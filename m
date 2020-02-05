@@ -2,140 +2,1293 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90C2C153A0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 22:21:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C61B153A23
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 22:24:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbgBEVVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 16:21:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37254 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727085AbgBEVVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 16:21:33 -0500
-Received: from localhost (unknown [193.117.204.200])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDE562082E;
-        Wed,  5 Feb 2020 21:21:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580937692;
-        bh=HZPos4rVk7aXuEQAlz+FmnYnm93VWpVbO/dAG4GSfM8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HKH4g//cfQ6S5jaqc/c7WFe/kXaldCe314/4mmcb1fyA4rbMwK32fpG6fyeXI8q7j
-         VPup/+nTDbgRkufOqmcRVp1fGQPMkvpnyvi1m3X9ssY+CI5MwbjyDmiHGtDrPYflbc
-         Ucj/D+9B/mkr5H5DwmTkQ1ak5Tc2JYeOgrfXhE3Y=
-Date:   Wed, 5 Feb 2020 21:21:29 +0000
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.4 00/90] 5.4.18-stable review
-Message-ID: <20200205212129.GA1452440@kroah.com>
-References: <20200203161917.612554987@linuxfoundation.org>
- <9a5a92f2-6e28-a9ab-a851-8d7e56482df6@roeck-us.net>
- <20200205151357.GB1236691@kroah.com>
- <20200205162429.GB25403@roeck-us.net>
- <20200205193008.GC1327971@kroah.com>
- <20200205210150.GA18483@roeck-us.net>
+        id S1727530AbgBEVX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 16:23:56 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:4118 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727070AbgBEVXx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 16:23:53 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e3b32580000>; Wed, 05 Feb 2020 13:23:36 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 05 Feb 2020 13:23:51 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 05 Feb 2020 13:23:51 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 5 Feb
+ 2020 21:23:50 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 5 Feb 2020 21:23:50 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.167.216]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5e3b32660000>; Wed, 05 Feb 2020 13:23:50 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <helen.koike@collabora.com>, <sboyd@kernel.org>
+CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH v2 0/6] Add Tegra driver for video capture
+Date:   Wed, 5 Feb 2020 13:23:20 -0800
+Message-ID: <1580937806-17376-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200205210150.GA18483@roeck-us.net>
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1580937817; bh=eNSGUNvcKmpDEl26uV40Irm2gBv0tiihYa8mFQDwYz4=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=mr2zTvHXkFkfyZVV+4riehJua0txVwfHFGBLox1LYYHqkcpXkxfGZ+swDrDaZ+RIg
+         mm36wmsX33WKM12zhLjHCj2a73ntHPFOPCe+sh1Z7oSvCSW6B8m4nqUNF/H135d2tp
+         GAq6Iax/EJ/M0aILxmexmOj78hZyubjwW0XOnphyUi52u5N221YDpK6/FKPSFe9tsB
+         X0heKh/Qoz4mtaADZh7g7PnpPmfaCHAwnrgJwKfkfjVPgMhFls3/BVVZt1w3y0G36Y
+         N3yk60kSpup7hCAafPRL+WolslLIiqn0813xEA+LP6/nWWtwPckacHASrT9PeLbfLS
+         sc5q6JGeVwr6w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 01:01:50PM -0800, Guenter Roeck wrote:
-> On Wed, Feb 05, 2020 at 07:30:08PM +0000, Greg Kroah-Hartman wrote:
-> > On Wed, Feb 05, 2020 at 08:24:29AM -0800, Guenter Roeck wrote:
-> > > On Wed, Feb 05, 2020 at 03:13:57PM +0000, Greg Kroah-Hartman wrote:
-> > > > On Tue, Feb 04, 2020 at 06:37:38AM -0800, Guenter Roeck wrote:
-> > > > > On 2/3/20 8:19 AM, Greg Kroah-Hartman wrote:
-> > > > > > This is the start of the stable review cycle for the 5.4.18 release.
-> > > > > > There are 90 patches in this series, all will be posted as a response
-> > > > > > to this one.  If anyone has any issues with these being applied, please
-> > > > > > let me know.
-> > > > > > 
-> > > > > > Responses should be made by Wed, 05 Feb 2020 16:17:59 +0000.
-> > > > > > Anything received after that time might be too late.
-> > > > > > 
-> > > > > 
-> > > > > Building i386:allyesconfig ... failed
-> > > > > Building i386:allmodconfig ... failed
-> > > > > --------------
-> > > > > Error log:
-> > > > > In file included from arch/x86/kernel/pci-dma.c:2:
-> > > > > include/linux/dma-direct.h:29:20: error: conflicting types for 'dma_capable'
-> > > > >    29 | static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_t size,
-> > > > >       |                    ^~~~~~~~~~~
-> > > > > In file included from include/linux/dma-direct.h:12,
-> > > > >                  from arch/x86/kernel/pci-dma.c:2:
-> > > > > arch/x86/include/asm/dma-direct.h:5:6: note: previous declaration of 'dma_capable' was here
-> > > > >     5 | bool dma_capable(struct device *dev, dma_addr_t addr, size_t size);
-> > > > 
-> > > > Ok, I think this is now resolved with a patch that Sasha added.
-> > > > 
-> > > > I have pushed out a -rc4 that _should_ build and boot properly.
-> > > > 
-> > > The i386 build still fails with v5.4.17-99-gbd0c6624a110 (-rc4).
-> > 
-> > Crap.
-> > 
-> > Ok, let me get some food and then try to figure this out...
-> > 
-> 
-> # bad: [bd0c6624a110d0f667cd2f3636f88e8de9b75851] Linux 5.4.18-rc4
-> # good: [313c8460cf0290fb1b9f71a20573fc32ac6c9cee] Linux 5.4.17
-> git bisect start 'HEAD' 'v5.4.17'
-> # good: [7c8bd91288c71011d793de1926a30182382141a0] parisc: Use proper printk format for resource_size_t
-> git bisect good 7c8bd91288c71011d793de1926a30182382141a0
-> # good: [67040c483ee8137adb12e20bb6448786455f4de6] r8152: Disable PLA MCU clock speed down
-> git bisect good 67040c483ee8137adb12e20bb6448786455f4de6
-> # good: [b3f55c9d709e6dcf96af5230295e631f0cbc3a8f] netfilter: nf_tables_offload: fix check the chain offload flag
-> git bisect good b3f55c9d709e6dcf96af5230295e631f0cbc3a8f
-> # good: [87bd4bf79429566adf306b8b133625604460b7c2] perf report: Fix no libunwind compiled warning break s390 issue
-> git bisect good 87bd4bf79429566adf306b8b133625604460b7c2
-> # good: [f831fda5fe86918fcb049721fba779ba2300c022] ASoC: topology: fix soc_tplg_fe_link_create() - link->dobj initialization order
-> git bisect good f831fda5fe86918fcb049721fba779ba2300c022
-> # good: [cc47538aebee48bb7626c84607116e43f57118d5] tracing/uprobe: Fix to make trace_uprobe_filter alignment safe
-> git bisect good cc47538aebee48bb7626c84607116e43f57118d5
-> # bad: [26f444bf728054ad23e5888bdd4ffa899e364b45] dma-direct: unify the dma_capable definitions
-> git bisect bad 26f444bf728054ad23e5888bdd4ffa899e364b45
-> # first bad commit: [26f444bf728054ad23e5888bdd4ffa899e364b45] dma-direct: unify the dma_capable definitions
-> 
-> Reverting 26f444bf728054ad23e5888bdd4ffa899e364b45 fixes that problem, but
-> results in other build failures. After dropping this commit, another bisect yields:
-> 
-> # bad: [56ea21e523a5ebf53e4ce88bc743c60c480d42ff] Linux 5.4.18-rc4
-> # good: [313c8460cf0290fb1b9f71a20573fc32ac6c9cee] Linux 5.4.17
-> git bisect start 'HEAD' 'v5.4.17'
-> # good: [7c8bd91288c71011d793de1926a30182382141a0] parisc: Use proper printk format for resource_size_t
-> git bisect good 7c8bd91288c71011d793de1926a30182382141a0
-> # good: [afbfe89dc11d19769477c5378a7164837baf75be] r8152: disable U2P3 for RTL8153B
-> git bisect good afbfe89dc11d19769477c5378a7164837baf75be
-> # good: [8403906c74753734338665be315175ddd1e03f5e] netfilter: conntrack: sctp: use distinct states for new SCTP connections
-> git bisect good 8403906c74753734338665be315175ddd1e03f5e
-> # good: [6b1562623df22cd81bf2138d880915029bbd414c] dm thin: fix use-after-free in metadata_pre_commit_callback
-> git bisect good 6b1562623df22cd81bf2138d880915029bbd414c
-> # bad: [705430d0039088973d204feea9eb0b7740509194] mm/migrate.c: also overwrite error when it is bigger than zero
-> git bisect bad 705430d0039088973d204feea9eb0b7740509194
-> # bad: [180dafcb1d1c0ee38f935810fe18d02eb7658c9f] dma-direct: exclude dma_direct_map_resource from the min_low_pfn check
-> git bisect bad 180dafcb1d1c0ee38f935810fe18d02eb7658c9f
-> # good: [87bd4bf79429566adf306b8b133625604460b7c2] perf report: Fix no libunwind compiled warning break s390 issue
-> git bisect good 87bd4bf79429566adf306b8b133625604460b7c2
-> # first bad commit: [180dafcb1d1c0ee38f935810fe18d02eb7658c9f] dma-direct: exclude dma_direct_map_resource from the min_low_pfn check
-> 
-> Dropping that patch as well fixes the problem for me.
+This series adds Tegra210 VI and CSI driver for built-in test pattern
+generator (TPG) capture.
 
-Ah, now I got my i386 build working, yeah, this works for me too.
+Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
+CSI port is one-to-one mapped to VI channel for video capture.
 
-Sasha, I think I tried to backport these dma patches earlier in the
-5.4.y series, but it was just too hard to unwind, so I figured it wasn't
-worth it.  I've dropped these two patches now and will go do a
-release...
+This series has TPG support only where it creates hard media links
+between CSI subdevice and VI video device without device graphs.
 
-thanks for the testing and help here, much appreciated.
+v4l2-compliance results are available below the patch diff.
 
-greg k-h
+[v1]:	Includes,
+	- v0 feedback
+	- Merged files to have Tegra specific separately
+	- Moved CSI device as child to VI as Tegra210 CSI is
+	  part of VI sharing same host interface and register
+	  space.
+	- Added link_validate for format validation.
+	- Fixes for passing v4l2-compliance for media, video,
+	  and subdevices.
+
+[v0]:	Includes,
+	- Adds CSI TPG clock to Tegra210 clock driver
+	- Host1x video driver with VI and CSI clients.
+	- Support for Tegra210 only.
+	- VI CSI TPG support with hard media links in driver.
+	- Video formats supported by Tegra210 VI
+	- CSI TPG supported video formats
+
+
+Sowjanya Komatineni (6):
+  dt-bindings: clock: tegra: Add clk id for CSI TPG clock
+  clk: tegra: Add Tegra210 CSI TPG clock gate
+  dt-binding: tegra: Add VI and CSI bindings
+  media: tegra: Add Tegra210 Video input driver
+  MAINTAINERS: Add Tegra Video driver section
+  arm64: tegra: Add Tegra VI CSI suppport in device tree
+
+ .../display/tegra/nvidia,tegra20-host1x.txt        |  55 +-
+ MAINTAINERS                                        |  10 +
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   8 +
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  36 +-
+ drivers/clk/tegra/clk-tegra210.c                   |   7 +
+ drivers/staging/media/Kconfig                      |   2 +
+ drivers/staging/media/Makefile                     |   1 +
+ drivers/staging/media/tegra/Kconfig                |  10 +
+ drivers/staging/media/tegra/Makefile               |   8 +
+ drivers/staging/media/tegra/TODO                   |  10 +
+ drivers/staging/media/tegra/tegra-common.h         | 237 +++++
+ drivers/staging/media/tegra/tegra-csi.c            | 374 ++++++++
+ drivers/staging/media/tegra/tegra-csi.h            | 116 +++
+ drivers/staging/media/tegra/tegra-vi.c             | 998 +++++++++++++++++++++
+ drivers/staging/media/tegra/tegra-vi.h             |  82 ++
+ drivers/staging/media/tegra/tegra-video.c          | 118 +++
+ drivers/staging/media/tegra/tegra-video.h          |  32 +
+ drivers/staging/media/tegra/tegra210.c             | 698 ++++++++++++++
+ drivers/staging/media/tegra/tegra210.h             | 190 ++++
+ include/dt-bindings/clock/tegra210-car.h           |   2 +-
+ 20 files changed, 2984 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/staging/media/tegra/Kconfig
+ create mode 100644 drivers/staging/media/tegra/Makefile
+ create mode 100644 drivers/staging/media/tegra/TODO
+ create mode 100644 drivers/staging/media/tegra/tegra-common.h
+ create mode 100644 drivers/staging/media/tegra/tegra-csi.c
+ create mode 100644 drivers/staging/media/tegra/tegra-csi.h
+ create mode 100644 drivers/staging/media/tegra/tegra-vi.c
+ create mode 100644 drivers/staging/media/tegra/tegra-vi.h
+ create mode 100644 drivers/staging/media/tegra/tegra-video.c
+ create mode 100644 drivers/staging/media/tegra/tegra-video.h
+ create mode 100644 drivers/staging/media/tegra/tegra210.c
+ create mode 100644 drivers/staging/media/tegra/tegra210.h
+
+./v4l2-compliance -m0 -s10
+v4l2-compliance SHA: e7402fb758fd106955c3b7d5a5e961d1cb606f4a, 32 bits, 32-bit time_t
+
+Compliance test for tegra-video device /dev/media0:
+
+Media Driver Info:
+        Driver name      : tegra-video
+        Model            : NVIDIA Tegra Video Input Device
+        Serial           : 
+        Bus info         : platform:54080000.vi
+        Media version    : 5.5.0
+        Hardware revision: 0x00000003 (3)
+        Driver version   : 5.5.0
+
+Required ioctls:
+        test MEDIA_IOC_DEVICE_INFO: OK
+
+Allow for multiple opens:
+        test second /dev/media0 open: OK
+        test MEDIA_IOC_DEVICE_INFO: OK
+        test for unlimited opens: OK
+
+Media Controller ioctls:
+        test MEDIA_IOC_G_TOPOLOGY: OK
+        Entities: 12 Interfaces: 12 Pads: 12 Links: 18
+        test MEDIA_IOC_ENUM_ENTITIES/LINKS: OK
+        test MEDIA_IOC_SETUP_LINK: OK
+        test invalid ioctls: OK
+
+Total for tegra-video device /dev/media0: 8, Succeeded: 8, Failed: 0, Warnings: 0
+--------------------------------------------------------------------------------
+Compliance test for tegra-video device /dev/video0:
+
+Driver Info:
+        Driver name      : tegra-video
+        Card type        : 54080000.vi-output-0
+        Bus info         : platform:54080000.vi
+        Driver version   : 5.5.0
+        Capabilities     : 0x85200001
+                Video Capture
+                Read/Write
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x05200001
+                Video Capture
+                Read/Write
+                Streaming
+                Extended Pix Format
+Media Driver Info:
+        Driver name      : tegra-video
+        Model            : NVIDIA Tegra Video Input Device
+        Serial           : 
+        Bus info         : platform:54080000.vi
+        Media version    : 5.5.0
+        Hardware revision: 0x00000003 (3)
+        Driver version   : 5.5.0
+Interface Info:
+        ID               : 0x03000003
+        Type             : V4L Video
+Entity Info:
+        ID               : 0x00000001 (1)
+        Name             : 54080000.vi-output-0
+        Function         : V4L2 I/O
+        Pad 0x01000002   : 0: Sink
+          Link 0x0200001b: from remote pad 0x100001a of entity 'tpg-0': Data, Enabled
+
+Required ioctls:
+        test MC information (see 'Media Driver Info' above): OK
+        test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+        test second /dev/video0 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+        test invalid ioctls: OK
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls (Input 0):
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 2 Private Controls: 0
+
+Format ioctls (Input 0):
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK
+
+Codec ioctls (Input 0):
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+
+Test input 0:
+
+Streaming ioctls:
+        test read/write: OK
+        test blocking wait: OK
+        test MMAP (no poll): OK                           
+        test MMAP (select): OK                            
+        test MMAP (epoll): OK                             
+        test USERPTR (no poll): OK (Not Supported)
+        test USERPTR (select): OK (Not Supported)
+        test DMABUF: Cannot test, specify --expbuf-device
+
+Total for tegra-video device /dev/video0: 53, Succeeded: 53, Failed: 0, Warnings: 0
+--------------------------------------------------------------------------------
+Compliance test for tegra-video device /dev/video1:
+
+Driver Info:
+        Driver name      : tegra-video
+        Card type        : 54080000.vi-output-1
+        Bus info         : platform:54080000.vi
+        Driver version   : 5.5.0
+        Capabilities     : 0x85200001
+                Video Capture
+                Read/Write
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x05200001
+                Video Capture
+                Read/Write
+                Streaming
+                Extended Pix Format
+Media Driver Info:
+        Driver name      : tegra-video
+        Model            : NVIDIA Tegra Video Input Device
+        Serial           : 
+        Bus info         : platform:54080000.vi
+        Media version    : 5.5.0
+        Hardware revision: 0x00000003 (3)
+        Driver version   : 5.5.0
+Interface Info:
+        ID               : 0x03000007
+        Type             : V4L Video
+Entity Info:
+        ID               : 0x00000005 (5)
+        Name             : 54080000.vi-output-1
+        Function         : V4L2 I/O
+        Pad 0x01000006   : 0: Sink
+          Link 0x0200001f: from remote pad 0x100001e of entity 'tpg-1': Data, Enabled
+
+Required ioctls:
+        test MC information (see 'Media Driver Info' above): OK
+        test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+        test second /dev/video1 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+        test invalid ioctls: OK
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls (Input 0):
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 2 Private Controls: 0
+
+Format ioctls (Input 0):
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK
+
+Codec ioctls (Input 0):
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+
+Test input 0:
+
+Streaming ioctls:
+        test read/write: OK
+        test blocking wait: OK
+        test MMAP (no poll): OK                           
+        test MMAP (select): OK                            
+        test MMAP (epoll): OK                             
+        test USERPTR (no poll): OK (Not Supported)
+        test USERPTR (select): OK (Not Supported)
+        test DMABUF: Cannot test, specify --expbuf-device
+
+Total for tegra-video device /dev/video1: 53, Succeeded: 53, Failed: 0, Warnings: 0
+--------------------------------------------------------------------------------
+Compliance test for tegra-video device /dev/video2:
+
+Driver Info:
+        Driver name      : tegra-video
+        Card type        : 54080000.vi-output-2
+        Bus info         : platform:54080000.vi
+        Driver version   : 5.5.0
+        Capabilities     : 0x85200001
+                Video Capture
+                Read/Write
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x05200001
+                Video Capture
+                Read/Write
+                Streaming
+                Extended Pix Format
+Media Driver Info:
+        Driver name      : tegra-video
+        Model            : NVIDIA Tegra Video Input Device
+        Serial           : 
+        Bus info         : platform:54080000.vi
+        Media version    : 5.5.0
+        Hardware revision: 0x00000003 (3)
+        Driver version   : 5.5.0
+Interface Info:
+        ID               : 0x0300000b
+        Type             : V4L Video
+Entity Info:
+        ID               : 0x00000009 (9)
+        Name             : 54080000.vi-output-2
+        Function         : V4L2 I/O
+        Pad 0x0100000a   : 0: Sink
+          Link 0x02000023: from remote pad 0x1000022 of entity 'tpg-2': Data, Enabled
+
+Required ioctls:
+        test MC information (see 'Media Driver Info' above): OK
+        test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+        test second /dev/video2 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+        test invalid ioctls: OK
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls (Input 0):
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 2 Private Controls: 0
+
+Format ioctls (Input 0):
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK
+
+Codec ioctls (Input 0):
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+
+Test input 0:
+
+Streaming ioctls:
+        test read/write: OK
+        test blocking wait: OK
+        test MMAP (no poll): OK                           
+        test MMAP (select): OK                            
+        test MMAP (epoll): OK                             
+        test USERPTR (no poll): OK (Not Supported)
+        test USERPTR (select): OK (Not Supported)
+        test DMABUF: Cannot test, specify --expbuf-device
+
+Total for tegra-video device /dev/video2: 53, Succeeded: 53, Failed: 0, Warnings: 0
+--------------------------------------------------------------------------------
+Compliance test for tegra-video device /dev/video3:
+
+Driver Info:
+        Driver name      : tegra-video
+        Card type        : 54080000.vi-output-3
+        Bus info         : platform:54080000.vi
+        Driver version   : 5.5.0
+        Capabilities     : 0x85200001
+                Video Capture
+                Read/Write
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x05200001
+                Video Capture
+                Read/Write
+                Streaming
+                Extended Pix Format
+Media Driver Info:
+        Driver name      : tegra-video
+        Model            : NVIDIA Tegra Video Input Device
+        Serial           : 
+        Bus info         : platform:54080000.vi
+        Media version    : 5.5.0
+        Hardware revision: 0x00000003 (3)
+        Driver version   : 5.5.0
+Interface Info:
+        ID               : 0x0300000f
+        Type             : V4L Video
+Entity Info:
+        ID               : 0x0000000d (13)
+        Name             : 54080000.vi-output-3
+        Function         : V4L2 I/O
+        Pad 0x0100000e   : 0: Sink
+          Link 0x02000027: from remote pad 0x1000026 of entity 'tpg-3': Data, Enabled
+
+Required ioctls:
+        test MC information (see 'Media Driver Info' above): OK
+        test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+        test second /dev/video3 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+        test invalid ioctls: OK
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls (Input 0):
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 2 Private Controls: 0
+
+Format ioctls (Input 0):
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK
+
+Codec ioctls (Input 0):
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+
+Test input 0:
+
+Streaming ioctls:
+        test read/write: OK
+        test blocking wait: OK
+        test MMAP (no poll): OK                           
+        test MMAP (select): OK                            
+        test MMAP (epoll): OK                             
+        test USERPTR (no poll): OK (Not Supported)
+        test USERPTR (select): OK (Not Supported)
+        test DMABUF: Cannot test, specify --expbuf-device
+
+Total for tegra-video device /dev/video3: 53, Succeeded: 53, Failed: 0, Warnings: 0
+--------------------------------------------------------------------------------
+Compliance test for tegra-video device /dev/video4:
+
+Driver Info:
+        Driver name      : tegra-video
+        Card type        : 54080000.vi-output-4
+        Bus info         : platform:54080000.vi
+        Driver version   : 5.5.0
+        Capabilities     : 0x85200001
+                Video Capture
+                Read/Write
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x05200001
+                Video Capture
+                Read/Write
+                Streaming
+                Extended Pix Format
+Media Driver Info:
+        Driver name      : tegra-video
+        Model            : NVIDIA Tegra Video Input Device
+        Serial           : 
+        Bus info         : platform:54080000.vi
+        Media version    : 5.5.0
+        Hardware revision: 0x00000003 (3)
+        Driver version   : 5.5.0
+Interface Info:
+        ID               : 0x03000013
+        Type             : V4L Video
+Entity Info:
+        ID               : 0x00000011 (17)
+        Name             : 54080000.vi-output-4
+        Function         : V4L2 I/O
+        Pad 0x01000012   : 0: Sink
+          Link 0x0200002b: from remote pad 0x100002a of entity 'tpg-4': Data, Enabled
+
+Required ioctls:
+        test MC information (see 'Media Driver Info' above): OK
+        test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+        test second /dev/video4 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+        test invalid ioctls: OK
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls (Input 0):
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 2 Private Controls: 0
+
+Format ioctls (Input 0):
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK
+
+Codec ioctls (Input 0):
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+
+Test input 0:
+
+Streaming ioctls:
+        test read/write: OK
+        test blocking wait: OK
+        test MMAP (no poll): OK                           
+        test MMAP (select): OK                            
+        test MMAP (epoll): OK                             
+        test USERPTR (no poll): OK (Not Supported)
+        test USERPTR (select): OK (Not Supported)
+        test DMABUF: Cannot test, specify --expbuf-device
+
+Total for tegra-video device /dev/video4: 53, Succeeded: 53, Failed: 0, Warnings: 0
+--------------------------------------------------------------------------------
+Compliance test for tegra-video device /dev/video5:
+
+Driver Info:
+        Driver name      : tegra-video
+        Card type        : 54080000.vi-output-5
+        Bus info         : platform:54080000.vi
+        Driver version   : 5.5.0
+        Capabilities     : 0x85200001
+                Video Capture
+                Read/Write
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x05200001
+                Video Capture
+                Read/Write
+                Streaming
+                Extended Pix Format
+Media Driver Info:
+        Driver name      : tegra-video
+        Model            : NVIDIA Tegra Video Input Device
+        Serial           : 
+        Bus info         : platform:54080000.vi
+        Media version    : 5.5.0
+        Hardware revision: 0x00000003 (3)
+        Driver version   : 5.5.0
+Interface Info:
+        ID               : 0x03000017
+        Type             : V4L Video
+Entity Info:
+        ID               : 0x00000015 (21)
+        Name             : 54080000.vi-output-5
+        Function         : V4L2 I/O
+        Pad 0x01000016   : 0: Sink
+          Link 0x0200002f: from remote pad 0x100002e of entity 'tpg-5': Data, Enabled
+
+Required ioctls:
+        test MC information (see 'Media Driver Info' above): OK
+        test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+        test second /dev/video5 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+        test invalid ioctls: OK
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls (Input 0):
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 2 Private Controls: 0
+
+Format ioctls (Input 0):
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK
+
+Codec ioctls (Input 0):
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+
+Test input 0:
+
+Streaming ioctls:
+        test read/write: OK
+        test blocking wait: OK
+        test MMAP (no poll): OK                           
+        test MMAP (select): OK                            
+        test MMAP (epoll): OK                             
+        test USERPTR (no poll): OK (Not Supported)
+        test USERPTR (select): OK (Not Supported)
+        test DMABUF: Cannot test, specify --expbuf-device
+
+Total for tegra-video device /dev/video5: 53, Succeeded: 53, Failed: 0, Warnings: 0
+--------------------------------------------------------------------------------
+Compliance test for device /dev/v4l-subdev0:
+
+
+Required ioctls:
+
+Allow for multiple opens:
+        test second /dev/v4l-subdev0 open: OK
+        test for unlimited opens: OK
+
+        test invalid ioctls: OK
+Debug ioctls:
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+        test VIDIOC_QUERYCTRL: OK (Not Supported)
+        test VIDIOC_G/S_CTRL: OK (Not Supported)
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 0 Private Controls: 0
+
+Format ioctls:
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not Supported)
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK (Not Supported)
+        test VIDIOC_TRY_FMT: OK (Not Supported)
+        test VIDIOC_S_FMT: OK (Not Supported)
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK (Not Supported)
+
+Codec ioctls:
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK (Not Supported)
+        test VIDIOC_EXPBUF: OK (Not Supported)
+        test Requests: OK (Not Supported)
+
+Total for device /dev/v4l-subdev0: 41, Succeeded: 41, Failed: 0, Warnings: 0
+--------------------------------------------------------------------------------
+Compliance test for device /dev/v4l-subdev1:
+
+
+Required ioctls:
+
+Allow for multiple opens:
+        test second /dev/v4l-subdev1 open: OK
+        test for unlimited opens: OK
+
+        test invalid ioctls: OK
+Debug ioctls:
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+        test VIDIOC_QUERYCTRL: OK (Not Supported)
+        test VIDIOC_G/S_CTRL: OK (Not Supported)
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 0 Private Controls: 0
+
+Format ioctls:
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not Supported)
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK (Not Supported)
+        test VIDIOC_TRY_FMT: OK (Not Supported)
+        test VIDIOC_S_FMT: OK (Not Supported)
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK (Not Supported)
+
+Codec ioctls:
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK (Not Supported)
+        test VIDIOC_EXPBUF: OK (Not Supported)
+        test Requests: OK (Not Supported)
+
+Total for device /dev/v4l-subdev1: 41, Succeeded: 41, Failed: 0, Warnings: 0
+--------------------------------------------------------------------------------
+Compliance test for device /dev/v4l-subdev2:
+
+
+Required ioctls:
+
+Allow for multiple opens:
+        test second /dev/v4l-subdev2 open: OK
+        test for unlimited opens: OK
+
+        test invalid ioctls: OK
+Debug ioctls:
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+        test VIDIOC_QUERYCTRL: OK (Not Supported)
+        test VIDIOC_G/S_CTRL: OK (Not Supported)
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 0 Private Controls: 0
+
+Format ioctls:
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not Supported)
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK (Not Supported)
+        test VIDIOC_TRY_FMT: OK (Not Supported)
+        test VIDIOC_S_FMT: OK (Not Supported)
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK (Not Supported)
+
+Codec ioctls:
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK (Not Supported)
+        test VIDIOC_EXPBUF: OK (Not Supported)
+        test Requests: OK (Not Supported)
+
+Total for device /dev/v4l-subdev2: 41, Succeeded: 41, Failed: 0, Warnings: 0
+--------------------------------------------------------------------------------
+Compliance test for device /dev/v4l-subdev3:
+
+
+Required ioctls:
+
+Allow for multiple opens:
+        test second /dev/v4l-subdev3 open: OK
+        test for unlimited opens: OK
+
+        test invalid ioctls: OK
+Debug ioctls:
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+        test VIDIOC_QUERYCTRL: OK (Not Supported)
+        test VIDIOC_G/S_CTRL: OK (Not Supported)
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 0 Private Controls: 0
+
+Format ioctls:
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not Supported)
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK (Not Supported)
+        test VIDIOC_TRY_FMT: OK (Not Supported)
+        test VIDIOC_S_FMT: OK (Not Supported)
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK (Not Supported)
+
+Codec ioctls:
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK (Not Supported)
+        test VIDIOC_EXPBUF: OK (Not Supported)
+        test Requests: OK (Not Supported)
+
+Total for device /dev/v4l-subdev3: 41, Succeeded: 41, Failed: 0, Warnings: 0
+--------------------------------------------------------------------------------
+Compliance test for device /dev/v4l-subdev4:
+
+
+Required ioctls:
+
+Allow for multiple opens:
+        test second /dev/v4l-subdev4 open: OK
+        test for unlimited opens: OK
+
+        test invalid ioctls: OK
+Debug ioctls:
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+        test VIDIOC_QUERYCTRL: OK (Not Supported)
+        test VIDIOC_G/S_CTRL: OK (Not Supported)
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 0 Private Controls: 0
+
+Format ioctls:
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not Supported)
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK (Not Supported)
+        test VIDIOC_TRY_FMT: OK (Not Supported)
+        test VIDIOC_S_FMT: OK (Not Supported)
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK (Not Supported)
+
+Codec ioctls:
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK (Not Supported)
+        test VIDIOC_EXPBUF: OK (Not Supported)
+        test Requests: OK (Not Supported)
+
+Total for device /dev/v4l-subdev4: 41, Succeeded: 41, Failed: 0, Warnings: 0
+--------------------------------------------------------------------------------
+Compliance test for device /dev/v4l-subdev5:
+
+
+Required ioctls:
+
+Allow for multiple opens:
+        test second /dev/v4l-subdev5 open: OK
+        test for unlimited opens: OK
+
+        test invalid ioctls: OK
+Debug ioctls:
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+        test VIDIOC_QUERYCTRL: OK (Not Supported)
+        test VIDIOC_G/S_CTRL: OK (Not Supported)
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 0 Private Controls: 0
+
+Format ioctls:
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not Supported)
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK (Not Supported)
+        test VIDIOC_TRY_FMT: OK (Not Supported)
+        test VIDIOC_S_FMT: OK (Not Supported)
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK (Not Supported)
+
+Codec ioctls:
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK (Not Supported)
+        test VIDIOC_EXPBUF: OK (Not Supported)
+        test Requests: OK (Not Supported)
+
+Total for device /dev/v4l-subdev5: 41, Succeeded: 41, Failed: 0, Warnings: 0
+
+Grand Total for tegra-video device /dev/media0: 572, Succeeded: 572, Failed: 0, Warnings: 0
+
+-- 
+2.7.4
+
