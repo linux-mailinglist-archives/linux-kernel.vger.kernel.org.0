@@ -2,100 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1D6F1538AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 20:03:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81E741538B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 20:08:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbgBETDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 14:03:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36770 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726822AbgBETDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 14:03:40 -0500
-Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4114217BA;
-        Wed,  5 Feb 2020 19:03:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580929419;
-        bh=s4sCPMZzjx09ipN9D6fBvtZZmWenqnm+d8znhpi4TZk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=0AKQV4UfO1b+QsLo33c8vCAfvP7G5/ZUeMPltiu7YqChu+hOnUoUKqMGhMMwaiPys
-         z9n6XYK5WgOjl8qvi/DXwGj+inl7NMbZEXz5QFPnx7Rx3VZ9MSmi6a0Uz251GXAWWp
-         dYNBRi0Mieb69JSfl2NBHUVqU/FJpm5ijtfC31xU=
-Date:   Wed, 5 Feb 2020 13:03:37 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, Keith Busch <keith.busch@intel.com>
-Subject: Re: [PATCH v13 1/8] PCI/ERR: Update error status after reset_link()
-Message-ID: <20200205190337.GA232001@google.com>
+        id S1727486AbgBETIa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 14:08:30 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52281 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726822AbgBETIa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 14:08:30 -0500
+Received: by mail-wm1-f67.google.com with SMTP id p9so3687324wmc.2;
+        Wed, 05 Feb 2020 11:08:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jj6fgSmpt3U2vE30272TJGECHKQ1zPe4wc+AxvAsp48=;
+        b=VO7jeWb6J4PPwqik1pme3VOzZ17RRdidQUQbrC6zis45E794vQO7SQPnwBotjXVfev
+         KmWMWhZHmtJuxP23h+wdQtPUvNMIAz55qwje6O+CvUq0q/tGCoa7Mh0qfh5dC9tNUO5s
+         7APjq6xqCDAOzvlHWjkzmw4pYHfmA757uzRUZh/3jiggDCKG4CJRSy7pIzwQH0CJ8kIp
+         SvCfxSGNPlIJcRFXWSSZC0hX6aoNgaQqjkf70leP7sjEHqwf+9WBkT+ITGTLw/zDzkj8
+         Usge4KPy0TXWZRk5BnPYs11rIlwYl6+zj40ymGxCOJDIuGlSzJsgwg1QKX4hRWtykPUA
+         HarQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jj6fgSmpt3U2vE30272TJGECHKQ1zPe4wc+AxvAsp48=;
+        b=DgLlYtWLx/h60BHQWPFYry3416OkDjHwrCWmA9IQ2G7mhYcgoep7TJAIhUVgALAqzq
+         NtTUYX0qkK+gTshbJAbgajAId6HDp2u2i2wGrly3LZdrxjPds+r0zaAy6Y5hB40eAEPt
+         8eaQYPzLr6MmFdD1q3/elBsQ5G8dwAoVyD+qCqkmS1qxdnACroDmmhOUQnwFQmbS66i5
+         uNDbAA/SGSJPhcNIS9J2XkvEqkGR16+j8ddnKuQMwEzkllDY/luadqpYZlCyansUb+AY
+         JllGb/ApeN0JXsL3ZnW/MxxHypWAFmfZHW96/5Hm47GUqW7E4ISVkhSCXnF35OIK1+XZ
+         Llsw==
+X-Gm-Message-State: APjAAAWxK6nsmK+Q+OO8cw7hb3sMD0CtGGywHJpdpy3ikW1dK5QMx288
+        Mpg2hVNGCJkgW+0E7zX8TZ4oB+tN
+X-Google-Smtp-Source: APXvYqyOCqN+FF5St5VC3smXTj/yi39kfVzpZsEENyx20Jp4Tmm9EGNeQnsjiI3iLt+RTOfF+wvL6g==
+X-Received: by 2002:a7b:c8d7:: with SMTP id f23mr7053532wml.173.1580929707037;
+        Wed, 05 Feb 2020 11:08:27 -0800 (PST)
+Received: from localhost.localdomain ([109.126.145.62])
+        by smtp.gmail.com with ESMTPSA id b10sm915568wrw.61.2020.02.05.11.08.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Feb 2020 11:08:26 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] io_uring: clean wq path
+Date:   Wed,  5 Feb 2020 22:07:30 +0300
+Message-Id: <cover.1580928112.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200205182800.GB112031@skuppusw-desk.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 10:28:00AM -0800, Kuppuswamy Sathyanarayanan wrote:
-> Hi Bjorn,
-> 
-> On Sat, Jan 18, 2020 at 08:00:30PM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
-> > From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> > 
-> > Commit bdb5ac85777d ("PCI/ERR: Handle fatal error recovery") uses
-> > reset_link() to recover from fatal errors. But during fatal error
-> > recovery, if the initial value of error status is
-> > PCI_ERS_RESULT_DISCONNECT or PCI_ERS_RESULT_NO_AER_DRIVER then
-> > even after successful recovery (using reset_link()) pcie_do_recovery()
-> > will report the recovery result as failure. So update the status of
-> > error after reset_link().
-> 
-> Since this patch has no dependency on EDR, can we merge it first?
+This is the first series of shaving some overhead for wq-offloading.
+The 1st removes extra allocations, and the 3rd req->refs abusing.
 
-We *could*, but I don't think there's any benefit.  bdb5ac85777d
-appeared in v4.20, so this wouldn't really be a candidate for v5.6.
+There are plenty of opportunities to leak memory similarly to
+the way mentioned in [PATCH 1/3], and I'm working a generic fix,
+as I need it to close holes in waiting splice(2) patches.
 
-I'm expecting (hoping, anyway) that we'll merge this whole series for
-v5.7.  For minor bugfixes like this one, we should add stable tags so
-they'll get backported.
+The untold idea behind [PATCH 3/3] is to get rid referencing even
+further. As submission ref always pin request, there is no need
+in the second (i.e. completion) ref. Even more, With a bit of
+retossing, we can get rid of req->refs at all by using non-atomic
+ref under @compl_lock, which usually will be bundled fill_event().
+I'll play with it soon. Any ideas or concerns regarding it?
 
-> > Fixes: bdb5ac85777d ("PCI/ERR: Handle fatal error recovery")
-> > Cc: Ashok Raj <ashok.raj@intel.com>
-> > Cc: Keith Busch <keith.busch@intel.com>
-> > Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> > Acked-by: Keith Busch <keith.busch@intel.com>
-> > ---
-> >  drivers/pci/pcie/err.c | 8 +++++---
-> >  1 file changed, 5 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-> > index b0e6048a9208..71639055511e 100644
-> > --- a/drivers/pci/pcie/err.c
-> > +++ b/drivers/pci/pcie/err.c
-> > @@ -204,9 +204,11 @@ void pcie_do_recovery(struct pci_dev *dev, enum pci_channel_state state,
-> >  	else
-> >  		pci_walk_bus(bus, report_normal_detected, &status);
-> >  
-> > -	if (state == pci_channel_io_frozen &&
-> > -	    reset_link(dev, service) != PCI_ERS_RESULT_RECOVERED)
-> > -		goto failed;
-> > +	if (state == pci_channel_io_frozen) {
-> > +		status = reset_link(dev, service);
-> > +		if (status != PCI_ERS_RESULT_RECOVERED)
-> > +			goto failed;
-> > +	}
-> >  
-> >  	if (status == PCI_ERS_RESULT_CAN_RECOVER) {
-> >  		status = PCI_ERS_RESULT_RECOVERED;
-> > -- 
-> > 2.21.0
-> > 
-> 
-> -- 
-> Sathyanarayanan Kuppuswamy
-> Linux kernel developer
+Regarding [PATCH 3/3], is there better way to do it for io_poll_add()?
+
+
+Pavel Begunkov (3):
+  io_uring: pass sqe for link head
+  io_uring: deduce force_nonblock in io_issue_sqe()
+  io_uring: pass submission ref to async
+
+ fs/io_uring.c | 60 +++++++++++++++++++++++++++++----------------------
+ 1 file changed, 34 insertions(+), 26 deletions(-)
+
+-- 
+2.24.0
+
