@@ -2,67 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48594153A84
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 22:55:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87194153A89
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 22:55:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727441AbgBEVzC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 16:55:02 -0500
-Received: from namei.org ([65.99.196.166]:43528 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727116AbgBEVzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 16:55:02 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 015LspWn020124;
-        Wed, 5 Feb 2020 21:54:51 GMT
-Date:   Thu, 6 Feb 2020 08:54:51 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-cc:     Sasha Levin <sashal@kernel.org>, corbet@lwn.net,
-        linux-kernel@vger.kernel.org, kys@microsoft.com,
-        jamorris@microsoft.com
-Subject: Re: [PATCH] Documentation/process: Change Microsoft contact for
- embargoed hardware issues
-In-Reply-To: <20200205214716.GA1468203@kroah.com>
-Message-ID: <alpine.LRH.2.21.2002060854230.17039@namei.org>
-References: <20200205213621.31474-1-sashal@kernel.org> <20200205214716.GA1468203@kroah.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1727496AbgBEVzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 16:55:43 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:37266 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727116AbgBEVzm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 16:55:42 -0500
+Received: by mail-oi1-f196.google.com with SMTP id q84so2420342oic.4;
+        Wed, 05 Feb 2020 13:55:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=qndbgjnKGTRqil5Ffj6ZYDKeVw7HlXNwJpUlAgm+S6Y=;
+        b=q34KOhpk47Q/2E2X+VFfQB25SvVHJuhCnCg72JdZCFnW+34+VG2/GkEDFmAASAupm4
+         on29xmt526yzth1T5zm/ebJ1M1wvCuY4Yx6/901AobkiGPk8jC7h3RyrgcH5Vs4C8UF7
+         KN/spHDzuJjORoS0IUzm0FRkq1V9B/lbDpLuH0gB4B5pLXTjNV0uKEZCndTP1J4oCf8/
+         h/1WjYJS3OGsZsmR6BFQPvhvM6grondSLwj30uUnPicUHus/rgxmJdX6sdVQ4DIV/eiN
+         xO+0hbO8PBLNoTOiNpeK721XNw3+z+C9X+yrn0GnSkd+efN1vixeURjr63JB7sXnCxsx
+         8Xlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=qndbgjnKGTRqil5Ffj6ZYDKeVw7HlXNwJpUlAgm+S6Y=;
+        b=dWhnrk3FWFLiHfSIgWlVbWgyzwzFeROAWrmh6ktySJM6XAydZkoRrhfZ1KFjONvoo/
+         X3i9tEy1J0RSbwgAlynA/d5/A/Scq8WvaU5SqcrqVPVU1NOgzdLiTT22nASKkXBGXBYQ
+         UmNpF8hJ0POHGtHXIkvOGkei7zXuuOCoq/79U3jmDMnqZaxipwgdZR+UWr3zbhZFFQnF
+         6Zm8rhNG4Yzf0Ii6TlIpS8gpSB3J6e4EVLdnf3K9zhBaJWb/KovRIp3XeOMfctdMBZX7
+         IYLC/ouHBGGFEWWz4A8RU+VAXWmsKiR4XmoAXWIn+LSNttkxgoQBkgsLd8AqdrigQe+0
+         W2ng==
+X-Gm-Message-State: APjAAAXsevqvOX4GA69TXXgg5AIKsiD+fJ+qkcM6S0GjQAF3EdN5qNFr
+        CP29YAJMl/39lSCYfSFt1s5hKh8KkH888g==
+X-Google-Smtp-Source: APXvYqzIKlb6ICrQEIE/J8GnWSUbGPOQNuGxtAkBKjeoaS1kBpIQsikXhsSVFf7o1NUhEsOJfJTFIA==
+X-Received: by 2002:aca:fd16:: with SMTP id b22mr4657409oii.73.1580939740596;
+        Wed, 05 Feb 2020 13:55:40 -0800 (PST)
+Received: from Andrews-MBP-2.attlocal.com (45-18-127-186.lightspeed.austtx.sbcglobal.net. [45.18.127.186])
+        by smtp.gmail.com with ESMTPSA id t23sm242396oic.28.2020.02.05.13.55.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Feb 2020 13:55:40 -0800 (PST)
+From:   Andrew Geissler <geissonator@gmail.com>
+To:     openbmc@lists.ozlabs.org, joel@jms.id.au,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     Andrew Geissler <geissonator@yahoo.com>, linux-gpio@vger.kernel.org
+Subject: [PATCH linux dev-5.4 v2] ARM: dts: aspeed: witherspoon: Add gpio line names
+Date:   Wed,  5 Feb 2020 15:55:11 -0600
+Message-Id: <20200205215511.80333-1-geissonator@gmail.com>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122)
+In-Reply-To: <FMfcgxwGDDpcbrVbWGfkMRbZCLSZqpMM>
+References: <FMfcgxwGDDpcbrVbWGfkMRbZCLSZqpMM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Feb 2020, Greg KH wrote:
+From: Andrew Geissler <geissonator@yahoo.com>
 
-> On Wed, Feb 05, 2020 at 04:36:21PM -0500, Sasha Levin wrote:
-> > Remove Sasha Levin as the Microsoft contact. A new contact will be
-> > assigned by Microsoft.
-> > 
-> > Signed-off-by: Sasha Levin <sashal@kernel.org>
-> > ---
-> >  Documentation/process/embargoed-hardware-issues.rst | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/process/embargoed-hardware-issues.rst b/Documentation/process/embargoed-hardware-issues.rst
-> > index 33edae654599..a6f4f6e5c78b 100644
-> > --- a/Documentation/process/embargoed-hardware-issues.rst
-> > +++ b/Documentation/process/embargoed-hardware-issues.rst
-> > @@ -250,7 +250,7 @@ an involved disclosed party. The current ambassadors list:
-> >    Intel		Tony Luck <tony.luck@intel.com>
-> >    Qualcomm	Trilok Soni <tsoni@codeaurora.org>
-> >  
-> > -  Microsoft	Sasha Levin <sashal@kernel.org>
-> > +  Microsoft
-> 
-> That's fine, but when will that contact "be assigned"?  I'd rather not
-> go without one at all for no good reason other than "people need to
-> figure their stuff out" :)
+Name the gpios so libgiod will work with them
 
-Add me for this: jamorris@linux.microsoft.com
+Signed-off-by: Andrew Geissler <geissonator@yahoo.com>
+---
+v2: added upstream to patch
+    prepended fsi- on fsi related gpios
+    prepended led- on led related gpios
+    prepended presence on presence related gpios
+    dropped pin_gpio_a1 definition
+---
+ .../boot/dts/aspeed-bmc-opp-witherspoon.dts   | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-
+diff --git a/arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts b/arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts
+index 515f0f208ee6..2519722928a4 100644
+--- a/arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts
++++ b/arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts
+@@ -193,6 +193,42 @@
+ 
+ };
+ 
++&gpio {
++    status = "okay";
++	gpio-line-names =
++	/*A0-A7*/	"","cfam-reset","","","","","fsi-mux","",
++	/*B0-B7*/	"","","","","","air-water","","",
++	/*C0-C7*/	"","","","","","","","",
++	/*D0-D7*/	"fsi-enable","","","","","","","",
++	/*E0-E7*/	"fsi-data","","","","","","","",
++	/*F0-F7*/	"","","","","","","","",
++	/*G0-G7*/	"","","","","","","","",
++	/*H0-H7*/	"","","","","","","","",
++	/*I0-I7*/	"","","","","","","","",
++	/*J0-J7*/	"","","checkstop","","","","","",
++	/*K0-K7*/	"","","","","","","","",
++	/*L0-L7*/	"","","","","","","","",
++	/*M0-M7*/	"","","","","","","","",
++	/*N0-N7*/	"presence-ps1","","led-rear-fault","led-rear-power",
++		        "led-rear-id","","","",
++	/*O0-O7*/	"","","","","","","","",
++	/*P0-P7*/	"","","","","","","","presence-ps0",
++	/*Q0-Q7*/	"","","","","","","","",
++	/*R0-R7*/	"","","fsi-trans","","","power-button","","",
++	/*S0-S7*/	"","","","","","","","",
++	/*T0-T7*/	"","","","","","","","",
++	/*U0-U7*/	"","","","","","","","",
++	/*V0-V7*/	"","","","","","","","",
++	/*W0-W7*/	"","","","","","","","",
++	/*X0-X7*/	"","","","","","","","",
++	/*Y0-Y7*/	"","","","","","","","",
++	/*Z0-Z7*/	"","","","","","","","",
++	/*AA0-AA7*/	"fsi-clock","","","","","","","",
++	/*AB0-AB7*/	"","","","","","","","",
++	/*AC0-AC7*/	"","","","","","","","";
++
++};
++
+ &fmc {
+ 	status = "okay";
+ 
 -- 
-James Morris
-<jmorris@namei.org>
+2.21.0 (Apple Git-122)
 
