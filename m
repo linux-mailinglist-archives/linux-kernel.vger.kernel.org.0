@@ -2,101 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0E9E15346B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 16:42:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12471153477
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 16:45:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbgBEPmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 10:42:16 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38660 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726534AbgBEPmQ (ORCPT
+        id S1727390AbgBEPpP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 10:45:15 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:35852 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbgBEPpO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 10:42:16 -0500
-Received: by mail-pf1-f196.google.com with SMTP id x185so1399333pfc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 07:42:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=03H9tOU4ZU6Aob62of9ZRzxsUiRGCwWaNgMF+MztT3g=;
-        b=nrehUZjzvoVHxS9MBml+qXueEBmbVQVRNi9QBTFlNb4ySXdy6sdRjrcpBdyFw4appf
-         EWDFAjrMEGyDLWcSlj+nW93jEfRP7BY22yZ7N4pkGQzq76QczVFRgkYk/iunW/YZ/MDv
-         sSH8U0+VX+dp0KjIQosvQElRZXeiN2OumArvk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=03H9tOU4ZU6Aob62of9ZRzxsUiRGCwWaNgMF+MztT3g=;
-        b=pTUvncCIQKd+d8/Av4hGqrRJ/ZTnWXpxyNRn3Y0rCT54P2KD86I56nz6bwGbfA0DpG
-         4SIabniF15UOalJrGVumHVgA6rPdzRidVNO1+7Por6881nKu2q5H41sfwL60fMjMHbCF
-         eTBO+Gx9+2A6OBAzMrvhS+VB3n63cY4FqJM3mPeq6S7g1G8FUEhKS/m3IoSFVacWYKGj
-         Gt1Y+8M1yx9TBo17lcAJH9Gw4jY4CSJv+h+bA39ltBW/k5VQwmKBKkg38+DDv4w3aWAr
-         ZbSSeARo1meIqz6THKQA8EIDlKrsqnQxlLLroU+j8pNG/GgxW420y27LpQvx2bvuYMBC
-         wblQ==
-X-Gm-Message-State: APjAAAUAJwMxU2YBQFaLMWw6MAA6d2qkoSuZiHyJ5P8RYeopXMi7uIJm
-        QIZ+KeG2yPK92WWi9vzVHR7xsw==
-X-Google-Smtp-Source: APXvYqyZJS8+VKbJ4mdfBpzG4WiIrsTqm/mT2imB8SMINJ7RnaYxCspLXuTcoiezwUtEjurmcUvWqw==
-X-Received: by 2002:a63:a1e:: with SMTP id 30mr28697873pgk.238.1580917334448;
-        Wed, 05 Feb 2020 07:42:14 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id l69sm221887pgd.1.2020.02.05.07.42.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 07:42:13 -0800 (PST)
-Date:   Wed, 5 Feb 2020 10:42:12 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Amol Grover <frextrite@gmail.com>
-Subject: Re: [for-next][PATCH 4/4] ftrace: Add comment to why
- rcu_dereference_sched() is open coded
-Message-ID: <20200205154212.GC142103@google.com>
-References: <20200205104929.313040579@goodmis.org>
- <20200205105113.283672584@goodmis.org>
- <20200205063349.4c3df2c0@oasis.local.home>
- <20200205141915.GA194021@google.com>
- <20200205092847.0b650972@oasis.local.home>
+        Wed, 5 Feb 2020 10:45:14 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1izMrR-0004Qd-EA; Wed, 05 Feb 2020 16:45:05 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 15E561C1EC4;
+        Wed,  5 Feb 2020 16:45:05 +0100 (CET)
+Date:   Wed, 05 Feb 2020 15:45:04 -0000
+From:   "tip-bot2 for Cengiz Can" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/urgent] perf maps: Add missing unlock to maps__insert() error case
+Cc:     Cengiz Can <cengiz@kernel.wtf>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200120141553.23934-1-cengiz@kernel.wtf>
+References: <20200120141553.23934-1-cengiz@kernel.wtf>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200205092847.0b650972@oasis.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <158091750477.411.16676804316136284961.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 09:28:47AM -0500, Steven Rostedt wrote:
-> On Wed, 5 Feb 2020 09:19:15 -0500
-> Joel Fernandes <joel@joelfernandes.org> wrote:
-> 
-> > Could you paste the stack here when RCU is not watching? In trace event code
-> > IIRC we call rcu_enter_irqs_on() to have RCU temporarily watch, since that
-> > code can be called from idle loop. Should we doing the same here as well?
-> 
-> Unfortunately I lost the stack trace. And the last time we tried to use
-> rcu_enter_irqs_on() for ftrace, we couldn't find a way to do this
-> properly. Ftrace is much more invasive then going into idle. The
-> problem is that ftrace traces RCU itself, and calling
-> "rcu_enter_irqs_on()" in pretty much any place in the RCU code caused
-> lots of bugs ;-)
-> 
-> This is why we have the schedule_on_each_cpu(ftrace_sync) hack.
+The following commit has been merged into the perf/urgent branch of tip:
 
-The "schedule a task on each CPU" trick works on !PREEMPT though right?
+Commit-ID:     85fc95d75970ee7dd8e01904e7fb1197c275ba6b
+Gitweb:        https://git.kernel.org/tip/85fc95d75970ee7dd8e01904e7fb1197c275ba6b
+Author:        Cengiz Can <cengiz@kernel.wtf>
+AuthorDate:    Mon, 20 Jan 2020 17:15:54 +03:00
+Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitterDate: Fri, 31 Jan 2020 09:40:50 +01:00
 
-Because it is possible in PREEMPT=y to get preempted in the middle of a
-read-side critical section, switch to the worker thread executing the
-ftrace_sync() and then switch back. But RCU still has to watch that CPU since
-the read-side critical section was not completed.
+perf maps: Add missing unlock to maps__insert() error case
 
-Or is there a subtlety here with ftrace that I missed?
+`tools/perf/util/map.c` has a function named `maps__insert` that
+acquires a write lock if its in multithread context.
 
-thanks,
+Even though this lock is released when function successfully completes,
+there's a branch that is executed when `maps_by_name == NULL` that
+returns from this function without releasing the write lock.
 
- - Joel
+Added an `up_write` to release the lock when this happens.
 
+Fixes: a7c2b572e217 ("perf map_groups: Auto sort maps by name, if needed")
+Signed-off-by: Cengiz Can <cengiz@kernel.wtf>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: http://lore.kernel.org/lkml/20200120141553.23934-1-cengiz@kernel.wtf
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/map.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
-> -- Steve
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index fdd5bdd..f67960b 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -549,6 +549,7 @@ void maps__insert(struct maps *maps, struct map *map)
+ 
+ 			if (maps_by_name == NULL) {
+ 				__maps__free_maps_by_name(maps);
++				up_write(&maps->lock);
+ 				return;
+ 			}
+ 
