@@ -2,201 +2,283 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 381611523BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 01:06:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 517F01523E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 01:11:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbgBEAGQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 19:06:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727537AbgBEAGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 19:06:16 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E2112085B;
-        Wed,  5 Feb 2020 00:06:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580861175;
-        bh=XBo2ymUlf4f7N8lIER7ed06C17EE+5fkcJuZdHynU90=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=UhcB0YjsdBtJZi9QZvv+KOYAVzjStGaCTTUD4n8T3DXHltLP46U7UO/30m6+W9MxG
-         8VaXefpeXWg5gvUa+L3x77z8a0sJArK/JifPW+nLMVMw2ZMJMN0IW1jhT18ArqUxGX
-         gV1Kh9xn8PUO6c6s0e3M5UUbSuLBPvh3HFS2R6UY=
-Date:   Wed, 5 Feb 2020 09:06:10 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v3] bootconfig: Only load bootconfig if "bootconfig" is
- on the kernel cmdline
-Message-Id: <20200205090610.fa3d0dcd5b2fea22e40991cf@kernel.org>
-In-Reply-To: <20200204110446.2c2616cd@oasis.local.home>
-References: <20200204110446.2c2616cd@oasis.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727689AbgBEALS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 19:11:18 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34012 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727494AbgBEALR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 19:11:17 -0500
+Received: by mail-wm1-f68.google.com with SMTP id s144so3267818wme.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 16:11:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=atishpatra.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TWMKFLmlf0AFDRFWSiZ8w6uqCqE+fpwvOde/KKxdspU=;
+        b=UzXC10dzSBLQ6VuzAQoUhXzFUQGOwSYE9pgvmC4LdvMdbspO/S66nkO9wvjlrrWPxv
+         XmpPUMQeEkO4AlU7kNm8UuYh2Y/CGxeVUlRJM5H/wP52De5/xUDjVecYTOwndzFU5AwE
+         NZws3UwOhqUJregkBG8US/i/nsP76mr8mcg9+Uu2Wdu+lq69qChmxrW0+Ep+aUwKP2r9
+         b1U9sLmEZ6Jl0WmsZgKq2tp3C9hWjupzpAOBYTT4QVVYvGnIni+fUQztb8/N68uIDjoC
+         htpTV8DM86H9wU7dI8uSUo+3VQ5BVP/N9LGzOKbTzJrBjXQUABGjZq2SMuD6DvMkpiW6
+         yRyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TWMKFLmlf0AFDRFWSiZ8w6uqCqE+fpwvOde/KKxdspU=;
+        b=s1Cu8Ey72H4UlP2Mziv9WhAyzVgcGXLjFx1h1xqd65k7dsnaPx8m91hQ94HAx2DPzV
+         sa4gMiB9/uxgUGzmQo3c10dIAm+Fzv7X569MpJrbhMkaQNCqARAUdsUvRU+S2QOSNBbc
+         M5yEmPXz64+pjRR+hG9WBGhGZVyN/hV3IWI7GKnsrE2NhdQzIZDQbkN461MBDsk7T4Qv
+         9Bnm2krPIDIuy4g/QwCjVy0RDXGGB0HghocHqeoM3R1/WMo4gxUno1J7b5nu80y1xKZ7
+         Tur+SiWxlMNo20WaqQ1PSstS4rD8AoeN+O9rfZuVc0DNlm9PvvanGTYLKVV5O2kSyfxE
+         tWig==
+X-Gm-Message-State: APjAAAUU4e6EHTInXx8cqulFeiVy035h9BFB+Eq0f8oVAjK5J847K5V5
+        zfpyXnv+AH2Ee+9smfXZjkWf48OeS3EfAPXVUc81
+X-Google-Smtp-Source: APXvYqyKn7KiPsuTjAOLqvpLY/n/dJ8r3z/19YegWM4nHyPKdgW4wlCJdMsTKLmliBy70QFIoNJttpnb7pGPVhaml7w=
+X-Received: by 2002:a1c:a404:: with SMTP id n4mr1570224wme.186.1580861473308;
+ Tue, 04 Feb 2020 16:11:13 -0800 (PST)
+MIME-Version: 1.0
+References: <20200128022737.15371-1-atish.patra@wdc.com> <20200128022737.15371-9-atish.patra@wdc.com>
+ <CAAhSdy1DtsPeKYrSDuqNUirDixypvrd42xQnr1bVExc8XE-Npw@mail.gmail.com>
+In-Reply-To: <CAAhSdy1DtsPeKYrSDuqNUirDixypvrd42xQnr1bVExc8XE-Npw@mail.gmail.com>
+From:   Atish Patra <atishp@atishpatra.org>
+Date:   Tue, 4 Feb 2020 16:11:02 -0800
+Message-ID: <CAOnJCUJtUHKE_+hXemkxwoa1M0GpQYQVxbw-5ScnGcHf_xZd-Q@mail.gmail.com>
+Subject: Re: [PATCH v7 08/10] RISC-V: Add SBI HSM extension
+To:     Anup Patel <anup@brainfault.org>
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kees Cook <keescook@chromium.org>,
+        Abner Chang <abner.chang@hpe.com>, nickhu@andestech.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Palmer Dabbelt <palmerdabbelt@google.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Chester Lin <clin@suse.com>,
+        Vincent Chen <vincent.chen@sifive.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Greentime Hu <greentime.hu@sifive.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Borislav Petkov <bp@suse.de>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Mao Han <han_mao@c-sky.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Feb 2020 11:04:46 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Mon, Jan 27, 2020 at 8:54 PM Anup Patel <anup@brainfault.org> wrote:
+>
+> On Tue, Jan 28, 2020 at 7:58 AM Atish Patra <atish.patra@wdc.com> wrote:
+> >
+> > SBI specification defines HSM extension that allows to start/stop a hart
+> > by a supervisor anytime. The specification is available at
+> >
+> > https://github.com/riscv/riscv-sbi-doc/blob/master/riscv-sbi.adoc
+> >
+> > Implement SBI HSM extension.
+> >
+> > Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> > ---
+> >  arch/riscv/include/asm/sbi.h | 22 ++++++++++++++++
+> >  arch/riscv/kernel/sbi.c      | 51 ++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 73 insertions(+)
+> >
+> > diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+> > index d55d8090ab5c..bed6fa26ec84 100644
+> > --- a/arch/riscv/include/asm/sbi.h
+> > +++ b/arch/riscv/include/asm/sbi.h
+> > @@ -26,6 +26,7 @@ enum sbi_ext_id {
+> >         SBI_EXT_TIME = 0x54494D45,
+> >         SBI_EXT_IPI = 0x735049,
+> >         SBI_EXT_RFENCE = 0x52464E43,
+> > +       SBI_EXT_HSM = 0x48534D,
+> >  };
+> >
+> >  enum sbi_ext_base_fid {
+> > @@ -56,6 +57,12 @@ enum sbi_ext_rfence_fid {
+> >         SBI_EXT_RFENCE_REMOTE_HFENCE_VVMA_ASID,
+> >  };
+> >
+> > +enum sbi_ext_hsm_fid {
+> > +       SBI_EXT_HSM_HART_START = 0,
+> > +       SBI_EXT_HSM_HART_STOP,
+> > +       SBI_EXT_HSM_HART_STATUS,
+> > +};
+> > +
+>
+> I think we should also define the possible return values of
+> SBI_EXT_HSM_HART_STATUS function.
+>
 
-> 
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> 
-> As the bootconfig is appended to the initrd it is not as easy to modify as
-> the kernel command line. If there's some issue with the kernel, and the
-> developer wants to boot a pristine kernel, it should not be needed to modify
-> the initrd to remove the bootconfig for a single boot.
-> 
-> As bootconfig is silently added (if the admin does not know where to look
-> they may not know it's being loaded). It should be explicitly added to the
-> kernel cmdline. The loading of the bootconfig is only done if "bootconfig"
-> is on the kernel command line. This will let admins know that the kernel
-> command line is extended.
-> 
-> Note, after adding printk()s for when the size is too great or the checksum
-> is wrong, exposed that the current method always looked for the boot config,
-> and if this size and checksum matched, it would parse it (as if either is
-> wrong a printk has been added to show this). It's better to only check this
-> if the boot config is asked to be looked for.
+Done.
 
-Thanks for adding this feature :) This looks good to me.
-Please add my ack when you fix the error message of "config=bootconfig".
+> >  #define SBI_SPEC_VERSION_DEFAULT       0x1
+> >  #define SBI_SPEC_VERSION_MAJOR_SHIFT   24
+> >  #define SBI_SPEC_VERSION_MAJOR_MASK    0x7f
+> > @@ -70,6 +77,7 @@ enum sbi_ext_rfence_fid {
+> >  #define SBI_ERR_INVALID_ADDRESS -5
+> >
+> >  extern unsigned long sbi_spec_version;
+> > +extern bool sbi_hsm_avail;
+> >  struct sbiret {
+> >         long error;
+> >         long value;
+> > @@ -110,8 +118,18 @@ int sbi_remote_hfence_vvma_asid(const unsigned long *hart_mask,
+> >                                 unsigned long start,
+> >                                 unsigned long size,
+> >                                 unsigned long asid);
+> > +int sbi_hsm_hart_start(unsigned long hartid, unsigned long saddr,
+> > +                      unsigned long priv);
+> > +int sbi_hsm_hart_stop(void);
+> > +int sbi_hsm_hart_get_status(unsigned long hartid);
+> > +
+> >  int sbi_probe_extension(int ext);
+> >
+> > +static inline bool sbi_hsm_is_available(void)
+> > +{
+> > +       return sbi_hsm_avail;
+> > +}
+> > +
+> >  /* Check if current SBI specification version is 0.1 or not */
+> >  static inline int sbi_spec_is_0_1(void)
+> >  {
+> > @@ -137,5 +155,9 @@ void sbi_clear_ipi(void);
+> >  void sbi_send_ipi(const unsigned long *hart_mask);
+> >  void sbi_remote_fence_i(const unsigned long *hart_mask);
+> >  void sbi_init(void);
+> > +static inline bool sbi_hsm_is_available(void)
+> > +{
+> > +       return false;
+> > +}
+> >  #endif /* CONFIG_RISCV_SBI */
+> >  #endif /* _ASM_RISCV_SBI_H */
+> > diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
+> > index 3c34aba30f6f..9bdc9801784d 100644
+> > --- a/arch/riscv/kernel/sbi.c
+> > +++ b/arch/riscv/kernel/sbi.c
+> > @@ -12,6 +12,8 @@
+> >
+> >  /* default SBI version is 0.1 */
+> >  unsigned long sbi_spec_version = SBI_SPEC_VERSION_DEFAULT;
+> > +bool sbi_hsm_avail;
+> > +
+> >  EXPORT_SYMBOL(sbi_spec_version);
+> >
+> >  static void (*__sbi_set_timer)(uint64_t stime);
+> > @@ -496,6 +498,54 @@ static void sbi_power_off(void)
+> >         sbi_shutdown();
+> >  }
+> >
+> > +int sbi_hsm_hart_stop(void)
+> > +{
+> > +       struct sbiret ret;
+> > +
+> > +       ret = sbi_ecall(SBI_EXT_HSM, SBI_EXT_HSM_HART_STOP, 0, 0, 0, 0, 0, 0);
+> > +
+> > +       if (!ret.error)
+> > +               return ret.value;
+> > +       else
+> > +               return sbi_err_map_linux_errno(ret.error);
+> > +}
+> > +EXPORT_SYMBOL(sbi_hsm_hart_stop);
+> > +
+> > +int sbi_hsm_hart_start(unsigned long hartid, unsigned long saddr,
+> > +                      unsigned long priv)
+> > +{
+> > +       struct sbiret ret;
+> > +
+> > +       ret = sbi_ecall(SBI_EXT_HSM, SBI_EXT_HSM_HART_START,
+> > +                             hartid, saddr, priv, 0, 0, 0);
+> > +       if (!ret.error)
+> > +               return ret.value;
+> > +       else
+> > +               return sbi_err_map_linux_errno(ret.error);
+> > +}
+> > +EXPORT_SYMBOL(sbi_hsm_hart_start);
+> > +
+> > +int sbi_hsm_hart_get_status(unsigned long hartid)
+> > +{
+> > +       struct sbiret ret;
+> > +
+> > +       ret = sbi_ecall(SBI_EXT_HSM, SBI_EXT_HSM_HART_STATUS,
+> > +                             hartid, 0, 0, 0, 0, 0);
+> > +       if (!ret.error)
+> > +               return ret.value;
+> > +       else
+> > +               return sbi_err_map_linux_errno(ret.error);
+> > +}
+> > +EXPORT_SYMBOL(sbi_hsm_hart_get_status);
+> > +
+> > +void __init sbi_hsm_ext_init(void)
+> > +{
+> > +       if (sbi_probe_extension(SBI_EXT_HSM) > 0) {
+> > +               pr_info("SBI v0.2 HSM extension detected\n");
+> > +               sbi_hsm_avail = true;
+> > +       }
+> > +}
+> > +
+>
+> If we start adding all present and future extensions in
+> arch/riscv/kernel/sbi.c then it will blow-up.
+>
+> IMHO, we should only keep legacy and replacement
+> extension in arch/riscv/kernel/sbi.c. All other extensions
+> will be separate based on how they are integrated.
+>
+> For SBI HSM, all sbi_hsm_xyz() functions should be in
+> arch/riscv/kernel/cpu_ops_sbi.c which will be only compiled
+> when CONFIG_RISCV_SBI is enabled.
+>
+> Maybe merge PATCH8 and PATCH9 ?
+>
 
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Sure. I am fine with that. However, I think we don't need to move
+spinwait ops to its
+own file as it won't grow in the future. I have refactored the series
+in the following way.
 
-Thank you!
+1. Move cpu_sbi_ops and sbi_hsm_xyz to its own file which can be
+compiled out with CONFIG_RISCV_SBI.
+2. Keep spinwait and other cpu_ops related functions in cpu_ops.c
 
-> 
-> Link: https://lore.kernel.org/r/CAHk-=wjfjO+h6bQzrTf=YCZA53Y3EDyAs3Z4gEsT7icA3u_Psw@mail.gmail.com
-> 
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
-> Changes from v2:
->   - Use "bootconfig" instead of "config=bootconifg"
-> 
->  Documentation/admin-guide/bootconfig.rst      |  2 ++
->  .../admin-guide/kernel-parameters.txt         |  6 ++++
->  init/main.c                                   | 28 ++++++++++++++-----
->  3 files changed, 29 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/bootconfig.rst b/Documentation/admin-guide/bootconfig.rst
-> index 4d617693c0c8..b342a6796392 100644
-> --- a/Documentation/admin-guide/bootconfig.rst
-> +++ b/Documentation/admin-guide/bootconfig.rst
-> @@ -123,6 +123,8 @@ To remove the config from the image, you can use -d option as below::
->  
->   # tools/bootconfig/bootconfig -d /boot/initrd.img-X.Y.Z
->  
-> +Then add "bootconfig" on the normal kernel command line to tell the
-> +kernel to look for the bootconfig at the end of the initrd file.
->  
->  Config File Limitation
->  ======================
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index ade4e6ec23e0..b48c70ba9841 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -437,6 +437,12 @@
->  			no delay (0).
->  			Format: integer
->  
-> +	bootconfig	[KNL]
-> +			Extended command line options can be added to an initrd
-> +			and this will cause the kernel to look for it.
-> +
-> +			See Documentation/admin-guide/bootconfig.rst
-> +
->  	bert_disable	[ACPI]
->  			Disable BERT OS support on buggy BIOSes.
->  
-> diff --git a/init/main.c b/init/main.c
-> index dd7da62d99a5..1465fb2d7277 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -336,28 +336,39 @@ u32 boot_config_checksum(unsigned char *p, u32 size)
->  	return ret;
->  }
->  
-> -static void __init setup_boot_config(void)
-> +static void __init setup_boot_config(const char *cmdline)
->  {
->  	u32 size, csum;
->  	char *data, *copy;
-> +	const char *p;
->  	u32 *hdr;
->  
-> -	if (!initrd_end)
-> +	p = strstr(cmdline, "bootconfig");
-> +	if (!p || (p != cmdline && !isspace(*(p-1))) ||
-> +	    (p[10] && !isspace(p[10])))
->  		return;
->  
-> +	if (!initrd_end)
-> +		goto not_found;
-> +
->  	hdr = (u32 *)(initrd_end - 8);
->  	size = hdr[0];
->  	csum = hdr[1];
->  
-> -	if (size >= XBC_DATA_MAX)
-> +	if (size >= XBC_DATA_MAX) {
-> +		pr_err("bootconfig size %d greater than max size %d\n",
-> +			size, XBC_DATA_MAX);
->  		return;
-> +	}
->  
->  	data = ((void *)hdr) - size;
->  	if ((unsigned long)data < initrd_start)
-> -		return;
-> +		goto not_found;
->  
-> -	if (boot_config_checksum((unsigned char *)data, size) != csum)
-> +	if (boot_config_checksum((unsigned char *)data, size) != csum) {
-> +		pr_err("bootconfig checksum failed\n");
->  		return;
-> +	}
->  
->  	copy = memblock_alloc(size + 1, SMP_CACHE_BYTES);
->  	if (!copy) {
-> @@ -377,9 +388,12 @@ static void __init setup_boot_config(void)
->  		/* Also, "init." keys are init arguments */
->  		extra_init_args = xbc_make_cmdline("init");
->  	}
-> +	return;
-> +not_found:
-> +	pr_err("config=bootconfig on command line, but no bootconfig found\n");
->  }
->  #else
-> -#define setup_boot_config()	do { } while (0)
-> +#define setup_boot_config(cmdline)	do { } while (0)
->  #endif
->  
->  /* Change NUL term back to "=", to make "param" the whole string. */
-> @@ -760,7 +774,7 @@ asmlinkage __visible void __init start_kernel(void)
->  	pr_notice("%s", linux_banner);
->  	early_security_init();
->  	setup_arch(&command_line);
-> -	setup_boot_config();
-> +	setup_boot_config(command_line);
->  	setup_command_line(command_line);
->  	setup_nr_cpu_ids();
->  	setup_per_cpu_areas();
-> -- 
-> 2.20.1
-> 
+Let me know if you think that's not a good idea.
+
+> Regards,
+> Anup
+>
+> >  int __init sbi_init(void)
+> >  {
+> >         int ret;
+> > @@ -532,5 +582,6 @@ int __init sbi_init(void)
+> >                 __sbi_rfence    = __sbi_rfence_v01;
+> >         }
+> >
+> > +       sbi_hsm_ext_init();
+>
+> We don't need sbi_hsm_ext_init() because we can check
+> and set CPU ops at boot-time in cpu_set_ops()
+>
+> >         return 0;
+> >  }
+> > --
+> > 2.24.0
+> >
+>
+> Regards,
+> Anup
+>
 
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Regards,
+Atish
