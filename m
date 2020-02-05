@@ -2,161 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41B321528FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 11:19:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93360152904
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 11:20:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728154AbgBEKTg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 05:19:36 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:43684 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727068AbgBEKTg (ORCPT
+        id S1728270AbgBEKUs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 05:20:48 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:45026 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727068AbgBEKUs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 05:19:36 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 015AJAWT038813;
-        Wed, 5 Feb 2020 04:19:10 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1580897950;
-        bh=a4B3Bqd5Pf17C8VTQl7PRrNSGniXRgvhSLeM1x0d+hk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=byogR5Y93N6sxhLZuK2obDyLC3hmzVNNSkPNhl2ry7ZEcrYkt8Hqq8IySduCmkPtB
-         ohzI1jKztmbskV4V7+4t9v6xsAEHReAeS1KcuOg+pfCOipcjcKomxqyKJ64H4kQq/o
-         E3K6QUFcAKw8gAI++17jnsbO91gCzSVdho02fGa4=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 015AJA6F008867;
-        Wed, 5 Feb 2020 04:19:10 -0600
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 5 Feb
- 2020 04:19:09 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 5 Feb 2020 04:19:09 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 015AJ7R3091177;
-        Wed, 5 Feb 2020 04:19:07 -0600
-Subject: Re: [PoC] arm: dma-mapping: direct: Apply dma_pfn_offset only when it
- is valid
-To:     Christoph Hellwig <hch@lst.de>
-CC:     <robh@kernel.org>, <vigneshr@ti.com>, <konrad.wilk@oracle.com>,
-        <linux@armlinux.org.uk>, <linux-kernel@vger.kernel.org>,
-        <iommu@lists.linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>, <rogerq@ti.com>
-References: <8eb68140-97b2-62ce-3e06-3761984aa5b1@ti.com>
- <20200114164332.3164-1-peter.ujfalusi@ti.com>
- <f8121747-8840-e279-8c7c-75a9d4becce8@arm.com>
- <28ee3395-baed-8d59-8546-ab7765829cc8@ti.com>
- <4f0e307f-29a9-44cd-eeaa-3b999e03871c@arm.com>
- <75843c71-1718-8d61-5e3d-edba6e1b10bd@ti.com> <20200130075332.GA30735@lst.de>
- <b2b1cb21-3aae-2181-fd79-f63701f283c0@ti.com> <20200130164010.GA6472@lst.de>
- <c37b12e4-0e0c-afa2-a8e4-782ccd57542d@ti.com> <20200203170809.GA19293@lst.de>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <af52fd8e-4991-cbf1-2b55-c2b4496f4703@ti.com>
-Date:   Wed, 5 Feb 2020 12:19:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 5 Feb 2020 05:20:48 -0500
+Received: by mail-qt1-f195.google.com with SMTP id w8so1101960qts.11
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 02:20:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=gl8m333ia74OFZpNmB4o7kIcYlvQPFpoCsxlN0OXKb0=;
+        b=hdQLxCQSd9bARnwDt0wyo40Z0EXmrXzoERGQmfraboQwG6ZJlXL2wPUUh1/8G/OX1A
+         wcGn3uXh5zm6c9bl7wd9LVvRNnPlWYW33/Qk9pghMyCjByMDi6MbEeCiOyJBUnQ3QCjG
+         efQkdblKWF9UeMpfYkyLEpcS9V3oGe1BvcTogNNxq9i90mtaobPr8D+EMhCJVWd1xd9u
+         rm2UHf62Pv5lvMmwnKaNj4TGzLEQa5p6yiv6H2551TZ3krd3iSpWhkivxTaDKcVXcR01
+         xv07GwyXHWacE578I4ENvrlZUj95kPyDf1so5dN83yfHlZRi6TUUbKz6KwSZYNOsNuQ9
+         EnrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=gl8m333ia74OFZpNmB4o7kIcYlvQPFpoCsxlN0OXKb0=;
+        b=VYSmhmzqFYvigCz6IjJdi2f/GcGKn6PqFAXRwPCgGOKoL85PUmBvKI6qBcpBzs9xMj
+         Gd7fPmJt+m2QXV4bALHNanGlo/JpYX4ezMS5KZKlPJuyuUIU1O5XIkKZ/5i1N8TyE+4u
+         ++8EGEF0fPYQvnI2D8PY6bW1WOu6kty6D9AEv6eCQsWDYf0HdSq1nAVwLPP9Y71iFaj/
+         uvCxJLXmmjzL/f/DrS4gBfsNtpqkXv6XaYVRRhtaPq/4tP3rIfLZHZoK7cFqk/G+2yGG
+         YJb0+8PByhCE0jRpL2oJvdHb+ybhi4mhpZAo+H78JSAxdPk8v48AIFqXeyOMUQYIvRBO
+         0+1A==
+X-Gm-Message-State: APjAAAX7Gi7gpV57QdrXs5Q2SfjxuNLtajAxtgvRHfbiLXFWRGtbGhDd
+        mMN0TJjypyaq1L5jPOCvygxXR7SvBbHfN6g/Tac=
+X-Google-Smtp-Source: APXvYqwyFc6b5UC60NcBTfaDSZ7XFYRHD5XNi0N3jYNxkQPuD9kGKa1mn+QZZILGPVJPfi7Jdnwdv0ixR6mvfcxZPR8=
+X-Received: by 2002:ac8:2939:: with SMTP id y54mr32504079qty.109.1580898046889;
+ Wed, 05 Feb 2020 02:20:46 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200203170809.GA19293@lst.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Received: by 2002:a37:a4cb:0:0:0:0:0 with HTTP; Wed, 5 Feb 2020 02:20:46 -0800 (PST)
+Reply-To: RevWrightWatson@yandex.com
+From:   "Rev.Wright Watson" <iykemannwachukwuchambers@gmail.com>
+Date:   Wed, 5 Feb 2020 11:20:46 +0100
+Message-ID: <CAGQOd6JyNdHtLvEh=4TOVq2fxjntVoy2T_YF60r2AnsoEVW4dg@mail.gmail.com>
+Subject: Dear Beloved,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dear Beloved,
 
+I'm Reverend Wright Watson, I was born in USA, 1945, I was ordained
+into the Catholic Priesthood.
 
-On 03/02/2020 19.08, Christoph Hellwig wrote:
-> On Fri, Jan 31, 2020 at 04:00:20PM +0200, Peter Ujfalusi wrote:
->> I see. My PoC patch was not too off then ;)
->> So the plan is to have a generic implementation for all of the
->> architecture, right?
-> 
-> І don't know of a concrete plan, but that's defintively what I'd like
-> to see.
-> 
->>>> The dma_pfn_offset is _still_ applied to the mask we are trying to set
->>>> (and validate) via dma-direct.
->>>
->>> And for the general case that is exactly the right thing to do, we
->>> just need to deal with really odd ZONE_DMA placements like yours.
->>
->> I'm still not convinced, the point of the DMA mask, at least how I see
->> it, to check that the dma address can be handled by the device (DMA,
->> peripheral with built in DMA, etc), it is not against physical address.
->> Doing phys_to_dma() on the mask from the dma_set_mask() is just wrong.
-> 
-> We have a translation between the addresses that the device sees, and
-> those that the CPU sees.  The device can address N bits of address space
-> as seen from the device.  The addresses encoded in max_pfn,
-> zone_dma_bits or the harcoded 32 in the zone dma 32 case are CPU address.
-> So no, we can't blindly compare those.
+Please take your time to read this message, although we have never met
+before, this is no spam, It's a real message sent to you. I know also
+that you will be amazed at the level of trust that I am willing to
+place in a person that I have never seen nor spoken with. If I can
+receive favor from someone I barely know, its not bad entrusting this
+project to unknown person as long as my spirit directed me to you.
 
-Right, thanks for the explanation.
+I have been a catholic priest for over 22 years. I spent about 10
+years serving at Africa, Burkina Faso to be precise, I spend most time
+in Ouagadougou Cathedral.
+Presently, I had a heart surgery on the 23-11-2018 and the Doctors
+have informed me that I cannot live longer; I had a serious bleeding
+after the operation.
+Before I left Ouagadougou to my country for the surgery, a priest
+friend of mine visited me from Netherlands with three companion, when
+they went back, one among his companion Transferred 10M$ in my
+personal account with Bank of Africa and advised that I use the money
+to help the poor, handicaps and less privileges because he saw the
+level hardship then.
 
->>> But that will cause yet another regression in what we have just fixed
->>> with using the generic direct ops, at which points it turns into who
->>> screams louder.
->>
->> Hehe, I see.
->> I genuinely curious why k2 platform worked just fine with LPAE (it needs
->> it), but guys had issues with LPAE on dra7/am5.
->> The fix for dra7/am5 broke k2.
->> As far as I can see the main (only) difference is that k2 have
->> dma_pfn_offset = 0x780000, while dra7/am5 have it 0 (really direct mapping).
-> 
-> How much memory does the platform have?
+Because of my present health condition, I cannot live to proceed with
+the projects, therefore, I have decided to appoint you to reclaim the
+money which total sum of $10,970,000.00 (Ten million Nine Hundred and
+seventy Thousand US DOLLARS).
 
-The boards which is bootable in mainline have maximum of 2G, there might
-be custom boards with more RAM, but I'm not aware of them.
+I want you to use this sum to make the world a better place for the
+poor and less privileged, help the needy and also help your family
+members.
 
-> Once you are above 32-bits worth
-> of address space devices with a 32-bit DMA mask can't address all the
-> memory.  Now if k2 for example only had less than 4G of memory, but at
-> addresses over 4G, and the offset compensates for the offset of the DRAM
-> it works without bounce buffering and thus didn't need swiotlb.  But any
-> platform that has DRAM that is not addressable will need swiotlb.
+I took this decision because I was raised in an Orphanage so I don't
+have relatives and presently, I'm still in the hospital, where I am
+undergoing treatment. That's why I have decided to contact you so that
+you can contact my account manager in Bank of Africa, reclaim the
+money and make good use of it.
 
-I see, since we have maximum of 2G, which is mirrored at 0x80000000 for
-devices we never needed the assistance from swiotlb for bounce buffering
-and that's why the arm ops worked fine.
+then you can contact me through private email
+addres(RevWrightWatson@yandex.com)
 
-> 
->>>  	u64 min_mask;
->>>  
->>> +	if (mask >= DMA_BIT_MASK(32))
->>> +		return 1;
->>> +
->>
->> Right, so skipping phys_to_dma() for the mask and believing that it will
->> work..
->>
->> It does: audio and dmatest memcpy tests are just fine with this, MMC
->> also probed with ADMA enabled.
->>
->> As far as I can tell it works as well as falling back to the old arm ops
->> in case of LPAE && dma_pfn_offset != 0
->>
->> Fwiw:
->> Tested-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
->>
->> Would you be comfortable to send this patch for mainline with
->> Fixes: ad3c7b18c5b3 ("arm: use swiotlb for bounce buffering on LPAE
->> configs")
-> 
-> That is the big question.  I don't feel overly comfortable as I've been
-> trying to get this right, but so far it seems like the least bad option.
-> I'll send out a proper patch with updated comments and will see what
-> people think.
-
-I understand and thank you for the patch, it makes k2 platform working
-again!
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Regards,
+Rev.Wright Watson
