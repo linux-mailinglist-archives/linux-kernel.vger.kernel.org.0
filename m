@@ -2,124 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6EEC1524D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 03:51:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBD1C1524DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 03:52:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727873AbgBECuq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 21:50:46 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:35399 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727796AbgBECuq (ORCPT
+        id S1727937AbgBECvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 21:51:18 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:29287 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727887AbgBECvQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 21:50:46 -0500
-X-UUID: 6ac2d375c3aa4ef7b3ac8b7f70286ff6-20200205
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=bbDYs9ZTXuzhLMo2u22hyWHcIsTbuzxFDPN8bwDnwbA=;
-        b=jwgYgx7D2vQB0p3A59Wd/0XoiHHdJAn6xnx/8iDqkn14hjgPlu3YVSEVyKN9yqwjMJVgl2BCcQr+7qRjmppS4zdxQfcfsPPW/O2p2IhRhqW1n46oyzJso5GAFSoEG5gqdQiSUnXVRRSUHz46cpCDXRtPK80V04qZ+1vksIm/j54=;
-X-UUID: 6ac2d375c3aa4ef7b3ac8b7f70286ff6-20200205
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1358086162; Wed, 05 Feb 2020 10:50:41 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 5 Feb 2020 10:49:55 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 5 Feb 2020 10:50:18 +0800
-Message-ID: <1580871040.21785.7.camel@mtksdccf07>
-Subject: Re: [PATCH v5 6/8] scsi: ufs: Add dev ref clock gating wait time
- support
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     Can Guo <cang@codeaurora.org>
-CC:     <asutoshd@codeaurora.org>, <nguyenb@codeaurora.org>,
-        <hongwus@codeaurora.org>, <rnayak@codeaurora.org>,
-        <linux-scsi@vger.kernel.org>, <kernel-team@android.com>,
-        <saravanak@google.com>, <salyzyn@google.com>,
-        "Alim Akhtar" <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        "Bart Van Assche" <bvanassche@acm.org>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Wed, 5 Feb 2020 10:50:40 +0800
-In-Reply-To: <1580721472-10784-7-git-send-email-cang@codeaurora.org>
-References: <1580721472-10784-1-git-send-email-cang@codeaurora.org>
-         <1580721472-10784-7-git-send-email-cang@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        Tue, 4 Feb 2020 21:51:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580871074;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=DKtUKnKq1J1pqiJ5NWomQSmReHrjvPI4rlRqnUPkaxE=;
+        b=Fe4L0RQXCA7yfBVWJAZ3wJnSwA6XJsVBSF+5ep0Rn2Yp4rwtOMmjhQHIF3/AFk9M47YPsz
+        cPp2IoxxyLAoNpjBjUJILMSO8EmBJf+pMr7sDuStyV5WRx/sLk2BbAG/Pe99Xxmdc3A53j
+        ZgL/FJlGued1cI4omGFMyYT4s5vYwxo=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-161-ZanSpeqnPIu6Ziv3uO63eg-1; Tue, 04 Feb 2020 21:51:10 -0500
+X-MC-Unique: ZanSpeqnPIu6Ziv3uO63eg-1
+Received: by mail-qk1-f198.google.com with SMTP id s9so376779qkg.21
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 18:51:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DKtUKnKq1J1pqiJ5NWomQSmReHrjvPI4rlRqnUPkaxE=;
+        b=pr64Bocmw0IEAJTU8xRmZ1Kpl0tO2U1v3fm1vpuRscI6Hv5ln/rF4mxcRtSb773liw
+         sq7yXAgthOq1vgzO1M8d1Khdb6TDNELQmfSKVLj3yRwCmOrvoUbb2EU7iQ+wrSinCO4P
+         MMUJNIvepTLlzH/w3LffSPAZRaymyGQ1qBzAIRGh3it7f30sDDdzyS+Fh/+hdI50DyPl
+         F3lD6uuwDyQPBE3skTmWaA6vx/Vr71WQaJbL25Da9Lz9V8IBJQ5VWGnaW6OWpujKbKbG
+         /SMIA1KDZ8pCT3l2jKFS9kiYzzzpaChEbCAeuxAF/HvYZ2PODidOA6RUsU7XP8zXAi9t
+         NThA==
+X-Gm-Message-State: APjAAAXk52B8Z9qCjlWphNqG7FGjXx2366vI0gSieNOG+WaCsmIn3Q0a
+        jZP7tkFQf//fmVLi3FBlH69y2bXJuLnKdjVhO/Pv/mwHM+IhcVuIHpPx6jhn+EcUBUrAsSec6Ki
+        4ypflvF22c0r0/PSxAvlbmWCV
+X-Received: by 2002:a0c:f24a:: with SMTP id z10mr30929670qvl.33.1580871069821;
+        Tue, 04 Feb 2020 18:51:09 -0800 (PST)
+X-Google-Smtp-Source: APXvYqx4Rzc4aPHLj7hhqYA+ZxPSLB6YJX/04N/lV5KKFxqu0yKbFNNIn/r3iiLYD2cYqAqGTafHFQ==
+X-Received: by 2002:a0c:f24a:: with SMTP id z10mr30929647qvl.33.1580871069426;
+        Tue, 04 Feb 2020 18:51:09 -0800 (PST)
+Received: from xz-x1.redhat.com ([2607:9880:19c8:32::2])
+        by smtp.gmail.com with ESMTPSA id b141sm12380923qkg.33.2020.02.04.18.51.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2020 18:51:08 -0800 (PST)
+From:   Peter Xu <peterx@redhat.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Christophe de Dinechin <dinechin@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>, peterx@redhat.com,
+        Kevin Tian <kevin.tian@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: [PATCH v4 00/14] KVM: Dirty ring interface
+Date:   Tue,  4 Feb 2020 21:50:51 -0500
+Message-Id: <20200205025105.367213-1-peterx@redhat.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQ2FuLA0KDQpPbiBNb24sIDIwMjAtMDItMDMgYXQgMDE6MTcgLTA4MDAsIENhbiBHdW8gd3Jv
-dGU6DQo+IEluIFVGUyB2ZXJzaW9uIDMuMCwgYSBuZXdseSBhZGRlZCBhdHRyaWJ1dGUgYlJlZkNs
-a0dhdGluZ1dhaXRUaW1lIGRlZmluZXMNCj4gdGhlIG1pbmltdW0gdGltZSBmb3Igd2hpY2ggdGhl
-IHJlZmVyZW5jZSBjbG9jayBpcyByZXF1aXJlZCBieSBkZXZpY2UgZHVyaW5nDQo+IHRyYW5zaXRp
-b24gdG8gTFMtTU9ERSBvciBISUJFUk44IHN0YXRlLiBNYWtlIHRoaXMgY2hhbmdlIHRvIHJlZmxl
-Y3QgdGhlIG5ldw0KPiByZXF1aXJlbWVudCBieSBhZGRpbmcgZGVsYXlzIGJlZm9yZSB0dXJuaW5n
-IG9mZiB0aGUgY2xvY2suDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDYW4gR3VvIDxjYW5nQGNvZGVh
-dXJvcmEub3JnPg0KPiBSZXZpZXdlZC1ieTogQXN1dG9zaCBEYXMgPGFzdXRvc2hkQGNvZGVhdXJv
-cmEub3JnPg0KPiAtLS0NCj4gIGRyaXZlcnMvc2NzaS91ZnMvdWZzLmggICAgfCAgMyArKysNCj4g
-IGRyaXZlcnMvc2NzaS91ZnMvdWZzaGNkLmMgfCA0MCArKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDQzIGluc2VydGlvbnMoKykNCj4g
-DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3Njc2kvdWZzL3Vmcy5oIGIvZHJpdmVycy9zY3NpL3Vm
-cy91ZnMuaA0KPiBpbmRleCBjZmUzODAzLi4zMDQwNzZlIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJz
-L3Njc2kvdWZzL3Vmcy5oDQo+ICsrKyBiL2RyaXZlcnMvc2NzaS91ZnMvdWZzLmgNCj4gQEAgLTE2
-Nyw2ICsxNjcsNyBAQCBlbnVtIGF0dHJfaWRuIHsNCj4gIAlRVUVSWV9BVFRSX0lETl9GRlVfU1RB
-VFVTCQk9IDB4MTQsDQo+ICAJUVVFUllfQVRUUl9JRE5fUFNBX1NUQVRFCQk9IDB4MTUsDQo+ICAJ
-UVVFUllfQVRUUl9JRE5fUFNBX0RBVEFfU0laRQkJPSAweDE2LA0KPiArCVFVRVJZX0FUVFJfSURO
-X1JFRl9DTEtfR0FUSU5HX1dBSVRfVElNRQk9IDB4MTcsDQo+ICB9Ow0KPiAgDQo+ICAvKiBEZXNj
-cmlwdG9yIGlkbiBmb3IgUXVlcnkgcmVxdWVzdHMgKi8NCj4gQEAgLTUzNCw2ICs1MzUsOCBAQCBz
-dHJ1Y3QgdWZzX2Rldl9pbmZvIHsNCj4gIAl1MTYgd21hbnVmYWN0dXJlcmlkOw0KPiAgCS8qVUZT
-IGRldmljZSBQcm9kdWN0IE5hbWUgKi8NCj4gIAl1OCAqbW9kZWw7DQo+ICsJdTE2IHNwZWNfdmVy
-c2lvbjsNCj4gKwl1MzIgY2xrX2dhdGluZ193YWl0X3VzOw0KPiAgfTsNCj4gIA0KPiAgLyoqDQo+
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL3Njc2kvdWZzL3Vmc2hjZC5jIGIvZHJpdmVycy9zY3NpL3Vm
-cy91ZnNoY2QuYw0KPiBpbmRleCBlOGY3ZjlkLi5kNWM1NDdiIDEwMDY0NA0KPiAtLS0gYS9kcml2
-ZXJzL3Njc2kvdWZzL3Vmc2hjZC5jDQo+ICsrKyBiL2RyaXZlcnMvc2NzaS91ZnMvdWZzaGNkLmMN
-Cj4gQEAgLTkxLDYgKzkxLDkgQEANCj4gIC8qIGRlZmF1bHQgZGVsYXkgb2YgYXV0b3N1c3BlbmQ6
-IDIwMDAgbXMgKi8NCj4gICNkZWZpbmUgUlBNX0FVVE9TVVNQRU5EX0RFTEFZX01TIDIwMDANCj4g
-IA0KPiArLyogRGVmYXVsdCB2YWx1ZSBvZiB3YWl0IHRpbWUgYmVmb3JlIGdhdGluZyBkZXZpY2Ug
-cmVmIGNsb2NrICovDQo+ICsjZGVmaW5lIFVGU0hDRF9SRUZfQ0xLX0dBVElOR19XQUlUX1VTIDB4
-RkYgLyogbWljcm9zZWNzICovDQo+ICsNCj4gICNkZWZpbmUgdWZzaGNkX3RvZ2dsZV92cmVnKF9k
-ZXYsIF92cmVnLCBfb24pCQkJCVwNCj4gIAkoeyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXA0KPiAgCQlpbnQgX3JldDsgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwNCj4gQEAgLTMyODEsNiAr
-MzI4NCwzNyBAQCBzdGF0aWMgaW5saW5lIGludCB1ZnNoY2RfcmVhZF91bml0X2Rlc2NfcGFyYW0o
-c3RydWN0IHVmc19oYmEgKmhiYSwNCj4gIAkJCQkgICAgICBwYXJhbV9vZmZzZXQsIHBhcmFtX3Jl
-YWRfYnVmLCBwYXJhbV9zaXplKTsNCj4gIH0NCj4gIA0KPiArc3RhdGljIGludCB1ZnNoY2RfZ2V0
-X3JlZl9jbGtfZ2F0aW5nX3dhaXQoc3RydWN0IHVmc19oYmEgKmhiYSkNCj4gK3sNCj4gKwlpbnQg
-ZXJyID0gMDsNCj4gKwl1MzIgZ2F0aW5nX3dhaXQgPSBVRlNIQ0RfUkVGX0NMS19HQVRJTkdfV0FJ
-VF9VUzsNCj4gKw0KPiArCWlmIChoYmEtPmRldl9pbmZvLnNwZWNfdmVyc2lvbiA+PSAweDMwMCkg
-ew0KPiArCQllcnIgPSB1ZnNoY2RfcXVlcnlfYXR0cl9yZXRyeShoYmEsIFVQSVVfUVVFUllfT1BD
-T0RFX1JFQURfQVRUUiwNCj4gKwkJCQlRVUVSWV9BVFRSX0lETl9SRUZfQ0xLX0dBVElOR19XQUlU
-X1RJTUUsIDAsIDAsDQo+ICsJCQkJJmdhdGluZ193YWl0KTsNCj4gKwkJaWYgKGVycikNCj4gKwkJ
-CWRldl9lcnIoaGJhLT5kZXYsICJGYWlsZWQgcmVhZGluZyBiUmVmQ2xrR2F0aW5nV2FpdC4gZXJy
-ID0gJWQsIHVzZSBkZWZhdWx0ICV1dXNcbiIsDQo+ICsJCQkJCSBlcnIsIGdhdGluZ193YWl0KTsN
-Cj4gKw0KPiArCQlpZiAoZ2F0aW5nX3dhaXQgPT0gMCkgew0KPiArCQkJZ2F0aW5nX3dhaXQgPSBV
-RlNIQ0RfUkVGX0NMS19HQVRJTkdfV0FJVF9VUzsNCj4gKwkJCWRldl9lcnIoaGJhLT5kZXYsICJV
-bmRlZmluZWQgcmVmIGNsayBnYXRpbmcgd2FpdCB0aW1lLCB1c2UgZGVmYXVsdCAldXVzXG4iLA0K
-PiArCQkJCQkgZ2F0aW5nX3dhaXQpOw0KPiArCQl9DQo+ICsNCj4gKwkJLyoNCj4gKwkJICogYlJl
-ZkNsa0dhdGluZ1dhaXRUaW1lIGRlZmluZXMgdGhlIG1pbmltdW0gdGltZSBmb3Igd2hpY2ggdGhl
-DQo+ICsJCSAqIHJlZmVyZW5jZSBjbG9jayBpcyByZXF1aXJlZCBieSBkZXZpY2UgZHVyaW5nIHRy
-YW5zaXRpb24gZnJvbQ0KPiArCQkgKiBIUy1NT0RFIHRvIExTLU1PREUgb3IgSElCRVJOOCBzdGF0
-ZS4gR2l2ZSBpdCBtb3JlIHRpbWUgdG8gYmUNCj4gKwkJICogb24gdGhlIHNhZmUgc2lkZS4NCj4g
-KwkJICovDQo+ICsJCWhiYS0+ZGV2X2luZm8uY2xrX2dhdGluZ193YWl0X3VzID0gZ2F0aW5nX3dh
-aXQgKyA1MDsNCg0KDQpOb3Qgc3VyZSBpZiB0aGUgYWRkaXRpb25hbCA1MHVzIHdhaXQgdGltZSBo
-ZXJlIGlzIHRvbyBsYXJnZS4NCg0KSXMgdGhlcmUgYW55IHNwZWNpYWwgcmVhc29uIHRvIGZpeCBp
-dCBhcyAiNTAiPw0KDQoNClRoYW5rcywNClN0YW5sZXkNCg0KPiAgCQkJCSAgICAgICZkZXZfaW5m
-by0+bW9kZWwsIFNEX0FTQ0lJX1NURCk7DQo+IEBAIC03MDAzLDYgKzcwNDEsOCBAQCBzdGF0aWMg
-aW50IHVmc2hjZF9kZXZpY2VfcGFyYW1zX2luaXQoc3RydWN0IHVmc19oYmEgKmhiYSkNCj4gIAkJ
-Z290byBvdXQ7DQo+ICAJfQ0KPiAgDQo+ICsJdWZzaGNkX2dldF9yZWZfY2xrX2dhdGluZ193YWl0
-KGhiYSk7DQo+ICsNCj4gIAl1ZnNfZml4dXBfZGV2aWNlX3NldHVwKGhiYSk7DQo+ICANCj4gIAlp
-ZiAoIXVmc2hjZF9xdWVyeV9mbGFnX3JldHJ5KGhiYSwgVVBJVV9RVUVSWV9PUENPREVfUkVBRF9G
-TEFHLA0KDQo=
+KVM branch:
+  https://github.com/xzpeter/linux/tree/kvm-dirty-ring
+
+QEMU branch for testing:
+  https://github.com/xzpeter/qemu/tree/kvm-dirty-ring
+
+v4 changelog:
+
+- refactor ring layout: remove indices, use bit 0/1 in the gfn.flags
+  field to encode GFN status (invalid, dirtied, collected) [Michael,
+  Paolo]
+- patch memslot_valid_for_gpte() too to check against memslot flags
+  rather than dirty_bitmap pointer
+- fix build on non-x86 arch [syzbot]
+- fix comment for kvm_dirty_gfn [Michael]
+- check against VM_EXEC, VM_SHARED for mmaps [Michael]
+- fix "KVM: X86: Don't track dirty for
+  KVM_SET_[TSS_ADDR|IDENTITY_MAP_ADDR]" to unbreak
+  unrestricted_guest=N [Sean]
+- some rework in the test code, e.g., more comments
+
+For previous versions, please refer to:
+
+V1: https://lore.kernel.org/kvm/20191129213505.18472-1-peterx@redhat.com
+V2: https://lore.kernel.org/kvm/20191221014938.58831-1-peterx@redhat.com
+V3: https://lore.kernel.org/kvm/20200109145729.32898-1-peterx@redhat.com
+
+Overview
+============
+
+This is a continued work from Lei Cao <lei.cao@stratus.com> and Paolo
+Bonzini on the KVM dirty ring interface.
+
+The new dirty ring interface is another way to collect dirty pages for
+the virtual machines. It is different from the existing dirty logging
+interface in a few ways, majorly:
+
+  - Data format: The dirty data was in a ring format rather than a
+    bitmap format, so dirty bits to sync for dirty logging does not
+    depend on the size of guest memory any more, but speed of
+    dirtying.  Also, the dirty ring is per-vcpu, while the dirty
+    bitmap is per-vm.
+
+  - Data copy: The sync of dirty pages does not need data copy any more,
+    but instead the ring is shared between the userspace and kernel by
+    page sharings (mmap() on vcpu fd)
+
+  - Interface: Instead of using the old KVM_GET_DIRTY_LOG,
+    KVM_CLEAR_DIRTY_LOG interfaces, the new ring uses the new
+    KVM_RESET_DIRTY_RINGS ioctl when we want to reset the collected
+    dirty pages to protected mode again (works like
+    KVM_CLEAR_DIRTY_LOG, but ring based).  To collecting dirty bits,
+    we only need to read the ring data, no ioctl is needed.
+
+Ring Layout
+===========
+
+KVM dirty ring is per-vcpu.  Each ring is an array of kvm_dirty_gfn
+defined as:
+
+struct kvm_dirty_gfn {
+        __u32 flags;
+        __u32 slot; /* as_id | slot_id */
+        __u64 offset;
+};
+
+Each GFN is a state machine itself.  The state is embeded in the flags
+field, as defined in the uapi header:
+
+/*
+ * KVM dirty GFN flags, defined as:
+ *
+ * |---------------+---------------+--------------|
+ * | bit 1 (reset) | bit 0 (dirty) | Status       |
+ * |---------------+---------------+--------------|
+ * |             0 |             0 | Invalid GFN  |
+ * |             0 |             1 | Dirty GFN    |
+ * |             1 |             X | GFN to reset |
+ * |---------------+---------------+--------------|
+ *
+ * Lifecycle of a dirty GFN goes like:
+ *
+ *      dirtied         collected        reset
+ * 00 -----------> 01 -------------> 1X -------+
+ *  ^                                          |
+ *  |                                          |
+ *  +------------------------------------------+
+ *
+ * The userspace program is only responsible for the 01->1X state
+ * conversion (to collect dirty bits).  Also, it must not skip any
+ * dirty bits so that dirty bits are always collected in sequence.
+ */
+
+Testing
+=======
+
+This series provided both the implementation of the KVM dirty ring and
+the test case.  Also I've implemented the QEMU counterpart that can
+run with the new KVM, link can be found at the top of the cover
+letter.  However that's still a very initial version which is prone to
+change and future optimizations.
+
+I did some measurement with the new method with 24G guest running some
+dirty workload, I don't see any speedup so far, even in some heavy
+dirty load it'll be slower (e.g., when 800MB/s random dirty rate, kvm
+dirty ring takes average of ~73s to complete migration while dirty
+logging only needs average of ~55s).  However that's understandable
+because 24G guest means only 1M dirty bitmap, that's still a suitable
+case for dirty logging.  Meanwhile heavier workload means worst case
+for dirty ring.
+
+More tests are welcomed if there's bigger host/guest, especially on
+COLO-like workload.
+
+Please review, thanks.
+
+Peter Xu (14):
+  KVM: X86: Change parameter for fast_page_fault tracepoint
+  KVM: Cache as_id in kvm_memory_slot
+  KVM: X86: Don't track dirty for KVM_SET_[TSS_ADDR|IDENTITY_MAP_ADDR]
+  KVM: Pass in kvm pointer into mark_page_dirty_in_slot()
+  KVM: X86: Implement ring-based dirty memory tracking
+  KVM: Make dirty ring exclusive to dirty bitmap log
+  KVM: Don't allocate dirty bitmap if dirty ring is enabled
+  KVM: selftests: Always clear dirty bitmap after iteration
+  KVM: selftests: Sync uapi/linux/kvm.h to tools/
+  KVM: selftests: Use a single binary for dirty/clear log test
+  KVM: selftests: Introduce after_vcpu_run hook for dirty log test
+  KVM: selftests: Add dirty ring buffer test
+  KVM: selftests: Let dirty_log_test async for dirty ring test
+  KVM: selftests: Add "-c" parameter to dirty log test
+
+ Documentation/virt/kvm/api.txt                | 125 +++++
+ arch/x86/include/asm/kvm_host.h               |   6 +-
+ arch/x86/include/uapi/asm/kvm.h               |   1 +
+ arch/x86/kvm/Makefile                         |   3 +-
+ arch/x86/kvm/mmu/mmu.c                        |  10 +-
+ arch/x86/kvm/mmutrace.h                       |   9 +-
+ arch/x86/kvm/svm.c                            |   9 +-
+ arch/x86/kvm/vmx/vmx.c                        |  85 ++--
+ arch/x86/kvm/x86.c                            |  49 +-
+ include/linux/kvm_dirty_ring.h                |  50 ++
+ include/linux/kvm_host.h                      |  21 +
+ include/trace/events/kvm.h                    |  78 ++++
+ include/uapi/linux/kvm.h                      |  44 ++
+ tools/include/uapi/linux/kvm.h                |  44 ++
+ tools/testing/selftests/kvm/Makefile          |   2 -
+ .../selftests/kvm/clear_dirty_log_test.c      |   2 -
+ tools/testing/selftests/kvm/dirty_log_test.c  | 441 ++++++++++++++++--
+ .../testing/selftests/kvm/include/kvm_util.h  |   4 +
+ tools/testing/selftests/kvm/lib/kvm_util.c    |  76 +++
+ .../selftests/kvm/lib/kvm_util_internal.h     |   4 +
+ virt/kvm/dirty_ring.c                         | 176 +++++++
+ virt/kvm/kvm_main.c                           | 225 ++++++++-
+ 22 files changed, 1347 insertions(+), 117 deletions(-)
+ create mode 100644 include/linux/kvm_dirty_ring.h
+ delete mode 100644 tools/testing/selftests/kvm/clear_dirty_log_test.c
+ create mode 100644 virt/kvm/dirty_ring.c
+
+-- 
+2.24.1
 
