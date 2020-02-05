@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E643153BE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 00:28:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12428153BE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 00:28:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbgBEX2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 18:28:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38370 "EHLO mail.kernel.org"
+        id S1727594AbgBEX2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 18:28:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727482AbgBEX2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727550AbgBEX2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Feb 2020 18:28:04 -0500
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FB4B217BA;
+        by mail.kernel.org (Postfix) with ESMTPSA id 798FD217F4;
         Wed,  5 Feb 2020 23:28:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1580945283;
-        bh=dw12aJGBOCJdLWAJqheCoPQcMOCtJwKsLjtTgt6MMVo=;
+        bh=Vs2ad5m8Wzki1gkcDfV7JuENWCjWBcBgOwmxALy+SKE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qPa8yQ3rZY9zQao7TbSyk8D9tmXff/r3WxMZTx+4cuK526Qjzz8Xb3P3ImilVgQu8
-         NLSyQEDEV3TXvZPW15U2QjK7AF+O7spZ7Xd1wqhyXXgk8wrfmrbzlZg+U4Fy7Skl2L
-         jDQoWkC+oUrh+XOHyKddP+bjY4/mLsrtSW4mC5xU=
+        b=sMxEOtkgJ/W9H2pRNp1aRL7EAtc8pB+UiR9JYSBfYGwo+SnfXNJLe9Pg/+yNTveYz
+         PvkQzveY/Qn7LpjB5nRDrYjpzE5d8RG9yvGwYMS3cphkNAF39yoAgMfVl/VK7ZyuHD
+         5bpP0dQhB2oX9ifqURwYcJkaTCAPpSgGISKlQSn8=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -30,9 +30,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Douglas Anderson <dianders@chromium.org>,
         Heiko Stuebner <heiko@sntech.de>,
         Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH v2 1/4] clk: Don't cache errors from clk_ops::get_phase()
-Date:   Wed,  5 Feb 2020 15:27:59 -0800
-Message-Id: <20200205232802.29184-2-sboyd@kernel.org>
+Subject: [PATCH v2 2/4] clk: Use 'parent' to shorten lines in __clk_core_init()
+Date:   Wed,  5 Feb 2020 15:28:00 -0800
+Message-Id: <20200205232802.29184-3-sboyd@kernel.org>
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 In-Reply-To: <20200205232802.29184-1-sboyd@kernel.org>
 References: <20200205232802.29184-1-sboyd@kernel.org>
@@ -43,125 +43,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't check for errors from clk_ops::get_phase() before storing away
-the result into the clk_core::phase member. This can lead to some fairly
-confusing debugfs information if these ops do return an error. Let's
-skip the store when this op fails to fix this. While we're here, move
-the locking outside of clk_core_get_phase() to simplify callers from
-the debugfs side.
+Some lines are getting long in this function. Let's move 'parent' up to
+the top of the function and use it in many places whenever there is a
+parent for a clk. This shortens some lines by avoiding core->parent->
+indirections.
 
 Cc: Douglas Anderson <dianders@chromium.org>
 Cc: Heiko Stuebner <heiko@sntech.de>
 Cc: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/clk.c | 48 +++++++++++++++++++++++++++++++----------------
- 1 file changed, 32 insertions(+), 16 deletions(-)
+ drivers/clk/clk.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d529ad67805c..26213e82f5f9 100644
+index 26213e82f5f9..9ad950178d10 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -2660,12 +2660,14 @@ static int clk_core_get_phase(struct clk_core *core)
+@@ -3342,6 +3342,7 @@ static void clk_core_reparent_orphans_nolock(void)
+ static int __clk_core_init(struct clk_core *core)
  {
  	int ret;
++	struct clk_core *parent;
+ 	unsigned long rate;
  
--	clk_prepare_lock();
-+	lockdep_assert_held(&prepare_lock);
-+	if (!core->ops->get_phase)
-+		return 0;
-+
- 	/* Always try to update cached phase if possible */
--	if (core->ops->get_phase)
--		core->phase = core->ops->get_phase(core->hw);
--	ret = core->phase;
--	clk_prepare_unlock();
-+	ret = core->ops->get_phase(core->hw);
-+	if (ret >= 0)
-+		core->phase = ret;
+ 	if (!core)
+@@ -3413,7 +3414,7 @@ static int __clk_core_init(struct clk_core *core)
+ 			goto out;
+ 	}
  
- 	return ret;
- }
-@@ -2679,10 +2681,16 @@ static int clk_core_get_phase(struct clk_core *core)
-  */
- int clk_get_phase(struct clk *clk)
- {
-+	int ret;
-+
- 	if (!clk)
- 		return 0;
+-	core->parent = __clk_init_parent(core);
++	parent = core->parent = __clk_init_parent(core);
  
--	return clk_core_get_phase(clk->core);
-+	clk_prepare_lock();
-+	ret = clk_core_get_phase(clk->core);
-+	clk_prepare_unlock();
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(clk_get_phase);
- 
-@@ -2896,13 +2904,21 @@ static struct hlist_head *orphan_list[] = {
- static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
- 				 int level)
- {
--	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu %5d %6d\n",
-+	int phase;
-+
-+	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu ",
- 		   level * 3 + 1, "",
- 		   30 - level * 3, c->name,
- 		   c->enable_count, c->prepare_count, c->protect_count,
--		   clk_core_get_rate(c), clk_core_get_accuracy(c),
--		   clk_core_get_phase(c),
--		   clk_core_get_scaled_duty_cycle(c, 100000));
-+		   clk_core_get_rate(c), clk_core_get_accuracy(c));
-+
-+	phase = clk_core_get_phase(c);
-+	if (phase >= 0)
-+		seq_printf(s, "%5d", phase);
-+	else
-+		seq_puts(s, "-----");
-+
-+	seq_printf(s, " %6d\n", clk_core_get_scaled_duty_cycle(c, 100000));
- }
- 
- static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
-@@ -2939,6 +2955,7 @@ DEFINE_SHOW_ATTRIBUTE(clk_summary);
- 
- static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
- {
-+	int phase;
- 	unsigned long min_rate, max_rate;
- 
- 	clk_core_get_boundaries(c, &min_rate, &max_rate);
-@@ -2952,7 +2969,9 @@ static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
- 	seq_printf(s, "\"min_rate\": %lu,", min_rate);
- 	seq_printf(s, "\"max_rate\": %lu,", max_rate);
- 	seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
--	seq_printf(s, "\"phase\": %d,", clk_core_get_phase(c));
-+	phase = clk_core_get_phase(c);
-+	if (phase >= 0)
-+		seq_printf(s, "\"phase\": %d,", phase);
- 	seq_printf(s, "\"duty_cycle\": %u",
- 		   clk_core_get_scaled_duty_cycle(c, 100000));
- }
-@@ -3434,14 +3453,11 @@ static int __clk_core_init(struct clk_core *core)
+ 	/*
+ 	 * Populate core->parent if parent has already been clk_core_init'd. If
+@@ -3425,10 +3426,9 @@ static int __clk_core_init(struct clk_core *core)
+ 	 * clocks and re-parent any that are children of the clock currently
+ 	 * being clk_init'd.
+ 	 */
+-	if (core->parent) {
+-		hlist_add_head(&core->child_node,
+-				&core->parent->children);
+-		core->orphan = core->parent->orphan;
++	if (parent) {
++		hlist_add_head(&core->child_node, &parent->children);
++		core->orphan = parent->orphan;
+ 	} else if (!core->num_parents) {
+ 		hlist_add_head(&core->child_node, &clk_root_list);
+ 		core->orphan = false;
+@@ -3446,9 +3446,9 @@ static int __clk_core_init(struct clk_core *core)
+ 	 */
+ 	if (core->ops->recalc_accuracy)
+ 		core->accuracy = core->ops->recalc_accuracy(core->hw,
+-					__clk_get_accuracy(core->parent));
+-	else if (core->parent)
+-		core->accuracy = core->parent->accuracy;
++					__clk_get_accuracy(parent));
++	else if (parent)
++		core->accuracy = parent->accuracy;
+ 	else
  		core->accuracy = 0;
  
- 	/*
--	 * Set clk's phase.
-+	 * Set clk's phase by clk_core_get_phase() caching the phase.
- 	 * Since a phase is by definition relative to its parent, just
- 	 * query the current clock phase, or just assume it's in phase.
+@@ -3472,9 +3472,9 @@ static int __clk_core_init(struct clk_core *core)
  	 */
--	if (core->ops->get_phase)
--		core->phase = core->ops->get_phase(core->hw);
--	else
--		core->phase = 0;
-+	clk_core_get_phase(core);
- 
- 	/*
- 	 * Set clk's duty cycle.
+ 	if (core->ops->recalc_rate)
+ 		rate = core->ops->recalc_rate(core->hw,
+-				clk_core_get_rate_nolock(core->parent));
+-	else if (core->parent)
+-		rate = core->parent->rate;
++				clk_core_get_rate_nolock(parent));
++	else if (parent)
++		rate = parent->rate;
+ 	else
+ 		rate = 0;
+ 	core->rate = core->req_rate = rate;
 -- 
 Sent by a computer, using git, on the internet
 
