@@ -2,104 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A2B61534B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 16:55:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDF0E1534A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 16:54:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbgBEPzA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 10:55:00 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41638 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727496AbgBEPy6 (ORCPT
+        id S1727079AbgBEPyX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 10:54:23 -0500
+Received: from mail-il1-f172.google.com ([209.85.166.172]:33307 "EHLO
+        mail-il1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbgBEPyX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 10:54:58 -0500
-Received: by mail-pg1-f196.google.com with SMTP id l3so1158201pgi.8
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 07:54:57 -0800 (PST)
+        Wed, 5 Feb 2020 10:54:23 -0500
+Received: by mail-il1-f172.google.com with SMTP id s18so2289453iln.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 07:54:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=OeTbs3cyKvuyu1XTWoXkCtNxO0aHwZN3JCJHavQfBCU=;
-        b=tSxQWHB04iYdusKGhVDF8HMwDTDEg0zV1A/JgtCqp2RNswNnWy2lPPeVDgG1U4ciMp
-         S1442X0kj37yAgGsopVkcbSas1VGMoRsmtaIhuoIN0r5FkT1k9QwAwbEu8j8MEz0h1ti
-         ULJqfBSFIqkaweNLnXs0rnRAsrDQWbLdoJqn0dW7NyirCHjjqvTlwJHgqU3boBikD8Q7
-         Ny4WZ5J3PEuHXiDvv76MTiZ9q4OhFLeOywte1WxAnDmNUDlnbNFyAlndQI2/0Y1rGOv/
-         NG4arpI04qinlAFilZmbJ5IKdmbTsefBaFkBHarRIT2QqCZMuv4OtFKnqgLX1ciZ+T+7
-         vOgA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=K/TEbJFWEtJ7myelS/+rh6TG8Nyyi+LUMKE4sDPf1rk=;
+        b=2DAa94e6a/x2+aZvMCSs+SwO191hwhcxjL9ORz3MeaiM7QD6UI/y5uXhii6zCOtGxD
+         Ao68VSG9ANXirxvEHg31qu+hk4UtS8gkP+RgBF4kI7ysUTqTp9B35Yx7P1i3xQeF3kpF
+         HSv9V6w3pDzlhBFjbfV+9WJagOG8KuvTojdydEqoTFOmXGqsDbysJ+m33AGXI4lLghOR
+         r86lZDz+//el2LiYv2NEKsMCzBo6RM+2PXZs/7o6uZ4wUYz76Q77zof61X07yhEXCoU3
+         lUiV6nmvVxWGT92jf50syh3y47zCVzyQD6lsIB0daDXUfTqZxlg05+zsS7OhyC8DIKyY
+         QaLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:in-reply-to:references;
-        bh=OeTbs3cyKvuyu1XTWoXkCtNxO0aHwZN3JCJHavQfBCU=;
-        b=GZ7NHa0M0ToSy9ruIX8NACz38AkVFf9qEUmjH2uJ1vQwQnLlTev2Xhc3XDXaH+ARSx
-         1o/NWZzzLEegbO+yOa+Pi6/MO85GOkwB0QNCGM63oHMzUAxbnbxnnBWv0HZLdzQKhSlk
-         W5sibBoeIghelXXnB9OEBj43E1DdPbPFxckQnqJrbAvtGvkUMi0k1O66ec5+VfUNNBqI
-         6toeMQkfHB1qjFFqlRzNqbKRj7lHUPxQh4WQVTseHmKdauV3Sf5uj5z857Mq1iivepkz
-         tur7wwck+81W1Ps4a4QtZPRTQaM2W8KXBYcjNG8+uQ9J/j2VRtzORF9Yr5kETcTruj4F
-         cZ7Q==
-X-Gm-Message-State: APjAAAW2J019I+X0P8sJxuCKcSI560huaT6qkpuD4/N/yLnb1okXuT2b
-        F2L/g56EXQLABRl9pIM5Fuw=
-X-Google-Smtp-Source: APXvYqyntnxc3m6CwR6tJ6zUfyr4W1jem2CU87O8i7q51eNcK1sVdFw+GQa0qFTWlHP3qLxXvyIKhw==
-X-Received: by 2002:a63:1101:: with SMTP id g1mr35938303pgl.435.1580918097602;
-        Wed, 05 Feb 2020 07:54:57 -0800 (PST)
-Received: from emb-wallaby.amd.com ([165.204.156.251])
-        by smtp.gmail.com with ESMTPSA id z10sm195678pgz.88.2020.02.05.07.54.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 07:54:57 -0800 (PST)
-From:   Arindam Nath <arindam.nath@amd.com>
-To:     Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        Jon Mason <jdmason@kudzu.us>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>,
-        Jiasen Lin <linjiasen@hygon.cn>,
-        Sanjay R Mehta <sanju.mehta@amd.com>
-Cc:     linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org,
-        Arindam Nath <arindam.nath@amd.com>
-Subject: [PATCH 03/15] NTB: Enable link up and down event notification
-Date:   Wed,  5 Feb 2020 21:24:20 +0530
-Message-Id: <1fb68eb0ee7ee636ab92bb0b3b7340c56f4a20c3.1580914232.git.arindam.nath@amd.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1580914232.git.arindam.nath@amd.com>
-References: <cover.1580914232.git.arindam.nath@amd.com>
-In-Reply-To: <cover.1580914232.git.arindam.nath@amd.com>
-References: <cover.1580914232.git.arindam.nath@amd.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=K/TEbJFWEtJ7myelS/+rh6TG8Nyyi+LUMKE4sDPf1rk=;
+        b=eg5kQSuYkcB2o1H5Zkm8CwwgpaUlxs0FZ7pyLk1+FM76qyXQdVC2ZGDXYF9Fruaeye
+         +a5kZrgvki1Y9B9IXiRtnkPq2JXzKtXwcq81zIF1ZIimZapH1pbvkpXicss7Hp5Os4Ff
+         RbxDBVYTcTXp+ESH7j/v6aTUtV9zY4jDr/6b1I0Uuzh5wjTkbvmYeYEpSqFAWsLy9njW
+         3ngDV3M3OBJtOXQUmAI44vg8d2PgwEwgYo2II8vIZkXI7jJgqwzpeRX43/Ioz0BfJh+Y
+         9VIv1cvHrwhMY4NpvgtrrEvwiGl7INvB2V3OEo4JJeGPP8kec/ru8C7Hw3muqgWxF+QS
+         4M1A==
+X-Gm-Message-State: APjAAAWeU6eJEdkCZqVy71TiUCHmvvFLSI4KuHyEzUZhhAwVP+tq4lL5
+        Q7M8RxZEc7Qm8lG3Hhewp8Rkg+vv88w=
+X-Google-Smtp-Source: APXvYqzWXlbgLJfIBrB+xCBg3yB7cebqo/qOH8x84HpGW+NlmiRh3flk2lxkQXchXo176LKhA4ND7w==
+X-Received: by 2002:a92:48c2:: with SMTP id j63mr25700622ilg.153.1580918061800;
+        Wed, 05 Feb 2020 07:54:21 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id r14sm10464783ilg.59.2020.02.05.07.54.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Feb 2020 07:54:21 -0800 (PST)
+Subject: Re: [PATCH] io_uring: fix mm use with IORING_OP_{READ,WRITE}
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <951bb84c8337aaac7654261a21b03506b2b8a001.1580914723.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <df11c48e-f456-3b64-88d1-6012b1ac2bc8@kernel.dk>
+Date:   Wed, 5 Feb 2020 08:54:20 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <951bb84c8337aaac7654261a21b03506b2b8a001.1580914723.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Link-Up and Link-Down events can occur irrespective
-of whether a data transfer is in progress or not.
-So we need to enable the interrupt delivery for
-these events early during driver load.
+On 2/5/20 8:46 AM, Pavel Begunkov wrote:
+> IORING_OP_{READ,WRITE} need mm to access user buffers, hence
+> req->has_user check should go for them as well. Move the corresponding
+> imports past the check.
 
-Signed-off-by: Arindam Nath <arindam.nath@amd.com>
----
- drivers/ntb/hw/amd/ntb_hw_amd.c | 5 +++++
- 1 file changed, 5 insertions(+)
+I'd need to double check, but I think the has_user check should just go.
+The import checks for access anyway, so we'll -EFAULT there if we
+somehow messed up and didn't acquire the right mm.
 
-diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.c b/drivers/ntb/hw/amd/ntb_hw_amd.c
-index 150e4db11485..111f33ff2bd7 100644
---- a/drivers/ntb/hw/amd/ntb_hw_amd.c
-+++ b/drivers/ntb/hw/amd/ntb_hw_amd.c
-@@ -994,6 +994,7 @@ static enum ntb_topo amd_get_topo(struct amd_ntb_dev *ndev)
- 
- static int amd_init_dev(struct amd_ntb_dev *ndev)
- {
-+	void __iomem *mmio = ndev->self_mmio;
- 	struct pci_dev *pdev;
- 	int rc = 0;
- 
-@@ -1015,6 +1016,10 @@ static int amd_init_dev(struct amd_ntb_dev *ndev)
- 
- 	ndev->db_valid_mask = BIT_ULL(ndev->db_count) - 1;
- 
-+	/* Enable Link-Up and Link-Down event interrupts */
-+	ndev->int_mask &= ~(AMD_LINK_UP_EVENT | AMD_LINK_DOWN_EVENT);
-+	writel(ndev->int_mask, mmio + AMD_INTMASK_OFFSET);
-+
- 	return 0;
- }
- 
 -- 
-2.17.1
+Jens Axboe
 
