@@ -2,174 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE206153A8C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 22:56:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27A06153A7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 22:53:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbgBEV4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 16:56:25 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:59188 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727109AbgBEV4Z (ORCPT
+        id S1727279AbgBEVx3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 16:53:29 -0500
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:41987 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727109AbgBEVx2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 16:56:25 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 015LuCCp079409;
-        Wed, 5 Feb 2020 15:56:12 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1580939772;
-        bh=e1Zw3z+xlD/pz5HMM6azV+85TAV093EqerWx393F+8c=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=lmrdUYtbJn0Pttqhmq0rhw5qWrFyuiNiFj1lZT7e7EQz3vSg8hMR88gb1WNwV4/dj
-         IcunSmV//aJ3GliO8wBZsnpQxjVEDKOt6UuZBsL9A1DGK8NKjMeyApxBsFwDgkPAq6
-         wAlPw8yDQQoBc49v0i6ttbyDbwc9Q03p93SWHfus=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 015LuCFD079824;
-        Wed, 5 Feb 2020 15:56:12 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 5 Feb
- 2020 15:56:11 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 5 Feb 2020 15:56:11 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 015LuAOe116131;
-        Wed, 5 Feb 2020 15:56:11 -0600
-Subject: Re: [PATCH net-next v2] net: phy: dp83867: Add speed optimization
- feature
-To:     Heiner Kallweit <hkallweit1@gmail.com>, <andrew@lunn.ch>,
-        <f.fainelli@gmail.com>
-CC:     <linux@armlinux.org.uk>, <davem@davemloft.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200204181319.27381-1-dmurphy@ti.com>
- <0ebcd40d-b9cc-1a76-bb18-91d8350aa1cd@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <170d6518-ea82-08d3-0348-228c72425e64@ti.com>
-Date:   Wed, 5 Feb 2020 15:51:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 5 Feb 2020 16:53:28 -0500
+Received: by mail-qv1-f67.google.com with SMTP id dc14so1877347qvb.9
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 13:53:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MIZWPxqzRXVWJ+Ic+8hIOYHDUnRhZs/23Y0wxfGuu50=;
+        b=KnwHUgQGUNZbFj3rH4Z0EEhz7PCS6Z9wYfSH9eL4TLB/xohszjfi6RhmLw9HzUkEda
+         gfqgK/qtDD4MJRJxn/dtri6oDbBXtiUUZV402IVYVH56tDpMsBlSDdmBy1S0DVZvqNEq
+         Oe9LCnjug5VsOY8/k0EZlZuKVsNkoCwQGWJbo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MIZWPxqzRXVWJ+Ic+8hIOYHDUnRhZs/23Y0wxfGuu50=;
+        b=hiKn4T8w3GUt/dwFm9Iqc2X70pBEvNvPP5Xzl2DvGNiPWyM8RrBIWwY9i4PgHRdM+o
+         vWs/OM+I0M0n2nE86e0zj6mtj92L9kk6kY49eyqe86ThydAqwnKErV454cjepA5R027Y
+         LIjZe2+6Vpl5E5IH6rhCZd6ILxV+GUm+qNOrPqdpl3yeUUYfgjPWk5bu2lOxAgg7OrYU
+         QtZ00knQ+ELf+cPDXiEIDCQs7BeqAZRQ7oTuMfzAVYjYHWoW+HMYUtMNXGeNG29WNv4y
+         gq/opcMFMbiSTIXI+TQ+KdFawE4CjFfsRSQj6RlhQ2Kn3/fDAwGKury4LpiA4ro9dLM2
+         TyCw==
+X-Gm-Message-State: APjAAAW4lqUpfxfHnnTBrIiz+gDSSMY7hJIrROfYwV9Gs5/e9hCQG+Ax
+        yTR7VEO+M6skSZEz3GnNH0Ws4WbaTxhf56e5GF01sg==
+X-Google-Smtp-Source: APXvYqyuo1xISODfo2xqjaF2V/BnCvStWurrM4AuLh1UdM27OhlsRBYTxe+qkPTZGUGfwJWU3jbnqq/w5I56cqrGXZU=
+X-Received: by 2002:a05:6214:287:: with SMTP id l7mr34917177qvv.142.1580939606245;
+ Wed, 05 Feb 2020 13:53:26 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <0ebcd40d-b9cc-1a76-bb18-91d8350aa1cd@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20200205154629.GA1257054@kroah.com> <20200205160250.GG142103@google.com>
+ <CAOesGMj7Z9JoEYrnQaiHrHsjG7cv9ebEbyZM-QFWN2HJDa=UGA@mail.gmail.com>
+ <20200205171353.GI142103@google.com> <20200205213354.GB1465126@kroah.com>
+ <CAEXW_YSU_Zm24R2TYFQd42CfXyotowv42BbvbvKfSFbZGUqOHQ@mail.gmail.com> <20200205214841.GB1468203@kroah.com>
+In-Reply-To: <20200205214841.GB1468203@kroah.com>
+From:   Joel Fernandes <joel@joelfernandes.org>
+Date:   Wed, 5 Feb 2020 13:53:15 -0800
+Message-ID: <CAEXW_YST9qj91=TbJ9j4boQgV=k=8E6fSQZB-iojRBLwGXSOag@mail.gmail.com>
+Subject: Re: [PATCH] Revert kheaders feature
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Olof Johansson <olof@lixom.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tejun Heo <tj@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-kbuild@vger.kernel.org,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Heiner
-
-On 2/5/20 3:16 PM, Heiner Kallweit wrote:
-> On 04.02.2020 19:13, Dan Murphy wrote:
->> Set the speed optimization bit on the DP83867 PHY.
->> This feature can also be strapped on the 64 pin PHY devices
->> but the 48 pin devices do not have the strap pin available to enable
->> this feature in the hardware.  PHY team suggests to have this bit set.
->>
->> With this bit set the PHY will auto negotiate and report the link
->> parameters in the PHYSTS register.  This register provides a single
->> location within the register set for quick access to commonly accessed
->> information.
->>
->> In this case when auto negotiation is on the PHY core reads the bits
->> that have been configured or if auto negotiation is off the PHY core
->> reads the BMCR register and sets the phydev parameters accordingly.
->>
->> This Giga bit PHY can throttle the speed to 100Mbps or 10Mbps to accomodate a
->> 4-wire cable.  If this should occur the PHYSTS register contains the
->> current negotiated speed and duplex mode.
->>
->> In overriding the genphy_read_status the dp83867_read_status will do a
->> genphy_read_status to setup the LP and pause bits.  And then the PHYSTS
->> register is read and the phydev speed and duplex mode settings are
->> updated.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
->> v2 - Updated read status to call genphy_read_status first, added link_change
->> callback to notify of speed change and use phy_set_bits - https://lore.kernel.org/patchwork/patch/1188348/
->>
-> As stated in the first review, it would be appreciated if you implement
-> also the downshift tunable. This could be a separate patch in this series.
-> Most of the implementation would be boilerplate code.
-
-I just don't have a requirement from our customer to make it adjustable 
-so I did not want to add something extra.
-
-I can add in for v3.
-
+On Wed, Feb 5, 2020 at 1:48 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> And I have to admit that I'm not too happy with the term "speed optimization".
-> This sounds like the PHY has some magic to establish a 1.2Gbps link.
-> Even though the vendor may call it this way in the datasheet, the standard
-> term is "downshift". I'm fine with using "speed optimization" in constants
-> to be in line with the datasheet. Just a comment in the code would be helpful
-> that speed optimization is the vendor's term for downshift.
-
-Ack.  The data sheet actually says "Speed optimization, also known as 
-link downshift"
-
-So I probably will just rename everything down shift.
-
+> On Wed, Feb 05, 2020 at 01:35:56PM -0800, Joel Fernandes wrote:
+> > On Wed, Feb 5, 2020 at 1:33 PM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > [snip]
+> > > > > like the BTF approach is significantly better and said users are
+> > > > > hopefully moving forward to it quickly, and if they can't move
+> > > > > forward, then they're likely also not going to move forward to newer
+> > > > > kernels either?
+> > > >
+> > > > I think BCC runs on a lot of upstream machines. I think the migration
+> > > > strategy is a matter of opinion, one way is to take it out and cause some
+> > > > pain in the hope that users/tools will migrate soon (while probably carrying
+> > > > the reverted patches out of tree). Another is to migrate the tools first and
+> > > > then take it out (which has its own disadvantages such as introducing even
+> > > > more users of it while it is still upstream).
+> > >
+> > > Do we "know" what tools today require this, and what needs to be done to
+> > > "fix" them?  If we don't know that, then there's no way to drop this,
+> > > pretty much ever :(
+> >
+> > Is there a real reason to drop it or a problem dropping this solves though?
 >
->>   drivers/net/phy/dp83867.c | 55 +++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 55 insertions(+)
->>
->> diff --git a/drivers/net/phy/dp83867.c b/drivers/net/phy/dp83867.c
->> index 967f57ed0b65..6f86ca1ebb51 100644
->> --- a/drivers/net/phy/dp83867.c
->> +++ b/drivers/net/phy/dp83867.c
->> @@ -21,6 +21,7 @@
->>   #define DP83867_DEVADDR		0x1f
->>   
->>   #define MII_DP83867_PHYCTRL	0x10
->> +#define MII_DP83867_PHYSTS	0x11
->>   #define MII_DP83867_MICR	0x12
->>   #define MII_DP83867_ISR		0x13
->>   #define DP83867_CFG2		0x14
->> @@ -118,6 +119,15 @@
->>   #define DP83867_IO_MUX_CFG_CLK_O_SEL_MASK	(0x1f << 8)
->>   #define DP83867_IO_MUX_CFG_CLK_O_SEL_SHIFT	8
->>   
->> +/* PHY STS bits */
->> +#define DP83867_PHYSTS_1000			BIT(15)
->> +#define DP83867_PHYSTS_100			BIT(14)
->> +#define DP83867_PHYSTS_DUPLEX			BIT(13)
->> +#define DP83867_PHYSTS_LINK			BIT(10)
->> +
->> +/* CFG2 bits */
->> +#define DP83867_SPEED_OPTIMIZED_EN		(BIT(8) | BIT(9))
->> +
->>   /* CFG3 bits */
->>   #define DP83867_CFG3_INT_OE			BIT(7)
->>   #define DP83867_CFG3_ROBUST_AUTO_MDIX		BIT(9)
->> @@ -287,6 +297,43 @@ static int dp83867_config_intr(struct phy_device *phydev)
->>   	return phy_write(phydev, MII_DP83867_MICR, micr_status);
->>   }
->>   
->> +static void dp83867_link_change_notify(struct phy_device *phydev)
->> +{
->> +	if (phydev->state != PHY_RUNNING)
->> +		return;
->> +
->> +	if (phydev->speed == SPEED_100 || phydev->speed == SPEED_10)
->> +		phydev_warn(phydev, "Downshift detected connection is %iMbps\n",
->> +			    phydev->speed);
-> The link partner may simply not advertise 1Gbps. How do you know that
-> a link speed of e.g. 100Mbps is caused by a downshift?
-> Some PHY's I've seen with this feature have a flag somewhere indicating
-> that downshift occurred. How about the PHY here?
+> Olof had some reasons, but as we were drinking at the time when it came
+> up last night, I can't really remember them specifically.  Hopefully he
+> does :)
+> But that didn't answer my question of "who is still using this"?  I was
+> hoping we actually knew this given it was created for specific users.
 
-I don't see a register that gives us that status
+I think I mentioned this in a previous thread of this email. Several
+BCC tools are using it - see for example the criticalstat BCC tool
+which includes linux/sched.h :
+https://github.com/iovisor/bcc/blob/master/tools/criticalstat.py#L73
+, or filetop BCC tool which uses struct dentry :
+https://github.com/iovisor/bcc/blob/master/tools/filetop.py#L101
 
-I will ask the hardware team if there is one.
+These would break without kernel headers either on the host or via
+CONFIG_IKHEADERS.
 
-This is a 1Gbps PHY by default so if a slower connection is established 
-due to faulty cabling or LP advertisement then this would be a down 
-shift IMO.
+thanks,
 
-Dan
-
+ - Joel
