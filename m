@@ -2,91 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98A4715312B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 13:53:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26EA0153125
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 13:52:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728003AbgBEMxW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 07:53:22 -0500
-Received: from gate.crashing.org ([63.228.1.57]:42729 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726386AbgBEMxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 07:53:21 -0500
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 015CppFf030570;
-        Wed, 5 Feb 2020 06:51:51 -0600
-Received: (from segher@localhost)
-        by gate.crashing.org (8.14.1/8.14.1/Submit) id 015Cpn3x030569;
-        Wed, 5 Feb 2020 06:51:49 -0600
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date:   Wed, 5 Feb 2020 06:51:49 -0600
-From:   Segher Boessenkool <segher@kernel.crashing.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Oscar Salvador <osalvador@suse.de>, linux-s390@vger.kernel.org,
-        Michal Hocko <mhocko@suse.com>, linux-ia64@vger.kernel.org,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        linux-sh@vger.kernel.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Wei Yang <richardw.yang@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 10/10] mm/memory_hotplug: Cleanup __remove_pages()
-Message-ID: <20200205125149.GS22482@gate.crashing.org>
-References: <20191006085646.5768-1-david@redhat.com> <20191006085646.5768-11-david@redhat.com> <20200204094652.GE6494@linux> <5d698f94-af18-0714-bc97-14b6c520572c@redhat.com> <20200204131353.GJ22482@gate.crashing.org> <0e2f700c-b01b-8c16-99c2-2648967fc203@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0e2f700c-b01b-8c16-99c2-2648967fc203@redhat.com>
-User-Agent: Mutt/1.4.2.3i
+        id S1728182AbgBEMwI convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 5 Feb 2020 07:52:08 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:34956 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbgBEMwI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 07:52:08 -0500
+Received: from marcel-macbook.fritz.box (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 0C821CECC7;
+        Wed,  5 Feb 2020 14:01:28 +0100 (CET)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [PATCH v1] Bluetooth: hci_qca: Bug fixes while collecting
+ controller memory dump
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <d89347d22c12ffca5ccf4e18e0c716ab@codeaurora.org>
+Date:   Wed, 5 Feb 2020 13:52:05 +0100
+Cc:     Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        robh@kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, bgodavar@codeaurora.org,
+        tientzu@chromium.org, seanpaul@chromium.org, rjliao@codeaurora.org,
+        Yoni Shavit <yshavit@google.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <20C0BA0B-1069-4DCF-A8FA-3B6359621D30@holtmann.org>
+References: <1580832929-2067-1-git-send-email-gubbaven@codeaurora.org>
+ <CANFp7mXgvfQGw0bc0dwNXg9KME1XD1zYGtPdEFWbM20NJpKtzQ@mail.gmail.com>
+ <d89347d22c12ffca5ccf4e18e0c716ab@codeaurora.org>
+To:     Venkata Lakshmi Narayana Gubba <gubbaven@codeaurora.org>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 04, 2020 at 02:38:51PM +0100, David Hildenbrand wrote:
-> On 04.02.20 14:13, Segher Boessenkool wrote:
-> > On Tue, Feb 04, 2020 at 01:41:06PM +0100, David Hildenbrand wrote:
-> >> It's a pattern commonly used in compilers and emulators to calculate the
-> >> number of bytes to the next block/alignment. (we're missing a macro
-> >> (like we have ALIGN_UP/IS_ALIGNED) for that - but it's hard to come up
-> >> with a good name (e.g., SIZE_TO_NEXT_ALIGN) .
+Hi Venkata,
 
-> > You can just write the easy to understand
-> > 
-> >   ...  ALIGN_UP(x) - x  ...
+>> Hi Venkata,
+>> Per our earlier review on chromium gerrit:
+>> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1992966
+>> I'm not too keen on the change from mutex to spinlock because it's
+>> made the code more complex.
+> [Venkata] :
 > 
-> you mean
-> 
-> ALIGN_UP(x, PAGES_PER_SECTION) - x
-> 
-> but ...
-> 
-> > which is better *without* having a separate name.  Does that not
-> > generate good machine code for you?
-> 
-> 1. There is no ALIGN_UP. "SECTION_ALIGN_UP(x) - x" would be possible
+> We have moved from mutex to spinlock as timer callback function is getting executed under interrupt context and not under process context.
 
-Erm, you started it ;-)
+can’t you use a delayed workqueue for this?
 
-> 2. It would be wrong if x is already aligned.
-> 
-> e.g., let's use 4096 for simplicity as we all know that value by heart
-> (for both x and the block size).
-> 
-> a) -(4096 | -4096) -> 4096
-> 
-> b) #define ALIGN_UP(x, a) ((x + a - 1) & -(a))
-> 
-> ALIGN_UP(4096, 4096) - 4096 -> 0
-> 
-> Not as easy as it seems ...
+Regards
 
-If you always want to return a number >= 1, it it simply
-  ALIGN_UP(x + 1) - x
-(and replace 1 by any other minimum size required).  This *also* is
-easy to read, without having to have any details (and quirks :-/ )
-of those utility functions memorised.
+Marcel
 
-
-Segher
