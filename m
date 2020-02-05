@@ -2,112 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B0CF152658
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 07:33:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB3AC15265F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 07:38:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbgBEGbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 01:31:50 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:60161 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725906AbgBEGbt (ORCPT
+        id S1726658AbgBEGgn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 01:36:43 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:53090 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725468AbgBEGgn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 01:31:49 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1580884309; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=ViCP3t2YRGW6lTwQZQeQAgzT2huQLFAv95wozwScy2g=;
- b=K/jdJAcJEkjjzI+HgJTCa9i9m+Vh7ItDEqX0XIBqqxnu5vs19nFJVzaR3zPM/7thOa2SAXdo
- qHv9Btl9f440CxySGAxyxGmDyNeLHyXvq7SLX/VlTqmebOoMF6t6A1q6iwNGzeVGON8USPjT
- sCd3lpcpMSyu5+qKVRQeQnPiZ5I=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e3a6153.7f282edce848-smtp-out-n03;
- Wed, 05 Feb 2020 06:31:47 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id B30C3C447A3; Wed,  5 Feb 2020 06:31:46 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E25B5C43383;
-        Wed,  5 Feb 2020 06:31:45 +0000 (UTC)
+        Wed, 5 Feb 2020 01:36:43 -0500
+Received: by mail-pj1-f65.google.com with SMTP id ep11so539825pjb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 22:36:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NR5HHqY14nVKiwN1pnGOCIaNnlF4MJl1CZSdtbVmuTk=;
+        b=aSEFDeWldjG7yFrvO1YqEPyjmp+WjO9Y1I/fRf1tF8L1//bP8rbNOx542hjgvyowZI
+         CJTeFWOLyxLIV/k2cRV3Ln7wCL8kXkqHoejpHlrAqfMzhbdfxbqBUePxgYmOLeZsf6q4
+         U5Rd7t7jot8QcZ/9SsBgDC10uZfEvwz4eriiIXuosVy0Fi4Ljqhr0oNfjTlVKkEB8JXX
+         MOjIgJqmNAGXdmg0AYR+Biamoehpfz8JYeEe32HFRsCl/uBWLxNq5NQKW0ki9YjnwYIx
+         sYuObbHtIaewfpxSU3hzyyPtKPFWMZYihtWHZHRAXrAAKM6+yvROtDfzEM1CWZL+sa1h
+         Rpfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NR5HHqY14nVKiwN1pnGOCIaNnlF4MJl1CZSdtbVmuTk=;
+        b=EkepaFLdnVBhqablKoqB17OKw9fHojKBBnXdjUefCBl5yjukVFbFmBAVzp1fO+sZZD
+         pCFSZK2iIqg7kxd5ExTroDwBaZCf/ehTIKK7feaASa5gYs7C1p79vbQqttUiyNCFc99u
+         YubUnormE+lE0vLqPb3/vl5DVMjHKL4HArcn0u+ukzqe4UvioAUxzYnIB06OqZR7cTk0
+         9CVYqyXeOwJEQJ8a/mxgV7f1tsFvbDtxQWGMrsnfql4ea6uPSrqyRjOL/SkjCC6yvETa
+         RLraQGBwvoONSN1ZzAhMbkipqh9a0iGPikOvz8N2FbI6WP0jcVxm8HeJdc06I0VuQ77U
+         GeYQ==
+X-Gm-Message-State: APjAAAULRdeXy7QMB86UFfGqISMuYqBaq8qzWGdyVBb6L0YlBEf8XErp
+        KcYDBlL4OHwnXAFhCGcwbSg=
+X-Google-Smtp-Source: APXvYqx+puy+6sb4HFx3KAsl7TfpxjwMo113X6yG3BHkUMt1zGTj2Zqfz0NX9sVKRKwlTQJsjYsYcg==
+X-Received: by 2002:a17:90a:6:: with SMTP id 6mr3971648pja.71.1580884602719;
+        Tue, 04 Feb 2020 22:36:42 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
+        by smtp.gmail.com with ESMTPSA id 196sm27200499pfy.86.2020.02.04.22.36.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2020 22:36:41 -0800 (PST)
+Date:   Wed, 5 Feb 2020 15:36:40 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     lijiang <lijiang@redhat.com>,
+        John Ogness <john.ogness@linutronix.de>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] printk: replace ringbuffer
+Message-ID: <20200205063640.GJ41358@google.com>
+References: <20200128161948.8524-1-john.ogness@linutronix.de>
+ <dc4ca9b5-d2a2-03af-c186-204a3aad2399@redhat.com>
+ <20200205044848.GH41358@google.com>
+ <20200205050204.GI41358@google.com>
+ <88827ae2-7af5-347b-29fb-cffb94350f8f@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 05 Feb 2020 14:31:45 +0800
-From:   Can Guo <cang@codeaurora.org>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        hongwus@codeaurora.org, rnayak@codeaurora.org,
-        linux-scsi@vger.kernel.org, kernel-team@android.com,
-        saravanak@google.com, salyzyn@google.com,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] scsi: ufs: Fix registers dump vops caused scheduling
- while atomic
-In-Reply-To: <3e529862-7790-c506-abaa-9a6972f5d53c@acm.org>
-References: <1580882795-29675-1-git-send-email-cang@codeaurora.org>
- <3e529862-7790-c506-abaa-9a6972f5d53c@acm.org>
-Message-ID: <749a1db94df00278ec9f5c121cd937fe@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <88827ae2-7af5-347b-29fb-cffb94350f8f@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-05 14:21, Bart Van Assche wrote:
-> On 2020-02-04 22:06, Can Guo wrote:
->> @@ -5617,7 +5622,7 @@ static irqreturn_t ufshcd_check_errors(struct
->> 
->>  					__func__, hba->saved_err,
->>  					hba->saved_uic_err);
->> 
->> -				ufshcd_print_host_regs(hba);
->> +				__ufshcd_print_host_regs(hba, true);
->>  				ufshcd_print_pwr_info(hba);
->>  				ufshcd_print_tmrs(hba,
->> 					hba->outstanding_tasks);
->>  				ufshcd_print_trs(hba,
->> 					hba->outstanding_reqs,
-> 
-> Hi Can,
-> 
-> Please fix this by splitting ufs_qcom_dump_dbg_regs() into two
-> functions: one function that doesn't sleep and a second function that
-> behaves identically to the current function. If the function names will
-> make it clear which function sleeps and which function doesn't that 
-> will
-> result in code that is much easier to read than the above code. For the
-> above code it is namely impossible to figure out what will happen
-> without looking up the caller.
-> 
-> Thanks,
-> 
-> Bart.
+On (20/02/05 13:38), lijiang wrote:
+> > On (20/02/05 13:48), Sergey Senozhatsky wrote:
+> >> On (20/02/05 12:25), lijiang wrote:
 
-Hi Bart,
+[..]
 
-Do you mean by splitting ufshcd_print_host_regs() into two functions?
-One behaves identically same to the current function, another one called
-ufshcd_print_host_regs_nosleep(). No?
+> >>
+> >> So there is a General protection fault. That's the type of a problem that
+> >> kills the boot for me as well (different backtrace, tho).
+> > 
+> > Do you have CONFIG_RELOCATABLE and CONFIG_RANDOMIZE_BASE (KASLR) enabled?
+> > 
+> 
+> Yes. These two options are enabled.
+> 
+> CONFIG_RELOCATABLE=y
+> CONFIG_RANDOMIZE_BASE=y
 
-Thanks,
-Can Guo.
+So KASLR kills the boot for me. So does KASAN.
+
+John, do you see any of these problems on your test machine?
+
+	-ss
