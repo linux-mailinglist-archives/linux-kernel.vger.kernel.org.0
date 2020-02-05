@@ -2,286 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26C5F15347D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 16:45:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2E34153489
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 16:47:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbgBEPpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 10:45:24 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:35870 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727000AbgBEPpV (ORCPT
+        id S1727535AbgBEPrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 10:47:06 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43854 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726896AbgBEPrG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 10:45:21 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1izMrS-0004R9-U3; Wed, 05 Feb 2020 16:45:07 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 939751C1EC6;
-        Wed,  5 Feb 2020 16:45:06 +0100 (CET)
-Date:   Wed, 05 Feb 2020 15:45:06 -0000
-From:   "tip-bot2 for Leo Yan" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf parse: Refactor 'struct perf_evsel_config_term'
-Cc:     Leo Yan <leo.yan@linaro.org>, Andi Kleen <ak@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Ian Rogers <irogers@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Suzuki Poulouse <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200117055251.24058-1-leo.yan@linaro.org>
-References: <20200117055251.24058-1-leo.yan@linaro.org>
+        Wed, 5 Feb 2020 10:47:06 -0500
+Received: by mail-ed1-f65.google.com with SMTP id dc19so2615648edb.10;
+        Wed, 05 Feb 2020 07:47:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KgaeS+7rmTlJ5xBZJmjQaeCEgvc91R6bTRPhHEIIuQE=;
+        b=IEDDoY7iQXTFrEOnjy9qG3FT5eTai71n3X5c27NsnKrcOd/0iCb/Iu6Ycgz+5N5fCx
+         ZHDXY0IkPJBmNKcT5aHxsmIJrLByDeZrj8689psYAWTdzOqYidY16b2QC7fcVl1OkpBl
+         4CXl10Nmw2TOISrPIF8bbrtQafOmgikU/jxT9wrOKDWZgsApR/HK9HbioCEjSntbPKhl
+         HvTB1dYQ/IO1vQYKliNein/KDG1OTHTr7wqVUbf9WFNAJgCGvhSUVtsd10AIte1aNM5S
+         w/VBCaKrUPZr+xLfL3RRI6BTIoew+vPnXFhzq0JMk+HesDOB1LcZwNTdoVeWkA1IDf/N
+         QrsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KgaeS+7rmTlJ5xBZJmjQaeCEgvc91R6bTRPhHEIIuQE=;
+        b=mlkRVgAVNkAnEUEY0bMOMUvMyauiIQeACTwSuSXdnX3Lz/6hr38+YEa87syGd4L/1d
+         0GLqWo7dMqHgr5UGJOxbcAOdsuQId9QRTtZB53RhzZUc5bcoTackhvdvIgng1mHvNxd4
+         c7E7SSjYehLRCw6QD3iV9hdb62a6SN6JyJ5q19EDXYbavxOBFk0S4Ror8+IFMoYN1lA7
+         PeSEEI/8KAOAyUFddQFfUwJYyGY5KgD1/V++LokRz2JaLOCL2uN2PUevcZvBFby+dJTg
+         s6bjJj2yMAJXgQS5FcmgT/uDrwRNUe4eJkzGrb+KOtE3tNIAvyet34GfpkADW55h5zoG
+         ORhA==
+X-Gm-Message-State: APjAAAWCreBhVIuCvQYEigZ8QhwqF+q9NsK5FyJaQ5s9JKIZWynzE8yc
+        k/LgDq8SiZwaQHPiSj9LxOsqruxf
+X-Google-Smtp-Source: APXvYqxK/k4x9dOtLVovXc62fQdEF6nNhVbK3NXGguJqVT/U9jf+QqC3kLE9G7hFkPbcMqYXFqpotA==
+X-Received: by 2002:a17:906:c302:: with SMTP id s2mr31005902ejz.275.1580917623630;
+        Wed, 05 Feb 2020 07:47:03 -0800 (PST)
+Received: from localhost.localdomain ([109.126.145.62])
+        by smtp.gmail.com with ESMTPSA id q3sm8069eju.88.2020.02.05.07.47.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Feb 2020 07:47:02 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring: fix mm use with IORING_OP_{READ,WRITE}
+Date:   Wed,  5 Feb 2020 18:46:14 +0300
+Message-Id: <951bb84c8337aaac7654261a21b03506b2b8a001.1580914723.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Message-ID: <158091750637.411.10611097345707412751.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: 1.5
-X-Linutronix-Spam-Level: +
-X-Linutronix-Spam-Status: No , 1.5 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001,URIBL_DBL_ABUSE_MALW=2.5
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/urgent branch of tip:
+IORING_OP_{READ,WRITE} need mm to access user buffers, hence
+req->has_user check should go for them as well. Move the corresponding
+imports past the check.
 
-Commit-ID:     e884602b57c07fae54ff357e4b996b2053b47c1e
-Gitweb:        https://git.kernel.org/tip/e884602b57c07fae54ff357e4b996b2053b47c1e
-Author:        Leo Yan <leo.yan@linaro.org>
-AuthorDate:    Fri, 17 Jan 2020 13:52:50 +08:00
-Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Thu, 30 Jan 2020 11:55:02 +01:00
-
-perf parse: Refactor 'struct perf_evsel_config_term'
-
-The struct perf_evsel_config_term::val is a union which contains fields
-'callgraph', 'drv_cfg' and 'branch' as string pointers.  This leads to
-the complex code logic for handling every type's string separately, and
-it's hard to release string as a general way.
-
-This patch refactors the structure to add a common field 'str' in the
-'val' union as string pointer and remove the other three fields
-'callgraph', 'drv_cfg' and 'branch'.  Without passing field name, the
-patch simplifies the string handling with macro ADD_CONFIG_TERM_STR()
-for string pointer assignment.
-
-This patch fixes multiple warnings of line over 80 characters detected
-by checkpatch tool.
-
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Mike Leach <mike.leach@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lore.kernel.org/lkml/20200117055251.24058-1-leo.yan@linaro.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- tools/perf/arch/arm/util/cs-etm.c |  2 +-
- tools/perf/util/evsel.c           |  6 +--
- tools/perf/util/evsel_config.h    |  4 +--
- tools/perf/util/parse-events.c    | 62 +++++++++++++++++++-----------
- 4 files changed, 45 insertions(+), 29 deletions(-)
+ fs/io_uring.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
-index ede040c..2898cfd 100644
---- a/tools/perf/arch/arm/util/cs-etm.c
-+++ b/tools/perf/arch/arm/util/cs-etm.c
-@@ -226,7 +226,7 @@ static int cs_etm_set_sink_attr(struct perf_pmu *pmu,
- 		if (term->type != PERF_EVSEL__CONFIG_TERM_DRV_CFG)
- 			continue;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index edb00ae2619b..f00c2c9c67c0 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2038,13 +2038,6 @@ static ssize_t io_import_iovec(int rw, struct io_kiocb *req,
+ 	if (req->rw.kiocb.private)
+ 		return -EINVAL;
  
--		sink = term->val.drv_cfg;
-+		sink = term->val.str;
- 		snprintf(path, PATH_MAX, "sinks/%s", sink);
+-	if (opcode == IORING_OP_READ || opcode == IORING_OP_WRITE) {
+-		ssize_t ret;
+-		ret = import_single_range(rw, buf, sqe_len, *iovec, iter);
+-		*iovec = NULL;
+-		return ret;
+-	}
+-
+ 	if (req->io) {
+ 		struct io_async_rw *iorw = &req->io->rw;
  
- 		ret = perf_pmu__scan_file(pmu, path, "%x", &hash);
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index a69e642..549abd4 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -808,12 +808,12 @@ static void apply_config_terms(struct evsel *evsel,
- 				perf_evsel__reset_sample_bit(evsel, TIME);
- 			break;
- 		case PERF_EVSEL__CONFIG_TERM_CALLGRAPH:
--			callgraph_buf = term->val.callgraph;
-+			callgraph_buf = term->val.str;
- 			break;
- 		case PERF_EVSEL__CONFIG_TERM_BRANCH:
--			if (term->val.branch && strcmp(term->val.branch, "no")) {
-+			if (term->val.str && strcmp(term->val.str, "no")) {
- 				perf_evsel__set_sample_bit(evsel, BRANCH_STACK);
--				parse_branch_str(term->val.branch,
-+				parse_branch_str(term->val.str,
- 						 &attr->branch_sample_type);
- 			} else
- 				perf_evsel__reset_sample_bit(evsel, BRANCH_STACK);
-diff --git a/tools/perf/util/evsel_config.h b/tools/perf/util/evsel_config.h
-index 1f8d2fe..b4a6520 100644
---- a/tools/perf/util/evsel_config.h
-+++ b/tools/perf/util/evsel_config.h
-@@ -36,18 +36,16 @@ struct perf_evsel_config_term {
- 		u64	      period;
- 		u64	      freq;
- 		bool	      time;
--		char	      *callgraph;
--		char	      *drv_cfg;
- 		u64	      stack_user;
- 		int	      max_stack;
- 		bool	      inherit;
- 		bool	      overwrite;
--		char	      *branch;
- 		unsigned long max_events;
- 		bool	      percore;
- 		bool	      aux_output;
- 		u32	      aux_sample_size;
- 		u64	      cfg_chg;
-+		char	      *str;
- 	} val;
- 	bool weak;
- };
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index ed7c008..f59f3c8 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -1219,8 +1219,7 @@ static int config_attr(struct perf_event_attr *attr,
- static int get_config_terms(struct list_head *head_config,
- 			    struct list_head *head_terms __maybe_unused)
- {
--#define ADD_CONFIG_TERM(__type, __name, __val)			\
--do {								\
-+#define ADD_CONFIG_TERM(__type)					\
- 	struct perf_evsel_config_term *__t;			\
- 								\
- 	__t = zalloc(sizeof(*__t));				\
-@@ -1229,9 +1228,19 @@ do {								\
- 								\
- 	INIT_LIST_HEAD(&__t->list);				\
- 	__t->type       = PERF_EVSEL__CONFIG_TERM_ ## __type;	\
--	__t->val.__name = __val;				\
- 	__t->weak	= term->weak;				\
--	list_add_tail(&__t->list, head_terms);			\
-+	list_add_tail(&__t->list, head_terms)
+@@ -2058,6 +2051,13 @@ static ssize_t io_import_iovec(int rw, struct io_kiocb *req,
+ 	if (!req->has_user)
+ 		return -EFAULT;
+ 
++	if (opcode == IORING_OP_READ || opcode == IORING_OP_WRITE) {
++		ssize_t ret;
++		ret = import_single_range(rw, buf, sqe_len, *iovec, iter);
++		*iovec = NULL;
++		return ret;
++	}
 +
-+#define ADD_CONFIG_TERM_VAL(__type, __name, __val)		\
-+do {								\
-+	ADD_CONFIG_TERM(__type);				\
-+	__t->val.__name = __val;				\
-+} while (0)
-+
-+#define ADD_CONFIG_TERM_STR(__type, __val)			\
-+do {								\
-+	ADD_CONFIG_TERM(__type);				\
-+	__t->val.str = __val;					\
- } while (0)
- 
- 	struct parse_events_term *term;
-@@ -1239,53 +1248,62 @@ do {								\
- 	list_for_each_entry(term, head_config, list) {
- 		switch (term->type_term) {
- 		case PARSE_EVENTS__TERM_TYPE_SAMPLE_PERIOD:
--			ADD_CONFIG_TERM(PERIOD, period, term->val.num);
-+			ADD_CONFIG_TERM_VAL(PERIOD, period, term->val.num);
- 			break;
- 		case PARSE_EVENTS__TERM_TYPE_SAMPLE_FREQ:
--			ADD_CONFIG_TERM(FREQ, freq, term->val.num);
-+			ADD_CONFIG_TERM_VAL(FREQ, freq, term->val.num);
- 			break;
- 		case PARSE_EVENTS__TERM_TYPE_TIME:
--			ADD_CONFIG_TERM(TIME, time, term->val.num);
-+			ADD_CONFIG_TERM_VAL(TIME, time, term->val.num);
- 			break;
- 		case PARSE_EVENTS__TERM_TYPE_CALLGRAPH:
--			ADD_CONFIG_TERM(CALLGRAPH, callgraph, term->val.str);
-+			ADD_CONFIG_TERM_STR(CALLGRAPH, term->val.str);
- 			break;
- 		case PARSE_EVENTS__TERM_TYPE_BRANCH_SAMPLE_TYPE:
--			ADD_CONFIG_TERM(BRANCH, branch, term->val.str);
-+			ADD_CONFIG_TERM_STR(BRANCH, term->val.str);
- 			break;
- 		case PARSE_EVENTS__TERM_TYPE_STACKSIZE:
--			ADD_CONFIG_TERM(STACK_USER, stack_user, term->val.num);
-+			ADD_CONFIG_TERM_VAL(STACK_USER, stack_user,
-+					    term->val.num);
- 			break;
- 		case PARSE_EVENTS__TERM_TYPE_INHERIT:
--			ADD_CONFIG_TERM(INHERIT, inherit, term->val.num ? 1 : 0);
-+			ADD_CONFIG_TERM_VAL(INHERIT, inherit,
-+					    term->val.num ? 1 : 0);
- 			break;
- 		case PARSE_EVENTS__TERM_TYPE_NOINHERIT:
--			ADD_CONFIG_TERM(INHERIT, inherit, term->val.num ? 0 : 1);
-+			ADD_CONFIG_TERM_VAL(INHERIT, inherit,
-+					    term->val.num ? 0 : 1);
- 			break;
- 		case PARSE_EVENTS__TERM_TYPE_MAX_STACK:
--			ADD_CONFIG_TERM(MAX_STACK, max_stack, term->val.num);
-+			ADD_CONFIG_TERM_VAL(MAX_STACK, max_stack,
-+					    term->val.num);
- 			break;
- 		case PARSE_EVENTS__TERM_TYPE_MAX_EVENTS:
--			ADD_CONFIG_TERM(MAX_EVENTS, max_events, term->val.num);
-+			ADD_CONFIG_TERM_VAL(MAX_EVENTS, max_events,
-+					    term->val.num);
- 			break;
- 		case PARSE_EVENTS__TERM_TYPE_OVERWRITE:
--			ADD_CONFIG_TERM(OVERWRITE, overwrite, term->val.num ? 1 : 0);
-+			ADD_CONFIG_TERM_VAL(OVERWRITE, overwrite,
-+					    term->val.num ? 1 : 0);
- 			break;
- 		case PARSE_EVENTS__TERM_TYPE_NOOVERWRITE:
--			ADD_CONFIG_TERM(OVERWRITE, overwrite, term->val.num ? 0 : 1);
-+			ADD_CONFIG_TERM_VAL(OVERWRITE, overwrite,
-+					    term->val.num ? 0 : 1);
- 			break;
- 		case PARSE_EVENTS__TERM_TYPE_DRV_CFG:
--			ADD_CONFIG_TERM(DRV_CFG, drv_cfg, term->val.str);
-+			ADD_CONFIG_TERM_STR(DRV_CFG, term->val.str);
- 			break;
- 		case PARSE_EVENTS__TERM_TYPE_PERCORE:
--			ADD_CONFIG_TERM(PERCORE, percore,
--					term->val.num ? true : false);
-+			ADD_CONFIG_TERM_VAL(PERCORE, percore,
-+					    term->val.num ? true : false);
- 			break;
- 		case PARSE_EVENTS__TERM_TYPE_AUX_OUTPUT:
--			ADD_CONFIG_TERM(AUX_OUTPUT, aux_output, term->val.num ? 1 : 0);
-+			ADD_CONFIG_TERM_VAL(AUX_OUTPUT, aux_output,
-+					    term->val.num ? 1 : 0);
- 			break;
- 		case PARSE_EVENTS__TERM_TYPE_AUX_SAMPLE_SIZE:
--			ADD_CONFIG_TERM(AUX_SAMPLE_SIZE, aux_sample_size, term->val.num);
-+			ADD_CONFIG_TERM_VAL(AUX_SAMPLE_SIZE, aux_sample_size,
-+					    term->val.num);
- 			break;
- 		default:
- 			break;
-@@ -1322,7 +1340,7 @@ static int get_config_chgs(struct perf_pmu *pmu, struct list_head *head_config,
- 	}
- 
- 	if (bits)
--		ADD_CONFIG_TERM(CFG_CHG, cfg_chg, bits);
-+		ADD_CONFIG_TERM_VAL(CFG_CHG, cfg_chg, bits);
- 
- #undef ADD_CONFIG_TERM
- 	return 0;
+ #ifdef CONFIG_COMPAT
+ 	if (req->ctx->compat)
+ 		return compat_import_iovec(rw, buf, sqe_len, UIO_FASTIOV,
+-- 
+2.24.0
+
