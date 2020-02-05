@@ -2,174 +2,235 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4544B153957
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 20:57:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F62F15395A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 20:57:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbgBET5C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 14:57:02 -0500
-Received: from mga09.intel.com ([134.134.136.24]:53285 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727079AbgBET5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 14:57:02 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2020 11:57:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,406,1574150400"; 
-   d="scan'208";a="225933582"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga008.fm.intel.com with ESMTP; 05 Feb 2020 11:57:00 -0800
-Date:   Wed, 5 Feb 2020 11:57:00 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
-        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
-        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
-        Serge Ayoun <serge.ayoun@intel.com>
-Subject: Re: [PATCH v25 07/21] x86/sgx: Enumerate and track EPC sections
-Message-ID: <20200205195700.GJ4877@linux.intel.com>
-References: <20200204060545.31729-1-jarkko.sakkinen@linux.intel.com>
- <20200204060545.31729-8-jarkko.sakkinen@linux.intel.com>
+        id S1727502AbgBET5P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 14:57:15 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40464 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727361AbgBET5P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 14:57:15 -0500
+Received: by mail-io1-f66.google.com with SMTP id x1so3571318iop.7
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 11:57:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=E8DT/JDkCyTz3eJT+UFCcTHz+yBESFEOpQDShsbicZo=;
+        b=WUu4aa27JwL7uv2P/L4c3Ok+FyuKnqJGHLzGZYjJt9q/DSazi89aSuNF5QF2wicVsv
+         ebLtKMEBEsZTeJWcdtGUvwZRlzQ6lkH9tS6lvboxehjdvt+GgWZOI0X3pYDwY5fbUwlk
+         66EQ3KGTsAybDLyF43WaeikkWK6NTpmVU9U5LF4og2RqArCzJtLfT9K6EN7ncauORJV3
+         viR4bsYex8C8aof2HDO8Bn+/YKScoZj0PNhkb249dkiQ/jhxzlJQ0woYy1wUNij+nC3p
+         ddfQqM4Yu9A2zOMqInce5lbterdjRi4WoVxM6b1kcH5v/XULCALRXlK6AJmKiK5hABpP
+         2K6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=E8DT/JDkCyTz3eJT+UFCcTHz+yBESFEOpQDShsbicZo=;
+        b=cFpgtHPj0fyzsMVLLabd+elWmX3gzG049hWq4bQ4lGZD+A2maGOiCbH/vbTmnSGukC
+         BtAN4FLCeCD+0oODMOBz6ST2ITLezCTD+NqKdWV8l2O5/K6QYErEYP/UYRsxXrlUf0eO
+         J16DUmCRhsvxDQ9V6rj6Uuul1tjx9i9I9o2BcFhLmGVmj50yY3Hpt479/9hPORqO4fEL
+         xlxsxVHfJc/5U70iv9vikIwN8DsNOeZEA7XN7267XzE8+TkTI79fT6aN+8NCW+lgCIop
+         5Z82M4rbqk1kp5cZbJuHoYjo1WaGYf3FQgbq/wrW6SB7k+NtAEzxIXbhN83Hc6qSqnB6
+         idVw==
+X-Gm-Message-State: APjAAAWH+9hBzd5AQuEpOtARA3IqvqNdILtQGTIGm8dMUd3r9+bBt6zM
+        dbt/1AsX+EeBlaeyPd1E3c+uz4t1GclKY7Vs0eI=
+X-Google-Smtp-Source: APXvYqzzljsWEvyAgqshuVvQI0+bwWGkLOy/+bGZ3qsxtX0LFjmImFZkCekHNQSV/qnqvg1jI5PMWdsyBC7Y9123Vas=
+X-Received: by 2002:a6b:e705:: with SMTP id b5mr31341286ioh.139.1580932634363;
+ Wed, 05 Feb 2020 11:57:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200204060545.31729-8-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20200205105955.28143-1-kraxel@redhat.com> <20200205105955.28143-5-kraxel@redhat.com>
+In-Reply-To: <20200205105955.28143-5-kraxel@redhat.com>
+From:   Chia-I Wu <olvaffe@gmail.com>
+Date:   Wed, 5 Feb 2020 11:57:03 -0800
+Message-ID: <CAPaKu7RxijC_oS4GPukS9wEe9gn8DPQgaGZKwG6g8M8xwTnsig@mail.gmail.com>
+Subject: Re: [PATCH 4/4] drm/virtio: move virtio_gpu_mem_entry initialization
+ to new function
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 04, 2020 at 08:05:31AM +0200, Jarkko Sakkinen wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
-> 
-> Enumerate Enclave Page Cache (EPC) sections via CPUID and add the data
-> structures necessary to track EPC pages so that they can be allocated,
-> freed and managed. As a system may have multiple EPC sections, invoke CPUID
-> on SGX sub-leafs until an invalid leaf is encountered.
-> 
-> For simplicity, support a maximum of eight EPC sections. Existing client
-> hardware supports only a single section, while upcoming server hardware
-> will support at most eight sections. Bounding the number of sections also
-> allows the section ID to be embedded along with a page's offset in a single
-> unsigned long, enabling easy retrieval of both the VA and PA for a given
-> page.
-
-...
-
-> +++ b/arch/x86/kernel/cpu/sgx/reclaim.c
-> @@ -0,0 +1,87 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-> +// Copyright(c) 2016-19 Intel Corporation.
+On Wed, Feb 5, 2020 at 3:00 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
+>
+> Introduce new virtio_gpu_object_shmem_init() helper function which will
+> create the virtio_gpu_mem_entry array, containing the backing storage
+> information for the host.  For the most path this just moves code from
+> virtio_gpu_object_attach().
+>
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>  drivers/gpu/drm/virtio/virtgpu_drv.h    |  4 ++
+>  drivers/gpu/drm/virtio/virtgpu_object.c | 49 +++++++++++++++++++++++++
+>  drivers/gpu/drm/virtio/virtgpu_vq.c     | 49 ++-----------------------
+>  3 files changed, 56 insertions(+), 46 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
+> index 15fb3c12f22f..be62a7469b04 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
+> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
+> @@ -71,6 +71,10 @@ struct virtio_gpu_object {
+>
+>         struct sg_table *pages;
+>         uint32_t mapped;
 > +
-> +#include <linux/freezer.h>
-> +#include <linux/highmem.h>
-> +#include <linux/kthread.h>
-> +#include <linux/pagemap.h>
-> +#include <linux/ratelimit.h>
-> +#include <linux/slab.h>
-> +#include <linux/sched/mm.h>
-> +#include <linux/sched/signal.h>
-> +#include "encls.h"
+> +       struct virtio_gpu_mem_entry *ents;
+> +       unsigned int nents;
 > +
-> +struct task_struct *ksgxswapd_tsk;
-> +
-> +/*
-> + * Reset all pages to uninitialized state. Pages could be in initialized on
-> + * kmemexec.
-> + */
-> +static void sgx_sanitize_section(struct sgx_epc_section *section)
+>         bool dumb;
+>         bool created;
+>  };
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
+> index bce2b3d843fe..4e82e269a1f4 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_object.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_object.c
+> @@ -121,6 +121,49 @@ struct drm_gem_object *virtio_gpu_create_object(struct drm_device *dev,
+>         return &bo->base.base;
+>  }
+>
+> +static int virtio_gpu_object_shmem_init(struct virtio_gpu_device *vgdev,
+> +                                       struct virtio_gpu_object *bo)
 > +{
-> +	struct sgx_epc_page *page, *tmp;
-> +	LIST_HEAD(secs_list);
-> +	int ret;
+> +       bool use_dma_api = !virtio_has_iommu_quirk(vgdev->vdev);
+> +       struct scatterlist *sg;
+> +       int si, ret;
 > +
-> +	while (!list_empty(&section->unsanitized_page_list)) {
-> +		if (kthread_should_stop())
-> +			return;
+> +       ret = drm_gem_shmem_pin(&bo->base.base);
+> +       if (ret < 0)
+> +               return -EINVAL;
 > +
-> +		spin_lock(&section->lock);
+> +       bo->pages = drm_gem_shmem_get_sg_table(&bo->base.base);
+> +       if (bo->pages == NULL) {
+> +               drm_gem_shmem_unpin(&bo->base.base);
+> +               return -EINVAL;
+> +       }
 > +
-> +		page = list_first_entry(&section->unsanitized_page_list,
-> +					struct sgx_epc_page, list);
+> +       if (use_dma_api) {
+> +               bo->mapped = dma_map_sg(vgdev->vdev->dev.parent,
+> +                                        bo->pages->sgl, bo->pages->nents,
+> +                                        DMA_TO_DEVICE);
+> +               bo->nents = bo->mapped;
+> +       } else {
+> +               bo->nents = bo->pages->nents;
+> +       }
 > +
-> +		ret = __eremove(sgx_epc_addr(page));
-> +		if (!ret)
-> +			list_move(&page->list, &section->page_list);
-> +		else
-> +			list_move_tail(&page->list, &secs_list);
+> +       bo->ents = kmalloc_array(bo->nents, sizeof(struct virtio_gpu_mem_entry),
+> +                                GFP_KERNEL);
+> +       if (!bo->ents) {
+> +               DRM_ERROR("failed to allocate ent list\n");
+> +               return -ENOMEM;
+> +       }
 > +
-> +		spin_unlock(&section->lock);
-> +
-> +		cond_resched();
-> +	}
-> +
-> +	list_for_each_entry_safe(page, tmp, &secs_list, list) {
-> +		if (kthread_should_stop())
-> +			return;
-> +
-> +		ret = __eremove(sgx_epc_addr(page));
-> +		if (!WARN_ON_ONCE(ret)) {
-
-Sadly, this WARN can fire after kexec() on systems with multiple EPC
-sections if the SECS has child pages in another section.
-
-Virtual EPC (KVM) has a similar issue, which I'm handling by collecting all
-pages that fail a second EREMOVE in a global list, and then retrying every
-page in the global list every time a virtual EPC is destroyed, i.e. might
-have freed pages.
-
-The same approach should work here, e.g. retry all SECS pages a third time
-once all sections have been sanitized and WARN if EREMOVE fails a third
-time on a page.
-
-> +			spin_lock(&section->lock);
-> +			list_move(&page->list, &section->page_list);
-> +			spin_unlock(&section->lock);
-> +		} else {
-> +			list_del(&page->list);
-> +			kfree(page);
-> +		}
-> +
-> +		cond_resched();
-> +	}
+> +       for_each_sg(bo->pages->sgl, sg, bo->nents, si) {
+> +               bo->ents[si].addr = cpu_to_le64(use_dma_api
+> +                                               ? sg_dma_address(sg)
+> +                                               : sg_phys(sg));
+> +               bo->ents[si].length = cpu_to_le32(sg->length);
+> +               bo->ents[si].padding = 0;
+> +       }
+> +       return 0;
 > +}
 > +
-> +static int ksgxswapd(void *p)
-> +{
-> +	int i;
+>  int virtio_gpu_object_create(struct virtio_gpu_device *vgdev,
+>                              struct virtio_gpu_object_params *params,
+>                              struct virtio_gpu_object **bo_ptr,
+> @@ -165,6 +208,12 @@ int virtio_gpu_object_create(struct virtio_gpu_device *vgdev,
+>                                                objs, fence);
+>         }
+>
+> +       ret = virtio_gpu_object_shmem_init(vgdev, bo);
+> +       if (ret != 0) {
+> +               virtio_gpu_free_object(&shmem_obj->base);
+> +               return ret;
+> +       }
 > +
-> +	set_freezable();
-> +
-> +	for (i = 0; i < sgx_nr_epc_sections; i++)
-> +		sgx_sanitize_section(&sgx_epc_sections[i]);
+>         ret = virtio_gpu_object_attach(vgdev, bo, NULL);
+>         if (ret != 0) {
+>                 virtio_gpu_free_object(&shmem_obj->base);
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+> index e258186bedb2..7db91376f2f2 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_vq.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+> @@ -1081,54 +1081,11 @@ int virtio_gpu_object_attach(struct virtio_gpu_device *vgdev,
+>                              struct virtio_gpu_object *obj,
+>                              struct virtio_gpu_fence *fence)
+>  {
+> -       bool use_dma_api = !virtio_has_iommu_quirk(vgdev->vdev);
+> -       struct virtio_gpu_mem_entry *ents;
+> -       struct scatterlist *sg;
+> -       int si, nents, ret;
+> -
+> -       if (WARN_ON_ONCE(!obj->created))
+> -               return -EINVAL;
+> -       if (WARN_ON_ONCE(obj->pages))
+> -               return -EINVAL;
+> -
+> -       ret = drm_gem_shmem_pin(&obj->base.base);
+> -       if (ret < 0)
+> -               return -EINVAL;
+> -
+> -       obj->pages = drm_gem_shmem_get_sg_table(&obj->base.base);
+> -       if (obj->pages == NULL) {
+> -               drm_gem_shmem_unpin(&obj->base.base);
+> -               return -EINVAL;
+> -       }
+> -
+> -       if (use_dma_api) {
+> -               obj->mapped = dma_map_sg(vgdev->vdev->dev.parent,
+> -                                        obj->pages->sgl, obj->pages->nents,
+> -                                        DMA_TO_DEVICE);
+> -               nents = obj->mapped;
+> -       } else {
+> -               nents = obj->pages->nents;
+> -       }
+> -
+> -       /* gets freed when the ring has consumed it */
+> -       ents = kmalloc_array(nents, sizeof(struct virtio_gpu_mem_entry),
+> -                            GFP_KERNEL);
+> -       if (!ents) {
+> -               DRM_ERROR("failed to allocate ent list\n");
+> -               return -ENOMEM;
+> -       }
+> -
+> -       for_each_sg(obj->pages->sgl, sg, nents, si) {
+> -               ents[si].addr = cpu_to_le64(use_dma_api
+> -                                           ? sg_dma_address(sg)
+> -                                           : sg_phys(sg));
+> -               ents[si].length = cpu_to_le32(sg->length);
+> -               ents[si].padding = 0;
+> -       }
+> -
+>         virtio_gpu_cmd_resource_attach_backing(vgdev, obj->hw_res_handle,
+> -                                              ents, nents,
+> +                                              obj->ents, obj->nents,
+>                                                fence);
+> +       obj->ents = NULL;
+> +       obj->nents = 0;
+Hm, if the entries are temporary, can we allocate and initialize them
+in this function?
 
-I'm having second thoughts about proactively sanitizing the EPC sections.
-I think it'd be better to do EREMOVE the first time a page is allocated,
-e.g. add a SGX_EPC_PAGE_UNSANITIZED flag.
+virtio_gpu_object_shmem_init will just pin and map pages.  Maybe
+rename it to virtio_gpu_object_pin_pages (and add a helper
+virtio_gpu_object_unpin_pages for use by virtio_gpu_cleanup_object).
 
-  1. Sanitizing EPC that's never used is a waste of cycles, especially on
-     platforms with 64gb+ of EPC.
+Because we pin pages on object creation, virtio_gpu_gem_funcs does not
+need to provide the optional pin/unpin hooks.
 
-  2. Deferring to allocation time automatically scales with the number of
-     tasks that are allocating EPC.  And, the CPU time will also be
-     accounted to those tasks.
-
-  3. Breaks on-demand paging when running in a VM, e.g. if the VMM chooses
-     to allocate a physical EPC page when it's actually accessed by the
-     VM.  I don't expect this to be a problem any time soon, as all VMMs
-     will likely preallocate EPC pages until KVM (or any other hypervisor)
-     gains EPC oversusbscription support, which may or may not ever happen.
-     But, I'd prefer to simply not have the problem in the first place.
-
-The logic will be a bit more complicated, but not terribly so.  
-
-> +
-> +	return 0;
-> +}
+>         return 0;
+>  }
+>
+> --
+> 2.18.1
+>
