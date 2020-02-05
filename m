@@ -2,112 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FB73152420
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 01:39:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1285A15242C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 01:41:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbgBEAjf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 19:39:35 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:50519 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727494AbgBEAje (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 19:39:34 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48C2kq2Q9Kz9sSN;
-        Wed,  5 Feb 2020 11:39:31 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1580863172;
-        bh=RgyY/tOo9lziedT4Kg/hB7aY/945tp8KAZmY13gSICA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=gjGg21E8GutoxDwoKArshcfZP7OMfo6KXVMdxP1JnveIwqYFf16suHb75Q2KTuoBu
-         LXT3ZzH5O/uok0ZrNOkjYZigsK469DDk/P645Ed8drQggyzyPNLml9Ex8aDazeBPVg
-         FOswW+53XfDN2d5SFADQ4a3Jxhz22usWTIZBuDNyQhcbyt9mskA7iRoMRCE8tDSgGV
-         A9vAQXJtOXjxSCOLf/8cM51siKyIAdxtFtoyYO8VEIgfFpvnacjBixIDIa0V717uTp
-         24qpMp/Op4Z7cz2UvdqGbPY7Vf6eExy6PbdB0PfMZzsKGqJB5yiwiMx0/LGQuhWS0d
-         +puw0yMXuyeuw==
-Date:   Wed, 5 Feb 2020 11:39:30 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: wcd934x: Add missing COMMON_CLK dependency to
- SND_SOC_ALL_CODECS
-Message-ID: <20200205113930.5eb08bb4@canb.auug.org.au>
-In-Reply-To: <20200204131857.7634-1-geert@linux-m68k.org>
-References: <20200204131857.7634-1-geert@linux-m68k.org>
+        id S1727758AbgBEAlt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 19:41:49 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:38966 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727494AbgBEAls (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 19:41:48 -0500
+Received: by mail-oi1-f196.google.com with SMTP id z2so230259oih.6;
+        Tue, 04 Feb 2020 16:41:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UkH7zbzWwgt3KeJcgew3A/K0SL1CvpLePI0yYn94J6g=;
+        b=sIL7asl4JV/aeujSnhoo9ko0NGsytCLBeMGQC4SFikAsR7B9aYASMBtsfgRQtgkTYB
+         Dmb9M0NbIknBAq2f5BMjSpM+QKoGmFOgYKPdo782y9x4bNB7TwNoK3Qi1kjs3Uv3JhF4
+         IdO0eB1tJExfhQEQYI7XniFbVjYgShEOOcQwaC9cvrY24h0rEaK6d/WrzFOJaZjnxtSY
+         Iiu+E7tRunShDCMBv/u16FMi+FfctlpuzNVkQ/xVzajow7S1zBuSZhpmPxJCDp3OCVAV
+         2ReyaJ/fG6Wqk85wZc+LAWYcsF25fAsGo9GUC2dkcK/ZFJT42wE2X8JSg6McUANkUk5z
+         qEjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UkH7zbzWwgt3KeJcgew3A/K0SL1CvpLePI0yYn94J6g=;
+        b=tbhQvB+NN7uCAY8cOk3lWcsLDAYabnSYFjF4WZczLa+A4BcqW56qBSPWEjzeelJYJw
+         TYyDLk3rBxs5GxE5XhdoBgvnixKR0zwGHmE4g8JUB2YjmA37wngRKZZyZPo2gDiwnE6c
+         P+Wr2tRnE/+fbey6Fd5hqRxEJCGCsgmZBfXlcB1WrnjKIw+M9hyPjL+zRouWZy8vPUYl
+         ZdFd7CCG7hNBIg/1HLkj2HzJmF4CEzTRjMhlpAGG8ttk4CHWN3pRiDfbl0QxR3O7jAE4
+         6z+il6dLPpzCIEG+ms4s+EM0stQDFG1qlyDF4s/GTEdX+HiiYWrEzt9AmZuR6CCBG7R5
+         iDRQ==
+X-Gm-Message-State: APjAAAVwWq9WKj//XcyUFz2jAT00oiEsxpyDpsTWCmTsqX2NJ/9vLtV7
+        RHuAC5EZYmD5siONT0KgzMO0NMLaPtETtwti5XNCBJj6
+X-Google-Smtp-Source: APXvYqyFz525nHfcKUq3P7rIhqzT5qT6SVTceYfQt/OupvQZEYPyeRik9oA34bQZylq02f9SCd/6JHgrvmvA788P+eM=
+X-Received: by 2002:aca:fc0c:: with SMTP id a12mr1153544oii.118.1580863307735;
+ Tue, 04 Feb 2020 16:41:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Hiz/NjwjpbUPYg/fH_/v/0X";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <0000000000009a59d2059dc3c8e9@google.com> <a1673e4f-6382-d7df-6942-6e4ffd2b81ce@gmail.com>
+ <20200204.222245.1920371518669295397.davem@davemloft.net> <CAM_iQpVE=B+LDpG=DpiHh_ydUxxhTj_ge-20zgdB4J1OqAfCtQ@mail.gmail.com>
+ <787030ee-ff3e-8eae-3526-24aa8251bcc6@gmail.com>
+In-Reply-To: <787030ee-ff3e-8eae-3526-24aa8251bcc6@gmail.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Tue, 4 Feb 2020 16:41:36 -0800
+Message-ID: <CAM_iQpWzhdfgHqLQPYwN8dyd37+SMXihM+bf1Cbw3iTV8VE8dw@mail.gmail.com>
+Subject: Re: memory leak in tcindex_set_parms
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        syzbot+f0bbb2287b8993d4fa74@syzkaller.appspotmail.com,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Jakub Kicinski <kuba@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Hiz/NjwjpbUPYg/fH_/v/0X
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Geert,
-
-On Tue,  4 Feb 2020 14:18:57 +0100 Geert Uytterhoeven <geert@linux-m68k.org=
-> wrote:
+On Tue, Feb 4, 2020 at 3:40 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
 >
-> Just adding a dependency on COMMON_CLK to SND_SOC_WCD934X is not
-> sufficient, as enabling SND_SOC_ALL_CODECS will still select it,
-> breaking the build later:
->=20
->     WARNING: unmet direct dependencies detected for SND_SOC_WCD934X
->       Depends on [n]: SOUND [=3Dm] && !UML && SND [=3Dm] && SND_SOC [=3Dm=
-] && COMMON_CLK [=3Dn] && MFD_WCD934X [=3Dm]
->       Selected by [m]:
->       - SND_SOC_ALL_CODECS [=3Dm] && SOUND [=3Dm] && !UML && SND [=3Dm] &=
-& SND_SOC [=3Dm] && COMPILE_TEST [=3Dy] && MFD_WCD934X [=3Dm]
->     ...
->     ERROR: "of_clk_add_provider" [sound/soc/codecs/snd-soc-wcd934x.ko] un=
-defined!
->     ERROR: "of_clk_src_simple_get" [sound/soc/codecs/snd-soc-wcd934x.ko] =
-undefined!
->     ERROR: "clk_hw_register" [sound/soc/codecs/snd-soc-wcd934x.ko] undefi=
-ned!
->     ERROR: "__clk_get_name" [sound/soc/codecs/snd-soc-wcd934x.ko] undefin=
-ed!
->=20
-> Fix this by adding the missing dependency to SND_SOC_ALL_CODECS
->=20
-> Fixes: 42b716359beca106 ("ASoC: wcd934x: Add missing COMMON_CLK dependenc=
-y")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
-> Seen with e.g. m68k/allmodconfig.
+> The only thing the repro fires for me on latest net tree is an UBSAN warning about a silly ->shift
 
-Also seen with powerpc/allyesconfig
+Yeah, I thought HEAD commit 322bf2d3 already contains my fix,
+I was wrong.
 
-Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
---=20
-Cheers,
-Stephen Rothwell
+>
+> I have not tried it on the old kernel.
+>
+> [  170.331009] UBSAN: Undefined behaviour in net/sched/cls_tcindex.c:239:29
+> [  170.337729] shift exponent 19375 is too large for 32-bit type 'int'
 
---Sig_/Hiz/NjwjpbUPYg/fH_/v/0X
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Please send your patch formally, it looks reasonable to me.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl46DsIACgkQAVBC80lX
-0GwzRwgAgmwTJPOGlGhFjolOKlrmmYlrenpXgKt+jAHgVCjxg02BcOjHK2fq14FZ
-+EHbzsS6mcSM3yjNhuObh1tUMdIRxCCssy/mHdFuCO4QnDeDf2EuCMmCDz/8icqD
-vdBkRhMbB4EbX/1B5tEwACPmunrYRCoQ4CrOUvDMAbZ6tztglNDe1fqJxpr9QBFT
-lW69SSDX5JALt3MOBvxO9rWsoG51beKLwuMg9lEON64bzp9vA2xq5Z44+asHWfxB
-pnLa8MlKG99cxqzXDy+kPaGFRlfVy4XHwyn0bJJnHjLSkQXibYrIqKbxyUNfjfGS
-3rMWUB3s4Kg/vPD6FlvW7MPda+QjcQ==
-=16Dv
------END PGP SIGNATURE-----
-
---Sig_/Hiz/NjwjpbUPYg/fH_/v/0X--
+Thanks.
