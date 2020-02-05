@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14268153479
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 16:45:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1146D153475
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 16:45:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbgBEPpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 10:45:18 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:35854 "EHLO
+        id S1727170AbgBEPpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 10:45:12 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:35844 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727000AbgBEPpP (ORCPT
+        with ESMTP id S1726334AbgBEPpL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 10:45:15 -0500
+        Wed, 5 Feb 2020 10:45:11 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1izMrS-0004Qk-DZ; Wed, 05 Feb 2020 16:45:06 +0100
+        id 1izMrR-0004Qe-No; Wed, 05 Feb 2020 16:45:05 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 028691C1EC5;
-        Wed,  5 Feb 2020 16:45:06 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 68D431C1EC5;
+        Wed,  5 Feb 2020 16:45:05 +0100 (CET)
 Date:   Wed, 05 Feb 2020 15:45:05 -0000
 From:   "tip-bot2 for Thomas Richter" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf test: Fix test case Merge cpu map
+Subject: [tip: perf/urgent] perf probe: Add ustring support for perf probe command
 Cc:     Thomas Richter <tmricht@linux.ibm.com>,
-        Andi Kleen <ak@linux.intel.com>,
         Heiko Carstens <heiko.carstens@de.ibm.com>,
         Vasily Gorbik <gor@linux.ibm.com>, sumanthk@linux.ibm.com,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200120132011.64698-1-tmricht@linux.ibm.com>
-References: <20200120132011.64698-1-tmricht@linux.ibm.com>
+In-Reply-To: <20200120132011.64698-2-tmricht@linux.ibm.com>
+References: <20200120132011.64698-2-tmricht@linux.ibm.com>
 MIME-Version: 1.0
-Message-ID: <158091750578.411.91326427267812239.tip-bot2@tip-bot2>
+Message-ID: <158091750519.411.12825187466008183227.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -50,106 +49,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     0dd1979f7f9981dcc5c497e68390f208580032ae
-Gitweb:        https://git.kernel.org/tip/0dd1979f7f9981dcc5c497e68390f208580032ae
+Commit-ID:     1873f1547dde65c687de143938581347a9312207
+Gitweb:        https://git.kernel.org/tip/1873f1547dde65c687de143938581347a9312207
 Author:        Thomas Richter <tmricht@linux.ibm.com>
-AuthorDate:    Mon, 20 Jan 2020 14:20:09 +01:00
+AuthorDate:    Mon, 20 Jan 2020 14:20:10 +01:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Thu, 30 Jan 2020 11:55:02 +01:00
+CommitterDate: Fri, 31 Jan 2020 09:33:58 +01:00
 
-perf test: Fix test case Merge cpu map
+perf probe: Add ustring support for perf probe command
 
-Commit a2408a70368a ("perf evlist: Maintain evlist->all_cpus")
-introduces a test case for cpumap merge operation, see functions
-perf_cpu_map__merge() and test__cpu_map_merge().
+Kernel commit 88903c464321 ("tracing/probe: Add ustring type for user-space string")
+adds support for user-space strings when type 'ustring' is specified.
 
-The test case fails on s390 with this error message:
+Here is an example using sysfs command line interface
+for kprobes:
 
- [root@m35lp76 perf]# ./perf test -Fvvvvv 52
- 52: Merge cpu map                                         :
- --- start ---
- cpumask list: 1-2,4-5,7
- perf: /root/linux/tools/include/linux/refcount.h:131:\
-          refcount_sub_and_test: Assertion `!(new > val)' failed.
- Aborted (core dumped)
- [root@m35lp76 perf]#
+Function to probe:
+  struct filename *
+  getname_flags(const char __user *filename, int flags, int *empty)
 
-The root cause is in the function test__cpu_map_merge():
-It creates two cpu_maps named 'a' and 'b':
+Setup:
+  # cd /sys/kernel/debug/tracing/
+  # echo 'p:tmr1 getname_flags +0(%r2):ustring' > kprobe_events
+  # cat events/kprobes/tmr1/format | fgrep print
+  print fmt: "(%lx) arg1=\"%s\"", REC->__probe_ip, REC->arg1
+  # echo 1 > events/kprobes/tmr1/enable
+  # touch /tmp/111
+  # echo 0 > events/kprobes/tmr1/enable
+  # cat trace|fgrep /tmp/111
+  touch-5846  [005] d..2 255520.717960: tmr1:\
+	  (getname_flags+0x0/0x400) arg1="/tmp/111"
 
-  struct perf_cpu_map *a = perf_cpu_map__new("4,2,1");
-  struct perf_cpu_map *b = perf_cpu_map__new("4,5,7");
+Doing the same with the perf tool fails.
+Using type 'string' succeeds:
+ # perf probe "vfs_getname=getname_flags:72 pathname=filename:string"
+ Added new event:
+   probe:vfs_getname (on getname_flags:72 with pathname=filename:string)
+   ....
+ # perf probe -d probe:vfs_getname
+ Removed event: probe:vfs_getname
 
-and creates a third map named 'c' which is the result of
-the merge of maps a and b:
+However using type 'ustring' fails (output before):
+ # perf probe "vfs_getname=getname_flags:72 pathname=filename:ustring"
+ Failed to write event: Invalid argument
+   Error: Failed to add events.
+ #
 
-  struct perf_cpu_map *c = perf_cpu_map__merge(a, b);
+Fix this by adding type 'ustring' in function
+convert_variable_type().
 
-After some verifaction of the merged cpu_map all three
-of them are have their reference count reduced and are
-freed:
+Using ustring succeeds (output after):
+ # ./perf probe "vfs_getname=getname_flags:72 pathname=filename:ustring"
+ Added new event:
+   probe:vfs_getname (on getname_flags:72 with pathname=filename:ustring)
 
-   perf_cpu_map__put(a); (1)
-   perf_cpu_map__put(b);
-   perf_cpu_map__put(c);
+ You can now use it in all perf tools, such as:
 
-The release of perf_cpu_map__put(a) is wrong. The map
-is already released and free'ed as part of the function
+	perf record -e probe:vfs_getname -aR sleep 1
 
-  perf_cpu_map__merge(struct perf_cpu_map *orig,
-  |	              struct perf_cpu_map *other)
-  +--> perf_cpu_map__put(orig);
-       |
-       +--> cpu_map__delete(orig)
+ #
 
-At the end perf_cpu_map_put() is called for map 'orig'
-alias 'a' and since the reference count is 1, the map
-is deleted, as can be seen by the following gdb trace:
-
- (gdb) where
- #0  tcache_put (tc_idx=0, chunk=0x156cc30) at malloc.c:2940
- #1  _int_free (av=0x3fffd49ee80 <main_arena>, p=0x156cc30,
-		     have_lock=<optimized out>) at malloc.c:4222
- #2  0x00000000012d5e78 in cpu_map__delete (map=0x156cc40) at cpumap.c:31
- #3  0x00000000012d5f7a in perf_cpu_map__put (map=0x156cc40) at cpumap.c:45
- #4  0x00000000012d723a in perf_cpu_map__merge (orig=0x156cc40,
-     other=0x156cc60) at cpumap.c:343
- #5  0x000000000110cdd0 in test__cpu_map_merge (
-     test=0x14ea6c8 <generic_tests+2856>, subtest=-1) at tests/cpumap.c:128
-
-Thus the perf_cpu_map__put(a) (see (1) above) frees map 'a'
-a second time and causes the failure. Fix this be removing that
-function call.
-
-Output after:
-  [root@m35lp76 perf]# ./perf test -Fvvvvv 52
-  52: Merge cpu map                                         :
-  --- start ---
-  cpumask list: 1-2,4-5,7
-  ---- end ----
-  Merge cpu map: Ok
-  [root@m35lp76 perf]#
+Note: This issue also exists on x86, it is not s390 specific.
 
 Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
 Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
 Cc: Vasily Gorbik <gor@linux.ibm.com>
 Cc: sumanthk@linux.ibm.com
-Link: http://lore.kernel.org/lkml/20200120132011.64698-1-tmricht@linux.ibm.com
+Link: http://lore.kernel.org/lkml/20200120132011.64698-2-tmricht@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/cpumap.c | 1 -
- 1 file changed, 1 deletion(-)
+ tools/perf/util/probe-finder.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/cpumap.c b/tools/perf/tests/cpumap.c
-index 4ac5674..29c793a 100644
---- a/tools/perf/tests/cpumap.c
-+++ b/tools/perf/tests/cpumap.c
-@@ -131,7 +131,6 @@ int test__cpu_map_merge(struct test *test __maybe_unused, int subtest __maybe_un
- 	TEST_ASSERT_VAL("failed to merge map: bad nr", c->nr == 5);
- 	cpu_map__snprint(c, buf, sizeof(buf));
- 	TEST_ASSERT_VAL("failed to merge map: bad result", !strcmp(buf, "1-2,4-5,7"));
--	perf_cpu_map__put(a);
- 	perf_cpu_map__put(b);
- 	perf_cpu_map__put(c);
- 	return 0;
+diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
+index c470c49..1c817ad 100644
+--- a/tools/perf/util/probe-finder.c
++++ b/tools/perf/util/probe-finder.c
+@@ -303,7 +303,8 @@ static int convert_variable_type(Dwarf_Die *vr_die,
+ 	char prefix;
+ 
+ 	/* TODO: check all types */
+-	if (cast && strcmp(cast, "string") != 0 && strcmp(cast, "x") != 0 &&
++	if (cast && strcmp(cast, "string") != 0 && strcmp(cast, "ustring") &&
++	    strcmp(cast, "x") != 0 &&
+ 	    strcmp(cast, "s") != 0 && strcmp(cast, "u") != 0) {
+ 		/* Non string type is OK */
+ 		/* and respect signedness/hexadecimal cast */
