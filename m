@@ -2,268 +2,405 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BEB915326F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 15:04:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4513D153289
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 15:11:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728208AbgBEOD5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 09:03:57 -0500
-Received: from 8bytes.org ([81.169.241.247]:51202 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727468AbgBEOD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 09:03:56 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 6A5C8371; Wed,  5 Feb 2020 15:03:55 +0100 (CET)
-Date:   Wed, 5 Feb 2020 15:03:54 +0100
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
-Subject: [git pull] IOMMU Updates for Linux v5.6
-Message-ID: <20200205140344.GA32375@8bytes.org>
+        id S1728188AbgBEOLV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 09:11:21 -0500
+Received: from mail-dm6nam12on2064.outbound.protection.outlook.com ([40.107.243.64]:5536
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726575AbgBEOLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 09:11:21 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jqTit+m7BxHmkwTAJjg7wjDxE9MgoGvRP92CCwT63fvs5fISTJpk3gl7giO6+XBsW3SKLuslm8iJBiRhvUQme7CEdEY5+Lw4KnIX/S507ndf29Yi7fHZaKUBRaMJgzfpAeEVHkYBr5UPRxmAGSA6M5CSm/TV9UPcKGiIwPS+49hfr+rMpITFlIxeBf55+4qvtAoIdLv6PYT+YkZrfQtiYU9v1QXWJ5dgYxNpycbm0YLSTKx/fwAKcnmDwSldStaGgsDHC5GbpFYpb5EDzhvqBsqMCUbmte/DW/dTlCBV4B8wCB7QvhKKcikaJd8S12nOPuIKvNLxZD6jvMFq5dc5Kg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rrIzBNCSY7ScFrDdEzAiu2xTBadRkGUxhpjo3jg5Op4=;
+ b=epEzlAnBKbO4tTiTQsPdYv7tmcRVt00hFxqWPvXSdoCyaoSFSFDQNhw2Ruwarwiqd6p8f5Ycn1DXB+4W/GckeG6Yxp/wOZV6StzP8e/gvZZCRflPRGj3HNDbT6MxgfMMOP11PssIrTW31yU2tAp8XmLOMSUl1uK6aWBxYh6xz1DfHm2E1ARSa+zcQUcEsOoUYz6V4f0nRxksANqdSHX94V+WpVG7owkyFaHH7ZmBtgtAhjvqAM06JQDBIVto59GKk1smWMwEBzFNK+BKYOiyft6S8xlbyiJisRD7i32wGuaElZAa9Nnlz9lQTw3xEc5rqKIl1+ZO9y2aewN8RdwDaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=linutronix.de smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rrIzBNCSY7ScFrDdEzAiu2xTBadRkGUxhpjo3jg5Op4=;
+ b=I6IQw5US/swdvGztRPVKDhwhZQGXn9/erBS2V7bzOw5CD2DoCzjJ8sp6EjeTqB/hd3yXukVOToMRhmmTQxleR/OdDw9yGaVq97k02ooDqS1a4vhnaM7iWV0yorNlLRuAf9LC1+ru6b0v/PyZwts/Thlyf2OzIrignKfh3J5n+CQ=
+Received: from BN7PR02CA0024.namprd02.prod.outlook.com (2603:10b6:408:20::37)
+ by DM6PR02MB6074.namprd02.prod.outlook.com (2603:10b6:5:1fd::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2686.32; Wed, 5 Feb
+ 2020 14:07:42 +0000
+Received: from CY1NAM02FT048.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::201) by BN7PR02CA0024.outlook.office365.com
+ (2603:10b6:408:20::37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2707.21 via Frontend
+ Transport; Wed, 5 Feb 2020 14:07:42 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; linutronix.de; dkim=none (message not signed)
+ header.d=none;linutronix.de; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT048.mail.protection.outlook.com (10.152.74.227) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2707.21
+ via Frontend Transport; Wed, 5 Feb 2020 14:07:41 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <mubin.usman.sayyed@xilinx.com>)
+        id 1izLLA-0002Ic-HR; Wed, 05 Feb 2020 06:07:40 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <mubin.usman.sayyed@xilinx.com>)
+        id 1izLL5-0002Hk-Bt; Wed, 05 Feb 2020 06:07:35 -0800
+Received: from [10.140.6.23] (helo=xhdmubinusm40.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <mubin.usman.sayyed@xilinx.com>)
+        id 1izLL1-0002Gr-Cx; Wed, 05 Feb 2020 06:07:31 -0800
+From:   Mubin Usman Sayyed <mubin.usman.sayyed@xilinx.com>
+To:     tglx@linutronix.de, jason@lakedaemon.net, maz@kernel.org,
+        michal.simek@xilinx.com, linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, siva.durga.paladugu@xilinx.com,
+        anirudha.sarangi@xilinx.com,
+        Mubin Sayyed <mubin.usman.sayyed@xilinx.com>
+Subject: [PATCH v2] irqchip: xilinx: Add support for multiple instances
+Date:   Wed,  5 Feb 2020 19:35:35 +0530
+Message-Id: <1580911535-19415-1-git-send-email-mubin.usman.sayyed@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(346002)(396003)(376002)(39860400002)(189003)(199004)(316002)(5660300002)(2616005)(4326008)(9786002)(81166006)(2906002)(81156014)(36756003)(8936002)(7696005)(8676002)(107886003)(356004)(186003)(426003)(336012)(478600001)(70206006)(26005)(70586007);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB6074;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="C7zPtVaVf+AK4Oqc"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 3b89cba6-7d44-41a0-fc21-08d7aa44c3dd
+X-MS-TrafficTypeDiagnostic: DM6PR02MB6074:
+X-Microsoft-Antispam-PRVS: <DM6PR02MB607458B2D95726817FE63F94A1020@DM6PR02MB6074.namprd02.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:5236;
+X-Forefront-PRVS: 0304E36CA3
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 0KZgA/YIhZOXKw7FiKOrDEugJ+xZMIESqo9UvFe7Bm2zGg3GojrElhxVzB2zDWYq0V8CwpRif7hN5H9YY1uUtQ79NWlmV9Wo39NnjY2FwauSTZuX2LzBq0131i2kELQ5I/F6Zm2q/MMPpiv7HEpOfuvc9+87gBUZRqjFY6jpKFoencij7SDK86CShbjtritrHqOtYGTd5nbqVL/0HaagA/o9GLmkl/+F9fj/CdDvjlbhE6fFYUAZ74o2v9H1TZ8GZb3OPPHllp5lciHhX60lEu6V5zwVa8KxOAhk53+0Kaq8Epr3R1ovimBSr/6mDVesL2rnF2js3qEfg+clKtGs1BgeSVI1aFQ69Dcoj7Yc/xG09q1zihPBLtezwiWD2a6z6DPIlbcxFD6JGp1l2DnmmLVsq7xjTsEkkcfdlnbNOYYe0SMrWgPtf68DV+oBPmhp
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Feb 2020 14:07:41.4685
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3b89cba6-7d44-41a0-fc21-08d7aa44c3dd
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB6074
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Mubin Sayyed <mubin.usman.sayyed@xilinx.com>
 
---C7zPtVaVf+AK4Oqc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch adds support for multiple instances of
+xilinx interrupt controller. Below configurations are
+supported by driver,
 
-Hi Linus,
+- peripheral->xilinx-intc->xilinx-intc->gic
+- peripheral->xilinx-intc->xilinx-intc
 
-The following changes since commit def9d2780727cec3313ed3522d0123158d87224d:
+Signed-off-by: Anirudha Sarangi <anirudha.sarangi@xilinx.com>
+Signed-off-by: Mubin Sayyed <mubin.usman.sayyed@xilinx.com>
+---
+Changes for v2:
+        - Removed write_fn/read_fn hooks, used xintc_write/
+          xintc_read directly
+        - Moved primary_intc declaration after xintc_irq_chip
+---
+ drivers/irqchip/irq-xilinx-intc.c | 121 +++++++++++++++++++++++-----------=
+----
+ 1 file changed, 73 insertions(+), 48 deletions(-)
 
-  Linux 5.5-rc7 (2020-01-19 16:02:49 -0800)
+diff --git a/drivers/irqchip/irq-xilinx-intc.c b/drivers/irqchip/irq-xilinx=
+-intc.c
+index e3043de..14cb630 100644
+--- a/drivers/irqchip/irq-xilinx-intc.c
++++ b/drivers/irqchip/irq-xilinx-intc.c
+@@ -38,29 +38,32 @@ struct xintc_irq_chip {
+        void            __iomem *base;
+        struct          irq_domain *root_domain;
+        u32             intr_mask;
++       struct                  irq_chip *intc_dev;
++       u32                             nr_irq;
+ };
 
-are available in the Git repository at:
+-static struct xintc_irq_chip *xintc_irqc;
++static struct xintc_irq_chip *primary_intc;
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-updates-v5.6
+-static void xintc_write(int reg, u32 data)
++static void xintc_write(void __iomem *addr, u32 data)
+ {
+        if (static_branch_unlikely(&xintc_is_be))
+-               iowrite32be(data, xintc_irqc->base + reg);
++               iowrite32be(data, addr);
+        else
+-               iowrite32(data, xintc_irqc->base + reg);
++               iowrite32(data, addr);
+ }
 
-for you to fetch changes up to e3b5ee0cfb65646f4a915643fe53e0a51829d891:
+-static unsigned int xintc_read(int reg)
++static unsigned int xintc_read(void __iomem *addr)
+ {
+        if (static_branch_unlikely(&xintc_is_be))
+-               return ioread32be(xintc_irqc->base + reg);
++               return ioread32be(addr);
+        else
+-               return ioread32(xintc_irqc->base + reg);
++               return ioread32(addr);
+ }
 
-  Merge branches 'iommu/fixes', 'arm/smmu', 'x86/amd', 'x86/vt-d' and 'core' into next (2020-01-24 15:39:39 +0100)
+ static void intc_enable_or_unmask(struct irq_data *d)
+ {
+        unsigned long mask =3D 1 << d->hwirq;
++       struct xintc_irq_chip *local_intc =3D irq_data_get_irq_chip_data(d)=
+;
 
-----------------------------------------------------------------
-IOMMU Updates for Linux v5.6
+        pr_debug("irq-xilinx: enable_or_unmask: %ld\n", d->hwirq);
 
-Including:
+@@ -69,47 +72,57 @@ static void intc_enable_or_unmask(struct irq_data *d)
+         * acks the irq before calling the interrupt handler
+         */
+        if (irqd_is_level_type(d))
+-               xintc_write(IAR, mask);
++               xintc_write(local_intc->base + IAR, mask);
 
-	- Allow to compile the ARM-SMMU drivers as modules.
+-       xintc_write(SIE, mask);
++       xintc_write(local_intc->base + SIE, mask);
+ }
 
-	- Fixes and cleanups for the ARM-SMMU drivers and io-pgtable code
-	  collected by Will Deacon. The merge-commit (6855d1ba7537) has all the
-	  details.
+ static void intc_disable_or_mask(struct irq_data *d)
+ {
++       struct xintc_irq_chip *local_intc =3D irq_data_get_irq_chip_data(d)=
+;
++
+        pr_debug("irq-xilinx: disable: %ld\n", d->hwirq);
+-       xintc_write(CIE, 1 << d->hwirq);
++       xintc_write(local_intc->base + CIE, 1 << d->hwirq);
+ }
 
-	- Cleanup of the iommu_put_resv_regions() call-backs in various drivers.
+ static void intc_ack(struct irq_data *d)
+ {
++       struct xintc_irq_chip *local_intc =3D irq_data_get_irq_chip_data(d)=
+;
++
+        pr_debug("irq-xilinx: ack: %ld\n", d->hwirq);
+-       xintc_write(IAR, 1 << d->hwirq);
++       xintc_write(local_intc->base + IAR, 1 << d->hwirq);
+ }
 
-	- AMD IOMMU driver cleanups.
+ static void intc_mask_ack(struct irq_data *d)
+ {
+        unsigned long mask =3D 1 << d->hwirq;
++       struct xintc_irq_chip *local_intc =3D irq_data_get_irq_chip_data(d)=
+;
 
-	- Update for the x2APIC support in the AMD IOMMU driver.
+        pr_debug("irq-xilinx: disable_and_ack: %ld\n", d->hwirq);
+-       xintc_write(CIE, mask);
+-       xintc_write(IAR, mask);
++       xintc_write(local_intc->base + CIE, mask);
++       xintc_write(local_intc->base + IAR, mask);
+ }
 
-	- Preparation patches for Intel VT-d nested mode support.
+-static struct irq_chip intc_dev =3D {
+-       .name =3D "Xilinx INTC",
+-       .irq_unmask =3D intc_enable_or_unmask,
+-       .irq_mask =3D intc_disable_or_mask,
+-       .irq_ack =3D intc_ack,
+-       .irq_mask_ack =3D intc_mask_ack,
+-};
++static unsigned int xintc_get_irq_local(struct xintc_irq_chip *local_intc)
++{
++       int hwirq, irq =3D -1;
++
++       hwirq =3D xintc_read(local_intc->base + IVR);
++       if (hwirq !=3D -1U)
++               irq =3D irq_find_mapping(local_intc->root_domain, hwirq);
++
++       pr_debug("irq-xilinx: hwirq=3D%d, irq=3D%d\n", hwirq, irq);
++
++       return irq;
++}
 
-	- RMRR and identity domain handling fixes for the Intel VT-d driver.
+ unsigned int xintc_get_irq(void)
+ {
+-       unsigned int hwirq, irq =3D -1;
++       int hwirq, irq =3D -1;
 
-	- More small fixes and cleanups.
+-       hwirq =3D xintc_read(IVR);
++       hwirq =3D xintc_read(primary_intc->base + IVR);
+        if (hwirq !=3D -1U)
+-               irq =3D irq_find_mapping(xintc_irqc->root_domain, hwirq);
++               irq =3D irq_find_mapping(primary_intc->root_domain, hwirq);
 
-----------------------------------------------------------------
-Adrian Huang (6):
-      iommu/amd: Treat per-device exclusion ranges as r/w unity-mapped regions
-      iommu/amd: Remove local variables
-      iommu/amd: Fix typos for PPR macros
-      iommu/amd: Replace two consecutive readl calls with one readq
-      iommu/amd: Remove unused struct member
-      iommu/amd: Remove the unnecessary assignment
+        pr_debug("irq-xilinx: hwirq=3D%d, irq=3D%d\n", hwirq, irq);
 
-Ard Biesheuvel (1):
-      iommu/arm-smmu: Support SMMU module probing from the IORT
+@@ -118,15 +131,18 @@ unsigned int xintc_get_irq(void)
 
-Barret Rhoden (2):
-      iommu/vt-d: Mark firmware tainted if RMRR fails sanity check
-      iommu/vt-d: Add RMRR base and end addresses sanity check
+ static int xintc_map(struct irq_domain *d, unsigned int irq, irq_hw_number=
+_t hw)
+ {
+-       if (xintc_irqc->intr_mask & (1 << hw)) {
+-               irq_set_chip_and_handler_name(irq, &intc_dev,
++       struct xintc_irq_chip *local_intc =3D d->host_data;
++
++       if (local_intc->intr_mask & (1 << hw)) {
++               irq_set_chip_and_handler_name(irq, local_intc->intc_dev,
+                                                handle_edge_irq, "edge");
+                irq_clear_status_flags(irq, IRQ_LEVEL);
+        } else {
+-               irq_set_chip_and_handler_name(irq, &intc_dev,
++               irq_set_chip_and_handler_name(irq, local_intc->intc_dev,
+                                                handle_level_irq, "level");
+                irq_set_status_flags(irq, IRQ_LEVEL);
+        }
++       irq_set_chip_data(irq, local_intc);
+        return 0;
+ }
 
-Greg Kroah-Hartman (1):
-      PCI/ATS: Restore EXPORT_SYMBOL_GPL() for pci_{enable,disable}_ats()
+@@ -138,11 +154,13 @@ static const struct irq_domain_ops xintc_irq_domain_o=
+ps =3D {
+ static void xil_intc_irq_handler(struct irq_desc *desc)
+ {
+        struct irq_chip *chip =3D irq_desc_get_chip(desc);
++       struct xintc_irq_chip *local_intc =3D
++               irq_data_get_irq_handler_data(&desc->irq_data);
+        u32 pending;
 
-Jacob Pan (8):
-      iommu/vt-d: Fix CPU and IOMMU SVM feature matching checks
-      iommu/vt-d: Match CPU and IOMMU paging mode
-      iommu/vt-d: Reject SVM bind for failed capability check
-      iommu/vt-d: Avoid duplicated code for PASID setup
-      iommu/vt-d: Fix off-by-one in PASID allocation
-      iommu/vt-d: Replace Intel specific PASID allocator with IOASID
-      iommu/vt-d: Avoid sending invalid page response
-      iommu/vt-d: Misc macro clean up for SVM
+        chained_irq_enter(chip, desc);
+        do {
+-               pending =3D xintc_get_irq();
++               pending =3D xintc_get_irq_local(local_intc);
+                if (pending =3D=3D -1U)
+                        break;
+                generic_handle_irq(pending);
+@@ -153,28 +171,20 @@ static void xil_intc_irq_handler(struct irq_desc *des=
+c)
+ static int __init xilinx_intc_of_init(struct device_node *intc,
+                                             struct device_node *parent)
+ {
+-       u32 nr_irq;
+        int ret, irq;
+        struct xintc_irq_chip *irqc;
+-
+-       if (xintc_irqc) {
+-               pr_err("irq-xilinx: Multiple instances aren't supported\n")=
+;
+-               return -EINVAL;
+-       }
++       struct irq_chip *intc_dev;
 
-Jean-Philippe Brucker (12):
-      iommu/arm-smmu-v3: Drop __GFP_ZERO flag from DMA allocation
-      dt-bindings: document PASID property for IOMMU masters
-      iommu/arm-smmu-v3: Parse PASID devicetree property of platform devices
-      ACPI/IORT: Parse SSID property of named component node
-      iommu/arm-smmu-v3: Prepare arm_smmu_s1_cfg for SSID support
-      iommu/arm-smmu-v3: Add context descriptor tables allocators
-      iommu/arm-smmu-v3: Add support for Substream IDs
-      iommu/arm-smmu-v3: Propagate ssid_bits
-      iommu/arm-smmu-v3: Prepare for handling arm_smmu_write_ctx_desc() failure
-      iommu/arm-smmu-v3: Add second level of context descriptor table
-      iommu/arm-smmu-v3: Improve add_device() error handling
-      PCI/ATS: Add PASID stubs
+        irqc =3D kzalloc(sizeof(*irqc), GFP_KERNEL);
+        if (!irqc)
+                return -ENOMEM;
+-
+-       xintc_irqc =3D irqc;
+-
+        irqc->base =3D of_iomap(intc, 0);
+        BUG_ON(!irqc->base);
 
-Jerry Snitselaar (1):
-      iommu/vt-d: Call __dmar_remove_one_dev_info with valid pointer
+-       ret =3D of_property_read_u32(intc, "xlnx,num-intr-inputs", &nr_irq)=
+;
++       ret =3D of_property_read_u32(intc, "xlnx,num-intr-inputs", &irqc->n=
+r_irq);
+        if (ret < 0) {
+                pr_err("irq-xilinx: unable to read xlnx,num-intr-inputs\n")=
+;
+-               goto err_alloc;
++               goto error;
+        }
 
-Joerg Roedel (3):
-      iommu/amd: Remove unused variable
-      Merge tag 'arm-smmu-updates' of git://git.kernel.org/.../will/linux into arm/smmu
-      Merge branches 'iommu/fixes', 'arm/smmu', 'x86/amd', 'x86/vt-d' and 'core' into next
+        ret =3D of_property_read_u32(intc, "xlnx,kind-of-intr", &irqc->intr=
+_mask);
+@@ -183,30 +193,42 @@ static int __init xilinx_intc_of_init(struct device_n=
+ode *intc,
+                irqc->intr_mask =3D 0;
+        }
 
-Krzysztof Kozlowski (1):
-      iommu: Fix Kconfig indentation
+-       if (irqc->intr_mask >> nr_irq)
++       if (irqc->intr_mask >> irqc->nr_irq)
+                pr_warn("irq-xilinx: mismatch in kind-of-intr param\n");
 
-Lu Baolu (16):
-      iommu/vt-d: Add Kconfig option to enable/disable scalable mode
-      iommu/vt-d: trace: Extend map_sg trace event
-      iommu/vt-d: Avoid iova flush queue in strict mode
-      iommu/vt-d: Loose requirement for flush queue initializaton
-      iommu/vt-d: Identify domains using first level page table
-      iommu/vt-d: Add set domain DOMAIN_ATTR_NESTING attr
-      iommu/vt-d: Add PASID_FLAG_FL5LP for first-level pasid setup
-      iommu/vt-d: Setup pasid entries for iova over first level
-      iommu/vt-d: Flush PASID-based iotlb for iova over first level
-      iommu/vt-d: Make first level IOVA canonical
-      iommu/vt-d: Update first level super page capability
-      iommu/vt-d: Use iova over first level
-      iommu/vt-d: debugfs: Add support to show page table internals
-      iommu/vt-d: Allow devices with RMRRs to use identity domain
-      iommu/vt-d: Unnecessary to handle default identity domain
-      iommu/vt-d: Remove unnecessary WARN_ON_ONCE()
+        pr_info("irq-xilinx: %pOF: num_irq=3D%d, edge=3D0x%x\n",
+-               intc, nr_irq, irqc->intr_mask);
++               intc, irqc->nr_irq, irqc->intr_mask);
++
++       intc_dev =3D kzalloc(sizeof(*intc_dev), GFP_KERNEL);
++       if (!intc_dev) {
++               ret =3D -ENOMEM;
++               goto error;
++       }
 
-Masahiro Yamada (3):
-      iommu/arm-smmu-v3: Fix resource_size check
-      iommu/arm-smmu-v3: Remove useless of_match_ptr()
-      iommu/arm-smmu: Fix -Wunused-const-variable warning
++       intc_dev->name =3D intc->full_name;
++       intc_dev->irq_unmask =3D intc_enable_or_unmask,
++       intc_dev->irq_mask =3D intc_disable_or_mask,
++       intc_dev->irq_ack =3D intc_ack,
++       intc_dev->irq_mask_ack =3D intc_mask_ack,
++       irqc->intc_dev =3D intc_dev;
 
-Qian Cai (1):
-      iommu/iova: Silence warnings under memory pressure
+        /*
+         * Disable all external interrupts until they are
+         * explicity requested.
+         */
+-       xintc_write(IER, 0);
++       xintc_write(irqc->base + IER, 0);
 
-Robin Murphy (5):
-      iommu/io-pgtable-arm: Rationalise TTBRn handling
-      iommu/io-pgtable-arm: Improve attribute handling
-      iommu/io-pgtable-arm: Rationalise TCR handling
-      iommu/io-pgtable-arm: Prepare for TTBR1 usage
-      iommu/arm-smmu: Improve SMR mask test
+        /* Acknowledge any pending interrupts just in case. */
+-       xintc_write(IAR, 0xffffffff);
++       xintc_write(irqc->base + IAR, 0xffffffff);
 
-Shameer Kolothum (1):
-      iommu/arm-smmu-v3: Populate VMID field for CMDQ_OP_TLBI_NH_VA
+        /* Turn on the Master Enable. */
+-       xintc_write(MER, MER_HIE | MER_ME);
+-       if (!(xintc_read(MER) & (MER_HIE | MER_ME))) {
++       xintc_write(irqc->base + MER, MER_HIE | MER_ME);
++       if (!(xintc_read(irqc->base + MER) & (MER_HIE | MER_ME))) {
+                static_branch_enable(&xintc_is_be);
+-               xintc_write(MER, MER_HIE | MER_ME);
++               xintc_write(irqc->base + MER, MER_HIE | MER_ME);
+        }
 
-Shuah Khan (1):
-      iommu/amd: Fix IOMMU perf counter clobbering during init
+-       irqc->root_domain =3D irq_domain_add_linear(intc, nr_irq,
++       irqc->root_domain =3D irq_domain_add_linear(intc, irqc->nr_irq,
+                                                  &xintc_irq_domain_ops, ir=
+qc);
+        if (!irqc->root_domain) {
+                pr_err("irq-xilinx: Unable to create IRQ domain\n");
+@@ -225,13 +247,16 @@ static int __init xilinx_intc_of_init(struct device_n=
+ode *intc,
+                        goto err_alloc;
+                }
+        } else {
+-               irq_set_default_host(irqc->root_domain);
++               primary_intc =3D irqc;
++               irq_set_default_host(primary_intc->root_domain);
+        }
 
-Suravee Suthikulpanit (2):
-      iommu/amd: Check feature support bit before accessing MSI capability registers
-      iommu/amd: Only support x2APIC with IVHD type 11h/40h
+        return 0;
 
-Thierry Reding (5):
-      iommu: Implement generic_iommu_put_resv_regions()
-      iommu: arm: Use generic_iommu_put_resv_regions()
-      iommu: amd: Use generic_iommu_put_resv_regions()
-      iommu: intel: Use generic_iommu_put_resv_regions()
-      iommu: virtio: Use generic_iommu_put_resv_regions()
+ err_alloc:
+-       xintc_irqc =3D NULL;
++       kfree(intc_dev);
++error:
++       iounmap(irqc->base);
+        kfree(irqc);
+        return ret;
 
-Will Deacon (21):
-      drivers/iommu: Export core IOMMU API symbols to permit modular drivers
-      iommu/of: Request ACS from the PCI core when configuring IOMMU linkage
-      PCI: Export pci_ats_disabled() as a GPL symbol to modules
-      drivers/iommu: Take a ref to the IOMMU driver prior to ->add_device()
-      iommu/of: Take a ref to the IOMMU driver during ->of_xlate()
-      drivers/iommu: Allow IOMMU bus ops to be unregistered
-      Revert "iommu/arm-smmu: Make arm-smmu-v3 explicitly non-modular"
-      Revert "iommu/arm-smmu: Make arm-smmu explicitly non-modular"
-      iommu/arm-smmu: Prevent forced unbinding of Arm SMMU drivers
-      iommu/arm-smmu-v3: Unregister IOMMU and bus ops on device removal
-      iommu/arm-smmu-v3: Allow building as a module
-      iommu/arm-smmu: Unregister IOMMU and bus ops on device removal
-      iommu/arm-smmu: Allow building as a module
-      iommu/arm-smmu: Update my email address in MODULE_AUTHOR()
-      drivers/iommu: Initialise module 'owner' field in iommu_device_set_ops()
-      iommu/io-pgtable-arm: Support non-coherent stage-2 page tables
-      iommu/io-pgtable-arm: Ensure ARM_64_LPAE_S2_TCR_RES1 is unsigned
-      iommu/arm-smmu: Rename public #defines under ARM_SMMU_ namespace
-      iommu/io-pgtable-arm: Rationalise VTCR handling
-      iommu/arm-smmu-v3: Use WRITE_ONCE() when changing validity of an STE
-      iommu/arm-smmu-v3: Return -EBUSY when trying to re-add a device
+--
+2.7.4
 
-jimyan (1):
-      iommu/vt-d: Don't reject Host Bridge due to scope mismatch
-
- Documentation/devicetree/bindings/iommu/iommu.txt |   6 +
- drivers/acpi/arm64/iort.c                         |  22 +-
- drivers/iommu/Kconfig                             |  35 +-
- drivers/iommu/Makefile                            |   3 +-
- drivers/iommu/amd_iommu.c                         |  12 +-
- drivers/iommu/amd_iommu_init.c                    |  79 +--
- drivers/iommu/amd_iommu_types.h                   |   7 +-
- drivers/iommu/arm-smmu-impl.c                     |   2 +-
- drivers/iommu/arm-smmu-v3.c                       | 600 ++++++++++++++++------
- drivers/iommu/arm-smmu.c                          | 334 +++++++-----
- drivers/iommu/arm-smmu.h                          | 228 ++++----
- drivers/iommu/dmar.c                              |  44 +-
- drivers/iommu/intel-iommu-debugfs.c               |  75 +++
- drivers/iommu/intel-iommu.c                       | 369 +++++++++----
- drivers/iommu/intel-pasid.c                       |  97 +---
- drivers/iommu/intel-pasid.h                       |   6 +
- drivers/iommu/intel-svm.c                         | 171 +++---
- drivers/iommu/io-pgtable-arm-v7s.c                |  22 +-
- drivers/iommu/io-pgtable-arm.c                    | 164 +++---
- drivers/iommu/io-pgtable.c                        |   2 +-
- drivers/iommu/iommu-sysfs.c                       |   5 +
- drivers/iommu/iommu.c                             |  51 +-
- drivers/iommu/iova.c                              |   2 +-
- drivers/iommu/ipmmu-vmsa.c                        |   2 +-
- drivers/iommu/msm_iommu.c                         |   4 +-
- drivers/iommu/mtk_iommu.c                         |   4 +-
- drivers/iommu/of_iommu.c                          |  25 +-
- drivers/iommu/qcom_iommu.c                        |  25 +-
- drivers/iommu/virtio-iommu.c                      |  14 +-
- drivers/pci/ats.c                                 |   2 +
- drivers/pci/pci.c                                 |   1 +
- include/linux/intel-iommu.h                       |  25 +-
- include/linux/io-pgtable.h                        |  27 +-
- include/linux/iommu.h                             |  19 +-
- include/linux/pci-ats.h                           |   3 +
- include/trace/events/intel_iommu.h                |  48 +-
- 36 files changed, 1706 insertions(+), 829 deletions(-)
-
-Please pull.
-
-Thanks,
-
-	Joerg
-
---C7zPtVaVf+AK4Oqc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEr9jSbILcajRFYWYyK/BELZcBGuMFAl46y0AACgkQK/BELZcB
-GuOukxAA3mY+BpqTPAiU638EIg/4FRdLHn9eN0Ywwo0PCwVms5bBLIAJlyo58qcq
-xBi2vXcyF52jkYYFDsausYojyCR+d/OSitQ5Pa/Ce9K4lnAOT4GsV9LdW/Tv3/1o
-UAxcetJAe5k6VWPJtDku4A+aqOM4NB4593nnjboPeJs5PWloec1xJnFB425S8IJV
-DZvgfk+ki46euK0ru4ZF0JFFFTPjNdRCn5DV+GHe8nmEJ6agN6ZA7SoN1AnuCpQ6
-Xm61muiYWjvsfowkMkCniK9bNyP+VHZOM5D9cRjANIS9PqQzJmbAjoXTrmatyHRJ
-94vU4SqfIapV0hCXhtwjkF1bgcf1W54BnF3qAEscGbqNPznPyf8YlD1mGY2Ws8P1
-JduBwLIB1RBsZTm/szVLLoqbH1wABz2hLIfemG9rIeFoK5NnwZCYKQyv8hQQu7e5
-XUrH88VybKoKxtpDdkycJV2F+gkp0KTJdl8Wq4pD5wGOICuxGwH1X8VKFupbVDXc
-+w0if2Y0a/LoV9zIs2QKMv7AukT898G+cvWIF2u/qTqxoZ17tBGgKbyBlzn371q3
-bJlo16efhqTdTYmBZi/1TkzOc1Mn1tS187RmotxTOBAngu/sadfrMsYBRT/AwJeV
-e/a+7TYnLIXnoUq1u5khcGIIHefYUzFKeZdH7WzmOic8wHtSOpM=
-=cy10
------END PGP SIGNATURE-----
-
---C7zPtVaVf+AK4Oqc--
+This email and any attachments are intended for the sole use of the named r=
+ecipient(s) and contain(s) confidential information that may be proprietary=
+, privileged or copyrighted under applicable law. If you are not the intend=
+ed recipient, do not read, copy, or forward this email message or any attac=
+hments. Delete this email message and any attachments immediately.
