@@ -2,84 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 704AA1536FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 18:48:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60CD0153708
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 18:49:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbgBERsd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 12:48:33 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36589 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726822AbgBERsc (ORCPT
+        id S1727478AbgBERtg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 12:49:36 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40726 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726957AbgBERtf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 12:48:32 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z3so3847835wru.3;
-        Wed, 05 Feb 2020 09:48:31 -0800 (PST)
+        Wed, 5 Feb 2020 12:49:35 -0500
+Received: by mail-wr1-f65.google.com with SMTP id t3so3817368wru.7;
+        Wed, 05 Feb 2020 09:49:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:content-language
-         :user-agent;
-        bh=Ux3DGzV35dAceVNHrHJKtHoyHks4VBOBKylo/BD3j8A=;
-        b=DkfkhCUQJrmGX5V3JIOOSr6LWxJ1zQ/4xCeP6hEV8W73GivRsJdvgwDmpIhVE2maFl
-         AoKnXz6XQaztWKLcuZ5APUZqmWExmm1CNBAImbAedj97ugtamOnmabzKEV9E9GcjVFTq
-         9LEVItT0WHX/dkaDnGxGYa3zwOod3zbOruhkW3I5auKjOfuHfbS4kKy/4y48OwgStCFN
-         Jwz8QRorMN7f7u6IiRqnHRVHKGqngzy5CAtWnjYWAprb/QIYDYR5fsQ9v+6zqKtvESzV
-         vJwiAeY4HJucafCb3AyRCyD7/oTZZZgg5r9jDyQX7IQJxGeYUxGFevZ+HEH6X4Ewd/99
-         +QyA==
-X-Gm-Message-State: APjAAAWgbNt5A3Z35CoG56eUI/zaHfxnZd7bJzBC39PGWwaPf/k68eq2
-        J1boJG/8eoZsaWZ5ytnpvg==
-X-Google-Smtp-Source: APXvYqyjCgMXX07vCklzfGwfuVFLf+VA2qWHi/2w8y238KZGaDM7SrZW2WawDJsygiDUkK+5I/A/1g==
-X-Received: by 2002:adf:dd51:: with SMTP id u17mr28737729wrm.290.1580924911012;
-        Wed, 05 Feb 2020 09:48:31 -0800 (PST)
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Lsfbnz3H38vTOletZ4EmB6C9KpZCxglql+qL3XIYGjo=;
+        b=pjIRK2NY3jjzO8+3tsKZuZBX/0U6wTbDe3+IQcd6RDKD3JE2GTV49yu/u/6QaccMzC
+         kDRNWmZVJtbAZYLzmzVnBGKbRCiIemBTcDLHibA/XmHGW9NpE8Uil/UKubUvSQ86cQbb
+         IBBEe+crd0PMv8tWuLy1Ri1t15Sazz3ZXeHBQ2doooD7iDGERSH7tWW48ocs+YoJn3dN
+         rbzpGL4ydNv+rQWc3QLh8jHB2xTrXO2H/I6bw77xLAU4PqDUmq/wvyuERe5Tq5ZPiKe7
+         zShELQ2nwVCnxEtZ7m/XKMxuhNUNcimUHDDuzMyigyzYD9ilNWyqpuEdL+guqH37tP28
+         Z34w==
+X-Gm-Message-State: APjAAAUjtWQWCXxfBYAeT8KWVf/1OekCeOsQ9JRvPL5o1mFGgKkNqdH0
+        EXKmp9AkjwgXrP+uwBZfIw==
+X-Google-Smtp-Source: APXvYqybHL6/b3Oz5I7G0CLuDoP0nfLxsBDQ3ivJbNaQ7/MXHy/EygjBmjdA1/E6DvSGs4NYiVTZrg==
+X-Received: by 2002:adf:ea8a:: with SMTP id s10mr28065695wrm.278.1580924973513;
+        Wed, 05 Feb 2020 09:49:33 -0800 (PST)
 Received: from rob-hp-laptop ([212.187.182.166])
-        by smtp.gmail.com with ESMTPSA id b18sm695624wru.50.2020.02.05.09.48.29
+        by smtp.gmail.com with ESMTPSA id t1sm335850wma.43.2020.02.05.09.49.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 09:48:30 -0800 (PST)
-Received: (nullmailer pid 28035 invoked by uid 1000);
-        Wed, 05 Feb 2020 17:48:29 -0000
-Date:   Wed, 5 Feb 2020 17:48:29 +0000
+        Wed, 05 Feb 2020 09:49:32 -0800 (PST)
+Received: (nullmailer pid 29957 invoked by uid 1000);
+        Wed, 05 Feb 2020 17:49:31 -0000
+Date:   Wed, 5 Feb 2020 17:49:31 +0000
 From:   Rob Herring <robh@kernel.org>
-To:     Shiping Ji <shiping.linux@gmail.com>
-Cc:     Borislav Petkov <bp@alien8.de>, James Morse <james.morse@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, hangl@microsoft.com,
-        ruizhao@microsoft.com, Lei Wang <lewan@microsoft.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Yuqing Shen <yuqing.shen@broadcom.com>
-Subject: Re: [PATCH v11 1/2] dt-bindings: edac: dmc-520.yaml
-Message-ID: <20200205174829.GA27969@bogus>
-References: <5354a9c3-5b5a-486a-9d19-fa9be169faef@gmail.com>
+To:     Ludovic Barre <ludovic.barre@st.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        srinivas.kandagatla@linaro.org,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: Re: [PATCH V2 5/9] dt-bindings: mmc: mmci: add delay block base
+ register for sdmmc
+Message-ID: <20200205174931.GA29922@bogus>
+References: <20200128090636.13689-1-ludovic.barre@st.com>
+ <20200128090636.13689-6-ludovic.barre@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5354a9c3-5b5a-486a-9d19-fa9be169faef@gmail.com>
-Content-Language: en-US
+In-Reply-To: <20200128090636.13689-6-ludovic.barre@st.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 27 Jan 2020 08:23:08 -0800, Shiping Ji wrote:
-> This is the device tree bindings for new EDAC driver dmc520_edac.c.
+On Tue, 28 Jan 2020 10:06:32 +0100, Ludovic Barre wrote:
+> To support the sdr104 mode, the sdmmc variant has a
+> hardware delay block to manage the clock phase when sampling
+> data received by the card.
 > 
-> From: Lei Wang <leiwang_git@outlook.com>
+> This patch adds a second base register (optional) for
+> sdmmc delay block.
 > 
-> Signed-off-by: Lei Wang <leiwang_git@outlook.com>
-> Signed-off-by: Shiping Ji <shiping.linux@gmail.com>
-> Reviewed-by: James Morse <james.morse@arm.com>
-> 
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 > ---
->      Changes in v11:
->          - Fix issues reported by make dt_binding_check
-> 
-> ---
->  .../devicetree/bindings/edac/dmc-520.yaml     | 59 +++++++++++++++++++
->  1 file changed, 59 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/edac/dmc-520.yaml
+>  Documentation/devicetree/bindings/mmc/mmci.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
