@@ -2,188 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D828152928
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 11:33:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38801152950
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 11:38:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728279AbgBEKdw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 05:33:52 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:24658 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727771AbgBEKdv (ORCPT
+        id S1728305AbgBEKiK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 05:38:10 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:40617 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727234AbgBEKiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 05:33:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580898829;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fMJo0Joxo+pl/mB5o3Pd3oM2dXap9Kiay0KNytUxRsU=;
-        b=ZIWxRiOIzLW96aEkYuzKP+c8c6Yr4VUb/c/lPxeAgEQfDfkgOe5MfIc00azpJg+CofmS5H
-        oFRmCVrbW2lAeXJYCkJvCYyvfywqE3Z8VW1XF1CPlZKOc6I3ZkOkPmGu/0ynXMJh1yC7i+
-        B9iSR9oVlUUGUgqROv65tADe6ktU4rY=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-38-Kv2sm9_INeacVasvVJJF4A-1; Wed, 05 Feb 2020 05:33:48 -0500
-X-MC-Unique: Kv2sm9_INeacVasvVJJF4A-1
-Received: by mail-qk1-f200.google.com with SMTP id q2so944071qkq.19
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 02:33:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=fMJo0Joxo+pl/mB5o3Pd3oM2dXap9Kiay0KNytUxRsU=;
-        b=fhk2m4m7Wl+lz8/GrrKgt8iDJeTsCEfQi9J1lfM7/tsWOuq5Tqjrwc7SGYw6H7BM4D
-         00rThA/cxo8EjUfxmr97IoS1aD5ZPG8EV8JXzhEHujB+SWUoK7pGU8dJcxDhl1mHiCPg
-         2ZkWU8WBkxlpC1xSIMh+CZVYXycOtv49UDpOJLuImKvRe/GThmFAARJuH8FKwL5I24iv
-         3a89bzt34429Ws+ZyO9zG+6xy0YhANGNCg/OZTxpZjS/K9zjV5zYBy5fjMlW4bUMQM1J
-         PwnShnsXNvpoOEJfEx0D9aWKEkDADllguK8Y2D6pz/Kggi1bcprLKby2QZM7ynntY6CY
-         0kpg==
-X-Gm-Message-State: APjAAAWk/HD/vl33NVwblQIz8PjVz+/BXJMhXij3Ppxy1PnY6W13o88L
-        D6KpDTjdjShIVPHLvJ4qxU5T0Z5tsEB/QahVH+FQJlUr04zhfy/JUsDCpK53Ih7PmN+pm6lpfM+
-        WU3Lu9qz7KJ4uD5hce0M77Q0T
-X-Received: by 2002:a37:6853:: with SMTP id d80mr4494822qkc.57.1580898827681;
-        Wed, 05 Feb 2020 02:33:47 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxSqc1HJF8dt4Eb/7jFWTJnHSPo1HCY1H3WJbmwy+Vb8UDe9HwZCYMCfYz7+b2DU8mORTzDoA==
-X-Received: by 2002:a37:6853:: with SMTP id d80mr4494800qkc.57.1580898827421;
-        Wed, 05 Feb 2020 02:33:47 -0800 (PST)
-Received: from redhat.com (bzq-79-176-41-183.red.bezeqint.net. [79.176.41.183])
-        by smtp.gmail.com with ESMTPSA id p50sm13949401qtf.5.2020.02.05.02.33.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 02:33:46 -0800 (PST)
-Date:   Wed, 5 Feb 2020 05:33:40 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Shahaf Shuler <shahafs@mellanox.com>
-Cc:     Jason Wang <jasowang@redhat.com>, Tiwei Bie <tiwei.bie@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        "rob.miller@broadcom.com" <rob.miller@broadcom.com>,
-        "haotian.wang@sifive.com" <haotian.wang@sifive.com>,
-        "eperezma@redhat.com" <eperezma@redhat.com>,
-        "lulu@redhat.com" <lulu@redhat.com>,
-        Parav Pandit <parav@mellanox.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "hanand@xilinx.com" <hanand@xilinx.com>,
-        "mhabets@solarflare.com" <mhabets@solarflare.com>,
-        "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
-        "lingshan.zhu@intel.com" <lingshan.zhu@intel.com>,
-        "dan.daly@intel.com" <dan.daly@intel.com>,
-        "cunming.liang@intel.com" <cunming.liang@intel.com>,
-        "zhihong.wang@intel.com" <zhihong.wang@intel.com>
-Subject: Re: [PATCH] vhost: introduce vDPA based backend
-Message-ID: <20200205053129-mutt-send-email-mst@kernel.org>
-References: <20200131033651.103534-1-tiwei.bie@intel.com>
- <7aab2892-bb19-a06a-a6d3-9c28bc4c3400@redhat.com>
- <20200205020247.GA368700@___>
- <AM0PR0502MB37952015716C1D5E07E390B6C3020@AM0PR0502MB3795.eurprd05.prod.outlook.com>
- <112858a4-1a01-f4d7-e41a-1afaaa1cad45@redhat.com>
- <AM0PR0502MB3795AD42233D69F350402A8AC3020@AM0PR0502MB3795.eurprd05.prod.outlook.com>
+        Wed, 5 Feb 2020 05:38:10 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1580899089; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=5ilXVdiiGsHsIhZ8uHUoDTDngAhrh2sBE7trFb5Vk7s=;
+ b=WSArBGQMTleQtKB+WB01kLgo1aXWgT8FB7dBuldaKLrX4f6QCpJbUrkML80KvQus/AlIk6KZ
+ uW7u25dpEc0vtY8P7HW4KMDkedW8xVg2PyP+RDrJMbWs8ARLJR36Mu1Gfo2Yn7xdeXlUAT/Z
+ QgCHBXEWk8TeqFR6fSXmmPzTs6Y=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e3a9b06.7fd1a5f669d0-smtp-out-n01;
+ Wed, 05 Feb 2020 10:37:58 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id B5EC5C447A1; Wed,  5 Feb 2020 10:37:58 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: gubbaven)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0A903C433CB;
+        Wed,  5 Feb 2020 10:37:58 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AM0PR0502MB3795AD42233D69F350402A8AC3020@AM0PR0502MB3795.eurprd05.prod.outlook.com>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 05 Feb 2020 16:07:57 +0530
+From:   gubbaven@codeaurora.org
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>, mka@chromium.org,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        robh@kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, bgodavar@codeaurora.org,
+        tientzu@chromium.org, seanpaul@chromium.org, rjliao@codeaurora.org,
+        yshavit@google.com
+Subject: Re: [PATCH v2 1/2] Bluetooth: hci_qca: Enable clocks required for BT
+ SOC
+In-Reply-To: <FA054FF0-C1EF-4749-96C3-A86ECD064FE9@holtmann.org>
+References: <1580456335-7317-1-git-send-email-gubbaven@codeaurora.org>
+ <20200203195632.GM3948@builder>
+ <FA054FF0-C1EF-4749-96C3-A86ECD064FE9@holtmann.org>
+Message-ID: <1ff3bfe6793972ab47675bf6b63cc596@codeaurora.org>
+X-Sender: gubbaven@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 09:30:14AM +0000, Shahaf Shuler wrote:
-> Wednesday, February 5, 2020 9:50 AM, Jason Wang:
-> > Subject: Re: [PATCH] vhost: introduce vDPA based backend
-> > On 2020/2/5 下午3:15, Shahaf Shuler wrote:
-> > > Wednesday, February 5, 2020 4:03 AM, Tiwei Bie:
-> > >> Subject: Re: [PATCH] vhost: introduce vDPA based backend
-> > >>
-> > >> On Tue, Feb 04, 2020 at 11:30:11AM +0800, Jason Wang wrote:
-> > >>> On 2020/1/31 上午11:36, Tiwei Bie wrote:
-> > >>>> This patch introduces a vDPA based vhost backend. This backend is
-> > >>>> built on top of the same interface defined in virtio-vDPA and
-> > >>>> provides a generic vhost interface for userspace to accelerate the
-> > >>>> virtio devices in guest.
-> > >>>>
-> > >>>> This backend is implemented as a vDPA device driver on top of the
-> > >>>> same ops used in virtio-vDPA. It will create char device entry
-> > >>>> named vhost-vdpa/$vdpa_device_index for userspace to use.
-> > Userspace
-> > >>>> can use vhost ioctls on top of this char device to setup the backend.
-> > >>>>
-> > >>>> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > > [...]
-> > >
-> > >>>> +static long vhost_vdpa_do_dma_mapping(struct vhost_vdpa *v) {
-> > >>>> +	/* TODO: fix this */
-> > >>>
-> > >>> Before trying to do this it looks to me we need the following during
-> > >>> the probe
-> > >>>
-> > >>> 1) if set_map() is not supported by the vDPA device probe the IOMMU
-> > >>> that is supported by the vDPA device
-> > >>> 2) allocate IOMMU domain
-> > >>>
-> > >>> And then:
-> > >>>
-> > >>> 3) pin pages through GUP and do proper accounting
-> > >>> 4) store GPA->HPA mapping in the umem
-> > >>> 5) generate diffs of memory table and using IOMMU API to setup the
-> > >>> dma mapping in this method
-> > >>>
-> > >>> For 1), I'm not sure parent is sufficient for to doing this or need
-> > >>> to introduce new API like iommu_device in mdev.
-> > >> Agree. We may also need to introduce something like the iommu_device.
-> > >>
-> > > Would it be better for the map/umnap logic to happen inside each device ?
-> > > Devices that needs the IOMMU will call iommu APIs from inside the driver
-> > callback.
-> > 
-> > 
-> > Technically, this can work. But if it can be done by vhost-vpda it will make the
-> > vDPA driver more compact and easier to be implemented.
-> 
-> Need to see the layering of such proposal but am not sure. 
-> Vhost-vdpa is generic framework, while the DMA mapping is vendor specific. 
-> Maybe vhost-vdpa can have some shared code needed to operate on iommu, so drivers can re-use it.  to me it seems simpler than exposing a new iommu device. 
-> 
-> > 
-> > 
-> > > Devices that has other ways to do the DMA mapping will call the
-> > proprietary APIs.
-> > 
-> > 
-> > To confirm, do you prefer:
-> > 
-> > 1) map/unmap
-> 
-> It is not only that. AFAIR there also flush and invalidate calls, right?
-> 
-> > 
-> > or
-> > 
-> > 2) pass all maps at one time?
-> 
-> To me this seems more straight forward. 
-> It is correct that under hotplug and large number of memory segments
-> the driver will need to understand the diff (or not and just reload
-> the new configuration).
-> However, my assumption here is that memory
-> hotplug is heavy flow anyway, and the driver extra cycles will not be
-> that visible
+Hi Bjorn,
 
-I think we can just allow both, after all vhost already has both interfaces ...
-We just need a flag that tells userspace whether it needs to
-update all maps aggressively or can wait for a fault.
-
-> > 
-> > Thanks
-> > 
-> > 
-> > >
+On 2020-02-04 14:34, Marcel Holtmann wrote:
+> Hi Bjorn,
 > 
+>>> Instead of relying on other subsytem to turn ON clocks
+>>> required for BT SoC to operate, voting them from the driver.
+>>> 
+>>> Signed-off-by: Venkata Lakshmi Narayana Gubba 
+>>> <gubbaven@codeaurora.org>
+>>> ---
+>>> v2:
+>>>   * addressed forward declarations
+>>>   * updated with devm_clk_get_optional()
+>>> 
+>>> ---
+>>> drivers/bluetooth/hci_qca.c | 25 +++++++++++++++++++++++++
+>>> 1 file changed, 25 insertions(+)
+>>> 
+>>> diff --git a/drivers/bluetooth/hci_qca.c 
+>>> b/drivers/bluetooth/hci_qca.c
+>>> index d6e0c99..73706f3 100644
+>>> --- a/drivers/bluetooth/hci_qca.c
+>>> +++ b/drivers/bluetooth/hci_qca.c
+>>> @@ -1738,6 +1738,15 @@ static int qca_power_off(struct hci_dev *hdev)
+>>> 	return 0;
+>>> }
+>>> 
+>>> +static int qca_setup_clock(struct clk *clk, bool enable)
+>>> +{
+>>> +	if (enable)
+>>> +		return clk_prepare_enable(clk);
+>>> +
+>>> +	clk_disable_unprepare(clk);
+>>> +	return 0;
+>>> +}
+>> 
+>> As Marcel requested, inline these.
+>> 
+>>> +
+>>> static int qca_regulator_enable(struct qca_serdev *qcadev)
+>>> {
+>>> 	struct qca_power *power = qcadev->bt_power;
+>>> @@ -1755,6 +1764,13 @@ static int qca_regulator_enable(struct 
+>>> qca_serdev *qcadev)
+>>> 
+>>> 	power->vregs_on = true;
+>>> 
+>>> +	ret = qca_setup_clock(qcadev->susclk, true);
+>>> +	if (ret) {
+>>> +		/* Turn off regulators to overcome power leakage */
+>> 
+>> You can omit this comment as well, as the name of the function you 
+>> call
+>> is aptly named.
+[Venkata] :
+We will update in next patch set.
+>> 
+>>> +		qca_regulator_disable(qcadev);
+>>> +		return ret;
+>> 
+>> Just return ret below instead.
+[Venkata] :
+We will update in next patch set
+>> 
+>>> +	}
+>>> +
+>>> 	return 0;
+>>> }
+>>> 
+>>> @@ -1773,6 +1789,9 @@ static void qca_regulator_disable(struct 
+>>> qca_serdev *qcadev)
+>>> 
+>>> 	regulator_bulk_disable(power->num_vregs, power->vreg_bulk);
+>>> 	power->vregs_on = false;
+>>> +
+>>> +	if (qcadev->susclk)
+>> 
+>> In the enable path you (correctly) rely on passing NULL to the clock
+>> code, so do the same here.
+[Venkata] :
+We will update in next patch set.
+> 
+> I already pushed the patch, but I am happy to accept a cleanup patch.
+> 
+> Regards
+> 
+> Marcel
 
+Regards,
+Venkata.
