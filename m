@@ -2,173 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E29FA153121
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 13:51:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98A4715312B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 13:53:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbgBEMvi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 07:51:38 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43326 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728094AbgBEMvf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 07:51:35 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p11so843146plq.10;
-        Wed, 05 Feb 2020 04:51:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=z2rCwKhMPk5QQnDbc8O1zs9yu0JRS1NKgiYNty4j9ao=;
-        b=X931Yhmlt5lykJmxHSlQn3LYRIUeitZYLnkp5ML0fo7ckqAoWt/tL0qCCLVzoyj4R2
-         4AfbRO5ga4ri3gN8/w77nULBeLd0GjHz+SkMPLgllyxl8I0khXZKKzV+ym/NLnjuBU6t
-         4ypn3cfgezDr9aqrMkiEv08OPrn7n5la/xbqov5TMWFG8JXaxDIenETzT35qv71bQqPK
-         3U1ImKu1C9TOQphMuge5niN4ld5uF3v2JcQH3BUUZekyLV9xBnU3bXssE6D8FYUwiWnG
-         9M5YkP89Zof8L7v9srlmRqyBXpsrDj3rc2/w9oKvSh6oxJYjE8B8makLJfZUHCLyRAGe
-         azXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=z2rCwKhMPk5QQnDbc8O1zs9yu0JRS1NKgiYNty4j9ao=;
-        b=t4Gl94Z/xVO8GNdUmxQusbUYZNtyMsgiD23aOXB7DL3hi1CYekGWytJAFZdkys9+8h
-         OAQu12nKq4rCoJs0RMN22KCOqlH8NyFeq1MKH46bj0T7X2sMY6dCetOc2C94wo44avrN
-         j6h9a5tDHZEz1FL/j5AWatvc8/jVFc6WY2HxnsM0X+elqHszyGrZk1svW95JcJ84tplS
-         viqlVT8sv7TBIjBxdzJKWekT1n0jq+NKfjvWnXBvpQodStDGaJYQ4/UW4qlAf0EIczQN
-         PGu7XCFsn1AfjGLeTN3wfTKB/f9TkU5GFPtNmt8tA0TxnJCIFoFr/GJgyNhnOqqolVB+
-         k0Hw==
-X-Gm-Message-State: APjAAAVIIGdKFsU27Hc5Bc4fZwtk89sBpvKvL4r5PSQyCJl5MhArHh1J
-        GDuZYdfQX0hZviEurKvo+88=
-X-Google-Smtp-Source: APXvYqxZ4IRD5HLednMl/VFLWobo0wrxj9CQmKQi4CyUuhEgfruu+Gnwt2VtBAlL08UlIjC42Iotkg==
-X-Received: by 2002:a17:902:24:: with SMTP id 33mr34959814pla.91.1580907093379;
-        Wed, 05 Feb 2020 04:51:33 -0800 (PST)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id y127sm22864784pfg.22.2020.02.05.04.51.30
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 05 Feb 2020 04:51:32 -0800 (PST)
-From:   Baolin Wang <baolin.wang7@gmail.com>
-To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        asutoshd@codeaurora.org
-Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, arnd@arndb.de,
-        linus.walleij@linaro.org, baolin.wang@linaro.org,
-        baolin.wang7@gmail.com, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v8 5/5] mmc: host: sdhci-sprd: Add software queue support
-Date:   Wed,  5 Feb 2020 20:50:32 +0800
-Message-Id: <6e11c5faeecafc2ef817c14268577925eee0bd4e.1580894083.git.baolin.wang7@gmail.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1580894083.git.baolin.wang7@gmail.com>
-References: <cover.1580894083.git.baolin.wang7@gmail.com>
-In-Reply-To: <cover.1580894083.git.baolin.wang7@gmail.com>
-References: <cover.1580894083.git.baolin.wang7@gmail.com>
+        id S1728003AbgBEMxW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 07:53:22 -0500
+Received: from gate.crashing.org ([63.228.1.57]:42729 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726386AbgBEMxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 07:53:21 -0500
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 015CppFf030570;
+        Wed, 5 Feb 2020 06:51:51 -0600
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id 015Cpn3x030569;
+        Wed, 5 Feb 2020 06:51:49 -0600
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Wed, 5 Feb 2020 06:51:49 -0600
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Oscar Salvador <osalvador@suse.de>, linux-s390@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>, linux-ia64@vger.kernel.org,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        linux-sh@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Wei Yang <richardw.yang@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 10/10] mm/memory_hotplug: Cleanup __remove_pages()
+Message-ID: <20200205125149.GS22482@gate.crashing.org>
+References: <20191006085646.5768-1-david@redhat.com> <20191006085646.5768-11-david@redhat.com> <20200204094652.GE6494@linux> <5d698f94-af18-0714-bc97-14b6c520572c@redhat.com> <20200204131353.GJ22482@gate.crashing.org> <0e2f700c-b01b-8c16-99c2-2648967fc203@redhat.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0e2f700c-b01b-8c16-99c2-2648967fc203@redhat.com>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Baolin Wang <baolin.wang@linaro.org>
+On Tue, Feb 04, 2020 at 02:38:51PM +0100, David Hildenbrand wrote:
+> On 04.02.20 14:13, Segher Boessenkool wrote:
+> > On Tue, Feb 04, 2020 at 01:41:06PM +0100, David Hildenbrand wrote:
+> >> It's a pattern commonly used in compilers and emulators to calculate the
+> >> number of bytes to the next block/alignment. (we're missing a macro
+> >> (like we have ALIGN_UP/IS_ALIGNED) for that - but it's hard to come up
+> >> with a good name (e.g., SIZE_TO_NEXT_ALIGN) .
 
-Add software queue support to improve the performance.
+> > You can just write the easy to understand
+> > 
+> >   ...  ALIGN_UP(x) - x  ...
+> 
+> you mean
+> 
+> ALIGN_UP(x, PAGES_PER_SECTION) - x
+> 
+> but ...
+> 
+> > which is better *without* having a separate name.  Does that not
+> > generate good machine code for you?
+> 
+> 1. There is no ALIGN_UP. "SECTION_ALIGN_UP(x) - x" would be possible
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
----
- drivers/mmc/host/Kconfig      |    1 +
- drivers/mmc/host/sdhci-sprd.c |   28 ++++++++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
+Erm, you started it ;-)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 65d3966..3ea45be 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -645,6 +645,7 @@ config MMC_SDHCI_SPRD
- 	depends on ARCH_SPRD
- 	depends on MMC_SDHCI_PLTFM
- 	select MMC_SDHCI_IO_ACCESSORS
-+	select MMC_HSQ
- 	help
- 	  This selects the SDIO Host Controller in Spreadtrum
- 	  SoCs, this driver supports R11(IP version: R11P0).
-diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-index d07b979..d346223 100644
---- a/drivers/mmc/host/sdhci-sprd.c
-+++ b/drivers/mmc/host/sdhci-sprd.c
-@@ -19,6 +19,7 @@
- #include <linux/slab.h>
- 
- #include "sdhci-pltfm.h"
-+#include "mmc_hsq.h"
- 
- /* SDHCI_ARGUMENT2 register high 16bit */
- #define SDHCI_SPRD_ARG2_STUFF		GENMASK(31, 16)
-@@ -379,6 +380,16 @@ static unsigned int sdhci_sprd_get_ro(struct sdhci_host *host)
- 	return 0;
- }
- 
-+static void sdhci_sprd_request_done(struct sdhci_host *host,
-+				    struct mmc_request *mrq)
-+{
-+	/* Validate if the request was from software queue firstly. */
-+	if (mmc_hsq_finalize_request(host->mmc, mrq))
-+		return;
-+
-+	 mmc_request_done(host->mmc, mrq);
-+}
-+
- static struct sdhci_ops sdhci_sprd_ops = {
- 	.read_l = sdhci_sprd_readl,
- 	.write_l = sdhci_sprd_writel,
-@@ -392,6 +403,7 @@ static unsigned int sdhci_sprd_get_ro(struct sdhci_host *host)
- 	.hw_reset = sdhci_sprd_hw_reset,
- 	.get_max_timeout_count = sdhci_sprd_get_max_timeout_count,
- 	.get_ro = sdhci_sprd_get_ro,
-+	.request_done = sdhci_sprd_request_done,
- };
- 
- static void sdhci_sprd_request(struct mmc_host *mmc, struct mmc_request *mrq)
-@@ -521,6 +533,7 @@ static int sdhci_sprd_probe(struct platform_device *pdev)
- {
- 	struct sdhci_host *host;
- 	struct sdhci_sprd_host *sprd_host;
-+	struct mmc_hsq *hsq;
- 	struct clk *clk;
- 	int ret = 0;
- 
-@@ -631,6 +644,18 @@ static int sdhci_sprd_probe(struct platform_device *pdev)
- 
- 	sprd_host->flags = host->flags;
- 
-+	hsq = devm_kzalloc(&pdev->dev, sizeof(*hsq), GFP_KERNEL);
-+	if (!hsq) {
-+		ret = -ENOMEM;
-+		goto err_cleanup_host;
-+	}
-+
-+	ret = mmc_hsq_init(hsq, host->mmc);
-+	if (ret)
-+		goto err_cleanup_host;
-+
-+	host->always_defer_done = true;
-+
- 	ret = __sdhci_add_host(host);
- 	if (ret)
- 		goto err_cleanup_host;
-@@ -689,6 +714,7 @@ static int sdhci_sprd_runtime_suspend(struct device *dev)
- 	struct sdhci_host *host = dev_get_drvdata(dev);
- 	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
- 
-+	mmc_hsq_suspend(host->mmc);
- 	sdhci_runtime_suspend_host(host);
- 
- 	clk_disable_unprepare(sprd_host->clk_sdio);
-@@ -717,6 +743,8 @@ static int sdhci_sprd_runtime_resume(struct device *dev)
- 		goto clk_disable;
- 
- 	sdhci_runtime_resume_host(host, 1);
-+	mmc_hsq_resume(host->mmc);
-+
- 	return 0;
- 
- clk_disable:
--- 
-1.7.9.5
+> 2. It would be wrong if x is already aligned.
+> 
+> e.g., let's use 4096 for simplicity as we all know that value by heart
+> (for both x and the block size).
+> 
+> a) -(4096 | -4096) -> 4096
+> 
+> b) #define ALIGN_UP(x, a) ((x + a - 1) & -(a))
+> 
+> ALIGN_UP(4096, 4096) - 4096 -> 0
+> 
+> Not as easy as it seems ...
 
+If you always want to return a number >= 1, it it simply
+  ALIGN_UP(x + 1) - x
+(and replace 1 by any other minimum size required).  This *also* is
+easy to read, without having to have any details (and quirks :-/ )
+of those utility functions memorised.
+
+
+Segher
