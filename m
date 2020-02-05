@@ -2,158 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F3B51538C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 20:11:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A24F1538E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 20:19:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbgBETLd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 14:11:33 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38175 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727085AbgBETLd (ORCPT
+        id S1727394AbgBETTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 14:19:47 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:39234 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727079AbgBETTr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 14:11:33 -0500
-Received: by mail-wm1-f66.google.com with SMTP id a9so4172694wmj.3;
-        Wed, 05 Feb 2020 11:11:31 -0800 (PST)
+        Wed, 5 Feb 2020 14:19:47 -0500
+Received: by mail-vs1-f65.google.com with SMTP id p14so2113824vsq.6
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 11:19:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jMov4KbETyM2WMoQRxMlok3LUpvFHoRjtuVdQssH7qc=;
-        b=MFyyiATYYDslQazdI+M1S6zJoUcmUuu2qGCEfjYlAdSm15sFBeMhqZaKgqFxh5mCXr
-         mkNyVuWGVZG8Xa1XmMzL1Lf0iLW90BxQy3mZafy179P49bOPTMs1jRqQ+GZMGdJBrxSu
-         urkC8c1SqBYoxzLw6ptMLn6kJ1zpZx+8LudsTT2LiOr4M6Fe6RpKogzDWI593bKhQVqI
-         3M/AIrObzFSC4PbLLD0QrVVuiM/1hfERWgqE8woiBpC+kAfcgjzqpOTNXlCFB0C1I6X6
-         xmgnt2UA6FmE5qhRVgjpUoLizW6TfRkrm3Q+8LdbjY+ofIzRS4C2qhRrJ1QwQgNI3tkd
-         pJXw==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mevmQ6k3Ihmv8r7EI3IwBN79KI6v2gp2UE5ATwyofr0=;
+        b=BuyExxOHNOnGw0g31bLqy0gVGWAXxG3djserMGkbzccG82zvt+a2/8Sqzj9jTg+Asa
+         2upuVHfTuyxd4DU4e3VS+64pnwjwhNe/J8UtYPtwP/hwbQ2Of2yNZIjQyTe42b6laPAb
+         Oa7DZNT5TuIoIpdt1rU89W3v4zmQUoQWR0r1E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jMov4KbETyM2WMoQRxMlok3LUpvFHoRjtuVdQssH7qc=;
-        b=gRg9jZf9aEr/5MbUYRrGojnLdDAIbtGhEMBd3DX2Q2vx+KepGaQt6+LFRhtnfxNV7p
-         I9JlY6xJXbfTHIW/ZovoQgqsZPTK6lPZb26JzTayJS/67CDte8V6M72aPK7FCeUB9Y6S
-         cAbDU9cv+YBZCJFxJqwQur/oOn+k/n3SOC8brL2vvBKPbPsBilN/eLqK5q9OXEdLyMRy
-         1q72uwKmzZtYL/vfZdsc9Q7dTfKWQ42ZmAOed3YfkPlAzl6YRPPNx44vKKng1Obcc3Gd
-         KZ4AajAxEQxW5/YwfZCngm2UwW8/UHLLPBMdbztjxyiTvCpqeD/dYvjVN6bVnsSH16/l
-         7RJQ==
-X-Gm-Message-State: APjAAAWVW56p/EVbs1ZLMnkioalpFEYyCYRooLPYA1dsqRc0H59APd/T
-        3yOzpmgiJXRkFGCEnnE9HDQ=
-X-Google-Smtp-Source: APXvYqxnArd6FNdbfRC8VRQ5oBDCx0vD9IKE5niHMygUbt1QSf4kw+bjgZD3w3sfbRUPodqOTlGhKQ==
-X-Received: by 2002:a7b:c934:: with SMTP id h20mr7155581wml.103.1580929890748;
-        Wed, 05 Feb 2020 11:11:30 -0800 (PST)
-Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id y17sm917898wrs.82.2020.02.05.11.11.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 11:11:30 -0800 (PST)
-Date:   Wed, 5 Feb 2020 20:11:28 +0100
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Silvano Di Ninno <silvano.dininno@nxp.com>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v2 1/2] crypto: engine - support for parallel requests
-Message-ID: <20200205191128.GA32606@Red>
-References: <1580819660-30211-1-git-send-email-iuliana.prodan@nxp.com>
- <1580819660-30211-2-git-send-email-iuliana.prodan@nxp.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mevmQ6k3Ihmv8r7EI3IwBN79KI6v2gp2UE5ATwyofr0=;
+        b=Svk7I0GgQF5CSmXpOZp98udgd8FnO0vn31D0O0veaSi8GffgScRwcOcJZwtMX4HhzC
+         JTfgmwFNvpy/MnvIuQNrMi9lL28NxhP4iGAzegFmfoeGHTOLEQcd7XlxkrnyjjVW8lMf
+         n1k90Q9KbYnTlvKZ99+rX1mwJtg5Gx4Acka2t2YsPopRaibxx998jDxud6UG08u9yA5Y
+         z9/JF42PifpwBKUsOYfnLTddnBIWbGTGUYpdw4Dk9+VhF4J4bvd9zRxCXeOJXRF3ehsA
+         TD4m9xp8tz81M9LQH4tGtyDblHetdFKZ/vHNwkud1Fnm4s0QbWQGV9zKs84aEspifzVR
+         +Tjg==
+X-Gm-Message-State: APjAAAVF4Ebl3VFMfHbrh9uTKT/oK4CWNveWhnc07smVXDIBs5Cp0GgG
+        lPanK4KxtKc92AyePxPDTocR32KPbe8=
+X-Google-Smtp-Source: APXvYqwcmYqh7DR+FdXeu4AHhVrKj1bDV/OBhEtdMOw354h0O/vuEEEMqaG8PW1eRvMhXnWhm3ow0w==
+X-Received: by 2002:a05:6102:3105:: with SMTP id e5mr11651252vsh.133.1580930385998;
+        Wed, 05 Feb 2020 11:19:45 -0800 (PST)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
+        by smtp.gmail.com with ESMTPSA id p78sm271892vkf.0.2020.02.05.11.19.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Feb 2020 11:19:45 -0800 (PST)
+Received: by mail-ua1-f41.google.com with SMTP id l6so1274315uap.13
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 11:19:44 -0800 (PST)
+X-Received: by 2002:a9f:300a:: with SMTP id h10mr14335806uab.91.1580930384495;
+ Wed, 05 Feb 2020 11:19:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1580819660-30211-2-git-send-email-iuliana.prodan@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1580886097-6312-1-git-send-email-smasetty@codeaurora.org> <1580886097-6312-4-git-send-email-smasetty@codeaurora.org>
+In-Reply-To: <1580886097-6312-4-git-send-email-smasetty@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 5 Feb 2020 11:19:33 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=UEQ0mOXuDrSZrcJ8g6jb0eLf1Ttn+Mn7T6d2TpCMUcuA@mail.gmail.com>
+Message-ID: <CAD=FV=UEQ0mOXuDrSZrcJ8g6jb0eLf1Ttn+Mn7T6d2TpCMUcuA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] arm64: dts: qcom: sc7180: Add A618 gpu dt blob
+To:     Sharat Masetty <smasetty@codeaurora.org>
+Cc:     freedreno <freedreno@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, dri-devel@freedesktop.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 04, 2020 at 02:34:19PM +0200, Iuliana Prodan wrote:
-> Added support for executing multiple requests, in parallel,
-> for crypto engine.
-> A new callback is added, can_enqueue_more, which asks the
-> driver if the hardware has free space, to enqueue a new request.
-> The new crypto_engine_alloc_init_and_set function, initialize
-> crypto-engine, sets the maximum size for crypto-engine software
-> queue (not hardcoded anymore) and the can_enqueue_more callback.
-> On crypto_pump_requests, if can_enqueue_more callback returns true,
-> a new request is send to hardware, until there is no space and the
-> callback returns false.
-> 
-> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+Hi,
+
+On Tue, Feb 4, 2020 at 11:02 PM Sharat Masetty <smasetty@codeaurora.org> wrote:
+>
+> This patch adds the required dt nodes and properties
+> to enabled A618 GPU.
+>
+> Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
 > ---
->  crypto/crypto_engine.c  | 106 ++++++++++++++++++++++++++++++------------------
->  include/crypto/engine.h |  10 +++--
->  2 files changed, 72 insertions(+), 44 deletions(-)
-> 
-> diff --git a/crypto/crypto_engine.c b/crypto/crypto_engine.c
-> index eb029ff..aba934f 100644
-> --- a/crypto/crypto_engine.c
-> +++ b/crypto/crypto_engine.c
-> @@ -22,32 +22,18 @@
->   * @err: error number
->   */
->  static void crypto_finalize_request(struct crypto_engine *engine,
-> -			     struct crypto_async_request *req, int err)
-> +				    struct crypto_async_request *req, int err)
->  {
-> -	unsigned long flags;
-> -	bool finalize_cur_req = false;
->  	int ret;
->  	struct crypto_engine_ctx *enginectx;
->  
-> -	spin_lock_irqsave(&engine->queue_lock, flags);
-> -	if (engine->cur_req == req)
-> -		finalize_cur_req = true;
-> -	spin_unlock_irqrestore(&engine->queue_lock, flags);
-> -
-> -	if (finalize_cur_req) {
-> -		enginectx = crypto_tfm_ctx(req->tfm);
-> -		if (engine->cur_req_prepared &&
-> -		    enginectx->op.unprepare_request) {
-> -			ret = enginectx->op.unprepare_request(engine, req);
-> -			if (ret)
-> -				dev_err(engine->dev, "failed to unprepare request\n");
-> -		}
-> -		spin_lock_irqsave(&engine->queue_lock, flags);
-> -		engine->cur_req = NULL;
-> -		engine->cur_req_prepared = false;
-> -		spin_unlock_irqrestore(&engine->queue_lock, flags);
-> +	enginectx = crypto_tfm_ctx(req->tfm);
-> +	if (enginectx->op.prepare_request &&
-> +	    enginectx->op.unprepare_request) {
-> +		ret = enginectx->op.unprepare_request(engine, req);
-> +		if (ret)
-> +			dev_err(engine->dev, "failed to unprepare request\n");
->  	}
-> -
->  	req->complete(req, err);
->  
->  	kthread_queue_work(engine->kworker, &engine->pump_requests);
-> @@ -73,10 +59,6 @@ static void crypto_pump_requests(struct crypto_engine *engine,
->  
->  	spin_lock_irqsave(&engine->queue_lock, flags);
->  
-> -	/* Make sure we are not already running a request */
-> -	if (engine->cur_req)
-> -		goto out;
-> -
+>  arch/arm64/boot/dts/qcom/sc7180.dtsi | 102 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 102 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> index f3fcc5c..63fff15 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> @@ -1043,6 +1043,108 @@
+>                         };
+>                 };
+>
+> +               gpu: gpu@5000000 {
+> +                       compatible = "qcom,adreno-618.0", "qcom,adreno";
+> +                       #stream-id-cells = <16>;
+> +                       reg = <0 0x05000000 0 0x40000>, <0 0x0509e000 0 0x1000>,
+> +                               <0 0x05061000 0 0x800>;
+> +                       reg-names = "kgsl_3d0_reg_memory", "cx_mem", "cx_dbgc";
+> +                       interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>;
+> +                       iommus = <&adreno_smmu 0>;
+> +                       operating-points-v2 = <&gpu_opp_table>;
+> +                       qcom,gmu = <&gmu>;
+> +
+> +                       gpu_opp_table: opp-table {
+> +                               compatible = "operating-points-v2";
+> +
+> +                               opp-800000000 {
+> +                                       opp-hz = /bits/ 64 <800000000>;
+> +                                       opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
+> +                               };
+> +
+> +                               opp-650000000 {
+> +                                       opp-hz = /bits/ 64 <650000000>;
+> +                                       opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
+> +                               };
+> +
+> +                               opp-565000000 {
+> +                                       opp-hz = /bits/ 64 <565000000>;
+> +                                       opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
+> +                               };
+> +
+> +                               opp-430000000 {
+> +                                       opp-hz = /bits/ 64 <430000000>;
+> +                                       opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
+> +                               };
+> +
+> +                               opp-355000000 {
+> +                                       opp-hz = /bits/ 64 <355000000>;
+> +                                       opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
+> +                               };
+> +
+> +                               opp-267000000 {
+> +                                       opp-hz = /bits/ 64 <267000000>;
+> +                                       opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
+> +                               };
+> +
+> +                               opp-180000000 {
+> +                                       opp-hz = /bits/ 64 <180000000>;
+> +                                       opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
+> +                               };
+> +                       };
+> +               };
+> +
+> +               adreno_smmu: iommu@5040000 {
+> +                       compatible = "qcom,sc7180-smmu-v2", "qcom,smmu-v2";
 
-Hello
+As per prior discussion "qcom,sc7180-smmu-v2" needs to be added to the bindings.
 
-Your patch has the same problem than mine reported by Horia.
-If a queue has more than one request, a first crypto_pump_requests() will send a request and for drivers which do not block on do_one_request() crypto_pump_requests() will end.
-Then another crypto_pump_requests() will fire sending a second request while the driver does not support that.
 
-So we need to replace engine->cur_req by another locking mechanism.
-Perhaps the cleaner is to add a "request count" (increased when do_one_request, decreased in crypto_finalize_request)
-I know that the early version have that and it was removed, but I do not see any better way.
+> +                       reg = <0 0x05040000 0 0x10000>;
+> +                       #iommu-cells = <1>;
+> +                       #global-interrupts = <2>;
+> +                       interrupts = <GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>,
+> +                                       <GIC_SPI 231 IRQ_TYPE_LEVEL_HIGH>,
+> +                                       <GIC_SPI 364 IRQ_TYPE_EDGE_RISING>,
+> +                                       <GIC_SPI 365 IRQ_TYPE_EDGE_RISING>,
+> +                                       <GIC_SPI 366 IRQ_TYPE_EDGE_RISING>,
+> +                                       <GIC_SPI 367 IRQ_TYPE_EDGE_RISING>,
+> +                                       <GIC_SPI 368 IRQ_TYPE_EDGE_RISING>,
+> +                                       <GIC_SPI 369 IRQ_TYPE_EDGE_RISING>,
+> +                                       <GIC_SPI 370 IRQ_TYPE_EDGE_RISING>,
+> +                                       <GIC_SPI 371 IRQ_TYPE_EDGE_RISING>;
+> +                       clocks = <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
+> +                               <&gcc GCC_GPU_CFG_AHB_CLK>,
+> +                               <&gcc GCC_DDRSS_GPU_AXI_CLK>;
+> +
+> +                       clock-names = "bus", "iface", "mem_iface_clk";
 
-Regards
+As per discussion in v3 [1], "mem_iface_clk" is new and needs to be
+added to the bindings. Presumably that patch should be posted / Acked
+by Rob before we land this dts.
+
+Other than relying on un-posted bindings, this looks sane to me and
+this patch lets me bring the GPU up on my sc7180-based board.
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Tested-by: Douglas Anderson <dianders@chromium.org>
+
+
+-Doug
+
+[1] https://lore.kernel.org/r/1e29097cc1cdf18671379f6420f872b0@codeaurora.org
