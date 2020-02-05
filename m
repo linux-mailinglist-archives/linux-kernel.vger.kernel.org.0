@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DC73153BE2
+	by mail.lfdr.de (Postfix) with ESMTP id E8AA0153BE3
 	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 00:28:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbgBEX2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 18:28:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38414 "EHLO mail.kernel.org"
+        id S1727632AbgBEX2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 18:28:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727192AbgBEX2F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 18:28:05 -0500
+        id S1727562AbgBEX2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 18:28:04 -0500
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D31A9218AC;
-        Wed,  5 Feb 2020 23:28:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3910021D7D;
+        Wed,  5 Feb 2020 23:28:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1580945284;
-        bh=bKTzow6lnfsmvQ7jDptWZxY6H3I0ImNzPEkMhHjJfFE=;
+        bh=46oZ7qfCkoMgiJNmlyL4gPed6RlcQ2p9W5//kGnmdW4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rlBtackbzTq8xRdEjNNSDDnyUF/HYo+6bGp6XpBIL1ehppAzScTvapV3qmWEPebad
-         loS77NuXFXfX8prBLA148vA/tFnehbHFik24APENoVAscanQ2PHATRzsbAVNa7LXUn
-         adq31FMB7jHN0ujn3iSlLpITFmyz0sYBQNUDJP9Y=
+        b=1qbTzrp3OYJjljGNXksFzohyeQKOG16ZA9ElJOJZYE0pYz99RY6HzML5gYQ89yjdL
+         Ft1uzm50Nnv1XOe3XIqJV4vCS265FW8/kDT/HCP/xDGo2rq2kmokIHP8eEkYaKjY+a
+         ucPOoZv8Ay10YX+ExJwfnXubPJgxHebXfD3P4Kxc=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -30,9 +30,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Douglas Anderson <dianders@chromium.org>,
         Heiko Stuebner <heiko@sntech.de>,
         Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH v2 3/4] clk: Move rate and accuracy recalc to mostly consumer APIs
-Date:   Wed,  5 Feb 2020 15:28:01 -0800
-Message-Id: <20200205232802.29184-4-sboyd@kernel.org>
+Subject: [PATCH v2 4/4] clk: Bail out when calculating phase fails during clk registration
+Date:   Wed,  5 Feb 2020 15:28:02 -0800
+Message-Id: <20200205232802.29184-5-sboyd@kernel.org>
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 In-Reply-To: <20200205232802.29184-1-sboyd@kernel.org>
 References: <20200205232802.29184-1-sboyd@kernel.org>
@@ -43,147 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's some confusion about when recalc is done for the rate and
-accuracy clk consumer APIs in relation to the prepare lock being taken.
-Oddly enough, we take the lock again in debugfs APIs so that we can call
-the internal "clk_core" APIs to get these fields with any necessary
-recalculations. Instead of having this confusion, let's introduce a
-recalc variant of these two consumer APIs as internal helpers and call
-them from the consumer APIs and the debugfs code so that we don't take
-the lock more than once.
+Bail out of clk registration if we fail to get the phase for a clk that
+has a clk_ops::get_phase() callback. Print a warning too so that driver
+authors can easily figure out that some clk is unable to read back phase
+information at boot.
 
 Cc: Douglas Anderson <dianders@chromium.org>
 Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
+Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/clk.c | 48 +++++++++++++++++++++++------------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+ drivers/clk/clk.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 9ad950178d10..87532e2d124a 100644
+index 87532e2d124a..e9e83f7ae9e0 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -488,7 +488,7 @@ unsigned long clk_hw_get_rate(const struct clk_hw *hw)
- }
- EXPORT_SYMBOL_GPL(clk_hw_get_rate);
- 
--static unsigned long __clk_get_accuracy(struct clk_core *core)
-+static unsigned long clk_core_get_accuracy_no_lock(struct clk_core *core)
- {
- 	if (!core)
- 		return 0;
-@@ -1517,18 +1517,12 @@ static void __clk_recalc_accuracies(struct clk_core *core)
- 		__clk_recalc_accuracies(child);
- }
- 
--static long clk_core_get_accuracy(struct clk_core *core)
-+static long clk_core_get_accuracy_recalc(struct clk_core *core)
- {
--	unsigned long accuracy;
--
--	clk_prepare_lock();
- 	if (core && (core->flags & CLK_GET_ACCURACY_NOCACHE))
- 		__clk_recalc_accuracies(core);
- 
--	accuracy = __clk_get_accuracy(core);
--	clk_prepare_unlock();
--
--	return accuracy;
-+	return clk_core_get_accuracy_no_lock(core);
- }
- 
- /**
-@@ -1542,10 +1536,16 @@ static long clk_core_get_accuracy(struct clk_core *core)
-  */
- long clk_get_accuracy(struct clk *clk)
- {
-+	long accuracy;
-+
- 	if (!clk)
- 		return 0;
- 
--	return clk_core_get_accuracy(clk->core);
-+	clk_prepare_lock();
-+	accuracy = clk_core_get_accuracy_recalc(clk->core);
-+	clk_prepare_unlock();
-+
-+	return accuracy;
- }
- EXPORT_SYMBOL_GPL(clk_get_accuracy);
- 
-@@ -1599,19 +1599,12 @@ static void __clk_recalc_rates(struct clk_core *core, unsigned long msg)
- 		__clk_recalc_rates(child, msg);
- }
- 
--static unsigned long clk_core_get_rate(struct clk_core *core)
-+static unsigned long clk_core_get_rate_recalc(struct clk_core *core)
- {
--	unsigned long rate;
--
--	clk_prepare_lock();
--
- 	if (core && (core->flags & CLK_GET_RATE_NOCACHE))
- 		__clk_recalc_rates(core, 0);
- 
--	rate = clk_core_get_rate_nolock(core);
--	clk_prepare_unlock();
--
--	return rate;
-+	return clk_core_get_rate_nolock(core);
- }
- 
- /**
-@@ -1624,10 +1617,16 @@ static unsigned long clk_core_get_rate(struct clk_core *core)
-  */
- unsigned long clk_get_rate(struct clk *clk)
- {
-+	unsigned long rate;
-+
- 	if (!clk)
- 		return 0;
- 
--	return clk_core_get_rate(clk->core);
-+	clk_prepare_lock();
-+	rate = clk_core_get_rate_recalc(clk->core);
-+	clk_prepare_unlock();
-+
-+	return rate;
- }
- EXPORT_SYMBOL_GPL(clk_get_rate);
- 
-@@ -2910,7 +2909,8 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
- 		   level * 3 + 1, "",
- 		   30 - level * 3, c->name,
- 		   c->enable_count, c->prepare_count, c->protect_count,
--		   clk_core_get_rate(c), clk_core_get_accuracy(c));
-+		   clk_core_get_rate_recalc(c),
-+		   clk_core_get_accuracy_recalc(c));
- 
- 	phase = clk_core_get_phase(c);
- 	if (phase >= 0)
-@@ -2965,10 +2965,10 @@ static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
- 	seq_printf(s, "\"enable_count\": %d,", c->enable_count);
- 	seq_printf(s, "\"prepare_count\": %d,", c->prepare_count);
- 	seq_printf(s, "\"protect_count\": %d,", c->protect_count);
--	seq_printf(s, "\"rate\": %lu,", clk_core_get_rate(c));
-+	seq_printf(s, "\"rate\": %lu,", clk_core_get_rate_recalc(c));
- 	seq_printf(s, "\"min_rate\": %lu,", min_rate);
- 	seq_printf(s, "\"max_rate\": %lu,", max_rate);
--	seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
-+	seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy_recalc(c));
- 	phase = clk_core_get_phase(c);
- 	if (phase >= 0)
- 		seq_printf(s, "\"phase\": %d,", phase);
-@@ -3446,7 +3446,7 @@ static int __clk_core_init(struct clk_core *core)
+@@ -3457,7 +3457,12 @@ static int __clk_core_init(struct clk_core *core)
+ 	 * Since a phase is by definition relative to its parent, just
+ 	 * query the current clock phase, or just assume it's in phase.
  	 */
- 	if (core->ops->recalc_accuracy)
- 		core->accuracy = core->ops->recalc_accuracy(core->hw,
--					__clk_get_accuracy(parent));
-+					clk_core_get_accuracy_no_lock(parent));
- 	else if (parent)
- 		core->accuracy = parent->accuracy;
- 	else
+-	clk_core_get_phase(core);
++	ret = clk_core_get_phase(core);
++	if (ret < 0) {
++		pr_warn("%s: Failed to get phase for clk '%s'\n", __func__,
++			core->name);
++		goto out;
++	}
+ 
+ 	/*
+ 	 * Set clk's duty cycle.
 -- 
 Sent by a computer, using git, on the internet
 
