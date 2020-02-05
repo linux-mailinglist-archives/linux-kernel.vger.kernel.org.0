@@ -2,113 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D6FF1525FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 06:26:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2965A152608
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 06:36:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726236AbgBEF0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 00:26:40 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:50186 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbgBEF0k (ORCPT
+        id S1726416AbgBEFgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 00:36:51 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:55162 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725385AbgBEFgv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 00:26:40 -0500
-Received: by mail-pj1-f66.google.com with SMTP id r67so467828pjb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 21:26:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=lVCuHJnMuCmwTfOue9M7b3xZrfn6U2mf9Vp/kH0JJOs=;
-        b=cJayuJpZmhN21d7X3rkS5Tr+K3EfQSzoT/0HJFSLNt66wGfiKSP0FyG6cTfzM/7oVF
-         o8IpmfXRopueRDlU+qbkKLmIr9BLAJqgHU9SmiyJ9vi7AQ1ML9uzAs7buBBaa4oRPKxE
-         hOTsjE0M6zFrn+PmyJiu0+8YwHmlGDBbxSzzzvemYGLOe2OMTgm25HXzn73akKPnO9Lk
-         XJ9uGmJv8gsSv57jfVJxHXKLEA1hLu1mhbMixuxv79EgW0dYC38C5uyXgBVEyePyaGJ2
-         ilP1rvkY0dAGud8omj3cVnS64RFlkFHW63Zji/Qot9oxZkkoje0tGdx+58HmO1/9nBx6
-         +jtw==
+        Wed, 5 Feb 2020 00:36:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580881010;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=XxLib1DyGWA3n/jl6h9rliqNTP1O1RA9Yuhg5J8jnQ8=;
+        b=RyoxjiUwJvI2I4ITkzXMhsmSEXwJbLsSPQTdUyivPjtYuDdowFtD4xLWCT+8/+ktVfcUs6
+        qVJYpTtp7Fdg8jAx3DNDhJxmsAqibIGJ/HXKJv3n52Y08GwQL/JShhZ34Mtzj0zf6PnmXc
+        KX7MTW9Sek0XnVFXNfNIELIM3yCJJxs=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-438-qJT_nZhSN4-BsKgtWprqNQ-1; Wed, 05 Feb 2020 00:36:48 -0500
+X-MC-Unique: qJT_nZhSN4-BsKgtWprqNQ-1
+Received: by mail-qv1-f72.google.com with SMTP id z39so826715qve.5
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 21:36:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=lVCuHJnMuCmwTfOue9M7b3xZrfn6U2mf9Vp/kH0JJOs=;
-        b=nwO/oKHyrw7LBPSETDUuu2gZvVDJQX9dNB4+n0TVty0SRtQYKKEnIQy7oPVYCWoMpg
-         jN+T5tXTrWKlI/KOMQq4aJeqZIyaAhOCZIAbAsNnAKh8UJ02IVU4degskNhkYnnvIMHW
-         3QLuWs/idTNA7EzChiEYKaknQMWcot8JWwt0qIIK5pxCiJ5yjw3OClgr+O2ob+O24/8A
-         LqEYKzofeLWz1uM2v2BVObqsHoJm28UZYUIOu2Et+9lhrkQ4jcaF5TWqs3dqvdP8Wat0
-         qHFO38tAXT67V3vzJfBYPlKXoG8Sjoier5D9CEcG2fkyTMviziFetChZ47hZ2PfQolIS
-         CLDw==
-X-Gm-Message-State: APjAAAWA61xqJUzm60ZIqJ48O8gGdnyuE6u3KQ64DnJUazqTRwThdSXF
-        AmiOtYsaIEQJ2ko1GYzO1QI=
-X-Google-Smtp-Source: APXvYqyzZSifvglSEHY4SkdDLNx4HtPkcV2z8C35LMbuNY7OjP2JjNstBX4Mb8HDYkB6XQD165h0jg==
-X-Received: by 2002:a17:902:4a:: with SMTP id 68mr34234329pla.245.1580880399635;
-        Tue, 04 Feb 2020 21:26:39 -0800 (PST)
-Received: from workstation-portable ([103.211.17.109])
-        by smtp.gmail.com with ESMTPSA id i3sm26130751pfg.94.2020.02.04.21.26.36
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=XxLib1DyGWA3n/jl6h9rliqNTP1O1RA9Yuhg5J8jnQ8=;
+        b=sOPGjUuvZida4bGyiq1Iq4puWXBD/56Z06322TvCDIAXT/d4Ua/KPa38dR7iQ2UMIc
+         HWBUCrWPvNcjitkpMLM+1KY840t0LyZzSzS8yr5Taap8jLGoT+4lJbdE21AgOmXAFRuv
+         jlXQAoogofxerSlRTZLeAtfN7gMpbg954/+X94KH2c0QW27yMuzudvW30B4BAEkXXER7
+         igLkg0ayEVCktzY/6q42GCPmQ4DqJ5so1Qi0wc6M7XJxdXRTJV1xaucGIHa4T6a4De9S
+         jJpEfJU4j30jvBLV9+pyBe30rV/+9eBgQMER5VhAQ4sxFJ2bCBkXBGiPT0gCp0j0dMKi
+         Ttaw==
+X-Gm-Message-State: APjAAAW2IrfZwpt/10puRnr1pXjqRKBKt1z/4jQMKFyBGdrdXm0u0bNz
+        WtMKyMWJLBGA8QXtiXPMxfOWhczAlTFZbtIbPTkVzcG2upZw9eQIWAGC8zaWQzqyM+96ijSjzIp
+        phcUc3CirRW7JbdLfxXuV8WLm
+X-Received: by 2002:ac8:6f09:: with SMTP id g9mr32149790qtv.275.1580881008081;
+        Tue, 04 Feb 2020 21:36:48 -0800 (PST)
+X-Google-Smtp-Source: APXvYqw0rRf19uckjRT2XyuOTvPcwwSVFIB7TnwPqwZmh7xwjP4vvHrAEcKTKEeGxk7l0EPBEm80AA==
+X-Received: by 2002:ac8:4e43:: with SMTP id e3mr32421061qtw.129.1580880686259;
+        Tue, 04 Feb 2020 21:31:26 -0800 (PST)
+Received: from redhat.com (bzq-79-176-41-183.red.bezeqint.net. [79.176.41.183])
+        by smtp.gmail.com with ESMTPSA id y145sm12328322qkb.87.2020.02.04.21.31.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2020 21:26:38 -0800 (PST)
-Date:   Wed, 5 Feb 2020 10:56:32 +0530
-From:   Amol Grover <frextrite@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH] tracing: Annotate ftrace_graph_hash pointer with __rcu
-Message-ID: <20200205052632.GB1540@workstation-portable>
-References: <20200201072703.17330-1-frextrite@gmail.com>
- <20200203163301.GB85781@google.com>
- <20200204200116.479f0c60@oasis.local.home>
+        Tue, 04 Feb 2020 21:31:25 -0800 (PST)
+Date:   Wed, 5 Feb 2020 00:31:18 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     Tiwei Bie <tiwei.bie@intel.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, shahafs@mellanox.com, jgg@mellanox.com,
+        rob.miller@broadcom.com, haotian.wang@sifive.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        rdunlap@infradead.org, hch@infradead.org, jiri@mellanox.com,
+        hanand@xilinx.com, mhabets@solarflare.com,
+        maxime.coquelin@redhat.com, lingshan.zhu@intel.com,
+        dan.daly@intel.com, cunming.liang@intel.com, zhihong.wang@intel.com
+Subject: Re: [PATCH] vhost: introduce vDPA based backend
+Message-ID: <20200205003048-mutt-send-email-mst@kernel.org>
+References: <20200131033651.103534-1-tiwei.bie@intel.com>
+ <7aab2892-bb19-a06a-a6d3-9c28bc4c3400@redhat.com>
+ <20200204005306-mutt-send-email-mst@kernel.org>
+ <cf485e7f-46e3-20d3-8452-e3058b885d0a@redhat.com>
+ <20200205020555.GA369236@___>
+ <798e5644-ca28-ee46-c953-688af9bccd3b@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200204200116.479f0c60@oasis.local.home>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <798e5644-ca28-ee46-c953-688af9bccd3b@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 04, 2020 at 08:01:16PM -0500, Steven Rostedt wrote:
-> On Mon, 3 Feb 2020 11:33:01 -0500
-> Joel Fernandes <joel@joelfernandes.org> wrote:
+On Wed, Feb 05, 2020 at 11:12:21AM +0800, Jason Wang wrote:
 > 
-> 
-> > > --- a/kernel/trace/trace.h
-> > > +++ b/kernel/trace/trace.h
-> > > @@ -950,22 +950,25 @@ extern void __trace_graph_return(struct trace_array *tr,
-> > >  				 unsigned long flags, int pc);
-> > >  
-> > >  #ifdef CONFIG_DYNAMIC_FTRACE
-> > > -extern struct ftrace_hash *ftrace_graph_hash;
-> > > +extern struct ftrace_hash __rcu *ftrace_graph_hash;
-> > >  extern struct ftrace_hash *ftrace_graph_notrace_hash;
-> > >  
-> > >  static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
-> > >  {
-> > >  	unsigned long addr = trace->func;
-> > >  	int ret = 0;
-> > > +	struct ftrace_hash *hash;
-> > >  
-> > >  	preempt_disable_notrace();
-> > >  
-> > > -	if (ftrace_hash_empty(ftrace_graph_hash)) {
-> > > +	hash = rcu_dereference_protected(ftrace_graph_hash, !preemptible());  
+> On 2020/2/5 上午10:05, Tiwei Bie wrote:
+> > On Tue, Feb 04, 2020 at 02:46:16PM +0800, Jason Wang wrote:
+> > > On 2020/2/4 下午2:01, Michael S. Tsirkin wrote:
+> > > > On Tue, Feb 04, 2020 at 11:30:11AM +0800, Jason Wang wrote:
+> > > > > 5) generate diffs of memory table and using IOMMU API to setup the dma
+> > > > > mapping in this method
+> > > > Frankly I think that's a bunch of work. Why not a MAP/UNMAP interface?
+> > > > 
+> > > Sure, so that basically VHOST_IOTLB_UPDATE/INVALIDATE I think?
+> > Do you mean we let userspace to only use VHOST_IOTLB_UPDATE/INVALIDATE
+> > to do the DMA mapping in vhost-vdpa case? When vIOMMU isn't available,
+> > userspace will set msg->iova to GPA, otherwise userspace will set
+> > msg->iova to GIOVA, and vhost-vdpa module will get HPA from msg->uaddr?
 > > 
-> > I think you can use rcu_dereference_sched() here? That way no need to pass
-> > !preemptible.
+> > Thanks,
+> > Tiwei
+> 
+> 
+> I think so. Michael, do you think this makes sense?
+> 
+> Thanks
+
+to make sure, could you post the suggested argument format for
+these ioctls?
+
+> 
 > > 
-> > A preempt-disabled section is an RCU "sched flavor" section. Flavors are
-> > consolidated in the backend, but in the front end the dereference API still
-> > do have flavors.
-> 
-> Unfortunately, doing it with rcu_dereference_sched() causes a lockdep
-> splat :-P. This is because ftrace can execute when rcu is not
-> "watching" and that will trigger a lockdep error. That means, this
-> origin patch *is* correct. I'm re-applying this one.
-> 
+> > > Thanks
+> > > 
+> > > 
 
-Something new to learn, thank you for the information Steve!
-
-Thanks
-Amol
-
-> -- Steve
