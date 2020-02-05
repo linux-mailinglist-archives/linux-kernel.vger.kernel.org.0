@@ -2,57 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C4E31538C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 20:11:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5B511538CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 20:11:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbgBETKy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 14:10:54 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:53384 "EHLO
+        id S1727478AbgBETLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 14:11:52 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:37965 "EHLO
         mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726822AbgBETKx (ORCPT
+        with ESMTP id S1727083AbgBETLv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 14:10:53 -0500
-Received: by mail-pj1-f67.google.com with SMTP id n96so1382054pjc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 11:10:52 -0800 (PST)
+        Wed, 5 Feb 2020 14:11:51 -0500
+Received: by mail-pj1-f67.google.com with SMTP id j17so1408523pjz.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 11:11:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=amr41VQ+ov/3FHdSaO7nRJdWSyyl+QIxOuaNb9WUjvA=;
-        b=VOHxRvsQAhXVnRNZHh8IzoFGmySV8SxSEw4f0VrV17nl5SmT6cvxcWBdy4hf3A0HVf
-         DHwtr37dnwyLSlgoUmt1jWAN6HVbpUfpwbv+SM10Cs8f+znrcuvRl41b1/aZA27MrRDG
-         wckehZslNLSyQ1KKNrKbA9627/sMMJfNtMiSI=
+        bh=y/dxpKcYEXxmnsITAJ6pnZifEuXekQdEG50zLc7fDeo=;
+        b=CxEmMnwR6rjD71F46jEADMXkj7EssJmMqd+P3L3f6w6ESIFbj1Hw7dJPhu400glIU7
+         9HNGruSKqCRaiHvJNyIp5ineGRVLgeIkRrfxwSw0Ry2Ne74Iu/U8pYeooGac19uXIZ4g
+         Bgrk8bznNFJ+13cj9tnhhFsYs0hNLKSvUA6Dw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=amr41VQ+ov/3FHdSaO7nRJdWSyyl+QIxOuaNb9WUjvA=;
-        b=jFj8kzJdOyhh/U5IKUO01V4ZjwEBGmJxKrHZFGiIk61yt4dj69hU+O2FY5EOqineNl
-         WFK+P2lHZX5tpRIoGXeCCZa8zxV/Q+7PP2+SlGGkg52izQN1PgODl5krwaseIdFQ4eXG
-         Xv7Lb2ZKIiAsaXUR4ZIJzWoJbpGiv8a3fuXwif5N0xSbF38uPNHMpxsCWtW3NbOti9uc
-         YcdvS8M/WXg8Urz5ak1IkCNSxoj3wxG6SwSefysoLIFMM92blLdVTXJYpR4PeT8sPMa0
-         FD/g9O2Wobmy3VnBO0lZcKkH923/NoHS6GsKJpjmhEmlYSCX3EmTBAhdydTs/QiT8yJO
-         4axg==
-X-Gm-Message-State: APjAAAXOOOA2Heh1EZab1N2RYlUE6bNlX+cSHY5Y7Z2kZtG5GZUCxBcn
-        h8JpydVBS/3iwM3ND5HBQ9UWvnEXiuM=
-X-Google-Smtp-Source: APXvYqyn1JHXj6wFMEEX8gmsq2idWTb1vj/lxD4pFRbUveUwSZuOb0YBEgp6S4BaotDDWsYTViUu6A==
-X-Received: by 2002:a17:902:9a8c:: with SMTP id w12mr36161333plp.149.1580929851564;
-        Wed, 05 Feb 2020 11:10:51 -0800 (PST)
+        bh=y/dxpKcYEXxmnsITAJ6pnZifEuXekQdEG50zLc7fDeo=;
+        b=buGLYv1Go1oBhIvEEBTZk7mVsikgyFdFomUUt73tH3jFcuqi3niRceQZml9qebtzas
+         SDBqcJtzFf/+lzMjA1rJEESdKuKZp3mfsG7pIfeWiAhfgYWi7wI+vTmP142mwbXxdjzy
+         q3kg1/HVMTfVEeMFlUEUWJIn7keeVEf6jAq+8r3dTyx3ZxeWqiEiUAvsdKxII8yj2prO
+         oTfeFXKwqNhW1Wy/0vGQ2ZjuddObaAl5xAhEm0liISoUT13z8tkgwXpcb0Dd/YBysj9U
+         xh/uohjjvCSlgV4zQuIRwWoqBQkq6aaS1/e2tkf8ClmcIdLANGiUw7UcpL6Nm0lbqqKA
+         8zAw==
+X-Gm-Message-State: APjAAAVPoFDIkJOUGyAJ/p9mCkaEVdhS0n5Vjq7UpYYOKNDAc2EB0NeM
+        6FTMYACp/NE/erPRRspS0nzOzgejAMQ=
+X-Google-Smtp-Source: APXvYqxHu1ZnioRv8yjOxEtywN6zzgA9Bc4iTDVAOFO5SWiSh8udQjlCLSp9knX7DA4TIgWFrn+mhQ==
+X-Received: by 2002:a17:902:82c3:: with SMTP id u3mr34711027plz.73.1580929910558;
+        Wed, 05 Feb 2020 11:11:50 -0800 (PST)
 Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:172e:4646:c089:ce59])
-        by smtp.gmail.com with ESMTPSA id u23sm257224pfm.29.2020.02.05.11.10.50
+        by smtp.gmail.com with ESMTPSA id u23sm257224pfm.29.2020.02.05.11.11.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 11:10:51 -0800 (PST)
+        Wed, 05 Feb 2020 11:11:50 -0800 (PST)
 From:   Prashant Malani <pmalani@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Prashant Malani <pmalani@chromium.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>
-Subject: [PATCH v2 08/17] extcon: cros_ec: Use cros_ec_cmd()
-Date:   Wed,  5 Feb 2020 11:00:09 -0800
-Message-Id: <20200205190028.183069-9-pmalani@chromium.org>
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org (open list:HID CORE LAYER)
+Subject: [PATCH v2 09/17] hid: google-hammer: Use cros_ec_cmd()
+Date:   Wed,  5 Feb 2020 11:00:11 -0800
+Message-Id: <20200205190028.183069-10-pmalani@chromium.org>
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 In-Reply-To: <20200205190028.183069-1-pmalani@chromium.org>
 References: <20200205190028.183069-1-pmalani@chromium.org>
@@ -63,9 +61,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace cros_ec_pd_command() with cros_ec_cmd() which does the same
-thing, but is defined in a common location in platform/chrome and
-exposed for other modules to use.
+Replace cros_ec_cmd_xfer_status() with cros_ec_cmd() which does the
+message buffer setup and cleanup.
 
 Signed-off-by: Prashant Malani <pmalani@chromium.org>
 ---
@@ -73,108 +70,56 @@ Signed-off-by: Prashant Malani <pmalani@chromium.org>
 Changes in v2:
 - Updated to use new function name and parameter list.
 
- drivers/extcon/extcon-usbc-cros-ec.c | 61 ++++------------------------
- 1 file changed, 8 insertions(+), 53 deletions(-)
+ drivers/hid/hid-google-hammer.c | 23 +++++------------------
+ 1 file changed, 5 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/extcon/extcon-usbc-cros-ec.c b/drivers/extcon/extcon-usbc-cros-ec.c
-index 5290cc2d19d953..2939cedca04798 100644
---- a/drivers/extcon/extcon-usbc-cros-ec.c
-+++ b/drivers/extcon/extcon-usbc-cros-ec.c
-@@ -45,49 +45,6 @@ enum usb_data_roles {
- 	DR_DEVICE,
- };
- 
--/**
-- * cros_ec_pd_command() - Send a command to the EC.
-- * @info: pointer to struct cros_ec_extcon_info
-- * @command: EC command
-- * @version: EC command version
-- * @outdata: EC command output data
-- * @outsize: Size of outdata
-- * @indata: EC command input data
-- * @insize: Size of indata
-- *
-- * Return: 0 on success, <0 on failure.
-- */
--static int cros_ec_pd_command(struct cros_ec_extcon_info *info,
--			      unsigned int command,
--			      unsigned int version,
--			      void *outdata,
--			      unsigned int outsize,
--			      void *indata,
--			      unsigned int insize)
--{
+diff --git a/drivers/hid/hid-google-hammer.c b/drivers/hid/hid-google-hammer.c
+index 2aa4ed157aec87..fb0d2a01e2736e 100644
+--- a/drivers/hid/hid-google-hammer.c
++++ b/drivers/hid/hid-google-hammer.c
+@@ -53,38 +53,25 @@ static bool cbas_parse_base_state(const void *data)
+ static int cbas_ec_query_base(struct cros_ec_device *ec_dev, bool get_state,
+ 				  bool *state)
+ {
+-	struct ec_params_mkbp_info *params;
 -	struct cros_ec_command *msg;
--	int ret;
--
--	msg = kzalloc(sizeof(*msg) + max(outsize, insize), GFP_KERNEL);
++	struct ec_params_mkbp_info params = {0};
+ 	int ret;
+ 
+-	msg = kzalloc(sizeof(*msg) + max(sizeof(u32), sizeof(*params)),
+-		      GFP_KERNEL);
 -	if (!msg)
 -		return -ENOMEM;
 -
--	msg->version = version;
--	msg->command = command;
--	msg->outsize = outsize;
--	msg->insize = insize;
--
--	if (outsize)
--		memcpy(msg->data, outdata, outsize);
--
--	ret = cros_ec_cmd_xfer_status(info->ec, msg);
--	if (ret >= 0 && insize)
--		memcpy(indata, msg->data, insize);
--
+-	msg->command = EC_CMD_MKBP_INFO;
+-	msg->version = 1;
+-	msg->outsize = sizeof(*params);
+-	msg->insize = sizeof(u32);
+-	params = (struct ec_params_mkbp_info *)msg->data;
+-	params->info_type = get_state ?
++	params.info_type = get_state ?
+ 		EC_MKBP_INFO_CURRENT : EC_MKBP_INFO_SUPPORTED;
+-	params->event_type = EC_MKBP_EVENT_SWITCH;
++	params.event_type = EC_MKBP_EVENT_SWITCH;
+ 
+-	ret = cros_ec_cmd_xfer_status(ec_dev, msg);
++	ret = cros_ec_cmd(ec_dev, 1, EC_CMD_MKBP_INFO, &params, sizeof(params),
++			  state, sizeof(u32), NULL);
+ 	if (ret >= 0) {
+ 		if (ret != sizeof(u32)) {
+ 			dev_warn(ec_dev->dev, "wrong result size: %d != %zu\n",
+ 				 ret, sizeof(u32));
+ 			ret = -EPROTO;
+ 		} else {
+-			*state = cbas_parse_base_state(msg->data);
+ 			ret = 0;
+ 		}
+ 	}
+ 
 -	kfree(msg);
--	return ret;
--}
 -
- /**
-  * cros_ec_usb_get_power_type() - Get power type info about PD device attached
-  * to given port.
-@@ -102,8 +59,8 @@ static int cros_ec_usb_get_power_type(struct cros_ec_extcon_info *info)
- 	int ret;
- 
- 	req.port = info->port_id;
--	ret = cros_ec_pd_command(info, EC_CMD_USB_PD_POWER_INFO, 0,
--				 &req, sizeof(req), &resp, sizeof(resp));
-+	ret = cros_ec_cmd(info->ec, 0, EC_CMD_USB_PD_POWER_INFO, &req,
-+			  sizeof(req), &resp, sizeof(resp), NULL);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -123,9 +80,8 @@ static int cros_ec_usb_get_pd_mux_state(struct cros_ec_extcon_info *info)
- 	int ret;
- 
- 	req.port = info->port_id;
--	ret = cros_ec_pd_command(info, EC_CMD_USB_PD_MUX_INFO, 0,
--				 &req, sizeof(req),
--				 &resp, sizeof(resp));
-+	ret = cros_ec_cmd(info->ec, 0, EC_CMD_USB_PD_MUX_INFO, &req,
-+			  sizeof(req), &resp, sizeof(resp), NULL);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -152,9 +108,8 @@ static int cros_ec_usb_get_role(struct cros_ec_extcon_info *info,
- 	pd_control.role = USB_PD_CTRL_ROLE_NO_CHANGE;
- 	pd_control.mux = USB_PD_CTRL_MUX_NO_CHANGE;
- 	pd_control.swap = USB_PD_CTRL_SWAP_NONE;
--	ret = cros_ec_pd_command(info, EC_CMD_USB_PD_CONTROL, 1,
--				 &pd_control, sizeof(pd_control),
--				 &resp, sizeof(resp));
-+	ret = cros_ec_cmd(info->ec, 1, EC_CMD_USB_PD_CONTROL, &pd_control,
-+			  sizeof(pd_control), &resp, sizeof(resp), NULL);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -177,8 +132,8 @@ static int cros_ec_pd_get_num_ports(struct cros_ec_extcon_info *info)
- 	struct ec_response_usb_pd_ports resp;
- 	int ret;
- 
--	ret = cros_ec_pd_command(info, EC_CMD_USB_PD_PORTS,
--				 0, NULL, 0, &resp, sizeof(resp));
-+	ret = cros_ec_cmd(info->ec, 0, EC_CMD_USB_PD_PORTS, NULL, 0, &resp,
-+			  sizeof(resp), NULL);
- 	if (ret < 0)
- 		return ret;
+ 	return ret;
+ }
  
 -- 
 2.25.0.341.g760bfbb309-goog
