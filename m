@@ -2,189 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D4C015276B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 09:14:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D5E5152776
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 09:16:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728021AbgBEIN4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 03:13:56 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43457 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727068AbgBEIN4 (ORCPT
+        id S1728068AbgBEIQd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 03:16:33 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:50606 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725875AbgBEIQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 03:13:56 -0500
-Received: by mail-pg1-f195.google.com with SMTP id u131so571220pgc.10
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 00:13:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9Kv2PfNZ/Q0TVvrr7RyiEmUt8JdC7LWiVIGz2BsjNHQ=;
-        b=B/+U52J+m+NF1gTrJMaYYLbomtsbHRdQwfD9R2WT9UzF9JAwj8hL7iTffUJBnZw583
-         nVEEhcTy/e7i+hr5oXqyl6TRCAnn1ks7LTIfnqPngvbvi/cv+dyJY2gf236C8iHzPF0P
-         ZomPzoRAZ86kr3ZsKjUpMM+sUJPM7TCvVqs04=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9Kv2PfNZ/Q0TVvrr7RyiEmUt8JdC7LWiVIGz2BsjNHQ=;
-        b=G5nXtNUHjvNl0Lw5SJjUexZp+oxVY+47FhV+7rRcJ0KlTY9uzjpx6S/NVwyk8ZY12e
-         J7/aWKiwa0K5p1U0Tf0c/EPIzD55hS/JVlHw0sJ7l29Vv/XLGtupp57w6mBVPhRuLHlW
-         hlP2mfWHMx8JCHZtlf0RffXHBMnw7kWpZGRfbIAweUGz3nl0PI/762a9uodPsq6jozxY
-         qC2RwXHABZrSnVY0pR/H+q7fRAKmOUvTFcBimM3yUJrjl35TztOSP3y0nd20J4vB72JV
-         E9RVut+Zb0KoCWYY2wRVE1FxIVV3iKqLxhneGrcTw6VWyAajw9/t2gn03X6/DgXdTulC
-         sJJw==
-X-Gm-Message-State: APjAAAV2RyMr+ysqblXc2dZVwRep+/yMTM5K0dhhkcL/XkGGTOUL6UwB
-        h2UOg910YrZBK0K6uWwEZbjERw==
-X-Google-Smtp-Source: APXvYqzNRlPWEekWO58tJEj8cBqvumvLPsg7qd6gYn8RHFbeCQwZHJLqQMEMKYBhZDm9nE1HE87fIA==
-X-Received: by 2002:a63:36c2:: with SMTP id d185mr15733815pga.59.1580890433605;
-        Wed, 05 Feb 2020 00:13:53 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
-        by smtp.gmail.com with ESMTPSA id az9sm6415208pjb.3.2020.02.05.00.13.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 00:13:52 -0800 (PST)
-Date:   Wed, 5 Feb 2020 17:13:50 +0900
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-To:     Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCHv2 02/12] videobuf2: handle V4L2 buffer cache flags
-Message-ID: <20200205081350.GK41358@google.com>
-References: <20200204025641.218376-1-senozhatsky@chromium.org>
- <20200204025641.218376-3-senozhatsky@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200204025641.218376-3-senozhatsky@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 5 Feb 2020 03:16:33 -0500
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1izFrF-0008R1-Lf; Wed, 05 Feb 2020 08:16:26 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     davem@davemloft.ne, mkubecek@suse.cz, jeffrey.t.kirsher@intel.com
+Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
+        netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 1/2] igb: Use device_lock() insead of rtnl_lock()
+Date:   Wed,  5 Feb 2020 16:16:15 +0800
+Message-Id: <20200205081616.18378-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (20/02/04 11:56), Sergey Senozhatsky wrote:
-> +static void set_buffer_cache_hints(struct vb2_queue *q,
-> +				   struct vb2_buffer *vb,
-> +				   struct v4l2_buffer *b)
-> +{
-> +	/*
-> +	 * DMA exporter should take care of cache syncs, so we can avoid
-> +	 * explicit ->prepare()/->finish() syncs. For other ->memory types
-> +	 * we always need ->prepare() or/and ->finish() cache sync.
-> +	 */
-> +	if (q->memory == VB2_MEMORY_DMABUF) {
-> +		vb->need_cache_sync_on_finish = 0;
-> +		vb->need_cache_sync_on_prepare = 0;
-> +		return;
-> +	}
-> +
-> +	if (!q->allow_cache_hints)
-> +		return;
-> +
-> +	vb->need_cache_sync_on_prepare = 1;
-> +	/*
-> +	 * ->finish() cache sync can be avoided when queue direction is
-> +	 * TO_DEVICE.
-> +	 */
-> +	if (q->dma_dir != DMA_TO_DEVICE)
-> +		vb->need_cache_sync_on_finish = 1;
-> +	else
-> +		vb->need_cache_sync_on_finish = 0;
-> +
-> +	if (b->flags & V4L2_BUF_FLAG_NO_CACHE_INVALIDATE)
-> +		vb->need_cache_sync_on_finish = 0;
-> +
-> +	if (b->flags & V4L2_BUF_FLAG_NO_CACHE_CLEAN)
-> +		vb->need_cache_sync_on_prepare = 0;
-> +}
+Commit 9474933caf21 ("igb: close/suspend race in netif_device_detach")
+fixed race condition between close and power management ops by using
+rtnl_lock().
 
-Last minute changes (tm), sorry. This is not right.
+However we can achieve the same by using device_lock() since all power
+management ops are protected by device_lock().
 
+This fix is a preparation for next patch, to prevent a dead lock under
+rtnl_lock() when calling runtime resume routine.
 
-====8<====8<====
-
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH] videobuf2: handle V4L2 buffer cache flags
-
-Set video buffer cache management flags corresponding to V4L2 cache
-flags.
-
-Both ->prepare() and ->finish() cache management hints should be
-passed during this stage (buffer preparation), because there is no
-other way for user-space to skip ->finish() cache flush.
-
-There are two possible alternative approaches:
-- The first one is to move cache sync from ->finish() to dqbuf().
-  But this breaks some drivers, that need to fix-up buffers before
-  dequeueing them.
-
-- The second one is to move ->finish() call from ->done() to dqbuf.
-
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 ---
- .../media/common/videobuf2/videobuf2-v4l2.c   | 36 +++++++++++++++++++
- 1 file changed, 36 insertions(+)
+v2:
+ - No change.
 
-diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-index eb5d5db96552..8ef57496b34a 100644
---- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
-+++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-@@ -337,6 +337,41 @@ static int vb2_fill_vb2_v4l2_buffer(struct vb2_buffer *vb, struct v4l2_buffer *b
+ drivers/net/ethernet/intel/igb/igb_main.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index b46bff8fe056..3750e2b926b1 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -4026,8 +4026,13 @@ static int __igb_close(struct net_device *netdev, bool suspending)
+ 
+ int igb_close(struct net_device *netdev)
+ {
++	struct igb_adapter *adapter = netdev_priv(netdev);
++	struct device *dev = &adapter->pdev->dev;
++
++	device_lock(dev);
+ 	if (netif_device_present(netdev) || netdev->dismantle)
+ 		return __igb_close(netdev, false);
++	device_unlock(dev);
  	return 0;
  }
  
-+static void set_buffer_cache_hints(struct vb2_queue *q,
-+				   struct vb2_buffer *vb,
-+				   struct v4l2_buffer *b)
-+{
-+	/*
-+	 * DMA exporter should take care of cache syncs, so we can avoid
-+	 * explicit ->prepare()/->finish() syncs. For other ->memory types
-+	 * we always need ->prepare() or/and ->finish() cache sync.
-+	 */
-+	if (q->memory == VB2_MEMORY_DMABUF) {
-+		vb->need_cache_sync_on_finish = 0;
-+		vb->need_cache_sync_on_prepare = 0;
-+		return;
-+	}
-+
-+	vb->need_cache_sync_on_prepare = 1;
-+	vb->need_cache_sync_on_finish = 1;
-+
-+	if (!q->allow_cache_hints)
-+		return;
-+
-+	/*
-+	 * ->finish() cache sync can be avoided when queue direction is
-+	 * TO_DEVICE.
-+	 */
-+	if (q->dma_dir == DMA_TO_DEVICE)
-+		vb->need_cache_sync_on_finish = 0;
-+
-+	if (b->flags & V4L2_BUF_FLAG_NO_CACHE_INVALIDATE)
-+		vb->need_cache_sync_on_finish = 0;
-+
-+	if (b->flags & V4L2_BUF_FLAG_NO_CACHE_CLEAN)
-+		vb->need_cache_sync_on_prepare = 0;
-+}
-+
- static int vb2_queue_or_prepare_buf(struct vb2_queue *q, struct media_device *mdev,
- 				    struct v4l2_buffer *b, bool is_prepare,
- 				    struct media_request **p_req)
-@@ -381,6 +416,7 @@ static int vb2_queue_or_prepare_buf(struct vb2_queue *q, struct media_device *md
- 	}
+@@ -8760,7 +8765,6 @@ static int __igb_shutdown(struct pci_dev *pdev, bool *enable_wake,
+ 	u32 wufc = runtime ? E1000_WUFC_LNKC : adapter->wol;
+ 	bool wake;
  
- 	if (!vb->prepared) {
-+		set_buffer_cache_hints(q, vb, b);
- 		/* Copy relevant information provided by the userspace */
- 		memset(vbuf->planes, 0,
- 		       sizeof(vbuf->planes[0]) * vb->num_planes);
+-	rtnl_lock();
+ 	netif_device_detach(netdev);
+ 
+ 	if (netif_running(netdev))
+@@ -8769,7 +8773,6 @@ static int __igb_shutdown(struct pci_dev *pdev, bool *enable_wake,
+ 	igb_ptp_suspend(adapter);
+ 
+ 	igb_clear_interrupt_scheme(adapter);
+-	rtnl_unlock();
+ 
+ 	status = rd32(E1000_STATUS);
+ 	if (status & E1000_STATUS_LU)
+@@ -8897,13 +8900,11 @@ static int __maybe_unused igb_resume(struct device *dev)
+ 
+ 	wr32(E1000_WUS, ~0);
+ 
+-	rtnl_lock();
+ 	if (!err && netif_running(netdev))
+ 		err = __igb_open(netdev, true);
+ 
+ 	if (!err)
+ 		netif_device_attach(netdev);
+-	rtnl_unlock();
+ 
+ 	return err;
+ }
 -- 
-2.25.0.341.g760bfbb309-goog
+2.17.1
 
