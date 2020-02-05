@@ -2,95 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF1151528DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 11:07:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DCD01528D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 11:07:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbgBEKHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 05:07:54 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40568 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727068AbgBEKHy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 05:07:54 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t3so1906942wru.7
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 02:07:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kmN+kD4FSA2ah1VtoMNYp6bLpdHdftqa8imfp5qvFQQ=;
-        b=uxf/4cY/d5W+AsY1/8m+Expm55bXJmtngFXF/rHWedksM3UV1Uqnw4P36T43Wxhnl/
-         6O8akDYn3n3HAzBLUpGu0izJUtiD6fAWnB4lCcRSGBbCO+R4Em5OXJR7owAENDJJIAj9
-         DiUIb1l3suJk4ZcFTBJvN04tvEvYXu9k0XekjeRrh49oAXJve69+wUSvPAuj+G1VjqDq
-         NMlA0I384Ho7Nwq2w4mO3jQXRzJCtorUIvSKctFGSe0Zwc7lPnm0VeQhh6xhKJ/FpHHN
-         vLpsRjRhg6d6DQBR/w1yUs4Ti42eK42Y5LlrG7ijZ4NoHTxTdWrmSo0qvPMdNQZSN7WO
-         LnNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=kmN+kD4FSA2ah1VtoMNYp6bLpdHdftqa8imfp5qvFQQ=;
-        b=gJRPkad37iI1JVbSGK8GgJtwU0R+B/Nf9PG9sBHgz/gfN6vaNdk8Fn+7kGGYpnTn5S
-         wR7cKLL/g4pKWoXksnfKlbbwNloIWOXq2LCere3b0B0+KeO6tWR4HuUD1HxIi59PdRtW
-         isemna3GgdZHEkLxhUQG4WJZUCcePfyfrhH+IlNJzaEdPXJUMz2RoFuVkvSFbxyfc9lf
-         ORSifpXAH8NZ3AxHMH26erNfa2hyLmKjwJcKeQbZGR/llezKiIb415I4X9h2PLnlgIE/
-         TnlqA6b4VCDhS3VKj8uOfCeB0towu2ne2y7NjBnWwejpX6XN3ht7EGoBvGBmTBCxSeH9
-         xTxw==
-X-Gm-Message-State: APjAAAUbP/I4SAo3S1z3fnl3ZuGgnSTUISsp+Mw3DwWNWHMvrmhVk4nB
-        1O3tyfje0fju/rd/6qYRfa6ldHurH+Y=
-X-Google-Smtp-Source: APXvYqw8R2TaGaAU3fic2Um7fz5KY8Q5ydfOXnJm0vGUyK4eHmdddD90kmC2E19/Z2AkBgRXGcRgLg==
-X-Received: by 2002:adf:ee0c:: with SMTP id y12mr28029051wrn.341.1580897270947;
-        Wed, 05 Feb 2020 02:07:50 -0800 (PST)
-Received: from cizrna.lan ([109.72.12.137])
-        by smtp.gmail.com with ESMTPSA id y6sm33749863wrl.17.2020.02.05.02.07.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 02:07:50 -0800 (PST)
-From:   Tomeu Vizoso <tomeu.vizoso@collabora.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Rob Herring <robh@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/panfrost: Don't try to map on error faults
-Date:   Wed,  5 Feb 2020 11:07:16 +0100
-Message-Id: <20200205100719.24999-1-tomeu.vizoso@collabora.com>
-X-Mailer: git-send-email 2.21.0
+        id S1727833AbgBEKHK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 05:07:10 -0500
+Received: from mga06.intel.com ([134.134.136.31]:30679 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727068AbgBEKHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 05:07:10 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2020 02:07:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,405,1574150400"; 
+   d="scan'208";a="279328278"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by FMSMGA003.fm.intel.com with ESMTP; 05 Feb 2020 02:07:06 -0800
+Date:   Wed, 5 Feb 2020 18:07:23 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, x86@kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Wei Yang <richardw.yang@linux.intel.com>
+Subject: Re: [PATCH v6 09/10] mm/memory_hotplug: Drop local variables in
+ shrink_zone_span()
+Message-ID: <20200205100723.GD24162@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20191006085646.5768-1-david@redhat.com>
+ <20191006085646.5768-10-david@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191006085646.5768-10-david@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the exception type isn't one of the normal faults, don't try to map
-and instead go straight to a terminal fault.
+On Sun, Oct 06, 2019 at 10:56:45AM +0200, David Hildenbrand wrote:
+>Get rid of the unnecessary local variables.
+>
+>Cc: Andrew Morton <akpm@linux-foundation.org>
+>Cc: Oscar Salvador <osalvador@suse.de>
+>Cc: David Hildenbrand <david@redhat.com>
+>Cc: Michal Hocko <mhocko@suse.com>
+>Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+>Cc: Dan Williams <dan.j.williams@intel.com>
+>Cc: Wei Yang <richardw.yang@linux.intel.com>
+>Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Otherwise, we can get flooded by kernel warnings and further faults.
+Looks reasonable.
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
----
- drivers/gpu/drm/panfrost/panfrost_mmu.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Reviewed-by: Wei Yang <richardw.yang@linux.intel.com>
 
-diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-index 763cfca886a7..80abddb4544c 100644
---- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-@@ -596,8 +596,9 @@ static irqreturn_t panfrost_mmu_irq_handler_thread(int irq, void *data)
- 		source_id = (fault_status >> 16);
- 
- 		/* Page fault only */
--		if ((status & mask) == BIT(i)) {
--			WARN_ON(exception_type < 0xC1 || exception_type > 0xC4);
-+		if ((status & mask) == BIT(i) &&
-+		     exception_type >= 0xC1 &&
-+		     exception_type <= 0xC4) {
- 
- 			ret = panfrost_mmu_map_fault_addr(pfdev, i, addr);
- 			if (!ret) {
+>---
+> mm/memory_hotplug.c | 15 ++++++---------
+> 1 file changed, 6 insertions(+), 9 deletions(-)
+>
+>diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+>index 8dafa1ba8d9f..843481bd507d 100644
+>--- a/mm/memory_hotplug.c
+>+++ b/mm/memory_hotplug.c
+>@@ -374,14 +374,11 @@ static unsigned long find_biggest_section_pfn(int nid, struct zone *zone,
+> static void shrink_zone_span(struct zone *zone, unsigned long start_pfn,
+> 			     unsigned long end_pfn)
+> {
+>-	unsigned long zone_start_pfn = zone->zone_start_pfn;
+>-	unsigned long z = zone_end_pfn(zone); /* zone_end_pfn namespace clash */
+>-	unsigned long zone_end_pfn = z;
+> 	unsigned long pfn;
+> 	int nid = zone_to_nid(zone);
+> 
+> 	zone_span_writelock(zone);
+>-	if (zone_start_pfn == start_pfn) {
+>+	if (zone->zone_start_pfn == start_pfn) {
+> 		/*
+> 		 * If the section is smallest section in the zone, it need
+> 		 * shrink zone->zone_start_pfn and zone->zone_spanned_pages.
+>@@ -389,25 +386,25 @@ static void shrink_zone_span(struct zone *zone, unsigned long start_pfn,
+> 		 * for shrinking zone.
+> 		 */
+> 		pfn = find_smallest_section_pfn(nid, zone, end_pfn,
+>-						zone_end_pfn);
+>+						zone_end_pfn(zone));
+> 		if (pfn) {
+>+			zone->spanned_pages = zone_end_pfn(zone) - pfn;
+> 			zone->zone_start_pfn = pfn;
+>-			zone->spanned_pages = zone_end_pfn - pfn;
+> 		} else {
+> 			zone->zone_start_pfn = 0;
+> 			zone->spanned_pages = 0;
+> 		}
+>-	} else if (zone_end_pfn == end_pfn) {
+>+	} else if (zone_end_pfn(zone) == end_pfn) {
+> 		/*
+> 		 * If the section is biggest section in the zone, it need
+> 		 * shrink zone->spanned_pages.
+> 		 * In this case, we find second biggest valid mem_section for
+> 		 * shrinking zone.
+> 		 */
+>-		pfn = find_biggest_section_pfn(nid, zone, zone_start_pfn,
+>+		pfn = find_biggest_section_pfn(nid, zone, zone->zone_start_pfn,
+> 					       start_pfn);
+> 		if (pfn)
+>-			zone->spanned_pages = pfn - zone_start_pfn + 1;
+>+			zone->spanned_pages = pfn - zone->zone_start_pfn + 1;
+> 		else {
+> 			zone->zone_start_pfn = 0;
+> 			zone->spanned_pages = 0;
+>-- 
+>2.21.0
+
 -- 
-2.21.0
-
+Wei Yang
+Help you, Help me
