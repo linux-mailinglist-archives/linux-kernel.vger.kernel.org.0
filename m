@@ -2,79 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BD8B153AE0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 23:22:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8124153AE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 23:23:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727538AbgBEWVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 17:21:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41412 "EHLO mail.kernel.org"
+        id S1727481AbgBEWWm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 17:22:42 -0500
+Received: from namei.org ([65.99.196.166]:43550 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727456AbgBEWVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 17:21:44 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 912FA217BA;
-        Wed,  5 Feb 2020 22:21:44 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.93)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1izT3H-001P24-Fe; Wed, 05 Feb 2020 17:21:43 -0500
-Message-Id: <20200205222143.365305847@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Wed, 05 Feb 2020 17:21:15 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [for-next][PATCH 5/5] bootconfig: Show the number of nodes on boot message
-References: <20200205222110.912457436@goodmis.org>
+        id S1727109AbgBEWWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 17:22:41 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 015MMXfo021603;
+        Wed, 5 Feb 2020 22:22:33 GMT
+Date:   Thu, 6 Feb 2020 09:22:33 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+cc:     Sasha Levin <sashal@kernel.org>, corbet@lwn.net,
+        linux-kernel@vger.kernel.org, kys@microsoft.com,
+        jamorris@microsoft.com
+Subject: Re: [PATCH] Documentation/process: Change Microsoft contact for
+ embargoed hardware issues
+In-Reply-To: <20200205221203.GA1471886@kroah.com>
+Message-ID: <alpine.LRH.2.21.2002060919420.17039@namei.org>
+References: <20200205213621.31474-1-sashal@kernel.org> <20200205214716.GA1468203@kroah.com> <alpine.LRH.2.21.2002060854230.17039@namei.org> <20200205221203.GA1471886@kroah.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+On Wed, 5 Feb 2020, Greg KH wrote:
 
-Show the number of bootconfig nodes on boot message.
+> > Add me for this: jamorris@linux.microsoft.com
+> 
+> Can you send me a patch please?
+> 
 
-Link: http://lkml.kernel.org/r/158091062297.27924.9051634676068550285.stgit@devnote2
+Sure.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From 97a1a94c53ac2b840ad285f9e47929de764f0ffa Mon Sep 17 00:00:00 2001
+From: James Morris <jmorris@namei.org>
+Date: Wed, 5 Feb 2020 14:17:56 -0800
+Subject: [PATCH] [PATCH] Documentation/process: Change Microsoft contact for embargoed hardware issues
+
+Update Microsoft contact from Sasha to James.
+
+Signed-off-by: James Morris <jmorris@namei.org>
 ---
- init/main.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ Documentation/process/embargoed-hardware-issues.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/init/main.c b/init/main.c
-index 2de2f9f7aab9..491f1cdb3105 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -342,6 +342,7 @@ static void __init setup_boot_config(const char *cmdline)
- 	char *data, *copy;
- 	const char *p;
- 	u32 *hdr;
-+	int ret;
+diff --git a/Documentation/process/embargoed-hardware-issues.rst b/Documentation/process/embargoed-hardware-issues.rst
+index 33edae654599..5916d76f0d6b 100644
+--- a/Documentation/process/embargoed-hardware-issues.rst
++++ b/Documentation/process/embargoed-hardware-issues.rst
+@@ -250,7 +250,7 @@ an involved disclosed party. The current ambassadors list:
+   Intel		Tony Luck <tony.luck@intel.com>
+   Qualcomm	Trilok Soni <tsoni@codeaurora.org>
  
- 	p = strstr(cmdline, "bootconfig");
- 	if (!p || (p != cmdline && !isspace(*(p-1))) ||
-@@ -379,10 +380,11 @@ static void __init setup_boot_config(const char *cmdline)
- 	memcpy(copy, data, size);
- 	copy[size] = '\0';
+-  Microsoft	Sasha Levin <sashal@kernel.org>
++  Microsoft	James Morris <jamorris@linux.microsoft.com>
+   VMware
+   Xen		Andrew Cooper <andrew.cooper3@citrix.com>
  
--	if (xbc_init(copy) < 0)
-+	ret = xbc_init(copy);
-+	if (ret < 0)
- 		pr_err("Failed to parse bootconfig\n");
- 	else {
--		pr_info("Load bootconfig: %d bytes\n", size);
-+		pr_info("Load bootconfig: %d bytes %d nodes\n", size, ret);
- 		/* keys starting with "kernel." are passed via cmdline */
- 		extra_command_line = xbc_make_cmdline("kernel");
- 		/* Also, "init." keys are init arguments */
 -- 
-2.24.1
+2.21.1
 
 
