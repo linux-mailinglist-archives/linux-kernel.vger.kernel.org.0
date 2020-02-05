@@ -2,110 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96A3D15286E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 10:35:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D65215287D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 10:37:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728230AbgBEJfU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 04:35:20 -0500
-Received: from mga17.intel.com ([192.55.52.151]:18567 "EHLO mga17.intel.com"
+        id S1728259AbgBEJhn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 04:37:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60316 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728078AbgBEJfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 04:35:19 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2020 01:35:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,405,1574150400"; 
-   d="scan'208";a="311314489"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by orsmga001.jf.intel.com with ESMTP; 05 Feb 2020 01:35:16 -0800
-Subject: Re: TI PCIe xHCI and kexec
-To:     Joel Stanley <joel@jms.id.au>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        linux-usb@vger.kernel.org
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-References: <CACPK8XdFUWoEr6YvVHf-g28hREFOWMX0g5=Vsdxq9Asq=ftOVQ@mail.gmail.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <26635edf-2df3-df0f-5644-e016e1e20248@linux.intel.com>
-Date:   Wed, 5 Feb 2020 11:37:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728030AbgBEJhm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 04:37:42 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id F2830AE2C;
+        Wed,  5 Feb 2020 09:37:39 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id ED8431E0A51; Wed,  5 Feb 2020 10:37:33 +0100 (CET)
+Date:   Wed, 5 Feb 2020 10:37:33 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 10/12] mm/gup: /proc/vmstat: pin_user_pages (FOLL_PIN)
+ reporting
+Message-ID: <20200205093733.GB28058@quack2.suse.cz>
+References: <20200204234117.2974687-1-jhubbard@nvidia.com>
+ <20200204234117.2974687-11-jhubbard@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <CACPK8XdFUWoEr6YvVHf-g28hREFOWMX0g5=Vsdxq9Asq=ftOVQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200204234117.2974687-11-jhubbard@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5.2.2020 2.55, Joel Stanley wrote:
-> I'm supporting a system that uses Linux-as-a-bootloader to load a
-> distro kernel via kexec, The systems have a TI TUSB73x0 PCIe
-> controller which goes out to lunch after a kexec. This is the distro
-> (post-kexec) kernel:
+On Tue 04-02-20 15:41:15, John Hubbard wrote:
+> Now that pages are "DMA-pinned" via pin_user_page*(), and unpinned via
+> unpin_user_pages*(), we need some visibility into whether all of this is
+> working correctly.
 > 
-> [    0.235411] pci 0003:01:00.0: xHCI HW did not halt within 16000
-> usec status = 0x0
-> [    1.037298] xhci_hcd 0003:01:00.0: xHCI Host Controller
-> [    1.037367] xhci_hcd 0003:01:00.0: new USB bus registered, assigned
-> bus number 1
-> [    1.053481] xhci_hcd 0003:01:00.0: Host halt failed, -110
-> [    1.053523] xhci_hcd 0003:01:00.0: can't setup: -110
-> [    1.053565] xhci_hcd 0003:01:00.0: USB bus 1 deregistered
-> [    1.053629] xhci_hcd 0003:01:00.0: init 0003:01:00.0 fail, -110
-> [    1.053703] xhci_hcd: probe of 0003:01:00.0 failed with error -110
+> Add two new fields to /proc/vmstat:
 > 
-> There were some fixes made a few years back to improve the situation,
-> but we've still had to carry some form of the patch below in the
-> bootloader kernel. I would like to rework it so it can be merged.
+>     nr_foll_pin_acquired
+>     nr_foll_pin_released
 > 
-> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-> index dbac0fa9748d..eaa94456dd9d 100644
-> --- a/drivers/usb/host/xhci.c
-> +++ b/drivers/usb/host/xhci.c
-> @@ -789,6 +789,9 @@ void xhci_shutdown(struct usb_hcd *hcd)
->       xhci_dbg_trace(xhci, trace_xhci_dbg_init,
->               "xhci_shutdown completed - status = %x",
->               readl(&xhci->op_regs->status));
+> These are documented in Documentation/core-api/pin_user_pages.rst.
+> They represent the number of pages (since boot time) that have been
+> pinned ("nr_foll_pin_acquired") and unpinned ("nr_foll_pin_released"),
+> via pin_user_pages*() and unpin_user_pages*().
+> 
+> In the absence of long-running DMA or RDMA operations that hold pages
+> pinned, the above two fields will normally be equal to each other.
+> 
+> Also: update Documentation/core-api/pin_user_pages.rst, to remove an
+> earlier (now confirmed untrue) claim about a performance problem with
+> /proc/vmstat.
+> 
+> Also: updated Documentation/core-api/pin_user_pages.rst to rename the
+> new /proc/vmstat entries, to the names listed here.
+> 
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+
+...
+
+> @@ -104,6 +106,9 @@ static __maybe_unused struct page *try_grab_compound_head(struct page *page,
+>  		if (hpage_pincount_available(page))
+>  			hpage_pincount_add(page, refs);
+>  
+> +		mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_ACQUIRED,
+> +				    orig_refs);
 > +
-> +    /* TI XHCI controllers do not come back after kexec without this hack */
-> +    pci_reset_function_locked(to_pci_dev(hcd->self.sysdev));
->   }
->   EXPORT_SYMBOL_GPL(xhci_shutdown);
-> 
-> I would like some advice on how to implement it in a way that is
-> acceptable. Would a quirk on the pci id in xhci_shutdown be ok?
+>  		return page;
+>  	}
+>  
 
-Yes, but as this is a pci specific workaround the quirk should go to
-xhci-pci.c: xhci_pci_shutdown(), which was added in v5.5
+It seems to me you miss mod_node_page_state() in put_compound_head(), don't
+you?
 
-Is the rootcause known?
-Is the only possible solution to reset the pci function?.
-Have you tried, or seen this issue on any other controller than this TUSB73x0?
+Otherwise I like the new stat names better :).
 
-> 
-> 0003:01:00.0 USB controller: Texas Instruments TUSB73x0 SuperSpeed USB
-> 3.0 xHCI Host Controller (rev 02)
-> 
-> The full debug log of the distro kernel booting is below.
-> 
-> [    1.037833] xhci_hcd 0003:01:00.0: USBCMD 0x0:
-> [    1.037835] xhci_hcd 0003:01:00.0:   HC is being stopped
-> [    1.037837] xhci_hcd 0003:01:00.0:   HC has finished hard reset
-> [    1.037839] xhci_hcd 0003:01:00.0:   Event Interrupts disabled
-> [    1.037841] xhci_hcd 0003:01:00.0:   Host System Error Interrupts disabled
-> [    1.037843] xhci_hcd 0003:01:00.0:   HC has finished light reset
-> [    1.037846] xhci_hcd 0003:01:00.0: USBSTS 0x0:
-> [    1.037847] xhci_hcd 0003:01:00.0:   Event ring is empty
-> [    1.037849] xhci_hcd 0003:01:00.0:   No Host System Error
-> [    1.037851] xhci_hcd 0003:01:00.0:   HC is running
-
-Hmm, all bits in both USBCMD and USBSTS are 0. This is a bit suspicious.
-Normally at least USBCMD Run/Stop bit, and USBSTS HCHalted bit have
-opposite values.
-
--Mathias
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
