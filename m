@@ -2,139 +2,252 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C9E21529A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 12:07:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 908361529B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 12:16:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728238AbgBELHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 06:07:48 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41542 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727170AbgBELHs (ORCPT
+        id S1728327AbgBELQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 06:16:10 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:43562 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbgBELQK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 06:07:48 -0500
-Received: by mail-pf1-f193.google.com with SMTP id j9so1031920pfa.8
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 03:07:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=L6Gq18X94g9uiylf9X3urfBkcBlJnTY40OWqebofXxQ=;
-        b=PmI+kq7dnuRDNGbAdL//xOu9iRIiDm/vC3Fk4dExvfWWxq597FO6gctGkjso02Mcm5
-         MD2FGMwrFDm3CG8wlIJ79sqIDa+Otu0ScTI07M52p1QjJjvjsiCxr9J3ilaFgGHhrF+7
-         2LbXh5JCWUdGYnRsr5qwfE+SHa+oQdBQHOF4g0BMxM7lCWx0W3d2HShDCvmwd8md1PV5
-         CWMpGDh9o9v4h/2f/IEBDtV8phbpd02T85RRBFwf0hXU+iMREn6+vKXqa0vTbqLsi55T
-         JscMNhVUozaz5R2Bond8gT7k/8J0Q1OiT6cilHrv5hLzNa9QtRcNPyRVWDLCkP513Knu
-         gcmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=L6Gq18X94g9uiylf9X3urfBkcBlJnTY40OWqebofXxQ=;
-        b=Zw/SkLH/gtx/NfjQRjIXVXHK2vr8QPyuhSiIF6UaW6o45E/AvPx5BbqtobRxvRtOic
-         sDZJl+YRtZK6qH4QKVhLya/5iFeaXaA6wKCd7lcJI3hVYbw2iKTe7/rmTJbSebbl3EpK
-         lxh5/VXpZlOsfK9F1NkXgD/b/RqYmIbA66X2VD/JT9EKNghx5Qs1si4z375zfiTGQSfJ
-         0gjY7bDuv/5aM+CJahowxQB46+vRlBp7pr+QpuNmTDJGS63yJXzVkvZHpKQhL+YtCcjY
-         dM8Cm1GxmLMb26kuPoyhjJwruOvdbsibjgDygmqmesosYU93lKxa4G6DVTuMBu+4w7NE
-         vcfA==
-X-Gm-Message-State: APjAAAVzYHO2YZPLP9BbbSntKZCyVrkfKvqvImrk7CDNs+1JdT73eyjr
-        7oHXdpVLoPiTD/VdWd+E/gg=
-X-Google-Smtp-Source: APXvYqwFAzf1zgsBrca5nJa7YG0i4kRv1JKUVvKUQZGhtEP47dp8RChltK3p9HOTw+aD0YqwRynuxg==
-X-Received: by 2002:a63:211f:: with SMTP id h31mr34250918pgh.299.1580900867368;
-        Wed, 05 Feb 2020 03:07:47 -0800 (PST)
-Received: from localhost ([2a00:79e1:abc:f604:6e29:95ff:fe2d:8f34])
-        by smtp.gmail.com with ESMTPSA id v8sm27291885pfn.172.2020.02.05.03.07.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 03:07:46 -0800 (PST)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Wed, 5 Feb 2020 20:07:44 +0900
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        lijiang <lijiang@redhat.com>, Petr Mladek <pmladek@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] printk: replace ringbuffer
-Message-ID: <20200205110522.GA456@jagdpanzerIV.localdomain>
-References: <20200128161948.8524-1-john.ogness@linutronix.de>
- <dc4ca9b5-d2a2-03af-c186-204a3aad2399@redhat.com>
- <20200205044848.GH41358@google.com>
- <20200205050204.GI41358@google.com>
- <88827ae2-7af5-347b-29fb-cffb94350f8f@redhat.com>
- <20200205063640.GJ41358@google.com>
- <877e11h0ir.fsf@linutronix.de>
+        Wed, 5 Feb 2020 06:16:10 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 015BG18B054316;
+        Wed, 5 Feb 2020 05:16:01 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1580901361;
+        bh=pbpHh099rDbmAhrqweejk71STC56PC+PVlT97eCxYhc=;
+        h=From:To:CC:Subject:Date;
+        b=MjFhnATFDk9Teer1vOn2c44pDZSaJxNjtuPM/YYjXL8yL0j9C0UiWAMJpegBc8l63
+         zMGLCcUZu4KXkEzCW3wAm+bttLm1Z7CYXqIwubGvtdabk7Z0BqvkuIluGzHPqwTfdy
+         WPsLPSR5YKmOwH+sJlMJexApzAIXA2R7JDpYyHYw=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 015BG19Y111832
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 5 Feb 2020 05:16:01 -0600
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 5 Feb
+ 2020 05:15:59 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 5 Feb 2020 05:15:59 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 015BFvGL017869;
+        Wed, 5 Feb 2020 05:15:58 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <vkoul@kernel.org>
+CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dan.j.williams@intel.com>, <geert@linux-m68k.org>
+Subject: [PATCH v3] dmaengine: Add basic debugfs support
+Date:   Wed, 5 Feb 2020 13:15:57 +0200
+Message-ID: <20200205111557.24125-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <877e11h0ir.fsf@linutronix.de>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (20/02/05 10:00), John Ogness wrote:
-> On 2020-02-05, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
-> >>>> So there is a General protection fault. That's the type of a
-> >>>> problem that kills the boot for me as well (different backtrace,
-> >>>> tho).
-> >>> 
-> >>> Do you have CONFIG_RELOCATABLE and CONFIG_RANDOMIZE_BASE (KASLR)
-> >>> enabled?
-> >> 
-> >> Yes. These two options are enabled.
-> >> 
-> >> CONFIG_RELOCATABLE=y
-> >> CONFIG_RANDOMIZE_BASE=y
-> >
-> > So KASLR kills the boot for me. So does KASAN.
-> 
-> Sergey, thanks for looking into this already!
-> 
+Via the /sys/kernel/debug/dmaengine users can get information about the
+DMA devices and the used channels.
 
-So I hacked the system a bit.
+Example output on am654-evm with audio using two channels and after running
+dmatest on 6 channels:
 
-3BUG: KASAN: wild-memory-access in copy_data+0x129/0x220>
-3Write of size 4 at addr 5a5a5a5a5a5a5a5a by task cat/474>
-Call Trace:>
- dump_stack+0x76/0xa0>
- ? copy_data+0x129/0x220>
- __kasan_report.cold+0x5/0x3b>
- ? get_page_from_freelist+0x1224/0x1490>
- ? copy_data+0x129/0x220>
- copy_data+0x129/0x220>
- _prb_read_valid+0x1a0/0x330>
- ? prb_first_seq+0xe0/0xe0>
- ? __might_sleep+0x2f/0xd0>
- ? __zone_watermark_ok+0x180/0x180>
- ? ___might_sleep+0xbe/0xe0>
- prb_read_valid+0x4f/0x60>
- ? _prb_read_valid+0x330/0x330>
- devkmsg_read+0x12e/0x3d0>
- ? __mod_node_page_state+0x1a/0xa0>
- ? info_print_ext_header.constprop.0+0x120/0x120>
- ? __lru_cache_add+0x16c/0x190>
- ? __handle_mm_fault+0x1097/0x1f60>
- vfs_read+0xdc/0x200>
- ksys_read+0xa0/0x130>
- ? kernel_write+0xb0/0xb0>
- ? up_read+0x56/0x130>
- do_syscall_64+0xa0/0x520>
- ? syscall_return_slowpath+0x210/0x210>
- ? do_page_fault+0x399/0x4fa>
- entry_SYSCALL_64_after_hwframe+0x44/0xa9>
-RIP: 0033:0x7ff5f39813f2>
-Code: c0 e9 c2 fe ff ff 50 48 8d 3d 9a 0d 0a 00 e8 95 ed 01 00 0f 1f 44 00 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 0f 05 <48> 3d 00 f0 ff ff 77 56 c3 0f 1f 44 00 00 48 83 ec 28 48 89 54 24>
-RSP: 002b:00007ffc47b3ee58 EFLAGS: 0000024>
-c ORIG_RAX: 0000000000000000>
-RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007ff5f39813f2>
-RDX: 0000000000020000 RSI: 00007ff5f3588000 RDI: 0000000000000003>
-RBP: 00007ff5f3588000 R08: 00007ff5f3587010 R09: 0000000000000000>
-R10: 0000000000000022 R11: 0000000000000246 R12: 000055f9c8a81c00>
-R13: 0000000000000003 R14: 0000000000020000 R15: 0000000000020000>
+# cat /sys/kernel/debug/dmaengine
+dma0 (285c0000.dma-controller): number of channels: 96
 
-	-ss
+dma1 (31150000.dma-controller): number of channels: 267
+ dma1chan0    | 2b00000.mcasp:tx
+ dma1chan1    | 2b00000.mcasp:rx
+ dma1chan2    | in-use
+ dma1chan3    | in-use
+ dma1chan4    | in-use
+ dma1chan5    | in-use
+ dma1chan6    | in-use
+ dma1chan7    | in-use
+
+For slave channels we can show the device and the channel name a given
+channel is requested.
+For non slave devices the only information we know is that the channel is
+in use.
+
+DMA drivers can implement the optional dbg_show callback to provide
+controller specific information instead of the generic one.
+
+It is easy to extend the generic dmaengine_dbg_show() to print additional
+information about the used channels.
+
+I have taken the idea from gpiolib.
+
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+---
+Hi,
+
+Changes since v2:
+- Use dma_chan_name() for printing the channel's name
+
+Changes since v1:
+- Use much more simplified fops for the debugfs file (via DEFINE_SHOW_ATTRIBUTE)
+- do not allow modification to dma_device_list while the debugfs file is read
+- rename the slave_name to dbg_client_name (it is only for debugging)
+- print information about dma_router if it is used by the channel
+- Formating of the output slightly changed
+
+Regards,
+Peter
+
+ drivers/dma/dmaengine.c   | 65 +++++++++++++++++++++++++++++++++++++++
+ include/linux/dmaengine.h | 12 +++++++-
+ 2 files changed, 76 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+index c3b1283b6d31..37c3a4cd5b1a 100644
+--- a/drivers/dma/dmaengine.c
++++ b/drivers/dma/dmaengine.c
+@@ -32,6 +32,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/platform_device.h>
++#include <linux/debugfs.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
+@@ -760,6 +761,11 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
+ 		return chan ? chan : ERR_PTR(-EPROBE_DEFER);
+ 
+ found:
++#ifdef CONFIG_DEBUG_FS
++	chan->dbg_client_name = kasprintf(GFP_KERNEL, "%s:%s", dev_name(dev),
++					  name);
++#endif
++
+ 	chan->name = kasprintf(GFP_KERNEL, "dma:%s", name);
+ 	if (!chan->name)
+ 		return chan;
+@@ -837,6 +843,11 @@ void dma_release_channel(struct dma_chan *chan)
+ 		chan->name = NULL;
+ 		chan->slave = NULL;
+ 	}
++
++#ifdef CONFIG_DEBUG_FS
++	kfree(chan->dbg_client_name);
++	chan->dbg_client_name = NULL;
++#endif
+ 	mutex_unlock(&dma_list_mutex);
+ }
+ EXPORT_SYMBOL_GPL(dma_release_channel);
+@@ -1562,3 +1573,57 @@ static int __init dma_bus_init(void)
+ 	return class_register(&dma_devclass);
+ }
+ arch_initcall(dma_bus_init);
++
++#ifdef CONFIG_DEBUG_FS
++static void dmaengine_dbg_show(struct seq_file *s, struct dma_device *dma_dev)
++{
++	struct dma_chan *chan;
++
++	list_for_each_entry(chan, &dma_dev->channels, device_node) {
++		if (chan->client_count) {
++			seq_printf(s, " %-13s| %s", dma_chan_name(chan),
++				   chan->dbg_client_name ?: "in-use");
++
++			if (chan->router)
++				seq_printf(s, " (via router: %s)\n",
++					dev_name(chan->router->dev));
++			else
++				seq_puts(s, "\n");
++		}
++	}
++}
++
++static int dmaengine_debugfs_show(struct seq_file *s, void *data)
++{
++	struct dma_device *dma_dev = NULL;
++
++	mutex_lock(&dma_list_mutex);
++	list_for_each_entry(dma_dev, &dma_device_list, global_node) {
++		seq_printf(s, "dma%d (%s): number of channels: %u\n",
++			   dma_dev->dev_id, dev_name(dma_dev->dev),
++			   dma_dev->chancnt);
++
++		if (dma_dev->dbg_show)
++			dma_dev->dbg_show(s, dma_dev);
++		else
++			dmaengine_dbg_show(s, dma_dev);
++
++		if (!list_is_last(&dma_dev->global_node, &dma_device_list))
++			seq_puts(s, "\n");
++	}
++	mutex_unlock(&dma_list_mutex);
++
++	return 0;
++}
++DEFINE_SHOW_ATTRIBUTE(dmaengine_debugfs);
++
++static int __init dmaengine_debugfs_init(void)
++{
++	/* /sys/kernel/debug/dmaengine */
++	debugfs_create_file("dmaengine", 0444, NULL, NULL,
++			    &dmaengine_debugfs_fops);
++	return 0;
++}
++late_initcall(dmaengine_debugfs_init);
++
++#endif	/* DEBUG_FS */
+diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+index 64461fc64e1b..9f232b7618f1 100644
+--- a/include/linux/dmaengine.h
++++ b/include/linux/dmaengine.h
+@@ -300,6 +300,8 @@ struct dma_router {
+  * @chan_id: channel ID for sysfs
+  * @dev: class device for sysfs
+  * @name: backlink name for sysfs
++ * @dbg_client_name: slave name for debugfs in format:
++ *	dev_name(requester's dev):channel name, for example: "2b00000.mcasp:tx"
+  * @device_node: used to add this to the device chan list
+  * @local: per-cpu pointer to a struct dma_chan_percpu
+  * @client_count: how many clients are using this channel
+@@ -318,6 +320,9 @@ struct dma_chan {
+ 	int chan_id;
+ 	struct dma_chan_dev *dev;
+ 	const char *name;
++#ifdef CONFIG_DEBUG_FS
++	char *dbg_client_name;
++#endif
+ 
+ 	struct list_head device_node;
+ 	struct dma_chan_percpu __percpu *local;
+@@ -805,7 +810,9 @@ struct dma_filter {
+  *     called and there are no further references to this structure. This
+  *     must be implemented to free resources however many existing drivers
+  *     do not and are therefore not safe to unbind while in use.
+- *
++ * @dbg_show: optional routine to show contents in debugfs; default code
++ *     will be used when this is omitted, but custom code can show extra,
++ *     controller specific information.
+  */
+ struct dma_device {
+ 	struct kref ref;
+@@ -891,6 +898,9 @@ struct dma_device {
+ 					    struct dma_tx_state *txstate);
+ 	void (*device_issue_pending)(struct dma_chan *chan);
+ 	void (*device_release)(struct dma_device *dev);
++#ifdef CONFIG_DEBUG_FS
++	void (*dbg_show)(struct seq_file *s, struct dma_device *dev);
++#endif
+ };
+ 
+ static inline int dmaengine_slave_config(struct dma_chan *chan,
+-- 
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
