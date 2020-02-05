@@ -2,123 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D55B715259A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 05:26:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BE131525A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 05:42:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbgBEE0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 23:26:37 -0500
-Received: from mail.loongson.cn ([114.242.206.163]:44570 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727834AbgBEE0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 23:26:36 -0500
-Received: from [192.168.68.106] (unknown [111.18.44.203])
-        by mail.loongson.cn (Coremail) with SMTP id AQAAf9DxH93rQzpeLI8MAA--.65S3;
-        Wed, 05 Feb 2020 12:26:21 +0800 (CST)
-Subject: Re: [PATCH v3 1/2] firmware: dmi: Add macro
- SMBIOS_ENTRY_POINT_SCAN_START
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-To:     Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Jean Delvare <jdelvare@suse.de>
-Cc:     Yinglu Yang <yangyinglu@loongson.cn>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        Xuefeng Li <lixuefeng@loongson.cn>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1580875204-18052-1-git-send-email-yangtiezhu@loongson.cn>
-Message-ID: <aa85b2d8-d4fb-c681-e4d1-85e23750715d@loongson.cn>
-Date:   Wed, 5 Feb 2020 12:26:30 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727991AbgBEEms (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 23:42:48 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:51574 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727884AbgBEEms (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 23:42:48 -0500
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id 0154giSx014546;
+        Wed, 5 Feb 2020 13:42:44 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 0154giSx014546
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1580877764;
+        bh=6CPRqOD/Fe7zoq1RGimJL9B88AgPymJVLA5R5fTkxsc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=zHHB/p6KmM0Kk6RP1vVPyCTW1hHBx0Vo9nCpLCtpaDHuCGacAbM8PLprep1c879Hz
+         W2iYS9jHiZMfjIBLgAAaPonzUCmX8jDNoV54W62IiF57f0CfwcpgEl+io4ecX2b4QI
+         pHoKd/ABAo9RqNH4WjRMZo1YB1y1qV6k074SKsJYWXO44Njrsj7dHAnD6r9KlmLwDz
+         W0YZETUkjPf/Z920ZtMaTrmCDagISAhVcDevy0QuyM2Ufl83+L0iFbDdGG4Ce2pMZf
+         FrTfmvZqrxjF4plzs07j3D3fGOBsLgkw7Zdn+yBtfgREyTx7Odnw7V3Q5u/0lKlFjH
+         hvgI2+Rj1jCvw==
+X-Nifty-SrcIP: [209.85.222.44]
+Received: by mail-ua1-f44.google.com with SMTP id o42so368713uad.10;
+        Tue, 04 Feb 2020 20:42:44 -0800 (PST)
+X-Gm-Message-State: APjAAAX7ZbF9w1CYxaU2mExOwMrY4GxvCnZ3DGwA4caPw6pl7Erlppnf
+        2POka23Rra4i7VJhfMwWPqFeL18dn2Vm88WA48Y=
+X-Google-Smtp-Source: APXvYqxcekY6tR906J3p0JD4gnkPGtQ9DyvPxOsISnJIV+Cw5/8zojyJV8B6RF3T6mUxbEfJQ5YSNrfZEb4mu614T60=
+X-Received: by 2002:ab0:2ea6:: with SMTP id y6mr19620371uay.25.1580877763433;
+ Tue, 04 Feb 2020 20:42:43 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1580875204-18052-1-git-send-email-yangtiezhu@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-CM-TRANSID: AQAAf9DxH93rQzpeLI8MAA--.65S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ww1DCr1UZrWDKF4rAryxKrg_yoW8AF1kpF
-        4UGF45Cr4DJF4xGa97Aa13uFy5uan3tF9IgFWUZr1rua98XFyfJrs3A3ykKF1DArWDKayI
-        9r1fXF1aka4DK3JanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUU9a14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-        6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-        1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-        7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
-        1j6r4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-        n2kIc2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFV
-        Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
-        x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
-        1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Wr1j
-        6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8Jr
-        UvcSsGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+References: <ced8ab1c-9c35-c7b0-6b9e-bcee7ffdf469@i-love.sakura.ne.jp>
+ <CAK7LNATNY1oP5XgFH3+fuUU=Z7pEz7Sqz0vKCzvhM4Kem7RkOg@mail.gmail.com> <202002040408.01448ioc013868@www262.sakura.ne.jp>
+In-Reply-To: <202002040408.01448ioc013868@www262.sakura.ne.jp>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 5 Feb 2020 13:42:07 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATD1p6KDYNLYmb+UZpVNOaLdFEp-QRm1waDX_v-sSZ1=w@mail.gmail.com>
+Message-ID: <CAK7LNATD1p6KDYNLYmb+UZpVNOaLdFEp-QRm1waDX_v-sSZ1=w@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: Invalidate all symbols after changing to y or m.
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/20 12:00 PM, Tiezhu Yang wrote:
-> Use SMBIOS_ENTRY_POINT_SCAN_START instead of 0xF0000, because other
-> archtecture maybe use a special start address such as 0xFFFE000 for
-> Loongson platform.
+Hi.
+
+On Tue, Feb 4, 2020 at 1:09 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
 >
-> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> Reviewed-by: Jean Delvare <jdelvare@suse.de>
+> Since commit 89b9060987d98833 ("kconfig: Add yes2modconfig and
+> mod2yesconfig targets.") forgot to clear SYMBOL_VALID bit after
+> changing to y or m, these targets did not save the changes.
+> Call sym_clear_all_valid() so that all symbols are revalidated.
+>
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+
+
+My previous comment:
+"sym_add_change_count(1); seems the convention way
+to inform kconfig of some options being updated."
+was misleading. Sorry.
+
+
+conf_write() skips symbol invalidation
+when conf_get_change() returns non-zero value.
+
+        if (!conf_get_changed())
+                sym_clear_all_valid();
+
+I do not know why this if-conditional exists here...
+
+Anyway, this patch fixes the issue.
+
+Applied. Thanks.
+
+
+
 > ---
+>  scripts/kconfig/confdata.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 >
-> v3:
->    - split the v2 patch into two patches
->    - make MIPS DMI config depend on MACH_LOONGSON64
+> diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
+> index 11f6c72c2eee..aa70360f27c1 100644
+> --- a/scripts/kconfig/confdata.c
+> +++ b/scripts/kconfig/confdata.c
+> @@ -1331,9 +1331,8 @@ void conf_rewrite_mod_or_yes(enum conf_def_mode mode)
 >
-> v2:
->    - add SMBIOS_ENTRY_POINT_SCAN_START suggested by Jean
->    - refine definitions and Kconfig by Jiaxun
+>         for_all_symbols(i, sym) {
+>                 if (sym_get_type(sym) == S_TRISTATE &&
+> -                   sym->def[S_DEF_USER].tri == old_val) {
+> +                   sym->def[S_DEF_USER].tri == old_val)
+>                         sym->def[S_DEF_USER].tri = new_val;
+> -                       sym_add_change_count(1);
+> -               }
+>         }
+> +       sym_clear_all_valid();
+>  }
+> --
+> 2.11.0
 >
->   drivers/firmware/dmi_scan.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/firmware/dmi_scan.c b/drivers/firmware/dmi_scan.c
-> index 2045566..f59163c 100644
-> --- a/drivers/firmware/dmi_scan.c
-> +++ b/drivers/firmware/dmi_scan.c
-> @@ -11,6 +11,10 @@
->   #include <asm/dmi.h>
->   #include <asm/unaligned.h>
->   
-> +#ifndef SMBIOS_ENTRY_POINT_SCAN_START
-> +#define SMBIOS_ENTRY_POINT_SCAN_START 0xF0000
-> +#endif
-> +
->   struct kobject *dmi_kobj;
->   EXPORT_SYMBOL_GPL(dmi_kobj);
->   
-> @@ -663,7 +667,7 @@ static void __init dmi_scan_machine(void)
->   			return;
->   		}
->   	} else if (IS_ENABLED(CONFIG_DMI_SCAN_MACHINE_NON_EFI_FALLBACK)) {
-> -		p = dmi_early_remap(0xF0000, 0x10000);
-> +		p = dmi_early_remap(SMBIOS_ENTRY_POINT_SCAN_START, 0x10000);
->   		if (p == NULL)
->   			goto error;
->   
-
-Sorry, there appears to be some issues when git send-email,
-
-please ignore the repeated patch:
-
-[PATCH v3 1/2] firmware: dmi: Add macro SMBIOS_ENTRY_POINT_SCAN_START.
-
-the correct send time of series patch is 2020-02-05 4:08 UTC, the link is
-
-https://lore.kernel.org/patchwork/patch/1189713/
-
-https://lore.kernel.org/patchwork/patch/1189714/
 
 
-Thanks,
-
-
-Tiezhu Yang
-
+-- 
+Best Regards
+Masahiro Yamada
