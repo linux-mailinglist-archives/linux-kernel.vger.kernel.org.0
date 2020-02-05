@@ -2,58 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CEB91538E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 20:18:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8295E1538E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 20:20:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbgBETSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 14:18:32 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36289 "EHLO
+        id S1727501AbgBETT5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 14:19:57 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43118 "EHLO
         mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727116AbgBETSc (ORCPT
+        with ESMTP id S1727079AbgBETT5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 14:18:32 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 185so1711432pfv.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 11:18:30 -0800 (PST)
+        Wed, 5 Feb 2020 14:19:57 -0500
+Received: by mail-pf1-f196.google.com with SMTP id s1so1698031pfh.10
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 11:19:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=sIFpMqGTN8n/WcYKnxRJgbTze8DyNUUZFg70ZbIEoWI=;
-        b=XVhusW/LvjaHg45v8IC8C/sf8nqOfxR/MgkOe7tWcZ5rqexAZOw27w9omEU3kFoUj6
-         yamxpa+X3Qf/Y83drLrOSbaZi9LWIMQ/xdlM/FSgeH4NeH9nWr22UZeNxVXs4MiFQn4r
-         kQBI3IEUXAtTCaW+1u8wHXwiChhvk5AEdmq+Y=
+        bh=3kaWiVgCUzHQzm8XNSi+4KOVQd2YyqHUv1usmw/72LM=;
+        b=CO4CrP+PQwUxailENkBM1kFSgtk0eKkblQlMdzpIQpAFOVTyZbdF3Vqhlw5sqfA9uM
+         J/kEf5KKjzE/Q9McYWqw0RvFuSjEB1dRusTICnXxfSt83mlxxpZDjRr5WwKa1dPQAHPJ
+         g2RAa0Yj+zQdyRFFYfGHQ42PFCp7MHOcYFGec=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sIFpMqGTN8n/WcYKnxRJgbTze8DyNUUZFg70ZbIEoWI=;
-        b=t4V8ql3y2MgeccDCzQXDG6iAu7MR4LQVyd7KT+f7WRbzIFi0whRQu+P7+r/5NOXDTn
-         2sKxJ5M5K8qXExqIMOMIoaSBIQg06UyTwubcwBXPEenmr/1z/hr2f8d5sIos10NpsYxO
-         uBH3qalJeJ2mHmmm+aC3y/t+2zvc53QI76rJ4uHpHpARgd3YcnaQKcn4TOMGfxUJSFa6
-         MG9C8PjKj9Az9fgSXp21vg/+u2FqeV6ZlnWFt4p26zbW0a9KaBwwcN+1Kz1a2k4fk5GA
-         L9Ih4V6efAfKPRV/ERcZdwTLNCOWDtvtwzktvsBuTfOCOjMPv+v6bNQztWTmPttJ6GwM
-         Nbqw==
-X-Gm-Message-State: APjAAAW6KsvCB46sX78Tq/7GRBXE/esV5hp/JNO9UJP9kJOfe9rmQX0L
-        xoJekCatsESL73ItO4mNyXYr4ruKwoU=
-X-Google-Smtp-Source: APXvYqxPpI/egGs5VfP1lfsj8LKYY+ZuiZR7QWRXekYLGdP4+g4jIec04hsk/l1nke1QrQ2mtlwzIQ==
-X-Received: by 2002:a63:7b5a:: with SMTP id k26mr16144682pgn.406.1580930310289;
-        Wed, 05 Feb 2020 11:18:30 -0800 (PST)
+        bh=3kaWiVgCUzHQzm8XNSi+4KOVQd2YyqHUv1usmw/72LM=;
+        b=JtZdMfezpUhRd2BY7lOshKqwKgDoasm72zs/cxMDvlB/0OG80rCOJbo1TUSvsUBraJ
+         bij6bzIYBIjbh60K6d9XJylHsQAiT3RYfAYWNGmQQORQfLsFDygSAy4Aj5Vm6ZgPnOyG
+         R/RjplCu+uf3bSW8oLfVsA4kWyekOkdmzZaiXJGG8dY0b0YhT2yaLU2JcSh+2WWi2Im4
+         NrJSBo2QrOVfqIybDlNwTR905ph2IBglbXsvnSVBQEEdGFWMC/vsOouIT9U0tQqnYQ1N
+         957a7uL2QuptoEES4y0ln0UJuFKORNH9yUZNgYmwl72AYZxUY1V+TMLPYLm6GoWSE57I
+         x2HA==
+X-Gm-Message-State: APjAAAV7+csRwIIYo5Nhipbc3GdsQAHBfRiVAyTvC9Ov1uIf/KbHzGRI
+        iObk6GO3JVQidOMwiDsAWrjYcp31+sw=
+X-Google-Smtp-Source: APXvYqw1egACkYs16SkZQ0SvN+AIzw2ZfFe0dA8G3jL2rE8nn48PZ/IdUGPcyCH9RHSxGF6Vb7C1aQ==
+X-Received: by 2002:a63:3487:: with SMTP id b129mr38154712pga.320.1580930395429;
+        Wed, 05 Feb 2020 11:19:55 -0800 (PST)
 Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:172e:4646:c089:ce59])
-        by smtp.gmail.com with ESMTPSA id u23sm257224pfm.29.2020.02.05.11.18.29
+        by smtp.gmail.com with ESMTPSA id u23sm257224pfm.29.2020.02.05.11.19.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 11:18:29 -0800 (PST)
+        Wed, 05 Feb 2020 11:19:54 -0800 (PST)
 From:   Prashant Malani <pmalani@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Prashant Malani <pmalani@chromium.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        kbuild test robot <lkp@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Benson Leung <bleung@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>,
         Guenter Roeck <groeck@chromium.org>,
-        linux-rtc@vger.kernel.org (open list:REAL TIME CLOCK (RTC) SUBSYSTEM)
-Subject: [PATCH v2 14/17] rtc: cros-ec: Use cros_ec_cmd()
-Date:   Wed,  5 Feb 2020 11:00:22 -0800
-Message-Id: <20200205190028.183069-15-pmalani@chromium.org>
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-media@vger.kernel.org (open list:MEDIA INPUT INFRASTRUCTURE
+        (V4L/DVB))
+Subject: [PATCH v2 15/17] media: cros-ec-cec: Use cros_ec_cmd()
+Date:   Wed,  5 Feb 2020 11:00:24 -0800
+Message-Id: <20200205190028.183069-16-pmalani@chromium.org>
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 In-Reply-To: <20200205190028.183069-1-pmalani@chromium.org>
 References: <20200205190028.183069-1-pmalani@chromium.org>
@@ -65,72 +70,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Replace cros_ec_cmd_xfer_status() with cros_ec_cmd() which does the
-message buffer setup and cleanup.
+message buffer setup and cleanup, but is located in platform/chrome
+and used by other drivers.
 
 Signed-off-by: Prashant Malani <pmalani@chromium.org>
+Reported-by: kbuild test robot <lkp@intel.com>
 ---
 
 Changes in v2:
 - Updated to use new function name and parameter list.
+- Used C99 element setting to initialize struct.
 
- drivers/rtc/rtc-cros-ec.c | 27 ++++++++-------------------
- 1 file changed, 8 insertions(+), 19 deletions(-)
+ .../media/platform/cros-ec-cec/cros-ec-cec.c  | 45 +++++++------------
+ 1 file changed, 16 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/rtc/rtc-cros-ec.c b/drivers/rtc/rtc-cros-ec.c
-index f7343c289cab73..6886100ad0b8b7 100644
---- a/drivers/rtc/rtc-cros-ec.c
-+++ b/drivers/rtc/rtc-cros-ec.c
-@@ -33,16 +33,11 @@ static int cros_ec_rtc_get(struct cros_ec_device *cros_ec, u32 command,
- 			   u32 *response)
+diff --git a/drivers/media/platform/cros-ec-cec/cros-ec-cec.c b/drivers/media/platform/cros-ec-cec/cros-ec-cec.c
+index 0e7e2772f08f96..a462af1c9ae04b 100644
+--- a/drivers/media/platform/cros-ec-cec/cros-ec-cec.c
++++ b/drivers/media/platform/cros-ec-cec/cros-ec-cec.c
+@@ -93,18 +93,14 @@ static int cros_ec_cec_set_log_addr(struct cec_adapter *adap, u8 logical_addr)
  {
+ 	struct cros_ec_cec *cros_ec_cec = adap->priv;
+ 	struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
+-	struct {
+-		struct cros_ec_command msg;
+-		struct ec_params_cec_set data;
+-	} __packed msg = {};
++	struct ec_params_cec_set data = {
++		.cmd = CEC_CMD_LOGICAL_ADDRESS,
++		.val = logical_addr,
++	};
  	int ret;
--	struct {
--		struct cros_ec_command msg;
--		struct ec_response_rtc data;
--	} __packed msg;
  
--	memset(&msg, 0, sizeof(msg));
--	msg.msg.command = command;
--	msg.msg.insize = sizeof(msg.data);
-+	struct ec_response_rtc data = {0};
- 
--	ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
-+	ret = cros_ec_cmd(cros_ec, 0, command, NULL, 0, &data, sizeof(data),
-+			  NULL);
- 	if (ret < 0) {
- 		dev_err(cros_ec->dev,
- 			"error getting %s from EC: %d\n",
-@@ -51,7 +46,7 @@ static int cros_ec_rtc_get(struct cros_ec_device *cros_ec, u32 command,
- 		return ret;
- 	}
- 
--	*response = msg.data.time;
-+	*response = data.time;
- 
- 	return 0;
- }
-@@ -60,17 +55,11 @@ static int cros_ec_rtc_set(struct cros_ec_device *cros_ec, u32 command,
- 			   u32 param)
- {
- 	int ret = 0;
--	struct {
--		struct cros_ec_command msg;
--		struct ec_response_rtc data;
--	} __packed msg;
-+	struct ec_response_rtc  data;
- 
--	memset(&msg, 0, sizeof(msg));
--	msg.msg.command = command;
+-	msg.msg.command = EC_CMD_CEC_SET;
 -	msg.msg.outsize = sizeof(msg.data);
--	msg.data.time = param;
+-	msg.data.cmd = CEC_CMD_LOGICAL_ADDRESS;
+-	msg.data.val = logical_addr;
 -
 -	ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
-+	data.time = param;
-+	ret = cros_ec_cmd(cros_ec, 0, command, &data, sizeof(data), NULL, 0,
-+			  NULL);
++	ret = cros_ec_cmd(cros_ec, 0, EC_CMD_CEC_SET, &data, sizeof(data),
++			  NULL, 0, NULL);
  	if (ret < 0) {
- 		dev_err(cros_ec->dev, "error setting %s on EC: %d\n",
- 			command == EC_CMD_RTC_SET_VALUE ? "time" : "alarm",
+ 		dev_err(cros_ec->dev,
+ 			"error setting CEC logical address on EC: %d\n", ret);
+@@ -119,17 +115,12 @@ static int cros_ec_cec_transmit(struct cec_adapter *adap, u8 attempts,
+ {
+ 	struct cros_ec_cec *cros_ec_cec = adap->priv;
+ 	struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
+-	struct {
+-		struct cros_ec_command msg;
+-		struct ec_params_cec_write data;
+-	} __packed msg = {};
++	struct ec_params_cec_write data = {};
+ 	int ret;
+ 
+-	msg.msg.command = EC_CMD_CEC_WRITE_MSG;
+-	msg.msg.outsize = cec_msg->len;
+-	memcpy(msg.data.msg, cec_msg->msg, cec_msg->len);
+-
+-	ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
++	memcpy(data.msg, cec_msg->msg, cec_msg->len);
++	ret = cros_ec_cmd(cros_ec, 0, EC_CMD_CEC_WRITE_MSG, &data,
++			  sizeof(cec_msg->len), NULL, 0, NULL);
+ 	if (ret < 0) {
+ 		dev_err(cros_ec->dev,
+ 			"error writing CEC msg on EC: %d\n", ret);
+@@ -143,18 +134,14 @@ static int cros_ec_cec_adap_enable(struct cec_adapter *adap, bool enable)
+ {
+ 	struct cros_ec_cec *cros_ec_cec = adap->priv;
+ 	struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
+-	struct {
+-		struct cros_ec_command msg;
+-		struct ec_params_cec_set data;
+-	} __packed msg = {};
++	struct ec_params_cec_set data = {
++		.cmd = CEC_CMD_ENABLE,
++		.val = enable,
++	};
+ 	int ret;
+ 
+-	msg.msg.command = EC_CMD_CEC_SET;
+-	msg.msg.outsize = sizeof(msg.data);
+-	msg.data.cmd = CEC_CMD_ENABLE;
+-	msg.data.val = enable;
+-
+-	ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
++	ret = cros_ec_cmd(cros_ec, 0, EC_CMD_CEC_SET, &data, sizeof(data),
++			  NULL, 0, NULL);
+ 	if (ret < 0) {
+ 		dev_err(cros_ec->dev,
+ 			"error %sabling CEC on EC: %d\n",
 -- 
 2.25.0.341.g760bfbb309-goog
 
