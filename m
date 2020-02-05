@@ -2,139 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD45415250C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 04:00:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 228C4152515
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 04:05:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727940AbgBEDAt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 22:00:49 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:49602 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727796AbgBEDAt (ORCPT
+        id S1727937AbgBEDFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 22:05:18 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43970 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727897AbgBEDFQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 22:00:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580871648;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MkSZ85QIBalZvWs6VFapLnhibOydb3IjnBZ+FKrtyNU=;
-        b=ea+7hciIlEEPE0RCfflLfaiP6VtTTQq+ch8qEEoZitEi+rRwCDsUR+pRSs65nArJqG7nih
-        1SyNnS6O0GtuAIt1oRokDbaGv0Sjj0Eulhb4HZ99MRcKwCK6oxbZ1+pz2O3t2Ba1An557G
-        RIuGmhwW0AkRpdBwPqJ105+NGKBCykc=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-237-EKcXjFuyNrKsVagckzx_Cg-1; Tue, 04 Feb 2020 22:00:46 -0500
-X-MC-Unique: EKcXjFuyNrKsVagckzx_Cg-1
-Received: by mail-qv1-f69.google.com with SMTP id b8so646189qvw.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 19:00:46 -0800 (PST)
+        Tue, 4 Feb 2020 22:05:16 -0500
+Received: by mail-lf1-f65.google.com with SMTP id 9so350063lfq.10
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 19:05:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5WF1go+DuJvbwgdXeUhoD65NaX1JQ7zRHimo51GmC8M=;
+        b=a/rT7owEo3U/lPRFn35JOyHmNdZNKq3CUN5eC0vmSOAlGMUJJc7ELCvSX1Mh8APfaa
+         lAlLVERWXR5pYN81ddhMclRnb/OmN5Fx2KddB7KuZLDfFPyFM3c5qNNCCjwGgxr+r3s1
+         DNCcaZvM6VYKACKmTz/OjiTlKJVFN9VL8YzEYvQS2U83lFvZUm1XWKOklUIkQxQvXozG
+         vNU7Zo1syf0hTTILG3oFQfUcj+JQqVr59fj+c5MCVuSCuEvLrPxTFeYRhYsiMU1wniYS
+         k/ew5rFlhFL2LzMHulEuIV3u33upCBPfLhXENQXAIsbZYUZT2I99yQmfa/FkquxeDAIP
+         aNXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=MkSZ85QIBalZvWs6VFapLnhibOydb3IjnBZ+FKrtyNU=;
-        b=PagRCORywYYrfhoj/D1rRDkuZI2hs0luFwtVMftPdFGpq94k317syrCzD+zB0ypQ4F
-         6kCJZr32WRuvT9UKmxpR3Qpz/0OioZ6CzHPrdtrbhCGWZeE8rmn16yThSOglVpWhANuG
-         taAA0T99Gouqk6Eau6NXX2aMcDg/5Vr67qsNsbu/ddaSkukaWPlqZXvrCPrj8ZTIKqFL
-         COhT498kQKHZulWZuwVaP6x08DA2J61RhUlv8IEdS3KZsA0WZtAvAk5Uyw+mQQfrjplu
-         AoKeA9vdHAhhgr74NAVQopTt08vsMRQ5VYDk/yc+F4BpyBWrNvr7k0z60brMpoKQTcTi
-         13VA==
-X-Gm-Message-State: APjAAAVyJPzerROYRbNrW1VepIRUQiU43695doLbAdKvGpEJ19gMdTA+
-        Na3o5tK99B9L55ZzWVDJ2O2TiCx90qpsLlumaPe+4FoCBSju0jcNGL6tq3C83ibQjpVghSns7mo
-        1wnpjhVOdngzboj/m7cQqD2ox
-X-Received: by 2002:ae9:f30e:: with SMTP id p14mr31895401qkg.186.1580871646038;
-        Tue, 04 Feb 2020 19:00:46 -0800 (PST)
-X-Google-Smtp-Source: APXvYqz3lyYvbqkVDgZHul6XJFSDUjVusufeLIOwhSUi2JAXcDok/5lHyajvbFw+VyTI/6GvK5X8ow==
-X-Received: by 2002:ae9:f30e:: with SMTP id p14mr31895381qkg.186.1580871645788;
-        Tue, 04 Feb 2020 19:00:45 -0800 (PST)
-Received: from xz-x1.redhat.com ([2607:9880:19c8:32::2])
-        by smtp.gmail.com with ESMTPSA id 2sm12111776qkv.98.2020.02.04.19.00.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2020 19:00:45 -0800 (PST)
-From:   Peter Xu <peterx@redhat.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     dinechin@redhat.com, sean.j.christopherson@intel.com,
-        pbonzini@redhat.com, jasowang@redhat.com, yan.y.zhao@intel.com,
-        mst@redhat.com, peterx@redhat.com, kevin.tian@intel.com,
-        alex.williamson@redhat.com, dgilbert@redhat.com,
-        vkuznets@redhat.com
-Subject: [PATCH 14/14] KVM: selftests: Add "-c" parameter to dirty log test
-Date:   Tue,  4 Feb 2020 22:00:42 -0500
-Message-Id: <20200205030042.367713-1-peterx@redhat.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200205025105.367213-1-peterx@redhat.com>
-References: <20200205025105.367213-1-peterx@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5WF1go+DuJvbwgdXeUhoD65NaX1JQ7zRHimo51GmC8M=;
+        b=tOAj5a7nkDHcUMGvREqtcXoNNjGPOQMsUCJ/2yy4UPCXJ+IW66YZMLckzJsUyJ+k+n
+         cnsVzrH77IgnHUYdW9I4uB50dh4jb0Iu10GGPrumdpdvfzjJMXMzutPqIQeTam8GXkGs
+         js8LirqXqVqnmF/Piw3PRh4yYyEyeX3/xB30VLCJyIngqgNRhd+Xn0MtRd+5g5TFcal/
+         IGvmS0JoRYiQm/1BwanzgM+WVmg3fpTC0MYFMdbmcMvvenY5UXUJnHYAwtO/gOd29+K3
+         MY4yhSnnBzAoCUnl5mwhVmcH8S27nAf+/gqiD34B4w+UgN9bv5TeD3k6sauRRh87YGFk
+         wxvA==
+X-Gm-Message-State: APjAAAURN9yXo567m7SM+mqJY5k5dV2c+ANrxNld+VxAHKukAt6FVNT7
+        r+gfQPZNsvZ46WjMUMeck3vk+FUrQk4wOWIe8q2C4Q==
+X-Google-Smtp-Source: APXvYqzeG4caRRvcRllow4EA73MGmU6WFhFNYJbaTAD8sJamhzsXSFSCQuZUYpZgWEJovRgzDpyi7R9sxFKJltzNJtg=
+X-Received: by 2002:a19:4a92:: with SMTP id x140mr17094713lfa.29.1580871913677;
+ Tue, 04 Feb 2020 19:05:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200128230328.183524-1-drosen@google.com> <20200128230328.183524-2-drosen@google.com>
+ <85sgjsxx2g.fsf@collabora.com>
+In-Reply-To: <85sgjsxx2g.fsf@collabora.com>
+From:   Daniel Rosenberg <drosen@google.com>
+Date:   Tue, 4 Feb 2020 19:05:02 -0800
+Message-ID: <CA+PiJmS3kbK8220QaccP5jJ7dSf4xv3UrStQvLskAtCN+=vG_A@mail.gmail.com>
+Subject: Re: [PATCH v6 1/5] unicode: Add standard casefolded d_ops
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's only used to override the existing dirty ring size/count.  If
-with a bigger ring count, we test async of dirty ring.  If with a
-smaller ring count, we test ring full code path.  Async is default.
+On Sun, Feb 2, 2020 at 5:46 PM Gabriel Krisman Bertazi
+<krisman@collabora.com> wrote:
+>
+>
+> I don't think fs/unicode is the right place for these very specific
+> filesystem functions, just because they happen to use unicode.  It is an
+> encoding library, it doesn't care about dentries, nor should know how to
+> handle them.  It exposes a simple api to manipulate and convert utf8 strings.
+>
+> I saw change was after the desire to not have these functions polluting
+> the VFS hot path, but that has nothing to do with placing them here.
+>
+> Would libfs be better?  or a casefolding library in fs/casefold.c?
+>
+>
+> --
+> Gabriel Krisman Bertazi
 
-It has no use for non-dirty-ring tests.
-
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- tools/testing/selftests/kvm/dirty_log_test.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/dirty_log_test.c b/tools/testing/selftests/kvm/dirty_log_test.c
-index 6c754e91fc50..40312fdbe0d2 100644
---- a/tools/testing/selftests/kvm/dirty_log_test.c
-+++ b/tools/testing/selftests/kvm/dirty_log_test.c
-@@ -163,6 +163,7 @@ enum log_mode_t {
- /* Mode of logging.  Default is LOG_MODE_DIRTY_LOG */
- static enum log_mode_t host_log_mode;
- pthread_t vcpu_thread;
-+static uint32_t test_dirty_ring_count = TEST_DIRTY_RING_COUNT;
- 
- /* Only way to pass this to the signal handler */
- struct kvm_vm *current_vm;
-@@ -235,7 +236,7 @@ static void dirty_ring_create_vm_done(struct kvm_vm *vm)
- 	 * Switch to dirty ring mode after VM creation but before any
- 	 * of the vcpu creation.
- 	 */
--	vm_enable_dirty_ring(vm, TEST_DIRTY_RING_COUNT *
-+	vm_enable_dirty_ring(vm, test_dirty_ring_count *
- 			     sizeof(struct kvm_dirty_gfn));
- }
- 
-@@ -257,7 +258,7 @@ static uint32_t dirty_ring_collect_one(struct kvm_dirty_gfn *dirty_gfns,
- 	uint32_t count = 0;
- 
- 	while (true) {
--		cur = &dirty_gfns[*fetch_index % TEST_DIRTY_RING_COUNT];
-+		cur = &dirty_gfns[*fetch_index % test_dirty_ring_count];
- 		if (!dirty_gfn_is_dirtied(cur))
- 			break;
- 		TEST_ASSERT(cur->slot == slot, "Slot number didn't match: "
-@@ -744,6 +745,9 @@ static void help(char *name)
- 	printf("usage: %s [-h] [-i iterations] [-I interval] "
- 	       "[-p offset] [-m mode]\n", name);
- 	puts("");
-+	printf(" -c: specify dirty ring size, in number of entries\n");
-+	printf("     (only useful for dirty-ring test; default: %"PRIu32")\n",
-+	       TEST_DIRTY_RING_COUNT);
- 	printf(" -i: specify iteration counts (default: %"PRIu64")\n",
- 	       TEST_HOST_LOOP_N);
- 	printf(" -I: specify interval in ms (default: %"PRIu64" ms)\n",
-@@ -799,8 +803,11 @@ int main(int argc, char *argv[])
- 	vm_guest_mode_params_init(VM_MODE_P40V48_4K, true, true);
- #endif
- 
--	while ((opt = getopt(argc, argv, "hi:I:p:m:M:")) != -1) {
-+	while ((opt = getopt(argc, argv, "c:hi:I:p:m:M:")) != -1) {
- 		switch (opt) {
-+		case 'c':
-+			test_dirty_ring_count = strtol(optarg, NULL, 10);
-+			break;
- 		case 'i':
- 			iterations = strtol(optarg, NULL, 10);
- 			break;
--- 
-2.24.1
-
+The hash function needs access to utf8ncursor, but apart from that,
+libfs would make sense. utf8ncursor is the only reason I have them
+here. How do you feel about exposing utf8cursor or something similar?
