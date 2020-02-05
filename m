@@ -2,81 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CCDD15296D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 11:51:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5314C152976
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 11:52:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728347AbgBEKvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 05:51:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59494 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728244AbgBEKvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 05:51:14 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79ADD222C2;
-        Wed,  5 Feb 2020 10:51:14 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.93)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1izIH3-001NtT-Co; Wed, 05 Feb 2020 05:51:13 -0500
-Message-Id: <20200205105113.283672584@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Wed, 05 Feb 2020 05:49:33 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 4/4] ftrace: Add comment to why rcu_dereference_sched() is open coded
-References: <20200205104929.313040579@goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S1728336AbgBEKwp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 05:52:45 -0500
+Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:63844 "EHLO
+        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727170AbgBEKwp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 05:52:45 -0500
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 05 Feb 2020 16:22:42 +0530
+Received: from gubbaven-linux.qualcomm.com ([10.206.64.32])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 05 Feb 2020 16:22:14 +0530
+Received: by gubbaven-linux.qualcomm.com (Postfix, from userid 2365015)
+        id 7D108213F5; Wed,  5 Feb 2020 16:22:13 +0530 (IST)
+From:   Venkata Lakshmi Narayana Gubba <gubbaven@codeaurora.org>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, robh@kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        bgodavar@codeaurora.org, tientzu@chromium.org,
+        seanpaul@chromium.org, rjliao@codeaurora.org, yshavit@google.com,
+        devicetree@vger.kernel.org,
+        Venkata Lakshmi Narayana Gubba <gubbaven@codeaurora.org>
+Subject: [PATCH v1] Bluetooth: hci_qca: Optimized code while enabling clocks for BT SOC
+Date:   Wed,  5 Feb 2020 16:21:43 +0530
+Message-Id: <1580899903-19032-1-git-send-email-gubbaven@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+* Directly passing clock pointer to clock code without checking for NULL
+  as clock code takes care of it
+* Removed the comment which was not necessary
+* Updated code for return in qca_regulator_enable()
 
-Because the function graph tracer can execute in sections where RCU is not
-"watching", the rcu_dereference_sched() for the has needs to be open coded.
-This is fine because the RCU "flavor" of the ftrace hash is protected by
-its own RCU handling (it does its own little synchronization on every CPU
-and does not rely on RCU sched).
-
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Venkata Lakshmi Narayana Gubba <gubbaven@codeaurora.org>
 ---
- kernel/trace/trace.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/bluetooth/hci_qca.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 022def96d307..8c52f5de9384 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -975,6 +975,11 @@ static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index eacc65b..8e95bfe 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -1756,13 +1756,10 @@ static int qca_regulator_enable(struct qca_serdev *qcadev)
+ 	power->vregs_on = true;
  
- 	preempt_disable_notrace();
+ 	ret = clk_prepare_enable(qcadev->susclk);
+-	if (ret) {
+-		/* Turn off regulators to overcome power leakage */
++	if (ret)
+ 		qca_regulator_disable(qcadev);
+-		return ret;
+-	}
  
-+	/*
-+	 * Have to open code "rcu_dereference_sched()" because the
-+	 * function graph tracer can be called when RCU is not
-+	 * "watching".
-+	 */
- 	hash = rcu_dereference_protected(ftrace_graph_hash, !preemptible());
+-	return 0;
++	return ret;
+ }
  
- 	if (ftrace_hash_empty(hash)) {
-@@ -1022,6 +1027,11 @@ static inline int ftrace_graph_notrace_addr(unsigned long addr)
+ static void qca_regulator_disable(struct qca_serdev *qcadev)
+@@ -1781,8 +1778,7 @@ static void qca_regulator_disable(struct qca_serdev *qcadev)
+ 	regulator_bulk_disable(power->num_vregs, power->vreg_bulk);
+ 	power->vregs_on = false;
  
- 	preempt_disable_notrace();
+-	if (qcadev->susclk)
+-		clk_disable_unprepare(qcadev->susclk);
++	clk_disable_unprepare(qcadev->susclk);
+ }
  
-+	/*
-+	 * Have to open code "rcu_dereference_sched()" because the
-+	 * function graph tracer can be called when RCU is not
-+	 * "watching".
-+	 */
- 	notrace_hash = rcu_dereference_protected(ftrace_graph_notrace_hash,
- 						 !preemptible());
- 
+ static int qca_init_regulators(struct qca_power *qca,
 -- 
-2.24.1
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member 
+of Code Aurora Forum, hosted by The Linux Foundation
 
