@@ -2,126 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09B961529D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 12:23:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AA0E152A10
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 12:42:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbgBELXd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 06:23:33 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43892 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727522AbgBELXc (ORCPT
+        id S1727986AbgBELmP convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 5 Feb 2020 06:42:15 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:54762 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727561AbgBELmN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 06:23:32 -0500
-Received: by mail-lj1-f194.google.com with SMTP id a13so1885998ljm.10
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 03:23:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=dh5KVm5NVZR7B6kV3CkfPxftpb+A9muCzSxY5f+by0k=;
-        b=tFQv4blGi1NukrKVKLKM9a5yWogak2ERntocChs0vWrya9lUNK3FSyatnKS1MLPDrt
-         p+3KZiUybS59AUws2x8n3rybFtHSU3qsaP38wMgFaDNTG/usGncV2+gIcDPWZaTihn2x
-         IT0s2ZIQkgy6nZw6cmza+jvP3jviAy+EvvnJ4AOSPcmWvi3H07xyPGK9XfmmYHOdOfBr
-         i64GsDmqMsxzDMDTMf2POxCYF3RjYkxUsa1AEq/CUhlFdErzLlXMxmx6vvsrYmjq/W1E
-         0uNIM8buRrHTOj7xD45gFWXrseGaMzB/dqpGKw77ntg+wPel+osm/zIX+A2PVoNrN2AX
-         dPxw==
+        Wed, 5 Feb 2020 06:42:13 -0500
+Received: from mail-pj1-f70.google.com ([209.85.216.70])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1izIno-0003RY-Qg
+        for linux-kernel@vger.kernel.org; Wed, 05 Feb 2020 11:25:05 +0000
+Received: by mail-pj1-f70.google.com with SMTP id hi12so1117418pjb.7
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 03:25:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dh5KVm5NVZR7B6kV3CkfPxftpb+A9muCzSxY5f+by0k=;
-        b=STNrH+2pRIXPfRRGaNuRJ+6eRRGTFefUxO6IMJ3dUSB+Nxse/wckrnKYTpBKmqPifx
-         CagUWBLstdon7VfLshf18WTvuHf1aazz8QJnYs/P1IpywCFu2XVmzdmkhJwWy1wEar7t
-         Plk0lxO4uxaY9CNq68WV9lWlK8KRpPLaH0hk/omsTvnWU5KmY3iVJjJJTR2mdaTvOr1L
-         AlGYUIaUAEBbVlZV66nT2S1qmsOe4g2vQSi459TNE/uqphqeSObiawZTgIsuxVj1n+nB
-         CXvGK3bkG0Y5icQDLrBOeGmY7/zLdlz34CJAOyhyzru/gR0gM5HCQDHJGkAUlwcxvVXC
-         ztEA==
-X-Gm-Message-State: APjAAAVNmbr1SRLUtZ0ITHgIHkT0P6Ob8DMjcrMLk169wOpFueeInjLD
-        ybLXqIJb0SpZS4IhB26RLe0PQQ==
-X-Google-Smtp-Source: APXvYqzGnroRbFkq73Du+mrJTZV4pY9s8Imx6qAPmcft4bWsOSpmZpl02xqYNxfUrCA0UHefdOERHw==
-X-Received: by 2002:a2e:918c:: with SMTP id f12mr18604844ljg.66.1580901810333;
-        Wed, 05 Feb 2020 03:23:30 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id y18sm12786085ljm.93.2020.02.05.03.23.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 03:23:29 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id AE293100AF6; Wed,  5 Feb 2020 14:23:43 +0300 (+03)
-Date:   Wed, 5 Feb 2020 14:23:43 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 04/12] mm: introduce page_ref_sub_return()
-Message-ID: <20200205112343.e2vpcylgrobfcxlo@box>
-References: <20200204234117.2974687-1-jhubbard@nvidia.com>
- <20200204234117.2974687-5-jhubbard@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200204234117.2974687-5-jhubbard@nvidia.com>
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=6zUnAJw/Y6vVvW2xmbH05AyrYz3QZAGIOapSC7+i3Mc=;
+        b=q/374D7ERbdRt0c5YEsGJaDXkn0yXyNfoXBVVni95Dy8UjJ9N5QIDKWp3z3dKuMa7F
+         QvyFbBbRJ6KyicbCxTYuKbHIRJtH8QGMFWrIEFuI8SG/8UHPkpuRowmON8DZhZNQR3tT
+         o8rkXn4EXqEgeGNvfk7K5bQPYa102HIzWpWlze1FIf5+tKXmn7WFZVu4AYIKgH8obkEh
+         ardzBFkFLMYscbZe5fxlD5154Jo0gHlUbrhSxVWRw0RY4cj5+E1gQ/GxaEvT5HnZpe1c
+         onU+8lgNilD8MenCZansFMVwE0t3Iqj3TMEAwEfqDDIWcq4pi+NXQhf1C1+xMXc95+Bi
+         wI4w==
+X-Gm-Message-State: APjAAAVf79Aen8N+wqgg4yC7A2fRidfVbP/wa+29c/SzfN4/eXRhM/m6
+        xkxAS0zVMaTM2InK75kukmgYjVPBOxwuAfqDS6FO6ljtaByIymmSWqwp2/YKLejcV8I+NGyVYcW
+        zQdarVpf746it2DL04PIj0v4GtzfxH9t2WynPySZOsw==
+X-Received: by 2002:a17:90a:db48:: with SMTP id u8mr5081661pjx.54.1580901903209;
+        Wed, 05 Feb 2020 03:25:03 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzs8jEUWVsPGPIqrQGiyIxOU5NsCKAV2kLJxc/sS5hZH+c4Gr+g9ys+WG+0DEuEOGh1dzscQg==
+X-Received: by 2002:a17:90a:db48:: with SMTP id u8mr5081630pjx.54.1580901902766;
+        Wed, 05 Feb 2020 03:25:02 -0800 (PST)
+Received: from 2001-b011-380f-35a3-4cfd-361b-ac7d-6a8c.dynamic-ip6.hinet.net (2001-b011-380f-35a3-4cfd-361b-ac7d-6a8c.dynamic-ip6.hinet.net. [2001:b011:380f:35a3:4cfd:361b:ac7d:6a8c])
+        by smtp.gmail.com with ESMTPSA id u12sm27695654pfm.165.2020.02.05.03.25.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Feb 2020 03:25:02 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [PATCH v2 1/3] xhci: Ensure link state is U3 after setting
+ USB_SS_PORT_LS_U3
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <20200205112228.25155-1-kai.heng.feng@canonical.com>
+Date:   Wed, 5 Feb 2020 19:24:59 +0800
+Cc:     acelan.kao@canonical.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <08A214EC-F78D-41E1-B080-2A03782E41C1@canonical.com>
+References: <20200205112228.25155-1-kai.heng.feng@canonical.com>
+To:     mathias.nyman@intel.com, gregkh@linuxfoundation.org,
+        stern@rowland.harvard.edu
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 04, 2020 at 03:41:09PM -0800, John Hubbard wrote:
-> An upcoming patch requires subtracting a large chunk of refcounts from
-> a page, and checking what the resulting refcount is. This is a little
-> different than the usual "check for zero refcount" that many of the
-> page ref functions already do. However, it is similar to a few other
-> routines that (like this one) are generally useful for things such as
-> 1-based refcounting.
+
+
+> On Feb 5, 2020, at 19:22, Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
 > 
-> Add page_ref_sub_return(), that subtracts a chunk of refcounts
-> atomically, and returns an atomic snapshot of the result.
+> The xHCI spec doesn't specify the upper bound of U3 transition time. For
+> some devices 20ms is not enough, so we need to make sure the link state
+> is in U3 before further actions.
 > 
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> I've tried to use U3 Entry Capability by setting U3 Entry Enable in
+> config register, however the port change event for U3 transition
+> interrupts the system suspend process.
+> 
+> For now let's use the less ideal method by polling PLS.
+> 
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+
+Please ignore this series. Some patches are missing changelog, will resend one.
+
+Kai-Heng
+
 > ---
->  include/linux/page_ref.h | 9 +++++++++
->  1 file changed, 9 insertions(+)
+> v2:
+> - Remove some redundant debug messages.
+> - Use msleep loop outside if spinlock to stop pegging CPU.
 > 
-> diff --git a/include/linux/page_ref.h b/include/linux/page_ref.h
-> index 14d14beb1f7f..a0e171265b79 100644
-> --- a/include/linux/page_ref.h
-> +++ b/include/linux/page_ref.h
-> @@ -102,6 +102,15 @@ static inline void page_ref_sub(struct page *page, int nr)
->  		__page_ref_mod(page, -nr);
->  }
->  
-> +static inline int page_ref_sub_return(struct page *page, int nr)
-> +{
-> +	int ret = atomic_sub_return(nr, &page->_refcount);
+> drivers/usb/host/xhci-hub.c | 11 ++++++++++-
+> 1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
+> index 7a3a29e5e9d2..d3c5bcf76755 100644
+> --- a/drivers/usb/host/xhci-hub.c
+> +++ b/drivers/usb/host/xhci-hub.c
+> @@ -1313,7 +1313,16 @@ int xhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
+> 			xhci_set_link_state(xhci, ports[wIndex], link_state);
+> 
+> 			spin_unlock_irqrestore(&xhci->lock, flags);
+> -			msleep(20); /* wait device to enter */
+> +			if (link_state == USB_SS_PORT_LS_U3) {
+> +				int retries = 10;
 > +
-> +	if (page_ref_tracepoint_active(__tracepoint_page_ref_mod))
-
-s/__tracepoint_page_ref_mod/__tracepoint_page_ref_mod_and_return/
-
-> +		__page_ref_mod_and_return(page, -nr, ret);
-> +	return ret;
-> +}
-> +
->  static inline void page_ref_inc(struct page *page)
->  {
->  	atomic_inc(&page->_refcount);
+> +				while (retries--) {
+> +					msleep(10); /* wait device to enter */
+> +					temp = readl(ports[wIndex]->addr);
+> +					if ((temp & PORT_PLS_MASK) == XDEV_U3)
+> +						break;
+> +				}
+> +			}
+> 			spin_lock_irqsave(&xhci->lock, flags);
+> 
+> 			temp = readl(ports[wIndex]->addr);
 > -- 
-> 2.25.0
+> 2.17.1
 > 
 
--- 
- Kirill A. Shutemov
