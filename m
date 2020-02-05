@@ -2,120 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A59215361A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 18:15:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32D27153621
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 18:16:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbgBERPo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 12:15:44 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:23562 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727527AbgBERPn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 12:15:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580922942;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=i/fvcosY8fRo4ERPbKWIeYDN1mwqZhnrYMnwOUyDV6k=;
-        b=jItTeeqZ/MhF3GtkpjFBafoKEIF7vnfhWwf+c7Mju1VP9AUojQupnWWT4DvGBvz5JcBg36
-        6ewVOa3BPU0kpv2fiUQ+/QsM8LwBlAVMGoTD49RFDpVcG8wPPSdKHiDQglZvkJYb2RAu5w
-        XT0Bw4YsoCyoti+gCtCtjkH/K5eplTA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-370-LaOJTlB0PmeDY5VEkGCHRw-1; Wed, 05 Feb 2020 12:15:39 -0500
-X-MC-Unique: LaOJTlB0PmeDY5VEkGCHRw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727567AbgBERP6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 12:15:58 -0500
+Received: from ms.lwn.net ([45.79.88.28]:52466 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727052AbgBERP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 12:15:57 -0500
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BC9D610CE789;
-        Wed,  5 Feb 2020 17:15:36 +0000 (UTC)
-Received: from kamzik.brq.redhat.com (unknown [10.43.2.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DFA66213F;
-        Wed,  5 Feb 2020 17:15:24 +0000 (UTC)
-Date:   Wed, 5 Feb 2020 18:15:21 +0100
-From:   Andrew Jones <drjones@redhat.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dinechin@redhat.com, sean.j.christopherson@intel.com,
-        pbonzini@redhat.com, jasowang@redhat.com, yan.y.zhao@intel.com,
-        mst@redhat.com, kevin.tian@intel.com, alex.williamson@redhat.com,
-        dgilbert@redhat.com, vkuznets@redhat.com
-Subject: Re: [PATCH 13/14] KVM: selftests: Let dirty_log_test async for dirty
- ring test
-Message-ID: <20200205171521.nh2yz7lal7pmcpai@kamzik.brq.redhat.com>
-References: <20200205025105.367213-1-peterx@redhat.com>
- <20200205025842.367575-1-peterx@redhat.com>
- <20200205025842.367575-10-peterx@redhat.com>
- <20200205094806.dqkzpxhrndocjl6g@kamzik.brq.redhat.com>
- <20200205155551.GB378317@xz-x1>
+        by ms.lwn.net (Postfix) with ESMTPSA id 90CDD6E5;
+        Wed,  5 Feb 2020 17:15:56 +0000 (UTC)
+Date:   Wed, 5 Feb 2020 10:15:55 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     SeongJae Park <sj38.park@gmail.com>
+Cc:     paulmck@kernel.org, SeongJae Park <sjpark@amazon.de>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Minchan Kim <minchan@kernel.org>
+Subject: Re: [PATCH 2/5] docs/ko_KR/howto: Insert missing dots
+Message-ID: <20200205101555.23ffde75@lwn.net>
+In-Reply-To: <20200131205237.29535-3-sj38.park@gmail.com>
+References: <20200131205237.29535-1-sj38.park@gmail.com>
+        <20200131205237.29535-3-sj38.park@gmail.com>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200205155551.GB378317@xz-x1>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 10:55:51AM -0500, Peter Xu wrote:
-> On Wed, Feb 05, 2020 at 10:48:06AM +0100, Andrew Jones wrote:
-> > On Tue, Feb 04, 2020 at 09:58:41PM -0500, Peter Xu wrote:
-> > > diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
-> > > index 4b78a8d3e773..e64fbfe6bbd5 100644
-> > > --- a/tools/testing/selftests/kvm/include/kvm_util.h
-> > > +++ b/tools/testing/selftests/kvm/include/kvm_util.h
-> > > @@ -115,6 +115,7 @@ vm_paddr_t addr_gva2gpa(struct kvm_vm *vm, vm_vaddr_t gva);
-> > >  struct kvm_run *vcpu_state(struct kvm_vm *vm, uint32_t vcpuid);
-> > >  void vcpu_run(struct kvm_vm *vm, uint32_t vcpuid);
-> > >  int _vcpu_run(struct kvm_vm *vm, uint32_t vcpuid);
-> > > +int __vcpu_run(struct kvm_vm *vm, uint32_t vcpuid);
-> > >  void vcpu_run_complete_io(struct kvm_vm *vm, uint32_t vcpuid);
-> > >  void vcpu_set_mp_state(struct kvm_vm *vm, uint32_t vcpuid,
-> > >  		       struct kvm_mp_state *mp_state);
-> > > diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-> > > index 25edf20d1962..5137882503bd 100644
-> > > --- a/tools/testing/selftests/kvm/lib/kvm_util.c
-> > > +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-> > > @@ -1203,6 +1203,14 @@ int _vcpu_run(struct kvm_vm *vm, uint32_t vcpuid)
-> > >  	return rc;
-> > >  }
-> > >  
-> > > +int __vcpu_run(struct kvm_vm *vm, uint32_t vcpuid)
-> > > +{
-> > > +	struct vcpu *vcpu = vcpu_find(vm, vcpuid);
-> > > +
-> > > +	TEST_ASSERT(vcpu != NULL, "vcpu not found, vcpuid: %u", vcpuid);
-> > > +	return ioctl(vcpu->fd, KVM_RUN, NULL);
-> > > +}
-> > > +
-> > >  void vcpu_run_complete_io(struct kvm_vm *vm, uint32_t vcpuid)
-> > >  {
-> > >  	struct vcpu *vcpu = vcpu_find(vm, vcpuid);
-> > 
-> > I think we should add a vcpu_get_fd(vm, vcpuid) function instead, and
-> > then call ioctl directly from the test.
-> 
-> Currently the vcpu struct is still internal to the lib/ directory (as
-> defined in lib/kvm_util_internal.h).  Wit that, it seems the vcpu fd
-> should also be limited to the lib/ as well?
-> 
-> But I feel like I got your point, because when I worked on the
-> selftests I did notice that in many places it's easier to expose all
-> these things for test cases (e.g., the struct vcpu).  For me, it's not
-> only for the vcpu fd, but also for the rest of internal structures to
-> be able to be accessed from tests directly.  Not sure whether that's
-> what you thought too.  It's just a separate topic of what this series
-> was trying to do.
+On Fri, 31 Jan 2020 21:52:34 +0100
+SeongJae Park <sj38.park@gmail.com> wrote:
 
-So far I've just wished I could get to the fd, which seems reasonable
-since it's an fd. I agree the whole internal thing is probably
-unnecessary, but nobody (including me) has complained enough yet to
-undo it. For this patch series I'd prefer we start heading in the
-expose more direction, than in the yet another variant of vcpu_run
-direction though.
+> From: SeongJae Park <sjpark@amazon.de>
+> 
+> Signed-off-by: SeongJae Park <sjpark@amazon.de>
+
+I'd really rather not see patches with an empty changelog, please, even
+when they are relatively trivial.  But also...
+
+> ---
+>  Documentation/translations/ko_KR/howto.rst | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/translations/ko_KR/howto.rst b/Documentation/translations/ko_KR/howto.rst
+> index ae3ad897d2ae..6419d8477689 100644
+> --- a/Documentation/translations/ko_KR/howto.rst
+> +++ b/Documentation/translations/ko_KR/howto.rst
+> @@ -1,6 +1,6 @@
+>  NOTE:
+> -This is a version of Documentation/process/howto.rst translated into korean
+> -This document is maintained by Minchan Kim <minchan@kernel.org>
+> +This is a version of Documentation/process/howto.rst translated into korean.
+> +This document is maintained by Minchan Kim <minchan@kernel.org>.
+
+Is this even true?  Minchan hasn't touched this document in years, and you
+didn't see fit to copy him on the change.  I'm thinking that adding
+periods doesn't seem like the right fix here.
 
 Thanks,
-drew
 
+jon
