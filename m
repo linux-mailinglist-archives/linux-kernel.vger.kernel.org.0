@@ -2,366 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 523B5152501
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 03:59:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 537D115250B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 04:00:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728087AbgBEC7R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 21:59:17 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:48068 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728065AbgBEC7K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 21:59:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580871548;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=T3MfHN9tfMflA2mtZCLums4Fx20WmuB7Kv75tieeS3Q=;
-        b=dKBpupExw/gxjvWh2jttYIOjajep92Tzyup224LBL8gDWa//Vb71kI/zRQ9yxGZxkadYo5
-        c736riaqeflPofFavA9Ft9afCNu3R5wFihKwusJhFVbsk1mbBxP2sEwXeu/lBVXEMMtrfs
-        fJnKZtcreiYAXuoTK5PGJi/4J6Ye5Ls=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-104-lQ7jdd6FNM-6OwuDtv85_g-1; Tue, 04 Feb 2020 21:59:07 -0500
-X-MC-Unique: lQ7jdd6FNM-6OwuDtv85_g-1
-Received: by mail-qt1-f198.google.com with SMTP id h11so414488qtq.11
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 18:59:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=T3MfHN9tfMflA2mtZCLums4Fx20WmuB7Kv75tieeS3Q=;
-        b=ZVRkxHGOEB+ZdMbJNE38wpX+Mwsp9sQHdxmVvzpEuM0NDtrFDdh0snNyYm/UvlVq0Y
-         taIi7Ufmo58XABLDWWCMGxQbYtS+qYggvF7yhVo/5NwSd3evj6oYKvA1fbI1vdTVMrOK
-         d+j/SoI7pDcOafbzoLIY5k772ppz/gfDp2hESjtAC3o/KsXseVuoYAXaQxUk6/UxvM/Y
-         a8pMNM6ycnQTrGrdQn6x8agry6CnhyNYvqbcGpWMzcmFPoX/Ys52UqO2REMR/dFyWdJN
-         rkXsPHcy5SRZfhhRYUnXHVmI4arKsluDS2uhuIHL+lSLlieeXQL9Ei9Xcfei2xDKfD4C
-         a7jg==
-X-Gm-Message-State: APjAAAVpvvUDg5oJfriLEZvsO42Jnrd8OovzMa06zIXSk5NlACeLrlAR
-        QtUFASCRXpmHuqiCFWUyXgtReb6szF5TM3Fztlp33qOuVMREbuEHTC9Eiue8gUeBi7lJNO9soit
-        s6F+hzgAQPv21hGWep1LwKxYZ
-X-Received: by 2002:a37:47c8:: with SMTP id u191mr32340475qka.438.1580871545346;
-        Tue, 04 Feb 2020 18:59:05 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxKBLFeUOTbByGjjkxUFAudwxLYcVqrWwN0nXLuxqXpj2ynXuSckzR2GzSHtwiMeb5iakaRWA==
-X-Received: by 2002:a37:47c8:: with SMTP id u191mr32340458qka.438.1580871544935;
-        Tue, 04 Feb 2020 18:59:04 -0800 (PST)
-Received: from xz-x1.redhat.com ([2607:9880:19c8:32::2])
-        by smtp.gmail.com with ESMTPSA id e64sm12961649qtd.45.2020.02.04.18.59.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2020 18:59:04 -0800 (PST)
-From:   Peter Xu <peterx@redhat.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     dinechin@redhat.com, sean.j.christopherson@intel.com,
-        pbonzini@redhat.com, jasowang@redhat.com, yan.y.zhao@intel.com,
-        mst@redhat.com, peterx@redhat.com, kevin.tian@intel.com,
-        alex.williamson@redhat.com, dgilbert@redhat.com,
-        vkuznets@redhat.com
-Subject: [PATCH 13/14] KVM: selftests: Let dirty_log_test async for dirty ring test
-Date:   Tue,  4 Feb 2020 21:58:41 -0500
-Message-Id: <20200205025842.367575-10-peterx@redhat.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200205025842.367575-1-peterx@redhat.com>
-References: <20200205025105.367213-1-peterx@redhat.com>
- <20200205025842.367575-1-peterx@redhat.com>
+        id S1728094AbgBEC75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 21:59:57 -0500
+Received: from mail-eopbgr70083.outbound.protection.outlook.com ([40.107.7.83]:14126
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727924AbgBEC74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 21:59:56 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=E+1LaayEGlt4Y7gb++ZXur7A7k/IdeuitSGCeAscvk8fUej/5wAaHEoZlsNUBhI3CE0HpJlh6KDmXNZFAEoENavGQEi7wQLkE/nyArQV3h+DOonsKky5JoS8At6zKRFpkUVr5PtRLflFez5rIIS6DWu2sgXljDq0oVZdABXdhjIi95/zxTeo/3VtQUTnaUUgA2hrIJGZZMwhO6T83OKvPn2gd/NM/COYpospbf5fA8ocY7E3dGknLeFF4l4H4jUm2Z2WeSEqxFDYqqqCz1jUSpgiIoSuOAjbv6Nd2KeD8XiF7ITG8bUcDs4LvicJUh73fuGQRA06oX8Zbe5Guyn/rQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pR58iCd+nNAnYwF+mvJyhklT4v/MM5nupao3qGVrJMY=;
+ b=iMpUkWArFlfTxlJN6I1xiqr2+1Vbd7XjMz9zrNyTq9m+1BcTME/OPPVxnb2sDTymyQXCGh6V2mE6kdSSFl6HseLG77lVxaX6Yb0Fupf2h4gDhxQhEpb276kq2IXRI81DoipGhU4NMBO8kIg+3Tcg/lg07WdiyMyxHMdjFcrPzMwuvSUlMumOw3Gcl0gfi4tilbumSNfjS06jbp7C5wqg/Mbe1Q3LD+SAkrfiFQ77fXuuGch/cv0tUm+tEWv1X62HXIfDwvRO8UNzrgrymjCBVhVcez38J8B8ixl8/kepqj+TiaWIiDwjoTMI7EB/3XflzW+3h0RNcrB7/SkTEJuqfg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pR58iCd+nNAnYwF+mvJyhklT4v/MM5nupao3qGVrJMY=;
+ b=dvNIFkodcdHo7mE+ekvNsKFJ7FpXkDv/1z8lcdhOwGYX3zb7apSIbMSpSquMblawxUS1zwkgWJ+/0XcTr7RQLL2hKpabXpXkoGi1yFgE0Lf5IXLgoJ/iJmnYRG21JuYapkpIr6YCBTmvHwUhXCp+w6XR05x7tUwIpU4lrXtqpr8=
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.150) by
+ DB7PR04MB4249.eurprd04.prod.outlook.com (52.134.108.25) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2686.32; Wed, 5 Feb 2020 02:59:50 +0000
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::59e6:140:b2df:a5b0]) by DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::59e6:140:b2df:a5b0%7]) with mapi id 15.20.2686.035; Wed, 5 Feb 2020
+ 02:59:50 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Fabio Estevam <festevam@gmail.com>
+CC:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abel.vesa@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH 6/7] ARM: imx: imx7ulp: support HSRUN mode
+Thread-Topic: [PATCH 6/7] ARM: imx: imx7ulp: support HSRUN mode
+Thread-Index: AQHV22DS1fobjwyzsECLZwnJ5ghp3qgLDWuAgADcRAA=
+Date:   Wed, 5 Feb 2020 02:59:50 +0000
+Message-ID: <DB7PR04MB449032635121DD11181FC2F388020@DB7PR04MB4490.eurprd04.prod.outlook.com>
+References: <1580823277-13644-1-git-send-email-peng.fan@nxp.com>
+ <1580823277-13644-7-git-send-email-peng.fan@nxp.com>
+ <CAOMZO5BnfGdbDuobV=qi4zbzKriM0kNmAyd8zFCSdv2krVj=Og@mail.gmail.com>
+In-Reply-To: <CAOMZO5BnfGdbDuobV=qi4zbzKriM0kNmAyd8zFCSdv2krVj=Og@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: edb6c81b-869d-4d2f-1ab6-08d7a9e777b0
+x-ms-traffictypediagnostic: DB7PR04MB4249:|DB7PR04MB4249:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB7PR04MB4249401F0E1416725761329A88020@DB7PR04MB4249.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2331;
+x-forefront-prvs: 0304E36CA3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(346002)(39860400002)(136003)(366004)(189003)(199004)(53546011)(6506007)(4744005)(478600001)(2906002)(33656002)(186003)(4326008)(81166006)(54906003)(8936002)(316002)(81156014)(26005)(86362001)(5660300002)(6916009)(44832011)(64756008)(52536014)(7696005)(55016002)(71200400001)(8676002)(66946007)(66556008)(9686003)(66476007)(66446008)(76116006);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4249;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: W5orJE7IQxN7yeB9UKpsxs030NCFNvTd7dUBBHQNenbNOTIDM53YjeJ1wvktrtyoSa1I7WhkIJTp0ZUvmjs6tY2YlofN7SgH4rY34Tx389Sp9lEJ+ttecnwCfresBTykc49rXfu11TbPEJymNuMJXlWDhgzDp3Kx1fkahgiJtRNRpndnniIBLAfXnYYN1bEpuvMYJOkDS+SzWQ6xOyikqyzGmIdL/Es9Gj9LB8hDNZWMc2LJoF3JIuBEaID8ANlkWQV9izOkStR52LMkWDoqfOQ6ApEvxGpmA7+JcI7TYWeqJRnORGOR5+gQCl4Nw2u1VtQBr47EpmkHpoo42Z8N/UIFLQGJljdurRPWFKNUBPpm8vowDKxB2s7NUVhQvuoVKYV5mxDSLwz1WGknWQNgU3CYPz2rQ8VVMIOaO5DbhNwsmXVfGKOo8RNDTQUQlWC9
+x-ms-exchange-antispam-messagedata: YTRKumUAfQEYVoY8MhlQjLX4YD+pB6O/Htn4YDyKHfZWA20cXzQ0DeflwFF0sLW9xfrcY7f3cXQKJXHV3rXg9Et/chCssI/d0Ges2QXvS/EK0ZVSQSx/afY+NMpzd6LHt5ESs42GwGU3GlA02tXPUg==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: edb6c81b-869d-4d2f-1ab6-08d7a9e777b0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2020 02:59:50.6044
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: t06Kas5yTlEY9Jbzxnkzs8F9xI88t+EXvP/no90vV9U8fQcNLli/9P9OtSuIKxxhxSxft32TQXGSyWilWTMEyg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4249
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously the dirty ring test was working in synchronous way, because
-only with a vmexit (with that it was the ring full event) we'll know
-the hardware dirty bits will be flushed to the dirty ring.
-
-With this patch we first introduced the vcpu kick mechanism by using
-SIGUSR1, meanwhile we can have a guarantee of vmexit and also the
-flushing of hardware dirty bits.  With all these, we can keep the vcpu
-dirty work asynchronous of the whole collection procedure now.  Still,
-we need to be very careful that we can only do it async if the vcpu is
-not reaching soft limit (no KVM_EXIT_DIRTY_RING_FULL).  Otherwise we
-must collect the dirty bits before continuing the vcpu.
-
-Further increase the dirty ring size to current maximum to make sure
-we torture more on the no-ring-full case, which should be the major
-scenario when the hypervisors like QEMU would like to use this feature.
-
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- tools/testing/selftests/kvm/dirty_log_test.c  | 123 +++++++++++++-----
- .../testing/selftests/kvm/include/kvm_util.h  |   1 +
- tools/testing/selftests/kvm/lib/kvm_util.c    |   8 ++
- 3 files changed, 103 insertions(+), 29 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/dirty_log_test.c b/tools/testing/selftests/kvm/dirty_log_test.c
-index b4c210f33dd7..6c754e91fc50 100644
---- a/tools/testing/selftests/kvm/dirty_log_test.c
-+++ b/tools/testing/selftests/kvm/dirty_log_test.c
-@@ -13,6 +13,9 @@
- #include <time.h>
- #include <pthread.h>
- #include <semaphore.h>
-+#include <sys/types.h>
-+#include <signal.h>
-+#include <errno.h>
- #include <linux/bitmap.h>
- #include <linux/bitops.h>
- #include <asm/barrier.h>
-@@ -59,7 +62,9 @@
- # define test_and_clear_bit_le	test_and_clear_bit
- #endif
- 
--#define TEST_DIRTY_RING_COUNT		1024
-+#define TEST_DIRTY_RING_COUNT		65536
-+
-+#define SIG_IPI SIGUSR1
- 
- /*
-  * Guest/Host shared variables. Ensure addr_gva2hva() and/or
-@@ -135,6 +140,12 @@ static uint64_t host_track_next_count;
- /* Whether dirty ring reset is requested, or finished */
- static sem_t dirty_ring_vcpu_stop;
- static sem_t dirty_ring_vcpu_cont;
-+/*
-+ * This is updated by the vcpu thread to tell the host whether it's a
-+ * ring-full event.  It should only be read until a sem_wait() of
-+ * dirty_ring_vcpu_stop and before vcpu continues to run.
-+ */
-+static bool dirty_ring_vcpu_ring_full;
- 
- enum log_mode_t {
- 	/* Only use KVM_GET_DIRTY_LOG for logging */
-@@ -151,6 +162,33 @@ enum log_mode_t {
- 
- /* Mode of logging.  Default is LOG_MODE_DIRTY_LOG */
- static enum log_mode_t host_log_mode;
-+pthread_t vcpu_thread;
-+
-+/* Only way to pass this to the signal handler */
-+struct kvm_vm *current_vm;
-+
-+static void vcpu_sig_handler(int sig)
-+{
-+	TEST_ASSERT(sig == SIG_IPI, "unknown signal: %d", sig);
-+}
-+
-+static void vcpu_kick(void)
-+{
-+	pthread_kill(vcpu_thread, SIG_IPI);
-+}
-+
-+/*
-+ * In our test we do signal tricks, let's use a better version of
-+ * sem_wait to avoid signal interrupts
-+ */
-+static void sem_wait_until(sem_t *sem)
-+{
-+	int ret;
-+
-+	do
-+		ret = sem_wait(sem);
-+	while (ret == -1 && errno == EINTR);
-+}
- 
- static void clear_log_create_vm_done(struct kvm_vm *vm)
- {
-@@ -179,10 +217,13 @@ static void clear_log_collect_dirty_pages(struct kvm_vm *vm, int slot,
- 	kvm_vm_clear_dirty_log(vm, slot, bitmap, 0, num_pages);
- }
- 
--static void default_after_vcpu_run(struct kvm_vm *vm)
-+static void default_after_vcpu_run(struct kvm_vm *vm, int ret, int err)
- {
- 	struct kvm_run *run = vcpu_state(vm, VCPU_ID);
- 
-+	TEST_ASSERT(ret == 0 || (ret == -1 && err == EINTR),
-+		    "vcpu run failed: errno=%d", err);
-+
- 	TEST_ASSERT(get_ucall(vm, VCPU_ID, NULL) == UCALL_SYNC,
- 		    "Invalid guest sync status: exit_reason=%s\n",
- 		    exit_reason_str(run->exit_reason));
-@@ -233,27 +274,37 @@ static uint32_t dirty_ring_collect_one(struct kvm_dirty_gfn *dirty_gfns,
- 	return count;
- }
- 
-+static void dirty_ring_wait_vcpu(void)
-+{
-+	/* This makes sure that hardware PML cache flushed */
-+	vcpu_kick();
-+	sem_wait_until(&dirty_ring_vcpu_stop);
-+}
-+
-+static void dirty_ring_continue_vcpu(void)
-+{
-+	DEBUG("Notifying vcpu to continue\n");
-+	sem_post(&dirty_ring_vcpu_cont);
-+}
-+
- static void dirty_ring_collect_dirty_pages(struct kvm_vm *vm, int slot,
- 					   void *bitmap, uint32_t num_pages)
- {
- 	/* We only have one vcpu */
- 	static uint32_t fetch_index = 0;
- 	uint32_t count = 0, cleared;
-+	bool continued_vcpu = false;
- 
--	/*
--	 * Before fetching the dirty pages, we need a vmexit of the
--	 * worker vcpu to make sure the hardware dirty buffers were
--	 * flushed.  This is not needed for dirty-log/clear-log tests
--	 * because get dirty log will natually do so.
--	 *
--	 * For now we do it in the simple way - we simply wait until
--	 * the vcpu uses up the soft dirty ring, then it'll always
--	 * do a vmexit to make sure that PML buffers will be flushed.
--	 * In real hypervisors, we probably need a vcpu kick or to
--	 * stop the vcpus (before the final sync) to make sure we'll
--	 * get all the existing dirty PFNs even cached in hardware.
--	 */
--	sem_wait(&dirty_ring_vcpu_stop);
-+	dirty_ring_wait_vcpu();
-+
-+	if (!dirty_ring_vcpu_ring_full) {
-+		/*
-+		 * This is not a ring-full event, it's safe to allow
-+		 * vcpu to continue
-+		 */
-+		dirty_ring_continue_vcpu();
-+		continued_vcpu = true;
-+	}
- 
- 	/* Only have one vcpu */
- 	count = dirty_ring_collect_one(vcpu_map_dirty_ring(vm, VCPU_ID),
-@@ -265,13 +316,16 @@ static void dirty_ring_collect_dirty_pages(struct kvm_vm *vm, int slot,
- 	TEST_ASSERT(cleared == count, "Reset dirty pages (%u) mismatch "
- 		    "with collected (%u)", cleared, count);
- 
--	DEBUG("Notifying vcpu to continue\n");
--	sem_post(&dirty_ring_vcpu_cont);
-+	if (!continued_vcpu) {
-+		TEST_ASSERT(dirty_ring_vcpu_ring_full,
-+			    "Didn't continue vcpu even without ring full");
-+		dirty_ring_continue_vcpu();
-+	}
- 
- 	DEBUG("Iteration %ld collected %u pages\n", iteration, count);
- }
- 
--static void dirty_ring_after_vcpu_run(struct kvm_vm *vm)
-+static void dirty_ring_after_vcpu_run(struct kvm_vm *vm, int ret, int err)
- {
- 	struct kvm_run *run = vcpu_state(vm, VCPU_ID);
- 
-@@ -279,10 +333,16 @@ static void dirty_ring_after_vcpu_run(struct kvm_vm *vm)
- 	if (get_ucall(vm, VCPU_ID, NULL) == UCALL_SYNC) {
- 		/* We should allow this to continue */
- 		;
--	} else if (run->exit_reason == KVM_EXIT_DIRTY_RING_FULL) {
-+	} else if (run->exit_reason == KVM_EXIT_DIRTY_RING_FULL ||
-+		   (ret == -1 && err == EINTR)) {
-+		/* Update the flag first before pause */
-+		WRITE_ONCE(dirty_ring_vcpu_ring_full,
-+			   run->exit_reason == KVM_EXIT_DIRTY_RING_FULL);
- 		sem_post(&dirty_ring_vcpu_stop);
--		DEBUG("vcpu stops because dirty ring full...\n");
--		sem_wait(&dirty_ring_vcpu_cont);
-+		DEBUG("vcpu stops because %s...\n",
-+		      dirty_ring_vcpu_ring_full ?
-+		      "dirty ring is full" : "vcpu is kicked out");
-+		sem_wait_until(&dirty_ring_vcpu_cont);
- 		DEBUG("vcpu continues now.\n");
- 	} else {
- 		TEST_ASSERT(false, "Invalid guest sync status: "
-@@ -305,7 +365,7 @@ struct log_mode {
- 	void (*collect_dirty_pages) (struct kvm_vm *vm, int slot,
- 				     void *bitmap, uint32_t num_pages);
- 	/* Hook to call when after each vcpu run */
--	void (*after_vcpu_run)(struct kvm_vm *vm);
-+	void (*after_vcpu_run)(struct kvm_vm *vm, int ret, int err);
- 	void (*before_vcpu_join) (void);
- } log_modes[LOG_MODE_NUM] = {
- 	{
-@@ -365,12 +425,12 @@ static void log_mode_collect_dirty_pages(struct kvm_vm *vm, int slot,
- 	mode->collect_dirty_pages(vm, slot, bitmap, num_pages);
- }
- 
--static void log_mode_after_vcpu_run(struct kvm_vm *vm)
-+static void log_mode_after_vcpu_run(struct kvm_vm *vm, int ret, int err)
- {
- 	struct log_mode *mode = &log_modes[host_log_mode];
- 
- 	if (mode->after_vcpu_run)
--		mode->after_vcpu_run(vm);
-+		mode->after_vcpu_run(vm, ret, err);
- }
- 
- static void log_mode_before_vcpu_join(void)
-@@ -394,15 +454,21 @@ static void *vcpu_worker(void *data)
- 	int ret;
- 	struct kvm_vm *vm = data;
- 	uint64_t *guest_array;
-+	struct sigaction sigact;
-+
-+	current_vm = vm;
-+	memset(&sigact, 0, sizeof(sigact));
-+	sigact.sa_handler = vcpu_sig_handler;
-+	sigaction(SIG_IPI, &sigact, NULL);
- 
- 	guest_array = addr_gva2hva(vm, (vm_vaddr_t)random_array);
- 
- 	while (!READ_ONCE(host_quit)) {
-+		/* Clear any existing kick signals */
- 		generate_random_array(guest_array, TEST_PAGES_PER_LOOP);
- 		/* Let the guest dirty the random pages */
--		ret = _vcpu_run(vm, VCPU_ID);
--		TEST_ASSERT(ret == 0, "vcpu_run failed: %d\n", ret);
--		log_mode_after_vcpu_run(vm);
-+		ret = __vcpu_run(vm, VCPU_ID);
-+		log_mode_after_vcpu_run(vm, ret, errno);
- 	}
- 
- 	return NULL;
-@@ -549,7 +615,6 @@ static struct kvm_vm *create_vm(enum vm_guest_mode mode, uint32_t vcpuid,
- static void run_test(enum vm_guest_mode mode, unsigned long iterations,
- 		     unsigned long interval, uint64_t phys_offset)
- {
--	pthread_t vcpu_thread;
- 	struct kvm_vm *vm;
- 	unsigned long *bmap;
- 
-diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
-index 4b78a8d3e773..e64fbfe6bbd5 100644
---- a/tools/testing/selftests/kvm/include/kvm_util.h
-+++ b/tools/testing/selftests/kvm/include/kvm_util.h
-@@ -115,6 +115,7 @@ vm_paddr_t addr_gva2gpa(struct kvm_vm *vm, vm_vaddr_t gva);
- struct kvm_run *vcpu_state(struct kvm_vm *vm, uint32_t vcpuid);
- void vcpu_run(struct kvm_vm *vm, uint32_t vcpuid);
- int _vcpu_run(struct kvm_vm *vm, uint32_t vcpuid);
-+int __vcpu_run(struct kvm_vm *vm, uint32_t vcpuid);
- void vcpu_run_complete_io(struct kvm_vm *vm, uint32_t vcpuid);
- void vcpu_set_mp_state(struct kvm_vm *vm, uint32_t vcpuid,
- 		       struct kvm_mp_state *mp_state);
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 25edf20d1962..5137882503bd 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -1203,6 +1203,14 @@ int _vcpu_run(struct kvm_vm *vm, uint32_t vcpuid)
- 	return rc;
- }
- 
-+int __vcpu_run(struct kvm_vm *vm, uint32_t vcpuid)
-+{
-+	struct vcpu *vcpu = vcpu_find(vm, vcpuid);
-+
-+	TEST_ASSERT(vcpu != NULL, "vcpu not found, vcpuid: %u", vcpuid);
-+	return ioctl(vcpu->fd, KVM_RUN, NULL);
-+}
-+
- void vcpu_run_complete_io(struct kvm_vm *vm, uint32_t vcpuid)
- {
- 	struct vcpu *vcpu = vcpu_find(vm, vcpuid);
--- 
-2.24.1
-
+PiBTdWJqZWN0OiBSZTogW1BBVENIIDYvN10gQVJNOiBpbXg6IGlteDd1bHA6IHN1cHBvcnQgSFNS
+VU4gbW9kZQ0KPiANCj4gSGkgUGVuZywNCj4gDQo+IE9uIFR1ZSwgRmViIDQsIDIwMjAgYXQgMTA6
+NDEgQU0gPHBlbmcuZmFuQG54cC5jb20+IHdyb3RlOg0KPiA+DQo+ID4gRnJvbTogUGVuZyBGYW4g
+PHBlbmcuZmFuQG54cC5jb20+DQo+ID4NCj4gPiBDb25maWd1cmUgcG1wcm90IHRvIGxldCBBUk0g
+Y29yZSBjb3VsZCBydW4gaW50byBIU1JVTiBtb2RlLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTog
+UGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+DQo+ID4gLS0tDQo+IA0KPiA+ICsgICAgICAgd3Jp
+dGVsX3JlbGF4ZWQoQk1fUE1QUk9UX0FIU1JVTiwgc21jMV9iYXNlICsNCj4gU01DX1BNUFJPVCk7
+DQo+IA0KPiBIU1JVTiBjYW5ub3QgYmUgY29uZmlndXJlZCB1bmNvbmRpdGlvbmFsbHkgYmVjYXVz
+ZSBpZiBpLk1YN1VMUCBydW5zIHdpdGgNCj4gTERPLWVuYWJsZWQgaXQgY2Fubm90IHJ1biBpbiBI
+U1JVTiBtb2RlLg0KDQpUaGFua3MsIEknbGwgdXBkYXRlIHRvIGFkZCBhIGNoZWNrIExETyBtb2Rl
+IGhlcmUuDQoNClRoYW5rcywNClBlbmcuDQo=
