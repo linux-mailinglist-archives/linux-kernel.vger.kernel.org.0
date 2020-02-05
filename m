@@ -2,110 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D382F152863
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 10:33:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4D49152873
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 10:36:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728236AbgBEJdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 04:33:50 -0500
-Received: from mga05.intel.com ([192.55.52.43]:19048 "EHLO mga05.intel.com"
+        id S1728240AbgBEJgQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 04:36:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728035AbgBEJdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 04:33:49 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2020 01:33:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,405,1574150400"; 
-   d="scan'208";a="378683518"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga004.jf.intel.com with ESMTP; 05 Feb 2020 01:33:43 -0800
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1izH43-0000Hp-JV; Wed, 05 Feb 2020 11:33:43 +0200
-Date:   Wed, 5 Feb 2020 11:33:43 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Michal Kubecek <mkubecek@suse.cz>
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>, davem@davemloft.ne,
-        jeffrey.t.kirsher@intel.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Jouni Hogander <jouni.hogander@unikie.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Wang Hai <wanghai26@huawei.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Li RongQing <lirongqing@baidu.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] net-sysfs: Ensure begin/complete are called in
- speed_show() and duplex_show()
-Message-ID: <20200205093343.GT10400@smile.fi.intel.com>
-References: <20200205081616.18378-1-kai.heng.feng@canonical.com>
- <20200205081616.18378-2-kai.heng.feng@canonical.com>
- <20200205090638.GS10400@smile.fi.intel.com>
- <20200205092345.GA14294@unicorn.suse.cz>
+        id S1728035AbgBEJgQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 04:36:16 -0500
+Received: from localhost (unknown [212.187.182.163])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AD5E20661;
+        Wed,  5 Feb 2020 09:36:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580895375;
+        bh=RwByi0XDoyCwQdPe5YV1dEFXavEuBmppr0k662j0vE0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GVMZpACbv7YDWH+Ckvp13K/sQxq6HMXMZWFjtjxgZOzZCqv9+3Rz5m7YrNUSRGzRo
+         8xla3g7gqRFfMK8GwmrjBaSCImKNAg1i5cq0H1VmAJSHqnh8N8ShGFvp+81/Aocfwd
+         zPKKa2l7omXB4nxNHq8JHvMsPIqUAf6bH7AZ+bNg=
+Date:   Wed, 5 Feb 2020 09:36:12 +0000
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Frankie Chang <Frankie.Chang@mediatek.com>
+Cc:     Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <christian@brauner.io>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        wsd_upstream@mediatek.com, Jian-Min.Liu@mediatek.com
+Subject: Re: [PATCH v1 1/1] binder: transaction latency tracking for user
+ build
+Message-ID: <20200205093612.GA1167956@kroah.com>
+References: <1580885572-14272-1-git-send-email-Frankie.Chang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200205092345.GA14294@unicorn.suse.cz>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <1580885572-14272-1-git-send-email-Frankie.Chang@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 10:23:45AM +0100, Michal Kubecek wrote:
-> On Wed, Feb 05, 2020 at 11:06:38AM +0200, Andy Shevchenko wrote:
-> > On Wed, Feb 05, 2020 at 04:16:16PM +0800, Kai-Heng Feng wrote:
-> > > Device like igb gets runtime suspended when there's no link partner. We
-> > > can't get correct speed under that state:
-> > > $ cat /sys/class/net/enp3s0/speed
-> > > 1000
-> > > 
-> > > In addition to that, an error can also be spotted in dmesg:
-> > > [  385.991957] igb 0000:03:00.0 enp3s0: PCIe link lost
-> > > 
-> > > It's because the igb device doesn't get runtime resumed before calling
-> > > get_link_ksettings().
-> > > 
-> > > So let's use a new helper to call begin() and complete() like what
-> > > dev_ethtool() does, to runtime resume/suspend or power up/down the
-> > > device properly.
-> > > 
-> > > Once this fix is in place, igb can show the speed correctly without link
-> > > partner:
-> > > $ cat /sys/class/net/enp3s0/speed
-> > > -1
-> > 
-> > What is the meaning of -1? Does it tells us "Hey, something is bad in hardware
-> > I can't tell you the speed" or does it imply anything else?
+On Wed, Feb 05, 2020 at 02:52:52PM +0800, Frankie Chang wrote:
+> Record start/end timestamp to binder transaction.
+> When transaction is completed or transaction is free,
+> it would be checked if transaction latency over threshold (2 sec),
+> if yes, printing related information for tracing.
 > 
-> It's SPEED_UNKNOWN constant printed with "%d" template.
+> Signed-off-by: Frankie Chang <Frankie.Chang@mediatek.com>
+> ---
+>  drivers/android/Kconfig           |    8 +++
+>  drivers/android/binder.c          |  107 +++++++++++++++++++++++++++++++++++++
+>  drivers/android/binder_internal.h |    4 ++
+>  3 files changed, 119 insertions(+)
 > 
-> > Wouldn't be better to report 0?
-> > 
-> > Where is the documentation part of this ABI change?
-> 
-> It's not an ABI change, /sys/class/net/*/speed already shows -1 when the
-> device reports SPEED_UNKNOWN. The only change is that after this patch,
-> igb driver reports SPEED_UNKNOWN rather than an outdated value if there
-> is no link.
+> diff --git a/drivers/android/Kconfig b/drivers/android/Kconfig
+> index 6fdf2ab..7ba80eb 100644
+> --- a/drivers/android/Kconfig
+> +++ b/drivers/android/Kconfig
+> @@ -54,6 +54,14 @@ config ANDROID_BINDER_IPC_SELFTEST
+>  	  exhaustively with combinations of various buffer sizes and
+>  	  alignments.
+>  
+> +config BINDER_USER_TRACKING
+> +	bool "Android Binder transaction tracking"
+> +	help
+> +	  Used for track abnormal binder transaction which is over 2 seconds,
+> +	  when the transaction is done or be free, this transaction would be
+> +	  checked whether it executed overtime.
+> +	  If yes, printing out the detail info about it.
+> +
+>  endif # if ANDROID
+>  
+>  endmenu
+> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> index e9bc9fc..5a352ee 100644
+> --- a/drivers/android/binder.c
+> +++ b/drivers/android/binder.c
+> @@ -76,6 +76,11 @@
+>  #include "binder_internal.h"
+>  #include "binder_trace.h"
+>  
+> +#ifdef CONFIG_BINDER_USER_TRACKING
+> +#include <linux/rtc.h>
+> +#include <linux/time.h>
+> +#endif
+> +
+>  static HLIST_HEAD(binder_deferred_list);
+>  static DEFINE_MUTEX(binder_deferred_lock);
+>  
+> @@ -591,8 +596,104 @@ struct binder_transaction {
+>  	 * during thread teardown
+>  	 */
+>  	spinlock_t lock;
+> +#ifdef CONFIG_BINDER_USER_TRACKING
+> +	struct timespec timestamp;
+> +	struct timeval tv;
+> +#endif
+>  };
+>  
+> +#ifdef CONFIG_BINDER_USER_TRACKING
+> +
+> +/*
+> + * binder_print_delay - Output info of a delay transaction
+> + * @t:          pointer to the over-time transaction
+> + */
+> +static void binder_print_delay(struct binder_transaction *t)
+> +{
+> +	struct rtc_time tm;
+> +	struct timespec *startime;
+> +	struct timespec cur, sub_t;
+> +
+> +	ktime_get_ts(&cur);
+> +	startime = &t->timestamp;
+> +	sub_t = timespec_sub(cur, *startime);
+> +
+> +	/* if transaction time is over than 2 sec,
+> +	 * show timeout warning log.
+> +	 */
+> +	if (sub_t.tv_sec < 2)
+> +		return;
+> +
+> +	rtc_time_to_tm(t->tv.tv_sec, &tm);
+> +
+> +	spin_lock(&t->lock);
+> +	pr_info_ratelimited("%d: from %d:%d to %d:%d",
+> +			    t->debug_id,
+> +			    t->from ? t->from->proc->pid : 0,
+> +			    t->from ? t->from->pid : 0,
+> +			    t->to_proc ? t->to_proc->pid : 0,
+> +			    t->to_thread ? t->to_thread->pid : 0);
+> +	spin_unlock(&t->lock);
+> +
+> +	pr_info_ratelimited(" total %u.%03ld s code %u start %lu.%03ld android %d-%02d-%02d %02d:%02d:%02d.%03lu\n",
+> +			    (unsigned int)sub_t.tv_sec,
+> +			    (sub_t.tv_nsec / NSEC_PER_MSEC),
+> +			    t->code,
+> +			    (unsigned long)startime->tv_sec,
+> +			    (startime->tv_nsec / NSEC_PER_MSEC),
+> +			    (tm.tm_year + 1900), (tm.tm_mon + 1), tm.tm_mday,
+> +			    tm.tm_hour, tm.tm_min, tm.tm_sec,
+> +			    (unsigned long)(t->tv.tv_usec / USEC_PER_MSEC));
+> +}
 
-Thanks for elaboration.
-Perhaps add a couple of words to the commit message that there is no ABI
-changes.
+Ick, why not use a tracepoint for this instead?
 
--- 
-With Best Regards,
-Andy Shevchenko
+And what is userspace supposed to do with this if they see it?
 
+thanks,
 
+greg k-h
