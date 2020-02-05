@@ -2,152 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D1E41526B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 08:11:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E59001526CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 08:22:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbgBEHLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 02:11:43 -0500
-Received: from mail-eopbgr80081.outbound.protection.outlook.com ([40.107.8.81]:34118
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725980AbgBEHLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 02:11:43 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=I2YmdeYOFeyioi0acX5YPeYbofbRG3ytpIPBxvMPjBLohWMffxdNzNv1bWwvj0IiaUmOw+sdC7sqBfAcom1iVQSBnaLbdo+FHb2S2nDr+QjyQDR/BoMvPUC8zVbrLzoij9IysiHmNOgpbEXXU5dbc47R8FcnsgIRF0aBscSd1BinY2NPsB+uOj0TP/72tULx28nPWvkS8S7o6qzLtpLLjXiJDwUJOQLqR5s35/Vj4VxDhdYxkh+glJMvMHtUwgBVLh8GuqIPlypuAQKBUuvlb8FVpmclrKTwbzbLwhQfLSbcvFHHNYGIQfGsEyKED95NEEQ/lM9gOSrzs59fPGACjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jLGrS9QStFVN7Qh5VIHW4t5KN9sy8ViNx0sI4tT9cjU=;
- b=nSy9uTesCMrh/gJdkV7gUTGt2tabiGKHhVPNeqqcVLCOZ4tambI62BrDmus0cKFEZDMOrnMLaF/5TjW2H3Jt4fwYBx9GCHy81mW5jC6XMA49orpUIQW6ATmSOoc6JTWgbLrQDXvKjk6XYE67ewohaWpiVDIx8K3UlFgxUOozjlvKpiaLTGZmYs88GIfKpfdGhy3XlyHBryk19fs7Kyasso6pQOMw3YlwPMXKKxcygWxpaIWTZbvyJSiFpzioEp0mTKiDF9bchatiob4JhRXqH8ViFdLvv6RX3e1x9UHef+NON0LLClDmknSQjMTUC9nev8j6HhZVhs3KeV/1D7iFhQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jLGrS9QStFVN7Qh5VIHW4t5KN9sy8ViNx0sI4tT9cjU=;
- b=BnCjssApr4yVITZPRtaFTN3D3N4t5nAG1HQOevl07lRlA9unjT8QQ8yVDVZNRhuCgtLExigmHFZDaGIwvuU22ufc1q5f/7Y2/8J03LKMZnEaOuUriERHDQxAdnelfN4ftszQwzIkph1qmg8xOQ6qjYworQYhN6Of4cpHIkc5qLU=
-Received: from AM0PR04MB5636.eurprd04.prod.outlook.com (20.178.202.86) by
- AM0PR04MB7060.eurprd04.prod.outlook.com (10.186.129.87) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2686.30; Wed, 5 Feb 2020 07:11:37 +0000
-Received: from AM0PR04MB5636.eurprd04.prod.outlook.com
- ([fe80::1b4:31d2:1485:6e07]) by AM0PR04MB5636.eurprd04.prod.outlook.com
- ([fe80::1b4:31d2:1485:6e07%7]) with mapi id 15.20.2686.034; Wed, 5 Feb 2020
- 07:11:37 +0000
-From:   "Calvin Johnson (OSS)" <calvin.johnson@oss.nxp.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     "linux.cj@gmail.com" <linux.cj@gmail.com>,
-        Jon Nettleton <jon@solid-run.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        Makarand Pawagi <makarand.pawagi@nxp.com>,
-        Cristi Sovaiala <cristian.sovaiala@nxp.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Varun Sethi <V.Sethi@nxp.com>,
-        Pankaj Bansal <pankaj.bansal@nxp.com>,
-        "Rajesh V. Bikkina" <rajesh.bikkina@nxp.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        "Calvin Johnson (OSS)" <calvin.johnson@oss.nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-Subject: RE: [EXT] Re: [PATCH v1 1/7] mdio_bus: Introduce fwnode MDIO helpers
-Thread-Topic: [EXT] Re: [PATCH v1 1/7] mdio_bus: Introduce fwnode MDIO helpers
-Thread-Index: AQHV2EwP/pAQL9rldkeFtJ0S9YjbKagE9kYAgAcVUTA=
-Date:   Wed, 5 Feb 2020 07:11:37 +0000
-Message-ID: <AM0PR04MB5636F2F01AC234F2F613E5B293020@AM0PR04MB5636.eurprd04.prod.outlook.com>
-References: <20200131153440.20870-1-calvin.johnson@nxp.com>
- <20200131153440.20870-2-calvin.johnson@nxp.com>
- <20200131162814.GB17185@lunn.ch>
-In-Reply-To: <20200131162814.GB17185@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=calvin.johnson@oss.nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [92.121.36.197]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 043b98ef-6738-4662-0be3-08d7aa0aa3ed
-x-ms-traffictypediagnostic: AM0PR04MB7060:|AM0PR04MB7060:
-x-ms-exchange-sharedmailbox-routingagent-processed: True
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB7060F7F6D20BE19434AEDCC6D2020@AM0PR04MB7060.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0304E36CA3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(39860400002)(396003)(366004)(136003)(199004)(189003)(33656002)(66446008)(64756008)(66556008)(66946007)(76116006)(66476007)(186003)(7696005)(6916009)(55016002)(478600001)(5660300002)(71200400001)(966005)(2906002)(4326008)(8676002)(9686003)(26005)(54906003)(316002)(81166006)(81156014)(6506007)(7416002)(52536014)(86362001)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB7060;H:AM0PR04MB5636.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
-received-spf: None (protection.outlook.com: oss.nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Ikn9X1q2GyGWA+yERih8zkvdu7/kU/g0nQsjEFXCe5/AdRWCBvNqGfbyjBd0PNq5h27BUq/ytAsqUOElsH2ybI14kDn9iPWzf1pGLl7Wsix6+Hqv12qdyC+Wf6XvRbbYlX0o+yuOqUZdA7PxL2PYyBQxrDmgQAsuKQM+EUdgx/6zYELZ8eMr7Ni7suDcpKKQlNeAfv0CLvTGhGCLx8N57gLCZl4fdlVLViy+zlGnsC7hDcHHFV1dVWbe+9GsScRdfiSLDp01YYXFHTPpv+EkPPl/J+uQlc2HJJTJ0zdK01qAJUqkWny+lwX0VH0CYbpTPd0QlS2Zo1EcfLPsJhMkcLE8yPJHWDrMiIBK7IJT6w5AT2qm33pnNb5XT2vToveUsCCdj79Q7b4FY4oSjh9HLsKff59zEQuA1EHL2cyIJj30vXRH+GDVNwPdEwubuIVH9++YqAEDWAScqcGOvNQebFX47MUildfT6VD9JhH1ogCvVKIT13coiQy3p56Mc4HSX2om5YyKUASAG7bV+kwP3w==
-x-ms-exchange-antispam-messagedata: HnPKpSxv4X4vz+L5FoBgiPK7TG4vF3OHAKJkqDMrHmvPH1RJBGC7mlPJ0gE3EaK//+qrQU4X8Wx2Ql7asmozBjWGZpr8gUdHNs2qZV+qLtj7loTqJ4LiXgjpgiV/PyK1B2FU2SJOMupEtUHniDEYTA==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727000AbgBEHWb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 02:22:31 -0500
+Received: from seldsegrel01.sonyericsson.com ([37.139.156.29]:17277 "EHLO
+        SELDSEGREL01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725468AbgBEHWb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 02:22:31 -0500
+X-Greylist: delayed 601 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Feb 2020 02:22:30 EST
+Subject: Re: [PATCH 5.4 17/78] HID: Fix slab-out-of-bounds read in
+ hid_field_extract (Broken!)
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Jiri Kosina <jkosina@suse.cz>
+CC:     <stable@vger.kernel.org>,
+        <syzbot+09ef48aa58261464b621@syzkaller.appspotmail.com>
+References: <20200114094352.428808181@linuxfoundation.org>
+ <20200114094356.028051662@linuxfoundation.org>
+From:   peter enderborg <peter.enderborg@sony.com>
+Message-ID: <27ba705a-6734-9a92-a60c-23e27c9bce6d@sony.com>
+Date:   Wed, 5 Feb 2020 08:12:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 043b98ef-6738-4662-0be3-08d7aa0aa3ed
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2020 07:11:37.2101
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: bhx7KObTDmQ8+BWfR+LR0J7CaKZ42q65J79LTSvInrsxZwQgMIjm3hJpKtll2P5VIhDvCn891jSqJEqXbeL6Mw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7060
+In-Reply-To: <20200114094356.028051662@linuxfoundation.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+X-SEG-SpamProfiler-Analysis: v=2.3 cv=V88DLtvi c=1 sm=1 tr=0 a=T5MYTZSj1jWyQccoVcawfw==:117 a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=IkcTkHD0fZMA:10 a=l697ptgUJYAA:10 a=hSkVLCK3AAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=mkI5n4lM7TqXLe6ThCMA:9 a=QEXdDO2ut3YA:10 a=cQPPKAXgyycSBL8etih5:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-SEG-SpamProfiler-Score: 0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+On 1/14/20 11:00 AM, Greg Kroah-Hartman wrote:
+> From: Alan Stern <stern@rowland.harvard.edu>
+>
+> commit 8ec321e96e056de84022c032ffea253431a83c3c upstream.
+>
+> The syzbot fuzzer found a slab-out-of-bounds bug in the HID report
+> handler.  The bug was caused by a report descriptor which included a
+> field with size 12 bits and count 4899, for a total size of 7349
+> bytes.
+>
+> The usbhid driver uses at most a single-page 4-KB buffer for reports.
+> In the test there wasn't any problem about overflowing the buffer,
+> since only one byte was received from the device.  Rather, the bug
+> occurred when the HID core tried to extract the data from the report
+> fields, which caused it to try reading data beyond the end of the
+> allocated buffer.
+>
+> This patch fixes the problem by rejecting any report whose total
+> length exceeds the HID_MAX_BUFFER_SIZE limit (minus one byte to allow
+> for a possible report index).  In theory a device could have a report
+> longer than that, but if there was such a thing we wouldn't handle it
+> correctly anyway.
+>
+> Reported-and-tested-by: syzbot+09ef48aa58261464b621@syzkaller.appspotmail.com
+> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> CC: <stable@vger.kernel.org>
+> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>
+> ---
+>  drivers/hid/hid-core.c |    6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> --- a/drivers/hid/hid-core.c
+> +++ b/drivers/hid/hid-core.c
+> @@ -288,6 +288,12 @@ static int hid_add_field(struct hid_pars
+>  	offset = report->size;
+>  	report->size += parser->global.report_size * parser->global.report_count;
+>  
+> +	/* Total size check: Allow for possible report index byte */
+> +	if (report->size > (HID_MAX_BUFFER_SIZE - 1) << 3) {
+> +		hid_err(parser->device, "report is too long\n");
+> +		return -1;
+> +	}
+> +
+>  	if (!parser->local.usage_index) /* Ignore padding fields */
+>  		return 0;
+>  
+>
+>
+>
+This patch breaks Elgato StreamDeck.
 
-> -----Original Message-----
-> From: Andrew Lunn <andrew@lunn.ch>
-> Sent: Friday, January 31, 2020 9:58 PM
-
-<snip>
-
-> On Fri, Jan 31, 2020 at 09:04:34PM +0530, Calvin Johnson wrote:
-> > From: Marcin Wojtas <mw@semihalf.com>
-> >
-> > This patch introduces fwnode helper for registering MDIO bus, as well
-> > as one for finding the PHY, basing on its firmware node pointer.
-> > Comparing to existing OF equivalent,
-> > fwnode_mdiobus_register() does not support:
-> >  * deprecated bindings (device whitelist, nor the PHY ID embedded
-> >    in the compatible string)
-> >  * MDIO bus auto scanning
-> >
-> > Signed-off-by: Marcin Wojtas <mw@semihalf.com>
-> > Signed-off-by: Calvin Johnson <calvin.johnson@oss.nxp.com>
->=20
-> Hi Calvin
-> no
-> This appears to but a cut and paste, follow by an intelligent s/of/fwnode=
-/g.
-
-In this patchset, I tried to reuse Marcin's patch which was posted on 2017/=
-12/18.
-https://lkml.org/lkml/2017/12/18/211
-With my patch([v1,2/7] mdio_bus: modify fwnode phy related functions), I've=
- made=20
-modifications to this(v1,1/7) patch to adapt to the changes in the kernel.
-
-> Did you make any attempt to consolidate the two implementations?  It
-> seems like there should be some level of abstraction that hides away the
-> difference between DT properties, and DT properties stuffed into ACPI
-> tables?
-
-Yes attempt is to consolidate DT and ACPI into fwnode. Sure, I'll revisit t=
-he patch
-and try to work on your recommendation.
-
-Thanks
-Calvin
