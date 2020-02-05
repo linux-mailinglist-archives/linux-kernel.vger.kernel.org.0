@@ -2,45 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3192F15347B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 16:45:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0224515347F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 16:45:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbgBEPpV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 10:45:21 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:35857 "EHLO
+        id S1727526AbgBEPp0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 10:45:26 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:35872 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbgBEPpQ (ORCPT
+        with ESMTP id S1726748AbgBEPpY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 10:45:16 -0500
+        Wed, 5 Feb 2020 10:45:24 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1izMrS-0004Qh-27; Wed, 05 Feb 2020 16:45:06 +0100
+        id 1izMrS-0004Qp-Kr; Wed, 05 Feb 2020 16:45:06 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B03061C1EC4;
-        Wed,  5 Feb 2020 16:45:05 +0100 (CET)
-Date:   Wed, 05 Feb 2020 15:45:05 -0000
-From:   "tip-bot2 for Changbin Du" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4A18C1C1EC4;
+        Wed,  5 Feb 2020 16:45:06 +0100 (CET)
+Date:   Wed, 05 Feb 2020 15:45:06 -0000
+From:   "tip-bot2 for Leo Yan" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf: Make perf able to build with latest libbfd
-Cc:     Changbin Du <changbin.du@gmail.com>, Jiri Olsa <jolsa@redhat.com>,
+Subject: [tip: perf/urgent] perf parse: Copy string to perf_evsel_config_term
+Cc:     Jiri Olsa <jolsa@kernel.org>, Leo Yan <leo.yan@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Ian Rogers <irogers@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
+        Suzuki Poulouse <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200128152938.31413-1-changbin.du@gmail.com>
-References: <20200128152938.31413-1-changbin.du@gmail.com>
+In-Reply-To: <20200117055251.24058-2-leo.yan@linaro.org>
+References: <20200117055251.24058-2-leo.yan@linaro.org>
 MIME-Version: 1.0
-Message-ID: <158091750550.411.12440680363367163439.tip-bot2@tip-bot2>
+Message-ID: <158091750607.411.898190623555171997.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-Linutronix-Spam-Score: 1.5
+X-Linutronix-Spam-Level: +
+X-Linutronix-Spam-Status: No , 1.5 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001,URIBL_DBL_ABUSE_MALW=2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -48,64 +58,117 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     0ada120c883d4f1f6aafd01cf0fbb10d8bbba015
-Gitweb:        https://git.kernel.org/tip/0ada120c883d4f1f6aafd01cf0fbb10d8bbba015
-Author:        Changbin Du <changbin.du@gmail.com>
-AuthorDate:    Tue, 28 Jan 2020 23:29:38 +08:00
+Commit-ID:     3220fb8d5e59d7a9b59d02965d4209aef7691e9f
+Gitweb:        https://git.kernel.org/tip/3220fb8d5e59d7a9b59d02965d4209aef7691e9f
+Author:        Leo Yan <leo.yan@linaro.org>
+AuthorDate:    Fri, 17 Jan 2020 13:52:51 +08:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Thu, 30 Jan 2020 11:55:26 +01:00
+CommitterDate: Thu, 30 Jan 2020 11:55:02 +01:00
 
-perf: Make perf able to build with latest libbfd
+perf parse: Copy string to perf_evsel_config_term
 
-libbfd has changed the bfd_section_* macros to inline functions
-bfd_section_<field> since 2019-09-18. See below two commits:
-  o http://www.sourceware.org/ml/gdb-cvs/2019-09/msg00064.html
-  o https://www.sourceware.org/ml/gdb-cvs/2019-09/msg00072.html
+perf with CoreSight fails to record trace data with command:
 
-This fix make perf able to build with both old and new libbfd.
+  perf record -e cs_etm/@tmc_etr0/u --per-thread ls
+  failed to set sink "" on event cs_etm/@tmc_etr0/u with 21 (Is a
+  directory)/perf/
 
-Signed-off-by: Changbin Du <changbin.du@gmail.com>
-Acked-by: Jiri Olsa <jolsa@redhat.com>
+This failure is root caused with the commit 1dc925568f01 ("perf
+parse: Add a deep delete for parse event terms").
+
+The log shows, cs_etm fails to parse the sink attribution; cs_etm event
+relies on the event configuration to pass sink name, but the event
+specific configuration data cannot be passed properly with flow:
+
+  get_config_terms()
+    ADD_CONFIG_TERM(DRV_CFG, term->val.str);
+      __t->val.str = term->val.str;
+        `> __t->val.str is assigned to term->val.str;
+
+  parse_events_terms__purge()
+    parse_events_term__delete()
+      zfree(&term->val.str);
+        `> term->val.str is freed and assigned to NULL pointer;
+
+  cs_etm_set_sink_attr()
+    sink = __t->val.str;
+      `> sink string has been freed.
+
+To fix this issue, in the function get_config_terms(), this patch
+changes to use strdup() for allocation a new duplicate string rather
+than directly assignment string pointer.
+
+This patch addes a new field 'free_str' in the data structure
+perf_evsel_config_term; 'free_str' is set to true when the union is used
+as a string pointer; thus it can tell perf_evsel__free_config_terms() to
+free the string.
+
+Fixes: 1dc925568f01 ("perf parse: Add a deep delete for parse event terms")
+Suggested-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Mike Leach <mike.leach@linaro.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/20200128152938.31413-1-changbin.du@gmail.com
+Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lore.kernel.org/lkml/20200117055251.24058-2-leo.yan@linaro.org
+[ Use zfree() in perf_evsel__free_config_terms ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/srcline.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/srcline.c b/tools/perf/util/srcline.c
-index 6ccf6f6..5b7d6c1 100644
---- a/tools/perf/util/srcline.c
-+++ b/tools/perf/util/srcline.c
-@@ -193,16 +193,30 @@ static void find_address_in_section(bfd *abfd, asection *section, void *data)
- 	bfd_vma pc, vma;
- 	bfd_size_type size;
- 	struct a2l_data *a2l = data;
-+	flagword flags;
+:#	modified:   tools/perf/util/evsel_config.h
+---
+ tools/perf/util/evsel.c        | 2 ++
+ tools/perf/util/evsel_config.h | 1 +
+ tools/perf/util/parse-events.c | 7 ++++++-
+ 3 files changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 549abd4..c8dc445 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1265,6 +1265,8 @@ static void perf_evsel__free_config_terms(struct evsel *evsel)
  
- 	if (a2l->found)
- 		return;
+ 	list_for_each_entry_safe(term, h, &evsel->config_terms, list) {
+ 		list_del_init(&term->list);
++		if (term->free_str)
++			zfree(&term->val.str);
+ 		free(term);
+ 	}
+ }
+diff --git a/tools/perf/util/evsel_config.h b/tools/perf/util/evsel_config.h
+index b4a6520..e026ab6 100644
+--- a/tools/perf/util/evsel_config.h
++++ b/tools/perf/util/evsel_config.h
+@@ -32,6 +32,7 @@ enum evsel_term_type {
+ struct perf_evsel_config_term {
+ 	struct list_head      list;
+ 	enum evsel_term_type  type;
++	bool		      free_str;
+ 	union {
+ 		u64	      period;
+ 		u64	      freq;
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index f59f3c8..c01ba6f 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -1240,7 +1240,12 @@ do {								\
+ #define ADD_CONFIG_TERM_STR(__type, __val)			\
+ do {								\
+ 	ADD_CONFIG_TERM(__type);				\
+-	__t->val.str = __val;					\
++	__t->val.str = strdup(__val);				\
++	if (!__t->val.str) {					\
++		zfree(&__t);					\
++		return -ENOMEM;					\
++	}							\
++	__t->free_str = true;					\
+ } while (0)
  
--	if ((bfd_get_section_flags(abfd, section) & SEC_ALLOC) == 0)
-+#ifdef bfd_get_section_flags
-+	flags = bfd_get_section_flags(abfd, section);
-+#else
-+	flags = bfd_section_flags(section);
-+#endif
-+	if ((flags & SEC_ALLOC) == 0)
- 		return;
- 
- 	pc = a2l->addr;
-+#ifdef bfd_get_section_vma
- 	vma = bfd_get_section_vma(abfd, section);
-+#else
-+	vma = bfd_section_vma(section);
-+#endif
-+#ifdef bfd_get_section_size
- 	size = bfd_get_section_size(section);
-+#else
-+	size = bfd_section_size(section);
-+#endif
- 
- 	if (pc < vma || pc >= vma + size)
- 		return;
+ 	struct parse_events_term *term;
