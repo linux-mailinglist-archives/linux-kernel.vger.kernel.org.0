@@ -2,54 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 869FA152688
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 08:01:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B90FC152697
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 08:02:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbgBEHBN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 02:01:13 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46436 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725980AbgBEHBM (ORCPT
+        id S1727929AbgBEHCA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 02:02:00 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:23308 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727836AbgBEHB7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 02:01:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=CIMLPTOIpIkqW6rCSCB/RZ2YWA0k6ASd16expdYFtQA=; b=gHFWUnHsOh5Qz70a1+BMJe/lh9
-        jRQ0lozk6QzxKXJhswoCOd5tJShhYPjcygqGKk7D7DkYLMfohtgHmGHopX+cD2q1tYtz7ebLJWJpK
-        nTUJgLVgTuVvcivsOk0E1LA6TlIWtN3ns17g2nu5GBBOkxn+28gPJpnQGrPB1QgX9Rnz4ZSzDd6YP
-        Spsn91t1/bPc5MnUEjZpdUXgdLlS3vO9TFNY069WNynKrss490n6VpqeFdwO3721JOOUuOI1yOiH7
-        OaPVOqMP6+Gu59g7RkCVSVAMtQVnrAa+HoWIQy8FSlIx9GyIWKwq7lMO5G5WYtYHOd1Kc1xMn/xmn
-        9NcaMjyA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1izEgP-00061P-A1; Wed, 05 Feb 2020 07:01:09 +0000
-Date:   Tue, 4 Feb 2020 23:01:09 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dev@dpdk.org, mtosatti@redhat.com,
-        thomas@monjalon.net, bluca@debian.org, jerinjacobk@gmail.com,
-        bruce.richardson@intel.com, cohuck@redhat.com
-Subject: Re: [RFC PATCH 0/7] vfio/pci: SR-IOV support
-Message-ID: <20200205070109.GA18027@infradead.org>
-References: <158085337582.9445.17682266437583505502.stgit@gimli.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <158085337582.9445.17682266437583505502.stgit@gimli.home>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 5 Feb 2020 02:01:59 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1580886119; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=KBgrq18X/unHwzcEQjxUJ1qgq9OWyPupMMdfoEVNsSA=; b=fwlpIllLVirMJdycwciVqblQjYGe5b+T3OAidtryvG+Fv89OwFGppxrp9UuczplpTB9o42nU
+ U/3zoZIKfCV1BzHjT0g0qjsERFGsBiMzTY+Rg9fmPmfMnGk6IRnPSSEXdMPcNY5qYMSG76Qm
+ CT5EscKO4BEWpfI8zpcZEnH78pA=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e3a685c.7f8d59180f80-smtp-out-n02;
+ Wed, 05 Feb 2020 07:01:48 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 6E011C4479C; Wed,  5 Feb 2020 07:01:48 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from smasetty-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: smasetty)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 853D1C433CB;
+        Wed,  5 Feb 2020 07:01:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 853D1C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=smasetty@codeaurora.org
+From:   Sharat Masetty <smasetty@codeaurora.org>
+To:     freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc:     dri-devel@freedesktop.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
+        jcrouse@codeaurora.org, mka@chromium.org, dianders@chromium.org,
+        Sharat Masetty <smasetty@codeaurora.org>
+Subject: [PATCH v4 0/3] sc7180: Add A618 GPU bindings
+Date:   Wed,  5 Feb 2020 12:31:34 +0530
+Message-Id: <1580886097-6312-1-git-send-email-smasetty@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 04, 2020 at 04:05:34PM -0700, Alex Williamson wrote:
-> We address this in a few ways in this series.  First, we can use a bus
-> notifier and the driver_override facility to make sure VFs are bound
-> to the vfio-pci driver by default.  This should eliminate the chance
-> that a VF is accidentally bound and used by host drivers.  We don't
-> however remove the ability for a host admin to change this override.
+I used this branch qcom/arm64-for-5.6-to-be-rebased as suggested by Matthias.
+This patch needs the clock patches and the clock patches have not yet landed, so
 
-That is just such a bad idea.  Using VFs in the host is a perfectly
-valid use case that you are breaking.
+please apply the following series and patches in order
+a) All patches from https://patchwork.kernel.org/project/linux-clk/list/?series=203517&state=%2a&archive=both
+b) Patches 1 and 2 from https://patchwork.kernel.org/project/linux-clk/list/?series=203527&archive=both&state=%2a
+c) All patches from https://patchwork.kernel.org/project/linux-clk/list/?series=221739&archive=both&state=%2a
+d) https://lore.kernel.org/linux-arm-msm/20200124144154.v2.10.I1a4b93fb005791e29a9dcf288fc8bd459a555a59%40changeid/raw
+e) This patch "arm64: dts: qcom: sc7180: Add A618 gpu dt blob"
+
+v3: Addressed review comments from previous submits. Also removed the
+interconnect bindings from this patch and I will submit as a new patch with its
+dependencies listed. Also I will be sending a new patch for updating the
+bindings documentation.
+
+v4: Add GX_GDSC power domain binding for GMU
+
+Sharat Masetty (1):
+  arm64: dts: qcom: sc7180: Add A618 gpu dt blob
+
+Taniya Das (2):
+  dt-bindings: clk: qcom: Add support for GPU GX GDSCR
+  clk: qcom: gpucc: Add support for GX GDSC for SC7180
+
+ arch/arm64/boot/dts/qcom/sc7180.dtsi          | 102 ++++++++++++++++++++++++++
+ drivers/clk/qcom/gpucc-sc7180.c               |  37 ++++++++++
+ include/dt-bindings/clock/qcom,gpucc-sc7180.h |   3 +-
+ 3 files changed, 141 insertions(+), 1 deletion(-)
+
+--
+1.9.1
