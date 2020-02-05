@@ -2,160 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80287153A06
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 22:20:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90C2C153A0E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 22:21:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbgBEVUP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 16:20:15 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:54191 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727085AbgBEVUO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 16:20:14 -0500
-Received: by mail-io1-f72.google.com with SMTP id q24so2422370iot.20
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 13:20:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=yeXkaU6z1oAYHjJ8XgSVU6rYjp0GpTAJJmGIMTNlysQ=;
-        b=ae5bdLOMNGISBr7M135D9IWhYYbBa+bLCpEEf97qAzIfXQsm00eA6SqWggD1thllVd
-         ccCkv+WiLW/mq/XOjsTwr+S2XQNjSdRBcoXA+Asm8gQSAvfnX7mmSUynnPOoJwy5p7xR
-         TMJUGu4A3r4Ar/nmVzTRJGzSRELMKWWMXjFZZkHqiii1pUa0EaL1dIaPvPZkduytIlkE
-         Y2OyTKic8b0uI5ikgeXbgMIkodWvMoWHlbjLb8dG9RBktW6zPYyPGwjjQ/6DtiQWqcF6
-         Dd7pNHLqq5xCrybHeoAjwhhN5bm0Sv/w2iPaqLsKyYn3MFux2ZEvRLXpyXRf571NplxV
-         uOUQ==
-X-Gm-Message-State: APjAAAWelvJ8d4+RaCdnPldjreXDWGCaxwvLag8Nw5Qa3F0c5350NFJ9
-        k4tGLbHhriNAW4QIeR0kbCd/rW0P0xiSaUjWQEUUzSC3gyvF
-X-Google-Smtp-Source: APXvYqyvDiGo+UaqQXOuzP+fiPpY5cB/Q5k2WTDbSj1YM0SiZksxh1BjbAia4zzMV9cBDyRqFfSNXmDgDICvI+1MTnP+qlq9htZT
+        id S1727398AbgBEVVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 16:21:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37254 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727085AbgBEVVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 16:21:33 -0500
+Received: from localhost (unknown [193.117.204.200])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDE562082E;
+        Wed,  5 Feb 2020 21:21:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580937692;
+        bh=HZPos4rVk7aXuEQAlz+FmnYnm93VWpVbO/dAG4GSfM8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HKH4g//cfQ6S5jaqc/c7WFe/kXaldCe314/4mmcb1fyA4rbMwK32fpG6fyeXI8q7j
+         VPup/+nTDbgRkufOqmcRVp1fGQPMkvpnyvi1m3X9ssY+CI5MwbjyDmiHGtDrPYflbc
+         Ucj/D+9B/mkr5H5DwmTkQ1ak5Tc2JYeOgrfXhE3Y=
+Date:   Wed, 5 Feb 2020 21:21:29 +0000
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 5.4 00/90] 5.4.18-stable review
+Message-ID: <20200205212129.GA1452440@kroah.com>
+References: <20200203161917.612554987@linuxfoundation.org>
+ <9a5a92f2-6e28-a9ab-a851-8d7e56482df6@roeck-us.net>
+ <20200205151357.GB1236691@kroah.com>
+ <20200205162429.GB25403@roeck-us.net>
+ <20200205193008.GC1327971@kroah.com>
+ <20200205210150.GA18483@roeck-us.net>
 MIME-Version: 1.0
-X-Received: by 2002:a02:cc75:: with SMTP id j21mr30135547jaq.113.1580937613555;
- Wed, 05 Feb 2020 13:20:13 -0800 (PST)
-Date:   Wed, 05 Feb 2020 13:20:13 -0800
-In-Reply-To: <000000000000f0baeb059db8b055@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000de3ccd059ddab8b8@google.com>
-Subject: Re: inconsistent lock state in rxrpc_put_client_connection_id
-From:   syzbot <syzbot+d82f3ac8d87e7ccbb2c9@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, dhowells@redhat.com, kuba@kernel.org,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200205210150.GA18483@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+On Wed, Feb 05, 2020 at 01:01:50PM -0800, Guenter Roeck wrote:
+> On Wed, Feb 05, 2020 at 07:30:08PM +0000, Greg Kroah-Hartman wrote:
+> > On Wed, Feb 05, 2020 at 08:24:29AM -0800, Guenter Roeck wrote:
+> > > On Wed, Feb 05, 2020 at 03:13:57PM +0000, Greg Kroah-Hartman wrote:
+> > > > On Tue, Feb 04, 2020 at 06:37:38AM -0800, Guenter Roeck wrote:
+> > > > > On 2/3/20 8:19 AM, Greg Kroah-Hartman wrote:
+> > > > > > This is the start of the stable review cycle for the 5.4.18 release.
+> > > > > > There are 90 patches in this series, all will be posted as a response
+> > > > > > to this one.  If anyone has any issues with these being applied, please
+> > > > > > let me know.
+> > > > > > 
+> > > > > > Responses should be made by Wed, 05 Feb 2020 16:17:59 +0000.
+> > > > > > Anything received after that time might be too late.
+> > > > > > 
+> > > > > 
+> > > > > Building i386:allyesconfig ... failed
+> > > > > Building i386:allmodconfig ... failed
+> > > > > --------------
+> > > > > Error log:
+> > > > > In file included from arch/x86/kernel/pci-dma.c:2:
+> > > > > include/linux/dma-direct.h:29:20: error: conflicting types for 'dma_capable'
+> > > > >    29 | static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_t size,
+> > > > >       |                    ^~~~~~~~~~~
+> > > > > In file included from include/linux/dma-direct.h:12,
+> > > > >                  from arch/x86/kernel/pci-dma.c:2:
+> > > > > arch/x86/include/asm/dma-direct.h:5:6: note: previous declaration of 'dma_capable' was here
+> > > > >     5 | bool dma_capable(struct device *dev, dma_addr_t addr, size_t size);
+> > > > 
+> > > > Ok, I think this is now resolved with a patch that Sasha added.
+> > > > 
+> > > > I have pushed out a -rc4 that _should_ build and boot properly.
+> > > > 
+> > > The i386 build still fails with v5.4.17-99-gbd0c6624a110 (-rc4).
+> > 
+> > Crap.
+> > 
+> > Ok, let me get some food and then try to figure this out...
+> > 
+> 
+> # bad: [bd0c6624a110d0f667cd2f3636f88e8de9b75851] Linux 5.4.18-rc4
+> # good: [313c8460cf0290fb1b9f71a20573fc32ac6c9cee] Linux 5.4.17
+> git bisect start 'HEAD' 'v5.4.17'
+> # good: [7c8bd91288c71011d793de1926a30182382141a0] parisc: Use proper printk format for resource_size_t
+> git bisect good 7c8bd91288c71011d793de1926a30182382141a0
+> # good: [67040c483ee8137adb12e20bb6448786455f4de6] r8152: Disable PLA MCU clock speed down
+> git bisect good 67040c483ee8137adb12e20bb6448786455f4de6
+> # good: [b3f55c9d709e6dcf96af5230295e631f0cbc3a8f] netfilter: nf_tables_offload: fix check the chain offload flag
+> git bisect good b3f55c9d709e6dcf96af5230295e631f0cbc3a8f
+> # good: [87bd4bf79429566adf306b8b133625604460b7c2] perf report: Fix no libunwind compiled warning break s390 issue
+> git bisect good 87bd4bf79429566adf306b8b133625604460b7c2
+> # good: [f831fda5fe86918fcb049721fba779ba2300c022] ASoC: topology: fix soc_tplg_fe_link_create() - link->dobj initialization order
+> git bisect good f831fda5fe86918fcb049721fba779ba2300c022
+> # good: [cc47538aebee48bb7626c84607116e43f57118d5] tracing/uprobe: Fix to make trace_uprobe_filter alignment safe
+> git bisect good cc47538aebee48bb7626c84607116e43f57118d5
+> # bad: [26f444bf728054ad23e5888bdd4ffa899e364b45] dma-direct: unify the dma_capable definitions
+> git bisect bad 26f444bf728054ad23e5888bdd4ffa899e364b45
+> # first bad commit: [26f444bf728054ad23e5888bdd4ffa899e364b45] dma-direct: unify the dma_capable definitions
+> 
+> Reverting 26f444bf728054ad23e5888bdd4ffa899e364b45 fixes that problem, but
+> results in other build failures. After dropping this commit, another bisect yields:
+> 
+> # bad: [56ea21e523a5ebf53e4ce88bc743c60c480d42ff] Linux 5.4.18-rc4
+> # good: [313c8460cf0290fb1b9f71a20573fc32ac6c9cee] Linux 5.4.17
+> git bisect start 'HEAD' 'v5.4.17'
+> # good: [7c8bd91288c71011d793de1926a30182382141a0] parisc: Use proper printk format for resource_size_t
+> git bisect good 7c8bd91288c71011d793de1926a30182382141a0
+> # good: [afbfe89dc11d19769477c5378a7164837baf75be] r8152: disable U2P3 for RTL8153B
+> git bisect good afbfe89dc11d19769477c5378a7164837baf75be
+> # good: [8403906c74753734338665be315175ddd1e03f5e] netfilter: conntrack: sctp: use distinct states for new SCTP connections
+> git bisect good 8403906c74753734338665be315175ddd1e03f5e
+> # good: [6b1562623df22cd81bf2138d880915029bbd414c] dm thin: fix use-after-free in metadata_pre_commit_callback
+> git bisect good 6b1562623df22cd81bf2138d880915029bbd414c
+> # bad: [705430d0039088973d204feea9eb0b7740509194] mm/migrate.c: also overwrite error when it is bigger than zero
+> git bisect bad 705430d0039088973d204feea9eb0b7740509194
+> # bad: [180dafcb1d1c0ee38f935810fe18d02eb7658c9f] dma-direct: exclude dma_direct_map_resource from the min_low_pfn check
+> git bisect bad 180dafcb1d1c0ee38f935810fe18d02eb7658c9f
+> # good: [87bd4bf79429566adf306b8b133625604460b7c2] perf report: Fix no libunwind compiled warning break s390 issue
+> git bisect good 87bd4bf79429566adf306b8b133625604460b7c2
+> # first bad commit: [180dafcb1d1c0ee38f935810fe18d02eb7658c9f] dma-direct: exclude dma_direct_map_resource from the min_low_pfn check
+> 
+> Dropping that patch as well fixes the problem for me.
 
-HEAD commit:    6992ca0d Merge branch 'parisc-5.6-1' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12dbd7f1e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f22d38d7f9a488a8
-dashboard link: https://syzkaller.appspot.com/bug?extid=d82f3ac8d87e7ccbb2c9
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14317dbee00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=145a44f6e00000
+Ah, now I got my i386 build working, yeah, this works for me too.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d82f3ac8d87e7ccbb2c9@syzkaller.appspotmail.com
+Sasha, I think I tried to backport these dma patches earlier in the
+5.4.y series, but it was just too hard to unwind, so I figured it wasn't
+worth it.  I've dropped these two patches now and will go do a
+release...
 
-================================
-WARNING: inconsistent lock state
-5.5.0-syzkaller #0 Not tainted
---------------------------------
-inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
-swapper/1/0 [HC0[0]:SC1[1]:HE1:SE0] takes:
-ffffffff8a8c84b8 (rxrpc_conn_id_lock){+.?.}, at: spin_lock include/linux/spinlock.h:338 [inline]
-ffffffff8a8c84b8 (rxrpc_conn_id_lock){+.?.}, at: rxrpc_put_client_connection_id net/rxrpc/conn_client.c:138 [inline]
-ffffffff8a8c84b8 (rxrpc_conn_id_lock){+.?.}, at: rxrpc_put_client_connection_id+0x73/0xe0 net/rxrpc/conn_client.c:135
-{SOFTIRQ-ON-W} state was registered at:
-  lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4484
-  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-  _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
-  spin_lock include/linux/spinlock.h:338 [inline]
-  rxrpc_get_client_connection_id net/rxrpc/conn_client.c:109 [inline]
-  rxrpc_alloc_client_connection net/rxrpc/conn_client.c:193 [inline]
-  rxrpc_get_client_conn net/rxrpc/conn_client.c:340 [inline]
-  rxrpc_connect_call+0x954/0x4e30 net/rxrpc/conn_client.c:701
-  rxrpc_new_client_call+0x9c0/0x1ad0 net/rxrpc/call_object.c:290
-  rxrpc_new_client_call_for_sendmsg net/rxrpc/sendmsg.c:595 [inline]
-  rxrpc_do_sendmsg+0xffa/0x1d5f net/rxrpc/sendmsg.c:652
-  rxrpc_sendmsg+0x4d6/0x5f0 net/rxrpc/af_rxrpc.c:586
-  sock_sendmsg_nosec net/socket.c:652 [inline]
-  sock_sendmsg+0xd7/0x130 net/socket.c:672
-  ____sys_sendmsg+0x358/0x880 net/socket.c:2343
-  ___sys_sendmsg+0x100/0x170 net/socket.c:2397
-  __sys_sendmmsg+0x1bf/0x4d0 net/socket.c:2487
-  __do_sys_sendmmsg net/socket.c:2516 [inline]
-  __se_sys_sendmmsg net/socket.c:2513 [inline]
-  __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2513
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-irq event stamp: 182462
-hardirqs last  enabled at (182462): [<ffffffff87ec18d6>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160 [inline]
-hardirqs last  enabled at (182462): [<ffffffff87ec18d6>] _raw_spin_unlock_irqrestore+0x66/0xe0 kernel/locking/spinlock.c:191
-hardirqs last disabled at (182461): [<ffffffff87ec1c4f>] __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:108 [inline]
-hardirqs last disabled at (182461): [<ffffffff87ec1c4f>] _raw_spin_lock_irqsave+0x6f/0xcd kernel/locking/spinlock.c:159
-softirqs last  enabled at (182386): [<ffffffff8147368c>] _local_bh_enable+0x1c/0x30 kernel/softirq.c:162
-softirqs last disabled at (182387): [<ffffffff8147608b>] invoke_softirq kernel/softirq.c:373 [inline]
-softirqs last disabled at (182387): [<ffffffff8147608b>] irq_exit+0x19b/0x1e0 kernel/softirq.c:413
+thanks for the testing and help here, much appreciated.
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(rxrpc_conn_id_lock);
-  <Interrupt>
-    lock(rxrpc_conn_id_lock);
-
- *** DEADLOCK ***
-
-1 lock held by swapper/1/0:
- #0: ffffffff89babac0 (rcu_callback){....}, at: rcu_do_batch kernel/rcu/tree.c:2176 [inline]
- #0: ffffffff89babac0 (rcu_callback){....}, at: rcu_core+0x562/0x1390 kernel/rcu/tree.c:2410
-
-stack backtrace:
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.5.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_usage_bug.cold+0x327/0x378 kernel/locking/lockdep.c:3100
- valid_state kernel/locking/lockdep.c:3111 [inline]
- mark_lock_irq kernel/locking/lockdep.c:3308 [inline]
- mark_lock+0xbb4/0x1220 kernel/locking/lockdep.c:3665
- mark_usage kernel/locking/lockdep.c:3565 [inline]
- __lock_acquire+0x1e8e/0x4a00 kernel/locking/lockdep.c:3908
- lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4484
- __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
- _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
- spin_lock include/linux/spinlock.h:338 [inline]
- rxrpc_put_client_connection_id net/rxrpc/conn_client.c:138 [inline]
- rxrpc_put_client_connection_id+0x73/0xe0 net/rxrpc/conn_client.c:135
- rxrpc_put_one_client_conn net/rxrpc/conn_client.c:955 [inline]
- rxrpc_put_client_conn+0x243/0xc90 net/rxrpc/conn_client.c:1001
- rxrpc_put_connection net/rxrpc/ar-internal.h:965 [inline]
- rxrpc_rcu_destroy_call+0xbd/0x200 net/rxrpc/call_object.c:572
- rcu_do_batch kernel/rcu/tree.c:2186 [inline]
- rcu_core+0x5e1/0x1390 kernel/rcu/tree.c:2410
- rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2419
- __do_softirq+0x262/0x98c kernel/softirq.c:292
- invoke_softirq kernel/softirq.c:373 [inline]
- irq_exit+0x19b/0x1e0 kernel/softirq.c:413
- exiting_irq arch/x86/include/asm/apic.h:536 [inline]
- smp_apic_timer_interrupt+0x1a3/0x610 arch/x86/kernel/apic/apic.c:1137
- apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
- </IRQ>
-RIP: 0010:native_safe_halt+0xe/0x10 arch/x86/include/asm/irqflags.h:61
-Code: 38 ea c7 f9 eb 8a cc cc cc cc cc cc e9 07 00 00 00 0f 00 2d 94 76 5c 00 f4 c3 66 90 e9 07 00 00 00 0f 00 2d 84 76 5c 00 fb f4 <c3> cc 55 48 89 e5 41 57 41 56 41 55 41 54 53 e8 ce b7 76 f9 e8 09
-RSP: 0018:ffffc90000d3fd68 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-RAX: 1ffffffff1367542 RBX: ffff8880a99fc340 RCX: 0000000000000000
-RDX: dffffc0000000000 RSI: 0000000000000006 RDI: ffff8880a99fcbd4
-RBP: ffffc90000d3fd98 R08: ffff8880a99fc340 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: dffffc0000000000
-R13: ffffffff8aa509c0 R14: 0000000000000000 R15: 0000000000000001
-
+greg k-h
