@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CEE5153634
+	by mail.lfdr.de (Postfix) with ESMTP id 9189E153635
 	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 18:17:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbgBERRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 12:17:50 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40196 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbgBERRs (ORCPT
+        id S1727559AbgBERRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 12:17:53 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36976 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727516AbgBERRu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 12:17:48 -0500
-Received: by mail-pg1-f195.google.com with SMTP id z7so1268699pgk.7
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 09:17:47 -0800 (PST)
+        Wed, 5 Feb 2020 12:17:50 -0500
+Received: by mail-pl1-f194.google.com with SMTP id c23so1140456plz.4
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 09:17:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=5Epmkols/Jcpk4BOtB6xrYTMWDhv57jhe/5P27cPTsM=;
-        b=JoRJst93U9bCZZNxTFkotrbqwe9DANT/aWnQ3KQKK48a4/aTEAOk2JtA2PmYsMkjB+
-         iRMfR/50HPQjQA5q/jBlq9+xFgLDJtWXWxbfTNo6cTK/arVA+rhTwMVC7y4n2Ga44rfz
-         R3pbxUZNXouDw3CeOZGQTL8UjVLUWMtmm4i4F+a2thsaACE+RVjbT9VSFv6PajGgfIi0
-         Z6zIZ4mqYmk50XZr3vNUYUPRQXXZ7areM3Lr32YudlJx0mOwiLIX1AjSu6fZRQrNPQq0
-         lxaE0lNku48jmfLyck2tI2N9LC/phWqf/D2XxPndkVWcnCfPp9PfkfRybvKQGeY/UxWK
-         k23A==
+        bh=mUDsIDZABMZl51KhHVbThQf4Tq5Xiy3roaR+2Uewz3I=;
+        b=T5Ri62NQ5TecG+H5Jkz3y/VrFKfdJk2hpW/44xQT4xfATYX7LgH825B+6EtpITWTBN
+         oyasJgxuEGESnxck6nQSSFid9SW/150iHcHfGpFsB36AXkMbISfiS1bDQHBpPXv0JT9m
+         xH944oVe2g7+4JGgSFu+AjCYq9KFiQWYzKZYTbQAoywFd8qHeAZ9CgMyloF8xIRELRLQ
+         KFcz8JWHPlksC7SxfPTh+Wir8XqzEOx5dk5yQI+HgX/s4ifjGXGIkeis5/rZULtdZB2S
+         C7Vuq7ixhvBCNTo+OkyqD5lQhWcR6TvE0uJaAjtjx9xSck5t5WjATT4mwSbqDwJmDUHs
+         GKug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:in-reply-to:references;
-        bh=5Epmkols/Jcpk4BOtB6xrYTMWDhv57jhe/5P27cPTsM=;
-        b=Yjp/HIlzJU876GE4gatOysnup3BN7pH/4N53JdRKAfmFEdrssoSrTEEiWWN6sh95NQ
-         WH/kxvBLfLkIBP5Z8RWHQnHlCiQYeCc/F7GMRtT0gsh23pfcUZyP2zYjnTSurEuUwcxc
-         wnql7kDkVd0AoIRpA5gj72E5UVQfH7AaF2aM3D5hZUTZAorxswY97fJqKP0YQgzp6rfE
-         WWX6+54i1JGabvjrxmY9dCPZVBbEGBe9PBIq3pJoCD5RNxHhtQegpwvcMSv5QsrpMuNM
-         f/SRTYQBIoC2St7qzlYYD8D9ZKJ9YI0evqSaoBOYEUm0y5lpeOG9sNUXObYzxl4SWEwq
-         gRlA==
-X-Gm-Message-State: APjAAAWUh18I9cU7b5d4ddCOIuOEp/3FWf2Jw3hm2os37gB5ZrNhkofI
-        Eu6OND9hxFWPu1So6XbPRSw=
-X-Google-Smtp-Source: APXvYqzXVTVChYHqPGJAAnvf91budGML5xKedygkZ/afLbay4FAJDdeS+mI0C3P15GHFFZf171UepQ==
-X-Received: by 2002:a63:60a:: with SMTP id 10mr1707960pgg.302.1580923066845;
-        Wed, 05 Feb 2020 09:17:46 -0800 (PST)
+        bh=mUDsIDZABMZl51KhHVbThQf4Tq5Xiy3roaR+2Uewz3I=;
+        b=OTq+Yga7/GQpxkTG3vM/zOb/aBXeaQSEomPvzjyPQxT97ABPWVSI0mzHaMv83l/HiH
+         dkqdfBCDaf3CsAQ0twlWqwj4db2895mi5p5LQwezFAtFvjQc6nJsLGA4GqFk9uCOfpYi
+         cNrQY05ElygleTL5vz5mLyxE7MKbL/xF0PquwxEqJdXlk1EALMKl/+2MQ/rxw8RaI2+w
+         ae/B7KCC9raNYbU98FXXT81T0glrBVJJrAgXDEAMAwoxO9ertk2cE6H1bTQrXh6/ll+J
+         ZsOB0Eh6JGskJUno2t6K7rF4we5Ooy0yYLj561/t7kXhEn35mNu6/+7+ASYCISeFVr+R
+         +7hA==
+X-Gm-Message-State: APjAAAVWC2tGgoVdUaEHR3OH5cKyHXyyhz7WlNlK/61nGQZv0avaOySC
+        sFIuv+V30B8RdQhXL1vNPyo=
+X-Google-Smtp-Source: APXvYqwAucub/1RnuK/N44ZKAJ/ubl68vA2EqER/Po2dotu9cAHraSFJVsBMiG0GURTaxB6fL5q9Dg==
+X-Received: by 2002:a17:90a:d081:: with SMTP id k1mr6863551pju.57.1580923069539;
+        Wed, 05 Feb 2020 09:17:49 -0800 (PST)
 Received: from emb-wallaby.amd.com ([165.204.156.251])
-        by smtp.gmail.com with ESMTPSA id l8sm357945pjy.24.2020.02.05.09.17.44
+        by smtp.gmail.com with ESMTPSA id l8sm357945pjy.24.2020.02.05.09.17.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 09:17:46 -0800 (PST)
+        Wed, 05 Feb 2020 09:17:49 -0800 (PST)
 From:   Arindam Nath <arindam.nath@amd.com>
 To:     Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
         Allen Hubbe <allenbh@gmail.com>,
         Sanjay R Mehta <sanju.mehta@amd.com>
 Cc:     linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org,
         Arindam Nath <arindam.nath@amd.com>
-Subject: [PATCH 3/4] ntb_perf: pass correct struct device to dma_alloc_coherent
-Date:   Wed,  5 Feb 2020 22:46:57 +0530
-Message-Id: <aa4e69feffab2fd3cd846569e0546c5cf8f8f6b4.1580921119.git.arindam.nath@amd.com>
+Subject: [PATCH 4/4] ntb_tool: pass correct struct device to dma_alloc_coherent
+Date:   Wed,  5 Feb 2020 22:46:58 +0530
+Message-Id: <a408ec42122ec0d9ad9aa0d3287f485eb727a6d6.1580921119.git.arindam.nath@amd.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1580921119.git.arindam.nath@amd.com>
 References: <cover.1580921119.git.arindam.nath@amd.com>
@@ -79,34 +79,40 @@ Fixes: 5648e56 ("NTB: ntb_perf: Add full multi-port NTB API support")
 Signed-off-by: Sanjay R Mehta <sanju.mehta@amd.com>
 Signed-off-by: Arindam Nath <arindam.nath@amd.com>
 ---
- drivers/ntb/test/ntb_perf.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/ntb/test/ntb_tool.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/ntb/test/ntb_perf.c b/drivers/ntb/test/ntb_perf.c
-index 5116655f0211..65501f24b742 100644
---- a/drivers/ntb/test/ntb_perf.c
-+++ b/drivers/ntb/test/ntb_perf.c
-@@ -558,7 +558,7 @@ static void perf_free_inbuf(struct perf_peer *peer)
- 		return;
+diff --git a/drivers/ntb/test/ntb_tool.c b/drivers/ntb/test/ntb_tool.c
+index d592c0ffbd19..025747c1568e 100644
+--- a/drivers/ntb/test/ntb_tool.c
++++ b/drivers/ntb/test/ntb_tool.c
+@@ -590,7 +590,7 @@ static int tool_setup_mw(struct tool_ctx *tc, int pidx, int widx,
+ 	inmw->size = min_t(resource_size_t, req_size, size);
+ 	inmw->size = round_up(inmw->size, addr_align);
+ 	inmw->size = round_up(inmw->size, size_align);
+-	inmw->mm_base = dma_alloc_coherent(&tc->ntb->dev, inmw->size,
++	inmw->mm_base = dma_alloc_coherent(&tc->ntb->pdev->dev, inmw->size,
+ 					   &inmw->dma_base, GFP_KERNEL);
+ 	if (!inmw->mm_base)
+ 		return -ENOMEM;
+@@ -612,7 +612,7 @@ static int tool_setup_mw(struct tool_ctx *tc, int pidx, int widx,
+ 	return 0;
  
- 	(void)ntb_mw_clear_trans(peer->perf->ntb, peer->pidx, peer->gidx);
--	dma_free_coherent(&peer->perf->ntb->dev, peer->inbuf_size,
-+	dma_free_coherent(&peer->perf->ntb->pdev->dev, peer->inbuf_size,
- 			  peer->inbuf, peer->inbuf_xlat);
- 	peer->inbuf = NULL;
- }
-@@ -587,8 +587,9 @@ static int perf_setup_inbuf(struct perf_peer *peer)
+ err_free_dma:
+-	dma_free_coherent(&tc->ntb->dev, inmw->size, inmw->mm_base,
++	dma_free_coherent(&tc->ntb->pdev->dev, inmw->size, inmw->mm_base,
+ 			  inmw->dma_base);
+ 	inmw->mm_base = NULL;
+ 	inmw->dma_base = 0;
+@@ -629,7 +629,7 @@ static void tool_free_mw(struct tool_ctx *tc, int pidx, int widx)
  
- 	perf_free_inbuf(peer);
+ 	if (inmw->mm_base != NULL) {
+ 		ntb_mw_clear_trans(tc->ntb, pidx, widx);
+-		dma_free_coherent(&tc->ntb->dev, inmw->size,
++		dma_free_coherent(&tc->ntb->pdev->dev, inmw->size,
+ 				  inmw->mm_base, inmw->dma_base);
+ 	}
  
--	peer->inbuf = dma_alloc_coherent(&perf->ntb->dev, peer->inbuf_size,
--					 &peer->inbuf_xlat, GFP_KERNEL);
-+	peer->inbuf = dma_alloc_coherent(&perf->ntb->pdev->dev,
-+					 peer->inbuf_size, &peer->inbuf_xlat,
-+					 GFP_KERNEL);
- 	if (!peer->inbuf) {
- 		dev_err(&perf->ntb->dev, "Failed to alloc inbuf of %pa\n",
- 			&peer->inbuf_size);
 -- 
 2.17.1
 
