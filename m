@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C26A1530C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 13:31:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C5081530C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 13:30:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbgBEMax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 07:30:53 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:50162 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727104AbgBEMao (ORCPT
+        id S1728150AbgBEMaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 07:30:46 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:43313 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727999AbgBEMap (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 07:30:44 -0500
+        Wed, 5 Feb 2020 07:30:45 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580905842;
+        s=mimecast20190719; t=1580905844;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=V4rO/yoB3tUWP9A0Ut5u9Rz301Z7Edprg1oEfc2ROnk=;
-        b=W8VcjH12xW2bxqiNLh9M9uJB+IsZlnGTaY4JEhLT+Ad2itoS5CbHLCQ2MCgo8/FvS+k/SF
-        iUnuUFvTbmVPjcNHc1clZRFVd0Es42OrnwC8kjRf3XEwvln7Wih0xZhlq8MT0Odkzv3QRY
-        U6IzMxQsImWPUSQm70pAYvzmLyWbdYg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-353-ST4nPrHAMVqLgQDSXr_scA-1; Wed, 05 Feb 2020 07:30:40 -0500
-X-MC-Unique: ST4nPrHAMVqLgQDSXr_scA-1
-Received: by mail-wm1-f71.google.com with SMTP id m21so770525wmg.6
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 04:30:40 -0800 (PST)
+        bh=kH9R5qygaELgrXQXaWn/tfFU/2DvggTDzmG5IhlZM0c=;
+        b=WvuN2YC4EYNkxalkPkS4Lpnu9xCfgwerpiWAKiE1mKMAN0IlanwXOUqtBR2/vaxuGrT0k2
+        WCS2lH44qK1z5GygQBMRdMX75l9ASuwr29O0clNwMVxHzkMQ4hNoKuLzYb1U0O/iNca0Qg
+        53H9VNAiH/8lVeIW7bgZpPCz8xed1lg=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-136-aEpMxZXRMAO_YefeJl_nIg-1; Wed, 05 Feb 2020 07:30:42 -0500
+X-MC-Unique: aEpMxZXRMAO_YefeJl_nIg-1
+Received: by mail-wr1-f70.google.com with SMTP id c6so1098409wrm.18
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 04:30:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=V4rO/yoB3tUWP9A0Ut5u9Rz301Z7Edprg1oEfc2ROnk=;
-        b=Um8anu7m6duk4DTjICeX/QiNu3Sq7gHy52+AhB5eVaRSGFnhxSQBcMLCW2q6skVXOl
-         gDRp8o8jl1mnWEG6M7LVqI3k3htR8SdmAgc+szx5k3U0JVCSjIkVIHFWqO/fKB89oWNq
-         IRW+xNaHHm0+K7WiR5KYgUR9kh4M0/d9EOyruRT9wHekGStssC5Zmk9cVP/eR66ouzA9
-         k46y4q7eH9v5nn5pSUUhQBI9sQcM4iGjSR/d2eCL2DOfAAQhYl+h7TbgosdhyTQ9m4Uk
-         wiavGe08C+hCL2p+E/a4Bb+7rAUc7nfOB3pK5OanBgE8MCVinuDn1ttcyjO6BwnwUjZ1
-         8lFA==
-X-Gm-Message-State: APjAAAVsThKaghANEbyBieVxBWgUWWwuskWCvq/IgH169CqbwI/0oZRZ
-        OpcosC3bu07WJwhyTiPC2H9fqxVeUK8BGbx9mJhHJw5AMP761+ke6Q6eOS2wdwqXKoTYImV1rsi
-        O++9FVEGPYnroMZjbVnlpLNZG
-X-Received: by 2002:a5d:56ca:: with SMTP id m10mr29730380wrw.313.1580905839736;
-        Wed, 05 Feb 2020 04:30:39 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwoZ811CuIhzZ2Yjt9DCyKIdSs8VFWHUqrGe60Zg+dvF2g2RxTSF7EBPUQXMQlKKeA9TPT+tw==
-X-Received: by 2002:a5d:56ca:: with SMTP id m10mr29730358wrw.313.1580905839472;
-        Wed, 05 Feb 2020 04:30:39 -0800 (PST)
+        bh=kH9R5qygaELgrXQXaWn/tfFU/2DvggTDzmG5IhlZM0c=;
+        b=NV8Nf4qJhjKlQ6EzKO+qxqn/ShmdgbnXCHehPpravCRB1rtbUmNj9atfoCh6ZvNEXd
+         Iv1h7/b8tcR0Ik2WFQZlyf99o8Xk6smQ3US+BvXwuKKggmXmRG6jEd2ZAQAXjgLeyiEp
+         p7NbwbAlCzO6te04XjTfeOBxEBWbvWcYAkB3q5zLWCU9gMhzV1LJROG/9C21P5NT+upu
+         E3z4xWhhZGKwpUPhGP0Aun57tC9GZDSLTEqALhCkKvcX77cD3AxGUs+YyIHOSGNxfGqo
+         1ie8QEKVulU4kASb1jok0lUk3UepBcR6L0UT15Jp0Wm6YQ2JkoYiKeXuzZ+Wa145gOK/
+         3y8w==
+X-Gm-Message-State: APjAAAUEahB0heU6BjfLifeAaxzTeCLE68gr+HgYL2aMkjHEO8tIBZHn
+        ZQfZ+ZmIlbKF8R/NzZRyvlGskIj+qZQ/4YUc4djkHLJASIRo8vnZYdA8vRTiy604Fudh8kbb5/o
+        H1u/NNaP/ni1pMSfxHK5d2/so
+X-Received: by 2002:adf:ea4d:: with SMTP id j13mr23997730wrn.292.1580905841362;
+        Wed, 05 Feb 2020 04:30:41 -0800 (PST)
+X-Google-Smtp-Source: APXvYqy6a7nZphH4CpZdYImL27XES4Yf2yGaYtSWHx6fRouFNr/X6nSst7FOsMjeu0DoqFuZVNRk3A==
+X-Received: by 2002:adf:ea4d:: with SMTP id j13mr23997707wrn.292.1580905841119;
+        Wed, 05 Feb 2020 04:30:41 -0800 (PST)
 Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id g7sm34227251wrq.21.2020.02.05.04.30.38
+        by smtp.gmail.com with ESMTPSA id g7sm34227251wrq.21.2020.02.05.04.30.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 04:30:38 -0800 (PST)
+        Wed, 05 Feb 2020 04:30:39 -0800 (PST)
 From:   Vitaly Kuznetsov <vkuznets@redhat.com>
 To:     kvm@vger.kernel.org
 Cc:     Paolo Bonzini <pbonzini@redhat.com>,
@@ -58,9 +58,9 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         Jim Mattson <jmattson@google.com>,
         linux-kernel@vger.kernel.org, Liran Alon <liran.alon@oracle.com>,
         Roman Kagan <rkagan@virtuozzo.com>
-Subject: [PATCH 2/3] x86/kvm/hyper-v: move VMX controls sanitization out of nested_enable_evmcs()
-Date:   Wed,  5 Feb 2020 13:30:33 +0100
-Message-Id: <20200205123034.630229-3-vkuznets@redhat.com>
+Subject: [PATCH 3/3] x86/kvm/hyper-v: don't allow to turn on unsupported VMX controls for nested guests
+Date:   Wed,  5 Feb 2020 13:30:34 +0100
+Message-Id: <20200205123034.630229-4-vkuznets@redhat.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200205123034.630229-1-vkuznets@redhat.com>
 References: <20200205123034.630229-1-vkuznets@redhat.com>
@@ -71,119 +71,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With fine grained VMX feature enablement QEMU>=4.2 tries to do KVM_SET_MSRS
-with default (matching CPU model) values and in case eVMCS is also enabled,
-fails.
+Sane L1 hypervisors are not supposed to turn any of the unsupported VMX
+controls on for its guests and nested_vmx_check_controls() checks for
+that. This is, however, not the case for the controls which are supported
+on the host but are missing in enlightened VMCS and when eVMCS is in use.
 
-It would be possible to drop VMX feature filtering completely and make
-this a guest's responsibility: if it decides to use eVMCS it should know
-which fields are available and which are not. Hyper-V mostly complies to
-this, however, there are some problematic controls:
-SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES
-VM_{ENTRY,EXIT}_LOAD_IA32_PERF_GLOBAL_CTR
-
-which Hyper-V enables. As there are no corresponding fields in eVMCS, we
-can't handle this properly in KVM. This is a Hyper-V issue.
-
-Move VMX controls sanitization from nested_enable_evmcs() to vmx_get_msr(),
-and do the bare minimum (controls, which are known to cause issues). This
-allows userspace to keep setting controls it wants and at the same
-time hides them from the guest.
+It would certainly be possible to add these missing checks to
+nested_check_vm_execution_controls()/_vm_exit_controls()/.. but it seems
+preferable to keep eVMCS-specific stuff in eVMCS and reduce the impact on
+non-eVMCS guests by doing less unrelated checks. Create a separate
+nested_evmcs_check_controls() for this purpose.
 
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- arch/x86/kvm/vmx/evmcs.c | 32 ++++++++++++++++++++++++++------
- arch/x86/kvm/vmx/evmcs.h |  1 +
- arch/x86/kvm/vmx/vmx.c   | 16 ++++++++++++++--
- 3 files changed, 41 insertions(+), 8 deletions(-)
+ arch/x86/kvm/vmx/evmcs.c  | 53 +++++++++++++++++++++++++++++++++++++++
+ arch/x86/kvm/vmx/evmcs.h  |  2 ++
+ arch/x86/kvm/vmx/nested.c |  3 +++
+ 3 files changed, 58 insertions(+)
 
 diff --git a/arch/x86/kvm/vmx/evmcs.c b/arch/x86/kvm/vmx/evmcs.c
-index 89c3e0caf39f..ba886fb7bc39 100644
+index ba886fb7bc39..303813423c3e 100644
 --- a/arch/x86/kvm/vmx/evmcs.c
 +++ b/arch/x86/kvm/vmx/evmcs.c
-@@ -346,6 +346,32 @@ uint16_t nested_get_evmcs_version(struct kvm_vcpu *vcpu)
-        return 0;
+@@ -7,6 +7,7 @@
+ #include "evmcs.h"
+ #include "vmcs.h"
+ #include "vmx.h"
++#include "trace.h"
+ 
+ DEFINE_STATIC_KEY_FALSE(enable_evmcs);
+ 
+@@ -372,6 +373,58 @@ void nested_evmcs_filter_control_msr(u32 msr_index, u64 *pdata)
+ 	*pdata = ctl_low | ((u64)ctl_high << 32);
  }
  
-+void nested_evmcs_filter_control_msr(u32 msr_index, u64 *pdata)
++int nested_evmcs_check_controls(struct vmcs12 *vmcs12)
 +{
-+	u32 ctl_low = (u32)*pdata;
-+	u32 ctl_high = (u32)(*pdata >> 32);
++	int ret = 0;
++	u32 unsupp_ctl;
 +
-+	/*
-+	 * Hyper-V 2016 and 2019 try using these features even when eVMCS
-+	 * is enabled but there are no corresponding fields.
-+	 */
-+	switch (msr_index) {
-+	case MSR_IA32_VMX_EXIT_CTLS:
-+	case MSR_IA32_VMX_TRUE_EXIT_CTLS:
-+		ctl_high &= ~VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL;
-+		break;
-+	case MSR_IA32_VMX_ENTRY_CTLS:
-+	case MSR_IA32_VMX_TRUE_ENTRY_CTLS:
-+		ctl_high &= ~VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL;
-+		break;
-+	case MSR_IA32_VMX_PROCBASED_CTLS2:
-+		ctl_high &= ~SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES;
-+		break;
++	unsupp_ctl = vmcs12->pin_based_vm_exec_control &
++		EVMCS1_UNSUPPORTED_PINCTRL;
++	if (unsupp_ctl) {
++		trace_kvm_nested_vmenter_failed(
++			"eVMCS: unsupported pin-based VM-execution controls",
++			unsupp_ctl);
++		ret = -EINVAL;
 +	}
 +
-+	*pdata = ctl_low | ((u64)ctl_high << 32);
++	unsupp_ctl = vmcs12->secondary_vm_exec_control &
++		EVMCS1_UNSUPPORTED_2NDEXEC;
++	if (unsupp_ctl) {
++		trace_kvm_nested_vmenter_failed(
++			"eVMCS: unsupported secondary VM-execution controls",
++			unsupp_ctl);
++		ret = -EINVAL;
++	}
++
++	unsupp_ctl = vmcs12->vm_exit_controls &
++		EVMCS1_UNSUPPORTED_VMEXIT_CTRL;
++	if (unsupp_ctl) {
++		trace_kvm_nested_vmenter_failed(
++			"eVMCS: unsupported VM-exit controls",
++			unsupp_ctl);
++		ret = -EINVAL;
++	}
++
++	unsupp_ctl = vmcs12->vm_entry_controls &
++		EVMCS1_UNSUPPORTED_VMENTRY_CTRL;
++	if (unsupp_ctl) {
++		trace_kvm_nested_vmenter_failed(
++			"eVMCS: unsupported VM-entry controls",
++			unsupp_ctl);
++		ret = -EINVAL;
++	}
++
++	unsupp_ctl = vmcs12->vm_function_control & EVMCS1_UNSUPPORTED_VMFUNC;
++	if (unsupp_ctl) {
++		trace_kvm_nested_vmenter_failed(
++			"eVMCS: unsupported VM-function controls",
++			unsupp_ctl);
++		ret = -EINVAL;
++	}
++
++	return ret;
 +}
 +
  int nested_enable_evmcs(struct kvm_vcpu *vcpu,
  			uint16_t *vmcs_version)
  {
-@@ -356,11 +382,5 @@ int nested_enable_evmcs(struct kvm_vcpu *vcpu,
- 	if (vmcs_version)
- 		*vmcs_version = nested_get_evmcs_version(vcpu);
- 
--	vmx->nested.msrs.pinbased_ctls_high &= ~EVMCS1_UNSUPPORTED_PINCTRL;
--	vmx->nested.msrs.entry_ctls_high &= ~EVMCS1_UNSUPPORTED_VMENTRY_CTRL;
--	vmx->nested.msrs.exit_ctls_high &= ~EVMCS1_UNSUPPORTED_VMEXIT_CTRL;
--	vmx->nested.msrs.secondary_ctls_high &= ~EVMCS1_UNSUPPORTED_2NDEXEC;
--	vmx->nested.msrs.vmfunc_controls &= ~EVMCS1_UNSUPPORTED_VMFUNC;
--
- 	return 0;
- }
 diff --git a/arch/x86/kvm/vmx/evmcs.h b/arch/x86/kvm/vmx/evmcs.h
-index 07ebf6882a45..b88d9807a796 100644
+index b88d9807a796..6de47f2569c9 100644
 --- a/arch/x86/kvm/vmx/evmcs.h
 +++ b/arch/x86/kvm/vmx/evmcs.h
-@@ -201,5 +201,6 @@ bool nested_enlightened_vmentry(struct kvm_vcpu *vcpu, u64 *evmcs_gpa);
- uint16_t nested_get_evmcs_version(struct kvm_vcpu *vcpu);
+@@ -10,6 +10,7 @@
+ 
+ #include "capabilities.h"
+ #include "vmcs.h"
++#include "vmcs12.h"
+ 
+ struct vmcs_config;
+ 
+@@ -202,5 +203,6 @@ uint16_t nested_get_evmcs_version(struct kvm_vcpu *vcpu);
  int nested_enable_evmcs(struct kvm_vcpu *vcpu,
  			uint16_t *vmcs_version);
-+void nested_evmcs_filter_control_msr(u32 msr_index, u64 *pdata);
+ void nested_evmcs_filter_control_msr(u32 msr_index, u64 *pdata);
++int nested_evmcs_check_controls(struct vmcs12 *vmcs12);
  
  #endif /* __KVM_X86_VMX_EVMCS_H */
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index cdb4bf50ee14..e3adf230ca8e 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1849,8 +1849,20 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 	case MSR_IA32_VMX_BASIC ... MSR_IA32_VMX_VMFUNC:
- 		if (!nested_vmx_allowed(vcpu))
- 			return 1;
--		return vmx_get_vmx_msr(&vmx->nested.msrs, msr_info->index,
--				       &msr_info->data);
-+		if (vmx_get_vmx_msr(&vmx->nested.msrs, msr_info->index,
-+				    &msr_info->data))
-+			return 1;
-+		/*
-+		 * Enlightened VMCS v1 doesn't have certain fields, but buggy
-+		 * Hyper-V versions are still trying to use corresponding
-+		 * features when they are exposed. Filter out the essential
-+		 * minimum.
-+		 */
-+		if (!msr_info->host_initiated &&
-+		    vmx->nested.enlightened_vmcs_enabled)
-+			nested_evmcs_filter_control_msr(msr_info->index,
-+							&msr_info->data);
-+		break;
- 	case MSR_IA32_RTIT_CTL:
- 		if (pt_mode != PT_MODE_HOST_GUEST)
- 			return 1;
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 6879966b7648..b9fd508f40c5 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -2767,6 +2767,9 @@ static int nested_vmx_check_controls(struct kvm_vcpu *vcpu,
+ 	    nested_check_vm_entry_controls(vcpu, vmcs12))
+ 		return -EINVAL;
+ 
++	if (to_vmx(vcpu)->nested.enlightened_vmcs_enabled)
++		return nested_evmcs_check_controls(vmcs12);
++
+ 	return 0;
+ }
+ 
 -- 
 2.24.1
 
