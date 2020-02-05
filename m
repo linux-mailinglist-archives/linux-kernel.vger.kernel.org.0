@@ -2,50 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0C251537F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 19:22:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21D0C153777
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 19:20:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbgBESUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 13:20:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51864 "EHLO mail.kernel.org"
+        id S1727720AbgBESUT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 13:20:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727663AbgBESUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 13:20:16 -0500
-Subject: Re: [GIT PULL] xen: branch for v5.6-rc1
+        id S1727682AbgBESUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 13:20:18 -0500
+Subject: Re: [GIT PULL] pwm: Changes for v5.6-rc1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580926816;
-        bh=yuBrlgCSyNpGr7f0LkdGSKgVKnHVeUJjNZG0igVS9No=;
+        s=default; t=1580926817;
+        bh=pkF+Zu7Fc6EtaNl3fzwBn92fLIb5ER8BmVSENmewRAk=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=nzH9OKtg7Wr17/acZ5zPdO4nd6vpEVmHl1rP1B4nTRnmGk+3bHyRZHpfwPTDKvdiK
-         C0eETZgCkjnldURs8faFa2ds7o8EUogzUfLFo3eJD2nK8GvXgm9GMbhXM2fW8AU3q/
-         NzjDLSUr4RhhXOOFV4Qe/APvd10GeR8x0xZvRoq0=
+        b=1+mftukO69IDnwumaGqXvcG8o/P2CnDrxfClc396gReqUvQNOTItC9Hq80gvYrJu/
+         QA5WL9lAXj9te2RhTA9LqoCBlDjsdrdYR47TCYfDjiS5wtIvsUES1yzJsQsyijrrW/
+         EAeFnCgePF2LM84LSiPQxLm7OJyooxXJZ2uzLKMM=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200205141135.31595-1-jgross@suse.com>
-References: <20200205141135.31595-1-jgross@suse.com>
+In-Reply-To: <20200205142511.2172050-1-thierry.reding@gmail.com>
+References: <20200205142511.2172050-1-thierry.reding@gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200205141135.31595-1-jgross@suse.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git
- for-linus-5.6-rc1-tag
-X-PR-Tracked-Commit-Id: 8557bbe5156e5fba022d5a5220004b1e016227ee
+X-PR-Tracked-Message-Id: <20200205142511.2172050-1-thierry.reding@gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git
+ tags/pwm/for-5.6-rc1
+X-PR-Tracked-Commit-Id: 9871abffc81048e20f02e15d6aa4558a44ad53ea
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d271ab29230b1d0ceb426f374c221c4eb2c91c64
-Message-Id: <158092681621.14135.14219430235179173763.pr-tracker-bot@kernel.org>
-Date:   Wed, 05 Feb 2020 18:20:16 +0000
-To:     Juergen Gross <jgross@suse.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com
+X-PR-Merge-Commit-Id: 4c7d00ccf40db99bfb7bd1857bcbf007275704d8
+Message-Id: <158092681758.14135.10923863172785841060.pr-tracker-bot@kernel.org>
+Date:   Wed, 05 Feb 2020 18:20:17 +0000
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed,  5 Feb 2020 15:11:35 +0100:
+The pull request you sent on Wed,  5 Feb 2020 15:25:11 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-5.6-rc1-tag
+> git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git tags/pwm/for-5.6-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d271ab29230b1d0ceb426f374c221c4eb2c91c64
+https://git.kernel.org/torvalds/c/4c7d00ccf40db99bfb7bd1857bcbf007275704d8
 
 Thank you!
 
