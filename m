@@ -2,33 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19730153ADD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 23:22:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 644F9153AE2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 23:22:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727479AbgBEWVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 17:21:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41326 "EHLO mail.kernel.org"
+        id S1727561AbgBEWWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 17:22:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727116AbgBEWVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727170AbgBEWVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Feb 2020 17:21:44 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2BEC214AF;
-        Wed,  5 Feb 2020 22:21:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FE0421927;
+        Wed,  5 Feb 2020 22:21:44 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1izT3G-001P07-Tu; Wed, 05 Feb 2020 17:21:42 -0500
-Message-Id: <20200205222142.810675558@goodmis.org>
+        id 1izT3H-001P0c-20; Wed, 05 Feb 2020 17:21:43 -0500
+Message-Id: <20200205222142.949099420@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Wed, 05 Feb 2020 17:21:11 -0500
+Date:   Wed, 05 Feb 2020 17:21:12 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Subject: [for-next][PATCH 1/5] ftrace: Protect ftrace_graph_hash with ftrace_sync
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [for-next][PATCH 2/5] bootconfig: Use bootconfig instead of boot config
 References: <20200205222110.912457436@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -37,66 +36,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-As function_graph tracer can run when RCU is not "watching", it can not be
-protected by synchronize_rcu() it requires running a task on each CPU before
-it can be freed. Calling schedule_on_each_cpu(ftrace_sync) needs to be used.
+Use "bootconfig" (1 word) instead of "boot config" (2 words)
+in the boot message.
 
-Link: https://lore.kernel.org/r/20200205131110.GT2935@paulmck-ThinkPad-P72
+Link: http://lkml.kernel.org/r/158091059459.27924.14414336187441539879.stgit@devnote2
 
-Cc: stable@vger.kernel.org
-Fixes: b9b0c831bed26 ("ftrace: Convert graph filter to use hash tables")
-Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/ftrace.c | 11 +++++++++--
- kernel/trace/trace.h  |  2 ++
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ init/main.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 481ede3eac13..3f7ee102868a 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -5867,8 +5867,15 @@ ftrace_graph_release(struct inode *inode, struct file *file)
+diff --git a/init/main.c b/init/main.c
+index f174a59d3903..2de2f9f7aab9 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -372,7 +372,7 @@ static void __init setup_boot_config(const char *cmdline)
  
- 		mutex_unlock(&graph_lock);
- 
--		/* Wait till all users are no longer using the old hash */
--		synchronize_rcu();
-+		/*
-+		 * We need to do a hard force of sched synchronization.
-+		 * This is because we use preempt_disable() to do RCU, but
-+		 * the function tracers can be called where RCU is not watching
-+		 * (like before user_exit()). We can not rely on the RCU
-+		 * infrastructure to do the synchronization, thus we must do it
-+		 * ourselves.
-+		 */
-+		schedule_on_each_cpu(ftrace_sync);
- 
- 		free_ftrace_hash(old_hash);
+ 	copy = memblock_alloc(size + 1, SMP_CACHE_BYTES);
+ 	if (!copy) {
+-		pr_err("Failed to allocate memory for boot config\n");
++		pr_err("Failed to allocate memory for bootconfig\n");
+ 		return;
  	}
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 8c52f5de9384..3c75d29bd861 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -979,6 +979,7 @@ static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
- 	 * Have to open code "rcu_dereference_sched()" because the
- 	 * function graph tracer can be called when RCU is not
- 	 * "watching".
-+	 * Protected with schedule_on_each_cpu(ftrace_sync)
- 	 */
- 	hash = rcu_dereference_protected(ftrace_graph_hash, !preemptible());
  
-@@ -1031,6 +1032,7 @@ static inline int ftrace_graph_notrace_addr(unsigned long addr)
- 	 * Have to open code "rcu_dereference_sched()" because the
- 	 * function graph tracer can be called when RCU is not
- 	 * "watching".
-+	 * Protected with schedule_on_each_cpu(ftrace_sync)
- 	 */
- 	notrace_hash = rcu_dereference_protected(ftrace_graph_notrace_hash,
- 						 !preemptible());
+@@ -380,9 +380,9 @@ static void __init setup_boot_config(const char *cmdline)
+ 	copy[size] = '\0';
+ 
+ 	if (xbc_init(copy) < 0)
+-		pr_err("Failed to parse boot config\n");
++		pr_err("Failed to parse bootconfig\n");
+ 	else {
+-		pr_info("Load boot config: %d bytes\n", size);
++		pr_info("Load bootconfig: %d bytes\n", size);
+ 		/* keys starting with "kernel." are passed via cmdline */
+ 		extra_command_line = xbc_make_cmdline("kernel");
+ 		/* Also, "init." keys are init arguments */
 -- 
 2.24.1
 
