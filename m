@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F7ED1536BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 18:35:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EF8E1536C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 18:36:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727491AbgBERfz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 12:35:55 -0500
-Received: from mga14.intel.com ([192.55.52.115]:16885 "EHLO mga14.intel.com"
+        id S1727512AbgBERgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 12:36:40 -0500
+Received: from mga17.intel.com ([192.55.52.151]:55569 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726957AbgBERfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 12:35:55 -0500
+        id S1726678AbgBERgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 12:36:39 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2020 09:35:54 -0800
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2020 09:36:38 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,406,1574150400"; 
-   d="scan'208";a="404218446"
+   d="scan'208";a="220171665"
 Received: from linux.intel.com ([10.54.29.200])
-  by orsmga005.jf.intel.com with ESMTP; 05 Feb 2020 09:35:54 -0800
+  by orsmga007.jf.intel.com with ESMTP; 05 Feb 2020 09:36:38 -0800
 Received: from [10.252.5.149] (abudanko-mobl.ccr.corp.intel.com [10.252.5.149])
-        by linux.intel.com (Postfix) with ESMTP id 919B05802BC;
-        Wed,  5 Feb 2020 09:35:46 -0800 (PST)
-Subject: [PATCH v6 08/10] parisc/perf: open access for CAP_PERFMON privileged
+        by linux.intel.com (Postfix) with ESMTP id F2F875803E3;
+        Wed,  5 Feb 2020 09:36:30 -0800 (PST)
+Subject: [PATCH v6 09/10] drivers/perf: open access for CAP_PERFMON privileged
  process
 From:   Alexey Budankov <alexey.budankov@linux.intel.com>
 To:     James Morris <jmorris@namei.org>, Serge Hallyn <serge@hallyn.com>,
@@ -52,8 +52,8 @@ Cc:     Andi Kleen <ak@linux.intel.com>,
         oprofile-list@lists.sf.net
 References: <576a6141-36d4-14c0-b395-8d195892b916@linux.intel.com>
 Organization: Intel Corp.
-Message-ID: <15e3133b-3090-f7e4-f12d-f47c60f8c93d@linux.intel.com>
-Date:   Wed, 5 Feb 2020 20:35:45 +0300
+Message-ID: <4fa7407f-0da8-fffa-dd79-2da0429055f6@linux.intel.com>
+Date:   Wed, 5 Feb 2020 20:36:29 +0300
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.2
 MIME-Version: 1.0
@@ -86,22 +86,31 @@ capability.
 
 Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 ---
- arch/parisc/kernel/perf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/perf/arm_spe_pmu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/parisc/kernel/perf.c b/arch/parisc/kernel/perf.c
-index 676683641d00..c4208d027794 100644
---- a/arch/parisc/kernel/perf.c
-+++ b/arch/parisc/kernel/perf.c
-@@ -300,7 +300,7 @@ static ssize_t perf_write(struct file *file, const char __user *buf,
- 	else
- 		return -EFAULT;
+diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+index 4e4984a55cd1..5dff81bc3324 100644
+--- a/drivers/perf/arm_spe_pmu.c
++++ b/drivers/perf/arm_spe_pmu.c
+@@ -274,7 +274,7 @@ static u64 arm_spe_event_to_pmscr(struct perf_event *event)
+ 	if (!attr->exclude_kernel)
+ 		reg |= BIT(SYS_PMSCR_EL1_E1SPE_SHIFT);
  
--	if (!capable(CAP_SYS_ADMIN))
-+	if (!perfmon_capable())
- 		return -EACCES;
+-	if (IS_ENABLED(CONFIG_PID_IN_CONTEXTIDR) && capable(CAP_SYS_ADMIN))
++	if (IS_ENABLED(CONFIG_PID_IN_CONTEXTIDR) && perfmon_capable())
+ 		reg |= BIT(SYS_PMSCR_EL1_CX_SHIFT);
  
- 	if (count != sizeof(uint32_t))
+ 	return reg;
+@@ -700,7 +700,7 @@ static int arm_spe_pmu_event_init(struct perf_event *event)
+ 		return -EOPNOTSUPP;
+ 
+ 	reg = arm_spe_event_to_pmscr(event);
+-	if (!capable(CAP_SYS_ADMIN) &&
++	if (!perfmon_capable() &&
+ 	    (reg & (BIT(SYS_PMSCR_EL1_PA_SHIFT) |
+ 		    BIT(SYS_PMSCR_EL1_CX_SHIFT) |
+ 		    BIT(SYS_PMSCR_EL1_PCT_SHIFT))))
 -- 
 2.20.1
 
