@@ -2,97 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF3CA1531C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 14:27:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D7861531D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 14:29:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728281AbgBEN1C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 08:27:02 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:36225 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726822AbgBEN1A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 08:27:00 -0500
-Received: by mail-ot1-f68.google.com with SMTP id j20so1902087otq.3;
-        Wed, 05 Feb 2020 05:26:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2iTmjWroM0axQMfNXSTY4B+Vwm8DbZJfE7GwGUvjpyQ=;
-        b=NwK7gQWqLfS/JUcGRZD+ikHP6oDzawbpGi52vOScViy7NpUb95lXZ/qUrSo13MJZuk
-         5/yZgqQKnkk0cMi5K7k1nZ3Jkn32nXwG8KZDA4HzCX1QzJqELzGfLhg1RjDGNfa9+j16
-         2WgZ5TU6eDlgZr1yrAB0vtYMLNBqb/QSpHhDJA1FB9nSMkk+3OGgHseBOnZn6Ydg8Lvg
-         vJrmPR0nsLR7TIHrGo1+7I32n8wSUO3gmaXbvmBTsVMwTUQjtr/3fgwqRRomCz40+hgs
-         alg9cOYWy3/bXhMOq/p+kABPeatiwUrS7yeF9cVyPolffFTFyh/K1iyMZI+aP89YauAq
-         +bTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2iTmjWroM0axQMfNXSTY4B+Vwm8DbZJfE7GwGUvjpyQ=;
-        b=WzjJo3ZViRdjrUhgzA7oeCBf1SGXCNRCCJ9KureROJrZQPPHo18zB3pA77vKxRCZwT
-         z+A8Kg9eqGYSsv/2rSUIL3X4EzQGtdmNIj+EyyPJExj0q9rcKIRv3unG4BZE28Hd1wLd
-         GYDAlY786hvEl8b6q/HyOUzeKAOMVRzLN9RuYt/54OXpHDTCxAHCy+Dztc/8G3KeqxKG
-         g2ZpktZeNZbw+LkIWJMoztrUJ00bLX+5hCgaK+KHhTKpoUPdvZzWikzSNZZALEuBuZ4P
-         eyPlj6Zf3laI8MRkD5ux9fImxkfUZWPRq6qfL7HslJSDSkxDMJ1+WqwEFat7ihUO3mM+
-         0AKg==
-X-Gm-Message-State: APjAAAWHS8fTBYZ6AoMYZ7dW4PAac1C4nVqxgojfVWRas28V8tTn8eFz
-        gHd7VcvG+QmzCP5OBPNQRT7VHNOGuiBi7mZIToU=
-X-Google-Smtp-Source: APXvYqx1Uo1av+7UTImzpbx3g3+rhU7G9l4tWB7NjhIpKmc4Fdg2DC7DGxSh2/aVlTgjwCfxuKVENTDYA5D3HTry98k=
-X-Received: by 2002:a05:6830:231d:: with SMTP id u29mr26656265ote.185.1580909219503;
- Wed, 05 Feb 2020 05:26:59 -0800 (PST)
+        id S1727468AbgBEN3V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 08:29:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40144 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726748AbgBEN3U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 08:29:20 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FB7F2072B;
+        Wed,  5 Feb 2020 13:29:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580909360;
+        bh=q3GH23a1FDWaFVRhUTNliOpuwo1wF6ZsFejI9M8tSQ0=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=ofwCmh1sIX/qbPu2BPDWAM8+n1bBJRtfpk57yQ5E3gpnTb1ouvryIAWv1mX68b7+V
+         asnILCtTNG4d18fkKGdPX0/wEEH9JMoUTOeLLVzuWrJ4NExqkhMf2bNqoCf0SNipV1
+         0qXXPXGEiLt76+qPSL7164BVlu3fifDR8dPG4HNc=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id D16FD35227F3; Wed,  5 Feb 2020 05:29:19 -0800 (PST)
+Date:   Wed, 5 Feb 2020 05:29:19 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Amol Grover <frextrite@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+Subject: Re: [PATCH] tracing: Annotate ftrace_graph_hash pointer with __rcu
+Message-ID: <20200205132919.GU2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200201072703.17330-1-frextrite@gmail.com>
+ <20200203163301.GB85781@google.com>
+ <20200204200116.479f0c60@oasis.local.home>
+ <20200205131110.GT2935@paulmck-ThinkPad-P72>
+ <20200205081409.4550aa67@oasis.local.home>
+ <20200205081921.34b19d9a@oasis.local.home>
 MIME-Version: 1.0
-References: <CANRm+CwwYoSLeA3Squp-_fVZpmYmxEfqOB+DGoQN4Y_iMT347w@mail.gmail.com>
- <878slio6hp.fsf@vitty.brq.redhat.com> <CANRm+CzkN9oYf4UqWYp2SHFii02=pvVLbW4oNkLmPan7ZroDZA@mail.gmail.com>
- <874kw6o1ve.fsf@vitty.brq.redhat.com>
-In-Reply-To: <874kw6o1ve.fsf@vitty.brq.redhat.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Wed, 5 Feb 2020 21:26:48 +0800
-Message-ID: <CANRm+CwgJ07i3O_-DpvDMaVSGThX7Ymwuty9rBm5Sc2wiuV-bw@mail.gmail.com>
-Subject: Re: [PATCH] KVM: Pre-allocate 1 cpumask variable per cpu for both pv
- tlb and pv ipis
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200205081921.34b19d9a@oasis.local.home>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Feb 2020 at 22:36, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->
-> Wanpeng Li <kernellwp@gmail.com> writes:
->
-> >>
-> >> Honestly, I'd simplify the check in kvm_alloc_cpumask() as
-> >>
-> >> if (!kvm_para_available())
-> >>         return;
-> >>
-> >> and allocated masks for all other cases.
-> >
-> > This will waste the memory if pv tlb and pv ipis are not exposed which
-> > are the only users currently.
-> >
->
-> My assumption is that the number of cases where we a) expose KVM b)
-> don't expose IPIs and PV-TLB and c) care about 1 cpumask per cpu is
-> relatively low. Ok, let's at least have a function for
->
->         if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
->             !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
->             kvm_para_has_feature(KVM_FEATURE_STEAL_TIME))
->
-> as we now check it twice: in kvm_alloc_cpumask() and kvm_guest_init(),
-> something like pv_tlb_flush_supported(). We can also do
-> pv_ipi_supported() and probably others for consistency.
+On Wed, Feb 05, 2020 at 08:19:21AM -0500, Steven Rostedt wrote:
+> On Wed, 5 Feb 2020 08:14:09 -0500
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > On Wed, 5 Feb 2020 05:11:10 -0800
+> > "Paul E. McKenney" <paulmck@kernel.org> wrote:
+> > 
+> > > I strongly recommend a comment stating why disabling preemption prevents
+> > > ftrace_graph_hash from going away.  I see the synchronize_rcu() after
+> > > the rcu_assign_pointer() in ftrace_graph_release(), but I don't see
+> > > anything that waits on CPUs that RCU is not watching.
+> > > 
+> > > Of course, event tracing -makes- RCU watch when needed, but if that
+> > > was set up, then lockdep would not have complained.
+> > > 
+> > > So what am I missing?  
+> > 
+> > Keep looking in your INBOX and look at the patch I asked you to ack or
+> > complain about ;-) 
 
-Will do.
+Not yet seeing it, but...
 
-    Wanpeng
+> Actually, looking at the code myself, it appears to be missing the
+> ftrace_sync. Thus, this is a bug, and requires the ftrace sync, as
+> synchronize_rcu() is not strong enough here.
+> 
+> Patch in process!
+
+Thank you for chasing it down!
+
+							Thanx, Paul
