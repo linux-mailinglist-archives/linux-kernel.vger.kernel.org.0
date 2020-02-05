@@ -2,180 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A3C2152698
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 08:02:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1516F1526A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 08:06:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbgBEHCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 02:02:03 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:34155 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727836AbgBEHCC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 02:02:02 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1580886122; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=yCDeCdgKA3IXNoyqrtgJmGy4KgKCgByY8yGLh4PgpZg=; b=ow83i+FVJnBTp5+LJ0nii556vzjK6dmuLrk6OEqwFQ1Ol26FaNYf4+R2JrV1p6IzEoUfYvUo
- iAU+boa+2VW8K0J5D1hGLp1mpWhg9pkMX+fOiEeOCA2IAB5kEgAZp1RP2gAyMblzKoFQXn3d
- w8Cu2nDzhHfCrfqpQXwdi7jXQoU=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e3a6868.7ff88db7a9d0-smtp-out-n03;
- Wed, 05 Feb 2020 07:02:00 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 2017DC447A5; Wed,  5 Feb 2020 07:02:00 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from smasetty-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: smasetty)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 129F6C433CB;
-        Wed,  5 Feb 2020 07:01:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 129F6C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=smasetty@codeaurora.org
-From:   Sharat Masetty <smasetty@codeaurora.org>
-To:     freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
-Cc:     dri-devel@freedesktop.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
-        jcrouse@codeaurora.org, mka@chromium.org, dianders@chromium.org,
-        Sharat Masetty <smasetty@codeaurora.org>
-Subject: [PATCH v4 3/3] arm64: dts: qcom: sc7180: Add A618 gpu dt blob
-Date:   Wed,  5 Feb 2020 12:31:37 +0530
-Message-Id: <1580886097-6312-4-git-send-email-smasetty@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1580886097-6312-1-git-send-email-smasetty@codeaurora.org>
-References: <1580886097-6312-1-git-send-email-smasetty@codeaurora.org>
+        id S1727051AbgBEHGP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 02:06:15 -0500
+Received: from mout.gmx.net ([212.227.17.22]:47401 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725875AbgBEHGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 02:06:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1580886368;
+        bh=sFyepofbS14sAHZ6pDuWzLmkNs4XyhFZqJzFXP5JZxs=;
+        h=X-UI-Sender-Class:Date:From:To:Subject;
+        b=juVcxY+3qLTnTDKbEclnCk0Vj3TJA7fbLEMcwbXchMLYivIjekzGFWzrrRY8mrLmI
+         dB4XANVZOdcfKSpfwmf3GqRcalmmf8gs0N16VBmgyH79cn50rebfOSdpCYIA4SGLmR
+         on+ut8cqaxs2oxPw6cF306Eaqi1nIhJq432Wb6M4=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from ls3530.fritz.box ([92.116.129.171]) by mail.gmx.com (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MfHAB-1jRhxj17xz-00gtHl; Wed, 05
+ Feb 2020 08:06:08 +0100
+Date:   Wed, 5 Feb 2020 08:06:04 +0100
+From:   Helge Deller <deller@gmx.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        John David Anglin <dave.anglin@bell.net>
+Subject: [GIT PULL] parisc architecture fixes for kernel v5.6
+Message-ID: <20200205070604.GA11613@ls3530.fritz.box>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Provags-ID: V03:K1:JvLviVfc4B9PfeafhwMkRK5L+rJd5hX8jPz1hZLdhc8VEooUv/Z
+ +hjTND8xnqJyDVWg2eoS5iwgauUJLKjIhwoP9zbdkvzuFaTLxn4rB9OcrF8u23qYXnMr5sb
+ d/qM2mAcn4TAjn/++SQ0gAXMoR7pF7JJy/qBL9uynVeL3xltPFOOVcLsLA2tfAuwTXIEFRj
+ 7P2LtAzl/xG8tg+hELWrw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:p5p43E+zilc=:BPhHaLHqhzweV6LwRmR9eY
+ jg659WPr2nwORFobCelaY0KT3nM0TmTe5P4I8dl3uK5W+7rA0biWPVYYnReJY5mDXvzBHukWE
+ Hyf77AnlLHggohCzqDKHOBGbCIIyDG8NFdRPRExPOE12hsASBMMhzLx/OfoF6tbEEE/fw0ykh
+ VlOXBNXS3nJCbWcEZMZtHMZZuYkFE0bDBGiQLuT2GCGIDalKwtY+UodE7OJDOI8qevWFkFtCL
+ dRJqrZZWVRPyGWbCmbz0FoSdoJuC4KQCjPJ3GJW4ADDVXf4hjtcceWH/ts9xfwE/9h/J2MGHW
+ cbw+7qHy1cYk4VbUCSclKb9ST45ygQTTJL3mzrJoWiD8zLw1A8V8HTW3MYvaAEJIhtoVRFk7J
+ EFFRJvKtsrxnjElKoNaIJ38vAN3Y9zi9WL5IKCyykGJvprVGT5AkClT449RI6+vFYa/rFoCE4
+ Y2oowhAqC/1SR3zOyENDcW+uODLGNr+b+sNPKseuJ5G4v4EYjXBdPSNHIYTJ1RxoDPljzYU9H
+ yhSYasdLc9RcRt6vuD8TlD/oDqqTJptt0Y/BtaKxUkWVI3k0n6QML6B/BzU4B3gsZ8RTNIpGT
+ 8zhyM01Vmqi2U133LKyMsjfLB4UjBWZtILq/6rOKf0ayU9roCFnLVDgqanYul1o8JkRR3h4Qh
+ N05JXnJWhQdQwep+9EoyZB/dTvDOQUGd4razp04cL6aMzljU31rEOkmFSjKOMXZHmP5+KHyYn
+ mW/q/Gcxvs56YiBaRi6yBTFKvhoJE4CG9VkuRit2wFmfkgDmsQ7zoMOKrz6TWF3nFQXK45s5x
+ jx1Bf522qFpVH4n5ClF+CDkowccw6MuvBuhND7LYzo5CrWZGoKTPKHeruRf/JzQ/cJdOuqVck
+ PFkmmxp3xYrUuxJd3SDrKQmY6mlnbzFU92hInRtg5XJUb6A1X4IEa6+ZUnlT7VysTIIWHXFfm
+ G5a3MbUQqCbLU7n92FSydPFO3sdrsFVbsr8gx4IvLTvankiWkqyARmIXw6pmA7xBtYZJ97C95
+ m76UFUeS/JqN49rMSQFIdoqY7KSmSHorCNbmZSGQXxC+7wUM7jWIiBmzITbrHgFbrAsRVIsST
+ 8CVOiFSPhPTskH0V8bdbtodnD+Ao8cYVVZ85eweBimT6CjxUi5oHH+i2sAAZlwFKo0w95JoOz
+ cCghEQN5qZkkJXV/v2F2ZK5QOKjgck4/OMw7UVcG7DaMF6jc2TKLbjBxY6JYAB4B9BKmN5Nj1
+ xu3VDg8bR0PZxvMIb
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the required dt nodes and properties
-to enabled A618 GPU.
+Hi Linus,
 
-Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sc7180.dtsi | 102 +++++++++++++++++++++++++++++++++++
- 1 file changed, 102 insertions(+)
+please pull two patches for the parisc architecture for kernel 5.6 from:
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index f3fcc5c..63fff15 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -1043,6 +1043,108 @@
- 			};
- 		};
- 
-+		gpu: gpu@5000000 {
-+			compatible = "qcom,adreno-618.0", "qcom,adreno";
-+			#stream-id-cells = <16>;
-+			reg = <0 0x05000000 0 0x40000>, <0 0x0509e000 0 0x1000>,
-+				<0 0x05061000 0 0x800>;
-+			reg-names = "kgsl_3d0_reg_memory", "cx_mem", "cx_dbgc";
-+			interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>;
-+			iommus = <&adreno_smmu 0>;
-+			operating-points-v2 = <&gpu_opp_table>;
-+			qcom,gmu = <&gmu>;
-+
-+			gpu_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-800000000 {
-+					opp-hz = /bits/ 64 <800000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
-+				};
-+
-+				opp-650000000 {
-+					opp-hz = /bits/ 64 <650000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
-+				};
-+
-+				opp-565000000 {
-+					opp-hz = /bits/ 64 <565000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
-+				};
-+
-+				opp-430000000 {
-+					opp-hz = /bits/ 64 <430000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
-+				};
-+
-+				opp-355000000 {
-+					opp-hz = /bits/ 64 <355000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
-+				};
-+
-+				opp-267000000 {
-+					opp-hz = /bits/ 64 <267000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
-+				};
-+
-+				opp-180000000 {
-+					opp-hz = /bits/ 64 <180000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
-+				};
-+			};
-+		};
-+
-+		adreno_smmu: iommu@5040000 {
-+			compatible = "qcom,sc7180-smmu-v2", "qcom,smmu-v2";
-+			reg = <0 0x05040000 0 0x10000>;
-+			#iommu-cells = <1>;
-+			#global-interrupts = <2>;
-+			interrupts = <GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 231 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 364 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 365 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 366 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 367 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 368 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 369 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 370 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 371 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
-+				<&gcc GCC_GPU_CFG_AHB_CLK>,
-+				<&gcc GCC_DDRSS_GPU_AXI_CLK>;
-+
-+			clock-names = "bus", "iface", "mem_iface_clk";
-+			power-domains = <&gpucc CX_GDSC>;
-+		};
-+
-+		gmu: gmu@506a000 {
-+			compatible="qcom,adreno-gmu-618.0", "qcom,adreno-gmu";
-+			reg = <0 0x0506a000 0 0x31000>, <0 0x0b290000 0 0x10000>,
-+				<0 0x0b490000 0 0x10000>;
-+			reg-names = "gmu", "gmu_pdc", "gmu_pdc_seq";
-+			interrupts = <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-+				   <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "hfi", "gmu";
-+			clocks = <&gpucc GPU_CC_CX_GMU_CLK>,
-+			       <&gpucc GPU_CC_CXO_CLK>,
-+			       <&gcc GCC_DDRSS_GPU_AXI_CLK>,
-+			       <&gcc GCC_GPU_MEMNOC_GFX_CLK>;
-+			clock-names = "gmu", "cxo", "axi", "memnoc";
-+			power-domains = <&gpucc CX_GDSC>, <&gpucc GX_GDSC>;
-+			power-domain-names = "cx", "gx";
-+			iommus = <&adreno_smmu 5>;
-+			operating-points-v2 = <&gmu_opp_table>;
-+
-+			gmu_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-200000000 {
-+					opp-hz = /bits/ 64 <200000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
-+				};
-+			};
-+		};
-+
- 		gpucc: clock-controller@5090000 {
- 			compatible = "qcom,sc7180-gpucc";
- 			reg = <0 0x05090000 0 0x9000>;
--- 
-1.9.1
+  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git parisc-5.6-1
+
+A page table initialization cleanup from Mike Rapoport and regenerated
+defconfig files from Helge Deller.
+
+Thanks,
+Helge
+
+----------------------------------------------------------------
+Helge Deller (1):
+      parisc: Regenerate parisc defconfigs
+
+Mike Rapoport (1):
+      parisc: map_pages(): cleanup page table initialization
+
+ arch/parisc/configs/712_defconfig           | 181 ---------------------
+ arch/parisc/configs/a500_defconfig          | 177 ---------------------
+ arch/parisc/configs/b180_defconfig          |  97 ------------
+ arch/parisc/configs/c3000_defconfig         | 151 ------------------
+ arch/parisc/configs/c8000_defconfig         | 234 ----------------------------
+ arch/parisc/configs/defconfig               | 206 ------------------------
+ arch/parisc/configs/generic-32bit_defconfig |  93 +++--------
+ arch/parisc/configs/generic-64bit_defconfig |  72 +++------
+ arch/parisc/mm/init.c                       |  50 ++----
+ 9 files changed, 55 insertions(+), 1206 deletions(-)
+ delete mode 100644 arch/parisc/configs/712_defconfig
+ delete mode 100644 arch/parisc/configs/a500_defconfig
+ delete mode 100644 arch/parisc/configs/b180_defconfig
+ delete mode 100644 arch/parisc/configs/c3000_defconfig
+ delete mode 100644 arch/parisc/configs/c8000_defconfig
+ delete mode 100644 arch/parisc/configs/defconfig
