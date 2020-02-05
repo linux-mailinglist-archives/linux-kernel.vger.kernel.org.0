@@ -2,116 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BE131525A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 05:42:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E39431525A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 05:42:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbgBEEms (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 23:42:48 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:51574 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727884AbgBEEms (ORCPT
+        id S1727956AbgBEEmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 23:42:16 -0500
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:50334 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727873AbgBEEmQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 23:42:48 -0500
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id 0154giSx014546;
-        Wed, 5 Feb 2020 13:42:44 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 0154giSx014546
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1580877764;
-        bh=6CPRqOD/Fe7zoq1RGimJL9B88AgPymJVLA5R5fTkxsc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=zHHB/p6KmM0Kk6RP1vVPyCTW1hHBx0Vo9nCpLCtpaDHuCGacAbM8PLprep1c879Hz
-         W2iYS9jHiZMfjIBLgAAaPonzUCmX8jDNoV54W62IiF57f0CfwcpgEl+io4ecX2b4QI
-         pHoKd/ABAo9RqNH4WjRMZo1YB1y1qV6k074SKsJYWXO44Njrsj7dHAnD6r9KlmLwDz
-         W0YZETUkjPf/Z920ZtMaTrmCDagISAhVcDevy0QuyM2Ufl83+L0iFbDdGG4Ce2pMZf
-         FrTfmvZqrxjF4plzs07j3D3fGOBsLgkw7Zdn+yBtfgREyTx7Odnw7V3Q5u/0lKlFjH
-         hvgI2+Rj1jCvw==
-X-Nifty-SrcIP: [209.85.222.44]
-Received: by mail-ua1-f44.google.com with SMTP id o42so368713uad.10;
-        Tue, 04 Feb 2020 20:42:44 -0800 (PST)
-X-Gm-Message-State: APjAAAX7ZbF9w1CYxaU2mExOwMrY4GxvCnZ3DGwA4caPw6pl7Erlppnf
-        2POka23Rra4i7VJhfMwWPqFeL18dn2Vm88WA48Y=
-X-Google-Smtp-Source: APXvYqxcekY6tR906J3p0JD4gnkPGtQ9DyvPxOsISnJIV+Cw5/8zojyJV8B6RF3T6mUxbEfJQ5YSNrfZEb4mu614T60=
-X-Received: by 2002:ab0:2ea6:: with SMTP id y6mr19620371uay.25.1580877763433;
- Tue, 04 Feb 2020 20:42:43 -0800 (PST)
+        Tue, 4 Feb 2020 23:42:16 -0500
+Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
+        id 1izCVy-0004Fh-00; Wed, 05 Feb 2020 04:42:14 +0000
+Date:   Tue, 4 Feb 2020 23:42:14 -0500
+From:   Rich Felker <dalias@libc.org>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: Proposal to fix pwrite with O_APPEND via pwritev2 flag
+Message-ID: <20200205044214.GY1663@brightrain.aerifal.cx>
+References: <20200124000243.GA12112@brightrain.aerifal.cx>
 MIME-Version: 1.0
-References: <ced8ab1c-9c35-c7b0-6b9e-bcee7ffdf469@i-love.sakura.ne.jp>
- <CAK7LNATNY1oP5XgFH3+fuUU=Z7pEz7Sqz0vKCzvhM4Kem7RkOg@mail.gmail.com> <202002040408.01448ioc013868@www262.sakura.ne.jp>
-In-Reply-To: <202002040408.01448ioc013868@www262.sakura.ne.jp>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Wed, 5 Feb 2020 13:42:07 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATD1p6KDYNLYmb+UZpVNOaLdFEp-QRm1waDX_v-sSZ1=w@mail.gmail.com>
-Message-ID: <CAK7LNATD1p6KDYNLYmb+UZpVNOaLdFEp-QRm1waDX_v-sSZ1=w@mail.gmail.com>
-Subject: Re: [PATCH] kconfig: Invalidate all symbols after changing to y or m.
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200124000243.GA12112@brightrain.aerifal.cx>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+On Thu, Jan 23, 2020 at 07:02:43PM -0500, Rich Felker wrote:
+> There's a longstanding unfixable (due to API stability) bug in the
+> pwrite syscall:
+> 
+> http://man7.org/linux/man-pages/man2/pwrite.2.html#BUGS
+> 
+> whereby it wrongly honors O_APPEND if set, ignoring the caller-passed
+> offset. Now that there's a pwritev2 syscall that takes a flags
+> argument, it's possible to fix this without breaking stability by
+> adding a new RWF_NOAPPEND flag, which callers that want the fixed
+> behavior can then pass.
+> 
+> I have a completely untested patch to add such a flag, but would like
+> to get a feel for whether the concept is acceptable before putting
+> time into testing it. If so, I'll submit this as a proper patch with
+> detailed commit message etc. Draft is below.
 
-On Tue, Feb 4, 2020 at 1:09 PM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> Since commit 89b9060987d98833 ("kconfig: Add yes2modconfig and
-> mod2yesconfig targets.") forgot to clear SYMBOL_VALID bit after
-> changing to y or m, these targets did not save the changes.
-> Call sym_clear_all_valid() so that all symbols are revalidated.
->
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+I went ahead and tested this, and it works as intended, so I'll post a
+proper patch with commit message.
 
-
-My previous comment:
-"sym_add_change_count(1); seems the convention way
-to inform kconfig of some options being updated."
-was misleading. Sorry.
-
-
-conf_write() skips symbol invalidation
-when conf_get_change() returns non-zero value.
-
-        if (!conf_get_changed())
-                sym_clear_all_valid();
-
-I do not know why this if-conditional exists here...
-
-Anyway, this patch fixes the issue.
-
-Applied. Thanks.
+Rich
 
 
 
-> ---
->  scripts/kconfig/confdata.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
-> index 11f6c72c2eee..aa70360f27c1 100644
-> --- a/scripts/kconfig/confdata.c
-> +++ b/scripts/kconfig/confdata.c
-> @@ -1331,9 +1331,8 @@ void conf_rewrite_mod_or_yes(enum conf_def_mode mode)
->
->         for_all_symbols(i, sym) {
->                 if (sym_get_type(sym) == S_TRISTATE &&
-> -                   sym->def[S_DEF_USER].tri == old_val) {
-> +                   sym->def[S_DEF_USER].tri == old_val)
->                         sym->def[S_DEF_USER].tri = new_val;
-> -                       sym_add_change_count(1);
-> -               }
->         }
-> +       sym_clear_all_valid();
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index e0d909d35763..3a769a972f79 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3397,6 +3397,8 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
+>  {
+>  	if (unlikely(flags & ~RWF_SUPPORTED))
+>  		return -EOPNOTSUPP;
+> +	if (unlikely((flags & RWF_APPEND) && (flags & RWF_NOAPPEND)))
+> +		return -EINVAL;
+>  
+>  	if (flags & RWF_NOWAIT) {
+>  		if (!(ki->ki_filp->f_mode & FMODE_NOWAIT))
+> @@ -3411,6 +3413,8 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
+>  		ki->ki_flags |= (IOCB_DSYNC | IOCB_SYNC);
+>  	if (flags & RWF_APPEND)
+>  		ki->ki_flags |= IOCB_APPEND;
+> +	if (flags & RWF_NOAPPEND)
+> +		ki->ki_flags &= ~IOCB_APPEND;
+>  	return 0;
 >  }
-> --
-> 2.11.0
->
-
-
--- 
-Best Regards
-Masahiro Yamada
+>  
+> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> index 379a612f8f1d..591357d9b3c9 100644
+> --- a/include/uapi/linux/fs.h
+> +++ b/include/uapi/linux/fs.h
+> @@ -299,8 +299,11 @@ typedef int __bitwise __kernel_rwf_t;
+>  /* per-IO O_APPEND */
+>  #define RWF_APPEND	((__force __kernel_rwf_t)0x00000010)
+>  
+> +/* per-IO negation of O_APPEND */
+> +#define RWF_NOAPPEND	((__force __kernel_rwf_t)0x00000020)
+> +
+>  /* mask of flags supported by the kernel */
+>  #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
+> -			 RWF_APPEND)
+> +			 RWF_APPEND | RWF_NOAPPEND)
+>  
+>  #endif /* _UAPI_LINUX_FS_H */
