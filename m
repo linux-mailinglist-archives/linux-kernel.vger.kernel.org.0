@@ -2,135 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AD851529B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 12:15:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65F621529BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 12:17:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728286AbgBELPu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 06:15:50 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42852 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727170AbgBELPu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 06:15:50 -0500
-Received: by mail-lf1-f65.google.com with SMTP id y19so1187119lfl.9;
-        Wed, 05 Feb 2020 03:15:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=x8ckLRvDL8dg/iPhi1vO5fg6t5hQSAQsmjIQBiNcoB4=;
-        b=EMit4qaHp+ClCDjyyJMWphi8crzhLGi3Smu8kLgmk5GeEWZLArq8dWq6YdlNJzI2Gk
-         tzdNIgVZZ8PnQSPgFY+dN9u8RZk5JhdzutPScZWOr6S7IKi466ZmSnxnjRIskLubxiYv
-         0EazMj9lgI8fWAOpzK/fZslU6nRAOw4Gwz0BezfxkS2HQWJjEEKiUxmqFLvsldQ6Mg5T
-         svzwQH3256oa3SVEHucPnZoIK7k0Alpj8B0lQQ6GEw//CfL0MPfGIec72ClV1tjCrGS1
-         OgYH7ZgBKyxrdHmHUoZeLo1dswYbKQr/NRyhxocM3avK7u+zYoRrc/xMI4/un4qwBD7+
-         SaZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x8ckLRvDL8dg/iPhi1vO5fg6t5hQSAQsmjIQBiNcoB4=;
-        b=r02dXWSVGXd5s9bbPBs8z1Eihk5b4YrgxN8zcaAkQtqqgyLHcotH9hllJVMc0h3jA6
-         FC41Pu/LCSKYf1M6mrJNVgGG37EiRUwouQiyhRPUzTYavaczf3Sc0wtf994m1YNCP/I6
-         xASDX5zouV4h0YNTr9y+HYGgatqV9VySpGPcMf4xcyWvD5B4Q1AbKuMtGfHX0W1JSq9i
-         IJaSrXVHfV1uS7sXoLAo4AsO0Qtbugva9aDhx7JqwALysnlgvoMrhOJpIrqc83IM+On+
-         aUueIYAE6UQOsowEazh1w8kQlXGFvW5f/EdIAJoLo4xgT3r6z+Q+LqTbby5Vj+ciBhpV
-         BHEQ==
-X-Gm-Message-State: APjAAAWMqvdUfzXswEiFM+xuJWSak+hgVI6Ae8amLdVizyioW1x7siZt
-        vrs/buHe7frouih9jjAUTdqwXIY9VFxL2oCkdx8=
-X-Google-Smtp-Source: APXvYqx8oG0xURPnylXNJ0s8CMXSDW6QXuLPsyuAcMSJ8G+8s5BFjDWo3Ir56Hq28vLgMhIY4WDVZaO+tSSN5P0TS7Y=
-X-Received: by 2002:a05:6512:64:: with SMTP id i4mr17458571lfo.55.1580901348247;
- Wed, 05 Feb 2020 03:15:48 -0800 (PST)
+        id S1728343AbgBELRZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 06:17:25 -0500
+Received: from mga18.intel.com ([134.134.136.126]:2567 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727231AbgBELRY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 06:17:24 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2020 03:17:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,405,1574150400"; 
+   d="scan'208";a="254733294"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga004.fm.intel.com with ESMTP; 05 Feb 2020 03:17:20 -0800
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1izIgL-0001Mk-Rp; Wed, 05 Feb 2020 13:17:21 +0200
+Date:   Wed, 5 Feb 2020 13:17:21 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Trond@black.fi.intel.com,
+        Myklebust@black.fi.intel.com, trond.myklebust@hammerspace.com,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 1/2] kernel.h: Split out min()/max() et al helpers
+Message-ID: <20200205111721.GI10400@smile.fi.intel.com>
+References: <20200204170412.30106-1-andriy.shevchenko@linux.intel.com>
+ <c02c86a1-5df3-1b94-78a7-3948bd9e64cb@rasmusvillemoes.dk>
+ <ee9b52c291fe7f090d6516397db978eaaae6c657.camel@perches.com>
 MIME-Version: 1.0
-References: <20200205102852.12236-1-lhenriques@suse.com>
-In-Reply-To: <20200205102852.12236-1-lhenriques@suse.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 5 Feb 2020 12:16:02 +0100
-Message-ID: <CAOi1vP8w_ssGZJTimgDMULgd4jyb_CYuxNyjvHhbBR9FgAqB9A@mail.gmail.com>
-Subject: Re: [PATCH] ceph: fix copy_file_range error path in short copies
-To:     Luis Henriques <lhenriques@suse.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        "Yan, Zheng" <zyan@redhat.com>,
-        Gregory Farnum <gfarnum@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ee9b52c291fe7f090d6516397db978eaaae6c657.camel@perches.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 5, 2020 at 11:28 AM Luis Henriques <lhenriques@suse.com> wrote:
->
-> When there's an error in the copying loop but some bytes have already been
-> copied into the destination file, it is necessary to dirty the caps and
-> eventually update the MDS with the file metadata (timestamps, size).  This
-> patch fixes this error path.
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> ---
->  fs/ceph/file.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 11929d2bb594..7be47d24edb1 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -2104,9 +2104,16 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->                         CEPH_OSD_OP_FLAG_FADVISE_DONTNEED, 0);
->                 if (err) {
->                         dout("ceph_osdc_copy_from returned %d\n", err);
-> -                       if (!ret)
-> +                       /*
-> +                        * If we haven't done any copy yet, just exit with the
-> +                        * error code; otherwise, return the number of bytes
-> +                        * already copied, update metadata and dirty caps.
-> +                        */
-> +                       if (!ret) {
->                                 ret = err;
-> -                       goto out_caps;
-> +                               goto out_caps;
-> +                       }
-> +                       goto out_early;
->                 }
->                 len -= object_size;
->                 src_off += object_size;
-> @@ -2118,6 +2125,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->                 /* We still need one final local copy */
->                 do_final_copy = true;
->
-> +out_early:
+On Tue, Feb 04, 2020 at 05:17:36PM -0800, Joe Perches wrote:
+> On Wed, 2020-02-05 at 00:23 +0100, Rasmus Villemoes wrote:
+> > On 04/02/2020 18.04, Andy Shevchenko wrote:
+> > > kernel.h is being used as a dump for all kinds of stuff for a long time.
+> > > Here is the attempt to start cleaning it up by splitting out min()/max()
+> > > et al helpers.
+> > > 
+> > > At the same time convert users in header and lib folder to use new header.
+> > > Though for time being include new header back to kernel.h to avoid twisted
+> > > indirected includes for existing users.
+> > 
+> > This is definitely long overdue, so thanks for taking this on. I think
+> > minmax.h is fine as a header on its own, but for the other one, I think
+> > you should go even further - and perhaps all these should go in a
+> > include/math/ dir (include/linux/ has ~1200 files), so we'd have
+> > math/minmax.h, math/round.h, math/ilog2.h, math/gcd.h etc., each
+> > containing just enough #includes to be self-contained (so if there's a
+> > declaration of something taking a u32, there's no way around having it
+> > include types.h (or wherever that's defined).
+> 
+> I think that's not at all desirable.
 
-out_early is misleading, especially given that there already
-is out_caps, which just puts caps.  I suggest something like
-update_dst_inode.
+device.h has been recently split to a 4 files (by Linus [old] request).
+Any comments on that?
 
->         file_update_time(dst_file);
->         inode_inc_iversion_raw(dst_inode);
->
+> kernel.h as a monolithic include block is pretty useful.
+> 
+> Separating out the various bits into separate files is
+> OK, but kernel.h should #include them all.
 
-I think this is still buggy.  What follows is this:
+That's fine but should not make people think this is a good idea to include
+only one header to their modules.
 
-        if (endoff > size) {
-                int caps_flags = 0;
+> One day a precompiled header of just kernel.h would be
+> useful to reduce overall compilation time.
 
-                /* Let the MDS know about dst file size change */
-                if (ceph_quota_is_max_bytes_approaching(dst_inode, endoff))
-                        caps_flags |= CHECK_CAPS_NODELAY;
-                if (ceph_inode_set_size(dst_inode, endoff))
-                        caps_flags |= CHECK_CAPS_AUTHONLY;
-                if (caps_flags)
-                        ceph_check_caps(dst_ci, caps_flags, NULL);
-        }
+All years no change.
 
-with endoff being:
+> Converting
+> all the other source files that use a small part of the
+> existing kernel.h into multiple includes would not allow
+> precompiled headers to work efficiently.
 
-        size = i_size_read(dst_inode);
-        endoff = dst_off + len;
 
-So a short copy effectively zero-fills the destination file...
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Thanks,
 
-                Ilya
