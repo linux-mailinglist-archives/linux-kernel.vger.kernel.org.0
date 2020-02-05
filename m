@@ -2,164 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8295E1538E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 20:20:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8728315389D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 20:02:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbgBETT5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 14:19:57 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43118 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727079AbgBETT5 (ORCPT
+        id S1727385AbgBETCc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 14:02:32 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:33068 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727081AbgBETCb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 14:19:57 -0500
-Received: by mail-pf1-f196.google.com with SMTP id s1so1698031pfh.10
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 11:19:56 -0800 (PST)
+        Wed, 5 Feb 2020 14:02:31 -0500
+Received: by mail-il1-f195.google.com with SMTP id s18so2829027iln.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 11:02:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3kaWiVgCUzHQzm8XNSi+4KOVQd2YyqHUv1usmw/72LM=;
-        b=CO4CrP+PQwUxailENkBM1kFSgtk0eKkblQlMdzpIQpAFOVTyZbdF3Vqhlw5sqfA9uM
-         J/kEf5KKjzE/Q9McYWqw0RvFuSjEB1dRusTICnXxfSt83mlxxpZDjRr5WwKa1dPQAHPJ
-         g2RAa0Yj+zQdyRFFYfGHQ42PFCp7MHOcYFGec=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NFFmVcVESEfwSn2A/244mgSc36NuR/2W0Tkvm0b+8y8=;
+        b=OkchdjsZNX5fOzLnoUuy87cUuoKByubZ2zqOERnwR9hKX8hukkCmV8HCsiT0Arwhqh
+         O3u9tIDy2LybmWCTmCT2t6gZkyGkqHAe44Iz/NgWrgghuk72FiEkhGsKXBwAe7MREQnP
+         9O3smUse0EtCi7RJE2RRNhWI3fQMJwh3UhJhHutolJpbCE+w4TSFfGqPpxdb7kG51xYS
+         W2ZpdBe8R0FeOw5HfCQLhmkt6rPo1ibCRSBEg6/O4W7XUwE6nvpNca5Whcb6Cy40v5ip
+         34/JEifRWbqP0vThcUQFmYe7iD4JZsM8IbEXOmS2lfT02z3oNYd4U3NS9p3e9u99LbDr
+         yI9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3kaWiVgCUzHQzm8XNSi+4KOVQd2YyqHUv1usmw/72LM=;
-        b=JtZdMfezpUhRd2BY7lOshKqwKgDoasm72zs/cxMDvlB/0OG80rCOJbo1TUSvsUBraJ
-         bij6bzIYBIjbh60K6d9XJylHsQAiT3RYfAYWNGmQQORQfLsFDygSAy4Aj5Vm6ZgPnOyG
-         R/RjplCu+uf3bSW8oLfVsA4kWyekOkdmzZaiXJGG8dY0b0YhT2yaLU2JcSh+2WWi2Im4
-         NrJSBo2QrOVfqIybDlNwTR905ph2IBglbXsvnSVBQEEdGFWMC/vsOouIT9U0tQqnYQ1N
-         957a7uL2QuptoEES4y0ln0UJuFKORNH9yUZNgYmwl72AYZxUY1V+TMLPYLm6GoWSE57I
-         x2HA==
-X-Gm-Message-State: APjAAAV7+csRwIIYo5Nhipbc3GdsQAHBfRiVAyTvC9Ov1uIf/KbHzGRI
-        iObk6GO3JVQidOMwiDsAWrjYcp31+sw=
-X-Google-Smtp-Source: APXvYqw1egACkYs16SkZQ0SvN+AIzw2ZfFe0dA8G3jL2rE8nn48PZ/IdUGPcyCH9RHSxGF6Vb7C1aQ==
-X-Received: by 2002:a63:3487:: with SMTP id b129mr38154712pga.320.1580930395429;
-        Wed, 05 Feb 2020 11:19:55 -0800 (PST)
-Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:172e:4646:c089:ce59])
-        by smtp.gmail.com with ESMTPSA id u23sm257224pfm.29.2020.02.05.11.19.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 11:19:54 -0800 (PST)
-From:   Prashant Malani <pmalani@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Prashant Malani <pmalani@chromium.org>,
-        kbuild test robot <lkp@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-media@vger.kernel.org (open list:MEDIA INPUT INFRASTRUCTURE
-        (V4L/DVB))
-Subject: [PATCH v2 15/17] media: cros-ec-cec: Use cros_ec_cmd()
-Date:   Wed,  5 Feb 2020 11:00:24 -0800
-Message-Id: <20200205190028.183069-16-pmalani@chromium.org>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-In-Reply-To: <20200205190028.183069-1-pmalani@chromium.org>
-References: <20200205190028.183069-1-pmalani@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NFFmVcVESEfwSn2A/244mgSc36NuR/2W0Tkvm0b+8y8=;
+        b=UoHlxt0YAv8lO+7vveC8fS2Dk1ZBEz1gbwac9xvkgkwWhAmXJaAws7f18BdZvSslEW
+         /Fd6j7cos5/Nq9sJu3BOTkXsajNss9+KAYyGhpR96I3ETjxHcfQgJQ7wY9Ft611Gdi4w
+         RLb3hQWaw3691UTizCCiLtaLHhwG2tJle2b4mtNxaNL0w7k2JowN/gUeLQh2S5g0nofo
+         y+iZYRGBOOAa3n5Kr4XDZ8xmYqB4FJbmIGK6fmf3Z3AJp1J8FBZL7USCpAPkypYJpKBS
+         Y/f3m5T0axCbu2fdmZijMND1myWDcvHzti/qkyO7XljCvz91Iie/QDzOC9NWzL3fM+au
+         v/3Q==
+X-Gm-Message-State: APjAAAWPfeYoJ+PHQj6ih7mAry9rN9sjja/s/Fsyato7f4A36HeRqd/r
+        dgzIaApRJyFck0vjf1OKlFRcko3LkdblfRX9oIg=
+X-Google-Smtp-Source: APXvYqyp9wuSn6/5IMsbRVub/R5YxR28vshgim22WfgXtRPHIQYjj4RUu6bWJWFTvDN/70errdbBVIhzy+NuDtuJv0s=
+X-Received: by 2002:a92:9ac5:: with SMTP id c66mr35877612ill.232.1580929350686;
+ Wed, 05 Feb 2020 11:02:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200205105955.28143-1-kraxel@redhat.com> <20200205105955.28143-3-kraxel@redhat.com>
+In-Reply-To: <20200205105955.28143-3-kraxel@redhat.com>
+From:   Chia-I Wu <olvaffe@gmail.com>
+Date:   Wed, 5 Feb 2020 11:02:19 -0800
+Message-ID: <CAPaKu7SCk_3yeTtzFTTU_y-tyo8EDS7vR8i+mk829=0D-UjLQA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] drm/virtio: resource teardown tweaks
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace cros_ec_cmd_xfer_status() with cros_ec_cmd() which does the
-message buffer setup and cleanup, but is located in platform/chrome
-and used by other drivers.
+On Wed, Feb 5, 2020 at 3:00 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
+>
+> Add new virtio_gpu_cleanup_object() helper function for object cleanup.
+> Wire up callback function for resource unref, do cleanup from callback
+> when we know the host stopped using the resource.
+>
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>  drivers/gpu/drm/virtio/virtgpu_drv.h    |  3 ++-
+>  drivers/gpu/drm/virtio/virtgpu_object.c | 19 ++++++++++----
+>  drivers/gpu/drm/virtio/virtgpu_vq.c     | 35 ++++++++++++++++++++++---
+>  3 files changed, 48 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
+> index 7e69c06e168e..372dd248cf02 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
+> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
+> @@ -262,7 +262,7 @@ void virtio_gpu_cmd_create_resource(struct virtio_gpu_device *vgdev,
+>                                     struct virtio_gpu_object_array *objs,
+>                                     struct virtio_gpu_fence *fence);
+>  void virtio_gpu_cmd_unref_resource(struct virtio_gpu_device *vgdev,
+> -                                  uint32_t resource_id);
+> +                                  struct virtio_gpu_object *bo);
+>  void virtio_gpu_cmd_transfer_to_host_2d(struct virtio_gpu_device *vgdev,
+>                                         uint64_t offset,
+>                                         uint32_t width, uint32_t height,
+> @@ -355,6 +355,7 @@ void virtio_gpu_fence_event_process(struct virtio_gpu_device *vdev,
+>                                     u64 last_seq);
+>
+>  /* virtio_gpu_object */
+> +void virtio_gpu_cleanup_object(struct virtio_gpu_object *bo);
+>  struct drm_gem_object *virtio_gpu_create_object(struct drm_device *dev,
+>                                                 size_t size);
+>  int virtio_gpu_object_create(struct virtio_gpu_device *vgdev,
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
+> index 017a9e0fc3bb..28a161af7503 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_object.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_object.c
+> @@ -61,6 +61,14 @@ static void virtio_gpu_resource_id_put(struct virtio_gpu_device *vgdev, uint32_t
+>         }
+>  }
+>
+> +void virtio_gpu_cleanup_object(struct virtio_gpu_object *bo)
+> +{
+> +       struct virtio_gpu_device *vgdev = bo->base.base.dev->dev_private;
+> +
+> +       virtio_gpu_resource_id_put(vgdev, bo->hw_res_handle);
+> +       drm_gem_shmem_free_object(&bo->base.base);
+> +}
+> +
+>  static void virtio_gpu_free_object(struct drm_gem_object *obj)
+>  {
+>         struct virtio_gpu_object *bo = gem_to_virtio_gpu_obj(obj);
+> @@ -68,11 +76,12 @@ static void virtio_gpu_free_object(struct drm_gem_object *obj)
+>
+>         if (bo->pages)
+>                 virtio_gpu_object_detach(vgdev, bo);
+> -       if (bo->created)
+> -               virtio_gpu_cmd_unref_resource(vgdev, bo->hw_res_handle);
+> -       virtio_gpu_resource_id_put(vgdev, bo->hw_res_handle);
+> -
+> -       drm_gem_shmem_free_object(obj);
+> +       if (bo->created) {
+> +               virtio_gpu_cmd_unref_resource(vgdev, bo);
+> +               /* completion handler calls virtio_gpu_cleanup_object() */
+nitpick: we don't need this comment when virtio_gpu_cmd_unref_cb is
+defined by this file and passed to virtio_gpu_cmd_unref_resource.
 
-Signed-off-by: Prashant Malani <pmalani@chromium.org>
-Reported-by: kbuild test robot <lkp@intel.com>
----
+I happen to be looking at our error handling paths.  I think we want
+virtio_gpu_queue_fenced_ctrl_buffer to call vbuf->resp_cb on errors.
 
-Changes in v2:
-- Updated to use new function name and parameter list.
-- Used C99 element setting to initialize struct.
 
- .../media/platform/cros-ec-cec/cros-ec-cec.c  | 45 +++++++------------
- 1 file changed, 16 insertions(+), 29 deletions(-)
+> +               return;
+> +       }
+> +       virtio_gpu_cleanup_object(bo);
+>  }
+>
+>  static const struct drm_gem_object_funcs virtio_gpu_gem_funcs = {
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+> index 6d6d55dc384e..6e8097e4c214 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_vq.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+> @@ -152,6 +152,15 @@ static void *virtio_gpu_alloc_cmd(struct virtio_gpu_device *vgdev,
+>                                          sizeof(struct virtio_gpu_ctrl_hdr), NULL);
+>  }
+>
+> +static void *virtio_gpu_alloc_cmd_cb(struct virtio_gpu_device *vgdev,
+> +                                    struct virtio_gpu_vbuffer **vbuffer_p,
+> +                                    int size,
+> +                                    virtio_gpu_resp_cb cb)
+> +{
+> +       return virtio_gpu_alloc_cmd_resp(vgdev, cb, vbuffer_p, size,
+> +                                        sizeof(struct virtio_gpu_ctrl_hdr), NULL);
+> +}
+> +
+>  static void free_vbuf(struct virtio_gpu_device *vgdev,
+>                       struct virtio_gpu_vbuffer *vbuf)
+>  {
+> @@ -494,17 +503,37 @@ void virtio_gpu_cmd_create_resource(struct virtio_gpu_device *vgdev,
+>         bo->created = true;
+>  }
+>
+> +static void virtio_gpu_cmd_unref_cb(struct virtio_gpu_device *vgdev,
+> +                                   struct virtio_gpu_vbuffer *vbuf)
+> +{
+> +       struct virtio_gpu_object *bo;
+> +
+> +       bo = gem_to_virtio_gpu_obj(vbuf->objs->objs[0]);
+> +       kfree(vbuf->objs);
+> +       vbuf->objs = NULL;
+> +
+> +       virtio_gpu_cleanup_object(bo);
+> +}
+> +
+>  void virtio_gpu_cmd_unref_resource(struct virtio_gpu_device *vgdev,
+> -                                  uint32_t resource_id)
+> +                                  struct virtio_gpu_object *bo)
+>  {
+>         struct virtio_gpu_resource_unref *cmd_p;
+>         struct virtio_gpu_vbuffer *vbuf;
+>
+> -       cmd_p = virtio_gpu_alloc_cmd(vgdev, &vbuf, sizeof(*cmd_p));
+> +       cmd_p = virtio_gpu_alloc_cmd_cb(vgdev, &vbuf, sizeof(*cmd_p),
+> +                                       virtio_gpu_cmd_unref_cb);
+>         memset(cmd_p, 0, sizeof(*cmd_p));
+>
+>         cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_RESOURCE_UNREF);
+> -       cmd_p->resource_id = cpu_to_le32(resource_id);
+> +       cmd_p->resource_id = cpu_to_le32(bo->hw_res_handle);
+> +
+> +       /*
+> +        * We are in the release callback and do NOT want refcount
+> +        * bo, so do NOT use virtio_gpu_array_add_obj().
+> +        */
+> +       vbuf->objs = virtio_gpu_array_alloc(1);
+> +       vbuf->objs->objs[0] = &bo->base.base
+This is an abuse of obj array.  Add "void *private_data;" to
+virtio_gpu_vbuffer and use that maybe?
 
-diff --git a/drivers/media/platform/cros-ec-cec/cros-ec-cec.c b/drivers/media/platform/cros-ec-cec/cros-ec-cec.c
-index 0e7e2772f08f96..a462af1c9ae04b 100644
---- a/drivers/media/platform/cros-ec-cec/cros-ec-cec.c
-+++ b/drivers/media/platform/cros-ec-cec/cros-ec-cec.c
-@@ -93,18 +93,14 @@ static int cros_ec_cec_set_log_addr(struct cec_adapter *adap, u8 logical_addr)
- {
- 	struct cros_ec_cec *cros_ec_cec = adap->priv;
- 	struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
--	struct {
--		struct cros_ec_command msg;
--		struct ec_params_cec_set data;
--	} __packed msg = {};
-+	struct ec_params_cec_set data = {
-+		.cmd = CEC_CMD_LOGICAL_ADDRESS,
-+		.val = logical_addr,
-+	};
- 	int ret;
- 
--	msg.msg.command = EC_CMD_CEC_SET;
--	msg.msg.outsize = sizeof(msg.data);
--	msg.data.cmd = CEC_CMD_LOGICAL_ADDRESS;
--	msg.data.val = logical_addr;
--
--	ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
-+	ret = cros_ec_cmd(cros_ec, 0, EC_CMD_CEC_SET, &data, sizeof(data),
-+			  NULL, 0, NULL);
- 	if (ret < 0) {
- 		dev_err(cros_ec->dev,
- 			"error setting CEC logical address on EC: %d\n", ret);
-@@ -119,17 +115,12 @@ static int cros_ec_cec_transmit(struct cec_adapter *adap, u8 attempts,
- {
- 	struct cros_ec_cec *cros_ec_cec = adap->priv;
- 	struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
--	struct {
--		struct cros_ec_command msg;
--		struct ec_params_cec_write data;
--	} __packed msg = {};
-+	struct ec_params_cec_write data = {};
- 	int ret;
- 
--	msg.msg.command = EC_CMD_CEC_WRITE_MSG;
--	msg.msg.outsize = cec_msg->len;
--	memcpy(msg.data.msg, cec_msg->msg, cec_msg->len);
--
--	ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
-+	memcpy(data.msg, cec_msg->msg, cec_msg->len);
-+	ret = cros_ec_cmd(cros_ec, 0, EC_CMD_CEC_WRITE_MSG, &data,
-+			  sizeof(cec_msg->len), NULL, 0, NULL);
- 	if (ret < 0) {
- 		dev_err(cros_ec->dev,
- 			"error writing CEC msg on EC: %d\n", ret);
-@@ -143,18 +134,14 @@ static int cros_ec_cec_adap_enable(struct cec_adapter *adap, bool enable)
- {
- 	struct cros_ec_cec *cros_ec_cec = adap->priv;
- 	struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
--	struct {
--		struct cros_ec_command msg;
--		struct ec_params_cec_set data;
--	} __packed msg = {};
-+	struct ec_params_cec_set data = {
-+		.cmd = CEC_CMD_ENABLE,
-+		.val = enable,
-+	};
- 	int ret;
- 
--	msg.msg.command = EC_CMD_CEC_SET;
--	msg.msg.outsize = sizeof(msg.data);
--	msg.data.cmd = CEC_CMD_ENABLE;
--	msg.data.val = enable;
--
--	ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
-+	ret = cros_ec_cmd(cros_ec, 0, EC_CMD_CEC_SET, &data, sizeof(data),
-+			  NULL, 0, NULL);
- 	if (ret < 0) {
- 		dev_err(cros_ec->dev,
- 			"error %sabling CEC on EC: %d\n",
--- 
-2.25.0.341.g760bfbb309-goog
+Otherwise, simply
 
+  // abuse objs field to pass our private data; must reset in the resp_cb
+  vbuf->objs = (virtio_gpu_object_array *) bo;
+
+makes it easier to see what is going on.
+
+
+>
+>         virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
+>  }
+> --
+> 2.18.1
+>
