@@ -2,91 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9912F153275
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 15:06:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3B9F153287
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 15:11:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbgBEOGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 09:06:08 -0500
-Received: from foss.arm.com ([217.140.110.172]:47628 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726748AbgBEOGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 09:06:08 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 865C431B;
-        Wed,  5 Feb 2020 06:06:07 -0800 (PST)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5626F3F68E;
-        Wed,  5 Feb 2020 06:06:05 -0800 (PST)
-Date:   Wed, 5 Feb 2020 14:06:03 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Maulik Shah <mkshah@codeaurora.org>
-Cc:     swboyd@chromium.org, agross@kernel.org, david.brown@linaro.org,
-        Lorenzo.Pieralisi@arm.com, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, bjorn.andersson@linaro.org,
-        evgreen@chromium.org, dianders@chromium.org, rnayak@codeaurora.org,
-        ilina@codeaurora.org, lsrao@codeaurora.org, ulf.hansson@linaro.org,
-        rjw@rjwysocki.net, Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH v3 5/7] drivers: firmware: psci: Add hierarchical domain
- idle states converter
-Message-ID: <20200205140603.GB38466@bogus>
-References: <1580736940-6985-1-git-send-email-mkshah@codeaurora.org>
- <1580736940-6985-6-git-send-email-mkshah@codeaurora.org>
- <20200203170832.GA38466@bogus>
- <0d7f7ade-3a1e-5428-d851-f1a886f58712@codeaurora.org>
- <20200204152132.GA44858@bogus>
- <6ff7c82d-4204-a339-4070-0154ab4515f1@codeaurora.org>
+        id S1728109AbgBEOLG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 09:11:06 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:52396 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727109AbgBEOLF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 09:11:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580911864;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=w4/IAIkLz0D/Z/IjxmMi8dEqQry7xSlVGHBtHnUX7vg=;
+        b=Z1WcrUakHCqJ+6Xe7XtsyRXOwm/JSLTyS7nmmeExkpk3SoTpAdpyy340czNHSNtGMGHG1W
+        6IN6Y81+eEu230c0RB2Q2ubKgNB3M6VH1IJxjkgNIJmGjt7mO7a1YpfwjFLC3f6phjJCLY
+        6TsKMcwg7+xeYKF0grZYuyZhFlPiyVg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-261-ugnoM9xKOA6feBUjQwI-mQ-1; Wed, 05 Feb 2020 09:11:00 -0500
+X-MC-Unique: ugnoM9xKOA6feBUjQwI-mQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6AFB41336563;
+        Wed,  5 Feb 2020 14:10:58 +0000 (UTC)
+Received: from x1.home (ovpn-116-28.phx2.redhat.com [10.3.116.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4E01660C05;
+        Wed,  5 Feb 2020 14:10:57 +0000 (UTC)
+Date:   Wed, 5 Feb 2020 07:10:56 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     "Liu, Yi L" <yi.l.liu@intel.com>
+Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dev@dpdk.org" <dev@dpdk.org>,
+        "mtosatti@redhat.com" <mtosatti@redhat.com>,
+        "thomas@monjalon.net" <thomas@monjalon.net>,
+        "bluca@debian.org" <bluca@debian.org>,
+        "jerinjacobk@gmail.com" <jerinjacobk@gmail.com>,
+        "Richardson, Bruce" <bruce.richardson@intel.com>,
+        "cohuck@redhat.com" <cohuck@redhat.com>
+Subject: Re: [RFC PATCH 0/7] vfio/pci: SR-IOV support
+Message-ID: <20200205071056.101ad3f2@x1.home>
+In-Reply-To: <A2975661238FB949B60364EF0F2C25743A1ABFE0@SHSMSX104.ccr.corp.intel.com>
+References: <158085337582.9445.17682266437583505502.stgit@gimli.home>
+        <A2975661238FB949B60364EF0F2C25743A1ABFE0@SHSMSX104.ccr.corp.intel.com>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6ff7c82d-4204-a339-4070-0154ab4515f1@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 05:53:00PM +0530, Maulik Shah wrote:
->
-> On 2/4/2020 8:51 PM, Sudeep Holla wrote:
-> > On Tue, Feb 04, 2020 at 10:22:42AM +0530, Maulik Shah wrote:
-> > > On 2/3/2020 10:38 PM, Sudeep Holla wrote:
-> > > > On Mon, Feb 03, 2020 at 07:05:38PM +0530, Maulik Shah wrote:
-> > > > > From: Ulf Hansson <ulf.hansson@linaro.org>
-> > > > >
-> > > > > If the hierarchical CPU topology is used, but the OS initiated mode isn't
-> > > > > supported, we need to rely solely on the regular cpuidle framework to
-> > > > > manage the idle state selection, rather than using genpd and its
-> > > > > governor.
-> > > > >
-> > > > > For this reason, introduce a new PSCI DT helper function,
-> > > > > psci_dt_pm_domains_parse_states(), which parses and converts the
-> > > > > hierarchically described domain idle states from DT, into regular flattened
-> > > > > cpuidle states. The converted states are added to the existing cpuidle
-> > > > > driver's array of idle states, which make them available for cpuidle.
-> > > > >
-> > > > And what's the main motivation for this if OSI is not supported in the
-> > > > firmware ?
-> > > Hi Sudeep,
-> > >
-> > > Main motivation is to do last-man activities before the CPU cluster can
-> > > enter a deep idle state.
-> > >
-> > Details on those last-man activities will help the discussion. Basically
-> > I am wondering what they are and why they need to done in OSPM ?
->
-> Hi Sudeep,
->
-> there are cases like,
->
-> Last cpu going to deepest idle mode need to lower various resoruce
-> requirements (for eg DDR freq).
->
+On Wed, 5 Feb 2020 07:57:21 +0000
+"Liu, Yi L" <yi.l.liu@intel.com> wrote:
 
-In PC mode, only PSCI implementation knows the last man and there shouldn't
-be any notion of it in OS. If you need it, you may need OSI. You are still
-mixing up the things. NACK for any such approach, sorry.
+> Hi Alex,
+> 
+> Silly questions on the background:
+> 
+> > From: Alex Williamson <alex.williamson@redhat.com>
+> > Sent: Wednesday, February 5, 2020 7:06 AM
+> > Subject: [RFC PATCH 0/7] vfio/pci: SR-IOV support
+> > 
+> > There seems to be an ongoing desire to use userspace, vfio-based
+> > drivers for both SR-IOV PF and VF devices.   
+> 
+> Is this series to make PF be bound-able to vfio-pci even SR-IOV is
+> enabled on such PFs? If yes, is it allowed to assign PF to a VM? or
+> it can only be used by userspace applications like DPDK?
 
---
-Regards,
-Sudeep
+No, this series does not change the behavior of vfio-pci with respect
+to probing a PF where VFs are already enabled.  This is still
+disallowed.  I haven't seen a use case that requires this and allowing
+it tends to subvert the restrictions here.  For instance, if an
+existing VF is already in use by a vfio-pci driver, the PF can
+transition from a trusted host driver to an unknown userspace driver.
+
+> > The fundamental issue
+> > with this concept is that the VF is not fully independent of the PF
+> > driver.  Minimally the PF driver might be able to deny service to the
+> > VF, VF data paths might be dependent on the state of the PF device,
+> > or the PF my have some degree of ability to inspect or manipulate the
+> > VF data.  It therefore would seem irresponsible to unleash VFs onto
+> > the system, managed by a user owned PF.
+> > 
+> > We address this in a few ways in this series.  First, we can use a bus
+> > notifier and the driver_override facility to make sure VFs are bound
+> > to the vfio-pci driver by default.  This should eliminate the chance
+> > that a VF is accidentally bound and used by host drivers.  We don't
+> > however remove the ability for a host admin to change this override.
+> > 
+> > The next issue we need to address is how we let userspace drivers
+> > opt-in to this participation with the PF driver.  We do not want an
+> > admin to be able to unwittingly assign one of these VFs to a tenant
+> > that isn't working in collaboration with the PF driver.  We could use
+> > IOMMU grouping, but this seems to push too far towards tightly coupled
+> > PF and VF drivers.  This series introduces a "VF token", implemented
+> > as a UUID, as a shared secret between PF and VF drivers.  The token
+> > needs to be set by the PF driver and used as part of the device
+> > matching by the VF driver.  Provisions in the code also account for
+> > restarting the PF driver with active VF drivers, requiring the PF to
+> > use the current token to re-gain access to the PF.  
+> 
+> How about the scenario in which PF driver is vfio-based userspace
+> driver but VF drivers are mixed. This means not all VFs are bound
+> to vfio-based userspace driver. Is it also supported here? :-)
+
+It's allowed.  Userspace VF drivers will need to participate in the VF
+token scheme, host drivers may be bound to VFs normally after removing
+the default driver_override.  Thanks,
+
+Alex
+
