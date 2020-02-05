@@ -2,115 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B03115250F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 04:05:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2874315251B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 04:07:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbgBEDFJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 22:05:09 -0500
-Received: from ozlabs.org ([203.11.71.1]:43509 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727774AbgBEDFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 22:05:08 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48C5yp0hsYz9sSR;
-        Wed,  5 Feb 2020 14:05:05 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1580871907;
-        bh=Dy2HNszoS5jMHuHyexeNZ1i6v2XpVUmuydKw/9Caj58=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=oLjjl/QmMaQUGkaI425lp8ZqbybG1H7xgmO+WmWq3t6CGe3Ydfi2omMvBob16Z5TS
-         LHkGOmvtvcpZoOVFbp1xrUN8gFyM+NV2mLZMiM0QNEI7mXLXmjvRfPJAaikuMqME9U
-         DdqyIDLQ8fMvvU9O3fXj+2ZNog4M9YaBI1kKj0vVSxuvesokyfqnXtxONTr0BTRBPw
-         GW6r4NuLz+BlK//+r3+ZzGcMec3ZhTxzZS+gLGPQpEtFPtWSi10F20kXho2mhO2xk1
-         C2dHxfOWKKQ1nfwjw5I8ncgxAzNir+zHOoAFGWZtbmPWBsUWAIawAKTavRpdoKHRah
-         /1o2zj3OuuW7Q==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org
-Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, vishal.l.verma@intel.com,
-        hch@lst.de, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 2/5] mm/memremap_pages: Introduce memremap_compat_align()
-In-Reply-To: <158041476763.3889308.13149849631980018039.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <158041475480.3889308.655103391935006598.stgit@dwillia2-desk3.amr.corp.intel.com> <158041476763.3889308.13149849631980018039.stgit@dwillia2-desk3.amr.corp.intel.com>
-Date:   Wed, 05 Feb 2020 14:05:02 +1100
-Message-ID: <875zgl3fa9.fsf@mpe.ellerman.id.au>
+        id S1727910AbgBEDHM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 22:07:12 -0500
+Received: from mail-eopbgr60060.outbound.protection.outlook.com ([40.107.6.60]:39033
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727746AbgBEDHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 22:07:12 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TTpvX75eMP89GGv8HLuvP7IKCh6x0v+5RpYg+jzxLI+RpAHi20LMz/f6JNAIjihPvs300q3dTpX3f4obJi3WrX7ZSrWcUGR10DNSvVWCGxgo2XJfEb53C8XLtJQ/AJiWO7P0vIHUpgHO0va+B1ByYig6kqBBC9OdVHqH3+1v8D0RLbamUPDSX6XYCAb/6TXouCJSXX2v6UZ9adIPFSnW7wR7+sQKorbaY4Gc3CMtcPjtvI9FOygr1QWhkq7A7vX319B+WFd/jGBUAS4DxjmuWIrsBrSpjV/uEBqFZVYmPJMASxSWpSE4PAbRMVV8OECur0klrCV6DNXCiFDWP9qSjA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=11rOZ6ub1Ypt7xsleDLGkDFWVYHUW2rojAmRp2oYkoo=;
+ b=l5y5cTpM0uFxvQlZMQNE6q0IjCfkwmIHcWwtJgNzgmQeQwZzJ4xtVn/YZIJtSHqmjl2+DRkHDVe44VYnw31DRBJxa6Rqj1mSN4Bmr1KCCM+OlW9zgMGLmY5NVJo5hEnzBsklbP8psxNv3MeFp+xA60KaEBPS5Uw94Gij3Eb7sK2CW9gc7p7WpYYkVm99CEe8FM/Cnr/TrPEMuJqw38dKL9MI2kDAWntBXSGbWBtM6QGmuZyC4yONaal3BAWws8FZFYSitnMB8wCHxHUMwTyOrb3RoPm1cV9dn59AqcrwbbQOJKJFVFbNb4oC9JYtkU0hor/1+YnCfSi8jcO8gStnBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=11rOZ6ub1Ypt7xsleDLGkDFWVYHUW2rojAmRp2oYkoo=;
+ b=kxWtPX/KECd0qQhvm6wDW4C2YEh4snD6Fu9BaDkT4xSgnBiAZH0NrP+XPTwaKIPi78JvkepDaC/tLIxRgTEW9fB0G+TUWhr09jhr2coPWR+fR9QtH9Bt5T8Um1YJu47yK5h1OizxPo4cCMnq7+qQ9+1NanY94W63+5BAzLXBe7A=
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.150) by
+ DB7PR04MB4474.eurprd04.prod.outlook.com (52.135.141.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2686.30; Wed, 5 Feb 2020 03:07:08 +0000
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::59e6:140:b2df:a5b0]) by DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::59e6:140:b2df:a5b0%7]) with mapi id 15.20.2686.035; Wed, 5 Feb 2020
+ 03:07:08 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Fabio Estevam <festevam@gmail.com>
+CC:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abel.vesa@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH 0/7] ARM: imx: imx7ulp: add cpufreq support
+Thread-Topic: [PATCH 0/7] ARM: imx: imx7ulp: add cpufreq support
+Thread-Index: AQHV22DB4Jio1GYHq0SGCvfmhvaRDKgLDAqAgADebCA=
+Date:   Wed, 5 Feb 2020 03:07:08 +0000
+Message-ID: <DB7PR04MB44904E50D1B0AC71D999D1C288020@DB7PR04MB4490.eurprd04.prod.outlook.com>
+References: <1580823277-13644-1-git-send-email-peng.fan@nxp.com>
+ <CAOMZO5Avbrzf8jNQ301mNN3YXXPjEGYWkooae_uw=wLykMgt+A@mail.gmail.com>
+In-Reply-To: <CAOMZO5Avbrzf8jNQ301mNN3YXXPjEGYWkooae_uw=wLykMgt+A@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: f2f55fa6-6fe4-4e46-2da0-08d7a9e87cd2
+x-ms-traffictypediagnostic: DB7PR04MB4474:|DB7PR04MB4474:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB7PR04MB4474C7918F90B3ADE631B07188020@DB7PR04MB4474.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0304E36CA3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(39860400002)(136003)(346002)(396003)(189003)(199004)(26005)(44832011)(55016002)(5660300002)(81156014)(86362001)(478600001)(76116006)(316002)(66446008)(64756008)(66476007)(66946007)(66556008)(186003)(54906003)(4744005)(4326008)(8676002)(6506007)(52536014)(53546011)(33656002)(81166006)(71200400001)(7696005)(2906002)(8936002)(9686003)(6916009);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4474;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ftqWxKkoMiR9U2WhCZo3NFRkdDNX9pmBfeKBqYx3TxxRClXJjIlJwTzkN1lZCTCMwZnjvuCTZVLmJ8jj7p6jMAOB3dD6uqyXEhj0GNfXyXltSA+b8GKHrDl/MqMnKgBMKFZSytuACAjOjGsR32W15tSc2WnMkEE7QRo7s+gZOxs/dFAP+qNeOOsu8MA9zvlmrUR9TfTgO1OCZDZSRG3c8Lna7YSnoUDum8Kch1NLoibsfNx61QvpDP/f6EA6UZt2EFC38xnWYEhGLdBGrQ3dAxTszYva98ekaV6IKSZPMxuV6eaOGIB5pzYJXIg5N3Lra4QRgNzsgyIQ0D8vdd/pK9FfnBkRDLXQlCPw5+wBiBpr6P5Ugv2VEGcD/st+FRjrfnyo4ZXxapOQMZo2pRpd9Hw2WfaYiybaMiCNaEldjPm3mE0vKWgPcQ4u911p4gRX
+x-ms-exchange-antispam-messagedata: vxKE5273B2zgZPjiQPbu2D7CAzjN0ttqspnWod4mvWyXjUuzm/NqgfLAyT41uF5mJ7Vjn9OtMIDwTLgBfGaVka4XHKUzaNut/zGpRm9FeTrSACXAYJMErUkKKRskuh97TqozhBlMULixpEencJC5cg==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2f55fa6-6fe4-4e46-2da0-08d7a9e87cd2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2020 03:07:08.7330
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: v+v2lkvwflzhTjO40sRAUj54LY/Iqcw1E0tn+JLj1KGuJlF+NttxRLbifw4Uv3qTkabaygS0JXv+AcGcdmswyA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4474
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan Williams <dan.j.williams@intel.com> writes:
-> The "sub-section memory hotplug" facility allows memremap_pages() users
-> like libnvdimm to compensate for hardware platforms like x86 that have a
-> section size larger than their hardware memory mapping granularity.  The
-> compensation that sub-section support affords is being tolerant of
-> physical memory resources shifting by units smaller (64MiB on x86) than
-> the memory-hotplug section size (128 MiB). Where the platform
-> physical-memory mapping granularity is limited by the number and
-> capability of address-decode-registers in the memory controller.
->
-> While the sub-section support allows memremap_pages() to operate on
-> sub-section (2MiB) granularity, the Power architecture may still
-> require 16MiB alignment on "!radix_enabled()" platforms.
->
-> In order for libnvdimm to be able to detect and manage this per-arch
-> limitation, introduce memremap_compat_align() as a common minimum
-> alignment across all driver-facing memory-mapping interfaces, and let
-> Power override it to 16MiB in the "!radix_enabled()" case.
->
-> The assumption / requirement for 16MiB to be a viable
-> memremap_compat_align() value is that Power does not have platforms
-> where its equivalent of address-decode-registers never hardware remaps a
-> persistent memory resource on smaller than 16MiB boundaries.
->
-> Based on an initial patch by Aneesh.
->
-> Link: http://lore.kernel.org/r/CAPcyv4gBGNP95APYaBcsocEa50tQj9b5h__83vgngjq3ouGX_Q@mail.gmail.com
-> Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> Reported-by: Jeff Moyer <jmoyer@redhat.com>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  arch/powerpc/include/asm/io.h |   10 ++++++++++
->  drivers/nvdimm/pfn_devs.c     |    2 +-
->  include/linux/io.h            |   23 +++++++++++++++++++++++
->  include/linux/mmzone.h        |    1 +
->  4 files changed, 35 insertions(+), 1 deletion(-)
-
-The powerpc change here looks fine to me.
-
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
-
-cheers
-
-> diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
-> index a63ec938636d..0fa2dc483008 100644
-> --- a/arch/powerpc/include/asm/io.h
-> +++ b/arch/powerpc/include/asm/io.h
-> @@ -734,6 +734,16 @@ extern void __iomem * __ioremap_at(phys_addr_t pa, void *ea,
->  				   unsigned long size, pgprot_t prot);
->  extern void __iounmap_at(void *ea, unsigned long size);
->  
-> +#ifdef CONFIG_SPARSEMEM
-> +static inline unsigned long memremap_compat_align(void)
-> +{
-> +	if (radix_enabled())
-> +		return SUBSECTION_SIZE;
-> +	return (1UL << mmu_psize_defs[mmu_linear_psize].shift);
-> +}
-> +#define memremap_compat_align memremap_compat_align
-> +#endif
-> +
->  /*
->   * When CONFIG_PPC_INDIRECT_PIO is set, we use the generic iomap implementation
->   * which needs some additional definitions here. They basically allow PIO
+PiBTdWJqZWN0OiBSZTogW1BBVENIIDAvN10gQVJNOiBpbXg6IGlteDd1bHA6IGFkZCBjcHVmcmVx
+IHN1cHBvcnQNCj4gDQo+IEhpIFBlbmcsDQo+IA0KPiBPbiBUdWUsIEZlYiA0LCAyMDIwIGF0IDEw
+OjQxIEFNIDxwZW5nLmZhbkBueHAuY29tPiB3cm90ZToNCj4gDQo+ID4gSSBub3QgaW5jbHVkZSB0
+aGUgdm9sdGFnZSBjb25maWd1cmF0aW9uLCBiZWNhdXNlIGlteC1ycG1zZyBhbmQgcGYxNTUwDQo+
+ID4gcnBtc2cgZHJpdmVyIHN0aWxsIG5vdCB1cHN0cmVhbWVkLg0KPiANCj4gQW55IHBsYW5zIGZv
+ciB1cHN0cmVhbWluZyBpbXgtcnBtc2c/IEkgYXNzdW1lIHRoaXMgd2lsbCBnbyBpbnRvIHRoZQ0K
+PiByZW1vdGVwcm9jIGZyYW1ld29yay4NCg0KSSBuZWVkIGNoZWNrIHdpdGggUmljaGFyZCBmaXJz
+dCwgaWYgbm8gcGxhbiwgSSdsbCB0YWtlIGl0Lg0KDQo+IA0KPiBXaXRob3V0IHRoaXMgZHJpdmVy
+LCB0aGUgaS5NWDdVTFAgc3VwcG9ydCBpbiBtYWlubGluZSBpcyB2ZXJ5IGxpbWl0ZWQgaW4NCj4g
+ZnVuY3Rpb25hbGl0eS4NCg0KVG8gdGVzdCBvbmx5IGNsayBjaGFuZ2UsIHJwbXNnIGRyaXZlciBp
+cyBub3QgYSBtdXN0LiBJIGhhdmUgdGVzdGVkIHRoYXQsDQptaHogY291bGQgY29ycmVjdGx5IHNo
+b3cgNTAwTUh6IGFuZCA3MjBNaHogd2l0aCB0aGUgZGlmZiBhcHBsaWVkDQppbiBjb3ZlciBsZXR0
+ZXIuDQoNCkknbGwgdHJ5IHRvIHB1c2ggZm9yd2FyZCB3aXRoIHJwbXNnIGFuZCByZWd1bGF0b3Ig
+cGFydCwgYnV0IGJvdGggbm90DQpnbyB0aHJvdWdoIHNoYXduJ3MgdHJlZS4gVGhpcyBwYXRjaHNl
+dCB3aXRob3V0IHRoZSBkdHMgcGFydCwgY3B1ZnJlcQ0KYWxzbyBub3QgdGFrZSBlZmZlY3QsIHNv
+IGl0IGlzIHNhZmUgdG8gYmUgaW4gaWYgZ290IHJldmlld2VkLiBBZnRlcg0KdGhlIHJwbXNnL3Jl
+Z3VsYXRvciBwYXJ0IGdvdCBpbiwgd2UgY291bGQgYWRkIHRoZSBkdHMgcGF0Y2ggdG8NCnN3aXRj
+aCBvbiBjcHVmcmVxIGZvciBpLk1YN1VMUC4NCg0KVGhhbmtzLA0KUGVuZy4NCg0KPiANCj4gVGhh
+bmtzDQo=
