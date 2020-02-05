@@ -2,408 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1A001534E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 17:03:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2092F1534ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 17:05:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbgBEQCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 11:02:55 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:36245 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726896AbgBEQCy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 11:02:54 -0500
-Received: by mail-pj1-f66.google.com with SMTP id gv17so1180569pjb.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 08:02:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+AeCGL2lj79oLdk7fxV05TUxOgARWDhVkDbxtkPjipM=;
-        b=bzycflIp4oqpZR7YINJUKZGaEkL+FZw7AS3Mk3GhykOqyAOVdNEIxPNJsF7ZXtMBYt
-         CAXjPDLJgLMsln3tE/SBpxndFAHqIzF7hTlYkDEUoEvuHoqxhqthUNIjLOom4ISWb1uf
-         Qvi4aCeveaS0VHEzqnaNMcwaP0RqAogtOX4EY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+AeCGL2lj79oLdk7fxV05TUxOgARWDhVkDbxtkPjipM=;
-        b=mFJQ2mQX8eIItBElhi3QBS/qntijyBjXmHGBvT2PI2Gwcopum7Qpiz8yztte8hh3jf
-         3rwYvSf4mwRIRsHwx6mQ5iDTv+owve5pGlVcVzdftwB6jbeYGTjVRiaumSk83Go9TNIp
-         ly8HqmKsmcHZAqKsKLUxs8Dykro91mCvUb13d4WtrH/mfOqDiYDl1pIjDp1rsvnSeg5U
-         k/fuOeH2sqmtJ2FMTWJgwqU6gV98hRlqlOu2+pk+j217msNKVUFILo/s1HkzAFMbLRxq
-         z8dj5sIxJKJTTp4tjuR0VhO3ouuZ/q8QgHX3WbISMmtfbtOejw4Knw5hOBNXW1BSIZWN
-         JXQg==
-X-Gm-Message-State: APjAAAVr/TIUaxdP0z22TWCfOrk9IJ3au4MtV7mIuja20ljBNX4UE3PZ
-        kvax03JJ8eaPCBCn9zqGRpXuiA==
-X-Google-Smtp-Source: APXvYqzQgVz8fC7tDSyNR6BHZZc1yory3It2uzEp9w6Bps1s0URaJnbcVIPztOGRJF3976yqOhAq7g==
-X-Received: by 2002:a17:90a:9f93:: with SMTP id o19mr6416489pjp.76.1580918571981;
-        Wed, 05 Feb 2020 08:02:51 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id e16sm206509pgk.77.2020.02.05.08.02.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 08:02:51 -0800 (PST)
-Date:   Wed, 5 Feb 2020 11:02:50 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ast@kernel.org
-Cc:     Olof Johansson <olof.johansson@gmail.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tejun Heo <tj@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Revert kheaders feature
-Message-ID: <20200205160250.GG142103@google.com>
-References: <20200205154629.GA1257054@kroah.com>
+        id S1727481AbgBEQFB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 11:05:01 -0500
+Received: from mail-bgr052101129064.outbound.protection.outlook.com ([52.101.129.64]:25765
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726973AbgBEQFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 11:05:00 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IZC1FHSO3kZ3QI1sbnGRdH/F7I2Uw5rxqhYHs6WYUnFlgDQAg2ocP9ILQg4dFAMsuxmCpZ5gJfR5P8iA6wmH90REiDCDeNxdlgOQshQMeV23wH79AjSbjuNFldyojgsiWy9n2dULVKKK78jhoMoWlk1ku8T2iuZxxxwdPN6G0/4eEYQT8xBxX7N0moxnrhoSLQyAI9Gz12z3WhP4oJdFr82OY6cqqPo3Q8pz3zuVFqcb0+k+iFcDK4Jl9s1UTQy//9EVHZS85p03XzshKeo7ZJuy6AKdKBfEm5NXFgRRevuVnhuf/KZVuwuV3q8sJ7tu1/hwbYYf+txi1hVXcv3X/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=itU0ED0w/Hmd36ELD5ckm1ecQ5jx70sKj6AhR/rNJO4=;
+ b=A1+8EMfI2mYCWYacb7StJFvkcXZy+9cp1ugQWqRLIFcTS9/RWiVl5NwxJEelTjzAYECCtRON0zzoPQraIWMsL60AN2Jek1bfEdqcF9QtQMPYnbIer5MtxIpjZ8v5X5g3MzgprPoRpO4NQUlo/Wi0HvCH1Ssk1efOIxf5Lz3fz044qGdJxxrj5acQPv+hrQnbQ145HAmraIiR4OnxhDwwNkbTjBHippKbSAk2IO0jYCUUltLgR5k/yaevolOVGHIZNAqlqkYhDNlzYZhdaAqk7MxfNO8OT2MmhHxATPuGEfciSlLTyvCVpZ2aLEyfL4G+lyjICE+cZ6p9HhWV6HH5YQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toradex.com; dmarc=pass action=none header.from=toradex.com;
+ dkim=pass header.d=toradex.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=itU0ED0w/Hmd36ELD5ckm1ecQ5jx70sKj6AhR/rNJO4=;
+ b=KxLjUhCmBrsxDjBLFUQH0NtbbjopsKx0MYZV6hfBktchcd/SShE+0OVgtvd7Axberk05+wwIDrjPsnWX+QCOrhfVcjDcRsjuXuylg275sLBpyCa4FAJk2R9uWmzcTiK92HAxRVPqVl9NWaVclUF9paA70JXFHmgn0pM1bMe4qC0=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=oleksandr.suvorov@toradex.com; 
+Received: from VI1PR05MB3279.eurprd05.prod.outlook.com (10.170.238.24) by
+ VI1PR05MB5197.eurprd05.prod.outlook.com (20.178.11.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2686.33; Wed, 5 Feb 2020 16:04:41 +0000
+Received: from VI1PR05MB3279.eurprd05.prod.outlook.com
+ ([fe80::c14f:4592:515f:6e52]) by VI1PR05MB3279.eurprd05.prod.outlook.com
+ ([fe80::c14f:4592:515f:6e52%7]) with mapi id 15.20.2686.035; Wed, 5 Feb 2020
+ 16:04:41 +0000
+From:   Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+To:     alsa-devel@alsa-project.org
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Takashi Iwai <tiwai@suse.com>, Timur Tabi <timur@kernel.org>,
+        Xiubo Li <Xiubo.Lee@gmail.com>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] ASoC: fsl_sai: Fix exiting path on probing failure
+Date:   Wed,  5 Feb 2020 18:04:36 +0200
+Message-Id: <20200205160436.3813642-1-oleksandr.suvorov@toradex.com>
+X-Mailer: git-send-email 2.24.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: GV0P278CA0030.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:710:28::17) To VI1PR05MB3279.eurprd05.prod.outlook.com
+ (2603:10a6:802:1c::24)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200205154629.GA1257054@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: from localhost (194.105.145.90) by GV0P278CA0030.CHEP278.PROD.OUTLOOK.COM (2603:10a6:710:28::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2707.21 via Frontend Transport; Wed, 5 Feb 2020 16:04:40 +0000
+X-Mailer: git-send-email 2.24.1
+X-Originating-IP: [194.105.145.90]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 1544a42a-6a1e-4d4a-0b73-08d7aa551bc4
+X-MS-TrafficTypeDiagnostic: VI1PR05MB5197:|VI1PR05MB5197:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR05MB5197C785940398ECBB568757F9020@VI1PR05MB5197.eurprd05.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4714;
+X-Forefront-PRVS: 0304E36CA3
+X-Forefront-Antispam-Report: SFV:SPM;SFS:(10019020)(4636009)(346002)(366004)(136003)(39850400004)(376002)(396003)(199004)(189003)(316002)(16526019)(81156014)(8676002)(186003)(81166006)(956004)(8936002)(66946007)(6666004)(7416002)(66556008)(66476007)(478600001)(6916009)(6496006)(36756003)(52116002)(26005)(86362001)(1076003)(2906002)(6486002)(44832011)(4326008)(2616005)(54906003)(5660300002)(23200700001);DIR:OUT;SFP:1501;SCL:5;SRVR:VI1PR05MB5197;H:VI1PR05MB3279.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;CAT:OSPM;
+Received-SPF: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Sw0vJi4XEAvc11+yt9IK+E2rAzJi47VDLVXns3uw2GZVgLf5kjN59NQG0FK/wxnPNUkdkMoLN0sno7pqP+M2kqJeztgiOhR3vmwXuuurZRePT2R3ChiS5JrrUVQAQyrCpggz6ZyqnO00bKfvIBhRoKWoo7NHZuP7N/cjL6mhIq6KI2rk18FjzxAVc5J8SDPoRhK163H+39pMoqM6I8PiLsXZxGkVG1WfAZd6vH5rf+rDaPaceB9c8ZHq3Coi4FjJYW/dK29RImKF7Y6PvGuWAKHScr/pFbfe+fHo2txlU4HoxzNg6/8CWXDR2FSe7j40c/DAVlV5X8sm48CDvSc+uulMZQpL4XaB+LEWf4kffM4HWtHBoVwxAkcV00Sony07YX919QZK5B/zDLIGpj++Hdd7OVEXW2dwtj8PseR4qh0Mq8rXhyUGr3tiYD0qYT3ARyhdb07llH4UGf+hFAdVTuUh3pjDN4QFQ2vjkuacHXAzPEiw+/twtWQIZJuDfeReESRsmPjUGGbdisftcCAeFkX36XQSm7q+vfzBhfQg3V3PL8FMYjBa0aCxiVGPrU/6ujUVNoqw5MjBpULvlIlTeiCzp2cuRyfF2sbF8/At9CJw4dfoMWejU28NnUnT8FQd/BzZcZ6QczvuRFQN4RsFVAfq4BNfbbDoEnBzoIP8g9FWm9TgzlUlGHIc01/HeUb1DkscTXFJwu5rpuT5QyONl3xvxK1A1Cxcyx585J6v4ghjwDg+J07HQcebYBwiNoqLtwVxwadFQqAUvNFJa+Jr/w==
+X-MS-Exchange-AntiSpam-MessageData: Mz2GOcg9jXO8x4f4wfofIOvEJSlpXjescALvGGIQ6gdROHOSs9GWCRi+xwk6a565B1JqZXim7M2kJesMJIQMv1wdvDdvNNHlN+p70wTXSIVebwF2Ea+z5IvpOsB/3MOIAd+ghx3PVjpHRhxZoqGZmQ==
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1544a42a-6a1e-4d4a-0b73-08d7aa551bc4
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Feb 2020 16:04:41.2908
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2xEopcBa3erDQ2vMSJK4aW7H4B2pFPiqyx7PY6qZSwWhafhplRl5lxd1iX4Ow30M7wWXwnMvsCscOPgovzZ0Fu6C0ikVHQJkCATMF80+hRA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5197
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 03:46:29PM +0000, Greg Kroah-Hartman wrote:
-> Now that BPF does not need a copy of the kernel headers anymore in order
-> to build programs, there's no real need for putting the kernel headers
-> into a kernel module.  So drop the feature quick, before someone starts
-> using it :)
+If the imx-sdma driver is built as a module, the fsl-sai device doesn't
+disable on probing failure, which causes the warning in the next probing:
 
-Temporary Nack. Adding Alexei to the thread.
+==================================================================
+fsl-sai 308a0000.sai: Unbalanced pm_runtime_enable!
+fsl-sai 308a0000.sai: Unbalanced pm_runtime_enable!
+fsl-sai 308a0000.sai: Unbalanced pm_runtime_enable!
+fsl-sai 308a0000.sai: Unbalanced pm_runtime_enable!
+fsl-sai 308a0000.sai: Unbalanced pm_runtime_enable!
+fsl-sai 308a0000.sai: Unbalanced pm_runtime_enable!
+==================================================================
 
-I believe at the time of this going in, the BPF's BTF feature was not fully
-ready or able to support the usecases. Especially because BPF programs can
-call or use macros in kernel headers as well.
+Disabling the device properly fixes the issue.
 
-Also, now BCC project does depend on this and so does bpftrace. Have both
-of these tools migrated to use BTF and don't need CONFIG_KHEADERS to be
-compiled? Sorry if I lost track.
+Fixes: 812ad463e089 ("ASoC: fsl_sai: Add support for runtime pm")
+Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+---
 
-Just last week someone was using CONFIG_KHEADERS for BPF tracing purposes at
-Google and pinged me as well. There are several others. This would at least
-them some amount of pain.
+ sound/soc/fsl/fsl_sai.c | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
 
-I'd suggest let us discuss more before ripping it out. thanks,
+diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
+index 8c3ea7300972..9d436b0c5718 100644
+--- a/sound/soc/fsl/fsl_sai.c
++++ b/sound/soc/fsl/fsl_sai.c
+@@ -1020,12 +1020,24 @@ static int fsl_sai_probe(struct platform_device *pdev)
+ 	ret = devm_snd_soc_register_component(&pdev->dev, &fsl_component,
+ 			&fsl_sai_dai, 1);
+ 	if (ret)
+-		return ret;
++		goto err_pm_disable;
+ 
+-	if (sai->soc_data->use_imx_pcm)
+-		return imx_pcm_dma_init(pdev, IMX_SAI_DMABUF_SIZE);
+-	else
+-		return devm_snd_dmaengine_pcm_register(&pdev->dev, NULL, 0);
++	if (sai->soc_data->use_imx_pcm) {
++		ret = imx_pcm_dma_init(pdev, IMX_SAI_DMABUF_SIZE);
++		if (ret)
++			goto err_pm_disable;
++	} else {
++		ret = devm_snd_dmaengine_pcm_register(&pdev->dev, NULL, 0);
++		if (ret)
++			goto err_pm_disable;
++	}
++
++	return ret;
++
++err_pm_disable:
++	pm_runtime_disable(&pdev->dev);
++
++	return ret;
+ }
+ 
+ static int fsl_sai_remove(struct platform_device *pdev)
+-- 
+2.24.1
 
- - Joel
-
-
-
-> 
-> This patch reverts the following commits:
-> f276031b4e2f ("kheaders: explain why include/config/autoconf.h is excluded from md5sum")
-> 1463f74f492e ("kheaders: remove the last bashism to allow sh to run it")
-> ea79e5168be6 ("kheaders: optimize header copy for in-tree builds")
-> 0e11773e7609 ("kheaders: optimize md5sum calculation for in-tree builds")
-> 9a0663571844 ("kheaders: remove unneeded 'cat' command piped to 'head' / 'tail'")
-> 700dea5a0bea ("kheaders: substituting --sort in archive creation")
-> 86cdd2fdc4e3 ("kheaders: make headers archive reproducible")
-> 7199ff7d7400 ("kheaders: include only headers into kheaders_data.tar.xz")
-> b60b7c2ea9b7 ("kheaders: remove meaningless -R option of 'ls'")
-> 1457dc9ed8da ("kheaders: Do not regenerate archive if config is not changed")
-> f7b101d33046 ("kheaders: Move from proc to sysfs")
-> 43d8ce9d65a5 ("Provide in-kernel headers to make extending kernel easier")
-> 
-> Reported-by: Olof Johansson <olof.johansson@gmail.com>
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> Cc: Michal Marek <michal.lkml@markovi.net>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Joel Fernandes <joel@joelfernandes.org>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Patrick Bellasi <patrick.bellasi@arm.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: linux-kbuild@vger.kernel.org
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
-> 
-> This came up in a bpf presentation today, along with talking with Olof.
-> Anyone object to ripping this out before people start to rely on it, now
-> that it's stated reason isn't needed anymore?
-> 
-> 
->  Documentation/kbuild/reproducible-builds.rst | 13 +--
->  init/Kconfig                                 |  9 --
->  kernel/.gitignore                            |  1 -
->  kernel/Makefile                              | 10 --
->  kernel/gen_kheaders.sh                       | 97 --------------------
->  kernel/kheaders.c                            | 66 -------------
->  6 files changed, 4 insertions(+), 192 deletions(-)
->  delete mode 100755 kernel/gen_kheaders.sh
->  delete mode 100644 kernel/kheaders.c
-> 
-> diff --git a/Documentation/kbuild/reproducible-builds.rst b/Documentation/kbuild/reproducible-builds.rst
-> index 503393854e2e..ab92e98c89c8 100644
-> --- a/Documentation/kbuild/reproducible-builds.rst
-> +++ b/Documentation/kbuild/reproducible-builds.rst
-> @@ -16,21 +16,16 @@ the kernel may be unreproducible, and how to avoid them.
->  Timestamps
->  ----------
->  
-> -The kernel embeds timestamps in three places:
-> +The kernel embeds a timestamp in two places:
->  
->  * The version string exposed by ``uname()`` and included in
->    ``/proc/version``
->  
->  * File timestamps in the embedded initramfs
->  
-> -* If enabled via ``CONFIG_IKHEADERS``, file timestamps of kernel
-> -  headers embedded in the kernel or respective module,
-> -  exposed via ``/sys/kernel/kheaders.tar.xz``
-> -
-> -By default the timestamp is the current time and in the case of
-> -``kheaders`` the various files' modification times. This must
-> -be overridden using the `KBUILD_BUILD_TIMESTAMP`_ variable.
-> -If you are building from a git commit, you could use its commit date.
-> +By default the timestamp is the current time.  This must be overridden
-> +using the `KBUILD_BUILD_TIMESTAMP`_ variable.  If you are building
-> +from a git commit, you could use its commit date.
->  
->  The kernel does *not* use the ``__DATE__`` and ``__TIME__`` macros,
->  and enables warnings if they are used.  If you incorporate external
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 24b23d843df1..da5dea21b9cb 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -599,15 +599,6 @@ config IKCONFIG_PROC
->  	  This option enables access to the kernel configuration file
->  	  through /proc/config.gz.
->  
-> -config IKHEADERS
-> -	tristate "Enable kernel headers through /sys/kernel/kheaders.tar.xz"
-> -	depends on SYSFS
-> -	help
-> -	  This option enables access to the in-kernel headers that are generated during
-> -	  the build process. These can be used to build eBPF tracing programs,
-> -	  or similar programs.  If you build the headers as a module, a module called
-> -	  kheaders.ko is built which can be loaded on-demand to get access to headers.
-> -
->  config LOG_BUF_SHIFT
->  	int "Kernel log buffer size (16 => 64KB, 17 => 128KB)"
->  	range 12 25
-> diff --git a/kernel/.gitignore b/kernel/.gitignore
-> index 34d1e77ee9df..6e699100872f 100644
-> --- a/kernel/.gitignore
-> +++ b/kernel/.gitignore
-> @@ -1,6 +1,5 @@
->  #
->  # Generated files
->  #
-> -kheaders.md5
->  timeconst.h
->  hz.bc
-> diff --git a/kernel/Makefile b/kernel/Makefile
-> index 4cb4130ced32..9ea0a49bd856 100644
-> --- a/kernel/Makefile
-> +++ b/kernel/Makefile
-> @@ -74,7 +74,6 @@ obj-$(CONFIG_UTS_NS) += utsname.o
->  obj-$(CONFIG_USER_NS) += user_namespace.o
->  obj-$(CONFIG_PID_NS) += pid_namespace.o
->  obj-$(CONFIG_IKCONFIG) += configs.o
-> -obj-$(CONFIG_IKHEADERS) += kheaders.o
->  obj-$(CONFIG_SMP) += stop_machine.o
->  obj-$(CONFIG_KPROBES_SANITY_TEST) += test_kprobes.o
->  obj-$(CONFIG_AUDIT) += audit.o auditfilter.o
-> @@ -127,12 +126,3 @@ $(obj)/configs.o: $(obj)/config_data.gz
->  targets += config_data.gz
->  $(obj)/config_data.gz: $(KCONFIG_CONFIG) FORCE
->  	$(call if_changed,gzip)
-> -
-> -$(obj)/kheaders.o: $(obj)/kheaders_data.tar.xz
-> -
-> -quiet_cmd_genikh = CHK     $(obj)/kheaders_data.tar.xz
-> -      cmd_genikh = $(CONFIG_SHELL) $(srctree)/kernel/gen_kheaders.sh $@
-> -$(obj)/kheaders_data.tar.xz: FORCE
-> -	$(call cmd,genikh)
-> -
-> -clean-files := kheaders_data.tar.xz kheaders.md5
-> diff --git a/kernel/gen_kheaders.sh b/kernel/gen_kheaders.sh
-> deleted file mode 100755
-> index e13ca842eb7e..000000000000
-> --- a/kernel/gen_kheaders.sh
-> +++ /dev/null
-> @@ -1,97 +0,0 @@
-> -#!/bin/sh
-> -# SPDX-License-Identifier: GPL-2.0
-> -
-> -# This script generates an archive consisting of kernel headers
-> -# for CONFIG_IKHEADERS.
-> -set -e
-> -sfile="$(readlink -f "$0")"
-> -outdir="$(pwd)"
-> -tarfile=$1
-> -cpio_dir=$outdir/$tarfile.tmp
-> -
-> -dir_list="
-> -include/
-> -arch/$SRCARCH/include/
-> -"
-> -
-> -# Support incremental builds by skipping archive generation
-> -# if timestamps of files being archived are not changed.
-> -
-> -# This block is useful for debugging the incremental builds.
-> -# Uncomment it for debugging.
-> -# if [ ! -f /tmp/iter ]; then iter=1; echo 1 > /tmp/iter;
-> -# else iter=$(($(cat /tmp/iter) + 1)); echo $iter > /tmp/iter; fi
-> -# find $all_dirs -name "*.h" | xargs ls -l > /tmp/ls-$iter
-> -
-> -all_dirs=
-> -if [ "$building_out_of_srctree" ]; then
-> -	for d in $dir_list; do
-> -		all_dirs="$all_dirs $srctree/$d"
-> -	done
-> -fi
-> -all_dirs="$all_dirs $dir_list"
-> -
-> -# include/generated/compile.h is ignored because it is touched even when none
-> -# of the source files changed.
-> -#
-> -# When Kconfig regenerates include/generated/autoconf.h, its timestamp is
-> -# updated, but the contents might be still the same. When any CONFIG option is
-> -# changed, Kconfig touches the corresponding timestamp file include/config/*.h.
-> -# Hence, the md5sum detects the configuration change anyway. We do not need to
-> -# check include/generated/autoconf.h explicitly.
-> -#
-> -# Ignore them for md5 calculation to avoid pointless regeneration.
-> -headers_md5="$(find $all_dirs -name "*.h"			|
-> -		grep -v "include/generated/compile.h"	|
-> -		grep -v "include/generated/autoconf.h"	|
-> -		xargs ls -l | md5sum | cut -d ' ' -f1)"
-> -
-> -# Any changes to this script will also cause a rebuild of the archive.
-> -this_file_md5="$(ls -l $sfile | md5sum | cut -d ' ' -f1)"
-> -if [ -f $tarfile ]; then tarfile_md5="$(md5sum $tarfile | cut -d ' ' -f1)"; fi
-> -if [ -f kernel/kheaders.md5 ] &&
-> -	[ "$(head -n 1 kernel/kheaders.md5)" = "$headers_md5" ] &&
-> -	[ "$(head -n 2 kernel/kheaders.md5 | tail -n 1)" = "$this_file_md5" ] &&
-> -	[ "$(tail -n 1 kernel/kheaders.md5)" = "$tarfile_md5" ]; then
-> -		exit
-> -fi
-> -
-> -if [ "${quiet}" != "silent_" ]; then
-> -       echo "  GEN     $tarfile"
-> -fi
-> -
-> -rm -rf $cpio_dir
-> -mkdir $cpio_dir
-> -
-> -if [ "$building_out_of_srctree" ]; then
-> -	(
-> -		cd $srctree
-> -		for f in $dir_list
-> -			do find "$f" -name "*.h";
-> -		done | cpio --quiet -pd $cpio_dir
-> -	)
-> -fi
-> -
-> -# The second CPIO can complain if files already exist which can happen with out
-> -# of tree builds having stale headers in srctree. Just silence CPIO for now.
-> -for f in $dir_list;
-> -	do find "$f" -name "*.h";
-> -done | cpio --quiet -pd $cpio_dir >/dev/null 2>&1
-> -
-> -# Remove comments except SDPX lines
-> -find $cpio_dir -type f -print0 |
-> -	xargs -0 -P8 -n1 perl -pi -e 'BEGIN {undef $/;}; s/\/\*((?!SPDX).)*?\*\///smg;'
-> -
-> -# Create archive and try to normalize metadata for reproducibility.
-> -# For compatibility with older versions of tar, files are fed to tar
-> -# pre-sorted, as --sort=name might not be available.
-> -find $cpio_dir -printf "./%P\n" | LC_ALL=C sort | \
-> -    tar "${KBUILD_BUILD_TIMESTAMP:+--mtime=$KBUILD_BUILD_TIMESTAMP}" \
-> -    --owner=0 --group=0 --numeric-owner --no-recursion \
-> -    -Jcf $tarfile -C $cpio_dir/ -T - > /dev/null
-> -
-> -echo $headers_md5 > kernel/kheaders.md5
-> -echo "$this_file_md5" >> kernel/kheaders.md5
-> -echo "$(md5sum $tarfile | cut -d ' ' -f1)" >> kernel/kheaders.md5
-> -
-> -rm -rf $cpio_dir
-> diff --git a/kernel/kheaders.c b/kernel/kheaders.c
-> deleted file mode 100644
-> index 8f69772af77b..000000000000
-> --- a/kernel/kheaders.c
-> +++ /dev/null
-> @@ -1,66 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0
-> -/*
-> - * Provide kernel headers useful to build tracing programs
-> - * such as for running eBPF tracing tools.
-> - *
-> - * (Borrowed code from kernel/configs.c)
-> - */
-> -
-> -#include <linux/kernel.h>
-> -#include <linux/module.h>
-> -#include <linux/kobject.h>
-> -#include <linux/init.h>
-> -
-> -/*
-> - * Define kernel_headers_data and kernel_headers_data_end, within which the
-> - * compressed kernel headers are stored. The file is first compressed with xz.
-> - */
-> -
-> -asm (
-> -"	.pushsection .rodata, \"a\"		\n"
-> -"	.global kernel_headers_data		\n"
-> -"kernel_headers_data:				\n"
-> -"	.incbin \"kernel/kheaders_data.tar.xz\"	\n"
-> -"	.global kernel_headers_data_end		\n"
-> -"kernel_headers_data_end:			\n"
-> -"	.popsection				\n"
-> -);
-> -
-> -extern char kernel_headers_data;
-> -extern char kernel_headers_data_end;
-> -
-> -static ssize_t
-> -ikheaders_read(struct file *file,  struct kobject *kobj,
-> -	       struct bin_attribute *bin_attr,
-> -	       char *buf, loff_t off, size_t len)
-> -{
-> -	memcpy(buf, &kernel_headers_data + off, len);
-> -	return len;
-> -}
-> -
-> -static struct bin_attribute kheaders_attr __ro_after_init = {
-> -	.attr = {
-> -		.name = "kheaders.tar.xz",
-> -		.mode = 0444,
-> -	},
-> -	.read = &ikheaders_read,
-> -};
-> -
-> -static int __init ikheaders_init(void)
-> -{
-> -	kheaders_attr.size = (&kernel_headers_data_end -
-> -			      &kernel_headers_data);
-> -	return sysfs_create_bin_file(kernel_kobj, &kheaders_attr);
-> -}
-> -
-> -static void __exit ikheaders_cleanup(void)
-> -{
-> -	sysfs_remove_bin_file(kernel_kobj, &kheaders_attr);
-> -}
-> -
-> -module_init(ikheaders_init);
-> -module_exit(ikheaders_cleanup);
-> -
-> -MODULE_LICENSE("GPL v2");
-> -MODULE_AUTHOR("Joel Fernandes");
-> -MODULE_DESCRIPTION("Echo the kernel header artifacts used to build the kernel");
-> -- 
-> 2.25.0
-> 
