@@ -2,220 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 365BB153B65
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 23:50:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C9C2153B73
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 23:52:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727724AbgBEWun (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 17:50:43 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40523 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727690AbgBEWum (ORCPT
+        id S1727773AbgBEWwO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 17:52:14 -0500
+Received: from smtprelay0014.hostedemail.com ([216.40.44.14]:52144 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727722AbgBEWwO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 17:50:42 -0500
-Received: by mail-ed1-f67.google.com with SMTP id p3so3846010edx.7
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 14:50:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oCUytS6g641J3tcs63EguLa4i9YrPYhugF9NrBFVt0A=;
-        b=LhqvsuRSA4VPD4eDBS98H9PdhUNvbEDjJfARIvTagB4Pbr7Lzl/Ujvqd9lE6I0E5rv
-         iNWm5MfzRgUHzuyhXoD3jmVEMsKjR0F5FBC1ff7mI1h+gnmONlRlo4R93WJZsugNhiFo
-         40eR5d65tbSMkjeLa9BQnToHh0xPmJw4SwneOPS0mCA7CKSI2GHWiUz1AzCTX2SldRVq
-         rFVUD+N7RDAa5788OR/TzconMfWOwpK0QuAosgMQu6K/YeeRRFqgYwGjx2FGplWEyzmo
-         tXdjMQcn4czk3so5X4miLpVFmxKiL2uQWRUQoRnBeQqFp1+7wnReIAJjDJcL68+UlFew
-         8p+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oCUytS6g641J3tcs63EguLa4i9YrPYhugF9NrBFVt0A=;
-        b=Ikt+0HeK3Ec8GC+6q9N/4EiMW9mVOXMUPxT4SbriNPdtEIaptUPHfgziPthFI5HQ6t
-         aLe7s9mGWqrxlWoEw8BMt4yk6y/mpRTR8LO60WHKEbzkiay7523BfqUdKZpaJ7Okm57w
-         wzjSUAR/swivgx4/jrLK2mJKvlSS9mLsJZo7kQ3F0OBgaH5i4IHqWHwL3WTUi0BODUnV
-         4aYPMrumC9Mi2ZayrnLUR0lP/93vnMDt3YOD+Zy5U4SqaPbOwZfe5TZtKM0s34zB+TwU
-         K6DucbsejObHLFY93fRH3aIQqHMhq9eMCG1b5VJGMOttuwH7Wgcdi/1r9vK32Z6OHF4s
-         bAqQ==
-X-Gm-Message-State: APjAAAWRU/RmFAUfai8f4ae2aAcw8ZNylENAxsoCFg5eZSZqtWOkqSX+
-        IvQua1s8VY3q9C0dtuzpr/Em+X2wKoaVwMPVcXDH
-X-Google-Smtp-Source: APXvYqzArv8aqc17G9clMFHzJDgoR01sfKnB5zKeGqYBAG7/zDEtsAzGFNzwSV4GXWYxeN77WLmoVFV8Kzp5Z7nAVys=
-X-Received: by 2002:a50:fd15:: with SMTP id i21mr422196eds.12.1580943039631;
- Wed, 05 Feb 2020 14:50:39 -0800 (PST)
+        Wed, 5 Feb 2020 17:52:14 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id C02BD3AB6;
+        Wed,  5 Feb 2020 22:52:12 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:966:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2196:2199:2393:2525:2553:2560:2563:2682:2685:2828:2859:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:4362:4385:4605:5007:7903:9025:10004:10400:10848:11026:11232:11233:11658:11914:12043:12048:12262:12297:12438:12555:12679:12740:12760:12895:12986:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21365:21451:21611:21627:21740:21811:21939:30012:30054:30064:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:3,LUA_SUMMARY:none
+X-HE-Tag: order36_1316b577d5b11
+X-Filterd-Recvd-Size: 2066
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf16.hostedemail.com (Postfix) with ESMTPA;
+        Wed,  5 Feb 2020 22:52:11 +0000 (UTC)
+Message-ID: <5a14078affad5e26330627d91df394da990ba301.camel@perches.com>
+Subject: Re: [PATCH] drm: Add missing newline after comment
+From:   Joe Perches <joe@perches.com>
+To:     Stefan Agner <stefan@agner.ch>, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, sean@poorly.run, airlied@linux.ie,
+        daniel.vetter@ffwll.ch
+Cc:     airlied@redhat.com, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Date:   Wed, 05 Feb 2020 14:50:59 -0800
+In-Reply-To: <586aab08af596120f48858005bb6784c83035d59.1580941448.git.stefan@agner.ch>
+References: <586aab08af596120f48858005bb6784c83035d59.1580941448.git.stefan@agner.ch>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-References: <cover.1577736799.git.rgb@redhat.com> <7d7933d742fdf4a94c84b791906a450b16f2e81f.1577736799.git.rgb@redhat.com>
- <CAHC9VhSuwJGryfrBfzxG01zwb-O_7dbjS0x0a3w-XjcNuYSAcg@mail.gmail.com>
- <20200123162918.b3jbed7tbvr2sf2p@madcap2.tricolour.ca> <CAHC9VhTusiQoudB8G5jjDFyM9WxBUAjZ6_X35ywJ063Jb75dQA@mail.gmail.com>
- <20200123200412.j2aucdp3cvk57prw@madcap2.tricolour.ca> <CAHC9VhQ2_MQdGAT6Pda9FRe6s0y4JC1XUQenpr-VJiyq9M_CBw@mail.gmail.com>
- <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
-In-Reply-To: <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 5 Feb 2020 17:50:28 -0500
-Message-ID: <CAHC9VhQquokw+7UOU=G0SsD35UdgmfysVKCGCE87JVaoTkbisg@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 4, 2020 at 6:15 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-01-23 16:35, Paul Moore wrote:
-> > On Thu, Jan 23, 2020 at 3:04 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > On 2020-01-23 12:09, Paul Moore wrote:
-> > > > On Thu, Jan 23, 2020 at 11:29 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > On 2020-01-22 16:28, Paul Moore wrote:
-> > > > > > On Tue, Dec 31, 2019 at 2:50 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > > >
-> > > > > > > Add audit container identifier support to the action of signalling the
-> > > > > > > audit daemon.
-> > > > > > >
-> > > > > > > Since this would need to add an element to the audit_sig_info struct,
-> > > > > > > a new record type AUDIT_SIGNAL_INFO2 was created with a new
-> > > > > > > audit_sig_info2 struct.  Corresponding support is required in the
-> > > > > > > userspace code to reflect the new record request and reply type.
-> > > > > > > An older userspace won't break since it won't know to request this
-> > > > > > > record type.
-> > > > > > >
-> > > > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > > > > ---
-> > > > > > >  include/linux/audit.h       |  7 +++++++
-> > > > > > >  include/uapi/linux/audit.h  |  1 +
-> > > > > > >  kernel/audit.c              | 35 +++++++++++++++++++++++++++++++++++
-> > > > > > >  kernel/audit.h              |  1 +
-> > > > > > >  security/selinux/nlmsgtab.c |  1 +
-> > > > > > >  5 files changed, 45 insertions(+)
-> > > > > >
-> > > > > > ...
-> > > > > >
-> > > > > > > diff --git a/kernel/audit.c b/kernel/audit.c
-> > > > > > > index 0871c3e5d6df..51159c94041c 100644
-> > > > > > > --- a/kernel/audit.c
-> > > > > > > +++ b/kernel/audit.c
-> > > > > > > @@ -126,6 +126,14 @@ struct auditd_connection {
-> > > > > > >  kuid_t         audit_sig_uid = INVALID_UID;
-> > > > > > >  pid_t          audit_sig_pid = -1;
-> > > > > > >  u32            audit_sig_sid = 0;
-> > > > > > > +/* Since the signal information is stored in the record buffer at the
-> > > > > > > + * time of the signal, but not retrieved until later, there is a chance
-> > > > > > > + * that the last process in the container could terminate before the
-> > > > > > > + * signal record is delivered.  In this circumstance, there is a chance
-> > > > > > > + * the orchestrator could reuse the audit container identifier, causing
-> > > > > > > + * an overlap of audit records that refer to the same audit container
-> > > > > > > + * identifier, but a different container instance.  */
-> > > > > > > +u64            audit_sig_cid = AUDIT_CID_UNSET;
-> > > > > >
-> > > > > > I believe we could prevent the case mentioned above by taking an
-> > > > > > additional reference to the audit container ID object when the signal
-> > > > > > information is collected, dropping it only after the signal
-> > > > > > information is collected by userspace or another process signals the
-> > > > > > audit daemon.  Yes, it would block that audit container ID from being
-> > > > > > reused immediately, but since we are talking about one number out of
-> > > > > > 2^64 that seems like a reasonable tradeoff.
-> > > > >
-> > > > > I had thought that through and should have been more explicit about that
-> > > > > situation when I documented it.  We could do that, but then the syscall
-> > > > > records would be connected with the call from auditd on shutdown to
-> > > > > request that signal information, rather than the exit of that last
-> > > > > process that was using that container.  This strikes me as misleading.
-> > > > > Is that really what we want?
-> > > >
-> > > >  ???
-> > > >
-> > > > I think one of us is not understanding the other; maybe it's me, maybe
-> > > > it's you, maybe it's both of us.
-> > > >
-> > > > Anyway, here is what I was trying to convey with my original comment
-> > > > ... When we record the audit container ID in audit_signal_info() we
-> > > > take an extra reference to the audit container ID object so that it
-> > > > will not disappear (and get reused) until after we respond with an
-> > > > AUDIT_SIGNAL_INFO2.  In audit_receive_msg() when we do the
-> > > > AUDIT_SIGNAL_INFO2 processing we drop the extra reference we took in
-> > > > audit_signal_info().  Unless I'm missing some other change you made,
-> > > > this *shouldn't* affect the syscall records, all it does is preserve
-> > > > the audit container ID object in the kernel's ACID store so it doesn't
-> > > > get reused.
-> > >
-> > > This is exactly what I had understood.  I hadn't considered the extra
-> > > details below in detail due to my original syscall concern, but they
-> > > make sense.
-> > >
-> > > The syscall I refer to is the one connected with the drop of the
-> > > audit container identifier by the last process that was in that
-> > > container in patch 5/16.  The production of this record is contingent on
-> > > the last ref in a contobj being dropped.  So if it is due to that ref
-> > > being maintained by audit_signal_info() until the AUDIT_SIGNAL_INFO2
-> > > record it fetched, then it will appear that the fetch action closed the
-> > > container rather than the last process in the container to exit.
-> > >
-> > > Does this make sense?
-> >
-> > More so than your original reply, at least to me anyway.
-> >
-> > It makes sense that the audit container ID wouldn't be marked as
-> > "dead" since it would still be very much alive and available for use
-> > by the orchestrator, the question is if that is desirable or not.  I
-> > think the answer to this comes down the preserving the correctness of
-> > the audit log.
-> >
-> > If the audit container ID reported by AUDIT_SIGNAL_INFO2 has been
-> > reused then I think there is a legitimate concern that the audit log
-> > is not correct, and could be misleading.  If we solve that by grabbing
-> > an extra reference, then there could also be some confusion as
-> > userspace considers a container to be "dead" while the audit container
-> > ID still exists in the kernel, and the kernel generated audit
-> > container ID death record will not be generated until much later (and
-> > possibly be associated with a different event, but that could be
-> > solved by unassociating the container death record).
->
-> How does syscall association of the death record with AUDIT_SIGNAL_INFO2
-> possibly get associated with another event?  Or is the syscall
-> association with the fetch for the AUDIT_SIGNAL_INFO2 the other event?
+On Wed, 2020-02-05 at 23:26 +0100, Stefan Agner wrote:
+> Clang prints a warning:
+> drivers/gpu/drm/drm_lock.c:363:6: warning: misleading indentation;
+> statement is not part of the previous 'if' [-Wmisleading-indentation]
+>          */     mutex_lock(&dev->struct_mutex);
+>                 ^
+> drivers/gpu/drm/drm_lock.c:357:2: note: previous statement is here
+>         if (!drm_core_check_feature(dev, DRIVER_LEGACY))
+>         ^
+> 
+> Fix this by adding a newline after the multi-line comment.
 
-The issue is when does the audit container ID "die".  If it is when
-the last task in the container exits, then the death record will be
-associated when the task's exit.  If the audit container ID lives on
-until the last reference of it in the audit logs, including the
-SIGNAL_INFO2 message, the death record will be associated with the
-related SIGNAL_INFO2 syscalls, or perhaps unassociated depending on
-the details of the syscalls/netlink.
+Thanks, already in -next
 
-> Another idea might be to bump the refcount in audit_signal_info() but
-> mark tht contid as dead so it can't be reused if we are concerned that
-> the dead contid be reused?
+commit 5b99cad6966b92f757863ff9b6688051633fde9a
+Author: Dan Carpenter <dan.carpenter@oracle.com>
+Date:   Wed Jan 8 08:43:12 2020 +0300
 
-Ooof.  Yes, maybe, but that would be ugly.
+    gpu/drm: clean up white space in drm_legacy_lock_master_cleanup()
+    
+    We moved this code to a different file and accidentally deleted a
+    newline.
+    
+    Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+    Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+    Link: https://patchwork.freedesktop.org/patch/msgid/20200108054312.yzlj5wmbdktejgob@kili.mountain
 
-> There is still the problem later that the reported contid is incomplete
-> compared to the rest of the contid reporting cycle wrt nesting since
-> AUDIT_SIGNAL_INFO2 will need to be more complex w/2 variable length
-> fields to accommodate a nested contid list.
 
-Do we really care about the full nested audit container ID list in the
-SIGNAL_INFO2 record?
-
-> >  Of the two
-> > approaches, I think the latter is safer in that it preserves the
-> > correctness of the audit log, even though it could result in a delay
-> > of the container death record.
->
-> I prefer the former since it strongly indicates last task in the
-> container.  The AUDIT_SIGNAL_INFO2 msg has the pid and other subject
-> attributes and the contid to strongly link the responsible party.
-
-Steve is the only one who really tracks the security certifications
-that are relevant to audit, see what the certification requirements
-have to say and we can revisit this.
-
--- 
-paul moore
-www.paul-moore.com
