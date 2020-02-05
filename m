@@ -2,123 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD469153AE7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 23:23:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E674153AED
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 23:25:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727566AbgBEWXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 17:23:10 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38512 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727109AbgBEWXK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 17:23:10 -0500
-Received: by mail-ot1-f66.google.com with SMTP id z9so3589110oth.5
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 14:23:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=7BPBFZwYMLdjTS7FC4wsJG0SBY3jzmuiQq5ab/pR8tE=;
-        b=bsCVEZXyO1m1nDWrhyLfqfamqKXOfvuJP41PTr4vHEntSvyBELd7iYKhNse6c2Tn9g
-         iIYLNxjo6KV5OEOU8j19451ahN0XbitPB0O/3aRADfb1w9uvKbYi0JIUSthzfFbgWSZV
-         dMOREBTUlTsa8xBI1nry+fdIWSqxaER3PK0/U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=7BPBFZwYMLdjTS7FC4wsJG0SBY3jzmuiQq5ab/pR8tE=;
-        b=WawFKlh0izu9HoSIkw4nxRt1lYGV0wLOyK3NGtBBe64AU7ehZYUzSBfoODu6AUvfYB
-         HUKSVzEuW2eg9eDGR4RG31EX4yuZWdyZ6T5HGrpm+/hUscMpqC5PYCtw4K07nDy/mcCS
-         SVjUgAinKMtfYC2Yq7MjeAm/bFW205GPDhlIEXfwasSOlrO3pIVzt04woXa5+EG5VOCm
-         /GgJ61vTl5fARgGJaUb5QZxMdZtbl8589JVBUAb+M1DWPXfVauVAnSrIWXEayJfrJCQM
-         71zK/Iwl+nC6BQG3mVvj+AE7Vc2ALd+CNZ2dmIUv0jpcLgfk05O5hBsPdG/6vPA1WkjA
-         EIiA==
-X-Gm-Message-State: APjAAAUlB/OYtOct3Xf6qWH4YYgSa1DOS+TOLqzdNQ8dS0W0mxlqVAs1
-        KgRSr+f7xjcHV0ZuUjGEKaCb5w==
-X-Google-Smtp-Source: APXvYqwiWxsqH9jzwGGCPTTA/BuMOcFastWQH/FIEhWKfTbMO7E5g/kRONngb8jpggIUpd8KuKUR/A==
-X-Received: by 2002:a9d:1ca3:: with SMTP id l35mr27648946ota.271.1580941389697;
-        Wed, 05 Feb 2020 14:23:09 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id n22sm369796otj.36.2020.02.05.14.23.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 14:23:08 -0800 (PST)
-Date:   Wed, 5 Feb 2020 14:23:07 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Grzegorz Halat <ghalat@redhat.com>,
+        id S1727505AbgBEWZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 17:25:25 -0500
+Received: from ozlabs.org ([203.11.71.1]:48275 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727109AbgBEWZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 17:25:25 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48CbjZ0ttpz9sRG;
+        Thu,  6 Feb 2020 09:25:18 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1580941522;
+        bh=FgeBSllH9nOX+H0EnoCoVt3VNC9kkq+gzK8azV5HlWs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=cza/Yb+Wi4JBkdle8/ZXsgaZqWMVyrW/uQCjG6yxbUi2KZX1aClsnb2yqGlwI6i9F
+         NhOzaKMllIhgArj4R7pbPzPoZ7tsnIXWpm0UHIVl4m3/LNpBVry7slTdDAY1unQm/Y
+         QZ/e530Dh3zcmNP1zhOVQ3TseEPLkc96KJXiTWvh9V42oxkn1idnwwnyh/Ve6DGmw8
+         LzoZ+4i4Nlz4e8Pa/y+n3BT6/ahDkqNDA2qR7/XiRDL51++kvuwrDQTzkyhmQEqhEi
+         nrJ6nxlMyxZhnC9ehUMB/4ISNrbo1A1egok5qWIOZWnyKMKMID5Ovdlnfz3Hqj6Yf1
+         tNZqnwCR79Xkw==
+Date:   Thu, 6 Feb 2020 09:25:12 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Al Viro <viro@ZenIV.linux.org.uk>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Trond Myklebust <trondmy@gmail.com>,
+        NFS Mailing List <linux-nfs@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, ssaner@redhat.com, atomlin@redhat.com,
-        oleksandr@redhat.com, vbendel@redhat.com, kirill@shutemov.name,
-        khlebnikov@yandex-team.ru,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Subject: Re: [PATCH 1/1] mm: sysctl: add panic_on_inconsistent_mm sysctl
-Message-ID: <202002051421.9419721B@keescook>
-References: <20200129180851.551109-1-ghalat@redhat.com>
- <84C253EB-B348-4B62-B863-F192FBA8C202@lca.pw>
- <34467005-1742-47a0-cd2b-05567584b91e@de.ibm.com>
- <1580742371.7365.1.camel@lca.pw>
+        Dai Ngo <dai.ngo@oracle.com>
+Subject: linux-next: manual merge of the vfs tree with the nfs-anna tree
+Message-ID: <20200206092512.5eb304b7@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1580742371.7365.1.camel@lca.pw>
+Content-Type: multipart/signed; boundary="Sig_/db1mAXHnx/_Rc63UC+p.9fG";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 10:06:11AM -0500, Qian Cai wrote:
-> On Mon, 2020-02-03 at 15:08 +0100, Christian Borntraeger wrote:
-> > 
-> > On 29.01.20 19:39, Qian Cai wrote:
-> > > 
-> > > 
-> > > > On Jan 29, 2020, at 1:08 PM, Grzegorz Halat <ghalat@redhat.com> wrote:
-> > > > 
-> > > > Memory management subsystem performs various checks at runtime,
-> > > > if an inconsistency is detected then such event is being logged and kernel
-> > > > continues to run. While debugging such problems it is helpful to collect
-> > > > memory dump as early as possible. Currently, there is no easy way to panic
-> > > > kernel when such error is detected.
-> > > > 
-> > > > It was proposed[1] to panic the kernel if panic_on_oops is set but this
-> > > > approach was not accepted. One of alternative proposals was introduction of
-> > > > a new sysctl.
-> > > > 
-> > > > Add a new sysctl - panic_on_inconsistent_mm. If the sysctl is set then the
-> > > > kernel will be crashed when an inconsistency is detected by memory
-> > > > management. This currently means panic when bad page or bad PTE
-> > > > is detected(this may be extended to other places in MM).
-> > > > 
-> > > > Another use case of this sysctl may be in security-wise environments,
-> > > > it may be more desired to crash machine than continue to run with
-> > > > potentially damaged data structures.
-> > > 
-> > > It is annoying that I have to repeat my feedback, but I don’t know why
-> > > admins want to enable this by allowing normal users to crash the systems
-> > > more easily through recoverable MM bugs where I am sure we have plenty.
-> > > How does that improve the security?
-> > 
-> > There are cases where data corruption is a no-go, while "one node going down" 
-> > is acceptable.
-> > And then there is also the case for payed service providers that often need
-> > a dump at the time of the problem to understand rare issues.
-> > 
-> > So I DO see value in such a thing. We should just piggy-back on panic_on_warn
-> > I guess.
-> > 
-> 
-> Indeed, so change pr_alert() to pr_warn() there then?
+--Sig_/db1mAXHnx/_Rc63UC+p.9fG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-pr_* are just printk levels. If you want a full trace and to hook to
-panic_on_warn, you want WARN_ON(condition) (or WARN_ON_ONCE(), etc).
+Hi all,
 
--- 
-Kees Cook
+Today's linux-next merge of the vfs tree got a conflict in:
+
+  fs/nfs/dir.c
+
+between commit:
+
+  227823d2074d ("nfs: optimise readdir cache page invalidation")
+
+from the nfs-anna tree and commit:
+
+  ef3af2d44331 ("nfs: optimise readdir cache page invalidation")
+
+from the vfs tree.
+
+I fixed it up (I used the nfs-anna tree version) and can carry the fix
+as necessary. This is now fixed as far as linux-next is concerned, but
+any non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/db1mAXHnx/_Rc63UC+p.9fG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl47QMgACgkQAVBC80lX
+0GyVfwf/T+0uXHU7k55U4Yok50+o+m7JIq2U5y/5z+P7poFOcYoWB0liR3yaosC0
+/SPD6womk2pac9Km3xC7xjudcHx2qrgPu4jkgSboEDdrIYgq2EXoRjNZToHBduM0
+BsbThvoC4EpuA4vN922VpWe2zUuLoFUTSX/hUruBlMd+jeG90Nf4sczI1IMrlVbm
+VaR0oL/Jgf/X0wm2KvxmqAlDcmFmTmE/o6imAEQsaAAbWPpCLdHejCahGSuX0L7d
+ywuF5Gh7U641+itfVk2LJkFwr+iAmdyxmAbqXIBVoexEg24f+JzVwcBtOOwulerc
+DxplKLs0+sp+RGY9xqInD29ssNCSsg==
+=64+8
+-----END PGP SIGNATURE-----
+
+--Sig_/db1mAXHnx/_Rc63UC+p.9fG--
