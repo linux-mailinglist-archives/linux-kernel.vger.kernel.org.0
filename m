@@ -2,34 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C80F152971
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 11:51:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85AD515296F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 11:51:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728288AbgBEKvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1728331AbgBEKvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 5 Feb 2020 05:51:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59460 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:59470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727970AbgBEKvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728034AbgBEKvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Feb 2020 05:51:14 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BD3C2072B;
+        by mail.kernel.org (Postfix) with ESMTPSA id 313F021741;
         Wed,  5 Feb 2020 10:51:14 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1izIH2-001Nrz-Va; Wed, 05 Feb 2020 05:51:12 -0500
-Message-Id: <20200205105112.862375803@goodmis.org>
+        id 1izIH3-001NsT-3x; Wed, 05 Feb 2020 05:51:13 -0500
+Message-Id: <20200205105113.004907028@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Wed, 05 Feb 2020 05:49:30 -0500
+Date:   Wed, 05 Feb 2020 05:49:31 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [for-next][PATCH 1/4] bootconfig: Only load bootconfig if "bootconfig" is on the kernel
- cmdline
+        Amol Grover <frextrite@gmail.com>
+Subject: [for-next][PATCH 2/4] tracing: Annotate ftrace_graph_hash pointer with __rcu
 References: <20200205104929.313040579@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -38,138 +36,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Amol Grover <frextrite@gmail.com>
 
-As the bootconfig is appended to the initrd it is not as easy to modify as
-the kernel command line. If there's some issue with the kernel, and the
-developer wants to boot a pristine kernel, it should not be needed to modify
-the initrd to remove the bootconfig for a single boot.
+Fix following instances of sparse error
+kernel/trace/ftrace.c:5664:29: error: incompatible types in comparison
+kernel/trace/ftrace.c:5785:21: error: incompatible types in comparison
+kernel/trace/ftrace.c:5864:36: error: incompatible types in comparison
+kernel/trace/ftrace.c:5866:25: error: incompatible types in comparison
 
-As bootconfig is silently added (if the admin does not know where to look
-they may not know it's being loaded). It should be explicitly added to the
-kernel cmdline. The loading of the bootconfig is only done if "bootconfig"
-is on the kernel command line. This will let admins know that the kernel
-command line is extended.
+Use rcu_dereference_protected to access the __rcu annotated pointer.
 
-Note, after adding printk()s for when the size is too great or the checksum
-is wrong, exposed that the current method always looked for the boot config,
-and if this size and checksum matched, it would parse it (as if either is
-wrong a printk has been added to show this). It's better to only check this
-if the boot config is asked to be looked for.
+Link: http://lkml.kernel.org/r/20200201072703.17330-1-frextrite@gmail.com
 
-Link: https://lore.kernel.org/r/CAHk-=wjfjO+h6bQzrTf=YCZA53Y3EDyAs3Z4gEsT7icA3u_Psw@mail.gmail.com
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Amol Grover <frextrite@gmail.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- Documentation/admin-guide/bootconfig.rst      |  2 ++
- .../admin-guide/kernel-parameters.txt         |  6 ++++
- init/main.c                                   | 28 ++++++++++++++-----
- 3 files changed, 29 insertions(+), 7 deletions(-)
+ kernel/trace/ftrace.c | 2 +-
+ kernel/trace/trace.h  | 9 ++++++---
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/admin-guide/bootconfig.rst b/Documentation/admin-guide/bootconfig.rst
-index 4d617693c0c8..b342a6796392 100644
---- a/Documentation/admin-guide/bootconfig.rst
-+++ b/Documentation/admin-guide/bootconfig.rst
-@@ -123,6 +123,8 @@ To remove the config from the image, you can use -d option as below::
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 0e9612c30995..01d2ecd66161 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -5591,7 +5591,7 @@ static const struct file_operations ftrace_notrace_fops = {
  
-  # tools/bootconfig/bootconfig -d /boot/initrd.img-X.Y.Z
+ static DEFINE_MUTEX(graph_lock);
  
-+Then add "bootconfig" on the normal kernel command line to tell the
-+kernel to look for the bootconfig at the end of the initrd file.
+-struct ftrace_hash *ftrace_graph_hash = EMPTY_HASH;
++struct ftrace_hash __rcu *ftrace_graph_hash = EMPTY_HASH;
+ struct ftrace_hash *ftrace_graph_notrace_hash = EMPTY_HASH;
  
- Config File Limitation
- ======================
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index ade4e6ec23e0..b48c70ba9841 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -437,6 +437,12 @@
- 			no delay (0).
- 			Format: integer
+ enum graph_filter_type {
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index f5480a2aa334..18ceab59a5ba 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -964,22 +964,25 @@ extern void __trace_graph_return(struct trace_array *tr,
+ 				 unsigned long flags, int pc);
  
-+	bootconfig	[KNL]
-+			Extended command line options can be added to an initrd
-+			and this will cause the kernel to look for it.
-+
-+			See Documentation/admin-guide/bootconfig.rst
-+
- 	bert_disable	[ACPI]
- 			Disable BERT OS support on buggy BIOSes.
+ #ifdef CONFIG_DYNAMIC_FTRACE
+-extern struct ftrace_hash *ftrace_graph_hash;
++extern struct ftrace_hash __rcu *ftrace_graph_hash;
+ extern struct ftrace_hash *ftrace_graph_notrace_hash;
  
-diff --git a/init/main.c b/init/main.c
-index dd7da62d99a5..f174a59d3903 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -336,28 +336,39 @@ u32 boot_config_checksum(unsigned char *p, u32 size)
- 	return ret;
- }
- 
--static void __init setup_boot_config(void)
-+static void __init setup_boot_config(const char *cmdline)
+ static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
  {
- 	u32 size, csum;
- 	char *data, *copy;
-+	const char *p;
- 	u32 *hdr;
+ 	unsigned long addr = trace->func;
+ 	int ret = 0;
++	struct ftrace_hash *hash;
  
--	if (!initrd_end)
-+	p = strstr(cmdline, "bootconfig");
-+	if (!p || (p != cmdline && !isspace(*(p-1))) ||
-+	    (p[10] && !isspace(p[10])))
- 		return;
+ 	preempt_disable_notrace();
  
-+	if (!initrd_end)
-+		goto not_found;
+-	if (ftrace_hash_empty(ftrace_graph_hash)) {
++	hash = rcu_dereference_protected(ftrace_graph_hash, !preemptible());
 +
- 	hdr = (u32 *)(initrd_end - 8);
- 	size = hdr[0];
- 	csum = hdr[1];
- 
--	if (size >= XBC_DATA_MAX)
-+	if (size >= XBC_DATA_MAX) {
-+		pr_err("bootconfig size %d greater than max size %d\n",
-+			size, XBC_DATA_MAX);
- 		return;
-+	}
- 
- 	data = ((void *)hdr) - size;
- 	if ((unsigned long)data < initrd_start)
--		return;
-+		goto not_found;
- 
--	if (boot_config_checksum((unsigned char *)data, size) != csum)
-+	if (boot_config_checksum((unsigned char *)data, size) != csum) {
-+		pr_err("bootconfig checksum failed\n");
- 		return;
-+	}
- 
- 	copy = memblock_alloc(size + 1, SMP_CACHE_BYTES);
- 	if (!copy) {
-@@ -377,9 +388,12 @@ static void __init setup_boot_config(void)
- 		/* Also, "init." keys are init arguments */
- 		extra_init_args = xbc_make_cmdline("init");
++	if (ftrace_hash_empty(hash)) {
+ 		ret = 1;
+ 		goto out;
  	}
-+	return;
-+not_found:
-+	pr_err("'bootconfig' found on command line, but no bootconfig found\n");
- }
- #else
--#define setup_boot_config()	do { } while (0)
-+#define setup_boot_config(cmdline)	do { } while (0)
- #endif
  
- /* Change NUL term back to "=", to make "param" the whole string. */
-@@ -760,7 +774,7 @@ asmlinkage __visible void __init start_kernel(void)
- 	pr_notice("%s", linux_banner);
- 	early_security_init();
- 	setup_arch(&command_line);
--	setup_boot_config();
-+	setup_boot_config(command_line);
- 	setup_command_line(command_line);
- 	setup_nr_cpu_ids();
- 	setup_per_cpu_areas();
+-	if (ftrace_lookup_ip(ftrace_graph_hash, addr)) {
++	if (ftrace_lookup_ip(hash, addr)) {
+ 
+ 		/*
+ 		 * This needs to be cleared on the return functions
 -- 
 2.24.1
 
