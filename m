@@ -2,78 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDF0E1534A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 16:54:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 800FC1534B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 16:55:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbgBEPyX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 10:54:23 -0500
-Received: from mail-il1-f172.google.com ([209.85.166.172]:33307 "EHLO
-        mail-il1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbgBEPyX (ORCPT
+        id S1727540AbgBEPzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 10:55:03 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41225 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727496AbgBEPzB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 10:54:23 -0500
-Received: by mail-il1-f172.google.com with SMTP id s18so2289453iln.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 07:54:22 -0800 (PST)
+        Wed, 5 Feb 2020 10:55:01 -0500
+Received: by mail-pf1-f196.google.com with SMTP id j9so1406621pfa.8
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 07:55:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=K/TEbJFWEtJ7myelS/+rh6TG8Nyyi+LUMKE4sDPf1rk=;
-        b=2DAa94e6a/x2+aZvMCSs+SwO191hwhcxjL9ORz3MeaiM7QD6UI/y5uXhii6zCOtGxD
-         Ao68VSG9ANXirxvEHg31qu+hk4UtS8gkP+RgBF4kI7ysUTqTp9B35Yx7P1i3xQeF3kpF
-         HSv9V6w3pDzlhBFjbfV+9WJagOG8KuvTojdydEqoTFOmXGqsDbysJ+m33AGXI4lLghOR
-         r86lZDz+//el2LiYv2NEKsMCzBo6RM+2PXZs/7o6uZ4wUYz76Q77zof61X07yhEXCoU3
-         lUiV6nmvVxWGT92jf50syh3y47zCVzyQD6lsIB0daDXUfTqZxlg05+zsS7OhyC8DIKyY
-         QaLg==
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=bsdxDvHxmIPg1xvhhe9AqHP+aRx23QetwzZU7QbbYOc=;
+        b=WDdm+HKOpEsEIQS0RWC3nhmjlhtk/FeT1aUfHH09au7ka4MQr02FaB+S5Ip2wC4yWI
+         tPqlkz3MbIqqJp5zFGOANULGu3Sn7/dWty0OEXVcYYZ1u2sCOGVE6/NdrS3NNhOyoP+C
+         GCyWJ6GO9lBvkHFEtkgsBmdYeJe827W4M/eT6FTSoMQk4bLLDbGm1RlSjFwcB2Y/8n9a
+         F55OcvkCGx/nHeUUgv/zWTAtucDX/WWALsfvc8qvq0Lk4QGh1a13op3hg5otgL1InjNW
+         kFEb7iKj5JPJva3oLX//URmkf7MZS6F/MlJ2Ch9riQK6R4177pbGKkqnLC0otJ3Uh6av
+         rI1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=K/TEbJFWEtJ7myelS/+rh6TG8Nyyi+LUMKE4sDPf1rk=;
-        b=eg5kQSuYkcB2o1H5Zkm8CwwgpaUlxs0FZ7pyLk1+FM76qyXQdVC2ZGDXYF9Fruaeye
-         +a5kZrgvki1Y9B9IXiRtnkPq2JXzKtXwcq81zIF1ZIimZapH1pbvkpXicss7Hp5Os4Ff
-         RbxDBVYTcTXp+ESH7j/v6aTUtV9zY4jDr/6b1I0Uuzh5wjTkbvmYeYEpSqFAWsLy9njW
-         3ngDV3M3OBJtOXQUmAI44vg8d2PgwEwgYo2II8vIZkXI7jJgqwzpeRX43/Ioz0BfJh+Y
-         9VIv1cvHrwhMY4NpvgtrrEvwiGl7INvB2V3OEo4JJeGPP8kec/ru8C7Hw3muqgWxF+QS
-         4M1A==
-X-Gm-Message-State: APjAAAWeU6eJEdkCZqVy71TiUCHmvvFLSI4KuHyEzUZhhAwVP+tq4lL5
-        Q7M8RxZEc7Qm8lG3Hhewp8Rkg+vv88w=
-X-Google-Smtp-Source: APXvYqzWXlbgLJfIBrB+xCBg3yB7cebqo/qOH8x84HpGW+NlmiRh3flk2lxkQXchXo176LKhA4ND7w==
-X-Received: by 2002:a92:48c2:: with SMTP id j63mr25700622ilg.153.1580918061800;
-        Wed, 05 Feb 2020 07:54:21 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id r14sm10464783ilg.59.2020.02.05.07.54.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Feb 2020 07:54:21 -0800 (PST)
-Subject: Re: [PATCH] io_uring: fix mm use with IORING_OP_{READ,WRITE}
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <951bb84c8337aaac7654261a21b03506b2b8a001.1580914723.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <df11c48e-f456-3b64-88d1-6012b1ac2bc8@kernel.dk>
-Date:   Wed, 5 Feb 2020 08:54:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <951bb84c8337aaac7654261a21b03506b2b8a001.1580914723.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references:in-reply-to:references;
+        bh=bsdxDvHxmIPg1xvhhe9AqHP+aRx23QetwzZU7QbbYOc=;
+        b=nByv621ta0/ZXMBQ9kLQgBgNB2dVzeKvr8Dc9beYh/FsgKZLvnFwvCKnGiZlBn+YAB
+         hmZrr/j69vbJbHPSU0Xm8CWjg4sgrXnSYPUR/EP3F0q2qDteLNZWi5lkb1bdMr9zLKgM
+         uezkcZhAslRLF/UKzpjlIz9dsjyFUStrVy0bj0ga5DSjt7c/m6tGsVKNTkKBvhD0oefc
+         Lz7mfm5SEgwW4UMXZqYFpFgX9DaeuWct7ou9QTPEVH57kWhhywf2D1bChKHynPkYabk/
+         sxdC1TGOjY29YMeKtLFABhs9N0AL0t9pcPFbE5SFtWQvOyJ36YEz7aioY/5bMiODTpsY
+         qddg==
+X-Gm-Message-State: APjAAAXcoXGbDly8AakqgcvtRoZE/hoPIMK3fBOWGGPqGayf5C2ZdtK4
+        /QcXX+s4vW24mZKKd6T0a3I=
+X-Google-Smtp-Source: APXvYqzHHowg8oanoCWkld5r4X43w5aHQKeQRrS8kvyfujL32ee8WfVag2/qh59G1TNkd/3Or5DlRw==
+X-Received: by 2002:aa7:9816:: with SMTP id e22mr37938712pfl.229.1580918100653;
+        Wed, 05 Feb 2020 07:55:00 -0800 (PST)
+Received: from emb-wallaby.amd.com ([165.204.156.251])
+        by smtp.gmail.com with ESMTPSA id z10sm195678pgz.88.2020.02.05.07.54.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Feb 2020 07:55:00 -0800 (PST)
+From:   Arindam Nath <arindam.nath@amd.com>
+To:     Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        Jon Mason <jdmason@kudzu.us>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>,
+        Jiasen Lin <linjiasen@hygon.cn>,
+        Sanjay R Mehta <sanju.mehta@amd.com>
+Cc:     linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org,
+        Arindam Nath <arindam.nath@amd.com>
+Subject: [PATCH 04/15] NTB: define a new function to get link status
+Date:   Wed,  5 Feb 2020 21:24:21 +0530
+Message-Id: <d775a8653d3f4550adfdbfaaf03c269ad2896273.1580914232.git.arindam.nath@amd.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1580914232.git.arindam.nath@amd.com>
+References: <cover.1580914232.git.arindam.nath@amd.com>
+In-Reply-To: <cover.1580914232.git.arindam.nath@amd.com>
+References: <cover.1580914232.git.arindam.nath@amd.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/20 8:46 AM, Pavel Begunkov wrote:
-> IORING_OP_{READ,WRITE} need mm to access user buffers, hence
-> req->has_user check should go for them as well. Move the corresponding
-> imports past the check.
+Since getting the status of link is a logically separate
+operation, we simply create a new function which will
+store the link status to be used later.
 
-I'd need to double check, but I think the has_user check should just go.
-The import checks for access anyway, so we'll -EFAULT there if we
-somehow messed up and didn't acquire the right mm.
+Signed-off-by: Arindam Nath <arindam.nath@amd.com>
+---
+ drivers/ntb/hw/amd/ntb_hw_amd.c | 93 ++++++++++++++++++---------------
+ 1 file changed, 50 insertions(+), 43 deletions(-)
 
+diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.c b/drivers/ntb/hw/amd/ntb_hw_amd.c
+index 111f33ff2bd7..f50537e0917b 100644
+--- a/drivers/ntb/hw/amd/ntb_hw_amd.c
++++ b/drivers/ntb/hw/amd/ntb_hw_amd.c
+@@ -195,6 +195,54 @@ static int amd_ntb_mw_set_trans(struct ntb_dev *ntb, int pidx, int idx,
+ 	return 0;
+ }
+ 
++static int amd_ntb_get_link_status(struct amd_ntb_dev *ndev)
++{
++	struct pci_dev *pdev = NULL;
++	struct pci_dev *pci_swds = NULL;
++	struct pci_dev *pci_swus = NULL;
++	u32 stat;
++	int rc;
++
++	if (ndev->ntb.topo == NTB_TOPO_SEC) {
++		/* Locate the pointer to Downstream Switch for this device */
++		pci_swds = pci_upstream_bridge(ndev->ntb.pdev);
++		if (pci_swds) {
++			/*
++			 * Locate the pointer to Upstream Switch for
++			 * the Downstream Switch.
++			 */
++			pci_swus = pci_upstream_bridge(pci_swds);
++			if (pci_swus) {
++				rc = pcie_capability_read_dword(pci_swus,
++								PCI_EXP_LNKCTL,
++								&stat);
++				if (rc)
++					return 0;
++			} else {
++				return 0;
++			}
++		} else {
++			return 0;
++		}
++	} else if (ndev->ntb.topo == NTB_TOPO_PRI) {
++		/*
++		 * For NTB primary, we simply read the Link Status and control
++		 * register of the NTB device itself.
++		 */
++		pdev = ndev->ntb.pdev;
++		rc = pcie_capability_read_dword(pdev, PCI_EXP_LNKCTL, &stat);
++		if (rc)
++			return 0;
++	} else {
++		/* Catch all for everything else */
++		return 0;
++	}
++
++	ndev->lnk_sta = stat;
++
++	return 1;
++}
++
+ static int amd_link_is_up(struct amd_ntb_dev *ndev)
+ {
+ 	if (!ndev->peer_sta)
+@@ -845,11 +893,7 @@ static inline void ndev_init_struct(struct amd_ntb_dev *ndev,
+ static int amd_poll_link(struct amd_ntb_dev *ndev)
+ {
+ 	void __iomem *mmio = ndev->peer_mmio;
+-	struct pci_dev *pdev = NULL;
+-	struct pci_dev *pci_swds = NULL;
+-	struct pci_dev *pci_swus = NULL;
+-	u32 reg, stat;
+-	int rc;
++	u32 reg;
+ 
+ 	reg = readl(mmio + AMD_SIDEINFO_OFFSET);
+ 	reg &= NTB_LIN_STA_ACTIVE_BIT;
+@@ -861,44 +905,7 @@ static int amd_poll_link(struct amd_ntb_dev *ndev)
+ 
+ 	ndev->cntl_sta = reg;
+ 
+-	if (ndev->ntb.topo == NTB_TOPO_SEC) {
+-		/* Locate the pointer to Downstream Switch for this device */
+-		pci_swds = pci_upstream_bridge(ndev->ntb.pdev);
+-		if (pci_swds) {
+-			/*
+-			 * Locate the pointer to Upstream Switch for
+-			 * the Downstream Switch.
+-			 */
+-			pci_swus = pci_upstream_bridge(pci_swds);
+-			if (pci_swus) {
+-				rc = pcie_capability_read_dword(pci_swus,
+-								PCI_EXP_LNKCTL,
+-								&stat);
+-				if (rc)
+-					return 0;
+-			} else {
+-				return 0;
+-			}
+-		} else {
+-			return 0;
+-		}
+-	} else if (ndev->ntb.topo == NTB_TOPO_PRI) {
+-		/*
+-		 * For NTB primary, we simply read the Link Status and control
+-		 * register of the NTB device itself.
+-		 */
+-		pdev = ndev->ntb.pdev;
+-		rc = pcie_capability_read_dword(pdev, PCI_EXP_LNKCTL, &stat);
+-		if (rc)
+-			return 0;
+-	} else {
+-		/* Catch all for everything else */
+-		return 0;
+-	}
+-
+-	ndev->lnk_sta = stat;
+-
+-	return 1;
++	return amd_ntb_get_link_status(ndev);
+ }
+ 
+ static void amd_link_hb(struct work_struct *work)
 -- 
-Jens Axboe
+2.17.1
 
