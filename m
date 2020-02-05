@@ -2,135 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B601153A82
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 22:54:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3619A153A86
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 22:55:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727379AbgBEVyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 16:54:36 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38827 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727033AbgBEVyg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 16:54:36 -0500
-Received: by mail-pg1-f194.google.com with SMTP id a33so1616580pgm.5
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 13:54:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lwQzYGWQiSO8R2tnjh/HUN/vNTtkdu/IlYzNsMB0TDw=;
-        b=Cr7P8fhZt8etP09vpJRSkAOTdKjH5X2yS9e6aMJbS33Ox5E9u5i/JPuli5iNQ1mo1G
-         kj6YHX7KNOa5KSCMrD28QoW6f1OySWzNqW+9r+QRkr7DXxwGXzsctVik8+ovLP5FIS91
-         PvIPBvwv5Q1VUZU44TVmimJqVp3QZH1XdNqq8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lwQzYGWQiSO8R2tnjh/HUN/vNTtkdu/IlYzNsMB0TDw=;
-        b=kFbEaNusqo83v59HJehJOTZPSQ7S8nn/cd8cyXzqR3s5DUY0Fp3QgJoUuBPp7yTV+V
-         tiOzga4PlIa7d7QKMTbgVsNTJnWk7+Tuq5RnKBZ71MMvoyEKyp/Zk1ROPUrYiRPmtyVt
-         MzJsmSvAwBTDxfWZFSpuKCZHgq+QQaC59ZXcqGWySiYiNZTNGL9F15wZL7+rwRF18fAV
-         QNbvnMHnY8FgUe6XEyX+lpvRFdf+ExmMQpvToa8YsUlLtqRy34O2YddXE++g4TseDETe
-         Ira4mTeOiufTEmi3meBuQK2cqBhjWUC65SJCm4RJS9UW2lB5aM+WxE0WyRuWKXMHxrFJ
-         3iIw==
-X-Gm-Message-State: APjAAAU7aoHHH0vrK5oHvRQYgsFcdmfgXbW/ZGr6ixUgWzJO99ymRlqX
-        m76j6Z3tHUjc9vhxm4phEW9KdA==
-X-Google-Smtp-Source: APXvYqz0FIqZfKc6sJvdfphUvGBnnud1jE4G1L7omf6jOQxlxG+8Gx4bdpgj312LJaiDM2kYOy3CHw==
-X-Received: by 2002:a63:751e:: with SMTP id q30mr37020562pgc.390.1580939674127;
-        Wed, 05 Feb 2020 13:54:34 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id fz21sm712197pjb.15.2020.02.05.13.54.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 13:54:33 -0800 (PST)
-Date:   Wed, 5 Feb 2020 16:54:32 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Amol Grover <frextrite@gmail.com>
-Subject: Re: [for-next][PATCH 4/4] ftrace: Add comment to why
- rcu_dereference_sched() is open coded
-Message-ID: <20200205215432.GJ142103@google.com>
-References: <20200205104929.313040579@goodmis.org>
- <20200205105113.283672584@goodmis.org>
- <20200205063349.4c3df2c0@oasis.local.home>
- <20200205141915.GA194021@google.com>
- <20200205092847.0b650972@oasis.local.home>
- <20200205154212.GC142103@google.com>
- <20200205104945.4a6f85de@oasis.local.home>
- <20200205160824.GH142103@google.com>
+        id S1727482AbgBEVzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 16:55:05 -0500
+Received: from nautica.notk.org ([91.121.71.147]:56696 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727116AbgBEVzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 16:55:03 -0500
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id E3728C009; Wed,  5 Feb 2020 22:55:01 +0100 (CET)
+Date:   Wed, 5 Feb 2020 22:54:46 +0100
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Sergey Alirzaev <l29ah@cock.li>
+Cc:     v9fs-developer@lists.sourceforge.net,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 9pnet: allow making incomplete read requests
+Message-ID: <20200205215446.GB3942@nautica>
+References: <20200205204053.12751-1-l29ah@cock.li>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200205160824.GH142103@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200205204053.12751-1-l29ah@cock.li>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 11:08:24AM -0500, Joel Fernandes wrote:
-> On Wed, Feb 05, 2020 at 10:49:45AM -0500, Steven Rostedt wrote:
-> > On Wed, 5 Feb 2020 10:42:12 -0500
-> > Joel Fernandes <joel@joelfernandes.org> wrote:
-> > 
-> > > On Wed, Feb 05, 2020 at 09:28:47AM -0500, Steven Rostedt wrote:
-> > > > On Wed, 5 Feb 2020 09:19:15 -0500
-> > > > Joel Fernandes <joel@joelfernandes.org> wrote:
-> > > >   
-> > > > > Could you paste the stack here when RCU is not watching? In trace event code
-> > > > > IIRC we call rcu_enter_irqs_on() to have RCU temporarily watch, since that
-> > > > > code can be called from idle loop. Should we doing the same here as well?  
-> > > > 
-> > > > Unfortunately I lost the stack trace. And the last time we tried to use
-> > > > rcu_enter_irqs_on() for ftrace, we couldn't find a way to do this
-> > > > properly. Ftrace is much more invasive then going into idle. The
-> > > > problem is that ftrace traces RCU itself, and calling
-> > > > "rcu_enter_irqs_on()" in pretty much any place in the RCU code caused
-> > > > lots of bugs ;-)
-> > > > 
-> > > > This is why we have the schedule_on_each_cpu(ftrace_sync) hack.  
-> > > 
-> > > The "schedule a task on each CPU" trick works on !PREEMPT though right?
-> > 
-> > It works on both, as I care more about the PREEMPT=y case then
-> > the !PREEMPT, and the PREEMPT_RT which is even more preemptive than
-> > PREEMPT!
-> > 
-> > > 
-> > > Because it is possible in PREEMPT=y to get preempted in the middle of a
-> > > read-side critical section, switch to the worker thread executing the
-> > > ftrace_sync() and then switch back. But RCU still has to watch that CPU since
-> > > the read-side critical section was not completed.
-> > > 
-> > > Or is there a subtlety here with ftrace that I missed?
-> > > 
-> > 
-> > Hence Amol's patch:
-> > 
-> > > +       notrace_hash = rcu_dereference_protected(ftrace_graph_notrace_hash,
-> > > +                                                !preemptible());
-> > 
-> > It checks to make sure preemption is off. There is no chance of being
-> > preempted in the read side critical section.
+Sergey Alirzaev wrote on Wed, Feb 05, 2020:
+> A user doesn't necessarily want to wait for all the requested data to
+> be available, since the waiting time for each request is unbounded.
 > 
-> Yes, this makes sense. Sorry for the noise.  For "sched" RCU cases,
-> scheduling on each CPU would work regardless of PREEMPT configuration.
-> 
-> ( I guess I was confusing this case with the non-sched RCU usages (such as using
-> rcu_read_lock()) where scheduling a task on each CPU obviously would not work
-> with PREEMPT=y. )
-> 
-> By the way would SRCU not work instead of the ftrace_sync() technique? Or is
-> the concern that SRCU cannot be used from NMI?
+> The new method permits sending one read request at a time and getting
+> the response ASAP, allowing to use 9pnet with synthetic file systems
+> representing arbitrary data streams.
 
-Answering my own question, SRCU would likely slow down ftrace_graph_addr()
-unnecessarily so is probably not worth doing so in this path (especially
-because ftrace_graph_addr() already starts an implict read-side critical
-section anyway via preempt_disable()).
+Much better, thanks!
 
-thanks,
+> Signed-off-by: Sergey Alirzaev <l29ah@cock.li>
+> [...]
+> +		if (n != count) {
+> +			*err = -EFAULT;
+> +			p9_tag_remove(clnt, req);
+> +			return n;
+>  		}
+> -		p9_tag_remove(clnt, req);
+> +	} else {
+> +		iov_iter_advance(to, count);
+> +		count;
 
- - Joel
+Any reason for this stray 'count;' statement?
 
+If you're ok with this I'll just take patch without that line, don't
+bother resubmitting.
+Will take a fair amount of time to make it to linux-next though, test
+setup needs some love and I want to run tests even if this should be
+straightforward...
+
+Thanks,
+-- 
+Dominique
