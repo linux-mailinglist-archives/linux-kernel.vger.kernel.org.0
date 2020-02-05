@@ -2,53 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B486915354E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 17:34:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4861715354A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 17:34:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbgBEQeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 11:34:36 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:46159 "EHLO
+        id S1727231AbgBEQeU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 11:34:20 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:46705 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726359AbgBEQef (ORCPT
+        with ESMTP id S1726359AbgBEQeU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 11:34:35 -0500
+        Wed, 5 Feb 2020 11:34:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580920474;
+        s=mimecast20190719; t=1580920458;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=rexFf3u9dwOgKF8qwa6CKc29pRBkdXMGcoOgim7g7N4=;
-        b=TE5qbyxxU+s4K2sR75Ci1TtW8PcT1NI2MJ1jlTJJt83M++wECgsDRazU//Bgsk6Dvx6Xe1
-        vyYEN3+lkL2oFb2JvRGRCWYWtTkHGTETbz5PeXG0iMuy9frQ91CpdDxOh6kccvebvMDdQ7
-        MKhJV/W5z5sdobX3sUVC/jiNwP5gCgs=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GtgAS5As/BKnCnMXPh5ZN6N7pDDP1MdfMF5L3R2Z8to=;
+        b=LlQQmLxrOXr4/EoDZ4kVklkiMzKsXJ8SDFA3pVMiwuPTwM4NzJGvG8Q+qNVevh028D/OFN
+        +6UxCTib85Q1ZH0RsyLONj7o3QPVLH8biHqRU12m8XzP2xfQW7iPo3KtGm90tMZlQ6Py4s
+        1tke98g+gZMtg9Xayev1QHZqC6Ln490=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-53-ei-AHbADN5qyeyeQL7fMRw-1; Wed, 05 Feb 2020 11:34:13 -0500
-X-MC-Unique: ei-AHbADN5qyeyeQL7fMRw-1
+ us-mta-380-no6_VzNIMpKlFtwPkyLWog-1; Wed, 05 Feb 2020 11:34:14 -0500
+X-MC-Unique: no6_VzNIMpKlFtwPkyLWog-1
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 64CD4190D37B;
-        Wed,  5 Feb 2020 16:34:11 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6A8DA1085929;
+        Wed,  5 Feb 2020 16:34:13 +0000 (UTC)
 Received: from t480s.redhat.com (ovpn-116-217.ams2.redhat.com [10.36.116.217])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F28231001B05;
-        Wed,  5 Feb 2020 16:34:02 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B02A21001B08;
+        Wed,  5 Feb 2020 16:34:11 +0000 (UTC)
 From:   David Hildenbrand <david@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-mm@kvack.org, virtualization@lists.linux-foundation.org,
         David Hildenbrand <david@redhat.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        David Rientjes <rientjes@google.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Liang Li <liang.z.li@intel.com>,
         "Michael S. Tsirkin" <mst@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Nadav Amit <namit@vmware.com>,
-        Tyler Sanderson <tysand@google.com>,
-        Wei Wang <wei.w.wang@intel.com>
-Subject: [PATCH v1 0/3] virtio-balloon: Fixes + switch back to OOM handler
-Date:   Wed,  5 Feb 2020 17:33:59 +0100
-Message-Id: <20200205163402.42627-1-david@redhat.com>
+        Jason Wang <jasowang@redhat.com>,
+        Wei Wang <wei.w.wang@intel.com>,
+        Liang Li <liang.z.li@intel.com>
+Subject: [PATCH v1 1/3] virtio-balloon: Fix memory leak when unloading while hinting is in progress
+Date:   Wed,  5 Feb 2020 17:34:00 +0100
+Message-Id: <20200205163402.42627-2-david@redhat.com>
+In-Reply-To: <20200205163402.42627-1-david@redhat.com>
+References: <20200205163402.42627-1-david@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Content-Transfer-Encoding: quoted-printable
@@ -57,31 +55,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Two fixes for issues I stumbled over while working on patch #3.
+When unloading the driver while hinting is in progress, we will not
+release the free page blocks back to MM, resulting in a memory leak.
 
-Switch back to the good ol' OOM handler for VIRTIO_BALLOON_F_DEFLATE_ON_O=
-OM
-as the switch to the shrinker introduce some undesired side effects. Keep
-the shrinker in place to handle VIRTIO_BALLOON_F_FREE_PAGE_HINT.
-Lengthy discussion under [1].
+Fixes: 86a559787e6f ("virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT")
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: Wei Wang <wei.w.wang@intel.com>
+Cc: Liang Li <liang.z.li@intel.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ drivers/virtio/virtio_balloon.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-I tested with QEMU and "deflate-on-oom=3Don". Works as expected. Did not
-test the shrinker for VIRTIO_BALLOON_F_FREE_PAGE_HINT, as it is
-hard to trigger (only when migrating a VM, and even then, it might not
-trigger).
-
-[1] https://www.spinics.net/lists/linux-virtualization/msg40863.html
-
-David Hildenbrand (3):
-  virtio-balloon: Fix memory leak when unloading while hinting is in
-    progress
-  virtio_balloon: Fix memory leaks on errors in virtballoon_probe()
-  virtio-balloon: Switch back to OOM handler for
-    VIRTIO_BALLOON_F_DEFLATE_ON_OOM
-
- drivers/virtio/virtio_balloon.c | 124 +++++++++++++++-----------------
- 1 file changed, 57 insertions(+), 67 deletions(-)
-
+diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_ball=
+oon.c
+index 8e400ece9273..abef2306c899 100644
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -968,6 +968,10 @@ static void remove_common(struct virtio_balloon *vb)
+ 		leak_balloon(vb, vb->num_pages);
+ 	update_balloon_size(vb);
+=20
++	/* There might be free pages that are being reported: release them. */
++	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT))
++		return_free_pages_to_mm(vb, ULONG_MAX);
++
+ 	/* Now we reset the device so we can clean up the queues. */
+ 	vb->vdev->config->reset(vb->vdev);
+=20
 --=20
 2.24.1
 
