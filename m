@@ -2,117 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9189E153635
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 18:17:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4504E153642
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 18:22:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbgBERRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 12:17:53 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36976 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727516AbgBERRu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 12:17:50 -0500
-Received: by mail-pl1-f194.google.com with SMTP id c23so1140456plz.4
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 09:17:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=mUDsIDZABMZl51KhHVbThQf4Tq5Xiy3roaR+2Uewz3I=;
-        b=T5Ri62NQ5TecG+H5Jkz3y/VrFKfdJk2hpW/44xQT4xfATYX7LgH825B+6EtpITWTBN
-         oyasJgxuEGESnxck6nQSSFid9SW/150iHcHfGpFsB36AXkMbISfiS1bDQHBpPXv0JT9m
-         xH944oVe2g7+4JGgSFu+AjCYq9KFiQWYzKZYTbQAoywFd8qHeAZ9CgMyloF8xIRELRLQ
-         KFcz8JWHPlksC7SxfPTh+Wir8XqzEOx5dk5yQI+HgX/s4ifjGXGIkeis5/rZULtdZB2S
-         C7Vuq7ixhvBCNTo+OkyqD5lQhWcR6TvE0uJaAjtjx9xSck5t5WjATT4mwSbqDwJmDUHs
-         GKug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:in-reply-to:references;
-        bh=mUDsIDZABMZl51KhHVbThQf4Tq5Xiy3roaR+2Uewz3I=;
-        b=OTq+Yga7/GQpxkTG3vM/zOb/aBXeaQSEomPvzjyPQxT97ABPWVSI0mzHaMv83l/HiH
-         dkqdfBCDaf3CsAQ0twlWqwj4db2895mi5p5LQwezFAtFvjQc6nJsLGA4GqFk9uCOfpYi
-         cNrQY05ElygleTL5vz5mLyxE7MKbL/xF0PquwxEqJdXlk1EALMKl/+2MQ/rxw8RaI2+w
-         ae/B7KCC9raNYbU98FXXT81T0glrBVJJrAgXDEAMAwoxO9ertk2cE6H1bTQrXh6/ll+J
-         ZsOB0Eh6JGskJUno2t6K7rF4we5Ooy0yYLj561/t7kXhEn35mNu6/+7+ASYCISeFVr+R
-         +7hA==
-X-Gm-Message-State: APjAAAVWC2tGgoVdUaEHR3OH5cKyHXyyhz7WlNlK/61nGQZv0avaOySC
-        sFIuv+V30B8RdQhXL1vNPyo=
-X-Google-Smtp-Source: APXvYqwAucub/1RnuK/N44ZKAJ/ubl68vA2EqER/Po2dotu9cAHraSFJVsBMiG0GURTaxB6fL5q9Dg==
-X-Received: by 2002:a17:90a:d081:: with SMTP id k1mr6863551pju.57.1580923069539;
-        Wed, 05 Feb 2020 09:17:49 -0800 (PST)
-Received: from emb-wallaby.amd.com ([165.204.156.251])
-        by smtp.gmail.com with ESMTPSA id l8sm357945pjy.24.2020.02.05.09.17.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 09:17:49 -0800 (PST)
-From:   Arindam Nath <arindam.nath@amd.com>
-To:     Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>,
-        Sanjay R Mehta <sanju.mehta@amd.com>
-Cc:     linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org,
-        Arindam Nath <arindam.nath@amd.com>
-Subject: [PATCH 4/4] ntb_tool: pass correct struct device to dma_alloc_coherent
-Date:   Wed,  5 Feb 2020 22:46:58 +0530
-Message-Id: <a408ec42122ec0d9ad9aa0d3287f485eb727a6d6.1580921119.git.arindam.nath@amd.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1580921119.git.arindam.nath@amd.com>
-References: <cover.1580921119.git.arindam.nath@amd.com>
-In-Reply-To: <cover.1580921119.git.arindam.nath@amd.com>
-References: <cover.1580921119.git.arindam.nath@amd.com>
+        id S1727192AbgBERWR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 12:22:17 -0500
+Received: from mga03.intel.com ([134.134.136.65]:7727 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726957AbgBERWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 12:22:17 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2020 09:22:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,406,1574150400"; 
+   d="scan'208";a="254826270"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
+  by fmsmga004.fm.intel.com with ESMTP; 05 Feb 2020 09:22:15 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id AF2C63003A2; Wed,  5 Feb 2020 09:22:15 -0800 (PST)
+Date:   Wed, 5 Feb 2020 09:22:15 -0800
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Hagen Paul Pfeifer <hagen@jauu.net>
+Cc:     linux-kernel@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [PATCH] perf script: introduce deltatime option
+Message-ID: <20200205172215.GG302770@tassilo.jf.intel.com>
+References: <20200204173709.489161-1-hagen@jauu.net>
+ <20200204231628.GF302770@tassilo.jf.intel.com>
+ <20200205091414.GB495987@virgo>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200205091414.GB495987@virgo>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sanjay R Mehta <sanju.mehta@amd.com>
+> reltime is relative to the *first event* in the record - deltatime is relative
+> to the *previous* event.
 
-Currently, ntb->dev is passed to dma_alloc_coherent
-and dma_free_coherent calls. The returned dma_addr_t
-is the CPU physical address. This works fine as long
-as IOMMU is disabled. But when IOMMU is enabled, we
-need to make sure that IOVA is returned for dma_addr_t.
-So the correct way to achieve this is by changing the
-first parameter of dma_alloc_coherent() as ntb->pdev->dev
-instead.
+Ah ok.
 
-Fixes: 5648e56 ("NTB: ntb_perf: Add full multi-port NTB API support")
-Signed-off-by: Sanjay R Mehta <sanju.mehta@amd.com>
-Signed-off-by: Arindam Nath <arindam.nath@amd.com>
----
- drivers/ntb/test/ntb_tool.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+I think it's useful, but you should rather implement it as a new field instead
+of as an option. There might be use cases where you want both.
 
-diff --git a/drivers/ntb/test/ntb_tool.c b/drivers/ntb/test/ntb_tool.c
-index d592c0ffbd19..025747c1568e 100644
---- a/drivers/ntb/test/ntb_tool.c
-+++ b/drivers/ntb/test/ntb_tool.c
-@@ -590,7 +590,7 @@ static int tool_setup_mw(struct tool_ctx *tc, int pidx, int widx,
- 	inmw->size = min_t(resource_size_t, req_size, size);
- 	inmw->size = round_up(inmw->size, addr_align);
- 	inmw->size = round_up(inmw->size, size_align);
--	inmw->mm_base = dma_alloc_coherent(&tc->ntb->dev, inmw->size,
-+	inmw->mm_base = dma_alloc_coherent(&tc->ntb->pdev->dev, inmw->size,
- 					   &inmw->dma_base, GFP_KERNEL);
- 	if (!inmw->mm_base)
- 		return -ENOMEM;
-@@ -612,7 +612,7 @@ static int tool_setup_mw(struct tool_ctx *tc, int pidx, int widx,
- 	return 0;
- 
- err_free_dma:
--	dma_free_coherent(&tc->ntb->dev, inmw->size, inmw->mm_base,
-+	dma_free_coherent(&tc->ntb->pdev->dev, inmw->size, inmw->mm_base,
- 			  inmw->dma_base);
- 	inmw->mm_base = NULL;
- 	inmw->dma_base = 0;
-@@ -629,7 +629,7 @@ static void tool_free_mw(struct tool_ctx *tc, int pidx, int widx)
- 
- 	if (inmw->mm_base != NULL) {
- 		ntb_mw_clear_trans(tc->ntb, pidx, widx);
--		dma_free_coherent(&tc->ntb->dev, inmw->size,
-+		dma_free_coherent(&tc->ntb->pdev->dev, inmw->size,
- 				  inmw->mm_base, inmw->dma_base);
- 	}
- 
--- 
-2.17.1
+delta time is easier for reading, but absolute time is often important 
+to find something in a trace.
 
+-Andi
