@@ -2,170 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1940152771
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 09:15:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF82F152753
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 09:03:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728053AbgBEIPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 03:15:22 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:14618 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725875AbgBEIPV (ORCPT
+        id S1727963AbgBEIDv convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 5 Feb 2020 03:03:51 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:46938 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbgBEIDv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 03:15:21 -0500
-X-UUID: 9ad21bda66b5410db1af0f5bc1f97c36-20200205
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=+Eehl38VYEUnGQv2W5X+HsgZ4ZWAQEHn3zauirYc0JY=;
-        b=qLP/9yEaVNLyjmffhkleI1sCLuvIQo61R2habIuvMwzyVgvIE9nitOg0w6S0uKq5UMQZ1DRx0uDN/vHaJSAtIgNZeve0POCcRI/ud2WVzxe5IFCNF3rs105TjlTm5ed/RlOQcb9ecviKtHx09FNfKyHIk6/S+2PK+Nd6OgHS7xc=;
-X-UUID: 9ad21bda66b5410db1af0f5bc1f97c36-20200205
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <frankie.chang@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1225700861; Wed, 05 Feb 2020 16:15:14 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 5 Feb 2020 16:14:28 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 5 Feb 2020 16:14:48 +0800
-From:   Frankie Chang <Frankie.Chang@mediatek.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <christian@brauner.io>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-        <Jian-Min.Liu@mediatek.com>,
-        Frankie Chang <Frankie.Chang@mediatek.com>
-Subject: [PATCH v1 1/1] binder: transaction latency tracking for user build
-Date:   Wed, 5 Feb 2020 14:52:52 +0800
-Message-ID: <1580885572-14272-1-git-send-email-Frankie.Chang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        Wed, 5 Feb 2020 03:03:51 -0500
+Received: from marcel-macpro.fritz.box (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
+        by mail.holtmann.org (Postfix) with ESMTPSA id AA2E6CECC4;
+        Wed,  5 Feb 2020 09:13:10 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [PATCH v1] Bluetooth: hci_qca: Bug fixes while collecting
+ controller memory dump
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <CANFp7mXgvfQGw0bc0dwNXg9KME1XD1zYGtPdEFWbM20NJpKtzQ@mail.gmail.com>
+Date:   Wed, 5 Feb 2020 09:03:48 +0100
+Cc:     Venkata Lakshmi Narayana Gubba <gubbaven@codeaurora.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        robh@kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, bgodavar@codeaurora.org,
+        tientzu@chromium.org, seanpaul@chromium.org, rjliao@codeaurora.org,
+        Yoni Shavit <yshavit@google.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <340089F1-166F-4C7C-8CB1-2D37DF11701E@holtmann.org>
+References: <1580832929-2067-1-git-send-email-gubbaven@codeaurora.org>
+ <CANFp7mXgvfQGw0bc0dwNXg9KME1XD1zYGtPdEFWbM20NJpKtzQ@mail.gmail.com>
+To:     Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UmVjb3JkIHN0YXJ0L2VuZCB0aW1lc3RhbXAgdG8gYmluZGVyIHRyYW5zYWN0aW9uLg0KV2hlbiB0
-cmFuc2FjdGlvbiBpcyBjb21wbGV0ZWQgb3IgdHJhbnNhY3Rpb24gaXMgZnJlZSwNCml0IHdvdWxk
-IGJlIGNoZWNrZWQgaWYgdHJhbnNhY3Rpb24gbGF0ZW5jeSBvdmVyIHRocmVzaG9sZCAoMiBzZWMp
-LA0KaWYgeWVzLCBwcmludGluZyByZWxhdGVkIGluZm9ybWF0aW9uIGZvciB0cmFjaW5nLg0KDQpT
-aWduZWQtb2ZmLWJ5OiBGcmFua2llIENoYW5nIDxGcmFua2llLkNoYW5nQG1lZGlhdGVrLmNvbT4N
-Ci0tLQ0KIGRyaXZlcnMvYW5kcm9pZC9LY29uZmlnICAgICAgICAgICB8ICAgIDggKysrDQogZHJp
-dmVycy9hbmRyb2lkL2JpbmRlci5jICAgICAgICAgIHwgIDEwNyArKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrDQogZHJpdmVycy9hbmRyb2lkL2JpbmRlcl9pbnRlcm5hbC5oIHwg
-ICAgNCArKw0KIDMgZmlsZXMgY2hhbmdlZCwgMTE5IGluc2VydGlvbnMoKykNCg0KZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvYW5kcm9pZC9LY29uZmlnIGIvZHJpdmVycy9hbmRyb2lkL0tjb25maWcNCmlu
-ZGV4IDZmZGYyYWIuLjdiYTgwZWIgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2FuZHJvaWQvS2NvbmZp
-Zw0KKysrIGIvZHJpdmVycy9hbmRyb2lkL0tjb25maWcNCkBAIC01NCw2ICs1NCwxNCBAQCBjb25m
-aWcgQU5EUk9JRF9CSU5ERVJfSVBDX1NFTEZURVNUDQogCSAgZXhoYXVzdGl2ZWx5IHdpdGggY29t
-YmluYXRpb25zIG9mIHZhcmlvdXMgYnVmZmVyIHNpemVzIGFuZA0KIAkgIGFsaWdubWVudHMuDQog
-DQorY29uZmlnIEJJTkRFUl9VU0VSX1RSQUNLSU5HDQorCWJvb2wgIkFuZHJvaWQgQmluZGVyIHRy
-YW5zYWN0aW9uIHRyYWNraW5nIg0KKwloZWxwDQorCSAgVXNlZCBmb3IgdHJhY2sgYWJub3JtYWwg
-YmluZGVyIHRyYW5zYWN0aW9uIHdoaWNoIGlzIG92ZXIgMiBzZWNvbmRzLA0KKwkgIHdoZW4gdGhl
-IHRyYW5zYWN0aW9uIGlzIGRvbmUgb3IgYmUgZnJlZSwgdGhpcyB0cmFuc2FjdGlvbiB3b3VsZCBi
-ZQ0KKwkgIGNoZWNrZWQgd2hldGhlciBpdCBleGVjdXRlZCBvdmVydGltZS4NCisJICBJZiB5ZXMs
-IHByaW50aW5nIG91dCB0aGUgZGV0YWlsIGluZm8gYWJvdXQgaXQuDQorDQogZW5kaWYgIyBpZiBB
-TkRST0lEDQogDQogZW5kbWVudQ0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvYW5kcm9pZC9iaW5kZXIu
-YyBiL2RyaXZlcnMvYW5kcm9pZC9iaW5kZXIuYw0KaW5kZXggZTliYzlmYy4uNWEzNTJlZSAxMDA2
-NDQNCi0tLSBhL2RyaXZlcnMvYW5kcm9pZC9iaW5kZXIuYw0KKysrIGIvZHJpdmVycy9hbmRyb2lk
-L2JpbmRlci5jDQpAQCAtNzYsNiArNzYsMTEgQEANCiAjaW5jbHVkZSAiYmluZGVyX2ludGVybmFs
-LmgiDQogI2luY2x1ZGUgImJpbmRlcl90cmFjZS5oIg0KIA0KKyNpZmRlZiBDT05GSUdfQklOREVS
-X1VTRVJfVFJBQ0tJTkcNCisjaW5jbHVkZSA8bGludXgvcnRjLmg+DQorI2luY2x1ZGUgPGxpbnV4
-L3RpbWUuaD4NCisjZW5kaWYNCisNCiBzdGF0aWMgSExJU1RfSEVBRChiaW5kZXJfZGVmZXJyZWRf
-bGlzdCk7DQogc3RhdGljIERFRklORV9NVVRFWChiaW5kZXJfZGVmZXJyZWRfbG9jayk7DQogDQpA
-QCAtNTkxLDggKzU5NiwxMDQgQEAgc3RydWN0IGJpbmRlcl90cmFuc2FjdGlvbiB7DQogCSAqIGR1
-cmluZyB0aHJlYWQgdGVhcmRvd24NCiAJICovDQogCXNwaW5sb2NrX3QgbG9jazsNCisjaWZkZWYg
-Q09ORklHX0JJTkRFUl9VU0VSX1RSQUNLSU5HDQorCXN0cnVjdCB0aW1lc3BlYyB0aW1lc3RhbXA7
-DQorCXN0cnVjdCB0aW1ldmFsIHR2Ow0KKyNlbmRpZg0KIH07DQogDQorI2lmZGVmIENPTkZJR19C
-SU5ERVJfVVNFUl9UUkFDS0lORw0KKw0KKy8qDQorICogYmluZGVyX3ByaW50X2RlbGF5IC0gT3V0
-cHV0IGluZm8gb2YgYSBkZWxheSB0cmFuc2FjdGlvbg0KKyAqIEB0OiAgICAgICAgICBwb2ludGVy
-IHRvIHRoZSBvdmVyLXRpbWUgdHJhbnNhY3Rpb24NCisgKi8NCitzdGF0aWMgdm9pZCBiaW5kZXJf
-cHJpbnRfZGVsYXkoc3RydWN0IGJpbmRlcl90cmFuc2FjdGlvbiAqdCkNCit7DQorCXN0cnVjdCBy
-dGNfdGltZSB0bTsNCisJc3RydWN0IHRpbWVzcGVjICpzdGFydGltZTsNCisJc3RydWN0IHRpbWVz
-cGVjIGN1ciwgc3ViX3Q7DQorDQorCWt0aW1lX2dldF90cygmY3VyKTsNCisJc3RhcnRpbWUgPSAm
-dC0+dGltZXN0YW1wOw0KKwlzdWJfdCA9IHRpbWVzcGVjX3N1YihjdXIsICpzdGFydGltZSk7DQor
-DQorCS8qIGlmIHRyYW5zYWN0aW9uIHRpbWUgaXMgb3ZlciB0aGFuIDIgc2VjLA0KKwkgKiBzaG93
-IHRpbWVvdXQgd2FybmluZyBsb2cuDQorCSAqLw0KKwlpZiAoc3ViX3QudHZfc2VjIDwgMikNCisJ
-CXJldHVybjsNCisNCisJcnRjX3RpbWVfdG9fdG0odC0+dHYudHZfc2VjLCAmdG0pOw0KKw0KKwlz
-cGluX2xvY2soJnQtPmxvY2spOw0KKwlwcl9pbmZvX3JhdGVsaW1pdGVkKCIlZDogZnJvbSAlZDol
-ZCB0byAlZDolZCIsDQorCQkJICAgIHQtPmRlYnVnX2lkLA0KKwkJCSAgICB0LT5mcm9tID8gdC0+
-ZnJvbS0+cHJvYy0+cGlkIDogMCwNCisJCQkgICAgdC0+ZnJvbSA/IHQtPmZyb20tPnBpZCA6IDAs
-DQorCQkJICAgIHQtPnRvX3Byb2MgPyB0LT50b19wcm9jLT5waWQgOiAwLA0KKwkJCSAgICB0LT50
-b190aHJlYWQgPyB0LT50b190aHJlYWQtPnBpZCA6IDApOw0KKwlzcGluX3VubG9jaygmdC0+bG9j
-ayk7DQorDQorCXByX2luZm9fcmF0ZWxpbWl0ZWQoIiB0b3RhbCAldS4lMDNsZCBzIGNvZGUgJXUg
-c3RhcnQgJWx1LiUwM2xkIGFuZHJvaWQgJWQtJTAyZC0lMDJkICUwMmQ6JTAyZDolMDJkLiUwM2x1
-XG4iLA0KKwkJCSAgICAodW5zaWduZWQgaW50KXN1Yl90LnR2X3NlYywNCisJCQkgICAgKHN1Yl90
-LnR2X25zZWMgLyBOU0VDX1BFUl9NU0VDKSwNCisJCQkgICAgdC0+Y29kZSwNCisJCQkgICAgKHVu
-c2lnbmVkIGxvbmcpc3RhcnRpbWUtPnR2X3NlYywNCisJCQkgICAgKHN0YXJ0aW1lLT50dl9uc2Vj
-IC8gTlNFQ19QRVJfTVNFQyksDQorCQkJICAgICh0bS50bV95ZWFyICsgMTkwMCksICh0bS50bV9t
-b24gKyAxKSwgdG0udG1fbWRheSwNCisJCQkgICAgdG0udG1faG91ciwgdG0udG1fbWluLCB0bS50
-bV9zZWMsDQorCQkJICAgICh1bnNpZ25lZCBsb25nKSh0LT50di50dl91c2VjIC8gVVNFQ19QRVJf
-TVNFQykpOw0KK30NCisNCitzdGF0aWMgdm9pZCBiaW5kZXJfbG9nX2VudHJ5X3NldHVwKHN0cnVj
-dCBiaW5kZXJfdHJhbnNhY3Rpb25fbG9nX2VudHJ5ICplKQ0KK3sNCisJa3RpbWVfZ2V0X3RzKCZl
-LT50aW1lc3RhbXApOw0KKwlkb19nZXR0aW1lb2ZkYXkoJmUtPnR2KTsNCisJZS0+dHYudHZfc2Vj
-IC09IChzeXNfdHoudHpfbWludXRlc3dlc3QgKiA2MCk7DQorfQ0KKw0KK3N0YXRpYyB2b2lkIHRp
-bWVzdGFtcF9jb3B5KHN0cnVjdCBiaW5kZXJfdHJhbnNhY3Rpb24gKnQsDQorCQkJICAgc3RydWN0
-IGJpbmRlcl90cmFuc2FjdGlvbl9sb2dfZW50cnkgKmUpDQorew0KKwltZW1jcHkoJnQtPnRpbWVz
-dGFtcCwgJmUtPnRpbWVzdGFtcCwgc2l6ZW9mKHN0cnVjdCB0aW1lc3BlYykpOw0KKwltZW1jcHko
-JnQtPnR2LCAmZS0+dHYsIHNpemVvZihzdHJ1Y3QgdGltZXZhbCkpOw0KK30NCisNCitzdGF0aWMg
-dm9pZCBwcmludF9iaW5kZXJfdHJhbnNhY3Rpb25fZXh0KHN0cnVjdCBzZXFfZmlsZSAqbSwNCisJ
-CQkJCSBzdHJ1Y3QgYmluZGVyX3RyYW5zYWN0aW9uICp0KQ0KK3sNCisJc3RydWN0IHJ0Y190aW1l
-IHRtOw0KKw0KKwlydGNfdGltZV90b190bSh0LT50di50dl9zZWMsICZ0bSk7DQorCXNlcV9wcmlu
-dGYobSwNCisJCSAgICIgc3RhcnQgJWx1LiUwNmx1IGFuZHJvaWQgJWQtJTAyZC0lMDJkICUwMmQ6
-JTAyZDolMDJkLiUwM2x1IiwNCisJCSAgICh1bnNpZ25lZCBsb25nKXQtPnRpbWVzdGFtcC50dl9z
-ZWMsDQorCQkgICAodC0+dGltZXN0YW1wLnR2X25zZWMgLyBOU0VDX1BFUl9VU0VDKSwNCisJCSAg
-ICh0bS50bV95ZWFyICsgMTkwMCksICh0bS50bV9tb24gKyAxKSwgdG0udG1fbWRheSwNCisJCSAg
-IHRtLnRtX2hvdXIsIHRtLnRtX21pbiwgdG0udG1fc2VjLA0KKwkJICAgKHVuc2lnbmVkIGxvbmcp
-KHQtPnR2LnR2X3VzZWMgLyBVU0VDX1BFUl9NU0VDKSk7DQorfQ0KKyNlbHNlDQorc3RhdGljIHZv
-aWQgYmluZGVyX3ByaW50X2RlbGF5KHN0cnVjdCBiaW5kZXJfdHJhbnNhY3Rpb24gKnQpDQorew0K
-K30NCisNCitzdGF0aWMgdm9pZCBiaW5kZXJfbG9nX2VudHJ5X3NldHVwKHN0cnVjdCBiaW5kZXJf
-dHJhbnNhY3Rpb25fbG9nX2VudHJ5ICplKQ0KK3sNCit9DQorDQorc3RhdGljIHZvaWQgdGltZXN0
-YW1wX2NvcHkoc3RydWN0IGJpbmRlcl90cmFuc2FjdGlvbiAqdCwNCisJCQkgICBzdHJ1Y3QgYmlu
-ZGVyX3RyYW5zYWN0aW9uX2xvZ19lbnRyeSAqZSkNCit7DQorfQ0KKw0KK3N0YXRpYyB2b2lkIHBy
-aW50X2JpbmRlcl90cmFuc2FjdGlvbl9leHQoc3RydWN0IHNlcV9maWxlICptLA0KKwkJCQkJIHN0
-cnVjdCBiaW5kZXJfdHJhbnNhY3Rpb24gKnQpDQorew0KK30NCisjZW5kaWYNCisNCiAvKioNCiAg
-KiBzdHJ1Y3QgYmluZGVyX29iamVjdCAtIHVuaW9uIG9mIGZsYXQgYmluZGVyIG9iamVjdCB0eXBl
-cw0KICAqIEBoZHI6ICAgZ2VuZXJpYyBvYmplY3QgaGVhZGVyDQpAQCAtMTkyNyw2ICsyMDI4LDcg
-QEAgc3RhdGljIHZvaWQgYmluZGVyX2ZyZWVfdHJhbnNhY3Rpb24oc3RydWN0IGJpbmRlcl90cmFu
-c2FjdGlvbiAqdCkNCiAJICogSWYgdGhlIHRyYW5zYWN0aW9uIGhhcyBubyB0YXJnZXRfcHJvYywg
-dGhlbg0KIAkgKiB0LT5idWZmZXItPnRyYW5zYWN0aW9uIGhhcyBhbHJlYWR5IGJlZW4gY2xlYXJl
-ZC4NCiAJICovDQorCWJpbmRlcl9wcmludF9kZWxheSh0KTsNCiAJYmluZGVyX2ZyZWVfdHhuX2Zp
-eHVwcyh0KTsNCiAJa2ZyZWUodCk7DQogCWJpbmRlcl9zdGF0c19kZWxldGVkKEJJTkRFUl9TVEFU
-X1RSQU5TQUNUSU9OKTsNCkBAIC0yODcyLDYgKzI5NzQsOCBAQCBzdGF0aWMgdm9pZCBiaW5kZXJf
-dHJhbnNhY3Rpb24oc3RydWN0IGJpbmRlcl9wcm9jICpwcm9jLA0KIAllLT5vZmZzZXRzX3NpemUg
-PSB0ci0+b2Zmc2V0c19zaXplOw0KIAlzdHJzY3B5KGUtPmNvbnRleHRfbmFtZSwgcHJvYy0+Y29u
-dGV4dC0+bmFtZSwgQklOREVSRlNfTUFYX05BTUUpOw0KIA0KKwliaW5kZXJfbG9nX2VudHJ5X3Nl
-dHVwKGUpOw0KKw0KIAlpZiAocmVwbHkpIHsNCiAJCWJpbmRlcl9pbm5lcl9wcm9jX2xvY2socHJv
-Yyk7DQogCQlpbl9yZXBseV90byA9IHRocmVhZC0+dHJhbnNhY3Rpb25fc3RhY2s7DQpAQCAtMzA1
-OCw2ICszMTYyLDcgQEAgc3RhdGljIHZvaWQgYmluZGVyX3RyYW5zYWN0aW9uKHN0cnVjdCBiaW5k
-ZXJfcHJvYyAqcHJvYywNCiAJCXJldHVybl9lcnJvcl9saW5lID0gX19MSU5FX187DQogCQlnb3Rv
-IGVycl9hbGxvY190X2ZhaWxlZDsNCiAJfQ0KKwl0aW1lc3RhbXBfY29weSh0LCBlKTsNCiAJSU5J
-VF9MSVNUX0hFQUQoJnQtPmZkX2ZpeHVwcyk7DQogCWJpbmRlcl9zdGF0c19jcmVhdGVkKEJJTkRF
-Ul9TVEFUX1RSQU5TQUNUSU9OKTsNCiAJc3Bpbl9sb2NrX2luaXQoJnQtPmxvY2spOw0KQEAgLTM0
-OTYsNiArMzYwMSw3IEBAIHN0YXRpYyB2b2lkIGJpbmRlcl90cmFuc2FjdGlvbihzdHJ1Y3QgYmlu
-ZGVyX3Byb2MgKnByb2MsDQogCWtmcmVlKHRjb21wbGV0ZSk7DQogCWJpbmRlcl9zdGF0c19kZWxl
-dGVkKEJJTkRFUl9TVEFUX1RSQU5TQUNUSU9OX0NPTVBMRVRFKTsNCiBlcnJfYWxsb2NfdGNvbXBs
-ZXRlX2ZhaWxlZDoNCisJYmluZGVyX3ByaW50X2RlbGF5KHQpOw0KIAlrZnJlZSh0KTsNCiAJYmlu
-ZGVyX3N0YXRzX2RlbGV0ZWQoQklOREVSX1NUQVRfVFJBTlNBQ1RJT04pOw0KIGVycl9hbGxvY190
-X2ZhaWxlZDoNCkBAIC01NTQ0LDYgKzU2NTAsNyBAQCBzdGF0aWMgdm9pZCBwcmludF9iaW5kZXJf
-dHJhbnNhY3Rpb25faWxvY2tlZChzdHJ1Y3Qgc2VxX2ZpbGUgKm0sDQogCQkgICB0LT50b190aHJl
-YWQgPyB0LT50b190aHJlYWQtPnBpZCA6IDAsDQogCQkgICB0LT5jb2RlLCB0LT5mbGFncywgdC0+
-cHJpb3JpdHksIHQtPm5lZWRfcmVwbHkpOw0KIAlzcGluX3VubG9jaygmdC0+bG9jayk7DQorCXBy
-aW50X2JpbmRlcl90cmFuc2FjdGlvbl9leHQobSwgdCk7DQogDQogCWlmIChwcm9jICE9IHRvX3By
-b2MpIHsNCiAJCS8qDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9hbmRyb2lkL2JpbmRlcl9pbnRlcm5h
-bC5oIGIvZHJpdmVycy9hbmRyb2lkL2JpbmRlcl9pbnRlcm5hbC5oDQppbmRleCBhZTk5MTA5Li5l
-YTUyYzVkIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9hbmRyb2lkL2JpbmRlcl9pbnRlcm5hbC5oDQor
-KysgYi9kcml2ZXJzL2FuZHJvaWQvYmluZGVyX2ludGVybmFsLmgNCkBAIC0xMzEsNiArMTMxLDEw
-IEBAIHN0cnVjdCBiaW5kZXJfdHJhbnNhY3Rpb25fbG9nX2VudHJ5IHsNCiAJdWludDMyX3QgcmV0
-dXJuX2Vycm9yOw0KIAl1aW50MzJfdCByZXR1cm5fZXJyb3JfcGFyYW07DQogCWNoYXIgY29udGV4
-dF9uYW1lW0JJTkRFUkZTX01BWF9OQU1FICsgMV07DQorI2lmZGVmIENPTkZJR19CSU5ERVJfVVNF
-Ul9UUkFDS0lORw0KKwlzdHJ1Y3QgdGltZXNwZWMgdGltZXN0YW1wOw0KKwlzdHJ1Y3QgdGltZXZh
-bCB0djsNCisjZW5kaWYNCiB9Ow0KIA0KIHN0cnVjdCBiaW5kZXJfdHJhbnNhY3Rpb25fbG9nIHsN
-Ci0tIA0KMS43LjkuNQ0K
+Hi Abhishek,
+
+> Per our earlier review on chromium gerrit:
+> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1992966
+> 
+> I'm not too keen on the change from mutex to spinlock because it's
+> made the code more complex.
+> 
+> Also, it has been a couple weeks since my last review and I've lost
+> the context of what order of events are supposed to happen (making
+> reviewing the sequencing hard).
+> 
+> Good case:
+> 
+> Memdump event from firmware
+> Some number of memdump events with seq #
+> Hw error event
+> Reset
+> 
+> Timeout case:
+> 
+> Memdump event from firmware
+> Some number of memdump events with seq #
+> Timeout schedules hw_error_event
+> hw_error_event clears the memdump activity
+> reset
+> 
+> Software memdump:
+> 
+> hw_error_event sends memdump command to firmware and waits for completion
+> memdump event with seq#
+> hw error event
+> reset
+> 
+> Does this look right? Could you add this to either the commit message
+> or as a comment in one of the functions so that it's easier to
+> understand what is the expected order of events.
+> 
+> On Tue, Feb 4, 2020 at 8:16 AM Venkata Lakshmi Narayana Gubba
+> <gubbaven@codeaurora.org> wrote:
+>> 
+>> This patch will fix the below issues
+>>   1.Fixed race conditions while accessing memory dump state flags.
+>>   2.Updated with actual context of timer in hci_memdump_timeout()
+>>   3.Updated injecting hardware error event if the dumps failed to receive.
+>>   4.Once timeout is triggered, stopping the memory dump collections.
+>> 
+>> Fixes: d841502c79e3 ("Bluetooth: hci_qca: Collect controller memory dump during SSR")
+>> Reported-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+>> Signed-off-by: Venkata Lakshmi Narayana Gubba <gubbaven@codeaurora.org>
+>> ---
+>> drivers/bluetooth/hci_qca.c | 104 ++++++++++++++++++++++++++++++++++++++------
+>> 1 file changed, 90 insertions(+), 14 deletions(-)
+>> 
+>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> index eacc65b..ea956c3 100644
+>> --- a/drivers/bluetooth/hci_qca.c
+>> +++ b/drivers/bluetooth/hci_qca.c
+>> @@ -69,7 +69,8 @@ enum qca_flags {
+>>        QCA_IBS_ENABLED,
+>>        QCA_DROP_VENDOR_EVENT,
+>>        QCA_SUSPENDING,
+>> -       QCA_MEMDUMP_COLLECTION
+>> +       QCA_MEMDUMP_COLLECTION,
+>> +       QCA_HW_ERROR_EVENT
+>> };
+>> 
+>> 
+>> @@ -150,6 +151,7 @@ struct qca_data {
+>>        struct completion drop_ev_comp;
+>>        wait_queue_head_t suspend_wait_q;
+>>        enum qca_memdump_states memdump_state;
+>> +       spinlock_t hci_memdump_lock;
+> In an earlier revision of this patch, you had this lock as a mutex.
+> Why change it from mutex to spinlock_t? I think this has made your
+> change more complex since you have to unlock during the middle of an
+> operation more often (i.e. since it can block)
+
+I agree that we should try to keep a mutex since all event processing in Bluetooth core happens in a workqueue anyway.
+
+Regards
+
+Marcel
 
