@@ -2,192 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F3331536F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 18:47:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CE0F153700
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 18:48:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbgBERrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 12:47:46 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44974 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbgBERrp (ORCPT
+        id S1727444AbgBERse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 12:48:34 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42249 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727052AbgBERse (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 12:47:45 -0500
-Received: by mail-wr1-f68.google.com with SMTP id m16so3791843wrx.11;
-        Wed, 05 Feb 2020 09:47:43 -0800 (PST)
+        Wed, 5 Feb 2020 12:48:34 -0500
+Received: by mail-ed1-f66.google.com with SMTP id e10so3014983edv.9;
+        Wed, 05 Feb 2020 09:48:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bqSFd8ExC2+wnJEBx28ysaeI00JolAV0U9Y2gLNzOSg=;
+        b=AIaZQFqZI/VpdWNKfIL+qsVL/e8sjHn3WkUCa7jmAu4xADr/5sHc4sSFvXvjz0rM/w
+         EFFJkZZ6Rk3kxbYJ/6EZm4ama7LHvpFBHMsLWk62wgIhhQOF/PBlwc+lgvgrNfAE85dn
+         njc1WMPfy5Ba0UVV3LdK357EWTMeA2wRwZ1IueB2OUCOIZ7cHBuJ+iFPhec3tMD6+uow
+         aHxO0j/IysW4/k7CxArSSrtO4R6XQ7L//EZH+Mn728uQa9LOzMY0BEkpVNiTkojzfjsW
+         NumGSmLCsqRmHx1jRfTJhFvaj2DcdxsmujkUdFkNqHVJneaPcP+lAvcRgYiEfxqMQDdM
+         ocog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CYLfMRQOnfB9NcsP3jbmvn6lucoo/vUebKxirhMntc0=;
-        b=tnm44IXJ1eniMLeztRtHWnM9AwcJ+TGr2TsJ8OKwvmrQuTyUARXpabN8l0FDHnNrv5
-         0Q17YoiBIo3HyMUeHBlCfx6JC1xc6+hlgEHrsVrmm721vJemwZVJsq1iD0Fx7RKGBbue
-         sGJnjSUhkHSrldPFqLZjEF0Uz2yEmF+DII+d2v2Lki4TAjIizvgAIyDpsw+DNhVspx4J
-         wab/gMU2Ahe4c/jbdt5+kQuaEgWdQFS5E92Z4TIGpY5Iww7DbxIGUg8CG5nPqGvVgIVb
-         +7dVNtP74D7gIAvZt4t2GSO+6NqbPkpCKCgRwevR+TtunDvEmUyquZVJU2uSwj2Vhfp4
-         Yh1A==
-X-Gm-Message-State: APjAAAWm5atDHrolSkbJDaDi0qSwHBFe6JINvvHRUF/fW28gywxakkD9
-        Lne2u1PIen9+16wDNJIF+g==
-X-Google-Smtp-Source: APXvYqztCHUsi45+Mt62Wd/cXHFhEBCqL5ykVTJiCzLLf1seeZgXV2jDrI41CauiGVreIOnEmV30nA==
-X-Received: by 2002:adf:fe43:: with SMTP id m3mr31718793wrs.213.1580924862634;
-        Wed, 05 Feb 2020 09:47:42 -0800 (PST)
-Received: from rob-hp-laptop ([212.187.182.166])
-        by smtp.gmail.com with ESMTPSA id u14sm659294wrm.51.2020.02.05.09.47.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 09:47:42 -0800 (PST)
-Received: (nullmailer pid 26578 invoked by uid 1000);
-        Wed, 05 Feb 2020 17:47:40 -0000
-Date:   Wed, 5 Feb 2020 17:47:40 +0000
-From:   Rob Herring <robh@kernel.org>
-To:     Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-Cc:     linux-i2c@vger.kernel.org, mark.rutland@arm.com,
-        bleung@chromium.org, enric.balletbo@collabora.com,
-        groeck@chromium.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, helen.koike@collabora.com,
-        ezequiel@collabora.com, kernel@collabora.com, dafna3@gmail.com
-Subject: Re: [PATCH] dt-bindings: convert i2c-cros-ec-tunnel.txt to yaml
-Message-ID: <20200205174740.GA10738@bogus>
-References: <20200127161213.13339-1-dafna.hirschfeld@collabora.com>
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=bqSFd8ExC2+wnJEBx28ysaeI00JolAV0U9Y2gLNzOSg=;
+        b=rR14jplB6k6N4RdJdllJECZg+m1isInVB2rSunu9Ak8KmPqLC07S6HF9MnKYINoFWL
+         79BDnmsu2dPwK4ev0+wnS+Q4tcOSUW5ouiF2SaNEV9rXLmJAuPF9gHsWtfDH9g4X7GyW
+         oY9K7Kacwz4bK/Lxbmc5rLA+2PdY2ZBSxQJgkq29olEyiqnI+UhY1ZZKkB16BBxG5Dus
+         cca5GhW+jkhlgcQjChCMCj2l4sJ9kfapzg8E5GXoIQo8b86q/EZ0lNEqHhT8BX1VvQsL
+         YJBq+CY1kzianpIEkdkPoFODemOS1TbOqAcgI1YTtzXrhCYz1u35hwiAdzCOf1unLq5m
+         Xi2A==
+X-Gm-Message-State: APjAAAUAJCqgFRYSmdjJODm4iFA4cjD8bMpM9wpNd0rwSIUlgx6KXUHb
+        yindUSMSPck44rj8KbqdkN8=
+X-Google-Smtp-Source: APXvYqw8Nld3FE4gMlZmecKsK5GXx76+c7CMKhSHfk3i/WQ1Qsqzn7usNreZ3AZGBj79jJQ+J9iwng==
+X-Received: by 2002:a50:cfc1:: with SMTP id i1mr5975525edk.369.1580924911542;
+        Wed, 05 Feb 2020 09:48:31 -0800 (PST)
+Received: from [10.67.50.115] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id x2sm53372edi.95.2020.02.05.09.48.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Feb 2020 09:48:30 -0800 (PST)
+Subject: Re: [PATCH v2 11/12] dt-bindings: arm: Document Broadcom SoCs
+ 'secondary-boot-reg'
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        "maintainer:BROADCOM IPROC ARM ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Sugaya Taichi <sugaya.taichi@socionext.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Arnd Bergmann <arnd@arndb.de>, Joel Stanley <joel@jms.id.au>,
+        Vinod Koul <vkoul@kernel.org>,
+        "james.tai" <james.tai@realtek.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>
+References: <20200204235552.7466-1-f.fainelli@gmail.com>
+ <20200204235552.7466-12-f.fainelli@gmail.com>
+ <20200205074908.kwtqadfcwo2mtefk@gilmour.lan>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ G10n8gCguORqNGMsVRxrlLs7/himep7MrCc=
+Message-ID: <ec3d1bca-323c-d3fc-ea0e-75335b4b92dc@gmail.com>
+Date:   Wed, 5 Feb 2020 09:48:19 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200127161213.13339-1-dafna.hirschfeld@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200205074908.kwtqadfcwo2mtefk@gilmour.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 05:12:13PM +0100, Dafna Hirschfeld wrote:
-> Convert the binding file i2c-cros-ec-tunnel.txt to yaml format.
+On 2/4/20 11:49 PM, Maxime Ripard wrote:
+> On Tue, Feb 04, 2020 at 03:55:51PM -0800, Florian Fainelli wrote:
+>> diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentation/devicetree/bindings/arm/cpus.yaml
+>> index c23c24ff7575..d7b181a44789 100644
+>> --- a/Documentation/devicetree/bindings/arm/cpus.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/cpus.yaml
+>> @@ -272,6 +272,39 @@ properties:
+>>        While optional, it is the preferred way to get access to
+>>        the cpu-core power-domains.
+>>
+>> +  secondary-boot-reg:
+>> +    $ref: '/schemas/types.yaml#/definitions/uint32'
+>> +    description: |
+>> +      Required for systems that have an "enable-method" property value of
+>> +      "brcm,bcm11351-cpu-method", "brcm,bcm23550" or "brcm,bcm-nsp-smp".
+>> +
+>> +      This includes the following SoCs: |
+>> +      BCM11130, BCM11140, BCM11351, BCM28145, BCM28155, BCM21664, BCM23550
+>> +      BCM58522, BCM58525, BCM58535, BCM58622, BCM58623, BCM58625, BCM88312
+>> +
+>> +      The secondary-boot-reg property is a u32 value that specifies the
+>> +      physical address of the register used to request the ROM holding pen
+>> +      code release a secondary CPU. The value written to the register is
+>> +      formed by encoding the target CPU id into the low bits of the
+>> +      physical start address it should jump to.
+>> +
+>> +if:
+>> +  # If the enable-method property contains one of those values
+>> +  properties:
+>> +    enable-method:
+>> +      contains:
+>> +        enum:
+>> +          - brcm,bcm11351-cpu-method
+>> +          - brcm,bcm23550
+>> +          - brcm,bcm-nsp-smp
+>> +  # and if enable-method is present
 > 
-> This was tested and verified on ARM and ARM64 with:
+> Those comments were purely for the explanation, but you can keep them
+> I guess :)
 > 
-> make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.yaml
-> make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.yaml
-> 
-> Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-> ---
->  .../bindings/i2c/i2c-cros-ec-tunnel.txt       | 39 ------------
->  .../bindings/i2c/i2c-cros-ec-tunnel.yaml      | 61 +++++++++++++++++++
->  2 files changed, 61 insertions(+), 39 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
->  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt b/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
-> deleted file mode 100644
-> index 898f030eba62..000000000000
-> --- a/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
-> +++ /dev/null
-> @@ -1,39 +0,0 @@
-> -I2C bus that tunnels through the ChromeOS EC (cros-ec)
-> -======================================================
-> -On some ChromeOS board designs we've got a connection to the EC (embedded
-> -controller) but no direct connection to some devices on the other side of
-> -the EC (like a battery and PMIC).  To get access to those devices we need
-> -to tunnel our i2c commands through the EC.
-> -
-> -The node for this device should be under a cros-ec node like google,cros-ec-spi
-> -or google,cros-ec-i2c.
-> -
-> -
-> -Required properties:
-> -- compatible: google,cros-ec-i2c-tunnel
-> -- google,remote-bus: The EC bus we'd like to talk to.
-> -
-> -Optional child nodes:
-> -- One node per I2C device connected to the tunnelled I2C bus.
-> -
-> -
-> -Example:
-> -	cros-ec@0 {
-> -		compatible = "google,cros-ec-spi";
-> -
-> -		...
-> -
-> -		i2c-tunnel {
-> -			compatible = "google,cros-ec-i2c-tunnel";
-> -			#address-cells = <1>;
-> -			#size-cells = <0>;
-> -
-> -			google,remote-bus = <0>;
-> -
-> -			battery: sbs-battery@b {
-> -				compatible = "sbs,sbs-battery";
-> -				reg = <0xb>;
-> -				sbs,poll-retry-count = <1>;
-> -			};
-> -		};
-> -	}
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.yaml b/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.yaml
-> new file mode 100644
-> index 000000000000..c1383e607f47
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.yaml
-> @@ -0,0 +1,61 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/i2c/i2c-cros-ec-tunnel.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: I2C bus that tunnels through the ChromeOS EC (cros-ec)
-> +
-> +maintainers:
-> +  - Benson Leung <bleung@chromium.org>
-> +  - Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> +  - Guenter Roeck <groeck@chromium.org>
-> +
-> +description: |
-> +  On some ChromeOS board designs we've got a connection to the EC (embedded
-> +  controller) but no direct connection to some devices on the other side of
-> +  the EC (like a battery and PMIC). To get access to those devices we need
-> +  to tunnel our i2c commands through the EC.
-> +  The node for this device should be under a cros-ec node like google,cros-ec-spi
-> +  or google,cros-ec-i2c.
+> Regardless on whether or not you keep them, for the whole series
+> Acked-by: Maxime Ripard <mripard@kernel.org>
 
-You should have a ref to /schemas/i2c-controller.yaml here.
-
-> +
-> +properties:
-> +  compatible:
-> +    const:
-> +      google,cros-ec-i2c-tunnel
-> +
-> +  google,remote-bus:
-> +    $ref: "/schemas/types.yaml#/definitions/uint32"
-> +    description: The EC bus we'd like to talk to.
-> +
-> +  "#address-cells": true
-> +  "#size-cells": true
-> +
-> +patternProperties:
-> +  "^.*@[0-9a-f]+$":
-> +    type: object
-> +    description: One node per I2C device connected to the tunnelled I2C bus.
-> +
-> +additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - google,remote-bus
-> +
-> +examples:
-> +  - |
-> +    cros-ec@0 {
-> +        compatible = "google,cros-ec-spi";
-> +        i2c-tunnel {
-> +            compatible = "google,cros-ec-i2c-tunnel";
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +            google,remote-bus = <0>;
-> +
-> +            battery: sbs-battery@b {
-> +                compatible = "sbs,sbs-battery";
-> +                reg = <0xb>;
-> +                sbs,poll-retry-count = <1>;
-> +            };
-> +        };
-> +    };
-> -- 
-> 2.17.1
-> 
+You could almost have Signed-off-by on this one, thanks a lot for
+walking me through examples.
+-- 
+Florian
