@@ -2,65 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CA7C152449
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 01:50:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0660D15244E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 01:51:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbgBEAuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 19:50:32 -0500
-Received: from mga09.intel.com ([134.134.136.24]:26490 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727619AbgBEAuc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 19:50:32 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2020 16:50:31 -0800
-X-IronPort-AV: E=Sophos;i="5.70,403,1574150400"; 
-   d="scan'208";a="254599234"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2020 16:50:31 -0800
-From:   ira.weiny@intel.com
-To:     linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH] memremap: Remove stale comments
-Date:   Tue,  4 Feb 2020 16:50:29 -0800
-Message-Id: <20200205005029.2177-1-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.21.0
+        id S1727895AbgBEAvA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 19:51:00 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46274 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727619AbgBEAu6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 19:50:58 -0500
+Received: by mail-pl1-f194.google.com with SMTP id y8so111918pll.13
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 16:50:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=xx/Hr3yEcha35uFKz8KW9UBIGlBl9yxxGD/Ht51bCag=;
+        b=JUhe3AKHAQbOZIQ0eNn+wAM8JAgL0Ssx9uCzEIYHRsMQ5X+Oxe84h0ULRtw9jnbhS1
+         T+NQdyQOkUOxlnuVOeguzvRKgEJbW6YZaI9iIez/rkX5ii3l5rskS2BnkS9K9JE4o0a3
+         J4etdJCQERSWNak0CGgoPvV4l8mwHAk43v7RwzNKCD32NP0SMx6/vUM+7a1roJlRB7Cq
+         jdiqC1oa/paLnFZ2aC+N96AtJqgW9819DHfnYO6oOTdG6AGnz4MSQmBaGCw8ajB6Lta1
+         K98FJGKB2SiFy9IAuidogj8YOG4TnlbFZ+V6jGr/RVuf9kgNKKW2yR1542rv/e/CqpRv
+         o07g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=xx/Hr3yEcha35uFKz8KW9UBIGlBl9yxxGD/Ht51bCag=;
+        b=aofkEtMYDUzEVVC/QM46oV67kgwVEyuH/iKTTgRhbAZ795cUu1UnfwoKstbs+58aHL
+         ulfM1LyRLxPRGTx2LE1bnFU9Z01HaYFVq4U0qHNBF8lnRZnV7YrK9in4O0Xzw01rNFxL
+         XYfLewzEPEdzE2I+xYKhpWnxfX+k8NBuQUQ+HyPlPuCBi7qfTOhXxLH8tkRs4TnRUpY4
+         pLA+U8Seqget3Z81L4DcoZDYIW6gZHOxDiFj7Nq2VSb0AmB22tw7r4qbgTKyVVE0WxWD
+         Cpl7GQBbYA4CaAphmCNsKvXN25H6QqCQmCtPv82kx2JL3JOuRVTETsS+aGGI7tWEtvDL
+         mH0g==
+X-Gm-Message-State: APjAAAUWMsu4b/pqXUZ6g3ef8ARV3HeXh2fOn3XcxR21W6XvTZ1uadIJ
+        vDXLPffIQfMfcBz7YlDRcqORew==
+X-Google-Smtp-Source: APXvYqzPK07gRufHI/PmLMyzBB0+GO6DbDSzvLF2bYKCZP3DpDOUeUFN2CY18edqckMlDeHNn/MkJg==
+X-Received: by 2002:a17:90a:cb11:: with SMTP id z17mr2406433pjt.122.1580863857220;
+        Tue, 04 Feb 2020 16:50:57 -0800 (PST)
+Received: from google.com ([2620:15c:2ce:0:9efe:9f1:9267:2b27])
+        by smtp.gmail.com with ESMTPSA id f81sm24626828pfa.118.2020.02.04.16.50.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2020 16:50:56 -0800 (PST)
+Date:   Tue, 4 Feb 2020 16:50:54 -0800
+From:   Fangrui Song <maskray@google.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Fangrui Song <maskray@google.com>
+Subject: [PATCH] powerpc/vdso32: mark __kernel_datapage_offset as
+ STV_PROTECTED
+Message-ID: <20200205005054.k72fuikf6rwrgfe4@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+A PC-relative relocation (R_PPC_REL16_LO in this case) referencing a
+preemptible symbol in a -shared link is not allowed.  GNU ld's powerpc
+port is permissive and allows it [1], but lld will report an error after
+https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git/commit/?id=ec0895f08f99515194e9fcfe1338becf6f759d38
 
-TO: linux-kernel@vger.kernel.org
-TO: Jason Gunthorpe <jgg@ziepe.ca>
-CC: Dan Williams <dan.j.williams@intel.com>
-CC: Christoph Hellwig <hch@lst.de>
-Fixes: 80a72d0af05a ("memremap: remove the data field in struct dev_pagemap")
-Fixes: fdc029b19dfd ("memremap: remove the dev field in struct dev_pagemap")
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Make the symbol protected so that it is non-preemptible but still
+exported.
+
+[1]: https://sourceware.org/bugzilla/show_bug.cgi?id=25500
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/851
+Signed-off-by: Fangrui Song <maskray@google.com>
 ---
- include/linux/memremap.h | 2 --
- 1 file changed, 2 deletions(-)
+ arch/powerpc/kernel/vdso32/datapage.S | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-index 6fefb09af7c3..edfd1ec6c165 100644
---- a/include/linux/memremap.h
-+++ b/include/linux/memremap.h
-@@ -98,8 +98,6 @@ struct dev_pagemap_ops {
-  * @ref: reference count that pins the devm_memremap_pages() mapping
-  * @internal_ref: internal reference if @ref is not provided by the caller
-  * @done: completion for @internal_ref
-- * @dev: host device of the mapping for debug
-- * @data: private data pointer for page_free()
-  * @type: memory type: see MEMORY_* in memory_hotplug.h
-  * @flags: PGMAP_* flags to specify defailed behavior
-  * @ops: method table
+diff --git a/arch/powerpc/kernel/vdso32/datapage.S b/arch/powerpc/kernel/vdso32/datapage.S
+index 217bb630f8f9..2831a8676365 100644
+--- a/arch/powerpc/kernel/vdso32/datapage.S
++++ b/arch/powerpc/kernel/vdso32/datapage.S
+@@ -13,7 +13,8 @@
+ #include <asm/vdso_datapage.h>
+ 
+ 	.text
+-	.global	__kernel_datapage_offset;
++	.global	__kernel_datapage_offset
++	.protected	__kernel_datapage_offset
+ __kernel_datapage_offset:
+ 	.long	0
+ 
 -- 
-2.21.0
+2.25.0.341.g760bfbb309-goog
 
