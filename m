@@ -2,91 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B85B152673
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 07:52:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C7CD15267A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 07:53:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbgBEGw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 01:52:28 -0500
-Received: from conuserg-12.nifty.com ([210.131.2.79]:24774 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbgBEGw1 (ORCPT
+        id S1727131AbgBEGx2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 01:53:28 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35893 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbgBEGx2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 01:52:27 -0500
-Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id 0156pvIw013204;
-        Wed, 5 Feb 2020 15:51:57 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com 0156pvIw013204
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1580885518;
-        bh=SQLIo/CN+y8L0OepweOpNyV3Tsh+znSRoDYXyHAL2bc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jrzonPyH54xW+kntgU6q1kD4t7esoeqlX/P+JEVJ4PxUBV4oLckYFU8JOLrfN/jgW
-         1WK05cGazownMi2SeWzvvatFE1HWtDS220NOdQF3b59bTJdkEPN2PWBozgccNC/wIf
-         nTbmRMGeHvHV9+dLMIGcBu0Rvp22UtOFQmyK/+SI9z2rVwWmSjOOrxIyQ8EhSolEEj
-         TnMZfsgxBuNmodgVnpbdjA5qyMAstnEETYWj/vvo6W8CK73enNef0B5uJQunmzC9w5
-         xF2D0kyIeVLSSBPGip3M5XDLLS5cP8pLQGVC6U0xKImH1r5BaDnUMB6uDGcEIgnb+Z
-         X/WxsQPwuyfNA==
-X-Nifty-SrcIP: [126.93.102.113]
-From:   Masahiro Yamada <masahiroy@kernel.org>
-To:     linux-kbuild@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: [PATCH] kbuild: make multiple directory targets work properly
-Date:   Wed,  5 Feb 2020 15:51:52 +0900
-Message-Id: <20200205065152.873-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        Wed, 5 Feb 2020 01:53:28 -0500
+Received: by mail-lj1-f194.google.com with SMTP id r19so1149476ljg.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 22:53:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2rHfdxHhDLs+MM9uoNDxMNVLPLgX0yrzzDYb5bvzyPs=;
+        b=YqGr520gJK49j9BS5djcnSQIVbFnezOdeXThn4a1UvkDe+fWAXI8xjLPZY/2hHQZgw
+         W3dIK16G2ofRNyK8gtgqWihIhtD+XeKORIC66fA0OhNPtqIUalUUUfOHoVpoMxJwot5r
+         fCn2gNfkYPjnpRyHiPVn/3Q7Io9ydT/2hly3w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2rHfdxHhDLs+MM9uoNDxMNVLPLgX0yrzzDYb5bvzyPs=;
+        b=uCeivvEAhcFzu9/8DMLwLWvNRMA/FmLZH/VGBQI7e/oxD3+58xkRO3mpwAV0Y4MzEa
+         6HvjdOnXuJvS6+uEOaQEOqy66CTub5UN/H4N+6Hat7dkazgZnKxGdz9s+kJT3xkX8/sc
+         7KlkNJZmYvarmL0X7t65CIFtkv7ayoNkC1GQRhKGL+K0l5/sg3a3ygTxBo5o3fNXd4X6
+         TbRLN9P//cMFOprkmnu+Cu7zUcwURCzd4VAOiCe+eKxEFuJRdWMR95gD3Pz4GrjU4tUC
+         8sIYo6gUbZtvMxqTBQkIB8B57dxO5mRop5JGuZ+NzHQaSagRrk1441Fy8Iccstju02zv
+         4hww==
+X-Gm-Message-State: APjAAAWlL2BgO1NEezW5pq4EH/2WAVvhnuB8PfqLgiUB9a2ZOgawbTXB
+        Z5H5AYL64gZtUPE3mjddBVnreJzsh6ImJQ==
+X-Google-Smtp-Source: APXvYqxKO5ZtR9Q2dxwcFeLqbOvpNCwOKI9JYWzuPPolg6jYjf9eaQGDdX81rktJ09z++nD0krFMJA==
+X-Received: by 2002:a2e:89cd:: with SMTP id c13mr18080863ljk.139.1580885605145;
+        Tue, 04 Feb 2020 22:53:25 -0800 (PST)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id l64sm11638012lfd.30.2020.02.04.22.53.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Feb 2020 22:53:24 -0800 (PST)
+Received: by mail-lf1-f41.google.com with SMTP id c23so664453lfi.7
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 22:53:24 -0800 (PST)
+X-Received: by 2002:a19:4849:: with SMTP id v70mr17364590lfa.30.1580885603756;
+ Tue, 04 Feb 2020 22:53:23 -0800 (PST)
+MIME-Version: 1.0
+References: <20200204150015.GR23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200204150015.GR23230@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 5 Feb 2020 06:53:07 +0000
+X-Gmail-Original-Message-ID: <CAHk-=wivZdF6tNERQp+CXyz7zeN4uG9O4d7mZhCrp3anJ29Arg@mail.gmail.com>
+Message-ID: <CAHk-=wivZdF6tNERQp+CXyz7zeN4uG9O4d7mZhCrp3anJ29Arg@mail.gmail.com>
+Subject: Re: [put pull] timestamp stuff
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the single-target build does not work when two
-or more sub-directories are given:
+On Tue, Feb 4, 2020 at 3:00 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+>         More 64bit timestamp work
 
-  $ make fs/ kernel/ lib/
-    CALL    scripts/checksyscalls.sh
-    CALL    scripts/atomic/check-atomics.sh
-    DESCEND  objtool
-  make[2]: Nothing to be done for 'kernel/'.
-  make[2]: Nothing to be done for 'fs/'.
-  make[2]: Nothing to be done for 'lib/'.
+Heh. pr-tracker-bot is not replying to your pull request, because you
+misspelled the subject line ("put pull").
 
-Make it work properly.
+But pr-tracker-bot _also_ isn't responding to the one where that
+wasn't the case:
 
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+   [git pull] kernel-initiated rm -rf on ramfs-style filesystems
 
-Linus,
+and I'm not seeing why that one wasn't picked up. But it seems to be
+because it never made it to lore.
 
-If you want to use this patch soon (seems useful since
-you are travelling), please feel free to apply it directly.
+I see
 
-If you wait for my next pull request, I will apply it to
-my tree.
+  To: Linus Torvalds <torvalds@linux-foundation.org>
+  Cc: fsdevel.@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
+  Subject: [git pull] kernel-initiated rm -rf on ramfs-style filesystems
+  Message-ID: <20200204150912.GS23230@ZenIV.linux.org.uk>
 
-Either is fine with me.
+on that other message in my mailbox, but I don't see it on lore. Odd.
+Is it because the "fsdevel" address is mis-spelled on the Cc line?
+Strange.
 
+Anyway, both pull requests pulled, even though neither got a
+pr-tracker-bot response for two apparently very different reasons.
 
-
- Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Makefile b/Makefile
-index 65a5dc653deb..ef8913a8eb2a 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1679,7 +1679,7 @@ PHONY += descend $(build-dirs)
- descend: $(build-dirs)
- $(build-dirs): prepare
- 	$(Q)$(MAKE) $(build)=$@ \
--	single-build=$(if $(filter-out $@/, $(single-no-ko)),1) \
-+	single-build=$(if $(filter-out $@/, $(filter $@/%, $(single-no-ko))),1) \
- 	need-builtin=1 need-modorder=1
- 
- clean-dirs := $(addprefix _clean_, $(clean-dirs))
--- 
-2.17.1
-
+               Linus
