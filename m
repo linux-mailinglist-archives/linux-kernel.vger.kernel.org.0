@@ -2,77 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DEB41529C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 12:22:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A21AE1529CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 12:22:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728348AbgBELWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 06:22:40 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:54437 "EHLO
+        id S1728370AbgBELWp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 06:22:45 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:54443 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727231AbgBELWj (ORCPT
+        with ESMTP id S1728353AbgBELWn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 06:22:39 -0500
+        Wed, 5 Feb 2020 06:22:43 -0500
 Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <kai.heng.feng@canonical.com>)
-        id 1izIlO-0003Ho-2S; Wed, 05 Feb 2020 11:22:34 +0000
+        id 1izIlR-0003Hw-Ul; Wed, 05 Feb 2020 11:22:38 +0000
 From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
 To:     mathias.nyman@intel.com, gregkh@linuxfoundation.org,
         stern@rowland.harvard.edu
 Cc:     acelan.kao@canonical.com, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH v2 1/3] xhci: Ensure link state is U3 after setting USB_SS_PORT_LS_U3
-Date:   Wed,  5 Feb 2020 19:22:26 +0800
-Message-Id: <20200205112228.25155-1-kai.heng.feng@canonical.com>
+Subject: [PATCH v2 2/3] xhci: Wait until link state trainsits to U0 after setting USB_SS_PORT_LS_U0
+Date:   Wed,  5 Feb 2020 19:22:27 +0800
+Message-Id: <20200205112228.25155-2-kai.heng.feng@canonical.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200205112228.25155-1-kai.heng.feng@canonical.com>
+References: <20200205112228.25155-1-kai.heng.feng@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The xHCI spec doesn't specify the upper bound of U3 transition time. For
-some devices 20ms is not enough, so we need to make sure the link state
-is in U3 before further actions.
+Like U3 case, xHCI spec doesn't specify the upper bound of U0 transition
+time. The 20ms is not enough for some devices.
 
-I've tried to use U3 Entry Capability by setting U3 Entry Enable in
-config register, however the port change event for U3 transition
-interrupts the system suspend process.
+Intead of polling PLS or PLC, we can facilitate the port change event to
+know that the link transits to U0 is completed.
 
-For now let's use the less ideal method by polling PLS.
+While at it, seperate U0 and U3 case 
 
 Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 ---
-v2:
- - Remove some redundant debug messages.
- - Use msleep loop outside if spinlock to stop pegging CPU.
-
- drivers/usb/host/xhci-hub.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/usb/host/xhci-hub.c  | 34 +++++++++++++++++++++-------------
+ drivers/usb/host/xhci-mem.c  |  2 ++
+ drivers/usb/host/xhci-ring.c |  1 +
+ drivers/usb/host/xhci.h      |  1 +
+ 4 files changed, 25 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
-index 7a3a29e5e9d2..d3c5bcf76755 100644
+index d3c5bcf76755..28a5c1c46079 100644
 --- a/drivers/usb/host/xhci-hub.c
 +++ b/drivers/usb/host/xhci-hub.c
-@@ -1313,7 +1313,16 @@ int xhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
- 			xhci_set_link_state(xhci, ports[wIndex], link_state);
- 
- 			spin_unlock_irqrestore(&xhci->lock, flags);
--			msleep(20); /* wait device to enter */
-+			if (link_state == USB_SS_PORT_LS_U3) {
-+				int retries = 10;
+@@ -1297,7 +1297,23 @@ int xhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
+ 					 wIndex, link_state);
+ 				goto error;
+ 			}
 +
-+				while (retries--) {
-+					msleep(10); /* wait device to enter */
-+					temp = readl(ports[wIndex]->addr);
-+					if ((temp & PORT_PLS_MASK) == XDEV_U3)
-+						break;
-+				}
++			if (link_state == USB_SS_PORT_LS_U0) {
++				if ((temp & PORT_PLS_MASK) == XDEV_U0)
++					break;
++
++				reinit_completion(&bus_state->link_change_done[wIndex]);
++				xhci_set_link_state(xhci, ports[wIndex], USB_SS_PORT_LS_U0);
++				spin_unlock_irqrestore(&xhci->lock, flags);
++				if (!wait_for_completion_timeout(&bus_state->link_change_done[wIndex], msecs_to_jiffies(100)))
++					xhci_dbg(xhci, "missing U0 port change event for port %d-%d\n", hcd->self.busnum, wIndex + 1);
++				spin_lock_irqsave(&xhci->lock, flags);
++				temp = readl(ports[wIndex]->addr);
++				break;
 +			}
- 			spin_lock_irqsave(&xhci->lock, flags);
++
+ 			if (link_state == USB_SS_PORT_LS_U3) {
++				int retries = 10;
+ 				slot_id = xhci_find_slot_id_by_port(hcd, xhci,
+ 						wIndex + 1);
+ 				if (slot_id) {
+@@ -1308,26 +1324,18 @@ int xhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
+ 					xhci_stop_device(xhci, slot_id, 1);
+ 					spin_lock_irqsave(&xhci->lock, flags);
+ 				}
+-			}
+-
+-			xhci_set_link_state(xhci, ports[wIndex], link_state);
+-
+-			spin_unlock_irqrestore(&xhci->lock, flags);
+-			if (link_state == USB_SS_PORT_LS_U3) {
+-				int retries = 10;
+-
++				xhci_set_link_state(xhci, ports[wIndex], USB_SS_PORT_LS_U3);
++				spin_unlock_irqrestore(&xhci->lock, flags);
+ 				while (retries--) {
+ 					msleep(10); /* wait device to enter */
+ 					temp = readl(ports[wIndex]->addr);
+ 					if ((temp & PORT_PLS_MASK) == XDEV_U3)
+ 						break;
+ 				}
+-			}
+-			spin_lock_irqsave(&xhci->lock, flags);
+-
+-			temp = readl(ports[wIndex]->addr);
+-			if (link_state == USB_SS_PORT_LS_U3)
++				spin_lock_irqsave(&xhci->lock, flags);
++				temp = readl(ports[wIndex]->addr);
+ 				bus_state->suspended_ports |= 1 << wIndex;
++			}
+ 			break;
+ 		case USB_PORT_FEAT_POWER:
+ 			/*
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index 3b1388fa2f36..aceb8c1af775 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -2531,6 +2531,8 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
+ 		xhci->usb3_rhub.bus_state.resume_done[i] = 0;
+ 		/* Only the USB 2.0 completions will ever be used. */
+ 		init_completion(&xhci->usb2_rhub.bus_state.rexit_done[i]);
++		init_completion(&xhci->usb2_rhub.bus_state.link_change_done[i]);
++		init_completion(&xhci->usb3_rhub.bus_state.link_change_done[i]);
+ 	}
  
- 			temp = readl(ports[wIndex]->addr);
+ 	if (scratchpad_alloc(xhci, flags))
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index d23f7408c81f..4d0f8dab069a 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -1677,6 +1677,7 @@ static void handle_port_status(struct xhci_hcd *xhci,
+ 	     (portsc & PORT_PLS_MASK) == XDEV_U1 ||
+ 	     (portsc & PORT_PLS_MASK) == XDEV_U2)) {
+ 		xhci_dbg(xhci, "resume SS port %d finished\n", port_id);
++		complete(&bus_state->link_change_done[hcd_portnum]);
+ 		/* We've just brought the device into U0/1/2 through either the
+ 		 * Resume state after a device remote wakeup, or through the
+ 		 * U3Exit state after a host-initiated resume.  If it's a device
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index 13d8838cd552..b5d443ce0750 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -1694,6 +1694,7 @@ struct xhci_bus_state {
+ 	/* Which ports are waiting on RExit to U0 transition. */
+ 	unsigned long		rexit_ports;
+ 	struct completion	rexit_done[USB_MAXCHILDREN];
++	struct completion	link_change_done[USB_MAXCHILDREN];
+ };
+ 
+ 
 -- 
 2.17.1
 
