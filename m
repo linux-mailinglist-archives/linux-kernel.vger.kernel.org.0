@@ -2,108 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 760001528C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 11:01:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D54E01528CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 11:02:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727390AbgBEKBE convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 5 Feb 2020 05:01:04 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:43185 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727068AbgBEKBE (ORCPT
+        id S1727711AbgBEKCJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 05:02:09 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57012 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727068AbgBEKCJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 05:01:04 -0500
-X-Originating-IP: 90.76.211.102
-Received: from xps13 (lfbn-tou-1-1151-102.w90-76.abo.wanadoo.fr [90.76.211.102])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 2940D1C000D;
-        Wed,  5 Feb 2020 10:01:02 +0000 (UTC)
-Date:   Wed, 5 Feb 2020 11:01:01 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com>
-Cc:     vigneshr@ti.com, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org
-Subject: Re: [PATCH] mtd: nand: Add comment about Kioxia ID
-Message-ID: <20200205110101.3d4e2e6a@xps13>
-In-Reply-To: <73dae14b-5bf0-b909-3229-aab3ed232669@kioxia.com>
-References: <1580783163-5601-1-git-send-email-ytc-mb-yfuruyama7@kioxia.com>
-        <20200204095214.666c71fc@xps13>
-        <73dae14b-5bf0-b909-3229-aab3ed232669@kioxia.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 5 Feb 2020 05:02:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oBYuPXXv/66fzN1ASv2aU1O7QlQkXjCIjDUBNtWwQko=; b=t3te0ZeVUoGID8glNCTYlLc2Y
+        m/BVOnTtbeJ5Oeut5ykyuzhQghXxwnF2PB7S5Pm5QyWiAMDroyLvQsxTpNZIByL7PP1Pbx2J878ks
+        gIcWFHWmOWNGjPpGHOXLRnlegLh+h4j322VjzrLdKzFhcl75nwbxwdEbni9QI2iEqTh/o=;
+Received: from fw-tnat-cam3.arm.com ([217.140.106.51] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1izHVP-0003oo-Ps; Wed, 05 Feb 2020 10:01:59 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 73FE5D00D65; Wed,  5 Feb 2020 10:01:59 +0000 (GMT)
+Date:   Wed, 5 Feb 2020 10:01:59 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: wcd934x: Add missing COMMON_CLK dependency to
+ SND_SOC_ALL_CODECS
+Message-ID: <20200205100159.GF3897@sirena.org.uk>
+References: <20200204131857.7634-1-geert@linux-m68k.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="k4g3xMTzTwvmb7wy"
+Content-Disposition: inline
+In-Reply-To: <20200204131857.7634-1-geert@linux-m68k.org>
+X-Cookie: Programming is an unnatural act.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yoshio,
 
-Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com> wrote on Tue, 4 Feb 2020
-19:30:04 +0900:
+--k4g3xMTzTwvmb7wy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Dear Miquèl,
-> 
-> 
-> On 2020/02/04 17:52, Miquel Raynal wrote:
-> > Hi Yoshio,
-> >
-> > Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com> wrote on Tue,  4 Feb
-> > 2020 11:26:03 +0900:
-> >  
-> >> Add a comment above NAND_MFR_TOSHIBA and SPINAND_MFR_TOSHIBA definitions
-> >> that Toshiba and Kioxia ID are the same.
-> >>
-> >> Signed-off-by: Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com>
-> >> ---
-> >>   drivers/mtd/nand/raw/internals.h | 1 +
-> >>   drivers/mtd/nand/spi/toshiba.c   | 1 +
-> >>   2 files changed, 2 insertions(+)
-> >>
-> >> diff --git a/drivers/mtd/nand/raw/internals.h b/drivers/mtd/nand/raw/internals.h
-> >> index cba6fe7..2918376b 100644
-> >> --- a/drivers/mtd/nand/raw/internals.h
-> >> +++ b/drivers/mtd/nand/raw/internals.h
-> >> @@ -30,6 +30,7 @@
-> >>   #define NAND_MFR_SAMSUNG	0xec
-> >>   #define NAND_MFR_SANDISK	0x45
-> >>   #define NAND_MFR_STMICRO	0x20
-> >> +/* Toshiba and Kioxia ID are the same. */
-> >>   #define NAND_MFR_TOSHIBA	0x98
-> >>   #define NAND_MFR_WINBOND	0xef  
-> >>   >> diff --git a/drivers/mtd/nand/spi/toshiba.c b/drivers/mtd/nand/spi/toshiba.c  
-> >> index 0db5ee4..a92ecc8 100644
-> >> --- a/drivers/mtd/nand/spi/toshiba.c
-> >> +++ b/drivers/mtd/nand/spi/toshiba.c
-> >> @@ -10,6 +10,7 @@
-> >>   #include <linux/kernel.h>
-> >>   #include <linux/mtd/spinand.h>  
-> >>   >> +/* Toshiba and Kioxia ID are the same. */  
-> >>   #define SPINAND_MFR_TOSHIBA		0x98
-> >>   #define TOSH_STATUS_ECC_HAS_BITFLIPS_T	(3 << 4)  
-> >>   >  
-> > "Are the same" is not very descriptive, what about "Kioxia is the new
-> > name of Toshiba"?  
-> 
-> 
-> That's a good idea.
-> 
-> Actually ,
-> 
-> Is was changed a company name from Toshiba memory Co to Kioxia Co.     Since became independent from Toshiba group.
-> 
-> I will update the comment as "Kioxia is new name of Toshiba memory"
+On Tue, Feb 04, 2020 at 02:18:57PM +0100, Geert Uytterhoeven wrote:
+> Just adding a dependency on COMMON_CLK to SND_SOC_WCD934X is not
+> sufficient, as enabling SND_SOC_ALL_CODECS will still select it,
+> breaking the build later:
 
-Well, in this case I would even recommend something more meaningful:
+Srini already fixed this.
 
-"Since its independence from Toshiba Group, Toshiba memory Co has become Kioxia Co"
+--k4g3xMTzTwvmb7wy
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Also, please update the version of your patch to "v3" in the title
-"[PATCH v3] ...", this can be done automatically when formatting your
-patch with git format-patch with the -v 3 option.
+-----BEGIN PGP SIGNATURE-----
 
-Also the prefix should be "mtd: spinand: toshiba:"
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl46kpYACgkQJNaLcl1U
+h9CdWQf/aFT0LLxtrjpK2ZraWkMAXbc/uzMv9oyxBMRJkViEi5/GaE8J9XwyGR0L
+xNV/jE0eMc6y4xMMkwcjv7Mla/fudCZoYaG5bjPI/xLMYG8MYwsPlLUXtt+1Rpcz
+9xEeatoF0rOleTANkzmNYTxDZPOCN2BL7ALgzQJKS1rWsIJumG0KrRni9P88/NlG
+y+hBF+N+QBvb7TEpkMHdeLvAZ/tZaV+2HJ0hG+zt3IlTPXmV4pvQ4RWMgTiuxW4e
+8kxxC8kq4oEt7Dvn2YxEItUt07ttcEgHWDVm10GzT103a1/+qaISvCEDsFPYuSnW
+FzReuyLciaCuSyqzmUUH9fufzkLpIQ==
+=Ycyk
+-----END PGP SIGNATURE-----
 
-Thanks,
-Miquèl
+--k4g3xMTzTwvmb7wy--
