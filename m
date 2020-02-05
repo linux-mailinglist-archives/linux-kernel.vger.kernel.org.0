@@ -2,188 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 049891539DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 22:02:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B75C61539D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 22:00:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbgBEVCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 16:02:18 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37802 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727085AbgBEVCR (ORCPT
+        id S1727444AbgBEVAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 16:00:42 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:1324 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727033AbgBEVAl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 16:02:17 -0500
-Received: by mail-pl1-f195.google.com with SMTP id c23so1379672plz.4
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 13:02:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1GKmfOgEfc+T65S9fe0HlKXKx9NnWDi37nRmrX7afPE=;
-        b=QR2/W4p4NKNy2jSR9gzQSGSMcD0j7zWf+DtEIaUAgCfeJNq5e4ohdqhIHyMO1NEX03
-         YFmQFNvV0v3+qEg+Pwq7KdWGagIp+I1BcobZOgHQLkS5jRMs8WogHOstX9DRndm2Vwcw
-         0fTTTixnPrBj1GQ+MtwYxLFzfP/t9FCh3V1oQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1GKmfOgEfc+T65S9fe0HlKXKx9NnWDi37nRmrX7afPE=;
-        b=jymm9LHzPbPXQv6Z8Hk28GmfyNNWgCeUZKpE1Z3xuNzrSyarGDsbsBm1NiRrEn51G3
-         pC5hy3nerEAp+niiQswswfZ3uQLVIzcPoJaj9uhwTOC7LxqkV+EE3o+0S2a0IKr01WCS
-         +A0oHyo2IRF0rNgVBGj0vkaY/3fr6PeLk5aUPYrM4tJ4gGRBolHqfF7MV7180NN2G9T6
-         pOO9NKR6zPNLYU+xtLmBsSvWJzEpF7ZBFCbsewTr6DT1kUTW9ecauOeFG+b70wHmv2u0
-         kbtW3EnXzNKs2i4cStAt2MKPRN9dAtncioQAIYodANqWZwLk7Yugyb/02trw+iO7Zspj
-         pluA==
-X-Gm-Message-State: APjAAAW0Fyel8LubGX7jWvNW5xoQ8D2P0qrG5tOzBeuHPj7KCRU94WmG
-        NTKvu6jmIAvKTPJmkMjcYn6WxtOJVS8=
-X-Google-Smtp-Source: APXvYqyItlB2yXfCMAOo4ljBCXUyqu5U37x8g0ORLqtoH+jF+mmeOfpjwra/9H+MV41tU0RO7SqhCg==
-X-Received: by 2002:a17:902:d711:: with SMTP id w17mr37810456ply.303.1580936535813;
-        Wed, 05 Feb 2020 13:02:15 -0800 (PST)
-Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:172e:4646:c089:ce59])
-        by smtp.gmail.com with ESMTPSA id f8sm648797pjg.28.2020.02.05.13.02.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 13:02:15 -0800 (PST)
-From:   Prashant Malani <pmalani@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     heikki.krogerus@intel.com, enric.balletbo@collabora.com,
-        bleung@chromium.org, Prashant Malani <pmalani@chromium.org>,
-        Jon Flatley <jflat@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>
-Subject: [PATCH 3/3] platform/chrome: typec: Update port info from EC
-Date:   Wed,  5 Feb 2020 12:59:54 -0800
-Message-Id: <20200205205954.84503-4-pmalani@chromium.org>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-In-Reply-To: <20200205205954.84503-1-pmalani@chromium.org>
-References: <20200205205954.84503-1-pmalani@chromium.org>
-MIME-Version: 1.0
+        Wed, 5 Feb 2020 16:00:41 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 015Ksoee115144
+        for <linux-kernel@vger.kernel.org>; Wed, 5 Feb 2020 16:00:40 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2xyhm7rjaj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 16:00:40 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 5 Feb 2020 21:00:38 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 5 Feb 2020 21:00:34 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 015L0Xj460293240
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 5 Feb 2020 21:00:33 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9BED942041;
+        Wed,  5 Feb 2020 21:00:33 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A65834204D;
+        Wed,  5 Feb 2020 21:00:32 +0000 (GMT)
+Received: from dhcp-9-31-103-105.watson.ibm.com (unknown [9.31.103.105])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  5 Feb 2020 21:00:32 +0000 (GMT)
+Subject: Re: [PATCH v2 2/8] ima: Switch to ima_hash_algo for boot aggregate
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        James.Bottomley@HansenPartnership.com,
+        jarkko.sakkinen@linux.intel.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        stable@vger.kernel.org
+Date:   Wed, 05 Feb 2020 16:00:32 -0500
+In-Reply-To: <20200205103317.29356-3-roberto.sassu@huawei.com>
+References: <20200205103317.29356-1-roberto.sassu@huawei.com>
+         <20200205103317.29356-3-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20020521-0016-0000-0000-000002E406B5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20020521-0017-0000-0000-00003346E93C
+Message-Id: <1580936432.5585.309.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-05_06:2020-02-04,2020-02-05 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=825
+ lowpriorityscore=0 spamscore=0 clxscore=1015 adultscore=0 phishscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 suspectscore=3
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002050160
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After registering the ports at probe, get the current port information
-from EC and update the Type C connector class ports accordingly.
+Hi Roberto,
 
-Co-developed-by: Jon Flatley <jflat@chromium.org>
-Signed-off-by: Prashant Malani <pmalani@chromium.org>
----
- drivers/platform/chrome/cros_ec_typec.c | 88 ++++++++++++++++++++++++-
- 1 file changed, 87 insertions(+), 1 deletion(-)
+On Wed, 2020-02-05 at 11:33 +0100, Roberto Sassu wrote:
 
-diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
-index b8edcfaa8a5297..f6aeba5bdc4972 100644
---- a/drivers/platform/chrome/cros_ec_typec.c
-+++ b/drivers/platform/chrome/cros_ec_typec.c
-@@ -153,6 +153,80 @@ static int cros_typec_ec_command(struct cros_typec_data *typec,
- 	return ret;
- }
- 
-+static void cros_typec_set_port_params_v0(struct cros_typec_data *typec,
-+		int port_num, struct ec_response_usb_pd_control *resp)
-+{
-+	struct typec_port *port = typec->ports[port_num];
-+	enum typec_orientation polarity;
-+
-+	if (!resp->enabled)
-+		polarity = TYPEC_ORIENTATION_NONE;
-+	else if (!resp->polarity)
-+		polarity = TYPEC_ORIENTATION_NORMAL;
-+	else
-+		polarity = TYPEC_ORIENTATION_REVERSE;
-+
-+	typec_set_pwr_role(port, resp->role ? TYPEC_SOURCE : TYPEC_SINK);
-+	typec_set_orientation(port, polarity);
-+}
-+
-+static void cros_typec_set_port_params_v1(struct cros_typec_data *typec,
-+		int port_num, struct ec_response_usb_pd_control_v1 *resp)
-+{
-+	struct typec_port *port = typec->ports[port_num];
-+	enum typec_orientation polarity;
-+
-+	if (!(resp->enabled & PD_CTRL_RESP_ENABLED_CONNECTED))
-+		polarity = TYPEC_ORIENTATION_NONE;
-+	else if (!resp->polarity)
-+		polarity = TYPEC_ORIENTATION_NORMAL;
-+	else
-+		polarity = TYPEC_ORIENTATION_REVERSE;
-+	typec_set_orientation(port, polarity);
-+	typec_set_data_role(port, resp->role & PD_CTRL_RESP_ROLE_DATA ?
-+			TYPEC_HOST : TYPEC_DEVICE);
-+	typec_set_pwr_role(port, resp->role & PD_CTRL_RESP_ROLE_POWER ?
-+			TYPEC_SOURCE : TYPEC_SINK);
-+	typec_set_vconn_role(port, resp->role & PD_CTRL_RESP_ROLE_VCONN ?
-+			TYPEC_SOURCE : TYPEC_SINK);
-+}
-+
-+static int cros_typec_port_update(struct cros_typec_data *typec, int port_num)
-+{
-+	struct ec_params_usb_pd_control req;
-+	struct ec_response_usb_pd_control_v1 resp;
-+	int ret;
-+
-+	if (port_num < 0 || port_num >= typec->num_ports) {
-+		dev_err(typec->dev, "cannot get status for invalid port %d\n",
-+			port_num);
-+		return -EINVAL;
-+	}
-+
-+	req.port = port_num;
-+	req.role = USB_PD_CTRL_ROLE_NO_CHANGE;
-+	req.mux = USB_PD_CTRL_MUX_NO_CHANGE;
-+	req.swap = USB_PD_CTRL_SWAP_NONE;
-+
-+	ret = cros_typec_ec_command(typec, typec->cmd_ver,
-+				    EC_CMD_USB_PD_CONTROL, &req, sizeof(req),
-+				    &resp, sizeof(resp));
-+	if (ret < 0)
-+		return ret;
-+
-+	dev_dbg(typec->dev, "Enabled %d: 0x%hhx\n", port_num, resp.enabled);
-+	dev_dbg(typec->dev, "Role %d: 0x%hhx\n", port_num, resp.role);
-+	dev_dbg(typec->dev, "Polarity %d: 0x%hhx\n", port_num, resp.polarity);
-+	dev_dbg(typec->dev, "State %d: %s\n", port_num, resp.state);
-+
-+	if (typec->cmd_ver == 1)
-+		cros_typec_set_port_params_v1(typec, port_num, &resp);
-+	else
-+		cros_typec_set_port_params_v0(typec, port_num,
-+			(struct ec_response_usb_pd_control *) &resp);
-+
-+	return 0;
-+}
- 
- static int cros_typec_get_num_ports(struct cros_typec_data *typec)
- {
-@@ -219,7 +293,7 @@ static int cros_typec_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct cros_typec_data *typec;
--	int ret;
-+	int ret, i;
- 
- 	typec = devm_kzalloc(dev, sizeof(*typec), GFP_KERNEL);
- 	if (!typec)
-@@ -242,7 +316,19 @@ static int cros_typec_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
-+	for (i = 0; i < typec->num_ports; i++) {
-+		ret = cros_typec_port_update(typec, i);
-+		if (ret < 0)
-+			goto unregister_ports;
-+	}
-+
- 	return 0;
-+
-+unregister_ports:
-+	for (i = 0; i < typec->num_ports; i++)
-+		if (typec->ports[i])
-+			typec_unregister_port(typec->ports[i]);
-+	return ret;
- }
- 
- static struct platform_driver cros_typec_driver = {
--- 
-2.25.0.341.g760bfbb309-goog
+<snip>
+
+> Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> Suggested-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Cc: stable@vger.kernel.org
+
+Cc'ing stable resulted in Sasha's automated message.  If you're going
+to Cc stable, then please include the stable kernel release (e.g. Cc: 
+stable@vger.kernel.org # v5.3).  Also please include a "Fixes" tag.
+ Normally only bug fixes are backported.
+
+Mimi
 
