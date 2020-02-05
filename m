@@ -2,66 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81B8A153B58
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 23:49:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1801153B60
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 23:50:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727681AbgBEWtD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 17:49:03 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:46652 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727546AbgBEWtC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 17:49:02 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1izTTc-00809s-GG; Wed, 05 Feb 2020 22:48:56 +0000
-Date:   Wed, 5 Feb 2020 22:48:56 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Anna Schumaker <Anna.Schumaker@netapp.com>,
-        Trond Myklebust <trondmy@gmail.com>,
-        NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dai Ngo <dai.ngo@oracle.com>
-Subject: Re: linux-next: manual merge of the vfs tree with the nfs-anna tree
-Message-ID: <20200205224856.GX23230@ZenIV.linux.org.uk>
-References: <20200206092512.5eb304b7@canb.auug.org.au>
+        id S1727662AbgBEWuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 17:50:32 -0500
+Received: from oxu.publicvm.com ([31.7.62.117]:58872 "EHLO oxu.publicvm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727149AbgBEWub (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 17:50:31 -0500
+Received: from WIN-L6QNEL5022Q (localhost.localdomain [127.0.0.1])
+        by oxu.publicvm.com (8.14.4/8.14.4) with ESMTP id 015MxjoQ020443
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Feb 2020 01:59:47 +0300
+Message-ID: <03af64ea-43866-816a6183548611@win-l6qnel5022q>
+Reply-To: "Google AdGrant" <agrant20202@gmail.com>
+From:   "Google AdGrant" <info@oxu.publicvm.com>
+To:     linux-kernel@vger.kernel.org
+Subject: Is this your linux-kernel@vger.kernel.org still active ??
+Date:   Wed, 5 Feb 2020 14:49:27 -0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200206092512.5eb304b7@canb.auug.org.au>
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 06, 2020 at 09:25:12AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the vfs tree got a conflict in:
-> 
->   fs/nfs/dir.c
-> 
-> between commit:
-> 
->   227823d2074d ("nfs: optimise readdir cache page invalidation")
-> 
-> from the nfs-anna tree and commit:
-> 
->   ef3af2d44331 ("nfs: optimise readdir cache page invalidation")
-> 
-> from the vfs tree.
-> 
-> I fixed it up (I used the nfs-anna tree version) and can carry the fix
-> as necessary. This is now fixed as far as linux-next is concerned, but
-> any non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+We have tried to reach you on this linux-kernel@vger.kernel.org account severally but we got no response, Please get back to us at your earliest convenience if you receive this email. 
 
-Umm...  OK, I'll redo that merge; FWIW, the only reason I pull that
-branch in the first place is that bunch of fixups needed to accomodate
-it for work.fs_parse changes.
+Sincerely,
+Google AdGrant
 
-As soon as nfs-anna lands in mainline, I'm going to send Linus a pull
-requrest for work.fs_parse + fixups...
+
