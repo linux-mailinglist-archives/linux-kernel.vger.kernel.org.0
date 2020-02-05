@@ -2,152 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 153D31524E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 03:55:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22DBD1524F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 03:59:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbgBECzq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 21:55:46 -0500
-Received: from forward500o.mail.yandex.net ([37.140.190.195]:50375 "EHLO
-        forward500o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727708AbgBECzp (ORCPT
+        id S1727887AbgBEC6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 21:58:50 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:34806 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727746AbgBEC6t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 21:55:45 -0500
-Received: from mxback7q.mail.yandex.net (mxback7q.mail.yandex.net [IPv6:2a02:6b8:c0e:41:0:640:cbbf:d618])
-        by forward500o.mail.yandex.net (Yandex) with ESMTP id D8B5660038;
-        Wed,  5 Feb 2020 05:55:39 +0300 (MSK)
-Received: from localhost (localhost [::1])
-        by mxback7q.mail.yandex.net (mxback/Yandex) with ESMTP id Fne5RH1nOD-tcLaxcjS;
-        Wed, 05 Feb 2020 05:55:39 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1580871339;
-        bh=Dvb46oX+sE51AQniYvfHyEhRnuBAEmi6TNyag+qriXY=;
-        h=Message-Id:Cc:Subject:In-Reply-To:Date:References:To:From;
-        b=g04rv893wsQtgKA8TQyHo7W76jEiPFv+TD97j46ucKKn3w/aAVN2PHq0SHui5kPdA
-         YVFjhIn8HaTwq8jFFX3d1oQTbF92sj73dwHpfg9HTn7RuqFZlnVYJ1MOiuW+6aSJ4P
-         oEbnW0eIecaOX5jQz0QmeJ/+InC6CVX0TiMAcZRU=
-Authentication-Results: mxback7q.mail.yandex.net; dkim=pass header.i=@flygoat.com
-Received: by vla4-87a00c2d2b1b.qloud-c.yandex.net with HTTP;
-        Wed, 05 Feb 2020 05:55:38 +0300
-From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
-Envelope-From: yjx@flygoat.com
-To:     Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc:     Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Huacai Chen <chenhc@lemote.com>,
-        Xuefeng Li <lixuefeng@loongson.cn>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yinglu Yang <yangyinglu@loongson.cn>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Jean Delvare <jdelvare@suse.de>
-In-Reply-To: <609c7042-0e44-2bd4-5e03-97465621b184@loongson.cn>
-References: <1579181165-2493-1-git-send-email-yangtiezhu@loongson.cn>
-         <a267161f-c8b3-a11c-7416-3ab9ba19aa82@loongson.cn>
-         <20200203131422.384cd168@endymion> <609c7042-0e44-2bd4-5e03-97465621b184@loongson.cn>
-Subject: Re: [PATCH v2,RESEND] MIPS: Scan the DMI system information
+        Tue, 4 Feb 2020 21:58:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580871528;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=iMoyuUQG6mGTZVCTKYztmS6Hs0K242TSdWPEeOxZW6A=;
+        b=Zk8Pnsf2ajJs2A8PU1TMYhlCMP3QCH+1zyGe7XH59GdobpRhqwsakGFtcWBX6ZKSjAdfAr
+        z/SBWwrcX7HbYbeCfvmgUYLgzluBlxc3hEwf3Jpex99tjYbcLq982afc4JuLs5z52Scaou
+        AK2HwdMUH1ycPgML81mtVr8bpsWuo24=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-241-8MDC-D-hOOuZOLfcA2gzBA-1; Tue, 04 Feb 2020 21:58:46 -0500
+X-MC-Unique: 8MDC-D-hOOuZOLfcA2gzBA-1
+Received: by mail-qv1-f69.google.com with SMTP id v3so642932qvm.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 18:58:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=iMoyuUQG6mGTZVCTKYztmS6Hs0K242TSdWPEeOxZW6A=;
+        b=t+wtbenNOwrNyT5UFiSG68P1LIpK0gfR7r7KBAbf2c+3kr2wEhIM2iEsrTkBjDwvdv
+         PbcjuWhDSGvnohOudBSi0+bQKovqjsHDv7yVUtOKFvx+x/hlnJYMhNn7Of2smfc/HJzL
+         065mwHGqTruh5rvDeN7/Cdlzo69R7uZlHft+d581LWBnEF7zcUvyNEKoy8tgQXltq5J/
+         QjXlP+18vJ0zETG3GVQ6mPemJDX8S8vJXplCFw7n3JZShj1ymWZEC6pYPVbPEjJXq37C
+         cmDPCndRnOlT2HBHcDrI0KCll8zyO5xDmwRx9Sp4AKC4wrxZbGnNMY52ju1IS07qEkPV
+         yCQQ==
+X-Gm-Message-State: APjAAAXm0fwQngKDjVDRN3Ww3IKrjv2OibtmCy9pTfCeXN3Pkv6/k3xR
+        jrX8/FF6gyvPR22yPxNrZAh7YQ9snzvMQ7BMf0ww/4tx2mawNyDDpRZPILTwOS8ubpjpbwHtHND
+        m07jWjx39/yhsRD1mIrCWMrDQ
+X-Received: by 2002:ac8:1415:: with SMTP id k21mr31821683qtj.300.1580871525713;
+        Tue, 04 Feb 2020 18:58:45 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwcW1YtKLT8v5bd10IJa63sORuNDIe53LmsHkfWJo8kyUKgeShP1B4VamT5gnlv2wvLf68pxw==
+X-Received: by 2002:ac8:1415:: with SMTP id k21mr31821664qtj.300.1580871525461;
+        Tue, 04 Feb 2020 18:58:45 -0800 (PST)
+Received: from xz-x1.redhat.com ([2607:9880:19c8:32::2])
+        by smtp.gmail.com with ESMTPSA id e64sm12961649qtd.45.2020.02.04.18.58.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2020 18:58:44 -0800 (PST)
+From:   Peter Xu <peterx@redhat.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     dinechin@redhat.com, sean.j.christopherson@intel.com,
+        pbonzini@redhat.com, jasowang@redhat.com, yan.y.zhao@intel.com,
+        mst@redhat.com, peterx@redhat.com, kevin.tian@intel.com,
+        alex.williamson@redhat.com, dgilbert@redhat.com,
+        vkuznets@redhat.com
+Subject: [PATCH 04/14] KVM: Pass in kvm pointer into mark_page_dirty_in_slot()
+Date:   Tue,  4 Feb 2020 21:58:32 -0500
+Message-Id: <20200205025842.367575-1-peterx@redhat.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200205025105.367213-1-peterx@redhat.com>
+References: <20200205025105.367213-1-peterx@redhat.com>
 MIME-Version: 1.0
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date:   Wed, 05 Feb 2020 10:55:38 +0800
-Message-Id: <17537451580871338@vla4-87a00c2d2b1b.qloud-c.yandex.net>
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The context will be needed to implement the kvm dirty ring.
 
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Peter Xu <peterx@redhat.com>
+---
+ virt/kvm/kvm_main.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-> On 2/3/20 8:14 PM, Jean Delvare wrote:
-> 
->> Hi Tiezhun,
->>
->> On Mon, 3 Feb 2020 16:32:03 +0800, Tiezhu Yang wrote:
->>
->>> On 1/16/20 9:26 PM, Tiezhu Yang wrote:
->>>
->>>> Enable DMI scanning on the MIPS architecture, this setups DMI identifiers
->>>> (dmi_system_id) for printing it out on task dumps and prepares DIMM entry
->>>> information (dmi_memdev_info) from the SMBIOS table. With this patch, the
->>>> driver can easily match various of mainboards.
->>>>
->>>> In the SMBIOS reference specification, the table anchor string "_SM_" is
->>>> present in the address range 0xF0000 to 0xFFFFF on a 16-byte boundary,
->>>> but there exists a special case for Loongson platform, when call function
->>>> dmi_early_remap, it should specify the start address to 0xFFFE000 due to
->>>> it is reserved for SMBIOS and can be normally access in the BIOS.
->>>>
->>>> This patch works fine on the Loongson 3A3000 platform which belongs to
->>>> MIPS architecture and has no influence on the other architectures such
->>>> as x86 and ARM.
->>>>
->>>> Co-developed-by: Yinglu Yang <yangyinglu@loongson.cn>
->>>> Signed-off-by: Yinglu Yang <yangyinglu@loongson.cn>
->>>> [jiaxun.yang@flygoat.com: Refine definitions and Kconfig]
->>>> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->>>> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
->>>> Reviewed-by: Huacai Chen <chenhc@lemote.com>
->>>> ---
->>>>
->>>> v2:
->>>> - add SMBIOS_ENTRY_POINT_SCAN_START suggested by Jean
->>>> - refine definitions and Kconfig by Jiaxun
->>>>
->>>> arch/mips/Kconfig | 10 ++++++++++
->>>> arch/mips/include/asm/dmi.h | 20 ++++++++++++++++++++
->>>> arch/mips/kernel/setup.c | 2 ++
->>>> drivers/firmware/dmi_scan.c | 6 +++++-
->>>> 4 files changed, 37 insertions(+), 1 deletion(-)
->>>> create mode 100644 arch/mips/include/asm/dmi.h
->>>
->>> Hi Paul and Jean,
->>>
->>> How do you think this patch?
->>
->> Looks good to me and you can add:
->>
->> Reviewed-by: Jean Delvare <jdelvare@suse.de>
->>
->> for the dmi subsystem part.
->>
->>> Should I split it into the following two patches?
->>> [PATCH v3 1/2] firmware: dmi: Add macro SMBIOS_ENTRY_POINT_SCAN_START
->>> [PATCH v3 2/2] MIPS: Add support for Desktop Management Interface (DMI)
->>>
->>> The first patch is only related with the common dmi code
->>> drivers/firmware/dmi_scan.c, the other patch is only related
->>> with the mips code under arch/mips.
->>>
->>> If you have any questions or suggestions, please let me know.
->>> I am looking forward to your early reply.
->>
->> I'm fine either way. I you do not split it, as most changes are in the
->> mips arch files and I do not expect any conflict in the dmi subsystem
->> part, I believe that the patch should be merged by the mips arch
->> maintainer.
-> 
-> Hi Jean,
-> 
-> Thanks very much for your review.
-> 
-> As described in another mail [1] by MIPS maintainer Paul Burton:
-> 
-> "So if unmerged arch/mips/ patches are holding you up, ping me, but
-> preferrably make sure code being added actually belongs under arch/mips/
-> first."
-> 
-> I think it is better to split it into the following two patches?
-> [PATCH v3 1/2] firmware: dmi: Add macro SMBIOS_ENTRY_POINT_SCAN_START
-> [PATCH v3 2/2] MIPS: Add support for Desktop Management Interface (DMI)
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 69190f9f7bd8..5307f6e33587 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -144,7 +144,9 @@ static void hardware_disable_all(void);
+ 
+ static void kvm_io_bus_destroy(struct kvm_io_bus *bus);
+ 
+-static void mark_page_dirty_in_slot(struct kvm_memory_slot *memslot, gfn_t gfn);
++static void mark_page_dirty_in_slot(struct kvm *kvm,
++				    struct kvm_memory_slot *memslot,
++				    gfn_t gfn);
+ 
+ __visible bool kvm_rebooting;
+ EXPORT_SYMBOL_GPL(kvm_rebooting);
+@@ -2057,7 +2059,8 @@ int kvm_vcpu_read_guest_atomic(struct kvm_vcpu *vcpu, gpa_t gpa,
+ }
+ EXPORT_SYMBOL_GPL(kvm_vcpu_read_guest_atomic);
+ 
+-static int __kvm_write_guest_page(struct kvm_memory_slot *memslot, gfn_t gfn,
++static int __kvm_write_guest_page(struct kvm *kvm,
++				  struct kvm_memory_slot *memslot, gfn_t gfn,
+ 			          const void *data, int offset, int len)
+ {
+ 	int r;
+@@ -2069,7 +2072,7 @@ static int __kvm_write_guest_page(struct kvm_memory_slot *memslot, gfn_t gfn,
+ 	r = __copy_to_user((void __user *)addr + offset, data, len);
+ 	if (r)
+ 		return -EFAULT;
+-	mark_page_dirty_in_slot(memslot, gfn);
++	mark_page_dirty_in_slot(kvm, memslot, gfn);
+ 	return 0;
+ }
+ 
+@@ -2078,7 +2081,7 @@ int kvm_write_guest_page(struct kvm *kvm, gfn_t gfn,
+ {
+ 	struct kvm_memory_slot *slot = gfn_to_memslot(kvm, gfn);
+ 
+-	return __kvm_write_guest_page(slot, gfn, data, offset, len);
++	return __kvm_write_guest_page(kvm, slot, gfn, data, offset, len);
+ }
+ EXPORT_SYMBOL_GPL(kvm_write_guest_page);
+ 
+@@ -2087,7 +2090,7 @@ int kvm_vcpu_write_guest_page(struct kvm_vcpu *vcpu, gfn_t gfn,
+ {
+ 	struct kvm_memory_slot *slot = kvm_vcpu_gfn_to_memslot(vcpu, gfn);
+ 
+-	return __kvm_write_guest_page(slot, gfn, data, offset, len);
++	return __kvm_write_guest_page(vcpu->kvm, slot, gfn, data, offset, len);
+ }
+ EXPORT_SYMBOL_GPL(kvm_vcpu_write_guest_page);
+ 
+@@ -2206,7 +2209,7 @@ int kvm_write_guest_offset_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+ 	r = __copy_to_user((void __user *)ghc->hva + offset, data, len);
+ 	if (r)
+ 		return -EFAULT;
+-	mark_page_dirty_in_slot(ghc->memslot, gpa >> PAGE_SHIFT);
++	mark_page_dirty_in_slot(kvm, ghc->memslot, gpa >> PAGE_SHIFT);
+ 
+ 	return 0;
+ }
+@@ -2273,7 +2276,8 @@ int kvm_clear_guest(struct kvm *kvm, gpa_t gpa, unsigned long len)
+ }
+ EXPORT_SYMBOL_GPL(kvm_clear_guest);
+ 
+-static void mark_page_dirty_in_slot(struct kvm_memory_slot *memslot,
++static void mark_page_dirty_in_slot(struct kvm *kvm,
++				    struct kvm_memory_slot *memslot,
+ 				    gfn_t gfn)
+ {
+ 	if (memslot && memslot->dirty_bitmap) {
+@@ -2288,7 +2292,7 @@ void mark_page_dirty(struct kvm *kvm, gfn_t gfn)
+ 	struct kvm_memory_slot *memslot;
+ 
+ 	memslot = gfn_to_memslot(kvm, gfn);
+-	mark_page_dirty_in_slot(memslot, gfn);
++	mark_page_dirty_in_slot(kvm, memslot, gfn);
+ }
+ EXPORT_SYMBOL_GPL(mark_page_dirty);
+ 
+@@ -2297,7 +2301,7 @@ void kvm_vcpu_mark_page_dirty(struct kvm_vcpu *vcpu, gfn_t gfn)
+ 	struct kvm_memory_slot *memslot;
+ 
+ 	memslot = kvm_vcpu_gfn_to_memslot(vcpu, gfn);
+-	mark_page_dirty_in_slot(memslot, gfn);
++	mark_page_dirty_in_slot(vcpu->kvm, memslot, gfn);
+ }
+ EXPORT_SYMBOL_GPL(kvm_vcpu_mark_page_dirty);
+ 
+-- 
+2.24.1
 
-Hi Tiezhu,
-
-That way will break bisect. In this case, I think the patch should still go through MIPS
-tree after grab review or ack from DMI maintainer.
-
-There is a grey margin for tree-wide patches, we should discuss how to deal with them case by
-case, for the email you mentioned, the main focus is platform driver. 
-
-Thanks.
-
---
-
-Jiaxun Yang
