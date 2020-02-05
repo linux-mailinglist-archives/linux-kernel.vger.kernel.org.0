@@ -2,77 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1D8F153B03
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 23:31:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5087153B77
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 23:54:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbgBEWaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 17:30:55 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:57354 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727307AbgBEWaz (ORCPT
+        id S1727711AbgBEWyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 17:54:01 -0500
+Received: from gateway22.websitewelcome.com ([192.185.47.163]:28674 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727355AbgBEWyA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 17:30:55 -0500
-Received: from zyt.lan (unknown [IPv6:2a02:169:3df5::564])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 2D3E25C4363;
-        Wed,  5 Feb 2020 23:30:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1580941853;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=8j/wLPVNelocFC7g7KIME69AY5HWX79CB2Mc0G7rnng=;
-        b=AWS1XuQcm4wvY/QLxoLWaINZ0MDRA75jAX35f8zRoS6r4tFVmWTqPmL0I7WYIrC4kvVvhd
-        hcjShldOactnbRSkfznuWKTcF1ZH9Acnx2rkPeOkl+VbQ5KqHI/v5P5cGUk2egYt/K6q7J
-        nfieAP0L3J1FAE6CVr18oXS2vU964mA=
-From:   Stefan Agner <stefan@agner.ch>
-To:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        sean@poorly.run, airlied@linux.ie, daniel.vetter@ffwll.ch
-Cc:     airlied@redhat.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH] drm: Add missing newline after comment
-Date:   Wed,  5 Feb 2020 23:26:00 +0100
-Message-Id: <586aab08af596120f48858005bb6784c83035d59.1580941448.git.stefan@agner.ch>
-X-Mailer: git-send-email 2.25.0
+        Wed, 5 Feb 2020 17:54:00 -0500
+X-Greylist: delayed 1339 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Feb 2020 17:54:00 EST
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 81EC6300D
+        for <linux-kernel@vger.kernel.org>; Wed,  5 Feb 2020 16:31:40 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id zTCuiyULsQfADzTCui1Nf3; Wed, 05 Feb 2020 16:31:40 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=L0Nz5IqdwqEH9ceOPKFVEIdv2X6+UyVS0shI1C/vLi8=; b=BLFkwCXKaaGmoFODgQFki5r82E
+        S021q2WGng0zG9zg+PCxkTUhOgv7yJxsvUO8cSV0xDNxytNqx3DPz+a7IWVPzBThzCn6/srLJco5f
+        lsTxcXYpDnEnlXgDemY8uZrASbdNJ2gzw0fAcJgrO9rA0Kf3FKail5tMF1gQzkliLa2/tf02t8ZnP
+        aqbt01yO51riNLXFk3x8HCRqOtFCEmNLLuMrXZYV3GRlBbN8QDpRJtnqmaHhflJ6m8y7i6US7PciX
+        j8fmWaqkGJ97dLh28jakK5oiJMI64mXw/pZA28kWs4k+2wqUPRthdPDFje2XgqDs4z1mkBI1oYoA2
+        IzY4QvJA==;
+Received: from [201.144.174.45] (port=29810 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1izTCt-000Jo3-6R; Wed, 05 Feb 2020 16:31:39 -0600
+Date:   Wed, 5 Feb 2020 16:34:04 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <zanussi@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] tracing/kprobe: Fix uninitialized variable bug
+Message-ID: <20200205223404.GA3379@embeddedor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.144.174.45
+X-Source-L: No
+X-Exim-ID: 1izTCt-000Jo3-6R
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.144.174.45]:29810
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang prints a warning:
-drivers/gpu/drm/drm_lock.c:363:6: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-         */     mutex_lock(&dev->struct_mutex);
-                ^
-drivers/gpu/drm/drm_lock.c:357:2: note: previous statement is here
-        if (!drm_core_check_feature(dev, DRIVER_LEGACY))
-        ^
+There is a potential execution path in which variable *ret* is returned
+without being properly initialized, previously.
 
-Fix this by adding a newline after the multi-line comment.
+Fix this by initializing variable *ret* to 0.
 
-Fixes: 058ca50ce3f1 ("drm/legacy: move lock cleanup for master into lock file (v2)")
-Link: https://github.com/ClangBuiltLinux/linux/issues/855
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Addresses-Coverity-ID: 1491142 ("Uninitialized scalar variable")
+Fixes: 2a588dd1d5d6 ("tracing: Add kprobe event command generation functions")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/gpu/drm/drm_lock.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/trace/trace_kprobe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_lock.c b/drivers/gpu/drm/drm_lock.c
-index 2e8ce99d0baa..2c79e8199e3c 100644
---- a/drivers/gpu/drm/drm_lock.c
-+++ b/drivers/gpu/drm/drm_lock.c
-@@ -360,7 +360,8 @@ void drm_legacy_lock_master_cleanup(struct drm_device *dev, struct drm_master *m
- 	/*
- 	 * Since the master is disappearing, so is the
- 	 * possibility to lock.
--	 */	mutex_lock(&dev->struct_mutex);
-+	 */
-+	mutex_lock(&dev->struct_mutex);
- 	if (master->lock.hw_lock) {
- 		if (dev->sigdata.lock == master->lock.hw_lock)
- 			dev->sigdata.lock = NULL;
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index d8264ebb9581..362cca52f5de 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -1012,7 +1012,7 @@ int __kprobe_event_add_fields(struct dynevent_cmd *cmd, ...)
+ {
+ 	struct dynevent_arg arg;
+ 	va_list args;
+-	int ret;
++	int ret = 0;
+ 
+ 	if (cmd->type != DYNEVENT_TYPE_KPROBE)
+ 		return -EINVAL;
 -- 
 2.25.0
 
