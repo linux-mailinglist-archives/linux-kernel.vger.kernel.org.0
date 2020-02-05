@@ -2,110 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E914153264
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 15:01:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0F7815326E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 15:03:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbgBEOBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 09:01:49 -0500
-Received: from foss.arm.com ([217.140.110.172]:47588 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726748AbgBEOBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 09:01:49 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB65731B;
-        Wed,  5 Feb 2020 06:01:48 -0800 (PST)
-Received: from [10.1.195.32] (e112269-lin.cambridge.arm.com [10.1.195.32])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 27F733F68E;
-        Wed,  5 Feb 2020 06:01:48 -0800 (PST)
-Subject: Re: [PATCH] drm/panfrost: Don't try to map on error faults
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        linux-kernel@vger.kernel.org
-Cc:     David Airlie <airlied@linux.ie>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        dri-devel@lists.freedesktop.org
-References: <20200205100719.24999-1-tomeu.vizoso@collabora.com>
- <3500c501-b166-6a1e-267b-31a4e5c62619@arm.com>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <565bac84-9e3c-21de-9043-f508e98ae6bf@arm.com>
-Date:   Wed, 5 Feb 2020 14:01:47 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1728188AbgBEODf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 09:03:35 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:38217 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727468AbgBEODf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 09:03:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580911414;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=W+NpZFWNZ2f3MnvwKemG9bonuUWg6dLPQi0q8VHXlF0=;
+        b=Jv/U+us+AbBvWnhuyCrzepLS07S0vacPoJGCkFK+eZhzRlZKP+3kc+ZwqnWKxpTQjObztl
+        pHS8qsGNY1PKqmyi92MB28hc/XRWH2PWtHpVBcMu6eGHI/KoBeHoqkwWirk1bp47Rs04GU
+        V6lmeAzLvrsUg3NjmAYS0ZrZuBayyEs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-322-7xqNhPILPQiZkH1oJPITDg-1; Wed, 05 Feb 2020 09:03:30 -0500
+X-MC-Unique: 7xqNhPILPQiZkH1oJPITDg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 46E771081FA1;
+        Wed,  5 Feb 2020 14:03:29 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AF2F419C7F;
+        Wed,  5 Feb 2020 14:03:28 +0000 (UTC)
+Subject: Re: [PATCH v5 6/7] locking/lockdep: Reuse freed chain_hlocks entries
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+References: <20200203164147.17990-1-longman@redhat.com>
+ <20200203164147.17990-7-longman@redhat.com>
+ <20200204154236.GE14879@hirez.programming.kicks-ass.net>
+ <c1af8458-7269-53c3-59f4-b87c5d51c208@redhat.com>
+ <16125cbf-09ee-919e-4b7a-33dabb123159@redhat.com>
+ <f7f4151d-6514-be7b-1915-37f19411ca96@redhat.com>
+ <20200205094838.GI14879@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <c3e01215-bb1c-e22a-32e3-f01e2e96584a@redhat.com>
+Date:   Wed, 5 Feb 2020 09:03:28 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <3500c501-b166-6a1e-267b-31a4e5c62619@arm.com>
+In-Reply-To: <20200205094838.GI14879@hirez.programming.kicks-ass.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2020 13:25, Robin Murphy wrote:
-> On 05/02/2020 10:07 am, Tomeu Vizoso wrote:
->> If the exception type isn't one of the normal faults, don't try to map
->> and instead go straight to a terminal fault.
-> 
-> "One of the the normal faults" seems a rather vague way of saying "a
-> translation fault", which is what we're specifically handling here, and
-> logically the only fault reflecting something not yet mapped rather than
-> mapped inappropriately ;)
-> 
-> (Who knows how the level ended up as 1-4 rather than 0-3 as it really
-> should be - another Mali Mystery(TM)...)
-
-Ah, but you're thinking of LPAE not Mali Magic Page Tables ('inspired
-by' LPAE but not actually compatible....) ;) However I do wonder what
-will happen when we enable aarch64 page tables in Bifrost.
-
->> Otherwise, we can get flooded by kernel warnings and further faults.
-> 
-> Either way,
-> 
-> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-> 
->> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
->> ---
->>   drivers/gpu/drm/panfrost/panfrost_mmu.c | 5 +++--
->>   1 file changed, 3 insertions(+), 2 deletions(-)
+On 2/5/20 4:48 AM, Peter Zijlstra wrote:
+> On Tue, Feb 04, 2020 at 11:57:09AM -0500, Waiman Long wrote:
+>
+>> Wait, it is possible that we can have deadlock like this:
 >>
->> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c
->> b/drivers/gpu/drm/panfrost/panfrost_mmu.c
->> index 763cfca886a7..80abddb4544c 100644
->> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
->> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
->> @@ -596,8 +596,9 @@ static irqreturn_t
->> panfrost_mmu_irq_handler_thread(int irq, void *data)
->>           source_id = (fault_status >> 16);
->>             /* Page fault only */
->> -        if ((status & mask) == BIT(i)) {
->> -            WARN_ON(exception_type < 0xC1 || exception_type > 0xC4);
->> +        if ((status & mask) == BIT(i) &&
->> +             exception_type >= 0xC1 &&
->> +             exception_type <= 0xC4) {
+>> =C2=A0 cpu 0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 cpu 1
+>> =C2=A0 -----=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 -----
+>> =C2=A0 lock A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 lock B
+>> =C2=A0 <irq>=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 <irq>
+>> =C2=A0 lock B=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 lock A
+>> =C2=A0
+>> If we eliminate 1-entry chain, will that impact our ability to detect =
+this
+>> kind of deadlock?
+> I'm thinking that should trigger irq-inversion (irq-on vs in-irq) on
+> either A or B (depending on timing).
+>
+> AFAICT the irq-state tracking is outside of validate_chain().
+>
+> This is also why I think your separate_irq_context() change is not
+> needed.
+>
+> validate_chain() really only checks the per-context lock nesting, and
+> there, a single lock doesn't do very much. Hence my proposed patch.
+>
+I see. Then it may be OK. I will take a further look just to be sure.
 
-I would suggest the best option here is to copy mali_kbase and check
-against a mask, in kbase[1] we have:
-
-	switch (fault_status & AS_FAULTSTATUS_EXCEPTION_CODE_MASK) {
-
-	case AS_FAULTSTATUS_EXCEPTION_CODE_TRANSLATION_FAULT:
-
-[1]
-https://gitlab.freedesktop.org/panfrost/linux-panfrost/blob/a864e6b9fbd093a033a90d5bbdd6dcc79a0667b2/mali_kbase_mmu.c#L108
-
-Where:
-
-#define AS_FAULTSTATUS_EXCEPTION_CODE_MASK                      (0x7<<3)
-#define AS_FAULTSTATUS_EXCEPTION_CODE_TRANSLATION_FAULT         (0x0<<3)
-
-Steve
-
->>                 ret = panfrost_mmu_map_fault_addr(pfdev, i, addr);
->>               if (!ret) {
->>
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Cheers,
+Longman
 
