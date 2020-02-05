@@ -2,70 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 029BD152A2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 12:48:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF5FC153024
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 12:50:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbgBELsU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 06:48:20 -0500
-Received: from mga12.intel.com ([192.55.52.136]:14661 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725385AbgBELsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 06:48:19 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2020 03:48:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,405,1574150400"; 
-   d="scan'208";a="404129293"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by orsmga005.jf.intel.com with ESMTP; 05 Feb 2020 03:48:15 -0800
-Date:   Wed, 5 Feb 2020 19:48:32 +0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, x86@kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Wei Yang <richardw.yang@linux.intel.com>
-Subject: Re: [PATCH v6 10/10] mm/memory_hotplug: Cleanup __remove_pages()
-Message-ID: <20200205114832.GE24162@richard>
-Reply-To: Wei Yang <richardw.yang@linux.intel.com>
-References: <20191006085646.5768-1-david@redhat.com>
- <20191006085646.5768-11-david@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191006085646.5768-11-david@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1727081AbgBELu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 06:50:28 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:40659 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbgBELu2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 06:50:28 -0500
+Received: from marcel-macpro.fritz.box (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
+        by mail.holtmann.org (Postfix) with ESMTPSA id BBB91CECC6;
+        Wed,  5 Feb 2020 12:59:47 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [PATCH v1] Bluetooth: hci_qca: Optimized code while enabling
+ clocks for BT SOC
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <1580899903-19032-1-git-send-email-gubbaven@codeaurora.org>
+Date:   Wed, 5 Feb 2020 12:50:25 +0100
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        robh@kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, bgodavar@codeaurora.org,
+        tientzu@chromium.org, seanpaul@chromium.org, rjliao@codeaurora.org,
+        yshavit@google.com, devicetree@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <3C9612F8-C73C-4C6A-96BF-2632E9E16C75@holtmann.org>
+References: <1580899903-19032-1-git-send-email-gubbaven@codeaurora.org>
+To:     Venkata Lakshmi Narayana Gubba <gubbaven@codeaurora.org>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 06, 2019 at 10:56:46AM +0200, David Hildenbrand wrote:
->Let's drop the basically unused section stuff and simplify.
->
->Also, let's use a shorter variant to calculate the number of pages to
->the next section boundary.
->
->Cc: Andrew Morton <akpm@linux-foundation.org>
->Cc: Oscar Salvador <osalvador@suse.de>
->Cc: Michal Hocko <mhocko@suse.com>
->Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
->Cc: Dan Williams <dan.j.williams@intel.com>
->Cc: Wei Yang <richardw.yang@linux.intel.com>
->Signed-off-by: David Hildenbrand <david@redhat.com>
+Hi Venkata,
 
-Finally understand the code.
+> * Directly passing clock pointer to clock code without checking for NULL
+>  as clock code takes care of it
+> * Removed the comment which was not necessary
+> * Updated code for return in qca_regulator_enable()
+> 
+> Signed-off-by: Venkata Lakshmi Narayana Gubba <gubbaven@codeaurora.org>
+> ---
+> drivers/bluetooth/hci_qca.c | 10 +++-------
+> 1 file changed, 3 insertions(+), 7 deletions(-)
 
-Reviewed-by: Wei Yang <richardw.yang@linux.intel.com>
+patch has been applied to bluetooth-next tree.
 
--- 
-Wei Yang
-Help you, Help me
+Regards
+
+Marcel
+
