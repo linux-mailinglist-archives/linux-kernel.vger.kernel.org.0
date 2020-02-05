@@ -2,170 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C429152630
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 07:06:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F155B152635
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 07:10:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbgBEGGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 01:06:55 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:43187 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725497AbgBEGGy (ORCPT
+        id S1726720AbgBEGJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 01:09:58 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40059 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbgBEGJ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 01:06:54 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1580882813; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=+G5FxAByirlTokI5Q9wrrRy13bzlUXcKOxokwDpbu2I=; b=idqfQbQFjcV8vUL3uUxeR+CFmZOrETyYSf4GijU19ebm2yJwzCUUDjp/2GqomVcEa9qlstHw
- MV5TGf4ylm2qW5OkH0+mVEJIzS7pzUXeCvjDP30hYbWMJIwReZv6XU1cuzE/Qzpp4ffX+Bhw
- IkuuD824RIJTdgPw4f3kTJyoux4=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e3a5b76.7fc587a33650-smtp-out-n03;
- Wed, 05 Feb 2020 06:06:46 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 65606C447A5; Wed,  5 Feb 2020 06:06:44 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3CC20C433CB;
-        Wed,  5 Feb 2020 06:06:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3CC20C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
-From:   Can Guo <cang@codeaurora.org>
-To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        hongwus@codeaurora.org, rnayak@codeaurora.org,
-        linux-scsi@vger.kernel.org, kernel-team@android.com,
-        saravanak@google.com, salyzyn@google.com, cang@codeaurora.org
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] scsi: ufs: Fix registers dump vops caused scheduling while atomic
-Date:   Tue,  4 Feb 2020 22:06:28 -0800
-Message-Id: <1580882795-29675-1-git-send-email-cang@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Wed, 5 Feb 2020 01:09:57 -0500
+Received: by mail-pf1-f194.google.com with SMTP id q8so626115pfh.7
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 22:09:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4mQKfMBsGIq7Hfer8YzXXFpOEX7eT6f9ZSgXgITsg2s=;
+        b=QpvwWoDMxlep5jMdpHk2t9204huxy8F0ckz6nbF0g2vs+n9Y6CZvCuHBb3NOA65x6j
+         slF0PIqixf3aAWfX2S1Qh8j43cgzlUyoeReEvly+gz/HSOOUr0x7fi8GlHQAeVodRD8T
+         G6gbRbs81+Mmio/oAdKWEABHKcMDb47fBkDaI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4mQKfMBsGIq7Hfer8YzXXFpOEX7eT6f9ZSgXgITsg2s=;
+        b=KqdLr2d20VmScfUhHulzFBxHpeFAJ+MKprnHV1tEv+pEgIxLv4LGVlV/jNnObC8BgE
+         /xF0catdfFgyYCmdTHJqluXLBohg1ZHpPlnxYcFCDDgvh7c6hdKhTaPoFV5nSCsBa7xV
+         x2wTGodV8ywaSKplHO07mThzccq59D/lNGdSgc9uRnHQJrvdHQVdCgBIAi0lmaw6pJrD
+         xd3w3nz+iTCva7R+CMWlBCTZGx7Y8QFO+3JXuQYopSahWrK8QyQZo9fZAeOstgPgRYAk
+         5ktdk5Js1Pa0R1rhMmRnKX1C+eOCvu0eUvK+e0WP05ds9819K9BAm10MQuVekF61ppd0
+         AlSg==
+X-Gm-Message-State: APjAAAWetcNUDKOcijX+ygxSW9qltI4rGt5P6evEat2oZMVTE5jsb7PC
+        gd2aL5IcbFw5AgvbgBdj3sadjg==
+X-Google-Smtp-Source: APXvYqxOoqdzPXFqh3VIm6fmR3wxTt7HovSZ/O22ZM9bUqJ7GHnPh/1EF0ADpOBTcMhz01PbBEh+Mw==
+X-Received: by 2002:a63:e04a:: with SMTP id n10mr34505587pgj.341.1580882995522;
+        Tue, 04 Feb 2020 22:09:55 -0800 (PST)
+Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id u26sm25680160pfn.46.2020.02.04.22.09.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2020 22:09:54 -0800 (PST)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Maulik Shah <mkshah@codeaurora.org>
+Subject: [PATCH] genirq: Clarify that irq wake state is orthogonal to enable/disable
+Date:   Tue,  4 Feb 2020 22:09:53 -0800
+Message-Id: <20200205060953.49167-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reigsters dump intiated from atomic context should not sleep. To fix it,
-add one boolean parameter to register dump vops to inform vendor driver if
-sleep is allowed or not.
+There's some confusion around if an irq that's disabled with
+disable_irq() can still wake the system from sleep states such as
+"suspend to RAM". Let's clarify this in the kernel documentation for
+irq_set_irq_wake() so that it's clear that an irq can be disabled and
+still wake the system if it has been marked for wakeup.
 
-Signed-off-by: Can Guo <cang@codeaurora.org>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Douglas Anderson <dianders@chromium.org>
+Cc: Lina Iyer <ilina@codeaurora.org>
+Cc: Maulik Shah <mkshah@codeaurora.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
+ kernel/irq/manage.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-index 3b5b2d9..c30139c 100644
---- a/drivers/scsi/ufs/ufs-qcom.c
-+++ b/drivers/scsi/ufs/ufs-qcom.c
-@@ -1619,13 +1619,17 @@ static void ufs_qcom_print_unipro_testbus(struct ufs_hba *hba)
- 	kfree(testbus);
- }
- 
--static void ufs_qcom_dump_dbg_regs(struct ufs_hba *hba)
-+static void ufs_qcom_dump_dbg_regs(struct ufs_hba *hba, bool no_sleep)
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index 818b2802d3e7..fa8db98c8699 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -731,6 +731,11 @@ static int set_irq_wake_real(unsigned int irq, unsigned int on)
+  *
+  *	Wakeup mode lets this IRQ wake the system from sleep
+  *	states like "suspend to RAM".
++ *
++ *	Note: irq enable/disable state is completely orthogonal
++ *	to the enable/disable state of irq wake. An irq can be
++ *	disabled with disable_irq() and still wake the system as
++ *	long as the irq has wake enabled.
+  */
+ int irq_set_irq_wake(unsigned int irq, unsigned int on)
  {
- 	ufshcd_dump_regs(hba, REG_UFS_SYS1CLK_1US, 16 * 4,
- 			 "HCI Vendor Specific Registers ");
- 
- 	/* sleep a bit intermittently as we are dumping too much data */
- 	ufs_qcom_print_hw_debug_reg_all(hba, NULL, ufs_qcom_dump_regs_wrapper);
-+
-+	if (no_sleep)
-+		return;
-+
- 	usleep_range(1000, 1100);
- 	ufs_qcom_testbus_read(hba);
- 	usleep_range(1000, 1100);
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 0ac5d47..37f1539 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -398,7 +398,7 @@ static void ufshcd_print_err_hist(struct ufs_hba *hba,
- 		dev_err(hba->dev, "No record of %s\n", err_name);
- }
- 
--static void ufshcd_print_host_regs(struct ufs_hba *hba)
-+static inline void __ufshcd_print_host_regs(struct ufs_hba *hba, bool no_sleep)
- {
- 	ufshcd_dump_regs(hba, 0, UFSHCI_REG_SPACE_SIZE, "host_regs: ");
- 	dev_err(hba->dev, "hba->ufs_version = 0x%x, hba->capabilities = 0x%x\n",
-@@ -430,7 +430,12 @@ static void ufshcd_print_host_regs(struct ufs_hba *hba)
- 
- 	ufshcd_print_clk_freqs(hba);
- 
--	ufshcd_vops_dbg_register_dump(hba);
-+	ufshcd_vops_dbg_register_dump(hba, no_sleep);
-+}
-+
-+static void ufshcd_print_host_regs(struct ufs_hba *hba)
-+{
-+	__ufshcd_print_host_regs(hba, false);
- }
- 
- static
-@@ -4821,7 +4826,7 @@ static void ufshcd_slave_destroy(struct scsi_device *sdev)
- 		dev_err(hba->dev,
- 				"OCS error from controller = %x for tag %d\n",
- 				ocs, lrbp->task_tag);
--		ufshcd_print_host_regs(hba);
-+		__ufshcd_print_host_regs(hba, true);
- 		ufshcd_print_host_state(hba);
- 		break;
- 	} /* end of switch */
-@@ -5617,7 +5622,7 @@ static irqreturn_t ufshcd_check_errors(struct ufs_hba *hba)
- 					__func__, hba->saved_err,
- 					hba->saved_uic_err);
- 
--				ufshcd_print_host_regs(hba);
-+				__ufshcd_print_host_regs(hba, true);
- 				ufshcd_print_pwr_info(hba);
- 				ufshcd_print_tmrs(hba, hba->outstanding_tasks);
- 				ufshcd_print_trs(hba, hba->outstanding_reqs,
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 2ae6c7c..3de7cbb 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -323,7 +323,7 @@ struct ufs_hba_variant_ops {
- 	int	(*apply_dev_quirks)(struct ufs_hba *hba);
- 	int     (*suspend)(struct ufs_hba *, enum ufs_pm_op);
- 	int     (*resume)(struct ufs_hba *, enum ufs_pm_op);
--	void	(*dbg_register_dump)(struct ufs_hba *hba);
-+	void	(*dbg_register_dump)(struct ufs_hba *hba, bool no_sleep);
- 	int	(*phy_initialization)(struct ufs_hba *);
- 	void	(*device_reset)(struct ufs_hba *hba);
- };
-@@ -1078,10 +1078,11 @@ static inline int ufshcd_vops_resume(struct ufs_hba *hba, enum ufs_pm_op op)
- 	return 0;
- }
- 
--static inline void ufshcd_vops_dbg_register_dump(struct ufs_hba *hba)
-+static inline void ufshcd_vops_dbg_register_dump(struct ufs_hba *hba,
-+						 bool no_sleep)
- {
- 	if (hba->vops && hba->vops->dbg_register_dump)
--		hba->vops->dbg_register_dump(hba);
-+		hba->vops->dbg_register_dump(hba, no_sleep);
- }
- 
- static inline void ufshcd_vops_device_reset(struct ufs_hba *hba)
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Sent by a computer, using git, on the internet
+
