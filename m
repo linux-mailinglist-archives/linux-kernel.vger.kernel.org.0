@@ -2,59 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DB45154AD6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 19:12:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AA9C154ACB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 19:07:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbgBFSMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 13:12:46 -0500
-Received: from frisell.zx2c4.com ([192.95.5.64]:52711 "EHLO frisell.zx2c4.com"
+        id S1727818AbgBFSHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 13:07:36 -0500
+Received: from mga18.intel.com ([134.134.136.126]:14788 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727747AbgBFSMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 13:12:46 -0500
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id d9a24a0a;
-        Thu, 6 Feb 2020 18:11:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=UoMsJlCUQufKURXYWGLwJRUQbeM=; b=Tz+lsj
-        K+Hb+gbCTWtPUm1u0UdjAyLgoKoXYz4WxCVbO7vGf9fxwzEkFJ1jCHwBlR8h9jEv
-        zpQ77BkmR9zzDRlO67hJIOdh6ySq6wLEc1xnjF3xSV5/zX3Ww0glJvIFYEAn1tRd
-        qpTsnsIi+TgD/LkrxUUhopVyJiyUv+4LIHcOLkfXrbNWJJ/fp8DuixB0QNLTaHRn
-        b0VYMJbAZ7N2cu+3f+zGfiYtFCToelyuIyqVgS5+K8NlBO1Qvazt4lelAM54uhaP
-        Gx35KEzw76rxY3+E+LdVw2AEutIvHHPkoLt+uwJyPhY4lw+9ZCY5IsYhmSl/EXO7
-        IgeIRIFX963mY6DA==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 551f680d (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Thu, 6 Feb 2020 18:11:38 +0000 (UTC)
-Received: by mail-ot1-f41.google.com with SMTP id j20so6418788otq.3;
-        Thu, 06 Feb 2020 10:12:43 -0800 (PST)
-X-Gm-Message-State: APjAAAVD1AJCmF5rTpCSUwvK9Tr5FyeCawPc317zPhE+fkwhqg2zwzhP
-        UVT6h07S7vpjEsjKA5hMyB6dzLzSf839RYxo2sI=
-X-Google-Smtp-Source: APXvYqwi9AYzuxJrHUrhzrEkIf/41GV7WgHZqF0lxsB7tgmFTyvfWKzBVF/8St753FegXqcTG4UsEkYS2/KswPvedio=
-X-Received: by 2002:a9d:7a47:: with SMTP id z7mr32144890otm.179.1581012763147;
- Thu, 06 Feb 2020 10:12:43 -0800 (PST)
+        id S1727662AbgBFSHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 13:07:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 10:07:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,410,1574150400"; 
+   d="scan'208";a="379143775"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga004.jf.intel.com with ESMTP; 06 Feb 2020 10:07:35 -0800
+Date:   Thu, 6 Feb 2020 10:12:53 -0800
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     "Liu, Yi L" <yi.l.liu@intel.com>
+Cc:     Alex Williamson <alex.williamson@redhat.com>,
+        "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Tian, Jun J" <jun.j.tian@intel.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "jean-philippe.brucker@arm.com" <jean-philippe.brucker@arm.com>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [RFC v3 1/8] vfio: Add VFIO_IOMMU_PASID_REQUEST(alloc/free)
+Message-ID: <20200206101253.7fb43e07@jacob-builder>
+In-Reply-To: <A2975661238FB949B60364EF0F2C25743A1993E8@SHSMSX104.ccr.corp.intel.com>
+References: <1580299912-86084-1-git-send-email-yi.l.liu@intel.com>
+        <1580299912-86084-2-git-send-email-yi.l.liu@intel.com>
+        <20200129165540.335774d5@w520.home>
+        <A2975661238FB949B60364EF0F2C25743A1993E8@SHSMSX104.ccr.corp.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <1580841629-7102-1-git-send-email-cai@lca.pw> <20200206163844.GA432041@zx2c4.com>
- <453212cf-8987-9f05-ceae-42a4fc3b0876@gmail.com>
-In-Reply-To: <453212cf-8987-9f05-ceae-42a4fc3b0876@gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Thu, 6 Feb 2020 19:12:32 +0100
-X-Gmail-Original-Message-ID: <CAHmME9pGhQoY8MjR8uvEZpF66Y_DvReAjKBx8L4SRiqbL_9itw@mail.gmail.com>
-Message-ID: <CAHmME9pGhQoY8MjR8uvEZpF66Y_DvReAjKBx8L4SRiqbL_9itw@mail.gmail.com>
-Subject: Re: [PATCH v3] skbuff: fix a data race in skb_queue_len()
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     cai@lca.pw, Netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Marco Elver <elver@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 6, 2020 at 6:10 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
-> Unfortunately we do not have ADD_ONCE() or something like that.
+Hi Alex,
 
-I guess normally this is called "atomic_add", unless you're thinking
-instead about something like this, which generates the same
-inefficient code as WRITE_ONCE:
+On Fri, 31 Jan 2020 12:41:06 +0000
+"Liu, Yi L" <yi.l.liu@intel.com> wrote:
 
-#define ADD_ONCE(d, s) *(volatile typeof(d) *)&(d) += (s)
+> > > +static int vfio_iommu_type1_pasid_free(struct vfio_iommu *iommu,
+> > > +				       unsigned int pasid)
+> > > +{
+> > > +	struct vfio_mm *vmm = iommu->vmm;
+> > > +	int ret = 0;
+> > > +
+> > > +	mutex_lock(&iommu->lock);
+> > > +	if (!IS_IOMMU_CAP_DOMAIN_IN_CONTAINER(iommu)) {  
+> > 
+> > But we could have been IOMMU backed when the pasid was allocated,
+> > did we just leak something?  In fact, I didn't spot anything in
+> > this series that handles a container with pasids allocated losing
+> > iommu backing. I'd think we want to release all pasids when that
+> > happens since permission for the user to hold pasids goes along
+> > with having an iommu backed device.  
+> 
+> oh, yes. If a container lose iommu backend, then needs to reclaim the
+> allocated PASIDs. right? I'll add it. :-)
+> 
+> > Also, do we want _free() paths that can fail?  
+> 
+> I remember we discussed if a _free() path can fail, I think we agreed
+> to let _free() path always success. :-)
+
+Just to add some details. We introduced IOASID notifier such that when
+VFIO frees a PASID, consumers such as IOMMU, can do the cleanup
+therefore ensure free always succeeds.
+https://www.spinics.net/lists/kernel/msg3349928.html
+https://www.spinics.net/lists/kernel/msg3349930.html
+This was not in my v9 set as I was considering some race conditions
+w.r.t. registering notifier, gets notifications, and free call. I will
+post it in v10.
+
+Thanks,
+
+Jacob
