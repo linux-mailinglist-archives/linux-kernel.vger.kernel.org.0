@@ -2,88 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E912A154C1B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 20:24:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E030154C3B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 20:27:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbgBFTX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 14:23:56 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41578 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727738AbgBFTX4 (ORCPT
+        id S1727950AbgBFT0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 14:26:54 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:39576 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727836AbgBFT0x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 14:23:56 -0500
-Received: by mail-pl1-f193.google.com with SMTP id t14so2730903plr.8;
-        Thu, 06 Feb 2020 11:23:55 -0800 (PST)
+        Thu, 6 Feb 2020 14:26:53 -0500
+Received: by mail-vs1-f65.google.com with SMTP id p14so4547728vsq.6
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 11:26:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=nf9jca+hMQs7Cat5Jz2CzrqqiXuLOSBdlIq3cfbrt0Y=;
-        b=o+igVjrUCEk9msksxFBcXk9Q+L11WU67C1VVsy6UaVs0g/1ubFuji25ig5OqemOH6J
-         KSPfMbN7+mSVRSe0jgApAr37A8Laolj0tnrWCc8m7JlCR0lOcsAAi/Sd9jdQlLyDVqLv
-         gjaPgMU9TNMshy6HinckZZnq4hpNtxXD4WdjGjfVeA912uwX1KcB2ZyF1E0Y2/+rJLv9
-         CM1PypQ4zqv3ac/SL+4kz/wmJJCKP7az4ox+ukvPsOwzMUm2ZQKpgSOb4EnWae9CRc/0
-         noOpOfVqK9ToBDh3JNukCWhwR/ezFKe6DKu8srrL8j5BBWSvxHSjSQfHo4MVgdYavYYp
-         TkEA==
+        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=S7KpLMUY7LiWZq/Kj/eAi+yNVL0NiKccJvwviJrN6LU=;
+        b=Tv8MZfQyvsljJl/L3IaZhjvF0zhvW7SGNWz006rU+AEOnWunbxolvEn+ld89B6WyJW
+         yn7gHQ2DktgOFMcX/tw2hqsr4MwhiimED2xSWJRNi0Apz814aNulaQTHc9vuGeK9IDNT
+         It5U1ReUUYb4xFG50FuVrDTevCZD9OT1L6gMNuK6aOR8E6g97ydSvQuyTUAWyDPrMdh6
+         vnjEkFc16T2U61hgk19+NgLZQA6IzseSsUaAl2CKt1oSsru/HYy478Lyv/RNrNgsMfJg
+         E34mx0+Ekt0XJqgazqxe82zwubl03+fz1uevMPW37HhjqMn6CPFGAdE0XsKrux2KOFyn
+         AYyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=nf9jca+hMQs7Cat5Jz2CzrqqiXuLOSBdlIq3cfbrt0Y=;
-        b=HQ0MQAriN7QqvV9yp0cccvOjPepnBVXJygk7TloTg6dUhSjY6xub37W2hFjnIMBpB+
-         /qUbCvPJw0l6iv/ok2eQyI62IoZSA06oafOlTnjyJCl3zNJTVbal4IIfhpwYxxGSCvFo
-         sN9W+M8PHnGakP5IyjTyfN2YP21B3SNV0UccYkKOfhvpuM63TqVMpmuim9nSE8zW+zEg
-         59z5l52UpAFdIScB/0+KxJW2r1uW4b9eYx2V8Zke69/MI8en6DqCmyVWdlNoHMMzPo8x
-         gMOdqDZ2LtJJXBnZKgAoRFo+abBX3thsGB6q/boBAN3hY6eB/1QCpOlkMuB247xLmRxy
-         TxKg==
-X-Gm-Message-State: APjAAAVydKLtcXkjIrI84aIwKzSfK9naQ7m7Hl9mkaaJW1dMsDeu8a2a
-        oNP5bXeJkbzZNoJnTGsJTtVzDegF
-X-Google-Smtp-Source: APXvYqxxvSpSuR5gMDf2ApuoNK5fINQtOs2zbk3AK9+Tt35oqUihS/rk23F3BtcNnfKaeYn9fJJrDg==
-X-Received: by 2002:a17:90b:4015:: with SMTP id ie21mr6396030pjb.1.1581017035236;
-        Thu, 06 Feb 2020 11:23:55 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id f18sm204715pgn.2.2020.02.06.11.23.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 11:23:54 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=S7KpLMUY7LiWZq/Kj/eAi+yNVL0NiKccJvwviJrN6LU=;
+        b=lHDNWIC08x/fv45y3j934x989hDvgiXYamtJrNCwo4VR8Rvr0xJ3D0wgnv5EK4X4BM
+         Yugayaw0JSkJJZU5MGMGQVwkZeiRYaePaRUhtwbyupMgHwfT5ioKYKNrdjBjPY2BVePn
+         aLM7ESOx0dMwJIBdcTE8qnjXJ5Dvz26/aRVQ44HDiDQUtwIcbMUGb2FHXuF6yLaX1x/n
+         m8uDrmHP/BLqEM3JhD7Os5tWdxJZiFk4pwI45C2yFaTGfwHwztEiCctsyboaOrzCwCqf
+         9SUcM0CwPfNYCuI0VNd7zchIrPJ+8joXjeUFlHQT0TVua36cJ8PLLB8onpV1HASCLvyb
+         rh9Q==
+X-Gm-Message-State: APjAAAViEc92QLX1c9CZY4v5d7SjLxYHZFs4mXJYzresfg5/8hgtK2nk
+        jzFskRzBVByuhygS1Y90BfKBEbS+/LKGlxlHVTlgRg==
+X-Google-Smtp-Source: APXvYqwoojhOiE1bY8Keza3r5GUPbzrgIujBGiCbM5sfzEmHarjYTwY433tNBdAO58ymcgqBI0TN5G4Kv1fiGkD0b+o=
+X-Received: by 2002:a67:d011:: with SMTP id r17mr2575599vsi.159.1581017212681;
+ Thu, 06 Feb 2020 11:26:52 -0800 (PST)
+MIME-Version: 1.0
+References: <20191219172823.1652600-1-anarsoul@gmail.com> <CAHLCerPWEDqEE8LRUiO5GpeP+BfnestocndBQq6oXAxVN=+3ow@mail.gmail.com>
+ <20200206155703.fyry7nh473mc7pqy@core.my.home>
+In-Reply-To: <20200206155703.fyry7nh473mc7pqy@core.my.home>
+From:   Amit Kucheria <amit.kucheria@verdurent.com>
+Date:   Fri, 7 Feb 2020 00:56:41 +0530
+Message-ID: <CAHLCerMLFYRNUfPAzbUTZkn33P7LG5PtHMNiSJ2GMCoJ=0k74w@mail.gmail.com>
+Subject: Re: [PATCH v8 0/7] add thermal sensor driver for A64, A83T, H3, H5,
+ H6, R40
+To:     Amit Kucheria <amit.kucheria@verdurent.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net] net: dsa: bcm_sf2: Only 7278 supports 2Gb/sec IMP port
-Date:   Thu,  6 Feb 2020 11:23:52 -0800
-Message-Id: <20200206192352.19939-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        lakml <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 7445 switch clocking profiles do not allow us to run the IMP port at
-2Gb/sec in a way that it is reliable and consistent. Make sure that the
-setting is only applied to the 7278 family.
+On Thu, Feb 6, 2020 at 9:27 PM Ond=C5=99ej Jirman <megous@megous.com> wrote=
+:
+>
+> Hi Amit,
+>
+> On Thu, Feb 06, 2020 at 07:43:59PM +0530, Amit Kucheria wrote:
+> > Hi Vasily,
+> >
+> > For this entire series, the DTS files don't contain any trip points.
+> > Did I miss some other series?
+> >
+> > At a minimum, you should add some "hot" or "critical" trip points
+> > since then don't require a cooling-map with throttling actions. If you
+> > have "passive" trip points, then you need to provide cooling-maps.
+> >
+> > Since this series has been merged, could you please follow up with a
+> > fixup series to add the trip points?
+>
+> I don't think lack of trip points causes runtime issues. Or does it? I pl=
+anned
+> to send update with some trip points and cooling maps for 5.7 merge windo=
+w.
+> Is this acceptable?
 
-Fixes: 8f1880cbe8d0 ("net: dsa: bcm_sf2: Configure IMP port for 2Gb/sec")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/net/dsa/bcm_sf2.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Yes, I think that would be fine.
 
-diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
-index 3e8635311d0d..d1955543acd1 100644
---- a/drivers/net/dsa/bcm_sf2.c
-+++ b/drivers/net/dsa/bcm_sf2.c
-@@ -68,7 +68,9 @@ static void bcm_sf2_imp_setup(struct dsa_switch *ds, int port)
- 
- 		/* Force link status for IMP port */
- 		reg = core_readl(priv, offset);
--		reg |= (MII_SW_OR | LINK_STS | GMII_SPEED_UP_2G);
-+		reg |= (MII_SW_OR | LINK_STS);
-+		if (priv->type == BCM7278_DEVICE_ID)
-+			reg |= GMII_SPEED_UP_2G;
- 		core_writel(priv, reg, offset);
- 
- 		/* Enable Broadcast, Multicast, Unicast forwarding to IMP port */
--- 
-2.17.1
+> If not, I can send a patch that adds:
+>
+> + trips {
+> +         cpu-very-hot {
+> +                 temperature =3D <100000>;
+> +                 hysteresis =3D <0>;
+> +                 type =3D "critical";
+> +         };
+> + };
+>
+> and
+>
+> + trips {
+> +         gpu-very-hot {
+> +                 temperature =3D <100000>;
+> +                 hysteresis =3D <0>;
+> +                 type =3D "critical";
+> +         };
+> + };
+>
+> everywhere where appropriate. Though that will make rebase of out of
+> tree patches that already have a more complicated setup to be sent for th=
+e next
+> merge window a bit tedious.
 
+Right, don't do that.
+
+> thank you,
+>         Ondrej
+>
+> > Regards,
+> > Amit
+> > p.s. We should catch all this automatically, I'll send out yaml
+> > bindings for the thermal framework soon that should catch this stuff.
