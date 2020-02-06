@@ -2,162 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C21F81542BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 12:12:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4205C1542BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 12:13:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727570AbgBFLMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 06:12:05 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:36448 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727560AbgBFLMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 06:12:05 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 90BFE2624F6B1E4B9F84;
-        Thu,  6 Feb 2020 19:11:55 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Thu, 6 Feb 2020
- 19:11:46 +0800
-From:   yu kuai <yukuai3@huawei.com>
-To:     <axboe@kernel.dk>, <ming.lei@redhat.com>,
-        <chaitanya.kulkarni@wdc.com>, <damien.lemoal@wdc.com>,
-        <bvanassche@acm.org>, <dhowells@redhat.com>,
-        <asml.silence@gmail.com>, <ajay.joshi@wdc.com>
-CC:     <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yukuai3@huawei.com>, <yi.zhang@huawei.com>,
-        <zhangxiaoxu5@huawei.com>, <luoshijie1@huawei.com>
-Subject: [PATCH] block: revert pushing the final release of request_queue to a workqueue.
-Date:   Thu, 6 Feb 2020 19:10:52 +0800
-Message-ID: <20200206111052.45356-1-yukuai3@huawei.com>
-X-Mailer: git-send-email 2.17.2
+        id S1727595AbgBFLNQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 06:13:16 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:34189 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727455AbgBFLNP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 06:13:15 -0500
+Received: by mail-oi1-f193.google.com with SMTP id l136so4202447oig.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 03:13:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=h2zaw6iYfCWOwDZ0jhzlPX+I4JIVjefxCpHGGlUTe4o=;
+        b=ONYb77D/SZI16E9+HCdImeDUPdAG6Mr6whETfwFD/8yOkEPWUogsT0L+v7jxLgNgYM
+         bdJzQr5rIdFpNCUd66hCFhq7P5RMFf4Wxj1XqaCQg4tgUN54X1cZc43hHrBR/6L81wmV
+         LuvZmhlbyYuaus5JRJIk6GuIfYStFXOulZnuo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=h2zaw6iYfCWOwDZ0jhzlPX+I4JIVjefxCpHGGlUTe4o=;
+        b=DuAwjJGuz7QGU+2BWYQ8Rcj5RGrUGxU9lpCIC1TFT3OO8VXLfVgDrvLHtBMv0tOLdO
+         lIv4w4e/i2B9O2/3NCaLi59iIqyyB0VMh6dBAvM5GpuAIY7TYtl8x2CgYcl7sEWRiVI1
+         zYDfwLygheKYVpeCGv6VG7Zl4nT4pCiRBPIxXMY8dV6pDs05HbKi2/AqkmPtuFI9HUa8
+         EgzmBO6lgsE1JXeo3Cs7EerpBa6Z8iggheU+RB7vU8/NrwSPj20U+BfhSjaPxVM534lT
+         F3VHP/lEqnSuRgILFKqVuFOJigVMyy73S1AcpuU7r677yTHo903k6UN46fc9k2tD6vFK
+         2FPA==
+X-Gm-Message-State: APjAAAWTj4T5bLErOfzLQMeaqBFKPYPDJHEHIRr3r9AnFjWxGza+HQvE
+        GsXoTsVN6vrDn0VxBzuYtaMd1Q==
+X-Google-Smtp-Source: APXvYqyIa+w8uVZWsJjTzzUF/R5VXZjIBSHbL4sGbqYcstUELKfDTdrqa7br00Jr065reLHSrmm8RA==
+X-Received: by 2002:aca:aa0a:: with SMTP id t10mr6231066oie.156.1580987594941;
+        Thu, 06 Feb 2020 03:13:14 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id h1sm983317otm.34.2020.02.06.03.13.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Feb 2020 03:13:13 -0800 (PST)
+Date:   Thu, 6 Feb 2020 03:13:12 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Kristen Carlson Accardi <kristen@linux.intel.com>,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        arjan@linux.intel.com, rick.p.edgecombe@intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+Subject: Re: [RFC PATCH 11/11] x86/boot: Move "boot heap" out of .bss
+Message-ID: <202002060251.681292DE63@keescook>
+References: <20200205223950.1212394-1-kristen@linux.intel.com>
+ <20200205223950.1212394-12-kristen@linux.intel.com>
+ <20200206001103.GA220377@rani.riverdale.lan>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200206001103.GA220377@rani.riverdale.lan>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot is reporting use after free bug in debugfs_remove[1].
+On Wed, Feb 05, 2020 at 07:11:05PM -0500, Arvind Sankar wrote:
+> From: Kees Cook <keescook@chromium.org>
+> > This seems to be a trivial change because head_{64,32}.S already only
+> > copies up to the start of the .bss section, so any growth in the .bss
+> > area was already not meaningful when placing the image in memory. The
+> > .bss size is, however, reflected in the boot params "init_size", so the
+> > memory range calculations included the "boot_heap" region. Instead of
+> > wasting the on-disk image size bytes, just account for this heap area
+> > when identifying the mem_avoid ranges, and leave it out of the .bss
+> > section entirely. For good measure, also zero initialize it, as this
+> > was already happening for when zeroing the entire .bss section.
+> 
+> I'm not sure I follow this: the reason the bzImage currently contains
+> .bss and a fix for it is in a patch I have out for review at
+> https://lore.kernel.org/lkml/20200109150218.16544-1-nivedita@alum.mit.edu
 
-This is because in request_queue, 'q->debugfs_dir' and
-'q->blk_trace->dir' could be the same dir. And in __blk_release_queue(),
-blk_mq_debugfs_unregister() will remove everything inside the dir.
+Ah! Thank you. Yes, that's _much_ cleaner. I could not figure out why
+the linker was actually keeping the .bss section allocated in the
+on-disk image. :) We've only had this bug for 10 years. ;)
 
-With futher investigation of the reporduce repro, the problem can be
-reporduced by following procedure:
+> This alone shouldn't make much of a difference across compressors. The
+> entire .bss is just stored uncompressed as 0's in bzImage currently.
+> The only thing that gets compressed is the original kernel ELF file. Is
+> the difference above just from this patch, or is it including the
+> overhead of function-sections?
 
-1. LOOP_CTL_ADD, create a request_queue q1, blk_mq_debugfs_register() will
-create the dir.
-2. LOOP_CTL_REMOVE, blk_release_queue() will add q1 to release queue.
-3. LOOP_CTL_ADD, create another request_queue q2,blk_mq_debugfs_register()
-will fail because the dir aready exist.
-4. BLKTRACESETUP, create two files(msg and dropped) inside the dir.
-5. call __blk_release_queue() for q1, debugfs_remove_recursive() will
-delete the files created in step 4.
-6. LOOP_CTL_REMOVE, blk_release_queue() will add q2 to release queue.
-And when __blk_release_queue() is called for q2, blk_trace_shutdown() will
-try to release the two files created in step 4, wich are aready released
-in step 5.
+With bzip2, it's a 4MB heap in .bss. Other compressors are 64KB. With
+fg-kaslr, the heap is 64MB in .bss. It made the bzImage huge. ;) Another
+thought I had to deal with the memory utilization in the fg-kaslr shuffle
+was to actually choose _two_ kernel locations in memory (via a refactoring
+of choose_random_location()). One to decompress into and the other to
+write out during the shuffle. Though the symbol table still needs to be
+reconstructed, etc, so probably just best to leave it all in the regular
+heap (or improve the ZO heap allocator which doesn't really implement
+free()).
 
-|thread1		  |kworker	             |thread2               |
-| ----------------------- | ------------------------ | -------------------- |
-|loop_control_ioctl       |                          |                      |
-| loop_add                |                          |                      |
-|  blk_mq_debugfs_register|                          |                      |
-|   debugfs_create_dir    |                          |                      |
-|loop_control_ioctl       |                          |                      |
-| loop_remove		  |                          |                      |
-|  blk_release_queue      |                          |                      |
-|   schedule_work         |                          |                      |
-|			  |			     |loop_control_ioctl    |
-|			  |			     | loop_add             |
-|			  |			     |  ...                 |
-|			  |			     |blk_trace_ioctl       |
-|			  |			     | __blk_trace_setup    |
-|			  |			     |   debugfs_create_file|
-|			  |__blk_release_queue       |                      |
-|			  | blk_mq_debugfs_unregister|                      |
-|			  |  debugfs_remove_recursive|                      |
-|			  |			     |loop_control_ioctl    |
-|			  |			     | loop_remove          |
-|			  |			     |  ...                 |
-|			  |__blk_release_queue       |                      |
-|			  | blk_trace_shutdown       |                      |
-|			  |  debugfs_remove          |                      |
+> It is not necessary for it to contain .bss to get the correct init_size.
+> The latter is calculated (in x86/boot/header.S) based on the offset of
+> the _end symbol in the compressed vmlinux, so storing the .bss is just a
+> bug.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/boot/header.S#n559
 
-commit dc9edc44de6c ("block: Fix a blk_exit_rl() regression") pushed the
-final release of request_queue to a workqueue, witch is not necessary
-since commit 1e9364283764 ("blk-sysfs: Rework documention of
-__blk_release_queue").
+Yes, thank you for the reminder. I couldn't find the ZO_INIT_SIZE when I
+was staring at this, since I only looked around the compressed/ directory.
+:)
 
-[1] https://syzkaller.appspot.com/bug?extid=903b72a010ad6b7a40f2
-References: CVE-2019-19770
-Fixes: commit dc9edc44de6c ("block: Fix a blk_exit_rl() regression")
-Reported-by: syzbot <syz...@syzkaller.appspotmail.com>
-Signed-off-by: yu kuai <yukuai3@huawei.com>
----
- block/blk-sysfs.c      | 18 +++++-------------
- include/linux/blkdev.h |  2 --
- 2 files changed, 5 insertions(+), 15 deletions(-)
+I should add this:
 
-diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-index fca9b158f4a0..3f448292099d 100644
---- a/block/blk-sysfs.c
-+++ b/block/blk-sysfs.c
-@@ -862,8 +862,8 @@ static void blk_exit_queue(struct request_queue *q)
- 
- 
- /**
-- * __blk_release_queue - release a request queue
-- * @work: pointer to the release_work member of the request queue to be released
-+ * blk_release_queue - release a request queue
-+ * @@kobj:    the kobj belonging to the request queue to be released
+diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+index d7408af55738..346e36ae163e 100644
+--- a/arch/x86/boot/compressed/kaslr.c
++++ b/arch/x86/boot/compressed/kaslr.c
+@@ -346,7 +346,7 @@ static void handle_mem_options(void)
+  * in header.S, and the memory diagram is based on the one found in
+  * misc.c.
   *
-  * Description:
-  *     This function is called when a block device is being unregistered. The
-@@ -873,9 +873,10 @@ static void blk_exit_queue(struct request_queue *q)
-  *     of the request queue reaches zero, blk_release_queue is called to release
-  *     all allocated resources of the request queue.
-  */
--static void __blk_release_queue(struct work_struct *work)
-+static void blk_release_queue(struct kobject *kobj)
- {
--	struct request_queue *q = container_of(work, typeof(*q), release_work);
-+	struct request_queue *q =
-+		container_of(kobj, struct request_queue, kobj);
- 
- 	if (test_bit(QUEUE_FLAG_POLL_STATS, &q->queue_flags))
- 		blk_stat_remove_callback(q, q->poll_cb);
-@@ -904,15 +905,6 @@ static void __blk_release_queue(struct work_struct *work)
- 	call_rcu(&q->rcu_head, blk_free_queue_rcu);
- }
- 
--static void blk_release_queue(struct kobject *kobj)
--{
--	struct request_queue *q =
--		container_of(kobj, struct request_queue, kobj);
--
--	INIT_WORK(&q->release_work, __blk_release_queue);
--	schedule_work(&q->release_work);
--}
--
- static const struct sysfs_ops queue_sysfs_ops = {
- 	.show	= queue_attr_show,
- 	.store	= queue_attr_store,
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 04cfa798a365..dff4d032c78a 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -580,8 +580,6 @@ struct request_queue {
- 
- 	size_t			cmd_size;
- 
--	struct work_struct	release_work;
--
- #define BLK_MAX_WRITE_HINTS	5
- 	u64			write_hints[BLK_MAX_WRITE_HINTS];
- };
--- 
-2.17.2
+  * The following conditions are already enforced by the image layouts
+  * and
+- * associated code:
++ * associated code (see ../boot/header.S):
+  *  - input + input_size >= output + output_size
+  *  - kernel_total_size <= init_size
+  *  - kernel_total_size <= output_size (see Note below)
 
+
+-- 
+Kees Cook
