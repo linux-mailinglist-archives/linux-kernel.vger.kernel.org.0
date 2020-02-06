@@ -2,83 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8E87153D05
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 03:50:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B02E0153D14
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 03:59:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727728AbgBFCui (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 21:50:38 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39515 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727474AbgBFCui (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 21:50:38 -0500
-Received: by mail-pg1-f196.google.com with SMTP id j15so1957117pgm.6
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 18:50:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=Qegq55lPgC0BXvUu/wXUbnt5DmIBr/mqJPSuK0MffVE=;
-        b=JR6HUENYiKJlHLAt10j6UEXGf3D/qSOezkF4iUhK0bzQ9dbse5/E3WSh8ir9qlqpH5
-         jf4Fp/+LIvHw1my1Bvn/J9G5j1LJNvxWv4Jke5XorIRuaL1STjelYKuXD0yhKYhM5oBw
-         tHwkq0A/2rKVfz50tVXipbh+lZ7Ri8oOl9Gg4orJ7kQoLc8Q1PFB3f8OpZAuA0mCShMT
-         UE9cWtY4R0Fhfu/ZX2vkChVRCAIBpQoIBFmVWnp+QpW1ayTn9Cuh/rGcMKf9U8d1JGbB
-         uB5+ZCLlmO2IQmLiJgmXQ9s+Y0Yuri2EVVvLxAkjul6eu9kMo6OxsCuIFBVDj7w3x1Uf
-         cprg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Qegq55lPgC0BXvUu/wXUbnt5DmIBr/mqJPSuK0MffVE=;
-        b=eKDSWn2C+6L9K0Kc7waRgF4KlK6gHUf8RU/0TIXt817Cb+NBQYLtksPPD7bGjeex1+
-         //nKASo9pwVNIIv7Nfp28L3uvTd2noL9tdAgOov3JmNxoBfnTBHYh4DJYLhwYqyxEZjU
-         oRL52jBPYHN/YtWFJJHToXIoInNyPmVgNxdCuNGQ3fzoHOrSDcPV1uR8NnCy3XACzvLa
-         lT1fQQEHyGRqUgw0GzBSz1KhZpLUJMqh1OvXEOgSP6Ywx+deoMxROPsZCPacA+hodk/O
-         XePNBfxcgEXd95gfyMk9NOIwLMuoMzgwNq5IK5bjto7XSUmieX8uoGbck3/Y0QTP57aI
-         Pxpw==
-X-Gm-Message-State: APjAAAV9+Mtj9y0dF+WFxK+mlfuLPJRh9llmPDFUkf/oh2ryDn1ZZ9Oj
-        utNYNzqv61pTmD2dAkYy3/mrfBfFKj0=
-X-Google-Smtp-Source: APXvYqzQURvopbf2xHH7Ke3u3nMN5PBZxuBr5Xtzix0A+O1jwajcJtRtzMV8Uay8e5JjI0gkfxmlog==
-X-Received: by 2002:a63:6a02:: with SMTP id f2mr1183633pgc.219.1580957436182;
-        Wed, 05 Feb 2020 18:50:36 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id v8sm851074pff.151.2020.02.05.18.50.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Feb 2020 18:50:35 -0800 (PST)
-Subject: Re: [PATCH 0/3] io_uring: clean wq path
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1580928112.git.asml.silence@gmail.com>
- <1fdfd8bf-c0cd-04c0-e22e-bc0945ef1734@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8c0639c6-78ad-6240-0c18-d3ef8936e2f4@kernel.dk>
-Date:   Wed, 5 Feb 2020 19:50:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727824AbgBFC7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 21:59:42 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38962 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727307AbgBFC7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 21:59:38 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 2D99B7C3F8276CE31737;
+        Thu,  6 Feb 2020 10:59:35 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Thu, 6 Feb 2020
+ 10:59:25 +0800
+From:   Jason Yan <yanaijie@huawei.com>
+To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
+        <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
+        <benh@kernel.crashing.org>, <paulus@samba.org>,
+        <npiggin@gmail.com>, <keescook@chromium.org>,
+        <kernel-hardening@lists.openwall.com>, <oss@buserror.net>
+CC:     <linux-kernel@vger.kernel.org>, <zhaohongjiang@huawei.com>,
+        Jason Yan <yanaijie@huawei.com>
+Subject: [PATCH v3 0/6] implement KASLR for powerpc/fsl_booke/64
+Date:   Thu, 6 Feb 2020 10:58:19 +0800
+Message-ID: <20200206025825.22934-1-yanaijie@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-In-Reply-To: <1fdfd8bf-c0cd-04c0-e22e-bc0945ef1734@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/20 3:29 PM, Pavel Begunkov wrote:
-> On 05/02/2020 22:07, Pavel Begunkov wrote:
->> This is the first series of shaving some overhead for wq-offloading.
->> The 1st removes extra allocations, and the 3rd req->refs abusing.
-> 
-> Rechecked a couple of assumptions, this patchset is messed up.
-> Drop it for now.
+This is a try to implement KASLR for Freescale BookE64 which is based on
+my earlier implementation for Freescale BookE32:
+https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=131718
 
-OK, will do, haven't had time to look at it yet anyway.
+The implementation for Freescale BookE64 is similar as BookE32. One
+difference is that Freescale BookE64 set up a TLB mapping of 1G during
+booting. Another difference is that ppc64 needs the kernel to be
+64K-aligned. So we can randomize the kernel in this 1G mapping and make
+it 64K-aligned. This can save some code to creat another TLB map at
+early boot. The disadvantage is that we only have about 1G/64K = 16384
+slots to put the kernel in.
 
-Are you going to do the ->has_user removal? We should just do that
-separately first.
+    KERNELBASE
+
+          64K                     |--> kernel <--|
+           |                      |              |
+        +--+--+--+    +--+--+--+--+--+--+--+--+--+    +--+--+
+        |  |  |  |....|  |  |  |  |  |  |  |  |  |....|  |  |
+        +--+--+--+    +--+--+--+--+--+--+--+--+--+    +--+--+
+        |                         |                        1G
+        |----->   offset    <-----|
+
+                              kernstart_virt_addr
+
+I'm not sure if the slot numbers is enough or the design has any
+defects. If you have some better ideas, I would be happy to hear that.
+
+Thank you all.
+
+v2->v3:
+  Fix build error when KASLR is disabled.
+v1->v2:
+  Add __kaslr_offset for the secondary cpu boot up.
+
+Jason Yan (6):
+  powerpc/fsl_booke/kaslr: refactor kaslr_legal_offset() and
+    kaslr_early_init()
+  powerpc/fsl_booke/64: introduce reloc_kernel_entry() helper
+  powerpc/fsl_booke/64: implement KASLR for fsl_booke64
+  powerpc/fsl_booke/64: do not clear the BSS for the second pass
+  powerpc/fsl_booke/64: clear the original kernel if randomized
+  powerpc/fsl_booke/kaslr: rename kaslr-booke32.rst to kaslr-booke.rst
+    and add 64bit part
+
+ .../{kaslr-booke32.rst => kaslr-booke.rst}    | 35 +++++++--
+ arch/powerpc/Kconfig                          |  2 +-
+ arch/powerpc/kernel/exceptions-64e.S          | 23 ++++++
+ arch/powerpc/kernel/head_64.S                 | 14 ++++
+ arch/powerpc/kernel/setup_64.c                |  4 +-
+ arch/powerpc/mm/mmu_decl.h                    | 19 ++---
+ arch/powerpc/mm/nohash/kaslr_booke.c          | 71 +++++++++++++------
+ 7 files changed, 132 insertions(+), 36 deletions(-)
+ rename Documentation/powerpc/{kaslr-booke32.rst => kaslr-booke.rst} (59%)
 
 -- 
-Jens Axboe
+2.17.2
 
