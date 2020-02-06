@@ -2,75 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 474D7154E27
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 22:40:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D48A5154DF9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 22:33:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbgBFVkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 16:40:41 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:36298 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727557AbgBFVkl (ORCPT
+        id S1727526AbgBFVcw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 16:32:52 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:39957 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727441AbgBFVcv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 16:40:41 -0500
-Received: from localhost (dhcp-077-249-119-090.chello.nl [77.249.119.90])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 87FDD15546467;
-        Thu,  6 Feb 2020 13:40:38 -0800 (PST)
-Date:   Thu, 06 Feb 2020 21:44:57 +0100 (CET)
-Message-Id: <20200206.214457.162922909993331176.davem@davemloft.net>
-To:     mcroce@redhat.com
-Cc:     netdev@vger.kernel.org, dev@openvswitch.org,
-        linux-kernel@vger.kernel.org, pshelar@ovn.org,
-        bindiyakurle@gmail.com, simon.horman@netronome.com, blp@ovn.org,
-        nikolay@cumulusnetworks.com, nicolas.dichtel@6wind.com,
-        jgh@redhat.com
-Subject: Re: [PATCH net-next v4] openvswitch: add TTL decrement action
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200206202949.6060-1-mcroce@redhat.com>
-References: <20200206202949.6060-1-mcroce@redhat.com>
-X-Mailer: Mew version 6.8 on Emacs 26.3
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 06 Feb 2020 13:40:40 -0800 (PST)
+        Thu, 6 Feb 2020 16:32:51 -0500
+Received: by mail-oi1-f194.google.com with SMTP id a142so6164561oii.7
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 13:32:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=CZIR0O4XSSHJzQ5NKMOaMQy9m9LNXwiQasS8KWy7Rew=;
+        b=KVrwWF2SKiVwKyoIsPVvbAikP44PdWvjeMhQkEtI1By6Zls5EW4B3PSNuMcCWXxG/v
+         xusmhSnTOcGjtj7V7BFKf6KBGw/XRFI38EnRK/cpY6ftMFBmZV6TSFD8jSDg+m6fy/z9
+         kWyh4e+ldTYzBi4iEsjBLdfXYAQLpCU5u9Vdo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=CZIR0O4XSSHJzQ5NKMOaMQy9m9LNXwiQasS8KWy7Rew=;
+        b=PEWeiontZV1l/LbbwCBZ4q5udxiT46TFP5o87baNEAr8UPzSryERpGSHimT8l5TUKi
+         jG/OktsQLKfirvZ4MoGg0s9qdu9S3umv2rICn80166AqtiRAMQia4WXcP3E9pYM9fivJ
+         8PZ24/Zm9bHw1irFAf6laRLPjdSLuVyN7bqDKsmmrR9henSzksv9I9Xz475F6NqWiHef
+         G/4LO2jcfUl41PPWAOxzTR2kABpPYqkpgIYusZt5KrGTzekEa/5vJsIeMVMApIGSrl9U
+         5/DOhHpmYuKgfdIoUuZBe6Xv9FFTFGiq8BQ2Wz0e0KpURlYlCbnsxX1cM1J//OgZIWKj
+         OfOA==
+X-Gm-Message-State: APjAAAU1nV3Oj+Y4gtVpMDbm5kiK81Qyv+YUVU5tx685d7opgYYYQQsB
+        P1EHQDJbnagxHAjCZRzA6b69eQ==
+X-Google-Smtp-Source: APXvYqwvXjFqDoHHLLlHopScWku9ff/Blk8JGx7kXOUBy8QLwy4WBSOp/2rRgo7BA84Ute5uBspIMg==
+X-Received: by 2002:aca:cd46:: with SMTP id d67mr81999oig.156.1581024771067;
+        Thu, 06 Feb 2020 13:32:51 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id o1sm286736otl.49.2020.02.06.13.32.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Feb 2020 13:32:50 -0800 (PST)
+Date:   Thu, 6 Feb 2020 13:32:48 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Kristen Carlson Accardi <kristen@linux.intel.com>,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        arjan@linux.intel.com, rick.p.edgecombe@intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+Subject: Re: [RFC PATCH 11/11] x86/boot: Move "boot heap" out of .bss
+Message-ID: <202002061331.E5956EA@keescook>
+References: <20200205223950.1212394-1-kristen@linux.intel.com>
+ <20200205223950.1212394-12-kristen@linux.intel.com>
+ <20200206001103.GA220377@rani.riverdale.lan>
+ <202002060251.681292DE63@keescook>
+ <20200206142557.GA3033443@rani.riverdale.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200206142557.GA3033443@rani.riverdale.lan>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matteo Croce <mcroce@redhat.com>
-Date: Thu,  6 Feb 2020 21:29:49 +0100
+On Thu, Feb 06, 2020 at 09:25:59AM -0500, Arvind Sankar wrote:
+> On Thu, Feb 06, 2020 at 03:13:12AM -0800, Kees Cook wrote:
+> > Yes, thank you for the reminder. I couldn't find the ZO_INIT_SIZE when I
+> > was staring at this, since I only looked around the compressed/ directory.
+> > :)
+> > 
+> 
+> There's another thing I noticed -- you would need to ensure that the
+> init_size in the header covers your boot heap even if you did split it
+> out. The reason is that the bootloader will only know to reserve enough
+> memory for init_size: it's possible it might put the initrd or something
+> else following the kernel, or theoretically there might be reserved
+> memory regions or the end of physical RAM immediately following, so you
+> can't assume that area will be available when you get to extract_kernel.
 
-> New action to decrement TTL instead of setting it to a fixed value.
-> This action will decrement the TTL and, in case of expired TTL, drop it
-> or execute an action passed via a nested attribute.
-> The default TTL expired action is to drop the packet.
-> 
-> Supports both IPv4 and IPv6 via the ttl and hop_limit fields, respectively.
-> 
-> Tested with a corresponding change in the userspace:
-> 
->     # ovs-dpctl dump-flows
->     in_port(2),eth(),eth_type(0x0800), packets:0, bytes:0, used:never, actions:dec_ttl{ttl<=1 action:(drop)},1
->     in_port(1),eth(),eth_type(0x0800), packets:0, bytes:0, used:never, actions:dec_ttl{ttl<=1 action:(drop)},2
->     in_port(1),eth(),eth_type(0x0806), packets:0, bytes:0, used:never, actions:2
->     in_port(2),eth(),eth_type(0x0806), packets:0, bytes:0, used:never, actions:1
-> 
->     # ping -c1 192.168.0.2 -t 42
->     IP (tos 0x0, ttl 41, id 61647, offset 0, flags [DF], proto ICMP (1), length 84)
->         192.168.0.1 > 192.168.0.2: ICMP echo request, id 386, seq 1, length 64
->     # ping -c1 192.168.0.2 -t 120
->     IP (tos 0x0, ttl 119, id 62070, offset 0, flags [DF], proto ICMP (1), length 84)
->         192.168.0.1 > 192.168.0.2: ICMP echo request, id 388, seq 1, length 64
->     # ping -c1 192.168.0.2 -t 1
->     #
-> 
-> Co-developed-by: Bindiya Kurle <bindiyakurle@gmail.com>
-> Signed-off-by: Bindiya Kurle <bindiyakurle@gmail.com>
-> Signed-off-by: Matteo Croce <mcroce@redhat.com>
+Yeah, that's what I was worrying about after I wrote that patch. Yours
+is the correct solution. :) (I Acked both of those now).
 
-net-next is closed, please resubmit this when it opens back up.
-
-Thank you.
+-- 
+Kees Cook
