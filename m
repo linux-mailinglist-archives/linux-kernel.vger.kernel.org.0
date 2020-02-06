@@ -2,62 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48F7C154BEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 20:19:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC383154BF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 20:20:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727897AbgBFTS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 14:18:59 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39832 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728023AbgBFTSy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 14:18:54 -0500
-Received: by mail-wm1-f67.google.com with SMTP id c84so1368481wme.4
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 11:18:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=bYJKFFqdthKI+iaXOPGecYEasFLaBFqdwv/Z7JQsfmU=;
-        b=LGUziSOKfN2ydZY7zT2NJqEl4+Ok0JUEmWnb4ay4KvA6bOkMwaos0WiJK77cZVnvcc
-         zNlr0Y6e3P1adlK5+LJbEyGaod5SaLTTTTUDPh0LwUr9de5zzWUokPqFIxdYHQSG/NMs
-         lCyp4FiLK+KLmYiUwRt9JpH8AYYt+bmQEURvKkf4uOfFJgX2nszArpJsaM4YnBs3Bu2p
-         rSGVu9xlwm636Zbc8OgsqD7On6SO9SKnmS3KYTl6owwE/jd8FTcGtMcV2NGRcnbTOe2x
-         7sa0MRLm4bJv15Ft6kA4dPxMuKF3K87IYMHeBjdOoVO/A/gcf8Z6n7wHZ6gtt7A3F/+k
-         vfdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=bYJKFFqdthKI+iaXOPGecYEasFLaBFqdwv/Z7JQsfmU=;
-        b=HPrIQn99pP0ePJJqoWtm+kpA5OGLFHx8paUkoEkSqoltYma4P5ybK0kWh5tLw57CVF
-         /WKy9t2n9g+DAreT5Sgm2P/S0Z1a0BjnXkSNow7mnBD2h5twygm6uiL1R6o7iPMehU7N
-         Prw/syeCp4FMr8JUi5hgQflmNd0B9e+f78MvtDUyWzIyo4IHRXPuqdg5SMcepwN1xvUw
-         IKwMKwLtde4dZdxV6KcEr88ClJ/SwyLr6KziBTUaQbf4Nw4iJLBP7P3+nj5MhZJTLoIr
-         DzVrdcoyc7jr7tFOje/I+zcnZw/NLBXvqiaSBVU8Uk88X8iGMEhMBhXZSacPSugTUzhc
-         D28g==
-X-Gm-Message-State: APjAAAVp7FRWmDxsopESxQQgKm3Y2OjAOnbre2LTI9WCP01IgA8WLXfK
-        SO7JSf9XHhG4tk9ktUrQn64z3A==
-X-Google-Smtp-Source: APXvYqxXWC/xTu7+7fnMOYVJpk9hBuDQBpAthF1xpQNXtuZEwqngxiQLCxRd5PWAQ4DuBqbAtCFHjQ==
-X-Received: by 2002:a05:600c:23ce:: with SMTP id p14mr5924924wmb.114.1581016732525;
-        Thu, 06 Feb 2020 11:18:52 -0800 (PST)
-Received: from bender.baylibre.local ([2a01:e35:2ec0:82b0:7d33:17f7:8097:ecc7])
-        by smtp.gmail.com with ESMTPSA id m3sm272662wrs.53.2020.02.06.11.18.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 11:18:52 -0800 (PST)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-        jonas@kwiboo.se, jernej.skrabec@siol.net,
-        boris.brezillon@collabora.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 11/11] drm/meson: Add YUV420 output support
-Date:   Thu,  6 Feb 2020 20:18:34 +0100
-Message-Id: <20200206191834.6125-12-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20200206191834.6125-1-narmstrong@baylibre.com>
-References: <20200206191834.6125-1-narmstrong@baylibre.com>
+        id S1727891AbgBFTUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 14:20:13 -0500
+Received: from foss.arm.com ([217.140.110.172]:33644 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727479AbgBFTUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 14:20:12 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E7B1A1FB;
+        Thu,  6 Feb 2020 11:20:11 -0800 (PST)
+Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 94E783F52E;
+        Thu,  6 Feb 2020 11:20:10 -0800 (PST)
+From:   Valentin Schneider <valentin.schneider@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mingo@redhat.com, peterz@infradead.org, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        qperret@google.com, adharmap@codeaurora.org,
+        pkondeti@codeaurora.org
+Subject: [PATCH v4 0/4] sched/fair: Capacity aware wakeup rework
+Date:   Thu,  6 Feb 2020 19:19:53 +0000
+Message-Id: <20200206191957.12325-1-valentin.schneider@arm.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -65,238 +34,210 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for the YUV420 output from the Amlogic Meson SoCs
-Video Processing Unit to the HDMI Controller.
+This series is about replacing the current wakeup logic for asymmetric CPU
+capacity topologies, i.e. wake_cap().
 
-The YUV420 is obtained by generating a YUV444 pixel stream like
-the classic HDMI display modes, but then the Video Encoder output
-can be configured to down-sample the YUV444 pixel stream to a YUV420
-stream.
-In addition if pixel stream down-sampling, the Y Cb Cr components must
-also be mapped differently to align with the HDMI2.0 specifications.
+Details are in patch 1, the TL;DR is that wake_cap() works fine for
+"legacy" big.LITTLE systems (e.g. Juno), since the Last Level Cache (LLC)
+domain of a CPU only spans CPUs of the same capacity, but somewhat broken
+for newer DynamIQ systems (e.g. Dragonboard 845C), since the LLC domain of
+a CPU can span all CPUs in the system. Both example boards are supported in
+mainline.
 
-This mode needs a different clock generation scheme since the TMDS PHY
-clock must match the 10x ration with the YUV420 pixel clock, but
-the video encoder must run at 2x the pixel clock.
+A bit of history
+================
 
-This patch enables the bridge bus format negociation, and handles
-the YUV420 case if selected by the negociation.
+Due to the old Energy Model (EM) used until Android Common Kernel v4.14
+which grafted itself onto the sched domain hierarchy, mobile topologies
+have been represented with "phantom domains"; IOW we'd make a DynamIQ
+topology look like a big.LITTLE one:
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/gpu/drm/meson/meson_dw_hdmi.c | 91 ++++++++++++++++++++-------
- 1 file changed, 70 insertions(+), 21 deletions(-)
+actual hardware:
 
-diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-index 94f206bf795d..5962afbfc8ab 100644
---- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
-+++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-@@ -150,6 +150,7 @@ struct meson_dw_hdmi {
- 	struct regulator *hdmi_supply;
- 	u32 irq_stat;
- 	struct dw_hdmi *hdmi;
-+	unsigned long output_bus_fmt;
- };
- #define encoder_to_meson_dw_hdmi(x) \
- 	container_of(x, struct meson_dw_hdmi, encoder)
-@@ -301,6 +302,10 @@ static void meson_hdmi_phy_setup_mode(struct meson_dw_hdmi *dw_hdmi,
- 	struct meson_drm *priv = dw_hdmi->priv;
- 	unsigned int pixel_clock = mode->clock;
- 
-+	/* For 420, pixel clock is half unlike venc clock */
-+	if (dw_hdmi->output_bus_fmt == MEDIA_BUS_FMT_UYYVYY8_0_5X24)
-+		pixel_clock /= 2;
-+
- 	if (dw_hdmi_is_compatible(dw_hdmi, "amlogic,meson-gxl-dw-hdmi") ||
- 	    dw_hdmi_is_compatible(dw_hdmi, "amlogic,meson-gxm-dw-hdmi")) {
- 		if (pixel_clock >= 371250) {
-@@ -383,6 +388,10 @@ static void dw_hdmi_set_vclk(struct meson_dw_hdmi *dw_hdmi,
- 
- 	vclk_freq = mode->clock;
- 
-+	/* For 420, pixel clock is half unlike venc clock */
-+	if (dw_hdmi->output_bus_fmt == MEDIA_BUS_FMT_UYYVYY8_0_5X24)
-+		vclk_freq /= 2;
-+
- 	/* TMDS clock is pixel_clock * 10 */
- 	phy_freq = vclk_freq * 10;
- 
-@@ -392,13 +401,16 @@ static void dw_hdmi_set_vclk(struct meson_dw_hdmi *dw_hdmi,
- 		return;
- 	}
- 
-+	/* 480i/576i needs global pixel doubling */
- 	if (mode->flags & DRM_MODE_FLAG_DBLCLK)
- 		vclk_freq *= 2;
- 
- 	venc_freq = vclk_freq;
- 	hdmi_freq = vclk_freq;
- 
--	if (meson_venc_hdmi_venc_repeat(vic))
-+	/* VENC double pixels for 1080i, 720p and YUV420 modes */
-+	if (meson_venc_hdmi_venc_repeat(vic) ||
-+	    dw_hdmi->output_bus_fmt == MEDIA_BUS_FMT_UYYVYY8_0_5X24)
- 		venc_freq *= 2;
- 
- 	vclk_freq = max(venc_freq, hdmi_freq);
-@@ -445,8 +457,9 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
- 	/* Enable normal output to PHY */
- 	dw_hdmi->data->top_write(dw_hdmi, HDMITX_TOP_BIST_CNTL, BIT(12));
- 
--	/* TMDS pattern setup (TOFIX Handle the YUV420 case) */
--	if (mode->clock > 340000) {
-+	/* TMDS pattern setup */
-+	if (mode->clock > 340000 &&
-+	    dw_hdmi->output_bus_fmt == MEDIA_BUS_FMT_YUV8_1X24) {
- 		dw_hdmi->data->top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_01,
- 				  0);
- 		dw_hdmi->data->top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_23,
-@@ -621,6 +634,7 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
- 		   const struct drm_display_mode *mode)
- {
- 	struct meson_drm *priv = connector->dev->dev_private;
-+	bool is_hdmi2_sink = connector->display_info.hdmi.scdc.supported;
- 	unsigned int phy_freq;
- 	unsigned int vclk_freq;
- 	unsigned int venc_freq;
-@@ -630,9 +644,11 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
- 
- 	DRM_DEBUG_DRIVER("Modeline " DRM_MODE_FMT "\n", DRM_MODE_ARG(mode));
- 
--	/* If sink max TMDS clock, we reject the mode */
-+	/* If sink does not support 540MHz, reject the non-420 HDMI2 modes */
- 	if (connector->display_info.max_tmds_clock &&
--	    mode->clock > connector->display_info.max_tmds_clock)
-+	    mode->clock > connector->display_info.max_tmds_clock &&
-+	    !drm_mode_is_420_only(&connector->display_info, mode) &&
-+	    !drm_mode_is_420_also(&connector->display_info, mode))
- 		return MODE_BAD;
- 
- 	/* Check against non-VIC supported modes */
-@@ -648,6 +664,12 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
- 
- 	vclk_freq = mode->clock;
- 
-+	/* For 420, pixel clock is half unlike venc clock */
-+	if (drm_mode_is_420_only(&connector->display_info, mode) ||
-+	    (!is_hdmi2_sink &&
-+	     drm_mode_is_420_also(&connector->display_info, mode)))
-+		vclk_freq /= 2;
-+
- 	/* TMDS clock is pixel_clock * 10 */
- 	phy_freq = vclk_freq * 10;
- 
-@@ -658,8 +680,11 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
- 	venc_freq = vclk_freq;
- 	hdmi_freq = vclk_freq;
- 
--	/* VENC double pixels for 1080i and 720p modes */
--	if (meson_venc_hdmi_venc_repeat(vic))
-+	/* VENC double pixels for 1080i, 720p and YUV420 modes */
-+	if (meson_venc_hdmi_venc_repeat(vic) ||
-+	    drm_mode_is_420_only(&connector->display_info, mode) ||
-+	    (!is_hdmi2_sink &&
-+	     drm_mode_is_420_also(&connector->display_info, mode)))
- 		venc_freq *= 2;
- 
- 	vclk_freq = max(venc_freq, hdmi_freq);
-@@ -677,6 +702,7 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
- 
- static const u32 meson_dw_hdmi_out_bus_fmts[] = {
- 	MEDIA_BUS_FMT_YUV8_1X24,
-+	MEDIA_BUS_FMT_UYYVYY8_0_5X24,
- };
- 
- static void meson_venc_hdmi_encoder_destroy(struct drm_encoder *encoder)
-@@ -717,18 +743,23 @@ meson_venc_hdmi_encoder_get_inp_bus_fmts(struct drm_bridge *bridge,
- 					unsigned int *num_input_fmts)
- {
- 	u32 *input_fmts = NULL;
-+	int i;
- 
--	if (output_fmt == meson_dw_hdmi_out_bus_fmts[0]) {
--		*num_input_fmts = 1;
--		input_fmts = kcalloc(*num_input_fmts,
--				     sizeof(*input_fmts),
--				     GFP_KERNEL);
--		if (!input_fmts)
--			return NULL;
-+	*num_input_fmts = 0;
- 
--		input_fmts[0] = output_fmt;
--	} else {
--		*num_input_fmts = 0;
-+	for (i = 0 ; i < ARRAY_SIZE(meson_dw_hdmi_out_bus_fmts) ; ++i) {
-+		if (output_fmt == meson_dw_hdmi_out_bus_fmts[i]) {
-+			*num_input_fmts = 1;
-+			input_fmts = kcalloc(*num_input_fmts,
-+					     sizeof(*input_fmts),
-+					     GFP_KERNEL);
-+			if (!input_fmts)
-+				return NULL;
-+
-+			input_fmts[0] = output_fmt;
-+
-+			break;
-+		}
- 	}
- 
- 	return input_fmts;
-@@ -739,6 +770,12 @@ static int meson_venc_hdmi_encoder_atomic_check(struct drm_bridge *bridge,
- 					struct drm_crtc_state *crtc_state,
- 					struct drm_connector_state *conn_state)
- {
-+	struct meson_dw_hdmi *dw_hdmi = bridge_to_meson_dw_hdmi(bridge);
-+
-+	dw_hdmi->output_bus_fmt = bridge_state->output_bus_cfg.format;
-+
-+	DRM_DEBUG_DRIVER("output_bus_fmt %lx\n", dw_hdmi->output_bus_fmt);
-+
- 	return 0;
- }
- 
-@@ -776,18 +813,29 @@ static void meson_venc_hdmi_encoder_mode_set(struct drm_bridge *bridge,
- 	struct meson_dw_hdmi *dw_hdmi = bridge_to_meson_dw_hdmi(bridge);
- 	struct meson_drm *priv = dw_hdmi->priv;
- 	int vic = drm_match_cea_mode(mode);
-+	unsigned int ycrcb_map = VPU_HDMI_OUTPUT_CBYCR;
-+	bool yuv420_mode = false;
- 
- 	DRM_DEBUG_DRIVER("\"%s\" vic %d\n", mode->name, vic);
- 
-+	if (dw_hdmi->output_bus_fmt == MEDIA_BUS_FMT_UYYVYY8_0_5X24) {
-+		ycrcb_map = VPU_HDMI_OUTPUT_CRYCB;
-+		yuv420_mode = true;
-+	}
-+
- 	/* VENC + VENC-DVI Mode setup */
--	meson_venc_hdmi_mode_set(priv, vic, ycrcb_map, false,
--				 VPU_HDMI_OUTPUT_CBYCR);
-+	meson_venc_hdmi_mode_set(priv, vic, ycrcb_map, yuv420_mode, mode);
- 
- 	/* VCLK Set clock */
- 	dw_hdmi_set_vclk(dw_hdmi, mode);
- 
--	/* Setup YUV444 to HDMI-TX, no 10bit diphering */
--	writel_relaxed(0, priv->io_base + _REG(VPU_HDMI_FMT_CTRL));
-+	if (dw_hdmi->output_bus_fmt == MEDIA_BUS_FMT_UYYVYY8_0_5X24)
-+		/* Setup YUV420 to HDMI-TX, no 10bit diphering */
-+		writel_relaxed(2 | (2 << 2),
-+			       priv->io_base + _REG(VPU_HDMI_FMT_CTRL));
-+	else
-+		/* Setup YUV444 to HDMI-TX, no 10bit diphering */
-+		writel_relaxed(0, priv->io_base + _REG(VPU_HDMI_FMT_CTRL));
- }
- 
- static const struct drm_bridge_funcs meson_venc_hdmi_encoder_bridge_funcs = {
-@@ -1045,6 +1093,7 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
- 	dw_plat_data->phy_name = "meson_dw_hdmi_phy";
- 	dw_plat_data->phy_data = meson_dw_hdmi;
- 	dw_plat_data->input_bus_encoding = V4L2_YCBCR_ENC_709;
-+	dw_plat_data->ycbcr_420_allowed = true;
- 
- 	if (dw_hdmi_is_compatible(meson_dw_hdmi, "amlogic,meson-gxl-dw-hdmi") ||
- 	    dw_hdmi_is_compatible(meson_dw_hdmi, "amlogic,meson-gxm-dw-hdmi") ||
--- 
-2.22.0
+  +-------------------+
+  |        L3         |
+  +----+----+----+----+
+  | L2 | L2 | L2 | L2 |
+  +----+----+----+----+
+  |CPU0|CPU1|CPU2|CPU3|
+  +----+----+----+----+
+     ^^^^^     ^^^^^
+    LITTLEs    bigs
+
+vanilla/mainline topology:
+
+  MC [       ]
+      0 1 2 3
+
+phantom domains topology:
+
+  DIE [        ]
+  MC  [   ][   ]
+       0 1  2 3
+
+With the newer, mainline EM this is no longer required, and wake_cap() is
+the last sticking point to getting rid of this legacy crud. More details
+and examples are in patch 1.
+
+Notes
+=====
+
+This removes the use of SD_BALANCE_WAKE for asymmetric CPU capacity
+topologies (which are the last mainline users of that flag), as such it
+shouldn't be a surprise that this comes with significant improvements to
+wake-intensive workloads: wakeups no longer go through the
+select_task_rq_fair() slow-path.
+
+Testing
+=======
+
+I've picked sysbench --test=threads to mimic Peter's testing mentioned in
+
+  commit 182a85f8a119 ("sched: Disable wakeup balancing")
+
+Sysbench results are the number of events handled in a fixed amount of
+time, so higher is better. Hackbench results are the usual time taken for
+the thing, so lower is better.
+
+Note: the 'X%' stats are the percentiles, so 50% is the 50th percentile.
+
+Juno r0 ("legacy" big.LITTLE)
++++++++++++++++++++++++++++++
+
+This is 2 bigs and 4 LITTLEs:
+
+  +---------------+ +-------+
+  |      L2       | |  L2   |
+  +---+---+---+---+ +---+---+
+  | L | L | L | L | | B | B |
+  +---+---+---+---+ +---+---+
+
+
+100 iterations of 'hackbench':
+
+|      |   -PATCH |   +PATCH | DELTA (%) |
+|------+----------+----------+-----------|
+| mean | 0.631040 | 0.619610 |    -1.811 |
+| std  | 0.025486 | 0.015798 |   -38.013 |
+| min  | 0.582000 | 0.594000 |    +2.062 |
+| 50%  | 0.628500 | 0.617500 |    -1.750 |
+| 75%  | 0.645500 | 0.630000 |    -2.401 |
+| 99%  | 0.697060 | 0.669030 |    -4.021 |
+| max  | 0.703000 | 0.672000 |    -4.410 |
+
+100 iterations of 'sysbench --max-time=5 --max-requests=-1 --test=threads --num-threads=6 run':
+
+|      |       -PATCH |       +PATCH | DELTA (%) |
+|------+--------------+--------------+-----------|
+| mean | 10267.760000 | 15137.930000 |   +47.432 |
+| std  |  3110.439815 |   412.275289 |   -86.745 |
+| min  |  7186.000000 | 14061.000000 |   +95.672 |
+| 50%  |  9019.500000 | 15255.500000 |   +69.139 |
+| 75%  | 12711.000000 | 15472.500000 |   +21.725 |
+| 99%  | 15749.290000 | 15683.470000 |    -0.418 |
+| max  | 15877.000000 | 15730.000000 |    -0.926 |
+
+Note: you'll notice the results aren't as good as with v3; from playing
+around with v4 this seems to come from removing the (broken) capacity_orig
+heuristic. 
+
+Pixel3 (DynamIQ)
+++++++++++++++++
+
+Ideally I would have used a DB845C but had a few issues with mine, so I
+went with a mainline-ish Pixel3 instead [1]. It's still the same SoC under
+the hood (Snapdragon 845), which has 4 bigs and 4 LITTLEs:
+
+  +-------------------------------+
+  |               L3              |
+  +---+---+---+---+---+---+---+---+
+  | L2| L2| L2| L2| L2| L2| L2| L2|
+  +---+---+---+---+---+---+---+---+
+  | L | L | L | L | B | B | B | B |
+  +---+---+---+---+---+---+---+---+
+
+Default topology (single MC domain)
+-----------------------------------
+
+100 iterations of 'hackbench -l 200'
+
+|      |   -PATCH |   +PATCH | DELTA (%) |
+|------+----------+----------+-----------|
+| mean | 1.131360 | 1.102560 |    -2.546 |
+| std  | 0.116322 | 0.101999 |   -12.313 |
+| min  | 0.935000 | 0.935000 |    +0.000 |
+| 50%  | 1.099000 | 1.097500 |    -0.136 |
+| 75%  | 1.211250 | 1.157750 |    -4.417 |
+| 99%  | 1.401020 | 1.338210 |    -4.483 |
+| max  | 1.502000 | 1.359000 |    -9.521 |
+
+100 iterations of 'sysbench --max-time=5 --max-requests=-1 --test=threads --num-threads=8 run':
+
+|      |      -PATCH |      +PATCH | DELTA (%) |
+|------+-------------+-------------+-----------|
+| mean | 7108.310000 | 8731.610000 |   +22.837 |
+| std  |  199.431854 |  206.826912 |    +3.708 |
+| min  | 6655.000000 | 8251.000000 |   +23.982 |
+| 50%  | 7107.500000 | 8705.000000 |   +22.476 |
+| 75%  | 7255.500000 | 8868.250000 |   +22.228 |
+| 99%  | 7539.540000 | 9155.520000 |   +21.433 |
+| max  | 7593.000000 | 9207.000000 |   +21.256 |
+
+Phantom domains (MC + DIE)
+--------------------------
+
+This is mostly included for the sake of completeness.
+
+100 iterations of 'sysbench --max-time=5 --max-requests=-1 --test=threads --num-threads=8 run':
+
+|      |      -PATCH |      +PATCH | DELTA (%) |
+|------+-------------+-------------+-----------|
+| mean | 7317.940000 | 9328.470000 |   +27.474 |
+| std  |  460.372682 |  181.528886 |   -60.569 |
+| min  | 5888.000000 | 8832.000000 |   +50.000 |
+| 50%  | 7271.000000 | 9348.000000 |   +28.566 |
+| 75%  | 7497.500000 | 9477.250000 |   +26.405 |
+| 99%  | 8464.390000 | 9634.160000 |   +13.820 |
+| max  | 8602.000000 | 9650.000000 |   +12.183 |
+
+Revisions
+=========
+
+v3 -> v4
+--------
+o Removed max capacity_orig heuristic (Dietmar)
+o (new patch) Removed for_each_lower_domain() (Dietmar)
+o Made select_idle_sibling() bail out after going through
+  select_idle_capacity() (Pavan)
+o Added use of sched_idle_cpu() in select_idle_capacity() (Pavan)
+o Corrected the signoff order in patch 1
+
+v2 -> v3
+--------
+o Added missing sync_entity_load_avg() (Quentin)
+o Added fallback CPU selection (maximize capacity)
+o Added special case for CPU hogs: task_fits_capacity() will always return 'false'
+  for tasks that are simply too big, due to the margin.
+
+v1 -> v2
+--------
+o Removed unrelated select_idle_core() change
+
+[1]: https://git.linaro.org/people/amit.pundir/linux.git/log/?h=blueline-mainline-tracking
+
+Morten Rasmussen (3):
+  sched/fair: Add asymmetric CPU capacity wakeup scan
+  sched/topology: Remove SD_BALANCE_WAKE on asymmetric capacity systems
+  sched/fair: Kill wake_cap()
+
+Valentin Schneider (1):
+  sched: Remove for_each_lower_domain()
+
+ kernel/sched/fair.c     | 86 +++++++++++++++++++++++++++--------------
+ kernel/sched/sched.h    |  2 -
+ kernel/sched/topology.c | 15 ++-----
+ 3 files changed, 60 insertions(+), 43 deletions(-)
+
+--
+2.24.0
 
