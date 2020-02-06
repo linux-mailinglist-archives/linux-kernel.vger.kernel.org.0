@@ -2,84 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 878CA1548EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 17:16:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7362D1548EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 17:16:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbgBFQQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 11:16:10 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:37810 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727579AbgBFQQK (ORCPT
+        id S1727768AbgBFQQr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 11:16:47 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:42504 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727392AbgBFQQr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 11:16:10 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1581005769; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=f0rMcpx6SByS3z9A7XD51YTKbT0hseWOxZX2pLwY5zs=; b=MU51J6wRl7iH0kazUqVnHKwZLa4rzJHM0Rk6+suk5FT/z36MP5pVtKWQB912TIxfauiimIZf
- 9yu0q0l3pp5Ov36NdvS7XE1cM2Zv5YRDlXP9oj3xZYPhjgzafmnd/H347jHLKN7r1aKmVbtj
- HCGr65NAdyN+vArpvEnoHRFOXFU=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e3c3bc3.7f093fee66c0-smtp-out-n03;
- Thu, 06 Feb 2020 16:16:03 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 5F120C433CB; Thu,  6 Feb 2020 16:16:03 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.0
-Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 560FCC43383;
-        Thu,  6 Feb 2020 16:16:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 560FCC43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v2 04/16] bus: mhi: core: Add support for creating and
- destroying MHI devices
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        gregkh@linuxfoundation.org, arnd@arndb.de
-Cc:     smohanad@codeaurora.org, kvalo@codeaurora.org,
-        bjorn.andersson@linaro.org, hemantk@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200131135009.31477-1-manivannan.sadhasivam@linaro.org>
- <20200131135009.31477-5-manivannan.sadhasivam@linaro.org>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <f667cd9a-8de7-8f4a-6dbb-eeb2a0dfa18e@codeaurora.org>
-Date:   Thu, 6 Feb 2020 09:16:01 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        Thu, 6 Feb 2020 11:16:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=AubZ6eNbPsdrFMhJeIYAUki5fHaAHzz7l6cvCGRQvNQ=; b=haqaYVzIlZYuYGBzqc4BvL/jGg
+        ly6UPMSQ3Oyg+swuQg91YuTKprbFhM7Tevo9OgH7fArSxLEOkOxnHYt+cWqnmZ8NmXcw2nesvN5rT
+        3XsFjo0PXvpGu2bygZsmpYN/UO8Tdc0D3Fa8ZeTg9ylXlb3ARx1T1kUy+28HUgBn+AeHlr6rMBgqW
+        cEFbw5MfXfebY8i8wSZumkyg+ZYRNSTc7N0zC4J3tDq8zVjUnUfVp1J1vJdG92BQCAxiqD0USkEU5
+        AzPxgqks6FkNCYWuVPgtLq9fpGl2Qgc9hdYzSW65in+t5sPdXz4NyMXMu+7ZZ+NtQh2GQoXmRt7IM
+        /7yed9Lg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1izjpa-0005Ko-B4; Thu, 06 Feb 2020 16:16:42 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7222F30066E;
+        Thu,  6 Feb 2020 17:14:54 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DB7192B813365; Thu,  6 Feb 2020 17:16:40 +0100 (CET)
+Date:   Thu, 6 Feb 2020 17:16:40 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH v6 6/6] locking/lockdep: Reuse freed chain_hlocks entries
+Message-ID: <20200206161640.GW14914@hirez.programming.kicks-ass.net>
+References: <20200206152408.24165-1-longman@redhat.com>
+ <20200206152408.24165-7-longman@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200131135009.31477-5-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200206152408.24165-7-longman@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/31/2020 6:49 AM, Manivannan Sadhasivam wrote:
-> This commit adds support for creating and destroying MHI devices. The
-> MHI devices binds to the MHI channels and are used to transfer data
-> between MHI host and client device.
-> 
-> This is based on the patch submitted by Sujeev Dias:
-> https://lkml.org/lkml/2018/7/9/989
-> 
-> Signed-off-by: Sujeev Dias <sdias@codeaurora.org>
-> Signed-off-by: Siddartha Mohanadoss <smohanad@codeaurora.org>
-> [mani: splitted from pm patch and cleaned up for upstream]
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On Thu, Feb 06, 2020 at 10:24:08AM -0500, Waiman Long wrote:
+> +static int alloc_chain_hlocks(int req)
+> +{
+> +	int bucket, curr, size;
+> +
+> +	/*
+> +	 * We rely on the MSB to act as an escape bit to denote freelist
+> +	 * pointers. Make sure this bit isn't set in 'normal' class_idx usage.
+> +	 */
+> +	BUILD_BUG_ON((MAX_LOCKDEP_KEYS-1) & CHAIN_BLK_FLAG);
+> +
+> +	init_data_structures_once();
+> +
+> +	if (nr_free_chain_hlocks < req)
+> +		return -1;
+> +
+> +	/*
+> +	 * We require a minimum of 2 (u16) entries to encode a freelist
+> +	 * 'pointer'.
+> +	 */
+> +	req = max(req, 2);
+> +	bucket = size_to_bucket(req);
+> +	curr = chain_block_buckets[bucket];
+> +
+> +	if (bucket && (curr >= 0)) {
+> +		del_chain_block(bucket, req, chain_block_next(curr));
+> +		return curr;
+> +	} else if (bucket) {
+> +		/* Try bucket 0 */
+> +		curr = chain_block_buckets[0];
+> +	}
 
-Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
-Tested-by: Jeffrey Hugo <jhugo@codeaurora.org>
+	if (bucket) {
+		if (curr >= 0) {
+			del_chain_block(bucket, req, chain_block_next(curr));
+			return curr;
+		}
+		/* Try bucket 0 */
+		curr = chain_block_bucket[0];
+	}
 
--- 
-Jeffrey Hugo
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+reads much easier IMO.
+
+> +	/*
+> +	 * The variable sized freelist is sorted by size; the first entry is
+> +	 * the largest. Use it if it fits.
+> +	 */
+> +	if (curr >= 0) {
+> +		size = chain_block_size(curr);
+> +		if (likely(size >= req)) {
+> +			del_chain_block(0, size, chain_block_next(curr));
+> +			add_chain_block(curr + req, size - req);
+> +			return curr;
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * Last resort, split a block in a larger sized bucket.
+> +	 */
+> +	for (size = MAX_CHAIN_BUCKETS; size > req; size--) {
+> +		bucket = size_to_bucket(size);
+> +		curr = chain_block_buckets[bucket];
+> +		if (curr < 0)
+> +			continue;
+> +
+> +		del_chain_block(bucket, size, chain_block_next(curr));
+> +		add_chain_block(curr + req, size - req);
+> +		return curr;
+> +	}
+> +
+> +	return -1;
+> +}
