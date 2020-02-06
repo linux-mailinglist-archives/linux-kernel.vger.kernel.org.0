@@ -2,81 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FD62154F0D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 23:45:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D81D154F10
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 23:47:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbgBFWpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 17:45:12 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:59124 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbgBFWpM (ORCPT
+        id S1727305AbgBFWq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 17:46:58 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:48168 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbgBFWq5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 17:45:12 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 29FAC1C208D; Thu,  6 Feb 2020 23:45:10 +0100 (CET)
-Date:   Thu, 6 Feb 2020 23:45:09 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>
-Subject: Re: [GIT PULL] LEDs changes for v5.6-rc1
-Message-ID: <20200206224509.GA23636@duo.ucw.cz>
-References: <20200202190943.GA4506@duo.ucw.cz>
- <CAHk-=wgsTkPZBCkmtx5o+X3penAzz_DeynChQO906NmqXd9r3Q@mail.gmail.com>
+        Thu, 6 Feb 2020 17:46:57 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016Mhsvf142169;
+        Thu, 6 Feb 2020 22:46:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=lckQ/StgoKnx4m6PSu+fhn3s8DV0OTNAKi1FIoZBHPs=;
+ b=jivIoJhn28fAUBDgTWntfTqWXE41uGNeaJ6vdFV7Yvi740qIAnc8Rhs3IvG7it120ND4
+ HgmOCG7JQuKeouw/BBvi4vFJHQ31wZMJZknlrFXP6i2QNsTxsIHt8kJkyI817tZprz8B
+ TJ1J+MFkbpZjW639ZO+jQCiYDF8px8yJiuuOO4cNWfRZMzD4lQ1UoFECcok222VZHK+z
+ w8fueg0+54ZMQw4mlsWZlR4IDFZle7LdfQqXYoWzVcKEbhK4yNBkfJ+JqtpDmO19QoCp
+ nABGb8VjtqoyfMUaN2jpGn7M7hSt1BSvi+Bv5/F327YigGkrV16WOtv+pLwrO5GCQWRa 2A== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=lckQ/StgoKnx4m6PSu+fhn3s8DV0OTNAKi1FIoZBHPs=;
+ b=V6C+Pvb0GrhEy8zkbfREcD5u4i82i5DBy9qxuk3swJ8vfEv+KrgqLKXZr35kUnj358FT
+ BhNY+VUSGrxKU+XS8zewL1a4MuW+tS+qjsOCArGGb8S7tj/nFhzg5qcuYfZIf/bdXkfK
+ L7+WKmhS4i/bLvGqtlVEUvl+YhNCVB8ySp8fn8ji7iR7Y37BavHcGBRjubxFibQoxUw7
+ NpgNHehWrjzKVbuuG48K+Hbfp7jRgAx9OZC/ixnpcl3OPeies3rjfAFFniYbzC3sAa24
+ 5aaFUKp17A/gFa9zBDt4Stre1CPW/wbOlUSw9E9HIV6c1kHv7WjKbzVhCnyvQKGhURhb /w== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2xykbpctwa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Feb 2020 22:46:51 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016Mi5r4055800;
+        Thu, 6 Feb 2020 22:46:51 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2y0mjw9n17-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Feb 2020 22:46:50 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 016MkoWG016960;
+        Thu, 6 Feb 2020 22:46:50 GMT
+Received: from dhcp-10-132-97-93.usdhcp.oraclecorp.com (/10.132.97.93)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 06 Feb 2020 14:46:50 -0800
+Subject: Re: [PATCH v4 3/3] selftests: KVM: SVM: Add vmcall test
+To:     Eric Auger <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, vkuznets@redhat.com
+Cc:     thuth@redhat.com, drjones@redhat.com, wei.huang2@amd.com
+References: <20200206104710.16077-1-eric.auger@redhat.com>
+ <20200206104710.16077-4-eric.auger@redhat.com>
+From:   Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Message-ID: <2469b52e-9f66-b19b-7269-297dbbd0ca27@oracle.com>
+Date:   Thu, 6 Feb 2020 14:46:49 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="PEIAKu/WMn1b1Hv9"
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgsTkPZBCkmtx5o+X3penAzz_DeynChQO906NmqXd9r3Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200206104710.16077-4-eric.auger@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9523 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=11 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2002060163
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9523 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=11 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2002060163
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---PEIAKu/WMn1b1Hv9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sun 2020-02-02 11:43:14, Linus Torvalds wrote:
-> On Sun, Feb 2, 2020 at 11:09 AM Pavel Machek <pavel@ucw.cz> wrote:
-> >
-> > LED updates for 5.6-rc1.
-> >
-> > Some of these changes are bugfixes already merged in v5.5, but I'd
-> > have to rebase the for-next branch, and git merge handles that ok, so
-> > I did not do that.
->=20
-> That's fine.
->=20
-> But I'd still have really wanted a short description of what the changes =
-are..
+On 02/06/2020 02:47 AM, Eric Auger wrote:
+> L2 guest calls vmcall and L1 checks the exit status does
+> correspond.
+>
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
+>
+> ---
+>
+> v3 -> v4:
+> - remove useless includes
+> - collected Lin's R-b
+>
+> v2 -> v3:
+> - remove useless comment and add Vitaly's R-b
+> ---
+>   tools/testing/selftests/kvm/Makefile          |  1 +
+>   .../selftests/kvm/x86_64/svm_vmcall_test.c    | 79 +++++++++++++++++++
+>   2 files changed, 80 insertions(+)
+>   create mode 100644 tools/testing/selftests/kvm/x86_64/svm_vmcall_test.c
+>
+> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+> index 2e770f554cae..b529d3b42c02 100644
+> --- a/tools/testing/selftests/kvm/Makefile
+> +++ b/tools/testing/selftests/kvm/Makefile
+> @@ -26,6 +26,7 @@ TEST_GEN_PROGS_x86_64 += x86_64/vmx_dirty_log_test
+>   TEST_GEN_PROGS_x86_64 += x86_64/vmx_set_nested_state_test
+>   TEST_GEN_PROGS_x86_64 += x86_64/vmx_tsc_adjust_test
+>   TEST_GEN_PROGS_x86_64 += x86_64/xss_msr_test
+> +TEST_GEN_PROGS_x86_64 += x86_64/svm_vmcall_test
+>   TEST_GEN_PROGS_x86_64 += clear_dirty_log_test
+>   TEST_GEN_PROGS_x86_64 += dirty_log_test
+>   TEST_GEN_PROGS_x86_64 += kvm_create_max_vcpus
+> diff --git a/tools/testing/selftests/kvm/x86_64/svm_vmcall_test.c b/tools/testing/selftests/kvm/x86_64/svm_vmcall_test.c
+> new file mode 100644
+> index 000000000000..6d3565aab94e
+> --- /dev/null
+> +++ b/tools/testing/selftests/kvm/x86_64/svm_vmcall_test.c
+> @@ -0,0 +1,79 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * svm_vmcall_test
+> + *
+> + * Copyright (C) 2020, Red Hat, Inc.
+> + *
+> + * Nested SVM testing: VMCALL
+> + */
+> +
+> +#include "test_util.h"
+> +#include "kvm_util.h"
+> +#include "processor.h"
+> +#include "svm_util.h"
+> +
+> +#define VCPU_ID		5
+> +
+> +static struct kvm_vm *vm;
+> +
+> +static inline void l2_vmcall(struct svm_test_data *svm)
+> +{
+> +	__asm__ __volatile__("vmcall");
+Is it possible to re-use the existing vmcall() function ?
+Also, we should probably re-name the function to 'l2_guest_code' which 
+is used in the existing code and also it matches with 'l1_guest_code' 
+naming.
+> +}
+> +
+> +static void l1_guest_code(struct svm_test_data *svm)
+> +{
+> +	#define L2_GUEST_STACK_SIZE 64
+> +	unsigned long l2_guest_stack[L2_GUEST_STACK_SIZE];
+> +	struct vmcb *vmcb = svm->vmcb;
+> +
+> +	/* Prepare for L2 execution. */
+> +	generic_svm_setup(svm, l2_vmcall,
+> +			  &l2_guest_stack[L2_GUEST_STACK_SIZE]);
+> +
+> +	run_guest(vmcb, svm->vmcb_gpa);
+> +
+> +	GUEST_ASSERT(vmcb->control.exit_code == SVM_EXIT_VMMCALL);
+> +	GUEST_DONE();
+> +}
+> +
+> +int main(int argc, char *argv[])
+> +{
+> +	vm_vaddr_t svm_gva;
+> +
+> +	nested_svm_check_supported();
+> +
+> +	vm = vm_create_default(VCPU_ID, 0, (void *) l1_guest_code);
+> +	vcpu_set_cpuid(vm, VCPU_ID, kvm_get_supported_cpuid());
+> +
+> +	vcpu_alloc_svm(vm, &svm_gva);
+> +	vcpu_args_set(vm, VCPU_ID, 1, svm_gva);
+> +
+> +	for (;;) {
+> +		volatile struct kvm_run *run = vcpu_state(vm, VCPU_ID);
+> +		struct ucall uc;
+> +
+> +		vcpu_run(vm, VCPU_ID);
+> +		TEST_ASSERT(run->exit_reason == KVM_EXIT_IO,
+> +			    "Got exit_reason other than KVM_EXIT_IO: %u (%s)\n",
+> +			    run->exit_reason,
+> +			    exit_reason_str(run->exit_reason));
+> +
+> +		switch (get_ucall(vm, VCPU_ID, &uc)) {
+> +		case UCALL_ABORT:
+> +			TEST_ASSERT(false, "%s",
+> +				    (const char *)uc.args[0]);
+> +			/* NOT REACHED */
+> +		case UCALL_SYNC:
+> +			break;
+> +		case UCALL_DONE:
+> +			goto done;
+> +		default:
+> +			TEST_ASSERT(false,
+> +				    "Unknown ucall 0x%x.", uc.cmd);
+> +		}
+> +	}
+> +done:
+> +	kvm_vm_free(vm);
+> +	return 0;
+> +}
 
-Ah, sorry about that.
-
-Besides random driver updates, we now allow referencing LED from the
-device tree, which is important for (future) backlight<->LED
-interoperation. (Which is in turn important for Librem 5 and Droid 4
-phones).
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---PEIAKu/WMn1b1Hv9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXjyW9QAKCRAw5/Bqldv6
-8qBKAJ9Wa+58BMC6kYl+B4I19/7+XcefxwCfRQSz+sZ2/J8vVzyCauh8Pj8dTzQ=
-=bm2K
------END PGP SIGNATURE-----
-
---PEIAKu/WMn1b1Hv9--
