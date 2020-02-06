@@ -2,111 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 447A6154F0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 23:46:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA566154F1A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 23:51:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbgBFWqz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 17:46:55 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:43712 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbgBFWqz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 17:46:55 -0500
-Received: by mail-oi1-f194.google.com with SMTP id p125so80536oif.10
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 14:46:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=mRfn9CMlX/X35LGWUqX09L+aJqRjTqZEyr0DskyPEVk=;
-        b=YpP4z647YJNTgMYDaCbmfNNSE81aL3av7qBko0/VdtiGhZSvur6WtjtYSWHkjDAIoM
-         BdOhCFg/OclcKtXF8ytjWJWduHIG7YXU85bFNUgXf338ijk9OV+cqc9/WjjhuE5qwXcc
-         JkhXHDNyLonrgI3ihoO0oyG917X6ifHyDW2Bv1okERhRnaFOrrVfQxArgEk5ojwC57gP
-         VdNp6r1ZJBEIld6vnHuY6orzdh4MjGqsXuTrPXdc3VkDZsNIxHP5Ig+msMLEID/DJYEV
-         d0USKt/26FLPQMc3USE+pkmkIqHyosIqOcVsw//7bawSc7DpPCHR35TvSYtdMeEbsyiJ
-         G6FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:message-id:date
-         :user-agent:mime-version:content-language:content-transfer-encoding;
-        bh=mRfn9CMlX/X35LGWUqX09L+aJqRjTqZEyr0DskyPEVk=;
-        b=jgnYHNNqFfnReY9w3wLOX1/TVcNHg6wWNOa+NLieEXVjDI0QHdkJfjFVBbGXDE5y/T
-         l++wyOt5/vL77yhYDTpufu5OGQDe4eF9lEpHJhGY775+VAApTxq0m4eHwkiLdTCT0wnt
-         qTo9vgXoGFyRTgkyszhbszFaeSmQFSEXjABRdS5eBeOtv16flD4nwcX6GYJU9c/flZ9M
-         MIBAXvJE2Vj6fFlhrlK2PIv5rrwaPx0oPgWaEmEDWTXnYO+MakDTbKZWfHo5OZrnrtCT
-         N2d8bl9lQZZ6qeRdK2AA7BVTgTTxYbZIjzWQCaPSWZyTx4argYaUibzIuYbM5thIqu4p
-         si6w==
-X-Gm-Message-State: APjAAAVegS1nF5/1HdtGoWdy6vXMUagMXvMePvR7v9tZTx6Ge1QYKxN4
-        rOCoAhr23yBaVJYhoOWvOb4=
-X-Google-Smtp-Source: APXvYqyrKNbNDWFqb6VTc7OysBx1MqLemYXBPyd8xS/tJ7PY+mI9Aw7k0tEyCCHESSnDY/bxANiEfw==
-X-Received: by 2002:aca:554d:: with SMTP id j74mr68745oib.92.1581029214126;
-        Thu, 06 Feb 2020 14:46:54 -0800 (PST)
-Received: from [192.168.1.120] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id z17sm369196oib.3.2020.02.06.14.46.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Feb 2020 14:46:53 -0800 (PST)
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-To:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc:     Tom Anderson <thomasanderson@google.com>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Manasi Navare <manasi.d.navare@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Error building v5.5-git on PowerPC32 - bisected to commit
- 7befe621ff81
-Message-ID: <0fb64c98-57c2-b988-051c-6ba0e460ad37@lwfinger.net>
-Date:   Thu, 6 Feb 2020 16:46:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S1726838AbgBFWvu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 17:51:50 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:44390 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726502AbgBFWvt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 17:51:49 -0500
+Received: from zn.tnic (p200300EC2F0B4B0040E17354A72808B0.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:4b00:40e1:7354:a728:8b0])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 704821EC0C99;
+        Thu,  6 Feb 2020 23:51:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1581029508;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=QtOEEHjg41DUFzH+/V56Ghw3dvejJBhcVDwpJPcS14c=;
+        b=Wh4z5l77TCxAa13iYN+M15YfE0SNLPvcDHiimZB47yxRN4C5uoht1dljEnsRnpGJPbQlyS
+        QZaf1D6zwCwQmMXgSde20TziBTXNtW5/jVHoLwYrDQnjp0XSxZcHeonrtB1NOPZ2x/WvXI
+        SZl/VD2BS1RClx9zYNw9Gpout9t1LqM=
+Date:   Thu, 6 Feb 2020 23:51:39 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [for-next][PATCH 04/26] bootconfig: Add Extra Boot Config support
+Message-ID: <20200206225139.GH9741@zn.tnic>
+References: <20200114210316.450821675@goodmis.org>
+ <20200114210336.259202220@goodmis.org>
+ <20200206115405.GA22608@zn.tnic>
+ <20200206234100.953b48ecef04f97c112d2e8b@kernel.org>
+ <20200206175858.GG9741@zn.tnic>
+ <7280e507-cafd-f981-88b5-0e7d375e26d4@infradead.org>
+ <20200206173945.0596d32a@oasis.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200206173945.0596d32a@oasis.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building post V5.5 on my PowerBook G4 Aluminum, the build failed with the 
-following error:
+On Thu, Feb 06, 2020 at 05:39:45PM -0500, Steven Rostedt wrote:
+> Well, to me its as important as the kernel command line itself, and
+> printk(). I know printk() can be disabled, should that be default 'n'?
 
-drivers/gpu/drm/drm_edid.c: In function ‘cea_mode_alternate_timings’:
-drivers/gpu/drm/drm_edid.c:3275:2: error: call to ‘__compiletime_assert_3282’ 
-declared with attribute error: BUILD_BUG_ON failed: cea_mode_for_vic(8)->vtotal 
-!= 262 || cea_mode_for_vic(9)->vtotal != 262 || cea_mode_for_vic(12)->vtotal != 
-262 || cea_mode_for_vic(13)->vtotal != 262 || cea_mode_for_vic(23)->vtotal != 
-312 || cea_mode_for_vic(24)->vtotal != 312 || cea_mode_for_vic(27)->vtotal != 
-312 || cea_mode_for_vic(28)->vtotal != 312
+You're arguing for a feature which might potentially become ubiquitous.
+I don't think anyone minds it being built-in and even without a config
+option when that happens. Just until that happens, it should have
+been default n like all the other features we come up with and then
+enable everywhere after sufficient amount of time of testing and
+reporting/fixing bugs. Then even the config item gets removed. We do it
+this way all the time.
 
-This error was bisected to commit 7befe621ff81 ("drm/edid: Abstract away 
-cea_edid_modes[]").
+-- 
+Regards/Gruss,
+    Boris.
 
-This problem is clearly a problem with the gcc compiler on the box, namely gcc 
-(Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3. I had no success finding why the 
-attributes were wrong, and finally settled on the following hack:
-
-diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index 99769d6c9f84..062bbe2b254a 100644
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -3272,6 +3272,7 @@ cea_mode_alternate_timings(u8 vic, struct drm_display_mode 
-*mode)
-          * get the other variants by simply increasing the
-          * vertical front porch length.
-          */
-+#ifndef CONFIG_PPC32
-         BUILD_BUG_ON(cea_mode_for_vic(8)->vtotal != 262 ||
-                      cea_mode_for_vic(9)->vtotal != 262 ||
-                      cea_mode_for_vic(12)->vtotal != 262 ||
-@@ -3280,6 +3281,7 @@ cea_mode_alternate_timings(u8 vic, struct drm_display_mode 
-*mode)
-                      cea_mode_for_vic(24)->vtotal != 312 ||
-                      cea_mode_for_vic(27)->vtotal != 312 ||
-                      cea_mode_for_vic(28)->vtotal != 312);
-+#endif
-
-         if (((vic == 8 || vic == 9 ||
-               vic == 12 || vic == 13) && mode->vtotal < 263) ||
-
-Disabling the build check allows me to build and test the post v5.5 versions.
-
-Larry
+https://people.kernel.org/tglx/notes-about-netiquette
