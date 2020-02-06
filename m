@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D74F154961
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 17:39:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A810C154963
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 17:39:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbgBFQjp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 11:39:45 -0500
-Received: from mga05.intel.com ([192.55.52.43]:22808 "EHLO mga05.intel.com"
+        id S1727897AbgBFQjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 11:39:51 -0500
+Received: from mga02.intel.com ([134.134.136.20]:5660 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727358AbgBFQjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 11:39:45 -0500
+        id S1727779AbgBFQjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 11:39:46 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 08:39:44 -0800
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 08:39:45 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,410,1574150400"; 
-   d="scan'208";a="264662769"
+   d="scan'208";a="311743046"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 06 Feb 2020 08:39:42 -0800
+  by orsmga001.jf.intel.com with ESMTP; 06 Feb 2020 08:39:42 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 387DC159; Thu,  6 Feb 2020 18:39:40 +0200 (EET)
+        id 47FD9FC; Thu,  6 Feb 2020 18:39:41 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org, trond.myklebust@hammerspace.com,
@@ -33,10 +33,12 @@ To:     Andrew Morton <akpm@linux-foundation.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Joe Perches <joe@perches.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v3 1/4] kernel.h: Split out min()/max() et al helpers
-Date:   Thu,  6 Feb 2020 18:39:37 +0200
-Message-Id: <20200206163940.1940-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 2/4] kernel.h: Split out mathematical helpers
+Date:   Thu,  6 Feb 2020 18:39:38 +0200
+Message-Id: <20200206163940.1940-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200206163940.1940-1-andriy.shevchenko@linux.intel.com>
+References: <20200206163940.1940-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -45,8 +47,8 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 kernel.h is being used as a dump for all kinds of stuff for a long time.
-Here is the attempt to start cleaning it up by splitting out min()/max()
-et al helpers.
+Here is the attempt to start cleaning it up by splitting out mathematical
+helpers.
 
 At the same time convert users in header and lib folder to use new header.
 Though for time being include new header back to kernel.h to avoid twisted
@@ -54,468 +56,624 @@ indirected includes for existing users.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
-v3: no change
- include/linux/blkdev.h    |   1 +
- include/linux/bvec.h      |   6 +-
- include/linux/jiffies.h   |   3 +-
- include/linux/kernel.h    | 142 +------------------------------------
- include/linux/minmax.h    | 145 ++++++++++++++++++++++++++++++++++++++
- include/linux/nodemask.h  |   2 +-
- include/linux/uaccess.h   |   1 +
- kernel/range.c            |   3 +-
- lib/find_bit.c            |   1 +
- lib/hexdump.c             |   1 +
- lib/math/rational.c       |   2 +-
- lib/math/reciprocal_div.c |   1 +
- 12 files changed, 162 insertions(+), 146 deletions(-)
- create mode 100644 include/linux/minmax.h
+v3: fix compilation error (kbuild test robot)
+ fs/nfs/callback_proc.c        |   5 +
+ include/linux/bitops.h        |  11 ++-
+ include/linux/dcache.h        |   1 +
+ include/linux/iommu-helper.h  |   4 +-
+ include/linux/kernel.h        | 174 +--------------------------------
+ include/linux/math.h          | 177 ++++++++++++++++++++++++++++++++++
+ include/linux/rcu_node_tree.h |   2 +
+ include/linux/units.h         |   2 +-
+ lib/errname.c                 |   1 +
+ lib/find_bit.c                |   3 +-
+ lib/math/div64.c              |   3 +-
+ lib/math/int_pow.c            |   2 +-
+ lib/math/int_sqrt.c           |   3 +-
+ lib/math/reciprocal_div.c     |   8 +-
+ 14 files changed, 212 insertions(+), 184 deletions(-)
+ create mode 100644 include/linux/math.h
 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 053ea4b51988..0cea2c66d6c4 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -11,6 +11,7 @@
- #include <linux/genhd.h>
- #include <linux/list.h>
- #include <linux/llist.h>
-+#include <linux/minmax.h>
- #include <linux/timer.h>
- #include <linux/workqueue.h>
- #include <linux/pagemap.h>
-diff --git a/include/linux/bvec.h b/include/linux/bvec.h
-index a81c13ac1972..56d4dec74926 100644
---- a/include/linux/bvec.h
-+++ b/include/linux/bvec.h
-@@ -7,10 +7,14 @@
- #ifndef __LINUX_BVEC_ITER_H
- #define __LINUX_BVEC_ITER_H
- 
--#include <linux/kernel.h>
- #include <linux/bug.h>
- #include <linux/errno.h>
-+#include <linux/limits.h>
-+#include <linux/minmax.h>
- #include <linux/mm.h>
+diff --git a/fs/nfs/callback_proc.c b/fs/nfs/callback_proc.c
+index cd4c6bc81cae..146cf0a5cbf8 100644
+--- a/fs/nfs/callback_proc.c
++++ b/fs/nfs/callback_proc.c
+@@ -6,10 +6,15 @@
+  *
+  * NFSv4 callback procedures
+  */
++
++#include <linux/errno.h>
++#include <linux/math.h>
+ #include <linux/nfs4.h>
+ #include <linux/nfs_fs.h>
+ #include <linux/slab.h>
+ #include <linux/rcupdate.h>
 +#include <linux/types.h>
 +
-+struct page;
+ #include "nfs4_fs.h"
+ #include "callback.h"
+ #include "delegation.h"
+diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+index 47f54b459c26..21696ea359d1 100644
+--- a/include/linux/bitops.h
++++ b/include/linux/bitops.h
+@@ -1,9 +1,12 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef _LINUX_BITOPS_H
+ #define _LINUX_BITOPS_H
++
+ #include <asm/types.h>
+ #include <linux/bits.h>
  
- /*
-  * was unsigned short, but we might as well be ready for > 64kB I/O pages
-diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
-index e3279ef24d28..d5a41a509cc0 100644
---- a/include/linux/jiffies.h
-+++ b/include/linux/jiffies.h
-@@ -3,8 +3,9 @@
- #define _LINUX_JIFFIES_H
++#include <uapi/linux/kernel.h>
++
+ /* Set bits in the first 'n' bytes when loaded from memory */
+ #ifdef __LITTLE_ENDIAN
+ #  define aligned_byte_mask(n) ((1UL << 8*(n))-1)
+@@ -12,10 +15,10 @@
+ #endif
  
- #include <linux/cache.h>
-+#include <linux/limits.h>
- #include <linux/math64.h>
+ #define BITS_PER_TYPE(type)	(sizeof(type) * BITS_PER_BYTE)
+-#define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
+-#define BITS_TO_U64(nr)		DIV_ROUND_UP(nr, BITS_PER_TYPE(u64))
+-#define BITS_TO_U32(nr)		DIV_ROUND_UP(nr, BITS_PER_TYPE(u32))
+-#define BITS_TO_BYTES(nr)	DIV_ROUND_UP(nr, BITS_PER_TYPE(char))
++#define BITS_TO_LONGS(nr)	__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
++#define BITS_TO_U64(nr)		__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(u64))
++#define BITS_TO_U32(nr)		__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(u32))
++#define BITS_TO_BYTES(nr)	__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(char))
+ 
+ extern unsigned int __sw_hweight8(unsigned int w);
+ extern unsigned int __sw_hweight16(unsigned int w);
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index c1488cc84fd9..096e04b7f38d 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -4,6 +4,7 @@
+ 
+ #include <linux/atomic.h>
+ #include <linux/list.h>
++#include <linux/math.h>
+ #include <linux/rculist.h>
+ #include <linux/rculist_bl.h>
+ #include <linux/spinlock.h>
+diff --git a/include/linux/iommu-helper.h b/include/linux/iommu-helper.h
+index 70d01edcbf8b..74be34f3a20a 100644
+--- a/include/linux/iommu-helper.h
++++ b/include/linux/iommu-helper.h
+@@ -3,7 +3,9 @@
+ #define _LINUX_IOMMU_HELPER_H
+ 
+ #include <linux/bug.h>
 -#include <linux/kernel.h>
-+#include <linux/minmax.h>
- #include <linux/types.h>
- #include <linux/time.h>
- #include <linux/timex.h>
++#include <linux/log2.h>
++#include <linux/math.h>
++#include <linux/types.h>
+ 
+ static inline unsigned long iommu_device_max_index(unsigned long size,
+ 						   unsigned long offset,
 diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 0d9db2a14f44..062d86f946c5 100644
+index 062d86f946c5..3ca18547af01 100644
 --- a/include/linux/kernel.h
 +++ b/include/linux/kernel.h
-@@ -11,6 +11,7 @@
+@@ -2,7 +2,6 @@
+ #ifndef _LINUX_KERNEL_H
+ #define _LINUX_KERNEL_H
+ 
+-
+ #include <stdarg.h>
+ #include <linux/limits.h>
+ #include <linux/linkage.h>
+@@ -11,14 +10,15 @@
  #include <linux/compiler.h>
  #include <linux/bitops.h>
  #include <linux/log2.h>
-+#include <linux/minmax.h>
++#include <linux/math.h>
+ #include <linux/minmax.h>
  #include <linux/typecheck.h>
  #include <linux/printk.h>
  #include <linux/build_bug.h>
-@@ -819,147 +820,6 @@ ftrace_vprintk(const char *fmt, va_list ap)
- static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
- #endif /* CONFIG_TRACING */
++
+ #include <asm/byteorder.h>
+-#include <asm/div64.h>
++
+ #include <uapi/linux/kernel.h>
+-#include <asm/div64.h>
+ 
+ #define STACK_MAGIC	0xdeadbeef
+ 
+@@ -54,125 +54,11 @@
+ }					\
+ )
  
 -/*
-- * min()/max()/clamp() macros must accomplish three things:
-- *
-- * - avoid multiple evaluations of the arguments (so side-effects like
-- *   "x++" happen only once) when non-constant.
-- * - perform strict type-checking (to generate warnings instead of
-- *   nasty runtime surprises). See the "unnecessary" pointer comparison
-- *   in __typecheck().
-- * - retain result as a constant expressions when called with only
-- *   constant expressions (to avoid tripping VLA warnings in stack
-- *   allocation usage).
+- * This looks more complex than it should be. But we need to
+- * get the type for the ~ right in round_down (it needs to be
+- * as wide as the result!), and we want to evaluate the macro
+- * arguments just once each.
 - */
--#define __typecheck(x, y) \
--		(!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
+-#define __round_mask(x, y) ((__typeof__(x))((y)-1))
+-/**
+- * round_up - round up to next specified power of 2
+- * @x: the value to round
+- * @y: multiple to round up to (must be a power of 2)
+- *
+- * Rounds @x up to next multiple of @y (which must be a power of 2).
+- * To perform arbitrary rounding up, use roundup() below.
+- */
+-#define round_up(x, y) ((((x)-1) | __round_mask(x, y))+1)
+-/**
+- * round_down - round down to next specified power of 2
+- * @x: the value to round
+- * @y: multiple to round down to (must be a power of 2)
+- *
+- * Rounds @x down to next multiple of @y (which must be a power of 2).
+- * To perform arbitrary rounding down, use rounddown() below.
+- */
+-#define round_down(x, y) ((x) & ~__round_mask(x, y))
+-
+ #define typeof_member(T, m)	typeof(((T*)0)->m)
+ 
+-#define DIV_ROUND_UP __KERNEL_DIV_ROUND_UP
+-
+-#define DIV_ROUND_DOWN_ULL(ll, d) \
+-	({ unsigned long long _tmp = (ll); do_div(_tmp, d); _tmp; })
+-
+-#define DIV_ROUND_UP_ULL(ll, d) \
+-	DIV_ROUND_DOWN_ULL((unsigned long long)(ll) + (d) - 1, (d))
+-
+-#if BITS_PER_LONG == 32
+-# define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP_ULL(ll, d)
+-#else
+-# define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP(ll,d)
+-#endif
+-
+-/**
+- * roundup - round up to the next specified multiple
+- * @x: the value to up
+- * @y: multiple to round up to
+- *
+- * Rounds @x up to next multiple of @y. If @y will always be a power
+- * of 2, consider using the faster round_up().
+- */
+-#define roundup(x, y) (					\
+-{							\
+-	typeof(y) __y = y;				\
+-	(((x) + (__y - 1)) / __y) * __y;		\
+-}							\
+-)
+-/**
+- * rounddown - round down to next specified multiple
+- * @x: the value to round
+- * @y: multiple to round down to
+- *
+- * Rounds @x down to next multiple of @y. If @y will always be a power
+- * of 2, consider using the faster round_down().
+- */
+-#define rounddown(x, y) (				\
+-{							\
+-	typeof(x) __x = (x);				\
+-	__x - (__x % (y));				\
+-}							\
+-)
 -
 -/*
-- * This returns a constant expression while determining if an argument is
-- * a constant expression, most importantly without evaluating the argument.
-- * Glory to Martin Uecker <Martin.Uecker@med.uni-goettingen.de>
+- * Divide positive or negative dividend by positive or negative divisor
+- * and round to closest integer. Result is undefined for negative
+- * divisors if the dividend variable type is unsigned and for negative
+- * dividends if the divisor variable type is unsigned.
 - */
--#define __is_constexpr(x) \
--	(sizeof(int) == sizeof(*(8 ? ((void *)((long)(x) * 0l)) : (int *)8)))
--
--#define __no_side_effects(x, y) \
--		(__is_constexpr(x) && __is_constexpr(y))
--
--#define __safe_cmp(x, y) \
--		(__typecheck(x, y) && __no_side_effects(x, y))
--
--#define __cmp(x, y, op)	((x) op (y) ? (x) : (y))
--
--#define __cmp_once(x, y, unique_x, unique_y, op) ({	\
--		typeof(x) unique_x = (x);		\
--		typeof(y) unique_y = (y);		\
--		__cmp(unique_x, unique_y, op); })
--
--#define __careful_cmp(x, y, op) \
--	__builtin_choose_expr(__safe_cmp(x, y), \
--		__cmp(x, y, op), \
--		__cmp_once(x, y, __UNIQUE_ID(__x), __UNIQUE_ID(__y), op))
--
--/**
-- * min - return minimum of two values of the same or compatible types
-- * @x: first value
-- * @y: second value
+-#define DIV_ROUND_CLOSEST(x, divisor)(			\
+-{							\
+-	typeof(x) __x = x;				\
+-	typeof(divisor) __d = divisor;			\
+-	(((typeof(x))-1) > 0 ||				\
+-	 ((typeof(divisor))-1) > 0 ||			\
+-	 (((__x) > 0) == ((__d) > 0))) ?		\
+-		(((__x) + ((__d) / 2)) / (__d)) :	\
+-		(((__x) - ((__d) / 2)) / (__d));	\
+-}							\
+-)
+-/*
+- * Same as above but for u64 dividends. divisor must be a 32-bit
+- * number.
 - */
--#define min(x, y)	__careful_cmp(x, y, <)
--
--/**
-- * max - return maximum of two values of the same or compatible types
-- * @x: first value
-- * @y: second value
-- */
--#define max(x, y)	__careful_cmp(x, y, >)
--
--/**
-- * min3 - return minimum of three values
-- * @x: first value
-- * @y: second value
-- * @z: third value
-- */
--#define min3(x, y, z) min((typeof(x))min(x, y), z)
--
--/**
-- * max3 - return maximum of three values
-- * @x: first value
-- * @y: second value
-- * @z: third value
-- */
--#define max3(x, y, z) max((typeof(x))max(x, y), z)
--
--/**
-- * min_not_zero - return the minimum that is _not_ zero, unless both are zero
-- * @x: value1
-- * @y: value2
-- */
--#define min_not_zero(x, y) ({			\
--	typeof(x) __x = (x);			\
--	typeof(y) __y = (y);			\
--	__x == 0 ? __y : ((__y == 0) ? __x : min(__x, __y)); })
--
--/**
-- * clamp - return a value clamped to a given range with strict typechecking
-- * @val: current value
-- * @lo: lowest allowable value
-- * @hi: highest allowable value
-- *
-- * This macro does strict typechecking of @lo/@hi to make sure they are of the
-- * same type as @val.  See the unnecessary pointer comparisons.
-- */
--#define clamp(val, lo, hi) min((typeof(val))max(val, lo), hi)
+-#define DIV_ROUND_CLOSEST_ULL(x, divisor)(		\
+-{							\
+-	typeof(divisor) __d = divisor;			\
+-	unsigned long long _tmp = (x) + (__d) / 2;	\
+-	do_div(_tmp, __d);				\
+-	_tmp;						\
+-}							\
+-)
 -
 -/*
-- * ..and if you can't take the strict
-- * types, you can specify one yourself.
-- *
-- * Or not use min/max/clamp at all, of course.
+- * Multiplies an integer by a fraction, while avoiding unnecessary
+- * overflow or loss of precision.
 - */
+-#define mult_frac(x, numer, denom)(			\
+-{							\
+-	typeof(x) quot = (x) / (denom);			\
+-	typeof(x) rem  = (x) % (denom);			\
+-	(quot * (numer)) + ((rem * (numer)) / (denom));	\
+-}							\
+-)
 -
--/**
-- * min_t - return minimum of two values, using the specified type
-- * @type: data type to use
-- * @x: first value
-- * @y: second value
-- */
--#define min_t(type, x, y)	__careful_cmp((type)(x), (type)(y), <)
 -
--/**
-- * max_t - return maximum of two values, using the specified type
-- * @type: data type to use
-- * @x: first value
-- * @y: second value
-- */
--#define max_t(type, x, y)	__careful_cmp((type)(x), (type)(y), >)
--
--/**
-- * clamp_t - return a value clamped to a given range using a given type
-- * @type: the type of variable to use
-- * @val: current value
-- * @lo: minimum allowable value
-- * @hi: maximum allowable value
-- *
-- * This macro does no typechecking and uses temporary variables of type
-- * @type to make all the comparisons.
-- */
--#define clamp_t(type, val, lo, hi) min_t(type, max_t(type, val, lo), hi)
--
--/**
-- * clamp_val - return a value clamped to a given range using val's type
-- * @val: current value
-- * @lo: minimum allowable value
-- * @hi: maximum allowable value
-- *
-- * This macro does no typechecking and uses temporary variables of whatever
-- * type the input argument @val is.  This is useful when @val is an unsigned
-- * type and @lo and @hi are literals that will otherwise be assigned a signed
-- * integer type.
-- */
--#define clamp_val(val, lo, hi) clamp_t(typeof(val), val, lo, hi)
--
+ #define _RET_IP_		(unsigned long)__builtin_return_address(0)
+ #define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; })
+ 
+-#define sector_div(a, b) do_div(a, b)
 -
  /**
-  * swap - swap values of @a and @b
-  * @a: first value
-diff --git a/include/linux/minmax.h b/include/linux/minmax.h
+  * upper_32_bits - return bits 32-63 of a number
+  * @n: the number we're accessing
+@@ -258,48 +144,6 @@ extern void __cant_sleep(const char *file, int line, int preempt_offset);
+ 
+ #define might_sleep_if(cond) do { if (cond) might_sleep(); } while (0)
+ 
+-/**
+- * abs - return absolute value of an argument
+- * @x: the value.  If it is unsigned type, it is converted to signed type first.
+- *     char is treated as if it was signed (regardless of whether it really is)
+- *     but the macro's return type is preserved as char.
+- *
+- * Return: an absolute value of x.
+- */
+-#define abs(x)	__abs_choose_expr(x, long long,				\
+-		__abs_choose_expr(x, long,				\
+-		__abs_choose_expr(x, int,				\
+-		__abs_choose_expr(x, short,				\
+-		__abs_choose_expr(x, char,				\
+-		__builtin_choose_expr(					\
+-			__builtin_types_compatible_p(typeof(x), char),	\
+-			(char)({ signed char __x = (x); __x<0?-__x:__x; }), \
+-			((void)0)))))))
+-
+-#define __abs_choose_expr(x, type, other) __builtin_choose_expr(	\
+-	__builtin_types_compatible_p(typeof(x),   signed type) ||	\
+-	__builtin_types_compatible_p(typeof(x), unsigned type),		\
+-	({ signed type __x = (x); __x < 0 ? -__x : __x; }), other)
+-
+-/**
+- * reciprocal_scale - "scale" a value into range [0, ep_ro)
+- * @val: value
+- * @ep_ro: right open interval endpoint
+- *
+- * Perform a "reciprocal multiplication" in order to "scale" a value into
+- * range [0, @ep_ro), where the upper interval endpoint is right-open.
+- * This is useful, e.g. for accessing a index of an array containing
+- * @ep_ro elements, for example. Think of it as sort of modulus, only that
+- * the result isn't that of modulo. ;) Note that if initial input is a
+- * small value, then result will return 0.
+- *
+- * Return: a result based on @val in interval [0, @ep_ro).
+- */
+-static inline u32 reciprocal_scale(u32 val, u32 ep_ro)
+-{
+-	return (u32)(((u64) val * ep_ro) >> 32);
+-}
+-
+ #if defined(CONFIG_MMU) && \
+ 	(defined(CONFIG_PROVE_LOCKING) || defined(CONFIG_DEBUG_ATOMIC_SLEEP))
+ #define might_fault() __might_fault(__FILE__, __LINE__)
+@@ -502,18 +346,6 @@ extern int __kernel_text_address(unsigned long addr);
+ extern int kernel_text_address(unsigned long addr);
+ extern int func_ptr_is_kernel_text(void *ptr);
+ 
+-u64 int_pow(u64 base, unsigned int exp);
+-unsigned long int_sqrt(unsigned long);
+-
+-#if BITS_PER_LONG < 64
+-u32 int_sqrt64(u64 x);
+-#else
+-static inline u32 int_sqrt64(u64 x)
+-{
+-	return (u32)int_sqrt(x);
+-}
+-#endif
+-
+ extern void bust_spinlocks(int yes);
+ extern int oops_in_progress;		/* If set, an oops, panic(), BUG() or die() is in progress */
+ extern int panic_timeout;
+diff --git a/include/linux/math.h b/include/linux/math.h
 new file mode 100644
-index 000000000000..bfd6ad822914
+index 000000000000..53674a327e39
 --- /dev/null
-+++ b/include/linux/minmax.h
-@@ -0,0 +1,145 @@
++++ b/include/linux/math.h
+@@ -0,0 +1,177 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_MINMAX_H
-+#define _LINUX_MINMAX_H
++#ifndef _LINUX_MATH_H
++#define _LINUX_MATH_H
++
++#include <asm/div64.h>
++#include <uapi/linux/kernel.h>
 +
 +/*
-+ * min()/max()/clamp() macros must accomplish three things:
-+ *
-+ * - avoid multiple evaluations of the arguments (so side-effects like
-+ *   "x++" happen only once) when non-constant.
-+ * - perform strict type-checking (to generate warnings instead of
-+ *   nasty runtime surprises). See the "unnecessary" pointer comparison
-+ *   in __typecheck().
-+ * - retain result as a constant expressions when called with only
-+ *   constant expressions (to avoid tripping VLA warnings in stack
-+ *   allocation usage).
++ * This looks more complex than it should be. But we need to
++ * get the type for the ~ right in round_down (it needs to be
++ * as wide as the result!), and we want to evaluate the macro
++ * arguments just once each.
 + */
-+#define __typecheck(x, y) \
-+	(!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
++#define __round_mask(x, y) ((__typeof__(x))((y)-1))
++
++/**
++ * round_up - round up to next specified power of 2
++ * @x: the value to round
++ * @y: multiple to round up to (must be a power of 2)
++ *
++ * Rounds @x up to next multiple of @y (which must be a power of 2).
++ * To perform arbitrary rounding up, use roundup() below.
++ */
++#define round_up(x, y) ((((x)-1) | __round_mask(x, y))+1)
++
++/**
++ * round_down - round down to next specified power of 2
++ * @x: the value to round
++ * @y: multiple to round down to (must be a power of 2)
++ *
++ * Rounds @x down to next multiple of @y (which must be a power of 2).
++ * To perform arbitrary rounding down, use rounddown() below.
++ */
++#define round_down(x, y) ((x) & ~__round_mask(x, y))
++
++#define DIV_ROUND_UP __KERNEL_DIV_ROUND_UP
++
++#define DIV_ROUND_DOWN_ULL(ll, d) \
++	({ unsigned long long _tmp = (ll); do_div(_tmp, d); _tmp; })
++
++#define DIV_ROUND_UP_ULL(ll, d) \
++	DIV_ROUND_DOWN_ULL((unsigned long long)(ll) + (d) - 1, (d))
++
++#if BITS_PER_LONG == 32
++# define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP_ULL(ll, d)
++#else
++# define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP(ll,d)
++#endif
++
++/**
++ * roundup - round up to the next specified multiple
++ * @x: the value to up
++ * @y: multiple to round up to
++ *
++ * Rounds @x up to next multiple of @y. If @y will always be a power
++ * of 2, consider using the faster round_up().
++ */
++#define roundup(x, y) (					\
++{							\
++	typeof(y) __y = y;				\
++	(((x) + (__y - 1)) / __y) * __y;		\
++}							\
++)
++/**
++ * rounddown - round down to next specified multiple
++ * @x: the value to round
++ * @y: multiple to round down to
++ *
++ * Rounds @x down to next multiple of @y. If @y will always be a power
++ * of 2, consider using the faster round_down().
++ */
++#define rounddown(x, y) (				\
++{							\
++	typeof(x) __x = (x);				\
++	__x - (__x % (y));				\
++}							\
++)
 +
 +/*
-+ * This returns a constant expression while determining if an argument is
-+ * a constant expression, most importantly without evaluating the argument.
-+ * Glory to Martin Uecker <Martin.Uecker@med.uni-goettingen.de>
++ * Divide positive or negative dividend by positive or negative divisor
++ * and round to closest integer. Result is undefined for negative
++ * divisors if the dividend variable type is unsigned and for negative
++ * dividends if the divisor variable type is unsigned.
 + */
-+#define __is_constexpr(x) \
-+	(sizeof(int) == sizeof(*(8 ? ((void *)((long)(x) * 0l)) : (int *)8)))
-+
-+#define __no_side_effects(x, y) \
-+		(__is_constexpr(x) && __is_constexpr(y))
-+
-+#define __safe_cmp(x, y) \
-+		(__typecheck(x, y) && __no_side_effects(x, y))
-+
-+#define __cmp(x, y, op)	((x) op (y) ? (x) : (y))
-+
-+#define __cmp_once(x, y, unique_x, unique_y, op) ({	\
-+		typeof(x) unique_x = (x);		\
-+		typeof(y) unique_y = (y);		\
-+		__cmp(unique_x, unique_y, op); })
-+
-+#define __careful_cmp(x, y, op) \
-+	__builtin_choose_expr(__safe_cmp(x, y), \
-+		__cmp(x, y, op), \
-+		__cmp_once(x, y, __UNIQUE_ID(__x), __UNIQUE_ID(__y), op))
-+
-+/**
-+ * min - return minimum of two values of the same or compatible types
-+ * @x: first value
-+ * @y: second value
++#define DIV_ROUND_CLOSEST(x, divisor)(			\
++{							\
++	typeof(x) __x = x;				\
++	typeof(divisor) __d = divisor;			\
++	(((typeof(x))-1) > 0 ||				\
++	 ((typeof(divisor))-1) > 0 ||			\
++	 (((__x) > 0) == ((__d) > 0))) ?		\
++		(((__x) + ((__d) / 2)) / (__d)) :	\
++		(((__x) - ((__d) / 2)) / (__d));	\
++}							\
++)
++/*
++ * Same as above but for u64 dividends. divisor must be a 32-bit
++ * number.
 + */
-+#define min(x, y)	__careful_cmp(x, y, <)
-+
-+/**
-+ * max - return maximum of two values of the same or compatible types
-+ * @x: first value
-+ * @y: second value
-+ */
-+#define max(x, y)	__careful_cmp(x, y, >)
-+
-+/**
-+ * min3 - return minimum of three values
-+ * @x: first value
-+ * @y: second value
-+ * @z: third value
-+ */
-+#define min3(x, y, z) min((typeof(x))min(x, y), z)
-+
-+/**
-+ * max3 - return maximum of three values
-+ * @x: first value
-+ * @y: second value
-+ * @z: third value
-+ */
-+#define max3(x, y, z) max((typeof(x))max(x, y), z)
-+
-+/**
-+ * min_not_zero - return the minimum that is _not_ zero, unless both are zero
-+ * @x: value1
-+ * @y: value2
-+ */
-+#define min_not_zero(x, y) ({			\
-+	typeof(x) __x = (x);			\
-+	typeof(y) __y = (y);			\
-+	__x == 0 ? __y : ((__y == 0) ? __x : min(__x, __y)); })
-+
-+/**
-+ * clamp - return a value clamped to a given range with strict typechecking
-+ * @val: current value
-+ * @lo: lowest allowable value
-+ * @hi: highest allowable value
-+ *
-+ * This macro does strict typechecking of @lo/@hi to make sure they are of the
-+ * same type as @val.  See the unnecessary pointer comparisons.
-+ */
-+#define clamp(val, lo, hi) min((typeof(val))max(val, lo), hi)
++#define DIV_ROUND_CLOSEST_ULL(x, divisor)(		\
++{							\
++	typeof(divisor) __d = divisor;			\
++	unsigned long long _tmp = (x) + (__d) / 2;	\
++	do_div(_tmp, __d);				\
++	_tmp;						\
++}							\
++)
 +
 +/*
-+ * ..and if you can't take the strict
-+ * types, you can specify one yourself.
++ * Multiplies an integer by a fraction, while avoiding unnecessary
++ * overflow or loss of precision.
++ */
++#define mult_frac(x, numer, denom)(			\
++{							\
++	typeof(x) quot = (x) / (denom);			\
++	typeof(x) rem  = (x) % (denom);			\
++	(quot * (numer)) + ((rem * (numer)) / (denom));	\
++}							\
++)
++
++#define sector_div(a, b) do_div(a, b)
++
++/**
++ * abs - return absolute value of an argument
++ * @x: the value.  If it is unsigned type, it is converted to signed type first.
++ *     char is treated as if it was signed (regardless of whether it really is)
++ *     but the macro's return type is preserved as char.
 + *
-+ * Or not use min/max/clamp at all, of course.
++ * Return: an absolute value of x.
 + */
++#define abs(x)	__abs_choose_expr(x, long long,				\
++		__abs_choose_expr(x, long,				\
++		__abs_choose_expr(x, int,				\
++		__abs_choose_expr(x, short,				\
++		__abs_choose_expr(x, char,				\
++		__builtin_choose_expr(					\
++			__builtin_types_compatible_p(typeof(x), char),	\
++			(char)({ signed char __x = (x); __x<0?-__x:__x; }), \
++			((void)0)))))))
++
++#define __abs_choose_expr(x, type, other) __builtin_choose_expr(	\
++	__builtin_types_compatible_p(typeof(x),   signed type) ||	\
++	__builtin_types_compatible_p(typeof(x), unsigned type),		\
++	({ signed type __x = (x); __x < 0 ? -__x : __x; }), other)
 +
 +/**
-+ * min_t - return minimum of two values, using the specified type
-+ * @type: data type to use
-+ * @x: first value
-+ * @y: second value
-+ */
-+#define min_t(type, x, y)	__careful_cmp((type)(x), (type)(y), <)
-+
-+/**
-+ * max_t - return maximum of two values, using the specified type
-+ * @type: data type to use
-+ * @x: first value
-+ * @y: second value
-+ */
-+#define max_t(type, x, y)	__careful_cmp((type)(x), (type)(y), >)
-+
-+/**
-+ * clamp_t - return a value clamped to a given range using a given type
-+ * @type: the type of variable to use
-+ * @val: current value
-+ * @lo: minimum allowable value
-+ * @hi: maximum allowable value
++ * reciprocal_scale - "scale" a value into range [0, ep_ro)
++ * @val: value
++ * @ep_ro: right open interval endpoint
 + *
-+ * This macro does no typechecking and uses temporary variables of type
-+ * @type to make all the comparisons.
-+ */
-+#define clamp_t(type, val, lo, hi) min_t(type, max_t(type, val, lo), hi)
-+
-+/**
-+ * clamp_val - return a value clamped to a given range using val's type
-+ * @val: current value
-+ * @lo: minimum allowable value
-+ * @hi: maximum allowable value
++ * Perform a "reciprocal multiplication" in order to "scale" a value into
++ * range [0, @ep_ro), where the upper interval endpoint is right-open.
++ * This is useful, e.g. for accessing a index of an array containing
++ * @ep_ro elements, for example. Think of it as sort of modulus, only that
++ * the result isn't that of modulo. ;) Note that if initial input is a
++ * small value, then result will return 0.
 + *
-+ * This macro does no typechecking and uses temporary variables of whatever
-+ * type the input argument @val is.  This is useful when @val is an unsigned
-+ * type and @lo and @hi are literals that will otherwise be assigned a signed
-+ * integer type.
++ * Return: a result based on @val in interval [0, @ep_ro).
 + */
-+#define clamp_val(val, lo, hi) clamp_t(typeof(val), val, lo, hi)
++static inline u32 reciprocal_scale(u32 val, u32 ep_ro)
++{
++	return (u32)(((u64) val * ep_ro) >> 32);
++}
 +
-+#endif	/* _LINUX_MINMAX_H */
-diff --git a/include/linux/nodemask.h b/include/linux/nodemask.h
-index 27e7fa36f707..7f38399cc9fe 100644
---- a/include/linux/nodemask.h
-+++ b/include/linux/nodemask.h
-@@ -90,9 +90,9 @@
-  * for such situations. See below and CPUMASK_ALLOC also.
-  */
++u64 int_pow(u64 base, unsigned int exp);
++unsigned long int_sqrt(unsigned long);
++
++#if BITS_PER_LONG < 64
++u32 int_sqrt64(u64 x);
++#else
++static inline u32 int_sqrt64(u64 x)
++{
++	return (u32)int_sqrt(x);
++}
++#endif
++
++#endif	/* _LINUX_MATH_H */
+diff --git a/include/linux/rcu_node_tree.h b/include/linux/rcu_node_tree.h
+index b8e094b125ee..78feb8ba7358 100644
+--- a/include/linux/rcu_node_tree.h
++++ b/include/linux/rcu_node_tree.h
+@@ -20,6 +20,8 @@
+ #ifndef __LINUX_RCU_NODE_TREE_H
+ #define __LINUX_RCU_NODE_TREE_H
  
--#include <linux/kernel.h>
- #include <linux/threads.h>
- #include <linux/bitmap.h>
-+#include <linux/minmax.h>
- #include <linux/numa.h>
- 
- typedef struct { DECLARE_BITMAP(bits, MAX_NUMNODES); } nodemask_t;
-diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-index 67f016010aad..cd842869f931 100644
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -2,6 +2,7 @@
- #ifndef __LINUX_UACCESS_H__
- #define __LINUX_UACCESS_H__
- 
-+#include <linux/minmax.h>
- #include <linux/sched.h>
- #include <linux/thread_info.h>
- #include <linux/kasan-checks.h>
-diff --git a/kernel/range.c b/kernel/range.c
-index d84de6766472..56435f96da73 100644
---- a/kernel/range.c
-+++ b/kernel/range.c
-@@ -2,8 +2,9 @@
++#include <linux/math.h>
++
  /*
-  * Range add and subtract
-  */
+  * Define shape of hierarchy based on NR_CPUS, CONFIG_RCU_FANOUT, and
+  * CONFIG_RCU_FANOUT_LEAF.
+diff --git a/include/linux/units.h b/include/linux/units.h
+index aaf716364ec3..5c115c809507 100644
+--- a/include/linux/units.h
++++ b/include/linux/units.h
+@@ -2,7 +2,7 @@
+ #ifndef _LINUX_UNITS_H
+ #define _LINUX_UNITS_H
+ 
 -#include <linux/kernel.h>
- #include <linux/init.h>
-+#include <linux/minmax.h>
-+#include <linux/printk.h>
- #include <linux/sort.h>
- #include <linux/string.h>
- #include <linux/range.h>
++#include <linux/math.h>
+ 
+ #define ABSOLUTE_ZERO_MILLICELSIUS -273150
+ 
+diff --git a/lib/errname.c b/lib/errname.c
+index 0c4d3e66170e..05cbf731545f 100644
+--- a/lib/errname.c
++++ b/lib/errname.c
+@@ -3,6 +3,7 @@
+ #include <linux/errno.h>
+ #include <linux/errname.h>
+ #include <linux/kernel.h>
++#include <linux/math.h>
+ 
+ /*
+  * Ensure these tables do not accidentally become gigantic if some
 diff --git a/lib/find_bit.c b/lib/find_bit.c
-index 49f875f1baf7..4a8751010d59 100644
+index 4a8751010d59..f67f86fd2f62 100644
 --- a/lib/find_bit.c
 +++ b/lib/find_bit.c
-@@ -16,6 +16,7 @@
+@@ -15,8 +15,9 @@
+ #include <linux/bitops.h>
  #include <linux/bitmap.h>
  #include <linux/export.h>
- #include <linux/kernel.h>
-+#include <linux/minmax.h>
+-#include <linux/kernel.h>
++#include <linux/math.h>
+ #include <linux/minmax.h>
++#include <linux/swab.h>
  
  #if !defined(find_next_bit) || !defined(find_next_zero_bit) ||			\
  	!defined(find_next_bit_le) || !defined(find_next_zero_bit_le) ||	\
-diff --git a/lib/hexdump.c b/lib/hexdump.c
-index 147133f8eb2f..9301578f98e8 100644
---- a/lib/hexdump.c
-+++ b/lib/hexdump.c
-@@ -7,6 +7,7 @@
- #include <linux/ctype.h>
- #include <linux/errno.h>
- #include <linux/kernel.h>
-+#include <linux/minmax.h>
- #include <linux/export.h>
- #include <asm/unaligned.h>
+diff --git a/lib/math/div64.c b/lib/math/div64.c
+index 368ca7fd0d82..259303233610 100644
+--- a/lib/math/div64.c
++++ b/lib/math/div64.c
+@@ -18,8 +18,9 @@
+  * or by defining a preprocessor macro in arch/include/asm/div64.h.
+  */
  
-diff --git a/lib/math/rational.c b/lib/math/rational.c
-index 31fb27db2deb..d8e985850d10 100644
---- a/lib/math/rational.c
-+++ b/lib/math/rational.c
-@@ -11,7 +11,7 @@
- #include <linux/rational.h>
- #include <linux/compiler.h>
++#include <linux/bitops.h>
  #include <linux/export.h>
 -#include <linux/kernel.h>
-+#include <linux/minmax.h>
++#include <linux/math.h>
+ #include <linux/math64.h>
  
- /*
-  * calculate best rational approximation for a given fraction
+ /* Not needed on 64bit architectures */
+diff --git a/lib/math/int_pow.c b/lib/math/int_pow.c
+index 622fc1ab3c74..0cf426e69bda 100644
+--- a/lib/math/int_pow.c
++++ b/lib/math/int_pow.c
+@@ -6,7 +6,7 @@
+  */
+ 
+ #include <linux/export.h>
+-#include <linux/kernel.h>
++#include <linux/math.h>
+ #include <linux/types.h>
+ 
+ /**
+diff --git a/lib/math/int_sqrt.c b/lib/math/int_sqrt.c
+index 30e0f9770f88..a8170bb9142f 100644
+--- a/lib/math/int_sqrt.c
++++ b/lib/math/int_sqrt.c
+@@ -6,9 +6,10 @@
+  *  square root from Guy L. Steele.
+  */
+ 
+-#include <linux/kernel.h>
+ #include <linux/export.h>
+ #include <linux/bitops.h>
++#include <linux/limits.h>
++#include <linux/math.h>
+ 
+ /**
+  * int_sqrt - computes the integer square root
 diff --git a/lib/math/reciprocal_div.c b/lib/math/reciprocal_div.c
-index bf043258fa00..32436dd4171e 100644
+index 32436dd4171e..65ee372d9d06 100644
 --- a/lib/math/reciprocal_div.c
 +++ b/lib/math/reciprocal_div.c
-@@ -4,6 +4,7 @@
- #include <asm/div64.h>
- #include <linux/reciprocal_div.h>
+@@ -1,10 +1,12 @@
+ // SPDX-License-Identifier: GPL-2.0
++#include <linux/bitops.h>
+ #include <linux/bug.h>
+-#include <linux/kernel.h>
+-#include <asm/div64.h>
+-#include <linux/reciprocal_div.h>
  #include <linux/export.h>
-+#include <linux/minmax.h>
++#include <linux/math.h>
+ #include <linux/minmax.h>
++#include <linux/types.h>
++
++#include <linux/reciprocal_div.h>
  
  /*
   * For a description of the algorithm please have a look at
