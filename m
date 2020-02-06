@@ -2,75 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE1E5154462
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 13:59:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFADB15447C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 14:04:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbgBFM72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 07:59:28 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:59182 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726765AbgBFM71 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 07:59:27 -0500
-Received: from localhost (unknown [IPv6:2001:982:756:1:57a7:3bfd:5e85:defb])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 30A2914C6027B;
-        Thu,  6 Feb 2020 04:59:26 -0800 (PST)
-Date:   Thu, 06 Feb 2020 13:59:24 +0100 (CET)
-Message-Id: <20200206.135924.1302030268583776261.davem@davemloft.net>
-To:     cai@lca.pw
-Cc:     kuba@kernel.org, elver@google.com, eric.dumazet@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] skbuff: fix a data race in skb_queue_len()
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1580841629-7102-1-git-send-email-cai@lca.pw>
-References: <1580841629-7102-1-git-send-email-cai@lca.pw>
-X-Mailer: Mew version 6.8 on Emacs 26.3
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 06 Feb 2020 04:59:27 -0800 (PST)
+        id S1727585AbgBFNEq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 08:04:46 -0500
+Received: from mail-eopbgr00070.outbound.protection.outlook.com ([40.107.0.70]:40961
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727111AbgBFNEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 08:04:45 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=V/ntwDpVNDuPONw0DvVAQj9wiMC6RRlOiLPWG+SMPBWMUZmszukkuQZj+v8SlKJoGRoeLx14DIvTzptjRKYQWINNt7RFjxoVFeRo9sxkII5utZ0MFuE/PVZsCX7MPF9VkEVJZYL5DBvMURbs2o8+CFilyZZDHpgRNUjmeJ5A6LCWALK0a2s3rdT5CfCDLsYiGw6UHV1PMHdhKB6tXZhyM6+/I7vuJINwB73yn56FrkRxtpbve2y2h1kdjUePIhiFvkSuFytQdO4udooyFdTlwhVhOXDH+8E3jGHFbANniGwEXoZ8H/t33TYOX75JZAeSPgHcO9DtEQk9BrLjWX+d9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mHfSijKilckf0Ocd/D/WiT7dQGm7dElsEx+7gO/odB0=;
+ b=NIxsEWQIBDCbP7AT8Ro/x8nOBzZt5kYwSpGwzF68tt2jzwucQ7YtTjEfC1Qopp0WPc137ywE3GYZmiXU5bgxGdHQnsG0t3At86OwG5BxOpJVPPuezkyoYWwaDaaABnqVpVNQdc8CZp0F0R5qwxDsUMM1JIFhSKwSHOfH7PzWp/gYMT6kNg8OCTVUqi1rkBfPjAUPCXCjuT4naA1G3cy31N6jLUneK7SsX52Po5kGprfsrF9PJoAKouGHHPtOWGK95G5SuD9qTV2FGA1kG7RqFMl9Od2kSLcqWzVoPkHcJ+aAq5+EovNQDYSl0DIQq4qZFAAVfA0/hf7tExbMA2vfsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mHfSijKilckf0Ocd/D/WiT7dQGm7dElsEx+7gO/odB0=;
+ b=ATqKup0LL3QbQlTQVQ6Bm+2A/Mnc4LBIsR+zldflHcNKYb5K6nOKrdhZNJlY27vFohNnWfEchkRj8FBMnrdwXya3kKXLsBNGKILkcZVKlBGPsJi4k7aVyn2AmC2mCPf1nWef1ps2D9/rKpG+BtHckCUkl8yxh1mayr43oz5dtlc=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4770.eurprd04.prod.outlook.com (20.177.41.154) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2686.32; Thu, 6 Feb 2020 13:04:43 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2707.020; Thu, 6 Feb 2020
+ 13:04:42 +0000
+From:   peng.fan@nxp.com
+To:     sudeep.holla@arm.com
+Cc:     viresh.kumar@linaro.org, f.fainelli@gmail.com, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH 1/2] firmware: arm_scmi: mailbox: share shmem for protocols
+Date:   Thu,  6 Feb 2020 20:59:25 +0800
+Message-Id: <1580993966-17757-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: HK2PR04CA0086.apcprd04.prod.outlook.com
+ (2603:1096:202:15::30) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+MIME-Version: 1.0
+Received: from localhost.localdomain (119.31.174.66) by HK2PR04CA0086.apcprd04.prod.outlook.com (2603:1096:202:15::30) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2707.21 via Frontend Transport; Thu, 6 Feb 2020 13:04:40 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: ba963931-86ce-46a6-45de-08d7ab0521b1
+X-MS-TrafficTypeDiagnostic: AM0PR04MB4770:|AM0PR04MB4770:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB47702E6D4629E4A6CC555136881D0@AM0PR04MB4770.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1002;
+X-Forefront-PRVS: 0305463112
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(346002)(396003)(136003)(376002)(189003)(199004)(86362001)(2616005)(956004)(36756003)(6486002)(6506007)(4326008)(6666004)(6512007)(9686003)(69590400006)(26005)(186003)(16526019)(2906002)(6916009)(4744005)(66946007)(5660300002)(66476007)(52116002)(15650500001)(81166006)(81156014)(8676002)(8936002)(478600001)(316002)(66556008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4770;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: EgesQtD41UpgvUQnfAgoegTQwDgwAHdAiMbmMDphFrZHiBug2vfysRBIzmJTYQOOxx2WGe9UfMe3gI5DokPYbgSYPNOBcr57V7aMc/Ip85igWK4fHKx3PHUNrjw19tuilQZFL4CCg8eGFfX8Sx6moxld/CZyoPZlxSfvctmbRwv0wZXMD+H8no2Xr65D8yjrFkqhvZFVnDPARvrFt3g4jZDcYJOHcOzOP4GQHUljaUbdVwVN6vExfzJeRnR+PW/1HW8p1qwGZ9lG5OTVkA/nX8EpY9dvbK0Krq0iRNJ8e4Q1h3NmzLQJv0UA5sgede8CGJYqaeK5waP2upC4I6X7btW/qPPbpZcOrb+gS1EvjZmguU2hjNUknCX+AXHeNjvXzM2KuJZL5VbVCvSoBonvPxPKEMgdEd4ZpM3XWkANx9sId7ViWGocg3Q1QqvzztEFH9vRAQpPA7iyE6p17C+/Cb2jYxa7O8VSCiK+gdJIfxm1RynqZZIp+ggWTYc6+ruscMZMz8AQMmYWQgWAKUD0G2RUk3MWw5eSZ75esH/V1AA=
+X-MS-Exchange-AntiSpam-MessageData: tiyv8m5VxH5wNrBsMknrCHUwPfCvjiJcbDTOkEZTEK9y3upAyZkEonLKLX0SfA+QlSfHvoUr6U4t6KG8Xnfrp4w9D1joCSjh8n5Ci3NRnbx8t/6jzn+dStlxpIyX6bh3l+44hYwmdD7likgx8mU15w==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba963931-86ce-46a6-45de-08d7ab0521b1
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2020 13:04:42.8694
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qGjOvss0po+fYeAxX92CVLEtg9s4tcQ8tsVxfdOwI1itR2eVNc3uuTxegiCg6elFxB4mci9RJpCkmD+YDDWs+Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4770
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
-Date: Tue,  4 Feb 2020 13:40:29 -0500
+From: Peng Fan <peng.fan@nxp.com>
 
-> sk_buff.qlen can be accessed concurrently as noticed by KCSAN,
-> 
->  BUG: KCSAN: data-race in __skb_try_recv_from_queue / unix_dgram_sendmsg
-> 
->  read to 0xffff8a1b1d8a81c0 of 4 bytes by task 5371 on cpu 96:
->   unix_dgram_sendmsg+0x9a9/0xb70 include/linux/skbuff.h:1821
-> 				 net/unix/af_unix.c:1761
->   ____sys_sendmsg+0x33e/0x370
->   ___sys_sendmsg+0xa6/0xf0
->   __sys_sendmsg+0x69/0xf0
->   __x64_sys_sendmsg+0x51/0x70
->   do_syscall_64+0x91/0xb47
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
->  write to 0xffff8a1b1d8a81c0 of 4 bytes by task 1 on cpu 99:
->   __skb_try_recv_from_queue+0x327/0x410 include/linux/skbuff.h:2029
->   __skb_try_recv_datagram+0xbe/0x220
->   unix_dgram_recvmsg+0xee/0x850
->   ____sys_recvmsg+0x1fb/0x210
->   ___sys_recvmsg+0xa2/0xf0
->   __sys_recvmsg+0x66/0xf0
->   __x64_sys_recvmsg+0x51/0x70
->   do_syscall_64+0x91/0xb47
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> Since only the read is operating as lockless, it could introduce a logic
-> bug in unix_recvq_full() due to the load tearing. Fix it by adding
-> a lockless variant of skb_queue_len() and unix_recvq_full() where
-> READ_ONCE() is on the read while WRITE_ONCE() is on the write similar to
-> the commit d7d16a89350a ("net: add skb_queue_empty_lockless()").
-> 
-> Signed-off-by: Qian Cai <cai@lca.pw>
+When shmem property of protocol is not specificed, let it use
+its parent's shmem property.
 
-Applied, thank you.
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+
+Based on Viresh's V6 patchset.
+
+ drivers/firmware/arm_scmi/mailbox.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/firmware/arm_scmi/mailbox.c b/drivers/firmware/arm_scmi/mailbox.c
+index 73077bbc4ad9..68ed58e2a47a 100644
+--- a/drivers/firmware/arm_scmi/mailbox.c
++++ b/drivers/firmware/arm_scmi/mailbox.c
+@@ -69,6 +69,8 @@ static int mailbox_chan_setup(struct scmi_chan_info *cinfo, struct device *dev,
+ 		return -ENOMEM;
+ 
+ 	shmem = of_parse_phandle(cdev->of_node, "shmem", idx);
++	if (!shmem)
++		shmem = of_parse_phandle(dev->of_node, "shmem", idx);
+ 	ret = of_address_to_resource(shmem, 0, &res);
+ 	of_node_put(shmem);
+ 	if (ret) {
+-- 
+2.16.4
+
