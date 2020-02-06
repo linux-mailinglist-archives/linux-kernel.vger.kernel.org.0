@@ -2,183 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84111154CEA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 21:25:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB3B7154CF0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 21:25:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbgBFUZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 15:25:14 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:44866 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727842AbgBFUZO (ORCPT
+        id S1727897AbgBFUZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 15:25:44 -0500
+Received: from mail-qv1-f43.google.com ([209.85.219.43]:43881 "EHLO
+        mail-qv1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727830AbgBFUZo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 15:25:14 -0500
-Received: by mail-qk1-f193.google.com with SMTP id v195so6877820qkb.11
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 12:25:13 -0800 (PST)
+        Thu, 6 Feb 2020 15:25:44 -0500
+Received: by mail-qv1-f43.google.com with SMTP id p2so3478120qvo.10
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 12:25:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EppCVQVdb0sbGPOMbE3NBdA8qFhHOMdA/yHWcWz4Q7c=;
-        b=Ikd/ForQYktwkjmcJi8TWzL0ti2z92MIt7bkLM6I3JIj3oeo950ZvGIC0w+5Q3hYDU
-         rIoUF5xzcij+4MVb/Uo2HVazWU3O4d0JmxcdJsRvaj81rBxASMyVuhFeUXsmLjDXTSLI
-         QH0bQYJ577Lwps4s/V2KT3IJTIEeAniJnFwK4=
+        d=lca.pw; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=V+0pNskuD/SO3/Mfw6U/mhfbSMlYPhmeyrODwhcICD0=;
+        b=BuIJ8GW7w6Df9mfqCREKzGHB6DpPXsZ4ztoVTFY+qO/azoRbhsE09W4S2obz1HeZnj
+         JZamn3QfFjQM344UKbKr3fe0qQy7iwSI3Zzm+fKFrOIIMMbpXodpX2+WhNZn5ykHsSrP
+         Fhpvmz8uhh4ivXkl7m6tD4fRlm06bBo9E+9+KU+VcQhqzUPsKzNBtE+RcRZtfuGaVZpg
+         YJ63RbE5R2stvs2sTqaVTJxsgFOovWygZyKTjJjA6DeRGP659XZneGjKjk9FzC13SvqX
+         c0XTfyCUZ7+UgRUdmHQGcF2fnp5y0t/5EMCEaveITuM6XGr6bRKrytDvV8oN/U2lalJA
+         yS1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EppCVQVdb0sbGPOMbE3NBdA8qFhHOMdA/yHWcWz4Q7c=;
-        b=DOl4ciDpfJcOt7jqA7sfYmvnat0RYcfDa6JW78PEg3oxC0erG7nNn9N5/b2pDOjRcb
-         SvMtqkwJpbCXdPpnolX9XgS4D4VolWkUY6wacG/otagdWtB0zhaSovrNczdFCS07p2hO
-         LDtLjwP2VytpdTKJ21/vOzYc/Tu0VA7FiGQQt+Ept0ExPsX/9qS/8wozjx/YZ/yNORaD
-         LawwpbNgj0F+XqjavAqosIFgtEyvyx0v/fwAa8Xm4/pggNZxW4LZtRVidvshcuK62egV
-         tnHVqAPcLVPQcwiNJiYxt1RfHiHcU/Hui9UJGkmNIlL2Od8HlJH+Vtt8HW7p6JTCIN13
-         /5zg==
-X-Gm-Message-State: APjAAAUPKa6huY2X6YoGcrjfsmGYyC3b1cu0Ip3M3Dy8Nwy56YY9SwKi
-        Tem+cbTyWPhMIRZvf27TIbVcag==
-X-Google-Smtp-Source: APXvYqy30Qk93sRD5os14ZOvi4/IQRNm9Fh5M8VNB3r1zdEp4q4pDfV2E8CioqsfjEVVRGt1WZDGmA==
-X-Received: by 2002:a05:620a:88b:: with SMTP id b11mr4251474qka.429.1581020712036;
-        Thu, 06 Feb 2020 12:25:12 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id g53sm212698qtk.76.2020.02.06.12.25.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 12:25:11 -0800 (PST)
-Date:   Thu, 6 Feb 2020 15:25:11 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-Cc:     "Eric W. Biederman" <ebiederm@gmail.com>, ebiederm@xmission.com,
-        oleg@redhat.com, christian.brauner@ubuntu.com, guro@fb.com,
-        tj@kernel.org, linux-kernel@vger.kernel.org, paulmck@kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org, frextrite@gmail.com
-Subject: Re: [PATCH] signal.c: Fix sparse warnings
-Message-ID: <20200206202511.GC36876@google.com>
-References: <20200205172437.10113-1-madhuparnabhowmik10@gmail.com>
- <87wo90myhj.fsf@x220.int.ebiederm.org>
- <20200206110051.GA4531@madhuparna-HP-Notebook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200206110051.GA4531@madhuparna-HP-Notebook>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=V+0pNskuD/SO3/Mfw6U/mhfbSMlYPhmeyrODwhcICD0=;
+        b=g/YDi2grfkBCjDBrk1wr+arU95x231POElERRWu9IOsSRKtSkOtOL7CiME7GmRdTEz
+         wpi4uenfVk1/f1ABzU9grUbhuAFI1Psfs6VdbCncalTCfpZ9LjRcjbHNLXyih0uZaHSM
+         w5WwVU+7dujEMSuDzL9AfRlibHXa9+U1V2n+bEd/6j9ZG2klz+eaa1H7bIWIM0aZAqOZ
+         Lua78pUDQqc+4YO/zUHHyB7jTTOolAoVamMf1H/tAMOTUl2+yJ79EBj9XnWgU5PqccuP
+         3Idjoale7KmCuFwSUxyKq0CUOzgB/Jesbo5KYq8kjf+HiUxqkLa49tWraaQCKmioFtFl
+         qqeA==
+X-Gm-Message-State: APjAAAV8FhnWxWwL2kacuHjQsGQH4G8aZCOa49HVzEbhCDd19J7sk2mP
+        aGvQ3XBwjnJfuVJlRqlqzP1ZJg==
+X-Google-Smtp-Source: APXvYqzCKll75OCN7AjSN8WOJiMDS0hEzPjVuzKSdQb8837HoW/z7IfPuSBWdcD8inIkX07YirveTQ==
+X-Received: by 2002:a0c:edb2:: with SMTP id h18mr3898739qvr.94.1581020743007;
+        Thu, 06 Feb 2020 12:25:43 -0800 (PST)
+Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id r6sm193031qtm.63.2020.02.06.12.25.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Feb 2020 12:25:42 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [PATCH -next v2] mm: mark an intentional data race in
+ page_zonenum
+From:   Qian Cai <cai@lca.pw>
+In-Reply-To: <20200206202005.GY8731@bombadil.infradead.org>
+Date:   Thu, 6 Feb 2020 15:25:41 -0500
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Marco Elver <elver@google.com>, jhubbard@nvidia.com,
+        ira.weiny@intel.com, dan.j.williams@intel.com, jack@suse.cz,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <95A69596-D5F9-41EB-84A0-AE32D17FE320@lca.pw>
+References: <20200206183000.913-1-cai@lca.pw>
+ <20200206202005.GY8731@bombadil.infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 06, 2020 at 04:30:51PM +0530, Madhuparna Bhowmik wrote:
-> On Wed, Feb 05, 2020 at 04:59:52PM -0600, Eric W. Biederman wrote:
-> > madhuparnabhowmik10@gmail.com writes:
-> > 
-> > > From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-> > >
-> > > This patch fixes the following two sparse warnings caused due to
-> > > accessing RCU protected pointer tsk->parent without rcu primitives.
-> > >
-> > > kernel/signal.c:1948:65: warning: incorrect type in argument 1 (different address spaces)
-> > > kernel/signal.c:1948:65:    expected struct task_struct *tsk
-> > > kernel/signal.c:1948:65:    got struct task_struct [noderef] <asn:4> *parent
-> > > kernel/signal.c:1949:40: warning: incorrect type in argument 1 (different address spaces)
-> > > kernel/signal.c:1949:40:    expected void const volatile *p
-> > > kernel/signal.c:1949:40:    got struct cred const [noderef] <asn:4> *[noderef] <asn:4> *
-> > > kernel/signal.c:1949:40: warning: incorrect type in argument 1 (different address spaces)
-> > > kernel/signal.c:1949:40:    expected void const volatile *p
-> > > kernel/signal.c:1949:40:    got struct cred const [noderef] <asn:4> *[noderef] <asn:4> *
-> > >
-> > > Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-> > > ---
-> > >  kernel/signal.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/kernel/signal.c b/kernel/signal.c
-> > > index 9ad8dea93dbb..8227058ea8c4 100644
-> > > --- a/kernel/signal.c
-> > > +++ b/kernel/signal.c
-> > > @@ -1945,8 +1945,8 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
-> > >  	 * correct to rely on this
-> > >  	 */
-> > >  	rcu_read_lock();
-> > > -	info.si_pid = task_pid_nr_ns(tsk, task_active_pid_ns(tsk->parent));
-> > > -	info.si_uid = from_kuid_munged(task_cred_xxx(tsk->parent, user_ns),
-> > > +	info.si_pid = task_pid_nr_ns(tsk, task_active_pid_ns(rcu_dereference(tsk->parent)));
-> > > +	info.si_uid = from_kuid_munged(task_cred_xxx(rcu_dereference(tsk->parent), user_ns),
-> > >  				       task_uid(tsk));
-> > >  	rcu_read_unlock();
-> > 
-> > 
-> > Still wrong because that access fundamentally depends upon the
-> > task_list_lock no the rcu_read_lock.  Things need to be consistent for
-> > longer than the rcu_read_lock is held.
-> >
-> Okay, then how about something like rcu_dereference_protected(tsk->parent, lockdep_is_held(&tasklist_lock))?
-> Let me know if this looks fine to you.
 
-But then there are several other ->parent accesses in the function. What
-about something like the following? It removes the confusion Eric is
-referring to and fixes the sparse errors you mentioned. Thoughts?
 
----8<-----------------------
+> On Feb 6, 2020, at 3:20 PM, Matthew Wilcox <willy@infradead.org> =
+wrote:
+>=20
+> On Thu, Feb 06, 2020 at 01:30:00PM -0500, Qian Cai wrote:
+>> Both the read and write are done only with the non-exclusive mmap_sem
+>> held. Since the read only check for a specific bit range (up to 3 =
+bits)
+>> in the flag but the write here never change those 3 bits, so load
+>> tearing would be harmless here. Thus, just mark it as an intentional
+>> data races using the data_race() macro which is designed for those
+>> situations [1].
+>=20
+> This changelog makes me think you don't really understand the =
+situation.
+>=20
+> A page never changes its zone number.  The zone number happens to be
+> stored in the same word as other bits which are modified, but the zone
+> number bits will never be modified by any other write.  So we can =
+accept
+> a reload of the zone bits after an intervening write and we don't need
+> to use READ_ONCE().
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index bcd46f547db39..92f0b7bf70bf3 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -1909,6 +1909,7 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
- 	struct sighand_struct *psig;
- 	bool autoreap = false;
- 	u64 utime, stime;
-+	struct task_struct *tsk_parent;
- 
- 	BUG_ON(sig == -1);
- 
-@@ -1918,6 +1919,9 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
- 	BUG_ON(!tsk->ptrace &&
- 	       (tsk->group_leader != tsk || !thread_group_empty(tsk)));
- 
-+	tsk_parent = rcu_dereference_protected(tsk->parent,
-+					   lockdep_is_held(&tasklist_lock));
-+
- 	/* Wake up all pidfd waiters */
- 	do_notify_pidfd(tsk);
- 
-@@ -1926,7 +1930,7 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
- 		 * This is only possible if parent == real_parent.
- 		 * Check if it has changed security domain.
- 		 */
--		if (tsk->parent_exec_id != tsk->parent->self_exec_id)
-+		if (tsk->parent_exec_id != tsk_parent->self_exec_id)
- 			sig = SIGCHLD;
- 	}
- 
-@@ -1945,8 +1949,8 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
- 	 * correct to rely on this
- 	 */
- 	rcu_read_lock();
--	info.si_pid = task_pid_nr_ns(tsk, task_active_pid_ns(tsk->parent));
--	info.si_uid = from_kuid_munged(task_cred_xxx(tsk->parent, user_ns),
-+	info.si_pid = task_pid_nr_ns(tsk, task_active_pid_ns(tsk_parent));
-+	info.si_uid = from_kuid_munged(task_cred_xxx(tsk_parent, user_ns),
- 				       task_uid(tsk));
- 	rcu_read_unlock();
- 
-@@ -1964,7 +1968,7 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
- 		info.si_status = tsk->exit_code >> 8;
- 	}
- 
--	psig = tsk->parent->sighand;
-+	psig = tsk_parent->sighand;
- 	spin_lock_irqsave(&psig->siglock, flags);
- 	if (!tsk->ptrace && sig == SIGCHLD &&
- 	    (psig->action[SIGCHLD-1].sa.sa_handler == SIG_IGN ||
-@@ -1989,8 +1993,8 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
- 			sig = 0;
- 	}
- 	if (valid_signal(sig) && sig)
--		__group_send_sig_info(sig, &info, tsk->parent);
--	__wake_up_parent(tsk, tsk->parent);
-+		__group_send_sig_info(sig, &info, tsk_parent);
-+	__wake_up_parent(tsk, tsk_parent);
- 	spin_unlock_irqrestore(&psig->siglock, flags);
- 
- 	return autoreap;
--- 
-2.25.0.341.g760bfbb309-goog
-
+Maybe your explanation is better, but I did try to explain the same =
+thing.
+I=E2=80=99ll let Andrew to decide if he would like to update the commit =
+log a bit
+with your wording.=
