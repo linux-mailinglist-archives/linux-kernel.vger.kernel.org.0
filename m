@@ -2,70 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11D6315489C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:55:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A37E71548A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:55:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbgBFPzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 10:55:11 -0500
-Received: from mga01.intel.com ([192.55.52.88]:29493 "EHLO mga01.intel.com"
+        id S1727785AbgBFPzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 10:55:20 -0500
+Received: from foss.arm.com ([217.140.110.172]:60212 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727516AbgBFPzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 10:55:10 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 07:55:09 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,410,1574150400"; 
-   d="scan'208";a="226186351"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga008.fm.intel.com with ESMTP; 06 Feb 2020 07:55:09 -0800
-Date:   Thu, 6 Feb 2020 07:55:08 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
-        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
-        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
-        Serge Ayoun <serge.ayoun@intel.com>
-Subject: Re: [PATCH v25 07/21] x86/sgx: Enumerate and track EPC sections
-Message-ID: <20200206155508.GC13067@linux.intel.com>
-References: <20200204060545.31729-1-jarkko.sakkinen@linux.intel.com>
- <20200204060545.31729-8-jarkko.sakkinen@linux.intel.com>
- <20200205195700.GJ4877@linux.intel.com>
- <20200206153519.GB9694@linux.intel.com>
+        id S1727630AbgBFPzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 10:55:19 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 10D961FB;
+        Thu,  6 Feb 2020 07:55:19 -0800 (PST)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0A2533F68E;
+        Thu,  6 Feb 2020 07:55:17 -0800 (PST)
+Date:   Thu, 6 Feb 2020 15:55:12 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     peng.fan@nxp.com
+Cc:     viresh.kumar@linaro.org, f.fainelli@gmail.com, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH 1/2] firmware: arm_scmi: mailbox: share shmem for
+ protocols
+Message-ID: <20200206155512.GA55006@bogus>
+References: <1580993966-17757-1-git-send-email-peng.fan@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200206153519.GB9694@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1580993966-17757-1-git-send-email-peng.fan@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 06, 2020 at 05:35:19PM +0200, Jarkko Sakkinen wrote:
-> On Wed, Feb 05, 2020 at 11:57:00AM -0800, Sean Christopherson wrote:
-> >   3. Breaks on-demand paging when running in a VM, e.g. if the VMM chooses
-> >      to allocate a physical EPC page when it's actually accessed by the
-> >      VM.  I don't expect this to be a problem any time soon, as all VMMs
-> >      will likely preallocate EPC pages until KVM (or any other hypervisor)
-> >      gains EPC oversusbscription support, which may or may not ever happen.
-> >      But, I'd prefer to simply not have the problem in the first place.
+On Thu, Feb 06, 2020 at 08:59:25PM +0800, peng.fan@nxp.com wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> So wouldn't it be better to revisit this when the VM changes are added.
+> When shmem property of protocol is not specificed, let it use
+> its parent's shmem property.
 
-No, because the guest kernel (this code) and the host hypervisor (KVM code)
-are separate assets.  Folks will pick up this code use it for guest kernels
-and start deploying it, e.g. for cloud workloads.  At some point after KVM
-support lands upstream (assuming we get there), CSPs et al will (in theory)
-move to the upstream version of KVM instead of running out-of-tree patches.
-But, the guest kernels will stay the same and continue to exhibit the
-undesirable behavior.
+I had replied already to the thread without ALKML you had sent earlier,
+please refer them.
 
-KVM is also not the only hypervisor that supports SGX, e.g. HyperV already
-supports exposing SGX to guests.
+-- 
+Regards,
+Sudeep
