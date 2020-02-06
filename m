@@ -2,195 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E710154EC3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 23:12:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7009F154ED5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 23:17:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbgBFWMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 17:12:23 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:57788 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727481AbgBFWMX (ORCPT
+        id S1727598AbgBFWRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 17:17:52 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:51066 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727517AbgBFWRw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 17:12:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581027141;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xnxqE/nCX2EzFDbA9kwFrPUv5TZytfq4VJeA0RRzpMU=;
-        b=E4ZDUGpmp2oHoTMhETV2mrexFeQo6QizBUAS1AngJSea8F8fHZNwkElTcLVOG4QxURnA46
-        4tzRZSHrgfhX0cm7C3LMj6ZAhYB/9/Y3jPqbyZjC+8GTMIyWFbSDU2oSiFuoGwJv6uWDbu
-        4JlbyfRqwW21aWWNVr6YvRzUmlyEITg=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-176-beXv0IpTNpWuaRYR-tlp-Q-1; Thu, 06 Feb 2020 17:12:15 -0500
-X-MC-Unique: beXv0IpTNpWuaRYR-tlp-Q-1
-Received: by mail-qt1-f198.google.com with SMTP id h11so237625qtq.11
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 14:12:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xnxqE/nCX2EzFDbA9kwFrPUv5TZytfq4VJeA0RRzpMU=;
-        b=o73hYKmT2j/OcB8UFTAK591yU1lDZRLLJQwW1U8AMWj5CeYOUi9k3HCMnSEBrVzr7F
-         T2fCd2uCaThL/Toiawgpd4GP/00GaurPBRqcl9FcV2MZZnk8A118O1AlbwOVLJuRis3k
-         xVLn+QlPSHPpWx9L1+aya6YHAQLyce/0frsrpUTyVxocWYcEIkxlmTcoeL4L9OPmFS2E
-         gWjdkM+PWS/5pqhvLdy0kBhVGYB3EY3EZAQqeBrP+lTPKMy+TVj7xUoSyFgmD7yU2drM
-         m7zGcZ945TsjRu7koBsdEd8O6ly/nYupZqAIgNvSKNJVTzbGHMqhWdYxt2P2EKgASyrI
-         eVnw==
-X-Gm-Message-State: APjAAAWxMTQL2hxYwzPrGfTOIbnY6cXjAG/Kq0wddv2c/rq2813ok94o
-        s0Poh/dHTlrFEDTxyh278Mu4TNGEDzTvN8hZXNV37qsA8OgvpfvII7A0XE78wfwqBX1OiDnGU0r
-        YQaMqerd3c2GAJKY719S6quGL
-X-Received: by 2002:ac8:1c1d:: with SMTP id a29mr4676783qtk.183.1581027135111;
-        Thu, 06 Feb 2020 14:12:15 -0800 (PST)
-X-Google-Smtp-Source: APXvYqw/2cyK6F4lh5rp4dz7WvwTupqk8fbtvVzQEcyTi4bd7WqahSqSpQi7XlP32hR4RTgKgW30Yg==
-X-Received: by 2002:ac8:1c1d:: with SMTP id a29mr4676750qtk.183.1581027134836;
-        Thu, 06 Feb 2020 14:12:14 -0800 (PST)
-Received: from xz-x1 ([2607:9880:19c8:32::2])
-        by smtp.gmail.com with ESMTPSA id w1sm357608qtk.31.2020.02.06.14.12.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 14:12:14 -0800 (PST)
-Date:   Thu, 6 Feb 2020 17:12:08 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, Marc Zyngier <maz@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-mips@vger.kernel.org, kvm@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Philippe =?utf-8?Q?Mathieu-Daud=C3=A9?= <f4bug@amsat.org>
-Subject: Re: [PATCH v5 18/19] KVM: Dynamically size memslot array based on
- number of used slots
-Message-ID: <20200206221208.GI700495@xz-x1>
-References: <20200121223157.15263-1-sean.j.christopherson@intel.com>
- <20200121223157.15263-19-sean.j.christopherson@intel.com>
+        Thu, 6 Feb 2020 17:17:52 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 016MHcUu116917;
+        Thu, 6 Feb 2020 16:17:38 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1581027458;
+        bh=R4m5Z48Yi0CW9KBoBFrwaaOfXjcfapPw/OutRzEAJwQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ELSdhvvGw0jm3cBcckyHHAmrIO+i/O1/tdh6xeg20hjXDazE9m5tms0Mzz/eQ2mHo
+         shcrYm+M09FntY3LwtoJ2GUBJwVOdhe4rVYsC/Tg6EcQfC2UTXOwDfqX9W1lyTvJCU
+         FeOhTPSwqngcOoawuX69/CeTzVCS120BN48HUpMA=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 016MHcfK028517
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Feb 2020 16:17:38 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 6 Feb
+ 2020 16:17:38 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 6 Feb 2020 16:17:38 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 016MHbDR103208;
+        Thu, 6 Feb 2020 16:17:38 -0600
+Subject: Re: [PATCH net-next v2] net: phy: dp83867: Add speed optimization
+ feature
+To:     Heiner Kallweit <hkallweit1@gmail.com>, <andrew@lunn.ch>,
+        <f.fainelli@gmail.com>
+CC:     <linux@armlinux.org.uk>, <davem@davemloft.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20200204181319.27381-1-dmurphy@ti.com>
+ <0ebcd40d-b9cc-1a76-bb18-91d8350aa1cd@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <47b9b462-6649-39a7-809f-613ce832bd5c@ti.com>
+Date:   Thu, 6 Feb 2020 16:13:09 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200121223157.15263-19-sean.j.christopherson@intel.com>
+In-Reply-To: <0ebcd40d-b9cc-1a76-bb18-91d8350aa1cd@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 02:31:56PM -0800, Sean Christopherson wrote:
-> Now that the memslot logic doesn't assume memslots are always non-NULL,
-> dynamically size the array of memslots instead of unconditionally
-> allocating memory for the maximum number of memslots.
-> 
-> Note, because a to-be-deleted memslot must first be invalidated, the
-> array size cannot be immediately reduced when deleting a memslot.
-> However, consecutive deletions will realize the memory savings, i.e.
-> a second deletion will trim the entry.
-> 
-> Tested-by: Christoffer Dall <christoffer.dall@arm.com>
-> Tested-by: Marc Zyngier <maz@kernel.org>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  include/linux/kvm_host.h |  2 +-
->  virt/kvm/kvm_main.c      | 31 ++++++++++++++++++++++++++++---
->  2 files changed, 29 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index 60ddfdb69378..8bb6fb127387 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -431,11 +431,11 @@ static inline int kvm_arch_vcpu_memslots_id(struct kvm_vcpu *vcpu)
->   */
->  struct kvm_memslots {
->  	u64 generation;
-> -	struct kvm_memory_slot memslots[KVM_MEM_SLOTS_NUM];
->  	/* The mapping table from slot id to the index in memslots[]. */
->  	short id_to_index[KVM_MEM_SLOTS_NUM];
->  	atomic_t lru_slot;
->  	int used_slots;
-> +	struct kvm_memory_slot memslots[];
+Heiner
 
-This patch is tested so I believe this works, however normally I need
-to do similar thing with [0] otherwise gcc might complaint.  Is there
-any trick behind to make this work?  Or is that because of different
-gcc versions?
+On 2/5/20 3:16 PM, Heiner Kallweit wrote:
+> On 04.02.2020 19:13, Dan Murphy wrote:
+>> Set the speed optimization bit on the DP83867 PHY.
+>> This feature can also be strapped on the 64 pin PHY devices
+>> but the 48 pin devices do not have the strap pin available to enable
+>> this feature in the hardware.  PHY team suggests to have this bit set.
+>>
+>> With this bit set the PHY will auto negotiate and report the link
+>> parameters in the PHYSTS register.  This register provides a single
+>> location within the register set for quick access to commonly accessed
+>> information.
+>>
+>> In this case when auto negotiation is on the PHY core reads the bits
+>> that have been configured or if auto negotiation is off the PHY core
+>> reads the BMCR register and sets the phydev parameters accordingly.
+>>
+>> This Giga bit PHY can throttle the speed to 100Mbps or 10Mbps to accomodate a
+>> 4-wire cable.  If this should occur the PHYSTS register contains the
+>> current negotiated speed and duplex mode.
+>>
+>> In overriding the genphy_read_status the dp83867_read_status will do a
+>> genphy_read_status to setup the LP and pause bits.  And then the PHYSTS
+>> register is read and the phydev speed and duplex mode settings are
+>> updated.
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> ---
+>> v2 - Updated read status to call genphy_read_status first, added link_change
+>> callback to notify of speed change and use phy_set_bits - https://lore.kernel.org/patchwork/patch/1188348/
+>>
+> As stated in the first review, it would be appreciated if you implement
+> also the downshift tunable. This could be a separate patch in this series.
+> Most of the implementation would be boilerplate code.
 
->  };
->  
->  struct kvm {
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 9b614cf2ca20..ed392ce64e59 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -565,7 +565,7 @@ static struct kvm_memslots *kvm_alloc_memslots(void)
->  		return NULL;
->  
->  	for (i = 0; i < KVM_MEM_SLOTS_NUM; i++)
-> -		slots->id_to_index[i] = slots->memslots[i].id = -1;
-> +		slots->id_to_index[i] = -1;
->  
->  	return slots;
->  }
-> @@ -1077,6 +1077,32 @@ static struct kvm_memslots *install_new_memslots(struct kvm *kvm,
->  	return old_memslots;
->  }
->  
-> +/*
-> + * Note, at a minimum, the current number of used slots must be allocated, even
-> + * when deleting a memslot, as we need a complete duplicate of the memslots for
-> + * use when invalidating a memslot prior to deleting/moving the memslot.
-> + */
-> +static struct kvm_memslots *kvm_dup_memslots(struct kvm_memslots *old,
-> +					     enum kvm_mr_change change)
-> +{
-> +	struct kvm_memslots *slots;
-> +	size_t old_size, new_size;
-> +
-> +	old_size = sizeof(struct kvm_memslots) +
-> +		   (sizeof(struct kvm_memory_slot) * old->used_slots);
-> +
-> +	if (change == KVM_MR_CREATE)
-> +		new_size = old_size + sizeof(struct kvm_memory_slot);
-> +	else
-> +		new_size = old_size;
-> +
-> +	slots = kvzalloc(new_size, GFP_KERNEL_ACCOUNT);
-> +	if (likely(slots))
-> +		memcpy(slots, old, old_size);
 
-(Maybe directly copy into it?)
+I looked at this today and there are no registers that allow tuning the 
+downshift attempts.  There is only a RO register that tells you how many 
+attempts it took to achieve a link.  So at the very least we could put 
+in the get_tunable but there will be no set.
 
-> +
-> +	return slots;
-> +}
-> +
->  static int kvm_set_memslot(struct kvm *kvm,
->  			   const struct kvm_userspace_memory_region *mem,
->  			   struct kvm_memory_slot *old,
-> @@ -1087,10 +1113,9 @@ static int kvm_set_memslot(struct kvm *kvm,
->  	struct kvm_memslots *slots;
->  	int r;
->  
-> -	slots = kvzalloc(sizeof(struct kvm_memslots), GFP_KERNEL_ACCOUNT);
-> +	slots = kvm_dup_memslots(__kvm_memslots(kvm, as_id), change);
->  	if (!slots)
->  		return -ENOMEM;
-> -	memcpy(slots, __kvm_memslots(kvm, as_id), sizeof(struct kvm_memslots));
->  
->  	if (change == KVM_MR_DELETE || change == KVM_MR_MOVE) {
->  		/*
-> -- 
-> 2.24.1
-> 
+So we should probably skip this for this PHY.
 
--- 
-Peter Xu
+Dan
 
