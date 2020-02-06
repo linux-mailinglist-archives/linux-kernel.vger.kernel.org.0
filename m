@@ -2,73 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76A9A1546F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:00:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D54D154764
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:12:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727548AbgBFPAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 10:00:05 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36326 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbgBFPAF (ORCPT
+        id S1727833AbgBFPLy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 10:11:54 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37516 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727522AbgBFPLn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 10:00:05 -0500
-Received: by mail-io1-f67.google.com with SMTP id d15so6649459iog.3;
-        Thu, 06 Feb 2020 07:00:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0aeF5q1G0b73eoVDS2ac2sJ7K68iVciT6eE2yPZtXHY=;
-        b=elysSnpttUIUL+HnDwisS+ujdHIotO/snGFPQXZZvkTXPEuR9rfRUl3lzb8v7OoB8C
-         9IfMuYl+P+mG0llybzT47GOIwMk1ziCGFBVxjvoqNq+E9VZ8dadJuwv3kGfLtfvSP6pI
-         CRz5e9kbOA8HHcDaz3+ATOCjLsjb/Wvp3t7ZtTK/wQSy2rcd5Mlp0Ee94b6bvyR1z/Ry
-         +PeFIqdg15wss+TQffZXE6jUFNLu5ngzXPyd7cLfYFOjY6MzAKLNnt7NvAAWEdD/itqh
-         zUup/d8x0xdjtjuzO4m3eUgocSc9K+j6Ydaq7UwBb+9OTtOmQJ7h+z/Fa5wl5iNTWvcs
-         hEBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0aeF5q1G0b73eoVDS2ac2sJ7K68iVciT6eE2yPZtXHY=;
-        b=qLCvLim9adOSUvYZislXYUgKAiQSfTtyDSuOyFbq8mNZ3rhwXDyHxcyM5X0ER0Kn9c
-         6TgnnNNxca0lDBrq8mMbSO/KM2yA0Vd9wcCz63+uS49uvKsusjK4Cfyarw1bdcECzdL9
-         8+6TAApdpT9HuKUDIQQX0Po/Lgqc7RRkrEWGS+MQgoYitl6Yz3OZGDstiOsjcVbdFIt7
-         +IOhkDZfc5oqJ6V+yssK0kPoo4cIlr+GdOpEA5wlwTcw8fGDTl93vO376L8n5q+2vbos
-         smX60kZFvCvEvKPsXoUQno9CQ10jQrIUiPDpjDTGj7raJlsBQNdHE4cmMDf0c9jBnRGn
-         TLZg==
-X-Gm-Message-State: APjAAAWYx+6yRe8D4aPjzSQNRO43kQ8Ri1bbLDUmI5x3n23TBod+JVLS
-        rFzz1h8aJrxCfvfGnZz/bJ+F1pwzubnEJG5piS4=
-X-Google-Smtp-Source: APXvYqxkTC68/mfvtuxSHKMnH0Wkjkd0rk/KuumAHnhmOJfquHLD75sVXLQ73KJAz4U4IFF8i2RAghE1ku4PpNRN+cc=
-X-Received: by 2002:a5e:da09:: with SMTP id x9mr31540090ioj.33.1581001203294;
- Thu, 06 Feb 2020 07:00:03 -0800 (PST)
+        Thu, 6 Feb 2020 10:11:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=qAWbALPQo8/7ZJiptwDEhRrrdBNpEoxar+lbkVRuAXo=; b=kkG5AvKqs7FgbTx1sDRnpdMTZc
+        BzBObTMElPe+LuKQATTxfQxOvzCr3lBLeGAPdfZafBDKaD6N+Fky8AcloGDTeDfemb1S9o3tCt5b5
+        VkwP0brh0w4wzD18UdcrDhuClv2L6gzwKCJLEFR+ZbYALVSceI2+qwGF0tgRyP2yTuGegFc9hv7iI
+        bgoJ8j2XLkrtmkg5E3CXbXjDyKxQUox1dMxnAmCa9sFuohwnzWxKUz7Cg5bLsKE/M7Q6PPhlYZuh0
+        15zhBPgDeNPdYUSxuBsvE53LMnBRjYeWXa9LizeXtRg8Wz9V9+7J1SjVOs4mK/e9B1qCad6uZ6vD7
+        l+u1K4uQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iziWV-0004zG-P7; Thu, 06 Feb 2020 14:52:55 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DC8623016E5;
+        Thu,  6 Feb 2020 15:51:06 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 549F42B811ED7; Thu,  6 Feb 2020 15:52:53 +0100 (CET)
+Date:   Thu, 6 Feb 2020 15:52:53 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Kristen Carlson Accardi <kristen@linux.intel.com>,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        arjan@linux.intel.com, rick.p.edgecombe@intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+Subject: Re: [RFC PATCH 08/11] x86: Add support for finer grained KASLR
+Message-ID: <20200206145253.GT14914@hirez.programming.kicks-ass.net>
+References: <20200205223950.1212394-1-kristen@linux.intel.com>
+ <20200205223950.1212394-9-kristen@linux.intel.com>
+ <20200206103830.GW14879@hirez.programming.kicks-ass.net>
+ <202002060356.BDFEEEFB6C@keescook>
 MIME-Version: 1.0
-References: <1580980321-19256-1-git-send-email-harigovi@codeaurora.org>
-In-Reply-To: <1580980321-19256-1-git-send-email-harigovi@codeaurora.org>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Thu, 6 Feb 2020 07:59:52 -0700
-Message-ID: <CAOCk7Nr9n-xLtWq=LEM-QFhJcY+QOuzazsoi-yjErA9od2Jwmw@mail.gmail.com>
-Subject: Re: [Freedreno] [v1] drm/msm/dsi/pll: call vco set rate explicitly
-To:     Harigovindan P <harigovi@codeaurora.org>
-Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Rob Clark <robdclark@gmail.com>, nganji@codeaurora.org,
-        Sean Paul <seanpaul@chromium.org>, kalyan_t@codeaurora.org,
-        "Kristian H. Kristensen" <hoegsberg@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202002060356.BDFEEEFB6C@keescook>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 6, 2020 at 2:13 AM Harigovindan P <harigovi@codeaurora.org> wrote:
->
-> For a given byte clock, if VCO recalc value is exactly same as
-> vco set rate value, vco_set_rate does not get called assuming
-> VCO is already set to required value. But Due to GDSC toggle,
-> VCO values are erased in the HW. To make sure VCO is programmed
-> correctly, we forcefully call set_rate from vco_prepare.
+On Thu, Feb 06, 2020 at 04:06:17AM -0800, Kees Cook wrote:
+> On Thu, Feb 06, 2020 at 11:38:30AM +0100, Peter Zijlstra wrote:
+> > On Wed, Feb 05, 2020 at 02:39:47PM -0800, Kristen Carlson Accardi wrote:
+> > > +static long __start___ex_table_addr;
+> > > +static long __stop___ex_table_addr;
+> > > +static long _stext;
+> > > +static long _etext;
+> > > +static long _sinittext;
+> > > +static long _einittext;
+> > 
+> > Should you not also adjust __jump_table, __mcount_loc,
+> > __kprobe_blacklist and possibly others that include text addresses?
+> 
+> These don't appear to be sorted at build time. 
 
-Is this specific to certain SoCs? I don't think I've observed this.
+The ORC tables are though:
+
+  57fa18994285 ("scripts/sorttable: Implement build-time ORC unwind table sorting")
+
+> AIUI, the problem with
+> ex_table and kallsyms is that they're preprocessed at build time and
+> opaque to the linker's relocation generation.
+
+I was under the impression these tables no longer had relocation data;
+that since they're part of the main kernel, the final link stage could
+completely resolve them.
+
+That said, I now see we actually have .rela__extable .rela.orc_unwind_ip
+etc.
+
+> For example, looking at __jump_table, it gets sorted at runtime:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/jump_label.c#n474
+
+For now, yes. Depends a bit on how hard people are pushing on getting
+jump_labels working earlier and ealier in boot.
+
+> As you're likely aware, we have a number of "special"
+> sections like this, currently collected manually, see *_TEXT:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/kernel/vmlinux.lds.S#n128
+
+Right.
+
+> I think we can actually add (most of) these to fg-kaslr's awareness (at
+> which point their order will be shuffled respective to other sections,
+> but with their content order unchanged), but it'll require a bit of
+> linker work. I'll mention this series's dependency on the linker's
+> orphaned section handling in another thread...
+
+I have some patches pending where we rely on link script order. That's
+data sections though, so I suppose that's safe for the moment.
+
