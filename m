@@ -2,125 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6184E153CFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 03:40:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B622E153D03
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 03:48:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727663AbgBFCkH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 21:40:07 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:36554 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727548AbgBFCkH (ORCPT
+        id S1727705AbgBFCsa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 21:48:30 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:48995 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727307AbgBFCs3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 21:40:07 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1580956806; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=x3250bc90bbLo/8nZIXvtLUJ7DKa2tZzcGBIY7u8bik=;
- b=Qv5ntAM929Si9SDcpTuCy9uw0QcJske/k08xOYdDv9/k8Zcb+fkYXx1uFr8+sDRp3jG8+Y71
- lPQkIj2TlnEaQIiMey1bqbqbYvHIZ2n5Gb7tq5UMvHmCIstROic+Xn5RdBEAFH5JZ5BHMahy
- sQmkAOc1auNIJRV7sRcuPAYpwvo=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e3b7c80.7f99b82640a0-smtp-out-n03;
- Thu, 06 Feb 2020 02:40:00 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 75EDEC447A4; Thu,  6 Feb 2020 02:39:58 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        Wed, 5 Feb 2020 21:48:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580957308;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=scPthlMCXPeadRfg0S1DOYHQjNbqePUziN1beyiv4iw=;
+        b=cl2cILSIJ4NwXJhY7Dp/37xaX8Z6FPRbsLaTikqYJro6GAH4giholxbFM4A4uFza0//7mQ
+        pGVQnWMquQB6k+ZfahoCj1XBWYekQGIrGRoiZLnPj7+G/TadK3prBh9f9jqxWpqOclXQmo
+        br+iEtZyupJzqvmGV1TWl2AnDW+/oVE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-322-OdVFOAnnPdmHaHjcIcFyPw-1; Wed, 05 Feb 2020 21:48:24 -0500
+X-MC-Unique: OdVFOAnnPdmHaHjcIcFyPw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9CEAFC43383;
-        Thu,  6 Feb 2020 02:39:57 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DD46218AB2C0;
+        Thu,  6 Feb 2020 02:48:22 +0000 (UTC)
+Received: from localhost (ovpn-12-19.pek2.redhat.com [10.72.12.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8BAD960BF7;
+        Thu,  6 Feb 2020 02:48:19 +0000 (UTC)
+Date:   Thu, 6 Feb 2020 10:48:16 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Wei Yang <richard.weiyang@gmail.com>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v1] mm/memory_hotplug: Easier calculation to get pages to
+ next section boundary
+Message-ID: <20200206024816.GK8965@MiWiFi-R3L-srv>
+References: <20200205135251.37488-1-david@redhat.com>
+ <20200205231945.GB28446@richard>
+ <20200205235007.GA28870@richard>
+ <20200206001317.GH8965@MiWiFi-R3L-srv>
+ <20200206003736.GI8965@MiWiFi-R3L-srv>
+ <20200206022644.6u7pxf7by2w5trmi@master>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 06 Feb 2020 10:39:57 +0800
-From:   Can Guo <cang@codeaurora.org>
-To:     Stanley Chu <stanley.chu@mediatek.com>
-Cc:     kuohong.wang@mediatek.com, asutoshd@codeaurora.org,
-        nguyenb@codeaurora.org, hongwus@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 6/8] scsi: ufs: Add dev ref clock gating wait time
- support
-In-Reply-To: <1580950556.27391.11.camel@mtksdccf07>
-References: <1580721472-10784-1-git-send-email-cang@codeaurora.org>
- <1580721472-10784-7-git-send-email-cang@codeaurora.org>
- <1580871040.21785.7.camel@mtksdccf07>
- <d37515ab264b0c46848ee2b88ba0a676@codeaurora.org>
- <1580950556.27391.11.camel@mtksdccf07>
-Message-ID: <8b6603db0bb793365542c39d33a64a0e@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200206022644.6u7pxf7by2w5trmi@master>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-06 08:55, Stanley Chu wrote:
-> Hi Can,
+On 02/06/20 at 02:26am, Wei Yang wrote:
+> On Thu, Feb 06, 2020 at 08:37:36AM +0800, Baoquan He wrote:
+> >On 02/06/20 at 08:13am, Baoquan He wrote:
+> >> On 02/06/20 at 07:50am, Wei Yang wrote:
+> >> > On Thu, Feb 06, 2020 at 07:19:45AM +0800, Wei Yang wrote:
+> >> > >On Wed, Feb 05, 2020 at 02:52:51PM +0100, David Hildenbrand wrote:
+> >> > >>Let's use a calculation that's easier to understand and calculates the
+> >> > >>same result. Reusing existing macros makes this look nicer.
+> >> > >>
+> >> > >>We always want to have the number of pages (> 0) to the next section
+> >> > >>boundary, starting from the current pfn.
+> >> > >>
+> >> > >>Suggested-by: Segher Boessenkool <segher@kernel.crashing.org>
+> >> > >>Cc: Andrew Morton <akpm@linux-foundation.org>
+> >> > >>Cc: Michal Hocko <mhocko@kernel.org>
+> >> > >>Cc: Oscar Salvador <osalvador@suse.de>
+> >> > >>Cc: Baoquan He <bhe@redhat.com>
+> >> > >>Cc: Wei Yang <richardw.yang@linux.intel.com>
+> >> > >>Signed-off-by: David Hildenbrand <david@redhat.com>
+> >> > >
+> >> > >Reviewed-by: Wei Yang <richardw.yang@linux.intel.com>
+> >> > >
+> >> > >BTW, I got one question about hotplug size requirement.
+> >> > >
+> >> > >I thought the hotplug range should be section size aligned, while taking a
+> >> > >look into current code function check_hotplug_memory_range() guard the range.
+> >> 
+> >> A good question. The current code should be block size aligned. I
+> >> remember in some places we assume each block comprise all the sections.
+> >> Can't imagine one or some of them are half section filled.
+> >
+> >I could be wrong, half filled block may not cause problem. 
+> >
 > 
-> On Wed, 2020-02-05 at 12:52 +0800, Can Guo wrote:
-> 
-> 
->> Hi Stanley,
->> 
->> We used to ask vendors about it, 50 is somehow agreed by them. Do you
->> have a
->> better value in mind?
->> 
->> For me, I just wanted to give it 10, so that we can directly use
->> usleep_range
->> with it, no need to decide whether to use udelay or usleep_range.
-> 
-> Actually I do not have any value in mind because I guess the 50us here
-> is just a margin time added for safety as your comments: "Give it more
-> time to be on the safe side".
-> 
-> An example case is that some vendors only specify 1us in
-> bRefClkGatingWaitTime, so this 50us may be too long compared to 
-> device's
-> requirement. If such device really needs this additional 50us, it shall
-> be specified in bRefClkGatingWaitTime.
-> 
-> So if this additional delay does not have any special reason or not
-> mentioned by UFS specification, would you consider move it to vendor
-> specific implementations. By this way, it would be more flexible to be
-> controlled by vendors or by platforms.
-> 
-> Thanks,
-> Stanley
-> 
->> 
->> Thanks,
->> Can Guo.
->> 
->> >>  				      &dev_info->model, SD_ASCII_STD);
+> David must be angry about our flooding the mail list :-)
 
-Hi Stanley,
+Believe he won't, :-) If you like, we can talk off line.
 
-FYI, the default values in bRefClkGatingWaitTime from vendors are around
-50 - 100.
+> 
+> Check the code again, there are two memory range check:
+> 
+>   * check_hotplug_memory_range(), block/section aligned
+>   * check_pfn_span(), subsection aligned
+> 
+> The second check, check_pfn_span() in __add_pages(), enable the capability to
+> add a memory range with subsection size.
+> 
+> This means hotplug still keeps section alignment.
 
-I agree with you. I will just remove the extra delay here and let's
-handle it in our own platform drivers.
+memremap_pages() also call add_pages(), it doesn't have the
+check_hotplug_memory_range() invocation. check_pfn_span() is made for
+it specifically.
 
-Thanks,
-Can Guo.
+> 
+> BTW, __add_pages() share the same logic as __remove_pages(). Why not change it
+> too? Do I miss something or I don't have the latest source code?
+
+Good question, and I think it need. Just David is refactoring/cleaning
+up the remove_pages() code path, this is found out by Segher from patch
+reviewing.
+
