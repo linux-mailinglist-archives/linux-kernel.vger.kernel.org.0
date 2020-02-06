@@ -2,95 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 071EE1543BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 13:06:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5BB21543C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 13:09:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727779AbgBFMGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 07:06:21 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43794 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbgBFMGU (ORCPT
+        id S1727902AbgBFMJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 07:09:04 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:52293 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727111AbgBFMJD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 07:06:20 -0500
-Received: by mail-ot1-f66.google.com with SMTP id p8so5201247oth.10
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 04:06:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=YOaPcVEE5NfGq9wvnq0/vJzrPpGVkSOEyM+hIny1xiQ=;
-        b=NeZA00ZgkpYbb57jZICxPQwzEkO47PnrZTJc74accDmoslXdCg9Y9+DDYQf85OELqc
-         lM4Z7OJJMutdJRHHEeXLZhqvP/cJfQggycs1Ntn64XJm3iZNaCua1c1VTPNlxnc1/8MC
-         KIcZ5PKTsO8DuOObuGbYqhYjNbgIGt5wFXzQ4=
+        Thu, 6 Feb 2020 07:09:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580990942;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=E0dTUFkCATPXVv287UdMap2gGam4zjJ6lvZcBnT8osI=;
+        b=ElX4uVDHHPqAMBa8hVyKF048pADsMrhExmmplOphx9HtW/at+8DJBpDw+DD6zjkTooI9Xq
+        K0D4k3rQkMCQff5R/0R1HmNfy1C5PmiXyOnUz8oscXoGctY+o7tpCUpsCqzH4mjmYdrVEO
+        YcgEMNSi173ugTgoe8+IW3t+oq2TrNE=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-364-ofFmDTLPMXOlRutpQcwiHA-1; Thu, 06 Feb 2020 07:08:57 -0500
+X-MC-Unique: ofFmDTLPMXOlRutpQcwiHA-1
+Received: by mail-wm1-f70.google.com with SMTP id d4so2541242wmd.7
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 04:08:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YOaPcVEE5NfGq9wvnq0/vJzrPpGVkSOEyM+hIny1xiQ=;
-        b=LDcZIQHJOEqp4tEv54H54KDJC8XCTvCXgrpdLqaeZnWwef7yIZ2SS51drLljWY2/IK
-         GBbuRlymABg02PXuQlQqTa7fldis+IPgStRABWg5oIicjnzD5pmCZOiZRkQtYFwlGCRu
-         CDTss9fMkTNsSYt20UbS0DnoVz8fuN9YTmIc1C5k6/MMGWG2Kh7+M5T9k8XLU4NETLVd
-         yFNHZPaL1nxSlbSK7hXEJDToi4+qnA0m+4TW+kx55GO5Zp90iUkz3pOcEF3Z/9Uc8Dkt
-         B/WsRrXOGkf6AsFprA5di3VcLoCW3cg5F6KxEG1JBOaJOoW+3kSyRf+yUFeDXb7Ypnfl
-         mh1A==
-X-Gm-Message-State: APjAAAWFNvr8B5w4NEHpgBYvb+6T0CcX3jePTfJSBSljS9MIIUiA3VJF
-        0H1THiZ2d/QrYwRnOD6glJ/N8g==
-X-Google-Smtp-Source: APXvYqxsX0xPKqXQ7FVbpOoF15/VUVG/NtfVZJQgYeMcBk/FwIaTRc4RuSWgy1tRMM+d4SxNSL/VDA==
-X-Received: by 2002:a9d:6290:: with SMTP id x16mr29107620otk.343.1580990779855;
-        Thu, 06 Feb 2020 04:06:19 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id a14sm1037734otr.54.2020.02.06.04.06.18
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=E0dTUFkCATPXVv287UdMap2gGam4zjJ6lvZcBnT8osI=;
+        b=XL2YcOvyUgRsIbJKJWoS7smRJGbQX6JVmf6ABv4dH9ovEhXMLkh1wqip6/Bq/ErHTe
+         0Oc0F/PddebeISxXavAZIvwTCDgB8xcYBhADtMVE1bIxQwOjW8fLJKnjjHninA6dKWee
+         vWTZOV9NlLyqOjih8rSYy4++f0zJQZoJZgkm/tY82t5hRVI6SjSlhZ4pnVKXj0DR8MIY
+         l6pxkD0qGMHD/UL0u2L3U0mmR+JIbD82mmL30TQeWuswD5QYlbfZUmLnp2y5GvpGOv2J
+         EIBqxnIWcwTHPuy9ZiNM5sO5Tq9eBqkcNsE5hm5heVnRII1CnWRWILyLFmBytYr42ZAq
+         9dNw==
+X-Gm-Message-State: APjAAAWnXtZjb2VEQkudC4J9dB8eOhexDsMF3pSACdmB57/9M9dD2ScU
+        XVfS08GVZ6U5SmWXVONeTd0rABQ90R0tjeEOjE5NGmThUp64XXIpeJBxaXWyMrQAtrKxdhlNlmo
+        u3mYpjwBzfUrItnPr62gMwycq
+X-Received: by 2002:a1c:7317:: with SMTP id d23mr4362677wmb.165.1580990936357;
+        Thu, 06 Feb 2020 04:08:56 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxbbMXe8FHfJITDoTG5ycCef7EyduSOW9ahh6f1qWfindtlKQK2JEURiiqEWYgbRJ/1F6WOSw==
+X-Received: by 2002:a1c:7317:: with SMTP id d23mr4362665wmb.165.1580990936162;
+        Thu, 06 Feb 2020 04:08:56 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id a22sm3490157wmd.20.2020.02.06.04.08.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 04:06:18 -0800 (PST)
-Date:   Thu, 6 Feb 2020 04:06:17 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Kristen Carlson Accardi <kristen@linux.intel.com>,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        arjan@linux.intel.com, rick.p.edgecombe@intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Subject: Re: [RFC PATCH 08/11] x86: Add support for finer grained KASLR
-Message-ID: <202002060356.BDFEEEFB6C@keescook>
-References: <20200205223950.1212394-1-kristen@linux.intel.com>
- <20200205223950.1212394-9-kristen@linux.intel.com>
- <20200206103830.GW14879@hirez.programming.kicks-ass.net>
+        Thu, 06 Feb 2020 04:08:55 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH 04/26] KVM: x86: Add a kvm_x86_ops hook to query virtualized MSR support
+In-Reply-To: <20200205170209.GH4877@linux.intel.com>
+References: <20200129234640.8147-1-sean.j.christopherson@intel.com> <20200129234640.8147-5-sean.j.christopherson@intel.com> <87eev9ksqy.fsf@vitty.brq.redhat.com> <20200205145923.GC4877@linux.intel.com> <8736bpkqif.fsf@vitty.brq.redhat.com> <20200205153508.GD4877@linux.intel.com> <87tv45j7nf.fsf@vitty.brq.redhat.com> <20200205170209.GH4877@linux.intel.com>
+Date:   Thu, 06 Feb 2020 13:08:54 +0100
+Message-ID: <871rr7hq95.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200206103830.GW14879@hirez.programming.kicks-ass.net>
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 06, 2020 at 11:38:30AM +0100, Peter Zijlstra wrote:
-> On Wed, Feb 05, 2020 at 02:39:47PM -0800, Kristen Carlson Accardi wrote:
-> > +static long __start___ex_table_addr;
-> > +static long __stop___ex_table_addr;
-> > +static long _stext;
-> > +static long _etext;
-> > +static long _sinittext;
-> > +static long _einittext;
-> 
-> Should you not also adjust __jump_table, __mcount_loc,
-> __kprobe_blacklist and possibly others that include text addresses?
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-These don't appear to be sorted at build time. AIUI, the problem with
-ex_table and kallsyms is that they're preprocessed at build time and
-opaque to the linker's relocation generation.
+> On Wed, Feb 05, 2020 at 05:55:32PM +0100, Vitaly Kuznetsov wrote:
+>> Sean Christopherson <sean.j.christopherson@intel.com> writes:
+>> > I dug deeper into the CPUID crud after posting this series because I really
+>> > didn't like the end result for vendor-specific leafs, and ended up coming
+>> > up with (IMO) a much more elegant solution.
+>> >
+>> > https://lkml.kernel.org/r/20200201185218.24473-1-sean.j.christopherson@intel.com/
+>> >
+>> > or on patchwork
+>> >
+>> > https://patchwork.kernel.org/cover/11361361/
+>> >
+>> 
+>> Thanks, I saw it. I tried applying it to kvm/next earlier today but
+>> failed. Do you by any chance have a git branch somewhere? I'll try to
+>> review it and test at least AMD stuff (if AMD people don't beat me to it
+>> of course).
+>
+> Have you tried kvm/queue?  I'm pretty sure I based the code on kvm/queue.
+> If that doesn't work, I'll push a tag to my github repo.
 
-For example, looking at __jump_table, it gets sorted at runtime:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/jump_label.c#n474
+My bad, kvm/queue worked like a charm!
 
-As you're likely aware, we have a number of "special"
-sections like this, currently collected manually, see *_TEXT:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/kernel/vmlinux.lds.S#n128
+>
+> This is exactly why I usually note the base for large series.  *sigh*
 
-I think we can actually add (most of) these to fg-kaslr's awareness (at
-which point their order will be shuffled respective to other sections,
-but with their content order unchanged), but it'll require a bit of
-linker work. I'll mention this series's dependency on the linker's
-orphaned section handling in another thread...
+Pull requests, anyone? :-)
 
 -- 
-Kees Cook
+Vitaly
+
