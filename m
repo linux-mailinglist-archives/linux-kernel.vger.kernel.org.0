@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAF91153E86
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 07:11:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F0A7153E8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 07:12:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbgBFGLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 01:11:51 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:23742 "EHLO
+        id S1727975AbgBFGME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 01:12:04 -0500
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:25316 "EHLO
         mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727862AbgBFGL3 (ORCPT
+        by vger.kernel.org with ESMTP id S1727806AbgBFGL1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 01:11:29 -0500
+        Thu, 6 Feb 2020 01:11:27 -0500
 Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01669B67015929;
-        Wed, 5 Feb 2020 22:11:20 -0800
+        by mx0b-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01669Nau016381;
+        Wed, 5 Feb 2020 22:11:18 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=proofpoint;
- bh=EmGoU7ZRE8EvrxN02KVFmRbGGbPSA87SXMjAVhATWH0=;
- b=Xc7suWqKmNe8JgyukDwKFVzASXpogqOHJixWrD/0l/sGtaMm7a60XtZvH9wC8tnRjTLB
- uZlsWgXtpjSlgSTKNXJxKKu/pXZa+1eSUSp4RsnoLLvlgtsjwthXrN22qxAFjArQ0s/u
- ko8KqCROk6G9/zX7C4OI04el9oV0xkZHTbMPCmlrnAUqnMGpmywYAaMIh3kQMj0nVors
- tadtKRYfydibUxsRsU0Y2e9ob7kV55JW7Fa7GTygacJDOMEJOiXFpwjou+sTB8mM2PmF
- tatGtnjCVK0cXLJT9JzyeCbJxQiI4H4/xkkBc9yVRrkhQfXD9WWyvRtKoOc7Jh5PlryM 5A== 
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2104.outbound.protection.outlook.com [104.47.70.104])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2xyhkunrb5-1
+ bh=G3pXYurmHbs7tP/DITaPgI559ZervsK79iaqJGIBerU=;
+ b=q1btXfyOE1Tuom8SmZ0MO+Ym2NR62lLWkwzs6sQ3zc90dXqAj1sd2MwJ/IEgWq2FVqpP
+ LJ2/UpxoP2rWHWtz0Qucb8a2tlaUMKmCdQByCLmLFxK2OSsOdqvVUk/1LWvnO+YTQtrd
+ 5kVmYsXBAx4t10lJ1ylOCC7RdKJvJtm/7lG8EiDd2fI+FoG+Ingjq9TAMuY9aQ9RcLXM
+ dlDNLNNWV5o040jvC2lE/NnGM0pi4x/EacneeHzxP9AtmApmBsYhR+sMONb3UbKnd/GN
+ 2+qmGofKyXp5aqzc+AxRqoNC2t2HbuSCtM+Re0NG55fKu+IPB8anHHjjOZA77u5eqnAj OQ== 
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2170.outbound.protection.outlook.com [104.47.59.170])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2xyhkunrb3-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Feb 2020 22:11:20 -0800
+        Wed, 05 Feb 2020 22:11:18 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Wz8LpupH9X1plEvc0SouidJ93/onkuyOzmUdim0FtF0rKpNTkEiGNxPVFj7zRYACN3dlFbYhrIx5FO5JJ2VcJn31/18E9qQvtHVSVO4PUx4MDDtHWtvNJWiXi2gWryg9C8uxxBf79KLF8fE6kRc/8dC+YJfIojfdMvZW8LHM3mYu7r9OgZ9HX/vu/Z03MlhlIMtITtj17uLvUklmhslzVzLogl1MUWKKNCrhfslw097P4FQI6n3pZrkm2wWjHzrH7HkIA3uMd2n8ov+PBZhN08uv0Z3TwpVPJ2eISm0VPu0lq27sxhG9P9516sAYz5tWKfiIMgX3lCs9PiZaSME+Cg==
+ b=jEbWFNya+6f5L8CAsw8tzP0TB9Z2OtRc+RtdHBJHHZJSkURH++ezae5/9eYydy1NOfexrdOLxtEkQbURAG6LxDCa+eHXeACMH/TwkORDa5rY1jvZm+T8aw5q6Vv6EAQ65pJWrjio+VWWX671EyIgJMcZW4yEPV3sqQQNOYGWM+POmsiNQJFjkQxwhPSMVkNITZfGqcmzjVGuuEl7PsPZmRpKv+RK9OzT1nDvdKTzk4u2JBAOrhGWMjJQgmCaaew6En7jJ7vJNdRjwU2y4BpYI/aD4k9bfZfBHW1eHX+wEyIw1mgJyLHYBJapgIF+E8G8rFHNbCJY8KvZlu6/LM99Iw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EmGoU7ZRE8EvrxN02KVFmRbGGbPSA87SXMjAVhATWH0=;
- b=RD0fxnDPKlbfDbKv/ibEkzrfKsyL0FNAJ/c9/3HSF0pvkM24oPL/xHqg/94OZAGUplkoW+mh90JttQmf+9ROni7IFFjgIQrJ0fQ3VR+KHOp5CGvSWK2F8kqbmJIA2Qs0Mxkv8E3sdOgKtaafjhucYxuI0OiFbXAY2k/d/RnABfFQ/ZE8JmO+LDb1wCxvYo6+dXb4iNRStACIxE0IXjKQ6esh3d+t1FviVR2YOhCbttvZrpzlWAHy3qHpqPxTaXj/Vb+TeqdF4FMoCNojSwnZ+NAue84sgqC8IPEsfE7pY8I5rhcEpBn5GsGvnHJuOtmu3aQI95lBaCMHPM6yTBttKA==
+ bh=G3pXYurmHbs7tP/DITaPgI559ZervsK79iaqJGIBerU=;
+ b=oeeNpp1RpJFLq737SR4acHbv76kRVy5fLnDbpFJJ1O6GidMJ8HQ6EIRInHooMiys1IZ0kknt3g3kB/36z6ufupqJ9XBCL/3NniS/3q8TgLyz4GdZhwtt4UjVzI7MzlL2vk2AgIfBPbN1FVxJGmorA+HkNBM9+UF5pE21Z3VxXC48EwU3xuiKX8Xe71fcXHUFt4QgQ0IN9vBPFV6rhEh6+Py6KCgQvaBde44g0QDIwjSUmgy5UDZagQfLpviZpE4dobhtnpEkzIpTDCkC7gf/5FXsPvWLNG3jtp3BJDTXV6ieBKleLevvCBQAsr7iOhyG/WhALlyBWhNw2V0DjG0B5Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  64.207.220.243) smtp.rcpttodomain=ti.com smtp.mailfrom=cadence.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=cadence.com;
@@ -42,40 +42,40 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EmGoU7ZRE8EvrxN02KVFmRbGGbPSA87SXMjAVhATWH0=;
- b=AJHJ/6ZV7f56ATy967R+Pn4FBUaOsb5unAoRXjfhn/0sZjvv44d/0L9VSd5aJ3/wpgMk6vKXLg/RFaz6viLRI/Fctfbw9ecK7npXkp+SAclx6KAiEZX+1WLzcev2kdjdOXBq/umG4F4ZNU6+3TrPDHHpvdE6pOzFXkIUBXF4nDU=
-Received: from DM6PR07CA0055.namprd07.prod.outlook.com (2603:10b6:5:74::32) by
- BN6PR07MB3492.namprd07.prod.outlook.com (2603:10b6:405:6c::13) with Microsoft
+ bh=G3pXYurmHbs7tP/DITaPgI559ZervsK79iaqJGIBerU=;
+ b=czrImQiShX48r/0DLB1/0F4ssY9vgZ47UiDnkwVB4BQMrVPn8JW2FTJDGE7658k3SEblwDHwu/plmD/vjhk0idR3G1VgEBip3so5Kj+AIRrbrxLiGwmSKjdnFT3ChJ0FRq7TyO3QRflaABVExUvO/uVkHjvJXZr5iIZIyr2vggc=
+Received: from CO2PR07CA0050.namprd07.prod.outlook.com (2603:10b6:100::18) by
+ CY4PR07MB3064.namprd07.prod.outlook.com (2603:10b6:903:cf::22) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2707.21; Thu, 6 Feb 2020 06:11:17 +0000
-Received: from MW2NAM12FT058.eop-nam12.prod.protection.outlook.com
- (2a01:111:f400:fe5a::202) by DM6PR07CA0055.outlook.office365.com
- (2603:10b6:5:74::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2686.32 via Frontend
- Transport; Thu, 6 Feb 2020 06:11:17 +0000
+ 15.20.2686.29; Thu, 6 Feb 2020 06:11:16 +0000
+Received: from MW2NAM12FT028.eop-nam12.prod.protection.outlook.com
+ (2a01:111:f400:fe5a::204) by CO2PR07CA0050.outlook.office365.com
+ (2603:10b6:100::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2707.21 via Frontend
+ Transport; Thu, 6 Feb 2020 06:11:15 +0000
 Received-SPF: Pass (protection.outlook.com: domain of cadence.com designates
  64.207.220.243 as permitted sender) receiver=protection.outlook.com;
  client-ip=64.207.220.243; helo=wcmailrelayl01.cadence.com;
 Received: from wcmailrelayl01.cadence.com (64.207.220.243) by
- MW2NAM12FT058.mail.protection.outlook.com (10.13.181.237) with Microsoft SMTP
+ MW2NAM12FT028.mail.protection.outlook.com (10.13.181.238) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2729.10 via Frontend Transport; Thu, 6 Feb 2020 06:11:17 +0000
+ 15.20.2729.10 via Frontend Transport; Thu, 6 Feb 2020 06:11:15 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by wcmailrelayl01.cadence.com (8.14.7/8.14.4) with ESMTP id 0166B5FC174490
+        by wcmailrelayl01.cadence.com (8.14.7/8.14.4) with ESMTP id 0166B5F9174490
         (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=OK);
-        Wed, 5 Feb 2020 22:11:16 -0800
+        Wed, 5 Feb 2020 22:11:14 -0800
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Thu, 6 Feb 2020 07:11:04 +0100
+ 15.0.1367.3; Thu, 6 Feb 2020 07:11:05 +0100
 Received: from vleu-orange.cadence.com (10.160.88.83) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
  15.0.1367.3 via Frontend Transport; Thu, 6 Feb 2020 07:11:04 +0100
 Received: from vleu-orange.cadence.com (localhost.localdomain [127.0.0.1])
-        by vleu-orange.cadence.com (8.14.4/8.14.4) with ESMTP id 0166B4GA017073;
+        by vleu-orange.cadence.com (8.14.4/8.14.4) with ESMTP id 0166B4hx017078;
         Thu, 6 Feb 2020 07:11:04 +0100
 Received: (from yamonkar@localhost)
-        by vleu-orange.cadence.com (8.14.4/8.14.4/Submit) id 0166B4Or017072;
+        by vleu-orange.cadence.com (8.14.4/8.14.4/Submit) id 0166B4xp017076;
         Thu, 6 Feb 2020 07:11:04 +0100
 From:   Yuti Amonkar <yamonkar@cadence.com>
 To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
@@ -84,9 +84,9 @@ To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
 CC:     <jsarha@ti.com>, <tomi.valkeinen@ti.com>, <praneeth@ti.com>,
         <mparab@cadence.com>, <sjakhade@cadence.com>,
         <yamonkar@cadence.com>
-Subject: [PATCH v4 12/13] phy: cadence-torrent: Add platform dependent initialization structure
-Date:   Thu, 6 Feb 2020 07:11:00 +0100
-Message-ID: <1580969461-16981-13-git-send-email-yamonkar@cadence.com>
+Subject: [PATCH v4 13/13] phy: cadence-torrent: Add support for subnode bindings
+Date:   Thu, 6 Feb 2020 07:11:01 +0100
+Message-ID: <1580969461-16981-14-git-send-email-yamonkar@cadence.com>
 X-Mailer: git-send-email 2.4.5
 In-Reply-To: <1580969461-16981-1-git-send-email-yamonkar@cadence.com>
 References: <1580969461-16981-1-git-send-email-yamonkar@cadence.com>
@@ -94,24 +94,24 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:64.207.220.243;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(136003)(39860400002)(396003)(199004)(36092001)(189003)(86362001)(81156014)(2906002)(8676002)(36906005)(2616005)(81166006)(8936002)(107886003)(110136005)(26005)(54906003)(316002)(42186006)(36756003)(5660300002)(426003)(6666004)(4326008)(336012)(186003)(356004)(478600001)(70206006)(70586007);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR07MB3492;H:wcmailrelayl01.cadence.com;FPR:;SPF:Pass;LANG:en;PTR:unused.mynethost.com;A:1;MX:1;
+X-Forefront-Antispam-Report: CIP:64.207.220.243;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(346002)(396003)(39860400002)(199004)(36092001)(189003)(5660300002)(30864003)(107886003)(36906005)(2906002)(26005)(86362001)(54906003)(6666004)(356004)(36756003)(478600001)(336012)(110136005)(186003)(8676002)(81156014)(426003)(70586007)(70206006)(316002)(81166006)(42186006)(8936002)(2616005)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR07MB3064;H:wcmailrelayl01.cadence.com;FPR:;SPF:Pass;LANG:en;PTR:unused.mynethost.com;A:1;MX:1;
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: aaed9f7d-8db0-499e-a841-08d7aacb6097
-X-MS-TrafficTypeDiagnostic: BN6PR07MB3492:
-X-Microsoft-Antispam-PRVS: <BN6PR07MB3492219797553DC5D1AB4A9ED21D0@BN6PR07MB3492.namprd07.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:849;
+X-MS-Office365-Filtering-Correlation-Id: 68545b51-b7ae-4b84-d766-08d7aacb5fb3
+X-MS-TrafficTypeDiagnostic: CY4PR07MB3064:
+X-Microsoft-Antispam-PRVS: <CY4PR07MB30644A33F29A1ECFB1400D46D21D0@CY4PR07MB3064.namprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:102;
 X-Forefront-PRVS: 0305463112
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: rH0oMCSWLMT/NCQwc/61oQtWP8BC6jah5IyK1BzRv0rZ+MtOR2RJukWJJBVS3OIIa0RQucMzG5y81qT/GX1oH07z7pq57XRj485RxC+iJLw90fb7wqf8RF8/Jpj7nydjd9Xqxj0YRBHhd62xz5g0MI5NTPYDdvQezhedovHWYNxIsWmhmhDm5N9UE7AGEV3Bp2pXyulXPL04we42rm3sxTm2/PGYJhmIdwfn7KSSTBU9piguj+OsdlEM9M9aHpMDS9KfZAnUNyjkwS+NFI6UmSOP24exGYKL+JTcA7TjhfTcAU/jC2bn1s1zxCYnJl12+rZMpGduA/N4kPDThP2XgdgVsaCW1u6CvTPOagd/yMz61jaGOhIrNLgrkPTMIq91RMw+7y1CWUlif/KcJQJ55AXJwL6PEAB5psRqyo5QdOZWaTSz/ZKmW1E4pXXbOSb9hGmA/hdlud2vJdQGIlQIkEO2xwKI+XXRvQFAA46Bvo8HvnceC3rvpsmaTIaODZYz
+X-Microsoft-Antispam-Message-Info: f/FBjcIM2EpJFmvO+D2WOrWfukt91ahY6Sj6GdkRyNC48G09c8HJl0fyD0tVeYHYKu5Hq7VoGPWSZJWh6PzUcUOwcrv07Gn1qC5nk+YrQKxlmSUk13olU7JU4+EesZvqhozE4IaAIX5ScMQq5PPR7TrgVppeNTByrTlnzhMtx0ClaEsLEyXg/S0DNd+mjToyRDv0/7ZO79dLl+rxn538bvnxSVOUQ2QiDt939LyeBE1dN7pVGrSfOBiKGMt+Viq4TdMZSp/xd8YJfeovfamzL1TLB74jbU7dNJAItpT7TbECUHV/IhsiVdJODN5YLLupsuo7hug31yHovZAZ5ummFt1SSQKZn/Pz/MsX5HYmpfHci8i8P/3F56rh7BTtfwyN4FDMf9Po9ei6QM7zP93mqmnHGq1jAy8ReVKUwBv75xjIUIYuMTk2VYxj0iBMgaTMmdKN5RTrazVVlZXXNIR66hSAxyy5XNfMKaWwPFCZHSklqdr/OTLrCjLxZttO8ywC
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2020 06:11:17.1289
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2020 06:11:15.6359
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: aaed9f7d-8db0-499e-a841-08d7aacb6097
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68545b51-b7ae-4b84-d766-08d7aacb5fb3
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[64.207.220.243];Helo=[wcmailrelayl01.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR07MB3492
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR07MB3064
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-02-05_06:2020-02-04,2020-02-05 signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
@@ -126,40 +126,496 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Swapnil Jakhade <sjakhade@cadence.com>
 
-Add platform dependent initialization data for Torrent PHY used in TI's
-J721E SoC.
+Implement single link subnode support to the phy driver.
+Add reset support including PHY reset and individual lane reset.
 
 Signed-off-by: Swapnil Jakhade <sjakhade@cadence.com>
 Signed-off-by: Yuti Amonkar <yamonkar@cadence.com>
 ---
- drivers/phy/cadence/phy-cadence-torrent.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/phy/cadence/phy-cadence-torrent.c | 292 ++++++++++++++++------
+ 1 file changed, 217 insertions(+), 75 deletions(-)
 
 diff --git a/drivers/phy/cadence/phy-cadence-torrent.c b/drivers/phy/cadence/phy-cadence-torrent.c
-index 0e03d3cb4c23..851a68590788 100644
+index 851a68590788..7116127358ee 100644
 --- a/drivers/phy/cadence/phy-cadence-torrent.c
 +++ b/drivers/phy/cadence/phy-cadence-torrent.c
-@@ -1770,11 +1770,20 @@ static const struct cdns_torrent_data cdns_map_torrent = {
- 	.reg_offset_shift = 0x2,
- };
+@@ -6,6 +6,7 @@
+  *
+  */
  
-+static const struct cdns_torrent_data ti_j721e_map_torrent = {
-+	.block_offset_shift = 0x0,
-+	.reg_offset_shift = 0x1,
++#include <dt-bindings/phy/phy.h>
+ #include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/err.h>
+@@ -18,6 +19,7 @@
+ #include <linux/of_device.h>
+ #include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
++#include <linux/reset.h>
+ #include <linux/regmap.h>
+ 
+ #define REF_CLK_19_2MHz		19200000
+@@ -183,14 +185,24 @@ static const struct reg_field phy_reset_ctrl =
+ 
+ static const struct of_device_id cdns_torrent_phy_of_match[];
+ 
++struct cdns_torrent_inst {
++	struct phy *phy;
++	u32 mlane;
++	u32 phy_type;
++	u32 num_lanes;
++	struct reset_control *lnk_rst;
 +};
 +
- static const struct of_device_id cdns_torrent_phy_of_match[] = {
- 	{
- 		.compatible = "cdns,torrent-phy",
- 		.data = &cdns_map_torrent,
- 	},
-+	{
-+		.compatible = "ti,j721e-serdes-10g",
-+		.data = &ti_j721e_map_torrent,
-+	},
- 	{}
+ struct cdns_torrent_phy {
+ 	void __iomem *base;	/* DPTX registers base */
+ 	void __iomem *sd_base; /* SD0801 registers base */
+-	u32 num_lanes; /* Number of lanes to use */
+ 	u32 max_bit_rate; /* Maximum link bit rate to use (in Mbps) */
++	struct reset_control *phy_rst;
+ 	struct device *dev;
+ 	struct clk *clk;
+ 	unsigned long ref_clk_rate;
++	struct cdns_torrent_inst phys[MAX_NUM_LANES];
++	int nsubnodes;
+ 	struct regmap *regmap;
+ 	struct regmap *regmap_common_cdb;
+ 	struct regmap *regmap_phy_pcs_common_cdb;
+@@ -217,7 +229,8 @@ static int cdns_torrent_dp_run(struct cdns_torrent_phy *cdns_phy,
+ 			       u32 num_lanes);
+ static
+ int cdns_torrent_dp_wait_pma_cmn_ready(struct cdns_torrent_phy *cdns_phy);
+-static void cdns_torrent_dp_pma_cfg(struct cdns_torrent_phy *cdns_phy);
++static void cdns_torrent_dp_pma_cfg(struct cdns_torrent_phy *cdns_phy,
++				    struct cdns_torrent_inst *inst);
+ static
+ void cdns_torrent_dp_pma_cmn_cfg_19_2mhz(struct cdns_torrent_phy *cdns_phy);
+ static
+@@ -237,11 +250,15 @@ static int cdns_torrent_dp_configure(struct phy *phy,
+ static int cdns_torrent_dp_set_power_state(struct cdns_torrent_phy *cdns_phy,
+ 					   u32 num_lanes,
+ 					   enum phy_powerstate powerstate);
++static int cdns_torrent_phy_on(struct phy *phy);
++static int cdns_torrent_phy_off(struct phy *phy);
+ 
+ static const struct phy_ops cdns_torrent_phy_ops = {
+ 	.init		= cdns_torrent_dp_init,
+ 	.exit		= cdns_torrent_dp_exit,
+ 	.configure	= cdns_torrent_dp_configure,
++	.power_on	= cdns_torrent_phy_on,
++	.power_off	= cdns_torrent_phy_off,
+ 	.owner		= THIS_MODULE,
  };
- MODULE_DEVICE_TABLE(of, cdns_torrent_phy_of_match);
+ 
+@@ -564,7 +581,7 @@ static int cdns_torrent_dp_configure_rate(struct cdns_torrent_phy *cdns_phy,
+ /*
+  * Verify, that parameters to configure PHY with are correct.
+  */
+-static int cdns_torrent_dp_verify_config(struct cdns_torrent_phy *cdns_phy,
++static int cdns_torrent_dp_verify_config(struct cdns_torrent_inst *inst,
+ 					 struct phy_configure_opts_dp *dp)
+ {
+ 	u8 i;
+@@ -599,7 +616,7 @@ static int cdns_torrent_dp_verify_config(struct cdns_torrent_phy *cdns_phy,
+ 	}
+ 
+ 	/* Check against actual number of PHY's lanes. */
+-	if (dp->lanes > cdns_phy->num_lanes)
++	if (dp->lanes > inst->num_lanes)
+ 		return -EINVAL;
+ 
+ 	/*
+@@ -791,10 +808,11 @@ static void cdns_torrent_dp_set_voltages(struct cdns_torrent_phy *cdns_phy,
+ static int cdns_torrent_dp_configure(struct phy *phy,
+ 				     union phy_configure_opts *opts)
+ {
+-	struct cdns_torrent_phy *cdns_phy = phy_get_drvdata(phy);
++	struct cdns_torrent_inst *inst = phy_get_drvdata(phy);
++	struct cdns_torrent_phy *cdns_phy = dev_get_drvdata(phy->dev.parent);
+ 	int ret;
+ 
+-	ret = cdns_torrent_dp_verify_config(cdns_phy, &opts->dp);
++	ret = cdns_torrent_dp_verify_config(inst, &opts->dp);
+ 	if (ret) {
+ 		dev_err(&phy->dev, "invalid params for phy configure\n");
+ 		return ret;
+@@ -826,8 +844,8 @@ static int cdns_torrent_dp_init(struct phy *phy)
+ {
+ 	unsigned char lane_bits;
+ 	int ret;
+-
+-	struct cdns_torrent_phy *cdns_phy = phy_get_drvdata(phy);
++	struct cdns_torrent_inst *inst = phy_get_drvdata(phy);
++	struct cdns_torrent_phy *cdns_phy = dev_get_drvdata(phy->dev.parent);
+ 	struct regmap *regmap = cdns_phy->regmap_dptx_phy_reg;
+ 
+ 	ret = clk_prepare_enable(cdns_phy->clk);
+@@ -856,19 +874,19 @@ static int cdns_torrent_dp_init(struct phy *phy)
+ 	cdns_torrent_dp_write(regmap, PHY_AUX_CTRL, 0x0003); /* enable AUX */
+ 
+ 	/* PHY PMA registers configuration function */
+-	cdns_torrent_dp_pma_cfg(cdns_phy);
++	cdns_torrent_dp_pma_cfg(cdns_phy, inst);
+ 
+ 	/*
+ 	 * Set lines power state to A0
+ 	 * Set lines pll clk enable to 0
+ 	 */
+-	cdns_torrent_dp_set_a0_pll(cdns_phy, cdns_phy->num_lanes);
++	cdns_torrent_dp_set_a0_pll(cdns_phy, inst->num_lanes);
+ 
+ 	/*
+ 	 * release phy_l0*_reset_n and pma_tx_elec_idle_ln_* based on
+ 	 * used lanes
+ 	 */
+-	lane_bits = (1 << cdns_phy->num_lanes) - 1;
++	lane_bits = (1 << inst->num_lanes) - 1;
+ 	cdns_torrent_dp_write(regmap, PHY_RESET,
+ 			      ((0xF & ~lane_bits) << 4) | (0xF & lane_bits));
+ 
+@@ -886,23 +904,25 @@ static int cdns_torrent_dp_init(struct phy *phy)
+ 						      cdns_phy->max_bit_rate,
+ 						      false);
+ 	cdns_torrent_dp_pma_cmn_rate(cdns_phy, cdns_phy->max_bit_rate,
+-				     cdns_phy->num_lanes);
++				     inst->num_lanes);
+ 
+ 	/* take out of reset */
+ 	regmap_field_write(cdns_phy->phy_reset_ctrl, 0x1);
+ 
++	cdns_torrent_phy_on(phy);
++
+ 	ret = cdns_torrent_dp_wait_pma_cmn_ready(cdns_phy);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = cdns_torrent_dp_run(cdns_phy, cdns_phy->num_lanes);
++	ret = cdns_torrent_dp_run(cdns_phy, inst->num_lanes);
+ 
+ 	return ret;
+ }
+ 
+ static int cdns_torrent_dp_exit(struct phy *phy)
+ {
+-	struct cdns_torrent_phy *cdns_phy = phy_get_drvdata(phy);
++	struct cdns_torrent_phy *cdns_phy = dev_get_drvdata(phy->dev.parent);
+ 
+ 	clk_disable_unprepare(cdns_phy->clk);
+ 	return 0;
+@@ -926,7 +946,8 @@ int cdns_torrent_dp_wait_pma_cmn_ready(struct cdns_torrent_phy *cdns_phy)
+ 	return 0;
+ }
+ 
+-static void cdns_torrent_dp_pma_cfg(struct cdns_torrent_phy *cdns_phy)
++static void cdns_torrent_dp_pma_cfg(struct cdns_torrent_phy *cdns_phy,
++				    struct cdns_torrent_inst *inst)
+ {
+ 	unsigned int i;
+ 
+@@ -938,7 +959,7 @@ static void cdns_torrent_dp_pma_cfg(struct cdns_torrent_phy *cdns_phy)
+ 		cdns_torrent_dp_pma_cmn_cfg_25mhz(cdns_phy);
+ 
+ 	/* PMA lane configuration to deal with multi-link operation */
+-	for (i = 0; i < cdns_phy->num_lanes; i++)
++	for (i = 0; i < inst->num_lanes; i++)
+ 		cdns_torrent_dp_pma_lane_cfg(cdns_phy, i);
+ }
+ 
+@@ -1518,6 +1539,33 @@ static int cdns_torrent_dp_run(struct cdns_torrent_phy *cdns_phy, u32 num_lanes)
+ 	return ret;
+ }
+ 
++static int cdns_torrent_phy_on(struct phy *phy)
++{
++	struct cdns_torrent_inst *inst = phy_get_drvdata(phy);
++	struct cdns_torrent_phy *cdns_phy = dev_get_drvdata(phy->dev.parent);
++	int ret;
++
++	/* Take the PHY out of reset */
++	ret = reset_control_deassert(cdns_phy->phy_rst);
++	if (ret)
++		return ret;
++
++	/* Take the PHY lane group out of reset */
++	return reset_control_deassert(inst->lnk_rst);
++}
++
++static int cdns_torrent_phy_off(struct phy *phy)
++{
++	struct cdns_torrent_inst *inst = phy_get_drvdata(phy);
++	struct cdns_torrent_phy *cdns_phy = dev_get_drvdata(phy->dev.parent);
++	int ret;
++
++	ret = reset_control_assert(cdns_phy->phy_rst);
++	if (ret)
++		return ret;
++
++	return reset_control_assert(inst->lnk_rst);
++}
+ 
+ static struct regmap *cdns_regmap_init(struct device *dev, void __iomem *base,
+ 				       u32 block_offset,
+@@ -1664,8 +1712,8 @@ static int cdns_torrent_phy_probe(struct platform_device *pdev)
+ 	struct phy_provider *phy_provider;
+ 	const struct of_device_id *match;
+ 	struct cdns_torrent_data *data;
+-	struct phy *phy;
+-	int err, ret;
++	struct device_node *child;
++	int ret, subnodes, node = 0, i;
+ 
+ 	/* Get init data for this PHY */
+ 	match = of_match_device(cdns_torrent_phy_of_match, dev);
+@@ -1678,12 +1726,20 @@ static int cdns_torrent_phy_probe(struct platform_device *pdev)
+ 	if (!cdns_phy)
+ 		return -ENOMEM;
+ 
+-	cdns_phy->dev = &pdev->dev;
++	dev_set_drvdata(dev, cdns_phy);
++	cdns_phy->dev = dev;
+ 
+-	phy = devm_phy_create(dev, NULL, &cdns_torrent_phy_ops);
+-	if (IS_ERR(phy)) {
+-		dev_err(dev, "failed to create Torrent PHY\n");
+-		return PTR_ERR(phy);
++	cdns_phy->phy_rst = devm_reset_control_get_exclusive_by_index(dev, 0);
++	if (IS_ERR(cdns_phy->phy_rst)) {
++		dev_err(dev, "%s: failed to get reset\n",
++			dev->of_node->full_name);
++		return PTR_ERR(cdns_phy->phy_rst);
++	}
++
++	cdns_phy->clk = devm_clk_get(dev, "refclk");
++	if (IS_ERR(cdns_phy->clk)) {
++		dev_err(dev, "phy ref clock not found\n");
++		return PTR_ERR(cdns_phy->clk);
+ 	}
+ 
+ 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -1691,78 +1747,163 @@ static int cdns_torrent_phy_probe(struct platform_device *pdev)
+ 	if (IS_ERR(cdns_phy->sd_base))
+ 		return PTR_ERR(cdns_phy->sd_base);
+ 
+-	regs = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	cdns_phy->base = devm_ioremap_resource(&pdev->dev, regs);
+-	if (IS_ERR(cdns_phy->base))
+-		return PTR_ERR(cdns_phy->base);
++	subnodes = of_get_available_child_count(dev->of_node);
++	if (subnodes == 0) {
++		dev_err(dev, "No available link subnodes found\n");
++		return -EINVAL;
++	} else if (subnodes != 1) {
++		dev_err(dev, "Driver supports only one link subnode.\n");
++		return -EINVAL;
++	}
+ 
++	for_each_available_child_of_node(dev->of_node, child) {
++		struct phy *gphy;
+ 
+-	err = device_property_read_u32(dev, "num_lanes",
+-				       &cdns_phy->num_lanes);
+-	if (err)
+-		cdns_phy->num_lanes = DEFAULT_NUM_LANES;
++		cdns_phy->phys[node].lnk_rst =
++				of_reset_control_array_get_exclusive(child);
++		if (IS_ERR(cdns_phy->phys[node].lnk_rst)) {
++			dev_err(dev, "%s: failed to get reset\n",
++				child->full_name);
++			ret = PTR_ERR(cdns_phy->phys[node].lnk_rst);
++			goto put_lnk_rst;
++		}
+ 
+-	switch (cdns_phy->num_lanes) {
+-	case 1:
+-	case 2:
+-	case 4:
+-		/* valid number of lanes */
+-		break;
+-	default:
+-		dev_err(dev, "unsupported number of lanes: %d\n",
+-			cdns_phy->num_lanes);
+-		return -EINVAL;
+-	}
++		if (of_property_read_u32(child, "reg",
++					 &cdns_phy->phys[node].mlane)) {
++			dev_err(dev, "%s: No \"reg\"-property.\n",
++				child->full_name);
++			ret = -EINVAL;
++			goto put_child;
++		}
+ 
+-	err = device_property_read_u32(dev, "max_bit_rate",
+-				       &cdns_phy->max_bit_rate);
+-	if (err)
+-		cdns_phy->max_bit_rate = DEFAULT_MAX_BIT_RATE;
++		if (cdns_phy->phys[node].mlane != 0) {
++			dev_err(dev,
++				"%s: Driver supports only lane-0 as master lane.\n",
++				child->full_name);
++			ret = -EINVAL;
++			goto put_child;
++		}
+ 
+-	switch (cdns_phy->max_bit_rate) {
+-	case 1620:
+-	case 2160:
+-	case 2430:
+-	case 2700:
+-	case 3240:
+-	case 4320:
+-	case 5400:
+-	case 8100:
+-		/* valid bit rate */
+-		break;
+-	default:
+-		dev_err(dev, "unsupported max bit rate: %dMbps\n",
+-			cdns_phy->max_bit_rate);
+-		return -EINVAL;
+-	}
++		if (of_property_read_u32(child, "cdns,phy-type",
++					 &cdns_phy->phys[node].phy_type)) {
++			dev_err(dev, "%s: No \"cdns,phy-type\"-property.\n",
++				child->full_name);
++			ret = -EINVAL;
++			goto put_child;
++		}
+ 
+-	cdns_phy->clk = devm_clk_get(dev, "refclk");
+-	if (IS_ERR(cdns_phy->clk)) {
+-		dev_err(dev, "phy ref clock not found\n");
+-		return PTR_ERR(cdns_phy->clk);
+-	}
++		cdns_phy->phys[node].num_lanes = DEFAULT_NUM_LANES;
++		of_property_read_u32(child, "cdns,num-lanes",
++				     &cdns_phy->phys[node].num_lanes);
++
++		if (cdns_phy->phys[node].phy_type == PHY_TYPE_DP) {
++			switch (cdns_phy->phys[node].num_lanes) {
++			case 1:
++			case 2:
++			case 4:
++			/* valid number of lanes */
++				break;
++			default:
++				dev_err(dev, "unsupported number of lanes: %d\n",
++					cdns_phy->phys[node].num_lanes);
++				ret = -EINVAL;
++				goto put_child;
++			}
++
++			cdns_phy->max_bit_rate = DEFAULT_MAX_BIT_RATE;
++			of_property_read_u32(child, "cdns,max-bit-rate",
++					     &cdns_phy->max_bit_rate);
++
++			switch (cdns_phy->max_bit_rate) {
++			case 1620:
++			case 2160:
++			case 2430:
++			case 2700:
++			case 3240:
++			case 4320:
++			case 5400:
++			case 8100:
++			/* valid bit rate */
++				break;
++			default:
++				dev_err(dev, "unsupported max bit rate: %dMbps\n",
++					cdns_phy->max_bit_rate);
++				ret = -EINVAL;
++				goto put_child;
++			}
++
++			/* DPTX registers */
++			regs = platform_get_resource(pdev, IORESOURCE_MEM, 1);
++			cdns_phy->base = devm_ioremap_resource(&pdev->dev,
++							       regs);
++			if (IS_ERR(cdns_phy->base)) {
++				ret = PTR_ERR(cdns_phy->base);
++				goto put_child;
++			}
++
++			gphy = devm_phy_create(dev, child,
++					       &cdns_torrent_phy_ops);
++			if (IS_ERR(gphy)) {
++				ret = PTR_ERR(gphy);
++				goto put_child;
++			}
++
++			dev_info(dev, "%d lanes, max bit rate %d.%03d Gbps\n",
++				 cdns_phy->phys[node].num_lanes,
++				 cdns_phy->max_bit_rate / 1000,
++				 cdns_phy->max_bit_rate % 1000);
++		} else {
++			dev_err(dev, "Driver supports only PHY_TYPE_DP\n");
++			ret = -ENOTSUPP;
++			goto put_child;
++		}
++		cdns_phy->phys[node].phy = gphy;
++		phy_set_drvdata(gphy, &cdns_phy->phys[node]);
+ 
+-	phy_set_drvdata(phy, cdns_phy);
++		node++;
++	}
++	cdns_phy->nsubnodes = node;
+ 
+ 	ret = cdns_regmap_init_torrent_dp(cdns_phy, cdns_phy->sd_base,
+ 					  cdns_phy->base,
+ 					  data->block_offset_shift,
+ 					  data->reg_offset_shift);
+ 	if (ret)
+-		return ret;
++		goto put_lnk_rst;
+ 
+ 	ret = cdns_regfield_init(cdns_phy);
+ 	if (ret)
+-		return ret;
++		goto put_lnk_rst;
+ 
+ 	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
++	if (IS_ERR(phy_provider)) {
++		ret = PTR_ERR(phy_provider);
++		goto put_lnk_rst;
++	}
++
++	return 0;
+ 
+-	dev_info(dev, "%d lanes, max bit rate %d.%03d Gbps\n",
+-		 cdns_phy->num_lanes,
+-		 cdns_phy->max_bit_rate / 1000,
+-		 cdns_phy->max_bit_rate % 1000);
++put_child:
++	node++;
++put_lnk_rst:
++	for (i = 0; i < node; i++)
++		reset_control_put(cdns_phy->phys[i].lnk_rst);
++	of_node_put(child);
++	return ret;
++}
+ 
+-	return PTR_ERR_OR_ZERO(phy_provider);
++static int cdns_torrent_phy_remove(struct platform_device *pdev)
++{
++	struct cdns_torrent_phy *cdns_phy = platform_get_drvdata(pdev);
++	int i;
++
++	reset_control_assert(cdns_phy->phy_rst);
++	for (i = 0; i < cdns_phy->nsubnodes; i++) {
++		reset_control_assert(cdns_phy->phys[i].lnk_rst);
++		reset_control_put(cdns_phy->phys[i].lnk_rst);
++	}
++
++	return 0;
+ }
+ 
+ static const struct cdns_torrent_data cdns_map_torrent = {
+@@ -1790,6 +1931,7 @@ MODULE_DEVICE_TABLE(of, cdns_torrent_phy_of_match);
+ 
+ static struct platform_driver cdns_torrent_phy_driver = {
+ 	.probe	= cdns_torrent_phy_probe,
++	.remove = cdns_torrent_phy_remove,
+ 	.driver = {
+ 		.name	= "cdns-torrent-phy",
+ 		.of_match_table	= cdns_torrent_phy_of_match,
 -- 
 2.20.1
 
