@@ -2,133 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1935A154D6E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 21:47:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98B9F154D6D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 21:47:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbgBFUrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 15:47:08 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39073 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728030AbgBFUpt (ORCPT
+        id S1728041AbgBFUpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 15:45:46 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:55562 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728009AbgBFUpm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 15:45:49 -0500
-Received: by mail-pl1-f196.google.com with SMTP id g6so36273plp.6;
-        Thu, 06 Feb 2020 12:45:49 -0800 (PST)
+        Thu, 6 Feb 2020 15:45:42 -0500
+Received: by mail-pj1-f66.google.com with SMTP id d5so488746pjz.5;
+        Thu, 06 Feb 2020 12:45:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jLTew4RI9WjJuJSt4kCXOUmH0fL8LgaBZiB6Bzr7kEA=;
-        b=fwRg3olFzBfrB26C7HS3fBqTOXwbRh+U/p5j3iFAP85QOTI4Q7kVaBflQsPfPe0Q+7
-         sSlpitSs29IG2Adkj+DkMrxfVGWzp6lJ7Z+Gb9pqPhbRNnADEqfRtFlIOjDSivWegRCx
-         Phb95HYpQtnlm4hiilfy/Zm+cpIYhbYU54SoODdeM9kP8kudlIzkk2ejTXzs0ZIddO95
-         sOPHyxh4z8Te0F3lWyjrxMQjPtdExxTkk02VvUAQUNFLPIRtVhl081j3VXJZ1vlq+TF6
-         ZzPmTvn882qoegz44bVCGY0Vr1+3RJ++Vi8/6n9vufrm99+OVJYvvVU0UK/T+CrKB0TJ
-         vKjQ==
-X-Gm-Message-State: APjAAAVtKeO57znbD1UoWpOlpBsuNuqaXRlj1Tun5usu6PFZYK4/sRja
-        Qevi93vuPR73iCFJfqljppngfEP6wg==
-X-Google-Smtp-Source: APXvYqw6qAQzrK7/A43W1PRNx0n+Xqq5FVNHJDtNv3UuBTkDbhgXyrKY1gkrAw4vlw7S1s6iKvUhQQ==
-X-Received: by 2002:a17:902:8498:: with SMTP id c24mr5869574plo.233.1581021949049;
-        Thu, 06 Feb 2020 12:45:49 -0800 (PST)
+        bh=JQfj0uzbhk9PL5wqDoKeIBKd41MQ1h8voivIlPs9HKc=;
+        b=eq+XzsaqERQOwcCshZzAYec2ud6qQJ6e80VLFLiKooJkqgaLPIvHd2CwrQcSzU4ya8
+         9P2T0H34tt+P9kw5O4vjBs7Lo1K2SPq1TXBMBIcjF3UruXRG/xMwfFOALscUbSxv8MZE
+         pIYw2YaxLQpiCneGOtTDSnJLyGlm9Jt+28sEMqQAirgINql2yNsMRTQZZj8Rmeyka7B7
+         RWzR+2HTMan/4IS/m3bDbnWjh3QYFU5H2Ip86eqxUQiN9pSBNzCmlmomkegROKXl43AV
+         8D02ezfuXmPiZr5BNL4S2hc/dJ1vuMSVXEwIm5E4Csl489//k5vNSyDGTSBNp/zjG9OP
+         5cyw==
+X-Gm-Message-State: APjAAAVMLATDNr9+Vd096SBJB4MwMM0WkxWrrGw+G3RDP24wPhp2wxN8
+        1NfelBmg2zXxFQ/nqyMK2w==
+X-Google-Smtp-Source: APXvYqzSMACQuqwX22lBn2rt4IX37CGDwizLP6s5gsYe5polHbDhnFefNbnnYKXjV0FMspaifpEDqg==
+X-Received: by 2002:a17:90a:35e6:: with SMTP id r93mr6788847pjb.44.1581021940411;
+        Thu, 06 Feb 2020 12:45:40 -0800 (PST)
 Received: from rob-hp-laptop (63-158-47-182.dia.static.qwest.net. [63.158.47.182])
-        by smtp.gmail.com with ESMTPSA id q21sm270965pff.105.2020.02.06.12.45.47
+        by smtp.gmail.com with ESMTPSA id 4sm284539pfn.90.2020.02.06.12.45.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 12:45:48 -0800 (PST)
-Received: (nullmailer pid 12394 invoked by uid 1000);
-        Thu, 06 Feb 2020 17:48:26 -0000
-Date:   Thu, 6 Feb 2020 17:48:26 +0000
+        Thu, 06 Feb 2020 12:45:39 -0800 (PST)
+Received: (nullmailer pid 24630 invoked by uid 1000);
+        Thu, 06 Feb 2020 17:54:58 -0000
+Date:   Thu, 6 Feb 2020 17:54:58 +0000
 From:   Rob Herring <robh@kernel.org>
-To:     min.li.xe@renesas.com
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: ptp: Add IDT 82P33 based PTP clock
-Message-ID: <20200206174826.GA6395@bogus>
-References: <1580326471-5389-1-git-send-email-min.li.xe@renesas.com>
+To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mark Rutland <mark.rutland@arm.com>, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: dmaengine: Add UniPhier external DMA
+ controller bindings
+Message-ID: <20200206175458.GA12845@bogus>
+References: <1580362048-28455-1-git-send-email-hayashi.kunihiko@socionext.com>
+ <1580362048-28455-2-git-send-email-hayashi.kunihiko@socionext.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1580326471-5389-1-git-send-email-min.li.xe@renesas.com>
+In-Reply-To: <1580362048-28455-2-git-send-email-hayashi.kunihiko@socionext.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 29, 2020 at 02:34:31PM -0500, min.li.xe@renesas.com wrote:
-> From: Min Li <min.li.xe@renesas.com>
+On Thu, Jan 30, 2020 at 02:27:27PM +0900, Kunihiko Hayashi wrote:
+> Add devicetree binding documentation for external DMA controller
+> implemented on Socionext UniPhier SoCs.
 > 
-> Add device tree binding doc for the PTP clock based on IDT 82P33
-> Synchronization Management Unit (SMU).
-> 
-> Signed-off-by: Min Li <min.li.xe@renesas.com>
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 > ---
->  .../devicetree/bindings/ptp/ptp-idt82p33.yaml      | 47 ++++++++++++++++++++++
->  1 file changed, 47 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/ptp/ptp-idt82p33.yaml
+>  .../bindings/dma/socionext,uniphier-xdmac.yaml     | 57 ++++++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/ptp/ptp-idt82p33.yaml b/Documentation/devicetree/bindings/ptp/ptp-idt82p33.yaml
+> diff --git a/Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml b/Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml
 > new file mode 100644
-> index 0000000..11d1b40
+> index 00000000..32abf18
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/ptp/ptp-idt82p33.yaml
-> @@ -0,0 +1,47 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +++ b/Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml
+> @@ -0,0 +1,57 @@
+> +# SPDX-License-Identifier: GPL-2.0
+
+Dual license new bindings:
+
+(GPL-2.0-only OR BSD-2-Clause)
+
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/ptp/ptp-idt82p33.yaml#
+> +$id: http://devicetree.org/schemas/dma/socionext,uniphier-xdmac.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: IDT 82P33 PTP Clock Device Tree Bindings
+> +title: Socionext UniPhier external DMA controller
 > +
 > +description: |
-> +  IDT 82P33XXX Synchronization Management Unit (SMU) based PTP clock
+> +  This describes the devicetree bindings for an external DMA engine to perform
+> +  memory-to-memory or peripheral-to-memory data transfer capable of supporting
+> +  16 channels, implemented in Socionext UniPhier SoCs.
 > +
 > +maintainers:
-> +  - Min Li <min.li.xe@renesas.com>
+> +  - Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> +
+> +allOf:
+> +  - $ref: "dma-controller.yaml#"
 > +
 > +properties:
 > +  compatible:
-> +    enum:
-> +      - idt,82p33810
-> +      - idt,82p33813
-> +      - idt,82p33814
-> +      - idt,82p33831
-> +      - idt,82p33910
-> +      - idt,82p33913
-> +      - idt,82p33914
-> +      - idt,82p33931
+> +    items:
+> +      - const: socionext,uniphier-xdmac
+
+You can drop 'items' for a single item.
+
 > +
 > +  reg:
+> +    minItems: 1
+> +    maxItems: 2
+
+You need to say what each entry is:
+
+items:
+  - description: ...
+  - description: ...
+
+> +
+> +  interrupts:
 > +    maxItems: 1
-> +    description:
-> +      I2C slave address of the device.
-
-Can drop the description. That's every device.
-
+> +
+> +  "#dma-cells":
+> +    const: 2
+> +    description: |
+> +      DMA request from clients consists of 2 cells:
+> +        1. Channel index
+> +        2. Transfer request factor number, If no transfer factor, use 0.
+> +           The number is SoC-specific, and this should be specified with
+> +           relation to the device to use the DMA controller.
 > +
 > +required:
 > +  - compatible
 > +  - reg
+> +  - interrupts
+> +  - "#dma-cells"
+
+Add:
+
+additionalProperties: false
+
 > +
 > +examples:
 > +  - |
-> +    i2c@1 {
-> +        compatible = "abc,acme-1234";
-> +        reg = <0x01 0x400>;
+> +    xdmac: dma-controller@5fc10000 {
+> +        compatible = "socionext,uniphier-xdmac";
+> +        reg = <0x5fc10000 0x1000>, <0x5fc20000 0x800>;
+> +        interrupts = <0 188 4>;
+> +        #dma-cells = <2>;
+> +        dma-channels = <16>;
 
-Just do:
+Not documented. You need at least 'dma-channels: true' to indicate 
+you're using this. But you should be able to have some constraints such 
+as 'maximum: 16'.
 
-i2c {
-
-Eventually undocumented compatibles are going to throw warnings.
-
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        phc@51 {
-> +            compatible = "idt,82p33810";
-> +            reg = <0x51>;
-> +        };
-> +    };
-> -- 
-> 2.7.4
-> 
+Rob
