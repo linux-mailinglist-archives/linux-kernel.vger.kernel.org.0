@@ -2,54 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71365154E68
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 22:55:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC9A1154E75
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 22:59:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbgBFVzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 16:55:23 -0500
-Received: from frisell.zx2c4.com ([192.95.5.64]:55175 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726765AbgBFVzX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 16:55:23 -0500
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 76877a17;
-        Thu, 6 Feb 2020 21:54:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=iEyYXoQeVJvL9VxBSqdINnENhik=; b=12M286
-        QcFw7FfPyXUco6JL08r7fRheSId3gtQL4kmvo3WK+hCB+kd0toeYc/mghSa19jwq
-        tIPpgmpmkSjxghjAKTrRHPzbF+vhLq2CNgcx4F2UPCLtwbZdqHcjZ/a3zrOnHBBv
-        KFzIu/HCMm72R2I2G7vvFXkOg0JF5+d3YDoGgl7E0i8nbREKFyvF/SAFeNA/sygr
-        aPZOqTaftwxalanM8Iv2JBkwwOrFMaVWMYb6VZg7RMHpfYCkBUggltYHBSDziYSq
-        J7Rpy1elZ2M1mlN72uIQlxvU33NrlwdeA25FIGa0Qx7pDoVLwGeG25eY71yw2/7W
-        I+ro8sh+UWoIEh7w==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 3e4ade7e (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Thu, 6 Feb 2020 21:54:14 +0000 (UTC)
-Received: by mail-oi1-f173.google.com with SMTP id c16so6252794oic.3;
-        Thu, 06 Feb 2020 13:55:20 -0800 (PST)
-X-Gm-Message-State: APjAAAW2gXE9oxCaffzDOE4I9xsWxeiFYoXn3SDmBq4AoBTmWwEvMTuZ
-        A6ARu0WEO07l9dscrwKZRRvrKazNBVA3cFHR+CE=
-X-Google-Smtp-Source: APXvYqyEsdNrxjDdXuCYJDqUYruajj4xtoIZ5dk0Shwq1ewne2L7eFL197kHYxueoLyjEE5plCZkXk6x5VTXY0hNAgQ=
-X-Received: by 2002:aca:c383:: with SMTP id t125mr33887oif.122.1581026120166;
- Thu, 06 Feb 2020 13:55:20 -0800 (PST)
+        id S1727546AbgBFV7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 16:59:51 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46443 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbgBFV7v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 16:59:51 -0500
+Received: by mail-pl1-f193.google.com with SMTP id y8so97293pll.13;
+        Thu, 06 Feb 2020 13:59:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sVXixa0B18zMPBUSYheGAsct/qyckxIS2tHmquk4WAY=;
+        b=gJH5kA6dCGEhZ/3W03hp6v/kLHQtNaGbLVveZZzxmn4ccBop06p7TniQvv61wknVov
+         lJJwxRj5ZfA2PMXRwmcQpLjO8Pm2zi7mcfxFoCIKwy39mpvrTZTAjKDHimHtE5CoEv+o
+         8RWzlGHkw6CPp/cSlKdlNomL5a6EAOo0zV7kW3wP+vhJu41QXOsvyGZQFgXxb31LXsLg
+         ygVE/TCvXZu3wqw4TA0poWzqp4szDa+6rbQI8RgvWOMkffQwUVLRBSbsieuHd2epwDjX
+         tvzVWgQDPRCMi7C8zDKQKDic5/+B5O5rq1Ou7+8l0eNI58YPDHptH34ZK7uzGTch/fRZ
+         2S4w==
+X-Gm-Message-State: APjAAAUT7Uc0eLCACGklNlG4ABPUbGvbnJmjbgmldvPzjuPdoi/UQQgP
+        5xSsVKevPa3c/aa6CyKefw==
+X-Google-Smtp-Source: APXvYqzQ9YsVc8gaumvlVWv2GaV+63IJpG8P6rBR7UaLfsBaOKX7ODYfLVMDfZ2RjAeHqRqV4JhmWg==
+X-Received: by 2002:a17:902:d205:: with SMTP id t5mr6261830ply.138.1581026389477;
+        Thu, 06 Feb 2020 13:59:49 -0800 (PST)
+Received: from rob-hp-laptop (63-158-47-182.dia.static.qwest.net. [63.158.47.182])
+        by smtp.gmail.com with ESMTPSA id v25sm343170pfe.147.2020.02.06.13.59.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Feb 2020 13:59:48 -0800 (PST)
+Received: (nullmailer pid 23357 invoked by uid 1000);
+        Thu, 06 Feb 2020 21:59:47 -0000
+Date:   Thu, 6 Feb 2020 14:59:47 -0700
+From:   Rob Herring <robh@kernel.org>
+To:     peng.fan@nxp.com
+Cc:     sudeep.holla@arm.com, mark.rutland@arm.com,
+        viresh.kumar@linaro.org, f.fainelli@gmail.com, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, andre.przywara@arm.com
+Subject: Re: [PATCH 1/2] dt-bindings: arm: arm,scmi: add smc/hvc transports
+Message-ID: <20200206215947.GA21514@bogus>
+References: <1580994086-17850-1-git-send-email-peng.fan@nxp.com>
+ <1580994086-17850-2-git-send-email-peng.fan@nxp.com>
 MIME-Version: 1.0
-References: <1580841629-7102-1-git-send-email-cai@lca.pw> <20200206163844.GA432041@zx2c4.com>
- <453212cf-8987-9f05-ceae-42a4fc3b0876@gmail.com> <CAHmME9pGhQoY8MjR8uvEZpF66Y_DvReAjKBx8L4SRiqbL_9itw@mail.gmail.com>
- <495f79f5-ae27-478a-2a1d-6d3fba2d4334@gmail.com> <20200206184340.GA494766@zx2c4.com>
-In-Reply-To: <20200206184340.GA494766@zx2c4.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Thu, 6 Feb 2020 22:55:08 +0100
-X-Gmail-Original-Message-ID: <CAHmME9oaPDNwXOAZSLRHQLawhRBPfgH4OewNBZH9Z_uL6BDDhA@mail.gmail.com>
-Message-ID: <CAHmME9oaPDNwXOAZSLRHQLawhRBPfgH4OewNBZH9Z_uL6BDDhA@mail.gmail.com>
-Subject: Re: [PATCH v3] skbuff: fix a data race in skb_queue_len()
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     cai@lca.pw, Netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Marco Elver <elver@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1580994086-17850-2-git-send-email-peng.fan@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Useful playground: https://godbolt.org/z/i7JFRW
+On Thu, Feb 06, 2020 at 09:01:25PM +0800, peng.fan@nxp.com wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> SCMI could use SMC/HVC as tranports, so add into devicetree
+> binding doc.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/arm/arm,scmi.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/arm,scmi.txt b/Documentation/devicetree/bindings/arm/arm,scmi.txt
+> index f493d69e6194..03cff8b55a93 100644
+> --- a/Documentation/devicetree/bindings/arm/arm,scmi.txt
+> +++ b/Documentation/devicetree/bindings/arm/arm,scmi.txt
+> @@ -14,7 +14,7 @@ Required properties:
+>  
+>  The scmi node with the following properties shall be under the /firmware/ node.
+>  
+> -- compatible : shall be "arm,scmi"
+> +- compatible : shall be "arm,scmi" or "arm,scmi-smc"
+>  - mboxes: List of phandle and mailbox channel specifiers. It should contain
+>  	  exactly one or two mailboxes, one for transmitting messages("tx")
+>  	  and another optional for receiving the notifications("rx") if
+> @@ -25,6 +25,8 @@ The scmi node with the following properties shall be under the /firmware/ node.
+>  	  protocol identifier for a given sub-node.
+>  - #size-cells : should be '0' as 'reg' property doesn't have any size
+>  	  associated with it.
+> +- arm,smc-id : SMC id required when using smc transports
+> +- arm,hvc-id : HVC id required when using hvc transports
+
+Don't the SMC ids get standardized?
+
+>  
+>  Optional properties:
+>  
+> -- 
+> 2.16.4
+> 
