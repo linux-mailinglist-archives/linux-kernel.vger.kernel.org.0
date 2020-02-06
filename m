@@ -2,73 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12EE3154AAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 18:59:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 671FE154AB3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 19:01:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbgBFR7F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 12:59:05 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:34022 "EHLO mail.skyhub.de"
+        id S1727790AbgBFSB0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 13:01:26 -0500
+Received: from mga14.intel.com ([192.55.52.115]:44547 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727358AbgBFR7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 12:59:05 -0500
-Received: from zn.tnic (p200300EC2F0B4B00B811E77661B3406F.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:4b00:b811:e776:61b3:406f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9659F1EC0C9F;
-        Thu,  6 Feb 2020 18:59:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1581011943;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=nViz79a1n7w/lfoDbFkBaxX8o7iOq4KdQvCEJpyKvWU=;
-        b=cta3RKduY4mqDM4xFMRY7YhuV0YG4axx8+hLVlbJi6LtMYyneK2V721qTKkl20/ayEE+j5
-        pCRvu2mhiCySmw2mFkaUn9Izu5IAMqJe5nIbkzi7C+b9fFPhPWV620fAcBIe5kzUEcXV/r
-        Ys/rWCgMY6oQGzXCxJib30vypOsvHyw=
-Date:   Thu, 6 Feb 2020 18:58:58 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [for-next][PATCH 04/26] bootconfig: Add Extra Boot Config support
-Message-ID: <20200206175858.GG9741@zn.tnic>
-References: <20200114210316.450821675@goodmis.org>
- <20200114210336.259202220@goodmis.org>
- <20200206115405.GA22608@zn.tnic>
- <20200206234100.953b48ecef04f97c112d2e8b@kernel.org>
+        id S1727358AbgBFSBZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 13:01:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 10:01:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,410,1574150400"; 
+   d="scan'208";a="311764928"
+Received: from skilgo1x-mobl.amr.corp.intel.com (HELO [10.254.103.251]) ([10.254.103.251])
+  by orsmga001.jf.intel.com with ESMTP; 06 Feb 2020 10:01:24 -0800
+Subject: Re: sound/soc/intel/boards/hda_dsp_common.c:76: undefined reference
+ to `snd_hda_codec_build_controls'
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To:     Takashi Iwai <tiwai@suse.de>, kbuild test robot <lkp@intel.com>
+Cc:     Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+References: <202002061349.zDVX3Qdu%lkp@intel.com>
+ <s5hwo909mm9.wl-tiwai@suse.de>
+ <e82ceb12-2d0e-ccec-8d8d-eef556918c53@linux.intel.com>
+Message-ID: <9d8d130f-47d5-03a5-484e-b0865c6de6f8@linux.intel.com>
+Date:   Thu, 6 Feb 2020 12:01:24 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200206234100.953b48ecef04f97c112d2e8b@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <e82ceb12-2d0e-ccec-8d8d-eef556918c53@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 06, 2020 at 11:41:00PM +0900, Masami Hiramatsu wrote:
-> Oh, you are not the first person asked that :)
+
+>>>     ld: sound/soc/intel/boards/hda_dsp_common.o: in function 
+>>> `hda_dsp_hdmi_build_controls':
+>>>>> sound/soc/intel/boards/hda_dsp_common.c:76: undefined reference to 
+>>>>> `snd_hda_codec_build_controls'
+>>
+>> Looks like the revert select enforcing the built-in of SOF while the
+>> legacy HDA is a module.  It doesn't look so trivial to fix...
 > 
-> https://lkml.org/lkml/2019/12/9/563
+> SOF in this case is build as a module, but the machine driver isn't.
 > 
-> And yes, I think this is important that will useful for most developers
-> and admins. Since the bootconfig already covers kernel and init options,
-> this can be a new standard way to pass args to kernel boot.
+> It seems like the SND_SOC_INTEL_SKL_HDA_DSP_GENERIC_MACH option is 
+> different from others machine drivers. All others can only be either M 
+> or not selected, but here we have a case where the selection can be M or y.
 
-Aha, so Steve and you believe this will become the next great thing
-after sliced bread. Sorry but I remain sceptical. :)
+Suggested fix is here, running it through our CI tests for now:
 
-I would've done it differently: have it default 'n' and once it turns
-out that the major distros have enabled it and *actually* use it, *then*
-simply remove the config option. Like we usually do with functionality.
-Not the other way around.
+https://github.com/thesofproject/linux/pull/1768
 
-In any case, I've disabled it on my machines and will wait for it
-missing to come back and bite me. :-P
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+This should be caught by kbuild tests as well.
