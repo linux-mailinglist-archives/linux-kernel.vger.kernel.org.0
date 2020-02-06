@@ -2,194 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 621AA154E26
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 22:40:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1FCF154E31
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 22:41:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbgBFVkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 16:40:09 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36504 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727450AbgBFVkJ (ORCPT
+        id S1727830AbgBFVlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 16:41:17 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:45068 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727661AbgBFVlQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 16:40:09 -0500
-Received: by mail-pl1-f193.google.com with SMTP id a6so98845plm.3;
-        Thu, 06 Feb 2020 13:40:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5vvIq67JV+Oxp9NKbdutNRvJz8PnZ+ipDgXIat3s/IM=;
-        b=Oi1pgWOYemZXbgqg32b3O1nImywT+pcyhhlTRA+3upt44XAK/6TqB7ULYqzOgL8app
-         RxTYqil60rk8tRBJxLcv0Gd4ZUQNK02XZZ6KusH6Fggc6uKBAq8ZGaJj/mD5MT6ZNuNt
-         Ni+LLa9VWGWgpDLxMWEUYFjrSMnZ72aRibfEyHEJN3d+pkrv40YPXLSJXetLvHzLgIwC
-         Fn/UDSmhAvxdg2bzpD8ijshmMBBrJyaJ/oB0vkvVpAIXNv34GAgMGqe90gZAjknPa/zv
-         975CQsS+h5dI3w4R4A+y6tcLGGuR3326QmkTGrr7qvRFDmCrDIv7JWJ3NbaewjZkmTPh
-         u/TQ==
-X-Gm-Message-State: APjAAAWNIX98WzToDznBGvlP+Gcdnm1w/HywvbBTGfEJNsTmf16eFBV5
-        DCqckrJ37oRSTkNloyWazg==
-X-Google-Smtp-Source: APXvYqwwexPoc9Hz2nHTx6PnK5C22QnItXhc4L9PublC77ZX1pijc5BwfgydEIocGZDePnqHtWRQAg==
-X-Received: by 2002:a17:90b:3109:: with SMTP id gc9mr7013106pjb.30.1581025207964;
-        Thu, 06 Feb 2020 13:40:07 -0800 (PST)
-Received: from rob-hp-laptop (63-158-47-182.dia.static.qwest.net. [63.158.47.182])
-        by smtp.gmail.com with ESMTPSA id g13sm322250pfo.169.2020.02.06.13.40.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 13:40:06 -0800 (PST)
-Received: (nullmailer pid 23807 invoked by uid 1000);
-        Thu, 06 Feb 2020 21:40:05 -0000
-Date:   Thu, 6 Feb 2020 14:40:05 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
-        devicetree@vger.kernel.org, myungjoo.ham@samsung.com,
-        cw00.choi@samsung.com, mark.rutland@arm.com, bleung@chromium.org,
-        groeck@chromium.org, linux-kernel@vger.kernel.org,
-        helen.koike@collabora.com, ezequiel@collabora.com,
-        kernel@collabora.com, dafna3@gmail.com
-Subject: Re: [PATCH v2] dt-bindings: convert extcon-usbc-cros-ec.txt
- extcon-usbc-cros-ec.yaml
-Message-ID: <20200206214005.GA20153@bogus>
-References: <20200205110029.3395-1-dafna.hirschfeld@collabora.com>
- <59ec876a-a77a-9b6d-34dd-272292102ed9@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <59ec876a-a77a-9b6d-34dd-272292102ed9@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 6 Feb 2020 16:41:16 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016LchfD110848;
+        Thu, 6 Feb 2020 21:40:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2020-01-29; bh=RVw98UuA753CD7zWY4l2J2dJK4NDnsK13hhkc8QW+gI=;
+ b=MUQOEJuuVTrXF3LMpiKU6vj27rvvoPw1slXWyVSXzsda5JTkJlbvr20z8xWZR0oqN3vM
+ bo6SwICvci4S9Z10VcU1AVr9UAVyqqrY1b9Yu8nQGDdy2iV0dvIhLGrnRIHe/Iz2QGd5
+ vc9AzRrEaTA7CRSk4ej4OAhhABnzia8vPWD+zSAOyQCCEeBV6ppaJPhGO5voVPfMwXi7
+ Os9V1vRXT898/0223hmqC+8zRBIcInshsUHFMiX2oNmX3eBE2GeGL6WahuEn66GXXLfw
+ PTPniqFdbZBhkEpkPAJ01OG/3gyCW5bP7FfqJs5yz2ObU6GsTWTuzvJp9ooVikeEs8x4 8w== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2019-08-05; bh=RVw98UuA753CD7zWY4l2J2dJK4NDnsK13hhkc8QW+gI=;
+ b=CyPAlgYFQb63uLSwARflxnQGU8oQBBtpPjXbqFAuPyvvKCjlbB/Z3IMf6xUJDXCBV+M8
+ i9BCErB1DsuiPgLz5EFzjowWK2cap3pedpjm/hCwS6qHXbfuZlATzHwYGYER0n/qZB0f
+ ZkT3wkTyaf2g5xyBp+23b6ktdh0lIUYK8awpa2l4hN+8+mEszriNFAN6kfE42E/2wTNz
+ mcyk20ZHSsD/GkM4ZyRDWbAe04xMiNuaT6jtOrxDGHcFAG6T641+zS1SM0UOXBEo+vSB
+ rlC+zuYGBE5eKbcisvQgiNZTUnBgCZ9yeblwnhYE7wD86aPc7vzwFKVjcYNEVaDtr0gF iQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2xykbpch43-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Feb 2020 21:40:48 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016Ld8ek098311;
+        Thu, 6 Feb 2020 21:40:47 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2y0mjvxjdy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Feb 2020 21:40:47 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 016LefZk024879;
+        Thu, 6 Feb 2020 21:40:41 GMT
+Received: from dhcp-10-65-154-237.vpn.oracle.com (/10.65.154.237)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 06 Feb 2020 13:40:41 -0800
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [RFC PATCH 0/2] ima: uncompressed module appraisal support
+From:   Eric Snowberg <eric.snowberg@oracle.com>
+In-Reply-To: <5c246616-9a3a-3ed2-c1f9-f634cef511c9@linux.vnet.ibm.com>
+Date:   Thu, 6 Feb 2020 14:40:40 -0700
+Cc:     dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
+        geert@linux-m68k.org, gregkh@linuxfoundation.org,
+        nayna@linux.ibm.com, tglx@linutronix.de, bauerman@linux.ibm.com,
+        mpe@ellerman.id.au, linux-integrity@vger.kernel.org,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <09D68C13-75E2-4BD6-B4E6-F765B175C7FD@oracle.com>
+References: <20200206164226.24875-1-eric.snowberg@oracle.com>
+ <5c246616-9a3a-3ed2-c1f9-f634cef511c9@linux.vnet.ibm.com>
+To:     Nayna <nayna@linux.vnet.ibm.com>
+X-Mailer: Apple Mail (2.3273)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9523 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2002060158
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9523 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2002060158
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 06, 2020 at 04:47:59PM +0100, Enric Balletbo i Serra wrote:
-> Hi Dafna,
-> 
-> On 5/2/20 12:00, Dafna Hirschfeld wrote:
-> > convert the binding file extcon-usbc-cros-ec.txt to yaml format
-> > This was tested and verified on ARM with:
-> > make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
-> > make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
-> > 
-> > Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-> > ---
-> > Changes since v1:
-> > 1 - changing the license to (GPL-2.0-only OR BSD-2-Clause)
-> > 2 - changing the maintainers
-> > 3 - changing the google,usb-port-id property to have minimum 0 and maximum 255
-> > 
-> >  .../bindings/extcon/extcon-usbc-cros-ec.txt   | 24 ----------
-> >  .../bindings/extcon/extcon-usbc-cros-ec.yaml  | 45 +++++++++++++++++++
-> >  2 files changed, 45 insertions(+), 24 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
-> >  create mode 100644 Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt b/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
-> > deleted file mode 100644
-> > index 8e8625c00dfa..000000000000
-> > --- a/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
-> > +++ /dev/null
-> > @@ -1,24 +0,0 @@
-> > -ChromeOS EC USB Type-C cable and accessories detection
-> > -
-> > -On ChromeOS systems with USB Type C ports, the ChromeOS Embedded Controller is
-> > -able to detect the state of external accessories such as display adapters
-> > -or USB devices when said accessories are attached or detached.
-> > -
-> > -The node for this device must be under a cros-ec node like google,cros-ec-spi
-> > -or google,cros-ec-i2c.
-> > -
-> > -Required properties:
-> > -- compatible:		Should be "google,extcon-usbc-cros-ec".
-> > -- google,usb-port-id:	Specifies the USB port ID to use.
-> > -
-> > -Example:
-> > -	cros-ec@0 {
-> > -		compatible = "google,cros-ec-i2c";
-> > -
-> > -		...
-> > -
-> > -		extcon {
-> > -			compatible = "google,extcon-usbc-cros-ec";
-> > -			google,usb-port-id = <0>;
-> > -		};
-> > -	}
-> > diff --git a/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml b/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
-> > new file mode 100644
-> > index 000000000000..fd95e413d46f
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
-> > @@ -0,0 +1,45 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/extcon/extcon-usbc-cros-ec.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: ChromeOS EC USB Type-C cable and accessories detection
-> > +
-> > +maintainers:
-> > +  - Benson Leung <bleung@chromium.org>
-> > +  - Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > +
-> > +description: |
-> > +  On ChromeOS systems with USB Type C ports, the ChromeOS Embedded Controller is
-> > +  able to detect the state of external accessories such as display adapters
-> > +  or USB devices when said accessories are attached or detached.
-> > +  The node for this device must be under a cros-ec node like google,cros-ec-spi
-> > +  or google,cros-ec-i2c.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: google,extcon-usbc-cros-ec
-> > +
-> > +  google,usb-port-id:
-> > +    allOf:
-> > +      - $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description: the port id
-> > +    minimum: 0
-> > +    maximum: 255
-> > +
-> > +required:
-> > +  - compatible
-> > +  - google,usb-port-id
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    cros-ec@0 {
-> > +        compatible = "google,cros-ec-i2c";
-> 
-> Now that you are here ... could you use compatible = "google,cros-ec-spi" here?
-> 
-> The reason is that the label above, cros-ec@0 is not really correct for an i2c
-> device because after the @ you should put the address, cros-ec@1e will have more
-> sense here. But cros-ec-i2c is rarely used, so I'd change the compatible to use
-> "google,cros-ec-spi" and the entry "cros-ec@0" is fine.
-> 
-> > +        extcon {
-> > +            compatible = "google,extcon-usbc-cros-ec";
-> > +            google,usb-port-id = <0>;
-> > +        };
-> 
-> And maybe would be useful have a more complete example like this?
-> 
->     cros-ec@0 {
->         compatible = "google,cros-ec-spi";
 
-There should also be a 'spi' parent node and 'reg' here.
+> On Feb 6, 2020, at 1:22 PM, Nayna <nayna@linux.vnet.ibm.com> wrote:
+>=20
+>=20
+> On 2/6/20 11:42 AM, Eric Snowberg wrote:
+>> When booting with either "ima_policy=3Dsecure_boot =
+module.sig_enforce=3D1"
+>> or building a kernel with CONFIG_IMA_ARCH_POLICY and booting with
+>> "ima_policy=3Dsecure_boot", module loading behaves differently based =
+on if
+>> the module is compressed or not.  Originally when appraising a module
+>> with ima it had to be uncompressed and ima signed.  Recent changes in =
+5.4
+>> have allowed internally signed modules to load [1].  But this only =
+works
+>> if the internally signed module is compressed.  The uncompressed =
+module
+>> that is internally signed must still be ima signed. This patch series
+>> tries to bring the two in line.
+>=20
+> We (Mimi and I) have been trying to understand the cover letter. It =
+seems "by internally signed" you are referring to modules signed with =
+build time generated keys.
 
-> 
-> 	usbc_extcon0: extcon@0 {
+I am referring to any module that includes an appended signature.  They =
+could be signed at build time or anytime afterwards using =
+/usr/src/kernels/$(uname -r)/scripts/sign-file.  As long as the public =
+key is contained in the builtin kernel trusted keyring.
 
-And no unit-address here as there's no 'reg'.
 
-> 		compatible = "google,extcon-usbc-cros-ec";
-> 		google,usb-port-id = <0>;
-> 	};
-> 
-> 
-> 	usbc_extcon1: extcon@1 {
-> 		compatible = "google,extcon-usbc-cros-ec";
-> 		google,usb-port-id = <1>;
-> 	};
->     };
+> Our interpretation of the cover letter is that IMA originally did not =
+support appended signatures and now does.
+
+Correct, before the changes added to 5.4 [1], it was not possible to =
+have a digital signature based appraisal policy that worked with a =
+compressed module.  This is because you can=E2=80=99t ima sign a =
+compressed module, since the signature would be lost by the time it gets =
+to the init_module syscall.  With the changes in [1] you can, if you =
+include =E2=80=9Cmodsig=E2=80=9D to your policy, which allows the =
+appended module to be checked instead.
+
+
+> Since the modules are signed with build time generated keys, the =
+signature verification still fails, as the keys are only available on =
+the .builtin keyring and not the .ima keyring.
+
+Currently the upstream code will fail if the module is uncompressed.  If =
+you compress the same module it will load with the current upstream =
+code.
+
+> Lastly, there is nothing in these patches that indicate that the =
+kernel modules being compressed/uncompressed is related to the signature =
+verification.
+>=20
+
+Basically if you have the following setup:
+
+Kernel built with CONFIG_IMA_ARCH_POLICY or kernel booted with =
+module.sig_enforce=3D1 along with the following ima policy:
+
+appraise func=3DMODULE_CHECK appraise_type=3Dimasig|modsig
+
+If you have a module foo.ko that contains a valid appended signature but =
+is not ima signed, it will fail to load.  Now if the enduser simply =
+compresses the same foo.ko, making it foo.ko.xz.  The module will load.
+
+Modules can be loaded thru two different syscalls, finit_module and =
+init_module.  The changes added in [1] work if you use the init_module =
+syscall.  My change adds support when the finit_module syscall gets used =
+instead.
+
+
+[1] https://patchwork.kernel.org/cover/10986023
+
