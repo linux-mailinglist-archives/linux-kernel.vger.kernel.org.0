@@ -2,159 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98B9F154D6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 21:47:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03A68154D52
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 21:47:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728041AbgBFUpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 15:45:46 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:55562 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728009AbgBFUpm (ORCPT
+        id S1728239AbgBFUq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 15:46:27 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40745 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727877AbgBFUqZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 15:45:42 -0500
-Received: by mail-pj1-f66.google.com with SMTP id d5so488746pjz.5;
-        Thu, 06 Feb 2020 12:45:40 -0800 (PST)
+        Thu, 6 Feb 2020 15:46:25 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z7so3333485pgk.7;
+        Thu, 06 Feb 2020 12:46:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JQfj0uzbhk9PL5wqDoKeIBKd41MQ1h8voivIlPs9HKc=;
-        b=eq+XzsaqERQOwcCshZzAYec2ud6qQJ6e80VLFLiKooJkqgaLPIvHd2CwrQcSzU4ya8
-         9P2T0H34tt+P9kw5O4vjBs7Lo1K2SPq1TXBMBIcjF3UruXRG/xMwfFOALscUbSxv8MZE
-         pIYw2YaxLQpiCneGOtTDSnJLyGlm9Jt+28sEMqQAirgINql2yNsMRTQZZj8Rmeyka7B7
-         RWzR+2HTMan/4IS/m3bDbnWjh3QYFU5H2Ip86eqxUQiN9pSBNzCmlmomkegROKXl43AV
-         8D02ezfuXmPiZr5BNL4S2hc/dJ1vuMSVXEwIm5E4Csl489//k5vNSyDGTSBNp/zjG9OP
-         5cyw==
-X-Gm-Message-State: APjAAAVMLATDNr9+Vd096SBJB4MwMM0WkxWrrGw+G3RDP24wPhp2wxN8
-        1NfelBmg2zXxFQ/nqyMK2w==
-X-Google-Smtp-Source: APXvYqzSMACQuqwX22lBn2rt4IX37CGDwizLP6s5gsYe5polHbDhnFefNbnnYKXjV0FMspaifpEDqg==
-X-Received: by 2002:a17:90a:35e6:: with SMTP id r93mr6788847pjb.44.1581021940411;
-        Thu, 06 Feb 2020 12:45:40 -0800 (PST)
+        bh=jPtOQdw8vyUeztLpc680CHtZLK6W1JEQ2cHvbgrlY+8=;
+        b=WqXY9MDGqAuSlJ3Htq+iCYlFvm9yzCL2kfMcTGeF6Fm4x7kEg1/X8EivvdBzr3oRew
+         7gHInV7c4+S9g2kIDnKx+40EffR34sc4K8E4NnQ1oxGGaM2UgZ2PbtM3itWF0qk/0LTN
+         ISTe4CXRiZfiQFqAOGy8CbBhOgTOPwyHoVjDXI5FbZTtB/aPUhxHXyzbeO7UP6qf8pIB
+         HR5fC5KKnih6yhfjQsYIUeOmpfZ4nKBY5fr7Yv+jClW2ixtRL0ZkeeJzystO/c/pqJct
+         kNxzqBha1V9aGfMoL2/B1jKkuwxz7XTcXCkQm0Omn45fPoZloF6d71dy1HbpSRekiTpC
+         hAKA==
+X-Gm-Message-State: APjAAAURznOXjApo7kd+BORqDLn+qnYPuIoHyISmXPBIPZcxqTaskEst
+        wB6Qm5XBxp1SoAObeqVebQ==
+X-Google-Smtp-Source: APXvYqxza9xpQ1nh+paMG8H01152jYTBvT3wn55ABgjvQ/4PX2elrh5aIP/rcP6j59uN6+87Rk8oUQ==
+X-Received: by 2002:a63:4b52:: with SMTP id k18mr5635945pgl.371.1581021982840;
+        Thu, 06 Feb 2020 12:46:22 -0800 (PST)
 Received: from rob-hp-laptop (63-158-47-182.dia.static.qwest.net. [63.158.47.182])
-        by smtp.gmail.com with ESMTPSA id 4sm284539pfn.90.2020.02.06.12.45.39
+        by smtp.gmail.com with ESMTPSA id z29sm292462pgc.21.2020.02.06.12.46.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 12:45:39 -0800 (PST)
-Received: (nullmailer pid 24630 invoked by uid 1000);
-        Thu, 06 Feb 2020 17:54:58 -0000
-Date:   Thu, 6 Feb 2020 17:54:58 +0000
+        Thu, 06 Feb 2020 12:46:22 -0800 (PST)
+Received: (nullmailer pid 28243 invoked by uid 1000);
+        Thu, 06 Feb 2020 17:56:52 -0000
+Date:   Thu, 6 Feb 2020 17:56:52 +0000
 From:   Rob Herring <robh@kernel.org>
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mark Rutland <mark.rutland@arm.com>, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: dmaengine: Add UniPhier external DMA
- controller bindings
-Message-ID: <20200206175458.GA12845@bogus>
-References: <1580362048-28455-1-git-send-email-hayashi.kunihiko@socionext.com>
- <1580362048-28455-2-git-send-email-hayashi.kunihiko@socionext.com>
+To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, andriy.shevchenko@intel.com,
+        qi-ming.wu@intel.com, yixin.zhu@linux.intel.com,
+        cheol.yong.kim@intel.com
+Subject: Re: [PATCH v3 2/2] dt-bindings: clk: intel: Add bindings document &
+ header file for a new clock driver
+Message-ID: <20200206175652.GA25108@bogus>
+References: <cover.1580373142.git.rahul.tanwar@linux.intel.com>
+ <1c4b7a999f47df4214a60971e27fa9311c8c64b4.1580373142.git.rahul.tanwar@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1580362048-28455-2-git-send-email-hayashi.kunihiko@socionext.com>
+In-Reply-To: <1c4b7a999f47df4214a60971e27fa9311c8c64b4.1580373142.git.rahul.tanwar@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 02:27:27PM +0900, Kunihiko Hayashi wrote:
-> Add devicetree binding documentation for external DMA controller
-> implemented on Socionext UniPhier SoCs.
+On Thu, Jan 30, 2020 at 04:54:01PM +0800, Rahul Tanwar wrote:
+> Clock generation unit(CGU) is a clock controller IP of Intel's Lightning
+> Mountain(LGM) SoC. Add DT bindings include file and document for CGU clock
+> controller driver of LGM.
 > 
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
 > ---
->  .../bindings/dma/socionext,uniphier-xdmac.yaml     | 57 ++++++++++++++++++++++
->  1 file changed, 57 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml
+>  .../devicetree/bindings/clock/intel,cgu-lgm.yaml   |  40 +++++
+>  include/dt-bindings/clock/intel,lgm-clk.h          | 165 +++++++++++++++++++++
+>  2 files changed, 205 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
+>  create mode 100644 include/dt-bindings/clock/intel,lgm-clk.h
 > 
-> diff --git a/Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml b/Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml
+> diff --git a/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml b/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
 > new file mode 100644
-> index 00000000..32abf18
+> index 000000000000..e9649fe75435
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml
-> @@ -0,0 +1,57 @@
-> +# SPDX-License-Identifier: GPL-2.0
-
-Dual license new bindings:
-
-(GPL-2.0-only OR BSD-2-Clause)
-
+> +++ b/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
+> @@ -0,0 +1,40 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/dma/socionext,uniphier-xdmac.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Socionext UniPhier external DMA controller
-> +
-> +description: |
-> +  This describes the devicetree bindings for an external DMA engine to perform
-> +  memory-to-memory or peripheral-to-memory data transfer capable of supporting
-> +  16 channels, implemented in Socionext UniPhier SoCs.
-> +
-> +maintainers:
-> +  - Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> +
-> +allOf:
-> +  - $ref: "dma-controller.yaml#"
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: socionext,uniphier-xdmac
+> +$id: http://devicetree.org/schemas/bindings/clock/intel,cgu-lgm.yaml#
 
-You can drop 'items' for a single item.
+Drop 'bindings'
 
-> +
-> +  reg:
-> +    minItems: 1
-> +    maxItems: 2
+With that,
 
-You need to say what each entry is:
-
-items:
-  - description: ...
-  - description: ...
-
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  "#dma-cells":
-> +    const: 2
-> +    description: |
-> +      DMA request from clients consists of 2 cells:
-> +        1. Channel index
-> +        2. Transfer request factor number, If no transfer factor, use 0.
-> +           The number is SoC-specific, and this should be specified with
-> +           relation to the device to use the DMA controller.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - "#dma-cells"
-
-Add:
-
-additionalProperties: false
-
-> +
-> +examples:
-> +  - |
-> +    xdmac: dma-controller@5fc10000 {
-> +        compatible = "socionext,uniphier-xdmac";
-> +        reg = <0x5fc10000 0x1000>, <0x5fc20000 0x800>;
-> +        interrupts = <0 188 4>;
-> +        #dma-cells = <2>;
-> +        dma-channels = <16>;
-
-Not documented. You need at least 'dma-channels: true' to indicate 
-you're using this. But you should be able to have some constraints such 
-as 'maximum: 16'.
-
-Rob
+Reviewed-by: Rob Herring <robh@kernel.org>
