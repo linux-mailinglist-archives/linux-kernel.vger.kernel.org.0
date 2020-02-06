@@ -2,146 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 807E81548B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:59:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B3C01548C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 17:05:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbgBFP7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 10:59:49 -0500
-Received: from gateway31.websitewelcome.com ([192.185.143.234]:23843 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727358AbgBFP7t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 10:59:49 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id E468511C4E7
-        for <linux-kernel@vger.kernel.org>; Thu,  6 Feb 2020 09:59:47 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id zjZDiI0RSSl8qzjZDi3GOQ; Thu, 06 Feb 2020 09:59:47 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=3x27GKoJpid13+Ve8WU7D8py7LuYdaBCUUELnv2Ntxg=; b=yXPSwqOvxzWHfuOQYI3nSlY/d+
-        /srKGPErQSU+0e0EKWR9M/Z81KgxRXMyngZTe+nTfNSTBY/UA7SXcZa+OrmOKUBVXCc/XxYNmCVs5
-        xa6egrFQdfpUcDQrRysJIkQrTvgaFaaAIbMuvociEPK2jZhmFbfjC6PyNG87vwsl4rmmChM4bUbeD
-        Raf0GfTzWcGYLEhlWEQzCx7lyJKP16dMiOpR05Wzu/Jgdd3xx7+tVzHt5PufrDZeLaXokZ5SA+xOE
-        gpcaWxMInK8JsQgqEXRKVlYwveQ71EK/glTx19UwuqMYSoGWt/wrrkcCp2wGBAUP35/22b9LIAVne
-        TLRH/SLg==;
-Received: from [201.144.174.45] (port=19798 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1izjZD-000e7P-Gv; Thu, 06 Feb 2020 09:59:47 -0600
-Subject: Re: [PATCH] COPYING: state that all contributions really are covered
- by this file
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>
-References: <20200206154800.GA3754085@kroah.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <56c799b5-a4b2-11b4-f89f-a6cc02ffe0e4@embeddedor.com>
-Date:   Thu, 6 Feb 2020 10:02:08 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727613AbgBFQFp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 11:05:45 -0500
+Received: from vps.xff.cz ([195.181.215.36]:39630 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727305AbgBFQFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 11:05:45 -0500
+X-Greylist: delayed 518 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Feb 2020 11:05:44 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1581004623; bh=Haoacbj1oR8jAZ/+z1mMEH6C0wNO66P8twZW4816v38=;
+        h=Date:From:To:Cc:Subject:References:X-My-GPG-KeyId:From;
+        b=SmyZvJrvntWZ9bg2ivEI9G8FdrqYkMwCdVplGX9cdlFGyBFEYe7Babbv6FSFyp4mA
+         OOMKGASHg+sg5L6nP6hU7A2jcRM8CZJuHneiLn3DBqzQoRM2LmTusOqG2mF9j2ZglU
+         1OwCIBmNyEYhTjoLwPqYohjmiLBWdWlj54jW1j88=
+Date:   Thu, 6 Feb 2020 16:57:03 +0100
+From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+To:     Amit Kucheria <amit.kucheria@verdurent.com>
+Cc:     Vasily Khoruzhick <anarsoul@gmail.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        lakml <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 0/7] add thermal sensor driver for A64, A83T, H3, H5,
+ H6, R40
+Message-ID: <20200206155703.fyry7nh473mc7pqy@core.my.home>
+Mail-Followup-To: Amit Kucheria <amit.kucheria@verdurent.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Yangtao Li <tiny.windzz@gmail.com>, Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+        lakml <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20191219172823.1652600-1-anarsoul@gmail.com>
+ <CAHLCerPWEDqEE8LRUiO5GpeP+BfnestocndBQq6oXAxVN=+3ow@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200206154800.GA3754085@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.144.174.45
-X-Source-L: No
-X-Exim-ID: 1izjZD-000e7P-Gv
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [201.144.174.45]:19798
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHLCerPWEDqEE8LRUiO5GpeP+BfnestocndBQq6oXAxVN=+3ow@mail.gmail.com>
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Amit,
 
-
-On 2/6/20 09:48, Greg Kroah-Hartman wrote:
-> Explicitly state that all contributions to the kernel source tree
-> really are covered under this COPYING file in case someone thought
-> otherwise.  Lawyers love to be pedantic, even more so than software
-> engineers at times, and this sentence makes them sleep easier.
+On Thu, Feb 06, 2020 at 07:43:59PM +0530, Amit Kucheria wrote:
+> Hi Vasily,
 > 
-> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-> ---
->  COPYING | 2 ++
->  1 file changed, 2 insertions(+)
+> For this entire series, the DTS files don't contain any trip points.
+> Did I miss some other series?
 > 
-> diff --git a/COPYING b/COPYING
-> index da4cb28febe6..a635a38ef940 100644
-> --- a/COPYING
-> +++ b/COPYING
-> @@ -16,3 +16,5 @@ In addition, other licenses may also apply. Please see:
->  	Documentation/process/license-rules.rst
->  
->  for more details.
-> +
-> +All contributions to the Linux Kernel are subject to this COPYING file.
+> At a minimum, you should add some "hot" or "critical" trip points
+> since then don't require a cooling-map with throttling actions. If you
+> have "passive" trip points, then you need to provide cooling-maps.
 > 
+> Since this series has been merged, could you please follow up with a
+> fixup series to add the trip points?
+
+I don't think lack of trip points causes runtime issues. Or does it? I planned
+to send update with some trip points and cooling maps for 5.7 merge window.
+Is this acceptable?
+
+If not, I can send a patch that adds:
+
++ trips {
++         cpu-very-hot {
++                 temperature = <100000>;
++                 hysteresis = <0>;
++                 type = "critical";
++         };
++ };
+
+and 
+
++ trips {
++         gpu-very-hot {
++                 temperature = <100000>;
++                 hysteresis = <0>;
++                 type = "critical";
++         };
++ };
+
+everywhere where appropriate. Though that will make rebase of out of
+tree patches that already have a more complicated setup to be sent for the next
+merge window a bit tedious.
+
+thank you,
+	Ondrej
+
+> Regards,
+> Amit
+> p.s. We should catch all this automatically, I'll send out yaml
+> bindings for the thermal framework soon that should catch this stuff.
+> 
+> On Thu, Dec 19, 2019 at 10:58 PM Vasily Khoruzhick <anarsoul@gmail.com> wrote:
+> >
+> > This patchset adds driver for thermal sensor in A64, A83T, H3, H5,
+> > H6 and R40 SoCs.
+> >
+> > v8:
+> >         - [vasily] Address more Maxime's comments for dt-schema
+> >         - [vasily] Add myself to MAINTAINERS for the driver and schema
+> >         - [vasily] Round calibration data size to word boundary for H6 and A64
+> >         - [vasily] Change offset for A64 since it reports too low temp otherwise.
+> >                    Likely conversion formula in user manual is not correct.
+> >
+> > v7:
+> >         - [vasily] Address Maxime's comments for dt-schema
+> >         - [vasily] Move common part of H3 and H5 dts into sunxi-h3-h5.dtsi
+> >         - [vasily] Add Maxime's a-b to the driver patch
+> >
+> > v6:
+> >         - [ondrej, vasily] Squash all driver related changes into a
+> >                            single patch
+> >         - [ondrej] Rename calib -> calibration
+> >         - [ondrej] Fix thermal zone registration check
+> >         - [ondrej] Lower rate of sensor data interrupts to 4/sec/sensor
+> >         - [ondrej] Rework scale/offset values, H6 calibration
+> >         - [ondrej] Explicitly set mod clock to 24 MHz
+> >         - [ondrej] Set undocumented bits in CTRL0 for H6
+> >         - [ondrej] Add support for A83T
+> >         - [ondrej] Add dts changes for A83T, H3, H5, H6
+> >         - [vasily] Add dts changes for A64
+> >         - [vasily] Address Maxime's comments for YAML scheme
+> >         - [vasily] Make .calc_temp callback mandatory
+> >         - [vasily] Set .max_register in regmap config, so regs can be
+> >                    inspected using debugfs
+> >
+> > Ondrej Jirman (4):
+> >   ARM: dts: sun8i-a83t: Add thermal sensor and thermal zones
+> >   ARM: dts: sun8i-h3: Add thermal sensor and thermal zones
+> >   arm64: dts: allwinner: h5: Add thermal sensor and thermal zones
+> >   arm64: dts: allwinner: h6: Add thermal sensor and thermal zones
+> >
+> > Vasily Khoruzhick (1):
+> >   arm64: dts: allwinner: a64: Add thermal sensors and thermal zones
+> >
+> > Yangtao Li (2):
+> >   thermal: sun8i: add thermal driver for H6/H5/H3/A64/A83T/R40
+> >   dt-bindings: thermal: add YAML schema for sun8i-thermal driver
+> >     bindings
+> >
+> >  .../thermal/allwinner,sun8i-a83t-ths.yaml     | 160 +++++
+> >  MAINTAINERS                                   |   8 +
+> >  arch/arm/boot/dts/sun8i-a83t.dtsi             |  36 +
+> >  arch/arm/boot/dts/sun8i-h3.dtsi               |  20 +
+> >  arch/arm/boot/dts/sunxi-h3-h5.dtsi            |   6 +
+> >  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  42 ++
+> >  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi  |  26 +
+> >  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |  33 +
+> >  drivers/thermal/Kconfig                       |  14 +
+> >  drivers/thermal/Makefile                      |   1 +
+> >  drivers/thermal/sun8i_thermal.c               | 639 ++++++++++++++++++
+> >  11 files changed, 985 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml
+> >  create mode 100644 drivers/thermal/sun8i_thermal.c
+> >
+> > --
+> > 2.24.1
+> >
