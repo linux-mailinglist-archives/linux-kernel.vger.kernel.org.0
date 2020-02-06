@@ -2,136 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAB63153D76
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 04:14:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13424153D4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 04:10:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727961AbgBFDNl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 22:13:41 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33360 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727762AbgBFDNk (ORCPT
+        id S1727577AbgBFDKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 22:10:05 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:53403 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727572AbgBFDKE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 22:13:40 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01639iJP087061;
-        Wed, 5 Feb 2020 22:13:08 -0500
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2xyhmhvkhn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Feb 2020 22:13:08 -0500
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0163A3Ax088408;
-        Wed, 5 Feb 2020 22:13:07 -0500
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2xyhmhvkhc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Feb 2020 22:13:07 -0500
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 0163D2Hi019950;
-        Thu, 6 Feb 2020 03:13:07 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma02wdc.us.ibm.com with ESMTP id 2xykc9hu9p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 06 Feb 2020 03:13:07 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0163D5Ii34275744
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Feb 2020 03:13:05 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A620FBE056;
-        Thu,  6 Feb 2020 03:13:05 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 57003BE04F;
-        Thu,  6 Feb 2020 03:12:52 +0000 (GMT)
-Received: from LeoBras.aus.stglabs.ibm.com (unknown [9.85.163.250])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu,  6 Feb 2020 03:12:51 +0000 (GMT)
-From:   Leonardo Bras <leonardo@linux.ibm.com>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Steven Price <steven.price@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Leonardo Bras <leonardo@linux.ibm.com>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Reza Arbab <arbab@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michal Suchanek <msuchanek@suse.de>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH v6 11/11] powerpc/mm/book3s64/pgtable: Uses counting method to skip serializing
-Date:   Thu,  6 Feb 2020 00:09:00 -0300
-Message-Id: <20200206030900.147032-12-leonardo@linux.ibm.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200206030900.147032-1-leonardo@linux.ibm.com>
-References: <20200206030900.147032-1-leonardo@linux.ibm.com>
+        Wed, 5 Feb 2020 22:10:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580958603;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=P1TczXbUHB/A1ibG/DqEE8S0FtOzhIhbj3hz2btGu3s=;
+        b=KU7FRVlHo5RI4RPTb4LiQ6cjsxX5XWoFuoDzUGJLHOqyGJwuCookEZfahYqxuhLzhbeWyJ
+        5nHk6rw8i4IVH/nLGWeIuhdNBHLCETc+gLiQroV+xWmgnMx+stYvsIYtbuWOXogHkND9DE
+        SZw3WeZGTb0E9b229CKOxtKVigYzv6Y=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-161-i1UTngbRMf-R7FlrhRD3mg-1; Wed, 05 Feb 2020 22:10:01 -0500
+X-MC-Unique: i1UTngbRMf-R7FlrhRD3mg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ABA228018A7;
+        Thu,  6 Feb 2020 03:09:58 +0000 (UTC)
+Received: from [10.72.13.85] (ovpn-13-85.pek2.redhat.com [10.72.13.85])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 400941A7E3;
+        Thu,  6 Feb 2020 03:09:43 +0000 (UTC)
+Subject: Re: [PATCH] vhost: introduce vDPA based backend
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Shahaf Shuler <shahafs@mellanox.com>
+Cc:     Tiwei Bie <tiwei.bie@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        "rob.miller@broadcom.com" <rob.miller@broadcom.com>,
+        "haotian.wang@sifive.com" <haotian.wang@sifive.com>,
+        "eperezma@redhat.com" <eperezma@redhat.com>,
+        "lulu@redhat.com" <lulu@redhat.com>,
+        Parav Pandit <parav@mellanox.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "hch@infradead.org" <hch@infradead.org>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "hanand@xilinx.com" <hanand@xilinx.com>,
+        "mhabets@solarflare.com" <mhabets@solarflare.com>,
+        "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
+        "lingshan.zhu@intel.com" <lingshan.zhu@intel.com>,
+        "dan.daly@intel.com" <dan.daly@intel.com>,
+        "cunming.liang@intel.com" <cunming.liang@intel.com>,
+        "zhihong.wang@intel.com" <zhihong.wang@intel.com>
+References: <20200131033651.103534-1-tiwei.bie@intel.com>
+ <7aab2892-bb19-a06a-a6d3-9c28bc4c3400@redhat.com>
+ <20200205020247.GA368700@___>
+ <AM0PR0502MB37952015716C1D5E07E390B6C3020@AM0PR0502MB3795.eurprd05.prod.outlook.com>
+ <112858a4-1a01-f4d7-e41a-1afaaa1cad45@redhat.com>
+ <AM0PR0502MB3795AD42233D69F350402A8AC3020@AM0PR0502MB3795.eurprd05.prod.outlook.com>
+ <20200205053129-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <80b4a5f9-8cc0-326a-a133-07a0ae3c7909@redhat.com>
+Date:   Thu, 6 Feb 2020 11:09:42 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-05_06:2020-02-04,2020-02-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
- impostorscore=0 malwarescore=0 priorityscore=1501 adultscore=0
- mlxlogscore=980 suspectscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002060022
+In-Reply-To: <20200205053129-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For each cpu in cpumask, checks if it's running a lockless pagetable
-walk. Then, run serialize_against_pte_lookup() only on these cpus.
 
-serialize_agains_pte_lookup() can take a long while when there are a
-lot of cpus in cpumask.
+On 2020/2/5 =E4=B8=8B=E5=8D=886:33, Michael S. Tsirkin wrote:
+> On Wed, Feb 05, 2020 at 09:30:14AM +0000, Shahaf Shuler wrote:
+>> Wednesday, February 5, 2020 9:50 AM, Jason Wang:
+>>> Subject: Re: [PATCH] vhost: introduce vDPA based backend
+>>> On 2020/2/5 =E4=B8=8B=E5=8D=883:15, Shahaf Shuler wrote:
+>>>> Wednesday, February 5, 2020 4:03 AM, Tiwei Bie:
+>>>>> Subject: Re: [PATCH] vhost: introduce vDPA based backend
+>>>>>
+>>>>> On Tue, Feb 04, 2020 at 11:30:11AM +0800, Jason Wang wrote:
+>>>>>> On 2020/1/31 =E4=B8=8A=E5=8D=8811:36, Tiwei Bie wrote:
+>>>>>>> This patch introduces a vDPA based vhost backend. This backend is
+>>>>>>> built on top of the same interface defined in virtio-vDPA and
+>>>>>>> provides a generic vhost interface for userspace to accelerate th=
+e
+>>>>>>> virtio devices in guest.
+>>>>>>>
+>>>>>>> This backend is implemented as a vDPA device driver on top of the
+>>>>>>> same ops used in virtio-vDPA. It will create char device entry
+>>>>>>> named vhost-vdpa/$vdpa_device_index for userspace to use.
+>>> Userspace
+>>>>>>> can use vhost ioctls on top of this char device to setup the back=
+end.
+>>>>>>>
+>>>>>>> Signed-off-by: Tiwei Bie<tiwei.bie@intel.com>
+>>>> [...]
+>>>>
+>>>>>>> +static long vhost_vdpa_do_dma_mapping(struct vhost_vdpa *v) {
+>>>>>>> +	/* TODO: fix this */
+>>>>>> Before trying to do this it looks to me we need the following duri=
+ng
+>>>>>> the probe
+>>>>>>
+>>>>>> 1) if set_map() is not supported by the vDPA device probe the IOMM=
+U
+>>>>>> that is supported by the vDPA device
+>>>>>> 2) allocate IOMMU domain
+>>>>>>
+>>>>>> And then:
+>>>>>>
+>>>>>> 3) pin pages through GUP and do proper accounting
+>>>>>> 4) store GPA->HPA mapping in the umem
+>>>>>> 5) generate diffs of memory table and using IOMMU API to setup the
+>>>>>> dma mapping in this method
+>>>>>>
+>>>>>> For 1), I'm not sure parent is sufficient for to doing this or nee=
+d
+>>>>>> to introduce new API like iommu_device in mdev.
+>>>>> Agree. We may also need to introduce something like the iommu_devic=
+e.
+>>>>>
+>>>> Would it be better for the map/umnap logic to happen inside each dev=
+ice ?
+>>>> Devices that needs the IOMMU will call iommu APIs from inside the dr=
+iver
+>>> callback.
+>>>
+>>>
+>>> Technically, this can work. But if it can be done by vhost-vpda it wi=
+ll make the
+>>> vDPA driver more compact and easier to be implemented.
+>> Need to see the layering of such proposal but am not sure.
+>> Vhost-vdpa is generic framework, while the DMA mapping is vendor speci=
+fic.
+>> Maybe vhost-vdpa can have some shared code needed to operate on iommu,=
+ so drivers can re-use it.  to me it seems simpler than exposing a new io=
+mmu device.
+>>
+>>>> Devices that has other ways to do the DMA mapping will call the
+>>> proprietary APIs.
+>>>
+>>>
+>>> To confirm, do you prefer:
+>>>
+>>> 1) map/unmap
+>> It is not only that. AFAIR there also flush and invalidate calls, righ=
+t?
+>>
+>>> or
+>>>
+>>> 2) pass all maps at one time?
+>> To me this seems more straight forward.
+>> It is correct that under hotplug and large number of memory segments
+>> the driver will need to understand the diff (or not and just reload
+>> the new configuration).
+>> However, my assumption here is that memory
+>> hotplug is heavy flow anyway, and the driver extra cycles will not be
+>> that visible
+> I think we can just allow both, after all vhost already has both interf=
+aces ...
+> We just need a flag that tells userspace whether it needs to
+> update all maps aggressively or can wait for a fault.
 
-This method is intended to reduce this waiting, while not impacting
-too much on the lockless pagetable walk.
 
-Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
----
- arch/powerpc/mm/book3s64/pgtable.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+It looks to me such flag is not a must and we can introduce it later=20
+when device support page fault.
 
-diff --git a/arch/powerpc/mm/book3s64/pgtable.c b/arch/powerpc/mm/book3s64/pgtable.c
-index bb138b628f86..4822ff1aac4b 100644
---- a/arch/powerpc/mm/book3s64/pgtable.c
-+++ b/arch/powerpc/mm/book3s64/pgtable.c
-@@ -96,8 +96,22 @@ static DEFINE_PER_CPU(int, lockless_pgtbl_walk_counter);
-  */
- void serialize_against_pte_lookup(struct mm_struct *mm)
- {
-+	int cpu;
-+	struct cpumask cm;
-+
- 	smp_mb();
--	smp_call_function_many(mm_cpumask(mm), do_nothing, NULL, 1);
-+
-+	/*
-+	 * Fills a new cpumask only with cpus that are currently doing a
-+	 * lockless pagetable walk. This reduces time spent in this function.
-+	 */
-+	cpumask_clear(&cm);
-+	for_each_cpu(cpu, mm_cpumask((mm))) {
-+		if (per_cpu(lockless_pgtbl_walk_counter, cpu) > 0)
-+			cpumask_set_cpu(cpu, &cm);
-+	}
-+
-+	smp_call_function_many(&cm, do_nothing, NULL, 1);
- }
- 
- /* begin_lockless_pgtbl_walk: Must be inserted before a function call that does
--- 
-2.24.1
+Thanks
+
 
