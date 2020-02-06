@@ -2,88 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9540153CF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 03:27:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7B0C153D01
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 03:46:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbgBFC1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 21:27:46 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10155 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727307AbgBFC1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 21:27:46 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D2F2FD7277A99D30D65F;
-        Thu,  6 Feb 2020 10:27:42 +0800 (CST)
-Received: from huawei.com (10.175.105.18) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Thu, 6 Feb 2020
- 10:27:32 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
-To:     <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
-        <sean.j.christopherson@intel.com>, <vkuznets@redhat.com>,
-        <wanpengli@tencent.com>, <jmattson@google.com>, <joro@8bytes.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>
-CC:     <linmiaohe@huawei.com>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-Subject: [PATCH] KVM: nVMX: Fix some comment typos and coding style
-Date:   Thu, 6 Feb 2020 10:29:22 +0800
-Message-ID: <1580956162-5609-1-git-send-email-linmiaohe@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.105.18]
-X-CFilter-Loop: Reflected
+        id S1727697AbgBFCqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 21:46:12 -0500
+Received: from in01-tec.fasttelco.net ([78.159.162.5]:55232 "EHLO
+        in01-tec.fasttelco.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727548AbgBFCqM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 21:46:12 -0500
+X-Greylist: delayed 3942 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Feb 2020 21:46:10 EST
+Received: from 3vda06y.com ([62.215.195.91])
+        by in01-tec.fasttelco.net (8.14.3/8.14.3/Debian-9.4) with ESMTP id 0161eLmG002414
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Feb 2020 04:40:24 +0300
+Message-Id: <202002060140.0161eLmG002414@in01-tec.fasttelco.net>
+From:   "Secretary-General for Development Coordination" <info34@hairal.com>
+Subject: General for Development Coordination
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Reply-To: "Secretary-General for Development Coordination" 
+          <sarah.buchiri@gmail.com>, sarah.buchiri@gmail.com
+Date:   Thu, 6 Feb 2020 02:40:23 +0100
+X-Priority: 3
+X-Bayes-Prob: 0.0001 (Score 0, tokens from: corp_smtp, base:default, @@RPTN)
+X-Spam-Score: 4.92 (****) [Hold at 5.00] FREEMAIL_FORGED_REPLYTO:2.503,MISSING_MID:0.14,RDNS_NONE:1.274,NewlySeenDomain:1.0
+X-CanIt-Geo: ip=62.215.195.91; country=KW; latitude=29.3375; longitude=47.6581; http://maps.google.com/maps?q=29.3375,47.6581&z=6
+X-CanItPRO-Stream: base:corp_smtp (inherits from base:makc.com.kw,base:default)
+X-Canit-Stats-ID: 041XdEmMi - 043d1a64db49 - 20200206
+X-Antispam-Training-Forget: https://spam.fasttelco.com/canit/b.php?c=f&i=041XdEmMi&m=043d1a64db49&rlm=base&t=20200206
+X-Antispam-Training-Nonspam: https://spam.fasttelco.com/canit/b.php?c=n&i=041XdEmMi&m=043d1a64db49&rlm=base&t=20200206
+X-Antispam-Training-Phish: https://spam.fasttelco.com/canit/b.php?c=p&i=041XdEmMi&m=043d1a64db49&rlm=base&t=20200206
+X-Antispam-Training-Spam: https://spam.fasttelco.com/canit/b.php?c=s&i=041XdEmMi&m=043d1a64db49&rlm=base&t=20200206
+X-Scanned-By: CanIt (www . roaringpenguin . com) on 78.159.162.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miaohe Lin <linmiaohe@huawei.com>
+Congratulations,
 
-Fix some typos in the comments. Also fix coding style.
 
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
----
- arch/x86/include/asm/kvm_host.h | 2 +-
- arch/x86/kvm/vmx/nested.c       | 5 +++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
+Your email was randomly selected for the 2020 first quarter reimbursement via certified ATM CARD. Please reach Mrs. Sarah Buchiri with your code:U.N.D.C/2020/10/0109 for more information.
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 4dffbc10d3f8..8196a4a0df8b 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -782,7 +782,7 @@ struct kvm_vcpu_arch {
- 
- 	/*
- 	 * Indicate whether the access faults on its page table in guest
--	 * which is set when fix page fault and used to detect unhandeable
-+	 * which is set when fix page fault and used to detect unhandleable
- 	 * instruction.
- 	 */
- 	bool write_fault_to_shadow_pgtable;
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 657c2eda357c..e7faebccd733 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -544,7 +544,8 @@ static void nested_vmx_disable_intercept_for_msr(unsigned long *msr_bitmap_l1,
- 	}
- }
- 
--static inline void enable_x2apic_msr_intercepts(unsigned long *msr_bitmap) {
-+static inline void enable_x2apic_msr_intercepts(unsigned long *msr_bitmap)
-+{
- 	int msr;
- 
- 	for (msr = 0x800; msr <= 0x8ff; msr += BITS_PER_LONG) {
-@@ -1981,7 +1982,7 @@ static int nested_vmx_handle_enlightened_vmptrld(struct kvm_vcpu *vcpu,
- 	}
- 
- 	/*
--	 * Clean fields data can't de used on VMLAUNCH and when we switch
-+	 * Clean fields data can't be used on VMLAUNCH and when we switch
- 	 * between different L2 guests as KVM keeps a single VMCS12 per L1.
- 	 */
- 	if (from_launch || evmcs_gpa_changed)
--- 
-2.19.1
+Contact Name: Mrs. Sarah Buchiri
+Email: sarah.buchiri@gmail.com
 
+
+Robert Andrew Piper
+Assistant Secretary-General for Development Coordination
