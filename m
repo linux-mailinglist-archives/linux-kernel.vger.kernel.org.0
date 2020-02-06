@@ -2,102 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7379B154E79
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 23:00:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAD51154E80
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 23:02:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbgBFWAR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 17:00:17 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37139 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726765AbgBFWAQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 17:00:16 -0500
-Received: by mail-pf1-f193.google.com with SMTP id p14so154372pfn.4;
-        Thu, 06 Feb 2020 14:00:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RE/0U9HMaaH2hc20ud5C4lxm6MqO7eGkAYTEiyXyOb0=;
-        b=tz4WFzfjnhDwtr5dsiEOAWxr++A9ejCXtqotSjRAcFV+97fm1TQUlRCeFwebPiPg6X
-         Pow+J7rUnivlPmJ3vgiYvFl2kB9gad13RfsQleKKr1tJzH0eRGdEZYshbeB7xamBymXh
-         QywVXbTyn2jUk0Pfuqhma87+Q4Svlnw0w3V386qh8AgYhexBWiHkCF1Lgry/U2NcdGKq
-         XbNxBG9ANvI+iR9BGxfIb1qcjGboqhWRNIT3u3L5LKG/w1FZePdni5PE2O/qUtE6fzDr
-         2CbD0dYYJUkIDGrlazQl34wMCRA7n1gZ7gNB7gFH0+c6XJHgTT6bI2n4djAQaB/TWJWC
-         sGiQ==
-X-Gm-Message-State: APjAAAW0Y7NC+bOkG1CJCkj97njdWpSPgBnBK0VQZUUXx0UEc1w4IEWO
-        paVFYeWfN0hgQ1SWf9aWnRrGD/d8/Q==
-X-Google-Smtp-Source: APXvYqzKAZlOtZ6zTxVdNseR3XTrwfkuVpvDHj6Wjm4UEWVA+8HSlBMS//56y3E0jNlK1vsVxbxfCw==
-X-Received: by 2002:a05:6a00:5b:: with SMTP id i27mr6395683pfk.112.1581026416197;
-        Thu, 06 Feb 2020 14:00:16 -0800 (PST)
-Received: from rob-hp-laptop (63-158-47-182.dia.static.qwest.net. [63.158.47.182])
-        by smtp.gmail.com with ESMTPSA id h62sm287723pfg.95.2020.02.06.14.00.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 14:00:15 -0800 (PST)
-Received: (nullmailer pid 24167 invoked by uid 1000);
-        Thu, 06 Feb 2020 22:00:14 -0000
-Date:   Thu, 6 Feb 2020 15:00:14 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     thierry.reding@gmail.com, sam@ravnborg.org, airlied@linux.ie,
-        daniel@ffwll.ch, robh+dt@kernel.org, mark.rutland@arm.com,
-        philippe.cornu@st.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Yannick Fertre <yannick.fertre@st.com>
-Subject: Re: [PATCH v4 1/3] dt-bindings: one file of all simple DSI panels
-Message-ID: <20200206220014.GA24061@bogus>
-References: <20200206133344.724-1-benjamin.gaignard@st.com>
- <20200206133344.724-2-benjamin.gaignard@st.com>
+        id S1727690AbgBFWCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 17:02:17 -0500
+Received: from mail-dm6nam11on2112.outbound.protection.outlook.com ([40.107.223.112]:21472
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726765AbgBFWCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 17:02:17 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hevyWhjc+87kuG9I+CopraHBI0wsJywY/tBl/Sx9OXPyOSctigMKMsibI8+eEAYZGVjSZ0dxfaIq7apnaMGbYioURjmSGr+B1MqYogUxR1U9C8o3UOGSUHUolEEUYEnKoP9ddJlLVYeUw6tDdopIkdjA9Q8mmU00lz/DFDJHpfzMWFgPVZFibgZVFuWK/5Gn2Az0qordW5nkKj59bwt8CSJ00Ew6Mclxa6ScTTgW2Etc1u2rgv9jPIVP44iBAVdiIwxzcDVLOvSESByM13KjClSeF0wzi6f5imgd3iQLdJ1k0NG5QE6mPlmG0KbfYwQDLm0eAQx2/eGbnS7HVzyn7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vN+XbgcGvfhWvx4AwrA6NIW1wUNIurLg4CELjId3Fz8=;
+ b=EXGWzL2X4h9Z5udl2v3+d6P3h7xtAatt2qi+EZBbv083/JPRTf4oO0dg3G5z9TYaPYZ1/RmfgmxG/QjEAOexQFuiyR9qaDWsdKSc/PNOhciYomoDMMd4Mde6D0E0LSt4kRAHZnzKx3PhTIgHjUvnImcBCmzkAew/RDlcEtKdxY4+czODZP0zTnVrXkcL1J56dKdrng0KP8IPsQrrimZr78D5IznxCsDomFjy8v9oGMt1hcnod8SY9hgDdghBLiWx3ogw+/z+K3h9+t4QikoX7YXK9c5ks/UW1KRTAl32noiDr81cCtTXDewlah+qSiT8qy5VbSPSFjfwYjqY6OOFIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vN+XbgcGvfhWvx4AwrA6NIW1wUNIurLg4CELjId3Fz8=;
+ b=Gf7WPThYu0SePsdsQYf02NJPYuqJLbFmbzIpVjCWtOzWkDNXtuXSKI7KirMXXYxZFV5Y4NS3VOF2qjX9zSRYDNMz2rMEjqGjgb2xOVRpySXQpD9/kK30OXiuNvXMKft5OtPnBlHWlTHRVdEu1b7yQR0js5i9ZsstZ3FL5AeZUN8=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=lkmlhyz@microsoft.com; 
+Received: from BL0PR2101MB0897.namprd21.prod.outlook.com (52.132.23.146) by
+ BL0PR2101MB1108.namprd21.prod.outlook.com (52.132.24.31) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.5; Thu, 6 Feb 2020 22:01:34 +0000
+Received: from BL0PR2101MB0897.namprd21.prod.outlook.com
+ ([fe80::dfe:c227:1ff0:ff55]) by BL0PR2101MB0897.namprd21.prod.outlook.com
+ ([fe80::dfe:c227:1ff0:ff55%5]) with mapi id 15.20.2729.004; Thu, 6 Feb 2020
+ 22:01:34 +0000
+From:   Haiyang Zhang <haiyangz@microsoft.com>
+To:     sashal@kernel.org, linux-hyperv@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc:     haiyangz@microsoft.com, kys@microsoft.com, sthemmin@microsoft.com,
+        olaf@aepfle.de, vkuznets@redhat.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net] hv_netvsc: Fix XDP refcnt for synthetic and VF NICs
+Date:   Thu,  6 Feb 2020 14:01:05 -0800
+Message-Id: <1581026465-36161-1-git-send-email-haiyangz@microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MWHPR21CA0056.namprd21.prod.outlook.com
+ (2603:10b6:300:db::18) To BL0PR2101MB0897.namprd21.prod.outlook.com
+ (2603:10b6:207:36::18)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200206133344.724-2-benjamin.gaignard@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (13.77.154.182) by MWHPR21CA0056.namprd21.prod.outlook.com (2603:10b6:300:db::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.6 via Frontend Transport; Thu, 6 Feb 2020 22:01:31 +0000
+X-Mailer: git-send-email 1.8.3.1
+X-Originating-IP: [13.77.154.182]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 2644a06a-c446-4f71-669e-08d7ab502065
+X-MS-TrafficTypeDiagnostic: BL0PR2101MB1108:|BL0PR2101MB1108:|BL0PR2101MB1108:
+X-MS-Exchange-Transport-Forked: True
+X-LD-Processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+X-Microsoft-Antispam-PRVS: <BL0PR2101MB11082360CA77F1842E9FC284AC1D0@BL0PR2101MB1108.namprd21.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-Forefront-PRVS: 0305463112
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(376002)(346002)(136003)(39860400002)(396003)(189003)(199004)(36756003)(8676002)(6486002)(2616005)(956004)(10290500003)(81166006)(8936002)(478600001)(2906002)(4326008)(6666004)(81156014)(6512007)(52116002)(186003)(316002)(5660300002)(66946007)(66556008)(26005)(16526019)(6506007)(66476007);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR2101MB1108;H:BL0PR2101MB0897.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: QuhZXqwl3tpX0fpcH7k/LC6XiUKVJtrXvuUESao7sqVryrFhPpEYNNVCV9QOPyqr0T3ESHNl/vSx1O8akg5TRN4aAHC01kCR1fKzxtU9NFwCORVNayw/+9AP4Lrr6GiC3LPgk2M7vToQQy0lOWOcAZbfuOHBWx4VSlvdh6+Gj7Cip045+gROO6pnTU449qSKPIUhONBmxt6Zbjp8qBdiNNXAl0KzvcpHFG6lH+Mebrp3MfO9fMT0bOEJlIoZb4+aShxiplYbPUKM+8/aUGTaJnVTyesomN2hNNoIdyREXS/M+gyUIvJgO6a5t3ixFEbdwmTJ69kCKbJl5ObdzCkRUz91w7l72+hUtuIQbQOHuZPSDbchxR6b2glV1uxNQnWmVSXNocIOWRpUhTbPSu872/Ja1/xjqamnUiivdiWP1IywpbvM9dHU0GeXqrf2Azxw
+X-MS-Exchange-AntiSpam-MessageData: +fhKuXs10z/P/Nr76A8Q0eIYYFIoyJhvSeGs0RHmI1Ax0jkhlS+NxCul8SlrmoC4K++Vu5dAaH3O926S3V8BLS4HPCkKjhZ3H20LpotE0o0LASIdPN+sr33hhyDOuSKTn0/+mnmxeKZ40cTOif1xYA==
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2644a06a-c446-4f71-669e-08d7ab502065
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2020 22:01:34.1324
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cAAgOQ2WTjlLtUBIXSDZ+WiNAxSE3vK8dWC0CeZ6PGnAvk6NjTp4PzpqmhM+F6VkpsPSzmFFwA2xPO/IDsTE6A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR2101MB1108
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Feb 2020 14:33:42 +0100, Benjamin Gaignard wrote:
-> From: Sam Ravnborg <sam@ravnborg.org>
-> 
-> To complement panel-simple.yaml, create panel-simple-dsi.yaml.
-> panel-simple-dsi-yaml are for all simple DSP panels with a single
-> power-supply and optional backlight / enable GPIO.
-> 
-> Migrate panasonic,vvx10f034n00 over to the new file.
-> 
-> The objectives with one file for all the simple DSI panels are:
->     - Make it simpler to add bindings for simple DSI panels
->     - Keep the number of bindings file lower
->     - Keep the binding documentation for simple DSI panels more consistent
-> 
-> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Yannick Fertre <yannick.fertre@st.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: devicetree@vger.kernel.org
-> ---
-> version 4:
-> - remove orisetech,otm8009a and raydium,rm68200 compatibles
-> - remove reset-gpios optional property
-> 
-> version 3:
-> - add orisetech,otm8009a and raydium,rm68200 compatibles
-> - add reset-gpios optional property
-> - fix indentation on compatible enumeration
-> 
->  .../display/panel/panasonic,vvx10f034n00.txt       | 20 -------
->  .../bindings/display/panel/panel-simple-dsi.yaml   | 67 ++++++++++++++++++++++
->  2 files changed, 67 insertions(+), 20 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/display/panel/panasonic,vvx10f034n00.txt
->  create mode 100644 Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
-> 
+The caller of XDP_SETUP_PROG has already incremented refcnt in
+__bpf_prog_get(), so drivers should only increment refcnt by
+num_queues - 1.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+To fix the issue, update netvsc_xdp_set() to add the correct number
+to refcnt.
+
+Hold a refcnt in netvsc_xdp_set()’s other caller, netvsc_attach().
+
+And, do the same in netvsc_vf_setxdp(). Otherwise, every time when VF is
+removed and added from the host side, the refcnt will be decreased by one,
+which may cause page fault when unloading xdp program.
+
+Fixes: 351e1581395f ("hv_netvsc: Add XDP support")
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+---
+ drivers/net/hyperv/netvsc_bpf.c | 13 +++++++++++--
+ drivers/net/hyperv/netvsc_drv.c |  5 ++++-
+ 2 files changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/hyperv/netvsc_bpf.c b/drivers/net/hyperv/netvsc_bpf.c
+index 20adfe5..b866110 100644
+--- a/drivers/net/hyperv/netvsc_bpf.c
++++ b/drivers/net/hyperv/netvsc_bpf.c
+@@ -120,7 +120,7 @@ int netvsc_xdp_set(struct net_device *dev, struct bpf_prog *prog,
+ 	}
+ 
+ 	if (prog)
+-		bpf_prog_add(prog, nvdev->num_chn);
++		bpf_prog_add(prog, nvdev->num_chn - 1);
+ 
+ 	for (i = 0; i < nvdev->num_chn; i++)
+ 		rcu_assign_pointer(nvdev->chan_table[i].bpf_prog, prog);
+@@ -136,6 +136,7 @@ int netvsc_vf_setxdp(struct net_device *vf_netdev, struct bpf_prog *prog)
+ {
+ 	struct netdev_bpf xdp;
+ 	bpf_op_t ndo_bpf;
++	int ret;
+ 
+ 	ASSERT_RTNL();
+ 
+@@ -148,10 +149,18 @@ int netvsc_vf_setxdp(struct net_device *vf_netdev, struct bpf_prog *prog)
+ 
+ 	memset(&xdp, 0, sizeof(xdp));
+ 
++	if (prog)
++		bpf_prog_inc(prog);
++
+ 	xdp.command = XDP_SETUP_PROG;
+ 	xdp.prog = prog;
+ 
+-	return ndo_bpf(vf_netdev, &xdp);
++	ret = ndo_bpf(vf_netdev, &xdp);
++
++	if (ret && prog)
++		bpf_prog_put(prog);
++
++	return ret;
+ }
+ 
+ static u32 netvsc_xdp_query(struct netvsc_device *nvdev)
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index 8fc71bd..65e12cb 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -1059,9 +1059,12 @@ static int netvsc_attach(struct net_device *ndev,
+ 
+ 	prog = dev_info->bprog;
+ 	if (prog) {
++		bpf_prog_inc(prog);
+ 		ret = netvsc_xdp_set(ndev, prog, NULL, nvdev);
+-		if (ret)
++		if (ret) {
++			bpf_prog_put(prog);
+ 			goto err1;
++		}
+ 	}
+ 
+ 	/* In any case device is now ready */
+-- 
+1.8.3.1
+
