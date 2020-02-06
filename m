@@ -2,107 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D54D154764
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:12:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 492EB1547DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:21:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbgBFPLy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 10:11:54 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37516 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727522AbgBFPLn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 10:11:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=qAWbALPQo8/7ZJiptwDEhRrrdBNpEoxar+lbkVRuAXo=; b=kkG5AvKqs7FgbTx1sDRnpdMTZc
-        BzBObTMElPe+LuKQATTxfQxOvzCr3lBLeGAPdfZafBDKaD6N+Fky8AcloGDTeDfemb1S9o3tCt5b5
-        VkwP0brh0w4wzD18UdcrDhuClv2L6gzwKCJLEFR+ZbYALVSceI2+qwGF0tgRyP2yTuGegFc9hv7iI
-        bgoJ8j2XLkrtmkg5E3CXbXjDyKxQUox1dMxnAmCa9sFuohwnzWxKUz7Cg5bLsKE/M7Q6PPhlYZuh0
-        15zhBPgDeNPdYUSxuBsvE53LMnBRjYeWXa9LizeXtRg8Wz9V9+7J1SjVOs4mK/e9B1qCad6uZ6vD7
-        l+u1K4uQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iziWV-0004zG-P7; Thu, 06 Feb 2020 14:52:55 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DC8623016E5;
-        Thu,  6 Feb 2020 15:51:06 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 549F42B811ED7; Thu,  6 Feb 2020 15:52:53 +0100 (CET)
-Date:   Thu, 6 Feb 2020 15:52:53 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Kristen Carlson Accardi <kristen@linux.intel.com>,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        arjan@linux.intel.com, rick.p.edgecombe@intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Subject: Re: [RFC PATCH 08/11] x86: Add support for finer grained KASLR
-Message-ID: <20200206145253.GT14914@hirez.programming.kicks-ass.net>
-References: <20200205223950.1212394-1-kristen@linux.intel.com>
- <20200205223950.1212394-9-kristen@linux.intel.com>
- <20200206103830.GW14879@hirez.programming.kicks-ass.net>
- <202002060356.BDFEEEFB6C@keescook>
+        id S1727639AbgBFPUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 10:20:07 -0500
+Received: from david.siemens.de ([192.35.17.14]:41368 "EHLO david.siemens.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727379AbgBFPUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 10:20:07 -0500
+X-Greylist: delayed 1443 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Feb 2020 10:20:06 EST
+Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+        by david.siemens.de (8.15.2/8.15.2) with ESMTPS id 016EtMPK029030
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 6 Feb 2020 15:55:22 +0100
+Received: from [139.25.68.37] ([139.25.68.37])
+        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 016EtJ6p029933;
+        Thu, 6 Feb 2020 15:55:19 +0100
+From:   Jan Kiszka <jan.kiszka@siemens.com>
+Subject: [PATCH] x86: pat: Do not compile stubbed functions when X86_PAT is
+ off
+To:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     x86 <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <198c94a8-12ea-88e7-6f08-b3456473e5c3@siemens.com>
+Date:   Thu, 6 Feb 2020 15:55:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202002060356.BDFEEEFB6C@keescook>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 06, 2020 at 04:06:17AM -0800, Kees Cook wrote:
-> On Thu, Feb 06, 2020 at 11:38:30AM +0100, Peter Zijlstra wrote:
-> > On Wed, Feb 05, 2020 at 02:39:47PM -0800, Kristen Carlson Accardi wrote:
-> > > +static long __start___ex_table_addr;
-> > > +static long __stop___ex_table_addr;
-> > > +static long _stext;
-> > > +static long _etext;
-> > > +static long _sinittext;
-> > > +static long _einittext;
-> > 
-> > Should you not also adjust __jump_table, __mcount_loc,
-> > __kprobe_blacklist and possibly others that include text addresses?
-> 
-> These don't appear to be sorted at build time. 
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-The ORC tables are though:
+Those are already provided by linux/io.h as stubs.
 
-  57fa18994285 ("scripts/sorttable: Implement build-time ORC unwind table sorting")
+The conflict remains invisible until someone would pull {linux,asm}/io.h
+into memtype.c.
 
-> AIUI, the problem with
-> ex_table and kallsyms is that they're preprocessed at build time and
-> opaque to the linker's relocation generation.
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ arch/x86/mm/pat/memtype.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I was under the impression these tables no longer had relocation data;
-that since they're part of the main kernel, the final link stage could
-completely resolve them.
-
-That said, I now see we actually have .rela__extable .rela.orc_unwind_ip
-etc.
-
-> For example, looking at __jump_table, it gets sorted at runtime:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/jump_label.c#n474
-
-For now, yes. Depends a bit on how hard people are pushing on getting
-jump_labels working earlier and ealier in boot.
-
-> As you're likely aware, we have a number of "special"
-> sections like this, currently collected manually, see *_TEXT:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/kernel/vmlinux.lds.S#n128
-
-Right.
-
-> I think we can actually add (most of) these to fg-kaslr's awareness (at
-> which point their order will be shuffled respective to other sections,
-> but with their content order unchanged), but it'll require a bit of
-> linker work. I'll mention this series's dependency on the linker's
-> orphaned section handling in another thread...
-
-I have some patches pending where we rely on link script order. That's
-data sections though, so I suppose that's safe for the moment.
-
+diff --git a/arch/x86/mm/pat/memtype.c b/arch/x86/mm/pat/memtype.c
+index 394be8611748..a695e17bd4c7 100644
+--- a/arch/x86/mm/pat/memtype.c
++++ b/arch/x86/mm/pat/memtype.c
+@@ -801,6 +801,7 @@ void memtype_free_io(resource_size_t start, resource_size_t end)
+ 	memtype_free(start, end);
+ }
+ 
++#ifdef CONFIG_X86_PAT
+ int arch_io_reserve_memtype_wc(resource_size_t start, resource_size_t size)
+ {
+ 	enum page_cache_mode type = _PAGE_CACHE_MODE_WC;
+@@ -814,6 +815,7 @@ void arch_io_free_memtype_wc(resource_size_t start, resource_size_t size)
+ 	memtype_free_io(start, start + size);
+ }
+ EXPORT_SYMBOL(arch_io_free_memtype_wc);
++#endif
+ 
+ pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
+ 				unsigned long size, pgprot_t vma_prot)
+-- 
+2.16.4
