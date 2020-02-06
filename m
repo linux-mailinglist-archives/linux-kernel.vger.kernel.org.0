@@ -2,98 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A33A15480A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:27:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D793154818
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:30:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbgBFP1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 10:27:09 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:42299 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbgBFP1I (ORCPT
+        id S1727555AbgBFPaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 10:30:13 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45098 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbgBFPaN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 10:27:08 -0500
-Received: by mail-qk1-f194.google.com with SMTP id q15so5887758qke.9
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 07:27:06 -0800 (PST)
+        Thu, 6 Feb 2020 10:30:13 -0500
+Received: by mail-pl1-f194.google.com with SMTP id b22so2468201pls.12;
+        Thu, 06 Feb 2020 07:30:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=XZOggLanx1OakxhbvmLypkwLB6o7BwYbW0LP99Ryt1o=;
-        b=yqZ/FZfL7rzCP/2Jqs5bBr0b3LqQr+WLoYGIPyBGKw6323lJiZKUFKys6E+VHeTJf2
-         Q6Piw50B5YbifhP9CblDm+U1GrvZEKZfGAIM/WgHxJp8L+nPX03q6D8VELhZ9R6NOLtJ
-         0N0BATZjWI1IczjjfHIveuTCnUgMe+YptD0IpellozuQtXZMs1KXJDOQoRD808ussEVS
-         Oeq1YPf/gA/4zQLcWiJBTPhyXQkV4fdKw2VzJoUCEkl+iDXax7CtlZ/cnhsc9SesEK6s
-         rSpSpV2Ot3fvi+Ga5GgVIr1vsjh5V4Ifnz9qtatPI8rzuX97IK5IffeOowrdFDe+hNk2
-         Ak9A==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yvImeWdanhuXuKTpYgc+fUvWT1XXGf47f3QA3cS1IIo=;
+        b=rFy8JI1vDm33O8mChanZAaw9Ljfkv2cbVdDfPeB6ygWnADagveeIi5z8zmtsfjhtXk
+         tX/Hcd+yx6frFoD5raNVuvjk/3vnNIdFDP7R8yiJy2CxUbmqvk6e7GJoqIFIg2Byj4EA
+         XMSjcshvC9HFUwkmuc2dZP0x5lfcWssoZVFuunuHnSZEuTX5HfAQzUJjQIz+PQPbmwz8
+         GKRiviOt/4ZkcDTyuXqcrq3xuyinxw/KC2HxZAzjL+V+pTp1uHOJC7Tv01vRNfCYGtkK
+         4ATt7SzL7W7MvrYlowHvzlAmdqN+Y6UxmRwxpRZcHWZMlv4o6zEfEhISBxlAbX5xTxcC
+         dOAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=XZOggLanx1OakxhbvmLypkwLB6o7BwYbW0LP99Ryt1o=;
-        b=CJe6iiFE0a3ekuCySJXGwWSs36KVfqFORpmn3Ro7y6zYbnzvvN9x7z9INfvCcW8sJL
-         eeKXu+d0xVtkdydmiwpCxCzKeOaLhkzo6AkxM1flPJ6CzPo+FFj2CE1qI95zu8Q/Z6yF
-         4ivmn/fTTNighvhqtPYqNhHrs5LXoRt2D6rt9rbXxzW+rhhov2wqBJZAhsHiNYo2WWPa
-         SmwDXy+Z2cNGrt84WwjdcPHZpPvYK89zMimoXu485e4/dFr0oMWiOVHheektoKoRmQIi
-         L1qUzLIU2rqTavMVbC7LFcg0C4Yc2SPUA439kDatUXmpmuIvyEpf/HxDfOf4I/CPnONo
-         +MQQ==
-X-Gm-Message-State: APjAAAXb/1vp7y+iCLwwbaz4pU5Fm4UUmkyiwRCOEwAzsL9mlpJOYZYi
-        3FcEojCmG64r9uk6stLHSn33O8+vutE=
-X-Google-Smtp-Source: APXvYqwoCWoPoxMsBmJ48AbMG+4iF96O7gepmNsPc8GfJXUuFMj8rT6ge/PsiVIYjdA9hTy/JKrEoQ==
-X-Received: by 2002:a05:620a:7f4:: with SMTP id k20mr2931953qkk.483.1581002826313;
-        Thu, 06 Feb 2020 07:27:06 -0800 (PST)
-Received: from localhost (pool-108-27-252-85.nycmny.fios.verizon.net. [108.27.252.85])
-        by smtp.gmail.com with ESMTPSA id b24sm1741820qto.71.2020.02.06.07.27.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 07:27:05 -0800 (PST)
-Date:   Thu, 6 Feb 2020 10:27:04 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Dan Schatzberg <dschatzberg@fb.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        "open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" 
-        <linux-mm@kvack.org>
-Subject: Re: [PATCH 1/2] mm: Charge current memcg when no mm is set
-Message-ID: <20200206152704.GA24735@cmpxchg.org>
-References: <20200205223348.880610-1-dschatzberg@fb.com>
- <20200205223348.880610-2-dschatzberg@fb.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yvImeWdanhuXuKTpYgc+fUvWT1XXGf47f3QA3cS1IIo=;
+        b=W5FaGgSc4uM14xTgxh6A1HRuuUuaBdvnbvhxyWj8M3z2i+Yy5w/+b79J0DaTgNDx3O
+         fxt29EKy+XscdD4Ond4D3AlRflbtTaknIqrgEWLmaruNNeiH3gTUvPMk41rxx66EosQ5
+         yE0wC5UX7RmJm1awfN57BoEcQwvYWKkExUK87dJdo/8GKvqE3027YF2+JcVzG9SSu1dV
+         FH7vbXYWXgc59I1BPX6Ij9MfuBnMJxY8zfmodiBnurRuTc92DCrL7kXhFEq+uuFxTv+4
+         qxmxrHaRotDjnkEP4JndlTf/1mvbPkKD163PVNSd2qhB1n/ugBdfH+m2amAtvDPo+rme
+         Fe3Q==
+X-Gm-Message-State: APjAAAVLg9QE1vRpD8i3BEfHkCxTL/yX/NUAHmXus/BMjPyi7Nm3kDyf
+        7VE0h8A6iW5SbaEShn6dW/0=
+X-Google-Smtp-Source: APXvYqzpVmwc8UDf4PLytIuzNQu7ecLLGVgM3QijN3zs88b3yKr+R6UlvDt1Mn1NA3D4q/iXZ4uqmA==
+X-Received: by 2002:a17:90a:2ec5:: with SMTP id h5mr5063197pjs.79.1581003011165;
+        Thu, 06 Feb 2020 07:30:11 -0800 (PST)
+Received: from localhost (104.128.80.227.16clouds.com. [104.128.80.227])
+        by smtp.gmail.com with ESMTPSA id f43sm3879247pje.23.2020.02.06.07.30.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Feb 2020 07:30:10 -0800 (PST)
+From:   Dejin Zheng <zhengdejin5@gmail.com>
+To:     vkoul@kernel.org, peppe.cavallaro@st.com, alexandre.torgue@st.com,
+        joabreu@synopsys.com, davem@davemloft.net,
+        mcoquelin.stm32@gmail.com, niklas.cassel@linaro.org,
+        netdev@vger.kernel.org
+Cc:     linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dejin Zheng <zhengdejin5@gmail.com>
+Subject: [PATCH v3] net: stmmac: fix a possible endless loop
+Date:   Thu,  6 Feb 2020 23:29:17 +0800
+Message-Id: <20200206152917.25564-1-zhengdejin5@gmail.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200205223348.880610-2-dschatzberg@fb.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 02:33:47PM -0800, Dan Schatzberg wrote:
-> This modifies the shmem and mm charge logic so that now if there is no
-> mm set (as in the case of tmpfs backed loop device), we charge the
-> current memcg, if set.
-> 
-> Signed-off-by: Dan Schatzberg <dschatzberg@fb.com>
+It forgot to reduce the value of the variable retry in a while loop
+in the ethqos_configure() function. It may cause an endless loop and
+without timeout.
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Fixes: a7c30e62d4b8 ("net: stmmac: Add driver for Qualcomm ethqos")
+Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
+Acked-by: Vinod Koul <vkoul@kernel.org>
+---
 
-It's a dependency for 2/2, but it's also an overdue cleanup IMO: it's
-always been a bit weird that memalloc_use_memcg() worked for kernel
-allocations but was silently ignored for user pages.
+Hi David, I'm so sorry for that.
 
-This patch establishes a precedence order for who gets charged:
+v3:
+remove an empty line between Fixes and other tags.
 
-1. If there is a memcg associated with the page already, that memcg is
-   charged. This happens during swapin.
+v2:
+add an appropriate Fixes tag.
 
-2. If an explicit mm is passed, mm->memcg is charged. This happens
-   during page faults, which can be triggered in remote VMs (eg gup).
+ drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-3. Otherwise consult the current process context. If it has configured
-   a current->active_memcg, use that. Otherwise, current->mm->memcg.
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+index 7ec895407d23..e0a5fe83d8e0 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+@@ -413,6 +413,7 @@ static int ethqos_configure(struct qcom_ethqos *ethqos)
+ 			dll_lock = rgmii_readl(ethqos, SDC4_STATUS);
+ 			if (dll_lock & SDC4_STATUS_DLL_LOCK)
+ 				break;
++			retry--;
+ 		} while (retry > 0);
+ 		if (!retry)
+ 			dev_err(&ethqos->pdev->dev,
+-- 
+2.25.0
 
-Thanks Dan
