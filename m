@@ -2,166 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 316C9154884
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:51:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A1F3154872
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:48:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbgBFPv4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 10:51:56 -0500
-Received: from mail-wm1-f74.google.com ([209.85.128.74]:33787 "EHLO
-        mail-wm1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbgBFPvz (ORCPT
+        id S1727652AbgBFPsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 10:48:06 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:41466 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727389AbgBFPsF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 10:51:55 -0500
-Received: by mail-wm1-f74.google.com with SMTP id l11so629791wmi.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 07:51:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=dJMzj3shZa2WtTpFPhLyRyZzYBIlQLsl5gnyIHG8III=;
-        b=fS6WBSvHWKHwTXDCVAu4fKASHYayWHCksUseKksJqEPSb5186BEYznh/NpvlIsHwx5
-         2tCtRb8i3L6HjO3y8at3R8fkeXFBmYOXM+sMlCflzIhaOIwb6a/QUUj29/8X+jQTKSSc
-         yYCjT1dTI8Sv6NbSM4s+9rMDTONHvSmbhgJwDFvBZpU1TfXwPI62foH8Pn/AJk4kBOkY
-         Mrgz3tx3CJzj5gA7536avTYbm1GdCphSvyKtFjiozUUV1Xu46i5FLstPijFkqhKaSx6+
-         4k9vvncK9m1CJ/VE67X3jY7sDI9tmf10wEgjNI8ydrCfHAMaSkddTQKE98ZdAI963aR1
-         N5zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=dJMzj3shZa2WtTpFPhLyRyZzYBIlQLsl5gnyIHG8III=;
-        b=NvObmTTw3VvDnW7iTVtNbx2RC/d0SLLq9g+xw24LPxUE2m+ebyPcvpo+BRBOkF41Wt
-         dGd+10mDxr7mkzrhonYE1tNk0PsM4UWyd5Ir9woTqN6SLZsuva9VCO8tQCIOzAgDsiEs
-         NhPoiY/Y3nJ2oGKxksoq1vLfsAuNhz4yI8i34py2gVwH6f7gmnLJnoTtUOPfUYJopfVB
-         6LtMmEM49cM2jKBhiLD8lW6jIFla+boKbEx4hHJ8P6jdXFIaI2jme0PG2GbQorFS+QoX
-         dzfTL7/dbcOgWLKVwxW2Ypj4XfBrUJ1NOV/Nh4SoVMSV1I3T4eTBg1imnvrREQlDLITN
-         aCog==
-X-Gm-Message-State: APjAAAVCaHV/tOKPkAb4GQO/nrFQM3Qh4vicU7apuIM/a9aens00rd+d
-        UyIjwESh/wrYSFAY6a/Z/m4cJA77LA==
-X-Google-Smtp-Source: APXvYqwooqaGqTrAUnqlOjW1UzTY9jSbItVxwgGd6O8cWAgC6MRW/FckXf7Zffr7dksz8R8I284lctmBVQ==
-X-Received: by 2002:a5d:4692:: with SMTP id u18mr4511821wrq.206.1581004313452;
- Thu, 06 Feb 2020 07:51:53 -0800 (PST)
-Date:   Thu,  6 Feb 2020 16:46:26 +0100
-In-Reply-To: <20200206154626.243230-1-elver@google.com>
-Message-Id: <20200206154626.243230-3-elver@google.com>
-Mime-Version: 1.0
-References: <20200206154626.243230-1-elver@google.com>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-Subject: [PATCH v2 3/3] kcsan: Add test to generate conflicts via debugfs
-From:   Marco Elver <elver@google.com>
-To:     elver@google.com
-Cc:     paulmck@kernel.org, andreyknvl@google.com, glider@google.com,
-        dvyukov@google.com, kasan-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 6 Feb 2020 10:48:05 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 83E5E2956C0
+Subject: Re: [PATCH v2] dt-bindings: convert extcon-usbc-cros-ec.txt
+ extcon-usbc-cros-ec.yaml
+To:     Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
+        devicetree@vger.kernel.org
+Cc:     myungjoo.ham@samsung.com, cw00.choi@samsung.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, bleung@chromium.org,
+        groeck@chromium.org, linux-kernel@vger.kernel.org,
+        helen.koike@collabora.com, ezequiel@collabora.com,
+        kernel@collabora.com, dafna3@gmail.com
+References: <20200205110029.3395-1-dafna.hirschfeld@collabora.com>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <59ec876a-a77a-9b6d-34dd-272292102ed9@collabora.com>
+Date:   Thu, 6 Feb 2020 16:47:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
+MIME-Version: 1.0
+In-Reply-To: <20200205110029.3395-1-dafna.hirschfeld@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add 'test=<iters>' option to KCSAN's debugfs interface to invoke KCSAN
-checks on a dummy variable. By writing 'test=<iters>' to the debugfs
-file from multiple tasks, we can generate real conflicts, and trigger
-data race reports.
+Hi Dafna,
 
-Signed-off-by: Marco Elver <elver@google.com>
----
- kernel/kcsan/debugfs.c | 51 +++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 46 insertions(+), 5 deletions(-)
+On 5/2/20 12:00, Dafna Hirschfeld wrote:
+> convert the binding file extcon-usbc-cros-ec.txt to yaml format
+> This was tested and verified on ARM with:
+> make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
+> make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
+> 
+> Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+> ---
+> Changes since v1:
+> 1 - changing the license to (GPL-2.0-only OR BSD-2-Clause)
+> 2 - changing the maintainers
+> 3 - changing the google,usb-port-id property to have minimum 0 and maximum 255
+> 
+>  .../bindings/extcon/extcon-usbc-cros-ec.txt   | 24 ----------
+>  .../bindings/extcon/extcon-usbc-cros-ec.yaml  | 45 +++++++++++++++++++
+>  2 files changed, 45 insertions(+), 24 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
+>  create mode 100644 Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt b/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
+> deleted file mode 100644
+> index 8e8625c00dfa..000000000000
+> --- a/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
+> +++ /dev/null
+> @@ -1,24 +0,0 @@
+> -ChromeOS EC USB Type-C cable and accessories detection
+> -
+> -On ChromeOS systems with USB Type C ports, the ChromeOS Embedded Controller is
+> -able to detect the state of external accessories such as display adapters
+> -or USB devices when said accessories are attached or detached.
+> -
+> -The node for this device must be under a cros-ec node like google,cros-ec-spi
+> -or google,cros-ec-i2c.
+> -
+> -Required properties:
+> -- compatible:		Should be "google,extcon-usbc-cros-ec".
+> -- google,usb-port-id:	Specifies the USB port ID to use.
+> -
+> -Example:
+> -	cros-ec@0 {
+> -		compatible = "google,cros-ec-i2c";
+> -
+> -		...
+> -
+> -		extcon {
+> -			compatible = "google,extcon-usbc-cros-ec";
+> -			google,usb-port-id = <0>;
+> -		};
+> -	}
+> diff --git a/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml b/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
+> new file mode 100644
+> index 000000000000..fd95e413d46f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
+> @@ -0,0 +1,45 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/extcon/extcon-usbc-cros-ec.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ChromeOS EC USB Type-C cable and accessories detection
+> +
+> +maintainers:
+> +  - Benson Leung <bleung@chromium.org>
+> +  - Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> +
+> +description: |
+> +  On ChromeOS systems with USB Type C ports, the ChromeOS Embedded Controller is
+> +  able to detect the state of external accessories such as display adapters
+> +  or USB devices when said accessories are attached or detached.
+> +  The node for this device must be under a cros-ec node like google,cros-ec-spi
+> +  or google,cros-ec-i2c.
+> +
+> +properties:
+> +  compatible:
+> +    const: google,extcon-usbc-cros-ec
+> +
+> +  google,usb-port-id:
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: the port id
+> +    minimum: 0
+> +    maximum: 255
+> +
+> +required:
+> +  - compatible
+> +  - google,usb-port-id
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    cros-ec@0 {
+> +        compatible = "google,cros-ec-i2c";
 
-diff --git a/kernel/kcsan/debugfs.c b/kernel/kcsan/debugfs.c
-index a9dad44130e62..9bbba0e57c9b3 100644
---- a/kernel/kcsan/debugfs.c
-+++ b/kernel/kcsan/debugfs.c
-@@ -6,6 +6,7 @@
- #include <linux/debugfs.h>
- #include <linux/init.h>
- #include <linux/kallsyms.h>
-+#include <linux/sched.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
- #include <linux/sort.h>
-@@ -69,9 +70,9 @@ void kcsan_counter_dec(enum kcsan_counter_id id)
- /*
-  * The microbenchmark allows benchmarking KCSAN core runtime only. To run
-  * multiple threads, pipe 'microbench=<iters>' from multiple tasks into the
-- * debugfs file.
-+ * debugfs file. This will not generate any conflicts, and tests fast-path only.
-  */
--static void microbenchmark(unsigned long iters)
-+static noinline void microbenchmark(unsigned long iters)
- {
- 	cycles_t cycles;
- 
-@@ -81,18 +82,52 @@ static void microbenchmark(unsigned long iters)
- 	while (iters--) {
- 		/*
- 		 * We can run this benchmark from multiple tasks; this address
--		 * calculation increases likelyhood of some accesses overlapping
--		 * (they still won't conflict because all are reads).
-+		 * calculation increases likelyhood of some accesses
-+		 * overlapping. Make the access type an atomic read, to never
-+		 * set up watchpoints and test the fast-path only.
- 		 */
- 		unsigned long addr =
- 			iters % (CONFIG_KCSAN_NUM_WATCHPOINTS * PAGE_SIZE);
--		__kcsan_check_read((void *)addr, sizeof(long));
-+		__kcsan_check_access((void *)addr, sizeof(long), KCSAN_ACCESS_ATOMIC);
- 	}
- 	cycles = get_cycles() - cycles;
- 
- 	pr_info("KCSAN: %s end   | cycles: %llu\n", __func__, cycles);
- }
- 
-+/*
-+ * Simple test to create conflicting accesses. Write 'test=<iters>' to KCSAN's
-+ * debugfs file from multiple tasks to generate real conflicts and show reports.
-+ */
-+static long test_dummy;
-+static noinline void test_thread(unsigned long iters)
-+{
-+	const struct kcsan_ctx ctx_save = current->kcsan_ctx;
-+	cycles_t cycles;
-+
-+	/* We may have been called from an atomic region; reset context. */
-+	memset(&current->kcsan_ctx, 0, sizeof(current->kcsan_ctx));
-+
-+	pr_info("KCSAN: %s begin | iters: %lu\n", __func__, iters);
-+
-+	cycles = get_cycles();
-+	while (iters--) {
-+		__kcsan_check_read(&test_dummy, sizeof(test_dummy));
-+		__kcsan_check_write(&test_dummy, sizeof(test_dummy));
-+		ASSERT_EXCLUSIVE_WRITER(test_dummy);
-+		ASSERT_EXCLUSIVE_ACCESS(test_dummy);
-+
-+		/* not actually instrumented */
-+		WRITE_ONCE(test_dummy, iters);  /* to observe value-change */
-+	}
-+	cycles = get_cycles() - cycles;
-+
-+	pr_info("KCSAN: %s end   | cycles: %llu\n", __func__, cycles);
-+
-+	/* restore context */
-+	current->kcsan_ctx = ctx_save;
-+}
-+
- static int cmp_filterlist_addrs(const void *rhs, const void *lhs)
- {
- 	const unsigned long a = *(const unsigned long *)rhs;
-@@ -242,6 +277,12 @@ debugfs_write(struct file *file, const char __user *buf, size_t count, loff_t *o
- 		if (kstrtoul(&arg[sizeof("microbench=") - 1], 0, &iters))
- 			return -EINVAL;
- 		microbenchmark(iters);
-+	} else if (!strncmp(arg, "test=", sizeof("test=") - 1)) {
-+		unsigned long iters;
-+
-+		if (kstrtoul(&arg[sizeof("test=") - 1], 0, &iters))
-+			return -EINVAL;
-+		test_thread(iters);
- 	} else if (!strcmp(arg, "whitelist")) {
- 		set_report_filterlist_whitelist(true);
- 	} else if (!strcmp(arg, "blacklist")) {
--- 
-2.25.0.341.g760bfbb309-goog
+Now that you are here ... could you use compatible = "google,cros-ec-spi" here?
 
+The reason is that the label above, cros-ec@0 is not really correct for an i2c
+device because after the @ you should put the address, cros-ec@1e will have more
+sense here. But cros-ec-i2c is rarely used, so I'd change the compatible to use
+"google,cros-ec-spi" and the entry "cros-ec@0" is fine.
+
+> +        extcon {
+> +            compatible = "google,extcon-usbc-cros-ec";
+> +            google,usb-port-id = <0>;
+> +        };
+
+And maybe would be useful have a more complete example like this?
+
+    cros-ec@0 {
+        compatible = "google,cros-ec-spi";
+
+	usbc_extcon0: extcon@0 {
+		compatible = "google,extcon-usbc-cros-ec";
+		google,usb-port-id = <0>;
+	};
+
+
+	usbc_extcon1: extcon@1 {
+		compatible = "google,extcon-usbc-cros-ec";
+		google,usb-port-id = <1>;
+	};
+    };
