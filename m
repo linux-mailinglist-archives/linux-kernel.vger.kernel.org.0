@@ -2,76 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E55C81549F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 18:05:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FD841549F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 18:07:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbgBFRFa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 12:05:30 -0500
-Received: from mga11.intel.com ([192.55.52.93]:28475 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727440AbgBFRFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 12:05:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 09:05:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,410,1574150400"; 
-   d="scan'208";a="432281666"
-Received: from rrmuthya-mobl1.amr.corp.intel.com (HELO [10.251.129.34]) ([10.251.129.34])
-  by fmsmga006.fm.intel.com with ESMTP; 06 Feb 2020 09:05:28 -0800
-Subject: Re: sound/pci/hda/patch_hdmi.c:1086: undefined reference to
- `snd_hda_get_num_devices'
-To:     Takashi Iwai <tiwai@suse.de>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>
-Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@lists.01.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-References: <202002061809.r3UYBZGx%lkp@intel.com>
- <alpine.DEB.2.21.2002061531350.2957@eliteleevi.tm.intel.com>
- <s5hr1z7q12m.wl-tiwai@suse.de>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <02d655fe-dd21-3fcb-6f5d-4ecde51f3240@linux.intel.com>
-Date:   Thu, 6 Feb 2020 11:05:28 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727864AbgBFRHB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 12:07:01 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:26560 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727060AbgBFRHA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 12:07:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581008819;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3pKJNNr147NV4iBcZUmPbcoeGNCKnZBNXgxrFA4/6SA=;
+        b=idIW/aiN062IxZK5IiJ9+BbxSI+hgmMr+TBFjJpfNsqXN1FuSFdYNRH28d/YfNixYHGADE
+        HjVShBArsWT6EcoJIApSl2nzOy88vSS2YXKNVzPa0pCgjVebVSK+Z1G/8CHX4tPmJRFDMS
+        UPQSRI4F2V9pwJKJ4AhPeRblktiZXFo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-316-90rAmeq-ML2Yb_pWyG-hcw-1; Thu, 06 Feb 2020 12:06:49 -0500
+X-MC-Unique: 90rAmeq-ML2Yb_pWyG-hcw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 06B6F800EB2;
+        Thu,  6 Feb 2020 17:06:46 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-124-223.rdu2.redhat.com [10.10.124.223])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6925519C69;
+        Thu,  6 Feb 2020 17:06:45 +0000 (UTC)
+Subject: Re: [PATCH v6 6/6] locking/lockdep: Reuse freed chain_hlocks entries
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+References: <20200206152408.24165-1-longman@redhat.com>
+ <20200206152408.24165-7-longman@redhat.com>
+ <20200206160334.GV14914@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <951c86c9-9340-c4af-35e6-8ac205d702ab@redhat.com>
+Date:   Thu, 6 Feb 2020 12:06:45 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <s5hr1z7q12m.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <20200206160334.GV14914@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2/6/20 11:03 AM, Peter Zijlstra wrote:
+> On Thu, Feb 06, 2020 at 10:24:08AM -0500, Waiman Long wrote:
+>> +#define for_each_chain_block(bucket, prev, curr)		\
+>> +	for ((prev) = -1, (curr) = chain_block_buckets[bucket];	\
+>> +	     (curr) >= 0;					\
+>> +	     (prev) = (curr), (curr) = chain_block_next(curr))
+>> +static inline void add_chain_block(int offset, int size)
+>> +{
+>> +	int bucket = size_to_bucket(size);
+>> +	int next = chain_block_buckets[bucket];
+>> +	int prev, curr;
+>> +
+>> +	if (unlikely(size < 2)) {
+>> +		/*
+>> +		 * We can't store single entries on the freelist. Leak them.
+>> +		 *
+>> +		 * One possible way out would be to uniquely mark them, other
+>> +		 * than with CHAIN_BLK_FLAG, such that we can recover them when
+>> +		 * the block before it is re-added.
+>> +		 */
+>> +		if (size)
+>> +			nr_lost_chain_hlocks++;
+>> +		return;
+>> +	}
+>> +
+>> +	nr_free_chain_hlocks += size;
+>> +	if (!bucket) {
+>> +		nr_large_chain_blocks++;
+>> +
+>> +		if (unlikely(next >= 0)) {
+> I was surprised by this condition..
 
+Yes, this condition is optional and the code will still work as expected
+without that. I added that so that for the common case where there is
+only 1 chain block in block 0 and it gets deleted and added
+repetitively, it will go to the simpler code path instead of the more
+complicated one.
 
-On 2/6/20 7:48 AM, Takashi Iwai wrote:
-> On Thu, 06 Feb 2020 14:40:17 +0100,
-> Kai Vehmanen wrote:
->>
->> Hey,
->>
->> On Thu, 6 Feb 2020, kbuild test robot wrote:
->>
->>>     ld: sound/pci/hda/patch_hdmi.o: in function `intel_not_share_assigned_cvt':
->>>>> sound/pci/hda/patch_hdmi.c:1086: undefined reference to `snd_hda_get_num_devices'
->>>>> ld: sound/pci/hda/patch_hdmi.c:1098: undefined reference to `snd_hda_get_dev_select'
->>>>> ld: sound/pci/hda/patch_hdmi.c:1099: undefined reference to `snd_hda_set_dev_select'
->>
->> hmm, this seems similar case as the previous one today w.r.t
->> hda_dsp_common.c:76. Patch_hdmi.c is built-in while snd-hda is a module.
->> Maybe we need to just drop the dependency from the ASoC board files to
->> SND_HDA_CODEC_HDMI. We don't have one for SND_HDA_CODEC either.
-> 
-> The problem is that SOF tries to do reverse-select the legacy HD-audio
-> codec, but it doesn't work in general.  Or it must be done very
-> carefully.
-> 
-> If something gets selected, all dependencies have to be
-> reverse-selected, too.  But the legacy HDA is built up in a way of
-> standard top-down selection (i.e. SND_HDA_CODEC_* depends on SND_HDA,
-> not other way round).
+Cheers,
+Longman
 
-It's the same issue as the other one reported earlier, and adding the 
-dependency on SOF_HDA makes the unmet dependency go away.
