@@ -2,58 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95A56153F9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 09:00:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5A91153FB5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 09:02:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbgBFIAV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 03:00:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33198 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728291AbgBFIAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 03:00:18 -0500
-Subject: Re: [GIT PULL v2] tracing: Changes for 5.6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580976018;
-        bh=ignv/0d2i6zkKatS47I7NyI8lRsSCr4wQvzyVGdB8tA=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=FMTzd2enw8DkHD2Wns3yXOSFFQhf7D8aV4XcTOdBcdZHI+HFspaKOClUcL2uv38Jz
-         NemAf8u4Q8h/YmmJrrpXdX8GsyKnwJKKvi4Lew34MOBoJJMcjdWJCF8lQYz3vIh4Ql
-         7HHY9NpgtiTOpEotFSg2ZC6DliLKjhEIQJZO1iB0=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200205172914.3d4b831f@oasis.local.home>
-References: <20200205172914.3d4b831f@oasis.local.home>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200205172914.3d4b831f@oasis.local.home>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
- trace-v5.6-2
-X-PR-Tracked-Commit-Id: a00574036c261421721fa770ccd21a1012e1fbbd
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e310396bb8d7db977a0e10ef7b5040e98b89c34c
-Message-Id: <158097601819.20426.16273200815485493057.pr-tracker-bot@kernel.org>
-Date:   Thu, 06 Feb 2020 08:00:18 +0000
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
+        id S1728289AbgBFIBi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 03:01:38 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:37018 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728059AbgBFIBh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 03:01:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580976096;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=3tlkCnjb8Q/VM9TgB9qGpS6MVMK6ymwvGChTp9CUmG0=;
+        b=H6gIRRmjIMnuh8TvboRRpcv50EvtAL32xOwRI6suEtTpZe/sjyzXAdRMtxNq2ki8NAx//D
+        e61j5hez0L6YvZqJ4gZhx7sUQcpDWHLaa0//5BeMdmht4Mqaf1kIBIcbQo9Wv1N3j0OEri
+        QgIFQo3M5OJzdeCbHeUSwgLuFvBbpYY=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-427-UIVDLVSnPjeqJ5t-dsqG9A-1; Thu, 06 Feb 2020 03:01:34 -0500
+X-MC-Unique: UIVDLVSnPjeqJ5t-dsqG9A-1
+Received: by mail-qv1-f72.google.com with SMTP id d7so3192308qvq.12
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 00:01:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=3tlkCnjb8Q/VM9TgB9qGpS6MVMK6ymwvGChTp9CUmG0=;
+        b=lewpT4mblkKP0bPRC6q7vtCjTyheIxe5UbXwZhNk82fmCYimdVIypf6K/FoRNpDB2y
+         0bMXXE7faXun1+bBpBut8RJRxnTigR9jSt9DCeWlZ+foYSE0xwrgwPzsOPH0Svz3rbWl
+         6y/yyL904yJyz4/1moSD4YGdje/Ws7q4HwIplJiwtmRwTHD3JCGheTvbanf5R5n1kAZO
+         +/x70iGxo0qnYNmWE3k5jh6pOxlGi9+8ff5r/XPh5Rx3Xa439eVXxRZfCDnzkFBekG1z
+         ESIdChjtGT6lBeNZ3v6Oj7k2BLCmFPSxQRR9gt2HCQL7BvS/uJ8mNrjTEfiLrsPwhp7t
+         U5ew==
+X-Gm-Message-State: APjAAAV1KzynW/IxQI3Y76XNSXgHdoKxiM8ntyr4HhiwAZvv1o45T9AY
+        lKW3bNYW3Ih8K1vS8zhjgdGrfhDmxWYyFQ51lBLApUzJSPQFfefFctDds+7C8bPqs7h1sjq2Qau
+        wNok8S0L1vZ4xhuh1IjHQt7Is
+X-Received: by 2002:a0c:fe8d:: with SMTP id d13mr1308099qvs.217.1580976093801;
+        Thu, 06 Feb 2020 00:01:33 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzDBfxSmanieDzWEXWVdX/CjC3Q/5KbnOAyJYXWTLuPb+oEDUAw9pAoLQDK+qxgWVtcbdYfBw==
+X-Received: by 2002:a0c:fe8d:: with SMTP id d13mr1308083qvs.217.1580976093498;
+        Thu, 06 Feb 2020 00:01:33 -0800 (PST)
+Received: from redhat.com (bzq-79-176-41-183.red.bezeqint.net. [79.176.41.183])
+        by smtp.gmail.com with ESMTPSA id m16sm1025713qka.8.2020.02.06.00.01.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Feb 2020 00:01:32 -0800 (PST)
+Date:   Thu, 6 Feb 2020 03:01:30 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH] tools/virtio: option to build an out of tree module
+Message-ID: <20200206080125.1178242-1-mst@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email 2.24.1.751.gd10ce2899c
+X-Mutt-Fcc: =sent
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 5 Feb 2020 17:29:14 -0500:
+Handy for testing with distro kernels.
+Warn that the resulting module is completely unsupported,
+and isn't intended for production use.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git trace-v5.6-2
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+---
+ tools/virtio/Makefile | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e310396bb8d7db977a0e10ef7b5040e98b89c34c
-
-Thank you!
-
+diff --git a/tools/virtio/Makefile b/tools/virtio/Makefile
+index 8e2a908115c2..94106cde49e3 100644
+--- a/tools/virtio/Makefile
++++ b/tools/virtio/Makefile
+@@ -8,7 +8,18 @@ CFLAGS += -g -O2 -Werror -Wall -I. -I../include/ -I ../../usr/include/ -Wno-poin
+ vpath %.c ../../drivers/virtio ../../drivers/vhost
+ mod:
+ 	${MAKE} -C `pwd`/../.. M=`pwd`/vhost_test V=${V}
+-.PHONY: all test mod clean
++
++#oot: build vhost as an out of tree module for a distro kernel
++#no effort is taken to make it actually build or work, but tends to mostly work
++#if the distro kernel is very close to upstream
++#unsupported! this is a development tool only, don't use the
++#resulting modules in production!
++oot:
++	echo "UNSUPPORTED! Don't use the resulting modules in production!"
++	KCFLAGS="-I "`pwd`/../../drivers/vhost ${MAKE} -C /usr/src/kernels/$$(uname -r) M=`pwd`/vhost_test V=${V}
++	KCFLAGS="-I "`pwd`/../../drivers/vhost ${MAKE} -C /usr/src/kernels/$$(uname -r) M=`pwd`/../../drivers/vhost V=${V} CONFIG_VHOST_VSOCK=n
++
++.PHONY: all test mod clean vhost oot
+ clean:
+ 	${RM} *.o vringh_test virtio_test vhost_test/*.o vhost_test/.*.cmd \
+               vhost_test/Module.symvers vhost_test/modules.order *.d
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+MST
+
