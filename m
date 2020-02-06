@@ -2,286 +2,302 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D05C6154D5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 21:47:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9747C154D1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 21:45:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728278AbgBFUqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 15:46:36 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:34089 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728259AbgBFUqb (ORCPT
+        id S1727930AbgBFUpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 15:45:34 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41709 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727830AbgBFUpd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 15:46:31 -0500
-Received: by mail-pj1-f66.google.com with SMTP id f2so655852pjq.1;
-        Thu, 06 Feb 2020 12:46:30 -0800 (PST)
+        Thu, 6 Feb 2020 15:45:33 -0500
+Received: by mail-pg1-f196.google.com with SMTP id l3so3337590pgi.8;
+        Thu, 06 Feb 2020 12:45:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+JpCejRz9cTdKzvN/s1Lqz/r+3bLOvKPVHP2ixVIjaA=;
-        b=mVWTbWIJa+9uidc0xClrpGq9nebOy0fSzasU8gzahG9t41Yn4VFswlgqSbhU5hj6rd
-         Ik1hXM3UrpI6Ageki0wRLXtXr/w2zWiv8nvcZ1qnK6YzaTtDffuxvFyek3aIKQJoeYwH
-         s2ihrvUJh4y/xB9GD/Z11gWOqEIwwTPtp69Rwb8PV2eK/GjDk1pJmZdJ5VAAF+hTW9LJ
-         PB3kzlEZgeUTI5qY1X9mf6v7J0u7JwFNKmfZQuGKaRLmL4dnWRxptCezKnSa5a7BQ5E7
-         uUlpkGOANciVIccMdRUS3uMg7DNLJnOMHMuF4Ll+rmmmLUwyDYBpI9YAuK01dVTA+PJW
-         J/mQ==
-X-Gm-Message-State: APjAAAWe+rYTGAk6zO/sy77vc4uvnmEfNP0yeQwuHW7wxKaCKKBOtBP2
-        TEFJMvI7YdqInvEjeKKX3w==
-X-Google-Smtp-Source: APXvYqwbC73hm+Agme/rCp48d6/0xYRA1eDWiKJsCgthOldvBiGk6RxTKAWpaJjx1M145Mgn2+p7Ag==
-X-Received: by 2002:a17:902:504:: with SMTP id 4mr5425237plf.276.1581021989698;
-        Thu, 06 Feb 2020 12:46:29 -0800 (PST)
+        bh=qIQ8hjlDUhZcArK+Q5WsTl5GNAhaa++UBQ6Modhac+E=;
+        b=kGXdVo1CwnaIsuzelyXAq3wU52Wy+xu8e8AniD53tA++AtdgqX9lM8WkZ/NU2azDTW
+         Fc7QMKKtkYl0Ng5dSyE0kV45Ear9kYfRDvtBbV5U7qWNitUeY9rG9SNq565eq4tzmqfi
+         XJ0pDI55OXmA8T5pV0+X8uV5FX9lx2oIMI133wKCENPRFEvb/Anax4IOi/iCBRvq2yzI
+         5WWZwjFIQRadR04VR/pxPEiRaJRy5PRzxaChuBGeH96fSjc5hUUTSnxzy7wjPSAPXd6B
+         brRaggwlPb14D/UKBlBhxyZzkq2MdAT9wBcHTAOL376vEG0tuNLwMc52HBGBXnw/eRb3
+         SCsg==
+X-Gm-Message-State: APjAAAVltdXATsmB11FQJsxbcN5Yem9qKBOL7DGufTiL0QQc/fD+wwaJ
+        8VxG59Eukk+zZByPh279zA==
+X-Google-Smtp-Source: APXvYqxp0gb4DCovJEikyOC6US+MZnvndVVAY5P6ZUyW0coT14JeNLGYWiVC5j97cQxJXe5/sJ3gbQ==
+X-Received: by 2002:a62:78c1:: with SMTP id t184mr5777570pfc.222.1581021932559;
+        Thu, 06 Feb 2020 12:45:32 -0800 (PST)
 Received: from rob-hp-laptop (63-158-47-182.dia.static.qwest.net. [63.158.47.182])
-        by smtp.gmail.com with ESMTPSA id g7sm288861pfq.33.2020.02.06.12.46.28
+        by smtp.gmail.com with ESMTPSA id e84sm262700pfh.149.2020.02.06.12.45.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 12:46:29 -0800 (PST)
-Received: (nullmailer pid 9682 invoked by uid 1000);
-        Thu, 06 Feb 2020 18:21:25 -0000
-Date:   Thu, 6 Feb 2020 18:21:25 +0000
+        Thu, 06 Feb 2020 12:45:31 -0800 (PST)
+Received: (nullmailer pid 22868 invoked by uid 1000);
+        Thu, 06 Feb 2020 18:28:20 -0000
+Date:   Thu, 6 Feb 2020 18:28:20 +0000
 From:   Rob Herring <robh@kernel.org>
-To:     Olivier Moysan <olivier.moysan@st.com>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        alsa-devel@alsa-project.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: dt-bindings: stm32: convert sai to json-schema
-Message-ID: <20200206182125.GA23274@bogus>
-References: <20200130135040.22575-1-olivier.moysan@st.com>
+To:     Benjamin Gaignard <benjamin.gaignard@st.com>
+Cc:     dmitry.torokhov@gmail.com, mark.rutland@arm.com,
+        lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+        wim@linux-watchdog.org, linux@roeck-us.net, p.paillet@st.com,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: mfd: Convert stpmic1 bindings to json-schema
+Message-ID: <20200206182820.GA12162@bogus>
+References: <20200130154315.6260-1-benjamin.gaignard@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200130135040.22575-1-olivier.moysan@st.com>
+In-Reply-To: <20200130154315.6260-1-benjamin.gaignard@st.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 02:50:40PM +0100, Olivier Moysan wrote:
-> Convert the STM32 SAI bindings to DT schema format using json-schema.
+On Thu, Jan 30, 2020 at 04:43:15PM +0100, Benjamin Gaignard wrote:
+> Convert stpmic1 bindings to json-schema.
 > 
-> Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 > ---
->  .../bindings/sound/st,stm32-sai.txt           | 107 ----------
->  .../bindings/sound/st,stm32-sai.yaml          | 193 ++++++++++++++++++
->  2 files changed, 193 insertions(+), 107 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/st,stm32-sai.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/st,stm32-sai.yaml
+>  .../devicetree/bindings/input/st,stpmic1-onkey.txt |  28 ---
+>  .../devicetree/bindings/mfd/st,stpmic1.txt         |  61 ------
+>  .../devicetree/bindings/mfd/st,stpmic1.yaml        | 205 +++++++++++++++++++++
+>  .../bindings/regulator/st,stpmic1-regulator.txt    |  64 -------
+>  .../bindings/watchdog/st,stpmic1-wdt.txt           |  11 --
+>  5 files changed, 205 insertions(+), 164 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/input/st,stpmic1-onkey.txt
+>  delete mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.txt
+>  create mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/regulator/st,stpmic1-regulator.txt
+>  delete mode 100644 Documentation/devicetree/bindings/watchdog/st,stpmic1-wdt.txt
 
 
-> diff --git a/Documentation/devicetree/bindings/sound/st,stm32-sai.yaml b/Documentation/devicetree/bindings/sound/st,stm32-sai.yaml
+> diff --git a/Documentation/devicetree/bindings/mfd/st,stpmic1.yaml b/Documentation/devicetree/bindings/mfd/st,stpmic1.yaml
 > new file mode 100644
-> index 000000000000..33dca007fc86
+> index 000000000000..5db86be683dd
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/st,stm32-sai.yaml
-> @@ -0,0 +1,193 @@
+> +++ b/Documentation/devicetree/bindings/mfd/st,stpmic1.yaml
+> @@ -0,0 +1,205 @@
 > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/sound/st,stm32-sai.yaml#
+> +$id: http://devicetree.org/schemas/mfd/st,stpmic1.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: STMicroelectronics STM32 Serial Audio Interface (SAI)
+> +title: STMicroelectonics STPMIC1 Power Management IC bindings
+> +
+> +description: STMicroelectronics STPMIC1 Power Management IC
 > +
 > +maintainers:
-> +  - Olivier Moysan <olivier.moysan@st.com>
+> +  - pascal Paillet <p.paillet@st.com>
 > +
-> +description:
-> +  The SAI interface (Serial Audio Interface) offers a wide set of audio
-> +  protocols as I2S standards, LSB or MSB-justified, PCM/DSP, TDM, and AC'97.
-> +  The SAI contains two independent audio sub-blocks. Each sub-block has
-> +  its own clock generator and I/O lines controller.
+> +allOf:
+> +  - $ref: ../input/input.yaml
+> +  - $ref: ../regulator/regulator.yaml
+
+The properties these define don't apply to the parent node here.
+
 > +
 > +properties:
 > +  compatible:
-> +    enum:
-> +      - st,stm32f4-sai
-> +      - st,stm32h7-sai
+> +    const: st,stpmic1
 > +
 > +  reg:
-> +    items:
-> +      - description: Base address and size of SAI common register set.
-> +      - description: Base address and size of SAI identification register set.
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  ranges:
-> +    maxItems: 1
+> +    const: 0x33
 > +
 > +  interrupts:
 > +    maxItems: 1
 > +
-> +  resets:
-> +    maxItems: 1
+> +  "#interrupt-cells":
+> +    const: 2
 > +
-> +  "#address-cells":
-> +    const: 1
+> +  interrupt-controller: true
 > +
-> +  "#size-cells":
-> +    const: 1
+> +  onkey:
+> +    type: object
+
+input.yaml goes here.
+
 > +
-> +  clocks:
-> +    items:
-> +      - description: pclk feeds the peripheral bus interface.
-> +      - description: x8k, SAI parent clock for sampling rates multiple of 8kHz.
-> +      - description: x11k, SAI parent clock for sampling rates multiple of 11.025kHz.
+> +    properties:
+> +      compatible:
+> +        const: st,stpmic1-onkey
 > +
-> +  clock-names:
-> +    items:
-> +      enum: [ pclk, x8k, x11k ]
-> +    minItems: 3
-> +    maxItems: 3
+> +      interrupts:
+> +        items:
+> +          - description: onkey-falling, happens when onkey is pressed. IT_PONKEY_F of pmic
+> +          - description: onkey-rising, happens when onkey is released. IT_PONKEY_R of pmic
+> +
+> +      interrupt-names:
+> +        items:
+> +          - const: onkey-falling
+> +          - const: onkey-rising
+> +
+> +      st,onkey-clear-cc-flag:
+> +        description: onkey is able power on after an over-current shutdown event.
+> +        $ref: /schemas/types.yaml#/definitions/flag
+> +
+> +      st,onkey-pu-inactive:
+> +        description: onkey pull up is not active
+> +        $ref: /schemas/types.yaml#/definitions/flag
+> +
+> +      power-off-time-sec:
+> +        minimum: 1
+> +        maximum: 16
+> +
+> +    required:
+> +      - compatible
+> +      - interrupts
+> +      - interrupt-names
+> +
+> +  watchdog:
+> +    type: object
+
+watchdog.yaml here.
+
+> +
+> +    properties:
+> +      compatible:
+> +        const: st,stpmic1-wdt
+> +
+> +    required:
+> +      - compatible
+> +
+> +  regulators:
+> +    type: object
+> +
+> +    description: |
+> +      Available Regulators in STPMIC1 device are:
+> +        - buck1 for Buck BUCK1
+> +        - buck2 for Buck BUCK2
+> +        - buck3 for Buck BUCK3
+> +        - buck4 for Buck BUCK4
+> +        - ldo1 for LDO LDO1
+> +        - ldo2 for LDO LDO2
+> +        - ldo3 for LDO LDO3
+> +        - ldo4 for LDO LDO4
+> +        - ldo5 for LDO LDO5
+> +        - ldo6 for LDO LDO6
+> +        - vref_ddr for LDO Vref DDR
+> +        - boost for Buck BOOST
+> +        - pwr_sw1 for VBUS_OTG switch
+> +        - pwr_sw2 for SW_OUT switch
+> +      Switches are fixed voltage regulators with only enable/disable capability.
+> +
+> +    properties:
+> +      compatible:
+> +        const: st,stpmic1-regulators
+> +
+> +    required:
+> +      - compatible
+> +
+> +patternProperties:
+> +  "^(buck[1-4]|ldo[1-6]|vref_ddr|boost|)$":
+
+Should be a child of 'regulators'
+
+> +    type: object
+> +
+> +    properties:
+> +      st,mask-reset:
+> +        description: mask reset for this regulator,
+> +                     the regulator configuration is maintained during pmic reset.
+> +        $ref: /schemas/types.yaml#/definitions/flag
+> +
+> +      interrupts:
+> +        maxItems: 1
+> +
+> +      regulator-over-current-protection: true
+> +
+> +  "^(pwr_sw[1-2])$":
+> +    type: object
+> +
+> +    properties:
+> +      interrupts:
+> +        maxItems: 1
+> +
+> +      regulator-over-current-protection: true
+> +      regulator-active-discharge: true
+> +
+> +additionalProperties: false
 > +
 > +required:
 > +  - compatible
 > +  - reg
-> +  - ranges
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +  - clocks
-> +  - clock-names
-> +
-> +patternProperties:
-> +  "^audio-controller@[0-9a-f]+$":
-> +    type: object
-> +    description:
-> +      Two subnodes corresponding to SAI sub-block instances A et B
-> +      can be defined. Subnode can be omitted for unsused sub-block.
-> +
-> +    properties:
-> +      compatible:
-> +        description: Compatible for SAI sub-block A or B.
-> +        enum:
-> +          - st,stm32-sai-sub-a
-> +          - st,stm32-sai-sub-b
-
-pattern: 'st,stm32-sai-sub-[ab]'
-
-> +
-> +      "#sound-dai-cells":
-> +        const: 0
-> +
-> +      reg:
-> +        maxItems: 1
-> +
-> +      clocks:
-> +        items:
-> +          - description: sai_ck clock feeding the internal clock generator.
-> +          - description: MCLK clock from a SAI set as master clock provider.
-> +        minItems: 1
-> +        maxItems: 2
-> +
-> +      clock-names:
-> +        items:
-> +          - const: sai_ck
-> +          - const: MCLK
-> +        minItems: 1
-> +        maxItems: 2
-> +
-> +      dmas:
-> +        items:
-> +          - description: SAI sub-block is configured as a capture DAI.
-> +          - description: SAI sub-block is configured as a playback DAI.
-> +        minItems: 1
-> +        maxItems: 1
-
-This is defining that dmas has 2 entries, but then limits it to the 1st 
-entry only.
-
-> +
-> +      dma-names:
-> +        items:
-> +          - enum: [ rx, tx ]
-> +
-> +      st,sync:
-> +        description:
-> +          Configure the SAI sub-block as slave of another SAI sub-block.
-> +          By default SAI sub-block is in asynchronous mode.
-> +          Must contain the phandle and index of the SAI sub-block providing
-> +          the synchronization.
-> +        allOf:
-> +          - $ref: /schemas/types.yaml#definitions/phandle-array
-> +          - maxItems: 1
-> +
-> +      st,iec60958:
-> +        description:
-> +          If set, support S/PDIF IEC6958 protocol for playback.
-> +          IEC60958 protocol is not available for capture.
-> +          By default, custom protocol is assumed, meaning that protocol is
-> +          configured according to protocol defined in related DAI link node,
-> +          such as i2s, left justified, right justified, dsp and pdm protocols.
-> +        allOf:
-> +          - $ref: /schemas/types.yaml#definitions/flag
-> +
-> +      "#clock-cells":
-> +        description: Configure the SAI device as master clock provider.
-> +        const: 0
-> +
-> +    required:
-> +      - compatible
-> +      - "#sound-dai-cells"
-> +      - reg
-> +      - clocks
-> +      - clock-names
-> +      - dmas
-> +      - dma-names
-
-       additionalProperties: false.
-
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: st,stm32f4-sai
-> +
-> +  - then:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 2
-> +
-> +        clock-names:
-> +          items:
-> +            enum: [ x8k, x11k ]
-
-Define the order.
-
-> +          minItems: 2
-> +          maxItems: 2
-> +
-> +additionalProperties: false
+> +  - interrupts
+> +  - "#interrupt-cells"
+> +  - interrupt-controller
 > +
 > +examples:
 > +  - |
+> +    #include <dt-bindings/mfd/st,stpmic1.h>
 > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/stm32mp1-clks.h>
-> +    #include <dt-bindings/reset/stm32mp1-resets.h>
-> +    sai1: sai@4400a000 {
-> +      compatible = "st,stm32h7-sai";
+> +    i2c@0 {
 > +      #address-cells = <1>;
-> +      #size-cells = <1>;
-> +      ranges = <0 0x4400a000 0x400>;
-> +      reg = <0x4400a000 0x4>, <0x4400a3f0 0x10>;
-> +      interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-> +      clocks = <&rcc SAI1>, <&rcc PLL1_Q>, <&rcc PLL2_P>;
-> +      clock-names = "pclk", "x8k", "x11k";
-> +      resets = <&rcc SAI1_R>;
+> +      #size-cells = <0>;
+> +      pmic@33 {
+> +        compatible = "st,stpmic1";
+> +        reg = <0x33>;
+> +        interrupt-parent = <&gpioa>;
+> +        interrupts = <0 2>;
 > +
-> +      sai1a: audio-controller@4400a004 {
-> +        compatible = "st,stm32-sai-sub-a";
-> +        #sound-dai-cells = <0>;
-> +        reg = <0x4 0x1c>;
-> +        clocks = <&rcc SAI1_K>;
-> +        clock-names = "sai_ck";
-> +        dmas = <&dmamux1 87 0x400 0x01>;
-> +        dma-names = "tx";
+> +        interrupt-controller;
+> +        #interrupt-cells = <2>;
+> +
+> +        onkey {
+> +          compatible = "st,stpmic1-onkey";
+> +          interrupts = <IT_PONKEY_F 0>,<IT_PONKEY_R 1>;
+> +          interrupt-names = "onkey-falling", "onkey-rising";
+> +          power-off-time-sec = <10>;
+> +        };
+> +
+> +        watchdog {
+> +          compatible = "st,stpmic1-wdt";
+> +        };
+> +
+> +        regulators {
+> +          compatible = "st,stpmic1-regulators";
+> +
+> +          ldo6-supply = <&v3v3>;
+
+Not documented.
+
+> +
+> +          buck1 {
+> +            regulator-name = "vdd_core";
+> +            interrupts = <IT_CURLIM_BUCK1 0>;
+> +            st,mask-reset;
+> +            regulator-boot-on;
+> +            regulator-min-microvolt = <700000>;
+> +            regulator-max-microvolt = <1200000>;
+> +          };
+> +
+> +          buck3 {
+> +            regulator-name = "vdd";
+> +            regulator-min-microvolt = <3300000>;
+> +            regulator-max-microvolt = <3300000>;
+> +            regulator-boot-on;
+> +            regulator-pull-down;
+> +          };
+> +
+> +          buck4 {
+> +            regulator-name = "v3v3";
+> +            interrupts = <IT_CURLIM_BUCK4 0>;
+> +            regulator-min-microvolt = <3300000>;
+> +            regulator-max-microvolt = <3300000>;
+> +          };
+> +
+> +          ldo6 {
+> +            regulator-name = "v1v8";
+> +            regulator-min-microvolt = <1800000>;
+> +            regulator-max-microvolt = <1800000>;
+> +            regulator-over-current-protection;
+> +          };
+> +        };
 > +      };
 > +    };
 > +
 > +...
-> -- 
-> 2.17.1
-> 
