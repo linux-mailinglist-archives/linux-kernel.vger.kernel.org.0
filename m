@@ -2,105 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F831154D33
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 21:46:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90356154D04
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 21:37:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728138AbgBFUqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 15:46:05 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42186 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728096AbgBFUp5 (ORCPT
+        id S1727872AbgBFUhB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 15:37:01 -0500
+Received: from www.linux-watchdog.org ([185.87.125.42]:50056 "EHLO
+        www.linux-watchdog.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727773AbgBFUhA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 15:45:57 -0500
-Received: by mail-pg1-f195.google.com with SMTP id w21so3340533pgl.9;
-        Thu, 06 Feb 2020 12:45:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TDSSUXzp+jY2mafKrqhbmPqt3x8XToH1UVPF0nShXrw=;
-        b=UuvbW5AxB50syt66YGG0LQZddxQqanSBCtgSiAHBmGkAI5bcaxo7KjeTTId976R7rQ
-         +ZpTCBN8h8aHEkmd2eEHNXfn0sDitDTlUbETD7as6pBBhJOnxOnHticK+jLU+/hqHbJ+
-         wOIGsnPNA98HUDhTd7FfaT/Qd8+SQBtEChgyHv82ZV1ooeHPFkLX+w4VRfq4JhcMjFdC
-         JcKuZ2H2cdzBj4yB/Kj4o/Fd50CGD9mhscGQyuRmsi57hHmz0lXU0lJ9fUkVnqjGn60z
-         sPsPi18eVR+IiPGkjPE4ACXn9+cfuoY/bZwbEeeL0otABiX7V9VCNVZj09hOwwyoOirj
-         3liQ==
-X-Gm-Message-State: APjAAAU9lqQhycR+fKj5WhcpZ4TAKTn/q9YxdG7PLqgiqWGctlUEKZbP
-        Fo+LOLWd/Iuxwqgktm5gmQ==
-X-Google-Smtp-Source: APXvYqyKjJUU76EY2SMDKH/N4kc6OvY/ZOAHowg2c6/pV5A8+7AkkIOuBxeq4e48NlDl4hjXDTlmrA==
-X-Received: by 2002:a63:ed14:: with SMTP id d20mr5610058pgi.267.1581021956822;
-        Thu, 06 Feb 2020 12:45:56 -0800 (PST)
-Received: from rob-hp-laptop (63-158-47-182.dia.static.qwest.net. [63.158.47.182])
-        by smtp.gmail.com with ESMTPSA id x12sm287256pfr.47.2020.02.06.12.45.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 12:45:56 -0800 (PST)
-Received: (nullmailer pid 13377 invoked by uid 1000);
-        Thu, 06 Feb 2020 19:24:37 -0000
-Date:   Thu, 6 Feb 2020 19:24:37 +0000
-From:   Rob Herring <robh@kernel.org>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        "maintainer:BROADCOM IPROC ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Sugaya Taichi <sugaya.taichi@socionext.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Arnd Bergmann <arnd@arndb.de>, Joel Stanley <joel@jms.id.au>,
-        Maxime Ripard <mripard@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        "james.tai" <james.tai@realtek.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 00/12] dt-bindings: arm: bcm: Convert boards to YAML
-Message-ID: <20200206192437.GB30325@bogus>
-References: <20200204235552.7466-1-f.fainelli@gmail.com>
+        Thu, 6 Feb 2020 15:37:00 -0500
+Received: by www.linux-watchdog.org (Postfix, from userid 500)
+        id 47C7D4065D; Thu,  6 Feb 2020 20:47:37 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org 47C7D4065D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
+        s=odk20180602; t=1581018457;
+        bh=UDRkZMKHbV1Ws+6JHIMGt7Ei1nb/ogRNQru6w0+tZXI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=UkIqrxpjYMqxSpmlNdNmfr3iWoBr+ou8d7kmtu7k8f0Fzm9rNyTXop3ZNJFtA0XIl
+         3gkGyOHYXadfmyfUZSeX/gQDXIu3Dw1Nme/XeJNSP1jug8wWeQje1QO2+EIiPqzFXO
+         OFTngwMkIlSg7JqUuli/qP6lScQ5XXd0mhRVeIos=
+Date:   Thu, 6 Feb 2020 20:47:37 +0100
+From:   Wim Van Sebroeck <wim@linux-watchdog.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Christophe Roullier <christophe.roullier@st.com>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Jack Mitchell <ml@embed.me.uk>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Srinivas Neeli <srinivas.neeli@xilinx.com>,
+        Vincent Prince <Vincent.PRINCE.fr@gmail.com>,
+        Vladis Dronov <vdronov@redhat.com>,
+        Wang@www.linux-watchdog.org,
+        "Peng 1." <peng.1.wang@nokia-sbell.com>,
+        "yong.liang" <yong.liang@mediatek.com>
+Subject: [GIT PULL REQUEST] watchdog - v5.6 Merge window
+Message-ID: <20200206194737.GA12072@www.linux-watchdog.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200204235552.7466-1-f.fainelli@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.5.20 (2009-12-10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 04, 2020 at 03:55:40PM -0800, Florian Fainelli wrote:
-> Hi Rob, Maxime,
-> 
-> This patch series converts most files under D/dt-bindings/arm/bcm/ with
-> the exception of bcm63138 and brcmstb to the YAML format. Those two may
-> be split accordingly later on since document not just the root node.
-> 
-> Changes in v2:
-> 
-> - fixed typo in Vulcan binding
-> - simplified how SoC compatible strings are specified
-> - fixed filename in bcm2835 firmware binding
-> - added 'secondary-boot-reg' constraint
-> 
-> 
-> Florian Fainelli (12):
->   dt-bindings: arm: bcm: Convert Cygnus to YAML
->   dt-bindings: arm: bcm: Convert Hurricane 2 to YAML
->   dt-bindings: arm: bcm: Convert Northstar Plus to YAML
->   dt-bindings: arm: bcm: Convert Northstar 2 to YAML
->   dt-bindings: arm: bcm: Convert Stingray to YAML
->   dt-bindings: arm: bcm: Convert BCM21664 to YAML
->   dt-bindings: arm: bcm: Convert BCM23550 to YAML
->   dt-bindings: arm: bcm: Convert BCM4708 to YAML
->   dt-bindings: arm: bcm: Convert BCM11351 to YAML
->   dt-bindings: arm: bcm: Convert Vulcan to YAML
->   dt-bindings: arm: Document Broadcom SoCs 'secondary-boot-reg'
+Hi Linus,
 
-For all the above,
+Please pull the watchdog changes for the v5.6 release cycle.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+This series contains:
+* add IT8786 chipset
+* addition of sam9x60 compatible watchdog
+* da9062 improvements
+* fix UAF in reboot notifier handling in watchdog core code
+* other fixes and small improvements
 
->   dt-bindings: arm: bcm: Convert BCM2835 firmware binding to YAML
-> 
+The output from git request-pull:
+----------------------------------------------------------------
+The following changes since commit d5226fa6dbae0569ee43ecfc08bdcd6770fc4755:
+
+  Linux 5.5 (2020-01-26 16:23:03 -0800)
+
+are available in the git repository at:
+
+  git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-5.6-rc1
+
+for you to fetch changes up to 057b52b4b3d58f4ee5944171da50f77b00a1bb0d:
+
+  watchdog: da9062: make restart handler atomic safe (2020-01-27 15:55:49 +0100)
+
+----------------------------------------------------------------
+linux-watchdog 5.6-rc1 tag
+
+----------------------------------------------------------------
+Christophe Roullier (1):
+      drivers: watchdog: stm32_iwdg: set WDOG_HW_RUNNING at probe
+
+Eugen Hristev (1):
+      watchdog: sama5d4_wdt: addition of sam9x60 compatible watchdog
+
+Jack Mitchell (1):
+      watchdog: dw_wdt: ping watchdog to reset countdown before start
+
+Marco Felsch (3):
+      watchdog: da9062: add power management ops
+      dt-bindings: watchdog: da9062: add suspend disable option
+      watchdog: da9062: make restart handler atomic safe
+
+Sai Prakash Ranjan (1):
+      watchdog: qcom: Use platform_get_irq_optional() for bark irq
+
+Srinivas Neeli (1):
+      watchdog: cadence: Skip printing pointer value
+
+Vincent Prince (1):
+      watchdog: it87_wdt: add IT8786 ID
+
+Vladis Dronov (1):
+      watchdog: fix UAF in reboot notifier handling in watchdog core code
+
+Wang, Peng 1. (NSB - CN/Hangzhou) (1):
+      watchdog: make DesignWare watchdog allow users to set bigger timeout value
+
+yong.liang (4):
+      dt-bindings: mediatek: mt8183: Add #reset-cells
+      dt-bindings: mediatek: mt2712: Add #reset-cells
+      watchdog: mtk_wdt: mt8183: Add reset controller
+      watchdog: mtk_wdt: mt2712: Add reset controller
+
+ .../devicetree/bindings/watchdog/da9062-wdt.txt    |   5 +
+ .../devicetree/bindings/watchdog/mtk-wdt.txt       |  11 ++-
+ drivers/watchdog/at91sam9_wdt.h                    |  21 ++++
+ drivers/watchdog/cadence_wdt.c                     |   5 +-
+ drivers/watchdog/da9062_wdt.c                      |  35 ++++++-
+ drivers/watchdog/dw_wdt.c                          |  11 ++-
+ drivers/watchdog/it87_wdt.c                        |   2 +
+ drivers/watchdog/mtk_wdt.c                         | 105 +++++++++++++++++++-
+ drivers/watchdog/qcom-wdt.c                        |   2 +-
+ drivers/watchdog/sama5d4_wdt.c                     | 109 ++++++++++++++++-----
+ drivers/watchdog/stm32_iwdg.c                      |  18 ++++
+ drivers/watchdog/watchdog_core.c                   |  35 +++++++
+ drivers/watchdog/watchdog_dev.c                    |  36 +------
+ .../dt-bindings/reset-controller/mt2712-resets.h   |  22 +++++
+ .../dt-bindings/reset-controller/mt8183-resets.h   |  17 ++++
+ 15 files changed, 361 insertions(+), 73 deletions(-)
+ create mode 100644 include/dt-bindings/reset-controller/mt2712-resets.h
+----------------------------------------------------------------
+
+Kind regards,
+Wim.
+
