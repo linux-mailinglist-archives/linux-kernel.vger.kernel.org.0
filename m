@@ -2,79 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9344153D12
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 03:59:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E217153D0C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 03:59:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727793AbgBFC7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 21:59:39 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:38866 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727770AbgBFC7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 21:59:38 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 2004A7B2BCFD0EE927FF;
-        Thu,  6 Feb 2020 10:59:35 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Thu, 6 Feb 2020
- 10:59:28 +0800
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
-        <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
-        <benh@kernel.crashing.org>, <paulus@samba.org>,
-        <npiggin@gmail.com>, <keescook@chromium.org>,
-        <kernel-hardening@lists.openwall.com>, <oss@buserror.net>
-CC:     <linux-kernel@vger.kernel.org>, <zhaohongjiang@huawei.com>,
-        Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH v3 4/6] powerpc/fsl_booke/64: do not clear the BSS for the second pass
-Date:   Thu, 6 Feb 2020 10:58:23 +0800
-Message-ID: <20200206025825.22934-5-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20200206025825.22934-1-yanaijie@huawei.com>
-References: <20200206025825.22934-1-yanaijie@huawei.com>
+        id S1727705AbgBFC64 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 21:58:56 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:37575 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727558AbgBFC64 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 21:58:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580957935;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=aUikXJihSelGv3US13DwD7EM94hbrK9xMRarpaRh2Mg=;
+        b=V8eLMk9eBjEL4/UzDSr+RJYNYHZyMNHOydu35t/x67AoNlaV5g6iZ7AoVhTm9VQzT1et2P
+        lyblF/+XW6wVAmOLD/Q0yQBIiHOGyywDBKIYnJLPgniTbMjVdcBywa9i6Qco/Cs1WdMO5/
+        SDMezf0MADMSQB2HffkqUl2TQFwq1gc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-289-HZki0O0INhaJeqV3CdPS5g-1; Wed, 05 Feb 2020 21:58:51 -0500
+X-MC-Unique: HZki0O0INhaJeqV3CdPS5g-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CCA6D800D54;
+        Thu,  6 Feb 2020 02:58:49 +0000 (UTC)
+Received: from localhost (ovpn-12-19.pek2.redhat.com [10.72.12.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 67CC0790C8;
+        Thu,  6 Feb 2020 02:58:46 +0000 (UTC)
+Date:   Thu, 6 Feb 2020 10:58:43 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, mhocko@kernel.org, david@redhat.com,
+        bsingharora@gmail.com
+Subject: Re: [PATCH v3] mm/hotplug: Only respect mem= parameter during boot
+ stage
+Message-ID: <20200206025843.GL8965@MiWiFi-R3L-srv>
+References: <20200204050643.20925-1-bhe@redhat.com>
+ <1356631d-30b6-e967-9874-6c48c25304cf@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <1356631d-30b6-e967-9874-6c48c25304cf@suse.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The BSS section has already cleared out in the first pass. No need to
-clear it again. This can save some time when booting with KASLR
-enabled.
+On 02/04/20 at 08:53am, J=FCrgen Gro=DF wrote:
+> On 04.02.20 06:06, Baoquan He wrote:
+> > In commit 357b4da50a62 ("x86: respect memory size limiting via mem=3D
+> > parameter") a global varialbe max_mem_size is added to store
+> > the value parsed from 'mem=3D ', then checked when memory region is
+> > added. This truly stops those DIMMs from being added into system memo=
+ry
+> > during boot-time.
+> >=20
+> > However, it also limits the later memory hotplug functionality. Any
+> > DIMM can't be hotplugged any more if its region is beyond the
+> > max_mem_size. We will get errors like:
+> >=20
+> > [  216.387164] acpi PNP0C80:02: add_memory failed
+> > [  216.389301] acpi PNP0C80:02: acpi_memory_enable_device() error
+> > [  216.392187] acpi PNP0C80:02: Enumeration failure
+> >=20
+> > This will cause issue in a known use case where 'mem=3D' is added to
+> > the hypervisor. The memory that lies after 'mem=3D' boundary will be
+> > assigned to KVM guests. After commit 357b4da50a62 merged, memory
+> > can't be extended dynamically if system memory on hypervisor is not
+> > sufficient.
+> >=20
+> > So fix it by also checking if it's during boot-time restricting to ad=
+d
+> > memory. Otherwise, skip the restriction.
+> >=20
+> > And also add this use case to document of 'mem=3D' kernel parameter.
+> >=20
+> > Fixes: 357b4da50a62 ("x86: respect memory size limiting via mem=3D pa=
+rameter")
+> > Signed-off-by: Baoquan He <bhe@redhat.com>
+>=20
+> Reviewed-by: Juergen Gross <jgross@suse.com>
 
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-Cc: Scott Wood <oss@buserror.net>
-Cc: Diana Craciun <diana.craciun@nxp.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: Kees Cook <keescook@chromium.org>
----
- arch/powerpc/kernel/head_64.S | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/powerpc/kernel/head_64.S b/arch/powerpc/kernel/head_64.S
-index 744624140fb8..8c644e7c3eaf 100644
---- a/arch/powerpc/kernel/head_64.S
-+++ b/arch/powerpc/kernel/head_64.S
-@@ -914,6 +914,13 @@ start_here_multiplatform:
- 	bl      relative_toc
- 	tovirt(r2,r2)
- 
-+	/* Do not clear the BSS for the second pass if randomized */
-+	LOAD_REG_ADDR(r3, kernstart_virt_addr)
-+	lwz     r3,0(r3)
-+	LOAD_REG_IMMEDIATE(r4, KERNELBASE)
-+	cmpw	r3,r4
-+	bne	4f
-+
- 	/* Clear out the BSS. It may have been done in prom_init,
- 	 * already but that's irrelevant since prom_init will soon
- 	 * be detached from the kernel completely. Besides, we need
--- 
-2.17.2
+Thanks, Juergen. Seems I should add more details to explain this. Will
+post v4 with your 'Reviewed-by'.
 
