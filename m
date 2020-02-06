@@ -2,96 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C40AE154A3C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 18:32:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1789154A45
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 18:34:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727779AbgBFRcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 12:32:00 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43369 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727358AbgBFRcA (ORCPT
+        id S1727747AbgBFRdz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 12:33:55 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:43662 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727358AbgBFRdz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 12:32:00 -0500
-Received: by mail-lj1-f193.google.com with SMTP id a13so6948413ljm.10
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 09:31:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=zu/G8MRDVCKX8RYx6Pvc5wkJFjC48WrjqEKdhsuBds4=;
-        b=i93gYIXCoEqx2+FdMbM7W31/tBjn9YnGY4pW2i2K2MtaBIbIQRMzoaNTH/A7FOzza4
-         57+3LVsNA50RVgFGUpp16LqhNabV6iFNPzNcQ9RREn4lJYlTcgMN6w/qUYigWyR2cTF5
-         V1rNi+pEl8ZknCnO0s3VnNBGGmcNph4iFoxi+Wcs42dGgGYhAQslMjElax7nMXQa2tOT
-         P3p1emNCBVi/oBfxn1yiul9HW+4eO71usyyAzb+TkeajhFPiaSkmIBKyneNOIhcIs55+
-         pAQdt7VPSHzWXUz9/FzPRXEnO549S7fc08WlZZsfnhDuFR7/tC2II1S1efR6siNzXx/T
-         Ql1w==
+        Thu, 6 Feb 2020 12:33:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581010434;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=BklOOZtpEbXR2lfLsVN/Nzs8K2IHl/5W7tD5xZRKzIw=;
+        b=VHUkb/dCf1lkz/dTqsEpTq08yK+skgf6XxRl0xd674ZeA6tabIVBbCk+W3PHfYsxzxYKDg
+        Thxl1zuPme50MS7F+DUazBQe2p+Oygs0QneI5dtTPuvxHGkBYsW0iHXkKnhJQUQwIIduPG
+        cGVa3u/7FI2WRuUKVtmSV9C9RQqAkCQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-60-9lJ2arPGN7mHAMEqyIiJFw-1; Thu, 06 Feb 2020 12:33:52 -0500
+X-MC-Unique: 9lJ2arPGN7mHAMEqyIiJFw-1
+Received: by mail-wm1-f72.google.com with SMTP id a10so363710wme.9
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 09:33:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=zu/G8MRDVCKX8RYx6Pvc5wkJFjC48WrjqEKdhsuBds4=;
-        b=rza/tASbPnx7/jmraa08MHAeJBabKAA2voyfZ5AkbCesdNDFhGV0kKh23xpUe5eLq6
-         ib/w8roL8E1I9G4PXv7m53QPBzt7Ig+n7P4ol6ow21OKfOakdPObsFe0eYJfqVa3urET
-         57bPDQmGNC7XOduvubJNlRQFNQw2LsNu339ARd5RQlSgd22EgdxvKddqr1qB4yiYWZbZ
-         7xKiVt6bWUaOmf6p1iMCCZPvJNAFGM42E+FfXc/KOFfAqnB00yQPpLmQotOPYuPaMe2v
-         U3FEhlgCzD4SGfNut4GhYv4uzlCxsKXh2rUA6trmTl+nXYL7s5tnpRzr24HrxNjN3qmO
-         H8YQ==
-X-Gm-Message-State: APjAAAVv8BsxDky0OrM2admZrusFBLKzB5dddA0ZqneS7tsEOR/DcJa7
-        OLvtGLTobrozQ8UUxTI+bwFiRozPRO2VDH6rGaU=
-X-Google-Smtp-Source: APXvYqzNRCyzPiXnN9BmdKsuYjpb49hj+m1D4UFIXvgHUWZqpXXVmGqeIMea60wSwEY4grqUkHkd+UbPWv3iUKyMdpU=
-X-Received: by 2002:a2e:a402:: with SMTP id p2mr2742009ljn.143.1581010318371;
- Thu, 06 Feb 2020 09:31:58 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=BklOOZtpEbXR2lfLsVN/Nzs8K2IHl/5W7tD5xZRKzIw=;
+        b=L1MByaNqFF2jQ6idzJcpuwNXLELp0gVP7NYtL8o0+vFXpvizlN6eZteT/oEnuIf68T
+         BCWIFX4l5+mYsUiGBTwNvYwUA7l32M2zF2s0jADiZMYdMq8HfHDV5lqOFEuwP/D7Rn77
+         +aBk685Hk8IJrZO1JkctJJV0pw1xS9ZDN0g+jV2ISKBX8wHEYzJJ04og/1Vj7ZbfxzKM
+         Skki2Ulx0IanGb/zR8fjObJufkT+MuSjiN0dwWg/tVR4fNDu/FUr15mrWtqPz8qHUX0Q
+         /+S42ppnEBpJBmT7nE03rnnPIaev5lmXS3u8DjMEkMQBtBxBRe1r0SL8LrTMzYX5T4qM
+         0DcA==
+X-Gm-Message-State: APjAAAVNbzeDpj0o0DYX9BY50Xsx8qDHGD1Ij+HQ9gaHONcKplHV6o+l
+        ztwyariWFkdddkh7KWG1B2H0PHMXuOQyYJQAvLEeyfdyIBv6xT0qhIKIDXlcxSg0zxYMnh4o04g
+        V0TGoKScXB4Avjr4kUBveeBRE
+X-Received: by 2002:a1c:7915:: with SMTP id l21mr5504745wme.112.1581010431052;
+        Thu, 06 Feb 2020 09:33:51 -0800 (PST)
+X-Google-Smtp-Source: APXvYqz/LgvjhDqPglzyKZz65I/FvXOuZVvP6MOg0sTKNxQjVoAU4NrjaJmmLB1IwT7DfEihNiQf7w==
+X-Received: by 2002:a1c:7915:: with SMTP id l21mr5504712wme.112.1581010430684;
+        Thu, 06 Feb 2020 09:33:50 -0800 (PST)
+Received: from steredhat (host209-4-dynamic.27-79-r.retail.telecomitalia.it. [79.27.4.209])
+        by smtp.gmail.com with ESMTPSA id z133sm263777wmb.7.2020.02.06.09.33.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Feb 2020 09:33:50 -0800 (PST)
+Date:   Thu, 6 Feb 2020 18:33:48 +0100
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH liburing v2 0/1] test: add epoll test case
+Message-ID: <CAGxU2F6qvW28=ULNUi-UHethus2bO6VXYX127HOcH_KPToZC-w@mail.gmail.com>
+References: <20200131142943.120459-1-sgarzare@redhat.com>
+ <ebc2efdb-4e7f-0db9-ef04-c02aac0b08b1@kernel.dk>
 MIME-Version: 1.0
-Reply-To: mrsnicolemarois94@gmail.com
-Received: by 2002:ab3:5a03:0:0:0:0:0 with HTTP; Thu, 6 Feb 2020 09:31:57 -0800 (PST)
-From:   "Mrs. Nicole Marois" <fridayot00@gmail.com>
-Date:   Thu, 6 Feb 2020 16:31:57 -0100
-X-Google-Sender-Auth: uz_nAcsazQPvk-AtripW77zfqwY
-Message-ID: <CAAsaS6QNBeDbCixAUJn9YHcwbKkgHfymas89k+52FpPVsvDU7g@mail.gmail.com>
-Subject: Greetings
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ebc2efdb-4e7f-0db9-ef04-c02aac0b08b1@kernel.dk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-Hello Dear,
 
-Please forgive me for stressing you with my predicaments as I know
-that this letter may come to you as big surprise. Actually, I came
-across your E-mail from my personal search afterward I decided to
-email you directly believing that you will be honest to fulfill my
-final wish before i die.
 
-Meanwhile, I am Mrs.  Nicole Marois 62 years old, from France, and I
-am suffering from a long time cancer and from all indication my
-condition is really deteriorating as my doctors have confirmed and
-courageously advised me that I may not live beyond two months from now
-for the reason that my tumor has reached a critical stage which has
-defiled all forms of medical treatment. As a matter of fact,
-registered nurse by profession while my husband was dealing on Gold
-Dust and Gold Dory Bars in Burkina Faso till his sudden death the year
-2016 then I took over his business till date.
+On Fri, Jan 31, 2020 at 4:39 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 1/31/20 7:29 AM, Stefano Garzarella wrote:
+> > Hi Jens,
+> > this is a v2 of the epoll test.
+> >
+> > v1 -> v2:
+> >     - if IORING_FEAT_NODROP is not available, avoid to overflow the CQ
+> >     - add 2 new tests to test epoll with IORING_FEAT_NODROP
+> >     - cleanups
+> >
+> > There are 4 sub-tests:
+> >     1. test_epoll
+> >     2. test_epoll_sqpoll
+> >     3. test_epoll_nodrop
+> >     4. test_epoll_sqpoll_nodrop
+> >
+> > In the first 2 tests, I try to avoid to queue more requests than we have room
+> > for in the CQ ring. These work fine, I have no faults.
+>
+> Thanks!
+>
+> > In the tests 3 and 4, if IORING_FEAT_NODROP is supported, I try to submit as
+> > much as I can until I get a -EBUSY, but they often fail in this way:
+> > the submitter manages to submit everything, the receiver receives all the
+> > submitted bytes, but the cleaner loses completion events (I also tried to put a
+> > timeout to epoll_wait() in the cleaner to be sure that it is not related to the
+> > patch that I send some weeks ago, but the situation doesn't change, it's like
+> > there is still overflow in the CQ).
+> >
+> > Next week I'll try to investigate better which is the problem.
+>
+> Does it change if you have an io_uring_enter() with GETEVENTS set? I wonder if
+> you just pruned the CQ ring but didn't flush the internal side.
 
-In fact, at this moment I have a deposit sum of four million five
-hundred thousand US dollars ($4,500,000.00) with one of the leading
-bank in Burkina Faso but unfortunately I cannot visit the bank since
-I m critically sick and powerless to do anything myself but my bank
-account officer advised me to assign any of my trustworthy relative,
-friends or partner with authorization letter to stand as the recipient
-of my money but sorrowfully I don t have any reliable relative and no
-child.
+If I do io_uring_enter() with GETEVENTS set and wait_nr = 0 it solves
+the issue, I think because we call io_cqring_events() that flushes the
+overflow list.
 
-Therefore, I want you to receive the money and take 50% to take care
-of yourself and family while 50% should be use basically on
-humanitarian purposes mostly to orphanages home, Motherless babies
-home, less privileged and disable citizens and widows around the
-world. and as soon as I receive your I shall send you my pictures,
-banking records and with full contacts of my banking institution to
-communicate them on the matter. Please contact me with these email
-address.(mrsnicolemarois94@gmail.com)
+At this point, should we call io_cqring_events() (that flushes the
+overflow list) in io_uring_poll()?
+I mean something like this:
 
-Hope to hear from you soon.
-Yours Faithfully,
-Mrs.  Nicole Marois
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 77f22c3da30f..2769451af89a 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -6301,7 +6301,7 @@ static __poll_t io_uring_poll(struct file *file, poll_table *wait)
+        if (READ_ONCE(ctx->rings->sq.tail) - ctx->cached_sq_head !=
+            ctx->rings->sq_ring_entries)
+                mask |= EPOLLOUT | EPOLLWRNORM;
+-       if (READ_ONCE(ctx->rings->cq.head) != ctx->cached_cq_tail)
++       if (!io_cqring_events(ctx, false))
+                mask |= EPOLLIN | EPOLLRDNORM;
+
+        return mask;
+
+Thanks,
+Stefano
+
