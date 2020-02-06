@@ -2,88 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B434153D30
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 04:07:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBD7F153D40
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 04:08:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727815AbgBFDHU convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 5 Feb 2020 22:07:20 -0500
-Received: from mga11.intel.com ([192.55.52.93]:35007 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727307AbgBFDHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 22:07:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2020 19:07:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,408,1574150400"; 
-   d="scan'208";a="235820044"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by orsmga006.jf.intel.com with ESMTP; 05 Feb 2020 19:07:19 -0800
-Received: from shsmsx153.ccr.corp.intel.com (10.239.6.53) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 5 Feb 2020 19:07:18 -0800
-Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.126]) by
- SHSMSX153.ccr.corp.intel.com ([169.254.12.97]) with mapi id 14.03.0439.000;
- Thu, 6 Feb 2020 11:07:17 +0800
-From:   "Li, Philip" <philip.li@intel.com>
-To:     Andi Kleen <ak@linux.intel.com>,
-        "Chen, Rong A" <rong.a.chen@intel.com>
-CC:     Roman Sudarikov <roman.sudarikov@linux.intel.com>,
-        lkp <lkp@intel.com>, Kan Liang <kan.liang@linux.intel.com>,
-        "Antonov, Alexander" <alexander.antonov@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "lkp@lists.01.org" <lkp@lists.01.org>
-Subject: RE: [LKP] Re: [perf x86] b77491648e: will-it-scale.per_process_ops
- -2.1% regression
-Thread-Topic: [LKP] Re: [perf x86] b77491648e: will-it-scale.per_process_ops
- -2.1% regression
-Thread-Index: AQHV3GVxtV9AZpMZekqZJwJ+vcCDDqgNe3dw
-Date:   Thu, 6 Feb 2020 03:07:15 +0000
-Message-ID: <831EE4E5E37DCC428EB295A351E6624952397CEA@shsmsx102.ccr.corp.intel.com>
-References: <20200205123110.GN12867@shao2-debian>
- <87tv44danp.fsf@linux.intel.com>
-In-Reply-To: <87tv44danp.fsf@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1727803AbgBFDIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 22:08:19 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:20556 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727663AbgBFDIT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 22:08:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580958498;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ofht4rTASrG2snsF2udWXLpOAWyq8ZOtG/BsyPM5Yj4=;
+        b=DfArRHpeiitC+7vYkkFUGizFqN0yjhjgtOufVxW9kTUXbCB/Om5SjKbw6MIc5udWzDfsjo
+        39fgfqEZwnYNlVM0YuY8rYXZLgzFWkYdEOXa9CiW4fBTL5T6l7yT5DrxAE50/l78kRInPV
+        2X07vFi2LJ0rLLX3n/vNDtlAvi3x6ws=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-79-X7uWwfe4On2D9cXt6zrN6w-1; Wed, 05 Feb 2020 22:08:17 -0500
+X-MC-Unique: X7uWwfe4On2D9cXt6zrN6w-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8894A107BAA4;
+        Thu,  6 Feb 2020 03:08:14 +0000 (UTC)
+Received: from [10.72.13.85] (ovpn-13-85.pek2.redhat.com [10.72.13.85])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 361F060C18;
+        Thu,  6 Feb 2020 03:07:56 +0000 (UTC)
+Subject: Re: [PATCH] vhost: introduce vDPA based backend
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Shahaf Shuler <shahafs@mellanox.com>,
+        Tiwei Bie <tiwei.bie@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        "rob.miller@broadcom.com" <rob.miller@broadcom.com>,
+        "haotian.wang@sifive.com" <haotian.wang@sifive.com>,
+        "eperezma@redhat.com" <eperezma@redhat.com>,
+        "lulu@redhat.com" <lulu@redhat.com>,
+        Parav Pandit <parav@mellanox.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "hch@infradead.org" <hch@infradead.org>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "hanand@xilinx.com" <hanand@xilinx.com>,
+        "mhabets@solarflare.com" <mhabets@solarflare.com>,
+        "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
+        "lingshan.zhu@intel.com" <lingshan.zhu@intel.com>,
+        "dan.daly@intel.com" <dan.daly@intel.com>,
+        "cunming.liang@intel.com" <cunming.liang@intel.com>,
+        "zhihong.wang@intel.com" <zhihong.wang@intel.com>
+References: <20200131033651.103534-1-tiwei.bie@intel.com>
+ <7aab2892-bb19-a06a-a6d3-9c28bc4c3400@redhat.com>
+ <20200205020247.GA368700@___>
+ <AM0PR0502MB37952015716C1D5E07E390B6C3020@AM0PR0502MB3795.eurprd05.prod.outlook.com>
+ <112858a4-1a01-f4d7-e41a-1afaaa1cad45@redhat.com>
+ <20200205042259-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <7519cde6-2c79-6867-d72d-05be73d947a6@redhat.com>
+Date:   Thu, 6 Feb 2020 11:07:55 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20200205042259-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Subject: [LKP] Re: [perf x86] b77491648e: will-it-scale.per_process_ops -2.1%
-> regression
-> 
-> kernel test robot <rong.a.chen@intel.com> writes:
-> 
-> > Greeting,
-> >
-> > FYI, we noticed a -2.1% regression of will-it-scale.per_process_ops due to
-> commit:
-> >
-> >
-> > commit: b77491648e6eb2f26b6edf5eaea859adc17f4dcc ("perf x86: Infrastructure
-> for exposing an Uncore unit to PMON mapping")
-> > https://github.com/0day-ci/linux/commits/roman-sudarikov-linux-intel-com/perf-
-> x86-Exposing-IO-stack-to-IO-PMON-mapping-through-sysfs/20200118-075508
-> 
-> Seems to be spurious bisect. I don't think that commit could change
-> anything performance related.
-Hi Andi, we will look into this as early as possible, we also receive another input from
-Pater Z that he got false positive of will-it-scale.per_process_ops performance
-regression. We will investigate them.
 
-> 
-> -Andi
-> _______________________________________________
-> LKP mailing list -- lkp@lists.01.org
-> To unsubscribe send an email to lkp-leave@lists.01.org
+On 2020/2/5 =E4=B8=8B=E5=8D=885:23, Michael S. Tsirkin wrote:
+> On Wed, Feb 05, 2020 at 03:50:14PM +0800, Jason Wang wrote:
+>> On 2020/2/5 =C3=A4=C2=B8=E2=80=B9=C3=A5=C2=8D=CB=863:15, Shahaf Shuler=
+ wrote:
+>>> Wednesday, February 5, 2020 4:03 AM, Tiwei Bie:
+>>>> Subject: Re: [PATCH] vhost: introduce vDPA based backend
+>>>>
+>>>> On Tue, Feb 04, 2020 at 11:30:11AM +0800, Jason Wang wrote:
+>>>>> On 2020/1/31 =C3=A4=C2=B8=C5=A0=C3=A5=C2=8D=CB=8611:36, Tiwei Bie w=
+rote:
+>>>>>> This patch introduces a vDPA based vhost backend. This backend is
+>>>>>> built on top of the same interface defined in virtio-vDPA and
+>>>>>> provides a generic vhost interface for userspace to accelerate the
+>>>>>> virtio devices in guest.
+>>>>>>
+>>>>>> This backend is implemented as a vDPA device driver on top of the
+>>>>>> same ops used in virtio-vDPA. It will create char device entry nam=
+ed
+>>>>>> vhost-vdpa/$vdpa_device_index for userspace to use. Userspace can
+>>>>>> use vhost ioctls on top of this char device to setup the backend.
+>>>>>>
+>>>>>> Signed-off-by: Tiwei Bie<tiwei.bie@intel.com>
+>>> [...]
+>>>
+>>>>>> +static long vhost_vdpa_do_dma_mapping(struct vhost_vdpa *v) {
+>>>>>> +	/* TODO: fix this */
+>>>>> Before trying to do this it looks to me we need the following durin=
+g
+>>>>> the probe
+>>>>>
+>>>>> 1) if set_map() is not supported by the vDPA device probe the IOMMU
+>>>>> that is supported by the vDPA device
+>>>>> 2) allocate IOMMU domain
+>>>>>
+>>>>> And then:
+>>>>>
+>>>>> 3) pin pages through GUP and do proper accounting
+>>>>> 4) store GPA->HPA mapping in the umem
+>>>>> 5) generate diffs of memory table and using IOMMU API to setup the =
+dma
+>>>>> mapping in this method
+>>>>>
+>>>>> For 1), I'm not sure parent is sufficient for to doing this or need=
+ to
+>>>>> introduce new API like iommu_device in mdev.
+>>>> Agree. We may also need to introduce something like the iommu_device=
+.
+>>>>
+>>> Would it be better for the map/umnap logic to happen inside each devi=
+ce ?
+>>> Devices that needs the IOMMU will call iommu APIs from inside the dri=
+ver callback.
+>> Technically, this can work. But if it can be done by vhost-vpda it wil=
+l make
+>> the vDPA driver more compact and easier to be implemented.
+>>
+>>
+>>> Devices that has other ways to do the DMA mapping will call the propr=
+ietary APIs.
+>> To confirm, do you prefer:
+>>
+>> 1) map/unmap
+>>
+>> or
+>>
+>> 2) pass all maps at one time?
+>>
+>> Thanks
+>>
+>>
+> I mean we really already have both right? ATM 1 is used with an iommu
+> and 2 without. I guess we can also have drivers ask for either or both
+> ...
+
+
+Yes, that looks better.
+
+Thanks
+
