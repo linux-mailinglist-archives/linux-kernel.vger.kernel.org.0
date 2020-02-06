@@ -2,99 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 768FC153CC3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 02:47:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76B68153CCB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 02:54:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbgBFBq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 20:46:56 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:54116 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727170AbgBFBqz (ORCPT
+        id S1727612AbgBFBye (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 20:54:34 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:43219 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727306AbgBFBye (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 20:46:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580953614;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QFMZVwYTnIpL7fCFcXZb1GizaNxHu6MTVpIRsyiA0gQ=;
-        b=RlzdZLPUl5L2d8CZkKUhvMdXjAGtEhk29SH/M0EZcTTNWSaopmSUMZxb4RR8EgsQY7hnzz
-        o3az559rtRnNWG64hEpWZUavLF7q2UEEr/Y87EA/XvnJjFndVJoledf0kUvi7XzpBOi7Fj
-        CAO0KPIe7dHRdxRgt2K15w7XtybFdiw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-213-FQ5uAGHWOuGLBy3AOFBdww-1; Wed, 05 Feb 2020 20:46:50 -0500
-X-MC-Unique: FQ5uAGHWOuGLBy3AOFBdww-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B9A4F10753F3;
-        Thu,  6 Feb 2020 01:46:48 +0000 (UTC)
-Received: from localhost (ovpn-12-19.pek2.redhat.com [10.72.12.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F0B271A7E3;
-        Thu,  6 Feb 2020 01:46:45 +0000 (UTC)
-Date:   Thu, 6 Feb 2020 09:46:42 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Wei Yang <richardw.yang@linux.intel.com>
-Subject: Re: [PATCH v1] mm/memory_hotplug: Easier calculation to get pages to
- next section boundary
-Message-ID: <20200206014642.GJ8965@MiWiFi-R3L-srv>
-References: <20200205135251.37488-1-david@redhat.com>
+        Wed, 5 Feb 2020 20:54:34 -0500
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id 0161sLWB013371;
+        Thu, 6 Feb 2020 10:54:22 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 0161sLWB013371
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1580954062;
+        bh=fYu5qSWDlyPR/anptL+BYhN5tzSdBVO/zoDfzstuN44=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LCJup8AFmkhz46Hw2VBHNYGakgtBiJOJ9C6xSkTww/uotGVBpuRZX6SB/Vv+3wEbF
+         FWqGdZICSpwK9VFqSe6CjHV1fr9VEQgng/STdoGkhyn8NSB1L4lY71yuuAHKiBLNDI
+         EwqpQQ8Z3CqmrQz4ZUdmwnEuzwopa7j5GV1aM2IGln8kn0dm/TnIMSkxFNTsHl14Yq
+         Mn6eOV0KPqZmOMCtqf+rGFt8F2ByLkhTf1s8c1utmdA3lkYOsQb6Dn/J85wZZ7kDxF
+         oFKY8TRFCBaNseYhvMX3tYEJpxkqtr6TFsFYrRQRU/uC8V1l8FVKGFYljGne6JDf3J
+         0LOB2wiuRojtQ==
+X-Nifty-SrcIP: [209.85.221.172]
+Received: by mail-vk1-f172.google.com with SMTP id b69so1178176vke.9;
+        Wed, 05 Feb 2020 17:54:22 -0800 (PST)
+X-Gm-Message-State: APjAAAUDLeihNVPU3WWZ318gaCRVg4dah8hhw/FXrbDMLsEaDKDXxNc0
+        rOQpjYvWsM8EEiUpHNUwHMQzDCxhSfiW3UH9Jms=
+X-Google-Smtp-Source: APXvYqxHSV/Jx6V/ajGP02WdniwHTc/a78EFjyD/aiY26Z26n4zwgD33O5EwfaOS+YXT3IohqmXYYFasoZB2vdvRmS4=
+X-Received: by 2002:a1f:bfc2:: with SMTP id p185mr542468vkf.73.1580954061054;
+ Wed, 05 Feb 2020 17:54:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200205135251.37488-1-david@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+References: <20200203164708.17478-1-masahiroy@kernel.org> <CAHk-=wiERN+VgxBEOUKMhZFG-yAvVjmDSZXGR22vQBZETQ75yg@mail.gmail.com>
+In-Reply-To: <CAHk-=wiERN+VgxBEOUKMhZFG-yAvVjmDSZXGR22vQBZETQ75yg@mail.gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Thu, 6 Feb 2020 10:53:44 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAREEkuZeXXzGbtemZ=A-YX6Jn6WOtD0azBxaiDiOxLp2w@mail.gmail.com>
+Message-ID: <CAK7LNAREEkuZeXXzGbtemZ=A-YX6Jn6WOtD0azBxaiDiOxLp2w@mail.gmail.com>
+Subject: Re: [PATCH] initramfs: do not show compression mode choice if
+ INITRAMFS_SOURCE is empty
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/05/20 at 02:52pm, David Hildenbrand wrote:
-> Let's use a calculation that's easier to understand and calculates the
-> same result. Reusing existing macros makes this look nicer.
-> 
-> We always want to have the number of pages (> 0) to the next section
-> boundary, starting from the current pfn.
-> 
-> Suggested-by: Segher Boessenkool <segher@kernel.crashing.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Baoquan He <bhe@redhat.com>
-> Cc: Wei Yang <richardw.yang@linux.intel.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+Hi Linus,
 
-LGTM.
+On Tue, Feb 4, 2020 at 2:35 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Mon, Feb 3, 2020 at 4:47 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> >
+> > This commit hides the Kconfig choice in that case. The default cpio
+> > is embedded without compression, which was the original behavior.
+>
+> Btw, is there any way to figure out automatically what the initrd
+> compression is (for the external case)?
+>
+> Because I think it would be lovely to be able to have sane defaults
+> for the CONFIG_RD_xyz things.
+>
+> I'm assuming the answer is "no", simply because it comes from distro
+> installs, but I thought I'd check.
 
-Reviewed-by: Baoquan He <bhe@redhat.com>
+I think the answer is no.
 
-> ---
->  mm/memory_hotplug.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 0a54ffac8c68..c30191183c04 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -528,7 +528,8 @@ void __remove_pages(unsigned long pfn, unsigned long nr_pages,
->  	for (; pfn < end_pfn; pfn += cur_nr_pages) {
->  		cond_resched();
->  		/* Select all remaining pages up to the next section boundary */
-> -		cur_nr_pages = min(end_pfn - pfn, -(pfn | PAGE_SECTION_MASK));
-> +		cur_nr_pages = min(end_pfn - pfn,
-> +				   SECTION_ALIGN_UP(pfn + 1) - pfn);
->  		__remove_section(pfn, cur_nr_pages, map_offset, altmap);
->  		map_offset = 0;
->  	}
-> -- 
-> 2.24.1
-> 
+For external initrd, it is up to distros,
+and we have no way to know the compression type beforehand.
 
+We know it after booting.
+
+init/initramfs.c has the following line:
+pr_debug("Detected %s compressed data\n", compress_name);
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
