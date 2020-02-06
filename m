@@ -2,31 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 468DA15472E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:10:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4114154732
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:10:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbgBFPKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 10:10:37 -0500
-Received: from smtp.gentoo.org ([140.211.166.183]:55950 "EHLO smtp.gentoo.org"
+        id S1727791AbgBFPKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 10:10:43 -0500
+Received: from smtp.gentoo.org ([140.211.166.183]:55970 "EHLO smtp.gentoo.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727723AbgBFPKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 10:10:36 -0500
+        id S1727773AbgBFPKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 10:10:41 -0500
 Received: from alexis.zapto.org (85-171-52-99.rev.numericable.fr [85.171.52.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: aballier)
-        by smtp.gentoo.org (Postfix) with ESMTPSA id F291C34E821;
-        Thu,  6 Feb 2020 15:10:33 +0000 (UTC)
+        by smtp.gentoo.org (Postfix) with ESMTPSA id 94BEE34E821;
+        Thu,  6 Feb 2020 15:10:39 +0000 (UTC)
 From:   Alexis Ballier <aballier@gentoo.org>
 Cc:     Alexis Ballier <aballier@gentoo.org>, devicetree@vger.kernel.org,
         Heiko Stuebner <heiko@sntech.de>,
-        Robin Murphy <robin.murphy@arm.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] arm64: dts: rockchip: rk3399-orangepi: Add ethernet phy.
-Date:   Thu,  6 Feb 2020 16:10:24 +0100
-Message-Id: <20200206151025.3813-1-aballier@gentoo.org>
+Subject: [PATCH 2/2] arm64: dts: rockchip: rk3399-orangepi: Explicitly pinmix the regulator configuration GPIOs
+Date:   Thu,  6 Feb 2020 16:10:25 +0100
+Message-Id: <20200206151025.3813-2-aballier@gentoo.org>
 X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200206151025.3813-1-aballier@gentoo.org>
+References: <20200206151025.3813-1-aballier@gentoo.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 To:     unlisted-recipients:; (no To-header on input)
@@ -35,76 +36,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enables INTB.
-The wiring is the same as the nanopi4, so this is heavily based on:
-- [1a4e6203f0c] arm64: dts: rockchip: Add nanopi4 ethernet phy
-- [bc43cee88aa] arm64: dts: rockchip: Update nanopi4 phy reset properties
-by Robin Murphy.
+Those GPIOs define which register is used by the GPU & CPUB regulators
+for sleep mode. The register is defined here, so better have the GPIOs
+explicitly set too.
 
 Signed-off-by: Alexis Ballier <aballier@gentoo.org>
 Cc: devicetree@vger.kernel.org
 Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Robin Murphy <robin.murphy@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-rockchip@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
 ---
- .../boot/dts/rockchip/rk3399-orangepi.dts     | 31 ++++++++++++++++---
- 1 file changed, 27 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
-index 9c659f3115c8..1767015e684c 100644
+index 1767015e684c..f9f7246d4d2f 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
 +++ b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
-@@ -202,14 +202,27 @@ &gmac {
- 	clock_in_out = "input";
- 	phy-supply = <&vcc3v3_s3>;
- 	phy-mode = "rgmii";
-+	phy-handle = <&rtl8211e>;
- 	pinctrl-names = "default";
--	pinctrl-0 = <&rgmii_pins>;
--	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
--	snps,reset-active-low;
--	snps,reset-delays-us = <0 10000 50000>;
-+	pinctrl-0 = <&rgmii_pins>, <&phy_intb>, <&phy_rstb>;
- 	tx_delay = <0x28>;
- 	rx_delay = <0x11>;
- 	status = "okay";
-+
-+	mdio {
-+		compatible = "snps,dwmac-mdio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		rtl8211e: phy@1 {
-+			reg = <1>;
-+			interrupt-parent = <&gpio3>;
-+			interrupts = <RK_PB2 IRQ_TYPE_LEVEL_LOW>;
-+			reset-assert-us = <10000>;
-+			reset-deassert-us = <30000>;
-+			reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
-+		};
-+	};
- };
- 
- &gpu {
-@@ -537,6 +550,16 @@ pwr_btn: pwr-btn {
- 		};
+@@ -432,6 +432,8 @@ vdd_cpu_b: regulator@40 {
+ 		compatible = "silergy,syr827";
+ 		reg = <0x40>;
+ 		fcs,suspend-voltage-selector = <1>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&cpu_b_sleep>;
+ 		regulator-name = "vdd_cpu_b";
+ 		regulator-min-microvolt = <712500>;
+ 		regulator-max-microvolt = <1500000>;
+@@ -449,6 +451,8 @@ vdd_gpu: regulator@41 {
+ 		compatible = "silergy,syr828";
+ 		reg = <0x41>;
+ 		fcs,suspend-voltage-selector = <1>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&gpu_sleep>;
+ 		regulator-name = "vdd_gpu";
+ 		regulator-min-microvolt = <712500>;
+ 		regulator-max-microvolt = <1500000>;
+@@ -561,6 +565,14 @@ phy_rstb: phy-rstb {
  	};
  
-+	phy {
-+		phy_intb: phy-intb {
-+			rockchip,pins = <3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
-+		};
-+
-+		phy_rstb: phy-rstb {
-+			rockchip,pins = <3 RK_PB7 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
  	pmic {
++		cpu_b_sleep: cpu-b-sleep {
++			rockchip,pins = <1 RK_PC1 RK_FUNC_GPIO &pcfg_pull_down>;
++		};
++
++		gpu_sleep: gpu-sleep {
++			rockchip,pins = <1 RK_PB6 RK_FUNC_GPIO &pcfg_pull_down>;
++		};
++
  		pmic_int_l: pmic-int-l {
  			rockchip,pins =
+ 				<1 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>;
 -- 
 2.25.0
 
