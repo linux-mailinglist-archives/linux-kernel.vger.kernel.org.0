@@ -2,123 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B125215498B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 17:45:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30822154992
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 17:46:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbgBFQpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 11:45:12 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:52420 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727593AbgBFQpL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 11:45:11 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016GcnbI050769;
-        Thu, 6 Feb 2020 16:42:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2020-01-29;
- bh=mOd/toCf6IcfjIYE08cObI/VB0Rx512cP6g2PbHIXoQ=;
- b=Rm4fw9qsTxTuQKGOf2eAh31Ow77Nu1oftxFWkCVXieAGjLVrnx9C0Dw8v00YJjIeND9B
- 4w/UYlbAiTrNE8RxmyTYs1N2VjMmlPBeXg+MZXAdNUUzcG66yfDPpnPw415XmnyJe5Gx
- fDnRPZYfexuSoSyZe65E9ma1HLi+P24vqxwx4DE5dZXPyw6eOFhCn67P4Zr2UFiB2Q4a
- R1wu5KHMR35SGCHg1l4UIbR6uYcsX6QJDdAEWlWYkyabsbwTW4bw1Cj12dzUuZ1SIwag
- tFO5p23AgvxvOpiikBaFMWGj8wjr2+TCY4Tn+tVUQL+Jp5bnGRMLD3lxAPLjW26XsdVo tA== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2019-08-05;
- bh=mOd/toCf6IcfjIYE08cObI/VB0Rx512cP6g2PbHIXoQ=;
- b=SqlFTqplMp2Z1yKySBLpekymcQsblolEpUZZwgGxODcBKcXQcVEyP9y+kVGuOYu6/XnF
- XCf/DypZBF6OXmCbW7jzCeIeGzqMwUZfW+x7hBCiQYWuUoenWvVo80ofzuzjn1UEarKw
- SXLAphomROT4GDCKsTNT2mtKetH8g7LxoY2zCf3q4Wk4JEaZUn2ynntQeaAfOl5wyeBQ
- giLglDKn6UMsUKTjWSW0UtZ5GBKyzE9sQjDSHemd4Ott+T6umU+WOgZkI+pn/30/M/cc
- l22moEyy98Pe1TtiwnjyEgUl+/UQAQBXS3BBejc4ZYHBMnjK+H1yifX+Y2VGx4NhHEb8 ZA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2xykbpawdf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Feb 2020 16:42:45 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016Gd8Rr009698;
-        Thu, 6 Feb 2020 16:42:44 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2y0mnk0n9k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Feb 2020 16:42:44 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 016GgdMW017902;
-        Thu, 6 Feb 2020 16:42:40 GMT
-Received: from localhost.us.oracle.com (/10.147.27.2)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Feb 2020 08:42:39 -0800
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     dhowells@redhat.com, geert@linux-m68k.org,
-        gregkh@linuxfoundation.org, nayna@linux.ibm.com,
-        eric.snowberg@oracle.com, tglx@linutronix.de,
-        bauerman@linux.ibm.com, mpe@ellerman.id.au,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 2/2] ima: Change default secure_boot policy to include appended signatures
-Date:   Thu,  6 Feb 2020 11:42:26 -0500
-Message-Id: <20200206164226.24875-3-eric.snowberg@oracle.com>
-X-Mailer: git-send-email 2.18.1
-In-Reply-To: <20200206164226.24875-1-eric.snowberg@oracle.com>
-References: <20200206164226.24875-1-eric.snowberg@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9523 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2002060127
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9523 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2002060127
+        id S1727773AbgBFQqR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 11:46:17 -0500
+Received: from mga07.intel.com ([134.134.136.100]:2851 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727358AbgBFQqR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 11:46:17 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 08:46:17 -0800
+X-IronPort-AV: E=Sophos;i="5.70,410,1574150400"; 
+   d="scan'208";a="225069050"
+Received: from agluck-desk2.sc.intel.com (HELO agluck-desk2.amr.corp.intel.com) ([10.3.52.68])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 08:46:16 -0800
+Date:   Thu, 6 Feb 2020 08:46:14 -0800
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark D Rustad <mrustad@gmail.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>, Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: Re: [PATCH] x86/split_lock: Avoid runtime reads of the TEST_CTRL MSR
+Message-ID: <20200206164614.GA20622@agluck-desk2.amr.corp.intel.com>
+References: <4E95BFAA-A115-4159-AA4F-6AAB548C6E6C@gmail.com>
+ <C3302B2F-177F-4C39-910E-EADBA9285DD0@intel.com>
+ <8CC9FBA7-D464-4E58-8912-3E14A751D243@gmail.com>
+ <20200126200535.GB30377@agluck-desk2.amr.corp.intel.com>
+ <20200203204155.GE19638@linux.intel.com>
+ <20200206004944.GA11455@agluck-desk2.amr.corp.intel.com>
+ <CALCETrWmuTbHn9YCpGsWLBjR9rV1QEoEQ-m63NDd9cu7SecV6Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrWmuTbHn9YCpGsWLBjR9rV1QEoEQ-m63NDd9cu7SecV6Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the default secure_boot policy from:
+On Wed, Feb 05, 2020 at 05:18:23PM -0800, Andy Lutomirski wrote:
+> On Wed, Feb 5, 2020 at 4:49 PM Luck, Tony <tony.luck@intel.com> wrote:
+> >
+> > In a context switch from a task that is detecting split locks
+> > to one that is not (or vice versa) we need to update the TEST_CTRL
+> > MSR. Currently this is done with the common sequence:
+> >         read the MSR
+> >         flip the bit
+> >         write the MSR
+> > in order to avoid changing the value of any reserved bits in the MSR.
+> >
+> > Cache the value of the TEST_CTRL MSR when we read it during initialization
+> > so we can avoid an expensive RDMSR instruction during context switch.
+> 
+> If something else that is per-cpu-ish gets added to the MSR in the
+> future, I will personally make fun of you for not making this percpu.
 
-appraise func=MODULE_CHECK appraise_type=imasig
-appraise func=FIRMWARE_CHECK appraise_type=imasig
-appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig
-appraise func=POLICY_CHECK appraise_type=imasig
+Xiaoyao Li has posted a version using a percpu cache value:
 
-to
+https://lore.kernel.org/r/20200206070412.17400-4-xiaoyao.li@intel.com
 
-appraise func=MODULE_CHECK appraise_type=imasig|modsig
-appraise func=FIRMWARE_CHECK appraise_type=imasig
-appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig|modsig
-appraise func=POLICY_CHECK appraise_type=imasig
+So take that if it makes you happier.  My patch only used the
+cached value to store the state of the reserved bits in the MSR
+and assumed those are the same for all cores.
 
-This will allow appended signatures to work with the default
-secure_boot policy.
+Xiaoyao Li's version updates with what was most recently written
+on each thread (but doesn't, and can't, make use of that because we
+know that the other thread on the core may have changed the actual
+value in the MSR).
 
-Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
----
- security/integrity/ima/ima_policy.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+If more bits are implemented that need to be set at run time, we
+are likely up the proverbial creek. I'll see if I can find out if
+there are plans for that.
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index ef8dfd47c7e3..5d835715b472 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -189,11 +189,11 @@ static struct ima_rule_entry build_appraise_rules[] __ro_after_init = {
- 
- static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
- 	{.action = APPRAISE, .func = MODULE_CHECK,
--	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
-+	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED | IMA_MODSIG_ALLOWED},
- 	{.action = APPRAISE, .func = FIRMWARE_CHECK,
- 	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
- 	{.action = APPRAISE, .func = KEXEC_KERNEL_CHECK,
--	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
-+	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED | IMA_MODSIG_ALLOWED},
- 	{.action = APPRAISE, .func = POLICY_CHECK,
- 	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
- };
--- 
-2.18.1
-
+-Tony
