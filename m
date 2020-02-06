@@ -2,109 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DB64154CED
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 21:25:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E189154CE5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 21:24:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728026AbgBFUZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 15:25:16 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25880 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727845AbgBFUZP (ORCPT
+        id S1727972AbgBFUYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 15:24:39 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35379 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727936AbgBFUYi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 15:25:15 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 016KDlEa060947;
-        Thu, 6 Feb 2020 15:22:12 -0500
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y0kne6euw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 06 Feb 2020 15:22:12 -0500
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 016KEXKf063196;
-        Thu, 6 Feb 2020 15:22:12 -0500
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y0kne6eu6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 06 Feb 2020 15:22:12 -0500
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 016KJUhW002391;
-        Thu, 6 Feb 2020 20:22:10 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma05wdc.us.ibm.com with ESMTP id 2xykc9qtdq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 06 Feb 2020 20:22:10 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 016KM90S34799880
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Feb 2020 20:22:09 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 171E9BE053;
-        Thu,  6 Feb 2020 20:22:09 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9DE00BE054;
-        Thu,  6 Feb 2020 20:22:05 +0000 (GMT)
-Received: from swastik.ibm.com (unknown [9.160.44.62])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu,  6 Feb 2020 20:22:05 +0000 (GMT)
-Subject: Re: [RFC PATCH 0/2] ima: uncompressed module appraisal support
-To:     Eric Snowberg <eric.snowberg@oracle.com>,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com
-Cc:     zohar@linux.ibm.com, dhowells@redhat.com, geert@linux-m68k.org,
-        gregkh@linuxfoundation.org, nayna@linux.ibm.com,
-        tglx@linutronix.de, bauerman@linux.ibm.com, mpe@ellerman.id.au,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200206164226.24875-1-eric.snowberg@oracle.com>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-Message-ID: <5c246616-9a3a-3ed2-c1f9-f634cef511c9@linux.vnet.ibm.com>
-Date:   Thu, 6 Feb 2020 15:22:04 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
-MIME-Version: 1.0
-In-Reply-To: <20200206164226.24875-1-eric.snowberg@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-06_03:2020-02-06,2020-02-06 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- malwarescore=0 suspectscore=0 mlxlogscore=999 adultscore=0 impostorscore=0
- phishscore=0 lowpriorityscore=0 priorityscore=1501 bulkscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002060149
+        Thu, 6 Feb 2020 15:24:38 -0500
+Received: by mail-wm1-f65.google.com with SMTP id b17so289945wmb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 12:24:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=LFxMYCi8lGoovOV/sAYPGteEncrVIWaLSH+LK6Sw5BI=;
+        b=k/+ec3LzTqJfjILFR0cc7f2Q6keBUxbOd+AiEs2of8GbeM6GGMyLV8t5tlwRr6KluB
+         Q0ypKUjvislTnM12SgJdNMO4zs4w7G35fKiyxdPp8Ka+faKrRC7xfm0ai1SZ47cQERp8
+         V58dZd8FLH99DbpwJCzA2vzmXw4+T85nRNz0CKl3lzj7gTFDukAGr9hZQ6iw9uzeamSZ
+         yN5vr+4bbMkRnWqfCBA4hDpo5N+efpViK8lHR5qqNhCPP00uZM2tgoJHKaEqOIln125r
+         BZR5072gpKse4NZwGg9LDF2VVgdT/4tOCILneL6geAW20JTdo2aV5GNv3ilenohoKFzP
+         P1UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=LFxMYCi8lGoovOV/sAYPGteEncrVIWaLSH+LK6Sw5BI=;
+        b=AqPpGEUboUjwws3Vhp74GDmNErJl9361ckEsPT8OgeNdrPnT0qv0ykPfLZFETJQAZw
+         uP9YWlqBFp8Yrr7rkvxM2VPJbvIf8voZw/IdzCByMoA3IpOG0/VH9ss8MoE9GDePJCqM
+         US0S3XYMiV8kT3HxWBOv29ehKgmzw39SsUeYQxXwuUpkpgMNXoKRjyT58ZyQZXHY7Fq4
+         hqIUEnyUE9zaUbddVPEo+lanaMKI6nXXwbToonhyePB14kOEElca56fj2HdaN5TlvxR5
+         h7Lw3om8spStbzEVXxxqLgc18mcjfnxG7jPGn8r3zeXq05+H8ga9AcdUtXHJSLEaJVKh
+         K+4Q==
+X-Gm-Message-State: APjAAAVqkZJix3HKVg2Vbj2yDK1FptqQdzGDXAUzqlozPeoA8mVNiijq
+        ueZ7ckwMSc7N3gl1XPtHVCI=
+X-Google-Smtp-Source: APXvYqyq7CoP1tZczuROmScct0k4Sx4IrB7cBccXjoqRWw1lrhus82/ttE+70/rzdw9FMMxc1pYF6w==
+X-Received: by 2002:a1c:1f56:: with SMTP id f83mr6336867wmf.93.1581020676029;
+        Thu, 06 Feb 2020 12:24:36 -0800 (PST)
+Received: from opensdev.fritz.box (business-178-015-117-054.static.arcor-ip.net. [178.15.117.54])
+        by smtp.gmail.com with ESMTPSA id c13sm539929wrx.9.2020.02.06.12.24.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Feb 2020 12:24:35 -0800 (PST)
+From:   shiva.linuxworks@gmail.com
+X-Google-Original-From: sshivamurthy@micron.com
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Shivamurthy Shastri <sshivamurthy@micron.com>
+Subject: [PATCH v4 3/5] mtd: spinand: micron: identify SPI NAND device with Continuous Read mode
+Date:   Thu,  6 Feb 2020 21:22:04 +0100
+Message-Id: <20200206202206.14770-4-sshivamurthy@micron.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200206202206.14770-1-sshivamurthy@micron.com>
+References: <20200206202206.14770-1-sshivamurthy@micron.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Shivamurthy Shastri <sshivamurthy@micron.com>
 
-On 2/6/20 11:42 AM, Eric Snowberg wrote:
-> When booting with either "ima_policy=secure_boot module.sig_enforce=1"
-> or building a kernel with CONFIG_IMA_ARCH_POLICY and booting with
-> "ima_policy=secure_boot", module loading behaves differently based on if
-> the module is compressed or not.  Originally when appraising a module
-> with ima it had to be uncompressed and ima signed.  Recent changes in 5.4
-> have allowed internally signed modules to load [1].  But this only works
-> if the internally signed module is compressed.  The uncompressed module
-> that is internally signed must still be ima signed. This patch series
-> tries to bring the two in line.
+Add SPINAND_HAS_CR_FEAT_BIT flag to identify the SPI NAND device with
+the Continuous Read mode.
 
-We (Mimi and I) have been trying to understand the cover letter. It 
-seems "by internally signed" you are referring to modules signed with 
-build time generated keys.
+Some of the Micron SPI NAND devices have the "Continuous Read" feature
+enabled by default, which does not fit the subsystem needs.
 
-Our interpretation of the cover letter is that IMA originally did not 
-support appended signatures and now does. Since the modules are signed 
-with build time generated keys, the signature verification still fails, 
-as the keys are only available on the .builtin keyring and not the .ima 
-keyring.
+In this mode, the READ CACHE command doesn't require the starting column
+address. The device always output the data starting from the first
+column of the cache register, and once the end of the cache register
+reached, the data output continues through the next page. With the
+continuous read mode, it is possible to read out the entire block using
+a single READ command, and once the end of the block reached, the output
+pins become High-Z state. However, during this mode the read command
+doesn't output the OOB area.
 
-Lastly, there is nothing in these patches that indicate that the kernel 
-modules being compressed/uncompressed is related to the signature 
-verification.
+Hence, we disable the feature at probe time.
 
-Thanks & Regards,
+Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
+---
+ drivers/mtd/nand/spi/micron.c | 16 ++++++++++++++++
+ include/linux/mtd/spinand.h   |  1 +
+ 2 files changed, 17 insertions(+)
 
-      - Nayna
+diff --git a/drivers/mtd/nand/spi/micron.c b/drivers/mtd/nand/spi/micron.c
+index 5fd1f921ef12..a8e947609cd9 100644
+--- a/drivers/mtd/nand/spi/micron.c
++++ b/drivers/mtd/nand/spi/micron.c
+@@ -18,6 +18,8 @@
+ #define MICRON_STATUS_ECC_4TO6_BITFLIPS	(3 << 4)
+ #define MICRON_STATUS_ECC_7TO8_BITFLIPS	(5 << 4)
+ 
++#define MICRON_CFG_CONTI_READ		BIT(0)
++
+ static SPINAND_OP_VARIANTS(read_cache_variants,
+ 		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 2, NULL, 0),
+ 		SPINAND_PAGE_READ_FROM_CACHE_X4_OP(0, 1, NULL, 0),
+@@ -153,8 +155,22 @@ static int micron_spinand_detect(struct spinand_device *spinand)
+ 	return 1;
+ }
+ 
++static int micron_spinand_init(struct spinand_device *spinand)
++{
++	/*
++	 * M70A device series enable Continuous Read feature at Power-up,
++	 * which is not supported. Disable this bit to avoid any possible
++	 * failure.
++	 */
++	if (spinand->flags == SPINAND_HAS_CR_FEAT_BIT)
++		return spinand_upd_cfg(spinand, MICRON_CFG_CONTI_READ, 0);
++
++	return 0;
++}
++
+ static const struct spinand_manufacturer_ops micron_spinand_manuf_ops = {
+ 	.detect = micron_spinand_detect,
++	.init = micron_spinand_init,
+ };
+ 
+ const struct spinand_manufacturer micron_spinand_manufacturer = {
+diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
+index 4ea558bd3c46..333149b2855f 100644
+--- a/include/linux/mtd/spinand.h
++++ b/include/linux/mtd/spinand.h
+@@ -270,6 +270,7 @@ struct spinand_ecc_info {
+ };
+ 
+ #define SPINAND_HAS_QE_BIT		BIT(0)
++#define SPINAND_HAS_CR_FEAT_BIT		BIT(1)
+ 
+ /**
+  * struct spinand_info - Structure used to describe SPI NAND chips
+-- 
+2.17.1
 
