@@ -2,232 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35344154BA7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 20:08:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDCF0154BAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 20:11:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727925AbgBFTIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 14:08:41 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:44334 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727738AbgBFTIl (ORCPT
+        id S1727945AbgBFTLb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 14:11:31 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:43472 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727479AbgBFTLb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 14:08:41 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016J8WpA172908;
-        Thu, 6 Feb 2020 19:08:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=yansYJidJ2HRyuM/DKZHN3c8dM+VvdkGZN7ODN38+Bc=;
- b=NnOVue9i1GmzVur0C8YB31uthCY0qMvGVdbGkRGMtlhvH8I2FZetuvMJhwnUts9PaQYf
- 8uPKLMOjp7XQciZKJJCYBjDBl085aJlitqMCaPvme0NGhOTL31s9oQ8D4z19RPlgolbZ
- ITirbPbus7AFFuER/QogvcOWKInGN+9lOglWqXDLd0ge6B1RylxLuK9QSfTd+PCS6sZ0
- 98GK5zy4bcr6FDdcHQsEs93e5JXAfjYTMmCAlARfpK/BmHPI/vaFMHruEfH3aF9VTxfD
- Giua3WjIA46v5JMQVaR0jRdOdbNVR4XWY+LUFkXbkeszm3o2LVNzvoO/lYpfkOf+K7V2 GA== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=yansYJidJ2HRyuM/DKZHN3c8dM+VvdkGZN7ODN38+Bc=;
- b=GDEa7pjC00TmLwoBuPhDKYUIrpHyz5eNq1KBKuQT7KOZPnDdsATODw+mszGtyfZeRR86
- 1zjJXlCMP+ks7wUSqI0Lk83zd/o3bmHcsx8gwb9liK/6velPYWslcZ68izHj/OdMDQnR
- VJ/n+UTEY/EvWHoGzwb7BdxFHd4lvijEYlPp4Gca1Bm4vODNvW+jrRaAxs8YQaJVwNum
- kzKlOcC7khpOKxjHcgEkuPFfGZL9tyNFaDriP/Iv3jTuwRIRVD7VtfB7UGT6fmS4chmv
- sRVu9BGBOzzg6led5NUcrDLK0a6mh6gbWP4C/ZS1ohFgSyQVfJWunqn2xr9vmd8yaYgs /Q== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2xykbpksa6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Feb 2020 19:08:32 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016J8Pmf088015;
-        Thu, 6 Feb 2020 19:08:31 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2y0mnk9qbk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Feb 2020 19:08:31 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 016J8UIY015928;
-        Thu, 6 Feb 2020 19:08:30 GMT
-Received: from localhost.localdomain (/10.159.247.143)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Feb 2020 11:08:30 -0800
-Subject: Re: [PATCH v4 3/3] selftests: KVM: SVM: Add vmcall test
-To:     Wei Huang <wei.huang2@amd.com>, Eric Auger <eric.auger@redhat.com>
-Cc:     eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, pbonzini@redhat.com, vkuznets@redhat.com,
-        thuth@redhat.com, drjones@redhat.com
-References: <20200206104710.16077-1-eric.auger@redhat.com>
- <20200206104710.16077-4-eric.auger@redhat.com>
- <20200206173931.GC2465308@weiserver.amd.com>
-From:   Krish Sadhukhan <krish.sadhukhan@oracle.com>
-Message-ID: <556d20b2-d6cf-e13c-635c-809836316b80@oracle.com>
-Date:   Thu, 6 Feb 2020 11:08:28 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 6 Feb 2020 14:11:31 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: tonyk)
+        with ESMTPSA id BC0AA295836
+From:   =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
+To:     open-iscsi@googlegroups.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     krisman@collabora.com, lduncan@suse.com, cleech@redhat.com,
+        jejb@linux.ibm.com, martin.petersen@oracle.com,
+        kernel@collabora.com, Frank Mayhar <fmayhar@google.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
+Subject: [PATCH v2] iscsi: Add support for asynchronous iSCSI session destruction
+Date:   Thu,  6 Feb 2020 16:09:03 -0300
+Message-Id: <20200206190903.104089-1-andrealmeid@collabora.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <20200206173931.GC2465308@weiserver.amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9523 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2002060140
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9523 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2002060140
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Frank Mayhar <fmayhar@google.com>
 
-On 2/6/20 9:39 AM, Wei Huang wrote:
-> On 02/06 11:47, Eric Auger wrote:
->> L2 guest calls vmcall and L1 checks the exit status does
->> correspond.
->>
->> Signed-off-by: Eric Auger <eric.auger@redhat.com>
->> Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->> Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
-> I verified this patch with my AMD box, both with nested=1 and nested=0. I
-> also intentionally changed the assertion of exit_code to a different
-> value (0x082) and the test complained about it. So the test is good.
->
-> # selftests: kvm: svm_vmcall_test
-> # ==== Test Assertion Failure ====
-> #   x86_64/svm_vmcall_test.c:64: false
-> #   pid=2485656 tid=2485656 - Interrupted system call
-> #      1        0x0000000000401387: main at svm_vmcall_test.c:72
-> #      2        0x00007fd0978d71a2: ?? ??:0
-> #      3        0x00000000004013ed: _start at ??:?
-> #   Failed guest assert: vmcb->control.exit_code == SVM_EXIT_VMMCALL
-> # Testing guest mode: PA-bits:ANY, VA-bits:48,  4K pages
-> # Guest physical address width detected: 48
-> not ok 15 selftests: kvm: svm_vmcall_test # exit=254
->
->> ---
->>
->> v3 -> v4:
->> - remove useless includes
->> - collected Lin's R-b
->>
->> v2 -> v3:
->> - remove useless comment and add Vitaly's R-b
->> ---
->>   tools/testing/selftests/kvm/Makefile          |  1 +
->>   .../selftests/kvm/x86_64/svm_vmcall_test.c    | 79 +++++++++++++++++++
->>   2 files changed, 80 insertions(+)
->>   create mode 100644 tools/testing/selftests/kvm/x86_64/svm_vmcall_test.c
->>
->> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
->> index 2e770f554cae..b529d3b42c02 100644
->> --- a/tools/testing/selftests/kvm/Makefile
->> +++ b/tools/testing/selftests/kvm/Makefile
->> @@ -26,6 +26,7 @@ TEST_GEN_PROGS_x86_64 += x86_64/vmx_dirty_log_test
->>   TEST_GEN_PROGS_x86_64 += x86_64/vmx_set_nested_state_test
->>   TEST_GEN_PROGS_x86_64 += x86_64/vmx_tsc_adjust_test
->>   TEST_GEN_PROGS_x86_64 += x86_64/xss_msr_test
->> +TEST_GEN_PROGS_x86_64 += x86_64/svm_vmcall_test
->>   TEST_GEN_PROGS_x86_64 += clear_dirty_log_test
->>   TEST_GEN_PROGS_x86_64 += dirty_log_test
->>   TEST_GEN_PROGS_x86_64 += kvm_create_max_vcpus
->> diff --git a/tools/testing/selftests/kvm/x86_64/svm_vmcall_test.c b/tools/testing/selftests/kvm/x86_64/svm_vmcall_test.c
->> new file mode 100644
->> index 000000000000..6d3565aab94e
->> --- /dev/null
->> +++ b/tools/testing/selftests/kvm/x86_64/svm_vmcall_test.c
-> Probably rename the file to svm_nested_vmcall_test.c. This matches with
-> the naming convention of VMX's nested tests. Otherwise people might not know
-> it is a nested one.
+iSCSI session destruction can be arbitrarily slow, since it might
+require network operations and serialization inside the scsi layer.
+This patch adds a new user event to trigger the destruction work
+asynchronously, releasing the rx_queue_mutex as soon as the operation is
+queued and before it is performed.  This change allow other operations
+to run in other sessions in the meantime, removing one of the major
+iSCSI bottlenecks for us.
 
-Is it better to give this file a generic name, say, nsvm_tests or 
-something like that, and place all future nested SVM tests in it, rather 
-than creating a separate file for each nested test ?
->
-> Everything else looks good.
->
->> @@ -0,0 +1,79 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * svm_vmcall_test
->> + *
->> + * Copyright (C) 2020, Red Hat, Inc.
->> + *
->> + * Nested SVM testing: VMCALL
->> + */
->> +
->> +#include "test_util.h"
->> +#include "kvm_util.h"
->> +#include "processor.h"
->> +#include "svm_util.h"
->> +
->> +#define VCPU_ID		5
->> +
->> +static struct kvm_vm *vm;
->> +
->> +static inline void l2_vmcall(struct svm_test_data *svm)
->> +{
->> +	__asm__ __volatile__("vmcall");
->> +}
->> +
->> +static void l1_guest_code(struct svm_test_data *svm)
->> +{
->> +	#define L2_GUEST_STACK_SIZE 64
->> +	unsigned long l2_guest_stack[L2_GUEST_STACK_SIZE];
->> +	struct vmcb *vmcb = svm->vmcb;
->> +
->> +	/* Prepare for L2 execution. */
->> +	generic_svm_setup(svm, l2_vmcall,
->> +			  &l2_guest_stack[L2_GUEST_STACK_SIZE]);
->> +
->> +	run_guest(vmcb, svm->vmcb_gpa);
->> +
->> +	GUEST_ASSERT(vmcb->control.exit_code == SVM_EXIT_VMMCALL);
->> +	GUEST_DONE();
->> +}
->> +
->> +int main(int argc, char *argv[])
->> +{
->> +	vm_vaddr_t svm_gva;
->> +
->> +	nested_svm_check_supported();
->> +
->> +	vm = vm_create_default(VCPU_ID, 0, (void *) l1_guest_code);
->> +	vcpu_set_cpuid(vm, VCPU_ID, kvm_get_supported_cpuid());
->> +
->> +	vcpu_alloc_svm(vm, &svm_gva);
->> +	vcpu_args_set(vm, VCPU_ID, 1, svm_gva);
->> +
->> +	for (;;) {
->> +		volatile struct kvm_run *run = vcpu_state(vm, VCPU_ID);
->> +		struct ucall uc;
->> +
->> +		vcpu_run(vm, VCPU_ID);
->> +		TEST_ASSERT(run->exit_reason == KVM_EXIT_IO,
->> +			    "Got exit_reason other than KVM_EXIT_IO: %u (%s)\n",
->> +			    run->exit_reason,
->> +			    exit_reason_str(run->exit_reason));
->> +
->> +		switch (get_ucall(vm, VCPU_ID, &uc)) {
->> +		case UCALL_ABORT:
->> +			TEST_ASSERT(false, "%s",
->> +				    (const char *)uc.args[0]);
->> +			/* NOT REACHED */
->> +		case UCALL_SYNC:
->> +			break;
->> +		case UCALL_DONE:
->> +			goto done;
->> +		default:
->> +			TEST_ASSERT(false,
->> +				    "Unknown ucall 0x%x.", uc.cmd);
->> +		}
->> +	}
->> +done:
->> +	kvm_vm_free(vm);
->> +	return 0;
->> +}
->
+To prevent the session from being used after the destruction request, we
+remove it immediately from the sesslist. This simplifies the locking
+required during the asynchronous removal.
+
+Reviewed-by: Lee Duncan <lduncan@suse.com>
+Co-developed-by: Khazhismel Kumykov <khazhy@google.com>
+Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
+Co-developed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Signed-off-by: Frank Mayhar <fmayhar@google.com>
+Signed-off-by: André Almeida <andrealmeid@collabora.com>
+---
+This patch depends on ("iscsi: Don't destroy session if there are
+outstanding connections"), which can be found at Martin tree at
+5.7/scsi-queue
+
+Changes from v1:
+ - Return a ENONMEM if creation of workqueue failed.
+---
+ drivers/scsi/scsi_transport_iscsi.c | 38 +++++++++++++++++++++++++++++
+ include/scsi/iscsi_if.h             |  1 +
+ include/scsi/scsi_transport_iscsi.h |  1 +
+ 3 files changed, 40 insertions(+)
+
+diff --git a/drivers/scsi/scsi_transport_iscsi.c b/drivers/scsi/scsi_transport_iscsi.c
+index f3f0ecdb09a2..17a45716a0fe 100644
+--- a/drivers/scsi/scsi_transport_iscsi.c
++++ b/drivers/scsi/scsi_transport_iscsi.c
+@@ -95,6 +95,8 @@ static DECLARE_WORK(stop_conn_work, stop_conn_work_fn);
+ static atomic_t iscsi_session_nr; /* sysfs session id for next new session */
+ static struct workqueue_struct *iscsi_eh_timer_workq;
+ 
++static struct workqueue_struct *iscsi_destroy_workq;
++
+ static DEFINE_IDA(iscsi_sess_ida);
+ /*
+  * list of registered transports and lock that must
+@@ -1615,6 +1617,7 @@ static struct sock *nls;
+ static DEFINE_MUTEX(rx_queue_mutex);
+ 
+ static LIST_HEAD(sesslist);
++static LIST_HEAD(sessdestroylist);
+ static DEFINE_SPINLOCK(sesslock);
+ static LIST_HEAD(connlist);
+ static LIST_HEAD(connlist_err);
+@@ -2035,6 +2038,14 @@ static void __iscsi_unbind_session(struct work_struct *work)
+ 	ISCSI_DBG_TRANS_SESSION(session, "Completed target removal\n");
+ }
+ 
++static void __iscsi_destroy_session(struct work_struct *work)
++{
++	struct iscsi_cls_session *session =
++		container_of(work, struct iscsi_cls_session, destroy_work);
++
++	session->transport->destroy_session(session);
++}
++
+ struct iscsi_cls_session *
+ iscsi_alloc_session(struct Scsi_Host *shost, struct iscsi_transport *transport,
+ 		    int dd_size)
+@@ -2057,6 +2068,7 @@ iscsi_alloc_session(struct Scsi_Host *shost, struct iscsi_transport *transport,
+ 	INIT_WORK(&session->block_work, __iscsi_block_session);
+ 	INIT_WORK(&session->unbind_work, __iscsi_unbind_session);
+ 	INIT_WORK(&session->scan_work, iscsi_scan_session);
++	INIT_WORK(&session->destroy_work, __iscsi_destroy_session);
+ 	spin_lock_init(&session->lock);
+ 
+ 	/* this is released in the dev's release function */
+@@ -3631,6 +3643,23 @@ iscsi_if_recv_msg(struct sk_buff *skb, struct nlmsghdr *nlh, uint32_t *group)
+ 		else
+ 			transport->destroy_session(session);
+ 		break;
++	case ISCSI_UEVENT_DESTROY_SESSION_ASYNC:
++		session = iscsi_session_lookup(ev->u.d_session.sid);
++		if (!session)
++			err = -EINVAL;
++		else if (iscsi_session_has_conns(ev->u.d_session.sid))
++			err = -EBUSY;
++		else {
++			unsigned long flags;
++
++			/* Prevent this session from being found again */
++			spin_lock_irqsave(&sesslock, flags);
++			list_move(&session->sess_list, &sessdestroylist);
++			spin_unlock_irqrestore(&sesslock, flags);
++
++			queue_work(iscsi_destroy_workq, &session->destroy_work);
++		}
++		break;
+ 	case ISCSI_UEVENT_UNBIND_SESSION:
+ 		session = iscsi_session_lookup(ev->u.d_session.sid);
+ 		if (session)
+@@ -4676,8 +4705,16 @@ static __init int iscsi_transport_init(void)
+ 		goto release_nls;
+ 	}
+ 
++	iscsi_destroy_workq = create_singlethread_workqueue("iscsi_destroy");
++	if (!iscsi_destroy_workq) {
++		err = -ENOMEM;
++		goto destroy_wq;
++	}
++
+ 	return 0;
+ 
++destroy_wq:
++	destroy_workqueue(iscsi_eh_timer_workq);
+ release_nls:
+ 	netlink_kernel_release(nls);
+ unregister_flashnode_bus:
+@@ -4699,6 +4736,7 @@ static __init int iscsi_transport_init(void)
+ 
+ static void __exit iscsi_transport_exit(void)
+ {
++	destroy_workqueue(iscsi_destroy_workq);
+ 	destroy_workqueue(iscsi_eh_timer_workq);
+ 	netlink_kernel_release(nls);
+ 	bus_unregister(&iscsi_flashnode_bus);
+diff --git a/include/scsi/iscsi_if.h b/include/scsi/iscsi_if.h
+index 92b11c7e0b4f..deacaee53e61 100644
+--- a/include/scsi/iscsi_if.h
++++ b/include/scsi/iscsi_if.h
+@@ -60,6 +60,7 @@ enum iscsi_uevent_e {
+ 	ISCSI_UEVENT_LOGOUT_FLASHNODE_SID	= UEVENT_BASE + 30,
+ 	ISCSI_UEVENT_SET_CHAP		= UEVENT_BASE + 31,
+ 	ISCSI_UEVENT_GET_HOST_STATS	= UEVENT_BASE + 32,
++	ISCSI_UEVENT_DESTROY_SESSION_ASYNC	= UEVENT_BASE + 33,
+ 
+ 	/* up events */
+ 	ISCSI_KEVENT_RECV_PDU		= KEVENT_BASE + 1,
+diff --git a/include/scsi/scsi_transport_iscsi.h b/include/scsi/scsi_transport_iscsi.h
+index 2129dc9e2dec..fa8814245796 100644
+--- a/include/scsi/scsi_transport_iscsi.h
++++ b/include/scsi/scsi_transport_iscsi.h
+@@ -226,6 +226,7 @@ struct iscsi_cls_session {
+ 	struct work_struct unblock_work;
+ 	struct work_struct scan_work;
+ 	struct work_struct unbind_work;
++	struct work_struct destroy_work;
+ 
+ 	/* recovery fields */
+ 	int recovery_tmo;
+-- 
+2.25.0
+
