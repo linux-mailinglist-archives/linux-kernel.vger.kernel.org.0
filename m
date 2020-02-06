@@ -2,87 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 867F2154A4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 18:35:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25074154A51
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 18:36:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbgBFRfC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 12:35:02 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:42248 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726990AbgBFRfB (ORCPT
+        id S1727866AbgBFRgF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 12:36:05 -0500
+Received: from smtprelay0057.hostedemail.com ([216.40.44.57]:36647 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726990AbgBFRgE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 12:35:01 -0500
-Received: by mail-ua1-f66.google.com with SMTP id 80so2553506uah.9
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 09:35:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dD8/qkuwt6LetOV2+TvRx1GvlGnrWoVaVJ700TQjzcc=;
-        b=h1hIVtb+dkWZUdmP5MsV8jMAf70S6skb34ohOf69BoclXPHSrw3ebHN2ulJyDKiVbj
-         kSo0lxu/HxdnHtBwL/2ZznDpawz/i6Dh6hB52kR3e2eqz6yERxcyFsCBtk1vkjx+FrkZ
-         vsTpz7STKW7Tlx5nHiJu3A+HS0bZjqg6fqVUA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dD8/qkuwt6LetOV2+TvRx1GvlGnrWoVaVJ700TQjzcc=;
-        b=FPfMqaUP8ecWSfMiJbuzMf8N6FuZJSMoMbxCd9xyvesQtqRVWFR6h/2wkDDBSEHeaP
-         iwSgPTCVx15AQ+AhDhx0i1sj5jdPTEGAz6GiRxix+eIk4vKOB6aTGARY4ff/lgg3l0B6
-         a7/C1Dh6Sz42/DWlRIgxG+/02hLjz59wG51K0BZq6aOthT9BtiKv6q10mapTu2ueLqqo
-         7IcXNAiTZ5yGO/CoiFnhz9+keDZN8hTfCbd2fxJoMWdSjfPxVDtenFsnysKn39/vGICB
-         svBX7iHy74NFsPtyC7qPYZPmo8HyPEMtAQ5U3EEUOjh6EM/ouL7LOy6f7ocmjLeSV0Ik
-         T7iw==
-X-Gm-Message-State: APjAAAUuOAJ+b+o9M8tJYU165WunJBGme7xCa38jbFU1uw/rEEOfpuA9
-        FkOAf+XvmaeDzTUW+4igsXzcsUskNiw=
-X-Google-Smtp-Source: APXvYqzb6gRVmLlUIWRNpNuHwG6USh1retMucm/s1hD6uca0udV508iub+x1vhXWkBwyMeI9NtTxLQ==
-X-Received: by 2002:a9f:24c1:: with SMTP id 59mr2267340uar.75.1581010500503;
-        Thu, 06 Feb 2020 09:35:00 -0800 (PST)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id j26sm57090ual.7.2020.02.06.09.34.59
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Feb 2020 09:34:59 -0800 (PST)
-Received: by mail-vs1-f52.google.com with SMTP id v141so4280028vsv.12
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 09:34:59 -0800 (PST)
-X-Received: by 2002:a67:8704:: with SMTP id j4mr2552856vsd.106.1581010499276;
- Thu, 06 Feb 2020 09:34:59 -0800 (PST)
+        Thu, 6 Feb 2020 12:36:04 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 0CBED182CED2A;
+        Thu,  6 Feb 2020 17:36:04 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1537:1561:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3867:3874:4321:5007:10004:10400:10848:11232:11658:11914:12043:12048:12297:12740:12760:12895:13019:13069:13161:13229:13311:13357:13439:14659:21080:21611:21627:21740:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: ocean08_51d5a3962c91c
+X-Filterd-Recvd-Size: 1469
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf17.hostedemail.com (Postfix) with ESMTPA;
+        Thu,  6 Feb 2020 17:36:02 +0000 (UTC)
+Message-ID: <94a6f123779f4d229ad52c1524b083673aba51fc.camel@perches.com>
+Subject: Re: [PATCH v3 4/4] kernel.h: Move lower_32_bits()/upper_32_bits()
+ to bitops.h
+From:   Joe Perches <joe@perches.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, trond.myklebust@hammerspace.com,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Date:   Thu, 06 Feb 2020 09:34:50 -0800
+In-Reply-To: <20200206163940.1940-4-andriy.shevchenko@linux.intel.com>
+References: <20200206163940.1940-1-andriy.shevchenko@linux.intel.com>
+         <20200206163940.1940-4-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-References: <20200206162124.201195-1-swboyd@chromium.org>
-In-Reply-To: <20200206162124.201195-1-swboyd@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 6 Feb 2020 09:34:47 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=WrT1aSqqjm7Lm55+Hr5FQMVz0iFpbDDpnk95A1iBZeSg@mail.gmail.com>
-Message-ID: <CAD=FV=WrT1aSqqjm7Lm55+Hr5FQMVz0iFpbDDpnk95A1iBZeSg@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-msm: Mark sdhci_msm_cqe_disable static
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        Ritesh Harjani <riteshh@codeaurora.org>,
-        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, 2020-02-06 at 18:39 +0200, Andy Shevchenko wrote:
+> Move lower_32_bits()/upper_32_bits() to bitops.h.
 
-On Thu, Feb 6, 2020 at 8:21 AM Stephen Boyd <swboyd@chromium.org> wrote:
->
-> This function is not exported and only used in this file. Mark it
-> static.
->
-> Cc: Ritesh Harjani <riteshh@codeaurora.org>
-> Cc: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  drivers/mmc/host/sdhci-msm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+while these macros includes bits, i think they
+are not appropriate to be moved to bitops.h as
+they generally work on values that are either
+32 or 64 bit addresses.
 
-Fixes: 87a8df0dce6a ("mmc: sdhci-msm: Add CQHCI support for sdhci-msm")
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+
+
