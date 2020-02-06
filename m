@@ -2,156 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F6E1154A49
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 18:34:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46480154A4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 18:36:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbgBFReP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 12:34:15 -0500
-Received: from UPDC19PA21.eemsg.mail.mil ([214.24.27.196]:51686 "EHLO
-        UPDC19PA21.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727358AbgBFReO (ORCPT
+        id S1727773AbgBFRgA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 12:36:00 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:49014 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726990AbgBFRf7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 12:34:14 -0500
-X-EEMSG-check-017: 55758858|UPDC19PA21_ESA_OUT03.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.70,410,1574121600"; 
-   d="scan'208";a="55758858"
-Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by UPDC19PA21.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 06 Feb 2020 17:34:06 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1581010446; x=1612546446;
-  h=subject:from:to:cc:references:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=uitglYAsxBW70gfI3K2N4Io4s9jsHzXkJ6Q9OzkGud4=;
-  b=nXlT4DkqnoysDnSV/6cblU8VI/52VQVqqnJ55o0D8+YeGAJo1fwfLlLl
-   qfF8HXgzYJlWwPiFfsF6GXzk0kkDLblDKIDQE40o2KueuDXeG2KhbEE97
-   tG/cPIijyV52CHw8johI64TQEZE2DxQW5uTQWc3gTGbo6rsZJ5xvPfLuc
-   bUFaLsfWu6oTVhiTuKtKKFed+4VmnC0lTM0czPPeclUs6dA/wAmTBlV79
-   HoZeNwvm9/pIP1eRgjSjeCwMYEERAp1Y+X1S+xi4UWhIbHICf5ZueaVmi
-   ZXZurs0fFS6r/w+Z4vyPA1lPJSlWwlvn1sHnYd80jH/2FzvFMX3U0JJnT
-   g==;
-X-IronPort-AV: E=Sophos;i="5.70,410,1574121600"; 
-   d="scan'208";a="38768670"
-IronPort-PHdr: =?us-ascii?q?9a23=3A4CZ/nRRWLr9TMS2M54fU1KkTA9psv+yvbD5Q0Y?=
- =?us-ascii?q?Iujvd0So/mwa67YhOHt8tkgFKBZ4jH8fUM07OQ7/m8HzFbqsfQ+DBaKdoQDk?=
- =?us-ascii?q?RD0Z1X1yUbQ+e9QXXhK/DrayFoVO9jb3RCu0+BDE5OBczlbEfTqHDhpRQbGx?=
- =?us-ascii?q?H4KBYnbr+tQt2agMu4zf299IPOaAtUmjW9falyLBKrpgnNq8Uam4RvJrs+xx?=
- =?us-ascii?q?fTonZFdetayGdsKFmOmxrw+tq88IRs/ihNtf8t7dJMXbn/c68lUbFWETMqPn?=
- =?us-ascii?q?wv6sb2rxfDVwyP5nUdUmUSjBVFBhXO4Q/5UJnsrCb0r/Jx1yaGM8L4S7A0Qi?=
- =?us-ascii?q?mi4LxwSBD0kicHNiU2/3/Rh8dtka9UuhOhpxh4w47JfIGYMed1c63Bcd8GQ2?=
- =?us-ascii?q?dKQ91cXDJdDIyic4QPDvIBPedGoIn7u1sOtga1CQ21CO/y1jNEmnr60Ks03O?=
- =?us-ascii?q?Q7FQHNwRIuEdQAvn/JqNn5LakfXOSwwKTO0D7Nbe5Z2S3l5YbVch4vv/+MU7?=
- =?us-ascii?q?F+f8XfxkYgFR/KgFqLpIz5PD6YzPgBv3SV4udiU++klm4pqxt2ojiq3soil5?=
- =?us-ascii?q?XJiZwNylDE6yp5xps+K8C9SEFhZd6kFIVftiGHPIZxWcMtXnpotT0myrwGpZ?=
- =?us-ascii?q?G7fC8KxI4hxx7EcfOLaYeI4hX9VOuIJzpzmXxreLW6hxmo8EigzPXxVsa10F?=
- =?us-ascii?q?ZWripFj8LDumoR2BzU78iKTOZ28ES52TuXygze5e5JLVo0mKbGMZIt3LE9mo?=
- =?us-ascii?q?QJvUjeGCL9hV/4g7WMdko+/+il8+HnYrL7qZCCL4J0kQT+Mrg2msy4HOQ4Lh?=
- =?us-ascii?q?ACX2iF9uS4073u5VH5T69Qjv03j6nZq4rWJcUdpq63BA9VyZgs5AqlAze60N?=
- =?us-ascii?q?UXgXkHLFVfdBKBk4fpIE3BLOr9Dfe+h1SgiDZrx/bYMb39GpjBM3fOnbj7cb?=
- =?us-ascii?q?t99kJQ0hQ/wN9B655OF70NOPfzVVXwtNzcAB85KQu0w+P/BdVmy4weQnmCAr?=
- =?us-ascii?q?OZMazOsV+I4fgjI++XZIAPojr9JP8l5+D2gX8jhVAdZbWp3YcQaH2gBfRmJk?=
- =?us-ascii?q?KZYWDyjdcFC2gKuBcxQffliF2FVj5TaHKyULwm6j4nD4KmCJ/JRpqxj7yZwC?=
- =?us-ascii?q?e7AppWa3heCl+WDHfoc56JW+8WZyKPJs9tizkEVb+mS487yx6irhP1y71iLu?=
- =?us-ascii?q?DM4C0XqYrj1MRp5+3UjRw96yR0AN6H02GMVGF5hXsISCUs3KB+ukx90lOD3r?=
- =?us-ascii?q?JkjPNGD9BT4OlJUggiP57G0+N6E8zyWh7GftqRS1apXMupASotQdI2xN8OYF?=
- =?us-ascii?q?1wFMmijhDZ2CqqBr4Vl6GOBJAu9aLcxXfxLd5ny3nazKkhk0UmQsxXOGK8gK?=
- =?us-ascii?q?5/6w/TB4jSnkqHkaaqcqEc3DXC9GuZymqOpk5YWhZqUarZRXAfelfWrdPh60?=
- =?us-ascii?q?zeU7CuE7MnMhBaycOZMKRKbMDmjU9BRPfiJdvSeX6+m2C1BRyQ3LODcJLqe3?=
- =?us-ascii?q?kB3CXaEEUEjwcT/XCGNAQkAiehvn7RDD91GFLuZUPs7fdxqHehQkAoyAGKal?=
- =?us-ascii?q?Vr16Cp9R4NmfycV/QT06ofuCg/rzV0HVC938/ZCtebuQphc7tTYckn7FdEy2?=
- =?us-ascii?q?3ZrQp9MYKkL6x4gV4eaQt3tVv01xprEoVAjdQqrHQywQp2KKKY1k5BdjyB0Z?=
- =?us-ascii?q?DzJLLXMG/y8w6ra6PNxFHe38iZ+r0V5PQ7tVrjpgepGVQm83l91NlVyXSc7I?=
- =?us-ascii?q?3QDAUOSZLxTlo39x9iqrHZfCY9/YXU2mNoMaWtrj/NxcgmBO4+xxm6eddQLb?=
- =?us-ascii?q?mEFAjzE8IHHcShNOsqm12xZBIeIO9S7LI0P9+hd/aexKGrO+BgnDShjWRd54?=
- =?us-ascii?q?BwyU2M9y17Su7H25YK3euU0ReAVzf53x+dtZXMhY1aaDdaO22lxCztAoIZMr?=
- =?us-ascii?q?Z3epwGDW6oL+W4wdJxg5OrUHldohrrH1ob3OexcAeWKln62hddk08QpDjvlD?=
- =?us-ascii?q?Ox1T1vuykgtKuExCjHyOmkcwAIfiZISWR5hlDrIqC/j8odWUm1ak4ujhThrU?=
- =?us-ascii?q?/8269djKl5KGzITgFPZSeyZ2ppSKyrrZKLZcJV75Ik9y5QVaD0fVecW/j5vh?=
- =?us-ascii?q?AZ+yLlA2Zagjs8cnXioZj9nhpnmEqDI3tp6nnUY8d9wVHY/tOYDfpQ2CcWAS?=
- =?us-ascii?q?p1kz/aAnCiMNSzu9aZjZHOtqa5TW3lHp5eay/mycacuSK+zWRsDQe4nvz1kd?=
- =?us-ascii?q?riQiYg1iqu7MVnTSXFql7HZ4Dv06mrebZ8clJAGE736808HJp31IQ3msdDij?=
- =?us-ascii?q?AhmpyJ8C9fwi/IOtJB1Pe7NSFcSA=3D=3D?=
-X-IPAS-Result: =?us-ascii?q?A2BTAADjTDxe/wHyM5BmHAEBAQEBBwEBEQEEBAEBgWkFA?=
- =?us-ascii?q?QELAYF8gRhUIRIqhBWJA4ZkAQEBBoESJYlwj1CBJANUCQEBAQEBAQEBASsMA?=
- =?us-ascii?q?QGEQAKCYTYHDgIQAQEBBAEBAQEBBQMBAWyFNwyCOykBgwEBAQEBAyMECwEFQ?=
- =?us-ascii?q?RAJAg4HAwICJgICVwYBDAYCAQGCYz8BglYlD5ECmwN1fzOJKYE4BoEOKgGMP?=
- =?us-ascii?q?HmBB4E4DAOCXT6CZAKEdYI8IgSWXYEnl2eCRIJOhHyOdgYbgkiIEJAzjmKIb?=
- =?us-ascii?q?JQ4Cig3gSErCAIYCCEPgydQGA2SEIocVSMDMI5KAQE?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 06 Feb 2020 17:34:04 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 016HXCn4173745;
-        Thu, 6 Feb 2020 12:33:13 -0500
-Subject: Re: [PATCH] security: selinux: allow per-file labeling for bpffs
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-To:     Steven Moreland <smoreland@google.com>, paul@paul-moore.com,
-        eparis@parisplace.org, keescook@chromium.org, anton@enomsg.org,
-        ccross@android.com, tony.luck@intel.com, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@android.com
-Cc:     "Connor O'Brien" <connoro@google.com>
-References: <20200206165527.211350-1-smoreland@google.com>
- <91465612-2fb2-5985-ba45-d4d9fcf0f70c@tycho.nsa.gov>
-Message-ID: <c61fc8f6-55c2-c717-5090-e535b7bdbb4f@tycho.nsa.gov>
-Date:   Thu, 6 Feb 2020 12:35:07 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 6 Feb 2020 12:35:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=SMyOfhZzZPZuujUA9E6GKG9U2eDhQH0R/BujkYeevWk=; b=cESW/Gp9HDS3+G9FpVQTt6hOML
+        sjgfAiMlMAPrC4TEVSciFPIhysWIP8ufQdJNbRKMnaikCo8+eDJVaTBvgSUfdGUwuKazj8S5/zve7
+        SBkf/3rkk/p/TKFS6tlJnf7uMgL8rChYdeX2tHYoD6liZjqYo5imoBuFHVXbY/CMckJiLTHagj090
+        iktPwKHYbuBQWOb3us0vZkN0q8aFayNFrHfWZ8BrhbMcept9LCEkDWVRrRnXagS/b9CneWfFZWFcK
+        nWq0TCHsJEFcLdftOsZdiO+WEmMdgzv0QAIsnyf/HZgwx1UUx9SzYff5sySRduCbm+dGIYnxu1jJB
+        pDWRlu2w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1izl3z-0006cL-Vd; Thu, 06 Feb 2020 17:35:40 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id B93FA30066E;
+        Thu,  6 Feb 2020 18:33:51 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 40AB22B813367; Thu,  6 Feb 2020 18:35:38 +0100 (CET)
+Date:   Thu, 6 Feb 2020 18:35:38 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Kristen Carlson Accardi <kristen@linux.intel.com>
+Cc:     Kees Cook <keescook@chromium.org>, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        arjan@linux.intel.com, rick.p.edgecombe@intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+Subject: Re: [RFC PATCH 08/11] x86: Add support for finer grained KASLR
+Message-ID: <20200206173538.GY14914@hirez.programming.kicks-ass.net>
+References: <20200205223950.1212394-1-kristen@linux.intel.com>
+ <20200205223950.1212394-9-kristen@linux.intel.com>
+ <20200206103830.GW14879@hirez.programming.kicks-ass.net>
+ <202002060356.BDFEEEFB6C@keescook>
+ <20200206145253.GT14914@hirez.programming.kicks-ass.net>
+ <9f337efdf226e51e3f5699243623e5de7505ac94.camel@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <91465612-2fb2-5985-ba45-d4d9fcf0f70c@tycho.nsa.gov>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9f337efdf226e51e3f5699243623e5de7505ac94.camel@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/6/20 12:21 PM, Stephen Smalley wrote:
-> On 2/6/20 11:55 AM, Steven Moreland wrote:
->> From: Connor O'Brien <connoro@google.com>
->>
->> Add support for genfscon per-file labeling of bpffs files. This allows
->> for separate permissions for different pinned bpf objects, which may
->> be completely unrelated to each other.
-> 
-> Do you want bpf fs to also support userspace labeling of files via 
-> setxattr()?  If so, you'll want to also add it to 
-> selinux_is_genfs_special_handling() as well.
-> 
-> The only caveat I would note here is that it appears that bpf fs 
-> supports rename, link, unlink, rmdir etc by userspace, which means that 
-> name-based labeling via genfscon isn't necessarily safe/stable.  See
-> https://github.com/SELinuxProject/selinux-kernel/issues/2
-> 
->> Change-Id: I03ae28d3afea70acd6dc53ebf810b34b357b6eb5
-> 
-> Drop Change-Ids from patches submitted upstream please since they aren't 
-> meaningful outside of Android.
-> 
->> Signed-off-by: Connor O'Brien <connoro@google.com>
->> Signed-off-by: Steven Moreland <smoreland@google.com>
->> ---
->>   security/selinux/hooks.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->> index de4887742d7c..4f9396e6ce8c 100644
->> --- a/security/selinux/hooks.c
->> +++ b/security/selinux/hooks.c
->> @@ -872,6 +872,7 @@ static int selinux_set_mnt_opts(struct super_block 
->> *sb,
->>           !strcmp(sb->s_type->name, "sysfs") ||
->>           !strcmp(sb->s_type->name, "pstore") ||
->>           !strcmp(sb->s_type->name, "binder") ||
->> +        !strcmp(sb->s_type->name, "bpf") ||
->>           !strcmp(sb->s_type->name, "cgroup") ||
->>           !strcmp(sb->s_type->name, "cgroup2"))
->>           sbsec->flags |= SE_SBGENFS;
->>
+On Thu, Feb 06, 2020 at 09:25:01AM -0800, Kristen Carlson Accardi wrote:
 
-Also, your patch appears to be based on an old kernel and won't apply 
-upstream; see
-https://github.com/SELinuxProject/selinux-kernel/blob/master/README.md
+> That's right - all of these tables that you mention had relocs and thus
+> I did not have to do anything special for them. The orc_unwind_ip
+> tables get sorted during unwind_init(). 
 
+No they're not:
 
+  f14bf6a350df ("x86/unwind/orc: Remove boot-time ORC unwind tables sorting")
 
-
+Or rather, it might be you're working on an old tree.
