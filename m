@@ -2,87 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22F1C15423F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 11:45:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6424154205
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 11:41:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbgBFKpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 05:45:34 -0500
-Received: from forward500j.mail.yandex.net ([5.45.198.250]:40757 "EHLO
-        forward500j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727778AbgBFKpe (ORCPT
+        id S1728453AbgBFKl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 05:41:29 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:33373 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727915AbgBFKl3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 05:45:34 -0500
-X-Greylist: delayed 311 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Feb 2020 05:45:32 EST
-Received: from mxback24g.mail.yandex.net (mxback24g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:324])
-        by forward500j.mail.yandex.net (Yandex) with ESMTP id D3DA411C257D;
-        Thu,  6 Feb 2020 13:40:19 +0300 (MSK)
-Received: from localhost (localhost [::1])
-        by mxback24g.mail.yandex.net (mxback/Yandex) with ESMTP id 86NWYwlhNY-eIZ8qZp7;
-        Thu, 06 Feb 2020 13:40:19 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1580985619;
-        bh=fuTBuOzRnyOKXn5u3YXXAdgvmURkN9prmY9Qet2z66U=;
-        h=Message-Id:Cc:Subject:In-Reply-To:Date:References:To:From;
-        b=mtMC4iVioaUvWtg0KO5P1FHI7HJDqCh/aOrmImQ6wPdVuzDidX0NjHClbZFaaalEz
-         eBNuqUTWKvy2SJTxi6w7i7sZFS/aTKYF0zKRNcUyTdGlaYJnod1YWg0VqVXGD5pcgp
-         r41pH18l4xnqKQB8pEnjTXbJ0L0t8tpJUKhhe+lo=
-Authentication-Results: mxback24g.mail.yandex.net; dkim=pass header.i=@maquefel.me
-Received: by sas2-1c82b59a1818.qloud-c.yandex.net with HTTP;
-        Thu, 06 Feb 2020 13:40:18 +0300
-From:   nikita.shubin@maquefel.me
-To:     Nikita Shubin <nshubin@topcon.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200206055419.15897-1-NShubin@topcon.com>
-References: <20200206055419.15897-1-NShubin@topcon.com>
-Subject: Re: [PATCH] remoteproc: warn on kick missing
+        Thu, 6 Feb 2020 05:41:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580985687;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=z3MLvs9QeO5YfLds0ekW7KKa80cPvToO4kODbI4MibM=;
+        b=hiJ5AS4X6LzWncGGEWMrbYOmjM9W0e9gPXAhqAxxk+mJ7xTyLsSZSpfeq4J3w/aZtU4FSN
+        S6II8qrceFMF8eN8tPKjJhkmUMRksDVycCW52zLa3tkR96j8bSacSEVOiYVYIaB8slwfLN
+        v6oSsCe7wDWZaymZ8x7TLm7YrBF3His=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-157-yI3V82t2PnKYSe4K0wTHZg-1; Thu, 06 Feb 2020 05:41:20 -0500
+X-MC-Unique: yI3V82t2PnKYSe4K0wTHZg-1
+Received: by mail-wm1-f69.google.com with SMTP id o24so2599283wmh.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 02:41:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=z3MLvs9QeO5YfLds0ekW7KKa80cPvToO4kODbI4MibM=;
+        b=NQPFjXMrZSqvWGPkdm3Xpuk+52TxJVsxNbsdGmv379WeDP8wF9fgZxBRkXUI3hzDKB
+         Djxr0X+aUnf9ZRtFDwi+GOJftZetry8Mmvhf5+hDahxwcdkfUFEkr/uMpP96ev0msYB1
+         /TvjfrweK1rhXzbUTjOSdTzxWzT33RIbHGVPC7XKXZMbmju00xdShS1EXADWC9wNRyj1
+         5KpOEaQmTgP6OAzhqW95GrWiLt0GKDcMjps49kWhzU/87eMCDSGA5+RivaMHFUnzov8o
+         /2niFZ+2SOlcS+w76P8CrbqhS/m+9B2hvEgzzoHxuCsfCGrXkH5Ov3MVGU6785jqqzmG
+         UMtw==
+X-Gm-Message-State: APjAAAVgHTMyQBZdQtzGtPPPtYsKIbLHvANgDnWfLP/r91+wyn+fTmlL
+        Qlhx67grfQDj7eW1uZUVGyKvONnaeV9ADydqseXwlvCbyXjbRdiCVJbL25hkj2MDz8+0XrYjkIp
+        KR3tz/BsCn3QD8hknAJBE74KW
+X-Received: by 2002:a1c:9e89:: with SMTP id h131mr3810508wme.161.1580985677423;
+        Thu, 06 Feb 2020 02:41:17 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyDh4uumYKMzVvavc7ne4C/+Y4wIseWOIgttAS3dqIsiaZbXeKK3iMa37NwzhkJfhRCKINK7Q==
+X-Received: by 2002:a1c:9e89:: with SMTP id h131mr3810455wme.161.1580985677003;
+        Thu, 06 Feb 2020 02:41:17 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id e17sm3732182wrn.62.2020.02.06.02.41.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Feb 2020 02:41:16 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     linmiaohe <linmiaohe@huawei.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+        pbonzini@redhat.com, rkrcmar@redhat.com,
+        sean.j.christopherson@intel.com, wanpengli@tencent.com,
+        jmattson@google.com, joro@8bytes.org, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com
+Subject: Re: [PATCH] KVM: x86: remove duplicated KVM_REQ_EVENT request
+In-Reply-To: <1580953544-4778-1-git-send-email-linmiaohe@huawei.com>
+References: <1580953544-4778-1-git-send-email-linmiaohe@huawei.com>
+Date:   Thu, 06 Feb 2020 11:41:15 +0100
+Message-ID: <87ftfogfqs.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date:   Thu, 06 Feb 2020 13:40:18 +0300
-Message-Id: <25402731580985618@sas2-1c82b59a1818.qloud-c.yandex.net>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry for malformed message, please ignore it.
+linmiaohe <linmiaohe@huawei.com> writes:
 
-06.02.2020, 08:53, "Nikita Shubin" <nshubin@topcon.com>:
-> .kick method not set in rproc_ops will result in:
+> From: Miaohe Lin <linmiaohe@huawei.com>
 >
-> 8<--- cut here ---
-> Unable to handle kernel NULL pointer dereference
+> The KVM_REQ_EVENT request is already made in kvm_set_rflags(). We should
+> not make it again.
 >
-> in rproc_virtio_notify, after firmware loading.
->
-> At least a warning needed on attempt to call missing method.
->
-> Signed-off-by: Nikita Shubin <NShubin@topcon.com>
+> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
 > ---
->  drivers/remoteproc/remoteproc_virtio.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  arch/x86/kvm/x86.c | 1 -
+>  1 file changed, 1 deletion(-)
 >
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index 8c07cb2ca8ba..77a81f331e3f 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -32,6 +32,12 @@ static bool rproc_virtio_notify(struct virtqueue *vq)
->
->         dev_dbg(&rproc->dev, "kicking vq index: %d\n", notifyid);
->
-> + if (unlikely(rproc->ops->kick == NULL)) {
-> + WARN_ONCE(rproc->ops->kick == NULL, ".kick method not defined for %s",
-> + rproc->name);
-> + return false;
-> + }
-> +
->         rproc->ops->kick(rproc, notifyid);
->         return true;
->  }
-> --
-> 2.24.1
->
-> Confidentiality Notice: This message (including attachments) is a private communication solely for use of the intended recipient(s). If you are not the intended recipient(s) or believe you received this message in error, notify the sender immediately and then delete this message. Any other use, retention, dissemination or copying is prohibited and may be a violation of law, including the Electronic Communication Privacy Act of 1986. ­­
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index fbabb2f06273..212282c6fb76 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -8942,7 +8942,6 @@ int kvm_task_switch(struct kvm_vcpu *vcpu, u16 tss_selector, int idt_index,
+>  
+>  	kvm_rip_write(vcpu, ctxt->eip);
+>  	kvm_set_rflags(vcpu, ctxt->eflags);
+> -	kvm_make_request(KVM_REQ_EVENT, vcpu);
+
+I would've actually done it the other way around and removed
+kvm_make_request() from kvm_set_rflags() as it is not an obvious
+behavior (e.g. why kvm_rip_write() doens't do that and kvm_set_rflags()
+does ?) adding kvm_make_request() to all call sites.
+
+In case this looks like too big of a change with no particular gain I'd
+suggest you at least leave a comment above kvm_set_rflags(), something
+like
+
+"kvm_make_request() also requests KVM_REQ_EVENT"
+
+>  	return 1;
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_task_switch);
+
+-- 
+Vitaly
+
