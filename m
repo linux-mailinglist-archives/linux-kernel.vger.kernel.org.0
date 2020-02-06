@@ -2,116 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8DC11540A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 09:52:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 642581540B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 09:52:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbgBFIwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 03:52:04 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34197 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727778AbgBFIwE (ORCPT
+        id S1728151AbgBFIw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 03:52:27 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:33807 "EHLO
+        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727778AbgBFIw1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 03:52:04 -0500
-Received: by mail-ed1-f68.google.com with SMTP id r18so5099382edl.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 00:52:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=We7DoVh7zLbEobTGikMeJVx0fJF9wa4d1jWsJYX+VpE=;
-        b=V53GVGtE+FiWi1Ic1qjEMrk3/vEvAhXyW5H0b0fxm+6774kxmE8OyeaawuPxs1gH4b
-         c+0FT6j2HTkSaJT6uEthX7ZOUXERC0g8efQ01yJ78SbJsqPTMPOADs6e2eP5V0D4MgrQ
-         5mxhqpf+6HI1BZDpX71QwLwNyugqDu8duGIlY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=We7DoVh7zLbEobTGikMeJVx0fJF9wa4d1jWsJYX+VpE=;
-        b=I4liVZHlrK4KlXghwW3FPz/NYZ6TzNX9k/AopkLewuHTpnEi1td/QET/JT8Dk0LLkr
-         FMwJ4Fl+npUrRu62AE6DY3M+y/e1fXaBVbY5eM+OXsO2RvE2RcstsunBhi8k9flgyYDE
-         b3r2lTZ45P9zGbjM/6rey8Ay14f1NSJsH0wyPTfwtPf+fPTig5pEp3GEZEMAIbFgKDoN
-         mSf9MAOZtepGZDuPjygT55Vnz3iCe0QyOxwmTtYZ7gSise8jl/7pk2krvtQ6So2JOLI3
-         FVYqMABSTq3xablRRKaEfBYigHWRkLYGOayc/FrXY/y+8bgsVAEllF40CJq7K3yf6GqY
-         MNqg==
-X-Gm-Message-State: APjAAAVdNpIphTkf9WjBg/IzsfRX2jyeiSQZ9Eeely11sNS0fFyRRjGA
-        ot0ZGRFz5tkmkxA48jTriFq0j3XKg+1F0A==
-X-Google-Smtp-Source: APXvYqxJrgCJQbdZbj7H5tLW7y847YzvWyjdBhKHMe6I2Ue+gH5v7TTaQFASdp8WkxF9kTJUSPxjmg==
-X-Received: by 2002:a05:6402:6cc:: with SMTP id n12mr2096523edy.344.1580979122353;
-        Thu, 06 Feb 2020 00:52:02 -0800 (PST)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com. [209.85.221.52])
-        by smtp.gmail.com with ESMTPSA id n11sm215998edv.66.2020.02.06.00.52.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Feb 2020 00:52:01 -0800 (PST)
-Received: by mail-wr1-f52.google.com with SMTP id m16so6071549wrx.11
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 00:52:00 -0800 (PST)
-X-Received: by 2002:adf:f58a:: with SMTP id f10mr2727400wro.105.1580979119629;
- Thu, 06 Feb 2020 00:51:59 -0800 (PST)
-MIME-Version: 1.0
-References: <20191217032034.54897-1-senozhatsky@chromium.org>
- <20191217032034.54897-13-senozhatsky@chromium.org> <1c5198dc-db4e-47d6-0d8b-259fbbb6372f@xs4all.nl>
- <CAAFQd5DN0FSJ=pXG3J32AXocnbkR+AB8yKKDk0tZS4s7K04Z9Q@mail.gmail.com>
- <560ba621-5396-1ea9-625e-a9f83622e052@xs4all.nl> <CAAFQd5D27xaKhxg8UuPH6XXdzgBBsCeDL8wYw37r6AK+6sWcbg@mail.gmail.com>
- <c23618a9-4bf8-1d9a-6e52-d616c79ff289@xs4all.nl> <CAAFQd5BGA-mnirgwQJP_UHkNzpVvf19xeRu-n7GLQci8nYGB2A@mail.gmail.com>
- <20200204025021.GF41358@google.com>
-In-Reply-To: <20200204025021.GF41358@google.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Thu, 6 Feb 2020 17:51:46 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5B1cDCHexRR7UaqhHuxOgbAZDFHrZEVA1E2bcH14Ve5_A@mail.gmail.com>
-Message-ID: <CAAFQd5B1cDCHexRR7UaqhHuxOgbAZDFHrZEVA1E2bcH14Ve5_A@mail.gmail.com>
-Subject: Re: [RFC][PATCH 12/15] videobuf2: add begin/end cpu_access callbacks
- to dma-sg
-To:     Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 6 Feb 2020 03:52:27 -0500
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 06 Feb 2020 14:22:24 +0530
+Received: from harigovi-linux.qualcomm.com ([10.204.66.157])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 06 Feb 2020 14:22:02 +0530
+Received: by harigovi-linux.qualcomm.com (Postfix, from userid 2332695)
+        id 2DE7628E6; Thu,  6 Feb 2020 14:22:02 +0530 (IST)
+From:   Harigovindan P <harigovi@codeaurora.org>
+To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc:     Harigovindan P <harigovi@codeaurora.org>,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        seanpaul@chromium.org, hoegsberg@chromium.org,
+        kalyan_t@codeaurora.org, nganji@codeaurora.org
+Subject: [v1] drm/msm/dsi: save pll state before dsi host is powered off
+Date:   Thu,  6 Feb 2020 14:21:54 +0530
+Message-Id: <1580979114-16447-1-git-send-email-harigovi@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 4, 2020 at 11:50 AM Sergey Senozhatsky
-<senozhatsky@chromium.org> wrote:
->
-> On (20/02/03 19:04), Tomasz Figa wrote:
-> [..]
-> > > I very much agree with that. But this should be very clearly documented.
-> > > Should V4L2_CAP_MEMORY_NON_CONSISTENT always be set in this case?
-> > >
-> >
-> > Yes, IMHO that would make sense. My understanding is that currently
-> > the consistency of allocated memory is unspecified, so it can be
-> > either. With V4L2_FLAG_MEMORY_NON_CONSISTENT, the userspace can
-> > explicitly ask for inconsistent memory.
-> >
-> > Moreover, I'd vote for setting V4L2_CAP_MEMORY_NON_CONSISTENT when
-> > V4L2_FLAG_MEMORY_NON_CONSISTENT is guaranteed to return inconsistent
-> > memory to avoid "optional" features or "hints" without guaranteed
-> > behavior.
->
-> Documentation/DMA-attributes.txt says the following
->
->   DMA_ATTR_NON_CONSISTENT
->   -----------------------
->
->   DMA_ATTR_NON_CONSISTENT lets the platform to choose to return either
->   consistent or non-consistent memory as it sees fit.  By using this API,
->   you are guaranteeing to the platform that you have all the correct and
->   necessary sync points for this memory in the driver.
+Save pll state before dsi host is powered off. Without this change
+some register values gets resetted.
 
-Good point. And I also realized that some platforms just have no way
-to make the memory inconsistent, because they may have hardware
-coherency.
+Signed-off-by: Harigovindan P <harigovi@codeaurora.org>
+---
 
-Then we need to keep it a hint only.
+Changes in v1:
+	- Saving pll state before dsi host is powered off.
+	- Removed calling of save state in post_disable since everything
+	would be resetted and it would save only resetted values.
 
-Best regards,
-Tomasz
+ drivers/gpu/drm/msm/dsi/dsi_manager.c | 5 +++++
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.c | 4 ----
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+index 104115d..a987efe 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
++++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+@@ -506,6 +506,7 @@ static void dsi_mgr_bridge_post_disable(struct drm_bridge *bridge)
+ 	struct msm_dsi *msm_dsi1 = dsi_mgr_get_dsi(DSI_1);
+ 	struct mipi_dsi_host *host = msm_dsi->host;
+ 	struct drm_panel *panel = msm_dsi->panel;
++	struct msm_dsi_pll *src_pll;
+ 	bool is_dual_dsi = IS_DUAL_DSI();
+ 	int ret;
+ 
+@@ -539,6 +540,10 @@ static void dsi_mgr_bridge_post_disable(struct drm_bridge *bridge)
+ 								id, ret);
+ 	}
+ 
++	/* Save PLL status if it is a clock source */
++	src_pll = msm_dsi_phy_get_pll(msm_dsi->phy);
++	msm_dsi_pll_save_state(src_pll);
++
+ 	ret = msm_dsi_host_power_off(host);
+ 	if (ret)
+ 		pr_err("%s: host %d power off failed,%d\n", __func__, id, ret);
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
+index b0cfa67..f509ebd 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
+@@ -724,10 +724,6 @@ void msm_dsi_phy_disable(struct msm_dsi_phy *phy)
+ 	if (!phy || !phy->cfg->ops.disable)
+ 		return;
+ 
+-	/* Save PLL status if it is a clock source */
+-	if (phy->usecase != MSM_DSI_PHY_SLAVE)
+-		msm_dsi_pll_save_state(phy->pll);
+-
+ 	phy->cfg->ops.disable(phy);
+ 
+ 	dsi_phy_regulator_disable(phy);
+-- 
+2.7.4
+
