@@ -2,101 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E3E61546DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 15:52:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8B481546E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 15:55:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbgBFOwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 09:52:05 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50220 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727678AbgBFOwE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 09:52:04 -0500
-Received: by mail-wm1-f66.google.com with SMTP id a5so313409wmb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 06:52:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=mJxTh9S4n0F4s5VxjTTNjdqiTqHIU1Yz89fV5yVtbcM=;
-        b=MY+/PXRtdFE0kGyhmQO6CI5BTAO1Se7mdcKRfgHaw0gbVPmmkDIc/fE7OP1H1Ntct1
-         593K3T539bQM4slWTzc+u84QJpc3edzBNdTlIwJIqXY6uxy4ijP1Jk1zm88I9wkRaZTc
-         CGrvilSdVk1cqZ3Y2PzE2rRVzto9nrOw2idIzGGWG52WRyRFCQJFRvrlkSjGRNbVQOWs
-         u78GrUv/57KjOJHi0YIXwacLbW3TVAPs1Sdp3OYX/GHgOS3ji87LcBfYp5FYRKPdGwLR
-         +OBHRxH8BnpPH8jusy4su4jWNhhXlDhyAfyu48yM9icOiv27/Y3zf6s8zLAKJeIzBu+5
-         WpSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=mJxTh9S4n0F4s5VxjTTNjdqiTqHIU1Yz89fV5yVtbcM=;
-        b=pQ3tsYjmLEXCp5CbGZJy/Mvp/+VcoJzhRoc7gnWy6PO6RE5Ro0sl4qS5tsShBhVneg
-         PKQCiHM/LFTQ9x2bFfP+246f+7cGiDHHEuoRpT4l5U5SpEW28gGWWPoaicO8eYPC0kzY
-         KoEvT1hjQMaRGPnDydU9KwTdd9ekIZX4n4UbQWgWliyXEmS6frzeW8VRbYt2CrnnAaC/
-         uBBEhvWTkl+1pI8JJwDwtqxf5LvMehRNuZJZP3N6K1WvLqc5pNUXeMXrwx/IfAc2PgSE
-         FkDAxYBGVtnyUrZR9N/iN5rFs9LEZpMjBT8dsm3Ep1N+FZcRCY1tPr72IHRL0W8JQCQ+
-         GF7Q==
-X-Gm-Message-State: APjAAAXOZeopn/IJMyEoi8zzjiVKSGFDd1QADm5T/ic8q3fkdynxk8/K
-        BNWpe9C5YoH2kibo5crYq6As7KE2BTjT4Q==
-X-Google-Smtp-Source: APXvYqyebkbTN9MGqapvZFGquDE74sOJyPmK+PjYKnjruE3amVtOOWzsBDEtNlQho9HPNpBEXNIsSw==
-X-Received: by 2002:a7b:cf0d:: with SMTP id l13mr5229896wmg.13.1581000722859;
-        Thu, 06 Feb 2020 06:52:02 -0800 (PST)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id r5sm4415391wrt.43.2020.02.06.06.52.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 06:52:02 -0800 (PST)
-Date:   Thu, 6 Feb 2020 14:52:00 +0000
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jason Wessel <jason.wessel@windriver.com>,
-        linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>
-Subject: [GIT PULL] kgdb fixes for v5.6-rc1
-Message-ID: <20200206145200.pafzy25atqrh5wro@holly.lan>
+        id S1727441AbgBFOyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 09:54:49 -0500
+Received: from mga11.intel.com ([192.55.52.93]:15814 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725535AbgBFOyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 09:54:49 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 06:53:31 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,410,1574150400"; 
+   d="scan'208";a="255108112"
+Received: from dgbrowne-mobl.ger.corp.intel.com (HELO localhost) ([10.252.14.106])
+  by fmsmga004.fm.intel.com with ESMTP; 06 Feb 2020 06:53:28 -0800
+Date:   Thu, 6 Feb 2020 16:53:28 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Alexander Steffen <Alexander.Steffen@infineon.com>
+Cc:     linux-integrity@vger.kernel.org,
+        Andrey Pronin <apronin@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>, stable@vger.kernel.org,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tpm: Revert tpm_tis_spi_mod.ko to tpm_tis_spi.ko.
+Message-ID: <20200206145328.GB8148@linux.intel.com>
+References: <20200205203818.4679-1-jarkko.sakkinen@linux.intel.com>
+ <f865a01e-83a1-b0e2-a9ca-45f874d86b4c@infineon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <f865a01e-83a1-b0e2-a9ca-45f874d86b4c@infineon.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus
+On Thu, Feb 06, 2020 at 01:54:11PM +0100, Alexander Steffen wrote:
+> Works for me, thank you very much :)
 
-I think you are likely to conclude from the following that the issue
-fixed in this PR should have been detected before it ever reached you.
-If that is your conclusion then I agree (and is one of the reasons
-I chose to address it with a direct revert).
+Apologies for having bad judgement with this in the first place :-)
 
-Sorry!
+I'll send another PR for the next kernel release as soon as v5.6-rc1 is
+out.
 
-I have already added additional architectures to my pre-release tests
-so this mistake is now (much) more likely to be caught in future.
-
-
-The following changes since commit dc2c733e65848b1df8d55c83eea79fc4a868c800:
-
-  kdb: Use for_each_console() helper (2020-01-31 17:34:54 +0000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/danielt/linux.git/ tags/kgdb-fixes-5.6-rc1
-
-for you to fetch changes up to fcf2736c82ca1908e3a0e74730c404baebd8ccdf:
-
-  Revert "kdb: Get rid of confusing diag msg from "rd" if current task has no regs" (2020-02-06 11:40:09 +0000)
-
-----------------------------------------------------------------
-kgdb fixes for 5.6-rc1
-
-One of the simplifications added for 5.6-rc1 has caused build
-regressions on some platforms (it was reported for sparc64).
-This pull request fixes it with a direct revert.
-
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-
-----------------------------------------------------------------
-Daniel Thompson (1):
-      Revert "kdb: Get rid of confusing diag msg from "rd" if current task has no regs"
-
- kernel/debug/kdb/kdb_main.c | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+/Jarkko
