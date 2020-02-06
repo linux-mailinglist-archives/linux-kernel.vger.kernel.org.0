@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ABE4154966
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 17:40:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C6B2154962
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 17:39:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbgBFQjq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 11:39:46 -0500
-Received: from mga11.intel.com ([192.55.52.93]:25965 "EHLO mga11.intel.com"
+        id S1727874AbgBFQjr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 11:39:47 -0500
+Received: from mga05.intel.com ([192.55.52.43]:22808 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727778AbgBFQjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 11:39:45 -0500
+        id S1727785AbgBFQjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 11:39:46 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 08:39:45 -0800
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 08:39:45 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,410,1574150400"; 
-   d="scan'208";a="232097014"
+   d="scan'208";a="225067192"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 06 Feb 2020 08:39:42 -0800
+  by orsmga008.jf.intel.com with ESMTP; 06 Feb 2020 08:39:42 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 56892373; Thu,  6 Feb 2020 18:39:41 +0200 (EET)
+        id 5BFCF2AF; Thu,  6 Feb 2020 18:39:41 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org, trond.myklebust@hammerspace.com,
@@ -33,9 +33,9 @@ To:     Andrew Morton <akpm@linux-foundation.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Joe Perches <joe@perches.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v3 3/4] kernel.h: Split out might_sleep() and friends
-Date:   Thu,  6 Feb 2020 18:39:39 +0200
-Message-Id: <20200206163940.1940-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 4/4] kernel.h: Move lower_32_bits()/upper_32_bits() to bitops.h
+Date:   Thu,  6 Feb 2020 18:39:40 +0200
+Message-Id: <20200206163940.1940-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200206163940.1940-1-andriy.shevchenko@linux.intel.com>
 References: <20200206163940.1940-1-andriy.shevchenko@linux.intel.com>
@@ -46,241 +46,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kernel.h is being used as a dump for all kinds of stuff for a long time.
-Here is the attempt to start cleaning it up by splitting out might_sleep()
-and friends.
-
-At the same time convert users in header and crypto folder to use new header.
-Though for time being include new header back to kernel.h to avoid twisted
-indirected includes for existing users.
+Move lower_32_bits()/upper_32_bits() to bitops.h.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
 v3: new patch
- crypto/asymmetric_keys/pkcs7_trust.c |  3 +-
- include/linux/kernel.h               | 67 +------------------------
- include/linux/might_sleep.h          | 73 ++++++++++++++++++++++++++++
- include/linux/percpu-rwsem.h         |  1 +
- include/linux/sched.h                |  1 +
- include/linux/wait_bit.h             |  1 +
- 6 files changed, 79 insertions(+), 67 deletions(-)
- create mode 100644 include/linux/might_sleep.h
+ include/linux/bitops.h | 16 ++++++++++++++++
+ include/linux/kernel.h | 16 ----------------
+ lib/clz_ctz.c          |  2 +-
+ lib/lz4/lz4defs.h      |  1 +
+ lib/math/gcd.c         |  2 ++
+ 5 files changed, 20 insertions(+), 17 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/pkcs7_trust.c b/crypto/asymmetric_keys/pkcs7_trust.c
-index 61af3c4d82cc..9a3f0c3cafa2 100644
---- a/crypto/asymmetric_keys/pkcs7_trust.c
-+++ b/crypto/asymmetric_keys/pkcs7_trust.c
-@@ -6,8 +6,9 @@
-  */
+diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+index 21696ea359d1..bcd91b2f0d89 100644
+--- a/include/linux/bitops.h
++++ b/include/linux/bitops.h
+@@ -20,6 +20,22 @@
+ #define BITS_TO_U32(nr)		__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(u32))
+ #define BITS_TO_BYTES(nr)	__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(char))
  
- #define pr_fmt(fmt) "PKCS7: "fmt
--#include <linux/kernel.h>
- #include <linux/export.h>
-+#include <linux/might_sleep.h>
-+#include <linux/printk.h>
- #include <linux/slab.h>
- #include <linux/err.h>
- #include <linux/asn1.h>
++/**
++ * upper_32_bits - return bits 32-63 of a number
++ * @n: the number we're accessing
++ *
++ * A basic shift-right of a 64- or 32-bit quantity.  Use this to suppress
++ * the "right shift count >= width of type" warning when that quantity is
++ * 32-bits.
++ */
++#define upper_32_bits(n) ((u32)(((n) >> 16) >> 16))
++
++/**
++ * lower_32_bits - return bits 0-31 of a number
++ * @n: the number we're accessing
++ */
++#define lower_32_bits(n) ((u32)(n))
++
+ extern unsigned int __sw_hweight8(unsigned int w);
+ extern unsigned int __sw_hweight16(unsigned int w);
+ extern unsigned int __sw_hweight32(unsigned int w);
 diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 3ca18547af01..d9ce634457cb 100644
+index d9ce634457cb..7c443bb779fb 100644
 --- a/include/linux/kernel.h
 +++ b/include/linux/kernel.h
-@@ -11,6 +11,7 @@
- #include <linux/bitops.h>
- #include <linux/log2.h>
- #include <linux/math.h>
-+#include <linux/might_sleep.h>
- #include <linux/minmax.h>
- #include <linux/typecheck.h>
- #include <linux/printk.h>
-@@ -77,72 +78,6 @@
+@@ -60,22 +60,6 @@
+ #define _RET_IP_		(unsigned long)__builtin_return_address(0)
+ #define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; })
  
+-/**
+- * upper_32_bits - return bits 32-63 of a number
+- * @n: the number we're accessing
+- *
+- * A basic shift-right of a 64- or 32-bit quantity.  Use this to suppress
+- * the "right shift count >= width of type" warning when that quantity is
+- * 32-bits.
+- */
+-#define upper_32_bits(n) ((u32)(((n) >> 16) >> 16))
+-
+-/**
+- * lower_32_bits - return bits 0-31 of a number
+- * @n: the number we're accessing
+- */
+-#define lower_32_bits(n) ((u32)(n))
+-
  struct completion;
  struct pt_regs;
--struct user;
--
--#ifdef CONFIG_PREEMPT_VOLUNTARY
--extern int _cond_resched(void);
--# define might_resched() _cond_resched()
--#else
--# define might_resched() do { } while (0)
--#endif
--
--#ifdef CONFIG_DEBUG_ATOMIC_SLEEP
--extern void ___might_sleep(const char *file, int line, int preempt_offset);
--extern void __might_sleep(const char *file, int line, int preempt_offset);
--extern void __cant_sleep(const char *file, int line, int preempt_offset);
--
--/**
-- * might_sleep - annotation for functions that can sleep
-- *
-- * this macro will print a stack trace if it is executed in an atomic
-- * context (spinlock, irq-handler, ...). Additional sections where blocking is
-- * not allowed can be annotated with non_block_start() and non_block_end()
-- * pairs.
-- *
-- * This is a useful debugging help to be able to catch problems early and not
-- * be bitten later when the calling function happens to sleep when it is not
-- * supposed to.
-- */
--# define might_sleep() \
--	do { __might_sleep(__FILE__, __LINE__, 0); might_resched(); } while (0)
--/**
-- * cant_sleep - annotation for functions that cannot sleep
-- *
-- * this macro will print a stack trace if it is executed with preemption enabled
-- */
--# define cant_sleep() \
--	do { __cant_sleep(__FILE__, __LINE__, 0); } while (0)
--# define sched_annotate_sleep()	(current->task_state_change = 0)
--/**
-- * non_block_start - annotate the start of section where sleeping is prohibited
-- *
-- * This is on behalf of the oom reaper, specifically when it is calling the mmu
-- * notifiers. The problem is that if the notifier were to block on, for example,
-- * mutex_lock() and if the process which holds that mutex were to perform a
-- * sleeping memory allocation, the oom reaper is now blocked on completion of
-- * that memory allocation. Other blocking calls like wait_event() pose similar
-- * issues.
-- */
--# define non_block_start() (current->non_block_count++)
--/**
-- * non_block_end - annotate the end of section where sleeping is prohibited
-- *
-- * Closes a section opened by non_block_start().
-- */
--# define non_block_end() WARN_ON(current->non_block_count-- == 0)
--#else
--  static inline void ___might_sleep(const char *file, int line,
--				   int preempt_offset) { }
--  static inline void __might_sleep(const char *file, int line,
--				   int preempt_offset) { }
--# define might_sleep() do { might_resched(); } while (0)
--# define cant_sleep() do { } while (0)
--# define sched_annotate_sleep() do { } while (0)
--# define non_block_start() do { } while (0)
--# define non_block_end() do { } while (0)
--#endif
--
--#define might_sleep_if(cond) do { if (cond) might_sleep(); } while (0)
  
- #if defined(CONFIG_MMU) && \
- 	(defined(CONFIG_PROVE_LOCKING) || defined(CONFIG_DEBUG_ATOMIC_SLEEP))
-diff --git a/include/linux/might_sleep.h b/include/linux/might_sleep.h
-new file mode 100644
-index 000000000000..dbf009711333
---- /dev/null
-+++ b/include/linux/might_sleep.h
-@@ -0,0 +1,73 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_MIGHT_SLEEP_H
-+#define _LINUX_MIGHT_SLEEP_H
-+
-+#include <asm/bug.h>
-+#include <asm/current.h>
-+
-+#ifdef CONFIG_PREEMPT_VOLUNTARY
-+extern int _cond_resched(void);
-+# define might_resched() _cond_resched()
-+#else
-+# define might_resched() do { } while (0)
-+#endif
-+
-+#ifdef CONFIG_DEBUG_ATOMIC_SLEEP
-+extern void ___might_sleep(const char *file, int line, int preempt_offset);
-+extern void __might_sleep(const char *file, int line, int preempt_offset);
-+extern void __cant_sleep(const char *file, int line, int preempt_offset);
-+
-+/**
-+ * might_sleep - annotation for functions that can sleep
-+ *
-+ * this macro will print a stack trace if it is executed in an atomic
-+ * context (spinlock, irq-handler, ...). Additional sections where blocking is
-+ * not allowed can be annotated with non_block_start() and non_block_end()
-+ * pairs.
-+ *
-+ * This is a useful debugging help to be able to catch problems early and not
-+ * be bitten later when the calling function happens to sleep when it is not
-+ * supposed to.
-+ */
-+# define might_sleep() \
-+	do { __might_sleep(__FILE__, __LINE__, 0); might_resched(); } while (0)
-+/**
-+ * cant_sleep - annotation for functions that cannot sleep
-+ *
-+ * this macro will print a stack trace if it is executed with preemption enabled
-+ */
-+# define cant_sleep() \
-+	do { __cant_sleep(__FILE__, __LINE__, 0); } while (0)
-+# define sched_annotate_sleep()	(current->task_state_change = 0)
-+/**
-+ * non_block_start - annotate the start of section where sleeping is prohibited
-+ *
-+ * This is on behalf of the oom reaper, specifically when it is calling the mmu
-+ * notifiers. The problem is that if the notifier were to block on, for example,
-+ * mutex_lock() and if the process which holds that mutex were to perform a
-+ * sleeping memory allocation, the oom reaper is now blocked on completion of
-+ * that memory allocation. Other blocking calls like wait_event() pose similar
-+ * issues.
-+ */
-+# define non_block_start() (current->non_block_count++)
-+/**
-+ * non_block_end - annotate the end of section where sleeping is prohibited
-+ *
-+ * Closes a section opened by non_block_start().
-+ */
-+# define non_block_end() WARN_ON(current->non_block_count-- == 0)
-+#else
-+  static inline void ___might_sleep(const char *file, int line,
-+				   int preempt_offset) { }
-+  static inline void __might_sleep(const char *file, int line,
-+				   int preempt_offset) { }
-+# define might_sleep() do { might_resched(); } while (0)
-+# define cant_sleep() do { } while (0)
-+# define sched_annotate_sleep() do { } while (0)
-+# define non_block_start() do { } while (0)
-+# define non_block_end() do { } while (0)
-+#endif
-+
-+#define might_sleep_if(cond) do { if (cond) might_sleep(); } while (0)
-+
-+#endif	/* _LINUX_MIGHT_SLEEP_H */
-diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
-index ad2ca2a89d5b..15c3b3a9f509 100644
---- a/include/linux/percpu-rwsem.h
-+++ b/include/linux/percpu-rwsem.h
-@@ -3,6 +3,7 @@
- #define _LINUX_PERCPU_RWSEM_H
- 
- #include <linux/atomic.h>
-+#include <linux/might_sleep.h>
- #include <linux/rwsem.h>
- #include <linux/percpu.h>
- #include <linux/rcuwait.h>
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index f314790cb527..77698948308a 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -15,6 +15,7 @@
- #include <linux/sem.h>
- #include <linux/shm.h>
- #include <linux/kcov.h>
-+#include <linux/might_sleep.h>
- #include <linux/mutex.h>
- #include <linux/plist.h>
- #include <linux/hrtimer.h>
-diff --git a/include/linux/wait_bit.h b/include/linux/wait_bit.h
-index 7dec36aecbd9..324cdbf5b4a4 100644
---- a/include/linux/wait_bit.h
-+++ b/include/linux/wait_bit.h
-@@ -5,6 +5,7 @@
- /*
-  * Linux wait-bit related types and methods:
+diff --git a/lib/clz_ctz.c b/lib/clz_ctz.c
+index 0d3a686b5ba2..28bb53f6cea3 100644
+--- a/lib/clz_ctz.c
++++ b/lib/clz_ctz.c
+@@ -11,8 +11,8 @@
+  * __c[lt]z[sd]i2 can be overridden by linking arch-specific versions.
   */
-+#include <linux/might_sleep.h>
- #include <linux/wait.h>
  
- struct wait_bit_key {
++#include <linux/bitops.h>
+ #include <linux/export.h>
+-#include <linux/kernel.h>
+ 
+ int __weak __ctzsi2(int val);
+ int __weak __ctzsi2(int val)
+diff --git a/lib/lz4/lz4defs.h b/lib/lz4/lz4defs.h
+index 1a7fa9d9170f..c468eab7f3c6 100644
+--- a/lib/lz4/lz4defs.h
++++ b/lib/lz4/lz4defs.h
+@@ -36,6 +36,7 @@
+  */
+ 
+ #include <asm/unaligned.h>
++#include <linux/bitops.h>
+ #include <linux/string.h>	 /* memset, memcpy */
+ 
+ #define FORCE_INLINE __always_inline
+diff --git a/lib/math/gcd.c b/lib/math/gcd.c
+index e3b042214d1b..6cd0d5b2aef7 100644
+--- a/lib/math/gcd.c
++++ b/lib/math/gcd.c
+@@ -1,4 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
++
++#include <linux/bitops.h>
+ #include <linux/kernel.h>
+ #include <linux/gcd.h>
+ #include <linux/export.h>
 -- 
 2.24.1
 
