@@ -2,179 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB3E41547F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:25:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 236AE1547E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:24:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbgBFPY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 10:24:28 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:24087 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727637AbgBFPY1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 10:24:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581002666;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=fUxgDMv84smLBrHrslyiv97KoxXkzHnJ/+b36HUgohw=;
-        b=Ud1TPaZdzR6DUt+C2QuC6n5dNZmZphn3m4Yp+eiZGCKoNWvT7DU6ub1UTXCkDqQ/SVF1XW
-        HCvLvLh1eIHuAQ07eSioDAkmMBeLj3CORjv5B+dpWJwhxnSRXeLsCfMaxoVCr2A9yyhX75
-        ejOTU3lVj2d/pbvWB3PsAaVKTAHl7Hw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-107-WtYFF4WDOWGMX7AUucoGVA-1; Thu, 06 Feb 2020 10:24:23 -0500
-X-MC-Unique: WtYFF4WDOWGMX7AUucoGVA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3531D18A6EFC;
-        Thu,  6 Feb 2020 15:24:22 +0000 (UTC)
-Received: from llong.com (ovpn-124-223.rdu2.redhat.com [10.10.124.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5FD801001B05;
-        Thu,  6 Feb 2020 15:24:21 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v6 1/6] locking/lockdep: Decrement irq context counters when removing lock chain
-Date:   Thu,  6 Feb 2020 10:24:03 -0500
-Message-Id: <20200206152408.24165-2-longman@redhat.com>
-In-Reply-To: <20200206152408.24165-1-longman@redhat.com>
-References: <20200206152408.24165-1-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+        id S1727542AbgBFPYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 10:24:08 -0500
+Received: from mail-eopbgr80053.outbound.protection.outlook.com ([40.107.8.53]:15398
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727325AbgBFPYI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 10:24:08 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NPqFtkhpIGfC5P9fyPma03EteonMuqNrmP1tG7sOucoytF5PBmmWsgUSY49QChnrnNA2ajIw6uGGOp22igXStg/zTJHh83TpWnVZpoikPyxcs/dSMd8SZzBwCOFEEIVcwirLlPDro9iRvw3rtffUxTqwuz3SQ14tntGeKOelMMvlbfvO3lyq40O2MtfWdVT0mkGr4AmLMhVNECUfwgLfxrnLC08jnvuwbvo1z/pRHF4xcBWgsOg7ZYGgsOUySF937hgshbeJIRondw0jwWVlqoOxGeibP4gkCbb50kBMzsWDpCD7SAGMUfp0gMXH8Ckv2tYgTdNzN+R3vcJjRhkcVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VzzJX5wHn99Aaj+fNZlFofq9bdvra+Vzbf0T29LQPpM=;
+ b=kunAFWF0ZNF9R+OUCxuP+I+trosqQnHmTxey6iJ0kM9VUKyD0xx/XeEnKp4vIljTAYKfttf83xsyU8wIDfr6vPnyVLbJCtJOxigC1Lym+U1e35Rw6lQTWnLFr4rn4M6R1BWyYsfBikTStmSB+oBh1lt6jE+9kVpM0uPq25KZtdZhlKAXjtSwA5V05cNGaoQEM8/O5C2mTztiWTBHPx3L4Zp30xl5GX9diNd7CxqcrRju5hKDZluIo/aQbH4yNLs4nXL8EMs2Cb+WfgEUHOIR+gzy/TRHpYQ9cUWouFSjCYqNsP2YtQvkVXPDe0+iac6SHK/41pZ0PXcL0+k4b+yjnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kococonnector.com; dmarc=pass action=none
+ header.from=kococonnector.com; dkim=pass header.d=kococonnector.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=KoCoConnector.onmicrosoft.com; s=selector2-KoCoConnector-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VzzJX5wHn99Aaj+fNZlFofq9bdvra+Vzbf0T29LQPpM=;
+ b=EicbclfAzB8FzNKxRDArExsoGcJsIt+yqdN2JqqdaoFkRmKuhXu1oj6rbx5tF3LSgiXOXae0dKMFOWzBcd465rUofQX5l6G/qLJNS2Q5LtZuBHDi7L0fKuaQJ5wjBZ2XYKRAxwuSGXYh4BdoX3lu4X8d+XgTl+/F2N+cxLy6Uqs=
+Received: from DB6PR0902MB2072.eurprd09.prod.outlook.com (10.170.212.23) by
+ DB6PR0902MB1847.eurprd09.prod.outlook.com (10.171.76.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.23; Thu, 6 Feb 2020 15:24:04 +0000
+Received: from DB6PR0902MB2072.eurprd09.prod.outlook.com
+ ([fe80::406b:dddb:f0d2:7ea7]) by DB6PR0902MB2072.eurprd09.prod.outlook.com
+ ([fe80::406b:dddb:f0d2:7ea7%7]) with mapi id 15.20.2686.035; Thu, 6 Feb 2020
+ 15:24:04 +0000
+Received: from localhost (193.47.161.132) by GV0P278CA0029.CHEP278.PROD.OUTLOOK.COM (2603:10a6:710:28::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2707.21 via Frontend Transport; Thu, 6 Feb 2020 15:24:03 +0000
+From:   Oliver Graute <oliver.graute@kococonnector.com>
+To:     "aisheng.dong@nxp.com" <aisheng.dong@nxp.com>
+CC:     "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "peng.fan@nxp.com" <peng.fan@nxp.com>,
+        Oliver Graute <oliver.graute@kococonnector.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [RFC 0/5] arm64: dts: imx8qm: enable sata on imx8qm based board
+Thread-Topic: [RFC 0/5] arm64: dts: imx8qm: enable sata on imx8qm based board
+Thread-Index: AQHV3QF2KkUyDNPMQU6sTRVuZgujtA==
+Date:   Thu, 6 Feb 2020 15:24:03 +0000
+Message-ID: <20200206152222.31095-1-oliver.graute@kococonnector.com>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: GV0P278CA0029.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:710:28::16) To DB6PR0902MB2072.eurprd09.prod.outlook.com
+ (2603:10a6:6:8::23)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=oliver.graute@kococonnector.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [193.47.161.132]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f24c63ba-d28f-4487-4505-08d7ab18995e
+x-ms-traffictypediagnostic: DB6PR0902MB1847:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB6PR0902MB18479CCFCD54565080F7369FEB1D0@DB6PR0902MB1847.eurprd09.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 0305463112
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39830400003)(346002)(376002)(136003)(366004)(199004)(189003)(508600001)(4326008)(64756008)(186003)(5660300002)(2906002)(6486002)(66446008)(6916009)(81166006)(81156014)(966005)(44832011)(16526019)(956004)(2616005)(26005)(66556008)(4744005)(66946007)(66476007)(54906003)(7416002)(6496006)(8676002)(52116002)(86362001)(36756003)(8936002)(71200400001)(1076003)(316002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0902MB1847;H:DB6PR0902MB2072.eurprd09.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: kococonnector.com does not
+ designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: kDed0v5xpOZzOXEPtBoCRxqUd4xQP9n8Hpxb/aZQ9Vjmd1poQTTvpMs+AViJEW9Ua2VsBoPGde73DlnoekjWNUlkgNKjklSPetp50+ucuul3Mc5zTe+E+7pIfe8kg2WCV2KRQ0qU37Cq/ItSZMz5F733w/zj1Lcx46ZOpsqc4CW9nuo3KOYgMR90kaoMGpvShtAT13SxrpS5AWeznIUlVitlRT0+6eHVo5W6m4hI3f3fVDRgtNtLRp7MfLaX8EhdiI5p1Px7dnvvO8HRZM/Fj+wlCXS1YLipr24f4RsQQLIRQPbIahhzeXlXwvjJEUbnPM4RdTqgfCUtI/b/7Ycl62kQrszeEvJiycE1oukBgcMmKeFYWgFOHZF3M9GcS2EbQyHBJBAiFeBfQ8VX/zO02uH6AhDYsE7Xwe1/S8KSLaXkT4+IC9G7Wqrpd6HKHS47/cgf2F9qYTsgSzfh+dlg8dv2TI6aC7rg/B5TFbttypbWJDNnvn7WEOzTMSbydUdU4j5UGPTHEn3QXgFnZWvRGCkve63FmX5fF5JFafE5T6CfwVRQR38kAiF037kB+yiB
+x-ms-exchange-antispam-messagedata: Yodpkq0+qFy9G3KyEA7qgur3vW6zQstqyKb4gAzJ3h2ZG/i9fg7KsJ5W1IKf195XgpwZcl1d/I+tqjs1j7DKfeHzVxqN5X7By2rSomigGY8nGY1JHw/gGirjWrIS1NB+sW79hHqe20VOeITFjVMeAw==
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: kococonnector.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f24c63ba-d28f-4487-4505-08d7ab18995e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2020 15:24:03.8910
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 59845429-0644-4099-bd7e-17fba65a2f2b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tYG+r0qLR2P6tAAb8AYaYVLxL2Qq1wNGhf7L+leJXjxR3uCoLKvLVsEk2h8NvscVyCu0Q5wpcrMi039f2H3R7Ub946vnlDw+etzqGnLmQQI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0902MB1847
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are currently three counters to track the irq context of a lock
-chain - nr_hardirq_chains, nr_softirq_chains and nr_process_chains.
-They are incremented when a new lock chain is added, but they are
-not decremented when a lock chain is removed. That causes some of the
-statistic counts reported by /proc/lockdep_stats to be incorrect.
+This patch series tries to enable the sata interface on a imx8qm based boar=
+d.
+I'm not sure howto do the sata clocking right. Maybe some can comment on th=
+at.
 
-Fix that by decrementing the right counter when a lock chain is removed.
+The patches are based on-top of these clock patches.
 
-Since inc_chains() no longer accesses hardirq_context and softirq_context
-directly, it is moved out from the CONFIG_TRACE_IRQFLAGS conditional
-compilation block.
+https://patchwork.kernel.org/patch/11248235/
 
-Fixes: a0b0fd53e1e6 ("locking/lockdep: Free lock classes that are no longer in use")
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/locking/lockdep.c           | 40 +++++++++++++++++-------------
- kernel/locking/lockdep_internals.h |  6 +++++
- 2 files changed, 29 insertions(+), 17 deletions(-)
+Oliver Graute (5):
+  arm64: dts: imx8qm: Add HSIO Subsystem node
+  arm64: dts: imx8qm: added System MMU
+  arm64: dts: imx8qm: added sata node
+  arm64: dts: imx8qm: added pinctrl for pciea
+  arm64: dts: imx8qm-rom7720: added sata node
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 32406ef0d6a2..35449f5b79fb 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -2298,18 +2298,6 @@ static int check_irq_usage(struct task_struct *curr, struct held_lock *prev,
- 	return 0;
- }
- 
--static void inc_chains(void)
--{
--	if (current->hardirq_context)
--		nr_hardirq_chains++;
--	else {
--		if (current->softirq_context)
--			nr_softirq_chains++;
--		else
--			nr_process_chains++;
--	}
--}
--
- #else
- 
- static inline int check_irq_usage(struct task_struct *curr,
-@@ -2317,13 +2305,27 @@ static inline int check_irq_usage(struct task_struct *curr,
- {
- 	return 1;
- }
-+#endif /* CONFIG_TRACE_IRQFLAGS */
- 
--static inline void inc_chains(void)
-+static void inc_chains(int irq_context)
- {
--	nr_process_chains++;
-+	if (irq_context & LOCK_CHAIN_HARDIRQ_CONTEXT)
-+		nr_hardirq_chains++;
-+	else if (irq_context & LOCK_CHAIN_SOFTIRQ_CONTEXT)
-+		nr_softirq_chains++;
-+	else
-+		nr_process_chains++;
- }
- 
--#endif /* CONFIG_TRACE_IRQFLAGS */
-+static void dec_chains(int irq_context)
-+{
-+	if (irq_context & LOCK_CHAIN_HARDIRQ_CONTEXT)
-+		nr_hardirq_chains--;
-+	else if (irq_context & LOCK_CHAIN_SOFTIRQ_CONTEXT)
-+		nr_softirq_chains--;
-+	else
-+		nr_process_chains--;
-+}
- 
- static void
- print_deadlock_scenario(struct held_lock *nxt, struct held_lock *prv)
-@@ -2843,7 +2845,7 @@ static inline int add_chain_cache(struct task_struct *curr,
- 
- 	hlist_add_head_rcu(&chain->entry, hash_head);
- 	debug_atomic_inc(chain_lookup_misses);
--	inc_chains();
-+	inc_chains(chain->irq_context);
- 
- 	return 1;
- }
-@@ -3596,7 +3598,8 @@ mark_usage(struct task_struct *curr, struct held_lock *hlock, int check)
- 
- static inline unsigned int task_irq_context(struct task_struct *task)
- {
--	return 2 * !!task->hardirq_context + !!task->softirq_context;
-+	return LOCK_CHAIN_HARDIRQ_CONTEXT * !!task->hardirq_context +
-+	       LOCK_CHAIN_SOFTIRQ_CONTEXT * !!task->softirq_context;
- }
- 
- static int separate_irq_context(struct task_struct *curr,
-@@ -4798,6 +4801,8 @@ static void remove_class_from_lock_chain(struct pending_free *pf,
- 		return;
- 	/* Overwrite the chain key for concurrent RCU readers. */
- 	WRITE_ONCE(chain->chain_key, chain_key);
-+	dec_chains(chain->irq_context);
-+
- 	/*
- 	 * Note: calling hlist_del_rcu() from inside a
- 	 * hlist_for_each_entry_rcu() loop is safe.
-@@ -4819,6 +4824,7 @@ static void remove_class_from_lock_chain(struct pending_free *pf,
- 	}
- 	*new_chain = *chain;
- 	hlist_add_head_rcu(&new_chain->entry, chainhashentry(chain_key));
-+	inc_chains(new_chain->irq_context);
- #endif
- }
- 
-diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
-index 18d85aebbb57..a525368b8cf6 100644
---- a/kernel/locking/lockdep_internals.h
-+++ b/kernel/locking/lockdep_internals.h
-@@ -106,6 +106,12 @@ static const unsigned long LOCKF_USED_IN_IRQ_READ =
- #define STACK_TRACE_HASH_SIZE	16384
- #endif
- 
-+/*
-+ * Bit definitions for lock_chain.irq_context
-+ */
-+#define LOCK_CHAIN_SOFTIRQ_CONTEXT	(1 << 0)
-+#define LOCK_CHAIN_HARDIRQ_CONTEXT	(1 << 1)
-+
- #define MAX_LOCKDEP_CHAINS	(1UL << MAX_LOCKDEP_CHAINS_BITS)
- 
- #define MAX_LOCKDEP_CHAIN_HLOCKS (MAX_LOCKDEP_CHAINS*5)
--- 
-2.18.1
+ .../boot/dts/freescale/imx8qm-rom7720-a1.dts  | 14 ++++++
+ arch/arm64/boot/dts/freescale/imx8qm.dtsi     | 45 +++++++++++++++++++
+ 2 files changed, 59 insertions(+)
+
+--=20
+2.17.1
 
