@@ -2,191 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BE6B1545FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 15:22:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD0F9154601
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 15:24:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728072AbgBFOWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 09:22:49 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:55433 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727814AbgBFOWs (ORCPT
+        id S1728142AbgBFOYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 09:24:20 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:39768 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727415AbgBFOYU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 09:22:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580998966;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=E33KDfHwzzctyySWOHYAqupA1xDN5Ko7hssayl+bQwc=;
-        b=CYybzKXKpiEkqGxbMBCWUVNg0dNRA8hNPnZ6piupJA+t8il638NdNodDlrtXZHAvTtW2Y9
-        yTVlCfzYFfjNoA2/hjgEmRItvngO0xHn/ZabQIaVnjWn0sMLv9Ki3K6+PqNQ/0IxZxabJi
-        ru+6eHu3xzMwiiFB2htCNDuGmZYiic4=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-150-66VYUNojOQiRZ1_9nDFxwQ-1; Thu, 06 Feb 2020 09:22:44 -0500
-X-MC-Unique: 66VYUNojOQiRZ1_9nDFxwQ-1
-Received: by mail-wr1-f69.google.com with SMTP id f10so3468991wro.14
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 06:22:44 -0800 (PST)
+        Thu, 6 Feb 2020 09:24:20 -0500
+Received: by mail-pj1-f67.google.com with SMTP id e9so43438pjr.4;
+        Thu, 06 Feb 2020 06:24:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ujphz3B+s46aEe7JvGGM1Ne2ZXEsoldLhyDrK7xK9Ko=;
+        b=r2fc3qi/9oNBxawfqNV0KXua36nCnXKLMdct8mDNook6eYV55lHztSV5xJ90MWYldf
+         GQDjpa2pqjDN/R6JQwv933Zfvw/ePlhJandlvdwup1MujP/V4rd0jVWQErbPOdC/xghr
+         IXDkRz0Qfw2uuZO9HEyg5aOlSMidW2brqKSnkLkFZIeh6dIzQCNCB8ZbPqVqA0s1DS6m
+         yKcqYX3Qvo6bdZZmQtrz/tLC/u1qH5MPBtlXeWqx/zXLlLNyZ4zaxTtbPCmqTZMacg1Y
+         yMiZypbiuqU+5hShOi+yn7yKlw/zZ3beb2KBtcTgZieAKFb+tvG7XgWGtbvmXtrjgoFD
+         vKOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=E33KDfHwzzctyySWOHYAqupA1xDN5Ko7hssayl+bQwc=;
-        b=VywhmKgKFdD6TOwVct+lJS5xZPUKgO2qBhXz9EhJyai7TjhjkmnD5UJhTl1Uz5d1F1
-         KNo26JyW5QPXYgpjXZ9zMRLCRDiemMj2HjW4xakvAr5bQbCxyS3B5K4B1hhPQJ6sl2bl
-         wkwaSo+/4I2duiXDr+aRCXpKyv1LjbjU6sIIQSiU2PE7EWhsyM2iPzYM3GY2IJJelixn
-         UH6S1Qe77LpmvtR0eSkdCizK0pvbcIrxwsyfR6YGNp1RsVkHuNfUwP7+4pnLH0PJh2Nd
-         Bb1DXAbiVeeBOpSt2J1mZsGcERTgo2iSxuz3hpkCvLSkIPY1zUEXRMkBJX6CzMMsM2wO
-         9dHQ==
-X-Gm-Message-State: APjAAAVcxy3dGIVhBMGqJpZfCFzQTndnkh/bl401tkQ7rsXo8m6rLEfJ
-        RU9TxVj/XRkCKuICZLLWHCOhAOHDH9ty4bdDtVsGM/gpJsmgz5GHKls4zHPnKKx38wlIWrlarm4
-        gIIe898RGEsQeGEf0lJmPlZSi
-X-Received: by 2002:adf:ebc6:: with SMTP id v6mr3994365wrn.75.1580998962366;
-        Thu, 06 Feb 2020 06:22:42 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxG7BBemHdFdSKhjME040XnbLs09XyhcJynHyJNGXKCsyl9KkmnJAkxk+E5CCHZv+jaiz2pCA==
-X-Received: by 2002:adf:ebc6:: with SMTP id v6mr3994337wrn.75.1580998962098;
-        Thu, 06 Feb 2020 06:22:42 -0800 (PST)
-Received: from eperezma.remote.csb (static-143-30-231-77.ipcom.comunitel.net. [77.231.30.143])
-        by smtp.gmail.com with ESMTPSA id 21sm3825312wmo.8.2020.02.06.06.22.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 06:22:41 -0800 (PST)
-Message-ID: <b6e32f58e5d85ac5cc3141e9155fb140ae5cd580.camel@redhat.com>
-Subject: Re: vhost changes (batched) in linux-next after 12/13 trigger
- random crashes in KVM guests after reboot
-From:   eperezma@redhat.com
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Halil Pasic <pasic@linux.ibm.com>
-Date:   Thu, 06 Feb 2020 15:22:39 +0100
-In-Reply-To: <2a63b15f-8cf5-5868-550c-42e2cfd92c60@de.ibm.com>
-References: <c022e1d6-0d57-ae07-5e6b-8e40d3b01f4b@de.ibm.com>
-         <20191218100926-mutt-send-email-mst@kernel.org>
-         <2ffdbd95-e375-a627-55a1-6990b0a0e37a@de.ibm.com>
-         <20200106054041-mutt-send-email-mst@kernel.org>
-         <08ae8d28-3d8c-04e8-bdeb-0117d06c6dc7@de.ibm.com>
-         <20200107042401-mutt-send-email-mst@kernel.org>
-         <c6795e53-d12c-0709-c2e9-e35d9af1f693@de.ibm.com>
-         <20200107065434-mutt-send-email-mst@kernel.org>
-         <fe6e7e90-3004-eb7a-9ed8-b53a7667959f@de.ibm.com>
-         <20200120012724-mutt-send-email-mst@kernel.org>
-         <2a63b15f-8cf5-5868-550c-42e2cfd92c60@de.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-6.el8) 
-Mime-Version: 1.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ujphz3B+s46aEe7JvGGM1Ne2ZXEsoldLhyDrK7xK9Ko=;
+        b=TdOjbgvnOonVlcuBLJyd4i76Zw/5sy4mOw6WeR3oJWLg5soGaGLLI3LytxRYB73+sF
+         L3vH+woWwjhyvTNnULms3+Z/rbrGFmeCdQ+2f46u6JKAW8dBGQ5+YVypGg8TADVj5qoA
+         Miyrw5au0YJP0OF+MDGzjkQ+ZiPpS9pNZ2uEFOZ7jW/vemPL0CN1LRXtj5ylIg7MmMII
+         QPXvnm6WAoYYvluL6uRtxa0kLogQoaSFcD20+gexPNossdHVkoDcnWoKYhn8FL3brdIz
+         KD5Arhc+cBTafEJ/bmkvYpzCrZU1V8Ci5iM2mMiXEQZ+1jCp7rZthtSudTXj66oahr6X
+         W2mw==
+X-Gm-Message-State: APjAAAVuTOiGKUQoR1xo3uJzd0T6V3pOQp40AJAwILz8vJ6mBnPKmPos
+        Y/Tx5iMehurFyXPMdtn1hkAQ65Yn
+X-Google-Smtp-Source: APXvYqy8U1nUa1UlxJnp4Ytp6VfhI1JzoIDrTHA7gjaGrxTdicYH6ucP96q5P+GGXmwsw8HEJLwNKA==
+X-Received: by 2002:a17:90a:7784:: with SMTP id v4mr4688042pjk.134.1580999059559;
+        Thu, 06 Feb 2020 06:24:19 -0800 (PST)
+Received: from localhost (104.128.80.227.16clouds.com. [104.128.80.227])
+        by smtp.gmail.com with ESMTPSA id q66sm3942259pfq.27.2020.02.06.06.24.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Feb 2020 06:24:19 -0800 (PST)
+From:   Dejin Zheng <zhengdejin5@gmail.com>
+To:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
+        joabreu@synopsys.com, davem@davemloft.net,
+        mcoquelin.stm32@gmail.com, netdev@vger.kernel.org
+Cc:     linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dejin Zheng <zhengdejin5@gmail.com>
+Subject: [PATCH 0/2]  use readl_poll_timeout() function
+Date:   Thu,  6 Feb 2020 22:24:02 +0800
+Message-Id: <20200206142404.24980-1-zhengdejin5@gmail.com>
+X-Mailer: git-send-email 2.25.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christian.
+This patch series just for use readl_poll_timeout() function
+to replace the open coded handling of use readl_poll_timeout()
+in the stmmac driver. There are two modification positions,
+the one in the init_systime() function and the other in the
+dwmac4_dma_reset() function.
 
-Could you try this patch on top of ("38ced0208491 vhost: use batched version by default")?
+Dejin Zheng (2):
+  net: stmmac: use readl_poll_timeout() function in init_systime()
+  net: stmmac: use readl_poll_timeout() function in dwmac4_dma_reset()
 
-It will not solve your first random crash but it should help with the lost of network connectivity.
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c   | 14 ++++++--------
+ .../net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c  | 14 ++++++--------
+ 2 files changed, 12 insertions(+), 16 deletions(-)
 
-Please let me know how does it goes.
-
-Thanks!
-
-From 99f0f543f3939dbe803988c9153a95616ccccacd Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
-Date: Thu, 6 Feb 2020 15:13:42 +0100
-Subject: [PATCH] vhost: filter valid vhost descriptors flags
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-Previous commit copy _NEXT flag, and it complains if a copied descriptor
-contains it.
-
-Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
----
- drivers/vhost/vhost.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 27ae5b4872a0..56c5253056ee 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -2125,6 +2125,8 @@ static void pop_split_desc(struct vhost_virtqueue *vq)
- 	--vq->ndescs;
- }
- 
-+#define VHOST_DESC_FLAGS (VRING_DESC_F_INDIRECT | VRING_DESC_F_WRITE | \
-+			  VRING_DESC_F_NEXT)
- static int push_split_desc(struct vhost_virtqueue *vq, struct vring_desc *desc, u16 id)
- {
- 	struct vhost_desc *h;
-@@ -2134,7 +2136,7 @@ static int push_split_desc(struct vhost_virtqueue *vq, struct vring_desc *desc,
- 	h = &vq->descs[vq->ndescs++];
- 	h->addr = vhost64_to_cpu(vq, desc->addr);
- 	h->len = vhost32_to_cpu(vq, desc->len);
--	h->flags = vhost16_to_cpu(vq, desc->flags);
-+	h->flags = vhost16_to_cpu(vq, desc->flags) & VHOST_DESC_FLAGS;
- 	h->id = id;
- 
- 	return 0;
-@@ -2343,7 +2345,7 @@ int vhost_get_vq_desc(struct vhost_virtqueue *vq,
- 		struct vhost_desc *desc = &vq->descs[i];
- 		int access;
- 
--		if (desc->flags & ~(VRING_DESC_F_INDIRECT | VRING_DESC_F_WRITE)) {
-+		if (desc->flags & ~VHOST_DESC_FLAGS) {
- 			vq_err(vq, "Unexpected flags: 0x%x at descriptor id 0x%x\n",
- 			       desc->flags, desc->id);
- 			ret = -EINVAL;
 -- 
-2.18.1
-
-
-On Wed, 2020-01-22 at 20:32 +0100, Christian Borntraeger wrote:
-> 
-> On 20.01.20 07:27, Michael S. Tsirkin wrote:
-> > On Tue, Jan 07, 2020 at 01:16:50PM +0100, Christian Borntraeger wrote:
-> > > On 07.01.20 12:55, Michael S. Tsirkin wrote:
-> > > 
-> > > > I pushed batched-v3 - same head but bisect should work now.
-> > > > 
-> > > 
-> > > With 
-> > > commit 38ced0208491103b50f1056f0d1c8f28e2e13d08 (HEAD)
-> > > Author:     Michael S. Tsirkin <mst@redhat.com>
-> > > AuthorDate: Wed Dec 11 12:19:26 2019 -0500
-> > > Commit:     Michael S. Tsirkin <mst@redhat.com>
-> > > CommitDate: Tue Jan 7 06:52:42 2020 -0500
-> > > 
-> > >     vhost: use batched version by default
-> > > 
-> > > 
-> > > I have exactly one successful ping and then the network inside the guest is broken (no packet
-> > > anymore).
-> > 
-> > Does anything appear in host's dmesg when this happens?
-> 
-> I think there was nothing, but I am not sure. I would need to redo the test if this is important to know.
-> 
-> > 
-> > > So you could consider this commit broken (but in a different way and also without any
-> > > guest reboot necessary).
-> > > 
-> > > 
-> > > bisect log:
-> > > git bisect start
-> > > # bad: [d2f6175f52062ee51ee69754a6925608213475d2] vhost: use vhost_desc instead of vhost_log
-> > > git bisect bad d2f6175f52062ee51ee69754a6925608213475d2
-> > > # good: [d1281e3a562ec6a08f944a876481dd043ba739b9] virtio-blk: remove VIRTIO_BLK_F_SCSI support
-> > > git bisect good d1281e3a562ec6a08f944a876481dd043ba739b9
-> > > # good: [fac7c0f46996e32d996f5c46121df24a6b95ec3b] vhost: option to fetch descriptors through an independent
-> > > struct
-> > > git bisect good fac7c0f46996e32d996f5c46121df24a6b95ec3b
-> > > # bad: [539eb9d738f048cd7be61f404e8f9c7d9d2ff3cc] vhost: batching fetches
-> > > git bisect bad 539eb9d738f048cd7be61f404e8f9c7d9d2ff3cc
+2.25.0
 
