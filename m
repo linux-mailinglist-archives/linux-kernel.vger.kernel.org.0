@@ -2,273 +2,309 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA256153D10
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 03:59:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C12CD153D1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 04:00:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727761AbgBFC7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 21:59:09 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:34707 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727558AbgBFC7I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 21:59:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580957946;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=elrfXvAvFe9N2hMUG5HMqPNblHdCzzwkwPDHkqMX4vs=;
-        b=g1HXzvEQAggaweXuj1yuLnIDWZmtm1s5HTdpgV30gbQrA9wWudbBbKaqlzr8Xvm0fkhoJy
-        C3yGJkgPN7gbuIiGSPzUB1r9yunmV9X2tPeYb1tcnVRAF5qDd2LL8cmTzZI1mItrBvR1ga
-        hSYwCq0kS+dgCJS8xBllvBzi3Vb7gAY=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-340-f944zy4HOpyKplXgkqFUyA-1; Wed, 05 Feb 2020 21:59:04 -0500
-X-MC-Unique: f944zy4HOpyKplXgkqFUyA-1
-Received: by mail-qv1-f70.google.com with SMTP id b8so2847258qvw.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 18:59:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=elrfXvAvFe9N2hMUG5HMqPNblHdCzzwkwPDHkqMX4vs=;
-        b=ZhFfuVtsYvkSIA69S4VKXsL7p3a1e63TIdXLXVfahe3GHuwMcQqQyz+JRuMclEMwg8
-         3e7kD8PqTzTkdozpQWd3Nncm5roSB7IS5iPncidvHeGGvGF9k8jrtYALIb333RTyg9WR
-         zHZO/fFhxbcV0IgABJsSTDd5dTyOUTMptXnmNFZOZOmsLFihxRWWsZtbCqiw8n0/8XgO
-         P4HSdthAkgVCLOSB7xhEyEuORy0WU16WVXd9CImhgt1fZdqhojgJfJsApvbpTW5BmJ3A
-         HgTgjA92p2HLybGOzx4iAoXpw7tK2jBdlEpcEQEb1BdQYAdhSZR4iGReeETRnqMBiasV
-         LpIw==
-X-Gm-Message-State: APjAAAVs5ahUJWgXCg9+MwRAMjDLOPrtBgm+DGuEFZrAw5kp8roDHnPP
-        uOJEKTrSjYGTR+i7L9CBrd+ym9dUTHFoyRFwtgkAwoQjmysdlpJ23gHd20A3xKLMcBIVytbJ7Ar
-        wDcGw8X7F/eYkUH1k/TiEWN65
-X-Received: by 2002:ad4:4434:: with SMTP id e20mr629683qvt.157.1580957942590;
-        Wed, 05 Feb 2020 18:59:02 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwRefmCuC5EkrvnBISCbt0OMK+7Pg2aDUhgdS94eihOXUTCefpmLLHm+a79iObj3JseFjw0PA==
-X-Received: by 2002:ad4:4434:: with SMTP id e20mr629652qvt.157.1580957942224;
-        Wed, 05 Feb 2020 18:59:02 -0800 (PST)
-Received: from xz-x1 ([2607:9880:19c8:32::2])
-        by smtp.gmail.com with ESMTPSA id y26sm915791qtv.28.2020.02.05.18.58.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 18:59:01 -0800 (PST)
-Date:   Wed, 5 Feb 2020 21:58:58 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, Marc Zyngier <maz@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-mips@vger.kernel.org, kvm@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Philippe =?utf-8?Q?Mathieu-Daud=C3=A9?= <f4bug@amsat.org>
-Subject: Re: [PATCH v5 01/19] KVM: x86: Allocate new rmap and large page
- tracking when moving memslot
-Message-ID: <20200206025858.GK387680@xz-x1>
-References: <20200121223157.15263-1-sean.j.christopherson@intel.com>
- <20200121223157.15263-2-sean.j.christopherson@intel.com>
- <20200205214952.GD387680@xz-x1>
- <20200205235533.GA7631@linux.intel.com>
- <20200206020031.GJ387680@xz-x1>
- <20200206021714.GB7631@linux.intel.com>
+        id S1727857AbgBFC74 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 21:59:56 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38972 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727769AbgBFC7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 21:59:39 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 33D62BE2E78A7FCD217D;
+        Thu,  6 Feb 2020 10:59:35 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Thu, 6 Feb 2020
+ 10:59:27 +0800
+From:   Jason Yan <yanaijie@huawei.com>
+To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
+        <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
+        <benh@kernel.crashing.org>, <paulus@samba.org>,
+        <npiggin@gmail.com>, <keescook@chromium.org>,
+        <kernel-hardening@lists.openwall.com>, <oss@buserror.net>
+CC:     <linux-kernel@vger.kernel.org>, <zhaohongjiang@huawei.com>,
+        Jason Yan <yanaijie@huawei.com>
+Subject: [PATCH v3 3/6] powerpc/fsl_booke/64: implement KASLR for fsl_booke64
+Date:   Thu, 6 Feb 2020 10:58:22 +0800
+Message-ID: <20200206025825.22934-4-yanaijie@huawei.com>
+X-Mailer: git-send-email 2.17.2
+In-Reply-To: <20200206025825.22934-1-yanaijie@huawei.com>
+References: <20200206025825.22934-1-yanaijie@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200206021714.GB7631@linux.intel.com>
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 06:17:15PM -0800, Sean Christopherson wrote:
-> On Wed, Feb 05, 2020 at 09:00:31PM -0500, Peter Xu wrote:
-> > On Wed, Feb 05, 2020 at 03:55:33PM -0800, Sean Christopherson wrote:
-> > > On Wed, Feb 05, 2020 at 04:49:52PM -0500, Peter Xu wrote:
-> > > > On Tue, Jan 21, 2020 at 02:31:39PM -0800, Sean Christopherson wrote:
-> > > > > Reallocate a rmap array and recalcuate large page compatibility when
-> > > > > moving an existing memslot to correctly handle the alignment properties
-> > > > > of the new memslot.  The number of rmap entries required at each level
-> > > > > is dependent on the alignment of the memslot's base gfn with respect to
-> > > > > that level, e.g. moving a large-page aligned memslot so that it becomes
-> > > > > unaligned will increase the number of rmap entries needed at the now
-> > > > > unaligned level.
-> > > > > 
-> > > > > Not updating the rmap array is the most obvious bug, as KVM accesses
-> > > > > garbage data beyond the end of the rmap.  KVM interprets the bad data as
-> > > > > pointers, leading to non-canonical #GPs, unexpected #PFs, etc...
-> > > > > 
-> > > > >   general protection fault: 0000 [#1] SMP
-> > > > >   CPU: 0 PID: 1909 Comm: move_memory_reg Not tainted 5.4.0-rc7+ #139
-> > > > >   Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
-> > > > >   RIP: 0010:rmap_get_first+0x37/0x50 [kvm]
-> > > > >   Code: <48> 8b 3b 48 85 ff 74 ec e8 6c f4 ff ff 85 c0 74 e3 48 89 d8 5b c3
-> > > > >   RSP: 0018:ffffc9000021bbc8 EFLAGS: 00010246
-> > > > >   RAX: ffff00617461642e RBX: ffff00617461642e RCX: 0000000000000012
-> > > > >   RDX: ffff88827400f568 RSI: ffffc9000021bbe0 RDI: ffff88827400f570
-> > > > >   RBP: 0010000000000000 R08: ffffc9000021bd00 R09: ffffc9000021bda8
-> > > > >   R10: ffffc9000021bc48 R11: 0000000000000000 R12: 0030000000000000
-> > > > >   R13: 0000000000000000 R14: ffff88827427d700 R15: ffffc9000021bce8
-> > > > >   FS:  00007f7eda014700(0000) GS:ffff888277a00000(0000) knlGS:0000000000000000
-> > > > >   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > > >   CR2: 00007f7ed9216ff8 CR3: 0000000274391003 CR4: 0000000000162eb0
-> > > > >   Call Trace:
-> > > > >    kvm_mmu_slot_set_dirty+0xa1/0x150 [kvm]
-> > > > >    __kvm_set_memory_region.part.64+0x559/0x960 [kvm]
-> > > > >    kvm_set_memory_region+0x45/0x60 [kvm]
-> > > > >    kvm_vm_ioctl+0x30f/0x920 [kvm]
-> > > > >    do_vfs_ioctl+0xa1/0x620
-> > > > >    ksys_ioctl+0x66/0x70
-> > > > >    __x64_sys_ioctl+0x16/0x20
-> > > > >    do_syscall_64+0x4c/0x170
-> > > > >    entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > > > >   RIP: 0033:0x7f7ed9911f47
-> > > > >   Code: <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 21 6f 2c 00 f7 d8 64 89 01 48
-> > > > >   RSP: 002b:00007ffc00937498 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> > > > >   RAX: ffffffffffffffda RBX: 0000000001ab0010 RCX: 00007f7ed9911f47
-> > > > >   RDX: 0000000001ab1350 RSI: 000000004020ae46 RDI: 0000000000000004
-> > > > >   RBP: 000000000000000a R08: 0000000000000000 R09: 00007f7ed9214700
-> > > > >   R10: 00007f7ed92149d0 R11: 0000000000000246 R12: 00000000bffff000
-> > > > >   R13: 0000000000000003 R14: 00007f7ed9215000 R15: 0000000000000000
-> > > > >   Modules linked in: kvm_intel kvm irqbypass
-> > > > >   ---[ end trace 0c5f570b3358ca89 ]---
-> > > > > 
-> > > > > The disallow_lpage tracking is more subtle.  Failure to update results
-> > > > > in KVM creating large pages when it shouldn't, either due to stale data
-> > > > > or again due to indexing beyond the end of the metadata arrays, which
-> > > > > can lead to memory corruption and/or leaking data to guest/userspace.
-> > > > > 
-> > > > > Note, the arrays for the old memslot are freed by the unconditional call
-> > > > > to kvm_free_memslot() in __kvm_set_memory_region().
-> > > > 
-> > > > If __kvm_set_memory_region() failed, I think the old memslot will be
-> > > > kept and the new memslot will be freed instead?
-> > > 
-> > > This is referring to a successful MOVE operation to note that zeroing @arch
-> > > in kvm_arch_create_memslot() won't leak memory.
-> > > 
-> > > > > 
-> > > > > Fixes: 05da45583de9b ("KVM: MMU: large page support")
-> > > > > Cc: stable@vger.kernel.org
-> > > > > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > > > > ---
-> > > > >  arch/x86/kvm/x86.c | 11 +++++++++++
-> > > > >  1 file changed, 11 insertions(+)
-> > > > > 
-> > > > > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > > > > index 4c30ebe74e5d..1953c71c52f2 100644
-> > > > > --- a/arch/x86/kvm/x86.c
-> > > > > +++ b/arch/x86/kvm/x86.c
-> > > > > @@ -9793,6 +9793,13 @@ int kvm_arch_create_memslot(struct kvm *kvm, struct kvm_memory_slot *slot,
-> > > > >  {
-> > > > >  	int i;
-> > > > >  
-> > > > > +	/*
-> > > > > +	 * Clear out the previous array pointers for the KVM_MR_MOVE case.  The
-> > > > > +	 * old arrays will be freed by __kvm_set_memory_region() if installing
-> > > > > +	 * the new memslot is successful.
-> > > > > +	 */
-> > > > > +	memset(&slot->arch, 0, sizeof(slot->arch));
-> > > > 
-> > > > I actually gave r-b on this patch but it was lost... And then when I
-> > > > read it again I start to confuse on why we need to set these to zeros.
-> > > > Even if they're not zeros, iiuc kvm_free_memslot() will compare each
-> > > > of the array pointer and it will only free the changed pointers, then
-> > > > it looks fine even without zeroing?
-> > > 
-> > > It's for the failure path, the out_free label, which blindy calls kvfree()
-> > > and relies on un-allocated pointers being NULL.  If @arch isn't zeroed, the
-> > > failure path will free metadata from the previous memslot.
-> > 
-> > IMHO it won't, because kvm_free_memslot() will only free metadata if
-> > the pointer changed.  So:
-> > 
-> >   - For succeeded kvcalloc(), the pointer will change in the new slot,
-> >     so kvm_free_memslot() will free it,
-> > 
-> >   - For failed kvcalloc(), the pointer will be NULL, so
-> >     kvm_free_memslot() will skip it,
-> 
-> No.  The out_free path iterates over all possible entries and would free
-> pointers from the old memslot.  It's still be wrong even if the very last
-> kcalloc() failed as that allocation is captured in a local variable and
-> only propagated to lpage_info on success.
-> 
-> out_free:
-> 	for (i = 0; i < KVM_NR_PAGE_SIZES; ++i) {
-> 		kvfree(slot->arch.rmap[i]);
-> 		slot->arch.rmap[i] = NULL;
-> 		if (i == 0)
-> 			continue;
-> 
-> 		kvfree(slot->arch.lpage_info[i - 1]);
-> 		slot->arch.lpage_info[i - 1] = NULL;
-> 	}
-> 	return -ENOMEM;
+The implementation for Freescale BookE64 is similar as BookE32. One
+difference is that Freescale BookE64 set up a TLB mapping of 1G during
+booting. Another difference is that ppc64 needs the kernel to be
+64K-aligned. So we can randomize the kernel in this 1G mapping and make
+it 64K-aligned. This can save some code to creat another TLB map at
+early boot. The disadvantage is that we only have about 1G/64K = 16384
+slots to put the kernel in.
 
-Ah right.  These discussion does also prove that simplify the slot
-free path is good, because it's easy to get confused. :)
+To support secondary cpu boot up, a variable __kaslr_offset was added in
+first_256B section. This can help secondary cpu get the kaslr offset
+before the 1:1 mapping has been setup.
 
-> 
-> >   - For untouched pointer, it'll be the same as the old, so
-> >     kvm_free_memslot() will skip it as well.
-> > 
-> > > 
-> > > > > +
-> > > > >  	for (i = 0; i < KVM_NR_PAGE_SIZES; ++i) {
-> > > > >  		struct kvm_lpage_info *linfo;
-> > > > >  		unsigned long ugfn;
-> > > > > @@ -9867,6 +9874,10 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
-> > > > >  				const struct kvm_userspace_memory_region *mem,
-> > > > >  				enum kvm_mr_change change)
-> > > > >  {
-> > > > > +	if (change == KVM_MR_MOVE)
-> > > > > +		return kvm_arch_create_memslot(kvm, memslot,
-> > > > > +					       mem->memory_size >> PAGE_SHIFT);
-> > > > > +
-> > > > 
-> > > > Instead of calling kvm_arch_create_memslot() explicitly again here,
-> > > > can it be replaced by below?
-> > > > 
-> > > > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > > > index 72b45f491692..85a7b02fd752 100644
-> > > > --- a/virt/kvm/kvm_main.c
-> > > > +++ b/virt/kvm/kvm_main.c
-> > > > @@ -1144,7 +1144,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
-> > > >                 new.dirty_bitmap = NULL;
-> > > >  
-> > > >         r = -ENOMEM;
-> > > > -       if (change == KVM_MR_CREATE) {
-> > > > +       if (change == KVM_MR_CREATE || change == KVM_MR_MOVE) {
-> > > >                 new.userspace_addr = mem->userspace_addr;
-> > > >  
-> > > >                 if (kvm_arch_create_memslot(kvm, &new, npages))
-> > > 
-> > > No, because other architectures don't need to re-allocate new metadata on
-> > > MOVE and rely on __kvm_set_memory_region() to copy @arch from old to new,
-> > > e.g. see kvmppc_core_create_memslot_hv().
-> > 
-> > Yes it's only required in x86, but iiuc it also will still work for
-> > ppc?  Say, in that case ppc won't copy @arch from old to new, and
-> > kvmppc_core_free_memslot_hv() will free the old, however it should
-> > still work.
-> 
-> No, calling kvm_arch_create_memslot() for MOVE will result in PPC leaking
-> memory due to overwriting slot->arch.rmap with a new allocation.
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+Cc: Scott Wood <oss@buserror.net>
+Cc: Diana Craciun <diana.craciun@nxp.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Kees Cook <keescook@chromium.org>
+---
+ arch/powerpc/Kconfig                 |  2 +-
+ arch/powerpc/kernel/exceptions-64e.S | 10 +++++++++
+ arch/powerpc/kernel/head_64.S        |  7 ++++++
+ arch/powerpc/kernel/setup_64.c       |  4 +++-
+ arch/powerpc/mm/mmu_decl.h           | 16 +++++++-------
+ arch/powerpc/mm/nohash/kaslr_booke.c | 33 +++++++++++++++++++++++++---
+ 6 files changed, 59 insertions(+), 13 deletions(-)
 
-Why?  For the MOVE case, kvm_arch_create_memslot() will create a new
-rmap for the "new" memslot.  If the whole procedure succeeded,
-kvm_free_memslot() will free the old rmap.  If it failed,
-kvm_free_memslot() will free the new rmap if !NULL.  Looks fine?
-
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index c150a9d49343..754aeb96bb1c 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -568,7 +568,7 @@ config RELOCATABLE
+ 
+ config RANDOMIZE_BASE
+ 	bool "Randomize the address of the kernel image"
+-	depends on (FSL_BOOKE && FLATMEM && PPC32)
++	depends on (PPC_FSL_BOOK3E && FLATMEM)
+ 	depends on RELOCATABLE
+ 	help
+ 	  Randomizes the virtual address at which the kernel image is
+diff --git a/arch/powerpc/kernel/exceptions-64e.S b/arch/powerpc/kernel/exceptions-64e.S
+index 1b9b174bee86..c1c05b8684ca 100644
+--- a/arch/powerpc/kernel/exceptions-64e.S
++++ b/arch/powerpc/kernel/exceptions-64e.S
+@@ -1378,6 +1378,7 @@ skpinv:	addi	r6,r6,1				/* Increment */
+ 1:	mflr	r6
+ 	addi	r6,r6,(2f - 1b)
+ 	tovirt(r6,r6)
++	add	r6,r6,r19
+ 	lis	r7,MSR_KERNEL@h
+ 	ori	r7,r7,MSR_KERNEL@l
+ 	mtspr	SPRN_SRR0,r6
+@@ -1400,6 +1401,7 @@ skpinv:	addi	r6,r6,1				/* Increment */
+ 
+ 	/* We translate LR and return */
+ 	tovirt(r8,r8)
++	add	r8,r8,r19
+ 	mtlr	r8
+ 	blr
+ 
+@@ -1528,6 +1530,7 @@ a2_tlbinit_code_end:
+  */
+ _GLOBAL(start_initialization_book3e)
+ 	mflr	r28
++	li	r19, 0
+ 
+ 	/* First, we need to setup some initial TLBs to map the kernel
+ 	 * text, data and bss at PAGE_OFFSET. We don't have a real mode
+@@ -1570,6 +1573,12 @@ _GLOBAL(book3e_secondary_core_init)
+ 	cmplwi	r4,0
+ 	bne	2f
+ 
++	li	r19, 0
++#ifdef CONFIG_RANDOMIZE_BASE
++	LOAD_REG_ADDR_PIC(r19, __kaslr_offset)
++	lwz	r19,0(r19)
++	rlwinm  r19,r19,0,0,5
++#endif
+ 	/* Setup TLB for this core */
+ 	bl	initial_tlb_book3e
+ 
+@@ -1602,6 +1611,7 @@ _GLOBAL(book3e_secondary_core_init)
+ 	lis	r3,PAGE_OFFSET@highest
+ 	sldi	r3,r3,32
+ 	or	r28,r28,r3
++	add	r28,r28,r19
+ 1:	mtlr	r28
+ 	blr
+ 
+diff --git a/arch/powerpc/kernel/head_64.S b/arch/powerpc/kernel/head_64.S
+index ad79fddb974d..744624140fb8 100644
+--- a/arch/powerpc/kernel/head_64.S
++++ b/arch/powerpc/kernel/head_64.S
+@@ -104,6 +104,13 @@ __secondary_hold_acknowledge:
+ 	.8byte	0x0
+ 
+ #ifdef CONFIG_RELOCATABLE
++#ifdef CONFIG_RANDOMIZE_BASE
++	. = 0x58
++	.globl	__kaslr_offset
++__kaslr_offset:
++DEFINE_FIXED_SYMBOL(__kaslr_offset)
++	.long	0
++#endif
+ 	/* This flag is set to 1 by a loader if the kernel should run
+ 	 * at the loaded address instead of the linked address.  This
+ 	 * is used by kexec-tools to keep the the kdump kernel in the
+diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
+index 6104917a282d..a16b970a8d1a 100644
+--- a/arch/powerpc/kernel/setup_64.c
++++ b/arch/powerpc/kernel/setup_64.c
+@@ -66,7 +66,7 @@
+ #include <asm/feature-fixups.h>
+ #include <asm/kup.h>
+ #include <asm/early_ioremap.h>
+-
++#include <mm/mmu_decl.h>
+ #include "setup.h"
+ 
+ int spinning_secondaries;
+@@ -300,6 +300,8 @@ void __init early_setup(unsigned long dt_ptr)
+ 	/* Enable early debugging if any specified (see udbg.h) */
+ 	udbg_early_init();
+ 
++	kaslr_early_init(__va(dt_ptr), 0);
++
+ 	udbg_printf(" -> %s(), dt_ptr: 0x%lx\n", __func__, dt_ptr);
+ 
+ 	/*
+diff --git a/arch/powerpc/mm/mmu_decl.h b/arch/powerpc/mm/mmu_decl.h
+index 3e1c85c7d10b..bbd721d1e3d7 100644
+--- a/arch/powerpc/mm/mmu_decl.h
++++ b/arch/powerpc/mm/mmu_decl.h
+@@ -147,14 +147,6 @@ void reloc_kernel_entry(void *fdt, long addr);
+ extern void loadcam_entry(unsigned int index);
+ extern void loadcam_multi(int first_idx, int num, int tmp_idx);
+ 
+-#ifdef CONFIG_RANDOMIZE_BASE
+-void kaslr_early_init(void *dt_ptr, phys_addr_t size);
+-void kaslr_late_init(void);
+-#else
+-static inline void kaslr_early_init(void *dt_ptr, phys_addr_t size) {}
+-static inline void kaslr_late_init(void) {}
+-#endif
+-
+ struct tlbcam {
+ 	u32	MAS0;
+ 	u32	MAS1;
+@@ -164,6 +156,14 @@ struct tlbcam {
+ };
+ #endif
+ 
++#ifdef CONFIG_RANDOMIZE_BASE
++void kaslr_early_init(void *dt_ptr, phys_addr_t size);
++void kaslr_late_init(void);
++#else
++static inline void kaslr_early_init(void *dt_ptr, phys_addr_t size) {}
++static inline void kaslr_late_init(void) {}
++#endif
++
+ #if defined(CONFIG_PPC_BOOK3S_32) || defined(CONFIG_FSL_BOOKE) || defined(CONFIG_PPC_8xx)
+ /* 6xx have BATS */
+ /* FSL_BOOKE have TLBCAM */
+diff --git a/arch/powerpc/mm/nohash/kaslr_booke.c b/arch/powerpc/mm/nohash/kaslr_booke.c
+index 07b036e98353..c6f5c1db1394 100644
+--- a/arch/powerpc/mm/nohash/kaslr_booke.c
++++ b/arch/powerpc/mm/nohash/kaslr_booke.c
+@@ -231,7 +231,7 @@ static __init unsigned long get_usable_address(const void *fdt,
+ 	unsigned long pa;
+ 	unsigned long pa_end;
+ 
+-	for (pa = offset; (long)pa > (long)start; pa -= SZ_16K) {
++	for (pa = offset; (long)pa > (long)start; pa -= SZ_64K) {
+ 		pa_end = pa + regions.kernel_size;
+ 		if (overlaps_region(fdt, pa, pa_end))
+ 			continue;
+@@ -265,14 +265,14 @@ static unsigned long __init kaslr_legal_offset(void *dt_ptr, unsigned long rando
+ {
+ 	unsigned long koffset = 0;
+ 	unsigned long start;
+-	unsigned long index;
+ 	unsigned long offset;
+ 
++#ifdef CONFIG_PPC32
+ 	/*
+ 	 * Decide which 64M we want to start
+ 	 * Only use the low 8 bits of the random seed
+ 	 */
+-	index = random & 0xFF;
++	unsigned long index = random & 0xFF;
+ 	index %= regions.linear_sz / SZ_64M;
+ 
+ 	/* Decide offset inside 64M */
+@@ -287,6 +287,15 @@ static unsigned long __init kaslr_legal_offset(void *dt_ptr, unsigned long rando
+ 			break;
+ 		index--;
+ 	}
++#else
++	/* Decide kernel offset inside 1G */
++	offset = random % (SZ_1G - regions.kernel_size);
++	offset = round_down(offset, SZ_64K);
++
++	start = memstart_addr;
++	offset = memstart_addr + offset;
++	koffset = get_usable_address(dt_ptr, start, offset);
++#endif
+ 
+ 	if (koffset != 0)
+ 		koffset -= memstart_addr;
+@@ -325,6 +334,7 @@ static unsigned long __init kaslr_choose_location(void *dt_ptr, phys_addr_t size
+ 	else
+ 		pr_warn("KASLR: No safe seed for randomizing the kernel base.\n");
+ 
++#ifdef CONFIG_PPC32
+ 	ram = min_t(phys_addr_t, __max_low_memory, size);
+ 	ram = map_mem_in_cams(ram, CONFIG_LOWMEM_CAM_NUM, true);
+ 	linear_sz = min_t(unsigned long, ram, SZ_512M);
+@@ -332,6 +342,7 @@ static unsigned long __init kaslr_choose_location(void *dt_ptr, phys_addr_t size
+ 	/* If the linear size is smaller than 64M, do not randmize */
+ 	if (linear_sz < SZ_64M)
+ 		return 0;
++#endif
+ 
+ 	/* check for a reserved-memory node and record its cell sizes */
+ 	regions.reserved_mem = fdt_path_offset(dt_ptr, "/reserved-memory");
+@@ -363,6 +374,17 @@ notrace void __init kaslr_early_init(void *dt_ptr, phys_addr_t size)
+ 	unsigned long offset;
+ 	unsigned long kernel_sz;
+ 
++#ifdef CONFIG_PPC64
++	unsigned int *__kaslr_offset = (unsigned int *)(KERNELBASE + 0x58);
++	unsigned int *__run_at_load = (unsigned int *)(KERNELBASE + 0x5c);
++
++	if (*__run_at_load == 1)
++		return;
++
++	/* Setup flat device-tree pointer */
++	initial_boot_params = dt_ptr;
++#endif
++
+ 	kernel_sz = (unsigned long)_end - (unsigned long)_stext;
+ 
+ 	offset = kaslr_choose_location(dt_ptr, size, kernel_sz);
+@@ -372,6 +394,7 @@ notrace void __init kaslr_early_init(void *dt_ptr, phys_addr_t size)
+ 	kernstart_virt_addr += offset;
+ 	kernstart_addr += offset;
+ 
++#ifdef CONFIG_PPC32
+ 	is_second_reloc = 1;
+ 
+ 	if (offset >= SZ_64M) {
+@@ -381,6 +404,10 @@ notrace void __init kaslr_early_init(void *dt_ptr, phys_addr_t size)
+ 		/* Create kernel map to relocate in */
+ 		create_kaslr_tlb_entry(1, tlb_virt, tlb_phys);
+ 	}
++#else
++	*__kaslr_offset = kernstart_virt_addr - KERNELBASE;
++	*__run_at_load = 1;
++#endif
+ 
+ 	/* Copy the kernel to it's new location and run */
+ 	memcpy((void *)kernstart_virt_addr, (void *)_stext, kernel_sz);
 -- 
-Peter Xu
+2.17.2
 
