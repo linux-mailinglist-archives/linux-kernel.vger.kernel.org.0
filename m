@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A884153E8B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 07:12:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E66A5153E84
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 07:11:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727957AbgBFGLy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 01:11:54 -0500
-Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:34080 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727851AbgBFGL2 (ORCPT
+        id S1727935AbgBFGLp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 01:11:45 -0500
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:47330 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727868AbgBFGLf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 01:11:28 -0500
-Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
-        by mx0a-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01667JQ5008121;
-        Wed, 5 Feb 2020 22:11:19 -0800
+        Thu, 6 Feb 2020 01:11:35 -0500
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01669B68015929;
+        Wed, 5 Feb 2020 22:11:22 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=proofpoint;
- bh=sWHRG9gt3DTBAVjoT3KBaYz+vpJ/i09QReKXqTkN9bw=;
- b=LIPX6yguc/fTmzYmATinKGwnpyYuz9ns94f3Zmu6o771oEb6PdBTkSbnX/tLFcnARrWQ
- H2m4ZEdyu3cxxBP5jZPYZZ0NcnIpYwcATuWlq5niIQye/5Fm9BR9qG2ZCQIoTjH3HwrX
- 3pl0l/EQwbv/9jI8ddYK8EkvITN/t4SMBpmZJQeUc7V5b8vXxVhpU4yw36WsyjQA7M0s
- XPyODDL8lREJnuzyruJhmMzn/kt+4oMGSW5Nlb2qH8b73lviy3fpuoyXWCId8AwzQgWs
- FkO0Jbg0azsBWb3gSa9P8QTNN6QFbsJYkPxyKRCjdDvQe+FiBDvIK4jOC4/YuT3qIfCH 9w== 
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2109.outbound.protection.outlook.com [104.47.70.109])
-        by mx0a-0014ca01.pphosted.com with ESMTP id 2xyhkv5pje-1
+ bh=kk3tOm4aCUw/SUUyJlpK4OX8AjNHWRFdykf4OxKo3Co=;
+ b=NaPNmmD7uDu27r6S6jKuALfUVZEYNP14j+1qsN3Vi9+JmOra+tts60tVvFvNK0f5X+Qt
+ S3+pVb0ByMDDvxPbk4o/PlvFk00nVmkSTz5Qtpa0npVvzF4unu+PAgGEkCPzdKpeg+UM
+ kB9Ag0i+kaArQi7nXF/2xR8S5snNuA/STxD5avUMuGEdFc0BN5Cu2Y+2xiyKWDRv917F
+ oJSKyZZWWXPz+pgAYRDwC/G1wqIgBZ1a+zPvnzv7ITZacaf5AsxInqr3G0sjwe8uRvo5
+ wl5PV2t9Hi8YGewJD2r/jsmPyeGiTdze2JH70Vj3BhdmwiXrI78KXE8vTO9of/+9Hitw fA== 
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2106.outbound.protection.outlook.com [104.47.58.106])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2xyhkunrb7-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Feb 2020 22:11:19 -0800
+        Wed, 05 Feb 2020 22:11:22 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZiNYn4663WP+Lw4w0bF/nUe7yBE0DyZQd4hgERmGtkDOK4XByKh2WM33JpvpYpZcuoLZB/bdbkqHJjtEU6CHOEV+eGBNmTTM8SRlOLl5FK/NXrWM07UXnDOJvRW/c3TD9+kgZ0Y/Kd3sry+2j3TAvmrA+di8KOG0135n6G3aM3H1YEqpjifL/931Y01Hugds9oWF/Z4rDBNKQKp9DuecSshulUNKDdzbUJ/Q6xOPmzJIzn3QdIeMbCNezaEo9Hz2JgGI3wxVse5AtuBKv8o2u4PbjVmBoFF6hXSIC9aaab37YNRHonkzCcZZxKNUu4/8vnyQ7rG4jS5IfqbRJc7qrQ==
+ b=aYaRbpoQqjXlSh56NMh/0OkdrO4o3J44mfkNkTYQ5fCLV1c5+K5RVJ3BClqGiGXeW8gFKSnACv/GJt8HpBwR4XJcC+92LUmL8EXyYPTzNIwJf0OcoDGf1n8Qy36SEfwcdfyZ1UQqWyYOr82jB2GIsmbKIn1OhiqX4a09U4RswT3ltcS91E7vqOPaE5Pg1WB2TovmbbgXk9aXS20UbR01mQnJpD7sm4O3AR9Z+vCuPYt6o6AobIjgGu89QtO3njOanxr9WWa/zPiROXWy6PHuGPohJztFzRdYvNNMYvL1Y8hap40BnOv+MmJbtN1nZlXL4AWi9i4NkrDOQUHbu5rR4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sWHRG9gt3DTBAVjoT3KBaYz+vpJ/i09QReKXqTkN9bw=;
- b=XDidZr7DnjWkuRX66meQi88OMM1ZmcfT6xb7m4f5ygIdRICpRqzy2I2h+T6BbHXD4lZhE6rQsHXFvXl48/71ehbHe+1qTgmsO+XqBpFiEL5VzqxnnvtZIpF1Fx6q64MdNSHr1rf+VHfK3hOfRN06d5cmowP85Mmkdnj4HOVG32//Qm71u4ZXx+h+U+99MnYw+2WWGzwgtFsiHmEp/N71vFpDc5pflNQ1gVEYq5sjkR4mRSLi6nut3uBSeaYAsP4Mp6iiGNuqLA+alAcg6Q6JpIdQfvLqE/YriAs2zQd6tiJX0M857hWv1O9MXQ4OxL+arzOsSrLDgOnb9wPflzMTfA==
+ bh=kk3tOm4aCUw/SUUyJlpK4OX8AjNHWRFdykf4OxKo3Co=;
+ b=dqGob7bVRZEadYjTMUUGqFKWRhwOcA9CdPXTIqbkC/TEuStPPBtlikuI+O/XYo1zPUvIrcHqSsdZ+eZPAeq8qUAXrDHCh/Ayup0ODpxppHXhiN+ypUre4sZI8sFF0MJbk9Dcp2FipEhMOlBVMPgvA8J0nSt4Iv+yh0Q6mypJ3qWvwcesm6Tye7E7dEvxzSRfQlKhVi5jTGyOTFjjFcwK+cdF8vPFHErlhPt0f+ZK7eaxknbrV4P01vS1heXL1HKSBNMGfI3ZuwE1UdMoCfFVTsnLZ5kKqwsOkf2hizUylVIk8m2yShrCF/aKHqAWJKj2STtCDUaK9/jLD2qPaZq3EA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  64.207.220.243) smtp.rcpttodomain=ti.com smtp.mailfrom=cadence.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=cadence.com;
@@ -42,41 +42,41 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sWHRG9gt3DTBAVjoT3KBaYz+vpJ/i09QReKXqTkN9bw=;
- b=aj93KpvoCc4Ps6BTE9AU4mKH1Bw8aWFuZ48WCUWHKJNnJrOWYUHdGpx/NdtULB9j5gLsFBZljklltCnpwOI8gGk8qd6uXrHUeJ31NPxc3zp2QmWCJ2pVufHSUcx3nMnxuFZN3yxJvqM5v8GRcVE5QElrO5CkCsyU/hlfjBaGEis=
-Received: from BYAPR07CA0081.namprd07.prod.outlook.com (2603:10b6:a03:12b::22)
- by BYAPR07MB5160.namprd07.prod.outlook.com (2603:10b6:a03:62::19) with
+ bh=kk3tOm4aCUw/SUUyJlpK4OX8AjNHWRFdykf4OxKo3Co=;
+ b=o75/CfrpyRHmNsd8JrNhefDDxzby+YNPm3d9sRshSzHAHGoOhFoS2MyOgRTUEbAkcuXqwOphFCFdoYlzO1h/RKjPF7AQa/CjTrGVV0Oed2SST7RX7BR29WNQzd0ezz5o0Y05t5xWGeOANBoPAFpbYA/3G+wIw2O6z5h4COaDD8U=
+Received: from BYAPR07CA0045.namprd07.prod.outlook.com (2603:10b6:a03:60::22)
+ by SN6PR07MB5184.namprd07.prod.outlook.com (2603:10b6:805:70::25) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2707.21; Thu, 6 Feb
- 2020 06:11:14 +0000
-Received: from MW2NAM12FT065.eop-nam12.prod.protection.outlook.com
- (2a01:111:f400:fe5a::202) by BYAPR07CA0081.outlook.office365.com
- (2603:10b6:a03:12b::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2686.32; Thu, 6 Feb
+ 2020 06:11:18 +0000
+Received: from MW2NAM12FT020.eop-nam12.prod.protection.outlook.com
+ (2a01:111:f400:fe5a::201) by BYAPR07CA0045.outlook.office365.com
+ (2603:10b6:a03:60::22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2707.21 via Frontend
- Transport; Thu, 6 Feb 2020 06:11:14 +0000
+ Transport; Thu, 6 Feb 2020 06:11:18 +0000
 Received-SPF: Pass (protection.outlook.com: domain of cadence.com designates
  64.207.220.243 as permitted sender) receiver=protection.outlook.com;
  client-ip=64.207.220.243; helo=wcmailrelayl01.cadence.com;
 Received: from wcmailrelayl01.cadence.com (64.207.220.243) by
- MW2NAM12FT065.mail.protection.outlook.com (10.13.180.181) with Microsoft SMTP
+ MW2NAM12FT020.mail.protection.outlook.com (10.13.180.87) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2729.10 via Frontend Transport; Thu, 6 Feb 2020 06:11:14 +0000
+ 15.20.2729.10 via Frontend Transport; Thu, 6 Feb 2020 06:11:16 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by wcmailrelayl01.cadence.com (8.14.7/8.14.4) with ESMTP id 0166B5F7174490
+        by wcmailrelayl01.cadence.com (8.14.7/8.14.4) with ESMTP id 0166B5FA174490
         (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=OK);
-        Wed, 5 Feb 2020 22:11:13 -0800
+        Wed, 5 Feb 2020 22:11:15 -0800
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Thu, 6 Feb 2020 07:11:03 +0100
+ 15.0.1367.3; Thu, 6 Feb 2020 07:11:04 +0100
 Received: from vleu-orange.cadence.com (10.160.88.83) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
  15.0.1367.3 via Frontend Transport; Thu, 6 Feb 2020 07:11:03 +0100
 Received: from vleu-orange.cadence.com (localhost.localdomain [127.0.0.1])
-        by vleu-orange.cadence.com (8.14.4/8.14.4) with ESMTP id 0166B3EI017050;
+        by vleu-orange.cadence.com (8.14.4/8.14.4) with ESMTP id 0166B3Qj017055;
         Thu, 6 Feb 2020 07:11:03 +0100
 Received: (from yamonkar@localhost)
-        by vleu-orange.cadence.com (8.14.4/8.14.4/Submit) id 0166B3Tg017049;
+        by vleu-orange.cadence.com (8.14.4/8.14.4/Submit) id 0166B3gC017054;
         Thu, 6 Feb 2020 07:11:03 +0100
 From:   Yuti Amonkar <yamonkar@cadence.com>
 To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
@@ -85,9 +85,9 @@ To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
 CC:     <jsarha@ti.com>, <tomi.valkeinen@ti.com>, <praneeth@ti.com>,
         <mparab@cadence.com>, <sjakhade@cadence.com>,
         <yamonkar@cadence.com>
-Subject: [PATCH v4 07/13] phy: cadence-torrent: Refactor code for reusability
-Date:   Thu, 6 Feb 2020 07:10:55 +0100
-Message-ID: <1580969461-16981-8-git-send-email-yamonkar@cadence.com>
+Subject: [PATCH v4 08/13] phy: cadence-torrent: Add 19.2 MHz reference clock support
+Date:   Thu, 6 Feb 2020 07:10:56 +0100
+Message-ID: <1580969461-16981-9-git-send-email-yamonkar@cadence.com>
 X-Mailer: git-send-email 2.4.5
 In-Reply-To: <1580969461-16981-1-git-send-email-yamonkar@cadence.com>
 References: <1580969461-16981-1-git-send-email-yamonkar@cadence.com>
@@ -95,30 +95,30 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:64.207.220.243;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(39860400002)(136003)(376002)(396003)(36092001)(189003)(199004)(110136005)(336012)(26005)(36756003)(36906005)(54906003)(42186006)(70586007)(86362001)(356004)(6666004)(316002)(5660300002)(426003)(2616005)(70206006)(478600001)(81156014)(81166006)(8936002)(2906002)(8676002)(4326008)(186003)(107886003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB5160;H:wcmailrelayl01.cadence.com;FPR:;SPF:Pass;LANG:en;PTR:unused.mynethost.com;MX:1;A:1;
+X-Forefront-Antispam-Report: CIP:64.207.220.243;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(39860400002)(346002)(136003)(36092001)(189003)(199004)(426003)(70206006)(70586007)(110136005)(54906003)(336012)(2906002)(5660300002)(4326008)(107886003)(2616005)(36756003)(478600001)(8676002)(81166006)(8936002)(356004)(30864003)(6666004)(316002)(42186006)(36906005)(26005)(186003)(81156014)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR07MB5184;H:wcmailrelayl01.cadence.com;FPR:;SPF:Pass;LANG:en;PTR:ErrorRetry;MX:1;A:1;
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 059250c5-9b2a-4981-5987-08d7aacb5eec
-X-MS-TrafficTypeDiagnostic: BYAPR07MB5160:
-X-Microsoft-Antispam-PRVS: <BYAPR07MB51605A93D56BBAE7CB72DFF8D21D0@BYAPR07MB5160.namprd07.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1060;
+X-MS-Office365-Filtering-Correlation-Id: 7502399b-e66b-4ac1-4d43-08d7aacb6004
+X-MS-TrafficTypeDiagnostic: SN6PR07MB5184:
+X-Microsoft-Antispam-PRVS: <SN6PR07MB51841D6468DA9C4E3A05B9B4D21D0@SN6PR07MB5184.namprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2043;
 X-Forefront-PRVS: 0305463112
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Y3cRj6M9tWwrnUzw04FH9Z1mGJ1BJi9tR7k8OHtmXEbFzw3O1u2j1Bi6/inYpKRphRoQUfDsPp5ABFrkSjsz1ac73L0QQJClBbItR/dZaMElr4+SbDbZuL28zIvknm3/YOy8Drlguez+Af4V4VUmv7YmOI1qNkR6YRhaSDmzUwbWBnokzSSLgGcxev/a2CR907cs3THG8Pt4pN215vtQfWA2tkgcb8Q3nG/OzcUw9uz0lAL1QzfYCF7u9iatvcI7U6zcsC1kJbmMivwHPASkNDQXLIjavnv3lnE3jtmFsvSslUyryyN1mAtwE0MKVgBdfD5VzL8Dwsnud3YaJYYYNH5cMhKIHYlm6CoX1fgl1kQTFDd1gs2/O80m24Gu6DoIFEVBO4uPUqcGHbNetYWKFjU6AsU9EAx+UxSY2lmCLZRftOXkyMntAAops5fxPNoig6hugUjWkHZ5hbyKnMDEgOv/W8k9Aw9+AOC/1JdC8eutcOXEKB+YryPEUZ28TVhs
+X-Microsoft-Antispam-Message-Info: aUL1HqmjHWgf30LV9zqAxQ8vS85tLKa/fedz6+0z8FflUt0auEKtJs9C3pDazNYjm64/txU83kHbZbah3eT7xYbcML1ei6jwE9FeEFh1UC9Fb5MR+9FOiI26uLkZWiwsMN2XT39Y4a/xZeJeOlyXJY0TD8qe3ODcVRYQ+spQoS2Wh4eg0cYIL2P/4UaE05uNAgbkAbnnyGaxnbtlocqP1iDisRDJB36yWO9runZbGfsdts/mylmR5x9bl2XrrsfVaBNZxuzadhyk37GBx6tOWpD2q7bcDdzWNd+STscRR8VdbdTK5r5q8ChFlNj9iQSUT7ud2CjvW8gQwByW8pH0be1xPo+eUfKgMSzpRQv77CY8FSwgIJqkf3RXfF9ss4liTfaou2V8maHY44xEJbB3CYF+OPYRfo+7xtvEkmag/B8PQHuWQIVCo5ZoTqSPU1m72unpxb6HZ+UghyGcpN5PnKb/L2/mVK/4YrxLMqs03uY1iXZizU+1AbppFf3GrV91
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2020 06:11:14.3285
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2020 06:11:16.1622
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 059250c5-9b2a-4981-5987-08d7aacb5eec
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7502399b-e66b-4ac1-4d43-08d7aacb6004
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[64.207.220.243];Helo=[wcmailrelayl01.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB5160
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR07MB5184
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-02-05_06:2020-02-04,2020-02-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0 mlxscore=0
- lowpriorityscore=0 adultscore=0 clxscore=1015 mlxlogscore=999 phishscore=0
- suspectscore=0 impostorscore=0 spamscore=0 bulkscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ lowpriorityscore=0 malwarescore=0 mlxscore=0 impostorscore=0 bulkscore=0
+ priorityscore=1501 phishscore=0 mlxlogscore=999 clxscore=1015 adultscore=0
+ spamscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2001150001 definitions=main-2002060048
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -127,332 +127,688 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Swapnil Jakhade <sjakhade@cadence.com>
 
-Add a separate function to set different power state values.
-Use uniform polling timeout value. Also check return values
-of functions for proper error handling.
+Add configuration functions for 19.2 MHz refclock support.
+Add register configurations for SSC support.
 
 Signed-off-by: Swapnil Jakhade <sjakhade@cadence.com>
 Signed-off-by: Yuti Amonkar <yamonkar@cadence.com>
 ---
- drivers/phy/cadence/phy-cadence-torrent.c | 230 +++++++++++++---------
- 1 file changed, 137 insertions(+), 93 deletions(-)
+ drivers/phy/cadence/phy-cadence-torrent.c | 458 +++++++++++++++++++++-
+ 1 file changed, 441 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/phy/cadence/phy-cadence-torrent.c b/drivers/phy/cadence/phy-cadence-torrent.c
-index 5c7c185ddbfe..b180fbaa3f12 100644
+index b180fbaa3f12..1596d2c8cfc2 100644
 --- a/drivers/phy/cadence/phy-cadence-torrent.c
 +++ b/drivers/phy/cadence/phy-cadence-torrent.c
-@@ -22,7 +22,7 @@
+@@ -6,6 +6,7 @@
+  *
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+@@ -18,7 +19,10 @@
+ #include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
+ 
+-#define DEFAULT_NUM_LANES	2
++#define REF_CLK_19_2MHz		19200000
++#define REF_CLK_25MHz		25000000
++
++#define DEFAULT_NUM_LANES	4
  #define MAX_NUM_LANES		4
  #define DEFAULT_MAX_BIT_RATE	8100 /* in Mbps */
  
--#define POLL_TIMEOUT_US		2000
-+#define POLL_TIMEOUT_US		5000
- #define LANE_MASK		0x7
+@@ -58,6 +62,7 @@
+ #define CMN_BGCAL_INIT_TMR		0x00190
+ #define CMN_BGCAL_ITER_TMR		0x00194
+ #define CMN_IBCAL_INIT_TMR		0x001d0
++#define CMN_PLL0_VCOCAL_TCTRL		0x00208
+ #define CMN_PLL0_VCOCAL_INIT_TMR	0x00210
+ #define CMN_PLL0_VCOCAL_ITER_TMR	0x00214
+ #define CMN_PLL0_VCOCAL_REFTIM_START	0x00218
+@@ -67,10 +72,30 @@
+ #define CMN_PLL0_FRACDIVH_M0		0x00248
+ #define CMN_PLL0_HIGH_THR_M0		0x0024c
+ #define CMN_PLL0_DSM_DIAG_M0		0x00250
++#define CMN_PLL0_SS_CTRL1_M0		0x00260
++#define CMN_PLL0_SS_CTRL2_M0            0x00264
++#define CMN_PLL0_SS_CTRL3_M0            0x00268
++#define CMN_PLL0_SS_CTRL4_M0            0x0026C
++#define CMN_PLL0_LOCK_REFCNT_START      0x00270
+ #define CMN_PLL0_LOCK_PLLCNT_START	0x00278
++#define CMN_PLL0_LOCK_PLLCNT_THR        0x0027C
++#define CMN_PLL1_VCOCAL_TCTRL		0x00308
+ #define CMN_PLL1_VCOCAL_INIT_TMR	0x00310
+ #define CMN_PLL1_VCOCAL_ITER_TMR	0x00314
++#define CMN_PLL1_VCOCAL_REFTIM_START	0x00318
++#define CMN_PLL1_VCOCAL_PLLCNT_START	0x00320
++#define CMN_PLL1_INTDIV_M0		0x00340
++#define CMN_PLL1_FRACDIVL_M0		0x00344
++#define CMN_PLL1_FRACDIVH_M0		0x00348
++#define CMN_PLL1_HIGH_THR_M0		0x0034c
+ #define CMN_PLL1_DSM_DIAG_M0		0x00350
++#define CMN_PLL1_SS_CTRL1_M0		0x00360
++#define CMN_PLL1_SS_CTRL2_M0            0x00364
++#define CMN_PLL1_SS_CTRL3_M0            0x00368
++#define CMN_PLL1_SS_CTRL4_M0            0x0036C
++#define CMN_PLL1_LOCK_REFCNT_START      0x00370
++#define CMN_PLL1_LOCK_PLLCNT_START	0x00378
++#define CMN_PLL1_LOCK_PLLCNT_THR        0x0037C
+ #define CMN_TXPUCAL_INIT_TMR		0x00410
+ #define CMN_TXPUCAL_ITER_TMR		0x00414
+ #define CMN_TXPDCAL_INIT_TMR		0x00430
+@@ -88,18 +113,30 @@
+ #define CMN_PDIAG_PLL0_FILT_PADJ_M0	0x00698
+ #define CMN_PDIAG_PLL0_CP_PADJ_M1	0x006d0
+ #define CMN_PDIAG_PLL0_CP_IADJ_M1	0x006d4
++#define CMN_PDIAG_PLL1_CTRL_M0		0x00700
+ #define CMN_PDIAG_PLL1_CLK_SEL_M0	0x00704
++#define CMN_PDIAG_PLL1_CP_PADJ_M0	0x00710
++#define CMN_PDIAG_PLL1_CP_IADJ_M0	0x00714
++#define CMN_PDIAG_PLL1_FILT_PADJ_M0	0x00718
++
+ #define XCVR_DIAG_PLLDRC_CTRL		0x10394
+ #define XCVR_DIAG_HSCLK_SEL		0x10398
+ #define XCVR_DIAG_HSCLK_DIV		0x1039c
++#define XCVR_DIAG_BIDI_CTRL		0x103a8
+ #define TX_PSC_A0			0x10400
+ #define TX_PSC_A1			0x10404
+ #define TX_PSC_A2			0x10408
+ #define TX_PSC_A3			0x1040c
++#define TX_RCVDET_ST_TMR		0x1048c
+ #define RX_PSC_A0			0x20000
+ #define RX_PSC_A1			0x20004
+ #define RX_PSC_A2			0x20008
+ #define RX_PSC_A3			0x2000c
++#define RX_PSC_CAL			0x20018
++#define RX_REE_GCSM1_CTRL		0x20420
++#define RX_REE_GCSM2_CTRL		0x20440
++#define RX_REE_PERGCSM_CTRL		0x20460
++
+ #define PHY_PLL_CFG			0x30038
  
- /*
-@@ -39,6 +39,7 @@
- #define PHY_POWER_STATE_LN_1	0x0008
- #define PHY_POWER_STATE_LN_2	0x0010
- #define PHY_POWER_STATE_LN_3	0x0018
-+#define PMA_XCVR_POWER_STATE_REQ_LN_MASK	0x3FU
- #define PHY_PMA_XCVR_POWER_STATE_ACK	0x30
- #define PHY_PMA_CMN_READY		0x34
- #define PHY_PMA_XCVR_TX_VMARGIN		0x38
-@@ -109,10 +110,17 @@ struct cdns_torrent_phy {
+ struct cdns_torrent_phy {
+@@ -108,6 +145,8 @@ struct cdns_torrent_phy {
+ 	u32 num_lanes; /* Number of lanes to use */
+ 	u32 max_bit_rate; /* Maximum link bit rate to use (in Mbps) */
  	struct device *dev;
++	struct clk *clk;
++	unsigned long ref_clk_rate;
  };
  
-+enum phy_powerstate {
-+	POWERSTATE_A0 = 0,
-+	/* Powerstate A1 is unused */
-+	POWERSTATE_A2 = 2,
-+	POWERSTATE_A3 = 3,
-+};
-+
+ enum phy_powerstate {
+@@ -118,17 +157,25 @@ enum phy_powerstate {
+ };
+ 
  static int cdns_torrent_dp_init(struct phy *phy);
--static void cdns_torrent_dp_run(struct cdns_torrent_phy *cdns_phy);
-+static int cdns_torrent_dp_run(struct cdns_torrent_phy *cdns_phy);
++static int cdns_torrent_dp_exit(struct phy *phy);
+ static int cdns_torrent_dp_run(struct cdns_torrent_phy *cdns_phy);
  static
--void cdns_torrent_dp_wait_pma_cmn_ready(struct cdns_torrent_phy *cdns_phy);
-+int cdns_torrent_dp_wait_pma_cmn_ready(struct cdns_torrent_phy *cdns_phy);
+ int cdns_torrent_dp_wait_pma_cmn_ready(struct cdns_torrent_phy *cdns_phy);
  static void cdns_torrent_dp_pma_cfg(struct cdns_torrent_phy *cdns_phy);
  static
++void cdns_torrent_dp_pma_cmn_cfg_19_2mhz(struct cdns_torrent_phy *cdns_phy);
++static
++void cdns_torrent_dp_pma_cmn_vco_cfg_19_2mhz(struct cdns_torrent_phy *cdns_phy,
++					     u32 rate, bool ssc);
++static
  void cdns_torrent_dp_pma_cmn_cfg_25mhz(struct cdns_torrent_phy *cdns_phy);
-@@ -158,9 +166,46 @@ static u32 cdns_torrent_dp_read(struct cdns_torrent_phy *cdns_phy, u32 offset)
- 	readl_poll_timeout((cdns_phy)->base + (offset), \
- 			   val, cond, delay_us, timeout_us)
++static
++void cdns_torrent_dp_pma_cmn_vco_cfg_25mhz(struct cdns_torrent_phy *cdns_phy,
++					   u32 rate, bool ssc);
+ static void cdns_torrent_dp_pma_lane_cfg(struct cdns_torrent_phy *cdns_phy,
+ 					 unsigned int lane);
+-static
+-void cdns_torrent_dp_pma_cmn_vco_cfg_25mhz(struct cdns_torrent_phy *cdns_phy);
+-static void cdns_torrent_dp_pma_cmn_rate(struct cdns_torrent_phy *cdns_phy);
++static void cdns_torrent_dp_pma_cmn_rate(struct cdns_torrent_phy *cdns_phy,
++					 u32 rate, u32 num_lanes);
+ static void cdns_dp_phy_write_field(struct cdns_torrent_phy *cdns_phy,
+ 				    unsigned int offset,
+ 				    unsigned char start_bit,
+@@ -137,6 +184,7 @@ static void cdns_dp_phy_write_field(struct cdns_torrent_phy *cdns_phy,
  
-+/* Set power state A0 and PLL clock enable to 0 on enabled lanes. */
-+static void cdns_torrent_dp_set_a0_pll(struct cdns_torrent_phy *cdns_phy,
-+				       u32 num_lanes)
-+{
-+	u32 pwr_state = cdns_torrent_dp_read(cdns_phy,
-+					     PHY_PMA_XCVR_POWER_STATE_REQ);
-+	u32 pll_clk_en = cdns_torrent_dp_read(cdns_phy,
-+					      PHY_PMA_XCVR_PLLCLK_EN);
-+
-+	/* Lane 0 is always enabled. */
-+	pwr_state &= ~(PMA_XCVR_POWER_STATE_REQ_LN_MASK <<
-+		       PHY_POWER_STATE_LN_0);
-+	pll_clk_en &= ~0x01U;
-+
-+	if (num_lanes > 1) {
-+		/* lane 1 */
-+		pwr_state &= ~(PMA_XCVR_POWER_STATE_REQ_LN_MASK <<
-+			       PHY_POWER_STATE_LN_1);
-+		pll_clk_en &= ~(0x01U << 1);
-+	}
-+
-+	if (num_lanes > 2) {
-+		/* lanes 2 and 3 */
-+		pwr_state &= ~(PMA_XCVR_POWER_STATE_REQ_LN_MASK <<
-+			       PHY_POWER_STATE_LN_2);
-+		pwr_state &= ~(PMA_XCVR_POWER_STATE_REQ_LN_MASK <<
-+			       PHY_POWER_STATE_LN_3);
-+		pll_clk_en &= ~(0x01U << 2);
-+		pll_clk_en &= ~(0x01U << 3);
-+	}
-+
-+	cdns_torrent_dp_write(cdns_phy,
-+			      PHY_PMA_XCVR_POWER_STATE_REQ, pwr_state);
-+	cdns_torrent_dp_write(cdns_phy, PHY_PMA_XCVR_PLLCLK_EN, pll_clk_en);
-+}
-+
- static int cdns_torrent_dp_init(struct phy *phy)
- {
- 	unsigned char lane_bits;
-+	int ret;
+ static const struct phy_ops cdns_torrent_phy_ops = {
+ 	.init		= cdns_torrent_dp_init,
++	.exit		= cdns_torrent_dp_exit,
+ 	.owner		= THIS_MODULE,
+ };
+ 
+@@ -209,6 +257,29 @@ static int cdns_torrent_dp_init(struct phy *phy)
  
  	struct cdns_torrent_phy *cdns_phy = phy_get_drvdata(phy);
  
-@@ -173,40 +218,7 @@ static int cdns_torrent_dp_init(struct phy *phy)
- 	 * Set lines power state to A0
- 	 * Set lines pll clk enable to 0
- 	 */
--
--	cdns_dp_phy_write_field(cdns_phy, PHY_PMA_XCVR_POWER_STATE_REQ,
--				PHY_POWER_STATE_LN_0, 6, 0x0000);
--
--	if (cdns_phy->num_lanes >= 2) {
--		cdns_dp_phy_write_field(cdns_phy,
--					PHY_PMA_XCVR_POWER_STATE_REQ,
--					PHY_POWER_STATE_LN_1, 6, 0x0000);
--
--		if (cdns_phy->num_lanes == 4) {
--			cdns_dp_phy_write_field(cdns_phy,
--						PHY_PMA_XCVR_POWER_STATE_REQ,
--						PHY_POWER_STATE_LN_2, 6, 0);
--			cdns_dp_phy_write_field(cdns_phy,
--						PHY_PMA_XCVR_POWER_STATE_REQ,
--						PHY_POWER_STATE_LN_3, 6, 0);
--		}
--	}
--
--	cdns_dp_phy_write_field(cdns_phy, PHY_PMA_XCVR_PLLCLK_EN,
--				0, 1, 0x0000);
--
--	if (cdns_phy->num_lanes >= 2) {
--		cdns_dp_phy_write_field(cdns_phy, PHY_PMA_XCVR_PLLCLK_EN,
--					1, 1, 0x0000);
--		if (cdns_phy->num_lanes == 4) {
--			cdns_dp_phy_write_field(cdns_phy,
--						PHY_PMA_XCVR_PLLCLK_EN,
--						2, 1, 0x0000);
--			cdns_dp_phy_write_field(cdns_phy,
--						PHY_PMA_XCVR_PLLCLK_EN,
--						3, 1, 0x0000);
--		}
--	}
-+	cdns_torrent_dp_set_a0_pll(cdns_phy, cdns_phy->num_lanes);
++	ret = clk_prepare_enable(cdns_phy->clk);
++	if (ret) {
++		dev_err(cdns_phy->dev, "Failed to prepare ref clock\n");
++		return ret;
++	}
++
++	cdns_phy->ref_clk_rate = clk_get_rate(cdns_phy->clk);
++	if (!(cdns_phy->ref_clk_rate)) {
++		dev_err(cdns_phy->dev, "Failed to get ref clock rate\n");
++		clk_disable_unprepare(cdns_phy->clk);
++		return -EINVAL;
++	}
++
++	switch (cdns_phy->ref_clk_rate) {
++	case REF_CLK_19_2MHz:
++	case REF_CLK_25MHz:
++		/* Valid Ref Clock Rate */
++		break;
++	default:
++		dev_err(cdns_phy->dev, "Unsupported Ref Clock Rate\n");
++		return -EINVAL;
++	}
++
+ 	cdns_torrent_dp_write(cdns_phy, PHY_AUX_CTRL, 0x0003); /* enable AUX */
  
- 	/*
- 	 * release phy_l0*_reset_n and pma_tx_elec_idle_ln_* based on
-@@ -225,23 +237,31 @@ static int cdns_torrent_dp_init(struct phy *phy)
+ 	/* PHY PMA registers configuration function */
+@@ -232,8 +303,17 @@ static int cdns_torrent_dp_init(struct phy *phy)
+ 	cdns_torrent_dp_write(cdns_phy, PHY_PMA_XCVR_PLLCLK_EN, 0x0001);
+ 
+ 	/* PHY PMA registers configuration functions */
+-	cdns_torrent_dp_pma_cmn_vco_cfg_25mhz(cdns_phy);
+-	cdns_torrent_dp_pma_cmn_rate(cdns_phy);
++	/* Initialize PHY with max supported link rate, without SSC. */
++	if (cdns_phy->ref_clk_rate == REF_CLK_19_2MHz)
++		cdns_torrent_dp_pma_cmn_vco_cfg_19_2mhz(cdns_phy,
++							cdns_phy->max_bit_rate,
++							false);
++	else if (cdns_phy->ref_clk_rate == REF_CLK_25MHz)
++		cdns_torrent_dp_pma_cmn_vco_cfg_25mhz(cdns_phy,
++						      cdns_phy->max_bit_rate,
++						      false);
++	cdns_torrent_dp_pma_cmn_rate(cdns_phy, cdns_phy->max_bit_rate,
++				     cdns_phy->num_lanes);
  
  	/* take out of reset */
  	cdns_dp_phy_write_field(cdns_phy, PHY_RESET, 8, 1, 1);
--	cdns_torrent_dp_wait_pma_cmn_ready(cdns_phy);
--	cdns_torrent_dp_run(cdns_phy);
-+	ret = cdns_torrent_dp_wait_pma_cmn_ready(cdns_phy);
-+	if (ret)
-+		return ret;
+@@ -246,6 +326,14 @@ static int cdns_torrent_dp_init(struct phy *phy)
+ 	return ret;
+ }
  
--	return 0;
-+	ret = cdns_torrent_dp_run(cdns_phy);
++static int cdns_torrent_dp_exit(struct phy *phy)
++{
++	struct cdns_torrent_phy *cdns_phy = phy_get_drvdata(phy);
 +
-+	return ret;
++	clk_disable_unprepare(cdns_phy->clk);
++	return 0;
++}
++
+ static
+ int cdns_torrent_dp_wait_pma_cmn_ready(struct cdns_torrent_phy *cdns_phy)
+ {
+@@ -268,14 +356,237 @@ static void cdns_torrent_dp_pma_cfg(struct cdns_torrent_phy *cdns_phy)
+ {
+ 	unsigned int i;
+ 
+-	/* PMA common configuration */
+-	cdns_torrent_dp_pma_cmn_cfg_25mhz(cdns_phy);
++	if (cdns_phy->ref_clk_rate == REF_CLK_19_2MHz)
++		/* PMA common configuration 19.2MHz */
++		cdns_torrent_dp_pma_cmn_cfg_19_2mhz(cdns_phy);
++	else if (cdns_phy->ref_clk_rate == REF_CLK_25MHz)
++		/* PMA common configuration 25MHz */
++		cdns_torrent_dp_pma_cmn_cfg_25mhz(cdns_phy);
+ 
+ 	/* PMA lane configuration to deal with multi-link operation */
+ 	for (i = 0; i < cdns_phy->num_lanes; i++)
+ 		cdns_torrent_dp_pma_lane_cfg(cdns_phy, i);
+ }
+ 
++static
++void cdns_torrent_dp_pma_cmn_cfg_19_2mhz(struct cdns_torrent_phy *cdns_phy)
++{
++	/* refclock registers - assumes 19.2 MHz refclock */
++	cdns_torrent_phy_write(cdns_phy, CMN_SSM_BIAS_TMR, 0x0014);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLLSM0_PLLPRE_TMR, 0x0027);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLLSM0_PLLLOCK_TMR, 0x00A1);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLLSM1_PLLPRE_TMR, 0x0027);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLLSM1_PLLLOCK_TMR, 0x00A1);
++	cdns_torrent_phy_write(cdns_phy, CMN_BGCAL_INIT_TMR, 0x0060);
++	cdns_torrent_phy_write(cdns_phy, CMN_BGCAL_ITER_TMR, 0x0060);
++	cdns_torrent_phy_write(cdns_phy, CMN_IBCAL_INIT_TMR, 0x0014);
++	cdns_torrent_phy_write(cdns_phy, CMN_TXPUCAL_INIT_TMR, 0x0018);
++	cdns_torrent_phy_write(cdns_phy, CMN_TXPUCAL_ITER_TMR, 0x0005);
++	cdns_torrent_phy_write(cdns_phy, CMN_TXPDCAL_INIT_TMR, 0x0018);
++	cdns_torrent_phy_write(cdns_phy, CMN_TXPDCAL_ITER_TMR, 0x0005);
++	cdns_torrent_phy_write(cdns_phy, CMN_RXCAL_INIT_TMR, 0x0240);
++	cdns_torrent_phy_write(cdns_phy, CMN_RXCAL_ITER_TMR, 0x0005);
++	cdns_torrent_phy_write(cdns_phy, CMN_SD_CAL_INIT_TMR, 0x0002);
++	cdns_torrent_phy_write(cdns_phy, CMN_SD_CAL_ITER_TMR, 0x0002);
++	cdns_torrent_phy_write(cdns_phy, CMN_SD_CAL_REFTIM_START, 0x000B);
++	cdns_torrent_phy_write(cdns_phy, CMN_SD_CAL_PLLCNT_START, 0x0137);
++
++	/* PLL registers */
++	cdns_torrent_phy_write(cdns_phy, CMN_PDIAG_PLL0_CP_PADJ_M0, 0x0509);
++	cdns_torrent_phy_write(cdns_phy, CMN_PDIAG_PLL0_CP_IADJ_M0, 0x0F00);
++	cdns_torrent_phy_write(cdns_phy, CMN_PDIAG_PLL0_FILT_PADJ_M0, 0x0F08);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_DSM_DIAG_M0, 0x0004);
++	cdns_torrent_phy_write(cdns_phy, CMN_PDIAG_PLL1_CP_PADJ_M0, 0x0509);
++	cdns_torrent_phy_write(cdns_phy, CMN_PDIAG_PLL1_CP_IADJ_M0, 0x0F00);
++	cdns_torrent_phy_write(cdns_phy, CMN_PDIAG_PLL1_FILT_PADJ_M0, 0x0F08);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_DSM_DIAG_M0, 0x0004);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_VCOCAL_INIT_TMR, 0x00C0);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_VCOCAL_ITER_TMR, 0x0004);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_VCOCAL_INIT_TMR, 0x00C0);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_VCOCAL_ITER_TMR, 0x0004);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_VCOCAL_REFTIM_START, 0x0260);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_VCOCAL_TCTRL, 0x0003);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_VCOCAL_REFTIM_START, 0x0260);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_VCOCAL_TCTRL, 0x0003);
++}
++
++/*
++ * Set registers responsible for enabling and configuring SSC, with second and
++ * third register values provided by parameters.
++ */
++static
++void cdns_torrent_dp_enable_ssc_19_2mhz(struct cdns_torrent_phy *cdns_phy,
++					u32 ctrl2_val, u32 ctrl3_val)
++{
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_SS_CTRL1_M0, 0x0001);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_SS_CTRL1_M0, ctrl2_val);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_SS_CTRL1_M0, ctrl3_val);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_SS_CTRL4_M0, 0x0003);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_SS_CTRL1_M0, 0x0001);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_SS_CTRL1_M0, ctrl2_val);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_SS_CTRL1_M0, ctrl3_val);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_SS_CTRL4_M0, 0x0003);
++}
++
++static
++void cdns_torrent_dp_pma_cmn_vco_cfg_19_2mhz(struct cdns_torrent_phy *cdns_phy,
++					     u32 rate, bool ssc)
++{
++	/* Assumes 19.2 MHz refclock */
++	switch (rate) {
++	/* Setting VCO for 10.8GHz */
++	case 2700:
++	case 5400:
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_INTDIV_M0, 0x0119);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_FRACDIVL_M0, 0x4000);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_FRACDIVH_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_HIGH_THR_M0, 0x00BC);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PDIAG_PLL0_CTRL_M0, 0x0012);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_INTDIV_M0, 0x0119);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_FRACDIVL_M0, 0x4000);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_FRACDIVH_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_HIGH_THR_M0, 0x00BC);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PDIAG_PLL1_CTRL_M0, 0x0012);
++		if (ssc)
++			cdns_torrent_dp_enable_ssc_19_2mhz(cdns_phy, 0x033A,
++							   0x006A);
++		break;
++	/* Setting VCO for 9.72GHz */
++	case 1620:
++	case 2430:
++	case 3240:
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_INTDIV_M0, 0x01FA);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_FRACDIVL_M0, 0x4000);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_FRACDIVH_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_HIGH_THR_M0, 0x0152);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PDIAG_PLL0_CTRL_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_INTDIV_M0, 0x01FA);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_FRACDIVL_M0, 0x4000);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_FRACDIVH_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_HIGH_THR_M0, 0x0152);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PDIAG_PLL1_CTRL_M0, 0x0002);
++		if (ssc)
++			cdns_torrent_dp_enable_ssc_19_2mhz(cdns_phy, 0x05DD,
++							   0x0069);
++		break;
++	/* Setting VCO for 8.64GHz */
++	case 2160:
++	case 4320:
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_INTDIV_M0, 0x01C2);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_FRACDIVL_M0, 0x0000);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_FRACDIVH_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_HIGH_THR_M0, 0x012C);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PDIAG_PLL0_CTRL_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_INTDIV_M0, 0x01C2);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_FRACDIVL_M0, 0x0000);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_FRACDIVH_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_HIGH_THR_M0, 0x012C);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PDIAG_PLL1_CTRL_M0, 0x0002);
++		if (ssc)
++			cdns_torrent_dp_enable_ssc_19_2mhz(cdns_phy, 0x0536,
++							   0x0069);
++		break;
++	/* Setting VCO for 8.1GHz */
++	case 8100:
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_INTDIV_M0, 0x01A5);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_FRACDIVL_M0, 0xE000);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_FRACDIVH_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_HIGH_THR_M0, 0x011A);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PDIAG_PLL0_CTRL_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_INTDIV_M0, 0x01A5);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_FRACDIVL_M0, 0xE000);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_FRACDIVH_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_HIGH_THR_M0, 0x011A);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PDIAG_PLL1_CTRL_M0, 0x0002);
++		if (ssc)
++			cdns_torrent_dp_enable_ssc_19_2mhz(cdns_phy, 0x04D7,
++							   0x006A);
++		break;
++	}
++
++	if (ssc) {
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_VCOCAL_PLLCNT_START, 0x025E);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_LOCK_PLLCNT_THR, 0x0005);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_VCOCAL_PLLCNT_START, 0x025E);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_LOCK_PLLCNT_THR, 0x0005);
++	} else {
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_VCOCAL_PLLCNT_START, 0x0260);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_VCOCAL_PLLCNT_START, 0x0260);
++		/* Set reset register values to disable SSC */
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_SS_CTRL1_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_SS_CTRL2_M0, 0x0000);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_SS_CTRL3_M0, 0x0000);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_SS_CTRL4_M0, 0x0000);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_LOCK_PLLCNT_THR, 0x0003);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_SS_CTRL1_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_SS_CTRL2_M0, 0x0000);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_SS_CTRL3_M0, 0x0000);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_SS_CTRL4_M0, 0x0000);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_LOCK_PLLCNT_THR, 0x0003);
++	}
++
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_LOCK_REFCNT_START, 0x0099);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_LOCK_PLLCNT_START, 0x0099);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_LOCK_REFCNT_START, 0x0099);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_LOCK_PLLCNT_START, 0x0099);
++}
++
+ static
+ void cdns_torrent_dp_pma_cmn_cfg_25mhz(struct cdns_torrent_phy *cdns_phy)
+ {
+@@ -300,22 +611,47 @@ void cdns_torrent_dp_pma_cmn_cfg_25mhz(struct cdns_torrent_phy *cdns_phy)
+ 	cdns_torrent_phy_write(cdns_phy, CMN_SD_CAL_PLLCNT_START, 0x012B);
+ 
+ 	/* PLL registers */
+-	cdns_torrent_phy_write(cdns_phy, CMN_PDIAG_PLL0_CP_PADJ_M0, 0x0409);
+-	cdns_torrent_phy_write(cdns_phy, CMN_PDIAG_PLL0_CP_IADJ_M0, 0x1001);
++	cdns_torrent_phy_write(cdns_phy, CMN_PDIAG_PLL0_CP_PADJ_M0, 0x0509);
++	cdns_torrent_phy_write(cdns_phy, CMN_PDIAG_PLL0_CP_IADJ_M0, 0x0F00);
+ 	cdns_torrent_phy_write(cdns_phy, CMN_PDIAG_PLL0_FILT_PADJ_M0, 0x0F08);
+ 	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_DSM_DIAG_M0, 0x0004);
++	cdns_torrent_phy_write(cdns_phy, CMN_PDIAG_PLL1_CP_PADJ_M0, 0x0509);
++	cdns_torrent_phy_write(cdns_phy, CMN_PDIAG_PLL1_CP_IADJ_M0, 0x0F00);
++	cdns_torrent_phy_write(cdns_phy, CMN_PDIAG_PLL1_FILT_PADJ_M0, 0x0F08);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_DSM_DIAG_M0, 0x0004);
+ 	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_VCOCAL_INIT_TMR, 0x00FA);
+ 	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_VCOCAL_ITER_TMR, 0x0004);
+ 	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_VCOCAL_INIT_TMR, 0x00FA);
+ 	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_VCOCAL_ITER_TMR, 0x0004);
+-	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_VCOCAL_REFTIM_START, 0x0318);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_VCOCAL_REFTIM_START, 0x0317);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_VCOCAL_TCTRL, 0x0003);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_VCOCAL_REFTIM_START, 0x0317);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_VCOCAL_TCTRL, 0x0003);
++}
++
++/*
++ * Set registers responsible for enabling and configuring SSC, with second
++ * register value provided by a parameter.
++ */
++static void cdns_torrent_dp_enable_ssc_25mhz(struct cdns_torrent_phy *cdns_phy,
++					     u32 ctrl2_val)
++{
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_SS_CTRL1_M0, 0x0001);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_SS_CTRL1_M0, ctrl2_val);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_SS_CTRL1_M0, 0x007F);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_SS_CTRL4_M0, 0x0003);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_SS_CTRL1_M0, 0x0001);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_SS_CTRL1_M0, ctrl2_val);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_SS_CTRL1_M0, 0x007F);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_SS_CTRL4_M0, 0x0003);
  }
  
  static
--void cdns_torrent_dp_wait_pma_cmn_ready(struct cdns_torrent_phy *cdns_phy)
-+int cdns_torrent_dp_wait_pma_cmn_ready(struct cdns_torrent_phy *cdns_phy)
+-void cdns_torrent_dp_pma_cmn_vco_cfg_25mhz(struct cdns_torrent_phy *cdns_phy)
++void cdns_torrent_dp_pma_cmn_vco_cfg_25mhz(struct cdns_torrent_phy *cdns_phy,
++					   u32 rate, bool ssc)
  {
- 	unsigned int reg;
- 	int ret;
- 
- 	ret = cdns_torrent_dp_read_poll_timeout(cdns_phy, PHY_PMA_CMN_READY,
--						reg, reg & 1, 0, 500);
--	if (ret == -ETIMEDOUT)
-+						reg, reg & 1, 0,
-+						POLL_TIMEOUT_US);
-+	if (ret == -ETIMEDOUT) {
- 		dev_err(cdns_phy->dev,
- 			"timeout waiting for PMA common ready\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	return 0;
- }
- 
- static void cdns_torrent_dp_pma_cfg(struct cdns_torrent_phy *cdns_phy)
-@@ -397,12 +417,73 @@ static void cdns_torrent_dp_pma_lane_cfg(struct cdns_torrent_phy *cdns_phy,
- 			       (XCVR_DIAG_HSCLK_SEL | lane_bits), 0x0000);
- }
- 
--static void cdns_torrent_dp_run(struct cdns_torrent_phy *cdns_phy)
-+static int cdns_torrent_dp_set_power_state(struct cdns_torrent_phy *cdns_phy,
-+					   u32 num_lanes,
-+					   enum phy_powerstate powerstate)
-+{
-+	/* Register value for power state for a single byte. */
-+	u32 value_part;
-+	u32 value;
-+	u32 mask;
-+	u32 read_val;
-+	u32 ret;
-+
-+	switch (powerstate) {
-+	case (POWERSTATE_A0):
-+		value_part = 0x01U;
-+		break;
-+	case (POWERSTATE_A2):
-+		value_part = 0x04U;
-+		break;
-+	default:
-+		/* Powerstate A3 */
-+		value_part = 0x08U;
-+		break;
-+	}
-+
-+	/* Select values of registers and mask, depending on enabled
-+	 * lane count.
-+	 */
-+	switch (num_lanes) {
-+	/* lane 0 */
-+	case (1):
-+		value = value_part;
-+		mask = 0x0000003FU;
-+		break;
-+	/* lanes 0-1 */
-+	case (2):
-+		value = (value_part
-+			 | (value_part << 8));
-+		mask = 0x00003F3FU;
-+		break;
-+	/* lanes 0-3, all */
-+	default:
-+		value = (value_part
-+			 | (value_part << 8)
-+			 | (value_part << 16)
-+			 | (value_part << 24));
-+		mask = 0x3F3F3F3FU;
-+		break;
-+	}
-+
-+	/* Set power state A<n>. */
-+	cdns_torrent_dp_write(cdns_phy, PHY_PMA_XCVR_POWER_STATE_REQ, value);
-+	/* Wait, until PHY acknowledges power state completion. */
-+	ret = cdns_torrent_dp_read_poll_timeout(cdns_phy,
-+						PHY_PMA_XCVR_POWER_STATE_ACK,
-+						read_val,
-+						(read_val & mask) == value, 0,
-+						POLL_TIMEOUT_US);
-+	cdns_torrent_dp_write(cdns_phy,
-+			      PHY_PMA_XCVR_POWER_STATE_REQ, 0x00000000);
-+	ndelay(100);
-+
-+	return ret;
-+}
-+
-+static int cdns_torrent_dp_run(struct cdns_torrent_phy *cdns_phy)
- {
- 	unsigned int read_val;
--	u32 write_val1 = 0;
--	u32 write_val2 = 0;
--	u32 mask = 0;
- 	int ret;
- 
- 	/*
-@@ -413,60 +494,23 @@ static void cdns_torrent_dp_run(struct cdns_torrent_phy *cdns_phy)
- 						PHY_PMA_XCVR_PLLCLK_EN_ACK,
- 						read_val, read_val & 1, 0,
- 						POLL_TIMEOUT_US);
--	if (ret == -ETIMEDOUT)
-+	if (ret == -ETIMEDOUT) {
- 		dev_err(cdns_phy->dev,
- 			"timeout waiting for link PLL clock enable ack\n");
--
--	ndelay(100);
--
--	switch (cdns_phy->num_lanes) {
--	case 1:	/* lane 0 */
--		write_val1 = 0x00000004;
--		write_val2 = 0x00000001;
--		mask = 0x0000003f;
--		break;
--	case 2: /* lane 0-1 */
--		write_val1 = 0x00000404;
--		write_val2 = 0x00000101;
--		mask = 0x00003f3f;
--		break;
--	case 4: /* lane 0-3 */
--		write_val1 = 0x04040404;
--		write_val2 = 0x01010101;
--		mask = 0x3f3f3f3f;
--		break;
-+		return ret;
+ 	/* Assumes 25 MHz refclock */
+-	switch (cdns_phy->max_bit_rate) {
++	switch (rate) {
+ 	/* Setting VCO for 10.8GHz */
+ 	case 2700:
+ 	case 5400:
+@@ -323,14 +659,27 @@ void cdns_torrent_dp_pma_cmn_vco_cfg_25mhz(struct cdns_torrent_phy *cdns_phy)
+ 		cdns_torrent_phy_write(cdns_phy, CMN_PLL0_FRACDIVL_M0, 0x0000);
+ 		cdns_torrent_phy_write(cdns_phy, CMN_PLL0_FRACDIVH_M0, 0x0002);
+ 		cdns_torrent_phy_write(cdns_phy, CMN_PLL0_HIGH_THR_M0, 0x0120);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_INTDIV_M0, 0x01B0);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_FRACDIVL_M0, 0x0000);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_FRACDIVH_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_HIGH_THR_M0, 0x0120);
++		if (ssc)
++			cdns_torrent_dp_enable_ssc_25mhz(cdns_phy, 0x0423);
+ 		break;
+ 	/* Setting VCO for 9.72GHz */
++	case 1620:
+ 	case 2430:
+ 	case 3240:
+ 		cdns_torrent_phy_write(cdns_phy, CMN_PLL0_INTDIV_M0, 0x0184);
+ 		cdns_torrent_phy_write(cdns_phy, CMN_PLL0_FRACDIVL_M0, 0xCCCD);
+ 		cdns_torrent_phy_write(cdns_phy, CMN_PLL0_FRACDIVH_M0, 0x0002);
+ 		cdns_torrent_phy_write(cdns_phy, CMN_PLL0_HIGH_THR_M0, 0x0104);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_INTDIV_M0, 0x0184);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_FRACDIVL_M0, 0xCCCD);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_FRACDIVH_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_HIGH_THR_M0, 0x0104);
++		if (ssc)
++			cdns_torrent_dp_enable_ssc_25mhz(cdns_phy, 0x03B9);
+ 		break;
+ 	/* Setting VCO for 8.64GHz */
+ 	case 2160:
+@@ -339,6 +688,12 @@ void cdns_torrent_dp_pma_cmn_vco_cfg_25mhz(struct cdns_torrent_phy *cdns_phy)
+ 		cdns_torrent_phy_write(cdns_phy, CMN_PLL0_FRACDIVL_M0, 0x999A);
+ 		cdns_torrent_phy_write(cdns_phy, CMN_PLL0_FRACDIVH_M0, 0x0002);
+ 		cdns_torrent_phy_write(cdns_phy, CMN_PLL0_HIGH_THR_M0, 0x00E7);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_INTDIV_M0, 0x0159);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_FRACDIVL_M0, 0x999A);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_FRACDIVH_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_HIGH_THR_M0, 0x00E7);
++		if (ssc)
++			cdns_torrent_dp_enable_ssc_25mhz(cdns_phy, 0x034F);
+ 		break;
+ 	/* Setting VCO for 8.1GHz */
+ 	case 8100:
+@@ -346,14 +701,55 @@ void cdns_torrent_dp_pma_cmn_vco_cfg_25mhz(struct cdns_torrent_phy *cdns_phy)
+ 		cdns_torrent_phy_write(cdns_phy, CMN_PLL0_FRACDIVL_M0, 0x0000);
+ 		cdns_torrent_phy_write(cdns_phy, CMN_PLL0_FRACDIVH_M0, 0x0002);
+ 		cdns_torrent_phy_write(cdns_phy, CMN_PLL0_HIGH_THR_M0, 0x00D8);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_INTDIV_M0, 0x0144);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_FRACDIVL_M0, 0x0000);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_FRACDIVH_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_HIGH_THR_M0, 0x00D8);
++		if (ssc)
++			cdns_torrent_dp_enable_ssc_25mhz(cdns_phy, 0x031A);
+ 		break;
  	}
  
--	cdns_torrent_dp_write(cdns_phy,
--			      PHY_PMA_XCVR_POWER_STATE_REQ, write_val1);
--
--	ret = cdns_torrent_dp_read_poll_timeout(cdns_phy,
--						PHY_PMA_XCVR_POWER_STATE_ACK,
--						read_val,
--						(read_val & mask) == write_val1,
--						0, POLL_TIMEOUT_US);
--
--	if (ret == -ETIMEDOUT)
--		dev_err(cdns_phy->dev,
--			"timeout waiting for link power state ack\n");
--
--	cdns_torrent_dp_write(cdns_phy, PHY_PMA_XCVR_POWER_STATE_REQ, 0);
- 	ndelay(100);
- 
--	cdns_torrent_dp_write(cdns_phy,
--			      PHY_PMA_XCVR_POWER_STATE_REQ, write_val2);
-+	ret = cdns_torrent_dp_set_power_state(cdns_phy, cdns_phy->num_lanes,
-+					      POWERSTATE_A2);
-+	if (ret)
-+		return ret;
- 
--	ret = cdns_torrent_dp_read_poll_timeout(cdns_phy,
--						PHY_PMA_XCVR_POWER_STATE_ACK,
--						read_val,
--						(read_val & mask) == write_val2,
--						0, POLL_TIMEOUT_US);
--	if (ret == -ETIMEDOUT)
--		dev_err(cdns_phy->dev,
--			"timeout waiting for link power state ack\n");
-+	ret = cdns_torrent_dp_set_power_state(cdns_phy, cdns_phy->num_lanes,
-+					      POWERSTATE_A0);
- 
--	cdns_torrent_dp_write(cdns_phy, PHY_PMA_XCVR_POWER_STATE_REQ, 0);
--	ndelay(100);
-+	return ret;
+ 	cdns_torrent_phy_write(cdns_phy, CMN_PDIAG_PLL0_CTRL_M0, 0x0002);
+-	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_VCOCAL_PLLCNT_START, 0x0318);
++	cdns_torrent_phy_write(cdns_phy, CMN_PDIAG_PLL1_CTRL_M0, 0x0002);
++
++	if (ssc) {
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_VCOCAL_PLLCNT_START, 0x0315);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_LOCK_PLLCNT_THR, 0x0005);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_VCOCAL_PLLCNT_START, 0x0315);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_LOCK_PLLCNT_THR, 0x0005);
++	} else {
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_VCOCAL_PLLCNT_START, 0x0317);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_VCOCAL_PLLCNT_START, 0x0317);
++		/* Set reset register values to disable SSC */
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL0_SS_CTRL1_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL0_SS_CTRL2_M0, 0x0000);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL0_SS_CTRL3_M0, 0x0000);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL0_SS_CTRL4_M0, 0x0000);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL0_LOCK_PLLCNT_THR, 0x0003);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_SS_CTRL1_M0, 0x0002);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_SS_CTRL2_M0, 0x0000);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_SS_CTRL3_M0, 0x0000);
++		cdns_torrent_phy_write(cdns_phy, CMN_PLL1_SS_CTRL4_M0, 0x0000);
++		cdns_torrent_phy_write(cdns_phy,
++				       CMN_PLL1_LOCK_PLLCNT_THR, 0x0003);
++	}
++
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_LOCK_REFCNT_START, 0x00C7);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL0_LOCK_PLLCNT_START, 0x00C7);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_LOCK_REFCNT_START, 0x00C7);
++	cdns_torrent_phy_write(cdns_phy, CMN_PLL1_LOCK_PLLCNT_START, 0x00C7);
  }
  
- static void cdns_dp_phy_write_field(struct cdns_torrent_phy *cdns_phy,
+-static void cdns_torrent_dp_pma_cmn_rate(struct cdns_torrent_phy *cdns_phy)
++static void cdns_torrent_dp_pma_cmn_rate(struct cdns_torrent_phy *cdns_phy,
++					 u32 rate, u32 num_lanes)
+ {
+ 	unsigned int clk_sel_val = 0;
+ 	unsigned int hsclk_div_val = 0;
+@@ -362,7 +758,7 @@ static void cdns_torrent_dp_pma_cmn_rate(struct cdns_torrent_phy *cdns_phy)
+ 	/* 16'h0000 for single DP link configuration */
+ 	cdns_torrent_phy_write(cdns_phy, PHY_PLL_CFG, 0x0000);
+ 
+-	switch (cdns_phy->max_bit_rate) {
++	switch (rate) {
+ 	case 1620:
+ 		clk_sel_val = 0x0f01;
+ 		hsclk_div_val = 2;
+@@ -390,9 +786,11 @@ static void cdns_torrent_dp_pma_cmn_rate(struct cdns_torrent_phy *cdns_phy)
+ 
+ 	cdns_torrent_phy_write(cdns_phy,
+ 			       CMN_PDIAG_PLL0_CLK_SEL_M0, clk_sel_val);
++	cdns_torrent_phy_write(cdns_phy,
++			       CMN_PDIAG_PLL1_CLK_SEL_M0, clk_sel_val);
+ 
+ 	/* PMA lane configuration to deal with multi-link operation */
+-	for (i = 0; i < cdns_phy->num_lanes; i++)
++	for (i = 0; i < num_lanes; i++)
+ 		cdns_torrent_phy_write(cdns_phy,
+ 				       (XCVR_DIAG_HSCLK_DIV | (i << 11)),
+ 				       hsclk_div_val);
+@@ -403,6 +801,14 @@ static void cdns_torrent_dp_pma_lane_cfg(struct cdns_torrent_phy *cdns_phy,
+ {
+ 	unsigned int lane_bits = (lane & LANE_MASK) << 11;
+ 
++	/* Per lane, refclock-dependent receiver detection setting */
++	if (cdns_phy->ref_clk_rate == REF_CLK_19_2MHz)
++		cdns_torrent_phy_write(cdns_phy,
++				       (TX_RCVDET_ST_TMR | lane_bits), 0x0780);
++	else if (cdns_phy->ref_clk_rate == REF_CLK_25MHz)
++		cdns_torrent_phy_write(cdns_phy,
++				       (TX_RCVDET_ST_TMR | lane_bits), 0x09C4);
++
+ 	/* Writing Tx/Rx Power State Controllers registers */
+ 	cdns_torrent_phy_write(cdns_phy, (TX_PSC_A0 | lane_bits), 0x00FB);
+ 	cdns_torrent_phy_write(cdns_phy, (TX_PSC_A2 | lane_bits), 0x04AA);
+@@ -411,6 +817,17 @@ static void cdns_torrent_dp_pma_lane_cfg(struct cdns_torrent_phy *cdns_phy,
+ 	cdns_torrent_phy_write(cdns_phy, (RX_PSC_A2 | lane_bits), 0x0000);
+ 	cdns_torrent_phy_write(cdns_phy, (RX_PSC_A3 | lane_bits), 0x0000);
+ 
++	cdns_torrent_phy_write(cdns_phy, (RX_PSC_CAL | lane_bits), 0x0000);
++
++	cdns_torrent_phy_write(cdns_phy,
++			       (RX_REE_GCSM1_CTRL | lane_bits), 0x0000);
++	cdns_torrent_phy_write(cdns_phy,
++			       (RX_REE_GCSM2_CTRL | lane_bits), 0x0000);
++	cdns_torrent_phy_write(cdns_phy,
++			       (RX_REE_PERGCSM_CTRL | lane_bits), 0x0000);
++
++	cdns_torrent_phy_write(cdns_phy,
++			       (XCVR_DIAG_BIDI_CTRL | lane_bits), 0x000F);
+ 	cdns_torrent_phy_write(cdns_phy,
+ 			       (XCVR_DIAG_PLLDRC_CTRL | lane_bits), 0x0001);
+ 	cdns_torrent_phy_write(cdns_phy,
+@@ -582,6 +999,7 @@ static int cdns_torrent_phy_probe(struct platform_device *pdev)
+ 		cdns_phy->max_bit_rate = DEFAULT_MAX_BIT_RATE;
+ 
+ 	switch (cdns_phy->max_bit_rate) {
++	case 1620:
+ 	case 2160:
+ 	case 2430:
+ 	case 2700:
+@@ -597,6 +1015,12 @@ static int cdns_torrent_phy_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
++	cdns_phy->clk = devm_clk_get(dev, "refclk");
++	if (IS_ERR(cdns_phy->clk)) {
++		dev_err(dev, "phy ref clock not found\n");
++		return PTR_ERR(cdns_phy->clk);
++	}
++
+ 	phy_set_drvdata(phy, cdns_phy);
+ 
+ 	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
 -- 
 2.20.1
 
