@@ -2,95 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F803154D41
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 21:47:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 484DA154D28
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 21:46:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbgBFUqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 15:46:11 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33799 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728150AbgBFUqI (ORCPT
+        id S1728025AbgBFUpo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 15:45:44 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35119 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728001AbgBFUpn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 15:46:08 -0500
-Received: by mail-pg1-f195.google.com with SMTP id j4so3356516pgi.1;
-        Thu, 06 Feb 2020 12:46:08 -0800 (PST)
+        Thu, 6 Feb 2020 15:45:43 -0500
+Received: by mail-pf1-f194.google.com with SMTP id y73so60956pfg.2;
+        Thu, 06 Feb 2020 12:45:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=8CEel95Qe0K0FMLgiCiTMequMG6yZDFIWpQ5eQwLax4=;
-        b=qwuTV2bGE5go6Dr3hk/G9xxmRw/YSrJGgeLoMC/iiRzHARB7EdSUgLGnOZ8JhU2Gku
-         Bh17V0Pl0N7l4wP9FW+PsyLFWmV7DSZVxkzSkIwbfnttYiswqubQ6xFWP2MFn3bdcwCc
-         1ChkoSEDaCcK/Rlu+gx6tEHQqZYzKwrRHBgVvpDMB6xk1+KxMDFZ0dLGpcBO8rU0aGs4
-         9aNIYSMfTrAw1uvCfwoFomiQ/kS6xkmDLUkS9cYxoc7iJT9BgvxDzHrCS6qsbhhHDH+z
-         ei/BSlk2JI3D/oh5o4eY/fDwmHuZHXIMEOPADI4UGy1MzrDin1/JTYVGIZxK0q4WhHjA
-         WxlA==
-X-Gm-Message-State: APjAAAV6NYTIp93DnC93iPZ6EVCMy/KuYo/XmbTNRThDB6O/Y77d0O6z
-        EYbXdUEfM3mFuUV5LGna3shnuRpJ5Q==
-X-Google-Smtp-Source: APXvYqx1NnBAhQrChlAlk+joiqFOCP58iYcXSFU1wddrjPp0aH7Qq0MEkUwXPJE9lP0gLPlBBbd93w==
-X-Received: by 2002:a62:8246:: with SMTP id w67mr5850174pfd.107.1581021968038;
-        Thu, 06 Feb 2020 12:46:08 -0800 (PST)
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+5+zudFLEE54RFgGYNUhud7P5ykhS6QeS0Eeg6mrByQ=;
+        b=FF3JRf8VMD/KZ/exI5b7luPx3w/x5cR6SJJdsW5MhM1ttMI86NLHmz9RUrYFkMJR+a
+         ihGftiCMJlJPdYjWQtME2SJaKMvjygDs31eMTGC6xGSW99kpE33w9KRxhHy2Ld86jpdR
+         DoiGkEN8Z8O/Xvxj+HCJYPVbhHIQo/Q5kYZl9KivV+2AhHbpmbrw561fdmylNut+quPY
+         UPZPVnRw9m1eBZOPGWEEWxLU/Q3Bwuye8gMEkhjzGBRQc7EAeVGk9R5PMfBXwfl3BeeN
+         qy+PzBv/JdLGeLhuI+fV4sYEG3eFWzW0hR9JYUTbdkihbK0nWUVgtPPiNQnTqD2ssH+t
+         CpeA==
+X-Gm-Message-State: APjAAAWgbHAoM3xd3TAQwOH2txUP2AtGLz/vLxpIuqwYQRrgkPqf6HLw
+        lTAxzAeooaC/wY6OWR/6tA==
+X-Google-Smtp-Source: APXvYqxx3xiy6suP140csN6jmTWRjdAkDcziJEtMyX+hlSDZ0vGdcdlTlihGnjZPFtNI/bKbll/9SA==
+X-Received: by 2002:a63:e044:: with SMTP id n4mr5612914pgj.338.1581021942409;
+        Thu, 06 Feb 2020 12:45:42 -0800 (PST)
 Received: from rob-hp-laptop (63-158-47-182.dia.static.qwest.net. [63.158.47.182])
-        by smtp.gmail.com with ESMTPSA id 133sm293844pfy.14.2020.02.06.12.46.06
+        by smtp.gmail.com with ESMTPSA id m12sm158298pjf.25.2020.02.06.12.45.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 12:46:07 -0800 (PST)
-Received: (nullmailer pid 27633 invoked by uid 1000);
-        Thu, 06 Feb 2020 18:30:53 -0000
-Date:   Thu, 6 Feb 2020 18:30:53 +0000
+        Thu, 06 Feb 2020 12:45:41 -0800 (PST)
+Received: (nullmailer pid 4349 invoked by uid 1000);
+        Thu, 06 Feb 2020 18:35:33 -0000
+Date:   Thu, 6 Feb 2020 18:35:33 +0000
 From:   Rob Herring <robh@kernel.org>
-To:     =?iso-8859-1?Q?Andr=E9?= Draszik <git@andred.net>
-Cc:     linux-kernel@vger.kernel.org,
-        =?iso-8859-1?Q?Andr=E9?= Draszik <git@andred.net>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH 1/3] ARM: dts: imx7s: add snvs clock to pwrkey
-Message-ID: <20200206183053.GA27553@bogus>
-References: <20200130204516.4760-1-git@andred.net>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.hajda@samsung.com, narmstrong@baylibre.com,
+        tomi.valkeinen@ti.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@siol.net
+Subject: Re: [PATCH v4 1/2] dt-bindings: display: bridge: Add documentation
+ for Toshiba tc358768
+Message-ID: <20200206183533.GA4136@bogus>
+References: <20200131111553.472-1-peter.ujfalusi@ti.com>
+ <20200131111553.472-2-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200130204516.4760-1-git@andred.net>
+In-Reply-To: <20200131111553.472-2-peter.ujfalusi@ti.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 30 Jan 2020 20:45:14 +0000, =?UTF-8?q?Andr=C3=A9=20Draszik?= wrote:
-> On i.MX7, the SNVS requires a clock. This is similar to the clock
-> bound to the SNVS RTC node, but if the SNVS RTC driver isn't enabled,
-> then SNVS doesn't work, and as such the pwrkey driver doesn't
-> work (i.e. hangs the kernel, as the clock isn't enabled).
+On Fri, 31 Jan 2020 13:15:52 +0200, Peter Ujfalusi wrote:
+> TC358768/TC358778 is a Parallel RGB to MIPI DSI bridge.
 > 
-> Also see commit ec2a844ef7c1
-> ("ARM: dts: imx7s: add snvs rtc clock")
-> for a similar fix.
-> 
-> Signed-off-by: André Draszik <git@andred.net>
-> Cc: Anson Huang <Anson.Huang@nxp.com>
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: "Horia Geantă" <horia.geanta@nxp.com>
-> Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: linux-crypto@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-input@vger.kernel.org
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 > ---
->  .../devicetree/bindings/crypto/fsl-sec4.txt     | 17 +++++++++++++++++
->  arch/arm/boot/dts/imx7s.dtsi                    |  2 ++
->  2 files changed, 19 insertions(+)
+>  .../display/bridge/toshiba,tc358768.yaml      | 159 ++++++++++++++++++
+>  1 file changed, 159 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba,tc358768.yaml
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
