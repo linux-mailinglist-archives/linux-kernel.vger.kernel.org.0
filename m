@@ -2,83 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05FB715471D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:10:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 468DA15472E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:10:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbgBFPKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 10:10:08 -0500
-Received: from frisell.zx2c4.com ([192.95.5.64]:40419 "EHLO frisell.zx2c4.com"
+        id S1727753AbgBFPKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 10:10:37 -0500
+Received: from smtp.gentoo.org ([140.211.166.183]:55950 "EHLO smtp.gentoo.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727563AbgBFPKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 10:10:06 -0500
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id fd6139fb;
-        Thu, 6 Feb 2020 15:09:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=date:from:to
-        :cc:subject:message-id:references:mime-version:content-type
-        :in-reply-to; s=mail; bh=hCSZI3yFG5bI3FQ2aJZ88GjlsbQ=; b=wbteIZ8
-        9JNF6qqVmEPpTWwRJW+dLN1smHNE8DAyaTIIIvea+fAlYw8LPoFdsEuOdcL/qTtv
-        eZY0n6RAW2Ruh57HeFIIX3rXqWaT6hDmLZpoPKoRig4OKwatJM2S94nhKgmvq8ix
-        ZNYFslxrtwwxQtLCEeE+3+noy0RQqTsij91uLugcLsqjmy7ML+GfHhtq/nV5k1AI
-        xx6dhqDX7UQVfEo/81on552tZQhAR8BA6LXmhBsusb2DzIurkt+6GYl8K8JU/gF4
-        izZk3MHJUYgu3KFYRh1injM9RwX5c9/UF5Dbo5yjSsAB7TuHYyZIyg65q2nzJaHW
-        Ssvprkwr+/GhF9g==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id fe7ef0f8 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Thu, 6 Feb 2020 15:08:59 +0000 (UTC)
-Date:   Thu, 6 Feb 2020 16:10:01 +0100
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>,
-        keescook@chromium.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        arjan@linux.intel.com, keescook@chromium.org,
-        rick.p.edgecombe@intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        jeanphilippe.aumasson@gmail.com
-Subject: Re: [RFC PATCH 04/11] x86/boot/KASLR: Introduce PRNG for faster
- shuffling
-Message-ID: <20200206151001.GA280489@zx2c4.com>
-References: <20200205223950.1212394-1-kristen@linux.intel.com>
- <20200205223950.1212394-5-kristen@linux.intel.com>
+        id S1727723AbgBFPKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 10:10:36 -0500
+Received: from alexis.zapto.org (85-171-52-99.rev.numericable.fr [85.171.52.99])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: aballier)
+        by smtp.gentoo.org (Postfix) with ESMTPSA id F291C34E821;
+        Thu,  6 Feb 2020 15:10:33 +0000 (UTC)
+From:   Alexis Ballier <aballier@gentoo.org>
+Cc:     Alexis Ballier <aballier@gentoo.org>, devicetree@vger.kernel.org,
+        Heiko Stuebner <heiko@sntech.de>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] arm64: dts: rockchip: rk3399-orangepi: Add ethernet phy.
+Date:   Thu,  6 Feb 2020 16:10:24 +0100
+Message-Id: <20200206151025.3813-1-aballier@gentoo.org>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200205223950.1212394-5-kristen@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Kees,
+Enables INTB.
+The wiring is the same as the nanopi4, so this is heavily based on:
+- [1a4e6203f0c] arm64: dts: rockchip: Add nanopi4 ethernet phy
+- [bc43cee88aa] arm64: dts: rockchip: Update nanopi4 phy reset properties
+by Robin Murphy.
 
-On Wed, Feb 05, 2020 at 02:39:43PM -0800, Kristen Carlson Accardi wrote:
-> +#define rot(x, k) (((x)<<(k))|((x)>>(64-(k))))
-> +static u64 prng_u64(struct prng_state *x)
-> +{
-> +	u64 e;
-> +
-> +	e = x->a - rot(x->b, 7);
-> +	x->a = x->b ^ rot(x->c, 13);
-> +	x->b = x->c + rot(x->d, 37);
-> +	x->c = x->d + e;
-> +	x->d = e + x->a;
-> +
-> +	return x->d;
-> +}
+Signed-off-by: Alexis Ballier <aballier@gentoo.org>
+Cc: devicetree@vger.kernel.org
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ .../boot/dts/rockchip/rk3399-orangepi.dts     | 31 ++++++++++++++++---
+ 1 file changed, 27 insertions(+), 4 deletions(-)
 
-I haven't looked closely at where the original entropy sources are
-coming from and how all this works, but on first glance, this prng
-doesn't look like an especially cryptographically secure one. I realize
-that isn't necessarily your intention (you're focused on speed), but
-actually might this be sort of important? If I understand correctly, the
-objective of this patch set is so that leaking the address of one
-function doesn't leak the address of all other functions, as is the case
-with fixed-offset kaslr. But if you leak the addresses of _some_ set of
-functions, and your prng is bogus, might it be possible to figure out
-the rest? For some prngs, if you give me the output stream of a few
-numbers, I can predict the rest. For others, it's not this straight
-forward, but there are some varieties of similar attacks. If any of that
-set of concerns turns out to apply to your prng_u64 here, would that
-undermine kaslr in similar ways as the current fixed-offset variety? Or
-does it not matter because it's some kind of blinded fixed-size shuffle
-with complex reasoning that makes this not a problem?
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+index 9c659f3115c8..1767015e684c 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+@@ -202,14 +202,27 @@ &gmac {
+ 	clock_in_out = "input";
+ 	phy-supply = <&vcc3v3_s3>;
+ 	phy-mode = "rgmii";
++	phy-handle = <&rtl8211e>;
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&rgmii_pins>;
+-	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
+-	snps,reset-active-low;
+-	snps,reset-delays-us = <0 10000 50000>;
++	pinctrl-0 = <&rgmii_pins>, <&phy_intb>, <&phy_rstb>;
+ 	tx_delay = <0x28>;
+ 	rx_delay = <0x11>;
+ 	status = "okay";
++
++	mdio {
++		compatible = "snps,dwmac-mdio";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		rtl8211e: phy@1 {
++			reg = <1>;
++			interrupt-parent = <&gpio3>;
++			interrupts = <RK_PB2 IRQ_TYPE_LEVEL_LOW>;
++			reset-assert-us = <10000>;
++			reset-deassert-us = <30000>;
++			reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
++		};
++	};
+ };
+ 
+ &gpu {
+@@ -537,6 +550,16 @@ pwr_btn: pwr-btn {
+ 		};
+ 	};
+ 
++	phy {
++		phy_intb: phy-intb {
++			rockchip,pins = <3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
++		};
++
++		phy_rstb: phy-rstb {
++			rockchip,pins = <3 RK_PB7 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
+ 	pmic {
+ 		pmic_int_l: pmic-int-l {
+ 			rockchip,pins =
+-- 
+2.25.0
 
-Jason
