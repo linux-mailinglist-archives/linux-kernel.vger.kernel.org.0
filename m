@@ -2,114 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2F58154481
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 14:05:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D92C15449A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 14:09:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727566AbgBFNFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 08:05:32 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:35845 "EHLO
+        id S1727598AbgBFNJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 08:09:47 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:31685 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727111AbgBFNFb (ORCPT
+        by vger.kernel.org with ESMTP id S1727325AbgBFNJr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 08:05:31 -0500
+        Thu, 6 Feb 2020 08:09:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580994330;
+        s=mimecast20190719; t=1580994586;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VK0cVU+EaUKEqVdhJY86wR9NaSgWi1ZgRcL6h4AgQY4=;
-        b=SNCA16of8eWq2uXT9siAjsxu15q/P3iQXndejfoRGJPZVAAUTndpR10AqNKAzQRDu8OVOt
-        JAlU6UY3XEPwDjwoLsbBDv0fbFnTK5e9mrllbr54bGFyxP9PV94QfB8KY1pq6PPp/dP72a
-        VhPZ4E45sX34sBsV5Q+jpFyCLtFjTyk=
+        bh=ZgKjq5f4oMoXVI4WqrUXov10JILu8ei/f35tvvz5Kbg=;
+        b=FTO7/8tDOr6uQuCyWV1BMHo8ZKq3n535OaqJJ/MNeU5au9P1DrZLmyPmjERN7YRpCBNO4i
+        lwzUvGwbXKOh5Y98Lt9nZqlQAGZJNrbE6G2YfDjBxWaR+xFwgHGZOcj0vhS3Bqp9stXRaH
+        fl+Cw8XT8EY27Mem6+BAPue83HrXMJk=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-224-RZYZ0dpDMyOQPkIOfvJQLw-1; Thu, 06 Feb 2020 08:05:27 -0500
-X-MC-Unique: RZYZ0dpDMyOQPkIOfvJQLw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-265-qH7P_AwpP2eTBjAnESgrMQ-1; Thu, 06 Feb 2020 08:09:41 -0500
+X-MC-Unique: qH7P_AwpP2eTBjAnESgrMQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2D5E763AD8;
-        Thu,  6 Feb 2020 13:05:26 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.7a2m.lab.eng.bos.redhat.com [10.16.222.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 32EEC863A5;
-        Thu,  6 Feb 2020 13:05:25 +0000 (UTC)
-Subject: Re: [PATCH] x86/mce: Enable HSD131, HSM142, HSW131, BDM48, and HSM142
-From:   Prarit Bhargava <prarit@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Krupp <centos@akr.yagii.de>,
-        Tony Luck <tony.luck@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-edac@vger.kernel.org
-References: <20200205125831.20430-1-prarit@redhat.com>
- <20200206110811.GC9741@zn.tnic>
- <1f3f5f54-eb31-1e2a-27be-7ed4cb3dc2d3@redhat.com>
-Message-ID: <e4088217-78cc-91f5-fcc9-6152aaf12caf@redhat.com>
-Date:   Thu, 6 Feb 2020 08:05:24 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A0E51104D419;
+        Thu,  6 Feb 2020 13:09:39 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-218.rdu2.redhat.com [10.10.120.218])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B996E90536;
+        Thu,  6 Feb 2020 13:09:37 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200204084005.11320-1-hdanton@sina.com>
+References: <20200204084005.11320-1-hdanton@sina.com>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     dhowells@redhat.com,
+        syzbot <syzbot+3f1fd6b8cbf8702d134e@syzkaller.appspotmail.com>,
+        davem@davemloft.net, kuba@kernel.org,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: inconsistent lock state in rxrpc_put_client_conn
 MIME-Version: 1.0
-In-Reply-To: <1f3f5f54-eb31-1e2a-27be-7ed4cb3dc2d3@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2183051.1580994576.1@warthog.procyon.org.uk>
+Date:   Thu, 06 Feb 2020 13:09:36 +0000
+Message-ID: <2183052.1580994576@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hillf Danton <hdanton@sina.com> wrote:
 
+> Take lock with irq quiesced.
 
-On 2/6/20 7:53 AM, Prarit Bhargava wrote:
-> 
-> 
-> On 2/6/20 6:10 AM, Borislav Petkov wrote:
->> On Wed, Feb 05, 2020 at 07:58:31AM -0500, Prarit Bhargava wrote:
->>
->>> Subject: Re: [PATCH] x86/mce: Enable HSD131, HSM142, HSW131, BDM48, and HSM142
->>
->> That subject is unreadable for humans.
-> 
-> Yeah :/  I couldn't think of a better one.  Maybe "Block spurious corrected
-> errors on some Intel processors"?  Any other suggestion?
-> 
->>
->>> Intel Errata HSD131, HSM142, HSW131, and BDM48 report that
->>> "spurious corrected errors may be logged in the IA32_MC0_STATUS register
->>> with the valid field (bit 63) set, the uncorrected error field (bit 61)
->>> not set, a Model Specific Error Code (bits [31:16]) of 0x000F, and
->>> an MCA Error Code (bits [15:0]) of 0x0005."
->>>
->>> Block these spurious errors from the console and logs.
->>
->> Are they being hit in the wild or why do we need this?
-> 
-> Alexander, cc'd, is being hit by this in the wild.
-> 
->>
->>> Links to Intel Specification updates:
->>> HSD131: https://www.intel.com/content/www/us/en/products/docs/processors/core/4th-gen-core-family-desktop-specification-update.html
->>> HSM142: https://www.intel.com/content/www/us/en/products/docs/processors/core/4th-gen-core-family-mobile-specification-update.html
->>> HSW131: https://www.intel.com/content/www/us/en/processors/xeon/xeon-e3-1200v3-spec-update.html
->>> BDM48: https://www.intel.com/content/www/us/en/products/docs/processors/core/5th-gen-core-family-spec-update.html
->>
->> Those links tend to get stale with time. If you really want to refer to
->> the PDFs, add a new bugzilla entry on https://bugzilla.kernel.org/, add
->> them there as an attachment and add the link to the entry to the commit
->> message.
->>
->>> Signed-off-by: Alexander Krupp <centos@akr.yagii.de>
->>
->> What's that Signed-off-by: tag supposed to mean?
+I think that's overkill.  It only needs _bh annotations, not _irqsave/restore
+- but even that is probably not the best way.
 
-Sorry.  I missed this question, but I really don't understand the question.
-Alexander posted a patch in a kernel bugzilla @ Red Hat and I modified the patch
-with some additional changes.  I don't want him to lose credit for the work so
-he's got a proper Signed-off-by tag for this patch.
+The best way is to offload the stuff done by rxrpc_rcu_destroy_call() to a
+workqueue if called in softirq mode.  I'm not sure whether rcu callbacks are
+done in softirq mode - if they are, then it can just call rxrpc_queue_work().
 
-P.
+David
 
