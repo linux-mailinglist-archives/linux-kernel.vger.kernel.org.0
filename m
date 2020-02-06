@@ -2,102 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BEB6154A3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 18:32:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C40AE154A3C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 18:32:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727818AbgBFRcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 12:32:02 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:48618 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727358AbgBFRcC (ORCPT
+        id S1727779AbgBFRcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 12:32:00 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43369 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727358AbgBFRcA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 12:32:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=5qqLfcCzZqb9lsXWveDQ2LL6r9oP/9a7+gTw/Jw44lg=; b=iAp/+gmvhiXYw+HT6nED2uCPqx
-        wcdbO7CICi5P3VZHW5Wk/M9cRq18evzlINEmuUVpP93Uf1fLMXQJfEdvUL27uigxWmZymgZJOEYQU
-        9awyC7PjBa0ZeZBouQlvObyti8zFjP4+j3bK1FwhoU9YZAN0PH/LZn6Fiq2OwjT44ECFAgXmJGBQM
-        fzM/gSkDxF1iAJU9ECU/v/t751cLc0q5NyaVt8NVY0CtYxypYBPYc6NsQJ57o+ef1+/HOG9aCgBwf
-        oC68OdKifGB3EAMArOVUSX5++WsSGODisyZSf4T7dnHGX/yHnvMuziWQO0EcZydkQF2pD/ACOFVeY
-        k+KH9nsg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1izl0O-0006Yb-33; Thu, 06 Feb 2020 17:31:56 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 35A333016E5;
-        Thu,  6 Feb 2020 18:30:07 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id AB2962B813A87; Thu,  6 Feb 2020 18:31:53 +0100 (CET)
-Date:   Thu, 6 Feb 2020 18:31:53 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH v6 6/6] locking/lockdep: Reuse freed chain_hlocks entries
-Message-ID: <20200206173153.GX14914@hirez.programming.kicks-ass.net>
-References: <20200206152408.24165-1-longman@redhat.com>
- <20200206152408.24165-7-longman@redhat.com>
- <20200206161640.GW14914@hirez.programming.kicks-ass.net>
- <29fbb4c6-aa8f-f6ce-6115-232db5f2db52@redhat.com>
+        Thu, 6 Feb 2020 12:32:00 -0500
+Received: by mail-lj1-f193.google.com with SMTP id a13so6948413ljm.10
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 09:31:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=zu/G8MRDVCKX8RYx6Pvc5wkJFjC48WrjqEKdhsuBds4=;
+        b=i93gYIXCoEqx2+FdMbM7W31/tBjn9YnGY4pW2i2K2MtaBIbIQRMzoaNTH/A7FOzza4
+         57+3LVsNA50RVgFGUpp16LqhNabV6iFNPzNcQ9RREn4lJYlTcgMN6w/qUYigWyR2cTF5
+         V1rNi+pEl8ZknCnO0s3VnNBGGmcNph4iFoxi+Wcs42dGgGYhAQslMjElax7nMXQa2tOT
+         P3p1emNCBVi/oBfxn1yiul9HW+4eO71usyyAzb+TkeajhFPiaSkmIBKyneNOIhcIs55+
+         pAQdt7VPSHzWXUz9/FzPRXEnO549S7fc08WlZZsfnhDuFR7/tC2II1S1efR6siNzXx/T
+         Ql1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=zu/G8MRDVCKX8RYx6Pvc5wkJFjC48WrjqEKdhsuBds4=;
+        b=rza/tASbPnx7/jmraa08MHAeJBabKAA2voyfZ5AkbCesdNDFhGV0kKh23xpUe5eLq6
+         ib/w8roL8E1I9G4PXv7m53QPBzt7Ig+n7P4ol6ow21OKfOakdPObsFe0eYJfqVa3urET
+         57bPDQmGNC7XOduvubJNlRQFNQw2LsNu339ARd5RQlSgd22EgdxvKddqr1qB4yiYWZbZ
+         7xKiVt6bWUaOmf6p1iMCCZPvJNAFGM42E+FfXc/KOFfAqnB00yQPpLmQotOPYuPaMe2v
+         U3FEhlgCzD4SGfNut4GhYv4uzlCxsKXh2rUA6trmTl+nXYL7s5tnpRzr24HrxNjN3qmO
+         H8YQ==
+X-Gm-Message-State: APjAAAVv8BsxDky0OrM2admZrusFBLKzB5dddA0ZqneS7tsEOR/DcJa7
+        OLvtGLTobrozQ8UUxTI+bwFiRozPRO2VDH6rGaU=
+X-Google-Smtp-Source: APXvYqzNRCyzPiXnN9BmdKsuYjpb49hj+m1D4UFIXvgHUWZqpXXVmGqeIMea60wSwEY4grqUkHkd+UbPWv3iUKyMdpU=
+X-Received: by 2002:a2e:a402:: with SMTP id p2mr2742009ljn.143.1581010318371;
+ Thu, 06 Feb 2020 09:31:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <29fbb4c6-aa8f-f6ce-6115-232db5f2db52@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Reply-To: mrsnicolemarois94@gmail.com
+Received: by 2002:ab3:5a03:0:0:0:0:0 with HTTP; Thu, 6 Feb 2020 09:31:57 -0800 (PST)
+From:   "Mrs. Nicole Marois" <fridayot00@gmail.com>
+Date:   Thu, 6 Feb 2020 16:31:57 -0100
+X-Google-Sender-Auth: uz_nAcsazQPvk-AtripW77zfqwY
+Message-ID: <CAAsaS6QNBeDbCixAUJn9YHcwbKkgHfymas89k+52FpPVsvDU7g@mail.gmail.com>
+Subject: Greetings
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 06, 2020 at 12:08:20PM -0500, Waiman Long wrote:
-> On 2/6/20 11:16 AM, Peter Zijlstra wrote:
-> > On Thu, Feb 06, 2020 at 10:24:08AM -0500, Waiman Long wrote:
-> >> +static int alloc_chain_hlocks(int req)
-> >> +{
-> >> +	int bucket, curr, size;
-> >> +
-> >> +	/*
-> >> +	 * We rely on the MSB to act as an escape bit to denote freelist
-> >> +	 * pointers. Make sure this bit isn't set in 'normal' class_idx usage.
-> >> +	 */
-> >> +	BUILD_BUG_ON((MAX_LOCKDEP_KEYS-1) & CHAIN_BLK_FLAG);
-> >> +
-> >> +	init_data_structures_once();
-> >> +
-> >> +	if (nr_free_chain_hlocks < req)
-> >> +		return -1;
-> >> +
-> >> +	/*
-> >> +	 * We require a minimum of 2 (u16) entries to encode a freelist
-> >> +	 * 'pointer'.
-> >> +	 */
-> >> +	req = max(req, 2);
-> >> +	bucket = size_to_bucket(req);
-> >> +	curr = chain_block_buckets[bucket];
-> >> +
-> >> +	if (bucket && (curr >= 0)) {
-> >> +		del_chain_block(bucket, req, chain_block_next(curr));
-> >> +		return curr;
-> >> +	} else if (bucket) {
-> >> +		/* Try bucket 0 */
-> >> +		curr = chain_block_buckets[0];
-> >> +	}
-> > 	if (bucket) {
-> > 		if (curr >= 0) {
-> > 			del_chain_block(bucket, req, chain_block_next(curr));
-> > 			return curr;
-> > 		}
-> > 		/* Try bucket 0 */
-> > 		curr = chain_block_bucket[0];
-> > 	}
-> >
-> > reads much easier IMO.
-> 
-> Yes, that is simpler. I can send out an updated patch if you want, or
-> you can apply the change when you pull the patch.
+-- 
+Hello Dear,
 
-I'll frob it. Thanks!
+Please forgive me for stressing you with my predicaments as I know
+that this letter may come to you as big surprise. Actually, I came
+across your E-mail from my personal search afterward I decided to
+email you directly believing that you will be honest to fulfill my
+final wish before i die.
+
+Meanwhile, I am Mrs.  Nicole Marois 62 years old, from France, and I
+am suffering from a long time cancer and from all indication my
+condition is really deteriorating as my doctors have confirmed and
+courageously advised me that I may not live beyond two months from now
+for the reason that my tumor has reached a critical stage which has
+defiled all forms of medical treatment. As a matter of fact,
+registered nurse by profession while my husband was dealing on Gold
+Dust and Gold Dory Bars in Burkina Faso till his sudden death the year
+2016 then I took over his business till date.
+
+In fact, at this moment I have a deposit sum of four million five
+hundred thousand US dollars ($4,500,000.00) with one of the leading
+bank in Burkina Faso but unfortunately I cannot visit the bank since
+I m critically sick and powerless to do anything myself but my bank
+account officer advised me to assign any of my trustworthy relative,
+friends or partner with authorization letter to stand as the recipient
+of my money but sorrowfully I don t have any reliable relative and no
+child.
+
+Therefore, I want you to receive the money and take 50% to take care
+of yourself and family while 50% should be use basically on
+humanitarian purposes mostly to orphanages home, Motherless babies
+home, less privileged and disable citizens and widows around the
+world. and as soon as I receive your I shall send you my pictures,
+banking records and with full contacts of my banking institution to
+communicate them on the matter. Please contact me with these email
+address.(mrsnicolemarois94@gmail.com)
+
+Hope to hear from you soon.
+Yours Faithfully,
+Mrs.  Nicole Marois
