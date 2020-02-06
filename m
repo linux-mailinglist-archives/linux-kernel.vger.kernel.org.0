@@ -2,112 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E77D5154800
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:25:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A33A15480A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:27:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727979AbgBFPY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 10:24:59 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:59293 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727944AbgBFPYz (ORCPT
+        id S1727572AbgBFP1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 10:27:09 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:42299 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727473AbgBFP1I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 10:24:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581002694;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VDikhD16Evvn1Sryhm3WQZr7k9nYSi7+3qLuDWiD+FI=;
-        b=MXK8N1DprrE3kZJjg9zYnPcprnIFyquLHGkk9w1oN9z76bUOxTGHArE2HSdjjn8YlixEow
-        K6VLbADpAP48xy8smru6Cg0EShPfeYlh2koAlCtbOoRr8Z3vWXPYGJw+u0Dvx+npeHcR3n
-        PKaeTGASHtq64JbzMVLnZivbQcrTDfo=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-339-4R0Oml9PNNWJsmVctskRKQ-1; Thu, 06 Feb 2020 10:24:51 -0500
-X-MC-Unique: 4R0Oml9PNNWJsmVctskRKQ-1
-Received: by mail-wr1-f69.google.com with SMTP id l1so3605553wrt.4
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 07:24:51 -0800 (PST)
+        Thu, 6 Feb 2020 10:27:08 -0500
+Received: by mail-qk1-f194.google.com with SMTP id q15so5887758qke.9
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 07:27:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=XZOggLanx1OakxhbvmLypkwLB6o7BwYbW0LP99Ryt1o=;
+        b=yqZ/FZfL7rzCP/2Jqs5bBr0b3LqQr+WLoYGIPyBGKw6323lJiZKUFKys6E+VHeTJf2
+         Q6Piw50B5YbifhP9CblDm+U1GrvZEKZfGAIM/WgHxJp8L+nPX03q6D8VELhZ9R6NOLtJ
+         0N0BATZjWI1IczjjfHIveuTCnUgMe+YptD0IpellozuQtXZMs1KXJDOQoRD808ussEVS
+         Oeq1YPf/gA/4zQLcWiJBTPhyXQkV4fdKw2VzJoUCEkl+iDXax7CtlZ/cnhsc9SesEK6s
+         rSpSpV2Ot3fvi+Ga5GgVIr1vsjh5V4Ifnz9qtatPI8rzuX97IK5IffeOowrdFDe+hNk2
+         Ak9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=VDikhD16Evvn1Sryhm3WQZr7k9nYSi7+3qLuDWiD+FI=;
-        b=YlqpK2GaC3JbTozMdhiRgKaFjOzDFR7PQxNFUXZeXsb3CDIaDONGzXPbydMsMLhWXs
-         1R369qrXlTMUzWRdO5+VdyUFCzSqcJyRBzsU31UQAX4txTIJExGyu4sVTq0IKCfZWHO+
-         6PbSXbpUokmWYcBeVCbHsG7ygUW8Emr5WFHlL0Mhg8ptZS1fDWda8U8B2Eq8AK/7mRnp
-         +EWBf/doTlYPIUKJJFT2+7ZvCpYeGtSwGsWg/TOGfhNXJ4YcRwKpvkPkNlz66ZiCFFAO
-         rP9jIB41FTEKdwdniy/yg6nfA9nt74ResoV9GXUNiUm8eRBEVb0LI2TDRqRkjY5VWw/J
-         Sr+A==
-X-Gm-Message-State: APjAAAVakGLFGbPe4WGU+FqgQM6UlT9fS/N3kZJXdMCQB8Ez3zA2/b9s
-        vtV5Kygjz6nKz24yTtbvQ9nzpJHnbJmgoRQ4hr6u11EiGSGOL4BKYpR/u1bt6jbzPjn1MQswBpy
-        1IH6vaExkwZLt529x4aDh415v
-X-Received: by 2002:a5d:5706:: with SMTP id a6mr4360395wrv.108.1581002690141;
-        Thu, 06 Feb 2020 07:24:50 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyDfgeM519VoXEHCNZuvgRVP3rjGryo/TbI5trM9zUhz8/cXUgb/b8aGM99u2lpQAJWzti+PA==
-X-Received: by 2002:a5d:5706:: with SMTP id a6mr4360377wrv.108.1581002689876;
-        Thu, 06 Feb 2020 07:24:49 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id w7sm3991741wmi.9.2020.02.06.07.24.49
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=XZOggLanx1OakxhbvmLypkwLB6o7BwYbW0LP99Ryt1o=;
+        b=CJe6iiFE0a3ekuCySJXGwWSs36KVfqFORpmn3Ro7y6zYbnzvvN9x7z9INfvCcW8sJL
+         eeKXu+d0xVtkdydmiwpCxCzKeOaLhkzo6AkxM1flPJ6CzPo+FFj2CE1qI95zu8Q/Z6yF
+         4ivmn/fTTNighvhqtPYqNhHrs5LXoRt2D6rt9rbXxzW+rhhov2wqBJZAhsHiNYo2WWPa
+         SmwDXy+Z2cNGrt84WwjdcPHZpPvYK89zMimoXu485e4/dFr0oMWiOVHheektoKoRmQIi
+         L1qUzLIU2rqTavMVbC7LFcg0C4Yc2SPUA439kDatUXmpmuIvyEpf/HxDfOf4I/CPnONo
+         +MQQ==
+X-Gm-Message-State: APjAAAXb/1vp7y+iCLwwbaz4pU5Fm4UUmkyiwRCOEwAzsL9mlpJOYZYi
+        3FcEojCmG64r9uk6stLHSn33O8+vutE=
+X-Google-Smtp-Source: APXvYqwoCWoPoxMsBmJ48AbMG+4iF96O7gepmNsPc8GfJXUuFMj8rT6ge/PsiVIYjdA9hTy/JKrEoQ==
+X-Received: by 2002:a05:620a:7f4:: with SMTP id k20mr2931953qkk.483.1581002826313;
+        Thu, 06 Feb 2020 07:27:06 -0800 (PST)
+Received: from localhost (pool-108-27-252-85.nycmny.fios.verizon.net. [108.27.252.85])
+        by smtp.gmail.com with ESMTPSA id b24sm1741820qto.71.2020.02.06.07.27.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 07:24:49 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH 05/61] KVM: x86: Check userapce CPUID array size after validating sub-leaf
-In-Reply-To: <20200201185218.24473-6-sean.j.christopherson@intel.com>
-References: <20200201185218.24473-1-sean.j.christopherson@intel.com> <20200201185218.24473-6-sean.j.christopherson@intel.com>
-Date:   Thu, 06 Feb 2020 16:24:48 +0100
-Message-ID: <87k14zg2m7.fsf@vitty.brq.redhat.com>
+        Thu, 06 Feb 2020 07:27:05 -0800 (PST)
+Date:   Thu, 6 Feb 2020 10:27:04 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Dan Schatzberg <dschatzberg@fb.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        "open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" 
+        <linux-mm@kvack.org>
+Subject: Re: [PATCH 1/2] mm: Charge current memcg when no mm is set
+Message-ID: <20200206152704.GA24735@cmpxchg.org>
+References: <20200205223348.880610-1-dschatzberg@fb.com>
+ <20200205223348.880610-2-dschatzberg@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200205223348.880610-2-dschatzberg@fb.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+On Wed, Feb 05, 2020 at 02:33:47PM -0800, Dan Schatzberg wrote:
+> This modifies the shmem and mm charge logic so that now if there is no
+> mm set (as in the case of tmpfs backed loop device), we charge the
+> current memcg, if set.
+> 
+> Signed-off-by: Dan Schatzberg <dschatzberg@fb.com>
 
-> Verify that the next sub-leaf of CPUID 0x4 (or 0x8000001d) is valid
-> before rejecting the entire KVM_GET_SUPPORTED_CPUID due to insufficent
-> space in the userspace array.
->
-> Note, although this is technically a bug, it's not visible to userspace
-> as KVM_GET_SUPPORTED_CPUID is guaranteed to fail on KVM_CPUID_SIGNATURE,
-> which is hardcoded to be added after the affected leafs.  The real
-> motivation for the change is to tightly couple the nent/maxnent and
-> do_host_cpuid() sequences in preparation for future cleanup.
->
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/kvm/cpuid.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 11d5f311ef10..e5cf1e0cf84a 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -552,12 +552,12 @@ static inline int __do_cpuid_func(struct kvm_cpuid_entry2 *entry, u32 function,
->  
->  		/* read more entries until cache_type is zero */
->  		for (i = 1; ; ++i) {
-> -			if (*nent >= maxnent)
-> -				goto out;
-> -
->  			cache_type = entry[i - 1].eax & 0x1f;
->  			if (!cache_type)
->  				break;
-> +
-> +			if (*nent >= maxnent)
-> +				goto out;
->  			do_host_cpuid(&entry[i], function, i);
->  			++*nent;
->  		}
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+It's a dependency for 2/2, but it's also an overdue cleanup IMO: it's
+always been a bit weird that memalloc_use_memcg() worked for kernel
+allocations but was silently ignored for user pages.
 
--- 
-Vitaly
+This patch establishes a precedence order for who gets charged:
 
+1. If there is a memcg associated with the page already, that memcg is
+   charged. This happens during swapin.
+
+2. If an explicit mm is passed, mm->memcg is charged. This happens
+   during page faults, which can be triggered in remote VMs (eg gup).
+
+3. Otherwise consult the current process context. If it has configured
+   a current->active_memcg, use that. Otherwise, current->mm->memcg.
+
+Thanks Dan
