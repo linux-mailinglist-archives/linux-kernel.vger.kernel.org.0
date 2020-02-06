@@ -2,215 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AC1E154EF1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 23:31:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E921D154F03
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 23:41:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbgBFWb6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 17:31:58 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:34074 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbgBFWb5 (ORCPT
+        id S1727392AbgBFWlB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 17:41:01 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:53526 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727129AbgBFWlB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 17:31:57 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016MO59D128029;
-        Thu, 6 Feb 2020 22:31:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=1dCQzBF1Cy1VWMoh0IXhksIqAR1fyX3kpp5QSoJp0Fw=;
- b=cqVmZRJOQqRb+8a78dIoQFixTd3UhMeWOw931Ihmokotg1vASd711h9Hh0WWZtQijSvJ
- VjLFglBkrlQGbk+MA/xFbq8dH/eENq/+7+SaSI6GaQgwsJ0pDQnWOFiz4p0SuMlieQ5V
- UHpxaglv8zW7f7Kgj2d+tmpgK0kkqI5RfO8AJbokVnZi5GEifH3vFK2T5tW7HMJm+p17
- LaAFCjGCW/5CJ45xqqdSVNNe6CcbTmOAvRnsW732CUbxTPFWNp3ZUq+ZruMW4OoisB1o
- Go5dXCXvufxN4N9Igk+ULW4Mghu5KdGiZ3U9oGbXquaPuf7ihzLs8oFf27tbrskOAras Dw== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=1dCQzBF1Cy1VWMoh0IXhksIqAR1fyX3kpp5QSoJp0Fw=;
- b=QEOGG3DrrUHxV3xUm43ars+LaIjQMuvppX08nVNAFGDn9SxuhI3AbfQYuJpAefKfFkN9
- Go+HaUhJwksZqQqansJcaPnpJFEOwBGP+ssuibZKLUK1hJhYDpL7aDNohKtvbwB9TP4X
- 0v1p29PmGJ/04u36yGb9+gw9dOulEcsvSbcDmV7LMbrFr0AeOJ5ADXVzfZbRDXMFfJhd
- rr0uAz+wxk0b83NFA9V4QSRhqz6QZBtABUYYN6UxhTJ3LTaDb+kXBAb8BybFx8c1m7Wc
- wrtH4yI103ik2kkRuU5A6qoUAG9OWSkLKXJoNSSHpU6BIpUaHFulOyYOhJGazbuuzeJ7 ig== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2xykbpcs55-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Feb 2020 22:31:50 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016MO9Ag190696;
-        Thu, 6 Feb 2020 22:31:50 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2y0jfytahp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Feb 2020 22:31:49 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 016MVmgm024222;
-        Thu, 6 Feb 2020 22:31:48 GMT
-Received: from [192.168.1.206] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Feb 2020 14:31:48 -0800
-Subject: Re: [PATCH v11 6/9] hugetlb_cgroup: support noreserve mappings
-To:     Mina Almasry <almasrymina@google.com>
-Cc:     shuah@kernel.org, rientjes@google.com, shakeelb@google.com,
-        gthelen@google.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org
-References: <20200203232248.104733-1-almasrymina@google.com>
- <20200203232248.104733-6-almasrymina@google.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <6cc406e7-757f-4922-ffc0-681df3ee0d18@oracle.com>
-Date:   Thu, 6 Feb 2020 14:31:46 -0800
+        Thu, 6 Feb 2020 17:41:01 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 016MeqRk122715;
+        Thu, 6 Feb 2020 16:40:53 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1581028853;
+        bh=Mu7qRJS2jLmIsrKLZLL/BI6cfeKEUL45gFIFdonUaCg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=BCGxdyIF+r7MKJxrR+4vnFOqOsoC5fJrZD17W/KAGF4NZYNf+0bsB+8enI3kCLc+U
+         FJ+YfDeEzuab1wwUkeBUgM8TBrqY8wgvo1emM4Q9ZJOkxRLTV7ZRz8C5nose9nSCkY
+         czX1aGOD9nh3rUryRJUDGE3cUApp2L2GxWyPUF7M=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 016Meqsr078565
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Feb 2020 16:40:52 -0600
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 6 Feb
+ 2020 16:40:52 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 6 Feb 2020 16:40:52 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 016Meq3d009707;
+        Thu, 6 Feb 2020 16:40:52 -0600
+Subject: Re: [PATCH net-next v2] net: phy: dp83867: Add speed optimization
+ feature
+To:     Heiner Kallweit <hkallweit1@gmail.com>, <andrew@lunn.ch>,
+        <f.fainelli@gmail.com>
+CC:     <linux@armlinux.org.uk>, <davem@davemloft.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20200204181319.27381-1-dmurphy@ti.com>
+ <0ebcd40d-b9cc-1a76-bb18-91d8350aa1cd@gmail.com>
+ <47b9b462-6649-39a7-809f-613ce832bd5c@ti.com>
+ <59ce70e0-4404-cade-208d-d089ed238f30@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <8fa98423-9c3c-62c9-1e5a-29b2eef555e3@ti.com>
+Date:   Thu, 6 Feb 2020 16:36:23 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200203232248.104733-6-almasrymina@google.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <59ce70e0-4404-cade-208d-d089ed238f30@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9523 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2002060162
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9523 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2002060162
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/3/20 3:22 PM, Mina Almasry wrote:
-> Support MAP_NORESERVE accounting as part of the new counter.
-> 
-> For each hugepage allocation, at allocation time we check if there is
-> a reservation for this allocation or not. If there is a reservation for
-> this allocation, then this allocation was charged at reservation time,
-> and we don't re-account it. If there is no reserevation for this
-> allocation, we charge the appropriate hugetlb_cgroup.
-> 
-> The hugetlb_cgroup to uncharge for this allocation is stored in
-> page[3].private. We use new APIs added in an earlier patch to set this
-> pointer.
+Heiner
 
-Ah!  That reminded me to look at the migration code.  Turns out that none
-of the existing cgroup information (page[2]) is being migrated today.  That
-is a bug. :(  I'll confirm and fix in a patch separate from this series.
-We will need to make sure that new information added by this series in page[3]
-is also migrated.  That would be in an earlier patch where the use of the
-field is introduced.
+On 2/6/20 4:28 PM, Heiner Kallweit wrote:
+> On 06.02.2020 23:13, Dan Murphy wrote:
+>> Heiner
+>>
+>> On 2/5/20 3:16 PM, Heiner Kallweit wrote:
+>>> On 04.02.2020 19:13, Dan Murphy wrote:
+>>>> Set the speed optimization bit on the DP83867 PHY.
+>>>> This feature can also be strapped on the 64 pin PHY devices
+>>>> but the 48 pin devices do not have the strap pin available to enable
+>>>> this feature in the hardware.  PHY team suggests to have this bit set.
+>>>>
+>>>> With this bit set the PHY will auto negotiate and report the link
+>>>> parameters in the PHYSTS register.  This register provides a single
+>>>> location within the register set for quick access to commonly accessed
+>>>> information.
+>>>>
+>>>> In this case when auto negotiation is on the PHY core reads the bits
+>>>> that have been configured or if auto negotiation is off the PHY core
+>>>> reads the BMCR register and sets the phydev parameters accordingly.
+>>>>
+>>>> This Giga bit PHY can throttle the speed to 100Mbps or 10Mbps to accomodate a
+>>>> 4-wire cable.  If this should occur the PHYSTS register contains the
+>>>> current negotiated speed and duplex mode.
+>>>>
+>>>> In overriding the genphy_read_status the dp83867_read_status will do a
+>>>> genphy_read_status to setup the LP and pause bits.  And then the PHYSTS
+>>>> register is read and the phydev speed and duplex mode settings are
+>>>> updated.
+>>>>
+>>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>>> ---
+>>>> v2 - Updated read status to call genphy_read_status first, added link_change
+>>>> callback to notify of speed change and use phy_set_bits - https://lore.kernel.org/patchwork/patch/1188348/
+>>>>
+>>> As stated in the first review, it would be appreciated if you implement
+>>> also the downshift tunable. This could be a separate patch in this series.
+>>> Most of the implementation would be boilerplate code.
+>>
+>> I looked at this today and there are no registers that allow tuning the downshift attempts.  There is only a RO register that tells you how many attempts it took to achieve a link.  So at the very least we could put in the get_tunable but there will be no set.
+>>
+> The get operation for the downshift tunable should return after how many failed
+> attempts the PHY starts a downshift. This doesn't match with your description of
+> this register, so yes: Implementing the tunable for this PHY doesn't make sense.
+True.  This register is only going to return 1,2,4 and 8.  And it is 
+defaulted to 4 attempts.
+>
+> However this register may be useful in the link_change_notify() callback to
+> figure out whether a downshift happened, to trigger the info message you had in
+> your first version.
 
-> 
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
-> 
-> ---
-> 
-> Changes in v10:
-> - Refactored deferred_reserve check.
-> 
-> ---
->  mm/hugetlb.c | 28 +++++++++++++++++++++++++++-
->  1 file changed, 27 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 33818ccaf7e89..ec0b55ea1506e 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -1339,6 +1339,9 @@ static void __free_huge_page(struct page *page)
->  	clear_page_huge_active(page);
->  	hugetlb_cgroup_uncharge_page(hstate_index(h), pages_per_huge_page(h),
->  				     page, false);
-> +	hugetlb_cgroup_uncharge_page(hstate_index(h), pages_per_huge_page(h),
-> +				     page, true);
-> +
+Thats a good idea but.. The register is defaulted to always report 4 
+attempts were made. It never reports 0 attempts so we would never know 
+the truth behind the reporting.  Kinda like matching the speeds.
 
-When looking at the code without change markings, the two above lines
-look so similar my first thought is there must be a mistake.
+Dan
 
-A suggestion for better code readability:
-- hugetlb_cgroup_uncharge_page could just take "struct hstate *h" and
-  get both hstate_index(h) and pages_per_huge_page(h).
-- Perhaps make hugetlb_cgroup_uncharge_page and
-  hugetlb_cgroup_uncharge_page_rsvd be wrappers around a common routine.
-  Then the above would look like:
-
-  hugetlb_cgroup_uncharge_page(h, page);
-  hugetlb_cgroup_uncharge_page_rsvd(h, page);
-  
-
->  	if (restore_reserve)
->  		h->resv_huge_pages++;
-> 
-> @@ -2172,6 +2175,7 @@ struct page *alloc_huge_page(struct vm_area_struct *vma,
->  	long gbl_chg;
->  	int ret, idx;
->  	struct hugetlb_cgroup *h_cg;
-> +	bool deferred_reserve;
-> 
->  	idx = hstate_index(h);
->  	/*
-> @@ -2209,10 +2213,20 @@ struct page *alloc_huge_page(struct vm_area_struct *vma,
->  			gbl_chg = 1;
->  	}
-> 
-> +	/* If this allocation is not consuming a reservation, charge it now.
-> +	 */
-> +	deferred_reserve = map_chg || avoid_reserve || !vma_resv_map(vma);
-> +	if (deferred_reserve) {
-> +		ret = hugetlb_cgroup_charge_cgroup(idx, pages_per_huge_page(h),
-> +						   &h_cg, true);
-> +		if (ret)
-> +			goto out_subpool_put;
-> +	}
-> +
->  	ret = hugetlb_cgroup_charge_cgroup(idx, pages_per_huge_page(h), &h_cg,
->  					   false);
-
-Hmmm?  I'm starting to like the wrapper idea more as a way to help with
-readability of the bool rsvd argument.
-
-hugetlb_cgroup_charge_cgroup_rsvd()
-hugetlb_cgroup_charge_cgroup()
-
-At least to me it makes it easier to read.
--- 
-Mike Kravetz
-
->  	if (ret)
-> -		goto out_subpool_put;
-> +		goto out_uncharge_cgroup_reservation;
-> 
->  	spin_lock(&hugetlb_lock);
->  	/*
-> @@ -2236,6 +2250,14 @@ struct page *alloc_huge_page(struct vm_area_struct *vma,
->  	}
->  	hugetlb_cgroup_commit_charge(idx, pages_per_huge_page(h), h_cg, page,
->  				     false);
-> +	/* If allocation is not consuming a reservation, also store the
-> +	 * hugetlb_cgroup pointer on the page.
-> +	 */
-> +	if (deferred_reserve) {
-> +		hugetlb_cgroup_commit_charge(idx, pages_per_huge_page(h), h_cg,
-> +					     page, true);
-> +	}
-> +
->  	spin_unlock(&hugetlb_lock);
-> 
->  	set_page_private(page, (unsigned long)spool);
-> @@ -2261,6 +2283,10 @@ struct page *alloc_huge_page(struct vm_area_struct *vma,
->  out_uncharge_cgroup:
->  	hugetlb_cgroup_uncharge_cgroup(idx, pages_per_huge_page(h), h_cg,
->  				       false);
-> +out_uncharge_cgroup_reservation:
-> +	if (deferred_reserve)
-> +		hugetlb_cgroup_uncharge_cgroup(idx, pages_per_huge_page(h),
-> +					       h_cg, true);
->  out_subpool_put:
->  	if (map_chg || avoid_reserve)
->  		hugepage_subpool_put_pages(spool, 1);
-> --
-> 2.25.0.341.g760bfbb309-goog
