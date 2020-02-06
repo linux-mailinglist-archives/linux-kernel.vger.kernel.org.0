@@ -2,182 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 447F415472C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:10:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5385C15471A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 16:10:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727604AbgBFPKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 10:10:34 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:41682 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727481AbgBFPKd (ORCPT
+        id S1727542AbgBFPJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 10:09:58 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:56376 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727389AbgBFPJ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 10:10:33 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016F87F9142665;
-        Thu, 6 Feb 2020 15:09:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2020-01-29;
- bh=ARPonP1U7McuPo6Qy5eAIFbn137aCvnTTbf1VmVmhp0=;
- b=iqj8wJKodIMyaMhZ4RoBknQTCdn2KxRTDl3wNGcP+Gi2NSykO89ELRAwM9F1TqCrylWC
- kdEvrXDjckAZnFzjbcuGKtkF+uN9RZu2FeuKGVIUVP6YlMVUkRYg8YCx2O35UY9xjImP
- SV3x42bWPfpvn4wn6oAuwUicULbOGqNVS9eCZIQDsK4fFjzVSAyS5FtOJxprRRpUhJd3
- Fyt3rz6xFEPqC5fQjPKHi/r+0ttnE7vUETdhkLZYzMGev3AI1GmsqwoiMMswvTStLx4B
- SDwejtMmXiRhgydsRB8b3AvMel4y2xQOOkrzVHB7xIaXGwlSLu2NVj6jcm2LTOYrchrn 0A== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2019-08-05;
- bh=ARPonP1U7McuPo6Qy5eAIFbn137aCvnTTbf1VmVmhp0=;
- b=WXVQpb1OLnwYAD1qisJmzC7CtQOjMDttQCNf5lb4VthK5pDecqKQZHJ1Q9sxmFu86XuA
- OwNwGZ33sZxdtU5MDnFg1B02p4opI7qBnHZItKodUyQGx2tFGRqTaiCuJjDZgbksFde3
- XyAh8C/Xp1U7Zk72oQStN0w9WcfD+sTv/4U67SWbZLnDVtKRyAZKZdcW/5TIjsq2SZjU
- UzSf+0oDZ0zUbprVrEBBLDlNvpIUBgFW2ZGLmn+Kbs4oOCn341tYYzd6HFB3mX2U8kvu
- MfrVkGUeE2OFGtJKrqw73GpbaTal+OM1Zp44GUjMGT6NZz3/bNRAQdu60udHT2puhrjB 8w== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2xykbpaaa1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Feb 2020 15:09:57 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 016F9JEA135306;
-        Thu, 6 Feb 2020 15:09:57 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2y0mnjtej0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Feb 2020 15:09:56 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 016F9tUX010096;
-        Thu, 6 Feb 2020 15:09:55 GMT
-Received: from dhcp-10-175-186-149.vpn.oracle.com (/10.175.186.149)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Feb 2020 07:09:55 -0800
-From:   Alan Maguire <alan.maguire@oracle.com>
-To:     rostedt@goodmis.org, shuah@kernel.org, mhiramat@kernel.org
-Cc:     mingo@redhat.com, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com,
-        colin.king@canonical.com
-Subject: [PATCH 2/2] ftrace/selftest: absence of modules/programs should trigger unsupported errors
-Date:   Thu,  6 Feb 2020 15:09:20 +0000
-Message-Id: <1581001760-29831-3-git-send-email-alan.maguire@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1581001760-29831-1-git-send-email-alan.maguire@oracle.com>
-References: <1581001760-29831-1-git-send-email-alan.maguire@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9522 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=4 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2002060116
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9522 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=4 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2002060116
+        Thu, 6 Feb 2020 10:09:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581001797;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=EZiBMYoM5ngA1SWJXac8F1p5eppKDaYXsn4jaAv3LSk=;
+        b=eoY7YT/kuC3ITEJdwBR241xbCV6nv1zgSARCNfwEdybEm3UAQfDmHYtim2wUFTMTpXnEHc
+        06zQHfkMKJrD7M4Ddgd6enZKV4xmcl0J8bIqmZei29scPjZNBLFgIcNMR4AbZP6IsDQSTR
+        3iRyokNn7P3hxEDaED3CWZWAtHH2408=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-128-MaYk6OVgMuC9t-3MiZbzew-1; Thu, 06 Feb 2020 10:09:56 -0500
+X-MC-Unique: MaYk6OVgMuC9t-3MiZbzew-1
+Received: by mail-wm1-f72.google.com with SMTP id s25so129437wmj.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 07:09:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=EZiBMYoM5ngA1SWJXac8F1p5eppKDaYXsn4jaAv3LSk=;
+        b=tv0xi5KcvtKWcrmjmR63xYrDJkZmQl68FQbHGNt3g3v0A8E+UznlOqxahQmu7gHE4A
+         YJ5rJl38N/AXr2FrskWbEQxqDdZKvaz6Xvx4qjE+pEsjdcUUbdv6VI80j1f43sUWmP+s
+         j7W1tpR5X8TA1K8OcRc3hObKGW2NFrxsqUga43w916lkPjBx+AhrX4PrCTjMZog5mwyr
+         Yypj9B56sUypSebOLmqnZVkbi+6jCQxOG7CAImvdJb+BHjfJf//+v03R1+7vu7JBPXPa
+         iyRQadjY6iusSYahbmb7mGNBNKulI9Ld/ERa/Gedkm5E+8/OMdfywix69jjx0yQsVK0P
+         HIAA==
+X-Gm-Message-State: APjAAAX4WyG1wA9MIbYoprwAH0zsOQS96MnwaTXexb0/hs2IZAIsWdcg
+        pfQjAwu/2DM9QDuWA2GQ0VnMO7b8XzmSsqMxV5p6srZTUyOQWzjWZGZR/Aj3RXZhmYbKy+4uao2
+        tZR9MC4xXwKglOKVShlzBSKAz
+X-Received: by 2002:a1c:151:: with SMTP id 78mr4844280wmb.182.1581001794876;
+        Thu, 06 Feb 2020 07:09:54 -0800 (PST)
+X-Google-Smtp-Source: APXvYqy7PZM8qvaN6WfZLfowxyRpKK0ElKwo8vzNSQ8xUj7u0xgC7aIvhuRCNLsPUGIuGsyl4qCxbg==
+X-Received: by 2002:a1c:151:: with SMTP id 78mr4844246wmb.182.1581001794592;
+        Thu, 06 Feb 2020 07:09:54 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id q130sm4453532wme.19.2020.02.06.07.09.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Feb 2020 07:09:54 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH 04/61] KVM: x86: Clean up error handling in kvm_dev_ioctl_get_cpuid()
+In-Reply-To: <20200201185218.24473-5-sean.j.christopherson@intel.com>
+References: <20200201185218.24473-1-sean.j.christopherson@intel.com> <20200201185218.24473-5-sean.j.christopherson@intel.com>
+Date:   Thu, 06 Feb 2020 16:09:53 +0100
+Message-ID: <87mu9vg3b2.fsf@vitty.brq.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In a number of cases, the ftrace tests check for the presence of
-ftrace testing-related modules (ftrace-direct, trace-printk) and
-programs (checkbashisms), returning exit_unresolved if these
-are not found.  The problem is, exit_unresolved causes execution
-of ftracetest to return an error, when really our tests are
-failing due to not having the requisite kernel configuration/tools
-present, which is I think more of an unsupported error condition.
-With these fixed, we see no unresolved test cases and ftracetest
-returns success ("ok" when run via kselftest).
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-Fixes: 646f01ccdd59 ("ftrace/selftest: Add tests to test register_ftrace_direct()")
-Fixes: 4d23e9b4fd2e ("selftests/ftrace: Add trace_printk sample module test")
-Fixes: 7bc026d6c032 ("selftests/ftrace: Add function filter on module testcase")
-Fixes: ff431b1390cb ("selftests/ftrace: Add a test to probe module functions")
-Fixes: 4a075bd4e13f ("selftests/ftrace: Add checkbashisms meta-testcase")
-Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
----
- tools/testing/selftests/ftrace/test.d/direct/ftrace-direct.tc  | 2 +-
- tools/testing/selftests/ftrace/test.d/direct/kprobe-direct.tc  | 2 +-
- tools/testing/selftests/ftrace/test.d/event/trace_printk.tc    | 2 +-
- tools/testing/selftests/ftrace/test.d/ftrace/func_mod_trace.tc | 2 +-
- tools/testing/selftests/ftrace/test.d/kprobe/kprobe_module.tc  | 2 +-
- tools/testing/selftests/ftrace/test.d/selftest/bashisms.tc     | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+> Clean up the error handling in kvm_dev_ioctl_get_cpuid(), which has
+> gotten a bit crusty as the function has evolved over the years.
+>
+> Opportunistically hoist the static @funcs declaration to the top of the
+> function to make it more obvious that it's a "static const".
+>
+> No functional change intended.
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/x86/kvm/cpuid.c | 19 +++++++------------
+>  1 file changed, 7 insertions(+), 12 deletions(-)
+>
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index de52cbb46171..11d5f311ef10 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -889,45 +889,40 @@ int kvm_dev_ioctl_get_cpuid(struct kvm_cpuid2 *cpuid,
+>  			    struct kvm_cpuid_entry2 __user *entries,
+>  			    unsigned int type)
+>  {
+> -	struct kvm_cpuid_entry2 *cpuid_entries;
+> -	int nent = 0, r = -E2BIG, i;
+> -
+>  	static const u32 funcs[] = {
+>  		0, 0x80000000, CENTAUR_CPUID_SIGNATURE, KVM_CPUID_SIGNATURE,
+>  	};
+>  
+> +	struct kvm_cpuid_entry2 *cpuid_entries;
+> +	int nent = 0, r, i;
+> +
+>  	if (cpuid->nent < 1)
+> -		goto out;
+> +		return -E2BIG;
+>  	if (cpuid->nent > KVM_MAX_CPUID_ENTRIES)
+>  		cpuid->nent = KVM_MAX_CPUID_ENTRIES;
+>  
+>  	if (sanity_check_entries(entries, cpuid->nent, type))
+>  		return -EINVAL;
+>  
+> -	r = -ENOMEM;
+>  	cpuid_entries = vzalloc(array_size(sizeof(struct kvm_cpuid_entry2),
+>  					   cpuid->nent));
+>  	if (!cpuid_entries)
+> -		goto out;
+> +		return -ENOMEM;
+>  
+> -	r = 0;
+>  	for (i = 0; i < ARRAY_SIZE(funcs); i++) {
+>  		r = get_cpuid_func(cpuid_entries, funcs[i], &nent, cpuid->nent,
+>  				   type);
+>  		if (r)
+>  			goto out_free;
+>  	}
+> +	cpuid->nent = nent;
+>  
+> -	r = -EFAULT;
+>  	if (copy_to_user(entries, cpuid_entries,
+>  			 nent * sizeof(struct kvm_cpuid_entry2)))
+> -		goto out_free;
+> -	cpuid->nent = nent;
+> -	r = 0;
+> +		r = -EFAULT;
+>  
+>  out_free:
+>  	vfree(cpuid_entries);
+> -out:
+>  	return r;
+>  }
 
-diff --git a/tools/testing/selftests/ftrace/test.d/direct/ftrace-direct.tc b/tools/testing/selftests/ftrace/test.d/direct/ftrace-direct.tc
-index d75a869..3d6189e 100644
---- a/tools/testing/selftests/ftrace/test.d/direct/ftrace-direct.tc
-+++ b/tools/testing/selftests/ftrace/test.d/direct/ftrace-direct.tc
-@@ -5,7 +5,7 @@
- rmmod ftrace-direct ||:
- if ! modprobe ftrace-direct ; then
-   echo "No ftrace-direct sample module - please make CONFIG_SAMPLE_FTRACE_DIRECT=m"
--  exit_unresolved;
-+  exit_unsupported;
- fi
- 
- echo "Let the module run a little"
-diff --git a/tools/testing/selftests/ftrace/test.d/direct/kprobe-direct.tc b/tools/testing/selftests/ftrace/test.d/direct/kprobe-direct.tc
-index 801ecb6..3d0e3ca 100644
---- a/tools/testing/selftests/ftrace/test.d/direct/kprobe-direct.tc
-+++ b/tools/testing/selftests/ftrace/test.d/direct/kprobe-direct.tc
-@@ -5,7 +5,7 @@
- rmmod ftrace-direct ||:
- if ! modprobe ftrace-direct ; then
-   echo "No ftrace-direct sample module - please build with CONFIG_SAMPLE_FTRACE_DIRECT=m"
--  exit_unresolved;
-+  exit_unsupported;
- fi
- 
- if [ ! -f kprobe_events ]; then
-diff --git a/tools/testing/selftests/ftrace/test.d/event/trace_printk.tc b/tools/testing/selftests/ftrace/test.d/event/trace_printk.tc
-index b02550b..dd8b10d 100644
---- a/tools/testing/selftests/ftrace/test.d/event/trace_printk.tc
-+++ b/tools/testing/selftests/ftrace/test.d/event/trace_printk.tc
-@@ -5,7 +5,7 @@
- rmmod trace-printk ||:
- if ! modprobe trace-printk ; then
-   echo "No trace-printk sample module - please make CONFIG_SAMPLE_TRACE_PRINTK=m"
--  exit_unresolved;
-+  exit_unsupported;
- fi
- 
- echo "Waiting for irq work"
-diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func_mod_trace.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func_mod_trace.tc
-index 9330c87..fc22ac0 100644
---- a/tools/testing/selftests/ftrace/test.d/ftrace/func_mod_trace.tc
-+++ b/tools/testing/selftests/ftrace/test.d/ftrace/func_mod_trace.tc
-@@ -13,7 +13,7 @@ echo '*:mod:trace_printk' > set_ftrace_filter
- if ! modprobe trace-printk ; then
-   echo "No trace-printk sample module - please make CONFIG_SAMPLE_TRACE_PRINTK=
- m"
--  exit_unresolved;
-+  exit_unsupported;
- fi
- 
- : "Wildcard should be resolved after loading module"
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_module.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_module.tc
-index d861bd7..4e07c69 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_module.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_module.tc
-@@ -8,7 +8,7 @@ rmmod trace-printk ||:
- if ! modprobe trace-printk ; then
-   echo "No trace-printk sample module - please make CONFIG_SAMPLE_TRACE_PRINTK=
- m"
--  exit_unresolved;
-+  exit_unsupported;
- fi
- 
- MOD=trace_printk
-diff --git a/tools/testing/selftests/ftrace/test.d/selftest/bashisms.tc b/tools/testing/selftests/ftrace/test.d/selftest/bashisms.tc
-index 1b081e9..1b339bd 100644
---- a/tools/testing/selftests/ftrace/test.d/selftest/bashisms.tc
-+++ b/tools/testing/selftests/ftrace/test.d/selftest/bashisms.tc
-@@ -9,7 +9,7 @@ fi
- 
- if ! which checkbashisms > /dev/null 2>&1 ; then
-   echo "No checkbashisms found. skipped."
--  exit_unresolved
-+  exit_unsupported
- fi
- 
- checkbashisms $FTRACETEST_ROOT/ftracetest
+Please [partially] disregard my comment on PATCH 02
+
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+
 -- 
-1.8.3.1
+Vitaly
 
