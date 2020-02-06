@@ -2,101 +2,313 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 989A6154EE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 23:30:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37BB5154EF3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 23:32:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbgBFWaI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 17:30:08 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:53192 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726543AbgBFWaI (ORCPT
+        id S1727309AbgBFWcK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 17:32:10 -0500
+Received: from mail-il1-f172.google.com ([209.85.166.172]:38703 "EHLO
+        mail-il1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726838AbgBFWcK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 17:30:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581028206;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=y9cBxEKgtYZ4SHZJ2KCZ291mafsQUmmbyOmTI5C6x9c=;
-        b=XtU6R1g1DzR7pDkOvp+BNKtATHbXUm90+/6GQRFQ9uNmo8psreNAsY2ftxMiGhOS92tTCK
-        FqguwxiD1MhiFn+CRt1r9PB391onsqLQdmK/iW/zXKIraySs/NP8xsLMIUIcxDY1chJMPP
-        8eIvakGDCKnQ+J8Mo6ManhkTvzGnOY8=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-343-beDS3rP4NV21BYC19vvukA-1; Thu, 06 Feb 2020 17:30:05 -0500
-X-MC-Unique: beDS3rP4NV21BYC19vvukA-1
-Received: by mail-qt1-f197.google.com with SMTP id o18so260603qtt.19
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 14:30:05 -0800 (PST)
+        Thu, 6 Feb 2020 17:32:10 -0500
+Received: by mail-il1-f172.google.com with SMTP id f5so73246ilq.5;
+        Thu, 06 Feb 2020 14:32:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:message-id:subject:from:to:cc:mime-version:date:user-agent
+         :content-transfer-encoding;
+        bh=7/Bes3cNLricskFz3U4XIFBnsvX6Y4giyFoJ+2MLEl4=;
+        b=txaA0eVKTJ4u1/q5ac5IeqCgAw7iDg7J+iKTAGUJ+DbpFHipV2QDYvk45NsbcgTzWe
+         3HCquQPM+LCuU4fKY5A50RWGtabOxk706MHwKa5uW+ux0I32FJimeBza4caTS973ctaF
+         1N3w2rqqB3c+Kid/oNk7a2QjxbkWXvLno6OiyNBd3h5fGtUCJZyetGaO9+98HkVmgnbt
+         ivSRRBr/beH+tr2Dg2BzJawPenR7MEVqH3WCyHqwWQ4BIwoMVFjFHgtsg2n5EB/VBDHF
+         XQX40psldoU1PfSAM4qxQuokIMC9wrBMmALmcd0bnFGXb3VvskwvAdusNKgJ9FGqoli+
+         qXZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=y9cBxEKgtYZ4SHZJ2KCZ291mafsQUmmbyOmTI5C6x9c=;
-        b=PJFhrnwDWrYMHuPdfTnNtRw0MpLcXCb2TvDmx+wElprq4z1RiCgtsqEoCbNliDbijF
-         3mNj6hHQLrodpg9r9qPKXw3VsHz578LsMlPfra3/67LDdfm7GpZdhWQ2MwVD3ZF5b8Gb
-         DxWr4Y5JMn2tiITCT1Ha5IWXRz0FH5XeEZgLCc1V3pvv/1NoIlgP2XTDMIzfx5ek1LnO
-         wkzRPdX9k0eqYIs/V/RvIjwxZ/VUssN+dkVt7H3GGqRcBmWrzheqXo6xDYlcvO9d7ND2
-         O/53l/NBBGRHAj7paRkwusmpdqilQVkZoIwgsBb7fW2+Y6hbuIscZ3TsY7haw5y93YaU
-         om+Q==
-X-Gm-Message-State: APjAAAXTaOIM17s8DGcSX4e9BlaLNzYFsMnyGNRUpotnGqiu9jZ5+BPc
-        a8R9IGiGgTAFjwCSVSkhql//8uIUvWP+ZBwv6SiHklk1dR7NtChdC7v0wQBsq/xL2tQCxj+35rg
-        OOih8Q1Dv3VY28NZFFud7b6b9
-X-Received: by 2002:a37:7884:: with SMTP id t126mr4700916qkc.288.1581028204600;
-        Thu, 06 Feb 2020 14:30:04 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzvEhS0XgXcsen5IJpPtTelaoRM0D8F8yYe4NbZxtsmBW+xmvTRWnxA6Vkem/WNxI4KksN37A==
-X-Received: by 2002:a37:7884:: with SMTP id t126mr4700901qkc.288.1581028204379;
-        Thu, 06 Feb 2020 14:30:04 -0800 (PST)
-Received: from xz-x1 ([2607:9880:19c8:32::2])
-        by smtp.gmail.com with ESMTPSA id z185sm352349qkb.116.2020.02.06.14.30.02
+        h=x-gm-message-state:sender:message-id:subject:from:to:cc
+         :mime-version:date:user-agent:content-transfer-encoding;
+        bh=7/Bes3cNLricskFz3U4XIFBnsvX6Y4giyFoJ+2MLEl4=;
+        b=OEBes/UBzvycvAxplg/sG6yArXa+7GWIqJKCs9nBfIVsyrwUsmOtubPZ1q9ACnbUh4
+         d5w5DWauPCAkqd4Teyn7qQLKM4TpV22A2HpQb6DUqSozCz8QC/NxNlkfSQpG99Y/52Xu
+         0ngRio0Q6MFZ04rHzuvU2802DYoJ9wpQsXiKz2DXc+DcMfogQ1/bovzZFJLi+2IulBql
+         y02Gogv8RNDdLBeDgJGqH4lsz1zHNOJlulzZanIzeVq1WIVYhMbRt0pLHn/+XfUqggcJ
+         699Ulft189gYv3uxUzKl6L67RUKwK0p7a9J3OQgtRtTU6cw3pgMrCqY7hgRtLMDwEinp
+         mEUQ==
+X-Gm-Message-State: APjAAAVf/IhIbh+WalBOzUr/RDZZJ2BsaSILdjSJKUd7D9NUxUySlsu3
+        C/FC8r2Xhfye/x1aO1Gb3nGEydv9
+X-Google-Smtp-Source: APXvYqwxWFbGcB0yvpWUrB3Z5mLGf6wsHrn/xhdIZzEaz6Pmi4/Mk5r1403nZ+tmKX4C6oU+2u6jBQ==
+X-Received: by 2002:a92:990d:: with SMTP id p13mr6063659ili.129.1581028329085;
+        Thu, 06 Feb 2020 14:32:09 -0800 (PST)
+Received: from gouda.nowheycreamery.com (c-68-32-74-190.hsd1.mi.comcast.net. [68.32.74.190])
+        by smtp.googlemail.com with ESMTPSA id e23sm433303ild.37.2020.02.06.14.32.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 14:30:03 -0800 (PST)
-Date:   Thu, 6 Feb 2020 17:30:01 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, Marc Zyngier <maz@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-mips@vger.kernel.org, kvm@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Philippe =?utf-8?Q?Mathieu-Daud=C3=A9?= <f4bug@amsat.org>
-Subject: Re: [PATCH v5 19/19] KVM: selftests: Add test for
- KVM_SET_USER_MEMORY_REGION
-Message-ID: <20200206223001.GJ700495@xz-x1>
-References: <20200121223157.15263-1-sean.j.christopherson@intel.com>
- <20200121223157.15263-20-sean.j.christopherson@intel.com>
+        Thu, 06 Feb 2020 14:32:08 -0800 (PST)
+Message-ID: <6a5ac820658697e7460006ddf08d10caeb7b33dd.camel@netapp.com>
+Subject: [GIT PULL] Please pull NFS client updates for Linux 5.6
+From:   Anna Schumaker <anna.schumaker@netapp.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200121223157.15263-20-sean.j.christopherson@intel.com>
+Date:   Thu, 06 Feb 2020 17:31:18 -0500
+User-Agent: Evolution 3.34.3 
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 02:31:57PM -0800, Sean Christopherson wrote:
-> Add a KVM selftest to test moving the base gfn of a userspace memory
-> region.  Although the basic concept of moving memory regions is not x86
-> specific, the assumptions regarding large pages and MMIO shenanigans
-> used to verify the correctness make this x86_64 only for the time being.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Hi Linus,
 
-(I'm a bit curious why write 2 first before 1...)
+The following changes since commit 95e20af9fb9ce572129b930967dcb762a318c588:
 
-Reviewed-by: Peter Xu <peterx@redhat.com>
+  Merge tag 'nfs-for-5.5-2' of git://git.linux-nfs.org/projects/anna/linux-nfs
+(2020-01-14 13:33:14 -0800)
 
--- 
-Peter Xu
+are available in the Git repository at:
+
+  git://git.linux-nfs.org/projects/anna/linux-nfs.git tags/nfs-for-5.6-1
+
+for you to fetch changes up to 7dc2993a9e51dd2eee955944efec65bef90265b7:
+
+  NFSv4.0: nfs4_do_fsinfo() should not do implicit lease renewals (2020-02-04
+12:27:55 -0500)
+
+----------------------------------------------------------------
+Stable bugfixes:
+- Fix memory leaks and corruption in readdir # v2.6.37+
+- Directory page cache needs to be locked when read # v2.6.37+
+
+New features:
+- Convert NFS to use the new mount API
+- Add "softreval" mount option to let clients use cache if server goes down
+- Add a config option to compile without UDP support
+- Limit the number of inactive delegations the client can cache at once
+- Improved readdir concurrency using iterate_shared()
+
+Other bugfixes and cleanups:
+- More 64-bit time conversions
+- Add additional diagnostic tracepoints
+- Check for holes in swapfiles, and add dependency on CONFIG_SWAP
+- Various xprtrdma cleanups to prepare for 5.7's changes
+- Several fixes for NFS writeback and commit handling
+- Fix acls over krb5i/krb5p mounts
+- Recover from premature loss of openstateids
+- Fix NFS v3 chacl and chmod bug
+- Compare creds using cred_fscmp()
+- Use kmemdup_nul() in more places
+- Optimize readdir cache page invalidation
+- Lease renewal and recovery fixes
+
+Thanks,
+Anna
+
+----------------------------------------------------------------
+Al Viro (15):
+      saner calling conventions for nfs_fs_mount_common()
+      nfs: stash server into struct nfs_mount_info
+      nfs: lift setting mount_info from nfs4_remote{,_referral}_mount
+      nfs: fold nfs4_remote_fs_type and nfs4_remote_referral_fs_type
+      nfs: don't bother setting/restoring export_path around do_nfs_root_mount()
+      nfs4: fold nfs_do_root_mount/nfs_follow_remote_path
+      nfs: lift setting mount_info from nfs_xdev_mount()
+      nfs: stash nfs_subversion reference into nfs_mount_info
+      nfs: don't bother passing nfs_subversion to ->try_mount() and
+nfs_fs_mount_common()
+      nfs: merge xdev and remote file_system_type
+      nfs: unexport nfs_fs_mount_common()
+      nfs: don't pass nfs_subversion to ->create_server()
+      nfs: get rid of mount_info ->fill_super()
+      nfs_clone_sb_security(): simplify the check for server bogosity
+      nfs: get rid of ->set_security()
+
+Alex Shi (1):
+      NFS: remove unused macros
+
+Arnd Bergmann (5):
+      sunrpc: convert to time64_t for expiry
+      nfs: use timespec64 in nfs_fattr
+      nfs: fscache: use timespec64 in inode auxdata
+      nfs: remove timespec from xdr_encode_nfstime
+      nfs: encode nfsv4 timestamps as 64-bit
+
+Chuck Lever (13):
+      SUNRPC: Capture signalled RPC tasks
+      NFS: Introduce trace events triggered by page writeback errors
+      NFS4: Report callback authentication errors
+      SUNRPC: call_connect_status should handle -EPROTO
+      xprtrdma: Eliminate ri_max_send_sges
+      xprtrdma: Make sendctx queue lifetime the same as connection lifetime
+      xprtrdma: Refactor initialization of ep->rep_max_requests
+      xprtrdma: Eliminate per-transport "max pages"
+      xprtrdma: Refactor frwr_is_supported
+      xprtrdma: Allocate and map transport header buffers at connect time
+      xprtrdma: Destroy rpcrdma_rep when Receive is flushed
+      xprtrdma: Destroy reps from previous connection instance
+      xprtrdma: DMA map rr_rdma_buf as each rpcrdma_rep is created
+
+Colin Ian King (1):
+      NFS: Add missing null check for failed allocation
+
+Dai Ngo (1):
+      nfs: optimise readdir cache page invalidation
+
+David Howells (9):
+      NFS: Move mount parameterisation bits into their own file
+      NFS: Constify mount argument match tables
+      NFS: Rename struct nfs_parsed_mount_data to struct nfs_fs_context
+      NFS: Split nfs_parse_mount_options()
+      NFS: Deindent nfs_fs_context_parse_option()
+      NFS: Add a small buffer in nfs_fs_context to avoid string dup
+      NFS: Do some tidying of the parsing code
+      NFS: Add fs_context support.
+      nfs: Return EINVAL rather than ERANGE for mount parse errors
+
+Geert Uytterhoeven (1):
+      nfs: NFS_SWAP should depend on SWAP
+
+Julia Lawall (1):
+      SUNRPC: constify copied structure
+
+Murphy Zhou (1):
+      fs/nfs, swapon: check holes in swapfile
+
+Olga Kornievskaia (3):
+      NFSv4 fix acl retrieval over krb5i/krb5p mounts
+      NFSv4.x recover from pre-mature loss of openstateid
+      NFS: allow deprecation of NFS UDP protocol
+
+Robert Milkowski (2):
+      NFSv4: try lease recovery on NFS4ERR_EXPIRED
+      NFSv4.0: nfs4_do_fsinfo() should not do implicit lease renewals
+
+Scott Mayhew (4):
+      NFS: rename nfs_fs_context pointer arg in a few functions
+      NFS: Convert mount option parsing to use functionality from fs_parser.h
+      NFS: Additional refactoring for fs_context conversion
+      NFS: Attach supplementary error information to fs_context.
+
+Su Yanjun (1):
+      NFSv3: FIx bug when using chacl and chmod to change acl
+
+Trond Myklebust (32):
+      NFS: Revalidate the file size on a fatal write error
+      NFS: Revalidate the file mapping on all fatal writeback errors
+      SUNRPC: Remove broken gss_mech_list_pseudoflavors()
+      NFS: Fix up fsync() when the server rebooted
+      NFS/pnfs: Fix pnfs_generic_prepare_to_resend_writes()
+      NFSv4: Improve read/write/commit tracing
+      NFS: Fix fix of show_nfs_errors
+      pNFS/flexfiles: Record resend attempts on I/O failure
+      NFS: Clean up generic file read tracepoints
+      NFS: Clean up generic writeback tracepoints
+      NFS: Clean up generic file commit tracepoint
+      pNFS/flexfiles: Add tracing for layout errors
+      NFS: Improve tracing of permission calls
+      NFS: When resending after a short write, reset the reply count to zero
+      NFS: Fix nfs_direct_write_reschedule_io()
+      NFS: Trust cached access if we've already revalidated the inode once
+      NFS: Add mount option 'softreval'
+      NFS: Add softreval behaviour to nfs_lookup_revalidate()
+      NFSv4: pnfs_roc() must use cred_fscmp() to compare creds
+      NFS: nfs_access_get_cached_rcu() should use cred_fscmp()
+      NFS: nfs_find_open_context() should use cred_fscmp()
+      NFSv4: nfs_inode_evict_delegation() should set NFS_DELEGATION_RETURNING
+      NFS: Clear NFS_DELEGATION_RETURN_IF_CLOSED when the delegation is returned
+      NFSv4: Try to return the delegation immediately when marked for return on
+close
+      NFSv4: Add accounting for the number of active delegations held
+      NFSv4: Limit the total number of cached delegations
+      NFS: Replace various occurrences of kstrndup() with kmemdup_nul()
+      SUNRPC: Use kmemdup_nul() in rpc_parse_scope_id()
+      NFS: Fix memory leaks and corruption in readdir
+      NFS: Directory page cache pages need to be locked when read
+      NFS: Use kmemdup_nul() in nfs_readdir_make_qstr()
+      NFS: Switch readdir to using iterate_shared()
+
+Wenwen Wang (1):
+      NFS: Fix memory leaks
+
+zhengbin (2):
+      NFS4: Remove unneeded semicolon
+      NFS: move dprintk after nfs_alloc_fattr in nfs3_proc_lookup
+
+ fs/nfs/Kconfig                         |   11 +-
+ fs/nfs/Makefile                        |    2 +-
+ fs/nfs/callback_xdr.c                  |   11 +-
+ fs/nfs/client.c                        |   84 ++--
+ fs/nfs/delegation.c                    |   80 +++-
+ fs/nfs/delegation.h                    |    1 +
+ fs/nfs/dir.c                           |   83 ++--
+ fs/nfs/direct.c                        |    7 +-
+ fs/nfs/dns_resolve.c                   |    2 +-
+ fs/nfs/file.c                          |   49 ++-
+ fs/nfs/flexfilelayout/flexfilelayout.c |   34 +-
+ fs/nfs/fs_context.c                    | 1437
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nfs/fscache-index.c                 |    6 +-
+ fs/nfs/fscache.c                       |   20 +-
+ fs/nfs/fscache.h                       |    8 +-
+ fs/nfs/getroot.c                       |   73 +--
+ fs/nfs/inode.c                         |   10 +-
+ fs/nfs/internal.h                      |  143 +++---
+ fs/nfs/mount_clnt.c                    |    2 -
+ fs/nfs/namespace.c                     |  146 +++---
+ fs/nfs/nfs2xdr.c                       |   12 +-
+ fs/nfs/nfs3_fs.h                       |    2 +-
+ fs/nfs/nfs3client.c                    |    6 +-
+ fs/nfs/nfs3proc.c                      |   28 +-
+ fs/nfs/nfs3xdr.c                       |    5 +-
+ fs/nfs/nfs42proc.c                     |   40 +-
+ fs/nfs/nfs4_fs.h                       |   19 +-
+ fs/nfs/nfs4client.c                    |   99 ++---
+ fs/nfs/nfs4file.c                      |    1 +
+ fs/nfs/nfs4namespace.c                 |  298 +++++++------
+ fs/nfs/nfs4proc.c                      |  104 +++--
+ fs/nfs/nfs4renewd.c                    |    5 +-
+ fs/nfs/nfs4state.c                     |    7 +-
+ fs/nfs/nfs4super.c                     |  257 ++++-------
+ fs/nfs/nfs4trace.c                     |    4 +
+ fs/nfs/nfs4trace.h                     |  237 ++++++++--
+ fs/nfs/nfs4xdr.c                       |   17 +-
+ fs/nfs/nfstrace.h                      |  279 +++++++++---
+ fs/nfs/pnfs.c                          |    4 +-
+ fs/nfs/pnfs.h                          |    8 +-
+ fs/nfs/pnfs_nfs.c                      |    7 +-
+ fs/nfs/proc.c                          |   24 +-
+ fs/nfs/read.c                          |    7 +-
+ fs/nfs/super.c                         | 2218 ++++++++++++---------------------
+-----------------------------------------------------------
+ fs/nfs/write.c                         |   32 +-
+ include/linux/nfs_fs.h                 |    3 +
+ include/linux/nfs_fs_sb.h              |    1 +
+ include/linux/nfs_xdr.h                |   11 +-
+ include/linux/sunrpc/auth.h            |    2 -
+ include/linux/sunrpc/gss_api.h         |    7 +-
+ include/linux/sunrpc/gss_krb5.h        |    2 +-
+ include/trace/events/rpcrdma.h         |   12 +-
+ include/trace/events/sunrpc.h          |    1 +
+ net/sunrpc/addr.c                      |    2 +-
+ net/sunrpc/auth.c                      |   49 ---
+ net/sunrpc/auth_gss/auth_gss.c         |    1 -
+ net/sunrpc/auth_gss/gss_krb5_mech.c    |   12 +-
+ net/sunrpc/auth_gss/gss_krb5_seal.c    |    8 +-
+ net/sunrpc/auth_gss/gss_krb5_unseal.c  |    6 +-
+ net/sunrpc/auth_gss/gss_krb5_wrap.c    |   16 +-
+ net/sunrpc/auth_gss/gss_mech_switch.c  |   31 +-
+ net/sunrpc/auth_gss/svcauth_gss.c      |    4 +-
+ net/sunrpc/clnt.c                      |    1 +
+ net/sunrpc/sched.c                     |    4 +-
+ net/sunrpc/xdr.c                       |    2 +-
+ net/sunrpc/xprtrdma/backchannel.c      |    4 +
+ net/sunrpc/xprtrdma/frwr_ops.c         |  104 ++---
+ net/sunrpc/xprtrdma/rpc_rdma.c         |   20 +-
+ net/sunrpc/xprtrdma/transport.c        |   17 +-
+ net/sunrpc/xprtrdma/verbs.c            |  213 +++++----
+ net/sunrpc/xprtrdma/xprt_rdma.h        |   14 +-
+ 71 files changed, 3404 insertions(+), 3072 deletions(-)
+ create mode 100644 fs/nfs/fs_context.c
 
