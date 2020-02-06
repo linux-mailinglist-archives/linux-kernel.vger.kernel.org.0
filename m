@@ -2,86 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F3EF15465D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 15:41:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F064154669
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Feb 2020 15:45:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbgBFOlF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 09:41:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60684 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726765AbgBFOlF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 09:41:05 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2331E20838;
-        Thu,  6 Feb 2020 14:41:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581000064;
-        bh=5F+DVXttfezw5xirpmvxPSy/Sk+UV6Nkj38IRu6gU5U=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LyYbmzsb7DqZFk/mVKGIxTigWRVuM8b72E+rp347Aj6aoBGBD/N4akrO+uHDnx6BT
-         lA7uJ6Xo04zDCKsis2drjhUiV/SDJ/Knoe9ttGeW6T+tLeeGE1asoCqF1P4SniD0K0
-         Yxl+hXLC7f3qVZyDQJyrzoTVZiZMyw8VmRWP5JgE=
-Date:   Thu, 6 Feb 2020 23:41:00 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [for-next][PATCH 04/26] bootconfig: Add Extra Boot Config
- support
-Message-Id: <20200206234100.953b48ecef04f97c112d2e8b@kernel.org>
-In-Reply-To: <20200206115405.GA22608@zn.tnic>
-References: <20200114210316.450821675@goodmis.org>
-        <20200114210336.259202220@goodmis.org>
-        <20200206115405.GA22608@zn.tnic>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727479AbgBFOpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 09:45:13 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:33310 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726365AbgBFOpM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Feb 2020 09:45:12 -0500
+Received: by mail-ot1-f66.google.com with SMTP id b18so5708010otp.0;
+        Thu, 06 Feb 2020 06:45:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xYD6Qn+f8O19n6jnbN4GmWDjU8MnxsjL6RmYBktzX6A=;
+        b=XroesZcVBYWRUVanRb6CT3oiXt1PVz4u/55Iae1H7IBjCLRwgiY91Ha5bt1TCL6swk
+         Lm39dxXchE0eTzcFeNwQ4qNnFjVf8ecbP6km6URHIdVnRptG6LpSIjvlB/+N9DolgeJu
+         nwwcFFJRZgechdj9Xn03/vAQra2MRbrBpLInhMyA9usZHtH/fFBqU/7lrauh5s1T5eJf
+         qasb146HczZZUUiMOlBKfJIGps5bJtpEtkpNxOfjv9WZAemXyE+yRIrB8zY+0PxvFPvj
+         IZ52fjcbGwlSmC90pT5f1dM/Rhgm91bBqfGcvuLxh0YhiCQtRGJoUDBNrBNzAtLiZIzP
+         N4gA==
+X-Gm-Message-State: APjAAAWchglkdfrJG+wqaYWYfj1CR3h+Fc8U/Rv0qrcrFQgJITkm0Htb
+        w5bCIITQ431kIKr9gTM3j2Ff8xCnsxzVNwUX1U4=
+X-Google-Smtp-Source: APXvYqyBBc29/Ijg8aP7euisquvo66G+D60N9QvVlXsbMPCrQqHLz5pKWCMv7f1iVeOMhJHx9xjsFMRcmhcR3vTsNq8=
+X-Received: by 2002:a05:6830:1d55:: with SMTP id p21mr30533670oth.145.1581000311584;
+ Thu, 06 Feb 2020 06:45:11 -0800 (PST)
+MIME-Version: 1.0
+References: <20200202161914.9551-1-gilad@benyossef.com>
+In-Reply-To: <20200202161914.9551-1-gilad@benyossef.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 6 Feb 2020 15:45:00 +0100
+Message-ID: <CAMuHMdVgxBx2x7=nTK0HtvufMNBGLruUD6Y1a0pSnX+CDsvCDA@mail.gmail.com>
+Subject: Re: [PATCH] crypto: ccree - dec auth tag size from cryptlen map
+To:     Gilad Ben-Yossef <gilad@benyossef.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        stable <stable@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Gilad,
 
-On Thu, 6 Feb 2020 12:54:05 +0100
-Borislav Petkov <bp@alien8.de> wrote:
+On Sun, Feb 2, 2020 at 5:19 PM Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> Remove the auth tag size from cryptlen before mapping the destination
+> in out-of-place AEAD decryption thus resolving a crash with
+> extended testmgr tests.
+>
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: stable@vger.kernel.org # v4.19+
 
-> On Tue, Jan 14, 2020 at 04:03:20PM -0500, Steven Rostedt wrote:
-> > diff --git a/init/Kconfig b/init/Kconfig
-> > index a34064a031a5..63450d3bbf12 100644
-> > --- a/init/Kconfig
-> > +++ b/init/Kconfig
-> > @@ -1215,6 +1215,17 @@ source "usr/Kconfig"
-> >  
-> >  endif
-> >  
-> > +config BOOT_CONFIG
-> > +	bool "Boot config support"
-> > +	select LIBXBC
-> > +	default y
-> 
-> Any particular reason this is default y? Why should it be enabled by
-> default on all boxes?
+Thanks, this fixes the crash seen on R-Car H3 ES2.0 with renesas_defconfig,
+CONFIG_CRYPTO_MANAGER_DISABLE_TESTS=n, and CONFIG_CRYPTO_MANAGER_EXTRA_TESTS=y
 
-Oh, you are not the first person asked that :)
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-https://lkml.org/lkml/2019/12/9/563
+Remaining issues reported during boot:
+  1. alg: skcipher: blocksize for xts-aes-ccree (1) doesn't match
+generic impl (16)
+  2. alg: aead: rfc4543-gcm-aes-ccree decryption unexpectedly
+succeeded on test vector "random: alen=16 plen=39 authsize=16 klen=20
+novrfy=1"; expected_error=-EBADMSG or -22, cfg="random: may_sleep
+use_digest src_divs=[4.47%@+3553, 30.80%@+4065, 12.0%@+11,
+6.22%@+2999, 46.51%@alignmask+3468]"
 
-And yes, I think this is important that will useful for most developers
-and admins. Since the bootconfig already covers kernel and init options,
-this can be a new standard way to pass args to kernel boot.
+Gr{oetje,eeting}s,
 
-And as I reported above thread, the memory footpoint of view, most code
-and working memory are released after boot. Also, as Linus's suggested,
-now this feature is enabled only if user gives "bootconfig" on the kernel
-command line. So the side effect is minimized.
-
-Thank you,
+                        Geert
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
