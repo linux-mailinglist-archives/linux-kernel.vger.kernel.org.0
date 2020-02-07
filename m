@@ -2,55 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38886155576
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 11:19:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C987F15557E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 11:19:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbgBGKS4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 05:18:56 -0500
-Received: from foss.arm.com ([217.140.110.172]:38500 "EHLO foss.arm.com"
+        id S1727045AbgBGKTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 05:19:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726587AbgBGKSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 05:18:55 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D6AA30E;
-        Fri,  7 Feb 2020 02:18:55 -0800 (PST)
-Received: from [10.1.194.46] (e113632-lin.cambridge.arm.com [10.1.194.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 042D63F52E;
-        Fri,  7 Feb 2020 02:18:53 -0800 (PST)
-Subject: Re: [PATCH v4 1/4] sched/fair: Add asymmetric CPU capacity wakeup
- scan
-To:     Pavan Kondeti <pkondeti@codeaurora.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        qperret@google.com, adharmap@codeaurora.org
-References: <20200206191957.12325-1-valentin.schneider@arm.com>
- <20200206191957.12325-2-valentin.schneider@arm.com>
- <20200207050854.GF27398@codeaurora.org>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <90b6b52f-6e8d-7d25-dc5b-3e537f419ef7@arm.com>
-Date:   Fri, 7 Feb 2020 10:18:52 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726587AbgBGKTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 05:19:38 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49EE220838;
+        Fri,  7 Feb 2020 10:19:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581070776;
+        bh=E6Bhpu7PeadDR+lnSXCZdRb1H/HcVZY2jmhLQfHKHNg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IBIPcZrUPuEJRxdGdR2zitjAgr4tCGwahxSRTi44HMOpMwMsBIyghInx2g7K1OCzt
+         r6FIouey/1zVdHwkATxbGqY9ImByO4KTgLc/xzd2Kfb0oxvaC1RFZ0kWeX/04fCzh7
+         +HaVXdqiriiaLobngHWMzqgKg7XhVhE1Wr4DnAVk=
+Date:   Fri, 7 Feb 2020 11:19:34 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Chengguang Xu <cgxu519@mykernel.net>
+Cc:     Pavel Machek <pavel@denx.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 062/114] f2fs: choose hardlimit when softlimit is
+ larger than hardlimit in f2fs_statfs_project()
+Message-ID: <20200207101934.GA635415@kroah.com>
+References: <20200102220029.183913184@linuxfoundation.org>
+ <20200102220035.294585461@linuxfoundation.org>
+ <20200103171213.GC14328@amd>
+ <16f6e3f5bbe.d291a05d38838.5222280714928609391@mykernel.net>
+ <20200104115308.GA1296856@kroah.com>
+ <1700010cc3e.12eb876364380.7472123035435503364@mykernel.net>
 MIME-Version: 1.0
-In-Reply-To: <20200207050854.GF27398@codeaurora.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1700010cc3e.12eb876364380.7472123035435503364@mykernel.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavan,
-
-On 07/02/2020 05:08, Pavan Kondeti wrote:
+On Sat, Feb 01, 2020 at 05:24:25PM +0800, Chengguang Xu wrote:
+>  ---- 在 星期六, 2020-01-04 19:53:08 Greg Kroah-Hartman <gregkh@linuxfoundation.org> 撰写 ----
+>  > On Sat, Jan 04, 2020 at 09:50:43AM +0800, Chengguang Xu wrote:
+>  > >  ---- 在 星期六, 2020-01-04 01:12:13 Pavel Machek <pavel@denx.de> 撰写 ----
+>  > >  > Hi!
+>  > >  > 
+>  > >  > > From: Chengguang Xu <cgxu519@mykernel.net>
+>  > >  > > 
+>  > >  > > [ Upstream commit 909110c060f22e65756659ec6fa957ae75777e00 ]
+>  > >  > > 
+>  > >  > > Setting softlimit larger than hardlimit seems meaningless
+>  > >  > > for disk quota but currently it is allowed. In this case,
+>  > >  > > there may be a bit of comfusion for users when they run
+>  > >  > > df comamnd to directory which has project quota.
+>  > >  > > 
+>  > >  > > For example, we set 20M softlimit and 10M hardlimit of
+>  > >  > > block usage limit for project quota of test_dir(project id 123).
+>  > >  > 
+>  > >  > > Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+>  > >  > > Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>  > >  > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>  > >  > > Signed-off-by: Sasha Levin <sashal@kernel.org>
+>  > >  > > ---
+>  > >  > >  fs/f2fs/super.c | 20 ++++++++++++++------
+>  > >  > >  1 file changed, 14 insertions(+), 6 deletions(-)
+>  > >  > > 
+>  > >  > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>  > >  > > index 7a9cc64f5ca3..662c7de58b99 100644
+>  > >  > > --- a/fs/f2fs/super.c
+>  > >  > > +++ b/fs/f2fs/super.c
+>  > >  > > @@ -1148,9 +1148,13 @@ static int f2fs_statfs_project(struct super_block *sb,
+>  > >  > >          return PTR_ERR(dquot);
+>  > >  > >      spin_lock(&dquot->dq_dqb_lock);
+>  > >  > >  
+>  > >  > > -    limit = (dquot->dq_dqb.dqb_bsoftlimit ?
+>  > >  > > -         dquot->dq_dqb.dqb_bsoftlimit :
+>  > >  > > -         dquot->dq_dqb.dqb_bhardlimit) >> sb->s_blocksize_bits;
+>  > >  > > +    limit = 0;
+>  > >  > > +    if (dquot->dq_dqb.dqb_bsoftlimit)
+>  > >  > > +        limit = dquot->dq_dqb.dqb_bsoftlimit;
+>  > >  > > +    if (dquot->dq_dqb.dqb_bhardlimit &&
+>  > >  > > +            (!limit || dquot->dq_dqb.dqb_bhardlimit < limit))
+>  > >  > > +        limit = dquot->dq_dqb.dqb_bhardlimit;
+>  > >  > > +
+>  > >  > >      if (limit && buf->f_blocks > limit) {
+>  > >  > 
+>  > >  > >> blocksize disappeared here. That can't be right.
+>  > >  > 
+>  > >  > Plus, is this just obfuscated way of saying
+>  > >  > 
+>  > >  > limit = min_not_zero(dquot->dq_dqb.dqb_bsoftlimit, dquot->dq_dqb.dqb_bhardlimit)?
+>  > >  > 
+>  > > 
+>  > > Please  skip this patch from  stable list,  I'll send  a revised patch to upstream.
+>  > 
+>  > This patch is already in Linus's tree, so you can't send a "revised"
+>  > version, only one that applies on top of this one :)
+>  > 
+>  > That being said, I'll go drop this from the stable queues, thanks.
+>  > Please let us know when the fixed patch is in Linus's tree and we will
+>  > be glad to take both of them.
+>  > 
+>  
 > 
-> Looks good to me.
+> Hi Greg, Sasha
 > 
-
-Thanks for having a look!
-
-> Thanks,
-> Pavan
+> Now the fix patch has been in Linus's tree, you can add below three patches together to  backport list.
 > 
+> 
+> commit 909110c060f22e6 "f2fs: choose hardlimit when softlimit is larger than hardlimit in f2fs_statfs_project()"
+> commit acdf2172172a511 "f2fs: fix miscounted block limit in f2fs_statfs_project()"
+> commit bf2cbd3c57159c2 "f2fs: code cleanup for f2fs_statfs_project()"
+
+All now queued up, thanks for letting us know.
+
+greg k-h
