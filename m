@@ -2,114 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B0A3155180
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 05:24:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DAD015518D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 05:38:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbgBGEYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 23:24:00 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39963 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726960AbgBGEYA (ORCPT
+        id S1727303AbgBGEil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 23:38:41 -0500
+Received: from mail-vk1-f201.google.com ([209.85.221.201]:36461 "EHLO
+        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726674AbgBGEil (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 23:24:00 -0500
-Received: by mail-pl1-f194.google.com with SMTP id y1so461768plp.7
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 20:23:58 -0800 (PST)
+        Thu, 6 Feb 2020 23:38:41 -0500
+Received: by mail-vk1-f201.google.com with SMTP id j25so494937vkn.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 20:38:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=t4CLMTIbjn78HyIw3MbTj9fsK/Q9HVmk1YRH08HvFW4=;
-        b=eiiOqXCQpKTTs3qcK0ClTRSeD0ED+jYP1J9vmKsXeIxVqH7nb3dGN8TXf1xmZgDlwZ
-         y2cRaE8wwKl+xqQwb9n1WEutzhlXPKh+ksiz8uU4xYzGVv9hHFpOq1Zh4lOqB+UysOVM
-         nlPGDQkicWj7hfppZ1DzZB4KXiZedkDnLILEc=
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=sBK5cpzGHdIvUKaHqM1DgwIph0gnDXoiKcHaONWU+rA=;
+        b=JNLE/o0Uutt+U6wL5PzjCJyy0nAXeXri1cda0G4JS4P2v+vnWMR4H1/o1TiBn6vL2Q
+         3nh6zs+he2dhoU7JvePW9hMesQWhf+nQ4QeV2R1+pAWb1j8l/0y/3IbSn/q2vSvJkIUg
+         yp6UOMAItxzc3ikmNvNi/EjU7VCnwQnuFfOauHXY7hVC18TsSOfhPrLEBww8lXYiTJj0
+         QLRXTvwbyQCFyx9oGwusnk4SejUp7OSYMW3bc+u84gjVz7PcIeoSp9ygOZWshFdo0r5v
+         S1TjfkhPAga2GgrGPhHz/xSqAJmQ/HIWuVY2E4VbRbzCQtx8GoXjIKFp3RRYfj8wHDPd
+         Lerw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=t4CLMTIbjn78HyIw3MbTj9fsK/Q9HVmk1YRH08HvFW4=;
-        b=qjc31qFnX8X+dcYVet4HwNRGRI8t77hBBHsNX3/ZnUcxHmrmUzD3vynm2GP53rPys5
-         TxNb5amiZqZ4jZGY43H1dVCsew/GbwLm3oIdjLxNHzbJi9CD7FIw1ttOJLXa915B+x/v
-         lQhyI/YySgI4yCpP7eA1MgAj9H+ms3TSoWggyLuA7K/8Hqbrb0VqqLMcxn+N2ghgMS5S
-         rGX7VXlDyFUxLKxS3y6xfUC395cI9HpgMMJAetCRpUXdSjOEzdRC6oyb7nYKO/0PRIYc
-         MPB0zXGnyttm3h2r6qQWFFm1Wqvp2yKJCpaj/3Zn35vZiU8IPqUzAwgWgQIe7+OOXNby
-         mxWg==
-X-Gm-Message-State: APjAAAXnH+F9rveLxDbz403blyY9qCq5S3gPHCWc1zjeot0Ep9VBmhCm
-        HTDURQBsvDa+MbcaZN2ruYFgFp6xnFCiXQ==
-X-Google-Smtp-Source: APXvYqxiM3mqXCuN//rbnMylmv3QEfgT2tAo0lrKJQKSE7Su2Tg5GR9a9AXOc66j0jtTmDYhbnQnRw==
-X-Received: by 2002:a17:90a:3ae5:: with SMTP id b92mr1540962pjc.26.1581049438091;
-        Thu, 06 Feb 2020 20:23:58 -0800 (PST)
-Received: from localhost ([2401:fa00:9:14:1105:3e8a:838d:e326])
-        by smtp.gmail.com with ESMTPSA id v7sm950245pfn.61.2020.02.06.20.23.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Feb 2020 20:23:57 -0800 (PST)
-From:   Evan Benn <evanbenn@chromium.org>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Evan Benn <evanbenn@chromium.org>, CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-kernel@vger.kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org,
-        David Airlie <airlied@linux.ie>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] drm/mediatek: Find the cursor plane instead of hard coding it
-Date:   Fri,  7 Feb 2020 15:23:51 +1100
-Message-Id: <20200207152348.1.Ie0633018fc787dda6e869cae23df76ae30f2a686@changeid>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=sBK5cpzGHdIvUKaHqM1DgwIph0gnDXoiKcHaONWU+rA=;
+        b=STKM/yiQoFMBFZwY4DPNT9C0Bv86UynJ0+AtsPZz8zjIyhO9BHFadttLBzwc3NY/kr
+         XsP3FPUFbIeDmWSSiSO47sFrHhpP18IA2T9BC8DPFfaE6hNvkGHN4voOll/TKMnm9Z/D
+         WVQy7pw694TPukniUHUxUXD7yoxoLZ7kHDhcQ2o4Tf4adxdFRyU3Y1d7KPpDi6HYtJax
+         9ntF8nt6reOuhLKRNZMO7rAzY20a/gGisD/tBsYFB393sxHkwCOVhVnTySZT7MOdmbOS
+         e4aNigzQvElTA/YoXXxzYbqp58BdppASFygXw6YwEQtWS5pikZ86GTvnKkbEoFEI18Cy
+         +ieQ==
+X-Gm-Message-State: APjAAAX4K68yNW3PbYtZ6yiywYoykDbASfpSvdTFNS7ZIZNIwf6fieQt
+        rEiKaXWUeze2y6DurzF5d7cZqUJyfVbiUA==
+X-Google-Smtp-Source: APXvYqz+0+eoXFKnJHGjg2TE/rXwFQoeel6t7oQy5zR3utAoabzfg9B7Y+7SFYfhPtyFhUEPx2iv996F+nPqKw==
+X-Received: by 2002:a1f:bd8d:: with SMTP id n135mr3841794vkf.88.1581050319527;
+ Thu, 06 Feb 2020 20:38:39 -0800 (PST)
+Date:   Thu,  6 Feb 2020 20:38:36 -0800
+Message-Id: <20200207043836.106657-1-edumazet@google.com>
+Mime-Version: 1.0
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-In-Reply-To: <20200206140140.GA18465@art_vandelay>
-References: <20200206140140.GA18465@art_vandelay>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH] x86/traps: do not hash pointers in handle_stack_overflow()
+From:   Eric Dumazet <edumazet@google.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cursor and primary planes were hard coded.
-Now search for them for passing to drm_crtc_init_with_planes
+Mangling stack pointers in handle_stack_overflow() is moot,
+as registers (including RSP/RBP) are clear anyway.
 
-Signed-off-by: Evan Benn <evanbenn@chromium.org>
+BUG: stack guard page was hit at 0000000063381e80 (stack is 000000008edc5696..0000000012256c50)
+kernel stack overflow (double-fault): 0000 [#1] PREEMPT SMP KASAN
+...
+RSP: 0018:ffffc90002c1ffc0 EFLAGS: 00010802
+RAX: 1ffff11004a0094c RBX: ffff888025004180 RCX: c9d82d1007bb146c
+RDX: dffffc0000000000 RSI: ffff888025004a40 RDI: ffff888025004180
+RBP: ffffc90002c201c0 R08: dffffc0000000000 R09: fffffbfff1405915
+R10: fffffbfff1405915 R11: 0000000000000000 R12: ffff888025004a60
+R13: ffff888025004a10 R14: c9d82d1007bb146c R15: ffff888025004180
+...
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Andy Lutomirski <luto@kernel.org>
 ---
+ arch/x86/kernel/traps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-index 7b392d6c71cc..935652990afa 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-@@ -658,10 +658,18 @@ static const struct drm_crtc_helper_funcs mtk_crtc_helper_funcs = {
- 
- static int mtk_drm_crtc_init(struct drm_device *drm,
- 			     struct mtk_drm_crtc *mtk_crtc,
--			     struct drm_plane *primary,
--			     struct drm_plane *cursor, unsigned int pipe)
-+			     unsigned int pipe)
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 6ef00eb6fbb925e86109f86845e2b3ccef4023ec..44873df292bd3f9f77bb721c53cb8a1c40994cca 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -296,7 +296,7 @@ __visible void __noreturn handle_stack_overflow(const char *message,
+ 						struct pt_regs *regs,
+ 						unsigned long fault_address)
  {
--	int ret;
-+	struct drm_plane *primary = NULL;
-+	struct drm_plane *cursor = NULL;
-+	int i, ret;
-+
-+	for (i = 0; i < mtk_crtc->layer_nr; i++) {
-+		if (mtk_crtc->planes[i].type == DRM_PLANE_TYPE_PRIMARY)
-+			primary = &mtk_crtc->planes[i];
-+		else if (mtk_crtc->planes[i].type == DRM_PLANE_TYPE_CURSOR)
-+			cursor = &mtk_crtc->planes[i];
-+	}
- 
- 	ret = drm_crtc_init_with_planes(drm, &mtk_crtc->base, primary, cursor,
- 					&mtk_crtc_funcs, NULL);
-@@ -830,9 +838,7 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
- 			return ret;
- 	}
- 
--	ret = mtk_drm_crtc_init(drm_dev, mtk_crtc, &mtk_crtc->planes[0],
--				mtk_crtc->layer_nr > 1 ? &mtk_crtc->planes[1] :
--				NULL, pipe);
-+	ret = mtk_drm_crtc_init(drm_dev, mtk_crtc, pipe);
- 	if (ret < 0)
- 		return ret;
- 
+-	printk(KERN_EMERG "BUG: stack guard page was hit at %p (stack is %p..%p)\n",
++	printk(KERN_EMERG "BUG: stack guard page was hit at %px (stack is %px..%px)\n",
+ 		 (void *)fault_address, current->stack,
+ 		 (char *)current->stack + THREAD_SIZE - 1);
+ 	die(message, regs, 0);
 -- 
 2.25.0.341.g760bfbb309-goog
 
