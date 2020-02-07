@@ -2,72 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E3DA155A8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 16:20:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33449155A9A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 16:22:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbgBGPUe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 10:20:34 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9710 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726874AbgBGPUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 10:20:34 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id D74921C7151530B987DE;
-        Fri,  7 Feb 2020 23:20:28 +0800 (CST)
-Received: from huawei.com (10.175.105.18) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Fri, 7 Feb 2020
- 23:20:21 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
-To:     <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
-        <sean.j.christopherson@intel.com>, <vkuznets@redhat.com>,
-        <wanpengli@tencent.com>, <jmattson@google.com>, <joro@8bytes.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>
-CC:     <linmiaohe@huawei.com>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-Subject: [PATCH v2] KVM: apic: reuse smp_wmb() in kvm_make_request()
-Date:   Fri, 7 Feb 2020 23:22:07 +0800
-Message-ID: <1581088927-3269-1-git-send-email-linmiaohe@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1727048AbgBGPWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 10:22:18 -0500
+Received: from netrider.rowland.org ([192.131.102.5]:56381 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726674AbgBGPWR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 10:22:17 -0500
+Received: (qmail 4104 invoked by uid 500); 7 Feb 2020 10:22:16 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 7 Feb 2020 10:22:16 -0500
+Date:   Fri, 7 Feb 2020 10:22:16 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@netrider.rowland.org
+To:     "Enderborg, Peter" <Peter.Enderborg@sony.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.4 17/78] HID: Fix slab-out-of-bounds read in
+ hid_field_extract (Broken!)
+In-Reply-To: <96c523ea-799f-ad2f-f1c4-46ff6f9f6d6c@sony.com>
+Message-ID: <Pine.LNX.4.44L0.2002071018580.3671-100000@netrider.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.105.18]
-X-CFilter-Loop: Reflected
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miaohe Lin <linmiaohe@huawei.com>
+On Fri, 7 Feb 2020, Enderborg, Peter wrote:
 
-kvm_make_request() provides smp_wmb() so pending_events changes are
-guaranteed to be visible.
+> On 2/6/20 4:14 PM, Alan Stern wrote:
 
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
-v1->v2:
-Collected Vitaly's R-b
-Use Vitaly's alternative wording
-Drop unnecessary comment as suggested by Sean Christopherson
----
- arch/x86/kvm/lapic.c | 3 ---
- 1 file changed, 3 deletions(-)
+> > I guess you have to unbind the device from the usbhid driver first in
+> > order for lsusb to get them.  Can you do that?
+> >
+> > Alan Stern
+> >
+> Im not sure exatly what you need to unbind. But I assume this is what you want:
+> 
+>  lsusb -v -d 0fd9:0060
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index eafc631d305c..afcd30d44cbb 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -1080,9 +1080,6 @@ static int __apic_accept_irq(struct kvm_lapic *apic, int delivery_mode,
- 			result = 1;
- 			/* assumes that there are only KVM_APIC_INIT/SIPI */
- 			apic->pending_events = (1UL << KVM_APIC_INIT);
--			/* make sure pending_events is visible before sending
--			 * the request */
--			smp_wmb();
- 			kvm_make_request(KVM_REQ_EVENT, vcpu);
- 			kvm_vcpu_kick(vcpu);
- 		}
--- 
-2.19.1
+Yes, that's it.  Most of the reports have:
+
+>             Item(Global): Report Size, data= [ 0x08 ] 8
+>             Item(Global): Report Count, data= [ 0x10 ] 16
+
+which means they are 16 bytes long.  But one report has:
+
+>             Item(Global): Report Size, data= [ 0x08 ] 8
+>             Item(Global): Report Count, data= [ 0xfe 0x1f ] 8190
+
+meaning it is 8190 bytes long (plus one byte for the report ID).  
+Therefore setting the maximum buffer size to 8192 should allow this 
+device to work properly, with no other changes needed.
+
+Alan Stern
 
