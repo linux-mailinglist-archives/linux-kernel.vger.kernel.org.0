@@ -2,93 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A6C9155FCB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 21:41:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDE47155FD7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 21:42:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbgBGUk6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 15:40:58 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:41560 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726947AbgBGUk6 (ORCPT
+        id S1727572AbgBGUmN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 15:42:13 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:46459 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727546AbgBGUmM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 15:40:58 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1j0AQo-0002F4-Qb; Fri, 07 Feb 2020 21:40:54 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 040321C1EEE;
-        Fri,  7 Feb 2020 21:40:54 +0100 (CET)
-Date:   Fri, 07 Feb 2020 20:40:53 -0000
-From:   "tip-bot2 for Stephen Boyd" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/urgent] genirq: Clarify that irq wake state is orthogonal
- to enable/disable
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Douglas Anderson <dianders@chromium.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200206191521.94559-1-swboyd@chromium.org>
-References: <20200206191521.94559-1-swboyd@chromium.org>
+        Fri, 7 Feb 2020 15:42:12 -0500
+Received: by mail-oi1-f196.google.com with SMTP id a22so3254605oid.13
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 12:42:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=8cDRXBFOpE9J1p6S5H+HXSQg9q3m7pUJ3iUuQ5MPcDc=;
+        b=YPZJJy834hUJnz7pionGH11ZciL6RrbrPELuvEefyNE4m32c/3BRL7jS6BX3GTRbjW
+         A7PT2XuyoA0DKIOAMXBVLqZDks+EHHVySpQpjboWji0NFQ79t34wrEkdhJ/7mvVnPfcg
+         BPXVuIvRzTGxR9yBINGUBTO7OS1IgYRxQvNJFyy4DMElAWJNigH6Lfy9a++UWnjsZV7K
+         NbU0I3Vhb1neiaj+I96jGm3rPYvdHpbUTw6COrl+fTWEjyjGSvKY6qdov3nXpFudxXNb
+         5mDt4W3AkewRXnJYuxGyMUAK1lkfrMP5hrIUalSBsJd0qxRrK90fgDoK4eboWAVqoACA
+         vQPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=8cDRXBFOpE9J1p6S5H+HXSQg9q3m7pUJ3iUuQ5MPcDc=;
+        b=FPC2ZMfoDPjN5CWKWnrZbOwSfDLwAmZHIQrSRG08/SA0YXY7DUDArpA83RIMDaHQeF
+         BzHx0p7bV4pxd0HnvNVk0j06ZN2F7U4oLUP6j/+AVkvbzg+31Z52mQ5GxkQL99g7ydjM
+         mYWC0pyrEr9IPXtMkxSZufj/YOjRoT3wkrvzxkebvwUmuj0K/nGpf0rH+AohnDoOVmwU
+         +WV/43Sq3LagHxvhsruGvOHqNSqfQ5tz0ym71oVEGwgeT7rOXH4JBUS3z8wzv+uvfNyA
+         ZUo58yN8ZRiMIJEIRNcHNxad/Lwn+AYHCKvjfGUEsTCOD0a8pQ+M4m37hfFSbQ3R6YmX
+         QiHg==
+X-Gm-Message-State: APjAAAUyedAHI8oWqyNoxMWsuc21pqsx9guHWpaahsLoMz375IqR7oq2
+        Z2EuZlIlLS8sZ1JkkHCSZNHn4OuApU+8B9S1TJsXbHuCNruxwg==
+X-Google-Smtp-Source: APXvYqwSeJkRlkGgNiWsW1NpF1DiAIFzsJveh9+wRvoFwY/EgylY09EfD37WjburJ+wD5ZF6dcgpmVqlX+UTGTmHly0=
+X-Received: by 2002:aca:c7cb:: with SMTP id x194mr3327726oif.157.1581108131844;
+ Fri, 07 Feb 2020 12:42:11 -0800 (PST)
 MIME-Version: 1.0
-Message-ID: <158110805373.411.379070256193790267.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Received: by 2002:a4a:d508:0:0:0:0:0 with HTTP; Fri, 7 Feb 2020 12:42:11 -0800 (PST)
+Reply-To: auch197722@gmail.com
+From:   "Mr. Theophilus Odadudu" <cristinamedina0010@gmail.com>
+Date:   Fri, 7 Feb 2020 15:42:11 -0500
+Message-ID: <CAPNvSTgeN84MC4a+RJ1wBioXqDfarTE4_m4nbA9Dm=S8bmF0WQ@mail.gmail.com>
+Subject: LETTER OF INQUIRY
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the irq/urgent branch of tip:
+Good Day,
 
-Commit-ID:     f9f21cea311340f38074ff93a8d89b4a9cae6bcc
-Gitweb:        https://git.kernel.org/tip/f9f21cea311340f38074ff93a8d89b4a9cae6bcc
-Author:        Stephen Boyd <swboyd@chromium.org>
-AuthorDate:    Thu, 06 Feb 2020 11:15:21 -08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 07 Feb 2020 21:37:08 +01:00
+I work as a clerk in a Bank here in Nigeria, I have a very
+confidential Business Proposition for you. There is a said amount of
+money floating in the bank unclaimed, belonging to the bank Foreign
+customer who die with his family in the Ethiopian Airline crash of
+March 11, 2019.
 
-genirq: Clarify that irq wake state is orthogonal to enable/disable
+I seek your good collaboration to move the fund for our benefit. we
+have agreed that 40% be yours once you help claim.
 
-There's some confusion around if an irq that's disabled with disable_irq()
-can still wake the system from sleep states such as "suspend to RAM".
+Do get back to with 1) Your Full Name: (2) Residential Address: (3)
+Phone, Mobile  (4) Scan Copy of Your ID. to apply for claims of the
+funds.
 
-Clarify this in the kernel documentation for irq_set_irq_wake() so that
-it's clear that an irq can be disabled and still wake the system if it has
-been marked for wakeup.
-
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Link: https://lkml.kernel.org/r/20200206191521.94559-1-swboyd@chromium.org
-
----
- kernel/irq/manage.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 818b280..3089a60 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -731,6 +731,13 @@ static int set_irq_wake_real(unsigned int irq, unsigned int on)
-  *
-  *	Wakeup mode lets this IRQ wake the system from sleep
-  *	states like "suspend to RAM".
-+ *
-+ *	Note: irq enable/disable state is completely orthogonal
-+ *	to the enable/disable state of irq wake. An irq can be
-+ *	disabled with disable_irq() and still wake the system as
-+ *	long as the irq has wake enabled. If this does not hold,
-+ *	then the underlying irq chip and the related driver need
-+ *	to be investigated.
-  */
- int irq_set_irq_wake(unsigned int irq, unsigned int on)
- {
+Regards
+Theophilus Odadudu
