@@ -2,60 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83DFC155018
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 02:59:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB40915501B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 02:59:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbgBGB7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 20:59:10 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37640 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727317AbgBGB7J (ORCPT
+        id S1727558AbgBGB7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 20:59:16 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50573 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727234AbgBGB7K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 20:59:09 -0500
-Received: by mail-wr1-f66.google.com with SMTP id w15so788007wru.4
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 17:59:07 -0800 (PST)
+        Thu, 6 Feb 2020 20:59:10 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a5so967709wmb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 17:59:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qsI/xaPXMqNdKm9K1igbwkE2PA4fRpWtUntr4tiEc9c=;
-        b=PTe8riw6U8bDW2BD/CxQgvv/9t4tl0U1Prhqr54tyU/g1/UMk7Tqd6sniHUl/w5azG
-         H8Sfs1vXxDHfScvBYzbH4HTjk/PsxN4+jnzWHUs0YqYitvkT29Mm1h8bZ+IoSP+mSsS+
-         p5KXsB/qvGU5nAqs+s042/nU8m6svRfIqTQFa0X3sGQcx9cnwhkhtQTF4CNHa20FGdsb
-         /4obbf3seLL+I6G2XzsD4dHF7SRF+TLHNPZ/655SBBGozgcrpXmDL98qLHnaNTxsX+WW
-         4qf8GdIzwWSBBzA0HzLJ7Crhh483zO4XdjGz923Zg0yV3A1qzKcmuAS3wQ+0cusp00by
-         SpDQ==
+        bh=x0ouoTkt3Ut5OXKfPgK1h53EOxbNSeKO18hqFnETzgE=;
+        b=xxaqmQbEoLyw2VX94sWCfxoccm4DVkt3AtuAjNLsMLbahf/lh84uoU6FOzY9HhIeHm
+         +gnmplDrpc6DnEyN59m1UyeLpznuDhHmKxf3nepX75ORqXwL6A3qb0vdyVDwo+PaepzS
+         9wkvQ/dK7Drevn0JnZxhi6C1w7vPfJCSixzXCbJ8GLfzJrchLTd9MScRWgNhek6tGeLJ
+         eNfHsAt/LZCnQZAJAsDJDBqd6BNbrthbySIBtA11tFwmJyibyy+cUvVQYWzHQEDFWvmO
+         hNXAfpKNTl8z7/dI1HcLGqkZsy+fJ/fNpEzR7X/bYMka5nNaUa3sU1yr+hZhjAiHlCjh
+         S53w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qsI/xaPXMqNdKm9K1igbwkE2PA4fRpWtUntr4tiEc9c=;
-        b=cspOB3Vscq9Jj+B4GMTH+gSQ5jmTXYwrJLVgf9xPvnybDMu0BLkKZSFkj1mi6iRXX6
-         K2QLALYz/t62GqpLezSM3P2k1E2AfixEyUWCPkcfCamjYniiw75k9WtFFnCL16xV7zlI
-         er3NaZ55+fb4I/0vex0z8UqUA2jOLubnMrsdPnmCoYgdWBbHpWbdTyM8oD4iOubJFMQI
-         DhwM/TYf0kkzAFW5Yvz1vro6tnajG42MUErHNlgs4lxe/mUZKbISThB6qJXvG0L9Bbda
-         HFpCsa2dxS/m5SfFovilBOvrZCco++/0TPf7flHNqYqQi4SDnWH21nRzEO5lIT5A2rsI
-         oU9g==
-X-Gm-Message-State: APjAAAXJAshI0LeePd9eEeVnL7SUjXsqnF9lpKpCj0q9X9//hczW3kDg
-        YjdGs5j1s9B8GWZ0Z9zbaTJU8Q==
-X-Google-Smtp-Source: APXvYqwPD2xq9B+Yz+WYnoPdj9yJUADJMolqYgcUq0fL+IXijMX6pa9HamJKV5V3OS6P4C32RhJO1w==
-X-Received: by 2002:a5d:5263:: with SMTP id l3mr1162751wrc.405.1581040747220;
-        Thu, 06 Feb 2020 17:59:07 -0800 (PST)
+        bh=x0ouoTkt3Ut5OXKfPgK1h53EOxbNSeKO18hqFnETzgE=;
+        b=Wgs2kdB3cRIA1HSlxkDi/5famYGge/rqFP4TYYtenH5EmTUNE4FFQfcYDEGgDEya3l
+         BOo+oneaWsdy87XDLgyB/oZ30cE+pADwBXckt0GXPAl2UXHf1ogeJd8ImlP9HQrIgAHH
+         sTCcrOR31Ove7huI/HMnX68TSZQUPHg5+X9CGk0SJ8nnmcBRbWKv7hRNrw9KKFEX3RNw
+         DwV9NGUDFhudMVkovdq33mtHo3LjnjbSBnybnjIrbWo+XtKNq05sheiZCvq28g7dPItG
+         q4xHUoxD8NxTDMjF1SDaLyYzYkrEyVnKvi93uXsCbq8PJq1MeWq5HUtqJMAhn/MsRAGW
+         vK4w==
+X-Gm-Message-State: APjAAAWohizLYGrJE5Xt6gBBMjrQ9Vx3o7px4AK7xUwORuwjLVyAwF4s
+        g5dLPmyVm6trTgpZvx3iBVJeXQ==
+X-Google-Smtp-Source: APXvYqz3mobXNYpdd1zNAXlNv8hUbwJ2a3HIClYJTpvmbPOMsdGCxCeHeLWpQrOr/+n7+AIrWNjung==
+X-Received: by 2002:a1c:660a:: with SMTP id a10mr963549wmc.122.1581040748600;
+        Thu, 06 Feb 2020 17:59:08 -0800 (PST)
 Received: from localhost.localdomain ([176.61.57.127])
-        by smtp.gmail.com with ESMTPSA id a62sm1490095wmh.33.2020.02.06.17.59.06
+        by smtp.gmail.com with ESMTPSA id a62sm1490095wmh.33.2020.02.06.17.59.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 17:59:06 -0800 (PST)
+        Thu, 06 Feb 2020 17:59:07 -0800 (PST)
 From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 To:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
         gregkh@linuxfoundation.org, jackp@codeaurora.org, balbi@kernel.org,
         bjorn.andersson@linaro.org
 Cc:     linux-kernel@vger.kernel.org,
-        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
+        Sriharsha Allenki <sallenki@codeaurora.org>,
+        Anu Ramanathan <anur@codeaurora.org>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Jorge Ramirez-Ortiz <jorge.ramirez.ortiz@gmail.com>,
+        devicetree@vger.kernel.org,
         Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: [PATCH v4 01/18] dt-bindings: phy: remove qcom-dwc3-usb-phy
-Date:   Fri,  7 Feb 2020 01:58:50 +0000
-Message-Id: <20200207015907.242991-2-bryan.odonoghue@linaro.org>
+Subject: [PATCH v4 02/18] dt-bindings: phy: Add Qualcomm Synopsys Hi-Speed USB PHY binding
+Date:   Fri,  7 Feb 2020 01:58:51 +0000
+Message-Id: <20200207015907.242991-3-bryan.odonoghue@linaro.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200207015907.242991-1-bryan.odonoghue@linaro.org>
 References: <20200207015907.242991-1-bryan.odonoghue@linaro.org>
@@ -66,61 +73,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+From: Sriharsha Allenki <sallenki@codeaurora.org>
 
-This binding is not used by any driver.
+Adds bindings for Qualcomm's 28 nm USB PHY supporting Low-Speed, Full-Speed
+and Hi-Speed USB connectivity on Qualcomm chipsets.
 
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+[bod: Converted to YAML. Changed name dropping snps, 28nm components]
+
+Signed-off-by: Sriharsha Allenki <sallenki@codeaurora.org>
+Signed-off-by: Anu Ramanathan <anur@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+Cc: Andy Gross <agross@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Jorge Ramirez-Ortiz <jorge.ramirez.ortiz@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org
 Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 ---
- .../bindings/phy/qcom-dwc3-usb-phy.txt        | 37 -------------------
- 1 file changed, 37 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/phy/qcom-dwc3-usb-phy.txt
+ .../bindings/phy/qcom,usb-hs-28nm.yaml        | 90 +++++++++++++++++++
+ 1 file changed, 90 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/qcom,usb-hs-28nm.yaml
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom-dwc3-usb-phy.txt b/Documentation/devicetree/bindings/phy/qcom-dwc3-usb-phy.txt
-deleted file mode 100644
-index a1697c27aecd..000000000000
---- a/Documentation/devicetree/bindings/phy/qcom-dwc3-usb-phy.txt
-+++ /dev/null
-@@ -1,37 +0,0 @@
--Qualcomm DWC3 HS AND SS PHY CONTROLLER
----------------------------------------
--
--DWC3 PHY nodes are defined to describe on-chip Synopsis Physical layer
--controllers.  Each DWC3 PHY controller should have its own node.
--
--Required properties:
--- compatible: should contain one of the following:
--	- "qcom,dwc3-hs-usb-phy" for High Speed Synopsis PHY controller
--	- "qcom,dwc3-ss-usb-phy" for Super Speed Synopsis PHY controller
--- reg: offset and length of the DWC3 PHY controller register set
--- #phy-cells: must be zero
--- clocks: a list of phandles and clock-specifier pairs, one for each entry in
--  clock-names.
--- clock-names: Should contain "ref" for the PHY reference clock
--
--Optional clocks:
--  "xo"		External reference clock
--
--Example:
--		phy@100f8800 {
--			compatible = "qcom,dwc3-hs-usb-phy";
--			reg = <0x100f8800 0x30>;
--			clocks = <&gcc USB30_0_UTMI_CLK>;
--			clock-names = "ref";
--			#phy-cells = <0>;
--
--		};
--
--		phy@100f8830 {
--			compatible = "qcom,dwc3-ss-usb-phy";
--			reg = <0x100f8830 0x30>;
--			clocks = <&gcc USB30_0_MASTER_CLK>;
--			clock-names = "ref";
--			#phy-cells = <0>;
--
--		};
+diff --git a/Documentation/devicetree/bindings/phy/qcom,usb-hs-28nm.yaml b/Documentation/devicetree/bindings/phy/qcom,usb-hs-28nm.yaml
+new file mode 100644
+index 000000000000..ca6a0836b53c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/qcom,usb-hs-28nm.yaml
+@@ -0,0 +1,90 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/phy/qcom,usb-hs-28nm.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: Qualcomm Synopsys DesignWare Core 28nm High-Speed PHY
++
++maintainers:
++  - Bryan O'Donoghue <bryan.odonoghue@linaro.org>
++
++description: |
++  Qualcomm Low-Speed, Full-Speed, Hi-Speed 28nm USB PHY
++
++properties:
++  compatible:
++    enum:
++      - qcom,usb-hs-28nm-femtophy
++
++  reg:
++    maxItems: 1
++
++  "#phy-cells":
++    const: 0
++
++  clocks:
++    items:
++      - description: rpmcc ref clock
++      - description: PHY AHB clock
++      - description: Rentention clock
++
++  clock-names:
++    items:
++      - const: ref
++      - const: ahb
++      - const: sleep
++
++  resets:
++    items:
++      - description: PHY core reset
++      - description: POR reset
++
++  reset-names:
++    items:
++      - const: phy
++      - const: por
++
++  vdd-supply:
++    description: phandle to the regulator VDD supply node.
++
++  vdda1p8-supply:
++    description: phandle to the regulator 1.8V supply node.
++
++  vdda3p3-supply:
++    description: phandle to the regulator 3.3V supply node.
++
++required:
++  - compatible
++  - reg
++  - "#phy-cells"
++  - clocks
++  - clock-names
++  - resets
++  - reset-names
++  - vdd-supply
++  - vdda1p8-supply
++  - vdda3p3-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,gcc-qcs404.h>
++    #include <dt-bindings/clock/qcom,rpmcc.h>
++    usb2_phy_prim: phy@7a000 {
++        compatible = "qcom,usb-hs-28nm-femtophy";
++        reg = <0x0007a000 0x200>;
++        #phy-cells = <0>;
++        clocks = <&rpmcc RPM_SMD_LN_BB_CLK>,
++                 <&gcc GCC_USB_HS_PHY_CFG_AHB_CLK>,
++                 <&gcc GCC_USB2A_PHY_SLEEP_CLK>;
++        clock-names = "ref", "ahb", "sleep";
++        resets = <&gcc GCC_USB_HS_PHY_CFG_AHB_BCR>,
++                 <&gcc GCC_USB2A_PHY_BCR>;
++        reset-names = "phy", "por";
++        vdd-supply = <&vreg_l4_1p2>;
++        vdda1p8-supply = <&vreg_l5_1p8>;
++        vdda3p3-supply = <&vreg_l12_3p3>;
++    };
++...
 -- 
 2.25.0
 
