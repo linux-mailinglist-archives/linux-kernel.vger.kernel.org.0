@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89DCD155D62
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 19:08:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6371155D64
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 19:08:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbgBGSIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 13:08:15 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:54143 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727524AbgBGSIN (ORCPT
+        id S1727557AbgBGSIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 13:08:20 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:51443 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727381AbgBGSIT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 13:08:13 -0500
-Received: by mail-pj1-f65.google.com with SMTP id n96so1226646pjc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 10:08:13 -0800 (PST)
+        Fri, 7 Feb 2020 13:08:19 -0500
+Received: by mail-pj1-f67.google.com with SMTP id fa20so1226966pjb.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 10:08:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5zQQHlAdkKi/5/LHbljBLnmP/SWJe90/jtmz6ntc02A=;
-        b=VlHMmU6I/xL2vd2EXJyZn/ypmR6KSTr1B4+IlMCX9nCDq0DE+2inkBhFKo67GNtamL
-         DpvJG29b7TujDuTvONAjb6/SpatGl2GrrRZ6JsyvuO9CTrEKGXsmRt0jVSeqle/RbjSK
-         zd+ZbybUkmsrYnybTPzXNp18CnEXZ38idwf5+RuV04DBCGSZNm7zGwt8GwuOKY5R2I92
-         QPWAoEPwrHf8N+yGxnXXhhyy+9C3NCdDh1MgO0MSTu+bZAof26suReLMld0nlje0tIFF
-         SH3nf1UfidaWVduztODzs4bYOv4P65oth5ukwHT+DpjVFe75oL9s/5KHOinB/4yz9AI4
-         +gbg==
+        bh=6dJnmRISnXhx/tid8L3bkFndKLLLawXzGhi1aYEmqBI=;
+        b=q66upDkhWWqCv7RN3g0JjmwCJmoQSdSo46/A9eK5grTxsRkeNIeWBTqyrXbechcCCT
+         ofFauNOWxK/BySUuN53q5didySxl8kkTrfKFPJmt0m3F8dS7N2YHHf5BWcXN5kp3PgAG
+         qaDYsmYc1TVijYr/tfnXGm9DeRVGo3lzeIrWj/zmEZA4wF606Kdk+NKGY7UHxpkwJ2Vx
+         2f0IgA01hxIWl1aSf3g7w89o6LflVQIf9D4xhGe3Zu8bOc2Xf4ZGG3L96/pKGrSRJe5N
+         DVQmkJDxxxkO1CPxMOVmKk7UBVgXyT5+5QjZ40441Jl0ZxBH2q3HV13H7VfKcSWSh+jT
+         RfcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5zQQHlAdkKi/5/LHbljBLnmP/SWJe90/jtmz6ntc02A=;
-        b=qnARldIDEp10qqlEST5oTegdy217OF/3YMW6w7Og+I1haQ5NmktRVUb1Y40eNQt8cE
-         RwuLQurwn82AT8ywP3QpgT7g+j1ZY8dpdB6t3krw7wj3rIQqG7TW0/rz0ptPduYVvWLq
-         bbVRJf/VwAMOO/xcSbRKZG1AFTS4/Osxg8iBpVO2wiFHDaT7bfLFr8tm5CiEaFZbEZLv
-         znrS7LGvfnKiqm8o+mCtz9yQy8mtGhW9sCSdsqDisWH0/c7qHOF++ptKGUKUxNyif2QX
-         JBznHEhgfyOcVr8NpR2V7+ZqOhtwnfiD6F7pUBU1g6Y6Vj5B2eGM9RcIm2qo0t/ZnRUN
-         5jNw==
-X-Gm-Message-State: APjAAAU1qcmPTxI+qh1KZhpppsqunFQt3ec/H7THs+xpTFpQBaJzN2Xd
-        utPBugNsHBY3E3LegglgH3E=
-X-Google-Smtp-Source: APXvYqyEBPgz7pQYmv0XHHjqZAEVk/5ga6fBOfnavOBQradYIrMGl3pLWPJyoOOoQeOQEDoBAIeMEA==
-X-Received: by 2002:a17:902:8a81:: with SMTP id p1mr10766574plo.284.1581098893117;
-        Fri, 07 Feb 2020 10:08:13 -0800 (PST)
+        bh=6dJnmRISnXhx/tid8L3bkFndKLLLawXzGhi1aYEmqBI=;
+        b=E4coWN4XFCSURwgkdBY8fs35nuGNjaWQXihycOBMpUNaO10izct89V+VsBpvj813r3
+         BNgwhynNF55L8GGi5VaQl1TuyhV3s3SGZ1h+0buu8fC0Isi6XTc9EUJ1Ol7MqPOyX0hR
+         rMw4eLxLZ1se+kJEaR6S8oUs0NuKivt6tKoLRoe7+jadvppjmXQy6T5OMi6Y7iD2dgLh
+         zbWa13oPcRpt6uwpP3ez0FgBMyV2Pedwvhw9ynlwArZ0ddXzHHjXrMxeTFFNWTWtwvyN
+         lmiCJN5a6cTGU0pPuZMt8HkzWAh8ygLAERa+XVFcEXhDB06lsQ4daq8Tv/dUtIWm4alG
+         jcKQ==
+X-Gm-Message-State: APjAAAXwVe8XuqqHmkfcaMx5ihRHkiXVFUiPzSuYQo5SQ3LU5eGRqgqH
+        VocCjuDaxk766GPd6nMUJ1k=
+X-Google-Smtp-Source: APXvYqym2YQSzc5+DaUKX0EDmz+UD0MoeyQVJEc9evlzGvMkuEWZiJSglWMQzb2WBkKyVuAow9dRtw==
+X-Received: by 2002:a17:902:a616:: with SMTP id u22mr10769740plq.173.1581098898305;
+        Fri, 07 Feb 2020 10:08:18 -0800 (PST)
 Received: from localhost.localdomain ([103.211.17.120])
-        by smtp.googlemail.com with ESMTPSA id gx18sm3088795pjb.8.2020.02.07.10.08.08
+        by smtp.googlemail.com with ESMTPSA id gx18sm3088795pjb.8.2020.02.07.10.08.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2020 10:08:12 -0800 (PST)
+        Fri, 07 Feb 2020 10:08:17 -0800 (PST)
 From:   Amol Grover <frextrite@gmail.com>
 To:     Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -69,9 +69,9 @@ Cc:     linux-kernel-mentees@lists.linuxfoundation.org,
         Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
         "Paul E . McKenney" <paulmck@kernel.org>,
         Amol Grover <frextrite@gmail.com>
-Subject: [PATCH 2/3] cred: Do not use RCU primitives to access cred pointer
-Date:   Fri,  7 Feb 2020 23:35:04 +0530
-Message-Id: <20200207180504.4200-2-frextrite@gmail.com>
+Subject: [PATCH 3/3] auditsc: Do not use RCU primitive to read from cred pointer
+Date:   Fri,  7 Feb 2020 23:35:05 +0530
+Message-Id: <20200207180504.4200-3-frextrite@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200207180504.4200-1-frextrite@gmail.com>
 References: <20200207180504.4200-1-frextrite@gmail.com>
@@ -82,69 +82,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since task_struct::cred can only be used task-synchronously,
-and is not visible to other threads under RCU context,
-we do not require RCU primitives to read/write to it and incur
-heavy barriers.
+task_struct::cred is only used task-synchronously and does
+not require any RCU locks, hence, rcu_dereference_check is
+not required to read from it.
 
 Suggested-by: Jann Horn <jannh@google.com>
 Co-developed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 Signed-off-by: Amol Grover <frextrite@gmail.com>
 ---
- include/linux/cred.h | 5 ++---
- kernel/cred.c        | 6 +++---
- 2 files changed, 5 insertions(+), 6 deletions(-)
+ kernel/auditsc.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 18639c069263..5973791e5fe4 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -291,11 +291,10 @@ static inline void put_cred(const struct cred *_cred)
- /**
-  * current_cred - Access the current task's subjective credentials
-  *
-- * Access the subjective credentials of the current task.  RCU-safe,
-- * since nobody else can modify it.
-+ * Access the subjective credentials of the current task.
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 4effe01ebbe2..d3510513cdd1 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -430,24 +430,19 @@ static int audit_field_compare(struct task_struct *tsk,
+ /* Determine if any context name data matches a rule's watch data */
+ /* Compare a task_struct with an audit_rule.  Return 1 on match, 0
+  * otherwise.
+- *
+- * If task_creation is true, this is an explicit indication that we are
+- * filtering a task rule at task creation time.  This and tsk == current are
+- * the only situations where tsk->cred may be accessed without an rcu read lock.
   */
- #define current_cred() \
--	rcu_dereference_protected(current->cred, 1)
-+	(current->cred)
+ static int audit_filter_rules(struct task_struct *tsk,
+ 			      struct audit_krule *rule,
+ 			      struct audit_context *ctx,
+ 			      struct audit_names *name,
+-			      enum audit_state *state,
+-			      bool task_creation)
++			      enum audit_state *state)
+ {
+ 	const struct cred *cred;
+ 	int i, need_sid = 1;
+ 	u32 sid;
+ 	unsigned int sessionid;
  
- /**
-  * current_real_cred - Access the current task's objective credentials
-diff --git a/kernel/cred.c b/kernel/cred.c
-index 809a985b1793..3956c31d068d 100644
---- a/kernel/cred.c
-+++ b/kernel/cred.c
-@@ -485,7 +485,7 @@ int commit_creds(struct cred *new)
- 	if (new->user != old->user)
- 		atomic_inc(&new->user->processes);
- 	rcu_assign_pointer(task->real_cred, new);
--	rcu_assign_pointer(task->cred, new);
-+	task->cred = new;
- 	if (new->user != old->user)
- 		atomic_dec(&old->user->processes);
- 	alter_cred_subscribers(old, -2);
-@@ -562,7 +562,7 @@ const struct cred *override_creds(const struct cred *new)
- 	 */
- 	get_new_cred((struct cred *)new);
- 	alter_cred_subscribers(new, 1);
--	rcu_assign_pointer(current->cred, new);
-+	current->cred = new;
- 	alter_cred_subscribers(old, -1);
+-	cred = rcu_dereference_check(tsk->cred, tsk == current || task_creation);
++	cred = tsk->cred;
  
- 	kdebug("override_creds() = %p{%d,%d}", old,
-@@ -590,7 +590,7 @@ void revert_creds(const struct cred *old)
- 	validate_creds(old);
- 	validate_creds(override);
- 	alter_cred_subscribers(old, 1);
--	rcu_assign_pointer(current->cred, old);
-+	current->cred = old;
- 	alter_cred_subscribers(override, -1);
- 	put_cred(override);
- }
+ 	for (i = 0; i < rule->field_count; i++) {
+ 		struct audit_field *f = &rule->fields[i];
+@@ -745,7 +740,7 @@ static enum audit_state audit_filter_task(struct task_struct *tsk, char **key)
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(e, &audit_filter_list[AUDIT_FILTER_TASK], list) {
+ 		if (audit_filter_rules(tsk, &e->rule, NULL, NULL,
+-				       &state, true)) {
++				       &state)) {
+ 			if (state == AUDIT_RECORD_CONTEXT)
+ 				*key = kstrdup(e->rule.filterkey, GFP_ATOMIC);
+ 			rcu_read_unlock();
+@@ -791,7 +786,7 @@ static enum audit_state audit_filter_syscall(struct task_struct *tsk,
+ 	list_for_each_entry_rcu(e, list, list) {
+ 		if (audit_in_mask(&e->rule, ctx->major) &&
+ 		    audit_filter_rules(tsk, &e->rule, ctx, NULL,
+-				       &state, false)) {
++				       &state)) {
+ 			rcu_read_unlock();
+ 			ctx->current_state = state;
+ 			return state;
+@@ -815,7 +810,7 @@ static int audit_filter_inode_name(struct task_struct *tsk,
+ 
+ 	list_for_each_entry_rcu(e, list, list) {
+ 		if (audit_in_mask(&e->rule, ctx->major) &&
+-		    audit_filter_rules(tsk, &e->rule, ctx, n, &state, false)) {
++		    audit_filter_rules(tsk, &e->rule, ctx, n, &state)) {
+ 			ctx->current_state = state;
+ 			return 1;
+ 		}
 -- 
 2.24.1
 
