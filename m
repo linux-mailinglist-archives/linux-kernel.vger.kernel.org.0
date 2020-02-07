@@ -2,72 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16248155040
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 03:01:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5301115504E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 03:01:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727626AbgBGB7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 20:59:23 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40885 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727586AbgBGB7V (ORCPT
+        id S1727381AbgBGCAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 21:00:01 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54127 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727621AbgBGB7Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 20:59:21 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t3so768850wru.7
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 17:59:20 -0800 (PST)
+        Thu, 6 Feb 2020 20:59:25 -0500
+Received: by mail-wm1-f65.google.com with SMTP id s10so931914wmh.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 17:59:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=eyKIMuCGLMoUcPFx2IeRMuTzX/rGZ52BhRtQ7dzOvAo=;
-        b=XPivzEKmIjPplCHPNq4sUXh/83PZNHieM4Sp4VpyX5ZiLOFtlTfj09ccORC/hByWpl
-         Kyr0u+ZHcASryxvwrbX9bmfHC1mcMxUsqmGOgMqbP0JQ/HdcEiUgqVWMiyfBBPOnPr+G
-         /r5B8LeBO6TfxVPVdmz7n87q3wZW7f2mcOPFDACaFqgNo8v6zAkjFzoBrkU/hfPuD+Tv
-         r2vo+R0FObZsx0guz8VdRci8LsHF6TO/rQ/xAhfav+raOjaDS9scH+AYiaNEhStFcXGG
-         6vtjLws0NGrMXAuHOIzc18PosWFHvAPos1O5VW5CMMwYtfpn/ZPQFJZnbZsFoKXhtKk+
-         ZWUQ==
+        bh=yws95nmaJZSmNzRJG51ZJDH/5MHh+qOjv+20GRqLWDg=;
+        b=EB4qPHFiqjaHLWaM/xuGWdSlWoqy/me+RmkCCtLDpUqfROTlp11Nua9NpW76lSXJo6
+         ol5HnB5j5EX18l8zD/2VjMykku+H0QwTjhYwS9COhevjdwrou9Fw0FijvSjEhVOJwx1N
+         6IGnpJc+1rBgWMwF9eQKFMj2RnNPRsas+kbZfAmodzE3xFWpCsI0lOAFZZHMfJvsUtSY
+         EqrpKVw0YEbkyYElU6X4xsGXJrYoTSxvL0dlf2Q8RQfjRF3imtAMQnoBaxSvTPtSBnsd
+         8hzGiEjJPNLgaAMYSbdPltRfnksqE05dj4ZPutHykMSCZ/mSRogs1WbHbrUDxI/lCYz4
+         ngJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=eyKIMuCGLMoUcPFx2IeRMuTzX/rGZ52BhRtQ7dzOvAo=;
-        b=OHRPU/3QeZ+RlPlAEKxG6T+ojZ+fmpl8N7SJ5a3OgNugr4qfIUfYE5s1T0o3OGORmv
-         Gz0xaYVvqDRpXS2ANKkUtDCXWE2bFRN2tzeIdxjfvCSitv7uYizmH1ObYnc3KuKy+CA/
-         ag8oyoM1Oijh566/GswWpsP+ZA7rru4ffx/a7ahmOo57qmrb+uIiXtLZVgRRUzS0xXpS
-         8JIVtKS+WSFYuF/wJ0by+AHGwilMe8UpN3lTWDo1/82MSv2JZdpMsTnqqFnoXv/f/1SK
-         GXvI0Wx/WwShE0a4JVGEyRIfdBVxBhNyjBxT4A+MJ8a9aMtVYrM6jTD7sAUbxjaJKzgQ
-         +eQA==
-X-Gm-Message-State: APjAAAX7MtMl3Y1uAto8wBxnH4THGUDUJZqmAuz4fN4f2RP69Kvsw382
-        Gw/fER7aynKnwQZAnfO9t9iQ+Q==
-X-Google-Smtp-Source: APXvYqxwDKP6Rh33l7a131ghdSf+JnhRF31RFQgP3HFFNFmupwQ2z6ZCBVFpVIvrrallVYFbaqwYig==
-X-Received: by 2002:adf:f707:: with SMTP id r7mr1192539wrp.194.1581040759891;
-        Thu, 06 Feb 2020 17:59:19 -0800 (PST)
+        bh=yws95nmaJZSmNzRJG51ZJDH/5MHh+qOjv+20GRqLWDg=;
+        b=Us0ShjfyTE1jRm3a1yrQqfF738ebW0M+DQcjBNv3MglI2eblD/Y5TF5tjkN2/fdW4X
+         s6eDLlzN3ruekyblGj85bQZxNfHJG3ilcDisauB+dALh2jVuKYzhrB6sawthbsOellD3
+         3LdhldKclAhjdPZnPJV1YWemQk8T5bhdxcXvk3d+cwDoEO8y19OHoLDrM842kwfCfDv4
+         YsR4poQX9I9teosG5qwCHI1vrz4j+6RRd4cznwQbbBFndcD5roLftJFXESEf6APVDtNy
+         D7iBqRJ8MSRWQlhLFvIcjKpUN9qcIxpzEw94eLEyyDoQt77QcaJ+/dZBu5SIsssTGGUH
+         10uQ==
+X-Gm-Message-State: APjAAAXMLNSm3qDdMV9eR+dAcoISVQ2FLQg3fluskxBii+450xNHoRY3
+        6nDFGdUTc3ggCAa0onoh147Ltw==
+X-Google-Smtp-Source: APXvYqymcKqIpAqu/yA09z56SWIcUHvFeO6IwFLJ/k5vRwPvn5AEcGhoHMWSMAENnnnyws5hqQZpRQ==
+X-Received: by 2002:a05:600c:224a:: with SMTP id a10mr950345wmm.143.1581040762397;
+        Thu, 06 Feb 2020 17:59:22 -0800 (PST)
 Received: from localhost.localdomain ([176.61.57.127])
-        by smtp.gmail.com with ESMTPSA id a62sm1490095wmh.33.2020.02.06.17.59.18
+        by smtp.gmail.com with ESMTPSA id a62sm1490095wmh.33.2020.02.06.17.59.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 17:59:19 -0800 (PST)
+        Thu, 06 Feb 2020 17:59:21 -0800 (PST)
 From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 To:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
         gregkh@linuxfoundation.org, jackp@codeaurora.org, balbi@kernel.org,
         bjorn.andersson@linaro.org
 Cc:     linux-kernel@vger.kernel.org,
         Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        ShuFan Lee <shufan_lee@richtek.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Yu Chen <chenyu56@huawei.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jun Li <lijun.kernel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v4 10/18] usb: dwc3: Add support for usb-conn-gpio connectors
-Date:   Fri,  7 Feb 2020 01:58:59 +0000
-Message-Id: <20200207015907.242991-11-bryan.odonoghue@linaro.org>
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: [PATCH v4 12/18] arm64: dts: qcom: qcs404-evb: Define VBUS detect pin
+Date:   Fri,  7 Feb 2020 01:59:01 +0000
+Message-Id: <20200207015907.242991-13-bryan.odonoghue@linaro.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200207015907.242991-1-bryan.odonoghue@linaro.org>
 References: <20200207015907.242991-1-bryan.odonoghue@linaro.org>
@@ -78,94 +67,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the ability to probe and enumerate a connector based on
-usb-conn-gpio. A device node label gpio_usb_connector is used to identify
-a usb-conn-gpio as a child of the USB interface.
+VBUS present/absent is presented to the SoC via a GPIO on the EVB. Define
+the pin mapping for later use by gpio-usb-conn.
 
-You would use usb-conn-gpio when a regulator in your system provides VBUS
-directly to the connector instead of supplying via the USB PHY.
-
-The parent device must have the "usb-role-switch" property, so that when
-the usb-conn-gpio driver calls usb_role_switch_set_role() the notification
-in dwc3 will run and the block registers will be updated to match the state
-detected at the connector.
-
-Cc: John Stultz <john.stultz@linaro.org>
+Cc: Andy Gross <agross@kernel.org>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Rob Herring <robh+dt@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>
-CC: ShuFan Lee <shufan_lee@richtek.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc: Yu Chen <chenyu56@huawei.com>
-Cc: Felipe Balbi <balbi@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jun Li <lijun.kernel@gmail.com>
-Cc: Valentin Schneider <valentin.schneider@arm.com>
-Cc: Jack Pham <jackp@codeaurora.org>
-Cc: linux-usb@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org
 Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 ---
- drivers/usb/dwc3/drd.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/usb/dwc3/drd.c b/drivers/usb/dwc3/drd.c
-index c355166793d0..c1825fd655f6 100644
---- a/drivers/usb/dwc3/drd.c
-+++ b/drivers/usb/dwc3/drd.c
-@@ -11,6 +11,7 @@
- #include <linux/of_graph.h>
- #include <linux/platform_device.h>
- #include <linux/property.h>
-+#include <linux/of_platform.h>
+diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+index 501a7330dbc8..6d53dc342f97 100644
+--- a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+@@ -4,6 +4,8 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include "qcs404.dtsi"
+ #include "pms405.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
  
- #include "debug.h"
- #include "core.h"
-@@ -537,8 +538,29 @@ static int dwc3_setup_role_switch(struct dwc3 *dwc)
- 	dwc3_set_mode(dwc, DWC3_GCTL_PRTCAP_DEVICE);
- 	return 0;
- }
-+
-+static int dwc3_register_gpio_usb_connector(struct dwc3 *dwc)
-+{
-+	struct device		*dev = dwc->dev;
-+	struct device_node	*np = dev->of_node, *conn_np;
-+	int			ret = 0;
-+
-+	conn_np = of_get_child_by_name(np, "connector");
-+	if (!conn_np) {
-+		dev_dbg(dev, "no connector child node specified\n");
-+		goto done;
-+	}
-+
-+	if (of_device_is_compatible(conn_np, "gpio-usb-b-connector"))
-+		ret = of_platform_populate(np, NULL, NULL, dev);
-+done:
-+	of_node_put(conn_np);
-+	return ret;
-+}
-+
- #else
- #define dwc3_setup_role_switch(x) 0
-+#define dwc3_register_gpio_usb_connector(x) 0
- #endif
+ / {
+ 	aliases {
+@@ -270,6 +272,18 @@ rclk {
+ 	};
+ };
  
- int dwc3_drd_init(struct dwc3 *dwc)
-@@ -554,6 +576,9 @@ int dwc3_drd_init(struct dwc3 *dwc)
- 		ret = dwc3_setup_role_switch(dwc);
- 		if (ret < 0)
- 			return ret;
-+		ret = dwc3_register_gpio_usb_connector(dwc);
-+		if (ret < 0)
-+			return ret;
- 	} else if (dwc->edev) {
- 		dwc->edev_nb.notifier_call = dwc3_drd_notifier;
- 		ret = extcon_register_notifier(dwc->edev, EXTCON_USB_HOST,
++&pms405_gpios {
++	usb3_vbus_pin: usb3-vbus-pin {
++		pinconf {
++			pins = "gpio12";
++			function = PMIC_GPIO_FUNC_NORMAL;
++			input-enable;
++			bias-pull-down;
++			power-source = <1>;
++		};
++	};
++};
++
+ &wifi {
+ 	status = "okay";
+ 	vdd-0.8-cx-mx-supply = <&vreg_l2_1p275>;
 -- 
 2.25.0
 
