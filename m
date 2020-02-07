@@ -2,112 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2C5B155CD5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 18:28:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCF73155CDC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 18:29:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbgBGR2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 12:28:14 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:33790 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726901AbgBGR2O (ORCPT
+        id S1727517AbgBGR3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 12:29:02 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:40621 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726874AbgBGR3B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 12:28:14 -0500
-Received: by mail-io1-f70.google.com with SMTP id i8so134229ioi.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 09:28:13 -0800 (PST)
+        Fri, 7 Feb 2020 12:29:01 -0500
+Received: by mail-il1-f196.google.com with SMTP id i7so191994ilr.7
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 09:29:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=poorly.run; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SQthra+5Tb+MdByAUBovPY1PsDx5TneOE+jweSiM4d0=;
+        b=JiDfGPDAovB+nWhtAim+Qoa8yJlNkdbELjctfRTRJacs8IQcvDG9LBHzFe9BQE3eQv
+         dUOCXG2MkvMvtLIh2LL+PXl2A83qDPOOQrPwvxURTxkykvPzQq6O5rtHvJNfil+Wn/Bo
+         26tHe3ii1y1hyDj1HOvXvj+PTlB10z9cnA5mkIB6LDRdAOD0NxM3SbGze+LUNFmHgViB
+         CyLR7MuxG0ICSeU2tg1kFLHrIKcn4LFjnwP1nfxJIN8EEMoKzlCYC4AZ2/cC3ObGDdgc
+         +RCPQknvTwh8bsAvfydBTTSoj58aGw3qrXn7mVRUyXM3ddYoZ1mUnVg0ap2PgDZLn/8d
+         xo4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=W63ahMeKAoR2+ngyjzVUzuW+ArlTdmK9l5iWyjmZIq4=;
-        b=P6YxcFhRlkkGbA3wJ8H9VNCK2igi/AIWLWRcxCFA53TL8gqMqelKthMUmUD73Onzqt
-         92wZ2iLPPyulSYsmGddwm7lRUOQOy+UTVNbDyI+8q2TzveG7si6lVZnXmpdjLZaNi+0Z
-         NRkLmQ9Mge1Du40vwY3uyMKmZX08o2TQE9N8TEGFohswfOs3xd+Y7Ndpu+16uhK4QZhQ
-         H4xVHNg6un6dOP9/Z1/OXDhJGlTcpJ7ZDya5as4N2wcylhOlcIXQZABU+bvs3n4qG/tv
-         bCz8TyIw4y3Kbws4Qhfr951rwBJv/RQf9+9ig1fEIBNEuHE3ZevJPm1C6mNXOVWk9jDu
-         i7Sw==
-X-Gm-Message-State: APjAAAW+v+18FzsWy9GEv9zSQbDpjiVzpC6sA3vOZxSeddqUDpZ+ACoT
-        G1sYXiMCc+pSMoJa+o/sCcFyfdp7SCmI99670HJsCtcI1lCw
-X-Google-Smtp-Source: APXvYqwEh9lgosP+ZBBHmuXoEJ8mg3fo/tiMaBTWqs2Fddp9hM/GpnUDHlrR9f+tNwP4WEpc/KQZNAmVVXrqXSKGL1pvEcf7kp6m
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SQthra+5Tb+MdByAUBovPY1PsDx5TneOE+jweSiM4d0=;
+        b=eawIW0c7pAfIeiEK/cfGG7QdvDxZg+6G3oiURngylCdhR6qwYjQw8xI1R/CVSv9mPU
+         kMeLmImM5J5qHknUpcRh7OfVrGNwgEo77y+q0gf6ODnXzyLe4Xbw9pndkVcho55ikEyZ
+         te83YeI7vdDvCXDsN5lM5tpW0pgJExqWfGglO50RJtkDcCBpsmLuoQHrnTr99EDrXpv3
+         0L7lf+RROyv+iKNNNy8ufjZmvsNjMlVpDcQyOo5YnWL6F8BkAF7q1GCABVOWvDUnWzQX
+         p0Sj25UoSBS0R0OgKjZN/in5mII6KlqPnDuIoOLboNjPdla0D8stTzH7vpudZ/ac57un
+         CYbw==
+X-Gm-Message-State: APjAAAWEUFgUbdB1QnYBzs0sTJcH+dYARJCN1HHdWTH5kNIYjpGCJ+lP
+        za8FHHUoqHmxBGmpYpBSxXjExXkxbF+7HBpcke6cQw==
+X-Google-Smtp-Source: APXvYqwXFhIati6Vp0GDfgQt0l5PZHt8xFRskEGYtNtbtsgxbozzjhsd86PDJjPrBvQAZjGbzw1snCPkeL1BuMgVfjk=
+X-Received: by 2002:a92:88c4:: with SMTP id m65mr450018ilh.165.1581096540300;
+ Fri, 07 Feb 2020 09:29:00 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a92:79c4:: with SMTP id u187mr454535ilc.92.1581096493420;
- Fri, 07 Feb 2020 09:28:13 -0800 (PST)
-Date:   Fri, 07 Feb 2020 09:28:13 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d895bd059dffb65c@google.com>
-Subject: BUG: sleeping function called from invalid context in __kmalloc
-From:   syzbot <syzbot+98704a51af8e3d9425a9@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <20200206140140.GA18465@art_vandelay> <20200207152348.1.Ie0633018fc787dda6e869cae23df76ae30f2a686@changeid>
+In-Reply-To: <20200207152348.1.Ie0633018fc787dda6e869cae23df76ae30f2a686@changeid>
+From:   Sean Paul <sean@poorly.run>
+Date:   Fri, 7 Feb 2020 12:28:24 -0500
+Message-ID: <CAMavQKKZAYgpCLPodWw0pS1na7rthuJy8DkSvexOb+TRKHeKfg@mail.gmail.com>
+Subject: Re: [PATCH] drm/mediatek: Find the cursor plane instead of hard
+ coding it
+To:     Evan Benn <evanbenn@chromium.org>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        David Airlie <airlied@linux.ie>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Feb 6, 2020 at 11:24 PM Evan Benn <evanbenn@chromium.org> wrote:
+>
+> The cursor and primary planes were hard coded.
+> Now search for them for passing to drm_crtc_init_with_planes
+>
+> Signed-off-by: Evan Benn <evanbenn@chromium.org>
 
-syzbot found the following crash on:
+I like it!
 
-HEAD commit:    90568ecf Merge tag 'kvm-5.6-2' of git://git.kernel.org/pub..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=107413bee00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=69fa012479f9a62
-dashboard link: https://syzkaller.appspot.com/bug?extid=98704a51af8e3d9425a9
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+Reviewed-by: Sean Paul <seanpaul@chromium.org>
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+98704a51af8e3d9425a9@syzkaller.appspotmail.com
-
-BUG: sleeping function called from invalid context at mm/slab.h:565
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 12445, name: syz-executor.1
-1 lock held by syz-executor.1/12445:
- #0: ffffffff89310218 (sb_lock){+.+.}, at: spin_lock include/linux/spinlock.h:338 [inline]
- #0: ffffffff89310218 (sb_lock){+.+.}, at: sget_fc+0xdc/0x640 fs/super.c:521
-Preemption disabled at:
-[<ffffffff81be818c>] spin_lock include/linux/spinlock.h:338 [inline]
-[<ffffffff81be818c>] sget_fc+0xdc/0x640 fs/super.c:521
-CPU: 0 PID: 12445 Comm: syz-executor.1 Not tainted 5.5.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1fb/0x318 lib/dump_stack.c:118
- ___might_sleep+0x449/0x5e0 kernel/sched/core.c:6800
- __might_sleep+0x8f/0x100 kernel/sched/core.c:6753
- slab_pre_alloc_hook mm/slab.h:565 [inline]
- slab_alloc mm/slab.c:3306 [inline]
- __do_kmalloc mm/slab.c:3654 [inline]
- __kmalloc+0x6f/0x340 mm/slab.c:3665
- kmalloc include/linux/slab.h:560 [inline]
- path_remove_extra_slash+0xae/0x2a0 fs/ceph/super.c:495
- compare_mount_options fs/ceph/super.c:553 [inline]
- ceph_compare_super+0x1d4/0x560 fs/ceph/super.c:1052
- sget_fc+0x139/0x640 fs/super.c:524
- ceph_get_tree+0x467/0x1540 fs/ceph/super.c:1127
- vfs_get_tree+0x8b/0x2a0 fs/super.c:1547
- do_new_mount fs/namespace.c:2822 [inline]
- do_mount+0x18ee/0x25a0 fs/namespace.c:3142
- __do_sys_mount fs/namespace.c:3351 [inline]
- __se_sys_mount+0xdd/0x110 fs/namespace.c:3328
- __x64_sys_mount+0xbf/0xd0 fs/namespace.c:3328
- do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45b399
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f77dba0ec78 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f77dba0f6d4 RCX: 000000000045b399
-RDX: 0000000020000140 RSI: 00000000200000c0 RDI: 0000000020000040
-RBP: 000000000075c070 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000000745 R14: 00000000004c8c38 R15: 000000000075c07c
-ceph: No mds server is up or the cluster is laggy
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> ---
+>
+>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 18 ++++++++++++------
+>  1 file changed, 12 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> index 7b392d6c71cc..935652990afa 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> @@ -658,10 +658,18 @@ static const struct drm_crtc_helper_funcs mtk_crtc_helper_funcs = {
+>
+>  static int mtk_drm_crtc_init(struct drm_device *drm,
+>                              struct mtk_drm_crtc *mtk_crtc,
+> -                            struct drm_plane *primary,
+> -                            struct drm_plane *cursor, unsigned int pipe)
+> +                            unsigned int pipe)
+>  {
+> -       int ret;
+> +       struct drm_plane *primary = NULL;
+> +       struct drm_plane *cursor = NULL;
+> +       int i, ret;
+> +
+> +       for (i = 0; i < mtk_crtc->layer_nr; i++) {
+> +               if (mtk_crtc->planes[i].type == DRM_PLANE_TYPE_PRIMARY)
+> +                       primary = &mtk_crtc->planes[i];
+> +               else if (mtk_crtc->planes[i].type == DRM_PLANE_TYPE_CURSOR)
+> +                       cursor = &mtk_crtc->planes[i];
+> +       }
+>
+>         ret = drm_crtc_init_with_planes(drm, &mtk_crtc->base, primary, cursor,
+>                                         &mtk_crtc_funcs, NULL);
+> @@ -830,9 +838,7 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
+>                         return ret;
+>         }
+>
+> -       ret = mtk_drm_crtc_init(drm_dev, mtk_crtc, &mtk_crtc->planes[0],
+> -                               mtk_crtc->layer_nr > 1 ? &mtk_crtc->planes[1] :
+> -                               NULL, pipe);
+> +       ret = mtk_drm_crtc_init(drm_dev, mtk_crtc, pipe);
+>         if (ret < 0)
+>                 return ret;
+>
+> --
+> 2.25.0.341.g760bfbb309-goog
+>
