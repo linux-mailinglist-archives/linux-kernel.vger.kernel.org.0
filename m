@@ -2,85 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F90B1559E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 15:44:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5D161559EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 15:46:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726982AbgBGOov (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 09:44:51 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:41014 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726827AbgBGOov (ORCPT
+        id S1727162AbgBGOpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 09:45:52 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:2101 "EHLO
+        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727065AbgBGOpv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 09:44:51 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1j04sB-0005PM-8I; Fri, 07 Feb 2020 15:44:47 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 71EB5100F58; Fri,  7 Feb 2020 14:44:46 +0000 (GMT)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Eric Dumazet <edumazet@google.com>, Ingo Molnar <mingo@kernel.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH] x86/traps: do not hash pointers in handle_stack_overflow()
-In-Reply-To: <20200207043836.106657-1-edumazet@google.com>
-References: <20200207043836.106657-1-edumazet@google.com>
-Date:   Fri, 07 Feb 2020 14:44:46 +0000
-Message-ID: <87tv42xxr5.fsf@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Fri, 7 Feb 2020 09:45:51 -0500
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 07 Feb 2020 20:15:45 +0530
+Received: from c-ppvk-linux.qualcomm.com ([10.206.24.34])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 07 Feb 2020 20:15:11 +0530
+Received: by c-ppvk-linux.qualcomm.com (Postfix, from userid 2304101)
+        id DE9F947EB; Fri,  7 Feb 2020 20:15:10 +0530 (IST)
+From:   Pradeep P V K <ppvk@codeaurora.org>
+To:     adrian.hunter@intel.com, robh+dt@kernel.org,
+        ulf.hansson@linaro.org, asutoshd@codeaurora.org,
+        stummala@codeaurora.org, sayalil@codeaurora.org,
+        rampraka@codeaurora.org, vbadigan@codeaurora.org, sboyd@kernel.org,
+        georgi.djakov@linaro.org
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        agross@kernel.org, linux-mmc-owner@vger.kernel.org,
+        mka@chromium.org, Pradeep P V K <ppvk@codeaurora.org>
+Subject: [RFC v3 0/2] Add SDHC interconnect bandwidth scaling
+Date:   Fri,  7 Feb 2020 20:14:53 +0530
+Message-Id: <1581086695-16645-1-git-send-email-ppvk@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eric Dumazet <edumazet@google.com> writes:
+Add interconnect bandwidths for SDHC driver using OPP framework that
+is required by SDHC driver based on the clock frequency and bus width
+of the card. Otherwise, the system clocks may run at minimum clock
+speed and thus affecting the performance.
 
-> Mangling stack pointers in handle_stack_overflow() is moot,
-> as registers (including RSP/RBP) are clear anyway.
->
-> BUG: stack guard page was hit at 0000000063381e80 (stack is
-> 000000008edc5696..0000000012256c50)
 
-To illustrate your argument above it would be useful to provide the post
-patch output as well.
+This change is based on Georgi Djakov [RFC]
+(https://lkml.org/lkml/2018/10/11/499) and
 
-> kernel stack overflow (double-fault): 0000 [#1] PREEMPT SMP KASAN
-> ...
-> RSP: 0018:ffffc90002c1ffc0 EFLAGS: 00010802
-> RAX: 1ffff11004a0094c RBX: ffff888025004180 RCX: c9d82d1007bb146c
-> RDX: dffffc0000000000 RSI: ffff888025004a40 RDI: ffff888025004180
-> RBP: ffffc90002c201c0 R08: dffffc0000000000 R09: fffffbfff1405915
-> R10: fffffbfff1405915 R11: 0000000000000000 R12: ffff888025004a60
-> R13: ffff888025004a10 R14: c9d82d1007bb146c R15: ffff888025004180
-> ...
->
-> Signed-off-by: Eric Dumazet <edumazet@google.com>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> ---
->  arch/x86/kernel/traps.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-> index 6ef00eb6fbb925e86109f86845e2b3ccef4023ec..44873df292bd3f9f77bb721c53cb8a1c40994cca 100644
-> --- a/arch/x86/kernel/traps.c
-> +++ b/arch/x86/kernel/traps.c
-> @@ -296,7 +296,7 @@ __visible void __noreturn handle_stack_overflow(const char *message,
->  						struct pt_regs *regs,
->  						unsigned long fault_address)
->  {
-> -	printk(KERN_EMERG "BUG: stack guard page was hit at %p (stack is %p..%p)\n",
-> +	printk(KERN_EMERG "BUG: stack guard page was hit at %px (stack
-> is %px..%px)\n",
+Saravana Kannan [PATCH v6]
+(https://lkml.org/lkml/2019/12/6/740)
 
-While touching this, can you please switch it to pr_emerg() ?
+change from RFC v2 -> v3 changes:
+- Modified interconnect bandwidth support using OPP framework.
+- Addressed review comments on v2.
 
-Thanks,
+Pradeep P V K (2):
+  mmc: sdhci-msm: Add interconnect bus bandwidth scaling support
+  dt-bindings: mmc: sdhci-msm: Add interconnect BW scaling strings
 
-        tglx
+ .../devicetree/bindings/mmc/sdhci-msm.txt          |  18 ++
+ drivers/mmc/host/sdhci-msm.c                       | 251 ++++++++++++++++++++-
+ 2 files changed, 265 insertions(+), 4 deletions(-)
+
+-- 
+1.9.1
+
