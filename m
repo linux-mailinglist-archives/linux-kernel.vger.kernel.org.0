@@ -2,146 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50A0315535D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 08:58:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20E22155369
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 09:02:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbgBGH6m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 02:58:42 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:31254 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726936AbgBGH6m (ORCPT
+        id S1726999AbgBGICm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 03:02:42 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:22152 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726136AbgBGICm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 02:58:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581062320;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=HenEqyaWD9A3GA5daQn5LKIiUsd/BikWwsStjqnEW1M=;
-        b=Z4HSOvs6k7Lqqs3eFoI5RaYZ7lzopGgOsysKNn2w2LPBwCLqtFb3NxaZRIfOdkUKkWIjLd
-        DNa7T0PLRKzJwfrxkqphRhLyMeT2afBc/hq0lTJAjeO+SnfueuZkQIpbzUc0udhkq4MsJ3
-        12HIoxU710H6zXaB0X9aWuKrvZXEkNI=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-198-KccekBmvNbKxsXV2vEzJJw-1; Fri, 07 Feb 2020 02:58:38 -0500
-X-MC-Unique: KccekBmvNbKxsXV2vEzJJw-1
-Received: by mail-qv1-f72.google.com with SMTP id g6so689946qvp.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 23:58:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=HenEqyaWD9A3GA5daQn5LKIiUsd/BikWwsStjqnEW1M=;
-        b=tTB39SRQ23ZwuWzseK9cEyDmGg7KY5IORD3Vy3upPyTWVyq/zMp6O2Lfwg8GWfiunX
-         /8tnUwZ+bsUHVdc4t7U56Z7VMuW/w3p6VEkVxGCX5mMjPzw0qXpSpNBeFOX7P61cogV3
-         nM0JXUMCQiSzRVnrUfGFPaEF5Gnh55cR1gpnprN0+jg6EH1YfKv75bUzcssVQIQRO+dA
-         TdGQ/qNapM4w20U2hQ6OiP4c0/htauKyCvECiWUo88IdFXl1WlP8h6EOsvDbFdqNe7r2
-         xnqIotX7iOeipkY3bJSUbZFcMglqkPcNjBtzoALwL6kLIiq9Yy2n9ti+jWb1afHJrtDu
-         vyKg==
-X-Gm-Message-State: APjAAAXlPuQR4tUs+CuP9uRY14EfGk5qV5uNrVqe65OiAugAuu2mD3Bx
-        xdcJeaUzUoW8zzYI7tBfsOAgBnfnPLAR6CSHx4ZGxkAGIra0hMI5zv8Uv2tzZdCRJW8UKKv3ciX
-        Dp32RcZ4rwImxhUh9tpvU48gN
-X-Received: by 2002:aed:34c1:: with SMTP id x59mr6453458qtd.236.1581062318422;
-        Thu, 06 Feb 2020 23:58:38 -0800 (PST)
-X-Google-Smtp-Source: APXvYqziMqz1E8IKbTESJfX9C1no83ZH/Toj/qyo6qUx6yX4UiOkZkQZ1T+NzcXp4I3jI9TAHXN8Bw==
-X-Received: by 2002:aed:34c1:: with SMTP id x59mr6453447qtd.236.1581062318154;
-        Thu, 06 Feb 2020 23:58:38 -0800 (PST)
-Received: from redhat.com (bzq-79-176-41-183.red.bezeqint.net. [79.176.41.183])
-        by smtp.gmail.com with ESMTPSA id g77sm906726qke.129.2020.02.06.23.58.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 23:58:37 -0800 (PST)
-Date:   Fri, 7 Feb 2020 02:58:32 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     eperezma@redhat.com,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>
-Subject: Re: vhost changes (batched) in linux-next after 12/13 trigger random
- crashes in KVM guests after reboot
-Message-ID: <20200207025806-mutt-send-email-mst@kernel.org>
-References: <20200107042401-mutt-send-email-mst@kernel.org>
- <c6795e53-d12c-0709-c2e9-e35d9af1f693@de.ibm.com>
- <20200107065434-mutt-send-email-mst@kernel.org>
- <fe6e7e90-3004-eb7a-9ed8-b53a7667959f@de.ibm.com>
- <20200120012724-mutt-send-email-mst@kernel.org>
- <2a63b15f-8cf5-5868-550c-42e2cfd92c60@de.ibm.com>
- <b6e32f58e5d85ac5cc3141e9155fb140ae5cd580.camel@redhat.com>
- <1ade56b5-083f-bb6f-d3e0-3ddcf78f4d26@de.ibm.com>
- <20200206171349-mutt-send-email-mst@kernel.org>
- <5c860fa1-cef5-b389-4ebf-99a62afa0fe8@de.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5c860fa1-cef5-b389-4ebf-99a62afa0fe8@de.ibm.com>
+        Fri, 7 Feb 2020 03:02:42 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1581062561; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=+F/pt2udyfg8s5WZPxDIux8J3Re3GcC64qVLQuWUVp0=; b=RrHlKBGnmP1HDrWaG1puwAQgqzL7GPttnWdSsbt8q2AWfWzQavdWZZKirAYdFFX3ZP1u/sON
+ Ct8YnfvKZwfl8csqf9lszU0sBYpv2Ll7jVv1b8Sb/UEPlFoXgIiTSjOz9Ng9l8yPkyjBm+CQ
+ urfo/Yk3rO8BvaqJhbww4yNXdAw=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e3d199d.7f53358e2998-smtp-out-n01;
+ Fri, 07 Feb 2020 08:02:37 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 559BFC447A3; Fri,  7 Feb 2020 08:02:36 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from vbadigan-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vbadigan)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 940BAC43383;
+        Fri,  7 Feb 2020 08:02:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 940BAC43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
+From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+To:     ulf.hansson@linaro.org, adrian.hunter@intel.com
+Cc:     asutoshd@codeaurora.org, stummala@codeaurora.org,
+        sayalil@codeaurora.org, cang@codeaurora.org,
+        rampraka@codeaurora.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Ritesh Harjani <riteshh@codeaurora.org>,
+        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH V1] mmc: sdhci-msm: Don't enable PWRSAVE_DLL for certain sdhc hosts
+Date:   Fri,  7 Feb 2020 13:31:56 +0530
+Message-Id: <1581062518-11655-1-git-send-email-vbadigan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 08:47:14AM +0100, Christian Borntraeger wrote:
-> Also adding Cornelia.
-> 
-> 
-> On 06.02.20 23:17, Michael S. Tsirkin wrote:
-> > On Thu, Feb 06, 2020 at 04:12:21PM +0100, Christian Borntraeger wrote:
-> >>
-> >>
-> >> On 06.02.20 15:22, eperezma@redhat.com wrote:
-> >>> Hi Christian.
-> >>>
-> >>> Could you try this patch on top of ("38ced0208491 vhost: use batched version by default")?
-> >>>
-> >>> It will not solve your first random crash but it should help with the lost of network connectivity.
-> >>>
-> >>> Please let me know how does it goes.
-> >>
-> >>
-> >> 38ced0208491 + this seem to be ok.
-> >>
-> >> Not sure if you can make out anything of this (and the previous git bisect log)
-> > 
-> > Yes it does - that this is just bad split-up of patches, and there's
-> > still a real bug that caused worse crashes :)
-> > 
-> > So I just pushed batch-v4.
-> > I expect that will fail, and bisect to give us
-> >     vhost: batching fetches
-> > Can you try that please?
-> > 
-> 
-> yes.
-> 
-> eccb852f1fe6bede630e2e4f1a121a81e34354ab is the first bad commit
-> commit eccb852f1fe6bede630e2e4f1a121a81e34354ab
-> Author: Michael S. Tsirkin <mst@redhat.com>
-> Date:   Mon Oct 7 06:11:18 2019 -0400
-> 
->     vhost: batching fetches
->     
->     With this patch applied, new and old code perform identically.
->     
->     Lots of extra optimizations are now possible, e.g.
->     we can fetch multiple heads with copy_from/to_user now.
->     We can get rid of maintaining the log array.  Etc etc.
->     
->     Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> 
->  drivers/vhost/test.c  |  2 +-
->  drivers/vhost/vhost.c | 39 ++++++++++++++++++++++++++++++++++-----
->  drivers/vhost/vhost.h |  4 +++-
->  3 files changed, 38 insertions(+), 7 deletions(-)
-> 
+From: Ritesh Harjani <riteshh@codeaurora.org>
 
+SDHC core with new 14lpp and later tech DLL should not enable
+PWRSAVE_DLL since such controller's internal gating cannot meet
+following MCLK requirement:
+When MCLK is gated OFF, it is not gated for less than 0.5us and MCLK
+must be switched on for at-least 1us before DATA starts coming.
 
-And the symptom is still the same - random crashes
-after a bit of traffic, right?
+Adding support for this requirement.
 
-> > 
-> 			
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+---
+ drivers/mmc/host/sdhci-msm.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index c3a160c..f27f891 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -977,9 +977,21 @@ static int sdhci_msm_cm_dll_sdc4_calibration(struct sdhci_host *host)
+ 		goto out;
+ 	}
+ 
+-	config = readl_relaxed(host->ioaddr + msm_offset->core_vendor_spec3);
+-	config |= CORE_PWRSAVE_DLL;
+-	writel_relaxed(config, host->ioaddr + msm_offset->core_vendor_spec3);
++	/*
++	 * Set CORE_PWRSAVE_DLL bit in CORE_VENDOR_SPEC3.
++	 * When MCLK is gated OFF, it is not gated for less than 0.5us
++	 * and MCLK must be switched on for at-least 1us before DATA
++	 * starts coming. Controllers with 14lpp and later tech DLL cannot
++	 * guarantee above requirement. So PWRSAVE_DLL should not be
++	 * turned on for host controllers using this DLL.
++	 */
++	if (msm_host->use_14lpp_dll_reset) {
++		config = readl_relaxed(host->ioaddr +
++				msm_offset->core_vendor_spec3);
++		config |= CORE_PWRSAVE_DLL;
++		writel_relaxed(config, host->ioaddr +
++				msm_offset->core_vendor_spec3);
++	}
+ 
+ 	/*
+ 	 * Drain writebuffer to ensure above DLL calibration
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
