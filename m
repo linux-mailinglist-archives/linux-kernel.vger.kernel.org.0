@@ -2,67 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E75C155CD9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 18:28:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB315155CF2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 18:38:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbgBGR2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 12:28:52 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:38454 "EHLO vps0.lunn.ch"
+        id S1727032AbgBGRhu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 12:37:50 -0500
+Received: from mga06.intel.com ([134.134.136.31]:53093 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726874AbgBGR2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 12:28:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=UEBTS0XrdoJSJQl95vSpuczU7JlSfYzUjvPMMXXJ5c4=; b=nZPxdgD/cUEFic5JI75m8v0Xr7
-        CzOliGBTSnBDBIgGpIokFggKL4yrT8Bccvx0sDAVG0BcwajXoK9KPtsWyzptxfB3FBdxfIx8Ofc6/
-        75s/hj9xZVa9oGxqU0yOIiT/04ftNIyXOmS9EE6zR/V1CQgvKi6M/zCYiY5bqEtEPJas=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
-        (envelope-from <andrew@lunn.ch>)
-        id 1j07Qq-0004lY-If; Fri, 07 Feb 2020 18:28:44 +0100
-Date:   Fri, 7 Feb 2020 18:28:44 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     christopher.s.hall@intel.com,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        netdev <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        jacob.e.keller@intel.com,
-        Richard Cochran <richardcochran@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, sean.v.kelley@intel.com
-Subject: Re: [Intel PMC TGPIO Driver 5/5] drivers/ptp: Add PMC Time-Aware
- GPIO Driver
-Message-ID: <20200207172844.GC19213@lunn.ch>
-References: <20191211214852.26317-1-christopher.s.hall@intel.com>
- <20191211214852.26317-6-christopher.s.hall@intel.com>
- <CACRpkdbi7q5Vr2Lt12eirs3Z8GLL2AuLLrAARCHkYEYgKbYkHg@mail.gmail.com>
+        id S1726897AbgBGRhu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 12:37:50 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2020 09:37:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,414,1574150400"; 
+   d="scan'208";a="346067524"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by fmsmga001.fm.intel.com with ESMTP; 07 Feb 2020 09:37:48 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] KVM: x86/mmu: nVMX: 5-level paging fixes and enabling
+Date:   Fri,  7 Feb 2020 09:37:40 -0800
+Message-Id: <20200207173747.6243-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbi7q5Vr2Lt12eirs3Z8GLL2AuLLrAARCHkYEYgKbYkHg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 06:10:46PM +0100, Linus Walleij wrote:
-> OK this looks like some GPIO registers...
-> 
-> Then there is a bunch of PTP stuff I don't understand I suppose
-> related to the precision time protocol.
+Two fixes for 5-level paging bugs with a 100% fatality rate, a patch to
+enable 5-level EPT in L1, and additional clean up on top (mostly renames
+of functions/variables that caused me no end of confusion when trying to
+figure out what was broken).
 
-Hi Linus
+Tested fixed kernels at L0, L1 and L2, with most combinations of EPT,
+shadow paging, 4-level and 5-level.  EPT kvm-unit-tests runs clean in L0.
+Patches for kvm-unit-tests incoming to play nice with 5-level nested EPT.
 
-I understand your confusion. The first time this was posted to netdev,
-i asked it to be renamed because it has very little to do with GPIO
+Ideally patches 1 and 2 would get into 5.6, 5-level paging is quite
+broken without them.
 
-https://lore.kernel.org/netdev/20190719132021.GC24930@lunn.ch/
+v2:
+  - Increase the nested EPT array sizes to accomodate 5-level paging in
+    the patch that adds support for 5-level nested EPT, not in the bug
+    fix for 5-level shadow paging.
 
-	Andrew
+Sean Christopherson (7):
+  KVM: nVMX: Use correct root level for nested EPT shadow page tables
+  KVM: x86/mmu: Fix struct guest_walker arrays for 5-level paging
+  KVM: nVMX: Allow L1 to use 5-level page walks for nested EPT
+  KVM: nVMX: Rename nested_ept_get_cr3() to nested_ept_get_eptp()
+  KVM: nVMX: Rename EPTP validity helper and associated variables
+  KVM: x86/mmu: Rename kvm_mmu->get_cr3() to ->get_guest_cr3_or_eptp()
+  KVM: nVMX: Drop unnecessary check on ept caps for execute-only
+
+ arch/x86/include/asm/kvm_host.h |  2 +-
+ arch/x86/include/asm/vmx.h      | 12 +++++++
+ arch/x86/kvm/mmu/mmu.c          | 35 ++++++++++----------
+ arch/x86/kvm/mmu/paging_tmpl.h  |  6 ++--
+ arch/x86/kvm/svm.c              | 10 +++---
+ arch/x86/kvm/vmx/nested.c       | 58 ++++++++++++++++++++-------------
+ arch/x86/kvm/vmx/nested.h       |  4 +--
+ arch/x86/kvm/vmx/vmx.c          |  2 ++
+ arch/x86/kvm/x86.c              |  2 +-
+ 9 files changed, 79 insertions(+), 52 deletions(-)
+
+-- 
+2.24.1
+
