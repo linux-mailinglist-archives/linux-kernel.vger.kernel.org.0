@@ -2,254 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C14415574B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 13:04:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79F2915575A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 13:06:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbgBGMEh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 07:04:37 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52725 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726827AbgBGMEh (ORCPT
+        id S1727144AbgBGMGD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 07:06:03 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:2538 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726860AbgBGMGC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 07:04:37 -0500
-Received: by mail-wm1-f66.google.com with SMTP id p9so2322118wmc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 04:04:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=R5h5Hhfr0C30ek8CnrJ517u633l7rUglq+J5+Ky2pSU=;
-        b=TSdbH1Lsaj15vZh5emaVkjGWlxSCoTfeQeU3gLRTOwpLcnalRwRfArvK9g5tD84AOV
-         WzchK0g1R/Nf9Yh7XJ7gZdrKTnE5132QPOMWe1IMFEW1YVOlkqSD6Xq/h4ebN0X5R1uF
-         xgcBnxLit2Kbh011VO7HArzZ+pDTDnOJQNDegC5p9Ccon1asad7i++4EikadZCvIR67P
-         F4kWIKeFyJtka5J2x1HDSTUR1ygNZKGeEVglBen++7LlgN7+Uo89775vErlaxUjeRIlh
-         BbFXlo3pol7vA/SyXDgkEsk6a8HQehBiLNeUS7zEhsloDDmBcf0aVwezLGxLuJJLzy5L
-         0U7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=R5h5Hhfr0C30ek8CnrJ517u633l7rUglq+J5+Ky2pSU=;
-        b=bqwYodJK1pk0CocEoJsEbVESPsp+MhcZp4DGbrikzMfcEGmV5Q91T8ObYCPHRDHYR+
-         IVIf12fa+51Xu7JRFtpNkbOy9XNIgghfT0corb63KobZzaSQzmerHI3sEATnLo/mfr0T
-         fMm7BgNxxVOgOaXIeDLsp3AKD4tozZ7xFFgCyMGCPa4UhnC7NuaOrjdhH1FZsjnKXQuG
-         0u96vg5LzJXmLDAEuf3d6oeThcp014Wt+BbNUdmdigOR6+Bk57gTTqYb4nu096MefMxP
-         gLArHIFJlB4O9gp/Ilel+js4d8z4Nl/Kqc0cbccYlTCPgRLaE4Ts1U7KKzKazvz0hIIk
-         GeWg==
-X-Gm-Message-State: APjAAAXrjPTI+NhoZRqL8Hg5WSt53ECsleZK+qFo7U8K5VxsVAH5EAIg
-        EWPehSyEa73sqHn+pygNcaELjg==
-X-Google-Smtp-Source: APXvYqwtC2bAQXniWiUc5oiGG0sJlgv9qLGg10xcRaZ8yTuXclNOUd0zGaxgEu16v3Q2wEfpyVEgZw==
-X-Received: by 2002:a7b:cf01:: with SMTP id l1mr4060275wmg.86.1581077074857;
-        Fri, 07 Feb 2020 04:04:34 -0800 (PST)
-Received: from google.com ([2a00:79e0:d:110:d6cc:2030:37c1:9964])
-        by smtp.gmail.com with ESMTPSA id e18sm3052153wrw.70.2020.02.07.04.04.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2020 04:04:33 -0800 (PST)
-Date:   Fri, 7 Feb 2020 12:04:30 +0000
-From:   Quentin Perret <qperret@google.com>
-To:     lukasz.luba@arm.com
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, linux-omap@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-imx@nxp.com, Morten.Rasmussen@arm.com,
-        Dietmar.Eggemann@arm.com, Chris.Redpath@arm.com,
-        ionela.voinescu@arm.com, javi.merino@arm.com,
-        cw00.choi@samsung.com, b.zolnierkie@samsung.com, rjw@rjwysocki.net,
-        sudeep.holla@arm.com, viresh.kumar@linaro.org, nm@ti.com,
-        sboyd@kernel.org, rui.zhang@intel.com, amit.kucheria@verdurent.com,
-        daniel.lezcano@linaro.org, mingo@redhat.com, peterz@infradead.org,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
-        kernel@pengutronix.de, khilman@kernel.org, agross@kernel.org,
-        bjorn.andersson@linaro.org, robh@kernel.org,
-        matthias.bgg@gmail.com, steven.price@arm.com,
-        tomeu.vizoso@collabora.com, alyssa.rosenzweig@collabora.com,
-        airlied@linux.ie, daniel@ffwll.ch, liviu.dudau@arm.com,
-        lorenzo.pieralisi@arm.com, patrick.bellasi@matbug.net
-Subject: Re: [PATCH v2 1/4] PM / EM: add devices to Energy Model
-Message-ID: <20200207120430.GA242912@google.com>
-References: <20200206134640.11367-1-lukasz.luba@arm.com>
- <20200206134640.11367-2-lukasz.luba@arm.com>
+        Fri, 7 Feb 2020 07:06:02 -0500
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 017C3XOJ012685;
+        Fri, 7 Feb 2020 04:05:51 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=proofpoint;
+ bh=O9whW5pRtLEzcX2nQnW1vfWdhih0XAVolfu1EHci9DY=;
+ b=JiHB+UN98jozBqYF7JoLrYdPKG4DqBLMx3Ct+xcaPVn7fBEa2/zyxvuCNpSkgcWPCvrB
+ mU+oLP6Jgy3aNPQoc8eBW+VzBhiwnvNU5iCgZnSgw3i+3H14W7NQabTY4Sm50KpzgMwu
+ hZnk3NetW0eRvCxMd9mSIgov18WZDe1dLR06ugzz/mZ3R8LbKXdAvZCXzZgk0knaDwEZ
+ J8p0ZUFxPOvQWQkv7YHIXKTaJXS/AunvvhBe5dUD5cNesQbsuL95jbDQmVo2u1DD0bIE
+ RDFkH4+bX2mLralFVPyS9bzWF8nvfuxJusPh8589Wn3ExO0KwztPCl4vlQqWj4kedJSV MQ== 
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2xyhkvax5m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 07 Feb 2020 04:05:51 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YUXaiuSPYNbXeFZgCPnYHFAbU4bIwEiPbKqQYzcPh0+mS7UQh60KTm+PGKGIGcncchRFSS2c2u3/xS4UI9ZkHM0aOAn6tmKn9FfUQu3wgPF+x/hb6t6ZqmNiG6PFPxNhz3y/FdZRCIgG+hvd6tnk37nA4JMRdqknZivELdFUki6QvqLRBxHP/4NXXmUx1+s9qnHopH3s4c8pkWt6Xnpis5XDwZayjWCTIWXSkQ14Gf3rKgTlU2CJ5zOgTlMzw2uGyU6GmMGiDsSPKt8gHfIyJete9UrjY1oGjbn0CLI2sNdJLjkqQjzjp+/QGAC8Stl7P1W1Du0FAhfUKo5GzyzLNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O9whW5pRtLEzcX2nQnW1vfWdhih0XAVolfu1EHci9DY=;
+ b=TZVcJf9QQCcba9MfmTCI4GykPmBFlg4iHBq272eZQ9JUvAoCKThAnpVEn5RsheymCIkE4ihqkVQD/IOGBEA1wcu1fx2FbULge/A7YIqH+g0l1qwKNGYHzNtcX+rcRG7M+bk5US4k3S3kK4LugH06cfZzuc2cN4H6Ht9NBTjGxtZJsJtG6WoFVo2HBwSVoMjrmMHcWBSpu3dzbt1Q57aJjglmReC0bPjwilYMPCo9oBBlwQSNdsw5ohLifSovyuhap0zH+/nJIT+arL4kKLSjDZ2pffANcZehwp+LxMWpr5pmSvjF3j20QNUTtHZoLjbItcClykEJnJP46vgzluQL+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cadence.com; dmarc=pass action=none header.from=cadence.com;
+ dkim=pass header.d=cadence.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O9whW5pRtLEzcX2nQnW1vfWdhih0XAVolfu1EHci9DY=;
+ b=Dcghl5V3Ofmjb02G8kVHNpddfb+zOezFSGM07+x4hZEcjTvynJN2/T7IX+Wb5SSAp37emHmNcsYXn5U1dMVFMYJcanNptRoumLKETXZyseUCG2RT0aSIkN35esj2yAY1L1WlTSK6eQvPJmXwL7EpHUj4/mZiWKxOD/jwX1lKJAs=
+Received: from BYAPR07MB5110.namprd07.prod.outlook.com (20.176.255.14) by
+ BYAPR07MB4678.namprd07.prod.outlook.com (52.135.204.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.21; Fri, 7 Feb 2020 12:05:46 +0000
+Received: from BYAPR07MB5110.namprd07.prod.outlook.com
+ ([fe80::cc36:479a:7b72:b1c9]) by BYAPR07MB5110.namprd07.prod.outlook.com
+ ([fe80::cc36:479a:7b72:b1c9%5]) with mapi id 15.20.2707.023; Fri, 7 Feb 2020
+ 12:05:46 +0000
+From:   Yuti Suresh Amonkar <yamonkar@cadence.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "kishon@ti.com" <kishon@ti.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "maxime@cerno.tech" <maxime@cerno.tech>,
+        "jsarha@ti.com" <jsarha@ti.com>,
+        "tomi.valkeinen@ti.com" <tomi.valkeinen@ti.com>,
+        "praneeth@ti.com" <praneeth@ti.com>,
+        Milind Parab <mparab@cadence.com>,
+        Swapnil Kashinath Jakhade <sjakhade@cadence.com>
+Subject: RE: [PATCH v4 02/13] dt-bindings: phy: Add Cadence MHDP PHY bindings
+ in YAML format.
+Thread-Topic: [PATCH v4 02/13] dt-bindings: phy: Add Cadence MHDP PHY bindings
+ in YAML format.
+Thread-Index: AQHV3LRLSlhV6s2u3EiDn6CGqL1+xagOpgSAgAD6LwA=
+Date:   Fri, 7 Feb 2020 12:05:46 +0000
+Message-ID: <BYAPR07MB5110DC5D61AD92C0DF2CBE50D21C0@BYAPR07MB5110.namprd07.prod.outlook.com>
+References: <1580969461-16981-1-git-send-email-yamonkar@cadence.com>
+ <1580969461-16981-3-git-send-email-yamonkar@cadence.com>
+ <20200206205507.GA13685@bogus>
+In-Reply-To: <20200206205507.GA13685@bogus>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNceWFtb25rYXJcYXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRiYTI5ZTM1Ylxtc2dzXG1zZy0yOWY0OTRhNy00OWEyLTExZWEtYWU3NS0xNGFiYzUzOWE4NjNcYW1lLXRlc3RcMjlmNDk0YTktNDlhMi0xMWVhLWFlNzUtMTRhYmM1MzlhODYzYm9keS50eHQiIHN6PSIzMTc2IiB0PSIxMzIyNTU1MDc0MzU4OTU2NTUiIGg9IktBQjArOFJwUWRnR25ReHc3aVdlWHBieU00bz0iIGlkPSIiIGJsPSIwIiBibz0iMSIvPjwvbWV0YT4=
+x-dg-rorf: true
+x-originating-ip: [14.143.9.161]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7f19f887-a671-4181-3e46-08d7abc610a6
+x-ms-traffictypediagnostic: BYAPR07MB4678:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR07MB46788C44C93A3B71E8E999AFD21C0@BYAPR07MB4678.namprd07.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0306EE2ED4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(136003)(346002)(366004)(376002)(396003)(36092001)(189003)(199004)(186003)(7416002)(81156014)(2906002)(71200400001)(6506007)(478600001)(26005)(9686003)(8676002)(81166006)(19627235002)(7696005)(6916009)(8936002)(53546011)(55016002)(33656002)(5660300002)(316002)(107886003)(4326008)(76116006)(66946007)(54906003)(86362001)(66446008)(66556008)(66476007)(52536014)(64756008)(966005)(55236004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4678;H:BYAPR07MB5110.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: lmkem5hfKsZt5AgEDRhAnHN7w6wl3Jg+MKsRx0Qta4QUXmfZTVxCVJPyntCHk97ORlb8FXT8LOP7j9v6T8VNMOvonmHUKvAlZEOD08Lp0KQbESBKffFBsyAsz72FrRM27GEUvwz7xP5AKhyyZvQk2HjIqENYYuTDjQyxzlTkf6fTUt61EcLJDvJ2cejwOCRBdpwhpb5GK6MH0lMANj+1E71+Prjnj1qjJ80UI+WG8YRj1pQStloz/7z6Q06Nifjfo0hE7OBVla/4qaaRmqhpfys8A6+qZ4fZQ4nmKXErvCpfIs+wmCR9kLKIBXvT7b/eaqIC0tuIdoc+li1OMitVeeA8rk5Ca3eIzj9+8KTx6VB05Y1ugku0J55bXujwAKABLvsh3P1lv19TsebJTd+89ELdWhKr4uTSFdVEvvE8NTPtJVxuADnMiDf/VjVwkyB+b6j3mHJTiDcJvYuzG9iOkZLo1clONqN709819AhlRx32rsDegVSqipcqi2nLNDVclWBSVOXVy0rDNVTZUo6AJdusySeVyUR4A3CLC4FD1zP+l4RjMTn76QPWlK5HiWNjgKaQ0gkheSBctxfDPRkaFg==
+x-ms-exchange-antispam-messagedata: GujirQiW2vVC4aQPUc2EpKf2fjAMVva4/QOpSOBOMEtkJjMbh/3qxnLSU2zhLDWDegpUXouic+Q6JA2q0ir+qbYiuqdOCAIueBfOFvTASo9L3sXbSwveCeLh5GX2pa/4bDgxAb+E1XsaKOpKY8Q4DQ==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200206134640.11367-2-lukasz.luba@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f19f887-a671-4181-3e46-08d7abc610a6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2020 12:05:46.6709
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tLDddEnK3m44jXuF5E7xiQtqF1olHFdmLgzf+qDdrfq0YpHEyUIHXy84WrxACRXTGh8EY3zvQtorsFNq73kZXTLA5dWrTfcIPlZPd3K7VHw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4678
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-07_01:2020-02-07,2020-02-07 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0 mlxscore=0
+ lowpriorityscore=0 adultscore=0 clxscore=1015 mlxlogscore=999 phishscore=0
+ suspectscore=0 impostorscore=0 spamscore=0 bulkscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002070094
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 06 Feb 2020 at 13:46:37 (+0000), lukasz.luba@arm.com wrote:
->  2. Core APIs
-> @@ -70,14 +72,16 @@ CONFIG_ENERGY_MODEL must be enabled to use the EM framework.
->  Drivers are expected to register performance domains into the EM framework by
->  calling the following API::
->  
-> -  int em_register_perf_domain(cpumask_t *span, unsigned int nr_states,
-> -			      struct em_data_callback *cb);
-> +  int em_register_perf_domain(struct device *dev, unsigned int nr_states,
-> +		struct em_data_callback *cb, cpumask_t *cpus);
->  
-> -Drivers must specify the CPUs of the performance domains using the cpumask
-> +Drivers must specify the device pointer of the performance domains as first
+Hi Rob,
 
-I find this sentence a little odd no?
+Thanks for the review.
 
->  argument, and provide a callback function returning <frequency, power> tuples
-> -for each capacity state. The callback function provided by the driver is free
-> +for each performance state. The callback function provided by the driver is free
->  to fetch data from any relevant location (DT, firmware, ...), and by any mean
-> -deemed necessary. See Section 3. for an example of driver implementing this
-> +deemed necessary. For other devices than CPUs the last argumant must be set to
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: Friday, February 7, 2020 2:25
+> To: Yuti Suresh Amonkar <yamonkar@cadence.com>
+> Cc: linux-kernel@vger.kernel.org; devicetree@vger.kernel.org;
+> kishon@ti.com; robh+dt@kernel.org; mark.rutland@arm.com;
+> maxime@cerno.tech; jsarha@ti.com; tomi.valkeinen@ti.com;
+> praneeth@ti.com; Milind Parab <mparab@cadence.com>; Swapnil Kashinath
+> Jakhade <sjakhade@cadence.com>; Yuti Suresh Amonkar
+> <yamonkar@cadence.com>
+> Subject: Re: [PATCH v4 02/13] dt-bindings: phy: Add Cadence MHDP PHY
+> bindings in YAML format.
+>=20
+> EXTERNAL MAIL
+>=20
+>=20
+> On Thu, 6 Feb 2020 07:10:50 +0100, Yuti Amonkar wrote:
+> > - Add Cadence MHDP PHY bindings in YAML format.
+> > - Add Torrent PHY reference clock bindings.
+> > - Add sub-node bindings for each group of PHY lanes based on PHY type.
+> >   Each sub-node includes properties such as master lane number, link re=
+set,
+> >   phy type, number of lanes etc.
+> > - Add reset support including PHY reset and individual lane reset.
+> > - Add a new compatible string used for TI SoCs using Torrent PHY.
+> > This will not affect ABI as the driver has never been functional, and
+> > therefore do not exist in any active use case.
+> >
+> > Signed-off-by: Yuti Amonkar <yamonkar@cadence.com>
+> > ---
+> >  .../bindings/phy/phy-cadence-torrent.yaml     | 143 ++++++++++++++++++
+> >  1 file changed, 143 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
+> >
+>=20
+> My bot found errors running 'make dt_binding_check' on your patch:
+>=20
+> Documentation/devicetree/bindings/display/simple-
+> framebuffer.example.dts:21.16-37.11: Warning (chosen_node_is_root):
+> /example-0/chosen: chosen node must be at root node
+> Error: Documentation/devicetree/bindings/phy/phy-cadence-
+> torrent.example.dts:33.42-43 syntax error FATAL ERROR: Unable to parse
+> input tree
+> scripts/Makefile.lib:300: recipe for target
+> 'Documentation/devicetree/bindings/phy/phy-cadence-
+> torrent.example.dt.yaml' failed
+> make[1]: *** [Documentation/devicetree/bindings/phy/phy-cadence-
+> torrent.example.dt.yaml] Error 1
+> Makefile:1263: recipe for target 'dt_binding_check' failed
+> make: *** [dt_binding_check] Error 2
+>=20
 
-s/argumant/argument
+I think this error is due to missing PHY_TYPE_DP macro in the include/dt-bi=
+ndings/phy/phy.h file. This macro is defined in the patch [1] which is avai=
+lable in phy-next. I forgot to mention dependency of this patch series on [=
+1]. Should I send the series again by mentioning the dependency in the cove=
+r letter?
 
-> +NULL. Only for CPUfreq drivers it is obligatory to specify the cpumask.
+[1]
+https://lkml.org/lkml/2019/12/9/586
 
-Please note that as of today nothing mandates the caller to be a CPUFreq
-driver -- it could be anything in theory. I'd say 'only for CPU devices'
-instead.
+> See https://urldefense.proofpoint.com/v2/url?u=3Dhttps-
+> 3A__patchwork.ozlabs.org_patch_1234141&d=3DDwIBAg&c=3DaUq983L2pue2Fq
+> KFoP6PGHMJQyoJ7kl3s3GZ-
+> _haXqY&r=3DxythEVTj32hrXbonw_U5uD9n5Dh9J7TTTznvmGAGKo4&m=3D4HxnP
+> HG3MyXrwx28RZFwK7SF4T0LlYYpDjAaJcJ0lXI&s=3Dzp6pUcrsuA4OAIRcws8y1rxY
+> xC4OrNk7GCrLcWqE0z8&e=3D
+> Please check and re-submit.
 
-<snip>
-> @@ -24,51 +27,65 @@ struct em_cap_state {
->  
->  /**
->   * em_perf_domain - Performance domain
-> - * @table:		List of capacity states, in ascending order
-> - * @nr_cap_states:	Number of capacity states
-> - * @cpus:		Cpumask covering the CPUs of the domain
-> + * @table:		List of performance states, in ascending order
-> + * @nr_perf_states:	Number of performance states
-> + * @priv:		In case of EM for CPU device it is a Cpumask
-> + *			covering the CPUs of the domain
-
-Could you turn @priv back into 'unsigned long priv[0];' and keep the
-allocation as it is today ? That is, append the cpumask to the struct.
-
-This empty pointer for non-CPU devices is just wasted space, and pointer
-chasing isn't good for your caches. Given that you pre-allocate the pd
-in em_create_pd() you could just have a special case for CPUs there I
-suppose. And _is_cpu_em() will have to check the bus like you did in v1.
-
->   *
-> - * A "performance domain" represents a group of CPUs whose performance is
-> - * scaled together. All CPUs of a performance domain must have the same
-> - * micro-architecture. Performance domains often have a 1-to-1 mapping with
-> - * CPUFreq policies.
-> + * In case of CPU device, a "performance domain" represents a group of CPUs
-> + * whose performance is scaled together. All CPUs of a performance domain
-> + * must have the same micro-architecture. Performance domains often have
-> + * a 1-to-1 mapping with CPUFreq policies.
-> + * In case of other devices the 'priv' field is unused.
->   */
->  struct em_perf_domain {
-> -	struct em_cap_state *table;
-> -	int nr_cap_states;
-> -	unsigned long cpus[0];
-> +	struct em_perf_state *table;
-> +	int nr_perf_states;
-> +	void *priv;
->  };
-
-<snip>
->  struct em_data_callback {
->  	/**
-> -	 * active_power() - Provide power at the next capacity state of a CPU
-> -	 * @power	: Active power at the capacity state in mW (modified)
-> -	 * @freq	: Frequency at the capacity state in kHz (modified)
-> -	 * @cpu		: CPU for which we do this operation
-> +	 * active_power() - Provide power at the next performance state of a
-> +	 *		    device
-> +	 * @power	: Active power at the performance state in mW (modified)
-> +	 * @freq	: Frequency at the performance state in kHz (modified)
-> +	 * @dev		: Device for which we do this operation (can be a CPU)
->  	 *
-> -	 * active_power() must find the lowest capacity state of 'cpu' above
-> +	 * active_power() must find the lowest performance state of 'dev' above
->  	 * 'freq' and update 'power' and 'freq' to the matching active power
->  	 * and frequency.
->  	 *
-> -	 * The power is the one of a single CPU in the domain, expressed in
-> -	 * milli-watts. It is expected to fit in the [0, EM_CPU_MAX_POWER]
-> -	 * range.
-> +	 * In case of CPUs, the power is the one of a single CPU in the domain,
-> +	 * expressed in milli-watts. It is expected to fit in the
-> +	 * [0, EM_MAX_POWER] range.
->  	 *
->  	 * Return 0 on success.
->  	 */
-> -	int (*active_power)(unsigned long *power, unsigned long *freq, int cpu);
-> +	int (*active_power)(unsigned long *power, unsigned long *freq,
-> +			    struct device *dev);
-
-Given that you've made explicit in the doc of struct em_perf_state that
-'power' can be a 'total' value (static + dynamic), this could be renamed
-I suppose.
-
-<snip>
->  /**
->   * em_cpu_get() - Return the performance domain for a CPU
->   * @cpu : CPU to find the performance domain for
->   *
-> - * Return: the performance domain to which 'cpu' belongs, or NULL if it doesn't
-> + * Returns the performance domain to which 'cpu' belongs, or NULL if it doesn't
->   * exist.
->   */
->  struct em_perf_domain *em_cpu_get(int cpu)
->  {
-> -	return READ_ONCE(per_cpu(em_data, cpu));
-
-Since CPU perf domains are guaranteed to never go away, it'd be safe to
-keep that per-CPU variable and avoid the locking and list manipulation
-below. No strong opinion, though.
-
-> +	struct em_device *em_dev;
-> +
-> +	mutex_lock(&em_pd_mutex);
-> +
-> +	if (list_empty(&em_pd_dev_list))
-> +		goto unlock;
-> +
-> +	list_for_each_entry(em_dev, &em_pd_dev_list, em_dev_list) {
-> +		if (!_is_cpu_em(em_dev->em_pd))
-> +			continue;
-> +
-> +		if (cpumask_test_cpu(cpu, em_span_cpus(em_dev->em_pd))) {
-> +			mutex_unlock(&em_pd_mutex);
-> +			return em_dev->em_pd;
-> +		}
-> +	}
-> +
-> +unlock:
-> +	mutex_unlock(&em_pd_mutex);
-> +	return NULL;
->  }
->  EXPORT_SYMBOL_GPL(em_cpu_get);
-
-<snip>
->  /**
-> - * em_register_perf_domain() - Register the Energy Model of a performance domain
-> - * @span	: Mask of CPUs in the performance domain
-> - * @nr_states	: Number of capacity states to register
-> + * em_register_perf_domain() - Register the Energy Model (EM) of a performance
-> + *		domain for the device
-> + * @dev		: Device for which the EM is to register
-> + * @nr_states	: Number of performance states to register
->   * @cb		: Callback functions providing the data of the Energy Model
-> + * @cpus	: Pointer to cpumask_t, which in case of a CPU device is
-> + *		obligatory. It can be taken from i.e. 'policy->cpus'. For other
-
-It should be policy->related_cpus actually (or 'real_cpus' even) -- PM_EM
-ignores hotplug ATM. Perhaps we should document that somewhere ...
-
-> + *		type of devices this should be set to NULL.
->   *
->   * Create Energy Model tables for a performance domain using the callbacks
->   * defined in cb.
-> @@ -196,63 +361,129 @@ EXPORT_SYMBOL_GPL(em_cpu_get);
-
-Thanks,
-Quentin
+Thanks & Regards,
+Yuti Amonkar
