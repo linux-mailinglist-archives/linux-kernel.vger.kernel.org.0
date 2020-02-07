@@ -2,86 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48C5A155B78
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 17:12:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DD92155B7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 17:13:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbgBGQMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 11:12:43 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:41751 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726874AbgBGQMn (ORCPT
+        id S1727347AbgBGQNC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 11:13:02 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:40012 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727068AbgBGQNC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 11:12:43 -0500
-Received: by mail-il1-f193.google.com with SMTP id f10so2134072ils.8
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 08:12:41 -0800 (PST)
+        Fri, 7 Feb 2020 11:13:02 -0500
+Received: by mail-oi1-f195.google.com with SMTP id a142so2468446oii.7
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 08:13:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lAnZ0KfpoJFXJXqEJp2h1hR24YKg8DCqzE8GT1Sg/80=;
-        b=ou7OV9nXB1rt4NAnNWVFHl5DT/z7arx3n217cok5UsX7/dZAEB/6gZZdgo5CRHKbtq
-         5MlVqxPBMVocDORdwmh/qiT1eSTmkMlpW+xIzeN3lYZj98PTiGVeUysgpuqebVnyMfiq
-         THrIoHPrfTrSpAMEGRQRuOOADT1okKx60iaHfjSi1C1VhnvFObLxss+/wqKfXI7daUDo
-         pU/yQEV036+gvU2gQoav9vyoYArKiK9vm0yjiEh4WmHKM/WvGTROd9a/JsKEr/iXZJcR
-         ldiZWBGMsC3THXrmtMnOunfqXpg7KjPd+OY2Uh2TwkySzeCQVCs2nUoko9r8tFVpqwk3
-         j47w==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=iWBJ9etiBm/hh818InyCY7sxm3rRSJTmMlNUHIhyA9c=;
+        b=EsHg7XJNBOnE9WV9xoWBpV5/Drmtbhea8wIUAcaLEGzyMD7IkjTUlZtnP7KIM6eBRi
+         OJCWNS1DAJ+gJ428u2R4P0q/fKyBUKbwQTpniG+rJNoFm7x0rk/YyopKEKsJOdsr4/n6
+         toj4YqL2h+x/l5BSMZl3Kx5T8nBgQS2CblzaRpG7BuTyDtWcVjCMSG9G1eQxXsAqRZlm
+         ZqRl/j1/rMCTZVhRrzJ6wMZS/EoWXXgZtP0CWQ/j+nXNHbigdWO/YCLF6XDD9MN/prz6
+         PEy2A4xGc65o+XsYD/Tl+YzlaZir8qB9vljkuL6hFPIovyKgwl2IA3J+TP5Yxwl3Z/aF
+         m77Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lAnZ0KfpoJFXJXqEJp2h1hR24YKg8DCqzE8GT1Sg/80=;
-        b=m0hw/yguitKGgqiY14MgRerK1JUEQnmERtOhi+8KkuzmOq2fU/6c3Qk47Z7bH3u9Rg
-         0kzmfCR9ulIlcHvEypHlkTMGvDAkY+8BexTm5CXEMdfnMOj1hg5RpQ4fDxb/URxwGHz0
-         SxD9B7OjeXZf9VR/ZlzUmGCIPjUQ3dqIACVX3qDiNWRjK9S6AFalDYI5VimCutIDzy7O
-         M98f0I9Jk89LjwqT4gccPSIcZiLyk/hYWCEWFZ0rB0mGpc2mTu45pgTRSZMXqg8t55gZ
-         9JmWTxarzRYg2V78vygPvqvSh2T7AnXDtCM2dRoZxVj9L14pNL66chAhBEYCw38MnJj3
-         ho2w==
-X-Gm-Message-State: APjAAAWBfFanM+ypAdjzTLpUS8c0Ie1EOyHJXGLGW2ghJWhroHpfC5h5
-        LTO0QhrlbGin3W6jpKEQuMkUelM2zRo=
-X-Google-Smtp-Source: APXvYqxlLfKpSh0/MAQWoZOGzqwYq4/oCYfhJFBjQabCpXWy7DdmtSgrXlico21x2I3TZIkM7UM2Dw==
-X-Received: by 2002:a92:3a07:: with SMTP id h7mr87346ila.203.1581091961049;
-        Fri, 07 Feb 2020 08:12:41 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id d7sm999245iof.14.2020.02.07.08.12.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Feb 2020 08:12:40 -0800 (PST)
-Subject: Re: [PATCH] io_uring: flush overflowed CQ events in the
- io_uring_poll()
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        io-uring@vger.kernel.org
-References: <20200207121828.105456-1-sgarzare@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0acf040c-4b00-1647-e0c9-fc8b1c94685d@kernel.dk>
-Date:   Fri, 7 Feb 2020 09:12:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=iWBJ9etiBm/hh818InyCY7sxm3rRSJTmMlNUHIhyA9c=;
+        b=JZ9mXKM05+6MQtPt5HRpEi6xZf3/SscoAJfVNskSC2D3+5sIkvw0DK8yfdkYzjCEI+
+         0bV1udfG+hxVJ44GNzwBWKOezkv9mZaowifU9giD1uBfaE/H55PWLMBgqzPSg8WLJEZ+
+         JkeHR0swvCxFop/wvQbolvHZ087NOMBUW50o/PqTou/QXE15vBzwOjxwKEyhE9XGZkn3
+         ERQBpwsQyRVxiimvnHJ0xRHiDE1i2S0XvB2kcZ9rPuCa+5yOYBmWicTrrxSwhAnkj90m
+         wJ9y0Ab8TbKMbKeB2Y996Znsx0DROHRCHZQOvzq6lCqk6IY5xRfkx2EcQYuEiQCzaTKM
+         qVXw==
+X-Gm-Message-State: APjAAAW4XFpWrKSPc6WY87RKztpd+7aHYVyvQZo/Fb+qmbpehTKBafTt
+        2m8NUp1QztF7kV5hivhooCT5yKR8XusSMeATd7Q=
+X-Google-Smtp-Source: APXvYqwqp6/JeTl5IP2cz7BbiqfYT9XW3BamplsS14CjEHLV9OIIY9e0BQU/LSMtcaitoWwSM2vvWl1oT0d3aDlv7ps=
+X-Received: by 2002:aca:d4c1:: with SMTP id l184mr2594404oig.172.1581091982088;
+ Fri, 07 Feb 2020 08:13:02 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200207121828.105456-1-sgarzare@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a8a:99:0:0:0:0:0 with HTTP; Fri, 7 Feb 2020 08:13:01 -0800 (PST)
+Reply-To: cfffdfd8brahim4@yandex.com
+From:   Salah Ibrahim <musahamed100@gmail.com>
+Date:   Fri, 7 Feb 2020 08:13:01 -0800
+Message-ID: <CALPqmR2BZkHyz8nDbTZ5aUNpqQ2swxLWWmKaeQcJRDEXrti-aQ@mail.gmail.com>
+Subject: My Good Friend,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/7/20 5:18 AM, Stefano Garzarella wrote:
-> In io_uring_poll() we must flush overflowed CQ events before to
-> check if there are CQ events available, to avoid missing events.
-> 
-> We call the io_cqring_events() that checks and flushes any overflow
-> and returns the number of CQ events available.
-> 
-> We can avoid taking the 'uring_lock' since the flush is already
-> protected by 'completion_lock'.
-
-Thanks, applied. I dropped that last sentence, as a) it doesn't
-really matter, and b) we may very well already have it held here
-if someone is doing a poll on the io_uring fd itself.
-
--- 
-Jens Axboe
-
+Dear Friend. I have a business proposal of  $35 Million USD which i want to
+transact with you  get back for more details.Best Regards From Salah Ibrahim
