@@ -2,52 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FF081560E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 22:55:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46A2B1560E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 22:55:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727801AbgBGVz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 16:55:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42410 "EHLO mail.kernel.org"
+        id S1727850AbgBGVzc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 16:55:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727697AbgBGVzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 16:55:20 -0500
-Subject: Re: [GIT PULL] Additional ACPI updates for v5.6-rc1
+        id S1727754AbgBGVzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 16:55:21 -0500
+Subject: Re: [GIT PULL] Documentation fixes for 5.6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581112519;
-        bh=GmfHsAi2L8vVRWBdqdTqIK2X5WyLyDBPcOXaUgGhuG4=;
+        s=default; t=1581112520;
+        bh=MIvv6CaYu0zTE0GTb/zh7bqZ4dno+909vzroeWAssOA=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=zhKjYnu7QePq2lyNj55j7gHMURu8nb50O4v3dCHdVdAaBsdfiOZSC7PepRtqMLPL9
-         +QepvPY3XkDmri/ASsKJbk/c3ymVZuOPTO1J8iohH7oll1soIKXvNgtz2gV06Xl1Hj
-         +wr4cqUEd41y1QihOfPNUI27dRfoHOKvaBatsjvI=
+        b=XsMl9dCghAlTcIkZlSEZPhwrwGir4GtXMbVYJwmy/KKhXIAyEKo5bDjqmKqz9cvB6
+         c110rhJHyHqt33k7gZ9VoNbIqTmiAALDZW44wdoxvZrp2vHplCvFkHmjpfVRfxVJjl
+         zgzogQEjdE8iCdHx06E7MJhXTSrBcOI+t/nW1g6E=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAJZ5v0iWhN=pxnedntPn5kriN-uEULvTjHADtJj59a5W14a4sQ@mail.gmail.com>
-References: <CAJZ5v0iWhN=pxnedntPn5kriN-uEULvTjHADtJj59a5W14a4sQ@mail.gmail.com>
+In-Reply-To: <20200207101614.4b5d6bc0@lwn.net>
+References: <20200207101614.4b5d6bc0@lwn.net>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJZ5v0iWhN=pxnedntPn5kriN-uEULvTjHADtJj59a5W14a4sQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
- acpi-5.6-rc1-3
-X-PR-Tracked-Commit-Id: dec0a81a7814c8a876e663e0627468e6b1a7d2fb
+X-PR-Tracked-Message-Id: <20200207101614.4b5d6bc0@lwn.net>
+X-PR-Tracked-Remote: git://git.lwn.net/linux.git tags/docs-5.6-2
+X-PR-Tracked-Commit-Id: d1c9038ab5c1c96c0fd9d13ec56f2d650fe4c59f
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ed39ba0ec1156407040e7509cb19299b5dda3815
-Message-Id: <158111251949.9631.11774276832242457428.pr-tracker-bot@kernel.org>
-Date:   Fri, 07 Feb 2020 21:55:19 +0000
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
+X-PR-Merge-Commit-Id: 41dcd67e88688afbeb3b2bd23960eed5daec74e7
+Message-Id: <158111252088.9631.9448670431680002920.pr-tracker-bot@kernel.org>
+Date:   Fri, 07 Feb 2020 21:55:20 +0000
+To:     Jonathan Corbet <corbet@lwn.net>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 7 Feb 2020 11:36:02 +0100:
+The pull request you sent on Fri, 7 Feb 2020 10:16:14 -0700:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-5.6-rc1-3
+> git://git.lwn.net/linux.git tags/docs-5.6-2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ed39ba0ec1156407040e7509cb19299b5dda3815
+https://git.kernel.org/torvalds/c/41dcd67e88688afbeb3b2bd23960eed5daec74e7
 
 Thank you!
 
