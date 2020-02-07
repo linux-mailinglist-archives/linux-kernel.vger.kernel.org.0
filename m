@@ -2,210 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E3BA156049
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 21:58:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6111D15602B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 21:52:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727594AbgBGU6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 15:58:49 -0500
-Received: from mail.serbinski.com ([162.218.126.2]:46960 "EHLO
-        mail.serbinski.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727071AbgBGU6o (ORCPT
+        id S1727162AbgBGUwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 15:52:53 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:41763 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726947AbgBGUww (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 15:58:44 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mail.serbinski.com (Postfix) with ESMTP id 53BA1D00725;
-        Fri,  7 Feb 2020 20:50:42 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at serbinski.com
-Received: from mail.serbinski.com ([127.0.0.1])
-        by localhost (mail.serbinski.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Wy_gu-ayd8MR; Fri,  7 Feb 2020 15:50:34 -0500 (EST)
-Received: from anet (ipagstaticip-7ac5353e-e7de-3a0d-ff65-4540e9bc137f.sdsl.bell.ca [142.112.15.192])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mail.serbinski.com (Postfix) with ESMTPSA id 135DFD00716;
-        Fri,  7 Feb 2020 15:50:28 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.serbinski.com 135DFD00716
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=serbinski.com;
-        s=default; t=1581108628;
-        bh=K2MdRRtZpB4Txo2PfziKzlrlKIrsC2ebzByAwXpZmVk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2smk52nQv3+OTl3zpA97hLFp9Fba8Ay/u/4sP4/D3VrcWlKlOZ+tnUOAMETCd3m2V
-         Pd12mwqhEn1Ri/o1P2FuW64VysYKAXnq4yFuQ2w8TQ3gdZJYpqoZd5BxTmhD2+bXFM
-         /9+l6xqTRyCZusnujvfxQg5JA7UZ6l45YxWqNLwQ=
-From:   Adam Serbinski <adam@serbinski.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Srini Kandagatla <srinivas.kandagatla@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Adam Serbinski <adam@serbinski.com>,
-        Andy Gross <agross@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Patrick Lai <plai@codeaurora.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 8/8] ASoC: qcom: apq8096: add kcontrols to set PCM rate
-Date:   Fri,  7 Feb 2020 15:50:13 -0500
-Message-Id: <20200207205013.12274-9-adam@serbinski.com>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200207205013.12274-1-adam@serbinski.com>
-References: <20200207205013.12274-1-adam@serbinski.com>
+        Fri, 7 Feb 2020 15:52:52 -0500
+Received: from dread.disaster.area (pa49-181-161-120.pa.nsw.optusnet.com.au [49.181.161.120])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 3A7708220F7;
+        Sat,  8 Feb 2020 07:52:45 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1j0AcF-0005eN-RY; Sat, 08 Feb 2020 07:52:43 +1100
+Date:   Sat, 8 Feb 2020 07:52:43 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        andres@anarazel.de, willy@infradead.org, dhowells@redhat.com,
+        hch@infradead.org, jack@suse.cz, akpm@linux-foundation.org
+Subject: Re: [PATCH v3 0/3] vfs: have syncfs() return error when there are
+ writeback errors
+Message-ID: <20200207205243.GP20628@dread.disaster.area>
+References: <20200207170423.377931-1-jlayton@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200207170423.377931-1-jlayton@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=SkgQWeG3jiSQFIjTo4+liA==:117 a=SkgQWeG3jiSQFIjTo4+liA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=7-415B0cAAAA:8 a=9kdqgZibw9NIpUqzm0EA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This makes it possible for the backend sample rate to be
-set to 8000 or 16000 Hz, depending on the needs of the HFP
-call being set up.
+On Fri, Feb 07, 2020 at 12:04:20PM -0500, Jeff Layton wrote:
+> You're probably wondering -- Where are v1 and v2 sets?
+> 
+> I did the first couple of versions of this set back in 2018, and then
+> got dragged off to work on other things. I'd like to resurrect this set
+> though, as I think it's valuable overall, and I have need of it for some
+> other work I'm doing.
+> 
+> Currently, syncfs does not return errors when one of the inodes fails to
+> be written back. It will return errors based on the legacy AS_EIO and
+> AS_ENOSPC flags when syncing out the block device fails, but that's not
+> particularly helpful for filesystems that aren't backed by a blockdev.
+> It's also possible for a stray sync to lose those errors.
+> 
+> The basic idea is to track writeback errors at the superblock level,
+> so that we can quickly and easily check whether something bad happened
+> without having to fsync each file individually. syncfs is then changed
+> to reliably report writeback errors, and a new ioctl is added to allow
+> userland to get at the current errseq_t value w/o having to sync out
+> anything.
 
-Signed-off-by: Adam Serbinski <adam@serbinski.com>
-CC: Andy Gross <agross@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>
-CC: Liam Girdwood <lgirdwood@gmail.com>
-CC: Patrick Lai <plai@codeaurora.org>
-CC: Banajit Goswami <bgoswami@codeaurora.org>
-CC: Jaroslav Kysela <perex@perex.cz>
-CC: Takashi Iwai <tiwai@suse.com>
-CC: alsa-devel@alsa-project.org
-CC: linux-arm-msm@vger.kernel.org
-CC: devicetree@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
----
- sound/soc/qcom/apq8096.c | 92 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 90 insertions(+), 2 deletions(-)
+So what, exactly, can userspace do with this error? It has no idea
+at all what file the writeback failure occurred on or even
+what files syncfs() even acted on so there's no obvious error
+recovery that it could perform on reception of such an error.
 
-diff --git a/sound/soc/qcom/apq8096.c b/sound/soc/qcom/apq8096.c
-index 1edcaa15234f..882f2c456321 100644
---- a/sound/soc/qcom/apq8096.c
-+++ b/sound/soc/qcom/apq8096.c
-@@ -16,6 +16,9 @@
- #define MI2S_BCLK_RATE			1536000
- #define PCM_BCLK_RATE			1024000
- 
-+static int pri_pcm_sample_rate = 16000;
-+static int quat_pcm_sample_rate = 16000;
-+
- static int msm_snd_hw_params(struct snd_pcm_substream *substream,
- 			     struct snd_pcm_hw_params *params)
- {
-@@ -33,10 +36,15 @@ static int msm_snd_hw_params(struct snd_pcm_substream *substream,
- 	switch (cpu_dai->id) {
- 	case PRIMARY_PCM_RX:
- 	case PRIMARY_PCM_TX:
-+		rate->min = pri_pcm_sample_rate;
-+		rate->max = pri_pcm_sample_rate;
-+		channels->min = 1;
-+		channels->max = 1;
-+		break;
- 	case QUATERNARY_PCM_RX:
- 	case QUATERNARY_PCM_TX:
--		rate->min = 16000;
--		rate->max = 16000;
-+		rate->min = quat_pcm_sample_rate;
-+		rate->max = quat_pcm_sample_rate;
- 		channels->min = 1;
- 		channels->max = 1;
- 		break;
-@@ -121,6 +129,83 @@ static struct snd_soc_ops apq8096_ops = {
- 	.startup = msm_snd_startup,
- };
- 
-+static char const *pcm_sample_rate_text[] = {"8 kHz", "16 kHz"};
-+static const struct soc_enum pcm_snd_enum =
-+		SOC_ENUM_SINGLE_EXT(2, pcm_sample_rate_text);
-+
-+static int get_sample_rate_idx(int sample_rate)
-+{
-+	int sample_rate_idx = 0;
-+
-+	switch (sample_rate) {
-+	case 8000:
-+		sample_rate_idx = 0;
-+		break;
-+	case 16000:
-+	default:
-+		sample_rate_idx = 1;
-+		break;
-+	}
-+
-+	return sample_rate_idx;
-+}
-+
-+static int pri_pcm_sample_rate_get(struct snd_kcontrol *kcontrol,
-+				   struct snd_ctl_elem_value *ucontrol)
-+{
-+	ucontrol->value.integer.value[0] =
-+		get_sample_rate_idx(pri_pcm_sample_rate);
-+	return 0;
-+}
-+
-+static int quat_pcm_sample_rate_get(struct snd_kcontrol *kcontrol,
-+				    struct snd_ctl_elem_value *ucontrol)
-+{
-+	ucontrol->value.integer.value[0] =
-+		get_sample_rate_idx(quat_pcm_sample_rate);
-+	return 0;
-+}
-+
-+static int get_sample_rate(int idx)
-+{
-+	int sample_rate_val = 0;
-+
-+	switch (idx) {
-+	case 0:
-+		sample_rate_val = 8000;
-+		break;
-+	case 1:
-+	default:
-+		sample_rate_val = 16000;
-+		break;
-+	}
-+
-+	return sample_rate_val;
-+}
-+
-+static int pri_pcm_sample_rate_put(struct snd_kcontrol *kcontrol,
-+				   struct snd_ctl_elem_value *ucontrol)
-+{
-+	pri_pcm_sample_rate =
-+		get_sample_rate(ucontrol->value.integer.value[0]);
-+	return 0;
-+}
-+
-+static int quat_pcm_sample_rate_put(struct snd_kcontrol *kcontrol,
-+				    struct snd_ctl_elem_value *ucontrol)
-+{
-+	quat_pcm_sample_rate =
-+		get_sample_rate(ucontrol->value.integer.value[0]);
-+	return 0;
-+}
-+
-+static const struct snd_kcontrol_new card_controls[] = {
-+	SOC_ENUM_EXT("PRI_PCM SampleRate", pcm_snd_enum,
-+		     pri_pcm_sample_rate_get, pri_pcm_sample_rate_put),
-+	SOC_ENUM_EXT("QUAT_PCM SampleRate", pcm_snd_enum,
-+		     quat_pcm_sample_rate_get, quat_pcm_sample_rate_put),
-+};
-+
- static int apq8096_init(struct snd_soc_pcm_runtime *rtd)
- {
- 	struct snd_soc_dai *codec_dai = rtd->codec_dai;
-@@ -182,6 +267,9 @@ static int apq8096_platform_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_card_register;
- 
-+	snd_soc_add_card_controls(card, card_controls,
-+				  ARRAY_SIZE(card_controls));
-+
- 	return 0;
- 
- err_card_register:
+> I do have a xfstest for this. I do not yet have manpage patches, but
+> I'm happy to roll some once there is consensus on the interface.
+> 
+> Caveats:
+> 
+> - Having different behavior for an O_PATH descriptor in syncfs is
+>   a bit odd, but it means that we don't have to grow struct file. Is
+>   that acceptable from an API standpoint?
+
+It's an ugly wart, IMO. But because we suck at APIs, I'm betting
+that we'll decide this is OK or do something even worse...
+
+> - This adds a new generic fs ioctl to allow userland to scrape the
+>   current superblock's errseq_t value. It may be best to present this
+>   to userland via fsinfo() instead (once that's merged). I'm fine with
+>   dropping the last patch for now and reworking it for fsinfo if so.
+
+What, exactly, is this useful for? Why would we consider exposing
+an internal implementation detail to userspace like this?
+
+Cheers,
+
+Dave.
 -- 
-2.21.1
-
+Dave Chinner
+david@fromorbit.com
