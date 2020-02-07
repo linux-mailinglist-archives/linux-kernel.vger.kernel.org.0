@@ -2,144 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CF6A1550D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 04:10:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F13D91550E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 04:16:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbgBGDKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 22:10:32 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:29246 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726509AbgBGDKc (ORCPT
+        id S1727129AbgBGDQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 22:16:31 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:60812 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726628AbgBGDQb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 22:10:32 -0500
-X-UUID: c782487949f44d5cae00623e8948f311-20200207
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=AVUNJMoThA1dscpdVLSgtsytpPvPRpIt9//axxaCTQs=;
-        b=Xz7tBGi3B9tdvV71NDwtLWhHln72HJhRrGomtyVDbrMCbg55XqOyfluOL7g6kbj850VX5HbkmiScI98y76nJhvXgZlvQt+dtohsD7m61vGMjbtZV4ijH9aovXaVNQki9GIyRR8sEJ7YcmfsQU5MTvIeByzt3wzh/4EY5tAEZmDY=;
-X-UUID: c782487949f44d5cae00623e8948f311-20200207
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <frankie.chang@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 209294105; Fri, 07 Feb 2020 11:10:24 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 7 Feb 2020 11:09:37 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 7 Feb 2020 11:09:48 +0800
-Message-ID: <1581045023.22229.46.camel@mtkswgap22>
-Subject: Re: [PATCH v1 1/1] binder: transaction latency tracking for user
- build
-From:   Frankie Chang <Frankie.Chang@mediatek.com>
-To:     Joel Fernandes <joel@joelfernandes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-        "Arve =?ISO-8859-1?Q?Hj=F8nnev=E5g?=" <arve@android.com>,
-        Christian Brauner <christian@brauner.io>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-        <Jian-Min.Liu@mediatek.com>
-Date:   Fri, 7 Feb 2020 11:10:23 +0800
-In-Reply-To: <20200205154943.GE142103@google.com>
-References: <1580885572-14272-1-git-send-email-Frankie.Chang@mediatek.com>
-         <20200205093612.GA1167956@kroah.com> <20200205154943.GE142103@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        Thu, 6 Feb 2020 22:16:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1581045391; x=1612581391;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=+2WThEHHt7KIj3oLeCAAyyJaZ7DMkUYjvDAOAA8HZAk=;
+  b=NNiVUrQt7bTJKqpSZht0O1nGX/oVCfTBNfMqL7u5XHDtcmQySeoEOlkE
+   dR8s3/wWLarOfzvSYgVT7wjc4HQqDPAQ/Inoci8ICYMNbexo3ACGM+q/8
+   Bt+No1B9WYw0xnRckvNrYHhLOsddnN4BEp2K168/q1dYKliIcLUG6uCYy
+   qqfagcHmgyBMyLFEwFKrIE5gf5Et3PRa9PE2wbVihuunl+iRrOy/gbcv6
+   sESDTyJe2W+8hOxPuSHT4BeJV5PO/RaXT8MbQ2y1nE4sGvgsLmPNuiSYy
+   UxmOhmm+hq3UTFmgZ2xKI7ANwJ9VdOirPDUL/7oNjTIco4EPlMTGrAfc2
+   g==;
+IronPort-SDR: io1EHGFE89rsDYAKAV9j+NBMXhFhrEoovalbjbqjm/mbX/x2vRNx4kNzCYDNxBCXt+uYCJRwba
+ SDtbAREEdhSxb5nyTv984sQF+x7Nznd2yo4YQL/r4pzkQb27aT4erMCWrU2ZrgLKJ4q3R6jwKT
+ OiQKxv6QZ44K3PrGfaotu15kbY5rbGFH/Q15U3me6x8/Er2nlr6g8gEFFs0HqLPO2nkuEVdP2v
+ v0h+mf6sq5K9CTWkEO/3xSzhbfx3OPZ6/LUjJeWFkmowvDVpnluMY2MXC5QBy/X3FI2Jz0xiq3
+ x7k=
+X-IronPort-AV: E=Sophos;i="5.70,411,1574092800"; 
+   d="scan'208";a="129872400"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 07 Feb 2020 11:16:09 +0800
+IronPort-SDR: aAiAO+4dawkc+vhw2b2mCGGrDe8aI3v6QCBuiKD1R9eM50TP5W9eowcWHVVbBcTZv/MsKwbmh+
+ eZWilZy3FIKdGsYUzK6bbC9Bvm5iVxT/RChjaykhjBzXGsKGgLic0BW4J9v6DuRuTcl+KLoj+H
+ bs6tGkzvcmcaUy16IIlhs3omn9Tk17eU+GoCvWnAvhsVU4RSXQQBarQ9L+SdDmEgDCAK1pvqeo
+ 2+c2igj+/bERAT75XGwvLA7zebd/DgJab9bU+EPV8e168zM//GZRyv7LVz/FZoWEGkU838nPG9
+ cqMoXmsNGIZSkLhaORDKkKMl
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 19:09:06 -0800
+IronPort-SDR: if/YQ/NuTEIOUnUVY7azHUN7FU8kpnJ4jJp6ioyJkgElM6L2CG0xlp1Dlka11OL2PyDQAjok/R
+ 01urtmcrMd0+Jvoqs1og6HzatK2l873zRACy6b6YnfDNAq+YpVAPF9T2tEa6WJNUDCm0gLVRvE
+ ZTdDeqyzktxCy3dKFZhdgv4+oX2TZRNsZp6qmexaZo1CGsiCOAakKYbVMIju1hJp+P12ezezv6
+ +ByUNqCYGka54YWIZ5NbnPs5Hkk3ozY8QFN4Raiv7dtirBhGTdz32dEJERYIyPgw/fv7fujPw8
+ 9tA=
+WDCIronportException: Internal
+Received: from washi.fujisawa.hgst.com ([10.149.53.254])
+  by uls-op-cesaip02.wdc.com with ESMTP; 06 Feb 2020 19:16:05 -0800
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Johannes Thumshirn <jth@kernel.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Dave Chinner <david@fromorbit.com>
+Subject: [PATCH v13 0/2] New zonefs file system
+Date:   Fri,  7 Feb 2020 12:16:04 +0900
+Message-Id: <20200207031606.641231-1-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDIwLTAyLTA1IGF0IDEwOjQ5IC0wNTAwLCBKb2VsIEZlcm5hbmRlcyB3cm90ZToN
-Cj4gT24gV2VkLCBGZWIgMDUsIDIwMjAgYXQgMDk6MzY6MTJBTSArMDAwMCwgR3JlZyBLcm9haC1I
-YXJ0bWFuIHdyb3RlOg0KPiA+IE9uIFdlZCwgRmViIDA1LCAyMDIwIGF0IDAyOjUyOjUyUE0gKzA4
-MDAsIEZyYW5raWUgQ2hhbmcgd3JvdGU6DQo+ID4gPiBSZWNvcmQgc3RhcnQvZW5kIHRpbWVzdGFt
-cCB0byBiaW5kZXIgdHJhbnNhY3Rpb24uDQo+ID4gPiBXaGVuIHRyYW5zYWN0aW9uIGlzIGNvbXBs
-ZXRlZCBvciB0cmFuc2FjdGlvbiBpcyBmcmVlLA0KPiA+ID4gaXQgd291bGQgYmUgY2hlY2tlZCBp
-ZiB0cmFuc2FjdGlvbiBsYXRlbmN5IG92ZXIgdGhyZXNob2xkICgyIHNlYyksDQo+ID4gPiBpZiB5
-ZXMsIHByaW50aW5nIHJlbGF0ZWQgaW5mb3JtYXRpb24gZm9yIHRyYWNpbmcuDQo+ID4gPiANCj4g
-PiA+IFNpZ25lZC1vZmYtYnk6IEZyYW5raWUgQ2hhbmcgPEZyYW5raWUuQ2hhbmdAbWVkaWF0ZWsu
-Y29tPg0KPiA+ID4gLS0tDQo+ID4gPiAgZHJpdmVycy9hbmRyb2lkL0tjb25maWcgICAgICAgICAg
-IHwgICAgOCArKysNCj4gPiA+ICBkcml2ZXJzL2FuZHJvaWQvYmluZGVyLmMgICAgICAgICAgfCAg
-MTA3ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gPiA+ICBkcml2ZXJz
-L2FuZHJvaWQvYmluZGVyX2ludGVybmFsLmggfCAgICA0ICsrDQo+ID4gPiAgMyBmaWxlcyBjaGFu
-Z2VkLCAxMTkgaW5zZXJ0aW9ucygrKQ0KPiA+ID4gDQo+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9hbmRyb2lkL0tjb25maWcgYi9kcml2ZXJzL2FuZHJvaWQvS2NvbmZpZw0KPiA+ID4gaW5kZXgg
-NmZkZjJhYi4uN2JhODBlYiAxMDA2NDQNCj4gPiA+IC0tLSBhL2RyaXZlcnMvYW5kcm9pZC9LY29u
-ZmlnDQo+ID4gPiArKysgYi9kcml2ZXJzL2FuZHJvaWQvS2NvbmZpZw0KPiA+ID4gQEAgLTU0LDYg
-KzU0LDE0IEBAIGNvbmZpZyBBTkRST0lEX0JJTkRFUl9JUENfU0VMRlRFU1QNCj4gPiA+ICAJICBl
-eGhhdXN0aXZlbHkgd2l0aCBjb21iaW5hdGlvbnMgb2YgdmFyaW91cyBidWZmZXIgc2l6ZXMgYW5k
-DQo+ID4gPiAgCSAgYWxpZ25tZW50cy4NCj4gPiA+ICANCj4gPiA+ICtjb25maWcgQklOREVSX1VT
-RVJfVFJBQ0tJTkcNCj4gPiA+ICsJYm9vbCAiQW5kcm9pZCBCaW5kZXIgdHJhbnNhY3Rpb24gdHJh
-Y2tpbmciDQo+ID4gPiArCWhlbHANCj4gPiA+ICsJICBVc2VkIGZvciB0cmFjayBhYm5vcm1hbCBi
-aW5kZXIgdHJhbnNhY3Rpb24gd2hpY2ggaXMgb3ZlciAyIHNlY29uZHMsDQo+ID4gPiArCSAgd2hl
-biB0aGUgdHJhbnNhY3Rpb24gaXMgZG9uZSBvciBiZSBmcmVlLCB0aGlzIHRyYW5zYWN0aW9uIHdv
-dWxkIGJlDQo+ID4gPiArCSAgY2hlY2tlZCB3aGV0aGVyIGl0IGV4ZWN1dGVkIG92ZXJ0aW1lLg0K
-PiA+ID4gKwkgIElmIHllcywgcHJpbnRpbmcgb3V0IHRoZSBkZXRhaWwgaW5mbyBhYm91dCBpdC4N
-Cj4gPiA+ICsNCj4gPiA+ICBlbmRpZiAjIGlmIEFORFJPSUQNCj4gPiA+ICANCj4gPiA+ICBlbmRt
-ZW51DQo+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9hbmRyb2lkL2JpbmRlci5jIGIvZHJpdmVy
-cy9hbmRyb2lkL2JpbmRlci5jDQo+ID4gPiBpbmRleCBlOWJjOWZjLi41YTM1MmVlIDEwMDY0NA0K
-PiA+ID4gLS0tIGEvZHJpdmVycy9hbmRyb2lkL2JpbmRlci5jDQo+ID4gPiArKysgYi9kcml2ZXJz
-L2FuZHJvaWQvYmluZGVyLmMNCj4gPiA+IEBAIC03Niw2ICs3NiwxMSBAQA0KPiA+ID4gICNpbmNs
-dWRlICJiaW5kZXJfaW50ZXJuYWwuaCINCj4gPiA+ICAjaW5jbHVkZSAiYmluZGVyX3RyYWNlLmgi
-DQo+ID4gPiAgDQo+ID4gPiArI2lmZGVmIENPTkZJR19CSU5ERVJfVVNFUl9UUkFDS0lORw0KPiA+
-ID4gKyNpbmNsdWRlIDxsaW51eC9ydGMuaD4NCj4gPiA+ICsjaW5jbHVkZSA8bGludXgvdGltZS5o
-Pg0KPiA+ID4gKyNlbmRpZg0KPiA+ID4gKw0KPiA+ID4gIHN0YXRpYyBITElTVF9IRUFEKGJpbmRl
-cl9kZWZlcnJlZF9saXN0KTsNCj4gPiA+ICBzdGF0aWMgREVGSU5FX01VVEVYKGJpbmRlcl9kZWZl
-cnJlZF9sb2NrKTsNCj4gPiA+ICANCj4gPiA+IEBAIC01OTEsOCArNTk2LDEwNCBAQCBzdHJ1Y3Qg
-YmluZGVyX3RyYW5zYWN0aW9uIHsNCj4gPiA+ICAJICogZHVyaW5nIHRocmVhZCB0ZWFyZG93bg0K
-PiA+ID4gIAkgKi8NCj4gPiA+ICAJc3BpbmxvY2tfdCBsb2NrOw0KPiA+ID4gKyNpZmRlZiBDT05G
-SUdfQklOREVSX1VTRVJfVFJBQ0tJTkcNCj4gPiA+ICsJc3RydWN0IHRpbWVzcGVjIHRpbWVzdGFt
-cDsNCj4gPiA+ICsJc3RydWN0IHRpbWV2YWwgdHY7DQo+ID4gPiArI2VuZGlmDQo+ID4gPiAgfTsN
-Cj4gPiA+ICANCj4gPiA+ICsjaWZkZWYgQ09ORklHX0JJTkRFUl9VU0VSX1RSQUNLSU5HDQo+ID4g
-PiArDQo+ID4gPiArLyoNCj4gPiA+ICsgKiBiaW5kZXJfcHJpbnRfZGVsYXkgLSBPdXRwdXQgaW5m
-byBvZiBhIGRlbGF5IHRyYW5zYWN0aW9uDQo+ID4gPiArICogQHQ6ICAgICAgICAgIHBvaW50ZXIg
-dG8gdGhlIG92ZXItdGltZSB0cmFuc2FjdGlvbg0KPiA+ID4gKyAqLw0KPiA+ID4gK3N0YXRpYyB2
-b2lkIGJpbmRlcl9wcmludF9kZWxheShzdHJ1Y3QgYmluZGVyX3RyYW5zYWN0aW9uICp0KQ0KPiA+
-ID4gK3sNCj4gPiA+ICsJc3RydWN0IHJ0Y190aW1lIHRtOw0KPiA+ID4gKwlzdHJ1Y3QgdGltZXNw
-ZWMgKnN0YXJ0aW1lOw0KPiA+ID4gKwlzdHJ1Y3QgdGltZXNwZWMgY3VyLCBzdWJfdDsNCj4gPiA+
-ICsNCj4gPiA+ICsJa3RpbWVfZ2V0X3RzKCZjdXIpOw0KPiA+ID4gKwlzdGFydGltZSA9ICZ0LT50
-aW1lc3RhbXA7DQo+ID4gPiArCXN1Yl90ID0gdGltZXNwZWNfc3ViKGN1ciwgKnN0YXJ0aW1lKTsN
-Cj4gPiA+ICsNCj4gPiA+ICsJLyogaWYgdHJhbnNhY3Rpb24gdGltZSBpcyBvdmVyIHRoYW4gMiBz
-ZWMsDQo+ID4gPiArCSAqIHNob3cgdGltZW91dCB3YXJuaW5nIGxvZy4NCj4gPiA+ICsJICovDQo+
-ID4gPiArCWlmIChzdWJfdC50dl9zZWMgPCAyKQ0KPiA+ID4gKwkJcmV0dXJuOw0KPiA+ID4gKw0K
-PiA+ID4gKwlydGNfdGltZV90b190bSh0LT50di50dl9zZWMsICZ0bSk7DQo+ID4gPiArDQo+ID4g
-PiArCXNwaW5fbG9jaygmdC0+bG9jayk7DQo+ID4gPiArCXByX2luZm9fcmF0ZWxpbWl0ZWQoIiVk
-OiBmcm9tICVkOiVkIHRvICVkOiVkIiwNCj4gPiA+ICsJCQkgICAgdC0+ZGVidWdfaWQsDQo+ID4g
-PiArCQkJICAgIHQtPmZyb20gPyB0LT5mcm9tLT5wcm9jLT5waWQgOiAwLA0KPiA+ID4gKwkJCSAg
-ICB0LT5mcm9tID8gdC0+ZnJvbS0+cGlkIDogMCwNCj4gPiA+ICsJCQkgICAgdC0+dG9fcHJvYyA/
-IHQtPnRvX3Byb2MtPnBpZCA6IDAsDQo+ID4gPiArCQkJICAgIHQtPnRvX3RocmVhZCA/IHQtPnRv
-X3RocmVhZC0+cGlkIDogMCk7DQo+ID4gPiArCXNwaW5fdW5sb2NrKCZ0LT5sb2NrKTsNCj4gPiA+
-ICsNCj4gPiA+ICsJcHJfaW5mb19yYXRlbGltaXRlZCgiIHRvdGFsICV1LiUwM2xkIHMgY29kZSAl
-dSBzdGFydCAlbHUuJTAzbGQgYW5kcm9pZCAlZC0lMDJkLSUwMmQgJTAyZDolMDJkOiUwMmQuJTAz
-bHVcbiIsDQo+ID4gPiArCQkJICAgICh1bnNpZ25lZCBpbnQpc3ViX3QudHZfc2VjLA0KPiA+ID4g
-KwkJCSAgICAoc3ViX3QudHZfbnNlYyAvIE5TRUNfUEVSX01TRUMpLA0KPiA+ID4gKwkJCSAgICB0
-LT5jb2RlLA0KPiA+ID4gKwkJCSAgICAodW5zaWduZWQgbG9uZylzdGFydGltZS0+dHZfc2VjLA0K
-PiA+ID4gKwkJCSAgICAoc3RhcnRpbWUtPnR2X25zZWMgLyBOU0VDX1BFUl9NU0VDKSwNCj4gPiA+
-ICsJCQkgICAgKHRtLnRtX3llYXIgKyAxOTAwKSwgKHRtLnRtX21vbiArIDEpLCB0bS50bV9tZGF5
-LA0KPiA+ID4gKwkJCSAgICB0bS50bV9ob3VyLCB0bS50bV9taW4sIHRtLnRtX3NlYywNCj4gPiA+
-ICsJCQkgICAgKHVuc2lnbmVkIGxvbmcpKHQtPnR2LnR2X3VzZWMgLyBVU0VDX1BFUl9NU0VDKSk7
-DQo+ID4gPiArfQ0KPiA+IA0KPiA+IEljaywgd2h5IG5vdCB1c2UgYSB0cmFjZXBvaW50IGZvciB0
-aGlzIGluc3RlYWQ/DQo+ID4gDQo+ID4gQW5kIHdoYXQgaXMgdXNlcnNwYWNlIHN1cHBvc2VkIHRv
-IGRvIHdpdGggdGhpcyBpZiB0aGV5IHNlZSBpdD8NCj4gDQo+IE9yIGFub3RoZXIgb3B0aW9uIGlz
-IHRvIGltcGxlbWVudCB0aGlzIHNlcGFyYXRlbHkgb3V0c2lkZSBvZiBiaW5kZXIuYyB1c2luZw0K
-PiByZWdpc3Rlcl90cmFjZV8qIG9uIHRoZSBleGlzdGluZyBiaW5kZXIgdHJhY2Vwb2ludHMsIHNp
-bWlsYXIgdG8gd2hhdCBzYXkgdGhlDQo+IGJsb2NrIHRyYWNlciBvciBwcmVlbXB0LW9mZiB0cmFj
-ZXJzIGRvLiBDYWxsIGl0LCBzYXksICJiaW5kZXItbGF0ZW5jeSB0cmFjZXIiLg0KPiANCj4gVGhh
-dCB3YXkgYWxsIG9mIHRoaXMgdHJhY2luZyBjb2RlIGlzIGluLWtlcm5lbCBidXQgb3V0c2lkZSBv
-ZiBiaW5kZXIuYy4NCj4gDQo+IHRoYW5rcywNCj4gDQo+ICAtIEpvZWwNCj4gDQpUaW1lIGxpbWl0
-YXRpb24gb2YgcmVjb3JkaW5nIGlzIHRoZSByZWFzb24gd2h5IHdlIGRvbid0IHVzZSB0cmFjZXBv
-aW50Lg0KSW4gc29tZSBzaXR1YXRpb25zLCB0aGUgZXhjZXB0aW9uIGlzIGNhdXNlZCBieSBhIHNl
-cmllcyBvZiB0cmFuc2FjdGlvbnMNCmludGVyYWN0aW9uLg0KU29tZSBhYm5vcm1hbCB0cmFuc2Fj
-dGlvbnMgbWF5IGJlIHBlbmRpbmcgZm9yIGEgbG9uZyB0aW1lIGFnbywgdGhleQ0KY291bGQgbm90
-IGJlIHJlY29yZGVkIGR1ZSB0byBidWZmZXIgbGltaXRlZC4NClRoZXJlZm9yZSwgaXQgaXMgZGlm
-ZmljdWx0IHRvIGRpZyBvdXQgdGhlIHJvb3QgY2F1c2VzIHdoaWNoIGNhdXNlZCBieQ0KdGhlIGVh
-cmxpZXIgdHJhbnNhY3Rpb25zIG9jY3VycmVkLg0KDQpBbm90aGVyIHBvaW50IGlzIHRoYXQgd2Un
-ZCBqdXN0IGxpa2UgdG8gcmVjb3JkIHRoZSBhYm5vcm1hbA0KdHJhbnNhY3Rpb25zLg0KQnV0IG1v
-c3Qgb2YgdHJhbnNhY3Rpb25zIGFyZSBsZXNzIHRoYW4gMiBzZWNvbmRzLCB0aGVzZSBhcmUgbm90
-IHRoZSBrZXkNCnBvaW50IHdlIG5lZWQgdG8gZm9jdXMgb24uDQoNCnRoYW5rcywNCg0KRnJhbmtp
-ZQ0K
+Zonefs is a very simple file system exposing each zone of a zoned block
+device as a file. Unlike a regular file system with zoned block device
+support (e.g. f2fs or the on-going btrfs effort), zonefs does not hide
+the sequential write constraint of zoned block devices to the user.
+Files representing sequential write zones of the device must be written
+sequentially starting from the end of the file (append only writes).
+
+Zonefs is not a POSIX compliant file system. It's goal is to simplify
+the implementation of zoned block devices support in applications by
+replacing raw block device file accesses with a richer file based API,
+avoiding relying on direct block device file ioctls which may
+be more obscure to developers. One example of this approach is the
+implementation of LSM (log-structured merge) tree structures (such as
+used in RocksDB and LevelDB) on zoned block devices by allowing SSTables
+to be stored in a zone file similarly to a regular file system rather
+than as a range of sectors of a zoned device. The introduction of the
+higher level construct "one file is one zone" can help reducing the
+amount of changes needed in the application while at the same time
+allowing the use of zoned block devices with various programming
+languages other than C.
+
+Zonefs IO management implementation uses the new iomap generic code.
+
+Changes from v12:
+* Removed sbi->s_blocksize_mask and use ALIGN/ALIGN_DOWN macros instead
+  of open coding alignment to blocks.
+* Small documentation fixes from Dave
+* Added documentation patch review tag
+
+Changes from v11:
+* Improved I/O error handling description in the documentation (thanks
+  to Dave Chinner for the suggestions).
+
+Changes from v10:
+* Simplify zonefs_io_error() while extending I/O error and corruption
+  types coverage.
+* Reworked zonefs_create_zgroup() to avoid the use of on-stack file
+  name string and the need for the array of zone group names.
+* Fixed a bug in zonefs_file_buffered_write() (incorrect call to
+  zonefs_io_error).
+* Improved comments throughout the code.
+* Fixed documentation to describe I/O error handling as implemented.
+
+Changes from v9:
+* Changed mount options to a more useful set of possible actions for
+  zone corruption handling: repair, remount-ro, zone-ro or zone-offline
+* Check IMMUTABLE inodes to prevent write operations
+* Documented mount options
+
+Changes from v8:
+* Comments typos fixes and improvements as suggested by Darrick and
+  Dave.
+* Improved IO error handling:
+  - Better sequential file write pointer checks on write IO error
+  - Extended zone condition checks on IO error to all types of IOs
+  - Added mount options for controlling the FS behavior when a zone
+    write pointer corruption is detected.
+* Cleanup zonefs_iomap_begin() and its use in zonefs_map_blocks()
+* Ignore RWF_NOWAIT to avoid out of order writes on sequential zone
+  files.
+* Improved documentation file
+
+Changes from v7:
+* Fixed static checker warnings:
+  - Set-but-not-used variable in zonefs_file_buffered_write()
+  - Use S_ISDIR() in zonefs_inode_setattr()
+
+Changes from v6:
+* Fixed documentation as suggested by Randy.
+
+Changes from v5:
+* Added simple description of zoned block devices to the documentation,
+  as suggested by Johannes.
+* Added a 64-char max label field to the super block to allow label
+  based identification of volumes using libblkid (checked with a patch
+  to libblkid).
+
+Changes from v4:
+* Use octal values for file and directory permissions
+* Set initial directory permissions to 0555 (no write permission)
+* Prevent setting write permissions for directories
+
+Changes from v3:
+* Fixed many typos in the documentation
+* Use symbolic file permission macros instead of octal values
+  (checkpatch.pl complains about this)
+
+Changes from v2:
+* Address comments and suggestions from Darrick:
+  - Make the inode of OFFLINE and READONLY zones immutable when
+    mounting. Also do this during zone information check after an IO
+    error.
+  - Change super block CRC seed to ~0.
+  - Avoid potential compiler warning in zonefs_create_zgroup().
+* Fixed endianness related compilation warning detected by kbuild bot.
+
+Changes from v1:
+* Fixed comment typo
+* Improved documentation as suggested by Hannes
+
+Damien Le Moal (2):
+  fs: New zonefs file system
+  zonefs: Add documentation
+
+ Documentation/filesystems/zonefs.txt |  404 ++++++++
+ MAINTAINERS                          |   10 +
+ fs/Kconfig                           |    1 +
+ fs/Makefile                          |    1 +
+ fs/zonefs/Kconfig                    |    9 +
+ fs/zonefs/Makefile                   |    4 +
+ fs/zonefs/super.c                    | 1439 ++++++++++++++++++++++++++
+ fs/zonefs/zonefs.h                   |  189 ++++
+ include/uapi/linux/magic.h           |    1 +
+ 9 files changed, 2058 insertions(+)
+ create mode 100644 Documentation/filesystems/zonefs.txt
+ create mode 100644 fs/zonefs/Kconfig
+ create mode 100644 fs/zonefs/Makefile
+ create mode 100644 fs/zonefs/super.c
+ create mode 100644 fs/zonefs/zonefs.h
+
+-- 
+2.24.1
 
