@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDC14155968
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 15:28:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2DAD15596F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 15:29:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727895AbgBGO2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 09:28:09 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:59720 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727828AbgBGO2F (ORCPT
+        id S1727934AbgBGO23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 09:28:29 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:49715 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727835AbgBGO2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 09:28:05 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200207142803euoutp0171e828d9ec7e192dd53aee3fef433fb5~xJQ1ykmt02148621486euoutp015
-        for <linux-kernel@vger.kernel.org>; Fri,  7 Feb 2020 14:28:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200207142803euoutp0171e828d9ec7e192dd53aee3fef433fb5~xJQ1ykmt02148621486euoutp015
+        Fri, 7 Feb 2020 09:28:06 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200207142804euoutp02014a1a7ceda8d126ecd29ec4ec4e5ca9~xJQ2VJALo2687426874euoutp02S
+        for <linux-kernel@vger.kernel.org>; Fri,  7 Feb 2020 14:28:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200207142804euoutp02014a1a7ceda8d126ecd29ec4ec4e5ca9~xJQ2VJALo2687426874euoutp02S
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1581085683;
-        bh=Gm7GS6/l8ZQE666ZiHRPCjTBX17aKesxrF1xG+DUNEU=;
+        s=mail20170921; t=1581085684;
+        bh=ftzeUmV9iG/vfvKr0kHipFl/DckhDGVDJGjJjv3SiJE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PDbgAzphqpjcxHyylvtatMLNZJubNZucnpaOrhPsJl2K5gxWsQMRTsVJUaTgNYyIB
-         l/K3n1gT+CHkAc4QsIWMxXaebwoGjkI7zeSECHT4zU6JiJvq3ZHD7D+R3Po6hvZXWq
-         EdRr755+GszjVjqIpw+wAXaJ7BnGJjR6KL8XF9W8=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        b=qsCDK7IgwO8zXMu03h9GBWbf2pg9NZ/+OdJTgapjsyUNxyllm4PqpQUZZ8GrRqQtC
+         V9UgmXu5t+pNStKUVay7qQkky7zjgp3Fz06oXrg6J9z+BcfoXIhr2Ybv+CgqaI6ybW
+         y/dY08eiMzam+kJ7+uUs6qiGl3l9H1/iMHKSZwfU=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200207142803eucas1p2e5871ed74b2b6d0368e70223de5cad03~xJQ1ZXu_M2432324323eucas1p2e;
-        Fri,  7 Feb 2020 14:28:03 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 55.D8.60698.3F37D3E5; Fri,  7
-        Feb 2020 14:28:03 +0000 (GMT)
+        20200207142804eucas1p24d99b885c9d8de6852c9087da297d988~xJQ2Ere1N2432324323eucas1p2g;
+        Fri,  7 Feb 2020 14:28:04 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 64.5D.60679.4F37D3E5; Fri,  7
+        Feb 2020 14:28:04 +0000 (GMT)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200207142803eucas1p2625a00402342b1279344ec2ab6d4db5b~xJQ1IUr7h3192231922eucas1p23;
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200207142803eucas1p1a2ee17261878ae26f9b388f693d6e56a~xJQ1oC6Fa2611726117eucas1p1u;
         Fri,  7 Feb 2020 14:28:03 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200207142803eusmtrp2024e1a793dc95c8e1cf11e9f5783d920~xJQ1Hpylo1102911029eusmtrp2M;
+        20200207142803eusmtrp24363cd662afb04e9bc66563e73d322d1~xJQ1nYOsn1102911029eusmtrp2O;
         Fri,  7 Feb 2020 14:28:03 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-d5-5e3d73f3dd4d
+X-AuditID: cbfec7f4-0cbff7000001ed07-90-5e3d73f4e41e
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 62.99.08375.3F37D3E5; Fri,  7
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id E5.D5.07950.3F37D3E5; Fri,  7
         Feb 2020 14:28:03 +0000 (GMT)
 Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200207142802eusmtip284545e053b4a6c6a414ab2a19a43c4a2~xJQ0r-ys53158331583eusmtip2C;
-        Fri,  7 Feb 2020 14:28:02 +0000 (GMT)
+        20200207142803eusmtip20df3c6efba228a67ef3fb6c2cbbc480a~xJQ1I8GZn3158631586eusmtip2D;
+        Fri,  7 Feb 2020 14:28:03 +0000 (GMT)
 From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Michael Schmitz <schmitzmic@gmail.com>,
@@ -53,269 +53,394 @@ Cc:     Michael Schmitz <schmitzmic@gmail.com>,
         Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
         linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
         b.zolnierkie@samsung.com
-Subject: [PATCH v2 24/26] ata: start separating SATA specific code from
- libata-eh.c
-Date:   Fri,  7 Feb 2020 15:27:32 +0100
-Message-Id: <20200207142734.8431-25-b.zolnierkie@samsung.com>
+Subject: [PATCH v2 25/26] ata: move ata_eh_analyze_ncq_error() & co. to
+ libata-sata.c
+Date:   Fri,  7 Feb 2020 15:27:33 +0100
+Message-Id: <20200207142734.8431-26-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200207142734.8431-1-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLKsWRmVeSWpSXmKPExsWy7djPc7qfi23jDLY/lLBYfbefzWLjjPWs
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPKsWRmVeSWpSXmKPExsWy7djP87pfim3jDP5NZbFYfbefzWLjjPWs
         Fs9u7WWyWLn6KJPFsR2PmCwu75rDZrH8yVpmi7mt09kdODx2zrrL7nH5bKnHocMdjB4nW7+x
-        eOy+2cDm0bdlFaPH501yAexRXDYpqTmZZalF+nYJXBmXHh1mL9hpXNGzopm1gfGQRhcjB4eE
-        gInE2oeZXYxcHEICKxgl3t5tZ4VwvjBKLNqxng3C+cwo8XD/LpYuRk6wjt0dj5ghEssZJXq3
-        3GCHa9nb+ZQdpIpNwEpiYvsqRhBbREBBouf3SrBRzALvGSVWTNoLNkpYIFTi3v6jbCA2i4Cq
-        xOuWz2BxXgFbid4HnUwQ6+Qltn77xApicwLFP075ywZRIyhxcuYTsHpmoJrmrbPBTpIQWMUu
-        sWvvTqhbXST+LJ/LDGELS7w6voUdwpaR+L9zPhNEwzpGib8dL6C6tzNKLJ/8jw2iylrizrlf
-        bKBwYhbQlFi/Sx8i7CjR3bWTCRJ8fBI33gpCHMEnMWnbdGaIMK9ER5sQRLWaxIZlG9hg1nbt
-        XAlV4iHx73j6BEbFWUi+mYXkm1kIaxcwMq9iFE8tLc5NTy02zkst1ytOzC0uzUvXS87P3cQI
-        TESn/x3/uoNx35+kQ4wCHIxKPLwJjjZxQqyJZcWVuYcYJTiYlUR4+1Rt44R4UxIrq1KL8uOL
-        SnNSiw8xSnOwKInzGi96GSskkJ5YkpqdmlqQWgSTZeLglGpgnGbyMsKJM9WvqE2hdGK8++vO
-        1aFLC48f5LaPE+d0r92cK7Vfe2uEcsCSqpaXd/bNsJhh+qB2w+PA6jiBtLuCqbe3HJyodHWS
-        QnxhdlWB2ax193637IqR4ipmnHe1nGPF6TX/Tv7a3KSxKvY0w5I/DX6Pti6JuRuXfXxOdd4U
-        S4PPQo1dc/+EKrEUZyQaajEXFScCAAdr63dAAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsVy+t/xe7qfi23jDD7P57BYfbefzWLjjPWs
+        eOy+2cDm0bdlFaPH501yAexRXDYpqTmZZalF+nYJXBk3Pl1mK1gdUDGhZy9zA2ODQxcjJ4eE
+        gInEh1erGLsYuTiEBFYwSnz+dJcFwvnCKNH86BUzhPOZUeLtwTMsMC2nHj9kgkgsZ5R4dWwj
+        O1xLS8tbVpAqNgEriYntIIM5OUQEFCR6fq9kAyliFnjPKLFi0l6wUcIC4RKbLj9gBrFZBFQl
+        dr07zARi8wrYSnw7dIsRYp28xNZvn8CGcgLFP075ywZRIyhxcuYTsDnMQDXNW2eD3SohsIpd
+        YtnuJ8wQzS4SzdsWsUHYwhKvjm9hh7BlJP7vnM8E0bCOUeJvxwuo7u2MEssn/4PqsJa4c+4X
+        kM0BtEJTYv0ufYiwo8Sri3dYQMISAnwSN94KQhzBJzFp23RmiDCvREebEES1msSGZRvYYNZ2
+        7VwJdZqHxIzLLxgnMCrOQvLOLCTvzELYu4CReRWjeGppcW56arFRXmq5XnFibnFpXrpecn7u
+        JkZgMjr97/iXHYy7/iQdYhTgYFTi4U1wtIkTYk0sK67MPcQowcGsJMLbp2obJ8SbklhZlVqU
+        H19UmpNafIhRmoNFSZzXeNHLWCGB9MSS1OzU1ILUIpgsEwenVANjr8Acf4tZG1TPiZ376PHl
+        6P7L6oYCPy8yBrB/9Jr1bWrLGefCDzmT9kiua358ZOa0T0HtrH6Rllf2v5zftb/VTPOS16/T
+        j5WyFgROytgW9jDj4SxTxch9S6I8D15Q75GeYv/ad/P0Ndsjbi7y0Gp+scHX+8vOn1FKP0wV
+        Jjxb/WdLu01Xgrj+CyWW4oxEQy3mouJEAPUmcMlCAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsVy+t/xe7qfi23jDA6/ULdYfbefzWLjjPWs
         Fs9u7WWyWLn6KJPFsR2PmCwu75rDZrH8yVpmi7mt09kdODx2zrrL7nH5bKnHocMdjB4nW7+x
         eOy+2cDm0bdlFaPH501yAexRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6
-        djYpqTmZZalF+nYJehmXHh1mL9hpXNGzopm1gfGQRhcjJ4eEgInE7o5HzF2MXBxCAksZJV7O
-        OMHYxcgBlJCROL6+DKJGWOLPtS42iJpPjBLbHmxjBUmwCVhJTGxfxQhiiwgoSPT8XglWxCzw
-        lVFi6aRuZpBBwgLBErN2SILUsAioSrxu+cwCYvMK2Er0PuhkglggL7H12yewmZxA8Y9T/rKB
-        2EICNhLf309ih6gXlDg58wlYLzNQffPW2cwTGAVmIUnNQpJawMi0ilEktbQ4Nz232FCvODG3
-        uDQvXS85P3cTIzBeth37uXkH46WNwYcYBTgYlXh4Exxt4oRYE8uKK3MPMUpwMCuJ8Pap2sYJ
-        8aYkVlalFuXHF5XmpBYfYjQFemIis5Rocj4wlvNK4g1NDc0tLA3Njc2NzSyUxHk7BA7GCAmk
-        J5akZqemFqQWwfQxcXBKNTCquffpZtwveNKsO5Wby/7WzeyI+7WPdNZ61WkcTTZxyX22MLxt
-        +v25gj+7/595qmwV4BPyeM1SI5auycbH3CqZtR6XVbEsZj815XhlITvvo6AFjOI3X02ve9x5
-        mOFn64r+iU/WVy9ibpDWObKIPafGrqhP7bVsj/2jxe7+h57yBZzcstjqk6USS3FGoqEWc1Fx
-        IgABuzCcrQIAAA==
-X-CMS-MailID: 20200207142803eucas1p2625a00402342b1279344ec2ab6d4db5b
+        djYpqTmZZalF+nYJehk3Pl1mK1gdUDGhZy9zA2ODQxcjJ4eEgInEqccPmboYuTiEBJYySvye
+        P4Oxi5EDKCEjcXx9GUSNsMSfa11sEDWfGCWurFvNBJJgE7CSmNi+ihHEFhFQkOj5vRKsiFng
+        K6PE0kndzCAJYYFQiUVnH4E1sAioSux6dxjM5hWwlfh26BYjxAZ5ia3fPrGC2JxA8Y9T/rKB
+        2EICNhLf309ih6gXlDg58wkLiM0MVN+8dTbzBEaBWUhSs5CkFjAyrWIUSS0tzk3PLTbSK07M
+        LS7NS9dLzs/dxAiMmG3Hfm7Zwdj1LvgQowAHoxIPb4KjTZwQa2JZcWXuIUYJDmYlEd4+Vds4
+        Id6UxMqq1KL8+KLSnNTiQ4ymQE9MZJYSTc4HRnNeSbyhqaG5haWhubG5sZmFkjhvh8DBGCGB
+        9MSS1OzU1ILUIpg+Jg5OqQZGLnmblxP5uRdY3p6b2bH0Z9emXc5Pm16y6q0M9/p+5uLnb9dj
+        Nqp/YP7Hku34PCP86b3InV6WZcqfJ4hYz+UPTmlxeac+y/Xz1zcW9tU8LHeY83m8NKf0Pln/
+        6+vM7G3aKQGHbE7yS666Lro3ZNP/1k06H7afncjJdf9M65ebHNwSQSU9HgUOSizFGYmGWsxF
+        xYkAss/6ya4CAAA=
+X-CMS-MailID: 20200207142803eucas1p1a2ee17261878ae26f9b388f693d6e56a
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200207142803eucas1p2625a00402342b1279344ec2ab6d4db5b
+X-RootMTR: 20200207142803eucas1p1a2ee17261878ae26f9b388f693d6e56a
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200207142803eucas1p2625a00402342b1279344ec2ab6d4db5b
+X-CMS-RootMailID: 20200207142803eucas1p1a2ee17261878ae26f9b388f693d6e56a
 References: <20200207142734.8431-1-b.zolnierkie@samsung.com>
-        <CGME20200207142803eucas1p2625a00402342b1279344ec2ab6d4db5b@eucas1p2.samsung.com>
+        <CGME20200207142803eucas1p1a2ee17261878ae26f9b388f693d6e56a@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Start separating SATA specific code from libata-eh.c:
+* move ata_eh_analyze_ncq_error() and ata_eh_read_log_10h() to
+  libata-sata.c
 
-* move sata_async_notification() to libata-sata.c:
+* add static inline for ata_eh_analyze_ncq_error() for
+  CONFIG_SATA_HOST=n case (link->sactive is non-zero only if
+  NCQ commands are actually queued so empty function body is
+  sufficient)
 
 Code size savings on m68k arch using (modified) atari_defconfig:
 
    text    data     bss     dec     hex filename
 before:
-  16243      18       0   16261    3f85 drivers/ata/libata-eh.o
-after:
   16164      18       0   16182    3f36 drivers/ata/libata-eh.o
+after:
+  15446      18       0   15464    3c68 drivers/ata/libata-eh.o
 
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/ata/libata-eh.c   | 74 --------------------------------------
- drivers/ata/libata-sata.c | 75 +++++++++++++++++++++++++++++++++++++++
- include/linux/libata.h    |  2 +-
- 3 files changed, 76 insertions(+), 75 deletions(-)
+ drivers/ata/libata-eh.c   | 131 --------------------------------------
+ drivers/ata/libata-sata.c | 131 ++++++++++++++++++++++++++++++++++++++
+ include/linux/libata.h    |   3 +-
+ 3 files changed, 133 insertions(+), 132 deletions(-)
 
 diff --git a/drivers/ata/libata-eh.c b/drivers/ata/libata-eh.c
-index 8dc33b6832f0..ef4d606cd8c6 100644
+index ef4d606cd8c6..474c6c34fe02 100644
 --- a/drivers/ata/libata-eh.c
 +++ b/drivers/ata/libata-eh.c
-@@ -1092,80 +1092,6 @@ int ata_port_freeze(struct ata_port *ap)
+@@ -1351,62 +1351,6 @@ static const char *ata_err_string(unsigned int err_mask)
+ 	return "unknown error";
  }
- EXPORT_SYMBOL_GPL(ata_port_freeze);
  
 -/**
-- *	sata_async_notification - SATA async notification handler
-- *	@ap: ATA port where async notification is received
+- *	ata_eh_read_log_10h - Read log page 10h for NCQ error details
+- *	@dev: Device to read log page 10h from
+- *	@tag: Resulting tag of the failed command
+- *	@tf: Resulting taskfile registers of the failed command
 - *
-- *	Handler to be called when async notification via SDB FIS is
-- *	received.  This function schedules EH if necessary.
+- *	Read log page 10h to obtain NCQ error details and clear error
+- *	condition.
 - *
 - *	LOCKING:
-- *	spin_lock_irqsave(host lock)
+- *	Kernel thread context (may sleep).
 - *
 - *	RETURNS:
-- *	1 if EH is scheduled, 0 otherwise.
+- *	0 on success, -errno otherwise.
 - */
--int sata_async_notification(struct ata_port *ap)
+-static int ata_eh_read_log_10h(struct ata_device *dev,
+-			       int *tag, struct ata_taskfile *tf)
 -{
--	u32 sntf;
--	int rc;
+-	u8 *buf = dev->link->ap->sector_buf;
+-	unsigned int err_mask;
+-	u8 csum;
+-	int i;
 -
--	if (!(ap->flags & ATA_FLAG_AN))
--		return 0;
+-	err_mask = ata_read_log_page(dev, ATA_LOG_SATA_NCQ, 0, buf, 1);
+-	if (err_mask)
+-		return -EIO;
 -
--	rc = sata_scr_read(&ap->link, SCR_NOTIFICATION, &sntf);
--	if (rc == 0)
--		sata_scr_write(&ap->link, SCR_NOTIFICATION, sntf);
+-	csum = 0;
+-	for (i = 0; i < ATA_SECT_SIZE; i++)
+-		csum += buf[i];
+-	if (csum)
+-		ata_dev_warn(dev, "invalid checksum 0x%x on log page 10h\n",
+-			     csum);
 -
--	if (!sata_pmp_attached(ap) || rc) {
--		/* PMP is not attached or SNTF is not available */
--		if (!sata_pmp_attached(ap)) {
--			/* PMP is not attached.  Check whether ATAPI
--			 * AN is configured.  If so, notify media
--			 * change.
--			 */
--			struct ata_device *dev = ap->link.device;
+-	if (buf[0] & 0x80)
+-		return -ENOENT;
 -
--			if ((dev->class == ATA_DEV_ATAPI) &&
--			    (dev->flags & ATA_DFLAG_AN))
--				ata_scsi_media_change_notify(dev);
--			return 0;
--		} else {
--			/* PMP is attached but SNTF is not available.
--			 * ATAPI async media change notification is
--			 * not used.  The PMP must be reporting PHY
--			 * status change, schedule EH.
--			 */
--			ata_port_schedule_eh(ap);
--			return 1;
--		}
--	} else {
--		/* PMP is attached and SNTF is available */
--		struct ata_link *link;
+-	*tag = buf[0] & 0x1f;
 -
--		/* check and notify ATAPI AN */
--		ata_for_each_link(link, ap, EDGE) {
--			if (!(sntf & (1 << link->pmp)))
--				continue;
+-	tf->command = buf[2];
+-	tf->feature = buf[3];
+-	tf->lbal = buf[4];
+-	tf->lbam = buf[5];
+-	tf->lbah = buf[6];
+-	tf->device = buf[7];
+-	tf->hob_lbal = buf[8];
+-	tf->hob_lbam = buf[9];
+-	tf->hob_lbah = buf[10];
+-	tf->nsect = buf[12];
+-	tf->hob_nsect = buf[13];
+-	if (dev->class == ATA_DEV_ZAC && ata_id_has_ncq_autosense(dev->id))
+-		tf->auxiliary = buf[14] << 16 | buf[15] << 8 | buf[16];
 -
--			if ((link->device->class == ATA_DEV_ATAPI) &&
--			    (link->device->flags & ATA_DFLAG_AN))
--				ata_scsi_media_change_notify(link->device);
--		}
--
--		/* If PMP is reporting that PHY status of some
--		 * downstream ports has changed, schedule EH.
--		 */
--		if (sntf & (1 << SATA_PMP_CTRL_PORT)) {
--			ata_port_schedule_eh(ap);
--			return 1;
--		}
--
--		return 0;
--	}
+-	return 0;
 -}
--EXPORT_SYMBOL_GPL(sata_async_notification);
 -
  /**
-  *	ata_eh_freeze_port - EH helper to freeze port
-  *	@ap: ATA port to freeze
+  *	atapi_eh_tur - perform ATAPI TEST_UNIT_READY
+  *	@dev: target ATAPI device
+@@ -1590,81 +1534,6 @@ static void ata_eh_analyze_serror(struct ata_link *link)
+ 	ehc->i.action |= action;
+ }
+ 
+-/**
+- *	ata_eh_analyze_ncq_error - analyze NCQ error
+- *	@link: ATA link to analyze NCQ error for
+- *
+- *	Read log page 10h, determine the offending qc and acquire
+- *	error status TF.  For NCQ device errors, all LLDDs have to do
+- *	is setting AC_ERR_DEV in ehi->err_mask.  This function takes
+- *	care of the rest.
+- *
+- *	LOCKING:
+- *	Kernel thread context (may sleep).
+- */
+-void ata_eh_analyze_ncq_error(struct ata_link *link)
+-{
+-	struct ata_port *ap = link->ap;
+-	struct ata_eh_context *ehc = &link->eh_context;
+-	struct ata_device *dev = link->device;
+-	struct ata_queued_cmd *qc;
+-	struct ata_taskfile tf;
+-	int tag, rc;
+-
+-	/* if frozen, we can't do much */
+-	if (ap->pflags & ATA_PFLAG_FROZEN)
+-		return;
+-
+-	/* is it NCQ device error? */
+-	if (!link->sactive || !(ehc->i.err_mask & AC_ERR_DEV))
+-		return;
+-
+-	/* has LLDD analyzed already? */
+-	ata_qc_for_each_raw(ap, qc, tag) {
+-		if (!(qc->flags & ATA_QCFLAG_FAILED))
+-			continue;
+-
+-		if (qc->err_mask)
+-			return;
+-	}
+-
+-	/* okay, this error is ours */
+-	memset(&tf, 0, sizeof(tf));
+-	rc = ata_eh_read_log_10h(dev, &tag, &tf);
+-	if (rc) {
+-		ata_link_err(link, "failed to read log page 10h (errno=%d)\n",
+-			     rc);
+-		return;
+-	}
+-
+-	if (!(link->sactive & (1 << tag))) {
+-		ata_link_err(link, "log page 10h reported inactive tag %d\n",
+-			     tag);
+-		return;
+-	}
+-
+-	/* we've got the perpetrator, condemn it */
+-	qc = __ata_qc_from_tag(ap, tag);
+-	memcpy(&qc->result_tf, &tf, sizeof(tf));
+-	qc->result_tf.flags = ATA_TFLAG_ISADDR | ATA_TFLAG_LBA | ATA_TFLAG_LBA48;
+-	qc->err_mask |= AC_ERR_DEV | AC_ERR_NCQ;
+-	if (dev->class == ATA_DEV_ZAC &&
+-	    ((qc->result_tf.command & ATA_SENSE) || qc->result_tf.auxiliary)) {
+-		char sense_key, asc, ascq;
+-
+-		sense_key = (qc->result_tf.auxiliary >> 16) & 0xff;
+-		asc = (qc->result_tf.auxiliary >> 8) & 0xff;
+-		ascq = qc->result_tf.auxiliary & 0xff;
+-		ata_scsi_set_sense(dev, qc->scsicmd, sense_key, asc, ascq);
+-		ata_scsi_set_sense_information(dev, qc->scsicmd,
+-					       &qc->result_tf);
+-		qc->flags |= ATA_QCFLAG_SENSE_VALID;
+-	}
+-
+-	ehc->i.err_mask &= ~AC_ERR_DEV;
+-}
+-EXPORT_SYMBOL_GPL(ata_eh_analyze_ncq_error);
+-
+ /**
+  *	ata_eh_analyze_tf - analyze taskfile of a failed qc
+  *	@qc: qc to analyze
 diff --git a/drivers/ata/libata-sata.c b/drivers/ata/libata-sata.c
-index 2d934ccfc930..008468e516cd 100644
+index 008468e516cd..c16423e44525 100644
 --- a/drivers/ata/libata-sata.c
 +++ b/drivers/ata/libata-sata.c
-@@ -4,6 +4,7 @@
-  *
-  *  Copyright 2003-2004 Red Hat, Inc.  All rights reserved.
-  *  Copyright 2003-2004 Jeff Garzik
-+ *  Copyright 2006 Tejun Heo <htejun@gmail.com>
-  */
- 
- #include <linux/kernel.h>
-@@ -1275,3 +1276,77 @@ void ata_sas_free_tag(unsigned int tag, struct ata_port *ap)
- {
- 	clear_bit(tag, &ap->sas_tag_allocated);
+@@ -1350,3 +1350,134 @@ int sata_async_notification(struct ata_port *ap)
+ 	}
  }
+ EXPORT_SYMBOL_GPL(sata_async_notification);
 +
 +/**
-+ *	sata_async_notification - SATA async notification handler
-+ *	@ap: ATA port where async notification is received
++ *	ata_eh_read_log_10h - Read log page 10h for NCQ error details
++ *	@dev: Device to read log page 10h from
++ *	@tag: Resulting tag of the failed command
++ *	@tf: Resulting taskfile registers of the failed command
 + *
-+ *	Handler to be called when async notification via SDB FIS is
-+ *	received.  This function schedules EH if necessary.
++ *	Read log page 10h to obtain NCQ error details and clear error
++ *	condition.
 + *
 + *	LOCKING:
-+ *	spin_lock_irqsave(host lock)
++ *	Kernel thread context (may sleep).
 + *
 + *	RETURNS:
-+ *	1 if EH is scheduled, 0 otherwise.
++ *	0 on success, -errno otherwise.
 + */
-+int sata_async_notification(struct ata_port *ap)
++static int ata_eh_read_log_10h(struct ata_device *dev,
++			       int *tag, struct ata_taskfile *tf)
 +{
-+	u32 sntf;
-+	int rc;
++	u8 *buf = dev->link->ap->sector_buf;
++	unsigned int err_mask;
++	u8 csum;
++	int i;
 +
-+	if (!(ap->flags & ATA_FLAG_AN))
-+		return 0;
++	err_mask = ata_read_log_page(dev, ATA_LOG_SATA_NCQ, 0, buf, 1);
++	if (err_mask)
++		return -EIO;
 +
-+	rc = sata_scr_read(&ap->link, SCR_NOTIFICATION, &sntf);
-+	if (rc == 0)
-+		sata_scr_write(&ap->link, SCR_NOTIFICATION, sntf);
++	csum = 0;
++	for (i = 0; i < ATA_SECT_SIZE; i++)
++		csum += buf[i];
++	if (csum)
++		ata_dev_warn(dev, "invalid checksum 0x%x on log page 10h\n",
++			     csum);
 +
-+	if (!sata_pmp_attached(ap) || rc) {
-+		/* PMP is not attached or SNTF is not available */
-+		if (!sata_pmp_attached(ap)) {
-+			/* PMP is not attached.  Check whether ATAPI
-+			 * AN is configured.  If so, notify media
-+			 * change.
-+			 */
-+			struct ata_device *dev = ap->link.device;
++	if (buf[0] & 0x80)
++		return -ENOENT;
 +
-+			if ((dev->class == ATA_DEV_ATAPI) &&
-+			    (dev->flags & ATA_DFLAG_AN))
-+				ata_scsi_media_change_notify(dev);
-+			return 0;
-+		} else {
-+			/* PMP is attached but SNTF is not available.
-+			 * ATAPI async media change notification is
-+			 * not used.  The PMP must be reporting PHY
-+			 * status change, schedule EH.
-+			 */
-+			ata_port_schedule_eh(ap);
-+			return 1;
-+		}
-+	} else {
-+		/* PMP is attached and SNTF is available */
-+		struct ata_link *link;
++	*tag = buf[0] & 0x1f;
 +
-+		/* check and notify ATAPI AN */
-+		ata_for_each_link(link, ap, EDGE) {
-+			if (!(sntf & (1 << link->pmp)))
-+				continue;
++	tf->command = buf[2];
++	tf->feature = buf[3];
++	tf->lbal = buf[4];
++	tf->lbam = buf[5];
++	tf->lbah = buf[6];
++	tf->device = buf[7];
++	tf->hob_lbal = buf[8];
++	tf->hob_lbam = buf[9];
++	tf->hob_lbah = buf[10];
++	tf->nsect = buf[12];
++	tf->hob_nsect = buf[13];
++	if (dev->class == ATA_DEV_ZAC && ata_id_has_ncq_autosense(dev->id))
++		tf->auxiliary = buf[14] << 16 | buf[15] << 8 | buf[16];
 +
-+			if ((link->device->class == ATA_DEV_ATAPI) &&
-+			    (link->device->flags & ATA_DFLAG_AN))
-+				ata_scsi_media_change_notify(link->device);
-+		}
-+
-+		/* If PMP is reporting that PHY status of some
-+		 * downstream ports has changed, schedule EH.
-+		 */
-+		if (sntf & (1 << SATA_PMP_CTRL_PORT)) {
-+			ata_port_schedule_eh(ap);
-+			return 1;
-+		}
-+
-+		return 0;
-+	}
++	return 0;
 +}
-+EXPORT_SYMBOL_GPL(sata_async_notification);
++
++/**
++ *	ata_eh_analyze_ncq_error - analyze NCQ error
++ *	@link: ATA link to analyze NCQ error for
++ *
++ *	Read log page 10h, determine the offending qc and acquire
++ *	error status TF.  For NCQ device errors, all LLDDs have to do
++ *	is setting AC_ERR_DEV in ehi->err_mask.  This function takes
++ *	care of the rest.
++ *
++ *	LOCKING:
++ *	Kernel thread context (may sleep).
++ */
++void ata_eh_analyze_ncq_error(struct ata_link *link)
++{
++	struct ata_port *ap = link->ap;
++	struct ata_eh_context *ehc = &link->eh_context;
++	struct ata_device *dev = link->device;
++	struct ata_queued_cmd *qc;
++	struct ata_taskfile tf;
++	int tag, rc;
++
++	/* if frozen, we can't do much */
++	if (ap->pflags & ATA_PFLAG_FROZEN)
++		return;
++
++	/* is it NCQ device error? */
++	if (!link->sactive || !(ehc->i.err_mask & AC_ERR_DEV))
++		return;
++
++	/* has LLDD analyzed already? */
++	ata_qc_for_each_raw(ap, qc, tag) {
++		if (!(qc->flags & ATA_QCFLAG_FAILED))
++			continue;
++
++		if (qc->err_mask)
++			return;
++	}
++
++	/* okay, this error is ours */
++	memset(&tf, 0, sizeof(tf));
++	rc = ata_eh_read_log_10h(dev, &tag, &tf);
++	if (rc) {
++		ata_link_err(link, "failed to read log page 10h (errno=%d)\n",
++			     rc);
++		return;
++	}
++
++	if (!(link->sactive & (1 << tag))) {
++		ata_link_err(link, "log page 10h reported inactive tag %d\n",
++			     tag);
++		return;
++	}
++
++	/* we've got the perpetrator, condemn it */
++	qc = __ata_qc_from_tag(ap, tag);
++	memcpy(&qc->result_tf, &tf, sizeof(tf));
++	qc->result_tf.flags = ATA_TFLAG_ISADDR | ATA_TFLAG_LBA | ATA_TFLAG_LBA48;
++	qc->err_mask |= AC_ERR_DEV | AC_ERR_NCQ;
++	if (dev->class == ATA_DEV_ZAC &&
++	    ((qc->result_tf.command & ATA_SENSE) || qc->result_tf.auxiliary)) {
++		char sense_key, asc, ascq;
++
++		sense_key = (qc->result_tf.auxiliary >> 16) & 0xff;
++		asc = (qc->result_tf.auxiliary >> 8) & 0xff;
++		ascq = qc->result_tf.auxiliary & 0xff;
++		ata_scsi_set_sense(dev, qc->scsicmd, sense_key, asc, ascq);
++		ata_scsi_set_sense_information(dev, qc->scsicmd,
++					       &qc->result_tf);
++		qc->flags |= ATA_QCFLAG_SENSE_VALID;
++	}
++
++	ehc->i.err_mask &= ~AC_ERR_DEV;
++}
++EXPORT_SYMBOL_GPL(ata_eh_analyze_ncq_error);
 diff --git a/include/linux/libata.h b/include/linux/libata.h
-index 33225cb2c6cc..24de4b66ce36 100644
+index 24de4b66ce36..4feeb12f58ea 100644
 --- a/include/linux/libata.h
 +++ b/include/linux/libata.h
-@@ -1242,6 +1242,7 @@ extern void ata_tf_to_fis(const struct ata_taskfile *tf,
- extern void ata_tf_from_fis(const u8 *fis, struct ata_taskfile *tf);
- extern int ata_qc_complete_multiple(struct ata_port *ap, u64 qc_active);
- extern bool sata_lpm_ignore_phy_events(struct ata_link *link);
-+extern int sata_async_notification(struct ata_port *ap);
+@@ -1183,6 +1183,7 @@ extern int sata_link_hardreset(struct ata_link *link,
+ 			bool *online, int (*check_ready)(struct ata_link *));
+ extern int sata_link_resume(struct ata_link *link, const unsigned long *params,
+ 			    unsigned long deadline);
++extern void ata_eh_analyze_ncq_error(struct ata_link *link);
+ #else
+ static inline const unsigned long *
+ sata_ehc_deb_timing(struct ata_eh_context *ehc)
+@@ -1219,6 +1220,7 @@ static inline int sata_link_resume(struct ata_link *link,
+ {
+ 	return -EOPNOTSUPP;
+ }
++static inline void ata_eh_analyze_ncq_error(struct ata_link *link) { }
+ #endif
+ extern int sata_link_debounce(struct ata_link *link,
+ 			const unsigned long *params, unsigned long deadline);
+@@ -1340,7 +1342,6 @@ extern void ata_eh_thaw_port(struct ata_port *ap);
  
- extern int ata_cable_40wire(struct ata_port *ap);
- extern int ata_cable_80wire(struct ata_port *ap);
-@@ -1333,7 +1334,6 @@ extern void ata_port_wait_eh(struct ata_port *ap);
- extern int ata_link_abort(struct ata_link *link);
- extern int ata_port_abort(struct ata_port *ap);
- extern int ata_port_freeze(struct ata_port *ap);
--extern int sata_async_notification(struct ata_port *ap);
+ extern void ata_eh_qc_complete(struct ata_queued_cmd *qc);
+ extern void ata_eh_qc_retry(struct ata_queued_cmd *qc);
+-extern void ata_eh_analyze_ncq_error(struct ata_link *link);
  
- extern void ata_eh_freeze_port(struct ata_port *ap);
- extern void ata_eh_thaw_port(struct ata_port *ap);
+ extern void ata_do_eh(struct ata_port *ap, ata_prereset_fn_t prereset,
+ 		      ata_reset_fn_t softreset, ata_reset_fn_t hardreset,
 -- 
 2.24.1
 
