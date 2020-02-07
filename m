@@ -2,139 +2,288 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 960BA155E7B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 19:59:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66D12155E82
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 20:04:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727048AbgBGS7T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 13:59:19 -0500
-Received: from mail-wr1-f73.google.com ([209.85.221.73]:51336 "EHLO
-        mail-wr1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbgBGS7T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 13:59:19 -0500
-Received: by mail-wr1-f73.google.com with SMTP id c6so107490wrm.18
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 10:59:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=nR+y9oL83JIGNZtIre6/euwCwaqJGCzYCr1D5UPHiH4=;
-        b=nP+4sZ11+bPG7CKNNsIVXFVgJ9RV5HxfeJX1ANQYSQalovtR9KJ+XgtL6djX225oDc
-         x58UXUaq7HZDzRZ9nuES1dj8iSUziSjL5xgYygFjwPUPyqzk7El3+awQLU3A7fBP36qd
-         JKAxgMLGh7j7ynfzYadsnJ7oLZnz0TkreQkG1/AHWLk8eYX7D6bPHi9/EYzDpeG+oLKz
-         SUW3eE0nnnW33XJ2+hRlc732/wuptyj6hsuyRwfbCVmA1ewjVa/FHEw1pVJNyp6toL0I
-         nrZdkG5U4PQTwvH6xD7XH49QTFyX1LejcaEZ8zd+YeeU31kQcE+Is12v1vAmHKc4qbE4
-         I9ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=nR+y9oL83JIGNZtIre6/euwCwaqJGCzYCr1D5UPHiH4=;
-        b=S0q+aNt4ZPf9w0s8+Iu0y4Z9Y24Nr4Vf4TuZ6B2bK8w7Hzl3lsMokGf0NYaAybVCwb
-         gW78A53RMGtAgoaG1BtNKkG6JgoFU3OaYdv6VP38QE6BxOWqyGf4SU/yotI6vtFzfOmA
-         /4ffhndOhmHMKjuOiw41Lhl9uqN3PjX6/FEYWH00P7ZCdFUwhALv9LM/8258zwofUK2O
-         cazwHpRstTpJaoZVtfveuK7zFyILCPXpc/DSsE0r5P6XURYtC4lEEfWqaZhjXgYl+XwD
-         +rqBU5tLQ1oZ20byIUW60ZYA/N1xR/Zsee9twzlq2d7jia/8MUz36UfZqpBcvnE3QmBg
-         XO4A==
-X-Gm-Message-State: APjAAAWvqkrWFWc0NbkndmanmBTfXj6fMozo18VneXOL8/bANqDCRnCb
-        iM4zTFZr1dD1jJxTNpx4gcfCmgKTMQ==
-X-Google-Smtp-Source: APXvYqyf/g7zk1EO7HKJUQGSGYz/6bLPHYZzw4JG7fqMMjAq1bcJGTMVNQqgTVaiEexiNoXYKWBxs6fC4g==
-X-Received: by 2002:a5d:40d1:: with SMTP id b17mr400665wrq.93.1581101956137;
- Fri, 07 Feb 2020 10:59:16 -0800 (PST)
-Date:   Fri,  7 Feb 2020 19:59:10 +0100
-Message-Id: <20200207185910.162512-1-elver@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-Subject: [PATCH] kcsan: Expose core configuration parameters as module params
-From:   Marco Elver <elver@google.com>
-To:     elver@google.com
-Cc:     paulmck@kernel.org, andreyknvl@google.com, glider@google.com,
-        dvyukov@google.com, kasan-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727129AbgBGTEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 14:04:43 -0500
+Received: from mga09.intel.com ([134.134.136.24]:27164 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726900AbgBGTEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 14:04:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2020 11:04:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,414,1574150400"; 
+   d="scan'208";a="432655072"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 07 Feb 2020 11:04:41 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1j08vh-000ImA-Ab; Sat, 08 Feb 2020 03:04:41 +0800
+Date:   Sat, 08 Feb 2020 03:03:42 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [rcu:dev.2020.01.31a] BUILD SUCCESS
+ 19cae4b11accf692fb67d6ba92833ca45dd63197
+Message-ID: <5e3db48e.mIX1DQNv9X0phtbG%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds early_boot, udelay_{task,interrupt}, and skip_watch as module
-params. The latter parameters are useful to modify at runtime to tune
-KCSAN's performance on new systems. This will also permit auto-tuning
-these parameters to maximize overall system performance and KCSAN's race
-detection ability.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git  dev.2020.01.31a
+branch HEAD: 19cae4b11accf692fb67d6ba92833ca45dd63197  kcsan: Fix 0-sized checks
 
-None of the parameters are used in the fast-path and referring to them
-via static variables instead of CONFIG constants will not affect
-performance.
+elapsed time: 2883m
 
-Signed-off-by: Marco Elver <elver@google.com>
-Cc: Qian Cai <cai@lca.pw>
+configs tested: 233
+configs skipped: 1
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm                         at91_dt_defconfig
+arm                           efm32_defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm64                               defconfig
+sparc                            allyesconfig
+powerpc                           allnoconfig
+csky                                defconfig
+nios2                         10m50_defconfig
+ia64                             allmodconfig
+h8300                       h8s-sim_defconfig
+c6x                        evmc6678_defconfig
+nds32                               defconfig
+sparc64                           allnoconfig
+mips                      fuloong2e_defconfig
+parisc                         b180_defconfig
+openrisc                 simple_smp_defconfig
+i386                             alldefconfig
+i386                              allnoconfig
+i386                             allyesconfig
+i386                                defconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+ia64                                defconfig
+ia64                             alldefconfig
+c6x                              allyesconfig
+nios2                         3c120_defconfig
+openrisc                    or1ksim_defconfig
+xtensa                       common_defconfig
+xtensa                          iss_defconfig
+alpha                               defconfig
+nds32                             allnoconfig
+h8300                     edosk2674_defconfig
+h8300                    h8300h-sim_defconfig
+m68k                             allmodconfig
+m68k                       m5475evb_defconfig
+m68k                          multi_defconfig
+m68k                           sun3_defconfig
+arc                              allyesconfig
+arc                                 defconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                             defconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+mips                           32r2_defconfig
+mips                         64r6el_defconfig
+mips                             allmodconfig
+mips                              allnoconfig
+mips                             allyesconfig
+mips                      malta_kvm_defconfig
+parisc                            allnoconfig
+parisc                            allyesonfig
+parisc                        c3000_defconfig
+parisc                              defconfig
+x86_64               randconfig-a001-20200206
+x86_64               randconfig-a002-20200206
+x86_64               randconfig-a003-20200206
+i386                 randconfig-a001-20200206
+i386                 randconfig-a002-20200206
+i386                 randconfig-a003-20200206
+x86_64               randconfig-a001-20200207
+x86_64               randconfig-a002-20200207
+x86_64               randconfig-a003-20200207
+i386                 randconfig-a001-20200207
+i386                 randconfig-a002-20200207
+i386                 randconfig-a003-20200207
+alpha                randconfig-a001-20200206
+parisc               randconfig-a001-20200206
+m68k                 randconfig-a001-20200206
+nds32                randconfig-a001-20200206
+mips                 randconfig-a001-20200206
+riscv                randconfig-a001-20200206
+alpha                randconfig-a001-20200207
+m68k                 randconfig-a001-20200207
+mips                 randconfig-a001-20200207
+nds32                randconfig-a001-20200207
+parisc               randconfig-a001-20200207
+h8300                randconfig-a001-20200206
+nios2                randconfig-a001-20200206
+sparc64              randconfig-a001-20200206
+c6x                  randconfig-a001-20200206
+microblaze           randconfig-a001-20200206
+c6x                  randconfig-a001-20200207
+h8300                randconfig-a001-20200207
+microblaze           randconfig-a001-20200207
+nios2                randconfig-a001-20200207
+sparc64              randconfig-a001-20200207
+sh                   randconfig-a001-20200205
+csky                 randconfig-a001-20200205
+s390                 randconfig-a001-20200205
+xtensa               randconfig-a001-20200205
+openrisc             randconfig-a001-20200205
+csky                 randconfig-a001-20200207
+openrisc             randconfig-a001-20200207
+s390                 randconfig-a001-20200207
+xtensa               randconfig-a001-20200207
+x86_64               randconfig-b001-20200206
+x86_64               randconfig-b002-20200206
+x86_64               randconfig-b003-20200206
+i386                 randconfig-b001-20200206
+i386                 randconfig-b002-20200206
+i386                 randconfig-b003-20200206
+x86_64               randconfig-c001-20200204
+x86_64               randconfig-c002-20200204
+x86_64               randconfig-c003-20200204
+i386                 randconfig-c001-20200204
+i386                 randconfig-c002-20200204
+i386                 randconfig-c003-20200204
+x86_64               randconfig-c003-20200206
+x86_64               randconfig-c002-20200206
+i386                 randconfig-c002-20200206
+i386                 randconfig-c001-20200206
+x86_64               randconfig-c001-20200206
+i386                 randconfig-c003-20200206
+x86_64               randconfig-c001-20200207
+x86_64               randconfig-c002-20200207
+x86_64               randconfig-c003-20200207
+i386                 randconfig-c001-20200207
+i386                 randconfig-c002-20200207
+i386                 randconfig-c003-20200207
+x86_64               randconfig-d001-20200207
+x86_64               randconfig-d002-20200207
+x86_64               randconfig-d003-20200207
+i386                 randconfig-d001-20200207
+i386                 randconfig-d002-20200207
+i386                 randconfig-d003-20200207
+x86_64               randconfig-d003-20200206
+i386                 randconfig-d001-20200206
+x86_64               randconfig-d002-20200206
+x86_64               randconfig-d001-20200206
+i386                 randconfig-d003-20200206
+i386                 randconfig-d002-20200206
+x86_64               randconfig-e001-20200207
+x86_64               randconfig-e002-20200207
+x86_64               randconfig-e003-20200207
+i386                 randconfig-e001-20200207
+i386                 randconfig-e002-20200207
+i386                 randconfig-e003-20200207
+i386                 randconfig-e003-20200206
+i386                 randconfig-e002-20200206
+x86_64               randconfig-e001-20200206
+x86_64               randconfig-e003-20200206
+i386                 randconfig-e001-20200206
+x86_64               randconfig-e002-20200206
+x86_64               randconfig-f001-20200204
+x86_64               randconfig-f002-20200204
+x86_64               randconfig-f003-20200204
+i386                 randconfig-f001-20200204
+i386                 randconfig-f002-20200204
+i386                 randconfig-f003-20200204
+x86_64               randconfig-g003-20200205
+i386                 randconfig-g001-20200205
+x86_64               randconfig-g001-20200205
+x86_64               randconfig-g002-20200205
+i386                 randconfig-g002-20200205
+i386                 randconfig-g003-20200205
+x86_64               randconfig-g001-20200206
+x86_64               randconfig-g002-20200206
+x86_64               randconfig-g003-20200206
+i386                 randconfig-g001-20200206
+i386                 randconfig-g002-20200206
+i386                 randconfig-g003-20200206
+x86_64               randconfig-g001-20200207
+x86_64               randconfig-g002-20200207
+x86_64               randconfig-g003-20200207
+i386                 randconfig-g001-20200207
+i386                 randconfig-g002-20200207
+i386                 randconfig-g003-20200207
+x86_64               randconfig-h001-20200206
+x86_64               randconfig-h002-20200206
+x86_64               randconfig-h003-20200206
+i386                 randconfig-h001-20200206
+i386                 randconfig-h002-20200206
+i386                 randconfig-h003-20200206
+x86_64               randconfig-h001-20200205
+x86_64               randconfig-h002-20200205
+x86_64               randconfig-h003-20200205
+i386                 randconfig-h001-20200205
+i386                 randconfig-h002-20200205
+i386                 randconfig-h003-20200205
+x86_64               randconfig-h001-20200207
+x86_64               randconfig-h002-20200207
+x86_64               randconfig-h003-20200207
+i386                 randconfig-h001-20200207
+i386                 randconfig-h002-20200207
+i386                 randconfig-h003-20200207
+powerpc              randconfig-a001-20200206
+arc                  randconfig-a001-20200206
+ia64                 randconfig-a001-20200206
+sparc                randconfig-a001-20200206
+arm64                randconfig-a001-20200206
+arm                  randconfig-a001-20200206
+riscv                            allmodconfig
+riscv                             allnoconfig
+riscv                            allyesconfig
+riscv                               defconfig
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
+s390                             alldefconfig
+s390                             allmodconfig
+s390                              allnoconfig
+s390                             allyesconfig
+s390                          debug_defconfig
+s390                                defconfig
+s390                       zfcpdump_defconfig
+sh                               allmodconfig
+sh                                allnoconfig
+sh                          rsk7269_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                            titan_defconfig
+sparc                               defconfig
+sparc64                          allmodconfig
+sparc64                          allyesconfig
+sparc64                             defconfig
+um                                  defconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
+
 ---
- kernel/kcsan/core.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
-index 87ef01e40199d..498b1eb3c1cda 100644
---- a/kernel/kcsan/core.c
-+++ b/kernel/kcsan/core.c
-@@ -6,6 +6,7 @@
- #include <linux/export.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-+#include <linux/moduleparam.h>
- #include <linux/percpu.h>
- #include <linux/preempt.h>
- #include <linux/random.h>
-@@ -16,6 +17,20 @@
- #include "encoding.h"
- #include "kcsan.h"
- 
-+static bool kcsan_early_enable = IS_ENABLED(CONFIG_KCSAN_EARLY_ENABLE);
-+static unsigned int kcsan_udelay_task = CONFIG_KCSAN_UDELAY_TASK;
-+static unsigned int kcsan_udelay_interrupt = CONFIG_KCSAN_UDELAY_INTERRUPT;
-+static long kcsan_skip_watch = CONFIG_KCSAN_SKIP_WATCH;
-+
-+#ifdef MODULE_PARAM_PREFIX
-+#undef MODULE_PARAM_PREFIX
-+#endif
-+#define MODULE_PARAM_PREFIX "kcsan."
-+module_param_named(early_enable, kcsan_early_enable, bool, 0);
-+module_param_named(udelay_task, kcsan_udelay_task, uint, 0644);
-+module_param_named(udelay_interrupt, kcsan_udelay_interrupt, uint, 0644);
-+module_param_named(skip_watch, kcsan_skip_watch, long, 0644);
-+
- bool kcsan_enabled;
- 
- /* Per-CPU kcsan_ctx for interrupts */
-@@ -239,9 +254,9 @@ should_watch(const volatile void *ptr, size_t size, int type)
- 
- static inline void reset_kcsan_skip(void)
- {
--	long skip_count = CONFIG_KCSAN_SKIP_WATCH -
-+	long skip_count = kcsan_skip_watch -
- 			  (IS_ENABLED(CONFIG_KCSAN_SKIP_WATCH_RANDOMIZE) ?
--				   prandom_u32_max(CONFIG_KCSAN_SKIP_WATCH) :
-+				   prandom_u32_max(kcsan_skip_watch) :
- 				   0);
- 	this_cpu_write(kcsan_skip, skip_count);
- }
-@@ -253,8 +268,7 @@ static __always_inline bool kcsan_is_enabled(void)
- 
- static inline unsigned int get_delay(void)
- {
--	unsigned int delay = in_task() ? CONFIG_KCSAN_UDELAY_TASK :
--					 CONFIG_KCSAN_UDELAY_INTERRUPT;
-+	unsigned int delay = in_task() ? kcsan_udelay_task : kcsan_udelay_interrupt;
- 	return delay - (IS_ENABLED(CONFIG_KCSAN_DELAY_RANDOMIZE) ?
- 				prandom_u32_max(delay) :
- 				0);
-@@ -527,7 +541,7 @@ void __init kcsan_init(void)
- 	 * We are in the init task, and no other tasks should be running;
- 	 * WRITE_ONCE without memory barrier is sufficient.
- 	 */
--	if (IS_ENABLED(CONFIG_KCSAN_EARLY_ENABLE))
-+	if (kcsan_early_enable)
- 		WRITE_ONCE(kcsan_enabled, true);
- }
- 
--- 
-2.25.0.341.g760bfbb309-goog
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
