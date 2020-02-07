@@ -2,157 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BFBB154FAA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 01:17:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9DFC154F90
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 01:04:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbgBGARu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 19:17:50 -0500
-Received: from mx0a-00000d04.pphosted.com ([148.163.149.245]:7050 "EHLO
-        mx0a-00000d04.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726543AbgBGARt (ORCPT
+        id S1726778AbgBGAEq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 19:04:46 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36273 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726502AbgBGAEq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 19:17:49 -0500
-X-Greylist: delayed 1010 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Feb 2020 19:17:48 EST
-Received: from pps.filterd (m0102887.ppops.net [127.0.0.1])
-        by mx0a-00000d04.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 016NnnKl004943;
-        Thu, 6 Feb 2020 16:00:04 -0800
-Received: from mx0b-00000d03.pphosted.com (mx0b-00000d03.pphosted.com [148.163.153.234])
-        by mx0a-00000d04.pphosted.com with ESMTP id 2xyhq93e11-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 06 Feb 2020 16:00:03 -0800
-Received: from pps.filterd (m0190086.ppops.net [127.0.0.1])
-        by mx0a-00000d03.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 016NpuO5030619;
-        Thu, 6 Feb 2020 16:00:02 -0800
-Received: from codegreen6.stanford.edu (codegreen6.stanford.edu [171.67.224.8])
-        by mx0a-00000d03.pphosted.com with ESMTP id 2xyhpr2hn9-1
-        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NOT);
-        Thu, 06 Feb 2020 16:00:02 -0800
-Received: from codegreen6.stanford.edu (localhost.localdomain [127.0.0.1])
-        by codegreen6.stanford.edu (Postfix) with ESMTP id 49D0B83;
-        Thu,  6 Feb 2020 16:00:01 -0800 (PST)
-Received: from smtp.stanford.edu (smtp5.stanford.edu [171.67.219.71])
-        by codegreen6.stanford.edu (Postfix) with ESMTP id 2F4E47E;
-        Thu,  6 Feb 2020 16:00:01 -0800 (PST)
-Received: from cm-mail.stanford.edu (cm-mail.stanford.edu [171.64.197.135])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp.stanford.edu (Postfix) with ESMTPS id E116CC1FA0;
-        Thu,  6 Feb 2020 16:00:00 -0800 (PST)
-Received: from localhost.localdomain (cm-guestnet.stanford.edu [171.64.197.42])
-        (authenticated bits=0)
-        by cm-mail.stanford.edu (8.14.4/8.14.4) with ESMTP id 016NxvPX030896
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES128-SHA bits=128 verify=NO);
-        Thu, 6 Feb 2020 15:59:59 -0800
-Cc:     nando@ccrma.Stanford.EDU, LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [ANNOUNCE] v5.4.17-rt9
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20200204165811.imc5lvs3wt3soaw2@linutronix.de>
-From:   Fernando Lopez-Lezcano <nando@ccrma.Stanford.EDU>
-Message-ID: <cda47e2f-fd9d-c4c8-7991-64fef38af0ef@ccrma.stanford.edu>
-Date:   Thu, 6 Feb 2020 15:59:57 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Thu, 6 Feb 2020 19:04:46 -0500
+Received: by mail-pl1-f193.google.com with SMTP id a6so235351plm.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 16:04:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1ZFFBxKxZAZaC7rKowP3dBpqjl3coMOLVdOhrj8QTtU=;
+        b=dKSa49CEXUtfhaZRDGsWkw+O6hjCch6SZ9FjRK0eY4/j1tRdrVPrwz6EYDVcQfnF3w
+         NUIWH9CEe3EeOP1+HMxOeHGtdV9cduvQm0+D8p+g0cvufaHEP+Xjj4K64VfC4r5Sne5Y
+         PiJ/8tS8P/OSvU+SOtZ/5EDx8P1/kyQ2Sih+UALy776fneFXX+1zd1+KhZqKY7eswxyA
+         AwCfod4jqeJ0oj8ju1hjz6YvTWkZ/N1+3da+rS2EYvrPoKapEbY2/YmTPjdjuGR/8azj
+         OvcW7xRvwWqhNOXhN0mHgP8AVqNuIHD9YYa//7GhbWo6ohLbN3qT4vymsMb8etY371ps
+         /efA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1ZFFBxKxZAZaC7rKowP3dBpqjl3coMOLVdOhrj8QTtU=;
+        b=td/qlNkOfRDnTm7M09lVmNioXEE9XCaPRACPsRejdGFSvX4xqpxyZujDjfvTtoNyks
+         tA2sZpw0He886FORGt+w+CW1DYzduTIUf/WJOrNztldt5oqDgyKHY7NqXpzFooVnRrzt
+         gPuTtldQuFs97mruiTSohbKKp28E+CV/7+x4sahwE2b/V8RfzN2jeCoDTaLGMIBzmvYA
+         MdGOgwVQ+7blaQlD5L2KkAGxen6c2YFbG15a4vPwbLTWXAToAYH5PlkdPPmpup+Td1go
+         y48Ymr0lQuZVxdccgpJdW4p5t+uRnV1LkyKjYHgFI6JVMciyoQGRFSSUBX7wGT4K6chw
+         owxg==
+X-Gm-Message-State: APjAAAXzvyQPlfNqwPIVKVuwZ0HZgygAk2lRKAZsIqKteUcTsKh2wrOK
+        JemZIZLmQ59ZjcdF5hV54lH98I4era2hxxKWFTqZpQ==
+X-Google-Smtp-Source: APXvYqyA9NYMs7vZ3ED+CoZUpSbhn4IlsxFLfzt20lRi0wAfDekv3xkC/NhND7OCu35LYPy7af9afZnqFsVR+uFgjHI=
+X-Received: by 2002:a17:90a:be06:: with SMTP id a6mr438587pjs.73.1581033883832;
+ Thu, 06 Feb 2020 16:04:43 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200204165811.imc5lvs3wt3soaw2@linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on cm-mail.stanford.edu
-x-proofpoint-stanford-dir: outbound
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-06_04:2020-02-06,2020-02-06 signatures=0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-06_04:2020-02-06,2020-02-06 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999 mlxscore=0
- bulkscore=0 suspectscore=0 impostorscore=0 adultscore=100 malwarescore=0
- lowpriorityscore=0 phishscore=0 clxscore=1011 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002060172
+References: <20200206200345.175344-1-caij2003@gmail.com> <20200206232840.227705-1-ndesaulniers@google.com>
+ <CAOHxzjGiO54BwUDR4zz6MwvFT3-XXDx830cQcQAcVUPA1N_emA@mail.gmail.com>
+In-Reply-To: <CAOHxzjGiO54BwUDR4zz6MwvFT3-XXDx830cQcQAcVUPA1N_emA@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Fri, 7 Feb 2020 00:04:31 +0000
+Message-ID: <CAKwvOdkaQJrXt3y_QDyZpQpeJqB0nYsV_p21h63SS1k2Q3Da=w@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: soc-core: fix an uninitialized use
+To:     Jian Cai <caij2003@gmail.com>
+Cc:     alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/4/20 8:58 AM, Sebastian Andrzej Siewior wrote:
-> Dear RT folks!
-> 
-> I'm pleased to announce the v5.4.17-rt9 patch set.
+On Fri, Feb 7, 2020 at 12:55 AM Jian Cai <caij2003@gmail.com> wrote:
+>
+> Hi Nick,
+>
+> 'ret' is only defined in if branches and for loops (e.g. for_each_component_dais). If none of these branches or loops get executed, then eventually we end up having
 
-Thanks!
-I see a continuous stream of these:
-
-----
-[165992.032318] BUG: sleeping function called from invalid context at 
-kernel/locking/rtmutex.c:973
-[165992.032320] in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 
-12209, name: kworker/u8:3
-[165992.032322] INFO: lockdep is turned off.
-[165992.032322] irq event stamp: 0
-[165992.032323] hardirqs last  enabled at (0): [<0000000000000000>] 0x0
-[165992.032325] hardirqs last disabled at (0): [<ffffffff980ed372>] 
-copy_process+0x802/0x2000
-[165992.032329] softirqs last  enabled at (0): [<ffffffff980ed372>] 
-copy_process+0x802/0x2000
-[165992.032331] softirqs last disabled at (0): [<0000000000000000>] 0x0
-[165992.032332] CPU: 2 PID: 12209 Comm: kworker/u8:3 Tainted: G        W 
-         5.4.17-100.rt9.1.fc30.ccrma.x86_64+rt #1
-[165992.032333] Hardware name:  /NUC6i7KYB, BIOS 
-KYSKLi70.86A.0034.2016.0503.1003 05/03/2016
-[165992.032369] Workqueue: i915 retire_work_handler [i915]
-[165992.032369] Call Trace:
-[165992.032373]  dump_stack+0x8f/0xd0
-[165992.032377]  ___might_sleep.cold+0xb3/0xc3
-[165992.032380]  rt_spin_lock_nested+0x8e/0xd0
-[165992.032382]  ? __i915_sw_fence_complete+0x15c/0x200 [i915]
-[165992.032407]  __i915_sw_fence_complete+0x15c/0x200 [i915]
-[165992.032432]  __i915_request_queue+0x19/0x50 [i915]
-[165992.032463]  __engine_park+0xe2/0x1d0 [i915]
-[165992.032489]  ____intel_wakeref_put_last+0x1e/0x50 [i915]
-[165992.032511]  i915_request_retire+0x293/0x480 [i915]
-[165992.032541]  retire_requests+0x54/0x60 [i915]
-[165992.032569]  i915_retire_requests+0xea/0x220 [i915]
-[165992.032598]  retire_work_handler+0x56/0x60 [i915]
-[165992.032626]  process_one_work+0x261/0x6c0
-[165992.032631]  worker_thread+0x50/0x3b0
-[165992.032634]  kthread+0x106/0x140
-[165992.032636]  ? process_one_work+0x6c0/0x6c0
-[165992.032638]  ? kthread_park+0x90/0x90
-[165992.032640]  ret_from_fork+0x3a/0x50
-----
-
-Something similar used to happen a while back, but I had not seen it on 
-5.2.x rt patched kernels. It is back (or something very similar).
-
-This is on Fedora 30 upgraded to the latest, and the kernel is based on 
-(as I normally do) the source package for the equivalent Fedora kernel, 
-with the RT patch added (and configured).
-
-Thanks again for your work!
--- Fernando
+https://elixir.bootlin.com/linux/latest/source/sound/soc/soc-core.c#L1276
+and
+https://elixir.bootlin.com/linux/latest/source/sound/soc/soc-core.c#L1287
+both assign to `ret` before any `goto` is taken.  Are you perhaps
+looking at an older branch of the LTS tree, but not the master branch
+of the mainline tree? (Or it's possible that it's 1am here in Zurich,
+and I should go to bed).
 
 
-> Changes since v5.4.17-rt8:
-> 
->    - A rework of percpu-rwsem locking. The fs core was using a
->      percpu-rwsem and returned with acquired lock to userland during
->      `fsfreeze' which led warnings. On !RT the warnings were disabled but
->      the same lockdep trick did not work on RT.
->      Reported by Juri Lelli, patch(es) by Peter Zijlstra.
-> 
->    - Include a header file the `current' macro to not break an allmod
->      build on ARM.
-> 
->    - A tweak to migrate_enable() to not having to wait until
->      stop_one_cpu_nowait() finishes in case CPU-mask changed during
->      migrate_disable() and the CPU has to be changed. Patch by Scott
->      Wood.
-> 
->    - Drop a lock earlier in mm/memcontrol. Not a bug but there is no need
->      for the additional locked section. Patch by Matt Fleming.
-> 
-> Known issues
->       - None
+>
+> int ret;
+>
+> err_probe:
+>         if (ret < 0)
+>                 soc_cleanup_component(component);
+>
+> With -ftrivial-auto-var-init=pattern, this code becomes
+>
+> int ret;
+>
+> err_probe:
+>        ret = 0xAAAAAAAA;
+>         if (ret < 0)
+>                 soc_cleanup_component(component);
+>
+> So soc_cleanup_component gets called unintentionally this case, which causes the built kernel to miss some files.
+>
+>
+>
+> On Thu, Feb 6, 2020 at 3:28 PM Nick Desaulniers <ndesaulniers@google.com> wrote:
+>>
+>> > Fixed the uninitialized use of a signed integer variable ret in
+>> > soc_probe_component when all its definitions are not executed. This
+>> > caused  -ftrivial-auto-var-init=pattern to initialize the variable to
+>> > repeated 0xAA (i.e. a negative value) and triggered the following code
+>> > unintentionally.
+>>
+>> > Signed-off-by: Jian Cai <caij2003@gmail.com>
+>>
+>> Hi Jian,
+>> I don't quite follow; it looks like `ret` is assigned to multiple times in
+>> `soc_probe_component`. Are one of the return values of one of the functions
+>> that are called then assigned to `ret` undefined? What control flow path leaves
+>> `ret` unitialized?
 
+
+
+-- 
+Thanks,
+~Nick Desaulniers
