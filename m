@@ -2,68 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A46B6155AB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 16:26:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9251C155AC5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 16:34:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbgBGP0S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 10:26:18 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37858 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726867AbgBGP0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 10:26:18 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 44562151689C27D83C1A;
-        Fri,  7 Feb 2020 23:26:15 +0800 (CST)
-Received: from huawei.com (10.175.105.18) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Fri, 7 Feb 2020
- 23:26:05 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
-To:     <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
-        <sean.j.christopherson@intel.com>, <vkuznets@redhat.com>,
-        <wanpengli@tencent.com>, <jmattson@google.com>, <joro@8bytes.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>
-CC:     <linmiaohe@huawei.com>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-Subject: [PATCH v2] KVM: x86: remove duplicated KVM_REQ_EVENT request
-Date:   Fri, 7 Feb 2020 23:27:51 +0800
-Message-ID: <1581089271-3431-1-git-send-email-linmiaohe@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1727026AbgBGPeG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 10:34:06 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39396 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726874AbgBGPeG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 10:34:06 -0500
+Received: by mail-wm1-f65.google.com with SMTP id c84so3229036wme.4
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 07:34:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=ubc3i5ioC2Mng+1ZCGgqSjrhQMsUN/k5l/kXQrpKbbE=;
+        b=pNDfYKDmis0ZIoYPys46LJ3eBdCjoVxn/3v2EnQ5eEWQihKfa+ZrD8+lDIJelNtsNE
+         zCo0dqacfo1f14irXeNginpPFf3515oPjUrcUERQz+lgH3XM4gqZDueiPG9dYdxnmXNM
+         7EvdJylctaaygZHqEZLPF2Fo0khFqQ9PxyZfU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=ubc3i5ioC2Mng+1ZCGgqSjrhQMsUN/k5l/kXQrpKbbE=;
+        b=fBm6yrev08SjCbQwMIRBsvyDdEs97Ph0XMdNsTw5fxg0cQ8WhkTCDBXYdqF9EmxMNs
+         zjUq+GvIGUq/QKCHHBuSrsCNhcrVzjrioOfLE54yicHqNrcI9bkGcxbh7P5nLqDpqUtl
+         EEprrL2FwXqsEqNmSq+JIGgLtScJm7SiQG0VfZZiIUE9WcdosYY8uEx0LxGHxcbbeiXx
+         rQwd/WZidWptHQK6mFdUA4W2maA10jTtltSGxGrb6vgS7DNxmgx7BoKt+xPNSYpDRP9O
+         GnGOnaEKbjUzEbgzVnxmqnBccaUnJ+v8bC+4kSV+v8wu/JEbjFcl34yI2tea1n7uNu9G
+         pn7g==
+X-Gm-Message-State: APjAAAUe/g9ZQMdkiBl6F4f2W8zzmEGR8hPTLP+RNG7+wR+GrIscGCkb
+        TD7RIdgtRrnOyJkAkTZPjOe8nNALl0E=
+X-Google-Smtp-Source: APXvYqy/NpI+jwi7ubi9A744y5HRTbyCjOoLff8EQAzbvpxGaSxGkf5a/khVgfzxuK6X4nsXyrH/yw==
+X-Received: by 2002:a1c:9e89:: with SMTP id h131mr4922099wme.161.1581089644697;
+        Fri, 07 Feb 2020 07:34:04 -0800 (PST)
+Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id i16sm3983836wmb.36.2020.02.07.07.34.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Feb 2020 07:34:04 -0800 (PST)
+Date:   Fri, 7 Feb 2020 16:34:01 +0100
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] fuse fixes for 5.6-rc1
+Message-ID: <20200207153401.GC7822@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.105.18]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miaohe Lin <linmiaohe@huawei.com>
+Hi Linus,
 
-The KVM_REQ_EVENT request is already made in kvm_set_rflags(). We should
-not make it again.
+Please pull from:
 
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-5.6-rc1
+
+- Fix a regression introduced in v5.1 that triggers WARNINGs for some fuse
+filesystems.
+
+- Fix an xfstest failure.
+
+- Allow overlayfs to be used on top of fuse/virtiofs.
+
+- Code and documentation cleanups.
+
+Thanks,
+Miklos
+
+----------------------------------------------------------------
+Daniel W. S. Almeida (1):
+      Documentation: filesystems: convert fuse to RST
+
+Miklos Szeredi (2):
+      fix up iter on short count in fuse_direct_io()
+      fuse: don't overflow LLONG_MAX with end offset
+
+Vivek Goyal (1):
+      fuse: Support RENAME_WHITEOUT flag
+
+zhengbin (1):
+      fuse: use true,false for bool variable
+
 ---
-v1->v2:
-Collected Vitaly's R-b
----
- arch/x86/kvm/x86.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index fbabb2f06273..212282c6fb76 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -8942,7 +8942,6 @@ int kvm_task_switch(struct kvm_vcpu *vcpu, u16 tss_selector, int idt_index,
- 
- 	kvm_rip_write(vcpu, ctxt->eip);
- 	kvm_set_rflags(vcpu, ctxt->eflags);
--	kvm_make_request(KVM_REQ_EVENT, vcpu);
- 	return 1;
- }
- EXPORT_SYMBOL_GPL(kvm_task_switch);
--- 
-2.19.1
-
+ Documentation/filesystems/{fuse.txt => fuse.rst} | 163 ++++++++++-------------
+ Documentation/filesystems/index.rst              |   1 +
+ MAINTAINERS                                      |   2 +-
+ fs/fuse/cuse.c                                   |   4 +-
+ fs/fuse/dir.c                                    |   2 +-
+ fs/fuse/file.c                                   |  21 ++-
+ fs/fuse/inode.c                                  |  14 +-
+ fs/fuse/readdir.c                                |   2 +-
+ 8 files changed, 104 insertions(+), 105 deletions(-)
+ rename Documentation/filesystems/{fuse.txt => fuse.rst} (80%)
