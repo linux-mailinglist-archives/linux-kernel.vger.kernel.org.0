@@ -2,131 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 003381552A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 07:57:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 305A11552A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 07:58:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbgBGG5W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 01:57:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36850 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726130AbgBGG5W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 01:57:22 -0500
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BE5920726;
-        Fri,  7 Feb 2020 06:57:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581058641;
-        bh=zTSBQNt4eq3J71YmoyHl3b2Ibnp+d/1SMhq+z2V2aj4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GvmjZXISOJ3OLa2bXHHiCeq8bBInKZU+XsQU1q216RDyC5AUtT9UQOxLT1Yckafku
-         UwXl9ubccSdjwBSmVcgnVbi69czGiUKRsWBQD1EMRBHcJdxC879MFqIAVqDdIcpjjZ
-         M/LuGr01YFaZAFV/Ymxh8iAqvdTM67c1eUIcEpsU=
-Date:   Thu, 6 Feb 2020 22:57:19 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [BUG] crypto: export() overran state buffer on test vector
-Message-ID: <20200207065719.GA8284@sol.localdomain>
-References: <20200206085442.GA5585@Red>
+        id S1727011AbgBGG55 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 01:57:57 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:42813 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726951AbgBGG55 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 01:57:57 -0500
+Received: by mail-il1-f196.google.com with SMTP id x2so810156ila.9;
+        Thu, 06 Feb 2020 22:57:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=MvC4wfPqw9IroxJFE0+MeDBQWPGintIKajsHZYirMKQ=;
+        b=JsD+38Lcu1jACdrWPnZvuVsKkMf9dmfdXJ9Ee1ctjb53C7MjQBeBKCKzUbCapxPkV3
+         yN5Y+ylzMm0ioC2S4fmQYdctCkheyaqfreX/0qsFU5De5c2lxLN0OUU4ZM7V6Q5hIpAu
+         xBNhx1UziYfV5qu8ffG5DleioJN5muRDe3FYloeKLvjcavOSBYp34gR2DMsa3AWZfxSb
+         6x9GKsN4QeVGvwjKv8PfM9u5Uk/9EYvAf3Bb52pQ0wAKxux8d8f6Y7AZIHetvLvcKAxt
+         T4YiGiKGm+RVxsAmWIYmcq2ywe/epX74Z69olrUPatdLthLCpKOS23rDaGbjyjIvbTPH
+         rTnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=MvC4wfPqw9IroxJFE0+MeDBQWPGintIKajsHZYirMKQ=;
+        b=HgIezn4Aljuq4R+ZpoM0H3OpkzaPewAea0G4JRR1FbbbwuORe32eh7YY0/uTaLsBm4
+         i5/M30atrXDQ7eO8tGcSvrz9TaZXCqTSvUa/yA/olXP66XGFg6Cq5z9rMbVZq8CxKzYF
+         VsxilslayXJ5N799XvU97act8ByYWzDvrEeyKT9P+hkuV2mLtIIqOJNVLiyC6JLy7jjb
+         dWGzwEq1lCROfPDBjCRTU9nphBZl0AMWmFCUUxCxCedwIdqRo9YJCu0U7OiPrZm99TQ7
+         okgP3cqj1tMvBHGvVHolXht9fuAJU0cevGMYk0o0K35OcWnMm6hGE0Rn+6NHeMbqv+d7
+         DQYQ==
+X-Gm-Message-State: APjAAAVtNqV8jZ6emEMXb6xO/2obxgJp6d+px7ez0DMnwgs5UdQ3MrPt
+        qrkAbaJXKoe+dkP3ZG5mXhr0jK1TeiouSA4S6wDchL/E3jo=
+X-Google-Smtp-Source: APXvYqzVlmSDZ11jLfB0Dk+b5wrJmCDCPMqzimvGfc3DZnWRvtmfFKx0rOtYrAe83Rd9Tv4z08oBry1yXBL1No/vG/c=
+X-Received: by 2002:a92:860a:: with SMTP id g10mr7690199ild.280.1581058676368;
+ Thu, 06 Feb 2020 22:57:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200206085442.GA5585@Red>
+Received: by 2002:ad5:5442:0:0:0:0:0 with HTTP; Thu, 6 Feb 2020 22:57:56 -0800 (PST)
+In-Reply-To: <0c4a37a9-0a2e-e698-f423-53060854ea05@ti.com>
+References: <20191104143713.11137-1-alexandre.torgue@st.com>
+ <20200206133918.15012-1-youling257@gmail.com> <0c4a37a9-0a2e-e698-f423-53060854ea05@ti.com>
+From:   youling 257 <youling257@gmail.com>
+Date:   Fri, 7 Feb 2020 14:57:56 +0800
+Message-ID: <CAOzgRdb5QfJDQzbtoHQry4wxUg52LwX5XFCPzzaYa=z+RqNWOQ@mail.gmail.com>
+Subject: Re: [PATCH] phy: core: Add consumer device link support
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     alexandre.torgue@st.com, yoshihiro.shimoda.uh@renesas.com,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 06, 2020 at 09:54:42AM +0100, Corentin Labbe wrote:
-> Hello
-> 
-> When working on adding hash support on sun8i-ce, I made a simple version which always fallback.
-> but booting it lead to this:
-> [   52.274278] sun8i-ce 1c15000.crypto: Register sha1
-> [   52.279286] sun8i-ce 1c15000.crypto: sun8i_hash_crainit statesize is 96
-> [   52.285933] sun8i-ce 1c15000.crypto: Fallback for sha1-sun8i-ce is sha1-ce
-> [   52.312423] shash_default_export descsize=104
-> [   52.316021] alg: ahash: sha1-sun8i-ce export() overran state buffer on test vector 0, cfg=\"import/export\" statesize=96
-> [   52.333189] sun8i-ce 1c15000.crypto: Register sha224
-> [   52.338387] sun8i-ce 1c15000.crypto: sun8i_hash_crainit statesize is 104
-> [   52.345097] sun8i-ce 1c15000.crypto: Fallback for sha224-sun8i-ce is sha224-ce
-> [   52.371865] shash_default_export descsize=112
-> [   52.375459] alg: ahash: sha224-sun8i-ce export() overran state buffer on test vector 0, cfg=\"import/export\" statesize=104
-> [   52.393039] sun8i-ce 1c15000.crypto: Register sha256
-> [   52.398219] sun8i-ce 1c15000.crypto: sun8i_hash_crainit statesize is 104
-> [   52.404937] sun8i-ce 1c15000.crypto: Fallback for sha256-sun8i-ce is sha256-ce
-> [   52.431476] shash_default_export descsize=112
-> [   52.435073] alg: ahash: sha256-sun8i-ce export() overran state buffer on test vector 0, cfg=\"import/export\" statesize=104
-> 
-> For sha1, sha224 and sha256, my driver fail to pass the test.
-> This is due to the fact that export() (and so shash_async_export/shash_default_export) use crypto_shash_descsize() as length but selftest expect it to be statesize.
+test this diff, dwc3 work for my device, thanks.
 
-That doesn't appear to actually be the problem.  shash_default_export() does
-assume descsize == statesize, but it's only used when that's the case.
-See shash_prepare_alg().  
-
-> Just in case, this is my export code:
-> int sun8i_hash_crainit(struct crypto_tfm *tfm)
-> {
->         struct sun8i_hash_tfm_ctx *op = crypto_tfm_ctx(tfm);
->         struct ahash_alg *alg = __crypto_ahash_alg(tfm->__crt_alg);
->         struct sun8i_ce_alg_template *algt;
-> 
->         memset(op, 0, sizeof(struct sun8i_hash_tfm_ctx));
-> 
->         crypto_ahash_set_reqsize(__crypto_ahash_cast(tfm), sizeof(struct sun8i_hash_reqctx));
-> 
->         op->fallback_tfm = crypto_alloc_ahash(crypto_tfm_alg_name(tfm), 0, CRYPTO_ALG_NEED_FALLBACK);
->         if (IS_ERR(op->fallback_tfm)) {
->                 dev_err(algt->ce->dev, "Fallback driver cound no be loaded\n");
->                 return PTR_ERR(op->fallback_tfm);
+2020-02-07 13:16 GMT+08:00, Kishon Vijay Abraham I <kishon@ti.com>:
+> Hi,
+>
+> On 06/02/20 7:09 PM, youling257 wrote:
+>> This patch cause "dwc3 dwc3.3.auto: failed to create device link to
+>> dwc3.3.auto.ulpi" problem.
+>> https://bugzilla.kernel.org/show_bug.cgi?id=206435
+>
+> I'm suspecting there is some sort of reverse dependency with dwc3 ULPI.
+> Can you try the following diff?
+>
+> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> index 2eb28cc2d2dc..397311dcb116 100644
+> --- a/drivers/phy/phy-core.c
+> +++ b/drivers/phy/phy-core.c
+> @@ -687,7 +687,7 @@ struct phy *phy_get(struct device *dev, const char
+> *string)
+>
+>         get_device(&phy->dev);
+>
+> -       link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
+> +       link = device_link_add(dev, &phy->dev, DL_FLAG_SYNC_STATE_ONLY);
+>         if (!link) {
+>                 dev_err(dev, "failed to create device link to %s\n",
+>                         dev_name(phy->dev.parent));
+> @@ -802,7 +802,7 @@ struct phy *devm_of_phy_get(struct device *dev,
+> struct device_node *np,
+>                 return phy;
 >         }
->         dev_info(op->ce->dev, "%s statesize is %u\n", __func__, algt->alg.hash.halg.statesize);
->         dev_info(op->ce->dev, "Fallback for %s is %s\n",
->                 crypto_tfm_alg_driver_name(tfm),
->                 crypto_tfm_alg_driver_name(&op->fallback_tfm->base));
->         return 0;
-> }
-> 
-> int sun8i_hash_init(struct ahash_request *areq)
-> {
->         struct sun8i_hash_reqctx *rctx = ahash_request_ctx(areq);
->         struct crypto_ahash *tfm = crypto_ahash_reqtfm(areq);
->         struct sun8i_hash_tfm_ctx *tfmctx = crypto_ahash_ctx(tfm);
-> 
->         memset(rctx, 0, sizeof(struct sun8i_hash_reqctx));
-> 
->         ahash_request_set_tfm(&rctx->fallback_req, tfmctx->fallback_tfm);
->         rctx->fallback_req.base.flags = areq->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP;
-> 
->         return crypto_ahash_init(&rctx->fallback_req);
-> }
-> 
-> int sun8i_hash_export(struct ahash_request *areq, void *out)
-> {
->         struct sun8i_hash_reqctx *rctx = ahash_request_ctx(areq);
->         struct crypto_ahash *tfm = crypto_ahash_reqtfm(areq);
->         struct sun8i_hash_tfm_ctx *tfmctx = crypto_ahash_ctx(tfm);
-> 
->         ahash_request_set_tfm(&rctx->fallback_req, tfmctx->fallback_tfm);
->         rctx->fallback_req.base.flags = areq->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP;
->                                                                                 
->         return crypto_ahash_export(&rctx->fallback_req, out);                   
-> }
-
-It seems the actual problem is that you're doing the export using a fallback
-algorithm, which may have a statesize different from the one you're setting.
-
-But I'm not sure what you should do here, since the correct statesize can only
-be known when a tfm is allocated, not when the algorithm is registered.
-
-Possibly statesize needs to be made a property of the tfm (struct crypto_ahash
-and crypto_shash) rather than the algorithm (struct hash_alg_common).
-
-But are you sure you actually need a fallback algorithm for any hash algorithms
-in your driver in the first place?
-
-- Eric
+>
+> -       link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
+> +       link = device_link_add(dev, &phy->dev, DL_FLAG_SYNC_STATE_ONLY);
+>         if (!link) {
+>                 dev_err(dev, "failed to create device link to %s\n",
+>                         dev_name(phy->dev.parent));
+> @@ -851,7 +851,7 @@ struct phy *devm_of_phy_get_by_index(struct device
+> *dev, struct device_node *np,
+>         *ptr = phy;
+>         devres_add(dev, ptr);
+>
+> -       link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
+> +       link = device_link_add(dev, &phy->dev, DL_FLAG_SYNC_STATE_ONLY);
+>         if (!link) {
+>                 dev_err(dev, "failed to create device link to %s\n",
+>                         dev_name(phy->dev.parent));
+>
+> Thanks
+> Kishon
+>
