@@ -2,87 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AC6E155D47
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 19:02:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57CBD155D6E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 19:14:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbgBGSCw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 13:02:52 -0500
-Received: from mail-yb1-f201.google.com ([209.85.219.201]:39280 "EHLO
-        mail-yb1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbgBGSCw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 13:02:52 -0500
-Received: by mail-yb1-f201.google.com with SMTP id a140so2713347ybg.6
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 10:02:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=iKjEZXvKKVcsWaI7ym2KttzdoB/EiCc42gBxG/ve1HE=;
-        b=gDNjzVrHvKMFTQCFsIM4J+qmSZzKqJ6pjINTMCtV6GCnxkS9bWToX/Y7xbkb+A3BDU
-         BG7girIrsDQZf30Fla4zwIn/uYke9+gN9WYJ37tHJS0UCJ1NOXhqpu6CXZy5gt76lVq1
-         hMFOpKyvDkQSFnaL/WVIg1c4lfLL/MZHN+OC6qHtiUWwLxPdlVOZVQTG7GkNpejL+Wtp
-         RyyWyJ1obapU77yE+1ZScpmgkSaWzo84v3k9Bss2jm1uk2sl9MOYTfuNUd87dh9m6/qv
-         zwDaDmlEWABrXP0KCozHVo39yHMf4vTFKGS2u2BsFFf/esrXDo19vauBjGw6p/GWCA2Z
-         AtqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=iKjEZXvKKVcsWaI7ym2KttzdoB/EiCc42gBxG/ve1HE=;
-        b=pLN3NcegJCkyMnVY2BZsnUExN4ytTG5GJhRKYBEkh5NSAUr8IBOm8X7/91iV17cgyg
-         WUufo10y+Xlt51gF+TYYxB2Z417g1iVbP1L8aZgdJlDPLn/DuinjvMNdsRCkrp0lhJdQ
-         7EVUdgiuURQlwR7jGE+CielGselI2Tgmj7TuUloS0hhkU9YS28OKCl+SoZGU35xxHY39
-         pyDW0TTdMF4vh2piZOD4JT4kjhHCLBfrDK/FQXpBe0d+97TGLIvk0RPAZvEtYQIErxSt
-         4yYP6ZnzpwZvrK1/6fHudeMnsySd9wc4a3UoFw8RJmgShCas3sP0gf8STFBE7BWxP9yQ
-         liOw==
-X-Gm-Message-State: APjAAAWgRDA3xIfcRVKD2ure7maF+jYihWByY8Q4IPvnuBfYlmZ34Tdf
-        Z+dV0Oy9/c5vbc1uvAghDyoCqkCMO1+Poh8=
-X-Google-Smtp-Source: APXvYqzHR4qUgqPBjFg2Eg15cywA5UDtWrs7vMReQKmbNj/hxk/GoJLGmLAct4ku6gkiSA6xO4UPiZNVNtyqGtg=
-X-Received: by 2002:a25:c04f:: with SMTP id c76mr306526ybf.355.1581098571073;
- Fri, 07 Feb 2020 10:02:51 -0800 (PST)
-Date:   Fri,  7 Feb 2020 10:01:49 -0800
-Message-Id: <20200207180148.235161-1-smoreland@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-Subject: [PATCH v3] security: selinux: allow per-file labeling for bpffs
-From:   Steven Moreland <smoreland@google.com>
-To:     paul@paul-moore.com, sds@tycho.nsa.gov, eparis@parisplace.org,
-        keescook@chromium.org, anton@enomsg.org, ccross@android.com,
-        tony.luck@intel.com, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@android.com
-Cc:     "Connor O'Brien" <connoro@google.com>,
-        Steven Moreland <smoreland@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727012AbgBGSOD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 13:14:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39360 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726900AbgBGSOC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 13:14:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id B8E38AD3F;
+        Fri,  7 Feb 2020 18:14:00 +0000 (UTC)
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     akpm@linux-foundation.org
+Cc:     dave@stgolabs.net, linux-kernel@vger.kernel.org, mcgrof@kernel.org,
+        broonie@kernel.org, alex.williamson@redhat.com
+Subject: [PATCH -next 0/5] rbtree: optimize frequent tree walks
+Date:   Fri,  7 Feb 2020 10:03:00 -0800
+Message-Id: <20200207180305.11092-1-dave@stgolabs.net>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Connor O'Brien <connoro@google.com>
+This series introduces the ll_rbtree interface to optimize rbtree users
+that incur in frequent in-order tree iterations (even full traversals).
+This can be seen as an abstraction to what is already done for dealing
+with VMAs (albeit non-augmented trees).
 
-Add support for genfscon per-file labeling of bpffs files. This allows
-for separate permissions for different pinned bpf objects, which may
-be completely unrelated to each other.
+Mainly, it trades off higher per-node memory footprint (two extra pointers)
+for minimal runtime overhead to gain O(1) brachless next and prev node
+pointers. See patch 1 for full details, but, for example, the following
+tables show the benefits vs the costs of using this new interface.
 
-Signed-off-by: Connor O'Brien <connoro@google.com>
-Signed-off-by: Steven Moreland <smoreland@google.com>
----
- security/selinux/hooks.c | 1 +
- 1 file changed, 1 insertion(+)
+   +--------+--------------+-----------+
+   | #nodes | plain rbtree | ll-rbtree |
+   +--------+--------------+-----------+
+   |     10 |          138 |        24 |
+   |    100 |        7,200 |       425 |
+   |   1000 |       17,000 |     8,000 |
+   |  10000 |      501,090 |   222,500 |
+   +--------+--------------+-----------+
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index d9e8b2131a65..18f8cd47729c 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -699,6 +699,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
- 	if (!strcmp(sb->s_type->name, "debugfs") ||
- 	    !strcmp(sb->s_type->name, "tracefs") ||
- 	    !strcmp(sb->s_type->name, "binderfs") ||
-+	    !strcmp(sb->s_type->name, "bpf") ||
- 	    !strcmp(sb->s_type->name, "pstore"))
- 		sbsec->flags |= SE_SBGENFS;
- 
+While there are other node representations that optimize getting such pointers
+without bloating the nodes as much, such as keeping a parent pointer or threaded
+trees where the nil prev/next pointers are recycled; both incurring in higher
+runtime penalization for common modification operations as well as any rotations.
+The overhead of tree modifications can be seen in the following table, comparing
+cycles to insert+delete:
+
+   +--------+--------------+------------------+-----------+
+   | #nodes | plain rbtree | augmented rbtree | ll-rbtree |
+   +--------+--------------+------------------+-----------+
+   |     10 |          530 |              840 |       600 |
+   |    100 |        7,100 |           14,200 |     7,800 |
+   |   1000 |      265,000 |          370,000 |   205,200 |
+   |  10000 |    4,400,000 |        5,500,000 | 4,200,000 |
+   +--------+--------------+------------------+-----------+
+
+
+Patch 1 introduces the ll_rbtree machinery.
+
+Patches 2-5 convert users that might benefit from the new interface.
+
+Full details and justifications for the conversion are in each
+individual patch.
+
+I am Cc'ing some of the maintainers of the users I have converted to the whole
+series such that it can the numbers and interface details can be easily seen.
+
+Please consider for v5.7.
+
+Thanks!
+
+Davidlohr Bueso (5):
+  lib/rbtree: introduce linked-list rbtree interface
+  proc/sysctl: optimize proc_sys_readdir
+  regmap: optimize sync() and drop() regcache callbacks
+  vfio/type1: optimize dma_list tree iterations
+  uprobes: optimize build_probe_list()
+
+ Documentation/rbtree.txt              |  74 ++++++++++++++++++++++++
+ drivers/base/regmap/regcache-rbtree.c |  62 +++++++++++---------
+ drivers/vfio/vfio_iommu_type1.c       |  50 +++++++++--------
+ fs/proc/proc_sysctl.c                 |  37 ++++++------
+ include/linux/ll_rbtree.h             | 103 ++++++++++++++++++++++++++++++++++
+ include/linux/sysctl.h                |   6 +-
+ kernel/events/uprobes.c               |  47 ++++++++--------
+ 7 files changed, 286 insertions(+), 93 deletions(-)
+ create mode 100644 include/linux/ll_rbtree.h
+
 -- 
-2.25.0.341.g760bfbb309-goog
+2.16.4
 
-v2 -> v3
-- on selinux next branch (instead of master)
