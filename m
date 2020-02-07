@@ -2,61 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B90D15522D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 06:49:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC972155230
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 06:56:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbgBGFtN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 00:49:13 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38473 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbgBGFtN (ORCPT
+        id S1726738AbgBGF4B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 00:56:01 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:36503 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbgBGF4B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 00:49:13 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a9so1323291wmj.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 21:49:12 -0800 (PST)
+        Fri, 7 Feb 2020 00:56:01 -0500
+Received: by mail-ot1-f67.google.com with SMTP id j20so1075869otq.3;
+        Thu, 06 Feb 2020 21:56:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=UvTD/zo46zus1rTHwzd6OxS+Ix2EfsxvRB6ZMsw3SJ0=;
-        b=HJ/GPSMISeORX2vc2lOURkjkmVlmUr3Rs6tw1MwpGOqI8RfdPbWNEC6LnfUzlOo7Ew
-         0QlrFLJluFh4kPerSs+0NTxV9NRVE1ZTIKzbRVuEj46VtfhKyiuCGrZ0VPIqhulv/MbO
-         3c/KS0Uczzjp9Cc/joVbbdkgrOKaLMImzNBRU2nbo71/+IwwXwdf+nLmsFBxiImVjhWj
-         NPAahBOIMmjh1Xa7kT857OPk8Ez/PhGW6MiM9DTQgAkc1qLStmAOmlydoCM2VU61pTHb
-         MH9dF3wgRax7Eftq3NE9EbaOoeiphMzcb/pBXbsED5mAvCJVlnUhE+NRqzZwtighFGLx
-         Dwpw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GNqCMb+6h4mDmpo7PkQEAJD5G5WQFTN1ZybnlaretkM=;
+        b=lnpaKhopowUy9WJU51IFT2Qyj/Li8tKyAWr1EmQyJ79vbJoKEtcstMGwTG6fC1zupI
+         jKQ0CprnNVt8NXkDuLYcY0/vOMSWLKn0fRRbKfUwcuezFmAX1FlLDb/mIhdwd6uBAzbP
+         ZpWYLpmemTfHlReLscC0i04meUAzisbaRED4QVOOfo7r+pZ/3Edn2SC5GbAkjYSO0I8m
+         ivsR4HYnkDOrJzn6sU6Qafd/4SinuBIEuz+8Q2jVIw2x+93uAQ1dnFwlpuqGK3eOQYKq
+         7xQ7g+2Hf/+UOj1jP/LaDjiyxaJwMyMAZMbVIVGpOK9WuIsbLgxIAhpAiVF75i6r1s5j
+         vLbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=UvTD/zo46zus1rTHwzd6OxS+Ix2EfsxvRB6ZMsw3SJ0=;
-        b=KCzsTRtWEsEtb88EKFztZ+ApJ9zWhqT8ONjkJURKDh/Mkc/GI0Zh15V3x+qjqGoII9
-         hMowljUDf+FdeUpfdWn8XwLhQDIqjMiPnwVhnEYDue5HKbl77tPszto6kdWNvslhcRqL
-         d2v0oT/Mbwq1uUw3iaP+WjSCHCLYXlq7J82SEIcVaC8UAZWAxGsBZB//ucK0ZVrJ+OfU
-         B/fzl+PGV/NphH3Vq49N1OvvGgk7Mkjw7+vzEwxnBRSz+5DRMlkviDMtShcNgDUP5JGr
-         UONxBS+6m1JSUJp0Lm1l0fQkhRwVMnto+3kNpjrRr1XzGiHGWB0F1gIFSo+WUeX7m7uN
-         MN0Q==
-X-Gm-Message-State: APjAAAUDn9OmWT/X049yjD7652UdSUkI8bL0nqGJDzEmgkd578PJKhHJ
-        Aaf8QiVcXTZ1YR+gziX7K/nzM3hIB8OgZSdgFmM=
-X-Google-Smtp-Source: APXvYqwrAyZ45lriEoqMChK1A88SLtTFmeYtnGPo/pdlcFFeC0i9RgcpQzuVUVGKomibVvDBjjIAbhg2QHDLT8ANZxI=
-X-Received: by 2002:a1c:a381:: with SMTP id m123mr2142489wme.158.1581054551371;
- Thu, 06 Feb 2020 21:49:11 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GNqCMb+6h4mDmpo7PkQEAJD5G5WQFTN1ZybnlaretkM=;
+        b=iDUozY5AzbmPUpm7INXz41XI2X68hkKX4Tf0WPY1ReevqIEeYnp4Z3qBcqciWgq4dQ
+         uUTrwaigWKkb47Z7o6jNFubU9m+koHzDRA/yc7eyy5zPgCQKbpZ5IAKn4cvAXw8op4X5
+         moeieqEZnfUUmSdVEIb2dkQ1SbvADw332ACej/BfVc/57XHGum/YJPzqyjilpzGWePWX
+         2OgHVd+0+wy0jNrviwgKt8YzDslhXvv/qqwXjWx5yZ5v5rJhXEZkR6sUyXXMvdqcD5LN
+         JzAgIO4nNsZBsEK6VE6Llh3eAjAuqz+OB26Wk5CB2xyOhZiFpOo70AqqVcyMkF7RAp4Y
+         vJqQ==
+X-Gm-Message-State: APjAAAWuMywRFt5ibTBHH99CmehO68ZFK63SYqXbLviCX044V2BKNO8d
+        DnvkyW4AnN06qfMNSfyGUSZpQ60qXCuk40Z9+gk=
+X-Google-Smtp-Source: APXvYqwzD5KFwcxS7dg0R98BSgS9GsIPoXAkhL2KBxUj0jdTvN15pvxBJkGZzklBEVCAyldxuKMoSctdORZp9XFTwk8=
+X-Received: by 2002:a9d:4c92:: with SMTP id m18mr1409184otf.168.1581054960272;
+ Thu, 06 Feb 2020 21:56:00 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a5d:45c7:0:0:0:0:0 with HTTP; Thu, 6 Feb 2020 21:49:10 -0800 (PST)
-Reply-To: lerynnewest51@gmail.com
-From:   Lerynne west <gotojimmm@gmail.com>
-Date:   Fri, 7 Feb 2020 05:49:10 +0000
-Message-ID: <CAJOoq1CCecLHNjUEKMMU+teuym+iMWryy7_Xp2=Co6mHwyDkfg@mail.gmail.com>
-Subject: Donation
-To:     undisclosed-recipients:;
+References: <20200206150626.708649-1-gch981213@gmail.com> <20200206150626.708649-3-gch981213@gmail.com>
+ <20200206205551.GA15172@bogus>
+In-Reply-To: <20200206205551.GA15172@bogus>
+From:   Chuanhong Guo <gch981213@gmail.com>
+Date:   Fri, 7 Feb 2020 13:55:49 +0800
+Message-ID: <CAJsYDVKXvAkQawwayX8JVrjvEKPuTyQXE8rw=BRiyVROKrdWrg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] dt-binding: spi: add bindings for spi-ar934x
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-My name is Lerynne West Ceo Callum Foundation and I'm donating $
-500,000 to you and your family.
-Get back to me through via email: lerynnewest51@gmail.com  for other Directives.
-Greetings.
-Lerynne West.
+On Fri, Feb 7, 2020 at 4:55 AM Rob Herring <robh@kernel.org> wrote:
+>
+> On Thu,  6 Feb 2020 23:06:26 +0800, Chuanhong Guo wrote:
+> > Add binding documentation for SPI controller in Qualcomm Atheros
+> > AR934x/QCA95xx SoCs.
+> >
+> > Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
+> > ---
+> > Changes since v1: none
+> >  .../bindings/spi/qca,ar934x-spi.yaml          | 40 +++++++++++++++++++
+> >  1 file changed, 40 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/spi/qca,ar934x-spi.yaml
+> >
+>
+> My bot found errors running 'make dt_binding_check' on your patch:
+>
+> Documentation/devicetree/bindings/display/simple-framebuffer.example.dts:21.16-37.11: Warning (chosen_node_is_root): /example-0/chosen: chosen node must be at root node
+> Error: Documentation/devicetree/bindings/spi/qca,ar934x-spi.example.dts:20.28-29 syntax error
+> FATAL ERROR: Unable to parse input tree
+> scripts/Makefile.lib:300: recipe for target 'Documentation/devicetree/bindings/spi/qca,ar934x-spi.example.dt.yaml' failed
+> make[1]: *** [Documentation/devicetree/bindings/spi/qca,ar934x-spi.example.dt.yaml] Error 1
+> Makefile:1263: recipe for target 'dt_binding_check' failed
+> make: *** [dt_binding_check] Error 2
+>
+> See https://patchwork.ozlabs.org/patch/1234394
+> Please check and re-submit.
+
+It's caused by "clocks = <&pll ATH79_CLK_AHB>" where ATH79_CLK_AHB
+isn't defined without a include of dt-bindings/clock/ath79-clk.h
+I'll replace this with a bogus "clocks = <&spi_clock>" instead in v3.
+
+Regards,
+Chuanhong Guo
