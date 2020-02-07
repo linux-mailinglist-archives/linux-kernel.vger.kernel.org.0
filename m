@@ -2,164 +2,280 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D238155C88
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 18:04:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28D58155C92
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 18:06:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbgBGREb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 12:04:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52972 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726874AbgBGREa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 12:04:30 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7686521927;
-        Fri,  7 Feb 2020 17:04:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581095069;
-        bh=VLYiA3MH1A/lCTCPikOl983ZPXm4JWB1EKa7ZQ4K++8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ERZFqZOrJflJqfyYP391wT2lv0fv2F4QUwkCsVMrX5qea1T1V7FamJVwD0ODIsgXA
-         r2JSwJytx+fq+jNyqL80QEXSzVFMkmNlH+Zl6XX9ypiXggZJ3Ssc7ZSZZPoJ4aG1bE
-         foMynkqnumgWXTyPgV5j1Ax8pzyBfF20MNUziduw=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, andres@anarazel.de, willy@infradead.org,
-        dhowells@redhat.com, hch@infradead.org, jack@suse.cz,
-        akpm@linux-foundation.org
-Subject: [PATCH v3 3/3] vfs: add a new ioctl for fetching the superblock's errseq_t
-Date:   Fri,  7 Feb 2020 12:04:23 -0500
-Message-Id: <20200207170423.377931-4-jlayton@kernel.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200207170423.377931-1-jlayton@kernel.org>
-References: <20200207170423.377931-1-jlayton@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727317AbgBGRGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 12:06:18 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43366 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727065AbgBGRGR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 12:06:17 -0500
+Received: by mail-qt1-f195.google.com with SMTP id d18so2343618qtj.10
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 09:06:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=RdUZszUoRKky8NvIk124GtZHPfeOOpksA+eMKXZrPwo=;
+        b=jFgyXpwSNBAe6yTrmnldmAseRFzf3b/SAgQk4YAM/KQzVPxZOlK+3s/DTU6rcL0RgS
+         QRRcVz33uTW9GDVZqOzjArlQlx+rBE4lOtwfFtWPJja9NueP9cA63LpDVl0L1W9q1gIG
+         igiYQMpzlqZ6Z9DIzjegQ2U1pdXLiVplf3Ss5NEEmaZTH0wpljoWaocw13M3jxVc+2v9
+         gVoxqQNuupk8JSBla7T/nOS/WjfUILz+EAvFMtkXXwBw6VtsEvbbWdQdJzMv0wiaDrPi
+         wcs+dHW0gYfpYkNkOw+A9e5IUxZNlahjdL5Nh2HX66nRKfMW39eKUE07Vkas1ypAMOFZ
+         TbdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=RdUZszUoRKky8NvIk124GtZHPfeOOpksA+eMKXZrPwo=;
+        b=KVhtih9l6R4hkWAcS7RpKrIXLudPr6h7VLNrDeXo/Sqrc8VTKDAp4pLxfK23w1HaIp
+         5gDJ9CBl9fDa+/7T/tX3Q/u5sEcrI9DI4jVnpi+Ly2lC2GmcUhVVBOvL+kE4IIVAWdpZ
+         MDznY500+SIkRdJ7nhAzku3RmKxZu69dL1M0dFjmgynHazPiXXwn+zK4BGtMpMlnp0rh
+         Y989yGOpgMceclXDxXTrHHYaji7CYYkVruJ5yhSm8qO3iZg+A+46I9wSDRkE1TB1Q5oz
+         XSQLoru+1ewF9//YT6qB7SopuWt7Wzwrn1KYZVk2ZqkzG2KjwXz40hcixV68P7H6LLlV
+         wSrw==
+X-Gm-Message-State: APjAAAVByH144eLcejNCu6QL1wWfcnbgEnUzt01VvtL3bOfiOMq/TwlJ
+        2me5/aihGxZQalKJjTFJppKyPQ==
+X-Google-Smtp-Source: APXvYqy1nMwySTpCErvAhcO5hy8YL+6y5ALh6683X73aqbdKLCwKk6/+h9VTHjQF/qdjhuIuLtpI9g==
+X-Received: by 2002:ac8:4b7c:: with SMTP id g28mr8226012qts.180.1581095174601;
+        Fri, 07 Feb 2020 09:06:14 -0800 (PST)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id l184sm1544219qkc.107.2020.02.07.09.06.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Feb 2020 09:06:13 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     elver@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH -next] mm/swapfile: fix and annotate various data races
+Date:   Fri,  7 Feb 2020 12:06:03 -0500
+Message-Id: <1581095163-12198-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeff Layton <jlayton@redhat.com>
+swap_info_struct si.highest_bit, si.swap_map[offset] and si.flags could
+be accessed concurrently separately as noticed by KCSAN,
 
-Some time ago, the PostgreSQL developers mentioned that they'd like a
-way to tell whether there have been any writeback errors on a given
-filesystem without having to forcibly sync out all buffered writes.
+=== si.highest_bit ===
 
-Now that we have a per-sb errseq_t that tracks whether any inode on the
-filesystem might have failed writeback, we can present that to userland
-applications via a new interface. Add a new generic fs ioctl for that
-purpose. This just reports the current state of the errseq_t counter
-with the SEEN bit masked off.
+ write to 0xffff8d5abccdc4d4 of 4 bytes by task 5353 on cpu 24:
+  swap_range_alloc+0x81/0x130
+  swap_range_alloc at mm/swapfile.c:681
+  scan_swap_map_slots+0x371/0xb90
+  get_swap_pages+0x39d/0x5c0
+  get_swap_page+0xf2/0x524
+  add_to_swap+0xe4/0x1c0
+  shrink_page_list+0x1795/0x2870
+  shrink_inactive_list+0x316/0x880
+  shrink_lruvec+0x8dc/0x1380
+  shrink_node+0x317/0xd80
+  do_try_to_free_pages+0x1f7/0xa10
+  try_to_free_pages+0x26c/0x5e0
+  __alloc_pages_slowpath+0x458/0x1290
 
-Cc: Andres Freund <andres@anarazel.de>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+ read to 0xffff8d5abccdc4d4 of 4 bytes by task 6672 on cpu 70:
+  scan_swap_map_slots+0x4a6/0xb90
+  scan_swap_map_slots at mm/swapfile.c:892
+  get_swap_pages+0x39d/0x5c0
+  get_swap_page+0xf2/0x524
+  add_to_swap+0xe4/0x1c0
+  shrink_page_list+0x1795/0x2870
+  shrink_inactive_list+0x316/0x880
+  shrink_lruvec+0x8dc/0x1380
+  shrink_node+0x317/0xd80
+  do_try_to_free_pages+0x1f7/0xa10
+  try_to_free_pages+0x26c/0x5e0
+  __alloc_pages_slowpath+0x458/0x1290
+
+ Reported by Kernel Concurrency Sanitizer on:
+ CPU: 70 PID: 6672 Comm: oom01 Tainted: G        W    L 5.5.0-next-20200205+ #3
+ Hardware name: HPE ProLiant DL385 Gen10/ProLiant DL385 Gen10, BIOS A40 07/10/2019
+
+=== si.swap_map[offset] ===
+
+ write to 0xffffbc370c29a64c of 1 bytes by task 6856 on cpu 86:
+  __swap_entry_free_locked+0x8c/0x100
+  __swap_entry_free_locked at mm/swapfile.c:1209 (discriminator 4)
+  __swap_entry_free.constprop.20+0x69/0xb0
+  free_swap_and_cache+0x53/0xa0
+  unmap_page_range+0x7f8/0x1d70
+  unmap_single_vma+0xcd/0x170
+  unmap_vmas+0x18b/0x220
+  exit_mmap+0xee/0x220
+  mmput+0x10e/0x270
+  do_exit+0x59b/0xf40
+  do_group_exit+0x8b/0x180
+
+ read to 0xffffbc370c29a64c of 1 bytes by task 6855 on cpu 20:
+  _swap_info_get+0x81/0xa0
+  _swap_info_get at mm/swapfile.c:1140
+  free_swap_and_cache+0x40/0xa0
+  unmap_page_range+0x7f8/0x1d70
+  unmap_single_vma+0xcd/0x170
+  unmap_vmas+0x18b/0x220
+  exit_mmap+0xee/0x220
+  mmput+0x10e/0x270
+  do_exit+0x59b/0xf40
+  do_group_exit+0x8b/0x180
+
+=== si.flags ===
+
+ write to 0xffff956c8fc6c400 of 8 bytes by task 6087 on cpu 23:
+  scan_swap_map_slots+0x6fe/0xb50
+  scan_swap_map_slots at mm/swapfile.c:887
+  get_swap_pages+0x39d/0x5c0
+  get_swap_page+0x377/0x524
+  add_to_swap+0xe4/0x1c0
+  shrink_page_list+0x1795/0x2870
+  shrink_inactive_list+0x316/0x880
+  shrink_lruvec+0x8dc/0x1380
+  shrink_node+0x317/0xd80
+  do_try_to_free_pages+0x1f7/0xa10
+  try_to_free_pages+0x26c/0x5e0
+  __alloc_pages_slowpath+0x458/0x1290
+
+ read to 0xffff956c8fc6c400 of 8 bytes by task 6207 on cpu 63:
+  _swap_info_get+0x41/0xa0
+  __swap_info_get at mm/swapfile.c:1114
+  put_swap_page+0x84/0x490
+  __remove_mapping+0x384/0x5f0
+  shrink_page_list+0xff1/0x2870
+  shrink_inactive_list+0x316/0x880
+  shrink_lruvec+0x8dc/0x1380
+  shrink_node+0x317/0xd80
+  do_try_to_free_pages+0x1f7/0xa10
+  try_to_free_pages+0x26c/0x5e0
+  __alloc_pages_slowpath+0x458/0x1290
+
+The writes are under si->lock but the reads are not. For si.highest_bit
+and si.swap_map[offset], data race could trigger logic bugs, so fix them
+by having WRITE_ONCE() for the writes and READ_ONCE() for the reads
+except those isolated reads where they compare against zero which a data
+race would cause no harm. Thus, annotate them as intentional data races
+using the data_race() macro.
+
+For si.flags, the readers are only interested in a single bit where a
+data race there would cause no issue there.
+
+Signed-off-by: Qian Cai <cai@lca.pw>
 ---
- fs/ioctl.c              |  4 ++++
- include/linux/errseq.h  |  1 +
- include/uapi/linux/fs.h |  1 +
- lib/errseq.c            | 33 +++++++++++++++++++++++++++++++--
- 4 files changed, 37 insertions(+), 2 deletions(-)
+ mm/swapfile.c | 31 ++++++++++++++++++-------------
+ 1 file changed, 18 insertions(+), 13 deletions(-)
 
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 7c9a5df5a597..41e991cec4c3 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -705,6 +705,10 @@ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
- 	case FS_IOC_FIEMAP:
- 		return ioctl_fiemap(filp, argp);
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 2c33ff456ed5..8178db2b9873 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -678,7 +678,7 @@ static void swap_range_alloc(struct swap_info_struct *si, unsigned long offset,
+ 	if (offset == si->lowest_bit)
+ 		si->lowest_bit += nr_entries;
+ 	if (end == si->highest_bit)
+-		si->highest_bit -= nr_entries;
++		WRITE_ONCE(si->highest_bit, si->highest_bit - nr_entries);
+ 	si->inuse_pages += nr_entries;
+ 	if (si->inuse_pages == si->pages) {
+ 		si->lowest_bit = si->max;
+@@ -710,7 +710,7 @@ static void swap_range_free(struct swap_info_struct *si, unsigned long offset,
+ 	if (end > si->highest_bit) {
+ 		bool was_full = !si->highest_bit;
  
-+	case FS_IOC_GETFSERR:
-+		return put_user(errseq_scrape(&inode->i_sb->s_wb_err),
-+				(unsigned int __user *)argp);
-+
- 	case FIGETBSZ:
- 		/* anon_bdev filesystems may not have a block size */
- 		if (!inode->i_sb->s_blocksize)
-diff --git a/include/linux/errseq.h b/include/linux/errseq.h
-index fc2777770768..de165623fa86 100644
---- a/include/linux/errseq.h
-+++ b/include/linux/errseq.h
-@@ -9,6 +9,7 @@ typedef u32	errseq_t;
+-		si->highest_bit = end;
++		WRITE_ONCE(si->highest_bit, end);
+ 		if (was_full && (si->flags & SWP_WRITEOK))
+ 			add_to_avail_list(si);
+ 	}
+@@ -843,7 +843,7 @@ static int scan_swap_map_slots(struct swap_info_struct *si,
+ 		else
+ 			goto done;
+ 	}
+-	si->swap_map[offset] = usage;
++	WRITE_ONCE(si->swap_map[offset], usage);
+ 	inc_cluster_info_page(si, si->cluster_info, offset);
+ 	unlock_cluster(ci);
  
- errseq_t errseq_set(errseq_t *eseq, int err);
- errseq_t errseq_sample(errseq_t *eseq);
-+errseq_t errseq_scrape(errseq_t *eseq);
- int errseq_check(errseq_t *eseq, errseq_t since);
- int errseq_check_and_advance(errseq_t *eseq, errseq_t *since);
- #endif
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index 379a612f8f1d..c39b37fba7f9 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -214,6 +214,7 @@ struct fsxattr {
- #define FS_IOC_FSSETXATTR		_IOW('X', 32, struct fsxattr)
- #define FS_IOC_GETFSLABEL		_IOR(0x94, 49, char[FSLABEL_MAX])
- #define FS_IOC_SETFSLABEL		_IOW(0x94, 50, char[FSLABEL_MAX])
-+#define FS_IOC_GETFSERR			_IOR('e', 1, unsigned int)
+@@ -889,12 +889,13 @@ static int scan_swap_map_slots(struct swap_info_struct *si,
  
- /*
-  * Inode flags (FS_IOC_GETFLAGS / FS_IOC_SETFLAGS)
-diff --git a/lib/errseq.c b/lib/errseq.c
-index 81f9e33aa7e7..8ded0920eed3 100644
---- a/lib/errseq.c
-+++ b/lib/errseq.c
-@@ -108,7 +108,7 @@ errseq_t errseq_set(errseq_t *eseq, int err)
- EXPORT_SYMBOL(errseq_set);
+ scan:
+ 	spin_unlock(&si->lock);
+-	while (++offset <= si->highest_bit) {
+-		if (!si->swap_map[offset]) {
++	while (++offset <= READ_ONCE(si->highest_bit)) {
++		if (data_race(!si->swap_map[offset])) {
+ 			spin_lock(&si->lock);
+ 			goto checks;
+ 		}
+-		if (vm_swap_full() && si->swap_map[offset] == SWAP_HAS_CACHE) {
++		if (vm_swap_full() &&
++		    READ_ONCE(si->swap_map[offset]) == SWAP_HAS_CACHE) {
+ 			spin_lock(&si->lock);
+ 			goto checks;
+ 		}
+@@ -905,11 +906,12 @@ static int scan_swap_map_slots(struct swap_info_struct *si,
+ 	}
+ 	offset = si->lowest_bit;
+ 	while (offset < scan_base) {
+-		if (!si->swap_map[offset]) {
++		if (data_race(!si->swap_map[offset])) {
+ 			spin_lock(&si->lock);
+ 			goto checks;
+ 		}
+-		if (vm_swap_full() && si->swap_map[offset] == SWAP_HAS_CACHE) {
++		if (vm_swap_full() &&
++		    READ_ONCE(si->swap_map[offset]) == SWAP_HAS_CACHE) {
+ 			spin_lock(&si->lock);
+ 			goto checks;
+ 		}
+@@ -1111,7 +1113,7 @@ static struct swap_info_struct *__swap_info_get(swp_entry_t entry)
+ 	p = swp_swap_info(entry);
+ 	if (!p)
+ 		goto bad_nofile;
+-	if (!(p->flags & SWP_USED))
++	if (data_race(!(p->flags & SWP_USED)))
+ 		goto bad_device;
+ 	offset = swp_offset(entry);
+ 	if (offset >= p->max)
+@@ -1137,7 +1139,7 @@ static struct swap_info_struct *_swap_info_get(swp_entry_t entry)
+ 	p = __swap_info_get(entry);
+ 	if (!p)
+ 		goto out;
+-	if (!p->swap_map[swp_offset(entry)])
++	if (data_race(!p->swap_map[swp_offset(entry)]))
+ 		goto bad_free;
+ 	return p;
  
- /**
-- * errseq_sample() - Grab current errseq_t value.
-+ * errseq_sample() - Grab current errseq_t value (or 0 if it hasn't been seen)
-  * @eseq: Pointer to errseq_t to be sampled.
-  *
-  * This function allows callers to initialise their errseq_t variable.
-@@ -117,7 +117,7 @@ EXPORT_SYMBOL(errseq_set);
-  * see it the next time it checks for an error.
-  *
-  * Context: Any context.
-- * Return: The current errseq value.
-+ * Return: The current errseq value or 0 if it wasn't previously seen
-  */
- errseq_t errseq_sample(errseq_t *eseq)
- {
-@@ -130,6 +130,35 @@ errseq_t errseq_sample(errseq_t *eseq)
+@@ -1206,7 +1208,10 @@ static unsigned char __swap_entry_free_locked(struct swap_info_struct *p,
+ 	}
+ 
+ 	usage = count | has_cache;
+-	p->swap_map[offset] = usage ? : SWAP_HAS_CACHE;
++	if (usage)
++		WRITE_ONCE(p->swap_map[offset], usage);
++	else
++		WRITE_ONCE(p->swap_map[offset], SWAP_HAS_CACHE);
+ 
+ 	return usage;
  }
- EXPORT_SYMBOL(errseq_sample);
+@@ -1258,7 +1263,7 @@ struct swap_info_struct *get_swap_device(swp_entry_t entry)
+ 		goto bad_nofile;
  
-+/**
-+ * errseq_scrape() - Grab current errseq_t value
-+ * @eseq: Pointer to errseq_t to be sampled.
-+ *
-+ * This function allows callers to scrape the current value of an errseq_t.
-+ * Unlike errseq_sample, this will always return the current value with
-+ * the SEEN flag unset, even when the value has not yet been seen.
-+ *
-+ * Context: Any context.
-+ * Return: The current errseq value with ERRSEQ_SEEN masked off
-+ */
-+errseq_t errseq_scrape(errseq_t *eseq)
-+{
-+	errseq_t old = READ_ONCE(*eseq);
-+
-+	/*
-+	 * For the common case of no errors ever having been set, we can skip
-+	 * marking the SEEN bit. Once an error has been set, the value will
-+	 * never go back to zero.
-+	 */
-+	if (old != 0) {
-+		errseq_t new = old | ERRSEQ_SEEN;
-+		if (old != new)
-+			cmpxchg(eseq, old, new);
-+	}
-+	return old & ~ERRSEQ_SEEN;
-+}
-+EXPORT_SYMBOL(errseq_scrape);
-+
- /**
-  * errseq_check() - Has an error occurred since a particular sample point?
-  * @eseq: Pointer to errseq_t value to be checked.
+ 	rcu_read_lock();
+-	if (!(si->flags & SWP_VALID))
++	if (data_race(!(si->flags & SWP_VALID)))
+ 		goto unlock_out;
+ 	offset = swp_offset(entry);
+ 	if (offset >= si->max)
+@@ -3436,7 +3441,7 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
+ 	} else
+ 		err = -ENOENT;			/* unused swap entry */
+ 
+-	p->swap_map[offset] = count | has_cache;
++	WRITE_ONCE(p->swap_map[offset], count | has_cache);
+ 
+ unlock_out:
+ 	unlock_cluster_or_swap_info(p, ci);
 -- 
-2.24.1
+1.8.3.1
 
