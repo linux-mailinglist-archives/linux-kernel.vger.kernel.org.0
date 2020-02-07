@@ -2,73 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17DDE156024
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 21:48:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FCFA15604B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 21:59:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbgBGUsv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 15:48:51 -0500
-Received: from mail-wm1-f45.google.com ([209.85.128.45]:55954 "EHLO
-        mail-wm1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726947AbgBGUsv (ORCPT
+        id S1727516AbgBGU6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 15:58:45 -0500
+Received: from mail.serbinski.com ([162.218.126.2]:46978 "EHLO
+        mail.serbinski.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727018AbgBGU6o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 15:48:51 -0500
-Received: by mail-wm1-f45.google.com with SMTP id q9so3867525wmj.5;
-        Fri, 07 Feb 2020 12:48:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=Vo3y/3LI/9xS6ovXLyiIY19qZ4rNDgl5cjTrH5DGm4I=;
-        b=HIcSkZzdBvgR0WPcV6MG53XbfktoeIflCnUKVByWe0jBVHEfCzzei6rSL0pCM7RKDY
-         wOvMog9dnWZEgWH2WvNPvv9oxFMCMI2ePH54mtU+k/JkksURgPOxbzsjjvLKSiQMLu3u
-         Coi36nEJkRtD5bOrgG7lxQKGTGbp1O4j9GjUUn4D8JZW8fujXkvnsykngs5jlBCpQhsf
-         WK87zaQPNiICgy5PpkE2HvhNwcZKHZmd0BtOJFD61Om+Nq7nihY5yrvaUJ3r1wFYvS3F
-         W36Qkw7vvt6+d+Vqz1rPdcd2MpVRA1dVA2bnCfzw1TsAoogFmSk2vLlP9K4/9XGaJRQY
-         swUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=Vo3y/3LI/9xS6ovXLyiIY19qZ4rNDgl5cjTrH5DGm4I=;
-        b=r+ulk18HLk+qNKmhTbe0/3VSJYflviNNiFQQzTqsxaaqJS0gcFT+yVrkfMIR3ZO4+J
-         qoU2XIlVl/kEamTXzQbu7m4X7zcJA5q7S4HXme2H+34qd9f3RJoNP5u6WMvP3xl399Pb
-         9DopYd5Jyxv2KZowWsrp0MbDClHKe/5D9bqbBW5k62p+8nBIAI8hvJQafJziaPoBrdCb
-         1ivLIaz8I15R3y5hyRUALQM+m5rK/32RvoFbS1KnlTPRwaTeDexxEsu83LJoswJrPleG
-         IOXu/suvPDJ75s1pXYbH3LFG3qRIYKz3K7ZQOv5gsCyY13qb0+BaLOYFuvQHDgDoCS6Y
-         JLQg==
-X-Gm-Message-State: APjAAAWp+P0YQoL/m/MVG37veeLbAbIW7GO2Zio5oZQxdNTmNb1YAM3b
-        2wTWt5Fc/a/gD9ohGmLo8GV1h2C8
-X-Google-Smtp-Source: APXvYqww2HjjQMNwdkQTkIkLEammO08yj4O42JmLPef87CvM4J1Vq8Ec3LZwBSGk+vtbq6vnsV4cfA==
-X-Received: by 2002:a1c:4b0f:: with SMTP id y15mr116024wma.87.1581108528197;
-        Fri, 07 Feb 2020 12:48:48 -0800 (PST)
-Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id g128sm4518742wme.47.2020.02.07.12.48.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2020 12:48:47 -0800 (PST)
-Date:   Fri, 7 Feb 2020 21:48:45 +0100
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     herbert@gondor.apana.org.au, davem@davemloft.net, heiko@sntech.de,
-        linux-rockchip@lists.infradead.org
-Cc:     linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Fri, 7 Feb 2020 15:58:44 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mail.serbinski.com (Postfix) with ESMTP id 854DCD00727;
+        Fri,  7 Feb 2020 20:50:42 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at serbinski.com
+Received: from mail.serbinski.com ([127.0.0.1])
+        by localhost (mail.serbinski.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id j-EbtHU13np8; Fri,  7 Feb 2020 15:50:36 -0500 (EST)
+Received: from anet (ipagstaticip-7ac5353e-e7de-3a0d-ff65-4540e9bc137f.sdsl.bell.ca [142.112.15.192])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mail.serbinski.com (Postfix) with ESMTPSA id 854D1D00717;
+        Fri,  7 Feb 2020 15:50:28 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.serbinski.com 854D1D00717
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=serbinski.com;
+        s=default; t=1581108628;
+        bh=MlElQX8UGSNGpk/B5oaMq2Wl0cfEBed5ksQ493alu7Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mMdBltuhTPxNolWE+/ZrxcYY8ll4FHCgyjB84nIXrIXYSM75RY5Jdk5HyGxdb7fef
+         vVRVYkL41HHJXLd3mE/0qrR7VziDpq925OlaUDSASqoUuOBeup1j53QiRkfDMkCFIS
+         nQDV9jKtn2W/4OcmZJQQBLR4RosJY0mly17QQ5z0=
+From:   Adam Serbinski <adam@serbinski.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Adam Serbinski <adam@serbinski.com>,
+        Andy Gross <agross@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Patrick Lai <plai@codeaurora.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [BUG] crypto: rk3288: ecb-aes-rk encryption failed
-Message-ID: <20200207204845.GA15221@Red>
+Subject: [PATCH 0/8] ASoC: qdsp6: db820c: Add support for external and bluetooth audio
+Date:   Fri,  7 Feb 2020 15:50:05 -0500
+Message-Id: <20200207205013.12274-1-adam@serbinski.com>
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+This patch set implements PCM audio support in qdsp6 and
+PCM and MI2S in apq8096/db820c to enable use of bluetooth
+audio codec and external MI2S port on db820c.
 
-When running next-20200207 on a rk3288-miqi, I get
-alg: skcipher: ecb-aes-rk encryption failed on test vector \"random: len=0 klen=32\"; expected_error=0, actual_error=-22, cfg=\"random: use_final nosimd src_divs=[<flush>54.11%@+27, 29.21%@+0, <flush>0.9%@+3586, 16.59%@+3971] dst_divs=[100.0%@+20] key_offset=63\"
+The db820c uses qca6174a for bluetooth, which by default
+is configured to use what qualcomm refers to as "PCM"
+format, which is a variation of TDM.
 
-Loading tcrypt later give me:
-udevd[117]: worker [125] /devices/platform/ff8a0000.cypto-controller is taking a long time
-udevd[117]: worker [125] /devices/platform/ff8a0000.cypto-controller timeout; kill it
+CC: Andy Gross <agross@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>
+CC: Liam Girdwood <lgirdwood@gmail.com>
+CC: Patrick Lai <plai@codeaurora.org>
+CC: Banajit Goswami <bgoswami@codeaurora.org>
+CC: Jaroslav Kysela <perex@perex.cz>
+CC: Takashi Iwai <tiwai@suse.com>
+CC: alsa-devel@alsa-project.org
+CC: linux-arm-msm@vger.kernel.org
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
 
-Regards
+Adam Serbinski (8):
+  ASoC: qdsp6: dt-bindings: Add q6afe pcm dt binding
+  ASoC: qdsp6: q6afe: add support to pcm ports
+  ASoC: qdsp6: q6afe-dai: add support to pcm port dais
+  ASoC: qdsp6: q6routing: add pcm port routing
+  ASoC: qcom: apq8096: add support for primary and quaternary I2S/PCM
+  ASoC: qcom/common: Use snd-soc-dummy-dai when codec is not specified
+  dts: msm8996/db820c: enable primary pcm and quaternary i2s
+  ASoC: qcom: apq8096: add kcontrols to set PCM rate
+
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi | 113 +++++++++
+ arch/arm64/boot/dts/qcom/msm8996-pins.dtsi   | 162 ++++++++++++
+ include/dt-bindings/sound/qcom,q6afe.h       |   8 +
+ sound/soc/qcom/apq8096.c                     | 172 +++++++++++--
+ sound/soc/qcom/common.c                      |  22 +-
+ sound/soc/qcom/qdsp6/q6afe-dai.c             | 198 ++++++++++++++-
+ sound/soc/qcom/qdsp6/q6afe.c                 | 246 +++++++++++++++++++
+ sound/soc/qcom/qdsp6/q6afe.h                 |   9 +-
+ sound/soc/qcom/qdsp6/q6routing.c             |  44 ++++
+ 9 files changed, 953 insertions(+), 21 deletions(-)
+
+-- 
+2.21.1
+
