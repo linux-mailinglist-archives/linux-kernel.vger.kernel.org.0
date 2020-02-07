@@ -2,126 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FAC5155843
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 14:18:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9197015583D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 14:17:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727387AbgBGNST (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 08:18:19 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42432 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726874AbgBGNST (ORCPT
+        id S1727234AbgBGNRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 08:17:53 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41474 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726674AbgBGNRx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 08:18:19 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 66so2079662otd.9
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 05:18:18 -0800 (PST)
+        Fri, 7 Feb 2020 08:17:53 -0500
+Received: by mail-lj1-f195.google.com with SMTP id h23so2098399ljc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 05:17:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AppHa1mPfAaiV/SFjOWJnS9mSSWNJs8o2NmtKzYnLIM=;
-        b=Bv7+O0Gj9xzAxmxTKrE64kVHWDzLjK/48wyrFk5pv+zPmbR8MwZx8Mq9HSymH0TL+F
-         gBqs2In+xlRc+Bc4Y3A2710Y+mDoCmsm5Phl1ZyDdMonr92CewoH05FNxI7b4vSIuyxp
-         01lpriTCHmxoLgRRDZdAmRB+ZZ8RtnEgjuAQNztgMRWCX+hr/TL8mYBbbU5FXaN+TYJi
-         KpzEQnEJ/41S/hjd77bv20LD4OrgAjU8T22ThyKEIhiFLJ57CKdXyqWOkUyzlhxaqZpY
-         TSsDfTZeYUgJwDsJJDso9uDZ2kKP4XcI+ZUVnBB9mu0z6TAaTBIr+a3oOsrAlpGO/A6m
-         HokA==
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ormWsvlEB3xaoLQJ32yqI2+YJjynCIo+Gkrsb90CUoc=;
+        b=zXiaaJaV/6vtSOmP9ODS2FF3enQ9DrLr2xaXqFISXdgWNN7JEZGqqteYAJg8ilecHC
+         ugo7pUkEj4BeIf0kvvpCo+9nvJTidcqrfgAKlXwcZrT/G25Hc0OKXxZ/73AFix6/STWU
+         kzL1F0LE/LTZEKILuppx9YGI01N+5ZbDcEQGL0HvU+uZcMgWGZCPrEAiaZ+BllPyAS7f
+         imqyuyZC2NI4FLBEhH4BIw6rEMsgDbGkg9nOxXihh8ryQwuUgPpw2KkNvbQrfWBn7wd+
+         mDYhZSynO7JxUG39HhOZIVunHOvL6zWKn3v9WqBVZysmR4JglhGrT7lyZay33uwkGfhZ
+         Lp9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AppHa1mPfAaiV/SFjOWJnS9mSSWNJs8o2NmtKzYnLIM=;
-        b=svI8KfJoJtNQfEPukb5yq6rQVG2NoKLDPHJN9RXugvx8or71ZL6HoNccrUnkKbK3nH
-         CF6urptb9q151nPI6fhWVnTb82tMqaKwWPdigHwHsyVJ+2gkEwLsfMpSBmz9dRn6Aftn
-         OtqWUSc9dLxclLJ6VxuWr8YKbcwH/GFOgZVhnWhHe9Mlu1heIlRjSm2ekiAQ0xLOxL5n
-         9avoaWuEyj1ms+V5QQQLQ+jB8EVWboExedGuBUAjC9Sv/SSa/Pm6x2vu9BY67zhiTaJ1
-         Rcwl0kvzAm3kmq2dybsPM3lHaNz6kSDZ1U9O/4o775zF+al3iabrt4wZNnRvK+DCcMoi
-         C1xg==
-X-Gm-Message-State: APjAAAX/zGYkAoqhaxDl1bsaxWN3u1aO8tJo1vPVkZgbeGQebi4Isd+C
-        xcvMVMM3mx1qOWtcyDjkYSxLQ5rWCJbMyvbg0AHVYQ==
-X-Google-Smtp-Source: APXvYqySp8t5lUY8/teOm/qXtbaVzYWnWcBeaLn8p5ibiMGK8WkrVN2kSGBYXg7A0wmRwctJqD8szGVi8N+/sIqUy5g=
-X-Received: by 2002:a9d:7410:: with SMTP id n16mr2746790otk.23.1581081497948;
- Fri, 07 Feb 2020 05:18:17 -0800 (PST)
-MIME-Version: 1.0
-References: <20200206035235.2537-1-cai@lca.pw> <480a7dde-f678-c07b-2231-4da8e0a38753@nvidia.com>
- <1580997681.7365.14.camel@lca.pw> <CANpmjNNX1apK0izjPhRG3kG-O_iKG1nGrOEL+PAvpH86QLXZMg@mail.gmail.com>
- <423eb3c6-6db2-87d2-e0b7-a32600ee1cd4@nvidia.com>
-In-Reply-To: <423eb3c6-6db2-87d2-e0b7-a32600ee1cd4@nvidia.com>
-From:   Marco Elver <elver@google.com>
-Date:   Fri, 7 Feb 2020 14:18:06 +0100
-Message-ID: <CANpmjNM6AFdMU3Oc8z5yJKhAEr7Z8AsOzgvwGgWAQ5j4J=D3xg@mail.gmail.com>
-Subject: Re: [PATCH -next] mm: mark a intentional data race in page_zonenum()
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ormWsvlEB3xaoLQJ32yqI2+YJjynCIo+Gkrsb90CUoc=;
+        b=SsknW5qftnwvH9n152gVD6ruEm2GfULLgbIJ87I6a9LNr729ksFX7zZmMa7hsdoPOt
+         4b7JezdSO2XzCICupLv6i50cfZkNPc1wFuyyox2pyUOPeGNLlOEv8Bxnr0zpJq5HHC+h
+         QF+iPLgFi1PlacZEAGFnAWuZX/8hWVDovgn4PAmiga+JGPc3aKJ0ucLz1v3s10/qCoDi
+         62usTj4un483lcdIpxLEdW8wvlCQTsj2o+XRQZroU0cBWuNOmDXCJ62dvDOkA70eZdEE
+         J2CVQtOhubeSR5q8T6iKK1GYHxfPPt6mZYgllFfJxz6kDT5pOCC2WSe2qQufuevpZR8X
+         DZnQ==
+X-Gm-Message-State: APjAAAWMizo8S8mKKQmfSv/FQQ0feEqoQsVOcmCwEtdV16eDurJ54JWx
+        TP1vbvzesMKsrNgln8ejKhogSw==
+X-Google-Smtp-Source: APXvYqxpnU/YqzHLLTtDrHtrmgEZwjR2XCzlQQy/QlYwTJZA8pqDeflD/7gMq3smNNvvvq1H14aHzw==
+X-Received: by 2002:a2e:7818:: with SMTP id t24mr5296927ljc.195.1581081470799;
+        Fri, 07 Feb 2020 05:17:50 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id 3sm1236687lja.65.2020.02.07.05.17.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Feb 2020 05:17:49 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 623C7100B12; Fri,  7 Feb 2020 16:18:06 +0300 (+03)
+Date:   Fri, 7 Feb 2020 16:18:06 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Qian Cai <cai@lca.pw>, Andrew Morton <akpm@linux-foundation.org>,
-        ira.weiny@intel.com, dan.j.williams@intel.com, jack@suse.cz,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 04/12] mm: introduce page_ref_sub_return()
+Message-ID: <20200207131806.xwnhxomxgt3hoqcc@box>
+References: <20200207033735.308000-1-jhubbard@nvidia.com>
+ <20200207033735.308000-5-jhubbard@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200207033735.308000-5-jhubbard@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 7 Feb 2020 at 00:18, John Hubbard <jhubbard@nvidia.com> wrote:
->
-> On 2/6/20 6:35 AM, Marco Elver wrote:
-> ...
-> >>>> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> >>>> index 52269e56c514..cafccad584c2 100644
-> >>>> --- a/include/linux/mm.h
-> >>>> +++ b/include/linux/mm.h
-> >>>> @@ -920,7 +920,7 @@ vm_fault_t finish_mkwrite_fault(struct vm_fault *vmf);
-> >>>>
-> >>>>   static inline enum zone_type page_zonenum(const struct page *page)
-> >>>>   {
-> >>>> -   return (page->flags >> ZONES_PGSHIFT) & ZONES_MASK;
-> >>>> +   return data_race((page->flags >> ZONES_PGSHIFT) & ZONES_MASK);
-> >>>
-> >>>
-> >>> I don't know about this. Lots of the kernel is written to do this sort
-> >>> of thing, and adding a load of "data_race()" everywhere is...well, I'm not
-> >>> sure if it's really the best way.  I wonder: could we maybe teach this
-> >>> kcsan thing to understand a few of the key idioms, particularly about page
-> >>> flags, instead of annotating all over the place?
-> >>
-> >> My understanding is that it is rather difficult to change the compilers, but it
-> >> is a good question and I Cc Marco who is the maintainer for KCSAN that might
-> >> give you a definite answer.
-> >
-> > The problem is that there is no general idiom where we could say with
-> > confidence that a data race is safe across the whole kernel. Here it
->
-> Yes. I'm grasping at straws now, but...what about the idiom that page_zonenum()
-> uses: a set of bits that are "always" (after a certain early point) read-only?
-> What are your thoughts on that?
+On Thu, Feb 06, 2020 at 07:37:27PM -0800, John Hubbard wrote:
+> An upcoming patch requires subtracting a large chunk of refcounts from
+> a page, and checking what the resulting refcount is. This is a little
+> different than the usual "check for zero refcount" that many of the
+> page ref functions already do. However, it is similar to a few other
+> routines that (like this one) are generally useful for things such as
+> 1-based refcounting.
+> 
+> Add page_ref_sub_return(), that subtracts a chunk of refcounts
+> atomically, and returns an atomic snapshot of the result.
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-I have replied to the other thread.
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-Thanks,
--- Marco
-
-
-
-> > might not matter, but somewhere else it might matter a lot.
-> >
-> > If you think that it turns out the entire file may be littered with
-> > 'data_race()', and you do not want to use annotations, you can
-> > blacklist the file. I already had to do this for other files in mm/,
-> > because concurrent flag modification/checking is pervasive and a lot
-> > of them seem 'benign'. We decided to revisit those files later.
-> >
-> > Feel free to add 'KCSAN_SANITIZE_memory.o := n' or whatever other
-> > files you think are full of these to mm/Makefile.
-> >
-> > The only problem I see with that is that it's not obvious what is
-> > concurrently modified and what isn't. The annotations would have
-> > helped document what is happening.
-> >
-> > Thanks,
-> > -- Marco
-> >
->
->
-> thanks,
-> --
-> John Hubbard
-> NVIDIA
+-- 
+ Kirill A. Shutemov
