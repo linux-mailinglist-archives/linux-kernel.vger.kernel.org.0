@@ -2,138 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FA69155252
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 07:15:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7471155263
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 07:18:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbgBGGPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 01:15:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52334 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726417AbgBGGPB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 01:15:01 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A54ED20838;
-        Fri,  7 Feb 2020 06:14:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581056100;
-        bh=O5bESTseaJwW695ZKFFk+TiTTw1SgAcOEDih6D0WyrA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=iow13TH8wCDDAsNZcUPYJfM8e/ru/+X48I2vSj01yefZjfYaDPFO9KOfhxW1lWGnx
-         dtUofyDQsy2yOao27YLnMLzVQFU1rCao/bSi1weelLzfko76+dKPrJB/ErvFLjq/s8
-         m3U3LGZlPr8Z7DjLEnc1R5eh/aRWc6Y2n7WagP3A=
-Date:   Fri, 7 Feb 2020 15:14:56 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Alan Maguire <alan.maguire@oracle.com>
-Cc:     rostedt@goodmis.org, shuah@kernel.org, mingo@redhat.com,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, colin.king@canonical.com
-Subject: Re: [PATCH 1/2] ftrace/selftests: workaround cgroup RT scheduling
- issues
-Message-Id: <20200207151456.4177c8974b779a45520b93d7@kernel.org>
-In-Reply-To: <1581001760-29831-2-git-send-email-alan.maguire@oracle.com>
-References: <1581001760-29831-1-git-send-email-alan.maguire@oracle.com>
-        <1581001760-29831-2-git-send-email-alan.maguire@oracle.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1726860AbgBGGSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 01:18:04 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48732 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbgBGGSE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 01:18:04 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: tomeu)
+        with ESMTPSA id DDFEB29575C
+Subject: Re: [PATCH v4 0/7] Add dts for mt8183 GPU (and misc panfrost patches)
+To:     Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Steven Price <steven.price@arm.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
+        ulf.hansson@linaro.org
+References: <20200207052627.130118-1-drinkcat@chromium.org>
+From:   Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Message-ID: <5237381b-c232-7087-a3d6-78d6358d80bf@collabora.com>
+Date:   Fri, 7 Feb 2020 07:17:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <20200207052627.130118-1-drinkcat@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  6 Feb 2020 15:09:19 +0000
-Alan Maguire <alan.maguire@oracle.com> wrote:
-
-> wakeup_rt.tc and wakeup.tc tests in tracers/ subdirectory
-> fail due to the chrt command returning:
+On 2/7/20 6:26 AM, Nicolas Boichat wrote:
+> Hi!
 > 
->  chrt: failed to set pid 0's policy: Operation not permitted.
+> Follow-up on the v3: https://patchwork.kernel.org/cover/11331343/.
 > 
-> To work around this, temporarily disable grout RT scheduling
-> during ftracetest execution.  Restore original value on
-> test run completion.  With these changes in place, both
-> tests consistently pass.
-
-OK, this looks good to me.
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Thanks!
-
+> The main purpose of this series is to upstream the dts change and the
+> binding document, but I wanted to see how far I could probe the GPU, to
+> check that the binding is indeed correct. The rest of the patches are
+> RFC/work-in-progress, but I think some of them could already be picked up.
 > 
-> Fixes: c575dea2c1a5 ("selftests/ftrace: Add wakeup_rt tracer testcase")
-> Fixes: c1edd060b413 ("selftests/ftrace: Add wakeup tracer testcase")
-> Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
-> ---
->  tools/testing/selftests/ftrace/ftracetest | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
+> So this is tested on MT8183 with a chromeos-4.19 kernel, and a ton of
+> backports to get the latest panfrost driver (I should probably try on
+> linux-next at some point but this was the path of least resistance).
 > 
-> diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
-> index 063ecb2..3207bbf 100755
-> --- a/tools/testing/selftests/ftrace/ftracetest
-> +++ b/tools/testing/selftests/ftrace/ftracetest
-> @@ -29,8 +29,26 @@ err_ret=1
->  # kselftest skip code is 4
->  err_skip=4
->  
-> +# cgroup RT scheduling prevents chrt commands from succeeding, which
-> +# induces failures in test wakeup tests.  Disable for the duration of
-> +# the tests.
-> +sched_rt_runtime=$(sysctl -n kernel.sched_rt_runtime_us)
-
-OK, but can you 
-
-> +
-> +set_sysctl() {
-> +  sysctl -qw ${1}=${2} >/dev/null 2>&1
-> +}
-> +
-> +setup() {
-> +  set_sysctl kernel.sched_rt_runtime_us -1
-> +}
-> +
-> +cleanup() {
-> +  set_sysctl kernel.sched_rt_runtime_us $sched_rt_runtime
-> +}
-> +
->  errexit() { # message
->    echo "Error: $1" 1>&2
-> +  cleanup
->    exit $err_ret
->  }
->  
-> @@ -39,6 +57,8 @@ if [ `id -u` -ne 0 ]; then
->    errexit "this must be run by root user"
->  fi
->  
-> +setup
-> +
->  # Utilities
->  absdir() { # file_path
->    (cd `dirname $1`; pwd)
-> @@ -235,6 +255,7 @@ TOTAL_RESULT=0
->  
->  INSTANCE=
->  CASENO=0
-> +
->  testcase() { # testfile
->    CASENO=$((CASENO+1))
->    desc=`grep "^#[ \t]*description:" $1 | cut -f2 -d:`
-> @@ -406,5 +427,7 @@ prlog "# of unsupported: " `echo $UNSUPPORTED_CASES | wc -w`
->  prlog "# of xfailed: " `echo $XFAILED_CASES | wc -w`
->  prlog "# of undefined(test bug): " `echo $UNDEFINED_CASES | wc -w`
->  
-> +cleanup
-> +
->  # if no error, return 0
->  exit $TOTAL_RESULT
-> -- 
-> 1.8.3.1
+> I tested it as a module as it's more challenging (originally probing would
+> work built-in, on boot, but not as a module, as I didn't have the power
+> domain changes, and all power domains are on by default during boot).
 > 
+> Probing logs looks like this, currently. They look sane.
+> [  501.319728] panfrost 13040000.gpu: clock rate = 511999970
+> [  501.320041] panfrost 13040000.gpu: Linked as a consumer to regulator.14
+> [  501.320102] panfrost 13040000.gpu: Linked as a consumer to regulator.31
+> [  501.320651] panfrost 13040000.gpu: Linked as a consumer to genpd:0:13040000.gpu
+> [  501.320954] panfrost 13040000.gpu: Linked as a consumer to genpd:1:13040000.gpu
+> [  501.321062] panfrost 13040000.gpu: Linked as a consumer to genpd:2:13040000.gpu
+> [  501.321734] panfrost 13040000.gpu: mali-g72 id 0x6221 major 0x0 minor 0x3 status 0x0
+> [  501.321741] panfrost 13040000.gpu: features: 00000000,13de77ff, issues: 00000000,00000400
+> [  501.321747] panfrost 13040000.gpu: Features: L2:0x07120206 Shader:0x00000000 Tiler:0x00000809 Mem:0x1 MMU:0x00002830 AS:0xff JS:0x7
+> [  501.321752] panfrost 13040000.gpu: shader_present=0x7 l2_present=0x1
+> [  501.324951] [drm] Initialized panfrost 1.1.0 20180908 for 13040000.gpu on minor 2
+> 
+> Some more changes are still required to get devfreq working, and of course
+> I do not have a userspace driver to test this with.
 
+Have you tried the Panfrost tests in IGT? They are atm quite basic, but 
+could be interesting to check that the different HW units are correctly 
+powered on.
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Regards,
+
+Tomeu
+
+> I believe at least patches 1, 2, and 3 can be merged. 4 and 5 are mostly
+> useful in conjunction with 6 and 7 (which are not ready yet), so I'll let
+> maintainers decide.
+> 
+> Thanks!
+> 
+> Nicolas Boichat (7):
+>    dt-bindings: gpu: mali-bifrost: Add Mediatek MT8183
+>    arm64: dts: mt8183: Add node for the Mali GPU
+>    drm/panfrost: Improve error reporting in panfrost_gpu_power_on
+>    drm/panfrost: Add support for multiple regulators
+>    drm/panfrost: Add support for multiple power domains
+>    RFC: drm/panfrost: Add mt8183-mali compatible string
+>    RFC: drm/panfrost: devfreq: Add support for 2 regulators
+> 
+>   .../bindings/gpu/arm,mali-bifrost.yaml        |  25 ++++
+>   arch/arm64/boot/dts/mediatek/mt8183-evb.dts   |   7 +
+>   arch/arm64/boot/dts/mediatek/mt8183.dtsi      | 105 +++++++++++++++
+>   drivers/gpu/drm/panfrost/panfrost_devfreq.c   |  17 +++
+>   drivers/gpu/drm/panfrost/panfrost_device.c    | 123 +++++++++++++++---
+>   drivers/gpu/drm/panfrost/panfrost_device.h    |  27 +++-
+>   drivers/gpu/drm/panfrost/panfrost_drv.c       |  41 ++++--
+>   drivers/gpu/drm/panfrost/panfrost_gpu.c       |  11 +-
+>   8 files changed, 326 insertions(+), 30 deletions(-)
+> 
