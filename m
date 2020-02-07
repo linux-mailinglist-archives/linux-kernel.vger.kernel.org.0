@@ -2,122 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A05211552AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 08:04:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E04841552B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 08:05:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726982AbgBGHEH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 02:04:07 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:56362 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726573AbgBGHEG (ORCPT
+        id S1726874AbgBGHFv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 02:05:51 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:44019 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbgBGHFv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 02:04:06 -0500
-X-UUID: 68390ea84fc14b07aa96cce384b45442-20200207
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=6jM/oR06razYnFBu9+gewGY3eZHYhaG1HA0jqsKM5V0=;
-        b=IDDf/v7qRZ49wRCyJyBLD3I7xIp+7uXiIecE3zVt8vnkCZwYZILvjE8S/1gqiUr1V3kKHCpfNTDY4+wbwY2PvtiCEi5xcs0uENPZRlOm6rl2PVW3IL5aYR8Wn4FLNjr7aOy0hIeCE4tDrzMMHu97XEU9uJrZ36aUBRZqmv1HNfc=;
-X-UUID: 68390ea84fc14b07aa96cce384b45442-20200207
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1088173936; Fri, 07 Feb 2020 15:03:59 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 7 Feb 2020 15:02:27 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 7 Feb 2020 15:04:28 +0800
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
-        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
-        <jejb@linux.ibm.com>, <beanhuo@micron.com>
-CC:     <asutoshd@codeaurora.org>, <cang@codeaurora.org>,
-        <matthias.bgg@gmail.com>, <bvanassche@acm.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
-        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
-        <andy.teng@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
-Subject: [PATCH v1 2/2] scsi: ufs: introduce common function to disable host TX LCC
-Date:   Fri, 7 Feb 2020 15:03:57 +0800
-Message-ID: <20200207070357.17169-3-stanley.chu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20200207070357.17169-1-stanley.chu@mediatek.com>
-References: <20200207070357.17169-1-stanley.chu@mediatek.com>
+        Fri, 7 Feb 2020 02:05:51 -0500
+Received: by mail-ot1-f65.google.com with SMTP id p8so1182933oth.10
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 23:05:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AI/Ed1jGZu0syy2ZPa3aiPuxKymaXFosIYunW/DJlgg=;
+        b=f5N4N057lze/UYExempS2s0dCoH9sLy74s6Isw5TBb7/s01mBzzDWFwD/EmbDtPZ8c
+         ne3ozJuuy965JFt7rupc1pObbHtWJfpedMtj0AuzKB4Vd4kYIHURJ0MThF43IwOp8mFr
+         ql0X+5PjZRWGOp2oKoDeu1U+mHPSwc37CgW60CFAJ2TK0v5zfHWa9eYsZiQ6OmChT+eW
+         xwp2tE69NrwsSIufnkxubt+SbjO9+3X8xuVkoQV89xnEUP2WtRV9NcZJKL7wXjoXa5E0
+         LDYH5YMWp1KLWEH1qbAkF4f6I7H6jNh3nRfs9WvGEJ3wDUP3HYEjy63BjD67LTq/RBox
+         IB4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AI/Ed1jGZu0syy2ZPa3aiPuxKymaXFosIYunW/DJlgg=;
+        b=X0oxtujJoZAkVCLGBiSFAKDY29/JCm9JQ88xhtno05BuwrR4oZSOJX8I3XSaghWmYK
+         nhnbqb42iJZz5j7MdfFqgLHjvncDLxsaI4vQ6MBlXll8bWZTPKCttTmmHz20Te9OfuT9
+         dU6P2AL3w/U0cQPgtYim0ypvgEBgcn/cFJRfwiEMXrV8RTdbqwKzDMLzBnagf0pLSTmF
+         L6U749u1FqVavYYeuniDZEnMaEwvpadGu4EgGZjjNLxUR/4k39a8R2OvEFk+n8Wp/gVY
+         scg6eU1lhrzQDV10IckJd92hlyrE6qUGrYtn7JrK7WXGWnr9Fn6omH/RrNzm0dbVbnQ3
+         bM0A==
+X-Gm-Message-State: APjAAAW91bwtb1w31I+Uk4E7E/FO3iXqG52j75TnryAofZuD/Fono4LP
+        sY9FphjPcD8/JG6YRiEvYNhpzXZQZUuSU0TyoBHQKFdT
+X-Google-Smtp-Source: APXvYqwl3CbR6UotROZtdXyz3AsI+ZjBwM4bP86Bh8CXVgTY1ZYpkd16mlzMWA+GGiBq7ttJjps1pHl1EV2FdYXCiDI=
+X-Received: by 2002:aca:ebcb:: with SMTP id j194mr1179392oih.154.1581059150234;
+ Thu, 06 Feb 2020 23:05:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+References: <20200206111646.11755-1-oshpigelman@habana.ai>
+In-Reply-To: <20200206111646.11755-1-oshpigelman@habana.ai>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Fri, 7 Feb 2020 09:05:24 +0200
+Message-ID: <CAFCwf12GYEcAHpundrSq9SQsiJEaM40s_4kF=mNGXFf0gKBOJg@mail.gmail.com>
+Subject: Re: [PATCH] habanalabs: fix DDR bar address setting
+To:     Omer Shpigelman <oshpigelman@habana.ai>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TWFueSB2ZW5kb3JzIHdvdWxkIGxpa2UgdG8gZGlzYWJsZSBob3N0IFRYIExDQyBkdXJpbmcgaW5p
-dGlhbGl6YXRpb24NCmZsb3cuIEludHJvZHVjZSBhIGNvbW1vbiBmdW5jdGlvbiBmb3IgYWxsIHVz
-ZXJzIHRvIG1ha2UgZHJpdmVycyBlYXNpZXIgdG8NCnJlYWQgYW5kIG1haW50YWluZWQuIFRoaXMg
-cGF0Y2ggZG9lcyBub3QgY2hhbmdlIGFueSBmdW5jdGlvbmFsaXR5Lg0KDQpTaWduZWQtb2ZmLWJ5
-OiBTdGFubGV5IENodSA8c3RhbmxleS5jaHVAbWVkaWF0ZWsuY29tPg0KLS0tDQogZHJpdmVycy9z
-Y3NpL3Vmcy9jZG5zLXBsdGZybS5jICB8IDIgKy0NCiBkcml2ZXJzL3Njc2kvdWZzL3Vmcy1oaXNp
-LmMgICAgIHwgMiArLQ0KIGRyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVrLmMgfCAyICstDQog
-ZHJpdmVycy9zY3NpL3Vmcy91ZnMtcWNvbS5jICAgICB8IDQgKy0tLQ0KIGRyaXZlcnMvc2NzaS91
-ZnMvdWZzaGNkLXBjaS5jICAgfCAyICstDQogZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2QuaCAgICAg
-ICB8IDUgKysrKysNCiA2IGZpbGVzIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDcgZGVsZXRp
-b25zKC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3Njc2kvdWZzL2NkbnMtcGx0ZnJtLmMgYi9k
-cml2ZXJzL3Njc2kvdWZzL2NkbnMtcGx0ZnJtLmMNCmluZGV4IDU2YTZhMWVkNWVjMi4uZGEwNjVh
-MjU5ZjZlIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9zY3NpL3Vmcy9jZG5zLXBsdGZybS5jDQorKysg
-Yi9kcml2ZXJzL3Njc2kvdWZzL2NkbnMtcGx0ZnJtLmMNCkBAIC0xOTIsNyArMTkyLDcgQEAgc3Rh
-dGljIGludCBjZG5zX3Vmc19saW5rX3N0YXJ0dXBfbm90aWZ5KHN0cnVjdCB1ZnNfaGJhICpoYmEs
-DQogCSAqIGFuZCBkZXZpY2UgVFggTENDIGFyZSBkaXNhYmxlZCBvbmNlIGxpbmsgc3RhcnR1cCBp
-cw0KIAkgKiBjb21wbGV0ZWQuDQogCSAqLw0KLQl1ZnNoY2RfZG1lX3NldChoYmEsIFVJQ19BUkdf
-TUlCKFBBX0xPQ0FMX1RYX0xDQ19FTkFCTEUpLCAwKTsNCisJdWZzaGNkX2Rpc2FibGVfaG9zdF90
-eF9sY2MoaGJhKTsNCiANCiAJLyoNCiAJICogRGlzYWJsaW5nIEF1dG9oaWJlcm44IGZlYXR1cmUg
-aW4gY2FkZW5jZSBVRlMNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3Njc2kvdWZzL3Vmcy1oaXNpLmMg
-Yi9kcml2ZXJzL3Njc2kvdWZzL3Vmcy1oaXNpLmMNCmluZGV4IDVkNjQ4NzM1MGE2Yy4uMDc0YTZh
-MDU1YTRjIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9zY3NpL3Vmcy91ZnMtaGlzaS5jDQorKysgYi9k
-cml2ZXJzL3Njc2kvdWZzL3Vmcy1oaXNpLmMNCkBAIC0yMzUsNyArMjM1LDcgQEAgc3RhdGljIGlu
-dCB1ZnNfaGlzaV9saW5rX3N0YXJ0dXBfcHJlX2NoYW5nZShzdHJ1Y3QgdWZzX2hiYSAqaGJhKQ0K
-IAl1ZnNoY2Rfd3JpdGVsKGhiYSwgcmVnLCBSRUdfQVVUT19ISUJFUk5BVEVfSURMRV9USU1FUik7
-DQogDQogCS8qIFVuaXBybyBQQV9Mb2NhbF9UWF9MQ0NfRW5hYmxlICovDQotCXVmc2hjZF9kbWVf
-c2V0KGhiYSwgVUlDX0FSR19NSUJfU0VMKDB4MTU1RSwgMHgwKSwgMHgwKTsNCisJdWZzaGNkX2Rp
-c2FibGVfaG9zdF90eF9sY2MoaGJhKTsNCiAJLyogY2xvc2UgVW5pcHJvIFZTX01rMkV4dG5TdXBw
-b3J0ICovDQogCXVmc2hjZF9kbWVfc2V0KGhiYSwgVUlDX0FSR19NSUJfU0VMKDB4RDBBQiwgMHgw
-KSwgMHgwKTsNCiAJdWZzaGNkX2RtZV9nZXQoaGJhLCBVSUNfQVJHX01JQl9TRUwoMHhEMEFCLCAw
-eDApLCAmdmFsdWUpOw0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVr
-LmMgYi9kcml2ZXJzL3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5jDQppbmRleCA4ZjczYzg2MGY0MjMu
-LjlkMDU5NjJmZWIxNSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVr
-LmMNCisrKyBiL2RyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVrLmMNCkBAIC0zMTgsNyArMzE4
-LDcgQEAgc3RhdGljIGludCB1ZnNfbXRrX3ByZV9saW5rKHN0cnVjdCB1ZnNfaGJhICpoYmEpDQog
-CSAqIHRvIG1ha2Ugc3VyZSB0aGF0IGJvdGggaG9zdCBhbmQgZGV2aWNlIFRYIExDQyBhcmUgZGlz
-YWJsZWQNCiAJICogb25jZSBsaW5rIHN0YXJ0dXAgaXMgY29tcGxldGVkLg0KIAkgKi8NCi0JcmV0
-ID0gdWZzaGNkX2RtZV9zZXQoaGJhLCBVSUNfQVJHX01JQihQQV9MT0NBTF9UWF9MQ0NfRU5BQkxF
-KSwgMCk7DQorCXJldCA9IHVmc2hjZF9kaXNhYmxlX2hvc3RfdHhfbGNjKGhiYSk7DQogCWlmIChy
-ZXQpDQogCQlyZXR1cm4gcmV0Ow0KIA0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvc2NzaS91ZnMvdWZz
-LXFjb20uYyBiL2RyaXZlcnMvc2NzaS91ZnMvdWZzLXFjb20uYw0KaW5kZXggYzY5YzI5YTFjZWI5
-Li5jMmU3MDNkNThmNjMgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3Njc2kvdWZzL3Vmcy1xY29tLmMN
-CisrKyBiL2RyaXZlcnMvc2NzaS91ZnMvdWZzLXFjb20uYw0KQEAgLTU1NCw5ICs1NTQsNyBAQCBz
-dGF0aWMgaW50IHVmc19xY29tX2xpbmtfc3RhcnR1cF9ub3RpZnkoc3RydWN0IHVmc19oYmEgKmhi
-YSwNCiAJCSAqIGNvbXBsZXRlZC4NCiAJCSAqLw0KIAkJaWYgKHVmc2hjZF9nZXRfbG9jYWxfdW5p
-cHJvX3ZlcihoYmEpICE9IFVGU19VTklQUk9fVkVSXzFfNDEpDQotCQkJZXJyID0gdWZzaGNkX2Rt
-ZV9zZXQoaGJhLA0KLQkJCQkJVUlDX0FSR19NSUIoUEFfTE9DQUxfVFhfTENDX0VOQUJMRSksDQot
-CQkJCQkwKTsNCisJCQllcnIgPSB1ZnNoY2RfZGlzYWJsZV9ob3N0X3R4X2xjYyhoYmEpOw0KIA0K
-IAkJYnJlYWs7DQogCWNhc2UgUE9TVF9DSEFOR0U6DQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9zY3Np
-L3Vmcy91ZnNoY2QtcGNpLmMgYi9kcml2ZXJzL3Njc2kvdWZzL3Vmc2hjZC1wY2kuYw0KaW5kZXgg
-M2IxOWRlM2FlOWEzLi44Zjc4YTgxNTE0OTkgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3Njc2kvdWZz
-L3Vmc2hjZC1wY2kuYw0KKysrIGIvZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2QtcGNpLmMNCkBAIC00
-NCw3ICs0NCw3IEBAIHN0YXRpYyBpbnQgdWZzX2ludGVsX2Rpc2FibGVfbGNjKHN0cnVjdCB1ZnNf
-aGJhICpoYmEpDQogDQogCXVmc2hjZF9kbWVfZ2V0KGhiYSwgYXR0ciwgJmxjY19lbmFibGUpOw0K
-IAlpZiAobGNjX2VuYWJsZSkNCi0JCXVmc2hjZF9kbWVfc2V0KGhiYSwgYXR0ciwgMCk7DQorCQl1
-ZnNoY2RfZGlzYWJsZV9ob3N0X3R4X2xjYyhoYmEpOw0KIA0KIAlyZXR1cm4gMDsNCiB9DQpkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2QuaCBiL2RyaXZlcnMvc2NzaS91ZnMvdWZz
-aGNkLmgNCmluZGV4IDgxYzcxYTNlMzQ3NC4uOGY1MTZiMjA1YzMyIDEwMDY0NA0KLS0tIGEvZHJp
-dmVycy9zY3NpL3Vmcy91ZnNoY2QuaA0KKysrIGIvZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2QuaA0K
-QEAgLTkxNCw2ICs5MTQsMTEgQEAgc3RhdGljIGlubGluZSBib29sIHVmc2hjZF9pc19oc19tb2Rl
-KHN0cnVjdCB1ZnNfcGFfbGF5ZXJfYXR0ciAqcHdyX2luZm8pDQogCQlwd3JfaW5mby0+cHdyX3R4
-ID09IEZBU1RBVVRPX01PREUpOw0KIH0NCiANCitzdGF0aWMgaW5saW5lIGludCB1ZnNoY2RfZGlz
-YWJsZV9ob3N0X3R4X2xjYyhzdHJ1Y3QgdWZzX2hiYSAqaGJhKQ0KK3sNCisJcmV0dXJuIHVmc2hj
-ZF9kbWVfc2V0KGhiYSwgVUlDX0FSR19NSUIoUEFfTE9DQUxfVFhfTENDX0VOQUJMRSksIDApOw0K
-K30NCisNCiAvKiBFeHBvc2UgUXVlcnktUmVxdWVzdCBBUEkgKi8NCiBpbnQgdWZzaGNkX3F1ZXJ5
-X2Rlc2NyaXB0b3JfcmV0cnkoc3RydWN0IHVmc19oYmEgKmhiYSwNCiAJCQkJICBlbnVtIHF1ZXJ5
-X29wY29kZSBvcGNvZGUsDQotLSANCjIuMTguMA0K
+On Thu, Feb 6, 2020 at 1:16 PM Omer Shpigelman <oshpigelman@habana.ai> wrote:
+>
+> DRAM_PHYS_BASE is already taken into account in MMU_PAGE_TABLES_ADDR.
+>
+> Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
+> ---
+>  drivers/misc/habanalabs/goya/goya.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
+> index 74785ccd2cb1..f634e9c5cad9 100644
+> --- a/drivers/misc/habanalabs/goya/goya.c
+> +++ b/drivers/misc/habanalabs/goya/goya.c
+> @@ -2575,8 +2575,7 @@ static int goya_hw_init(struct hl_device *hdev)
+>          * After CPU initialization is finished, change DDR bar mapping inside
+>          * iATU to point to the start address of the MMU page tables
+>          */
+> -       if (goya_set_ddr_bar_base(hdev, DRAM_PHYS_BASE +
+> -                       (MMU_PAGE_TABLES_ADDR &
+> +       if (goya_set_ddr_bar_base(hdev, (MMU_PAGE_TABLES_ADDR &
+>                         ~(prop->dram_pci_bar_size - 0x1ull))) == U64_MAX) {
+>                 dev_err(hdev->dev,
+>                         "failed to map DDR bar to MMU page tables\n");
+> --
+> 2.17.1
+>
 
+This patch is:
+Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
