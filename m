@@ -2,52 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 020121560DB
+	by mail.lfdr.de (Postfix) with ESMTP id EED1B1560DE
 	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 22:55:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbgBGVzQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 16:55:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42262 "EHLO mail.kernel.org"
+        id S1727720AbgBGVzS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 16:55:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727663AbgBGVzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 16:55:16 -0500
-Subject: Re: [PULL 00/11] xtensa updates for v5.6
+        id S1727691AbgBGVzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 16:55:17 -0500
+Subject: Re: [GIT PULL] more clk changes for the merge window
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581112515;
-        bh=QrDmgzN6HBBYGH/yuWtiDjfySyzevCWjKqhuZ8g/Vxk=;
+        s=default; t=1581112517;
+        bh=/Qo+lfgpbFQAmNq2fIslBcBaSs+oWm0srYRVl83lonw=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=TxyxSEY0uhp51i7XmNsiK2GL9kIGMZRfIUdDepI7UjpmderbJghQyjqOu5YAhc6sE
-         fQysDKkgEzXzYwAdGUmZCrgS0ZQsQKgOrFGUf+3unnCbW/sMgtkBuPJ46JiY1PCKgf
-         Yf9BupMK41W5QwfMojAZNrudjT4ske+8hOeUfG98=
+        b=uvlYT3OVHAvs2q6vvbSJSyqZ9aLjOVyU3O8hdo+xTphx/vkO5YLtDS2d1DjM6QoFO
+         ksZMbnZ2v8u9+iossuu373dR8AvRbYz2JnJIv7rfi7xcdQuX02oAhnQXdBlHU6FCwb
+         fpN4kV2mFWlnRoKl2tl1PRKnTHp6b9HBscpUWuPg=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200206184224.25833-1-jcmvbkbc@gmail.com>
-References: <20200206184224.25833-1-jcmvbkbc@gmail.com>
+In-Reply-To: <20200206184405.183679-1-sboyd@kernel.org>
+References: <20200206184405.183679-1-sboyd@kernel.org>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200206184224.25833-1-jcmvbkbc@gmail.com>
-X-PR-Tracked-Remote: git://github.com/jcmvbkbc/linux-xtensa.git
- tags/xtensa-20200206
-X-PR-Tracked-Commit-Id: c74c0fd2282e0e3ce891cb571f325b9412cbaa3f
+X-PR-Tracked-Message-Id: <20200206184405.183679-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+ tags/clk-for-linus
+X-PR-Tracked-Commit-Id: 5df867145f8adad9e5cdf9d67db1fbc0f71351e9
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9b7fa2880fe716a30d2359d40d12ec4bc69ec7b5
-Message-Id: <158111251576.9631.15062083091089576130.pr-tracker-bot@kernel.org>
-Date:   Fri, 07 Feb 2020 21:55:15 +0000
-To:     Max Filippov <jcmvbkbc@gmail.com>
+X-PR-Merge-Commit-Id: 8bf5973a4ef0c996d805dc70c2122f08155d14ef
+Message-Id: <158111251708.9631.16528576943918451615.pr-tracker-bot@kernel.org>
+Date:   Fri, 07 Feb 2020 21:55:17 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu,  6 Feb 2020 10:42:24 -0800:
+The pull request you sent on Thu,  6 Feb 2020 10:44:05 -0800:
 
-> git://github.com/jcmvbkbc/linux-xtensa.git tags/xtensa-20200206
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9b7fa2880fe716a30d2359d40d12ec4bc69ec7b5
+https://git.kernel.org/torvalds/c/8bf5973a4ef0c996d805dc70c2122f08155d14ef
 
 Thank you!
 
