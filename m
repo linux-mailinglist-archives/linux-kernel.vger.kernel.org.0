@@ -2,148 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 520041552DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 08:23:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD0BE1552E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 08:23:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbgBGHWz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 02:22:55 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:31452 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726130AbgBGHWz (ORCPT
+        id S1727154AbgBGHXZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 02:23:25 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:22011 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726130AbgBGHXZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 02:22:55 -0500
+        Fri, 7 Feb 2020 02:23:25 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581060173;
+        s=mimecast20190719; t=1581060204;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=lgVyzV98WCkCA7JLqOF1Cqp3XlDwsyJOWyuCfKoS/hQ=;
-        b=NwdB63XDlY7KtdMk7jlbH+rLvb1ZzWSzeqmeLyJ9btaQjzCMEaR1nNJOjhNWpdZi7wDive
-        ZXyfG6Ku1swqmw9oQtoehjTgWT7z85bxeksnmhGjGi2TU04NmHNVAXSF2+np1zEhaZ1ncs
-        8JjSDQex0gfSKU+UV0MWILstXVYLrg0=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-428-dt6MGbb9M1awyS0HTAVJ_g-1; Fri, 07 Feb 2020 02:22:49 -0500
-X-MC-Unique: dt6MGbb9M1awyS0HTAVJ_g-1
-Received: by mail-qk1-f197.google.com with SMTP id s9so800743qkg.21
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 23:22:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lgVyzV98WCkCA7JLqOF1Cqp3XlDwsyJOWyuCfKoS/hQ=;
-        b=fOLV/yd9BtIQCcNY/WXOwm0u2gnAo0Izfo7/vb8p/fELNcdTKzOjh9ImOdgOLsv1Wj
-         PM3rJe5JfIZlSH4QYsaBhVTEt1x9wYvbleWiZTZEnoWRN0GiksH16jS6zGlBvkjWVOAr
-         wYYXWO020I83lcIBS0YUrEcjvXGTDMh0G0DpBwbFzG2xoZRnF31vUhORPiQl8lxtymcN
-         C300x2WDyYf71gyzc8O53hDDIKwrXRNDfTs574pZ71H8NlzkBcqAqX3s58pFrZbH1H50
-         eb+GIwJzAfbpFfKCAETFDSic/AUT4r/GSUNt+N58Z5XsPo9DAcWD5ex/1/8Iu7sG8Ls8
-         y1lw==
-X-Gm-Message-State: APjAAAUziJkYCTWDVraznrDpw+ysKY7gZK+iWQABFUcsIVedGPeuqOUk
-        CGCIQ8uzD0eppa7OIVF770nhSVljdkwLlPczaLVAIJXz1ow6mQ+oJhzQCLOPMykIhwLXyaels04
-        +SyYJ3Z7sqTynnNxsUJDrlgeYJCItMJlxJhDnb6hh
-X-Received: by 2002:a37:8cc:: with SMTP id 195mr6075721qki.456.1581060169017;
-        Thu, 06 Feb 2020 23:22:49 -0800 (PST)
-X-Google-Smtp-Source: APXvYqydmVvTffqnOIk3fXrn9Ur3ZslgLahtGidDn7lhiibNQVBA9X4nupwC/DYYmAcfTwowjXQ8U5lbiUjFW6nQ7Ac=
-X-Received: by 2002:a37:8cc:: with SMTP id 195mr6075715qki.456.1581060168719;
- Thu, 06 Feb 2020 23:22:48 -0800 (PST)
+        bh=B/1eHis89MpyLuxYDGM/uGf+wxAz3YIEtRor+3W21dw=;
+        b=e4wqmYsumtzlwTfVQG8/2Fw3C8+moVh4IlE71pPekFSKimBLwTNBEvSezHxVDK+R/mNd+1
+        3/epPSxW3rZzQHCA0jx9MXIBRhPMABpQr4Rj9o9d+E0jEo5/eWeRdg3L5fKHThUPRysraz
+        u+d2c6UIVtr3d3FV2QNtgB2xZMsZp+k=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-98-w5vvEUNNNmCIBUUG-UCjJQ-1; Fri, 07 Feb 2020 02:23:16 -0500
+X-MC-Unique: w5vvEUNNNmCIBUUG-UCjJQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 69644DB64;
+        Fri,  7 Feb 2020 07:23:15 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-218.rdu2.redhat.com [10.10.120.218])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 88CF78E9FE;
+        Fri,  7 Feb 2020 07:23:13 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200207031553.18696-1-hdanton@sina.com>
+References: <20200207031553.18696-1-hdanton@sina.com> <20200204084005.11320-1-hdanton@sina.com>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     dhowells@redhat.com,
+        syzbot <syzbot+3f1fd6b8cbf8702d134e@syzkaller.appspotmail.com>,
+        davem@davemloft.net, kuba@kernel.org,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: inconsistent lock state in rxrpc_put_client_conn
 MIME-Version: 1.0
-References: <1580768784-25868-1-git-send-email-bhsharma@redhat.com>
- <1580768784-25868-3-git-send-email-bhsharma@redhat.com> <20200206103858.GB17074@willie-the-truck>
-In-Reply-To: <20200206103858.GB17074@willie-the-truck>
-From:   Bhupesh Sharma <bhsharma@redhat.com>
-Date:   Fri, 7 Feb 2020 12:52:36 +0530
-Message-ID: <CACi5LpPTQ6f5tHEXFsFFhPQ2phLefZY8L3rZ-9xLGyTJ7_SdCQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] perf/arm64: Allow per-task kernel breakpoints
-To:     Will Deacon <will@kernel.org>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bhupesh SHARMA <bhupesh.linux@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2394695.1581060192.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Fri, 07 Feb 2020 07:23:12 +0000
+Message-ID: <2394696.1581060192@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Will,
+I've posted a patch for this:
 
-Thanks for your inputs.
+https://lore.kernel.org/netdev/158099746025.2198892.1158535190228552910.st=
+git@warthog.procyon.org.uk/
 
-On Thu, Feb 6, 2020 at 4:09 PM Will Deacon <will@kernel.org> wrote:
->
-> On Tue, Feb 04, 2020 at 03:56:24AM +0530, Bhupesh Sharma wrote:
-> > commit 478fcb2cdb23 ("arm64: Debugging support") disallowed per-task
-> > kernel breakpoints on arm64 since these would have potentially
-> > complicated the stepping code.
-> >
-> > However, we now have several use-cases (for e.g. perf) which require
-> > per-task address execution h/w breakpoint to be exercised/set on arm64:
->
-> To be honest, the perf interface to hw_breakpoint is an abomination and
-> I think we should remove it entirely for arm64. It's flakey, complicated,
-> adds code to context-switch and reduces the capabilities available to
-> ptrace.
-
-Sure, I agree.
-
-> > For e.g. we can set address execution h/w breakpoints, using the
-> > format prescribed by 'perf-list' command:
-> > mem:<addr>[/len][:access]                          [Hardware breakpoint]
-> >
-> > Without this patch, currently 'perf stat -e' reports that per-task
-> > address execution h/w breakpoints are 'not supported' on arm64. See
-> > below:
-> >
-> > $ TEST_FUNC="vfs_read"
-> > $ ADDR=0x`cat /proc/kallsyms | grep -P "\\s$TEST_FUNC\$" | cut -f1 -d' '`
-> > $ perf stat -e mem:$ADDR:x -x';' -- cat /proc/cpuinfo > /dev/null
-> >
-> > <not supported>;;mem:0xffff00001031dd68:x;0;100.00;;
-> >
-> > After this patch, this use-case can be supported:
-> >
-> > $ TEST_FUNC="vfs_read"
-> > $ ADDR=0x`cat /proc/kallsyms | grep -P "\\s$TEST_FUNC\$" | cut -f1 -d' '`
-> > $ perf stat -e mem:$ADDR:x -x';' -- cat /proc/cpuinfo > /dev/null
-> >
-> > 5;;mem:0xfffffe0010361d20:x;912200;100.00;;
-> >
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > Signed-off-by: Bhupesh Sharma <bhsharma@redhat.com>
-> > ---
-> >  arch/arm64/kernel/hw_breakpoint.c | 7 -------
-> >  1 file changed, 7 deletions(-)
-> >
-> > diff --git a/arch/arm64/kernel/hw_breakpoint.c b/arch/arm64/kernel/hw_breakpoint.c
-> > index 0b727edf4104..c28f04e02845 100644
-> > --- a/arch/arm64/kernel/hw_breakpoint.c
-> > +++ b/arch/arm64/kernel/hw_breakpoint.c
-> > @@ -562,13 +562,6 @@ int hw_breakpoint_arch_parse(struct perf_event *bp,
-> >       hw->address &= ~alignment_mask;
-> >       hw->ctrl.len <<= offset;
-> >
-> > -     /*
-> > -      * Disallow per-task kernel breakpoints since these would
-> > -      * complicate the stepping code.
-> > -      */
-> > -     if (hw->ctrl.privilege == AARCH64_BREAKPOINT_EL1 && bp->hw.target)
-> > -             return -EINVAL;
-> > -
->
-> Sorry, but this is broken; the check is there for a reason, not just for
-> fun!
->
-> Look at how the step handler toggles the bp registers.
-
-Not sure I follow. Can you please give me some pointers. All the perf
-tests I have from test-suite run fine with this chunk removed.
-
-Thanks for your help.
-Regards,
-Bhupesh
+David
 
