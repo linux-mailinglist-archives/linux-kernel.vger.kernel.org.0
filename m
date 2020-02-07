@@ -2,69 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4C18155473
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 10:22:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C045D15548F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 10:24:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbgBGJWj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 04:22:39 -0500
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:58115 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726451AbgBGJWi (ORCPT
+        id S1727123AbgBGJYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 04:24:36 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58182 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbgBGJYf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 04:22:38 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R801e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0TpLWpJm_1581067344;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0TpLWpJm_1581067344)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 07 Feb 2020 17:22:24 +0800
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-To:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ima: add sm3-256 algorithm to hash algorithm configuration list
-Date:   Fri,  7 Feb 2020 17:22:19 +0800
-Message-Id: <20200207092219.115056-3-tianjia.zhang@linux.alibaba.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200207092219.115056-1-tianjia.zhang@linux.alibaba.com>
-References: <20200207092219.115056-1-tianjia.zhang@linux.alibaba.com>
+        Fri, 7 Feb 2020 04:24:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=yaE19GgpjVX5EZUeoCXo1Tot1/ENKsmmaOeID2j9w7k=; b=fuRDhn/wOjdvyk0m/AyqA/kup7
+        zrsbwXouGB5slDalE0R/KNtPkUPPkbVHPhS9GkjhGlxd2QdwEG+HgNMz8WK+EqsCwmUHfP2i3YUb6
+        /Nt5s0JUx4pw2up1M/cQs/WXlr1o8zdkaAhQ2nh6fVIfysjqB1RrqFlu0wVpeYZn9/7l1PHcHe1PA
+        S00jCNQJeqSygWrfPYXDdPej8QUmNXK0In69nBO8Rp6pX2DRS3frF6KHbQE8Hx7/qbQi1E6eXZMVF
+        BYhV/FD4QlgOXZL6y1VtNr/6Ba1Gk6AoZ5sfo5Pq2L0W8Et7/gUgUzxQgGvovtV4xX42g6v3mKFcT
+        CJFQnSOg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1izzsA-0007ba-3H; Fri, 07 Feb 2020 09:24:26 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id ABAC3304B7F;
+        Fri,  7 Feb 2020 10:22:36 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7BFDA2B81491C; Fri,  7 Feb 2020 10:24:23 +0100 (CET)
+Date:   Fri, 7 Feb 2020 10:24:23 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        arjan@linux.intel.com, rick.p.edgecombe@intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+Subject: Re: [RFC PATCH 06/11] x86: make sure _etext includes function
+ sections
+Message-ID: <20200207092423.GC14914@hirez.programming.kicks-ass.net>
+References: <75f0bd0365857ba4442ee69016b63764a8d2ad68.camel@linux.intel.com>
+ <B413445A-F1F0-4FB7-AA9F-C5FF4CEFF5F5@amacapital.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <B413445A-F1F0-4FB7-AA9F-C5FF4CEFF5F5@amacapital.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sm3-256 has been supported by the ima hash algorithm, but it is not
-yet in the Kconfig configuration list. After adding, both ima and tpm2
-can support sm3-256 well.
+On Thu, Feb 06, 2020 at 12:02:36PM -0800, Andy Lutomirski wrote:
+> Also, in the shiny new era of
+> Intel-CPUs-can’t-handle-Jcc-spanning-a-cacheline, function alignment
+> may actually matter.
 
-Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
----
- security/integrity/ima/Kconfig | 5 +++++
- 1 file changed, 5 insertions(+)
+*groan*, indeed. I just went and looked that up. I missed this one in
+all the other fuss :/
 
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 838476d780e5..27b5df895808 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -112,6 +112,10 @@ choice
- 	config IMA_DEFAULT_HASH_WP512
- 		bool "WP512"
- 		depends on CRYPTO_WP512=y && !IMA_TEMPLATE
-+
-+	config IMA_DEFAULT_HASH_SM3_256
-+		bool "SM3_256"
-+		depends on CRYPTO_SM3=y && !IMA_TEMPLATE
- endchoice
- 
- config IMA_DEFAULT_HASH
-@@ -121,6 +125,7 @@ config IMA_DEFAULT_HASH
- 	default "sha256" if IMA_DEFAULT_HASH_SHA256
- 	default "sha512" if IMA_DEFAULT_HASH_SHA512
- 	default "wp512" if IMA_DEFAULT_HASH_WP512
-+	default "sm3-256" if IMA_DEFAULT_HASH_SM3_256
- 
- config IMA_WRITE_POLICY
- 	bool "Enable multiple writes to the IMA policy"
--- 
-2.17.1
+So per:
+
+  https://www.intel.com/content/dam/support/us/en/documents/processors/mitigations-jump-conditional-code-erratum.pdf
+
+the toolchain mitigations only work if the offset in the ifetch window
+(32 bytes) is preserved. Which seems to suggest we ought to align all
+functions to 32byte before randomizing it, otherwise we're almost
+guaranteed to change this offset by the act of randomizing.
 
