@@ -2,109 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B69E8155046
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 03:01:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A3D515505B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 03:01:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727818AbgBGB7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Feb 2020 20:59:49 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52623 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727600AbgBGB71 (ORCPT
+        id S1727911AbgBGCA3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Feb 2020 21:00:29 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44592 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727896AbgBGCAZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Feb 2020 20:59:27 -0500
-Received: by mail-wm1-f67.google.com with SMTP id p9so941341wmc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 17:59:26 -0800 (PST)
+        Thu, 6 Feb 2020 21:00:25 -0500
+Received: by mail-oi1-f193.google.com with SMTP id d62so492094oia.11
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Feb 2020 18:00:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4Kx77RkRZ6BLkxPPbqLY1opgnPyzoSH+OO3s+PAvU9w=;
-        b=AfenHCvMQ7EQykW+PXRtakMMVfMZNbR2flNXrUZqeSJsEWinzpKqMDZzjGPWumbA/y
-         FoUBsjOWXnEdIM4piKlnOf+4jzEeoFITkIv89WNh9mj84nXwT9HMowLvjPoMBTZTVW5s
-         S2vVPteAhCMHLXqHonIA2H+BSiJa6sNjxIyoAp7ox9qahIEZdRqqMaM/V/P+Qs/KbgM5
-         XEzLd7Ygn/rN5hommxp8DmQxu4z6QcwkFvUyNEIem4FEJEetKCmWWDi08BVW8q605rPi
-         HEFGUPWpHTjld5KF14QSKC0y/ZJ5Sy5t9CXX9a4HgytC70PJAnwWVNLslH4e7nntSNKk
-         pkMw==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B3CzpWEhjGrNTft9efyOK3iDvmIkcWco/Hi4kp5Xn6c=;
+        b=mFqfTxH17DKWGmlyN+WKWh3LGx9K2vV7Uu6I6markT+umMWzauzf+aSs/chFlQuWyL
+         WjOWy3sp4tBmrfTD+lYBZD4Ptv4uVSLZ8jk7cvuJWPhifk6ocGYh6BDyQmcoQsJwoETy
+         sJsgG04MmnecAng2izL09mlcdFaRFyDcNZFML0VALpeCMK/Yn9cqpJuDjeVLOTShIiIw
+         dHHgAlAaOgJRqgPUWjT4UoBlrZJ1CQIz6i+Y7n8Y1neWZsVe2ZwVbrmkyIrFGiPL6zbA
+         CBmgoVEV6ohxtoeuxJzbcQk6AmoqWEIY26fmJr5y07j79rcYKQz5zkPrXY066zYXynlN
+         s2uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4Kx77RkRZ6BLkxPPbqLY1opgnPyzoSH+OO3s+PAvU9w=;
-        b=EeB5/MGbByx3Lxpk28pfRS5kjyE/n+sJgw4x7iFzpTx8Neb/NG6vDU/7WsNO63z3L6
-         RewouhymPrXs6VqCq8y4/B6OQkNKvjPt01/vJZHlbhhG7UYV82BnsjTAD9kTsZBxRWds
-         6SiO6hpZoZU2yhx/FARScDbUvNQh4yhIvsIrj/usxYfNFyWTB08pp/52Dw3kQYuSCYE2
-         uzA7Rn3md0iWaDzoMYfQUJRaMWiBED14maaLPJaP1FOREzE5eoMuIfts+Z/l5QDvkX2W
-         nhQAlEMlK+e9rZ9Et+PuZxy8+qOrH2GW/sGExC4oYWC/DtJzTLiL4ccHfyduwJJpbJWA
-         obOg==
-X-Gm-Message-State: APjAAAVYnTe0Y/pOrAwoTRnHoNwtTlGHfvRFPf+NdqLzNitquBYy8asM
-        /4bg2OFnizNl1zYW173MJEjrTA==
-X-Google-Smtp-Source: APXvYqwdpE4xr5cnlVFTBvq32+zu+QuVclYrJLX4nilOR/tnwMIXlHi4IHGlSMIhWiGHGvJs+sqdRg==
-X-Received: by 2002:a7b:cf39:: with SMTP id m25mr962289wmg.146.1581040765884;
-        Thu, 06 Feb 2020 17:59:25 -0800 (PST)
-Received: from localhost.localdomain ([176.61.57.127])
-        by smtp.gmail.com with ESMTPSA id a62sm1490095wmh.33.2020.02.06.17.59.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 17:59:25 -0800 (PST)
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        gregkh@linuxfoundation.org, jackp@codeaurora.org, balbi@kernel.org,
-        bjorn.andersson@linaro.org
-Cc:     linux-kernel@vger.kernel.org,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH v4 15/18] arm64: dts: qcom: qcs404-evb: Describe external VBUS regulator
-Date:   Fri,  7 Feb 2020 01:59:04 +0000
-Message-Id: <20200207015907.242991-16-bryan.odonoghue@linaro.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200207015907.242991-1-bryan.odonoghue@linaro.org>
-References: <20200207015907.242991-1-bryan.odonoghue@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B3CzpWEhjGrNTft9efyOK3iDvmIkcWco/Hi4kp5Xn6c=;
+        b=c4lEqoG7djY4tmt3hDYJ5IyEzlcUnQRNLtYpsQPcF1c8h+ZgDU9+EDsudSQFyazUj7
+         nRI714BZ4Lfc0K4kKwv7+gIqXMaI2e9jCk10O06DAI16cCFRMSqwjmcqIiC3jDac9F0c
+         mNdyh8fc5GRdeHJvuu97T8hX5xFQYevEKxHNtEpbX+bzxs5exEnbAcZPDpIb3kOuj/lS
+         LZaoAjHtCGkyH8rLPGxGA6KMUdb9O6xANAOnG2ULM/34BIPRkwvKsmrdKuIcO2IS7wUW
+         0i5LI1THl5VanleL9k32ShdLF57EJaAputJ3RjwYH5Cv2olttFJ6m3BUWIbn5fipiMc7
+         G/wg==
+X-Gm-Message-State: APjAAAVDU/+O46QU6402GqP5LFKyM1ENocZf+whnJrPGmcGDV13MTWK7
+        H7AQuFv1y+pANtdGkuCIOUz1FQGiCL0M9Kfi3arv3g==
+X-Google-Smtp-Source: APXvYqzDAxly+x9xhSwzVeIqYYmAXLncXK+51lPngBmnh8tEaAPHsBxMPHY2clTJyT6lZmY1MH3Y9rUK9ynOq3OURAA=
+X-Received: by 2002:aca:3f54:: with SMTP id m81mr517359oia.73.1581040824822;
+ Thu, 06 Feb 2020 18:00:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200206231629.14151-1-richardw.yang@linux.intel.com> <20200206231629.14151-2-richardw.yang@linux.intel.com>
+In-Reply-To: <20200206231629.14151-2-richardw.yang@linux.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 6 Feb 2020 18:00:13 -0800
+Message-ID: <CAPcyv4h9C+QLO0VVn2W97p2sYxP2LocCyxYF+Gzy3tM=DYxH4Q@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mm/sparsemem: adjust memmap only for SPARSEMEM_VMEMMAP
+To:     Wei Yang <richardw.yang@linux.intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Baoquan He <bhe@redhat.com>,
+        David Hildenbrand <david@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VBUS is supplied by an external regulator controlled by a GPIO pin. This
-patch models the regulator as regulator-usb3-vbus.
+On Thu, Feb 6, 2020 at 3:17 PM Wei Yang <richardw.yang@linux.intel.com> wrote:
+>
+> Only when SPARSEMEM_VMEMMAP is set, memmap returned from
+> section_activate() points to sub-section page struct. Otherwise, memmap
+> already points to the whole section page struct.
+>
+> This means only for SPARSEMEM_VMEMMAP, we need to adjust memmap for
+> sub-section case.
+>
+> Fixes: ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
+> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+> CC: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  mm/sparse.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index 586d85662978..b5da121bdd6e 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -886,7 +886,8 @@ int __meminit sparse_add_section(int nid, unsigned long start_pfn,
+>         section_mark_present(ms);
+>
+>         /* Align memmap to section boundary in the subsection case */
+> -       if (section_nr_to_pfn(section_nr) != start_pfn)
+> +       if (IS_ENABLED(CONFIG_SPARSEMEM_VMEMMAP) &&
+> +               section_nr_to_pfn(section_nr) != start_pfn)
 
-Cc: Andy Gross <agross@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-msm@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-index abfb2a9a37e9..01ef59e8e5b7 100644
---- a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-@@ -33,6 +33,18 @@ vdd_esmps3_3p3: vdd-esmps3-3p3-regulator {
- 		regulator-max-microvolt = <3300000>;
- 		regulator-always-on;
- 	};
-+
-+	usb3_vbus_reg: regulator-usb3-vbus {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VBUS_BOOST_5V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&pms405_gpios 3 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usb_vbus_boost_pin>;
-+		vin-supply = <&vph_pwr>;
-+		enable-active-high;
-+	};
- };
- 
- &blsp1_uart3 {
--- 
-2.25.0
-
+Aren't we assured that start_pfn is always section aligned in the
+SPARSEMEM case? That's the role of check_pfn_span(). Does the change
+have a runtime impact or is this just theoretical?
