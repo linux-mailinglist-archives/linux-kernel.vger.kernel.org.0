@@ -2,200 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9A14156042
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 21:57:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 442691560A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 22:18:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbgBGU5N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 15:57:13 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:41026 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727392AbgBGU5K (ORCPT
+        id S1727442AbgBGVSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 16:18:34 -0500
+Received: from lists.gateworks.com ([108.161.130.12]:52303 "EHLO
+        lists.gateworks.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727005AbgBGVSe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 15:57:10 -0500
-Received: by mail-qt1-f194.google.com with SMTP id l19so437372qtq.8
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 12:57:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HN45H+ids+NCISymh2yr5TaGOkbSeu3kPfZfuoJYhiE=;
-        b=OfluTCbQxU2UiZewf9sKzFEe0wl4kJczwr4+6O5grSXP6BWolUzLfdS/1FDvMbwQR/
-         /93uAKd/ORgMIeB0BaD9x6qmSfbDBYDZmIq1M/38b+os8KV8M6WZPsetiTtbf7UePxGC
-         AX4rNZmGOXuzE48Fp0N65arYv44wQhAGvXuFY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HN45H+ids+NCISymh2yr5TaGOkbSeu3kPfZfuoJYhiE=;
-        b=RwABo8P8gzZYxseHqtuK8Oi9W4cac0oE7AhFvOYk7SNoSjZrSYTCEzJ+w1iil7ItXC
-         MIgoj3lC8N0wKih2rQGbvjNxVTZapdwHWBd1DDyUzfCVM7TVsFQYytTNNkVGjdd4VdMj
-         R9nnjY64Vk3oRFBueBgqAcI9xp0yDNs4f2oww0hjkhUojrPOOM5wzpwnZOY3Ru3bEPsW
-         n+q+DHgEUBctq8zdGGcexeSIVyoDxwXm3EbZqiitzfUHEfWVB8nLGCxek2Qy2cwN8w6q
-         kvyn38shwZadFvTjcFp1UMoGT5Ooln+UCkG5GxO1CV6jjNpIgEdTZCEN6BHz9XoXZwYC
-         YhMg==
-X-Gm-Message-State: APjAAAUXhDAXPwmmFwdNuppZg6QzMaKA9u0juP4iqKWZPEgKyTky6zoz
-        Yu7zbjzQfl7YEQIC9pNksctn88kkkCk=
-X-Google-Smtp-Source: APXvYqw4muYEToLsLXQ4KN9P+X2B7pWR3w+BImuMb/7RPlgI45XwTrLrUC2CUHYZ0zeLTmQGjtrpYg==
-X-Received: by 2002:aed:3384:: with SMTP id v4mr278936qtd.58.1581109029448;
-        Fri, 07 Feb 2020 12:57:09 -0800 (PST)
-Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id 136sm1887431qkn.109.2020.02.07.12.57.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2020 12:57:09 -0800 (PST)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Richard Fontana <rfontana@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [RFC 3/3] Revert "tracepoint: Make rcuidle tracepoint callers use SRCU"
-Date:   Fri,  7 Feb 2020 15:56:56 -0500
-Message-Id: <20200207205656.61938-4-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-In-Reply-To: <20200207205656.61938-1-joel@joelfernandes.org>
-References: <20200207205656.61938-1-joel@joelfernandes.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 7 Feb 2020 16:18:34 -0500
+X-Greylist: delayed 2267 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Feb 2020 16:18:34 EST
+Received: from 68-189-91-139.static.snlo.ca.charter.com ([68.189.91.139] helo=tharvey.pdc.gateworks.com)
+        by lists.gateworks.com with esmtp (Exim 4.82)
+        (envelope-from <tharvey@gateworks.com>)
+        id 1j0ARF-0004wm-Ik; Fri, 07 Feb 2020 20:41:21 +0000
+From:   Tim Harvey <tharvey@gateworks.com>
+To:     netdev@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        davem@davemloft.net, rrichter@marvell.com, sgoutham@marvell.com,
+        andrew@lunn.ch, Tim Harvey <tharvey@gateworks.com>
+Subject: [PATCH] net: thunderx: use proper interface type for RGMII
+Date:   Fri,  7 Feb 2020 12:40:26 -0800
+Message-Id: <1581108026-28170-1-git-send-email-tharvey@gateworks.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit e6753f23d961d601dbae50a2fc2a3975c9715b14.
+The configuration of the OCTEONTX XCV_DLL_CTL register via
+xcv_init_hw() is such that the RGMII RX delay is bypassed
+leaving the RGMII TX delay enabled in the MAC:
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+	/* Configure DLL - enable or bypass
+	 * TX no bypass, RX bypass
+	 */
+	cfg = readq_relaxed(xcv->reg_base + XCV_DLL_CTL);
+	cfg &= ~0xFF03;
+	cfg |= CLKRX_BYP;
+	writeq_relaxed(cfg, xcv->reg_base + XCV_DLL_CTL);
+
+This would coorespond to a interface type of PHY_INTERFACE_MODE_RGMII_RXID
+and not PHY_INTERFACE_MODE_RGMII.
+
+Fixing this allows RGMII PHY drivers to do the right thing (enable
+RX delay in the PHY) instead of erroneously enabling both delays in the
+PHY.
+
+Signed-off-by: Tim Harvey <tharvey@gateworks.com>
 ---
- include/linux/tracepoint.h | 40 ++++++++------------------------------
- kernel/tracepoint.c        | 10 +---------
- 2 files changed, 9 insertions(+), 41 deletions(-)
+ drivers/net/ethernet/cavium/thunder/thunder_bgx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index ab1f13b7f7d2c..b2b13cf03e092 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -13,7 +13,6 @@
-  */
+diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
+index c4f6ec0..17a4110 100644
+--- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
++++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
+@@ -1039,7 +1039,7 @@ static int phy_interface_mode(u8 lmac_type)
+ 	if (lmac_type == BGX_MODE_QSGMII)
+ 		return PHY_INTERFACE_MODE_QSGMII;
+ 	if (lmac_type == BGX_MODE_RGMII)
+-		return PHY_INTERFACE_MODE_RGMII;
++		return PHY_INTERFACE_MODE_RGMII_RXID;
  
- #include <linux/smp.h>
--#include <linux/srcu.h>
- #include <linux/errno.h>
- #include <linux/types.h>
- #include <linux/cpumask.h>
-@@ -32,8 +31,6 @@ struct trace_eval_map {
- 
- #define TRACEPOINT_DEFAULT_PRIO	10
- 
--extern struct srcu_struct tracepoint_srcu;
--
- extern int
- tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
- extern int
-@@ -76,16 +73,10 @@ int unregister_tracepoint_module_notifier(struct notifier_block *nb)
-  * probe unregistration and the end of module exit to make sure there is no
-  * caller executing a probe when it is freed.
-  */
--#ifdef CONFIG_TRACEPOINTS
- static inline void tracepoint_synchronize_unregister(void)
- {
--	synchronize_srcu(&tracepoint_srcu);
- 	synchronize_rcu();
+ 	return PHY_INTERFACE_MODE_SGMII;
  }
--#else
--static inline void tracepoint_synchronize_unregister(void)
--{ }
--#endif
- 
- #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
- extern int syscall_regfunc(void);
-@@ -159,31 +150,18 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
-  * as "(void *, void)". The DECLARE_TRACE_NOARGS() will pass in just
-  * "void *data", where as the DECLARE_TRACE() will pass in "void *data, proto".
-  */
--#define __DO_TRACE(tp, proto, args, cond, rcuidle)			\
-+#define __DO_TRACE(tp, proto, args, cond, rcucheck)			\
- 	do {								\
- 		struct tracepoint_func *it_func_ptr;			\
- 		void *it_func;						\
- 		void *__data;						\
--		int __maybe_unused idx = 0;				\
- 									\
- 		if (!(cond))						\
- 			return;						\
--									\
--		/* srcu can't be used from NMI */			\
--		WARN_ON_ONCE(rcuidle && in_nmi());			\
--									\
--		/* keep srcu and sched-rcu usage consistent */		\
--		preempt_disable_notrace();				\
--									\
--		/*							\
--		 * For rcuidle callers, use srcu since sched-rcu	\
--		 * doesn't work from the idle path.			\
--		 */							\
--		if (rcuidle)						\
--			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
--									\
--		it_func_ptr = rcu_dereference_raw((tp)->funcs);		\
--									\
-+		if (rcucheck)						\
-+			rcu_irq_enter_irqson();				\
-+		rcu_read_lock_sched_notrace();				\
-+		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
- 		if (it_func_ptr) {					\
- 			do {						\
- 				it_func = (it_func_ptr)->func;		\
-@@ -191,11 +169,9 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 				((void(*)(proto))(it_func))(args);	\
- 			} while ((++it_func_ptr)->func);		\
- 		}							\
--									\
--		if (rcuidle)						\
--			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
--									\
--		preempt_enable_notrace();				\
-+		rcu_read_unlock_sched_notrace();			\
-+		if (rcucheck)						\
-+			rcu_irq_exit_irqson();				\
- 	} while (0)
- 
- #ifndef MODULE
-diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-index 73956eaff8a9c..df956fc23ca57 100644
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -18,9 +18,6 @@
- extern tracepoint_ptr_t __start___tracepoints_ptrs[];
- extern tracepoint_ptr_t __stop___tracepoints_ptrs[];
- 
--DEFINE_SRCU(tracepoint_srcu);
--EXPORT_SYMBOL_GPL(tracepoint_srcu);
--
- /* Set to 1 to enable tracepoint debug output */
- static const int tracepoint_debug;
- 
-@@ -60,14 +57,9 @@ static inline void *allocate_probes(int count)
- 	return p == NULL ? NULL : p->probes;
- }
- 
--static void srcu_free_old_probes(struct rcu_head *head)
--{
--	kfree(container_of(head, struct tp_probes, rcu));
--}
--
- static void rcu_free_old_probes(struct rcu_head *head)
- {
--	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
-+	kfree(container_of(head, struct tp_probes, rcu));
- }
- 
- static __init int release_early_probes(void)
 -- 
-2.25.0.341.g760bfbb309-goog
+2.7.4
 
