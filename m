@@ -2,130 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D32315552C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 11:00:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5272155546
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 11:05:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbgBGKA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 05:00:26 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:41877 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbgBGKAZ (ORCPT
+        id S1726894AbgBGKFh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 05:05:37 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51932 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbgBGKFg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 05:00:25 -0500
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1j00Qx-0006gM-4C; Fri, 07 Feb 2020 10:00:23 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     axboe@kernel.dk
-Cc:     anthony.wong@canonical.com,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        linux-ide@vger.kernel.org (open list:LIBATA SUBSYSTEM (Serial and
-        Parallel ATA drivers)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ata: ahci: Add sysfs attribute to show remapped NVMe device count
-Date:   Fri,  7 Feb 2020 18:00:16 +0800
-Message-Id: <20200207100016.32605-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 7 Feb 2020 05:05:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=DpJx2T35TLBltfQwDw/CMJMotScVo3os7osEESBHF6Y=; b=LI20WLXI2tTFKZ/xP2Rf3UEO0r
+        ZNr7hjhwGqGEaeJH7UjmTdYvQBACERjCz1Q+SsRQluv9WrznmFaWLTI83rMSgqKt7JGzqUe7ZBCI9
+        xhNd4asfHsUHQL3t8HTkbV40IFDTcxm+AL+KcEt2bVvrrhDYlp/kkiaExKnYWVD8zNK7rSzXuH/65
+        dwHGmkY6/gwbLXIPshDkLDtmak8NTk2eHTvQmjZYpjg+1uS8o/3osySqMFDthtgnQj4eazpJBtFTK
+        X0LsGQVDFN8FLE+RyNx/uQrdcqv9EO51R44B/02U3Xmw5E/5FcFc+G2bgjSzUW5alislIL5FDP/9m
+        79ymyDxw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j00Ce-000174-2m; Fri, 07 Feb 2020 09:45:36 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7E72E30066E;
+        Fri,  7 Feb 2020 10:43:47 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 46F992B834461; Fri,  7 Feb 2020 10:45:34 +0100 (CET)
+Date:   Fri, 7 Feb 2020 10:45:34 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        andriy.shevchenko@intel.com
+Subject: Re: [PATCH V2] perf/x86: Add Intel Tiger Lake uncore support
+Message-ID: <20200207094534.GD14914@hirez.programming.kicks-ass.net>
+References: <20200206161527.3529-1-kan.liang@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200206161527.3529-1-kan.liang@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new sysfs attribute to show how many NVMe devices are remapped.
+On Thu, Feb 06, 2020 at 08:15:27AM -0800, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
+> 
+> For MSR type of uncore units, there is no difference between Ice Lake
+> and Tiger Lake. Share the same code with Ice Lake.
+> 
+> Tiger Lake has two MCs. Both of them are located at 0:0:0. The BAR
+> offset is still 0x48. The offset of the two MCs is 0x10000.
+> Each MC has three counters to count every read/write/total issued by the
+> Memory Controller to DRAM. The counters can be accessed by MMIO.
+> They are free-running counters.
+> 
+> The offset of counters are different for TIGERLAKE_L and TIGERLAKE.
+> Add separated mmio_init() functions.
+> 
+> Reviewed-by: Andi Kleen <ak@linux.intel.com>
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 
-Userspace like distro installer can use this info to ask user to change
-the BIOS setting.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/ata/ahci.c | 28 ++++++++++++++++++++++++----
- drivers/ata/ahci.h |  1 +
- 2 files changed, 25 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
-index 11ea1aff40db..cdbd995a7a6b 100644
---- a/drivers/ata/ahci.c
-+++ b/drivers/ata/ahci.c
-@@ -1488,7 +1488,7 @@ static irqreturn_t ahci_thunderx_irq_handler(int irq, void *dev_instance)
- static void ahci_remap_check(struct pci_dev *pdev, int bar,
- 		struct ahci_host_priv *hpriv)
- {
--	int i, count = 0;
-+	int i;
- 	u32 cap;
- 
- 	/*
-@@ -1509,13 +1509,14 @@ static void ahci_remap_check(struct pci_dev *pdev, int bar,
- 			continue;
- 
- 		/* We've found a remapped device */
--		count++;
-+		hpriv->remapped_nvme++;
- 	}
- 
--	if (!count)
-+	if (!hpriv->remapped_nvme)
- 		return;
- 
--	dev_warn(&pdev->dev, "Found %d remapped NVMe devices.\n", count);
-+	dev_warn(&pdev->dev, "Found %u remapped NVMe devices.\n",
-+		 hpriv->remapped_nvme);
- 	dev_warn(&pdev->dev,
- 		 "Switch your BIOS from RAID to AHCI mode to use them.\n");
- 
-@@ -1635,6 +1636,18 @@ static void ahci_intel_pcs_quirk(struct pci_dev *pdev, struct ahci_host_priv *hp
- 	}
- }
- 
-+static ssize_t remapped_nvme_show(struct device *dev,
-+				  struct device_attribute *attr,
-+				  char *buf)
-+{
-+	struct ata_host *host = dev_get_drvdata(dev);
-+	struct ahci_host_priv *hpriv = host->private_data;
-+
-+	return sprintf(buf, "%u\n", hpriv->remapped_nvme);
-+}
-+
-+static DEVICE_ATTR_RO(remapped_nvme);
-+
- static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- {
- 	unsigned int board_id = ent->driver_data;
-@@ -1735,6 +1748,10 @@ static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	/* detect remapped nvme devices */
- 	ahci_remap_check(pdev, ahci_pci_bar, hpriv);
- 
-+	sysfs_add_file_to_group(&pdev->dev.kobj,
-+				&dev_attr_remapped_nvme.attr,
-+				NULL);
-+
- 	/* must set flag prior to save config in order to take effect */
- 	if (ahci_broken_devslp(pdev))
- 		hpriv->flags |= AHCI_HFLAG_NO_DEVSLP;
-@@ -1886,6 +1903,9 @@ static void ahci_shutdown_one(struct pci_dev *pdev)
- 
- static void ahci_remove_one(struct pci_dev *pdev)
- {
-+	sysfs_remove_file_from_group(&pdev->dev.kobj,
-+				     &dev_attr_remapped_nvme.attr,
-+				     NULL);
- 	pm_runtime_get_noresume(&pdev->dev);
- 	ata_pci_remove_one(pdev);
- }
-diff --git a/drivers/ata/ahci.h b/drivers/ata/ahci.h
-index 3dbf398c92ea..d991dd46e89c 100644
---- a/drivers/ata/ahci.h
-+++ b/drivers/ata/ahci.h
-@@ -336,6 +336,7 @@ struct ahci_host_priv {
- 	u32 			em_loc; /* enclosure management location */
- 	u32			em_buf_sz;	/* EM buffer size in byte */
- 	u32			em_msg_type;	/* EM message type */
-+	u32			remapped_nvme;	/* NVMe remapped device count */
- 	bool			got_runtime_pm; /* Did we do pm_runtime_get? */
- 	struct clk		*clks[AHCI_MAX_CLKS]; /* Optional */
- 	struct reset_control	*rsts;		/* Optional */
--- 
-2.17.1
-
+Thanks!
