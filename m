@@ -2,150 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DE5E155251
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 07:14:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62EE0155258
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 07:15:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbgBGGO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 01:14:26 -0500
-Received: from mx0a-00000d04.pphosted.com ([148.163.149.245]:23154 "EHLO
-        mx0a-00000d04.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726465AbgBGGO0 (ORCPT
+        id S1726901AbgBGGPz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 01:15:55 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45270 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbgBGGPy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 01:14:26 -0500
-Received: from pps.filterd (m0102889.ppops.net [127.0.0.1])
-        by mx0a-00000d04.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01769SvB029538;
-        Thu, 6 Feb 2020 22:13:51 -0800
-Received: from mx0a-00000d03.pphosted.com (mx0a-00000d03.pphosted.com [148.163.149.244])
-        by mx0a-00000d04.pphosted.com with ESMTP id 2xyhq04jry-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 06 Feb 2020 22:13:51 -0800
-Received: from pps.filterd (m0190089.ppops.net [127.0.0.1])
-        by mx0a-00000d03.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0176DCBr002116;
-        Thu, 6 Feb 2020 22:13:50 -0800
-Received: from codegreen8.stanford.edu (codegreen8.stanford.edu [171.67.224.10])
-        by mx0a-00000d03.pphosted.com with ESMTP id 2xyhngvb42-1
-        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NOT);
-        Thu, 06 Feb 2020 22:13:50 -0800
-Received: from codegreen8.stanford.edu (localhost.localdomain [127.0.0.1])
-        by codegreen8.stanford.edu (Postfix) with ESMTP id 93E2678;
-        Thu,  6 Feb 2020 22:13:49 -0800 (PST)
-Received: from smtp.stanford.edu (smtp4.stanford.edu [171.67.219.72])
-        by codegreen8.stanford.edu (Postfix) with ESMTP id 8489878;
-        Thu,  6 Feb 2020 22:13:49 -0800 (PST)
-Received: from cm-mail.stanford.edu (cm-mail.stanford.edu [171.64.197.135])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp.stanford.edu (Postfix) with ESMTPS id 7D8BF21D0F;
-        Thu,  6 Feb 2020 22:13:49 -0800 (PST)
-Received: from localhost.localdomain (c-73-189-214-134.hsd1.ca.comcast.net [73.189.214.134])
-        (authenticated bits=0)
-        by cm-mail.stanford.edu (8.14.4/8.14.4) with ESMTP id 0176DkPJ003086
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES128-SHA bits=128 verify=NO);
-        Thu, 6 Feb 2020 22:13:48 -0800
-Cc:     nando@ccrma.Stanford.EDU, LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [ANNOUNCE] v5.4.17-rt9
-To:     Mike Galbraith <efault@gmx.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20200204165811.imc5lvs3wt3soaw2@linutronix.de>
- <cda47e2f-fd9d-c4c8-7991-64fef38af0ef@ccrma.stanford.edu>
- <1581055866.25780.7.camel@gmx.de>
-From:   Fernando Lopez-Lezcano <nando@ccrma.Stanford.EDU>
-Message-ID: <a6a9ba66-4e63-8156-2e49-291087d9e847@ccrma.stanford.edu>
-Date:   Thu, 6 Feb 2020 22:13:46 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Fri, 7 Feb 2020 01:15:54 -0500
+Received: by mail-pg1-f193.google.com with SMTP id b9so560869pgk.12;
+        Thu, 06 Feb 2020 22:15:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oIWvQKjeURh41o5jLiCm8zK/D7CveIajHCiTf3CbOf4=;
+        b=rA+pSDl2UEhU7r4KgW1R90UuKoei0GVpzWqpQaPSMYl2XN5+EDo808cRepHaOfuBZ8
+         dcRRQTfA4Bsg0lwBPH8y14tiFReDeFMEqjPUvmkDKULpNjklhJFmVJrj3ieP3lMRqUiV
+         y7gUJMY3bH5vfJphpztQP8nfga0zqcOx/o7ogozY/KpM99WizPdRiIqD9CdQJzwARfjF
+         hqLOxksfH4Vk920UA2YRyjiT+VzAxgV3wk6CM/6Dt83hH1JGLfLVsQ2nGC6YOS5kD58G
+         90/i7fIc8yOOnzbpWeLFRkN86nUPJlcVMLUT512gN48G4IWeRWjw+7Hxiz+J28T1pRpy
+         lxyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oIWvQKjeURh41o5jLiCm8zK/D7CveIajHCiTf3CbOf4=;
+        b=FfkhxRcm049Wrp+zKwpdxluPvHoergZr67XmLMHuF1DtE82CCxCz9WgXC4U2jQDJlE
+         /oiC5Rqz3ZgyzeGJRnJs38ODS4Fi4KvYopa65rDQEiGkDFV7sGbc+CsUGbuRGa3KtTk8
+         DEc1tC6ratIe/uqMoJ8U+DLC19ixperARjMDQETEZv8X8uD23XtT0eg3qaVPTnHW+zIY
+         tFGAYPs83YvnPVrLiCsQ+8UyrzUYBITy9laks69HB8LF7Sn0cRwh3VxyiGNjhgmeMdYW
+         hX5xrMktD60/6Juw6urxRmk2wLfk5nSp0LQ61cMbYnoiuUa/9dv5ge2j6dfycOlO2dfT
+         KnTw==
+X-Gm-Message-State: APjAAAUQ2XA/Wo4l29hAxXJtFVZ2YQp784gTDMhQvUa6nVxyamFu43LX
+        z4f+kr2+qrA4gcKAKlEhGat9k+Y2JRfhxg==
+X-Google-Smtp-Source: APXvYqwd6QSW6mUkT1II/pwo9nRPlkyFskOSSckbiAzAKYrTCZR/KF0Tj//AWGcLBv0zW9hwbxa0Jg==
+X-Received: by 2002:a63:f0a:: with SMTP id e10mr7170520pgl.402.1581056152556;
+        Thu, 06 Feb 2020 22:15:52 -0800 (PST)
+Received: from localhost.localdomain ([2001:19f0:7001:2668:5400:1ff:fe62:2bbd])
+        by smtp.gmail.com with ESMTPSA id gc1sm1127414pjb.20.2020.02.06.22.15.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Feb 2020 22:15:51 -0800 (PST)
+From:   Chuanhong Guo <gch981213@gmail.com>
+To:     linux-spi@vger.kernel.org
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Chuanhong Guo <gch981213@gmail.com>
+Subject: [PATCH v3 0/2] spi: add driver for ar934x spi controller
+Date:   Fri,  7 Feb 2020 14:14:04 +0800
+Message-Id: <20200207061406.1735079-1-gch981213@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <1581055866.25780.7.camel@gmx.de>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on cm-mail.stanford.edu
-x-proofpoint-stanford-dir: outbound
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-06_04:2020-02-06,2020-02-06 signatures=0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-06_04:2020-02-06,2020-02-06 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0
- mlxlogscore=999 priorityscore=1501 mlxscore=0 clxscore=1011 malwarescore=0
- spamscore=0 impostorscore=0 adultscore=100 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002070044
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/6/20 10:11 PM, Mike Galbraith wrote:
-> On Thu, 2020-02-06 at 15:59 -0800, Fernando Lopez-Lezcano wrote:
->> On 2/4/20 8:58 AM, Sebastian Andrzej Siewior wrote:
->>> Dear RT folks!
->>>
->>> I'm pleased to announce the v5.4.17-rt9 patch set.
->>
->> Thanks!
->> I see a continuous stream of these:
-> 
-> (snips gripage)
-> 
-> Yup, d67739268cf0 annoys RT locking if lockdep is enabled.  The below
-> shut it up for my i915 equipped lappy.
+This controller is a superset of the already supported qca,ar7100-spi.
+Besides the bit-bang mode in spi-ath79.c, this new controller added
+a new "shift register" mode, allowing faster spi operations.
+This mode doesn't need all the bit-bang code in spi-ath79.c and needs
+a different clock setup, so I decided to write a new driver for it
+instead of extending current spi-ath79 driver.
 
-Wow, Mike, thanks!, will try it out and report...
-(might take me a couple of days)
+Change since v2:
+fix binding documentation check.
 
--- Fernando
+Changes since v1:
+1. change comment at the beginning to C++ style
+2. rename ar934x_spi_transfer_one to ar934x_spi_transfer_one_message
 
+Chuanhong Guo (2):
+  spi: add driver for ar934x spi controller
+  dt-binding: spi: add bindings for spi-ar934x
 
-> drm/i915/gt: use a LOCAL_IRQ_LOCK in __timeline_mark_lock()
-> 
-> Quoting drm/i915/gt: Mark up the nested engine-pm timeline lock as irqsafe
-> 
->      We use a fake timeline->mutex lock to reassure lockdep that the timeline
->      is always locked when emitting requests. However, the use inside
->      __engine_park() may be inside hardirq and so lockdep now complains about
->      the mixed irq-state of the nested locked. Disable irqs around the
->      lockdep tracking to keep it happy.
-> 
-> This lockdep appeasement breaks RT because we take sleeping locks between
-> __timeline_mark_lock()/unlock().  Use a LOCAL_IRQ_LOCK instead.
-> 
-> Signed-off-by: Mike Galbraith <efaukt@gmx.de>
-> ---
->   drivers/gpu/drm/i915/gt/intel_engine_pm.c |    7 +++++--
->   1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> --- a/drivers/gpu/drm/i915/gt/intel_engine_pm.c
-> +++ b/drivers/gpu/drm/i915/gt/intel_engine_pm.c
-> @@ -38,12 +38,15 @@ static int __engine_unpark(struct intel_
->   }
-> 
->   #if IS_ENABLED(CONFIG_LOCKDEP)
-> +#include <linux/locallock.h>
-> +
-> +static DEFINE_LOCAL_IRQ_LOCK(timeline_lock);
-> 
->   static inline unsigned long __timeline_mark_lock(struct intel_context *ce)
->   {
->   	unsigned long flags;
-> 
-> -	local_irq_save(flags);
-> +	local_lock_irqsave(timeline_lock, flags);
->   	mutex_acquire(&ce->timeline->mutex.dep_map, 2, 0, _THIS_IP_);
-> 
->   	return flags;
-> @@ -53,7 +56,7 @@ static inline void __timeline_mark_unloc
->   					  unsigned long flags)
->   {
->   	mutex_release(&ce->timeline->mutex.dep_map, 0, _THIS_IP_);
-> -	local_irq_restore(flags);
-> +	local_unlock_irqrestore(timeline_lock, flags);
->   }
-> 
->   #else
-> 
-> 
+ .../bindings/spi/qca,ar934x-spi.yaml          |  40 +++
+ drivers/spi/Kconfig                           |   7 +
+ drivers/spi/Makefile                          |   1 +
+ drivers/spi/spi-ar934x.c                      | 229 ++++++++++++++++++
+ 4 files changed, 277 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/qca,ar934x-spi.yaml
+ create mode 100644 drivers/spi/spi-ar934x.c
 
+-- 
+2.24.1
 
