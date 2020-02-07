@@ -2,137 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D09C155653
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 12:06:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E277155658
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 12:06:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbgBGLGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 06:06:07 -0500
-Received: from foss.arm.com ([217.140.110.172]:38970 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726674AbgBGLGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 06:06:06 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B091930E;
-        Fri,  7 Feb 2020 03:06:05 -0800 (PST)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2BFED3F68E;
-        Fri,  7 Feb 2020 03:06:04 -0800 (PST)
-Date:   Fri, 7 Feb 2020 11:06:02 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "andre.przywara@arm.com" <andre.przywara@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: arm,scmi: add smc/hvc transports
-Message-ID: <20200207110602.GE36345@bogus>
-References: <1580994086-17850-1-git-send-email-peng.fan@nxp.com>
- <1580994086-17850-2-git-send-email-peng.fan@nxp.com>
- <7875e2533c4ba23b8ca0a2a296699497@kernel.org>
- <20200207104736.GB36345@bogus>
- <AM0PR04MB4481B1D5E2725E85BC6D6D71881C0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+        id S1727049AbgBGLGe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 06:06:34 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:17405 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726674AbgBGLGd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 06:06:33 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e3d44aa0000>; Fri, 07 Feb 2020 03:06:18 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 07 Feb 2020 03:06:32 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 07 Feb 2020 03:06:32 -0800
+Received: from [10.24.44.92] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 7 Feb
+ 2020 11:06:27 +0000
+CC:     <spujar@nvidia.com>, <perex@perex.cz>, <tiwai@suse.com>,
+        <robh+dt@kernel.org>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sharadg@nvidia.com>, <mkumard@nvidia.com>,
+        <viswanathl@nvidia.com>, <rlokhande@nvidia.com>,
+        <dramesh@nvidia.com>, <atalambedu@nvidia.com>
+Subject: Re: [PATCH v2 3/9] ASoC: tegra: add Tegra210 based DMIC driver
+To:     Dmitry Osipenko <digetx@gmail.com>
+References: <1580380422-3431-1-git-send-email-spujar@nvidia.com>
+ <1580380422-3431-4-git-send-email-spujar@nvidia.com>
+ <9ada4090-169e-0767-db5d-739f6e621812@gmail.com>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <3e89e75d-2f5a-dc42-98f7-8e1262afe380@nvidia.com>
+Date:   Fri, 7 Feb 2020 16:36:24 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM0PR04MB4481B1D5E2725E85BC6D6D71881C0@AM0PR04MB4481.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <9ada4090-169e-0767-db5d-739f6e621812@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-GB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1581073578; bh=3R4H2IZWw7cTPGDMdPoqMKekUyJM+BtKnjJ790Z/Zqo=;
+        h=X-PGP-Universal:CC:Subject:To:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=RiBDDr5xvmcO6DXh82HHBPn9OlvxmrN84Ur8NAesELWcxhWHETz2Qpwo349cijTe1
+         QjoUYMgDdWdh+navso0UWpxkqK07SM3YLwwJm4vxYcuSF+FZzgNhr0GxxrFKsa080o
+         oVYcP/MXaPYi+9wg0P4bQAW4N16lOmYMdVyIsroHaaFyr2nswdnmJ8EAXbJKRmN9f6
+         Q8MZ026nkP9lw/HMi9CIG4rQYQ1+eOi80nooxaG+W8IFZ/wHsktWY02gQiFft3mIYx
+         t7GXZpdxMgIR48hbR4euPfqJgOytS2V7I9ppkWKhmxHLBqMhe8s2OJOE81qaz+61nj
+         5QJCcY9AKwGLA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 10:55:44AM +0000, Peng Fan wrote:
-> > Subject: Re: [PATCH 1/2] dt-bindings: arm: arm,scmi: add smc/hvc transports
-> >
-> > On Fri, Feb 07, 2020 at 10:08:36AM +0000, Marc Zyngier wrote:
-> > > On 2020-02-06 13:01, peng.fan@nxp.com wrote:
-> > > > From: Peng Fan <peng.fan@nxp.com>
-> > > >
-> > > > SCMI could use SMC/HVC as tranports, so add into devicetree binding
-> > > > doc.
-> > > >
-> > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > > ---
-> > > >  Documentation/devicetree/bindings/arm/arm,scmi.txt | 4 +++-
-> > > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/arm/arm,scmi.txt
-> > > > b/Documentation/devicetree/bindings/arm/arm,scmi.txt
-> > > > index f493d69e6194..03cff8b55a93 100644
-> > > > --- a/Documentation/devicetree/bindings/arm/arm,scmi.txt
-> > > > +++ b/Documentation/devicetree/bindings/arm/arm,scmi.txt
-> > > > @@ -14,7 +14,7 @@ Required properties:
-> > > >
-> > > >  The scmi node with the following properties shall be under the
-> > > > /firmware/ node.
-> > > >
-> > > > -- compatible : shall be "arm,scmi"
-> > > > +- compatible : shall be "arm,scmi" or "arm,scmi-smc"
-> > > >  - mboxes: List of phandle and mailbox channel specifiers. It should
-> > > > contain
-> > > >  	  exactly one or two mailboxes, one for transmitting messages("tx")
-> > > >  	  and another optional for receiving the notifications("rx") if @@
-> > > > -25,6 +25,8 @@ The scmi node with the following properties shall be
-> > > > under the /firmware/ node.
-> > > >  	  protocol identifier for a given sub-node.
-> > > >  - #size-cells : should be '0' as 'reg' property doesn't have any size
-> > > >  	  associated with it.
-> > > > +- arm,smc-id : SMC id required when using smc transports
-> > > > +- arm,hvc-id : HVC id required when using hvc transports
-> > > >
-> > > >  Optional properties:
-> > >
-> > > Not directly related to DT: Why do we need to distinguish between SMC
-> > > and HVC?
-> >
-> > IIUC you want just one property to get the function ID ? Does that align with
-> > what you are saying ? I wanted to ask the same question and I see no need for
-> > 2 different properties.
->
-> The multiple protocols might use SMC or HVC. Saying
->
->  Protocol@x {
->     method="smc";
->     arm,func-id=<0x....>
->  };
->  Protocol@y {
->     method="hvc";
->     arm,func-id=<0x....>
->  };
->
 
-Wow, stop there. Please don't do that. You either use SMC or HVC consistently.
-Not both at the same time. Any particular reasons for trying such crazy things.
 
-> With my propose:
+On 2/6/2020 10:23 PM, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
 >
-> Protocol@x {
->     arm,smc-id=<0x....>
->  };
->  Protocol@y {
->     arm,hvc-id=<0x....>
->  };
 >
-> No need an extra method property to indicate it is smc or hvc.
-> The driver use take arm,smc-id as SMC, arm,hvc-id as HVC.
->
+> 30.01.2020 13:33, Sameer Pujar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> ...
+>> +static const struct reg_default tegra210_dmic_reg_defaults[] =3D {
+>> +     { TEGRA210_DMIC_TX_INT_MASK, 0x00000001},
+>> +     { TEGRA210_DMIC_TX_CIF_CTRL, 0x00007700},
+>> +     { TEGRA210_DMIC_CG, 0x1},
+>> +     { TEGRA210_DMIC_CTRL, 0x00000301},
+>> +     /* Below enables all filters - DCR, LP and SC */
+>> +     { TEGRA210_DMIC_DBG_CTRL, 0xe },
+>> +     /* Below as per latest POR value */
+>> +     { TEGRA210_DMIC_DCR_BIQUAD_0_COEF_4, 0x0},
+>> +     /* LP filter is configured for pass through and used to apply gain=
+ */
+>> +     { TEGRA210_DMIC_LP_BIQUAD_0_COEF_0, 0x00800000},
+>> +     { TEGRA210_DMIC_LP_BIQUAD_0_COEF_1, 0x0},
+>> +     { TEGRA210_DMIC_LP_BIQUAD_0_COEF_2, 0x0},
+>> +     { TEGRA210_DMIC_LP_BIQUAD_0_COEF_3, 0x0},
+>> +     { TEGRA210_DMIC_LP_BIQUAD_0_COEF_4, 0x0},
+>> +     { TEGRA210_DMIC_LP_BIQUAD_1_COEF_0, 0x00800000},
+>> +     { TEGRA210_DMIC_LP_BIQUAD_1_COEF_1, 0x0},
+>> +     { TEGRA210_DMIC_LP_BIQUAD_1_COEF_2, 0x0},
+>> +     { TEGRA210_DMIC_LP_BIQUAD_1_COEF_3, 0x0},
+>> +     { TEGRA210_DMIC_LP_BIQUAD_1_COEF_4, 0x0},
+>> +};
+> I'd add a space on the right side of `}`, for consistency with the left.
 
-NACK, just have one function ID, I am not very particular on the name
-'smc-id' is just fine for me. But only one function ID for any conduit
-used and that is chosen by PSCI/SMCCC.
+Do you mean like this?
+{ TEGRA210_DMIC_TX_INT_MASK, 0x00000001 },
+{ TEGRA210_DMIC_TX_CIF_CTRL, 0x00007700 },
+ =C2=A0=C2=A0=C2=A0 . . .
 
-If you need multiple channels(unique per protocol) then I suggest go for
-an channel ID or you can even manage just with shmem associated with it
-(I prefer latter but again I am fine either way)
-
---
-Regards,
-Sudeep
