@@ -2,81 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3D341558C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 14:52:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 367CB1558D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 14:55:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbgBGNw6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 08:52:58 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:53548 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726798AbgBGNw5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 08:52:57 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: alyssa)
-        with ESMTPSA id 0478629567D
-Date:   Fri, 7 Feb 2020 08:52:51 -0500
-From:   Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Steven Price <steven.price@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
-        ulf.hansson@linaro.org
-Subject: Re: [PATCH v4 5/7] drm/panfrost: Add support for multiple power
- domains
-Message-ID: <20200207135251.GA2952@kevin>
-References: <20200207052627.130118-1-drinkcat@chromium.org>
- <20200207052627.130118-6-drinkcat@chromium.org>
+        id S1727048AbgBGNzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 08:55:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33882 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726798AbgBGNzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 08:55:05 -0500
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE50C20720;
+        Fri,  7 Feb 2020 13:55:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581083705;
+        bh=/DJDioa5aewgXfPA9osE7mqZMcad0mT1AbwY/XarPgQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=2gFMslvSyBiAaLDzxpsxU78KqVgOxbNA7N5n2gnm735yJ91jwwjJ1fhETkC5lkNS6
+         Y6SCIUM5nUmfSGBVo8OXZw+1zNSdmASX+PJnao+jwgRgy6DpZT3Uqb0Y1urR6PuFKZ
+         2Dn7UXKlVY5pTwfXse7SH7DtkbKVg0fHNDnQBs6Y=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH] tools/bootconfig: Fix wrong __VA_ARGS__ usage
+Date:   Fri,  7 Feb 2020 22:55:01 +0900
+Message-Id: <158108370130.2758.10893830923800978011.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <87o8ua1rg3.fsf@mpe.ellerman.id.au>
+References: <87o8ua1rg3.fsf@mpe.ellerman.id.au>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
-Content-Disposition: inline
-In-Reply-To: <20200207052627.130118-6-drinkcat@chromium.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Since printk() wrapper macro uses __VA_ARGS__ without
+"##" prefix, it causes a build error if there is no
+variable arguments (e.g. only fmt is specified.)
+To fix this error, use ##__VA_ARGS__ instead of
+__VAR_ARGS__.
 
---VbJkn9YxBvnuCH5J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Fixes: 950313ebf79c ("tools: bootconfig: Add bootconfig command")
+Reported-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ tools/bootconfig/include/linux/printk.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +	for (i = 0; i < ARRAY_SIZE(pfdev->pm_domain_devs); i++) {
-> +		if (!pfdev->pm_domain_devs[i])
-> +			break;
+diff --git a/tools/bootconfig/include/linux/printk.h b/tools/bootconfig/include/linux/printk.h
+index 017bcd6912a5..e978a63d3222 100644
+--- a/tools/bootconfig/include/linux/printk.h
++++ b/tools/bootconfig/include/linux/printk.h
+@@ -7,7 +7,7 @@
+ /* controllable printf */
+ extern int pr_output;
+ #define printk(fmt, ...)	\
+-	(pr_output ? printf(fmt, __VA_ARGS__) : 0)
++	(pr_output ? printf(fmt, ##__VA_ARGS__) : 0)
+ 
+ #define pr_err printk
+ #define pr_warn	printk
 
-I'm not totally familiar with this code, but should this be a break or
-just a continue?
-
-
---VbJkn9YxBvnuCH5J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEQ17gm7CvANAdqvY4/v5QWgr1WA0FAl49a6kACgkQ/v5QWgr1
-WA1bjxAAnLaxUD3zjRv8cz282ucvOS+zEVrsYCEtVHJXAXsVa6qH9W4rTswmRCnU
-0xfwIFqVmUch1QzZgxsqX42RrVZPNU20eN1qspQgEfXnIttVsTSzvgnEwHw22TCn
-nr/f+tKDnIRFzz4PZ9ywTyzLBJNYJwR00QoMKTg//184tvoAWDrm0k0h7iVx7X96
-mymCuf6jWpfB24TlTTvcXTCDUcoPVWZqJ1rppHtVV10E0a6VRKRURli75q6d4uBU
-T4yqc02JSUvyaOm8KF5LNce0FOGeEMiQFfEG4jRP1y5FYVuPOoJciB3Gtv7JSeaa
-Tg0PCBs7BYNbIlkLcxYyPjnwD60L5l1IxD5lKzF0DJJucuqoRQP1gpz5kZaLmEOj
-kvXi8P0Bx87ZaF2ghgX+l/IKFLiwHpLfE4BzG6VMLUSE/Nher4Tcvz7+3AbsTBhD
-pJ5tcommgF4KYUkEZ7rfNDD1G5f6h+c7yNMpeUOIadPyMY47NIpr3TBCpZJGiJ02
-nSwt3k/7Y5Hig0OZxypHVgqyBD3FycMPoQpelBC4/gZH4w59DKlE42VBqc8977m/
-dv1vv3QPS0w0RNKO4FnH+N63RnHovNNsUbNAsQkS7GldSGnbCQymGHXRniSdO7XT
-cbs14xJbzZ09gdyTGmybAsL1RKMT1YqGG1/3RSeS7bSOwyFX8Wg=
-=dMt0
------END PGP SIGNATURE-----
-
---VbJkn9YxBvnuCH5J--
