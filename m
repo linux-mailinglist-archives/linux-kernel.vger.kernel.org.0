@@ -2,138 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79FFC1558A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 14:42:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE7F81558B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 14:44:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbgBGNmc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 08:42:32 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53214 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726798AbgBGNmb (ORCPT
+        id S1727005AbgBGNoR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 08:44:17 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43928 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726674AbgBGNoR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 08:42:31 -0500
-Received: by mail-wm1-f66.google.com with SMTP id p9so2640893wmc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 05:42:29 -0800 (PST)
+        Fri, 7 Feb 2020 08:44:17 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z9so2719894wrs.10
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 05:44:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=date:from:to:cc:subject:message-id:mail-followup-to:references
          :mime-version:content-disposition:in-reply-to;
-        bh=TyPPRLKeipDPd+u8tqRuMDYkhQE0y3JFQkWBFGYN/N8=;
-        b=Q6ayxrGsTc4a7zvF4JrnE8pm2eVELARdVSK6Pfhkt5GjlpNQouAG/N05fastzNDYtV
-         0s/3GOaVVtss8j7chaZqG7vGZQRceoD5tg/UC5OVWooSkOcqvpqBBdeYlbu8DDxfb+oM
-         BOI3HVjzmrTIXfiK6zcpxNhHPSzQPSjhdF8vA=
+        bh=m9Hn1RaUXFooKHwmRZTfAKZ274VjztClE8pDRYYGw2c=;
+        b=M0PjjdgYCPa6DgxGqO3xxPQ3OX262TSN0UqM6Kqiq8/lumJMhLG+2HPA3bnZvyhpwc
+         CVSO/cXMEAMr+UUk3ef8vaeTxw3+qSrjyvfJWj/sLyvEzrHr1LqWAjHi8Ap3jRrWzagR
+         fWYlOeYeXN31g0NzMnTA5QYYX6ZfrRyNtdkGc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id
          :mail-followup-to:references:mime-version:content-disposition
          :in-reply-to;
-        bh=TyPPRLKeipDPd+u8tqRuMDYkhQE0y3JFQkWBFGYN/N8=;
-        b=NFCh3nt+IyGZ29PcDnkOw6/0raTLlSGkNEmL8ot7ks4pAi2/D4kSYyBLM3qIg427ar
-         cocvJamC6VJbATp9wPSTWUjZt3o2dWqOh3vdJQTKYH426dTypx2whimscbl3f14gAJ2y
-         LFe9wcVZLo13GhNIGp+bH3fQ22k8/IlPUgaC+LKDthMh1cfASh80IwTOjijBNkcDNm/w
-         BGppMkb6ASxshmbGW/H38ActX0hr6KzuTcDyEOAVAZme5Wa9EhCogqbWnDM/TxxjoNNK
-         wTSPSUr5RACksLu44HGYIsNhhjpCTZRMeb1FVa3d32LVSGzAUlsktnnHPCv/+rKXQLoN
-         cKUg==
-X-Gm-Message-State: APjAAAWI+C919tDxD2sa4LBKL6ej7AFwPB9kPy2qVLhG66CJEURvBVgi
-        QfWpow+mkfyWFDglKGtXVmdYag==
-X-Google-Smtp-Source: APXvYqxhatD4Js1NKtiy3XyO7Te5rVWuR1uUeZlh84mCoY9NL3oeMACk2iagMiLuPOki+LjjhnCnBA==
-X-Received: by 2002:a1c:9a84:: with SMTP id c126mr4594084wme.111.1581082948462;
-        Fri, 07 Feb 2020 05:42:28 -0800 (PST)
+        bh=m9Hn1RaUXFooKHwmRZTfAKZ274VjztClE8pDRYYGw2c=;
+        b=lHtpejGyJKk1YCdJJtCieink4f7B5Aqk3qr40j52a7oSjCwvp9VMNO1EFjI8/UXYAy
+         XgfQ5wUqVlvLsqYDYMMZP1qGb9Qy9An8GOoRWnG9nutadjyk2QgB0XZfOTbsfyhHhxwt
+         3KjeewjRnEoRFqjTbiFszdb/IKITmwe6i1+o+DlsCjzxP+uqa9GZnG8Ywr0D+rodw9ex
+         UU7ODPL5/KpVUZf7IoIGwpGhfUnXnjEJ3BUxiJoIoRgJvKD+GaU/SYRxsx07yqxVtC/Q
+         l/dQYlzT1VvMsLayzM9BVDYM8a7DWIi0ZcLCesy/t7m1uq1t6E2+3Y6gZjhl04fqphPi
+         M4tQ==
+X-Gm-Message-State: APjAAAXcsGzWowgvZsPvg1aklEf0Zj7vwXwWm4ZAnT1D/nXRDUw907/C
+        QVs6GnpLhoAGQHT3Gpk1KnUqCCgwhKLqEQ==
+X-Google-Smtp-Source: APXvYqwJ37XAlNKHJ3NdiUGsMdK5N0tuoJlJ5hgMTD925OdVra68xNS96qXdlwiN2Ssrdy6rDTdM8Q==
+X-Received: by 2002:adf:d4ca:: with SMTP id w10mr5065348wrk.53.1581083054017;
+        Fri, 07 Feb 2020 05:44:14 -0800 (PST)
 Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id i16sm3175338wrr.71.2020.02.07.05.42.27
+        by smtp.gmail.com with ESMTPSA id g25sm16762868wmh.3.2020.02.07.05.44.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2020 05:42:27 -0800 (PST)
-Date:   Fri, 7 Feb 2020 14:42:25 +0100
+        Fri, 07 Feb 2020 05:44:13 -0800 (PST)
+Date:   Fri, 7 Feb 2020 14:44:11 +0100
 From:   Daniel Vetter <daniel@ffwll.ch>
 To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
+Cc:     dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
-        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
         <virtualization@lists.linux-foundation.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <spice-devel@lists.freedesktop.org>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/bochs: add drm_driver.release callback.
-Message-ID: <20200207134225.GA43062@phenom.ffwll.local>
+Subject: Re: [PATCH] drm/qxl: add drm_driver.release callback.
+Message-ID: <20200207134411.GB43062@phenom.ffwll.local>
 Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
-        dri-devel@lists.freedesktop.org,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
+        dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>,
         David Airlie <airlied@linux.ie>,
-        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" <virtualization@lists.linux-foundation.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" <virtualization@lists.linux-foundation.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" <spice-devel@lists.freedesktop.org>,
         open list <linux-kernel@vger.kernel.org>
-References: <20200207121312.25296-1-kraxel@redhat.com>
+References: <20200207121405.25895-1-kraxel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200207121312.25296-1-kraxel@redhat.com>
+In-Reply-To: <20200207121405.25895-1-kraxel@redhat.com>
 X-Operating-System: Linux phenom 5.3.0-3-amd64 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 01:13:12PM +0100, Gerd Hoffmann wrote:
-> From: Gurchetan Singh <gurchetansingh@chromium.org>
+On Fri, Feb 07, 2020 at 01:14:05PM +0100, Gerd Hoffmann wrote:
+> Move final cleanups to qxl_drm_release() callback.
+> Add drm_atomic_helper_shutdown() call to qxl_pci_remove().
 > 
-> Move bochs_unload call from bochs_remove() to the new bochs_release()
-> callback.  Also call drm_dev_unregister() first in bochs_remove().
+> Reorder calls in qxl_device_fini().  Cleaning up gem & ttm
+> might trigger qxl commands, so we should do that before
+> releaseing command rings.
 > 
 > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 > ---
->  drivers/gpu/drm/bochs/bochs_drv.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+>  drivers/gpu/drm/qxl/qxl_drv.c | 21 ++++++++++++++-------
+>  drivers/gpu/drm/qxl/qxl_kms.c |  8 ++++----
+>  2 files changed, 18 insertions(+), 11 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
-> index 10460878414e..87ee1eb21a4d 100644
-> --- a/drivers/gpu/drm/bochs/bochs_drv.c
-> +++ b/drivers/gpu/drm/bochs/bochs_drv.c
-> @@ -60,6 +60,11 @@ static int bochs_load(struct drm_device *dev)
+> diff --git a/drivers/gpu/drm/qxl/qxl_drv.c b/drivers/gpu/drm/qxl/qxl_drv.c
+> index 1d601f57a6ba..8044363ba0f2 100644
+> --- a/drivers/gpu/drm/qxl/qxl_drv.c
+> +++ b/drivers/gpu/drm/qxl/qxl_drv.c
+> @@ -34,6 +34,7 @@
+>  #include <linux/pci.h>
 >  
->  DEFINE_DRM_GEM_FOPS(bochs_fops);
+>  #include <drm/drm.h>
+> +#include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_drv.h>
+>  #include <drm/drm_file.h>
+>  #include <drm/drm_modeset_helper.h>
+> @@ -132,21 +133,25 @@ qxl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>  	return ret;
+>  }
 >  
-> +static void bochs_release(struct drm_device *dev)
+> +static void qxl_drm_release(struct drm_device *dev)
 > +{
-> +	bochs_unload(dev);
+> +	struct qxl_device *qdev = dev->dev_private;
+> +
+> +	qxl_modeset_fini(qdev);
+> +	qxl_device_fini(qdev);
 
-Hm I think this needs to be split, and bochs_hw_fini needs to stay in
-bochs_pci_remove. Otherwise we again release the iommu mappings too late
-(there was just a discussion about that on the fbdev side of things
-getting this wrong). Good to fix the lifetime fun here, but let's not move
-too far :-)
+Same here, there's a few iounmap and io_mapping_free which I think should
+be in the pci_remove hook.
+-Daniel
 
-Ideally we'd move the iomapping to devm_, that would remove it at the
-right time I think.
-
-Slight annoyance might be that we then need to shoot down the varios
-mmaps, which I frankly don't know how to do. But keeping them pointing at
-wrong stuff also isn't that great :-/
-
-Cheers, Daniel
-
+> +	dev->dev_private = NULL;
+> +	kfree(qdev);
 > +}
 > +
->  static struct drm_driver bochs_driver = {
->  	.driver_features	= DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC,
->  	.fops			= &bochs_fops,
-> @@ -69,6 +74,7 @@ static struct drm_driver bochs_driver = {
->  	.major			= 1,
->  	.minor			= 0,
->  	DRM_GEM_VRAM_DRIVER,
-> +	.release                = bochs_release,
->  };
->  
->  /* ---------------------------------------------------------------------- */
-> @@ -148,9 +154,8 @@ static void bochs_pci_remove(struct pci_dev *pdev)
+>  static void
+>  qxl_pci_remove(struct pci_dev *pdev)
 >  {
 >  	struct drm_device *dev = pci_get_drvdata(pdev);
+> -	struct qxl_device *qdev = dev->dev_private;
 >  
-> -	drm_atomic_helper_shutdown(dev);
 >  	drm_dev_unregister(dev);
-> -	bochs_unload(dev);
+> -
+> -	qxl_modeset_fini(qdev);
+> -	qxl_device_fini(qdev);
 > +	drm_atomic_helper_shutdown(dev);
+>  	if (is_vga(pdev))
+>  		vga_put(pdev, VGA_RSRC_LEGACY_IO);
+> -
+> -	dev->dev_private = NULL;
+> -	kfree(qdev);
 >  	drm_dev_put(dev);
 >  }
 >  
+> @@ -279,6 +284,8 @@ static struct drm_driver qxl_driver = {
+>  	.major = 0,
+>  	.minor = 1,
+>  	.patchlevel = 0,
+> +
+> +	.release = qxl_drm_release,
+>  };
+>  
+>  static int __init qxl_init(void)
+> diff --git a/drivers/gpu/drm/qxl/qxl_kms.c b/drivers/gpu/drm/qxl/qxl_kms.c
+> index bfc1631093e9..70b20ee4741a 100644
+> --- a/drivers/gpu/drm/qxl/qxl_kms.c
+> +++ b/drivers/gpu/drm/qxl/qxl_kms.c
+> @@ -299,12 +299,12 @@ void qxl_device_fini(struct qxl_device *qdev)
+>  {
+>  	qxl_bo_unref(&qdev->current_release_bo[0]);
+>  	qxl_bo_unref(&qdev->current_release_bo[1]);
+> -	flush_work(&qdev->gc_work);
+> -	qxl_ring_free(qdev->command_ring);
+> -	qxl_ring_free(qdev->cursor_ring);
+> -	qxl_ring_free(qdev->release_ring);
+>  	qxl_gem_fini(qdev);
+>  	qxl_bo_fini(qdev);
+> +	flush_work(&qdev->gc_work);
+> +	qxl_ring_free(qdev->command_ring);
+> +	qxl_ring_free(qdev->cursor_ring);
+> +	qxl_ring_free(qdev->release_ring);
+>  	io_mapping_free(qdev->surface_mapping);
+>  	io_mapping_free(qdev->vram_mapping);
+>  	iounmap(qdev->ram_header);
 > -- 
 > 2.18.1
 > 
