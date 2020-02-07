@@ -2,112 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B5B5155EB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 20:45:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0580C155EC9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 20:50:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbgBGTpd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 14:45:33 -0500
-Received: from mga01.intel.com ([192.55.52.88]:21548 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726900AbgBGTpd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 14:45:33 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2020 11:45:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,414,1574150400"; 
-   d="scan'208";a="312123734"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga001.jf.intel.com with ESMTP; 07 Feb 2020 11:45:32 -0800
-Date:   Fri, 7 Feb 2020 11:45:32 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Peter Xu <peterx@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, Marc Zyngier <maz@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-mips@vger.kernel.org, kvm@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <f4bug@amsat.org>
-Subject: Re: [PATCH v5 15/19] KVM: Provide common implementation for generic
- dirty log functions
-Message-ID: <20200207194532.GK2401@linux.intel.com>
-References: <20200121223157.15263-1-sean.j.christopherson@intel.com>
- <20200121223157.15263-16-sean.j.christopherson@intel.com>
- <20200206200200.GC700495@xz-x1>
- <20200206212120.GF13067@linux.intel.com>
- <20200206214106.GG700495@xz-x1>
+        id S1727387AbgBGTut (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 14:50:49 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:37816 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbgBGTus (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 14:50:48 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 017Jo4UJ100329;
+        Fri, 7 Feb 2020 13:50:04 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1581105004;
+        bh=MsMfXIk8QfS6+D9zPfzNzS76menjn5D568VCWB65xFs=;
+        h=From:To:CC:Subject:Date;
+        b=n3ej5cmDnV4gXAXVnJbF1wDDQ79MRGmttgezAigJKQFf2SIiPeTmtMqe6Z9ltx9GF
+         7GYeZb/OyFdDHH+aTMMpgtVMRIq1TH1Epp0j6EQoWI+yhExfVNcUmb8RZJi8PsTZWR
+         zC/8aOvA5sIXBfWhqNW/y9rf9QIH7giKf6Bqa8dY=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 017Jo4iL031897;
+        Fri, 7 Feb 2020 13:50:04 -0600
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 7 Feb
+ 2020 13:50:04 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 7 Feb 2020 13:50:04 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 017Jo4io116946;
+        Fri, 7 Feb 2020 13:50:04 -0600
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>
+Subject: [PATCH 1/2] dt-bindings: sound: Add TLV320ADCx140 dt bindings
+Date:   Fri, 7 Feb 2020 13:45:32 -0600
+Message-ID: <20200207194533.29967-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200206214106.GG700495@xz-x1>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Vitaly for HyperV
+Add dt bindings for the TLV320ADCx140 Burr-Brown ADC.
+The initial support is for the following:
 
-On Thu, Feb 06, 2020 at 04:41:06PM -0500, Peter Xu wrote:
-> On Thu, Feb 06, 2020 at 01:21:20PM -0800, Sean Christopherson wrote:
-> > On Thu, Feb 06, 2020 at 03:02:00PM -0500, Peter Xu wrote:
-> > > But that matters to this patch because if MIPS can use
-> > > kvm_flush_remote_tlbs(), then we probably don't need this
-> > > arch-specific hook any more and we can directly call
-> > > kvm_flush_remote_tlbs() after sync dirty log when flush==true.
-> > 
-> > Ya, the asid_flush_mask in kvm_vz_flush_shadow_all() is the only thing
-> > that prevents calling kvm_flush_remote_tlbs() directly, but I have no
-> > clue as to the important of that code.
-> 
-> As said above I think the x86 lockdep is really not necessary, then
-> considering MIPS could be the only one that will use the new hook
-> introduced in this patch...  Shall we figure that out first?
+TLV320ADC3140 - http://www.ti.com/lit/gpn/tlv320adc3140
+TLV320ADC5140 - http://www.ti.com/lit/gpn/tlv320adc5140
+TLV320ADC6140 - http://www.ti.com/lit/gpn/tlv320adc6140
 
-So I prepped a follow-up patch to make kvm_arch_dirty_log_tlb_flush() a
-MIPS-only hook and use kvm_flush_remote_tlbs() directly for arm and x86,
-but then I realized x86 *has* a hook to do a precise remote TLB flush.
-There's even an existing kvm_flush_remote_tlbs_with_address() call on a
-memslot, i.e. this exact scenario.  So arguably, x86 should be using the
-more precise flush and should keep kvm_arch_dirty_log_tlb_flush().
+CC: Rob Herring <robh@kernel.org>
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ .../bindings/sound/tlv320adcx140.yaml         | 73 +++++++++++++++++++
+ 1 file changed, 73 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/tlv320adcx140.yaml
 
-But, the hook is only used when KVM is running as an L1 on top of HyperV,
-and I assume dirty logging isn't used much, if at all, for L1 KVM on
-HyperV?
+diff --git a/Documentation/devicetree/bindings/sound/tlv320adcx140.yaml b/Documentation/devicetree/bindings/sound/tlv320adcx140.yaml
+new file mode 100644
+index 000000000000..84c407fae21e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/tlv320adcx140.yaml
+@@ -0,0 +1,73 @@
++# SPDX-License-Identifier: (GPL-2.0+ OR BSD-2-Clause)
++# Copyright (C) 2019 Texas Instruments Incorporated
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/tlv320adcx140.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments TLV320ADCX140 Quad Channel Analog-to-Digital Converter
++
++maintainers:
++  - Dan Murphy <dmurphy@ti.com>
++
++description: |
++  The TLV320ADCX140 are multichannel (4-ch analog recording or 8-ch digital
++  PDM microphones recording), high-performance audio, analog-to-digital
++  converter (ADC) with analog inputs supporting up to 2V RMS. The TLV320ADCX140
++  family supports line and  microphone Inputs, and offers a programmable
++  microphone bias or supply voltage generation.
++
++  Specifications can be found at:
++    http://www.ti.com/lit/ds/symlink/tlv320adc3140.pdf
++    http://www.ti.com/lit/ds/symlink/tlv320adc5140.pdf
++    http://www.ti.com/lit/ds/symlink/tlv320adc6140.pdf
++
++properties:
++  compatible:
++    oneOf:
++      - const: ti,tlv320adc3140
++      - const: ti,tlv320adc5140
++      - const: ti,tlv320adc6140
++
++  reg:
++    maxItems: 1
++    description: |
++       I2C addresss of the device can be one of these 0x4c, 0x4d, 0x4e or 0x4f
++
++  reset-gpios:
++    description: |
++       GPIO used for hardware reset.
++
++  ti,use-internal-areg:
++    type: boolean
++    description: |
++       Internal Regulator with AVDD at 3.3V.
++
++  ti,mic-bias-source:
++    description: |
++       Indicates the source for MIC Bias.
++       0 - Mic bias is set to VREF
++       1 - Mic bias is set to VREF × 1.096
++       6 - Mic bias is set to AVDD
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32
++      - enum: [0, 1, 6]
++
++required:
++  - compatible
++  - reg
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    i2c0 {
++      #address-cells = <1>;
++      #size-cells = <0>;
++      codec: codec@4c {
++        compatible = "ti,tlv320adc5140";
++        reg = <0x4c>;
++        ti,use-internal-areg;
++        ti,mic-bias-source = <6>;
++        reset-gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
++      };
++    };
+-- 
+2.25.0
 
-I see three options:
-
-  1. Make kvm_arch_dirty_log_tlb_flush() MIPS-only and call
-     kvm_flush_remote_tlbs() directly for arm and x86.  Add comments to
-     explain when an arch should implement kvm_arch_dirty_log_tlb_flush().
-
-  2. Change x86 to use kvm_flush_remote_tlbs_with_address() when flushing
-     a memslot after the dirty log is grabbed by userspace.
-
-  3. Keep the resulting code as is, but add a comment in x86's
-     kvm_arch_dirty_log_tlb_flush() to explain why it uses
-     kvm_flush_remote_tlbs() instead of the with_address() variant.
-
-I strongly prefer to (2) or (3), but I'll defer to Vitaly as to which of
-those is preferable.
-
-I don't like (1) because (a) it requires more lines code (well comments),
-to explain why kvm_flush_remote_tlbs() is the default, and (b) it would
-require even more comments, which would be x86-specific in generic KVM,
-to explain why x86 doesn't use its with_address() flush, or we'd lost that
-info altogether.
