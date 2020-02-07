@@ -2,193 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63D52155FF6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 21:43:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03070155FAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 21:38:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbgBGUnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 15:43:02 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33552 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727012AbgBGUnC (ORCPT
+        id S1727162AbgBGUiJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 15:38:09 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:45997 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727005AbgBGUiJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 15:43:02 -0500
-Received: by mail-pg1-f194.google.com with SMTP id 6so395344pgk.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 12:43:01 -0800 (PST)
+        Fri, 7 Feb 2020 15:38:09 -0500
+Received: by mail-il1-f196.google.com with SMTP id p8so644978iln.12
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 12:38:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=tfGepi3b0hZsP0eynwkvtU7Dzi5ho/+WU7/Amaz8QIE=;
-        b=oMBoToc9coTuVIDmfDRf6SOictmOFqZqpXb4VzfmSt4hpCzfsl2jyiGNqwxI2LM820
-         kWtAX2TBVHD7Obj5dtflcjNatewkKiUyTB8lCE9R2fAZvdw5FjksowH9MdbxWDGVmo+x
-         eGIK/WP7FteVVHWI3hwHO9iwev/q2icNwyOVM=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Dg4oON5J4q1fP44KHqOQveBtLzhE62D/XRXrye9zUFs=;
+        b=H0AXpVHi3OoVTO5fMc/MD/deUKtMKczIoMcgUbYSgxYbrqJgdaHtDiU4YpHoR6SOQo
+         ANzA42tykPyEQj6LIC+i+fKdwMEG7htXYQMrFnRkY+U8kTKi4GtgpLOfC/S92/LLUmzT
+         H2IWFt8QKHw6JLdIu44Eq2stfN3FbZ4RU/vKyQszPtE2ujYpQfC411+6tlpTBOkEnc8R
+         j9qUeuO76mFpi4ryetJraTCoBySQVeOqlGm3JKDYcstbMH+qbtBTGy16AwrE/4fvl8Uw
+         prWpNBk8XfObuiJbH75+YPZQ39M85395DyhxR61gWaeBVnfMpFvt6ILxcSw+3YGlVbxu
+         xc4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=tfGepi3b0hZsP0eynwkvtU7Dzi5ho/+WU7/Amaz8QIE=;
-        b=mLsOai6qDg7mQMTsh97w+htYoO3cMW+2RYqveAOp8RzS794w0mW7IGhHlWHxrm8i08
-         nhK9U5vX5IHcZsF5n0ftEuWVCg7SlQ9T8veTDvBMqF5qRFxOMc/OxJHubM8jTiA9TsEn
-         zUf+VIWbABBzkVMBIlOjyJ66NnmhMIvC45qfxEH2sNKbdGXGhD4aZ54cOm1Ig0anL2NW
-         nACU0hwv5hiUO04OjTQlEttJeozvJwdX9ArBs6HEdxzoE6SShAkyZWqzBrFmn5TvCZuh
-         RAdJUnJOH8bg2RwKC4XapR2NO12TMr4pS6U+9FMYJ/OdxI9sXf+eRGNOOFqI7FUVnMIf
-         2K5w==
-X-Gm-Message-State: APjAAAVT34FN2/1XTIpWZi9bNuznLySHB5OJZcTVl5AUsV9z+Ew49Z48
-        TkSLoK2sG8z7lu3xItQEbbs4N/3GuaQ=
-X-Google-Smtp-Source: APXvYqxagcwCHMD33MC0fr0WY2XrOMvQ279AaOy+0YEmrkiVzyH/nF1mBV58FB/T2/gij1I/Pi5vwA==
-X-Received: by 2002:a62:1d07:: with SMTP id d7mr657929pfd.159.1581108180434;
-        Fri, 07 Feb 2020 12:43:00 -0800 (PST)
-Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:172e:4646:c089:ce59])
-        by smtp.gmail.com with ESMTPSA id 4sm4051001pfn.90.2020.02.07.12.42.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2020 12:42:59 -0800 (PST)
-From:   Prashant Malani <pmalani@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     heikki.krogerus@intel.com, enric.balletbo@collabora.com,
-        bleung@chromium.org, Prashant Malani <pmalani@chromium.org>,
-        Jon Flatley <jflat@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>
-Subject: [PATCH v2 4/4] platform/chrome: typec: Update port info from EC
-Date:   Fri,  7 Feb 2020 12:37:50 -0800
-Message-Id: <20200207203752.209296-5-pmalani@chromium.org>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-In-Reply-To: <20200207203752.209296-1-pmalani@chromium.org>
-References: <20200207203752.209296-1-pmalani@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Dg4oON5J4q1fP44KHqOQveBtLzhE62D/XRXrye9zUFs=;
+        b=sC24njqLR10avanRhRNgTS99w9GrJxT1SYmEGaGKR5tcx1MScu8zjgZWGreK+V/INl
+         1cpKDgFqbEK7vRzPsi6WFgIIYFdguEGD+eYK9SH6LuBgQeJwlJ71wtKgaqxbDIw7Obz2
+         5DrmMhRnC/kw2ephESSpkG0tiRj+bPtH1+q+8+fyOcdlAGq4NOeSAhafEPl8M5qJNy17
+         vvEXNBUAFIgfcwGx/YtNDH6BDANHSI5ni2hxu0OSBSHs5/58RmKxHo3vL/eFn8C75wiw
+         u+s2NQpBQLMQKAbstbwLLqegXOK9cTQPWp1QBwO+KLJnFLQK/ZNe/9YMmu80OOhDLE/2
+         zYKw==
+X-Gm-Message-State: APjAAAVPB85VUV0e3JsoQhKxa92dilwOPZByOgh3pK4dldlOkvtqUhdR
+        8lgD4ea56FleynZO6Js/J2w6XuSWYFzQg7OEk68cpw==
+X-Google-Smtp-Source: APXvYqyTqUEaeiRszM4nM+OgnMVDTccPNheMsyBNPQIZ4n7gi3IrYrOGJJCZk5Op6+0SWXNMyDf3QEdg9TZqFqZVb4E=
+X-Received: by 2002:a92:af99:: with SMTP id v25mr1287002ill.289.1581107888526;
+ Fri, 07 Feb 2020 12:38:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200206101833.GA20943@ming.t460p> <20200206211222.83170-1-sqazi@google.com>
+ <5707b17f-e5d7-c274-de6a-694098c4e9a2@acm.org> <CAKUOC8X0OFqJ09Y+nrPQiMLiRjpKMm0Ucci_33UJEM8HvQ=H1Q@mail.gmail.com>
+ <10c64a02-91fe-c2af-4c0c-dc9677f9b223@acm.org>
+In-Reply-To: <10c64a02-91fe-c2af-4c0c-dc9677f9b223@acm.org>
+From:   Salman Qazi <sqazi@google.com>
+Date:   Fri, 7 Feb 2020 12:37:56 -0800
+Message-ID: <CAKUOC8X=fzXjt=5qZ+tkq3iKnu7NHhPfT_t0JyzcmZg49ZEq4A@mail.gmail.com>
+Subject: Re: [PATCH] block: Limit number of items taken from the I/O scheduler
+ in one go
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>,
+        linux-block@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jesse Barnes <jsbarnes@google.com>,
+        Gwendal Grignou <gwendal@google.com>,
+        Hannes Reinecke <hare@suse.com>, Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After registering the ports at probe, get the current port information
-from EC and update the Type C connector class ports accordingly.
+On Fri, Feb 7, 2020 at 12:19 PM Bart Van Assche <bvanassche@acm.org> wrote:
+>
+> On 2/7/20 10:45 AM, Salman Qazi wrote:
+> > If I were to write this as a for-loop, it will look like this:
+> >
+> > for (i = 0; i == 0 || (run_again && i < 2); i++) {
+> > /* another level of 8 character wide indentation */
+> >      run_again = false;
+> >     /* a bunch of code that possibly sets run_again to true
+> > }
+> >
+> > if (run_again)
+> >      blk_mq_run_hw_queue(hctx, true);
+>
+> That's not what I meant. What I meant is a loop that iterates at most
+> two times and also to break out of the loop if run_again == false.
+>
 
-Co-developed-by: Jon Flatley <jflat@chromium.org>
-Signed-off-by: Prashant Malani <pmalani@chromium.org>
----
+I picked the most compact variant to demonstrate the problem.  Adding
+breaks isn't
+really helping the readability.
 
-Changes in v2:
-- No changes.
+for (i = 0; i < 2; i++) {
+  run_again = false;
+/* bunch of code that possibly sets it to true */
+...
+ if (!run_again)
+    break;
+}
+if (run_again)
+    blk_mq_run_hw_queue(hctx, true);
 
- drivers/platform/chrome/cros_ec_typec.c | 89 ++++++++++++++++++++++++-
- 1 file changed, 88 insertions(+), 1 deletion(-)
+When I read this, I initially assume that the loop in general runs
+twice and that this is the common case.  It has the
+same problem with conveying intent.  Perhaps, more importantly, the
+point of using programming constructs is to shorten and simplify the
+code.
+There are still two if-statements in addition to the loop. We haven't
+gained much by introducing the loop.
 
-diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
-index df01ce86c7146c..4cdbd85966ee02 100644
---- a/drivers/platform/chrome/cros_ec_typec.c
-+++ b/drivers/platform/chrome/cros_ec_typec.c
-@@ -153,6 +153,81 @@ static int cros_typec_ec_command(struct cros_typec_data *typec,
- 	return ret;
- }
- 
-+static void cros_typec_set_port_params_v0(struct cros_typec_data *typec,
-+		int port_num, struct ec_response_usb_pd_control *resp)
-+{
-+	struct typec_port *port = typec->ports[port_num];
-+	enum typec_orientation polarity;
-+
-+	if (!resp->enabled)
-+		polarity = TYPEC_ORIENTATION_NONE;
-+	else if (!resp->polarity)
-+		polarity = TYPEC_ORIENTATION_NORMAL;
-+	else
-+		polarity = TYPEC_ORIENTATION_REVERSE;
-+
-+	typec_set_pwr_role(port, resp->role ? TYPEC_SOURCE : TYPEC_SINK);
-+	typec_set_orientation(port, polarity);
-+}
-+
-+static void cros_typec_set_port_params_v1(struct cros_typec_data *typec,
-+		int port_num, struct ec_response_usb_pd_control_v1 *resp)
-+{
-+	struct typec_port *port = typec->ports[port_num];
-+	enum typec_orientation polarity;
-+
-+	if (!(resp->enabled & PD_CTRL_RESP_ENABLED_CONNECTED))
-+		polarity = TYPEC_ORIENTATION_NONE;
-+	else if (!resp->polarity)
-+		polarity = TYPEC_ORIENTATION_NORMAL;
-+	else
-+		polarity = TYPEC_ORIENTATION_REVERSE;
-+	typec_set_orientation(port, polarity);
-+	typec_set_data_role(port, resp->role & PD_CTRL_RESP_ROLE_DATA ?
-+			TYPEC_HOST : TYPEC_DEVICE);
-+	typec_set_pwr_role(port, resp->role & PD_CTRL_RESP_ROLE_POWER ?
-+			TYPEC_SOURCE : TYPEC_SINK);
-+	typec_set_vconn_role(port, resp->role & PD_CTRL_RESP_ROLE_VCONN ?
-+			TYPEC_SOURCE : TYPEC_SINK);
-+}
-+
-+static int cros_typec_port_update(struct cros_typec_data *typec, int port_num)
-+{
-+	struct ec_params_usb_pd_control req;
-+	struct ec_response_usb_pd_control_v1 resp;
-+	int ret;
-+
-+	if (port_num < 0 || port_num >= typec->num_ports) {
-+		dev_err(typec->dev, "cannot get status for invalid port %d\n",
-+			port_num);
-+		return -EINVAL;
-+	}
-+
-+	req.port = port_num;
-+	req.role = USB_PD_CTRL_ROLE_NO_CHANGE;
-+	req.mux = USB_PD_CTRL_MUX_NO_CHANGE;
-+	req.swap = USB_PD_CTRL_SWAP_NONE;
-+
-+	ret = cros_typec_ec_command(typec, typec->cmd_ver,
-+				    EC_CMD_USB_PD_CONTROL, &req, sizeof(req),
-+				    &resp, sizeof(resp));
-+	if (ret < 0)
-+		return ret;
-+
-+	dev_dbg(typec->dev, "Enabled %d: 0x%hhx\n", port_num, resp.enabled);
-+	dev_dbg(typec->dev, "Role %d: 0x%hhx\n", port_num, resp.role);
-+	dev_dbg(typec->dev, "Polarity %d: 0x%hhx\n", port_num, resp.polarity);
-+	dev_dbg(typec->dev, "State %d: %s\n", port_num, resp.state);
-+
-+	if (typec->cmd_ver == 1)
-+		cros_typec_set_port_params_v1(typec, port_num, &resp);
-+	else
-+		cros_typec_set_port_params_v0(typec, port_num,
-+			(struct ec_response_usb_pd_control *) &resp);
-+
-+	return 0;
-+}
-+
- static int cros_typec_get_cmd_version(struct cros_typec_data *typec)
- {
- 	struct ec_params_get_cmd_versions_v1 req_v1;
-@@ -199,7 +274,7 @@ static int cros_typec_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct cros_typec_data *typec;
- 	struct ec_response_usb_pd_ports resp;
--	int ret;
-+	int ret, i;
- 
- 	typec = devm_kzalloc(dev, sizeof(*typec), GFP_KERNEL);
- 	if (!typec)
-@@ -231,7 +306,19 @@ static int cros_typec_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
-+	for (i = 0; i < typec->num_ports; i++) {
-+		ret = cros_typec_port_update(typec, i);
-+		if (ret < 0)
-+			goto unregister_ports;
-+	}
-+
- 	return 0;
-+
-+unregister_ports:
-+	for (i = 0; i < typec->num_ports; i++)
-+		if (typec->ports[i])
-+			typec_unregister_port(typec->ports[i]);
-+	return ret;
- }
- 
- static struct platform_driver cros_typec_driver = {
--- 
-2.25.0.341.g760bfbb309-goog
+> BTW, I share your concern about the additional indentation by eight
+> positions. How about avoiding deeper indentation by introducing a new
+> function?
 
+If there was a benefit to introducing the loop, this would be a good
+call.  But the way I see it, the introduction of another
+function is yet another way in which the introduction of the loop
+makes the code less readable.
+
+This is not a hill I want to die on.  If the maintainer agrees with
+you on this point, I will use a loop.
+>
+> Thanks,
+>
+> Bart.
