@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47A6D15585B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 14:26:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9A5215585D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 14:26:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbgBGN0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 08:26:11 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:40782 "EHLO
+        id S1727561AbgBGN0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 08:26:17 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:40797 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727317AbgBGN0C (ORCPT
+        with ESMTP id S1727446AbgBGN0F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 08:26:02 -0500
+        Fri, 7 Feb 2020 08:26:05 -0500
 Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j03dh-0003qh-Uu; Fri, 07 Feb 2020 14:25:46 +0100
+        id 1j03di-0003sN-VC; Fri, 07 Feb 2020 14:25:47 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 31731105D01;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 357C7105D02;
         Fri,  7 Feb 2020 13:25:38 +0000 (GMT)
-Message-Id: <20200207124403.857649978@linutronix.de>
+Message-Id: <20200207124403.965789141@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Fri, 07 Feb 2020 13:39:03 +0100
+Date:   Fri, 07 Feb 2020 13:39:04 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, John Stultz <john.stultz@linaro.org>,
@@ -41,7 +41,7 @@ Cc:     x86@kernel.org, John Stultz <john.stultz@linaro.org>,
         Will Deacon <will@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Marc Zyngier <maz@kernel.org>, Andrei Vagin <avagin@gmail.com>
-Subject: [patch V2 16/17] lib/vdso: Allow architectures to override the ns shift operation
+Subject: [patch V2 17/17] lib/vdso: Allow architectures to provide the vdso data pointer
 References: <20200207123847.339896630@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -55,81 +55,184 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-On powerpc/32, GCC (8.1) generates pretty bad code for the ns >>= vd->shift
-operation taking into account that the shift is always <= 32 and the upper
-part of the result is likely to be zero. GCC makes reversed assumptions
-considering the shift to be likely >= 32 and the upper part to be like not
-zero.
+On powerpc, __arch_get_vdso_data() clobbers the link register, requiring
+the caller to save it.
 
-unsigned long long shift(unsigned long long x, unsigned char s)
-{
-	return x >> s;
-}
+As the parent function already has to set a stack frame and saves the link
+register before calling the C vdso function, retrieving the vdso data
+pointer there is less overhead.
 
-results in:
-
-00000018 <shift>:
-  18:	35 25 ff e0 	addic.  r9,r5,-32
-  1c:	41 80 00 10 	blt     2c <shift+0x14>
-  20:	7c 64 4c 30 	srw     r4,r3,r9
-  24:	38 60 00 00 	li      r3,0
-  28:	4e 80 00 20 	blr
-  2c:	54 69 08 3c 	rlwinm  r9,r3,1,0,30
-  30:	21 45 00 1f 	subfic  r10,r5,31
-  34:	7c 84 2c 30 	srw     r4,r4,r5
-  38:	7d 29 50 30 	slw     r9,r9,r10
-  3c:	7c 63 2c 30 	srw     r3,r3,r5
-  40:	7d 24 23 78 	or      r4,r9,r4
-  44:	4e 80 00 20 	blr
-
-Even when forcing the shift to be smaller than 32 with an &= 31, it still
-considers the shift as likely >= 32.
-
-Move the default shift implementation into an inline which can be redefined
-in architecture code via a macro.
-
-[ tglx: Made the shift argument u32 and removed the __arch prefix ]
+Split out the functional code from the __cvdso.*() interfaces into new
+static functions which can either be called from the existing interfaces
+with the vdso data pointer supplied via __arch_get_vdso_data() or directly
+from ASM code.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/b3d449de856982ed060a71e6ace8eeca4654e685.1580399657.git.christophe.leroy@c-s.fr
+Link: https://lore.kernel.org/r/abf97996602ef07223fec30c005df78e5ed41b2e.1580399657.git.christophe.leroy@c-s.fr
 
 ---
- lib/vdso/gettimeofday.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ lib/vdso/gettimeofday.c |   72 +++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 56 insertions(+), 16 deletions(-)
 
 --- a/lib/vdso/gettimeofday.c
 +++ b/lib/vdso/gettimeofday.c
-@@ -39,6 +39,13 @@ u64 vdso_calc_delta(u64 cycles, u64 last
+@@ -233,9 +233,9 @@ static __always_inline int do_coarse(con
  }
- #endif
  
-+#ifndef vdso_shift_ns
-+static __always_inline u64 vdso_shift_ns(u64 ns, u32 shift)
-+{
-+	return ns >> shift;
-+}
-+#endif
-+
- #ifndef __arch_vdso_hres_capable
- static inline bool __arch_vdso_hres_capable(void)
+ static __maybe_unused int
+-__cvdso_clock_gettime_common(clockid_t clock, struct __kernel_timespec *ts)
++__cvdso_clock_gettime_common(const struct vdso_data *vd, clockid_t clock,
++			     struct __kernel_timespec *ts)
  {
-@@ -80,7 +87,7 @@ static int do_hres_timens(const struct v
- 		ns = vdso_ts->nsec;
- 		last = vd->cycle_last;
- 		ns += vdso_calc_delta(cycles, last, vd->mask, vd->mult);
--		ns >>= vd->shift;
-+		ns = vdso_shift_ns(ns, vd->shift);
- 		sec = vdso_ts->sec;
- 	} while (unlikely(vdso_read_retry(vd, seq)));
+-	const struct vdso_data *vd = __arch_get_vdso_data();
+ 	u32 msk;
  
-@@ -148,7 +155,7 @@ static __always_inline int do_hres(const
- 		ns = vdso_ts->nsec;
- 		last = vd->cycle_last;
- 		ns += vdso_calc_delta(cycles, last, vd->mask, vd->mult);
--		ns >>= vd->shift;
-+		ns = vdso_shift_ns(ns, vd->shift);
- 		sec = vdso_ts->sec;
- 	} while (unlikely(vdso_read_retry(vd, seq)));
+ 	/* Check for negative values or invalid clocks */
+@@ -260,23 +260,31 @@ static __maybe_unused int
+ }
  
+ static __maybe_unused int
+-__cvdso_clock_gettime(clockid_t clock, struct __kernel_timespec *ts)
++__cvdso_clock_gettime_data(const struct vdso_data *vd, clockid_t clock,
++			   struct __kernel_timespec *ts)
+ {
+-	int ret = __cvdso_clock_gettime_common(clock, ts);
++	int ret = __cvdso_clock_gettime_common(vd, clock, ts);
+ 
+ 	if (unlikely(ret))
+ 		return clock_gettime_fallback(clock, ts);
+ 	return 0;
+ }
+ 
++static __maybe_unused int
++__cvdso_clock_gettime(clockid_t clock, struct __kernel_timespec *ts)
++{
++	return __cvdso_clock_gettime_data(__arch_get_vdso_data(), clock, ts);
++}
++
+ #ifdef BUILD_VDSO32
+ static __maybe_unused int
+-__cvdso_clock_gettime32(clockid_t clock, struct old_timespec32 *res)
++__cvdso_clock_gettime32_data(const struct vdso_data *vd, clockid_t clock,
++			     struct old_timespec32 *res)
+ {
+ 	struct __kernel_timespec ts;
+ 	int ret;
+ 
+-	ret = __cvdso_clock_gettime_common(clock, &ts);
++	ret = __cvdso_clock_gettime_common(vd, clock, &ts);
+ 
+ 	if (unlikely(ret))
+ 		return clock_gettime32_fallback(clock, res);
+@@ -287,12 +295,18 @@ static __maybe_unused int
+ 
+ 	return ret;
+ }
++
++static __maybe_unused int
++__cvdso_clock_gettime32(clockid_t clock, struct old_timespec32 *res)
++{
++	return __cvdso_clock_gettime32_data(__arch_get_vdso_data(), clock, res);
++}
+ #endif /* BUILD_VDSO32 */
+ 
+ static __maybe_unused int
+-__cvdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
++__cvdso_gettimeofday_data(const struct vdso_data *vd,
++			  struct __kernel_old_timeval *tv, struct timezone *tz)
+ {
+-	const struct vdso_data *vd = __arch_get_vdso_data();
+ 
+ 	if (likely(tv != NULL)) {
+ 		struct __kernel_timespec ts;
+@@ -316,10 +330,16 @@ static __maybe_unused int
+ 	return 0;
+ }
+ 
++static __maybe_unused int
++__cvdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
++{
++	return __cvdso_gettimeofday_data(__arch_get_vdso_data(), tv, tz);
++}
++
+ #ifdef VDSO_HAS_TIME
+-static __maybe_unused __kernel_old_time_t __cvdso_time(__kernel_old_time_t *time)
++static __maybe_unused __kernel_old_time_t
++__cvdso_time_data(const struct vdso_data *vd, __kernel_old_time_t *time)
+ {
+-	const struct vdso_data *vd = __arch_get_vdso_data();
+ 	__kernel_old_time_t t;
+ 
+ 	if (IS_ENABLED(CONFIG_TIME_NS) &&
+@@ -333,13 +353,18 @@ static __maybe_unused __kernel_old_time_
+ 
+ 	return t;
+ }
++
++static __maybe_unused __kernel_old_time_t __cvdso_time(__kernel_old_time_t *time)
++{
++	return __cvdso_time_data(__arch_get_vdso_data(), time);
++}
+ #endif /* VDSO_HAS_TIME */
+ 
+ #ifdef VDSO_HAS_CLOCK_GETRES
+ static __maybe_unused
+-int __cvdso_clock_getres_common(clockid_t clock, struct __kernel_timespec *res)
++int __cvdso_clock_getres_common(const struct vdso_data *vd, clockid_t clock,
++				struct __kernel_timespec *res)
+ {
+-	const struct vdso_data *vd = __arch_get_vdso_data();
+ 	u32 msk;
+ 	u64 ns;
+ 
+@@ -378,23 +403,31 @@ int __cvdso_clock_getres_common(clockid_
+ }
+ 
+ static __maybe_unused
+-int __cvdso_clock_getres(clockid_t clock, struct __kernel_timespec *res)
++int __cvdso_clock_getres_data(const struct vdso_data *vd, clockid_t clock,
++			      struct __kernel_timespec *res)
+ {
+-	int ret = __cvdso_clock_getres_common(clock, res);
++	int ret = __cvdso_clock_getres_common(vd, clock, res);
+ 
+ 	if (unlikely(ret))
+ 		return clock_getres_fallback(clock, res);
+ 	return 0;
+ }
+ 
++static __maybe_unused
++int __cvdso_clock_getres(clockid_t clock, struct __kernel_timespec *res)
++{
++	return __cvdso_clock_getres_data(__arch_get_vdso_data(), clock, res);
++}
++
+ #ifdef BUILD_VDSO32
+ static __maybe_unused int
+-__cvdso_clock_getres_time32(clockid_t clock, struct old_timespec32 *res)
++__cvdso_clock_getres_time32_data(const struct vdso_data *vd, clockid_t clock,
++				 struct old_timespec32 *res)
+ {
+ 	struct __kernel_timespec ts;
+ 	int ret;
+ 
+-	ret = __cvdso_clock_getres_common(clock, &ts);
++	ret = __cvdso_clock_getres_common(vd, clock, &ts);
+ 
+ 	if (unlikely(ret))
+ 		return clock_getres32_fallback(clock, res);
+@@ -405,5 +438,12 @@ static __maybe_unused int
+ 	}
+ 	return ret;
+ }
++
++static __maybe_unused int
++__cvdso_clock_getres_time32(clockid_t clock, struct old_timespec32 *res)
++{
++	return __cvdso_clock_getres_time32_data(__arch_get_vdso_data(),
++						clock, res);
++}
+ #endif /* BUILD_VDSO32 */
+ #endif /* VDSO_HAS_CLOCK_GETRES */
 
