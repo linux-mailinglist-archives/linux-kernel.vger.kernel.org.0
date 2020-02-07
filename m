@@ -2,150 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7CFA155F07
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 21:04:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6026155F5B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 21:19:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbgBGUEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 15:04:30 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:18578 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727012AbgBGUE3 (ORCPT
+        id S1727574AbgBGURA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 15:17:00 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52586 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727305AbgBGUQw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 15:04:29 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 017JxK1s147412;
-        Fri, 7 Feb 2020 15:04:25 -0500
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xyhn5n8h6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 07 Feb 2020 15:04:24 -0500
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 017K0kKY005873;
-        Fri, 7 Feb 2020 15:04:24 -0500
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xyhn5n8gq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 07 Feb 2020 15:04:24 -0500
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 017K4FWr005458;
-        Fri, 7 Feb 2020 20:04:23 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma04wdc.us.ibm.com with ESMTP id 2xykc9yxph-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 07 Feb 2020 20:04:23 +0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 017K4Nr448234900
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 7 Feb 2020 20:04:23 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 108E128065;
-        Fri,  7 Feb 2020 20:04:23 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 939EE28059;
-        Fri,  7 Feb 2020 20:04:22 +0000 (GMT)
-Received: from [9.41.103.158] (unknown [9.41.103.158])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri,  7 Feb 2020 20:04:22 +0000 (GMT)
-Subject: Re: [PATCH] spi: Add FSI-attached SPI controller driver
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Eddie James <eajames@linux.ibm.com>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>, Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>
-References: <1580328504-436-1-git-send-email-eajames@linux.ibm.com>
- <CAHp75VeNs9Zr1vayO8TwVq6=B8fwvv0chOt0in6Dw+WLCezL2g@mail.gmail.com>
- <29f6cc86-69ca-bc88-b6ae-2b1a24c0dae3@linux.vnet.ibm.com>
- <CAHp75Vf3NCkbw39E+d_nf+AyViG2o-u5HxrCjXXmbGk4LaFLog@mail.gmail.com>
- <744f0019-8656-eec1-cb9a-7e70cd042587@linux.ibm.com>
- <CAHp75VfOM5Rd3LRBtvyT96G=+J4KxTRoSVUcQTj+RxrGyZMMnQ@mail.gmail.com>
- <90973143-bd0a-33cf-9eb8-a83be1a9b415@linux.vnet.ibm.com>
- <CAHp75Vf6HJw=SpK9_HUgcMaaabs5pZEybP4SS-gc1wz5GRcqeg@mail.gmail.com>
-From:   Eddie James <eajames@linux.vnet.ibm.com>
-Message-ID: <cd8a7279-beb2-39e6-58e6-6ea505665547@linux.vnet.ibm.com>
-Date:   Fri, 7 Feb 2020 14:04:22 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Fri, 7 Feb 2020 15:16:52 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p9so3834797wmc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 12:16:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4wW2T2Hf0VfuSYnJQMUU+IIJaZFO8kXPo9LciCrLguQ=;
+        b=nJRE5Oqg80/6zlUNLtjSSi5V0IhlQuxcxDib7pTKZi3Czuw3lN22oJ97lXCcigyQbX
+         ksmmt1T6Ynvcj39HiMiD4CsmQQH7KeluVEAjxEwvCgh9V75Xz4X2G+2kjxtMmQyF10kv
+         TEzK3FKN7vZjDSropS8pxWCxUsCpAY+p9AU0N8nEf+p95VpqjNaGU238Jy0fEHICosr1
+         B9+R0pCEFIG0G+XjH1qOhvW7Z0o+GlYKKwRbmpdIksvbT0egR+hZ0ZdK8EXN7n7s+/lm
+         rl1ND+S585EteurjK1j5MiUxGZA0tP3B09qnlMUSmwKr+KGJ6dKffTTmJkILnlxNMLnT
+         8mqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4wW2T2Hf0VfuSYnJQMUU+IIJaZFO8kXPo9LciCrLguQ=;
+        b=KCKGDi9bOXWp2btJ0OmtCl5XXfEZ9XAG6KsbK5oSdsg+YuqgqGu20wC8dPg2ETyhDY
+         tJgqGIgiktmgRhHHeo2J/1d6tXCJh0fHE2YIyQVdfTyjb0Jq43vshI6pdAHCpSPhhyBy
+         sG8eOAPIQiPqnGl4fU7nz4SgwQOrRvmifFMjJDhXOszmXk7YYmI8dJVjAHstnzxvIM1p
+         K4nJN2lzZdEHmleVmKaUW/b3gNKUuxfRnT3DbvKetYwdZLcCbuuvFLToIq6ks1fpid8J
+         IVdXW1OGcp09b+zFunLgnCSPwNYTuZ6j1m2AGg1YiZI+k7MsJx9AzaH/x722dDv8EYTV
+         O8bg==
+X-Gm-Message-State: APjAAAX+m18zLiiDC4LFqv2lGhik+jIHAjhUJleWXxJekyEHTgZWarFA
+        il95j9osMBAbdROyGiRspwElDQ==
+X-Google-Smtp-Source: APXvYqxLoLnAheBAIMTB5ALNDAeFHFdgKeOOSwJyrZY832oHFlYsuJKyZc3qvvxRv88E9Q1d3EFJ7w==
+X-Received: by 2002:a1c:1fc5:: with SMTP id f188mr24171wmf.55.1581106609635;
+        Fri, 07 Feb 2020 12:16:49 -0800 (PST)
+Received: from localhost.localdomain ([176.61.57.127])
+        by smtp.gmail.com with ESMTPSA id h2sm5018542wrt.45.2020.02.07.12.16.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Feb 2020 12:16:48 -0800 (PST)
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        gregkh@linuxfoundation.org, jackp@codeaurora.org, balbi@kernel.org,
+        bjorn.andersson@linaro.org, robh@kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v5 00/18] Enable Qualcomm QCS 404 HS/SS USB
+Date:   Fri,  7 Feb 2020 20:16:36 +0000
+Message-Id: <20200207201654.641525-1-bryan.odonoghue@linaro.org>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vf6HJw=SpK9_HUgcMaaabs5pZEybP4SS-gc1wz5GRcqeg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-07_05:2020-02-07,2020-02-07 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1015
- adultscore=0 mlxlogscore=999 bulkscore=0 spamscore=0 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002070142
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+V1:
+This series enables the Primary and Secondary USB controllers on the
+QCS404, associated PHYs, role-switching and DTS descriptions.
 
-On 2/7/20 1:39 PM, Andy Shevchenko wrote:
-> On Fri, Feb 7, 2020 at 9:28 PM Eddie James <eajames@linux.vnet.ibm.com> wrote:
->> On 2/5/20 9:51 AM, Andy Shevchenko wrote:
->>> On Tue, Feb 4, 2020 at 6:06 PM Eddie James <eajames@linux.ibm.com> wrote:
->>>> On 2/4/20 5:02 AM, Andy Shevchenko wrote:
->>>>> On Mon, Feb 3, 2020 at 10:33 PM Eddie James <eajames@linux.vnet.ibm.com> wrote:
->>>>>> On 1/30/20 10:37 AM, Andy Shevchenko wrote:
-> ...
->
->>>>>>>> +       for (i = 0; i < num_bytes; ++i)
->>>>>>>> +               rx[i] = (u8)((in >> (8 * ((num_bytes - 1) - i))) & 0xffULL);
->>>>>>> Redundant & 0xffULL part.
->>>>>>>
->>>>>>> Isn't it NIH of get_unalinged_be64 / le64 or something similar?
->>>>>> No, these are shift in/out operations. The read register will also have
->>>>>> previous operations data in them and must be extracted with only the
->>>>>> correct number of bytes.
->>>>> Why not to call put_unaligned() how the tail in this case (it's 0 or
->>>>> can be easily made to be 0) will affect the result?
->>>> The shift-in is not the same as any byte-swap or unaligned operation.
->>>> For however many bytes we've read, we start at that many bytes
->>>> left-shifted in the register and copy out to our buffer, moving right
->>>> for each next byte... I don't think there is an existing function for
->>>> this operation.
->>> For me it looks like
->>>
->>>     u8 tmp[8];
->>>
->>>     put_unaligned_be64(in, tmp);
->>>     memcpy(rx, tmp, num_bytes);
->>>
->>> put_unaligned*() is just a method to unroll the value to the u8 buffer.
->>> See, for example, linux/unaligned/be_byteshift.h implementation.
->>
->> Unforunately it is not the same. put_unaligned_be64 will take the
->> highest 8 bits (0xff00000000000000) and move it into tmp[0]. Then
->> 0x00ff000000000000 into tmp[1], etc. This is only correct for this
->> driver IF my transfer is 8 bytes. If, for example, I transfer 5 bytes,
->> then I need 0x000000ff00000000 into tmp[0], 0x00000000ff000000 into
->> tmp[1], etc. So I think my current implementation is correct.
-> Yes, I missed correction of the start address in memcpy(). Otherwise
-> it's still the same what I was talking about.
+The series takes in a number of patches worked on by a number of people
+over the past few years from downstream, through to previous upstream
+submissions for both of these interfaces. Additional work has been done to
+enable USB role-switching.
 
+1. USB SS
+   - extcon has been dropped in favour of gpio-usb-conn as discussed and
+     agreed previously by Jorge, Bjorn, Stephen Boyd and Jack Pham [1].
 
-I see now, yes, thanks.
+   - Regulator API has been updated following suggestions from Bjorn.
+   
+   - Sanitzation of the DT compatible name - dropped "snps" entirely
+     from the name - it made almost no sense to me and doesn't appear
+     consistent with similar naming conventions for Snopsys based IP.
 
-Do you think this is worth a v3? Perhaps put_unaligned is slightly more 
-optimized than the loop but there is more memory copy with that way too.
+2. USB HS
+   - Regulator API changes here.
+   - Dropped "snps" from the namespace for similar reasons as above.
+   - Dropped "28nm" from the namespace, looked superfluous.
+   - Changed "High-Speed" to "Hi-Speed".
+   - [2]
 
-Eddie
+3. DWC3 Role switching
+   - At the time usb-gpio-conn was discussed it was mentioned that
+     role-switching was absent from the DWC3 driver.
+   - John Stultz has some patches in-flight for that, that I've included in
+     this series for completeness.
+   - Adds my SoB to relevant patches.
+   - Drops gerrit ChangeId.
 
+4. DWC3 usb-gpio-conn
+   Needs to be a child node of the DWC3 driver so some code and DT binding
+   is required for that.
 
->
->>>>>>>> +       return num_bytes;
->>>>>>>> +}
->>>>>>>> +static int fsi_spi_data_out(u64 *out, const u8 *tx, int len)
->>>>>>>> +{
->>>>>>> Ditto as for above function. (put_unaligned ...)
->>>>> Ditto.
->>>> I don't understand how this could work for transfers of less than 8
->>>> bytes, any put_unaligned would access memory that it doesn't own.
->>> Ditto.
->>>
->>>>>>>> +}
+5. QCOM-DWC3
+   Since we are role-switching with an external PMIC supplying VBUS we want
+   to skip past toggling VBUS from QCOM-DWC3 controlled registers, so a
+   patch is added to the qcom-dwc3 driver to do that.
+
+References:
+
+1: USB SS PHY for Qualcomm's QCS404
+https://lwn.net/ml/devicetree/20190207111734.24171-1-jorge.ramirez-ortiz@linaro.org/
+
+2: Add Synopsys High-Speed USB PHY driver for Qualcomm SoCs
+https://lore.kernel.org/linux-arm-msm/20181127100722.9993-3-shawn.guo@linaro.org/
+
+https://www.spinics.net/lists/linux-usb/msg190003.html
+
+V2:
+- Fixes yaml error - Rob's YAML robot
+- Exclusive control of reset in PHY drivers - Philipp Zabel
+
+V3:
+- Fixes typo generating YAML warning - Rob's YAML robot
+
+V4:
+
+https://lore.kernel.org/linux-arm-msm/20200122185610.131930-1-bryan.odonoghue@linaro.org/
+
+- Churn names of PHYs - Rob Herring
+  Rob questioned the name of the SuperSpeed PHY in V3.
+  Looking at available data 
+
+  usb-hs-28nm - There are two possible PHYs on 28nm litho node
+		so it makes sense to name the PHY relating to its relevant
+		litho node.
+
+  usb-ss - This is not litho node dependent and is used on  multiple SoCs
+	   and litho nodes.
+
+- Drop default mode for role switching - Felipe Balbi
+  Felipe asked if the default mode for role switching was
+  required and the answer is no. It makes no difference
+  becuase the USB ID pin ultimately dictates the mode of operation.
+
+- Change "gpio_usb_connector" to "connector" - Rob
+  This was a minor change in terms of DTS but, means I need to look for the
+  DTS compatible string as opposed to a label given in the DTS.
+  No matter what the name of the label, this is he right thing to do.
+
+- Used IS_ENABLED() - Felipe
+  The logic is the same but IS_ENABLED() is used now.
+
+- Retained example of USB connector in dwc.txt - Rob, Felipe
+  Rob pointed out adding the connector was redundant as the documentation
+  already implies it.
+  Felipe seemed in favour of I think adding the example.
+  I've dropped the documentation of the connector and kept the example.
+  https://lore.kernel.org/linux-arm-msm/20200122185610.131930-7-bryan.odonoghue@linaro.org/
+
+- Added example of usb-role-switch in dwc3.txt - BOD
+  
+- Incorporated various inputs from Rob on DTS/YAML
+  - Added required:
+  - Added additionalProperties:
+  - Renamed "phy" clock to "ahb"
+  - maxItems dropped as indicated
+
+V5:
+- https://lkml.org/lkml/2020/2/6/913
+
+- Adds a notifier to DWC3 - BOD
+  This is done in order to allow propagation of role-switch events from the
+  DWC3 core to an associated binding layer.
+
+- Re-use the existent EXTCON VBUS power lane toggle logic - Jack Pham
+  Jack flagged this for inclusion and as a result we need to make a
+  small change to the qcom binding layer.
+
+- Squash DTS changes - BOD
+  I've squashed down some of the DTS changes to stop the patch count in
+  this series going  up any further.
+
+Bjorn Andersson (1):
+  arm64: dts: qcom: qcs404: Add USB devices and PHYs
+
+Bryan O'Donoghue (11):
+  dt-bindings: usb: dwc3: Add a gpio-usb-connector example
+  dt-bindings: usb: dwc3: Add a usb-role-switch to the example
+  usb: dwc3: qcom: Add support for usb-conn-gpio connectors
+  usb: dwc3: Add support for usb-conn-gpio connectors
+  usb: dwc3: Add support for a role-switch notifier
+  usb: dwc3: qcom: Enable gpio-usb-conn based role-switching
+  arm64: dts: qcom: qcs404-evb: Define VBUS pins
+  arm64: dts: qcom: qcs404-evb: Define USB ID pin
+  arm64: dts: qcom: qcs404-evb: Describe external VBUS regulator
+  arm64: dts: qcom: qcs404-evb: Raise vreg_l12_3p3 minimum voltage
+  arm64: dts: qcom: qcs404-evb: Enable USB controllers
+
+Jorge Ramirez-Ortiz (3):
+  dt-bindings: phy: remove qcom-dwc3-usb-phy
+  dt-bindings: Add Qualcomm USB SuperSpeed PHY bindings
+  phy: qualcomm: usb: Add SuperSpeed PHY driver
+
+Shawn Guo (1):
+  phy: qualcomm: Add Synopsys 28nm Hi-Speed USB PHY driver
+
+Sriharsha Allenki (1):
+  dt-bindings: phy: Add Qualcomm Synopsys Hi-Speed USB PHY binding
+
+Yu Chen (1):
+  usb: dwc3: Registering a role switch in the DRD code.
+
+ .../bindings/phy/qcom,usb-hs-28nm.yaml        |  90 ++++
+ .../devicetree/bindings/phy/qcom,usb-ss.yaml  |  83 ++++
+ .../bindings/phy/qcom-dwc3-usb-phy.txt        |  37 --
+ .../devicetree/bindings/usb/dwc3.txt          |   9 +
+ arch/arm64/boot/dts/qcom/qcs404-evb.dtsi      |  90 +++-
+ arch/arm64/boot/dts/qcom/qcs404.dtsi          | 100 +++++
+ drivers/phy/qualcomm/Kconfig                  |  20 +
+ drivers/phy/qualcomm/Makefile                 |   2 +
+ drivers/phy/qualcomm/phy-qcom-usb-hs-28nm.c   | 415 ++++++++++++++++++
+ drivers/phy/qualcomm/phy-qcom-usb-ss.c        | 246 +++++++++++
+ drivers/usb/dwc3/core.h                       |  22 +
+ drivers/usb/dwc3/drd.c                        | 117 ++++-
+ drivers/usb/dwc3/dwc3-qcom.c                  |  31 +-
+ 13 files changed, 1221 insertions(+), 41 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/qcom,usb-hs-28nm.yaml
+ create mode 100644 Documentation/devicetree/bindings/phy/qcom,usb-ss.yaml
+ delete mode 100644 Documentation/devicetree/bindings/phy/qcom-dwc3-usb-phy.txt
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-usb-hs-28nm.c
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-usb-ss.c
+
+-- 
+2.25.0
+
