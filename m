@@ -2,79 +2,240 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DAD515573F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 12:59:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5807D155758
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 13:05:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbgBGL7E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 06:59:04 -0500
-Received: from mx.socionext.com ([202.248.49.38]:10065 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726827AbgBGL7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 06:59:04 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 07 Feb 2020 20:59:02 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 8808D603AB;
-        Fri,  7 Feb 2020 20:59:02 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Fri, 7 Feb 2020 20:59:02 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id 240201A03A2;
-        Fri,  7 Feb 2020 20:59:02 +0900 (JST)
-Received: from [10.213.132.48] (unknown [10.213.132.48])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 048FC120133;
-        Fri,  7 Feb 2020 20:59:02 +0900 (JST)
-Date:   Fri, 07 Feb 2020 20:59:01 +0900
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     David Miller <davem@davemloft.net>
-Subject: Re: [PATCH net] net: ethernet: ave: Add capability of rgmii-id mode
-Cc:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <masami.hiramatsu@linaro.org>, <jaswinder.singh@linaro.org>
-In-Reply-To: <20200207.111648.1915539223489764931.davem@davemloft.net>
-References: <1580954376-27283-1-git-send-email-hayashi.kunihiko@socionext.com> <20200207.111648.1915539223489764931.davem@davemloft.net>
-Message-Id: <20200207205901.BE9A.4A936039@socionext.com>
+        id S1727114AbgBGMFv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 07:05:51 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:22182 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726860AbgBGMFv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 07:05:51 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 017C46FU011497;
+        Fri, 7 Feb 2020 13:04:54 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=iBQhYgSBgcuIqzcDUdUOlfFrxK4Faz6+YOshSkZgHl4=;
+ b=xcTmbCRjerjRHreCBsVttBbvxrjsAsmMee+8dXf6bdAkXcTuCUwKQPwC8sDTcIrlvvOA
+ xZ8Q2ZJH2V8Y/AC77a3vDvQF+KmbeVgUVQat/gBNzgqN8504OkWN2xAR6iVCwzHtpJ+X
+ pg9vNu/zsvKZVa0UuC/FjMyf9oVIR5wg9Oxe0K7LDdAGmwsLs0w4383Ji1wAXx2RwedB
+ 3NY31s9JJgn1y2hm0UmWMGjs8/2toiZy/2QCudRbwNqN9aV7LP9QiRYZpnSolb8bH+ku
+ mVTziVi8LBPKNC0wTbRxb68jU0HMdPycXZTq9lNQCo0mQYCMFGMEbcUm+j2vNQKbI5wW DA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xyhkbshtx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 07 Feb 2020 13:04:54 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9366F10002A;
+        Fri,  7 Feb 2020 13:04:53 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5270F2B5017;
+        Fri,  7 Feb 2020 13:04:53 +0100 (CET)
+Received: from localhost (10.75.127.46) by SFHDAG6NODE2.st.com (10.75.127.17)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 7 Feb 2020 13:04:52
+ +0100
+From:   Olivier Moysan <olivier.moysan@st.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <alsa-devel@alsa-project.org>,
+        <robh@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <olivier.moysan@st.com>
+CC:     <arnaud.pouliquen@st.com>, <benjamin.gaignard@st.com>
+Subject: [PATCH v2] ASoC: dt-bindings: stm32: convert i2s to json-schema
+Date:   Fri, 7 Feb 2020 13:03:45 +0100
+Message-ID: <20200207120345.24672-1-olivier.moysan@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.70 [ja]
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG6NODE2.st.com
+ (10.75.127.17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-07_01:2020-02-07,2020-02-07 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David, 
-Thank you for your comment.
+Convert the STM32 I2S bindings to DT schema format using json-schema.
 
-On Fri, 7 Feb 2020 11:16:48 +0100 <davem@davemloft.net> wrote:
-
-> From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> Date: Thu,  6 Feb 2020 10:59:36 +0900
-> 
-> > This allows you to specify the type of rgmii-id that will enable phy
-> > internal delay in ethernet phy-mode.
-> > 
-> > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> 
-> I do not understand this change at all.
-> 
-> At a minimum you must explain things more clearly and completely in your
-> commit message.
-> 
-> Are you just adding all of the RGMII cases to the code that only currently
-> mentions PHY_INTERFACE_MODE_RGMII?  If so, why did you only do this for
-> some but not all of the get_pinmode() methods in this driver?
-
-Yes, this is intended to add all of RGMII cases to the code.
-I add the cases to all of get_pinmode() except LD11, because LD11 doesn't
-support RGMII due to the constraint of the hardware.
-
-When RGMII phy mode is specified in the devicetree for LD11, the driver
-will abort with the message "invalid phy-mode setting".
-
-If it is clear, I'll add this to the next commit message.
-
-Thank you,
-
+Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
 ---
-Best Regards,
-Kunihiko Hayashi
+Changes in v2:
+- Define items order for clock and dma properties
+---
+ .../bindings/sound/st,stm32-i2s.txt           | 62 -------------
+ .../bindings/sound/st,stm32-i2s.yaml          | 87 +++++++++++++++++++
+ 2 files changed, 87 insertions(+), 62 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/st,stm32-i2s.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/st,stm32-i2s.yaml
+
+diff --git a/Documentation/devicetree/bindings/sound/st,stm32-i2s.txt b/Documentation/devicetree/bindings/sound/st,stm32-i2s.txt
+deleted file mode 100644
+index cbf24bcd1b8d..000000000000
+--- a/Documentation/devicetree/bindings/sound/st,stm32-i2s.txt
++++ /dev/null
+@@ -1,62 +0,0 @@
+-STMicroelectronics STM32 SPI/I2S Controller
+-
+-The SPI/I2S block supports I2S/PCM protocols when configured on I2S mode.
+-Only some SPI instances support I2S.
+-
+-Required properties:
+-  - compatible: Must be "st,stm32h7-i2s"
+-  - reg: Offset and length of the device's register set.
+-  - interrupts: Must contain the interrupt line id.
+-  - clocks: Must contain phandle and clock specifier pairs for each entry
+-	in clock-names.
+-  - clock-names: Must contain "i2sclk", "pclk", "x8k" and "x11k".
+-	"i2sclk": clock which feeds the internal clock generator
+-	"pclk": clock which feeds the peripheral bus interface
+-	"x8k": I2S parent clock for sampling rates multiple of 8kHz.
+-	"x11k": I2S parent clock for sampling rates multiple of 11.025kHz.
+-  - dmas: DMA specifiers for tx and rx dma.
+-    See Documentation/devicetree/bindings/dma/stm32-dma.txt.
+-  - dma-names: Identifier for each DMA request line. Must be "tx" and "rx".
+-  - pinctrl-names: should contain only value "default"
+-  - pinctrl-0: see Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
+-
+-Optional properties:
+-  - resets: Reference to a reset controller asserting the reset controller
+-
+-The device node should contain one 'port' child node with one child 'endpoint'
+-node, according to the bindings defined in Documentation/devicetree/bindings/
+-graph.txt.
+-
+-Example:
+-sound_card {
+-	compatible = "audio-graph-card";
+-	dais = <&i2s2_port>;
+-};
+-
+-i2s2: audio-controller@40003800 {
+-	compatible = "st,stm32h7-i2s";
+-	reg = <0x40003800 0x400>;
+-	interrupts = <36>;
+-	clocks = <&rcc PCLK1>, <&rcc SPI2_CK>, <&rcc PLL1_Q>, <&rcc PLL2_P>;
+-	clock-names = "pclk", "i2sclk",  "x8k", "x11k";
+-	dmas = <&dmamux2 2 39 0x400 0x1>,
+-           <&dmamux2 3 40 0x400 0x1>;
+-	dma-names = "rx", "tx";
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_i2s2>;
+-
+-	i2s2_port: port@0 {
+-		cpu_endpoint: endpoint {
+-			remote-endpoint = <&codec_endpoint>;
+-			format = "i2s";
+-		};
+-	};
+-};
+-
+-audio-codec {
+-	codec_port: port@0 {
+-		codec_endpoint: endpoint {
+-			remote-endpoint = <&cpu_endpoint>;
+-		};
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/sound/st,stm32-i2s.yaml b/Documentation/devicetree/bindings/sound/st,stm32-i2s.yaml
+new file mode 100644
+index 000000000000..f32410890589
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/st,stm32-i2s.yaml
+@@ -0,0 +1,87 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/st,stm32-i2s.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: STMicroelectronics STM32 SPI/I2S Controller
++
++maintainers:
++  - Olivier Moysan <olivier.moysan@st.com>
++
++description:
++  The SPI/I2S block supports I2S/PCM protocols when configured on I2S mode.
++  Only some SPI instances support I2S.
++
++properties:
++  compatible:
++    enum:
++      - st,stm32h7-i2s
++
++  "#sound-dai-cells":
++    const: 0
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: clock feeding the peripheral bus interface.
++      - description: clock feeding the internal clock generator.
++      - description: I2S parent clock for sampling rates multiple of 8kHz.
++      - description: I2S parent clock for sampling rates multiple of 11.025kHz.
++
++  clock-names:
++    items:
++      - const: pclk
++      - const: i2sclk
++      - const: x8k
++      - const: x11k
++
++  interrupts:
++    maxItems: 1
++
++  dmas:
++    items:
++      - description: audio capture DMA.
++      - description: audio playback DMA.
++
++  dma-names:
++    items:
++      - const: rx
++      - const: tx
++
++  resets:
++    maxItems: 1
++
++required:
++  - compatible
++  - "#sound-dai-cells"
++  - reg
++  - clocks
++  - clock-names
++  - interrupts
++  - dmas
++  - dma-names
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/stm32mp1-clks.h>
++    i2s2: audio-controller@4000b000 {
++        compatible = "st,stm32h7-i2s";
++        #sound-dai-cells = <0>;
++        reg = <0x4000b000 0x400>;
++        clocks = <&rcc SPI2>, <&rcc SPI2_K>, <&rcc PLL3_Q>, <&rcc PLL3_R>;
++        clock-names = "pclk", "i2sclk", "x8k", "x11k";
++        interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
++        dmas = <&dmamux1 39 0x400 0x01>,
++               <&dmamux1 40 0x400 0x01>;
++        dma-names = "rx", "tx";
++        pinctrl-names = "default";
++        pinctrl-0 = <&i2s2_pins_a>;
++    };
++
++...
+-- 
+2.17.1
 
