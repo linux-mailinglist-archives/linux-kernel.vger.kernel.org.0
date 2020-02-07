@@ -2,72 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE47155FD7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 21:42:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DB15155FF4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 21:42:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbgBGUmN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 15:42:13 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:46459 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727546AbgBGUmM (ORCPT
+        id S1727527AbgBGUmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 15:42:44 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:34853 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727012AbgBGUmn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 15:42:12 -0500
-Received: by mail-oi1-f196.google.com with SMTP id a22so3254605oid.13
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 12:42:12 -0800 (PST)
+        Fri, 7 Feb 2020 15:42:43 -0500
+Received: by mail-ed1-f65.google.com with SMTP id f8so973702edv.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 12:42:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=8cDRXBFOpE9J1p6S5H+HXSQg9q3m7pUJ3iUuQ5MPcDc=;
-        b=YPZJJy834hUJnz7pionGH11ZciL6RrbrPELuvEefyNE4m32c/3BRL7jS6BX3GTRbjW
-         A7PT2XuyoA0DKIOAMXBVLqZDks+EHHVySpQpjboWji0NFQ79t34wrEkdhJ/7mvVnPfcg
-         BPXVuIvRzTGxR9yBINGUBTO7OS1IgYRxQvNJFyy4DMElAWJNigH6Lfy9a++UWnjsZV7K
-         NbU0I3Vhb1neiaj+I96jGm3rPYvdHpbUTw6COrl+fTWEjyjGSvKY6qdov3nXpFudxXNb
-         5mDt4W3AkewRXnJYuxGyMUAK1lkfrMP5hrIUalSBsJd0qxRrK90fgDoK4eboWAVqoACA
-         vQPg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Qme74oUO2AjF1HKgLPSJvL4CSEChV51xdiVyhj0IraY=;
+        b=bvdo489WkazsFr8MyNsmtfFBn7DsQljQXJ/HOxxSWabU4r6rIEsNpz737+aAgQboHv
+         1gx4Yxk1LbZYkC1W9yfgri+0wFxWOnx8qJ7BuCUbOGkyCIMgZwhZlLN8gGCOhRb/SeqT
+         q4Y20cVFpjN7cHiDrws7RJEuz+CgdcIfo5GiOF/ezfmFqGAoj6+A4t3f2KUfZBo6LCAM
+         TrQGLfTWFH/fwntXGaEhHmzCqCf33+HAfHS28QIf3nfNr7iKy1yp4pWofrcOB8fC5lRW
+         CQL5fCArFohre7uLi8GcE8/5B6mcBcK87J7IAYiICzOary8Eqlj4kD4YSxN9f4yVxSKG
+         VsUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=8cDRXBFOpE9J1p6S5H+HXSQg9q3m7pUJ3iUuQ5MPcDc=;
-        b=FPC2ZMfoDPjN5CWKWnrZbOwSfDLwAmZHIQrSRG08/SA0YXY7DUDArpA83RIMDaHQeF
-         BzHx0p7bV4pxd0HnvNVk0j06ZN2F7U4oLUP6j/+AVkvbzg+31Z52mQ5GxkQL99g7ydjM
-         mYWC0pyrEr9IPXtMkxSZufj/YOjRoT3wkrvzxkebvwUmuj0K/nGpf0rH+AohnDoOVmwU
-         +WV/43Sq3LagHxvhsruGvOHqNSqfQ5tz0ym71oVEGwgeT7rOXH4JBUS3z8wzv+uvfNyA
-         ZUo58yN8ZRiMIJEIRNcHNxad/Lwn+AYHCKvjfGUEsTCOD0a8pQ+M4m37hfFSbQ3R6YmX
-         QiHg==
-X-Gm-Message-State: APjAAAUyedAHI8oWqyNoxMWsuc21pqsx9guHWpaahsLoMz375IqR7oq2
-        Z2EuZlIlLS8sZ1JkkHCSZNHn4OuApU+8B9S1TJsXbHuCNruxwg==
-X-Google-Smtp-Source: APXvYqwSeJkRlkGgNiWsW1NpF1DiAIFzsJveh9+wRvoFwY/EgylY09EfD37WjburJ+wD5ZF6dcgpmVqlX+UTGTmHly0=
-X-Received: by 2002:aca:c7cb:: with SMTP id x194mr3327726oif.157.1581108131844;
- Fri, 07 Feb 2020 12:42:11 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Qme74oUO2AjF1HKgLPSJvL4CSEChV51xdiVyhj0IraY=;
+        b=YwArPAuQgNTU9+BFeddSlNFTpk6ggVN4AlN959ZCTiqxMZtD3eAmKNmCpZkpYecvSR
+         I0bUhyF5MGuR5bV2bCjxfFJhC+2pQRH/TUcRLYqf1uY5T9R2FNutgegP+xoYm8/e3lhd
+         3iRAf5XtqJbH9rdML7GYzWE3S+ryAyjX3jIsrGFOrxFZrdET8wYGmxWhtIkO2us0nvGs
+         NW15jYhHrxLn6y3xsszRvapLLrxJ+nKxP6mfuHgCiXRE2hfEy0c00qfTlmUMTdta0kX5
+         cPZ3w6SweCV+nIG8CSnPAjYCBJ1823dnDrdTLbiSeI/DbZ9N29btigoQIsVTnKcEnv8B
+         V5tw==
+X-Gm-Message-State: APjAAAXWI1cFd+77XkouO/YfodCRkeui7tIjMhlRueKAqJHg73NSxEJY
+        X6s6t5PMrkwvzNN1IoEz9j1HbZcqlJ0G6Fo4WuOdhw==
+X-Google-Smtp-Source: APXvYqxd/3AgJCgsBd9lmKhLRCgoBs7ng3LZam3gp52WRCLUPvXrvw3OIwH4OX3lHJRvQnfg33LmrMwxq7BZX3LCu1k=
+X-Received: by 2002:aa7:d355:: with SMTP id m21mr690593edr.312.1581108161876;
+ Fri, 07 Feb 2020 12:42:41 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a4a:d508:0:0:0:0:0 with HTTP; Fri, 7 Feb 2020 12:42:11 -0800 (PST)
-Reply-To: auch197722@gmail.com
-From:   "Mr. Theophilus Odadudu" <cristinamedina0010@gmail.com>
-Date:   Fri, 7 Feb 2020 15:42:11 -0500
-Message-ID: <CAPNvSTgeN84MC4a+RJ1wBioXqDfarTE4_m4nbA9Dm=S8bmF0WQ@mail.gmail.com>
-Subject: LETTER OF INQUIRY
-To:     undisclosed-recipients:;
+References: <20200123014627.71720-1-bgeffon@google.com> <20200124190625.257659-1-bgeffon@google.com>
+ <20200126220650.i4lwljpvohpgvsi2@box> <CADyq12xCK_3MhGi88Am5P6DVZvrW8vqtyJMHO0zjNhvhYegm1w@mail.gmail.com>
+ <20200129104655.egvpavc2tzozlbqe@box> <CADyq12xgnVByYOkL=GcszYYKzDpg254QEOFoW8=e1y=bmOCcFQ@mail.gmail.com>
+ <20200203130940.enfvdsbn42hhoaki@box>
+In-Reply-To: <20200203130940.enfvdsbn42hhoaki@box>
+From:   Brian Geffon <bgeffon@google.com>
+Date:   Fri, 7 Feb 2020 12:42:15 -0800
+Message-ID: <CADyq12x98QspiWSqNui1OH8+FEUzVyJwxia+ho00S2+Q+PmTjw@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: Add MREMAP_DONTUNMAP to mremap().
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, linux-api@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Yu Zhao <yuzhao@google.com>, Jesse Barnes <jsbarnes@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good Day,
+Hi Kirill,
+I started a new thread https://lkml.org/lkml/2020/2/7/640 for my v4
+patch. But I wanted to quickly address your comments. Regarding the
+concern around the rmap, no changes actually need to be made. If we
+were to unlink_anon_vma(vma) and then set vma->anon_vma = NULL, that
+would be fine but then as soon as there was a fault the same anon_vma
+would be attached since it's a private anonymous mapping. So there is
+really nothing to do regarding the rmap.
 
-I work as a clerk in a Bank here in Nigeria, I have a very
-confidential Business Proposition for you. There is a said amount of
-money floating in the bank unclaimed, belonging to the bank Foreign
-customer who die with his family in the Ethiopian Airline crash of
-March 11, 2019.
+I considered the two flag approach but since I could not come up with
+a concrete use case of MREMAP_MUSTMOVE I decided to just leave the
+single MREMAP_DONTUNMAP flag, the two flag approach would be only for
+clarifying the operations so I'm not sure it's worth it. (Still trying
+to come up with a better name). But I've attached a man page diff to
+the latest patch.
 
-I seek your good collaboration to move the fund for our benefit. we
-have agreed that 40% be yours once you help claim.
+Thanks,
+Brian
 
-Do get back to with 1) Your Full Name: (2) Residential Address: (3)
-Phone, Mobile  (4) Scan Copy of Your ID. to apply for claims of the
-funds.
-
-Regards
-Theophilus Odadudu
+On Mon, Feb 3, 2020 at 5:09 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
+>
+> On Sun, Feb 02, 2020 at 05:17:53AM +0100, Brian Geffon wrote:
+> > On Wed, Jan 29, 2020 at 11:46 AM Kirill A. Shutemov
+> > <kirill@shutemov.name> wrote:
+> > > Any better options for the flag name? (I have none)
+> >
+> > The other option is that it's broken up into two new flags the first
+> > MREMAP_MUSTMOVE which can be used regardless of whether or not you're
+> > leaving the original mapping mapped. This would do exactly what it
+> > describes: move the mapping to a new address with or without
+> > MREMAP_FIXED, this keeps consistency with MAYMOVE.
+> >
+> > The second flag would be the new MREMAP_DONTUNMAP flag which requires
+> > MREMAP_MUSTMOVE, again with or without MREMAP_FIXED.
+> >
+> > What are your thoughts on this?
+>
+> Sounds reasonable.
+>
+> MREMAP_DONTUNMAP doesn't really convey that you move pages to the new
+> mapping, but leave empty mapping behind. But I guess there's only so much
+> you can encode into the name. (Patch to the man page should do the rest)
+>
+> --
+>  Kirill A. Shutemov
