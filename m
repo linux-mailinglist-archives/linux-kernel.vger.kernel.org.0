@@ -2,112 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 305A11552A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 07:58:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CE2F1552AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 08:04:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbgBGG55 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 01:57:57 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:42813 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726951AbgBGG55 (ORCPT
+        id S1726816AbgBGHEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 02:04:06 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:59065 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726130AbgBGHEF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 01:57:57 -0500
-Received: by mail-il1-f196.google.com with SMTP id x2so810156ila.9;
-        Thu, 06 Feb 2020 22:57:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=MvC4wfPqw9IroxJFE0+MeDBQWPGintIKajsHZYirMKQ=;
-        b=JsD+38Lcu1jACdrWPnZvuVsKkMf9dmfdXJ9Ee1ctjb53C7MjQBeBKCKzUbCapxPkV3
-         yN5Y+ylzMm0ioC2S4fmQYdctCkheyaqfreX/0qsFU5De5c2lxLN0OUU4ZM7V6Q5hIpAu
-         xBNhx1UziYfV5qu8ffG5DleioJN5muRDe3FYloeKLvjcavOSBYp34gR2DMsa3AWZfxSb
-         6x9GKsN4QeVGvwjKv8PfM9u5Uk/9EYvAf3Bb52pQ0wAKxux8d8f6Y7AZIHetvLvcKAxt
-         T4YiGiKGm+RVxsAmWIYmcq2ywe/epX74Z69olrUPatdLthLCpKOS23rDaGbjyjIvbTPH
-         rTnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=MvC4wfPqw9IroxJFE0+MeDBQWPGintIKajsHZYirMKQ=;
-        b=HgIezn4Aljuq4R+ZpoM0H3OpkzaPewAea0G4JRR1FbbbwuORe32eh7YY0/uTaLsBm4
-         i5/M30atrXDQ7eO8tGcSvrz9TaZXCqTSvUa/yA/olXP66XGFg6Cq5z9rMbVZq8CxKzYF
-         VsxilslayXJ5N799XvU97act8ByYWzDvrEeyKT9P+hkuV2mLtIIqOJNVLiyC6JLy7jjb
-         dWGzwEq1lCROfPDBjCRTU9nphBZl0AMWmFCUUxCxCedwIdqRo9YJCu0U7OiPrZm99TQ7
-         okgP3cqj1tMvBHGvVHolXht9fuAJU0cevGMYk0o0K35OcWnMm6hGE0Rn+6NHeMbqv+d7
-         DQYQ==
-X-Gm-Message-State: APjAAAVtNqV8jZ6emEMXb6xO/2obxgJp6d+px7ez0DMnwgs5UdQ3MrPt
-        qrkAbaJXKoe+dkP3ZG5mXhr0jK1TeiouSA4S6wDchL/E3jo=
-X-Google-Smtp-Source: APXvYqzVlmSDZ11jLfB0Dk+b5wrJmCDCPMqzimvGfc3DZnWRvtmfFKx0rOtYrAe83Rd9Tv4z08oBry1yXBL1No/vG/c=
-X-Received: by 2002:a92:860a:: with SMTP id g10mr7690199ild.280.1581058676368;
- Thu, 06 Feb 2020 22:57:56 -0800 (PST)
+        Fri, 7 Feb 2020 02:04:05 -0500
+X-UUID: 54507557b7ae47d7a22bcb86bc5b5fbb-20200207
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=0FyZvLAm8VgVJ2/OueWbRbVIynhvPgRH9QI8GSdUKEk=;
+        b=Slbo06+6Dug2P4nauEaQ8uC6OaDKspaRoYF5u9uelez2nmeF48sXZtotYg64U68V89s1g21EfoU4p+FKlfZhPZ9g0SArr2KH2191MlWbAAjDWldgOfYWbOgm6GaC93f2XF0KKFVZqwHBXIkO5T6dqB4+UDvFiJBkbVWgbRpktks=;
+X-UUID: 54507557b7ae47d7a22bcb86bc5b5fbb-20200207
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1791150247; Fri, 07 Feb 2020 15:03:59 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 7 Feb 2020 15:02:27 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 7 Feb 2020 15:04:27 +0800
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
+        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
+        <jejb@linux.ibm.com>, <beanhuo@micron.com>
+CC:     <asutoshd@codeaurora.org>, <cang@codeaurora.org>,
+        <matthias.bgg@gmail.com>, <bvanassche@acm.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
+        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
+        <andy.teng@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
+Subject: [PATCH v1 0/2] scsi: ufs: introduce common function to disable host TX LCC
+Date:   Fri, 7 Feb 2020 15:03:55 +0800
+Message-ID: <20200207070357.17169-1-stanley.chu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Received: by 2002:ad5:5442:0:0:0:0:0 with HTTP; Thu, 6 Feb 2020 22:57:56 -0800 (PST)
-In-Reply-To: <0c4a37a9-0a2e-e698-f423-53060854ea05@ti.com>
-References: <20191104143713.11137-1-alexandre.torgue@st.com>
- <20200206133918.15012-1-youling257@gmail.com> <0c4a37a9-0a2e-e698-f423-53060854ea05@ti.com>
-From:   youling 257 <youling257@gmail.com>
-Date:   Fri, 7 Feb 2020 14:57:56 +0800
-Message-ID: <CAOzgRdb5QfJDQzbtoHQry4wxUg52LwX5XFCPzzaYa=z+RqNWOQ@mail.gmail.com>
-Subject: Re: [PATCH] phy: core: Add consumer device link support
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     alexandre.torgue@st.com, yoshihiro.shimoda.uh@renesas.com,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-test this diff, dwc3 work for my device, thanks.
+SGksDQoNClRoaXMgcGF0Y2hzZXQgaW50cm9kdWNlcyBhIGNvbW1vbiBmdW5jdGlvbiB0byBkaXNh
+YmxlIGhvc3QgVFggTENDIGZvciBhbGwgdmVuZG9ycyBhbmQgZml4ZXMgYSBUWCBMQ0MgaXNzdWUg
+aW4gTWVkaWFUZWsgVUZTIGRyaXZlci4NCg0KU3RhbmxleSBDaHUgKDIpOg0KICBzY3NpOiB1ZnM6
+IHVmcy1tZWRpYXRlazogZml4IFRYIExDQyBkaXNhYmxpbmcgdGltaW5nDQogIHNjc2k6IHVmczog
+aW50cm9kdWNlIGNvbW1vbiBmdW5jdGlvbiB0byBkaXNhYmxlIGhvc3QgVFggTENDDQoNCiBkcml2
+ZXJzL3Njc2kvdWZzL2NkbnMtcGx0ZnJtLmMgIHwgIDIgKy0NCiBkcml2ZXJzL3Njc2kvdWZzL3Vm
+cy1oaXNpLmMgICAgIHwgIDIgKy0NCiBkcml2ZXJzL3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5jIHwg
+MTIgKysrKysrKysrLS0tDQogZHJpdmVycy9zY3NpL3Vmcy91ZnMtcWNvbS5jICAgICB8ICA0ICst
+LS0NCiBkcml2ZXJzL3Njc2kvdWZzL3Vmc2hjZC1wY2kuYyAgIHwgIDIgKy0NCiBkcml2ZXJzL3Nj
+c2kvdWZzL3Vmc2hjZC5oICAgICAgIHwgIDUgKysrKysNCiA2IGZpbGVzIGNoYW5nZWQsIDE4IGlu
+c2VydGlvbnMoKyksIDkgZGVsZXRpb25zKC0pDQoNCi0tIA0KMi4xOC4wDQo=
 
-2020-02-07 13:16 GMT+08:00, Kishon Vijay Abraham I <kishon@ti.com>:
-> Hi,
->
-> On 06/02/20 7:09 PM, youling257 wrote:
->> This patch cause "dwc3 dwc3.3.auto: failed to create device link to
->> dwc3.3.auto.ulpi" problem.
->> https://bugzilla.kernel.org/show_bug.cgi?id=206435
->
-> I'm suspecting there is some sort of reverse dependency with dwc3 ULPI.
-> Can you try the following diff?
->
-> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-> index 2eb28cc2d2dc..397311dcb116 100644
-> --- a/drivers/phy/phy-core.c
-> +++ b/drivers/phy/phy-core.c
-> @@ -687,7 +687,7 @@ struct phy *phy_get(struct device *dev, const char
-> *string)
->
->         get_device(&phy->dev);
->
-> -       link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
-> +       link = device_link_add(dev, &phy->dev, DL_FLAG_SYNC_STATE_ONLY);
->         if (!link) {
->                 dev_err(dev, "failed to create device link to %s\n",
->                         dev_name(phy->dev.parent));
-> @@ -802,7 +802,7 @@ struct phy *devm_of_phy_get(struct device *dev,
-> struct device_node *np,
->                 return phy;
->         }
->
-> -       link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
-> +       link = device_link_add(dev, &phy->dev, DL_FLAG_SYNC_STATE_ONLY);
->         if (!link) {
->                 dev_err(dev, "failed to create device link to %s\n",
->                         dev_name(phy->dev.parent));
-> @@ -851,7 +851,7 @@ struct phy *devm_of_phy_get_by_index(struct device
-> *dev, struct device_node *np,
->         *ptr = phy;
->         devres_add(dev, ptr);
->
-> -       link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
-> +       link = device_link_add(dev, &phy->dev, DL_FLAG_SYNC_STATE_ONLY);
->         if (!link) {
->                 dev_err(dev, "failed to create device link to %s\n",
->                         dev_name(phy->dev.parent));
->
-> Thanks
-> Kishon
->
