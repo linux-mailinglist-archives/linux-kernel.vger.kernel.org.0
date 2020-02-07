@@ -2,110 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11405155A82
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 16:18:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D971155A9C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 16:22:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbgBGPSb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 10:18:31 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:33835 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbgBGPSb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 10:18:31 -0500
-Received: by mail-yb1-f196.google.com with SMTP id w17so1412724ybm.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 07:18:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nFsoOSwL9YbwXaTDXlHQ5VoCRQV0nAn2vPNJKXbJcGU=;
-        b=Ijqx7MgMTJgA2Zs0AZ9OYA7xm0i7YTRtbow5+VmzNbGcNc8adWDbkUIOTp9arzhY58
-         BOB8I/6z2TQYHdmRB/RIe4WUY2xDd+p+lte9CinqmvkeJDbY7gVZ9aoYnlfxZxpQ1MMf
-         m9ytl7/TkiFvkxx/xWl2zrdW13ZkFMMXtWV5aRz46dDbOv5y0whs7cmc/EBpvu4ZG+Q1
-         5hnEo3tzAiK2sAkUHy7Yg5dNBapb8j8KSOBL9C7Ozmy4UiSsbLo5fzfs5xDoCL+weMtd
-         9EAQxLDIIx4BsQhD3ULwgUslYNMWYJAX3RZ0lj+eJFCx6geNNfCJkdoYWFm0GhnvkgA9
-         q/3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nFsoOSwL9YbwXaTDXlHQ5VoCRQV0nAn2vPNJKXbJcGU=;
-        b=N16HHuAXVrBfE/AYFnkZqjdB/nfeym5nGLnTVJ870ZJIl1T1BNUsn3rTwWMWk3AWDF
-         WguO4UD3UZaMsjnz0jtfWkS0rCkftCcQ/PNRF3fcWZQfPW1yegnRSjbNfV1MOvaQb/49
-         3x4xmnNDmXfQGmW8RerdxSF5PqxiVrHZU03k8yPV6luvVZd2SQ0p8vX4hfzTxJlepHWD
-         p/Os7svTwfI5FcD6ZQCrJIgXR7pvkhjTN12GlyRHRMO9cYpxzevnbnLAWJr77BdOkMk9
-         Ds/DoaQDuw7FIYMRfmKjEhrCZsKbR09q0+hKnuP2tAAvSaF/THlqf7Mm+Pd4FEhN7Dlw
-         rf+Q==
-X-Gm-Message-State: APjAAAUE26txBZiIshZFonSxtfHr2p9AUfStE2i8cMIZ9TGaCUrzeI/D
-        t4GlF77aL86JPUydnfkrCK9wQkdlNFJnNXQCo4VqWw==
-X-Google-Smtp-Source: APXvYqxNNa5WVr6tDVQ5+kY8QCx69tm+gnrj+/GdtvNWv1dsvL/OQIIdovJljB9ggBjXAxC+SpjJMphhUujpYgsgesw=
-X-Received: by 2002:a25:d9d4:: with SMTP id q203mr9392649ybg.274.1581088709627;
- Fri, 07 Feb 2020 07:18:29 -0800 (PST)
-MIME-Version: 1.0
-References: <20200207043836.106657-1-edumazet@google.com> <87tv42xxr5.fsf@nanos.tec.linutronix.de>
-In-Reply-To: <87tv42xxr5.fsf@nanos.tec.linutronix.de>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Fri, 7 Feb 2020 07:18:18 -0800
-Message-ID: <CANn89i+mo08vK3ejvmn7DxvHEkAox4Xpm9Dm5hGc=9-+Xwxi4g@mail.gmail.com>
-Subject: Re: [PATCH] x86/traps: do not hash pointers in handle_stack_overflow()
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727234AbgBGPWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 10:22:43 -0500
+Received: from foss.arm.com ([217.140.110.172]:41074 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726674AbgBGPWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 10:22:43 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 466C21FB;
+        Fri,  7 Feb 2020 07:22:42 -0800 (PST)
+Received: from e121896.default (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D51F73F6CF;
+        Fri,  7 Feb 2020 07:22:38 -0800 (PST)
+From:   James Clark <james.clark@arm.com>
+To:     jolsa@redhat.com, liwei391@huawei.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     nd@arm.com, James Clark <james.clark@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
+        Al Grant <al.grant@arm.com>, Namhyung Kim <namhyung@kernel.org>
+Subject: [PATCH v3 0/4] perf tools: Add support for some spe events and precise ip
+Date:   Fri,  7 Feb 2020 15:21:38 +0000
+Message-Id: <20200207152142.28662-1-james.clark@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200127123108.GC1114818@krava>
+References: <20200127123108.GC1114818@krava>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 7, 2020 at 6:44 AM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> Eric Dumazet <edumazet@google.com> writes:
->
-> > Mangling stack pointers in handle_stack_overflow() is moot,
-> > as registers (including RSP/RBP) are clear anyway.
-> >
-> > BUG: stack guard page was hit at 0000000063381e80 (stack is
-> > 000000008edc5696..0000000012256c50)
->
-> To illustrate your argument above it would be useful to provide the post
-> patch output as well.
+Hi Jirka,
 
-Unfortunately this KASAN report has no repro yet. I have no idea what
-triggered the fault ;)
+Thanks for the feedback. I've made the following changes:
 
->
-> > kernel stack overflow (double-fault): 0000 [#1] PREEMPT SMP KASAN
-> > ...
-> > RSP: 0018:ffffc90002c1ffc0 EFLAGS: 00010802
-> > RAX: 1ffff11004a0094c RBX: ffff888025004180 RCX: c9d82d1007bb146c
-> > RDX: dffffc0000000000 RSI: ffff888025004a40 RDI: ffff888025004180
-> > RBP: ffffc90002c201c0 R08: dffffc0000000000 R09: fffffbfff1405915
-> > R10: fffffbfff1405915 R11: 0000000000000000 R12: ffff888025004a60
-> > R13: ffff888025004a10 R14: c9d82d1007bb146c R15: ffff888025004180
-> > ...
-> >
-> > Signed-off-by: Eric Dumazet <edumazet@google.com>
-> > Cc: Andy Lutomirski <luto@kernel.org>
-> > ---
-> >  arch/x86/kernel/traps.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-> > index 6ef00eb6fbb925e86109f86845e2b3ccef4023ec..44873df292bd3f9f77bb721c53cb8a1c40994cca 100644
-> > --- a/arch/x86/kernel/traps.c
-> > +++ b/arch/x86/kernel/traps.c
-> > @@ -296,7 +296,7 @@ __visible void __noreturn handle_stack_overflow(const char *message,
-> >                                               struct pt_regs *regs,
-> >                                               unsigned long fault_address)
-> >  {
-> > -     printk(KERN_EMERG "BUG: stack guard page was hit at %p (stack is %p..%p)\n",
-> > +     printk(KERN_EMERG "BUG: stack guard page was hit at %px (stack
-> > is %px..%px)\n",
->
-> While touching this, can you please switch it to pr_emerg() ?
->
+Removed the arm_spe_synth_opts struct and added the new types into
+itrace_synth_opts. I could re-use branch but the other ones are new.
+And the --trace argument documentation has been updated accordingly.
 
+I've removed the processing of the evlist from perf_evlist__splice_list_tail
+and put it in a weak function "auxtrace__preprocess_evlist" that is
+only built on Arm.
 
-Sure I will, thanks.
+For the 2 patches about the hang on termination, I have removed them
+because I haven't been able to reproduce it and everything is working
+ok for me. @Wei Li, are you able to post steps required to reproduce?
+
+Thanks
+James
+
+Cc: Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Tan Xiaojun <tanxiaojun@huawei.com>
+Cc: Al Grant <al.grant@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+
+Tan Xiaojun (4):
+  perf tools: Move arm-spe-pkt-decoder.h/c to the new dir
+  perf tools: Add support for "report" for some spe events
+  perf report: Add SPE options to --itrace argument
+  perf tools: Support "branch-misses:pp" on arm64
+
+ tools/perf/Documentation/itrace.txt           |   5 +-
+ tools/perf/arch/arm/util/auxtrace.c           |  38 +
+ tools/perf/builtin-record.c                   |   5 +
+ tools/perf/util/Build                         |   2 +-
+ tools/perf/util/arm-spe-decoder/Build         |   1 +
+ .../util/arm-spe-decoder/arm-spe-decoder.c    | 225 ++++++
+ .../util/arm-spe-decoder/arm-spe-decoder.h    |  66 ++
+ .../arm-spe-pkt-decoder.c                     |   0
+ .../arm-spe-pkt-decoder.h                     |   2 +
+ tools/perf/util/arm-spe.c                     | 756 +++++++++++++++++-
+ tools/perf/util/arm-spe.h                     |   3 +
+ tools/perf/util/auxtrace.c                    |  13 +
+ tools/perf/util/auxtrace.h                    |  14 +-
+ tools/perf/util/evlist.c                      |   1 +
+ tools/perf/util/evsel.h                       |   1 -
+ 15 files changed, 1090 insertions(+), 42 deletions(-)
+ create mode 100644 tools/perf/util/arm-spe-decoder/Build
+ create mode 100644 tools/perf/util/arm-spe-decoder/arm-spe-decoder.c
+ create mode 100644 tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+ rename tools/perf/util/{ => arm-spe-decoder}/arm-spe-pkt-decoder.c (100%)
+ rename tools/perf/util/{ => arm-spe-decoder}/arm-spe-pkt-decoder.h (96%)
+
+-- 
+2.17.1
+
