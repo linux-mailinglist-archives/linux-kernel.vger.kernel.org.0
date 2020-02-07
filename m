@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7951C155867
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 14:27:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4986B15585C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 14:26:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbgBGN0q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 08:26:46 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:40750 "EHLO
+        id S1727549AbgBGN0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 08:26:13 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:40796 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726899AbgBGNZ4 (ORCPT
+        with ESMTP id S1727443AbgBGN0E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 08:25:56 -0500
+        Fri, 7 Feb 2020 08:26:04 -0500
 Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j03df-0003o5-1M; Fri, 07 Feb 2020 14:25:43 +0100
+        id 1j03dl-0003ox-9Y; Fri, 07 Feb 2020 14:25:49 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 281AA105CFE;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 2ACE4105CFF;
         Fri,  7 Feb 2020 13:25:38 +0000 (GMT)
-Message-Id: <20200207124403.563379423@linutronix.de>
+Message-Id: <20200207124403.656097274@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Fri, 07 Feb 2020 13:39:00 +0100
+Date:   Fri, 07 Feb 2020 13:39:01 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, John Stultz <john.stultz@linaro.org>,
@@ -41,7 +41,7 @@ Cc:     x86@kernel.org, John Stultz <john.stultz@linaro.org>,
         Will Deacon <will@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Marc Zyngier <maz@kernel.org>, Andrei Vagin <avagin@gmail.com>
-Subject: [patch V2 13/17] lib/vdso: Avoid highres update if clocksource is not VDSO capable
+Subject: [patch V2 14/17] lib/vdso: Move VCLOCK_TIMENS to vdso_clock_modes
 References: <20200207123847.339896630@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -55,65 +55,137 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-If the current clocksource is not VDSO capable there is no point in
-updating the high resolution parts of the VDSO data.
-
-Replace the architecture specific check with a check for a VDSO capable
-clocksource and skip the update if there is none.
+Move the time namespace indicator clock mode to the other ones for
+consistency sake.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- arch/arm/include/asm/vdso/vsyscall.h |    7 -------
- include/asm-generic/vdso/vsyscall.h  |    7 -------
- kernel/time/vsyscall.c               |    6 +++---
- 3 files changed, 3 insertions(+), 17 deletions(-)
 
---- a/arch/arm/include/asm/vdso/vsyscall.h
-+++ b/arch/arm/include/asm/vdso/vsyscall.h
-@@ -22,13 +22,6 @@ struct vdso_data *__arm_get_k_vdso_data(
- #define __arch_get_k_vdso_data __arm_get_k_vdso_data
+---
+ include/linux/clocksource.h |    3 +++
+ include/vdso/datapage.h     |    2 --
+ kernel/time/namespace.c     |    7 ++++---
+ lib/vdso/gettimeofday.c     |   18 ++++++++++--------
+ 4 files changed, 17 insertions(+), 13 deletions(-)
+
+--- a/include/linux/clocksource.h
++++ b/include/linux/clocksource.h
+@@ -34,6 +34,9 @@ enum vdso_clock_mode {
+ 	VDSO_ARCH_CLOCKMODES,
+ #endif
+ 	VDSO_CLOCKMODE_MAX,
++
++	/* Indicator for time namespace VDSO */
++	VDSO_CLOCKMODE_TIMENS = INT_MAX
+ };
  
- static __always_inline
--bool __arm_update_vdso_data(void)
--{
--	return cntvct_ok;
--}
--#define __arch_update_vdso_data __arm_update_vdso_data
--
--static __always_inline
- void __arm_sync_vdso_data(struct vdso_data *vdata)
- {
- 	flush_dcache_page(virt_to_page(vdata));
---- a/include/asm-generic/vdso/vsyscall.h
-+++ b/include/asm-generic/vdso/vsyscall.h
-@@ -11,13 +11,6 @@ static __always_inline struct vdso_data
- }
- #endif /* __arch_get_k_vdso_data */
+ /**
+--- a/include/vdso/datapage.h
++++ b/include/vdso/datapage.h
+@@ -21,8 +21,6 @@
+ #define CS_RAW		1
+ #define CS_BASES	(CS_RAW + 1)
  
--#ifndef __arch_update_vdso_data
--static __always_inline bool __arch_update_vdso_data(void)
--{
--	return true;
--}
--#endif /* __arch_update_vdso_data */
+-#define VCLOCK_TIMENS	UINT_MAX
 -
- #ifndef __arch_update_vsyscall
- static __always_inline void __arch_update_vsyscall(struct vdso_data *vdata,
- 						   struct timekeeper *tk)
---- a/kernel/time/vsyscall.c
-+++ b/kernel/time/vsyscall.c
-@@ -105,10 +105,10 @@ void update_vsyscall(struct timekeeper *
- 	WRITE_ONCE(vdata[CS_HRES_COARSE].hrtimer_res, hrtimer_resolution);
+ /**
+  * struct vdso_timestamp - basetime per clock_id
+  * @sec:	seconds
+--- a/kernel/time/namespace.c
++++ b/kernel/time/namespace.c
+@@ -8,6 +8,7 @@
+ #include <linux/user_namespace.h>
+ #include <linux/sched/signal.h>
+ #include <linux/sched/task.h>
++#include <linux/clocksource.h>
+ #include <linux/seq_file.h>
+ #include <linux/proc_ns.h>
+ #include <linux/export.h>
+@@ -172,8 +173,8 @@ static struct timens_offset offset_from_
+  * for vdso_data->clock_mode is a non-issue. The task is spin waiting for the
+  * update to finish and for 'seq' to become even anyway.
+  *
+- * Timens page has vdso_data->clock_mode set to VCLOCK_TIMENS which enforces
+- * the time namespace handling path.
++ * Timens page has vdso_data->clock_mode set to VDSO_CLOCKMODE_TIMENS which
++ * enforces the time namespace handling path.
+  */
+ static void timens_setup_vdso_data(struct vdso_data *vdata,
+ 				   struct time_namespace *ns)
+@@ -183,7 +184,7 @@ static void timens_setup_vdso_data(struc
+ 	struct timens_offset boottime = offset_from_ts(ns->offsets.boottime);
+ 
+ 	vdata->seq			= 1;
+-	vdata->clock_mode		= VCLOCK_TIMENS;
++	vdata->clock_mode		= VDSO_CLOCKMODE_TIMENS;
+ 	offset[CLOCK_MONOTONIC]		= monotonic;
+ 	offset[CLOCK_MONOTONIC_RAW]	= monotonic;
+ 	offset[CLOCK_MONOTONIC_COARSE]	= monotonic;
+--- a/lib/vdso/gettimeofday.c
++++ b/lib/vdso/gettimeofday.c
+@@ -116,10 +116,10 @@ static __always_inline int do_hres(const
+ 
+ 	do {
+ 		/*
+-		 * Open coded to handle VCLOCK_TIMENS. Time namespace
++		 * Open coded to handle VDSO_CLOCKMODE_TIMENS. Time namespace
+ 		 * enabled tasks have a special VVAR page installed which
+ 		 * has vd->seq set to 1 and vd->clock_mode set to
+-		 * VCLOCK_TIMENS. For non time namespace affected tasks
++		 * VDSO_CLOCKMODE_TIMENS. For non time namespace affected tasks
+ 		 * this does not affect performance because if vd->seq is
+ 		 * odd, i.e. a concurrent update is in progress the extra
+ 		 * check for vd->clock_mode is just a few extra
+@@ -128,7 +128,7 @@ static __always_inline int do_hres(const
+ 		 */
+ 		while (unlikely((seq = READ_ONCE(vd->seq)) & 1)) {
+ 			if (IS_ENABLED(CONFIG_TIME_NS) &&
+-			    vd->clock_mode == VCLOCK_TIMENS)
++			    vd->clock_mode == VDSO_CLOCKMODE_TIMENS)
+ 				return do_hres_timens(vd, clk, ts);
+ 			cpu_relax();
+ 		}
+@@ -200,12 +200,12 @@ static __always_inline int do_coarse(con
+ 
+ 	do {
+ 		/*
+-		 * Open coded to handle VCLOCK_TIMENS. See comment in
++		 * Open coded to handle VDSO_CLOCK_TIMENS. See comment in
+ 		 * do_hres().
+ 		 */
+ 		while ((seq = READ_ONCE(vd->seq)) & 1) {
+ 			if (IS_ENABLED(CONFIG_TIME_NS) &&
+-			    vd->clock_mode == VCLOCK_TIMENS)
++			    vd->clock_mode == VDSO_CLOCKMODE_TIMENS)
+ 				return do_coarse_timens(vd, clk, ts);
+ 			cpu_relax();
+ 		}
+@@ -292,7 +292,7 @@ static __maybe_unused int
+ 
+ 	if (unlikely(tz != NULL)) {
+ 		if (IS_ENABLED(CONFIG_TIME_NS) &&
+-		    vd->clock_mode == VCLOCK_TIMENS)
++		    vd->clock_mode == VDSO_CLOCKMODE_TIMENS)
+ 			vd = __arch_get_timens_vdso_data();
+ 
+ 		tz->tz_minuteswest = vd[CS_HRES_COARSE].tz_minuteswest;
+@@ -308,7 +308,8 @@ static __maybe_unused __kernel_old_time_
+ 	const struct vdso_data *vd = __arch_get_vdso_data();
+ 	__kernel_old_time_t t;
+ 
+-	if (IS_ENABLED(CONFIG_TIME_NS) && vd->clock_mode == VCLOCK_TIMENS)
++	if (IS_ENABLED(CONFIG_TIME_NS) &&
++	    vd->clock_mode == VDSO_CLOCKMODE_TIMENS)
+ 		vd = __arch_get_timens_vdso_data();
+ 
+ 	t = READ_ONCE(vd[CS_HRES_COARSE].basetime[CLOCK_REALTIME].sec);
+@@ -332,7 +333,8 @@ int __cvdso_clock_getres_common(clockid_
+ 	if (unlikely((u32) clock >= MAX_CLOCKS))
+ 		return -1;
+ 
+-	if (IS_ENABLED(CONFIG_TIME_NS) && vd->clock_mode == VCLOCK_TIMENS)
++	if (IS_ENABLED(CONFIG_TIME_NS) &&
++	    vd->clock_mode == VDSO_CLOCKMODE_TIMENS)
+ 		vd = __arch_get_timens_vdso_data();
  
  	/*
--	 * Architectures can opt out of updating the high resolution part
--	 * of the VDSO.
-+	 * If the current clocksource is not VDSO capable, then spare the
-+	 * update of the high reolution parts.
- 	 */
--	if (__arch_update_vdso_data())
-+	if (clock_mode != VDSO_CLOCKMODE_NONE)
- 		update_vdso_data(vdata, tk);
- 
- 	__arch_update_vsyscall(vdata, tk);
 
