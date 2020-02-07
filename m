@@ -2,54 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C555E1560E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 22:55:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3B0E1560F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 22:58:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbgBGVz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 16:55:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42550 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727764AbgBGVzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 16:55:22 -0500
-Subject: Re: [PULL REQUEST] i2c for v5.6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581112522;
-        bh=x4jVxI0ZMxL9jmduN8iNSalk/GJgxwf8ZGViWkqSW+o=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=1N9CBzMjd1PwwQGgrPWOrGVyoaV0+YifzCvd8LQttgqOerrMWPccmMgnripqwmNZ+
-         hCpjwAII65fcpsFHq96F6yCQMe1pzfhwsd1dHtYPVPpL6HoZczM7g0AUrcot7yWVBw
-         S+WwweJ3eShl6klipA0kvTiz2JKBi9Q9xryIEoWI=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200207171923.GA9783@ninjato>
-References: <20200207171923.GA9783@ninjato>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200207171923.GA9783@ninjato>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-5.6
-X-PR-Tracked-Commit-Id: b49f8e0e7bd17b968129790e40f9e2566f4f95ec
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 11777ee8b04acab07c96959e9c6ac6a1603d0958
-Message-Id: <158111252224.9631.1092673712656215961.pr-tracker-bot@kernel.org>
-Date:   Fri, 07 Feb 2020 21:55:22 +0000
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
+        id S1727491AbgBGV6E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 16:58:04 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:37262 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727075AbgBGV6D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 16:58:03 -0500
+Received: by mail-io1-f71.google.com with SMTP id p4so597008ioo.4
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 13:58:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=W19wD+6tfTNDp+aV2Lk+F8lK/QrKkxo/+Ppz61rvmy0=;
+        b=iJHWQ0wmfCfdpKR/bwJW0sdNwoSkszuI7+HLdg8f8JNv5mzpdzLbNdi/0142Zwlg47
+         EWn5Uj6n5/BKYv2AG2CIPag+5CH1Fn7VTZGht0lwwltyPeGZut0m79/EQ97c9v4+QWsf
+         vNZYrB/GYtWIfb2GTkqaNN8LjyFI1AbF2GqEER4Wg37AfnMziGijS9yb687zVHciYgDP
+         oHA5Vo5qZXBkPovsuf/9uDK8mauZYSVkQKvJM4U3xpp+rsktz67h6ja1OdZy1o8tN83B
+         SBm6alM3DH9RSj2bDwT0spzBOUbnYhs09pJ+Vx0Vxw2l/l8R9SY+KfAizkBaa4yxPI6D
+         QrRg==
+X-Gm-Message-State: APjAAAUcuhb/9dUvIDYO04dktIkGKmHLeU3fyzJpAFOBEa026FzS7+RI
+        figNMvlGM3Q8RKGXAja2b3iv/hXNskIQF/TmK24Luqnq1tFi
+X-Google-Smtp-Source: APXvYqxVxIlLYhnPbOxSejnGOT841+/VwCnwX8a4WtJ3oEOV5qwNJPQ9lQs8cstQ3checqsjzAkOriGHYbqdsIZkXL/M2UzITXwc
+MIME-Version: 1.0
+X-Received: by 2002:a02:cc75:: with SMTP id j21mr492335jaq.113.1581112681695;
+ Fri, 07 Feb 2020 13:58:01 -0800 (PST)
+Date:   Fri, 07 Feb 2020 13:58:01 -0800
+In-Reply-To: <000000000000d895bd059dffb65c@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000be1109059e037b83@google.com>
+Subject: Re: BUG: sleeping function called from invalid context in __kmalloc
+From:   syzbot <syzbot+98704a51af8e3d9425a9@syzkaller.appspotmail.com>
+To:     idryomov@gmail.com, jlayton@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        xiubli@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 7 Feb 2020 18:19:27 +0100:
+syzbot has bisected this bug to:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-5.6
+commit 4fbc0c711b2464ee1551850b85002faae0b775d5
+Author: Xiubo Li <xiubli@redhat.com>
+Date:   Fri Dec 20 14:34:04 2019 +0000
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/11777ee8b04acab07c96959e9c6ac6a1603d0958
+    ceph: remove the extra slashes in the server path
 
-Thank you!
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=166a57bee00000
+start commit:   90568ecf Merge tag 'kvm-5.6-2' of git://git.kernel.org/pub..
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=156a57bee00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=116a57bee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=69fa012479f9a62
+dashboard link: https://syzkaller.appspot.com/bug?extid=98704a51af8e3d9425a9
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172182b5e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1590aab5e00000
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Reported-by: syzbot+98704a51af8e3d9425a9@syzkaller.appspotmail.com
+Fixes: 4fbc0c711b24 ("ceph: remove the extra slashes in the server path")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
