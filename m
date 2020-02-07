@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F757155862
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 14:26:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE29F155856
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 14:26:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbgBGN0G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 08:26:06 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:40781 "EHLO
+        id S1727138AbgBGNZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 08:25:56 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:40759 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727309AbgBGN0B (ORCPT
+        with ESMTP id S1726874AbgBGNZz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 08:26:01 -0500
+        Fri, 7 Feb 2020 08:25:55 -0500
 Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j03da-0003gy-PS; Fri, 07 Feb 2020 14:25:39 +0100
+        id 1j03db-0003gx-0L; Fri, 07 Feb 2020 14:25:39 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id F19FD100F58;
-        Fri,  7 Feb 2020 13:25:37 +0000 (GMT)
-Message-Id: <20200207124402.328922847@linutronix.de>
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 01A86100F59;
+        Fri,  7 Feb 2020 13:25:38 +0000 (GMT)
+Message-Id: <20200207124402.438179009@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Fri, 07 Feb 2020 13:38:48 +0100
+Date:   Fri, 07 Feb 2020 13:38:49 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, John Stultz <john.stultz@linaro.org>,
@@ -41,7 +41,7 @@ Cc:     x86@kernel.org, John Stultz <john.stultz@linaro.org>,
         Will Deacon <will@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Marc Zyngier <maz@kernel.org>, Andrei Vagin <avagin@gmail.com>
-Subject: [patch V2 01/17] x86/vdso: Mark the TSC clocksource path likely
+Subject: [patch V2 02/17] ARM: vdso: Remove unused function
 References: <20200207123847.339896630@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -53,25 +53,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jumping out of line for the TSC clcoksource read is creating awful
-code. TSC is likely to be the clocksource at least on bare metal and the PV
-interfaces are sufficiently more work that the jump over the TSC read is
-just in the noise.
+From: Thomas Gleixner <tglx@linutronix.de>
+
+The function is nowhere used. Aside of that this check should only cover
+the high resolution parts of the VDSO which require a VDSO capable
+clocksource and not the complete functionality as the name suggests. Will
+be replaced with something more useful.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- arch/x86/include/asm/vdso/gettimeofday.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/vdso/gettimeofday.h
-+++ b/arch/x86/include/asm/vdso/gettimeofday.h
-@@ -243,7 +243,7 @@ static u64 vread_hvclock(void)
+---
+ arch/arm/include/asm/vdso/vsyscall.h |    7 -------
+ 1 file changed, 7 deletions(-)
+
+--- a/arch/arm/include/asm/vdso/vsyscall.h
++++ b/arch/arm/include/asm/vdso/vsyscall.h
+@@ -50,13 +50,6 @@ int __arm_get_clock_mode(struct timekeep
+ #define __arch_get_clock_mode __arm_get_clock_mode
  
- static inline u64 __arch_get_hw_counter(s32 clock_mode)
+ static __always_inline
+-int __arm_use_vsyscall(struct vdso_data *vdata)
+-{
+-	return vdata[CS_HRES_COARSE].clock_mode;
+-}
+-#define __arch_use_vsyscall __arm_use_vsyscall
+-
+-static __always_inline
+ void __arm_sync_vdso_data(struct vdso_data *vdata)
  {
--	if (clock_mode == VCLOCK_TSC)
-+	if (likely(clock_mode == VCLOCK_TSC))
- 		return (u64)rdtsc_ordered();
- 	/*
- 	 * For any memory-mapped vclock type, we need to make sure that gcc
+ 	flush_dcache_page(virt_to_page(vdata));
 
