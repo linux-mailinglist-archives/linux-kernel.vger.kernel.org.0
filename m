@@ -2,168 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0AB81560A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 22:18:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FAF81560AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 22:19:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbgBGVSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 16:18:12 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38961 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726947AbgBGVSL (ORCPT
+        id S1727076AbgBGVTg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 16:19:36 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38215 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726947AbgBGVTf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 16:18:11 -0500
-Received: by mail-wr1-f65.google.com with SMTP id y11so544335wrt.6
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 13:18:09 -0800 (PST)
+        Fri, 7 Feb 2020 16:19:35 -0500
+Received: by mail-ed1-f66.google.com with SMTP id p23so1055005edr.5;
+        Fri, 07 Feb 2020 13:19:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=s3/+t3C/iGaUgSEBBn4UBiEXAA3Z2xiPjiTjCVmDGl8=;
-        b=GfoGaC+/D2IbhwLnfJa3biAe5iPkr+OuRXLKcIZgOZFgYGtGR/dc32KDVeiUu1TXk0
-         eWPSWbZikyLpSAEg8CB0va7Ozm1hhXJZLf0Y/bQn/fhxnQL9eZUGeWjN+xq/u9jl7qtc
-         WAnaA0kz6pznkybaVC/dd561pV315aJX4mGaU=
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to;
+        bh=OWCBZ6tih1HyNFzDGB/mSHGPgMhLO6Fnq6qaK7NUkrc=;
+        b=UICGqB223vOOu2383pFCn98guTfsMca3NzGr2bG+AJzB/wTCRdAZFrhNXuIcb8PrNX
+         1hgj0qowVg+9Q0qktE4S76GfRxS1hEiDIAt5ZlituWPMx+UW7djSador0D2T8aP5JsGM
+         xycPdQxTgaEb+yGM6SWcPBIBpIXthbynQuINR+5ZJ06Z6w+l5d5J2F6dBmXcU3IbVUfk
+         Jo4xMCph5Tc4ifhdX9qnty9WwOGk1wNrBvuubzMFQHuxFtIwJKfzO7dCKoeZy7R81303
+         989Zy61R9dCiERWoXIDK1F/ZPZrMgQo6UV68Z33zDnTUc8AJMF7j3FE9KLf0BSw1S2eR
+         WEpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=s3/+t3C/iGaUgSEBBn4UBiEXAA3Z2xiPjiTjCVmDGl8=;
-        b=ZjVMSlUem8dA2NBBQ6ImhFkeFZKJujUwgcSpVD32fzUTI3G5n8FSntRR3nxBVT7gP9
-         zh322aWnDiZt8SVEaAI5kX6R5CWPuzv55hmaWSzWesD0nI2/ZUDrbW7OCH0F1QpdfBW/
-         sT6z6k1uKr4eNVtabVZR1J/9k9m41hZhpMYDMamrXH/MXP3ZHcbewLPGYOW5VfbKOO/0
-         GM9ol8ztNqktWHYvb0P8gaBsQ/roxIli7pvAKWz+bfbNStGzBHJH9fuLEgQllb6B3gmQ
-         TjB6Ia73HU+Y+Iy8SZ6ECpu2/aPPOsdOw6BTzm64Sfe7n4AyodQR57im0hmC/ynZWeq0
-         tt+Q==
-X-Gm-Message-State: APjAAAVNjfGnkWSgbpfOZBQBiMdeuR3SAqet6QuVta/rGvFUL4LTq/h4
-        4DwG9vVAjX/3W8+SVp+OVharAQ==
-X-Google-Smtp-Source: APXvYqxec00hS/YwBZ499yu47bZwrCh/oZd5f0f9T0ew/bFtZ3FCmODRG59pIZ1Nw2V66uA6cc49Eg==
-X-Received: by 2002:adf:e88f:: with SMTP id d15mr912024wrm.186.1581110288231;
-        Fri, 07 Feb 2020 13:18:08 -0800 (PST)
-Received: from localhost ([2a01:4b00:8432:8a00:63de:dd93:20be:f460])
-        by smtp.gmail.com with ESMTPSA id c9sm4672886wme.41.2020.02.07.13.18.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2020 13:18:07 -0800 (PST)
-Date:   Fri, 7 Feb 2020 21:18:07 +0000
-From:   Chris Down <chris@chrisdown.name>
-To:     Dan Schatzberg <dschatzberg@fb.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        "open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" 
-        <linux-mm@kvack.org>
-Subject: Re: [PATCH v2 2/3] mm: Charge active memcg when no mm is set
-Message-ID: <20200207211807.GA138184@chrisdown.name>
-References: <cover.1581088326.git.dschatzberg@fb.com>
- <8e41630b9d1c5d00f92a00f998285fa6003af5eb.1581088326.git.dschatzberg@fb.com>
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to;
+        bh=OWCBZ6tih1HyNFzDGB/mSHGPgMhLO6Fnq6qaK7NUkrc=;
+        b=Ii55JjTLWpNOS73TNFJx21V8QHeR+9+JlPfrOtT2JMZr02gKpEor4YImfK3xHv/FFl
+         udag+CDjUbl6EkAGMGzfa6l8OzRqxhJEkrWIH6yKOxOBbqlNDx4exOABSQ5dXaA7kkil
+         JAcyG8CkG51ZKI/MWwsp8VSvx8Z54iIQJtDAGpf88Z7N7sUPrCmqJoIRkwTK1HaztkQJ
+         Rkdu7x+OM0GtYpCbiC4oJ2sCW8n8gK5YMqXLensAnB8Q74peiOLvl3RMpKveUQ39+8Kg
+         H2bQ10hxJE1iKsxUd/t5mwK+v1hoe4j/kWR/VxzJ84rNfNI4ITsF6/84piN5xTDgNxpd
+         wGbQ==
+X-Gm-Message-State: APjAAAUZrkJxqc3F+sQ8f/K7i4W3h0pg+drVOTUuiZr+fn3ixBSufuk6
+        Sgi6Bwc/C06A6lEecYKHpNTEXDsD
+X-Google-Smtp-Source: APXvYqz/z1XrGqOHiPHsCg12e+jf8nNd2aAlDTzSZua9PfHTyGKug0J8xIXh8veDjbsM3f7RyR4Ksg==
+X-Received: by 2002:a50:cfc1:: with SMTP id i1mr812421edk.366.1581110371916;
+        Fri, 07 Feb 2020 13:19:31 -0800 (PST)
+Received: from [192.168.43.117] ([109.126.145.62])
+        by smtp.gmail.com with ESMTPSA id k11sm479668ejq.24.2020.02.07.13.19.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Feb 2020 13:19:31 -0800 (PST)
+Subject: Re: [PATCH v2] io_uring: add cleanup for openat()/statx()
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <b55d447204244baca5a99c53fb443c20b36b8c0e.1581109120.git.asml.silence@gmail.com>
+ <10b7caed-06dd-f6a0-24f1-648968011e40@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <66ab5ebd-8a9c-47bc-1bf2-8a328e70c290@gmail.com>
+Date:   Sat, 8 Feb 2020 00:18:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <8e41630b9d1c5d00f92a00f998285fa6003af5eb.1581088326.git.dschatzberg@fb.com>
+In-Reply-To: <10b7caed-06dd-f6a0-24f1-648968011e40@kernel.dk>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="7uuPjldF0rMczuXUAWDrpXw3B02Hl8en9"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan Schatzberg writes:
->This is a dependency for 3/3
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--7uuPjldF0rMczuXUAWDrpXw3B02Hl8en9
+Content-Type: multipart/mixed; boundary="LoWLipQcGjVDclvdaAczuwtdlfwjfZVpv";
+ protected-headers="v1"
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-ID: <66ab5ebd-8a9c-47bc-1bf2-8a328e70c290@gmail.com>
+Subject: Re: [PATCH v2] io_uring: add cleanup for openat()/statx()
+References: <b55d447204244baca5a99c53fb443c20b36b8c0e.1581109120.git.asml.silence@gmail.com>
+ <10b7caed-06dd-f6a0-24f1-648968011e40@kernel.dk>
+In-Reply-To: <10b7caed-06dd-f6a0-24f1-648968011e40@kernel.dk>
 
-This can be omitted, since "3" won't mean anything in the change history (and 
-patch series are generally considered as a unit unless there are explicit 
-requests to split them out).
+--LoWLipQcGjVDclvdaAczuwtdlfwjfZVpv
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
->memalloc_use_memcg() worked for kernel allocations but was silently
->ignored for user pages.
->
->This patch establishes a precedence order for who gets charged:
->
->1. If there is a memcg associated with the page already, that memcg is
->   charged. This happens during swapin.
->
->2. If an explicit mm is passed, mm->memcg is charged. This happens
->   during page faults, which can be triggered in remote VMs (eg gup).
->
->3. Otherwise consult the current process context. If it has configured
->   a current->active_memcg, use that. Otherwise, current->mm->memcg.
->
->Signed-off-by: Dan Schatzberg <dschatzberg@fb.com>
->Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+On 08/02/2020 00:13, Jens Axboe wrote:
+> On 2/7/20 1:59 PM, Pavel Begunkov wrote:
+>> openat() and statx() may have allocated ->open.filename, which should =
+be
+>> be put. Add cleanup handlers for them.
+>=20
+> Thanks, applied - but I dropped this hunk:
 
-Thanks, this seems reasonable. One (minor and optional) suggestion would be to 
-make the title more clear that this is a change in 
-try_charge/memalloc_use_memcg behaviour overall rather than a charge site, 
-since this wasn't what I expected to find when I saw the patch title :-)
+That's the second time it slipped, I need to read patches more attentivel=
+y.
+Thanks
 
-I only have one other question about behaviour when there is no active_memcg 
-and mm/memcg in try_charge are NULL below, but assuming that's been checked:
+>=20
+>> @@ -2857,7 +2862,6 @@ static void io_close_finish(struct io_wq_work **=
+workptr)
+>>  	}
+>> =20
+>>  	fput(req->close.put_file);
+>> -
+>>  	io_put_req_find_next(req, &nxt);
+>>  	if (nxt)
+>>  		io_wq_assign_next(workptr, nxt);
+>=20
 
-Acked-by: Chris Down <chris@chrisdown.name>
+--=20
+Pavel Begunkov
 
->---
-> mm/memcontrol.c | 11 ++++++++---
-> mm/shmem.c      |  2 +-
-> 2 files changed, 9 insertions(+), 4 deletions(-)
->
->diff --git a/mm/memcontrol.c b/mm/memcontrol.c
->index f7da3ff135ed..69935d166bdb 100644
->--- a/mm/memcontrol.c
->+++ b/mm/memcontrol.c
->@@ -6812,7 +6812,8 @@ enum mem_cgroup_protection mem_cgroup_protected(struct mem_cgroup *root,
->  * @compound: charge the page as compound or small page
->  *
->  * Try to charge @page to the memcg that @mm belongs to, reclaiming
->- * pages according to @gfp_mask if necessary.
->+ * pages according to @gfp_mask if necessary. If @mm is NULL, try to
->+ * charge to the active memcg.
->  *
->  * Returns 0 on success, with *@memcgp pointing to the charged memcg.
->  * Otherwise, an error code is returned.
->@@ -6856,8 +6857,12 @@ int mem_cgroup_try_charge(struct page *page, struct mm_struct *mm,
-> 		}
-> 	}
->
->-	if (!memcg)
->-		memcg = get_mem_cgroup_from_mm(mm);
->+	if (!memcg) {
->+		if (!mm)
->+			memcg = get_mem_cgroup_from_current();
->+		else
->+			memcg = get_mem_cgroup_from_mm(mm);
->+	}
 
-Just to do due diligence, did we double check whether this results in any 
-unintentional shift in accounting for those passing in both mm and memcg as 
-NULL with no current->active_memcg set, since previously we never even tried to 
-consult current->mm and always used root_mem_cgroup in get_mem_cgroup_from_mm?
+--LoWLipQcGjVDclvdaAczuwtdlfwjfZVpv--
 
-It's entirely possible that this results in exactly the same outcome as before 
-just by different means, but with the number of try_charge callsites I'm not 
-totally certain of that.
+--7uuPjldF0rMczuXUAWDrpXw3B02Hl8en9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
->
-> 	ret = try_charge(memcg, gfp_mask, nr_pages, false);
->
->diff --git a/mm/shmem.c b/mm/shmem.c
->index ca74ede9e40b..70aabd9aba1a 100644
->--- a/mm/shmem.c
->+++ b/mm/shmem.c
->@@ -1748,7 +1748,7 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
-> 	}
->
-> 	sbinfo = SHMEM_SB(inode->i_sb);
->-	charge_mm = vma ? vma->vm_mm : current->mm;
->+	charge_mm = vma ? vma->vm_mm : NULL;
->
-> 	page = find_lock_entry(mapping, index);
-> 	if (xa_is_value(page)) {
->--
->2.17.1
->
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl491DgACgkQWt5b1Glr
++6VPRg/5AaMTrZu9rk7XcHCN5mjMLegmEPR0z+qdHzR7++6LKUslGj4TELRyfw0G
+pQWuFjc3JPozFJgrj1S/0mN76Rqy5sncSA/OfRPVRrlXi3RqGNU+5RUpK5OaS6Qy
+Yq0miHIViKCmZSP7qyhbe6KRqfQnkWnVRgSJyGeiJgkwTMIAaDbkYOdjOHvMWhcP
+14Sj5ZXqbMZWICOdFzCjvagaSzJ/0XRg9ol0oyOdXljvMPFcZ19Uq/6b2ub7Kv5S
+kmR4a2/U0vB6ouRq/s0khgEpDeVL1S0A2SSviCpIvGTxEvcztA7foUPsqi2LrdBC
+15LyqGs+Ew20qnCT9YJg8PIY0WJkM6zKmoujboJplJiA9922n+w9TLzc591yFcGx
+EctgXNAOq8WCmBy6+ZH0rdL23OZOWs2hCvVDz1nisFXiNVdzqRj2AQVSKaf9AP+c
+7vnesUjkBLLu42e+Gm9Pgc6kzoCHKqe1nKAkvn3niGjwsGX+vm82Bj2+752zLjJ2
+7UEZrs2qCSjmPix0fTF5OxzBdyAmvIVhaVpYC9jIyb07qsvuSpFMzcJQVFOC9VgU
+3pqPybvyE+fz8WaO3Q42iE4CeFAh3b5HMeuiffFJ1DNRI+3WcPuS9QHVSaG7DwjZ
+N7wZNQDAbz1ojVWZrMILTV4cAYOwKOmhbLIubFCwR7q+t4Jf3ZE=
+=35C3
+-----END PGP SIGNATURE-----
+
+--7uuPjldF0rMczuXUAWDrpXw3B02Hl8en9--
