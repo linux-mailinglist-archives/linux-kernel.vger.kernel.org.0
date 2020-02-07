@@ -2,82 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3221A155327
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 08:43:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23EC3155336
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 08:47:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbgBGHnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 02:43:47 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:39155 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbgBGHnq (ORCPT
+        id S1726798AbgBGHqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 02:46:47 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27454 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726130AbgBGHqq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 02:43:46 -0500
-Received: from localhost ([127.0.0.1] helo=vostro.local)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1izyIf-00071r-RG; Fri, 07 Feb 2020 08:43:41 +0100
-From:   John Ogness <john.ogness@linutronix.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        lijiang <lijiang@redhat.com>, Petr Mladek <pmladek@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] printk: replace ringbuffer
-References: <20200128161948.8524-1-john.ogness@linutronix.de>
-        <dc4ca9b5-d2a2-03af-c186-204a3aad2399@redhat.com>
-        <20200205044848.GH41358@google.com>
-        <20200205050204.GI41358@google.com>
-        <88827ae2-7af5-347b-29fb-cffb94350f8f@redhat.com>
-        <20200205063640.GJ41358@google.com> <877e11h0ir.fsf@linutronix.de>
-        <20200205110522.GA456@jagdpanzerIV.localdomain>
-        <87wo919grz.fsf@linutronix.de>
-        <20200206204012.0cbfc941@oasis.local.home>
-Date:   Fri, 07 Feb 2020 08:43:39 +0100
-In-Reply-To: <20200206204012.0cbfc941@oasis.local.home> (Steven Rostedt's
-        message of "Thu, 6 Feb 2020 20:40:12 -0500")
-Message-ID: <87k14yx2ok.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Fri, 7 Feb 2020 02:46:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581061605;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
+        bh=SUzQd6LFEwB3hirjXChHgZ4lmXv/SBqu0oNtoi7asxQ=;
+        b=ax75UrtcEnxvYpsjZevD7Y3ggegCKZYH9UxOBrYm/INNfh6dKtWPcBwpCVQvqoE4AvvYFl
+        eyHXNLytFJ/pBdS+vuI7e7pB4DJcorcJIX15sNdUzjxGsNlat00q4THbxQIQ0u0YqpC+rX
+        DBEV9YHbI1Tfk9Xd1XIU6rve84GdNf4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-109-Ase0DdZMOJG3dMa_il8VyA-1; Fri, 07 Feb 2020 02:46:43 -0500
+X-MC-Unique: Ase0DdZMOJG3dMa_il8VyA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E6D64DB60;
+        Fri,  7 Feb 2020 07:46:41 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-112.ams2.redhat.com [10.36.116.112])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 16B4B60C05;
+        Fri,  7 Feb 2020 07:46:39 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 6C06431F39; Fri,  7 Feb 2020 08:46:38 +0100 (CET)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     gurchetansingh@chromium.org, olvaffe@gmail.com,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 1/4] drm/virtio: simplify virtio_gpu_alloc_cmd
+Date:   Fri,  7 Feb 2020 08:46:35 +0100
+Message-Id: <20200207074638.26386-2-kraxel@redhat.com>
+In-Reply-To: <20200207074638.26386-1-kraxel@redhat.com>
+References: <20200207074638.26386-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-07, Steven Rostedt <rostedt@goodmis.org> wrote:
->> The quick fixup:
->> 
->> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
->> index d0d24ee1d1f4..5ad67ff60cd9 100644
->> --- a/kernel/printk/printk.c
->> +++ b/kernel/printk/printk.c
->> @@ -883,6 +883,7 @@ static int devkmsg_open(struct inode *inode, struct file *file)
->>  	user->record.text_buf_size = sizeof(user->text_buf);
->>  	user->record.dict_buf = &user->dict_buf[0];
->>  	user->record.dict_buf_size = sizeof(user->dict_buf);
->> +	user->record.text_line_count = NULL;
->>  
->>  	logbuf_lock_irq();
->>  	user->seq = prb_first_seq(prb);
->
-> FYI, I used your patch set to test out Konstantin's new get-lore-mbox
-> script, and then applied them. It locked up on boot up as well, and
-> applying this appears to fix it.
+Just call virtio_gpu_alloc_cmd_resp with some fixed args
+instead of duplicating most of the function body.
 
-Yes, this is a horrible bug. In preparation for my v2 I implemented:
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ drivers/gpu/drm/virtio/virtgpu_vq.c | 26 +++++++++-----------------
+ 1 file changed, 9 insertions(+), 17 deletions(-)
 
-    prb_rec_init_rd()
-    prb_rec_init_wr()
+diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+index 41e475fbd67b..df499fb64ac7 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -120,23 +120,6 @@ virtio_gpu_vbuf_ctrl_hdr(struct virtio_gpu_vbuffer *vbuf)
+ 	return (struct virtio_gpu_ctrl_hdr *)vbuf->buf;
+ }
+ 
+-static void *virtio_gpu_alloc_cmd(struct virtio_gpu_device *vgdev,
+-				  struct virtio_gpu_vbuffer **vbuffer_p,
+-				  int size)
+-{
+-	struct virtio_gpu_vbuffer *vbuf;
+-
+-	vbuf = virtio_gpu_get_vbuf(vgdev, size,
+-				   sizeof(struct virtio_gpu_ctrl_hdr),
+-				   NULL, NULL);
+-	if (IS_ERR(vbuf)) {
+-		*vbuffer_p = NULL;
+-		return ERR_CAST(vbuf);
+-	}
+-	*vbuffer_p = vbuf;
+-	return vbuf->buf;
+-}
+-
+ static struct virtio_gpu_update_cursor*
+ virtio_gpu_alloc_cursor(struct virtio_gpu_device *vgdev,
+ 			struct virtio_gpu_vbuffer **vbuffer_p)
+@@ -172,6 +155,15 @@ static void *virtio_gpu_alloc_cmd_resp(struct virtio_gpu_device *vgdev,
+ 	return (struct virtio_gpu_command *)vbuf->buf;
+ }
+ 
++static void *virtio_gpu_alloc_cmd(struct virtio_gpu_device *vgdev,
++				  struct virtio_gpu_vbuffer **vbuffer_p,
++				  int size)
++{
++	return virtio_gpu_alloc_cmd_resp(vgdev, NULL, vbuffer_p, size,
++					 sizeof(struct virtio_gpu_ctrl_hdr),
++					 NULL);
++}
++
+ static void free_vbuf(struct virtio_gpu_device *vgdev,
+ 		      struct virtio_gpu_vbuffer *vbuf)
+ {
+-- 
+2.18.1
 
-as static inline functions to initialize the records. There is a reader
-and writer variant because they initialize the records differently:
-readers provide buffers, writers request buffers. This eliminates the
-manual twiddling with the record struct and ensures that the struct is
-always properly initialized.
-
-John Ogness
