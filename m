@@ -2,107 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E8251560A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 22:18:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E03E15607C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 22:08:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbgBGVSR convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 7 Feb 2020 16:18:17 -0500
-Received: from smtprelay0235.hostedemail.com ([216.40.44.235]:48245 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727005AbgBGVSR (ORCPT
+        id S1727144AbgBGVIe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 16:08:34 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:44592 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726947AbgBGVIe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 16:18:17 -0500
-X-Greylist: delayed 594 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Feb 2020 16:18:16 EST
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave03.hostedemail.com (Postfix) with ESMTP id 895D518033D25
-        for <linux-kernel@vger.kernel.org>; Fri,  7 Feb 2020 21:08:22 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id AFA81837F252;
-        Fri,  7 Feb 2020 21:08:21 +0000 (UTC)
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,rostedt@goodmis.org,:::::::::::::::::::::,RULES_HIT:41:152:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1513:1515:1516:1518:1521:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:3138:3139:3140:3141:3142:3353:3865:3868:3873:5007:6120:7652:7875:7903:10004:10400:10450:10455:10848:11026:11232:11658:11914:12043:12296:12297:12438:12555:12663:12895:12986:13069:13255:13311:13357:14721:14777:19904:19999:21080:21324:21433:21627:21740:21990:30026:30039:30054:30090,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:16,LUA_SUMMARY:none
-X-HE-Tag: fuel06_65ff284cde013
-X-Filterd-Recvd-Size: 3182
-Received: from [100.68.140.46] (unknown [206.121.37.170])
-        (Authenticated sender: rostedt@goodmis.org)
-        by omf05.hostedemail.com (Postfix) with ESMTPA;
-        Fri,  7 Feb 2020 21:08:20 +0000 (UTC)
-Date:   Fri, 07 Feb 2020 16:07:58 -0500
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20200207205656.61938-2-joel@joelfernandes.org>
-References: <20200207205656.61938-1-joel@joelfernandes.org> <20200207205656.61938-2-joel@joelfernandes.org>
+        Fri, 7 Feb 2020 16:08:34 -0500
+Received: by mail-qk1-f194.google.com with SMTP id v195so473871qkb.11
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 13:08:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=onxmmjqXELNJOnSDJZ2qgajL7wmylkhLVi0Ggn784AA=;
+        b=dk5vzb2tCbBXS4d5M4it8BrIKygD26w5xPGFMn5hH7EB5FDmp0KmRWi/KQkqFkG1m8
+         CZbK1VtVLge1Eb4gNl4uRSdTopDs5ifncqrRoaKJt0xiy4KsrUNbkeoHFnpDu82NGpoM
+         XgxVX/bjgquMFQ7AL/PU5uShMvk5OCyQSKtUkAks5S2bpFBayhohiAjbSrs0bfH02cql
+         1XoSJkbIUFB0Kr13E5+kCY/PyGf5zGsZNuwNfBWNLXgLPruhljRLmWxCkW2WzgOfO3Au
+         cCNrrWIRqHsKpBql3MPaR/UFV+dcy3bnv/2M3EhyPrCMvK48LPH69/Y2TcNSDDw1XeRt
+         sj7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=onxmmjqXELNJOnSDJZ2qgajL7wmylkhLVi0Ggn784AA=;
+        b=EoWUGyVXpP2mpmE29xUV3YSQrVb7JAEEuvmfFcwG5rgVUNPcHnFrUsiKAW12uO/ABV
+         XgxEgcfLoAwgA1rNFqsiq2TjIMtdH+Faf4iUlOfyKR6eojyUFhLo5F7Z98fzh3n6huhr
+         yva2l3lol/2YZCGV3dB2RtatAXrk5ZNHPfCx6lvmzcI4/tJzZkbNljKxe7DIMugjoxoj
+         qtG7ATIO3u/BuSt2LBk8a0W8JZvc/jU6Fm/lSPGwBVH35moRqjdXeR2wMy/xOoAYjk0f
+         yhm402BvY0r4GT0oPeus8z1csmtKF6HtDqGWkW4Ue/JO4LaZo8CM/SH1a8cO8OGPg+Sn
+         yvPw==
+X-Gm-Message-State: APjAAAUs4i+AtA2JDuawWqhEBAEW7dN2tPfFj8H0cO8ApfT7dtZUuHaF
+        cNARpK98YP8IgijPTJA2VSIrkw==
+X-Google-Smtp-Source: APXvYqxV/m72xBwpp0O2ntYMuXRK2I5x5D+oyFT5b9Vs5/VSe70eUTFQFZZtB9ADtTtpSzP+vqImqQ==
+X-Received: by 2002:a37:e10f:: with SMTP id c15mr806650qkm.331.1581109713217;
+        Fri, 07 Feb 2020 13:08:33 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
+        by smtp.gmail.com with ESMTPSA id n7sm189917qkk.41.2020.02.07.13.08.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Feb 2020 13:08:32 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1j0ArY-00086p-0F; Fri, 07 Feb 2020 17:08:32 -0400
+Date:   Fri, 7 Feb 2020 17:08:31 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Joao Martins <joao.m.martins@oracle.com>
+Cc:     linux-nvdimm@lists.01.org, Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Liran Alon <liran.alon@oracle.com>,
+        Nikita Leshenko <nikita.leshchenko@oracle.com>,
+        Barret Rhoden <brho@google.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: [PATCH RFC 09/10] vfio/type1: Use follow_pfn for VM_FPNMAP VMAs
+Message-ID: <20200207210831.GA31015@ziepe.ca>
+References: <20200110190313.17144-1-joao.m.martins@oracle.com>
+ <20200110190313.17144-10-joao.m.martins@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [RFC 1/3] Revert "tracepoint: Use __idx instead of idx in DO_TRACE macro to make it unique"
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Richard Fontana <rfontana@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-From:   Steven Rostedt <rostedt@goodmis.org>
-Message-ID: <13EE7A4B-38E7-4A41-AE42-C03B1898E947@goodmis.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200110190313.17144-10-joao.m.martins@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Top posting as I'm replying from an airport gate, from my phone ]
+On Fri, Jan 10, 2020 at 07:03:12PM +0000, Joao Martins wrote:
+> From: Nikita Leshenko <nikita.leshchenko@oracle.com>
+> 
+> Unconditionally interpreting vm_pgoff as a PFN is incorrect.
+> 
+> VMAs created by /dev/mem do this, but in general VM_PFNMAP just means
+> that the VMA doesn't have an associated struct page and is being managed
+> directly by something other than the core mmu.
+> 
+> Use follow_pfn like KVM does to find the PFN.
+> 
+> Signed-off-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
+>  drivers/vfio/vfio_iommu_type1.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> index 2ada8e6cdb88..1e43581f95ea 100644
+> +++ b/drivers/vfio/vfio_iommu_type1.c
+> @@ -362,9 +362,9 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
+>  	vma = find_vma_intersection(mm, vaddr, vaddr + 1);
+>  
+>  	if (vma && vma->vm_flags & VM_PFNMAP) {
+> -		*pfn = ((vaddr - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
+> -		if (is_invalid_reserved_pfn(*pfn))
+> -			ret = 0;
+> +		ret = follow_pfn(vma, vaddr, pfn);
+> +		if (!ret && !is_invalid_reserved_pfn(*pfn))
+> +			ret = -EOPNOTSUPP;
+>  	}
 
-Although you have a cover letter explaining the revert, each patch must be standalone, otherwise looking at git history won't have any explanation for the revert.
+FWIW this existing code is a huge hack and a security problem.
 
--- Steve
+I'm not sure how you could be successfully using this path on actual
+memory without hitting bad bugs?
 
+Fudamentally VFIO can't retain a reference to a page from within a VMA
+without some kind of recount/locking/etc to allow the thing that put
+the page there to know it is still being used (ie programmed in a
+IOMMU) by VFIO.
 
-On February 7, 2020 3:56:54 PM EST, "Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
->This reverts commit 0c7a52e4d4b5c4d35b31f3c3ad32af814f1bf491.
->
->Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
->---
-> include/linux/tracepoint.h | 6 +++---
-> 1 file changed, 3 insertions(+), 3 deletions(-)
->
->diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
->index 1fb11daa5c533..59463c90fdc3d 100644
->--- a/include/linux/tracepoint.h
->+++ b/include/linux/tracepoint.h
->@@ -164,7 +164,7 @@ static inline struct tracepoint
->*tracepoint_ptr_deref(tracepoint_ptr_t *p)
-> 		struct tracepoint_func *it_func_ptr;			\
-> 		void *it_func;						\
-> 		void *__data;						\
->-		int __maybe_unused __idx = 0;				\
->+		int __maybe_unused idx = 0;				\
-> 									\
-> 		if (!(cond))						\
-> 			return;						\
->@@ -180,7 +180,7 @@ static inline struct tracepoint
->*tracepoint_ptr_deref(tracepoint_ptr_t *p)
-> 		 * doesn't work from the idle path.			\
-> 		 */							\
-> 		if (rcuidle) {						\
->-			__idx = srcu_read_lock_notrace(&tracepoint_srcu);\
->+			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
-> 			rcu_irq_enter_irqson();				\
-> 		}							\
-> 									\
->@@ -196,7 +196,7 @@ static inline struct tracepoint
->*tracepoint_ptr_deref(tracepoint_ptr_t *p)
-> 									\
-> 		if (rcuidle) {						\
-> 			rcu_irq_exit_irqson();				\
->-			srcu_read_unlock_notrace(&tracepoint_srcu, __idx);\
->+			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
-> 		}							\
-> 									\
-> 		preempt_enable_notrace();				\
+Otherwise it creates use-after-free style security problems on the
+page.
 
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity and top posting.
+This code needs to be deleted, not extended :(
+
+Jason
