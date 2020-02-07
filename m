@@ -2,137 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D934B155AFB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 16:48:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A045155B01
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 16:49:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbgBGPsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 10:48:39 -0500
-Received: from UPDC19PA21.eemsg.mail.mil ([214.24.27.196]:43850 "EHLO
-        UPDC19PA21.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727011AbgBGPsi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 10:48:38 -0500
-X-EEMSG-check-017: 56352021|UPDC19PA21_ESA_OUT03.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.70,413,1574121600"; 
-   d="scan'208";a="56352021"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by UPDC19PA21.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 07 Feb 2020 15:48:35 +0000
+        id S1727473AbgBGPto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 10:49:44 -0500
+Received: from mail-bn8nam12on2083.outbound.protection.outlook.com ([40.107.237.83]:23518
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726874AbgBGPtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 10:49:43 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bB6Af1K1+WLuDqcKaKzaO4EWk+EXqNYGhlBzRzpRu0XToMjmSLs20e8bUJy1UgRbb58ZvSRzub4z2WALu6j8hoTLtdQcI5OEegip4AiC/m8HQ4ehfXnuYdaBNmjjWbaLB+3OAKCTIAoREYI/oOdsvgLKWJaW8krfTh9w1jCpUbE/BezhhHIZbIKlzOFUUkW5/yNuECTmrK0GBIKiXTJZMi8S0X3SOjgdgyUMwF7T8yuxe0euww52bw+bPtG7WeuJl2MY4mrTk6+qgsQ+PzpR98ovXGqtziUUNHZ7eianI4OUQewXZk/zvLO9Z6QQGGwXGw+z14p4qaoIh8FeU6EOww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FrPbTT8UM/dooNdpWttwq8p2PT6EKWTaxeV4RQ9oVeQ=;
+ b=Z+UEOulL/UJUnha7i8dXbZqdMgsUg0b0SMiUcnZHDSeZpjpjOA2MAje849p4R4Oiqpn1uy34laEG3yHgqiT4RU4r4yoVROWg7eQGgM09RgkkPepSNrY7pYYKD9MgDWCUyGSWMJpnP1eolKQmTVf2qRddkQk48mqnBQoscmfUEk3DoCYobA9C2qFmm2dP/d2Gh/J3XFo55CJyRz8y0Cnd2o55CIqsI5eA192gBFvsX86kryLvpzADpG155GLqlAEFstLdu8ViMPTep4xShNeU215FoxQXSs8qC05NwK6DWxnj8jm76DZd/Q1AnZpTCkoJfbiiDTpipaAdx3dt+HrOnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1581090515; x=1612626515;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=VYJHgycuPWO/L2dcj6an2rSIm6IQDAIauZlSsglQpg4=;
-  b=lXI6sznq+3V6vnjpANYJDrLk8rnyRaYJx9J6i0CIYnUAXJK2mY8twNH2
-   8c3G0xuNdVyZED5nwNjyPK9NEuXwCu1wSqQSo7BIQiO+Zp3RJJGw3iiEd
-   +PLYMSoqyfKNEKhKX56l8r7QMPZOx5vxpwKTVOQHrmVvtciuPLNiPyicM
-   3UOJvGH54NaHZK8Q9W4AVS909+DlACPBffZ5NM2HHlwydq23C4efm61yx
-   TzmMSSECv7fP5eSJ18jlnVsrSSCRZ55yyjOKkoYYyV/dila48KwyuL1K1
-   aTvdVg0GFL6g/41xLLdnw9i+wOEzAJvSZiZOUXEOx8f3/cGRO35BS15za
-   A==;
-X-IronPort-AV: E=Sophos;i="5.70,413,1574121600"; 
-   d="scan'208";a="32813247"
-IronPort-PHdr: =?us-ascii?q?9a23=3AF5bNPh2B7FqqKfSXsmDT+DRfVm0co7zxezQtwd?=
- =?us-ascii?q?8ZsesQKf7xwZ3uMQTl6Ol3ixeRBMOHsq4C1red7PGoGTRZp8rY6zZaKN0Efi?=
- =?us-ascii?q?RGoP1epxYnDs+BBB+zB9/RRAt+Iv5/UkR49WqwK0lfFZW2TVTTpnqv8WxaQU?=
- =?us-ascii?q?2nZkJ6KevvB4Hdkdm82fys9J3PeQVIgye2ba9vIBmsogjdq8YbjZFiJ6sxxR?=
- =?us-ascii?q?fEoH9FcPlSyW90OF6fhRnx6tq+8ZJ57yhcp/ct/NNcXKvneKg1UaZWByk8PW?=
- =?us-ascii?q?Av483ruxjDTQ+R6XYZT24bjBlGDRXb4R/jRpv+vTf0ueR72CmBIM35Vqs0Vi?=
- =?us-ascii?q?i476dqUxDnliEKPCMk/W7Ni8xwiKVboA+9pxF63oXZbp2ZOOZ4c6jAZt4RW3?=
- =?us-ascii?q?ZPUdhNWCxAGoO8bpUAD+wdPeZDsoLxo0ICoQaiCQWwAe/izDFHhmXy3aYnze?=
- =?us-ascii?q?ovFw/I1xEkE94XvnnZqND5OaEPWu630abI1y3OYe5I1zfz6IbGcR4vrv+DUr?=
- =?us-ascii?q?1ybcXfxlIiFx/Hg1iKtYDpIz2Y2+YLvmOG7+RgT+Wvi2s/pg9svjig2N8sio?=
- =?us-ascii?q?nXiYIT11vK6CB5z5wxJd28VkF6YcOvHZxLty6HLIt7Wd8iQmF0tyY6zb0Ko5?=
- =?us-ascii?q?i7fDMQx5g9yB7fbOKHfpGO7xn+V+iROS91iG9qdb+wnRq/8VWsxvfiWsS7zl?=
- =?us-ascii?q?pGtDdJn9/RvX4XzRPT8NKISv5l80ek3jaAyh7c5/lfIUAxiarbM5khwqMslp?=
- =?us-ascii?q?YLsUTMACv2mELuga+KbEok4Omo6/n8Yrn8p5+cMYF0igblMqswhsOzG/g4Mw?=
- =?us-ascii?q?gSUGib/uSwzrvj8lHiQLpWlPE2l6jZsJTCKcQaoK62HRNV354+5xuwADqqyt?=
- =?us-ascii?q?QVkWQdIF5bdx+LkZLlN0zWLPD9F/i/glCskDlxx/DBO73sGo7NIWXYkLr6Yb?=
- =?us-ascii?q?Z861JTyAo0zdxF4ZJUEasOLOj8Wk/2qtzUFgU5PBCsw+b7FNV90ZsTWXmKAq?=
- =?us-ascii?q?+eKqPdr1uI6fgpI+aRf4IVtzH9K/8q5/7qk3A1g0MSfa6s3ZEPcnC3AuxmI1?=
- =?us-ascii?q?mFYXrrmtoBCX0Fvhc6TOHxkF2NSyNTZ3KrU6I54TE7D5imApnZSo+xh7yB2T?=
- =?us-ascii?q?+xHodKaWBeFlCMDXDoep2aVPcUci2SOM5hkicfWLi5UYAhzxCutBTiy7pjNO?=
- =?us-ascii?q?Xb5jMXuYjk1Nhv6O3ZjQsy+iBsD8SBz2GNSHl5nmAWSDAox6BwvUt9ylCA0a?=
- =?us-ascii?q?Vjn/NYFcZT5/RMUgc7KJ7cyvZ2C9foWgLOZt2JUkqpQs26ATEtSdI828UBY0?=
- =?us-ascii?q?BhG9WliBDOxDSlA7kSl7yOH5w0/bjQ33/rJ8Zy03zGzrUuj0E6QstTMm2rnr?=
- =?us-ascii?q?Jw+BTJB47OiEWZjL2ner4a3CHQ7meDymuOs1xCXAFsVqXFWGgVZlHKotTh+k?=
- =?us-ascii?q?PCU7iuBKw7MgtGz86DKrFGatn0jVpaR/fuI9XeY2Stm2iuARaE3K+DbI3ve2?=
- =?us-ascii?q?8FxiXSFFAEkxwP/XaBLQU+HTmuo2bfDDxoCFLubFjh8fdxqHylVE841QKKYF?=
- =?us-ascii?q?N717qz5BEVgeaQS/QJ3rILoC0hsSl7HE6h39LKDNqNvw5hfKRaYdMg71ZLzG?=
- =?us-ascii?q?HZuBJnPpymMa9igkUTcxp4v0zwzRV7EIZAntYwrHMs0gVyLbiU0FRbdzOXxZ?=
- =?us-ascii?q?rwIKHYKnHu/BCzbK7bwlLe38iM+qcJ9vs4r0zvvB23GUU49nVqyMNa032B6Z?=
- =?us-ascii?q?XQCwoSUI/+Xlwr+Bh9orHQejM96J/M1X1wLam0tSfP1M4uBOsjzBageM1fMK?=
- =?us-ascii?q?SfGQ/9FM0aAMeuKOg0lFSzch0EO+VSp+YIOJada/aY1ajjGeF6kTavi2gPtJ?=
- =?us-ascii?q?t41ViB8yN6RsbH2JEKx/ze1QyCAXO0lF68tujvkJ1AIDQVGXCyjyPjAcoZa7?=
- =?us-ascii?q?V7Z4cQIX+nOcys3tF3jJOrXGRXsBagCl4d08iuejKZb0b62AxN0AIQu3Pj0S?=
- =?us-ascii?q?K+0ztyuzwvqa+E02rJ2eumPBEMIGlQX0Fri1v2Jom4ydsdWQzgcw8vhV2h+E?=
- =?us-ascii?q?3576lduKl7aWLURAMAZCXyLmd/QoOuubeYJc1C8pUltWNQSuv4KVSbTKPt5h?=
- =?us-ascii?q?gXySXuG0NAyz0hMTKnoJP0m1p9km3ZZHV+tnzUfYRsyB7azNXaSeRW3zZATy?=
- =?us-ascii?q?592hfNAV3pBMWk5dWZkd/4t+m6U2+wHslIfTLD0ZKLtCz943ZjRxK4gabgyZ?=
- =?us-ascii?q?XcDQEm3HqjhJFRXiLSoUO5O9K62g=3D=3D?=
-X-IPAS-Result: =?us-ascii?q?A2DpAAAOhj1e/wHyM5BmGwEBAQEBAQEFAQEBEQEBAwMBA?=
- =?us-ascii?q?QGBe4F9gW0gEiqEFYkDhmcGgRIliXCQdANUCQEBAQEBAQEBATcBAYRAAoJnO?=
- =?us-ascii?q?BMCEAEBAQQBAQEBAQUDAQFshUOCOykBgwEBAQEBAyMEEUEQCw4HAwICJgICV?=
- =?us-ascii?q?wYBDAYCAQGCYz+CVyWuG3V/M4VKg0KBPoEOKow9eYEHgTgMA4JdPoQSg0mCP?=
- =?us-ascii?q?CIEll9jRpdqgkSCTpN4BhubD45knTYiN4EhKwgCGAghD4MnUBgNnCxVIwMwj?=
- =?us-ascii?q?CWCQwEB?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 07 Feb 2020 15:48:34 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 017FlaaB067298;
-        Fri, 7 Feb 2020 10:47:38 -0500
-Subject: Re: [PATCH v2] security: selinux: allow per-file labeling for bpffs
-To:     Steven Moreland <smoreland@google.com>, paul@paul-moore.com,
-        eparis@parisplace.org, keescook@chromium.org, anton@enomsg.org,
-        ccross@android.com, tony.luck@intel.com, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@android.com
-Cc:     "Connor O'Brien" <connoro@google.com>
-References: <20200206211430.150615-1-smoreland@google.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <a4344c6a-3916-a119-1f5c-5c2129b415f9@tycho.nsa.gov>
-Date:   Fri, 7 Feb 2020 10:49:32 -0500
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FrPbTT8UM/dooNdpWttwq8p2PT6EKWTaxeV4RQ9oVeQ=;
+ b=tX/obtMYNXGRd0DNq5k3TVT39PlPmlgdE0bTB4bzqIKYtQlrVudUfoohOOPAE0bAuUjo/vJ6qLpYZAsX31Vy0v1OQWrffUT6QVYGMz4/S8pgBsu/NVwVg/YVKxhcadh+e++OPZOgiwGZV/8LF2b9JA7gEIAyl8unOP3JhAZB0jU=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Wei.Huang2@amd.com; 
+Received: from CH2PR12MB3991.namprd12.prod.outlook.com (52.132.247.26) by
+ CH2PR12MB4214.namprd12.prod.outlook.com (20.180.7.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.21; Fri, 7 Feb 2020 15:49:41 +0000
+Received: from CH2PR12MB3991.namprd12.prod.outlook.com
+ ([fe80::5559:35b0:5478:1892]) by CH2PR12MB3991.namprd12.prod.outlook.com
+ ([fe80::5559:35b0:5478:1892%6]) with mapi id 15.20.2707.024; Fri, 7 Feb 2020
+ 15:49:41 +0000
+Subject: Re: [PATCH v3 2/3] selftests: KVM: AMD Nested test infrastructure
+To:     Auger Eric <eric.auger@redhat.com>
+Cc:     eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, pbonzini@redhat.com, vkuznets@redhat.com,
+        thuth@redhat.com, drjones@redhat.com
+References: <20200204150040.2465-1-eric.auger@redhat.com>
+ <20200204150040.2465-3-eric.auger@redhat.com>
+ <20200206181521.GD2465308@weiserver.amd.com>
+ <88fe7667-17ab-6856-0e99-7106454b9de4@redhat.com>
+From:   Wei Huang <wei.huang2@amd.com>
+Message-ID: <c4af40ab-3ad3-ace1-36dc-44e2613a6bbb@amd.com>
+Date:   Fri, 7 Feb 2020 09:49:39 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200206211430.150615-1-smoreland@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+ Thunderbird/68.3.1
+In-Reply-To: <88fe7667-17ab-6856-0e99-7106454b9de4@redhat.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN1PR12CA0067.namprd12.prod.outlook.com
+ (2603:10b6:802:20::38) To CH2PR12MB3991.namprd12.prod.outlook.com
+ (2603:10b6:610:2f::26)
+MIME-Version: 1.0
+Received: from [10.236.30.248] (165.204.77.1) by SN1PR12CA0067.namprd12.prod.outlook.com (2603:10b6:802:20::38) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2707.21 via Frontend Transport; Fri, 7 Feb 2020 15:49:40 +0000
+X-Originating-IP: [165.204.77.1]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: c2df4efb-8d7d-48c8-560d-08d7abe55845
+X-MS-TrafficTypeDiagnostic: CH2PR12MB4214:
+X-Microsoft-Antispam-PRVS: <CH2PR12MB4214A11A241FA7F6A7EE508DCF1C0@CH2PR12MB4214.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1443;
+X-Forefront-PRVS: 0306EE2ED4
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(346002)(396003)(136003)(376002)(189003)(199004)(2616005)(956004)(186003)(66946007)(16526019)(31686004)(8936002)(81166006)(8676002)(81156014)(316002)(16576012)(26005)(36756003)(5660300002)(2906002)(31696002)(86362001)(478600001)(4326008)(53546011)(52116002)(6486002)(6916009)(66476007)(66556008);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR12MB4214;H:CH2PR12MB3991.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: RErujJYLHRb2ZOZYTYjTcUQifsZQay4e4LNlnKz+6QOG6lx/Nla7NFgquGeGpoJsSjQ/72i776cdnoQrRFp6Hs/P9vQWJjOhogwNl6FYZnxp1kU3/OaTfP8tDCf84iS56nN9VE6m6DVC09FiaJKh9387xiEFG2fa8Cv107ATuQZmss1XnSrXsn7cA7XoFUR9ViX2trFAbktJP98PXshQ5Rk5cUp1+0PXhq18glMMMwDfxoSXddRxT9U4wl1oYDodxyYR4R78Xn8CN2VYnF9MosMkNQh/MmXc7Zbr/muDNvURSvIgQv83fl3jJlv/Qjkr4L+pK8QO8vrkKKJ3ByHPDF3pDQ4n6Bo3XzzIPEj4GazS7OOzDEc4sZD2iuHMvbDvpnbwKBpxs8X9eGp2bxfgkTE2+x9OfUXSiAG92ZHFJ75A/iB7FneYtuvUaGjBCrfK
+X-MS-Exchange-AntiSpam-MessageData: vHp3CGUiHwqc0l0iK0xfDgNufYYmWFLcnlZDZVO7lD5ZfzdX0Dsglnzu1vDxNmlCGNmwxq3UIHx+IplUUiKHXe2csJDogiveFLSt0CjAccilAv61lKwyI6ae1Sp4czzQH0t6P3qQpWlqaBhXhQdWwA==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c2df4efb-8d7d-48c8-560d-08d7abe55845
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Feb 2020 15:49:41.4403
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: G4qK+A2L/FBR6iPHnttq3/GUmPGZM1wIcrsrvF+XyGiEnKvYyLBF6zdEvetKwer4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4214
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/6/20 4:14 PM, Steven Moreland wrote:
-> From: Connor O'Brien <connoro@google.com>
-> 
-> Add support for genfscon per-file labeling of bpffs files. This allows
-> for separate permissions for different pinned bpf objects, which may
-> be completely unrelated to each other.
-> 
-> Signed-off-by: Connor O'Brien <connoro@google.com>
-> Signed-off-by: Steven Moreland <smoreland@google.com>
 
-Is this relative to the next branch of the selinux git tree?
-Doesn't apply for me.
 
-> ---
->   security/selinux/hooks.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+On 2/7/20 3:53 AM, Auger Eric wrote:
+[snip]
+>>> +
+>>> +#define	SVM_EXITINTINFO_TYPE_INTR SVM_EVTINJ_TYPE_INTR
+>>> +#define	SVM_EXITINTINFO_TYPE_NMI SVM_EVTINJ_TYPE_NMI
+>>> +#define	SVM_EXITINTINFO_TYPE_EXEPT SVM_EVTINJ_TYPE_EXEPT
+>>> +#define	SVM_EXITINTINFO_TYPE_SOFT SVM_EVTINJ_TYPE_SOFT
+>>           ^^^^^^
+>> TAB instead of SPACE
 > 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 116b4d644f68..d7b11188dc8d 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -750,7 +750,8 @@ static int selinux_set_mnt_opts(struct super_block *sb,
->   	if (strcmp(sb->s_type->name, "proc") == 0)
->   		sbsec->flags |= SE_SBPROC | SE_SBGENFS;
->   
-> -	if (!strcmp(sb->s_type->name, "debugfs") ||
-> +	if (!strcmp(sb->s_type->name, "bpf") ||
-> +	    !strcmp(sb->s_type->name, "debugfs") ||
->   	    !strcmp(sb->s_type->name, "tracefs") ||
->   	    !strcmp(sb->s_type->name, "pstore"))
->   		sbsec->flags |= SE_SBGENFS;
+> as written in the history log (but I think I will add this to the commit
+> msg too), this file is an exact copy of arch/x86/include/asm/svm.h
+> (except the header includer #ifdef + uapi/asm/svm.h header inclusion. So
+> it inherits the style issue of its parent ;-)
+>>
+>>> +
+>>> +#define SVM_EXITINTINFO_VALID SVM_EVTINJ_VALID
+>>> +#define SVM_EXITINTINFO_VALID_ERR SVM_EVTINJ_VALID_ERR
+>>> +
+>>> +#define SVM_EXITINFOSHIFT_TS_REASON_IRET 36
+>>> +#define SVM_EXITINFOSHIFT_TS_REASON_JMP 38
+>>> +#define SVM_EXITINFOSHIFT_TS_HAS_ERROR_CODE 44
+>>> +
+>>> +#define SVM_EXITINFO_REG_MASK 0x0F
+>>> +
+>>> +#define SVM_CR0_SELECTIVE_MASK (X86_CR0_TS | X86_CR0_MP)
+>>> +
+>>> +#endif /* SELFTEST_KVM_SVM_H */
+>>> diff --git a/tools/testing/selftests/kvm/include/x86_64/svm_util.h b/tools/testing/selftests/kvm/include/x86_64/svm_util.h
+>>> new file mode 100644
+>>> index 000000000000..6a67a89c5d06
+>>> --- /dev/null
+>>> +++ b/tools/testing/selftests/kvm/include/x86_64/svm_util.h
+>>> @@ -0,0 +1,36 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>>> +/*
+>>> + * tools/testing/selftests/kvm/include/x86_64/svm_utils.h
+>>> + * Header for nested SVM testing
+>>> + *
+>>> + * Copyright (C) 2020, Red Hat, Inc.
+>>> + */
+>>> +
+>>> +#ifndef SELFTEST_KVM_SVM_UTILS_H
+>>> +#define SELFTEST_KVM_SVM_UTILS_H
+>>> +
+>>> +#include <stdint.h>
+>>> +#include "svm.h"
+>>> +#include "processor.h"
+>>> +
+>>> +#define CPUID_SVM_BIT		2
+>>> +#define CPUID_SVM		BIT_ULL(CPUID_SVM_BIT)
+>>> +
+>>> +#define SVM_EXIT_VMMCALL	0x081
+>>
+>> SVM_EXIT_VMMCALL is better to relocate to svm.h file as it is an
+>> architecture definition.
+> For the same reason I am tempted to leave this definition here for now.
+> Maybe at some point if we introduce some additional ones, this will
+> indeed deserve to be moved to the parent? Is it ok?
 > 
+
+I figured out this was your intention when I compared arch/x86/include/asm/svm.h with tools/testing/selftests/kvm/include/x86_64/svm.h. However I also noticed that vmx.h in tools/testing/selftests/kvm/include/x86_64/ is not identical as arch/x86/include/asm/vmx.h. So being the same isn't a hard requirement. I am OK with either way.
+
+-Wei
+
 
