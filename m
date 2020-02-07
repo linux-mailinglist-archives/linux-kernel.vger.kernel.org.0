@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15181155FA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 21:38:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84D01155FB8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 21:39:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbgBGUiD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 15:38:03 -0500
-Received: from mail-pl1-f177.google.com ([209.85.214.177]:44653 "EHLO
-        mail-pl1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727005AbgBGUiD (ORCPT
+        id S1727484AbgBGUjf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 15:39:35 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35721 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727068AbgBGUje (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 15:38:03 -0500
-Received: by mail-pl1-f177.google.com with SMTP id d9so203259plo.11
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 12:38:02 -0800 (PST)
+        Fri, 7 Feb 2020 15:39:34 -0500
+Received: by mail-pg1-f193.google.com with SMTP id l24so384546pgk.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 12:39:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ifCbiBJDktUTJhTkv9KSAGNf4cll4FIlR1vlR2WCup0=;
-        b=ebfLute2BqyBNSLfR3/rTFEZ9Lk6VvKLon7hSktz5FbtUuroU4kw1HVg918t1ASWc7
-         1VrAUpvhGqVUYciYlLyARi5kCxpQc5AN4QdSH3i2LH/WX+U2wnm3531IFn0HB6HT+769
-         49PmXTNWg0jrtAg0Z34mvxgtr9Tqt3IDQac9k=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=r/3HQWF35ivl3fkO172M9O1viQmjTTJED1CtfoRt15k=;
+        b=kyovkwhUgtT8TT1uUvaC6AuyI4FyJwhKnP2lWDRHoS0VSvI15vlplW1mblQYhsbbrs
+         tQHoBxPZ57xwafBkBirfvb049NzgtoHnbdZ8Ut+hRDCnttl58lPSi9KyN/ekvVKNLVsY
+         IIkQR4r2wZQ9ILD71ApdxVFwEh5YGL7kgWv+o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ifCbiBJDktUTJhTkv9KSAGNf4cll4FIlR1vlR2WCup0=;
-        b=j4xAB/j++4quL1KtBca+pqVCPEJB1yE2qXu3WGMfdm/nXGosR8tWcYH8PzzmDqi+9y
-         8AYJY3MgqhCpHeXInKeRYuU/HIDd6kVgxS5PqEg4MAn4tgIykG0njnzwBYsUcBYR+OE/
-         E5aKcGb8g9fCa9hN223TIUUbM1x0J+CxXYwiDmRgvyik5rH4mcNyyjCyePsQjCKJgqRN
-         xFg0Xxyz7kxd7PWGnxLvnUvsaHiN404J4yOLtYJapALQdkThnixSKLMh79D+JnN0P6+h
-         xvwTmkoA5VNq3tXUwkFXvz0taD+9BJBnbGpvBdZwYHUs7WnCz0gqEPblJXSaChjV7LmD
-         u7VQ==
-X-Gm-Message-State: APjAAAUCs03sw+S0DBmU0+MJYnCcEOXXv0Ty+o7gd6P4WiEM5FwCNeYZ
-        DQhCybsRJ40yjix7jekEsfP1Q2VQE18=
-X-Google-Smtp-Source: APXvYqzk42NKqsohxngK4S9f5vG7B8djpKPCB3LdmBDlJ8WzumloON87AggSCNxJk0WZvSKUC0oGcg==
-X-Received: by 2002:a17:90b:3115:: with SMTP id gc21mr5649351pjb.54.1581107882002;
-        Fri, 07 Feb 2020 12:38:02 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=r/3HQWF35ivl3fkO172M9O1viQmjTTJED1CtfoRt15k=;
+        b=LL37AcVTrP5ZKEFm86qjfypb6Qha+EOmYIfHlnW2ahYBZpqqB2LprxTyXokWb8hDZo
+         3cimorDmraI5NRzNyFyklyTPl7dCvK/JTFhIDB8oLKxxYWHPQbseB/an7HI9/wztNc6e
+         C3DB2CDoxWIauN2zFrJqV/3tHMvNniSHaNmtGIDSLW09XfkWpYyzDHnIkYSbofBu52a7
+         hOAvgtbF68+buRXXM6VkZPumC9wMAL6cftFNAuOelDx/3Opa9Ud4LyZ8QV2ZPaaw9dB3
+         yurdy+VPR9JfRBXOHrR4xTVI/UOl+5IMYfKUOTKxEr9lQAgHj8ndnoOihzIiZE+tPI8v
+         CLAA==
+X-Gm-Message-State: APjAAAXuLixEmMxXOyX0vIIIA41XkdSdXnFM0D3q+9KcxG9++R02flO0
+        MOqlLYcIgq6qBQvstGAmryqKB98UtWY=
+X-Google-Smtp-Source: APXvYqy9YVlC5Lo5de3O6H+Tzla/M3k33LZB+4zXlSllG7vpr8NBR9lXsDjqxybmpzmvkf3nETwnOw==
+X-Received: by 2002:a62:1a97:: with SMTP id a145mr713986pfa.244.1581107973858;
+        Fri, 07 Feb 2020 12:39:33 -0800 (PST)
 Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:172e:4646:c089:ce59])
-        by smtp.gmail.com with ESMTPSA id 4sm4051001pfn.90.2020.02.07.12.38.00
+        by smtp.gmail.com with ESMTPSA id 4sm4051001pfn.90.2020.02.07.12.39.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2020 12:38:01 -0800 (PST)
+        Fri, 07 Feb 2020 12:39:33 -0800 (PST)
 From:   Prashant Malani <pmalani@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     heikki.krogerus@intel.com, enric.balletbo@collabora.com,
@@ -50,10 +50,12 @@ Cc:     heikki.krogerus@intel.com, enric.balletbo@collabora.com,
         DEVICE TREE BINDINGS), Guenter Roeck <groeck@chromium.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v2 0/4] platform/chrome: Add Type C connector class driver
-Date:   Fri,  7 Feb 2020 12:37:42 -0800
-Message-Id: <20200207203752.209296-1-pmalani@chromium.org>
+Subject: [PATCH v2 1/4] dt-bindings: Add cros-ec Type C port driver
+Date:   Fri,  7 Feb 2020 12:37:44 -0800
+Message-Id: <20200207203752.209296-2-pmalani@chromium.org>
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+In-Reply-To: <20200207203752.209296-1-pmalani@chromium.org>
+References: <20200207203752.209296-1-pmalani@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,32 +63,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following series introduces a Type C port driver for Chrome OS devices
-that have an EC (Embedded Controller). It derives port information from
-ACPI or DT entries. This patch series adds basic support, including
-registering ports, and setting certain basic attributes.
+Some Chrome OS devices with Embedded Controllers (EC) can read and
+modify Type C port state.
 
-v1: https://lkml.org/lkml/2020/2/5/676
+Add an entry in the DT Bindings documentation that lists out the logical
+device and describes the relevant port information, to be used by the
+corresponding driver.
+
+Signed-off-by: Prashant Malani <pmalani@chromium.org>
+---
 
 Changes in v2:
-- Added DT bindings entry in Documentation.
-- Fixed minor comments in cros_ec_typec.c driver file.
-- Incorporated get_num_ports() code into probe() function.
+- No changes. Patch first introduced in v2 of series.
 
-Prashant Malani (4):
-  dt-bindings: Add cros-ec Type C port driver
-  platform/chrome: Add Type C connector class driver
-  platform/chrome: typec: Get PD_CONTROL cmd version
-  platform/chrome: typec: Update port info from EC
-
- .../bindings/chrome/google,cros-ec-typec.yaml |  77 ++++
- drivers/platform/chrome/Kconfig               |  11 +
- drivers/platform/chrome/Makefile              |   1 +
- drivers/platform/chrome/cros_ec_typec.c       | 337 ++++++++++++++++++
- 4 files changed, 426 insertions(+)
+ .../bindings/chrome/google,cros-ec-typec.yaml | 77 +++++++++++++++++++
+ 1 file changed, 77 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
- create mode 100644 drivers/platform/chrome/cros_ec_typec.c
 
+diff --git a/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
+new file mode 100644
+index 00000000000000..46ebcbe76db3c2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
+@@ -0,0 +1,77 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/chrome/google,cros-ec-typec.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Google Chrome OS EC(Embedded Controller) Type C port driver.
++
++maintainers:
++  - Benson Leung <bleung@chromium.org>
++  - Prashant Malani <pmalani@chromium.org>
++
++description:
++  Chrome OS devices have an Embedded Controller(EC) which has access to
++  Type C port state. This node is intended to allow the host to read and
++  control the Type C ports. The node for this device should be under a
++  cros-ec node like google,cros-ec-spi.
++
++properties:
++  compatible:
++    const: google,cros-ec-typec
++
++  port:
++    description: A node that represents a physical Type C port on the
++      device.
++    type: object
++    properties:
++      port-number:
++        description: The number used by the Chrome OS EC to identify
++          this type C port.
++        $ref: /schemas/types.yaml#/definitions/uint32
++      power-role:
++        description: Determines the power role that the Type C port will
++          adopt.
++        oneOf:
++          - items:
++            - const: sink
++            - const: source
++            - const: dual
++      data-role:
++        description: Determines the data role that the Type C port will
++          adopt.
++        oneOf:
++          - items:
++            - const: host
++            - const: device
++            - const: dual
++      try-power-role:
++        description: Determines the preferred power role of the Type C port.
++        oneOf:
++          - items:
++            - const: sink
++            - const: source
++            - const: dual
++
++    required:
++      - port-number
++      - power-role
++      - data-role
++      - try-power-role
++
++required:
++  - compatible
++  - port
++
++examples:
++  - |+
++    typec {
++      compatible = "google,cros-ec-typec";
++
++      port@0 {
++        port-number = <0>;
++        power-role = "dual";
++        data-role = "dual";
++        try-power-role = "source";
++      };
++    };
 -- 
 2.25.0.341.g760bfbb309-goog
 
