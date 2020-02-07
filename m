@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4655C155857
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 14:26:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 035E6155866
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 14:27:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbgBGNZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 08:25:59 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:40763 "EHLO
+        id S1727641AbgBGN0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 08:26:40 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:40778 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727113AbgBGNZ5 (ORCPT
+        with ESMTP id S1727195AbgBGNZ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 08:25:57 -0500
+        Fri, 7 Feb 2020 08:25:59 -0500
 Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j03db-0003hB-TU; Fri, 07 Feb 2020 14:25:40 +0100
+        id 1j03db-0003hC-TY; Fri, 07 Feb 2020 14:25:40 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 0A914100F7E;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 0EBFC1017FA;
         Fri,  7 Feb 2020 13:25:38 +0000 (GMT)
-Message-Id: <20200207124402.622587341@linutronix.de>
+Message-Id: <20200207124402.714585315@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Fri, 07 Feb 2020 13:38:51 +0100
+Date:   Fri, 07 Feb 2020 13:38:52 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, John Stultz <john.stultz@linaro.org>,
@@ -41,7 +41,7 @@ Cc:     x86@kernel.org, John Stultz <john.stultz@linaro.org>,
         Will Deacon <will@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Marc Zyngier <maz@kernel.org>, Andrei Vagin <avagin@gmail.com>
-Subject: [patch V2 04/17] ARM: vdso: Compile high resolution parts conditionally
+Subject: [patch V2 05/17] MIPS: vdso: Compile high resolution parts conditionally
 References: <20200207123847.339896630@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -55,28 +55,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-If the architected timer is disabled in the kernel configuration then let
-the core VDSO code drop the high resolution parts at compile time.
+If neither the R4K nor the GIC timer is enabled in the kernel configuration
+then let the core VDSO code drop the high resolution parts at compile time.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
 ---
- arch/arm/include/asm/vdso/gettimeofday.h |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/mips/include/asm/vdso/gettimeofday.h |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/arch/arm/include/asm/vdso/gettimeofday.h
-+++ b/arch/arm/include/asm/vdso/gettimeofday.h
-@@ -106,6 +106,12 @@ static __always_inline int clock_getres3
- 	return ret;
+--- a/arch/mips/include/asm/vdso/gettimeofday.h
++++ b/arch/mips/include/asm/vdso/gettimeofday.h
+@@ -199,6 +199,13 @@ static __always_inline u64 __arch_get_hw
+ 	return cycle_now;
  }
  
-+static inline bool arm_vdso_hres_capable(void)
++static inline bool mips_vdso_hres_capable(void)
 +{
-+	return IS_ENABLED(CONFIG_ARM_ARCH_TIMER);
++	return IS_ENABLED(CONFIG_CSRC_R4K) ||
++	       IS_ENABLED(CONFIG_CLKSRC_MIPS_GIC);
 +}
-+#define __arch_vdso_hres_capable arm_vdso_hres_capable
++#define __arch_vdso_hres_capable mips_vdso_hres_capable
 +
- static __always_inline u64 __arch_get_hw_counter(int clock_mode)
+ static __always_inline const struct vdso_data *__arch_get_vdso_data(void)
  {
- #ifdef CONFIG_ARM_ARCH_TIMER
+ 	return get_vdso_data();
 
