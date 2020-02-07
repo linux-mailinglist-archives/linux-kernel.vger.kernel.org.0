@@ -2,182 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85D941558C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 14:49:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EBFD1558DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 14:58:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbgBGNtK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 08:49:10 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46841 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbgBGNtK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 08:49:10 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z7so2725543wrl.13
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 05:49:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=MwvFxS4AH5H+msf0RBllxFFr08FoXJrYwxPsNlpLaEQ=;
-        b=Pxid3V/7oELCUAVYCAbBRfGbPfOEsMJg8xXN1JTmemsVv3TBTsWlXcSfrdQoBNhuTH
-         1m8yIGCff9hZmpc9wEG1dS08c6ZquRHQJiToOViW2rUGp43mSk7n65o7JvuvZVSW4auZ
-         cbn0VAjrrFJZ60AFoGtwm9WzugYsnujFLchNY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=MwvFxS4AH5H+msf0RBllxFFr08FoXJrYwxPsNlpLaEQ=;
-        b=DP4ih+ridXqYfcGDHtAO/8k7VyLHJXfqcAaIu0NjA9hEGstS5CA9Ia7VyV6NLy5zfE
-         rf3H+V8RoeU/hmhk0N7Ko2L7785BJmVfhfdjVfsln9IUPKfY49zhhS3kVD+y5VWzzJXF
-         m5nMIDXQSYcUaujKV2Z8RkMYTH13Vmqit7t7kZ/6GotVhysi2rW9WXYEFKMLAfAju9Vr
-         vtlCStP0coMtwyvRjxQXq482Oqv/4bEbRZl79B8qWviszgRvSyf5ObpbE/NvyFf4BX4P
-         ghCmhJx002TgD3GdU8qmmrjo3/+ZLPss5CDINmKbffv+hckcJ4RdSfvH6zvQhCxt7c9L
-         aSZg==
-X-Gm-Message-State: APjAAAX/ZEDwWDfvPcQpoInOAMcBo5noGrhkGNc+v8xIsH54WOFzUV8L
-        rLtO52u0IOATua9zUQc2sDMV5w==
-X-Google-Smtp-Source: APXvYqwb7z6otNJpnpWZ2LemuyPi/rvqLye9AzCkf4YZs9lQDPxX/bMBWeZASc7vHTbBKNFsZlr8hQ==
-X-Received: by 2002:adf:90ee:: with SMTP id i101mr4772714wri.417.1581083346294;
-        Fri, 07 Feb 2020 05:49:06 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id r14sm3360107wrj.26.2020.02.07.05.49.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2020 05:49:05 -0800 (PST)
-Date:   Fri, 7 Feb 2020 14:49:03 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, gurchetansingh@chromium.org,
-        olvaffe@gmail.com, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/virtio: add drm_driver.release callback.
-Message-ID: <20200207134903.GD43062@phenom.ffwll.local>
-Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
-        dri-devel@lists.freedesktop.org, gurchetansingh@chromium.org,
-        olvaffe@gmail.com, David Airlie <airlied@linux.ie>,
-        "open list:VIRTIO GPU DRIVER" <virtualization@lists.linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20200207121420.26222-1-kraxel@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200207121420.26222-1-kraxel@redhat.com>
-X-Operating-System: Linux phenom 5.3.0-3-amd64 
+        id S1726942AbgBGN6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 08:58:39 -0500
+Received: from host5.net38.ru ([77.243.126.231]:42336 "EHLO host5.net38.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726798AbgBGN6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 08:58:39 -0500
+X-Greylist: delayed 500 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Feb 2020 08:58:38 EST
+Received: by host5.net38.ru (Postfix, from userid 8)
+        id 78E09283DFE; Fri,  7 Feb 2020 21:50:16 +0800 (+08)
+DKIM-Filter: OpenDKIM Filter v2.11.0 host5.net38.ru 78E09283DFE
+X-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on host5.net38.ru
+X-Spam-Level: *
+X-Spam-Status: No, score=1.5 required=5.0 tests=ALL_TRUSTED,
+        FREEMAIL_FORGED_REPLYTO,URIBL_BLOCKED autolearn=disabled version=3.3.1
+Received: from blogs.inter-comfort.ru (unknown [171.234.114.242])
+        by host5.net38.ru (Postfix) with ESMTPA id BEB56283B73
+        for <linux-kernel@vger.kernel.org>; Fri,  7 Feb 2020 21:49:59 +0800 (+08)
+DKIM-Filter: OpenDKIM Filter v2.11.0 host5.net38.ru BEB56283B73
+Content-transfer-encoding: 7bit
+From:   "Mark Underwood" <basicmark@inter-comfort.ru>
+Content-type: text/plain; charset=us-ascii
+MIME-version: 1.0 (1.0)
+Date:   Fri, 7 Feb 2020 16:49:56 +0300
+Message-Id: <0C25F42A-824E-46FA-A14C-5124DCCF5F6C@inter-comfort.ru>
+Subject: 
+To:     "LKML" <linux-kernel@vger.kernel.org>
+Reply-To: "Mark Underwood" <basicmarkr@yahoo.com>
+X-Mailer: iPhone Mail (15F79)
+X-Virus-Scanned: clamav-milter 0.100.2 at host5.net38.ru
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 01:14:20PM +0100, Gerd Hoffmann wrote:
-> Split virtio_gpu_deinit(), move the drm shutdown and release to
-> virtio_gpu_release().  Also free vbufs in case we can't queue them.
-> 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
->  drivers/gpu/drm/virtio/virtgpu_drv.h | 1 +
->  drivers/gpu/drm/virtio/virtgpu_drv.c | 4 ++++
->  drivers/gpu/drm/virtio/virtgpu_kms.c | 5 +++++
->  drivers/gpu/drm/virtio/virtgpu_vq.c  | 9 ++++++++-
->  4 files changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> index d278c8c50f39..09a485b001e7 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> @@ -217,6 +217,7 @@ extern struct drm_ioctl_desc virtio_gpu_ioctls[DRM_VIRTIO_NUM_IOCTLS];
->  /* virtio_kms.c */
->  int virtio_gpu_init(struct drm_device *dev);
->  void virtio_gpu_deinit(struct drm_device *dev);
-> +void virtio_gpu_release(struct drm_device *dev);
->  int virtio_gpu_driver_open(struct drm_device *dev, struct drm_file *file);
->  void virtio_gpu_driver_postclose(struct drm_device *dev, struct drm_file *file);
->  
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> index 8cf27af3ad53..664a741a3b0b 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> @@ -31,6 +31,7 @@
->  #include <linux/pci.h>
->  
->  #include <drm/drm.h>
-> +#include <drm/drm_atomic_helper.h>
->  #include <drm/drm_drv.h>
->  #include <drm/drm_file.h>
->  
-> @@ -136,6 +137,7 @@ static void virtio_gpu_remove(struct virtio_device *vdev)
->  	struct drm_device *dev = vdev->priv;
->  
->  	drm_dev_unregister(dev);
-> +	drm_atomic_helper_shutdown(dev);
->  	virtio_gpu_deinit(dev);
->  	drm_dev_put(dev);
->  }
-> @@ -214,4 +216,6 @@ static struct drm_driver driver = {
->  	.major = DRIVER_MAJOR,
->  	.minor = DRIVER_MINOR,
->  	.patchlevel = DRIVER_PATCHLEVEL,
-> +
-> +	.release = virtio_gpu_release,
->  };
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
-> index c1086df49816..b45d12e3db2a 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_kms.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
-> @@ -240,6 +240,11 @@ void virtio_gpu_deinit(struct drm_device *dev)
->  	flush_work(&vgdev->config_changed_work);
->  	vgdev->vdev->config->reset(vgdev->vdev);
->  	vgdev->vdev->config->del_vqs(vgdev->vdev);
-> +}
-> +
-> +void virtio_gpu_release(struct drm_device *dev)
-> +{
-> +	struct virtio_gpu_device *vgdev = dev->dev_private;
->  
->  	virtio_gpu_modeset_fini(vgdev);
+ LKML
 
-This calls drm_atomic_helper_shutdown, probably want that in the remove
-hook?  Everything else looks like it's in the right spot. So with that
-call moved into the top of the deinit function above this is:
-
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+http://j.mp/2Uvd18v
 
 
->  	virtio_gpu_free_vbufs(vgdev);
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-> index cc02fc4bab2a..cc674b45f904 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-> @@ -330,6 +330,11 @@ static void virtio_gpu_queue_ctrl_sgs(struct virtio_gpu_device *vgdev,
->  	bool notify = false;
->  	int ret;
->  
-> +	if (!vgdev->vqs_ready) {
-> +		free_vbuf(vgdev, vbuf);
-> +		return;
-> +	}
-> +
->  	if (vgdev->has_indirect)
->  		elemcnt = 1;
->  
-> @@ -462,8 +467,10 @@ static void virtio_gpu_queue_cursor(struct virtio_gpu_device *vgdev,
->  	int ret;
->  	int outcnt;
->  
-> -	if (!vgdev->vqs_ready)
-> +	if (!vgdev->vqs_ready) {
-> +		free_vbuf(vgdev, vbuf);
->  		return;
-> +	}
->  
->  	sg_init_one(&ccmd, vbuf->buf, vbuf->size);
->  	sgs[0] = &ccmd;
-> -- 
-> 2.18.1
-> 
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+
+
+Mark
