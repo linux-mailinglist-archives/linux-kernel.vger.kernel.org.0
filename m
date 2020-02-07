@@ -2,97 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 752C3155299
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 07:51:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C258E15529B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 07:52:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbgBGGvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 01:51:13 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:39977 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbgBGGvN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 01:51:13 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1izxTj-0003LT-Qk; Fri, 07 Feb 2020 07:51:03 +0100
-Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1izxTj-0002T1-Ct; Fri, 07 Feb 2020 07:51:03 +0100
-Date:   Fri, 7 Feb 2020 07:51:03 +0100
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     support.opensource@diasemi.com, robh+dt@kernel.org,
-        lee.jones@linaro.org, stwiss.opensource@diasemi.com,
-        Adam.Thomson.Opensource@diasemi.com,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH 3/3] watchdog: da9062: add power management ops
-Message-ID: <20200207065103.o5liyfdrl5fudxvh@pengutronix.de>
-References: <20200108095704.23233-1-m.felsch@pengutronix.de>
- <20200108095704.23233-4-m.felsch@pengutronix.de>
- <20200123205132.GA13377@roeck-us.net>
- <20200206090010.ya6p2kvab452kedr@pengutronix.de>
- <a5d61822-c4fa-d5d3-c3ef-174b57a651bc@roeck-us.net>
+        id S1726942AbgBGGw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 01:52:28 -0500
+Received: from mga02.intel.com ([134.134.136.20]:24185 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726136AbgBGGw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 01:52:28 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 22:52:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,412,1574150400"; 
+   d="scan'208";a="220700150"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga007.jf.intel.com with ESMTP; 06 Feb 2020 22:52:25 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1izxV1-0004iX-Cs; Fri, 07 Feb 2020 14:52:23 +0800
+Date:   Fri, 7 Feb 2020 14:51:56 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Prashant Malani <pmalani@chromium.org>
+Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
+        heikki.krogerus@intel.com, enric.balletbo@collabora.com,
+        bleung@chromium.org, Prashant Malani <pmalani@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>
+Subject: Re: [PATCH 1/3] platform/chrome: Add Type C connector class driver
+Message-ID: <202002071406.LXbYPq2Y%lkp@intel.com>
+References: <20200205205954.84503-2-pmalani@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a5d61822-c4fa-d5d3-c3ef-174b57a651bc@roeck-us.net>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 07:48:05 up 83 days, 22:06, 86 users,  load average: 0.09, 0.12,
- 0.08
+In-Reply-To: <20200205205954.84503-2-pmalani@chromium.org>
 User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20-02-06 06:45, Guenter Roeck wrote:
-> On 2/6/20 1:00 AM, Marco Felsch wrote:
-> > Hi Guenter,
-> > 
-> > On 20-01-23 12:51, Guenter Roeck wrote:
-> > > On Wed, Jan 08, 2020 at 10:57:04AM +0100, Marco Felsch wrote:
-> > > > Disable the watchdog during suspend if it is enabled and re-enable it on
-> > > > resume. So we can sleep without the interruptions.
-> > > > 
-> > > > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > > > Reviewed-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-> > > 
-> > > Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> > 
-> > I got an kbuild email so I checked the linux-next master tree. On
-> > linux-next this patch isn't used instead the old v1 was used...
-> > 
-> 
-> Yes, it appears that I picked the wrong version as well, and Wim picked it
-> up from there. But, really, what do you expect if you don't tag your
-> submissions with version numbers ?
+Hi Prashant,
 
-Pls check the cover-letter I said sorry their. As I said it was a
-mistake.
+Thank you for the patch! Perhaps something to improve:
 
-> I would suggest to send a follow-up patch to fix what is in -next.
+[auto build test WARNING on chrome-platform-linux/for-next]
+[also build test WARNING on linux/master linus/master v5.5 next-20200207]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
 
-A 'real' patch or should I send a 'fixup!' patch?
+url:    https://github.com/0day-ci/linux/commits/Prashant-Malani/platform-chrome-Add-Type-C-connector-class-driver/20200206-225838
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-159-g100509c0-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
 
-Regards,
-  Marco
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
 
-> Guenter
-> 
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/platform/chrome/cros_ec_typec.c:28:5: sparse: sparse: symbol 'cros_typec_parse_port_props' was not declared. Should it be static?
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
