@@ -2,121 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 381FB155E9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 20:31:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9DAF155EA7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 20:39:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbgBGTbU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 14:31:20 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:39167 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726988AbgBGTbT (ORCPT
+        id S1727175AbgBGTj0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 14:39:26 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43715 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727113AbgBGTj0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 14:31:19 -0500
-Received: by mail-qk1-f193.google.com with SMTP id w15so211595qkf.6;
-        Fri, 07 Feb 2020 11:31:18 -0800 (PST)
+        Fri, 7 Feb 2020 14:39:26 -0500
+Received: by mail-pf1-f194.google.com with SMTP id s1so277773pfh.10;
+        Fri, 07 Feb 2020 11:39:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZkpXb/Mvw8qZyRJM76GkT3rnAFfUOKULtUPg4iPdeJU=;
-        b=CREEuByZvw6a7GdcLO3uMXiq/E3wUDW+KQRbosp7l0VVBD5NLfSK60uQKE5SB9q3no
-         zKhlfLbHLIj4TR2SQpcpPtlPTEr47jEaxgDMdCbyAcXAOJ1fuYIwe+BnntP1HrhkemGn
-         qG0K7J8ZiVCRPK5FsT3rCX/S5hLSfA3vZSNooF6UJ8EATZKijS3lT1QIuceiUzyC5PJI
-         L53pt//TSTOGqs+SyRjZoo03alTjFDx+JBqbWs/rOUYYcRQhb5e4W/lOVOTeVzRdtct+
-         eW6RxdDLfsyPx2KHxYxwiE8GFY6Ivtsb/h6EoofuGU7URSsAjehav7ss5+//4lk3WSZu
-         8bew==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kMV9mrvxXKtF7veXVaTaKRwaBbMNRnkTmlI+NnwqDp0=;
+        b=UVW1Jr3rxr43QMhieO9muTBS+hJj0+c93HmCQYuhH0kio1os13hyQ701MxvUvCE76v
+         KFpgpEbaHsKkidsrjbiUQ4wODCM9UWOXmd+c56elI9tcMrKhXyJWQlgK47igUdYr6FLY
+         gLlqN/z2b1rKywI+q/+V30XqwuH5x5X4ItHIdjrce/ehs1hisN/HFq/n0Y+jMOc3CvQ2
+         1pGW9ZGUdxB59DHcHOBvOaFfRv8Tr2ddqrU9LzxkKFPp425UO3j6m0AJlKd9kx23EHSp
+         ZUdv8KvcAiDMpL0c3onlAIrjRgWotEUBZqUrPUjh5pgNE0qOhSpeXkMF7iRgwtvkb8ZX
+         ajFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZkpXb/Mvw8qZyRJM76GkT3rnAFfUOKULtUPg4iPdeJU=;
-        b=maqgi1IWYQHWq10EQ+nDSeiK1oPCMbRNQmGeJSxKXBWjtNI63upu4i44YDiIb3NVoR
-         sNwmoeXsy5oW8nhz/s+yPcjrpBsCri1VO80RFIWLMSoULAHjASswpZWDOZ30pjNhFoxI
-         RX0e1wQoGvEpVRtU2pCLp+D9KgkJ3bIiN/p+QEWM3FzMS06+2QOlJaedyXRiQeh5h9OM
-         dILrKDJztYhlQ0KZlxZUGxBiqixVpgYPQ2Ihmuge/xNIIqPMdxPDsSogc4WlAjp+WkZ7
-         gkf2Y37NHMH91bsdTY8gEegYlMgbEqwwLaik3+U+vt/rue0XcCewqJYQWrwAWeJrMmnm
-         DoqA==
-X-Gm-Message-State: APjAAAVEbPOmxT8yEWAwG71Dflivf61gfhOI4wA3sDR4/0NbJP2KxvkB
-        6k7YWr8mINhNIUsOHDHqCUQ=
-X-Google-Smtp-Source: APXvYqxy6o6177LHJnLryDQqD0y55xKipDKCoLo5JYvFEJ5gBxdU3RRLew7swNn1gJfRZTXayQF65w==
-X-Received: by 2002:a05:620a:9d9:: with SMTP id y25mr439287qky.41.1581103877782;
-        Fri, 07 Feb 2020 11:31:17 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id k37sm1896821qtf.70.2020.02.07.11.31.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2020 11:31:17 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Fri, 7 Feb 2020 14:31:15 -0500
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 08/22] bootconfig: init: Allow admin to use bootconfig
- for init command line
-Message-ID: <20200207193113.GA3438946@rani.riverdale.lan>
-References: <157867220019.17873.13377985653744804396.stgit@devnote2>
- <157867229521.17873.654222294326542349.stgit@devnote2>
- <202002070954.C18E7F58B@keescook>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kMV9mrvxXKtF7veXVaTaKRwaBbMNRnkTmlI+NnwqDp0=;
+        b=qE3sGm4l0ETkwL2FR9Xw7GMU43I0oT0lHRND2RJpwVzN4MLpnnxNzjuUx8Kjmj5wWD
+         KmIg8tSct+FdJvgsBxpPvU0CmVBmMDWuftZeUbQCM9NJ1JtgSfuKGXUGLUopfcoOAWuX
+         FhKzeY2HFm5ul/PVayowdtk3UQoLl0xvf4rxxkZsfzSS76EjSE89qdDAVfiEP1BMzXh/
+         b1b6TRMQQSqUexLhrLDk8V3hL8eIjhlg7064WGnCoeuS50J9gtKWrQCydRgjg3yts1l1
+         t71X84YunP6rHltqqjxEmMh4HFx7Lde+ilBsrKwXniO/kHp7w6s1IFf4K5bF4tLGCEdx
+         WGqA==
+X-Gm-Message-State: APjAAAXfhcaw1D3ZGZplQJkYwtNp10gtFOhWWX5xC8QqVqOkIi1wLbVE
+        1/ItZQUAiySlEjb7G5T46SVZsMarA97rYC0fbNo=
+X-Google-Smtp-Source: APXvYqyPLUNxHc5eaZYFb23Seh/CPSZFSy5A5kNWFuz5VbNhJw1ERrOtmz+X4gaYxJK7ZRoFnlqblRqMPWEBQiZRgh0=
+X-Received: by 2002:a65:5242:: with SMTP id q2mr810978pgp.74.1581104365541;
+ Fri, 07 Feb 2020 11:39:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202002070954.C18E7F58B@keescook>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1580328504-436-1-git-send-email-eajames@linux.ibm.com>
+ <CAHp75VeNs9Zr1vayO8TwVq6=B8fwvv0chOt0in6Dw+WLCezL2g@mail.gmail.com>
+ <29f6cc86-69ca-bc88-b6ae-2b1a24c0dae3@linux.vnet.ibm.com> <CAHp75Vf3NCkbw39E+d_nf+AyViG2o-u5HxrCjXXmbGk4LaFLog@mail.gmail.com>
+ <744f0019-8656-eec1-cb9a-7e70cd042587@linux.ibm.com> <CAHp75VfOM5Rd3LRBtvyT96G=+J4KxTRoSVUcQTj+RxrGyZMMnQ@mail.gmail.com>
+ <90973143-bd0a-33cf-9eb8-a83be1a9b415@linux.vnet.ibm.com>
+In-Reply-To: <90973143-bd0a-33cf-9eb8-a83be1a9b415@linux.vnet.ibm.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 7 Feb 2020 21:39:17 +0200
+Message-ID: <CAHp75Vf6HJw=SpK9_HUgcMaaabs5pZEybP4SS-gc1wz5GRcqeg@mail.gmail.com>
+Subject: Re: [PATCH] spi: Add FSI-attached SPI controller driver
+To:     Eddie James <eajames@linux.vnet.ibm.com>
+Cc:     Eddie James <eajames@linux.ibm.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>, Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 10:03:16AM -0800, Kees Cook wrote:
-> > +
-> > +	if (ilen) {
-> > +		/*
-> > +		 * Append supplemental init boot args to saved_command_line
-> > +		 * so that user can check what command line options passed
-> > +		 * to init.
-> > +		 */
-> > +		len = strlen(saved_command_line);
-> > +		if (!strstr(boot_command_line, " -- ")) {
-> > +			strcpy(saved_command_line + len, " -- ");
-> > +			len += 4;
-> > +		} else
-> > +			saved_command_line[len++] = ' ';
-> > +
-> > +		strcpy(saved_command_line + len, extra_init_args);
-> > +	}
-> 
-> This isn't safe because it will destroy any argument with " -- " in
-> quotes and anything after it. For example, booting with:
-> 
-> thing=on acpi_osi="! -- " other=setting
-> 
-> will wreck acpi_osi's value and potentially overwrite "other=settings",
-> etc.
-> 
-> (Yes, this seems very unlikely, but you can't treat " -- " as special,
-> the command line string must be correct parsed for double quotes, as
-> parse_args() does.)
-> 
+On Fri, Feb 7, 2020 at 9:28 PM Eddie James <eajames@linux.vnet.ibm.com> wrote:
+> On 2/5/20 9:51 AM, Andy Shevchenko wrote:
+> > On Tue, Feb 4, 2020 at 6:06 PM Eddie James <eajames@linux.ibm.com> wrote:
+> >> On 2/4/20 5:02 AM, Andy Shevchenko wrote:
+> >>> On Mon, Feb 3, 2020 at 10:33 PM Eddie James <eajames@linux.vnet.ibm.com> wrote:
+> >>>> On 1/30/20 10:37 AM, Andy Shevchenko wrote:
 
-I think it won't overwrite anything, it will just leave out the " -- "
-that should have been added?
+...
 
-I wonder if this is necessary, though -- since commit b88c50ac304a ("log
-arguments and environment passed to init") the init arguments will be in
-the kernel log anyway.
+> >>>>>> +       for (i = 0; i < num_bytes; ++i)
+> >>>>>> +               rx[i] = (u8)((in >> (8 * ((num_bytes - 1) - i))) & 0xffULL);
+> >>>>> Redundant & 0xffULL part.
+> >>>>>
+> >>>>> Isn't it NIH of get_unalinged_be64 / le64 or something similar?
+> >>>> No, these are shift in/out operations. The read register will also have
+> >>>> previous operations data in them and must be extracted with only the
+> >>>> correct number of bytes.
+> >>> Why not to call put_unaligned() how the tail in this case (it's 0 or
+> >>> can be easily made to be 0) will affect the result?
+> >>
+> >> The shift-in is not the same as any byte-swap or unaligned operation.
+> >> For however many bytes we've read, we start at that many bytes
+> >> left-shifted in the register and copy out to our buffer, moving right
+> >> for each next byte... I don't think there is an existing function for
+> >> this operation.
+> > For me it looks like
+> >
+> >    u8 tmp[8];
+> >
+> >    put_unaligned_be64(in, tmp);
+> >    memcpy(rx, tmp, num_bytes);
+> >
+> > put_unaligned*() is just a method to unroll the value to the u8 buffer.
+> > See, for example, linux/unaligned/be_byteshift.h implementation.
+>
+>
+> Unforunately it is not the same. put_unaligned_be64 will take the
+> highest 8 bits (0xff00000000000000) and move it into tmp[0]. Then
+> 0x00ff000000000000 into tmp[1], etc. This is only correct for this
+> driver IF my transfer is 8 bytes. If, for example, I transfer 5 bytes,
+> then I need 0x000000ff00000000 into tmp[0], 0x00000000ff000000 into
+> tmp[1], etc. So I think my current implementation is correct.
+
+Yes, I missed correction of the start address in memcpy(). Otherwise
+it's still the same what I was talking about.
+
+> >>>>>> +       return num_bytes;
+> >>>>>> +}
+> >>>>>> +static int fsi_spi_data_out(u64 *out, const u8 *tx, int len)
+> >>>>>> +{
+> >>>>> Ditto as for above function. (put_unaligned ...)
+> >>> Ditto.
+> >>
+> >> I don't understand how this could work for transfers of less than 8
+> >> bytes, any put_unaligned would access memory that it doesn't own.
+> > Ditto.
+> >
+> >>>>>> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
