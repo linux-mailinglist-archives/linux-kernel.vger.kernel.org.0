@@ -2,46 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EB0F1557B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 13:27:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BEDD1557C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Feb 2020 13:30:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbgBGM1l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 07:27:41 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:41842 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbgBGM1k (ORCPT
+        id S1726974AbgBGMao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 07:30:44 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:51938 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726860AbgBGMao (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 07:27:40 -0500
-Received: from localhost (unknown [IPv6:2001:982:756:1:57a7:3bfd:5e85:defb])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        Fri, 7 Feb 2020 07:30:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=QK48O+y37jvZHWT0Auf5grI1LRwTFvYsSDflDx+K5Rg=; b=oMR0amM9l8Z2yi84U6avC+uXEL
+        HF3sqzI5pLBU7d/Fltj9Rtbqk20d+dyxZegB2gZ3UHcLOHzjbj4Uz9c07X7p6GELJcuTJyUG8+xWO
+        +yXwPeYMJgu7lgOm3zCNY91fNCj20uN55z3oqP8ouEwFT+wHI6pdXOI23+YR9OPbI85aBSWcaSrPH
+        B+f0ghmfJ7+5VSVLlCsnodLB+Y/uGOHmMRRpeLpBOEitr61ieZF5mq7/fVGTGuV5qGrveKEEIDNEl
+        +Q8ZPQk0VQEnilKr35Fk0MQvHPFMrxpUvAAijouJx+JuFZTgFlt58ohQAVEWv4Gw4bCW2NlEZI1Ul
+        O1yYRudw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j02mL-0008PJ-SO; Fri, 07 Feb 2020 12:30:38 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 68BA015AACD7A;
-        Fri,  7 Feb 2020 04:27:39 -0800 (PST)
-Date:   Fri, 07 Feb 2020 13:27:35 +0100 (CET)
-Message-Id: <20200207.132735.1570410046928054736.davem@davemloft.net>
-To:     hayashi.kunihiko@socionext.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        masami.hiramatsu@linaro.org, jaswinder.singh@linaro.org
-Subject: Re: [PATCH net] net: ethernet: ave: Add capability of rgmii-id mode
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200207205901.BE9A.4A936039@socionext.com>
-References: <1580954376-27283-1-git-send-email-hayashi.kunihiko@socionext.com>
-        <20200207.111648.1915539223489764931.davem@davemloft.net>
-        <20200207205901.BE9A.4A936039@socionext.com>
-X-Mailer: Mew version 6.8 on Emacs 26.3
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 07 Feb 2020 04:27:40 -0800 (PST)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 4E24A30066E;
+        Fri,  7 Feb 2020 13:28:48 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2783D2B835766; Fri,  7 Feb 2020 13:30:35 +0100 (CET)
+Date:   Fri, 7 Feb 2020 13:30:35 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Greg Ungerer <gerg@linux-m68k.org>, joe@perches.com,
+        sean.j.christopherson@intel.com
+Subject: Checkpatch being daft, Was: [PATCH -v2 08/10] m68k,mm: Extend table
+ allocator for multiple sizes
+Message-ID: <20200207123035.GI14914@hirez.programming.kicks-ass.net>
+References: <20200131124531.623136425@infradead.org>
+ <20200131125403.882175409@infradead.org>
+ <CAMuHMdWa8R=3fHLV7W_ni8An_1CwOoJxErnnDA3t4rq2XN+QzA@mail.gmail.com>
+ <20200207113417.GG14914@hirez.programming.kicks-ass.net>
+ <CAMuHMdW8hWpSsf31P0hC=b23GCx4oFwfaVYKQ1qrZfwFCPK5-Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdW8hWpSsf31P0hC=b23GCx4oFwfaVYKQ1qrZfwFCPK5-Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Date: Fri, 07 Feb 2020 20:59:01 +0900
+On Fri, Feb 07, 2020 at 01:11:54PM +0100, Geert Uytterhoeven wrote:
+> On Fri, Feb 7, 2020 at 12:34 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> > On Fri, Feb 07, 2020 at 11:56:40AM +0100, Geert Uytterhoeven wrote:
 
-> If it is clear, I'll add this to the next commit message.
+> > > WARNING: Missing Signed-off-by: line by nominal patch author 'Peter
+> > > Zijlstra <peterz@infradead.org>'
+> > > (in all patches)
+> > >
+> > > I can fix that (the From?) up while applying.
+> >
+> > I'm not sure where that warning comes from, but if you feel it needs
+> > fixing, sure. I normally only add the (Intel) thing to the SoB. I've so
+> > far never had complaints about that.
+> 
+> Checkpatch doesn't like this.
 
-Please do, thank you.
+Ooh, I see, that's a relatively new warning, pretty daft if you ask me.
+
+Now I have to rediscover how I went about teaching checkpatch to STFU ;-)
+
+Joe, should that '$email eq $author' not ignore rfc822 comments? That
+is:
+
+	Peter Zijlstra <peterz@infradead.org>
+
+and:
+
+	Peter Zijlstra (Intel) <peterz@infradead.org>
+
+are, in actual fact, the same.
