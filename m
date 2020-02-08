@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C6DF15665C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 19:34:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8CE815669E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 19:38:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbgBHSeE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Feb 2020 13:34:04 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34230 "EHLO
+        id S1728347AbgBHSft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Feb 2020 13:35:49 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34000 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727892AbgBHS3p (ORCPT
+        by vger.kernel.org with ESMTP id S1727833AbgBHS3m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Feb 2020 13:29:45 -0500
+        Sat, 8 Feb 2020 13:29:42 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1j0UrJ-0003fX-FZ; Sat, 08 Feb 2020 18:29:37 +0000
+        id 1j0UrJ-0003fb-Hu; Sat, 08 Feb 2020 18:29:37 +0000
 Received: from ben by deadeye with local (Exim 4.93)
         (envelope-from <ben@decadent.org.uk>)
-        id 1j0UrI-000CP3-1F; Sat, 08 Feb 2020 18:29:36 +0000
+        id 1j0UrI-000CPF-4K; Sat, 08 Feb 2020 18:29:36 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Michal Nazarewicz" <mina86@mina86.com>
-Date:   Sat, 08 Feb 2020 18:20:09 +0000
-Message-ID: <lsq.1581185940.404267590@decadent.org.uk>
+        "Oliver Neukum" <oneukum@suse.com>
+Date:   Sat, 08 Feb 2020 18:20:11 +0000
+Message-ID: <lsq.1581185940.333060299@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 070/148] usb: gadget: pch_udc: fix use after free
+Subject: [PATCH 3.16 072/148] appledisplay: fix error handling in the
+ scheduled work
 In-Reply-To: <lsq.1581185939.857586636@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,34 +48,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 66d1b0c0580b7f1b1850ee4423f32ac42afa2e92 upstream.
+commit 91feb01596e5efc0cc922cc73f5583114dccf4d2 upstream.
 
-Remove pointer dereference after free.
+The work item can operate on
 
-pci_pool_free doesn't care about contents of td.
-It's just a void* for it
+1. stale memory left over from the last transfer
+the actual length of the data transfered needs to be checked
+2. memory already freed
+the error handling in appledisplay_probe() needs
+to cancel the work in that case
 
-Addresses-Coverity-ID: 1091173 ("Use after free")
-Acked-by: Michal Nazarewicz <mina86@mina86.com>
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Link: https://lore.kernel.org/r/20191106202821.GA20347@embeddedor
+Reported-and-tested-by: syzbot+495dab1f175edc9c2f13@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Link: https://lore.kernel.org/r/20191106124902.7765-1-oneukum@suse.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/gadget/pch_udc.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/usb/misc/appledisplay.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/gadget/pch_udc.c
-+++ b/drivers/usb/gadget/pch_udc.c
-@@ -1533,7 +1533,6 @@ static void pch_udc_free_dma_chain(struc
- 		td = phys_to_virt(addr);
- 		addr2 = (dma_addr_t)td->next;
- 		pci_pool_free(dev->data_requests, td, addr);
--		td->next = 0x00;
- 		addr = addr2;
- 	}
- 	req->chain_len = 1;
+--- a/drivers/usb/misc/appledisplay.c
++++ b/drivers/usb/misc/appledisplay.c
+@@ -180,7 +180,12 @@ static int appledisplay_bl_get_brightnes
+ 		0,
+ 		pdata->msgdata, 2,
+ 		ACD_USB_TIMEOUT);
+-	brightness = pdata->msgdata[1];
++	if (retval < 2) {
++		if (retval >= 0)
++			retval = -EMSGSIZE;
++	} else {
++		brightness = pdata->msgdata[1];
++	}
+ 	mutex_unlock(&pdata->sysfslock);
+ 
+ 	if (retval < 0)
+@@ -326,6 +331,7 @@ error:
+ 	if (pdata) {
+ 		if (pdata->urb) {
+ 			usb_kill_urb(pdata->urb);
++			cancel_delayed_work_sync(&pdata->work);
+ 			if (pdata->urbdata)
+ 				usb_free_coherent(pdata->udev, ACD_URB_BUFFER_LEN,
+ 					pdata->urbdata, pdata->urb->transfer_dma);
 
