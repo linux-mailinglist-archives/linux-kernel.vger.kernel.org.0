@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C0EC1566F7
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 19:39:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 924FB156708
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 19:39:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbgBHSi3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Feb 2020 13:38:29 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33636 "EHLO
+        id S1727635AbgBHS3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Feb 2020 13:29:34 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33524 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727652AbgBHS3f (ORCPT
+        by vger.kernel.org with ESMTP id S1727584AbgBHS3e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Feb 2020 13:29:35 -0500
+        Sat, 8 Feb 2020 13:29:34 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1j0UrE-0003as-0t; Sat, 08 Feb 2020 18:29:32 +0000
+        id 1j0UrE-0003b0-0k; Sat, 08 Feb 2020 18:29:32 +0000
 Received: from ben by deadeye with local (Exim 4.93)
         (envelope-from <ben@decadent.org.uk>)
-        id 1j0UrC-000CJp-QJ; Sat, 08 Feb 2020 18:29:30 +0000
+        id 1j0UrD-000CJu-0j; Sat, 08 Feb 2020 18:29:31 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,19 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Adam Ford" <aford173@gmail.com>,
-        "Pali =?UTF-8?Q?Roh=C3=A1r?=" <pali.rohar@gmail.com>,
-        "Tero Kristo" <t-kristo@ti.com>,
-        "Aaro Koskinen" <aaro.koskinen@iki.fi>,
-        "Tony Lindgren" <tony@atomide.com>,
-        "Herbert Xu" <herbert@gondor.apana.org.au>,
-        "Sebastian Reichel" <sre@kernel.org>
-Date:   Sat, 08 Feb 2020 18:19:17 +0000
-Message-ID: <lsq.1581185940.409368153@decadent.org.uk>
+        "Dan Carpenter" <dan.carpenter@oracle.com>,
+        "Chris Wilson" <chris@chris-wilson.co.uk>
+Date:   Sat, 08 Feb 2020 18:19:18 +0000
+Message-ID: <lsq.1581185940.740550818@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 018/148] hwrng: omap3-rom - Call clk_disable_unprepare()
- on exit only if not idled
+Subject: [PATCH 3.16 019/148] drm/i810: Prevent underflow in ioctl
 In-Reply-To: <lsq.1581185939.857586636@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -53,40 +47,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit eaecce12f5f0d2c35d278e41e1bc4522393861ab upstream.
+commit 4f69851fbaa26b155330be35ce8ac393e93e7442 upstream.
 
-When unloading omap3-rom-rng, we'll get the following:
+The "used" variables here come from the user in the ioctl and it can be
+negative.  It could result in an out of bounds write.
 
-WARNING: CPU: 0 PID: 100 at drivers/clk/clk.c:948 clk_core_disable
-
-This is because the clock may be already disabled by omap3_rom_rng_idle().
-Let's fix the issue by checking for rng_idle on exit.
-
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Adam Ford <aford173@gmail.com>
-Cc: Pali Rohár <pali.rohar@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>
-Cc: Tero Kristo <t-kristo@ti.com>
-Fixes: 1c6b7c2108bd ("hwrng: OMAP3 ROM Random Number Generator support")
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Link: https://patchwork.freedesktop.org/patch/msgid/20191004102251.GC823@mwanda
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/char/hw_random/omap3-rom-rng.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/i810/i810_dma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/char/hw_random/omap3-rom-rng.c
-+++ b/drivers/char/hw_random/omap3-rom-rng.c
-@@ -119,7 +119,8 @@ static int omap3_rom_rng_probe(struct pl
- static int omap3_rom_rng_remove(struct platform_device *pdev)
- {
- 	hwrng_unregister(&omap3_rom_rng_ops);
--	clk_disable_unprepare(rng_clk);
-+	if (!rng_idle)
-+		clk_disable_unprepare(rng_clk);
- 	return 0;
- }
+--- a/drivers/gpu/drm/i810/i810_dma.c
++++ b/drivers/gpu/drm/i810/i810_dma.c
+@@ -724,7 +724,7 @@ static void i810_dma_dispatch_vertex(str
+ 	if (nbox > I810_NR_SAREA_CLIPRECTS)
+ 		nbox = I810_NR_SAREA_CLIPRECTS;
  
+-	if (used > 4 * 1024)
++	if (used < 0 || used > 4 * 1024)
+ 		used = 0;
+ 
+ 	if (sarea_priv->dirty)
+@@ -1044,7 +1044,7 @@ static void i810_dma_dispatch_mc(struct
+ 	if (u != I810_BUF_CLIENT)
+ 		DRM_DEBUG("MC found buffer that isn't mine!\n");
+ 
+-	if (used > 4 * 1024)
++	if (used < 0 || used > 4 * 1024)
+ 		used = 0;
+ 
+ 	sarea_priv->dirty = 0x7f;
 
