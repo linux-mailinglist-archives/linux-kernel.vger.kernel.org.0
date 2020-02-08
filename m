@@ -2,204 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E48E21561C4
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 01:06:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDD741561BF
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 01:06:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbgBHAGM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 19:06:12 -0500
-Received: from mga09.intel.com ([134.134.136.24]:55819 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727032AbgBHAGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 19:06:08 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2020 16:06:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,415,1574150400"; 
-   d="scan'208";a="250596593"
-Received: from skuppusw-desk.jf.intel.com ([10.7.201.16])
-  by orsmga002.jf.intel.com with ESMTP; 07 Feb 2020 16:06:05 -0800
-From:   sathyanarayanan.kuppuswamy@linux.intel.com
-To:     bhelgaas@google.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, sathyanarayanan.kuppuswamy@linux.intel.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Huong Nguyen <huong.nguyen@dell.com>,
-        Austin Bolen <Austin.Bolen@dell.com>
-Subject: [PATCH v14 5/5] PCI/ACPI: Enable EDR support
-Date:   Fri,  7 Feb 2020 16:03:35 -0800
-Message-Id: <217768ad1d0efe4558644978e694a39cd234f7a1.1581119844.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1581119844.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <cover.1581119844.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+        id S1727317AbgBHAGC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 19:06:02 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:41712 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727032AbgBHAGC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 19:06:02 -0500
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1j0Dcy-0004K9-EG; Sat, 08 Feb 2020 01:05:40 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id E6A6A1001FC; Sat,  8 Feb 2020 00:05:39 +0000 (GMT)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Vipul Kumar <vipulk0511@gmail.com>,
+        Vipul Kumar <vipul_kumar@mentor.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>,
+        Cedric Hombourger <Cedric_Hombourger@mentor.com>,
+        Len Brown <len.brown@intel.com>,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Gayatri Kammela <gayatri.kammela@intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] x86/tsc_msr: Make MSR derived TSC frequency more accurate
+In-Reply-To: <20200207205456.113758-3-hdegoede@redhat.com>
+References: <20200207205456.113758-1-hdegoede@redhat.com> <20200207205456.113758-3-hdegoede@redhat.com>
+Date:   Sat, 08 Feb 2020 01:05:39 +0100
+Message-ID: <87eev67xkc.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Hans,
 
-As per PCI firmware specification r3.2 Downstream Port Containment
-Related Enhancements ECN, sec 4.5.1, OS must implement following steps
-to enable/use EDR feature.
+Hans de Goede <hdegoede@redhat.com> writes:
+> @@ -120,11 +180,23 @@ unsigned long cpu_khz_from_msr(void)
+>  	rdmsr(MSR_FSB_FREQ, lo, hi);
+>  	index = lo & freq_desc->mask;
+>  
+> -	/* Map CPU reference clock freq ID(0-7) to CPU reference clock freq(KHz) */
+> -	freq = freq_desc->freqs[index];
+> -
+> -	/* TSC frequency = maximum resolved freq * maximum resolved bus ratio */
+> -	res = freq * ratio;
+> +	/*
+> +	 * Note this also catches cases where the index points to an unpopulated
+> +	 * part of muldiv, in that case the else will set freq and res to 0.
+> +	 */
+> +	if (freq_desc->muldiv[index].divider) {
+> +		freq = DIV_ROUND_CLOSEST(TSC_REFERENCE_KHZ *
+> +					   freq_desc->muldiv[index].multiplier,
+> +					 freq_desc->muldiv[index].divider);
+> +		/* Multiply by ratio before the divide for better accuracy */
+> +		res = DIV_ROUND_CLOSEST(TSC_REFERENCE_KHZ *
+> +					   freq_desc->muldiv[index].multiplier *
+> +					   ratio,
+> +					freq_desc->muldiv[index].divider);
 
-1. OS can use bit 7 of _OSC Control Field to negotiate control over
-Downstream Port Containment (DPC) configuration of PCIe port. After _OSC
-negotiation, firmware will Set this bit to grant OS control over PCIe
-DPC configuration and Clear it if this feature was requested and denied,
-or was not requested.
+What about:
 
-2. Also, if OS supports EDR, it should expose its support to BIOS by
-setting bit 7 of _OSC Support Field. And if OS sets bit 7 of _OSC
-Control Field it must also expose support for EDR by setting bit 7 of
-_OSC Support Field.
+        struct muldiv *md = &freq_desc->muldiv[index];
 
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Len Brown <lenb@kernel.org>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Acked-by: Keith Busch <keith.busch@intel.com>
-Tested-by: Huong Nguyen <huong.nguyen@dell.com>
-Tested-by: Austin Bolen <Austin.Bolen@dell.com>
----
- drivers/acpi/pci_root.c | 16 ++++++++++++++++
- drivers/pci/pcie/edr.c  |  4 +++-
- drivers/pci/probe.c     |  1 +
- include/linux/acpi.h    |  6 ++++--
- include/linux/pci.h     |  1 +
- 5 files changed, 25 insertions(+), 3 deletions(-)
+        if (md->divider) {
+		tscref = TSC_REFERENCE_KHZ * md->multiplier;
+        	freq = DIV_ROUND_CLOSEST(tscref, md->divider);
+		/*
+                 * Multiplying by ratio before the division has better
+                 * accuracy than just calculating freq * ratio
+                 */
+                res = DIV_ROUND_CLOSEST(tscref * ratio, md->divider);
 
-diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
-index d1e666ef3fcc..ad1be5941a00 100644
---- a/drivers/acpi/pci_root.c
-+++ b/drivers/acpi/pci_root.c
-@@ -131,6 +131,7 @@ static struct pci_osc_bit_struct pci_osc_support_bit[] = {
- 	{ OSC_PCI_CLOCK_PM_SUPPORT, "ClockPM" },
- 	{ OSC_PCI_SEGMENT_GROUPS_SUPPORT, "Segments" },
- 	{ OSC_PCI_MSI_SUPPORT, "MSI" },
-+	{ OSC_PCI_EDR_SUPPORT, "EDR" },
- 	{ OSC_PCI_HPX_TYPE_3_SUPPORT, "HPX-Type3" },
- };
- 
-@@ -141,6 +142,7 @@ static struct pci_osc_bit_struct pci_osc_control_bit[] = {
- 	{ OSC_PCI_EXPRESS_AER_CONTROL, "AER" },
- 	{ OSC_PCI_EXPRESS_CAPABILITY_CONTROL, "PCIeCapability" },
- 	{ OSC_PCI_EXPRESS_LTR_CONTROL, "LTR" },
-+	{ OSC_PCI_EXPRESS_DPC_CONTROL, "DPC" },
- };
- 
- static void decode_osc_bits(struct acpi_pci_root *root, char *msg, u32 word,
-@@ -440,6 +442,8 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm,
- 		support |= OSC_PCI_ASPM_SUPPORT | OSC_PCI_CLOCK_PM_SUPPORT;
- 	if (pci_msi_enabled())
- 		support |= OSC_PCI_MSI_SUPPORT;
-+	if (IS_ENABLED(CONFIG_PCIE_EDR))
-+		support |= OSC_PCI_EDR_SUPPORT;
- 
- 	decode_osc_support(root, "OS supports", support);
- 	status = acpi_pci_osc_support(root, support);
-@@ -487,6 +491,16 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm,
- 			control |= OSC_PCI_EXPRESS_AER_CONTROL;
- 	}
- 
-+	/*
-+	 * Per the Downstream Port Containment Related Enhancements ECN to
-+	 * the PCI Firmware Spec, r3.2, sec 4.5.1, table 4-5,
-+	 * OSC_PCI_EXPRESS_DPC_CONTROL indicates the OS supports both DPC
-+	 * and EDR. So use CONFIG_PCIE_EDR for requesting DPC control which
-+	 * will only be turned on if both EDR and DPC is enabled.
-+	 */
-+	if (IS_ENABLED(CONFIG_PCIE_EDR))
-+		control |= OSC_PCI_EXPRESS_DPC_CONTROL;
-+
- 	requested = control;
- 	status = acpi_pci_osc_control_set(handle, &control,
- 					  OSC_PCI_EXPRESS_CAPABILITY_CONTROL);
-@@ -916,6 +930,8 @@ struct pci_bus *acpi_pci_root_create(struct acpi_pci_root *root,
- 		host_bridge->native_pme = 0;
- 	if (!(root->osc_control_set & OSC_PCI_EXPRESS_LTR_CONTROL))
- 		host_bridge->native_ltr = 0;
-+	if (!(root->osc_control_set & OSC_PCI_EXPRESS_DPC_CONTROL))
-+		host_bridge->native_dpc = 0;
- 
- 	/*
- 	 * Evaluate the "PCI Boot Configuration" _DSM Function.  If it
-diff --git a/drivers/pci/pcie/edr.c b/drivers/pci/pcie/edr.c
-index b3e9103585a1..e7dfe401db5c 100644
---- a/drivers/pci/pcie/edr.c
-+++ b/drivers/pci/pcie/edr.c
-@@ -201,6 +201,7 @@ static void edr_handle_event(acpi_handle handle, u32 event, void *data)
- int pci_acpi_add_edr_notifier(struct pci_dev *pdev)
- {
- 	struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
-+	struct pci_host_bridge *host = pci_find_host_bridge(pdev->bus);
- 	struct dpc_dev *dpc;
- 	acpi_status astatus;
- 	int status;
-@@ -213,7 +214,8 @@ int pci_acpi_add_edr_notifier(struct pci_dev *pdev)
- 	 * TODO: Remove dependency on ACPI FIRMWARE_FIRST bit to
- 	 * determine ownership of DPC between firmware or OS.
- 	 */
--	if (!pcie_aer_get_firmware_first(pdev) || pcie_ports_dpc_native)
-+	if (!pcie_aer_get_firmware_first(pdev) || pcie_ports_dpc_native ||
-+	    (host->native_dpc))
- 		return -ENODEV;
- 
- 	if (!adev)
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 512cb4312ddd..c9a9c5b42e72 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -598,6 +598,7 @@ static void pci_init_host_bridge(struct pci_host_bridge *bridge)
- 	bridge->native_shpc_hotplug = 1;
- 	bridge->native_pme = 1;
- 	bridge->native_ltr = 1;
-+	bridge->native_dpc = 1;
- }
- 
- struct pci_host_bridge *pci_alloc_host_bridge(size_t priv)
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 0f37a7d5fa77..0a7aaa452a98 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -515,8 +515,9 @@ extern bool osc_pc_lpi_support_confirmed;
- #define OSC_PCI_CLOCK_PM_SUPPORT		0x00000004
- #define OSC_PCI_SEGMENT_GROUPS_SUPPORT		0x00000008
- #define OSC_PCI_MSI_SUPPORT			0x00000010
-+#define OSC_PCI_EDR_SUPPORT			0x00000080
- #define OSC_PCI_HPX_TYPE_3_SUPPORT		0x00000100
--#define OSC_PCI_SUPPORT_MASKS			0x0000011f
-+#define OSC_PCI_SUPPORT_MASKS			0x0000019f
- 
- /* PCI Host Bridge _OSC: Capabilities DWORD 3: Control Field */
- #define OSC_PCI_EXPRESS_NATIVE_HP_CONTROL	0x00000001
-@@ -525,7 +526,8 @@ extern bool osc_pc_lpi_support_confirmed;
- #define OSC_PCI_EXPRESS_AER_CONTROL		0x00000008
- #define OSC_PCI_EXPRESS_CAPABILITY_CONTROL	0x00000010
- #define OSC_PCI_EXPRESS_LTR_CONTROL		0x00000020
--#define OSC_PCI_CONTROL_MASKS			0x0000003f
-+#define OSC_PCI_EXPRESS_DPC_CONTROL		0x00000080
-+#define OSC_PCI_CONTROL_MASKS			0x000000bf
- 
- #define ACPI_GSB_ACCESS_ATTRIB_QUICK		0x00000002
- #define ACPI_GSB_ACCESS_ATTRIB_SEND_RCV         0x00000004
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index c393dff2d66f..d0739e90f4e7 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -510,6 +510,7 @@ struct pci_host_bridge {
- 	unsigned int	native_shpc_hotplug:1;	/* OS may use SHPC hotplug */
- 	unsigned int	native_pme:1;		/* OS may use PCIe PME */
- 	unsigned int	native_ltr:1;		/* OS may use PCIe LTR */
-+	unsigned int	native_dpc:1;		/* OS may use PCIe DPC */
- 	unsigned int	preserve_config:1;	/* Preserve FW resource setup */
- 
- 	/* Resource alignment requirements */
--- 
-2.21.0
+Hmm?
 
+Thanks,
+
+        tglx
