@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F65B1565D2
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 19:29:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9419F1565D7
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 19:29:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbgBHS3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Feb 2020 13:29:32 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33392 "EHLO
+        id S1727690AbgBHS3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Feb 2020 13:29:36 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33450 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727465AbgBHS3b (ORCPT
+        by vger.kernel.org with ESMTP id S1727465AbgBHS3d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Feb 2020 13:29:31 -0500
+        Sat, 8 Feb 2020 13:29:33 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1j0UrB-0003Zp-Qi; Sat, 08 Feb 2020 18:29:29 +0000
+        id 1j0UrC-0003a5-Pw; Sat, 08 Feb 2020 18:29:30 +0000
 Received: from ben by deadeye with local (Exim 4.93)
         (envelope-from <ben@decadent.org.uk>)
-        id 1j0UrB-000CIb-9S; Sat, 08 Feb 2020 18:29:29 +0000
+        id 1j0UrB-000CJA-Jd; Sat, 08 Feb 2020 18:29:29 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        "Woody Suwalski" <terraluna977@gmail.com>
-Date:   Sat, 08 Feb 2020 18:19:02 +0000
-Message-ID: <lsq.1581185940.964505196@decadent.org.uk>
+        "David S. Miller" <davem@davemloft.net>,
+        "John W. Linville" <linville@tuxdriver.com>,
+        "Denis Efremov" <efremov@linux.com>,
+        "Kalle Valo" <kvalo@codeaurora.org>,
+        "Rajkumar Manoharan" <rmanohar@qca.qualcomm.com>
+Date:   Sat, 08 Feb 2020 18:19:09 +0000
+Message-ID: <lsq.1581185940.263713177@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 003/148] x86: Treat R_X86_64_PLT32 as R_X86_64_PC32
+Subject: [PATCH 3.16 010/148] ath9k_hw: fix uninitialized variable data
 In-Reply-To: <lsq.1581185939.857586636@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,67 +50,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "H.J. Lu" <hjl.tools@gmail.com>
+From: Denis Efremov <efremov@linux.com>
 
-commit b21ebf2fb4cde1618915a97cc773e287ff49173e upstream.
+commit 80e84f36412e0c5172447b6947068dca0d04ee82 upstream.
 
-On i386, there are 2 types of PLTs, PIC and non-PIC.  PIE and shared
-objects must use PIC PLT.  To use PIC PLT, you need to load
-_GLOBAL_OFFSET_TABLE_ into EBX first.  There is no need for that on
-x86-64 since x86-64 uses PC-relative PLT.
+Currently, data variable in ar9003_hw_thermo_cal_apply() could be
+uninitialized if ar9300_otp_read_word() will fail to read the value.
+Initialize data variable with 0 to prevent an undefined behavior. This
+will be enough to handle error case when ar9300_otp_read_word() fails.
 
-On x86-64, for 32-bit PC-relative branches, we can generate PLT32
-relocation, instead of PC32 relocation, which can also be used as
-a marker for 32-bit PC-relative branches.  Linker can always reduce
-PLT32 relocation to PC32 if function is defined locally.   Local
-functions should use PC32 relocation.  As far as Linux kernel is
-concerned, R_X86_64_PLT32 can be treated the same as R_X86_64_PC32
-since Linux kernel doesn't use PLT.
-
-R_X86_64_PLT32 for 32-bit PC-relative branches has been enabled in
-binutils master branch which will become binutils 2.31.
-
-[ hjl is working on having better documentation on this all, but a few
-  more notes from him:
-
-   "PLT32 relocation is used as marker for PC-relative branches. Because
-    of EBX, it looks odd to generate PLT32 relocation on i386 when EBX
-    doesn't have GOT.
-
-    As for symbol resolution, PLT32 and PC32 relocations are almost
-    interchangeable. But when linker sees PLT32 relocation against a
-    protected symbol, it can resolved locally at link-time since it is
-    used on a branch instruction. Linker can't do that for PC32
-    relocation"
-
-  but for the kernel use, the two are basically the same, and this
-  commit gets things building and working with the current binutils
-  master   - Linus ]
-
-Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[Woody Suwalski: Backported to 3.16]
-Signed-off-by: Woody Suwalski <terraluna977@gmail.com>
+Fixes: 80fe43f2bbd5 ("ath9k_hw: Read and configure thermocal for AR9462")
+Cc: Rajkumar Manoharan <rmanohar@qca.qualcomm.com>
+Cc: John W. Linville <linville@tuxdriver.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Signed-off-by: Denis Efremov <efremov@linux.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/kernel/module.c
-+++ b/arch/x86/kernel/module.c
-@@ -180,6 +180,7 @@ int apply_relocate_add(Elf64_Shdr *sechd
- 				goto overflow;
- 			break;
- 		case R_X86_64_PC32:
-+		case R_X86_64_PLT32:
- 			val -= (u64)loc;
- 			*(u32 *)loc = val;
- #if 0
---- a/arch/x86/tools/relocs.c
-+++ b/arch/x86/tools/relocs.c
-@@ -763,6 +763,7 @@ static int do_reloc64(struct section *se
- 	switch (r_type) {
- 	case R_X86_64_NONE:
- 	case R_X86_64_PC32:
-+	case R_X86_64_PLT32:
- 		/*
- 		 * NONE can be ignored and PC relative relocations don't
- 		 * need to be adjusted.
+ drivers/net/wireless/ath/ath9k/ar9003_eeprom.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
++++ b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
+@@ -4107,7 +4107,7 @@ static void ar9003_hw_thermometer_apply(
+ 
+ static void ar9003_hw_thermo_cal_apply(struct ath_hw *ah)
+ {
+-	u32 data, ko, kg;
++	u32 data = 0, ko, kg;
+ 
+ 	if (!AR_SREV_9462_20_OR_LATER(ah))
+ 		return;
 
