@@ -2,82 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5946156202
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 01:47:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CC5F156208
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 01:50:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbgBHArY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 19:47:24 -0500
-Received: from mga01.intel.com ([192.55.52.88]:41715 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727048AbgBHArX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 19:47:23 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2020 16:47:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,415,1574150400"; 
-   d="scan'208";a="226648860"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga008.fm.intel.com with ESMTP; 07 Feb 2020 16:47:22 -0800
-Date:   Fri, 7 Feb 2020 16:47:22 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
+        id S1727392AbgBHAuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 19:50:18 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:53822 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727131AbgBHAuS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 19:50:18 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-101.corp.google.com [104.133.0.101] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 0180nMPw011787
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 7 Feb 2020 19:49:23 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 88C16420324; Fri,  7 Feb 2020 19:49:22 -0500 (EST)
+Date:   Fri, 7 Feb 2020 19:49:22 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Mark Salyzyn <salyzyn@android.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] KVM: x86: remove redundant WARN_ON check of an
- unsigned less than zero
-Message-ID: <20200208004722.GB15581@linux.intel.com>
-References: <20200207231813.786224-1-colin.king@canonical.com>
+        Alexander Potapenko <glider@google.com>
+Subject: Re: [PATCH] random: add rng-seed= command line option
+Message-ID: <20200208004922.GE122530@mit.edu>
+References: <20200207150809.19329-1-salyzyn@android.com>
+ <20200207155828.GB122530@mit.edu>
+ <d35bacd4-ba3f-335d-85c4-57e87abd8e9a@android.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200207231813.786224-1-colin.king@canonical.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <d35bacd4-ba3f-335d-85c4-57e87abd8e9a@android.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 11:18:13PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Fri, Feb 07, 2020 at 09:49:17AM -0800, Mark Salyzyn wrote:
+> > > It is preferred to add rng-seed to the Device Tree, but some
+> > > platforms do not have this option, so this adds the ability to
+> > > provide some command-line-limited data to the entropy through this
+> > > alternate mechanism.  Expect all 8 bits to be used, but must exclude
+> > > space to be accounted in the command line.
+> > "all 8 bits"?
 > 
-> The check cpu->hv_clock.system_time < 0 is redundant since system_time
-> is a u64 and hence can never be less than zero. Remove it.
-> 
-> Addresses-Coverity: ("Macro compares unsigned to 0")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  arch/x86/kvm/x86.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index fbabb2f06273..d4967ac47e68 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -2448,7 +2448,6 @@ static int kvm_guest_time_update(struct kvm_vcpu *v)
->  	vcpu->hv_clock.tsc_timestamp = tsc_timestamp;
->  	vcpu->hv_clock.system_time = kernel_ns + v->kvm->arch.kvmclock_offset;
->  	vcpu->last_guest_tsc = tsc_timestamp;
-> -	WARN_ON(vcpu->hv_clock.system_time < 0);
+> Command line (and Device Tree for that matter) can provide 8-bits of data,
+> and specifically for the command line as long as they skip space and nul
+> characters, we will be stripping the content out of the command line because
+> we strip it from view, so that no one gets hot and bothered.
 
-Don't know this code well, but @kernel_ns and @v->kvm->arch.kvmclock_offset
-are both s64, so maybe this was intended and/or desirable?
+What wasn't obvious to me initially (and should be clearly documented
+in the commit description as well as elsewhere) is that we are already
+adding the entire boot command-line string using
+"add_device_randomness()" and so what this commit is doing is simply
+counting the length of xxx in "rng_seed=xxx" and assuming that those
+bytes are 100% entropy and simply crediting the trusted entropy by
+length of xxx.  If xxx happened to be a hex string, or worse, was
+hard-coded in /etc/grub.conf as "rng_seed=supercalifragilisticexpialidocious"
+with this commit (and CONFIG_RANDOM_TRUST_BOOTLOADER), it would assume
+that it is safe to credit the boot command line has having sufficient
+entropy to fully initialize the CRNG.
 
-	WARN_ON((s64)vcpu->hv_clock.system_time < 0);
-	
+> I expected this to be contentious, this is why I call it out. Does _anyone_
+> have a disagreement with allowing raw data (minus nul and space characters)
+> to be part of the rng-seed?
 
->  	/* If the host uses TSC clocksource, then it is stable */
->  	pvclock_flags = 0;
-> -- 
-> 2.24.0
-> 
+There are two parts of this that might be controverisial.  The first
+is that there isn't actually *fully* eight bits; it's really
+log_2(254) bits per caharacter, since NUL and SPC aren't valid.
+
+The second is that we're treating rng_seed as being magic, and if
+someone tries to pass in something like rng_seed=0x7932dca76b51
+because they didn't understand how rng_seed was going to work, it
+would be surprising.
+
+My preference would be to pass in the random seed *not* on the
+command-line at all, but as a separate parameter which is passed to
+the bootloader, just as we pass in the device-tree, the initrd and the
+command-line as separate things.  The problem is that how we pass in
+extra boot parameters is architecture specific, and how we might do it
+for x86 is different than for arm64.  So yeah, it's a bit more
+inconvenient to do things that way; but I think it's also much
+cleaner.
+
+					- Ted
