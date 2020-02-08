@@ -2,92 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DEB0156796
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 20:39:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 782671567A3
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 20:58:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbgBHTjf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Feb 2020 14:39:35 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:44578 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727471AbgBHTjf (ORCPT
+        id S1727524AbgBHT6r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Feb 2020 14:58:47 -0500
+Received: from sender4-of-o58.zoho.com ([136.143.188.58]:21899 "EHLO
+        sender4-of-o58.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727471AbgBHT6r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Feb 2020 14:39:35 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 8F8EC8EE07B;
-        Sat,  8 Feb 2020 11:39:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1581190774;
-        bh=jKK0QTtjZCZO5mlfdM04hkHTfc78SwOLsTEq3kqfgiE=;
-        h=Subject:From:To:Cc:Date:From;
-        b=CC/EzITliRqvuhQsFnB5HcncxwC5Zg4ODfkbqYVa17xb8WpyEzALxT1fHVFqel8du
-         6FzBOlX5WU+mpnlcvU7L8JCU7AtK0bwvdb1VxVO2fbYF69hd91cOC/B6Do7J1L+pbB
-         5aQI44tmDJxYrPNcyBj2zRy/aRbiQfx0jOsRC2b0=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id gbZUqiU6eH4C; Sat,  8 Feb 2020 11:39:34 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.76.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 24ED28EE079;
-        Sat,  8 Feb 2020 11:39:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1581190774;
-        bh=jKK0QTtjZCZO5mlfdM04hkHTfc78SwOLsTEq3kqfgiE=;
-        h=Subject:From:To:Cc:Date:From;
-        b=CC/EzITliRqvuhQsFnB5HcncxwC5Zg4ODfkbqYVa17xb8WpyEzALxT1fHVFqel8du
-         6FzBOlX5WU+mpnlcvU7L8JCU7AtK0bwvdb1VxVO2fbYF69hd91cOC/B6Do7J1L+pbB
-         5aQI44tmDJxYrPNcyBj2zRy/aRbiQfx0jOsRC2b0=
-Message-ID: <1581190772.31918.4.camel@HansenPartnership.com>
-Subject: [GIT PULL] final round of SCSI updates for the 5.5+ merge window
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Sat, 08 Feb 2020 11:39:32 -0800
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 8 Feb 2020 14:58:47 -0500
+X-Greylist: delayed 902 seconds by postgrey-1.27 at vger.kernel.org; Sat, 08 Feb 2020 14:58:46 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1581191015;
+        s=s; d=qubes-os.org; i=frederic.pierret@qubes-os.org;
+        h=From:Subject:To:Message-ID:Date:MIME-Version:Content-Type;
+        bh=4UMIRX/WyO4WPJxy81RyadUUcsnUGWlHOmbQ6Au+Adw=;
+        b=aho9vRRvhnk2FpRErf38+/MEObzvwxaTurt+edbLy96tJbcgb/3dPKq74mB3lI5j
+        QEepVG9fLYkVEltOPuE6wxCNAGPMZXkXolO5Ysv3mQCxggkZTUoaZcxkXI3Elnc5tn3
+        AtDFkEXGsEDgpMgK8PUbchHwTyVHWq9Q7HAa2drk=
+Received: from [10.137.0.45] (82.102.18.6 [82.102.18.6]) by mx.zohomail.com
+        with SMTPS id 1581191012557842.0701714079564; Sat, 8 Feb 2020 11:43:32 -0800 (PST)
+From:   =?UTF-8?B?RnLDqWTDqXJpYyBQaWVycmV0?= 
+        <frederic.pierret@qubes-os.org>
+Subject: [PATCH] nv50_disp_chan_mthd: ensure mthd is not NULL
+To:     bskeggs@redhat.com, airlied@linux.ie, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <dac89843-5258-5bed-ee86-7038e94e56da@qubes-os.org>
+Date:   Sat, 8 Feb 2020 20:43:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="B4yCyaNyqdN68C01OPt6rR5nIf1KF21jl"
+X-Zoho-Virus-Status: 1
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Five small patches, all in drivers or doc, which missed the initial
-pull request. The qla2xxx and megaraid_sas are actual fixes and the
-rest are spelling and doc changes.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--B4yCyaNyqdN68C01OPt6rR5nIf1KF21jl
+Content-Type: multipart/mixed; boundary="TIhELMerY5yoVKYrPM88CXOKjlxsWwbcW"
 
-The patch is available here:
+--TIhELMerY5yoVKYrPM88CXOKjlxsWwbcW
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-misc
+Pointer to structure array is assumed not NULL by default. It has
+the consequence to raise a kernel panic when it's not the case.
 
-The short changelog is:
+Basically, running at least a RTX2080TI on Xen makes a bad mmio error
+which causes having 'mthd' pointer to be NULL in 'channv50.c'. From the
+code, it's assumed to be not NULL by accessing directly 'mthd->data[0]'
+which is the reason of the kernel panic. Simply check if the pointer
+is not NULL before continuing.
 
-Arun Easi (1):
-      scsi: qla2xxx: Fix unbound NVME response length
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=3D206299
+Cc: stable@vger.kernel.org
+Signed-off-by: Fr=C3=A9d=C3=A9ric Pierret (fepitre) <frederic.pierret@qub=
+es-os.org>
+---
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Bean Huo (1):
-      scsi: MAINTAINERS: ufs: remove pedrom.sousa@synopsys.com
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c b/driver=
+s/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+index bcf32d92ee5a..50e3539f33d2 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+@@ -74,6 +74,8 @@ nv50_disp_chan_mthd(struct nv50_disp_chan *chan, int de=
+bug)
+=20
+ 	if (debug > subdev->debug)
+ 		return;
++	if (!mthd)
++		return;
+=20
+ 	for (i =3D 0; (list =3D mthd->data[i].mthd) !=3D NULL; i++) {
+ 		u32 base =3D chan->head * mthd->addr;
+--=20
+2.21.0
 
-Colin Ian King (2):
-      scsi: ufs: fix spelling mistake "initilized" -> "initialized"
-      scsi: pm80xx: fix spelling mistake "to" -> "too"
-
-Hannes Reinecke (1):
-      scsi: megaraid_sas: fixup MSIx interrupt setup during resume
 
 
-And the diffstat:
+--TIhELMerY5yoVKYrPM88CXOKjlxsWwbcW--
 
- MAINTAINERS                               |  1 -
- drivers/scsi/megaraid/megaraid_sas_base.c | 20 +++++++++-----------
- drivers/scsi/pm8001/pm80xx_hwi.c          |  2 +-
- drivers/scsi/qla2xxx/qla_dbg.c            |  6 ------
- drivers/scsi/qla2xxx/qla_dbg.h            |  6 ++++++
- drivers/scsi/qla2xxx/qla_isr.c            | 12 ++++++++++++
- drivers/scsi/ufs/ufs.h                    |  2 +-
- 7 files changed, 29 insertions(+), 20 deletions(-)
+--B4yCyaNyqdN68C01OPt6rR5nIf1KF21jl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-James
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAEBCAAdFiEEn6ZLkvlecGvyjiymSEAQtc3FduIFAl4/D18ACgkQSEAQtc3F
+duIJFhAAzN4V0d2b9UNZOSl5OOGjbUHnimbJA3Y51i+r3r+rEInrItxwl2c8asfm
+mHaq3BdBfcGVrb0rkFssztpze7mtt+UBBvmDYSGGHrStyGEpeoZJ659PI0EmZr/U
+PwRHspPkOwb5N2DSDZJ83j/O/lZE3x61YFOAum11JW6xOJOT7lTLlzO/NYosktnj
+VNM/WAbUt5muS3ZZAlPCpaX8vMS3oFG7ssPCYtq56w9BaaOZuWiAA41vtCAc79Sm
+pE6BjWEmcD22tBF19/V0wnbENXfv2AKgw2X1VIChjXDYW0+Rd7DVOMiNnRU+9brD
+3pyyKppbrakHy6u9S7762NDCJvtLDL2dkYaN/VdtKw41jwTCRg0O/IG16jjRT/Z2
+OZRPWBo1wibMsgXB6LfAvE6Y/GDS6N0imGsJgq/mZe6j7wexDTLwLu5GCLWUDFP3
+RvBpHBx5w17KCMQ0pYnFkLdZTc7gkqhqdI5FeDK4QBbNTi8tKvmSNzs7/ZWLaUI9
+vGqteuMnmrs8+mMZxrfIk7oijIFNKnv3JJIM2Hbovfx9e7haKuIZ7M5LqEC3fNuY
+4d9BCj4xnF0S5UFM+VP0lGB5PoMXnTuwHzsIjBqDErpsFH3J69Inh/7+hVECbs2U
+Yg3Ui9xyK9AEEFw83u9BXS90ZlvwIFWKJvgenDQs9zarslW0vQE=
+=8SIN
+-----END PGP SIGNATURE-----
+
+--B4yCyaNyqdN68C01OPt6rR5nIf1KF21jl--
