@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4065015660D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 19:31:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5303B1565FC
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 19:30:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728308AbgBHSb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Feb 2020 13:31:29 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34826 "EHLO
+        id S1728275AbgBHSar (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Feb 2020 13:30:47 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35118 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727977AbgBHS3u (ORCPT
+        by vger.kernel.org with ESMTP id S1728033AbgBHSaD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Feb 2020 13:29:50 -0500
+        Sat, 8 Feb 2020 13:30:03 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1j0UrK-0003fa-1j; Sat, 08 Feb 2020 18:29:38 +0000
+        id 1j0UrK-0003fe-1g; Sat, 08 Feb 2020 18:29:38 +0000
 Received: from ben by deadeye with local (Exim 4.93)
         (envelope-from <ben@decadent.org.uk>)
-        id 1j0UrJ-000CRA-8Z; Sat, 08 Feb 2020 18:29:37 +0000
+        id 1j0UrJ-000CRH-D2; Sat, 08 Feb 2020 18:29:37 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,16 +27,27 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Yang Tao" <yang.tao172@zte.com.cn>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Ingo Molnar" <mingo@kernel.org>,
+        "Ingo Molnar" <mingo@redhat.com>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        "Borislav Petkov" <bp@suse.de>, "x86-ml" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Tyler Hicks" <tyhicks@canonical.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Jiri Kosina" <jkosina@suse.cz>,
         "Thomas Gleixner" <tglx@linutronix.de>,
-        "Yi Wang" <wang.yi59@zte.com.cn>
-Date:   Sat, 08 Feb 2020 18:20:35 +0000
-Message-ID: <lsq.1581185940.296689092@decadent.org.uk>
+        "Tim Chen" <tim.c.chen@linux.intel.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Tony Luck" <tony.luck@intel.com>,
+        "Mark Gross" <mgross@linux.intel.com>, linux-doc@vger.kernel.org,
+        "Jonathan Corbet" <corbet@lwn.net>,
+        "Pawan Gupta" <pawan.kumar.gupta@linux.intel.com>,
+        "Waiman Long" <longman@redhat.com>
+Date:   Sat, 08 Feb 2020 18:20:36 +0000
+Message-ID: <lsq.1581185940.817819654@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 096/148] futex: Prevent robust futex exit race
+Subject: [PATCH 3.16 097/148] x86/speculation: Fix incorrect MDS/TAA
+ mitigation status
 In-Reply-To: <lsq.1581185939.857586636@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -50,268 +61,152 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yang Tao <yang.tao172@zte.com.cn>
+From: Waiman Long <longman@redhat.com>
 
-commit ca16d5bee59807bf04deaab0a8eccecd5061528c upstream.
+commit 64870ed1b12e235cfca3f6c6da75b542c973ff78 upstream.
 
-Robust futexes utilize the robust_list mechanism to allow the kernel to
-release futexes which are held when a task exits. The exit can be voluntary
-or caused by a signal or fault. This prevents that waiters block forever.
+For MDS vulnerable processors with TSX support, enabling either MDS or
+TAA mitigations will enable the use of VERW to flush internal processor
+buffers at the right code path. IOW, they are either both mitigated
+or both not. However, if the command line options are inconsistent,
+the vulnerabilites sysfs files may not report the mitigation status
+correctly.
 
-The futex operations in user space store a pointer to the futex they are
-either locking or unlocking in the op_pending member of the per task robust
-list.
+For example, with only the "mds=off" option:
 
-After a lock operation has succeeded the futex is queued in the robust list
-linked list and the op_pending pointer is cleared.
+  vulnerabilities/mds:Vulnerable; SMT vulnerable
+  vulnerabilities/tsx_async_abort:Mitigation: Clear CPU buffers; SMT vulnerable
 
-After an unlock operation has succeeded the futex is removed from the
-robust list linked list and the op_pending pointer is cleared.
+The mds vulnerabilities file has wrong status in this case. Similarly,
+the taa vulnerability file will be wrong with mds mitigation on, but
+taa off.
 
-The robust list exit code checks for the pending operation and any futex
-which is queued in the linked list. It carefully checks whether the futex
-value is the TID of the exiting task. If so, it sets the OWNER_DIED bit and
-tries to wake up a potential waiter.
+Change taa_select_mitigation() to sync up the two mitigation status
+and have them turned off if both "mds=off" and "tsx_async_abort=off"
+are present.
 
-This is race free for the lock operation but unlock has two race scenarios
-where waiters might not be woken up. These issues can be observed with
-regular robust pthread mutexes. PI aware pthread mutexes are not affected.
+Update documentation to emphasize the fact that both "mds=off" and
+"tsx_async_abort=off" have to be specified together for processors that
+are affected by both TAA and MDS to be effective.
 
-(1) Unlocking task is killed after unlocking the futex value in user space
-    before being able to wake a waiter.
+ [ bp: Massage and add kernel-parameters.txt change too. ]
 
-        pthread_mutex_unlock()
-                |
-                V
-        atomic_exchange_rel (&mutex->__data.__lock, 0)
-                        <------------------------killed
-            lll_futex_wake ()                   |
-                                                |
-                                                |(__lock = 0)
-                                                |(enter kernel)
-                                                |
-                                                V
-                                            do_exit()
-                                            exit_mm()
-                                          mm_release()
-                                        exit_robust_list()
-                                        handle_futex_death()
-                                                |
-                                                |(__lock = 0)
-                                                |(uval = 0)
-                                                |
-                                                V
-        if ((uval & FUTEX_TID_MASK) != task_pid_vnr(curr))
-                return 0;
-
-    The sanity check which ensures that the user space futex is owned by
-    the exiting task prevents the wakeup of waiters which in consequence
-    block infinitely.
-
-(2) Waiting task is killed after a wakeup and before it can acquire the
-    futex in user space.
-
-        OWNER                         WAITER
-				futex_wait()
-   pthread_mutex_unlock()               |
-                |                       |
-                |(__lock = 0)           |
-                |                       |
-                V                       |
-         futex_wake() ------------>  wakeup()
-                                        |
-                                        |(return to userspace)
-                                        |(__lock = 0)
-                                        |
-                                        V
-                        oldval = mutex->__data.__lock
-                                          <-----------------killed
-    atomic_compare_and_exchange_val_acq (&mutex->__data.__lock,  |
-                        id | assume_other_futex_waiters, 0)      |
-                                                                 |
-                                                                 |
-                                                   (enter kernel)|
-                                                                 |
-                                                                 V
-                                                         do_exit()
-                                                        |
-                                                        |
-                                                        V
-                                        handle_futex_death()
-                                        |
-                                        |(__lock = 0)
-                                        |(uval = 0)
-                                        |
-                                        V
-        if ((uval & FUTEX_TID_MASK) != task_pid_vnr(curr))
-                return 0;
-
-    The sanity check which ensures that the user space futex is owned
-    by the exiting task prevents the wakeup of waiters, which seems to
-    be correct as the exiting task does not own the futex value, but
-    the consequence is that other waiters wont be woken up and block
-    infinitely.
-
-In both scenarios the following conditions are true:
-
-   - task->robust_list->list_op_pending != NULL
-   - user space futex value == 0
-   - Regular futex (not PI)
-
-If these conditions are met then it is reasonably safe to wake up a
-potential waiter in order to prevent the above problems.
-
-As this might be a false positive it can cause spurious wakeups, but the
-waiter side has to handle other types of unrelated wakeups, e.g. signals
-gracefully anyway. So such a spurious wakeup will not affect the
-correctness of these operations.
-
-This workaround must not touch the user space futex value and cannot set
-the OWNER_DIED bit because the lock value is 0, i.e. uncontended. Setting
-OWNER_DIED in this case would result in inconsistent state and subsequently
-in malfunction of the owner died handling in user space.
-
-The rest of the user space state is still consistent as no other task can
-observe the list_op_pending entry in the exiting tasks robust list.
-
-The eventually woken up waiter will observe the uncontended lock value and
-take it over.
-
-[ tglx: Massaged changelog and comment. Made the return explicit and not
-  	depend on the subsequent check and added constants to hand into
-  	handle_futex_death() instead of plain numbers. Fixed a few coding
-	style issues. ]
-
-Fixes: 0771dfefc9e5 ("[PATCH] lightweight robust futexes: core")
-Signed-off-by: Yang Tao <yang.tao172@zte.com.cn>
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/1573010582-35297-1-git-send-email-wang.yi59@zte.com.cn
-Link: https://lkml.kernel.org/r/20191106224555.943191378@linutronix.de
-[bwh: Backported to 3.16: Implementation is split between futex.c and
- futex_compat.c, with common definitions in <linux/futex.h>]
+Fixes: 1b42f017415b ("x86/speculation/taa: Add mitigation for TSX Async Abort")
+Signed-off-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: linux-doc@vger.kernel.org
+Cc: Mark Gross <mgross@linux.intel.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Tyler Hicks <tyhicks@canonical.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20191115161445.30809-2-longman@redhat.com
+[bwh: Backported to 3.16: adjust filenames]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -2905,7 +2905,8 @@ err_unlock:
-  * Process a futex-list entry, check whether it's owned by the
-  * dying task, and do notification if so:
-  */
--int handle_futex_death(u32 __user *uaddr, struct task_struct *curr, int pi)
-+int handle_futex_death(u32 __user *uaddr, struct task_struct *curr,
-+		       bool pi, bool pending_op)
- {
- 	u32 uval, uninitialized_var(nval), mval;
+ Documentation/hw-vuln/mds.rst             |  7 +++++--
+ Documentation/hw-vuln/tsx_async_abort.rst |  5 ++++-
+ Documentation/kernel-parameters.txt       | 11 +++++++++++
+ arch/x86/kernel/cpu/bugs.c                | 17 +++++++++++++++--
+ 4 files changed, 35 insertions(+), 5 deletions(-)
+
+--- a/Documentation/hw-vuln/mds.rst
++++ b/Documentation/hw-vuln/mds.rst
+@@ -262,8 +262,11 @@ time with the option "mds=". The valid a
  
-@@ -2917,6 +2918,42 @@ retry:
- 	if (get_user(uval, uaddr))
- 		return -1;
+   ============  =============================================================
+ 
+-Not specifying this option is equivalent to "mds=full".
+-
++Not specifying this option is equivalent to "mds=full". For processors
++that are affected by both TAA (TSX Asynchronous Abort) and MDS,
++specifying just "mds=off" without an accompanying "tsx_async_abort=off"
++will have no effect as the same mitigation is used for both
++vulnerabilities.
+ 
+ Mitigation selection guide
+ --------------------------
+--- a/Documentation/hw-vuln/tsx_async_abort.rst
++++ b/Documentation/hw-vuln/tsx_async_abort.rst
+@@ -169,7 +169,10 @@ the option "tsx_async_abort=". The valid
+                 systems will have no effect.
+   ============  =============================================================
+ 
+-Not specifying this option is equivalent to "tsx_async_abort=full".
++Not specifying this option is equivalent to "tsx_async_abort=full". For
++processors that are affected by both TAA and MDS, specifying just
++"tsx_async_abort=off" without an accompanying "mds=off" will have no
++effect as the same mitigation is used for both vulnerabilities.
+ 
+ The kernel command line also allows to control the TSX feature using the
+ parameter "tsx=" on CPUs which support TSX control. MSR_IA32_TSX_CTRL is used
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -1793,6 +1793,12 @@ bytes respectively. Such letter suffixes
+ 			full    - Enable MDS mitigation on vulnerable CPUs
+ 			off     - Unconditionally disable MDS mitigation
+ 
++			On TAA-affected machines, mds=off can be prevented by
++			an active TAA mitigation as both vulnerabilities are
++			mitigated with the same mechanism so in order to disable
++			this mitigation, you need to specify tsx_async_abort=off
++			too.
++
+ 			Not specifying this option is equivalent to
+ 			mds=full.
+ 
+@@ -3634,6 +3640,11 @@ bytes respectively. Such letter suffixes
+ 
+ 			off        - Unconditionally disable TAA mitigation
+ 
++			On MDS-affected machines, tsx_async_abort=off can be
++			prevented by an active MDS mitigation as both vulnerabilities
++			are mitigated with the same mechanism so in order to disable
++			this mitigation, you need to specify mds=off too.
++
+ 			Not specifying this option is equivalent to
+ 			tsx_async_abort=full.  On CPUs which are MDS affected
+ 			and deploy MDS mitigation, TAA mitigation is not
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -349,8 +349,12 @@ static void __init taa_select_mitigation
+ 		return;
+ 	}
+ 
+-	/* TAA mitigation is turned off on the cmdline (tsx_async_abort=off) */
+-	if (taa_mitigation == TAA_MITIGATION_OFF)
++	/*
++	 * TAA mitigation via VERW is turned off if both
++	 * tsx_async_abort=off and mds=off are specified.
++	 */
++	if (taa_mitigation == TAA_MITIGATION_OFF &&
++	    mds_mitigation == MDS_MITIGATION_OFF)
+ 		goto out;
+ 
+ 	if (boot_cpu_has(X86_FEATURE_MD_CLEAR))
+@@ -381,6 +385,15 @@ static void __init taa_select_mitigation
+ 	 */
+ 	static_branch_enable(&mds_user_clear);
  
 +	/*
-+	 * Special case for regular (non PI) futexes. The unlock path in
-+	 * user space has two race scenarios:
-+	 *
-+	 * 1. The unlock path releases the user space futex value and
-+	 *    before it can execute the futex() syscall to wake up
-+	 *    waiters it is killed.
-+	 *
-+	 * 2. A woken up waiter is killed before it can acquire the
-+	 *    futex in user space.
-+	 *
-+	 * In both cases the TID validation below prevents a wakeup of
-+	 * potential waiters which can cause these waiters to block
-+	 * forever.
-+	 *
-+	 * In both cases the following conditions are met:
-+	 *
-+	 *	1) task->robust_list->list_op_pending != NULL
-+	 *	   @pending_op == true
-+	 *	2) User space futex value == 0
-+	 *	3) Regular futex: @pi == false
-+	 *
-+	 * If these conditions are met, it is safe to attempt waking up a
-+	 * potential waiter without touching the user space futex value and
-+	 * trying to set the OWNER_DIED bit. The user space futex value is
-+	 * uncontended and the rest of the user space mutex state is
-+	 * consistent, so a woken waiter will just take over the
-+	 * uncontended futex. Setting the OWNER_DIED bit would create
-+	 * inconsistent state and malfunction of the user space owner died
-+	 * handling.
++	 * Update MDS mitigation, if necessary, as the mds_user_clear is
++	 * now enabled for TAA mitigation.
 +	 */
-+	if (pending_op && !pi && !uval) {
-+		futex_wake(uaddr, 1, 1, FUTEX_BITSET_MATCH_ANY);
-+		return 0;
++	if (mds_mitigation == MDS_MITIGATION_OFF &&
++	    boot_cpu_has_bug(X86_BUG_MDS)) {
++		mds_mitigation = MDS_MITIGATION_FULL;
++		mds_select_mitigation();
 +	}
-+
- 	if ((uval & FUTEX_TID_MASK) == task_pid_vnr(curr)) {
- 		/*
- 		 * Ok, this dying thread is truly holding a futex
-@@ -3021,10 +3058,11 @@ void exit_robust_list(struct task_struct
- 		 * A pending lock might already be on the list, so
- 		 * don't process it twice:
- 		 */
--		if (entry != pending)
-+		if (entry != pending) {
- 			if (handle_futex_death((void __user *)entry + futex_offset,
--						curr, pi))
-+						curr, pi, HANDLE_DEATH_LIST))
- 				return;
-+		}
- 		if (rc)
- 			return;
- 		entry = next_entry;
-@@ -3038,9 +3076,10 @@ void exit_robust_list(struct task_struct
- 		cond_resched();
- 	}
- 
--	if (pending)
-+	if (pending) {
- 		handle_futex_death((void __user *)pending + futex_offset,
--				   curr, pip);
-+				   curr, pip, HANDLE_DEATH_PENDING);
-+	}
+ out:
+ 	pr_info("%s\n", taa_strings[taa_mitigation]);
  }
- 
- long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
---- a/kernel/futex_compat.c
-+++ b/kernel/futex_compat.c
-@@ -94,7 +94,8 @@ void compat_exit_robust_list(struct task
- 		if (entry != pending) {
- 			void __user *uaddr = futex_uaddr(entry, futex_offset);
- 
--			if (handle_futex_death(uaddr, curr, pi))
-+			if (handle_futex_death(uaddr, curr, pi,
-+					       HANDLE_DEATH_LIST))
- 				return;
- 		}
- 		if (rc)
-@@ -113,7 +114,7 @@ void compat_exit_robust_list(struct task
- 	if (pending) {
- 		void __user *uaddr = futex_uaddr(pending, futex_offset);
- 
--		handle_futex_death(uaddr, curr, pip);
-+		handle_futex_death(uaddr, curr, pip, HANDLE_DEATH_PENDING);
- 	}
- }
- 
---- a/include/linux/futex.h
-+++ b/include/linux/futex.h
-@@ -11,8 +11,13 @@ union ktime;
- long do_futex(u32 __user *uaddr, int op, u32 val, union ktime *timeout,
- 	      u32 __user *uaddr2, u32 val2, u32 val3);
- 
-+/* Constants for the pending_op argument of handle_futex_death */
-+#define HANDLE_DEATH_PENDING	true
-+#define HANDLE_DEATH_LIST	false
-+
- extern int
--handle_futex_death(u32 __user *uaddr, struct task_struct *curr, int pi);
-+handle_futex_death(u32 __user *uaddr, struct task_struct *curr,
-+		   bool pi, bool pending_op);
- 
- /*
-  * Futexes are matched on equal values of this key.
 
