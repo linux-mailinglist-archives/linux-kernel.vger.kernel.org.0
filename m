@@ -2,110 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B7E215621A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 01:51:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D381156222
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 01:53:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727584AbgBHAvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 19:51:15 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:14216 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727309AbgBHAvM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 19:51:12 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1581123071; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=i0UPuEk6K/s4FZ/ntBE5LFbUEQNQedXOFXrUR/093vk=; b=A3RLFKBYvZBd75pSmny4qddqJqEcPgHVd9CPxpEJuBw1unWhILrg8ODzUFPUyUAlgEuTzYi0
- cpzeEcZHXV0Is8mYT1TeKc5Jf9+tjYkk/hCNWW++y8z1wDIVPSBo4eckUwbB+KZ/qy18t4qT
- kTzjDfCzlSTK/RJLTYaDIOuxE/k=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e3e05ff.7f4e4b528df8-smtp-out-n02;
- Sat, 08 Feb 2020 00:51:11 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id B4723C447B2; Sat,  8 Feb 2020 00:51:09 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1727130AbgBHAxa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 19:53:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33416 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726995AbgBHAx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 19:53:29 -0500
+Received: from oasis.local.home (unknown [12.174.139.122])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5D22AC4479C;
-        Sat,  8 Feb 2020 00:51:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5D22AC4479C
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
-From:   Can Guo <cang@codeaurora.org>
-To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        hongwus@codeaurora.org, rnayak@codeaurora.org,
-        linux-scsi@vger.kernel.org, kernel-team@android.com,
-        saravanak@google.com, salyzyn@google.com, cang@codeaurora.org
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 7/7] scsi: ufs-qcom: Delay specific time before gate ref clk
-Date:   Fri,  7 Feb 2020 16:50:29 -0800
-Message-Id: <1581123030-12023-8-git-send-email-cang@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1581123030-12023-1-git-send-email-cang@codeaurora.org>
-References: <1581123030-12023-1-git-send-email-cang@codeaurora.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id E9750206CC;
+        Sat,  8 Feb 2020 00:53:27 +0000 (UTC)
+Date:   Fri, 7 Feb 2020 19:53:26 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Mark Salyzyn <salyzyn@android.com>, linux-kernel@vger.kernel.org,
+        kernel-team@android.com, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Potapenko <glider@google.com>
+Subject: Re: [PATCH] random: add rng-seed= command line option
+Message-ID: <20200207195326.0344ef82@oasis.local.home>
+In-Reply-To: <20200208004922.GE122530@mit.edu>
+References: <20200207150809.19329-1-salyzyn@android.com>
+        <20200207155828.GB122530@mit.edu>
+        <d35bacd4-ba3f-335d-85c4-57e87abd8e9a@android.com>
+        <20200208004922.GE122530@mit.edu>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After enter hibern8, as UFS JEDEC ver 3.0 requires, a specific gating wait
-time is required before disable the device reference clock. If it is not
-specified, use the old delay.
+On Fri, 7 Feb 2020 19:49:22 -0500
+"Theodore Y. Ts'o" <tytso@mit.edu> wrote:
 
-Signed-off-by: Can Guo <cang@codeaurora.org>
-Reviewed-by: Asutosh Das <asutoshd@codeaurora.org>
-Reviewed-by: Hongwu Su <hongwus@codeaurora.org>
 
-diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-index 85d7c17..db14a83 100644
---- a/drivers/scsi/ufs/ufs-qcom.c
-+++ b/drivers/scsi/ufs/ufs-qcom.c
-@@ -845,11 +845,27 @@ static void ufs_qcom_dev_ref_clk_ctrl(struct ufs_qcom_host *host, bool enable)
- 		/*
- 		 * If we are here to disable this clock it might be immediately
- 		 * after entering into hibern8 in which case we need to make
--		 * sure that device ref_clk is active at least 1us after the
-+		 * sure that device ref_clk is active for specific time after
- 		 * hibern8 enter.
- 		 */
--		if (!enable)
--			udelay(1);
-+		if (!enable) {
-+			unsigned long gating_wait;
-+
-+			gating_wait = host->hba->dev_info.clk_gating_wait_us;
-+			if (!gating_wait) {
-+				udelay(1);
-+			} else {
-+				/*
-+				 * bRefClkGatingWaitTime defines the minimum
-+				 * time for which the reference clock is
-+				 * required by device during transition from
-+				 * HS-MODE to LS-MODE or HIBERN8 state. Give it
-+				 * more delay to be on the safe side.
-+				 */
-+				gating_wait += 10;
-+				usleep_range(gating_wait, gating_wait + 10);
-+			}
-+		}
- 
- 		writel_relaxed(temp, host->dev_ref_clk_ctrl_mmio);
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> My preference would be to pass in the random seed *not* on the
+> command-line at all, but as a separate parameter which is passed to
+> the bootloader, just as we pass in the device-tree, the initrd and the
+> command-line as separate things.  The problem is that how we pass in
+> extra boot parameters is architecture specific, and how we might do it
+> for x86 is different than for arm64.  So yeah, it's a bit more
+> inconvenient to do things that way; but I think it's also much
+> cleaner.
+
+Hmm, if the boot loader could add on to the bootconfig that Masami just
+added, then it could add some "random" seed for each boot! The
+bootconfig is just an appended file at the end of the initrd.
+
+-- Steve
