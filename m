@@ -2,94 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 849E915624E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 02:35:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABEC1156259
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 02:36:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbgBHBfQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 20:35:16 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39275 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727144AbgBHBfQ (ORCPT
+        id S1727514AbgBHBgA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 20:36:00 -0500
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:33922 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726743AbgBHBf6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 20:35:16 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 77so1151201oty.6
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 17:35:14 -0800 (PST)
+        Fri, 7 Feb 2020 20:35:58 -0500
+Received: by mail-pg1-f202.google.com with SMTP id w5so807928pgw.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Feb 2020 17:35:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=f1JfsNRiU9CPiPWIvBjcsKVKQf1l0VHF1PLTYDvT8K8=;
-        b=BYndojLbxOFUmIRGToqRX3e3jZw7MBZ88OtnLC1tK32Pk484w7hVn8Z7ZPT7V2z8PO
-         QBLHN27wW1P6MvJ02SHJs7vfNc/ZdpKqY/8j7tHezjUZVZFCBaSNnZORaeICC9hKWJ3R
-         b+U91RwNbruPB7rMbnnvAK+rFY5bbc5AoBdcLw/gkwNzAdHpP1FXQ6tyMsvMZVa1kKJJ
-         fdV1rcBaOAGpnhg4fU8QcWdMlVtC8aIsBijZm4nSGr+sfsd9UWt7pLCTXOnIEGU3svFe
-         GjVCWouqyXbLDnkk5iHXwID0DOrutOFY3lvKtytH04t9OvROjmCe6Osg/M4ZrRHrYzEz
-         sSYA==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=GmdJt27134kNRYXiKp4wrB+O4TXMZQXM52BZBGOfEtM=;
+        b=NEywg0M14MnLDWsKOucPQs1roEACrJM00yn5kNJb9zMFZHTZqInTtQiy8IBGz9p2Hj
+         S2N+jRLMGwbFKmZnn0koP7Tcjk3PRRe25bAoZCO6ZvkOdazou5mlWmZGxidYIkcSGuOg
+         Nc74v+ubh+mtZLefCCwVuXd9BDeFc8qAxw99sNFE3K2Kpg4BaE72oOWDN6XOg4MbOAr3
+         dE6k/7AgKUChxUQkZAzZOa2U+EcNbV65+xrCtvviZzWWuHM3cy3/YjezlVDdUeYdz/l0
+         cT1t9iCftO1kkoHUVh9CSB9TUY9yRGjwmslRWvlUSeA23a9y0cc6gFqjzMT4jbC4J+6s
+         Ch8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=f1JfsNRiU9CPiPWIvBjcsKVKQf1l0VHF1PLTYDvT8K8=;
-        b=fizKupxWS/26vT6oQ89JoSvHlpzjcsgcX8Gr9osHy38yAKlHfTS65wTctl2sXDRnNk
-         s9eG4f9pN5Gdi/1tMbfczAY3WIiautGsQoNX5ur5iFhbmx1TM1qoidYF6Re8LkQ1vwSy
-         QviY4iMIBM/bK+mYByC9fL8TuzUKnVWSKxDq5ynwy+RIe+MWagrfX3SnrJ5AH9uA1ob6
-         9R1bEVb9UtPGbFqFLP/7J6DDigVmsri0N1Mclf6DwUIO7jtVugTI+AxQ5o1euXBxZmzd
-         a4pspeD2yZR7RAktlEnROsRUwNyGZJnkGi6EcbQxurLSyPpGSaZvkJ5tR8pMWVRHzqyt
-         kIXQ==
-X-Gm-Message-State: APjAAAVBvPjtEUh1f2Cc8iZeIdoBklSDgO9E7RHh3Oe0VCGulfA/VgSc
-        6YlH4cXfbjfDZxVE38F6JH/MRjMCcwu/h/j6nVc=
-X-Google-Smtp-Source: APXvYqzXuGlhxtlp0Kxlov00ng7Vq+eiima5n9xdWFsY3i2yAkGuu4L4c+QSMcFynqfPBk63m5CWgphYD6I3Ydr5lXc=
-X-Received: by 2002:a9d:6653:: with SMTP id q19mr1775029otm.94.1581125713883;
- Fri, 07 Feb 2020 17:35:13 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a05:6838:a3c5:0:0:0:0 with HTTP; Fri, 7 Feb 2020 17:35:12
- -0800 (PST)
-Reply-To: sulembello879@gmail.com
-From:   Mr Suleman Bello <imf.fblservice@gmail.com>
-Date:   Fri, 7 Feb 2020 17:35:12 -0800
-Message-ID: <CA+sLMM+MnppiJWZPOgodhLziRrAJss=eUgWzjYozX=TzJ=fjYA@mail.gmail.com>
-Subject: CAN I TRUST YOU?
-To:     undisclosed-recipients:;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=GmdJt27134kNRYXiKp4wrB+O4TXMZQXM52BZBGOfEtM=;
+        b=jf2Vx69P7S9sJpfWtxs3gGpUKg1spEi7E2yrjQAds1s1mhjXQr8h7hhc6e2V74M1tZ
+         rQfZWPkS/5Za049+1ZPo/lwFsW07TK4QqubTPCpCvHUUZ/jNe/24aQOqEBmifNDTgBR/
+         V/1kzTohGrQOYQsSK8PbseKkRN3tj+s+3nuHqgTJnNiwArCeM5dK3TMfAlszNe/RGgLE
+         6aFtusikKNmNJBwz4ZitG+G2ef61U9qKT0vYf1zt7JPwOurKdn9vmOroQsK2tJZ8OwGF
+         AcvaPHZ0uZdlzZ8FrM5EqADMx4xSch9tnDqDm7W9rSlgd3nYzrdLBvrLWiJoO4WL56C3
+         7CkA==
+X-Gm-Message-State: APjAAAWy/9TU/gmmgV1gFibP3OrHOBkag7JythqsXmvRrW+j2eQMmYOd
+        LLBTN2lWP99T9akM8pR6odHRckAuCg0=
+X-Google-Smtp-Source: APXvYqzX2zjDvOsycNvWYLOgK+VBNHyLR+WR4NBkkN5UhCL4Cx9+zC71iQcfsB2K3n5Ocuz6cv+mlKk8NrQ=
+X-Received: by 2002:a63:211f:: with SMTP id h31mr1939792pgh.299.1581125756217;
+ Fri, 07 Feb 2020 17:35:56 -0800 (PST)
+Date:   Fri,  7 Feb 2020 17:35:44 -0800
+Message-Id: <20200208013552.241832-1-drosen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+Subject: [PATCH v7 0/8] Support fof Casefolding and Encryption
+From:   Daniel Rosenberg <drosen@google.com>
+To:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Richard Weinberger <richard@nod.at>
+Cc:     linux-mtd@lists.infradead.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel-team@android.com, Daniel Rosenberg <drosen@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+These patches are all on top of torvalds/master
 
-Please i want you to read this letter very carefully and i must
-apologize for berging this message into your mail box without any
-formal introduction due to the urgency and confidential of this issue
-and i know that this message will come to you as a surprise, Please
-this is not a joke and i will not like you to joke with it.I am
-Mr.Suleman Bello, a staff in African Development Bank (A.D.B)
-Ouagadougou, Burkina faso West Africa.I discovered existing dormant
-account for years. When I discovered that there had been neither
-continuation nor withdrawals from this account for this long period
-and according to the laws and constitution guiding this banking
-institution, any unserviceable account for more than (7) seven years,
-that fund will be transferred to national treasury as unclaimed fund.
+Ext4 and F2FS currently both support casefolding and encryption, but not at
+the same time. These patches aim to rectify that.
 
-I Hoped that you will not expose or betray this trust and confident
-that i am about to extablish with you for the mutual benefit of you
-and i.I need your urgent assistance in transferring the sum of $10.5
-)million usd into your account within 7 banking days. This money has
-been dormant for years in our Bank, and The request of foreigner in
-this transaction is necessary because our late customer was a
-foreigner and a burkinabe cannot stand as next of kin to a
-foreigner.Because of the static of this transaction I want you to
-stand as the next of kin so that our bank will accord you the
-recognition and have the fund transferred to your account.
+I moved the identical casefolding dcache operations for ext4 and f2fs into
+fs/libfs.c, as all filesystems using casefolded names will want them.
 
-Upon your response, I shall then provide you with further information
-and more deities that will help you understand the transaction. I am
-expecting your urgent response to enable me inform you on how the
-business will be executed. Please I would like you to keep this
-transaction confidential and as a top secret or delete if you are not
-interested.
+I've also adjust fscrypt to not set it's d_revalidate operation during it's
+prepare lookup, instead having the calling filesystem set it up. This is
+done to that the filesystem may have it's own dentry_operations. Also added
+a helper function in libfs.c that will work for filesystems supporting both
+casefolding and fscrypt.
 
-Thanks
-Mr.Suleman Bello.
-N.B: PLEASE CONTACT ME THROUGH MY PRIVATE EMAIL
-( suleman_bello@yahoo.com ) SO WE CAN COMMENCE ALL ARRANGEMENTS AS
-SOON AS POSSIBLE.
+For Ext4, since the hash for encrypted casefolded directory names cannot be
+computed without the key, we need to store the hash on disk. We only do so
+for encrypted and casefolded directories to avoid on disk format changes.
+Previously encryption and casefolding could not be on the same filesystem,
+and we're relaxing that requirement. F2fs is a bit more straightforward
+since it already stores hashes on disk.
+
+I've updated the related tools with just enough to enable the feature. I
+still need to adjust ext4's fsck's, although without access to the keys,
+neither fsck will be able to verify the hashes of casefolded and encrypted
+names.
+
+v7 chances:
+Moved dentry operations from unicode to libfs, added new iterator function
+to unicode to allow this.
+Added libfs function for setting dentries to remove code duplication between
+ext4 and f2fs.
+
+v6 changes:
+Went back to using dentry_operations for casefolding. Provided standard
+implementations in fs/unicode, avoiding extra allocation in d_hash op.
+Moved fscrypt d_ops setting to be filesystem's responsibility to maintain
+compatibility with casefolding and overlayfs if casefolding is not used
+fixes some f2fs error handling
+
+v4-5: patches submitted on fscrypt
+
+v3 changes:
+fscrypt patch only creates hash key if it will be needed.
+Rebased on top of fscrypt branch, reconstified match functions in ext4/f2fs
+
+v2 changes:
+fscrypt moved to separate thread to rebase on fscrypt dev branch
+addressed feedback, plus some minor fixes
+
+
+Daniel Rosenberg (8):
+  unicode: Add utf8_casefold_iter
+  fs: Add standard casefolding support
+  f2fs: Use generic casefolding support
+  ext4: Use generic casefolding support
+  fscrypt: Have filesystems handle their d_ops
+  f2fs: Handle casefolding with Encryption
+  ext4: Hande casefolding with encryption
+  ext4: Optimize match for casefolded encrypted dirs
+
+ Documentation/filesystems/ext4/directory.rst |  27 ++
+ fs/crypto/fname.c                            |   7 +-
+ fs/crypto/fscrypt_private.h                  |   1 -
+ fs/crypto/hooks.c                            |   1 -
+ fs/ext4/dir.c                                |  78 +----
+ fs/ext4/ext4.h                               |  93 ++++--
+ fs/ext4/hash.c                               |  26 +-
+ fs/ext4/ialloc.c                             |   5 +-
+ fs/ext4/inline.c                             |  41 ++-
+ fs/ext4/namei.c                              | 325 ++++++++++++-------
+ fs/ext4/super.c                              |  21 +-
+ fs/f2fs/dir.c                                | 127 +++-----
+ fs/f2fs/f2fs.h                               |  15 +-
+ fs/f2fs/hash.c                               |  25 +-
+ fs/f2fs/inline.c                             |   9 +-
+ fs/f2fs/namei.c                              |   1 +
+ fs/f2fs/super.c                              |  17 +-
+ fs/f2fs/sysfs.c                              |  10 +-
+ fs/libfs.c                                   | 127 ++++++++
+ fs/ubifs/dir.c                               |  18 +
+ fs/unicode/utf8-core.c                       |  25 +-
+ include/linux/f2fs_fs.h                      |   3 -
+ include/linux/fs.h                           |  24 ++
+ include/linux/fscrypt.h                      |   6 +-
+ include/linux/unicode.h                      |  10 +
+ 25 files changed, 671 insertions(+), 371 deletions(-)
+
+-- 
+2.25.0.341.g760bfbb309-goog
+
