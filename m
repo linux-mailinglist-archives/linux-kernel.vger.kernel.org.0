@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D15EC1565DE
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 19:30:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FE151565E9
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 19:30:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbgBHS3s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Feb 2020 13:29:48 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33762 "EHLO
+        id S1728010AbgBHS34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Feb 2020 13:29:56 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33802 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727751AbgBHS3i (ORCPT
+        by vger.kernel.org with ESMTP id S1727766AbgBHS3j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Feb 2020 13:29:38 -0500
+        Sat, 8 Feb 2020 13:29:39 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1j0UrG-0003dG-Ih; Sat, 08 Feb 2020 18:29:34 +0000
+        id 1j0UrH-0003dP-80; Sat, 08 Feb 2020 18:29:35 +0000
 Received: from ben by deadeye with local (Exim 4.93)
         (envelope-from <ben@decadent.org.uk>)
-        id 1j0UrF-000CLV-Ud; Sat, 08 Feb 2020 18:29:33 +0000
+        id 1j0UrF-000CLe-WF; Sat, 08 Feb 2020 18:29:34 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Steffen Maier" <maier@linux.ibm.com>,
-        "Benjamin Block" <bblock@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Date:   Sat, 08 Feb 2020 18:19:37 +0000
-Message-ID: <lsq.1581185940.779304711@decadent.org.uk>
+        "Boris Brezillon" <boris.brezillon@collabora.com>,
+        "Russell King" <linux@armlinux.org.uk>,
+        "Russell King" <rmk+kernel@armlinux.org.uk>,
+        "Miquel Raynal" <miquel.raynal@bootlin.com>
+Date:   Sat, 08 Feb 2020 18:19:39 +0000
+Message-ID: <lsq.1581185940.750851301@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 038/148] scsi: zfcp: trace channel log even for FCP
- command responses
+Subject: [PATCH 3.16 040/148] mtd: spear_smi: Fix Write Burst mode
 In-Reply-To: <lsq.1581185939.857586636@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,44 +49,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steffen Maier <maier@linux.ibm.com>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
 
-commit 100843f176109af94600e500da0428e21030ca7f upstream.
+commit 69c7f4618c16b4678f8a4949b6bb5ace259c0033 upstream.
 
-While v2.6.26 commit b75db73159cc ("[SCSI] zfcp: Add qtcb dump to hba debug
-trace") is right that we don't want to flood the (payload) trace ring
-buffer, we don't trace successful FCP command responses by default.  So we
-can include the channel log for problem determination with failed responses
-of any FSF request type.
+Any write with either dd or flashcp to a device driven by the
+spear_smi.c driver will pass through the spear_smi_cpy_toio()
+function. This function will get called for chunks of up to 256 bytes.
+If the amount of data is smaller, we may have a problem if the data
+length is not 4-byte aligned. In this situation, the kernel panics
+during the memcpy:
 
-Fixes: b75db73159cc ("[SCSI] zfcp: Add qtcb dump to hba debug trace")
-Fixes: a54ca0f62f95 ("[SCSI] zfcp: Redesign of the debug tracing for HBA records.")
-Link: https://lore.kernel.org/r/e37597b5c4ae123aaa85fd86c23a9f71e994e4a9.1572018132.git.bblock@linux.ibm.com
-Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
-Signed-off-by: Steffen Maier <maier@linux.ibm.com>
-Signed-off-by: Benjamin Block <bblock@linux.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-[bwh: Backported to 3.16: Deleted condition is slightly different]
+    # dd if=/dev/urandom bs=1001 count=1 of=/dev/mtd6
+    spear_smi_cpy_toio [620] dest c9070000, src c7be8800, len 256
+    spear_smi_cpy_toio [620] dest c9070100, src c7be8900, len 256
+    spear_smi_cpy_toio [620] dest c9070200, src c7be8a00, len 256
+    spear_smi_cpy_toio [620] dest c9070300, src c7be8b00, len 233
+    Unhandled fault: external abort on non-linefetch (0x808) at 0xc90703e8
+    [...]
+    PC is at memcpy+0xcc/0x330
+
+The above error occurs because the implementation of memcpy_toio()
+tries to optimize the number of I/O by writing 4 bytes at a time as
+much as possible, until there are less than 4 bytes left and then
+switches to word or byte writes.
+
+Unfortunately, the specification states about the Write Burst mode:
+
+        "the next AHB Write request should point to the next
+	incremented address and should have the same size (byte,
+	half-word or word)"
+
+This means ARM architecture implementation of memcpy_toio() cannot
+reliably be used blindly here. Workaround this situation by update the
+write path to stick to byte access when the burst length is not
+multiple of 4.
+
+Fixes: f18dbbb1bfe0 ("mtd: ST SPEAr: Add SMI driver for serial NOR flash")
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/s390/scsi/zfcp_dbf.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/mtd/devices/spear_smi.c | 38 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
 
---- a/drivers/s390/scsi/zfcp_dbf.c
-+++ b/drivers/s390/scsi/zfcp_dbf.c
-@@ -93,11 +93,9 @@ void zfcp_dbf_hba_fsf_res(char *tag, int
- 	memcpy(rec->u.res.fsf_status_qual, &q_head->fsf_status_qual,
- 	       FSF_STATUS_QUALIFIER_SIZE);
+--- a/drivers/mtd/devices/spear_smi.c
++++ b/drivers/mtd/devices/spear_smi.c
+@@ -595,6 +595,26 @@ static int spear_mtd_read(struct mtd_inf
+ 	return 0;
+ }
  
--	if (req->fsf_command != FSF_QTCB_FCP_CMND) {
--		rec->pl_len = q_head->log_length;
--		zfcp_dbf_pl_write(dbf, (char *)q_pref + q_head->log_start,
--				  rec->pl_len, "fsf_res", req->req_id);
--	}
-+	rec->pl_len = q_head->log_length;
-+	zfcp_dbf_pl_write(dbf, (char *)q_pref + q_head->log_start,
-+			  rec->pl_len, "fsf_res", req->req_id);
++/*
++ * The purpose of this function is to ensure a memcpy_toio() with byte writes
++ * only. Its structure is inspired from the ARM implementation of _memcpy_toio()
++ * which also does single byte writes but cannot be used here as this is just an
++ * implementation detail and not part of the API. Not mentioning the comment
++ * stating that _memcpy_toio() should be optimized.
++ */
++static void spear_smi_memcpy_toio_b(volatile void __iomem *dest,
++				    const void *src, size_t len)
++{
++	const unsigned char *from = src;
++
++	while (len) {
++		len--;
++		writeb(*from, dest);
++		from++;
++		dest++;
++	}
++}
++
+ static inline int spear_smi_cpy_toio(struct spear_smi *dev, u32 bank,
+ 		void __iomem *dest, const void *src, size_t len)
+ {
+@@ -617,7 +637,23 @@ static inline int spear_smi_cpy_toio(str
+ 	ctrlreg1 = readl(dev->io_base + SMI_CR1);
+ 	writel((ctrlreg1 | WB_MODE) & ~SW_MODE, dev->io_base + SMI_CR1);
  
- 	debug_event(dbf->hba, level, rec, sizeof(*rec));
- 	spin_unlock_irqrestore(&dbf->hba_lock, flags);
+-	memcpy_toio(dest, src, len);
++	/*
++	 * In Write Burst mode (WB_MODE), the specs states that writes must be:
++	 * - incremental
++	 * - of the same size
++	 * The ARM implementation of memcpy_toio() will optimize the number of
++	 * I/O by using as much 4-byte writes as possible, surrounded by
++	 * 2-byte/1-byte access if:
++	 * - the destination is not 4-byte aligned
++	 * - the length is not a multiple of 4-byte.
++	 * Avoid this alternance of write access size by using our own 'byte
++	 * access' helper if at least one of the two conditions above is true.
++	 */
++	if (IS_ALIGNED(len, sizeof(u32)) &&
++	    IS_ALIGNED((uintptr_t)dest, sizeof(u32)))
++		memcpy_toio(dest, src, len);
++	else
++		spear_smi_memcpy_toio_b(dest, src, len);
+ 
+ 	writel(ctrlreg1, dev->io_base + SMI_CR1);
+ 
 
