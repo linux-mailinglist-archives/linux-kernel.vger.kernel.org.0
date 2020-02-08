@@ -2,133 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 364F21562E8
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 06:09:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DEA9156324
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 06:59:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbgBHFJ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Feb 2020 00:09:56 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:37415 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbgBHFJz (ORCPT
+        id S1727123AbgBHF7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Feb 2020 00:59:11 -0500
+Received: from sonic311-15.consmr.mail.bf2.yahoo.com ([74.6.131.125]:37804
+        "EHLO sonic311-15.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726714AbgBHF7L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Feb 2020 00:09:55 -0500
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id 01859hmN013105;
-        Sat, 8 Feb 2020 14:09:43 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 01859hmN013105
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1581138583;
-        bh=N6D5jo+vAq8fHn5iSXB7XmN5f+J7iCxpb/iTdSTATRY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=s4tjOqYnhagTSuxQlIKrMIrOUW+I/qtjVPpb/L2OK76jWXkDFpeKaC0RMATeWly3L
-         bftzyQkHEQLaHhWm7IfbhQoR1NjY/L2XL0FAO4aXLcykpPmg0hlRqLf/JGVpVb8bj0
-         6n1+4wI6mzagJw66lrmEAGIJYZnTKZQLGBZurlri96Tze0xtDgwdHDh/nzdBvB/xzh
-         fB1EYbl0PR6mjiSfJfkwTOehq6X8b6QqIKFqn5a630THnPur/xk9T7s8RKZZzQ62l+
-         Bayh7nEH+2ACfqW52hydIehsy4/sdIVHVLWUO4cWm2BoW/YzkATYKqOiV+s+48q3im
-         +KzxlSfoKD9Cw==
-X-Nifty-SrcIP: [209.85.221.176]
-Received: by mail-vk1-f176.google.com with SMTP id w67so422686vkf.1;
-        Fri, 07 Feb 2020 21:09:43 -0800 (PST)
-X-Gm-Message-State: APjAAAVo5ExxS+RuWO2GrbN0yDwQYXbaQV/jWtIf6sEbVAKSmYOxiyVR
-        BWal2CIaaUHOfgfUqkG8odFEfRcRGPcBhvcxvRw=
-X-Google-Smtp-Source: APXvYqwjN7p0lr2wEjZebW2hKuAYzvbCXoP/0n+3izd4inMtjm45k8b8J/myUy584914wKNNbE+z4QKXrh1r52BZOMk=
-X-Received: by 2002:a1f:72c3:: with SMTP id n186mr1512436vkc.12.1581138582383;
- Fri, 07 Feb 2020 21:09:42 -0800 (PST)
+        Sat, 8 Feb 2020 00:59:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1581141548; bh=pa1o5VRYWWG3WgDVzwpWeoz/bqhPAQKm9h7htHGAd9k=; h=Date:From:Reply-To:Subject:References:From:Subject; b=msGp8xFmHfm71OTooC/OxL1lBTswqrmhV0qEHElrfcR6MJo3rQx2uqwEoi+GXIRk/TzreQVCoYwC9GoMj36BEfxBaV+y22Lvgn+CRtCyGD2QWbSiBPlEmo96qD4upV6fpNZI8qehBgk6kxUOPbZpo+a2XH08ASFLqLloFvVP8IgmlxBMOu2RzEVil/RUnolR/O5zljbLKLP572Y84vZmP7yKoBuyaTnKq1KUNTGLHgVdEm3PKh/H9+Rnci0v8sy63y93IWKKQdle80vfRvdKQmRLkp8H3KUL4Gifcm4w7Q2/3L0HIkpm2HOpkqefeGwMAhbk1T7DwUWyJvHRe6ROaw==
+X-YMail-OSG: njbACL4VM1lU2Rwq9T.bIUyYJeitlHIRMyNlTeJ2VSjJFNg7WcKA3Nw_ZliynWx
+ 9gd9ot3Dj_TmsDf78tbrgmBDyv83SnhmdNBl5FCQ3tWkuWyZ7TscFs0fYc1YSRqzvjb0LbMkJdUg
+ cUxRubEWn8KqBpVEivBGSBOSjKzQva2f4mvom4xV5cPKkF_8uD54h4fRwBgD2T2BW79tWLObUOjX
+ z5SU.OtCBugrsA5XaGmaEV3n0d4.vwT.QhH8uzD8U1kcwEpS3SVib7C_q7HKbNcLfx5fo97hnth7
+ RrJh5CYGScIxbr5uVqMVT_lrPxs0ehCQD9MPdBzLqe1nJSQlQVDqA8HFqeTExdvBkXx0BvoEURuJ
+ DCk6aEEGIu4oVNB.2HI19lJwA9eaNoLjngnQ5Fte8a6l_tWl2guJhuh4wKDMu1mPEy28VgUZRNDK
+ BB7KrkjvMybwbWLrBRHArVFHHWWF91BEqBwvOd1QNdkWa2vGSDUv1_DMohIGCb0FTwtYvIp29ywk
+ qc0i.3iX1Viryiepx7Xb.8fCAS5FEhrJRG4i9Njrx0VFiA.dtbNezgkgcvwKAKym74cpIuNWcLZD
+ kO0cEoD9CK1mf9fquX75rLyzgQpGMntIZYJ5I2D467n3FAiQgqA.GpIQdEu2zwa48SO8d9Gz81wj
+ PHzy8UvbKbEAPjjnQTUwzZcyHgLxGtH.MtCo2n9JL_Tixf2loatYJqs8S9ScjwxdhcxvxA7cz2aF
+ la5G25PIIak8J44p5088JQv2YZiMflb9VeXLZqpsESpK7hd8S4KPECk5NPqYescMVl47nKLTrWu9
+ L0V_xzksIry_1aws07fixhjHq0qYAKq4UhDxob2wiZo0IFMkNKvXQKrN.FOWQ4BZ4tTfgo7jhXah
+ kqniLTmVN90B35vnFVKQxsoZr1ZGiJprH3viww5.E_zug_kt.3ad0ezI.U3arxf3Lc_rL1UzydaR
+ 0b3fL4s7Y5hIqYr2ACChM1n_5l3Mid.O.A_6TTcMWeFeOWfKAJ7W6tm8Eik3rbHDb5_eKF45vRMV
+ fMMIQfe_NVOERicgB.Vnu0UpPvPxR_ePGeBoaNz5PKyma9sCn3GZo16ZX8phNDJg0TIuWpUOzqQG
+ r1uVPBpEE._v_75IS6TXO6wIbg7_6.SwXeIYoCXQr5tFBS7qqeEhlk0F.ZuT6aEIUrh7S_Jn2G.4
+ cx9zyqy6cPab9UKNF77OOUkMXYZTa0HD9MrnbVms3SComcAI5W1mSBdavvar85JnqUdzASSEAKAg
+ LTzh38XAbZZbahlX6JcHsVf0rxFpM4xiQsxFWkojoVwfERgM8n3D9aiw1gJKmZD.8t9hprStNSw-
+ -
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.bf2.yahoo.com with HTTP; Sat, 8 Feb 2020 05:59:08 +0000
+Date:   Sat, 8 Feb 2020 05:59:06 +0000 (UTC)
+From:   "D.H.L HASSAIN" <mrsrajoysmrsrajoyshassain@gmail.com>
+Reply-To: rejoy_hassain_2020@mail.ru
+Message-ID: <506063762.70146.1581141546770@mail.yahoo.com>
+Subject: =?UTF-8?Q?Greetings=C2=A0to=C2=A0you.?=
 MIME-Version: 1.0
-References: <20200207180755.100561-1-qperret@google.com> <20200207180755.100561-4-qperret@google.com>
-In-Reply-To: <20200207180755.100561-4-qperret@google.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Sat, 8 Feb 2020 06:09:06 +0100
-X-Gmail-Original-Message-ID: <CAK7LNAT+Xw8ntYcrcMtLrekkgziaHU+7nvzdh5tqD0cbe8pJhw@mail.gmail.com>
-Message-ID: <CAK7LNAT+Xw8ntYcrcMtLrekkgziaHU+7nvzdh5tqD0cbe8pJhw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] kbuild: generate autoksyms.h early
-To:     Quentin Perret <qperret@google.com>
-Cc:     Nicolas Pitre <nico@fluxnic.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Matthias Maennich <maennich@google.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <506063762.70146.1581141546770.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.15199 YMailNodin Mozilla/5.0 (Windows NT 5.1; rv:52.0) Gecko/20100101 Firefox/52.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 7, 2020 at 7:08 PM Quentin Perret <qperret@google.com> wrote:
->
-> When doing a cold build, autoksyms.h starts empty, and is updated late
-> in the build process to have visibility over the symbols used by in-tree
-> drivers. But since the symbol whitelist is known upfront, it can be used
-> to pre-populate autoksyms.h and maximize the amount of code that can be
-> compiled to its final state in a single pass, hence reducing build time.
->
-> Do this by using gen_autoksyms.sh to initialize autoksyms.h instead of
-> creating an empty file.
->
-> Signed-off-by: Quentin Perret <qperret@google.com>
-> ---
->  Makefile                 | 2 +-
->  scripts/gen_autoksyms.sh | 3 ++-
->  2 files changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/Makefile b/Makefile
-> index 6a01b073915e..e5c389d189f7 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1065,7 +1065,7 @@ autoksyms_h := $(if $(CONFIG_TRIM_UNUSED_KSYMS), include/generated/autoksyms.h)
->
->  $(autoksyms_h):
->         $(Q)mkdir -p $(dir $@)
-> -       $(Q)touch $@
-> +       $(Q)$(CONFIG_SHELL) $(srctree)/scripts/gen_autoksyms.sh $@
+ATTENTION: DEAR BENEFICIARY CONGRATULATIONS TO YOU DEAR GOOD DAY I AM SORRY IF YOU RECEIVED THIS LETTER IN YOUR SPAM OR JUNK MAIL IT IS DUE TO A RECENT CONNECTION HERE IN MY COUNTRY.
 
+DEAR FRIEND.
 
-Now that this line is doing a non-trivial task,
-it might be a good idea to show a short log, like this:
+YOU MAY BE WONDERING WHYI CONTACT YOU BUT SOMEONE LUCKY HAS TO BE CHOSEN WHICH IS YOU. I WANT YOU TO HANDLE THIS BUSINESS TRASACTION WITH ME IF CHANCE YOU TO DO INTERNATION BUSINESS I GO YOUR CONTACT FROM A RELIABLE WEB DIRECTORY.
 
-  GEN     include/generated/autoksyms.h
+I RECEIVE YOUR CONTENT OF YOUR EMAIL FROM THIS DHL MASTER CARD OFFICES FUND OF $10.5 USD MILLION AFTER THE BOARD OF DIRECTORS MEETINGS, THE UNITED NATIONS GOVERNMENT HAVE DECIDED TO ISSUE YOU YOUR (ATM) VALUED AT 10.5 MILLION UNITED STATES DOLLAR.THIS IS TO BRING TO YOUR NOTICE THAT YOUR VALUED SUM OF 10.5 MILLION DOLLAR HAS BEING TODAY CREDITED INTO (ATM) MASTER CARD AND HAS BEEN HANDLE TO THE FOREIGN REMITTANCE DEPARTMENT TO SEND IT TO YOU TODAY IN YOUR FAVOR.
 
+WITH YOUR (ATM) YOU WILL HAVE ACCESS TO MAKE DAILY WITHDRAWALS OF $5000,00 UNITED STATE DOLLARS DAILIES AS ALREADY PROGRAMMED UNTIL YOU WITHDRAW YOUR TOTAL SUM IN YOUR (ATM) CARD WHICH HAS REGISTERED IN OUR SYSTEM FOR PAYMENT RECORD, AS SOON AS WE RECEIVE YOUR INFORMATIONS AND YOUR HOME ADDRESS OF YOUR COUNTRY AS ALREADY PROGRAMMED, WE WILL SEND YOUR (ATM) CARD THROUGH DHL COURIER SERVICE, WE HAVE RECEIVED A SIGNAL FROM THE SWISS WORLD BANK TO INFECT YOUR TRANSFER TO YOU WITHIN ONE WEEK,
 
+WE HAVE JUST FINISHED OUR ANNUAL GENERAL MEETING WITH THE CENTRAL BANK OF AMERICA (BOA). AT THE END OF THE BOARD OF DIRECTORS MEETING TODAY, WE HAVE CONCLUDED TO IMMEDIATELY ISSUE YOU AS SOON AS POSSIBLE,
 
-You can do it like this:
+AND YOUR VALUE SUM HAS BEEN CREDITED INTO YOUR (ATM) VISA CARD
+ACCOUNT. WHICH YOU WILL USE TO WITHDRAW YOUR FUND IN ANY PART OF THE WORLD, WE HAVE ISSUED AND CREDITED YOUR (ATM) CARD IN YOUR NAME TODAY,
 
+YOUR (ATM) WILL BE INSURE BY THE INSURANCE COMPANY AND SEND TO YOU
+THROUGH ANY AVAILABLE COURIER COMPANY OF OUR CHOICE.
 
-quiet_cmd_autoksyms_h = GEN     $@
-      cmd_autoksyms_h = mkdir -p $(dir $@); $(BASH)
-$(srctree)/scripts/gen_autoksyms.sh $@
+ONCE AGAIN CONGRATULATIONS TO YOU,
 
-$(autoksyms_h):
-        $(call cmd,autoksyms_h)
-
-
-
-
-
->
->  ARCH_POSTLINK := $(wildcard $(srctree)/arch/$(SRCARCH)/Makefile.postlink)
->
-> diff --git a/scripts/gen_autoksyms.sh b/scripts/gen_autoksyms.sh
-> index ce0919c3791a..ae033ab03a4a 100755
-> --- a/scripts/gen_autoksyms.sh
-> +++ b/scripts/gen_autoksyms.sh
-> @@ -32,7 +32,8 @@ cat > "$output_file" << EOT
->
->  EOT
->
-> -sed 's/ko$/mod/' modules.order |
-> +[[ -f modules.order ]] && modlist=modules.order || modlist=/dev/null
-> +sed 's/ko$/mod/' $modlist |
->  xargs -n1 sed -n -e '2{s/ /\n/g;/^$/!p;}' -- |
->  cat - "$ksym_wl" |
->  sort -u |
-> --
-> 2.25.0.341.g760bfbb309-goog
->
-
-
---
-Best Regards
-
-Masahiro Yamada
+DIRECTOR DHL SERVICE,
+THANKS,
+SINCERELY.
+MRS. RAJOYS HASSAIN,
