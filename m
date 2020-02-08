@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 883A81566F8
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 19:39:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA3681566F2
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 19:39:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728337AbgBHSia (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Feb 2020 13:38:30 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33638 "EHLO
+        id S1728404AbgBHSiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Feb 2020 13:38:17 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33692 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727653AbgBHS3f (ORCPT
+        by vger.kernel.org with ESMTP id S1727682AbgBHS3g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Feb 2020 13:29:35 -0500
+        Sat, 8 Feb 2020 13:29:36 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1j0UrF-0003cH-Ll; Sat, 08 Feb 2020 18:29:33 +0000
+        id 1j0UrF-0003cT-Qz; Sat, 08 Feb 2020 18:29:33 +0000
 Received: from ben by deadeye with local (Exim 4.93)
         (envelope-from <ben@decadent.org.uk>)
-        id 1j0UrE-000CKe-EW; Sat, 08 Feb 2020 18:29:32 +0000
+        id 1j0UrE-000CKn-S1; Sat, 08 Feb 2020 18:29:32 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Andrew Murray" <andrew.murray@arm.com>,
-        "Ashok Raj" <ashok.raj@intel.com>,
-        "Bjorn Helgaas" <bhelgaas@google.com>,
-        "Steffen Liebergeld" <steffen.liebergeld@kernkonzept.com>
-Date:   Sat, 08 Feb 2020 18:19:27 +0000
-Message-ID: <lsq.1581185940.117103824@decadent.org.uk>
+        "Mark Brown" <broonie@kernel.org>,
+        "Nicolas Ferre" <nicolas.ferre@atmel.com>,
+        "Mans Rullgard" <mans@mansr.com>,
+        "Gregory CLEMENT" <gregory.clement@bootlin.com>
+Date:   Sat, 08 Feb 2020 18:19:29 +0000
+Message-ID: <lsq.1581185940.540120808@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 028/148] PCI: Fix Intel ACS quirk UPDCR register address
+Subject: [PATCH 3.16 030/148] spi: atmel: fix handling of cs_change set on
+ non-last xfer
 In-Reply-To: <lsq.1581185939.857586636@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,43 +50,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steffen Liebergeld <steffen.liebergeld@kernkonzept.com>
+From: Mans Rullgard <mans@mansr.com>
 
-commit d8558ac8c93d429d65d7490b512a3a67e559d0d4 upstream.
+commit fed8d8c7a6dc2a76d7764842853d81c770b0788e upstream.
 
-According to documentation [0] the correct offset for the Upstream Peer
-Decode Configuration Register (UPDCR) is 0x1014.  It was previously defined
-as 0x1114.
+The driver does the wrong thing when cs_change is set on a non-last
+xfer in a message.  When cs_change is set, the driver deactivates the
+CS and leaves it off until a later xfer again has cs_change set whereas
+it should be briefly toggling CS off and on again.
 
-d99321b63b1f ("PCI: Enable quirks for PCIe ACS on Intel PCH root ports")
-intended to enforce isolation between PCI devices allowing them to be put
-into separate IOMMU groups.  Due to the wrong register offset the intended
-isolation was not fully enforced.  This is fixed with this patch.
-
-Please note that I did not test this patch because I have no hardware that
-implements this register.
-
-[0] https://www.intel.com/content/dam/www/public/us/en/documents/datasheets/4th-gen-core-family-mobile-i-o-datasheet.pdf (page 325)
-Fixes: d99321b63b1f ("PCI: Enable quirks for PCIe ACS on Intel PCH root ports")
-Link: https://lore.kernel.org/r/7a3505df-79ba-8a28-464c-88b83eefffa6@kernkonzept.com
-Signed-off-by: Steffen Liebergeld <steffen.liebergeld@kernkonzept.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
-Acked-by: Ashok Raj <ashok.raj@intel.com>
+This patch brings the behaviour of the driver back in line with the
+documentation and common sense.  The delay of 10 us is the same as is
+used by the default spi_transfer_one_message() function in spi.c.
+[gregory: rebased on for-5.5 from spi tree]
+Fixes: 8090d6d1a415 ("spi: atmel: Refactor spi-atmel to use SPI framework queue")
+Signed-off-by: Mans Rullgard <mans@mansr.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Link: https://lore.kernel.org/r/20191018153504.4249-1-gregory.clement@bootlin.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+[bwhh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/pci/quirks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-atmel.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -3787,7 +3787,7 @@ int pci_dev_specific_acs_enabled(struct
- #define INTEL_BSPR_REG_BPPD  (1 << 9)
+--- a/drivers/spi/spi-atmel.c
++++ b/drivers/spi/spi-atmel.c
+@@ -242,7 +242,6 @@ struct atmel_spi {
+ 	struct atmel_spi_dma	dma;
  
- /* Upstream Peer Decode Configuration Register */
--#define INTEL_UPDCR_REG 0x1114
-+#define INTEL_UPDCR_REG 0x1014
- /* 5:0 Peer Decode Enable bits */
- #define INTEL_UPDCR_REG_MASK 0x3f
+ 	bool			keep_cs;
+-	bool			cs_active;
+ };
  
+ /* Controller-specific per-slave state */
+@@ -1190,11 +1189,9 @@ static int atmel_spi_one_transfer(struct
+ 				 &msg->transfers)) {
+ 			as->keep_cs = true;
+ 		} else {
+-			as->cs_active = !as->cs_active;
+-			if (as->cs_active)
+-				cs_activate(as, msg->spi);
+-			else
+-				cs_deactivate(as, msg->spi);
++			cs_deactivate(as, msg->spi);
++			udelay(10);
++			cs_activate(as, msg->spi);
+ 		}
+ 	}
+ 
+@@ -1217,7 +1214,6 @@ static int atmel_spi_transfer_one_messag
+ 	atmel_spi_lock(as);
+ 	cs_activate(as, spi);
+ 
+-	as->cs_active = true;
+ 	as->keep_cs = false;
+ 
+ 	msg->status = 0;
 
