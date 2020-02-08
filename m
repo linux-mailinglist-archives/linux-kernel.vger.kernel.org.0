@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EEC8156624
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 19:32:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D17A41565FB
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 19:30:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728454AbgBHScS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Feb 2020 13:32:18 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34698 "EHLO
+        id S1728265AbgBHSao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Feb 2020 13:30:44 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34778 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727962AbgBHS3t (ORCPT
+        by vger.kernel.org with ESMTP id S1727967AbgBHS3u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Feb 2020 13:29:49 -0500
+        Sat, 8 Feb 2020 13:29:50 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1j0UrO-0003ji-V7; Sat, 08 Feb 2020 18:29:43 +0000
+        id 1j0UrP-0003jn-0m; Sat, 08 Feb 2020 18:29:43 +0000
 Received: from ben by deadeye with local (Exim 4.93)
         (envelope-from <ben@decadent.org.uk>)
-        id 1j0UrM-000CWU-Ik; Sat, 08 Feb 2020 18:29:40 +0000
+        id 1j0UrM-000CWY-Jt; Sat, 08 Feb 2020 18:29:40 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Pavel Shilovsky" <pshilov@microsoft.com>,
-        "Steve French" <stfrench@microsoft.com>,
-        "Aurelien Aptel" <aaptel@suse.com>
-Date:   Sat, 08 Feb 2020 18:21:12 +0000
-Message-ID: <lsq.1581185941.602937819@decadent.org.uk>
+        syzbot+2add91c08eb181fea1bf@syzkaller.appspotmail.com,
+        "David S. Miller" <davem@davemloft.net>,
+        "Nikolay Aleksandrov" <nikolay@cumulusnetworks.com>
+Date:   Sat, 08 Feb 2020 18:21:13 +0000
+Message-ID: <lsq.1581185941.176527532@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 133/148] CIFS: Fix NULL-pointer dereference in
- smb2_push_mandatory_locks
+Subject: [PATCH 3.16 134/148] net: bridge: deny dev_set_mac_address() when
+ unregistering
 In-Reply-To: <lsq.1581185939.857586636@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,69 +49,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pavel Shilovsky <pshilov@microsoft.com>
+From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 
-commit 6f582b273ec23332074d970a7fb25bef835df71f upstream.
+commit c4b4c421857dc7b1cf0dccbd738472360ff2cd70 upstream.
 
-Currently when the client creates a cifsFileInfo structure for
-a newly opened file, it allocates a list of byte-range locks
-with a pointer to the new cfile and attaches this list to the
-inode's lock list. The latter happens before initializing all
-other fields, e.g. cfile->tlink. Thus a partially initialized
-cifsFileInfo structure becomes available to other threads that
-walk through the inode's lock list. One example of such a thread
-may be an oplock break worker thread that tries to push all
-cached byte-range locks. This causes NULL-pointer dereference
-in smb2_push_mandatory_locks() when accessing cfile->tlink:
+We have an interesting memory leak in the bridge when it is being
+unregistered and is a slave to a master device which would change the
+mac of its slaves on unregister (e.g. bond, team). This is a very
+unusual setup but we do end up leaking 1 fdb entry because
+dev_set_mac_address() would cause the bridge to insert the new mac address
+into its table after all fdbs are flushed, i.e. after dellink() on the
+bridge has finished and we call NETDEV_UNREGISTER the bond/team would
+release it and will call dev_set_mac_address() to restore its original
+address and that in turn will add an fdb in the bridge.
+One fix is to check for the bridge dev's reg_state in its
+ndo_set_mac_address callback and return an error if the bridge is not in
+NETREG_REGISTERED.
 
-[598428.945633] BUG: kernel NULL pointer dereference, address: 0000000000000038
-...
-[598428.945749] Workqueue: cifsoplockd cifs_oplock_break [cifs]
-[598428.945793] RIP: 0010:smb2_push_mandatory_locks+0xd6/0x5a0 [cifs]
-...
-[598428.945834] Call Trace:
-[598428.945870]  ? cifs_revalidate_mapping+0x45/0x90 [cifs]
-[598428.945901]  cifs_oplock_break+0x13d/0x450 [cifs]
-[598428.945909]  process_one_work+0x1db/0x380
-[598428.945914]  worker_thread+0x4d/0x400
-[598428.945921]  kthread+0x104/0x140
-[598428.945925]  ? process_one_work+0x380/0x380
-[598428.945931]  ? kthread_park+0x80/0x80
-[598428.945937]  ret_from_fork+0x35/0x40
+Easy steps to reproduce:
+ 1. add bond in mode != A/B
+ 2. add any slave to the bond
+ 3. add bridge dev as a slave to the bond
+ 4. destroy the bridge device
 
-Fix this by reordering initialization steps of the cifsFileInfo
-structure: initialize all the fields first and then add the new
-byte-range lock list to the inode's lock list.
+Trace:
+ unreferenced object 0xffff888035c4d080 (size 128):
+   comm "ip", pid 4068, jiffies 4296209429 (age 1413.753s)
+   hex dump (first 32 bytes):
+     41 1d c9 36 80 88 ff ff 00 00 00 00 00 00 00 00  A..6............
+     d2 19 c9 5e 3f d7 00 00 00 00 00 00 00 00 00 00  ...^?...........
+   backtrace:
+     [<00000000ddb525dc>] kmem_cache_alloc+0x155/0x26f
+     [<00000000633ff1e0>] fdb_create+0x21/0x486 [bridge]
+     [<0000000092b17e9c>] fdb_insert+0x91/0xdc [bridge]
+     [<00000000f2a0f0ff>] br_fdb_change_mac_address+0xb3/0x175 [bridge]
+     [<000000001de02dbd>] br_stp_change_bridge_id+0xf/0xff [bridge]
+     [<00000000ac0e32b1>] br_set_mac_address+0x76/0x99 [bridge]
+     [<000000006846a77f>] dev_set_mac_address+0x63/0x9b
+     [<00000000d30738fc>] __bond_release_one+0x3f6/0x455 [bonding]
+     [<00000000fc7ec01d>] bond_netdev_event+0x2f2/0x400 [bonding]
+     [<00000000305d7795>] notifier_call_chain+0x38/0x56
+     [<0000000028885d4a>] call_netdevice_notifiers+0x1e/0x23
+     [<000000008279477b>] rollback_registered_many+0x353/0x6a4
+     [<0000000018ef753a>] unregister_netdevice_many+0x17/0x6f
+     [<00000000ba854b7a>] rtnl_delete_link+0x3c/0x43
+     [<00000000adf8618d>] rtnl_dellink+0x1dc/0x20a
+     [<000000009b6395fd>] rtnetlink_rcv_msg+0x23d/0x268
 
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Fixes: 43598813386f ("bridge: add local MAC address to forwarding table (v2)")
+Reported-by: syzbot+2add91c08eb181fea1bf@syzkaller.appspotmail.com
+Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/cifs/file.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ net/bridge/br_device.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -313,9 +313,6 @@ cifs_new_fileinfo(struct cifs_fid *fid,
- 	INIT_LIST_HEAD(&fdlocks->locks);
- 	fdlocks->cfile = cfile;
- 	cfile->llist = fdlocks;
--	cifs_down_write(&cinode->lock_sem);
--	list_add(&fdlocks->llist, &cinode->llist);
--	up_write(&cinode->lock_sem);
+--- a/net/bridge/br_device.c
++++ b/net/bridge/br_device.c
+@@ -193,6 +193,12 @@ static int br_set_mac_address(struct net
+ 	if (!is_valid_ether_addr(addr->sa_data))
+ 		return -EADDRNOTAVAIL;
  
- 	cfile->count = 1;
- 	cfile->pid = current->tgid;
-@@ -339,6 +336,10 @@ cifs_new_fileinfo(struct cifs_fid *fid,
- 		oplock = 0;
- 	}
- 
-+	cifs_down_write(&cinode->lock_sem);
-+	list_add(&fdlocks->llist, &cinode->llist);
-+	up_write(&cinode->lock_sem);
++	/* dev_set_mac_addr() can be called by a master device on bridge's
++	 * NETDEV_UNREGISTER, but since it's being destroyed do nothing
++	 */
++	if (dev->reg_state != NETREG_REGISTERED)
++		return -EBUSY;
 +
- 	spin_lock(&tcon->open_file_lock);
- 	if (fid->pending_open->oplock != CIFS_OPLOCK_NO_CHANGE && oplock)
- 		oplock = fid->pending_open->oplock;
+ 	spin_lock_bh(&br->lock);
+ 	if (!ether_addr_equal(dev->dev_addr, addr->sa_data)) {
+ 		/* Mac address will be changed in br_stp_change_bridge_id(). */
 
