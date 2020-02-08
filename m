@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65AB3156401
+	by mail.lfdr.de (Postfix) with ESMTP id E5359156402
 	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 12:23:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbgBHLUm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Feb 2020 06:20:42 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38896 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726970AbgBHLUl (ORCPT
+        id S1727540AbgBHLUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Feb 2020 06:20:45 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:38392 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727499AbgBHLUl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 8 Feb 2020 06:20:41 -0500
-Received: by mail-pg1-f195.google.com with SMTP id d6so1207933pgn.5
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Feb 2020 03:20:39 -0800 (PST)
+Received: by mail-pj1-f67.google.com with SMTP id j17so2065240pjz.3
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Feb 2020 03:20:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lixom-net.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/TuNGFz1JcD7T6IDfh5rq70OidRyfNk4PEH1acEnm1Y=;
-        b=XL+flBOTIWxg+yjbLL5ipgbB4fCNCmx0tdgckQrzylmHqrakQWwG3Tzo00aHR5IbBZ
-         qCgEpK8hLISiwRNIMPD7vlYtJl6kwJjWoRfT3WHTRcQeWqPuoYGJynm74cp8C10a7UHV
-         uA6+PS2g7C3llNBpmXKOA0yd/ARLVfHn+XWm5GYhaZaucXCrgbKcb1iXL0aOQiqGHKRT
-         HCfEODsBoPgy8EDG7gZ6vFYrgq8brXMXOJZcIi0zLzrVodDDQgxagaybxmE5J1DccX91
-         xu+sWn3PftBlZ1Rxt7zZD9XpWnRxnyABQ0svMzGAXwD5NfLMHR6R9RZlqnPdlsy+srnw
-         NNTw==
+        bh=CLvBYI2Cs8Bqj8AtKjZ3LbYsK+wgnbwS8xmH1fw8LUE=;
+        b=nnBhxewMsZOYLOs9Kf6jUrr1OtWph2gM8kCfFDaMZkAQL8fvrRirZ2/ebsWfG3zMJ3
+         bfSFqZSWCDyg78v1r2SRvC1YwMCqiR59dvuhCQXDMfrldsfNj3oW79edbNayPUF+KYWm
+         RFW9xJfWAjBihO6y6R6E2bZqWEKFShZbBAe1023/fg49g6sCf8ZfgzCEozCpCwsuoIrZ
+         0GeZY5+MLCmwiUfJpWe7k4sYUGHlKIUdMhuyW+h54tXWiI6i5Peo3bidVtvB/m/rB+2D
+         Y9rZeCYlEdSsM1d7xyvu15SvhTtUSl31l68NKq7wsvtxv77RJ+j5xo0mL09k+01HEZtN
+         dg4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/TuNGFz1JcD7T6IDfh5rq70OidRyfNk4PEH1acEnm1Y=;
-        b=SCl+DL+rByMDJ7z9hYkrGymJBz4p+NQKgpY9BvfZv1xfFs1RY27c4OL12fE1NWabgk
-         trw6eQRFXJb5lh2NSnf6C4RcVecXIBtCkkuVcerR03CqvKKvrBwVttFBsNUr/FfT3W/c
-         KTw8AHXbPmKPtebjgNF6pmdXC1C6K906Ie5Tshv29k3DKfgWsrOUqiKv3LcQhVbNbgQK
-         SmzyzMoKkQ5chmhilFO1/wZGOMx07jxfdM4Ez8Cc9vBQpQfVjnrLrABQurD0k23vH8Zq
-         XGH9cAEyd/qViiL/HrllIbUDyZPXYdQcFoa6p+Hjv3x/IPlQxNaDzStaAjI77QrueSMQ
-         SNJQ==
-X-Gm-Message-State: APjAAAUpcT2ZbUr3MLRsArfyCXhsdPsKydAWYHcRQGd5lG23DpCZZnWS
-        W4UyjsqeSY66d36VwTOE7FUsXQ==
-X-Google-Smtp-Source: APXvYqzqcF7UHN6MhOG6LzgFQ1WYsym1a8kd+pbhCUGC6kcjiHgSR3d5X61zzw1f7lOjMzuhgJ4I8Q==
-X-Received: by 2002:aa7:86c3:: with SMTP id h3mr3589889pfo.243.1581160839243;
-        Sat, 08 Feb 2020 03:20:39 -0800 (PST)
+        bh=CLvBYI2Cs8Bqj8AtKjZ3LbYsK+wgnbwS8xmH1fw8LUE=;
+        b=EjAWSmpz31UfRUEGuzQLTNqerxcte5n7/sYOBmj8JcLYFHVHksvKzanIB5GUo1zTXQ
+         3mPp/AexfQmDCYMNjc7z3YfyccEJAm3dMvHXpL+uV5QEU93e+tehgtt0InM1DDUDFPxF
+         aL5XfHRNkNQTEMLEI+sWLkf2lfAz+wW2IYiCYq4uZpQ/5/sO4IBRGXZvkXtJ0y5uSJMe
+         JzYUVMrmIMaQTSO9Cq+17qIKomS0xpeCNMnYz16K2B7eQ2GuTyqNb+kwojqQpdL5Adxb
+         /V67J0AZUs6YQlTbgz4zsnCNNyLfb6vHq5BsJeg0VMbm8kg208hh/ENAXxylFU5ksubw
+         JX3g==
+X-Gm-Message-State: APjAAAVGA/LOcXCeMJ9eLmCimZELEQpPMQDDScPOOnd99Q9tChEN88Z7
+        VtRUzE3JeBm7DzS3jWttrgaJE0lQwG2PFw==
+X-Google-Smtp-Source: APXvYqwMlHi+v4Nl0O6eC0mwPsXJS+kBanl+5tdDrtHUeA4jtUp8CiywLAerDT9joHBCBNr2OOK2NA==
+X-Received: by 2002:a17:902:6ac7:: with SMTP id i7mr3305678plt.314.1581160841129;
+        Sat, 08 Feb 2020 03:20:41 -0800 (PST)
 Received: from localhost.localdomain (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
-        by smtp.gmail.com with ESMTPSA id a19sm5707281pju.11.2020.02.08.03.20.37
+        by smtp.gmail.com with ESMTPSA id a19sm5707281pju.11.2020.02.08.03.20.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Feb 2020 03:20:38 -0800 (PST)
+        Sat, 08 Feb 2020 03:20:39 -0800 (PST)
 From:   Olof Johansson <olof@lixom.net>
 To:     torvalds@linux-foundation.org
 Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         arm@kernel.org, soc@kernel.org, Olof Johansson <olof@lixom.net>
-Subject: [GIT PULL 4/5] ARM: SoC defconfig updates
-Date:   Sat,  8 Feb 2020 03:20:17 -0800
-Message-Id: <20200208112018.29819-5-olof@lixom.net>
+Subject: [GIT PULL 5/5] ARM: SoC: late updates
+Date:   Sat,  8 Feb 2020 03:20:18 -0800
+Message-Id: <20200208112018.29819-6-olof@lixom.net>
 X-Mailer: git-send-email 2.22.GIT
 In-Reply-To: <20200208112018.29819-1-olof@lixom.net>
 References: <20200208112018.29819-1-olof@lixom.net>
@@ -62,10 +62,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We keep this in a separate branch to avoid cross-branch conflicts, but
-most of the material here is fairly boring -- some new drivers turned on
-for hardware since they were merged, and some refreshed files due to
-time having moved a lot of entries around.
+This is some material that we picked up into our tree late, or that had
+more complex dependencies on more than one topic branch that makes sense
+to keep separately.
+
+- TI support for secure accelerators and hwrng on OMAP4/5
+
+- TI camera changes for dra7 and am437x and SGX improvement due to better
+reset control support on am335x, am437x and dra7
+
+- Davinci moves to proper clocksource on DM365, and regulator/audio
+improvements for DM365 and DM644x eval boards
 
 ----------------------------------------------------------------
 
@@ -75,13 +82,62 @@ The following changes since commit a1a0cfaf7fb7c1a90201e6b0937f742c8c212d8e:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/armsoc-defconfig
+  git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/armsoc-late
 
-for you to fetch changes up to 1342a6aa4abf6a56e83ce24ce5e84243c365ab4d:
+for you to fetch changes up to a832eb203ecd34e486bdde0042cf166e687eb227:
 
-  Merge tag 'samsung-defconfig-5.6' of https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux into arm/defconfig
+  Merge tag 'davinci-for-v5.6/soc' of git://git.kernel.org/pub/scm/linux/kernel/git/nsekhar/linux-davinci into arm/late
 
 ----------------------------------------------------------------
+
+Bartosz Golaszewski (3):
+      clocksource: davinci: only enable clockevents once tim34 is initialized
+      ARM: davinci: dm365: switch to using the clocksource driver
+      ARM: davinci: remove legacy timer support
+
+Benoit Parrot (11):
+      ARM: dts: dra7: add cam clkctrl node
+      ARM: OMAP: DRA7xx: Make CAM clock domain SWSUP only
+      ARM: dts: dra7-l4: Add ti-sysc node for CAM
+      ARM: dts: DRA72: Add CAL dtsi node
+      arm: dts: dra72-evm-common: Add entries for the CSI2 cameras
+      arm: dtsi: dra76x: Add CAL dtsi node
+      arm: dts: dra76-evm: Add CAL and OV5640 nodes
+      ARM: dts: am437x-sk-evm: Add VPFE and OV2659 entries
+      ARM: dts: am43x-epos-evm: Add VPFE and OV2659 entries
+      ARM: dts: dra7: add vpe clkctrl node
+      ARM: dts: dra7: Add ti-sysc node for VPE
+
+Olof Johansson (3):
+      Merge tag 'omap-for-v5.6/ti-sysc-drop-pdata-crypto-signed' of git://git.kernel.org/.../tmlind/linux-omap into arm/late
+      Merge tag 'omap-for-v5.6/dt-late-signed' of git://git.kernel.org/.../tmlind/linux-omap into arm/late
+      Merge tag 'davinci-for-v5.6/soc' of git://git.kernel.org/.../nsekhar/linux-davinci into arm/late
+
+Peter Ujfalusi (2):
+      ARM: davinci: dm365-evm: Add Fixed regulators needed for tlv320aic3101
+      ARM: davinci: dm644x-evm: Add Fixed regulators needed for tlv320aic33
+
+Tero Kristo (1):
+      ARM: dts: am43xx: add support for clkout1 clock
+
+Tony Lindgren (17):
+      ARM: dts: Add missing omap4 secure clocks
+      ARM: dts: Add missing omap5 secure clocks
+      ARM: dts: Configure omap4 rng to probe with ti-sysc
+      ARM: dts: Configure omap5 rng to probe with ti-sysc
+      ARM: dts: Configure interconnect target module for omap4 sham
+      ARM: dts: Configure interconnect target module for omap4 aes
+      ARM: dts: Configure interconnect target module for omap4 des
+      ARM: OMAP2+: Drop legacy platform data for omap4 aes
+      ARM: OMAP2+: Drop legacy platform data for omap4 sham
+      ARM: OMAP2+: Drop legacy platform data for omap4 des
+      Merge branch 'omap-for-v5.6/ti-sysc-omap45-rng' into omap-for-v5.6/ti-sysc-drop-pdata
+      Merge branch 'omap-for-v5.6/ti-sysc-dt-cam' into omap-for-v5.6/dt
+      ARM: dts: Configure rstctrl reset for am335x SGX
+      ARM: dts: Configure sgx for dra7
+      ARM: dts: Configure interconnect target module for am437x sgx
+      ARM: dts: motorola-cpcap-mapphone: Configure calibration interrupt
+      ARM: dts: omap4-droid4: Enable hdq for droid4 ds250x 1-wire battery nvmem
 
 
  arch/arm/boot/dts/am33xx.dtsi                   |  25 ++
