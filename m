@@ -2,79 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B1CE156205
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 01:50:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8F7115620B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 01:50:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbgBHAt7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Feb 2020 19:49:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60492 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726743AbgBHAt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Feb 2020 19:49:59 -0500
-Received: from oasis.local.home (unknown [12.174.139.122])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727509AbgBHAuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Feb 2020 19:50:55 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:49099 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727131AbgBHAux (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Feb 2020 19:50:53 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1581123052; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=qPkoBZcjFDDffVZqOjSoc0Prt/FQJ0KkDvb0IVj8YME=; b=QK8sYbAtDR0aelDU0WulxP+pdBvq3JSyhLFFjAKc2ByaM65WZgFIe4W4/J1TQduiJ2Q/MqQi
+ bXrklhkkd+9T2y7wwHcbYXt0SGaA+zSpfZ3phczKLdHZHOuLU2CRF0QRAov5RhCrNjHN7Wlr
+ 6miUMvZM+4Up9Z1dF5eAS3hugUE=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e3e05e7.7f3ca5d71308-smtp-out-n01;
+ Sat, 08 Feb 2020 00:50:47 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 78C2AC447A9; Sat,  8 Feb 2020 00:50:45 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AA8E206DB;
-        Sat,  8 Feb 2020 00:49:57 +0000 (UTC)
-Date:   Fri, 7 Feb 2020 19:49:55 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] bootconfig: Use parse_args() to find bootconfig and
- '--'
-Message-ID: <20200207194955.41fd5192@oasis.local.home>
-In-Reply-To: <20200207192632.0cd953a7@oasis.local.home>
-References: <20200207192632.0cd953a7@oasis.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        (Authenticated sender: cang)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 93AD5C43383;
+        Sat,  8 Feb 2020 00:50:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 93AD5C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
+From:   Can Guo <cang@codeaurora.org>
+To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        hongwus@codeaurora.org, rnayak@codeaurora.org,
+        linux-scsi@vger.kernel.org, kernel-team@android.com,
+        saravanak@google.com, salyzyn@google.com, cang@codeaurora.org
+Cc:     Sayali Lokhande <sayalil@codeaurora.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/7] scsi: ufs: Flush exception event before suspend
+Date:   Fri,  7 Feb 2020 16:50:23 -0800
+Message-Id: <1581123030-12023-2-git-send-email-cang@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1581123030-12023-1-git-send-email-cang@codeaurora.org>
+References: <1581123030-12023-1-git-send-email-cang@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 7 Feb 2020 19:26:32 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+From: Sayali Lokhande <sayalil@codeaurora.org>
 
->  static void __init setup_boot_config(const char *cmdline)
->  {
-> +	static char tmp_cmdline[COMMAND_LINE_SIZE] __initdata;
->  	u32 size, csum;
->  	char *data, *copy;
->  	const char *p;
+Exception event can be raised by the device when system
+suspend is in progress. This will result in unclocked
+register access in exception event handler as clocks will
+be turned off during suspend. This change makes sure to flush
+exception event handler work in suspend before disabling
+clocks to avoid unclocked register access issue.
 
-I have a v2 of this patch that removes the variable "p" as I now get an
-unused variable because of it.
+Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+Signed-off-by: Can Guo <cang@codeaurora.org>
+Reviewed-by: Bean Huo <beanhuo@micron.com>
 
--- Steve
-
-
->  	u32 *hdr;
->  	int ret;
->  
-> -	p = strstr(cmdline, "bootconfig");
-> -	if (!p || (p != cmdline && !isspace(*(p-1))) ||
-> -	    (p[10] && !isspace(p[10])))
-> +	strlcpy(tmp_cmdline, boot_command_line, COMMAND_LINE_SIZE);
-> +	parse_args("bootconfig", tmp_cmdline, NULL, 0, 0, 0, NULL,
-> +		   bootconfig_params);
-> +
-> +	if (!bootconfig_found)
->  		return;
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index abd0e6b..10dbc0c 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -4730,8 +4730,15 @@ static void ufshcd_slave_destroy(struct scsi_device *sdev)
+ 			 * UFS device needs urgent BKOPs.
+ 			 */
+ 			if (!hba->pm_op_in_progress &&
+-			    ufshcd_is_exception_event(lrbp->ucd_rsp_ptr))
+-				schedule_work(&hba->eeh_work);
++			    ufshcd_is_exception_event(lrbp->ucd_rsp_ptr) &&
++			    schedule_work(&hba->eeh_work)) {
++				/*
++				 * Prevent suspend once eeh_work is scheduled
++				 * to avoid deadlock between ufshcd_suspend
++				 * and exception event handler.
++				 */
++				pm_runtime_get_noresume(hba->dev);
++			}
+ 			break;
+ 		case UPIU_TRANSACTION_REJECT_UPIU:
+ 			/* TODO: handle Reject UPIU Response */
+@@ -5184,7 +5191,14 @@ static void ufshcd_exception_event_handler(struct work_struct *work)
+ 
+ out:
+ 	ufshcd_scsi_unblock_requests(hba);
+-	pm_runtime_put_sync(hba->dev);
++	/*
++	 * pm_runtime_get_noresume is called while scheduling
++	 * eeh_work to avoid suspend racing with exception work.
++	 * Hence decrement usage counter using pm_runtime_put_noidle
++	 * to allow suspend on completion of exception event handler.
++	 */
++	pm_runtime_put_noidle(hba->dev);
++	pm_runtime_put(hba->dev);
+ 	return;
+ }
+ 
+@@ -7924,6 +7938,7 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+ 			goto enable_gating;
+ 	}
+ 
++	flush_work(&hba->eeh_work);
+ 	ret = ufshcd_link_state_transition(hba, req_link_state, 1);
+ 	if (ret)
+ 		goto set_dev_active;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
