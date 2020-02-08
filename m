@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45B981565DB
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 19:30:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D15EC1565DE
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 19:30:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727810AbgBHS3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Feb 2020 13:29:40 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33630 "EHLO
+        id S1727944AbgBHS3s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Feb 2020 13:29:48 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33762 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727650AbgBHS3f (ORCPT
+        by vger.kernel.org with ESMTP id S1727751AbgBHS3i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Feb 2020 13:29:35 -0500
+        Sat, 8 Feb 2020 13:29:38 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1j0UrF-0003cK-Lx; Sat, 08 Feb 2020 18:29:33 +0000
+        id 1j0UrG-0003dG-Ih; Sat, 08 Feb 2020 18:29:34 +0000
 Received: from ben by deadeye with local (Exim 4.93)
         (envelope-from <ben@decadent.org.uk>)
-        id 1j0UrE-000CKi-L8; Sat, 08 Feb 2020 18:29:32 +0000
+        id 1j0UrF-000CLV-Ud; Sat, 08 Feb 2020 18:29:33 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Marcel Holtmann" <marcel@holtmann.org>,
-        "Mattijs Korpershoek" <mkorpershoek@baylibre.com>
-Date:   Sat, 08 Feb 2020 18:19:28 +0000
-Message-ID: <lsq.1581185940.463080775@decadent.org.uk>
+        "Steffen Maier" <maier@linux.ibm.com>,
+        "Benjamin Block" <bblock@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Date:   Sat, 08 Feb 2020 18:19:37 +0000
+Message-ID: <lsq.1581185940.779304711@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 029/148] Bluetooth: hci_core: fix init for
- HCI_USER_CHANNEL
+Subject: [PATCH 3.16 038/148] scsi: zfcp: trace channel log even for FCP
+ command responses
 In-Reply-To: <lsq.1581185939.857586636@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,47 +49,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mattijs Korpershoek <mkorpershoek@baylibre.com>
+From: Steffen Maier <maier@linux.ibm.com>
 
-commit eb8c101e28496888a0dcfe16ab86a1bee369e820 upstream.
+commit 100843f176109af94600e500da0428e21030ca7f upstream.
 
-During the setup() stage, HCI device drivers expect the chip to
-acknowledge its setup() completion via vendor specific frames.
+While v2.6.26 commit b75db73159cc ("[SCSI] zfcp: Add qtcb dump to hba debug
+trace") is right that we don't want to flood the (payload) trace ring
+buffer, we don't trace successful FCP command responses by default.  So we
+can include the channel log for problem determination with failed responses
+of any FSF request type.
 
-If userspace opens() such HCI device in HCI_USER_CHANNEL [1] mode,
-the vendor specific frames are never tranmitted to the driver, as
-they are filtered in hci_rx_work().
-
-Allow HCI devices which operate in HCI_USER_CHANNEL mode to receive
-frames if the HCI device is is HCI_INIT state.
-
-[1] https://www.spinics.net/lists/linux-bluetooth/msg37345.html
-
-Fixes: 23500189d7e0 ("Bluetooth: Introduce new HCI socket channel for user operation")
-Signed-off-by: Mattijs Korpershoek <mkorpershoek@baylibre.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-[bwh: Backported to 3.16: Keep checking both HCI_RAW and HCI_USER_CHANNEL
- bits here]
+Fixes: b75db73159cc ("[SCSI] zfcp: Add qtcb dump to hba debug trace")
+Fixes: a54ca0f62f95 ("[SCSI] zfcp: Redesign of the debug tracing for HBA records.")
+Link: https://lore.kernel.org/r/e37597b5c4ae123aaa85fd86c23a9f71e994e4a9.1572018132.git.bblock@linux.ibm.com
+Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
+Signed-off-by: Steffen Maier <maier@linux.ibm.com>
+Signed-off-by: Benjamin Block <bblock@linux.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+[bwh: Backported to 3.16: Deleted condition is slightly different]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/net/bluetooth/hci_core.c
-+++ b/net/bluetooth/hci_core.c
-@@ -5226,8 +5226,15 @@ static void hci_rx_work(struct work_stru
- 			hci_send_to_sock(hdev, skb);
- 		}
+ drivers/s390/scsi/zfcp_dbf.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+--- a/drivers/s390/scsi/zfcp_dbf.c
++++ b/drivers/s390/scsi/zfcp_dbf.c
+@@ -93,11 +93,9 @@ void zfcp_dbf_hba_fsf_res(char *tag, int
+ 	memcpy(rec->u.res.fsf_status_qual, &q_head->fsf_status_qual,
+ 	       FSF_STATUS_QUALIFIER_SIZE);
  
--		if (test_bit(HCI_RAW, &hdev->flags) ||
--		    test_bit(HCI_USER_CHANNEL, &hdev->dev_flags)) {
-+		/* If the device has been opened in HCI_USER_CHANNEL,
-+		 * the userspace has exclusive access to device.
-+		 * When device is HCI_INIT, we still need to process
-+		 * the data packets to the driver in order
-+		 * to complete its setup().
-+		 */
-+		if ((test_bit(HCI_RAW, &hdev->flags) ||
-+		     test_bit(HCI_USER_CHANNEL, &hdev->dev_flags)) &&
-+		    !test_bit(HCI_INIT, &hdev->flags)) {
- 			kfree_skb(skb);
- 			continue;
- 		}
+-	if (req->fsf_command != FSF_QTCB_FCP_CMND) {
+-		rec->pl_len = q_head->log_length;
+-		zfcp_dbf_pl_write(dbf, (char *)q_pref + q_head->log_start,
+-				  rec->pl_len, "fsf_res", req->req_id);
+-	}
++	rec->pl_len = q_head->log_length;
++	zfcp_dbf_pl_write(dbf, (char *)q_pref + q_head->log_start,
++			  rec->pl_len, "fsf_res", req->req_id);
+ 
+ 	debug_event(dbf->hba, level, rec, sizeof(*rec));
+ 	spin_unlock_irqrestore(&dbf->hba_lock, flags);
 
