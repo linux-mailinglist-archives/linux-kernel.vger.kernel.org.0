@@ -2,75 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73BE01564AF
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 15:09:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ECD31564B6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 15:11:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727446AbgBHOJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Feb 2020 09:09:28 -0500
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:38074 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727195AbgBHOJ1 (ORCPT
+        id S1727496AbgBHOLJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Feb 2020 09:11:09 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42848 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727196AbgBHOLJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Feb 2020 09:09:27 -0500
-Received: from localhost.localdomain ([93.22.133.23])
-        by mwinf5d31 with ME
-        id 0E9R220070WSqZ103E9RbC; Sat, 08 Feb 2020 15:09:26 +0100
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 08 Feb 2020 15:09:26 +0100
-X-ME-IP: 93.22.133.23
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     oss@buserror.net, galak@kernel.crashing.org,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/2] powerpc/83xx: Add some error handling in 'quirk_mpc8360e_qe_enet10()'
-Date:   Sat,  8 Feb 2020 15:09:20 +0100
-Message-Id: <20200208140920.7652-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.20.1
+        Sat, 8 Feb 2020 09:11:09 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 66so2053864otd.9;
+        Sat, 08 Feb 2020 06:11:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cWwOu9a6Z1tLizrwqoz4gJCJrtA9tbQqyQC9xeUEbAk=;
+        b=IhgngSOUWZuvS1yoCpBIkBgYZSyuHDMJxKhnvk+9BKkLidnOBtpGJ2UYyjuXV49rtx
+         Y7QKwAzxZQHMYk1aOqyHV93VNWOd/cuOuh1zsHex5pBJnBP7Qz3qh1cwExoQfwGJwOnl
+         AY4Fjocfx7JqExG7KllMr+Q8w4PzGI+fzGTheyLHi91hFNrEHKqpxhBOkFCX58ghhrZ7
+         O5+Cv+qa2eqDfsZs+1NFITd/XiyY0eRNSfF96tSCDpSIuXjjS7qf3On2Ci20nGG0jKL3
+         KwdYlEh54/XhY6ALIDTam4B9xD0+dQu9Tw8OaV5nqf+myj/cO2H5yG/4kbrrVzCH0rVn
+         wAbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cWwOu9a6Z1tLizrwqoz4gJCJrtA9tbQqyQC9xeUEbAk=;
+        b=ebzIAw0F53vj7ygxlsEqd+2OM0ERdotPgGS8ddPILdVTkxvdzg7NTW9JTBBT+79pNI
+         vQe90hVFZuenynlRgbhS4V7lumzRnlGyoTIAh6xKIHCEiadP/KalwgReuSVO+BCMwEa/
+         ICHrUnlSCQLOa37/0ySyTlHKNZWMKo4antb0KTSjk1JQM9TzwJ7HQItW6EjmW1QXYEUP
+         mDo0D1QQUTkCs9xJwCPJlBXuP2ZZ0iy0lx1dGrm5wDaP9JePIMRtUl4iI5M82ZwLs8bP
+         g4rG04d8FGZe+NDi2Ftn5zneZgGnheO0dNcL92B7/PwE1ZKn5f6yW6H19eq4HAQ54GXW
+         jU4Q==
+X-Gm-Message-State: APjAAAU+gRnJnHv5PT0Zq2LJsXuATXPMp0N1vQ8p+aBrai675j1jun0h
+        u1C5YAW35y3KQHDK+fQ4KSM=
+X-Google-Smtp-Source: APXvYqweQ+tULOjiAGitJKPoVJw+WP/OV7bz5HFmJf3cwWIUuPUIDbrvec0qcD37tzw7hMVA9XlnNQ==
+X-Received: by 2002:a9d:6212:: with SMTP id g18mr3705409otj.187.1581171068359;
+        Sat, 08 Feb 2020 06:11:08 -0800 (PST)
+Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id c36sm2294461otb.55.2020.02.08.06.11.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Feb 2020 06:11:08 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] s390/kaslr: Fix casts in get_random
+Date:   Sat,  8 Feb 2020 07:10:52 -0700
+Message-Id: <20200208141052.48476-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
+X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some error handling path, we should call "of_node_put(np_par)" or
-some resource may be leaking in case of error.
+Clang warns:
 
-Fixes: 8159df72d43e ("83xx: add support for the kmeter1 board.")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+../arch/s390/boot/kaslr.c:78:25: warning: passing 'char *' to parameter
+of type 'const u8 *' (aka 'const unsigned char *') converts between
+pointers to integer
+types with different sign [-Wpointer-sign]
+                                  (char *) entropy, (char *) entropy,
+                                                    ^~~~~~~~~~~~~~~~
+../arch/s390/include/asm/cpacf.h:280:28: note: passing argument to
+parameter 'src' here
+                            u8 *dest, const u8 *src, long src_len)
+                                                ^
+2 warnings generated.
+
+Fix the cast to match what else is done in this function.
+
+Fixes: b2d24b97b2a9 ("s390/kernel: add support for kernel address space layout randomization (KASLR)")
+Link: https://github.com/ClangBuiltLinux/linux/issues/862
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- arch/powerpc/platforms/83xx/km83xx.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/s390/boot/kaslr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/platforms/83xx/km83xx.c b/arch/powerpc/platforms/83xx/km83xx.c
-index 306be75faec7..bcdc2c203ec9 100644
---- a/arch/powerpc/platforms/83xx/km83xx.c
-+++ b/arch/powerpc/platforms/83xx/km83xx.c
-@@ -60,10 +60,12 @@ static void quirk_mpc8360e_qe_enet10(void)
- 	ret = of_address_to_resource(np_par, 0, &res);
- 	if (ret) {
- 		pr_warn("%s couldn't map par_io registers\n", __func__);
--		return;
-+		goto out;
- 	}
- 
- 	base = ioremap(res.start, resource_size(&res));
-+	if (!base)
-+		goto out;
- 
- 	/*
- 	 * set output delay adjustments to default values according
-@@ -111,6 +113,7 @@ static void quirk_mpc8360e_qe_enet10(void)
- 		setbits32((base + 0xac), 0x0000c000);
- 	}
- 	iounmap(base);
-+out:
- 	of_node_put(np_par);
- }
- 
+diff --git a/arch/s390/boot/kaslr.c b/arch/s390/boot/kaslr.c
+index 5d12352545c5..5591243d673e 100644
+--- a/arch/s390/boot/kaslr.c
++++ b/arch/s390/boot/kaslr.c
+@@ -75,7 +75,7 @@ static unsigned long get_random(unsigned long limit)
+ 		*(unsigned long *) prng.parm_block ^= seed;
+ 		for (i = 0; i < 16; i++) {
+ 			cpacf_kmc(CPACF_KMC_PRNG, prng.parm_block,
+-				  (char *) entropy, (char *) entropy,
++				  (u8 *) entropy, (u8 *) entropy,
+ 				  sizeof(entropy));
+ 			memcpy(prng.parm_block, entropy, sizeof(entropy));
+ 		}
 -- 
-2.20.1
+2.25.0
 
