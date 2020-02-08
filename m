@@ -2,63 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 306EB15658E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 17:50:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A96CB15659E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Feb 2020 18:01:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbgBHQu0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Feb 2020 11:50:26 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:46733 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727390AbgBHQuZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Feb 2020 11:50:25 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1j0TJH-0005uJ-5K; Sat, 08 Feb 2020 16:50:23 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: typec: ucsi: remove redundant assignment to variable num
-Date:   Sat,  8 Feb 2020 16:50:22 +0000
-Message-Id: <20200208165022.30429-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.25.0
+        id S1727499AbgBHRA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Feb 2020 12:00:57 -0500
+Received: from mga06.intel.com ([134.134.136.31]:14586 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727341AbgBHRA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Feb 2020 12:00:57 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2020 09:00:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,418,1574150400"; 
+   d="scan'208";a="232687537"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.21])
+  by orsmga003.jf.intel.com with ESMTP; 08 Feb 2020 09:00:56 -0800
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     dvhart@infradead.org, andy@infradead.org
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH 0/2] x86/platform: intel-uncore-frequnecy bug fixes
+Date:   Sat,  8 Feb 2020 09:00:50 -0800
+Message-Id: <20200208170052.57712-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+This patchset fix issue reported by static checker and potential
+race condition.
 
-Variable num is being assigned with a value that is never read, it is
-assigned a new value later in a for-loop. The assignment is redundant
-and can be removed.
+Srinivas Pandruvada (2):
+  platform/x86/intel-uncore-freq: Fix static checker issue and potential
+    race condition
+  platform/x86/intel-uncore-freq: Add release callback
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/typec/ucsi/ucsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/x86/intel-uncore-frequency.c | 51 ++++++++++++-------
+ 1 file changed, 33 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-index d5a6aac86327..b1b72cb7af10 100644
---- a/drivers/usb/typec/ucsi/ucsi.c
-+++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -400,7 +400,7 @@ static int ucsi_register_altmodes(struct ucsi_connector *con, u8 recipient)
- 	struct typec_altmode_desc desc;
- 	struct ucsi_altmode alt[2];
- 	u64 command;
--	int num = 1;
-+	int num;
- 	int ret;
- 	int len;
- 	int j;
 -- 
-2.25.0
+2.20.1
 
