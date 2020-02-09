@@ -2,238 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 987E7156A33
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 13:57:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48E29156A36
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 13:57:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbgBIM47 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 07:56:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44920 "EHLO mail.kernel.org"
+        id S1727847AbgBIM5P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 07:57:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727514AbgBIM46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 07:56:58 -0500
+        id S1727631AbgBIM5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Feb 2020 07:57:15 -0500
 Received: from localhost (unknown [38.98.37.135])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF9C220733;
-        Sun,  9 Feb 2020 12:56:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD3C620733;
+        Sun,  9 Feb 2020 12:57:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581253017;
-        bh=pU0XY5vmHidxHznE1uXZI2JzEedVBBHCxGVC1uiti40=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JyCcZDWJZAkGBhefHviaP6ENYmF9lictV+VTN6DRjQgnyCNbaHH9fAUbqipujGQ7B
-         Gxa1RJYLuKrFRGWVXIWGsg9DKG9WUL5i8SyHW6ruYrb42ckwsfTJdLvD/igBC7/Aq8
-         0IIumpdO25SczqlP0z4MdTxgphh7WGeX/TamtXbk=
+        s=default; t=1581253034;
+        bh=6sX0Ip+mK3tsK8D8/OZZvuROxHkWLqF6ytnpDiTpDsc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=uSxZe6b/ilcxBYyy5/bKvhjr7cQ9Ksm4h7zu5SBIPM+dw5YWlfJQkbJeGY3LwRLj0
+         cdVypdKUJmaw12ip8kq0HQOgkiYxOtubI4lvvt0hMDgJlMTM7B9KdjyE4HGLtxaDaG
+         HiFCNoAPNqKYPRb2357mo+LpyTQFACsKkIqGNa8M=
+Date:   Sun, 9 Feb 2020 12:05:49 +0100
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linuxppc-dev@lists.ozlabs.org
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sukadev Bhattiprolu <sukadev@linux.ibm.com>
-Subject: [PATCH 6/6] powerpc: powernv: no need to check return value of debugfs_create functions
-Date:   Sun,  9 Feb 2020 11:59:01 +0100
-Message-Id: <20200209105901.1620958-6-gregkh@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200209105901.1620958-1-gregkh@linuxfoundation.org>
-References: <20200209105901.1620958-1-gregkh@linuxfoundation.org>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Saravana Kannan <saravanak@google.com>,
+        Jason Baron <jbaron@akamai.com>, Will Deacon <will@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH v5] dynamic_debug: allow to work if debugfs is disabled
+Message-ID: <20200209110549.GA1621867@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200123093628.GA18991@willie-the-truck>
+ <20200123085015.GA436361@kroah.com>
+ <CAGETcx86rQpS4qodSiv_v+E_8P3DUQDY9jiN_Yq07Jwh9tHQcQ@mail.gmail.com>
+ <20200125101130.449a8e4d@lwn.net>
+ <20200125014231.GI147870@mit.edu>
+ <20200123155340.GD147870@mit.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When calling debugfs functions, there is no need to ever check the
-return value.  The function can work or not, but the code logic should
-never do something different based on this.
+With the realization that having debugfs enabled on "production" systems
+is generally not a good idea, debugfs is being disabled from more and
+more platforms over time.  However, the functionality of dynamic
+debugging still is needed at times, and since it relies on debugfs for
+its user api, having debugfs disabled also forces dynamic debug to be
+disabled.
 
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Sukadev Bhattiprolu <sukadev@linux.ibm.com>
-Cc: linuxppc-dev@lists.ozlabs.org
+To get around this, also create the "control" file for dynamic_debug in
+procfs.  This allows people turn on debugging as needed at runtime for
+individual driverfs and subsystems.
+
+Reported-by: many different companies
+Cc: Jason Baron <jbaron@akamai.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/powernv/memtrace.c  |  7 ----
- arch/powerpc/platforms/powernv/opal-imc.c  | 24 ++++----------
- arch/powerpc/platforms/powernv/pci-ioda.c  |  5 ---
- arch/powerpc/platforms/powernv/vas-debug.c | 37 ++--------------------
- 4 files changed, 10 insertions(+), 63 deletions(-)
+v5: as many people asked for it, now enable the control file in both
+    debugfs and procfs at the same time.
+v4: tweaks to the .rst text thanks to Randy's review
+v3: rename init function as it is now no longer just for debugfs, thanks
+    to Jason for the review.
+    Fix build warning for debugfs_initialized call.
+v2: Fix up octal permissions and add procfs reference to the Kconfig
+    entry, thanks to Will for the review.
 
-diff --git a/arch/powerpc/platforms/powernv/memtrace.c b/arch/powerpc/platforms/powernv/memtrace.c
-index eb2e75dac369..d6d64f8718e6 100644
---- a/arch/powerpc/platforms/powernv/memtrace.c
-+++ b/arch/powerpc/platforms/powernv/memtrace.c
-@@ -187,11 +187,6 @@ static int memtrace_init_debugfs(void)
+ .../admin-guide/dynamic-debug-howto.rst       |  3 +++
+ lib/Kconfig.debug                             |  7 ++++---
+ lib/dynamic_debug.c                           | 20 ++++++++++++++-----
+ 3 files changed, 22 insertions(+), 8 deletions(-)
+
+diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
+index 252e5ef324e5..585451d12608 100644
+--- a/Documentation/admin-guide/dynamic-debug-howto.rst
++++ b/Documentation/admin-guide/dynamic-debug-howto.rst
+@@ -54,6 +54,9 @@ If you make a mistake with the syntax, the write will fail thus::
+ 				<debugfs>/dynamic_debug/control
+   -bash: echo: write error: Invalid argument
  
- 		snprintf(ent->name, 16, "%08x", ent->nid);
- 		dir = debugfs_create_dir(ent->name, memtrace_debugfs_dir);
--		if (!dir) {
--			pr_err("Failed to create debugfs directory for node %d\n",
--				ent->nid);
--			return -1;
--		}
++Note, for systems without 'debugfs' enabled, the control file can also
++be found in ``/proc/dynamic_debug/control``.
++
+ Viewing Dynamic Debug Behaviour
+ ===============================
  
- 		ent->dir = dir;
- 		debugfs_create_file("trace", 0400, dir, ent, &memtrace_fops);
-@@ -314,8 +309,6 @@ static int memtrace_init(void)
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 69def4a9df00..a15dde66dc4c 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -98,7 +98,7 @@ config DYNAMIC_DEBUG
+ 	bool "Enable dynamic printk() support"
+ 	default n
+ 	depends on PRINTK
+-	depends on DEBUG_FS
++	depends on (DEBUG_FS || PROC_FS)
+ 	help
+ 
+ 	  Compiles debug level messages into the kernel, which would not
+@@ -116,8 +116,9 @@ config DYNAMIC_DEBUG
+ 	  Usage:
+ 
+ 	  Dynamic debugging is controlled via the 'dynamic_debug/control' file,
+-	  which is contained in the 'debugfs' filesystem. Thus, the debugfs
+-	  filesystem must first be mounted before making use of this feature.
++	  which is contained in the 'debugfs' filesystem or procfs if
++	  debugfs is not present. Thus, the debugfs or procfs filesystem
++	  must first be mounted before making use of this feature.
+ 	  We refer the control file as: <debugfs>/dynamic_debug/control. This
+ 	  file contains a list of the debug statements that can be enabled. The
+ 	  format for each line of the file is:
+diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+index c60409138e13..c220c1891729 100644
+--- a/lib/dynamic_debug.c
++++ b/lib/dynamic_debug.c
+@@ -991,15 +991,25 @@ static void ddebug_remove_all_tables(void)
+ 
+ static __initdata int ddebug_init_success;
+ 
+-static int __init dynamic_debug_init_debugfs(void)
++static int __init dynamic_debug_init_control(void)
  {
- 	memtrace_debugfs_dir = debugfs_create_dir("memtrace",
- 						  powerpc_debugfs_root);
--	if (!memtrace_debugfs_dir)
--		return -1;
+-	struct dentry *dir;
++	struct proc_dir_entry *procfs_dir;
++	struct dentry *debugfs_dir;
  
- 	debugfs_create_file("enable", 0600, memtrace_debugfs_dir,
- 			    NULL, &memtrace_init_fops);
-diff --git a/arch/powerpc/platforms/powernv/opal-imc.c b/arch/powerpc/platforms/powernv/opal-imc.c
-index 000b350d4060..968b9a4d1cd9 100644
---- a/arch/powerpc/platforms/powernv/opal-imc.c
-+++ b/arch/powerpc/platforms/powernv/opal-imc.c
-@@ -35,11 +35,10 @@ static int imc_mem_set(void *data, u64 val)
+ 	if (!ddebug_init_success)
+ 		return -ENODEV;
+ 
+-	dir = debugfs_create_dir("dynamic_debug", NULL);
+-	debugfs_create_file("control", 0644, dir, NULL, &ddebug_proc_fops);
++	/* Create the control file in debugfs if it is enabled */
++	if (debugfs_initialized()) {
++		debugfs_dir = debugfs_create_dir("dynamic_debug", NULL);
++		debugfs_create_file("control", 0644, debugfs_dir, NULL,
++				    &ddebug_proc_fops);
++	}
++
++	/* Also create the control file in procfs */
++	procfs_dir = proc_mkdir("dynamic_debug", NULL);
++	if (procfs_dir)
++		proc_create("control", 0644, procfs_dir, &ddebug_proc_fops);
+ 
+ 	return 0;
  }
- DEFINE_DEBUGFS_ATTRIBUTE(fops_imc_x64, imc_mem_get, imc_mem_set, "0x%016llx\n");
+@@ -1077,4 +1087,4 @@ static int __init dynamic_debug_init(void)
+ early_initcall(dynamic_debug_init);
  
--static struct dentry *imc_debugfs_create_x64(const char *name, umode_t mode,
--					     struct dentry *parent, u64  *value)
-+static void imc_debugfs_create_x64(const char *name, umode_t mode,
-+				   struct dentry *parent, u64  *value)
- {
--	return debugfs_create_file_unsafe(name, mode, parent,
--					  value, &fops_imc_x64);
-+	debugfs_create_file_unsafe(name, mode, parent, value, &fops_imc_x64);
- }
- 
- /*
-@@ -59,9 +58,6 @@ static void export_imc_mode_and_cmd(struct device_node *node,
- 
- 	imc_debugfs_parent = debugfs_create_dir("imc", powerpc_debugfs_root);
- 
--	if (!imc_debugfs_parent)
--		return;
--
- 	if (of_property_read_u32(node, "cb_offset", &cb_offset))
- 		cb_offset = IMC_CNTL_BLK_OFFSET;
- 
-@@ -69,21 +65,15 @@ static void export_imc_mode_and_cmd(struct device_node *node,
- 		loc = (u64)(ptr->vbase) + cb_offset;
- 		imc_mode_addr = (u64 *)(loc + IMC_CNTL_BLK_MODE_OFFSET);
- 		sprintf(mode, "imc_mode_%d", (u32)(ptr->id));
--		if (!imc_debugfs_create_x64(mode, 0600, imc_debugfs_parent,
--					    imc_mode_addr))
--			goto err;
-+		imc_debugfs_create_x64(mode, 0600, imc_debugfs_parent,
-+				       imc_mode_addr);
- 
- 		imc_cmd_addr = (u64 *)(loc + IMC_CNTL_BLK_CMD_OFFSET);
- 		sprintf(cmd, "imc_cmd_%d", (u32)(ptr->id));
--		if (!imc_debugfs_create_x64(cmd, 0600, imc_debugfs_parent,
--					    imc_cmd_addr))
--			goto err;
-+		imc_debugfs_create_x64(cmd, 0600, imc_debugfs_parent,
-+				       imc_cmd_addr);
- 		ptr++;
- 	}
--	return;
--
--err:
--	debugfs_remove_recursive(imc_debugfs_parent);
- }
- 
- /*
-diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
-index 22c22cd7bd82..57d3a6af1d52 100644
---- a/arch/powerpc/platforms/powernv/pci-ioda.c
-+++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-@@ -3174,11 +3174,6 @@ static void pnv_pci_ioda_create_dbgfs(void)
- 
- 		sprintf(name, "PCI%04x", hose->global_number);
- 		phb->dbgfs = debugfs_create_dir(name, powerpc_debugfs_root);
--		if (!phb->dbgfs) {
--			pr_warn("%s: Error on creating debugfs on PHB#%x\n",
--				__func__, hose->global_number);
--			continue;
--		}
- 
- 		debugfs_create_file_unsafe("dump_diag_regs", 0200, phb->dbgfs,
- 					   phb, &pnv_pci_diag_data_fops);
-diff --git a/arch/powerpc/platforms/powernv/vas-debug.c b/arch/powerpc/platforms/powernv/vas-debug.c
-index 09e63df53c30..44035a3d6414 100644
---- a/arch/powerpc/platforms/powernv/vas-debug.c
-+++ b/arch/powerpc/platforms/powernv/vas-debug.c
-@@ -115,7 +115,7 @@ void vas_window_free_dbgdir(struct vas_window *window)
- 
- void vas_window_init_dbgdir(struct vas_window *window)
- {
--	struct dentry *f, *d;
-+	struct dentry *d;
- 
- 	if (!window->vinst->dbgdir)
- 		return;
-@@ -127,28 +127,10 @@ void vas_window_init_dbgdir(struct vas_window *window)
- 	snprintf(window->dbgname, 16, "w%d", window->winid);
- 
- 	d = debugfs_create_dir(window->dbgname, window->vinst->dbgdir);
--	if (IS_ERR(d))
--		goto free_name;
--
- 	window->dbgdir = d;
- 
--	f = debugfs_create_file("info", 0444, d, window, &info_fops);
--	if (IS_ERR(f))
--		goto remove_dir;
--
--	f = debugfs_create_file("hvwc", 0444, d, window, &hvwc_fops);
--	if (IS_ERR(f))
--		goto remove_dir;
--
--	return;
--
--remove_dir:
--	debugfs_remove_recursive(window->dbgdir);
--	window->dbgdir = NULL;
--
--free_name:
--	kfree(window->dbgname);
--	window->dbgname = NULL;
-+	debugfs_create_file("info", 0444, d, window, &info_fops);
-+	debugfs_create_file("hvwc", 0444, d, window, &hvwc_fops);
- }
- 
- void vas_instance_init_dbgdir(struct vas_instance *vinst)
-@@ -156,8 +138,6 @@ void vas_instance_init_dbgdir(struct vas_instance *vinst)
- 	struct dentry *d;
- 
- 	vas_init_dbgdir();
--	if (!vas_debugfs)
--		return;
- 
- 	vinst->dbgname = kzalloc(16, GFP_KERNEL);
- 	if (!vinst->dbgname)
-@@ -166,16 +146,7 @@ void vas_instance_init_dbgdir(struct vas_instance *vinst)
- 	snprintf(vinst->dbgname, 16, "v%d", vinst->vas_id);
- 
- 	d = debugfs_create_dir(vinst->dbgname, vas_debugfs);
--	if (IS_ERR(d))
--		goto free_name;
--
- 	vinst->dbgdir = d;
--	return;
--
--free_name:
--	kfree(vinst->dbgname);
--	vinst->dbgname = NULL;
--	vinst->dbgdir = NULL;
- }
- 
- /*
-@@ -191,6 +162,4 @@ void vas_init_dbgdir(void)
- 
- 	first_time = false;
- 	vas_debugfs = debugfs_create_dir("vas", NULL);
--	if (IS_ERR(vas_debugfs))
--		vas_debugfs = NULL;
- }
+ /* Debugfs setup must be done later */
+-fs_initcall(dynamic_debug_init_debugfs);
++fs_initcall(dynamic_debug_init_control);
 -- 
 2.25.0
 
