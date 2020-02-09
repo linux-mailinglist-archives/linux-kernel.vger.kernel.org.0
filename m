@@ -2,137 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B87BB156858
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 02:45:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2C31156860
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 03:15:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727604AbgBIBpk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Feb 2020 20:45:40 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:36307 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727502AbgBIBpj (ORCPT
+        id S1727589AbgBICPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Feb 2020 21:15:33 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:35457 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727527AbgBICPd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Feb 2020 20:45:39 -0500
-Received: by mail-io1-f66.google.com with SMTP id d15so3775406iog.3;
-        Sat, 08 Feb 2020 17:45:38 -0800 (PST)
+        Sat, 8 Feb 2020 21:15:33 -0500
+Received: by mail-vs1-f66.google.com with SMTP id x123so2026876vsc.2
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Feb 2020 18:15:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=MCQaQpg0y2itnJBTvG3xjWtDW7J07F5JpEm9F18Dlno=;
-        b=q61BSIdwNFuESRBLf1qekdUkE4NIAnZnpkpNYj6ThHG/y4GYEZL3EsPWgETi74w1mj
-         U73iXjNIZP+7y7DUmlUhC20FpaECDZdwq4KNTbOB8XglvudoXJf6uePwY0SpV0ytY5L7
-         gsX6oHuG3sb8w29IC1Hbl70/U06bmbK2hsizl25kyunbOtKzVKIOxSw6zRnrHgGzBNAa
-         efgd0fId1pbCkHi+rhw9S7CO11tzA6RU5yAzY18l/ghwpL2/6oTfq+TpcEWZ9ehFH+ZC
-         KCfi9TFpuhTKtg6zebWSIVV1Np/YWPLOOfeZL1apTITLCbjKnylFIAZFw6DJ0qbyTZRz
-         8geg==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=hWWZukPJh92rQ3vhdIt7GO3pCIdgbJac2b77G3PE640=;
+        b=oa1SlnX/JGQM8nnmK9Pr8uqsiDXCgQgWZ+tn2RxFJ3S5ybopF4kCmnDMlmvtGhsjkQ
+         +j4Qw6ds1OfrBPvpRv69f7kEcOvzYdjsRK5s57DcSAu2wUnv2ikzB6fHhRLaAi08VFz1
+         SUvrLaVFrD0YrIleYfTZTezW+qfcKxe1Q0tbswiCPjmLaYR9BPtt8ZYcpBl6NzwkVgmK
+         G9isRO5f9k8YEOitIXypxgqgofBnxxJvaBu4EPyO/f24/vmHQ6MMLIAV6bfzHBLkhoUk
+         Vo9G36teDBwebH7rYN6nRt2fcmKaVQ4HeBe/CqBcC1k5lFf/LkGv7oZcmUVqZRVpzSy9
+         Ea5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=MCQaQpg0y2itnJBTvG3xjWtDW7J07F5JpEm9F18Dlno=;
-        b=Qk3xVXOfPdg6SvOmG9ZKd4GkN6biEOZ3xFxZc1Mren+0mNCFiehThqC9uOQA6jVZaR
-         LTfEAo8qfwNQf5NnquZtUTYOXoLYzbGydUGA69WlP71rKbsJ7CkQB5viRBWgOUM5Uebr
-         hreW4q+KU9ORtfTW5E9yUKzjxI4+CCGWUglievVos57Y6atItznA7mcDsZDh/JJPoY3x
-         wZF6C97eMwyxr+QWJgf4M20CCcvvcRrE7gPrLrILG1viVR6JQrNzbtsYv7k8W7/3LnKG
-         aaqfSqnumxarflQEQOqOX2p4EGUOxZaWRq7W0CDeZ1NbwJXNGCZEnMOYO9yHLdI5Ou0b
-         wzYg==
-X-Gm-Message-State: APjAAAX4r+xqJvF9uTowkbOQNU6vv//q4Uz8MgmBfwmPpjzfhU7slDPT
-        gMngCQPddS2q63n8Du9Y0g0wMkPfBxlVvAWjBwPM2FZ9zEM=
-X-Google-Smtp-Source: APXvYqw6LHx2aENMZsLdSsMP6GQzPN0w9vcXI01havkzcHcJUU5xSPnT3DYkygMeAVO5szcIHK4MEAandSHSPyYHXbA=
-X-Received: by 2002:a5d:9419:: with SMTP id v25mr4324008ion.3.1581212737288;
- Sat, 08 Feb 2020 17:45:37 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=hWWZukPJh92rQ3vhdIt7GO3pCIdgbJac2b77G3PE640=;
+        b=b7+J6eDMhqC2TF3a310uuSI3649pjGjQpklsHZoOsqFjpXn0GyVfelckM+NblsD46W
+         yxjZmaIqc1bzFEEYXhHwMaKj26cnf8RknpU4X7gYpuv+V/vQpY3MD2t42Bvoo94XNKzG
+         TV3ypunr8eNN7wZeAk+DLLqMD+nCFCdtlmEy3iHdwZhDdmLam/ItAUh5XEhgvoxIIgd8
+         +jBzf2XTklreSHNDLRAIWirWp2lMojChLAU/Ftfkbf5a0msrek9W8RyBgdRJBfOKhpHl
+         EJ8fS093amfTl2QWZl4comUwtc0Milw4u+Pv+1h4T8Ol2nruukC7WghGkolP1f5Vb1dq
+         SbRQ==
+X-Gm-Message-State: APjAAAUr87+X0xz3C3CsTQjeUkiLJIxg32KVroKDr6qBfQUcI2z9fLBe
+        PX+5c64X152Yktc+rpK5V2xURS3JO+RkAYh2Mp4=
+X-Google-Smtp-Source: APXvYqy2lbY+bvEBqEHMla0N2EQS3RAuGZ0UCXhvtJvH+Nk5j+D9hieYlErLjIc7dyry3kTVtSZoouflYWs18j27U0w=
+X-Received: by 2002:a67:ae43:: with SMTP id u3mr3378514vsh.44.1581214530813;
+ Sat, 08 Feb 2020 18:15:30 -0800 (PST)
 MIME-Version: 1.0
-From:   Steve French <smfrench@gmail.com>
-Date:   Sat, 8 Feb 2020 19:45:26 -0600
-Message-ID: <CAH2r5ms=hyEdeSLo2qN11rB41e-+yFn7Xg=8CVWwXVa1R0hooQ@mail.gmail.com>
-Subject: [GIT PULL] CIFS/SMB3 Fixes
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     CIFS <linux-cifs@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+Received: by 2002:a67:7c97:0:0:0:0:0 with HTTP; Sat, 8 Feb 2020 18:15:30 -0800 (PST)
+Reply-To: info.moneygrampostunit@gmail.com
+From:   Money Gram <departmentinvestigatingsecurit@gmail.com>
+Date:   Sun, 9 Feb 2020 02:15:30 +0000
+Message-ID: <CAPBJQAmS06_-Ggs9oO5hBONKQL0Ofpz3k+CnOxs_snQKO5Vrng@mail.gmail.com>
+Subject: 42te
+To:     bkoko002 <bkoko002@mail.ru>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please pull the following changes since commit
-94f2630b18975bb56eee5d1a36371db967643479:
-
-  Merge tag '5.6-rc-small-smb3-fix-for-stable' of
-git://git.samba.org/sfrench/cifs-2.6 (2020-02-01 11:22:41 -0800)
-
-are available in the Git repository at:
-
-  git://git.samba.org/sfrench/cifs-2.6.git tags/5.6-rc-smb3-plugfest-patches
-
-for you to fetch changes up to 51d92d69f77b121d8093af82eb3bd2e8e631be55:
-
-  smb3: Add defines for new information level, FileIdInformation
-(2020-02-06 17:32:24 -0600)
-
-----------------------------------------------------------------
-13 cifs/smb3 patches (most from testing at the SMB3 plugfest this week)
-
-Important fix for multichannel and for modefromsid mounts.
-Two reconnect fixes
-Addition of SMB3 change notify support
-Backup tools fix
-A few additional minor debug improvements (tracepoints and additional
-logging found useful during testing this week)
-
-Unit test results:
-http://smb3-test-rhel-75.southcentralus.cloudapp.azure.com/#/builders/2/builds/314
-
-An additional set of important improvements for SMB3.1.1 POSIX
-Extensions that was being worked on and tested at the recent SNIA test
-event is still under testing and is not included in this pull request.
-----------------------------------------------------------------
-Amir Goldstein (1):
-      SMB3: Backup intent flag missing from some more ops
-
-Aurelien Aptel (3):
-      cifs: make multichannel warning more visible
-      cifs: fix channel signing
-      cifs: fix mode bits from dir listing when mounted with modefromsid
-
-Ronnie Sahlberg (2):
-      cifs: fail i/o on soft mounts if sessionsetup errors out
-      cifs: fix soft mounts hanging in the reconnect code
-
-Steve French (7):
-      smb3: fix problem with null cifs super block with previous patch
-      cifs: log warning message (once) if out of disk space
-      cifs: Add tracepoints for errors on flush or fsync
-      cifs: add SMB3 change notification support
-      smb3: add one more dynamic tracepoint missing from strict fsync path
-      smb3: print warning once if posix context returned on open
-      smb3: Add defines for new information level, FileIdInformation
-
- fs/cifs/cifs_ioctl.h    |   6 +++++
- fs/cifs/cifsacl.c       |  14 +++--------
- fs/cifs/cifsfs.c        |   2 +-
- fs/cifs/cifsglob.h      |   8 ++++--
- fs/cifs/cifsproto.h     |   8 ++++++
- fs/cifs/cifssmb.c       |   2 +-
- fs/cifs/connect.c       |   2 +-
- fs/cifs/dir.c           |   5 +---
- fs/cifs/file.c          |  21 ++++++++--------
- fs/cifs/inode.c         |   8 +++---
- fs/cifs/ioctl.c         |  18 +++++++++++++-
- fs/cifs/link.c          |  18 +++-----------
- fs/cifs/readdir.c       |   3 ++-
- fs/cifs/sess.c          |   2 +-
- fs/cifs/smb1ops.c       |  19 +++++++-------
- fs/cifs/smb2inode.c     |   9 ++-----
- fs/cifs/smb2ops.c       | 145
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------------
- fs/cifs/smb2pdu.c       |  36 +++++++++++++++++++++++++--
- fs/cifs/smb2pdu.h       |  16 ++++++++++++
- fs/cifs/smb2proto.h     |   2 +-
- fs/cifs/smb2transport.c |   5 ++--
- fs/cifs/trace.h         |  27 ++++++++++++++++++++
- 22 files changed, 247 insertions(+), 129 deletions(-)
-
-
---
-Thanks,
-
-Steve
+i have a good news for you i will be glad if you can contact me now
