@@ -2,99 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20200156AF0
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 16:03:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36C76156AF7
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 16:20:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbgBIPDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 10:03:31 -0500
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:51627 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbgBIPDb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 10:03:31 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 1BABC3000469E;
-        Sun,  9 Feb 2020 16:03:29 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id E5810129957; Sun,  9 Feb 2020 16:03:28 +0100 (CET)
-Date:   Sun, 9 Feb 2020 16:03:28 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Stuart Hayes <stuart.w.hayes@gmail.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Austin Bolen <austin_bolen@dell.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, narendra_k@dell.com
-Subject: Re: [PATCH v3] PCI: pciehp: Make sure pciehp_isr clears interrupt
- events
-Message-ID: <20200209150328.2x2zumhqbs6fihmc@wunner.de>
-References: <20200207195450.52026-1-stuart.w.hayes@gmail.com>
+        id S1727768AbgBIPU2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 10:20:28 -0500
+Received: from mail.z3ntu.xyz ([128.199.32.197]:50494 "EHLO mail.z3ntu.xyz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727514AbgBIPU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Feb 2020 10:20:28 -0500
+Received: from localhost.localdomain (80-110-126-226.cgn.dynamic.surfer.at [80.110.126.226])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 00E4DC1E6F;
+        Sun,  9 Feb 2020 15:20:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1581261625; bh=yU5+GbnKv24kCO8ScL2Ee8KtKAa6j8RtJf1mj6xw9tg=;
+        h=From:To:Cc:Subject:Date;
+        b=nvy5+HxvKgqPca59Ke/8b/MWJn6wdmZNuW45zMihRHDSVzKrRr2l7eisM5GsOaD6m
+         h3YslYNtbyNyGdKHI5KohpQqil8G+WKNwaACejW/ZdfmXxJqlj8WrS9HXD1H55Tqls
+         YtlyPJ8e8vq6Yj6WEp8fk16RMKBsLcbj9q/w+KRA=
+From:   Luca Weiss <luca@z3ntu.xyz>
+To:     linux-input@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, Luca Weiss <luca@z3ntu.xyz>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sven Van Asbroeck <thesven73@gmail.com>,
+        Marek Vasut <marex@denx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] Input: ili210x - add ili2120 support
+Date:   Sun,  9 Feb 2020 16:19:03 +0100
+Message-Id: <20200209151904.661210-1-luca@z3ntu.xyz>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200207195450.52026-1-stuart.w.hayes@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 02:54:50PM -0500, Stuart Hayes wrote:
-> +/*
-> + * Set a limit to how many times the ISR will loop reading and writing the
-> + * slot status register trying to clear the event bits.  These bits should
-> + * not toggle rapidly, and there are only six possible events that could
-> + * generate this interrupt.  If we still see events after this many reads,
-> + * there is likely a bit stuck.
-> + */
-> +#define MAX_ISR_STATUS_READS 6
+This adds support for the Ilitek ili2120 touchscreen found in the
+Fairphone 2 smartphone.
 
-Actually only *three* possible events could generate this interrupt
-because pcie_enable_notification() only enables DLLSC, CCIE and
-either of ABP or PDC.
+Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+---
+Changes from v1:
+- Rebase on master, adjust for upstream changes
 
+ .../bindings/input/ilitek,ili2xxx.txt         |  3 +-
+ drivers/input/touchscreen/ili210x.c           | 32 +++++++++++++++++++
+ 2 files changed, 34 insertions(+), 1 deletion(-)
 
-> -	pcie_capability_write_word(pdev, PCI_EXP_SLTSTA, events);
-> +	if (status) {
-> +		pcie_capability_write_word(pdev, PCI_EXP_SLTSTA, status);
+diff --git a/Documentation/devicetree/bindings/input/ilitek,ili2xxx.txt b/Documentation/devicetree/bindings/input/ilitek,ili2xxx.txt
+index dc194b2c151a..cdcaa3f52d25 100644
+--- a/Documentation/devicetree/bindings/input/ilitek,ili2xxx.txt
++++ b/Documentation/devicetree/bindings/input/ilitek,ili2xxx.txt
+@@ -1,9 +1,10 @@
+-Ilitek ILI210x/ILI2117/ILI251x touchscreen controller
++Ilitek ILI210x/ILI2117/ILI2120/ILI251x touchscreen controller
+ 
+ Required properties:
+ - compatible:
+     ilitek,ili210x for ILI210x
+     ilitek,ili2117 for ILI2117
++    ilitek,ili2120 for ILI2120
+     ilitek,ili251x for ILI251x
+ 
+ - reg: The I2C address of the device
+diff --git a/drivers/input/touchscreen/ili210x.c b/drivers/input/touchscreen/ili210x.c
+index 84bf51d79888..199cf3daec10 100644
+--- a/drivers/input/touchscreen/ili210x.c
++++ b/drivers/input/touchscreen/ili210x.c
+@@ -167,6 +167,36 @@ static const struct ili2xxx_chip ili211x_chip = {
+ 	.resolution		= 2048,
+ };
+ 
++static bool ili212x_touchdata_to_coords(const u8 *touchdata,
++					unsigned int finger,
++					unsigned int *x, unsigned int *y)
++{
++	u16 val;
++
++	val = get_unaligned_be16(touchdata + 3 + (finger * 5) + 0);
++	if (!(val & BIT(15)))	/* Touch indication */
++		return false;
++
++	*x = val & 0x3fff;
++	*y = get_unaligned_be16(touchdata + 3 + (finger * 5) + 2);
++
++	return true;
++}
++
++static bool ili212x_check_continue_polling(const u8 *data, bool touch)
++{
++	return touch;
++}
++
++static const struct ili2xxx_chip ili212x_chip = {
++	.read_reg		= ili210x_read_reg,
++	.get_touch_data		= ili210x_read_touch_data,
++	.parse_touch_data	= ili212x_touchdata_to_coords,
++	.continue_polling	= ili212x_check_continue_polling,
++	.max_touches		= 10,
++	.has_calibrate_reg	= true,
++};
++
+ static int ili251x_read_reg(struct i2c_client *client,
+ 			    u8 reg, void *buf, size_t len)
+ {
+@@ -447,6 +477,7 @@ static int ili210x_i2c_probe(struct i2c_client *client,
+ static const struct i2c_device_id ili210x_i2c_id[] = {
+ 	{ "ili210x", (long)&ili210x_chip },
+ 	{ "ili2117", (long)&ili211x_chip },
++	{ "ili2120", (long)&ili212x_chip },
+ 	{ "ili251x", (long)&ili251x_chip },
+ 	{ }
+ };
+@@ -455,6 +486,7 @@ MODULE_DEVICE_TABLE(i2c, ili210x_i2c_id);
+ static const struct of_device_id ili210x_dt_ids[] = {
+ 	{ .compatible = "ilitek,ili210x", .data = &ili210x_chip },
+ 	{ .compatible = "ilitek,ili2117", .data = &ili211x_chip },
++	{ .compatible = "ilitek,ili2120", .data = &ili212x_chip },
+ 	{ .compatible = "ilitek,ili251x", .data = &ili251x_chip },
+ 	{ }
+ };
+-- 
+2.25.0
 
-Writing "events" instead of "status" would seem to be more advantageous
-because it reduces the number of loops.  Say you read PDC in the first
-loop iteration, then DLLSC in the second loop iteration and shortly
-before writing the register, PDC transitions to 1.  If you write
-"events", you can make do with 2 loop iterations, if you write "status"
-you'll need 3.
-
-
-> +
-> +		/*
-> +		 * Unless the MSI happens to be masked, all of the event
-> +		 * bits must be zero before the port will send a new
-> +		 * interrupt (see PCI Express Base Specification Rev 5.0
-> +		 * Version 1.0, section 6.7.3.4, "Software Notification of
-> +		 * Hot-Plug Events"). So, if an event bit gets set between
-> +		 * the read and the write of PCI_EXP_SLTSTA, we need to
-> +		 * loop back and try again.
-> +		 */
-> +		if (status_reads++ < MAX_ISR_STATUS_READS)
-> +			goto read_status;
-
-Please use "pci_dev_msi_enabled(pdev)" as conditional for the if-clause,
-we don't need this with INTx.
-
-
-Using a for (;;) or do/while loop that you jump out of if
-(!status || !pci_dev_msi_enabled(pdev)) might be more readable
-than a goto, but I'm not sure.
-
-Thanks,
-
-Lukas
