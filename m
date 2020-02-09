@@ -2,174 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 832B4156C29
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 19:35:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C3CB156C33
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 19:51:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbgBISfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 13:35:03 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:25495 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727951AbgBISfD (ORCPT
+        id S1727777AbgBISvs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 13:51:48 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41854 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727388AbgBISvs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 13:35:03 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1581273302; h=Content-Transfer-Encoding: MIME-Version:
- References: In-Reply-To: Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=qJ+RgHmSGKWGGiT5X3DLCdCoaU8PC1L+QDt/KFBvZVk=; b=TioZDuthy5cg1b5ajj9xOVa9IjzXQbXxRRtnh23zP/Fb7KxQ8yNxZgwv3/+0OOX3iOhblDNw
- 2gF+1cXD7BGLd/iyAENCwVs2AS6ZfPpY4+SgFZZqBbQfSli2wmTcgNRJjkD2sipNI4gFe+AF
- EOWBaMkm5fhwmOrTEQR/zC1HayQ=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e4050d3.7f5ebab6aa78-smtp-out-n01;
- Sun, 09 Feb 2020 18:34:59 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 5F0E9C447AC; Sun,  9 Feb 2020 18:34:59 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BA7B2C43383;
-        Sun,  9 Feb 2020 18:34:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BA7B2C43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     robh+dt@kernel.org, georgi.djakov@linaro.org, evgreen@chromium.org
-Cc:     bjorn.andersson@linaro.org, agross@kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, mark.rutland@arm.com,
-        daidavid1@codeaurora.org, saravanak@google.com, mka@chromium.org,
-        linux-pm@vger.kernel.org, Odelu Kukatla <okukatla@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v3 6/6] arm64: dts: sdm845: Redefine interconnect provider DT nodes
-Date:   Mon, 10 Feb 2020 00:04:11 +0530
-Message-Id: <20200209183411.17195-7-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.22.1
-In-Reply-To: <20200209183411.17195-1-sibis@codeaurora.org>
-References: <20200209183411.17195-1-sibis@codeaurora.org>
+        Sun, 9 Feb 2020 13:51:48 -0500
+Received: from [192.168.4.242] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1j0rgI-0001sY-51; Sun, 09 Feb 2020 18:51:46 +0000
+Received: from ben by deadeye with local (Exim 4.93)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1j0rgH-000EuL-P0; Sun, 09 Feb 2020 18:51:45 +0000
+Message-ID: <299ca8f082969ba8ec4b5060200b11a04f0a65b0.camel@decadent.org.uk>
+Subject: Re: [PATCH 3.16 000/148] 3.16.82-rc1 review
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        Denis Kirjanov <kda@linux-powerpc.org>
+Date:   Sun, 09 Feb 2020 18:51:30 +0000
+In-Reply-To: <60c66967-afb5-a1a5-0c16-af212aa49465@roeck-us.net>
+References: <lsq.1581185939.857586636@decadent.org.uk>
+         <60c66967-afb5-a1a5-0c16-af212aa49465@roeck-us.net>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-3wQpx9MXcDxWnERIlLT4"
+User-Agent: Evolution 3.34.1-2+b1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 192.168.4.242
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Dai <daidavid1@codeaurora.org>
 
-Add the DT nodes for each of the Network-On-Chip interconnect
-buses found on SDM845 based platform and redefine the rsc_hlos
-child node as a bcm-voter device to better represent the hardware.
+--=-3wQpx9MXcDxWnERIlLT4
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: David Dai <daidavid1@codeaurora.org>
-Signed-off-by: Odelu Kukatla <okukatla@codeaurora.org>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 65 +++++++++++++++++++++++++---
- 1 file changed, 60 insertions(+), 5 deletions(-)
+On Sat, 2020-02-08 at 15:10 -0800, Guenter Roeck wrote:
+> On 2/8/20 10:18 AM, Ben Hutchings wrote:
+> > This is the start of the stable review cycle for the 3.16.82 release.
+> > There are 148 patches in this series, which will be posted as responses
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >=20
+> > Responses should be made by Tue Feb 11 20:00:00 UTC 2020.
+> > Anything received after that time might be too late.
+> >=20
+>=20
+> Build results:
+> 	total: 136 pass: 136 fail: 0
+> Qemu test results:
+> 	total: 227 pass: 227 fail: 0
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index d42302b8889b6..ae7d6617d8b87 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -1364,6 +1364,55 @@
- 			interrupts = <GIC_SPI 582 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		mem_noc: interconnect@1380000 {
-+			compatible = "qcom,sdm845-mem-noc";
-+			reg = <0 0x01380000 0 0x27200>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		dc_noc: interconnect@14e0000 {
-+			compatible = "qcom,sdm845-dc-noc";
-+			reg = <0 0x014e0000 0 0x400>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		config_noc: interconnect@1500000 {
-+			compatible = "qcom,sdm845-config-noc";
-+			reg = <0 0x01500000 0 0x5080>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		system_noc: interconnect@1620000 {
-+			compatible = "qcom,sdm845-system-noc";
-+			reg = <0 0x01620000 0 0x18080>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		aggre1_noc: interconnect@16e0000 {
-+			compatible = "qcom,sdm845-aggre1-noc";
-+			reg = <0 0x016e0000 0 0x15080>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		aggre2_noc: interconnect@1700000 {
-+			compatible = "qcom,sdm845-aggre2-noc";
-+			reg = <0 0x01700000 0 0x1f300>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		mmss_noc: interconnect@1740000 {
-+			compatible = "qcom,sdm845-mmss-noc";
-+			reg = <0 0x01740000 0 0x1c100>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
- 		ufs_mem_hc: ufshc@1d84000 {
- 			compatible = "qcom,sdm845-ufshc", "qcom,ufshc",
- 				     "jedec,ufs-2.0";
-@@ -3098,6 +3147,13 @@
- 			status = "disabled";
- 		};
- 
-+		gladiator_noc: interconnect@17900000 {
-+			compatible = "qcom,sdm845-gladiator-noc";
-+			reg = <0 0x17900000 0 0xd080>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
- 		watchdog@17980000 {
- 			compatible = "qcom,apss-wdt-sdm845", "qcom,kpss-wdt";
- 			reg = <0 0x17980000 0 0x1000>;
-@@ -3127,6 +3183,10 @@
- 					  <WAKE_TCS    3>,
- 					  <CONTROL_TCS 1>;
- 
-+			apps_bcm_voter: bcm-voter {
-+				compatible = "qcom,bcm-voter";
-+			};
-+
- 			rpmhcc: clock-controller {
- 				compatible = "qcom,sdm845-rpmh-clk";
- 				#clock-cells = <1>;
-@@ -3183,11 +3243,6 @@
- 					};
- 				};
- 			};
--
--			rsc_hlos: interconnect {
--				compatible = "qcom,sdm845-rsc-hlos";
--				#interconnect-cells = <1>;
--			};
- 		};
- 
- 		intc: interrupt-controller@17a00000 {
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks for checking,
+
+Ben.
+
+--=20
+Ben Hutchings
+The world is coming to an end.	Please log off.
+
+
+
+--=-3wQpx9MXcDxWnERIlLT4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAl5AVLIACgkQ57/I7JWG
+EQlgWg//T1m0VFp97s7gcbK4SX5TtzDzaJ/FPhns9JF0cAgDEhZmYcTcOZ+G2QvV
+ERzl5eiefuyCf/i/39Kj49GtSse348vaYAa8d+ASX+lCu8FDdMdxVc6Tu4cMnnLm
+vxjLKHk5uiG7j4XhnWzvK67a+D57pqCiMvbRrnZGMNnbEuveY9XQYpsZv+mXj5dV
+ZGSnqJfQ2XdtbD4NazTvRYAqc11UVgt5kohqij3mLsXst2fjiktZZEWIITAeVEXX
+tv9EtrUGbxhZ7DInJONeCxd15qXLsAhSGS9XTvvHoyPz8MfzKEnLYK3/3nGh+Tk8
+rHMFawOONA1KOPybgkc+B7vk9dJk3hqC9kNCSvNa9KHjYvGDYyqEEuHkB7kzmGKy
+H38tNlT55023KEsSdhJq6PcLwn1fc6Hek01tzjjcPkU95Q9l3EVqzReHwBt2DfBP
+Z2q4hrnNQL79iMLOZayQI/YVqaM809MPi8KkESM7G/iubVS+7YmIwWA2M/IStXXn
+cYHTf5wvlXLLOuHB7kl+zeOTfPq4aZcFBFXEwM9hm/S9HFoNNqDecP265eMCtKoZ
+friwA9qL3Hkq4TA4rf3q1D45MQ1v99bx0Gq4EY7STGZ4ipnbG7YwKvHxO9K5XnkF
+sr6+dGl5a/stH7aV7Q1x5CvuPpCVJT+vtGU+BQxMP0m7h8XrxGM=
+=mUlV
+-----END PGP SIGNATURE-----
+
+--=-3wQpx9MXcDxWnERIlLT4--
