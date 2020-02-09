@@ -2,71 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 863F8156B0C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 16:37:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9782E156B28
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 16:48:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727801AbgBIPhs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 10:37:48 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:42502 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727661AbgBIPhs (ORCPT
+        id S1727888AbgBIPsg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 10:48:36 -0500
+Received: from mail.serbinski.com ([162.218.126.2]:32884 "EHLO
+        mail.serbinski.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727828AbgBIPsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 10:37:48 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1j0oeO-00053e-Kc; Sun, 09 Feb 2020 16:37:36 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id AAB4D100F5A; Sun,  9 Feb 2020 16:37:35 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     sean.v.kelley@linux.intel.com, Kar Hin Ong <kar.hin.ong@ni.com>,
-        Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-rt-users <linux-rt-users@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "x86\@kernel.org" <x86@kernel.org>,
-        "linux-pci\@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Julia Cartwright <julia.cartwright@ni.com>,
-        Keng Soon Cheah <keng.soon.cheah@ni.com>,
-        Gratian Crisan <gratian.crisan@ni.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: RE: Re: "oneshot" interrupt causes another interrupt to be fired erroneously in Haswell system
-In-Reply-To: <87muaetj4p.fsf@nanos.tec.linutronix.de>
-References: <20191031230532.GA170712@google.com> <alpine.DEB.2.21.1911050017410.17054@nanos.tec.linutronix.de> <MN2PR04MB625594021250E0FB92EC955DC3780@MN2PR04MB6255.namprd04.prod.outlook.com> <87a76oxqv1.fsf@nanos.tec.linutronix.de> <MN2PR04MB62551D8B240966B02ED71516C3360@MN2PR04MB6255.namprd04.prod.outlook.com> <87muanwwhb.fsf@nanos.tec.linutronix.de> <8f1e5981b519acb5edf53b5392c81ef7cbf6a3eb.camel@linux.intel.com> <87muaetj4p.fsf@nanos.tec.linutronix.de>
-Date:   Sun, 09 Feb 2020 16:37:35 +0100
-Message-ID: <8736bjlqkg.fsf@nanos.tec.linutronix.de>
+        Sun, 9 Feb 2020 10:48:30 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mail.serbinski.com (Postfix) with ESMTP id 861D7D00700;
+        Sun,  9 Feb 2020 15:48:29 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at serbinski.com
+Received: from mail.serbinski.com ([127.0.0.1])
+        by localhost (mail.serbinski.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id lcSDXKU_nL2R; Sun,  9 Feb 2020 10:48:23 -0500 (EST)
+Received: from anet (23-233-80-73.cpe.pppoe.ca [23.233.80.73])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mail.serbinski.com (Postfix) with ESMTPSA id D36A2D00716;
+        Sun,  9 Feb 2020 10:48:09 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.serbinski.com D36A2D00716
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=serbinski.com;
+        s=default; t=1581263289;
+        bh=+zB4LnN9LLpPdhU7E7/M9daLcjy7QRsA3nLhYSVC610=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lnVf5zihzXXmqGAdeUCWgq53i5PiqyLPm1d4RtuXtQ2fYNZ0W9+yuDbaaVxcns6nO
+         H6f/mlBFE6sn5DoBh25bAHN/BPZrlzhq7aHNnw9M85EXayD/sUNVxysoAffz9o+GGc
+         dp+uvPpBThdF5kEtzk33qDa30Skas0vaaxANHxdI=
+From:   Adam Serbinski <adam@serbinski.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Adam Serbinski <adam@serbinski.com>,
+        Andy Gross <agross@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Patrick Lai <plai@codeaurora.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/8] ASoC: qdsp6: db820c: Add support for external and bluetooth audio
+Date:   Sun,  9 Feb 2020 10:47:40 -0500
+Message-Id: <20200209154748.3015-1-adam@serbinski.com>
+X-Mailer: git-send-email 2.21.1
+In-Reply-To: <20200207205013.12274-1-adam@serbinski.com>
+References: <20200207205013.12274-1-adam@serbinski.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean,
+Changes from V1:
 
-Thomas Gleixner <tglx@linutronix.de> writes:
-> Sean V Kelley <sean.v.kelley@linux.intel.com> writes:
->> So I will ensure we actually create useful information pointing to this
->> behavior either in kernel docs or online as in a white paper or both.
->
-> Great.
->
->>> As we have already quirks in drivers/pci/quirks.c which handle the
->>> same issue on older chipsets, we really should add one for these kind
->>> of systems to avoid fiddling with the BIOS (which you can, but most
->>> people cannot).
->
->> Agreed, and I will follow-up with Kar Hin Ong to get them added.
->
-> Much appreciated.
+	Rename patch:
+		from: dts: msm8996/db820c: enable primary pcm and quaternary i2s
+		to: dts: qcom: db820c: Enable primary PCM and quaternary I2S
 
-Any update on this?
+CC: Andy Gross <agross@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>
+CC: Liam Girdwood <lgirdwood@gmail.com>
+CC: Patrick Lai <plai@codeaurora.org>
+CC: Banajit Goswami <bgoswami@codeaurora.org>
+CC: Jaroslav Kysela <perex@perex.cz>
+CC: Takashi Iwai <tiwai@suse.com>
+CC: alsa-devel@alsa-project.org
+CC: linux-arm-msm@vger.kernel.org
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
 
-Thanks,
+Adam Serbinski (8):
+  ASoC: qdsp6: dt-bindings: Add q6afe pcm dt binding
+  ASoC: qdsp6: q6afe: add support to pcm ports
+  ASoC: qdsp6: q6afe-dai: add support to pcm port dais
+  ASoC: qdsp6: q6routing: add pcm port routing
+  ASoC: qcom: apq8096: add support for primary and quaternary I2S/PCM
+  ASoC: qcom/common: Use snd-soc-dummy-dai when codec is not specified
+  arm64: dts: qcom: db820c: Enable primary PCM and quaternary I2S
+  ASoC: qcom: apq8096: add kcontrols to set PCM rate
 
-        tglx
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi | 113 +++++++++
+ arch/arm64/boot/dts/qcom/msm8996-pins.dtsi   | 162 ++++++++++++
+ include/dt-bindings/sound/qcom,q6afe.h       |   8 +
+ sound/soc/qcom/apq8096.c                     | 172 +++++++++++--
+ sound/soc/qcom/common.c                      |  22 +-
+ sound/soc/qcom/qdsp6/q6afe-dai.c             | 198 ++++++++++++++-
+ sound/soc/qcom/qdsp6/q6afe.c                 | 246 +++++++++++++++++++
+ sound/soc/qcom/qdsp6/q6afe.h                 |   9 +-
+ sound/soc/qcom/qdsp6/q6routing.c             |  44 ++++
+ 9 files changed, 953 insertions(+), 21 deletions(-)
+
+-- 
+2.21.1
+
