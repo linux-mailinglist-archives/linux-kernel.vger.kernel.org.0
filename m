@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9758A156ACD
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 15:09:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22E23156ACE
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 15:09:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbgBIOG6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727810AbgBIOG6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Sun, 9 Feb 2020 09:06:58 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:42464 "EHLO
+Received: from Galois.linutronix.de ([193.142.43.55]:42457 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727721AbgBIOG6 (ORCPT
+        with ESMTP id S1727698AbgBIOG6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Feb 2020 09:06:58 -0500
 Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j0nEa-0004VJ-5k; Sun, 09 Feb 2020 15:06:52 +0100
+        id 1j0nEa-0004VI-5p; Sun, 09 Feb 2020 15:06:52 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 8FACE1017FA;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 86F2B100F5A;
         Sun,  9 Feb 2020 15:06:51 +0100 (CET)
 Date:   Sun, 09 Feb 2020 14:02:37 -0000
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] SMP fixes for 5.6-rc1
+Subject: [GIT pull] interrupt fixes for 5.6-rc1
 References: <158125695731.26104.949647922067525745.tglx@nanos.tec.linutronix.de>
-Message-ID: <158125695732.26104.1145889078762434274.tglx@nanos.tec.linutronix.de>
+Message-ID: <158125695732.26104.12129452415222798177.tglx@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -40,63 +40,472 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest smp/urgent branch from:
+please pull the latest irq/urgent branch from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git smp-urgent-2020-02-09
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-2020-02-09
 
-up to:  1e474b28e788: smp/up: Make smp_call_function_single() match SMP semantics
+up to:  2f86e45a7f42: Merge tag 'irqchip-fixes-5.6-1' of git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms into irq/urgent
 
 
-Two fixes for the SMP related functionality:
+A set of fixes for the interrupt subsystem:
 
- - Make the UP version of smp_call_function_single() match SMP semantics
-   when called for a not available CPU.  Instead of emitting a warning and
-   assuming that the function call target is CPU0, return a proper error
-   code like the SMP version does.
+ - Provision only ACPI enabled redistributors on GICv3
 
- - Remove a superfluous check in smp_call_function_many_cond()
+ - Use the proper command colums when building the INVALL command for the
+   GICv3-ITS
+
+ - Ensure the allocation of the L2 vPE table for GICv4.1
+
+ - Correct the GICv4.1 VPROBASER programming so it uses the proper size
+
+ - A set of small GICv4.1 tidy up patches
+
+ - Configuration cleanup for C-SKY interrupt chip
+
+ - Clarify the function documentation for irq_set_wake() to document that
+   the wakeup functionality is orthogonal to the irq disable/enable
+   mechanism.
 
 Thanks,
 
 	tglx
 
 ------------------>
-Paul E. McKenney (1):
-      smp/up: Make smp_call_function_single() match SMP semantics
+Marc Zyngier (1):
+      irqchip/gic-v3: Only provision redistributors that are enabled in ACPI
 
-Sebastian Andrzej Siewior (1):
-      smp: Remove superfluous cond_func check in smp_call_function_many_cond()
+Randy Dunlap (1):
+      irqchip: Some Kconfig cleanup for C-SKY
+
+Stephen Boyd (1):
+      genirq: Clarify that irq wake state is orthogonal to enable/disable
+
+Zenghui Yu (7):
+      irqchip/gic-v3-its: Reference to its_invall_cmd descriptor when building INVALL
+      irqchip/gic-v4.1: Fix programming of GICR_VPROPBASER_4_1_SIZE
+      irqchip/gic-v4.1: Set vpe_l1_base for all redistributors
+      irqchip/gic-v4.1: Ensure L2 vPE table is allocated at RD level
+      irqchip/gic-v4.1: Drop 'tmp' in inherit_vpe_l1_table_from_rd()
+      irqchip/gic-v3-its: Remove superfluous WARN_ON
+      irqchip/gic-v3-its: Rename VPENDBASER/VPROPBASER accessors
 
 
- kernel/smp.c | 2 +-
- kernel/up.c  | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/include/asm/arch_gicv3.h   |  12 ++--
+ arch/arm64/include/asm/arch_gicv3.h |   8 +--
+ drivers/irqchip/Kconfig             |   4 +-
+ drivers/irqchip/irq-gic-v3-its.c    | 120 ++++++++++++++++++++++++++++++------
+ drivers/irqchip/irq-gic-v3.c        |   9 ++-
+ include/linux/irqchip/arm-gic-v3.h  |   2 +-
+ kernel/irq/manage.c                 |   7 +++
+ 7 files changed, 127 insertions(+), 35 deletions(-)
 
-diff --git a/kernel/smp.c b/kernel/smp.c
-index 3b7bedc97af3..d0ada39eb4d4 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -435,7 +435,7 @@ static void smp_call_function_many_cond(const struct cpumask *mask,
+diff --git a/arch/arm/include/asm/arch_gicv3.h b/arch/arm/include/asm/arch_gicv3.h
+index b5752f0e8936..c815477b4303 100644
+--- a/arch/arm/include/asm/arch_gicv3.h
++++ b/arch/arm/include/asm/arch_gicv3.h
+@@ -326,16 +326,16 @@ static inline u64 __gic_readq_nonatomic(const volatile void __iomem *addr)
+ #define gits_write_cwriter(v, c)	__gic_writeq_nonatomic(v, c)
  
- 	/* Fastpath: do that cpu by itself. */
- 	if (next_cpu >= nr_cpu_ids) {
--		if (!cond_func || (cond_func && cond_func(cpu, info)))
-+		if (!cond_func || cond_func(cpu, info))
- 			smp_call_function_single(cpu, func, info, wait);
- 		return;
- 	}
-diff --git a/kernel/up.c b/kernel/up.c
-index 53144d056252..c6f323dcd45b 100644
---- a/kernel/up.c
-+++ b/kernel/up.c
-@@ -14,7 +14,8 @@ int smp_call_function_single(int cpu, void (*func) (void *info), void *info,
+ /*
+- * GITS_VPROPBASER - hi and lo bits may be accessed independently.
++ * GICR_VPROPBASER - hi and lo bits may be accessed independently.
+  */
+-#define gits_read_vpropbaser(c)		__gic_readq_nonatomic(c)
+-#define gits_write_vpropbaser(v, c)	__gic_writeq_nonatomic(v, c)
++#define gicr_read_vpropbaser(c)		__gic_readq_nonatomic(c)
++#define gicr_write_vpropbaser(v, c)	__gic_writeq_nonatomic(v, c)
+ 
+ /*
+- * GITS_VPENDBASER - the Valid bit must be cleared before changing
++ * GICR_VPENDBASER - the Valid bit must be cleared before changing
+  * anything else.
+  */
+-static inline void gits_write_vpendbaser(u64 val, void __iomem *addr)
++static inline void gicr_write_vpendbaser(u64 val, void __iomem *addr)
  {
- 	unsigned long flags;
+ 	u32 tmp;
  
--	WARN_ON(cpu != 0);
-+	if (cpu != 0)
-+		return -ENXIO;
+@@ -352,7 +352,7 @@ static inline void gits_write_vpendbaser(u64 val, void __iomem *addr)
+ 	__gic_writeq_nonatomic(val, addr);
+ }
  
- 	local_irq_save(flags);
- 	func(info);
+-#define gits_read_vpendbaser(c)		__gic_readq_nonatomic(c)
++#define gicr_read_vpendbaser(c)		__gic_readq_nonatomic(c)
+ 
+ static inline bool gic_prio_masking_enabled(void)
+ {
+diff --git a/arch/arm64/include/asm/arch_gicv3.h b/arch/arm64/include/asm/arch_gicv3.h
+index 4750fc8030c3..25fec4bde43a 100644
+--- a/arch/arm64/include/asm/arch_gicv3.h
++++ b/arch/arm64/include/asm/arch_gicv3.h
+@@ -140,11 +140,11 @@ static inline u32 gic_read_rpr(void)
+ #define gicr_write_pendbaser(v, c)	writeq_relaxed(v, c)
+ #define gicr_read_pendbaser(c)		readq_relaxed(c)
+ 
+-#define gits_write_vpropbaser(v, c)	writeq_relaxed(v, c)
+-#define gits_read_vpropbaser(c)		readq_relaxed(c)
++#define gicr_write_vpropbaser(v, c)	writeq_relaxed(v, c)
++#define gicr_read_vpropbaser(c)		readq_relaxed(c)
+ 
+-#define gits_write_vpendbaser(v, c)	writeq_relaxed(v, c)
+-#define gits_read_vpendbaser(c)		readq_relaxed(c)
++#define gicr_write_vpendbaser(v, c)	writeq_relaxed(v, c)
++#define gicr_read_vpendbaser(c)		readq_relaxed(c)
+ 
+ static inline bool gic_prio_masking_enabled(void)
+ {
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index 1006c694d9fb..6d397732138d 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -438,7 +438,7 @@ config CSKY_MPINTC
+ 	help
+ 	  Say yes here to enable C-SKY SMP interrupt controller driver used
+ 	  for C-SKY SMP system.
+-	  In fact it's not mmio map in hw and it use ld/st to visit the
++	  In fact it's not mmio map in hardware and it uses ld/st to visit the
+ 	  controller's register inside CPU.
+ 
+ config CSKY_APB_INTC
+@@ -446,7 +446,7 @@ config CSKY_APB_INTC
+ 	depends on CSKY
+ 	help
+ 	  Say yes here to enable C-SKY APB interrupt controller driver used
+-	  by C-SKY single core SOC system. It use mmio map apb-bus to visit
++	  by C-SKY single core SOC system. It uses mmio map apb-bus to visit
+ 	  the controller's register.
+ 
+ config IMX_IRQSTEER
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index f71758632f8d..1ee95f546cb0 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -661,7 +661,7 @@ static struct its_collection *its_build_invall_cmd(struct its_node *its,
+ 						   struct its_cmd_desc *desc)
+ {
+ 	its_encode_cmd(cmd, GITS_CMD_INVALL);
+-	its_encode_collection(cmd, desc->its_mapc_cmd.col->col_id);
++	its_encode_collection(cmd, desc->its_invall_cmd.col->col_id);
+ 
+ 	its_fixup_cmd(cmd);
+ 
+@@ -2376,6 +2376,8 @@ static u64 inherit_vpe_l1_table_from_its(void)
+ 			continue;
+ 
+ 		/* We have a winner! */
++		gic_data_rdist()->vpe_l1_base = its->tables[2].base;
++
+ 		val  = GICR_VPROPBASER_4_1_VALID;
+ 		if (baser & GITS_BASER_INDIRECT)
+ 			val |= GICR_VPROPBASER_4_1_INDIRECT;
+@@ -2413,14 +2415,12 @@ static u64 inherit_vpe_l1_table_from_rd(cpumask_t **mask)
+ 
+ 	for_each_possible_cpu(cpu) {
+ 		void __iomem *base = gic_data_rdist_cpu(cpu)->rd_base;
+-		u32 tmp;
+ 
+ 		if (!base || cpu == smp_processor_id())
+ 			continue;
+ 
+ 		val = gic_read_typer(base + GICR_TYPER);
+-		tmp = compute_common_aff(val);
+-		if (tmp != aff)
++		if (aff != compute_common_aff(val))
+ 			continue;
+ 
+ 		/*
+@@ -2429,9 +2429,10 @@ static u64 inherit_vpe_l1_table_from_rd(cpumask_t **mask)
+ 		 * ours wrt CommonLPIAff. Let's use its own VPROPBASER.
+ 		 * Make sure we don't write the Z bit in that case.
+ 		 */
+-		val = gits_read_vpropbaser(base + SZ_128K + GICR_VPROPBASER);
++		val = gicr_read_vpropbaser(base + SZ_128K + GICR_VPROPBASER);
+ 		val &= ~GICR_VPROPBASER_4_1_Z;
+ 
++		gic_data_rdist()->vpe_l1_base = gic_data_rdist_cpu(cpu)->vpe_l1_base;
+ 		*mask = gic_data_rdist_cpu(cpu)->vpe_table_mask;
+ 
+ 		return val;
+@@ -2440,6 +2441,72 @@ static u64 inherit_vpe_l1_table_from_rd(cpumask_t **mask)
+ 	return 0;
+ }
+ 
++static bool allocate_vpe_l2_table(int cpu, u32 id)
++{
++	void __iomem *base = gic_data_rdist_cpu(cpu)->rd_base;
++	u64 val, gpsz, npg;
++	unsigned int psz, esz, idx;
++	struct page *page;
++	__le64 *table;
++
++	if (!gic_rdists->has_rvpeid)
++		return true;
++
++	val  = gicr_read_vpropbaser(base + SZ_128K + GICR_VPROPBASER);
++
++	esz  = FIELD_GET(GICR_VPROPBASER_4_1_ENTRY_SIZE, val) + 1;
++	gpsz = FIELD_GET(GICR_VPROPBASER_4_1_PAGE_SIZE, val);
++	npg  = FIELD_GET(GICR_VPROPBASER_4_1_SIZE, val) + 1;
++
++	switch (gpsz) {
++	default:
++		WARN_ON(1);
++		/* fall through */
++	case GIC_PAGE_SIZE_4K:
++		psz = SZ_4K;
++		break;
++	case GIC_PAGE_SIZE_16K:
++		psz = SZ_16K;
++		break;
++	case GIC_PAGE_SIZE_64K:
++		psz = SZ_64K;
++		break;
++	}
++
++	/* Don't allow vpe_id that exceeds single, flat table limit */
++	if (!(val & GICR_VPROPBASER_4_1_INDIRECT))
++		return (id < (npg * psz / (esz * SZ_8)));
++
++	/* Compute 1st level table index & check if that exceeds table limit */
++	idx = id >> ilog2(psz / (esz * SZ_8));
++	if (idx >= (npg * psz / GITS_LVL1_ENTRY_SIZE))
++		return false;
++
++	table = gic_data_rdist_cpu(cpu)->vpe_l1_base;
++
++	/* Allocate memory for 2nd level table */
++	if (!table[idx]) {
++		page = alloc_pages(GFP_KERNEL | __GFP_ZERO, get_order(psz));
++		if (!page)
++			return false;
++
++		/* Flush Lvl2 table to PoC if hw doesn't support coherency */
++		if (!(val & GICR_VPROPBASER_SHAREABILITY_MASK))
++			gic_flush_dcache_to_poc(page_address(page), psz);
++
++		table[idx] = cpu_to_le64(page_to_phys(page) | GITS_BASER_VALID);
++
++		/* Flush Lvl1 entry to PoC if hw doesn't support coherency */
++		if (!(val & GICR_VPROPBASER_SHAREABILITY_MASK))
++			gic_flush_dcache_to_poc(table + idx, GITS_LVL1_ENTRY_SIZE);
++
++		/* Ensure updated table contents are visible to RD hardware */
++		dsb(sy);
++	}
++
++	return true;
++}
++
+ static int allocate_vpe_l1_table(void)
+ {
+ 	void __iomem *vlpi_base = gic_data_rdist_vlpi_base();
+@@ -2457,8 +2524,8 @@ static int allocate_vpe_l1_table(void)
+ 	 * effect of making sure no doorbell will be generated and we can
+ 	 * then safely clear VPROPBASER.Valid.
+ 	 */
+-	if (gits_read_vpendbaser(vlpi_base + GICR_VPENDBASER) & GICR_VPENDBASER_Valid)
+-		gits_write_vpendbaser(GICR_VPENDBASER_PendingLast,
++	if (gicr_read_vpendbaser(vlpi_base + GICR_VPENDBASER) & GICR_VPENDBASER_Valid)
++		gicr_write_vpendbaser(GICR_VPENDBASER_PendingLast,
+ 				      vlpi_base + GICR_VPENDBASER);
+ 
+ 	/*
+@@ -2481,8 +2548,8 @@ static int allocate_vpe_l1_table(void)
+ 
+ 	/* First probe the page size */
+ 	val = FIELD_PREP(GICR_VPROPBASER_4_1_PAGE_SIZE, GIC_PAGE_SIZE_64K);
+-	gits_write_vpropbaser(val, vlpi_base + GICR_VPROPBASER);
+-	val = gits_read_vpropbaser(vlpi_base + GICR_VPROPBASER);
++	gicr_write_vpropbaser(val, vlpi_base + GICR_VPROPBASER);
++	val = gicr_read_vpropbaser(vlpi_base + GICR_VPROPBASER);
+ 	gpsz = FIELD_GET(GICR_VPROPBASER_4_1_PAGE_SIZE, val);
+ 	esz = FIELD_GET(GICR_VPROPBASER_4_1_ENTRY_SIZE, val);
+ 
+@@ -2531,7 +2598,7 @@ static int allocate_vpe_l1_table(void)
+ 		npg = 1;
+ 	}
+ 
+-	val |= FIELD_PREP(GICR_VPROPBASER_4_1_SIZE, npg);
++	val |= FIELD_PREP(GICR_VPROPBASER_4_1_SIZE, npg - 1);
+ 
+ 	/* Right, that's the number of CPU pages we need for L1 */
+ 	np = DIV_ROUND_UP(npg * psz, PAGE_SIZE);
+@@ -2542,7 +2609,7 @@ static int allocate_vpe_l1_table(void)
+ 	if (!page)
+ 		return -ENOMEM;
+ 
+-	gic_data_rdist()->vpe_l1_page = page;
++	gic_data_rdist()->vpe_l1_base = page_address(page);
+ 	pa = virt_to_phys(page_address(page));
+ 	WARN_ON(!IS_ALIGNED(pa, psz));
+ 
+@@ -2553,7 +2620,7 @@ static int allocate_vpe_l1_table(void)
+ 	val |= GICR_VPROPBASER_4_1_VALID;
+ 
+ out:
+-	gits_write_vpropbaser(val, vlpi_base + GICR_VPROPBASER);
++	gicr_write_vpropbaser(val, vlpi_base + GICR_VPROPBASER);
+ 	cpumask_set_cpu(smp_processor_id(), gic_data_rdist()->vpe_table_mask);
+ 
+ 	pr_debug("CPU%d: VPROPBASER = %llx %*pbl\n",
+@@ -2660,14 +2727,14 @@ static u64 its_clear_vpend_valid(void __iomem *vlpi_base, u64 clr, u64 set)
+ 	bool clean;
+ 	u64 val;
+ 
+-	val = gits_read_vpendbaser(vlpi_base + GICR_VPENDBASER);
++	val = gicr_read_vpendbaser(vlpi_base + GICR_VPENDBASER);
+ 	val &= ~GICR_VPENDBASER_Valid;
+ 	val &= ~clr;
+ 	val |= set;
+-	gits_write_vpendbaser(val, vlpi_base + GICR_VPENDBASER);
++	gicr_write_vpendbaser(val, vlpi_base + GICR_VPENDBASER);
+ 
+ 	do {
+-		val = gits_read_vpendbaser(vlpi_base + GICR_VPENDBASER);
++		val = gicr_read_vpendbaser(vlpi_base + GICR_VPENDBASER);
+ 		clean = !(val & GICR_VPENDBASER_Dirty);
+ 		if (!clean) {
+ 			count--;
+@@ -2782,7 +2849,7 @@ static void its_cpu_init_lpis(void)
+ 		val = (LPI_NRBITS - 1) & GICR_VPROPBASER_IDBITS_MASK;
+ 		pr_debug("GICv4: CPU%d: Init IDbits to 0x%llx for GICR_VPROPBASER\n",
+ 			smp_processor_id(), val);
+-		gits_write_vpropbaser(val, vlpi_base + GICR_VPROPBASER);
++		gicr_write_vpropbaser(val, vlpi_base + GICR_VPROPBASER);
+ 
+ 		/*
+ 		 * Also clear Valid bit of GICR_VPENDBASER, in case some
+@@ -2790,7 +2857,6 @@ static void its_cpu_init_lpis(void)
+ 		 * corrupting memory.
+ 		 */
+ 		val = its_clear_vpend_valid(vlpi_base, 0, 0);
+-		WARN_ON(val & GICR_VPENDBASER_Dirty);
+ 	}
+ 
+ 	if (allocate_vpe_l1_table()) {
+@@ -2954,6 +3020,7 @@ static bool its_alloc_device_table(struct its_node *its, u32 dev_id)
+ static bool its_alloc_vpe_table(u32 vpe_id)
+ {
+ 	struct its_node *its;
++	int cpu;
+ 
+ 	/*
+ 	 * Make sure the L2 tables are allocated on *all* v4 ITSs. We
+@@ -2976,6 +3043,19 @@ static bool its_alloc_vpe_table(u32 vpe_id)
+ 			return false;
+ 	}
+ 
++	/* Non v4.1? No need to iterate RDs and go back early. */
++	if (!gic_rdists->has_rvpeid)
++		return true;
++
++	/*
++	 * Make sure the L2 tables are allocated for all copies of
++	 * the L1 table on *all* v4.1 RDs.
++	 */
++	for_each_possible_cpu(cpu) {
++		if (!allocate_vpe_l2_table(cpu, vpe_id))
++			return false;
++	}
++
+ 	return true;
+ }
+ 
+@@ -3443,7 +3523,7 @@ static void its_vpe_schedule(struct its_vpe *vpe)
+ 	val |= (LPI_NRBITS - 1) & GICR_VPROPBASER_IDBITS_MASK;
+ 	val |= GICR_VPROPBASER_RaWb;
+ 	val |= GICR_VPROPBASER_InnerShareable;
+-	gits_write_vpropbaser(val, vlpi_base + GICR_VPROPBASER);
++	gicr_write_vpropbaser(val, vlpi_base + GICR_VPROPBASER);
+ 
+ 	val  = virt_to_phys(page_address(vpe->vpt_page)) &
+ 		GENMASK_ULL(51, 16);
+@@ -3461,7 +3541,7 @@ static void its_vpe_schedule(struct its_vpe *vpe)
+ 	val |= GICR_VPENDBASER_PendingLast;
+ 	val |= vpe->idai ? GICR_VPENDBASER_IDAI : 0;
+ 	val |= GICR_VPENDBASER_Valid;
+-	gits_write_vpendbaser(val, vlpi_base + GICR_VPENDBASER);
++	gicr_write_vpendbaser(val, vlpi_base + GICR_VPENDBASER);
+ }
+ 
+ static void its_vpe_deschedule(struct its_vpe *vpe)
+@@ -3661,7 +3741,7 @@ static void its_vpe_4_1_schedule(struct its_vpe *vpe,
+ 	val |= info->g1en ? GICR_VPENDBASER_4_1_VGRP1EN : 0;
+ 	val |= FIELD_PREP(GICR_VPENDBASER_4_1_VPEID, vpe->vpe_id);
+ 
+-	gits_write_vpendbaser(val, vlpi_base + GICR_VPENDBASER);
++	gicr_write_vpendbaser(val, vlpi_base + GICR_VPENDBASER);
+ }
+ 
+ static void its_vpe_4_1_deschedule(struct its_vpe *vpe,
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index 286f98222878..c1f7af9d9ae7 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -1839,6 +1839,7 @@ static struct
+ 	struct redist_region *redist_regs;
+ 	u32 nr_redist_regions;
+ 	bool single_redist;
++	int enabled_rdists;
+ 	u32 maint_irq;
+ 	int maint_irq_mode;
+ 	phys_addr_t vcpu_base;
+@@ -1933,8 +1934,10 @@ static int __init gic_acpi_match_gicc(union acpi_subtable_headers *header,
+ 	 * If GICC is enabled and has valid gicr base address, then it means
+ 	 * GICR base is presented via GICC
+ 	 */
+-	if ((gicc->flags & ACPI_MADT_ENABLED) && gicc->gicr_base_address)
++	if ((gicc->flags & ACPI_MADT_ENABLED) && gicc->gicr_base_address) {
++		acpi_data.enabled_rdists++;
+ 		return 0;
++	}
+ 
+ 	/*
+ 	 * It's perfectly valid firmware can pass disabled GICC entry, driver
+@@ -1964,8 +1967,10 @@ static int __init gic_acpi_count_gicr_regions(void)
+ 
+ 	count = acpi_table_parse_madt(ACPI_MADT_TYPE_GENERIC_INTERRUPT,
+ 				      gic_acpi_match_gicc, 0);
+-	if (count > 0)
++	if (count > 0) {
+ 		acpi_data.single_redist = true;
++		count = acpi_data.enabled_rdists;
++	}
+ 
+ 	return count;
+ }
+diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
+index f0b8ca766e7d..83439bfb6c5b 100644
+--- a/include/linux/irqchip/arm-gic-v3.h
++++ b/include/linux/irqchip/arm-gic-v3.h
+@@ -652,10 +652,10 @@ struct rdists {
+ 	struct {
+ 		void __iomem	*rd_base;
+ 		struct page	*pend_page;
+-		struct page	*vpe_l1_page;
+ 		phys_addr_t	phys_base;
+ 		bool		lpi_enabled;
+ 		cpumask_t	*vpe_table_mask;
++		void		*vpe_l1_base;
+ 	} __percpu		*rdist;
+ 	phys_addr_t		prop_table_pa;
+ 	void			*prop_table_va;
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index 818b2802d3e7..3089a60ea8f9 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -731,6 +731,13 @@ static int set_irq_wake_real(unsigned int irq, unsigned int on)
+  *
+  *	Wakeup mode lets this IRQ wake the system from sleep
+  *	states like "suspend to RAM".
++ *
++ *	Note: irq enable/disable state is completely orthogonal
++ *	to the enable/disable state of irq wake. An irq can be
++ *	disabled with disable_irq() and still wake the system as
++ *	long as the irq has wake enabled. If this does not hold,
++ *	then the underlying irq chip and the related driver need
++ *	to be investigated.
+  */
+ int irq_set_irq_wake(unsigned int irq, unsigned int on)
+ {
 
