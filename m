@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71E15156AD0
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 15:09:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9758A156ACD
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 15:09:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727873AbgBIOHC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 09:07:02 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:42467 "EHLO
+        id S1727833AbgBIOG6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 09:06:58 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:42464 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727695AbgBIOHC (ORCPT
+        with ESMTP id S1727721AbgBIOG6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 09:07:02 -0500
+        Sun, 9 Feb 2020 09:06:58 -0500
 Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j0nEb-0004Ve-0j; Sun, 09 Feb 2020 15:06:53 +0100
+        id 1j0nEa-0004VJ-5k; Sun, 09 Feb 2020 15:06:52 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 9534F103092;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 8FACE1017FA;
         Sun,  9 Feb 2020 15:06:51 +0100 (CET)
 Date:   Sun, 09 Feb 2020 14:02:37 -0000
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] x86 fixes for 5.6-rc1
+Subject: [GIT pull] SMP fixes for 5.6-rc1
 References: <158125695731.26104.949647922067525745.tglx@nanos.tec.linutronix.de>
-Message-ID: <158125695732.26104.8703656786037209247.tglx@nanos.tec.linutronix.de>
+Message-ID: <158125695732.26104.1145889078762434274.tglx@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -40,611 +40,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest x86/urgent branch from:
+please pull the latest smp/urgent branch from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-2020-02-09
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git smp-urgent-2020-02-09
 
-up to:  0f378d73d429: x86/apic: Mask IOAPIC entries when disabling the local APIC
+up to:  1e474b28e788: smp/up: Make smp_call_function_single() match SMP semantics
 
 
-A set of fixes for X86:
+Two fixes for the SMP related functionality:
 
- - Ensure that the PIT is set up when the local APIC is disable or
-   configured in legacy mode. This is caused by an ordering issue
-   introduced in the recent changes which skip PIT initialization when the
-   TSC and APIC frequencies are already known.
+ - Make the UP version of smp_call_function_single() match SMP semantics
+   when called for a not available CPU.  Instead of emitting a warning and
+   assuming that the function call target is CPU0, return a proper error
+   code like the SMP version does.
 
- - Handle malformed SRAT tables during early ACPI parsing which caused an
-   infinite loop anda boot hang.
-
- - Fix a long standing race in the affinity setting code which affects PCI
-   devices with non-maskable MSI interrupts. The problem is caused by the
-   non-atomic writes of the MSI address (destination APIC id) and data
-   (vector) fields which the device uses to construct the MSI message. The
-   non-atomic writes are mandated by PCI.
-
-   If both fields change and the device raises an interrupt after writing
-   address and before writing data, then the MSI block constructs a
-   inconsistent message which causes interrupts to be lost and subsequent
-   malfunction of the device.
-
-   The fix is to redirect the interrupt to the new vector on the current
-   CPU first and then switch it over to the new target CPU. This allows to
-   observe an eventually raised interrupt in the transitional stage (old
-   CPU, new vector) to be observed in the APIC IRR and retriggered on the
-   new target CPU and the new vector. The potential spurious interrupts
-   caused by this are harmless and can in the worst case expose a buggy
-   driver (all handlers have to be able to deal with spurious interrupts as
-   they can and do happen for various reasons).
-
- - Add the missing suspend/resume mechanism for the HYPERV hypercall page
-   which prevents resume hibernation on HYPERV guests. This change got
-   lost before the merge window.
-
- - Mask the IOAPIC before disabling the local APIC to prevent potentially
-   stale IOAPIC remote IRR bits which cause stale interrupt lines after
-   resume.
+ - Remove a superfluous check in smp_call_function_many_cond()
 
 Thanks,
 
 	tglx
 
 ------------------>
-Dexuan Cui (1):
-      x86/hyperv: Suspend/resume the hypercall page for hibernation
+Paul E. McKenney (1):
+      smp/up: Make smp_call_function_single() match SMP semantics
 
-Steven Clarkson (1):
-      x86/boot: Handle malformed SRAT tables during early ACPI parsing
-
-Thomas Gleixner (2):
-      x86/timer: Don't skip PIT setup when APIC is disabled or in legacy mode
-      x86/apic/msi: Plug non-maskable MSI affinity race
-
-Tony W Wang-oc (1):
-      x86/apic: Mask IOAPIC entries when disabling the local APIC
+Sebastian Andrzej Siewior (1):
+      smp: Remove superfluous cond_func check in smp_call_function_many_cond()
 
 
- arch/x86/boot/compressed/acpi.c |   6 ++
- arch/x86/hyperv/hv_init.c       |  50 ++++++++++++++++
- arch/x86/include/asm/apic.h     |  10 ++++
- arch/x86/include/asm/x86_init.h |   2 +
- arch/x86/kernel/apic/apic.c     |  30 ++++++++--
- arch/x86/kernel/apic/msi.c      | 128 +++++++++++++++++++++++++++++++++++++++-
- arch/x86/kernel/time.c          |  12 +++-
- arch/x86/kernel/x86_init.c      |   1 +
- arch/x86/xen/enlighten_pv.c     |   1 +
- include/linux/irq.h             |  18 ++++++
- include/linux/irqdomain.h       |   7 +++
- kernel/irq/debugfs.c            |   1 +
- kernel/irq/msi.c                |   5 +-
- 13 files changed, 260 insertions(+), 11 deletions(-)
+ kernel/smp.c | 2 +-
+ kernel/up.c  | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-index 25019d42ae93..ef2ad7253cd5 100644
---- a/arch/x86/boot/compressed/acpi.c
-+++ b/arch/x86/boot/compressed/acpi.c
-@@ -393,7 +393,13 @@ int count_immovable_mem_regions(void)
- 	table = table_addr + sizeof(struct acpi_table_srat);
+diff --git a/kernel/smp.c b/kernel/smp.c
+index 3b7bedc97af3..d0ada39eb4d4 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -435,7 +435,7 @@ static void smp_call_function_many_cond(const struct cpumask *mask,
  
- 	while (table + sizeof(struct acpi_subtable_header) < table_end) {
-+
- 		sub_table = (struct acpi_subtable_header *)table;
-+		if (!sub_table->length) {
-+			debug_putstr("Invalid zero length SRAT subtable.\n");
-+			return 0;
-+		}
-+
- 		if (sub_table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
- 			struct acpi_srat_mem_affinity *ma;
- 
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index caaf4dce99bf..b0da5320bcff 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -21,11 +21,15 @@
- #include <linux/hyperv.h>
- #include <linux/slab.h>
- #include <linux/cpuhotplug.h>
-+#include <linux/syscore_ops.h>
- #include <clocksource/hyperv_timer.h>
- 
- void *hv_hypercall_pg;
- EXPORT_SYMBOL_GPL(hv_hypercall_pg);
- 
-+/* Storage to save the hypercall page temporarily for hibernation */
-+static void *hv_hypercall_pg_saved;
-+
- u32 *hv_vp_index;
- EXPORT_SYMBOL_GPL(hv_vp_index);
- 
-@@ -246,6 +250,48 @@ static int __init hv_pci_init(void)
- 	return 1;
- }
- 
-+static int hv_suspend(void)
-+{
-+	union hv_x64_msr_hypercall_contents hypercall_msr;
-+
-+	/*
-+	 * Reset the hypercall page as it is going to be invalidated
-+	 * accross hibernation. Setting hv_hypercall_pg to NULL ensures
-+	 * that any subsequent hypercall operation fails safely instead of
-+	 * crashing due to an access of an invalid page. The hypercall page
-+	 * pointer is restored on resume.
-+	 */
-+	hv_hypercall_pg_saved = hv_hypercall_pg;
-+	hv_hypercall_pg = NULL;
-+
-+	/* Disable the hypercall page in the hypervisor */
-+	rdmsrl(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
-+	hypercall_msr.enable = 0;
-+	wrmsrl(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
-+
-+	return 0;
-+}
-+
-+static void hv_resume(void)
-+{
-+	union hv_x64_msr_hypercall_contents hypercall_msr;
-+
-+	/* Re-enable the hypercall page */
-+	rdmsrl(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
-+	hypercall_msr.enable = 1;
-+	hypercall_msr.guest_physical_address =
-+		vmalloc_to_pfn(hv_hypercall_pg_saved);
-+	wrmsrl(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
-+
-+	hv_hypercall_pg = hv_hypercall_pg_saved;
-+	hv_hypercall_pg_saved = NULL;
-+}
-+
-+static struct syscore_ops hv_syscore_ops = {
-+	.suspend	= hv_suspend,
-+	.resume		= hv_resume,
-+};
-+
- /*
-  * This function is to be invoked early in the boot sequence after the
-  * hypervisor has been detected.
-@@ -330,6 +376,8 @@ void __init hyperv_init(void)
- 
- 	x86_init.pci.arch_init = hv_pci_init;
- 
-+	register_syscore_ops(&hv_syscore_ops);
-+
- 	return;
- 
- remove_cpuhp_state:
-@@ -349,6 +397,8 @@ void hyperv_cleanup(void)
+ 	/* Fastpath: do that cpu by itself. */
+ 	if (next_cpu >= nr_cpu_ids) {
+-		if (!cond_func || (cond_func && cond_func(cpu, info)))
++		if (!cond_func || cond_func(cpu, info))
+ 			smp_call_function_single(cpu, func, info, wait);
+ 		return;
+ 	}
+diff --git a/kernel/up.c b/kernel/up.c
+index 53144d056252..c6f323dcd45b 100644
+--- a/kernel/up.c
++++ b/kernel/up.c
+@@ -14,7 +14,8 @@ int smp_call_function_single(int cpu, void (*func) (void *info), void *info,
  {
- 	union hv_x64_msr_hypercall_contents hypercall_msr;
+ 	unsigned long flags;
  
-+	unregister_syscore_ops(&hv_syscore_ops);
-+
- 	/* Reset our OS id */
- 	wrmsrl(HV_X64_MSR_GUEST_OS_ID, 0);
- 
-diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
-index 2ebc17d9c72c..19e94af9cc5d 100644
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -140,6 +140,7 @@ extern void apic_soft_disable(void);
- extern void lapic_shutdown(void);
- extern void sync_Arb_IDs(void);
- extern void init_bsp_APIC(void);
-+extern void apic_intr_mode_select(void);
- extern void apic_intr_mode_init(void);
- extern void init_apic_mappings(void);
- void register_lapic_address(unsigned long address);
-@@ -188,6 +189,7 @@ static inline void disable_local_APIC(void) { }
- # define setup_secondary_APIC_clock x86_init_noop
- static inline void lapic_update_tsc_freq(void) { }
- static inline void init_bsp_APIC(void) { }
-+static inline void apic_intr_mode_select(void) { }
- static inline void apic_intr_mode_init(void) { }
- static inline void lapic_assign_system_vectors(void) { }
- static inline void lapic_assign_legacy_vector(unsigned int i, bool r) { }
-@@ -452,6 +454,14 @@ static inline void ack_APIC_irq(void)
- 	apic_eoi();
- }
- 
-+
-+static inline bool lapic_vector_set_in_irr(unsigned int vector)
-+{
-+	u32 irr = apic_read(APIC_IRR + (vector / 32 * 0x10));
-+
-+	return !!(irr & (1U << (vector % 32)));
-+}
-+
- static inline unsigned default_get_apic_id(unsigned long x)
- {
- 	unsigned int ver = GET_APIC_VERSION(apic_read(APIC_LVR));
-diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
-index 19435858df5f..96d9cd208610 100644
---- a/arch/x86/include/asm/x86_init.h
-+++ b/arch/x86/include/asm/x86_init.h
-@@ -51,12 +51,14 @@ struct x86_init_resources {
-  *				are set up.
-  * @intr_init:			interrupt init code
-  * @trap_init:			platform specific trap setup
-+ * @intr_mode_select:		interrupt delivery mode selection
-  * @intr_mode_init:		interrupt delivery mode setup
-  */
- struct x86_init_irqs {
- 	void (*pre_vector_init)(void);
- 	void (*intr_init)(void);
- 	void (*trap_init)(void);
-+	void (*intr_mode_select)(void);
- 	void (*intr_mode_init)(void);
- };
- 
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 28446fa6bf18..5f973fed3c9f 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -830,8 +830,17 @@ bool __init apic_needs_pit(void)
- 	if (!tsc_khz || !cpu_khz)
- 		return true;
- 
--	/* Is there an APIC at all? */
--	if (!boot_cpu_has(X86_FEATURE_APIC))
-+	/* Is there an APIC at all or is it disabled? */
-+	if (!boot_cpu_has(X86_FEATURE_APIC) || disable_apic)
-+		return true;
-+
-+	/*
-+	 * If interrupt delivery mode is legacy PIC or virtual wire without
-+	 * configuration, the local APIC timer wont be set up. Make sure
-+	 * that the PIT is initialized.
-+	 */
-+	if (apic_intr_mode == APIC_PIC ||
-+	    apic_intr_mode == APIC_VIRTUAL_WIRE_NO_CONFIG)
- 		return true;
- 
- 	/* Virt guests may lack ARAT, but still have DEADLINE */
-@@ -1322,7 +1331,7 @@ void __init sync_Arb_IDs(void)
- 
- enum apic_intr_mode_id apic_intr_mode __ro_after_init;
- 
--static int __init apic_intr_mode_select(void)
-+static int __init __apic_intr_mode_select(void)
- {
- 	/* Check kernel option */
- 	if (disable_apic) {
-@@ -1384,6 +1393,12 @@ static int __init apic_intr_mode_select(void)
- 	return APIC_SYMMETRIC_IO;
- }
- 
-+/* Select the interrupt delivery mode for the BSP */
-+void __init apic_intr_mode_select(void)
-+{
-+	apic_intr_mode = __apic_intr_mode_select();
-+}
-+
- /*
-  * An initial setup of the virtual wire mode.
-  */
-@@ -1440,8 +1455,6 @@ void __init apic_intr_mode_init(void)
- {
- 	bool upmode = IS_ENABLED(CONFIG_UP_LATE_INIT);
- 
--	apic_intr_mode = apic_intr_mode_select();
--
- 	switch (apic_intr_mode) {
- 	case APIC_PIC:
- 		pr_info("APIC: Keep in PIC mode(8259)\n");
-@@ -2626,6 +2639,13 @@ static int lapic_suspend(void)
- #endif
+-	WARN_ON(cpu != 0);
++	if (cpu != 0)
++		return -ENXIO;
  
  	local_irq_save(flags);
-+
-+	/*
-+	 * Mask IOAPIC before disabling the local APIC to prevent stale IRR
-+	 * entries on some implementations.
-+	 */
-+	mask_ioapic_entries();
-+
- 	disable_local_APIC();
- 
- 	irq_remapping_disable();
-diff --git a/arch/x86/kernel/apic/msi.c b/arch/x86/kernel/apic/msi.c
-index 7f7533462474..159bd0cb8548 100644
---- a/arch/x86/kernel/apic/msi.c
-+++ b/arch/x86/kernel/apic/msi.c
-@@ -23,10 +23,8 @@
- 
- static struct irq_domain *msi_default_domain;
- 
--static void irq_msi_compose_msg(struct irq_data *data, struct msi_msg *msg)
-+static void __irq_msi_compose_msg(struct irq_cfg *cfg, struct msi_msg *msg)
- {
--	struct irq_cfg *cfg = irqd_cfg(data);
--
- 	msg->address_hi = MSI_ADDR_BASE_HI;
- 
- 	if (x2apic_enabled())
-@@ -47,6 +45,127 @@ static void irq_msi_compose_msg(struct irq_data *data, struct msi_msg *msg)
- 		MSI_DATA_VECTOR(cfg->vector);
- }
- 
-+static void irq_msi_compose_msg(struct irq_data *data, struct msi_msg *msg)
-+{
-+	__irq_msi_compose_msg(irqd_cfg(data), msg);
-+}
-+
-+static void irq_msi_update_msg(struct irq_data *irqd, struct irq_cfg *cfg)
-+{
-+	struct msi_msg msg[2] = { [1] = { }, };
-+
-+	__irq_msi_compose_msg(cfg, msg);
-+	irq_data_get_irq_chip(irqd)->irq_write_msi_msg(irqd, msg);
-+}
-+
-+static int
-+msi_set_affinity(struct irq_data *irqd, const struct cpumask *mask, bool force)
-+{
-+	struct irq_cfg old_cfg, *cfg = irqd_cfg(irqd);
-+	struct irq_data *parent = irqd->parent_data;
-+	unsigned int cpu;
-+	int ret;
-+
-+	/* Save the current configuration */
-+	cpu = cpumask_first(irq_data_get_effective_affinity_mask(irqd));
-+	old_cfg = *cfg;
-+
-+	/* Allocate a new target vector */
-+	ret = parent->chip->irq_set_affinity(parent, mask, force);
-+	if (ret < 0 || ret == IRQ_SET_MASK_OK_DONE)
-+		return ret;
-+
-+	/*
-+	 * For non-maskable and non-remapped MSI interrupts the migration
-+	 * to a different destination CPU and a different vector has to be
-+	 * done careful to handle the possible stray interrupt which can be
-+	 * caused by the non-atomic update of the address/data pair.
-+	 *
-+	 * Direct update is possible when:
-+	 * - The MSI is maskable (remapped MSI does not use this code path)).
-+	 *   The quirk bit is not set in this case.
-+	 * - The new vector is the same as the old vector
-+	 * - The old vector is MANAGED_IRQ_SHUTDOWN_VECTOR (interrupt starts up)
-+	 * - The new destination CPU is the same as the old destination CPU
-+	 */
-+	if (!irqd_msi_nomask_quirk(irqd) ||
-+	    cfg->vector == old_cfg.vector ||
-+	    old_cfg.vector == MANAGED_IRQ_SHUTDOWN_VECTOR ||
-+	    cfg->dest_apicid == old_cfg.dest_apicid) {
-+		irq_msi_update_msg(irqd, cfg);
-+		return ret;
-+	}
-+
-+	/*
-+	 * Paranoia: Validate that the interrupt target is the local
-+	 * CPU.
-+	 */
-+	if (WARN_ON_ONCE(cpu != smp_processor_id())) {
-+		irq_msi_update_msg(irqd, cfg);
-+		return ret;
-+	}
-+
-+	/*
-+	 * Redirect the interrupt to the new vector on the current CPU
-+	 * first. This might cause a spurious interrupt on this vector if
-+	 * the device raises an interrupt right between this update and the
-+	 * update to the final destination CPU.
-+	 *
-+	 * If the vector is in use then the installed device handler will
-+	 * denote it as spurious which is no harm as this is a rare event
-+	 * and interrupt handlers have to cope with spurious interrupts
-+	 * anyway. If the vector is unused, then it is marked so it won't
-+	 * trigger the 'No irq handler for vector' warning in do_IRQ().
-+	 *
-+	 * This requires to hold vector lock to prevent concurrent updates to
-+	 * the affected vector.
-+	 */
-+	lock_vector_lock();
-+
-+	/*
-+	 * Mark the new target vector on the local CPU if it is currently
-+	 * unused. Reuse the VECTOR_RETRIGGERED state which is also used in
-+	 * the CPU hotplug path for a similar purpose. This cannot be
-+	 * undone here as the current CPU has interrupts disabled and
-+	 * cannot handle the interrupt before the whole set_affinity()
-+	 * section is done. In the CPU unplug case, the current CPU is
-+	 * about to vanish and will not handle any interrupts anymore. The
-+	 * vector is cleaned up when the CPU comes online again.
-+	 */
-+	if (IS_ERR_OR_NULL(this_cpu_read(vector_irq[cfg->vector])))
-+		this_cpu_write(vector_irq[cfg->vector], VECTOR_RETRIGGERED);
-+
-+	/* Redirect it to the new vector on the local CPU temporarily */
-+	old_cfg.vector = cfg->vector;
-+	irq_msi_update_msg(irqd, &old_cfg);
-+
-+	/* Now transition it to the target CPU */
-+	irq_msi_update_msg(irqd, cfg);
-+
-+	/*
-+	 * All interrupts after this point are now targeted at the new
-+	 * vector/CPU.
-+	 *
-+	 * Drop vector lock before testing whether the temporary assignment
-+	 * to the local CPU was hit by an interrupt raised in the device,
-+	 * because the retrigger function acquires vector lock again.
-+	 */
-+	unlock_vector_lock();
-+
-+	/*
-+	 * Check whether the transition raced with a device interrupt and
-+	 * is pending in the local APICs IRR. It is safe to do this outside
-+	 * of vector lock as the irq_desc::lock of this interrupt is still
-+	 * held and interrupts are disabled: The check is not accessing the
-+	 * underlying vector store. It's just checking the local APIC's
-+	 * IRR.
-+	 */
-+	if (lapic_vector_set_in_irr(cfg->vector))
-+		irq_data_get_irq_chip(irqd)->irq_retrigger(irqd);
-+
-+	return ret;
-+}
-+
- /*
-  * IRQ Chip for MSI PCI/PCI-X/PCI-Express Devices,
-  * which implement the MSI or MSI-X Capability Structure.
-@@ -58,6 +177,7 @@ static struct irq_chip pci_msi_controller = {
- 	.irq_ack		= irq_chip_ack_parent,
- 	.irq_retrigger		= irq_chip_retrigger_hierarchy,
- 	.irq_compose_msi_msg	= irq_msi_compose_msg,
-+	.irq_set_affinity	= msi_set_affinity,
- 	.flags			= IRQCHIP_SKIP_SET_WAKE,
- };
- 
-@@ -146,6 +266,8 @@ void __init arch_init_msi_domain(struct irq_domain *parent)
- 	}
- 	if (!msi_default_domain)
- 		pr_warn("failed to initialize irqdomain for MSI/MSI-x.\n");
-+	else
-+		msi_default_domain->flags |= IRQ_DOMAIN_MSI_NOMASK_QUIRK;
- }
- 
- #ifdef CONFIG_IRQ_REMAP
-diff --git a/arch/x86/kernel/time.c b/arch/x86/kernel/time.c
-index 7ce29cee9f9e..d8673d8a779b 100644
---- a/arch/x86/kernel/time.c
-+++ b/arch/x86/kernel/time.c
-@@ -91,10 +91,18 @@ void __init hpet_time_init(void)
- 
- static __init void x86_late_time_init(void)
- {
-+	/*
-+	 * Before PIT/HPET init, select the interrupt mode. This is required
-+	 * to make the decision whether PIT should be initialized correct.
-+	 */
-+	x86_init.irqs.intr_mode_select();
-+
-+	/* Setup the legacy timers */
- 	x86_init.timers.timer_init();
-+
- 	/*
--	 * After PIT/HPET timers init, select and setup
--	 * the final interrupt mode for delivering IRQs.
-+	 * After PIT/HPET timers init, set up the final interrupt mode for
-+	 * delivering IRQs.
- 	 */
- 	x86_init.irqs.intr_mode_init();
- 	tsc_init();
-diff --git a/arch/x86/kernel/x86_init.c b/arch/x86/kernel/x86_init.c
-index ce89430a7f80..9a89261dcd2a 100644
---- a/arch/x86/kernel/x86_init.c
-+++ b/arch/x86/kernel/x86_init.c
-@@ -80,6 +80,7 @@ struct x86_init_ops x86_init __initdata = {
- 		.pre_vector_init	= init_ISA_irqs,
- 		.intr_init		= native_init_IRQ,
- 		.trap_init		= x86_init_noop,
-+		.intr_mode_select	= apic_intr_mode_select,
- 		.intr_mode_init		= apic_intr_mode_init
- 	},
- 
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index ae4a41ca19f6..1f756ffffe8b 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -1205,6 +1205,7 @@ asmlinkage __visible void __init xen_start_kernel(void)
- 	x86_platform.get_nmi_reason = xen_get_nmi_reason;
- 
- 	x86_init.resources.memory_setup = xen_memory_setup;
-+	x86_init.irqs.intr_mode_select	= x86_init_noop;
- 	x86_init.irqs.intr_mode_init	= x86_init_noop;
- 	x86_init.oem.arch_setup = xen_arch_setup;
- 	x86_init.oem.banner = xen_banner;
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index 7853eb9301f2..3ed5a055b5f4 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -209,6 +209,8 @@ struct irq_data {
-  * IRQD_SINGLE_TARGET		- IRQ allows only a single affinity target
-  * IRQD_DEFAULT_TRIGGER_SET	- Expected trigger already been set
-  * IRQD_CAN_RESERVE		- Can use reservation mode
-+ * IRQD_MSI_NOMASK_QUIRK	- Non-maskable MSI quirk for affinity change
-+ *				  required
-  */
- enum {
- 	IRQD_TRIGGER_MASK		= 0xf,
-@@ -231,6 +233,7 @@ enum {
- 	IRQD_SINGLE_TARGET		= (1 << 24),
- 	IRQD_DEFAULT_TRIGGER_SET	= (1 << 25),
- 	IRQD_CAN_RESERVE		= (1 << 26),
-+	IRQD_MSI_NOMASK_QUIRK		= (1 << 27),
- };
- 
- #define __irqd_to_state(d) ACCESS_PRIVATE((d)->common, state_use_accessors)
-@@ -390,6 +393,21 @@ static inline bool irqd_can_reserve(struct irq_data *d)
- 	return __irqd_to_state(d) & IRQD_CAN_RESERVE;
- }
- 
-+static inline void irqd_set_msi_nomask_quirk(struct irq_data *d)
-+{
-+	__irqd_to_state(d) |= IRQD_MSI_NOMASK_QUIRK;
-+}
-+
-+static inline void irqd_clr_msi_nomask_quirk(struct irq_data *d)
-+{
-+	__irqd_to_state(d) &= ~IRQD_MSI_NOMASK_QUIRK;
-+}
-+
-+static inline bool irqd_msi_nomask_quirk(struct irq_data *d)
-+{
-+	return __irqd_to_state(d) & IRQD_MSI_NOMASK_QUIRK;
-+}
-+
- #undef __irqd_to_state
- 
- static inline irq_hw_number_t irqd_to_hwirq(struct irq_data *d)
-diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-index 3c340dbc5a1f..4da8df57618a 100644
---- a/include/linux/irqdomain.h
-+++ b/include/linux/irqdomain.h
-@@ -206,6 +206,13 @@ enum {
- 	/* Irq domain implements MSI remapping */
- 	IRQ_DOMAIN_FLAG_MSI_REMAP	= (1 << 5),
- 
-+	/*
-+	 * Quirk to handle MSI implementations which do not provide
-+	 * masking. Currently known to affect x86, but partially
-+	 * handled in core code.
-+	 */
-+	IRQ_DOMAIN_MSI_NOMASK_QUIRK	= (1 << 6),
-+
- 	/*
- 	 * Flags starting from IRQ_DOMAIN_FLAG_NONCORE are reserved
- 	 * for implementation specific purposes and ignored by the
-diff --git a/kernel/irq/debugfs.c b/kernel/irq/debugfs.c
-index c1eccd4f6520..a949bd39e343 100644
---- a/kernel/irq/debugfs.c
-+++ b/kernel/irq/debugfs.c
-@@ -114,6 +114,7 @@ static const struct irq_bit_descr irqdata_states[] = {
- 	BIT_MASK_DESCR(IRQD_AFFINITY_MANAGED),
- 	BIT_MASK_DESCR(IRQD_MANAGED_SHUTDOWN),
- 	BIT_MASK_DESCR(IRQD_CAN_RESERVE),
-+	BIT_MASK_DESCR(IRQD_MSI_NOMASK_QUIRK),
- 
- 	BIT_MASK_DESCR(IRQD_FORWARDED_TO_VCPU),
- 
-diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
-index ad26fbcfbfc8..eb95f6106a1e 100644
---- a/kernel/irq/msi.c
-+++ b/kernel/irq/msi.c
-@@ -453,8 +453,11 @@ int msi_domain_alloc_irqs(struct irq_domain *domain, struct device *dev,
- 			continue;
- 
- 		irq_data = irq_domain_get_irq_data(domain, desc->irq);
--		if (!can_reserve)
-+		if (!can_reserve) {
- 			irqd_clr_can_reserve(irq_data);
-+			if (domain->flags & IRQ_DOMAIN_MSI_NOMASK_QUIRK)
-+				irqd_set_msi_nomask_quirk(irq_data);
-+		}
- 		ret = irq_domain_activate_irq(irq_data, can_reserve);
- 		if (ret)
- 			goto cleanup;
+ 	func(info);
 
