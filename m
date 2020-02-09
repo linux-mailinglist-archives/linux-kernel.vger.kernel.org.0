@@ -2,149 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ED38156C62
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 21:25:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C29E156C67
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 21:34:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbgBIUZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 15:25:16 -0500
-Received: from bmailout2.hostsharing.net ([83.223.78.240]:54433 "EHLO
-        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727416AbgBIUZP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 15:25:15 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 064102800BB92;
-        Sun,  9 Feb 2020 21:25:13 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id BF09A14BAA7; Sun,  9 Feb 2020 21:25:12 +0100 (CET)
-Date:   Sun, 9 Feb 2020 21:25:12 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Stuart Hayes <stuart.w.hayes@gmail.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Austin Bolen <austin_bolen@dell.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, narendra_k@dell.com
-Subject: Re: [PATCH v3] PCI: pciehp: Make sure pciehp_isr clears interrupt
- events
-Message-ID: <20200209202512.rzaqoc7tydo2ouog@wunner.de>
-References: <20200207195450.52026-1-stuart.w.hayes@gmail.com>
- <20200209150328.2x2zumhqbs6fihmc@wunner.de>
- <20200209180722.ikuyjignnd7ddfp5@wunner.de>
+        id S1727895AbgBIUdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 15:33:20 -0500
+Received: from mga05.intel.com ([192.55.52.43]:48308 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727416AbgBIUdU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Feb 2020 15:33:20 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2020 12:33:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,422,1574150400"; 
+   d="scan'208";a="265639440"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga002.fm.intel.com with ESMTP; 09 Feb 2020 12:33:18 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1j0tGY-000EpI-2u; Mon, 10 Feb 2020 04:33:18 +0800
+Date:   Mon, 10 Feb 2020 04:32:45 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "x86-ml" <x86@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [tip:smp/urgent] BUILD SUCCESS
+ 1e474b28e78897d0d170fab3b28ba683149cb9ea
+Message-ID: <5e406c6d.QaueDJ9ABgy6wpiF%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200209180722.ikuyjignnd7ddfp5@wunner.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 09, 2020 at 07:07:22PM +0100, Lukas Wunner wrote:
-> Actually, scratch that.  After thinking about this problem for a day
-> I've come up with a much simpler and more elegant solution.  Could you
-> test if the below works for you?
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  smp/urgent
+branch HEAD: 1e474b28e78897d0d170fab3b28ba683149cb9ea  smp/up: Make smp_call_function_single() match SMP semantics
 
-Sorry, I missed a few things:
+elapsed time: 3098m
 
-* pm_runtime_put() is called too often in the MSI case.
-* If only the CC bit is set or if ignore_hotplug is set, the function
-  may return prematurely without re-reading the Slot Status register.
-* Returning IRQ_NONE in the MSI case even though the IRQ thread was woken
-  may incorrectly signal a spurious interrupt to the genirq code.
-  It's better to return IRQ_HANDLED instead.
+configs tested: 163
+configs skipped: 0
 
-Below is another attempt.  I'll have to take a look at this with a
-fresh pair of eyeballs though to verify I haven't overlooked anything
-else and also to determine if this is actually simpler than Stuart's
-approach.  Again, the advantage here is that processing of the events
-by the IRQ thread is sped up by not delaying it until the Slot Status
-register has settled.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Thanks.
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm                         at91_dt_defconfig
+arm                           efm32_defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm64                               defconfig
+sparc                            allyesconfig
+s390                              allnoconfig
+sparc64                          allmodconfig
+riscv                             allnoconfig
+sh                                allnoconfig
+csky                                defconfig
+um                                  defconfig
+i386                              allnoconfig
+mips                      malta_kvm_defconfig
+riscv                          rv32_defconfig
+xtensa                       common_defconfig
+s390                       zfcpdump_defconfig
+parisc                           allyesconfig
+m68k                       m5475evb_defconfig
+parisc                              defconfig
+riscv                    nommu_virt_defconfig
+arc                              allyesconfig
+xtensa                          iss_defconfig
+ia64                                defconfig
+s390                                defconfig
+i386                                defconfig
+h8300                       h8s-sim_defconfig
+nds32                             allnoconfig
+openrisc                 simple_smp_defconfig
+ia64                             allmodconfig
+mips                             allmodconfig
+sparc64                          allyesconfig
+sparc64                           allnoconfig
+um                             i386_defconfig
+mips                              allnoconfig
+powerpc                           allnoconfig
+sh                            titan_defconfig
+parisc                            allnoconfig
+c6x                              allyesconfig
+powerpc                             defconfig
+i386                             alldefconfig
+i386                             allyesconfig
+ia64                             alldefconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+c6x                        evmc6678_defconfig
+nios2                         10m50_defconfig
+nios2                         3c120_defconfig
+openrisc                    or1ksim_defconfig
+nds32                               defconfig
+alpha                               defconfig
+h8300                     edosk2674_defconfig
+h8300                    h8300h-sim_defconfig
+m68k                             allmodconfig
+m68k                          multi_defconfig
+m68k                           sun3_defconfig
+arc                                 defconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+mips                           32r2_defconfig
+mips                         64r6el_defconfig
+mips                             allyesconfig
+mips                      fuloong2e_defconfig
+parisc                         b180_defconfig
+parisc                        c3000_defconfig
+c6x                  randconfig-a001-20200209
+h8300                randconfig-a001-20200209
+microblaze           randconfig-a001-20200209
+nios2                randconfig-a001-20200209
+sparc64              randconfig-a001-20200209
+h8300                randconfig-a001-20200208
+nios2                randconfig-a001-20200208
+microblaze           randconfig-a001-20200208
+sparc64              randconfig-a001-20200208
+c6x                  randconfig-a001-20200208
+s390                 randconfig-a001-20200208
+csky                 randconfig-a001-20200208
+sh                   randconfig-a001-20200208
+xtensa               randconfig-a001-20200208
+openrisc             randconfig-a001-20200208
+x86_64               randconfig-b001-20200210
+x86_64               randconfig-b002-20200210
+x86_64               randconfig-b003-20200210
+i386                 randconfig-b001-20200210
+i386                 randconfig-b002-20200210
+i386                 randconfig-b003-20200210
+x86_64               randconfig-c001-20200207
+x86_64               randconfig-c002-20200207
+x86_64               randconfig-c003-20200207
+i386                 randconfig-c001-20200207
+i386                 randconfig-c002-20200207
+i386                 randconfig-c003-20200207
+x86_64               randconfig-c001-20200209
+x86_64               randconfig-c002-20200209
+x86_64               randconfig-c003-20200209
+i386                 randconfig-c001-20200209
+i386                 randconfig-c002-20200209
+i386                 randconfig-c003-20200209
+x86_64               randconfig-c001-20200208
+x86_64               randconfig-c002-20200208
+x86_64               randconfig-c003-20200208
+i386                 randconfig-c001-20200208
+i386                 randconfig-c002-20200208
+i386                 randconfig-c003-20200208
+x86_64               randconfig-d001-20200207
+x86_64               randconfig-d002-20200207
+x86_64               randconfig-d003-20200207
+i386                 randconfig-d001-20200207
+i386                 randconfig-d002-20200207
+i386                 randconfig-d003-20200207
+x86_64               randconfig-f001-20200210
+x86_64               randconfig-f002-20200210
+x86_64               randconfig-f003-20200210
+i386                 randconfig-f001-20200210
+i386                 randconfig-f002-20200210
+i386                 randconfig-f003-20200210
+i386                 randconfig-f002-20200208
+i386                 randconfig-f003-20200208
+x86_64               randconfig-f002-20200208
+i386                 randconfig-f001-20200208
+x86_64               randconfig-f001-20200208
+x86_64               randconfig-f003-20200208
+x86_64               randconfig-g001-20200210
+x86_64               randconfig-g002-20200210
+x86_64               randconfig-g003-20200210
+i386                 randconfig-g001-20200210
+i386                 randconfig-g002-20200210
+i386                 randconfig-g003-20200210
+arc                  randconfig-a001-20200208
+ia64                 randconfig-a001-20200208
+sparc                randconfig-a001-20200208
+arm64                randconfig-a001-20200208
+arm                  randconfig-a001-20200208
+riscv                            allmodconfig
+riscv                            allyesconfig
+riscv                               defconfig
+s390                             alldefconfig
+s390                             allmodconfig
+s390                             allyesconfig
+s390                          debug_defconfig
+sh                               allmodconfig
+sh                          rsk7269_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sparc                               defconfig
+sparc64                             defconfig
+um                           x86_64_defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
 
--- >8 --
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index c3e3f53..db5baa5 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -530,6 +530,7 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
- 	struct controller *ctrl = (struct controller *)dev_id;
- 	struct pci_dev *pdev = ctrl_dev(ctrl);
- 	struct device *parent = pdev->dev.parent;
-+	irqreturn_t ret = IRQ_NONE;
- 	u16 status, events;
- 
- 	/*
-@@ -553,6 +554,7 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
- 		}
- 	}
- 
-+read_status:
- 	pcie_capability_read_word(pdev, PCI_EXP_SLTSTA, &status);
- 	if (status == (u16) ~0) {
- 		ctrl_info(ctrl, "%s: no response from device\n", __func__);
-@@ -579,13 +581,11 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
- 	if (!events) {
- 		if (parent)
- 			pm_runtime_put(parent);
--		return IRQ_NONE;
-+		return ret;
- 	}
- 
- 	pcie_capability_write_word(pdev, PCI_EXP_SLTSTA, events);
- 	ctrl_dbg(ctrl, "pending interrupts %#06x from Slot Status\n", events);
--	if (parent)
--		pm_runtime_put(parent);
- 
- 	/*
- 	 * Command Completed notifications are not deferred to the
-@@ -595,21 +595,33 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
- 		ctrl->cmd_busy = 0;
- 		smp_mb();
- 		wake_up(&ctrl->queue);
--
--		if (events == PCI_EXP_SLTSTA_CC)
--			return IRQ_HANDLED;
--
- 		events &= ~PCI_EXP_SLTSTA_CC;
- 	}
- 
- 	if (pdev->ignore_hotplug) {
- 		ctrl_dbg(ctrl, "ignoring hotplug event %#06x\n", events);
--		return IRQ_HANDLED;
-+		events = 0;
- 	}
- 
- 	/* Save pending events for consumption by IRQ thread. */
- 	atomic_or(events, &ctrl->pending_events);
--	return IRQ_WAKE_THREAD;
-+
-+	/*
-+	 * In MSI mode, all event bits must be zero before the port will send
-+	 * a new interrupt (PCIe Base Spec r5.0 sec 6.7.3.4).  So re-read the
-+	 * Slot Status register in case a bit was set between read and write.
-+	 */
-+	if (pci_dev_msi_enabled(pdev) && !pciehp_poll_mode) {
-+		irq_wake_thread(irq, ctrl);
-+		ret = IRQ_HANDLED;
-+		goto read_status;
-+	}
-+
-+	if (parent)
-+		pm_runtime_put(parent);
-+	if (events)
-+		return IRQ_WAKE_THREAD;
-+	return IRQ_HANDLED;
- }
- 
- static irqreturn_t pciehp_ist(int irq, void *dev_id)
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
