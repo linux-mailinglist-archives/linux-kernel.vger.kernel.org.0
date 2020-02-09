@@ -2,64 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3782156B88
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 17:42:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1062C156B97
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 17:45:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728095AbgBIQlv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 11:41:51 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:34557 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728018AbgBIQlh (ORCPT
+        id S1727836AbgBIQpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 11:45:10 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37381 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727661AbgBIQpK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 11:41:37 -0500
-Received: by mail-lf1-f67.google.com with SMTP id l18so2502244lfc.1;
-        Sun, 09 Feb 2020 08:41:35 -0800 (PST)
+        Sun, 9 Feb 2020 11:45:10 -0500
+Received: by mail-lj1-f196.google.com with SMTP id v17so4415030ljg.4;
+        Sun, 09 Feb 2020 08:45:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zcf0gJptkOIkfvTjG31/qLysvKtVLp1ja+Srz6ndwWs=;
-        b=fATQj5GXrFgbfFr6CUNWZ5g6BAUrh/QE1VKNU+ltqFm4f+cXliSu1FimiGcZkTZcuO
-         pkqgcFUcyKU8ANB9T2+8LVxu/H3aNC5EJG1Jzahczy9YzLxxYEdqS4OoAq0bbvDPbvJ1
-         zmnfTzjmiMUxXY3le22Jff5twa0fVmt35Ay/AfCp8vUHN+bnQI1UPdZlFx1Y6HEqQ+yT
-         5RcUOr/Ni+spoJ6tu2YPuOI7uHX/Jv1kCtdJhtw6iwWSR6f9D4z6B7mjJ5Y1ABsk1B7k
-         8EhJsTuRAKZKKuf8wjmul3yATcj8w+FN1RBOoeBS3u8Wolc3NDwfQYKYmPSZEaiNpgA+
-         SKEw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vOlt1s90wwxFL9uryuJBW3ESkV5Or6KtWKfVzGs/MUg=;
+        b=r40NS9IaKFe289s1wd02JqPFoZJ1EYx3UAoqrcvzkxsJHZhMzF1HY7tp0U54EuGCo2
+         RtMjrXEGpE1dNj/EzwQ5rA+/7Hol60Xnozj7VaTgSGTsxXp/uDmLaASQWFtuaBCs4+Al
+         n/CKq8GwN7DsFCyaxkzRYZHEcOjlzfBWv1JWgsZVvSNqZlKPMgUmMJKULaP87uXv5J0j
+         2Ozl63ZEREJkvc7emSuiLPIg7kYORuRT7mh5QqhCwHWXR3s3V/8bWp5CaBujvaTQQs4R
+         rMZForOx5bnfgCfm6b+5V9RPdJ5Z96tZL9ZnzzPzTkeSANhOOPxAk0m5fZ8xpWez8vxX
+         w1Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zcf0gJptkOIkfvTjG31/qLysvKtVLp1ja+Srz6ndwWs=;
-        b=nApiXg6JiQI/S4rtqXkv2ximxyf366X4OO5rob4obuUyygSL3bXGpzBZ/KPL87UzsO
-         nd8af8rXfRMU7w96SLjiNKgLk+EMhbnLYVHuV4eRTJUv+cNbCRDhJV9m6dqnQNCruO0v
-         J6R8iWrPh3qRWgDLYDpF++eCHHCP1OTD4Tm+XWeFIHosjCWaJ1kElpvD/annfsnkx/aD
-         k7HxWE9wjHTspTJlgDnJcfSF9XJtuqIKYZFaC7PyVA3hukniAd6mqtfVS0P+4HO4PgZB
-         srMNZWOCQ4P6ZYEjVDdBFDdv7zz/pX6GWgtpMOFbriYHl26dyBKxY+T2EsEQGkfYT9QY
-         I6Eg==
-X-Gm-Message-State: APjAAAWZic77IfCJWxtb/TgbtfWv+6ttsFTe1Yhrk4Aec86AjyEEBDnS
-        wqDW2u4yeaVrm7U/5o86PxI=
-X-Google-Smtp-Source: APXvYqyDVK7ohW2g2VLA/i1SiYKZxOLC2/LMbilFUK71tCCCqbSnOFGMD3DoygbY3SczP4JRLxA/8A==
-X-Received: by 2002:ac2:47ec:: with SMTP id b12mr4152741lfp.162.1581266495070;
-        Sun, 09 Feb 2020 08:41:35 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vOlt1s90wwxFL9uryuJBW3ESkV5Or6KtWKfVzGs/MUg=;
+        b=sPzrTudmaT4LYPyAt8mH/h9pkPd9Io3TxaBK8jZ6c5/9KQZukOHFVdgqV99rb4AXZX
+         Vssj/4yLT04B69T4/sjq/iZhyklFnaXnUrh4ADCRNpcT+DFS1ldAfMRkH10BKg5cdN7v
+         T1285mN3bgGaJXuVwtwTySSikMS0jB2M6KquvU7KtYlwDUC5CUVllMSWdKaAnWeYlj7v
+         EIpQ/IBfwEDKwm89/g44z4B3lVUYKO2YhUinOsF+0AQUXLtWlaOIslRAmjzSc+quRGZ5
+         K3LDRUNTClfYuXGTMVEZEL49o1yJHO4MdvPukKM+GvGWvA0GvxJOk5+hvkLoDlPjY9wx
+         LVnA==
+X-Gm-Message-State: APjAAAW28fDJJ92XqNZQpBP+/flIqBUtht9ewcRBolDu5FG2boLCDBiv
+        1vOYyk8LpM/UQYfHvSuaZS4=
+X-Google-Smtp-Source: APXvYqxLnQL5Gbnt/iZx4MeR6ttqwm52Ee7kw+kxDCWlLMPLOQtRt4mUwN9qpjZjyj2BMUTvptc8hQ==
+X-Received: by 2002:a2e:9e16:: with SMTP id e22mr5773121ljk.220.1581266708167;
+        Sun, 09 Feb 2020 08:45:08 -0800 (PST)
 Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id g21sm4941826ljj.53.2020.02.09.08.41.34
+        by smtp.gmail.com with ESMTPSA id w8sm4933483ljj.75.2020.02.09.08.45.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Feb 2020 08:41:34 -0800 (PST)
+        Sun, 09 Feb 2020 08:45:07 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Cc:     dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v8 19/19] dmaengine: tegra-apb: Improve error message about DMA underflow
-Date:   Sun,  9 Feb 2020 19:33:56 +0300
-Message-Id: <20200209163356.6439-20-digetx@gmail.com>
+Subject: [PATCH for 5.6 v2] tty: serial: tegra: Handle RX transfer in PIO mode if DMA wasn't started
+Date:   Sun,  9 Feb 2020 19:44:15 +0300
+Message-Id: <20200209164415.9632-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200209163356.6439-1-digetx@gmail.com>
-References: <20200209163356.6439-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,30 +63,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Technically it is possible that DMA could be misconfigured in a way that
-cyclic DMA transfer is processed slower than it takes to complete the
-cycle and in this case the DMA is getting aborted with a not very
-informative message about the problem, let's improve it.
+It is possible to get an instant RX timeout or end-of-transfer interrupt
+before RX DMA was started, if transaction is less than 16 bytes. Transfer
+should be handled in PIO mode in this case because DMA can't handle it.
+This patch brings back the original behaviour of the driver that was
+changed by accident by a previous commit, it fixes occasional Bluetooth HW
+initialization failures which I started to notice recently.
 
-Suggested-by: Jon Hunter <jonathanh@nvidia.com>
+Fixes: d5e3fadb7012 ("tty: serial: tegra: Activate RX DMA transfer by request")
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 3e0373b89195..1a9b37c102ba 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -566,7 +566,7 @@ static bool handle_continuous_head_request(struct tegra_dma_channel *tdc,
- 	if (!hsgreq->configured) {
- 		tegra_dma_stop(tdc);
- 		pm_runtime_put(tdc->tdma->dev);
--		dev_err(tdc2dev(tdc), "Error in DMA transfer, aborting DMA\n");
-+		dev_err(tdc2dev(tdc), "DMA transfer underflow, aborting DMA\n");
- 		tegra_dma_abort_all(tdc);
- 		return false;
- 	}
+Changelog:
+
+v2: - Corrected commit's title by adding the accidentally missed "tegra: "
+      to the prefix.
+
+ drivers/tty/serial/serial-tegra.c | 35 ++++++++++++++-----------------
+ 1 file changed, 16 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+index 33034b852a51..8de8bac9c6c7 100644
+--- a/drivers/tty/serial/serial-tegra.c
++++ b/drivers/tty/serial/serial-tegra.c
+@@ -692,11 +692,22 @@ static void tegra_uart_copy_rx_to_tty(struct tegra_uart_port *tup,
+ 				   count, DMA_TO_DEVICE);
+ }
+ 
++static void do_handle_rx_pio(struct tegra_uart_port *tup)
++{
++	struct tty_struct *tty = tty_port_tty_get(&tup->uport.state->port);
++	struct tty_port *port = &tup->uport.state->port;
++
++	tegra_uart_handle_rx_pio(tup, port);
++	if (tty) {
++		tty_flip_buffer_push(port);
++		tty_kref_put(tty);
++	}
++}
++
+ static void tegra_uart_rx_buffer_push(struct tegra_uart_port *tup,
+ 				      unsigned int residue)
+ {
+ 	struct tty_port *port = &tup->uport.state->port;
+-	struct tty_struct *tty = tty_port_tty_get(port);
+ 	unsigned int count;
+ 
+ 	async_tx_ack(tup->rx_dma_desc);
+@@ -705,11 +716,7 @@ static void tegra_uart_rx_buffer_push(struct tegra_uart_port *tup,
+ 	/* If we are here, DMA is stopped */
+ 	tegra_uart_copy_rx_to_tty(tup, port, count);
+ 
+-	tegra_uart_handle_rx_pio(tup, port);
+-	if (tty) {
+-		tty_flip_buffer_push(port);
+-		tty_kref_put(tty);
+-	}
++	do_handle_rx_pio(tup);
+ }
+ 
+ static void tegra_uart_rx_dma_complete(void *args)
+@@ -749,8 +756,10 @@ static void tegra_uart_terminate_rx_dma(struct tegra_uart_port *tup)
+ {
+ 	struct dma_tx_state state;
+ 
+-	if (!tup->rx_dma_active)
++	if (!tup->rx_dma_active) {
++		do_handle_rx_pio(tup);
+ 		return;
++	}
+ 
+ 	dmaengine_terminate_all(tup->rx_dma_chan);
+ 	dmaengine_tx_status(tup->rx_dma_chan, tup->rx_cookie, &state);
+@@ -816,18 +825,6 @@ static void tegra_uart_handle_modem_signal_change(struct uart_port *u)
+ 		uart_handle_cts_change(&tup->uport, msr & UART_MSR_CTS);
+ }
+ 
+-static void do_handle_rx_pio(struct tegra_uart_port *tup)
+-{
+-	struct tty_struct *tty = tty_port_tty_get(&tup->uport.state->port);
+-	struct tty_port *port = &tup->uport.state->port;
+-
+-	tegra_uart_handle_rx_pio(tup, port);
+-	if (tty) {
+-		tty_flip_buffer_push(port);
+-		tty_kref_put(tty);
+-	}
+-}
+-
+ static irqreturn_t tegra_uart_isr(int irq, void *data)
+ {
+ 	struct tegra_uart_port *tup = data;
 -- 
 2.24.0
 
