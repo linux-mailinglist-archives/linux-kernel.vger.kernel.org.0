@@ -2,98 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B81021569B4
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 09:39:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BADE61569B7
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 09:41:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbgBIIjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 03:39:06 -0500
-Received: from pindarots.xs4all.nl ([82.161.210.87]:60952 "EHLO
-        pindarots.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbgBIIjG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 03:39:06 -0500
-Received: from surfplank2.hierzo (localhost.localdomain [127.0.0.1])
-        by pindarots.xs4all.nl (8.15.2/8.14.5) with ESMTPS id 0198d45F005741
-        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO)
-        for <linux-kernel@vger.kernel.org>; Sun, 9 Feb 2020 09:39:04 +0100
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Udo van den Heuvel <udovdh@xs4all.nl>
-Subject: 5.4+: PAGE FAULT crashes the system multiple times per 24h
-Autocrypt: addr=udovdh@xs4all.nl; prefer-encrypt=mutual; keydata=
- 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
- JjyRAfO8kEkwCkTZ6/Mnrxsunx9VNLGDEw==
-Organization: hierzo
-Message-ID: <1ff71181-0ddb-38d7-64a3-e06d0e7f94d3@xs4all.nl>
-Date:   Sun, 9 Feb 2020 09:39:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        id S1727626AbgBIIlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 03:41:25 -0500
+Received: from mail-am6eur05on2079.outbound.protection.outlook.com ([40.107.22.79]:13816
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725933AbgBIIlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Feb 2020 03:41:24 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eaeGLB+AdCV+uRubtjyShjPkN7uKmngvaFcnn0rYPjJkjAde53bFSYvdsNLyUw5qmperXThxbqYVe8MAbs2dALihiIt6T0N8xnpmMvfyJmIatGLhNH9LVaLhqLW3fS6DICaN0hHSsoQO3u4RfqANMh8OG/tf8c/PslS0sH1DdVRJR7MgaZ0etOb1YXm5OKnGlF3Lx8x1GcU5vGHwN5f48YUTSjQYciYil/YCeKRmDXWDeDO8kvG9tOcpaqjhb7JpSqDmjVHaBq8yqdVY895PxA9E6da7NIw0Fe36SKa3BthvaaMnRI7MWYqPBoYFAGM4bn6ospWlfCTFbDqZOkTHcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+wdxIVpMkPIKxK/PtXcPCJQvn9lnB1B7mvhpko8Ph3c=;
+ b=lNGn464JggEeiELSMUTAbBDpRYkw4/RAWP7M0iav8zg4aSOtVIkydbuEgHLOzg2/z9x/JHTIAq+d0hXBALEsNfUgFCe7xj/qXdccOVjyc/zz5WuvNigO2ML23nfWnyj8bsjg4HsL2rWwdDkS9eaaLTrXXG9z9YUGHJ0pJurZhiDpZ/KfCubS9an50t2C+m35wjS/snJEikoOXD63CPnZuaMjYccbp4mTwAxRHAUz0LbaY7xdzuU9jabl3UxC9PALsx22jDBMRa/M57UaHAIZUeNnzoA3en+oq3ZmkUqItN32R1uW4ENCzhMd3r85MQSC4UvFicOQTDc+URjwXAy37A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+wdxIVpMkPIKxK/PtXcPCJQvn9lnB1B7mvhpko8Ph3c=;
+ b=VUGRRyzUj+I6hDrnrZCV9boklujH/dDqYjJeARVigamzEjwtOL03vlft20SXOD9yHn3hnlo3PrPvJy+OjmRwb26JfzhVJtbcgcttOva6cA6pDzyEBeKk1pitMj/mZetRTKQ2J7rxjFLmyhUCTF+zox1J+f/nk7bJuGpIHcLvEec=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5843.eurprd04.prod.outlook.com (20.178.118.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.24; Sun, 9 Feb 2020 08:41:20 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2707.028; Sun, 9 Feb 2020
+ 08:41:20 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "srinivas.kandagatla@linaro.org" <srinivas.kandagatla@linaro.org>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] nvmem: imx: ocotp: add i.MX8MP support
+Thread-Topic: [PATCH] nvmem: imx: ocotp: add i.MX8MP support
+Thread-Index: AQHVzOYys8WB3+BLO0KUDipX7ftHWKgSr3Rg
+Date:   Sun, 9 Feb 2020 08:41:20 +0000
+Message-ID: <AM0PR04MB4481AB5A3E3D7D623EA29923881E0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1579231433-14201-1-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <1579231433-14201-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 53c5c0a6-f7c4-44c0-af56-08d7ad3bd663
+x-ms-traffictypediagnostic: AM0PR04MB5843:|AM0PR04MB5843:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB5843C4F4DF2D4CF6CA3E851B881E0@AM0PR04MB5843.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3631;
+x-forefront-prvs: 0308EE423E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(346002)(376002)(366004)(39860400002)(199004)(189003)(81156014)(2906002)(8676002)(81166006)(7696005)(8936002)(4326008)(44832011)(186003)(26005)(478600001)(110136005)(6506007)(66946007)(316002)(86362001)(5660300002)(33656002)(76116006)(54906003)(71200400001)(66556008)(9686003)(52536014)(64756008)(55016002)(66476007)(66446008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5843;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: HsJJQDqAhT3uFngL4UQc7mfkTI6DtEyWwgVzSi+jhvAbbMMAVXc23AZP9ptOa6NDa8i+pf1BP/lKTKDT7MF/1IxTcsXfBrQ8mxvMz0/keNY/f3qMPEeGzSvmJEJXi9ewNDNFufVcXo1mU0c16brQeCVOpVHnrTw/s5ejwXqqVHHZ7oJANrgwA13Tv20WBmsajgLrDosIk2tCpN1eP7Z2e4QS5GHNxbhoYWlzlLyJkG6HB6LpuXWx+kRaVhVsSm2m/u7IbJUKhP42pAslcNB8/sonJrFmhho8CqOVVWCvPIMPoJX+554tJAE1nfToNuZZ05iRHf7ODQgmxBO9hnTN9w03FrywRsTAEVryKHYoKOdUkWk6i2yHckGfuSkL9dvaTefs5Ucm/GbH8UMoQ4xFkxzlXKtH1sIWkW40et4+7XLnG/3BrtJum93MfEgNWLTM
+x-ms-exchange-antispam-messagedata: lo1u+x4LCkcKZFFISkJHQElU9iwnNCF5PlTx6kKuJM/gSB98TSap5eSnG7Ru4qFEnVPTaG6zYrlqCNC0AiMQ98Rudmiqt/xfL9veEZJIPbm/1bjagrQ5AgNhX4fqRLae1gRPUvQNkOkGsGgt2gvnJw==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53c5c0a6-f7c4-44c0-af56-08d7ad3bd663
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Feb 2020 08:41:20.6847
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zMHuqJuQ/DAqkAmgAa8ka9vqY4RqXBq8jUNem5MJhJ75K7ZTdJIokzfke5hHLeYi998CHqVRyFZR/rHBerJBMQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5843
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+> Subject: [PATCH] nvmem: imx: ocotp: add i.MX8MP support
 
-For bug https://bugzilla.kernel.org/show_bug.cgi?id=206191 I have been
-bisecting way but now the process landed me with a kernel that cannot
-find the root fs. (with either good or bad bisect choices)
+Gentle ping..
 
-Pictures of the crash that is the reason for this bisect:
-https://bugzilla.kernel.org/attachment.cgi?id=286787
-https://bugzilla.kernel.org/attachment.cgi?id=286789
-https://bugzilla.kernel.org/attachment.cgi?id=286791
-https://bugzilla.kernel.org/attachment.cgi?id=286793
+Thanks,
+Peng.
 
-How can I proceed from here with the bisecting?
-Did someone perhaps find the root cause for the page fault?
-As the crash is fairly easy to reproduce I can test patches...
+>=20
+> From: Peng Fan <peng.fan@nxp.com>
+>=20
+> i.MX8MP has 96 banks with each bank 4 words. And it has different ctrl
+> register layout, so add new macros for that.
+>=20
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>=20
+> dt-bindings doc has been posted by Anson Huang
+>=20
+>  drivers/nvmem/imx-ocotp.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>=20
+> diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c index
+> 4ba9cc8f76df..794858093086 100644
+> --- a/drivers/nvmem/imx-ocotp.c
+> +++ b/drivers/nvmem/imx-ocotp.c
+> @@ -44,6 +44,11 @@
+>  #define IMX_OCOTP_BM_CTRL_ERROR		0x00000200
+>  #define IMX_OCOTP_BM_CTRL_REL_SHADOWS	0x00000400
+>=20
+> +#define IMX_OCOTP_BM_CTRL_ADDR_8MP		0x000001FF
+> +#define IMX_OCOTP_BM_CTRL_BUSY_8MP		0x00000200
+> +#define IMX_OCOTP_BM_CTRL_ERROR_8MP		0x00000400
+> +#define IMX_OCOTP_BM_CTRL_REL_SHADOWS_8MP	0x00000800
+> +
+>  #define IMX_OCOTP_BM_CTRL_DEFAULT				\
+>  	{							\
+>  		.bm_addr =3D IMX_OCOTP_BM_CTRL_ADDR,		\
+> @@ -52,6 +57,14 @@
+>  		.bm_rel_shadows =3D IMX_OCOTP_BM_CTRL_REL_SHADOWS,\
+>  	}
+>=20
+> +#define IMX_OCOTP_BM_CTRL_8MP					\
+> +	{							\
+> +		.bm_addr =3D IMX_OCOTP_BM_CTRL_ADDR_8MP,		\
+> +		.bm_busy =3D IMX_OCOTP_BM_CTRL_BUSY_8MP,		\
+> +		.bm_error =3D IMX_OCOTP_BM_CTRL_ERROR_8MP,	\
+> +		.bm_rel_shadows =3D IMX_OCOTP_BM_CTRL_REL_SHADOWS_8MP,\
+> +	}
+> +
+>  #define TIMING_STROBE_PROG_US		10	/* Min time to blow a fuse */
+>  #define TIMING_STROBE_READ_NS		37	/* Min time before read */
+>  #define TIMING_RELAX_NS			17
+> @@ -520,6 +533,13 @@ static const struct ocotp_params imx8mn_params =3D
+> {
+>  	.ctrl =3D IMX_OCOTP_BM_CTRL_DEFAULT,
+>  };
+>=20
+> +static const struct ocotp_params imx8mp_params =3D {
+> +	.nregs =3D 384,
+> +	.bank_address_words =3D 0,
+> +	.set_timing =3D imx_ocotp_set_imx6_timing,
+> +	.ctrl =3D IMX_OCOTP_BM_CTRL_8MP,
+> +};
+> +
+>  static const struct of_device_id imx_ocotp_dt_ids[] =3D {
+>  	{ .compatible =3D "fsl,imx6q-ocotp",  .data =3D &imx6q_params },
+>  	{ .compatible =3D "fsl,imx6sl-ocotp", .data =3D &imx6sl_params }, @@ -5=
+32,6
+> +552,7 @@ static const struct of_device_id imx_ocotp_dt_ids[] =3D {
+>  	{ .compatible =3D "fsl,imx8mq-ocotp", .data =3D &imx8mq_params },
+>  	{ .compatible =3D "fsl,imx8mm-ocotp", .data =3D &imx8mm_params },
+>  	{ .compatible =3D "fsl,imx8mn-ocotp", .data =3D &imx8mn_params },
+> +	{ .compatible =3D "fsl,imx8mp-ocotp", .data =3D &imx8mp_params },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, imx_ocotp_dt_ids);
+> --
+> 2.16.4
 
-Please let me know!
-
-Kind regards,
-Udo
