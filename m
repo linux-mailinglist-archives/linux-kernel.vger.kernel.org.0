@@ -2,67 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C144C156C74
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 21:53:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9ED7156C7C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 22:01:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727880AbgBIUxf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 15:53:35 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:42713 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727409AbgBIUxf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 15:53:35 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1j0ta8-0007Rh-Fp; Sun, 09 Feb 2020 21:53:32 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id B6CBF100F5A; Sun,  9 Feb 2020 21:53:31 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: [GIT pull] perf fixes for 5.6-rc1
-In-Reply-To: <CAHk-=wiEg6+j1UuRSAZmXozJEw0p33gM9uPT2oAOFwsOUaa=uw@mail.gmail.com>
-References: <158125695731.26104.949647922067525745.tglx@nanos.tec.linutronix.de> <158125695732.26104.3631526665331853849.tglx@nanos.tec.linutronix.de> <CAHk-=wiEg6+j1UuRSAZmXozJEw0p33gM9uPT2oAOFwsOUaa=uw@mail.gmail.com>
-Date:   Sun, 09 Feb 2020 21:53:31 +0100
-Message-ID: <877e0v5vp0.fsf@nanos.tec.linutronix.de>
+        id S1727896AbgBIVBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 16:01:37 -0500
+Received: from mga17.intel.com ([192.55.52.151]:30936 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727404AbgBIVBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Feb 2020 16:01:37 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2020 13:01:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,422,1574150400"; 
+   d="scan'208";a="226036574"
+Received: from jradtke-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.22.75])
+  by fmsmga007.fm.intel.com with ESMTP; 09 Feb 2020 13:01:34 -0800
+Date:   Sun, 9 Feb 2020 23:01:33 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-integrity@vger.kernel.org,
+        Andrey Pronin <apronin@chromium.org>, stable@vger.kernel.org,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Heiko Stuebner <heiko@sntech.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: Revert tpm_tis_spi_mod.ko to tpm_tis_spi.ko.
+Message-ID: <20200209210133.GA3702@linux.intel.com>
+References: <20200205203818.4679-1-jarkko.sakkinen@linux.intel.com>
+ <5e3c6784.1c69fb81.34ded.0a42@mx.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5e3c6784.1c69fb81.34ded.0a42@mx.google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+On Thu, Feb 06, 2020 at 11:22:44AM -0800, Stephen Boyd wrote:
+> Quoting Jarkko Sakkinen (2020-02-05 12:38:18)
+> > Revert tpm_tis_spi_mod.ko back to tpm_tis_spi.ko as the rename could break
+> > the build script. This can be achieved by renaming tpm_tis_spi.c as
+> 
+> Do you mean userspace scripts?
 
-> On Sun, Feb 9, 2020 at 6:06 AM Thomas Gleixner <tglx@linutronix.de> wrote:
->>
->>    - Prevent am intgeer underflow in the perf mlock acounting
->>
->>    - Add a missing prototyp for arch_perf_update_userpage()
->>
->>    - Fix the perf parser so it does not delete parse event terms, which
->>      caused a regression for using perf with the ARM CoreSight as the sink
->>      confuguration was missing due to the deletion.
->
-> You've started drinking too early in the day.  But hey, I guess it was
-> evening _somewhere_ in the world.
+Yes. I'll fix the commit message before merging.
 
-I swear, I wasn't even near alcohol before writing this.
+Thanks for the review.
 
-> Pick out the five speeling errors in that pull request message.
-
-But I have to admit shamefully that I really should have searched my
-misplaced reading glasses instead of trying to squint through my driving
-glasses.
-
-Want me to redo it?
-
-Thanks,
-
-        tglx
+/Jarkko
