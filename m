@@ -2,80 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB24A156C75
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 21:56:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD70F156C71
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 21:51:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727901AbgBIU4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 15:56:00 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:54286 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727409AbgBIU4A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 15:56:00 -0500
-Received: by mail-pj1-f67.google.com with SMTP id dw13so3274569pjb.4;
-        Sun, 09 Feb 2020 12:55:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=+26FYn1Jtrvl0Tdo43WhoX99YiKtnwNRDS1kjmkTi2M=;
-        b=t0Vul+D0Xjo3QkfANq67nPW+JcvR+fnNlBs1wiGKUKYAQez/rJl2QQT89j3MTOg6fo
-         0ephBTYaZSHyYKWdDq/1wKMVXPpYA8IHTaS94oFhe6WfUGdtzsGqoHHb8k2fUPVzCQzb
-         BI0JcrZ8oak/B0fwFWNep5p7PTyTbH7smS569iHlZF4w2usJ6KYvchcRFcQviLZbUAlk
-         6wGy4PVuoNehHJEG/bI6oQ45+1qOWCtddYO0u+rVSKI1XqZ+Utcg68a2HmPsmsEqeA3E
-         QqFF1cOh/Z8DSxOS5YN+PIlrpKJSTdHieCWG181R5pMl+fInqag4d5qOoJGC7Yg6HkfL
-         DZDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+26FYn1Jtrvl0Tdo43WhoX99YiKtnwNRDS1kjmkTi2M=;
-        b=DVIVs7/vT5GOg87UER7pXC6kt3CBqluGQaNeyeTfwwr3KGjNCqm0jX1lOcRUqEY5s7
-         lhzFpZCauaiIhv2Owj1OtjV3TkYa5Rkc02bIjyvIk1h+vVk/idbngsCgfcYZk/4ykR7A
-         Uq3KGQqRLUPus5Y7WEeIzk3vcKuauj72t/+aRICDr3I3u39zoCrqXfA8jpt0XdVLELIo
-         C8EohrBSm6nPp+wflBPYcOWzXOY8qErxOOQiu8teC31WXA/rwWNPo+z5yCDEh6cRTLBW
-         MVdZI2Ms77Mxl90kMsJfG3nAmttVjLY/qrMDqtAScZXI3hVo2GS+pkW/itUTAgmNd6AV
-         tTxQ==
-X-Gm-Message-State: APjAAAWkuj7tEynLkY2n31XCMftCrMmQr0reaDTeVzfgTIzaW3lyBvIc
-        F9xtog/qZa6GszxgH4ZI/ZE=
-X-Google-Smtp-Source: APXvYqw8VhcIRxAHx/n78QIiNmOW7ezsRzYLfnmLCgZ6CnDw7qDMRc+fLNCB0O0iNgPsRs/m2r95rw==
-X-Received: by 2002:a17:902:b617:: with SMTP id b23mr9796027pls.285.1581281759041;
-        Sun, 09 Feb 2020 12:55:59 -0800 (PST)
-Received: from localhost.localdomain ([116.126.226.81])
-        by smtp.googlemail.com with ESMTPSA id k123sm7075722pgk.48.2020.02.09.12.55.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Feb 2020 12:55:58 -0800 (PST)
-From:   JieunKim <jieun.kim4758@gmail.com>
-To:     valdis.kletnieks@vt.edu
-Cc:     gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, JieunKim <jieun.kim4758@gmail.com>
-Subject: [PATCH] staging: exfat: Replace printk with pr_info
-Date:   Mon, 10 Feb 2020 05:48:10 +0900
-Message-Id: <20200209204810.9899-1-jieun.kim4758@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727864AbgBIUvd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 15:51:33 -0500
+Received: from mga02.intel.com ([134.134.136.20]:28445 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727409AbgBIUvd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Feb 2020 15:51:33 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2020 12:51:32 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,422,1574150400"; 
+   d="scan'208";a="227009399"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 09 Feb 2020 12:51:30 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1j0tY9-0000Bk-W8; Mon, 10 Feb 2020 04:51:29 +0800
+Date:   Mon, 10 Feb 2020 04:50:31 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     kbuild-all@lists.01.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, trond.myklebust@hammerspace.com,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Joe Perches <joe@perches.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v3 3/4] kernel.h: Split out might_sleep() and friends
+Message-ID: <202002100415.2I0gMpYv%lkp@intel.com>
+References: <20200206163940.1940-3-andriy.shevchenko@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200206163940.1940-3-andriy.shevchenko@linux.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pr_info is preferred to use than printk.
-pr_info calls printk with KERN_INFO macros by itself.
+Hi Andy,
+
+I love your patch! Perhaps something to improve:
+
+[auto build test WARNING on linus/master]
+[also build test WARNING on next-20200207]
+[cannot apply to nfs/linux-next rcu/dev cryptodev/master crypto/master dennis-percpu/for-next tip/sched/core linux/master v5.5]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+
+url:    https://github.com/0day-ci/linux/commits/Andy-Shevchenko/kernel-h-Split-out-min-max-et-al-helpers/20200209-041358
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git f757165705e92db62f85a1ad287e9251d1f2cd82
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-162-g98276e61-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> arch/x86/include/asm/current.h:11:1: sparse: sparse: 'DECLARE_PER_CPU()' has implicit return type
+
+vim +11 arch/x86/include/asm/current.h
+
+f0766440dda7ac include/asm-x86/current.h Christoph Lameter 2008-05-09  10  
+f0766440dda7ac include/asm-x86/current.h Christoph Lameter 2008-05-09 @11  DECLARE_PER_CPU(struct task_struct *, current_task);
+f0766440dda7ac include/asm-x86/current.h Christoph Lameter 2008-05-09  12  
+
+:::::: The code at line 11 was first introduced by commit
+:::::: f0766440dda7ace8a43b030f75e2dcb82449fb85 x86: unify current.h
+
+:::::: TO: Christoph Lameter <clameter@sgi.com>
+:::::: CC: Thomas Gleixner <tglx@linutronix.de>
+
 ---
- drivers/staging/exfat/exfat_super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index b81d2a87b82e..3806036c0ef6 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -364,7 +364,7 @@ static int ffsMountVol(struct super_block *sb)
- 	exfat_bdev_open(sb);
- 
- 	if (p_bd->sector_size < sb->s_blocksize) {
--		printk(KERN_INFO "EXFAT: mount failed - sector size %d less than blocksize %ld\n",
-+		pr_info("EXFAT: mount failed - sector size %d less than blocksize %ld\n",
- 		       p_bd->sector_size,  sb->s_blocksize);
- 		ret = -EINVAL;
- 		goto out;
--- 
-2.17.1
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
