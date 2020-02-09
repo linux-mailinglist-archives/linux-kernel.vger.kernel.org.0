@@ -2,75 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6086156A10
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 13:10:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47F42156A34
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 13:57:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbgBIMKT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 07:10:19 -0500
-Received: from mga01.intel.com ([192.55.52.88]:52721 "EHLO mga01.intel.com"
+        id S1727821AbgBIM5G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 07:57:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727340AbgBIMKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 07:10:18 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2020 04:10:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,421,1574150400"; 
-   d="scan'208";a="250923645"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by orsmga002.jf.intel.com with ESMTP; 09 Feb 2020 04:10:17 -0800
-Received: from lcsmsx601.ger.corp.intel.com (10.109.210.10) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Sun, 9 Feb 2020 04:10:17 -0800
-Received: from hasmsx602.ger.corp.intel.com (10.184.107.142) by
- LCSMSX601.ger.corp.intel.com (10.109.210.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Sun, 9 Feb 2020 14:10:15 +0200
-Received: from hasmsx602.ger.corp.intel.com ([10.184.107.142]) by
- HASMSX602.ger.corp.intel.com ([10.184.107.142]) with mapi id 15.01.1713.004;
- Sun, 9 Feb 2020 14:10:15 +0200
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-CC:     Lee Jones <lee.jones@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        id S1727514AbgBIM5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Feb 2020 07:57:06 -0500
+Received: from localhost (unknown [38.98.37.135])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CA792081E;
+        Sun,  9 Feb 2020 12:57:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581253025;
+        bh=GZDs+2I8Zu/fkAf+zMYTdMQ6mWpB0sh+HmrhjqeNZpg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ZGX16Twk8Pz+EE4u2eqM+8EbdYsiuKKWGuWzdgzHlY/QQnjZQL9WZkAWA82l8Z6Lp
+         W8C4yqkbHO2YyaSjMg73C/hyrhcqKWcc1XFA/1s5M84U4XWSIR3hCWYE0/58Wbwnv7
+         SZtwray3/cEojve2FxyFkSS3YwBTrLoGbgTQpFaA=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linuxppc-dev@lists.ozlabs.org
+Cc:     linux-kernel@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/2 V2] mfd: constify properties in mfd_cell
-Thread-Topic: [PATCH 1/2 V2] mfd: constify properties in mfd_cell
-Thread-Index: AQHV3q/JurhZU4WdAEOnVlgq+8N6CagSnuMAgAAjSMD//+JFAIAAIcoA
-Date:   Sun, 9 Feb 2020 12:10:15 +0000
-Message-ID: <c4e85375e4204198a05236c2f48157f0@intel.com>
-References: <20200208184407.1294-1-tomas.winkler@intel.com>
- <CAHp75Ve0PGO_s-nRk6zwk6QTcFi4Jm3yA-QZ7j7dxqVkYB=svA@mail.gmail.com>
- <29e51a81900f4009ab173058bdf9ebde@intel.com>
- <CAHp75Ve_=edHqb9DMMzFR4NZAhZV1BeLH+EBYLz-+fDsNP_vYQ@mail.gmail.com>
-In-Reply-To: <CAHp75Ve_=edHqb9DMMzFR4NZAhZV1BeLH+EBYLz-+fDsNP_vYQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-reaction: no-action
-dlp-version: 11.2.0.6
-x-originating-ip: [10.184.70.1]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Hari Bathini <hbathini@linux.ibm.com>
+Subject: [PATCH 1/6] powerpc: kernel: no need to check return value of debugfs_create functions
+Date:   Sun,  9 Feb 2020 11:58:56 +0100
+Message-Id: <20200209105901.1620958-1-gregkh@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+IA0KPiBPbiBTdW4sIEZlYiA5LCAyMDIwIGF0IDE6NTggUE0gV2lua2xlciwgVG9tYXMgPHRv
-bWFzLndpbmtsZXJAaW50ZWwuY29tPg0KPiB3cm90ZToNCj4gPiA+IE9uIFNhdCwgRmViIDgsIDIw
-MjAgYXQgODo0NCBQTSBUb21hcyBXaW5rbGVyDQo+ID4gPiA8dG9tYXMud2lua2xlckBpbnRlbC5j
-b20+DQo+ID4gPiB3cm90ZToNCj4gDQo+ID4gPiA+IFYyOiBkcm9wIHBsYXRmb3JtX2RldmljZSBw
-YXJ0DQo+ID4gPg0KPiA+ID4gQnR3LCB3aGVuIHlvdSBwcmVwYXJlIHNlcmllcywgeW91IG1heSB1
-c2UgLXZYIGNvbW1hbmQgbGluZQ0KPiA+ID4gcGFyYW1ldGVyLCB3aGVyZSBYIGlzIGEgdmVyc2lv
-biBudW1iZXIuIFRoZSBzY3JpcHRzIHdpbGwgcHV0IHYyIGluDQo+ID4gPiBlYWNoIFN1YmplY3Qg
-bGluZSB1bmlmb3JtbHkuDQo+ID4gUmlnaHQsIGp1c3QgdGhlIHNlY29uZCBwYXRjaCB3YXMgYSBu
-ZXcgb25lLCBzbyBub3Qgc3VyZSBJIHNob3VsZCBtYXJrIGl0IHYyLg0KPiANCj4gWWVzLCBpdCBl
-dm9sdmVkIGZyb20gdGhlIHYxIG9mIG9uZSBwYXRjaC4gU28sIGp1c3QgbWFyayBib3RoIG9mIHRo
-ZW0gbGlrZQ0KPiAgIHYyOiBwZXIgc3Vic3lzdGVtIHNwbGl0IGZyb20gdjENCj4gb3IgYWxpa2Uu
-DQpPa2F5LCB3ZSBjYW4gbG9vayBhdCB0aGF0IGFsc28gdGhpcyB3YXkuDQpUb21hcw0KDQo=
+When calling debugfs functions, there is no need to ever check the
+return value.  The function can work or not, but the code logic should
+never do something different based on this.
+
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Hari Bathini <hbathini@linux.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/powerpc/kernel/fadump.c       |  9 ++-------
+ arch/powerpc/kernel/setup-common.c |  3 +--
+ arch/powerpc/kernel/traps.c        | 25 +++++--------------------
+ 3 files changed, 8 insertions(+), 29 deletions(-)
+
+diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
+index ff0114aeba9b..b83fa42c19e1 100644
+--- a/arch/powerpc/kernel/fadump.c
++++ b/arch/powerpc/kernel/fadump.c
+@@ -1432,7 +1432,6 @@ DEFINE_SHOW_ATTRIBUTE(fadump_region);
+ 
+ static void fadump_init_files(void)
+ {
+-	struct dentry *debugfs_file;
+ 	int rc = 0;
+ 
+ 	rc = sysfs_create_file(kernel_kobj, &fadump_attr.attr);
+@@ -1445,12 +1444,8 @@ static void fadump_init_files(void)
+ 		printk(KERN_ERR "fadump: unable to create sysfs file"
+ 			" fadump_registered (%d)\n", rc);
+ 
+-	debugfs_file = debugfs_create_file("fadump_region", 0444,
+-					powerpc_debugfs_root, NULL,
+-					&fadump_region_fops);
+-	if (!debugfs_file)
+-		printk(KERN_ERR "fadump: unable to create debugfs file"
+-				" fadump_region\n");
++	debugfs_create_file("fadump_region", 0444, powerpc_debugfs_root, NULL,
++			    &fadump_region_fops);
+ 
+ 	if (fw_dump.dump_active) {
+ 		rc = sysfs_create_file(kernel_kobj, &fadump_release_attr.attr);
+diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
+index 7f8c890360fe..f9c0d888ce8a 100644
+--- a/arch/powerpc/kernel/setup-common.c
++++ b/arch/powerpc/kernel/setup-common.c
+@@ -787,8 +787,7 @@ EXPORT_SYMBOL(powerpc_debugfs_root);
+ static int powerpc_debugfs_init(void)
+ {
+ 	powerpc_debugfs_root = debugfs_create_dir("powerpc", NULL);
+-
+-	return powerpc_debugfs_root == NULL;
++	return 0;
+ }
+ arch_initcall(powerpc_debugfs_init);
+ #endif
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index 82a3438300fd..3fca22276bb1 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -2278,35 +2278,20 @@ void ppc_warn_emulated_print(const char *type)
+ 
+ static int __init ppc_warn_emulated_init(void)
+ {
+-	struct dentry *dir, *d;
++	struct dentry *dir;
+ 	unsigned int i;
+ 	struct ppc_emulated_entry *entries = (void *)&ppc_emulated;
+ 
+-	if (!powerpc_debugfs_root)
+-		return -ENODEV;
+-
+ 	dir = debugfs_create_dir("emulated_instructions",
+ 				 powerpc_debugfs_root);
+-	if (!dir)
+-		return -ENOMEM;
+ 
+-	d = debugfs_create_u32("do_warn", 0644, dir,
+-			       &ppc_warn_emulated);
+-	if (!d)
+-		goto fail;
++	debugfs_create_u32("do_warn", 0644, dir, &ppc_warn_emulated);
+ 
+-	for (i = 0; i < sizeof(ppc_emulated)/sizeof(*entries); i++) {
+-		d = debugfs_create_u32(entries[i].name, 0644, dir,
+-				       (u32 *)&entries[i].val.counter);
+-		if (!d)
+-			goto fail;
+-	}
++	for (i = 0; i < sizeof(ppc_emulated)/sizeof(*entries); i++)
++		debugfs_create_u32(entries[i].name, 0644, dir,
++				   (u32 *)&entries[i].val.counter);
+ 
+ 	return 0;
+-
+-fail:
+-	debugfs_remove_recursive(dir);
+-	return -ENOMEM;
+ }
+ 
+ device_initcall(ppc_warn_emulated_init);
+-- 
+2.25.0
+
