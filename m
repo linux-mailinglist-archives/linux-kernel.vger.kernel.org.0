@@ -2,85 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ACEC156A2B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 13:55:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8ED4156A37
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 13:57:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbgBIMzq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 07:55:46 -0500
-Received: from bmailout2.hostsharing.net ([83.223.78.240]:38087 "EHLO
-        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727514AbgBIMzq (ORCPT
+        id S1727864AbgBIM5R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 07:57:17 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:4823 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727514AbgBIM5Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 07:55:46 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout2.hostsharing.net (Postfix) with ESMTPS id D916628004EA1;
-        Sun,  9 Feb 2020 13:55:43 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id AD5FAECCD6; Sun,  9 Feb 2020 13:55:43 +0100 (CET)
-Date:   Sun, 9 Feb 2020 13:55:43 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Stuart Hayes <stuart.w.hayes@gmail.com>,
-        Austin Bolen <austin_bolen@dell.com>, keith.busch@intel.com,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Enzo Matsumiya <ematsumiya@suse.de>
-Subject: Re: [PATCH v2] PCI: pciehp: Make sure pciehp_isr clears interrupt
- events
-Message-ID: <20200209125543.k7u5y6omptbpmwo6@wunner.de>
-References: <20191120222043.53432-1-stuart.w.hayes@gmail.com>
- <20200129005151.GA247355@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200129005151.GA247355@google.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Sun, 9 Feb 2020 07:57:16 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 019CslML085131
+        for <linux-kernel@vger.kernel.org>; Sun, 9 Feb 2020 07:57:15 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2y1u2cpsab-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Feb 2020 07:57:14 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Sun, 9 Feb 2020 12:57:12 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 9 Feb 2020 12:57:09 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 019CuEPY20054478
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 9 Feb 2020 12:56:14 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7571DA4040;
+        Sun,  9 Feb 2020 12:57:08 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A3D7BA4053;
+        Sun,  9 Feb 2020 12:57:07 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.161.21])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun,  9 Feb 2020 12:57:07 +0000 (GMT)
+Subject: Re: [PATCH] IMA: Add log statements for failure conditions.
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org
+Cc:     sashal@kernel.org, nramas@linux.microsoft.com,
+        linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
+Date:   Sun, 09 Feb 2020 07:57:07 -0500
+In-Reply-To: <20200207195346.4017-2-tusharsu@linux.microsoft.com>
+References: <20200207195346.4017-1-tusharsu@linux.microsoft.com>
+         <20200207195346.4017-2-tusharsu@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20020912-0008-0000-0000-0000035139C8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20020912-0009-0000-0000-00004A71D49E
+Message-Id: <1581253027.5585.671.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-09_03:2020-02-07,2020-02-09 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 malwarescore=0 adultscore=0 mlxlogscore=999 bulkscore=0
+ spamscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=2
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002090108
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 06:51:51PM -0600, Bjorn Helgaas wrote:
-> On Wed, Nov 20, 2019 at 05:20:43PM -0500, Stuart Hayes wrote:
-> > -	pcie_capability_write_word(pdev, PCI_EXP_SLTSTA, events);
-> > +	if (status) {
-> > +		pcie_capability_write_word(pdev, PCI_EXP_SLTSTA, status);
-> > +
-> > +		/*
-> > +		 * If MSI per-vector masking is not supported by the port,
-> > +		 * all of the event bits must be zero before the port will
-> > +		 * send a new interrupt (see PCI Express Base Specification
-> > +		 * Revision 5.0 Version 1.0, section 6.7.3.4, "Software
-> > +		 * Notification of Hot-Plug Events"). So in that case, if
-> > +		 * event bit gets set between the read and the write of
-> > +		 * PCI_EXP_SLTSTA, we need to loop back and try again.
-> > +		 */
-> > +		if (!ctrl->pvm_capable) {
+Hi Tushar,
+
+On Fri, 2020-02-07 at 11:53 -0800, Tushar Sugandhi wrote:
+> process_buffer_measurement() and ima_alloc_key_entry()
+> functions do not have log messages for failure conditions.
 > 
-> I don't know what whether the MSI vector is masked or not at this
-> point
+> This change adds log statements in the above functions. 
+> 
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 
-I think MSIs are handled by handle_edge_irq(), which, unlike
-handle_level_irq(), does not mask the IRQ by default.
+The two patches you posted are related.  Please group them as a patch
+set, making this patch 2/2.
 
-We could call disable_irq_nosync() / enable_irq() to mask the IRQ and
-immediately unmask it after writing to the slot status register if the
-interrupt uses MSI / MSI-X (and not INTx), thereby forcing another
-interrupt if new bits have been set in the meantime.  But I suspect this
-approach may not work if PVM is unsupported.
+In addition, as Shuah Khan suggested for the security/integrity/
+directory, "there is an opportunity here to add #define pr_fmt(fmt)
+KBUILD_MODNAME ": " fmt to integrity.h and get rid of duplicate
+defines."  With Joe Perches patch (waiting for it to be re-posted),
+are all the pr_fmt definitions needed in each file in the
+integrity/ima directory?
 
+> ---
+>  security/integrity/ima/ima_main.c       | 4 ++++
+>  security/integrity/ima/ima_queue_keys.c | 2 ++
+>  2 files changed, 6 insertions(+)
+> 
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 9fe949c6a530..afab796fb765 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -757,6 +757,10 @@ void process_buffer_measurement(const void *buf, int size,
+>  		ima_free_template_entry(entry);
+>  
+>  out:
+> +	if (ret < 0)
+> +		pr_err("Process buffer measurement failed, result: %d\n",
+> +			ret);
 
-> I see that Lukas took a look at this earlier; I'd really like to have
-> his reviewed-by, since he's the expert on this code.
+There's no reason to split the statement like this.  The joined line
+is less than 80 characters.
 
-Hm, should we add an entry for pciehp to MAINTAINERS and list me as R: or M:?
+> +
+>  	return;
+>  }
+>  
+> diff --git a/security/integrity/ima/ima_queue_keys.c b/security/integrity/ima/ima_queue_keys.c
+> index c87c72299191..2cc52f17ea81 100644
+> --- a/security/integrity/ima/ima_queue_keys.c
+> +++ b/security/integrity/ima/ima_queue_keys.c
+> @@ -90,6 +90,8 @@ static struct ima_key_entry *ima_alloc_key_entry(struct key *keyring,
+>  
+>  out:
+>  	if (rc) {
+> +		pr_err("Key entry allocation failed, result: %d\n",
+> +			rc);
 
-Thanks,
+ditto
 
-Lukas
+>  		ima_free_key_entry(entry);
+>  		entry = NULL;
+>  	}
+
+thanks,
+
+Mimi
+
