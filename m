@@ -2,54 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD38B156C70
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 21:40:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB24A156C75
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 21:56:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbgBIUkf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 15:40:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43634 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727972AbgBIUka (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 15:40:30 -0500
-Subject: Re: [GIT pull] x86 fixes for 5.6-rc1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581280830;
-        bh=7OkSibig9um5vAt9s30JpXnbrFpj1g5Xs4WdJElVp+c=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Khf/uW/igp7FLo8d9Nmav9s2lUZdwBgdbMi7DsGSN5fyaKT7gAxxzRLz4UaGXWE48
-         j4dX8uXxiW7hByQn4duhhAdJRuuCFGl5bwOLNDmFDlyOPW+pYw3Sd2TnK6tArI0cBI
-         3rbNJr9vwTQx0Yu00xmr4zezlaTMOGiPm00vrl64=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <158125695732.26104.8703656786037209247.tglx@nanos.tec.linutronix.de>
-References: <158125695731.26104.949647922067525745.tglx@nanos.tec.linutronix.de>
- <158125695732.26104.8703656786037209247.tglx@nanos.tec.linutronix.de>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <158125695732.26104.8703656786037209247.tglx@nanos.tec.linutronix.de>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- x86-urgent-2020-02-09
-X-PR-Tracked-Commit-Id: 0f378d73d429d5f73fe2f00be4c9a15dbe9779ee
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1a2a76c2685a29e46d7b37e752ccea7b15aa8e24
-Message-Id: <158128082995.31187.7789453045572318731.pr-tracker-bot@kernel.org>
-Date:   Sun, 09 Feb 2020 20:40:29 +0000
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
+        id S1727901AbgBIU4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 15:56:00 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:54286 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727409AbgBIU4A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Feb 2020 15:56:00 -0500
+Received: by mail-pj1-f67.google.com with SMTP id dw13so3274569pjb.4;
+        Sun, 09 Feb 2020 12:55:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=+26FYn1Jtrvl0Tdo43WhoX99YiKtnwNRDS1kjmkTi2M=;
+        b=t0Vul+D0Xjo3QkfANq67nPW+JcvR+fnNlBs1wiGKUKYAQez/rJl2QQT89j3MTOg6fo
+         0ephBTYaZSHyYKWdDq/1wKMVXPpYA8IHTaS94oFhe6WfUGdtzsGqoHHb8k2fUPVzCQzb
+         BI0JcrZ8oak/B0fwFWNep5p7PTyTbH7smS569iHlZF4w2usJ6KYvchcRFcQviLZbUAlk
+         6wGy4PVuoNehHJEG/bI6oQ45+1qOWCtddYO0u+rVSKI1XqZ+Utcg68a2HmPsmsEqeA3E
+         QqFF1cOh/Z8DSxOS5YN+PIlrpKJSTdHieCWG181R5pMl+fInqag4d5qOoJGC7Yg6HkfL
+         DZDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=+26FYn1Jtrvl0Tdo43WhoX99YiKtnwNRDS1kjmkTi2M=;
+        b=DVIVs7/vT5GOg87UER7pXC6kt3CBqluGQaNeyeTfwwr3KGjNCqm0jX1lOcRUqEY5s7
+         lhzFpZCauaiIhv2Owj1OtjV3TkYa5Rkc02bIjyvIk1h+vVk/idbngsCgfcYZk/4ykR7A
+         Uq3KGQqRLUPus5Y7WEeIzk3vcKuauj72t/+aRICDr3I3u39zoCrqXfA8jpt0XdVLELIo
+         C8EohrBSm6nPp+wflBPYcOWzXOY8qErxOOQiu8teC31WXA/rwWNPo+z5yCDEh6cRTLBW
+         MVdZI2Ms77Mxl90kMsJfG3nAmttVjLY/qrMDqtAScZXI3hVo2GS+pkW/itUTAgmNd6AV
+         tTxQ==
+X-Gm-Message-State: APjAAAWkuj7tEynLkY2n31XCMftCrMmQr0reaDTeVzfgTIzaW3lyBvIc
+        F9xtog/qZa6GszxgH4ZI/ZE=
+X-Google-Smtp-Source: APXvYqw8VhcIRxAHx/n78QIiNmOW7ezsRzYLfnmLCgZ6CnDw7qDMRc+fLNCB0O0iNgPsRs/m2r95rw==
+X-Received: by 2002:a17:902:b617:: with SMTP id b23mr9796027pls.285.1581281759041;
+        Sun, 09 Feb 2020 12:55:59 -0800 (PST)
+Received: from localhost.localdomain ([116.126.226.81])
+        by smtp.googlemail.com with ESMTPSA id k123sm7075722pgk.48.2020.02.09.12.55.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Feb 2020 12:55:58 -0800 (PST)
+From:   JieunKim <jieun.kim4758@gmail.com>
+To:     valdis.kletnieks@vt.edu
+Cc:     gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, JieunKim <jieun.kim4758@gmail.com>
+Subject: [PATCH] staging: exfat: Replace printk with pr_info
+Date:   Mon, 10 Feb 2020 05:48:10 +0900
+Message-Id: <20200209204810.9899-1-jieun.kim4758@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 09 Feb 2020 14:02:37 -0000:
+pr_info is preferred to use than printk.
+pr_info calls printk with KERN_INFO macros by itself.
+---
+ drivers/staging/exfat/exfat_super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-2020-02-09
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1a2a76c2685a29e46d7b37e752ccea7b15aa8e24
-
-Thank you!
-
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index b81d2a87b82e..3806036c0ef6 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -364,7 +364,7 @@ static int ffsMountVol(struct super_block *sb)
+ 	exfat_bdev_open(sb);
+ 
+ 	if (p_bd->sector_size < sb->s_blocksize) {
+-		printk(KERN_INFO "EXFAT: mount failed - sector size %d less than blocksize %ld\n",
++		pr_info("EXFAT: mount failed - sector size %d less than blocksize %ld\n",
+ 		       p_bd->sector_size,  sb->s_blocksize);
+ 		ret = -EINVAL;
+ 		goto out;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.17.1
+
