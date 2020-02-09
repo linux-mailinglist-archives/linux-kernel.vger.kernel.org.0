@@ -2,31 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51A6A156ACB
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 15:09:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E64C4156ACF
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Feb 2020 15:09:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727767AbgBIOG4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 09:06:56 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:42461 "EHLO
+        id S1727855AbgBIOHB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 09:07:01 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:42471 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727721AbgBIOGz (ORCPT
+        with ESMTP id S1727721AbgBIOHA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 09:06:55 -0500
+        Sun, 9 Feb 2020 09:07:00 -0500
 Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j0nEb-0004VU-0y; Sun, 09 Feb 2020 15:06:53 +0100
+        id 1j0nEa-0004VG-6G; Sun, 09 Feb 2020 15:06:52 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 931B9103086;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 83373FFB71;
         Sun,  9 Feb 2020 15:06:51 +0100 (CET)
 Date:   Sun, 09 Feb 2020 14:02:37 -0000
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] time(r) fixes for 5.6-rc1
-References: <158125695731.26104.949647922067525745.tglx@nanos.tec.linutronix.de>
-Message-ID: <158125695732.26104.9630376117953711880.tglx@nanos.tec.linutronix.de>
+Subject: [GIT pull] EFI fix for 5.6-rc1
+Message-ID: <158125695731.26104.949647922067525745.tglx@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -40,20 +39,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest timers/urgent branch from:
+please pull the latest efi/urgent branch from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-2020-02-09
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git efi-urgent-2020-02-09
 
-up to:  febac332a819: clocksource: Prevent double add_timer_on() for watchdog_timer
+up to:  59365cadfbcd: efi/x86: Fix boot regression on systems with invalid memmap entries
 
 
-Two small fixes for the time(r) subsystem:
-
-  - Handle a subtle race between the clocksource watchdog and a concurrent
-    clocksource watchdog stop/start sequence correctly to prevent a timer
-    double add bug.
-
-  - Fix the file path for the core time namespace file.
+A single fix for a EFI boot regression on X86 which was caused by the
+recent rework of the EFI memory map parsing. On systems with invalid memmap
+entries the cleanup function uses an value which cannot be relied on in
+this stage. Use the actual EFI memmap entry instead.
 
 
 Thanks,
@@ -61,50 +57,24 @@ Thanks,
 	tglx
 
 ------------------>
-Dmitry Safonov (1):
-      MAINTAINERS: Correct path to time namespace source file
-
-Konstantin Khlebnikov (1):
-      clocksource: Prevent double add_timer_on() for watchdog_timer
+Ard Biesheuvel (1):
+      efi/x86: Fix boot regression on systems with invalid memmap entries
 
 
- MAINTAINERS               |  2 +-
- kernel/time/clocksource.c | 11 +++++++++--
- 2 files changed, 10 insertions(+), 3 deletions(-)
+ arch/x86/platform/efi/efi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 141b8d3e4ca2..3a4163be98da 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13267,7 +13267,7 @@ S:	Maintained
- F:	fs/timerfd.c
- F:	include/linux/timer*
- F:	include/linux/time_namespace.h
--F:	kernel/time_namespace.c
-+F:	kernel/time/namespace.c
- F:	kernel/time/*timer*
+diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
+index 59f7f6d60cf6..ae923ee8e2b4 100644
+--- a/arch/x86/platform/efi/efi.c
++++ b/arch/x86/platform/efi/efi.c
+@@ -308,7 +308,7 @@ static void __init efi_clean_memmap(void)
+ 			.phys_map = efi.memmap.phys_map,
+ 			.desc_version = efi.memmap.desc_version,
+ 			.desc_size = efi.memmap.desc_size,
+-			.size = data.desc_size * (efi.memmap.nr_map - n_removal),
++			.size = efi.memmap.desc_size * (efi.memmap.nr_map - n_removal),
+ 			.flags = 0,
+ 		};
  
- POWER MANAGEMENT CORE
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index fff5f64981c6..428beb69426a 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -293,8 +293,15 @@ static void clocksource_watchdog(struct timer_list *unused)
- 	next_cpu = cpumask_next(raw_smp_processor_id(), cpu_online_mask);
- 	if (next_cpu >= nr_cpu_ids)
- 		next_cpu = cpumask_first(cpu_online_mask);
--	watchdog_timer.expires += WATCHDOG_INTERVAL;
--	add_timer_on(&watchdog_timer, next_cpu);
-+
-+	/*
-+	 * Arm timer if not already pending: could race with concurrent
-+	 * pair clocksource_stop_watchdog() clocksource_start_watchdog().
-+	 */
-+	if (!timer_pending(&watchdog_timer)) {
-+		watchdog_timer.expires += WATCHDOG_INTERVAL;
-+		add_timer_on(&watchdog_timer, next_cpu);
-+	}
- out:
- 	spin_unlock(&watchdog_lock);
- }
 
