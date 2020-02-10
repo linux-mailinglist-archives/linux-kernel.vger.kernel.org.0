@@ -2,155 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D62B157020
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 08:56:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 131DB157029
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 08:58:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727436AbgBJH4F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 02:56:05 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33376 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725468AbgBJH4E (ORCPT
+        id S1727369AbgBJH6T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 02:58:19 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:43687 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725468AbgBJH6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 02:56:04 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01A7tSCn134439
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 02:56:03 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2y1tncmfmp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 02:56:02 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Mon, 10 Feb 2020 07:56:01 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 10 Feb 2020 07:55:47 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01A7tlFa59899928
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Feb 2020 07:55:47 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 017AE4C04E;
-        Mon, 10 Feb 2020 07:55:47 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BE3E74C040;
-        Mon, 10 Feb 2020 07:55:46 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.152.224.61])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 10 Feb 2020 07:55:46 +0000 (GMT)
-Subject: Re: -Wtautological-constant-compare in arch/s390/include/asm/page.h
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-References: <20200208125714.GA9164@ubuntu-x2-xlarge-x86>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- nS4h0HDFPrrp1C2EMVYIQrMokWvlFZbCpsdYbBI=
-Date:   Mon, 10 Feb 2020 08:55:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Mon, 10 Feb 2020 02:58:19 -0500
+Received: by mail-ot1-f67.google.com with SMTP id p8so5410729oth.10
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Feb 2020 23:58:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=gFmjWJgnqMfOe0WpN++eBCj9oEJM1xbOvI/rc5h7adA=;
+        b=EYLK2BU0ZNzLNnSNehbaPGGFWGWYqwmOIUirBH2KPGnRL+SwCdNfxxY8xN/ddppQhu
+         CY3w35gZbJ9f2IaAm7+1M5zIycqjNzEgOpqGe/p2xg2BAJqV+yaUSn+Ct3UQyIV3KHTY
+         EfG48lMk4qI70TugtoxrclXboKwRAldQ6g31VHXSfy+lNZq+bLnoKX8WpD3jYx2sLLoL
+         UIy2lOhUrto1CL8G83+W+C1+4WGJkzDMmu2DpLAGFhZ7nJ//Pyy3oGIwDGYX+Ofj9mc4
+         pgLsctw2orkDU8dvYYPRV6bLYj61W3Q7CUB4nn8tsnqBHwkIfVxcfX+xNUeI/033R1ys
+         wuvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=gFmjWJgnqMfOe0WpN++eBCj9oEJM1xbOvI/rc5h7adA=;
+        b=EkQdCbR5+SHowx086OvvGDIndXofMk9AUWIKsLRSqy0nLdrCl/M3kP0RTcEZTh1joY
+         SyPcaJEWS+Z4/qeyY8P5A3Szsy2nFZ7rJYsyzozM4IU8O9yyAnq14L/DtGJCIAw9CwqI
+         Lw7vNP+hOAwHycKNAChA0dVgBSnT9Meg9dfTnjwNLoYXFJUSneXxM/DHpgGu2FM+WcXl
+         i1Tm/a005TWJxKF4ZscIvpUx9It2rhEtHuBfntRQvL5y6iXEzNYpH57rmNF9clevjhgU
+         T8M452sxKFlZo+Fhd2RfnwmGBWXrRrBWtuO5tudB0ifMZjZEretPNNBR2wxijdBDGAfw
+         +gpw==
+X-Gm-Message-State: APjAAAX7dNZbJaUIyiTXTCTmb/ITGl6EFiJFxGcGO3O1c9E+569V9xMY
+        1Y6+3ZVbRq14DYMpQ/ZBe7vh3lMSzRquUTetU7fj8g==
+X-Google-Smtp-Source: APXvYqwFUwCCOEbpz5Jl1bGXHyiSZ+zIVpJGarL0oYqphwoRK0i7lXJGhdsDh6d7COwr74pg3gfjS5LMsGYA9tTW6IY=
+X-Received: by 2002:a9d:588c:: with SMTP id x12mr184722otg.2.1581321497301;
+ Sun, 09 Feb 2020 23:58:17 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200208125714.GA9164@ubuntu-x2-xlarge-x86>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021007-0020-0000-0000-000003A8B3C5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021007-0021-0000-0000-000022008D1F
-Message-Id: <1f54ae4c-8748-496b-0833-80749d8d4f6c@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-10_02:2020-02-07,2020-02-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 suspectscore=0 bulkscore=0 phishscore=0
- impostorscore=0 adultscore=0 priorityscore=1501 clxscore=1031 mlxscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002100067
+References: <20200209182008.008c06f1cf4347a95f9de0a5@linux-foundation.org>
+ <2B333FA6-AB17-4169-B9EE-9355FF9C42A4@lca.pw> <20200209200620.883ad431b01bcd38939ff5b4@linux-foundation.org>
+In-Reply-To: <20200209200620.883ad431b01bcd38939ff5b4@linux-foundation.org>
+From:   Marco Elver <elver@google.com>
+Date:   Mon, 10 Feb 2020 08:58:06 +0100
+Message-ID: <CANpmjNOs-ncPxv1gnzwXwCpf1nqABn59wUhpo-tf8A_8VP0dvQ@mail.gmail.com>
+Subject: Re: [PATCH -next v2] mm: mark an intentional data race in page_zonenum
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Qian Cai <cai@lca.pw>, Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <jhubbard@nvidia.com>, ira.weiny@intel.com,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 10 Feb 2020 at 05:06, Andrew Morton <akpm@linux-foundation.org> wro=
+te:
+>
+> On Sun, 9 Feb 2020 21:41:56 -0500 Qian Cai <cai@lca.pw> wrote:
+>
+> >
+> >
+> > > On Feb 9, 2020, at 9:20 PM, Andrew Morton <akpm@linux-foundation.org>=
+ wrote:
+> > >
+> > > Using data_race() here seems misleading - there is no race, but we're
+> > > using data_race() to suppress a false positive warning from KCSAN, ye=
+s?
+> >
+> > It is a data race in the sense of compilers, i.e., KCSAN is a compiler =
+instrumentation, so here the load and store are both in word-size, but code=
+ here is only interested in 3 bits which are never changed. Thus, it is a h=
+armless data race.
+> >
+> > Marco also mentioned,
+> >
+> > =E2=80=9CVarious options were considered, and based on feedback from Li=
+nus,
+> > decided 'data_race(..)' is the best option:=E2=80=9D
+> >
+> > lore.kernel.org/linux-fsdevel/CAHk-=3Dwg5CkOEF8DTez1Qu0XTEFw_oHhxN98bDn=
+FqbY7HL5AB2g@mail.gmail.com/
+> >
+> > Paul also said,
+> >
+> > =E2=80=9DPeople will get used to the name more quickly than they will g=
+et used
+> > to typing the extra seven characters.  Here is the current comment head=
+er:
+> >
+> > /*
+> >  * data_race(): macro to document that accesses in an expression may co=
+nflict with
+> >  * other concurrent accesses resulting in data races, but the resulting
+> >  * behaviour is deemed safe regardless.
+> >  *
+> >  * This macro *does not* affect normal code generation, but is a hint t=
+o tooling
+> >  * that data races here should be ignored.
+> >  */
+> >
+> > I will be converting this to docbook form.
+> >
+> > In addition, in the KCSAN documentation:
+> >
+> > * KCSAN understands the ``data_race(expr)`` annotation, which tells KCS=
+AN that
+> >   any data races due to accesses in ``expr`` should be ignored and resu=
+lting
+> >   behaviour when encountering a data race is deemed safe.=E2=80=9D
+>
+> OK.  But I believe page_zonenum() still deserves a comment explaining
+> that there is no race and explaining why we're using data_race()
+> anyway.  Otherwise the use of data_race() is simply misleading.
+>
 
+I have a better suggestion for page_zonenum(), pending a patch if it
+makes sense:
+  http://lkml.kernel.org/r/CANpmjNNaHAnKCMLb+Njs3AhEoJT9O6-Yh63fcNcVTjBbNQi=
+EPg@mail.gmail.com
+If that makes more sense, the patch here could eventually be replaced.
 
-On 08.02.20 13:57, Nathan Chancellor wrote:
-> Hi all,
-> 
-> We noticed that you all added support for building s390 with clang,
-> which is great! I have noticed a few warnings for which I will send
-> patches but this one has me stumped.
-> 
-> In file included from ../lib/crypto/sha256.c:16:
-> In file included from ../include/linux/module.h:13:
-> In file included from ../include/linux/stat.h:19:
-> In file included from ../include/linux/time.h:6:
-> In file included from ../include/linux/seqlock.h:36:
-> In file included from ../include/linux/spinlock.h:51:
-> In file included from ../include/linux/preempt.h:78:
-> In file included from ../arch/s390/include/asm/preempt.h:6:
-> In file included from ../include/linux/thread_info.h:38:
-> In file included from ../arch/s390/include/asm/thread_info.h:26:
-> ../arch/s390/include/asm/page.h:45:6: warning: converting the result of '<<' to a boolean always evaluates to false [-Wtautological-constant-compare]
->         if (PAGE_DEFAULT_KEY)
->             ^
-> ../arch/s390/include/asm/page.h:23:44: note: expanded from macro 'PAGE_DEFAULT_KEY'
-> #define PAGE_DEFAULT_KEY        (PAGE_DEFAULT_ACC << 4)
->                                                   ^
-> 1 warning generated.
-> 
-> PAGE_DEFAULT_PAGE is always 0, meaning this function never does what it
-> is supposed to. Is this intentional? It seems that commit 0b642ede4796
-> ("[PATCH] s390: default storage key") added this and it mentions that it
-> can be overwritten at build time but I do not see any infrastructure for
-> doing that. Any clarification that you can give so we can solve this
-> warning would be much appreciated!
-
-Yes, it is a debugging tool that we use from time to time. The user would then
-change PAGE_DEFAULT_ACC in the header file when needed. It was not worth a config
-option as normal users should not use it. 
-
+Thanks,
+-- Marco
