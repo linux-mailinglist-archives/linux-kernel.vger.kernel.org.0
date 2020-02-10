@@ -2,38 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD31E15782C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:06:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17C7015793B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:14:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729706AbgBJNFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:05:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38940 "EHLO mail.kernel.org"
+        id S1729180AbgBJMij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:38:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729587AbgBJMkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:00 -0500
+        id S1728588AbgBJMg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:36:59 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D315D24672;
-        Mon, 10 Feb 2020 12:39:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D7DE20838;
+        Mon, 10 Feb 2020 12:36:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338398;
-        bh=viCN2OLrdVaSy6OC4bX/zxx4udJHBfesir8T4kojJ2c=;
+        s=default; t=1581338219;
+        bh=ekNtUJOY6BTQcgO0ETB60irb815V229JjRQZLA77jDo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eIPCmxk39kfc31TRniHd0tP/RiB+xWiA40DD6AE/pmxHz3OdBbVZB7LP0FeGn3q4l
-         TnYHETj7FUWtFmp9hT6TIvK7JqLO+Tnx4zsNOcPJyZh+4HHKD4/mLY64cWUsIhyluQ
-         X0qFQgU1371BA4gWYSpR4Wpv/HDPrR+j/RPtwgDA=
+        b=ndi3w/GVCYoDmQ843gBcKc6sEYMhweYNWjeHTMKSZuMmxq5MmCXeZZFm7V5A3pjt1
+         CgHNbR2f1e0o52K5qOtjdzR2tTle8n41FFwDFnMbklJDKSww8lAbUUCnlfrkn0subl
+         Ziz9hsDq2oVJkbETflgFEwn/Xh+OBptNPEu4SKq0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 5.5 096/367] ACPI / battery: Deal with design or full capacity being reported as -1
+        stable@vger.kernel.org, Wei Yang <richardw.yang@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        David Rientjes <rientjes@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.4 053/309] mm: thp: dont need care deferred split queue in memcg charge move path
 Date:   Mon, 10 Feb 2020 04:30:09 -0800
-Message-Id: <20200210122433.233401391@linuxfoundation.org>
+Message-Id: <20200210122411.076985137@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,96 +50,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Wei Yang <richardw.yang@linux.intel.com>
 
-commit cc99f0ad52467028cb1251160f23ad4bb65baf20 upstream.
+commit fac0516b5534897bf4c4a88daa06a8cfa5611b23 upstream.
 
-Commit b41901a2cf06 ("ACPI / battery: Do not export energy_full[_design]
-on devices without full_charge_capacity") added support for some (broken)
-devices which always report 0 for both design- and full_charge-capacity.
+If compound is true, this means it is a PMD mapped THP.  Which implies
+the page is not linked to any defer list.  So the first code chunk will
+not be executed.
 
-This assumes that if the capacity is not being reported it is 0. The
-ThunderSoft TS178 tablet's _BIX implementation falsifies this assumption.
-It reports ACPI_BATTERY_VALUE_UNKNOWN (-1) as full_charge_capacity, which
-we treat as a valid value which causes several problems.
+Also with this reason, it would not be proper to add this page to a
+defer list.  So the second code chunk is not correct.
 
-This commit fixes this by adding a new ACPI_BATTERY_CAPACITY_VALID() helper
-which checks that the value is not 0 and not -1; and using this whenever we
-need to test if either design_capacity or full_charge_capacity is valid.
+Based on this, we should remove the defer list related code.
 
-Fixes: b41901a2cf06 ("ACPI / battery: Do not export energy_full[_design] on devices without full_charge_capacity")
-Cc: 4.19+ <stable@vger.kernel.org> # 4.19+
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+[yang.shi@linux.alibaba.com: better patch title]
+Link: http://lkml.kernel.org/r/20200117233836.3434-1-richardw.yang@linux.intel.com
+Fixes: 87eaceb3faa5 ("mm: thp: make deferred split shrinker memcg aware")
+Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Acked-by: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: <stable@vger.kernel.org>    [5.4+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/battery.c |   19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ mm/memcontrol.c |   18 ------------------
+ 1 file changed, 18 deletions(-)
 
---- a/drivers/acpi/battery.c
-+++ b/drivers/acpi/battery.c
-@@ -38,6 +38,8 @@
- #define PREFIX "ACPI: "
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -5465,14 +5465,6 @@ static int mem_cgroup_move_account(struc
+ 		__mod_lruvec_state(to_vec, NR_WRITEBACK, nr_pages);
+ 	}
  
- #define ACPI_BATTERY_VALUE_UNKNOWN 0xFFFFFFFF
-+#define ACPI_BATTERY_CAPACITY_VALID(capacity) \
-+	((capacity) != 0 && (capacity) != ACPI_BATTERY_VALUE_UNKNOWN)
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-	if (compound && !list_empty(page_deferred_list(page))) {
+-		spin_lock(&from->deferred_split_queue.split_queue_lock);
+-		list_del_init(page_deferred_list(page));
+-		from->deferred_split_queue.split_queue_len--;
+-		spin_unlock(&from->deferred_split_queue.split_queue_lock);
+-	}
+-#endif
+ 	/*
+ 	 * It is safe to change page->mem_cgroup here because the page
+ 	 * is referenced, charged, and isolated - we can't race with
+@@ -5482,16 +5474,6 @@ static int mem_cgroup_move_account(struc
+ 	/* caller should have done css_get */
+ 	page->mem_cgroup = to;
  
- #define ACPI_BATTERY_DEVICE_NAME	"Battery"
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-	if (compound && list_empty(page_deferred_list(page))) {
+-		spin_lock(&to->deferred_split_queue.split_queue_lock);
+-		list_add_tail(page_deferred_list(page),
+-			      &to->deferred_split_queue.split_queue);
+-		to->deferred_split_queue.split_queue_len++;
+-		spin_unlock(&to->deferred_split_queue.split_queue_lock);
+-	}
+-#endif
+-
+ 	spin_unlock_irqrestore(&from->move_lock, flags);
  
-@@ -192,7 +194,8 @@ static int acpi_battery_is_charged(struc
- 
- static bool acpi_battery_is_degraded(struct acpi_battery *battery)
- {
--	return battery->full_charge_capacity && battery->design_capacity &&
-+	return ACPI_BATTERY_CAPACITY_VALID(battery->full_charge_capacity) &&
-+		ACPI_BATTERY_CAPACITY_VALID(battery->design_capacity) &&
- 		battery->full_charge_capacity < battery->design_capacity;
- }
- 
-@@ -263,14 +266,14 @@ static int acpi_battery_get_property(str
- 		break;
- 	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
- 	case POWER_SUPPLY_PROP_ENERGY_FULL_DESIGN:
--		if (battery->design_capacity == ACPI_BATTERY_VALUE_UNKNOWN)
-+		if (!ACPI_BATTERY_CAPACITY_VALID(battery->design_capacity))
- 			ret = -ENODEV;
- 		else
- 			val->intval = battery->design_capacity * 1000;
- 		break;
- 	case POWER_SUPPLY_PROP_CHARGE_FULL:
- 	case POWER_SUPPLY_PROP_ENERGY_FULL:
--		if (battery->full_charge_capacity == ACPI_BATTERY_VALUE_UNKNOWN)
-+		if (!ACPI_BATTERY_CAPACITY_VALID(battery->full_charge_capacity))
- 			ret = -ENODEV;
- 		else
- 			val->intval = battery->full_charge_capacity * 1000;
-@@ -283,11 +286,12 @@ static int acpi_battery_get_property(str
- 			val->intval = battery->capacity_now * 1000;
- 		break;
- 	case POWER_SUPPLY_PROP_CAPACITY:
--		if (battery->capacity_now && battery->full_charge_capacity)
-+		if (battery->capacity_now == ACPI_BATTERY_VALUE_UNKNOWN ||
-+		    !ACPI_BATTERY_CAPACITY_VALID(battery->full_charge_capacity))
-+			ret = -ENODEV;
-+		else
- 			val->intval = battery->capacity_now * 100/
- 					battery->full_charge_capacity;
--		else
--			val->intval = 0;
- 		break;
- 	case POWER_SUPPLY_PROP_CAPACITY_LEVEL:
- 		if (battery->state & ACPI_BATTERY_STATE_CRITICAL)
-@@ -799,7 +803,8 @@ static int sysfs_add_battery(struct acpi
- 		battery->bat_desc.properties = charge_battery_props;
- 		battery->bat_desc.num_properties =
- 			ARRAY_SIZE(charge_battery_props);
--	} else if (battery->full_charge_capacity == 0) {
-+	} else if (!ACPI_BATTERY_CAPACITY_VALID(
-+					battery->full_charge_capacity)) {
- 		battery->bat_desc.properties =
- 			energy_battery_full_cap_broken_props;
- 		battery->bat_desc.num_properties =
+ 	ret = 0;
 
 
