@@ -2,133 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C2B1157409
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:08:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77FCF15742B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:09:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727897AbgBJMIO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:08:14 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44207 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727743AbgBJMHj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:07:39 -0500
-Received: by mail-wr1-f68.google.com with SMTP id m16so7302138wrx.11
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 04:07:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=XNnWmRJxPTDDJICmaDWfmQ5x36dMwtg4YdELGjqA9ik=;
-        b=lL081FFmyi/DIMyE07yeQ1zuo3jdvDlpGt/WoWlp8MiWlpnVQ0WD+PHpBpYC1Ea898
-         go8ZoE3G9nqdVOAfCKU88TKed7ncataZTlELRRaYR6oQzGn1IGhRA0Y6StPVxsknibwy
-         IgMKCGNklIQxp+DMLmiysyFhmjK2bbR4kBSE42bTqMtOu7nCLupC0IlGV6+d52lQKMyN
-         x3cFS7z5gWZjogFLyN6xXp7k002mbsIQR96CjpE7aUavSo1zVyaP2C2UahmF6qbF8dSr
-         +gr+s5mSmg+UAgAA/GDxuopc1dkHdKSPAeg8Ow8/g60oaJgQz9Q7IzG4tcDM05hq2qI0
-         Eb+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=XNnWmRJxPTDDJICmaDWfmQ5x36dMwtg4YdELGjqA9ik=;
-        b=F5OrG0CqLbgH9omGcKW7ySvPLe8mVl2v6AwPuikEyKPxnxfupHoS6iRJ62Km9JUaP0
-         puFxI/ttD5aaQdUnzmr7dlkcnB/w2j1VbNyNuRsmQ9DGIZndqVgHjY3CZ4Q6WaZCOguH
-         FYSBhBvlFmw0t+zsLz+1xS7cG6flWSOVPO2Zhg5BqtHtjjyuGfjg/orsjlsbwi+Hgd3f
-         bKZ8h2Di03GJz62Km6lJmmKbna/HQItDc6nMnmLraHgGqpyPiQvzUlKtienJMfPTu4cc
-         y3WUqPkpx7JWMiu+3h7goEWSNUikxTRAPK+ImVq9DHEtnfMA1zJXfoe95nLkL3eloaxK
-         7v0g==
-X-Gm-Message-State: APjAAAXFg3wkOycCFCS1CWFWOjNKy9EpKpspiGZEMFAhebdoRVTP00Ve
-        AQ1WQwiVD9SSaLjdSPW+aNsIig==
-X-Google-Smtp-Source: APXvYqzWjVye17eAFI99zsG/SY5npLH5qj/05tyjekfpLzQ6CxG75uJjpcOS9TM31i7xFCu0VAoOAQ==
-X-Received: by 2002:adf:df03:: with SMTP id y3mr1714572wrl.260.1581336457982;
-        Mon, 10 Feb 2020 04:07:37 -0800 (PST)
-Received: from localhost.localdomain ([176.61.57.127])
-        by smtp.gmail.com with ESMTPSA id i204sm293124wma.44.2020.02.10.04.07.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2020 04:07:37 -0800 (PST)
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        gregkh@linuxfoundation.org, jackp@codeaurora.org, balbi@kernel.org,
-        bjorn.andersson@linaro.org, robh@kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH v6 14/18] arm64: dts: qcom: qcs404-evb: Define VBUS pins
-Date:   Mon, 10 Feb 2020 12:07:19 +0000
-Message-Id: <20200210120723.91794-15-bryan.odonoghue@linaro.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210120723.91794-1-bryan.odonoghue@linaro.org>
-References: <20200210120723.91794-1-bryan.odonoghue@linaro.org>
+        id S1727973AbgBJMJI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:09:08 -0500
+Received: from foss.arm.com ([217.140.110.172]:59386 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727570AbgBJMHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:07:24 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD9A81FB;
+        Mon, 10 Feb 2020 04:07:23 -0800 (PST)
+Received: from [192.168.0.7] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C0B883F6CF;
+        Mon, 10 Feb 2020 04:07:20 -0800 (PST)
+Subject: Re: [Patch v9 0/8] Introduce Thermal Pressure
+To:     Thara Gopinath <thara.gopinath@linaro.org>, mingo@redhat.com,
+        peterz@infradead.org, ionela.voinescu@arm.com,
+        vincent.guittot@linaro.org, rui.zhang@intel.com,
+        qperret@google.com, daniel.lezcano@linaro.org,
+        viresh.kumar@linaro.org, rostedt@goodmis.org, will@kernel.org,
+        catalin.marinas@arm.com, sudeep.holla@arm.com,
+        juri.lelli@redhat.com, corbet@lwn.net
+Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
+        javi.merino@kernel.org, amit.kucheria@verdurent.com
+References: <1580250967-4386-1-git-send-email-thara.gopinath@linaro.org>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <95164e1d-12e4-b155-f0d6-f869ee982aae@arm.com>
+Date:   Mon, 10 Feb 2020 13:07:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1580250967-4386-1-git-send-email-thara.gopinath@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Defines VBUS detect and VBUS boost for the QCS404 EVB.
+On 28/01/2020 23:35, Thara Gopinath wrote:
+> Thermal governors can respond to an overheat event of a cpu by
+> capping the cpu's maximum possible frequency. This in turn
+> means that the maximum available compute capacity of the
+> cpu is restricted. But today in the kernel, task scheduler is
+> not notified of capping of maximum frequency of a cpu.
+> In other words, scheduler is unaware of maximum capacity
+> restrictions placed on a cpu due to thermal activity.
+> This patch series attempts to address this issue.
+> The benefits identified are better task placement among available
+> cpus in event of overheating which in turn leads to better
+> performance numbers.
+> 
+> The reduction in the maximum possible capacity of a cpu due to a
+> thermal event can be considered as thermal pressure. Instantaneous
+> thermal pressure is hard to record and can sometime be erroneous
+> as there can be mismatch between the actual capping of capacity
+> and scheduler recording it. Thus solution is to have a weighted
+> average per cpu value for thermal pressure over time.
+> The weight reflects the amount of time the cpu has spent at a
+> capped maximum frequency. Since thermal pressure is recorded as
+> an average, it must be decayed periodically. Exisiting algorithm
+> in the kernel scheduler pelt framework is re-used to calculate
+> the weighted average. This patch series also defines a sysctl
+> inerface to allow for a configurable decay period.
+> 
+> Regarding testing, basic build, boot and sanity testing have been
+> performed on db845c platform with debian file system.
+> Further, dhrystone and hackbench tests have been
+> run with the thermal pressure algorithm. During testing, due to
+> constraints of step wise governor in dealing with big little systems,
+> trip point 0 temperature was made assymetric between cpus in little
+> cluster and big cluster; the idea being that
+> big core will heat up and cpu cooling device will throttle the
+> frequency of the big cores faster, there by limiting the maximum available
+> capacity and the scheduler will spread out tasks to little cores as well.
+> 
+> Test Results
+> 
+> Hackbench: 1 group , 30000 loops, 10 runs
+>                                                Result         SD
+>                                                (Secs)     (% of mean)
+>  No Thermal Pressure                            14.03       2.69%
+>  Thermal Pressure PELT Algo. Decay : 32 ms      13.29       0.56%
+>  Thermal Pressure PELT Algo. Decay : 64 ms      12.57       1.56%
+>  Thermal Pressure PELT Algo. Decay : 128 ms     12.71       1.04%
+>  Thermal Pressure PELT Algo. Decay : 256 ms     12.29       1.42%
+>  Thermal Pressure PELT Algo. Decay : 512 ms     12.42       1.15%
+> 
+> Dhrystone Run Time  : 20 threads, 3000 MLOOPS
+>                                                  Result      SD
+>                                                  (Secs)    (% of mean)
+>  No Thermal Pressure                              9.452      4.49%
+>  Thermal Pressure PELT Algo. Decay : 32 ms        8.793      5.30%
+>  Thermal Pressure PELT Algo. Decay : 64 ms        8.981      5.29%
+>  Thermal Pressure PELT Algo. Decay : 128 ms       8.647      6.62%
+>  Thermal Pressure PELT Algo. Decay : 256 ms       8.774      6.45%
+>  Thermal Pressure PELT Algo. Decay : 512 ms       8.603      5.41%
 
-Detect:
-VBUS present/absent is presented to the SoC via a GPIO on the EVB. Define
-the pin mapping for later use by gpio-usb-conn.
+What do we do on systems on which one Frequency domain spawns all the
+CPUs (e.g. Hikey620)?
 
-Boost:
-An external regulator is used to trigger VBUS on/off via GPIO. This patch
-defines the relevant GPIO in the EVB dts.
+perf stat --null --repeat 10 -- perf bench sched messaging -g 10 -l 1000
 
-Cc: Andy Gross <agross@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-msm@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+# Running 'sched/messaging' benchmark:
+# 20 sender and receiver processes per group
+# 10 groups == 400 processes run
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-index 501a7330dbc8..b6147b5ab5cb 100644
---- a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-@@ -4,6 +4,8 @@
- #include <dt-bindings/gpio/gpio.h>
- #include "qcs404.dtsi"
- #include "pms405.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
- 
- / {
- 	aliases {
-@@ -270,6 +272,26 @@ rclk {
- 	};
- };
- 
-+&pms405_gpios {
-+	usb_vbus_boost_pin: usb-vbus-boost-pin {
-+		pinconf {
-+			pins = "gpio3";
-+			function = PMIC_GPIO_FUNC_NORMAL;
-+			output-low;
-+			power-source = <1>;
-+		};
-+	};
-+	usb3_vbus_pin: usb3-vbus-pin {
-+		pinconf {
-+			pins = "gpio12";
-+			function = PMIC_GPIO_FUNC_NORMAL;
-+			input-enable;
-+			bias-pull-down;
-+			power-source = <1>;
-+		};
-+	};
-+};
-+
- &wifi {
- 	status = "okay";
- 	vdd-0.8-cx-mx-supply = <&vreg_l2_1p275>;
--- 
-2.25.0
+     Total time: 4.697 [sec]
+# Running 'sched/messaging' benchmark:
+[ 8082.882751] hisi_thermal f7030700.tsensor: sensor <2> THERMAL ALARM: 66385 > 65000
+# 20 sender and receiver processes per group
+# 10 groups == 400 processes run
 
+     Total time: 4.910 [sec]
+# Running 'sched/messaging' benchmark:
+[ 8091.070386] CPU3 cpus=0-7 th_pressure=205
+[ 8091.178390] CPU3 cpus=0-7 th_pressure=0
+[ 8091.286389] CPU3 cpus=0-7 th_pressure=205
+[ 8091.398397] CPU3 cpus=0-7 th_pressure=0
