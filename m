@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2213157B23
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:28:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A65F11579C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:18:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731203AbgBJN1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:27:51 -0500
+        id S1728939AbgBJMhx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:37:53 -0500
 Received: from mail.kernel.org ([198.145.29.99]:55878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728398AbgBJMgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:32 -0500
+        id S1728429AbgBJMge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:36:34 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24D052467C;
-        Mon, 10 Feb 2020 12:36:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3DEB20661;
+        Mon, 10 Feb 2020 12:36:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338190;
-        bh=xSKy0VUYvuRtdZfsXdTP62/aEzxuc94wctJhZJ9qRQ8=;
+        s=default; t=1581338193;
+        bh=io37CtxpcxYVCGqUBrxjjsavdxhBcKnT/OpkX6gQAJk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CXHJwrQrZVomnwJy2hz9acvR8NE959TtGGt/06joTt72lOpNjl4EmN0mISRj/a1EI
-         R79IVAT4HS48No37E42O9ua+Lx1Ou0m0gNl2umXqkB6QNFByNvSFiZ2EDU9Ij99ZCU
-         xQe+Melqp4jbIGl2UgFqvJKf0SzbQPPKID92Ovco=
+        b=C3yS6g8XY8k9x6FUae+SNSrf4KdA/n6ypBECEWb6rcj3oYS1Okb16UOCFMKcV+pSS
+         O8xREiaU0n+6E6SJqpJFOPSsHUSTFGSed5u1wjlAWm1+hVVmUqJGEp0NEbhwQ4y74t
+         QM6h5cehbgArDbn4mEAO4idL0edUBFF+25O5/qks=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Harini Katakam <harini.katakam@xilinx.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 174/195] net: macb: Limit maximum GEM TX length in TSO
-Date:   Mon, 10 Feb 2020 04:33:52 -0800
-Message-Id: <20200210122322.199856256@linuxfoundation.org>
+        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 177/195] btrfs: use bool argument in free_root_pointers()
+Date:   Mon, 10 Feb 2020 04:33:55 -0800
+Message-Id: <20200210122322.455191783@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
 References: <20200210122305.731206734@linuxfoundation.org>
@@ -43,41 +45,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Harini Katakam <harini.katakam@xilinx.com>
+From: Anand Jain <anand.jain@oracle.com>
 
-[ Upstream commit f822e9c4ffa511a5c681cf866287d9383a3b6f1b ]
+[ Upstream commit 4273eaff9b8d5e141113a5bdf9628c02acf3afe5 ]
 
-GEM_MAX_TX_LEN currently resolves to 0x3FF8 for any IP version supporting
-TSO with full 14bits of length field in payload descriptor. But an IP
-errata causes false amba_error (bit 6 of ISR) when length in payload
-descriptors is specified above 16387. The error occurs because the DMA
-falsely concludes that there is not enough space in SRAM for incoming
-payload. These errors were observed continuously under stress of large
-packets using iperf on a version where SRAM was 16K for each queue. This
-errata will be documented shortly and affects all versions since TSO
-functionality was added. Hence limit the max length to 0x3FC0 (rounded).
+We don't need int argument bool shall do in free_root_pointers().  And
+rename the argument as it confused two people.
 
-Signed-off-by: Harini Katakam <harini.katakam@xilinx.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Anand Jain <anand.jain@oracle.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/cadence/macb_main.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/btrfs/disk-io.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -66,7 +66,11 @@
- /* Max length of transmit frame must be a multiple of 8 bytes */
- #define MACB_TX_LEN_ALIGN	8
- #define MACB_MAX_TX_LEN		((unsigned int)((1 << MACB_TX_FRMLEN_SIZE) - 1) & ~((unsigned int)(MACB_TX_LEN_ALIGN - 1)))
--#define GEM_MAX_TX_LEN		((unsigned int)((1 << GEM_TX_FRMLEN_SIZE) - 1) & ~((unsigned int)(MACB_TX_LEN_ALIGN - 1)))
-+/* Limit maximum TX length as per Cadence TSO errata. This is to avoid a
-+ * false amba_error in TX path from the DMA assuming there is not enough
-+ * space in the SRAM (16KB) even when there is.
-+ */
-+#define GEM_MAX_TX_LEN		(unsigned int)(0x3FC0)
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 15212e835e02c..d296ea329bd4e 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -2031,7 +2031,7 @@ static void free_root_extent_buffers(struct btrfs_root *root)
+ }
  
- #define GEM_MTU_MIN_SIZE	ETH_MIN_MTU
- #define MACB_NETIF_LSO		NETIF_F_TSO
+ /* helper to cleanup tree roots */
+-static void free_root_pointers(struct btrfs_fs_info *info, int chunk_root)
++static void free_root_pointers(struct btrfs_fs_info *info, bool free_chunk_root)
+ {
+ 	free_root_extent_buffers(info->tree_root);
+ 
+@@ -2040,7 +2040,7 @@ static void free_root_pointers(struct btrfs_fs_info *info, int chunk_root)
+ 	free_root_extent_buffers(info->csum_root);
+ 	free_root_extent_buffers(info->quota_root);
+ 	free_root_extent_buffers(info->uuid_root);
+-	if (chunk_root)
++	if (free_chunk_root)
+ 		free_root_extent_buffers(info->chunk_root);
+ 	free_root_extent_buffers(info->free_space_root);
+ }
+@@ -3273,7 +3273,7 @@ int open_ctree(struct super_block *sb,
+ 	btrfs_put_block_group_cache(fs_info);
+ 
+ fail_tree_roots:
+-	free_root_pointers(fs_info, 1);
++	free_root_pointers(fs_info, true);
+ 	invalidate_inode_pages2(fs_info->btree_inode->i_mapping);
+ 
+ fail_sb_buffer:
+@@ -3301,7 +3301,7 @@ int open_ctree(struct super_block *sb,
+ 	if (!btrfs_test_opt(fs_info, USEBACKUPROOT))
+ 		goto fail_tree_roots;
+ 
+-	free_root_pointers(fs_info, 0);
++	free_root_pointers(fs_info, false);
+ 
+ 	/* don't use the log in recovery mode, it won't be valid */
+ 	btrfs_set_super_log_root(disk_super, 0);
+@@ -3986,7 +3986,7 @@ void close_ctree(struct btrfs_fs_info *fs_info)
+ 	btrfs_free_block_groups(fs_info);
+ 
+ 	clear_bit(BTRFS_FS_OPEN, &fs_info->flags);
+-	free_root_pointers(fs_info, 1);
++	free_root_pointers(fs_info, true);
+ 
+ 	iput(fs_info->btree_inode);
+ 
+-- 
+2.20.1
+
 
 
