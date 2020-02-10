@@ -2,181 +2,252 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FC0A157042
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 09:11:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F64715705D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 09:13:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727540AbgBJILg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 03:11:36 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40980 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727056AbgBJILf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 03:11:35 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 0133FB019;
-        Mon, 10 Feb 2020 08:11:33 +0000 (UTC)
-From:   Jiri Slaby <jslaby@suse.cz>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.cz>,
-        syzbot+59997e8d5cbdc486e6f6@syzkaller.appspotmail.com
-Subject: [PATCH 2/2] vt: selection, close sel_buffer race
-Date:   Mon, 10 Feb 2020 09:11:31 +0100
-Message-Id: <20200210081131.23572-2-jslaby@suse.cz>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210081131.23572-1-jslaby@suse.cz>
-References: <20200210081131.23572-1-jslaby@suse.cz>
+        id S1727722AbgBJIMu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 03:12:50 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:18207 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727522AbgBJIMq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 03:12:46 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e41106e0001>; Mon, 10 Feb 2020 00:12:30 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 10 Feb 2020 00:12:44 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 10 Feb 2020 00:12:44 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 10 Feb
+ 2020 08:12:44 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 10 Feb 2020 08:12:44 +0000
+Received: from nkristam-ubuntu.nvidia.com (Not Verified[10.19.67.128]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5e4110780001>; Mon, 10 Feb 2020 00:12:43 -0800
+From:   Nagarjuna Kristam <nkristam@nvidia.com>
+To:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mark.rutland@arm.com>, <robh+dt@kernel.org>, <kishon@ti.com>
+CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Nagarjuna Kristam <nkristam@nvidia.com>
+Subject: [Patch V5 06/21] phy: tegra: xusb: Add set_mode support for USB 2 phy on Tegra210
+Date:   Mon, 10 Feb 2020 13:41:32 +0530
+Message-ID: <1581322307-11140-7-git-send-email-nkristam@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1581322307-11140-1-git-send-email-nkristam@nvidia.com>
+References: <1581322307-11140-1-git-send-email-nkristam@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1581322350; bh=XodaTLC2VSUtO4PzxYzekka/lD0xigZ8PFJGJP2uRos=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=YPYSbhgZ51pqR3ZE43fV70bcNe56pUZCrgXIIbw1+xXCY/EizAQJ/7c9yFOL8CqzK
+         r8Uoueq2tNR0t0gL6j1E3pC5uLn+QXsS1EXoLgmFVKzEXNKxx12spEMYy1KyWR8a23
+         Io3olTF5LkFqvtk5to6YoieOi1aJT2CUF+BkNKXeS9LiAk4eWyxh/knS3bTUJSQ2BW
+         ZH/cxE1ORtIQGzece6V5vIhbEvfjOHQipe2Fdu9pS8n4Blxb9/+qjvCfS5Y2mDX4rc
+         MVte5RpmfhZGTqGUPUw6oEPO4XPnjlgazwgUGeeY9ynhBuEbnGOYSbCGImcTf6Qz0J
+         RH6kuYiJgiS8Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzkaller reported this UAF:
-BUG: KASAN: use-after-free in n_tty_receive_buf_common+0x2481/0x2940 drivers/tty/n_tty.c:1741
-Read of size 1 at addr ffff8880089e40e9 by task syz-executor.1/13184
+Add support for set_mode on USB 2 phy. This allow XUSB host/device mode
+drivers to configure the hardware to corresponding modes.
 
-CPU: 0 PID: 13184 Comm: syz-executor.1 Not tainted 5.4.7 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
-Call Trace:
-...
- kasan_report+0xe/0x20 mm/kasan/common.c:634
- n_tty_receive_buf_common+0x2481/0x2940 drivers/tty/n_tty.c:1741
- tty_ldisc_receive_buf+0xac/0x190 drivers/tty/tty_buffer.c:461
- paste_selection+0x297/0x400 drivers/tty/vt/selection.c:372
- tioclinux+0x20d/0x4e0 drivers/tty/vt/vt.c:3044
- vt_ioctl+0x1bcf/0x28d0 drivers/tty/vt/vt_ioctl.c:364
- tty_ioctl+0x525/0x15a0 drivers/tty/tty_io.c:2657
- vfs_ioctl fs/ioctl.c:47 [inline]
-
-It is due to a race between parallel paste_selection (TIOCL_PASTESEL)
-and set_selection_user (TIOCL_SETSEL) invocations. One uses sel_buffer,
-while the other frees it and reallocates a new one for another
-selection. Add a mutex to close this race.
-
-The mutex takes care properly of sel_buffer and sel_buffer_lth only. The
-other selection global variables (like sel_start, sel_end, and sel_cons)
-are protected only in set_selection_user. The other functions need quite
-some more work to close the races of the variables there. This is going
-to happen later.
-
-This likely fixes (I am unsure as there is no reproducer provided) bug
-206361 too. It was marked as CVE-2020-8648.
-
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Reported-by: syzbot+59997e8d5cbdc486e6f6@syzkaller.appspotmail.com
-References: https://bugzilla.kernel.org/show_bug.cgi?id=206361
+Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/tty/vt/selection.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+V5:
+ - No changes.
+---
+V4:
+ - Added comment for conditional regulator disable.
+ - Added Acked-by info.
+---
+V2-V3:
+ - No changes in this version
+---
+ drivers/phy/tegra/xusb-tegra210.c | 131 ++++++++++++++++++++++++++++++--------
+ 1 file changed, 104 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/tty/vt/selection.c b/drivers/tty/vt/selection.c
-index 44d974d4159f..0c50d7410b31 100644
---- a/drivers/tty/vt/selection.c
-+++ b/drivers/tty/vt/selection.c
-@@ -16,6 +16,7 @@
- #include <linux/tty.h>
- #include <linux/sched.h>
- #include <linux/mm.h>
-+#include <linux/mutex.h>
- #include <linux/slab.h>
- #include <linux/types.h>
+diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
+index 394913b..54d6826 100644
+--- a/drivers/phy/tegra/xusb-tegra210.c
++++ b/drivers/phy/tegra/xusb-tegra210.c
+@@ -236,6 +236,7 @@
+ #define XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT 18
+ #define XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_MASK 0xf
+ #define XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_FLOATING 8
++#define XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_GROUNDED 0
  
-@@ -45,6 +46,7 @@ static volatile int sel_start = -1; 	/* cleared by clear_selection */
- static int sel_end;
- static int sel_buffer_lth;
- static char *sel_buffer;
-+static DEFINE_MUTEX(sel_lock);
- 
- /* clear_selection, highlight and highlight_pointer can be called
-    from interrupt (via scrollback/front) */
-@@ -186,7 +188,7 @@ int set_selection_kernel(struct tiocl_selection *v, struct tty_struct *tty)
- 	char *bp, *obp;
- 	int i, ps, pe, multiplier;
- 	u32 c;
--	int mode;
-+	int mode, ret = 0;
- 
- 	poke_blanked_console();
- 
-@@ -212,6 +214,7 @@ int set_selection_kernel(struct tiocl_selection *v, struct tty_struct *tty)
- 	if (ps > pe)	/* make sel_start <= sel_end */
- 		swap(ps, pe);
- 
-+	mutex_lock(&sel_lock);
- 	if (sel_cons != vc_cons[fg_console].d) {
- 		clear_selection();
- 		sel_cons = vc_cons[fg_console].d;
-@@ -257,9 +260,10 @@ int set_selection_kernel(struct tiocl_selection *v, struct tty_struct *tty)
- 			break;
- 		case TIOCL_SELPOINTER:
- 			highlight_pointer(pe);
--			return 0;
-+			goto unlock;
- 		default:
--			return -EINVAL;
-+			ret = -EINVAL;
-+			goto unlock;
- 	}
- 
- 	/* remove the pointer */
-@@ -281,7 +285,7 @@ int set_selection_kernel(struct tiocl_selection *v, struct tty_struct *tty)
- 	else if (new_sel_start == sel_start)
- 	{
- 		if (new_sel_end == sel_end)	/* no action required */
--			return 0;
-+			goto unlock;
- 		else if (new_sel_end > sel_end)	/* extend to right */
- 			highlight(sel_end + 2, new_sel_end);
- 		else				/* contract from right */
-@@ -309,7 +313,8 @@ int set_selection_kernel(struct tiocl_selection *v, struct tty_struct *tty)
- 	if (!bp) {
- 		printk(KERN_WARNING "selection: kmalloc() failed\n");
- 		clear_selection();
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto unlock;
- 	}
- 	kfree(sel_buffer);
- 	sel_buffer = bp;
-@@ -334,7 +339,9 @@ int set_selection_kernel(struct tiocl_selection *v, struct tty_struct *tty)
- 		}
- 	}
- 	sel_buffer_lth = bp - sel_buffer;
--	return 0;
-+unlock:
-+	mutex_unlock(&sel_lock);
-+	return ret;
+ struct tegra210_xusb_fuse_calibration {
+ 	u32 hs_curr_level[4];
+@@ -935,6 +936,103 @@ static int tegra210_usb2_phy_exit(struct phy *phy)
+ 	return tegra210_xusb_padctl_disable(lane->pad->padctl);
  }
- EXPORT_SYMBOL_GPL(set_selection_kernel);
  
-@@ -364,6 +371,7 @@ int paste_selection(struct tty_struct *tty)
- 	tty_buffer_lock_exclusive(&vc->port);
++static int tegra210_xusb_padctl_vbus_override(struct tegra_xusb_padctl *padctl,
++					      bool status)
++{
++	u32 value;
++
++	dev_dbg(padctl->dev, "%s vbus override\n", status ? "set" : "clear");
++
++	value = padctl_readl(padctl, XUSB_PADCTL_USB2_VBUS_ID);
++
++	if (status) {
++		value |= XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON;
++		value &= ~(XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_MASK <<
++			   XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT);
++		value |= XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_FLOATING <<
++			 XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT;
++	} else {
++		value &= ~XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON;
++	}
++
++	padctl_writel(padctl, value, XUSB_PADCTL_USB2_VBUS_ID);
++
++	return 0;
++}
++
++static int tegra210_xusb_padctl_id_override(struct tegra_xusb_padctl *padctl,
++					    bool status)
++{
++	u32 value;
++
++	dev_dbg(padctl->dev, "%s id override\n", status ? "set" : "clear");
++
++	value = padctl_readl(padctl, XUSB_PADCTL_USB2_VBUS_ID);
++
++	if (status) {
++		if (value & XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON) {
++			value &= ~XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON;
++			padctl_writel(padctl, value, XUSB_PADCTL_USB2_VBUS_ID);
++			usleep_range(1000, 2000);
++
++			value = padctl_readl(padctl, XUSB_PADCTL_USB2_VBUS_ID);
++		}
++
++		value &= ~(XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_MASK <<
++			   XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT);
++		value |= XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_GROUNDED <<
++			 XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT;
++	} else {
++		value &= ~(XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_MASK <<
++			   XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT);
++		value |= XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_FLOATING <<
++			 XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT;
++	}
++
++	padctl_writel(padctl, value, XUSB_PADCTL_USB2_VBUS_ID);
++
++	return 0;
++}
++
++static int tegra210_usb2_phy_set_mode(struct phy *phy, enum phy_mode mode,
++				      int submode)
++{
++	struct tegra_xusb_lane *lane = phy_get_drvdata(phy);
++	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
++	struct tegra_xusb_usb2_port *port = tegra_xusb_find_usb2_port(padctl,
++								lane->index);
++	int err = 0;
++
++	mutex_lock(&padctl->lock);
++
++	dev_dbg(&port->base.dev, "%s: mode %d", __func__, mode);
++
++	if (mode == PHY_MODE_USB_OTG) {
++		if (submode == USB_ROLE_HOST) {
++			tegra210_xusb_padctl_id_override(padctl, true);
++
++			err = regulator_enable(port->supply);
++		} else if (submode == USB_ROLE_DEVICE) {
++			tegra210_xusb_padctl_vbus_override(padctl, true);
++		} else if (submode == USB_ROLE_NONE) {
++			/*
++			 * When port is peripheral only or role transitions to
++			 * USB_ROLE_NONE from USB_ROLE_DEVICE, regulator is not
++			 * be enabled.
++			 */
++			if (regulator_is_enabled(port->supply))
++				regulator_disable(port->supply);
++
++			tegra210_xusb_padctl_id_override(padctl, false);
++			tegra210_xusb_padctl_vbus_override(padctl, false);
++		}
++	}
++
++	mutex_unlock(&padctl->lock);
++
++	return err;
++}
++
+ static int tegra210_usb2_phy_power_on(struct phy *phy)
+ {
+ 	struct tegra_xusb_lane *lane = phy_get_drvdata(phy);
+@@ -1048,9 +1146,11 @@ static int tegra210_usb2_phy_power_on(struct phy *phy)
+ 	padctl_writel(padctl, value,
+ 		      XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
  
- 	add_wait_queue(&vc->paste_wait, &wait);
-+	mutex_lock(&sel_lock);
- 	while (sel_buffer && sel_buffer_lth > pasted) {
- 		set_current_state(TASK_INTERRUPTIBLE);
- 		if (signal_pending(current)) {
-@@ -371,7 +379,9 @@ int paste_selection(struct tty_struct *tty)
- 			break;
- 		}
- 		if (tty_throttled(tty)) {
-+			mutex_unlock(&sel_lock);
- 			schedule();
-+			mutex_lock(&sel_lock);
- 			continue;
- 		}
- 		__set_current_state(TASK_RUNNING);
-@@ -380,6 +390,7 @@ int paste_selection(struct tty_struct *tty)
- 					      count);
- 		pasted += count;
- 	}
-+	mutex_unlock(&sel_lock);
- 	remove_wait_queue(&vc->paste_wait, &wait);
- 	__set_current_state(TASK_RUNNING);
+-	err = regulator_enable(port->supply);
+-	if (err)
+-		return err;
++	if (port->supply && port->mode == USB_DR_MODE_HOST) {
++		err = regulator_enable(port->supply);
++		if (err)
++			return err;
++	}
  
+ 	mutex_lock(&padctl->lock);
+ 
+@@ -1164,6 +1264,7 @@ static const struct phy_ops tegra210_usb2_phy_ops = {
+ 	.exit = tegra210_usb2_phy_exit,
+ 	.power_on = tegra210_usb2_phy_power_on,
+ 	.power_off = tegra210_usb2_phy_power_off,
++	.set_mode = tegra210_usb2_phy_set_mode,
+ 	.owner = THIS_MODULE,
+ };
+ 
+@@ -2023,30 +2124,6 @@ static const struct tegra_xusb_port_ops tegra210_usb3_port_ops = {
+ 	.map = tegra210_usb3_port_map,
+ };
+ 
+-static int tegra210_xusb_padctl_vbus_override(struct tegra_xusb_padctl *padctl,
+-					      bool status)
+-{
+-	u32 value;
+-
+-	dev_dbg(padctl->dev, "%s vbus override\n", status ? "set" : "clear");
+-
+-	value = padctl_readl(padctl, XUSB_PADCTL_USB2_VBUS_ID);
+-
+-	if (status) {
+-		value |= XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON;
+-		value &= ~(XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_MASK <<
+-			   XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT);
+-		value |= XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_FLOATING <<
+-			 XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT;
+-	} else {
+-		value &= ~XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON;
+-	}
+-
+-	padctl_writel(padctl, value, XUSB_PADCTL_USB2_VBUS_ID);
+-
+-	return 0;
+-}
+-
+ static int tegra210_utmi_port_reset(struct phy *phy)
+ {
+ 	struct tegra_xusb_padctl *padctl;
 -- 
-2.25.0
+2.7.4
 
