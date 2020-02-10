@@ -2,163 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B6B1158615
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 00:16:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37DF815861C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 00:19:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbgBJXQH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 18:16:07 -0500
-Received: from mga18.intel.com ([134.134.136.126]:47537 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727422AbgBJXQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 18:16:07 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Feb 2020 15:16:06 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,426,1574150400"; 
-   d="scan'208";a="227328311"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by fmsmga008.fm.intel.com with ESMTP; 10 Feb 2020 15:16:05 -0800
-Date:   Tue, 11 Feb 2020 07:16:23 +0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Wei Yang <richardw.yang@linux.intel.com>,
-        akpm@linux-foundation.org, osalvador@suse.de,
-        dan.j.williams@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Baoquan He <bhe@redhat.com>
-Subject: Re: [Patch v2] mm/sparsemem: get address to page struct instead of
- address to pfn
-Message-ID: <20200210231623.GC32495@richard>
-Reply-To: Wei Yang <richardw.yang@linux.intel.com>
-References: <20200210005048.10437-1-richardw.yang@linux.intel.com>
- <90742479-cbb1-4ea9-c20c-53a1df34b806@redhat.com>
+        id S1727518AbgBJXTu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 18:19:50 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:43091 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727422AbgBJXTt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 18:19:49 -0500
+Received: by mail-yb1-f195.google.com with SMTP id b141so2304069ybg.10
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 15:19:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=CZOZ6zJl7K+CX7mG44VkFRrQ+i68m5YSb/XRoNfw+DM=;
+        b=vCtdruf+CDabsQqsi3RHwzOgVsfcApJtGC+uolS2Z1IY41RiPOYczORJne6YDKZOyF
+         xXmQUbYSAIkfHiHLF/v0VvaKwX9Q2ldZsxE2MHx6rKNcxjwTO+vY4IaNdGcytYQmgorS
+         m/IAbNRXk6zemY8R/SUw75vxiiKZ8FpWtBsZnMlQMnPs1U+XaQoXnQOFWKj0MWvFmdoZ
+         ql+ThejhjANpiWKeVavCdEPrQS0Nx4ar4UdDUzcq3pRImCCP+OL4IzJsl3PFHCUSAYSS
+         q3m8PYts17OBV3GC0URpA5YStt1n56UCULQJB7YGt+VdaPTONOIHFmWOXDW5i2HNlmCf
+         3Gog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=CZOZ6zJl7K+CX7mG44VkFRrQ+i68m5YSb/XRoNfw+DM=;
+        b=lGuNL/roH3QP9LNL9DdkitUS8pJxN9bbjfWhwqfekhvqzzb4Q8juuRrn/pMeVA+BJh
+         YJLxWDA+rXHq5lHlLlGfOLE3Q9UE1mOWIWCgPA+dracCl25ghv6Nzt0arsIJad+fVeEG
+         4bzKJfnjQiwsgVpx0omJP2nYbPM8SC3UWMHSSulUGyEOL81rKThVZNj71Kjb7ulz3gi0
+         NeWqjCbh5ZW3JQfQsTSO23Dur1iH7Gt1cCoHbFtIv7GdCJ6p+iwYUnr8MvsDnFg+FWxr
+         IdgMu23BoA0/X7J/iO9W2a50S1yy0pk8BhFNqYJBZ5lj2XNt4qG5IJOp26CQSdCXTWtx
+         KG8Q==
+X-Gm-Message-State: APjAAAVf6c96R6p3FfaR74rFI/kreCL/mZ0rvoIMEWHgzma9WMelEfkt
+        hZ46p0KmMuL6EN5V+/DHF2dF/gIjZ/w6kETG2Bc=
+X-Google-Smtp-Source: APXvYqy0f/XVZm7IJpiO8V1M1H82IlCAjk2THehqhVt5uXVMJcsGRLLlPDG25EwCsVd84pFAuvPYanY2A7rwQEIR/JQ=
+X-Received: by 2002:a25:2e0b:: with SMTP id u11mr3371068ybu.393.1581376788952;
+ Mon, 10 Feb 2020 15:19:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <90742479-cbb1-4ea9-c20c-53a1df34b806@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a25:c7c8:0:0:0:0:0 with HTTP; Mon, 10 Feb 2020 15:19:48
+ -0800 (PST)
+Reply-To: azizdake0@gmail.com
+From:   Aziz Dake <legalwaaboki@gmail.com>
+Date:   Mon, 10 Feb 2020 15:19:48 -0800
+Message-ID: <CAAiMQBDTQ-TfGXjA8jXV9VMOjtqksQo8pG227GvdecWXJ__X6g@mail.gmail.com>
+Subject: From Honourable Barrister Aziz Dake,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 10:00:47AM +0100, David Hildenbrand wrote:
->On 10.02.20 01:50, Wei Yang wrote:
->> memmap should be the address to page struct instead of address to pfn.
->> 
->
->"mm/sparsemem: fix wrong address in ms->section_mem_map with sub-sections
->
->We want to store the address of the memmap, not the address of the first
->pfn.
->
->E.g., we can have both (boot) system memory and devmem residing in a
->single section. Once we hot-add the devmem part, the address stored in
->ms->section_mem_map would be wrong, and kdump would not be able to
->dump the right memory.
->"
->
->? See below
->
->> As mentioned by David, if system memory and devmem sit within a
->> section, the mismatch address would lead kdump to dump unexpected
->> memory.
->> 
->> Since sub-section only works for SPARSEMEM_VMEMMAP, pfn_to_page() is
->> valid to get the page struct address at this point.
->> 
->> Fixes: ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
->> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
->> CC: Dan Williams <dan.j.williams@intel.com>
->> CC: David Hildenbrand <david@redhat.com>
->> CC: Baoquan He <bhe@redhat.com>
->> 
->> ---
->> v2:
->>   * adjust comment to mention the mismatch data would affect kdump
->> 
->> ---
->>  mm/sparse.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/mm/sparse.c b/mm/sparse.c
->> index 586d85662978..4862ec2cfbc0 100644
->> --- a/mm/sparse.c
->> +++ b/mm/sparse.c
->> @@ -887,7 +887,7 @@ int __meminit sparse_add_section(int nid, unsigned long start_pfn,
->>  
->>  	/* Align memmap to section boundary in the subsection case */
->>  	if (section_nr_to_pfn(section_nr) != start_pfn)
->> -		memmap = pfn_to_kaddr(section_nr_to_pfn(section_nr));
->> +		memmap = pfn_to_page(section_nr_to_pfn(section_nr));
->
->I think this whole code should be reworked.
->
->Callee returns a pointer. Caller: Nah, I know it better.
->
->Just nasty.
->
->
->Can we do something like this instead:
->
->
->diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
->index 200aef686722..c5091feef29e 100644
->--- a/mm/sparse-vmemmap.c
->+++ b/mm/sparse-vmemmap.c
->@@ -266,5 +266,5 @@ struct page * __meminit
->__populate_section_memmap(unsigned long pfn,
->        if (vmemmap_populate(start, end, nid, altmap))
->                return NULL;
->
->-       return pfn_to_page(pfn);
->+       return pfn_to_page(SECTION_ALIGN_DOWN(pfn));
-> }
->diff --git a/mm/sparse.c b/mm/sparse.c
->index c184b69460b7..21902d7931e4 100644
->--- a/mm/sparse.c
->+++ b/mm/sparse.c
->@@ -788,6 +788,10 @@ static void section_deactivate(unsigned long pfn,
->unsigned long nr_pages,
->                depopulate_section_memmap(pfn, nr_pages, altmap);
-> }
->
->+/*
->+ * Returns the memmap of the first pfn of the section (not of
->+ * sub-sections).
->+ */
-> static struct page * __meminit section_activate(int nid, unsigned long pfn,
->                unsigned long nr_pages, struct vmem_altmap *altmap)
-> {
->@@ -882,9 +886,6 @@ int __meminit sparse_add_section(int nid, unsigned
->long start_pfn,
->        set_section_nid(section_nr, nid);
->        section_mark_present(ms);
->
->-       /* Align memmap to section boundary in the subsection case */
->-       if (section_nr_to_pfn(section_nr) != start_pfn)
->-               memmap = pfn_to_kaddr(section_nr_to_pfn(section_nr));
->        sparse_init_one_section(ms, section_nr, memmap, ms->usage, 0);
->
->        return 0;
->
->
->Untested, of course :)
+Attn: Sir/Madam
 
-I think you get some point. As you mentioned in the following reply, we need
-to adjust poisoning after this change.
+I am Honourable Barrister Aziz the personal resident Attorney here in
+Burkina Faso to Late Mr. Muammar Muhammad Abu Minyar al-Gaddafi of
+Libya c. 1942 =E2=80=93 20 October 2011.
 
-This looks like a trade off between two options. I don't have a strong
-preference.
+My client Late Mr. Muammar Muhammad Abu Minyar al-Gaddafi c. 1942 =E2=80=93=
+ 20
+October 2011, was having a deposit sum of {thirty million four Hundred
+thousand united state dollars} only ($30.4M USD) with a security
+finance firm affiliated with African development bank here in Burkina
+Faso.
 
->
->-- 
->Thanks,
->
->David / dhildenb
+With the above explanation=E2=80=99s I want to move this money from Burkina
+Faso to your country, affidavit on your name, but note that this is a
+deal between me and you and should not be related to anybody until the
+deal is over for security reasons, please if interested reply as soon
+as possible.
 
--- 
-Wei Yang
-Help you, Help me
+Thanks,
+Honourable Barrister Aziz Dake.
