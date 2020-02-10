@@ -2,167 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2484157F85
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 17:16:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5911157F87
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 17:16:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbgBJQQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 11:16:18 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:35400 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727120AbgBJQQR (ORCPT
+        id S1727840AbgBJQQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 11:16:21 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:41505 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727120AbgBJQQV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 11:16:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=69w/2QNd4cmMSFcuQq/l9eOaG1SLWlv8HuFiAnr2cxg=; b=JB5VUCc1Ll4QlyGtYAdmnZk0B
-        eWNvb9O4bAuq6+ssCpSV6CmPXcDfJWRlafkgvBi8PBUrkaGJkKQlWc7VaA7XE/SkiXfTnt5N2VjMB
-        Qt6lPbwQ7uWwk8p6rNTdwyjKIc/rP94ZJvne8ysEGP+fa3qq6eJQdD2mqwdAPkS7NUZqq3tVNumlS
-        Bi+hQuNBWbhFawQuX08Bq0X3+b6RzWAvfEOmpeE3hDzIxeKsctVRxDWDdNcVA5aBu4cH7OYFZ8LSb
-        oDrQJiXjjk2pzwvQdB4Atpd1cKl4jWfQPLFKxGdHb4g/LBuKZu3UFabi/fuWYNZsuenJLYINpdaCR
-        3B+/Uvdcw==;
-Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:46036)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1j1BjA-0007iw-VW; Mon, 10 Feb 2020 16:16:05 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1j1Biz-00081L-Q1; Mon, 10 Feb 2020 16:15:53 +0000
-Date:   Mon, 10 Feb 2020 16:15:53 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Olof Johansson <olof@lixom.net>
-Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "m.karthikeyan@mobiveil.co.in" <m.karthikeyan@mobiveil.co.in>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Z.q. Hou" <zhiqiang.hou@nxp.com>,
-        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "andrew.murray@arm.com" <andrew.murray@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCHv9 00/12] PCI: Recode Mobiveil driver and add PCIe Gen4
- driver for NXP Layerscape SoCs
-Message-ID: <20200210161553.GE25745@shell.armlinux.org.uk>
-References: <20191120034451.30102-1-Zhiqiang.Hou@nxp.com>
- <CAOesGMjAQSfx1WZr6b1kNX=Exipj_f4X_f39Db7AxXr4xG4Tkg@mail.gmail.com>
- <DB8PR04MB6747DA8E1480DCF3EFF67C9284500@DB8PR04MB6747.eurprd04.prod.outlook.com>
- <20200110153347.GA29372@e121166-lin.cambridge.arm.com>
- <CAOesGMj9X1c7eJ4gX2QWXSNszPkRn68E4pkrSCxKMYJG7JHwsg@mail.gmail.com>
- <DB8PR04MB67473114B315FBCC97D0C6F9841D0@DB8PR04MB6747.eurprd04.prod.outlook.com>
- <CAOesGMieMXHWBO_p9YJXWWneC47g+TGDt9SVfvnp5tShj5gbPw@mail.gmail.com>
- <20200210152257.GD25745@shell.armlinux.org.uk>
- <CAOesGMj6B-X1s8-mYqS0N6GJXdKka1MxaNV=33D1H++h7bmXrA@mail.gmail.com>
+        Mon, 10 Feb 2020 11:16:21 -0500
+Received: by mail-qk1-f195.google.com with SMTP id d11so7025314qko.8
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 08:16:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=dAJybwrGCLZNtcnQsurUDSEE3vxhzkNctFcgFV8Jq9M=;
+        b=XgcoyZnqYnSrDOqE1q5Nf2xd0M5i+D3L3tQMpdUc0aRi31LwXecknf6Ha/KocNG8iS
+         QjWJqWrM+EMjrFKr3Khrh0m7nMStcIOC8neBHzJyTByqn6G61jtobx4T2tdHeYvvmfra
+         LE9FVqF6QkC7Avh4nzrI37XyLL9ztMynfF8ZVufFcl2umfKaEOUQrFHnj0OnTdZ49OHh
+         89xdPSLI6RC7e0J1UjnD4ACka+XYos0gTfr/3mS0GhqtRbIzidMKTlveHhBxz0K60imo
+         +PFVu/SZ1o/yC8dy4pTif1tZxVS2r4EBO6rhdEm8q1Nfi8srRvsI1PvhJ+MWCorBqPLH
+         Z+Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=dAJybwrGCLZNtcnQsurUDSEE3vxhzkNctFcgFV8Jq9M=;
+        b=hdqfZ6mV666AFHQsMVnaZgxVwzj6dPAC4bLtCUnIkc72YJibEF9X2R5T4r1pki1EAZ
+         G3006Ctwalu2Sb925q+i1BOVlSXUBbUppOJ2Zu2AZFZdChTRKepGRhBmT/waZT52qY8o
+         DSQMhH2qwFiIEjInMEwI9E+hZ1xanKnCfPFnZ8G7jIOdgo8tMBF3ShrmhIrFRrn11SRe
+         /X22rakTRO+wI37x5KnOjDoDrREi3n6Wm6g8lZCR6+fXdS2BjKr2McB4z0EwAYpxkwfZ
+         NPH+5Rm4ey1Tc2dhe6CqmTY5wYO7IT4OSesFYSF5LQVneCgmc3uR2qFKyThDR/U6EjnJ
+         rN1Q==
+X-Gm-Message-State: APjAAAWRMEp/sO/221fJtW/jVX08jaK8Ccp+z2koCIyHtaJw329rHQO2
+        wBHqTLYg7Nk4YWRQVXkgdfRRZx1eq+dlNAvyJJksL0DrlXs=
+X-Google-Smtp-Source: APXvYqyg7/5NUx/KddWHUceI2huMiTbVD0/p8PGmEsJyAf+hJiuZGBBMIk//Fe4F7t45BrlO4YwG486Pdud7O2DIZNs=
+X-Received: by 2002:a05:620a:1679:: with SMTP id d25mr2023835qko.67.1581351380043;
+ Mon, 10 Feb 2020 08:16:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOesGMj6B-X1s8-mYqS0N6GJXdKka1MxaNV=33D1H++h7bmXrA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a05:6214:729:0:0:0:0 with HTTP; Mon, 10 Feb 2020 08:16:19
+ -0800 (PST)
+Reply-To: amboline.hills@gmail.com
+From:   Amboline Hills <centopara@gmail.com>
+Date:   Mon, 10 Feb 2020 17:16:19 +0100
+Message-ID: <CAH8WxbfuEahCJ3uAWxgVH8vS6ag=kKW2gpkQdUqqh8xw1XMQjQ@mail.gmail.com>
+Subject: =?UTF-8?B?44GT44KT44Gr44Gh44Gv?=
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 04:28:23PM +0100, Olof Johansson wrote:
-> On Mon, Feb 10, 2020 at 4:23 PM Russell King - ARM Linux admin
-> <linux@armlinux.org.uk> wrote:
-> >
-> > On Mon, Feb 10, 2020 at 04:12:30PM +0100, Olof Johansson wrote:
-> > > On Thu, Feb 6, 2020 at 11:57 AM Z.q. Hou <zhiqiang.hou@nxp.com> wrote:
-> > > >
-> > > > Hi Olof,
-> > > >
-> > > > Thanks a lot for your comments!
-> > > > And sorry for my delay respond!
-> > >
-> > > Actually, they apply with only minor conflicts on top of current -next.
-> > >
-> > > Bjorn, any chance we can get you to pick these up pretty soon? They
-> > > enable full use of a promising ARM developer system, the SolidRun
-> > > HoneyComb, and would be quite valuable for me and others to be able to
-> > > use with mainline or -next without any additional patches applied --
-> > > which this patchset achieves.
-> > >
-> > > I know there are pending revisions based on feedback. I'll leave it up
-> > > to you and others to determine if that can be done with incremental
-> > > patches on top, or if it should be fixed before the initial patchset
-> > > is applied. But all in all, it's holding up adaption by me and surely
-> > > others of a very interesting platform -- I'm looking to replace my
-> > > aging MacchiatoBin with one of these and would need PCIe/NVMe to work
-> > > before I do.
-> >
-> > If you're going to be using NVMe, make sure you use a power-fail safe
-> > version; I've already had one instance where ext4 failed to mount
-> > because of a corrupted journal using an XPG SX8200 after the Honeycomb
-> > Serror'd, and then I powered it down after a few hours before later
-> > booting it back up.
-> >
-> > EXT4-fs (nvme0n1p2): INFO: recovery required on readonly filesystem
-> > EXT4-fs (nvme0n1p2): write access will be enabled during recovery
-> > JBD2: journal transaction 80849 on nvme0n1p2-8 is corrupt.
-> > EXT4-fs (nvme0n1p2): error loading journal
-> 
-> Hmm, using btrfs on mine, not sure if the exposure is similar or not.
-
-As I understand the problem, it isn't a filesystem issue.  It's a data
-integrity issue with the NVMe over power fail, how they cache the data,
-and ultimately write it to the nand flash.
-
-Have a read of:
-
-https://www.kingston.com/en/solutions/servers-data-centers/ssd-power-loss-protection
-
-As NVMe and SSD are basically the same underlying technology (the host
-interface is different) and the issues I've heard, and now experienced
-with my NVMe, I think the above is a good pointer to the problems of
-flash mass storage.
-
-As I understand it, the problem occurs when the mapping table has not
-been written back to flash, power is lost without the Standby Immediate
-command being sent, and there is no way for the firmware to quickly
-save the table.  On subsequent power up, the firmware has to
-reconstruct the mapping table, and depending on how that is done,
-incorrect (old?) data may be returned for some blocks.
-
-That can happen to any blocks on the drive, which means any data can
-be at risk from a power loss event, whether that is a power failure
-or after a crash.
-
-> Do you know if the SErr was due to a known issue and/or if it's
-> something that's fixed in production silicon?
-
-The SError is triggered by something on the PCIe side of things; if I
-leave the Mellanox PCIe card out, then I don't get them.  The errata
-patches I have merged into my tree help a bit, turning the code from
-being unable to boot without a SError with the card plugged in, to
-being able to boot and last a while - but the SErrors still eventually
-come, maybe taking a few days... and that's without the Mellanox
-ethernet interface being up.
-
-> (I still can't enable SMMU since across a warm reboot it fails
-> *completely*, with nothing coming up and working. NXP folks, you
-> listening? :)
-
-Is it just a warm reboot?  I thought I saw SMMU activity on a cold
-boot as well, implying that there were devices active that Linux
-did not know about.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+44GT44KT44Gr44Gh44GvDQoNCuengeOBruimquaEm+OBquOCi+WPi+S6uuOAgQ0K56eB44Gv5byB
+6K235aOr44Gn44GZ44CC44Ki44Oz44Oc44Oq44Oz44O744OS44Or44K644CB5b6M5pyfTXIuSi5C
+44Gu5byB6K235aOr44CCDQrnp4Hjga/jgIHjgq/jg6njgqTjgqLjg7Pjg4jjga7mrbvkuqHku6Xm
+naXoq4vmsYLjgZXjgozjgabjgYTjgarjgYTpioDooYzjga7poJDph5Hmrovpq5jvvIgxMC4155m+
+5LiH57Gz44OJ44Or77yJ44Gu44Gf44KB44CB44GC44Gq44Gf44Gr6YCj57Wh44GX44Gm44GE44G+
+44GZ44CC44GZ44GQ44Gr56eB44Gr5oi744Gj44GmDQroqbPntLDjgIINCuOCiOOCjeOBl+OBj+OA
+gQ0KQmFyci5BbWJvbGluZSBIaWxscw0K
