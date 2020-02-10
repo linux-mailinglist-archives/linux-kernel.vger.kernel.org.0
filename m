@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB464157564
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:40:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2006D157723
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:58:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728167AbgBJMkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:40:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33654 "EHLO mail.kernel.org"
+        id S1730023AbgBJM57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:57:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729129AbgBJMiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:23 -0500
+        id S1727791AbgBJMlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:41:22 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31FD920733;
-        Mon, 10 Feb 2020 12:38:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F376924650;
+        Mon, 10 Feb 2020 12:41:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338303;
-        bh=yT39T1LfOvJDm+YcHJ0W//J7FONSZAxa/7T50mD0S1U=;
+        s=default; t=1581338482;
+        bh=4Zw4f/er2pIM3aDRMBtI8BCjliq6iN6qQXfBIQhwjUg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MGqYUJUOxtBkuyWd4VJ0YfvHqDwhCq08NVVVoBvHa8loMOT86ueIriCOxZHSj2Xhi
-         QZvCn33DYpvXEEpEhcYjLUdmLk/8ZrB+gtIHi3QwERHsjXjp5moE8QoXWJBkTJDd/y
-         OLYQumHeC5fHruqKWCq1tSsSytCLcdUyyxEaszQs=
+        b=Fn1Tqxvdrt8/+3ReSM93UwCzZOPVwGbUGT3AwmWnLv2CAMk11Esb+RVnETE8aej5G
+         S7IaPc1GIFID/Bh2xznj7lf/WbWhlXpCZt/KIiE8ixl7csqjAa9DadoLKbqzFM/I+T
+         Cl0H7B0ouh7zS3mjN5YgGHEpJjehcJAnkMvhOAAg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.4 215/309] x86/kvm: Introduce kvm_(un)map_gfn()
-Date:   Mon, 10 Feb 2020 04:32:51 -0800
-Message-Id: <20200210122427.201624924@linuxfoundation.org>
+Subject: [PATCH 5.5 259/367] KVM: x86: reorganize pvclock_gtod_data members
+Date:   Mon, 10 Feb 2020 04:32:52 -0800
+Message-Id: <20200210122448.554018214@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,109 +43,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit 1eff70a9abd46f175defafd29bc17ad456f398a7 upstream.
+commit 917f9475c0a8ab8958db7f22a5d495b9a1d51be6 upstream.
 
-kvm_vcpu_(un)map operates on gfns from any current address space.
-In certain cases we want to make sure we are not mapping SMRAM
-and for that we can use kvm_(un)map_gfn() that we are introducing
-in this patch.
+We will need a copy of tk->offs_boot in the next patch.  Store it and
+cleanup the struct: instead of storing tk->tkr_xxx.base with the tk->offs_boot
+included, store the raw value in struct pvclock_clock and sum it in
+do_monotonic_raw and do_realtime.   tk->tkr_xxx.xtime_nsec also moves
+to struct pvclock_clock.
 
-This is part of CVE-2019-3016.
+While at it, fix a (usually harmless) typo in do_monotonic_raw, which
+was using gtod->clock.shift instead of gtod->raw_clock.shift.
 
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
+Fixes: 53fafdbb8b21f ("KVM: x86: switch KVMCLOCK base to monotonic raw clock")
 Cc: stable@vger.kernel.org
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/kvm_host.h |    2 ++
- virt/kvm/kvm_main.c      |   29 ++++++++++++++++++++++++-----
- 2 files changed, 26 insertions(+), 5 deletions(-)
+ arch/x86/kvm/x86.c |   29 ++++++++++++-----------------
+ 1 file changed, 12 insertions(+), 17 deletions(-)
 
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -758,8 +758,10 @@ struct kvm_memory_slot *kvm_vcpu_gfn_to_
- kvm_pfn_t kvm_vcpu_gfn_to_pfn_atomic(struct kvm_vcpu *vcpu, gfn_t gfn);
- kvm_pfn_t kvm_vcpu_gfn_to_pfn(struct kvm_vcpu *vcpu, gfn_t gfn);
- int kvm_vcpu_map(struct kvm_vcpu *vcpu, gpa_t gpa, struct kvm_host_map *map);
-+int kvm_map_gfn(struct kvm_vcpu *vcpu, gfn_t gfn, struct kvm_host_map *map);
- struct page *kvm_vcpu_gfn_to_page(struct kvm_vcpu *vcpu, gfn_t gfn);
- void kvm_vcpu_unmap(struct kvm_vcpu *vcpu, struct kvm_host_map *map, bool dirty);
-+int kvm_unmap_gfn(struct kvm_vcpu *vcpu, struct kvm_host_map *map, bool dirty);
- unsigned long kvm_vcpu_gfn_to_hva(struct kvm_vcpu *vcpu, gfn_t gfn);
- unsigned long kvm_vcpu_gfn_to_hva_prot(struct kvm_vcpu *vcpu, gfn_t gfn, bool *writable);
- int kvm_vcpu_read_guest_page(struct kvm_vcpu *vcpu, gfn_t gfn, void *data, int offset,
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1809,12 +1809,13 @@ struct page *gfn_to_page(struct kvm *kvm
- }
- EXPORT_SYMBOL_GPL(gfn_to_page);
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1580,6 +1580,8 @@ struct pvclock_clock {
+ 	u64 mask;
+ 	u32 mult;
+ 	u32 shift;
++	u64 base_cycles;
++	u64 offset;
+ };
  
--static int __kvm_map_gfn(struct kvm_memory_slot *slot, gfn_t gfn,
-+static int __kvm_map_gfn(struct kvm_memslots *slots, gfn_t gfn,
- 			 struct kvm_host_map *map)
+ struct pvclock_gtod_data {
+@@ -1588,11 +1590,8 @@ struct pvclock_gtod_data {
+ 	struct pvclock_clock clock; /* extract of a clocksource struct */
+ 	struct pvclock_clock raw_clock; /* extract of a clocksource struct */
+ 
+-	u64		boot_ns_raw;
+-	u64		boot_ns;
+-	u64		nsec_base;
++	ktime_t		offs_boot;
+ 	u64		wall_time_sec;
+-	u64		monotonic_raw_nsec;
+ };
+ 
+ static struct pvclock_gtod_data pvclock_gtod_data;
+@@ -1600,10 +1599,6 @@ static struct pvclock_gtod_data pvclock_
+ static void update_pvclock_gtod(struct timekeeper *tk)
  {
- 	kvm_pfn_t pfn;
- 	void *hva = NULL;
- 	struct page *page = KVM_UNMAPPED_PAGE;
-+	struct kvm_memory_slot *slot = __gfn_to_memslot(slots, gfn);
+ 	struct pvclock_gtod_data *vdata = &pvclock_gtod_data;
+-	u64 boot_ns, boot_ns_raw;
+-
+-	boot_ns = ktime_to_ns(ktime_add(tk->tkr_mono.base, tk->offs_boot));
+-	boot_ns_raw = ktime_to_ns(ktime_add(tk->tkr_raw.base, tk->offs_boot));
  
- 	if (!map)
- 		return -EINVAL;
-@@ -1843,14 +1844,20 @@ static int __kvm_map_gfn(struct kvm_memo
- 	return 0;
+ 	write_seqcount_begin(&vdata->seq);
+ 
+@@ -1613,20 +1608,20 @@ static void update_pvclock_gtod(struct t
+ 	vdata->clock.mask		= tk->tkr_mono.mask;
+ 	vdata->clock.mult		= tk->tkr_mono.mult;
+ 	vdata->clock.shift		= tk->tkr_mono.shift;
++	vdata->clock.base_cycles	= tk->tkr_mono.xtime_nsec;
++	vdata->clock.offset		= tk->tkr_mono.base;
+ 
+ 	vdata->raw_clock.vclock_mode	= tk->tkr_raw.clock->archdata.vclock_mode;
+ 	vdata->raw_clock.cycle_last	= tk->tkr_raw.cycle_last;
+ 	vdata->raw_clock.mask		= tk->tkr_raw.mask;
+ 	vdata->raw_clock.mult		= tk->tkr_raw.mult;
+ 	vdata->raw_clock.shift		= tk->tkr_raw.shift;
+-
+-	vdata->boot_ns			= boot_ns;
+-	vdata->nsec_base		= tk->tkr_mono.xtime_nsec;
++	vdata->raw_clock.base_cycles	= tk->tkr_raw.xtime_nsec;
++	vdata->raw_clock.offset		= tk->tkr_raw.base;
+ 
+ 	vdata->wall_time_sec            = tk->xtime_sec;
+ 
+-	vdata->boot_ns_raw		= boot_ns_raw;
+-	vdata->monotonic_raw_nsec	= tk->tkr_raw.xtime_nsec;
++	vdata->offs_boot		= tk->offs_boot;
+ 
+ 	write_seqcount_end(&vdata->seq);
  }
+@@ -2096,10 +2091,10 @@ static int do_monotonic_raw(s64 *t, u64
  
-+int kvm_map_gfn(struct kvm_vcpu *vcpu, gfn_t gfn, struct kvm_host_map *map)
-+{
-+	return __kvm_map_gfn(kvm_memslots(vcpu->kvm), gfn, map);
-+}
-+EXPORT_SYMBOL_GPL(kvm_map_gfn);
-+
- int kvm_vcpu_map(struct kvm_vcpu *vcpu, gfn_t gfn, struct kvm_host_map *map)
- {
--	return __kvm_map_gfn(kvm_vcpu_gfn_to_memslot(vcpu, gfn), gfn, map);
-+	return __kvm_map_gfn(kvm_vcpu_memslots(vcpu), gfn, map);
- }
- EXPORT_SYMBOL_GPL(kvm_vcpu_map);
+ 	do {
+ 		seq = read_seqcount_begin(&gtod->seq);
+-		ns = gtod->monotonic_raw_nsec;
++		ns = gtod->raw_clock.base_cycles;
+ 		ns += vgettsc(&gtod->raw_clock, tsc_timestamp, &mode);
+-		ns >>= gtod->clock.shift;
+-		ns += gtod->boot_ns_raw;
++		ns >>= gtod->raw_clock.shift;
++		ns += ktime_to_ns(ktime_add(gtod->raw_clock.offset, gtod->offs_boot));
+ 	} while (unlikely(read_seqcount_retry(&gtod->seq, seq)));
+ 	*t = ns;
  
--void kvm_vcpu_unmap(struct kvm_vcpu *vcpu, struct kvm_host_map *map,
--		    bool dirty)
-+static void __kvm_unmap_gfn(struct kvm_memory_slot *memslot,
-+			struct kvm_host_map *map, bool dirty)
- {
- 	if (!map)
- 		return;
-@@ -1866,7 +1873,7 @@ void kvm_vcpu_unmap(struct kvm_vcpu *vcp
- #endif
- 
- 	if (dirty) {
--		kvm_vcpu_mark_page_dirty(vcpu, map->gfn);
-+		mark_page_dirty_in_slot(memslot, map->gfn);
- 		kvm_release_pfn_dirty(map->pfn);
- 	} else {
- 		kvm_release_pfn_clean(map->pfn);
-@@ -1875,6 +1882,18 @@ void kvm_vcpu_unmap(struct kvm_vcpu *vcp
- 	map->hva = NULL;
- 	map->page = NULL;
- }
-+
-+int kvm_unmap_gfn(struct kvm_vcpu *vcpu, struct kvm_host_map *map, bool dirty)
-+{
-+	__kvm_unmap_gfn(gfn_to_memslot(vcpu->kvm, map->gfn), map, dirty);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(kvm_unmap_gfn);
-+
-+void kvm_vcpu_unmap(struct kvm_vcpu *vcpu, struct kvm_host_map *map, bool dirty)
-+{
-+	__kvm_unmap_gfn(kvm_vcpu_gfn_to_memslot(vcpu, map->gfn), map, dirty);
-+}
- EXPORT_SYMBOL_GPL(kvm_vcpu_unmap);
- 
- struct page *kvm_vcpu_gfn_to_page(struct kvm_vcpu *vcpu, gfn_t gfn)
+@@ -2116,7 +2111,7 @@ static int do_realtime(struct timespec64
+ 	do {
+ 		seq = read_seqcount_begin(&gtod->seq);
+ 		ts->tv_sec = gtod->wall_time_sec;
+-		ns = gtod->nsec_base;
++		ns = gtod->clock.base_cycles;
+ 		ns += vgettsc(&gtod->clock, tsc_timestamp, &mode);
+ 		ns >>= gtod->clock.shift;
+ 	} while (unlikely(read_seqcount_retry(&gtod->seq, seq)));
 
 
