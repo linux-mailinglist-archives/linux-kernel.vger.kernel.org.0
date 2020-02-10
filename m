@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 352FF1573FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:08:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D83D157403
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:08:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727830AbgBJMHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:07:55 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:57547 "EHLO
+        id S1727873AbgBJMID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:08:03 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:35208 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727818AbgBJMHw (ORCPT
+        by vger.kernel.org with ESMTP id S1727858AbgBJMIB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:07:52 -0500
+        Mon, 10 Feb 2020 07:08:01 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581336471;
+        s=mimecast20190719; t=1581336481;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=jONdue0ovlDdMXefHuursR0LxtLZt0LrzIOWpvfMZzk=;
-        b=dZCmecK8EVRIkBz5/RxXkiaJUeD+wxOHsPIo6PsTCgtqm4pFQHBdGco9hQDRklN8YkrBaE
-        Uv1xowyw/bBTYO2X+dP9mj/cJl5lunOg7mLbKHU4JaABn2RxNQPi7F9EQPrUauLekvzOyl
-        1AuB3bqI1ksRfWQYPn+5g3dIkFu3Ftg=
+        bh=K5X/P5cTna//QaVwWn9YAqQiAEG6LJsWV3uuBWQnAic=;
+        b=K3Y3jgcJprrMlS6easp/m8ALh8lN6ijeCaJPxVJEz6bLgxNAy9sifu8sUz563iC8dLD7+x
+        sQbF/RJDd2pF4u4pL+LT4bZIAPo/hn9dOy6o2wwsskiuqszeyAE2D3CZ6EuMLldxAZ2SiJ
+        3Yo6crCjQYNUVpa8M62k6PBVBYrXjm4=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-353-Q1NGfm_wOESApJ57bhvzhQ-1; Mon, 10 Feb 2020 07:07:47 -0500
-X-MC-Unique: Q1NGfm_wOESApJ57bhvzhQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-181-kNyM94vDMtW_ufBV_bQLrQ-1; Mon, 10 Feb 2020 07:07:57 -0500
+X-MC-Unique: kNyM94vDMtW_ufBV_bQLrQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 251201005510;
-        Mon, 10 Feb 2020 12:07:45 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D6E55107ACCC;
+        Mon, 10 Feb 2020 12:07:54 +0000 (UTC)
 Received: from krava (unknown [10.43.17.9])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3A1A389F30;
-        Mon, 10 Feb 2020 12:07:42 +0000 (UTC)
-Date:   Mon, 10 Feb 2020 13:07:39 +0100
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EFFA95C1D4;
+        Mon, 10 Feb 2020 12:07:51 +0000 (UTC)
+Date:   Mon, 10 Feb 2020 13:07:49 +0100
 From:   Jiri Olsa <jolsa@redhat.com>
 To:     John Garry <john.garry@huawei.com>
 Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
@@ -44,14 +44,14 @@ Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         james.clark@arm.com, zhangshaokun@hisilicon.com,
         robin.murphy@arm.com
 Subject: Re: [PATCH RFC 3/7] perf jevents: Add support for a system events PMU
-Message-ID: <20200210120739.GE1907700@krava>
+Message-ID: <20200210120749.GF1907700@krava>
 References: <1579876505-113251-1-git-send-email-john.garry@huawei.com>
  <1579876505-113251-4-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1579876505-113251-4-git-send-email-john.garry@huawei.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,30 +61,43 @@ On Fri, Jan 24, 2020 at 10:35:01PM +0800, John Garry wrote:
 
 SNIP
 
-> +	return ret;
-> +}
+>  	- Set of 'PMU events tables' for all known CPUs in the architecture,
+> @@ -83,11 +93,11 @@ NOTES:
+>  	2. The 'pmu-events.h' has an extern declaration for the mapping table
+>  	   and the generated 'pmu-events.c' defines this table.
+>  
+> -	3. _All_ known CPU tables for architecture are included in the perf
+> -	   binary.
+> +	3. _All_ known CPU and system tables for architecture are included in
+> +	   the perf binary.
+>  
+> -At run time, perf determines the actual CPU it is running on, finds the
+> -matching events table and builds aliases for those events. This allows
+> +At run time, perf determines the actual CPU or system it is running on, finds
+> +the matching events table and builds aliases for those events. This allows
+>  users to specify events by their name:
+>  
+>  	$ perf stat -e pm_1plus_ppc_cmpl sleep 1
+> @@ -150,3 +160,18 @@ where:
+>  
+>  	i.e the three CPU models use the JSON files (i.e PMU events) listed
+>  	in the directory 'tools/perf/pmu-events/arch/x86/silvermont'.
 > +
->  /*
->   * If we fail to locate/process JSON and map files, create a NULL mapping
->   * table. This would at least allow perf to build even if we can't find/use
-> @@ -887,6 +917,7 @@ static int get_maxfds(void)
->   */
->  static FILE *eventsfp;
->  static char *mapfile;
-> +static char *mapfile_sys;
->  
->  static int is_leaf_dir(const char *fpath)
->  {
-> @@ -1024,6 +1055,11 @@ static int process_one_file(const char *fpath, const struct stat *sb,
->  			return 0;
->  		}
->  
-> +		if (!strcmp(bname, "mapfile_sys.csv")) {
-> +			mapfile_sys = strdup(fpath);
+> +The mapfile_sys.csv format is slightly different, in that it contains a SYSID
+> +instead of the CPUID:
+> +
+> +	Header line
+> +	SYSID,Version,Dir/path/name,Type
 
+can't we just add prefix to SYSID types? like:
 
-we could release that in the cleanup code at the end of main
-together with 'mapfile', which is also missing
+	SYSID-HIP08,v1,hisilicon/hip08/sys,sys
+	0x00000000480fd010,v1,hisilicon/hip08/cpu,core
+	0x00000000500f0000,v1,ampere/emag,core
+
+because the rest of the line is the same, right?
+
+seems to me that having one mapfile type would be less confusing
 
 jirka
 
