@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9DA21575AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:43:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AD431575AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:43:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730082AbgBJMnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:43:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37844 "EHLO mail.kernel.org"
+        id S1729879AbgBJMnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:43:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729498AbgBJMjm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:39:42 -0500
+        id S1729503AbgBJMjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:39:44 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77848208C4;
-        Mon, 10 Feb 2020 12:39:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A66D24683;
+        Mon, 10 Feb 2020 12:39:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338382;
-        bh=5TL30PjowtXTYNPP0SZ29e3wn97dh7wA6dQ0mz7WZXU=;
+        s=default; t=1581338383;
+        bh=w04zKDRhfpscS0qERuuz0M+TT8yN32ujVbARW/VIr00=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HlroFZVCXbX9yOfqmyHzAOj2G6q43tD5J/gsQRZWq4ORdQkCfQAf7/WBQOrZzDD48
-         Kk4mbCn79Dc+n3iKQf3N6psnQhwUF2MecrfUQJC1i9OfFf67cdZOAv9SuJvEnjwNc/
-         hkkOF7yL7HwGHEuKz3aeKBQ1+UTUuOcPLpc/wnYw=
+        b=XqMu7b9/QWW8SjnekWR/yG7kFH9EylQ2gF25oCRAenP8rPFsDDSpRxI4oegyLWSd1
+         ur0TH5eXgBMj8Y0+sYAfkpRQy+flrfdW66NCFWR+5CajsDOcOgjbYEOnNYgbUxKlks
+         s9rnU7VOU5ibzCyV8Y26q+62mXNe/3CLLo1xYK0I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helen Koike <helen.koike@collabora.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH 5.5 063/367] media: v4l2-rect.h: fix v4l2_rect_map_inside() top/left adjustments
-Date:   Mon, 10 Feb 2020 04:29:36 -0800
-Message-Id: <20200210122429.902124072@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.5 064/367] lib/test_kasan.c: fix memory leak in kmalloc_oob_krealloc_more()
+Date:   Mon, 10 Feb 2020 04:29:37 -0800
+Message-Id: <20200210122430.002358593@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -44,78 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Helen Koike <helen.koike@collabora.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit f51e50db4c20d46930b33be3f208851265694f3e upstream.
+commit 3e21d9a501bf99aee2e5835d7f34d8c823f115b5 upstream.
 
-boundary->width and boundary->height are sizes relative to
-boundary->left and boundary->top coordinates, but they were not being
-taken into consideration to adjust r->left and r->top, leading to the
-following error:
+In case memory resources for _ptr2_ were allocated, release them before
+return.
 
-Consider the follow as initial values for boundary and r:
+Notice that in case _ptr1_ happens to be NULL, krealloc() behaves
+exactly like kmalloc().
 
-struct v4l2_rect boundary = {
-	.left = 100,
-	.top = 100,
-	.width = 800,
-	.height = 600,
-}
-
-struct v4l2_rect r = {
-	.left = 0,
-	.top = 0,
-	.width = 1920,
-	.height = 960,
-}
-
-calling v4l2_rect_map_inside(&r, &boundary) was modifying r to:
-
-r = {
-	.left = 0,
-	.top = 0,
-	.width = 800,
-	.height = 600,
-}
-
-Which is wrongly outside the boundary rectangle, because:
-
-	v4l2_rect_set_max_size(r, boundary); // r->width = 800, r->height = 600
-	...
-	if (r->left + r->width > boundary->width) // true
-		r->left = boundary->width - r->width; // r->left = 800 - 800
-	if (r->top + r->height > boundary->height) // true
-		r->top = boundary->height - r->height; // r->height = 600 - 600
-
-Fix this by considering top/left coordinates from boundary.
-
-Fixes: ac49de8c49d7 ("[media] v4l2-rect.h: new header with struct v4l2_rect helper functions")
-Signed-off-by: Helen Koike <helen.koike@collabora.com>
-Cc: <stable@vger.kernel.org>      # for v4.7 and up
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Addresses-Coverity-ID: 1490594 ("Resource leak")
+Link: http://lkml.kernel.org/r/20200123160115.GA4202@embeddedor
+Fixes: 3f15801cdc23 ("lib: add kasan test module")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/media/v4l2-rect.h |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ lib/test_kasan.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/media/v4l2-rect.h
-+++ b/include/media/v4l2-rect.h
-@@ -63,10 +63,10 @@ static inline void v4l2_rect_map_inside(
- 		r->left = boundary->left;
- 	if (r->top < boundary->top)
- 		r->top = boundary->top;
--	if (r->left + r->width > boundary->width)
--		r->left = boundary->width - r->width;
--	if (r->top + r->height > boundary->height)
--		r->top = boundary->height - r->height;
-+	if (r->left + r->width > boundary->left + boundary->width)
-+		r->left = boundary->left + boundary->width - r->width;
-+	if (r->top + r->height > boundary->top + boundary->height)
-+		r->top = boundary->top + boundary->height - r->height;
- }
+--- a/lib/test_kasan.c
++++ b/lib/test_kasan.c
+@@ -158,6 +158,7 @@ static noinline void __init kmalloc_oob_
+ 	if (!ptr1 || !ptr2) {
+ 		pr_err("Allocation failed\n");
+ 		kfree(ptr1);
++		kfree(ptr2);
+ 		return;
+ 	}
  
- /**
 
 
