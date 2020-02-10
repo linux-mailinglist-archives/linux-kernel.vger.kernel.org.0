@@ -2,75 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5D3F15743A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:11:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B978C157440
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:12:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbgBJMLC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:11:02 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42172 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726950AbgBJMLC (ORCPT
+        id S1727634AbgBJMLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:11:34 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38543 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727436AbgBJMLe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:11:02 -0500
-Received: by mail-wr1-f65.google.com with SMTP id k11so7335525wrd.9
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 04:11:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=mrjbcYIstFUYdIKT7W4vXIKRiqhKmb5C1fAHjTQNfVo=;
-        b=mC1ZqE43inpzRuA3RQ315VOCdWHyo04HgMzT2jOC5H94PrmNUmEwcmr1WpDRSGQvo4
-         uNAklQecMY8PiYubg5ZkBC4LeAEC+bG1bYh0I4BfSInvf93BATTLT+6mYFg1uBrsu0F8
-         z6J30xDk3qQwLwdCuQOB1Ojm4BfJNyTm5OFQxbRvJ9yzZjg9BaN5loalvTIFLpvcbjHS
-         ogNybmaBsqYDaA1J8NrQYR/l6qe5qutzfYCeeczaTS9hQLQ5vdb1LmUGS7/+FGEl5XQS
-         Tk3XyKhdcIoETpFoWLpS0gSJ4aLKHz/IUqmIWZpIEgmB+02PTRXMvGa+kl2/KaeLgCcm
-         lOMw==
+        Mon, 10 Feb 2020 07:11:34 -0500
+Received: by mail-lj1-f196.google.com with SMTP id w1so6862392ljh.5;
+        Mon, 10 Feb 2020 04:11:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=mrjbcYIstFUYdIKT7W4vXIKRiqhKmb5C1fAHjTQNfVo=;
-        b=pHHxlYNoK6H0EvgmViMqWQbuoVPi39e76H0gmCH0TFBy/dUdgdHyX4StQh/7I1Yb8Q
-         FHRdJD8JJbPSGzhjK7GHplD3yZR/FSIsWN1Ja8cjMZ5nMOW+VuOF69TkkYU5NYCq8WQ3
-         lrxvKA8NS38TvQctLC21YhzPf4VXDL6d60zhYJFvF+ez6V18Czurm/FR60QBW+0OSl5H
-         tTWY5J47/M1CRxL+WhDgnQNJifSkWmki1MQgmRIO08fd1AaBa3JBjBf3V0vkhdEXFFsS
-         und4q7Ib0N8926sYFUf91IgeQkC8m6zCeGz17m0yrB7hZwhkv7eqsajwpX/C8KxhC2ZJ
-         94kQ==
-X-Gm-Message-State: APjAAAW3Z9KaDg2HfN29lrXJsJUzgYBMnEBaO1dEL4KuEN/wGiKx2IMF
-        4Ho2v8PnGf03+dRvrwnOXiwy4ajuSg/MSUdepVg=
-X-Google-Smtp-Source: APXvYqyjKWojNajhUCyhEnHMPQhT2pR8XdrNa7+5hKGZGitF8PRB11gWNMqkDoDw9o1jShFApEObZlqySTgN3r9/jXk=
-X-Received: by 2002:adf:f8c4:: with SMTP id f4mr1572457wrq.243.1581336660253;
- Mon, 10 Feb 2020 04:11:00 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=lB5Gls1bE5ZTM4FMK83JW7NErQx+DjSi+JPZdDq6b/Q=;
+        b=fgXpoB97Z2uDj0LPfwUfTrJuc/09JkoKK0RpXenJ2XGazDyNxD3DCtxP0hGTbdSejs
+         EXHfRZgdCNlm//vlzUNbx0WWptrNrbUhnJHDdzY+jCtEhlBXS9KCWgDoMl9wagNLYxTa
+         htuC/Ha+ickz1eJL/Po85qgTOrdY0zr1q1XcNFLMCyftFTX5powedeuzcEarraBE4fhu
+         HznNE7SUrH6/dXxtMkzAZqLEjLT5E8fhR7in1XpEZ6mIjm1bp6TGEd8fl3nfWRue3lRC
+         COo9lgE/gZYvtEa49PMGROahvpGVCf8X/vENiNhvKScrNsZ+Aum44C9ujHD61I/WVr2v
+         nPXw==
+X-Gm-Message-State: APjAAAU0MIoVI5lmgKFvsWRyklISXG1fsp+GR0F3/bSVnbrq3z5kakS0
+        VzPbPh4Ieso2YUacDpNFFKxhYYcU
+X-Google-Smtp-Source: APXvYqzBK31c7zKdZ+qT85bpPwAbr58MQfb3D4n4F3URm6rq4jWZ6p1cySqQbYIll3nD6/mRI1XBeg==
+X-Received: by 2002:a05:651c:239:: with SMTP id z25mr741897ljn.48.1581336690406;
+        Mon, 10 Feb 2020 04:11:30 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id b20sm133154ljp.20.2020.02.10.04.11.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Feb 2020 04:11:29 -0800 (PST)
+Date:   Mon, 10 Feb 2020 14:11:20 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     mikko.mutanen@fi.rohmeurope.com, markus.laine@fi.rohmeurope.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/3] Support ROHM BD99954 charger IC
+Message-ID: <cover.1581327762.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Received: by 2002:a1c:a710:0:0:0:0:0 with HTTP; Mon, 10 Feb 2020 04:10:59
- -0800 (PST)
-Reply-To: msjilmike101@gmail.com
-From:   Jillrita Mike <spa.rosa.mrs@gmail.com>
-Date:   Mon, 10 Feb 2020 13:10:59 +0100
-Message-ID: <CAPFFY3fH3MX+ZY+f1P9bEY=BzngQKUrRopngpQhPUYN9F4kLoA@mail.gmail.com>
-Subject: Dear Friend.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend.
+Support ROHM BD99954 Battery Management IC
 
- My  name is Jillrita Mike Riddering,  I am sending this brief letter
-to solicit your support and partnership to transfer $5.5 million US
-Dollars. This money belongs to my late father Mike Riddering,my father
-and my mother were among those that were killed on 2016 terrorist
-attack at Splendid Hotel Ouagadougou Burkina Faso, my mother did not
-die instantly but she later gave up at the hospital. we are from USA
-but
-reside in Burkina Faso, my father is An American missionary,
-before my father died with my mother at Splendid hotel,
+ROHM BD99954 is a Battery Management IC for 1-4 cell Lithium-Ion
+secondary battery. BD99954 is intended to be used in space-constraint
+equipment such as Low profile Notebook PC, Tablets and other
+applications.
 
-Check out the web; (https://www.bbc.com/news/world-africa-35332792)
-for more understanding, I shall send you more information and
-the bank details  when I receive positive response from you to follow up.
-contact my E-mail;
-msjilmike101@gmail.com
-Thanks
-Jillrita Mike
+Series introduces "linear ranges" helper intended to help converting
+real-world values to register values when conversion is linear. This
+version just meld the helpers in power/supply but this is hardly the
+correct place. Maybe they would fit regmap?
+
+This version of series introduces ROHM specific DT binding entries
+for few charger parameters. I think these parameters are pretty common
+and maybe the "rohm,"-prefix should be dropped and we should try having
+common properties for different chips?
+
+If this seems reasonable I can try drafting parser functions in
+power/supply framework and extract the corresponding DT yaml bindings
+into generic power-supply.yaml doc.
+
+Please let me know if you think these properties should not be common
+- or that the power/supply framework should not contain helpers for
+parsing these properties. Then I'll just drop the RFC from series and
+submit the ROHM specific properties and do DT parsing in this driver.
+
+Patch 1:
+	BD99954 charger DT binding docs
+Patch 2:
+	Linear ranges helpers
+Patch 3:
+	BD99954 driver
+
+---
+
+Matti Vaittinen (3):
+  dt_bindings: ROHM BD99954 Charger
+  power: Add linear_range helper
+  power: supply: Support ROHM bd99954 charger
+
+ .../bindings/power/supply/rohm,bd9995x.yaml   |  118 ++
+ drivers/power/supply/Kconfig                  |   14 +
+ drivers/power/supply/Makefile                 |    2 +
+ drivers/power/supply/bd70528-charger.c        |   65 +-
+ drivers/power/supply/bd99954-charger.c        | 1056 ++++++++++++++++
+ drivers/power/supply/linear-ranges.h          |   36 +
+ drivers/power/supply/linear_ranges.c          |   89 ++
+ include/linux/power/bd99954-charger.h         | 1075 +++++++++++++++++
+ 8 files changed, 2398 insertions(+), 57 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/rohm,bd9995x.yaml
+ create mode 100644 drivers/power/supply/bd99954-charger.c
+ create mode 100644 drivers/power/supply/linear-ranges.h
+ create mode 100644 drivers/power/supply/linear_ranges.c
+ create mode 100644 include/linux/power/bd99954-charger.h
+
+-- 
+2.21.0
+
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
