@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A65F11579C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:18:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98E241579C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:18:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728939AbgBJMhx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:37:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55878 "EHLO mail.kernel.org"
+        id S1728962AbgBJMh5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:37:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728429AbgBJMge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:34 -0500
+        id S1728441AbgBJMgg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:36:36 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3DEB20661;
-        Mon, 10 Feb 2020 12:36:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 514932051A;
+        Mon, 10 Feb 2020 12:36:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338193;
-        bh=io37CtxpcxYVCGqUBrxjjsavdxhBcKnT/OpkX6gQAJk=;
+        s=default; t=1581338194;
+        bh=Wr7nmr6SVOu771PfcvgyxO26NvzBCiIOiBCs3Lt01tw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C3yS6g8XY8k9x6FUae+SNSrf4KdA/n6ypBECEWb6rcj3oYS1Okb16UOCFMKcV+pSS
-         O8xREiaU0n+6E6SJqpJFOPSsHUSTFGSed5u1wjlAWm1+hVVmUqJGEp0NEbhwQ4y74t
-         QM6h5cehbgArDbn4mEAO4idL0edUBFF+25O5/qks=
+        b=z+VBtB5cx6hXpxIwYZmb9bRyjf4YFrJwAseiEvuvhLWuwoVwcWBakBEKl+ISY7++Y
+         a8CVh8Q8jnZsi0Jz3XSeEqm2YAlxtpFGh1rNtYvBS9rynjhMus7T9Fqfv8GCdpsPlp
+         2VuSyYFzkpcfu8AguXtWMikA+ELmT1vBfXFqfkD8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
-        Anand Jain <anand.jain@oracle.com>,
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 177/195] btrfs: use bool argument in free_root_pointers()
-Date:   Mon, 10 Feb 2020 04:33:55 -0800
-Message-Id: <20200210122322.455191783@linuxfoundation.org>
+Subject: [PATCH 4.19 178/195] btrfs: free block groups after freeing fs trees
+Date:   Mon, 10 Feb 2020 04:33:56 -0800
+Message-Id: <20200210122322.539836731@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
 References: <20200210122305.731206734@linuxfoundation.org>
@@ -45,71 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anand Jain <anand.jain@oracle.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-[ Upstream commit 4273eaff9b8d5e141113a5bdf9628c02acf3afe5 ]
+[ Upstream commit 4e19443da1941050b346f8fc4c368aa68413bc88 ]
 
-We don't need int argument bool shall do in free_root_pointers().  And
-rename the argument as it confused two people.
+Sometimes when running generic/475 we would trip the
+WARN_ON(cache->reserved) check when free'ing the block groups on umount.
+This is because sometimes we don't commit the transaction because of IO
+errors and thus do not cleanup the tree logs until at umount time.
 
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: Anand Jain <anand.jain@oracle.com>
+These blocks are still reserved until they are cleaned up, but they
+aren't cleaned up until _after_ we do the free block groups work.  Fix
+this by moving the free after free'ing the fs roots, that way all of the
+tree logs are cleaned up and we have a properly cleaned fs.  A bunch of
+loops of generic/475 confirmed this fixes the problem.
+
+CC: stable@vger.kernel.org # 4.9+
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/disk-io.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ fs/btrfs/disk-io.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 15212e835e02c..d296ea329bd4e 100644
+index d296ea329bd4e..9e467e8a8cb5d 100644
 --- a/fs/btrfs/disk-io.c
 +++ b/fs/btrfs/disk-io.c
-@@ -2031,7 +2031,7 @@ static void free_root_extent_buffers(struct btrfs_root *root)
- }
- 
- /* helper to cleanup tree roots */
--static void free_root_pointers(struct btrfs_fs_info *info, int chunk_root)
-+static void free_root_pointers(struct btrfs_fs_info *info, bool free_chunk_root)
- {
- 	free_root_extent_buffers(info->tree_root);
- 
-@@ -2040,7 +2040,7 @@ static void free_root_pointers(struct btrfs_fs_info *info, int chunk_root)
- 	free_root_extent_buffers(info->csum_root);
- 	free_root_extent_buffers(info->quota_root);
- 	free_root_extent_buffers(info->uuid_root);
--	if (chunk_root)
-+	if (free_chunk_root)
- 		free_root_extent_buffers(info->chunk_root);
- 	free_root_extent_buffers(info->free_space_root);
- }
-@@ -3273,7 +3273,7 @@ int open_ctree(struct super_block *sb,
- 	btrfs_put_block_group_cache(fs_info);
- 
- fail_tree_roots:
--	free_root_pointers(fs_info, 1);
-+	free_root_pointers(fs_info, true);
+@@ -3983,11 +3983,18 @@ void close_ctree(struct btrfs_fs_info *fs_info)
  	invalidate_inode_pages2(fs_info->btree_inode->i_mapping);
+ 	btrfs_stop_all_workers(fs_info);
  
- fail_sb_buffer:
-@@ -3301,7 +3301,7 @@ int open_ctree(struct super_block *sb,
- 	if (!btrfs_test_opt(fs_info, USEBACKUPROOT))
- 		goto fail_tree_roots;
- 
--	free_root_pointers(fs_info, 0);
-+	free_root_pointers(fs_info, false);
- 
- 	/* don't use the log in recovery mode, it won't be valid */
- 	btrfs_set_super_log_root(disk_super, 0);
-@@ -3986,7 +3986,7 @@ void close_ctree(struct btrfs_fs_info *fs_info)
- 	btrfs_free_block_groups(fs_info);
- 
+-	btrfs_free_block_groups(fs_info);
+-
  	clear_bit(BTRFS_FS_OPEN, &fs_info->flags);
--	free_root_pointers(fs_info, 1);
-+	free_root_pointers(fs_info, true);
+ 	free_root_pointers(fs_info, true);
  
++	/*
++	 * We must free the block groups after dropping the fs_roots as we could
++	 * have had an IO error and have left over tree log blocks that aren't
++	 * cleaned up until the fs roots are freed.  This makes the block group
++	 * accounting appear to be wrong because there's pending reserved bytes,
++	 * so make sure we do the block group cleanup afterwards.
++	 */
++	btrfs_free_block_groups(fs_info);
++
  	iput(fs_info->btree_inode);
  
+ #ifdef CONFIG_BTRFS_FS_CHECK_INTEGRITY
 -- 
 2.20.1
 
