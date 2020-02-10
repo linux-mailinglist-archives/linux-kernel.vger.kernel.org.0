@@ -2,111 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE2451580CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 18:11:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41FEF15808F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 18:07:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728178AbgBJRKM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 12:10:12 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:17750 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728149AbgBJRKJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 12:10:09 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e418e300000>; Mon, 10 Feb 2020 09:09:04 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 10 Feb 2020 09:10:07 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 10 Feb 2020 09:10:07 -0800
-Received: from [10.2.168.250] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 10 Feb
- 2020 17:10:07 +0000
-Subject: Re: [PATCH v5 10/12] mm/gup: /proc/vmstat: pin_user_pages (FOLL_PIN)
- reporting
-To:     Jan Kara <jack@suse.cz>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20200207033735.308000-1-jhubbard@nvidia.com>
- <20200207033735.308000-11-jhubbard@nvidia.com>
- <20200210101629.GC12923@quack2.suse.cz>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <7fcc15f4-e548-78bc-788d-f93293a1be74@nvidia.com>
-Date:   Mon, 10 Feb 2020 09:07:07 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S1728126AbgBJRHe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 12:07:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47318 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728102AbgBJRH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 12:07:29 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 912D32080C;
+        Mon, 10 Feb 2020 17:07:28 +0000 (UTC)
+Date:   Mon, 10 Feb 2020 12:07:26 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] tools/bootconfig: Fix wrong __VA_ARGS__ usage
+Message-ID: <20200210120726.55c060f1@gandalf.local.home>
+In-Reply-To: <87y2tazs7h.fsf@mpe.ellerman.id.au>
+References: <87o8ua1rg3.fsf@mpe.ellerman.id.au>
+        <158108370130.2758.10893830923800978011.stgit@devnote2>
+        <87y2tazs7h.fsf@mpe.ellerman.id.au>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20200210101629.GC12923@quack2.suse.cz>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1581354545; bh=GFFwsx57sCxj2sUkp7PeUAMx5ZDz2er8KdXyQLBksyc=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=mgiGuvh4a8/j5qP8rVJeI+8VQbHf2jVdOGqN8dzHXZ+aeb7PZyeJbMOhxY+1OUqQ5
-         e12UVW9rEfOpg4y6UBRpdDTiOg0K2Lz6Jd2BtFewg+9KyFwPzPT7AP3Wzt6s+CkwmB
-         rUuU0Q0ki0c9cXfzej3YnAfaBNDiecxV+Lx5Xmw8bNccE+px/ak0HTpJUmMOyZ0hgK
-         9nmpeudR7hWQ2f8b5IKfN1LJlE+w/bvqIwHXLJmN2ZGvt0UHj2RPFjU2kgHWUG+2cM
-         wTUjRMQp5P5znDTg5h0Rzk288BjQiK8Jkvj7oxWo3tMlHRD66hPcedX3dSQGyreutP
-         p41fLIcZHUnWg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/10/20 2:16 AM, Jan Kara wrote:
-> On Thu 06-02-20 19:37:33, John Hubbard wrote:
->> @@ -2258,6 +2268,8 @@ static int record_subpages(struct page *page, unsigned long addr,
->>   
->>   static void put_compound_head(struct page *page, int refs, unsigned int flags)
->>   {
->> +	int orig_refs = refs;
->> +
->>   	if (flags & FOLL_PIN) {
->>   		if (hpage_pincount_available(page))
->>   			hpage_pincount_sub(page, refs);
->> @@ -2273,6 +2285,8 @@ static void put_compound_head(struct page *page, int refs, unsigned int flags)
->>   	if (refs > 1)
->>   		page_ref_sub(page, refs - 1);
->>   	put_page(page);
->> +
->> +	mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_RELEASED, orig_refs);
->>   }
+On Mon, 10 Feb 2020 20:50:42 +1100
+Michael Ellerman <mpe@ellerman.id.au> wrote:
+
+> > diff --git a/tools/bootconfig/include/linux/printk.h b/tools/bootconfig/include/linux/printk.h
+> > index 017bcd6912a5..e978a63d3222 100644
+> > --- a/tools/bootconfig/include/linux/printk.h
+> > +++ b/tools/bootconfig/include/linux/printk.h
+> > @@ -7,7 +7,7 @@
+> >  /* controllable printf */
+> >  extern int pr_output;
+> >  #define printk(fmt, ...)	\
+> > -	(pr_output ? printf(fmt, __VA_ARGS__) : 0)
+> > +	(pr_output ? printf(fmt, ##__VA_ARGS__) : 0)
+> >  
+> >  #define pr_err printk
+> >  #define pr_warn	printk  
 > 
-> Still not quite happy about this :) Now you update NR_FOLL_PIN_RELEASED
-> even if 'flags' don't have FOLL_PIN set. You need to have the
-> mod_node_page_state() inside the "if (flags & FOLL_PIN)" branch above...
-> 
-> 									Honza
+> Tested-by: Michael Ellerman <mpe@ellerman.id.au>
 
-Arggh, yes that's true. Thanks for catching that, will fix in v6.
+Thanks! I'll rebase my branch with this.
 
-
-thanks,
--- 
-John Hubbard
-NVIDIA
-  
+-- Steve
