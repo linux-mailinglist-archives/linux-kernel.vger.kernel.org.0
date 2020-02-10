@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99BEE15788E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:08:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E485157799
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:02:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728942AbgBJMj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:39:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59600 "EHLO mail.kernel.org"
+        id S1730451AbgBJNBE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:01:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728810AbgBJMhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:35 -0500
+        id S1729843AbgBJMkz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:55 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1406720661;
-        Mon, 10 Feb 2020 12:37:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E77820661;
+        Mon, 10 Feb 2020 12:40:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338255;
-        bh=KzrcerYRpkBvM8Ls6B8F9C2ScMYkk16N/YAjQhTmnEs=;
+        s=default; t=1581338455;
+        bh=C1+/RlnZs2Nk2K1ETRDZAwhJ4JS4GCmzt4qAEf3KLtc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d/9YhmnUyc6PP5rhAoROLY+MI7HyI2PT86AqHsdY9gC0DZ5PizPVXB4mbS85oqPUX
-         53SH0f4bU/47ynH6NmC9fHYWUnNTfI6Fg0zIjS2PHpOobTQOWznBmFWp3mUgVsmbP6
-         HC5KMk8PQl31b0WvwrHenS7RdQv9LRNeRSptBVtQ=
+        b=ohnt3e5ABLf30wvrLoJL1BFAWAze1vKU2lFy/88DN9Y8mTvb4dQv99Z3mcPjBex/Y
+         NaeMQgQNzfwqZ/CtfA1TjY6/or39rsR4MFUEvXYYvZCqYV1bD6VBTglODhHFOkNnlj
+         OdmnimwRA+dV+Vat8ek2QfCxp0HHclbCxd2JePeg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 5.4 121/309] f2fs: fix dcache lookup of !casefolded directories
-Date:   Mon, 10 Feb 2020 04:31:17 -0800
-Message-Id: <20200210122418.109052516@linuxfoundation.org>
+        stable@vger.kernel.org, William Smith <williampsmith@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Yonghong Song <yhs@fb.com>
+Subject: [PATCH 5.5 165/367] libbpf: Fix realloc usage in bpf_core_find_cands
+Date:   Mon, 10 Feb 2020 04:31:18 -0800
+Message-Id: <20200210122440.102702050@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Andrii Nakryiko <andriin@fb.com>
 
-commit 5515eae647426169e4b7969271fb207881eba7f6 upstream.
+commit 35b9211c0a2427e8f39e534f442f43804fc8d5ca upstream.
 
-Do the name comparison for non-casefolded directories correctly.
+Fix bug requesting invalid size of reallocated array when constructing CO-RE
+relocation candidate list. This can cause problems if there are many potential
+candidates and a very fine-grained memory allocator bucket sizes are used.
 
-This is analogous to ext4's commit 66883da1eee8 ("ext4: fix dcache
-lookup of !casefolded directories").
-
-Fixes: 2c2eb7a300cd ("f2fs: Support case-insensitive file name lookups")
-Cc: <stable@vger.kernel.org> # v5.4+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Fixes: ddc7c3042614 ("libbpf: implement BPF CO-RE offset relocation algorithm")
+Reported-by: William Smith <williampsmith@fb.com>
+Signed-off-by: Andrii Nakryiko <andriin@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Yonghong Song <yhs@fb.com>
+Link: https://lore.kernel.org/bpf/20200124201847.212528-1-andriin@fb.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/f2fs/dir.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/lib/bpf/libbpf.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -1072,7 +1072,7 @@ static int f2fs_d_compare(const struct d
- 	if (!IS_CASEFOLDED(dentry->d_parent->d_inode)) {
- 		if (len != name->len)
- 			return -1;
--		return memcmp(str, name, len);
-+		return memcmp(str, name->name, len);
- 	}
- 
- 	return f2fs_ci_compare(dentry->d_parent->d_inode, name, &qstr, false);
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -2744,7 +2744,9 @@ static struct ids_vec *bpf_core_find_can
+ 		if (strncmp(local_name, targ_name, local_essent_len) == 0) {
+ 			pr_debug("[%d] %s: found candidate [%d] %s\n",
+ 				 local_type_id, local_name, i, targ_name);
+-			new_ids = realloc(cand_ids->data, cand_ids->len + 1);
++			new_ids = reallocarray(cand_ids->data,
++					       cand_ids->len + 1,
++					       sizeof(*cand_ids->data));
+ 			if (!new_ids) {
+ 				err = -ENOMEM;
+ 				goto err_out;
 
 
