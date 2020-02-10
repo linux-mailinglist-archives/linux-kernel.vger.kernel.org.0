@@ -2,100 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F1E7156D7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 02:57:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88674156D6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 02:44:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbgBJBzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 20:55:53 -0500
-Received: from mga01.intel.com ([192.55.52.88]:51100 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726207AbgBJBzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 20:55:52 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2020 17:55:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,423,1574150400"; 
-   d="asc'?scan'208";a="405439459"
-Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.13.14])
-  by orsmga005.jf.intel.com with ESMTP; 09 Feb 2020 17:55:49 -0800
-Date:   Mon, 10 Feb 2020 09:43:14 +0800
-From:   Zhenyu Wang <zhenyuw@linux.intel.com>
-To:     Igor Druzhinin <igor.druzhinin@citrix.com>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org, airlied@linux.ie,
-        joonas.lahtinen@linux.intel.com, jani.nikula@linux.intel.com,
-        zhenyuw@linux.intel.com, daniel@ffwll.ch, rodrigo.vivi@intel.com,
-        zhi.a.wang@intel.com
-Subject: Re: [PATCH] drm/i915/gvt: more locking for ppgtt mm LRU list
-Message-ID: <20200210014314.GA28133@zhen-hp.sh.intel.com>
-Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
-References: <1580742421-25194-1-git-send-email-igor.druzhinin@citrix.com>
+        id S1727029AbgBJBno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 20:43:44 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:44008 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbgBJBno (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Feb 2020 20:43:44 -0500
+Received: by mail-ot1-f65.google.com with SMTP id p8so4779825oth.10
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Feb 2020 17:43:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=HdwoUvKACAu13YTpgkcA2GYzOLF4EXKUPzTpSp3Y354=;
+        b=OWDasQsz0mzVFR9NAt3/dyP6IIx6MvuQQk/PMLMcNc5J5Q2l/ZX9JlPy3ONAjfV1M+
+         sEuBiVbCoGOeWqeDw32+6/YQUu6fznqbJ8ZexyTCMHECPY64+PRjoV1PwfDHfxiuqPig
+         m2wz/WYPPexf1OuqvnAwKlwoUCD3O0DULryKA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=HdwoUvKACAu13YTpgkcA2GYzOLF4EXKUPzTpSp3Y354=;
+        b=Mw5e/nHvmW/AOUvuciP6RXSk3m97osx232gc2rxJ8PQv2JpJ/01oUjaTlpWzee12rD
+         SKhz55xnOY89ng3hBjcxM2CBifYpYH/2ObEJ120dueK5b0Uyyj0Y3MPkazX/PBEB1Ri7
+         u6DzriD6b7CEgl9DBjze5cXW4T66byWREzgTGT3tEJDv30ksVVVznWZcYDM2t/1fs9PO
+         UAs4FFQlLuMDbA3i4CaXqMLbfCKba8EKiLyo8MsCmi7ygmkgGFdq+DPURyEXg1V9ep3E
+         WbbMIBR8vFDxfGSAwOmV2OOkYMPZvnqyq/HO9ReQzz7KJ/d5JvTmQ4FJDRK2mjTsi0ZJ
+         cMtw==
+X-Gm-Message-State: APjAAAUKuB7mJ1/AJvMByH2Z7APrGH82ymfpEsSKJ8fP+c4nUNaiDWTi
+        HghsXZ6haNlY2FheA/2M/oFowA==
+X-Google-Smtp-Source: APXvYqxJIiGcpGRtLkseu5csk6qVTgBaW3SqsXIHMJ1sQpVYEgldsMB1fM/RGLKTb04sdm8bPtwUSQ==
+X-Received: by 2002:a9d:7a89:: with SMTP id l9mr6809190otn.228.1581299023111;
+        Sun, 09 Feb 2020 17:43:43 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id y25sm3999524oto.27.2020.02.09.17.43.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Feb 2020 17:43:42 -0800 (PST)
+Date:   Sun, 9 Feb 2020 17:43:40 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        arjan@linux.intel.com, rick.p.edgecombe@intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+Subject: Re: [RFC PATCH 06/11] x86: make sure _etext includes function
+ sections
+Message-ID: <202002091742.7B1E6BF19@keescook>
+References: <75f0bd0365857ba4442ee69016b63764a8d2ad68.camel@linux.intel.com>
+ <B413445A-F1F0-4FB7-AA9F-C5FF4CEFF5F5@amacapital.net>
+ <20200207092423.GC14914@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="KsGdsel6WgEHnImy"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1580742421-25194-1-git-send-email-igor.druzhinin@citrix.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200207092423.GC14914@hirez.programming.kicks-ass.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 07, 2020 at 10:24:23AM +0100, Peter Zijlstra wrote:
+> On Thu, Feb 06, 2020 at 12:02:36PM -0800, Andy Lutomirski wrote:
+> > Also, in the shiny new era of
+> > Intel-CPUs-can’t-handle-Jcc-spanning-a-cacheline, function alignment
+> > may actually matter.
+> 
+> *groan*, indeed. I just went and looked that up. I missed this one in
+> all the other fuss :/
+> 
+> So per:
+> 
+>   https://www.intel.com/content/dam/support/us/en/documents/processors/mitigations-jump-conditional-code-erratum.pdf
+> 
+> the toolchain mitigations only work if the offset in the ifetch window
+> (32 bytes) is preserved. Which seems to suggest we ought to align all
+> functions to 32byte before randomizing it, otherwise we're almost
+> guaranteed to change this offset by the act of randomizing.
 
---KsGdsel6WgEHnImy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Wheee! This sounds like in needs to be fixed generally, yes? (And I see
+"FUNCTION_ALIGN" macro is currently 16 bytes...
 
-On 2020.02.03 15:07:01 +0000, Igor Druzhinin wrote:
-> When the lock was introduced in 72aabfb862e40 ("drm/i915/gvt: Add mutual
-> lock for ppgtt mm LRU list") one place got lost.
->=20
-> Signed-off-by: Igor Druzhinin <igor.druzhinin@citrix.com>
-> ---
->  drivers/gpu/drm/i915/gvt/gtt.c | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/i915/gvt/gtt.c b/drivers/gpu/drm/i915/gvt/gt=
-t.c
-> index 34cb404..4a48280 100644
-> --- a/drivers/gpu/drm/i915/gvt/gtt.c
-> +++ b/drivers/gpu/drm/i915/gvt/gtt.c
-> @@ -1956,7 +1956,11 @@ void _intel_vgpu_mm_release(struct kref *mm_ref)
-> =20
->  	if (mm->type =3D=3D INTEL_GVT_MM_PPGTT) {
->  		list_del(&mm->ppgtt_mm.list);
-> +
-> +		mutex_lock(&mm->vgpu->gvt->gtt.ppgtt_mm_lock);
->  		list_del(&mm->ppgtt_mm.lru_list);
-> +		mutex_unlock(&mm->vgpu->gvt->gtt.ppgtt_mm_lock);
-> +
->  		invalidate_ppgtt_mm(mm);
->  	} else {
->  		vfree(mm->ggtt_mm.virtual_ggtt);
-> --=20
-
-Thanks for the fix!
-
-Reviewed-by: Zhenyu Wang <zhenyuw@linux.intel.com>
-
---=20
-Open Source Technology Center, Intel ltd.
-
-$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
-
---KsGdsel6WgEHnImy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCXkC1MQAKCRCxBBozTXgY
-J4abAJ9rGEjuKM3P5001pSAgbWTxt3gc1gCfQm1iVfei/7raZuyFiFZ7OkbVwJE=
-=y1cr
------END PGP SIGNATURE-----
-
---KsGdsel6WgEHnImy--
+-- 
+Kees Cook
