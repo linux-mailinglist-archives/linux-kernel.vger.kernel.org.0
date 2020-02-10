@@ -2,87 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 744DD15726B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 11:04:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C563515724F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 11:01:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727561AbgBJKET (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 05:04:19 -0500
-Received: from srv1.deutnet.info ([116.203.153.70]:47860 "EHLO
-        srv1.deutnet.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727061AbgBJKER (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 05:04:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=deutnet.info; s=default; h=In-Reply-To:Message-Id:Date:Subject:Cc:To:From;
-         bh=3Ciuxvpq/QgkL4EE+nmSla5AVI07VMG5GvViEqviaBw=; b=QXIKRKzj2jZBrINaRH8wb1ds4
-        UIxerPh66Uh6wFQdEZiNV3dKXxyxFrmM9fEbA6tahtn/+Vf+3JdbCvwJAjN8iO/UQFF3w5eQk6IiG
-        aY5G3SZnYK3ZPlpn45BXw9owc8jcWPclOsTOkVT9cIBLahyw0QtuezPjLvpvIN+NHYqe7yVYRDlWe
-        t2ma5N8D/Gxdt3nwNjqJXRas64gu9f6kMBIjymL6CEjOcOciVFwAwhR0kDe9ouVTEri+0UiyqACwW
-        HGDivztK3FRW9Io0dEBMsbpQrgzJaBDK7czmbY+pXjhXNyjNvHfqZ5Wg7vqLY4P1Ff6iCsKzpAYGE
-        f6QbYeVEw==;
-Received: from [2001:bc8:3dc9::1] (helo=srv100.deutnet.info)
-        by srv1.deutnet.info with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <agriveaux@deutnet.info>)
-        id 1j15Ma-0007ft-1d; Mon, 10 Feb 2020 10:28:20 +0100
-Received: from agriveaux by srv100.deutnet.info with local (Exim 4.92)
-        (envelope-from <agriveaux@deutnet.info>)
-        id 1j15MZ-00DSp5-N2; Mon, 10 Feb 2020 10:28:19 +0100
-From:   agriveaux@deutnet.info
-To:     robh+dt@kernel.org, mark.rutland@arm.com, mripard@kernel.org,
-        wens@csie.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        agriveaux@deutnet.info
-Subject: [PATCH] ARM: dts: sun5i: Add dts for inet86v_rev2
-Date:   Mon, 10 Feb 2020 10:27:36 +0100
-Message-Id: <20200210092736.3208998-2-agriveaux@deutnet.info>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200210092736.3208998-1-agriveaux@deutnet.info>
-References: <20200210092736.3208998-1-agriveaux@deutnet.info>
+        id S1727429AbgBJKBy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 05:01:54 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2392 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726451AbgBJKBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 05:01:54 -0500
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 9758D9C9E66D8A9052AC;
+        Mon, 10 Feb 2020 10:01:51 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
+ by smtpsuk.huawei.com (10.201.108.35) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Mon, 10 Feb 2020 10:01:43 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <James.Bottomley@HansenPartnership.com>,
+        <jarkko.sakkinen@linux.intel.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v3 0/8] ima: support stronger algorithms for attestation
+Date:   Mon, 10 Feb 2020 11:00:40 +0100
+Message-ID: <20200210100048.21448-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.160]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre GRIVEAUX <agriveaux@deutnet.info>
+IMA extends Platform Configuration Registers (PCRs) of the TPM to give a
+proof to a remote verifier that the measurement list contains all
+measurements done by the kernel and that the list was not maliciously
+modified by an attacker.
 
-Add Inet 86V Rev 2 support, based upon Inet 86VS.
+IMA was originally designed to extend PCRs with a SHA1 digest, provided
+with the measurement list, and was subsequently updated to extend all PCR
+banks in case a TPM 2.0 is used. Non-SHA1 PCR banks are not supposed to be
+used for remote attestation, as they are extended with a SHA1 digest padded
+with zeros, which does not increase the strength.
 
-Missing things:
-- Accelerometer (MXC6225X)
-- Touchpanel (Sitronix SL1536)
-- Nand (29F32G08CBACA)
-- Camera (HCWY0308)
+This patch set addresses this issue by extending PCRs with the digest of
+the measurement entry calculated with the crypto subsystem. The list of
+algorithms used to calculate the digest are taken from
+ima_tpm_chip->allocated_banks, returned by the TPM driver. The SHA1 digest
+is always calculated, as SHA1 still remains the default algorithm for the
+template digest in the measurement list.
+
+This patch set also makes two additional modifications related to the usage
+of hash algorithms. First, since now the template digest for the default
+IMA algorithm is always calculated, this is used for hash collision
+detection, to check if there are duplicate measurement entries.
+
+Second, it uses the default IMA hash algorithm to calculate the boot
+aggregate, assuming that the corresponding PCR bank is currently allocated.
+Otherwise, it finds the SHA256 PCR bank (mandatory for TPM 2.0 in TCG PC
+Client specification). Lastly, if that bank was not found, it selects the
+first PCR bank. If the TPM algorithm ID of the first PCR bank is not mapped
+to a crypto ID, boot_aggregate is set to zero.
+
+This patch set does not yet modify the format of the measurement list to
+provide the digests passed to the TPM. However, reconstructing the value of
+the quoted PCR is still possible for the verifier by calculating the digest
+on measurement data found in binary_runtime_measurements.
+
+attest-tools (https://github.com/euleros/attest-tools, branch 0.2-devel)
+has the ability to parse the BIOS and IMA event logs, and to compare
+boot_aggregate with the digest of final PCR values obtained by performing
+in software the PCR extend operation with digests in the BIOS event log.
+
+To perform the test, it is necessary to have a complete BIOS event log and
+to apply the boot_aggregate patches. It would be possible to use qemu and
+swtpm from Stefan Berger, but at the moment it is necessary to change the
+ACPI parser in drivers/char/tpm/event_log/acpi.c to accept TPM 2.0 and to
+return EFI_TCG2_EVENT_LOG_FORMAT_TCG_2.
+
+Create req.json with this content:
 ---
- arch/arm/boot/dts/sun5i-a13-inet-86v-rev2.dts | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 arch/arm/boot/dts/sun5i-a13-inet-86v-rev2.dts
+{
+  "reqs":{
+    "dummy|verify":"",
+    "ima_boot_aggregate|verify":""
+  }
+}
+---
 
-diff --git a/arch/arm/boot/dts/sun5i-a13-inet-86v-rev2.dts b/arch/arm/boot/dts/sun5i-a13-inet-86v-rev2.dts
-new file mode 100644
-index 000000000000..e73abb9a1e32
---- /dev/null
-+++ b/arch/arm/boot/dts/sun5i-a13-inet-86v-rev2.dts
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright 2020 Alexandre Griveaux <agriveaux@deutnet.info>
-+ *
-+ * Minimal dts file for the iNet 86V
-+ */
-+
-+/dts-v1/;
-+
-+#include "sun5i-a13.dtsi"
-+#include "sun5i-reference-design-tablet.dtsi"
-+
-+/ {
-+	model = "iNET 86V Rev 02";
-+	compatible = "inet,86v-rev2", "allwinner,sun5i-a13";
-+
-+};
+With the requirements above, attest-tools verifies boot_aggregate and
+accepts any other entry in the event logs.
+
+On server side run:
+# attest_ra_server -p 10 -r req.json -s -i
+
+-s disables TPM signature verification
+-i allows IMA violations
+
+To enable TPM signature verification it is necessary to have a valid AK
+certificate. It can be obtained by following the instructions at:
+
+https://github.com/euleros/attest-tools/blob/0.2-devel/README
+
+On client side run:
+# echo test > aik_cert.pem
+# echo aik_cert.pem > list_privacy_ca
+# attest_ra_client -A
+
+The commands above generate an AK and tell attest-tools to use a dummy AK
+certificate.
+
+# attest_ra_client -s <server IP> -q -p 10 -P <PCR algo> -b -i
+
+The command above sends the TPM quote and the event logs to the RA server
+and gets the response (successful/failed verification).
+
+-b includes the BIOS event log from securityfs
+-i includes the IMA event log from securityfs
+
+To check that IMA extends non-SHA1 PCR banks with an appropriate digest,
+use -P sha256, so that attest_ra_client selects the SHA256 PCR bank. To
+check that boot_aggregate is calculated properly, set ima_hash=sha256 in
+the kernel command line.
+
+Changelog
+
+v2:
+- add NR_BANKS macro to return zero if ima_tpm_chip is NULL
+- replace ima_num_template_digests with
+  NR_BANKS(ima_tpm_chip) + ima_extra_slots (suggested by Mimi)
+- add __ro_after_init to declaration of ima_sha1_idx ima_hash_algo_idx and
+  ima_extra_slots (suggested by Mimi)
+- declare ima_init_ima_crypto() as static (reported by kbuild test robot)
+- use ima_sha1_idx and ima_hash_algo_idx to access ima_algo_array elements
+  in ima_init_crypto()
+
+v1:
+- move ima_sha1_idx and ima_hash_algo_idx to ima_crypto.c
+- introduce ima_num_template_digests (suggested by Mimi)
+- determine ima_num_template_digests before allocating ima_algo_array
+  (suggested by Mimi)
+- replace kmalloc_array() with kcalloc() in ima_init_crypto() (suggested by
+  Mimi)
+- check if ima_tpm_chip is NULL
+
+Roberto Sassu (8):
+  tpm: Initialize crypto_id of allocated_banks to HASH_ALGO__LAST
+  ima: Switch to ima_hash_algo for boot aggregate
+  ima: Evaluate error in init_ima()
+  ima: Store template digest directly in ima_template_entry
+  ima: Switch to dynamically allocated buffer for template digests
+  ima: Allocate and initialize tfm for each PCR bank
+  ima: Calculate and extend PCR with digests in ima_template_entry
+  ima: Use ima_hash_algo for collision detection in the measurement list
+
+ drivers/char/tpm/tpm2-cmd.c           |   2 +
+ security/integrity/ima/ima.h          |  10 +-
+ security/integrity/ima/ima_api.c      |  20 +--
+ security/integrity/ima/ima_crypto.c   | 244 ++++++++++++++++++++++----
+ security/integrity/ima/ima_fs.c       |   4 +-
+ security/integrity/ima/ima_init.c     |  22 ++-
+ security/integrity/ima/ima_main.c     |   3 +
+ security/integrity/ima/ima_queue.c    |  36 ++--
+ security/integrity/ima/ima_template.c |  22 ++-
+ 9 files changed, 290 insertions(+), 73 deletions(-)
+
 -- 
-2.20.1
+2.17.1
 
