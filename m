@@ -2,103 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFF1A158420
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 21:09:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C26C115841D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 21:09:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbgBJUJ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 15:09:27 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36409 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727003AbgBJUJ0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 15:09:26 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p17so657761wma.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 12:09:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wKboNi//DgTEz5deRYoAuburODisq7rqrYp491IRSic=;
-        b=M2/a83Nm4BdBUv9gXQ/mBPZMXXPBjlTQ+Of0m9y1Zsokt99NGzfHs9u8XYqi6MfyOe
-         h28q90RGkIjP5glo6hbfrQe2k57+voxZZAHegwY3sN786x/H7mdgHIpDMp0/iFZaLPsS
-         WbUiG6WUI7q9ndTBaj3vqBwU0gta6SCa+/OP0ZKiVgwJufZXdcy7j4qVjhao+7zWpBru
-         FfHig8sNpO7befw8M5UjR8tfdYhNkd4A5gO9qApA0A1GQCKZcXSFuhLd622nae8EOo/J
-         lKqgkG6KZWgIkRge3HJYTceFH7HKHap8isl6Zr95ubnfLSk4bsSlQXt+LNfqywtRomtF
-         ZoEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wKboNi//DgTEz5deRYoAuburODisq7rqrYp491IRSic=;
-        b=cd3w6vZ6vZDFKnUmWW6PWEA/jVtYCd/yLX7rQy91oO61ppIa0Fgi1dQfj4KGLHb6fv
-         GOiW0o+ULKA4K5GqhxSffAMkJ0v6vRnWZ0S0TxBDvjZKysGZkP3gVS1z/CSygKmQM3GZ
-         QrV/ilYTa22qP1+VFb/1EwsqL8a934Obl9XPuBHhkAmmfq1YMd2oA0FoZX7Ii3uXjwtQ
-         WhqVIhrK0GcMs3jYnkRGu1d0YS7mnApwgR+teCMPCOK4NkE4N9X7fnG2Uaz1yd4uq3QX
-         YP7RV5jXH9xD/RqoHaWQ9YQKU0mtVYcvF1Abvawx+pDnh4aqNuBSF6fL2oQni0kyzCyD
-         SVSw==
-X-Gm-Message-State: APjAAAX3xP6ZjYTZr9B4gK9KCCLxuq5umpM9QHP8E4dwyveAe49y+iCo
-        soSIicmFo7aq7aNmvEwxoyA=
-X-Google-Smtp-Source: APXvYqxcQjd5wkMyTqNHabVM+z8hjry3oeYMmwlpO1fz7/AEmC8sk+oRxeZyAaE+u078UHf+e5ERGQ==
-X-Received: by 2002:a1c:7f87:: with SMTP id a129mr708835wmd.156.1581365364842;
-        Mon, 10 Feb 2020 12:09:24 -0800 (PST)
-Received: from localhost.localdomain (ipservice-092-219-207-036.092.219.pools.vodafone-ip.de. [92.219.207.36])
-        by smtp.gmail.com with ESMTPSA id s139sm518577wme.35.2020.02.10.12.09.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2020 12:09:24 -0800 (PST)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH] staging: rtl8188eu: rename variable pnetdev -> netdev
-Date:   Mon, 10 Feb 2020 21:08:30 +0100
-Message-Id: <20200210200830.22868-1-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.25.0
+        id S1727686AbgBJUIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 15:08:43 -0500
+Received: from foss.arm.com ([217.140.110.172]:38402 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727003AbgBJUIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 15:08:42 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF8D431B;
+        Mon, 10 Feb 2020 12:08:41 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 614613F68F;
+        Mon, 10 Feb 2020 12:08:41 -0800 (PST)
+Date:   Mon, 10 Feb 2020 20:08:39 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Adam Serbinski <adam@serbinski.com>
+Cc:     Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Patrick Lai <plai@codeaurora.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 8/8] ASoC: qcom: apq8096: add kcontrols to set PCM rate
+Message-ID: <20200210200839.GG14166@sirena.org.uk>
+References: <20200207205013.12274-1-adam@serbinski.com>
+ <20200209154748.3015-1-adam@serbinski.com>
+ <20200209154748.3015-9-adam@serbinski.com>
+ <20200210133636.GJ7685@sirena.org.uk>
+ <18057b47c76d350f8380f277713e0936@serbinski.com>
+ <20200210182609.GA14166@sirena.org.uk>
+ <f88d21773f47f5a543a17ad07d66f9b7@serbinski.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="OFj+1YLvsEfSXdCH"
+Content-Disposition: inline
+In-Reply-To: <f88d21773f47f5a543a17ad07d66f9b7@serbinski.com>
+X-Cookie: No lifeguard on duty.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the local variable pnetdev in rtw_alloc_etherdev_with_old_priv
-to avoid hungarian notation and clear the last checkpatch warning in
-the file osdep_service.c.
 
-rtl8188eu/os_dep/osdep_service.c:32: WARNING: line over 80 characters
+--OFj+1YLvsEfSXdCH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8188eu/os_dep/osdep_service.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+On Mon, Feb 10, 2020 at 03:00:55PM -0500, Adam Serbinski wrote:
+> On 2020-02-10 13:26, Mark Brown wrote:
 
-diff --git a/drivers/staging/rtl8188eu/os_dep/osdep_service.c b/drivers/staging/rtl8188eu/os_dep/osdep_service.c
-index 4ba2378a1bb8..4d6d0347ab8e 100644
---- a/drivers/staging/rtl8188eu/os_dep/osdep_service.c
-+++ b/drivers/staging/rtl8188eu/os_dep/osdep_service.c
-@@ -26,17 +26,17 @@ void _rtw_init_queue(struct __queue *pqueue)
- 
- struct net_device *rtw_alloc_etherdev_with_old_priv(void *old_priv)
- {
--	struct net_device *pnetdev;
-+	struct net_device *netdev;
- 	struct rtw_netdev_priv_indicator *pnpi;
- 
--	pnetdev = alloc_etherdev_mq(sizeof(struct rtw_netdev_priv_indicator), 4);
--	if (!pnetdev)
-+	netdev = alloc_etherdev_mq(sizeof(struct rtw_netdev_priv_indicator), 4);
-+	if (!netdev)
- 		return NULL;
- 
--	pnpi = netdev_priv(pnetdev);
-+	pnpi = netdev_priv(netdev);
- 	pnpi->priv = old_priv;
- 
--	return pnetdev;
-+	return netdev;
- }
- 
- void rtw_free_netdev(struct net_device *netdev)
--- 
-2.25.0
+> > To repeat my comment on another patch in the series there should still
+> > be some representation of the DAI for this device in the kernel.
 
+> Respectfully, I'm not sure I understand what it is that you are suggesting.
+
+> Is it your intention to suggest that instead of adding controls to the
+> machine driver, I should instead write a codec driver to contain those
+> controls?
+
+I have already separately said that you should write a CODEC driver for
+this CODEC.  I'm saying that this seems like the sort of thing that
+might fit in that CODEC driver.
+
+> Or is it your intention to suggest that something within the kernel is
+> already aware of the rate to be set, and it is that which should set the
+> rate rather than a control?
+
+That would be one example of how such a CODEC driver could be
+configured, and is how other baseband/BT devices have ended up going
+(see cx20442.c for example).
+
+--OFj+1YLvsEfSXdCH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5BuEcACgkQJNaLcl1U
+h9DMaQf9GjP0HkMcqo5yI64nvRK1tv1Ea9AL0H1Mlyqry7AQgS5d1PcRXiYU9MOj
+9eMHwbPyh02erDpaLNZLuawcksp7JmDypG7Wj6ZAw6FUh3YnybFjq+pao5SBb/e4
+4xvGxokT0mYhgXkBOL8l+Rarkz4HHmnsuag1YeGP82F8ZnCpDH0mzO4D005vA83D
+Xlv0KtbReo0N2zuM8ElShKIiIBaO4gnvsU6Mxf4PaOhPTYh3Q7ubtB4zJ/+JJh7/
+O+q5EyXDZnXR+FK65tdzGg3UaaQwGyaAAEhdW8A5u48uxnidwWTKM0QE+eHolHL4
+5vpjCOhUsJOeS+8qXyfakKzjpY2E1w==
+=02k4
+-----END PGP SIGNATURE-----
+
+--OFj+1YLvsEfSXdCH--
