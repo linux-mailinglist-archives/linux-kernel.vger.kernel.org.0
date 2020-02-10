@@ -2,88 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D86081570E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 09:35:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 369061570F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 09:41:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727604AbgBJIf0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 03:35:26 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34459 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727507AbgBJIfY (ORCPT
+        id S1727481AbgBJIld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 03:41:33 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:41720 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726061AbgBJIld (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 03:35:24 -0500
-Received: by mail-pg1-f195.google.com with SMTP id j4so3539449pgi.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 00:35:24 -0800 (PST)
+        Mon, 10 Feb 2020 03:41:33 -0500
+Received: by mail-qk1-f196.google.com with SMTP id d11so5700469qko.8;
+        Mon, 10 Feb 2020 00:41:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/nZnIc67c2Uk/CN3G2tIHWPR653imWhXfxakv+5Ocgc=;
-        b=daG8Oq75DnpoQAvJWB6XbRvynaKNvFo8AHdCxeD90PwK0I5LUrjCjHV+6QgJQwMl2p
-         FnR8IjrCkqcwi7rHIAezum+vzXNFA4Ro5WUhsy5cFpp3iS9y+oHHmP/YbRZEMBCx9mDt
-         sathdMRh8AmPFzGk4btWpRhh0bIWmXCreib5k1PGhqy5YZEo0MXdjQPshJo5jvrbtsmE
-         y9VV8/8DaFw/yqmN2rNP8uuW0e/8JhGkWqQ0A1N3b7/23eJpQShP/7DSl8RNMSq1CEAC
-         GjCHmO6KRPWJ4pQDgf8uIDgBgYAb8CAl13GAuH+AsOjKhP+Jkqhv4bTS8aMHetefr64c
-         dvsQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tMzxO+pms4irASelkz3xREp787YtIXCiGVQgDQy0n+k=;
+        b=sKmUY/4kCNfLJBv/3hfRzHt79AskEo4GgRKgBi+8cr+vj+I0MlA/zskHZja/cbDo+O
+         xAESl0V8jIE8MQV6nLDzjAa7yf4v78AnR5awYoLzoKt4cfj6oS0zU5ryakzl9eY2AbXJ
+         pa3ruoKQp8e+UlIHTsRmisxkECgRR9ctyzjVHOG8DqVNBNAfj0t0b5rh+D3sAMVPyqjM
+         B3EXn6KYueDi+ssHc4l95KWEfcwxphI7gHFGFv9UCmvcQr6HtUjZLOpP3FDQKYLSSIQP
+         s1C93kPjWEpPasua117Om4pMnVxoilNn++Xzq3t5Rb7GuyTeudW1QpGl1JLxBtA/PvoS
+         asSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/nZnIc67c2Uk/CN3G2tIHWPR653imWhXfxakv+5Ocgc=;
-        b=lu1Rv4swipBr1VE1kitscZxV2b82ltaXiTrigVBCvVG3Zq7ZwxawTmP7oWAwPfUu5J
-         s4qWegvkWJPDodtlr8JaCdnxOB8WbbTqtaZtxnd8Rd/AzBwBAFutJhGfUHz7iAGtQg+T
-         HXv+hGaHzoDV6IzyF7KadFHkf9rQr4NmdSNfZTcK/4dS59OJ/dicViOvqljAYAQCa6d0
-         c2ZGZp9jTBPDRBFDPHVM+NCpHIIBTQnnDyM32hxN6SxHXXhb9WthjAPkNfABxMpK4liu
-         luniGshFigj8B0h0C9GHAmtX/zNMWg67JbCaRlC+8Y9wsoGOD5vN01JH7KFhVTm0wYTa
-         NRYA==
-X-Gm-Message-State: APjAAAVDA0P3UjsB9u5Z6TzkFmBdMnRw03p07FPmHw8XilOOc3d2sb0S
-        KsrRzD7xj5Fwit3oyNis1ZF63w==
-X-Google-Smtp-Source: APXvYqwySTsDZ7ffIr6LWs5uEkv6SmFd4RFmzerUCF2XeNERGDjMBzIWnzSRUEexwVgQUUojJ+9NFg==
-X-Received: by 2002:a62:16d0:: with SMTP id 199mr132682pfw.96.1581323724176;
-        Mon, 10 Feb 2020 00:35:24 -0800 (PST)
-Received: from hsinchu02.internal.sifive.com (220-132-236-182.HINET-IP.hinet.net. [220.132.236.182])
-        by smtp.gmail.com with ESMTPSA id q8sm10582409pje.2.2020.02.10.00.35.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2020 00:35:23 -0800 (PST)
-From:   Zong Li <zong.li@sifive.com>
-To:     paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Zong Li <zong.li@sifive.com>
-Subject: [PATCH v2 2/2] riscv: Use macro definition instead of magic number
-Date:   Mon, 10 Feb 2020 16:35:15 +0800
-Message-Id: <20200210083515.10864-3-zong.li@sifive.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210083515.10864-1-zong.li@sifive.com>
-References: <20200210083515.10864-1-zong.li@sifive.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tMzxO+pms4irASelkz3xREp787YtIXCiGVQgDQy0n+k=;
+        b=K99pQGX1FtjnS1z2o0XGtSa5cMAU4zFX6JBzM+xQzVa4Yn9bjAaNFLoDA6IK0PlxMu
+         ukmxPLn5hIV3LvbR/ZZo3DKJRiZ+hUrMvx8cu9XQlYFCu4wK34fKcduum+Ulpf/OikHL
+         joPw7mcuMEUQOQiBf9RaYaZsH4pdcSVNNgN9Ap04J9iS0LNmjLbpA5CxU327zTIv2cK9
+         rMYZfMoCbhrSx/fZ2tgdbJsei92Vfq4etxVdflz3vvUppDrkFhX5DMfPTZNNOF/6Bgai
+         kHY11luKlQrnV8EqaaaKjxcBw1fhwRiPzlmLj1nTuPNVwMCSmLNHGRRZIz1z3/zTN4AO
+         4lMA==
+X-Gm-Message-State: APjAAAWPceMATuTbxIHx33OMsL7iw0G3x1n8LzfqYnXgWBaDNZ1CesSD
+        T+WA58OQYDBr7fCkLZXq4OjHXkui9dQ2JpWRgPc=
+X-Google-Smtp-Source: APXvYqy0KS0DKQM9QxfxyWZ8s4Z6fyhAmZi6o+euGuhDCCtDJfvt//oXsgMQH/s9bXOCobYjqgxaX9UUFB7HRjKtRIo=
+X-Received: by 2002:a05:620a:a1e:: with SMTP id i30mr321910qka.133.1581324092193;
+ Mon, 10 Feb 2020 00:41:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1580894083.git.baolin.wang7@gmail.com> <CAPDyKFpqtCi4H7T99PguzsUi+-803EA-y+vXGK7C0cHVbzeJ6A@mail.gmail.com>
+In-Reply-To: <CAPDyKFpqtCi4H7T99PguzsUi+-803EA-y+vXGK7C0cHVbzeJ6A@mail.gmail.com>
+From:   Baolin Wang <baolin.wang7@gmail.com>
+Date:   Mon, 10 Feb 2020 16:41:20 +0800
+Message-ID: <CADBw62rgoXjgoqaokhBqYCqAY-3vYnCq4iiVYaxZu_JJsufvDQ@mail.gmail.com>
+Subject: Re: [PATCH v8 0/5] Add MMC software queue support
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The KERN_VIRT_START defines the start virtual address of kernel space.
-Use this macro instead of magic number.
+Hi Ulf,
 
-Signed-off-by: Zong Li <zong.li@sifive.com>
----
- arch/riscv/include/asm/kasan.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Feb 6, 2020 at 11:00 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Wed, 5 Feb 2020 at 13:51, Baolin Wang <baolin.wang7@gmail.com> wrote:
+> >
+> > Hi All,
+> >
+> > Now the MMC read/write stack will always wait for previous request is
+> > completed by mmc_blk_rw_wait(), before sending a new request to hardware,
+> > or queue a work to complete request, that will bring context switching
+> > overhead, especially for high I/O per second rates, to affect the IO
+> > performance.
+>
+> In the regular request path (non CQE), we call mmc_blk_card_busy() to
+> complete a request. For write I/O, this leads to calling
+> card_busy_detect(), which starts to poll the card by sending a CMD13.
+>
+> At least one CMD13 will be sent to the card, before we exit the
+> polling loop and a new I/O request can get submitted. However, in many
+> cases, depending on the controller/host/card/request-size, my best
+> guess is that *one* CMD13 might not be sufficient. At least, that is
+> what I have observed on those platforms I recently have been working
+> on.
+>
+> That said, I am wondering if you have done some measurement/profiling
+> on this particular behaviour for your controller/driver? For example,
+> how many CMD13 gets sent for random small writes during polling?
 
-diff --git a/arch/riscv/include/asm/kasan.h b/arch/riscv/include/asm/kasan.h
-index eee6e6588b12..b47045cb85ce 100644
---- a/arch/riscv/include/asm/kasan.h
-+++ b/arch/riscv/include/asm/kasan.h
-@@ -13,7 +13,7 @@
- #define KASAN_SHADOW_SCALE_SHIFT	3
- 
- #define KASAN_SHADOW_SIZE	(UL(1) << (38 - KASAN_SHADOW_SCALE_SHIFT))
--#define KASAN_SHADOW_START	0xffffffc000000000 /* 2^64 - 2^38 */
-+#define KASAN_SHADOW_START	KERN_VIRT_START /* 2^64 - 2^38 */
- #define KASAN_SHADOW_END	(KASAN_SHADOW_START + KASAN_SHADOW_SIZE)
- 
- #define KASAN_SHADOW_OFFSET	(KASAN_SHADOW_END - (1ULL << \
--- 
-2.25.0
+Ah, I had not checked how many CMD13 for random small writes before.
+And I did a quick testing today, I found only 1 CMD13 gets sent for
+random writes on my platform.
 
+
+> Why am I asking this? Because, unless I am mistaken, when using the
+> new hsq path that you introduce in $subject series, based on the cqe
+> ops, then mmc_blk_card_busy() is not being called at all. In other
+> words, you rely on HW busy detection from the controller/driver,
+> rather than polling with CMD13. Is that correct?
+
+Right. I think so.
+
+> This seems like an additional reason to why you achieve significant
+> improvements for the random write case. Don't you think?
+
+Yes, agree wtih you.
+
+> >
+> > Thus this patch set will introduce the MMC software command queue support
+> > based on command queue engine's interfaces, and set the queue depth as 64
+> > to allow more requests can be be prepared, merged and inserted into IO
+> > scheduler, but we only allow 2 requests in flight, that is enough to let
+> > the irq handler always trigger the next request without a context switch,
+> > as well as avoiding a long latency.
+> >
+> > Moreover we can expand the MMC software queue interface to support
+> > MMC packed request or packed command instead of adding new interfaces,
+> > according to previosus discussion.
+> >
+> > Below are some comparison data with fio tool. The fio command I used
+> > is like below with changing the '--rw' parameter and enabling the direct
+> > IO flag to measure the actual hardware transfer speed in 4K block size.
+> >
+> > ./fio --filename=/dev/mmcblk0p30 --direct=1 --iodepth=20 --rw=read --bs=4K --size=1G --group_reporting --numjobs=20 --name=test_read
+> >
+> > My eMMC card working at HS400 Enhanced strobe mode:
+> > [    2.229856] mmc0: new HS400 Enhanced strobe MMC card at address 0001
+> > [    2.237566] mmcblk0: mmc0:0001 HBG4a2 29.1 GiB
+> > [    2.242621] mmcblk0boot0: mmc0:0001 HBG4a2 partition 1 4.00 MiB
+> > [    2.249110] mmcblk0boot1: mmc0:0001 HBG4a2 partition 2 4.00 MiB
+> > [    2.255307] mmcblk0rpmb: mmc0:0001 HBG4a2 partition 3 4.00 MiB, chardev (248:0)
+> >
+> > 1. Without MMC software queue
+> > I tested 5 times for each case and output a average speed.
+> >
+> > 1) Sequential read:
+> > Speed: 59.4MiB/s, 63.4MiB/s, 57.5MiB/s, 57.2MiB/s, 60.8MiB/s
+> > Average speed: 59.66MiB/s
+> >
+> > 2) Random read:
+> > Speed: 26.9MiB/s, 26.9MiB/s, 27.1MiB/s, 27.1MiB/s, 27.2MiB/s
+> > Average speed: 27.04MiB/s
+> >
+> > 3) Sequential write:
+> > Speed: 71.6MiB/s, 72.5MiB/s, 72.2MiB/s, 64.6MiB/s, 67.5MiB/s
+> > Average speed: 69.68MiB/s
+> >
+> > 4) Random write:
+> > Speed: 36.3MiB/s, 35.4MiB/s, 38.6MiB/s, 34MiB/s, 35.5MiB/s
+> > Average speed: 35.96MiB/s
+> >
+> > 2. With MMC software queue
+> > I tested 5 times for each case and output a average speed.
+> >
+> > 1) Sequential read:
+> > Speed: 59.2MiB/s, 60.4MiB/s, 63.6MiB/s, 60.3MiB/s, 59.9MiB/s
+> > Average speed: 60.68MiB/s
+> >
+> > 2) Random read:
+> > Speed: 31.3MiB/s, 31.4MiB/s, 31.5MiB/s, 31.3MiB/s, 31.3MiB/s
+> > Average speed: 31.36MiB/s
+> >
+> > 3) Sequential write:
+> > Speed: 71MiB/s, 71.8MiB/s, 72.3MiB/s, 72.2MiB/s, 71MiB/s
+> > Average speed: 71.66MiB/s
+> >
+> > 4) Random write:
+> > Speed: 68.9MiB/s, 68.7MiB/s, 68.8MiB/s, 68.6MiB/s, 68.8MiB/s
+> > Average speed: 68.76MiB/s
+> >
+> > Form above data, we can see the MMC software queue can help to improve some
+> > performance obviously for random read and write, though no obvious improvement
+> > for sequential read and write.
+> >
+> > Any comments are welcome. Thanks a lot.
+> >
+> > Changes from v7:
+> >  - Add reviewed tag from Arnd.
+> >  - Use the 'hsq' acronym for varibles and functions in the core layer.
+> >  - Check the 'card->ext_csd.cmdq_en' in cqhci.c to make sure the CQE
+> >  can work normally.
+> >  - Add a new patch to enable the host software queue for the SD card.
+> >  - Use the default MMC queue depth for host software queue.
+>
+> It would be nice to also have some measurements for an SD card, now
+> that the series supports this. Is that possible for you test as well?
+
+Yes, but my SD card works at high speed mode, and shows a low speed in
+4k block size.
+[    2.941965] mmc0: new high speed SDHC card at address b368
+[    2.948325] mmcblk0: mmc0:b368 SD08G 7.42 GiB
+[    2.956554]  mmcblk0: p1
+
+And I did not see any obvious improvement or recession for my SD card
+in 4k block size from below data, I think the most of the time is
+spent in hardware. (But when I enabled the packed request based on
+hsq, I can see some obvious improvement.)
+Without hsq:
+read: bw=4347KiB/s
+randread: bw=3040KiB/s
+write: bw=1361KiB/s
+randwrite: bw=692KiB/s
+
+With hsq:
+read: bw=4246KiB/s
+randread: bw=29950KiB/s
+write: bw=1417KiB/s
+randwrite: bw=697KiB/s
