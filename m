@@ -2,77 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 034701570D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 09:31:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63A421570D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 09:32:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbgBJIbE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 03:31:04 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:26053 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726968AbgBJIbE (ORCPT
+        id S1727562AbgBJIb6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 03:31:58 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40995 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726968AbgBJIb5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 03:31:04 -0500
-X-UUID: 5b9bbc56cfdc4bba9c29251cc2c3084e-20200210
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=Jme6XnUcV22sv+Lb0GfidwDPAVP5wJkTpFliBwJ3cpI=;
-        b=MlgjgnoIA4AD4sGad07cNjNs9aeX4kPOkUBvg6aJe/XqqKbp6z7t+WdI8EyBQG7wwk4xzFLVfTa+JAxwf9PZ2n7AHIwcbS7t1WZ32/TY3Vt36qp+4oPBYAJm/RO/vCS/hK5rMBvIQNeNet3kupcf44gHZJvloGaQBGVgtKNZf/Y=;
-X-UUID: 5b9bbc56cfdc4bba9c29251cc2c3084e-20200210
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <yingjoe.chen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 878928057; Mon, 10 Feb 2020 16:30:57 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 10 Feb 2020 16:31:39 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by mtkcas08.mediatek.inc
- (172.21.101.126) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 10 Feb
- 2020 16:31:12 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 10 Feb 2020 16:31:12 +0800
-Message-ID: <1581323455.2213.6.camel@mtksdaap41>
-Subject: Re: [PATCH v2] mtd: mtk-quadspi: add support for DMA reading
-From:   Yingjoe Chen <yingjoe.chen@mediatek.com>
-To:     Chuanhong Guo <gch981213@gmail.com>
-CC:     <linux-mtd@lists.infradead.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Richard Weinberger <richard@nod.at>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Mon, 10 Feb 2020 16:30:55 +0800
-In-Reply-To: <20200208084022.193231-1-gch981213@gmail.com>
-References: <20200208084022.193231-1-gch981213@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Mon, 10 Feb 2020 03:31:57 -0500
+Received: by mail-lf1-f66.google.com with SMTP id m30so3535111lfp.8
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 00:31:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=nGIjsaBccfzgbG6AB9u8tl8iW74VAAyTBEMSpWPn7tU=;
+        b=Ft0pgrTgNRywWAhE4nJhfKI5bm00r9rWI44J8YelyxNd8cXMgYJNrxykGaWNSvAmkm
+         9wjiQgmsi+HalpQBQSsbtD7Iaaml6zeq0bA2bYcv1ec1hUBq5UjlHuYWRK8h/h8h6seZ
+         YtP1jgp86POZ63sKri+Rgke/fWJQqYoi+OKEt4INj1sxrxtFaEN/7g/rSD/1IxORKFDA
+         o7tIoDRz5Qrb9NYbIrkNJ/c/SvPwEpza4GWhNMEbVcJCj0AdOkq5hxo0VEFv8Ar6J7Nv
+         r+Fpzil4noWFCvsjGJNStFCuzFUege+ClZ4axs7FoeuUhosV8Mt+Q4FwDjrVuH1YOfyj
+         rzrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=nGIjsaBccfzgbG6AB9u8tl8iW74VAAyTBEMSpWPn7tU=;
+        b=II/1uOntLJED4GXrXj6fOhkZeYQ1xIPEjYAG8QQavWLCRILXhsAG49CDTEyXiLxko7
+         RG8iXJyCKC44t5ywGFWJDe9QIeQhvyI6eP2Di9VZq4rnV3VRq/eDhq6Mq9BbgaXxCgbI
+         UZydpp8qwT1OvJSMHL74Kb7TRsQGOhKrFFDl1QfwM8ECvWeGvNF7DxY905fhiNyOMgF7
+         85rCJX1ZoQFHR0pyXi82ePEMKW97it+1+4FCeD0PFEeiG17gZyG8cqIxukOg3YLfEbig
+         ww1Rgpq0G2+hFwhLgeDtDcp5uXfHFSFZRgrO/lbG2n/xT4tszjcGg/W8Bu4FWWfg/E4O
+         BJHg==
+X-Gm-Message-State: APjAAAU7oue9Da57HzdM4FbWrQ5Rkd5PjsUjSpIgxH3r5D+DD4Sb45un
+        KSFmqM+hELodvCMf5oW1FU2OhAZIGRS35n4lv+s=
+X-Google-Smtp-Source: APXvYqzhEfshBeuU+uEJg+rOGax3PX8H9KiyfqTHwNHC+RlnJF93uvQZiEbzHXI3RYY9abyhE9bahUoPKK/Q+6Dtbg4=
+X-Received: by 2002:a05:6512:64:: with SMTP id i4mr151560lfo.55.1581323514120;
+ Mon, 10 Feb 2020 00:31:54 -0800 (PST)
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Received: by 2002:a2e:969a:0:0:0:0:0 with HTTP; Mon, 10 Feb 2020 00:31:53
+ -0800 (PST)
+Reply-To: auditor.infor@gmail.com
+From:   Sambo SALIFOU <mariam.dim.deng2014@gmail.com>
+Date:   Mon, 10 Feb 2020 08:31:53 +0000
+Message-ID: <CALecXHaGG76pVxZFE3bkRWBA+uv3PWnJXt9nx7_NUzqwPA=_+g@mail.gmail.com>
+Subject: To A Good Friend
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gU2F0LCAyMDIwLTAyLTA4IGF0IDE2OjQwICswODAwLCBDaHVhbmhvbmcgR3VvIHdyb3RlOg0K
-PiBQSU8gcmVhZGluZyBtb2RlIG9uIHRoaXMgY29udHJvbGxlciBpcyBwcmV0dHkgaW5lZmZpY2ll
-bnQNCj4gKG9uZSBjbWQrYWRkcitkdW1teSBzZXF1ZW5jZSByZWFkcyBvbmx5IG9uZSBieXRlKQ0K
-PiBUaGlzIHBhdGNoIGFkZHMgc3VwcG9ydCBmb3IgcmVhZGluZyB1c2luZyBETUEgbW9kZSB3aGlj
-aCBpbmNyZWFzZXMNCj4gcmVhZGluZyBzcGVlZCBmcm9tIDFNQi9zIHRvIDRNQi9zDQo+IA0KPiBE
-TUEgYnVzeSBjaGVja2luZyBpcyBpbXBsZW1lbnRlZCB3aXRoIHJlYWRsX3BvbGxfdGltZW91dCBi
-ZWNhdXNlDQo+IEkgZG9uJ3QgaGF2ZSBhY2Nlc3MgdG8gSVJRLXJlbGF0ZWQgZG9jcy4gVGhlIHNw
-ZWVkIGluY3JlbWVudCBjb21lcw0KPiBmcm9tIHRob3NlIHNhdmVkIGNtZCthZGRyK2R1bW15IGNs
-b2Nrcy4NCg0KSGkgQ2h1YW5ob25nLA0KDQpUaGFua3MgZm9yIHlvdXIgcGF0Y2gsIEknbSBjaGVj
-a2luZyB3aXRoIEd1b2NodW4gdG8gc2VlIGlmIHdlIGNvdWxkDQpyZWxlYXNlIElSUSByZWxhdGVk
-IGluZm9ybWF0aW9uIHRvIHlvdS4NCg0KDQo+IFRoaXMgY29udHJvbGxlciByZXF1aXJlcyB0aGF0
-IERNQSBzb3VyY2UvZGVzdGluYXRpb24gYWRkcmVzcyBhbmQNCj4gcmVhZGluZyBsZW5ndGggc2hv
-dWxkIGJlIDE2LWJ5dGUgYWxpZ25lZC4gV2UgdXNlIGEgYm91bmNlIGJ1ZmZlciBpZg0KPiBvbmUg
-b2YgdGhlbSBpcyBub3QgYWxpZ25lZCwgcmVhZCBtb3JlIHRoYW4gd2hhdCB3ZSBuZWVkLCBhbmQg
-Y29weQ0KPiBkYXRhIGZyb20gY29ycmVzcG9uZGluZyBidWZmZXIgb2Zmc2V0Lg0KDQpJJ3ZlIGNo
-ZWNrZWQgd2l0aCBvdXIgSFcgZ3V5cy4gVGhlIGxpbWl0YXRpb24gaXMgb24gRFJBTSBvbmx5Lg0K
-U28gZm9yIHJlYWQgd2Ugc2hvdWxkIGNoZWNrIGJ1ZmZlciBhbmQgbGVuZ3RoIHRvIG1ha2Ugc3Vy
-ZSBpdCBpcw0KYWxpZ25lZCwgYnV0IGRvbid0IG5lZWQgdG8gY2hlY2sgZnJvbS4NCg0KSm9lLkMN
-Cg0K
+Please lets make joint business
 
+I am, Dr. Salifou Sambo a bank auditor, I am in-charge of transferring
+out funds or my village, which our village generates from the sales of
+our local mined gold. I have some left over fund in the bank here that
+I alone is aware of, and wants to transfer it out.
+My village that mines gold, has mandated me for sales of our raw Gold,
+and as a bank auditor I help our village to control their funds. I
+want to use this opportunity to look for some one who will provide an
+account to receive the sum of 4.2 million US dollars left in the bank,
+this was realized from gold sold, to be transferred out to our foreign
+account,now it is
+unknown by our village, This fund has been laying for onward transfer
+to overseas as we transfer out all funds sold from our gold, till now
+this fund is lying in the bank, I have all documents concerning the
+fund, and now I want to use it to establish outside my country. So if
+you are interested, then you will provide an account to receive the
+fund for a joint benefit and business and sharing, I will give you 30%
+of the fund. if you
+are interested reply me.
+Sincerely,
+Dr. SALIFOU Sambo
