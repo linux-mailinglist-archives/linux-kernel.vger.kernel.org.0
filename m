@@ -2,168 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA1BF157281
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 11:06:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E845F157278
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 11:05:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727538AbgBJKGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 05:06:00 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2400 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726451AbgBJKF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 05:05:59 -0500
-Received: from lhreml704-cah.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 2E71E2FBB5E367A0ACF8;
-        Mon, 10 Feb 2020 10:05:58 +0000 (GMT)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
- by smtpsuk.huawei.com (10.201.108.45) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Mon, 10 Feb 2020 10:05:44 +0000
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <James.Bottomley@HansenPartnership.com>,
-        <jarkko.sakkinen@linux.intel.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v3 8/8] ima: Use ima_hash_algo for collision detection in the measurement list
-Date:   Mon, 10 Feb 2020 11:04:50 +0100
-Message-ID: <20200210100450.22168-1-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727594AbgBJKFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 05:05:04 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:44321 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbgBJKFE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 05:05:04 -0500
+Received: by mail-qk1-f196.google.com with SMTP id v195so5858026qkb.11
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 02:05:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=3god/b/yvIlvZvunyDH+WBGg0Kw3FYonev0EbEFIPz0=;
+        b=hNIk5M8YPli8l4qIA/CU1yDP+M6/l0XPmtMvaMwJGz7vjXTIVHvD435kPx8fUTgC+k
+         g4rYF1LRVdRDdbpwwLlmRZR21eTSRPuso6Qr6AUG0VG+xlqKo1GZxOD16kvbZZ8H7xAk
+         t7nqFCH7EdENGulohyjfxu16Qn6CGcjBbPxvwkKLjs+vPubwvCLfOdgy5KrQx9XT2sJ1
+         2IJEIc/Fh/B1AUm4BuM+qRE99yV/IJlnRb4svzm+W0foajuufrB0fK1ZtgOzyauU9HRU
+         6iBt25QqxMUvBkKZlzGdTqdweqsCLaFcqFF6tecTK5+17cOa2opJl9kYFxTNLHHok8qi
+         VDLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=3god/b/yvIlvZvunyDH+WBGg0Kw3FYonev0EbEFIPz0=;
+        b=pLPGoaZDWjWJ/vbpLq6R/s5klo5r1O532gQsKrruoap7Ze+HHgtMBmdXlutQxnltQx
+         kmSNK58Vfu/vKpXV9Wnx61w+4K4l4K2M7M02ZEkfNlFYIIFIAP+yLz+HBGK5j0E/H1QR
+         lcXBkcMqCdAdZ2hA9jcRRKhwW2ENPefgmD+82B4ej1R38yLHDGFqR3EnfBF30EH3hotD
+         32vIhOKiNyB+K5KS7aPDnaEXy6nLRDVF3qOgI4BljBF9D6xUchcUaPud8KcQ+gJrvIA1
+         WMqoJt3i9r3dziK7M8U6tMMAXPQoQo1t49t/Hj4dkxlCollVhHK6epuByYLqqwLRgWRU
+         QJdg==
+X-Gm-Message-State: APjAAAVuRzDB1JGtutVaCBy9JV+2MNHkG36ql2L9BrgBnQzWCrCcWdvD
+        KrwAF0+Qt/hv02PVC0y08dy182f+Sb1WsaRUoMtQ2w==
+X-Google-Smtp-Source: APXvYqyQryVPCguLwjUuUHNgfdavO1+lnE6Mj4YnkxbZoG9CaHMHWDOiLk63k6dtjOyRHcTh01DwkAR14J8GtcKjYW8=
+X-Received: by 2002:a37:6fc4:: with SMTP id k187mr540519qkc.21.1581329102849;
+ Mon, 10 Feb 2020 02:05:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.160]
-X-CFilter-Loop: Reflected
+References: <20200127103541.6975-1-o.rempel@pengutronix.de>
+In-Reply-To: <20200127103541.6975-1-o.rempel@pengutronix.de>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Mon, 10 Feb 2020 11:04:52 +0100
+Message-ID: <CAMpxmJU1U15_HxZfjdzTUfpTjOyhgybD=vPPJ6fXVV8Jy1dEmA@mail.gmail.com>
+Subject: Re: [PATCH V1] eeprom: at24: add TPF0001 ACPI ID for 24c1024 device
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Markus Pietrek <mpie@msc-ge.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before calculating a digest for each PCR bank, collisions were detected
-with a SHA1 digest. This patch includes ima_hash_algo among the algorithms
-used to calculate the template digest and checks collisions on that digest.
+pon., 27 sty 2020 o 11:35 Oleksij Rempel <o.rempel@pengutronix.de> napisa=
+=C5=82(a):
+>
+> From: Markus Pietrek <mpie@msc-ge.com>
+>
+> This ID is used at leas on some variants of MSC C6B-SLH board.
+>
+> Signed-off-by: Markus Pietrek <mpie@msc-ge.com>
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  drivers/misc/eeprom/at24.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
+> index 2cccd82a3106..1c8e2ff96d9d 100644
+> --- a/drivers/misc/eeprom/at24.c
+> +++ b/drivers/misc/eeprom/at24.c
+> @@ -228,6 +228,7 @@ MODULE_DEVICE_TABLE(of, at24_of_match);
+>
+>  static const struct acpi_device_id at24_acpi_ids[] =3D {
+>         { "INT3499",    (kernel_ulong_t)&at24_data_INT3499 },
+> +       { "TPF0001",    (kernel_ulong_t)&at24_data_24c1024 },
+>         { /* END OF LIST */ }
+>  };
+>  MODULE_DEVICE_TABLE(acpi, at24_acpi_ids);
+> --
+> 2.25.0
+>
 
-The position in the measurement entry array of the template digest
-calculated with the default IMA algorithm is stored in the
-ima_hash_algo_idx global variable and is determined at IMA initialization
-time.
+Patch applied.
 
-Changelog
-
-v2:
-- add __ro_after_init to declaration of ima_hash_algo_idx (suggested by
-  Mimi)
-- replace ima_num_template_digests with
-  NR_BANKS(ima_tpm_chip) + ima_extra_slots(suggested by Mimi)
-- use ima_hash_algo_idx to access ima_algo_array elements in
-  ima_init_crypto()
-
-v1:
-- increment ima_num_template_digests before kcalloc() (suggested by Mimi)
-- check if ima_tpm_chip is NULL
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/ima/ima.h        |  1 +
- security/integrity/ima/ima_crypto.c | 19 ++++++++++++++++++-
- security/integrity/ima/ima_queue.c  |  8 ++++----
- 3 files changed, 23 insertions(+), 5 deletions(-)
-
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index f04bec2ab83f..15663711d0ec 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -53,6 +53,7 @@ extern int ima_policy_flag;
- /* set during initialization */
- extern int ima_hash_algo;
- extern int ima_sha1_idx __ro_after_init;
-+extern int ima_hash_algo_idx __ro_after_init;
- extern int ima_extra_slots __ro_after_init;
- extern int ima_appraise;
- extern struct tpm_chip *ima_tpm_chip;
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 5ebe31576f7b..84e2b239d31c 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -65,6 +65,7 @@ struct ima_algo_desc {
- };
- 
- int ima_sha1_idx __ro_after_init;
-+int ima_hash_algo_idx __ro_after_init;
- /* Additional number of slots in ima_algo_array for SHA1 and default IMA algo */
- int ima_extra_slots __ro_after_init;
- 
-@@ -121,15 +122,25 @@ int __init ima_init_crypto(void)
- 		return rc;
- 
- 	ima_sha1_idx = -1;
-+	ima_hash_algo_idx = -1;
- 
- 	for (i = 0; i < NR_BANKS(ima_tpm_chip); i++) {
- 		algo = ima_tpm_chip->allocated_banks[i].crypto_id;
- 		if (algo == HASH_ALGO_SHA1)
- 			ima_sha1_idx = i;
-+
-+		if (algo == ima_hash_algo)
-+			ima_hash_algo_idx = i;
- 	}
- 
--	if (ima_sha1_idx < 0)
-+	if (ima_sha1_idx < 0) {
- 		ima_sha1_idx = NR_BANKS(ima_tpm_chip) + ima_extra_slots++;
-+		if (ima_hash_algo == HASH_ALGO_SHA1)
-+			ima_hash_algo_idx = ima_sha1_idx;
-+	}
-+
-+	if (ima_hash_algo_idx < 0)
-+		ima_hash_algo_idx = NR_BANKS(ima_tpm_chip) + ima_extra_slots++;
- 
- 	ima_algo_array = kcalloc(NR_BANKS(ima_tpm_chip) + ima_extra_slots,
- 				 sizeof(*ima_algo_array), GFP_KERNEL);
-@@ -178,6 +189,12 @@ int __init ima_init_crypto(void)
- 		ima_algo_array[ima_sha1_idx].algo = HASH_ALGO_SHA1;
- 	}
- 
-+	if (ima_hash_algo_idx >= NR_BANKS(ima_tpm_chip) &&
-+	    ima_hash_algo_idx != ima_sha1_idx) {
-+		ima_algo_array[ima_hash_algo_idx].tfm = ima_shash_tfm;
-+		ima_algo_array[ima_hash_algo_idx].algo = ima_hash_algo;
-+	}
-+
- 	return 0;
- out_array:
- 	for (i = 0; i < NR_BANKS(ima_tpm_chip) + ima_extra_slots; i++) {
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 7f7509774b85..58983d0f0214 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -57,8 +57,8 @@ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
- 	key = ima_hash_key(digest_value);
- 	rcu_read_lock();
- 	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext) {
--		rc = memcmp(qe->entry->digests[ima_sha1_idx].digest,
--			    digest_value, TPM_DIGEST_SIZE);
-+		rc = memcmp(qe->entry->digests[ima_hash_algo_idx].digest,
-+			    digest_value, hash_digest_size[ima_hash_algo]);
- 		if ((rc == 0) && (qe->entry->pcr == pcr)) {
- 			ret = qe;
- 			break;
-@@ -110,7 +110,7 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
- 
- 	atomic_long_inc(&ima_htable.len);
- 	if (update_htable) {
--		key = ima_hash_key(entry->digests[ima_sha1_idx].digest);
-+		key = ima_hash_key(entry->digests[ima_hash_algo_idx].digest);
- 		hlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
- 	}
- 
-@@ -162,7 +162,7 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
- 			   const char *op, struct inode *inode,
- 			   const unsigned char *filename)
- {
--	u8 *digest = entry->digests[ima_sha1_idx].digest;
-+	u8 *digest = entry->digests[ima_hash_algo_idx].digest;
- 	struct tpm_digest *digests_arg = entry->digests;
- 	const char *audit_cause = "hash_added";
- 	char tpm_audit_cause[AUDIT_CAUSE_LEN_MAX];
--- 
-2.17.1
-
+Bartosz
