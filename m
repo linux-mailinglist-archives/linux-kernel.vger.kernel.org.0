@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80ED6157999
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:17:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CC6B157B21
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:28:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729738AbgBJNQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:16:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32978 "EHLO mail.kernel.org"
+        id S1728409AbgBJMgc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:36:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727906AbgBJMiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:08 -0500
+        id S1728138AbgBJMfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:51 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92A9A2173E;
-        Mon, 10 Feb 2020 12:38:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42EDC2168B;
+        Mon, 10 Feb 2020 12:35:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338287;
-        bh=rVtizd47pPRclKqUkCqje4zkgi1bBzaeodtlgmwOJag=;
+        s=default; t=1581338150;
+        bh=MwYhGUE+jYWpjZsa+15g3hupFybA4O768IPBJA8Bcy0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hQyJWtsXotalRJfBcDBbATiwXk33SbPXYS05BOuH8hf2G/APlt7kNZpIFdV4mx//u
-         oTNNXjrms6f2fSXhQFcJYT4ztKAm/9xxBsPpEXtj8+OPZ1uj8xvvrOE9TmE4kpXoSH
-         C5lOPyfPQdksDG++b4UXd2Wr3nF84o1nOIzd1RhU=
+        b=Hbvv8KwAVH6pTGb3a6LqZpiBI8wEc97kWfNFUSNLy39yLVqS5rNxpOsiVv80oLkSp
+         EzfbdHWhNZHTNZPTTtFomP93BzZeqJ1FJ5ZFEfgwtS0/+/TrXUcqxDf+txiZXQzhY4
+         bfdvu27lpC2bBuzeJPzzY8VezA7G91TUOK8+HbOI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 5.4 187/309] drm: atmel-hlcdc: enable clock before configuring timing engine
-Date:   Mon, 10 Feb 2020 04:32:23 -0800
-Message-Id: <20200210122424.517724468@linuxfoundation.org>
+        stable@vger.kernel.org, Dmitry Fomichev <dmitry.fomichev@wdc.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.19 086/195] dm zoned: support zone sizes smaller than 128MiB
+Date:   Mon, 10 Feb 2020 04:32:24 -0800
+Message-Id: <20200210122313.863366477@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,53 +44,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+From: Dmitry Fomichev <dmitry.fomichev@wdc.com>
 
-commit 2c1fb9d86f6820abbfaa38a6836157c76ccb4e7b upstream.
+commit b39962950339912978484cdac50069258545d753 upstream.
 
-Changing pixel clock source without having this clock source enabled
-will block the timing engine and the next operations after (in this case
-setting ATMEL_HLCDC_CFG(5) settings in atmel_hlcdc_crtc_mode_set_nofb()
-will fail). It is recomended (although in datasheet this is not present)
-to actually enabled pixel clock source before doing any changes on timing
-enginge (only SAM9X60 datasheet specifies that the peripheral clock and
-pixel clock must be enabled before using LCD controller).
+dm-zoned is observed to log failed kernel assertions and not work
+correctly when operating against a device with a zone size smaller
+than 128MiB (e.g. 32768 bits per 4K block). The reason is that the
+bitmap size per zone is calculated as zero with such a small zone
+size. Fix this problem and also make the code related to zone bitmap
+management be able to handle per zone bitmaps smaller than a single
+block.
 
-Fixes: 1a396789f65a ("drm: add Atmel HLCDC Display Controller support")
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: <stable@vger.kernel.org> # v4.0+
-Link: https://patchwork.freedesktop.org/patch/msgid/1576672109-22707-3-git-send-email-claudiu.beznea@microchip.com
+A dm-zoned-tools patch is required to properly format dm-zoned devices
+with zone sizes smaller than 128MiB.
+
+Fixes: 3b1a94c88b79 ("dm zoned: drive-managed zoned block device target")
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Fomichev <dmitry.fomichev@wdc.com>
+Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/md/dm-zoned-metadata.c |   23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-@@ -73,7 +73,11 @@ static void atmel_hlcdc_crtc_mode_set_no
- 	unsigned long prate;
- 	unsigned int mask = ATMEL_HLCDC_CLKDIV_MASK | ATMEL_HLCDC_CLKPOL;
- 	unsigned int cfg = 0;
--	int div;
-+	int div, ret;
-+
-+	ret = clk_prepare_enable(crtc->dc->hlcdc->sys_clk);
-+	if (ret)
-+		return;
+--- a/drivers/md/dm-zoned-metadata.c
++++ b/drivers/md/dm-zoned-metadata.c
+@@ -132,6 +132,7 @@ struct dmz_metadata {
  
- 	vm.vfront_porch = adj->crtc_vsync_start - adj->crtc_vdisplay;
- 	vm.vback_porch = adj->crtc_vtotal - adj->crtc_vsync_end;
-@@ -147,6 +151,8 @@ static void atmel_hlcdc_crtc_mode_set_no
- 			   ATMEL_HLCDC_VSPSU | ATMEL_HLCDC_VSPHO |
- 			   ATMEL_HLCDC_GUARDTIME_MASK | ATMEL_HLCDC_MODE_MASK,
- 			   cfg);
-+
-+	clk_disable_unprepare(crtc->dc->hlcdc->sys_clk);
- }
+ 	sector_t		zone_bitmap_size;
+ 	unsigned int		zone_nr_bitmap_blocks;
++	unsigned int		zone_bits_per_mblk;
  
- static enum drm_mode_status
+ 	unsigned int		nr_bitmap_blocks;
+ 	unsigned int		nr_map_blocks;
+@@ -1165,7 +1166,10 @@ static int dmz_init_zones(struct dmz_met
+ 
+ 	/* Init */
+ 	zmd->zone_bitmap_size = dev->zone_nr_blocks >> 3;
+-	zmd->zone_nr_bitmap_blocks = zmd->zone_bitmap_size >> DMZ_BLOCK_SHIFT;
++	zmd->zone_nr_bitmap_blocks =
++		max_t(sector_t, 1, zmd->zone_bitmap_size >> DMZ_BLOCK_SHIFT);
++	zmd->zone_bits_per_mblk = min_t(sector_t, dev->zone_nr_blocks,
++					DMZ_BLOCK_SIZE_BITS);
+ 
+ 	/* Allocate zone array */
+ 	zmd->zones = kcalloc(dev->nr_zones, sizeof(struct dm_zone), GFP_KERNEL);
+@@ -1982,7 +1986,7 @@ int dmz_copy_valid_blocks(struct dmz_met
+ 		dmz_release_mblock(zmd, to_mblk);
+ 		dmz_release_mblock(zmd, from_mblk);
+ 
+-		chunk_block += DMZ_BLOCK_SIZE_BITS;
++		chunk_block += zmd->zone_bits_per_mblk;
+ 	}
+ 
+ 	to_zone->weight = from_zone->weight;
+@@ -2043,7 +2047,7 @@ int dmz_validate_blocks(struct dmz_metad
+ 
+ 		/* Set bits */
+ 		bit = chunk_block & DMZ_BLOCK_MASK_BITS;
+-		nr_bits = min(nr_blocks, DMZ_BLOCK_SIZE_BITS - bit);
++		nr_bits = min(nr_blocks, zmd->zone_bits_per_mblk - bit);
+ 
+ 		count = dmz_set_bits((unsigned long *)mblk->data, bit, nr_bits);
+ 		if (count) {
+@@ -2122,7 +2126,7 @@ int dmz_invalidate_blocks(struct dmz_met
+ 
+ 		/* Clear bits */
+ 		bit = chunk_block & DMZ_BLOCK_MASK_BITS;
+-		nr_bits = min(nr_blocks, DMZ_BLOCK_SIZE_BITS - bit);
++		nr_bits = min(nr_blocks, zmd->zone_bits_per_mblk - bit);
+ 
+ 		count = dmz_clear_bits((unsigned long *)mblk->data,
+ 				       bit, nr_bits);
+@@ -2182,6 +2186,7 @@ static int dmz_to_next_set_block(struct
+ {
+ 	struct dmz_mblock *mblk;
+ 	unsigned int bit, set_bit, nr_bits;
++	unsigned int zone_bits = zmd->zone_bits_per_mblk;
+ 	unsigned long *bitmap;
+ 	int n = 0;
+ 
+@@ -2196,15 +2201,15 @@ static int dmz_to_next_set_block(struct
+ 		/* Get offset */
+ 		bitmap = (unsigned long *) mblk->data;
+ 		bit = chunk_block & DMZ_BLOCK_MASK_BITS;
+-		nr_bits = min(nr_blocks, DMZ_BLOCK_SIZE_BITS - bit);
++		nr_bits = min(nr_blocks, zone_bits - bit);
+ 		if (set)
+-			set_bit = find_next_bit(bitmap, DMZ_BLOCK_SIZE_BITS, bit);
++			set_bit = find_next_bit(bitmap, zone_bits, bit);
+ 		else
+-			set_bit = find_next_zero_bit(bitmap, DMZ_BLOCK_SIZE_BITS, bit);
++			set_bit = find_next_zero_bit(bitmap, zone_bits, bit);
+ 		dmz_release_mblock(zmd, mblk);
+ 
+ 		n += set_bit - bit;
+-		if (set_bit < DMZ_BLOCK_SIZE_BITS)
++		if (set_bit < zone_bits)
+ 			break;
+ 
+ 		nr_blocks -= nr_bits;
+@@ -2307,7 +2312,7 @@ static void dmz_get_zone_weight(struct d
+ 		/* Count bits in this block */
+ 		bitmap = mblk->data;
+ 		bit = chunk_block & DMZ_BLOCK_MASK_BITS;
+-		nr_bits = min(nr_blocks, DMZ_BLOCK_SIZE_BITS - bit);
++		nr_bits = min(nr_blocks, zmd->zone_bits_per_mblk - bit);
+ 		n += dmz_count_bits(bitmap, bit, nr_bits);
+ 
+ 		dmz_release_mblock(zmd, mblk);
 
 
