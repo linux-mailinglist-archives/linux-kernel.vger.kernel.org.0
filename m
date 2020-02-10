@@ -2,81 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6F0E1580B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 18:10:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B3861580FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 18:11:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbgBJRKB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 12:10:01 -0500
-Received: from mga14.intel.com ([192.55.52.115]:2424 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727628AbgBJRKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 12:10:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Feb 2020 09:10:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,425,1574150400"; 
-   d="scan'208";a="221621078"
-Received: from orsmsx102.amr.corp.intel.com ([10.22.225.129])
-  by orsmga007.jf.intel.com with ESMTP; 10 Feb 2020 09:10:00 -0800
-Received: from orsmsx151.amr.corp.intel.com (10.22.226.38) by
- ORSMSX102.amr.corp.intel.com (10.22.225.129) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 10 Feb 2020 09:10:00 -0800
-Received: from orsmsx101.amr.corp.intel.com ([169.254.8.110]) by
- ORSMSX151.amr.corp.intel.com ([169.254.7.116]) with mapi id 14.03.0439.000;
- Mon, 10 Feb 2020 09:09:59 -0800
-From:   "Derrick, Jonathan" <jonathan.derrick@intel.com>
-To:     "hch@lst.de" <hch@lst.de>
-CC:     "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        id S1728249AbgBJRLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 12:11:00 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43208 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727872AbgBJRK7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 12:10:59 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01AH9GmH007379;
+        Mon, 10 Feb 2020 12:10:23 -0500
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2y1u2dy35m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 10 Feb 2020 12:10:23 -0500
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 01AH5dYv016782;
+        Mon, 10 Feb 2020 17:10:21 GMT
+Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
+        by ppma03wdc.us.ibm.com with ESMTP id 2y1mm63n74-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 10 Feb 2020 17:10:21 +0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01AHAL8X59244978
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Feb 2020 17:10:21 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E51266A058;
+        Mon, 10 Feb 2020 17:10:20 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4CF706A057;
+        Mon, 10 Feb 2020 17:10:20 +0000 (GMT)
+Received: from [9.41.103.158] (unknown [9.41.103.158])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 10 Feb 2020 17:10:20 +0000 (GMT)
+Subject: Re: [PATCH v6 06/12] soc: aspeed: Add XDMA Engine Driver
+To:     Arnd Bergmann <arnd@arndb.de>, Eddie James <eajames@linux.ibm.com>
+Cc:     linux-aspeed <linux-aspeed@lists.ozlabs.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
-        "Baldysiak, Pawel" <pawel.baldysiak@intel.com>,
-        "helgaas@kernel.org" <helgaas@kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "mr.nuke.me@gmail.com" <mr.nuke.me@gmail.com>,
-        "kbusch@kernel.org" <kbusch@kernel.org>,
-        "okaya@kernel.org" <okaya@kernel.org>
-Subject: Re: [RFC 0/9] PCIe Hotplug Slot Emulation driver
-Thread-Topic: [RFC 0/9] PCIe Hotplug Slot Emulation driver
-Thread-Index: AQHV3hK/y2Hxis+abEWPqwm+8JRaDqgUibyAgACHXACAAB+igIAAAw0A
-Date:   Mon, 10 Feb 2020 17:09:59 +0000
-Message-ID: <8a787f85964c66e8c6efde51f439db26fecfc5c6.camel@intel.com>
-References: <1581120007-5280-1-git-send-email-jonathan.derrick@intel.com>
-         <20200210070115.GA7748@lst.de>
-         <3a4de58ad83a88f90f372e162c39d09eeebd8043.camel@intel.com>
-         <20200210165857.GA19419@lst.de>
-In-Reply-To: <20200210165857.GA19419@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.232.115.25]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F4DD63D01A5CA14E92E60D721897DEF6@intel.com>
-Content-Transfer-Encoding: base64
+        DTML <devicetree@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>
+References: <1579123790-6894-1-git-send-email-eajames@linux.ibm.com>
+ <1579123790-6894-7-git-send-email-eajames@linux.ibm.com>
+ <CAK8P3a3HsdpLz0aDGem1BrQsNo2mEJOnOsLcKFcLjaERx9dhGg@mail.gmail.com>
+From:   Eddie James <eajames@linux.vnet.ibm.com>
+Message-ID: <1a303336-9ffb-353f-efe3-7d45ed114fd0@linux.vnet.ibm.com>
+Date:   Mon, 10 Feb 2020 11:10:19 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
+In-Reply-To: <CAK8P3a3HsdpLz0aDGem1BrQsNo2mEJOnOsLcKFcLjaERx9dhGg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-10_06:2020-02-10,2020-02-10 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 malwarescore=0 adultscore=0 mlxlogscore=999 bulkscore=0
+ spamscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002100129
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDIwLTAyLTEwIGF0IDE3OjU4ICswMTAwLCBoY2hAbHN0LmRlIHdyb3RlOg0KPiBP
-biBNb24sIEZlYiAxMCwgMjAyMCBhdCAwMzowNTo0N1BNICswMDAwLCBEZXJyaWNrLCBKb25hdGhh
-biB3cm90ZToNCj4gPiA+IFRoZSBjb2RlIHNlZW1zIGxpa2Ugb25lIGdpYW50IGhhY2sgdG8gbWUu
-ICBXaGF0IGlzIHRoZSByZWFsIGxpZmUNCj4gPiA+IHVzZSBjYXNlIGZvciB0aGlzPyAgQW5vdGhl
-ciBJbnRlbCBjaGlwc2V0IGZ1Y2t1cCBsaWtlIHZtZCBvciB0aGUgYWhjaQ0KPiA+ID4gcmVtYXBw
-aW5nPw0KPiA+ID4gDQo+ID4gRXhhY3RseSBhcyB0aGUgY292ZXIgbGV0dGVyIGRlc2NyaWJlcy4g
-QW4gaW50ZXJwb3NlciBiZWluZyB1c2VkIG9uIGENCj4gPiBub24taG90cGx1ZyBzbG90Lg0KPiAN
-Cj4gVGhhdCBpc24ndCBhIHVzZSBhIGNhc2UsIHRoYXQgadGVIGEgZGVzY3JpcHRpb24gb2YgdGhl
-IGltcGxlbWVudGF0aW9uLg0KPiBXaHkgd291bGQgeW91IHdhbnQgdGhpcyBjb2RlPw0KSXQgYWxs
-b3dzIG5vbi1ob3RwbHVnIHNsb3RzIHRvIHRha2UgYWR2YW50YWdlIG9mIHRoZSBrZXJuZWwncyBy
-b2J1c3QNCmhvdHBsdWcgZWNvc3lzdGVtLCBpZiB0aGUgcGxhdGZvcm0gY29uZmlndXJhdGlvbiBj
-YW4gdG9sZXJhdGUgdGhlDQpldmVudHMuIFRoaXMgY291bGQgYWxzbyByZWR1Y2UgQk9NIGNvc3Qg
-YnkgZWxpbWluYXRpbmcgc29tZSBzbG90DQpjb250cm9sbGVycy4gU2F5IHlvdSBoYWQgc29tZXRo
-aW5nIHRoYXQgb25seSBuZWVkZWQgdG8gYmUgaG90cGx1Z2dlZA0KdmVyeSBpbmZyZXF1ZW50bHks
-IGxpa2UgUkFJRGVkIE9TIGRyaXZlcywgdmVyc3VzIHNvbWV0aGluZyBuZWVkaW5nIHRvDQpiZSBo
-b3RwbHVnZ2VkIHZlcnkgZnJlcXVlbnRseSBsaWtlIGRhdGEgZHJpdmVzLg0KDQoNCkdyYW50ZWQg
-aXQgcHJvYmFibHkgY291bGQgYmUgZml0IGludG8gcGNpZWhwX3BvbGwsIGJ1dCBpdCBzZWVtZWQg
-dG8NCmhhdmUgYSBkaWZmZXJlbnQgb2JqZWN0aXZlIChlbXVsYXRpbmcgc2xvdCkNCg==
+
+On 2/10/20 10:35 AM, Arnd Bergmann wrote:
+> On Wed, Jan 15, 2020 at 10:31 PM Eddie James <eajames@linux.ibm.com> wrote:
+>> The XDMA engine embedded in the AST2500 and AST2600 SOCs performs PCI
+>> DMA operations between the SOC (acting as a BMC) and a host processor
+>> in a server.
+>>
+>> This commit adds a driver to control the XDMA engine and adds functions
+>> to initialize the hardware and memory and start DMA operations.
+>>
+>> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> Hi Eddie,
+>
+> I'm missing the bigger picture in the description here, how does this fit into
+> the PCIe endpoint framework and the dmaengine subsystem?
+
+
+Hi,
+
+It doesn't fit into the PCIe endpoint framework. The XDMA engine 
+abstracts all the PCIe details away so the BMC cannot configure any of 
+the things the PCIe endpoint exposes.
+
+It also doesn't fit into the dmaengine subsystem due to the restriction 
+on the ast2500 (and maybe the ast2600) that the XDMA engine can only 
+access certain areas of physical memory. Also problematic would be 
+pausing/resuming/terminating transfers because the XDMA engine can't do 
+those things.
+
+
+>
+> Does the AST2500 show up as a PCIe device in the host, or do you just
+> inject DMAs into the host and hope that bypasses the IOMMU?
+> If it shows up as an endpoint, how does the endpoint driver link into the
+> dma driver?
+
+
+The AST2500 and AST2600 have two PCIe devices on them, so these will 
+show up on the host if the BMC enables both of them. Either or both can 
+also be disabled and therefore will not show up. On the host side, in 
+order to receive DMA transfers, its simply a matter of registering a PCI 
+device driver and allocating some coherent DMA.... Not sure about the 
+details of endpoints/dma client driver?
+
+
+Hopefully this answers your questions. Thanks,
+
+Eddie
+
+
+>
+>       Arnd
