@@ -2,102 +2,382 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FB87157369
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 12:25:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9BFA15735A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 12:22:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbgBJLZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 06:25:22 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:37388 "EHLO mail.skyhub.de"
+        id S1727430AbgBJLWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 06:22:36 -0500
+Received: from mga09.intel.com ([134.134.136.24]:51189 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727022AbgBJLZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 06:25:22 -0500
-Received: from zn.tnic (p200300EC2F05D4008812BAA0C57D79D0.dip0.t-ipconnect.de [IPv6:2003:ec:2f05:d400:8812:baa0:c57d:79d0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 156FB1EC071C;
-        Mon, 10 Feb 2020 12:25:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1581333921;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=NaiqXX+sMELuoMaZk+22aQzQw0VCUrjI3pgdh2M4tM4=;
-        b=i5LcFyhjdWnvrYl86SQPuJE6746hdWxgOLTu/v97aq18gb2hB2XnJapv0MjHW9o5mi4FHc
-        KSjZ+zrtU0eUBcv6M5u4pPzqcG99loFdQekeQJOZHLT2zywkxoZCKqoQjM5E/9y8LR32jd
-        okIO0cTG7dwOjsMWlYSstEvlZ3qPl3E=
-Date:   Mon, 10 Feb 2020 12:25:13 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [for-next][PATCH 04/26] bootconfig: Add Extra Boot Config support
-Message-ID: <20200210112512.GA29627@zn.tnic>
-References: <20200114210316.450821675@goodmis.org>
- <20200114210336.259202220@goodmis.org>
- <20200206115405.GA22608@zn.tnic>
- <20200206234100.953b48ecef04f97c112d2e8b@kernel.org>
- <20200206175858.GG9741@zn.tnic>
- <20200207114617.3bda49673175d3fa33cbe85e@kernel.org>
- <20200207114122.GB24074@zn.tnic>
- <20200208000648.3383f991fee68af5ee229d65@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200208000648.3383f991fee68af5ee229d65@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726796AbgBJLWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 06:22:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Feb 2020 03:22:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,424,1574150400"; 
+   d="scan'208";a="227160563"
+Received: from test-hp-compaq-8100-elite-cmt-pc.igk.intel.com ([10.237.149.93])
+  by fmsmga008.fm.intel.com with ESMTP; 10 Feb 2020 03:22:33 -0800
+From:   Piotr Maziarz <piotrx.maziarz@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     rostedt@goodmis.org, acme@redhat.com, tstoyanov@vmware.com,
+        andriy.shevchenko@intel.com, cezary.rojewski@intel.com,
+        gustaw.lewandowski@intel.com
+Subject: [PATCH v2] libtraceevent: add __print_hex_dump support
+Date:   Mon, 10 Feb 2020 13:19:11 +0100
+Message-Id: <1581337151-11231-1-git-send-email-piotrx.maziarz@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 08, 2020 at 12:06:48AM +0900, Masami Hiramatsu wrote:
-> OK, could you tell me your idea to make it better? I'm waiting for such
-> discussion a half of last year :)
+This allows using parsing __print_hex_dump in user space tools. Print
+format is aligned with debugfs tracing interface.
 
-Yah, situation sounds familiar. :)
+Signed-off-by: Piotr Maziarz <piotrx.maziarz@linux.intel.com>
+Signed-off-by: Cezary Rojewski <cezary.rojewski@intel.com>
+---
+v2:
+Fix checkpatch warning
+Use is_power_of_2() function
 
-> For your information, here is the background of this bootconfig.
-> To build my boot-time tracing, I need a way to pass a flexible and
-> structured configuration at boot time.
+ tools/lib/traceevent/event-parse.c | 123 +++++++++++++++++++++++++++++++++++++
+ tools/lib/traceevent/event-parse.h |  12 ++++
+ tools/lib/traceevent/trace-seq.c   |  94 ++++++++++++++++++++++++++++
+ tools/lib/traceevent/trace-seq.h   |   3 +
+ 4 files changed, 232 insertions(+)
 
-Can I see an actual example of what you're doing?
-
-> I had tried to reuse devicetree at first, but it was rejected because
-> the devicetree is only for describing hardware. So I introduced this
-> bootconfig.
-
-Makes sense.
-
-> When I designed the bootconfig, I tried to sort out the requirements.
-> That config should be able to pass all setting we can do on tracefs.
-> Since ftrace already has a parser for tracefs, we don't need any types
-> for each settings. Thus it should be something like sysctl.conf. But the
-> sysctl.conf was too simple, it couldn't handle several related keys
-> well. So I decided to introduce braces which put together some related
-> parameters. And the bootconfig syntax was born.
-
-Ok, here's my boot command line:
-
-[    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-5.5.0-rc7+ root=/dev/nvme0n1p2 ro root=/dev/disk/by-id/nvme-eui.0025385481b2fe2a-part2 resume=/dev/disk/by-id/nvme-eui.0025385481b2fe2a-part1 debug ignore_loglevel log_buf_len=16M no_console_suspend net.ifnames=0 mem_encrypt=off systemd.log_target=null
-
-How do I use the bootconfig thing with it? Or is it not supposed to be
-used that way? IOW, how is it supposed to be used so that it needs to be
-enabled on every box?
-
-> Okay, I hope it and try to prove it. Anyway, to use boot-time tracing which
-> can fully utilize ftrace at boot-time, we have to enable bootconfig.
-
-Ok, this is getting closer. But not everyone is using boottime tracing?
-
-Or is the logic: every user/tool might need to be able to do boottime
-tracing at some future point in time and bootconfig is a mandatory part
-of that use case?
-
-Thx.
-
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index beaa8b8..37aefdc 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -898,6 +898,15 @@ static void free_arg(struct tep_print_arg *arg)
+ 		free_arg(arg->int_array.count);
+ 		free_arg(arg->int_array.el_size);
+ 		break;
++	case TEP_PRINT_HEX_DUMP:
++		free_arg(arg->hex_dump.prefix_str);
++		free_arg(arg->hex_dump.prefix_type);
++		free_arg(arg->hex_dump.rowsize);
++		free_arg(arg->hex_dump.groupsize);
++		free_arg(arg->hex_dump.buf);
++		free_arg(arg->hex_dump.len);
++		free_arg(arg->hex_dump.ascii);
++		break;
+ 	case TEP_PRINT_TYPE:
+ 		free(arg->typecast.type);
+ 		free_arg(arg->typecast.item);
+@@ -2752,6 +2761,58 @@ process_int_array(struct tep_event *event, struct tep_print_arg *arg, char **tok
+ }
+ 
+ static enum tep_event_type
++process_hex_dump(struct tep_event *event, struct tep_print_arg *arg, char **tok)
++{
++	memset(arg, 0, sizeof(*arg));
++	arg->type = TEP_PRINT_HEX_DUMP;
++
++	if (alloc_and_process_delim(event, ",", &arg->hex_dump.prefix_str))
++		goto out;
++
++	if (alloc_and_process_delim(event, ",", &arg->hex_dump.prefix_type))
++		goto free_prefix_str;
++
++	if (alloc_and_process_delim(event, ",", &arg->hex_dump.rowsize))
++		goto free_prefix_type;
++
++	if (alloc_and_process_delim(event, ",", &arg->hex_dump.groupsize))
++		goto free_rowsize;
++
++	if (alloc_and_process_delim(event, ",", &arg->hex_dump.buf))
++		goto free_groupsize;
++
++	if (alloc_and_process_delim(event, ",", &arg->hex_dump.len))
++		goto free_buf;
++
++	if (alloc_and_process_delim(event, ")", &arg->hex_dump.ascii))
++		goto free_len;
++
++	return read_token_item(tok);
++
++free_len:
++	free_arg(arg->hex_dump.len);
++	arg->hex_dump.len = NULL;
++free_buf:
++	free_arg(arg->hex_dump.buf);
++	arg->hex_dump.buf = NULL;
++free_groupsize:
++	free_arg(arg->hex_dump.groupsize);
++	arg->hex_dump.groupsize = NULL;
++free_rowsize:
++	free_arg(arg->hex_dump.rowsize);
++	arg->hex_dump.rowsize = NULL;
++free_prefix_type:
++	free_arg(arg->hex_dump.prefix_type);
++	arg->hex_dump.prefix_type = NULL;
++free_prefix_str:
++	free_arg(arg->hex_dump.prefix_str);
++	arg->hex_dump.prefix_str = NULL;
++out:
++	*tok = NULL;
++	return TEP_EVENT_ERROR;
++}
++
++static enum tep_event_type
+ process_dynamic_array(struct tep_event *event, struct tep_print_arg *arg, char **tok)
+ {
+ 	struct tep_format_field *field;
+@@ -3090,6 +3151,10 @@ process_function(struct tep_event *event, struct tep_print_arg *arg,
+ 		free_token(token);
+ 		return process_int_array(event, arg, tok);
+ 	}
++	if (strcmp(token, "__print_hex_dump") == 0) {
++		free_token(token);
++		return process_hex_dump(event, arg, tok);
++	}
+ 	if (strcmp(token, "__get_str") == 0) {
+ 		free_token(token);
+ 		return process_str(event, arg, tok);
+@@ -3626,6 +3691,7 @@ eval_num_arg(void *data, int size, struct tep_event *event, struct tep_print_arg
+ 	case TEP_PRINT_FLAGS:
+ 	case TEP_PRINT_SYMBOL:
+ 	case TEP_PRINT_INT_ARRAY:
++	case TEP_PRINT_HEX_DUMP:
+ 	case TEP_PRINT_HEX:
+ 	case TEP_PRINT_HEX_STR:
+ 		break;
+@@ -4124,6 +4190,46 @@ static void print_str_arg(struct trace_seq *s, void *data, int size,
+ 		}
+ 		break;
+ 	}
++	case TEP_PRINT_HEX_DUMP: {
++		void *buf;
++		char *prefix_str;
++		int prefix_type, rowsize, groupsize, ascii;
++
++		if (arg->hex_dump.buf->type == TEP_PRINT_DYNAMIC_ARRAY) {
++			unsigned long offset;
++
++			field = arg->hex_dump.buf->dynarray.field;
++			offset = tep_read_number(tep,
++						 data + field->offset,
++						 field->size);
++			buf = data + (offset & 0xffff);
++		} else {
++			field = arg->hex_dump.buf->field.field;
++			if (!field) {
++				str = arg->hex_dump.buf->field.name;
++				field = tep_find_any_field(event, str);
++				if (!field)
++					goto out_warning_field;
++				arg->hex_dump.buf->field.field = field;
++			}
++			buf = data + field->offset;
++		}
++		prefix_type = eval_num_arg(data, size, event,
++					   arg->hex_dump.prefix_type);
++		rowsize = eval_num_arg(data, size, event,
++				       arg->hex_dump.rowsize);
++		groupsize = eval_num_arg(data, size, event,
++					 arg->hex_dump.groupsize);
++		len = eval_num_arg(data, size, event, arg->hex_dump.len);
++		ascii = eval_num_arg(data, size, event,
++					   arg->hex_dump.ascii);
++		prefix_str = arg->hex_dump.prefix_str->atom.atom;
++
++		trace_seq_putc(s, '\n');
++		trace_seq_hex_dump(s, prefix_str, prefix_type,
++				   rowsize, groupsize, buf, len, ascii);
++		break;
++	}
+ 	case TEP_PRINT_TYPE:
+ 		break;
+ 	case TEP_PRINT_STRING: {
+@@ -5987,6 +6093,23 @@ static void print_args(struct tep_print_arg *args)
+ 		print_args(args->int_array.el_size);
+ 		printf(")");
+ 		break;
++	case TEP_PRINT_HEX_DUMP:
++		printf("__print_hex_dump(");
++		print_args(args->hex_dump.prefix_str);
++		printf(", ");
++		print_args(args->hex_dump.prefix_type);
++		printf(", ");
++		print_args(args->hex_dump.rowsize);
++		printf(", ");
++		print_args(args->hex_dump.groupsize);
++		printf(", ");
++		print_args(args->hex_dump.buf);
++		printf(", ");
++		print_args(args->hex_dump.len);
++		printf(", ");
++		print_args(args->hex_dump.ascii);
++		printf(")");
++		break;
+ 	case TEP_PRINT_STRING:
+ 	case TEP_PRINT_BSTRING:
+ 		printf("__get_str(%s)", args->string.string);
+diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
+index b77837f..9d4482f 100644
+--- a/tools/lib/traceevent/event-parse.h
++++ b/tools/lib/traceevent/event-parse.h
+@@ -213,6 +213,16 @@ struct tep_print_arg_int_array {
+ 	struct tep_print_arg	*el_size;
+ };
+ 
++struct tep_print_arg_hex_dump {
++	struct tep_print_arg	*prefix_str;
++	struct tep_print_arg	*prefix_type;
++	struct tep_print_arg	*rowsize;
++	struct tep_print_arg	*groupsize;
++	struct tep_print_arg	*buf;
++	struct tep_print_arg	*len;
++	struct tep_print_arg	*ascii;
++};
++
+ struct tep_print_arg_dynarray {
+ 	struct tep_format_field	*field;
+ 	struct tep_print_arg	*index;
+@@ -242,6 +252,7 @@ enum tep_print_arg_type {
+ 	TEP_PRINT_SYMBOL,
+ 	TEP_PRINT_HEX,
+ 	TEP_PRINT_INT_ARRAY,
++	TEP_PRINT_HEX_DUMP,
+ 	TEP_PRINT_TYPE,
+ 	TEP_PRINT_STRING,
+ 	TEP_PRINT_BSTRING,
+@@ -264,6 +275,7 @@ struct tep_print_arg {
+ 		struct tep_print_arg_symbol	symbol;
+ 		struct tep_print_arg_hex	hex;
+ 		struct tep_print_arg_int_array	int_array;
++		struct tep_print_arg_hex_dump	hex_dump;
+ 		struct tep_print_arg_func	func;
+ 		struct tep_print_arg_string	string;
+ 		struct tep_print_arg_bitmask	bitmask;
+diff --git a/tools/lib/traceevent/trace-seq.c b/tools/lib/traceevent/trace-seq.c
+index 8d5ecd2..46004f7 100644
+--- a/tools/lib/traceevent/trace-seq.c
++++ b/tools/lib/traceevent/trace-seq.c
+@@ -13,6 +13,7 @@
+ #include <asm/bug.h>
+ #include "event-parse.h"
+ #include "event-utils.h"
++#include "linux/log2.h"
+ 
+ /*
+  * The TRACE_SEQ_POISON is to catch the use of using
+@@ -247,3 +248,96 @@ int trace_seq_do_printf(struct trace_seq *s)
+ {
+ 	return trace_seq_do_fprintf(s, stdout);
+ }
++
++enum {
++	DUMP_PREFIX_NONE,
++	DUMP_PREFIX_ADDRESS,
++	DUMP_PREFIX_OFFSET
++};
++
++int hex_dump_line(const unsigned char *buf, size_t len, int rowsize,
++		  int groupsize, struct trace_seq *s, bool ascii)
++{
++	unsigned long long val;
++	int i, ret, pos = 0;
++	const char *format;
++	int ascii_pos = rowsize * 2 + rowsize / groupsize + 1;
++
++	if (len > rowsize)
++		len = rowsize;
++	if ((!is_power_of_2(groupsize) || groupsize > 8)
++	    || (len % groupsize) != 0) {
++		groupsize = 1;
++	}
++
++	for (i = 0; i < len / groupsize; i++) {
++		if (groupsize == 8) {
++			const unsigned long long *ptr8 = (void *)buf;
++
++			val = *(ptr8 + i);
++			format = "%s%16.16llx";
++		} else if (groupsize == 4) {
++			const unsigned int *ptr4 = (void *)buf;
++
++			val = *(ptr4 + i);
++			format = "%s%8.8x";
++		} else if (groupsize == 2) {
++			const unsigned short *ptr2 = (void *)buf;
++
++			val = *(ptr2 + i);
++			format = "%s%4.4x";
++		} else {
++			const unsigned char *ptr1 = (void *)buf;
++
++			val = *(ptr1 + i);
++			format = "%s%2.2x";
++		}
++		ret = trace_seq_printf(s,
++			       format, i ? " " : "",
++			       val);
++		if (ret <= 0)
++			return ret;
++		pos += ret;
++	}
++	if (!ascii)
++		return 0;
++	ret = trace_seq_printf(s, "%*s", ascii_pos - pos, "");
++	if (ret <= 0)
++		return ret;
++	for (i = 0; i < len; i++)
++		trace_seq_putc(s, (isprint(buf[i])) ? buf[i] : '.');
++	return 0;
++}
++
++int trace_seq_hex_dump(struct trace_seq *s, const char *prefix_str,
++		       int prefix_type, int rowsize, int groupsize,
++		       const void *buf, size_t len, int ascii)
++{
++	const unsigned char *ptr = buf;
++	int i, linelen, remaining = len;
++	int ret;
++
++	if (rowsize != 16 && rowsize != 32)
++		rowsize = 16;
++
++	for (i = 0; i < len; i += rowsize) {
++		linelen = min(remaining, rowsize);
++		remaining -= linelen;
++
++		if (prefix_type == DUMP_PREFIX_ADDRESS)
++			ret = trace_seq_printf(s, "%s%p: ",
++					       prefix_str, ptr + i);
++		else if (prefix_type == DUMP_PREFIX_OFFSET)
++			ret = trace_seq_printf(s, "%s%.8x: ",
++					       prefix_str, i);
++		else
++			ret = trace_seq_printf(s, "%s",
++					       prefix_str);
++		if (ret <= 0)
++			return ret;
++		hex_dump_line(ptr + i, linelen, rowsize, groupsize,
++			      s, ascii);
++		trace_seq_putc(s, '\n');
++	}
++	return 0;
++}
+diff --git a/tools/lib/traceevent/trace-seq.h b/tools/lib/traceevent/trace-seq.h
+index d68ec69..7b7d72e 100644
+--- a/tools/lib/traceevent/trace-seq.h
++++ b/tools/lib/traceevent/trace-seq.h
+@@ -51,5 +51,8 @@ extern void trace_seq_terminate(struct trace_seq *s);
+ 
+ extern int trace_seq_do_fprintf(struct trace_seq *s, FILE *fp);
+ extern int trace_seq_do_printf(struct trace_seq *s);
++extern int trace_seq_hex_dump(struct trace_seq *s, const char *prefix_str,
++			      int prefix_type, int rowsize, int groupsize,
++			      const void *buf, size_t len, int ascii);
+ 
+ #endif /* _TRACE_SEQ_H */
 -- 
-Regards/Gruss,
-    Boris.
+2.7.4
 
-https://people.kernel.org/tglx/notes-about-netiquette
