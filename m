@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79D121575BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:44:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F71C157539
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:40:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730120AbgBJMn4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:43:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39836 "EHLO mail.kernel.org"
+        id S1729478AbgBJMjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:39:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729659AbgBJMkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:14 -0500
+        id S1728865AbgBJMhm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:42 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DFC321739;
-        Mon, 10 Feb 2020 12:40:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5399F20838;
+        Mon, 10 Feb 2020 12:37:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338413;
-        bh=jZcV4X8CoMBQJCOkAZGM6gkdBTBIngVw/b85D7d0Qjc=;
+        s=default; t=1581338262;
+        bh=u5gjxbGuLQJXByiCbFPs4mdb0PD/2AnCQv8x4gXAxPU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SZy0xgWrxeIN9bdcVf1Ad7UyQcyOZVnQ1vRPxpRSJUTl6WmncTdiuZg7R8kgbwDEa
-         9nE6NWIFzPZzYzhzbXE8cDoQIbaKYsGJ54Kniv5glU3uQ7Suoy2VXGaz8vzjwKY+aQ
-         VdV0fKy1WV27teX5+UOvreVz3588tSAIOla4Ohfg=
+        b=G97qjJKq9SuagjmwttD14MFPhmey7+B86kOxawIFX4WgY/qmeKH6NV4zXG+rtyEbt
+         EgwBoHu7xBO0eYP05G6R5YiWSA5Uc6td/y0T9GBguebrLGs4mRcFK5e6QvgJhf5BFr
+         fjbQIlNrRx2FK90LvtVDMKg/ejT4U9lYqeTo6BuU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <qutran@marvell.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 5.5 126/367] scsi: qla2xxx: Fix mtcp dump collection failure
-Date:   Mon, 10 Feb 2020 04:30:39 -0800
-Message-Id: <20200210122436.487650823@linuxfoundation.org>
+        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: [PATCH 5.4 084/309] PCI: keystone: Fix error handling when "num-viewport" DT property is not populated
+Date:   Mon, 10 Feb 2020 04:30:40 -0800
+Message-Id: <20200210122413.927268328@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quinn Tran <qutran@marvell.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
 
-commit 641e0efddcbde52461e017136acd3ce7f2ef0c14 upstream.
+commit b0de922af53eede340986a2d05b6cd4b6d6efa43 upstream.
 
-MTCP dump failed due to MB Reg 10 was picking garbage data from stack
-memory.
+Fix error handling when "num-viewport" DT property is not populated.
 
-Fixes: 81178772b636a ("[SCSI] qla2xxx: Implemetation of mctp.")
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20191217220617.28084-14-hmadhani@marvell.com
-Signed-off-by: Quinn Tran <qutran@marvell.com>
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 23284ad677a9 ("PCI: keystone: Add support for PCIe EP in AM654x Platforms")
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: stable@vger.kernel.org # v5.2+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_mbx.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/pci/controller/dwc/pci-keystone.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/qla2xxx/qla_mbx.c
-+++ b/drivers/scsi/qla2xxx/qla_mbx.c
-@@ -6152,9 +6152,8 @@ qla2x00_dump_mctp_data(scsi_qla_host_t *
- 	mcp->mb[7] = LSW(MSD(req_dma));
- 	mcp->mb[8] = MSW(addr);
- 	/* Setting RAM ID to valid */
--	mcp->mb[10] |= BIT_7;
- 	/* For MCTP RAM ID is 0x40 */
--	mcp->mb[10] |= 0x40;
-+	mcp->mb[10] = BIT_7 | 0x40;
+--- a/drivers/pci/controller/dwc/pci-keystone.c
++++ b/drivers/pci/controller/dwc/pci-keystone.c
+@@ -1354,7 +1354,7 @@ static int __init ks_pcie_probe(struct p
+ 		ret = of_property_read_u32(np, "num-viewport", &num_viewport);
+ 		if (ret < 0) {
+ 			dev_err(dev, "unable to read *num-viewport* property\n");
+-			return ret;
++			goto err_get_sync;
+ 		}
  
- 	mcp->out_mb |= MBX_10|MBX_8|MBX_7|MBX_6|MBX_5|MBX_4|MBX_3|MBX_2|MBX_1|
- 	    MBX_0;
+ 		/*
 
 
