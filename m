@@ -2,93 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33DAA157037
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 09:07:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE74D157030
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 09:04:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727536AbgBJIH0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 03:07:26 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:27661 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725468AbgBJIHZ (ORCPT
+        id S1727431AbgBJIEw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 03:04:52 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:52056 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725468AbgBJIEw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 03:07:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581322044;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=R/vrAcei338JXmIq8PEiyq5Efj26tu4WshIpJ4aAFt0=;
-        b=D24klSlQUYC3vrFZZw3b2Zi1BFVF0wymub+2wj4EW4h+tnCwfMi8/3YNxda9VK0DtPVhzF
-        jeC87db8fjDR+AX/yFswBjJpBhfCTSB/JOo4teUvikyKnjRLVX2gJogxJ0qM0/bU6h6EfJ
-        wJ+yaTsfHM5faqISVUXo9PQDPydFlEI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-426-DKlFqS7YNci9yCybhuLeQA-1; Mon, 10 Feb 2020 03:07:22 -0500
-X-MC-Unique: DKlFqS7YNci9yCybhuLeQA-1
-Received: by mail-wm1-f72.google.com with SMTP id n17so2872617wmk.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 00:07:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=R/vrAcei338JXmIq8PEiyq5Efj26tu4WshIpJ4aAFt0=;
-        b=WWLm5rm8pALg08bSEZ2rfIl44v05qQ8a0QcI7gYbttCAG7ezKUS8PXEC+XTQtapPFO
-         GAip3E9SV6HTvs+0w0ENmfh4EcX984aeME43iMzSNO5blRFNKYXEriVgAvzPXaeKLsY8
-         AXDsOWOxt8InphrvaqmtKR6q3zAtSipWVS60s7TGYQ74sMS6GZHdmWD4xea5OaVWP0aA
-         wQpVaXxc9xPbfaXZpmwyRJXYnlan7tdOMlygf71RAiVBIeBJ0FR59FwwpaS96cAAE863
-         BT4jpDvGlAB09QU//v82BAk36K8MrwEynGxKRMbjjS+BzqifLMcz+IMcxPHnEmTjqiPN
-         kMaQ==
-X-Gm-Message-State: APjAAAUjpPkbdmUQcwXuW4pjXU6xPQ9sralaY/89DpL8o1hqZZoEXmoN
-        Kn3J0pvw4RwksLIibTWI1m/RzvuXdNfmlGihlTkJLcDHYF7D6nKKuxw534ynpSobi24iGRBg5+0
-        53JXH7ao/RcwGIZu0sQMkU4SH
-X-Received: by 2002:a1c:7406:: with SMTP id p6mr14647152wmc.82.1581322041636;
-        Mon, 10 Feb 2020 00:07:21 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzyutQzrqNLBSHCcjxPc2EBxYV84bPCyNl9toOZe4wlgGLy5GGwUc79SQYvtPkEpAQyR519RQ==
-X-Received: by 2002:a1c:7406:: with SMTP id p6mr14647117wmc.82.1581322041343;
-        Mon, 10 Feb 2020 00:07:21 -0800 (PST)
-Received: from localhost.localdomain ([151.29.2.83])
-        by smtp.gmail.com with ESMTPSA id k10sm15250485wrd.68.2020.02.10.00.07.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2020 00:07:20 -0800 (PST)
-Date:   Mon, 10 Feb 2020 09:07:18 +0100
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Jules Irenge <jbi.octave@gmail.com>
-Cc:     boqun.feng@gmail.com, peterz@infradead.org, mingo@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/11] sched/deadline: Add missing annotation for
- dl_task_offline_migration()
-Message-ID: <20200210080718.GG7650@localhost.localdomain>
-References: <0/11>
- <cover.1581282103.git.jbi.octave@gmail.com>
- <4cebf47c30ce24ee1972f4b6330376d8f32802b9.1581282103.git.jbi.octave@gmail.com>
+        Mon, 10 Feb 2020 03:04:52 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01A84hru054895;
+        Mon, 10 Feb 2020 02:04:43 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1581321883;
+        bh=5RrM0zAdbPJvAvUMbbQa1uJTy6L2C1VFT9qlwKh0x6M=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=GX90jOJXYyVUI96TGzXEy/NBKYP7q6Ah/M4Hgqtz72PRIvzlwq0j/2sTNEZ6NPTBV
+         hKmkJmRnz2eYrCrMw7JJ4Ew54cmniwfNsz7qqHii7FOK7FsNz8DUFwIE3Jloef7jrt
+         wgvfQyG3/pyZO1vLQd5dNkuw5u+wEKXHq5WVcexM=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01A84hWu131019;
+        Mon, 10 Feb 2020 02:04:43 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 10
+ Feb 2020 02:04:43 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 10 Feb 2020 02:04:43 -0600
+Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01A84eqq071121;
+        Mon, 10 Feb 2020 02:04:41 -0600
+Subject: Re: [PATCH] phy: core: Add consumer device link support
+To:     youling 257 <youling257@gmail.com>
+CC:     <alexandre.torgue@st.com>, <yoshihiro.shimoda.uh@renesas.com>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>
+References: <20191104143713.11137-1-alexandre.torgue@st.com>
+ <20200206133918.15012-1-youling257@gmail.com>
+ <0c4a37a9-0a2e-e698-f423-53060854ea05@ti.com>
+ <CAOzgRdb5QfJDQzbtoHQry4wxUg52LwX5XFCPzzaYa=z+RqNWOQ@mail.gmail.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <8bd72269-16ae-b24a-7144-44d22d668dc6@ti.com>
+Date:   Mon, 10 Feb 2020 13:38:16 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4cebf47c30ce24ee1972f4b6330376d8f32802b9.1581282103.git.jbi.octave@gmail.com>
+In-Reply-To: <CAOzgRdb5QfJDQzbtoHQry4wxUg52LwX5XFCPzzaYa=z+RqNWOQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Alexandre,
 
-On 09/02/20 22:39, Jules Irenge wrote:
-> Sparse reports warning at dl_task_offline_migration()
+On 07/02/20 12:27 PM, youling 257 wrote:
+> test this diff, dwc3 work for my device, thanks.
 > 
-> warning: context imbalance in dl_task_offline_migration()
-> 	 - unexpected unlock
-> 
-> The root cause is the missing annotation for dl_task_offline_migration()
-> 
-> Add the missing __releases(rq->lock) annotation.
-> 
-> Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+> 2020-02-07 13:16 GMT+08:00, Kishon Vijay Abraham I <kishon@ti.com>:
+>> Hi,
+>>
+>> On 06/02/20 7:09 PM, youling257 wrote:
+>>> This patch cause "dwc3 dwc3.3.auto: failed to create device link to
+>>> dwc3.3.auto.ulpi" problem.
+>>> https://bugzilla.kernel.org/show_bug.cgi?id=206435
+>>
+>> I'm suspecting there is some sort of reverse dependency with dwc3 ULPI.
+>> Can you try the following diff?
+>>
+>> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+>> index 2eb28cc2d2dc..397311dcb116 100644
+>> --- a/drivers/phy/phy-core.c
+>> +++ b/drivers/phy/phy-core.c
+>> @@ -687,7 +687,7 @@ struct phy *phy_get(struct device *dev, const char
+>> *string)
+>>
+>>         get_device(&phy->dev);
+>>
+>> -       link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
+>> +       link = device_link_add(dev, &phy->dev, DL_FLAG_SYNC_STATE_ONLY);
+>>         if (!link) {
+>>                 dev_err(dev, "failed to create device link to %s\n",
+>>                         dev_name(phy->dev.parent));
+>> @@ -802,7 +802,7 @@ struct phy *devm_of_phy_get(struct device *dev,
+>> struct device_node *np,
+>>                 return phy;
+>>         }
+>>
+>> -       link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
+>> +       link = device_link_add(dev, &phy->dev, DL_FLAG_SYNC_STATE_ONLY);
+>>         if (!link) {
+>>                 dev_err(dev, "failed to create device link to %s\n",
+>>                         dev_name(phy->dev.parent));
+>> @@ -851,7 +851,7 @@ struct phy *devm_of_phy_get_by_index(struct device
+>> *dev, struct device_node *np,
+>>         *ptr = phy;
+>>         devres_add(dev, ptr);
+>>
+>> -       link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
+>> +       link = device_link_add(dev, &phy->dev, DL_FLAG_SYNC_STATE_ONLY);
+>>         if (!link) {
+>>                 dev_err(dev, "failed to create device link to %s\n",
+>>                         dev_name(phy->dev.parent));Parent
 
-Acked-by: Juri Lelli <juri.lelli@redhat.com>
+Can you check if this doesn't affect the suspend/resume ordering?
 
-Best,
-
-Juri
-
+Thanks
+Kishon
