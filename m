@@ -2,137 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 698D51571E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 10:41:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 540F01571F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 10:43:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbgBJJl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 04:41:58 -0500
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:51037 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726950AbgBJJl5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 04:41:57 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 4428A21A97;
-        Mon, 10 Feb 2020 04:41:54 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 10 Feb 2020 04:41:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=d9UVYjOFvIhqvu/YHII/qZzXr7G
-        ct38JABDmCn0w5X8=; b=F8jbaGgZDT1zY6FziFyoGrH3wIfbJuPJ73uKI0lkfHv
-        vCi+Pc4X+lIEp08xpgBcD5xGp9t9atMo0Gj0oWynWeNryrVfs/BwlQpSzZcSqAJG
-        vsSBQAdUddK5Lp8vRCwz6khYegKe2o5n7jcnw6BTR5doVtnH60Vhe0ndMTn8+CU3
-        4NAfNmjzEaPup0NiXBymdL8oZmZlIhDw/WjpwVTtKtde5laTJeMmFcvh3oq4HisD
-        +mJTh1Xg1w8gulkp9Um/J6k8Rwj4c3j16QYhtPVx20u0TDsh+dtpbFakhTp5/end
-        WqV/pzp8QopoXaH/8cS1fbQsg75uzzwNz3RFE9/I4gQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=d9UVYj
-        OFvIhqvu/YHII/qZzXr7Gct38JABDmCn0w5X8=; b=fEq3Z14vxDFoPUpI8LNKnT
-        1po7RhhotquPwjoZMoiG522U0RLNM+kL15EwORlMY7ROqKtt1biz6UenZoElBn+P
-        Ongy9vWxFy7Q+0BAjIibG9UYs1TSSLr0t83Q8D7MARwlIiubQD0mH6OfbG6vfi5H
-        Q54LjaYQ61mFDOvBKdvxH9c6ehPf9C+5KElxKLkdSMj9duEtmCr8YXZnkVQ5MnY3
-        8eZFWp6VNlYYuFj6cMTLurWA0apyF7BMO/Fcjw7XlfR8rqA0hNz/frWHGox8qsFF
-        7x0aU/SxygcaB3wGoge15EGHmh4X3QLyun7BV+0BNPodPwqqSDLttE9GJl/t+ALg
-        ==
-X-ME-Sender: <xms:YSVBXrZdgESm-gLNg8o2FjfJ8kFqNc3s10vMd8n0mXnZwWYcp9r2Ug>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedriedugddtiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffukfhfgggtuggjsehgtderre
-    dttddvnecuhfhrohhmpeforgigihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghr
-    nhhordhtvggthheqnecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordht
-    vggthh
-X-ME-Proxy: <xmx:YSVBXguuX4srb9zEpsDxIHDKbieKrmlSaTvfNSxo31KSrDqBv5OZQQ>
-    <xmx:YSVBXqpTd2D-cb2Z-ObYq0wSWBgYy7vThsHVJJIRPI4A4JuUbRVvlw>
-    <xmx:YSVBXgTUaMzlrsKvm9yshoBxnRBwLMvjeXyVaPqEp1cahlaCeg9DWg>
-    <xmx:YiVBXmCnnFqkmhuNBJnGYWlcsJGl2vDH_y_SNEEukQenm-d7gt8hJg>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 6E65D3060717;
-        Mon, 10 Feb 2020 04:41:53 -0500 (EST)
-Date:   Mon, 10 Feb 2020 10:41:51 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     agriveaux@deutnet.info
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: sun5i: Add dts for inet86v_rev2
-Message-ID: <20200210094151.acim7h4yladgluc7@gilmour.lan>
-References: <20200210092736.3208998-1-agriveaux@deutnet.info>
- <20200210092736.3208998-2-agriveaux@deutnet.info>
+        id S1727549AbgBJJny (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 04:43:54 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52842 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726950AbgBJJny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 04:43:54 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 9D776B15D;
+        Mon, 10 Feb 2020 09:43:47 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="i5c7nphjkfrh5sot"
-Content-Disposition: inline
-In-Reply-To: <20200210092736.3208998-2-agriveaux@deutnet.info>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 10 Feb 2020 10:43:47 +0100
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Max Neunhoeffer <max@arangodb.com>,
+        Christopher Kohlhoff <chris.kohlhoff@clearpool.io>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Jason Baron <jbaron@akamai.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] epoll: fix possible lost wakeup on epoll_ctl() path
+In-Reply-To: <20200209215916.15640598689d3e40aa3f9e72@linux-foundation.org>
+References: <20200203205907.291929-1-rpenyaev@suse.de>
+ <51f29f23a4d996810bfad12b9634ee12@suse.de>
+ <20200204083237.7fa30aea@cakuba.hsd1.ca.comcast.net>
+ <549916868753e737316f509640550b66@suse.de>
+ <20200209215916.15640598689d3e40aa3f9e72@linux-foundation.org>
+Message-ID: <55c054e4c52c1e659cfa5f38a5e37571@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2020-02-10 06:59, Andrew Morton wrote:
+> On Tue, 04 Feb 2020 18:20:03 +0100 Roman Penyaev <rpenyaev@suse.de> 
+> wrote:
+> 
+>> On 2020-02-04 17:32, Jakub Kicinski wrote:
+>> > On Tue, 04 Feb 2020 11:41:42 +0100, Roman Penyaev wrote:
+>> >> Hi Andrew,
+>> >>
+>> >> Could you please suggest me, do I need to include Reported-by tag,
+>> >> or reference to the bug is enough?
+>> >
+>> > Sorry to jump in but FWIW I like the Reported-and-bisected-by tag to
+>> > fully credit the extra work done by the reporter.
+>> 
+>> Reported-by: Max Neunhoeffer <max@arangodb.com>
+>> Bisected-by: Max Neunhoeffer <max@arangodb.com>
+>> 
+>> Correct?
+> 
+> We could do that, but preferably with Max's approval (please?).
+> 
+> Because people sometimes have issues with having their personal info
+> added to the kernel commit record without having being asked.
 
---i5c7nphjkfrh5sot
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Max approved.  I've just resent v2, no code changes, comment
+tweaks and 2 explicit tags with Max's name.
 
-Hi,
+--
+Roman
 
-On Mon, Feb 10, 2020 at 10:27:36AM +0100, agriveaux@deutnet.info wrote:
-> From: Alexandre GRIVEAUX <agriveaux@deutnet.info>
->
-> Add Inet 86V Rev 2 support, based upon Inet 86VS.
->
-> Missing things:
-> - Accelerometer (MXC6225X)
-> - Touchpanel (Sitronix SL1536)
-> - Nand (29F32G08CBACA)
-> - Camera (HCWY0308)
-
-Same thing than for U-Boot, you're missing your SoB.
-
-> ---
->  arch/arm/boot/dts/sun5i-a13-inet-86v-rev2.dts | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->  create mode 100644 arch/arm/boot/dts/sun5i-a13-inet-86v-rev2.dts
->
-> diff --git a/arch/arm/boot/dts/sun5i-a13-inet-86v-rev2.dts b/arch/arm/boot/dts/sun5i-a13-inet-86v-rev2.dts
-> new file mode 100644
-> index 000000000000..e73abb9a1e32
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/sun5i-a13-inet-86v-rev2.dts
-> @@ -0,0 +1,17 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright 2020 Alexandre Griveaux <agriveaux@deutnet.info>
-> + *
-> + * Minimal dts file for the iNet 86V
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "sun5i-a13.dtsi"
-> +#include "sun5i-reference-design-tablet.dtsi"
-> +
-> +/ {
-> +	model = "iNET 86V Rev 02";
-> +	compatible = "inet,86v-rev2", "allwinner,sun5i-a13";
-> +
-> +};
-
-If it's exactly the same device, why do we need another device tree?
-
-Maxime
-
---i5c7nphjkfrh5sot
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXkElXwAKCRDj7w1vZxhR
-xVqQAP0WqaoWFqiHegUKPvKlv56b9oGniB5VpWmrxYdYEA2xdAEA72tUhIcb89Xk
-YbyBfShDx6jSAVf/b7hvE/yy2ZX+ogw=
-=YSHF
------END PGP SIGNATURE-----
-
---i5c7nphjkfrh5sot--
