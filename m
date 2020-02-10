@@ -2,167 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39B7F157B2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:28:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB80C157B36
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:29:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731367AbgBJN2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:28:11 -0500
-Received: from esa5.hc3370-68.iphmx.com ([216.71.155.168]:58949 "EHLO
-        esa5.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727784AbgBJN2I (ORCPT
+        id S1731376AbgBJN2X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:28:23 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:54761 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727784AbgBJN2Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 08:28:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=citrix.com; s=securemail; t=1581341287;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=opbvteBDcQt8TMq05Xoco2FvwOxB7xQFs3oCBwqLCAg=;
-  b=RGgk3lkRH2E0BmzV/lkt1ItWxNa8nr+rZW6tOVcY0n6sVWwd/CQvpsa9
-   UFMx4ZPQDXLEmSVke90etWlEurcOcJq3rUE1virvYzkIB/pzgL2VnnbiM
-   fWlcZ2D+Q1ogKIedkLZEWoaLBhtBm2FTOGxpMWAi9yRePKMyP3YB+laT4
-   Y=;
-Authentication-Results: esa5.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=sergey.dyasli@citrix.com; spf=Pass smtp.mailfrom=sergey.dyasli@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  sergey.dyasli@citrix.com) identity=pra;
-  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
-  envelope-from="sergey.dyasli@citrix.com";
-  x-sender="sergey.dyasli@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa5.hc3370-68.iphmx.com: domain of
-  sergey.dyasli@citrix.com designates 162.221.158.21 as
-  permitted sender) identity=mailfrom;
-  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
-  envelope-from="sergey.dyasli@citrix.com";
-  x-sender="sergey.dyasli@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
-  ip4:168.245.78.127 ~all"
-Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
-  envelope-from="sergey.dyasli@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: v27w17BgUeGjtp/rl+JvfJKbl+EaZoEoDjOXy+AxgNKoUVuR3HsBp3/YwqB9C4hhsfHfEiE5R8
- Whp2yvSJsJIZGHYa4NCcKw23XExw6bKzW3EMqZcR6rU8AvrEaseHho+J2sSxsiS3elFH0s0Ja0
- soe8U2ZuKnE5dtm/45/ysKOJjCySAWU8mJCVOf8aabf41Wa/kPUnRQlQDPiBOOUdHjg0MfKRgb
- h5R+0CQLPMCQ0uAK1uf+ztaHPEZ1AYc+pLaw6b6CVKL34Mz9s6NHWfx0Vt1uvPZ6aSMvam2HSV
- csE=
-X-SBRS: 2.7
-X-MesageID: 12569220
-X-Ironport-Server: esa5.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.70,425,1574139600"; 
-   d="scan'208";a="12569220"
-Subject: Re: [PATCH v3 4/4] xen/netback: fix grant copy across page boundary
-To:     David Miller <davem@davemloft.net>
-CC:     <xen-devel@lists.xen.org>, <kasan-dev@googlegroups.com>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <aryabinin@virtuozzo.com>, <glider@google.com>,
-        <dvyukov@google.com>, <boris.ostrovsky@oracle.com>,
-        <jgross@suse.com>, <sstabellini@kernel.org>,
-        <george.dunlap@citrix.com>, <ross.lagerwall@citrix.com>,
-        <akpm@linux-foundation.org>, <netdev@vger.kernel.org>,
-        <wei.liu@kernel.org>, <paul@xen.org>,
-        "sergey.dyasli@citrix.com >> Sergey Dyasli" 
-        <sergey.dyasli@citrix.com>
-References: <20200207142652.670-1-sergey.dyasli@citrix.com>
- <20200207142652.670-5-sergey.dyasli@citrix.com>
- <20200207.153630.1432371073271757175.davem@davemloft.net>
-From:   Sergey Dyasli <sergey.dyasli@citrix.com>
-Autocrypt: addr=sergey.dyasli@citrix.com; keydata=
- xsFNBFtMVHEBEADc/hZcLexrB6vGTdGqEUsYZkFGQh6Z1OO7bCtM1go1RugSMeq9tkFHQSOc
- 9c7W9NVQqLgn8eefikIHxgic6tGgKoIQKcPuSsnqGao2YabsTSSoeatvmO5HkR0xGaUd+M6j
- iqv3cD7/WL602NhphT4ucKXCz93w0TeoJ3gleLuILxmzg1gDhKtMdkZv6TngWpKgIMRfoyHQ
- jsVzPbTTjJl/a9Cw99vuhFuEJfzbLA80hCwhoPM+ZQGFDcG4c25GQGQFFatpbQUhNirWW5b1
- r2yVOziSJsvfTLnyzEizCvU+r/Ek2Kh0eAsRFr35m2X+X3CfxKrZcePxzAf273p4nc3YIK9h
- cwa4ZpDksun0E2l0pIxg/pPBXTNbH+OX1I+BfWDZWlPiPxgkiKdgYPS2qv53dJ+k9x6HkuCy
- i61IcjXRtVgL5nPGakyOFQ+07S4HIJlw98a6NrptWOFkxDt38x87mSM7aSWp1kjyGqQTGoKB
- VEx5BdRS5gFdYGCQFc8KVGEWPPGdeYx9Pj2wTaweKV0qZT69lmf/P5149Pc81SRhuc0hUX9K
- DnYBa1iSHaDjifMsNXKzj8Y8zVm+J6DZo/D10IUxMuExvbPa/8nsertWxoDSbWcF1cyvZp9X
- tUEukuPoTKO4Vzg7xVNj9pbK9GPxSYcafJUgDeKEIlkn3iVIPwARAQABzShTZXJnZXkgRHlh
- c2xpIDxzZXJnZXkuZHlhc2xpQGNpdHJpeC5jb20+wsGlBBMBCgA4FiEEkI7HMI5EbM2FLA1L
- Aa+w5JvbyusFAltMVHECGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AAIQkQAa+w5JvbyusW
- IQSQjscwjkRszYUsDUsBr7Dkm9vK65AkEACvL+hErqbQj5yTVNqvP1rVGsXvevViglSTkHD4
- 9LGwEk4+ne8N4DPcqrDnyqYFd42UxTjVyoDEXEIIoy0RHWCmaspYEDX8fVmgFG3OFoeA9NAv
- JHssHU6B2mDAQ6M3VDmAwTw+TbXL/c1wblgGAP9kdurydZL8bevTTUh7edfnm5pwaT9HLXvl
- xLjz5qyt6tKEowM0xPVzCKaj3Mf/cuZFOlaWiHZ0biOPC0JeoHuz4UQTnBBUKk+n2nnn72k9
- 37cNeaxARwn/bxcej9QlbrrdaNGVFzjCA/CIL0KjUepowpLN0+lmYjkPgeLNYfyMXumlSNag
- 9qnCTh0QDsCXS/HUHPeBskAvwNpGBCkfiP/XqJ+V618ZQ1sclHa9aWNnlIR/a8xVx25t/14V
- R8EX/045HUpyPU8hI/yw+Fw/ugJ8W0dFzFeHU5K2tEW2W0m3ZWWWgpcBSCB17DDLIPjGX1Qc
- J8jiVJ7E4rfvA1JBg9BxVw5LVuXg2FB6bqnDYALfY2ydATk+ZzMUAMMilaE7/5a2RMV4TYcd
- 8Cf77LdgO0pB3vF6z1QmNA2IbOICtJOXpmvHj+dKFUt5hFVbvqXbuAjlrwFktbAFVGxaeIYz
- nQ44lQu9JqDuSH5yOytdek24Dit8SgEHGvumyj17liCG6kNzxd+2xh3uaUCA5MIALy5mZ87B
- TQRbTFRxARAAwqL3u/cPDA+BhU9ghtAkC+gyC5smWUL1FwTQ9CwTqcQpKt85PoaHn8sc5ctt
- Aj2fNT/F2vqQx/BthVOdkhj9LCwuslqBIqbri3XUyMLVV/Tf+ydzHW2AjufCowwgBguxedD1
- f9Snkv+As7ZgMg/GtDqDiCWBFg9PneKvr+FPPd2WmrI8Kium4X5Zjs/a6OGUWVcIBoPpu088
- z/0tlKYjTFLhoIEsf6ll4KvRQZIyGxclg3RBEuN+wgMbKppdUf2DBXYeCyrrPx809CUFzcik
- O99drWti2CV1gF8bnbUvfCewxwqgVKtHl2kfsm2+/lgG4CTyvnvWqUyHICZUqISdz5GidaXn
- TcPlsAeo2YU2NXbjwnmxzJEP/4FxgsjYIUbbxdmsK+PGre7HmGmaDZ8K77L3yHr/K7AH8mFs
- WUM5KiW4SnKyIQvdHkZMpvE4XrrirlZ+JI5vE043GzzpS2CGo0NFQmDJLRbpN/KQY6dkNVgA
- L0aDxJtAO1rXKYDSrvpL80bYyskQ4ivUa06v9SM2/bHi9bnp3Nf/fK6ErWKWmDOHWrnTgRML
- oQpcxoVPxw2CwyWT1069Y/CWwgnbj34+LMwMUYhPEZMitABpQE74dEtIFh0c2scm3K2QGhOP
- KQK3szqmXuX6MViMZLDh/B7FXLQyqwMBnZygfzZFM9vpDskAEQEAAcLBjQQYAQoAIBYhBJCO
- xzCORGzNhSwNSwGvsOSb28rrBQJbTFRxAhsMACEJEAGvsOSb28rrFiEEkI7HMI5EbM2FLA1L
- Aa+w5Jvbyuvvbg//S3d1+XL568K5BTHXaYxSqCeMqYbV9rPhEHyk+rzKtwNXSbSO8x0xZutL
- gYV+nkW0KMPH5Bz3I1xiRKAkiX/JLcMfx2HAXJ1Cv2rpR6bxyCGBJmuwR68uMS/gKe6AWwTY
- q2kt1rtZPjGl9OwVoWGJKbu2pFBLWmLAnHlXOL6WDSE1Mz2Ah3jMHOaSyAgPu1XSNa600gMJ
- QrSxgbe7bW72gCjeHcrIjfv+uh5cZ5/J/edpWXRuE4Tz82nxudBIHE2vnQEoJrXOh2kAJiYs
- G+IllDqFKDPrnS0R3DenBNG0Ir8h9W6heETnhQUc9NDFCSr81Mp0fROdBfYZnQzgSZMjN2eY
- pkNEWshJER4ZYY+7hAmqI51HnsKuM46QINh00jJHRMykW3TBMlwnUFxZ0gplAecjCFC7g2zj
- g1qNxLnxMS4wCsyEVhCkPyYnS8zuoa4ZUH37CezD01Ph4O1saln5+M4blHCEAUpZIkTGpUoi
- SEwtoxu6EEUYfbcjWgzJCs023hbRykZlFALoRNCwVz/FnPuVu291jn9kjvCTEeE6g2dCtOrO
- ukuXzk1tIeeoggsU7AJ0bzP7QOEhEckaBbP4k6ic26LJGWNMinllePyEMXzsgmMHVN//8wDT
- NWaanhP/JZ1v5Mfn8s1chIqC0sJIw73RvvuBkOa+jx0OwW3RFoQ=
-Message-ID: <db55bbec-e685-e3b6-638a-3d707d8892c0@citrix.com>
-Date:   Mon, 10 Feb 2020 13:27:38 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 10 Feb 2020 08:28:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581341294;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=mPXhabgczbTMf25Zh3H3ZWdppn7J5d5aXBKo4Z9Cwr8=;
+        b=CKUM9DCvOwFT5hr6QxhzM4ap9u7cCJvjv3AlC27CmvnWbBckY6rV7OS3jRdjALct2fEWGC
+        PBafNUMGUE140vb/fDGMmae64n6ASxhMMvAn17mnwM14qQiddQL3lfv/x9GLHpK3SBuJIX
+        W68ArE+q5PjL83eTq7iweYjGwDq/giA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-262-uREGZ89FND6f_aVOJ9z3Aw-1; Mon, 10 Feb 2020 08:28:10 -0500
+X-MC-Unique: uREGZ89FND6f_aVOJ9z3Aw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3D0901857340;
+        Mon, 10 Feb 2020 13:28:09 +0000 (UTC)
+Received: from krava (unknown [10.43.17.9])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 40BF05C1D6;
+        Mon, 10 Feb 2020 13:28:07 +0000 (UTC)
+Date:   Mon, 10 Feb 2020 14:28:04 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jin Yao <yao.jin@linux.intel.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH] perf stat: Show percore counts in per CPU output
+Message-ID: <20200210132804.GA9922@krava>
+References: <20200206015613.527-1-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20200207.153630.1432371073271757175.davem@davemloft.net>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200206015613.527-1-yao.jin@linux.intel.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/2020 14:36, David Miller wrote:
-> From: Sergey Dyasli <sergey.dyasli@citrix.com>
-> Date: Fri, 7 Feb 2020 14:26:52 +0000
->
->> From: Ross Lagerwall <ross.lagerwall@citrix.com>
->>
->> When KASAN (or SLUB_DEBUG) is turned on, there is a higher chance that
->> non-power-of-two allocations are not aligned to the next power of 2 of
->> the size. Therefore, handle grant copies that cross page boundaries.
->>
->> Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
->> Signed-off-by: Sergey Dyasli <sergey.dyasli@citrix.com>
->> Acked-by: Paul Durrant <paul@xen.org>
->
-> This is part of a larger patch series to which netdev was not CC:'d
->
-> Where is this patch targetted to be applied?
->
-> Do you expect a networking ACK on this?
->
-> Please do not submit patches in such an ambiguous manner like this
-> in the future, thank you.
+On Thu, Feb 06, 2020 at 09:56:13AM +0800, Jin Yao wrote:
+> We have supported the event modifier "percore" which sums up the
+> event counts for all hardware threads in a core and show the counts
+> per core.
+> 
+> For example,
+> 
+>  # perf stat -e cpu/event=cpu-cycles,percore/ -a -A -- sleep 1
+> 
+>   Performance counter stats for 'system wide':
+> 
+>  S0-D0-C0                395,072      cpu/event=cpu-cycles,percore/
+>  S0-D0-C1                851,248      cpu/event=cpu-cycles,percore/
+>  S0-D0-C2                954,226      cpu/event=cpu-cycles,percore/
+>  S0-D0-C3              1,233,659      cpu/event=cpu-cycles,percore/
+> 
+> This patch provides a new option "--percore-show-thread". It is
+> used with event modifier "percore" together to sum up the event counts
+> for all hardware threads in a core but show the counts per hardware
+> thread.
+> 
+> For example,
+> 
+>  # perf stat -e cpu/event=cpu-cycles,percore/ -a -A --percore-show-thread  -- sleep 1
+> 
+>   Performance counter stats for 'system wide':
+> 
+>  CPU0               2,453,061      cpu/event=cpu-cycles,percore/
+>  CPU1               1,823,921      cpu/event=cpu-cycles,percore/
+>  CPU2               1,383,166      cpu/event=cpu-cycles,percore/
+>  CPU3               1,102,652      cpu/event=cpu-cycles,percore/
+>  CPU4               2,453,061      cpu/event=cpu-cycles,percore/
+>  CPU5               1,823,921      cpu/event=cpu-cycles,percore/
+>  CPU6               1,383,166      cpu/event=cpu-cycles,percore/
+>  CPU7               1,102,652      cpu/event=cpu-cycles,percore/
 
-Please see the following for more context:
+I don't understand how is this different from -A output:
 
-    https://lore.kernel.org/linux-mm/20200122140512.zxtld5sanohpmgt2@debian/
+  # ./perf stat -e cpu/event=cpu-cycles/ -A  
+  ^C
+   Performance counter stats for 'system wide':
 
-Sorry for not providing enough context with this submission.
+  CPU0              56,847,497      cpu/event=cpu-cycles/                                       
+  CPU1              75,274,384      cpu/event=cpu-cycles/                                       
+  CPU2              63,866,342      cpu/event=cpu-cycles/                                       
+  CPU3              89,559,693      cpu/event=cpu-cycles/                                       
+  CPU4              74,761,132      cpu/event=cpu-cycles/                                       
+  CPU5              76,320,191      cpu/event=cpu-cycles/                                       
+  CPU6              55,100,175      cpu/event=cpu-cycles/                                       
+  CPU7              48,472,895      cpu/event=cpu-cycles/                                       
 
---
-Thanks,
-Sergey
+       1.074800857 seconds time elapsed
+
+also the interval output is mangled:
+
+  # ./perf stat -e cpu/event=cpu-cycles,percore/ -a -A --percore-show-thread  -I 1000
+  #           time CPU                    counts unit events
+     1.000177375      1.000177375 CPU0             138,483,540      cpu/event=cpu-cycles,percore/                                   
+     1.000177375      1.000177375 CPU1             143,159,477      cpu/event=cpu-cycles,percore/                                   
+     1.000177375      1.000177375 CPU2             177,554,642      cpu/event=cpu-cycles,percore/                                   
+     1.000177375      1.000177375 CPU3             150,974,512      cpu/event=cpu-cycles,percore/                                   
+     1.000177375      1.000177375 CPU4             138,483,540      cpu/event=cpu-cycles,percore/                                   
+     1.000177375      1.000177375 CPU5             143,159,477      cpu/event=cpu-cycles,percore/                                   
+     1.000177375      1.000177375 CPU6             177,554,642      cpu/event=cpu-cycles,percore/                                   
+
+jirka
+
