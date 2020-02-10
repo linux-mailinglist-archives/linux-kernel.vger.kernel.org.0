@@ -2,78 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2EF615849D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 22:16:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75B321584B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 22:27:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbgBJVPx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 16:15:53 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:44350 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727003AbgBJVPw (ORCPT
+        id S1727613AbgBJV0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 16:26:50 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:59728 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727431AbgBJV0t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 16:15:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=bsxuISQKXc1QVXfhX/xu9UmxvHFsqYl3xryeCuozyaI=; b=NiQWcvLzrYNrDYRy71Dxh5Y2/q
-        TrFw4y/GXXWToBCQG70ylBysvQw2XIylVfTGj3napUhrN8yFe2GE8igpsb5KKkI2q7+EIY78qcNGl
-        JOFU/7o7xL52L97MB5yPTgJ/1E6X4xri3GS0QQpJD9AOtuk5KYhRouccpkfGTvHfmIY9PZs6IHJiZ
-        l1UzZEZieE7YQrAItSj47KGJU3KtHP0sPi4Ve/vjDZrhslLiqIzBXuVSWCxGI17CPxMquu99IN9rM
-        MMLs/H99XBZIM0y5M5lb1gV7JaufImKjwP7PR0eeeh1Zl0bdwccDJzdk4Q7PYyX6dXJ0zHpo2V8oQ
-        QElsnSbw==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1GPH-00014A-Ej; Mon, 10 Feb 2020 21:15:51 +0000
-Subject: Re: [PATCH v6] dynamic_debug: allow to work if debugfs is disabled
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Saravana Kannan <saravanak@google.com>,
-        Jason Baron <jbaron@akamai.com>, Will Deacon <will@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com
-References: <20200123093628.GA18991@willie-the-truck>
- <20200123085015.GA436361@kroah.com>
- <CAGETcx86rQpS4qodSiv_v+E_8P3DUQDY9jiN_Yq07Jwh9tHQcQ@mail.gmail.com>
- <20200125101130.449a8e4d@lwn.net> <20200125014231.GI147870@mit.edu>
- <20200123155340.GD147870@mit.edu> <20200209110549.GA1621867@kroah.com>
- <20200210211142.GB1373304@kroah.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <827b4265-918e-99a7-544a-668edad5b2b9@infradead.org>
-Date:   Mon, 10 Feb 2020 13:15:50 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200210211142.GB1373304@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 10 Feb 2020 16:26:49 -0500
+Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
+        id 1E79429B4C; Mon, 10 Feb 2020 16:26:48 -0500 (EST)
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Chris Zankel <chris@zankel.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-Id: <aab0449ddb0bc15bce268f86d0b2ee7afb0e49c6.1581369531.git.fthain@telegraphics.com.au>
+In-Reply-To: <cover.1581369530.git.fthain@telegraphics.com.au>
+References: <cover.1581369530.git.fthain@telegraphics.com.au>
+From:   Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH net-next 4/7] net/sonic: Remove redundant netif_start_queue()
+ call
+Date:   Tue, 11 Feb 2020 08:18:50 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/10/20 1:11 PM, Greg Kroah-Hartman wrote:
-> diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
-> index 252e5ef324e5..585451d12608 100644
-> --- a/Documentation/admin-guide/dynamic-debug-howto.rst
-> +++ b/Documentation/admin-guide/dynamic-debug-howto.rst
-> @@ -54,6 +54,9 @@ If you make a mistake with the syntax, the write will fail thus::
->  				<debugfs>/dynamic_debug/control
->    -bash: echo: write error: Invalid argument
->  
-> +Note, for systems without 'debugfs' enabled, the control file can also
+The transmit queue must be running already otherwise sonic_send_packet()
+would not have been called. If the queue was stopped by the interrupt
+handler, the interrupt handler will restart it again.
 
-Hi Greg,
-If you make any more changes, please drop the word "also" here       ^^^^
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+---
+ drivers/net/ethernet/natsemi/sonic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +be found in ``/proc/dynamic_debug/control``.
-> +
->  Viewing Dynamic Debug Behaviour
->  ===============================
->  
-
-
+diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
+index 9ecdd67e1410..1d6de6706875 100644
+--- a/drivers/net/ethernet/natsemi/sonic.c
++++ b/drivers/net/ethernet/natsemi/sonic.c
+@@ -327,7 +327,7 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
+ 		netif_dbg(lp, tx_queued, dev, "%s: stopping queue\n", __func__);
+ 		netif_stop_queue(dev);
+ 		/* after this packet, wait for ISR to free up some TDAs */
+-	} else netif_start_queue(dev);
++	}
+ 
+ 	netif_dbg(lp, tx_queued, dev, "%s: issuing Tx command\n", __func__);
+ 
 -- 
-~Randy
+2.24.1
 
