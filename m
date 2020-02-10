@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 390861576EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:56:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A58AF157739
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:59:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729799AbgBJM4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:56:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44344 "EHLO mail.kernel.org"
+        id S1729793AbgBJM61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:58:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728574AbgBJMlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:41:42 -0500
+        id S1729609AbgBJMlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:41:20 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 252A420733;
-        Mon, 10 Feb 2020 12:41:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79BB520733;
+        Mon, 10 Feb 2020 12:41:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338501;
-        bh=39WzRQPwvW5XrxKbELBSz19WS+NFf8umOaaiF2Is8OY=;
+        s=default; t=1581338479;
+        bh=2ifBn54R1zBhvU4qCO9oQLKUnyRbCbxap7YXovSR+F8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lG8NgWcXaVBJb4mqg/bQIIvUVvMLeoG3aQmQ6RW/RTJYk89FmJUaCZJypVfA9soEW
-         wK+uPUId1KLoMnVOXQH8UHTikRWdVainB2ysbJnJSczItTLDivRP2kHHoH6CEokkEo
-         aMAzJd3QLNV/cSZugQgzt4lwiHFC9rlsGehca/yY=
+        b=W+pE17gTxGlKTatz1a8FNMqOBUKskLSg0emXBmIEwuj784tNhkv3IPglmizrR9Lxy
+         KsrjKdpCYrMHvQUmLfWajvmZM1wqmbm+ORmff9davT5r/HyuP21+jmh0cr9oKKUIl3
+         4GqwE7+XZLiKhsDBi6cyix3Hb9Nb1Rjg5k2+HZvk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+        stable@vger.kernel.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Joao Martins <joao.m.martins@oracle.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.5 245/367] KVM: x86: use CPUID to locate host page table reserved bits
-Date:   Mon, 10 Feb 2020 04:32:38 -0800
-Message-Id: <20200210122446.800976612@linuxfoundation.org>
+Subject: [PATCH 5.5 246/367] x86/kvm: Introduce kvm_(un)map_gfn()
+Date:   Mon, 10 Feb 2020 04:32:39 -0800
+Message-Id: <20200210122446.896396023@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -43,53 +45,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-commit 7adacf5eb2d2048045d9fd8fdab861fd9e7e2e96 upstream.
+commit 1eff70a9abd46f175defafd29bc17ad456f398a7 upstream.
 
-The comment in kvm_get_shadow_phys_bits refers to MKTME, but the same is actually
-true of SME and SEV.  Just use CPUID[0x8000_0008].EAX[7:0] unconditionally if
-available, it is simplest and works even if memory is not encrypted.
+kvm_vcpu_(un)map operates on gfns from any current address space.
+In certain cases we want to make sure we are not mapping SMRAM
+and for that we can use kvm_(un)map_gfn() that we are introducing
+in this patch.
 
+This is part of CVE-2019-3016.
+
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
 Cc: stable@vger.kernel.org
-Reported-by: Tom Lendacky <thomas.lendacky@amd.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/mmu/mmu.c |   20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ include/linux/kvm_host.h |    2 ++
+ virt/kvm/kvm_main.c      |   29 ++++++++++++++++++++++++-----
+ 2 files changed, 26 insertions(+), 5 deletions(-)
 
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -538,16 +538,20 @@ EXPORT_SYMBOL_GPL(kvm_mmu_set_mask_ptes)
- static u8 kvm_get_shadow_phys_bits(void)
- {
- 	/*
--	 * boot_cpu_data.x86_phys_bits is reduced when MKTME is detected
--	 * in CPU detection code, but MKTME treats those reduced bits as
--	 * 'keyID' thus they are not reserved bits. Therefore for MKTME
--	 * we should still return physical address bits reported by CPUID.
-+	 * boot_cpu_data.x86_phys_bits is reduced when MKTME or SME are detected
-+	 * in CPU detection code, but the processor treats those reduced bits as
-+	 * 'keyID' thus they are not reserved bits. Therefore KVM needs to look at
-+	 * the physical address bits reported by CPUID.
- 	 */
--	if (!boot_cpu_has(X86_FEATURE_TME) ||
--	    WARN_ON_ONCE(boot_cpu_data.extended_cpuid_level < 0x80000008))
--		return boot_cpu_data.x86_phys_bits;
-+	if (likely(boot_cpu_data.extended_cpuid_level >= 0x80000008))
-+		return cpuid_eax(0x80000008) & 0xff;
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -775,8 +775,10 @@ struct kvm_memory_slot *kvm_vcpu_gfn_to_
+ kvm_pfn_t kvm_vcpu_gfn_to_pfn_atomic(struct kvm_vcpu *vcpu, gfn_t gfn);
+ kvm_pfn_t kvm_vcpu_gfn_to_pfn(struct kvm_vcpu *vcpu, gfn_t gfn);
+ int kvm_vcpu_map(struct kvm_vcpu *vcpu, gpa_t gpa, struct kvm_host_map *map);
++int kvm_map_gfn(struct kvm_vcpu *vcpu, gfn_t gfn, struct kvm_host_map *map);
+ struct page *kvm_vcpu_gfn_to_page(struct kvm_vcpu *vcpu, gfn_t gfn);
+ void kvm_vcpu_unmap(struct kvm_vcpu *vcpu, struct kvm_host_map *map, bool dirty);
++int kvm_unmap_gfn(struct kvm_vcpu *vcpu, struct kvm_host_map *map, bool dirty);
+ unsigned long kvm_vcpu_gfn_to_hva(struct kvm_vcpu *vcpu, gfn_t gfn);
+ unsigned long kvm_vcpu_gfn_to_hva_prot(struct kvm_vcpu *vcpu, gfn_t gfn, bool *writable);
+ int kvm_vcpu_read_guest_page(struct kvm_vcpu *vcpu, gfn_t gfn, void *data, int offset,
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1821,12 +1821,13 @@ struct page *gfn_to_page(struct kvm *kvm
+ }
+ EXPORT_SYMBOL_GPL(gfn_to_page);
  
--	return cpuid_eax(0x80000008) & 0xff;
-+	/*
-+	 * Quite weird to have VMX or SVM but not MAXPHYADDR; probably a VM with
-+	 * custom CPUID.  Proceed with whatever the kernel found since these features
-+	 * aren't virtualizable (SME/SEV also require CPUIDs higher than 0x80000008).
-+	 */
-+	return boot_cpu_data.x86_phys_bits;
+-static int __kvm_map_gfn(struct kvm_memory_slot *slot, gfn_t gfn,
++static int __kvm_map_gfn(struct kvm_memslots *slots, gfn_t gfn,
+ 			 struct kvm_host_map *map)
+ {
+ 	kvm_pfn_t pfn;
+ 	void *hva = NULL;
+ 	struct page *page = KVM_UNMAPPED_PAGE;
++	struct kvm_memory_slot *slot = __gfn_to_memslot(slots, gfn);
+ 
+ 	if (!map)
+ 		return -EINVAL;
+@@ -1855,14 +1856,20 @@ static int __kvm_map_gfn(struct kvm_memo
+ 	return 0;
  }
  
- static void kvm_mmu_reset_all_pte_masks(void)
++int kvm_map_gfn(struct kvm_vcpu *vcpu, gfn_t gfn, struct kvm_host_map *map)
++{
++	return __kvm_map_gfn(kvm_memslots(vcpu->kvm), gfn, map);
++}
++EXPORT_SYMBOL_GPL(kvm_map_gfn);
++
+ int kvm_vcpu_map(struct kvm_vcpu *vcpu, gfn_t gfn, struct kvm_host_map *map)
+ {
+-	return __kvm_map_gfn(kvm_vcpu_gfn_to_memslot(vcpu, gfn), gfn, map);
++	return __kvm_map_gfn(kvm_vcpu_memslots(vcpu), gfn, map);
+ }
+ EXPORT_SYMBOL_GPL(kvm_vcpu_map);
+ 
+-void kvm_vcpu_unmap(struct kvm_vcpu *vcpu, struct kvm_host_map *map,
+-		    bool dirty)
++static void __kvm_unmap_gfn(struct kvm_memory_slot *memslot,
++			struct kvm_host_map *map, bool dirty)
+ {
+ 	if (!map)
+ 		return;
+@@ -1878,7 +1885,7 @@ void kvm_vcpu_unmap(struct kvm_vcpu *vcp
+ #endif
+ 
+ 	if (dirty) {
+-		kvm_vcpu_mark_page_dirty(vcpu, map->gfn);
++		mark_page_dirty_in_slot(memslot, map->gfn);
+ 		kvm_release_pfn_dirty(map->pfn);
+ 	} else {
+ 		kvm_release_pfn_clean(map->pfn);
+@@ -1887,6 +1894,18 @@ void kvm_vcpu_unmap(struct kvm_vcpu *vcp
+ 	map->hva = NULL;
+ 	map->page = NULL;
+ }
++
++int kvm_unmap_gfn(struct kvm_vcpu *vcpu, struct kvm_host_map *map, bool dirty)
++{
++	__kvm_unmap_gfn(gfn_to_memslot(vcpu->kvm, map->gfn), map, dirty);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(kvm_unmap_gfn);
++
++void kvm_vcpu_unmap(struct kvm_vcpu *vcpu, struct kvm_host_map *map, bool dirty)
++{
++	__kvm_unmap_gfn(kvm_vcpu_gfn_to_memslot(vcpu, map->gfn), map, dirty);
++}
+ EXPORT_SYMBOL_GPL(kvm_vcpu_unmap);
+ 
+ struct page *kvm_vcpu_gfn_to_page(struct kvm_vcpu *vcpu, gfn_t gfn)
 
 
