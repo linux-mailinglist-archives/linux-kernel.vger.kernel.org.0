@@ -2,90 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31E76157CE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:56:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC630157CE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:57:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729121AbgBJN4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:56:46 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38867 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728169AbgBJN4p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 08:56:45 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a9so418921wmj.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 05:56:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=3niQnp6Xkf21oPQ9gKE5EOxxtej8Exq79aPM4XzaEgA=;
-        b=t5ipPD2kOYi0YtKNrR8sfZHHY1382ki+a56ABKQ0Kl/qMb677jHiYCT89IKOn8xe/4
-         B2Tf6o96Ol2Mzrmc8L1/+BRtxYzfoFSAcYyJBgQbE6j1tt/c/11JC3Eo4RxbjOy0hhaK
-         2ZvPeHS5NihJgDqBmm+nYH14rom3UQhjvn/0NsMMcRsCvYlO/83Y0eYrX+PNz/3auBXU
-         rj6qQrZGTipZ9Kai+9F2cwVUHn50rQPXumEdRH9HenPGngBBQRdMYUJ82I2rkDHPq42Q
-         J8asR/DZ7WQ45L4fiWuCANs3aJ/zxKzavXZ8984GbXKnSUa+loSX1+CfPibLmuMckxtt
-         c1RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=3niQnp6Xkf21oPQ9gKE5EOxxtej8Exq79aPM4XzaEgA=;
-        b=YTfwQe/JMH3nSh7xHEaWiAFvdMKoMtGVdQgasgNBEsqDY1D7+cSc+paeUd54erHtQI
-         edOQcqOOWXf6MiWHTJGSvcXVvYaghLf0BALxFO/L09SNcKmzUGLnQ0PWf94UnoreRJjL
-         ZIidLCfxuv3/6rZYWQ3dUdSk0JQ3SlZuP8T/5j3G/skhZ27JGECDJuB3RtK/kDFS7W1U
-         rfD8ttphXdLd5hDpKdi9LMoJ8Iu+XsKYEp/UNa8BcvrzgU0zp2Jv1CISq8d7X1CKvDqc
-         x6nH59lF5rRNlNJXcdgcDDosYGE9vKqows5NEGK8nqls1/WesEA1JseWzFLvtxDiapRE
-         YmuQ==
-X-Gm-Message-State: APjAAAWsqBPYH78OhfM/tLRYsRvoDlD9RQm8izvxpPFfMuF6tmuZjvu4
-        ACspZuVDjZ/tPfZuHE+LQSD5ikvomuhEkhWF698=
-X-Google-Smtp-Source: APXvYqwI244Q68r+4OhEeUnSphOT/nA0o04lbdZiGTE3zxOW25pnEu5f2MB+vBZ7Cebbqo5vXX36Q3/IK6ve11/LIV4=
-X-Received: by 2002:a1c:ddd6:: with SMTP id u205mr16332790wmg.151.1581343002085;
- Mon, 10 Feb 2020 05:56:42 -0800 (PST)
+        id S1729189AbgBJN5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:57:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41122 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727918AbgBJN5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 08:57:13 -0500
+Received: from paulmck-ThinkPad-P72.home (unknown [193.85.242.128])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18FF8206ED;
+        Mon, 10 Feb 2020 13:57:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581343033;
+        bh=IWC4nbYsn8wiAFqXOmw689pbM07Zng40OjaVFbq6MzM=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=r2gFg7CTyh1h4iPpRtqdScLeq6c6Zqbv+XwWy5fRSTl3eN5DZM7PEf9yeZ/tY832p
+         6vfK22OXgdMs6ea2yBziTDrCeDS4vp/4tIFXk7MAntOhDARzVkZ0m+ZF3p1Kgjq0Fw
+         HG6vLtgFcOKuxfn9vRF64BD/6bD5JBu/Tn+FO6Yo=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id C19B73522700; Mon, 10 Feb 2020 05:57:10 -0800 (PST)
+Date:   Mon, 10 Feb 2020 05:57:10 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Joel Fernandes, Google" <joel@joelfernandes.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Richard Fontana <rfontana@redhat.com>,
+        rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Subject: Re: [RFC 0/3] Revert SRCU from tracepoint infrastructure
+Message-ID: <20200210135710.GX2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200207205656.61938-1-joel@joelfernandes.org>
+ <1997032737.615438.1581179485507.JavaMail.zimbra@efficios.com>
+ <20200210094616.GC14879@hirez.programming.kicks-ass.net>
+ <20200210133652.GV2935@paulmck-ThinkPad-P72>
+ <20200210134432.GK14897@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Reply-To: oliviaeorge@hotmail.com
-Received: by 2002:a5d:5702:0:0:0:0:0 with HTTP; Mon, 10 Feb 2020 05:56:41
- -0800 (PST)
-From:   George Olivia <oliviaeorge@gmail.com>
-Date:   Mon, 10 Feb 2020 06:56:41 -0700
-X-Google-Sender-Auth: 4__boeiwFmPUQAx8rNYJzusAdwQ
-Message-ID: <CAABkmyzS7mkimDUZpBJc6y4oC-+bdWpFuC-PX=bvoPUtGShOUA@mail.gmail.com>
-Subject: I need your prompt response
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200210134432.GK14897@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With due respect, I am Mrs. George Olivia; I have decided to donate
-what I have to you / Motherless babies/Less privileged/Widows' because
-I am dying and diagnosed for cancer for about 2 years ago. I have been
-touched by God Almighty to donate from what I have inherited from my
-late husband to you for good work of God Almighty. I have asked
-Almighty God to forgive me and believe he has, because he is a
-Merciful God I will be going in for an operation surgery soon.
+On Mon, Feb 10, 2020 at 02:44:32PM +0100, Peter Zijlstra wrote:
+> On Mon, Feb 10, 2020 at 05:36:52AM -0800, Paul E. McKenney wrote:
+> 
+> > > Furthermore, using srcu would be detrimental, because of how it has
+> > > smp_mb() in the read side primitives.
+> > 
+> > Note that rcu_irq_enter() and rcu_irq_exit() also contain value-returning
+> > atomics, which imply full memory barriers.
+> 
+> There is a whole lot of perf that doesn't go through tracepoints. It
+> makes absolutely no sense to make all that more expensive just because
+> tracepoints are getting 'funny'.
 
-I decided to will/donate the sum of ($ 8.1 million DOLLARS) to you for
-the good work of God Almighty, and also to help the motherless and
-less privilege and also forth assistance of the widows. At the moment
-I cannot take any telephone calls right now due to the fact that my
-relatives (that have squandered the funds gave them for this purpose
-before) are around me and my health status also. I have adjusted my
-will and my lawyer is aware.
+OK.
 
-I wish you all the best and May the good Lord bless you abundantly,
-and please use the funds judiciously and always extend the good work
-to others. As soon as you get back to me, I shall give you info on
-what I need from you, then you will contact the bank and tell them I
-have willed those properties to you by quoting my personal file
-routing and account information. And I have also notified the bank
-that I am willing that properties to you for a good, effective and
-prudent work. I know I don't know you but I have been directed to do
-this by God Almighty.
+> > > The best we can do is move that rcu_irq_enter/exit_*() crud into the
+> > > perf tracepoint glue I suppose.
+> > 
+> > One approach would be to define a synchronize_preempt_disable() that
+> > waits only for pre-existing disabled-preemption regions (including
+> > of course diabled-irq and NMI-handler regions.  Something like Steve
+> > Rostedt's workqueue-baed schedule_on_each_cpu(ftrace_sync) implementation
+> > might work.
+> > 
+> > There are of course some plusses and minuses:
+> > 
+> > +	Works on preempt-disable regions in idle-loop code without
+> > 	the need to invoke rcu_idle_exit() and rcu_idle_enter()..
+> > 
+> > +	Straightforward implementation.
+> > 
+> > -	Does not work on preempt-disable regions on offline CPUs.
+> > 	(I have no idea if this really matters.)
+> 
+> I'd hope not ;-)
 
-I Have all my Hospital document which i can send to you as prove to
-what am tell you and my seriousness to this. If you are interested in
-carrying out this task, get back to me for more details on this noble
-project of mine.
+Me too, but I have harbored a great many hopes over the decades.  ;-)
 
-Yours Faithfully,
-Mrs. George Olivia
+> > -	Schedules on idle CPUs, so usage needs to be restricted to
+> > 	avoid messing up energy-efficient systems.  (It should be
+> > 	just fine to use this for tracing.)
+> 
+> Unless you're tracing energy usage -- weird some people actually do that
+> :-)
+
+Would they be changing tracing of their energy usage often in production?
+
+							Thanx, Paul
