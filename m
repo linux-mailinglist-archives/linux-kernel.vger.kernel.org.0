@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E6871574EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:38:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A46ED15754E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:40:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728583AbgBJMg6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:36:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54426 "EHLO mail.kernel.org"
+        id S1729199AbgBJMkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:40:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728204AbgBJMgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:00 -0500
+        id S1729050AbgBJMiL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:11 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D745E20838;
-        Mon, 10 Feb 2020 12:35:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C2D124680;
+        Mon, 10 Feb 2020 12:38:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338159;
-        bh=ybAVDw8a+2yH1pyo9WP0iudYGr9/9Kh4ncRyyYMBtb8=;
+        s=default; t=1581338290;
+        bh=BqnlbCiXH63Epcz+lc02oqm7krVwoZ59t11L6PvqMQs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VdzZVNiFxtFMCIVC0fnsCDAGkNjAZQ3Ep1eCM4+/sUY20M2Dhofhbq9s6hNBmmFxC
-         meLKcDo5fyOUNk0GxdDy6CtVlJszocxZpUZUCygzPpvq2WquvBKGTEfUdBQCaMj9a9
-         m2TOcEuLP65t0WaFAxt5s+Tt5PirPl3x7A97xAgs=
+        b=ca+4rOH2jpX2ldeNyHpU9OOrWiwzy3b9hTVjvdiWN2tnBmAx2L/UYlfNOqSIkB1yT
+         WRpnBghiUPS8nMsdu+xgF5NSGgMu7njYxQKS2UXUlbj418ZokfeaoZYvvPSo4iG5Dp
+         TmMFpdQUDhk8kWY9Knubix0YZv5+DuwnAojc4mdU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 091/195] padata: Remove broken queue flushing
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH 5.4 193/309] xen/balloon: Support xend-based toolstack take two
 Date:   Mon, 10 Feb 2020 04:32:29 -0800
-Message-Id: <20200210122314.217904406@linuxfoundation.org>
+Message-Id: <20200210122425.107505025@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,144 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Juergen Gross <jgross@suse.com>
 
-[ Upstream commit 07928d9bfc81640bab36f5190e8725894d93b659 ]
+commit eda4eabf86fd6806eaabc23fb90dd056fdac037b upstream.
 
-The function padata_flush_queues is fundamentally broken because
-it cannot force padata users to complete the request that is
-underway.  IOW padata has to passively wait for the completion
-of any outstanding work.
+Commit 3aa6c19d2f38be ("xen/balloon: Support xend-based toolstack")
+tried to fix a regression with running on rather ancient Xen versions.
+Unfortunately the fix was based on the assumption that xend would
+just use another Xenstore node, but in reality only some downstream
+versions of xend are doing that. The upstream xend does not write
+that Xenstore node at all, so the problem must be fixed in another
+way.
 
-As it stands flushing is used in two places.  Its use in padata_stop
-is simply unnecessary because nothing depends on the queues to
-be flushed afterwards.
+The easiest way to achieve that is to fall back to the behavior
+before commit 96edd61dcf4436 ("xen/balloon: don't online new memory
+initially") in case the static memory maximum can't be read.
 
-The other use in padata_replace is more substantial as we depend
-on it to free the old pd structure.  This patch instead uses the
-pd->refcnt to dynamically free the pd structure once all requests
-are complete.
+This is achieved by setting static_max to the current number of
+memory pages known by the system resulting in target_diff becoming
+zero.
 
-Fixes: 2b73b07ab8a4 ("padata: Flush the padata queues actively")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 3aa6c19d2f38be ("xen/balloon: Support xend-based toolstack")
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: <stable@vger.kernel.org> # 4.13
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- kernel/padata.c | 46 ++++++++++++----------------------------------
- 1 file changed, 12 insertions(+), 34 deletions(-)
+ drivers/xen/xen-balloon.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/padata.c b/kernel/padata.c
-index 6c06b3039faed..11c5f9c8779ea 100644
---- a/kernel/padata.c
-+++ b/kernel/padata.c
-@@ -35,6 +35,8 @@
+--- a/drivers/xen/xen-balloon.c
++++ b/drivers/xen/xen-balloon.c
+@@ -94,7 +94,7 @@ static void watch_target(struct xenbus_w
+ 				  "%llu", &static_max) == 1))
+ 			static_max >>= PAGE_SHIFT - 10;
+ 		else
+-			static_max = new_target;
++			static_max = balloon_stats.current_pages;
  
- #define MAX_OBJ_NUM 1000
- 
-+static void padata_free_pd(struct parallel_data *pd);
-+
- static int padata_index_to_cpu(struct parallel_data *pd, int cpu_index)
- {
- 	int cpu, target_cpu;
-@@ -334,6 +336,7 @@ static void padata_serial_worker(struct work_struct *serial_work)
- 	struct padata_serial_queue *squeue;
- 	struct parallel_data *pd;
- 	LIST_HEAD(local_list);
-+	int cnt;
- 
- 	local_bh_disable();
- 	squeue = container_of(serial_work, struct padata_serial_queue, work);
-@@ -343,6 +346,8 @@ static void padata_serial_worker(struct work_struct *serial_work)
- 	list_replace_init(&squeue->serial.list, &local_list);
- 	spin_unlock(&squeue->serial.lock);
- 
-+	cnt = 0;
-+
- 	while (!list_empty(&local_list)) {
- 		struct padata_priv *padata;
- 
-@@ -352,9 +357,12 @@ static void padata_serial_worker(struct work_struct *serial_work)
- 		list_del_init(&padata->list);
- 
- 		padata->serial(padata);
--		atomic_dec(&pd->refcnt);
-+		cnt++;
- 	}
- 	local_bh_enable();
-+
-+	if (atomic_sub_and_test(cnt, &pd->refcnt))
-+		padata_free_pd(pd);
- }
- 
- /**
-@@ -501,8 +509,7 @@ static struct parallel_data *padata_alloc_pd(struct padata_instance *pinst,
- 	timer_setup(&pd->timer, padata_reorder_timer, 0);
- 	atomic_set(&pd->seq_nr, -1);
- 	atomic_set(&pd->reorder_objects, 0);
--	atomic_set(&pd->refcnt, 0);
--	pd->pinst = pinst;
-+	atomic_set(&pd->refcnt, 1);
- 	spin_lock_init(&pd->lock);
- 
- 	return pd;
-@@ -526,31 +533,6 @@ static void padata_free_pd(struct parallel_data *pd)
- 	kfree(pd);
- }
- 
--/* Flush all objects out of the padata queues. */
--static void padata_flush_queues(struct parallel_data *pd)
--{
--	int cpu;
--	struct padata_parallel_queue *pqueue;
--	struct padata_serial_queue *squeue;
--
--	for_each_cpu(cpu, pd->cpumask.pcpu) {
--		pqueue = per_cpu_ptr(pd->pqueue, cpu);
--		flush_work(&pqueue->work);
--	}
--
--	del_timer_sync(&pd->timer);
--
--	if (atomic_read(&pd->reorder_objects))
--		padata_reorder(pd);
--
--	for_each_cpu(cpu, pd->cpumask.cbcpu) {
--		squeue = per_cpu_ptr(pd->squeue, cpu);
--		flush_work(&squeue->work);
--	}
--
--	BUG_ON(atomic_read(&pd->refcnt) != 0);
--}
--
- static void __padata_start(struct padata_instance *pinst)
- {
- 	pinst->flags |= PADATA_INIT;
-@@ -564,10 +546,6 @@ static void __padata_stop(struct padata_instance *pinst)
- 	pinst->flags &= ~PADATA_INIT;
- 
- 	synchronize_rcu();
--
--	get_online_cpus();
--	padata_flush_queues(pinst->pd);
--	put_online_cpus();
- }
- 
- /* Replace the internal control structure with a new one. */
-@@ -588,8 +566,8 @@ static void padata_replace(struct padata_instance *pinst,
- 	if (!cpumask_equal(pd_old->cpumask.cbcpu, pd_new->cpumask.cbcpu))
- 		notification_mask |= PADATA_CPU_SERIAL;
- 
--	padata_flush_queues(pd_old);
--	padata_free_pd(pd_old);
-+	if (atomic_dec_and_test(&pd_old->refcnt))
-+		padata_free_pd(pd_old);
- 
- 	if (notification_mask)
- 		blocking_notifier_call_chain(&pinst->cpumask_change_notifier,
--- 
-2.20.1
-
+ 		target_diff = (xen_pv_domain() || xen_initial_domain()) ? 0
+ 				: static_max - balloon_stats.target_pages;
 
 
