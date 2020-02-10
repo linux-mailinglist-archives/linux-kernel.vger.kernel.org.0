@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DA5B15769C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:55:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 039DC1576B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:55:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730112AbgBJMl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:41:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35748 "EHLO mail.kernel.org"
+        id S1729998AbgBJMy1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:54:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729284AbgBJMi7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:59 -0500
+        id S1730121AbgBJMmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:42:00 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEF4820733;
-        Mon, 10 Feb 2020 12:38:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E251D20842;
+        Mon, 10 Feb 2020 12:41:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338338;
-        bh=9Sl9JUJekRdZMRB1FyI7vJki+XqxXk0x+zns+DiSHyk=;
+        s=default; t=1581338520;
+        bh=t4wbXBwwAt7MaSC0Q2NVeMfh7j7XNATXObDaJ5xrNpY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jeLgYQb6Pja6NcNBqI1xzocJRzubeT89x1/GkVlJaTmFD9EP3wmZbuhimY3+/ZeDO
-         Oyhm81HuofGDxSNgfDlUQk0ygtfLKQGXZap/2GPpw80YFFVEmQEZGra5Vt+aBlddXM
-         ifThw1ipyMoq6X2V9SuYF7w/VrwWA1C3AAsW3pro=
+        b=c8Ivk89AhxXi4NoKmp+iPnEwSsw8W3luiB+PT7Wt7CAi732Fgh4CwFLXagUrrEWM9
+         37jii17gDy0zYhUAHtxv65ObpKcdYK+glqHs8ezPVJl4KGVgyj3i96A2D1xtpknDkX
+         R79vijkWlBQpb8Wx3PWpadMyIBq06D9Y89jKg4a0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marco Felsch <m.felsch@pengutronix.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 5.4 288/309] mfd: da9062: Fix watchdog compatible string
+        stable@vger.kernel.org, Ong Boon Leong <boon.leong.ong@intel.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.5 331/367] net: stmmac: xgmac: fix incorrect XGMAC_VLAN_TAG register writting
 Date:   Mon, 10 Feb 2020 04:34:04 -0800
-Message-Id: <20200210122434.329253436@linuxfoundation.org>
+Message-Id: <20200210122453.402692988@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marco Felsch <m.felsch@pengutronix.de>
+From: Ong Boon Leong <boon.leong.ong@intel.com>
 
-commit 1112ba02ff1190ca9c15a912f9269e54b46d2d82 upstream.
+[ Upstream commit 907a076881f171254219faad05f46ac5baabedfb ]
 
-The watchdog driver compatible is "dlg,da9062-watchdog" and not
-"dlg,da9062-wdt". Therefore the mfd-core can't populate the of_node and
-fwnode. As result the watchdog driver can't parse the devicetree.
+We should always do a read of current value of XGMAC_VLAN_TAG instead of
+directly overwriting the register value.
 
-Fixes: 9b40b030c4ad ("mfd: da9062: Supply core driver")
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Fixes: 3cd1cfcba26e2 ("net: stmmac: Implement VLAN Hash Filtering in XGMAC")
+Signed-off-by: Ong Boon Leong <boon.leong.ong@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/mfd/da9062-core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/mfd/da9062-core.c
-+++ b/drivers/mfd/da9062-core.c
-@@ -248,7 +248,7 @@ static const struct mfd_cell da9062_devs
- 		.name		= "da9062-watchdog",
- 		.num_resources	= ARRAY_SIZE(da9062_wdt_resources),
- 		.resources	= da9062_wdt_resources,
--		.of_compatible  = "dlg,da9062-wdt",
-+		.of_compatible  = "dlg,da9062-watchdog",
- 	},
- 	{
- 		.name		= "da9062-thermal",
+--- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
+@@ -569,7 +569,9 @@ static void dwxgmac2_update_vlan_hash(st
+ 
+ 		writel(value, ioaddr + XGMAC_PACKET_FILTER);
+ 
+-		value = XGMAC_VLAN_VTHM | XGMAC_VLAN_ETV;
++		value = readl(ioaddr + XGMAC_VLAN_TAG);
++
++		value |= XGMAC_VLAN_VTHM | XGMAC_VLAN_ETV;
+ 		if (is_double) {
+ 			value |= XGMAC_VLAN_EDVLP;
+ 			value |= XGMAC_VLAN_ESVL;
+@@ -584,7 +586,9 @@ static void dwxgmac2_update_vlan_hash(st
+ 
+ 		writel(value, ioaddr + XGMAC_PACKET_FILTER);
+ 
+-		value = XGMAC_VLAN_ETV;
++		value = readl(ioaddr + XGMAC_VLAN_TAG);
++
++		value |= XGMAC_VLAN_ETV;
+ 		if (is_double) {
+ 			value |= XGMAC_VLAN_EDVLP;
+ 			value |= XGMAC_VLAN_ESVL;
 
 
