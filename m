@@ -2,180 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E32AD156FFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 08:41:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBD2C157003
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 08:41:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbgBJHlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 02:41:23 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:18580 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726796AbgBJHlW (ORCPT
+        id S1727529AbgBJHlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 02:41:42 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36873 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726796AbgBJHlm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 02:41:22 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1581320481; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=yCDeCdgKA3IXNoyqrtgJmGy4KgKCgByY8yGLh4PgpZg=; b=eJVDeVhDwrV4dp5jY+r+8uVQ4MlxkO0+Oh5/OjcSfX1EjCXn9uxO6dv816nnX6qf4Jd4rgcC
- Zq1TyB0Sz68kGNi+yad0IsUDouEvDj0bmDZnIIMI/d3szMOmn4wigjJ7vDyhGZkcZmiBM4xF
- 7NbJbBaox1LMRQMCGKSj2Sbzsuw=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e410920.7fbbe469ee30-smtp-out-n01;
- Mon, 10 Feb 2020 07:41:20 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 90120C433A2; Mon, 10 Feb 2020 07:41:19 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from smasetty-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: smasetty)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B2044C447A3;
-        Mon, 10 Feb 2020 07:41:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B2044C447A3
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=smasetty@codeaurora.org
-From:   Sharat Masetty <smasetty@codeaurora.org>
-To:     freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
-Cc:     dri-devel@freedesktop.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
-        jcrouse@codeaurora.org, mka@chromium.org, dianders@chromium.org,
-        Sharat Masetty <smasetty@codeaurora.org>
-Subject: [PATCH v6] arm64: dts: qcom: sc7180: Add A618 gpu dt blob
-Date:   Mon, 10 Feb 2020 13:11:05 +0530
-Message-Id: <1581320465-15854-2-git-send-email-smasetty@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1581320465-15854-1-git-send-email-smasetty@codeaurora.org>
-References: <1581320465-15854-1-git-send-email-smasetty@codeaurora.org>
+        Mon, 10 Feb 2020 02:41:42 -0500
+Received: by mail-lj1-f195.google.com with SMTP id v17so5947087ljg.4
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Feb 2020 23:41:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iQAMqZgLfT0wJRD/FDyGI9iiUds9Vgum3AdT3P7c+Pk=;
+        b=s6dTIH8nR1EDDkvxfT1FBQ8tPW7iSPSDaPQ6E+N3gYuGm2w528c9yPiIj9GXYfGTNU
+         ji5dy54Tbk2OAM0Fth+NzdaZQp1HMORcpbbftO5yu/4g9rqaofEQpZLbQtmfJa1tTgIY
+         h19tTFVFoX38vPV5o3xBf+5Qchx1ltxsvTwdFiiG5wfBEUvX6Cx7ypL7H4pL77IAB0Xg
+         XgXXgxtWzeOvY0GrwtsbbGHfUQW6DAo7jcgQVjiKhavXn8EpUtE3ga8wC+VW2utJ20hq
+         1ePeUN0vhOMYdXtqWxtab3jPppZ9AL6dVQpwvMsb6wBh3EI4mJnV/sNWFjY7Gy2llxee
+         uChQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iQAMqZgLfT0wJRD/FDyGI9iiUds9Vgum3AdT3P7c+Pk=;
+        b=hagZZMgcKwvBOw+o2dt7Kt/OO1+nR9UzAUDMipJJwgbCnt0aUKFRhqVu43pN/E55aH
+         e+bk/QwDAhT2gOEEp9xKjxph7GKRWpJ63r/bMG8dj3suM8/alC9jG1fY1EiRQE8tx+k0
+         cNtBrwiaeDYLD2PzZc+1Db2vFPZ2F2rse5TTB8+giF4N85V5fTYJugZUdEpV3IIfCAkT
+         yozynRReFspkLYKJaf7x2E+1w4jZZCQK1bAGzTYp0Ln1NldO0SuTazmBVrOHxuVup8Ow
+         bZ9OTyZzERu+8yubiNFk9QD0O/RjsahDJWzqQ1G+j8DdK4O0cQ3nHCld5E1EWeJW3Tk4
+         LuLQ==
+X-Gm-Message-State: APjAAAVv+CI+daZb5aoc9lZxFtbUV213IBghAL8B3ssxSBG+uSQQobSR
+        LPuDmoBen9oks1Hz31P6sxktpESAq3ZDLqGzotxs4Q==
+X-Google-Smtp-Source: APXvYqz2STzBhlOw3uR6zIIOfr03gzozPSja2i9wC+uvdgfObt/xm1FF3AW3JPTgkc2nOng/9dN4TXFfdIdWrDqp9KQ=
+X-Received: by 2002:a2e:8eda:: with SMTP id e26mr37451ljl.65.1581320499988;
+ Sun, 09 Feb 2020 23:41:39 -0800 (PST)
+MIME-Version: 1.0
+References: <cbe964e4-6879-fd08-41c9-ef1917414af4@infradead.org>
+In-Reply-To: <cbe964e4-6879-fd08-41c9-ef1917414af4@infradead.org>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Mon, 10 Feb 2020 08:41:28 +0100
+Message-ID: <CAKfTPtAmG7WnZCZLKpK2SLG24W-Azr7P2E=41kz=1R9CJLwkvg@mail.gmail.com>
+Subject: Re: [PATCH RESEND] sched: fix kernel-doc warning in attach_entity_load_avg()
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the required dt nodes and properties
-to enabled A618 GPU.
+On Mon, 10 Feb 2020 at 04:29, Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Fix kernel-doc warning in kernel/sched/fair.c, caused by a recent
+> function parameter removal:
+>
+> ../kernel/sched/fair.c:3526: warning: Excess function parameter 'flags' description in 'attach_entity_load_avg'
+>
+> Fixes: a4f9a0e51bbf ("sched/fair: Remove redundant call to cpufreq_update_util()")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Vincent Guittot <vincent.guittot@linaro.org> (SCHED_NORMAL)
+> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com> (SCHED_NORMAL)
 
-Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sc7180.dtsi | 102 +++++++++++++++++++++++++++++++++++
- 1 file changed, 102 insertions(+)
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index f3fcc5c..63fff15 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -1043,6 +1043,108 @@
- 			};
- 		};
- 
-+		gpu: gpu@5000000 {
-+			compatible = "qcom,adreno-618.0", "qcom,adreno";
-+			#stream-id-cells = <16>;
-+			reg = <0 0x05000000 0 0x40000>, <0 0x0509e000 0 0x1000>,
-+				<0 0x05061000 0 0x800>;
-+			reg-names = "kgsl_3d0_reg_memory", "cx_mem", "cx_dbgc";
-+			interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>;
-+			iommus = <&adreno_smmu 0>;
-+			operating-points-v2 = <&gpu_opp_table>;
-+			qcom,gmu = <&gmu>;
-+
-+			gpu_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-800000000 {
-+					opp-hz = /bits/ 64 <800000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
-+				};
-+
-+				opp-650000000 {
-+					opp-hz = /bits/ 64 <650000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
-+				};
-+
-+				opp-565000000 {
-+					opp-hz = /bits/ 64 <565000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
-+				};
-+
-+				opp-430000000 {
-+					opp-hz = /bits/ 64 <430000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
-+				};
-+
-+				opp-355000000 {
-+					opp-hz = /bits/ 64 <355000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
-+				};
-+
-+				opp-267000000 {
-+					opp-hz = /bits/ 64 <267000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
-+				};
-+
-+				opp-180000000 {
-+					opp-hz = /bits/ 64 <180000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
-+				};
-+			};
-+		};
-+
-+		adreno_smmu: iommu@5040000 {
-+			compatible = "qcom,sc7180-smmu-v2", "qcom,smmu-v2";
-+			reg = <0 0x05040000 0 0x10000>;
-+			#iommu-cells = <1>;
-+			#global-interrupts = <2>;
-+			interrupts = <GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 231 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 364 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 365 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 366 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 367 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 368 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 369 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 370 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 371 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
-+				<&gcc GCC_GPU_CFG_AHB_CLK>,
-+				<&gcc GCC_DDRSS_GPU_AXI_CLK>;
-+
-+			clock-names = "bus", "iface", "mem_iface_clk";
-+			power-domains = <&gpucc CX_GDSC>;
-+		};
-+
-+		gmu: gmu@506a000 {
-+			compatible="qcom,adreno-gmu-618.0", "qcom,adreno-gmu";
-+			reg = <0 0x0506a000 0 0x31000>, <0 0x0b290000 0 0x10000>,
-+				<0 0x0b490000 0 0x10000>;
-+			reg-names = "gmu", "gmu_pdc", "gmu_pdc_seq";
-+			interrupts = <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-+				   <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "hfi", "gmu";
-+			clocks = <&gpucc GPU_CC_CX_GMU_CLK>,
-+			       <&gpucc GPU_CC_CXO_CLK>,
-+			       <&gcc GCC_DDRSS_GPU_AXI_CLK>,
-+			       <&gcc GCC_GPU_MEMNOC_GFX_CLK>;
-+			clock-names = "gmu", "cxo", "axi", "memnoc";
-+			power-domains = <&gpucc CX_GDSC>, <&gpucc GX_GDSC>;
-+			power-domain-names = "cx", "gx";
-+			iommus = <&adreno_smmu 5>;
-+			operating-points-v2 = <&gmu_opp_table>;
-+
-+			gmu_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-200000000 {
-+					opp-hz = /bits/ 64 <200000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
-+				};
-+			};
-+		};
-+
- 		gpucc: clock-controller@5090000 {
- 			compatible = "qcom,sc7180-gpucc";
- 			reg = <0 0x05090000 0 0x9000>;
--- 
-1.9.1
+>
+> ---
+>  kernel/sched/fair.c |    1 -
+>  1 file changed, 1 deletion(-)
+>
+> --- lnx-56-rc1.orig/kernel/sched/fair.c
+> +++ lnx-56-rc1/kernel/sched/fair.c
+> @@ -3516,7 +3516,6 @@ update_cfs_rq_load_avg(u64 now, struct c
+>   * attach_entity_load_avg - attach this entity to its cfs_rq load avg
+>   * @cfs_rq: cfs_rq to attach to
+>   * @se: sched_entity to attach
+> - * @flags: migration hints
+>   *
+>   * Must call update_cfs_rq_load_avg() before this, since we rely on
+>   * cfs_rq->avg.last_update_time being current.
+>
+>
