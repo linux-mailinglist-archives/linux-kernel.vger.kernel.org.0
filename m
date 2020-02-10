@@ -2,59 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 727FB158317
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 19:58:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6CA615831B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 19:58:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727618AbgBJS6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 13:58:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34870 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727121AbgBJS6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 13:58:23 -0500
-Received: from localhost (unknown [104.132.1.111])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 475222085B;
-        Mon, 10 Feb 2020 18:58:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581361102;
-        bh=XhsDSqmZAV5GAixCR38jksBySp8eRi3o9QvzAGZo0T0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fIxlTXuChg1UrtQ3SPibVHWtPQcF/pz1KL2gIKL6c98MEEg8ZkvufcuMOuVVYDIu7
-         Y+Ark2JbEzwEmEDSqMSUsX17i4mlOva9YAwF//tnPztNFiCI1Wr3cWXUivWLPRB3/H
-         Bi6rOloB/jdx2IepZVYCBFyvlbcpd42Sy5XwxzfE=
-Date:   Mon, 10 Feb 2020 10:58:21 -0800
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     JC Kuo <jckuo@nvidia.com>
-Cc:     thierry.reding@gmail.com, robh@kernel.org, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
-        felipe.balbi@linux.intel.com
-Subject: Re: [PATCH v1] dt-binding: usb: add "super-speed-plus"
-Message-ID: <20200210185821.GA1057764@kroah.com>
-References: <20200113060046.14448-1-jckuo@nvidia.com>
+        id S1727705AbgBJS61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 13:58:27 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:50192 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727079AbgBJS6Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 13:58:25 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 0D4AF1C259A; Mon, 10 Feb 2020 19:58:24 +0100 (CET)
+Date:   Mon, 10 Feb 2020 19:58:23 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     linux-kbuild@vger.kernel.org, youling257 <youling257@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scripts/kallsyms: fix memory corruption caused by write
+ over-run
+Message-ID: <20200210185822.GA420@amd>
+References: <20200210161852.842-1-masahiroy@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="k1lZvvs/B4yU6o8G"
 Content-Disposition: inline
-In-Reply-To: <20200113060046.14448-1-jckuo@nvidia.com>
+In-Reply-To: <20200210161852.842-1-masahiroy@kernel.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 02:00:46PM +0800, JC Kuo wrote:
-> This commit adds "super-speed-plus" to valid argument list of
-> "maximum-speed" property.
-> 
-> Signed-off-by: JC Kuo <jckuo@nvidia.com>
-> ---
->  Documentation/devicetree/bindings/usb/generic.txt | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
 
-What ever happened to this?  Did the DT developers see it?
+--k1lZvvs/B4yU6o8G
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I suggest resending please so it gets into their queue to review.
+On Tue 2020-02-11 01:18:52, Masahiro Yamada wrote:
+> scripts/kallsyms crashes because memcpy() writes one more byte than
+> allocated.
+>=20
+> Fixes: 8d60526999aa ("scripts/kallsyms: change table to store (strcut sym=
+_entry *)")
+> Reported-by: youling257 <youling257@gmail.com>
+> Reported-by: Pavel Machek <pavel@ucw.cz>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
-thanks,
 
-greg k-h
+Tested-by: Pavel Machek <pavel@ucw.cz>
+
+Thanks!
+								Pavel
+							=09
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--k1lZvvs/B4yU6o8G
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl5Bp84ACgkQMOfwapXb+vIjYQCfedtM2eZCZ29z9ojkk2B0W2ML
+1xcAoKkKc3GstwIw7jiXhejvrEAuVRQe
+=ZKh/
+-----END PGP SIGNATURE-----
+
+--k1lZvvs/B4yU6o8G--
