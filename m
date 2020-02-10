@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECB49157ACC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:25:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BF6F157877
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:08:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730810AbgBJNZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:25:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57430 "EHLO mail.kernel.org"
+        id S1729975AbgBJNIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:08:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728565AbgBJMgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:55 -0500
+        id S1729457AbgBJMjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:39:37 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 557E520873;
-        Mon, 10 Feb 2020 12:36:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FB5D2051A;
+        Mon, 10 Feb 2020 12:39:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338215;
-        bh=+HSqdxYkaYNIfkfUg/Sub3ZQxnf+zFmHQsRtSt8ybzQ=;
+        s=default; t=1581338376;
+        bh=vHsL6AfawnbWeF5SwmkVlWf8ruzCVLjR6inWgxEaI5w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bmgEKAYDVF8nWu59dyLk3oa1sWtO4sc9hwcvSoKCs5R2WAwu9qusV7yhsAEQulncs
-         W49halBkq8n8oaTXecfSYymcZlUaU0l4g1YI263Ne2Rj29dms6CQCFgf9luruT3r1U
-         wA9lZpuFKLXT8/R8pXQlYJJAAZVC7UAUWp8T5dEI=
+        b=RbcHq1ZyJZJoWgBDgJRho1RPUwTbd8RH057WF0tWWrcgP4Asu+kr99RckxgwYChYk
+         lhj6qvX8Q+PY1YmYGbnw6dcUgoWF5MGlIImLAOpDifp22/hFn3G4x+NLcTT8eRt1Ff
+         3dyle8T45D1CVWpo99dzQMP0BoxFlUuerdouUMQ0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolin Chen <nicoleotsuka@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>
-Subject: [PATCH 5.4 008/309] net: stmmac: Delete txtimer in suspend()
-Date:   Mon, 10 Feb 2020 04:29:24 -0800
-Message-Id: <20200210122406.866683986@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.5 052/367] ALSA: usb-audio: Annotate endianess in Scarlett gen2 quirk
+Date:   Mon, 10 Feb 2020 04:29:25 -0800
+Message-Id: <20200210122428.850363144@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,72 +42,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolin Chen <nicoleotsuka@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 14b41a2959fbaa50932699d32ceefd6643abacc6 ]
+commit d8f489355cff55b30731354317739a00cf1238bd upstream.
 
-When running v5.5 with a rootfs on NFS, memory abort may happen in
-the system resume stage:
- Unable to handle kernel paging request at virtual address dead00000000012a
- [dead00000000012a] address between user and kernel address ranges
- pc : run_timer_softirq+0x334/0x3d8
- lr : run_timer_softirq+0x244/0x3d8
- x1 : ffff800011cafe80 x0 : dead000000000122
- Call trace:
-  run_timer_softirq+0x334/0x3d8
-  efi_header_end+0x114/0x234
-  irq_exit+0xd0/0xd8
-  __handle_domain_irq+0x60/0xb0
-  gic_handle_irq+0x58/0xa8
-  el1_irq+0xb8/0x180
-  arch_cpu_idle+0x10/0x18
-  do_idle+0x1d8/0x2b0
-  cpu_startup_entry+0x24/0x40
-  secondary_start_kernel+0x1b4/0x208
- Code: f9000693 a9400660 f9000020 b4000040 (f9000401)
- ---[ end trace bb83ceeb4c482071 ]---
- Kernel panic - not syncing: Fatal exception in interrupt
- SMP: stopping secondary CPUs
- SMP: failed to stop secondary CPUs 2-3
- Kernel Offset: disabled
- CPU features: 0x00002,2300aa30
- Memory Limit: none
- ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+The Scarlett gen2 mixer quirk code defines a few record types to
+communicate via USB hub, and those must be all little-endian.
+This patch changes the field types to LE to annotate endianess
+properly.  It also fixes the incorrect usage of leXX_to_cpu() in a
+couple of places, which was caught by sparse after this change.
 
-It's found that stmmac_xmit() and stmmac_resume() sometimes might
-run concurrently, possibly resulting in a race condition between
-mod_timer() and setup_timer(), being called by stmmac_xmit() and
-stmmac_resume() respectively.
-
-Since the resume() runs setup_timer() every time, it'd be safer to
-have del_timer_sync() in the suspend() as the counterpart.
-
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Fixes: 9e4d5c1be21f ("ALSA: usb-audio: Scarlett Gen 2 mixer interface")
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200201080530.22390-2-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    4 ++++
- 1 file changed, 4 insertions(+)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -4763,6 +4763,7 @@ int stmmac_suspend(struct device *dev)
+---
+ sound/usb/mixer_scarlett_gen2.c |   46 ++++++++++++++++++++--------------------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
+
+--- a/sound/usb/mixer_scarlett_gen2.c
++++ b/sound/usb/mixer_scarlett_gen2.c
+@@ -558,11 +558,11 @@ static const struct scarlett2_config
+ 
+ /* proprietary request/response format */
+ struct scarlett2_usb_packet {
+-	u32 cmd;
+-	u16 size;
+-	u16 seq;
+-	u32 error;
+-	u32 pad;
++	__le32 cmd;
++	__le16 size;
++	__le16 seq;
++	__le32 error;
++	__le32 pad;
+ 	u8 data[];
+ };
+ 
+@@ -664,11 +664,11 @@ static int scarlett2_usb(
+ 			"Scarlett Gen 2 USB invalid response; "
+ 			   "cmd tx/rx %d/%d seq %d/%d size %d/%d "
+ 			   "error %d pad %d\n",
+-			le16_to_cpu(req->cmd), le16_to_cpu(resp->cmd),
++			le32_to_cpu(req->cmd), le32_to_cpu(resp->cmd),
+ 			le16_to_cpu(req->seq), le16_to_cpu(resp->seq),
+ 			resp_size, le16_to_cpu(resp->size),
+-			le16_to_cpu(resp->error),
+-			le16_to_cpu(resp->pad));
++			le32_to_cpu(resp->error),
++			le32_to_cpu(resp->pad));
+ 		err = -EINVAL;
+ 		goto unlock;
+ 	}
+@@ -687,7 +687,7 @@ error:
+ /* Send SCARLETT2_USB_DATA_CMD SCARLETT2_USB_CONFIG_SAVE */
+ static void scarlett2_config_save(struct usb_mixer_interface *mixer)
  {
- 	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct stmmac_priv *priv = netdev_priv(ndev);
-+	u32 chan;
+-	u32 req = cpu_to_le32(SCARLETT2_USB_CONFIG_SAVE);
++	__le32 req = cpu_to_le32(SCARLETT2_USB_CONFIG_SAVE);
  
- 	if (!ndev || !netif_running(ndev))
- 		return 0;
-@@ -4776,6 +4777,9 @@ int stmmac_suspend(struct device *dev)
+ 	scarlett2_usb(mixer, SCARLETT2_USB_DATA_CMD,
+ 		      &req, sizeof(u32),
+@@ -713,11 +713,11 @@ static int scarlett2_usb_set_config(
+ 	const struct scarlett2_config config_item =
+ 	       scarlett2_config_items[config_item_num];
+ 	struct {
+-		u32 offset;
+-		u32 bytes;
+-		s32 value;
++		__le32 offset;
++		__le32 bytes;
++		__le32 value;
+ 	} __packed req;
+-	u32 req2;
++	__le32 req2;
+ 	int err;
+ 	struct scarlett2_mixer_data *private = mixer->private_data;
  
- 	stmmac_disable_all_queues(priv);
+@@ -753,8 +753,8 @@ static int scarlett2_usb_get(
+ 	int offset, void *buf, int size)
+ {
+ 	struct {
+-		u32 offset;
+-		u32 size;
++		__le32 offset;
++		__le32 size;
+ 	} __packed req;
  
-+	for (chan = 0; chan < priv->plat->tx_queues_to_use; chan++)
-+		del_timer_sync(&priv->tx_queue[chan].txtimer);
-+
- 	/* Stop TX/RX DMA */
- 	stmmac_stop_all_dma(priv);
+ 	req.offset = cpu_to_le32(offset);
+@@ -794,8 +794,8 @@ static int scarlett2_usb_set_mix(struct
+ 	const struct scarlett2_device_info *info = private->info;
  
+ 	struct {
+-		u16 mix_num;
+-		u16 data[SCARLETT2_INPUT_MIX_MAX];
++		__le16 mix_num;
++		__le16 data[SCARLETT2_INPUT_MIX_MAX];
+ 	} __packed req;
+ 
+ 	int i, j;
+@@ -850,9 +850,9 @@ static int scarlett2_usb_set_mux(struct
+ 	};
+ 
+ 	struct {
+-		u16 pad;
+-		u16 num;
+-		u32 data[SCARLETT2_MUX_MAX];
++		__le16 pad;
++		__le16 num;
++		__le32 data[SCARLETT2_MUX_MAX];
+ 	} __packed req;
+ 
+ 	req.pad = 0;
+@@ -911,9 +911,9 @@ static int scarlett2_usb_get_meter_level
+ 					  u16 *levels)
+ {
+ 	struct {
+-		u16 pad;
+-		u16 num_meters;
+-		u32 magic;
++		__le16 pad;
++		__le16 num_meters;
++		__le32 magic;
+ 	} __packed req;
+ 	u32 resp[SCARLETT2_NUM_METERS];
+ 	int i, err;
 
 
