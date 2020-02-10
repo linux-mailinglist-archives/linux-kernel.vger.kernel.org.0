@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF9EA157A02
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:19:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC9331579FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:19:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730450AbgBJNTn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:19:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59942 "EHLO mail.kernel.org"
+        id S1730959AbgBJNTa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:19:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728338AbgBJMhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:45 -0500
+        id S1728898AbgBJMhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:47 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7E6820838;
-        Mon, 10 Feb 2020 12:37:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7ACC82085B;
+        Mon, 10 Feb 2020 12:37:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338265;
-        bh=eTMGfSCQDEQhcUO/BxXhoJsgYKekYZbw0osjgQ0ZV+I=;
+        s=default; t=1581338266;
+        bh=MIdrN4eNMf+qGiOgzxhA4qnCELEF867GZBySwRbQpQ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DjJ3gy/F1lvt08Es4qYkTJmA21bYloz4qWlRIWEBezyMj0V3D/u8GJrXw9iBhYIbu
-         AtyCaAPXiVLI28E9WUWmFTlFtTTcnrlwQfV0DFvTZV9c7S+kwnsDbg60JOyWV0Oe4e
-         TZya5Zh3+FJO37nrBaSQtEnj+kkB381vj2ukk+sk=
+        b=KoSDQFYQ+EhhBl+A61qTxaJTKTy3lz9I9dfBZIa/XMTXu2EE+/c7+wVc1TMr/iBxB
+         wAYBV0QnAtla68JqJYQNOKI0SAQNpG53fZ0WxnQpNFTjizW7uvBuG1jRQRmho74rXW
+         32/F1ZtyVAHhsB+Nms1pUNJDXvgdQlDeSsfsXH6s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.4 142/309] btrfs: fix improper setting of scanned for range cyclic write cache pages
-Date:   Mon, 10 Feb 2020 04:31:38 -0800
-Message-Id: <20200210122419.986841458@linuxfoundation.org>
+        stable@vger.kernel.org, Andrii Nakryiko <andriin@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: [PATCH 5.4 145/309] selftests/bpf: Fix perf_buffer test on systems w/ offline CPUs
+Date:   Mon, 10 Feb 2020 04:31:41 -0800
+Message-Id: <20200210122420.277511774@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
 References: <20200210122406.106356946@linuxfoundation.org>
@@ -43,88 +43,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Andrii Nakryiko <andriin@fb.com>
 
-commit 556755a8a99be8ca3cd9fbe36aaf9b3b0339a00d upstream.
+commit 91cbdf740a476cf2c744169bf407de2e3ac1f3cf upstream.
 
-We noticed that we were having regular CG OOM kills in cases where there
-was still enough dirty pages to avoid OOM'ing.  It turned out there's
-this corner case in btrfs's handling of range_cyclic where files that
-were being redirtied were not getting fully written out because of how
-we do range_cyclic writeback.
+Fix up perf_buffer.c selftest to take into account offline/missing CPUs.
 
-We unconditionally were setting scanned = 1; the first time we found any
-pages in the inode.  This isn't actually what we want, we want it to be
-set if we've scanned the entire file.  For range_cyclic we could be
-starting in the middle or towards the end of the file, so we could write
-one page and then not write any of the other dirty pages in the file
-because we set scanned = 1.
-
-Fix this by not setting scanned = 1 if we find pages.  The rules for
-setting scanned should be
-
-1) !range_cyclic.  In this case we have a specified range to write out.
-2) range_cyclic && index == 0.  In this case we've started at the
-   beginning and there is no need to loop around a second time.
-3) range_cyclic && we started at index > 0 and we've reached the end of
-   the file without satisfying our nr_to_write.
-
-This patch fixes both of our writepages implementations to make sure
-these rules hold true.  This fixed our over zealous CG OOMs in
-production.
-
-Fixes: d1310b2e0cd9 ("Btrfs: Split the extent_map code into two parts")
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-[ add comment ]
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: ee5cf82ce04a ("selftests/bpf: test perf buffer API")
+Signed-off-by: Andrii Nakryiko <andriin@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Link: https://lore.kernel.org/bpf/20191212013621.1691858-1-andriin@fb.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent_io.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ tools/testing/selftests/bpf/prog_tests/perf_buffer.c |   29 +++++++++++++++----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -3938,6 +3938,11 @@ int btree_write_cache_pages(struct addre
- 	if (wbc->range_cyclic) {
- 		index = mapping->writeback_index; /* Start from prev offset */
- 		end = -1;
-+		/*
-+		 * Start from the beginning does not need to cycle over the
-+		 * range, mark it as scanned.
-+		 */
-+		scanned = (index == 0);
- 	} else {
- 		index = wbc->range_start >> PAGE_SHIFT;
- 		end = wbc->range_end >> PAGE_SHIFT;
-@@ -3955,7 +3960,6 @@ retry:
- 			tag))) {
- 		unsigned i;
+--- a/tools/testing/selftests/bpf/prog_tests/perf_buffer.c
++++ b/tools/testing/selftests/bpf/prog_tests/perf_buffer.c
+@@ -4,6 +4,7 @@
+ #include <sched.h>
+ #include <sys/socket.h>
+ #include <test_progs.h>
++#include "libbpf_internal.h"
  
--		scanned = 1;
- 		for (i = 0; i < nr_pages; i++) {
- 			struct page *page = pvec.pages[i];
+ static void on_sample(void *ctx, int cpu, void *data, __u32 size)
+ {
+@@ -19,7 +20,7 @@ static void on_sample(void *ctx, int cpu
  
-@@ -4084,6 +4088,11 @@ static int extent_write_cache_pages(stru
- 	if (wbc->range_cyclic) {
- 		index = mapping->writeback_index; /* Start from prev offset */
- 		end = -1;
-+		/*
-+		 * Start from the beginning does not need to cycle over the
-+		 * range, mark it as scanned.
-+		 */
-+		scanned = (index == 0);
- 	} else {
- 		index = wbc->range_start >> PAGE_SHIFT;
- 		end = wbc->range_end >> PAGE_SHIFT;
-@@ -4117,7 +4126,6 @@ retry:
- 						&index, end, tag))) {
- 		unsigned i;
+ void test_perf_buffer(void)
+ {
+-	int err, prog_fd, nr_cpus, i, duration = 0;
++	int err, prog_fd, on_len, nr_on_cpus = 0,  nr_cpus, i, duration = 0;
+ 	const char *prog_name = "kprobe/sys_nanosleep";
+ 	const char *file = "./test_perf_buffer.o";
+ 	struct perf_buffer_opts pb_opts = {};
+@@ -29,15 +30,27 @@ void test_perf_buffer(void)
+ 	struct bpf_object *obj;
+ 	struct perf_buffer *pb;
+ 	struct bpf_link *link;
++	bool *online;
  
--		scanned = 1;
- 		for (i = 0; i < nr_pages; i++) {
- 			struct page *page = pvec.pages[i];
+ 	nr_cpus = libbpf_num_possible_cpus();
+ 	if (CHECK(nr_cpus < 0, "nr_cpus", "err %d\n", nr_cpus))
+ 		return;
  
++	err = parse_cpu_mask_file("/sys/devices/system/cpu/online",
++				  &online, &on_len);
++	if (CHECK(err, "nr_on_cpus", "err %d\n", err))
++		return;
++
++	for (i = 0; i < on_len; i++)
++		if (online[i])
++			nr_on_cpus++;
++
+ 	/* load program */
+ 	err = bpf_prog_load(file, BPF_PROG_TYPE_KPROBE, &obj, &prog_fd);
+-	if (CHECK(err, "obj_load", "err %d errno %d\n", err, errno))
+-		return;
++	if (CHECK(err, "obj_load", "err %d errno %d\n", err, errno)) {
++		obj = NULL;
++		goto out_close;
++	}
+ 
+ 	prog = bpf_object__find_program_by_title(obj, prog_name);
+ 	if (CHECK(!prog, "find_probe", "prog '%s' not found\n", prog_name))
+@@ -64,6 +77,11 @@ void test_perf_buffer(void)
+ 	/* trigger kprobe on every CPU */
+ 	CPU_ZERO(&cpu_seen);
+ 	for (i = 0; i < nr_cpus; i++) {
++		if (i >= on_len || !online[i]) {
++			printf("skipping offline CPU #%d\n", i);
++			continue;
++		}
++
+ 		CPU_ZERO(&cpu_set);
+ 		CPU_SET(i, &cpu_set);
+ 
+@@ -81,8 +99,8 @@ void test_perf_buffer(void)
+ 	if (CHECK(err < 0, "perf_buffer__poll", "err %d\n", err))
+ 		goto out_free_pb;
+ 
+-	if (CHECK(CPU_COUNT(&cpu_seen) != nr_cpus, "seen_cpu_cnt",
+-		  "expect %d, seen %d\n", nr_cpus, CPU_COUNT(&cpu_seen)))
++	if (CHECK(CPU_COUNT(&cpu_seen) != nr_on_cpus, "seen_cpu_cnt",
++		  "expect %d, seen %d\n", nr_on_cpus, CPU_COUNT(&cpu_seen)))
+ 		goto out_free_pb;
+ 
+ out_free_pb:
+@@ -91,4 +109,5 @@ out_detach:
+ 	bpf_link__destroy(link);
+ out_close:
+ 	bpf_object__close(obj);
++	free(online);
+ }
 
 
