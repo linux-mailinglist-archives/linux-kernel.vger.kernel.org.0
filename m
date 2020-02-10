@@ -2,78 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63A421570D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 09:32:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71A381570DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 09:35:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbgBJIb6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 03:31:58 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40995 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726968AbgBJIb5 (ORCPT
+        id S1727556AbgBJIe7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 03:34:59 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:38654 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727452AbgBJIe6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 03:31:57 -0500
-Received: by mail-lf1-f66.google.com with SMTP id m30so3535111lfp.8
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 00:31:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=nGIjsaBccfzgbG6AB9u8tl8iW74VAAyTBEMSpWPn7tU=;
-        b=Ft0pgrTgNRywWAhE4nJhfKI5bm00r9rWI44J8YelyxNd8cXMgYJNrxykGaWNSvAmkm
-         9wjiQgmsi+HalpQBQSsbtD7Iaaml6zeq0bA2bYcv1ec1hUBq5UjlHuYWRK8h/h8h6seZ
-         YtP1jgp86POZ63sKri+Rgke/fWJQqYoi+OKEt4INj1sxrxtFaEN/7g/rSD/1IxORKFDA
-         o7tIoDRz5Qrb9NYbIrkNJ/c/SvPwEpza4GWhNMEbVcJCj0AdOkq5hxo0VEFv8Ar6J7Nv
-         r+Fpzil4noWFCvsjGJNStFCuzFUege+ClZ4axs7FoeuUhosV8Mt+Q4FwDjrVuH1YOfyj
-         rzrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=nGIjsaBccfzgbG6AB9u8tl8iW74VAAyTBEMSpWPn7tU=;
-        b=II/1uOntLJED4GXrXj6fOhkZeYQ1xIPEjYAG8QQavWLCRILXhsAG49CDTEyXiLxko7
-         RG8iXJyCKC44t5ywGFWJDe9QIeQhvyI6eP2Di9VZq4rnV3VRq/eDhq6Mq9BbgaXxCgbI
-         UZydpp8qwT1OvJSMHL74Kb7TRsQGOhKrFFDl1QfwM8ECvWeGvNF7DxY905fhiNyOMgF7
-         85rCJX1ZoQFHR0pyXi82ePEMKW97it+1+4FCeD0PFEeiG17gZyG8cqIxukOg3YLfEbig
-         ww1Rgpq0G2+hFwhLgeDtDcp5uXfHFSFZRgrO/lbG2n/xT4tszjcGg/W8Bu4FWWfg/E4O
-         BJHg==
-X-Gm-Message-State: APjAAAU7oue9Da57HzdM4FbWrQ5Rkd5PjsUjSpIgxH3r5D+DD4Sb45un
-        KSFmqM+hELodvCMf5oW1FU2OhAZIGRS35n4lv+s=
-X-Google-Smtp-Source: APXvYqzhEfshBeuU+uEJg+rOGax3PX8H9KiyfqTHwNHC+RlnJF93uvQZiEbzHXI3RYY9abyhE9bahUoPKK/Q+6Dtbg4=
-X-Received: by 2002:a05:6512:64:: with SMTP id i4mr151560lfo.55.1581323514120;
- Mon, 10 Feb 2020 00:31:54 -0800 (PST)
+        Mon, 10 Feb 2020 03:34:58 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01A8Wx33161934;
+        Mon, 10 Feb 2020 08:34:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=jUUFk4pjb4VR5au3cMOhGdF3aMvNDZPsdfMNEMcE88Y=;
+ b=TtfwFmaCYZ7mxxJyy/NgvB5hNwBeHzKKrJHA82hz4I5KiQk+l6BBp7Qjuc8d/zS+kffz
+ 1I5KRbVp8u/mPsKh1eIQfPxD3v+mN2nuiAEmHt/QtE2J4qQHY2QjYdD5eof45FAZuqQv
+ ze5eygr9Pld5+VMbG0chzaJtOM7XteryWECz+U67qJSbNb3lhZXzSkqJrK6jSgTkGv1l
+ 3os1ruWNTWfsjLghuW461Fc3SH5/KuViEPuupuDutjjWWmU0e5/YTXJXR281kAUaxGJz
+ zFYTMFhGjklMG9vBu8OTPpSm/LWGdHof7oJVFzojkPzY1EClwiOQ7DKt+oan/RWyjOji cA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2y2p3s24gk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Feb 2020 08:34:53 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01A8WXsp168413;
+        Mon, 10 Feb 2020 08:32:52 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2y26pxshhy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Feb 2020 08:32:52 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01A8Wp4w001439;
+        Mon, 10 Feb 2020 08:32:51 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 10 Feb 2020 00:32:51 -0800
+Date:   Mon, 10 Feb 2020 11:32:43 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: dwc3: debug: remove redundant call to strlen
+Message-ID: <20200210083243.GW1778@kadam>
+References: <20200208162508.29336-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Received: by 2002:a2e:969a:0:0:0:0:0 with HTTP; Mon, 10 Feb 2020 00:31:53
- -0800 (PST)
-Reply-To: auditor.infor@gmail.com
-From:   Sambo SALIFOU <mariam.dim.deng2014@gmail.com>
-Date:   Mon, 10 Feb 2020 08:31:53 +0000
-Message-ID: <CALecXHaGG76pVxZFE3bkRWBA+uv3PWnJXt9nx7_NUzqwPA=_+g@mail.gmail.com>
-Subject: To A Good Friend
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200208162508.29336-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9526 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 spamscore=0
+ mlxscore=0 adultscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002100071
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9526 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 malwarescore=0
+ suspectscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1015
+ impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002100071
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please lets make joint business
+On Sat, Feb 08, 2020 at 04:25:08PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The call to strlen is redundant since the return value is assigned
+> to variable len but not subsequently used. Remove the redundant
+> call.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/usb/dwc3/debug.h | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/usb/dwc3/debug.h b/drivers/usb/dwc3/debug.h
+> index e56beb9d1e36..ee964352c8e2 100644
+> --- a/drivers/usb/dwc3/debug.h
+> +++ b/drivers/usb/dwc3/debug.h
+> @@ -296,8 +296,6 @@ static inline const char *dwc3_ep_event_string(char *str, size_t size,
+>  				status & DEPEVT_STATUS_TRANSFER_ACTIVE ?
+>  				" (Active)" : " (Not Active)");
+>  
+> -		len = strlen(str);
 
-I am, Dr. Salifou Sambo a bank auditor, I am in-charge of transferring
-out funds or my village, which our village generates from the sales of
-our local mined gold. I have some left over fund in the bank here that
-I alone is aware of, and wants to transfer it out.
-My village that mines gold, has mandated me for sales of our raw Gold,
-and as a bank auditor I help our village to control their funds. I
-want to use this opportunity to look for some one who will provide an
-account to receive the sum of 4.2 million US dollars left in the bank,
-this was realized from gold sold, to be transferred out to our foreign
-account,now it is
-unknown by our village, This fund has been laying for onward transfer
-to overseas as we transfer out all funds sold from our gold, till now
-this fund is lying in the bank, I have all documents concerning the
-fund, and now I want to use it to establish outside my country. So if
-you are interested, then you will provide an account to receive the
-fund for a joint benefit and business and sharing, I will give you 30%
-of the fund. if you
-are interested reply me.
-Sincerely,
-Dr. SALIFOU Sambo
+This code is buggy.  It's a mixup between ret and len.  Get rid of "ret"
+and use "len" throughout.
+
+Unlike userspace snprintf() the kernel version always returns a positive
+value.  It returns the number of bytes that would have been copied if
+there were enough space.  This code should probably be changed to use
+scnprintf() which returns the number of bytes which were copied
+successfully.
+
+The remove all the strlen() calls.  It should just be += the return.
+
+	len += scnprintf(str + len, size - len, "Transfer Not Ready [%d] %s",
+			 event->parameters,
+			 status & DEPEVT_STATUS_TRANSFER_ACTIVE ?
+				"(Active)" : "(Not Active)");
+
+regards,
+dan carpenter
+
