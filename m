@@ -2,117 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE74D157030
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 09:04:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61A53157046
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 09:12:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbgBJIEw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 03:04:52 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:52056 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725468AbgBJIEw (ORCPT
+        id S1727558AbgBJIMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 03:12:24 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:3633 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726061AbgBJIMY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 03:04:52 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01A84hru054895;
-        Mon, 10 Feb 2020 02:04:43 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581321883;
-        bh=5RrM0zAdbPJvAvUMbbQa1uJTy6L2C1VFT9qlwKh0x6M=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=GX90jOJXYyVUI96TGzXEy/NBKYP7q6Ah/M4Hgqtz72PRIvzlwq0j/2sTNEZ6NPTBV
-         hKmkJmRnz2eYrCrMw7JJ4Ew54cmniwfNsz7qqHii7FOK7FsNz8DUFwIE3Jloef7jrt
-         wgvfQyG3/pyZO1vLQd5dNkuw5u+wEKXHq5WVcexM=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01A84hWu131019;
-        Mon, 10 Feb 2020 02:04:43 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 10
- Feb 2020 02:04:43 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 10 Feb 2020 02:04:43 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01A84eqq071121;
-        Mon, 10 Feb 2020 02:04:41 -0600
-Subject: Re: [PATCH] phy: core: Add consumer device link support
-To:     youling 257 <youling257@gmail.com>
-CC:     <alexandre.torgue@st.com>, <yoshihiro.shimoda.uh@renesas.com>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>
-References: <20191104143713.11137-1-alexandre.torgue@st.com>
- <20200206133918.15012-1-youling257@gmail.com>
- <0c4a37a9-0a2e-e698-f423-53060854ea05@ti.com>
- <CAOzgRdb5QfJDQzbtoHQry4wxUg52LwX5XFCPzzaYa=z+RqNWOQ@mail.gmail.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <8bd72269-16ae-b24a-7144-44d22d668dc6@ti.com>
-Date:   Mon, 10 Feb 2020 13:38:16 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Mon, 10 Feb 2020 03:12:24 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e4110280000>; Mon, 10 Feb 2020 00:11:20 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 10 Feb 2020 00:12:22 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 10 Feb 2020 00:12:22 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 10 Feb
+ 2020 08:12:22 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 10 Feb 2020 08:12:22 +0000
+Received: from nkristam-ubuntu.nvidia.com (Not Verified[10.19.67.128]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5e4110630000>; Mon, 10 Feb 2020 00:12:21 -0800
+From:   Nagarjuna Kristam <nkristam@nvidia.com>
+To:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mark.rutland@arm.com>, <robh+dt@kernel.org>, <kishon@ti.com>
+CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Nagarjuna Kristam <nkristam@nvidia.com>
+Subject: [Patch V5 00/21] Tegra XUSB OTG support
+Date:   Mon, 10 Feb 2020 13:41:26 +0530
+Message-ID: <1581322307-11140-1-git-send-email-nkristam@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <CAOzgRdb5QfJDQzbtoHQry4wxUg52LwX5XFCPzzaYa=z+RqNWOQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1581322280; bh=ujUqf31Zwt3popcGNbrMXalxvNgvk88rt4aoa6VhYy8=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=JdIsKh3nVW96YvqY7MfWx5MFISpbJC2Pp8acE40qzQD3vFwI42dZIWiplsZ6iNXYi
+         IwGMoBBTpebRztXj0pGBLbdzfjle0SghUtVZM1rdUzMTyUf0b3w0+qlabpkXRLe1ls
+         zH2fibIVfMjTBAWOdoDdutT8dAJMdqr1f8yV/m1L6fXHEiuwNf8GXEbX5/kKJkaZ7W
+         VxumxdXiQgN1bdPN8KbpiBl6RoJnJI+pod5Y6X+BA8O0TDqe8gTSbbftR9eGoOLBnr
+         YaRtkLdUexuqJfEurDrOsZhUYyYRkuOS7ab0CHLadRLKfx0BBZKD7VAVh7Ykmv8LG4
+         Rw78kgFwdrBmA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
+This patch series adds OTG support on XUSB hardware used in Tegra210 and
+Tegra186 SoCs.
 
-On 07/02/20 12:27 PM, youling 257 wrote:
-> test this diff, dwc3 work for my device, thanks.
-> 
-> 2020-02-07 13:16 GMT+08:00, Kishon Vijay Abraham I <kishon@ti.com>:
->> Hi,
->>
->> On 06/02/20 7:09 PM, youling257 wrote:
->>> This patch cause "dwc3 dwc3.3.auto: failed to create device link to
->>> dwc3.3.auto.ulpi" problem.
->>> https://bugzilla.kernel.org/show_bug.cgi?id=206435
->>
->> I'm suspecting there is some sort of reverse dependency with dwc3 ULPI.
->> Can you try the following diff?
->>
->> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
->> index 2eb28cc2d2dc..397311dcb116 100644
->> --- a/drivers/phy/phy-core.c
->> +++ b/drivers/phy/phy-core.c
->> @@ -687,7 +687,7 @@ struct phy *phy_get(struct device *dev, const char
->> *string)
->>
->>         get_device(&phy->dev);
->>
->> -       link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
->> +       link = device_link_add(dev, &phy->dev, DL_FLAG_SYNC_STATE_ONLY);
->>         if (!link) {
->>                 dev_err(dev, "failed to create device link to %s\n",
->>                         dev_name(phy->dev.parent));
->> @@ -802,7 +802,7 @@ struct phy *devm_of_phy_get(struct device *dev,
->> struct device_node *np,
->>                 return phy;
->>         }
->>
->> -       link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
->> +       link = device_link_add(dev, &phy->dev, DL_FLAG_SYNC_STATE_ONLY);
->>         if (!link) {
->>                 dev_err(dev, "failed to create device link to %s\n",
->>                         dev_name(phy->dev.parent));
->> @@ -851,7 +851,7 @@ struct phy *devm_of_phy_get_by_index(struct device
->> *dev, struct device_node *np,
->>         *ptr = phy;
->>         devres_add(dev, ptr);
->>
->> -       link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
->> +       link = device_link_add(dev, &phy->dev, DL_FLAG_SYNC_STATE_ONLY);
->>         if (!link) {
->>                 dev_err(dev, "failed to create device link to %s\n",
->>                         dev_name(phy->dev.parent));Parent
+This patchset is composed with :
+ - dt bindings of XUSB Pad Controller
+ - dt bindings for XUSB device Driver
+ - Tegra PHY driver for usb-role-switch and usb-phy
+ - Tegra XUSB host mode driver to support OTG mode
+ - Tegra XUSB device mode driver to use usb-phy and multi device mode
+ - dts for XUSB pad controller
+ - dts for xudc for Jetson TX1 and TX2
+ - dts for Jetson-TK1
+ - dts for Jetson-Nano
 
-Can you check if this doesn't affect the suspend/resume ordering?
+Tegra Pad controller driver register for role switch updates for
+OTG/peripheral capable USB ports and adds usb-phy for that corresponding
+USB ports.
 
-Thanks
-Kishon
+Host and Device mode drivers gets usb-phy from USB2's phy and registers
+notifier for role changes to perform corresponding role tasks.
+
+Order of merging Patches:
+Please merge DT changes first followed Tegra PHY driver changes and then
+USB driver changes.
+
+Tests done:
+ - device mode support using micro-B USB cable connection between ubuntu
+   host and DUT on micro-AB port
+ - host mode support by connecting pen-drive to micro-AB USB port on DUT
+   using standard-A to micro-A converter.
+ - toggling between these 2 modes by hot plugging corresponding cables.
+
+DUT: Jetson-tx1, Jetson tx2, Jetson Nano(device mode test only).
+
+V5:
+ - Jetson Nano DT changes are added in the series
+ - Removed select USB_ROLE_SWITCH from Kconfig in the change corresponding
+   to removal off role switch support from XUDC driver.
+V4:
+ - Owner info is updated to port->dev for which USB role switch is used.
+ - Updated function name in logs, unsigned int usage as per comments.
+ - usb_phy_event is used instead of usb_role to detect role changes as
+   notifier arguments of usb-phy is used for charging current updates.
+ - Added ACKed-by info for corresponding patches.
+ - Jetson TK1 DT changes added to remove USB2-0 port from padctl node.
+V3:
+ - Port and cable names updated in "Tests done" section of cover letter as
+   per JC inputs.
+ - Fixed arguments allignments in USB padctl driver.
+ - Padctl driver aborts if usb-role-switch is not present in dt for
+   peripheral/otg roles.
+ - Added Reviewed and ACKed details for corresponding patches.
+V2:
+ - Updated usb-role-switch documentation for Padctl driver.
+ - Update XUDC bindings doc as suggested by Rob.
+ - Used standard error codes for error return.
+ - Added of_platform_depopulate during error and driver removal.
+ - Updated error variable during phy initialization in XUDC driver.
+ - Updated Tegra210 soc dtb file as per changes to binding doc.
+ 
+Nagarjuna Kristam (21):
+  dt-bindings: phy: tegra-xusb: Add usb-role-switch
+  dt-bindings: usb: Add NVIDIA Tegra XUSB device mode controller binding
+  phy: tegra: xusb: Add usb-role-switch support
+  phy: tegra: xusb: Add usb-phy support
+  phy: tegra: xusb: Add support to get companion USB 3 port
+  phy: tegra: xusb: Add set_mode support for USB 2 phy on Tegra210
+  phy: tegra: xusb: Add set_mode support for UTMI phy on Tegra186
+  usb: xhci-tegra: Add OTG support
+  usb: gadget: tegra-xudc: Remove usb-role-switch support
+  usb: gadget: tegra-xudc: Add usb-phy support
+  usb: gadget: tegra-xudc: use phy_set_mode to set/unset device mode
+  usb: gadget: tegra-xudc: support multiple device modes
+  arm64: tegra: update OTG port entries for jetson-tx1
+  arm64: tegra: update OTG port entries for jetson-tx2
+  arm64: tegra: Add xudc node for Tegra210
+  arm64: tegra: Enable xudc on Jetson TX1
+  arm64: tegra: Add xudc node for Tegra186
+  arm64: tegra: Enable xudc node on Jetson TX2
+  ARM: tegra: Remove USB 2-0 port from Jetson TK1 padctl
+  arm64: tegra: update OTG port entries for jetson-nano
+  arm64: tegra: Enable xudc node on Jetson nano
+
+ .../bindings/phy/nvidia,tegra124-xusb-padctl.txt   |   6 +
+ .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml | 190 ++++++++++++++
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   6 -
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |  23 +-
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  19 ++
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |  34 ++-
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |  22 +-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  19 ++
+ drivers/phy/tegra/Kconfig                          |   1 +
+ drivers/phy/tegra/xusb-tegra186.c                  | 114 +++++++--
+ drivers/phy/tegra/xusb-tegra210.c                  | 131 ++++++++--
+ drivers/phy/tegra/xusb.c                           | 172 +++++++++++++
+ drivers/phy/tegra/xusb.h                           |   5 +
+ drivers/usb/gadget/udc/Kconfig                     |   1 -
+ drivers/usb/gadget/udc/tegra-xudc.c                | 273 ++++++++++++++-------
+ drivers/usb/host/xhci-tegra.c                      | 228 ++++++++++++++++-
+ include/linux/phy/tegra/xusb.h                     |   2 +
+ 17 files changed, 1098 insertions(+), 148 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
+
+-- 
+2.7.4
+
