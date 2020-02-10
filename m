@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 039DC1576B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:55:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 962FE15758F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:42:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729998AbgBJMy1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:54:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45498 "EHLO mail.kernel.org"
+        id S1730106AbgBJMl4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:41:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730121AbgBJMmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:42:00 -0500
+        id S1729283AbgBJMjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:39:00 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E251D20842;
-        Mon, 10 Feb 2020 12:41:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 596B221739;
+        Mon, 10 Feb 2020 12:38:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338520;
-        bh=t4wbXBwwAt7MaSC0Q2NVeMfh7j7XNATXObDaJ5xrNpY=;
+        s=default; t=1581338339;
+        bh=b5E0seDSw/2qSo6zYqvtGmYLu55ZAeyA2xmwOUaLTtg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c8Ivk89AhxXi4NoKmp+iPnEwSsw8W3luiB+PT7Wt7CAi732Fgh4CwFLXagUrrEWM9
-         37jii17gDy0zYhUAHtxv65ObpKcdYK+glqHs8ezPVJl4KGVgyj3i96A2D1xtpknDkX
-         R79vijkWlBQpb8Wx3PWpadMyIBq06D9Y89jKg4a0=
+        b=spMcXgq+jFmFH4sNMcBUrq+b6/IXX5ZndSvRv0anG6rWykzUNMQnUCMj7rEdXAjKp
+         B0yU7lBRRdsMIDdXn6aAKmmBByBY7GRNwnfPW2w/Oeow66gOPOX1S47x0K3wzUfBjM
+         VIlUwgnXwJVaw2UgEzoxDqabedoLFoVapdyWwvDI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ong Boon Leong <boon.leong.ong@intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 331/367] net: stmmac: xgmac: fix incorrect XGMAC_VLAN_TAG register writting
-Date:   Mon, 10 Feb 2020 04:34:04 -0800
-Message-Id: <20200210122453.402692988@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 5.4 289/309] mfd: rn5t618: Mark ADC control register volatile
+Date:   Mon, 10 Feb 2020 04:34:05 -0800
+Message-Id: <20200210122434.450710665@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,44 +43,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ong Boon Leong <boon.leong.ong@intel.com>
+From: Andreas Kemnade <andreas@kemnade.info>
 
-[ Upstream commit 907a076881f171254219faad05f46ac5baabedfb ]
+commit 2f3dc25c0118de03a00ddc88b61f7216854f534d upstream.
 
-We should always do a read of current value of XGMAC_VLAN_TAG instead of
-directly overwriting the register value.
+There is a bit which gets cleared after conversion.
 
-Fixes: 3cd1cfcba26e2 ("net: stmmac: Implement VLAN Hash Filtering in XGMAC")
-Signed-off-by: Ong Boon Leong <boon.leong.ong@intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 9bb9e29c78f8 ("mfd: Add Ricoh RN5T618 PMIC core driver")
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
-@@ -569,7 +569,9 @@ static void dwxgmac2_update_vlan_hash(st
- 
- 		writel(value, ioaddr + XGMAC_PACKET_FILTER);
- 
--		value = XGMAC_VLAN_VTHM | XGMAC_VLAN_ETV;
-+		value = readl(ioaddr + XGMAC_VLAN_TAG);
-+
-+		value |= XGMAC_VLAN_VTHM | XGMAC_VLAN_ETV;
- 		if (is_double) {
- 			value |= XGMAC_VLAN_EDVLP;
- 			value |= XGMAC_VLAN_ESVL;
-@@ -584,7 +586,9 @@ static void dwxgmac2_update_vlan_hash(st
- 
- 		writel(value, ioaddr + XGMAC_PACKET_FILTER);
- 
--		value = XGMAC_VLAN_ETV;
-+		value = readl(ioaddr + XGMAC_VLAN_TAG);
-+
-+		value |= XGMAC_VLAN_ETV;
- 		if (is_double) {
- 			value |= XGMAC_VLAN_EDVLP;
- 			value |= XGMAC_VLAN_ESVL;
+---
+ drivers/mfd/rn5t618.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/mfd/rn5t618.c
++++ b/drivers/mfd/rn5t618.c
+@@ -26,6 +26,7 @@ static bool rn5t618_volatile_reg(struct
+ 	case RN5T618_WATCHDOGCNT:
+ 	case RN5T618_DCIRQ:
+ 	case RN5T618_ILIMDATAH ... RN5T618_AIN0DATAL:
++	case RN5T618_ADCCNT3:
+ 	case RN5T618_IR_ADC1 ... RN5T618_IR_ADC3:
+ 	case RN5T618_IR_GPR:
+ 	case RN5T618_IR_GPF:
 
 
