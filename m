@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 756DF15766A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:53:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D95961575A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:43:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729488AbgBJMmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:42:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37544 "EHLO mail.kernel.org"
+        id S1727411AbgBJMm6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:42:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729432AbgBJMjd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:39:33 -0500
+        id S1729060AbgBJMjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:39:43 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1251620842;
-        Mon, 10 Feb 2020 12:39:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE07724682;
+        Mon, 10 Feb 2020 12:39:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338372;
-        bh=jPoE6XcnEbE2KOaQgoztjLf0DwFZSq5ltPR9Xwbho0k=;
+        s=default; t=1581338383;
+        bh=17MaOto3qGiNDsjCGWj6Y/lMgIC4o3kD41TiSnZ/HA8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zY6dMksgqH3PA3W0WUjjr95WStdQ1mxu3I0exCpV29l3Oj6RO/PfG6tmtNEiGb0yR
-         JmDwMg6g+GLUoddXOVjmcbDZu43FEgA1/t6a/3KAjyhTQzk3BCsHX9j9WwreQ7queZ
-         5+qKzkjQUyRAVEhqTYScNeSGNHzId6POBO7nmd5U=
+        b=GU79WdWNvNMxVoCoAkaB22oTxGS28JEiXelAJcCDttlb32m+YLlfxViV1lWON3CZK
+         wfiFtvFxz+iCoUcSIPFCllZutqTWXJyJlcngYRa//2WQfK5zWisIzLGwrUQsm5aeTB
+         0HcP5/oZMjeQRJ0+tNEhiksHOmgBvF966LtZX9T0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>,
-        Jakub Kicinski <kuba@kernel.org>
-Subject: [PATCH 5.5 026/367] bnxt_en: Fix logic that disables Bus Master during firmware reset.
-Date:   Mon, 10 Feb 2020 04:28:59 -0800
-Message-Id: <20200210122426.308964111@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        syzbot+48a2851be24583b864dc@syzkaller.appspotmail.com
+Subject: [PATCH 5.5 028/367] mfd: dln2: More sanity checking for endpoints
+Date:   Mon, 10 Feb 2020 04:29:01 -0800
+Message-Id: <20200210122426.499313249@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -45,59 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-[ Upstream commit d407302895d3f3ca3a333c711744a95e0b1b0150 ]
+commit 2b8bd606b1e60ca28c765f69c1eedd7d2a2e9dca upstream.
 
-The current logic that calls pci_disable_device() in __bnxt_close_nic()
-during firmware reset is flawed.  If firmware is still alive, we're
-disabling the device too early, causing some firmware commands to
-not reach the firmware.
+It is not enough to check for the number of endpoints.
+The types must also be correct.
 
-Fix it by moving the logic to bnxt_reset_close().  If firmware is
-in fatal condition, we call pci_disable_device() before we free
-any of the rings to prevent DMA corruption of the freed rings.  If
-firmware is still alive, we call pci_disable_device() after the
-last firmware message has been sent.
-
-Fixes: 3bc7d4a352ef ("bnxt_en: Add BNXT_STATE_IN_FW_RESET state.")
-Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Reported-and-tested-by: syzbot+48a2851be24583b864dc@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/broadcom/bnxt/bnxt.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -9312,10 +9312,6 @@ static void __bnxt_close_nic(struct bnxt
- 	bnxt_debug_dev_exit(bp);
- 	bnxt_disable_napi(bp);
- 	del_timer_sync(&bp->timer);
--	if (test_bit(BNXT_STATE_IN_FW_RESET, &bp->state) &&
--	    pci_is_enabled(bp->pdev))
--		pci_disable_device(bp->pdev);
--
- 	bnxt_free_skbs(bp);
- 
- 	/* Save ring stats before shutdown */
-@@ -10093,9 +10089,16 @@ static void bnxt_reset(struct bnxt *bp,
- static void bnxt_fw_reset_close(struct bnxt *bp)
+---
+ drivers/mfd/dln2.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+--- a/drivers/mfd/dln2.c
++++ b/drivers/mfd/dln2.c
+@@ -722,6 +722,8 @@ static int dln2_probe(struct usb_interfa
+ 		      const struct usb_device_id *usb_id)
  {
- 	bnxt_ulp_stop(bp);
-+	/* When firmware is fatal state, disable PCI device to prevent
-+	 * any potential bad DMAs before freeing kernel memory.
-+	 */
-+	if (test_bit(BNXT_STATE_FW_FATAL_COND, &bp->state))
-+		pci_disable_device(bp->pdev);
- 	__bnxt_close_nic(bp, true, false);
- 	bnxt_clear_int_mode(bp);
- 	bnxt_hwrm_func_drv_unrgtr(bp);
-+	if (pci_is_enabled(bp->pdev))
-+		pci_disable_device(bp->pdev);
- 	bnxt_free_ctx_mem(bp);
- 	kfree(bp->ctx);
- 	bp->ctx = NULL;
+ 	struct usb_host_interface *hostif = interface->cur_altsetting;
++	struct usb_endpoint_descriptor *epin;
++	struct usb_endpoint_descriptor *epout;
+ 	struct device *dev = &interface->dev;
+ 	struct dln2_dev *dln2;
+ 	int ret;
+@@ -731,12 +733,19 @@ static int dln2_probe(struct usb_interfa
+ 	    hostif->desc.bNumEndpoints < 2)
+ 		return -ENODEV;
+ 
++	epin = &hostif->endpoint[0].desc;
++	epout = &hostif->endpoint[1].desc;
++	if (!usb_endpoint_is_bulk_out(epout))
++		return -ENODEV;
++	if (!usb_endpoint_is_bulk_in(epin))
++		return -ENODEV;
++
+ 	dln2 = kzalloc(sizeof(*dln2), GFP_KERNEL);
+ 	if (!dln2)
+ 		return -ENOMEM;
+ 
+-	dln2->ep_out = hostif->endpoint[0].desc.bEndpointAddress;
+-	dln2->ep_in = hostif->endpoint[1].desc.bEndpointAddress;
++	dln2->ep_out = epout->bEndpointAddress;
++	dln2->ep_in = epin->bEndpointAddress;
+ 	dln2->usb_dev = usb_get_dev(interface_to_usbdev(interface));
+ 	dln2->interface = interface;
+ 	usb_set_intfdata(interface, dln2);
 
 
