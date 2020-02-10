@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C28F31579EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:19:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67A641579D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:18:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731006AbgBJNTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:19:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60278 "EHLO mail.kernel.org"
+        id S1731052AbgBJNSO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:18:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728913AbgBJMht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:49 -0500
+        id S1728952AbgBJMhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:54 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7448A20838;
-        Mon, 10 Feb 2020 12:37:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3911424687;
+        Mon, 10 Feb 2020 12:37:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338268;
-        bh=On/b13BkslPuTXAbYJbp7a7hdtDg7ESrC7NRhPdErqw=;
+        s=default; t=1581338274;
+        bh=RC5LyErzA5QLiIz6fXV5CAXcGDg3k+bE+UcIo5ET3PU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OljBu6XznnAKGdEsSCrfh1joh9IVSuv5U+Ceyes/Z0+OJIZxAPXWUZvmYaXSn8WTD
-         fNPg216NRjtn1NFyaGqtdtGHTNOp0/y2la5y2SGLcO3tMLKKHwuQ73BLXiMVR/68k/
-         C9Z7ZUTY/wq8w1O9+yWxgFHs9u9cqK6PlineWSJs=
+        b=ARXYI+xvV+Hm+73v5Nkvq+GSGCf5COUe1TrWhWx6kWpCgvDJD8HKssvZODaSyL9gG
+         JRDf6+u9FiMw0YCyfRSppzlUtFhYP9AltEjilt8oO3e7RLeYVyu5kS3mjo0pZiQWND
+         oDTDBoKP0v6HDdeYhNF65PvP4+kJrCtKL+XBv9oE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jerad Simpson <jbsimpson@gmail.com>,
-        Milan Broz <gmazyland@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 5.4 131/309] dm crypt: fix benbi IV constructor crash if used in authenticated mode
-Date:   Mon, 10 Feb 2020 04:31:27 -0800
-Message-Id: <20200210122418.955759660@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 5.4 132/309] dm thin metadata: use pool locking at end of dm_pool_metadata_close
+Date:   Mon, 10 Feb 2020 04:31:28 -0800
+Message-Id: <20200210122419.047329981@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
 References: <20200210122406.106356946@linuxfoundation.org>
@@ -44,54 +42,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Milan Broz <gmazyland@gmail.com>
+From: Mike Snitzer <snitzer@redhat.com>
 
-commit 4ea9471fbd1addb25a4d269991dc724e200ca5b5 upstream.
+commit 44d8ebf436399a40fcd10dd31b29d37823d62fcc upstream.
 
-If benbi IV is used in AEAD construction, for example:
-  cryptsetup luksFormat <device> --cipher twofish-xts-benbi --key-size 512 --integrity=hmac-sha256
-the constructor uses wrong skcipher function and crashes:
+Ensure that the pool is locked during calls to __commit_transaction and
+__destroy_persistent_data_objects.  Just being consistent with locking,
+but reality is dm_pool_metadata_close is called once pool is being
+destroyed so access to pool shouldn't be contended.
 
- BUG: kernel NULL pointer dereference, address: 00000014
- ...
- EIP: crypt_iv_benbi_ctr+0x15/0x70 [dm_crypt]
- Call Trace:
-  ? crypt_subkey_size+0x20/0x20 [dm_crypt]
-  crypt_ctr+0x567/0xfc0 [dm_crypt]
-  dm_table_add_target+0x15f/0x340 [dm_mod]
+Also, use pmd_write_lock_in_core rather than __pmd_write_lock in
+dm_pool_commit_metadata and rename __pmd_write_lock to
+pmd_write_lock_in_core -- there was no need for the alias.
 
-Fix this by properly using crypt_aead_blocksize() in this case.
+In addition, verify that the pool is locked in __commit_transaction().
 
-Fixes: ef43aa38063a6 ("dm crypt: add cryptographic data integrity protection (authenticated encryption)")
-Cc: stable@vger.kernel.org # v4.12+
-Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=941051
-Reported-by: Jerad Simpson <jbsimpson@gmail.com>
-Signed-off-by: Milan Broz <gmazyland@gmail.com>
+Fixes: 873f258becca ("dm thin metadata: do not write metadata if no changes occurred")
+Cc: stable@vger.kernel.org
 Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-crypt.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/md/dm-thin-metadata.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -331,8 +331,14 @@ static int crypt_iv_essiv_gen(struct cry
- static int crypt_iv_benbi_ctr(struct crypt_config *cc, struct dm_target *ti,
- 			      const char *opts)
+--- a/drivers/md/dm-thin-metadata.c
++++ b/drivers/md/dm-thin-metadata.c
+@@ -387,16 +387,15 @@ static int subtree_equal(void *context,
+  * Variant that is used for in-core only changes or code that
+  * shouldn't put the pool in service on its own (e.g. commit).
+  */
+-static inline void __pmd_write_lock(struct dm_pool_metadata *pmd)
++static inline void pmd_write_lock_in_core(struct dm_pool_metadata *pmd)
+ 	__acquires(pmd->root_lock)
  {
--	unsigned bs = crypto_skcipher_blocksize(any_tfm(cc));
--	int log = ilog2(bs);
-+	unsigned bs;
-+	int log;
-+
-+	if (test_bit(CRYPT_MODE_INTEGRITY_AEAD, &cc->cipher_flags))
-+		bs = crypto_aead_blocksize(any_tfm_aead(cc));
-+	else
-+		bs = crypto_skcipher_blocksize(any_tfm(cc));
-+	log = ilog2(bs);
+ 	down_write(&pmd->root_lock);
+ }
+-#define pmd_write_lock_in_core(pmd) __pmd_write_lock((pmd))
  
- 	/* we need to calculate how far we must shift the sector count
- 	 * to get the cipher block count, we use this shift in _gen */
+ static inline void pmd_write_lock(struct dm_pool_metadata *pmd)
+ {
+-	__pmd_write_lock(pmd);
++	pmd_write_lock_in_core(pmd);
+ 	if (unlikely(!pmd->in_service))
+ 		pmd->in_service = true;
+ }
+@@ -831,6 +830,7 @@ static int __commit_transaction(struct d
+ 	 * We need to know if the thin_disk_superblock exceeds a 512-byte sector.
+ 	 */
+ 	BUILD_BUG_ON(sizeof(struct thin_disk_superblock) > 512);
++	BUG_ON(!rwsem_is_locked(&pmd->root_lock));
+ 
+ 	if (unlikely(!pmd->in_service))
+ 		return 0;
+@@ -953,6 +953,7 @@ int dm_pool_metadata_close(struct dm_poo
+ 		return -EBUSY;
+ 	}
+ 
++	pmd_write_lock_in_core(pmd);
+ 	if (!dm_bm_is_read_only(pmd->bm) && !pmd->fail_io) {
+ 		r = __commit_transaction(pmd);
+ 		if (r < 0)
+@@ -961,6 +962,7 @@ int dm_pool_metadata_close(struct dm_poo
+ 	}
+ 	if (!pmd->fail_io)
+ 		__destroy_persistent_data_objects(pmd);
++	pmd_write_unlock(pmd);
+ 
+ 	kfree(pmd);
+ 	return 0;
+@@ -1841,7 +1843,7 @@ int dm_pool_commit_metadata(struct dm_po
+ 	 * Care is taken to not have commit be what
+ 	 * triggers putting the thin-pool in-service.
+ 	 */
+-	__pmd_write_lock(pmd);
++	pmd_write_lock_in_core(pmd);
+ 	if (pmd->fail_io)
+ 		goto out;
+ 
 
 
