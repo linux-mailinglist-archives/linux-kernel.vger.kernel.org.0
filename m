@@ -2,175 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4060C157E77
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:10:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0C0C157E81
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:12:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729219AbgBJPKN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 10:10:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39432 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728994AbgBJPKM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 10:10:12 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729155AbgBJPMh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 10:12:37 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:37053 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728485AbgBJPMg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 10:12:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581347556;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=5TfrepxBJJxmbjB0OX3FYkTn2hilWeyBf15in8jo9Z4=;
+        b=UxTDPgR47qZXmiZI1kWjVmyNW7srmYuEkHccHrfKn2KuH0ljn+WzTHOQupBh8nBU3pcBEg
+        39RGVL7YSS9h+NKCfl+MLx7Yl3yw4haSypAVvna2etf1ZRyTHssYTziJSPSXvWw2jddkIK
+        b2Pa7l6iXJoqdLsUi1grvdTvmx/Kc90=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-8-4cfTw6hJPZy4KqwQrnfAjA-1; Mon, 10 Feb 2020 10:12:18 -0500
+X-MC-Unique: 4cfTw6hJPZy4KqwQrnfAjA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A4EB20661;
-        Mon, 10 Feb 2020 15:10:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581347411;
-        bh=vTR6ay2rTMWbD7WmnoyN014vTkNPpyTlmii8NwEA79A=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=u4dnRcarX25/fF73QozHItzoHS4cTCd/yH7muQpEKWQyTWvZtZJvmYP2eGJXcidW0
-         SyGsw2xbHDgnFZQvGXi5qljU8VTvithIR2j8RQMqU3lbNmAIMmJLa1ZSD1gFyRuJDk
-         NE7F4nsH+QLuGQZXW9y2Pc22zGuP6uAALGmuCOBQ=
-Date:   Tue, 11 Feb 2020 00:10:07 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [for-next][PATCH 04/26] bootconfig: Add Extra Boot Config
- support
-Message-Id: <20200211001007.62290c743e049b231bdd7052@kernel.org>
-In-Reply-To: <20200210112512.GA29627@zn.tnic>
-References: <20200114210316.450821675@goodmis.org>
-        <20200114210336.259202220@goodmis.org>
-        <20200206115405.GA22608@zn.tnic>
-        <20200206234100.953b48ecef04f97c112d2e8b@kernel.org>
-        <20200206175858.GG9741@zn.tnic>
-        <20200207114617.3bda49673175d3fa33cbe85e@kernel.org>
-        <20200207114122.GB24074@zn.tnic>
-        <20200208000648.3383f991fee68af5ee229d65@kernel.org>
-        <20200210112512.GA29627@zn.tnic>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C3C2E108838A;
+        Mon, 10 Feb 2020 15:12:16 +0000 (UTC)
+Received: from localhost (ovpn-200-43.brq.redhat.com [10.40.200.43])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A088A26FBF;
+        Mon, 10 Feb 2020 15:12:13 +0000 (UTC)
+Date:   Mon, 10 Feb 2020 16:12:09 +0100
+From:   Stefano Brivio <sbrivio@redhat.com>
+To:     Chen Wandun <chenwandun@huawei.com>
+Cc:     <pablo@netfilter.org>, <kadlec@netfilter.org>, <fw@strlen.de>,
+        <davem@davemloft.net>, <kuba@kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <coreteam@netfilter.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH next] nf_tables: make the symbol 'nft_pipapo_get' static
+Message-ID: <20200210161209.588b5c4e@redhat.com>
+In-Reply-To: <20200210085109.13954-1-chenwandun@huawei.com>
+References: <20200210085109.13954-1-chenwandun@huawei.com>
+Organization: Red Hat
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Feb 2020 12:25:13 +0100
-Borislav Petkov <bp@alien8.de> wrote:
+On Mon, 10 Feb 2020 16:51:09 +0800
+Chen Wandun <chenwandun@huawei.com> wrote:
 
-> On Sat, Feb 08, 2020 at 12:06:48AM +0900, Masami Hiramatsu wrote:
-> > OK, could you tell me your idea to make it better? I'm waiting for such
-> > discussion a half of last year :)
+> Fix the following sparse warning:
 > 
-> Yah, situation sounds familiar. :)
-> 
-> > For your information, here is the background of this bootconfig.
-> > To build my boot-time tracing, I need a way to pass a flexible and
-> > structured configuration at boot time.
-> 
-> Can I see an actual example of what you're doing?
+> net/netfilter/nft_set_pipapo.c:739:6: warning: symbol 'nft_pipapo_get' was not declared. Should it be static?
 
-Sure, there are some examples under Documentation/trace/boottime-trace.rst.
-Since the tracefs (ftrace's filesystem user interface) is extensible
-by dynamic events and instanses, I need flexibility of option "keys"
-not only values, also I need structured settings because some keys
-will configure same events or trace instance.
-For example, ftrace has tracing instances (which represents different
-trace logs) which has some set of configuration parameters. Some
-parameters has sub-parameters (trace options), and most parameters
-have default parameters. I don't want to make it a single parametarized
-options, like ftrace.instance="NAME:OPT1,OPT2:CLOCK:SIZE:SNAPSHOT:...",
-because it is not human readable and easy to make mistakes.
-Instead, bootconfig solve that with structured, multi-line keys;
+Whoops, thanks for fixing this.
 
-ftrace.instance.NAME {
-	options = OPT1,OPT2
-	trace_clock = CLOCK
-	buffer_size = SIZE
-	...
-}
+> Fixes: 3c4287f62044 ("nf_tables: Add set type for arbitrary concatenation of ranges")
+> Signed-off-by: Chen Wandun <chenwandun@huawei.com>
 
-If we have 3 or more instances, it is easy to expand it as
-
-ftrace.instance {
-	NAME1 {
-		...
-	}
-	NAME2 {
-		...
-	}
-	NAME3 {
-		...
-	}
-}
-
-(Hmm, maybe I should reserve "default" name for setting a default configuration)
-
-> > I had tried to reuse devicetree at first, but it was rejected because
-> > the devicetree is only for describing hardware. So I introduced this
-> > bootconfig.
-> 
-> Makes sense.
-> 
-> > When I designed the bootconfig, I tried to sort out the requirements.
-> > That config should be able to pass all setting we can do on tracefs.
-> > Since ftrace already has a parser for tracefs, we don't need any types
-> > for each settings. Thus it should be something like sysctl.conf. But the
-> > sysctl.conf was too simple, it couldn't handle several related keys
-> > well. So I decided to introduce braces which put together some related
-> > parameters. And the bootconfig syntax was born.
-> 
-> Ok, here's my boot command line:
-> 
-> [    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-5.5.0-rc7+ root=/dev/nvme0n1p2 ro root=/dev/disk/by-id/nvme-eui.0025385481b2fe2a-part2 resume=/dev/disk/by-id/nvme-eui.0025385481b2fe2a-part1 debug ignore_loglevel log_buf_len=16M no_console_suspend net.ifnames=0 mem_encrypt=off systemd.log_target=null
-> 
-> How do I use the bootconfig thing with it? Or is it not supposed to be
-> used that way? IOW, how is it supposed to be used so that it needs to be
-> enabled on every box?
-
-Sure,
-
-1) write a following bootconfig file
-----
-kernel {
-	# root device and resume devices
-	root = /dev/disk/by-id/nvme-eui.0025385481b2fe2a-part2
-	resume = /dev/disk/by-id/nvme-eui.0025385481b2fe2a-part1
-	ro			# Mount root device readonly.
-	debug			# boot with debug log
-	ignore_loglevel	# this will print all messages
-	log_buf_len = 16M	# So expand log buffer to 16MB
-	no_console_suspend	# Debugging suspend process
-	mem_encrypt = off	# Set AMD SME to off
-}
-
-init {
-	net.ifnames = 0	# Use tradisional ifname
-	systemd.log_target = null	# Ignore systemd log?
-}
-----
-2) Use tools/bootconfig/bootconfig to apply it to your initrd image
-# tools/bootconfig/bootconfig -a <your-bootconfig> <your-initrd>
-3) boot.
-
-Note that I don't intended to "replace" all legacy command line
-(but it is easy for bootloaders to use bootconfig) it seems above example
-seems have some options which added by the bootloader.
-
-> 
-> > Okay, I hope it and try to prove it. Anyway, to use boot-time tracing which
-> > can fully utilize ftrace at boot-time, we have to enable bootconfig.
-> 
-> Ok, this is getting closer. But not everyone is using boottime tracing?
-
-No, (but I HOPE so). 
-
-> 
-> Or is the logic: every user/tool might need to be able to do boottime
-> tracing at some future point in time and bootconfig is a mandatory part
-> of that use case?
-
-Boot time tracing is just a example. I think we can expand this for some
-other subsystems too. And this might be also helpful for adding a bit more
-complex syntax to those parameters without parser.
-
-Thank you,
+Acked-by: Stefano Brivio <sbrivio@redhat.com>
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Stefano
+
