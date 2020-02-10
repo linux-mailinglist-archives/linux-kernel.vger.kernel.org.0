@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C3AF157639
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 494F51574E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:38:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730861AbgBJMqK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:46:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43620 "EHLO mail.kernel.org"
+        id S1728517AbgBJMgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:36:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729983AbgBJMlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:41:25 -0500
+        id S1728168AbgBJMfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:55 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8612C208C4;
-        Mon, 10 Feb 2020 12:41:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B680214DB;
+        Mon, 10 Feb 2020 12:35:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338484;
-        bh=AViEQ5fvYl+sEdnTzILEYYBLQ/WlvneuYGVncy1Zbdo=;
+        s=default; t=1581338154;
+        bh=mXlzzQvYGrlSiGKEytBob4ZNCDo9AP1SW67BMwoq7/0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NeWJBlBIGUETiFScLfWi2DViPtu31uOZjjoU0KDVxlritSfRtd5rTgBZ6UtgTepck
-         XDogL20Bp/8+z4GOF7MyqloCUMFgjiViAiP0TC3UzmzrhpEN/iZt7FAh7upqDSEY0a
-         fk0PheKo/QpObRjq4ymXNo+1GPiIcObrSHZCsI9A=
+        b=Gal6STBR416l8+i92ItPJqWwthuyiWKCFtDV5kgA9EdzbMdHwaxEFYGDGtRHTeU+3
+         k0/Td6SAJrV3xkWz5ou46QtGe6RmaG6OpO2AE2an1Pl2avyfmSvzGtuvq76iofVpVY
+         3zRJXJpG4qajBL5FZTth2O1ZyqDlvP6LgFSwWzvE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.5 264/367] mm/mmu_gather: invalidate TLB correctly on batch allocation failure and flush
-Date:   Mon, 10 Feb 2020 04:32:57 -0800
-Message-Id: <20200210122448.845450476@linuxfoundation.org>
+        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Eric Wheeler <bcache@linux.ewheeler.net>,
+        Michael Lyle <mlyle@lyle.org>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.19 120/195] bcache: add readahead cache policy options via sysfs interface
+Date:   Mon, 10 Feb 2020 04:32:58 -0800
+Message-Id: <20200210122317.079482355@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,183 +44,139 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Coly Li <colyli@suse.de>
 
-commit 0ed1325967ab5f7a4549a2641c6ebe115f76e228 upstream.
+commit 038ba8cc1bffc51250add4a9b9249d4331576d8f upstream.
 
-Architectures for which we have hardware walkers of Linux page table
-should flush TLB on mmu gather batch allocation failures and batch flush.
-Some architectures like POWER supports multiple translation modes (hash
-and radix) and in the case of POWER only radix translation mode needs the
-above TLBI.  This is because for hash translation mode kernel wants to
-avoid this extra flush since there are no hardware walkers of linux page
-table.  With radix translation, the hardware also walks linux page table
-and with that, kernel needs to make sure to TLB invalidate page walk cache
-before page table pages are freed.
+In year 2007 high performance SSD was still expensive, in order to
+save more space for real workload or meta data, the readahead I/Os
+for non-meta data was bypassed and not cached on SSD.
 
-More details in commit d86564a2f085 ("mm/tlb, x86/mm: Support invalidating
-TLB caches for RCU_TABLE_FREE")
+In now days, SSD price drops a lot and people can find larger size
+SSD with more comfortable price. It is unncessary to alway bypass
+normal readahead I/Os to save SSD space for now.
 
-The changes to sparc are to make sure we keep the old behavior since we
-are now removing HAVE_RCU_TABLE_NO_INVALIDATE.  The default value for
-tlb_needs_table_invalidate is to always force an invalidate and sparc can
-avoid the table invalidate.  Hence we define tlb_needs_table_invalidate to
-false for sparc architecture.
+This patch adds options for readahead data cache policies via sysfs
+file /sys/block/bcache<N>/readahead_cache_policy, the options are,
+- "all": cache all readahead data I/Os.
+- "meta-only": only cache meta data, and bypass other regular I/Os.
 
-Link: http://lkml.kernel.org/r/20200116064531.483522-3-aneesh.kumar@linux.ibm.com
-Fixes: a46cc7a90fd8 ("powerpc/mm/radix: Improve TLB/PWC flushes")
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>	[powerpc]
-Cc: <stable@vger.kernel.org>	[4.14+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+If users want to make bcache continue to only cache readahead request
+for metadata and bypass regular data readahead, please set "meta-only"
+to this sysfs file. By default, bcache will back to cache all read-
+ahead requests now.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Coly Li <colyli@suse.de>
+Acked-by: Eric Wheeler <bcache@linux.ewheeler.net>
+Cc: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/Kconfig                    |    3 ---
- arch/powerpc/Kconfig            |    1 -
- arch/powerpc/include/asm/tlb.h  |   11 +++++++++++
- arch/sparc/Kconfig              |    1 -
- arch/sparc/include/asm/tlb_64.h |    9 +++++++++
- include/asm-generic/tlb.h       |   22 +++++++++++++++-------
- mm/mmu_gather.c                 |   16 ++++++++--------
- 7 files changed, 43 insertions(+), 20 deletions(-)
+ drivers/md/bcache/bcache.h  |    3 +++
+ drivers/md/bcache/request.c |   17 ++++++++++++-----
+ drivers/md/bcache/sysfs.c   |   22 ++++++++++++++++++++++
+ 3 files changed, 37 insertions(+), 5 deletions(-)
 
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -396,9 +396,6 @@ config HAVE_ARCH_JUMP_LABEL_RELATIVE
- config HAVE_RCU_TABLE_FREE
- 	bool
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -329,6 +329,9 @@ struct cached_dev {
+ 	 */
+ 	atomic_t		has_dirty;
  
--config HAVE_RCU_TABLE_NO_INVALIDATE
--	bool
--
- config HAVE_MMU_GATHER_PAGE_SIZE
- 	bool
++#define BCH_CACHE_READA_ALL		0
++#define BCH_CACHE_READA_META_ONLY	1
++	unsigned int		cache_readahead_policy;
+ 	struct bch_ratelimit	writeback_rate;
+ 	struct delayed_work	writeback_rate_update;
  
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -223,7 +223,6 @@ config PPC
- 	select HAVE_PERF_REGS
- 	select HAVE_PERF_USER_STACK_DUMP
- 	select HAVE_RCU_TABLE_FREE
--	select HAVE_RCU_TABLE_NO_INVALIDATE	if HAVE_RCU_TABLE_FREE
- 	select HAVE_MMU_GATHER_PAGE_SIZE
- 	select HAVE_REGS_AND_STACK_ACCESS_API
- 	select HAVE_RELIABLE_STACKTRACE		if PPC_BOOK3S_64 && CPU_LITTLE_ENDIAN
---- a/arch/powerpc/include/asm/tlb.h
-+++ b/arch/powerpc/include/asm/tlb.h
-@@ -26,6 +26,17 @@
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -391,13 +391,20 @@ static bool check_should_bypass(struct c
+ 		goto skip;
  
- #define tlb_flush tlb_flush
- extern void tlb_flush(struct mmu_gather *tlb);
-+/*
-+ * book3s:
-+ * Hash does not use the linux page-tables, so we can avoid
-+ * the TLB invalidate for page-table freeing, Radix otoh does use the
-+ * page-tables and needs the TLBI.
-+ *
-+ * nohash:
-+ * We still do TLB invalidate in the __pte_free_tlb routine before we
-+ * add the page table pages to mmu gather table batch.
-+ */
-+#define tlb_needs_table_invalidate()	radix_enabled()
- 
- /* Get the generic bits... */
- #include <asm-generic/tlb.h>
---- a/arch/sparc/Kconfig
-+++ b/arch/sparc/Kconfig
-@@ -65,7 +65,6 @@ config SPARC64
- 	select HAVE_KRETPROBES
- 	select HAVE_KPROBES
- 	select HAVE_RCU_TABLE_FREE if SMP
--	select HAVE_RCU_TABLE_NO_INVALIDATE if HAVE_RCU_TABLE_FREE
- 	select HAVE_MEMBLOCK_NODE_MAP
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE
- 	select HAVE_DYNAMIC_FTRACE
---- a/arch/sparc/include/asm/tlb_64.h
-+++ b/arch/sparc/include/asm/tlb_64.h
-@@ -28,6 +28,15 @@ void flush_tlb_pending(void);
- #define __tlb_remove_tlb_entry(tlb, ptep, address) do { } while (0)
- #define tlb_flush(tlb)	flush_tlb_pending()
- 
-+/*
-+ * SPARC64's hardware TLB fill does not use the Linux page-tables
-+ * and therefore we don't need a TLBI when freeing page-table pages.
-+ */
-+
-+#ifdef CONFIG_HAVE_RCU_TABLE_FREE
-+#define tlb_needs_table_invalidate()	(false)
-+#endif
-+
- #include <asm-generic/tlb.h>
- 
- #endif /* _SPARC64_TLB_H */
---- a/include/asm-generic/tlb.h
-+++ b/include/asm-generic/tlb.h
-@@ -137,13 +137,6 @@
-  *  When used, an architecture is expected to provide __tlb_remove_table()
-  *  which does the actual freeing of these pages.
-  *
-- *  HAVE_RCU_TABLE_NO_INVALIDATE
-- *
-- *  This makes HAVE_RCU_TABLE_FREE avoid calling tlb_flush_mmu_tlbonly() before
-- *  freeing the page-table pages. This can be avoided if you use
-- *  HAVE_RCU_TABLE_FREE and your architecture does _NOT_ use the Linux
-- *  page-tables natively.
-- *
-  *  MMU_GATHER_NO_RANGE
-  *
-  *  Use this if your architecture lacks an efficient flush_tlb_range().
-@@ -189,8 +182,23 @@ struct mmu_table_batch {
- 
- extern void tlb_remove_table(struct mmu_gather *tlb, void *table);
- 
-+/*
-+ * This allows an architecture that does not use the linux page-tables for
-+ * hardware to skip the TLBI when freeing page tables.
-+ */
-+#ifndef tlb_needs_table_invalidate
-+#define tlb_needs_table_invalidate() (true)
- #endif
- 
-+#else
-+
-+#ifdef tlb_needs_table_invalidate
-+#error tlb_needs_table_invalidate() requires HAVE_RCU_TABLE_FREE
-+#endif
-+
-+#endif /* CONFIG_HAVE_RCU_TABLE_FREE */
-+
-+
- #ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
- /*
-  * If we can't allocate a page to make a big batch of page pointers
---- a/mm/mmu_gather.c
-+++ b/mm/mmu_gather.c
-@@ -102,14 +102,14 @@ bool __tlb_remove_page_size(struct mmu_g
-  */
- static inline void tlb_table_invalidate(struct mmu_gather *tlb)
- {
--#ifndef CONFIG_HAVE_RCU_TABLE_NO_INVALIDATE
--	/*
--	 * Invalidate page-table caches used by hardware walkers. Then we still
--	 * need to RCU-sched wait while freeing the pages because software
--	 * walkers can still be in-flight.
--	 */
--	tlb_flush_mmu_tlbonly(tlb);
--#endif
-+	if (tlb_needs_table_invalidate()) {
-+		/*
-+		 * Invalidate page-table caches used by hardware walkers. Then
-+		 * we still need to RCU-sched wait while freeing the pages
-+		 * because software walkers can still be in-flight.
-+		 */
-+		tlb_flush_mmu_tlbonly(tlb);
+ 	/*
+-	 * Flag for bypass if the IO is for read-ahead or background,
+-	 * unless the read-ahead request is for metadata
++	 * If the bio is for read-ahead or background IO, bypass it or
++	 * not depends on the following situations,
++	 * - If the IO is for meta data, always cache it and no bypass
++	 * - If the IO is not meta data, check dc->cache_reada_policy,
++	 *      BCH_CACHE_READA_ALL: cache it and not bypass
++	 *      BCH_CACHE_READA_META_ONLY: not cache it and bypass
++	 * That is, read-ahead request for metadata always get cached
+ 	 * (eg, for gfs2 or xfs).
+ 	 */
+-	if (bio->bi_opf & (REQ_RAHEAD|REQ_BACKGROUND) &&
+-	    !(bio->bi_opf & (REQ_META|REQ_PRIO)))
+-		goto skip;
++	if ((bio->bi_opf & (REQ_RAHEAD|REQ_BACKGROUND))) {
++		if (!(bio->bi_opf & (REQ_META|REQ_PRIO)) &&
++		    (dc->cache_readahead_policy != BCH_CACHE_READA_ALL))
++			goto skip;
 +	}
- }
  
- static void tlb_remove_table_smp_sync(void *arg)
+ 	if (bio->bi_iter.bi_sector & (c->sb.block_size - 1) ||
+ 	    bio_sectors(bio) & (c->sb.block_size - 1)) {
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -25,6 +25,12 @@ static const char * const bch_cache_mode
+ 	NULL
+ };
+ 
++static const char * const bch_reada_cache_policies[] = {
++	"all",
++	"meta-only",
++	NULL
++};
++
+ /* Default is -1; we skip past it for stop_when_cache_set_failed */
+ static const char * const bch_stop_on_failure_modes[] = {
+ 	"auto",
+@@ -94,6 +100,7 @@ rw_attribute(congested_write_threshold_u
+ rw_attribute(sequential_cutoff);
+ rw_attribute(data_csum);
+ rw_attribute(cache_mode);
++rw_attribute(readahead_cache_policy);
+ rw_attribute(stop_when_cache_set_failed);
+ rw_attribute(writeback_metadata);
+ rw_attribute(writeback_running);
+@@ -160,6 +167,11 @@ SHOW(__bch_cached_dev)
+ 					       bch_cache_modes,
+ 					       BDEV_CACHE_MODE(&dc->sb));
+ 
++	if (attr == &sysfs_readahead_cache_policy)
++		return bch_snprint_string_list(buf, PAGE_SIZE,
++					      bch_reada_cache_policies,
++					      dc->cache_readahead_policy);
++
+ 	if (attr == &sysfs_stop_when_cache_set_failed)
+ 		return bch_snprint_string_list(buf, PAGE_SIZE,
+ 					       bch_stop_on_failure_modes,
+@@ -324,6 +336,15 @@ STORE(__cached_dev)
+ 		}
+ 	}
+ 
++	if (attr == &sysfs_readahead_cache_policy) {
++		v = __sysfs_match_string(bch_reada_cache_policies, -1, buf);
++		if (v < 0)
++			return v;
++
++		if ((unsigned int) v != dc->cache_readahead_policy)
++			dc->cache_readahead_policy = v;
++	}
++
+ 	if (attr == &sysfs_stop_when_cache_set_failed) {
+ 		v = __sysfs_match_string(bch_stop_on_failure_modes, -1, buf);
+ 		if (v < 0)
+@@ -417,6 +438,7 @@ static struct attribute *bch_cached_dev_
+ 	&sysfs_data_csum,
+ #endif
+ 	&sysfs_cache_mode,
++	&sysfs_readahead_cache_policy,
+ 	&sysfs_stop_when_cache_set_failed,
+ 	&sysfs_writeback_metadata,
+ 	&sysfs_writeback_running,
 
 
