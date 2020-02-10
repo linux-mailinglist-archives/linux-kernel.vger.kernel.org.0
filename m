@@ -2,108 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58805157E87
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:13:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64012157E8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:15:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729225AbgBJPNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 10:13:17 -0500
-Received: from mail-il1-f174.google.com ([209.85.166.174]:40691 "EHLO
-        mail-il1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbgBJPNQ (ORCPT
+        id S1729297AbgBJPO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 10:14:57 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:34450 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727008AbgBJPO4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 10:13:16 -0500
-Received: by mail-il1-f174.google.com with SMTP id i7so488012ilr.7
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 07:13:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FhN4XtFCJkoq1uQy3zAa0gdyCp3Sl71uMPy2Eyj8+bE=;
-        b=I/xFN0o6OHNqlV1vOX3xfGZ8d/9J7hUwnWgRkbtmq5yervupWrbgBcGxfGD0b8sYLC
-         uwcGuejk6bD/ZVkpBth8Jjaa713iNs++YsuJPMlSmtwGys5Gej+Xh2SSNPtHIoOeigwl
-         V98nNsFb2EBay4fOu+ill9j4oWB/gkUdI0yu51YKQnRETpoRkcL5c00+Gq/LH+LCLxlH
-         laj+IEGsZEzC7ASAVdAWUuf/cVDMbEiNHcd2qjXFZ2RG1UO3Q6bgSxySNgoDxU5Sc2K5
-         iyTcCsUu5ozZRmiqGYQtnaI/XkwlXp7xqsE/jANCwbVG2Kvz90jDI8wrUC7x+dciP+Rx
-         JiOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FhN4XtFCJkoq1uQy3zAa0gdyCp3Sl71uMPy2Eyj8+bE=;
-        b=gKHQavuxSmYyxaI2f2/ldOPPAGYNYuKCXCHykIsoe/c7V5QLK26IQt49PfhXZpbKpk
-         ykj7BJUILo8Q+M8uysUtORcnQjYJ3czIIqF1uWstq7mbUi200NlOie/IpL02+IProaBx
-         PkDVKxwFj/jmG6d518nzmGX6DR9oNmlvlnBkhPiM8Gfjh2W+7neRocJ+RC37LN/uccH2
-         cRqFNb7Q37L7pQMUGiMLlXJwOJsAAZaVDHgayFzJxP3Ke5Qsj2/i2rzSkjdNwdIwxtvX
-         l/QBc0KUPXgaQq/XO5a3PScoVYbHkij5MXwHVyTE6MX0/4DqlvQhA6t+VHRMu1kRWYJJ
-         u25w==
-X-Gm-Message-State: APjAAAXweX4/S+3K1+d0iGNGC2/8ujNSB+7L3NfF8VXb61WBK3GlKqVK
-        otGlAW86xGIpnAC1h2xCeNezGrkuC0JO/pNaA+bNVg==
-X-Google-Smtp-Source: APXvYqz8NJ/XJCZgc65CapYNrLpMIOjiJgGhRG/vY2GtMRsBh+nwgtkTAaBtEJw8o0Ee3qShBauPgKT/rw5SSdeonlg=
-X-Received: by 2002:a92:ba8d:: with SMTP id t13mr1821680ill.207.1581347594542;
- Mon, 10 Feb 2020 07:13:14 -0800 (PST)
+        Mon, 10 Feb 2020 10:14:56 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01AFE2sT013007;
+        Mon, 10 Feb 2020 09:14:02 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1581347642;
+        bh=CTOwkFUbIy08mEjbwj0bYGRUO57VUe1/SfMIuhw6a7o=;
+        h=From:To:CC:Subject:Date;
+        b=YJdAgluGxWR+XkmDaVObE+r3ioGNcRp/i1zcMmlGJqDdCzJLM5m68BQC4HYKktbTX
+         YX4ybkkc9sOkJd1j5EEv87GfRzZz+oeOnSFoD0+hZlQpyrIUoGHCQEHN5V24YxwXJN
+         Z26+N3TYLUZPNUzlfJ8GQ6Obx3XyETlDjIoXftlI=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01AFE2f3064432
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Feb 2020 09:14:02 -0600
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 10
+ Feb 2020 09:14:02 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 10 Feb 2020 09:14:02 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01AFDxp6020133;
+        Mon, 10 Feb 2020 09:14:00 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <tiwai@suse.com>,
+        <perex@perex.cz>
+CC:     <lars@metafoo.de>, <alsa-devel@alsa-project.org>,
+        <vkoul@kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] ALSA: dmaengine_pcm: Consider DMA cache caused delay in pointer callback
+Date:   Mon, 10 Feb 2020 17:14:02 +0200
+Message-ID: <20200210151402.29634-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-References: <20191120034451.30102-1-Zhiqiang.Hou@nxp.com> <CAOesGMjAQSfx1WZr6b1kNX=Exipj_f4X_f39Db7AxXr4xG4Tkg@mail.gmail.com>
- <DB8PR04MB6747DA8E1480DCF3EFF67C9284500@DB8PR04MB6747.eurprd04.prod.outlook.com>
- <20200110153347.GA29372@e121166-lin.cambridge.arm.com> <CAOesGMj9X1c7eJ4gX2QWXSNszPkRn68E4pkrSCxKMYJG7JHwsg@mail.gmail.com>
- <DB8PR04MB67473114B315FBCC97D0C6F9841D0@DB8PR04MB6747.eurprd04.prod.outlook.com>
-In-Reply-To: <DB8PR04MB67473114B315FBCC97D0C6F9841D0@DB8PR04MB6747.eurprd04.prod.outlook.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Mon, 10 Feb 2020 16:12:30 +0100
-Message-ID: <CAOesGMieMXHWBO_p9YJXWWneC47g+TGDt9SVfvnp5tShj5gbPw@mail.gmail.com>
-Subject: Re: [PATCHv9 00/12] PCI: Recode Mobiveil driver and add PCIe Gen4
- driver for NXP Layerscape SoCs
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "m.karthikeyan@mobiveil.co.in" <m.karthikeyan@mobiveil.co.in>,
-        Leo Li <leoyang.li@nxp.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "andrew.murray@arm.com" <andrew.murray@arm.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 6, 2020 at 11:57 AM Z.q. Hou <zhiqiang.hou@nxp.com> wrote:
->
-> Hi Olof,
->
-> Thanks a lot for your comments!
-> And sorry for my delay respond!
+Some DMA engines can have big FIFOs which adds to the latency.
+The DMAengine framework can report the FIFO utilization in bytes. Use this
+information for the delay reporting.
 
-Actually, they apply with only minor conflicts on top of current -next.
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+---
+Hi,
 
-Bjorn, any chance we can get you to pick these up pretty soon? They
-enable full use of a promising ARM developer system, the SolidRun
-HoneyComb, and would be quite valuable for me and others to be able to
-use with mainline or -next without any additional patches applied --
-which this patchset achieves.
+Changes since v1:
+- use bytes_to_frames() for the DMA delay calculation
+- Drop changes to soc-pcm
 
-I know there are pending revisions based on feedback. I'll leave it up
-to you and others to determine if that can be done with incremental
-patches on top, or if it should be fixed before the initial patchset
-is applied. But all in all, it's holding up adaption by me and surely
-others of a very interesting platform -- I'm looking to replace my
-aging MacchiatoBin with one of these and would need PCIe/NVMe to work
-before I do.
+5.6-rc1 now have support for reporting the DMA cached data.
+With this patch we can include it to the delay calculation.
+The first DMA driver which reports this is the TI K3 UDMA driver.
 
+Regards,
+Peter
 
-Thanks!
+ sound/core/pcm_dmaengine.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
+diff --git a/sound/core/pcm_dmaengine.c b/sound/core/pcm_dmaengine.c
+index 5749a8a49784..d8be7b488162 100644
+--- a/sound/core/pcm_dmaengine.c
++++ b/sound/core/pcm_dmaengine.c
+@@ -247,9 +247,14 @@ snd_pcm_uframes_t snd_dmaengine_pcm_pointer(struct snd_pcm_substream *substream)
+ 
+ 	status = dmaengine_tx_status(prtd->dma_chan, prtd->cookie, &state);
+ 	if (status == DMA_IN_PROGRESS || status == DMA_PAUSED) {
++		struct snd_pcm_runtime *runtime = substream->runtime;
++
+ 		buf_size = snd_pcm_lib_buffer_bytes(substream);
+ 		if (state.residue > 0 && state.residue <= buf_size)
+ 			pos = buf_size - state.residue;
++
++		runtime->delay = bytes_to_frames(runtime,
++						 state.in_flight_bytes);
+ 	}
+ 
+ 	return bytes_to_frames(substream->runtime, pos);
+-- 
+Peter
 
--Olof
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
