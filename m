@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ACA4157BDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:33:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7142F157BAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:32:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731439AbgBJNdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:33:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52932 "EHLO mail.kernel.org"
+        id S1731537AbgBJNbm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:31:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728054AbgBJMfk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:35:40 -0500
+        id S1728195AbgBJMf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:58 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F045124676;
-        Mon, 10 Feb 2020 12:35:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57E8D24650;
+        Mon, 10 Feb 2020 12:35:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338139;
-        bh=3iWbfAP+PG1KW8y63o4x49d5mJdWLWyQ+qpsewFAmDw=;
+        s=default; t=1581338158;
+        bh=CCRdGqX/qGm69ug+v9Y5SR8BnRz4DNknCK4V/Tw2TAU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1jt2TLEPXrH/bn8sGevCwpnaAh/9HtSEw6wfFeLOVWoxxYjOUm6aweC/PN1Y6h2+b
-         CjGwbrS4BXJeypI0kqqN6kONAr43ovW59BGBXAsJsq5b4UeVLB3vJUswbcBwsc2Git
-         3BdrqVPLbsXb76uABgHR+PxFoj0rO1Ongrs68dhk=
+        b=hRXWU+gTH/3WVv2i2j3AYws5aAS+jxbC/SESadO7rHP0+k+Qgh9ScmIlrWX53qPcd
+         U2TSGjmXa1ulmBeXXWZxQjl0twjNYJ/KNI3qa8856pHHb9CRB4T3+lFSjQu/pDxp9R
+         v1kcDysJfKUczFiRvC+LT0XGDqa7bfzkfoACyTTk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chanho Min <chanho.min@lge.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.19 084/195] PM: core: Fix handling of devices deleted during system-wide resume
-Date:   Mon, 10 Feb 2020 04:32:22 -0800
-Message-Id: <20200210122313.698514623@linuxfoundation.org>
+        stable@vger.kernel.org, Jerad Simpson <jbsimpson@gmail.com>,
+        Milan Broz <gmazyland@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.19 088/195] dm crypt: fix benbi IV constructor crash if used in authenticated mode
+Date:   Mon, 10 Feb 2020 04:32:26 -0800
+Message-Id: <20200210122313.980830180@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
 References: <20200210122305.731206734@linuxfoundation.org>
@@ -43,123 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Milan Broz <gmazyland@gmail.com>
 
-commit 0552e05fdfea191a2cf3a0abd33574b5ef9ca818 upstream.
+commit 4ea9471fbd1addb25a4d269991dc724e200ca5b5 upstream.
 
-If a device is deleted by one of its system-wide resume callbacks
-(for example, because it does not appear to be present or accessible
-any more) along with its children, the resume of the children may
-continue leading to use-after-free errors and other issues
-(potentially).
+If benbi IV is used in AEAD construction, for example:
+  cryptsetup luksFormat <device> --cipher twofish-xts-benbi --key-size 512 --integrity=hmac-sha256
+the constructor uses wrong skcipher function and crashes:
 
-Namely, if the device's children are resumed asynchronously, their
-resume may have been scheduled already before the device's callback
-runs and so the device may be deleted while dpm_wait_for_superior()
-is being executed for them.  The memory taken up by the parent device
-object may be freed then while dpm_wait() is waiting for the parent's
-resume callback to complete, which leads to a use-after-free.
-Moreover, the resume of the children is really not expected to
-continue after they have been unregistered, so it must be terminated
-right away in that case.
+ BUG: kernel NULL pointer dereference, address: 00000014
+ ...
+ EIP: crypt_iv_benbi_ctr+0x15/0x70 [dm_crypt]
+ Call Trace:
+  ? crypt_subkey_size+0x20/0x20 [dm_crypt]
+  crypt_ctr+0x567/0xfc0 [dm_crypt]
+  dm_table_add_target+0x15f/0x340 [dm_mod]
 
-To address this problem, modify dpm_wait_for_superior() to check
-if the target device is still there in the system-wide PM list of
-devices and if so, to increment its parent's reference counter, both
-under dpm_list_mtx which prevents device_del() running for the child
-from dropping the parent's reference counter prematurely.
+Fix this by properly using crypt_aead_blocksize() in this case.
 
-If the device is not present in the system-wide PM list of devices
-any more, the resume of it cannot continue, so check that again after
-dpm_wait() returns, which means that the parent's callback has been
-completed, and pass the result of that check to the caller of
-dpm_wait_for_superior() to allow it to abort the device's resume
-if it is not there any more.
-
-Link: https://lore.kernel.org/linux-pm/1579568452-27253-1-git-send-email-chanho.min@lge.com
-Reported-by: Chanho Min <chanho.min@lge.com>
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: ef43aa38063a6 ("dm crypt: add cryptographic data integrity protection (authenticated encryption)")
+Cc: stable@vger.kernel.org # v4.12+
+Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=941051
+Reported-by: Jerad Simpson <jbsimpson@gmail.com>
+Signed-off-by: Milan Broz <gmazyland@gmail.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/power/main.c |   42 +++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 37 insertions(+), 5 deletions(-)
+ drivers/md/dm-crypt.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -265,10 +265,38 @@ static void dpm_wait_for_suppliers(struc
- 	device_links_read_unlock(idx);
- }
- 
--static void dpm_wait_for_superior(struct device *dev, bool async)
-+static bool dpm_wait_for_superior(struct device *dev, bool async)
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -482,8 +482,14 @@ static int crypt_iv_essiv_gen(struct cry
+ static int crypt_iv_benbi_ctr(struct crypt_config *cc, struct dm_target *ti,
+ 			      const char *opts)
  {
--	dpm_wait(dev->parent, async);
-+	struct device *parent;
+-	unsigned bs = crypto_skcipher_blocksize(any_tfm(cc));
+-	int log = ilog2(bs);
++	unsigned bs;
++	int log;
 +
-+	/*
-+	 * If the device is resumed asynchronously and the parent's callback
-+	 * deletes both the device and the parent itself, the parent object may
-+	 * be freed while this function is running, so avoid that by reference
-+	 * counting the parent once more unless the device has been deleted
-+	 * already (in which case return right away).
-+	 */
-+	mutex_lock(&dpm_list_mtx);
-+
-+	if (!device_pm_initialized(dev)) {
-+		mutex_unlock(&dpm_list_mtx);
-+		return false;
-+	}
-+
-+	parent = get_device(dev->parent);
-+
-+	mutex_unlock(&dpm_list_mtx);
-+
-+	dpm_wait(parent, async);
-+	put_device(parent);
-+
- 	dpm_wait_for_suppliers(dev, async);
-+
-+	/*
-+	 * If the parent's callback has deleted the device, attempting to resume
-+	 * it would be invalid, so avoid doing that then.
-+	 */
-+	return device_pm_initialized(dev);
- }
++	if (test_bit(CRYPT_MODE_INTEGRITY_AEAD, &cc->cipher_flags))
++		bs = crypto_aead_blocksize(any_tfm_aead(cc));
++	else
++		bs = crypto_skcipher_blocksize(any_tfm(cc));
++	log = ilog2(bs);
  
- static void dpm_wait_for_consumers(struct device *dev, bool async)
-@@ -628,7 +656,8 @@ static int device_resume_noirq(struct de
- 	if (!dev->power.is_noirq_suspended)
- 		goto Out;
- 
--	dpm_wait_for_superior(dev, async);
-+	if (!dpm_wait_for_superior(dev, async))
-+		goto Out;
- 
- 	skip_resume = dev_pm_may_skip_resume(dev);
- 
-@@ -829,7 +858,8 @@ static int device_resume_early(struct de
- 	if (!dev->power.is_late_suspended)
- 		goto Out;
- 
--	dpm_wait_for_superior(dev, async);
-+	if (!dpm_wait_for_superior(dev, async))
-+		goto Out;
- 
- 	callback = dpm_subsys_resume_early_cb(dev, state, &info);
- 
-@@ -949,7 +979,9 @@ static int device_resume(struct device *
- 		goto Complete;
- 	}
- 
--	dpm_wait_for_superior(dev, async);
-+	if (!dpm_wait_for_superior(dev, async))
-+		goto Complete;
-+
- 	dpm_watchdog_set(&wd, dev);
- 	device_lock(dev);
- 
+ 	/* we need to calculate how far we must shift the sector count
+ 	 * to get the cipher block count, we use this shift in _gen */
 
 
