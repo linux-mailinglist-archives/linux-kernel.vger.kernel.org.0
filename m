@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 909811574F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:38:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6B0E15757A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:41:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728638AbgBJMhH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:37:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54676 "EHLO mail.kernel.org"
+        id S1729928AbgBJMlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:41:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728232AbgBJMgF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:05 -0500
+        id S1729170AbgBJMii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:38 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5DB3624672;
-        Mon, 10 Feb 2020 12:36:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CA0B20733;
+        Mon, 10 Feb 2020 12:38:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338164;
-        bh=QLrCYCMToR/tJeTQ6ZWq5DMRRf6mp+uEOJQngrRT4OY=;
+        s=default; t=1581338317;
+        bh=+rpPukVyXSRat+AIBRd3Dok+i5Z3ZVjtWl1lwbRpOjg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qTfiyQVYvOpjm2aVuy58Zi2N8NDSlTey3YodybStDJ/WwS3mR2gp0WQ8LtNhun/SJ
-         ++CeuUDvKP5XAq3cygAtjDEU8ZegyH95BUdgZ0Z5R/maLY1vwonQyrhXeOCFlHkZDp
-         aCt90Czf+3uY4RtPO2A5HNYnx6dXUDTtmIGHd/vo=
+        b=mS3nkh6c1PRFxVbNvjAh5kSp9FRk0EkFCJQBVU6FTGY74iWDZgxZ9NnNC2URIWEl6
+         /8zfmfMOXYShqK+EcGeLERKfkKiTUGnXF83+1p3hd/JDcbSnZgV0mBdHm2MpKtuQOx
+         tKrUqA75EPzH/FWnfU6H5OngQY+HHK4Qh0E5e0Go=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
-        Stephen Warren <swarren@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: [PATCH 4.19 142/195] clk: tegra: Mark fuse clock as critical
-Date:   Mon, 10 Feb 2020 04:33:20 -0800
-Message-Id: <20200210122319.147338980@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.4 245/309] powerpc/44x: Adjust indentation in ibm4xx_denali_fixup_memsize
+Date:   Mon, 10 Feb 2020 04:33:21 -0800
+Message-Id: <20200210122430.048569328@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,44 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit bf83b96f87ae2abb1e535306ea53608e8de5dfbb upstream.
+commit c3aae14e5d468d18dbb5d7c0c8c7e2968cc14aad upstream.
 
-For a little over a year, U-Boot on Tegra124 has configured the flow
-controller to perform automatic RAM re-repair on off->on power
-transitions of the CPU rail[1]. This is mandatory for correct operation
-of Tegra124. However, RAM re-repair relies on certain clocks, which the
-kernel must enable and leave running. The fuse clock is one of those
-clocks. Mark this clock as critical so that LP1 power mode (system
-suspend) operates correctly.
+Clang warns:
 
-[1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
+../arch/powerpc/boot/4xx.c:231:3: warning: misleading indentation;
+statement is not part of the previous 'else' [-Wmisleading-indentation]
+        val = SDRAM0_READ(DDR0_42);
+        ^
+../arch/powerpc/boot/4xx.c:227:2: note: previous statement is here
+        else
+        ^
 
-Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+This is because there is a space at the beginning of this line; remove
+it so that the indentation is consistent according to the Linux kernel
+coding style and clang no longer warns.
+
+Fixes: d23f5099297c ("[POWERPC] 4xx: Adds decoding of 440SPE memory size to boot wrapper library")
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://github.com/ClangBuiltLinux/linux/issues/780
+Link: https://lore.kernel.org/r/20191209200338.12546-1-natechancellor@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/tegra/clk-tegra-periph.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/powerpc/boot/4xx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -799,7 +799,11 @@ static struct tegra_periph_init_data gat
- 	GATE("ahbdma", "hclk", 33, 0, tegra_clk_ahbdma, 0),
- 	GATE("apbdma", "pclk", 34, 0, tegra_clk_apbdma, 0),
- 	GATE("kbc", "clk_32k", 36, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_kbc, 0),
--	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, 0),
-+	/*
-+	 * Critical for RAM re-repair operation, which must occur on resume
-+	 * from LP1 system suspend and as part of CCPLEX cluster switching.
-+	 */
-+	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, CLK_IS_CRITICAL),
- 	GATE("fuse_burn", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse_burn, 0),
- 	GATE("kfuse", "clk_m", 40, TEGRA_PERIPH_ON_APB, tegra_clk_kfuse, 0),
- 	GATE("apbif", "clk_m", 107, TEGRA_PERIPH_ON_APB, tegra_clk_apbif, 0),
+--- a/arch/powerpc/boot/4xx.c
++++ b/arch/powerpc/boot/4xx.c
+@@ -228,7 +228,7 @@ void ibm4xx_denali_fixup_memsize(void)
+ 		dpath = 8; /* 64 bits */
+ 
+ 	/* get address pins (rows) */
+- 	val = SDRAM0_READ(DDR0_42);
++	val = SDRAM0_READ(DDR0_42);
+ 
+ 	row = DDR_GET_VAL(val, DDR_APIN, DDR_APIN_SHIFT);
+ 	if (row > max_row)
 
 
