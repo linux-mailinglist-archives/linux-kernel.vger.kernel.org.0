@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76E0215782A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:05:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1CD6157AB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:24:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730456AbgBJNFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:05:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39128 "EHLO mail.kernel.org"
+        id S1730393AbgBJNYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:24:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729597AbgBJMkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:01 -0500
+        id S1728606AbgBJMhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:02 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6505E24650;
-        Mon, 10 Feb 2020 12:40:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02CCC2080C;
+        Mon, 10 Feb 2020 12:37:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338401;
-        bh=O6YsbmRPveSTEOfCkCjl0ByYf3LC/loyxyLTERL+99g=;
+        s=default; t=1581338222;
+        bh=0sQasF9IBn8U4b1IBOCJCZMlHvM34h6dAm5fLx7bgWk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GLX/tMymmmznIiTRMZm5tZZsTUIDNf09f/dC8RMZSm3Vrw+/uM+E1gtBwwDTbg33l
-         Mw1WFt3EQLtqTpBJTb1nKyVhkGskFhwKYYvIFd5n+tmdU+tM4YFwP4Tzp7oca9rNJQ
-         JExjtoR8BZQ1XDu63PB9Zkza/GEXjhFvBmVnDLEQ=
+        b=mWbbzdgZwf06ALDSntQESpPOG4Y2qw9zr7H/cgvKyRbGW6G29RxiqKTjmcKS6B7eT
+         NqqH2K6oF5LLmh9y50RGJ0JZ6CiQX+2/bJW4G88Ue7hqDd8gr6rR6sc1EjZmnF3IfA
+         mUchS/5cDckOz1wIRM/SHFirDZKPCsZwLa1l2wR8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Douglas Anderson <dianders@chromium.org>
-Subject: [PATCH 5.5 100/367] alarmtimer: Unregister wakeup source when module get fails
-Date:   Mon, 10 Feb 2020 04:30:13 -0800
-Message-Id: <20200210122433.597241894@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.4 058/309] lib/test_kasan.c: fix memory leak in kmalloc_oob_krealloc_more()
+Date:   Mon, 10 Feb 2020 04:30:14 -0800
+Message-Id: <20200210122411.536891471@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,64 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <swboyd@chromium.org>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 6b6d188aae79a630957aefd88ff5c42af6553ee3 upstream.
+commit 3e21d9a501bf99aee2e5835d7f34d8c823f115b5 upstream.
 
-The alarmtimer_rtc_add_device() function creates a wakeup source and then
-tries to grab a module reference. If that fails the function returns early
-with an error code, but fails to remove the wakeup source.
+In case memory resources for _ptr2_ were allocated, release them before
+return.
 
-Cleanup this exit path so there is no dangling wakeup source, which is
-named 'alarmtime' left allocated which will conflict with another RTC
-device that may be registered later.
+Notice that in case _ptr1_ happens to be NULL, krealloc() behaves
+exactly like kmalloc().
 
-Fixes: 51218298a25e ("alarmtimer: Ensure RTC module is not unloaded")
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20200109155910.907-2-swboyd@chromium.org
+Addresses-Coverity-ID: 1490594 ("Resource leak")
+Link: http://lkml.kernel.org/r/20200123160115.GA4202@embeddedor
+Fixes: 3f15801cdc23 ("lib: add kasan test module")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/time/alarmtimer.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ lib/test_kasan.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -88,6 +88,7 @@ static int alarmtimer_rtc_add_device(str
- 	unsigned long flags;
- 	struct rtc_device *rtc = to_rtc_device(dev);
- 	struct wakeup_source *__ws;
-+	int ret = 0;
- 
- 	if (rtcdev)
- 		return -EBUSY;
-@@ -102,8 +103,8 @@ static int alarmtimer_rtc_add_device(str
- 	spin_lock_irqsave(&rtcdev_lock, flags);
- 	if (!rtcdev) {
- 		if (!try_module_get(rtc->owner)) {
--			spin_unlock_irqrestore(&rtcdev_lock, flags);
--			return -1;
-+			ret = -1;
-+			goto unlock;
- 		}
- 
- 		rtcdev = rtc;
-@@ -112,11 +113,12 @@ static int alarmtimer_rtc_add_device(str
- 		ws = __ws;
- 		__ws = NULL;
+--- a/lib/test_kasan.c
++++ b/lib/test_kasan.c
+@@ -157,6 +157,7 @@ static noinline void __init kmalloc_oob_
+ 	if (!ptr1 || !ptr2) {
+ 		pr_err("Allocation failed\n");
+ 		kfree(ptr1);
++		kfree(ptr2);
+ 		return;
  	}
-+unlock:
- 	spin_unlock_irqrestore(&rtcdev_lock, flags);
  
- 	wakeup_source_unregister(__ws);
- 
--	return 0;
-+	return ret;
- }
- 
- static inline void alarmtimer_rtc_timer_init(void)
 
 
