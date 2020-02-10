@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D4681574A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:35:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB6601575C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:45:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbgBJMfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:35:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51066 "EHLO mail.kernel.org"
+        id S1730646AbgBJMo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:44:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727008AbgBJMfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:35:00 -0500
+        id S1729760AbgBJMkf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:35 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 868C621569;
-        Mon, 10 Feb 2020 12:34:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BACB420873;
+        Mon, 10 Feb 2020 12:40:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338098;
-        bh=wOcNyjm+mwOODpPFkM42+asVMReuzY0jZgrInWYPVzw=;
+        s=default; t=1581338434;
+        bh=A8OS+irv9ptR5X5lUbKiugMdJqyLkGJygP7rHJ61eSY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KXmM1jXMQFI9Pnxn17ehc/xYHywLzEC0ttDoA8m3kAu84qq1AIbnWnBCr6CQWyvmE
-         FBA5srgerUiFuvkV7o062W1S8t3ISWg24nJaEAOz190yoVEMS1kPJtjpJMZb4jzd3h
-         kEs7AV+E3MeG1Pcmugo1QtXZysQ7dA8rcx+f+sf8=
+        b=D8AXpyiGP/s34G2EwhuMdvJDNtki1kZSkLAQEAlOuPF7/W+Ou33pI3tnXNGJZAz8u
+         lox5x1sFOOx6CCvSx0wrTWwb2fSFMmWrWjh0Se9OzYugpBQ8Zu4Y4nYdCNCscCJt9s
+         f1HrdGY3kSSiG/ORKRCuWqh8F8Ji/ErfR1HOADrk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ridge Kennedy <ridge.kennedy@alliedtelesis.co.nz>,
-        James Chapman <jchapman@katalix.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 013/195] l2tp: Allow duplicate session creation with UDP
-Date:   Mon, 10 Feb 2020 04:31:11 -0800
-Message-Id: <20200210122307.000630132@linuxfoundation.org>
+        stable@vger.kernel.org, Andrii Nakryiko <andriin@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>
+Subject: [PATCH 5.5 159/367] libbpf: Fix printf compilation warnings on ppc64le arch
+Date:   Mon, 10 Feb 2020 04:31:12 -0800
+Message-Id: <20200210122439.509830003@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +44,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ridge Kennedy <ridge.kennedy@alliedtelesis.co.nz>
+From: Andrii Nakryiko <andriin@fb.com>
 
-[ Upstream commit 0d0d9a388a858e271bb70e71e99e7fe2a6fd6f64 ]
+commit 679152d3a32e305c213f83160c328c37566ae8bc upstream.
 
-In the past it was possible to create multiple L2TPv3 sessions with the
-same session id as long as the sessions belonged to different tunnels.
-The resulting sessions had issues when used with IP encapsulated tunnels,
-but worked fine with UDP encapsulated ones. Some applications began to
-rely on this behaviour to avoid having to negotiate unique session ids.
+On ppc64le __u64 and __s64 are defined as long int and unsigned long int,
+respectively. This causes compiler to emit warning when %lld/%llu are used to
+printf 64-bit numbers. Fix this by casting to size_t/ssize_t with %zu and %zd
+format specifiers, respectively.
 
-Some time ago a change was made to require session ids to be unique across
-all tunnels, breaking the applications making use of this "feature".
+v1->v2:
+- use size_t/ssize_t instead of custom typedefs (Martin).
 
-This change relaxes the duplicate session id check to allow duplicates
-if both of the colliding sessions belong to UDP encapsulated tunnels.
-
-Fixes: dbdbc73b4478 ("l2tp: fix duplicate session creation")
-Signed-off-by: Ridge Kennedy <ridge.kennedy@alliedtelesis.co.nz>
-Acked-by: James Chapman <jchapman@katalix.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 1f8e2bcb2cd5 ("libbpf: Refactor relocation handling")
+Fixes: abd29c931459 ("libbpf: allow specifying map definitions using BTF")
+Signed-off-by: Andrii Nakryiko <andriin@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Acked-by: Martin KaFai Lau <kafai@fb.com>
+Link: https://lore.kernel.org/bpf/20191212171918.638010-1-andriin@fb.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/l2tp/l2tp_core.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -325,8 +325,13 @@ int l2tp_session_register(struct l2tp_se
- 
- 		spin_lock_bh(&pn->l2tp_session_hlist_lock);
- 
-+		/* IP encap expects session IDs to be globally unique, while
-+		 * UDP encap doesn't.
-+		 */
- 		hlist_for_each_entry(session_walk, g_head, global_hlist)
--			if (session_walk->session_id == session->session_id) {
-+			if (session_walk->session_id == session->session_id &&
-+			    (session_walk->tunnel->encap == L2TP_ENCAPTYPE_IP ||
-+			     tunnel->encap == L2TP_ENCAPTYPE_IP)) {
- 				err = -EEXIST;
- 				goto err_tlock_pnlock;
+---
+ tools/lib/bpf/libbpf.c |   37 +++++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
+
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -1242,15 +1242,15 @@ static int bpf_object__init_user_btf_map
  			}
+ 			sz = btf__resolve_size(obj->btf, t->type);
+ 			if (sz < 0) {
+-				pr_warn("map '%s': can't determine key size for type [%u]: %lld.\n",
+-					map_name, t->type, sz);
++				pr_warn("map '%s': can't determine key size for type [%u]: %zd.\n",
++					map_name, t->type, (ssize_t)sz);
+ 				return sz;
+ 			}
+-			pr_debug("map '%s': found key [%u], sz = %lld.\n",
+-				 map_name, t->type, sz);
++			pr_debug("map '%s': found key [%u], sz = %zd.\n",
++				 map_name, t->type, (ssize_t)sz);
+ 			if (map->def.key_size && map->def.key_size != sz) {
+-				pr_warn("map '%s': conflicting key size %u != %lld.\n",
+-					map_name, map->def.key_size, sz);
++				pr_warn("map '%s': conflicting key size %u != %zd.\n",
++					map_name, map->def.key_size, (ssize_t)sz);
+ 				return -EINVAL;
+ 			}
+ 			map->def.key_size = sz;
+@@ -1285,15 +1285,15 @@ static int bpf_object__init_user_btf_map
+ 			}
+ 			sz = btf__resolve_size(obj->btf, t->type);
+ 			if (sz < 0) {
+-				pr_warn("map '%s': can't determine value size for type [%u]: %lld.\n",
+-					map_name, t->type, sz);
++				pr_warn("map '%s': can't determine value size for type [%u]: %zd.\n",
++					map_name, t->type, (ssize_t)sz);
+ 				return sz;
+ 			}
+-			pr_debug("map '%s': found value [%u], sz = %lld.\n",
+-				 map_name, t->type, sz);
++			pr_debug("map '%s': found value [%u], sz = %zd.\n",
++				 map_name, t->type, (ssize_t)sz);
+ 			if (map->def.value_size && map->def.value_size != sz) {
+-				pr_warn("map '%s': conflicting value size %u != %lld.\n",
+-					map_name, map->def.value_size, sz);
++				pr_warn("map '%s': conflicting value size %u != %zd.\n",
++					map_name, map->def.value_size, (ssize_t)sz);
+ 				return -EINVAL;
+ 			}
+ 			map->def.value_size = sz;
+@@ -1817,7 +1817,8 @@ static int bpf_program__record_reloc(str
+ 			return -LIBBPF_ERRNO__RELOC;
+ 		}
+ 		if (sym->st_value % 8) {
+-			pr_warn("bad call relo offset: %llu\n", (__u64)sym->st_value);
++			pr_warn("bad call relo offset: %zu\n",
++				(size_t)sym->st_value);
+ 			return -LIBBPF_ERRNO__RELOC;
+ 		}
+ 		reloc_desc->type = RELO_CALL;
+@@ -1859,8 +1860,8 @@ static int bpf_program__record_reloc(str
+ 			break;
+ 		}
+ 		if (map_idx >= nr_maps) {
+-			pr_warn("map relo failed to find map for sec %u, off %llu\n",
+-				shdr_idx, (__u64)sym->st_value);
++			pr_warn("map relo failed to find map for sec %u, off %zu\n",
++				shdr_idx, (size_t)sym->st_value);
+ 			return -LIBBPF_ERRNO__RELOC;
+ 		}
+ 		reloc_desc->type = RELO_LD64;
+@@ -1941,9 +1942,9 @@ bpf_program__collect_reloc(struct bpf_pr
+ 		name = elf_strptr(obj->efile.elf, obj->efile.strtabidx,
+ 				  sym.st_name) ? : "<?>";
+ 
+-		pr_debug("relo for shdr %u, symb %llu, value %llu, type %d, bind %d, name %d (\'%s\'), insn %u\n",
+-			 (__u32)sym.st_shndx, (__u64)GELF_R_SYM(rel.r_info),
+-			 (__u64)sym.st_value, GELF_ST_TYPE(sym.st_info),
++		pr_debug("relo for shdr %u, symb %zu, value %zu, type %d, bind %d, name %d (\'%s\'), insn %u\n",
++			 (__u32)sym.st_shndx, (size_t)GELF_R_SYM(rel.r_info),
++			 (size_t)sym.st_value, GELF_ST_TYPE(sym.st_info),
+ 			 GELF_ST_BIND(sym.st_info), sym.st_name, name,
+ 			 insn_idx);
+ 
 
 
