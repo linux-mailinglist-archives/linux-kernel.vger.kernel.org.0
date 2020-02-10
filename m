@@ -2,90 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8791157ED2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:34:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E5FF157EE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:35:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbgBJPeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 10:34:03 -0500
-Received: from foss.arm.com ([217.140.110.172]:35286 "EHLO foss.arm.com"
+        id S1727620AbgBJPf4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 10:35:56 -0500
+Received: from mx2.freebsd.org ([96.47.72.81]:46040 "EHLO mx2.freebsd.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727541AbgBJPeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 10:34:03 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 825611FB;
-        Mon, 10 Feb 2020 07:34:02 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C9BF3F68E;
-        Mon, 10 Feb 2020 07:34:00 -0800 (PST)
-Date:   Mon, 10 Feb 2020 15:33:54 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Olof Johansson <olof@lixom.net>
-Cc:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "m.karthikeyan@mobiveil.co.in" <m.karthikeyan@mobiveil.co.in>,
-        Leo Li <leoyang.li@nxp.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "andrew.murray@arm.com" <andrew.murray@arm.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: Re: [PATCHv9 00/12] PCI: Recode Mobiveil driver and add PCIe Gen4
- driver for NXP Layerscape SoCs
-Message-ID: <20200210153354.GA8911@e121166-lin.cambridge.arm.com>
-References: <20191120034451.30102-1-Zhiqiang.Hou@nxp.com>
- <CAOesGMjAQSfx1WZr6b1kNX=Exipj_f4X_f39Db7AxXr4xG4Tkg@mail.gmail.com>
- <DB8PR04MB6747DA8E1480DCF3EFF67C9284500@DB8PR04MB6747.eurprd04.prod.outlook.com>
- <20200110153347.GA29372@e121166-lin.cambridge.arm.com>
- <CAOesGMj9X1c7eJ4gX2QWXSNszPkRn68E4pkrSCxKMYJG7JHwsg@mail.gmail.com>
- <DB8PR04MB67473114B315FBCC97D0C6F9841D0@DB8PR04MB6747.eurprd04.prod.outlook.com>
- <CAOesGMieMXHWBO_p9YJXWWneC47g+TGDt9SVfvnp5tShj5gbPw@mail.gmail.com>
+        id S1726563AbgBJPf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 10:35:56 -0500
+Received: from mx1.freebsd.org (mx1.freebsd.org [IPv6:2610:1c1:1:606c::19:1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client CN "mx1.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
+        by mx2.freebsd.org (Postfix) with ESMTPS id 5D07279FF9;
+        Mon, 10 Feb 2020 15:35:55 +0000 (UTC)
+        (envelope-from manu@FreeBSD.org)
+Received: from smtp.freebsd.org (smtp.freebsd.org [96.47.72.83])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         server-signature RSA-PSS (4096 bits)
+         client-signature RSA-PSS (4096 bits) client-digest SHA256)
+        (Client CN "smtp.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
+        by mx1.freebsd.org (Postfix) with ESMTPS id 48GVNq104Pz4c82;
+        Mon, 10 Feb 2020 15:35:55 +0000 (UTC)
+        (envelope-from manu@FreeBSD.org)
+Received: from skull.home.blih.net (lfbn-idf2-1-1164-130.w90-92.abo.wanadoo.fr [90.92.223.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: manu)
+        by smtp.freebsd.org (Postfix) with ESMTPSA id 2C20622AE;
+        Mon, 10 Feb 2020 15:35:54 +0000 (UTC)
+        (envelope-from manu@FreeBSD.org)
+From:   Emmanuel Vadot <manu@FreeBSD.org>
+To:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        airlied@linux.ie, daniel@ffwll.ch, tzimmermann@suse.de,
+        kraxel@redhat.com
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Emmanuel Vadot <manu@FreeBSD.org>
+Subject: [PATCH 0/2] Dual licence some files in GPL-2.0 and MIT
+Date:   Mon, 10 Feb 2020 16:35:42 +0100
+Message-Id: <20200210153544.24750-1-manu@FreeBSD.org>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOesGMieMXHWBO_p9YJXWWneC47g+TGDt9SVfvnp5tShj5gbPw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 04:12:30PM +0100, Olof Johansson wrote:
-> On Thu, Feb 6, 2020 at 11:57 AM Z.q. Hou <zhiqiang.hou@nxp.com> wrote:
-> >
-> > Hi Olof,
-> >
-> > Thanks a lot for your comments!
-> > And sorry for my delay respond!
-> 
-> Actually, they apply with only minor conflicts on top of current -next.
-> 
-> Bjorn, any chance we can get you to pick these up pretty soon? They
-> enable full use of a promising ARM developer system, the SolidRun
-> HoneyComb, and would be quite valuable for me and others to be able to
-> use with mainline or -next without any additional patches applied --
-> which this patchset achieves.
-> 
-> I know there are pending revisions based on feedback. I'll leave it up
-> to you and others to determine if that can be done with incremental
-> patches on top, or if it should be fixed before the initial patchset
-> is applied. But all in all, it's holding up adaption by me and surely
-> others of a very interesting platform -- I'm looking to replace my
-> aging MacchiatoBin with one of these and would need PCIe/NVMe to work
-> before I do.
+Hello all,
 
-We should be able to merge them for v5.7, I don't know when they
-will land in -next.
+We had a discussion a while back with Noralf where he said that he wouldn't
+mind dual licence his work under GPL-2 and MIT.
+Those files are a problem with BSDs as we cannot include them.
+For drm_client.c the main contributors are Noralf Trønnes and Thomas
+Zimmermann, the other commits are just catch ups from changes elsewhere
+(return values, struct member names, function renames etc ...).
+For drm_format_helper the main contributors are Noralf Trønnes and
+Gerd Hoffmann. Same comment as for drm_client.c for the other commits.
 
-Thanks,
-Lorenzo
+Emmanuel Vadot (2):
+  drm/client: Dual licence the file in GPL-2 and MIT
+  drm/format_helper: Dual licence the file in GPL 2 and MIT
+
+ drivers/gpu/drm/drm_client.c        | 2 +-
+ drivers/gpu/drm/drm_format_helper.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+2.25.0
+
