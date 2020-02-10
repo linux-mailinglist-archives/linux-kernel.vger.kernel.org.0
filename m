@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BAEC157910
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:13:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47E12157B14
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:28:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730120AbgBJNMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:12:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35514 "EHLO mail.kernel.org"
+        id S1731306AbgBJN1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:27:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728706AbgBJMiz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:55 -0500
+        id S1728147AbgBJMgg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:36:36 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2844F2051A;
-        Mon, 10 Feb 2020 12:38:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6ECC2467C;
+        Mon, 10 Feb 2020 12:36:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338335;
-        bh=gpyuhuqPcV4Uc6z8CWeKoaWi8oR+hXG/FcX1MvPEne0=;
+        s=default; t=1581338195;
+        bh=nJ6ggGLBR3NCncHPiTujF3UzijBwY1BFaDE8jyZ/q2Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uUF74cs3iNA0l3+ev5un3bXHRSJwCCb1trEA7I2RFmWuKQHuWutPPuaEDKbkv/fQC
-         gmpDtVtf0yXMekwdItb2cI8ZK2q2nNzi3J/pyAmRutoxWdNx2TZuplwjL0jyw3LZus
-         OA2IirTVljp10MdH01PKdQZg/4au4ZoTfHdpUavc=
+        b=znNy6t18MPrdsmip8h4LpmaD25kkUC0q8NvwwAXKtfDcasdwRvJWRs8G30vdQoZel
+         r6tieMkyOVhP/u6L36EVrWxq7xMSJgP+kFrE57J6brSd1obEVYXPAPPbVAWB53wUIa
+         8Jhj5Z4GBOeSuTLA1iCihQLsUzPTXFOAjpQz/0BE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Maxim Mikityanskiy <maximmi@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot <syzkaller@googlegroups.com>
-Subject: [PATCH 5.4 282/309] ipv6/addrconf: fix potential NULL deref in inet6_set_link_af()
-Date:   Mon, 10 Feb 2020 04:33:58 -0800
-Message-Id: <20200210122433.735133486@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 181/195] btrfs: flush write bio if we loop in extent_write_cache_pages
+Date:   Mon, 10 Feb 2020 04:33:59 -0800
+Message-Id: <20200210122322.982302912@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,135 +45,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-[ Upstream commit db3fa271022dacb9f741b96ea4714461a8911bb9 ]
+[ Upstream commit 96bf313ecb33567af4cb53928b0c951254a02759 ]
 
-__in6_dev_get(dev) called from inet6_set_link_af() can return NULL.
+There exists a deadlock with range_cyclic that has existed forever.  If
+we loop around with a bio already built we could deadlock with a writer
+who has the page locked that we're attempting to write but is waiting on
+a page in our bio to be written out.  The task traces are as follows
 
-The needed check has been recently removed, let's add it back.
+  PID: 1329874  TASK: ffff889ebcdf3800  CPU: 33  COMMAND: "kworker/u113:5"
+   #0 [ffffc900297bb658] __schedule at ffffffff81a4c33f
+   #1 [ffffc900297bb6e0] schedule at ffffffff81a4c6e3
+   #2 [ffffc900297bb6f8] io_schedule at ffffffff81a4ca42
+   #3 [ffffc900297bb708] __lock_page at ffffffff811f145b
+   #4 [ffffc900297bb798] __process_pages_contig at ffffffff814bc502
+   #5 [ffffc900297bb8c8] lock_delalloc_pages at ffffffff814bc684
+   #6 [ffffc900297bb900] find_lock_delalloc_range at ffffffff814be9ff
+   #7 [ffffc900297bb9a0] writepage_delalloc at ffffffff814bebd0
+   #8 [ffffc900297bba18] __extent_writepage at ffffffff814bfbf2
+   #9 [ffffc900297bba98] extent_write_cache_pages at ffffffff814bffbd
 
-While do_setlink() does call validate_linkmsg() :
-...
-err = validate_linkmsg(dev, tb); /* OK at this point */
-...
+  PID: 2167901  TASK: ffff889dc6a59c00  CPU: 14  COMMAND:
+  "aio-dio-invalid"
+   #0 [ffffc9003b50bb18] __schedule at ffffffff81a4c33f
+   #1 [ffffc9003b50bba0] schedule at ffffffff81a4c6e3
+   #2 [ffffc9003b50bbb8] io_schedule at ffffffff81a4ca42
+   #3 [ffffc9003b50bbc8] wait_on_page_bit at ffffffff811f24d6
+   #4 [ffffc9003b50bc60] prepare_pages at ffffffff814b05a7
+   #5 [ffffc9003b50bcd8] btrfs_buffered_write at ffffffff814b1359
+   #6 [ffffc9003b50bdb0] btrfs_file_write_iter at ffffffff814b5933
+   #7 [ffffc9003b50be38] new_sync_write at ffffffff8128f6a8
+   #8 [ffffc9003b50bec8] vfs_write at ffffffff81292b9d
+   #9 [ffffc9003b50bf00] ksys_pwrite64 at ffffffff81293032
 
-It is possible that the following call happening before the
-->set_link_af() removes IPv6 if MTU is less than 1280 :
+I used drgn to find the respective pages we were stuck on
 
-if (tb[IFLA_MTU]) {
-    err = dev_set_mtu_ext(dev, nla_get_u32(tb[IFLA_MTU]), extack);
-    if (err < 0)
-          goto errout;
-    status |= DO_SETLINK_MODIFIED;
-}
-...
+page_entry.page 0xffffea00fbfc7500 index 8148 bit 15 pid 2167901
+page_entry.page 0xffffea00f9bb7400 index 7680 bit 0 pid 1329874
 
-if (tb[IFLA_AF_SPEC]) {
-   ...
-   err = af_ops->set_link_af(dev, af);
-      ->inet6_set_link_af() // CRASH because idev is NULL
+As you can see the kworker is waiting for bit 0 (PG_locked) on index
+7680, and aio-dio-invalid is waiting for bit 15 (PG_writeback) on index
+8148.  aio-dio-invalid has 7680, and the kworker epd looks like the
+following
 
-Please note that IPv4 is immune to the bug since inet_set_link_af() does :
+  crash> struct extent_page_data ffffc900297bbbb0
+  struct extent_page_data {
+    bio = 0xffff889f747ed830,
+    tree = 0xffff889eed6ba448,
+    extent_locked = 0,
+    sync_io = 0
+  }
 
-struct in_device *in_dev = __in_dev_get_rcu(dev);
-if (!in_dev)
-    return -EAFNOSUPPORT;
+Probably worth mentioning as well that it waits for writeback of the
+page to complete while holding a lock on it (at prepare_pages()).
 
-This problem has been mentioned in commit cf7afbfeb8ce ("rtnl: make
-link af-specific updates atomic") changelog :
+Using drgn I walked the bio pages looking for page
+0xffffea00fbfc7500 which is the one we're waiting for writeback on
 
-    This method is not fail proof, while it is currently sufficient
-    to make set_link_af() inerrable and thus 100% atomic, the
-    validation function method will not be able to detect all error
-    scenarios in the future, there will likely always be errors
-    depending on states which are f.e. not protected by rtnl_mutex
-    and thus may change between validation and setting.
+  bio = Object(prog, 'struct bio', address=0xffff889f747ed830)
+  for i in range(0, bio.bi_vcnt.value_()):
+      bv = bio.bi_io_vec[i]
+      if bv.bv_page.value_() == 0xffffea00fbfc7500:
+	  print("FOUND IT")
 
-IPv6: ADDRCONF(NETDEV_CHANGE): lo: link becomes ready
-general protection fault, probably for non-canonical address 0xdffffc0000000056: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x00000000000002b0-0x00000000000002b7]
-CPU: 0 PID: 9698 Comm: syz-executor712 Not tainted 5.5.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:inet6_set_link_af+0x66e/0xae0 net/ipv6/addrconf.c:5733
-Code: 38 d0 7f 08 84 c0 0f 85 20 03 00 00 48 8d bb b0 02 00 00 45 0f b6 64 24 04 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 08 3c 03 0f 8e 1a 03 00 00 44 89 a3 b0 02 00
-RSP: 0018:ffffc90005b06d40 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff86df39a6
-RDX: 0000000000000056 RSI: ffffffff86df3e74 RDI: 00000000000002b0
-RBP: ffffc90005b06e70 R08: ffff8880a2ac0380 R09: ffffc90005b06db0
-R10: fffff52000b60dbe R11: ffffc90005b06df7 R12: 0000000000000000
-R13: 0000000000000000 R14: ffff8880a1fcc424 R15: dffffc0000000000
-FS:  0000000000c46880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055f0494ca0d0 CR3: 000000009e4ac000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- do_setlink+0x2a9f/0x3720 net/core/rtnetlink.c:2754
- rtnl_group_changelink net/core/rtnetlink.c:3103 [inline]
- __rtnl_newlink+0xdd1/0x1790 net/core/rtnetlink.c:3257
- rtnl_newlink+0x69/0xa0 net/core/rtnetlink.c:3377
- rtnetlink_rcv_msg+0x45e/0xaf0 net/core/rtnetlink.c:5438
- netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
- rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5456
- netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
- netlink_unicast+0x59e/0x7e0 net/netlink/af_netlink.c:1328
- netlink_sendmsg+0x91c/0xea0 net/netlink/af_netlink.c:1917
- sock_sendmsg_nosec net/socket.c:652 [inline]
- sock_sendmsg+0xd7/0x130 net/socket.c:672
- ____sys_sendmsg+0x753/0x880 net/socket.c:2343
- ___sys_sendmsg+0x100/0x170 net/socket.c:2397
- __sys_sendmsg+0x105/0x1d0 net/socket.c:2430
- __do_sys_sendmsg net/socket.c:2439 [inline]
- __se_sys_sendmsg net/socket.c:2437 [inline]
- __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2437
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4402e9
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fffd62fbcf8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004402e9
-RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000008 R09: 00000000004002c8
-R10: 0000000000000005 R11: 0000000000000246 R12: 0000000000401b70
-R13: 0000000000401c00 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace cfa7664b8fdcdff3 ]---
-RIP: 0010:inet6_set_link_af+0x66e/0xae0 net/ipv6/addrconf.c:5733
-Code: 38 d0 7f 08 84 c0 0f 85 20 03 00 00 48 8d bb b0 02 00 00 45 0f b6 64 24 04 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 08 3c 03 0f 8e 1a 03 00 00 44 89 a3 b0 02 00
-RSP: 0018:ffffc90005b06d40 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff86df39a6
-RDX: 0000000000000056 RSI: ffffffff86df3e74 RDI: 00000000000002b0
-RBP: ffffc90005b06e70 R08: ffff8880a2ac0380 R09: ffffc90005b06db0
-R10: fffff52000b60dbe R11: ffffc90005b06df7 R12: 0000000000000000
-R13: 0000000000000000 R14: ffff8880a1fcc424 R15: dffffc0000000000
-FS:  0000000000c46880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000004 CR3: 000000009e4ac000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+which validated what I suspected.
 
-Fixes: 7dc2bccab0ee ("Validate required parameters in inet6_validate_link_af")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Bisected-and-reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Maxim Mikityanskiy <maximmi@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The fix for this is simple, flush the epd before we loop back around to
+the beginning of the file during writeout.
+
+Fixes: b293f02e1423 ("Btrfs: Add writepages support")
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/addrconf.c |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/btrfs/extent_io.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/net/ipv6/addrconf.c
-+++ b/net/ipv6/addrconf.c
-@@ -5719,6 +5719,9 @@ static int inet6_set_link_af(struct net_
- 	struct nlattr *tb[IFLA_INET6_MAX + 1];
- 	int err;
- 
-+	if (!idev)
-+		return -EAFNOSUPPORT;
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index fed44390c0492..11efb4f5041c7 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -4014,6 +4014,14 @@ static int extent_write_cache_pages(struct address_space *mapping,
+ 		 */
+ 		scanned = 1;
+ 		index = 0;
 +
- 	if (nla_parse_nested_deprecated(tb, IFLA_INET6_MAX, nla, NULL, NULL) < 0)
- 		BUG();
++		/*
++		 * If we're looping we could run into a page that is locked by a
++		 * writer and that writer could be waiting on writeback for a
++		 * page in our current bio, and thus deadlock, so flush the
++		 * write bio here.
++		 */
++		flush_write_bio(epd);
+ 		goto retry;
+ 	}
  
+-- 
+2.20.1
+
 
 
