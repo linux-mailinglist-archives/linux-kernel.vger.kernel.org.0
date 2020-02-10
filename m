@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E411157524
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:40:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F751157619
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728732AbgBJMi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:38:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58096 "EHLO mail.kernel.org"
+        id S1730620AbgBJMoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:44:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728669AbgBJMhM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:12 -0500
+        id S1729362AbgBJMkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:32 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A5F720733;
-        Mon, 10 Feb 2020 12:37:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34BB324672;
+        Mon, 10 Feb 2020 12:40:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338232;
-        bh=r6ZSEKAcPOGSCgVBKU4Kqbfz3ie67Rtztmpje+wDHlc=;
+        s=default; t=1581338432;
+        bh=J05NzwZemBlr80XEvaHzlzPsIv40DKlhVAFBil0eImg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CmT6NqYzHVrJ7YaeNxV3hEBW9Pddhp8emq9fqI6YMuGsDqFBu8f8IJI90C/0EYTi9
-         pjusdk7mi+329ByZB4KO1gPx24uDEU7setiFVASuz8lKVtERKtDQH2z0ylmkiguGP1
-         mc65flLBq5PiYUjxdhTfDNGpKCtcabGgb0l+IWJs=
+        b=GCUgcsLqfFjfPLgHedF6hT67X8ziyEsy67Jao5cZ96vh+h97LV+wXTSAQAV4rSmxh
+         XeeE7K78m+qF+A6unzj0rpEO8saSh4vx3yFWeMkDFscjFCzHxYHRwgWT6f980i0L3A
+         z4Gtz1dVkksWIqKEfL70T6wFKuq522F61cp8DelU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sukadev Bhattiprolu <sukadev@linux.ibm.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.4 076/309] powerpc/xmon: dont access ASDR in VMs
-Date:   Mon, 10 Feb 2020 04:30:32 -0800
-Message-Id: <20200210122413.155402391@linuxfoundation.org>
+        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: [PATCH 5.5 120/367] padata: Remove broken queue flushing
+Date:   Mon, 10 Feb 2020 04:30:33 -0800
+Message-Id: <20200210122435.803392067@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +43,137 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sukadev Bhattiprolu <sukadev@linux.ibm.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-commit c2a20711fc181e7f22ee5c16c28cb9578af84729 upstream.
+commit 07928d9bfc81640bab36f5190e8725894d93b659 upstream.
 
-ASDR is HV-privileged and must only be accessed in HV-mode.
-Fixes a Program Check (0x700) when xmon in a VM dumps SPRs.
+The function padata_flush_queues is fundamentally broken because
+it cannot force padata users to complete the request that is
+underway.  IOW padata has to passively wait for the completion
+of any outstanding work.
 
-Fixes: d1e1b351f50f ("powerpc/xmon: Add ISA v3.0 SPRs to SPR dump")
-Cc: stable@vger.kernel.org # v4.14+
-Signed-off-by: Sukadev Bhattiprolu <sukadev@linux.ibm.com>
-Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20200107021633.GB29843@us.ibm.com
+As it stands flushing is used in two places.  Its use in padata_stop
+is simply unnecessary because nothing depends on the queues to
+be flushed afterwards.
+
+The other use in padata_replace is more substantial as we depend
+on it to free the old pd structure.  This patch instead uses the
+pd->refcnt to dynamically free the pd structure once all requests
+are complete.
+
+Fixes: 2b73b07ab8a4 ("padata: Flush the padata queues actively")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/xmon/xmon.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ kernel/padata.c |   43 ++++++++++++-------------------------------
+ 1 file changed, 12 insertions(+), 31 deletions(-)
 
---- a/arch/powerpc/xmon/xmon.c
-+++ b/arch/powerpc/xmon/xmon.c
-@@ -1894,15 +1894,14 @@ static void dump_300_sprs(void)
+--- a/kernel/padata.c
++++ b/kernel/padata.c
+@@ -35,6 +35,8 @@
  
- 	printf("pidr   = %.16lx  tidr  = %.16lx\n",
- 		mfspr(SPRN_PID), mfspr(SPRN_TIDR));
--	printf("asdr   = %.16lx  psscr = %.16lx\n",
--		mfspr(SPRN_ASDR), hv ? mfspr(SPRN_PSSCR)
--					: mfspr(SPRN_PSSCR_PR));
-+	printf("psscr  = %.16lx\n",
-+		hv ? mfspr(SPRN_PSSCR) : mfspr(SPRN_PSSCR_PR));
+ #define MAX_OBJ_NUM 1000
  
- 	if (!hv)
- 		return;
++static void padata_free_pd(struct parallel_data *pd);
++
+ static int padata_index_to_cpu(struct parallel_data *pd, int cpu_index)
+ {
+ 	int cpu, target_cpu;
+@@ -283,6 +285,7 @@ static void padata_serial_worker(struct
+ 	struct padata_serial_queue *squeue;
+ 	struct parallel_data *pd;
+ 	LIST_HEAD(local_list);
++	int cnt;
  
--	printf("ptcr   = %.16lx\n",
--		mfspr(SPRN_PTCR));
-+	printf("ptcr   = %.16lx  asdr  = %.16lx\n",
-+		mfspr(SPRN_PTCR), mfspr(SPRN_ASDR));
- #endif
+ 	local_bh_disable();
+ 	squeue = container_of(serial_work, struct padata_serial_queue, work);
+@@ -292,6 +295,8 @@ static void padata_serial_worker(struct
+ 	list_replace_init(&squeue->serial.list, &local_list);
+ 	spin_unlock(&squeue->serial.lock);
+ 
++	cnt = 0;
++
+ 	while (!list_empty(&local_list)) {
+ 		struct padata_priv *padata;
+ 
+@@ -301,9 +306,12 @@ static void padata_serial_worker(struct
+ 		list_del_init(&padata->list);
+ 
+ 		padata->serial(padata);
+-		atomic_dec(&pd->refcnt);
++		cnt++;
+ 	}
+ 	local_bh_enable();
++
++	if (atomic_sub_and_test(cnt, &pd->refcnt))
++		padata_free_pd(pd);
  }
  
+ /**
+@@ -440,7 +448,7 @@ static struct parallel_data *padata_allo
+ 	padata_init_squeues(pd);
+ 	atomic_set(&pd->seq_nr, -1);
+ 	atomic_set(&pd->reorder_objects, 0);
+-	atomic_set(&pd->refcnt, 0);
++	atomic_set(&pd->refcnt, 1);
+ 	spin_lock_init(&pd->lock);
+ 	pd->cpu = cpumask_first(pd->cpumask.pcpu);
+ 	INIT_WORK(&pd->reorder_work, invoke_padata_reorder);
+@@ -466,29 +474,6 @@ static void padata_free_pd(struct parall
+ 	kfree(pd);
+ }
+ 
+-/* Flush all objects out of the padata queues. */
+-static void padata_flush_queues(struct parallel_data *pd)
+-{
+-	int cpu;
+-	struct padata_parallel_queue *pqueue;
+-	struct padata_serial_queue *squeue;
+-
+-	for_each_cpu(cpu, pd->cpumask.pcpu) {
+-		pqueue = per_cpu_ptr(pd->pqueue, cpu);
+-		flush_work(&pqueue->work);
+-	}
+-
+-	if (atomic_read(&pd->reorder_objects))
+-		padata_reorder(pd);
+-
+-	for_each_cpu(cpu, pd->cpumask.cbcpu) {
+-		squeue = per_cpu_ptr(pd->squeue, cpu);
+-		flush_work(&squeue->work);
+-	}
+-
+-	BUG_ON(atomic_read(&pd->refcnt) != 0);
+-}
+-
+ static void __padata_start(struct padata_instance *pinst)
+ {
+ 	pinst->flags |= PADATA_INIT;
+@@ -502,10 +487,6 @@ static void __padata_stop(struct padata_
+ 	pinst->flags &= ~PADATA_INIT;
+ 
+ 	synchronize_rcu();
+-
+-	get_online_cpus();
+-	padata_flush_queues(pinst->pd);
+-	put_online_cpus();
+ }
+ 
+ /* Replace the internal control structure with a new one. */
+@@ -526,8 +507,8 @@ static void padata_replace(struct padata
+ 	if (!cpumask_equal(pd_old->cpumask.cbcpu, pd_new->cpumask.cbcpu))
+ 		notification_mask |= PADATA_CPU_SERIAL;
+ 
+-	padata_flush_queues(pd_old);
+-	padata_free_pd(pd_old);
++	if (atomic_dec_and_test(&pd_old->refcnt))
++		padata_free_pd(pd_old);
+ 
+ 	if (notification_mask)
+ 		blocking_notifier_call_chain(&pinst->cpumask_change_notifier,
 
 
