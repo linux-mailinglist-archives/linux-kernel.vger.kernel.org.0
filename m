@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79882157510
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:38:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 047091575BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:44:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729120AbgBJMiU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:38:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57158 "EHLO mail.kernel.org"
+        id S1730513AbgBJMny (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:43:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728539AbgBJMgu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:50 -0500
+        id S1729643AbgBJMkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:11 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5020B24683;
-        Mon, 10 Feb 2020 12:36:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 132E324649;
+        Mon, 10 Feb 2020 12:40:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338210;
-        bh=+Ch9E2FOQGSoQPtDIBinvsMhL5RaKnjKr1v85lFveCw=;
+        s=default; t=1581338411;
+        bh=HXBYUJjyLsFEYeVDNirUeUnuXUm5SXGnUmEnR2UscT0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qk0gculdQffEv0q2jqdLg9PlpfkargMCL1GQz5B8nNIaQFpW9geV0YuDbCvkQSfWC
-         1mqlWD6mZOPvaHHSghTyBdxjIz9SdUMVR1h8r8XH3RpGKpjs6QcfCthSfoMlZ2lwWm
-         s2xhCE4sDEnqxRSDgSFS4bMb6ysAL3/IETjKFJqo=
+        b=q0OXOuGpC02vc+iXQJek6EBpMRgxRTdFFFNpIWEK7c4mH1cCPZl5yII6EaJFWb27J
+         qZL9pY31rcOWhylO5nvl0CsNpuH8YE61Nn2xynIFAjE6AJ3EzwP75XqichneRzcQDX
+         sUOUbBZS+0OLPQ6cnyYayiudhdMXJi/3WwO/HDUQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Israel Rukshin <israelr@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>
-Subject: [PATCH 5.4 033/309] nvmet: Fix controller use after free
-Date:   Mon, 10 Feb 2020 04:29:49 -0800
-Message-Id: <20200210122409.272180540@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Lobakin <alobakin@dlink.ru>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Rob Herring <robh@kernel.org>, linux-mips@vger.kernel.org
+Subject: [PATCH 5.5 078/367] MIPS: fix indentation of the RELOCS message
+Date:   Mon, 10 Feb 2020 04:29:51 -0800
+Message-Id: <20200210122431.448343266@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,87 +47,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Israel Rukshin <israelr@mellanox.com>
+From: Alexander Lobakin <alobakin@dlink.ru>
 
-commit 1a3f540d63152b8db0a12de508bfa03776217d83 upstream.
+commit a53998802e178451701d59d38e36f551422977ba upstream.
 
-After nvmet_install_queue() sets sq->ctrl calling to nvmet_sq_destroy()
-reduces the controller refcount. In case nvmet_install_queue() fails,
-calling to nvmet_ctrl_put() is done twice (at nvmet_sq_destroy and
-nvmet_execute_io_connect/nvmet_execute_admin_connect) instead of once for
-the queue which leads to use after free of the controller. Fix this by set
-NULL at sq->ctrl in case of a failure at nvmet_install_queue().
+quiet_cmd_relocs lacks a whitespace which results in:
 
-The bug leads to the following Call Trace:
+  LD      vmlinux
+  SORTEX  vmlinux
+  SYSMAP  System.map
+  RELOCS vmlinux
+  Building modules, stage 2.
+  MODPOST 64 modules
 
-[65857.994862] refcount_t: underflow; use-after-free.
-[65858.108304] Workqueue: events nvmet_rdma_release_queue_work [nvmet_rdma]
-[65858.115557] RIP: 0010:refcount_warn_saturate+0xe5/0xf0
-[65858.208141] Call Trace:
-[65858.211203]  nvmet_sq_destroy+0xe1/0xf0 [nvmet]
-[65858.216383]  nvmet_rdma_release_queue_work+0x37/0xf0 [nvmet_rdma]
-[65858.223117]  process_one_work+0x167/0x370
-[65858.227776]  worker_thread+0x49/0x3e0
-[65858.232089]  kthread+0xf5/0x130
-[65858.235895]  ? max_active_store+0x80/0x80
-[65858.240504]  ? kthread_bind+0x10/0x10
-[65858.244832]  ret_from_fork+0x1f/0x30
-[65858.249074] ---[ end trace f82d59250b54beb7 ]---
+After this patch:
 
-Fixes: bb1cc74790eb ("nvmet: implement valid sqhd values in completions")
-Fixes: 1672ddb8d691 ("nvmet: Add install_queue callout")
-Signed-off-by: Israel Rukshin <israelr@mellanox.com>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Keith Busch <kbusch@kernel.org>
+  LD      vmlinux
+  SORTEX  vmlinux
+  SYSMAP  System.map
+  RELOCS  vmlinux
+  Building modules, stage 2.
+  MODPOST 64 modules
+
+Typo is present in kernel tree since the introduction of relocatable
+kernel support in commit e818fac595ab ("MIPS: Generate relocation table
+when CONFIG_RELOCATABLE"), but the relocation scripts were moved to
+Makefile.postlink later with commit 44079d3509ae ("MIPS: Use
+Makefile.postlink to insert relocations into vmlinux").
+
+Fixes: 44079d3509ae ("MIPS: Use Makefile.postlink to insert relocations into vmlinux")
+Cc: <stable@vger.kernel.org> # v4.11+
+Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
+[paulburton@kernel.org: Fixup commit references in commit message.]
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvme/target/fabrics-cmd.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ arch/mips/Makefile.postlink |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/nvme/target/fabrics-cmd.c
-+++ b/drivers/nvme/target/fabrics-cmd.c
-@@ -105,6 +105,7 @@ static u16 nvmet_install_queue(struct nv
- 	u16 qid = le16_to_cpu(c->qid);
- 	u16 sqsize = le16_to_cpu(c->sqsize);
- 	struct nvmet_ctrl *old;
-+	u16 ret;
+--- a/arch/mips/Makefile.postlink
++++ b/arch/mips/Makefile.postlink
+@@ -17,7 +17,7 @@ quiet_cmd_ls3_llsc = LLSCCHK $@
+       cmd_ls3_llsc = $(CMD_LS3_LLSC) $@
  
- 	old = cmpxchg(&req->sq->ctrl, NULL, ctrl);
- 	if (old) {
-@@ -115,7 +116,8 @@ static u16 nvmet_install_queue(struct nv
- 	if (!sqsize) {
- 		pr_warn("queue size zero!\n");
- 		req->error_loc = offsetof(struct nvmf_connect_command, sqsize);
--		return NVME_SC_CONNECT_INVALID_PARAM | NVME_SC_DNR;
-+		ret = NVME_SC_CONNECT_INVALID_PARAM | NVME_SC_DNR;
-+		goto err;
- 	}
+ CMD_RELOCS = arch/mips/boot/tools/relocs
+-quiet_cmd_relocs = RELOCS $@
++quiet_cmd_relocs = RELOCS  $@
+       cmd_relocs = $(CMD_RELOCS) $@
  
- 	/* note: convert queue size from 0's-based value to 1's-based value */
-@@ -128,16 +130,19 @@ static u16 nvmet_install_queue(struct nv
- 	}
- 
- 	if (ctrl->ops->install_queue) {
--		u16 ret = ctrl->ops->install_queue(req->sq);
--
-+		ret = ctrl->ops->install_queue(req->sq);
- 		if (ret) {
- 			pr_err("failed to install queue %d cntlid %d ret %x\n",
- 				qid, ctrl->cntlid, ret);
--			return ret;
-+			goto err;
- 		}
- 	}
- 
- 	return 0;
-+
-+err:
-+	req->sq->ctrl = NULL;
-+	return ret;
- }
- 
- static void nvmet_execute_admin_connect(struct nvmet_req *req)
+ # `@true` prevents complaint when there is nothing to be done
 
 
