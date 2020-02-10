@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 059621575C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:45:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A19BE1574A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:35:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730141AbgBJMoK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:44:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40296 "EHLO mail.kernel.org"
+        id S1727692AbgBJMfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:35:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729725AbgBJMkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:25 -0500
+        id S1727600AbgBJMfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:02 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E027B20842;
-        Mon, 10 Feb 2020 12:40:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 077FF214DB;
+        Mon, 10 Feb 2020 12:35:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338425;
-        bh=4QML1bwa7pCPpS2zEuTpwZs3ISXs9jTMOsaVH/HWu74=;
+        s=default; t=1581338102;
+        bh=jy5JOodwvlwm7Ucf+eZv1S4++d87MwsN5hfxCWrT4X4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gTov/a+5rheCwEpsP5P1avYrZEgffEj/z27b0kSENU9aKy0sJxNDx13KoUBIQ/iN2
-         blvqrSGUY04rZ0AO3t4KAhhv9Dk/kKWsLMFMOQwzjK5Ws3q4GTfN/7OwTiDwFZ94Pm
-         Ss+yZ9sPo3BKCzDYBCYJWZlUFo8FSg7IZ1xHg8OI=
+        b=OSbDyinGB93lgV2wgKWp2t42QI6MxgGfFWfKltOIG9OlfTCLqF9jV6qLO5Bk10LNl
+         JwesnzWVdKtVSMYCT2nUJBgmylMyX2K4UfqRZpQXGV7tu34YQblnaEz52soFhvgwfY
+         v2l0h2LbhtDguXWDOz5f4MgUPi35P7S0GEuLYFjY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zdenek Kabelac <zkabelac@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 5.5 146/367] dm thin: fix use-after-free in metadata_pre_commit_callback
-Date:   Mon, 10 Feb 2020 04:30:59 -0800
-Message-Id: <20200210122438.330873917@linuxfoundation.org>
+        stable@vger.kernel.org, Boris Gjenero <boris.gjenero@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 002/195] ovl: fix lseek overflow on 32bit
+Date:   Mon, 10 Feb 2020 04:31:00 -0800
+Message-Id: <20200210122305.999066195@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,66 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Snitzer <snitzer@redhat.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit a4a8d286586d4b28c8517a51db8d86954aadc74b upstream.
+[ Upstream commit a4ac9d45c0cd14a2adc872186431c79804b77dbf ]
 
-dm-thin uses struct pool to hold the state of the pool. There may be
-multiple pool_c's pointing to a given pool, each pool_c represents a
-loaded target. pool_c's may be created and destroyed arbitrarily and the
-pool contains a reference count of pool_c's pointing to it.
+ovl_lseek() is using ssize_t to return the value from vfs_llseek().  On a
+32-bit kernel ssize_t is a 32-bit signed int, which overflows above 2 GB.
 
-Since commit 694cfe7f31db3 ("dm thin: Flush data device before
-committing metadata") a pointer to pool_c is passed to
-dm_pool_register_pre_commit_callback and this function stores it in
-pmd->pre_commit_context. If this pool_c is freed, but pool is not
-(because there is another pool_c referencing it), we end up in a
-situation where pmd->pre_commit_context structure points to freed
-pool_c. It causes a crash in metadata_pre_commit_callback.
+Assign the return value of vfs_llseek() to loff_t to fix this.
 
-Fix this by moving the dm_pool_register_pre_commit_callback() from
-pool_ctr() to pool_preresume(). This way the in-core thin-pool metadata
-is only ever armed with callback data whose lifetime matches the
-active thin-pool target.
-
-In should be noted that this fix preserves the ability to load a
-thin-pool table that uses a different data block device (that contains
-the same data) -- though it is unclear if that capability is still
-useful and/or needed.
-
-Fixes: 694cfe7f31db3 ("dm thin: Flush data device before committing metadata")
-Cc: stable@vger.kernel.org
-Reported-by: Zdenek Kabelac <zkabelac@redhat.com>
-Reported-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reported-by: Boris Gjenero <boris.gjenero@gmail.com>
+Fixes: 9e46b840c705 ("ovl: support stacked SEEK_HOLE/SEEK_DATA")
+Cc: <stable@vger.kernel.org> # v4.19
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-thin.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ fs/overlayfs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/md/dm-thin.c
-+++ b/drivers/md/dm-thin.c
-@@ -3408,10 +3408,6 @@ static int pool_ctr(struct dm_target *ti
- 	if (r)
- 		goto out_flags_changed;
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index 0bd276e4ccbee..fa5ac5de807c5 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -149,7 +149,7 @@ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
+ 	struct inode *inode = file_inode(file);
+ 	struct fd real;
+ 	const struct cred *old_cred;
+-	ssize_t ret;
++	loff_t ret;
  
--	dm_pool_register_pre_commit_callback(pt->pool->pmd,
--					     metadata_pre_commit_callback,
--					     pt);
--
- 	pt->callbacks.congested_fn = pool_is_congested;
- 	dm_table_add_target_callbacks(ti->table, &pt->callbacks);
- 
-@@ -3574,6 +3570,9 @@ static int pool_preresume(struct dm_targ
- 	if (r)
- 		return r;
- 
-+	dm_pool_register_pre_commit_callback(pool->pmd,
-+					     metadata_pre_commit_callback, pt);
-+
- 	r = maybe_resize_data_dev(ti, &need_commit1);
- 	if (r)
- 		return r;
+ 	/*
+ 	 * The two special cases below do not need to involve real fs,
+-- 
+2.20.1
+
 
 
