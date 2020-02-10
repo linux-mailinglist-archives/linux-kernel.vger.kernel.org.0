@@ -2,44 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A55E81574AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:35:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64A2C1575C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:45:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbgBJMfP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:35:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51458 "EHLO mail.kernel.org"
+        id S1730676AbgBJMog (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:44:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727707AbgBJMfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:35:07 -0500
+        id S1728154AbgBJMkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:39 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 235DD214DB;
-        Mon, 10 Feb 2020 12:35:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4AB52173E;
+        Mon, 10 Feb 2020 12:40:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338107;
-        bh=V4Vj4iXVZCOwvr/0Kky48M0kWDdquu7/d64KrYgidMQ=;
+        s=default; t=1581338439;
+        bh=5QD9YOC95JGAUEOA86RzolZ5SR5kMSDUR274K8u+1o4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sIIbxzWezzOxJeKVBSU5IaWA8YdllZrNYoi2j01DCba/bMtQkGLRXPwt08UEYVbqy
-         QfLt0wd7ocAfHaKaKBNC2cPlhKyiIFC5uviG0BnZ4JkttPdeC7lv8Q4q+BUBBtFICz
-         mfQS8/uPQvBtUNW0auZGGqLyuqOeK9R1e4gOyIj0=
+        b=gNnAzbckLb5K3bCMF5kRSVYhjWUnLT/SfT3VJLlCW4ByOC59BytdQEiN6CJh3uNay
+         bt0e2VhUqQeUG/1oO+cCTyf25pbnGsFyWO0BcnNwIVn61YIORpO8k5periSDLhUs6x
+         GoCxgQz0Ymbycc55+II3KT50NRK0lkjvqYwLBMfU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        syzbot+774fddf07b7ab29a1e55@syzkaller.appspotmail.com,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [PATCH 4.19 029/195] tracing: Fix sched switch start/stop refcount racy updates
-Date:   Mon, 10 Feb 2020 04:31:27 -0800
-Message-Id: <20200210122309.320840403@linuxfoundation.org>
+        stable@vger.kernel.org, Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 5.5 175/367] crypto: amlogic - fix removal of module
+Date:   Mon, 10 Feb 2020 04:31:28 -0800
+Message-Id: <20200210122440.982219829@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,50 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+From: Corentin Labbe <clabbe.montjoie@gmail.com>
 
-commit 64ae572bc7d0060429e40e1c8d803ce5eb31a0d6 upstream.
+commit 24775ac2fe68132d3e0e7cd3a0521ccb1a5d7243 upstream.
 
-Reading the sched_cmdline_ref and sched_tgid_ref initial state within
-tracing_start_sched_switch without holding the sched_register_mutex is
-racy against concurrent updates, which can lead to tracepoint probes
-being registered more than once (and thus trigger warnings within
-tracepoint.c).
+Removing the driver cause an oops due to the fact we clean an extra
+channel.
+Let's give the right index to the cleaning function.
+Fixes: 48fe583fe541 ("crypto: amlogic - Add crypto accelerator for amlogic GXL")
 
-[ May be the fix for this bug ]
-Link: https://lore.kernel.org/r/000000000000ab6f84056c786b93@google.com
-
-Link: http://lkml.kernel.org/r/20190817141208.15226-1-mathieu.desnoyers@efficios.com
-
-Cc: stable@vger.kernel.org
-CC: Steven Rostedt (VMware) <rostedt@goodmis.org>
-CC: Joel Fernandes (Google) <joel@joelfernandes.org>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Paul E. McKenney <paulmck@linux.ibm.com>
-Reported-by: syzbot+774fddf07b7ab29a1e55@syzkaller.appspotmail.com
-Fixes: d914ba37d7145 ("tracing: Add support for recording tgid of tasks")
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_sched_switch.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/crypto/amlogic/amlogic-gxl-core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/kernel/trace/trace_sched_switch.c
-+++ b/kernel/trace/trace_sched_switch.c
-@@ -89,8 +89,10 @@ static void tracing_sched_unregister(voi
+--- a/drivers/crypto/amlogic/amlogic-gxl-core.c
++++ b/drivers/crypto/amlogic/amlogic-gxl-core.c
+@@ -289,7 +289,7 @@ static int meson_crypto_probe(struct pla
+ error_alg:
+ 	meson_unregister_algs(mc);
+ error_flow:
+-	meson_free_chanlist(mc, MAXFLOW);
++	meson_free_chanlist(mc, MAXFLOW - 1);
+ 	clk_disable_unprepare(mc->busclk);
+ 	return err;
+ }
+@@ -304,7 +304,7 @@ static int meson_crypto_remove(struct pl
  
- static void tracing_start_sched_switch(int ops)
- {
--	bool sched_register = (!sched_cmdline_ref && !sched_tgid_ref);
-+	bool sched_register;
-+
- 	mutex_lock(&sched_register_mutex);
-+	sched_register = (!sched_cmdline_ref && !sched_tgid_ref);
+ 	meson_unregister_algs(mc);
  
- 	switch (ops) {
- 	case RECORD_CMDLINE:
+-	meson_free_chanlist(mc, MAXFLOW);
++	meson_free_chanlist(mc, MAXFLOW - 1);
+ 
+ 	clk_disable_unprepare(mc->busclk);
+ 	return 0;
 
 
