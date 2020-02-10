@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A253B15764B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB07E157649
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbgBJMur (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:50:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48006 "EHLO mail.kernel.org"
+        id S1728360AbgBJMu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:50:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730564AbgBJMoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:44:06 -0500
+        id S1730241AbgBJMoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:44:18 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7AB1320873;
-        Mon, 10 Feb 2020 12:44:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 768E320661;
+        Mon, 10 Feb 2020 12:44:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338645;
-        bh=8qFy2P9Vypn24UZq8VITnvCyAMf7Rm5CIXUCo9bYzcA=;
+        s=default; t=1581338658;
+        bh=xG5SeJcEhEvE6IkzAVa8Fi15ahVA/6ZM/EBQpVj+dV8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zqv5B1NKK2MkaobL4++aWEe+ZOz7PDHR11ZqkIK6nreFeNxibwS9D0ZvbvXGg9kA8
-         9XYKF5yXjETiwYgUPi3EYve2UQEwtRayKzM2TI3z4C6Gx3RzRJncg/svW8DTGZt/hi
-         j+RPFck+9jMMpv0PPaMgq6A7DsAcE/00pyO6FhG0=
+        b=T0OpRDdIFqN8cmQVFAw8DWqu308q8Vy9qYP93PNH+a2YqItXI5Hxx2f/f+Tzb01fs
+         rXcTYTk3R7/FCa7zQEDmg5LWDYz9X15KXmZTQJMTYwIJWeXqscromZNzQL3Rorjjxw
+         UxxrFhvZuqGqmsWvxWL5XInS2wKPqtyh5sfFeRF4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Verma, Aashish" <aashishx.verma@intel.com>,
-        "Tan, Tee Min" <tee.min.tan@intel.com>,
+        stable@vger.kernel.org, "Tan, Tee Min" <tee.min.tan@intel.com>,
         Ong Boon Leong <boon.leong.ong@intel.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 332/367] net: stmmac: fix missing IFF_MULTICAST check in dwmac4_set_filter
-Date:   Mon, 10 Feb 2020 04:34:05 -0800
-Message-Id: <20200210122453.473303179@linuxfoundation.org>
+Subject: [PATCH 5.5 333/367] net: stmmac: xgmac: fix missing IFF_MULTICAST checki in dwxgmac2_set_filter
+Date:   Mon, 10 Feb 2020 04:34:06 -0800
+Message-Id: <20200210122453.546037048@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -46,9 +44,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Verma, Aashish" <aashishx.verma@intel.com>
+From: "Tan, Tee Min" <tee.min.tan@intel.com>
 
-[ Upstream commit 2ba31cd93784b61813226d259fd94a221ecd9d61 ]
+[ Upstream commit 2f633d5820e4ed870f408957322acb9263bce2f4 ]
 
 Without checking for IFF_MULTICAST flag, it is wrong to assume multicast
 filtering is always enabled. By checking against IFF_MULTICAST, now
@@ -56,26 +54,25 @@ the driver behaves correctly when the multicast support is toggled by below
 command:-
   ip link set <devname> multicast off|on
 
-Fixes: 477286b53f55 ("stmmac: add GMAC4 core support")
-Signed-off-by: Verma, Aashish <aashishx.verma@intel.com>
-Tested-by: Tan, Tee Min <tee.min.tan@intel.com>
+Fixes: 0efedbf11f07a ("net: stmmac: xgmac: Fix XGMAC selftests")
+Signed-off-by: Tan, Tee Min <tee.min.tan@intel.com>
 Signed-off-by: Ong Boon Leong <boon.leong.ong@intel.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c |    2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-@@ -420,7 +420,7 @@ static void dwmac4_set_filter(struct mac
- 		value |= GMAC_PACKET_FILTER_PM;
- 		/* Set all the bits of the HASH tab */
- 		memset(mc_filter, 0xff, sizeof(mc_filter));
+--- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
+@@ -458,7 +458,7 @@ static void dwxgmac2_set_filter(struct m
+ 
+ 		for (i = 0; i < XGMAC_MAX_HASH_TABLE; i++)
+ 			writel(~0x0, ioaddr + XGMAC_HASH_TABLE(i));
 -	} else if (!netdev_mc_empty(dev)) {
 +	} else if (!netdev_mc_empty(dev) && (dev->flags & IFF_MULTICAST)) {
  		struct netdev_hw_addr *ha;
  
- 		/* Hash filter for multicast */
+ 		value |= XGMAC_FILTER_HMC;
 
 
