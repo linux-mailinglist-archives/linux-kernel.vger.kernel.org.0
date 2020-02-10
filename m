@@ -2,325 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1185157EF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:37:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C93F1157EE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:36:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbgBJPha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 10:37:30 -0500
-Received: from foss.arm.com ([217.140.110.172]:35344 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726816AbgBJPha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 10:37:30 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F75B1FB;
-        Mon, 10 Feb 2020 07:37:28 -0800 (PST)
-Received: from E121110.arm.com (C02TF0J2HF1T.cambridge.arm.com [10.1.26.172])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1A4B13F68E;
-        Mon, 10 Feb 2020 07:37:18 -0800 (PST)
-Date:   Mon, 10 Feb 2020 15:37:16 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-mm@kvack.org, Mark Rutland <mark.rutland@arm.com>,
-        linux-ia64@vger.kernel.org, linux-sh@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        James Hogan <jhogan@kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Paul Mackerras <paulus@samba.org>, sparclinux@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-s390@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        x86@kernel.org, Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Steven Price <Steven.Price@arm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mark Brown <broonie@kernel.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-mips@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        linux-kernel@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH V12] mm/debug: Add tests validating architecture page
- table helpers
-Message-ID: <20200210153716.GB9283@E121110.arm.com>
-References: <1580174873-18117-1-git-send-email-anshuman.khandual@arm.com>
+        id S1727845AbgBJPgB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 10:36:01 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:53976 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726816AbgBJPf4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 10:35:56 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01AFYLtj188710;
+        Mon, 10 Feb 2020 15:34:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=BAJtlUFBeU9vdpqs1Ne5FDMQCX4Tpeov/LFTBTNfdl0=;
+ b=IuZk1WhpYDwpe6vHHg8wIU10EELLc9vg6ZX3nVaXGDLs/vgWnyKkqhrvBtPROEe1WzBq
+ 6KsqYXosz3qQhb6RmpJxxawJ1bXLoBRtEMU+tGQknPJOWJTjel2x6x87sCUKmrazn4T1
+ UWfLUCSotXq3gKCobHPdyxBgn07LF3IRQFVyiyo2nqjNetsR0RkYW0XKyU3/UdC+AKaM
+ cLjwv43qaVPLnZ6j5zEVPX98Uyu86LZmLAhz+MfG5Bvd14aCrU6qN/Jh2OBJ/wmHZD7J
+ F9pm3Ve1+YnnBcEULUIaGJU/5SKFsi4eHKOqjT/CTc2qUAflB2IzEI75ZPqLfMeCcr5b yQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2y2jx5wgfy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Feb 2020 15:34:37 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01AFWu1N170522;
+        Mon, 10 Feb 2020 15:34:36 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2y26ffbjmh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Feb 2020 15:34:36 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01AFYXiT023567;
+        Mon, 10 Feb 2020 15:34:34 GMT
+Received: from char.us.oracle.com (/10.152.32.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 10 Feb 2020 07:34:33 -0800
+Received: by char.us.oracle.com (Postfix, from userid 1000)
+        id EBFB96A00DD; Mon, 10 Feb 2020 10:38:15 -0500 (EST)
+Date:   Mon, 10 Feb 2020 10:38:15 -0500
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH v2 1/2] KVM: Introduce pv check helpers
+Message-ID: <20200210153815.GE7395@char.us.oracle.com>
+References: <CANRm+Cxd55Sqi4anpXD_Urmx8BV=R9ZDUwejChJHLBsZeGoWbw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1580174873-18117-1-git-send-email-anshuman.khandual@arm.com>
+In-Reply-To: <CANRm+Cxd55Sqi4anpXD_Urmx8BV=R9ZDUwejChJHLBsZeGoWbw@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9527 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ adultscore=0 bulkscore=0 mlxscore=0 spamscore=0 phishscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002100117
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9527 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
+ priorityscore=1501 adultscore=0 phishscore=0 impostorscore=0 spamscore=0
+ bulkscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002100117
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 06:57:53AM +0530, Anshuman Khandual wrote:
-> This gets build and run when CONFIG_DEBUG_VM_PGTABLE is selected along with
-> CONFIG_VM_DEBUG. Architectures willing to subscribe this test also need to
-> select CONFIG_ARCH_HAS_DEBUG_VM_PGTABLE which for now is limited to x86 and
-> arm64. Going forward, other architectures too can enable this after fixing
-> build or runtime problems (if any) with their page table helpers.
+On Mon, Feb 10, 2020 at 02:37:30PM +0800, Wanpeng Li wrote:
+> From: Wanpeng Li <wanpengli@tencent.com>
+> 
+> Introduce some pv check helpers for consistency.
+> 
+> Suggested-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-It may be worth posting the next version to linux-arch to reach out to
-other arch maintainers.
-
-Also I've seen that you posted a v13 but it hasn't reached
-linux-arm-kernel (likely held in moderation because of the large amount
-of addresses cc'ed) and I don't normally follow LKML. I'm not cc'ed to
-this patch either (which is fine as long as you post to a list that I
-read).
-
-Since I started the reply on v12 about a week ago, I'll follow up here.
-When you post a v14, please trim the people on cc only to those strictly
-necessary (e.g. arch maintainers, linux-mm, linux-arch and lkml).
-
-> diff --git a/Documentation/features/debug/debug-vm-pgtable/arch-support.txt b/Documentation/features/debug/debug-vm-pgtable/arch-support.txt
-> new file mode 100644
-> index 000000000000..f3f8111edbe3
-> --- /dev/null
-> +++ b/Documentation/features/debug/debug-vm-pgtable/arch-support.txt
-> @@ -0,0 +1,35 @@
-> +#
-> +# Feature name:          debug-vm-pgtable
-> +#         Kconfig:       ARCH_HAS_DEBUG_VM_PGTABLE
-> +#         description:   arch supports pgtable tests for semantics compliance
-> +#
-> +    -----------------------
-> +    |         arch |status|
-> +    -----------------------
-> +    |       alpha: | TODO |
-> +    |         arc: |  ok  |
-> +    |         arm: | TODO |
-
-I'm sure you can find some arm32 hardware around (or a VM) to give this
-a try ;).
-
-> diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
-> index 0b6c4042942a..fb0e76d254b3 100644
-> --- a/arch/x86/include/asm/pgtable_64.h
-> +++ b/arch/x86/include/asm/pgtable_64.h
-[...]
-> @@ -1197,6 +1197,7 @@ static noinline void __init kernel_init_freeable(void)
->  	sched_init_smp();
->  
->  	page_alloc_init_late();
-> +	debug_vm_pgtable();
->  	/* Initialize page ext after all struct pages are initialized. */
->  	page_ext_init();
-
-I guess you could even make debug_vm_pgtable() an early_initcall(). I
-don't have a strong opinion either way.
-
-> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
-> new file mode 100644
-> index 000000000000..0f37f32d15f1
-> --- /dev/null
-> +++ b/mm/debug_vm_pgtable.c
-> @@ -0,0 +1,388 @@
-[...]
-> +/*
-> + * Basic operations
-> + *
-> + * mkold(entry)			= An old and not a young entry
-> + * mkyoung(entry)		= A young and not an old entry
-> + * mkdirty(entry)		= A dirty and not a clean entry
-> + * mkclean(entry)		= A clean and not a dirty entry
-> + * mkwrite(entry)		= A write and not a write protected entry
-> + * wrprotect(entry)		= A write protected and not a write entry
-> + * pxx_bad(entry)		= A mapped and non-table entry
-> + * pxx_same(entry1, entry2)	= Both entries hold the exact same value
-> + */
-> +#define VMFLAGS	(VM_READ|VM_WRITE|VM_EXEC)
-> +
-> +/*
-> + * On s390 platform, the lower 12 bits are used to identify given page table
-> + * entry type and for other arch specific requirements. But these bits might
-> + * affect the ability to clear entries with pxx_clear(). So while loading up
-> + * the entries skip all lower 12 bits in order to accommodate s390 platform.
-> + * It does not have affect any other platform.
-> + */
-> +#define RANDOM_ORVALUE	(0xfffffffffffff000UL)
-
-I'd suggest you generate this mask with something like
-GENMASK(BITS_PER_LONG, PAGE_SHIFT).
-
-> +#define RANDOM_NZVALUE	(0xff)
-> +
-> +static void __init pte_basic_tests(unsigned long pfn, pgprot_t prot)
+Thank you!
+> ---
+>  arch/x86/kernel/kvm.c | 34 ++++++++++++++++++++++++----------
+>  1 file changed, 24 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> index d817f25..76ea8c4 100644
+> --- a/arch/x86/kernel/kvm.c
+> +++ b/arch/x86/kernel/kvm.c
+> @@ -425,7 +425,27 @@ static void __init sev_map_percpu_data(void)
+>      }
+>  }
+> 
+> +static bool pv_tlb_flush_supported(void)
 > +{
-> +	pte_t pte = pfn_pte(pfn, prot);
-> +
-> +	WARN_ON(!pte_same(pte, pte));
-> +	WARN_ON(!pte_young(pte_mkyoung(pte)));
-> +	WARN_ON(!pte_dirty(pte_mkdirty(pte)));
-> +	WARN_ON(!pte_write(pte_mkwrite(pte)));
-> +	WARN_ON(pte_young(pte_mkold(pte)));
-> +	WARN_ON(pte_dirty(pte_mkclean(pte)));
-> +	WARN_ON(pte_write(pte_wrprotect(pte)));
-
-Given that you start with rwx permissions set,
-some of these ops would not have any effect. For example, on arm64 at
-least, mkwrite clears a bit already cleared here. You could try with
-multiple rwx combinations values (e.g. all set and all cleared) or maybe
-something like below:
-
-	WARN_ON(!pte_write(pte_mkwrite(pte_wrprotect(pte))));
-
-You could also try something like this:
-
-	WARN_ON(!pte_same(pte_wrprotect(pte), pte_wrprotect(pte_mkwrite(pte))));
-
-though the above approach may not work for arm64 ptep_set_wrprotect() on
-a dirty pte (if you extend these tests later).
-
+> +    return (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
+> +        !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
+> +        kvm_para_has_feature(KVM_FEATURE_STEAL_TIME));
 > +}
 > +
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +static void __init pmd_basic_tests(unsigned long pfn, pgprot_t prot)
-> +{
-> +	pmd_t pmd = pfn_pmd(pfn, prot);
+>  #ifdef CONFIG_SMP
 > +
-> +	WARN_ON(!pmd_same(pmd, pmd));
-> +	WARN_ON(!pmd_young(pmd_mkyoung(pmd)));
-> +	WARN_ON(!pmd_dirty(pmd_mkdirty(pmd)));
-> +	WARN_ON(!pmd_write(pmd_mkwrite(pmd)));
-> +	WARN_ON(pmd_young(pmd_mkold(pmd)));
-> +	WARN_ON(pmd_dirty(pmd_mkclean(pmd)));
-> +	WARN_ON(pmd_write(pmd_wrprotect(pmd)));
-> +	/*
-> +	 * A huge page does not point to next level page table
-> +	 * entry. Hence this must qualify as pmd_bad().
-> +	 */
-> +	WARN_ON(!pmd_bad(pmd_mkhuge(pmd)));
+> +static bool pv_ipi_supported(void)
+> +{
+> +    return kvm_para_has_feature(KVM_FEATURE_PV_SEND_IPI);
 > +}
 > +
-> +#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
-> +static void __init pud_basic_tests(unsigned long pfn, pgprot_t prot)
+> +static bool pv_sched_yield_supported(void)
 > +{
-> +	pud_t pud = pfn_pud(pfn, prot);
-> +
-> +	WARN_ON(!pud_same(pud, pud));
-> +	WARN_ON(!pud_young(pud_mkyoung(pud)));
-> +	WARN_ON(!pud_write(pud_mkwrite(pud)));
-> +	WARN_ON(pud_write(pud_wrprotect(pud)));
-> +	WARN_ON(pud_young(pud_mkold(pud)));
-> +
-> +	if (mm_pmd_folded(mm) || __is_defined(ARCH_HAS_4LEVEL_HACK))
-> +		return;
-> +
-> +	/*
-> +	 * A huge page does not point to next level page table
-> +	 * entry. Hence this must qualify as pud_bad().
-> +	 */
-> +	WARN_ON(!pud_bad(pud_mkhuge(pud)));
-> +}
-> +#else
-> +static void __init pud_basic_tests(unsigned long pfn, pgprot_t prot) { }
-> +#endif
-> +#else
-> +static void __init pmd_basic_tests(unsigned long pfn, pgprot_t prot) { }
-> +static void __init pud_basic_tests(unsigned long pfn, pgprot_t prot) { }
-> +#endif
-> +
-> +static void __init p4d_basic_tests(unsigned long pfn, pgprot_t prot)
-> +{
-> +	p4d_t p4d;
-> +
-> +	memset(&p4d, RANDOM_NZVALUE, sizeof(p4d_t));
-> +	WARN_ON(!p4d_same(p4d, p4d));
+> +    return (kvm_para_has_feature(KVM_FEATURE_PV_SCHED_YIELD) &&
+> +        !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
+> +        kvm_para_has_feature(KVM_FEATURE_STEAL_TIME));
 > +}
 > +
-> +static void __init pgd_basic_tests(unsigned long pfn, pgprot_t prot)
-> +{
-> +	pgd_t pgd;
-> +
-> +	memset(&pgd, RANDOM_NZVALUE, sizeof(pgd_t));
-> +	WARN_ON(!pgd_same(pgd, pgd));
-> +}
-> +
-> +#ifndef __ARCH_HAS_4LEVEL_HACK
-
-This macro doesn't exist in the kernel anymore (it's a 5LEVEL now). But
-can you not use the __PAGETABLE_PUD_FOLDED instead?
-
-> +static void __init pud_clear_tests(struct mm_struct *mm, pud_t *pudp)
-> +{
-> +	pud_t pud = READ_ONCE(*pudp);
-> +
-> +	if (mm_pmd_folded(mm))
-> +		return;
-> +
-> +	pud = __pud(pud_val(pud) | RANDOM_ORVALUE);
-> +	WRITE_ONCE(*pudp, pud);
-> +	pud_clear(pudp);
-> +	pud = READ_ONCE(*pudp);
-> +	WARN_ON(!pud_none(pud));
-> +}
-> +
-> +static void __init pud_populate_tests(struct mm_struct *mm, pud_t *pudp,
-> +				      pmd_t *pmdp)
-> +{
-> +	pud_t pud;
-> +
-> +	if (mm_pmd_folded(mm))
-> +		return;
-> +	/*
-> +	 * This entry points to next level page table page.
-> +	 * Hence this must not qualify as pud_bad().
-> +	 */
-> +	pmd_clear(pmdp);
-> +	pud_clear(pudp);
-> +	pud_populate(mm, pudp, pmdp);
-> +	pud = READ_ONCE(*pudp);
-> +	WARN_ON(pud_bad(pud));
-> +}
-> +#else
-> +static void __init pud_clear_tests(struct mm_struct *mm, pud_t *pudp) { }
-> +static void __init pud_populate_tests(struct mm_struct *mm, pud_t *pudp,
-> +				      pmd_t *pmdp)
-> +{
-> +}
-> +#endif
-> +
-> +#ifndef __ARCH_HAS_5LEVEL_HACK
-
-Could you use __PAGETABLE_P4D_FOLDED instead?
-
-> +static void __init p4d_clear_tests(struct mm_struct *mm, p4d_t *p4dp)
-> +{
-> +	p4d_t p4d = READ_ONCE(*p4dp);
-> +
-> +	if (mm_pud_folded(mm))
-> +		return;
-> +
-> +	p4d = __p4d(p4d_val(p4d) | RANDOM_ORVALUE);
-> +	WRITE_ONCE(*p4dp, p4d);
-> +	p4d_clear(p4dp);
-> +	p4d = READ_ONCE(*p4dp);
-> +	WARN_ON(!p4d_none(p4d));
-> +}
-
-Otherwise the patch looks fine. As per the comment on v13, make sure you
-don't break the build on any architecture, so this could either be an
-opt-in or patch those architectures before this patch is applied.
-
-Thanks.
-
--- 
-Catalin
+>  #define KVM_IPI_CLUSTER_SIZE    (2 * BITS_PER_LONG)
+> 
+>  static void __send_ipi_mask(const struct cpumask *mask, int vector)
+> @@ -619,9 +639,7 @@ static void __init kvm_guest_init(void)
+>          pv_ops.time.steal_clock = kvm_steal_clock;
+>      }
+> 
+> -    if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
+> -        !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
+> -        kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
+> +    if (pv_tlb_flush_supported()) {
+>          pv_ops.mmu.flush_tlb_others = kvm_flush_tlb_others;
+>          pv_ops.mmu.tlb_remove_table = tlb_remove_table;
+>      }
+> @@ -632,9 +650,7 @@ static void __init kvm_guest_init(void)
+>  #ifdef CONFIG_SMP
+>      smp_ops.smp_prepare_cpus = kvm_smp_prepare_cpus;
+>      smp_ops.smp_prepare_boot_cpu = kvm_smp_prepare_boot_cpu;
+> -    if (kvm_para_has_feature(KVM_FEATURE_PV_SCHED_YIELD) &&
+> -        !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
+> -        kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
+> +    if (pv_sched_yield_supported()) {
+>          smp_ops.send_call_func_ipi = kvm_smp_send_call_func_ipi;
+>          pr_info("KVM setup pv sched yield\n");
+>      }
+> @@ -700,7 +716,7 @@ static uint32_t __init kvm_detect(void)
+>  static void __init kvm_apic_init(void)
+>  {
+>  #if defined(CONFIG_SMP)
+> -    if (kvm_para_has_feature(KVM_FEATURE_PV_SEND_IPI))
+> +    if (pv_ipi_supported())
+>          kvm_setup_pv_ipi();
+>  #endif
+>  }
+> @@ -739,9 +755,7 @@ static __init int kvm_setup_pv_tlb_flush(void)
+>      if (!kvm_para_available() || nopv)
+>          return 0;
+> 
+> -    if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
+> -        !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
+> -        kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
+> +    if (pv_tlb_flush_supported()) {
+>          for_each_possible_cpu(cpu) {
+>              zalloc_cpumask_var_node(per_cpu_ptr(&__pv_tlb_mask, cpu),
+>                  GFP_KERNEL, cpu_to_node(cpu));
+> --
+> 2.7.4
