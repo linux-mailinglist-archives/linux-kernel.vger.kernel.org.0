@@ -2,95 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9B1C157465
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:18:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1432157454
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:15:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbgBJMS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:18:29 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42044 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727003AbgBJMS2 (ORCPT
+        id S1727548AbgBJMPE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:15:04 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:43474 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727029AbgBJMPE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:18:28 -0500
-Received: by mail-lf1-f66.google.com with SMTP id y19so4022735lfl.9
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 04:18:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HRc8fo3vz8PCS1Yui1Bgio/cnoEmzs/JvTxaOe6eVas=;
-        b=GUpjT9gHuQx2gQlQVFcoYwwo7YeMBzcjPIF7A+HVsnA+0I9rO3R8a0Eyxx60R5i3Im
-         AA77t2iY2P0+4ZeNr+LGv/BxOH2W63DqpCcMOaulkrQaFtm9mENZPAwDjxM52WHVBAru
-         1+IZrr1Or5ixBjrOhR+Tl644dSDbKaowXjR0k7uETEMHl9DjlloiXa+QIxHffLJ8gwQF
-         npLg1Yp8d5fxcv5ZBoF9cZnuJAm0fbLm5oA+cIaVA/UV7c1O5FkfBmQWxlapSxPU0rqc
-         UQaso90wxPeeHl1d2l0mV95dNxUDSm0IJcG+c1JzXIu3GxZW5QAokIUI3b0f+FnzUF0H
-         PRsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HRc8fo3vz8PCS1Yui1Bgio/cnoEmzs/JvTxaOe6eVas=;
-        b=eH/wJa4zkK8ahy7ll/xXi4/AvAjeeXX6lZ2FKAn4wN24C4O7NAYPfj+L7FkdyEcMVy
-         XJjmx4jN082ZoiMMYGS/r+etoD5bT2vp33zG2z5H/BImZS+OYYB5l6nWz2QXM/DiO5fo
-         Xx9OQHEQKoxmwVhF9rbDUn5wLdvEe0X6We0nI/Umfg+tjHUrLD8uzu/u/40/e0mYwEhU
-         Uw97jwLXOGsC4x1+IAKoIPNtgpgjzL1Vdgi/fMPaXlLXN+kmNEBNoBxcJ8GLHi+AHz6W
-         cYb4sWNTy57JGODEuxtSs52bdnWQexfIBpoxizSGz9zKw3RXVyfO/DBqfbprmhMrNFpJ
-         8dwQ==
-X-Gm-Message-State: APjAAAXmQy6DfryrfcdLdYejLaULYJOCimhWeVYwBoFcZtRTguzJ3uR4
-        sXl0FgTO6F9ONgZBSG69PzGJwPZ9tay9hgde0D3ygQ==
-X-Google-Smtp-Source: APXvYqw9v3mzj35qFJVR63kJU8jEJlDWyo91EsiOJGUIDkaX08FbvJDH5iQCPLZy99seAO1pGZP0RFPsAW/1pkLCgTo=
-X-Received: by 2002:a19:850a:: with SMTP id h10mr650759lfd.89.1581337106340;
- Mon, 10 Feb 2020 04:18:26 -0800 (PST)
+        Mon, 10 Feb 2020 07:15:04 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01ACEsrX098789;
+        Mon, 10 Feb 2020 06:14:54 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1581336894;
+        bh=SLpBExsKZLtK2SHmY9lMw5K33/QC+xtpwOOSBm+kc1I=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=vfsnzG50PyID/eSEXaNAjwpZk6RY2mHtR19qpsQxppBrTL5S0M5G5L/DcLYs2rah7
+         v9wCswU+oLzVr8BfI30suD2f2+OiSRffhtL48F2uBkmwO1NJrbgskx2wvIrkKFOiNO
+         yTUo8bRNk4UJmJJiWGGXVM7gCfWFPmlxgINzbFYA=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01ACEsmo062021
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Feb 2020 06:14:54 -0600
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 10
+ Feb 2020 06:14:53 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 10 Feb 2020 06:14:54 -0600
+Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01ACEp0N103304;
+        Mon, 10 Feb 2020 06:14:52 -0600
+Subject: Re: [PATCH] phy: core: Add consumer device link support
+To:     Alexandre Torgue <alexandre.torgue@st.com>,
+        youling 257 <youling257@gmail.com>
+CC:     <yoshihiro.shimoda.uh@renesas.com>, <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <saravanak@google.com>
+References: <20191104143713.11137-1-alexandre.torgue@st.com>
+ <20200206133918.15012-1-youling257@gmail.com>
+ <0c4a37a9-0a2e-e698-f423-53060854ea05@ti.com>
+ <CAOzgRdb5QfJDQzbtoHQry4wxUg52LwX5XFCPzzaYa=z+RqNWOQ@mail.gmail.com>
+ <8bd72269-16ae-b24a-7144-44d22d668dc6@ti.com>
+ <1cd5885d-7db4-59b9-ef2d-e3556f60ca68@st.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <c2950949-6a9d-afe0-7c44-4378018b9d95@ti.com>
+Date:   Mon, 10 Feb 2020 17:48:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-References: <20200121183748.68662-1-swboyd@chromium.org> <CACRpkdbgfNuJCgOWMBGwf1FoF+9cpQACnGH7Uon5Y6X+kN+x_w@mail.gmail.com>
- <5e29f186.1c69fb81.61d8.83b9@mx.google.com> <CAD=FV=W=NjMf5UqpSaY-VZfE013Ut=qe2EgSY2UErXM3eqpsGQ@mail.gmail.com>
-In-Reply-To: <CAD=FV=W=NjMf5UqpSaY-VZfE013Ut=qe2EgSY2UErXM3eqpsGQ@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 10 Feb 2020 13:18:15 +0100
-Message-ID: <CACRpkdZDYT4m4i0cbuLRbr4H4sJPHjpf7hirMf1LkNttyuKWGA@mail.gmail.com>
-Subject: Re: [PATCH] spmi: pmic-arb: Set lockdep class for hierarchical irq domains
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>, Douglas Anderson
-        <dianders@chromium.org>, Brian Masney <masneyb@onstation.org>, Lina Iyer
-        <ilina@codeaurora.org>, Maulik Shah <mkshah@codeaurora.org>, Bjorn
-        Andersson" <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1cd5885d-7db4-59b9-ef2d-e3556f60ca68@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 3, 2020 at 8:02 PM Doug Anderson <dianders@chromium.org> wrote:
-> On Thu, Jan 23, 2020 at 11:18 AM Stephen Boyd <swboyd@chromium.org> wrote:
-> >
-> > Quoting Linus Walleij (2020-01-23 07:29:31)
+Hi,
 
-> > > > Fixes: 12a9eeaebba3 ("spmi: pmic-arb: convert to v2 irq interfaces to support hierarchical IRQ chips")
-> > > > Cc: Douglas Anderson <dianders@chromium.org>
-> > > > Cc: Brian Masney <masneyb@onstation.org>
-> > > > Cc: Lina Iyer <ilina@codeaurora.org>
-> > > > Cc: Maulik Shah <mkshah@codeaurora.org>
-> > > > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> > >
-> > > LGTM
-> > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> >
-> > Thanks. I was hoping you would apply it given that the commit it's
-> > fixing was applied by you. I can send it to Gregkh or have some qcom
-> > person pick it up though if you prefer.
->
-> It appears that the commit this is Fixing is now in Linus's tree but
-> Stephen's fix is still nowhere to be found.  Any update on what the
-> plan is?
+On 10/02/20 5:00 PM, Alexandre Torgue wrote:
+> Hi Kishon,
+> 
+> On 2/10/20 9:08 AM, Kishon Vijay Abraham I wrote:
+>> Hi Alexandre,
+>>
+>> On 07/02/20 12:27 PM, youling 257 wrote:
+>>> test this diff, dwc3 work for my device, thanks.
+>>>
+>>> 2020-02-07 13:16 GMT+08:00, Kishon Vijay Abraham I <kishon@ti.com>:
+>>>> Hi,
+>>>>
+>>>> On 06/02/20 7:09 PM, youling257 wrote:
+>>>>> This patch cause "dwc3 dwc3.3.auto: failed to create device link to
+>>>>> dwc3.3.auto.ulpi" problem.
+>>>>> https://bugzilla.kernel.org/show_bug.cgi?id=206435
+>>>>
+>>>> I'm suspecting there is some sort of reverse dependency with dwc3 ULPI.
+>>>> Can you try the following diff?
+>>>>
+>>>> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+>>>> index 2eb28cc2d2dc..397311dcb116 100644
+>>>> --- a/drivers/phy/phy-core.c
+>>>> +++ b/drivers/phy/phy-core.c
+>>>> @@ -687,7 +687,7 @@ struct phy *phy_get(struct device *dev, const char
+>>>> *string)
+>>>>
+>>>>          get_device(&phy->dev);
+>>>>
+>>>> -       link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
+>>>> +       link = device_link_add(dev, &phy->dev,
+>>>> DL_FLAG_SYNC_STATE_ONLY);
+>>>>          if (!link) {
+>>>>                  dev_err(dev, "failed to create device link to %s\n",
+>>>>                          dev_name(phy->dev.parent));
+>>>> @@ -802,7 +802,7 @@ struct phy *devm_of_phy_get(struct device *dev,
+>>>> struct device_node *np,
+>>>>                  return phy;
+>>>>          }
+>>>>
+>>>> -       link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
+>>>> +       link = device_link_add(dev, &phy->dev,
+>>>> DL_FLAG_SYNC_STATE_ONLY);
+>>>>          if (!link) {
+>>>>                  dev_err(dev, "failed to create device link to %s\n",
+>>>>                          dev_name(phy->dev.parent));
+>>>> @@ -851,7 +851,7 @@ struct phy *devm_of_phy_get_by_index(struct device
+>>>> *dev, struct device_node *np,
+>>>>          *ptr = phy;
+>>>>          devres_add(dev, ptr);
+>>>>
+>>>> -       link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
+>>>> +       link = device_link_add(dev, &phy->dev,
+>>>> DL_FLAG_SYNC_STATE_ONLY);
+>>>>          if (!link) {
+>>>>                  dev_err(dev, "failed to create device link to %s\n",
+>>>>                          dev_name(phy->dev.parent));Parent
+>>
+>> Can you check if this doesn't affect the suspend/resume ordering?
+> 
+> With this fix, suspend/resume ordering is broken on my side. What do you
+> think to keep the STATELESS flag and to only display a warn if
+> "device_link_add" returns an error ? It's not "smart" but it could
+> solved our issue.
 
-I just applied the patch, it's a simple solution :D
-
-I was just worried whether I have jurisdiction over driver/spmi
-but let's hope noone gets angry.
-
-Yours,
-Linus Walleij
+yeah, that sounds reasonable for now. Can you find out the dependencies
+between dwc3 and ulpi and what exactly breaks. That would help Saravana
+to suggest a fix?
+> 
+> As a lot of improvements have been recently done on device link topic by
+> Saravana, we could check with him what is the way to follow.
+Thanks
+Kishon
