@@ -2,42 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98CAC157C40
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:36:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EEE3157C5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:36:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbgBJMfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:35:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51524 "EHLO mail.kernel.org"
+        id S1731701AbgBJNgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:36:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727698AbgBJMfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:35:07 -0500
+        id S1727732AbgBJMfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:09 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95F6220873;
-        Mon, 10 Feb 2020 12:35:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2618E21569;
+        Mon, 10 Feb 2020 12:35:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338106;
-        bh=vB3quujGHwbWE7glnHEKGAGUsRN3zVu3/hhNce9Q+YY=;
+        s=default; t=1581338108;
+        bh=T5SCSuYet7A0qikb4Uzy060FpGLhW8As74cG32LteVw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K189u0e5454eUVkdh46fYdJBSorxOb39PQQpRM2Z8rsiXJFAIZAXHjxcFyS1P0eA0
-         I5IPShQVHKCDOf8ZTZHL8uE3kRBo8kByuSGh8XEZfGrTxlu1IkbIyihzEUbR98ZV9V
-         tVNeSsSoKE/vgaQWlEYXOrHXCtHD9DygLlR4XObg=
+        b=fmSxrZcc5XIrQbg92ZNsLe6ojXiyui4+nRl47UfWMmmuMgnyJRTMISWZmjryvpPct
+         K5lqzgDU8nME0G6Wy6A0A22DDnVQxXtqvH5cgzskjLd6a4PSuqwqO7uHex7EbKSQ8t
+         O8yDNfhi1AjryYKMrX7S8rloPGEayQN+P/qbt2+M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lu Shuaibing <shuaibinglu@126.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Manfred Spraul <manfred@colorfullife.com>,
-        NeilBrown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 028/195] ipc/msg.c: consolidate all xxxctl_down() functions
-Date:   Mon, 10 Feb 2020 04:31:26 -0800
-Message-Id: <20200210122309.058792478@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH 4.19 030/195] rcu: Avoid data-race in rcu_gp_fqs_check_wake()
+Date:   Mon, 10 Feb 2020 04:31:28 -0800
+Message-Id: <20200210122309.492470971@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
 References: <20200210122305.731206734@linuxfoundation.org>
@@ -50,154 +44,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lu Shuaibing <shuaibinglu@126.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 889b331724c82c11e15ba0a60979cf7bded0a26c upstream.
+commit 6935c3983b246d5fbfebd3b891c825e65c118f2d upstream.
 
-A use of uninitialized memory in msgctl_down() because msqid64 in
-ksys_msgctl hasn't been initialized.  The local | msqid64 | is created in
-ksys_msgctl() and then passed into msgctl_down().  Along the way msqid64
-is never initialized before msgctl_down() checks msqid64->msg_qbytes.
+The rcu_gp_fqs_check_wake() function uses rcu_preempt_blocked_readers_cgp()
+to read ->gp_tasks while other cpus might overwrite this field.
 
-KUMSAN(KernelUninitializedMemorySantizer, a new error detection tool)
-reports:
+We need READ_ONCE()/WRITE_ONCE() pairs to avoid compiler
+tricks and KCSAN splats like the following :
 
-==================================================================
-BUG: KUMSAN: use of uninitialized memory in msgctl_down+0x94/0x300
-Read of size 8 at addr ffff88806bb97eb8 by task syz-executor707/2022
+BUG: KCSAN: data-race in rcu_gp_fqs_check_wake / rcu_preempt_deferred_qs_irqrestore
 
-CPU: 0 PID: 2022 Comm: syz-executor707 Not tainted 5.2.0-rc4+ #63
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-Call Trace:
- dump_stack+0x75/0xae
- __kumsan_report+0x17c/0x3e6
- kumsan_report+0xe/0x20
- msgctl_down+0x94/0x300
- ksys_msgctl.constprop.14+0xef/0x260
- do_syscall_64+0x7e/0x1f0
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x4400e9
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffd869e0598 EFLAGS: 00000246 ORIG_RAX: 0000000000000047
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004400e9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000246 R12: 0000000000401970
-R13: 0000000000401a00 R14: 0000000000000000 R15: 0000000000000000
+write to 0xffffffff85a7f190 of 8 bytes by task 7317 on cpu 0:
+ rcu_preempt_deferred_qs_irqrestore+0x43d/0x580 kernel/rcu/tree_plugin.h:507
+ rcu_read_unlock_special+0xec/0x370 kernel/rcu/tree_plugin.h:659
+ __rcu_read_unlock+0xcf/0xe0 kernel/rcu/tree_plugin.h:394
+ rcu_read_unlock include/linux/rcupdate.h:645 [inline]
+ __ip_queue_xmit+0x3b0/0xa40 net/ipv4/ip_output.c:533
+ ip_queue_xmit+0x45/0x60 include/net/ip.h:236
+ __tcp_transmit_skb+0xdeb/0x1cd0 net/ipv4/tcp_output.c:1158
+ __tcp_send_ack+0x246/0x300 net/ipv4/tcp_output.c:3685
+ tcp_send_ack+0x34/0x40 net/ipv4/tcp_output.c:3691
+ tcp_cleanup_rbuf+0x130/0x360 net/ipv4/tcp.c:1575
+ tcp_recvmsg+0x633/0x1a30 net/ipv4/tcp.c:2179
+ inet_recvmsg+0xbb/0x250 net/ipv4/af_inet.c:838
+ sock_recvmsg_nosec net/socket.c:871 [inline]
+ sock_recvmsg net/socket.c:889 [inline]
+ sock_recvmsg+0x92/0xb0 net/socket.c:885
+ sock_read_iter+0x15f/0x1e0 net/socket.c:967
+ call_read_iter include/linux/fs.h:1864 [inline]
+ new_sync_read+0x389/0x4f0 fs/read_write.c:414
 
-The buggy address belongs to the page:
-page:ffffea0001aee5c0 refcount:0 mapcount:0 mapping:0000000000000000 index:0x0
-flags: 0x100000000000000()
-raw: 0100000000000000 0000000000000000 ffffffff01ae0101 0000000000000000
-raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kumsan: bad access detected
-==================================================================
+read to 0xffffffff85a7f190 of 8 bytes by task 10 on cpu 1:
+ rcu_gp_fqs_check_wake kernel/rcu/tree.c:1556 [inline]
+ rcu_gp_fqs_check_wake+0x93/0xd0 kernel/rcu/tree.c:1546
+ rcu_gp_fqs_loop+0x36c/0x580 kernel/rcu/tree.c:1611
+ rcu_gp_kthread+0x143/0x220 kernel/rcu/tree.c:1768
+ kthread+0x1d4/0x200 drivers/block/aoe/aoecmd.c:1253
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:352
 
-Syzkaller reproducer:
-msgctl$IPC_RMID(0x0, 0x0)
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 PID: 10 Comm: rcu_preempt Not tainted 5.3.0+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 
-C reproducer:
-// autogenerated by syzkaller (https://github.com/google/syzkaller)
-
-int main(void)
-{
-  syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
-  syscall(__NR_msgctl, 0, 0, 0);
-  return 0;
-}
-
-[natechancellor@gmail.com: adjust indentation in ksys_msgctl]
-  Link: https://github.com/ClangBuiltLinux/linux/issues/829
-  Link: http://lkml.kernel.org/r/20191218032932.37479-1-natechancellor@gmail.com
-Link: http://lkml.kernel.org/r/20190613014044.24234-1-shuaibinglu@126.com
-Signed-off-by: Lu Shuaibing <shuaibinglu@126.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Manfred Spraul <manfred@colorfullife.com>
-Cc: NeilBrown <neilb@suse.com>
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 4.19 028/195] ipc/msg.c: consolidate all xxxctl_down() functions
-
-Each line here overflows 80 cols by exactly one character.  Delete one tab
-per line to fix.
-
-Cc: Shaohua Li <shli@fb.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+[ paulmck:  Added another READ_ONCE() for RCU CPU stall warnings. ]
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- ipc/msg.c |   19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ kernel/rcu/tree_plugin.h |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/ipc/msg.c
-+++ b/ipc/msg.c
-@@ -377,7 +377,7 @@ copy_msqid_from_user(struct msqid64_ds *
-  * NOTE: no locks must be held, the rwsem is taken inside this function.
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -267,7 +267,7 @@ static void rcu_preempt_ctxt_queue(struc
+ 	 * blocked tasks.
+ 	 */
+ 	if (!rnp->gp_tasks && (blkd_state & RCU_GP_BLKD)) {
+-		rnp->gp_tasks = &t->rcu_node_entry;
++		WRITE_ONCE(rnp->gp_tasks, &t->rcu_node_entry);
+ 		WARN_ON_ONCE(rnp->completedqs == rnp->gp_seq);
+ 	}
+ 	if (!rnp->exp_tasks && (blkd_state & RCU_EXP_BLKD))
+@@ -392,7 +392,7 @@ static void rcu_preempt_note_context_swi
   */
- static int msgctl_down(struct ipc_namespace *ns, int msqid, int cmd,
--			struct msqid64_ds *msqid64)
-+			struct ipc64_perm *perm, int msg_qbytes)
+ static int rcu_preempt_blocked_readers_cgp(struct rcu_node *rnp)
  {
- 	struct kern_ipc_perm *ipcp;
- 	struct msg_queue *msq;
-@@ -387,7 +387,7 @@ static int msgctl_down(struct ipc_namesp
- 	rcu_read_lock();
+-	return rnp->gp_tasks != NULL;
++	return READ_ONCE(rnp->gp_tasks) != NULL;
+ }
  
- 	ipcp = ipcctl_obtain_check(ns, &msg_ids(ns), msqid, cmd,
--				      &msqid64->msg_perm, msqid64->msg_qbytes);
-+				      perm, msg_qbytes);
- 	if (IS_ERR(ipcp)) {
- 		err = PTR_ERR(ipcp);
- 		goto out_unlock1;
-@@ -409,18 +409,18 @@ static int msgctl_down(struct ipc_namesp
- 	{
- 		DEFINE_WAKE_Q(wake_q);
- 
--		if (msqid64->msg_qbytes > ns->msg_ctlmnb &&
-+		if (msg_qbytes > ns->msg_ctlmnb &&
- 		    !capable(CAP_SYS_RESOURCE)) {
- 			err = -EPERM;
- 			goto out_unlock1;
- 		}
- 
- 		ipc_lock_object(&msq->q_perm);
--		err = ipc_update_perm(&msqid64->msg_perm, ipcp);
-+		err = ipc_update_perm(perm, ipcp);
- 		if (err)
- 			goto out_unlock0;
- 
--		msq->q_qbytes = msqid64->msg_qbytes;
-+		msq->q_qbytes = msg_qbytes;
- 
- 		msq->q_ctime = ktime_get_real_seconds();
- 		/*
-@@ -603,9 +603,10 @@ long ksys_msgctl(int msqid, int cmd, str
- 	case IPC_SET:
- 		if (copy_msqid_from_user(&msqid64, buf, version))
- 			return -EFAULT;
--		/* fallthru */
-+		return msgctl_down(ns, msqid, cmd, &msqid64.msg_perm,
-+				   msqid64.msg_qbytes);
- 	case IPC_RMID:
--		return msgctl_down(ns, msqid, cmd, &msqid64);
-+		return msgctl_down(ns, msqid, cmd, NULL, 0);
- 	default:
- 		return  -EINVAL;
- 	}
-@@ -724,9 +725,9 @@ long compat_ksys_msgctl(int msqid, int c
- 	case IPC_SET:
- 		if (copy_compat_msqid_from_user(&msqid64, uptr, version))
- 			return -EFAULT;
--		/* fallthru */
-+		return msgctl_down(ns, msqid, cmd, &msqid64.msg_perm, msqid64.msg_qbytes);
- 	case IPC_RMID:
--		return msgctl_down(ns, msqid, cmd, &msqid64);
-+		return msgctl_down(ns, msqid, cmd, NULL, 0);
- 	default:
- 		return -EINVAL;
- 	}
+ /*
+@@ -557,7 +557,7 @@ static void rcu_read_unlock_special(stru
+ 		trace_rcu_unlock_preempted_task(TPS("rcu_preempt"),
+ 						rnp->gp_seq, t->pid);
+ 		if (&t->rcu_node_entry == rnp->gp_tasks)
+-			rnp->gp_tasks = np;
++			WRITE_ONCE(rnp->gp_tasks, np);
+ 		if (&t->rcu_node_entry == rnp->exp_tasks)
+ 			rnp->exp_tasks = np;
+ 		if (IS_ENABLED(CONFIG_RCU_BOOST)) {
+@@ -716,7 +716,7 @@ rcu_preempt_check_blocked_tasks(struct r
+ 		dump_blkd_tasks(rsp, rnp, 10);
+ 	if (rcu_preempt_has_tasks(rnp) &&
+ 	    (rnp->qsmaskinit || rnp->wait_blkd_tasks)) {
+-		rnp->gp_tasks = rnp->blkd_tasks.next;
++		WRITE_ONCE(rnp->gp_tasks, rnp->blkd_tasks.next);
+ 		t = container_of(rnp->gp_tasks, struct task_struct,
+ 				 rcu_node_entry);
+ 		trace_rcu_unlock_preempted_task(TPS("rcu_preempt-GPS"),
+@@ -883,7 +883,8 @@ dump_blkd_tasks(struct rcu_state *rsp, s
+ 		pr_info("%s: %d:%d ->qsmask %#lx ->qsmaskinit %#lx ->qsmaskinitnext %#lx\n",
+ 			__func__, rnp1->grplo, rnp1->grphi, rnp1->qsmask, rnp1->qsmaskinit, rnp1->qsmaskinitnext);
+ 	pr_info("%s: ->gp_tasks %p ->boost_tasks %p ->exp_tasks %p\n",
+-		__func__, rnp->gp_tasks, rnp->boost_tasks, rnp->exp_tasks);
++		__func__, READ_ONCE(rnp->gp_tasks), rnp->boost_tasks,
++		rnp->exp_tasks);
+ 	pr_info("%s: ->blkd_tasks", __func__);
+ 	i = 0;
+ 	list_for_each(lhp, &rnp->blkd_tasks) {
 
 
