@@ -2,174 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0284158304
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 19:53:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDCD6158306
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 19:53:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbgBJSxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 13:53:34 -0500
-Received: from smtprelay0223.hostedemail.com ([216.40.44.223]:45833 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726991AbgBJSxd (ORCPT
+        id S1727764AbgBJSxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 13:53:39 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:17552 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726991AbgBJSxi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 13:53:33 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 52FC41F10;
-        Mon, 10 Feb 2020 18:53:32 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:69:355:379:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1543:1593:1594:1711:1712:1730:1747:1777:1792:2197:2198:2199:2200:2393:2559:2562:2828:3138:3139:3140:3141:3142:3354:3653:3865:3866:3867:3868:3874:4321:4605:5007:10004:10400:10432:10433:10848:11026:11473:11658:11914:12043:12291:12296:12297:12438:12555:12683:12760:12986:13221:13229:13439:14181:14394:14659:14721:19903:19997:21080:21221:21433:21627:21660:21819:21990:30003:30022:30029:30030:30054:30055:30070,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: bone32_761312919442d
-X-Filterd-Recvd-Size: 4953
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf06.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 10 Feb 2020 18:53:31 +0000 (UTC)
-Message-ID: <ebaa2f7c8f94e25520981945cddcc1982e70e072.camel@perches.com>
-Subject: [PATCH] checkpatch: Remove email address comment from email address
- comparisons
-From:   Joe Perches <joe@perches.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Whitcroft <apw@canonical.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Mon, 10 Feb 2020 10:52:16 -0800
-In-Reply-To: <20200207123334.GT14946@hirez.programming.kicks-ass.net>
-References: <20200131124531.623136425@infradead.org>
-         <20200131125403.882175409@infradead.org>
-         <CAMuHMdWa8R=3fHLV7W_ni8An_1CwOoJxErnnDA3t4rq2XN+QzA@mail.gmail.com>
-         <20200207113417.GG14914@hirez.programming.kicks-ass.net>
-         <CAMuHMdW8hWpSsf31P0hC=b23GCx4oFwfaVYKQ1qrZfwFCPK5-Q@mail.gmail.com>
-         <20200207123035.GI14914@hirez.programming.kicks-ass.net>
-         <20200207123334.GT14946@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Mon, 10 Feb 2020 13:53:38 -0500
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.42/8.16.0.42) with SMTP id 01AIZYDe005271;
+        Mon, 10 Feb 2020 10:52:23 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=jOzHjZSNYfUX+qChiPwoFqMPOXgtOqIStR+HioRkBM4=;
+ b=KI8NQIRX/+KMnmUR+xfnxm3IxngPn0ZPodInRAOOWKPg7b+1DOjToKUc+AA8/FcndN3o
+ Eomodnh2sh/a1ahZIctQZKHcRAtNEAv6XXsAB4R486G5sfPHu3gMd3yXyg0ZVNiGHuxs
+ 3TDCpi6BAVSF7DqioktApZFmV9FudwZdsyY= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0089730.ppops.net with ESMTP id 2y2ftep05d-13
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 10 Feb 2020 10:52:23 -0800
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Mon, 10 Feb 2020 10:52:18 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AZx6tqCmYJdOB94coix87OhDxN0TxG6hCy7NAliOxmBSZtdgUMP0RtJ/Xv2Hn7D6ZzH8w2Q2+0d/qsn3JB97jLooEiXGHBRMRCUK9waXeMIMK1OPWi+ZfLfbCUFLAT0clJDCeYpUOBXDwpAFkmpbrNKbexANNwsW7SeCvkweeEhKESah5eS/cPGx66euOx2S7NbuLkOkmj9D9yi9wCbBwscvOzNsHvN21Wu1634iwhee649IzXwpgamBe2KtURJv93W1iXdAkSDzACbAebF/CxUxt85FLJCtw3tyIUkJvFfrw6HFDCboiSID7XbBzffLPa2V+dmK6liNje4nLNWufg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jOzHjZSNYfUX+qChiPwoFqMPOXgtOqIStR+HioRkBM4=;
+ b=jM5Qjb/OwRW1Md7ZbCH3Qs1qs6YC6BDiNaPEvLsu+h2OyzfXTnwbJzPjci83T4hVrl1lsqlPmaNFPhj9IHASNyI+ShpNbka52gDBGrGBof9T285vuYsaG12lAVXAKkDf2bSTAd5DOCAUdGiDJb31Y2Gj58j1v6nlxO/ye8jqeJMt9Jx+xGnLXlpuwVvexOVrJwSekM3e9uTofvaDWdIcLH3A9btxkQJuAf7ctyCgDpCC5B58OTXEULQU+jwhqiAzYmH2qIJznBm8rT44MrBbo6+nhfdF8BgqTUrcmR/2+QgBwtXTrT/ioyVaBWy0uknzJBhWpSqkY/inMgQ4DD7NxQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jOzHjZSNYfUX+qChiPwoFqMPOXgtOqIStR+HioRkBM4=;
+ b=JBnrs1qXPbeccnTpZPnSA5vzUTncpYXOFBcbBmsG5Y3HRfbDhuGiLG5vdchwZoWHkttE2JZLAfzrFufIpmxJ18KNRIZc5Z4XSEVH6bECnfhAP9ubzMU1kkN5NrsOT73DUjUklwYWBGh3JwGDqQibclVBGUEzE50wddveYtMAsz0=
+Received: from BYAPR15MB3029.namprd15.prod.outlook.com (20.178.238.208) by
+ BYAPR15MB2485.namprd15.prod.outlook.com (52.135.194.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.25; Mon, 10 Feb 2020 18:52:18 +0000
+Received: from BYAPR15MB3029.namprd15.prod.outlook.com
+ ([fe80::3541:85d8:c4c8:760d]) by BYAPR15MB3029.namprd15.prod.outlook.com
+ ([fe80::3541:85d8:c4c8:760d%3]) with mapi id 15.20.2707.028; Mon, 10 Feb 2020
+ 18:52:17 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     Kim Phillips <kim.phillips@amd.com>
+CC:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        "Namhyung Kim" <namhyung@kernel.org>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>
+Subject: Re: [PATCH 2/3 v2] perf symbols: Update the list of kernel idle
+ symbols
+Thread-Topic: [PATCH 2/3 v2] perf symbols: Update the list of kernel idle
+ symbols
+Thread-Index: AQHV3gtQ30a2WiQpFEWvpind6FUCXagUyleA
+Date:   Mon, 10 Feb 2020 18:52:17 +0000
+Message-ID: <A3A96AB6-C21C-4F3D-A69C-C968D43195B2@fb.com>
+References: <20200207230613.26709-1-kim.phillips@amd.com>
+ <20200207230613.26709-2-kim.phillips@amd.com>
+In-Reply-To: <20200207230613.26709-2-kim.phillips@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3608.40.2.2.4)
+x-originating-ip: [2620:10d:c090:200::6281]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3baa7e84-b04f-44a3-3841-08d7ae5a5a28
+x-ms-traffictypediagnostic: BYAPR15MB2485:
+x-microsoft-antispam-prvs: <BYAPR15MB248591FCF463BD856A075C66B3190@BYAPR15MB2485.namprd15.prod.outlook.com>
+x-fb-source: Internal
+x-ms-oob-tlc-oobclassifiers: OLM:3276;
+x-forefront-prvs: 03094A4065
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(396003)(346002)(376002)(136003)(189003)(199004)(5660300002)(2906002)(6486002)(7416002)(8676002)(316002)(81166006)(81156014)(8936002)(4744005)(6512007)(478600001)(86362001)(186003)(53546011)(6506007)(4326008)(54906003)(36756003)(6916009)(33656002)(71200400001)(66446008)(91956017)(66556008)(76116006)(66476007)(2616005)(66946007)(64756008);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2485;H:BYAPR15MB3029.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: dCksaMBr9CjfaKOpM9k55oi58S9O4K/ealjXRY5ML/HZgmeR7RQRuNCXUB7vU5gnFaZXZP/x/g9d+GR7iAkT7oGHp5oaXlFyCkyLyHj3opOdJoKcc5Lwdh285UgcvoWi5fAr0T1+I5kR4OdO14ysfPCGFQkgm52MVHojWku2iNvjPdhMyjicgPEhr4IKO3/hWpbZoGAsuh+CEQny+C7n9S+9gHeIoOVycl9zbGpFXFW2IL+/NC3H/zPhnu5cyPSKlkbTHefMUoWZhKYxc7GKLd+M1BRiJtswcYkQgn/HP2iVDXJLJoW3Z8z5UYBk4dZ9QWZmWxCZxLwYBAxZ/hVIF7JLlCUFXN97y2fCh63C7VidgPbvWNnuQa09X8w8kVOu+IhftwNc4kvkyZnwAJgUEy+UpcUZth2BSMwnCQA7IecXxOheOKXvY2BkrfQjgiaV
+x-ms-exchange-antispam-messagedata: 3AT+Ras0Z0pLeO6ExP0yNm0/lYT+bKNbaBi/SHLOuTQAeIq1pRBhhfqm44ugdPAUxX2c7/nYzdmdl9JX/JoIdeRLaJp0U4zKedtvIr1cQZUZP4rtYZGsKHOaLbzAJm/ClABEM9kqM1sGhLLB+8PJf2nt/OAHur/hURYbFdBXxOI=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <49F800BADE5E8540B8ECEE84645D77FF@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3baa7e84-b04f-44a3-3841-08d7ae5a5a28
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Feb 2020 18:52:17.8060
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 2RCp8okDfsmV7pyp2RrBcB5vcYiN8TL87e+8VeuMb9DAPsEg8OpuSWZVYaY0yD0c89vBKENF0be80Qukz5nkvA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2485
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-10_06:2020-02-10,2020-02-10 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxscore=0 bulkscore=0
+ phishscore=0 priorityscore=1501 spamscore=0 malwarescore=0
+ lowpriorityscore=0 clxscore=1015 adultscore=0 mlxlogscore=999
+ suspectscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2001150001 definitions=main-2002100137
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-About 2% of the last 100K commits have email addresses that include an
-RFC2822 compliant comment like:
 
-	Peter Zijlstra (Intel) <peterz@infradead.org>
 
-checkpatch currently does a comparison of the complete name and address
-to the submitted author to determine if the author has signed-off and
-emits a warning if the exact email names and addresses do not match.
+> On Feb 7, 2020, at 3:06 PM, Kim Phillips <kim.phillips@amd.com> wrote:
+>=20
+> "acpi_idle_do_entry", "acpi_processor_ffh_cstate_enter", and "idle_cpu"
+> appear in 'perf top' output, at least on AMD systems.
+>=20
+> Add them to perf's idle_symbols list, so they don't dominate 'perf top'
+> output.
+>=20
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Cong Wang <xiyou.wangcong@gmail.com>
+> Cc: Andi Kleen <ak@linux.intel.com>
+> Cc: Jin Yao <yao.jin@linux.intel.com>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Kim Phillips <kim.phillips@amd.com>
+> Cc: Song Liu <songliubraving@fb.com>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: linux-perf-users@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Acked-by: Jiri Olsa <jolsa@redhat.com>
+> Signed-off-by: Kim Phillips <kim.phillips@amd.com>
 
-Unfortunately, the author email address can be written without the comment
-like:
-
-	Peter Zijlstra <peterz@infradead.org>
-
-Add logic to compare the comment stripped email addresses to avoid this
-warning.
-
-Signed-off-by: Joe Perches <joe@perches.com>
-Reported-by: Peter Zijlstra <peterz@infradead.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- scripts/checkpatch.pl | 39 +++++++++++++++++++++++++++++----------
- 1 file changed, 29 insertions(+), 10 deletions(-)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index f3b8434..17637d0 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -1132,6 +1132,7 @@ sub parse_email {
- 	my ($formatted_email) = @_;
- 
- 	my $name = "";
-+	my $name_comment = "";
- 	my $address = "";
- 	my $comment = "";
- 
-@@ -1164,6 +1165,10 @@ sub parse_email {
- 
- 	$name = trim($name);
- 	$name =~ s/^\"|\"$//g;
-+	$name =~ s/(\s*\([^\)]+\))\s*//;
-+	if (defined($1)) {
-+		$name_comment = trim($1);
-+	}
- 	$address = trim($address);
- 	$address =~ s/^\<|\>$//g;
- 
-@@ -1172,7 +1177,7 @@ sub parse_email {
- 		$name = "\"$name\"";
- 	}
- 
--	return ($name, $address, $comment);
-+	return ($name, $name_comment, $address, $comment);
- }
- 
- sub format_email {
-@@ -1198,6 +1203,23 @@ sub format_email {
- 	return $formatted_email;
- }
- 
-+sub reformat_email {
-+	my ($email) = @_;
-+
-+	my ($email_name, $name_comment, $email_address, $comment) = parse_email($email);
-+	return format_email($email_name, $email_address);
-+}
-+
-+sub same_email_addresses {
-+	my ($email1, $email2) = @_;
-+
-+	my ($email1_name, $name1_comment, $email1_address, $comment1) = parse_email($email1);
-+	my ($email2_name, $name2_comment, $email2_address, $comment2) = parse_email($email2);
-+
-+	return $email1_name eq $email2_name &&
-+	       $email1_address eq $email2_address;
-+}
-+
- sub which {
- 	my ($bin) = @_;
- 
-@@ -2618,17 +2640,16 @@ sub process {
- 			$author = $1;
- 			$author = encode("utf8", $author) if ($line =~ /=\?utf-8\?/i);
- 			$author =~ s/"//g;
-+			$author = reformat_email($author);
- 		}
- 
- # Check the patch for a signoff:
--		if ($line =~ /^\s*signed-off-by:/i) {
-+		if ($line =~ /^\s*signed-off-by:\s*(.*)/i) {
- 			$signoff++;
- 			$in_commit_log = 0;
- 			if ($author ne '') {
--				my $l = $line;
--				$l =~ s/"//g;
--				if ($l =~ /^\s*signed-off-by:\s*\Q$author\E/i) {
--				    $authorsignoff = 1;
-+				if (same_email_addresses($1, $author)) {
-+					$authorsignoff = 1;
- 				}
- 			}
- 		}
-@@ -2678,7 +2699,7 @@ sub process {
- 				}
- 			}
- 
--			my ($email_name, $email_address, $comment) = parse_email($email);
-+			my ($email_name, $name_comment, $email_address, $comment) = parse_email($email);
- 			my $suggested_email = format_email(($email_name, $email_address));
- 			if ($suggested_email eq "") {
- 				ERROR("BAD_SIGN_OFF",
-@@ -2689,9 +2710,7 @@ sub process {
- 				$dequoted =~ s/" </ </;
- 				# Don't force email to have quotes
- 				# Allow just an angle bracketed address
--				if ("$dequoted$comment" ne $email &&
--				    "<$email_address>$comment" ne $email &&
--				    "$suggested_email$comment" ne $email) {
-+				if (!same_email_addresses($email, $suggested_email)) {
- 					WARN("BAD_SIGN_OFF",
- 					     "email address '$email' might be better as '$suggested_email$comment'\n" . $herecurr);
- 				}
-
+Acked-by: Song Liu <songliubraving@fb.com>
 
