@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92937157612
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9242A157523
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:40:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730382AbgBJMn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:43:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40016 "EHLO mail.kernel.org"
+        id S1729275AbgBJMi4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:38:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728523AbgBJMkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:18 -0500
+        id S1728094AbgBJMhM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:12 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6C7520661;
-        Mon, 10 Feb 2020 12:40:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B591520661;
+        Mon, 10 Feb 2020 12:37:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338417;
-        bh=EtqAip2wnqvoXOp3+xaMnhpjYdXXYLsB5O4YTrNPBjs=;
+        s=default; t=1581338231;
+        bh=8u5vfo0W6dwew4wkxSb7nqRjuWXE9FNdYdLLyBEAE/Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QTTokeqB0vIu/BU2w55ZnrN7GSlsF7Gu/etS4zcOBLnmuyhdkAYTk9tHAfXaWuZRq
-         dXtAZ7dqwWql21AKoYO5SXcwep0Dk0GH9M8C54Kt/L9/cHFN6zGbxBhDmsgZqwlpBx
-         VqwefaYO6AyOXlTWOloj/Wa6pl6QhViu7c+Gyg1g=
+        b=Jyu1VzRKK3ndX7scbQLs04EUSl/ZSGe/lO2RCTTQZd/YHn25m7JW9zjfF0NeZ43M2
+         6bAmkBZ29BemFwVuk2poW1akFBV0KFXX8blCQiNOa37FIhAOd01kYkq4vtAywF748o
+         SrIZXlgduh2mL6dV8UFL6u8epyTIehoDUR0InkNs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gilad Ben-Yossef <gilad@benyossef.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.5 116/367] crypto: ccree - fix AEAD decrypt auth fail
-Date:   Mon, 10 Feb 2020 04:30:29 -0800
-Message-Id: <20200210122435.326007380@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.4 075/309] powerpc/ptdump: Fix W+X verification
+Date:   Mon, 10 Feb 2020 04:30:31 -0800
+Message-Id: <20200210122413.072268305@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gilad Ben-Yossef <gilad@benyossef.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 2a6bc713f1cef32e39e3c4e6f2e1a9849da6379c upstream.
+commit d80ae83f1f932ab7af47b54d0d3bef4f4dba489f upstream.
 
-On AEAD decryption authentication failure we are suppose to
-zero out the output plaintext buffer. However, we've missed
-skipping the optional associated data that may prefix the
-ciphertext. This commit fixes this issue.
+Verification cannot rely on simple bit checking because on some
+platforms PAGE_RW is 0, checking that a page is not W means
+checking that PAGE_RO is set instead of checking that PAGE_RW
+is not set.
 
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-Fixes: e88b27c8eaa8 ("crypto: ccree - use std api sg_zero_buffer")
-Cc: stable@vger.kernel.org
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Use pte helpers instead of checking bits.
+
+Fixes: 453d87f6a8ae ("powerpc/mm: Warn if W+X pages found on boot")
+Cc: stable@vger.kernel.org # v5.2+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/0d894839fdbb19070f0e1e4140363be4f2bb62fc.1578989540.git.christophe.leroy@c-s.fr
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/ccree/cc_aead.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/mm/ptdump/ptdump.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/crypto/ccree/cc_aead.c
-+++ b/drivers/crypto/ccree/cc_aead.c
-@@ -237,7 +237,7 @@ static void cc_aead_complete(struct devi
- 			 * revealed the decrypted message --> zero its memory.
- 			 */
- 			sg_zero_buffer(areq->dst, sg_nents(areq->dst),
--				       areq->cryptlen, 0);
-+				       areq->cryptlen, areq->assoclen);
- 			err = -EBADMSG;
- 		}
- 	/*ENCRYPT*/
+--- a/arch/powerpc/mm/ptdump/ptdump.c
++++ b/arch/powerpc/mm/ptdump/ptdump.c
+@@ -173,10 +173,12 @@ static void dump_addr(struct pg_state *s
+ 
+ static void note_prot_wx(struct pg_state *st, unsigned long addr)
+ {
++	pte_t pte = __pte(st->current_flags);
++
+ 	if (!IS_ENABLED(CONFIG_PPC_DEBUG_WX) || !st->check_wx)
+ 		return;
+ 
+-	if (!((st->current_flags & pgprot_val(PAGE_KERNEL_X)) == pgprot_val(PAGE_KERNEL_X)))
++	if (!pte_write(pte) || !pte_exec(pte))
+ 		return;
+ 
+ 	WARN_ONCE(1, "powerpc/mm: Found insecure W+X mapping at address %p/%pS\n",
 
 
