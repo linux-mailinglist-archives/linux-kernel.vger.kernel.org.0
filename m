@@ -2,68 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 399BD157F4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 17:00:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82ADD157F72
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 17:07:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727756AbgBJQAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 11:00:24 -0500
-Received: from mga02.intel.com ([134.134.136.20]:17025 "EHLO mga02.intel.com"
+        id S1727856AbgBJQHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 11:07:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33104 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727143AbgBJQAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 11:00:23 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Feb 2020 08:00:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,425,1574150400"; 
-   d="scan'208";a="380144630"
-Received: from dvolkov-mobl1.ccr.corp.intel.com (HELO localhost) ([10.252.14.103])
-  by orsmga004.jf.intel.com with ESMTP; 10 Feb 2020 08:00:20 -0800
-Date:   Mon, 10 Feb 2020 18:00:19 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, James.Bottomley@HansenPartnership.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v3 1/8] tpm: Initialize crypto_id of allocated_banks to
- HASH_ALGO__LAST
-Message-ID: <20200210160019.GA8146@linux.intel.com>
-References: <20200210100048.21448-1-roberto.sassu@huawei.com>
- <20200210100048.21448-2-roberto.sassu@huawei.com>
+        id S1727120AbgBJQHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 11:07:05 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 29C98ACD0;
+        Mon, 10 Feb 2020 16:07:04 +0000 (UTC)
+Date:   Mon, 10 Feb 2020 07:56:11 -0800
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, mcgrof@kernel.org,
+        broonie@kernel.org, alex.williamson@redhat.com
+Subject: Re: [PATCH -next 0/5] rbtree: optimize frequent tree walks
+Message-ID: <20200210155611.lfrddnolsyzktqne@linux-p48b>
+References: <20200207180305.11092-1-dave@stgolabs.net>
+ <20200209174632.9c7b6ff20567853c05e5ee58@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20200210100048.21448-2-roberto.sassu@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200209174632.9c7b6ff20567853c05e5ee58@linux-foundation.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 11:00:41AM +0100, Roberto Sassu wrote:
-> chip->allocated_banks, an array of tpm_bank_info structures, contains the
-> list of TPM algorithm IDs of allocated PCR banks. It also contains the
-> corresponding ID of the crypto subsystem, so that users of the TPM driver
-> can calculate a digest for a PCR extend operation.
-> 
-> However, if there is no mapping between TPM algorithm ID and crypto ID, the
-> crypto_id field of tpm_bank_info remains set to zero (the array is
-> allocated and initialized with kcalloc() in tpm2_get_pcr_allocation()).
-> Zero should not be used as value for unknown mappings, as it is a valid
-> crypto ID (HASH_ALGO_MD4).
-> 
-> Thus, initialize crypto_id to HASH_ALGO__LAST.
-> 
-> Cc: stable@vger.kernel.org # 5.1.x
-> Fixes: 879b589210a9 ("tpm: retrieve digest size of unknown algorithms with PCR read")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Petr Vorel <pvorel@suse.cz>
+On Sun, 09 Feb 2020, Andrew Morton wrote:
+>Seems that all the caller sites you've converted use a fairly small
+>number of rbnodes, so the additional storage shouldn't be a big
+>problem.  Are there any other sites you're eyeing?  If so, do you expect
+>any of those will use a significant amount of memory for the nodes?
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+I also thought about converting the deadline scheduler to use these,
+mainly benefiting pull_dl_task() but didn't get to it and I don't expect
+the extra footprint to be prohibitive.
 
-/Jarkko
+>
+>And...  are these patches really worth merging?  Complexity is added,
+>but what end-user benefit can we expect?
+
+Yes they are worth merging, imo (which of course is biased :)
+
+I don't think there is too much added complexity overall, particularly
+considering that the user conversions are rather trivial. And even for
+small trees (ie 100 nodes) we still benefit in a measurable way from
+these optimizations.
+
+Thanks,
+Davidlohr
