@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4950157408
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:08:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 352FF1573FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:08:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbgBJMIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:08:12 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:54372 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727754AbgBJMHk (ORCPT
+        id S1727830AbgBJMHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:07:55 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:57547 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727818AbgBJMHw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:07:40 -0500
+        Mon, 10 Feb 2020 07:07:52 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581336459;
+        s=mimecast20190719; t=1581336471;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=e2eRuZqsSaScZZo8kRHflKS/ooXKuAQ41Yq4aCVvwEU=;
-        b=B2G82Rohi7mN/kp/9ws49OL7fzkIeLYogtqbkMPS30ueDZ1eKT/k7n6ql6OdrEAB06Ii79
-        O70pVv8UaKsGhR+RQDVIT5xCs6LV0rFj90G7vTbTHFacV6n2i2iCQSsmLEfszDQVbioHcg
-        kAO/JprQwNPsYdB0Ypp7W8kyucr93ho=
+        bh=jONdue0ovlDdMXefHuursR0LxtLZt0LrzIOWpvfMZzk=;
+        b=dZCmecK8EVRIkBz5/RxXkiaJUeD+wxOHsPIo6PsTCgtqm4pFQHBdGco9hQDRklN8YkrBaE
+        Uv1xowyw/bBTYO2X+dP9mj/cJl5lunOg7mLbKHU4JaABn2RxNQPi7F9EQPrUauLekvzOyl
+        1AuB3bqI1ksRfWQYPn+5g3dIkFu3Ftg=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-430-rRbuwR1zN2iFw2chVyWWEw-1; Mon, 10 Feb 2020 07:07:35 -0500
-X-MC-Unique: rRbuwR1zN2iFw2chVyWWEw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-353-Q1NGfm_wOESApJ57bhvzhQ-1; Mon, 10 Feb 2020 07:07:47 -0500
+X-MC-Unique: Q1NGfm_wOESApJ57bhvzhQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2E9AC13E6;
-        Mon, 10 Feb 2020 12:07:33 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 251201005510;
+        Mon, 10 Feb 2020 12:07:45 +0000 (UTC)
 Received: from krava (unknown [10.43.17.9])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43FCD60BF1;
-        Mon, 10 Feb 2020 12:07:30 +0000 (UTC)
-Date:   Mon, 10 Feb 2020 13:07:27 +0100
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3A1A389F30;
+        Mon, 10 Feb 2020 12:07:42 +0000 (UTC)
+Date:   Mon, 10 Feb 2020 13:07:39 +0100
 From:   Jiri Olsa <jolsa@redhat.com>
 To:     John Garry <john.garry@huawei.com>
 Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
@@ -43,84 +43,48 @@ Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         linux-arm-kernel@lists.infradead.org, suzuki.poulose@arm.com,
         james.clark@arm.com, zhangshaokun@hisilicon.com,
         robin.murphy@arm.com
-Subject: Re: [PATCH RFC 1/7] perf jevents: Add support for an extra directory
- level
-Message-ID: <20200210120727.GD1907700@krava>
+Subject: Re: [PATCH RFC 3/7] perf jevents: Add support for a system events PMU
+Message-ID: <20200210120739.GE1907700@krava>
 References: <1579876505-113251-1-git-send-email-john.garry@huawei.com>
- <1579876505-113251-2-git-send-email-john.garry@huawei.com>
+ <1579876505-113251-4-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1579876505-113251-2-git-send-email-john.garry@huawei.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <1579876505-113251-4-git-send-email-john.garry@huawei.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 10:34:59PM +0800, John Garry wrote:
-> Currently we support upto a level 2 directory, and level 2 would be in the
-> form vendor/platform.
-> 
-> Add support for a further level, to hold specific categories of events for
-> when we want to segregate them for matching purposes.
-> 
-> Signed-off-by: John Garry <john.garry@huawei.com>
-> ---
->  tools/perf/pmu-events/jevents.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
-> index 079c77b6a2fd..8af05b94a37d 100644
-> --- a/tools/perf/pmu-events/jevents.c
-> +++ b/tools/perf/pmu-events/jevents.c
-> @@ -960,15 +960,20 @@ static int process_one_file(const char *fpath, const struct stat *sb,
->  	int level   = ftwbuf->level;
->  	int err = 0;
->  
-> -	if (level == 2 && is_dir) {
-> +	if (level >= 2 && is_dir) {
-> +		int count = 0;
->  		/*
->  		 * For level 2 directory, bname will include parent name,
->  		 * like vendor/platform. So search back from platform dir
->  		 * to find this.
-> +		 * Something similar for level 3 directory, but we're a PMU
-> +		 * category folder, like vendor/platform/cpu.
->  		 */
->  		bname = (char *) fpath + ftwbuf->base - 2;
->  		for (;;) {
->  			if (*bname == '/')
-> +				count++;
-> +			if (count == level - 1)
->  				break;
->  			bname--;
+On Fri, Jan 24, 2020 at 10:35:01PM +0800, John Garry wrote:
 
-I was wondering why we just don't use different filename for that,
-but it's true that the code transforms directory chain to the table
-name.. so I guess another directory level is justified ;-)
+SNIP
+
+> +	return ret;
+> +}
+> +
+>  /*
+>   * If we fail to locate/process JSON and map files, create a NULL mapping
+>   * table. This would at least allow perf to build even if we can't find/use
+> @@ -887,6 +917,7 @@ static int get_maxfds(void)
+>   */
+>  static FILE *eventsfp;
+>  static char *mapfile;
+> +static char *mapfile_sys;
+>  
+>  static int is_leaf_dir(const char *fpath)
+>  {
+> @@ -1024,6 +1055,11 @@ static int process_one_file(const char *fpath, const struct stat *sb,
+>  			return 0;
+>  		}
+>  
+> +		if (!strcmp(bname, "mapfile_sys.csv")) {
+> +			mapfile_sys = strdup(fpath);
+
+
+we could release that in the cleanup code at the end of main
+together with 'mapfile', which is also missing
 
 jirka
-
-
->  		}
-> @@ -981,13 +986,13 @@ static int process_one_file(const char *fpath, const struct stat *sb,
->  		 level, sb->st_size, bname, fpath);
->  
->  	/* base dir or too deep */
-> -	if (level == 0 || level > 3)
-> +	if (level == 0 || level > 4)
->  		return 0;
->  
->  
->  	/* model directory, reset topic */
->  	if ((level == 1 && is_dir && is_leaf_dir(fpath)) ||
-> -	    (level == 2 && is_dir)) {
-> +	    (level >= 2 && is_dir && is_leaf_dir(fpath))) {
->  		if (close_table)
->  			print_events_table_suffix(eventsfp);
->  
-> -- 
-> 2.17.1
-> 
 
