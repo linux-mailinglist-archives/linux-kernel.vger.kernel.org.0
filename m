@@ -2,265 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B96C157E0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:02:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A01D157E10
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:03:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728701AbgBJPCG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 10:02:06 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:42972 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727636AbgBJPCG (ORCPT
+        id S1728954AbgBJPDO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 10:03:14 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:51874 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726809AbgBJPDN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 10:02:06 -0500
-Received: by mail-io1-f65.google.com with SMTP id s6so7863722iol.9
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 07:02:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bhMwZCYROirrJMoN5ENbQVM31GkKgHRjbPr+9bhi68s=;
-        b=uImQGabY9dxOZONqTfKUL5gE1YbSZdXoJ8AWTRjzEHCFO7x8127xTjm4QQwIjpWIVB
-         jrgOeGxFcmfdngVwXgLzHMvbmpZbQNeRyYmkCFDRMKzM8yppUhFMHb6WLK9qQl8oLhqC
-         jNa0HenIjQLy+ohapkQQ4ci3ZGTupit7jPRweeMsjyZkln1gQs1JgJcRvbKK+2xWXd6D
-         x8m8WVAGeEHODeM99C8aGyHwmXTOgXyZ5yqPEgOjVu+ClX9bF+98A6FaNy163TZRr5IJ
-         P9U9+arKycX7zzDMFgbkc64HfLZUPPjzIBaJPoIWQLLooOvdcn00Nw69bs1OiUB4OjTQ
-         4VXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bhMwZCYROirrJMoN5ENbQVM31GkKgHRjbPr+9bhi68s=;
-        b=QVQ8lBwYv/y1I/TkgUE/tBYEGr/KeLOn1o0P5+ir9TB31S1oYt7YobiE8FEnXU84SG
-         WYQVVfvcxI488dqGnrQ/QYi+F9Zc0ui7TtS+Z9n1ppSmc3QDGuhqlmIdB4C2pcMn8fwb
-         8KmhV95DkfZwCQ9AQHzQwnB6poEDLs5zedfgXNvteK8b5XOdh3KlCA8+rBqz2vxUvhKe
-         IP6eIDkFVopOPFdpmSXmR9nT2Ow9mC791UPFw6e0IFPctsJhrf7anLEiDRVeFqJjKKoE
-         +LpfTrF/cVi2TCq/Mnz0fCJPzoCDo4xUu28nuWQrHlCfFh8X+KRWYgJDTNCpabacpdJA
-         v2aQ==
-X-Gm-Message-State: APjAAAV04xsxtv7L+x0pUFPu8Y9cpRlyKbkjr0ztzHLNXycqlNOpqxd0
-        Gh72IAWk0TIUe3sswvRVHQw/Y3FxgAOpWG5sWnMyDA==
-X-Google-Smtp-Source: APXvYqyPnVtT5nH7L0EYMs6xaLx+NOHB7rwRvqU4Z1bh2gtYeyUtXSbA9kAV3MDESOSvEfpVZfpbl96NqCLZcY0b05Q=
-X-Received: by 2002:a02:8525:: with SMTP id g34mr10179487jai.72.1581346925348;
- Mon, 10 Feb 2020 07:02:05 -0800 (PST)
+        Mon, 10 Feb 2020 10:03:13 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 725CF290B17
+Subject: Re: [PATCH v2] platform/chrome: wilco_ec: Platform data shan't
+ include kernel.h
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Nick Crews <ncrews@chromium.org>, linux-kernel@vger.kernel.org,
+        Daniel Campello <campello@chromium.org>
+References: <20200205094828.77940-1-andriy.shevchenko@linux.intel.com>
+ <20200210145721.GX10400@smile.fi.intel.com>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <4e78d3ca-7e41-a201-18c8-d91923423827@collabora.com>
+Date:   Mon, 10 Feb 2020 16:03:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-References: <20200209105901.1620958-1-gregkh@linuxfoundation.org> <20200209105901.1620958-6-gregkh@linuxfoundation.org>
-In-Reply-To: <20200209105901.1620958-6-gregkh@linuxfoundation.org>
-From:   "Oliver O'Halloran" <oohall@gmail.com>
-Date:   Tue, 11 Feb 2020 02:01:53 +1100
-Message-ID: <CAOSf1CEKwjDkp-=SMjmJfQirxdGCkadougZbdDS6FK1muNNCZw@mail.gmail.com>
-Subject: Re: [PATCH 6/6] powerpc: powernv: no need to check return value of
- debugfs_create functions
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Sukadev Bhattiprolu <sukadev@linux.ibm.com>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200210145721.GX10400@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 12:12 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
+Hi Andy,
 
-For memtrace debugfs is the only way to actually use the feature. It'd
-be nice if it still printed out *something* if it failed to create the
-files rather than just being mysteriously absent, but maybe debugfs
-itself does that. Looks fine otherwise.
+On 10/2/20 15:57, Andy Shevchenko wrote:
+> On Wed, Feb 05, 2020 at 11:48:28AM +0200, Andy Shevchenko wrote:
+>> Replace with appropriate types.h.
+>>
+>> Also there is no need to include device.h, but mutex.h.
+>> For the pointers to unknown structures use forward declarations.
+>>
+>> In the *.c files we need to include all headers that provide APIs
+>> being used in the module.
+> 
+> Anybody to comment?
+> 
 
-Reviewed-by: Oliver O'Halloran <oohall@gmail.com>
+LGTM, I silently queued this patch this morning in our kernelci branch to give a
+try. Waiting for the results, if all goes well will be queued for-next.
 
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Sukadev Bhattiprolu <sukadev@linux.ibm.com>
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  arch/powerpc/platforms/powernv/memtrace.c  |  7 ----
->  arch/powerpc/platforms/powernv/opal-imc.c  | 24 ++++----------
->  arch/powerpc/platforms/powernv/pci-ioda.c  |  5 ---
->  arch/powerpc/platforms/powernv/vas-debug.c | 37 ++--------------------
->  4 files changed, 10 insertions(+), 63 deletions(-)
->
-> diff --git a/arch/powerpc/platforms/powernv/memtrace.c b/arch/powerpc/platforms/powernv/memtrace.c
-> index eb2e75dac369..d6d64f8718e6 100644
-> --- a/arch/powerpc/platforms/powernv/memtrace.c
-> +++ b/arch/powerpc/platforms/powernv/memtrace.c
-> @@ -187,11 +187,6 @@ static int memtrace_init_debugfs(void)
->
->                 snprintf(ent->name, 16, "%08x", ent->nid);
->                 dir = debugfs_create_dir(ent->name, memtrace_debugfs_dir);
-> -               if (!dir) {
-> -                       pr_err("Failed to create debugfs directory for node %d\n",
-> -                               ent->nid);
-> -                       return -1;
-> -               }
->
->                 ent->dir = dir;
->                 debugfs_create_file("trace", 0400, dir, ent, &memtrace_fops);
-> @@ -314,8 +309,6 @@ static int memtrace_init(void)
->  {
->         memtrace_debugfs_dir = debugfs_create_dir("memtrace",
->                                                   powerpc_debugfs_root);
-> -       if (!memtrace_debugfs_dir)
-> -               return -1;
->
->         debugfs_create_file("enable", 0600, memtrace_debugfs_dir,
->                             NULL, &memtrace_init_fops);
-> diff --git a/arch/powerpc/platforms/powernv/opal-imc.c b/arch/powerpc/platforms/powernv/opal-imc.c
-> index 000b350d4060..968b9a4d1cd9 100644
-> --- a/arch/powerpc/platforms/powernv/opal-imc.c
-> +++ b/arch/powerpc/platforms/powernv/opal-imc.c
-> @@ -35,11 +35,10 @@ static int imc_mem_set(void *data, u64 val)
->  }
->  DEFINE_DEBUGFS_ATTRIBUTE(fops_imc_x64, imc_mem_get, imc_mem_set, "0x%016llx\n");
->
-> -static struct dentry *imc_debugfs_create_x64(const char *name, umode_t mode,
-> -                                            struct dentry *parent, u64  *value)
-> +static void imc_debugfs_create_x64(const char *name, umode_t mode,
-> +                                  struct dentry *parent, u64  *value)
->  {
-> -       return debugfs_create_file_unsafe(name, mode, parent,
-> -                                         value, &fops_imc_x64);
-> +       debugfs_create_file_unsafe(name, mode, parent, value, &fops_imc_x64);
->  }
->
->  /*
-> @@ -59,9 +58,6 @@ static void export_imc_mode_and_cmd(struct device_node *node,
->
->         imc_debugfs_parent = debugfs_create_dir("imc", powerpc_debugfs_root);
->
-> -       if (!imc_debugfs_parent)
-> -               return;
-> -
->         if (of_property_read_u32(node, "cb_offset", &cb_offset))
->                 cb_offset = IMC_CNTL_BLK_OFFSET;
->
-> @@ -69,21 +65,15 @@ static void export_imc_mode_and_cmd(struct device_node *node,
->                 loc = (u64)(ptr->vbase) + cb_offset;
->                 imc_mode_addr = (u64 *)(loc + IMC_CNTL_BLK_MODE_OFFSET);
->                 sprintf(mode, "imc_mode_%d", (u32)(ptr->id));
-> -               if (!imc_debugfs_create_x64(mode, 0600, imc_debugfs_parent,
-> -                                           imc_mode_addr))
-> -                       goto err;
-> +               imc_debugfs_create_x64(mode, 0600, imc_debugfs_parent,
-> +                                      imc_mode_addr);
->
->                 imc_cmd_addr = (u64 *)(loc + IMC_CNTL_BLK_CMD_OFFSET);
->                 sprintf(cmd, "imc_cmd_%d", (u32)(ptr->id));
-> -               if (!imc_debugfs_create_x64(cmd, 0600, imc_debugfs_parent,
-> -                                           imc_cmd_addr))
-> -                       goto err;
-> +               imc_debugfs_create_x64(cmd, 0600, imc_debugfs_parent,
-> +                                      imc_cmd_addr);
->                 ptr++;
->         }
-> -       return;
-> -
-> -err:
-> -       debugfs_remove_recursive(imc_debugfs_parent);
->  }
->
->  /*
-> diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
-> index 22c22cd7bd82..57d3a6af1d52 100644
-> --- a/arch/powerpc/platforms/powernv/pci-ioda.c
-> +++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-> @@ -3174,11 +3174,6 @@ static void pnv_pci_ioda_create_dbgfs(void)
->
->                 sprintf(name, "PCI%04x", hose->global_number);
->                 phb->dbgfs = debugfs_create_dir(name, powerpc_debugfs_root);
-> -               if (!phb->dbgfs) {
-> -                       pr_warn("%s: Error on creating debugfs on PHB#%x\n",
-> -                               __func__, hose->global_number);
-> -                       continue;
-> -               }
->
->                 debugfs_create_file_unsafe("dump_diag_regs", 0200, phb->dbgfs,
->                                            phb, &pnv_pci_diag_data_fops);
-> diff --git a/arch/powerpc/platforms/powernv/vas-debug.c b/arch/powerpc/platforms/powernv/vas-debug.c
-> index 09e63df53c30..44035a3d6414 100644
-> --- a/arch/powerpc/platforms/powernv/vas-debug.c
-> +++ b/arch/powerpc/platforms/powernv/vas-debug.c
-> @@ -115,7 +115,7 @@ void vas_window_free_dbgdir(struct vas_window *window)
->
->  void vas_window_init_dbgdir(struct vas_window *window)
->  {
-> -       struct dentry *f, *d;
-> +       struct dentry *d;
->
->         if (!window->vinst->dbgdir)
->                 return;
-> @@ -127,28 +127,10 @@ void vas_window_init_dbgdir(struct vas_window *window)
->         snprintf(window->dbgname, 16, "w%d", window->winid);
->
->         d = debugfs_create_dir(window->dbgname, window->vinst->dbgdir);
-> -       if (IS_ERR(d))
-> -               goto free_name;
-> -
->         window->dbgdir = d;
->
-> -       f = debugfs_create_file("info", 0444, d, window, &info_fops);
-> -       if (IS_ERR(f))
-> -               goto remove_dir;
-> -
-> -       f = debugfs_create_file("hvwc", 0444, d, window, &hvwc_fops);
-> -       if (IS_ERR(f))
-> -               goto remove_dir;
-> -
-> -       return;
-> -
-> -remove_dir:
-> -       debugfs_remove_recursive(window->dbgdir);
-> -       window->dbgdir = NULL;
-> -
-> -free_name:
-> -       kfree(window->dbgname);
-> -       window->dbgname = NULL;
-> +       debugfs_create_file("info", 0444, d, window, &info_fops);
-> +       debugfs_create_file("hvwc", 0444, d, window, &hvwc_fops);
->  }
->
->  void vas_instance_init_dbgdir(struct vas_instance *vinst)
-> @@ -156,8 +138,6 @@ void vas_instance_init_dbgdir(struct vas_instance *vinst)
->         struct dentry *d;
->
->         vas_init_dbgdir();
-> -       if (!vas_debugfs)
-> -               return;
->
->         vinst->dbgname = kzalloc(16, GFP_KERNEL);
->         if (!vinst->dbgname)
-> @@ -166,16 +146,7 @@ void vas_instance_init_dbgdir(struct vas_instance *vinst)
->         snprintf(vinst->dbgname, 16, "v%d", vinst->vas_id);
->
->         d = debugfs_create_dir(vinst->dbgname, vas_debugfs);
-> -       if (IS_ERR(d))
-> -               goto free_name;
-> -
->         vinst->dbgdir = d;
-> -       return;
-> -
-> -free_name:
-> -       kfree(vinst->dbgname);
-> -       vinst->dbgname = NULL;
-> -       vinst->dbgdir = NULL;
->  }
->
->  /*
-> @@ -191,6 +162,4 @@ void vas_init_dbgdir(void)
->
->         first_time = false;
->         vas_debugfs = debugfs_create_dir("vas", NULL);
-> -       if (IS_ERR(vas_debugfs))
-> -               vas_debugfs = NULL;
->  }
-> --
-> 2.25.0
->
+Thanks,
+ Enric
+
+>>
+>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>> ---
+>> v2: update *.c files (kbuild test robot)
+>>  drivers/platform/chrome/wilco_ec/properties.c | 3 +++
+>>  drivers/platform/chrome/wilco_ec/sysfs.c      | 4 ++++
+>>  include/linux/platform_data/wilco-ec.h        | 8 ++++++--
+>>  3 files changed, 13 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/platform/chrome/wilco_ec/properties.c b/drivers/platform/chrome/wilco_ec/properties.c
+>> index e69682c95ea2..a0cbd8bd2851 100644
+>> --- a/drivers/platform/chrome/wilco_ec/properties.c
+>> +++ b/drivers/platform/chrome/wilco_ec/properties.c
+>> @@ -3,8 +3,11 @@
+>>   * Copyright 2019 Google LLC
+>>   */
+>>  
+>> +#include <linux/errno.h>
+>> +#include <linux/export.h>
+>>  #include <linux/platform_data/wilco-ec.h>
+>>  #include <linux/string.h>
+>> +#include <linux/types.h>
+>>  #include <linux/unaligned/le_memmove.h>
+>>  
+>>  /* Operation code; what the EC should do with the property */
+>> diff --git a/drivers/platform/chrome/wilco_ec/sysfs.c b/drivers/platform/chrome/wilco_ec/sysfs.c
+>> index f0d174b6bb21..3c587b4054a5 100644
+>> --- a/drivers/platform/chrome/wilco_ec/sysfs.c
+>> +++ b/drivers/platform/chrome/wilco_ec/sysfs.c
+>> @@ -8,8 +8,12 @@
+>>   * See Documentation/ABI/testing/sysfs-platform-wilco-ec for more information.
+>>   */
+>>  
+>> +#include <linux/device.h>
+>> +#include <linux/kernel.h>
+>>  #include <linux/platform_data/wilco-ec.h>
+>> +#include <linux/string.h>
+>>  #include <linux/sysfs.h>
+>> +#include <linux/types.h>
+>>  
+>>  #define CMD_KB_CMOS			0x7C
+>>  #define SUB_CMD_KB_CMOS_AUTO_ON		0x03
+>> diff --git a/include/linux/platform_data/wilco-ec.h b/include/linux/platform_data/wilco-ec.h
+>> index afede15a95bf..25f46a939637 100644
+>> --- a/include/linux/platform_data/wilco-ec.h
+>> +++ b/include/linux/platform_data/wilco-ec.h
+>> @@ -8,8 +8,8 @@
+>>  #ifndef WILCO_EC_H
+>>  #define WILCO_EC_H
+>>  
+>> -#include <linux/device.h>
+>> -#include <linux/kernel.h>
+>> +#include <linux/mutex.h>
+>> +#include <linux/types.h>
+>>  
+>>  /* Message flags for using the mailbox() interface */
+>>  #define WILCO_EC_FLAG_NO_RESPONSE	BIT(0) /* EC does not respond */
+>> @@ -17,6 +17,10 @@
+>>  /* Normal commands have a maximum 32 bytes of data */
+>>  #define EC_MAILBOX_DATA_SIZE		32
+>>  
+>> +struct device;
+>> +struct resource;
+>> +struct platform_device;
+>> +
+>>  /**
+>>   * struct wilco_ec_device - Wilco Embedded Controller handle.
+>>   * @dev: Device handle.
+>> -- 
+>> 2.24.1
+>>
+> 
