@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 487441577D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:03:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 593701577CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:03:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730645AbgBJNCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:02:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40726 "EHLO mail.kernel.org"
+        id S1730628AbgBJNCj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:02:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729747AbgBJMka (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:30 -0500
+        id S1729749AbgBJMkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:31 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28C3D20842;
+        by mail.kernel.org (Postfix) with ESMTPSA id A91BD20873;
         Mon, 10 Feb 2020 12:40:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1581338430;
-        bh=/L09c4D6tvDhtBvettooq6PMqTLwWh1zJo9L3kooNdI=;
+        bh=KV0NiS2aOHN6RwhExLIB01bPY4Iwsa8czE2TsEoKgXM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LZzqqDJq0eG3kRU8erkocQDdVLlD8x1tCbxUaNSzZXbjviptwGVJHEm5fpdd5KmbN
-         9kBPslQln8rNIQrvNCqiGIlspvfS6rG16ilBtYClKMyy2QAVm0JvlH4nIRCIJwKVM2
-         lxrbyToRzycylTX4oskK4YEauL5/AGx6PEtOp9uc=
+        b=u5U1rnqFqfOHkqhEKTa/fiamQuB1G3rKPGusMrik1ACug8v3BC5BdKViA+nVuujFz
+         2KB9DX0vf39pP7JFfChYrbk1gSpOnxLI/DF4Reb2utGB9ZiFp5s/B2x3+ud/cTMM5m
+         qYy8Q8k3IARuLw5DP2Uwkh9NKIrDDMczcvUnjNeU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Su Yue <Damenly_Su@gmx.com>,
+        Nikolay Borisov <nborisov@suse.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.5 155/367] btrfs: fix improper setting of scanned for range cyclic write cache pages
-Date:   Mon, 10 Feb 2020 04:31:08 -0800
-Message-Id: <20200210122439.130689063@linuxfoundation.org>
+Subject: [PATCH 5.5 156/367] btrfs: Handle another split brain scenario with metadata uuid feature
+Date:   Mon, 10 Feb 2020 04:31:09 -0800
+Message-Id: <20200210122439.222143017@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -43,88 +45,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Nikolay Borisov <nborisov@suse.com>
 
-commit 556755a8a99be8ca3cd9fbe36aaf9b3b0339a00d upstream.
+commit 05840710149c7d1a78ea85a2db5723f706e97d8f upstream.
 
-We noticed that we were having regular CG OOM kills in cases where there
-was still enough dirty pages to avoid OOM'ing.  It turned out there's
-this corner case in btrfs's handling of range_cyclic where files that
-were being redirtied were not getting fully written out because of how
-we do range_cyclic writeback.
+There is one more cases which isn't handled by the original metadata
+uuid work. Namely, when a filesystem has METADATA_UUID incompat bit and
+the user decides to change the FSID to the original one e.g. have
+metadata_uuid and fsid match. In case of power failure while this
+operation is in progress we could end up in a situation where some of
+the disks have the incompat bit removed and the other half have both
+METADATA_UUID_INCOMPAT and FSID_CHANGING_IN_PROGRESS flags.
 
-We unconditionally were setting scanned = 1; the first time we found any
-pages in the inode.  This isn't actually what we want, we want it to be
-set if we've scanned the entire file.  For range_cyclic we could be
-starting in the middle or towards the end of the file, so we could write
-one page and then not write any of the other dirty pages in the file
-because we set scanned = 1.
+This patch handles the case where a disk that has successfully changed
+its FSID such that it equals METADATA_UUID is scanned first.
+Subsequently when a disk with both
+METADATA_UUID_INCOMPAT/FSID_CHANGING_IN_PROGRESS flags is scanned
+find_fsid_changed won't be able to find an appropriate btrfs_fs_devices.
+This is done by extending find_fsid_changed to correctly find
+btrfs_fs_devices whose metadata_uuid/fsid are the same and they match
+the metadata_uuid of the currently scanned device.
 
-Fix this by not setting scanned = 1 if we find pages.  The rules for
-setting scanned should be
-
-1) !range_cyclic.  In this case we have a specified range to write out.
-2) range_cyclic && index == 0.  In this case we've started at the
-   beginning and there is no need to loop around a second time.
-3) range_cyclic && we started at index > 0 and we've reached the end of
-   the file without satisfying our nr_to_write.
-
-This patch fixes both of our writepages implementations to make sure
-these rules hold true.  This fixed our over zealous CG OOMs in
-production.
-
-Fixes: d1310b2e0cd9 ("Btrfs: Split the extent_map code into two parts")
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Fixes: cc5de4e70256 ("btrfs: Handle final split-brain possibility during fsid change")
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Reported-by: Su Yue <Damenly_Su@gmx.com>
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
-[ add comment ]
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent_io.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ fs/btrfs/volumes.c |   17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -3941,6 +3941,11 @@ int btree_write_cache_pages(struct addre
- 	if (wbc->range_cyclic) {
- 		index = mapping->writeback_index; /* Start from prev offset */
- 		end = -1;
-+		/*
-+		 * Start from the beginning does not need to cycle over the
-+		 * range, mark it as scanned.
-+		 */
-+		scanned = (index == 0);
- 	} else {
- 		index = wbc->range_start >> PAGE_SHIFT;
- 		end = wbc->range_end >> PAGE_SHIFT;
-@@ -3958,7 +3963,6 @@ retry:
- 			tag))) {
- 		unsigned i;
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -697,17 +697,28 @@ static struct btrfs_fs_devices *find_fsi
+ 	/*
+ 	 * Handles the case where scanned device is part of an fs that had
+ 	 * multiple successful changes of FSID but curently device didn't
+-	 * observe it. Meaning our fsid will be different than theirs.
++	 * observe it. Meaning our fsid will be different than theirs. We need
++	 * to handle two subcases :
++	 *  1 - The fs still continues to have different METADATA/FSID uuids.
++	 *  2 - The fs is switched back to its original FSID (METADATA/FSID
++	 *  are equal).
+ 	 */
+ 	list_for_each_entry(fs_devices, &fs_uuids, fs_list) {
++		/* Changed UUIDs */
+ 		if (memcmp(fs_devices->metadata_uuid, fs_devices->fsid,
+ 			   BTRFS_FSID_SIZE) != 0 &&
+ 		    memcmp(fs_devices->metadata_uuid, disk_super->metadata_uuid,
+ 			   BTRFS_FSID_SIZE) == 0 &&
+ 		    memcmp(fs_devices->fsid, disk_super->fsid,
+-			   BTRFS_FSID_SIZE) != 0) {
++			   BTRFS_FSID_SIZE) != 0)
++			return fs_devices;
++
++		/* Unchanged UUIDs */
++		if (memcmp(fs_devices->metadata_uuid, fs_devices->fsid,
++			   BTRFS_FSID_SIZE) == 0 &&
++		    memcmp(fs_devices->fsid, disk_super->metadata_uuid,
++			   BTRFS_FSID_SIZE) == 0)
+ 			return fs_devices;
+-		}
+ 	}
  
--		scanned = 1;
- 		for (i = 0; i < nr_pages; i++) {
- 			struct page *page = pvec.pages[i];
- 
-@@ -4087,6 +4091,11 @@ static int extent_write_cache_pages(stru
- 	if (wbc->range_cyclic) {
- 		index = mapping->writeback_index; /* Start from prev offset */
- 		end = -1;
-+		/*
-+		 * Start from the beginning does not need to cycle over the
-+		 * range, mark it as scanned.
-+		 */
-+		scanned = (index == 0);
- 	} else {
- 		index = wbc->range_start >> PAGE_SHIFT;
- 		end = wbc->range_end >> PAGE_SHIFT;
-@@ -4120,7 +4129,6 @@ retry:
- 						&index, end, tag))) {
- 		unsigned i;
- 
--		scanned = 1;
- 		for (i = 0; i < nr_pages; i++) {
- 			struct page *page = pvec.pages[i];
- 
+ 	return NULL;
 
 
