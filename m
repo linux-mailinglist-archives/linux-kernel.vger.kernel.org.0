@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA89215776A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:00:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CA0F157968
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:15:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729283AbgBJM77 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:59:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42010 "EHLO mail.kernel.org"
+        id S1730505AbgBJNPE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:15:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729187AbgBJMlE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:41:04 -0500
+        id S1728059AbgBJMi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:26 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE25924650;
-        Mon, 10 Feb 2020 12:41:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30AC92173E;
+        Mon, 10 Feb 2020 12:38:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338463;
-        bh=Tvf4txON6eeUtHEOdVEOOBvXVy6B/tu1BYD/Xx9UAUg=;
+        s=default; t=1581338305;
+        bh=8NAGo9e5AJ0Ux3q1OgbYLdinV3moyrh9CcR77rKraOs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TdpWC0eTTMqHmvLYkJ+G8hDseq9mOvD6J/KbvdN+GZupfEIio5PgSyX2O/ARbCO5c
-         eAmd0sbvT/D8UQ3ghKLa/gCvwkzw0A3biR6K+1tqb79GMmJFV1ZC2xr9dXBKaby41s
-         YqkmbiHQoGGX4ql5D4LEkgXwUUU0DNKhqtooehTY=
+        b=aZr7KHopNwxjWonpDFphM5WFPUmYV6U3W+8PFIjuJwsjhlCggdfBE0IAbAPznsQTk
+         4U0GI2cde9doZDya4f3oW2+Nyswi+PKbWTxugg0UtEl44lyytZNGkAvJhTLXV26LlD
+         Z25VsFkIcl0g0NWHWJuqIqH/iNcFy+AxqQunBY5w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Eric Wheeler <bcache@linux.ewheeler.net>,
-        Michael Lyle <mlyle@lyle.org>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.5 222/367] bcache: add readahead cache policy options via sysfs interface
+        stable@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
+        Stephen Warren <swarren@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: [PATCH 5.4 179/309] ARM: tegra: Enable PLLP bypass during Tegra124 LP1
 Date:   Mon, 10 Feb 2020 04:32:15 -0800
-Message-Id: <20200210122444.562098668@linuxfoundation.org>
+Message-Id: <20200210122423.673949891@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,139 +44,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+From: Stephen Warren <swarren@nvidia.com>
 
-commit 038ba8cc1bffc51250add4a9b9249d4331576d8f upstream.
+commit 1a3388d506bf5b45bb283e6a4c4706cfb4897333 upstream.
 
-In year 2007 high performance SSD was still expensive, in order to
-save more space for real workload or meta data, the readahead I/Os
-for non-meta data was bypassed and not cached on SSD.
+For a little over a year, U-Boot has configured the flow controller to
+perform automatic RAM re-repair on off->on power transitions of the CPU
+rail[1]. This is mandatory for correct operation of Tegra124. However,
+RAM re-repair relies on certain clocks, which the kernel must enable and
+leave running. PLLP is one of those clocks. This clock is shut down
+during LP1 in order to save power. Enable bypass (which I believe routes
+osc_div_clk, essentially the crystal clock, to the PLL output) so that
+this clock signal toggles even though the PLL is not active. This is
+required so that LP1 power mode (system suspend) operates correctly.
 
-In now days, SSD price drops a lot and people can find larger size
-SSD with more comfortable price. It is unncessary to alway bypass
-normal readahead I/Os to save SSD space for now.
+The bypass configuration must then be undone when resuming from LP1, so
+that all peripheral clocks run at the expected rate. Without this, many
+peripherals won't work correctly; for example, the UART baud rate would
+be incorrect.
 
-This patch adds options for readahead data cache policies via sysfs
-file /sys/block/bcache<N>/readahead_cache_policy, the options are,
-- "all": cache all readahead data I/Os.
-- "meta-only": only cache meta data, and bypass other regular I/Os.
+NVIDIA's downstream kernel code only does this if not compiled for
+Tegra30, so the added code is made conditional upon the chip ID.
+NVIDIA's downstream code makes this change conditional upon the active
+CPU cluster. The upstream kernel currently doesn't support cluster
+switching, so this patch doesn't test the active CPU cluster ID.
 
-If users want to make bcache continue to only cache readahead request
-for metadata and bypass regular data readahead, please set "meta-only"
-to this sysfs file. By default, bcache will back to cache all read-
-ahead requests now.
+[1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
 
+Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Coly Li <colyli@suse.de>
-Acked-by: Eric Wheeler <bcache@linux.ewheeler.net>
-Cc: Michael Lyle <mlyle@lyle.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/bcache/bcache.h  |    3 +++
- drivers/md/bcache/request.c |   17 ++++++++++++-----
- drivers/md/bcache/sysfs.c   |   22 ++++++++++++++++++++++
- 3 files changed, 37 insertions(+), 5 deletions(-)
+ arch/arm/mach-tegra/sleep-tegra30.S |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -329,6 +329,9 @@ struct cached_dev {
- 	 */
- 	atomic_t		has_dirty;
+--- a/arch/arm/mach-tegra/sleep-tegra30.S
++++ b/arch/arm/mach-tegra/sleep-tegra30.S
+@@ -370,6 +370,14 @@ _pll_m_c_x_done:
+ 	pll_locked r1, r0, CLK_RESET_PLLC_BASE
+ 	pll_locked r1, r0, CLK_RESET_PLLX_BASE
  
-+#define BCH_CACHE_READA_ALL		0
-+#define BCH_CACHE_READA_META_ONLY	1
-+	unsigned int		cache_readahead_policy;
- 	struct bch_ratelimit	writeback_rate;
- 	struct delayed_work	writeback_rate_update;
- 
---- a/drivers/md/bcache/request.c
-+++ b/drivers/md/bcache/request.c
-@@ -379,13 +379,20 @@ static bool check_should_bypass(struct c
- 		goto skip;
- 
- 	/*
--	 * Flag for bypass if the IO is for read-ahead or background,
--	 * unless the read-ahead request is for metadata
-+	 * If the bio is for read-ahead or background IO, bypass it or
-+	 * not depends on the following situations,
-+	 * - If the IO is for meta data, always cache it and no bypass
-+	 * - If the IO is not meta data, check dc->cache_reada_policy,
-+	 *      BCH_CACHE_READA_ALL: cache it and not bypass
-+	 *      BCH_CACHE_READA_META_ONLY: not cache it and bypass
-+	 * That is, read-ahead request for metadata always get cached
- 	 * (eg, for gfs2 or xfs).
- 	 */
--	if (bio->bi_opf & (REQ_RAHEAD|REQ_BACKGROUND) &&
--	    !(bio->bi_opf & (REQ_META|REQ_PRIO)))
--		goto skip;
-+	if ((bio->bi_opf & (REQ_RAHEAD|REQ_BACKGROUND))) {
-+		if (!(bio->bi_opf & (REQ_META|REQ_PRIO)) &&
-+		    (dc->cache_readahead_policy != BCH_CACHE_READA_ALL))
-+			goto skip;
-+	}
- 
- 	if (bio->bi_iter.bi_sector & (c->sb.block_size - 1) ||
- 	    bio_sectors(bio) & (c->sb.block_size - 1)) {
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -27,6 +27,12 @@ static const char * const bch_cache_mode
- 	NULL
- };
- 
-+static const char * const bch_reada_cache_policies[] = {
-+	"all",
-+	"meta-only",
-+	NULL
-+};
++	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
++	cmp	r1, #TEGRA30
++	beq	1f
++	ldr	r1, [r0, #CLK_RESET_PLLP_BASE]
++	bic	r1, r1, #(1<<31)	@ disable PllP bypass
++	str	r1, [r0, #CLK_RESET_PLLP_BASE]
++1:
 +
- /* Default is 0 ("auto") */
- static const char * const bch_stop_on_failure_modes[] = {
- 	"auto",
-@@ -100,6 +106,7 @@ rw_attribute(congested_write_threshold_u
- rw_attribute(sequential_cutoff);
- rw_attribute(data_csum);
- rw_attribute(cache_mode);
-+rw_attribute(readahead_cache_policy);
- rw_attribute(stop_when_cache_set_failed);
- rw_attribute(writeback_metadata);
- rw_attribute(writeback_running);
-@@ -168,6 +175,11 @@ SHOW(__bch_cached_dev)
- 					       bch_cache_modes,
- 					       BDEV_CACHE_MODE(&dc->sb));
+ 	mov32	r7, TEGRA_TMRUS_BASE
+ 	ldr	r1, [r7]
+ 	add	r1, r1, #LOCK_DELAY
+@@ -630,7 +638,10 @@ tegra30_switch_cpu_to_clk32k:
+ 	str	r0, [r4, #PMC_PLLP_WB0_OVERRIDE]
  
-+	if (attr == &sysfs_readahead_cache_policy)
-+		return bch_snprint_string_list(buf, PAGE_SIZE,
-+					      bch_reada_cache_policies,
-+					      dc->cache_readahead_policy);
-+
- 	if (attr == &sysfs_stop_when_cache_set_failed)
- 		return bch_snprint_string_list(buf, PAGE_SIZE,
- 					       bch_stop_on_failure_modes,
-@@ -353,6 +365,15 @@ STORE(__cached_dev)
- 		}
- 	}
- 
-+	if (attr == &sysfs_readahead_cache_policy) {
-+		v = __sysfs_match_string(bch_reada_cache_policies, -1, buf);
-+		if (v < 0)
-+			return v;
-+
-+		if ((unsigned int) v != dc->cache_readahead_policy)
-+			dc->cache_readahead_policy = v;
-+	}
-+
- 	if (attr == &sysfs_stop_when_cache_set_failed) {
- 		v = __sysfs_match_string(bch_stop_on_failure_modes, -1, buf);
- 		if (v < 0)
-@@ -467,6 +488,7 @@ static struct attribute *bch_cached_dev_
- 	&sysfs_data_csum,
- #endif
- 	&sysfs_cache_mode,
-+	&sysfs_readahead_cache_policy,
- 	&sysfs_stop_when_cache_set_failed,
- 	&sysfs_writeback_metadata,
- 	&sysfs_writeback_running,
+ 	/* disable PLLP, PLLA, PLLC and PLLX */
++	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
++	cmp	r1, #TEGRA30
+ 	ldr	r0, [r5, #CLK_RESET_PLLP_BASE]
++	orrne	r0, r0, #(1 << 31)	@ enable PllP bypass on fast cluster
+ 	bic	r0, r0, #(1 << 30)
+ 	str	r0, [r5, #CLK_RESET_PLLP_BASE]
+ 	ldr	r0, [r5, #CLK_RESET_PLLA_BASE]
 
 
