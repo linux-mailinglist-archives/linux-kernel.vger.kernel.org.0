@@ -2,209 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C803157F2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:51:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5225A157F41
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:55:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbgBJPvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 10:51:03 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:37009 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726796AbgBJPvC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 10:51:02 -0500
-Received: by mail-il1-f199.google.com with SMTP id z79so6999992ilf.4
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 07:51:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=0Z4mZBtI2gdriykPJmN0mwKGOFirSgbNkIa1x0WQpo0=;
-        b=RPjxZXnXtnTumme5ZNLF0u6nKd2LA0GSb3ZJ9rxqSBgTKY4HoTm2N49zlRuI8AkuVC
-         ichA1tuxNWqLauZLSva6GyQE5obBuCCuhBeDxRrvdGMEcNrbGgZw18jnEh8bJHe45zAG
-         l978xZ54stPCK8+0/VcvdyUmQONeTxXgt1k1hbpWwOqIIymlp1HI7Jea9L/OPTBQB/9H
-         cglaKZH52Bgvj18l06YjUI1S89KzbBkTCfMt6VvrCto4Siu8CONd42yXw/EaTUIcTkVL
-         o5h73e0HaA3s7TsBd3qkqzjjkhYOI0Guh/fMxtvXYBlTkLM7BGbjFLaj7uGxOqJ7qhvO
-         zMBg==
-X-Gm-Message-State: APjAAAXAMEICzz9TFSI2kKsEkzDAWuoeuRtDtJq3UY4vl5kEL0X9VYr6
-        C5YyQdohYUNiRxRWF2jhqHHdK3kZnwrN3hVfgPAby5oNvMOL
-X-Google-Smtp-Source: APXvYqzrR5X28Dnt9QIyHtOREXF6/SoFdK8vY+UvCcSf6Yn4HXv9ZCCXIJFDJ/8bdQ1WykzyXtTzj5ZLi9hnqNV22qR+5N7lMqze
+        id S1727683AbgBJPzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 10:55:01 -0500
+Received: from mga07.intel.com ([134.134.136.100]:1546 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727584AbgBJPzB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 10:55:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Feb 2020 07:55:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,425,1574150400"; 
+   d="scan'208";a="380142760"
+Received: from avandeve-mobl.amr.corp.intel.com (HELO [10.254.13.35]) ([10.254.13.35])
+  by orsmga004.jf.intel.com with ESMTP; 10 Feb 2020 07:54:59 -0800
+Subject: Re: [RFC PATCH 06/11] x86: make sure _etext includes function
+ sections
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        rick.p.edgecombe@intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+References: <75f0bd0365857ba4442ee69016b63764a8d2ad68.camel@linux.intel.com>
+ <B413445A-F1F0-4FB7-AA9F-C5FF4CEFF5F5@amacapital.net>
+ <20200207092423.GC14914@hirez.programming.kicks-ass.net>
+ <202002091742.7B1E6BF19@keescook>
+ <20200210105117.GE14879@hirez.programming.kicks-ass.net>
+From:   Arjan van de Ven <arjan@linux.intel.com>
+Message-ID: <43b7ba31-6dca-488b-8a0e-72d9fdfd1a6b@linux.intel.com>
+Date:   Mon, 10 Feb 2020 07:54:58 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9708:: with SMTP id h8mr9858742iol.141.1581349861783;
- Mon, 10 Feb 2020 07:51:01 -0800 (PST)
-Date:   Mon, 10 Feb 2020 07:51:01 -0800
-In-Reply-To: <1581344006.26936.7.camel@suse.de>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c6fdac059e3ab4c6@google.com>
-Subject: Re: KASAN: use-after-free Read in uvc_probe
-From:   syzbot <syzbot+9a48339b077c5a80b869@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, laurent.pinchart@ideasonboard.com,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-usb@vger.kernel.org, mchehab@kernel.org, oneukum@suse.de,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200210105117.GE14879@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+> 
+> I'll leave it to others to figure out the exact details. But afaict it
+> should be possible to have fine-grained-randomization and preserve the
+> workaround in the end.
+> 
 
-syzbot has tested the proposed patch but the reproducer still triggered crash:
-KASAN: use-after-free Read in uvc_probe
+the most obvious "solution" is to compile with an alignment of 4 bytes (so tight packing)
+and then in the randomizer preserve the offset within 32 bytes, no matter what it is
 
-usb 2-1: string descriptor 0 read error: -71
-uvcvideo: Found UVC 0.00 device <unnamed> (0bd3:0555)
-==================================================================
-BUG: KASAN: use-after-free in uvc_register_terms drivers/media/usb/uvc/uvc_driver.c:2038 [inline]
-BUG: KASAN: use-after-free in uvc_register_chains drivers/media/usb/uvc/uvc_driver.c:2071 [inline]
-BUG: KASAN: use-after-free in uvc_probe.cold+0x2193/0x29fe drivers/media/usb/uvc/uvc_driver.c:2202
-Read of size 2 at addr ffff8881d933182e by task kworker/0:2/95
-
-CPU: 0 PID: 95 Comm: kworker/0:2 Not tainted 5.5.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xef/0x16e lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0xd3/0x314 mm/kasan/report.c:374
- __kasan_report.cold+0x37/0x85 mm/kasan/report.c:506
- kasan_report+0xe/0x20 mm/kasan/common.c:639
- uvc_register_terms drivers/media/usb/uvc/uvc_driver.c:2038 [inline]
- uvc_register_chains drivers/media/usb/uvc/uvc_driver.c:2071 [inline]
- uvc_probe.cold+0x2193/0x29fe drivers/media/usb/uvc/uvc_driver.c:2202
- usb_probe_interface+0x310/0x800 drivers/usb/core/driver.c:361
- really_probe+0x290/0xad0 drivers/base/dd.c:548
- driver_probe_device+0x223/0x350 drivers/base/dd.c:721
- __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:828
- bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
- __device_attach+0x217/0x390 drivers/base/dd.c:894
- bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
- device_add+0x1459/0x1bf0 drivers/base/core.c:2487
- usb_set_configuration+0xe47/0x17d0 drivers/usb/core/message.c:2023
- generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
- usb_probe_device+0xaf/0x140 drivers/usb/core/driver.c:266
- really_probe+0x290/0xad0 drivers/base/dd.c:548
- driver_probe_device+0x223/0x350 drivers/base/dd.c:721
- __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:828
- bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
- __device_attach+0x217/0x390 drivers/base/dd.c:894
- bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
- device_add+0x1459/0x1bf0 drivers/base/core.c:2487
- usb_new_device.cold+0x540/0xcd0 drivers/usb/core/hub.c:2537
- hub_port_connect drivers/usb/core/hub.c:5184 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5324 [inline]
- port_event drivers/usb/core/hub.c:5470 [inline]
- hub_event+0x21cb/0x4300 drivers/usb/core/hub.c:5552
- process_one_work+0x945/0x15c0 kernel/workqueue.c:2264
- worker_thread+0x96/0xe20 kernel/workqueue.c:2410
- kthread+0x318/0x420 kernel/kthread.c:255
- ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-Allocated by task 95:
- save_stack+0x1b/0x80 mm/kasan/common.c:72
- set_track mm/kasan/common.c:80 [inline]
- __kasan_kmalloc mm/kasan/common.c:513 [inline]
- __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:486
- kmalloc include/linux/slab.h:556 [inline]
- kzalloc include/linux/slab.h:670 [inline]
- uvc_alloc_chain+0x48/0xfa drivers/media/usb/uvc/uvc_driver.c:1692
- uvc_scan_device drivers/media/usb/uvc/uvc_driver.c:1818 [inline]
- uvc_probe.cold+0x15f0/0x29fe drivers/media/usb/uvc/uvc_driver.c:2198
- usb_probe_interface+0x310/0x800 drivers/usb/core/driver.c:361
- really_probe+0x290/0xad0 drivers/base/dd.c:548
- driver_probe_device+0x223/0x350 drivers/base/dd.c:721
- __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:828
- bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
- __device_attach+0x217/0x390 drivers/base/dd.c:894
- bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
- device_add+0x1459/0x1bf0 drivers/base/core.c:2487
- usb_set_configuration+0xe47/0x17d0 drivers/usb/core/message.c:2023
- generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
- usb_probe_device+0xaf/0x140 drivers/usb/core/driver.c:266
- really_probe+0x290/0xad0 drivers/base/dd.c:548
- driver_probe_device+0x223/0x350 drivers/base/dd.c:721
- __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:828
- bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
- __device_attach+0x217/0x390 drivers/base/dd.c:894
- bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
- device_add+0x1459/0x1bf0 drivers/base/core.c:2487
- usb_new_device.cold+0x540/0xcd0 drivers/usb/core/hub.c:2537
- hub_port_connect drivers/usb/core/hub.c:5184 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5324 [inline]
- port_event drivers/usb/core/hub.c:5470 [inline]
- hub_event+0x21cb/0x4300 drivers/usb/core/hub.c:5552
- process_one_work+0x945/0x15c0 kernel/workqueue.c:2264
- worker_thread+0x96/0xe20 kernel/workqueue.c:2410
- kthread+0x318/0x420 kernel/kthread.c:255
- ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-Freed by task 95:
- save_stack+0x1b/0x80 mm/kasan/common.c:72
- set_track mm/kasan/common.c:80 [inline]
- kasan_set_free_info mm/kasan/common.c:335 [inline]
- __kasan_slab_free+0x117/0x160 mm/kasan/common.c:474
- slab_free_hook mm/slub.c:1425 [inline]
- slab_free_freelist_hook mm/slub.c:1458 [inline]
- slab_free mm/slub.c:3005 [inline]
- kfree+0xd5/0x300 mm/slub.c:3957
- uvc_scan_device drivers/media/usb/uvc/uvc_driver.c:1825 [inline]
- uvc_probe.cold+0x16fd/0x29fe drivers/media/usb/uvc/uvc_driver.c:2198
- usb_probe_interface+0x310/0x800 drivers/usb/core/driver.c:361
- really_probe+0x290/0xad0 drivers/base/dd.c:548
- driver_probe_device+0x223/0x350 drivers/base/dd.c:721
- __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:828
- bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
- __device_attach+0x217/0x390 drivers/base/dd.c:894
- bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
- device_add+0x1459/0x1bf0 drivers/base/core.c:2487
- usb_set_configuration+0xe47/0x17d0 drivers/usb/core/message.c:2023
- generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
- usb_probe_device+0xaf/0x140 drivers/usb/core/driver.c:266
- really_probe+0x290/0xad0 drivers/base/dd.c:548
- driver_probe_device+0x223/0x350 drivers/base/dd.c:721
- __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:828
- bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
- __device_attach+0x217/0x390 drivers/base/dd.c:894
- bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
- device_add+0x1459/0x1bf0 drivers/base/core.c:2487
- usb_new_device.cold+0x540/0xcd0 drivers/usb/core/hub.c:2537
- hub_port_connect drivers/usb/core/hub.c:5184 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5324 [inline]
- port_event drivers/usb/core/hub.c:5470 [inline]
- hub_event+0x21cb/0x4300 drivers/usb/core/hub.c:5552
- process_one_work+0x945/0x15c0 kernel/workqueue.c:2264
- worker_thread+0x96/0xe20 kernel/workqueue.c:2410
- kthread+0x318/0x420 kernel/kthread.c:255
- ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-The buggy address belongs to the object at ffff8881d9331800
- which belongs to the cache kmalloc-256 of size 256
-The buggy address is located 46 bytes inside of
- 256-byte region [ffff8881d9331800, ffff8881d9331900)
-The buggy address belongs to the page:
-page:ffffea000764cc00 refcount:1 mapcount:0 mapping:ffff8881da002780 index:0x0 compound_mapcount: 0
-raw: 0200000000010200 ffffea0007648d80 0000000e0000000e ffff8881da002780
-raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff8881d9331700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff8881d9331780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff8881d9331800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                  ^
- ffff8881d9331880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8881d9331900: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
+that would get you an average padding of 16 bytes which is a bit more than now but not too insane
+(queue Kees' argument that tiny bits of padding are actually good)
 
 
-Tested on:
 
-commit:         ae179410 usb: gadget: add raw-gadget interface
-git tree:       https://github.com/google/kasan.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=13d466e9e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ad1d751a3a72ae57
-dashboard link: https://syzkaller.appspot.com/bug?extid=9a48339b077c5a80b869
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16022395e00000
 
