@@ -2,83 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BF84156FEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 08:35:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 008DC156FFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 08:41:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbgBJHd4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 02:33:56 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10606 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726061AbgBJHd4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 02:33:56 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 28D5B2F7CEFFAE2091B8;
-        Mon, 10 Feb 2020 15:33:50 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Mon, 10 Feb 2020
- 15:33:41 +0800
-From:   Sun Ke <sunke32@huawei.com>
-To:     <josef@toxicpanda.com>, <axboe@kernel.dk>, <mchristi@redhat.com>,
-        <sunke32@huawei.com>
-CC:     <linux-block@vger.kernel.org>, <nbd@other.debian.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [v3] nbd: fix potential NULL pointer fault in nbd_genl_disconnect
-Date:   Mon, 10 Feb 2020 15:32:41 +0800
-Message-ID: <20200210073241.41813-1-sunke32@huawei.com>
-X-Mailer: git-send-email 2.17.2
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+        id S1727477AbgBJHl2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 02:41:28 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:32146 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727429AbgBJHl1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 02:41:27 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1581320487; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=uQ1CFdzgmAFqyyBigIzwbQQb6E7RnAIID7E2Ta0bdUY=; b=OjR2hfzmY7mJrdlZ8VNRmzdVMPPeYav0q07VsCgR2aD8GD/TJzc25psDs9XOF5/p2DNIbir1
+ YQql+KBR3BaoyJW2NlIy0dFYkd5GelXeWy2ZrBKXM+q8WDGy54KaDeNxbKPhSk7hl07P5fmk
+ upneVSrMiaCKXVDKxEddz26PY9E=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e41091c.7fb6bfac7ab0-smtp-out-n03;
+ Mon, 10 Feb 2020 07:41:16 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 88CB8C447A0; Mon, 10 Feb 2020 07:41:15 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from smasetty-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: smasetty)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D078FC43383;
+        Mon, 10 Feb 2020 07:41:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D078FC43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=smasetty@codeaurora.org
+From:   Sharat Masetty <smasetty@codeaurora.org>
+To:     freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc:     dri-devel@freedesktop.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
+        jcrouse@codeaurora.org, mka@chromium.org, dianders@chromium.org,
+        Sharat Masetty <smasetty@codeaurora.org>
+Subject: [PATCH v6]  sc7180: Add A618 GPU bindings
+Date:   Mon, 10 Feb 2020 13:11:04 +0530
+Message-Id: <1581320465-15854-1-git-send-email-smasetty@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Open /dev/nbdX first, the config_refs will be 1 and
-the pointers in nbd_device are still null. Disconnect
-/dev/nbdX, then reference a null recv_workq. The
-protection by config_refs in nbd_genl_disconnect is useless.
+I used this branch qcom/arm64-for-5.6-to-be-rebased as suggested by Matthias.
+This patch needs the clock patches and the clock patches have not yet landed, so
+please apply the following series and patches in order
 
-To fix it, just add a check for a non null task_recv in
-nbd_genl_disconnect.
+a) All patches from https://patchwork.kernel.org/project/linux-clk/list/?series=203517&state=%2a&archive=both
+b) Patches 1 and 2 from https://patchwork.kernel.org/project/linux-clk/list/?series=203527&archive=both&state=%2a
+c) All patches from https://patchwork.kernel.org/project/linux-clk/list/?series=221739&archive=both&state=%2a
+d) https://lore.kernel.org/linux-arm-msm/20200124144154.v2.10.I1a4b93fb005791e29a9dcf288fc8bd459a555a59%40changeid/raw
+e) https://patchwork.kernel.org/project/linux-clk/list/?series=238893
+f) This patch "arm64: dts: qcom: sc7180: Add A618 gpu dt blob"
 
-Signed-off-by: Sun Ke <sunke32@huawei.com>
----
-v1 -> v2:
-Add an omitted mutex_unlock.
+v3: Addressed review comments from previous submits. Also removed the
+interconnect bindings from this patch and I will submit as a new patch with its
+dependencies listed. Also I will be sending a new patch for updating the
+bindings documentation.
 
-v2 -> v3:
-Add nbd->config_lock, suggested by Josef.
----
- drivers/block/nbd.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+v4: Add GX_GDSC power domain binding for GMU
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index b4607dd96185..870b3fd0c101 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -2008,12 +2008,20 @@ static int nbd_genl_disconnect(struct sk_buff *skb, struct genl_info *info)
- 		       index);
- 		return -EINVAL;
- 	}
-+	mutex_lock(&nbd->config_lock);
- 	if (!refcount_inc_not_zero(&nbd->refs)) {
-+		mutex_unlock(&nbd->config_lock);
- 		mutex_unlock(&nbd_index_mutex);
- 		printk(KERN_ERR "nbd: device at index %d is going down\n",
- 		       index);
- 		return -EINVAL;
- 	}
-+	if (!nbd->recv_workq) {
-+		mutex_unlock(&nbd->config_lock);
-+		mutex_unlock(&nbd_index_mutex);
-+		return -EINVAL;
-+	}
-+	mutex_unlock(&nbd->config_lock);
- 	mutex_unlock(&nbd_index_mutex);
- 	if (!refcount_inc_not_zero(&nbd->config_refs)) {
- 		nbd_put(nbd);
--- 
-2.17.2
+v5: Change to a dummy GX_GDSC binding for faster landing
 
+v6: Rebased changes on top of Taniyas lastet post((e) in the list above) and
+adding back the GX_GDSC binding.
+
+Sharat Masetty (1):
+  arm64: dts: qcom: sc7180: Add A618 gpu dt blob
+
+ arch/arm64/boot/dts/qcom/sc7180.dtsi | 102 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 102 insertions(+)
+
+--
+1.9.1
