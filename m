@@ -2,33 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F181C157D9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 15:42:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A5FB157D9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 15:42:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728387AbgBJOmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 09:42:35 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:46611 "EHLO
+        id S1728441AbgBJOmx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 09:42:53 -0500
+Received: from rtits2.realtek.com ([211.75.126.72]:46622 "EHLO
         rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727704AbgBJOmf (ORCPT
+        with ESMTP id S1727704AbgBJOmx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 09:42:35 -0500
+        Mon, 10 Feb 2020 09:42:53 -0500
 Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID 01AEfxVY025063, This message is accepted by code: ctloc85258
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID 01AEgaBj025081, This message is accepted by code: ctloc85258
 Received: from mail.realtek.com (RTEXMB06.realtek.com.tw[172.21.6.99])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id 01AEfxVY025063
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id 01AEgaBj025081
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 10 Feb 2020 22:41:59 +0800
+        Mon, 10 Feb 2020 22:42:36 +0800
 Received: from RTEXMB05.realtek.com.tw (172.21.6.98) by
  RTEXMB06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Mon, 10 Feb 2020 22:41:58 +0800
-Received: from RTEXMB05.realtek.com.tw (172.21.6.98) by
- RTEXMB05.realtek.com.tw (172.21.6.98) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Mon, 10 Feb 2020 22:41:58 +0800
+ 15.1.1779.2; Mon, 10 Feb 2020 22:42:36 +0800
 Received: from james-BS01.localdomain (172.21.190.33) by
  RTEXMB01.realtek.com.tw (172.21.6.98) with Microsoft SMTP Server id
- 15.1.1779.2 via Frontend Transport; Mon, 10 Feb 2020 22:41:58 +0800
+ 15.1.1779.2 via Frontend Transport; Mon, 10 Feb 2020 22:42:36 +0800
 From:   James Tai <james.tai@realtek.com>
 To:     <james.ttl7447@gmail.com>
 CC:     <linux-arm-kernel@lists.infradead.org>,
@@ -38,8 +34,8 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         Mark Rutland <mark.rutland@arm.com>,
         <devicetree@vger.kernel.org>
 Subject: [PATCH] [DEV_FIX][THOR][B00] Support multiple IR key [REVIEWER] Simon
-Date:   Mon, 10 Feb 2020 22:41:53 +0800
-Message-ID: <20200210144153.27184-1-james.tai@realtek.com>
+Date:   Mon, 10 Feb 2020 22:42:31 +0800
+Message-ID: <20200210144231.27237-1-james.tai@realtek.com>
 X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
