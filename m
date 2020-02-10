@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E1D1157AA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:24:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A425F15781C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:05:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730028AbgBJNYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:24:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57926 "EHLO mail.kernel.org"
+        id S1730797AbgBJNFJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:05:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728633AbgBJMhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:06 -0500
+        id S1729623AbgBJMkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:07 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23A8E2051A;
-        Mon, 10 Feb 2020 12:37:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 104FE24672;
+        Mon, 10 Feb 2020 12:40:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338226;
-        bh=J5DLvdB6gBroYHWGrAiyydWfzx0oanCDBY7mMDZ58fs=;
+        s=default; t=1581338407;
+        bh=SuRrPA4tdvUoCTfsC4/L91gX2RFmWCvvWteqkENkFwU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h2U4s15aIPTqx5Z2ed4ROB2lqsc98JxmA+PVISVDhjf3WlTtO9/RvQkc/sQkBIE79
-         O8S6RAjb0ZYrqrqSQ8+SoOVKiPla5DvB+Dan3o+AMVe+YPNBWeKPXQjxNfe+6muz9w
-         mj7xOzvVWdrQpw5mL63QBmlzRl/IThKMncAnFn8Y=
+        b=mPmUOgsioKwrIeZFcfoxgs6ktt+UytIwFcjNrbTvOt8ax59x/Fuh1eUog4acLQumv
+         pEwI/oAPPq+kMhzqzo7is0FH13ysoIeQoZBbd5OfyAxNQAohzlrC5X8VY1C9kKrW2n
+         wRAY5TKZBIa6DwVpMnJEw67ZOysklsbRwj2YLJkM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Will Deacon <will@kernel.org>
-Subject: [PATCH 5.4 065/309] arm64: acpi: fix DAIF manipulation with pNMI
-Date:   Mon, 10 Feb 2020 04:30:21 -0800
-Message-Id: <20200210122412.185333033@linuxfoundation.org>
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 110/367] hv_balloon: Balloon up according to request page number
+Date:   Mon, 10 Feb 2020 04:30:23 -0800
+Message-Id: <20200210122434.627765704@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,89 +45,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Tianyu Lan <Tianyu.Lan@microsoft.com>
 
-commit e533dbe9dcb199bb637a2c465f3a6e70564994fe upstream.
+commit d33c240d47dab4fd15123d9e73fc8810cbc6ed6a upstream.
 
-Since commit:
+Current code has assumption that balloon request memory size aligns
+with 2MB. But actually Hyper-V doesn't guarantee such alignment. When
+balloon driver receives non-aligned balloon request, it produces warning
+and balloon up more memory than requested in order to keep 2MB alignment.
+Remove the warning and balloon up memory according to actual requested
+memory size.
 
-  d44f1b8dd7e66d80 ("arm64: KVM/mm: Move SEA handling behind a single 'claim' interface")
-
-... the top-level APEI SEA handler has the shape:
-
-1. current_flags = arch_local_save_flags()
-2. local_daif_restore(DAIF_ERRCTX)
-3. <GHES handler>
-4. local_daif_restore(current_flags)
-
-However, since commit:
-
-  4a503217ce37e1f4 ("arm64: irqflags: Use ICC_PMR_EL1 for interrupt masking")
-
-... when pseudo-NMIs (pNMIs) are in use, arch_local_save_flags() will save
-the PMR value rather than the DAIF flags.
-
-The combination of these two commits means that the APEI SEA handler will
-erroneously attempt to restore the PMR value into DAIF. Fix this by
-factoring local_daif_save_flags() out of local_daif_save(), so that we
-can consistently save DAIF in step #1, regardless of whether pNMIs are in
-use.
-
-Both commits were introduced concurrently in v5.0.
-
-Cc: <stable@vger.kernel.org>
-Fixes: 4a503217ce37e1f4 ("arm64: irqflags: Use ICC_PMR_EL1 for interrupt masking")
-Fixes: d44f1b8dd7e66d80 ("arm64: KVM/mm: Move SEA handling behind a single 'claim' interface")
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: Julien Thierry <julien.thierry.kdev@gmail.com>
-Cc: Will Deacon <will@kernel.org>
-Signed-off-by: Will Deacon <will@kernel.org>
+Fixes: f6712238471a ("hv: hv_balloon: avoid memory leak on alloc_error of 2MB memory block")
+Cc: stable@vger.kernel.org
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/include/asm/daifflags.h |   11 ++++++++++-
- arch/arm64/kernel/acpi.c           |    2 +-
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ drivers/hv/hv_balloon.c |   13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
---- a/arch/arm64/include/asm/daifflags.h
-+++ b/arch/arm64/include/asm/daifflags.h
-@@ -36,7 +36,7 @@ static inline void local_daif_mask(void)
- 	trace_hardirqs_off();
- }
+--- a/drivers/hv/hv_balloon.c
++++ b/drivers/hv/hv_balloon.c
+@@ -1217,10 +1217,7 @@ static unsigned int alloc_balloon_pages(
+ 	unsigned int i, j;
+ 	struct page *pg;
  
--static inline unsigned long local_daif_save(void)
-+static inline unsigned long local_daif_save_flags(void)
- {
- 	unsigned long flags;
+-	if (num_pages < alloc_unit)
+-		return 0;
+-
+-	for (i = 0; (i * alloc_unit) < num_pages; i++) {
++	for (i = 0; i < num_pages / alloc_unit; i++) {
+ 		if (bl_resp->hdr.size + sizeof(union dm_mem_page_range) >
+ 			HV_HYP_PAGE_SIZE)
+ 			return i * alloc_unit;
+@@ -1258,7 +1255,7 @@ static unsigned int alloc_balloon_pages(
  
-@@ -48,6 +48,15 @@ static inline unsigned long local_daif_s
- 			flags |= PSR_I_BIT;
  	}
  
-+	return flags;
-+}
-+
-+static inline unsigned long local_daif_save(void)
-+{
-+	unsigned long flags;
-+
-+	flags = local_daif_save_flags();
-+
- 	local_daif_mask();
+-	return num_pages;
++	return i * alloc_unit;
+ }
  
- 	return flags;
---- a/arch/arm64/kernel/acpi.c
-+++ b/arch/arm64/kernel/acpi.c
-@@ -274,7 +274,7 @@ int apei_claim_sea(struct pt_regs *regs)
- 	if (!IS_ENABLED(CONFIG_ACPI_APEI_GHES))
- 		return err;
+ static void balloon_up(struct work_struct *dummy)
+@@ -1273,9 +1270,6 @@ static void balloon_up(struct work_struc
+ 	long avail_pages;
+ 	unsigned long floor;
  
--	current_flags = arch_local_save_flags();
-+	current_flags = local_daif_save_flags();
- 
+-	/* The host balloons pages in 2M granularity. */
+-	WARN_ON_ONCE(num_pages % PAGES_IN_2M != 0);
+-
  	/*
- 	 * SEA can interrupt SError, mask it and describe this as an NMI so
+ 	 * We will attempt 2M allocations. However, if we fail to
+ 	 * allocate 2M chunks, we will go back to PAGE_SIZE allocations.
+@@ -1285,14 +1279,13 @@ static void balloon_up(struct work_struc
+ 	avail_pages = si_mem_available();
+ 	floor = compute_balloon_floor();
+ 
+-	/* Refuse to balloon below the floor, keep the 2M granularity. */
++	/* Refuse to balloon below the floor. */
+ 	if (avail_pages < num_pages || avail_pages - num_pages < floor) {
+ 		pr_warn("Balloon request will be partially fulfilled. %s\n",
+ 			avail_pages < num_pages ? "Not enough memory." :
+ 			"Balloon floor reached.");
+ 
+ 		num_pages = avail_pages > floor ? (avail_pages - floor) : 0;
+-		num_pages -= num_pages % PAGES_IN_2M;
+ 	}
+ 
+ 	while (!done) {
 
 
