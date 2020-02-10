@@ -2,100 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03E3B1583E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 20:45:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63E07158398
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 20:31:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbgBJTo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 14:44:58 -0500
-Received: from gateway20.websitewelcome.com ([192.185.69.18]:33402 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727003AbgBJTo5 (ORCPT
+        id S1727635AbgBJTbA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 14:31:00 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41937 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727003AbgBJTa7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 14:44:57 -0500
-X-Greylist: delayed 1232 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Feb 2020 14:44:57 EST
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id F2140400CCD53
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 12:10:53 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 1EfQj9VRSRP4z1EfQjbaNm; Mon, 10 Feb 2020 13:24:24 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=zLJ411YQzZxcjVivpQCSqDHQIKFunCgqDuGk0Y1oDF8=; b=fXZGvH4sfeNwBs35dvxc4x9IO/
-        lGre/eexYjTS79Tv1LTUpIErCF+xC5pMY88XXQBE/ddM44YBKPFEyw+u5ILAQjMYL01Ehq00BAnpF
-        vV8szZbddEA/RgJvXUg/F9/NCrmhJbItNsy7Sm1HUwuDSqEW/BbsQo3Lqqm2V8SQcK2aAHQ43hOCW
-        KT+l7tcrI4cxNKeexSxXg8U+VlW4D48xCs/pslMnOF/s8LT/ch67cGMiWoPaAcFOsAhGBOax5AU4Q
-        u72GiAmyKX6QpUGOshCh2LPBTQFFzObVeWpnNkdOxyy8ac4ovu4z3vMeEh+A0XYsQyaDQKlqU3wK5
-        TpSPyqNw==;
-Received: from [200.68.141.48] (port=6223 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j1EfO-0013oR-Te; Mon, 10 Feb 2020 13:24:23 -0600
-Date:   Mon, 10 Feb 2020 13:26:56 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Thor Thayer <thor.thayer@linux.intel.com>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] i2c: altera: Use 64-bit arithmetic instead of 32-bit
-Message-ID: <20200210192656.GA8412@embeddedor>
+        Mon, 10 Feb 2020 14:30:59 -0500
+Received: by mail-oi1-f196.google.com with SMTP id i1so10317891oie.8
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 11:30:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7BxkgltGo3ZM9ZY7Grbu2bcNcn+pz+GDYrC11ZXD2ME=;
+        b=BH7Ud+6oFq+7OoIlLBbbMvTBHC4x6G8tRrT4wZScXP2/0BYU5O8AgFFlezKTTpQYMV
+         fmiGPa9peDfUrdZdj+9xqS9t7Ua491OZzp4RIZLg3Giw7fhPm1FvIbwzaS9NqQojoCMv
+         95B0WHndyisDS9V4XA1xkVEyzq6091EvwvmT4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7BxkgltGo3ZM9ZY7Grbu2bcNcn+pz+GDYrC11ZXD2ME=;
+        b=K2UhCHbmqeP/W/qkKJCpyT56j/y7eO3JQI/nBBLM+ncgNy2bwBpZr9+A7AMDj+K/Wh
+         023gZE5an/FT+jxc8SzK8ZKodO9F8mMRZqaSBDbii/KU6WO/LXFRKq/KksfNP1AnCVv3
+         cXjtu0bnAVEP43u34WjXcrgf3KbBppR1w3caiIFhX7puv/Mr4b+dk/urlt2iVQbyOVRw
+         Xv6ByHuyWSlJWb13MjtUwlbr5dljPBiqaxIZLSZJy4p8nzP1fJjBiynj3f59qY07rEQ7
+         /D5Kpl1DfJy7sGKgAkDLpgfcpV6phqojyyK0Uyn0jQjEgHdTmQDDG1iIOiR1zCVmk9A1
+         QkZg==
+X-Gm-Message-State: APjAAAUhRAH/24DG6SjEvU67+3/P/CKk9M0yZuWJdUrAL3Up/vb4cZ+Z
+        xUtAKxHoIWueq9jv/DyjkhD55Q==
+X-Google-Smtp-Source: APXvYqzUOzBqZYnuPC5ne0YCYJNkucq+pHiY9zdgP+OtGzcaHv4jX1sC238odS+TkQrM/uoVlWRNEA==
+X-Received: by 2002:aca:5a04:: with SMTP id o4mr405786oib.71.1581363059273;
+        Mon, 10 Feb 2020 11:30:59 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 67sm354602oid.30.2020.02.10.11.30.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Feb 2020 11:30:58 -0800 (PST)
+From:   Kees Cook <keescook@chromium.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Hector Marco-Gisbert <hecmargi@upv.es>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Jann Horn <jannh@google.com>,
+        Russell King <linux@armlinux.org.uk>, x86@kernel.org,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH v3 0/7] binfmt_elf: Update READ_IMPLIES_EXEC logic for modern CPUs
+Date:   Mon, 10 Feb 2020 11:30:42 -0800
+Message-Id: <20200210193049.64362-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.141.48
-X-Source-L: No
-X-Exim-ID: 1j1EfO-0013oR-Te
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.141.48]:6223
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add suffix ULL to constant 300 in order to avoid a potential integer
-overflow and give the compiler complete information about the proper
-arithmetic to use. Notice that this constant is being used in a context
-that expects an expression of type u64, but it's currently evaluated
-using 32-bit arithmetic.
+Hi,
 
-Addresses-Coverity: 1458369 ("Unintentional integer overflow")
-Fixes: 0560ad576268 ("i2c: altera: Add Altera I2C Controller driver")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/i2c/busses/i2c-altera.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This is a refresh of my earlier attempt to fix READ_IMPLIES_EXEC. I think
+it incorporates the feedback from v2, and I've now added a selftest. This
+series is for x86, arm, and arm64; I'd like it to go via -tip, though,
+just to keep this change together with the selftest. To that end, I'd like
+to collect Acks from the respective architecture maintainers. (Note that
+most other architectures don't suffer from this problem. e.g. powerpc's
+behavior appears to already be correct. MIPS may need adjusting but the
+history of CPU features and toolchain behavior is very unclear to me.)
 
-diff --git a/drivers/i2c/busses/i2c-altera.c b/drivers/i2c/busses/i2c-altera.c
-index 5255d3755411..526f453f0ff7 100644
---- a/drivers/i2c/busses/i2c-altera.c
-+++ b/drivers/i2c/busses/i2c-altera.c
-@@ -171,7 +171,8 @@ static void altr_i2c_init(struct altr_i2c_dev *idev)
- 	/* SCL Low Time */
- 	writel(t_low, idev->base + ALTR_I2C_SCL_LOW);
- 	/* SDA Hold Time, 300ns */
--	writel(div_u64(300 * clk_mhz, 1000), idev->base + ALTR_I2C_SDA_HOLD);
-+	writel(div_u64(300ULL * clk_mhz, 1000),
-+	       idev->base + ALTR_I2C_SDA_HOLD);
- 
- 	/* Mask all master interrupt bits */
- 	altr_i2c_int_enable(idev, ALTR_I2C_ALL_IRQ, false);
+Repeating the commit log from later in the series:
+
+
+The READ_IMPLIES_EXEC work-around was designed for old toolchains that
+lacked the ELF PT_GNU_STACK marking under the assumption that toolchains
+that couldn't specify executable permission flags for the stack may not
+know how to do it correctly for any memory region.
+
+This logic is sensible for having ancient binaries coexist in a system
+with possibly NX memory, but was implemented in a way that equated having
+a PT_GNU_STACK marked executable as being as "broken" as lacking the
+PT_GNU_STACK marking entirely. Things like unmarked assembly and stack
+trampolines may cause PT_GNU_STACK to need an executable bit, but they
+do not imply all mappings must be executable.
+
+This confusion has led to situations where modern programs with explicitly
+marked executable stack are forced into the READ_IMPLIES_EXEC state when
+no such thing is needed. (And leads to unexpected failures when mmap()ing
+regions of device driver memory that wish to disallow VM_EXEC[1].)
+
+In looking for other reasons for the READ_IMPLIES_EXEC behavior, Jann
+Horn noted that glibc thread stacks have always been marked RWX (until
+2003 when they started tracking the PT_GNU_STACK flag instead[2]). And
+musl doesn't support executable stacks at all[3]. As such, no breakage
+for multithreaded applications is expected from this change.
+
+[1] https://lkml.kernel.org/r/20190418055759.GA3155@mellanox.com
+[2] https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=54ee14b3882
+[3] https://lkml.kernel.org/r/20190423192534.GN23599@brightrain.aerifal.cx
+
+
+-Kees
+
+
+v3:
+ - split steps in to distinct patches
+ - include arm32 and arm64/compat
+ - add selftests to validate behavior
+v2: https://lore.kernel.org/lkml/20190424203408.GA11386@beast/
+v1: https://lore.kernel.org/lkml/20190423181210.GA2443@beast/
+
+Kees Cook (7):
+  x86/elf: Add table to document READ_IMPLIES_EXEC
+  x86/elf: Split READ_IMPLIES_EXEC from executable GNU_STACK
+  x86/elf: Disable automatic READ_IMPLIES_EXEC for 64-bit address spaces
+  arm32/64, elf: Add tables to document READ_IMPLIES_EXEC
+  arm32/64, elf: Split READ_IMPLIES_EXEC from executable GNU_STACK
+  arm64, elf: Disable automatic READ_IMPLIES_EXEC for 64-bit address
+    spaces
+  selftests/exec: Add READ_IMPLIES_EXEC tests
+
+ arch/arm/kernel/elf.c                         |  27 +++-
+ arch/arm64/include/asm/elf.h                  |  23 +++-
+ arch/x86/include/asm/elf.h                    |  22 +++-
+ fs/compat_binfmt_elf.c                        |   5 +
+ tools/testing/selftests/exec/Makefile         |  42 +++++-
+ .../selftests/exec/read_implies_exec.c        | 121 ++++++++++++++++++
+ .../selftests/exec/strip-gnu-stack-bits.c     |  34 +++++
+ .../testing/selftests/exec/strip-gnu-stack.c  |  69 ++++++++++
+ 8 files changed, 336 insertions(+), 7 deletions(-)
+ create mode 100644 tools/testing/selftests/exec/read_implies_exec.c
+ create mode 100644 tools/testing/selftests/exec/strip-gnu-stack-bits.c
+ create mode 100644 tools/testing/selftests/exec/strip-gnu-stack.c
+
 -- 
-2.25.0
+2.20.1
 
