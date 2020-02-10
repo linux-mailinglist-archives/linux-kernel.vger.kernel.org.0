@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF8FB157945
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:14:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A03AB157AC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:25:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729164AbgBJMih (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:38:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57580 "EHLO mail.kernel.org"
+        id S1729260AbgBJNZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:25:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728581AbgBJMg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:58 -0500
+        id S1727967AbgBJMg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:36:59 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E46B720661;
-        Mon, 10 Feb 2020 12:36:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A5532051A;
+        Mon, 10 Feb 2020 12:36:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1581338218;
-        bh=H2c6hpcHaXEX8RbjLCaE5ksJqfVjCa4i3BpC92XnC5E=;
+        bh=aNUCgyekur5TaYEv7mJwSWqN9fHod0KCFAq+c+HIKq4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TwmwGicDdveqTwCfH2g7eiFoS+1QlDDbQPsiUkAwfhn4L27CvE7Xf38ndPEOTYkWA
-         nk2xzHkSTF17+YZ4IFx90ZhZJbSCCUkRWZWmWIEEaqXbjz8t+8V3kGa7n1mg7fc1Dg
-         edQ6rNA2Em/JAxcQlUtA6PGluMZ8xBnNyiYMJVt4=
+        b=EOjqkH4eMNpZ9iFLMA2hzZHhh2O5mDj7f7Vra4ucKP4dlSb+pCjDNz2AX5yPdZVMT
+         9xnGuvZsU4BLNH/oTqu557S+3vpZCxvRNT6QOw8IDJ4yjZ4bOCB5/yVy8Ode2geNL4
+         S4G8ZTrqCGu541t5H+HXvjPHAmSO7EyJDv+x1Gc4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        zhengbin <zhengbin13@huawei.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 5.4 050/309] mmc: sdhci-pci: Make function amd_sdhci_reset static
-Date:   Mon, 10 Feb 2020 04:30:06 -0800
-Message-Id: <20200210122410.803394396@linuxfoundation.org>
+        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 5.4 051/309] utimes: Clamp the timestamps in notify_change()
+Date:   Mon, 10 Feb 2020 04:30:07 -0800
+Message-Id: <20200210122410.898647246@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
 References: <20200210122406.106356946@linuxfoundation.org>
@@ -45,34 +46,197 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhengbin <zhengbin13@huawei.com>
+From: Amir Goldstein <amir73il@gmail.com>
 
-commit 38413ce39a4bd908c02257cd2f9e0c92b27886f4 upstream.
+commit eb31e2f63d85d1bec4f7b136f317e03c03db5503 upstream.
 
-Fix sparse warnings:
+Push clamping timestamps into notify_change(), so in-kernel
+callers like nfsd and overlayfs will get similar timestamp
+set behavior as utimes.
 
-drivers/mmc/host/sdhci-pci-core.c:1599:6: warning: symbol 'amd_sdhci_reset' was not declared. Should it be static?
+AV: get rid of clamping in ->setattr() instances; we don't need
+to bother with that there, with notify_change() doing normalization
+in all cases now (it already did for implicit case, since current_time()
+clamps).
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: zhengbin <zhengbin13@huawei.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Suggested-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: 42e729b9ddbb ("utimes: Clamp the timestamps before update")
+Cc: stable@vger.kernel.org # v5.4
+Cc: Deepa Dinamani <deepa.kernel@gmail.com>
+Cc: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/sdhci-pci-core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/attr.c           |   23 +++++++++++------------
+ fs/configfs/inode.c |    9 +++------
+ fs/f2fs/file.c      |   18 ++++++------------
+ fs/ntfs/inode.c     |   18 ++++++------------
+ fs/ubifs/file.c     |   18 ++++++------------
+ fs/utimes.c         |    4 ++--
+ 6 files changed, 34 insertions(+), 56 deletions(-)
 
---- a/drivers/mmc/host/sdhci-pci-core.c
-+++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -1604,7 +1604,7 @@ static u32 sdhci_read_present_state(stru
- 	return sdhci_readl(host, SDHCI_PRESENT_STATE);
- }
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -183,18 +183,12 @@ void setattr_copy(struct inode *inode, c
+ 		inode->i_uid = attr->ia_uid;
+ 	if (ia_valid & ATTR_GID)
+ 		inode->i_gid = attr->ia_gid;
+-	if (ia_valid & ATTR_ATIME) {
+-		inode->i_atime = timestamp_truncate(attr->ia_atime,
+-						  inode);
+-	}
+-	if (ia_valid & ATTR_MTIME) {
+-		inode->i_mtime = timestamp_truncate(attr->ia_mtime,
+-						  inode);
+-	}
+-	if (ia_valid & ATTR_CTIME) {
+-		inode->i_ctime = timestamp_truncate(attr->ia_ctime,
+-						  inode);
+-	}
++	if (ia_valid & ATTR_ATIME)
++		inode->i_atime = attr->ia_atime;
++	if (ia_valid & ATTR_MTIME)
++		inode->i_mtime = attr->ia_mtime;
++	if (ia_valid & ATTR_CTIME)
++		inode->i_ctime = attr->ia_ctime;
+ 	if (ia_valid & ATTR_MODE) {
+ 		umode_t mode = attr->ia_mode;
  
--void amd_sdhci_reset(struct sdhci_host *host, u8 mask)
-+static void amd_sdhci_reset(struct sdhci_host *host, u8 mask)
- {
- 	struct sdhci_pci_slot *slot = sdhci_priv(host);
- 	struct pci_dev *pdev = slot->chip->pdev;
+@@ -268,8 +262,13 @@ int notify_change(struct dentry * dentry
+ 	attr->ia_ctime = now;
+ 	if (!(ia_valid & ATTR_ATIME_SET))
+ 		attr->ia_atime = now;
++	else
++		attr->ia_atime = timestamp_truncate(attr->ia_atime, inode);
+ 	if (!(ia_valid & ATTR_MTIME_SET))
+ 		attr->ia_mtime = now;
++	else
++		attr->ia_mtime = timestamp_truncate(attr->ia_mtime, inode);
++
+ 	if (ia_valid & ATTR_KILL_PRIV) {
+ 		error = security_inode_need_killpriv(dentry);
+ 		if (error < 0)
+--- a/fs/configfs/inode.c
++++ b/fs/configfs/inode.c
+@@ -76,14 +76,11 @@ int configfs_setattr(struct dentry * den
+ 	if (ia_valid & ATTR_GID)
+ 		sd_iattr->ia_gid = iattr->ia_gid;
+ 	if (ia_valid & ATTR_ATIME)
+-		sd_iattr->ia_atime = timestamp_truncate(iattr->ia_atime,
+-						      inode);
++		sd_iattr->ia_atime = iattr->ia_atime;
+ 	if (ia_valid & ATTR_MTIME)
+-		sd_iattr->ia_mtime = timestamp_truncate(iattr->ia_mtime,
+-						      inode);
++		sd_iattr->ia_mtime = iattr->ia_mtime;
+ 	if (ia_valid & ATTR_CTIME)
+-		sd_iattr->ia_ctime = timestamp_truncate(iattr->ia_ctime,
+-						      inode);
++		sd_iattr->ia_ctime = iattr->ia_ctime;
+ 	if (ia_valid & ATTR_MODE) {
+ 		umode_t mode = iattr->ia_mode;
+ 
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -751,18 +751,12 @@ static void __setattr_copy(struct inode
+ 		inode->i_uid = attr->ia_uid;
+ 	if (ia_valid & ATTR_GID)
+ 		inode->i_gid = attr->ia_gid;
+-	if (ia_valid & ATTR_ATIME) {
+-		inode->i_atime = timestamp_truncate(attr->ia_atime,
+-						  inode);
+-	}
+-	if (ia_valid & ATTR_MTIME) {
+-		inode->i_mtime = timestamp_truncate(attr->ia_mtime,
+-						  inode);
+-	}
+-	if (ia_valid & ATTR_CTIME) {
+-		inode->i_ctime = timestamp_truncate(attr->ia_ctime,
+-						  inode);
+-	}
++	if (ia_valid & ATTR_ATIME)
++		inode->i_atime = attr->ia_atime;
++	if (ia_valid & ATTR_MTIME)
++		inode->i_mtime = attr->ia_mtime;
++	if (ia_valid & ATTR_CTIME)
++		inode->i_ctime = attr->ia_ctime;
+ 	if (ia_valid & ATTR_MODE) {
+ 		umode_t mode = attr->ia_mode;
+ 
+--- a/fs/ntfs/inode.c
++++ b/fs/ntfs/inode.c
+@@ -2899,18 +2899,12 @@ int ntfs_setattr(struct dentry *dentry,
+ 			ia_valid |= ATTR_MTIME | ATTR_CTIME;
+ 		}
+ 	}
+-	if (ia_valid & ATTR_ATIME) {
+-		vi->i_atime = timestamp_truncate(attr->ia_atime,
+-					       vi);
+-	}
+-	if (ia_valid & ATTR_MTIME) {
+-		vi->i_mtime = timestamp_truncate(attr->ia_mtime,
+-					       vi);
+-	}
+-	if (ia_valid & ATTR_CTIME) {
+-		vi->i_ctime = timestamp_truncate(attr->ia_ctime,
+-					       vi);
+-	}
++	if (ia_valid & ATTR_ATIME)
++		vi->i_atime = attr->ia_atime;
++	if (ia_valid & ATTR_MTIME)
++		vi->i_mtime = attr->ia_mtime;
++	if (ia_valid & ATTR_CTIME)
++		vi->i_ctime = attr->ia_ctime;
+ 	mark_inode_dirty(vi);
+ out:
+ 	return err;
+--- a/fs/ubifs/file.c
++++ b/fs/ubifs/file.c
+@@ -1078,18 +1078,12 @@ static void do_attr_changes(struct inode
+ 		inode->i_uid = attr->ia_uid;
+ 	if (attr->ia_valid & ATTR_GID)
+ 		inode->i_gid = attr->ia_gid;
+-	if (attr->ia_valid & ATTR_ATIME) {
+-		inode->i_atime = timestamp_truncate(attr->ia_atime,
+-						  inode);
+-	}
+-	if (attr->ia_valid & ATTR_MTIME) {
+-		inode->i_mtime = timestamp_truncate(attr->ia_mtime,
+-						  inode);
+-	}
+-	if (attr->ia_valid & ATTR_CTIME) {
+-		inode->i_ctime = timestamp_truncate(attr->ia_ctime,
+-						  inode);
+-	}
++	if (attr->ia_valid & ATTR_ATIME)
++		inode->i_atime = attr->ia_atime;
++	if (attr->ia_valid & ATTR_MTIME)
++		inode->i_mtime = attr->ia_mtime;
++	if (attr->ia_valid & ATTR_CTIME)
++		inode->i_ctime = attr->ia_ctime;
+ 	if (attr->ia_valid & ATTR_MODE) {
+ 		umode_t mode = attr->ia_mode;
+ 
+--- a/fs/utimes.c
++++ b/fs/utimes.c
+@@ -36,14 +36,14 @@ static int utimes_common(const struct pa
+ 		if (times[0].tv_nsec == UTIME_OMIT)
+ 			newattrs.ia_valid &= ~ATTR_ATIME;
+ 		else if (times[0].tv_nsec != UTIME_NOW) {
+-			newattrs.ia_atime = timestamp_truncate(times[0], inode);
++			newattrs.ia_atime = times[0];
+ 			newattrs.ia_valid |= ATTR_ATIME_SET;
+ 		}
+ 
+ 		if (times[1].tv_nsec == UTIME_OMIT)
+ 			newattrs.ia_valid &= ~ATTR_MTIME;
+ 		else if (times[1].tv_nsec != UTIME_NOW) {
+-			newattrs.ia_mtime = timestamp_truncate(times[1], inode);
++			newattrs.ia_mtime = times[1];
+ 			newattrs.ia_valid |= ATTR_MTIME_SET;
+ 		}
+ 		/*
 
 
