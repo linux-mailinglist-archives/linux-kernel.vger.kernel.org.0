@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA4FE157B3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:29:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39ED0157914
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:13:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731274AbgBJN2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:28:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55692 "EHLO mail.kernel.org"
+        id S1730411AbgBJNMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:12:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728365AbgBJMgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:24 -0500
+        id S1727900AbgBJMiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:52 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42CD120838;
-        Mon, 10 Feb 2020 12:36:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 107BC24649;
+        Mon, 10 Feb 2020 12:38:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338184;
-        bh=0hJvxlpKEClRtqfzkKKPJrpazecwg1Hs12lim4zNnzY=;
+        s=default; t=1581338332;
+        bh=f4kmDu/JvwbQrWcKHUCplWeVGT/aIKbR1AJbtnX2X9U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l4mXmrzSdCveDnrAVaMMBu0X/OgW+hhksb80UQ2qzQ6xtIh3R25iCHkZF51KuMV0m
-         ul+n9quaLh5gThpcmY4FnpKwa+kDUWpY8RxOT6OIaOSA1CPkm+D4lyhECn6DJPU5Lw
-         nhzKtEADbQKxH5c+tPbn60ddry9yYiPtSmKnZQrQ=
+        b=mWI9TnEozfD46RiMg/7IzlTNfq5+IQKtu8LCRX5d/ynnHHumZCX3dVn0DRYc8yYxR
+         wEDnCy+086v1QnktksfI1r1Mkk7OqD+sWhf8DogvHa6ukDS1upImiBbinxL+n7c1oq
+         gqSrX/HDLwnHA+jSWm5sb6V0trvZyQ7MzYivZYaM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Harini Katakam <harini.katakam@xilinx.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 173/195] net: macb: Remove unnecessary alignment check for TSO
-Date:   Mon, 10 Feb 2020 04:33:51 -0800
-Message-Id: <20200210122322.115440692@linuxfoundation.org>
+Subject: [PATCH 5.4 276/309] net: macb: Limit maximum GEM TX length in TSO
+Date:   Mon, 10 Feb 2020 04:33:52 -0800
+Message-Id: <20200210122433.150724415@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +45,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Harini Katakam <harini.katakam@xilinx.com>
 
-[ Upstream commit 41c1ef978c8d0259c6636e6d2d854777e92650eb ]
+[ Upstream commit f822e9c4ffa511a5c681cf866287d9383a3b6f1b ]
 
-The IP TSO implementation does NOT require the length to be a
-multiple of 8. That is only a requirement for UFO as per IP
-documentation. Hence, exit macb_features_check function in the
-beginning if the protocol is not UDP. Only when it is UDP,
-proceed further to the alignment checks. Update comments to
-reflect the same. Also remove dead code checking for protocol
-TCP when calculating header length.
+GEM_MAX_TX_LEN currently resolves to 0x3FF8 for any IP version supporting
+TSO with full 14bits of length field in payload descriptor. But an IP
+errata causes false amba_error (bit 6 of ISR) when length in payload
+descriptors is specified above 16387. The error occurs because the DMA
+falsely concludes that there is not enough space in SRAM for incoming
+payload. These errors were observed continuously under stress of large
+packets using iperf on a version where SRAM was 16K for each queue. This
+errata will be documented shortly and affects all versions since TSO
+functionality was added. Hence limit the max length to 0x3FC0 (rounded).
 
-Fixes: 1629dd4f763c ("cadence: Add LSO support.")
 Signed-off-by: Harini Katakam <harini.katakam@xilinx.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/cadence/macb_main.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/cadence/macb_main.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 --- a/drivers/net/ethernet/cadence/macb_main.c
 +++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -1654,16 +1654,14 @@ static netdev_features_t macb_features_c
+@@ -73,7 +73,11 @@ struct sifive_fu540_macb_mgmt {
+ /* Max length of transmit frame must be a multiple of 8 bytes */
+ #define MACB_TX_LEN_ALIGN	8
+ #define MACB_MAX_TX_LEN		((unsigned int)((1 << MACB_TX_FRMLEN_SIZE) - 1) & ~((unsigned int)(MACB_TX_LEN_ALIGN - 1)))
+-#define GEM_MAX_TX_LEN		((unsigned int)((1 << GEM_TX_FRMLEN_SIZE) - 1) & ~((unsigned int)(MACB_TX_LEN_ALIGN - 1)))
++/* Limit maximum TX length as per Cadence TSO errata. This is to avoid a
++ * false amba_error in TX path from the DMA assuming there is not enough
++ * space in the SRAM (16KB) even when there is.
++ */
++#define GEM_MAX_TX_LEN		(unsigned int)(0x3FC0)
  
- 	/* Validate LSO compatibility */
- 
--	/* there is only one buffer */
--	if (!skb_is_nonlinear(skb))
-+	/* there is only one buffer or protocol is not UDP */
-+	if (!skb_is_nonlinear(skb) || (ip_hdr(skb)->protocol != IPPROTO_UDP))
- 		return features;
- 
- 	/* length of header */
- 	hdrlen = skb_transport_offset(skb);
--	if (ip_hdr(skb)->protocol == IPPROTO_TCP)
--		hdrlen += tcp_hdrlen(skb);
- 
--	/* For LSO:
-+	/* For UFO only:
- 	 * When software supplies two or more payload buffers all payload buffers
- 	 * apart from the last must be a multiple of 8 bytes in size.
- 	 */
+ #define GEM_MTU_MIN_SIZE	ETH_MIN_MTU
+ #define MACB_NETIF_LSO		NETIF_F_TSO
 
 
