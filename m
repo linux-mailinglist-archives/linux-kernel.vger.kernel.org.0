@@ -2,138 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBB0B157DB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 15:46:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24A19157DAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 15:45:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728621AbgBJOpo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 09:45:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58754 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728297AbgBJOph (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 09:45:37 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB37324672;
-        Mon, 10 Feb 2020 14:45:36 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.93)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1j1AJb-001Vz8-Ni; Mon, 10 Feb 2020 09:45:35 -0500
-Message-Id: <20200210144535.610003291@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Mon, 10 Feb 2020 09:44:59 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
+        id S1728156AbgBJOp3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 09:45:29 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37362 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727411AbgBJOp3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 09:45:29 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z12so4033585pgl.4
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 06:45:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AoC6oLn1iN9nAEM4B11m4EnisMnCyq2bdXkwzvNp36c=;
+        b=e6+c4MRotQlIlu/VHkezDMBYJX1/ZntF5pE9VwiOcSLxcpPcryDxRTgwjK/ptX2sZv
+         LBDhDetYzW+4Z4d8dGkJzlA2TwdJotNQCxS2fQCHayLykVo8l3wAY0o2ATl9Y9g+3AOk
+         kQ1/uD4zYT0qz6DR3jwmGqIvwE3t+i9kjfhe6aEXTAWzGd3RWJI9OjNNGU3O2clJ596g
+         ArbvoO0mrJfcZc39E+qoUSnlcy08ENMtwhGnSWT+RZuAmUHnwYD1ldGQIdOVhHzaf2rb
+         lBtrI7M1fKmSme3mrpABjmQwDIHrcYBovYaCkck2Ai7dcoaE0YeLFxZdo9f3ybZ4biRV
+         IfMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AoC6oLn1iN9nAEM4B11m4EnisMnCyq2bdXkwzvNp36c=;
+        b=JrzJhiBWImtQmilwvXY8jYAQk0Y7/5/Mm2JDNGQ2RW6mcYLPyLUG1JNqSzE3pmAzya
+         9D/U35VcBPKctJV4Xigw0HiSQB7LNyG5ij6A1wZU5hYE8HVuUP+ZDm6zR4Y3p1lI0X1w
+         LiU++wAqmTDg0/XQLNt+HE3Z+or5P1SMksM48iRvFjX7sOcP+IIYNQ6wsde1aCOwYUfM
+         uh+exc6ZPOQf/TC3IPAe2j7p6TZHovWM1T7muCAokTdISwrojUNF/D711KZdEztKSl6j
+         gFjRHqEd17YGkdt7cGqQKyP1WiQJ5gYTotbCi9SM/DAVJlzIBhnyopDxEHYnTJoPBDCm
+         x7Jg==
+X-Gm-Message-State: APjAAAXIIWWWrzfqF/5OA8a6ArlLvfYrI587FBtz0b3U05EOTpaBBvR3
+        6bISON6XdU1a81+G2TshgVjU/RgJx5g=
+X-Google-Smtp-Source: APXvYqy56C+LYN/F5dUKKelbs886mNzI9yqb6YM3uacrsLXpoxwP4uDXYx/soWzP+PzK+jDRnMeuJA==
+X-Received: by 2002:a65:420b:: with SMTP id c11mr2013833pgq.306.1581345926732;
+        Mon, 10 Feb 2020 06:45:26 -0800 (PST)
+Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
+        by smtp.gmail.com with ESMTPSA id dw10sm552079pjb.11.2020.02.10.06.45.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Feb 2020 06:45:26 -0800 (PST)
+From:   Mark Salyzyn <salyzyn@android.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [for-linus][PATCH 4/4] bootconfig: Use parse_args() to find bootconfig and --
-References: <20200210144455.531096382@goodmis.org>
+Cc:     kernel-team@android.com, Mark Salyzyn <salyzyn@android.com>
+Subject: [PATCH 0/4 v2] random add rng-seed to command line option
+Date:   Mon, 10 Feb 2020 06:45:01 -0800
+Message-Id: <20200210144512.180348-1-salyzyn@android.com>
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+A followup to commit 428826f5358c922dc378830a1717b682c0823160
+("fdt: add support for rng-seed") to extend what was started
+with Open Firmware (OF or Device Tree) parsing, but also add
+it to the command line.
 
-The current implementation does a naive search of "bootconfig" on the kernel
-command line. But this could find "bootconfig" that is part of another
-option in quotes (although highly unlikely). But it also needs to find '--'
-on the kernel command line to know if it should append a '--' or not when a
-bootconfig in the initrd file has an "init" section. The check uses the
-naive strstr() to find to see if it exists. But this can return a false
-positive if it exists in an option and then the "init" section in the initrd
-will not be appended properly.
+If CONFIG_RANDOM_TRUST_BOOTLOADER is set, then feed the rng-seed
+command line option length as added trusted entropy.
 
-Using parse_args() to find both of these will solve both of these problems.
+Always erase all views of the rng-seed option, except early command
+line parsing, to prevent leakage to applications or modules, to
+eliminate any attack vector.
 
-Link: https://lore.kernel.org/r/202002070954.C18E7F58B@keescook
+It is preferred to add rng-seed to the Device Tree, but some
+platforms do not have this option, so this adds the ability to
+provide some command-line-limited data to the entropy through this
+alternate mechanism.  Expect on average 6 bits of useful entropy
+per character.
 
-Fixes: 7495e0926fdf3 ("bootconfig: Only load bootconfig if "bootconfig" is on the kernel cmdline")
-Fixes: 1319916209ce8 ("bootconfig: init: Allow admin to use bootconfig for init command line")
-Reported-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Mark Salyzyn (4):
+  init: move string constants to __initconst section
+  init: boot_command_line can be truncated
+  random: rng-seed source is utf-8
+  random: add rng-seed= command line option
+
 ---
- init/main.c | 37 ++++++++++++++++++++++++++++++-------
- 1 file changed, 30 insertions(+), 7 deletions(-)
+v2
+- Split into four bite sized patches.
+- Correct spelling in commit message.
+- rng-seed is assumed to be utf-8, so correct both to 6 bits/character
+  of collected entropy.
+- Move entropy collection to a static __always_inline helper function.
 
-diff --git a/init/main.c b/init/main.c
-index 491f1cdb3105..59248717c925 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -142,6 +142,15 @@ static char *extra_command_line;
- /* Extra init arguments */
- static char *extra_init_args;
- 
-+#ifdef CONFIG_BOOT_CONFIG
-+/* Is bootconfig on command line? */
-+static bool bootconfig_found;
-+static bool initargs_found;
-+#else
-+# define bootconfig_found false
-+# define initargs_found false
-+#endif
-+
- static char *execute_command;
- static char *ramdisk_execute_command;
- 
-@@ -336,17 +345,30 @@ u32 boot_config_checksum(unsigned char *p, u32 size)
- 	return ret;
- }
- 
-+static int __init bootconfig_params(char *param, char *val,
-+				    const char *unused, void *arg)
-+{
-+	if (strcmp(param, "bootconfig") == 0) {
-+		bootconfig_found = true;
-+	} else if (strcmp(param, "--") == 0) {
-+		initargs_found = true;
-+	}
-+	return 0;
-+}
-+
- static void __init setup_boot_config(const char *cmdline)
- {
-+	static char tmp_cmdline[COMMAND_LINE_SIZE] __initdata;
- 	u32 size, csum;
- 	char *data, *copy;
--	const char *p;
- 	u32 *hdr;
- 	int ret;
- 
--	p = strstr(cmdline, "bootconfig");
--	if (!p || (p != cmdline && !isspace(*(p-1))) ||
--	    (p[10] && !isspace(p[10])))
-+	strlcpy(tmp_cmdline, boot_command_line, COMMAND_LINE_SIZE);
-+	parse_args("bootconfig", tmp_cmdline, NULL, 0, 0, 0, NULL,
-+		   bootconfig_params);
-+
-+	if (!bootconfig_found)
- 		return;
- 
- 	if (!initrd_end)
-@@ -563,11 +585,12 @@ static void __init setup_command_line(char *command_line)
- 		 * to init.
- 		 */
- 		len = strlen(saved_command_line);
--		if (!strstr(boot_command_line, " -- ")) {
-+		if (initargs_found) {
-+			saved_command_line[len++] = ' ';
-+		} else {
- 			strcpy(saved_command_line + len, " -- ");
- 			len += 4;
--		} else
--			saved_command_line[len++] = ' ';
-+		}
- 
- 		strcpy(saved_command_line + len, extra_init_args);
- 	}
+ drivers/char/random.c  |  10 +++-
+ include/linux/random.h |   5 ++
+ init/main.c            | 115 ++++++++++++++++++++++++++++++-----------
+ 3 files changed, 100 insertions(+), 30 deletions(-)
+
 -- 
-2.24.1
-
+2.25.0.341.g760bfbb309-goog
 
