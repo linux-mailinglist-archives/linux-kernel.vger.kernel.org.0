@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 518B51575AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:43:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 484E91575AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:43:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730174AbgBJMnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:43:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38356 "EHLO mail.kernel.org"
+        id S1730409AbgBJMnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:43:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728940AbgBJMjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:39:46 -0500
+        id S1729524AbgBJMjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:39:49 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8572E2051A;
-        Mon, 10 Feb 2020 12:39:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BEAF24676;
+        Mon, 10 Feb 2020 12:39:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338386;
-        bh=dQft7Jsp+PifajobanTiCRRBQKL883ifoUu3o6aGT+w=;
+        s=default; t=1581338387;
+        bh=54VNu45w/vLNKLZ2cxJsWNJgFLn0bNvrtrd9wtIlbaI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Eh93tTZrC3FAckTwswLuDrmnFKhOekDShYRQex/AiUMQ9kQZtm2YoqUdIauv+ps9z
-         IOHTKP3HMqftbvAd+wrSBf6kKTcSw27YOeDTeiMEO34bjMo9Gb5sxvWrRjlijVXOsa
-         Zv5ay5np1HMWdVN+DAx9j54HSTD2hGI0a5TRWw9Y=
+        b=1qb6oV0rZM31qVlGlY4skjn1H9GyfmHXM0AFxX2DJXAlvSSPOhkUtrdbYmo6Sk2pR
+         WBPGq7YeZdGSBDEymfo4aLYZgJhRbj6Zd3hnodFzDUtLlOsnuWTaMe21uTLpPlsT9F
+         q8PNmu5H84SHSNwrJ423JCqlklKmrgS08QO/ZvXo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+30edd0f34bfcdc548ac4@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.5 030/367] ALSA: pcm: Fix memory leak at closing a stream without hw_free
-Date:   Mon, 10 Feb 2020 04:29:03 -0800
-Message-Id: <20200210122426.682758235@linuxfoundation.org>
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 5.5 032/367] tracing/kprobes: Have uname use __get_str() in print_fmt
+Date:   Mon, 10 Feb 2020 04:29:05 -0800
+Message-Id: <20200210122426.895258454@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -44,81 +44,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit 66f2d19f8116e16898f8d82e28573a384ddc430d upstream.
+commit 20279420ae3a8ef4c5d9fedc360a2c37a1dbdf1b upstream.
 
-ALSA PCM core recently introduced a new managed PCM buffer allocation
-mode that does allocate / free automatically at hw_params and
-hw_free.  However, it overlooked the code path directly calling
-hw_free PCM ops at releasing the PCM substream, and it may result in a
-memory leak as spotted by syzkaller when no buffer preallocation is
-used (e.g. vmalloc buffer).
+Thomas Richter reported:
 
-This patch papers over it with a slight refactoring.  The hw_free ops
-call and relevant tasks are unified in a new helper function, and call
-it from both places.
+> Test case 66 'Use vfs_getname probe to get syscall args filenames'
+> is broken on s390, but works on x86. The test case fails with:
+>
+>  [root@m35lp76 perf]# perf test -F 66
+>  66: Use vfs_getname probe to get syscall args filenames
+>            :Recording open file:
+>  [ perf record: Woken up 1 times to write data ]
+>  [ perf record: Captured and wrote 0.004 MB /tmp/__perf_test.perf.data.TCdYj\
+> 	 (20 samples) ]
+>  Looking at perf.data file for vfs_getname records for the file we touched:
+>   FAILED!
+>   [root@m35lp76 perf]#
 
-Fixes: 0dba808eae26 ("ALSA: pcm: Introduce managed buffer allocation mode")
-Reported-by: syzbot+30edd0f34bfcdc548ac4@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200129195907.12197-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+The root cause was the print_fmt of the kprobe event that referenced the
+"ustring"
+
+> Setting up the kprobe event using perf command:
+>
+>  # ./perf probe "vfs_getname=getname_flags:72 pathname=filename:ustring"
+>
+> generates this format file:
+>   [root@m35lp76 perf]# cat /sys/kernel/debug/tracing/events/probe/\
+> 	  vfs_getname/format
+>   name: vfs_getname
+>   ID: 1172
+>   format:
+>     field:unsigned short common_type; offset:0; size:2; signed:0;
+>     field:unsigned char common_flags; offset:2; size:1; signed:0;
+>     field:unsigned char common_preempt_count; offset:3; size:1; signed:0;
+>     field:int common_pid; offset:4; size:4; signed:1;
+>
+>     field:unsigned long __probe_ip; offset:8; size:8; signed:0;
+>     field:__data_loc char[] pathname; offset:16; size:4; signed:1;
+>
+>     print fmt: "(%lx) pathname=\"%s\"", REC->__probe_ip, REC->pathname
+
+Instead of using "__get_str(pathname)" it referenced it directly.
+
+Link: http://lkml.kernel.org/r/20200124100742.4050c15e@gandalf.local.home
+
+Cc: stable@vger.kernel.org
+Fixes: 88903c464321 ("tracing/probe: Add ustring type for user-space string")
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reported-by: Thomas Richter <tmricht@linux.ibm.com>
+Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/pcm_native.c |   24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+ kernel/trace/trace_probe.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -785,10 +785,22 @@ end:
- 	return err;
- }
- 
-+static int do_hw_free(struct snd_pcm_substream *substream)
-+{
-+	int result = 0;
-+
-+	snd_pcm_sync_stop(substream);
-+	if (substream->ops->hw_free)
-+		result = substream->ops->hw_free(substream);
-+	if (substream->managed_buffer_alloc)
-+		snd_pcm_lib_free_pages(substream);
-+	return result;
-+}
-+
- static int snd_pcm_hw_free(struct snd_pcm_substream *substream)
- {
- 	struct snd_pcm_runtime *runtime;
--	int result = 0;
-+	int result;
- 
- 	if (PCM_RUNTIME_CHECK(substream))
- 		return -ENXIO;
-@@ -805,11 +817,7 @@ static int snd_pcm_hw_free(struct snd_pc
- 	snd_pcm_stream_unlock_irq(substream);
- 	if (atomic_read(&substream->mmap_count))
- 		return -EBADFD;
--	snd_pcm_sync_stop(substream);
--	if (substream->ops->hw_free)
--		result = substream->ops->hw_free(substream);
--	if (substream->managed_buffer_alloc)
--		snd_pcm_lib_free_pages(substream);
-+	result = do_hw_free(substream);
- 	snd_pcm_set_state(substream, SNDRV_PCM_STATE_OPEN);
- 	pm_qos_remove_request(&substream->latency_pm_qos_req);
- 	return result;
-@@ -2466,9 +2474,7 @@ void snd_pcm_release_substream(struct sn
- 
- 	snd_pcm_drop(substream);
- 	if (substream->hw_opened) {
--		if (substream->ops->hw_free &&
--		    substream->runtime->status->state != SNDRV_PCM_STATE_OPEN)
--			substream->ops->hw_free(substream);
-+		do_hw_free(substream);
- 		substream->ops->close(substream);
- 		substream->hw_opened = 0;
- 	}
+--- a/kernel/trace/trace_probe.c
++++ b/kernel/trace/trace_probe.c
+@@ -876,7 +876,8 @@ static int __set_print_fmt(struct trace_
+ 	for (i = 0; i < tp->nr_args; i++) {
+ 		parg = tp->args + i;
+ 		if (parg->count) {
+-			if (strcmp(parg->type->name, "string") == 0)
++			if ((strcmp(parg->type->name, "string") == 0) ||
++			    (strcmp(parg->type->name, "ustring") == 0))
+ 				fmt = ", __get_str(%s[%d])";
+ 			else
+ 				fmt = ", REC->%s[%d]";
+@@ -884,7 +885,8 @@ static int __set_print_fmt(struct trace_
+ 				pos += snprintf(buf + pos, LEN_OR_ZERO,
+ 						fmt, parg->name, j);
+ 		} else {
+-			if (strcmp(parg->type->name, "string") == 0)
++			if ((strcmp(parg->type->name, "string") == 0) ||
++			    (strcmp(parg->type->name, "ustring") == 0))
+ 				fmt = ", __get_str(%s)";
+ 			else
+ 				fmt = ", REC->%s";
 
 
