@@ -2,140 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9D16158251
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 19:30:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F353158269
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 19:33:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbgBJSat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 13:30:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50106 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726950AbgBJSat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 13:30:49 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727665AbgBJSdW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 13:33:22 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:53950 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726816AbgBJSdV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 13:33:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581359601;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Ah53tJG2kEdSb2jrTYOGXeChilhie7bfMD31S0yM5BQ=;
+        b=bkr0Q6KXzjjBFdM241k7EBptI1ertoXL5FTsDq4PxEXgkuXQrAyEFAeTBB0X2Qroj3OVD1
+        xwLCyjRyVjaFzsj1WEvuBBpXJ41PamP4hunFs3i0IQ3CDWMN3E87BRaVf33hK4z2paFsYM
+        djnffLHh1AzhZGJD7Cqfpfu5fSqx+6w=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-20-kXaWGT4QOn6i6j4SdH88Hw-1; Mon, 10 Feb 2020 13:33:18 -0500
+X-MC-Unique: kXaWGT4QOn6i6j4SdH88Hw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C01C20838;
-        Mon, 10 Feb 2020 18:30:47 +0000 (UTC)
-Date:   Mon, 10 Feb 2020 13:30:45 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Richard Fontana <rfontana@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        paulmck <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Subject: Re: [RFC 0/3] Revert SRCU from tracepoint infrastructure
-Message-ID: <20200210133045.3beb774e@gandalf.local.home>
-In-Reply-To: <1966694237.616758.1581355984287.JavaMail.zimbra@efficios.com>
-References: <20200207205656.61938-1-joel@joelfernandes.org>
-        <1997032737.615438.1581179485507.JavaMail.zimbra@efficios.com>
-        <20200210094616.GC14879@hirez.programming.kicks-ass.net>
-        <20200210120552.1a06a7aa@gandalf.local.home>
-        <1966694237.616758.1581355984287.JavaMail.zimbra@efficios.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 56DA218A5502;
+        Mon, 10 Feb 2020 18:33:17 +0000 (UTC)
+Received: from treble.redhat.com (ovpn-122-45.rdu2.redhat.com [10.10.122.45])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DB19810013A7;
+        Mon, 10 Feb 2020 18:33:15 +0000 (UTC)
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Julien Thierry <jthierry@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 0/3] objtool: Relocation sanity check for alternatives
+Date:   Mon, 10 Feb 2020 12:32:37 -0600
+Message-Id: <cover.1581359535.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Feb 2020 12:33:04 -0500 (EST)
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+Patches 1-2 are in preparation for patch 3.
 
-> The rcu_irq_enter/exit_irqson() does atomic_add_return(), which is even worse
-> than a memory barrier.
+Patch 3 adds sanity checking to prevent unsupported relocations in
+alternatives.
 
-As we discussed on IRC, would something like this work (not even
-compiled tested).
+Josh Poimboeuf (3):
+  objtool: Fail the kernel build on fatal errors
+  objtool: Add is_static_jump() helper
+  objtool: Add relocation check for alternative sections
 
--- Steve
+ tools/objtool/check.c | 48 +++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 39 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 1fb11daa5c53..a83fd076a312 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -179,10 +179,8 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 		 * For rcuidle callers, use srcu since sched-rcu	\
- 		 * doesn't work from the idle path.			\
- 		 */							\
--		if (rcuidle) {						\
-+		if (rcuidle)						\
- 			__idx = srcu_read_lock_notrace(&tracepoint_srcu);\
--			rcu_irq_enter_irqson();				\
--		}							\
- 									\
- 		it_func_ptr = rcu_dereference_raw((tp)->funcs);		\
- 									\
-@@ -194,10 +192,8 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 			} while ((++it_func_ptr)->func);		\
- 		}							\
- 									\
--		if (rcuidle) {						\
--			rcu_irq_exit_irqson();				\
-+		if (rcuidle)						\
- 			srcu_read_unlock_notrace(&tracepoint_srcu, __idx);\
--		}							\
- 									\
- 		preempt_enable_notrace();				\
- 	} while (0)
-diff --git a/include/trace/perf.h b/include/trace/perf.h
-index dbc6c74defc3..86d3b2eb00cd 100644
---- a/include/trace/perf.h
-+++ b/include/trace/perf.h
-@@ -39,17 +39,27 @@ perf_trace_##call(void *__data, proto)					\
- 	u64 __count = 1;						\
- 	struct task_struct *__task = NULL;				\
- 	struct hlist_head *head;					\
-+	bool rcu_watching;						\
- 	int __entry_size;						\
- 	int __data_size;						\
- 	int rctx;							\
- 									\
-+	rcu_watching = rcu_is_watching();				\
-+									\
-+	/* Can not use RCU if rcu is not watching and in NMI */		\
-+	if (!rcu_watching && in_nmi())					\
-+		return;							\
-+									\
- 	__data_size = trace_event_get_offsets_##call(&__data_offsets, args); \
- 									\
-+	if (!rcu_watching)						\
-+		rcu_irq_enter_irqson();					\
-+									\
- 	head = this_cpu_ptr(event_call->perf_events);			\
- 	if (!bpf_prog_array_valid(event_call) &&			\
- 	    __builtin_constant_p(!__task) && !__task &&			\
- 	    hlist_empty(head))						\
--		return;							\
-+		goto out;						\
- 									\
- 	__entry_size = ALIGN(__data_size + sizeof(*entry) + sizeof(u32),\
- 			     sizeof(u64));				\
-@@ -57,7 +67,7 @@ perf_trace_##call(void *__data, proto)					\
- 									\
- 	entry = perf_trace_buf_alloc(__entry_size, &__regs, &rctx);	\
- 	if (!entry)							\
--		return;							\
-+		goto out;						\
- 									\
- 	perf_fetch_caller_regs(__regs);					\
- 									\
-@@ -68,6 +78,9 @@ perf_trace_##call(void *__data, proto)					\
- 	perf_trace_run_bpf_submit(entry, __entry_size, rctx,		\
- 				  event_call, __count, __regs,		\
- 				  head, __task);			\
-+out:									\
-+	if (!rcu_watching)						\
-+		rcu_irq_exit_irqson();					\
- }
- 
- /*
+Josh Poimboeuf (3):
+  objtool: Fail the kernel build on fatal errors
+  objtool: Add is_static_jump() helper
+  objtool: Add relocation check for alternative sections
+
+ tools/objtool/check.c | 48 +++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 39 insertions(+), 9 deletions(-)
+
+--=20
+2.21.1
+
