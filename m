@@ -2,192 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4B7C15833D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 20:05:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79496158342
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 20:08:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbgBJTFV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 14:05:21 -0500
-Received: from mail.efficios.com ([167.114.26.124]:60056 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727003AbgBJTFU (ORCPT
+        id S1727555AbgBJTHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 14:07:53 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45153 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726831AbgBJTHx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 14:05:20 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 26E66245BDF;
-        Mon, 10 Feb 2020 14:05:19 -0500 (EST)
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 2cc5F7qO5Tv4; Mon, 10 Feb 2020 14:05:18 -0500 (EST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id B5F19245F9A;
-        Mon, 10 Feb 2020 14:05:18 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com B5F19245F9A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1581361518;
-        bh=+kipQ5NlQVbRyfLk6PdhFdo0Uekn5i8O7ECNRsEs1ZQ=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=MMnC+c7GSHhb4w1fq8fo0FOE4jIwRZwZzmgaU2DzLIMZMwZLXiNCA+oytB+N4DMoB
-         wT9TbPeWNrKbAWFhGQE8+m6wBMzQ2XNthPl4PS6qbrGrbU204Gies//KaURKD75+ib
-         pEs1BxwynJ1NScBWXpOwvcArhcssdil/8JRraEfR9HFk9jXqeXghWI6nsykMkS6LKD
-         I0dS9v1TMUfbw3gG1Xd6kaAjQraJ07gjBmy7XO10IG+WQ6ng0Gj56fSt2Mo2zM+Xab
-         ZLQmicJbyfuVH19qq2w6yPFRuv9OqdtlzyRBRJ30KIVZtO3Yi2kjbDCY4POWKbJkCh
-         kMrAweZWaVeyQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id krdPLfvrB7Cq; Mon, 10 Feb 2020 14:05:18 -0500 (EST)
-Received: from mail03.efficios.com (mail03.efficios.com [167.114.26.124])
-        by mail.efficios.com (Postfix) with ESMTP id 9DD80245BD6;
-        Mon, 10 Feb 2020 14:05:18 -0500 (EST)
-Date:   Mon, 10 Feb 2020 14:05:18 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Richard Fontana <rfontana@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        paulmck <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Message-ID: <1076842217.616862.1581361518556.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20200210133045.3beb774e@gandalf.local.home>
-References: <20200207205656.61938-1-joel@joelfernandes.org> <1997032737.615438.1581179485507.JavaMail.zimbra@efficios.com> <20200210094616.GC14879@hirez.programming.kicks-ass.net> <20200210120552.1a06a7aa@gandalf.local.home> <1966694237.616758.1581355984287.JavaMail.zimbra@efficios.com> <20200210133045.3beb774e@gandalf.local.home>
-Subject: Re: [RFC 0/3] Revert SRCU from tracepoint infrastructure
+        Mon, 10 Feb 2020 14:07:53 -0500
+Received: by mail-pg1-f196.google.com with SMTP id b9so4379994pgk.12
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 11:07:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4wXKXGly1PMIFo4PH4r9KP7MD5EVde6Oh8xOIxa8LfU=;
+        b=X0a4/JKOhli8X/KeJCnZa8Hz+PTgCswHgRwy0C4ZGbO0LnVANWm+XoawNSIduFVH1Y
+         j0LgzYRWnzencGlWIB97hp+s5kg4N45J9vR0exzze91M3f/0/yqPnKeuZxi2u2pVs7vC
+         b0I1EUFrUddASr4ED0FWDBb8y9SNBwnrqaUj8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4wXKXGly1PMIFo4PH4r9KP7MD5EVde6Oh8xOIxa8LfU=;
+        b=V7s2G2E2mHVIwIDpOR7m0ir8JQ71tOPy6UOH3d1OmULCIxhb/jgnW+AoLX1k+PImTS
+         g0PXWMx3MdlOcAggTfwOnHwCU3aKvxuzIN7rGVJPG/TjetT6KRLi6E2SJQ8cXeC4cNo0
+         J5fBq9ZNTx53FTqWEshHEYA8lhMNwkmFqAjAfv8Tum+dA5iT+ZskOPg1D8YT2zzIf/Et
+         BlNlOuLvG5mjaOXj5pnewE40Zh1YOqxwhZLg4UlZMoRZhB2lE4vt9aeR2eOTMeudpR2f
+         F1nbH79Vv/tCjBngHdSFD1ZZmcmgvFMElkLZlTGzBv98lEvnKROe+aTRPuiyleGgbcUR
+         FF8A==
+X-Gm-Message-State: APjAAAUZnK9MXdZycUslusdX0PwmUgkNCPRY4+jHdtafnFUsW7S+PMJL
+        eFfCkQSl4QpId9BulJiQ2jkbwedNeII=
+X-Google-Smtp-Source: APXvYqzCX4kvbqBO59/kezp3MhWwFQ7LA6iCNggX4v5e8KzVFfF6HGmB4zDnK4Z7r8a7SW1SMXJIPQ==
+X-Received: by 2002:a62:7c49:: with SMTP id x70mr2376068pfc.200.1581361670669;
+        Mon, 10 Feb 2020 11:07:50 -0800 (PST)
+Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:172e:4646:c089:ce59])
+        by smtp.gmail.com with ESMTPSA id q6sm1118102pfh.127.2020.02.10.11.07.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Feb 2020 11:07:49 -0800 (PST)
+From:   Prashant Malani <pmalani@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Prashant Malani <pmalani@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH RESEND] mfd: cros_ec: Check DT node for usbpd-notify add
+Date:   Mon, 10 Feb 2020 11:06:24 -0800
+Message-Id: <20200210190623.18543-1-pmalani@chromium.org>
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.26.124]
-X-Mailer: Zimbra 8.8.15_GA_3895 (ZimbraWebClient - FF72 (Linux)/8.8.15_GA_3895)
-Thread-Topic: Revert SRCU from tracepoint infrastructure
-Thread-Index: czBPNBUds6fkjawJvJ27CuslWNq0Gg==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Feb 10, 2020, at 1:30 PM, rostedt rostedt@goodmis.org wrote:
+Add a check to ensure there is indeed an EC device tree entry before
+adding the cros-usbpd-notify device. This covers configs where both
+CONFIG_ACPI and CONFIG_OF are defined, but the EC device is defined
+using device tree and not in ACPI.
 
-> On Mon, 10 Feb 2020 12:33:04 -0500 (EST)
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-> 
->> The rcu_irq_enter/exit_irqson() does atomic_add_return(), which is even worse
->> than a memory barrier.
-> 
-> As we discussed on IRC, would something like this work (not even
-> compiled tested).
+Signed-off-by: Prashant Malani <pmalani@chromium.org>
+Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Fixes: 4602dce0361e ("mfd: cros_ec: Add cros-usbpd-notify subdevice")
+---
 
-Yes, it's very close to what I have prototyped locally. With one very minor
-detail below:
+This patch was originally part 3/4 of a series for the Chrome OS EC
+USBPD notify driver:
+ https://patchwork.kernel.org/patch/11351271/
 
-> 
-> -- Steve
-> 
-> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-> index 1fb11daa5c53..a83fd076a312 100644
-> --- a/include/linux/tracepoint.h
-> +++ b/include/linux/tracepoint.h
-> @@ -179,10 +179,8 @@ static inline struct tracepoint
-> *tracepoint_ptr_deref(tracepoint_ptr_t *p)
-> 		 * For rcuidle callers, use srcu since sched-rcu	\
-> 		 * doesn't work from the idle path.			\
-> 		 */							\
-> -		if (rcuidle) {						\
-> +		if (rcuidle)						\
-> 			__idx = srcu_read_lock_notrace(&tracepoint_srcu);\
-> -			rcu_irq_enter_irqson();				\
-> -		}							\
-> 									\
-> 		it_func_ptr = rcu_dereference_raw((tp)->funcs);		\
-> 									\
-> @@ -194,10 +192,8 @@ static inline struct tracepoint
-> *tracepoint_ptr_deref(tracepoint_ptr_t *p)
-> 			} while ((++it_func_ptr)->func);		\
-> 		}							\
-> 									\
-> -		if (rcuidle) {						\
-> -			rcu_irq_exit_irqson();				\
-> +		if (rcuidle)						\
-> 			srcu_read_unlock_notrace(&tracepoint_srcu, __idx);\
-> -		}							\
-> 									\
-> 		preempt_enable_notrace();				\
-> 	} while (0)
-> diff --git a/include/trace/perf.h b/include/trace/perf.h
-> index dbc6c74defc3..86d3b2eb00cd 100644
-> --- a/include/trace/perf.h
-> +++ b/include/trace/perf.h
-> @@ -39,17 +39,27 @@ perf_trace_##call(void *__data, proto)					\
-> 	u64 __count = 1;						\
-> 	struct task_struct *__task = NULL;				\
-> 	struct hlist_head *head;					\
-> +	bool rcu_watching;						\
-> 	int __entry_size;						\
-> 	int __data_size;						\
-> 	int rctx;							\
-> 									\
-> +	rcu_watching = rcu_is_watching();				\
-> +									\
-> +	/* Can not use RCU if rcu is not watching and in NMI */		\
-> +	if (!rcu_watching && in_nmi())					\
-> +		return;							\
-> +									\
-> 	__data_size = trace_event_get_offsets_##call(&__data_offsets, args); \
-> 									\
-> +	if (!rcu_watching)						\
-> +		rcu_irq_enter_irqson();					\
+Resending this patch since the dependent components have been merged
+into the upstream master tree or an immutable staging branch:
+- Patches 1/4 and 4/4 of the original series have been included in
+  the platform/chrome maintainer's immutable staging branch:
+      https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git/log/?h=ib-chrome-platform-power-supply-cros-usbpd-notify
+- Patch 2/4 has been merged to the mainline kernel as
+  commit 4602dce0361ebc67b9bfbed9338eee588e3c7e7e.
 
-You might want to fold the line above into the first check like this,
-considering that doing the rcu_irq_enter_irqson() earlier should not
-matter, and I expect it to remove a branch from the probe:
 
-rcu_watching = rcu_is_watching();
+Changes in RESEND:
+- No changes.
 
-if (!rcu_watching) {
-        if (in_nmi())
-                return;
-        rcu_irq_enter_irqson();
-}
+Changes in v8:
+- Patch first introduced in v8 of the series.
 
-Thanks!
+ drivers/mfd/cros_ec_dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Mathieu
-
-> +									\
-> 	head = this_cpu_ptr(event_call->perf_events);			\
-> 	if (!bpf_prog_array_valid(event_call) &&			\
-> 	    __builtin_constant_p(!__task) && !__task &&			\
-> 	    hlist_empty(head))						\
-> -		return;							\
-> +		goto out;						\
-> 									\
-> 	__entry_size = ALIGN(__data_size + sizeof(*entry) + sizeof(u32),\
-> 			     sizeof(u64));				\
-> @@ -57,7 +67,7 @@ perf_trace_##call(void *__data, proto)					\
-> 									\
-> 	entry = perf_trace_buf_alloc(__entry_size, &__regs, &rctx);	\
-> 	if (!entry)							\
-> -		return;							\
-> +		goto out;						\
-> 									\
-> 	perf_fetch_caller_regs(__regs);					\
-> 									\
-> @@ -68,6 +78,9 @@ perf_trace_##call(void *__data, proto)					\
-> 	perf_trace_run_bpf_submit(entry, __entry_size, rctx,		\
-> 				  event_call, __count, __regs,		\
-> 				  head, __task);			\
-> +out:									\
-> +	if (!rcu_watching)						\
-> +		rcu_irq_exit_irqson();					\
-> }
-> 
->  /*
-
+diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+index 39e61169505362..32c2b912b58b25 100644
+--- a/drivers/mfd/cros_ec_dev.c
++++ b/drivers/mfd/cros_ec_dev.c
+@@ -211,7 +211,7 @@ static int ec_device_probe(struct platform_device *pdev)
+ 	 * explicitly added on platforms that don't have the PD notifier ACPI
+ 	 * device entry defined.
+ 	 */
+-	if (IS_ENABLED(CONFIG_OF)) {
++	if (IS_ENABLED(CONFIG_OF) && ec->ec_dev->dev->of_node) {
+ 		if (cros_ec_check_features(ec, EC_FEATURE_USB_PD)) {
+ 			retval = mfd_add_hotplug_devices(ec->dev,
+ 					cros_usbpd_notify_cells,
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+2.25.0.341.g760bfbb309-goog
+
