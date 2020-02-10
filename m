@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BCB6157818
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:05:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7F47157A97
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:23:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730654AbgBJNFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:05:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39548 "EHLO mail.kernel.org"
+        id S1729652AbgBJNXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:23:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729634AbgBJMkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:09 -0500
+        id S1728652AbgBJMhK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:10 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BAED20873;
-        Mon, 10 Feb 2020 12:40:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA9F3208C4;
+        Mon, 10 Feb 2020 12:37:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338408;
-        bh=LNeibIY6axNTtFN8sdKrJ2bxfbs3upu9sCY0s3IUwDg=;
+        s=default; t=1581338229;
+        bh=zSg6T09HqcBiqYeTqt4FTCQO6B5h/IbyxlbEvz0yLW8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iLQpyrAvNiU96W3nydFQRhZUlHFVUF02Xb5pH+wlTxjROD59ud5RMN1AA8wwq8uBJ
-         l+0MLIn+fSi9Yq6SBTjm6xmy/1XLNOgaDyOFIohvZws/gBeR9qOR7brsjGu6eRYP67
-         dlzI6jG06unXQ1WgeJS2thIK0R1A2WpHhZBb2g2w=
+        b=PhqQF2rHK98OyIW+Ha9Wd24BLfFI4+fwO8R2u37mjGYSy1Ffr771dVxl+gmx9vyTu
+         ycPS8C1fX7ihnLDF1FSawi+c7MaBuBCHQ1h+eS4K0N2K4SaKdK5ZD8n5wdAgKI78ec
+         vy6YF5nQ0cbyx9dtpCr/qEmJ0DhNSCx2fO7pU2k8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bitan Biswas <bbiswas@nvidia.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 5.5 113/367] nvmem: core: fix memory abort in cleanup path
-Date:   Mon, 10 Feb 2020 04:30:26 -0800
-Message-Id: <20200210122435.013356076@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Lobakin <alobakin@dlink.ru>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Rob Herring <robh@kernel.org>, linux-mips@vger.kernel.org
+Subject: [PATCH 5.4 071/309] MIPS: fix indentation of the RELOCS message
+Date:   Mon, 10 Feb 2020 04:30:27 -0800
+Message-Id: <20200210122412.710756016@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,115 +47,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bitan Biswas <bbiswas@nvidia.com>
+From: Alexander Lobakin <alobakin@dlink.ru>
 
-commit 16bb7abc4a6b9defffa294e4dc28383e62a1dbcf upstream.
+commit a53998802e178451701d59d38e36f551422977ba upstream.
 
-nvmem_cell_info_to_nvmem_cell implementation has static
-allocation of name. nvmem_add_cells_from_of() call may
-return error and kfree name results in memory abort. Use
-kstrdup_const() and kfree_const calls for name alloc and free.
+quiet_cmd_relocs lacks a whitespace which results in:
 
-Unable to handle kernel paging request at virtual address ffffffffffe44888
-Mem abort info:
-  ESR = 0x96000006
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-Data abort info:
-  ISV = 0, ISS = 0x00000006
-  CM = 0, WnR = 0
-swapper pgtable: 64k pages, 48-bit VAs, pgdp=00000000815d0000
-[ffffffffffe44888] pgd=0000000081d30803, pud=0000000081d30803,
-pmd=0000000000000000
-Internal error: Oops: 96000006 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 2 PID: 43 Comm: kworker/2:1 Tainted
-Hardware name: quill (DT)
-Workqueue: events deferred_probe_work_func
-pstate: a0000005 (NzCv daif -PAN -UAO)
-pc : kfree+0x38/0x278
-lr : nvmem_cell_drop+0x68/0x80
-sp : ffff80001284f9d0
-x29: ffff80001284f9d0 x28: ffff0001f677e830
-x27: ffff800011b0b000 x26: ffff0001c36e1008
-x25: ffff8000112ad000 x24: ffff8000112c9000
-x23: ffffffffffffffea x22: ffff800010adc7f0
-x21: ffffffffffe44880 x20: ffff800011b0b068
-x19: ffff80001122d380 x18: ffffffffffffffff
-x17: 00000000d5cb4756 x16: 0000000070b193b8
-x15: ffff8000119538c8 x14: 0720072007200720
-x13: 07200720076e0772 x12: 07750762072d0765
-x11: 0773077507660765 x10: 072f073007300730
-x9 : 0730073207380733 x8 : 0000000000000151
-x7 : 07660765072f0720 x6 : ffff0001c00e0f00
-x5 : 0000000000000000 x4 : ffff0001c0b43800
-x3 : ffff800011b0b068 x2 : 0000000000000000
-x1 : 0000000000000000 x0 : ffffffdfffe00000
-Call trace:
- kfree+0x38/0x278
- nvmem_cell_drop+0x68/0x80
- nvmem_device_remove_all_cells+0x2c/0x50
- nvmem_register.part.9+0x520/0x628
- devm_nvmem_register+0x48/0xa0
- tegra_fuse_probe+0x140/0x1f0
- platform_drv_probe+0x50/0xa0
- really_probe+0x108/0x348
- driver_probe_device+0x58/0x100
- __device_attach_driver+0x90/0xb0
- bus_for_each_drv+0x64/0xc8
- __device_attach+0xd8/0x138
- device_initial_probe+0x10/0x18
- bus_probe_device+0x90/0x98
- deferred_probe_work_func+0x74/0xb0
- process_one_work+0x1e0/0x358
- worker_thread+0x208/0x488
- kthread+0x118/0x120
- ret_from_fork+0x10/0x18
-Code: d350feb5 f2dffbe0 aa1e03f6 8b151815 (f94006a0)
----[ end trace 49b1303c6b83198e ]---
+  LD      vmlinux
+  SORTEX  vmlinux
+  SYSMAP  System.map
+  RELOCS vmlinux
+  Building modules, stage 2.
+  MODPOST 64 modules
 
-Fixes: badcdff107cbf ("nvmem: Convert to using %pOFn instead of device_node.name")
-Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Link: https://lore.kernel.org/r/20200109104017.6249-5-srinivas.kandagatla@linaro.org
+After this patch:
+
+  LD      vmlinux
+  SORTEX  vmlinux
+  SYSMAP  System.map
+  RELOCS  vmlinux
+  Building modules, stage 2.
+  MODPOST 64 modules
+
+Typo is present in kernel tree since the introduction of relocatable
+kernel support in commit e818fac595ab ("MIPS: Generate relocation table
+when CONFIG_RELOCATABLE"), but the relocation scripts were moved to
+Makefile.postlink later with commit 44079d3509ae ("MIPS: Use
+Makefile.postlink to insert relocations into vmlinux").
+
+Fixes: 44079d3509ae ("MIPS: Use Makefile.postlink to insert relocations into vmlinux")
+Cc: <stable@vger.kernel.org> # v4.11+
+Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
+[paulburton@kernel.org: Fixup commit references in commit message.]
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvmem/core.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/mips/Makefile.postlink |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -83,7 +83,7 @@ static void nvmem_cell_drop(struct nvmem
- 	list_del(&cell->node);
- 	mutex_unlock(&nvmem_mutex);
- 	of_node_put(cell->np);
--	kfree(cell->name);
-+	kfree_const(cell->name);
- 	kfree(cell);
- }
+--- a/arch/mips/Makefile.postlink
++++ b/arch/mips/Makefile.postlink
+@@ -12,7 +12,7 @@ __archpost:
+ include scripts/Kbuild.include
  
-@@ -110,7 +110,9 @@ static int nvmem_cell_info_to_nvmem_cell
- 	cell->nvmem = nvmem;
- 	cell->offset = info->offset;
- 	cell->bytes = info->bytes;
--	cell->name = info->name;
-+	cell->name = kstrdup_const(info->name, GFP_KERNEL);
-+	if (!cell->name)
-+		return -ENOMEM;
+ CMD_RELOCS = arch/mips/boot/tools/relocs
+-quiet_cmd_relocs = RELOCS $@
++quiet_cmd_relocs = RELOCS  $@
+       cmd_relocs = $(CMD_RELOCS) $@
  
- 	cell->bit_offset = info->bit_offset;
- 	cell->nbits = info->nbits;
-@@ -300,7 +302,7 @@ static int nvmem_add_cells_from_of(struc
- 			dev_err(dev, "cell %s unaligned to nvmem stride %d\n",
- 				cell->name, nvmem->stride);
- 			/* Cells already added will be freed later. */
--			kfree(cell->name);
-+			kfree_const(cell->name);
- 			kfree(cell);
- 			return -EINVAL;
- 		}
+ # `@true` prevents complaint when there is nothing to be done
 
 
