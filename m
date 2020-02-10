@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00A34157BBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:32:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E4C7157BBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:32:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731558AbgBJNcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:32:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53642 "EHLO mail.kernel.org"
+        id S1731551AbgBJNcD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:32:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728129AbgBJMfu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:35:50 -0500
+        id S1728160AbgBJMfy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:54 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6847215A4;
-        Mon, 10 Feb 2020 12:35:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBF49208C4;
+        Mon, 10 Feb 2020 12:35:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338149;
-        bh=7S+nz84V2XBwIG/SFHIOdFnJ93coRYt3lxMrqd/7a2U=;
+        s=default; t=1581338152;
+        bh=i+t3QrlUoPcMh4vJRJFjTNhFtpxkNZIJKUzJBi8sdwg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iJySgIVeqG6nE998HDkf4gvxGmrczKdrta6VoK50jELtwg1/YCrzyiSdc7AOx0mnX
-         r6drmITaMCZmOf2kdytqxPmnnEPl/72Orx1PifeJ/hJHYqtASTbCS8z+Q/OL1zgX+G
-         fro740vIzAl15FE1zsMJbdvXkiechByhGzCR64WQ=
+        b=Yqt0vuUIbbVB059xksPgz1ipzKbBhljVbKKozX3nCH3qdedI8r6nIwct5am8lGp4W
+         AHaFTu2k4q4hdlIA6TRFSSInovNN/cwhkkjxQxQEoIB8r+6HtsUh70Zi1mIjBLS3UZ
+         uzayKLX17uvldEejG65MU6HbrADRgEb0asrBN8+E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Roberto Bergantinos Corpas <rbergant@redhat.com>,
-        Frank Sorenson <sorenson@redhat.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.19 112/195] sunrpc: expiry_time should be seconds not timeval
-Date:   Mon, 10 Feb 2020 04:32:50 -0800
-Message-Id: <20200210122316.459145421@linuxfoundation.org>
+        stable@vger.kernel.org, Andrew Jones <drjones@redhat.com>,
+        Gavin Shan <gshan@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.19 117/195] tools/kvm_stat: Fix kvm_exit filter name
+Date:   Mon, 10 Feb 2020 04:32:55 -0800
+Message-Id: <20200210122316.831588276@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
 References: <20200210122305.731206734@linuxfoundation.org>
@@ -45,54 +44,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roberto Bergantinos Corpas <rbergant@redhat.com>
+From: Gavin Shan <gshan@redhat.com>
 
-commit 3d96208c30f84d6edf9ab4fac813306ac0d20c10 upstream.
+commit 5fcf3a55a62afb0760ccb6f391d62f20bce4a42f upstream.
 
-When upcalling gssproxy, cache_head.expiry_time is set as a
-timeval, not seconds since boot. As such, RPC cache expiry
-logic will not clean expired objects created under
-auth.rpcsec.context cache.
+The filter name is fixed to "exit_reason" for some kvm_exit events, no
+matter what architect we have. Actually, the filter name ("exit_reason")
+is only applicable to x86, meaning it's broken on other architects
+including aarch64.
 
-This has proven to cause kernel memory leaks on field. Using
-64 bit variants of getboottime/timespec
+This fixes the issue by providing various kvm_exit filter names, depending
+on architect we're on. Afterwards, the variable filter name is picked and
+applied through ioctl(fd, SET_FILTER).
 
-Expiration times have worked this way since 2010's c5b29f885afe "sunrpc:
-use seconds since boot in expiry cache".  The gssproxy code introduced
-in 2012 added gss_proxy_save_rsc and introduced the bug.  That's a while
-for this to lurk, but it required a bit of an extreme case to make it
-obvious.
-
-Signed-off-by: Roberto Bergantinos Corpas <rbergant@redhat.com>
+Reported-by: Andrew Jones <drjones@redhat.com>
+Signed-off-by: Gavin Shan <gshan@redhat.com>
 Cc: stable@vger.kernel.org
-Fixes: 030d794bf498 "SUNRPC: Use gssproxy upcall for server..."
-Tested-By: Frank Sorenson <sorenson@redhat.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/auth_gss/svcauth_gss.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ tools/kvm/kvm_stat/kvm_stat |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/net/sunrpc/auth_gss/svcauth_gss.c
-+++ b/net/sunrpc/auth_gss/svcauth_gss.c
-@@ -1224,6 +1224,7 @@ static int gss_proxy_save_rsc(struct cac
- 		dprintk("RPC:       No creds found!\n");
- 		goto out;
- 	} else {
-+		struct timespec64 boot;
+--- a/tools/kvm/kvm_stat/kvm_stat
++++ b/tools/kvm/kvm_stat/kvm_stat
+@@ -271,6 +271,7 @@ class ArchX86(Arch):
+     def __init__(self, exit_reasons):
+         self.sc_perf_evt_open = 298
+         self.ioctl_numbers = IOCTL_NUMBERS
++        self.exit_reason_field = 'exit_reason'
+         self.exit_reasons = exit_reasons
  
- 		/* steal creds */
- 		rsci.cred = ud->creds;
-@@ -1244,6 +1245,9 @@ static int gss_proxy_save_rsc(struct cac
- 						&expiry, GFP_KERNEL);
- 		if (status)
- 			goto out;
-+
-+		getboottime64(&boot);
-+		expiry -= boot.tv_sec;
- 	}
+     def debugfs_is_child(self, field):
+@@ -290,6 +291,7 @@ class ArchPPC(Arch):
+         # numbers depend on the wordsize.
+         char_ptr_size = ctypes.sizeof(ctypes.c_char_p)
+         self.ioctl_numbers['SET_FILTER'] = 0x80002406 | char_ptr_size << 16
++        self.exit_reason_field = 'exit_nr'
+         self.exit_reasons = {}
  
- 	rsci.h.expiry_time = expiry;
+     def debugfs_is_child(self, field):
+@@ -301,6 +303,7 @@ class ArchA64(Arch):
+     def __init__(self):
+         self.sc_perf_evt_open = 241
+         self.ioctl_numbers = IOCTL_NUMBERS
++        self.exit_reason_field = 'esr_ec'
+         self.exit_reasons = AARCH64_EXIT_REASONS
+ 
+     def debugfs_is_child(self, field):
+@@ -312,6 +315,7 @@ class ArchS390(Arch):
+     def __init__(self):
+         self.sc_perf_evt_open = 331
+         self.ioctl_numbers = IOCTL_NUMBERS
++        self.exit_reason_field = None
+         self.exit_reasons = None
+ 
+     def debugfs_is_child(self, field):
+@@ -542,8 +546,8 @@ class TracepointProvider(Provider):
+         """
+         filters = {}
+         filters['kvm_userspace_exit'] = ('reason', USERSPACE_EXIT_REASONS)
+-        if ARCH.exit_reasons:
+-            filters['kvm_exit'] = ('exit_reason', ARCH.exit_reasons)
++        if ARCH.exit_reason_field and ARCH.exit_reasons:
++            filters['kvm_exit'] = (ARCH.exit_reason_field, ARCH.exit_reasons)
+         return filters
+ 
+     def _get_available_fields(self):
 
 
