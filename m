@@ -2,197 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9285115842C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 21:14:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 639A4158422
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 21:10:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbgBJUOo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 15:14:44 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:39788 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726563AbgBJUOo (ORCPT
+        id S1727549AbgBJUKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 15:10:31 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:39364 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727056AbgBJUKa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 15:14:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581365682;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=aru7SYuZXhhhxDg5jfxc1VIsQsLEX+56nBygo91zRPY=;
-        b=LC7Z5v+T17jDhEwHe5nX0F4M1QrSCcQRYhVgZSoOUKfwqmpLfQ9lQO56+UizD3k+AMxKZA
-        VQxdmOkbtu+eHI7XgDQWyQR0UbzVmUkJI7xgDvBzDSWL3HBavgMl86KUTd4zPQSOUeFCNx
-        pzPCWCVKoHTIwvaLbHv4WE+Yy6HsJh0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-407-9VHrNn0mNp24TCJ6OQIh7g-1; Mon, 10 Feb 2020 15:14:38 -0500
-X-MC-Unique: 9VHrNn0mNp24TCJ6OQIh7g-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3E652800D41;
-        Mon, 10 Feb 2020 20:14:37 +0000 (UTC)
-Received: from mail (ovpn-125-144.rdu2.redhat.com [10.10.125.144])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C38E719C70;
-        Mon, 10 Feb 2020 20:14:22 +0000 (UTC)
-Date:   Mon, 10 Feb 2020 15:14:11 -0500
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Will Deacon <will@kernel.org>, Jon Masters <jcm@jonmasters.org>,
-        Rafael Aquini <aquini@redhat.com>,
-        Mark Salter <msalter@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] arm64: tlb: skip tlbi broadcast for single threaded
- TLB flushes
-Message-ID: <20200210201411.GC3699@redhat.com>
-References: <20200203201745.29986-1-aarcange@redhat.com>
- <20200203201745.29986-3-aarcange@redhat.com>
- <20200210175106.GA27215@arrakis.emea.arm.com>
+        Mon, 10 Feb 2020 15:10:30 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01AK9s3i089232;
+        Mon, 10 Feb 2020 14:09:54 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1581365394;
+        bh=AFL81LYESA2xTo1aeZkayWnryvzu4ghmI9VBCmzaZ2c=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=xLPc/jlo1dOpnGbkqgDhWC0DrVbaDFm4aIlu7L+KgY5MiwIqdAfZcoDTns5yQDKwD
+         OEYrnfH2L5cJpTMcI3FEO1tAmSlhUK5p9p/E6U2GpRrUAIFGVKZmJM7ohUXxg4iRG6
+         T6oWVPcvuJVptLgll6iqs/Ojf6EjJyGP27HmNFiI=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01AK9s7Q035091
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Feb 2020 14:09:54 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 10
+ Feb 2020 14:09:54 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 10 Feb 2020 14:09:54 -0600
+Received: from [158.218.117.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01AK9qra005248;
+        Mon, 10 Feb 2020 14:09:52 -0600
+Subject: Re: [v1,net-next, 1/2] ethtool: add setting frame preemption of
+ traffic classes
+To:     Vladimir Oltean <olteanv@gmail.com>
+CC:     Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+        Po Liu <po.liu@nxp.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "hauke.mehrtens@intel.com" <hauke.mehrtens@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "allison@lohutok.net" <allison@lohutok.net>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "saeedm@mellanox.com" <saeedm@mellanox.com>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "alexandru.ardelean@analog.com" <alexandru.ardelean@analog.com>,
+        "jiri@mellanox.com" <jiri@mellanox.com>,
+        "ayal@mellanox.com" <ayal@mellanox.com>,
+        "pablo@netfilter.org" <pablo@netfilter.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "simon.horman@netronome.com" <simon.horman@netronome.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Alexandru Marginean <alexandru.marginean@nxp.com>,
+        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
+        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
+        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>
+References: <20191127094517.6255-1-Po.Liu@nxp.com>
+ <87v9p93a2s.fsf@linux.intel.com>
+ <9b13a47e-8ca3-66b0-063c-798a5fa71149@ti.com>
+ <CA+h21hqk2pCfrQg5kC6HzmL=eEqJXjuRsu+cVkGsEi8OXGpKJA@mail.gmail.com>
+From:   Murali Karicheri <m-karicheri2@ti.com>
+Message-ID: <700c20c2-6112-100f-d198-40ee74a167c1@ti.com>
+Date:   Mon, 10 Feb 2020 15:17:13 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200210175106.GA27215@arrakis.emea.arm.com>
-User-Agent: Mutt/1.13.1 (2019-12-14)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <CA+h21hqk2pCfrQg5kC6HzmL=eEqJXjuRsu+cVkGsEi8OXGpKJA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Catalin,
+Hi Vladimir,
 
-On Mon, Feb 10, 2020 at 05:51:06PM +0000, Catalin Marinas wrote:
-> Relying om mm_users is not sufficient AFAICT. Let's say on CPU0 you have
-> a kernel thread running with the previous user pgd and ASID set in
-> ttbr0_el1. The mm_users would still be 1 since only mm_count is
-> incremented in context_switch(). If the user thread now runs on CPU1, a
-> local tlbi would only invalidate the TLBs on CPU1. However, CPU0 may
-> still walk (speculatively) the user page tables.
+On 01/23/2020 08:30 AM, Vladimir Oltean wrote:
+> Hi Murali,
 > 
-> An example where this matters is a group of small pages converted to a
-> huge page. If CPU0 already has some TLB entries for small pages in the
-> group but, not being aware of a TLBI for the ptes in the range, may read
-> a block pmd entry (huge page) and we end up with a TLB conflict on CPU0
-> (CPU1 is fine since you do the local tlbi).
+> On Wed, 22 Jan 2020 at 20:04, Murali Karicheri <m-karicheri2@ti.com> wrote:
+>>
+>> I have question about the below parameters in The Gate Parameter Table
+>> that are not currently supported by tc command. Looks like they need to
+>> be shown to user for management.
+>>
+>>       - ConfigChange - Looks like this needs to be controlled by
+>>         user. After sending admin command, user send this trigger to start
+>>         copying admin schedule to operation schedule. Is this getting
+>>         added to tc command?
 > 
-> There are other examples where this could go wrong as the hardware may
-> keep intermediate pgtable entries in a walk cache. In the arm64 kernel
-> we rely on something the architecture calls break-before-make for any
-> page table updates and these need to be broadcast to other CPUs that may
-> potentially have an entry in their TLB.
+> "The ConfigChange parameter signals the start of a
+> configuration change for the gate
+> when it is set to TRUE. This should only be done
+> when the various administrative parameters
+> are all set to appropriate values."
 > 
-> It may be better if you used mm_cpumask to mark wherever an mm ever ran
-> than relying on mm_users.
+> As far as my understanding goes, all tc-taprio commands currently
+> behave as though this boolean is implicitly set to TRUE after the
+> structures have been set up. I'm not sure there is any value in doing
+> otherwise.
+> 
+That is my understanding as well. However I found this in the 802.1Q
+and want to see if someone has insight into this parameter. So perhaps
+we can ignore this for now and re-visit when there is a real need for
+the same.
 
-Agreed.
+>>       - ConfigChangeTime - The time at which the administrative variables
+>>         that determine the cycle are to be copied across to the
+>>         corresponding operational variables, expressed as a PTP timescale
+> 
+> This is the base-time of the admin schedule, no?
 
-If we can use mm_cpumask to track where the mm ever run, then if I'm
-not mistaken we could optimize also multithreaded processes in the
-same way: if only one thread is running frequently and the others are
-frequently sleeping, we could issue a single tlbi broadcast (modulo
-invalidates of small virtual ranges).
+I think there is cycle time extension possible and in that case,
+ConfigChangeTime may be different from Admin  base-time. So this gives
+the actual time when the cycle configuration is actually applied.
 
-In the meantime the below should be enough to address the concern you
-raised of the proof of concept RFC patch.
+> 
+> "The PTPtime at which the next config change is scheduled to occur.
+> The value is a representation of a PTPtime value,
+> consisting of a 48-bit integer
+> number of seconds and a 32-bit integer number of nanoseconds."
+> 
+>>       - TickGranularity - the management parameters specified in Gate
+>>         Parameter Table allow a management station to discover the
+>>         characteristics of an implementation’s cycle timer clock
+>>         (TickGranularity) and to set the parameters for the gating cycle
+>>         accordingly.
+> 
+> Not sure who is going to use this and for what purpose, but ok.
 
-I already experimented with mm_users == 1 earlier and it doesn't
-change the benchmark results for the "best case" below.
+Same here. Not sure how this will be used by application.
 
-(untested)
+> 
+>>       - ConfigPending - A Boolean variable, set TRUE to indicate that
+>>         there is a new cycle configuration awaiting installation.
+> 
+> I had tried to export something like this (driver calls back into
+> sch_taprio.c when hw has applied the config, this would result in
+> ConfigPending = FALSE), but ultimately didn't finish the idea, and it
+> caused some problems too, due to incorrect RCU usage.
+> 
 
-diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-index 772bbc45b867..a2d53b301f22 100644
---- a/arch/arm64/include/asm/tlbflush.h
-+++ b/arch/arm64/include/asm/tlbflush.h
-@@ -169,7 +169,8 @@ static inline void flush_tlb_mm(struct mm_struct *mm)
- 	unsigned long asid = __TLBI_VADDR(0, ASID(mm));
- 
- 	/* avoid TLB-i broadcast to remote NUMA nodes if it's a local flush */
--	if (current->mm == mm && atomic_read(&mm->mm_users) <= 1) {
-+	if (current->mm == mm && atomic_read(&mm->mm_users) <= 1 &&
-+	    (system_uses_ttbr0_pan() || atomic_read(&mm->mm_count) == 1)) {
- 		int cpu = get_cpu();
- 
- 		cpumask_setall(mm_cpumask(mm));
-@@ -177,7 +178,9 @@ static inline void flush_tlb_mm(struct mm_struct *mm)
- 
- 		smp_mb();
- 
--		if (atomic_read(&mm->mm_users) <= 1) {
-+		if (atomic_read(&mm->mm_users) <= 1 &&
-+		    (system_uses_ttbr0_pan() ||
-+		     atomic_read(&mm->mm_count) == 1)) {
- 			dsb(nshst);
- 			__tlbi(aside1, asid);
- 			__tlbi_user(aside1, asid);
-@@ -212,7 +215,8 @@ static inline void flush_tlb_page(struct vm_area_struct *vma,
- 	unsigned long addr = __TLBI_VADDR(uaddr, ASID(mm));
- 
- 	/* avoid TLB-i broadcast to remote NUMA nodes if it's a local flush */
--	if (current->mm == mm && atomic_read(&mm->mm_users) <= 1) {
-+	if (current->mm == mm && atomic_read(&mm->mm_users) <= 1 &&
-+	    (system_uses_ttbr0_pan() || atomic_read(&mm->mm_count) == 1)) {
- 		int cpu = get_cpu();
- 
- 		cpumask_setall(mm_cpumask(mm));
-@@ -220,7 +224,9 @@ static inline void flush_tlb_page(struct vm_area_struct *vma,
- 
- 		smp_mb();
- 
--		if (atomic_read(&mm->mm_users) <= 1) {
-+		if (atomic_read(&mm->mm_users) <= 1 &&
-+		    (system_uses_ttbr0_pan() ||
-+		     atomic_read(&mm->mm_count) == 1)) {
- 			dsb(nshst);
- 			__tlbi(vale1, addr);
- 			__tlbi_user(vale1, addr);
-@@ -264,7 +270,8 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
- 	end = __TLBI_VADDR(end, asid);
- 
- 	/* avoid TLB-i broadcast to remote NUMA nodes if it's a local flush */
--	if (current->mm == mm && atomic_read(&mm->mm_users) <= 1) {
-+	if (current->mm == mm && atomic_read(&mm->mm_users) <= 1  &&
-+	    (system_uses_ttbr0_pan() || atomic_read(&mm->mm_count) == 1)) {
- 		int cpu = get_cpu();
- 
- 		cpumask_setall(mm_cpumask(mm));
-@@ -272,7 +279,9 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
- 
- 		smp_mb();
- 
--		if (atomic_read(&mm->mm_users) <= 1) {
-+		if (atomic_read(&mm->mm_users) <= 1 &&
-+		    (system_uses_ttbr0_pan() ||
-+		     atomic_read(&mm->mm_count) == 1)) {
- 			dsb(nshst);
- 			for (addr = start; addr < end; addr += stride) {
- 				if (last_level) {
+Ok. Hope you plan to send a patch for this in the future.
 
+>>       - ConfigChangeError - Error in configuration (AdminBaseTime <
+>>         CurrentTime)
+> 
+> This can be exported similarly.
 
-> That's a pretty artificial test and it is indeed improved by this patch.
-> However, it would be nice to have some real-world scenarios where this
-> matters.
+Ok.
 
-I don't know exactly how much we should rely on the hardware to snoop
-the asid on NUMA. The hardware to fully optimize would need to
-implement a replicated mm_cpumask bitflag for each asid and every CPU
-would need to tell every other CPU which asid it is loading every time
-it is loading it. Exactly what x86 does with mm_cpumask in software.
+> 
+>>       - SupportedListMax - Maximum supported Admin/Open shed list.
+>>
+>> Is there a plan to export these from driver through tc show or such
+>> command? The reason being, there would be applications developed to
+>> manage configuration/schedule of TSN nodes that would requires these
+>> information from the node. So would need a support either in tc or
+>> some other means to retrieve them from hardware or driver. That is my
+>> understanding...
+>>
+> 
+> Not sure what answer you expect to receive for "is there any plan".
 
-That is ideal, but is it an arch requirement to add the above in all
-implementations?
+To avoid duplicating the work if someone is already working on this.
 
-The case I measured has a single socket so it's even simpler because
-it could be optimized all in-core. Even with a single socket I'm not
-sure what's going wrong in the chip: it felt like it's the engine that
-does the broadcast that runs serially system wide and then all CPUs
-have to wait on it.
+> You can go ahead and propose something, as long as it is reasonably
+> useful to have.
+Ok. Will keep in mind.
+> 
+>> Regards,
+>>
+>> Murali
+>>
+>> --
+>> Murali Karicheri
+>> Texas Instruments
+> 
+> Thanks,
+> -Vladimir
+> 
 
-Still your question if it'll make a difference in practice is a good
-one and I don't have a sure answer yet. I suppose before doing more
-benchmarking it's better to make a new version of this that uses
-mm_cpumask to track where the asid was ever loaded as you suggested,
-so that it will also optimize away tlbi broadcaasts from multithreaded
-processes where only one thread is running frequently?
-
-Thanks!
-Andrea
-
+-- 
+Murali Karicheri
+Texas Instruments
