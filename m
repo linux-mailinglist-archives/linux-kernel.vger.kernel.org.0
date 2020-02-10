@@ -2,45 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17C7015793B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:14:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F6E2157831
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:06:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729180AbgBJMij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:38:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57542 "EHLO mail.kernel.org"
+        id S1730400AbgBJNF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:05:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728588AbgBJMg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:59 -0500
+        id S1729590AbgBJMj7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:39:59 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D7DE20838;
-        Mon, 10 Feb 2020 12:36:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C3DD20842;
+        Mon, 10 Feb 2020 12:39:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338219;
-        bh=ekNtUJOY6BTQcgO0ETB60irb815V229JjRQZLA77jDo=;
+        s=default; t=1581338399;
+        bh=V3KZXuaCciVHdUE9nXWXaaEJybBGYjvFOmK9/bmg+Ko=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ndi3w/GVCYoDmQ843gBcKc6sEYMhweYNWjeHTMKSZuMmxq5MmCXeZZFm7V5A3pjt1
-         CgHNbR2f1e0o52K5qOtjdzR2tTle8n41FFwDFnMbklJDKSww8lAbUUCnlfrkn0subl
-         Ziz9hsDq2oVJkbETflgFEwn/Xh+OBptNPEu4SKq0=
+        b=k954DLBKc0E3s0glDCFHXEglXOWmqvOvjsTM28n9Zp/vY9b2So9K6+F0AMkv8/Vei
+         UvQ4bzOTxXIsKfPXK4+b7BCwj1GdMBepquWpBHEXBmkE4MRBsMxIunuIPZ23CbBGV0
+         yg35tyJ4g6pBmpzzNaJJtyflVm6aDyKCCJ2+CbmU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Yang <richardw.yang@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        David Rientjes <rientjes@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.4 053/309] mm: thp: dont need care deferred split queue in memcg charge move path
-Date:   Mon, 10 Feb 2020 04:30:09 -0800
-Message-Id: <20200210122411.076985137@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 5.5 097/367] ACPI / battery: Use design-cap for capacity calculations if full-cap is not available
+Date:   Mon, 10 Feb 2020 04:30:10 -0800
+Message-Id: <20200210122433.326475992@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,72 +43,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Yang <richardw.yang@linux.intel.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit fac0516b5534897bf4c4a88daa06a8cfa5611b23 upstream.
+commit 5b74d1d16e2f5753fcbdecd6771b2d8370dda414 upstream.
 
-If compound is true, this means it is a PMD mapped THP.  Which implies
-the page is not linked to any defer list.  So the first code chunk will
-not be executed.
+The ThunderSoft TS178 tablet's _BIX implementation reports design_capacity
+but not full_charge_capacity.
 
-Also with this reason, it would not be proper to add this page to a
-defer list.  So the second code chunk is not correct.
+Before this commit this would cause us to return -ENODEV for the capacity
+attribute, which userspace does not like. Specifically upower does this:
 
-Based on this, we should remove the defer list related code.
+        if (sysfs_file_exists (native_path, "capacity")) {
+                percentage = sysfs_get_double (native_path, "capacity");
 
-[yang.shi@linux.alibaba.com: better patch title]
-Link: http://lkml.kernel.org/r/20200117233836.3434-1-richardw.yang@linux.intel.com
-Fixes: 87eaceb3faa5 ("mm: thp: make deferred split shrinker memcg aware")
-Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
-Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Acked-by: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: <stable@vger.kernel.org>    [5.4+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Where the sysfs_get_double() helper returns 0 when we return -ENODEV,
+so the battery always reads 0% if we return -ENODEV.
+
+This commit fixes this by using the design-capacity instead of the
+full-charge-capacity when the full-charge-capacity is not available.
+
+Fixes: b41901a2cf06 ("ACPI / battery: Do not export energy_full[_design] on devices without full_charge_capacity")
+Cc: 4.19+ <stable@vger.kernel.org> # 4.19+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/memcontrol.c |   18 ------------------
- 1 file changed, 18 deletions(-)
+ drivers/acpi/battery.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -5465,14 +5465,6 @@ static int mem_cgroup_move_account(struc
- 		__mod_lruvec_state(to_vec, NR_WRITEBACK, nr_pages);
- 	}
+--- a/drivers/acpi/battery.c
++++ b/drivers/acpi/battery.c
+@@ -217,7 +217,7 @@ static int acpi_battery_get_property(str
+ 				     enum power_supply_property psp,
+ 				     union power_supply_propval *val)
+ {
+-	int ret = 0;
++	int full_capacity = ACPI_BATTERY_VALUE_UNKNOWN, ret = 0;
+ 	struct acpi_battery *battery = to_acpi_battery(psy);
  
--#ifdef CONFIG_TRANSPARENT_HUGEPAGE
--	if (compound && !list_empty(page_deferred_list(page))) {
--		spin_lock(&from->deferred_split_queue.split_queue_lock);
--		list_del_init(page_deferred_list(page));
--		from->deferred_split_queue.split_queue_len--;
--		spin_unlock(&from->deferred_split_queue.split_queue_lock);
--	}
--#endif
- 	/*
- 	 * It is safe to change page->mem_cgroup here because the page
- 	 * is referenced, charged, and isolated - we can't race with
-@@ -5482,16 +5474,6 @@ static int mem_cgroup_move_account(struc
- 	/* caller should have done css_get */
- 	page->mem_cgroup = to;
- 
--#ifdef CONFIG_TRANSPARENT_HUGEPAGE
--	if (compound && list_empty(page_deferred_list(page))) {
--		spin_lock(&to->deferred_split_queue.split_queue_lock);
--		list_add_tail(page_deferred_list(page),
--			      &to->deferred_split_queue.split_queue);
--		to->deferred_split_queue.split_queue_len++;
--		spin_unlock(&to->deferred_split_queue.split_queue_lock);
--	}
--#endif
--
- 	spin_unlock_irqrestore(&from->move_lock, flags);
- 
- 	ret = 0;
+ 	if (acpi_battery_present(battery)) {
+@@ -286,12 +286,17 @@ static int acpi_battery_get_property(str
+ 			val->intval = battery->capacity_now * 1000;
+ 		break;
+ 	case POWER_SUPPLY_PROP_CAPACITY:
++		if (ACPI_BATTERY_CAPACITY_VALID(battery->full_charge_capacity))
++			full_capacity = battery->full_charge_capacity;
++		else if (ACPI_BATTERY_CAPACITY_VALID(battery->design_capacity))
++			full_capacity = battery->design_capacity;
++
+ 		if (battery->capacity_now == ACPI_BATTERY_VALUE_UNKNOWN ||
+-		    !ACPI_BATTERY_CAPACITY_VALID(battery->full_charge_capacity))
++		    full_capacity == ACPI_BATTERY_VALUE_UNKNOWN)
+ 			ret = -ENODEV;
+ 		else
+ 			val->intval = battery->capacity_now * 100/
+-					battery->full_charge_capacity;
++					full_capacity;
+ 		break;
+ 	case POWER_SUPPLY_PROP_CAPACITY_LEVEL:
+ 		if (battery->state & ACPI_BATTERY_STATE_CRITICAL)
 
 
