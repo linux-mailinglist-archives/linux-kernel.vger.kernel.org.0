@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 456AF1576C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:55:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0309D157586
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:41:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729881AbgBJMzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:55:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44986 "EHLO mail.kernel.org"
+        id S1728956AbgBJMlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:41:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728712AbgBJMlw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:41:52 -0500
+        id S1729240AbgBJMiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:52 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1C2520842;
-        Mon, 10 Feb 2020 12:41:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8422D20873;
+        Mon, 10 Feb 2020 12:38:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338511;
-        bh=/kmyYt9ZI3NOmd4VftzPhAPuJR8J8CHxBHA/slhwnJo=;
+        s=default; t=1581338331;
+        bh=lUGMPVwglRWAlieNZ5OqxlF4gbbFWvhR6+24MzY3r+g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c1o8uz+8OYRuvHlOPG7ur95B73AtDTJSnFbMJ1O+EN+LWsHcSPUBqHjH7amldy9mv
-         E2MckRIwX7rUiSyS6bkRJBwBS8hW4eqwGD5J+TjwG5RTRDvDMxfnOh9jj63v5KlGOK
-         EjRVTMK02ixke4lNxweevSh0pXXg4ABAhoVLw39w=
+        b=TuQZDbrNREbhAuIjwqyp/8a2wWwl7Xbfg9Y7oPeqDCLBTjzG9bohmwqZMNMOkg640
+         Uio/Sv//7oHsnLkMxjSjzwpi6Gd4kkPjhY3qkMK4xAUNjjXcoyVNaJyYSvu4by9uaJ
+         xaBY0gpuNlswW3+Y+XCT2UgNJ+XEPjSIsq7cKc/E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>,
-        Jiri Pirko <jiri@mellanox.com>,
+        stable@vger.kernel.org, Harini Katakam <harini.katakam@xilinx.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 317/367] devlink: report 0 after hitting end in region read
-Date:   Mon, 10 Feb 2020 04:33:50 -0800
-Message-Id: <20200210122452.405722316@linuxfoundation.org>
+Subject: [PATCH 5.4 275/309] net: macb: Remove unnecessary alignment check for TSO
+Date:   Mon, 10 Feb 2020 04:33:51 -0800
+Message-Id: <20200210122433.059511653@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jacob Keller <jacob.e.keller@intel.com>
+From: Harini Katakam <harini.katakam@xilinx.com>
 
-[ Upstream commit d5b90e99e1d51b7b5d2b74fbc4c2db236a510913 ]
+[ Upstream commit 41c1ef978c8d0259c6636e6d2d854777e92650eb ]
 
-commit fdd41ec21e15 ("devlink: Return right error code in case of errors
-for region read") modified the region read code to report errors
-properly in unexpected cases.
+The IP TSO implementation does NOT require the length to be a
+multiple of 8. That is only a requirement for UFO as per IP
+documentation. Hence, exit macb_features_check function in the
+beginning if the protocol is not UDP. Only when it is UDP,
+proceed further to the alignment checks. Update comments to
+reflect the same. Also remove dead code checking for protocol
+TCP when calculating header length.
 
-In the case where the start_offset and ret_offset match, it unilaterally
-converted this into an error. This causes an issue for the "dump"
-version of the command. In this case, the devlink region dump will
-always report an invalid argument:
-
-000000000000ffd0 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-000000000000ffe0 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-devlink answers: Invalid argument
-000000000000fff0 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-
-This occurs because the expected flow for the dump is to return 0 after
-there is no further data.
-
-The simplest fix would be to stop converting the error code to -EINVAL
-if start_offset == ret_offset. However, avoid unnecessary work by
-checking for when start_offset is larger than the region size and
-returning 0 upfront.
-
-Fixes: fdd41ec21e15 ("devlink: Return right error code in case of errors for region read")
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
+Fixes: 1629dd4f763c ("cadence: Add LSO support.")
+Signed-off-by: Harini Katakam <harini.katakam@xilinx.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/devlink.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/cadence/macb_main.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
---- a/net/core/devlink.c
-+++ b/net/core/devlink.c
-@@ -3986,6 +3986,12 @@ static int devlink_nl_cmd_region_read_du
- 		goto out_unlock;
- 	}
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -1664,16 +1664,14 @@ static netdev_features_t macb_features_c
  
-+	/* return 0 if there is no further data to read */
-+	if (start_offset >= region->size) {
-+		err = 0;
-+		goto out_unlock;
-+	}
-+
- 	hdr = genlmsg_put(skb, NETLINK_CB(cb->skb).portid, cb->nlh->nlmsg_seq,
- 			  &devlink_nl_family, NLM_F_ACK | NLM_F_MULTI,
- 			  DEVLINK_CMD_REGION_READ);
+ 	/* Validate LSO compatibility */
+ 
+-	/* there is only one buffer */
+-	if (!skb_is_nonlinear(skb))
++	/* there is only one buffer or protocol is not UDP */
++	if (!skb_is_nonlinear(skb) || (ip_hdr(skb)->protocol != IPPROTO_UDP))
+ 		return features;
+ 
+ 	/* length of header */
+ 	hdrlen = skb_transport_offset(skb);
+-	if (ip_hdr(skb)->protocol == IPPROTO_TCP)
+-		hdrlen += tcp_hdrlen(skb);
+ 
+-	/* For LSO:
++	/* For UFO only:
+ 	 * When software supplies two or more payload buffers all payload buffers
+ 	 * apart from the last must be a multiple of 8 bytes in size.
+ 	 */
 
 
