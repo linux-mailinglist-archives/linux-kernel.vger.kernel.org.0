@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D524A157A6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:22:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 689FD157A6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:22:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731077AbgBJNWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1731145AbgBJNWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 10 Feb 2020 08:22:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58822 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:58778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728268AbgBJMhV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:21 -0500
+        id S1728725AbgBJMhW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:22 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 099552085B;
+        by mail.kernel.org (Postfix) with ESMTPSA id 85BB4208C4;
         Mon, 10 Feb 2020 12:37:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1581338241;
-        bh=/glp9sSdbLe3epTTSCqFRgpTWpPljAzDuqmKyRFBIH0=;
+        bh=tChVLO5t1hD/U1oJ87Zqw4YfkrlE6oR1y5L0VUdR7do=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=spguriA9Qi8ndVFTFtsuJRZt9DI35i/bA+MwqwiSQX6wpIwwdn3cBe/p3CHBhjVD2
-         UJm/sEoxQz0T8VvSBwQ27TWHTT2GTAbLq19uXB1kF/1/IorCDAQqACUq07Hs+RhzpO
-         9+4rLIDGXuPIUZpK+1DRJTNO/AJqwDxEHTtdt34o=
+        b=QqL8/hB8XTWKpAywrmVNVT3krUVEE/mCaPtPIKRUFb+/druWRuF/niM2Kx6+6cuC/
+         TFXIna46NellaFnT/wUSqc9z58AFkV7qYZpgYU638XKwhltuMAmZIZ6x2ItSBiotyc
+         2B5zPbH3TwQMX9HF2K927WEy3rpWVcxYcdmqAax8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhihao Cheng <chengzhihao1@huawei.com>,
-        "zhangyi (F)" <yi.zhang@huawei.com>, Stable@vger.kernel.org,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 5.4 095/309] ubifs: Fix deadlock in concurrent bulk-read and writepage
-Date:   Mon, 10 Feb 2020 04:30:51 -0800
-Message-Id: <20200210122415.250833630@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 096/309] mmc: sdhci-of-at91: fix memleak on clk_get failure
+Date:   Mon, 10 Feb 2020 04:30:52 -0800
+Message-Id: <20200210122415.373322202@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
 References: <20200210122406.106356946@linuxfoundation.org>
@@ -44,56 +47,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhihao Cheng <chengzhihao1@huawei.com>
+From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 
-commit f5de5b83303e61b1f3fb09bd77ce3ac2d7a475f2 upstream.
+[ Upstream commit a04184ce777b46e92c2b3c93c6dcb2754cb005e1 ]
 
-In ubifs, concurrent execution of writepage and bulk read on the same file
-may cause ABBA deadlock, for example (Reproduce method see Link):
+sdhci_alloc_host() does its work not using managed infrastructure, so
+needs explicit free on error path. Add it where needed.
 
-Process A(Bulk-read starts from page4)         Process B(write page4 back)
-  vfs_read                                       wb_workfn or fsync
-  ...                                            ...
-  generic_file_buffered_read                     write_cache_pages
-    ubifs_readpage                                 LOCK(page4)
-
-      ubifs_bulk_read                              ubifs_writepage
-        LOCK(ui->ui_mutex)                           ubifs_write_inode
-
-	  ubifs_do_bulk_read                           LOCK(ui->ui_mutex)
-	    find_or_create_page(alloc page4)                  ↑
-	      LOCK(page4)                   <--     ABBA deadlock occurs!
-
-In order to ensure the serialization execution of bulk read, we can't
-remove the big lock 'ui->ui_mutex' in ubifs_bulk_read(). Instead, we
-allow ubifs_do_bulk_read() to lock page failed by replacing
-find_or_create_page(FGP_LOCK) with
-pagecache_get_page(FGP_LOCK | FGP_NOWAIT).
-
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
-Suggested-by: zhangyi (F) <yi.zhang@huawei.com>
-Cc: <Stable@vger.kernel.org>
-Fixes: 4793e7c5e1c ("UBIFS: add bulk-read facility")
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206153
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: <stable@vger.kernel.org>
+Fixes: bb5f8ea4d514 ("mmc: sdhci-of-at91: introduce driver for the Atmel SDMMC")
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Link: https://lore.kernel.org/r/b2a44d5be2e06ff075f32477e466598bb0f07b36.1577961679.git.mirq-linux@rere.qmqm.pl
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ubifs/file.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/mmc/host/sdhci-of-at91.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/fs/ubifs/file.c
-+++ b/fs/ubifs/file.c
-@@ -786,7 +786,9 @@ static int ubifs_do_bulk_read(struct ubi
+diff --git a/drivers/mmc/host/sdhci-of-at91.c b/drivers/mmc/host/sdhci-of-at91.c
+index 0ae986c42bc82..9378d5dc86c81 100644
+--- a/drivers/mmc/host/sdhci-of-at91.c
++++ b/drivers/mmc/host/sdhci-of-at91.c
+@@ -324,19 +324,22 @@ static int sdhci_at91_probe(struct platform_device *pdev)
+ 	priv->mainck = devm_clk_get(&pdev->dev, "baseclk");
+ 	if (IS_ERR(priv->mainck)) {
+ 		dev_err(&pdev->dev, "failed to get baseclk\n");
+-		return PTR_ERR(priv->mainck);
++		ret = PTR_ERR(priv->mainck);
++		goto sdhci_pltfm_free;
+ 	}
  
- 		if (page_offset > end_index)
- 			break;
--		page = find_or_create_page(mapping, page_offset, ra_gfp_mask);
-+		page = pagecache_get_page(mapping, page_offset,
-+				 FGP_LOCK|FGP_ACCESSED|FGP_CREAT|FGP_NOWAIT,
-+				 ra_gfp_mask);
- 		if (!page)
- 			break;
- 		if (!PageUptodate(page))
+ 	priv->hclock = devm_clk_get(&pdev->dev, "hclock");
+ 	if (IS_ERR(priv->hclock)) {
+ 		dev_err(&pdev->dev, "failed to get hclock\n");
+-		return PTR_ERR(priv->hclock);
++		ret = PTR_ERR(priv->hclock);
++		goto sdhci_pltfm_free;
+ 	}
+ 
+ 	priv->gck = devm_clk_get(&pdev->dev, "multclk");
+ 	if (IS_ERR(priv->gck)) {
+ 		dev_err(&pdev->dev, "failed to get multclk\n");
+-		return PTR_ERR(priv->gck);
++		ret = PTR_ERR(priv->gck);
++		goto sdhci_pltfm_free;
+ 	}
+ 
+ 	ret = sdhci_at91_set_clks_presets(&pdev->dev);
+-- 
+2.20.1
+
 
 
