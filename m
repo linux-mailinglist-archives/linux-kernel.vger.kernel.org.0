@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A15891575B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:43:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2270F1575B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:43:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730480AbgBJMno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:43:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39362 "EHLO mail.kernel.org"
+        id S1730486AbgBJMnp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:43:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729615AbgBJMkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:06 -0500
+        id S1729622AbgBJMkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:07 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8887720838;
-        Mon, 10 Feb 2020 12:40:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87D8B208C4;
+        Mon, 10 Feb 2020 12:40:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338405;
-        bh=gp3uSyvEdJvMJ43iWW0SHxrSkKLlqtLGRBb2o/xi1cY=;
+        s=default; t=1581338406;
+        bh=m6cwZzCh2LI5USGwyzzuiZR9EePHbRQEa9N2N2+tT1g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N8IkUe8ehdkNmRtgvsxxnKXio1tU+oKAL1HBhh8xIlf8GKiX50YpC2oQmA/ENcykt
-         TkrSzvsW5lquBqmWcHI0zCowHEYAJENadHAPmhK05TSO0wiW1cZR/O0W4yqVybPMZ+
-         a0HDyi9n28O71+k7km5rLeXoDEoVDZ+5q9tBnwFA=
+        b=n+Irx/hEDRsY6bIaOjB2TUL3tEy+FbMfMrqBEv21PpSBCVPXl7PDiK7Ug62Siyw+V
+         nh/RedVvBkQF/hE81umt7X+qUFQllOTdS5oXnxzi+S9hldoXyBXRqxvxNSO9zj+72K
+         78oGd+c2NpAsfTXeJEvFSL0ewf6m7JHbewPBy8m0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dragos Tarcatu <dragos_tarcatu@mentor.com>,
+        stable@vger.kernel.org,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>
-Subject: [PATCH 5.5 108/367] ASoC: topology: fix soc_tplg_fe_link_create() - link->dobj initialization order
-Date:   Mon, 10 Feb 2020 04:30:21 -0800
-Message-Id: <20200210122434.382312689@linuxfoundation.org>
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 5.5 109/367] ASoC: SOF: core: free trace on errors
+Date:   Mon, 10 Feb 2020 04:30:22 -0800
+Message-Id: <20200210122434.504307647@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -46,62 +45,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jaroslav Kysela <perex@perex.cz>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-commit 8ce1cbd6ce0b1bda0c980c64fee4c1e1378355f1 upstream.
+commit 37e97e6faeabda405d0c4319f8419dcc3da14b2b upstream.
 
-The code which checks the return value for snd_soc_add_dai_link() call
-in soc_tplg_fe_link_create() moved the snd_soc_add_dai_link() call before
-link->dobj members initialization.
+free_trace() is not called on probe errors, fix
 
-While it does not affect the latest kernels, the old soc-core.c code
-in the stable kernels is affected. The snd_soc_add_dai_link() function uses
-the link->dobj.type member to check, if the link structure is valid.
-
-Reorder the link->dobj initialization to make things work again.
-It's harmless for the recent code (and the structure should be properly
-initialized before other calls anyway).
-
-The problem is in stable linux-5.4.y since version 5.4.11 when the
-upstream commit 76d270364932 was applied.
-
-Fixes: 76d270364932 ("ASoC: topology: Check return value for snd_soc_add_dai_link()")
-Cc: Dragos Tarcatu <dragos_tarcatu@mentor.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jaroslav Kysela <perex@perex.cz>
-Link: https://lore.kernel.org/r/20200122190752.3081016-1-perex@perex.cz
+Reviewed-by: Kai Vehmanen <kai.vehmanen@linux.intel.com>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Link: https://lore.kernel.org/r/20200124213625.30186-3-pierre-louis.bossart@linux.intel.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/soc-topology.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ sound/soc/sof/core.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/sound/soc/soc-topology.c
-+++ b/sound/soc/soc-topology.c
-@@ -1906,6 +1906,10 @@ static int soc_tplg_fe_link_create(struc
- 	link->num_codecs = 1;
- 	link->num_platforms = 1;
- 
-+	link->dobj.index = tplg->index;
-+	link->dobj.ops = tplg->ops;
-+	link->dobj.type = SND_SOC_DOBJ_DAI_LINK;
-+
- 	if (strlen(pcm->pcm_name)) {
- 		link->name = kstrdup(pcm->pcm_name, GFP_KERNEL);
- 		link->stream_name = kstrdup(pcm->pcm_name, GFP_KERNEL);
-@@ -1942,9 +1946,6 @@ static int soc_tplg_fe_link_create(struc
- 		goto err;
+--- a/sound/soc/sof/core.c
++++ b/sound/soc/sof/core.c
+@@ -394,7 +394,7 @@ static int sof_probe_continue(struct snd
+ 	if (ret < 0) {
+ 		dev_err(sdev->dev,
+ 			"error: failed to register DSP DAI driver %d\n", ret);
+-		goto fw_run_err;
++		goto fw_trace_err;
  	}
  
--	link->dobj.index = tplg->index;
--	link->dobj.ops = tplg->ops;
--	link->dobj.type = SND_SOC_DOBJ_DAI_LINK;
- 	list_add(&link->dobj.list, &tplg->comp->dobj_list);
+ 	drv_name = plat_data->machine->drv_name;
+@@ -408,7 +408,7 @@ static int sof_probe_continue(struct snd
  
+ 	if (IS_ERR(plat_data->pdev_mach)) {
+ 		ret = PTR_ERR(plat_data->pdev_mach);
+-		goto fw_run_err;
++		goto fw_trace_err;
+ 	}
+ 
+ 	dev_dbg(sdev->dev, "created machine %s\n",
+@@ -420,6 +420,8 @@ static int sof_probe_continue(struct snd
  	return 0;
+ 
+ #if !IS_ENABLED(CONFIG_SND_SOC_SOF_PROBE_WORK_QUEUE)
++fw_trace_err:
++	snd_sof_free_trace(sdev);
+ fw_run_err:
+ 	snd_sof_fw_unload(sdev);
+ fw_load_err:
+@@ -437,6 +439,7 @@ dbg_err:
+ 	 * snd_sof_device_remove() when the PCI/ACPI device is removed
+ 	 */
+ 
++fw_trace_err:
+ fw_run_err:
+ fw_load_err:
+ ipc_err:
 
 
