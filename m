@@ -2,92 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E12F15787B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:08:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3ABC15790D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:13:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729581AbgBJNIO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:08:14 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41776 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729457AbgBJNIM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 08:08:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=TdcuDpxLgQJeHBcjjVmCcGsEmDfK4lLRpvk8VBOXZEk=; b=Su/gbaRlBpenaffOyzKGTCy2Kv
-        U4VhuSMUBuiH5znbE8cOJQiXc7OAauUE3Rr5zDYruT/2zFwUqWw8u8N06QVtl4w+u1uzvUsPrb83e
-        YoMJyArf4azD3c8CyMwK5/ciw1xcEI1wqrDRRWJ1ghDMGFrXoTFVImPDMhyXO2OMJ93EZ1TtXLuzZ
-        B6zyGC0NSxpn8QH/CrgKfXvO9aihTKBAL5brXqHdW8vzr0HZSFqXZsstmks+fnPKx5s/ZmNoaX0ak
-        9NxODiMBETNDfExlqYLhuSIDGHbL7fqHP2RoIQL1WoJDdoJkcjziR2P0GIStEQf2EjcTYrJp0bn8j
-        V07W3OhA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j18nE-0005je-1z; Mon, 10 Feb 2020 13:08:04 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0B8B2300446;
-        Mon, 10 Feb 2020 14:06:13 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2B97120148931; Mon, 10 Feb 2020 14:08:02 +0100 (CET)
-Date:   Mon, 10 Feb 2020 14:08:02 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Douglas RAILLARD <douglas.raillard@arm.com>
-Cc:     linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        qperret@google.com, linux-pm@vger.kernel.org
-Subject: Re: [RFC PATCH v4 4/6] sched/cpufreq: Introduce sugov_cpu_ramp_boost
-Message-ID: <20200210130802.GG14879@hirez.programming.kicks-ass.net>
-References: <20200122173538.1142069-1-douglas.raillard@arm.com>
- <20200122173538.1142069-5-douglas.raillard@arm.com>
+        id S1730290AbgBJNMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:12:01 -0500
+Received: from foss.arm.com ([217.140.110.172]:32958 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727727AbgBJNL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 08:11:59 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 498531FB;
+        Mon, 10 Feb 2020 05:11:59 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C11273F68E;
+        Mon, 10 Feb 2020 05:11:58 -0800 (PST)
+Date:   Mon, 10 Feb 2020 13:11:57 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        mcgrof@kernel.org, alex.williamson@redhat.com,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 3/5] regmap: optimize sync() and drop() regcache callbacks
+Message-ID: <20200210131157.GE7685@sirena.org.uk>
+References: <20200207180305.11092-1-dave@stgolabs.net>
+ <20200207180305.11092-4-dave@stgolabs.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="FEz7ebHBGB6b2e8X"
 Content-Disposition: inline
-In-Reply-To: <20200122173538.1142069-5-douglas.raillard@arm.com>
+In-Reply-To: <20200207180305.11092-4-dave@stgolabs.net>
+X-Cookie: Avoid gunfire in the bathroom tonight.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 05:35:36PM +0000, Douglas RAILLARD wrote:
 
-> +static unsigned long sugov_cpu_ramp_boost_update(struct sugov_cpu *sg_cpu)
-> +{
-> +	struct rq *rq = cpu_rq(sg_cpu->cpu);
-> +	unsigned long util_est_enqueued;
-> +	unsigned long util_avg;
-> +	unsigned long boost = 0;
-> +
+--FEz7ebHBGB6b2e8X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Should we NO-OP this function when !sched_feat(UTIL_EST) ?
+On Fri, Feb 07, 2020 at 10:03:03AM -0800, Davidlohr Bueso wrote:
+> At a higher memory footprint (two additional pointers per node) we
+> can get branchless O(1) tree iterators which can optimize in-order
+> tree walks/traversals. For example, on my laptop looking at the rbtree
+> debugfs entries:
 
-> +	util_est_enqueued = READ_ONCE(rq->cfs.avg.util_est.enqueued);
+It's not clear that this is a good optimization - we're increasing the
+memory footprint for a bit of performance but our performance is all
+relative to the I2C or SPI I/O we're most likely all in the noise here
+whereas for larger maps the size cost looks like it could be quite bad
+(but equally your case looks to have a lot of 2 register blocks which is
+almost the worst case for overhead so...).
 
-Otherwise you're reading garbage here, no?
+That said the code is fine so from that point of view:
 
-> +	util_avg = READ_ONCE(rq->cfs.avg.util_avg);
-> +
-> +	/*
-> +	 * Boost when util_avg becomes higher than the previous stable
-> +	 * knowledge of the enqueued tasks' set util, which is CPU's
-> +	 * util_est_enqueued.
-> +	 *
-> +	 * We try to spot changes in the workload itself, so we want to
-> +	 * avoid the noise of tasks being enqueued/dequeued. To do that,
-> +	 * we only trigger boosting when the "amount of work" enqueued
-> +	 * is stable.
-> +	 */
-> +	if (util_est_enqueued == sg_cpu->util_est_enqueued &&
-> +	    util_avg >= sg_cpu->util_avg &&
-> +	    util_avg > util_est_enqueued)
-> +		boost = util_avg - util_est_enqueued;
-> +
-> +	sg_cpu->util_est_enqueued = util_est_enqueued;
-> +	sg_cpu->util_avg = util_avg;
-> +	WRITE_ONCE(sg_cpu->ramp_boost, boost);
-> +	return boost;
-> +}
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--FEz7ebHBGB6b2e8X
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5BVpwACgkQJNaLcl1U
+h9D9nQf/UDELw4nM+mVlqjci3E7CLgv2DvqtZdkaYcs/g8i10jrF2mZBquvaUwUX
+DpgA8imJ1niA81szUWxxUjbMXLT/FRbVZBHAGDK47n1b6E0j1k1K35eq9nvsgchW
+Lg6NaXfqNFgmm4TCwKbS+eQZANklImbERJkdELSFasEwi2I2WETW1T2/TmHxGO3j
+orStHxYCiSIobLd+kXwzC/gcFg5H17s9zRpDDNqr+qIK/XMkEzoXckoVCE4bDIS7
+k9NX3PD64PKfTSjgsfCbJmhQUCvSqo02zgUkFfHOzBSE4YCTf0CijLV4wwlnaNuM
+7SiD49YTlzecyrzgmFA2iQEgp/Jbww==
+=utDt
+-----END PGP SIGNATURE-----
+
+--FEz7ebHBGB6b2e8X--
