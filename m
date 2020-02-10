@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F71C157539
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:40:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9113B157610
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729478AbgBJMjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:39:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60006 "EHLO mail.kernel.org"
+        id S1730526AbgBJMn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:43:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728865AbgBJMhm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:42 -0500
+        id S1729670AbgBJMkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:15 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5399F20838;
-        Mon, 10 Feb 2020 12:37:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 968A92051A;
+        Mon, 10 Feb 2020 12:40:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338262;
-        bh=u5gjxbGuLQJXByiCbFPs4mdb0PD/2AnCQv8x4gXAxPU=;
+        s=default; t=1581338414;
+        bh=MMy5b1V1IL5uHCq9NfdoFe3WHzgaxpAqJCJ80qPZUTM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G97qjJKq9SuagjmwttD14MFPhmey7+B86kOxawIFX4WgY/qmeKH6NV4zXG+rtyEbt
-         EgwBoHu7xBO0eYP05G6R5YiWSA5Uc6td/y0T9GBguebrLGs4mRcFK5e6QvgJhf5BFr
-         fjbQIlNrRx2FK90LvtVDMKg/ejT4U9lYqeTo6BuU=
+        b=wk/scjW6gbEt2lt6DqydYlGn1OspQ1UlWhhecWqQOfqEU9sP7nXpHjN2/esyyK4Ge
+         JXxr1xOzMYCjHdWNOsJHCl9fIyYACt0XTvQQTEn0l20eAZ1TQo/JWrL5oDw/hNxvR5
+         3Nu79DfhXae98LBP/vVCXw7AsE419crgnsMLrbGE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH 5.4 084/309] PCI: keystone: Fix error handling when "num-viewport" DT property is not populated
-Date:   Mon, 10 Feb 2020 04:30:40 -0800
-Message-Id: <20200210122413.927268328@linuxfoundation.org>
+        stable@vger.kernel.org, Samuel Holland <samuel@sholland.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH 5.5 128/367] power: supply: axp20x_ac_power: Fix reporting online status
+Date:   Mon, 10 Feb 2020 04:30:41 -0800
+Message-Id: <20200210122436.676761953@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,32 +44,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kishon Vijay Abraham I <kishon@ti.com>
+From: Samuel Holland <samuel@sholland.org>
 
-commit b0de922af53eede340986a2d05b6cd4b6d6efa43 upstream.
+commit 1c51aad8475d670ad58ae60adc9d32342381df8d upstream.
 
-Fix error handling when "num-viewport" DT property is not populated.
+AXP803/AXP813 have a flag that enables/disables the AC power supply
+input. This flag does not affect the status bits in PWR_INPUT_STATUS.
+Its effect can be verified by checking the battery charge/discharge
+state (bit 2 of PWR_INPUT_STATUS), or by examining the current draw on
+the AC input.
 
-Fixes: 23284ad677a9 ("PCI: keystone: Add support for PCIe EP in AM654x Platforms")
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: stable@vger.kernel.org # v5.2+
+Take this flag into account when getting the ONLINE property of the AC
+input, on PMICs where this flag is present.
+
+Fixes: 7693b5643fd2 ("power: supply: add AC power supply driver for AXP813")
+Cc: stable@vger.kernel.org
+Signed-off-by: Samuel Holland <samuel@sholland.org>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/controller/dwc/pci-keystone.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/power/supply/axp20x_ac_power.c |   31 +++++++++++++++++++++++++------
+ 1 file changed, 25 insertions(+), 6 deletions(-)
 
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -1354,7 +1354,7 @@ static int __init ks_pcie_probe(struct p
- 		ret = of_property_read_u32(np, "num-viewport", &num_viewport);
- 		if (ret < 0) {
- 			dev_err(dev, "unable to read *num-viewport* property\n");
--			return ret;
-+			goto err_get_sync;
- 		}
+--- a/drivers/power/supply/axp20x_ac_power.c
++++ b/drivers/power/supply/axp20x_ac_power.c
+@@ -23,6 +23,8 @@
+ #define AXP20X_PWR_STATUS_ACIN_PRESENT	BIT(7)
+ #define AXP20X_PWR_STATUS_ACIN_AVAIL	BIT(6)
  
- 		/*
++#define AXP813_ACIN_PATH_SEL		BIT(7)
++
+ #define AXP813_VHOLD_MASK		GENMASK(5, 3)
+ #define AXP813_VHOLD_UV_TO_BIT(x)	((((x) / 100000) - 40) << 3)
+ #define AXP813_VHOLD_REG_TO_UV(x)	\
+@@ -40,6 +42,7 @@ struct axp20x_ac_power {
+ 	struct power_supply *supply;
+ 	struct iio_channel *acin_v;
+ 	struct iio_channel *acin_i;
++	bool has_acin_path_sel;
+ };
+ 
+ static irqreturn_t axp20x_ac_power_irq(int irq, void *devid)
+@@ -86,6 +89,17 @@ static int axp20x_ac_power_get_property(
+ 			return ret;
+ 
+ 		val->intval = !!(reg & AXP20X_PWR_STATUS_ACIN_AVAIL);
++
++		/* ACIN_PATH_SEL disables ACIN even if ACIN_AVAIL is set. */
++		if (val->intval && power->has_acin_path_sel) {
++			ret = regmap_read(power->regmap, AXP813_ACIN_PATH_CTRL,
++					  &reg);
++			if (ret)
++				return ret;
++
++			val->intval = !!(reg & AXP813_ACIN_PATH_SEL);
++		}
++
+ 		return 0;
+ 
+ 	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+@@ -224,21 +238,25 @@ static const struct power_supply_desc ax
+ struct axp_data {
+ 	const struct power_supply_desc	*power_desc;
+ 	bool				acin_adc;
++	bool				acin_path_sel;
+ };
+ 
+ static const struct axp_data axp20x_data = {
+-	.power_desc = &axp20x_ac_power_desc,
+-	.acin_adc = true,
++	.power_desc	= &axp20x_ac_power_desc,
++	.acin_adc	= true,
++	.acin_path_sel	= false,
+ };
+ 
+ static const struct axp_data axp22x_data = {
+-	.power_desc = &axp22x_ac_power_desc,
+-	.acin_adc = false,
++	.power_desc	= &axp22x_ac_power_desc,
++	.acin_adc	= false,
++	.acin_path_sel	= false,
+ };
+ 
+ static const struct axp_data axp813_data = {
+-	.power_desc = &axp813_ac_power_desc,
+-	.acin_adc = false,
++	.power_desc	= &axp813_ac_power_desc,
++	.acin_adc	= false,
++	.acin_path_sel	= true,
+ };
+ 
+ static int axp20x_ac_power_probe(struct platform_device *pdev)
+@@ -282,6 +300,7 @@ static int axp20x_ac_power_probe(struct
+ 	}
+ 
+ 	power->regmap = dev_get_regmap(pdev->dev.parent, NULL);
++	power->has_acin_path_sel = axp_data->acin_path_sel;
+ 
+ 	platform_set_drvdata(pdev, power);
+ 
 
 
