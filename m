@@ -2,150 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A057B15772D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:59:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05B2B1576F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:56:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbgBJMlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:41:15 -0500
-Received: from orion.archlinux.org ([88.198.91.70]:38070 "EHLO
-        orion.archlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728158AbgBJMii (ORCPT
+        id S1729811AbgBJM4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:56:36 -0500
+Received: from seldsegrel01.sonyericsson.com ([37.139.156.29]:5545 "EHLO
+        SELDSEGREL01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730030AbgBJMli (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:38 -0500
-Received: from orion.archlinux.org (localhost [127.0.0.1])
-        by orion.archlinux.org (Postfix) with ESMTP id BC39418CCD29EA;
-        Mon, 10 Feb 2020 12:38:34 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.3 (2019-12-06) on orion.archlinux.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=5.0 tests=ALL_TRUSTED=-1,BAYES_00=-1,
-        DMARC_FAIL_NONE=0.25,T_DMARC_POLICY_NONE=0.01,T_DMARC_TESTS_FAIL=0.01
-        autolearn=no autolearn_force=no version=3.4.3
-X-Spam-BL-Results: 
-Received: from genesis (unknown [IPv6:2001:8a0:f254:2300:dad6:8c60:8394:88da])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: ffy00)
-        by orion.archlinux.org (Postfix) with ESMTPSA;
-        Mon, 10 Feb 2020 12:38:34 +0000 (UTC)
-Message-ID: <2405a741abf0d5fe8f55b5d3de8488e3054cc5e1.camel@archlinux.org>
-Subject: Re: [BUG] Kernel log flooded by message "logitech-djreceiver
- 0003:046D:C53A.000C: logi_dj_hidpp_event: invalid device index:7"
-From:   Filipe =?ISO-8859-1?Q?La=EDns?= <lains@archlinux.org>
-To:     Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-input@vger.kernel.org
-In-Reply-To: <CABXGCsMfzj+mpjvuZifzWEKbX7X36v7iMVPampSS6kOc2Hzoow@mail.gmail.com>
-References: <CABXGCsMfzj+mpjvuZifzWEKbX7X36v7iMVPampSS6kOc2Hzoow@mail.gmail.com>
-Organization: Archlinux
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-CC7fhrLK0x2ihemV6EOD"
-Date:   Mon, 10 Feb 2020 12:38:32 +0000
+        Mon, 10 Feb 2020 07:41:38 -0500
+From:   Peter Enderborg <peter.enderborg@sony.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>
+CC:     Peter Enderborg <peter.enderborg@sony.com>
+Subject: [PATCH] HID: Extend report buffer size
+Date:   Mon, 10 Feb 2020 13:40:54 +0100
+Message-ID: <20200210124054.1257-1-peter.enderborg@sony.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200210122147.GA413013@kroah.com>
+References: <20200210122147.GA413013@kroah.com>
 MIME-Version: 1.0
-User-Agent: Evolution 3.34.3 
+Content-Type: text/plain
+X-SEG-SpamProfiler-Analysis: v=2.3 cv=V88DLtvi c=1 sm=1 tr=0 a=Jtaq2Av1iV2Yg7i8w6AGMw==:117 a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=l697ptgUJYAA:10 a=z6gsHLkEAAAA:8 a=0ZngROrHOgAAH7t2AUYA:9 a=d-OLMTCWyvARjPbQ-enb:22
+X-SEG-SpamProfiler-Score: 0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In the patch "HID: Fix slab-out-of-bounds read in hid_field_extract"
+there added a check for buffer overruns. This made Elgato StreamDeck
+to fail. This patch extend the buffer to 8192 to solve this. It also
+adds a print of the requested length if it fails on this test.
 
---=-CC7fhrLK0x2ihemV6EOD
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, 2020-02-10 at 13:21 +0500, Mikhail Gavrilov wrote:
-> Kernel log flooded by message
-> logitech-djreceiver 0003:046D:C53A.000C: logi_dj_hidpp_event: invalid
-> device index:7
-> This happens when the mouse is idle.
-> And it started since I begin using the mouse pad with Power Play
-> technology.
->=20
->=20
-> Kernel ver: 5.6 pre RC
-> --
-> Best Regards,
-> Mike Gavrilov.
-
-Hello Mike,
-
-Yes, the Powerplay mat exports a static HID++ 2.0 device with index 7
-to configure the led on the mat. The current code expects devices to
-have a maximum index of 6, which is the maximum index of pairable
-devices.=20
-
-I already submitted a patch adding support for the Logitech G Powerplay
-mat but it wasn't been upstreamed it. I will attach it in case you want
-to try it.
-
-Cheers,
-Filipe La=C3=ADns
-
+Fixes: 8ec321e96e05 ("HID: Fix slab-out-of-bounds read in hid_field_extract")
+Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
 ---
-Author: Filipe La=C3=ADns <lains@archlinux.org>
-Date:   Sun Jan 12 20:15:41 2020 +0000
+ drivers/hid/hid-core.c | 2 +-
+ include/linux/hid.h    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-    HID: logitech-dj: add support for the static device in the Powerplay ma=
-t/receiver
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index 851fe54ea59e..28841219b3d2 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -290,7 +290,7 @@ static int hid_add_field(struct hid_parser *parser, unsigned report_type, unsign
+ 
+ 	/* Total size check: Allow for possible report index byte */
+ 	if (report->size > (HID_MAX_BUFFER_SIZE - 1) << 3) {
+-		hid_err(parser->device, "report is too long\n");
++		hid_err(parser->device, "report is too long (%d)\n", report->size);
+ 		return -1;
+ 	}
+ 
+diff --git a/include/linux/hid.h b/include/linux/hid.h
+index cd41f209043f..875f71132b14 100644
+--- a/include/linux/hid.h
++++ b/include/linux/hid.h
+@@ -492,7 +492,7 @@ struct hid_report_enum {
+ };
+ 
+ #define HID_MIN_BUFFER_SIZE	64		/* make sure there is at least a packet size of space */
+-#define HID_MAX_BUFFER_SIZE	4096		/* 4kb */
++#define HID_MAX_BUFFER_SIZE	8192		/* 8kb */
+ #define HID_CONTROL_FIFO_SIZE	256		/* to init devices with >100 reports */
+ #define HID_OUTPUT_FIFO_SIZE	64
+ 
+-- 
+2.17.1
 
-    The Logitech G Powerplay has a lightspeed receiver with a static HID++
-    device with ID 7 attached to it to. It is used to configure the led on
-    the mat. For this reason I increased the max number of devices.
-
-    Signed-off-by: Filipe La=C3=ADns <lains@archlinux.org>
-
-diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
-index bb50d6e7745b..79294b873057 100644
---- a/drivers/hid/hid-logitech-dj.c
-+++ b/drivers/hid/hid-logitech-dj.c
-@@ -16,11 +16,11 @@
- #include <asm/unaligned.h>
- #include "hid-ids.h"
-
--#define DJ_MAX_PAIRED_DEVICES                  6
-+#define DJ_MAX_PAIRED_DEVICES                  7
- #define DJ_MAX_NUMBER_NOTIFS                   8
- #define DJ_RECEIVER_INDEX                      0
- #define DJ_DEVICE_INDEX_MIN                    1
--#define DJ_DEVICE_INDEX_MAX                    6
-+#define DJ_DEVICE_INDEX_MAX                    7
-
- #define DJREPORT_SHORT_LENGTH                  15
- #define DJREPORT_LONG_LENGTH                   32
-@@ -980,6 +980,11 @@ static void logi_hidpp_recv_queue_notif(struct hid_dev=
-ice *hdev,
-                break;
-        }
-
-+       /* custom receiver device (eg. powerplay) */
-+       if (hidpp_report->device_index =3D=3D 7) {
-+               workitem.reports_supported |=3D HIDPP;
-+       }
-+
-        if (workitem.type =3D=3D WORKITEM_TYPE_EMPTY) {
-                hid_warn(hdev,
-                         "unusable device of type %s (0x%02x) connected on =
-slot %d",
-
---=-CC7fhrLK0x2ihemV6EOD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0jW0leqs33gyftiw+JPGdIFqqV0FAl5BTsQACgkQ+JPGdIFq
-qV2o1BAArnqS+PoUWAyJOVrP4wEmyHC0lyB5osiGEehXtMvhd2pDWwl9P8U8nYdj
-TusgiebYY4F9lrZu00g7ggqD5iQQA1uyOvOGkV91sYez4YdKYU8lpUfGS+jTgTOo
-gIWlGntJi/qjbYkHqz5zeI+K0mvCpmUyinn2/WkV7y5ErPvgdiXPsTIzQq9geSJn
-i2syAUY0fTwDMe60AQ/2MhIXRiUCvMyMH8TLbDUFz2uzbzwhzBZH6tRY1tlPM0ow
-mtUPCEHWNTazfd56317QHDGMVne8/bWd4z+Gsyd2WqZVXNBvDAoX58aMxNH2FTtG
-jN6TjA01SAb9/yKcRdOe4hb7wstmjX9744ClGmueQNCPJyvjuWuGOBj/eMNVRk7p
-2PTAoR+ijTdHkUghZ3i+aGnzQVFpbgyistvNj1XajIhusHTMlHWep8f4IKPVS7zb
-5HGx6HF/ThBALxFUAOQjdpITzBF605I4b0XjOrx5UnZiYokCwVIulJrKFMwggUos
-UHNJrVbIx4fmjBvolMLAx9zmf9Hsd0BCj17ToECPXQpnZsV1K80q2K4XmzS5Zpx8
-gHvZlMsjq92JS4pnebyJIjeS22S8AnHESe6TBQyqelVlYJnKaiQ2eZVbQkO3QbqI
-6XEAShG/PJ1HIcHur1l23aEoYvu0cgzP+FyRQ5oucNwhuuLdcmI=
-=t81+
------END PGP SIGNATURE-----
-
---=-CC7fhrLK0x2ihemV6EOD--
