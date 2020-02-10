@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A41BE15798F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:16:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B536C15798B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:16:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728555AbgBJNQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:16:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33136 "EHLO mail.kernel.org"
+        id S1730952AbgBJNQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:16:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729041AbgBJMiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:10 -0500
+        id S1729058AbgBJMiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:12 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 151F82467C;
-        Mon, 10 Feb 2020 12:38:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1670620733;
+        Mon, 10 Feb 2020 12:38:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338290;
-        bh=TjPCIGx70c/xuK9ZFkx8nMSD4QHZZjnp9Dt2xOdRpRo=;
+        s=default; t=1581338292;
+        bh=fNsfi5Nz4UDoAno/GsvfQIo/eIIBQA6rNmDtAkzqfOk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dFZVJg5cGjNeeX4+Lk2qwUJGS4GJSANjPmzXQeapLIcz4ASedT8Zc1/biFqR/1/kT
-         rWNhxxBVvxWGS6eOppun4s4omLItXBnqsdrz/Ia/PSWlgSDoUkVyYMkmadWU7ML/jp
-         6zcbwbSeTmcfPuY2EsqsL6pWtv1vDmRmW9LTdE5E=
+        b=vHApylvhnhVCFp4+n/KkxEjGdpj+wj3aHVliLf/Zj9/lgN79ShMmsHCNCr9eg9UPs
+         RB1qIr/33GjqARLklA/UKcBUv5iObR3TfUZsdBhny0LjbcahDuIbQmmlehxrGjOaQD
+         LqGB5ruGs0uYAlEWwdn0aivnp1VyTIvciJQ4gt5Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Jones <drjones@redhat.com>,
-        Gavin Shan <gshan@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.4 192/309] tools/kvm_stat: Fix kvm_exit filter name
-Date:   Mon, 10 Feb 2020 04:32:28 -0800
-Message-Id: <20200210122425.012302403@linuxfoundation.org>
+        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Eric Wheeler <bcache@linux.ewheeler.net>,
+        Michael Lyle <mlyle@lyle.org>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.4 195/309] bcache: add readahead cache policy options via sysfs interface
+Date:   Mon, 10 Feb 2020 04:32:31 -0800
+Message-Id: <20200210122425.292428812@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
 References: <20200210122406.106356946@linuxfoundation.org>
@@ -44,73 +44,139 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gavin Shan <gshan@redhat.com>
+From: Coly Li <colyli@suse.de>
 
-commit 5fcf3a55a62afb0760ccb6f391d62f20bce4a42f upstream.
+commit 038ba8cc1bffc51250add4a9b9249d4331576d8f upstream.
 
-The filter name is fixed to "exit_reason" for some kvm_exit events, no
-matter what architect we have. Actually, the filter name ("exit_reason")
-is only applicable to x86, meaning it's broken on other architects
-including aarch64.
+In year 2007 high performance SSD was still expensive, in order to
+save more space for real workload or meta data, the readahead I/Os
+for non-meta data was bypassed and not cached on SSD.
 
-This fixes the issue by providing various kvm_exit filter names, depending
-on architect we're on. Afterwards, the variable filter name is picked and
-applied through ioctl(fd, SET_FILTER).
+In now days, SSD price drops a lot and people can find larger size
+SSD with more comfortable price. It is unncessary to alway bypass
+normal readahead I/Os to save SSD space for now.
 
-Reported-by: Andrew Jones <drjones@redhat.com>
-Signed-off-by: Gavin Shan <gshan@redhat.com>
+This patch adds options for readahead data cache policies via sysfs
+file /sys/block/bcache<N>/readahead_cache_policy, the options are,
+- "all": cache all readahead data I/Os.
+- "meta-only": only cache meta data, and bypass other regular I/Os.
+
+If users want to make bcache continue to only cache readahead request
+for metadata and bypass regular data readahead, please set "meta-only"
+to this sysfs file. By default, bcache will back to cache all read-
+ahead requests now.
+
 Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Coly Li <colyli@suse.de>
+Acked-by: Eric Wheeler <bcache@linux.ewheeler.net>
+Cc: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/kvm/kvm_stat/kvm_stat |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/md/bcache/bcache.h  |    3 +++
+ drivers/md/bcache/request.c |   17 ++++++++++++-----
+ drivers/md/bcache/sysfs.c   |   22 ++++++++++++++++++++++
+ 3 files changed, 37 insertions(+), 5 deletions(-)
 
---- a/tools/kvm/kvm_stat/kvm_stat
-+++ b/tools/kvm/kvm_stat/kvm_stat
-@@ -270,6 +270,7 @@ class ArchX86(Arch):
-     def __init__(self, exit_reasons):
-         self.sc_perf_evt_open = 298
-         self.ioctl_numbers = IOCTL_NUMBERS
-+        self.exit_reason_field = 'exit_reason'
-         self.exit_reasons = exit_reasons
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -329,6 +329,9 @@ struct cached_dev {
+ 	 */
+ 	atomic_t		has_dirty;
  
-     def debugfs_is_child(self, field):
-@@ -289,6 +290,7 @@ class ArchPPC(Arch):
-         # numbers depend on the wordsize.
-         char_ptr_size = ctypes.sizeof(ctypes.c_char_p)
-         self.ioctl_numbers['SET_FILTER'] = 0x80002406 | char_ptr_size << 16
-+        self.exit_reason_field = 'exit_nr'
-         self.exit_reasons = {}
++#define BCH_CACHE_READA_ALL		0
++#define BCH_CACHE_READA_META_ONLY	1
++	unsigned int		cache_readahead_policy;
+ 	struct bch_ratelimit	writeback_rate;
+ 	struct delayed_work	writeback_rate_update;
  
-     def debugfs_is_child(self, field):
-@@ -300,6 +302,7 @@ class ArchA64(Arch):
-     def __init__(self):
-         self.sc_perf_evt_open = 241
-         self.ioctl_numbers = IOCTL_NUMBERS
-+        self.exit_reason_field = 'esr_ec'
-         self.exit_reasons = AARCH64_EXIT_REASONS
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -391,13 +391,20 @@ static bool check_should_bypass(struct c
+ 		goto skip;
  
-     def debugfs_is_child(self, field):
-@@ -311,6 +314,7 @@ class ArchS390(Arch):
-     def __init__(self):
-         self.sc_perf_evt_open = 331
-         self.ioctl_numbers = IOCTL_NUMBERS
-+        self.exit_reason_field = None
-         self.exit_reasons = None
+ 	/*
+-	 * Flag for bypass if the IO is for read-ahead or background,
+-	 * unless the read-ahead request is for metadata
++	 * If the bio is for read-ahead or background IO, bypass it or
++	 * not depends on the following situations,
++	 * - If the IO is for meta data, always cache it and no bypass
++	 * - If the IO is not meta data, check dc->cache_reada_policy,
++	 *      BCH_CACHE_READA_ALL: cache it and not bypass
++	 *      BCH_CACHE_READA_META_ONLY: not cache it and bypass
++	 * That is, read-ahead request for metadata always get cached
+ 	 * (eg, for gfs2 or xfs).
+ 	 */
+-	if (bio->bi_opf & (REQ_RAHEAD|REQ_BACKGROUND) &&
+-	    !(bio->bi_opf & (REQ_META|REQ_PRIO)))
+-		goto skip;
++	if ((bio->bi_opf & (REQ_RAHEAD|REQ_BACKGROUND))) {
++		if (!(bio->bi_opf & (REQ_META|REQ_PRIO)) &&
++		    (dc->cache_readahead_policy != BCH_CACHE_READA_ALL))
++			goto skip;
++	}
  
-     def debugfs_is_child(self, field):
-@@ -541,8 +545,8 @@ class TracepointProvider(Provider):
-         """
-         filters = {}
-         filters['kvm_userspace_exit'] = ('reason', USERSPACE_EXIT_REASONS)
--        if ARCH.exit_reasons:
--            filters['kvm_exit'] = ('exit_reason', ARCH.exit_reasons)
-+        if ARCH.exit_reason_field and ARCH.exit_reasons:
-+            filters['kvm_exit'] = (ARCH.exit_reason_field, ARCH.exit_reasons)
-         return filters
+ 	if (bio->bi_iter.bi_sector & (c->sb.block_size - 1) ||
+ 	    bio_sectors(bio) & (c->sb.block_size - 1)) {
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -27,6 +27,12 @@ static const char * const bch_cache_mode
+ 	NULL
+ };
  
-     def _get_available_fields(self):
++static const char * const bch_reada_cache_policies[] = {
++	"all",
++	"meta-only",
++	NULL
++};
++
+ /* Default is 0 ("auto") */
+ static const char * const bch_stop_on_failure_modes[] = {
+ 	"auto",
+@@ -100,6 +106,7 @@ rw_attribute(congested_write_threshold_u
+ rw_attribute(sequential_cutoff);
+ rw_attribute(data_csum);
+ rw_attribute(cache_mode);
++rw_attribute(readahead_cache_policy);
+ rw_attribute(stop_when_cache_set_failed);
+ rw_attribute(writeback_metadata);
+ rw_attribute(writeback_running);
+@@ -167,6 +174,11 @@ SHOW(__bch_cached_dev)
+ 					       bch_cache_modes,
+ 					       BDEV_CACHE_MODE(&dc->sb));
+ 
++	if (attr == &sysfs_readahead_cache_policy)
++		return bch_snprint_string_list(buf, PAGE_SIZE,
++					      bch_reada_cache_policies,
++					      dc->cache_readahead_policy);
++
+ 	if (attr == &sysfs_stop_when_cache_set_failed)
+ 		return bch_snprint_string_list(buf, PAGE_SIZE,
+ 					       bch_stop_on_failure_modes,
+@@ -352,6 +364,15 @@ STORE(__cached_dev)
+ 		}
+ 	}
+ 
++	if (attr == &sysfs_readahead_cache_policy) {
++		v = __sysfs_match_string(bch_reada_cache_policies, -1, buf);
++		if (v < 0)
++			return v;
++
++		if ((unsigned int) v != dc->cache_readahead_policy)
++			dc->cache_readahead_policy = v;
++	}
++
+ 	if (attr == &sysfs_stop_when_cache_set_failed) {
+ 		v = __sysfs_match_string(bch_stop_on_failure_modes, -1, buf);
+ 		if (v < 0)
+@@ -466,6 +487,7 @@ static struct attribute *bch_cached_dev_
+ 	&sysfs_data_csum,
+ #endif
+ 	&sysfs_cache_mode,
++	&sysfs_readahead_cache_policy,
+ 	&sysfs_stop_when_cache_set_failed,
+ 	&sysfs_writeback_metadata,
+ 	&sysfs_writeback_running,
 
 
