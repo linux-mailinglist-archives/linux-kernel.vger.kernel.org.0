@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59508157970
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:15:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA89215776A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:00:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730195AbgBJNPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:15:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33634 "EHLO mail.kernel.org"
+        id S1729283AbgBJM77 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:59:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728220AbgBJMiW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:22 -0500
+        id S1729187AbgBJMlE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:41:04 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E8DE20838;
-        Mon, 10 Feb 2020 12:38:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE25924650;
+        Mon, 10 Feb 2020 12:41:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338302;
-        bh=kxFncGf/eva9sctmoin6ssD2buP8wYRxGrlH4Bw3S9I=;
+        s=default; t=1581338463;
+        bh=Tvf4txON6eeUtHEOdVEOOBvXVy6B/tu1BYD/Xx9UAUg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nyj6qn+aJCoZOYwJbARtTM6FckLLRwlUBt0RaZyUJsW6STev+guE+vvka4fFYzkXO
-         LfS+ISeDjDLuWZcdlHHb0wtBQYDhLnaF7AM5j93P3CnMPiERSoKWDBnc+MczsE3SrS
-         PBs6bw6Zd/yqVYVN51udcmOZFDjAv4nCEXBdQlrU=
+        b=TdpWC0eTTMqHmvLYkJ+G8hDseq9mOvD6J/KbvdN+GZupfEIio5PgSyX2O/ARbCO5c
+         eAmd0sbvT/D8UQ3ghKLa/gCvwkzw0A3biR6K+1tqb79GMmJFV1ZC2xr9dXBKaby41s
+         YqkmbiHQoGGX4ql5D4LEkgXwUUU0DNKhqtooehTY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.4 178/309] btrfs: Correctly handle empty trees in find_first_clear_extent_bit
-Date:   Mon, 10 Feb 2020 04:32:14 -0800
-Message-Id: <20200210122423.563423231@linuxfoundation.org>
+        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Eric Wheeler <bcache@linux.ewheeler.net>,
+        Michael Lyle <mlyle@lyle.org>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.5 222/367] bcache: add readahead cache policy options via sysfs interface
+Date:   Mon, 10 Feb 2020 04:32:15 -0800
+Message-Id: <20200210122444.562098668@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,122 +44,139 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Coly Li <colyli@suse.de>
 
-commit 5750c37523a2c8cbb450b9ef31e21c2ba876b05e upstream.
+commit 038ba8cc1bffc51250add4a9b9249d4331576d8f upstream.
 
-Raviu reported that running his regular fs_trim segfaulted with the
-following backtrace:
+In year 2007 high performance SSD was still expensive, in order to
+save more space for real workload or meta data, the readahead I/Os
+for non-meta data was bypassed and not cached on SSD.
 
-[  237.525947] assertion failed: prev, in ../fs/btrfs/extent_io.c:1595
-[  237.525984] ------------[ cut here ]------------
-[  237.525985] kernel BUG at ../fs/btrfs/ctree.h:3117!
-[  237.525992] invalid opcode: 0000 [#1] SMP PTI
-[  237.525998] CPU: 4 PID: 4423 Comm: fstrim Tainted: G     U     OE     5.4.14-8-vanilla #1
-[  237.526001] Hardware name: ASUSTeK COMPUTER INC.
-[  237.526044] RIP: 0010:assfail.constprop.58+0x18/0x1a [btrfs]
-[  237.526079] Call Trace:
-[  237.526120]  find_first_clear_extent_bit+0x13d/0x150 [btrfs]
-[  237.526148]  btrfs_trim_fs+0x211/0x3f0 [btrfs]
-[  237.526184]  btrfs_ioctl_fitrim+0x103/0x170 [btrfs]
-[  237.526219]  btrfs_ioctl+0x129a/0x2ed0 [btrfs]
-[  237.526227]  ? filemap_map_pages+0x190/0x3d0
-[  237.526232]  ? do_filp_open+0xaf/0x110
-[  237.526238]  ? _copy_to_user+0x22/0x30
-[  237.526242]  ? cp_new_stat+0x150/0x180
-[  237.526247]  ? do_vfs_ioctl+0xa4/0x640
-[  237.526278]  ? btrfs_ioctl_get_supported_features+0x30/0x30 [btrfs]
-[  237.526283]  do_vfs_ioctl+0xa4/0x640
-[  237.526288]  ? __do_sys_newfstat+0x3c/0x60
-[  237.526292]  ksys_ioctl+0x70/0x80
-[  237.526297]  __x64_sys_ioctl+0x16/0x20
-[  237.526303]  do_syscall_64+0x5a/0x1c0
-[  237.526310]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+In now days, SSD price drops a lot and people can find larger size
+SSD with more comfortable price. It is unncessary to alway bypass
+normal readahead I/Os to save SSD space for now.
 
-That was due to btrfs_fs_device::aloc_tree being empty. Initially I
-thought this wasn't possible and as a percaution have put the assert in
-find_first_clear_extent_bit. Turns out this is indeed possible and could
-happen when a file system with SINGLE data/metadata profile has a 2nd
-device added. Until balance is run or a new chunk is allocated on this
-device it will be completely empty.
+This patch adds options for readahead data cache policies via sysfs
+file /sys/block/bcache<N>/readahead_cache_policy, the options are,
+- "all": cache all readahead data I/Os.
+- "meta-only": only cache meta data, and bypass other regular I/Os.
 
-In this case find_first_clear_extent_bit should return the full range
-[0, -1ULL] and let the caller handle this i.e for trim the end will be
-capped at the size of actual device.
+If users want to make bcache continue to only cache readahead request
+for metadata and bypass regular data readahead, please set "meta-only"
+to this sysfs file. By default, bcache will back to cache all read-
+ahead requests now.
 
-Link: https://lore.kernel.org/linux-btrfs/izW2WNyvy1dEDweBICizKnd2KDwDiDyY2EYQr4YCwk7pkuIpthx-JRn65MPBde00ND6V0_Lh8mW0kZwzDiLDv25pUYWxkskWNJnVP0kgdMA=@protonmail.com/
-Fixes: 45bfcfc168f8 ("btrfs: Implement find_first_clear_extent_bit")
-CC: stable@vger.kernel.org # 5.2+
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Coly Li <colyli@suse.de>
+Acked-by: Eric Wheeler <bcache@linux.ewheeler.net>
+Cc: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent_io.c             |   32 ++++++++++++++++++--------------
- fs/btrfs/tests/extent-io-tests.c |    9 +++++++++
- 2 files changed, 27 insertions(+), 14 deletions(-)
+ drivers/md/bcache/bcache.h  |    3 +++
+ drivers/md/bcache/request.c |   17 ++++++++++++-----
+ drivers/md/bcache/sysfs.c   |   22 ++++++++++++++++++++++
+ 3 files changed, 37 insertions(+), 5 deletions(-)
 
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -1583,21 +1583,25 @@ void find_first_clear_extent_bit(struct
- 	/* Find first extent with bits cleared */
- 	while (1) {
- 		node = __etree_search(tree, start, &next, &prev, NULL, NULL);
--		if (!node) {
-+		if (!node && !next && !prev) {
-+			/*
-+			 * Tree is completely empty, send full range and let
-+			 * caller deal with it
-+			 */
-+			*start_ret = 0;
-+			*end_ret = -1;
-+			goto out;
-+		} else if (!node && !next) {
-+			/*
-+			 * We are past the last allocated chunk, set start at
-+			 * the end of the last extent.
-+			 */
-+			state = rb_entry(prev, struct extent_state, rb_node);
-+			*start_ret = state->end + 1;
-+			*end_ret = -1;
-+			goto out;
-+		} else if (!node) {
- 			node = next;
--			if (!node) {
--				/*
--				 * We are past the last allocated chunk,
--				 * set start at the end of the last extent. The
--				 * device alloc tree should never be empty so
--				 * prev is always set.
--				 */
--				ASSERT(prev);
--				state = rb_entry(prev, struct extent_state, rb_node);
--				*start_ret = state->end + 1;
--				*end_ret = -1;
--				goto out;
--			}
- 		}
- 		/*
- 		 * At this point 'node' either contains 'start' or start is
---- a/fs/btrfs/tests/extent-io-tests.c
-+++ b/fs/btrfs/tests/extent-io-tests.c
-@@ -441,8 +441,17 @@ static int test_find_first_clear_extent_
- 	int ret = -EINVAL;
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -329,6 +329,9 @@ struct cached_dev {
+ 	 */
+ 	atomic_t		has_dirty;
  
- 	test_msg("running find_first_clear_extent_bit test");
-+
- 	extent_io_tree_init(NULL, &tree, IO_TREE_SELFTEST, NULL);
++#define BCH_CACHE_READA_ALL		0
++#define BCH_CACHE_READA_META_ONLY	1
++	unsigned int		cache_readahead_policy;
+ 	struct bch_ratelimit	writeback_rate;
+ 	struct delayed_work	writeback_rate_update;
  
-+	/* Test correct handling of empty tree */
-+	find_first_clear_extent_bit(&tree, 0, &start, &end, CHUNK_TRIMMED);
-+	if (start != 0 || end != -1) {
-+		test_err(
-+	"error getting a range from completely empty tree: start %llu end %llu",
-+			 start, end);
-+		goto out;
-+	}
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -379,13 +379,20 @@ static bool check_should_bypass(struct c
+ 		goto skip;
+ 
  	/*
- 	 * Set 1M-4M alloc/discard and 32M-64M thus leaving a hole between
- 	 * 4M-32M
+-	 * Flag for bypass if the IO is for read-ahead or background,
+-	 * unless the read-ahead request is for metadata
++	 * If the bio is for read-ahead or background IO, bypass it or
++	 * not depends on the following situations,
++	 * - If the IO is for meta data, always cache it and no bypass
++	 * - If the IO is not meta data, check dc->cache_reada_policy,
++	 *      BCH_CACHE_READA_ALL: cache it and not bypass
++	 *      BCH_CACHE_READA_META_ONLY: not cache it and bypass
++	 * That is, read-ahead request for metadata always get cached
+ 	 * (eg, for gfs2 or xfs).
+ 	 */
+-	if (bio->bi_opf & (REQ_RAHEAD|REQ_BACKGROUND) &&
+-	    !(bio->bi_opf & (REQ_META|REQ_PRIO)))
+-		goto skip;
++	if ((bio->bi_opf & (REQ_RAHEAD|REQ_BACKGROUND))) {
++		if (!(bio->bi_opf & (REQ_META|REQ_PRIO)) &&
++		    (dc->cache_readahead_policy != BCH_CACHE_READA_ALL))
++			goto skip;
++	}
+ 
+ 	if (bio->bi_iter.bi_sector & (c->sb.block_size - 1) ||
+ 	    bio_sectors(bio) & (c->sb.block_size - 1)) {
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -27,6 +27,12 @@ static const char * const bch_cache_mode
+ 	NULL
+ };
+ 
++static const char * const bch_reada_cache_policies[] = {
++	"all",
++	"meta-only",
++	NULL
++};
++
+ /* Default is 0 ("auto") */
+ static const char * const bch_stop_on_failure_modes[] = {
+ 	"auto",
+@@ -100,6 +106,7 @@ rw_attribute(congested_write_threshold_u
+ rw_attribute(sequential_cutoff);
+ rw_attribute(data_csum);
+ rw_attribute(cache_mode);
++rw_attribute(readahead_cache_policy);
+ rw_attribute(stop_when_cache_set_failed);
+ rw_attribute(writeback_metadata);
+ rw_attribute(writeback_running);
+@@ -168,6 +175,11 @@ SHOW(__bch_cached_dev)
+ 					       bch_cache_modes,
+ 					       BDEV_CACHE_MODE(&dc->sb));
+ 
++	if (attr == &sysfs_readahead_cache_policy)
++		return bch_snprint_string_list(buf, PAGE_SIZE,
++					      bch_reada_cache_policies,
++					      dc->cache_readahead_policy);
++
+ 	if (attr == &sysfs_stop_when_cache_set_failed)
+ 		return bch_snprint_string_list(buf, PAGE_SIZE,
+ 					       bch_stop_on_failure_modes,
+@@ -353,6 +365,15 @@ STORE(__cached_dev)
+ 		}
+ 	}
+ 
++	if (attr == &sysfs_readahead_cache_policy) {
++		v = __sysfs_match_string(bch_reada_cache_policies, -1, buf);
++		if (v < 0)
++			return v;
++
++		if ((unsigned int) v != dc->cache_readahead_policy)
++			dc->cache_readahead_policy = v;
++	}
++
+ 	if (attr == &sysfs_stop_when_cache_set_failed) {
+ 		v = __sysfs_match_string(bch_stop_on_failure_modes, -1, buf);
+ 		if (v < 0)
+@@ -467,6 +488,7 @@ static struct attribute *bch_cached_dev_
+ 	&sysfs_data_csum,
+ #endif
+ 	&sysfs_cache_mode,
++	&sysfs_readahead_cache_policy,
+ 	&sysfs_stop_when_cache_set_failed,
+ 	&sysfs_writeback_metadata,
+ 	&sysfs_writeback_running,
 
 
