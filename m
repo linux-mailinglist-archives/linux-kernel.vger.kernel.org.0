@@ -2,83 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75ABA1576D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:55:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E9AE157734
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:59:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729951AbgBJMzd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:55:33 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34553 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729987AbgBJMzY (ORCPT
+        id S1730117AbgBJM6T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:58:19 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:43424 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729969AbgBJM6P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:55:24 -0500
-Received: by mail-lj1-f196.google.com with SMTP id x7so7046236ljc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 04:55:22 -0800 (PST)
+        Mon, 10 Feb 2020 07:58:15 -0500
+Received: by mail-oi1-f194.google.com with SMTP id p125so9050251oif.10
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 04:58:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=if4MUnW+MXwsU+saJV38n0v9tUH8Lchg2aKYG4Eb7X4=;
-        b=DRgSEasHs7rZLw8lwalhqqVwwrJjzEeFMhK6P7OyXSdnl1DnOjoLg7S3gtTFtG1htL
-         8PqvxVm0XTS0ARlV0Rhr7kA/HGQ98L++ubs/qGWrRLGfGhT3sbDc3YwalzhPLs6a74J1
-         0zs5HgYZS0WfWx4rXHM1ViEZd6aQ2LPaODzPEUHW4doJisbhmv3LJDVkk9uNQ9AGMU48
-         rOCv+R3N2LIgD24H2MZaSb8xHONLDBmb9N6AXv9x8UQQNdNVv8WrCeIyoE7TBNormu9u
-         SwACo3uBmfPBjB3nMNEDFgCiR27a6t8gUVOj/myILUNlkzfVpDhWmNFUOBlD1+ODtgre
-         aNLg==
+         :cc:content-transfer-encoding;
+        bh=zh7WaU7ewGekRG7I1HMZ6lekH2DZziRDqSPnvPUVHsM=;
+        b=aB2mqO0I1BE2YVL9HktuWHitoKBpyzRZp78dTOhF8GymM4iLL/UTUr12XfLXer7+2Q
+         tJBqlfHLPj4M8LChNh8/vNK2luTKqHWGkEHCBkyQg8aQD5o6SADs1g9OBN/dowF3Illb
+         eB9WOCXOto4ZifIPH9uojL6ipxlAdUogy56n9NMOb6GwM7gCdasNUNswGwkxiMh7i8LV
+         7JmEyLwoy7olS9Ue2hSHhkVwWSEmkaH/OTBwbBr0bBIQpwr5IpPz4tEFcGL9bfSIgGwN
+         Al9t+58bAsnLAuigp+kJtMYgS46qixPPoI3ejMsWNjuEYCiLgRp50wwHWxJLU/qRqE/i
+         7ZSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=if4MUnW+MXwsU+saJV38n0v9tUH8Lchg2aKYG4Eb7X4=;
-        b=MylFL7an2jbdbwiUwOklSLiwlrdSyD3Qecw9JjDe9vBVGNhptfLSCzDoYk7DCays0c
-         FdU7Adf78WL1ft9nL2itGe2OIKQJ6+dujS5NYauoWBUKuywDfp8gJXbkvm/jK42Sl5Mt
-         gCoghXzXFSijkSg+G5ud4BrCRsvN34yvKJRezh87napJacs3G61eESGGH4XAL8kkLeYI
-         xspEKeu3+kDjrkgbHzPIBIJHFV96VvZVJIu9UBTihMfeqJ12ird49149XqWXj+6j0Kh2
-         SS6dW0JVptCUVciu3NW47wW8AueJShjS11Izs1iI+Q4E4Ok7ES5yXBZUSzbci46Ju1Oh
-         R0JA==
-X-Gm-Message-State: APjAAAXzl95bYlQPYhXiw+28QUwWwZYsKDYuICu3Fhoqo3zbA6CwAsYo
-        LbAccFvuiFThgaRylc5K1MnzUx3ieozo6xRLBhWDiQ==
-X-Google-Smtp-Source: APXvYqw+civ1ODb6zso+c7GW7rfrr9mBNsfxXp5/xK8t7tww8joCEz2Wgykxa4HgCnO9fVri1gLiHP82cmonCoITb+A=
-X-Received: by 2002:a2e:2a84:: with SMTP id q126mr847097ljq.258.1581339321285;
- Mon, 10 Feb 2020 04:55:21 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zh7WaU7ewGekRG7I1HMZ6lekH2DZziRDqSPnvPUVHsM=;
+        b=tJ6z+jMuj17N72V2zPO/dXztw5Cu1d/Z3TUxXoLVzxuKwvRPz6ixASfuW5fjZtfynJ
+         0aKWnThMshLPa04He8f/sV6s+zjtUNZSmiZ5MAfGhyasNXo2BIVlK0+b+PQpceZ5xDbv
+         czqU9wJzm47ZaPQdRmIWidNLAQrQrhwKZd9c92JnCfbhLTGSjVLRScHTHRmyacla4L+J
+         e/bmgye/5ltHvvLAYIu/H0WMu+JhWLEIBQlf6SWhsQkUP5OB+uq4Jncr5hTJI2kJWMhc
+         xLImWIVxgcggKyoCtDn7tEm01l9uc72OIDxg0us/cREKZDjSvFwwRTbVAe4ckVwxofc1
+         BjfQ==
+X-Gm-Message-State: APjAAAW4PzE87R6DFuW4vpo96xLatSBpYwiDdsU0ap6lQ5tuYp1XvAAc
+        1Wo8y0mYlGJVeqv3qgrXii2FPWHf77FyjjzXg9nYlg==
+X-Google-Smtp-Source: APXvYqyLVKEJkzbvqewcQ1Cwp/1kseXffAz8pZi+JP4f+koptcUYrs6fKS19tYLFdKppaHVYVOsespyyJSiphNJMBzk=
+X-Received: by 2002:aca:2112:: with SMTP id 18mr684589oiz.155.1581339494032;
+ Mon, 10 Feb 2020 04:58:14 -0800 (PST)
 MIME-Version: 1.0
-References: <1580189061-14091-1-git-send-email-yash.shah@sifive.com>
-In-Reply-To: <1580189061-14091-1-git-send-email-yash.shah@sifive.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 10 Feb 2020 13:55:10 +0100
-Message-ID: <CACRpkdY2Zahr0mLUp+dBOzZbthsttLS=oKitPJVS_xQh8RwZqA@mail.gmail.com>
-Subject: Re: [PATCH] gpio/sifive: fix static checker warning
-To:     Yash Shah <yash.shah@sifive.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        "Wesley W. Terpstra" <wesley@sifive.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Atish Patra <atish.patra@wdc.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sachin Ghadi <sachin.ghadi@sifive.com>
+References: <CANpmjNNaHAnKCMLb+Njs3AhEoJT9O6-Yh63fcNcVTjBbNQiEPg@mail.gmail.com>
+ <26B88005-28E6-4A09-B3A7-DC982DABE679@lca.pw>
+In-Reply-To: <26B88005-28E6-4A09-B3A7-DC982DABE679@lca.pw>
+From:   Marco Elver <elver@google.com>
+Date:   Mon, 10 Feb 2020 13:58:02 +0100
+Message-ID: <CANpmjNMzF-T=CzMqoJh-5zrsro8Ky7Q85tnX_HwWhsLCa0DsHw@mail.gmail.com>
+Subject: Re: [PATCH] mm: fix a data race in put_page()
+To:     Qian Cai <cai@lca.pw>
+Cc:     John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>, ira.weiny@intel.com,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 6:24 AM Yash Shah <yash.shah@sifive.com> wrote:
-
-> Typcasting "irq_state" leads to the below static checker warning:
-> The fix is to declare "irq_state" as unsigned long instead of u32.
+On Mon, 10 Feb 2020 at 13:16, Qian Cai <cai@lca.pw> wrote:
 >
->         drivers/gpio/gpio-sifive.c:97 sifive_gpio_irq_enable()
->         warn: passing casted pointer '&chip->irq_state' to
->         'assign_bit()' 32 vs 64.
 >
-> Fixes: 96868dce644d ("gpio/sifive: Add GPIO driver for SiFive SoCs")
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Yash Shah <yash.shah@sifive.com>
+>
+> > On Feb 10, 2020, at 2:48 AM, Marco Elver <elver@google.com> wrote:
+> >
+> > Here is an alternative:
+> >
+> > Let's say KCSAN gives you this:
+> >   /* ... Assert that the bits set in mask are not written
+> > concurrently; they may still be read concurrently.
+> >     The access that immediately follows is assumed to access those
+> > bits and safe w.r.t. data races.
+> >
+> >     For example, this may be used when certain bits of @flags may
+> > only be modified when holding the appropriate lock,
+> >     but other bits may still be modified locklessly.
+> >   ...
+> >  */
+> >   #define ASSERT_EXCLUSIVE_BITS(flags, mask)   ....
+> >
+> > Then we can write page_zonenum as follows:
+> >
+> > static inline enum zone_type page_zonenum(const struct page *page)
+> > {
+> > +       ASSERT_EXCLUSIVE_BITS(page->flags, ZONES_MASK << ZONES_PGSHIFT)=
+;
+> >        return (page->flags >> ZONES_PGSHIFT) & ZONES_MASK;
+> > }
+> >
+> > This will accomplish the following:
+> > 1. The current code is not touched, and we do not have to verify that
+> > the change is correct without KCSAN.
+> > 2. We're not introducing a bunch of special macros to read bits in vari=
+ous ways.
+> > 3. KCSAN will assume that the access is safe, and no data race report
+> > is generated.
+> > 4. If somebody modifies ZONES bits concurrently, KCSAN will tell you
+> > about the race.
+> > 5. We're documenting the code.
+> >
+> > Anything I missed?
+>
+> I don=E2=80=99t know. Having to write the same line twice does not feel m=
+e any better than data_race() with commenting occasionally.
 
-Patch applied for GPIO fixes.
+Point 4 above: While data_race() will ignore cause KCSAN to not report
+the data race, now you might be missing a real bug: if somebody
+concurrently modifies the bits accessed, you want to know about it!
+Either way, it's up to you to add the ASSERT_EXCLUSIVE_BITS, but just
+remember that if you decide to silence it with data_race(), you need
+to be sure there are no concurrent writers to those bits.
 
-Yours,
-Linus Walleij
+There is no way to automatically infer all over the kernel which bits
+we care about, and the most reliable is to be explicit about it. I
+don't see a problem with it per se.
+
+Thanks,
+-- Marco
