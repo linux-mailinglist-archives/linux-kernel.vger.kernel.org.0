@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E99BF15796B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:15:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 111FE157AFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:27:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729339AbgBJNPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:15:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33856 "EHLO mail.kernel.org"
+        id S1728469AbgBJMgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:36:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727940AbgBJMiZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:25 -0500
+        id S1728151AbgBJMfx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:53 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 298AC20873;
-        Mon, 10 Feb 2020 12:38:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48FB420863;
+        Mon, 10 Feb 2020 12:35:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338304;
-        bh=+UNTQ7nSHat3vd+fUbAiIams6KFOmMXy9u4wDqA2Tf4=;
+        s=default; t=1581338152;
+        bh=Ltz2oaLXq2xBQOHBKtR5CK4Djns+UnmIlRNTfkRE6U4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n3VPNFi08OAPZyHx7DKnu+vuUJjpT+TrgT6iJ/8YWduVaZnDLQOT9ypM7loceMcRT
-         Dli99XwSbPeHOzTZwFYFZfjxBdFc81CQ+4wm6xJYbhYaO47zO2WVkpbp5FeId/XW+K
-         Yxf/ccpkEflF6eF40irmPDBn6py+qghBNjxtr9jg=
+        b=xj6ZJecdDt4vXtoKiyTCtwHTNe+RQkh7vFBaUlIhLp7lQjOHzPnjptUKSET1oXL28
+         b7DwPnCldYY2FPCXYcOi//LdlyZfomZ4y1c9tPKm1S1QaPfi/aeEarZ9ijieq8FPOA
+         Lqm/wZNxPse2mlotYgxNPb/Y0+BIt3ABIEITCDvY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.4 217/309] x86/kvm: Cache gfn to pfn translation
-Date:   Mon, 10 Feb 2020 04:32:53 -0800
-Message-Id: <20200210122427.400032571@linuxfoundation.org>
+        stable@vger.kernel.org, Nick French <nickfrench@gmail.com>,
+        Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Subject: [PATCH 4.19 116/195] media: rc: ensure lirc is initialized before registering input device
+Date:   Mon, 10 Feb 2020 04:32:54 -0800
+Message-Id: <20200210122316.748790034@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,285 +44,145 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+From: Sean Young <sean@mess.org>
 
-commit 917248144db5d7320655dbb41d3af0b8a0f3d589 upstream.
+commit 080d89f522e2baddb4fbbd1af4b67b5f92537ef8 upstream.
 
-__kvm_map_gfn()'s call to gfn_to_pfn_memslot() is
-* relatively expensive
-* in certain cases (such as when done from atomic context) cannot be called
+Once rc_open is called on the input device, lirc events can be delivered.
+Ensure lirc is ready to do so else we might get this:
 
-Stashing gfn-to-pfn mapping should help with both cases.
+Registered IR keymap rc-hauppauge
+rc rc0: Hauppauge WinTV PVR-350 as
+/devices/pci0000:00/0000:00:1e.0/0000:04:00.0/i2c-0/0-0018/rc/rc0
+input: Hauppauge WinTV PVR-350 as
+/devices/pci0000:00/0000:00:1e.0/0000:04:00.0/i2c-0/0-0018/rc/rc0/input9
+BUG: kernel NULL pointer dereference, address: 0000000000000038
+PGD 0 P4D 0
+Oops: 0000 [#1] SMP PTI
+CPU: 1 PID: 17 Comm: kworker/1:0 Not tainted 5.3.11-300.fc31.x86_64 #1
+Hardware name:  /DG43NB, BIOS NBG4310H.86A.0096.2009.0903.1845 09/03/2009
+Workqueue: events ir_work [ir_kbd_i2c]
+RIP: 0010:ir_lirc_scancode_event+0x3d/0xb0
+Code: a6 b4 07 00 00 49 81 c6 b8 07 00 00 55 53 e8 ba a7 9d ff 4c 89
+e7 49 89 45 00 e8 5e 7a 25 00 49 8b 1e 48 89 c5 4c 39 f3 74 58 <8b> 43
+38 8b 53 40 89 c1 2b 4b 3c 39 ca 72 41 21 d0 49 8b 7d 00 49
+RSP: 0018:ffffaae2000b3d88 EFLAGS: 00010017
+RAX: 0000000000000002 RBX: 0000000000000000 RCX: 0000000000000019
+RDX: 0000000000000001 RSI: 006e801b1f26ce6a RDI: ffff9e39797c37b4
+RBP: 0000000000000002 R08: 0000000000000001 R09: 0000000000000001
+R10: 0000000000000001 R11: 0000000000000001 R12: ffff9e39797c37b4
+R13: ffffaae2000b3db8 R14: ffff9e39797c37b8 R15: ffff9e39797c33d8
+FS:  0000000000000000(0000) GS:ffff9e397b680000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000038 CR3: 0000000035844000 CR4: 00000000000006e0
+Call Trace:
+ir_do_keydown+0x8e/0x2b0
+rc_keydown+0x52/0xc0
+ir_work+0xb8/0x130 [ir_kbd_i2c]
+process_one_work+0x19d/0x340
+worker_thread+0x50/0x3b0
+kthread+0xfb/0x130
+? process_one_work+0x340/0x340
+? kthread_park+0x80/0x80
+ret_from_fork+0x35/0x40
+Modules linked in: rc_hauppauge tuner msp3400 saa7127 saa7115 ivtv(+)
+tveeprom cx2341x v4l2_common videodev mc i2c_algo_bit ir_kbd_i2c
+ip_tables firewire_ohci e1000e serio_raw firewire_core ata_generic
+crc_itu_t pata_acpi pata_jmicron fuse
+CR2: 0000000000000038
+---[ end trace c67c2697a99fa74b ]---
+RIP: 0010:ir_lirc_scancode_event+0x3d/0xb0
+Code: a6 b4 07 00 00 49 81 c6 b8 07 00 00 55 53 e8 ba a7 9d ff 4c 89
+e7 49 89 45 00 e8 5e 7a 25 00 49 8b 1e 48 89 c5 4c 39 f3 74 58 <8b> 43
+38 8b 53 40 89 c1 2b 4b 3c 39 ca 72 41 21 d0 49 8b 7d 00 49
+RSP: 0018:ffffaae2000b3d88 EFLAGS: 00010017
+RAX: 0000000000000002 RBX: 0000000000000000 RCX: 0000000000000019
+RDX: 0000000000000001 RSI: 006e801b1f26ce6a RDI: ffff9e39797c37b4
+RBP: 0000000000000002 R08: 0000000000000001 R09: 0000000000000001
+R10: 0000000000000001 R11: 0000000000000001 R12: ffff9e39797c37b4
+R13: ffffaae2000b3db8 R14: ffff9e39797c37b8 R15: ffff9e39797c33d8
+FS:  0000000000000000(0000) GS:ffff9e397b680000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000038 CR3: 0000000035844000 CR4: 00000000000006e0
+rc rc0: lirc_dev: driver ir_kbd_i2c registered at minor = 0, scancode
+receiver, no transmitter
+tuner-simple 0-0061: creating new instance
+tuner-simple 0-0061: type set to 2 (Philips NTSC (FI1236,FM1236 and
+compatibles))
+ivtv0: Registered device video0 for encoder MPG (4096 kB)
+ivtv0: Registered device video32 for encoder YUV (2048 kB)
+ivtv0: Registered device vbi0 for encoder VBI (1024 kB)
+ivtv0: Registered device video24 for encoder PCM (320 kB)
+ivtv0: Registered device radio0 for encoder radio
+ivtv0: Registered device video16 for decoder MPG (1024 kB)
+ivtv0: Registered device vbi8 for decoder VBI (64 kB)
+ivtv0: Registered device vbi16 for decoder VOUT
+ivtv0: Registered device video48 for decoder YUV (1024 kB)
 
-This is part of CVE-2019-3016.
-
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Tested-by: Nick French <nickfrench@gmail.com>
+Reported-by: Nick French <nickfrench@gmail.com>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/kvm_host.h |    1 
- arch/x86/kvm/x86.c              |   10 ++++
- include/linux/kvm_host.h        |    7 ++
- include/linux/kvm_types.h       |    9 +++
- virt/kvm/kvm_main.c             |   98 ++++++++++++++++++++++++++++++++--------
- 5 files changed, 103 insertions(+), 22 deletions(-)
+ drivers/media/rc/rc-main.c |   27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
 
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -671,6 +671,7 @@ struct kvm_vcpu_arch {
- 		u64 last_steal;
- 		struct gfn_to_hva_cache stime;
- 		struct kvm_steal_time steal;
-+		struct gfn_to_pfn_cache cache;
- 	} st;
+--- a/drivers/media/rc/rc-main.c
++++ b/drivers/media/rc/rc-main.c
+@@ -1874,23 +1874,28 @@ int rc_register_device(struct rc_dev *de
  
- 	u64 tsc_offset;
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -9081,6 +9081,9 @@ static void fx_init(struct kvm_vcpu *vcp
- void kvm_arch_vcpu_free(struct kvm_vcpu *vcpu)
- {
- 	void *wbinvd_dirty_mask = vcpu->arch.wbinvd_dirty_mask;
-+	struct gfn_to_pfn_cache *cache = &vcpu->arch.st.cache;
-+
-+	kvm_release_pfn(cache->pfn, cache->dirty, cache);
+ 	dev->registered = true;
  
- 	kvmclock_reset(vcpu);
- 
-@@ -9745,11 +9748,18 @@ out_free:
- 
- void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen)
- {
-+	struct kvm_vcpu *vcpu;
-+	int i;
-+
- 	/*
- 	 * memslots->generation has been incremented.
- 	 * mmio generation may have reached its maximum value.
- 	 */
- 	kvm_mmu_invalidate_mmio_sptes(kvm, gen);
-+
-+	/* Force re-initialization of steal_time cache */
-+	kvm_for_each_vcpu(i, vcpu, kvm)
-+		kvm_vcpu_kick(vcpu);
- }
- 
- int kvm_arch_prepare_memory_region(struct kvm *kvm,
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -728,6 +728,7 @@ void kvm_set_pfn_dirty(kvm_pfn_t pfn);
- void kvm_set_pfn_accessed(kvm_pfn_t pfn);
- void kvm_get_pfn(kvm_pfn_t pfn);
- 
-+void kvm_release_pfn(kvm_pfn_t pfn, bool dirty, struct gfn_to_pfn_cache *cache);
- int kvm_read_guest_page(struct kvm *kvm, gfn_t gfn, void *data, int offset,
- 			int len);
- int kvm_read_guest_atomic(struct kvm *kvm, gpa_t gpa, void *data,
-@@ -758,10 +759,12 @@ struct kvm_memory_slot *kvm_vcpu_gfn_to_
- kvm_pfn_t kvm_vcpu_gfn_to_pfn_atomic(struct kvm_vcpu *vcpu, gfn_t gfn);
- kvm_pfn_t kvm_vcpu_gfn_to_pfn(struct kvm_vcpu *vcpu, gfn_t gfn);
- int kvm_vcpu_map(struct kvm_vcpu *vcpu, gpa_t gpa, struct kvm_host_map *map);
--int kvm_map_gfn(struct kvm_vcpu *vcpu, gfn_t gfn, struct kvm_host_map *map);
-+int kvm_map_gfn(struct kvm_vcpu *vcpu, gfn_t gfn, struct kvm_host_map *map,
-+		struct gfn_to_pfn_cache *cache, bool atomic);
- struct page *kvm_vcpu_gfn_to_page(struct kvm_vcpu *vcpu, gfn_t gfn);
- void kvm_vcpu_unmap(struct kvm_vcpu *vcpu, struct kvm_host_map *map, bool dirty);
--int kvm_unmap_gfn(struct kvm_vcpu *vcpu, struct kvm_host_map *map, bool dirty);
-+int kvm_unmap_gfn(struct kvm_vcpu *vcpu, struct kvm_host_map *map,
-+		  struct gfn_to_pfn_cache *cache, bool dirty, bool atomic);
- unsigned long kvm_vcpu_gfn_to_hva(struct kvm_vcpu *vcpu, gfn_t gfn);
- unsigned long kvm_vcpu_gfn_to_hva_prot(struct kvm_vcpu *vcpu, gfn_t gfn, bool *writable);
- int kvm_vcpu_read_guest_page(struct kvm_vcpu *vcpu, gfn_t gfn, void *data, int offset,
---- a/include/linux/kvm_types.h
-+++ b/include/linux/kvm_types.h
-@@ -18,7 +18,7 @@ struct kvm_memslots;
- 
- enum kvm_mr_change;
- 
--#include <asm/types.h>
-+#include <linux/types.h>
- 
- /*
-  * Address types:
-@@ -49,4 +49,11 @@ struct gfn_to_hva_cache {
- 	struct kvm_memory_slot *memslot;
- };
- 
-+struct gfn_to_pfn_cache {
-+	u64 generation;
-+	gfn_t gfn;
-+	kvm_pfn_t pfn;
-+	bool dirty;
-+};
-+
- #endif /* __KVM_TYPES_H__ */
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1809,27 +1809,72 @@ struct page *gfn_to_page(struct kvm *kvm
- }
- EXPORT_SYMBOL_GPL(gfn_to_page);
- 
-+void kvm_release_pfn(kvm_pfn_t pfn, bool dirty, struct gfn_to_pfn_cache *cache)
-+{
-+	if (pfn == 0)
-+		return;
-+
-+	if (cache)
-+		cache->pfn = cache->gfn = 0;
-+
-+	if (dirty)
-+		kvm_release_pfn_dirty(pfn);
-+	else
-+		kvm_release_pfn_clean(pfn);
-+}
-+
-+static void kvm_cache_gfn_to_pfn(struct kvm_memory_slot *slot, gfn_t gfn,
-+				 struct gfn_to_pfn_cache *cache, u64 gen)
-+{
-+	kvm_release_pfn(cache->pfn, cache->dirty, cache);
-+
-+	cache->pfn = gfn_to_pfn_memslot(slot, gfn);
-+	cache->gfn = gfn;
-+	cache->dirty = false;
-+	cache->generation = gen;
-+}
-+
- static int __kvm_map_gfn(struct kvm_memslots *slots, gfn_t gfn,
--			 struct kvm_host_map *map)
-+			 struct kvm_host_map *map,
-+			 struct gfn_to_pfn_cache *cache,
-+			 bool atomic)
- {
- 	kvm_pfn_t pfn;
- 	void *hva = NULL;
- 	struct page *page = KVM_UNMAPPED_PAGE;
- 	struct kvm_memory_slot *slot = __gfn_to_memslot(slots, gfn);
-+	u64 gen = slots->generation;
- 
- 	if (!map)
- 		return -EINVAL;
- 
--	pfn = gfn_to_pfn_memslot(slot, gfn);
-+	if (cache) {
-+		if (!cache->pfn || cache->gfn != gfn ||
-+			cache->generation != gen) {
-+			if (atomic)
-+				return -EAGAIN;
-+			kvm_cache_gfn_to_pfn(slot, gfn, cache, gen);
-+		}
-+		pfn = cache->pfn;
-+	} else {
-+		if (atomic)
-+			return -EAGAIN;
-+		pfn = gfn_to_pfn_memslot(slot, gfn);
+-	if (dev->driver_type != RC_DRIVER_IR_RAW_TX) {
+-		rc = rc_setup_rx_device(dev);
+-		if (rc)
+-			goto out_dev;
+-	}
+-
+-	/* Ensure that the lirc kfifo is setup before we start the thread */
++	/*
++	 * once the the input device is registered in rc_setup_rx_device,
++	 * userspace can open the input device and rc_open() will be called
++	 * as a result. This results in driver code being allowed to submit
++	 * keycodes with rc_keydown, so lirc must be registered first.
++	 */
+ 	if (dev->allowed_protocols != RC_PROTO_BIT_CEC) {
+ 		rc = ir_lirc_register(dev);
+ 		if (rc < 0)
+-			goto out_rx;
++			goto out_dev;
 +	}
- 	if (is_error_noslot_pfn(pfn))
- 		return -EINVAL;
- 
- 	if (pfn_valid(pfn)) {
- 		page = pfn_to_page(pfn);
--		hva = kmap(page);
-+		if (atomic)
-+			hva = kmap_atomic(page);
-+		else
-+			hva = kmap(page);
- #ifdef CONFIG_HAS_IOMEM
--	} else {
-+	} else if (!atomic) {
- 		hva = memremap(pfn_to_hpa(pfn), PAGE_SIZE, MEMREMAP_WB);
-+	} else {
-+		return -EINVAL;
- #endif
++
++	if (dev->driver_type != RC_DRIVER_IR_RAW_TX) {
++		rc = rc_setup_rx_device(dev);
++		if (rc)
++			goto out_lirc;
  	}
  
-@@ -1844,20 +1889,25 @@ static int __kvm_map_gfn(struct kvm_mems
+ 	if (dev->driver_type == RC_DRIVER_IR_RAW) {
+ 		rc = ir_raw_event_register(dev);
+ 		if (rc < 0)
+-			goto out_lirc;
++			goto out_rx;
+ 	}
+ 
+ 	dev_dbg(&dev->dev, "Registered rc%u (driver: %s)\n", dev->minor,
+@@ -1898,11 +1903,11 @@ int rc_register_device(struct rc_dev *de
+ 
  	return 0;
- }
  
--int kvm_map_gfn(struct kvm_vcpu *vcpu, gfn_t gfn, struct kvm_host_map *map)
-+int kvm_map_gfn(struct kvm_vcpu *vcpu, gfn_t gfn, struct kvm_host_map *map,
-+		struct gfn_to_pfn_cache *cache, bool atomic)
- {
--	return __kvm_map_gfn(kvm_memslots(vcpu->kvm), gfn, map);
-+	return __kvm_map_gfn(kvm_memslots(vcpu->kvm), gfn, map,
-+			cache, atomic);
- }
- EXPORT_SYMBOL_GPL(kvm_map_gfn);
- 
- int kvm_vcpu_map(struct kvm_vcpu *vcpu, gfn_t gfn, struct kvm_host_map *map)
- {
--	return __kvm_map_gfn(kvm_vcpu_memslots(vcpu), gfn, map);
-+	return __kvm_map_gfn(kvm_vcpu_memslots(vcpu), gfn, map,
-+		NULL, false);
- }
- EXPORT_SYMBOL_GPL(kvm_vcpu_map);
- 
- static void __kvm_unmap_gfn(struct kvm_memory_slot *memslot,
--			struct kvm_host_map *map, bool dirty)
-+			struct kvm_host_map *map,
-+			struct gfn_to_pfn_cache *cache,
-+			bool dirty, bool atomic)
- {
- 	if (!map)
- 		return;
-@@ -1865,34 +1915,44 @@ static void __kvm_unmap_gfn(struct kvm_m
- 	if (!map->hva)
- 		return;
- 
--	if (map->page != KVM_UNMAPPED_PAGE)
--		kunmap(map->page);
-+	if (map->page != KVM_UNMAPPED_PAGE) {
-+		if (atomic)
-+			kunmap_atomic(map->hva);
-+		else
-+			kunmap(map->page);
-+	}
- #ifdef CONFIG_HAS_IOMEM
--	else
-+	else if (!atomic)
- 		memunmap(map->hva);
-+	else
-+		WARN_ONCE(1, "Unexpected unmapping in atomic context");
- #endif
- 
--	if (dirty) {
-+	if (dirty)
- 		mark_page_dirty_in_slot(memslot, map->gfn);
--		kvm_release_pfn_dirty(map->pfn);
--	} else {
--		kvm_release_pfn_clean(map->pfn);
--	}
-+
-+	if (cache)
-+		cache->dirty |= dirty;
-+	else
-+		kvm_release_pfn(map->pfn, dirty, NULL);
- 
- 	map->hva = NULL;
- 	map->page = NULL;
- }
- 
--int kvm_unmap_gfn(struct kvm_vcpu *vcpu, struct kvm_host_map *map, bool dirty)
-+int kvm_unmap_gfn(struct kvm_vcpu *vcpu, struct kvm_host_map *map,
-+		  struct gfn_to_pfn_cache *cache, bool dirty, bool atomic)
- {
--	__kvm_unmap_gfn(gfn_to_memslot(vcpu->kvm, map->gfn), map, dirty);
-+	__kvm_unmap_gfn(gfn_to_memslot(vcpu->kvm, map->gfn), map,
-+			cache, dirty, atomic);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(kvm_unmap_gfn);
- 
- void kvm_vcpu_unmap(struct kvm_vcpu *vcpu, struct kvm_host_map *map, bool dirty)
- {
--	__kvm_unmap_gfn(kvm_vcpu_gfn_to_memslot(vcpu, map->gfn), map, dirty);
-+	__kvm_unmap_gfn(kvm_vcpu_gfn_to_memslot(vcpu, map->gfn), map, NULL,
-+			dirty, false);
- }
- EXPORT_SYMBOL_GPL(kvm_vcpu_unmap);
- 
++out_rx:
++	rc_free_rx_device(dev);
+ out_lirc:
+ 	if (dev->allowed_protocols != RC_PROTO_BIT_CEC)
+ 		ir_lirc_unregister(dev);
+-out_rx:
+-	rc_free_rx_device(dev);
+ out_dev:
+ 	device_del(&dev->dev);
+ out_rx_free:
 
 
