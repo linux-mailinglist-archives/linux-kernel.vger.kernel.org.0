@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F2901577E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:03:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3C3B157A56
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:22:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730727AbgBJNDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:03:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40240 "EHLO mail.kernel.org"
+        id S1731055AbgBJNWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:22:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729715AbgBJMkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:23 -0500
+        id S1728288AbgBJMh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:26 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD8352465D;
-        Mon, 10 Feb 2020 12:40:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 037FB2168B;
+        Mon, 10 Feb 2020 12:37:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338423;
-        bh=G4kgGGeoj+dWTzgCjehelOgG4stCoMbF9iSLP4XKNDQ=;
+        s=default; t=1581338244;
+        bh=bcivqPUoKibzVZRLYV93mZU5UcqeoabEktaxltG0Mfs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gi4dpEuWKnj6G0WIPXs4GzszuAaslv5GkIIzaVecuCWeMIKh+HrFQ7WRjHDMpox5w
-         F3YrBzdjP5Muy/2avR3mO1gKrST10nEyWKocWYWA1yVzexYNTW2DpPzx2iEjh6sh+j
-         edZxEDrHZ1ypKvIUsapKM9otB2buIq/K5ziDR9xQ=
+        b=UdrdIAWc1+THoF48yYhlVNo4eF6eZBCe6BMeDq72TFvgBvvX/JBRuU/Utj93DjJdd
+         bveztZuzCdIwTJRnWUk4nBBVO+zb+ZoKmDmDEXBhnB9nVmNtWPaldTm/PxPgH/uXcR
+         hXYuBuNss73aIufGotDAUXakkhsn1/iGZI+kKz1M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 5.5 143/367] dm crypt: fix GFP flags passed to skcipher_request_alloc()
-Date:   Mon, 10 Feb 2020 04:30:56 -0800
-Message-Id: <20200210122438.047237719@linuxfoundation.org>
+        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 5.4 101/309] crypto: api - Check spawn->alg under lock in crypto_drop_spawn
+Date:   Mon, 10 Feb 2020 04:30:57 -0800
+Message-Id: <20200210122415.925320076@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +42,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-commit 9402e959014a18b4ebf7558733076875808dd66c upstream.
+commit 7db3b61b6bba4310f454588c2ca6faf2958ad79f upstream.
 
-GFP_KERNEL is not supposed to be or'd with GFP_NOFS (the result is
-equivalent to GFP_KERNEL). Also, we use GFP_NOIO instead of GFP_NOFS
-because we don't want any I/O being submitted in the direct reclaim
-path.
+We need to check whether spawn->alg is NULL under lock as otherwise
+the algorithm could be removed from under us after we have checked
+it and found it to be non-NULL.  This could cause us to remove the
+spawn from a non-existent list.
 
-Fixes: 39d13a1ac41d ("dm crypt: reuse eboiv skcipher for IV generation")
-Cc: stable@vger.kernel.org # v5.4+
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Fixes: 7ede5a5ba55a ("crypto: api - Fix crypto_drop_spawn crash...")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-crypt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ crypto/algapi.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -717,7 +717,7 @@ static int crypt_iv_eboiv_gen(struct cry
- 	struct crypto_wait wait;
- 	int err;
+--- a/crypto/algapi.c
++++ b/crypto/algapi.c
+@@ -669,11 +669,9 @@ EXPORT_SYMBOL_GPL(crypto_grab_spawn);
  
--	req = skcipher_request_alloc(any_tfm(cc), GFP_KERNEL | GFP_NOFS);
-+	req = skcipher_request_alloc(any_tfm(cc), GFP_NOIO);
- 	if (!req)
- 		return -ENOMEM;
- 
+ void crypto_drop_spawn(struct crypto_spawn *spawn)
+ {
+-	if (!spawn->alg)
+-		return;
+-
+ 	down_write(&crypto_alg_sem);
+-	list_del(&spawn->list);
++	if (spawn->alg)
++		list_del(&spawn->list);
+ 	up_write(&crypto_alg_sem);
+ }
+ EXPORT_SYMBOL_GPL(crypto_drop_spawn);
 
 
