@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00C1315753A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:40:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D177B1575CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:45:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729049AbgBJMjm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:39:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59710 "EHLO mail.kernel.org"
+        id S1730702AbgBJMor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:44:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727799AbgBJMhq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:46 -0500
+        id S1728299AbgBJMkp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:45 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 744A620842;
-        Mon, 10 Feb 2020 12:37:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 180862467D;
+        Mon, 10 Feb 2020 12:40:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338265;
-        bh=kIu9pVIK5YxpNmrt2ZBevJj9lmPT9Y76rMQC3oOVRhs=;
+        s=default; t=1581338445;
+        bh=0kGnIQmYHLHLyFnEWBAylLFxR0+B2VN0YAnNjlZp0IQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aC7GKrvR1GLQ9Eox5lj5RDP3scZuhcU865+iciDOIcfKxU9WG99FhrIdCMCU8mibh
-         Gs7M2YB8WDYIwGFmIOwb340WsHs2BlbfWYpGTrpNYo1PxlG750bF1CdmMWoeeD3iUQ
-         i+2cvQtcpJ9nZs7gx7/+OtRyo7FEeli8sV9YxFmc=
+        b=GzElSbxd5x3YMDS5phrGTxOY48tvQdZ11uBSsLlf1DB5POY9KFLftlJxIl48vDIRc
+         UZQgs7NOg22hyiQVm28AsETYQn97FHfUYE6T1zrIv/LWtORoFGIuqBkvUudcznVpHf
+         uXr3Pt6ZLgAtJg8HrWQQlUN8n7UTV4wmoY/DonCA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Su Yue <Damenly_Su@gmx.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.4 143/309] btrfs: Handle another split brain scenario with metadata uuid feature
+        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 5.5 186/367] crypto: picoxcell - adjust the position of tasklet_init and fix missed tasklet_kill
 Date:   Mon, 10 Feb 2020 04:31:39 -0800
-Message-Id: <20200210122420.096745138@linuxfoundation.org>
+Message-Id: <20200210122441.826444883@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,72 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Chuhong Yuan <hslester96@gmail.com>
 
-commit 05840710149c7d1a78ea85a2db5723f706e97d8f upstream.
+commit 7f8c36fe9be46862c4f3c5302f769378028a34fa upstream.
 
-There is one more cases which isn't handled by the original metadata
-uuid work. Namely, when a filesystem has METADATA_UUID incompat bit and
-the user decides to change the FSID to the original one e.g. have
-metadata_uuid and fsid match. In case of power failure while this
-operation is in progress we could end up in a situation where some of
-the disks have the incompat bit removed and the other half have both
-METADATA_UUID_INCOMPAT and FSID_CHANGING_IN_PROGRESS flags.
+Since tasklet is needed to be initialized before registering IRQ
+handler, adjust the position of tasklet_init to fix the wrong order.
 
-This patch handles the case where a disk that has successfully changed
-its FSID such that it equals METADATA_UUID is scanned first.
-Subsequently when a disk with both
-METADATA_UUID_INCOMPAT/FSID_CHANGING_IN_PROGRESS flags is scanned
-find_fsid_changed won't be able to find an appropriate btrfs_fs_devices.
-This is done by extending find_fsid_changed to correctly find
-btrfs_fs_devices whose metadata_uuid/fsid are the same and they match
-the metadata_uuid of the currently scanned device.
+Besides, to fix the missed tasklet_kill, this patch adds a helper
+function and uses devm_add_action to kill the tasklet automatically.
 
-Fixes: cc5de4e70256 ("btrfs: Handle final split-brain possibility during fsid change")
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Reported-by: Su Yue <Damenly_Su@gmx.com>
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: ce92136843cb ("crypto: picoxcell - add support for the picoxcell crypto engines")
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/volumes.c |   17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ drivers/crypto/picoxcell_crypto.c |   15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -881,17 +881,28 @@ static struct btrfs_fs_devices *find_fsi
- 	/*
- 	 * Handles the case where scanned device is part of an fs that had
- 	 * multiple successful changes of FSID but curently device didn't
--	 * observe it. Meaning our fsid will be different than theirs.
-+	 * observe it. Meaning our fsid will be different than theirs. We need
-+	 * to handle two subcases :
-+	 *  1 - The fs still continues to have different METADATA/FSID uuids.
-+	 *  2 - The fs is switched back to its original FSID (METADATA/FSID
-+	 *  are equal).
- 	 */
- 	list_for_each_entry(fs_devices, &fs_uuids, fs_list) {
-+		/* Changed UUIDs */
- 		if (memcmp(fs_devices->metadata_uuid, fs_devices->fsid,
- 			   BTRFS_FSID_SIZE) != 0 &&
- 		    memcmp(fs_devices->metadata_uuid, disk_super->metadata_uuid,
- 			   BTRFS_FSID_SIZE) == 0 &&
- 		    memcmp(fs_devices->fsid, disk_super->fsid,
--			   BTRFS_FSID_SIZE) != 0) {
-+			   BTRFS_FSID_SIZE) != 0)
-+			return fs_devices;
+--- a/drivers/crypto/picoxcell_crypto.c
++++ b/drivers/crypto/picoxcell_crypto.c
+@@ -1595,6 +1595,11 @@ static const struct of_device_id spacc_o
+ MODULE_DEVICE_TABLE(of, spacc_of_id_table);
+ #endif /* CONFIG_OF */
+ 
++static void spacc_tasklet_kill(void *data)
++{
++	tasklet_kill(data);
++}
 +
-+		/* Unchanged UUIDs */
-+		if (memcmp(fs_devices->metadata_uuid, fs_devices->fsid,
-+			   BTRFS_FSID_SIZE) == 0 &&
-+		    memcmp(fs_devices->fsid, disk_super->metadata_uuid,
-+			   BTRFS_FSID_SIZE) == 0)
- 			return fs_devices;
--		}
+ static int spacc_probe(struct platform_device *pdev)
+ {
+ 	int i, err, ret;
+@@ -1637,6 +1642,14 @@ static int spacc_probe(struct platform_d
+ 		return -ENXIO;
  	}
  
- 	return NULL;
++	tasklet_init(&engine->complete, spacc_spacc_complete,
++		     (unsigned long)engine);
++
++	ret = devm_add_action(&pdev->dev, spacc_tasklet_kill,
++			      &engine->complete);
++	if (ret)
++		return ret;
++
+ 	if (devm_request_irq(&pdev->dev, irq->start, spacc_spacc_irq, 0,
+ 			     engine->name, engine)) {
+ 		dev_err(engine->dev, "failed to request IRQ\n");
+@@ -1694,8 +1707,6 @@ static int spacc_probe(struct platform_d
+ 	INIT_LIST_HEAD(&engine->completed);
+ 	INIT_LIST_HEAD(&engine->in_progress);
+ 	engine->in_flight = 0;
+-	tasklet_init(&engine->complete, spacc_spacc_complete,
+-		     (unsigned long)engine);
+ 
+ 	platform_set_drvdata(pdev, engine);
+ 
 
 
