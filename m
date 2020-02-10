@@ -2,70 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA2D2157E9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:19:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E906E157EA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:21:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729398AbgBJPTQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 10:19:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43014 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729056AbgBJPTQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 10:19:16 -0500
-Received: from localhost (unknown [104.132.1.111])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D359206ED;
-        Mon, 10 Feb 2020 15:19:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581347955;
-        bh=JqaNMooa6dE5vSnfD9rwkvCtggIprvOdi7XG448QR40=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HtjiMHXEg2E9MoB5ocWMybjprlQPDyTnSWglv3Rx7JV2pDWQJZX3Yxhj7FEyHIUZ9
-         sRup8fP/LSYmY6WQoxcKADmXbUnNnhGeGhtKvWe8/3qRfPFz84N7KkJqmlfKDHtlss
-         gaipYqNj01BwFElHx9vdrfdwKNHkUlzmlPmrwkTI=
-Date:   Mon, 10 Feb 2020 07:19:15 -0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Oliver O'Halloran <oohall@gmail.com>
-Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Sukadev Bhattiprolu <sukadev@linux.ibm.com>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>
-Subject: Re: [PATCH 6/6] powerpc: powernv: no need to check return value of
- debugfs_create functions
-Message-ID: <20200210151915.GA686798@kroah.com>
-References: <20200209105901.1620958-1-gregkh@linuxfoundation.org>
- <20200209105901.1620958-6-gregkh@linuxfoundation.org>
- <CAOSf1CEKwjDkp-=SMjmJfQirxdGCkadougZbdDS6FK1muNNCZw@mail.gmail.com>
+        id S1729254AbgBJPU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 10:20:59 -0500
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:7354 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728779AbgBJPU7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 10:20:59 -0500
+Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
+  Nicolas.Ferre@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Nicolas.Ferre@microchip.com";
+  x-sender="Nicolas.Ferre@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa2.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Nicolas.Ferre@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa2.microchip.iphmx.com; spf=Pass smtp.mailfrom=Nicolas.Ferre@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: L7BX/6oEt6gKL1m2Oy6RMwXq4ngWrcO4DRk/+LGzLoQu5R0PM66CboAOgPYrdaKgquHdoHCwRc
+ oqawS8diV6MJjhb5j3a+jAHmzNinCtT2vC7FgYLgzsEpUvtmC26KjKOlHMWOKkt0R9mIQMq0dO
+ SICv9OCg24cpxElgs6eMRL3DdB48Dqwrfccuc5FPYOTQ4Y0VrLPFN57bsa3sIUgUdYYjz3yXDz
+ SS2tVNf31A6vGKgyhYA3tZBofrfEBFJv4sXZ9b+WnFqmltALmgBuN6cJADM0iZilOI+NUykkr3
+ 9dI=
+X-IronPort-AV: E=Sophos;i="5.70,425,1574146800"; 
+   d="scan'208";a="65398876"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 10 Feb 2020 08:20:58 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 10 Feb 2020 08:20:56 -0700
+Received: from tenerife.corp.atmel.com (10.10.85.251) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Mon, 10 Feb 2020 08:20:54 -0700
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        <linux-serial@vger.kernel.org>
+CC:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+Subject: [PATCH] tty/serial: atmel: manage shutdown in case of RS485 or ISO7816 mode
+Date:   Mon, 10 Feb 2020 16:20:53 +0100
+Message-ID: <20200210152053.8289-1-nicolas.ferre@microchip.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOSf1CEKwjDkp-=SMjmJfQirxdGCkadougZbdDS6FK1muNNCZw@mail.gmail.com>
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 02:01:53AM +1100, Oliver O'Halloran wrote:
-> On Mon, Feb 10, 2020 at 12:12 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > When calling debugfs functions, there is no need to ever check the
-> > return value.  The function can work or not, but the code logic should
-> > never do something different based on this.
-> 
-> For memtrace debugfs is the only way to actually use the feature. It'd
-> be nice if it still printed out *something* if it failed to create the
-> files rather than just being mysteriously absent, but maybe debugfs
-> itself does that. Looks fine otherwise.
+In atmel_shutdown() we call atmel_stop_rx() and atmel_stop_tx() functions.
+Prevent the rx restart that is implemented in RS485 or ISO7816 modes when
+calling atmel_stop_tx() by using the atomic information tasklet_shutdown
+that is already in place for this purpose.
 
-No, debugfs will only spit out an error message to the log if a
-file/directory is attempted to be created for an already present
-file/directory.
+Fixes: 98f2082c3ac4 ("tty/serial: atmel: enforce tasklet init and termination sequences")
+Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+---
+ drivers/tty/serial/atmel_serial.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-For other failures, no error will be printed, other than the normal
-lower-level "out of memory" issues that might rarely happen.
+diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+index c15c398c88a9..a39c87a7c2e1 100644
+--- a/drivers/tty/serial/atmel_serial.c
++++ b/drivers/tty/serial/atmel_serial.c
+@@ -570,7 +570,8 @@ static void atmel_stop_tx(struct uart_port *port)
+ 	atmel_uart_writel(port, ATMEL_US_IDR, atmel_port->tx_done_mask);
+ 
+ 	if (atmel_uart_is_half_duplex(port))
+-		atmel_start_rx(port);
++		if (!atomic_read(&atmel_port->tasklet_shutdown))
++			atmel_start_rx(port);
+ 
+ }
+ 
+-- 
+2.17.1
 
-thanks,
-
-greg k-h
