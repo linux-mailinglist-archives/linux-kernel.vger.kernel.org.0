@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12D09157536
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:40:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A298D1574A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:35:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729443AbgBJMje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:39:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59664 "EHLO mail.kernel.org"
+        id S1727728AbgBJMfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:35:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728834AbgBJMhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:39 -0500
+        id S1727686AbgBJMfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:05 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B481E20733;
-        Mon, 10 Feb 2020 12:37:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16AE620661;
+        Mon, 10 Feb 2020 12:35:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338258;
-        bh=YouNCeNRR7PhMolICMgZpwhNMWiJklpJo7hkHPuiq50=;
+        s=default; t=1581338105;
+        bh=Gh7vqVArhh/BofwFsMN4DhthnNRQNT7NXy6j0JeRFhA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f8EmIGZ2iHd2p7wnB3NphQijW5phu/+t5N5o9PYOBqgC9A056DT87HpFDWYimwcPD
-         hEvfGpRW39AxGzAa7FSbJ/UOf03OaT58HLvWC1NgwN22oKnl3KLdZ5ivlegzT5DToY
-         F3beVvXICRqdMuAuWsNE3/0JMIFyvpWpzPTBEtlM=
+        b=GyJM4mYVlqf2wunkf6pNkgYGAEwRkcnTYmZcAquVzc27EYCDiw54xosRQE97Sn7eM
+         vTHKzlrwihwoQw5uZCwjocPc79ludp0lvJlHGE07+92gUdXidy9fN+Q0nBrnwj2x+v
+         bqugP7GKGJ2C/OD0uj7E/+iUP22lByr6yVW9ijs8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Fomichev <dmitry.fomichev@wdc.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 5.4 127/309] dm zoned: support zone sizes smaller than 128MiB
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: [PATCH 4.19 025/195] rxrpc: Fix NULL pointer deref due to call->conn being cleared on disconnect
 Date:   Mon, 10 Feb 2020 04:31:23 -0800
-Message-Id: <20200210122418.612720750@linuxfoundation.org>
+Message-Id: <20200210122308.386425132@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,117 +42,192 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Fomichev <dmitry.fomichev@wdc.com>
+From: David Howells <dhowells@redhat.com>
 
-commit b39962950339912978484cdac50069258545d753 upstream.
+[ Upstream commit 5273a191dca65a675dc0bcf3909e59c6933e2831 ]
 
-dm-zoned is observed to log failed kernel assertions and not work
-correctly when operating against a device with a zone size smaller
-than 128MiB (e.g. 32768 bits per 4K block). The reason is that the
-bitmap size per zone is calculated as zero with such a small zone
-size. Fix this problem and also make the code related to zone bitmap
-management be able to handle per zone bitmaps smaller than a single
-block.
+When a call is disconnected, the connection pointer from the call is
+cleared to make sure it isn't used again and to prevent further attempted
+transmission for the call.  Unfortunately, there might be a daemon trying
+to use it at the same time to transmit a packet.
 
-A dm-zoned-tools patch is required to properly format dm-zoned devices
-with zone sizes smaller than 128MiB.
+Fix this by keeping call->conn set, but setting a flag on the call to
+indicate disconnection instead.
 
-Fixes: 3b1a94c88b79 ("dm zoned: drive-managed zoned block device target")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Fomichev <dmitry.fomichev@wdc.com>
-Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Remove also the bits in the transmission functions where the conn pointer is
+checked and a ref taken under spinlock as this is now redundant.
+
+Fixes: 8d94aa381dab ("rxrpc: Calls shouldn't hold socket refs")
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/md/dm-zoned-metadata.c |   23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ net/rxrpc/ar-internal.h |    1 +
+ net/rxrpc/call_object.c |    4 ++--
+ net/rxrpc/conn_client.c |    3 +--
+ net/rxrpc/conn_object.c |    4 ++--
+ net/rxrpc/output.c      |   27 +++++++++------------------
+ 5 files changed, 15 insertions(+), 24 deletions(-)
 
---- a/drivers/md/dm-zoned-metadata.c
-+++ b/drivers/md/dm-zoned-metadata.c
-@@ -134,6 +134,7 @@ struct dmz_metadata {
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -484,6 +484,7 @@ enum rxrpc_call_flag {
+ 	RXRPC_CALL_BEGAN_RX_TIMER,	/* We began the expect_rx_by timer */
+ 	RXRPC_CALL_RX_HEARD,		/* The peer responded at least once to this call */
+ 	RXRPC_CALL_RX_UNDERRUN,		/* Got data underrun */
++	RXRPC_CALL_DISCONNECTED,	/* The call has been disconnected */
+ };
  
- 	sector_t		zone_bitmap_size;
- 	unsigned int		zone_nr_bitmap_blocks;
-+	unsigned int		zone_bits_per_mblk;
+ /*
+--- a/net/rxrpc/call_object.c
++++ b/net/rxrpc/call_object.c
+@@ -520,7 +520,7 @@ void rxrpc_release_call(struct rxrpc_soc
  
- 	unsigned int		nr_bitmap_blocks;
- 	unsigned int		nr_map_blocks;
-@@ -1167,7 +1168,10 @@ static int dmz_init_zones(struct dmz_met
+ 	_debug("RELEASE CALL %p (%d CONN %p)", call, call->debug_id, conn);
  
- 	/* Init */
- 	zmd->zone_bitmap_size = dev->zone_nr_blocks >> 3;
--	zmd->zone_nr_bitmap_blocks = zmd->zone_bitmap_size >> DMZ_BLOCK_SHIFT;
-+	zmd->zone_nr_bitmap_blocks =
-+		max_t(sector_t, 1, zmd->zone_bitmap_size >> DMZ_BLOCK_SHIFT);
-+	zmd->zone_bits_per_mblk = min_t(sector_t, dev->zone_nr_blocks,
-+					DMZ_BLOCK_SIZE_BITS);
+-	if (conn)
++	if (conn && !test_bit(RXRPC_CALL_DISCONNECTED, &call->flags))
+ 		rxrpc_disconnect_call(call);
  
- 	/* Allocate zone array */
- 	zmd->zones = kcalloc(dev->nr_zones, sizeof(struct dm_zone), GFP_KERNEL);
-@@ -1991,7 +1995,7 @@ int dmz_copy_valid_blocks(struct dmz_met
- 		dmz_release_mblock(zmd, to_mblk);
- 		dmz_release_mblock(zmd, from_mblk);
+ 	for (i = 0; i < RXRPC_RXTX_BUFF_SIZE; i++) {
+@@ -654,6 +654,7 @@ static void rxrpc_rcu_destroy_call(struc
+ 	struct rxrpc_call *call = container_of(rcu, struct rxrpc_call, rcu);
+ 	struct rxrpc_net *rxnet = call->rxnet;
  
--		chunk_block += DMZ_BLOCK_SIZE_BITS;
-+		chunk_block += zmd->zone_bits_per_mblk;
++	rxrpc_put_connection(call->conn);
+ 	rxrpc_put_peer(call->peer);
+ 	kfree(call->rxtx_buffer);
+ 	kfree(call->rxtx_annotations);
+@@ -677,7 +678,6 @@ void rxrpc_cleanup_call(struct rxrpc_cal
+ 
+ 	ASSERTCMP(call->state, ==, RXRPC_CALL_COMPLETE);
+ 	ASSERT(test_bit(RXRPC_CALL_RELEASED, &call->flags));
+-	ASSERTCMP(call->conn, ==, NULL);
+ 
+ 	/* Clean up the Rx/Tx buffer */
+ 	for (i = 0; i < RXRPC_RXTX_BUFF_SIZE; i++)
+--- a/net/rxrpc/conn_client.c
++++ b/net/rxrpc/conn_client.c
+@@ -786,6 +786,7 @@ void rxrpc_disconnect_client_call(struct
+ 	u32 cid;
+ 
+ 	spin_lock(&conn->channel_lock);
++	set_bit(RXRPC_CALL_DISCONNECTED, &call->flags);
+ 
+ 	cid = call->cid;
+ 	if (cid) {
+@@ -793,7 +794,6 @@ void rxrpc_disconnect_client_call(struct
+ 		chan = &conn->channels[channel];
+ 	}
+ 	trace_rxrpc_client(conn, channel, rxrpc_client_chan_disconnect);
+-	call->conn = NULL;
+ 
+ 	/* Calls that have never actually been assigned a channel can simply be
+ 	 * discarded.  If the conn didn't get used either, it will follow
+@@ -909,7 +909,6 @@ out:
+ 	spin_unlock(&rxnet->client_conn_cache_lock);
+ out_2:
+ 	spin_unlock(&conn->channel_lock);
+-	rxrpc_put_connection(conn);
+ 	_leave("");
+ 	return;
+ 
+--- a/net/rxrpc/conn_object.c
++++ b/net/rxrpc/conn_object.c
+@@ -174,6 +174,8 @@ void __rxrpc_disconnect_call(struct rxrp
+ 
+ 	_enter("%d,%x", conn->debug_id, call->cid);
+ 
++	set_bit(RXRPC_CALL_DISCONNECTED, &call->flags);
++
+ 	if (rcu_access_pointer(chan->call) == call) {
+ 		/* Save the result of the call so that we can repeat it if necessary
+ 		 * through the channel, whilst disposing of the actual call record.
+@@ -226,9 +228,7 @@ void rxrpc_disconnect_call(struct rxrpc_
+ 	__rxrpc_disconnect_call(conn, call);
+ 	spin_unlock(&conn->channel_lock);
+ 
+-	call->conn = NULL;
+ 	conn->idle_timestamp = jiffies;
+-	rxrpc_put_connection(conn);
+ }
+ 
+ /*
+--- a/net/rxrpc/output.c
++++ b/net/rxrpc/output.c
+@@ -133,7 +133,7 @@ static size_t rxrpc_fill_out_ack(struct
+ int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping,
+ 			  rxrpc_serial_t *_serial)
+ {
+-	struct rxrpc_connection *conn = NULL;
++	struct rxrpc_connection *conn;
+ 	struct rxrpc_ack_buffer *pkt;
+ 	struct msghdr msg;
+ 	struct kvec iov[2];
+@@ -143,18 +143,14 @@ int rxrpc_send_ack_packet(struct rxrpc_c
+ 	int ret;
+ 	u8 reason;
+ 
+-	spin_lock_bh(&call->lock);
+-	if (call->conn)
+-		conn = rxrpc_get_connection_maybe(call->conn);
+-	spin_unlock_bh(&call->lock);
+-	if (!conn)
++	if (test_bit(RXRPC_CALL_DISCONNECTED, &call->flags))
+ 		return -ECONNRESET;
+ 
+ 	pkt = kzalloc(sizeof(*pkt), GFP_KERNEL);
+-	if (!pkt) {
+-		rxrpc_put_connection(conn);
++	if (!pkt)
+ 		return -ENOMEM;
+-	}
++
++	conn = call->conn;
+ 
+ 	msg.msg_name	= &call->peer->srx.transport;
+ 	msg.msg_namelen	= call->peer->srx.transport_len;
+@@ -249,7 +245,6 @@ int rxrpc_send_ack_packet(struct rxrpc_c
  	}
  
- 	to_zone->weight = from_zone->weight;
-@@ -2052,7 +2056,7 @@ int dmz_validate_blocks(struct dmz_metad
- 
- 		/* Set bits */
- 		bit = chunk_block & DMZ_BLOCK_MASK_BITS;
--		nr_bits = min(nr_blocks, DMZ_BLOCK_SIZE_BITS - bit);
-+		nr_bits = min(nr_blocks, zmd->zone_bits_per_mblk - bit);
- 
- 		count = dmz_set_bits((unsigned long *)mblk->data, bit, nr_bits);
- 		if (count) {
-@@ -2131,7 +2135,7 @@ int dmz_invalidate_blocks(struct dmz_met
- 
- 		/* Clear bits */
- 		bit = chunk_block & DMZ_BLOCK_MASK_BITS;
--		nr_bits = min(nr_blocks, DMZ_BLOCK_SIZE_BITS - bit);
-+		nr_bits = min(nr_blocks, zmd->zone_bits_per_mblk - bit);
- 
- 		count = dmz_clear_bits((unsigned long *)mblk->data,
- 				       bit, nr_bits);
-@@ -2191,6 +2195,7 @@ static int dmz_to_next_set_block(struct
+ out:
+-	rxrpc_put_connection(conn);
+ 	kfree(pkt);
+ 	return ret;
+ }
+@@ -259,7 +254,7 @@ out:
+  */
+ int rxrpc_send_abort_packet(struct rxrpc_call *call)
  {
- 	struct dmz_mblock *mblk;
- 	unsigned int bit, set_bit, nr_bits;
-+	unsigned int zone_bits = zmd->zone_bits_per_mblk;
- 	unsigned long *bitmap;
- 	int n = 0;
+-	struct rxrpc_connection *conn = NULL;
++	struct rxrpc_connection *conn;
+ 	struct rxrpc_abort_buffer pkt;
+ 	struct msghdr msg;
+ 	struct kvec iov[1];
+@@ -276,13 +271,11 @@ int rxrpc_send_abort_packet(struct rxrpc
+ 	    test_bit(RXRPC_CALL_TX_LAST, &call->flags))
+ 		return 0;
  
-@@ -2205,15 +2210,15 @@ static int dmz_to_next_set_block(struct
- 		/* Get offset */
- 		bitmap = (unsigned long *) mblk->data;
- 		bit = chunk_block & DMZ_BLOCK_MASK_BITS;
--		nr_bits = min(nr_blocks, DMZ_BLOCK_SIZE_BITS - bit);
-+		nr_bits = min(nr_blocks, zone_bits - bit);
- 		if (set)
--			set_bit = find_next_bit(bitmap, DMZ_BLOCK_SIZE_BITS, bit);
-+			set_bit = find_next_bit(bitmap, zone_bits, bit);
- 		else
--			set_bit = find_next_zero_bit(bitmap, DMZ_BLOCK_SIZE_BITS, bit);
-+			set_bit = find_next_zero_bit(bitmap, zone_bits, bit);
- 		dmz_release_mblock(zmd, mblk);
+-	spin_lock_bh(&call->lock);
+-	if (call->conn)
+-		conn = rxrpc_get_connection_maybe(call->conn);
+-	spin_unlock_bh(&call->lock);
+-	if (!conn)
++	if (test_bit(RXRPC_CALL_DISCONNECTED, &call->flags))
+ 		return -ECONNRESET;
  
- 		n += set_bit - bit;
--		if (set_bit < DMZ_BLOCK_SIZE_BITS)
-+		if (set_bit < zone_bits)
- 			break;
++	conn = call->conn;
++
+ 	msg.msg_name	= &call->peer->srx.transport;
+ 	msg.msg_namelen	= call->peer->srx.transport_len;
+ 	msg.msg_control	= NULL;
+@@ -317,8 +310,6 @@ int rxrpc_send_abort_packet(struct rxrpc
+ 		trace_rxrpc_tx_packet(call->debug_id, &pkt.whdr,
+ 				      rxrpc_tx_point_call_abort);
+ 	rxrpc_tx_backoff(call, ret);
+-
+-	rxrpc_put_connection(conn);
+ 	return ret;
+ }
  
- 		nr_blocks -= nr_bits;
-@@ -2316,7 +2321,7 @@ static void dmz_get_zone_weight(struct d
- 		/* Count bits in this block */
- 		bitmap = mblk->data;
- 		bit = chunk_block & DMZ_BLOCK_MASK_BITS;
--		nr_bits = min(nr_blocks, DMZ_BLOCK_SIZE_BITS - bit);
-+		nr_bits = min(nr_blocks, zmd->zone_bits_per_mblk - bit);
- 		n += dmz_count_bits(bitmap, bit, nr_bits);
- 
- 		dmz_release_mblock(zmd, mblk);
 
 
