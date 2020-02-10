@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CB12157902
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:13:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7BC615784B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:06:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728680AbgBJMip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:38:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57832 "EHLO mail.kernel.org"
+        id S1730787AbgBJNGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:06:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728045AbgBJMhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:03 -0500
+        id S1729548AbgBJMjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:39:53 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BBFC20661;
-        Mon, 10 Feb 2020 12:37:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98DBE24650;
+        Mon, 10 Feb 2020 12:39:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338222;
-        bh=ZgdRohyeoqyTe+zFijsGSWH8xU5n9mO1FJu1F/BIhj0=;
+        s=default; t=1581338392;
+        bh=gxm2KvSy24vJVM6qJ96MO74XGzXAu3rlYDpEdI9euoo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QezNxEL2jc/xs3lXsFYxPdPh/rFZu0xKoUD2ne/VYeVjfIwVN2JXq+xkVYxrcDtfa
-         d8LI+SQnDoXPXkaHTmsFcQv+Q+qFeJJ0hEXiG2Xgc48/JHWKpDfmd2P1844yQAN8OV
-         OlYWiaLSIGJVdlxjTexWxpcFUOOXNhENVUlufYTk=
+        b=zytNYzjkgLPrtcQkxT0RGmke9YHzgf5pL3TZOITqCQssu91zFycKX2k4YolmA97z/
+         rOkmfBxRaoGGRzBRYow6vFf0wSEsV/k0mazbyi9Q4uLVyPhZFKpLi69TG3gvQFqknC
+         d3lc4k0YwHJua6V/iO5DhT33EvmP7gSFEIuSeOkU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jun Li <jun.li@nxp.com>,
-        Peter Chen <peter.chen@nxp.com>,
-        Felipe Balbi <balbi@kernel.org>
-Subject: [PATCH 5.4 041/309] usb: gadget: f_fs: set req->num_sgs as 0 for non-sg transfer
-Date:   Mon, 10 Feb 2020 04:29:57 -0800
-Message-Id: <20200210122410.032100371@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sukadev Bhattiprolu <sukadev@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.5 085/367] powerpc/xmon: dont access ASDR in VMs
+Date:   Mon, 10 Feb 2020 04:29:58 -0800
+Message-Id: <20200210122432.199926067@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Chen <peter.chen@nxp.com>
+From: Sukadev Bhattiprolu <sukadev@linux.ibm.com>
 
-commit d2450c6937018d40d4111fe830fa48d4ddceb8d0 upstream.
+commit c2a20711fc181e7f22ee5c16c28cb9578af84729 upstream.
 
-The UDC core uses req->num_sgs to judge if scatter buffer list is used.
-Eg: usb_gadget_map_request_by_dev. For f_fs sync io mode, the request
-is re-used for each request, so if the 1st request->length > PAGE_SIZE,
-and the 2nd request->length is <= PAGE_SIZE, the f_fs uses the 1st
-req->num_sgs for the 2nd request, it causes the UDC core get the wrong
-req->num_sgs value (The 2nd request doesn't use sg). For f_fs async
-io mode, it is not harm to initialize req->num_sgs as 0 either, in case,
-the UDC driver doesn't zeroed request structure.
+ASDR is HV-privileged and must only be accessed in HV-mode.
+Fixes a Program Check (0x700) when xmon in a VM dumps SPRs.
 
-Cc: Jun Li <jun.li@nxp.com>
-Cc: stable <stable@vger.kernel.org>
-Fixes: 772a7a724f69 ("usb: gadget: f_fs: Allow scatter-gather buffers")
-Signed-off-by: Peter Chen <peter.chen@nxp.com>
-Signed-off-by: Felipe Balbi <balbi@kernel.org>
+Fixes: d1e1b351f50f ("powerpc/xmon: Add ISA v3.0 SPRs to SPR dump")
+Cc: stable@vger.kernel.org # v4.14+
+Signed-off-by: Sukadev Bhattiprolu <sukadev@linux.ibm.com>
+Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20200107021633.GB29843@us.ibm.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/gadget/function/f_fs.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/powerpc/xmon/xmon.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -1062,6 +1062,7 @@ static ssize_t ffs_epfile_io(struct file
- 			req->num_sgs = io_data->sgt.nents;
- 		} else {
- 			req->buf = data;
-+			req->num_sgs = 0;
- 		}
- 		req->length = data_len;
+--- a/arch/powerpc/xmon/xmon.c
++++ b/arch/powerpc/xmon/xmon.c
+@@ -1949,15 +1949,14 @@ static void dump_300_sprs(void)
  
-@@ -1105,6 +1106,7 @@ static ssize_t ffs_epfile_io(struct file
- 			req->num_sgs = io_data->sgt.nents;
- 		} else {
- 			req->buf = data;
-+			req->num_sgs = 0;
- 		}
- 		req->length = data_len;
+ 	printf("pidr   = %.16lx  tidr  = %.16lx\n",
+ 		mfspr(SPRN_PID), mfspr(SPRN_TIDR));
+-	printf("asdr   = %.16lx  psscr = %.16lx\n",
+-		mfspr(SPRN_ASDR), hv ? mfspr(SPRN_PSSCR)
+-					: mfspr(SPRN_PSSCR_PR));
++	printf("psscr  = %.16lx\n",
++		hv ? mfspr(SPRN_PSSCR) : mfspr(SPRN_PSSCR_PR));
+ 
+ 	if (!hv)
+ 		return;
+ 
+-	printf("ptcr   = %.16lx\n",
+-		mfspr(SPRN_PTCR));
++	printf("ptcr   = %.16lx  asdr  = %.16lx\n",
++		mfspr(SPRN_PTCR), mfspr(SPRN_ASDR));
+ #endif
+ }
  
 
 
