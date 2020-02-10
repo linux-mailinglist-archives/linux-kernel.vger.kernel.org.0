@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FC2A15793D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:14:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54A24157AD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:26:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730644AbgBJNNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:13:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34208 "EHLO mail.kernel.org"
+        id S1728531AbgBJMgt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:36:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729182AbgBJMij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:39 -0500
+        id S1728182AbgBJMf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:56 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2895F20661;
-        Mon, 10 Feb 2020 12:38:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A6CE20838;
+        Mon, 10 Feb 2020 12:35:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338319;
-        bh=pwgh38ltuMnOL+4RvfiyDg7TiATd0kVlvmn7UumDg1k=;
+        s=default; t=1581338156;
+        bh=CSrHh6ckbplG7cDGcTH5GkDJu+ynBZmL5i67RFtgq/4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R4uuziuUTL+4ZltmffFeVKaPwKMDZZ6G13NvYIA2+3Rr/0xOduBOFtWUxgm6WinbA
-         uApOhMgrdwqHJi/a5U8ZxfXPY29RaFcGj9tUUzSbGYC2XOODHpykp0YxMm6GrIPpCQ
-         qZ72M34EGaRYvFBvHXuQWnDhl649vW5P+97OPnts=
+        b=Be1TNtZvjuasYFGFB9RKjzITsKB/LhvB8uhYX8NqxCTA82CkSMqWWy5ORYkepnxNC
+         ByRZXrrKD/do6uHc1sEjc9b3VGZ4tiusy+PHp5r/O7RfW8TESb56nRtxeiPS7zJcKN
+         ZgU0C1JvfDZYnUtI+MfN+GTobeHWJrV1Krczhbyg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
+        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
+        Marios Pomonis <pomonis@google.com>,
+        Andrew Honig <ahonig@google.com>,
+        Jim Mattson <jmattson@google.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.4 222/309] KVM: x86: Handle TIF_NEED_FPU_LOAD in kvm_{load,put}_guest_fpu()
-Date:   Mon, 10 Feb 2020 04:32:58 -0800
-Message-Id: <20200210122427.883826991@linuxfoundation.org>
+Subject: [PATCH 4.19 123/195] KVM: x86: Refactor picdev_write() to prevent Spectre-v1/L1TF attacks
+Date:   Mon, 10 Feb 2020 04:33:01 -0800
+Message-Id: <20200210122317.434626582@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,67 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Marios Pomonis <pomonis@google.com>
 
-commit c9aef3b85f425d1f6635382ec210ee5a7ef55d7d upstream.
+commit 14e32321f3606e4b0970200b6e5e47ee6f1e6410 upstream.
 
-Handle TIF_NEED_FPU_LOAD similar to how fpu__copy() handles the flag
-when duplicating FPU state to a new task struct.  TIF_NEED_FPU_LOAD can
-be set any time control is transferred out of KVM, be it voluntarily,
-e.g. if I/O is triggered during a KVM call to get_user_pages, or
-involuntarily, e.g. if softirq runs after an IRQ occurs.  Therefore,
-KVM must account for TIF_NEED_FPU_LOAD whenever it is (potentially)
-accessing CPU FPU state.
+This fixes a Spectre-v1/L1TF vulnerability in picdev_write().
+It replaces index computations based on the (attacked-controlled) port
+number with constants through a minor refactoring.
 
-Fixes: 5f409e20b7945 ("x86/fpu: Defer FPU state load until return to userspace")
+Fixes: 85f455f7ddbe ("KVM: Add support for in-kernel PIC emulation")
+
+Signed-off-by: Nick Finco <nifi@google.com>
+Signed-off-by: Marios Pomonis <pomonis@google.com>
+Reviewed-by: Andrew Honig <ahonig@google.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |   19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ arch/x86/kvm/i8259.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -8493,12 +8493,26 @@ static int complete_emulated_mmio(struct
- 	return 0;
- }
- 
-+static void kvm_save_current_fpu(struct fpu *fpu)
-+{
-+	/*
-+	 * If the target FPU state is not resident in the CPU registers, just
-+	 * memcpy() from current, else save CPU state directly to the target.
-+	 */
-+	if (test_thread_flag(TIF_NEED_FPU_LOAD))
-+		memcpy(&fpu->state, &current->thread.fpu.state,
-+		       fpu_kernel_xstate_size);
-+	else
-+		copy_fpregs_to_fpstate(fpu);
-+}
-+
- /* Swap (qemu) user FPU context for the guest FPU context. */
- static void kvm_load_guest_fpu(struct kvm_vcpu *vcpu)
- {
- 	fpregs_lock();
- 
--	copy_fpregs_to_fpstate(vcpu->arch.user_fpu);
-+	kvm_save_current_fpu(vcpu->arch.user_fpu);
-+
- 	/* PKRU is separately restored in kvm_x86_ops->run.  */
- 	__copy_kernel_to_fpregs(&vcpu->arch.guest_fpu->state,
- 				~XFEATURE_MASK_PKRU);
-@@ -8514,7 +8528,8 @@ static void kvm_put_guest_fpu(struct kvm
- {
- 	fpregs_lock();
- 
--	copy_fpregs_to_fpstate(vcpu->arch.guest_fpu);
-+	kvm_save_current_fpu(vcpu->arch.guest_fpu);
-+
- 	copy_kernel_to_fpregs(&vcpu->arch.user_fpu->state);
- 
- 	fpregs_mark_activate();
+--- a/arch/x86/kvm/i8259.c
++++ b/arch/x86/kvm/i8259.c
+@@ -460,10 +460,14 @@ static int picdev_write(struct kvm_pic *
+ 	switch (addr) {
+ 	case 0x20:
+ 	case 0x21:
++		pic_lock(s);
++		pic_ioport_write(&s->pics[0], addr, data);
++		pic_unlock(s);
++		break;
+ 	case 0xa0:
+ 	case 0xa1:
+ 		pic_lock(s);
+-		pic_ioport_write(&s->pics[addr >> 7], addr, data);
++		pic_ioport_write(&s->pics[1], addr, data);
+ 		pic_unlock(s);
+ 		break;
+ 	case 0x4d0:
 
 
