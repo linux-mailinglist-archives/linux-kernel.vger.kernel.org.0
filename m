@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 496B61575CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:45:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D3771574B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:35:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730372AbgBJMo7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:44:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41670 "EHLO mail.kernel.org"
+        id S1727947AbgBJMf3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:35:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729803AbgBJMkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:49 -0500
+        id S1727818AbgBJMfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:18 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEB7320661;
-        Mon, 10 Feb 2020 12:40:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5309920873;
+        Mon, 10 Feb 2020 12:35:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338448;
-        bh=8HSn47iVmVuHK5R6HJ9DPCtyktsjn3EOBpK6AgA2IB0=;
+        s=default; t=1581338116;
+        bh=QoEvPILQv9L3KPA9Sa4kXtBR6pHoB54DfzK+oAm4Pv4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OF/9f8hHWMkCzGo1FfqkPnbjFvqUyzSCyx5GDoqYaJfyK80vNHGJckrgUWnYsR6cI
-         AqM2DqFuLXhAR5hrVOt0b64+g7n0h3DFDCfMWqFnbL/8evvF6El/e3G8jtJlDQ9Aqj
-         zQfHyB/POSY3RxTWtmziXtSuvdN8ewwkBZvLf/Ns=
+        b=cvdUrlbIe4vGSv3GjekbWdk1GHzd0UV4Zb4Li0Nk3bLbmWYbUM/sdOVH5WxGnIqRJ
+         dF2ldWg9AHA1HDQgHrvGWmZAF9VR1kKxghHN2cu0bbbTdguWYBH0+JsO4JIRJTAK4E
+         kttJ+egZhhTNWM6i/3o1bC3U4tVYlxUuCR7OaxDc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@kernel.org,
-        Vasily Averin <vvs@virtuozzo.com>, Jan Kara <jack@suse.cz>,
-        Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 5.5 192/367] jbd2_seq_info_next should increase position index
-Date:   Mon, 10 Feb 2020 04:31:45 -0800
-Message-Id: <20200210122442.319188014@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Alexandru Elisei <alexandru.elisei@arm.com>
+Subject: [PATCH 4.19 048/195] KVM: arm/arm64: Correct CPSR on exception entry
+Date:   Mon, 10 Feb 2020 04:31:46 -0800
+Message-Id: <20200210122310.841119432@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +44,217 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Mark Rutland <mark.rutland@arm.com>
 
-commit 1a8e9cf40c9a6a2e40b1e924b13ed303aeea4418 upstream.
+commit 3c2483f15499b877ccb53250d88addb8c91da147 upstream.
 
-if seq_file .next fuction does not change position index,
-read after some lseek can generate unexpected output.
+When KVM injects an exception into a guest, it generates the CPSR value
+from scratch, configuring CPSR.{M,A,I,T,E}, and setting all other
+bits to zero.
 
-Script below generates endless output
- $ q=;while read -r r;do echo "$((++q)) $r";done </proc/fs/jbd2/DEV/info
+This isn't correct, as the architecture specifies that some CPSR bits
+are (conditionally) cleared or set upon an exception, and others are
+unchanged from the original context.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=206283
+This patch adds logic to match the architectural behaviour. To make this
+simple to follow/audit/extend, documentation references are provided,
+and bits are configured in order of their layout in SPSR_EL2. This
+layout can be seen in the diagram on ARM DDI 0487E.a page C5-426.
 
-Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code and interface")
-Cc: stable@kernel.org
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Link: https://lore.kernel.org/r/d13805e5-695e-8ac3-b678-26ca2313629f@virtuozzo.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Note that this code is used by both arm and arm64, and is intended to
+fuction with the SPSR_EL2 and SPSR_HYP layouts.
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Reviewed-by: Alexandru Elisei <alexandru.elisei@arm.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20200108134324.46500-3-mark.rutland@arm.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/jbd2/journal.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/include/asm/kvm_emulate.h |   12 ++++
+ arch/arm64/include/asm/ptrace.h    |    1 
+ virt/kvm/arm/aarch32.c             |  111 +++++++++++++++++++++++++++++++++----
+ 3 files changed, 114 insertions(+), 10 deletions(-)
 
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -982,6 +982,7 @@ static void *jbd2_seq_info_start(struct
+--- a/arch/arm/include/asm/kvm_emulate.h
++++ b/arch/arm/include/asm/kvm_emulate.h
+@@ -26,13 +26,25 @@
+ #include <asm/cputype.h>
  
- static void *jbd2_seq_info_next(struct seq_file *seq, void *v, loff_t *pos)
+ /* arm64 compatibility macros */
++#define PSR_AA32_MODE_FIQ	FIQ_MODE
++#define PSR_AA32_MODE_SVC	SVC_MODE
+ #define PSR_AA32_MODE_ABT	ABT_MODE
+ #define PSR_AA32_MODE_UND	UND_MODE
+ #define PSR_AA32_T_BIT		PSR_T_BIT
++#define PSR_AA32_F_BIT		PSR_F_BIT
+ #define PSR_AA32_I_BIT		PSR_I_BIT
+ #define PSR_AA32_A_BIT		PSR_A_BIT
+ #define PSR_AA32_E_BIT		PSR_E_BIT
+ #define PSR_AA32_IT_MASK	PSR_IT_MASK
++#define PSR_AA32_GE_MASK	0x000f0000
++#define PSR_AA32_DIT_BIT	0x00200000
++#define PSR_AA32_PAN_BIT	0x00400000
++#define PSR_AA32_SSBS_BIT	0x00800000
++#define PSR_AA32_Q_BIT		PSR_Q_BIT
++#define PSR_AA32_V_BIT		PSR_V_BIT
++#define PSR_AA32_C_BIT		PSR_C_BIT
++#define PSR_AA32_Z_BIT		PSR_Z_BIT
++#define PSR_AA32_N_BIT		PSR_N_BIT
+ 
+ unsigned long *vcpu_reg(struct kvm_vcpu *vcpu, u8 reg_num);
+ 
+--- a/arch/arm64/include/asm/ptrace.h
++++ b/arch/arm64/include/asm/ptrace.h
+@@ -50,6 +50,7 @@
+ #define PSR_AA32_I_BIT		0x00000080
+ #define PSR_AA32_A_BIT		0x00000100
+ #define PSR_AA32_E_BIT		0x00000200
++#define PSR_AA32_PAN_BIT	0x00400000
+ #define PSR_AA32_SSBS_BIT	0x00800000
+ #define PSR_AA32_DIT_BIT	0x01000000
+ #define PSR_AA32_Q_BIT		0x08000000
+--- a/virt/kvm/arm/aarch32.c
++++ b/virt/kvm/arm/aarch32.c
+@@ -21,6 +21,7 @@
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
++#include <linux/bits.h>
+ #include <linux/kvm_host.h>
+ #include <asm/kvm_emulate.h>
+ #include <asm/kvm_hyp.h>
+@@ -39,22 +40,112 @@ static const u8 return_offsets[8][2] = {
+ 	[7] = { 4, 4 },		/* FIQ, unused */
+ };
+ 
++/*
++ * When an exception is taken, most CPSR fields are left unchanged in the
++ * handler. However, some are explicitly overridden (e.g. M[4:0]).
++ *
++ * The SPSR/SPSR_ELx layouts differ, and the below is intended to work with
++ * either format. Note: SPSR.J bit doesn't exist in SPSR_ELx, but this bit was
++ * obsoleted by the ARMv7 virtualization extensions and is RES0.
++ *
++ * For the SPSR layout seen from AArch32, see:
++ * - ARM DDI 0406C.d, page B1-1148
++ * - ARM DDI 0487E.a, page G8-6264
++ *
++ * For the SPSR_ELx layout for AArch32 seen from AArch64, see:
++ * - ARM DDI 0487E.a, page C5-426
++ *
++ * Here we manipulate the fields in order of the AArch32 SPSR_ELx layout, from
++ * MSB to LSB.
++ */
++static unsigned long get_except32_cpsr(struct kvm_vcpu *vcpu, u32 mode)
++{
++	u32 sctlr = vcpu_cp15(vcpu, c1_SCTLR);
++	unsigned long old, new;
++
++	old = *vcpu_cpsr(vcpu);
++	new = 0;
++
++	new |= (old & PSR_AA32_N_BIT);
++	new |= (old & PSR_AA32_Z_BIT);
++	new |= (old & PSR_AA32_C_BIT);
++	new |= (old & PSR_AA32_V_BIT);
++	new |= (old & PSR_AA32_Q_BIT);
++
++	// CPSR.IT[7:0] are set to zero upon any exception
++	// See ARM DDI 0487E.a, section G1.12.3
++	// See ARM DDI 0406C.d, section B1.8.3
++
++	new |= (old & PSR_AA32_DIT_BIT);
++
++	// CPSR.SSBS is set to SCTLR.DSSBS upon any exception
++	// See ARM DDI 0487E.a, page G8-6244
++	if (sctlr & BIT(31))
++		new |= PSR_AA32_SSBS_BIT;
++
++	// CPSR.PAN is unchanged unless SCTLR.SPAN == 0b0
++	// SCTLR.SPAN is RES1 when ARMv8.1-PAN is not implemented
++	// See ARM DDI 0487E.a, page G8-6246
++	new |= (old & PSR_AA32_PAN_BIT);
++	if (!(sctlr & BIT(23)))
++		new |= PSR_AA32_PAN_BIT;
++
++	// SS does not exist in AArch32, so ignore
++
++	// CPSR.IL is set to zero upon any exception
++	// See ARM DDI 0487E.a, page G1-5527
++
++	new |= (old & PSR_AA32_GE_MASK);
++
++	// CPSR.IT[7:0] are set to zero upon any exception
++	// See prior comment above
++
++	// CPSR.E is set to SCTLR.EE upon any exception
++	// See ARM DDI 0487E.a, page G8-6245
++	// See ARM DDI 0406C.d, page B4-1701
++	if (sctlr & BIT(25))
++		new |= PSR_AA32_E_BIT;
++
++	// CPSR.A is unchanged upon an exception to Undefined, Supervisor
++	// CPSR.A is set upon an exception to other modes
++	// See ARM DDI 0487E.a, pages G1-5515 to G1-5516
++	// See ARM DDI 0406C.d, page B1-1182
++	new |= (old & PSR_AA32_A_BIT);
++	if (mode != PSR_AA32_MODE_UND && mode != PSR_AA32_MODE_SVC)
++		new |= PSR_AA32_A_BIT;
++
++	// CPSR.I is set upon any exception
++	// See ARM DDI 0487E.a, pages G1-5515 to G1-5516
++	// See ARM DDI 0406C.d, page B1-1182
++	new |= PSR_AA32_I_BIT;
++
++	// CPSR.F is set upon an exception to FIQ
++	// CPSR.F is unchanged upon an exception to other modes
++	// See ARM DDI 0487E.a, pages G1-5515 to G1-5516
++	// See ARM DDI 0406C.d, page B1-1182
++	new |= (old & PSR_AA32_F_BIT);
++	if (mode == PSR_AA32_MODE_FIQ)
++		new |= PSR_AA32_F_BIT;
++
++	// CPSR.T is set to SCTLR.TE upon any exception
++	// See ARM DDI 0487E.a, page G8-5514
++	// See ARM DDI 0406C.d, page B1-1181
++	if (sctlr & BIT(30))
++		new |= PSR_AA32_T_BIT;
++
++	new |= mode;
++
++	return new;
++}
++
+ static void prepare_fault32(struct kvm_vcpu *vcpu, u32 mode, u32 vect_offset)
  {
-+	(*pos)++;
- 	return NULL;
- }
+-	unsigned long cpsr;
+ 	unsigned long new_spsr_value = *vcpu_cpsr(vcpu);
+ 	bool is_thumb = (new_spsr_value & PSR_AA32_T_BIT);
+ 	u32 return_offset = return_offsets[vect_offset >> 2][is_thumb];
+ 	u32 sctlr = vcpu_cp15(vcpu, c1_SCTLR);
+ 
+-	cpsr = mode | PSR_AA32_I_BIT;
+-
+-	if (sctlr & (1 << 30))
+-		cpsr |= PSR_AA32_T_BIT;
+-	if (sctlr & (1 << 25))
+-		cpsr |= PSR_AA32_E_BIT;
+-
+-	*vcpu_cpsr(vcpu) = cpsr;
++	*vcpu_cpsr(vcpu) = get_except32_cpsr(vcpu, mode);
+ 
+ 	/* Note: These now point to the banked copies */
+ 	vcpu_write_spsr(vcpu, new_spsr_value);
+@@ -95,7 +186,7 @@ static void inject_abt32(struct kvm_vcpu
+ 		fsr = &vcpu_cp15(vcpu, c5_DFSR);
+ 	}
+ 
+-	prepare_fault32(vcpu, PSR_AA32_MODE_ABT | PSR_AA32_A_BIT, vect_offset);
++	prepare_fault32(vcpu, PSR_AA32_MODE_ABT, vect_offset);
+ 
+ 	*far = addr;
  
 
 
