@@ -2,233 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 060DA158436
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 21:24:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C293E15844C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 21:34:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727540AbgBJUXz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 15:23:55 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:34162 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727437AbgBJUXz (ORCPT
+        id S1727505AbgBJUeC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 15:34:02 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18388 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727431AbgBJUeB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 15:23:55 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01AKNIko012856;
-        Mon, 10 Feb 2020 14:23:18 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581366198;
-        bh=M1Td7beGKvgKckRxRbYjVwuAHcQVfdb9OrWelO0p1/M=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=tcXcOcurD0Qrn1wq7WRo9pz0XiELk9+01wOeqvdq9G59S2RStj7Hm6y+K0X++4R7x
-         MwcahzVNop3u00CdBtmSiSDQ6/wDBQSp2yR0n6QCc++HOtIEELIagEEzbd1aNezo7M
-         ZWa8pS3fDjpP7Zq0hzQAWf9hLaLXvh/cFfeWr/b4=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01AKNI2f127064
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Feb 2020 14:23:18 -0600
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 10
- Feb 2020 14:23:18 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 10 Feb 2020 14:23:18 -0600
-Received: from [158.218.117.45] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01AKNGFq056049;
-        Mon, 10 Feb 2020 14:23:16 -0600
-Subject: Re: [v1,net-next, 1/2] ethtool: add setting frame preemption of
- traffic classes
-To:     Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-        Vladimir Oltean <olteanv@gmail.com>
-CC:     Po Liu <po.liu@nxp.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "hauke.mehrtens@intel.com" <hauke.mehrtens@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "allison@lohutok.net" <allison@lohutok.net>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "saeedm@mellanox.com" <saeedm@mellanox.com>,
-        "andrew@lunn.ch" <andrew@lunn.ch>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "alexandru.ardelean@analog.com" <alexandru.ardelean@analog.com>,
-        "jiri@mellanox.com" <jiri@mellanox.com>,
-        "ayal@mellanox.com" <ayal@mellanox.com>,
-        "pablo@netfilter.org" <pablo@netfilter.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "simon.horman@netronome.com" <simon.horman@netronome.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Alexandru Marginean <alexandru.marginean@nxp.com>,
-        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
-        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>
-References: <20191127094517.6255-1-Po.Liu@nxp.com>
- <87v9p93a2s.fsf@linux.intel.com>
- <9b13a47e-8ca3-66b0-063c-798a5fa71149@ti.com>
- <CA+h21hqk2pCfrQg5kC6HzmL=eEqJXjuRsu+cVkGsEi8OXGpKJA@mail.gmail.com>
- <87d0bajc3l.fsf@linux.intel.com>
-From:   Murali Karicheri <m-karicheri2@ti.com>
-Message-ID: <70deb628-d7bc-d2a3-486d-d3e53854c06e@ti.com>
-Date:   Mon, 10 Feb 2020 15:30:37 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <87d0bajc3l.fsf@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+        Mon, 10 Feb 2020 15:34:01 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01AKV9dl135835
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 15:34:00 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2y1u56ampt-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 15:34:00 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 10 Feb 2020 20:33:57 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 10 Feb 2020 20:33:53 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01AKXpFe52560028
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Feb 2020 20:33:51 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BFA2D4C04E;
+        Mon, 10 Feb 2020 20:33:51 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 21EB04C040;
+        Mon, 10 Feb 2020 20:33:50 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.140.79])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 10 Feb 2020 20:33:50 +0000 (GMT)
+Subject: Re: [RFC PATCH 0/2] ima: uncompressed module appraisal support
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     Nayna <nayna@linux.vnet.ibm.com>, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com, dhowells@redhat.com,
+        geert@linux-m68k.org, gregkh@linuxfoundation.org,
+        nayna@linux.ibm.com, tglx@linutronix.de, bauerman@linux.ibm.com,
+        mpe@ellerman.id.au, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Mon, 10 Feb 2020 15:33:49 -0500
+In-Reply-To: <90E53A33-530B-40FB-9982-2818FFD78D73@oracle.com>
+References: <20200206164226.24875-1-eric.snowberg@oracle.com>
+         <5c246616-9a3a-3ed2-c1f9-f634cef511c9@linux.vnet.ibm.com>
+         <09D68C13-75E2-4BD6-B4E6-F765B175C7FD@oracle.com>
+         <1581087096.5585.597.camel@linux.ibm.com>
+         <330BDFAC-E778-4E9D-A2D2-DD81B745F6AB@oracle.com>
+         <1581097201.5585.613.camel@linux.ibm.com>
+         <764C5FC8-DF0C-4B7A-8B5B-FD8B83F31568@oracle.com>
+         <1581100125.5585.623.camel@linux.ibm.com>
+         <992E95D5-D4B9-4913-A36F-BB47631DFE0A@oracle.com>
+         <1581101672.5585.628.camel@linux.ibm.com>
+         <C25E5885-F00B-48C0-AEF1-FA3014B2FDA6@oracle.com>
+         <1581205431.5585.645.camel@linux.ibm.com>
+         <0F13CB66-6962-44AC-A20D-CCBD82B43625@oracle.com>
+         <1581354556.5585.827.camel@linux.ibm.com>
+         <90E53A33-530B-40FB-9982-2818FFD78D73@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-TM-AS-GCONF: 00
+x-cbid: 20021020-0012-0000-0000-000003859968
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20021020-0013-0000-0000-000021C21253
+Message-Id: <1581366829.5585.898.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-10_07:2020-02-10,2020-02-10 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ mlxlogscore=999 impostorscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002100148
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, 2020-02-10 at 12:24 -0700, Eric Snowberg wrote:
+> > On Feb 10, 2020, at 10:09 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
 
+> >> 
+> >> Ok, understood, “modsig” refers to strictly kernel module appended signatures
+> >> without regard to the keyring that verifies it.  Since there are inconsistencies
+> >> here, would you consider something like my first patch?  It will verify an 
+> >> uncompressed kernel module containing an appended signature  when the public key
+> >> is contained within the kernel keyring instead of the ima keyring.  Why force a 
+> >> person to add the same keys into the ima keyring for validation?  Especially when
+> >> the kernel keyring is now used to verify appended signatures in the compressed
+> >> modules.
+> > 
+> > Different use case scenarios have different requirements.  Suppose for
+> > example that the group creating the kernel image is not the same as
+> > using it.  The group using the kernel image could sign all files,
+> > including kernel modules (imasig), with their own private key. Only
+> > files that they signed would be permitted.  Your proposal would break
+> > the current expectations, allowing kernel modules signed by someone
+> > else to be loaded.
+> > 
+> 
+> All the end user needs to do is compress any module created by the group that built
+> the original kernel image to work around the scenario above.  Then the appended 
+> signature in the compressed module will be verified by the kernel keyring. Does 
+> this mean there is a security problem that should be fixed, if this is a concern?
 
-On 01/23/2020 12:50 PM, Vinicius Costa Gomes wrote:
-> Hi,
-> 
-> Vladimir Oltean <olteanv@gmail.com> writes:
-> 
->> Hi Murali,
->>
->> On Wed, 22 Jan 2020 at 20:04, Murali Karicheri <m-karicheri2@ti.com> wrote:
->>>
->>> I have question about the below parameters in The Gate Parameter Table
->>> that are not currently supported by tc command. Looks like they need to
->>> be shown to user for management.
->>>
->>>       - ConfigChange - Looks like this needs to be controlled by
->>>         user. After sending admin command, user send this trigger to start
->>>         copying admin schedule to operation schedule. Is this getting
->>>         added to tc command?
->>
->> "The ConfigChange parameter signals the start of a
->> configuration change for the gate
->> when it is set to TRUE. This should only be done
->> when the various administrative parameters
->> are all set to appropriate values."
->>
->> As far as my understanding goes, all tc-taprio commands currently
->> behave as though this boolean is implicitly set to TRUE after the
->> structures have been set up. I'm not sure there is any value in doing
->> otherwise.
->>
->>>       - ConfigChangeTime - The time at which the administrative variables
->>>         that determine the cycle are to be copied across to the
->>>         corresponding operational variables, expressed as a PTP timescale
->>
->> This is the base-time of the admin schedule, no?
->>
->> "The PTPtime at which the next config change is scheduled to occur.
->> The value is a representation of a PTPtime value,
->> consisting of a 48-bit integer
->> number of seconds and a 32-bit integer number of nanoseconds."
->>
->>>       - TickGranularity - the management parameters specified in Gate
->>>         Parameter Table allow a management station to discover the
->>>         characteristics of an implementation’s cycle timer clock
->>>         (TickGranularity) and to set the parameters for the gating cycle
->>>         accordingly.
->>
->> Not sure who is going to use this and for what purpose, but ok.
->>
->>>       - ConfigPending - A Boolean variable, set TRUE to indicate that
->>>         there is a new cycle configuration awaiting installation.
->>
->> I had tried to export something like this (driver calls back into
->> sch_taprio.c when hw has applied the config, this would result in
->> ConfigPending = FALSE), but ultimately didn't finish the idea, and it
->> caused some problems too, due to incorrect RCU usage.
->>
-> 
-> If this should be exported, this should be done from taprio, perhaps
-> adding a new field to what is exported via the dump() callback, which
-> should be quite easy.
->
-We are still working to send a patch for taprio offload on our hardware
-and it may take a while to get to this. So if someone can help to add
-the required kernel/driver interface for this, that will be great!
+Again, the issue isn't compressed/uncompressed kernel modules, but the
+syscall used to load the kernel module.  IMA can prevent using the the
+init_module syscall.  Refer to the ima_load_data() LOADING_MODULE
+case.
 
->>>       - ConfigChangeError - Error in configuration (AdminBaseTime <
->>>         CurrentTime)
->>
->> This can be exported similarly.
-> 
-> In my view, having this as a "runtime" error is not useful, as we can
-> verify this at configuration time.
+Mimi
 
-Looks like this is not an error per 802.1Q standard if I understood it
-correctly.
-
-This is what I see.
-=======================================================================
- From 802.1Q 2018, 8.6.9.1.1 SetCycleStartTime()
-
-If AdminBaseTime is set to the same time in the past in all bridges and
-end stations, OperBaseTime is always in the past, and all cycles start
-synchronized. Using AdminBaseTime in the past is appropriate when you
-can start schedules prior to starting the application that uses the
-schedules. Use of AdminBaseTime in the future is intended to change a
-currently running schedule in all bridges and end stations to a new
-schedule at a future time. Using AdminBaseTime in the future is
-appropriate when schedules must be changed without stopping the
-application
-========================================================================
-
-> 
->>
->>>       - SupportedListMax - Maximum supported Admin/Open shed list.
->>>
->>> Is there a plan to export these from driver through tc show or such
->>> command? The reason being, there would be applications developed to
->>> manage configuration/schedule of TSN nodes that would requires these
->>> information from the node. So would need a support either in tc or
->>> some other means to retrieve them from hardware or driver. That is my
->>> understanding...
->>>
-> 
-> Hm, now I understamd what you meant here...
-> 
->>
->> Not sure what answer you expect to receive for "is there any plan".
->> You can go ahead and propose something, as long as it is reasonably
->> useful to have.
-> 
-> ... if this is indeed useful, perhaps one way to do is to add a subcommand
-> to TC_SETUP_QDISC_TAPRIO, so we can retrieve the stats/information we want
-> from the driver. Similar to what cls_flower does.
-> 
-
-What I understand is that there will be some work done to allow auto
-configuration of TSN nodes from user space and that would need access to
-all or some of the above parameters along with tc command to configure
-the same. May be a open source project for this or some custom
-application? Any such projects existing??
-
-Regards,
-
-Murali
->>
->>> Regards,
->>>
->>> Murali
->>>
->>> --
->>> Murali Karicheri
->>> Texas Instruments
->>
->> Thanks,
->> -Vladimir
-> 
-> Cheers,
-> --
-> Vinicius
-> 
-
--- 
-Murali Karicheri
-Texas Instruments
