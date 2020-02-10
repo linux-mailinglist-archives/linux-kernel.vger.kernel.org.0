@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38C4D157805
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:04:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53C541578D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:10:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730764AbgBJNE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:04:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39860 "EHLO mail.kernel.org"
+        id S1729334AbgBJMjJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:39:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729665AbgBJMkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:14 -0500
+        id S1728711AbgBJMhU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:20 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1676A20661;
-        Mon, 10 Feb 2020 12:40:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F405520838;
+        Mon, 10 Feb 2020 12:37:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338414;
-        bh=w5A4eA5jMsXvzpUtja3e+W6Wm1p/u6dChInaxePgKbw=;
+        s=default; t=1581338240;
+        bh=HRQkpN1Mvq7ucN4kQwhBOlr26goTcPiQ9hquQc7J3I8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B/PuzdaNSv51udF3b54qaGldo74WY5snI6ZdMdvufbySBrRHZKYySHTUG6lJ6I2V+
-         asYyycBRSTowqQxekEdpTDiw4a/aRImLHy5ffauXSX95Kf26B7sk/iUtQfN+H3H1J9
-         /u379oWKucptcNJX667Te6I7IyylP2dbaw8SUMJc=
+        b=Pc5EY4Bt+tKe+BlApPFAUCyyo/LW1ROzNfDhkCaRD4TSX2PutiYjyFNVRzHNGGZKh
+         HU3NT1LFahubSQwOvUt25u44hv+mCHvkLGOgtGX3R5lvGprlcBbF1m9Nb6GU20pChM
+         zd8lQtzEIjVZC1oPgsb7E/v3CmVh6y1cW+JNUGPY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Renninger <trenn@suse.de>,
-        Shuah Khan <skhan@linuxfoundation.org>
-Subject: [PATCH 5.5 127/367] cpupower: Revert library ABI changes from commit ae2917093fb60bdc1ed3e
-Date:   Mon, 10 Feb 2020 04:30:40 -0800
-Message-Id: <20200210122436.582325663@linuxfoundation.org>
+        stable@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 5.4 085/309] mmc: spi: Toggle SPI polarity, do not hardcode it
+Date:   Mon, 10 Feb 2020 04:30:41 -0800
+Message-Id: <20200210122414.039001849@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,242 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Renninger <trenn@suse.de>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-commit 41ddb7e1f79693d904502ae9bea609837973eff8 upstream.
+commit af3ed119329cf9690598c5a562d95dfd128e91d6 upstream.
 
-Commit ae2917093fb6 ("tools/power/cpupower: Display boost frequency
-separately") modified the library function:
+The code in mmc_spi_initsequence() tries to send a burst with
+high chipselect and for this reason hardcodes the device into
+SPI_CS_HIGH.
 
-struct cpufreq_available_frequencies
-*cpufreq_get_available_frequencies(unsigned int cpu)
+This is not good because the SPI_CS_HIGH flag indicates
+logical "asserted" CS not always the physical level. In
+some cases the signal is inverted in the GPIO library and
+in that case SPI_CS_HIGH is already set, and enforcing
+SPI_CS_HIGH again will actually drive it low.
 
-to
-struct cpufreq_frequencies
-*cpufreq_get_frequencies(const char *type, unsigned int cpu)
+Instead of hard-coding this, toggle the polarity so if the
+default is LOW it goes high to assert chipselect but if it
+is already high then toggle it low instead.
 
-This patch recovers the old API and implements the new functionality
-in a newly introduce method:
-struct cpufreq_boost_frequencies
-*cpufreq_get_available_frequencies(unsigned int cpu)
-
-This one should get merged into stable kernels back to 5.0 when
-the above had been introduced.
-
-Fixes: ae2917093fb6 ("tools/power/cpupower: Display boost frequency separately")
-
+Cc: Phil Elwell <phil@raspberrypi.org>
+Reported-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Link: https://lore.kernel.org/r/20191204152749.12652-1-linus.walleij@linaro.org
 Cc: stable@vger.kernel.org
-Signed-off-by: Thomas Renninger <trenn@suse.de>
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/power/cpupower/lib/cpufreq.c        |   78 ++++++++++++++++++++++++++----
- tools/power/cpupower/lib/cpufreq.h        |   20 +++++--
- tools/power/cpupower/utils/cpufreq-info.c |   12 ++--
- 3 files changed, 87 insertions(+), 23 deletions(-)
+ drivers/mmc/host/mmc_spi.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/tools/power/cpupower/lib/cpufreq.c
-+++ b/tools/power/cpupower/lib/cpufreq.c
-@@ -332,21 +332,74 @@ void cpufreq_put_available_governors(str
- }
+--- a/drivers/mmc/host/mmc_spi.c
++++ b/drivers/mmc/host/mmc_spi.c
+@@ -1134,17 +1134,22 @@ static void mmc_spi_initsequence(struct
+ 	 * SPI protocol.  Another is that when chipselect is released while
+ 	 * the card returns BUSY status, the clock must issue several cycles
+ 	 * with chipselect high before the card will stop driving its output.
++	 *
++	 * SPI_CS_HIGH means "asserted" here. In some cases like when using
++	 * GPIOs for chip select, SPI_CS_HIGH is set but this will be logically
++	 * inverted by gpiolib, so if we want to ascertain to drive it high
++	 * we should toggle the default with an XOR as we do here.
+ 	 */
+-	host->spi->mode |= SPI_CS_HIGH;
++	host->spi->mode ^= SPI_CS_HIGH;
+ 	if (spi_setup(host->spi) != 0) {
+ 		/* Just warn; most cards work without it. */
+ 		dev_warn(&host->spi->dev,
+ 				"can't change chip-select polarity\n");
+-		host->spi->mode &= ~SPI_CS_HIGH;
++		host->spi->mode ^= SPI_CS_HIGH;
+ 	} else {
+ 		mmc_spi_readbytes(host, 18);
  
- 
--struct cpufreq_frequencies
--*cpufreq_get_frequencies(const char *type, unsigned int cpu)
-+struct cpufreq_available_frequencies
-+*cpufreq_get_available_frequencies(unsigned int cpu)
- {
--	struct cpufreq_frequencies *first = NULL;
--	struct cpufreq_frequencies *current = NULL;
-+	struct cpufreq_available_frequencies *first = NULL;
-+	struct cpufreq_available_frequencies *current = NULL;
- 	char one_value[SYSFS_PATH_MAX];
- 	char linebuf[MAX_LINE_LEN];
--	char fname[MAX_LINE_LEN];
- 	unsigned int pos, i;
- 	unsigned int len;
- 
--	snprintf(fname, MAX_LINE_LEN, "scaling_%s_frequencies", type);
-+	len = sysfs_cpufreq_read_file(cpu, "scaling_available_frequencies",
-+				      linebuf, sizeof(linebuf));
-+	if (len == 0)
-+		return NULL;
-+
-+	pos = 0;
-+	for (i = 0; i < len; i++) {
-+		if (linebuf[i] == ' ' || linebuf[i] == '\n') {
-+			if (i - pos < 2)
-+				continue;
-+			if (i - pos >= SYSFS_PATH_MAX)
-+				goto error_out;
-+			if (current) {
-+				current->next = malloc(sizeof(*current));
-+				if (!current->next)
-+					goto error_out;
-+				current = current->next;
-+			} else {
-+				first = malloc(sizeof(*first));
-+				if (!first)
-+					goto error_out;
-+				current = first;
-+			}
-+			current->first = first;
-+			current->next = NULL;
-+
-+			memcpy(one_value, linebuf + pos, i - pos);
-+			one_value[i - pos] = '\0';
-+			if (sscanf(one_value, "%lu", &current->frequency) != 1)
-+				goto error_out;
-+
-+			pos = i + 1;
-+		}
-+	}
-+
-+	return first;
-+
-+ error_out:
-+	while (first) {
-+		current = first->next;
-+		free(first);
-+		first = current;
-+	}
-+	return NULL;
-+}
- 
--	len = sysfs_cpufreq_read_file(cpu, fname,
--				linebuf, sizeof(linebuf));
-+struct cpufreq_available_frequencies
-+*cpufreq_get_boost_frequencies(unsigned int cpu)
-+{
-+	struct cpufreq_available_frequencies *first = NULL;
-+	struct cpufreq_available_frequencies *current = NULL;
-+	char one_value[SYSFS_PATH_MAX];
-+	char linebuf[MAX_LINE_LEN];
-+	unsigned int pos, i;
-+	unsigned int len;
-+
-+	len = sysfs_cpufreq_read_file(cpu, "scaling_boost_frequencies",
-+				      linebuf, sizeof(linebuf));
- 	if (len == 0)
- 		return NULL;
- 
-@@ -391,9 +444,9 @@ struct cpufreq_frequencies
- 	return NULL;
- }
- 
--void cpufreq_put_frequencies(struct cpufreq_frequencies *any)
-+void cpufreq_put_available_frequencies(struct cpufreq_available_frequencies *any)
- {
--	struct cpufreq_frequencies *tmp, *next;
-+	struct cpufreq_available_frequencies *tmp, *next;
- 
- 	if (!any)
- 		return;
-@@ -406,6 +459,11 @@ void cpufreq_put_frequencies(struct cpuf
- 	}
- }
- 
-+void cpufreq_put_boost_frequencies(struct cpufreq_available_frequencies *any)
-+{
-+	cpufreq_put_available_frequencies(any);
-+}
-+
- static struct cpufreq_affected_cpus *sysfs_get_cpu_list(unsigned int cpu,
- 							const char *file)
- {
---- a/tools/power/cpupower/lib/cpufreq.h
-+++ b/tools/power/cpupower/lib/cpufreq.h
-@@ -20,10 +20,10 @@ struct cpufreq_available_governors {
- 	struct cpufreq_available_governors *first;
- };
- 
--struct cpufreq_frequencies {
-+struct cpufreq_available_frequencies {
- 	unsigned long frequency;
--	struct cpufreq_frequencies *next;
--	struct cpufreq_frequencies *first;
-+	struct cpufreq_available_frequencies *next;
-+	struct cpufreq_available_frequencies *first;
- };
- 
- 
-@@ -124,11 +124,17 @@ void cpufreq_put_available_governors(
-  * cpufreq_put_frequencies after use.
-  */
- 
--struct cpufreq_frequencies
--*cpufreq_get_frequencies(const char *type, unsigned int cpu);
-+struct cpufreq_available_frequencies
-+*cpufreq_get_available_frequencies(unsigned int cpu);
- 
--void cpufreq_put_frequencies(
--		struct cpufreq_frequencies *first);
-+void cpufreq_put_available_frequencies(
-+		struct cpufreq_available_frequencies *first);
-+
-+struct cpufreq_available_frequencies
-+*cpufreq_get_boost_frequencies(unsigned int cpu);
-+
-+void cpufreq_put_boost_frequencies(
-+		struct cpufreq_available_frequencies *first);
- 
- 
- /* determine affected CPUs
---- a/tools/power/cpupower/utils/cpufreq-info.c
-+++ b/tools/power/cpupower/utils/cpufreq-info.c
-@@ -244,14 +244,14 @@ static int get_boost_mode_x86(unsigned i
- 
- static int get_boost_mode(unsigned int cpu)
- {
--	struct cpufreq_frequencies *freqs;
-+	struct cpufreq_available_frequencies *freqs;
- 
- 	if (cpupower_cpu_info.vendor == X86_VENDOR_AMD ||
- 	    cpupower_cpu_info.vendor == X86_VENDOR_HYGON ||
- 	    cpupower_cpu_info.vendor == X86_VENDOR_INTEL)
- 		return get_boost_mode_x86(cpu);
- 
--	freqs = cpufreq_get_frequencies("boost", cpu);
-+	freqs = cpufreq_get_boost_frequencies(cpu);
- 	if (freqs) {
- 		printf(_("  boost frequency steps: "));
- 		while (freqs->next) {
-@@ -261,7 +261,7 @@ static int get_boost_mode(unsigned int c
- 		}
- 		print_speed(freqs->frequency);
- 		printf("\n");
--		cpufreq_put_frequencies(freqs);
-+		cpufreq_put_available_frequencies(freqs);
- 	}
- 
- 	return 0;
-@@ -475,7 +475,7 @@ static int get_latency(unsigned int cpu,
- 
- static void debug_output_one(unsigned int cpu)
- {
--	struct cpufreq_frequencies *freqs;
-+	struct cpufreq_available_frequencies *freqs;
- 
- 	get_driver(cpu);
- 	get_related_cpus(cpu);
-@@ -483,7 +483,7 @@ static void debug_output_one(unsigned in
- 	get_latency(cpu, 1);
- 	get_hardware_limits(cpu, 1);
- 
--	freqs = cpufreq_get_frequencies("available", cpu);
-+	freqs = cpufreq_get_available_frequencies(cpu);
- 	if (freqs) {
- 		printf(_("  available frequency steps:  "));
- 		while (freqs->next) {
-@@ -493,7 +493,7 @@ static void debug_output_one(unsigned in
- 		}
- 		print_speed(freqs->frequency);
- 		printf("\n");
--		cpufreq_put_frequencies(freqs);
-+		cpufreq_put_available_frequencies(freqs);
- 	}
- 
- 	get_available_governors(cpu);
+-		host->spi->mode &= ~SPI_CS_HIGH;
++		host->spi->mode ^= SPI_CS_HIGH;
+ 		if (spi_setup(host->spi) != 0) {
+ 			/* Wot, we can't get the same setup we had before? */
+ 			dev_err(&host->spi->dev,
 
 
