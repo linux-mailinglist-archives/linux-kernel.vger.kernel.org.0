@@ -2,138 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBAE91582C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 19:38:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ADF715827E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 19:36:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbgBJSiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 13:38:08 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36639 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728102AbgBJSiG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 13:38:06 -0500
-Received: by mail-pf1-f194.google.com with SMTP id 185so4132606pfv.3;
-        Mon, 10 Feb 2020 10:38:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=OlRrcV4cV+SlhUD75IgA2vuU1RtHvP/9GZxrkhvxchc=;
-        b=eyeATcJof+038p+BnoFo7o5+/Wg8N9L2sNXgOUL/t4JnoE5/w5swPUhhBxScTk/DHr
-         WMNu7fXE7GqmMHBeupggQm1Z3ykj0g7eQw8WnUuK4U0pQiqSfHdhVwjCgPeuAac4sFlC
-         9+hu32uaiFkSy7/WvvWuT7N49ThMt1lyd2U4N8lMQzN52NPseachthwFpS3tO9iocyLM
-         EWiPKQzM6Ci56XgrmguS33VSlk5oKSIz0nJIgS3Ekmu8DEE9xopX+M3MwETvxQcPfkhG
-         Ej5KC//6tToF6+drHLQNS07RK5XGeLd8fu37NPX3kAnreSm7FJ/mkwz6ydnCAgiKlB7V
-         35YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=OlRrcV4cV+SlhUD75IgA2vuU1RtHvP/9GZxrkhvxchc=;
-        b=obe1WF4ObMZB+IVV471YaFe/dyClxlyJ8tuAw/CGjSWLWs4kwpae6cH6iljIWh0h/j
-         hCrWuZFObOJTJuqNydSjqm8dgYmpl4unSuHGB8X1g5P92LB4EtgR71suhxsByzMWvljE
-         TPibNKumqq+Iz2f/OobTmOuNkl5ZZabH0jyRdX1TOvIbz1ruEJzgeOlX79l9lVGoiCgu
-         2J5a5hgFY6MeE9JTcTpXAUpPaw8O6gZtw9NxxuHQeuUwn4q+Za+3ZM3OCjLt43PlcylP
-         uU6riNaKLj5HoVT9SidfP9R7WZCjINNta6jbrAoHVNqZnAOpJR7rtuxh0dvinvlUYBvc
-         cdZQ==
-X-Gm-Message-State: APjAAAV/uG5du1ofmstGYgEJ3q2urfTnr7sRJkmpuO/IBPkrBOZlAmxe
-        P50Y2T8eYNp8dUtxEUZHn0Y=
-X-Google-Smtp-Source: APXvYqwKlPqRa5EC0LwWDP1BusScl/tPVHSEFZRpU+UtUDBjpDgl/nxAobd28LS4kzzlkCdnyEMBAw==
-X-Received: by 2002:a63:aa07:: with SMTP id e7mr3020882pgf.90.1581359885308;
-        Mon, 10 Feb 2020 10:38:05 -0800 (PST)
-Received: from localhost.localdomain ([2405:204:8308:74f3:144f:bb39:afc3:51b0])
-        by smtp.gmail.com with ESMTPSA id gc1sm124922pjb.20.2020.02.10.10.38.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2020 10:38:04 -0800 (PST)
-From:   Pragat Pandya <pragat.pandya@gmail.com>
-To:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        skhan@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Pragat Pandya <pragat.pandya@gmail.com>
-Subject: [PATCH v2 19/19] staging: exfat: Rename variable 'AccessTimestamp' to 'access_timestamp'
-Date:   Tue, 11 Feb 2020 00:05:58 +0530
-Message-Id: <20200210183558.11836-20-pragat.pandya@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200210183558.11836-1-pragat.pandya@gmail.com>
-References: <20200207094612.GA562325@kroah.com>
- <20200210183558.11836-1-pragat.pandya@gmail.com>
+        id S1727652AbgBJSgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 13:36:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52606 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727477AbgBJSgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 13:36:24 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB4DB20675;
+        Mon, 10 Feb 2020 18:36:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581359783;
+        bh=YRMERBGZ8987hvH9lRSoazOKWCQx+VOKpk/WDol0H0A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JxsQ+K2zIBVfotr5CTTHqBIGvls/92V7dMI9Q4pd9S/qqXtQzQ/DTiTFJUI3npQ3R
+         PJ2Ck3i7IkeQfROZ3y8tPQE45fTASFlLfqptL7woZj8iC/eKqU2rQ55B20v1zHg1+n
+         PfpB1g2nGA+Rj8i0Ze48HAcJSNKVtPfxYpW5QJ7w=
+Date:   Mon, 10 Feb 2020 10:36:21 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Ken Goldman <kgold@linux.ibm.com>
+Cc:     "Van Leeuwen, Pascal" <pvanleeuwen@rambus.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Ken Goldman <kgold@linux.ibm.com>,
+        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] crypto: sm3 - add a new alias name sm3-256
+Message-ID: <20200210183620.GA137710@gmail.com>
+References: <20200207092219.115056-1-tianjia.zhang@linux.alibaba.com>
+ <20200207092219.115056-2-tianjia.zhang@linux.alibaba.com>
+ <20200210031717.GA5198@sol.localdomain>
+ <1a623251-e83a-3b70-9fbd-8e929a23f7d8@linux.ibm.com>
+ <7a496bb15f264eab920bf081338d67af@MN2PR20MB2973.namprd20.prod.outlook.com>
+ <CY4PR0401MB36523805F71721000F188F2FC3190@CY4PR0401MB3652.namprd04.prod.outlook.com>
+ <9683f764-c8c7-e123-b5f6-4f155bd1b10b@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9683f764-c8c7-e123-b5f6-4f155bd1b10b@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix checkpatch warning: Avoid CamelCase
-Change all occurrences of identifier "AccessTimestamp" to
-"access_timestamp"
+[Please fix your email client; you dropped all non-list recipients from Cc,
+and I had to manually add them back...]
 
-Signed-off-by: Pragat Pandya <pragat.pandya@gmail.com>
----
- drivers/staging/exfat/exfat.h       |  2 +-
- drivers/staging/exfat/exfat_super.c | 10 +++++-----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+On Mon, Feb 10, 2020 at 01:02:42PM -0500, Ken Goldman wrote:
+> On 2/10/2020 12:01 PM, Van Leeuwen, Pascal wrote:
+> > Well, the current specification surely doesn't define anything else and is
+> > already over a decade old. So what would be the odds that they add a
+> > different blocksize variant_now_  AND still call that SM3-something?
+> 
+> I just got a note from a cryptographer who said there were discussions last
+> year about a future SM3 with 512 bit output.
+> 
+> Given that, why not plan ahead and use sm3-256?  Is there any downside?
+> Is the cost any more than 4 bytes in some source code?
 
-diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-index 2c911f1ea949..46cfac322821 100644
---- a/drivers/staging/exfat/exfat.h
-+++ b/drivers/staging/exfat/exfat.h
-@@ -280,7 +280,7 @@ struct dir_entry_t {
- 	u32 num_subdirs;
- 	struct date_time_t create_timestamp;
- 	struct date_time_t modify_timestamp;
--	struct date_time_t AccessTimestamp;
-+	struct date_time_t access_timestamp;
- };
- 
- struct timestamp_t {
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index 7388aa8fb344..9f47102e3f38 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -1462,7 +1462,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
- 			       sizeof(struct date_time_t));
- 			memset((char *)&info->modify_timestamp, 0,
- 			       sizeof(struct date_time_t));
--			memset((char *)&info->AccessTimestamp, 0,
-+			memset((char *)&info->access_timestamp, 0,
- 			       sizeof(struct date_time_t));
- 			strcpy(info->short_name, ".");
- 			strcpy(info->name, ".");
-@@ -1522,7 +1522,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
- 	info->modify_timestamp.second = tm.sec;
- 	info->modify_timestamp.millisecond = 0;
- 
--	memset((char *)&info->AccessTimestamp, 0, sizeof(struct date_time_t));
-+	memset((char *)&info->access_timestamp, 0, sizeof(struct date_time_t));
- 
- 	*uni_name.name = 0x0;
- 	/* XXX this is very bad for exfat cuz name is already included in es.
-@@ -1939,7 +1939,7 @@ static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
- 			dir_entry->modify_timestamp.second = tm.sec;
- 			dir_entry->modify_timestamp.millisecond = 0;
- 
--			memset((char *)&dir_entry->AccessTimestamp, 0,
-+			memset((char *)&dir_entry->access_timestamp, 0,
- 			       sizeof(struct date_time_t));
- 
- 			*uni_name.name = 0x0;
-@@ -3190,7 +3190,7 @@ static int exfat_fill_inode(struct inode *inode, struct file_id_t *fid)
- 
- 	exfat_time_fat2unix(&inode->i_mtime, &info.modify_timestamp);
- 	exfat_time_fat2unix(&inode->i_ctime, &info.create_timestamp);
--	exfat_time_fat2unix(&inode->i_atime, &info.AccessTimestamp);
-+	exfat_time_fat2unix(&inode->i_atime, &info.access_timestamp);
- 
- 	return 0;
- }
-@@ -3261,7 +3261,7 @@ static int exfat_write_inode(struct inode *inode, struct writeback_control *wbc)
- 
- 	exfat_time_unix2fat(&inode->i_mtime, &info.modify_timestamp);
- 	exfat_time_unix2fat(&inode->i_ctime, &info.create_timestamp);
--	exfat_time_unix2fat(&inode->i_atime, &info.AccessTimestamp);
-+	exfat_time_unix2fat(&inode->i_atime, &info.access_timestamp);
- 
- 	ffsWriteStat(inode, &info);
- 
--- 
-2.17.1
+If renaming sm3 to sm3-256 in the crypto API, no.  If adding sm3-256 alongside
+sm3, then yes there is a cost to that because from the crypto API's perspective
+they will be separate algorithms that each need to be registered, tested, etc.
 
+- Eric
