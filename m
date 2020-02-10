@@ -2,54 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 153C9156D1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 01:10:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A958F156D41
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 01:44:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727918AbgBJAKZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 19:10:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52612 "EHLO mail.kernel.org"
+        id S1726944AbgBJAn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 19:43:57 -0500
+Received: from mga02.intel.com ([134.134.136.20]:57022 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726915AbgBJAKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 19:10:24 -0500
-Subject: Re: [GIT PULL] more Kbuild updates for v5.6-rc1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581293424;
-        bh=140zUBpxxk4wiGsnmF/irmYN0fv0NTAH2kX6HfvOMQE=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Lol2vXdzJ2svIgzXjvBse+MfFIPCu612rvvSC9HaAz7G7O/cDq38PJZ82w3xPqYJV
-         cICmDD066cFQjyMdWYz6veDwl8FFOeY0RGT7NoWAxegYS1KcXG6tpo3e+Gd/+CqahQ
-         kf2C+96iOh5gXQ7YMUkC325h3sNFVxxXXHhAZHVw=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAK7LNAQs-KVCM7xXqJchQrMG+nnajPFRMB2Z+RJ9VTsg7XGRAQ@mail.gmail.com>
-References: <CAK7LNAQs-KVCM7xXqJchQrMG+nnajPFRMB2Z+RJ9VTsg7XGRAQ@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAK7LNAQs-KVCM7xXqJchQrMG+nnajPFRMB2Z+RJ9VTsg7XGRAQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
- tags/kbuild-v5.6-2
-X-PR-Tracked-Commit-Id: f566e1fbadb686e28f1c307e356114b2865ef588
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 89a47dd1af8fdda667938ec190d9595d55d7ec6f
-Message-Id: <158129342420.32523.4154436213451712314.pr-tracker-bot@kernel.org>
-Date:   Mon, 10 Feb 2020 00:10:24 +0000
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+        id S1725868AbgBJAn5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Feb 2020 19:43:57 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2020 16:43:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,423,1574150400"; 
+   d="scan'208";a="280491112"
+Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.16])
+  by FMSMGA003.fm.intel.com with ESMTP; 09 Feb 2020 16:43:54 -0800
+Date:   Sun, 9 Feb 2020 19:34:36 -0500
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "He, Shaopeng" <shaopeng.he@intel.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>
+Subject: Re: [RFC PATCH v2 1/9] vfio/pci: split vfio_pci_device into public
+ and private parts
+Message-ID: <20200210003436.GA3520@joy-OptiPlex-7040>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20200131020803.27519-1-yan.y.zhao@intel.com>
+ <20200131020956.27604-1-yan.y.zhao@intel.com>
+ <20200207124831.391d5f70@w520.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200207124831.391d5f70@w520.home>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 9 Feb 2020 06:45:18 +0100:
+On Sat, Feb 08, 2020 at 03:48:31AM +0800, Alex Williamson wrote:
+> On Thu, 30 Jan 2020 21:09:56 -0500
+> Yan Zhao <yan.y.zhao@intel.com> wrote:
+> 
+> > split vfio_pci_device into two parts:
+> > (1) a public part,
+> >     including pdev, num_region, irq_type which are accessible from
+> >     outside of vfio.
+> > (2) a private part,
+> >     a pointer to vfio_pci_device_private, only accessible within vfio
+> > 
+> > Cc: Kevin Tian <kevin.tian@intel.com>
+> > Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> > ---
+> >  drivers/vfio/pci/vfio_pci.c         | 209 +++++++++++++++-------------
+> >  drivers/vfio/pci/vfio_pci_config.c  | 157 +++++++++++----------
+> >  drivers/vfio/pci/vfio_pci_igd.c     |  16 +--
+> >  drivers/vfio/pci/vfio_pci_intrs.c   | 171 ++++++++++++-----------
+> >  drivers/vfio/pci/vfio_pci_nvlink2.c |  16 +--
+> >  drivers/vfio/pci/vfio_pci_private.h |   5 +-
+> >  drivers/vfio/pci/vfio_pci_rdwr.c    |  36 ++---
+> >  include/linux/vfio.h                |   7 +
+> >  8 files changed, 321 insertions(+), 296 deletions(-)
+> 
+> I think the typical solution to something like this would be...
+> 
+> struct vfio_pci_device {
+> 	...
+> };
+> 
+> struct vfio_pci_device_private {
+> 	struct vfio_pci_device vdev;
+> 	...
+> };
+> 
+> External code would be able to work with the vfio_pci_device and
+> internal code would do a container_of() to get access to the private
+> fields.  What's done here is pretty ugly and not very cache friendly.
+> Thanks,
+>
+got it, it's much better!
+will change it. Thanks!
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-v5.6-2
+Yan
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/89a47dd1af8fdda667938ec190d9595d55d7ec6f
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
