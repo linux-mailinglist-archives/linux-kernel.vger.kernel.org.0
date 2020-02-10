@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13255157825
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:05:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8465C157AAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:24:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729703AbgBJNFa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:05:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39160 "EHLO mail.kernel.org"
+        id S1729887AbgBJNYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:24:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727895AbgBJMkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:02 -0500
+        id S1728000AbgBJMhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:03 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF1562173E;
-        Mon, 10 Feb 2020 12:40:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18702208C4;
+        Mon, 10 Feb 2020 12:37:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338402;
-        bh=bX7GnoWQ6l6nAAzkQaHSk/xwhKV1gQokzvDLbi/ZR5M=;
+        s=default; t=1581338223;
+        bh=Ij0hfG6Hsb9nxUaFvyNt85tsg8GkDcEXtR5HNI+GKqU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xw2S4PS2s+QODCTK4UEkCfK4XdMYL2OiJb8joDijcIGAV5x3tOK7Ei07dfZ1z+H9w
-         TN8De6OpNKunDwWbZow4adRW0VHvfo+OWZdvOcrCpEV+d3ZfTUOsqeQoMHrcoDolm+
-         xE7IbsDb0maQuT+FHQevbm7GHtHSDSw3rXmTOgIg=
+        b=X+8DMkF8vGQNX58sUJmEKDvuhUCY8b/ILcqffeemsiLYMV8BP1Qbz7dptpewwyn2i
+         4rj4nf8iriMWlKRslNkBOgUXWg1sxtKyoJgvqvSjFi7uJpv+yvGOnchdKr5IlxBqM8
+         zceMNeZKbOy+tk1jo8Qf9TSmrhSyLlqP5RrtCq6k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>
-Subject: [PATCH 5.5 101/367] fscrypt: dont print name of busy file when removing key
-Date:   Mon, 10 Feb 2020 04:30:14 -0800
-Message-Id: <20200210122433.696258343@linuxfoundation.org>
+        stable@vger.kernel.org, Kevin Hao <haokexin@gmail.com>,
+        Marc Zyngier <maz@kernel.org>
+Subject: [PATCH 5.4 059/309] irqdomain: Fix a memory leak in irq_domain_push_irq()
+Date:   Mon, 10 Feb 2020 04:30:15 -0800
+Message-Id: <20200210122411.636308109@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,77 +43,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Kevin Hao <haokexin@gmail.com>
 
-commit 13a10da94615d81087e718517794f2868a8b3fab upstream.
+commit 0f394daef89b38d58c91118a2b08b8a1b316703b upstream.
 
-When an encryption key can't be fully removed due to file(s) protected
-by it still being in-use, we shouldn't really print the path to one of
-these files to the kernel log, since parts of this path are likely to be
-encrypted on-disk, and (depending on how the system is set up) the
-confidentiality of this path might be lost by printing it to the log.
+Fix a memory leak reported by kmemleak:
+unreferenced object 0xffff000bc6f50e80 (size 128):
+  comm "kworker/23:2", pid 201, jiffies 4294894947 (age 942.132s)
+  hex dump (first 32 bytes):
+    00 00 00 00 41 00 00 00 86 c0 03 00 00 00 00 00  ....A...........
+    00 a0 b2 c6 0b 00 ff ff 40 51 fd 10 00 80 ff ff  ........@Q......
+  backtrace:
+    [<00000000e62d2240>] kmem_cache_alloc_trace+0x1a4/0x320
+    [<00000000279143c9>] irq_domain_push_irq+0x7c/0x188
+    [<00000000d9f4c154>] thunderx_gpio_probe+0x3ac/0x438
+    [<00000000fd09ec22>] pci_device_probe+0xe4/0x198
+    [<00000000d43eca75>] really_probe+0xdc/0x320
+    [<00000000d3ebab09>] driver_probe_device+0x5c/0xf0
+    [<000000005b3ecaa0>] __device_attach_driver+0x88/0xc0
+    [<000000004e5915f5>] bus_for_each_drv+0x7c/0xc8
+    [<0000000079d4db41>] __device_attach+0xe4/0x140
+    [<00000000883bbda9>] device_initial_probe+0x18/0x20
+    [<000000003be59ef6>] bus_probe_device+0x98/0xa0
+    [<0000000039b03d3f>] deferred_probe_work_func+0x74/0xa8
+    [<00000000870934ce>] process_one_work+0x1c8/0x470
+    [<00000000e3cce570>] worker_thread+0x1f8/0x428
+    [<000000005d64975e>] kthread+0xfc/0x128
+    [<00000000f0eaa764>] ret_from_fork+0x10/0x18
 
-This is a trade-off: a single file path often doesn't matter at all,
-especially if it's a directory; the kernel log might still be protected
-in some way; and I had originally hoped that any "inode(s) still busy"
-bugs (which are security weaknesses in their own right) would be quickly
-fixed and that to do so it would be super helpful to always know the
-file path and not have to run 'find dir -inum $inum' after the fact.
-
-But in practice, these bugs can be hard to fix (e.g. due to asynchronous
-process killing that is difficult to eliminate, for performance
-reasons), and also not tied to specific files, so knowing a file path
-doesn't necessarily help.
-
-So to be safe, for now let's just show the inode number, not the path.
-If someone really wants to know a path they can use 'find -inum'.
-
-Fixes: b1c0ec3599f4 ("fscrypt: add FS_IOC_REMOVE_ENCRYPTION_KEY ioctl")
-Cc: <stable@vger.kernel.org> # v5.4+
-Link: https://lore.kernel.org/r/20200120060732.390362-1-ebiggers@kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Fixes: 495c38d3001f ("irqdomain: Add irq_domain_{push,pop}_irq() functions")
+Signed-off-by: Kevin Hao <haokexin@gmail.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20200120043547.22271-1-haokexin@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/crypto/keyring.c |   15 ++-------------
- 1 file changed, 2 insertions(+), 13 deletions(-)
+ kernel/irq/irqdomain.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/crypto/keyring.c
-+++ b/fs/crypto/keyring.c
-@@ -666,9 +666,6 @@ static int check_for_busy_inodes(struct
- 	struct list_head *pos;
- 	size_t busy_count = 0;
- 	unsigned long ino;
--	struct dentry *dentry;
--	char _path[256];
--	char *path = NULL;
- 
- 	spin_lock(&mk->mk_decrypted_inodes_lock);
- 
-@@ -687,22 +684,14 @@ static int check_for_busy_inodes(struct
- 					 struct fscrypt_info,
- 					 ci_master_key_link)->ci_inode;
- 		ino = inode->i_ino;
--		dentry = d_find_alias(inode);
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -1459,6 +1459,7 @@ int irq_domain_push_irq(struct irq_domai
+ 	if (rv) {
+ 		/* Restore the original irq_data. */
+ 		*root_irq_data = *child_irq_data;
++		kfree(child_irq_data);
+ 		goto error;
  	}
- 	spin_unlock(&mk->mk_decrypted_inodes_lock);
- 
--	if (dentry) {
--		path = dentry_path(dentry, _path, sizeof(_path));
--		dput(dentry);
--	}
--	if (IS_ERR_OR_NULL(path))
--		path = "(unknown)";
--
- 	fscrypt_warn(NULL,
--		     "%s: %zu inode(s) still busy after removing key with %s %*phN, including ino %lu (%s)",
-+		     "%s: %zu inode(s) still busy after removing key with %s %*phN, including ino %lu",
- 		     sb->s_id, busy_count, master_key_spec_type(&mk->mk_spec),
- 		     master_key_spec_len(&mk->mk_spec), (u8 *)&mk->mk_spec.u,
--		     ino, path);
-+		     ino);
- 	return -EBUSY;
- }
  
 
 
