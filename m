@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C4A9157BE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:33:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 399BD157C1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:35:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbgBJMfh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:35:37 -0500
+        id S1731631AbgBJNew (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:34:52 -0500
 Received: from mail.kernel.org ([198.145.29.99]:52128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727883AbgBJMfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:35:22 -0500
+        id S1727904AbgBJMfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:25 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F089D215A4;
-        Mon, 10 Feb 2020 12:35:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 809DB24683;
+        Mon, 10 Feb 2020 12:35:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338122;
-        bh=dUIA7XYKh2tjWz5vcmmzWs7dwmjsqJYdL6fQNXnZiDE=;
+        s=default; t=1581338123;
+        bh=nMvHdqf3f7WB9WXMouBqwV1kRJsEOuGBB7cOXjHz8Mw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kb2tGYo7efg3oe9PJ4wzk1iLDW2l2c07wYqjrtZ1pZnJLH6FBZdOAQxUrAi0CHAAK
-         8VmFWSzpk/9ClsOl2K3TX0RudflPUJ37sQX0YoH90nJOTuHOApawucdPsVB/l43qAy
-         KZte+aH3nXplnAYwVUS+OPuOBc44OSNeVnbRNSeg=
+        b=rwMLUmjwea5AaUB9uPBUs6PRpU9c///DUbX3f0y7NKqbTiWb2hZS9saWt01LnQFhN
+         5Lwm0sru6SkmMloQLP94+Fo+HPh154Pfo0On49Clb1JBGny88HwfjmqkLO434njixj
+         kpfUBGWu3wgdAHC8yEkLGTYEQFdivE53amyhfM/I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.19 058/195] mmc: spi: Toggle SPI polarity, do not hardcode it
-Date:   Mon, 10 Feb 2020 04:31:56 -0800
-Message-Id: <20200210122311.656219366@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.19 061/195] ACPI / battery: Use design-cap for capacity calculations if full-cap is not available
+Date:   Mon, 10 Feb 2020 04:31:59 -0800
+Message-Id: <20200210122311.832867027@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
 References: <20200210122305.731206734@linuxfoundation.org>
@@ -45,64 +43,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit af3ed119329cf9690598c5a562d95dfd128e91d6 upstream.
+commit 5b74d1d16e2f5753fcbdecd6771b2d8370dda414 upstream.
 
-The code in mmc_spi_initsequence() tries to send a burst with
-high chipselect and for this reason hardcodes the device into
-SPI_CS_HIGH.
+The ThunderSoft TS178 tablet's _BIX implementation reports design_capacity
+but not full_charge_capacity.
 
-This is not good because the SPI_CS_HIGH flag indicates
-logical "asserted" CS not always the physical level. In
-some cases the signal is inverted in the GPIO library and
-in that case SPI_CS_HIGH is already set, and enforcing
-SPI_CS_HIGH again will actually drive it low.
+Before this commit this would cause us to return -ENODEV for the capacity
+attribute, which userspace does not like. Specifically upower does this:
 
-Instead of hard-coding this, toggle the polarity so if the
-default is LOW it goes high to assert chipselect but if it
-is already high then toggle it low instead.
+        if (sysfs_file_exists (native_path, "capacity")) {
+                percentage = sysfs_get_double (native_path, "capacity");
 
-Cc: Phil Elwell <phil@raspberrypi.org>
-Reported-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Link: https://lore.kernel.org/r/20191204152749.12652-1-linus.walleij@linaro.org
-Cc: stable@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Where the sysfs_get_double() helper returns 0 when we return -ENODEV,
+so the battery always reads 0% if we return -ENODEV.
+
+This commit fixes this by using the design-capacity instead of the
+full-charge-capacity when the full-charge-capacity is not available.
+
+Fixes: b41901a2cf06 ("ACPI / battery: Do not export energy_full[_design] on devices without full_charge_capacity")
+Cc: 4.19+ <stable@vger.kernel.org> # 4.19+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/mmc_spi.c |   11 ++++++++---
+ drivers/acpi/battery.c |   11 ++++++++---
  1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/mmc/host/mmc_spi.c
-+++ b/drivers/mmc/host/mmc_spi.c
-@@ -1154,17 +1154,22 @@ static void mmc_spi_initsequence(struct
- 	 * SPI protocol.  Another is that when chipselect is released while
- 	 * the card returns BUSY status, the clock must issue several cycles
- 	 * with chipselect high before the card will stop driving its output.
-+	 *
-+	 * SPI_CS_HIGH means "asserted" here. In some cases like when using
-+	 * GPIOs for chip select, SPI_CS_HIGH is set but this will be logically
-+	 * inverted by gpiolib, so if we want to ascertain to drive it high
-+	 * we should toggle the default with an XOR as we do here.
- 	 */
--	host->spi->mode |= SPI_CS_HIGH;
-+	host->spi->mode ^= SPI_CS_HIGH;
- 	if (spi_setup(host->spi) != 0) {
- 		/* Just warn; most cards work without it. */
- 		dev_warn(&host->spi->dev,
- 				"can't change chip-select polarity\n");
--		host->spi->mode &= ~SPI_CS_HIGH;
-+		host->spi->mode ^= SPI_CS_HIGH;
- 	} else {
- 		mmc_spi_readbytes(host, 18);
+--- a/drivers/acpi/battery.c
++++ b/drivers/acpi/battery.c
+@@ -230,7 +230,7 @@ static int acpi_battery_get_property(str
+ 				     enum power_supply_property psp,
+ 				     union power_supply_propval *val)
+ {
+-	int ret = 0;
++	int full_capacity = ACPI_BATTERY_VALUE_UNKNOWN, ret = 0;
+ 	struct acpi_battery *battery = to_acpi_battery(psy);
  
--		host->spi->mode &= ~SPI_CS_HIGH;
-+		host->spi->mode ^= SPI_CS_HIGH;
- 		if (spi_setup(host->spi) != 0) {
- 			/* Wot, we can't get the same setup we had before? */
- 			dev_err(&host->spi->dev,
+ 	if (acpi_battery_present(battery)) {
+@@ -299,12 +299,17 @@ static int acpi_battery_get_property(str
+ 			val->intval = battery->capacity_now * 1000;
+ 		break;
+ 	case POWER_SUPPLY_PROP_CAPACITY:
++		if (ACPI_BATTERY_CAPACITY_VALID(battery->full_charge_capacity))
++			full_capacity = battery->full_charge_capacity;
++		else if (ACPI_BATTERY_CAPACITY_VALID(battery->design_capacity))
++			full_capacity = battery->design_capacity;
++
+ 		if (battery->capacity_now == ACPI_BATTERY_VALUE_UNKNOWN ||
+-		    !ACPI_BATTERY_CAPACITY_VALID(battery->full_charge_capacity))
++		    full_capacity == ACPI_BATTERY_VALUE_UNKNOWN)
+ 			ret = -ENODEV;
+ 		else
+ 			val->intval = battery->capacity_now * 100/
+-					battery->full_charge_capacity;
++					full_capacity;
+ 		break;
+ 	case POWER_SUPPLY_PROP_CAPACITY_LEVEL:
+ 		if (battery->state & ACPI_BATTERY_STATE_CRITICAL)
 
 
