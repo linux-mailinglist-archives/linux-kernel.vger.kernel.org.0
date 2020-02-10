@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56D60157543
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:40:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 303A9157636
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729559AbgBJMjy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:39:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60682 "EHLO mail.kernel.org"
+        id S1730844AbgBJMqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:46:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728970AbgBJMh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:58 -0500
+        id S1729950AbgBJMlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:41:17 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B05F24687;
-        Mon, 10 Feb 2020 12:37:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7DD6208C3;
+        Mon, 10 Feb 2020 12:41:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338277;
-        bh=9B6miRQh+3DtZ//AIx/cuId/0CWPKh5Z0QEr7g2b1q8=;
+        s=default; t=1581338477;
+        bh=8Jb3WF7J4RzRLBfrdqdB0TvnGiKJLDBYl2f04hpF+DQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mTNTwQyfMp808AZFfrqkqz12kKcHziNipqrLaAxLvQ7EAyPYsyRaAIOMaz1scpyRN
-         mEQ3z+AbjxwCdckCPwhr5SjkDz1WWU4wuoZxzgtaKQkXqZHZ9qvowvsNU0+TzYre9p
-         xvrjTDFv50lUd/9HnxucRV03YLd87hWJiZSaa+UY=
+        b=Bjf3RIzfNe07UtpckfWNmz+YBx1bemUTzlJcKfGpfCFOm/Dg1bMoueFqdIxEfzW4O
+         D40viClQu/PQ4uno58UkTq0cdVCeJOPOdgtNIUvsJkzbzZQcwTrV1QGsFAAV8uiTzk
+         OgafcaTNlYezbUoAIhndNBOE073raVI7XiiBPbA0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arun Easi <aeasi@marvell.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 5.4 164/309] scsi: qla2xxx: Fix unbound NVME response length
-Date:   Mon, 10 Feb 2020 04:32:00 -0800
-Message-Id: <20200210122422.008833141@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Roberto Bergantinos Corpas <rbergant@redhat.com>,
+        Frank Sorenson <sorenson@redhat.com>,
+        "J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 5.5 208/367] sunrpc: expiry_time should be seconds not timeval
+Date:   Mon, 10 Feb 2020 04:32:01 -0800
+Message-Id: <20200210122443.600771045@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,78 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arun Easi <aeasi@marvell.com>
+From: Roberto Bergantinos Corpas <rbergant@redhat.com>
 
-commit 00fe717ee1ea3c2979db4f94b1533c57aed8dea9 upstream.
+commit 3d96208c30f84d6edf9ab4fac813306ac0d20c10 upstream.
 
-On certain cases when response length is less than 32, NVME response data
-is supplied inline in IOCB. This is indicated by some combination of state
-flags. There was an instance when a high, and incorrect, response length
-was indicated causing driver to overrun buffers. Fix this by checking and
-limiting the response payload length.
+When upcalling gssproxy, cache_head.expiry_time is set as a
+timeval, not seconds since boot. As such, RPC cache expiry
+logic will not clean expired objects created under
+auth.rpcsec.context cache.
 
-Fixes: 7401bc18d1ee3 ("scsi: qla2xxx: Add FC-NVMe command handling")
+This has proven to cause kernel memory leaks on field. Using
+64 bit variants of getboottime/timespec
+
+Expiration times have worked this way since 2010's c5b29f885afe "sunrpc:
+use seconds since boot in expiry cache".  The gssproxy code introduced
+in 2012 added gss_proxy_save_rsc and introduced the bug.  That's a while
+for this to lurk, but it required a bit of an extreme case to make it
+obvious.
+
+Signed-off-by: Roberto Bergantinos Corpas <rbergant@redhat.com>
 Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20200124045014.23554-1-hmadhani@marvell.com
-Signed-off-by: Arun Easi <aeasi@marvell.com>
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 030d794bf498 "SUNRPC: Use gssproxy upcall for server..."
+Tested-By: Frank Sorenson <sorenson@redhat.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_dbg.c |    6 ------
- drivers/scsi/qla2xxx/qla_dbg.h |    6 ++++++
- drivers/scsi/qla2xxx/qla_isr.c |   12 ++++++++++++
- 3 files changed, 18 insertions(+), 6 deletions(-)
+ net/sunrpc/auth_gss/svcauth_gss.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/scsi/qla2xxx/qla_dbg.c
-+++ b/drivers/scsi/qla2xxx/qla_dbg.c
-@@ -2519,12 +2519,6 @@ qla83xx_fw_dump_failed:
- /*                         Driver Debug Functions.                          */
- /****************************************************************************/
+--- a/net/sunrpc/auth_gss/svcauth_gss.c
++++ b/net/sunrpc/auth_gss/svcauth_gss.c
+@@ -1248,6 +1248,7 @@ static int gss_proxy_save_rsc(struct cac
+ 		dprintk("RPC:       No creds found!\n");
+ 		goto out;
+ 	} else {
++		struct timespec64 boot;
  
--static inline int
--ql_mask_match(uint level)
--{
--	return (level & ql2xextended_error_logging) == level;
--}
--
- /*
-  * This function is for formatting and logging debug information.
-  * It is to be used when vha is available. It formats the message
---- a/drivers/scsi/qla2xxx/qla_dbg.h
-+++ b/drivers/scsi/qla2xxx/qla_dbg.h
-@@ -374,3 +374,9 @@ extern int qla24xx_dump_ram(struct qla_h
- extern void qla24xx_pause_risc(struct device_reg_24xx __iomem *,
- 	struct qla_hw_data *);
- extern int qla24xx_soft_reset(struct qla_hw_data *);
+ 		/* steal creds */
+ 		rsci.cred = ud->creds;
+@@ -1268,6 +1269,9 @@ static int gss_proxy_save_rsc(struct cac
+ 						&expiry, GFP_KERNEL);
+ 		if (status)
+ 			goto out;
 +
-+static inline int
-+ql_mask_match(uint level)
-+{
-+	return (level & ql2xextended_error_logging) == level;
-+}
---- a/drivers/scsi/qla2xxx/qla_isr.c
-+++ b/drivers/scsi/qla2xxx/qla_isr.c
-@@ -1897,6 +1897,18 @@ static void qla24xx_nvme_iocb_entry(scsi
- 		inbuf = (uint32_t *)&sts->nvme_ersp_data;
- 		outbuf = (uint32_t *)fd->rspaddr;
- 		iocb->u.nvme.rsp_pyld_len = le16_to_cpu(sts->nvme_rsp_pyld_len);
-+		if (unlikely(iocb->u.nvme.rsp_pyld_len >
-+		    sizeof(struct nvme_fc_ersp_iu))) {
-+			if (ql_mask_match(ql_dbg_io)) {
-+				WARN_ONCE(1, "Unexpected response payload length %u.\n",
-+				    iocb->u.nvme.rsp_pyld_len);
-+				ql_log(ql_log_warn, fcport->vha, 0x5100,
-+				    "Unexpected response payload length %u.\n",
-+				    iocb->u.nvme.rsp_pyld_len);
-+			}
-+			iocb->u.nvme.rsp_pyld_len =
-+			    sizeof(struct nvme_fc_ersp_iu);
-+		}
- 		iter = iocb->u.nvme.rsp_pyld_len >> 2;
- 		for (; iter; iter--)
- 			*outbuf++ = swab32(*inbuf++);
++		getboottime64(&boot);
++		expiry -= boot.tv_sec;
+ 	}
+ 
+ 	rsci.h.expiry_time = expiry;
 
 
