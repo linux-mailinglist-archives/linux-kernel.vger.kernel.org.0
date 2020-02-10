@@ -2,45 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72C6915786C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:07:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB0F3157B0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:27:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729931AbgBJNHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:07:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37844 "EHLO mail.kernel.org"
+        id S1731280AbgBJN1C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:27:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728137AbgBJMjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:39:40 -0500
+        id S1728465AbgBJMgk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:36:40 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84E342051A;
-        Mon, 10 Feb 2020 12:39:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC2C920661;
+        Mon, 10 Feb 2020 12:36:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338378;
-        bh=Iaomh9OrMmWwgmV3r5KWLTmAR3fNuUtA1Fh7Wys/DQ4=;
+        s=default; t=1581338199;
+        bh=jfL2xgB0OH2/+eAWEFRux8QQXzIUfua+Ga5fmgvbbVM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BC8CDaAY8P1OdQuXXiR3Hmpt+NtUDxIDofxD/tuz5OD0b1v9No5mIxmQZwrXemx6i
-         bIPvbKehwh1MKzwAJhJDa+vlxFV1l9ZeF+rxPJb5vJrmxSyf51Ewru8aGSV35VB/FU
-         UEoHrHJj7GDH79zX/4XWnFSUx5zBq+fm8i0J4lb0=
+        b=0NXz5zw6nYlcVPk+lbYMTJemOymoOmgCGZ4DKUOxJWB47GasxPLcU4VAzEow3v94M
+         VZevhBX6dyQdHMhMk8w/FoZzlg4aqQeyMi/6VumVd3f85WHWMxJa0oDGFTn5xhW7ek
+         ay1wN9ppaUaV5HG3ZGRbUofr5vL6SMVmMYujEQ8c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pingfan Liu <kernelfans@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Baoquan He <bhe@redhat.com>, Qian Cai <cai@lca.pw>,
-        Kazuhito Hagio <k-hagio@ab.jp.nec.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.5 055/367] mm/sparse.c: reset sections mem_map when fully deactivated
-Date:   Mon, 10 Feb 2020 04:29:28 -0800
-Message-Id: <20200210122429.133079039@linuxfoundation.org>
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: [PATCH 5.4 013/309] rxrpc: Fix NULL pointer deref due to call->conn being cleared on disconnect
+Date:   Mon, 10 Feb 2020 04:29:29 -0800
+Message-Id: <20200210122407.291613575@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,56 +42,192 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pingfan Liu <kernelfans@gmail.com>
+From: David Howells <dhowells@redhat.com>
 
-commit 1f503443e7df8dc8366608b4d810ce2d6669827c upstream.
+[ Upstream commit 5273a191dca65a675dc0bcf3909e59c6933e2831 ]
 
-After commit ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug"),
-when a mem section is fully deactivated, section_mem_map still records
-the section's start pfn, which is not used any more and will be
-reassigned during re-addition.
+When a call is disconnected, the connection pointer from the call is
+cleared to make sure it isn't used again and to prevent further attempted
+transmission for the call.  Unfortunately, there might be a daemon trying
+to use it at the same time to transmit a packet.
 
-In analogy with alloc/free pattern, it is better to clear all fields of
-section_mem_map.
+Fix this by keeping call->conn set, but setting a flag on the call to
+indicate disconnection instead.
 
-Beside this, it breaks the user space tool "makedumpfile" [1], which
-makes assumption that a hot-removed section has mem_map as NULL, instead
-of checking directly against SECTION_MARKED_PRESENT bit.  (makedumpfile
-will be better to change the assumption, and need a patch)
+Remove also the bits in the transmission functions where the conn pointer is
+checked and a ref taken under spinlock as this is now redundant.
 
-The bug can be reproduced on IBM POWERVM by "drmgr -c mem -r -q 5" ,
-trigger a crash, and save vmcore by makedumpfile
-
-[1]: makedumpfile, commit e73016540293 ("[v1.6.7] Update version")
-
-Link: http://lkml.kernel.org/r/1579487594-28889-1-git-send-email-kernelfans@gmail.com
-Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: David Hildenbrand <david@redhat.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Baoquan He <bhe@redhat.com>
-Cc: Qian Cai <cai@lca.pw>
-Cc: Kazuhito Hagio <k-hagio@ab.jp.nec.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 8d94aa381dab ("rxrpc: Calls shouldn't hold socket refs")
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- mm/sparse.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/rxrpc/ar-internal.h |    1 +
+ net/rxrpc/call_object.c |    4 ++--
+ net/rxrpc/conn_client.c |    3 +--
+ net/rxrpc/conn_object.c |    4 ++--
+ net/rxrpc/output.c      |   27 +++++++++------------------
+ 5 files changed, 15 insertions(+), 24 deletions(-)
 
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -789,7 +789,7 @@ static void section_deactivate(unsigned
- 			ms->usage = NULL;
- 		}
- 		memmap = sparse_decode_mem_map(ms->section_mem_map, section_nr);
--		ms->section_mem_map = sparse_encode_mem_map(NULL, section_nr);
-+		ms->section_mem_map = (unsigned long)NULL;
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -490,6 +490,7 @@ enum rxrpc_call_flag {
+ 	RXRPC_CALL_RX_HEARD,		/* The peer responded at least once to this call */
+ 	RXRPC_CALL_RX_UNDERRUN,		/* Got data underrun */
+ 	RXRPC_CALL_IS_INTR,		/* The call is interruptible */
++	RXRPC_CALL_DISCONNECTED,	/* The call has been disconnected */
+ };
+ 
+ /*
+--- a/net/rxrpc/call_object.c
++++ b/net/rxrpc/call_object.c
+@@ -493,7 +493,7 @@ void rxrpc_release_call(struct rxrpc_soc
+ 
+ 	_debug("RELEASE CALL %p (%d CONN %p)", call, call->debug_id, conn);
+ 
+-	if (conn)
++	if (conn && !test_bit(RXRPC_CALL_DISCONNECTED, &call->flags))
+ 		rxrpc_disconnect_call(call);
+ 	if (call->security)
+ 		call->security->free_call_crypto(call);
+@@ -569,6 +569,7 @@ static void rxrpc_rcu_destroy_call(struc
+ 	struct rxrpc_call *call = container_of(rcu, struct rxrpc_call, rcu);
+ 	struct rxrpc_net *rxnet = call->rxnet;
+ 
++	rxrpc_put_connection(call->conn);
+ 	rxrpc_put_peer(call->peer);
+ 	kfree(call->rxtx_buffer);
+ 	kfree(call->rxtx_annotations);
+@@ -590,7 +591,6 @@ void rxrpc_cleanup_call(struct rxrpc_cal
+ 
+ 	ASSERTCMP(call->state, ==, RXRPC_CALL_COMPLETE);
+ 	ASSERT(test_bit(RXRPC_CALL_RELEASED, &call->flags));
+-	ASSERTCMP(call->conn, ==, NULL);
+ 
+ 	rxrpc_cleanup_ring(call);
+ 	rxrpc_free_skb(call->tx_pending, rxrpc_skb_cleaned);
+--- a/net/rxrpc/conn_client.c
++++ b/net/rxrpc/conn_client.c
+@@ -785,6 +785,7 @@ void rxrpc_disconnect_client_call(struct
+ 	u32 cid;
+ 
+ 	spin_lock(&conn->channel_lock);
++	set_bit(RXRPC_CALL_DISCONNECTED, &call->flags);
+ 
+ 	cid = call->cid;
+ 	if (cid) {
+@@ -792,7 +793,6 @@ void rxrpc_disconnect_client_call(struct
+ 		chan = &conn->channels[channel];
+ 	}
+ 	trace_rxrpc_client(conn, channel, rxrpc_client_chan_disconnect);
+-	call->conn = NULL;
+ 
+ 	/* Calls that have never actually been assigned a channel can simply be
+ 	 * discarded.  If the conn didn't get used either, it will follow
+@@ -908,7 +908,6 @@ out:
+ 	spin_unlock(&rxnet->client_conn_cache_lock);
+ out_2:
+ 	spin_unlock(&conn->channel_lock);
+-	rxrpc_put_connection(conn);
+ 	_leave("");
+ 	return;
+ 
+--- a/net/rxrpc/conn_object.c
++++ b/net/rxrpc/conn_object.c
+@@ -171,6 +171,8 @@ void __rxrpc_disconnect_call(struct rxrp
+ 
+ 	_enter("%d,%x", conn->debug_id, call->cid);
+ 
++	set_bit(RXRPC_CALL_DISCONNECTED, &call->flags);
++
+ 	if (rcu_access_pointer(chan->call) == call) {
+ 		/* Save the result of the call so that we can repeat it if necessary
+ 		 * through the channel, whilst disposing of the actual call record.
+@@ -223,9 +225,7 @@ void rxrpc_disconnect_call(struct rxrpc_
+ 	__rxrpc_disconnect_call(conn, call);
+ 	spin_unlock(&conn->channel_lock);
+ 
+-	call->conn = NULL;
+ 	conn->idle_timestamp = jiffies;
+-	rxrpc_put_connection(conn);
+ }
+ 
+ /*
+--- a/net/rxrpc/output.c
++++ b/net/rxrpc/output.c
+@@ -129,7 +129,7 @@ static size_t rxrpc_fill_out_ack(struct
+ int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping,
+ 			  rxrpc_serial_t *_serial)
+ {
+-	struct rxrpc_connection *conn = NULL;
++	struct rxrpc_connection *conn;
+ 	struct rxrpc_ack_buffer *pkt;
+ 	struct msghdr msg;
+ 	struct kvec iov[2];
+@@ -139,18 +139,14 @@ int rxrpc_send_ack_packet(struct rxrpc_c
+ 	int ret;
+ 	u8 reason;
+ 
+-	spin_lock_bh(&call->lock);
+-	if (call->conn)
+-		conn = rxrpc_get_connection_maybe(call->conn);
+-	spin_unlock_bh(&call->lock);
+-	if (!conn)
++	if (test_bit(RXRPC_CALL_DISCONNECTED, &call->flags))
+ 		return -ECONNRESET;
+ 
+ 	pkt = kzalloc(sizeof(*pkt), GFP_KERNEL);
+-	if (!pkt) {
+-		rxrpc_put_connection(conn);
++	if (!pkt)
+ 		return -ENOMEM;
+-	}
++
++	conn = call->conn;
+ 
+ 	msg.msg_name	= &call->peer->srx.transport;
+ 	msg.msg_namelen	= call->peer->srx.transport_len;
+@@ -244,7 +240,6 @@ int rxrpc_send_ack_packet(struct rxrpc_c
  	}
  
- 	if (section_is_early && memmap)
+ out:
+-	rxrpc_put_connection(conn);
+ 	kfree(pkt);
+ 	return ret;
+ }
+@@ -254,7 +249,7 @@ out:
+  */
+ int rxrpc_send_abort_packet(struct rxrpc_call *call)
+ {
+-	struct rxrpc_connection *conn = NULL;
++	struct rxrpc_connection *conn;
+ 	struct rxrpc_abort_buffer pkt;
+ 	struct msghdr msg;
+ 	struct kvec iov[1];
+@@ -271,13 +266,11 @@ int rxrpc_send_abort_packet(struct rxrpc
+ 	    test_bit(RXRPC_CALL_TX_LAST, &call->flags))
+ 		return 0;
+ 
+-	spin_lock_bh(&call->lock);
+-	if (call->conn)
+-		conn = rxrpc_get_connection_maybe(call->conn);
+-	spin_unlock_bh(&call->lock);
+-	if (!conn)
++	if (test_bit(RXRPC_CALL_DISCONNECTED, &call->flags))
+ 		return -ECONNRESET;
+ 
++	conn = call->conn;
++
+ 	msg.msg_name	= &call->peer->srx.transport;
+ 	msg.msg_namelen	= call->peer->srx.transport_len;
+ 	msg.msg_control	= NULL;
+@@ -312,8 +305,6 @@ int rxrpc_send_abort_packet(struct rxrpc
+ 		trace_rxrpc_tx_packet(call->debug_id, &pkt.whdr,
+ 				      rxrpc_tx_point_call_abort);
+ 	rxrpc_tx_backoff(call, ret);
+-
+-	rxrpc_put_connection(conn);
+ 	return ret;
+ }
+ 
 
 
