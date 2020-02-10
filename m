@@ -2,143 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 427C9157D0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 15:05:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE6E5157D13
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 15:10:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729091AbgBJOFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 09:05:55 -0500
-Received: from mail-wr1-f47.google.com ([209.85.221.47]:41851 "EHLO
-        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726846AbgBJOFz (ORCPT
+        id S1728229AbgBJOKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 09:10:32 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:43541 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727581AbgBJOKb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 09:05:55 -0500
-Received: by mail-wr1-f47.google.com with SMTP id c9so7892816wrw.8
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 06:05:53 -0800 (PST)
+        Mon, 10 Feb 2020 09:10:31 -0500
+Received: by mail-qk1-f196.google.com with SMTP id p7so1609830qkh.10
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 06:10:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=G/FZSNf3MhvRb/T7INkTCPjfGTsSzpMNGjUKbnmKyY4=;
-        b=iPfcRd1w4laOGn59XtBwszGfp96yxLDGITuhhwwE3PjC9cpZvDJU6uLHlBwt1WpswW
-         w9b4/x74FlHokCi7P+jw+aNDQFzjaZ39hFxFSjoF12e4ZimHOrXd54zMW8r1SM2ZG8c+
-         vjyIo4nf9OKFzI0Bn/+X5QOLF5aam8H7kLxqv9VVFvc+TwEuz7OucBZ2Hq5JhVLy73Ud
-         MrDkF6EpPPAzK7mk1MHT15h4lMV2EV4v1sDgfJvVecZWCVkJmCzGmEMY/vzLC9RkuVA9
-         94g14l/jptK+nNz71kQKrDsXsSsBeVEWFcE0dCZpnczwfoN7eFdwk/uEnTN9RXJW9C1z
-         OYzw==
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=o1FO2aoDKh5++SWDchty/IeRtGGhMroFxwtbPC/sRDE=;
+        b=Tup2u5IFZdERxE1QBLvBxHOiArZ00RWuTCUSg63tlZfALHeOk/zrvdi87Y2k6nVUgl
+         DBYJvJ8ZUU/KInRZFp3KeDKl5Jc21flL84qLaoZh/H8TO1dFDG8wHy8iBqEAeEdGidgW
+         +tFURH6zj5TH4HKV/o8GZF88GQ2kBbhcQxOCLO3zGyTGQxWV6exCew9LHVYEGWjAIvBY
+         HfrKhxL6wGubFuR2b3pGATEKh9BHuuMKGG16Fl4hXS5fkN4Fz6ZDUrZDM6vBrtnoJevF
+         F9wi+b5e9J9Gc8RpkhgHFzcJmGkg4b+9GOJuC4pjma1Fv5Pw8sixWTNZp+MU6jFOdlb7
+         HfYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=G/FZSNf3MhvRb/T7INkTCPjfGTsSzpMNGjUKbnmKyY4=;
-        b=teUeBe2rZsFrLsxGeOBZpflDhmhUu2gVnU91UZ3nepDazZGM7SMVzjlqsQb33Tg9tO
-         06CRsGKYDC/11VhV4B8njfHrFvk2g04FB0nQTMjLLUQ46iwX0ywPIgsbB4pBIoA48JLc
-         9vxc8suUVcaVWGRWElGMQ3eD9RMI8L6rzKmBBEkbcCLMAHwlKeruON3NbQRuEJQ+oYdy
-         y5BWOcg05wjFOlv84BNyRekcugMMtJkfcmSVcVFJbALlAGYTNTKK89scLXR9aCZ61qlY
-         PqQCKQoipoxDqG0BEP+ttRBGM3moUmLsOgq3WrUqToYPVderJmB9uWFAuxNJWSBnkeHy
-         dG6w==
-X-Gm-Message-State: APjAAAWLhGY5b960hommkSxfWjsafCPmDmYVTLgUxqMM2LZT2mwVYKO/
-        y19mRRYlO2CBnjXyt20gS117Vw==
-X-Google-Smtp-Source: APXvYqxAk2+49iT5ulAwFbbjeX3NEhN4U8gky4O0bvN0DFf8z+HPIfNAoXGox+AJBPPi+kYpb9QQKw==
-X-Received: by 2002:a5d:474b:: with SMTP id o11mr2250241wrs.255.1581343552430;
-        Mon, 10 Feb 2020 06:05:52 -0800 (PST)
-Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id y20sm646715wmi.25.2020.02.10.06.05.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2020 06:05:51 -0800 (PST)
-From:   Dmitry Safonov <dima@arista.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dmitry Safonov <dima@arista.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH-4.19-stable 2/2] x86/stackframe, x86/ftrace: Add pt_regs frame annotations
-Date:   Mon, 10 Feb 2020 14:05:43 +0000
-Message-Id: <20200210140543.79641-3-dima@arista.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210140543.79641-1-dima@arista.com>
-References: <20200210140543.79641-1-dima@arista.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=o1FO2aoDKh5++SWDchty/IeRtGGhMroFxwtbPC/sRDE=;
+        b=ctQ3mB1ZUCE8lM6fwbrA3hVV7EReDRaPrx7XlSl75+XUYgUma0FvZI+UwO2PRlbibf
+         dH5Qp2nOmcXdFJmtUCLNfqLhQDK8SImqA89wj2c3tZD3MFrHaIt6EI9k/1KIoSptLNCS
+         OlUZRNuF5CKf1/Heb6iulPr4oHdSNjZ5RUcKpfH06EP2GeqUYsNW3rMF479BZy6O4pb3
+         Ez4yjUsR9kDrh0Rp0GPQ/Sk5OGBG4zSWFd6P4paFmmoFEaJdoZm9Y8xo2VysH1BxbD0H
+         325sfZLDkDdJcn9HeTadebhQdKckEQwrt2ltRIBrsgrDU5B6A81u73YHyG7ljPnjlsFW
+         3r7w==
+X-Gm-Message-State: APjAAAWwMV61NAu4iexjbmklJr5XTKnXfwHFywrmYF8NRIqM3NXhcoyN
+        5m2FwQOLrs5ZveND0gQ8fJdu1Q==
+X-Google-Smtp-Source: APXvYqzDz/UPzz38CvJM8x23GvvG1Z5D+kIpsV+8HBycvRSnI83xRRWGT9BVs5DNzjWtb305Kpivfw==
+X-Received: by 2002:a37:9d8c:: with SMTP id g134mr1494240qke.73.1581343830661;
+        Mon, 10 Feb 2020 06:10:30 -0800 (PST)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id d17sm199223qkc.9.2020.02.10.06.10.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Feb 2020 06:10:29 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de
+Cc:     dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        elver@google.com, x86@kernel.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH -next] x86/mm/pat: mark an intentional data race
+Date:   Mon, 10 Feb 2020 09:10:16 -0500
+Message-Id: <1581343816-6490-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+cpa_4k_install could be accessed concurrently as noticed by KCSAN,
 
-[ Upstream commit ea1ed38dba64b64a245ab8ca1406269d17b99485 ]
+read to 0xffffffffaa59a000 of 8 bytes by interrupt on cpu 7:
+cpa_inc_4k_install arch/x86/mm/pat/set_memory.c:131 [inline]
+__change_page_attr+0x10cf/0x1840 arch/x86/mm/pat/set_memory.c:1514
+__change_page_attr_set_clr+0xce/0x490 arch/x86/mm/pat/set_memory.c:1636
+__set_pages_np+0xc4/0xf0 arch/x86/mm/pat/set_memory.c:2148
+__kernel_map_pages+0xb0/0xc8 arch/x86/mm/pat/set_memory.c:2178
+kernel_map_pages include/linux/mm.h:2719 [inline] <snip>
 
-When CONFIG_FRAME_POINTER, we should mark pt_regs frames.
+write to 0xffffffffaa59a000 of 8 bytes by task 1 on cpu 6:
+cpa_inc_4k_install arch/x86/mm/pat/set_memory.c:131 [inline]
+__change_page_attr+0x10ea/0x1840 arch/x86/mm/pat/set_memory.c:1514
+__change_page_attr_set_clr+0xce/0x490 arch/x86/mm/pat/set_memory.c:1636
+__set_pages_p+0xc4/0xf0 arch/x86/mm/pat/set_memory.c:2129
+__kernel_map_pages+0x2e/0xc8 arch/x86/mm/pat/set_memory.c:2176
+kernel_map_pages include/linux/mm.h:2719 [inline] <snip>
 
-Fixes user-visible warning for unwinder (i.e, ftrace's stack tracer):
-> WARNING: kernel stack frame pointer at 00000000bceb5183 in Coronavirus:3282 has bad value           (null)
->  unwind stack type:0 next_sp:          (null) mask:0x2 graph_idx:0
->  000000009630aa47: ffffc9000126fdb0 (0xffffc9000126fdb0)
->  0000000020360f53: ffffffff81038e33 (__save_stack_trace+0xcb/0xee)
->  00000000675081f2: 0000000000000000 ...
->  0000000043198fe7: ffffc9000126c000 (0xffffc9000126c000)
->  0000000008a46231: ffffc90001270000 (0xffffc90001270000)
-[..]
+Both accesses are due to the same "cpa_4k_install++" in
+cpa_inc_4k_install. A data race here could be potentially undesirable:
+depending on compiler optimizations or how x86 executes a non-LOCK'd
+increment, it may lose increments, corrupt the counter, etc. Since this
+counter only seems to be used for printing some stats, this data race
+itself is unlikely to cause harm to the system though. Thus, mark this
+intentional data race using the data_race() marco.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[4.19 backport; added user-visible changelog]
-Signed-off-by: Dmitry Safonov <dima@arista.com>
+Suggested-by: Macro Elver <elver@google.com>
+Signed-off-by: Qian Cai <cai@lca.pw>
 ---
- arch/x86/kernel/ftrace_32.S | 3 +++
- arch/x86/kernel/ftrace_64.S | 3 +++
- 2 files changed, 6 insertions(+)
+ arch/x86/mm/pat/set_memory.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/ftrace_32.S b/arch/x86/kernel/ftrace_32.S
-index 4c8440de3355..83f18e829ac7 100644
---- a/arch/x86/kernel/ftrace_32.S
-+++ b/arch/x86/kernel/ftrace_32.S
-@@ -9,6 +9,7 @@
- #include <asm/export.h>
- #include <asm/ftrace.h>
- #include <asm/nospec-branch.h>
-+#include <asm/frame.h>
+diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
+index c4aedd00c1ba..ea0b6df950ee 100644
+--- a/arch/x86/mm/pat/set_memory.c
++++ b/arch/x86/mm/pat/set_memory.c
+@@ -128,7 +128,7 @@ static inline void cpa_inc_2m_checked(void)
  
- #ifdef CC_USING_FENTRY
- # define function_hook	__fentry__
-@@ -131,6 +132,8 @@ ENTRY(ftrace_regs_caller)
- 	pushl	%ecx
- 	pushl	%ebx
+ static inline void cpa_inc_4k_install(void)
+ {
+-	cpa_4k_install++;
++	data_race(cpa_4k_install++);
+ }
  
-+	ENCODE_FRAME_POINTER
-+
- 	movl	12*4(%esp), %eax		/* Load ip (1st parameter) */
- 	subl	$MCOUNT_INSN_SIZE, %eax		/* Adjust ip */
- #ifdef CC_USING_FENTRY
-diff --git a/arch/x86/kernel/ftrace_64.S b/arch/x86/kernel/ftrace_64.S
-index 75f2b36b41a6..24b9abf718e8 100644
---- a/arch/x86/kernel/ftrace_64.S
-+++ b/arch/x86/kernel/ftrace_64.S
-@@ -9,6 +9,7 @@
- #include <asm/export.h>
- #include <asm/nospec-branch.h>
- #include <asm/unwind_hints.h>
-+#include <asm/frame.h>
- 
- 	.code64
- 	.section .entry.text, "ax"
-@@ -222,6 +223,8 @@ GLOBAL(ftrace_regs_caller_op_ptr)
- 	leaq MCOUNT_REG_SIZE+8*2(%rsp), %rcx
- 	movq %rcx, RSP(%rsp)
- 
-+	ENCODE_FRAME_POINTER
-+
- 	/* regs go into 4th parameter */
- 	leaq (%rsp), %rcx
- 
+ static inline void cpa_inc_lp_sameprot(int level)
 -- 
-2.25.0
+1.8.3.1
 
