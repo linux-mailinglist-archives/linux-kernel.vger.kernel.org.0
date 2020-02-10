@@ -2,95 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A958F156D41
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 01:44:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97596156D38
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 01:36:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbgBJAn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 19:43:57 -0500
-Received: from mga02.intel.com ([134.134.136.20]:57022 "EHLO mga02.intel.com"
+        id S1726942AbgBJAgZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 19:36:25 -0500
+Received: from mga03.intel.com ([134.134.136.65]:24790 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725868AbgBJAn5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 19:43:57 -0500
+        id S1725877AbgBJAgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Feb 2020 19:36:24 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2020 16:43:56 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2020 16:36:23 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,423,1574150400"; 
-   d="scan'208";a="280491112"
-Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.16])
-  by FMSMGA003.fm.intel.com with ESMTP; 09 Feb 2020 16:43:54 -0800
-Date:   Sun, 9 Feb 2020 19:34:36 -0500
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "cohuck@redhat.com" <cohuck@redhat.com>,
-        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "Wang, Zhi A" <zhi.a.wang@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "He, Shaopeng" <shaopeng.he@intel.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>
-Subject: Re: [RFC PATCH v2 1/9] vfio/pci: split vfio_pci_device into public
- and private parts
-Message-ID: <20200210003436.GA3520@joy-OptiPlex-7040>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20200131020803.27519-1-yan.y.zhao@intel.com>
- <20200131020956.27604-1-yan.y.zhao@intel.com>
- <20200207124831.391d5f70@w520.home>
+   d="scan'208";a="232948849"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by orsmga003.jf.intel.com with ESMTP; 09 Feb 2020 16:36:21 -0800
+Date:   Mon, 10 Feb 2020 08:36:39 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Baoquan He <bhe@redhat.com>, Wei Yang <richard.weiyang@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Wei Yang <richardw.yang@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] mm/sparsemem: get physical address to page struct
+ instead of virtual address to pfn
+Message-ID: <20200210003639.GD7326@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20200209135015.GX8965@MiWiFi-R3L-srv>
+ <A25CC0EC-73A0-426D-93A0-DD9DDC43800F@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200207124831.391d5f70@w520.home>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <A25CC0EC-73A0-426D-93A0-DD9DDC43800F@redhat.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 08, 2020 at 03:48:31AM +0800, Alex Williamson wrote:
-> On Thu, 30 Jan 2020 21:09:56 -0500
-> Yan Zhao <yan.y.zhao@intel.com> wrote:
-> 
-> > split vfio_pci_device into two parts:
-> > (1) a public part,
-> >     including pdev, num_region, irq_type which are accessible from
-> >     outside of vfio.
-> > (2) a private part,
-> >     a pointer to vfio_pci_device_private, only accessible within vfio
-> > 
-> > Cc: Kevin Tian <kevin.tian@intel.com>
-> > Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> > ---
-> >  drivers/vfio/pci/vfio_pci.c         | 209 +++++++++++++++-------------
-> >  drivers/vfio/pci/vfio_pci_config.c  | 157 +++++++++++----------
-> >  drivers/vfio/pci/vfio_pci_igd.c     |  16 +--
-> >  drivers/vfio/pci/vfio_pci_intrs.c   | 171 ++++++++++++-----------
-> >  drivers/vfio/pci/vfio_pci_nvlink2.c |  16 +--
-> >  drivers/vfio/pci/vfio_pci_private.h |   5 +-
-> >  drivers/vfio/pci/vfio_pci_rdwr.c    |  36 ++---
-> >  include/linux/vfio.h                |   7 +
-> >  8 files changed, 321 insertions(+), 296 deletions(-)
-> 
-> I think the typical solution to something like this would be...
-> 
-> struct vfio_pci_device {
-> 	...
-> };
-> 
-> struct vfio_pci_device_private {
-> 	struct vfio_pci_device vdev;
-> 	...
-> };
-> 
-> External code would be able to work with the vfio_pci_device and
-> internal code would do a container_of() to get access to the private
-> fields.  What's done here is pretty ugly and not very cache friendly.
-> Thanks,
+On Sun, Feb 09, 2020 at 03:14:28PM +0100, David Hildenbrand wrote:
 >
-got it, it's much better!
-will change it. Thanks!
+>
+>> Am 09.02.2020 um 14:50 schrieb Baoquan He <bhe@redhat.com>:
+>> 
+>> ﻿On 02/07/20 at 11:26am, Wei Yang wrote:
+>>>> On Thu, Feb 06, 2020 at 06:19:46PM -0800, Dan Williams wrote:
+>>>> On Thu, Feb 6, 2020 at 3:17 PM Wei Yang <richardw.yang@linux.intel.com> wrote:
+>>>>> 
+>>>>> memmap should be the physical address to page struct instead of virtual
+>>>>> address to pfn.
+>>>>> 
+>>>>> Since we call this only for SPARSEMEM_VMEMMAP, pfn_to_page() is valid at
+>>>>> this point.
+>>>>> 
+>>>>> Fixes: ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
+>>>>> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+>>>>> CC: Dan Williams <dan.j.williams@intel.com>
+>>>>> ---
+>>>>> mm/sparse.c | 2 +-
+>>>>> 1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>> 
+>>>>> diff --git a/mm/sparse.c b/mm/sparse.c
+>>>>> index b5da121bdd6e..56816f653588 100644
+>>>>> --- a/mm/sparse.c
+>>>>> +++ b/mm/sparse.c
+>>>>> @@ -888,7 +888,7 @@ int __meminit sparse_add_section(int nid, unsigned long start_pfn,
+>>>>>        /* Align memmap to section boundary in the subsection case */
+>>>>>        if (IS_ENABLED(CONFIG_SPARSEMEM_VMEMMAP) &&
+>>>>>                section_nr_to_pfn(section_nr) != start_pfn)
+>>>>> -               memmap = pfn_to_kaddr(section_nr_to_pfn(section_nr));
+>>>>> +               memmap = pfn_to_page(section_nr_to_pfn(section_nr));
+>>>> 
+>>>> Yes, this looks obviously correct. This might be tripping up
+>>>> makedumpfile. Do you see any practical effects of this bug? The kernel
+>>>> mostly avoids ->section_mem_map in the vmemmap case and in the
+>>>> !vmemmap case section_nr_to_pfn(section_nr) should always equal
+>>>> start_pfn.
+>>> 
+>>> I took another look into the code. Looks there is no practical effect after
+>>> this. Because in the vmemmap case, we don't need ->section_mem_map to retrieve
+>>> the real memmap.
+>>> 
+>>> But leave a inconsistent data in section_mem_map is not a good practice.
+>> 
+>> Yeah, it does has no pratical effect. I tried to create sub-section
+>> alighed namespace, then trigger crash, makedumpfile isn't impacted.
+>> Because pmem memory is only added, but not onlined. We don't report it
+>> to kdump, makedumpfile will ignore it.
+>> 
+>> I think it's worth fixing it to encode a correct memmap address. We
+>> don't know if in the future this will break anything.
+>
+>We can have system memory and devmem overlap within a section (which is still buggy and to be fixed in other regard - e.g., pfn_to_online_page() does not work correctly).
+>
+>E.g., 64 mb of (boot) system memory in a section. Then you can hot-add devmem that spans the remaining 64 mb of that section.
+>
+>So some of that memory will be kdumped - and should be fixed if broken.
+>
+>Cheers
 
-Yan
+Thanks for the explanation, I will add this in the changelog.
 
+>
+>
+>> 
+>> Thanks
+>> Baoquan
+
+-- 
+Wei Yang
+Help you, Help me
