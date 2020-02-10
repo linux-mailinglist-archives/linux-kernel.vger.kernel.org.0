@@ -2,333 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6D24157498
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:32:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A057B15772D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:59:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbgBJMb6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:31:58 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:38396 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbgBJMbz (ORCPT
+        id S1729937AbgBJMlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:41:15 -0500
+Received: from orion.archlinux.org ([88.198.91.70]:38070 "EHLO
+        orion.archlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728158AbgBJMii (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:31:55 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01ACVkMq023220;
-        Mon, 10 Feb 2020 06:31:46 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581337906;
-        bh=8UKzchovWQsic5D+IhNkKAsu3YPA30ZLZgLl2grTVhY=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=ww2oRgASEWczpC2P1dADxThAu8oEuj+OwFnLu6ZfLXEHyRvTgBAI+/+OP7RdlNbOp
-         c4DWuxR2LQCS1TsfriEAzcrSl5XaIuM0BsAIPbwJXseH5S7X8dGIJbuApoDe20iHGi
-         Lo/mlljbb+KUClnx2/XVLYSl73xSNEZJdhHfaylY=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01ACVk7o082926
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Feb 2020 06:31:46 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 10
- Feb 2020 06:31:46 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 10 Feb 2020 06:31:46 -0600
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01ACVaEZ129098;
-        Mon, 10 Feb 2020 06:31:43 -0600
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Rob Herring <robh+dt@kernel.org>, Tom Joseph <tjoseph@cadence.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <amurray@thegoodpenguin.co.uk>
-CC:     Mark Rutland <mark.rutland@arm.com>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH 2/2] dt-bindings: PCI: Convert PCIe Host/Endpoint in Cadence platform to DT schema
-Date:   Mon, 10 Feb 2020 18:05:07 +0530
-Message-ID: <20200210123507.9491-3-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200210123507.9491-1-kishon@ti.com>
-References: <20200210123507.9491-1-kishon@ti.com>
+        Mon, 10 Feb 2020 07:38:38 -0500
+Received: from orion.archlinux.org (localhost [127.0.0.1])
+        by orion.archlinux.org (Postfix) with ESMTP id BC39418CCD29EA;
+        Mon, 10 Feb 2020 12:38:34 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.3 (2019-12-06) on orion.archlinux.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.7 required=5.0 tests=ALL_TRUSTED=-1,BAYES_00=-1,
+        DMARC_FAIL_NONE=0.25,T_DMARC_POLICY_NONE=0.01,T_DMARC_TESTS_FAIL=0.01
+        autolearn=no autolearn_force=no version=3.4.3
+X-Spam-BL-Results: 
+Received: from genesis (unknown [IPv6:2001:8a0:f254:2300:dad6:8c60:8394:88da])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: ffy00)
+        by orion.archlinux.org (Postfix) with ESMTPSA;
+        Mon, 10 Feb 2020 12:38:34 +0000 (UTC)
+Message-ID: <2405a741abf0d5fe8f55b5d3de8488e3054cc5e1.camel@archlinux.org>
+Subject: Re: [BUG] Kernel log flooded by message "logitech-djreceiver
+ 0003:046D:C53A.000C: logi_dj_hidpp_event: invalid device index:7"
+From:   Filipe =?ISO-8859-1?Q?La=EDns?= <lains@archlinux.org>
+To:     Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-input@vger.kernel.org
+In-Reply-To: <CABXGCsMfzj+mpjvuZifzWEKbX7X36v7iMVPampSS6kOc2Hzoow@mail.gmail.com>
+References: <CABXGCsMfzj+mpjvuZifzWEKbX7X36v7iMVPampSS6kOc2Hzoow@mail.gmail.com>
+Organization: Archlinux
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-CC7fhrLK0x2ihemV6EOD"
+Date:   Mon, 10 Feb 2020 12:38:32 +0000
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Evolution 3.34.3 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Include Cadence core DT schema and define the Cadence platform DT schema
-for both Host and Endpoint mode. Note: The Cadence core DT schema could
-be included for other platforms using Cadence PCIe core.
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+--=-CC7fhrLK0x2ihemV6EOD
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, 2020-02-10 at 13:21 +0500, Mikhail Gavrilov wrote:
+> Kernel log flooded by message
+> logitech-djreceiver 0003:046D:C53A.000C: logi_dj_hidpp_event: invalid
+> device index:7
+> This happens when the mouse is idle.
+> And it started since I begin using the mouse pad with Power Play
+> technology.
+>=20
+>=20
+> Kernel ver: 5.6 pre RC
+> --
+> Best Regards,
+> Mike Gavrilov.
+
+Hello Mike,
+
+Yes, the Powerplay mat exports a static HID++ 2.0 device with index 7
+to configure the led on the mat. The current code expects devices to
+have a maximum index of 6, which is the maximum index of pairable
+devices.=20
+
+I already submitted a patch adding support for the Logitech G Powerplay
+mat but it wasn't been upstreamed it. I will attach it in case you want
+to try it.
+
+Cheers,
+Filipe La=C3=ADns
+
 ---
- .../bindings/pci/cdns,cdns-pcie-ep.txt        | 27 -------
- .../bindings/pci/cdns,cdns-pcie-ep.yaml       | 48 ++++++++++++
- .../bindings/pci/cdns,cdns-pcie-host.txt      | 66 ----------------
- .../bindings/pci/cdns,cdns-pcie-host.yaml     | 76 +++++++++++++++++++
- MAINTAINERS                                   |  2 +-
- 5 files changed, 125 insertions(+), 94 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.txt
- create mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.yaml
- delete mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.txt
- create mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml
+Author: Filipe La=C3=ADns <lains@archlinux.org>
+Date:   Sun Jan 12 20:15:41 2020 +0000
 
-diff --git a/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.txt b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.txt
-deleted file mode 100644
-index 4a0475e2ba7e..000000000000
---- a/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.txt
-+++ /dev/null
-@@ -1,27 +0,0 @@
--* Cadence PCIe endpoint controller
--
--Required properties:
--- compatible: Should contain "cdns,cdns-pcie-ep" to identify the IP used.
--- reg: Should contain the controller register base address and AXI interface
--  region base address respectively.
--- reg-names: Must be "reg" and "mem" respectively.
--- cdns,max-outbound-regions: Set to maximum number of outbound regions
--
--Optional properties:
--- max-functions: Maximum number of functions that can be configured (default 1).
--- phys: From PHY bindings: List of Generic PHY phandles. One per lane if more
--  than one in the list.  If only one PHY listed it must manage all lanes. 
--- phy-names:  List of names to identify the PHY.
--
--Example:
--
--pcie@fc000000 {
--	compatible = "cdns,cdns-pcie-ep";
--	reg = <0x0 0xfc000000 0x0 0x01000000>,
--	      <0x0 0x80000000 0x0 0x40000000>;
--	reg-names = "reg", "mem";
--	cdns,max-outbound-regions = <16>;
--	max-functions = /bits/ 8 <8>;
--	phys = <&ep_phy0 &ep_phy1>;
--	phy-names = "pcie-lane0","pcie-lane1";
--};
-diff --git a/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.yaml
-new file mode 100644
-index 000000000000..016c374cf125
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.yaml
-@@ -0,0 +1,48 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pci/cdns,cdns-pcie-ep.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Cadence PCIe EP Controller
-+
-+maintainers:
-+  - Tom Joseph <tjoseph@cadence.com>
-+
-+allOf:
-+  - $ref: "cdns-pcie-ep.yaml#"
-+
-+properties:
-+  compatible:
-+    const: cdns,cdns-pcie-ep
-+
-+  reg:
-+    maxItems: 2
-+
-+  reg-names:
-+    items:
-+      - const: reg
-+      - const: mem
-+
-+required:
-+  - reg
-+  - reg-names
-+
-+examples:
-+  - |
-+    bus {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        pcie@fc000000 {
-+                compatible = "cdns,cdns-pcie-ep";
-+                reg = <0x0 0xfc000000 0x0 0x01000000>,
-+                      <0x0 0x80000000 0x0 0x40000000>;
-+                reg-names = "reg", "mem";
-+                cdns,max-outbound-regions = <16>;
-+                max-functions = /bits/ 8 <8>;
-+                phys = <&pcie_phy0>;
-+                phy-names = "pcie-phy";
-+        };
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.txt b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.txt
-deleted file mode 100644
-index 91de69c713a9..000000000000
---- a/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.txt
-+++ /dev/null
-@@ -1,66 +0,0 @@
--* Cadence PCIe host controller
--
--This PCIe controller inherits the base properties defined in
--host-generic-pci.txt.
--
--Required properties:
--- compatible: Should contain "cdns,cdns-pcie-host" to identify the IP used.
--- reg: Should contain the controller register base address, PCIe configuration
--  window base address, and AXI interface region base address respectively.
--- reg-names: Must be "reg", "cfg" and "mem" respectively.
--- #address-cells: Set to <3>
--- #size-cells: Set to <2>
--- device_type: Set to "pci"
--- ranges: Ranges for the PCI memory and I/O regions
--- #interrupt-cells: Set to <1>
--- interrupt-map-mask and interrupt-map: Standard PCI properties to define the
--  mapping of the PCIe interface to interrupt numbers.
--
--Optional properties:
--- cdns,max-outbound-regions: Set to maximum number of outbound regions
--  (default 32)
--- cdns,no-bar-match-nbits: Set into the no BAR match register to configure the
--  number of least significant bits kept during inbound (PCIe -> AXI) address
--  translations (default 32)
--- vendor-id: The PCI vendor ID (16 bits, default is design dependent)
--- device-id: The PCI device ID (16 bits, default is design dependent)
--- phys: From PHY bindings: List of Generic PHY phandles. One per lane if more
--  than one in the list.  If only one PHY listed it must manage all lanes. 
--- phy-names:  List of names to identify the PHY.
--
--Example:
--
--pcie@fb000000 {
--	compatible = "cdns,cdns-pcie-host";
--	device_type = "pci";
--	#address-cells = <3>;
--	#size-cells = <2>;
--	bus-range = <0x0 0xff>;
--	linux,pci-domain = <0>;
--	cdns,max-outbound-regions = <16>;
--	cdns,no-bar-match-nbits = <32>;
--	vendor-id = /bits/ 16 <0x17cd>;
--	device-id = /bits/ 16 <0x0200>;
--
--	reg = <0x0 0xfb000000  0x0 0x01000000>,
--	      <0x0 0x41000000  0x0 0x00001000>,
--	      <0x0 0x40000000  0x0 0x04000000>;
--	reg-names = "reg", "cfg", "mem";
--
--	ranges = <0x02000000 0x0 0x42000000  0x0 0x42000000  0x0 0x1000000>,
--		 <0x01000000 0x0 0x43000000  0x0 0x43000000  0x0 0x0010000>;
--
--	#interrupt-cells = <0x1>;
--
--	interrupt-map = <0x0 0x0 0x0  0x1  &gic  0x0 0x0 0x0 14 0x1
--			 0x0 0x0 0x0  0x2  &gic  0x0 0x0 0x0 15 0x1
--			 0x0 0x0 0x0  0x3  &gic  0x0 0x0 0x0 16 0x1
--			 0x0 0x0 0x0  0x4  &gic  0x0 0x0 0x0 17 0x1>;
--
--	interrupt-map-mask = <0x0 0x0 0x0  0x7>;
--
--	msi-parent = <&its_pci>;
--
--	phys = <&pcie_phy0>;
--	phy-names = "pcie-phy";
--};
-diff --git a/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml
-new file mode 100644
-index 000000000000..2f605297f862
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml
-@@ -0,0 +1,76 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pci/cdns,cdns-pcie-host.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Cadence PCIe host controller
-+
-+maintainers:
-+  - Tom Joseph <tjoseph@cadence.com>
-+
-+allOf:
-+  - $ref: /schemas/pci/pci-bus.yaml#
-+  - $ref: "cdns-pcie-host.yaml#"
-+
-+properties:
-+  compatible:
-+    const: cdns,cdns-pcie-host
-+
-+  reg:
-+    maxItems: 3
-+
-+  reg-names:
-+    items:
-+      - const: reg
-+      - const: cfg
-+      - const: mem
-+
-+  msi-parent: true
-+
-+required:
-+  - reg
-+  - reg-names
-+
-+examples:
-+  - |
-+    bus {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        pcie@fb000000 {
-+            compatible = "cdns,cdns-pcie-host";
-+            device_type = "pci";
-+            #address-cells = <3>;
-+            #size-cells = <2>;
-+            bus-range = <0x0 0xff>;
-+            linux,pci-domain = <0>;
-+            cdns,max-outbound-regions = <16>;
-+            cdns,no-bar-match-nbits = <32>;
-+            vendor-id = /bits/ 16 <0x17cd>;
-+            device-id = /bits/ 16 <0x0200>;
-+
-+            reg = <0x0 0xfb000000  0x0 0x01000000>,
-+                  <0x0 0x41000000  0x0 0x00001000>,
-+                  <0x0 0x40000000  0x0 0x04000000>;
-+            reg-names = "reg", "cfg", "mem";
-+
-+            ranges = <0x02000000 0x0 0x42000000  0x0 0x42000000  0x0 0x1000000>,
-+                     <0x01000000 0x0 0x43000000  0x0 0x43000000  0x0 0x0010000>;
-+
-+            #interrupt-cells = <0x1>;
-+
-+            interrupt-map = <0x0 0x0 0x0  0x1  &gic  0x0 0x0 0x0 14 0x1>,
-+                 <0x0 0x0 0x0  0x2  &gic  0x0 0x0 0x0 15 0x1>,
-+                 <0x0 0x0 0x0  0x3  &gic  0x0 0x0 0x0 16 0x1>,
-+                 <0x0 0x0 0x0  0x4  &gic  0x0 0x0 0x0 17 0x1>;
-+
-+            interrupt-map-mask = <0x0 0x0 0x0  0x7>;
-+
-+            msi-parent = <&its_pci>;
-+
-+            phys = <&pcie_phy0>;
-+            phy-names = "pcie-phy";
-+        };
-+    };
-+...
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 38fe2f3f7b6f..e0402e001edd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12739,7 +12739,7 @@ PCI DRIVER FOR CADENCE PCIE IP
- M:	Tom Joseph <tjoseph@cadence.com>
- L:	linux-pci@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/pci/cdns,*.txt
-+F:	Documentation/devicetree/bindings/pci/cdns,*
- F:	drivers/pci/controller/pcie-cadence*
- 
- PCI DRIVER FOR FREESCALE LAYERSCAPE
--- 
-2.17.1
+    HID: logitech-dj: add support for the static device in the Powerplay ma=
+t/receiver
 
+    The Logitech G Powerplay has a lightspeed receiver with a static HID++
+    device with ID 7 attached to it to. It is used to configure the led on
+    the mat. For this reason I increased the max number of devices.
+
+    Signed-off-by: Filipe La=C3=ADns <lains@archlinux.org>
+
+diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
+index bb50d6e7745b..79294b873057 100644
+--- a/drivers/hid/hid-logitech-dj.c
++++ b/drivers/hid/hid-logitech-dj.c
+@@ -16,11 +16,11 @@
+ #include <asm/unaligned.h>
+ #include "hid-ids.h"
+
+-#define DJ_MAX_PAIRED_DEVICES                  6
++#define DJ_MAX_PAIRED_DEVICES                  7
+ #define DJ_MAX_NUMBER_NOTIFS                   8
+ #define DJ_RECEIVER_INDEX                      0
+ #define DJ_DEVICE_INDEX_MIN                    1
+-#define DJ_DEVICE_INDEX_MAX                    6
++#define DJ_DEVICE_INDEX_MAX                    7
+
+ #define DJREPORT_SHORT_LENGTH                  15
+ #define DJREPORT_LONG_LENGTH                   32
+@@ -980,6 +980,11 @@ static void logi_hidpp_recv_queue_notif(struct hid_dev=
+ice *hdev,
+                break;
+        }
+
++       /* custom receiver device (eg. powerplay) */
++       if (hidpp_report->device_index =3D=3D 7) {
++               workitem.reports_supported |=3D HIDPP;
++       }
++
+        if (workitem.type =3D=3D WORKITEM_TYPE_EMPTY) {
+                hid_warn(hdev,
+                         "unusable device of type %s (0x%02x) connected on =
+slot %d",
+
+--=-CC7fhrLK0x2ihemV6EOD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0jW0leqs33gyftiw+JPGdIFqqV0FAl5BTsQACgkQ+JPGdIFq
+qV2o1BAArnqS+PoUWAyJOVrP4wEmyHC0lyB5osiGEehXtMvhd2pDWwl9P8U8nYdj
+TusgiebYY4F9lrZu00g7ggqD5iQQA1uyOvOGkV91sYez4YdKYU8lpUfGS+jTgTOo
+gIWlGntJi/qjbYkHqz5zeI+K0mvCpmUyinn2/WkV7y5ErPvgdiXPsTIzQq9geSJn
+i2syAUY0fTwDMe60AQ/2MhIXRiUCvMyMH8TLbDUFz2uzbzwhzBZH6tRY1tlPM0ow
+mtUPCEHWNTazfd56317QHDGMVne8/bWd4z+Gsyd2WqZVXNBvDAoX58aMxNH2FTtG
+jN6TjA01SAb9/yKcRdOe4hb7wstmjX9744ClGmueQNCPJyvjuWuGOBj/eMNVRk7p
+2PTAoR+ijTdHkUghZ3i+aGnzQVFpbgyistvNj1XajIhusHTMlHWep8f4IKPVS7zb
+5HGx6HF/ThBALxFUAOQjdpITzBF605I4b0XjOrx5UnZiYokCwVIulJrKFMwggUos
+UHNJrVbIx4fmjBvolMLAx9zmf9Hsd0BCj17ToECPXQpnZsV1K80q2K4XmzS5Zpx8
+gHvZlMsjq92JS4pnebyJIjeS22S8AnHESe6TBQyqelVlYJnKaiQ2eZVbQkO3QbqI
+6XEAShG/PJ1HIcHur1l23aEoYvu0cgzP+FyRQ5oucNwhuuLdcmI=
+=t81+
+-----END PGP SIGNATURE-----
+
+--=-CC7fhrLK0x2ihemV6EOD--
