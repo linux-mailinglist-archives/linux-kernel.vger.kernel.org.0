@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 873401574F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:38:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CFBC1575F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:48:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728683AbgBJMhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:37:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54742 "EHLO mail.kernel.org"
+        id S1729900AbgBJMrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:47:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728260AbgBJMgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:08 -0500
+        id S1730116AbgBJMl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:41:59 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEA9821734;
-        Mon, 10 Feb 2020 12:36:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84D3C2051A;
+        Mon, 10 Feb 2020 12:41:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338168;
-        bh=868tlg1DuwDywdnzsV4fTcAhhf7kZR1YZPpVNvPkJC8=;
+        s=default; t=1581338518;
+        bh=E+MTVgFWNIcvf+fhiuKRguXt/m4kjJSHKqQwsK/ytv4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=id0OlfB52cS3CBq11b8hvkej4cv/rLTy1rZZu3VllX31ZY2yHA5iwbAEzwiZexkoj
-         6U2HSD82MUg2C6HqyuZQQGd6Bfg5L+43YRB9VdmqrhTldOxIXLXR+diRxBsNrCqDp7
-         iu2+N8B4N2bnLnM+XRc61xtIhkrvKN9Uk6N8Fp3Y=
+        b=uwZw11J75sRCiIQV1uUruKPPf5F3Fihb2RtrPuxxxd6EXdfDmfga4XqwkTPgAZ/e+
+         Shhah7CZxbRbbmVjU3wc9rHLS7j/vBzm/qOdHowiKKVD3KVkDgF5mN9PUmI8qIVClX
+         7rfwGQapxG66sDjOfXyS/9BmFDhdjddxNpNpSbWg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bean Huo <beanhuo@micron.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Can Guo <cang@codeaurora.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.19 148/195] scsi: ufs: Recheck bkops level if bkops is disabled
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.5 293/367] net: tulip: Adjust indentation in {dmfe, uli526x}_init_module
 Date:   Mon, 10 Feb 2020 04:33:26 -0800
-Message-Id: <20200210122319.731762402@linuxfoundation.org>
+Message-Id: <20200210122450.801336395@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,55 +44,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Asutosh Das <asutoshd@codeaurora.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit 24366c2afbb0539fb14eff330d4e3a5db5c0a3ef upstream.
+commit fe06bf3d83ef0d92f35a24e03297172e92ce9ce3 upstream.
 
-bkops level should be rechecked upon receiving an exception.  Currently the
-level is being cached and never updated.
+Clang warns:
 
-Update bkops each time the level is checked.  Also do not use the cached
-bkops level value if it is disabled and then enabled.
+../drivers/net/ethernet/dec/tulip/uli526x.c:1812:3: warning: misleading
+indentation; statement is not part of the previous 'if'
+[-Wmisleading-indentation]
+        switch (mode) {
+        ^
+../drivers/net/ethernet/dec/tulip/uli526x.c:1809:2: note: previous
+statement is here
+        if (cr6set)
+        ^
+1 warning generated.
 
-Fixes: afdfff59a0e0 (scsi: ufs: handle non spec compliant bkops behaviour by device)
-Link: https://lore.kernel.org/r/1574751214-8321-2-git-send-email-cang@qti.qualcomm.com
-Reviewed-by: Bean Huo <beanhuo@micron.com>
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
-Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
-Signed-off-by: Can Guo <cang@codeaurora.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+../drivers/net/ethernet/dec/tulip/dmfe.c:2217:3: warning: misleading
+indentation; statement is not part of the previous 'if'
+[-Wmisleading-indentation]
+        switch(mode) {
+        ^
+../drivers/net/ethernet/dec/tulip/dmfe.c:2214:2: note: previous
+statement is here
+        if (cr6set)
+        ^
+1 warning generated.
+
+This warning occurs because there is a space before the tab on these
+lines. Remove them so that the indentation is consistent with the Linux
+kernel coding style and clang no longer warns.
+
+While we are here, adjust the default block in dmfe_init_module to have
+a proper break between the label and assignment and add a space between
+the switch and opening parentheses to avoid a checkpatch warning.
+
+Fixes: e1c3e5014040 ("[PATCH] initialisation cleanup for ULI526x-net-driver")
+Link: https://github.com/ClangBuiltLinux/linux/issues/795
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/ufs/ufshcd.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/dec/tulip/dmfe.c    |    7 ++++---
+ drivers/net/ethernet/dec/tulip/uli526x.c |    4 ++--
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -5044,6 +5044,7 @@ static int ufshcd_disable_auto_bkops(str
+--- a/drivers/net/ethernet/dec/tulip/dmfe.c
++++ b/drivers/net/ethernet/dec/tulip/dmfe.c
+@@ -2214,15 +2214,16 @@ static int __init dmfe_init_module(void)
+ 	if (cr6set)
+ 		dmfe_cr6_user_set = cr6set;
  
- 	hba->auto_bkops_enabled = false;
- 	trace_ufshcd_auto_bkops_state(dev_name(hba->dev), "Disabled");
-+	hba->is_urgent_bkops_lvl_checked = false;
- out:
- 	return err;
- }
-@@ -5068,6 +5069,7 @@ static void ufshcd_force_reset_auto_bkop
- 		hba->ee_ctrl_mask &= ~MASK_EE_URGENT_BKOPS;
- 		ufshcd_disable_auto_bkops(hba);
+- 	switch(mode) {
+-   	case DMFE_10MHF:
++	switch (mode) {
++	case DMFE_10MHF:
+ 	case DMFE_100MHF:
+ 	case DMFE_10MFD:
+ 	case DMFE_100MFD:
+ 	case DMFE_1M_HPNA:
+ 		dmfe_media_mode = mode;
+ 		break;
+-	default:dmfe_media_mode = DMFE_AUTO;
++	default:
++		dmfe_media_mode = DMFE_AUTO;
+ 		break;
  	}
-+	hba->is_urgent_bkops_lvl_checked = false;
- }
  
- static inline int ufshcd_get_bkops_status(struct ufs_hba *hba, u32 *status)
-@@ -5114,6 +5116,7 @@ static int ufshcd_bkops_ctrl(struct ufs_
- 		err = ufshcd_enable_auto_bkops(hba);
- 	else
- 		err = ufshcd_disable_auto_bkops(hba);
-+	hba->urgent_bkops_lvl = curr_status;
- out:
- 	return err;
- }
+--- a/drivers/net/ethernet/dec/tulip/uli526x.c
++++ b/drivers/net/ethernet/dec/tulip/uli526x.c
+@@ -1809,8 +1809,8 @@ static int __init uli526x_init_module(vo
+ 	if (cr6set)
+ 		uli526x_cr6_user_set = cr6set;
+ 
+- 	switch (mode) {
+-   	case ULI526X_10MHF:
++	switch (mode) {
++	case ULI526X_10MHF:
+ 	case ULI526X_100MHF:
+ 	case ULI526X_10MFD:
+ 	case ULI526X_100MFD:
 
 
