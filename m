@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AF4515787E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:08:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E063157ACD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:25:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729719AbgBJNIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:08:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37688 "EHLO mail.kernel.org"
+        id S1728869AbgBJNZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:25:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729451AbgBJMjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:39:36 -0500
+        id S1728562AbgBJMgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:36:55 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15B1921739;
-        Mon, 10 Feb 2020 12:39:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD54E2051A;
+        Mon, 10 Feb 2020 12:36:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338375;
-        bh=qATLWGm8vYOyW9iIYLQ9TEKrHeRMZ7731hcN7k1bZw8=;
+        s=default; t=1581338214;
+        bh=iW2erDbgdHRSyYnWrC6Cbf3Cy5uDHy6bDSkEM2YR5mw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A8EII2ondlbHlIEz1PFeFY3CKS5/1dAXm10lHgFvWhQI1i6HnbYP3+b6s7pG449Hk
-         Z1+Xx9j06qEfAxApD7By3ojCOUoqst7G8rP59YnI3/zNe1BfXMPSjsLWqb74ZVuBPc
-         JJRXVVnQ75CobqswzdEQ4Pr2uKTx0BZXfJ2xkesM=
+        b=N07D8JwAgaDrzMY7goHxZw3vF/8krnCrMUL4jgmkmXgkB3dxTPJaFE/5hNkI6TtxU
+         ALJfdDgqcMtlmg8lsIN3RpHePISriXK/cZWnwS6x7joNyfOoYKgaloyXE5Oe5rgDpG
+         i5Jlx4LQoHkDWzGx1MiI75gIkYRivfwhmLUZ08Bw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bryan ODonoghue <bryan.odonoghue@linaro.org>,
-        Felipe Balbi <balbi@kernel.org>
-Subject: [PATCH 5.5 049/367] usb: gadget: f_ncm: Use atomic_t to track in-flight request
-Date:   Mon, 10 Feb 2020 04:29:22 -0800
-Message-Id: <20200210122428.567332269@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+35d4dea36c387813ed31@syzkaller.appspotmail.com
+Subject: [PATCH 5.4 007/309] net_sched: fix an OOB access in cls_tcindex
+Date:   Mon, 10 Feb 2020 04:29:23 -0800
+Message-Id: <20200210122406.768264448@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,97 +49,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 5b24c28cfe136597dc3913e1c00b119307a20c7e upstream.
+[ Upstream commit 599be01ee567b61f4471ee8078870847d0a11e8e ]
 
-Currently ncm->notify_req is used to flag when a request is in-flight.
-ncm->notify_req is set to NULL and when a request completes it is
-subsequently reset.
+As Eric noticed, tcindex_alloc_perfect_hash() uses cp->hash
+to compute the size of memory allocation, but cp->hash is
+set again after the allocation, this caused an out-of-bound
+access.
 
-This is fundamentally buggy in that the unbind logic of the NCM driver will
-unconditionally free ncm->notify_req leading to a NULL pointer dereference.
+So we have to move all cp->hash initialization and computation
+before the memory allocation. Move cp->mask and cp->shift together
+as cp->hash may need them for computation too.
 
-Fixes: 40d133d7f542 ("usb: gadget: f_ncm: convert to new function interface with backward compatibility")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Felipe Balbi <balbi@kernel.org>
+Reported-and-tested-by: syzbot+35d4dea36c387813ed31@syzkaller.appspotmail.com
+Fixes: 331b72922c5f ("net: sched: RCU cls_tcindex")
+Cc: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: John Fastabend <john.fastabend@gmail.com>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Jiri Pirko <jiri@resnulli.us>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/gadget/function/f_ncm.c |   17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ net/sched/cls_tcindex.c |   40 ++++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
---- a/drivers/usb/gadget/function/f_ncm.c
-+++ b/drivers/usb/gadget/function/f_ncm.c
-@@ -53,6 +53,7 @@ struct f_ncm {
- 	struct usb_ep			*notify;
- 	struct usb_request		*notify_req;
- 	u8				notify_state;
-+	atomic_t			notify_count;
- 	bool				is_open;
+--- a/net/sched/cls_tcindex.c
++++ b/net/sched/cls_tcindex.c
+@@ -333,12 +333,31 @@ tcindex_set_parms(struct net *net, struc
+ 	cp->fall_through = p->fall_through;
+ 	cp->tp = tp;
  
- 	const struct ndp_parser_opts	*parser_opts;
-@@ -547,7 +548,7 @@ static void ncm_do_notify(struct f_ncm *
- 	int				status;
- 
- 	/* notification already in flight? */
--	if (!req)
-+	if (atomic_read(&ncm->notify_count))
- 		return;
- 
- 	event = req->buf;
-@@ -587,7 +588,8 @@ static void ncm_do_notify(struct f_ncm *
- 	event->bmRequestType = 0xA1;
- 	event->wIndex = cpu_to_le16(ncm->ctrl_id);
- 
--	ncm->notify_req = NULL;
-+	atomic_inc(&ncm->notify_count);
++	if (tb[TCA_TCINDEX_HASH])
++		cp->hash = nla_get_u32(tb[TCA_TCINDEX_HASH]);
 +
- 	/*
- 	 * In double buffering if there is a space in FIFO,
- 	 * completion callback can be called right after the call,
-@@ -597,7 +599,7 @@ static void ncm_do_notify(struct f_ncm *
- 	status = usb_ep_queue(ncm->notify, req, GFP_ATOMIC);
- 	spin_lock(&ncm->lock);
- 	if (status < 0) {
--		ncm->notify_req = req;
-+		atomic_dec(&ncm->notify_count);
- 		DBG(cdev, "notify --> %d\n", status);
- 	}
- }
-@@ -632,17 +634,19 @@ static void ncm_notify_complete(struct u
- 	case 0:
- 		VDBG(cdev, "Notification %02x sent\n",
- 		     event->bNotificationType);
-+		atomic_dec(&ncm->notify_count);
- 		break;
- 	case -ECONNRESET:
- 	case -ESHUTDOWN:
-+		atomic_set(&ncm->notify_count, 0);
- 		ncm->notify_state = NCM_NOTIFY_NONE;
- 		break;
- 	default:
- 		DBG(cdev, "event %02x --> %d\n",
- 			event->bNotificationType, req->status);
-+		atomic_dec(&ncm->notify_count);
- 		break;
- 	}
--	ncm->notify_req = req;
- 	ncm_do_notify(ncm);
- 	spin_unlock(&ncm->lock);
- }
-@@ -1649,6 +1653,11 @@ static void ncm_unbind(struct usb_config
- 	ncm_string_defs[0].id = 0;
- 	usb_free_all_descriptors(f);
- 
-+	if (atomic_read(&ncm->notify_count)) {
-+		usb_ep_dequeue(ncm->notify, ncm->notify_req);
-+		atomic_set(&ncm->notify_count, 0);
++	if (tb[TCA_TCINDEX_MASK])
++		cp->mask = nla_get_u16(tb[TCA_TCINDEX_MASK]);
++
++	if (tb[TCA_TCINDEX_SHIFT])
++		cp->shift = nla_get_u32(tb[TCA_TCINDEX_SHIFT]);
++
++	if (!cp->hash) {
++		/* Hash not specified, use perfect hash if the upper limit
++		 * of the hashing index is below the threshold.
++		 */
++		if ((cp->mask >> cp->shift) < PERFECT_HASH_THRESHOLD)
++			cp->hash = (cp->mask >> cp->shift) + 1;
++		else
++			cp->hash = DEFAULT_HASH_SIZE;
 +	}
 +
- 	kfree(ncm->notify_req->buf);
- 	usb_ep_free_request(ncm->notify, ncm->notify_req);
- }
+ 	if (p->perfect) {
+ 		int i;
+ 
+ 		if (tcindex_alloc_perfect_hash(net, cp) < 0)
+ 			goto errout;
+-		for (i = 0; i < cp->hash; i++)
++		for (i = 0; i < min(cp->hash, p->hash); i++)
+ 			cp->perfect[i].res = p->perfect[i].res;
+ 		balloc = 1;
+ 	}
+@@ -350,15 +369,6 @@ tcindex_set_parms(struct net *net, struc
+ 	if (old_r)
+ 		cr = r->res;
+ 
+-	if (tb[TCA_TCINDEX_HASH])
+-		cp->hash = nla_get_u32(tb[TCA_TCINDEX_HASH]);
+-
+-	if (tb[TCA_TCINDEX_MASK])
+-		cp->mask = nla_get_u16(tb[TCA_TCINDEX_MASK]);
+-
+-	if (tb[TCA_TCINDEX_SHIFT])
+-		cp->shift = nla_get_u32(tb[TCA_TCINDEX_SHIFT]);
+-
+ 	err = -EBUSY;
+ 
+ 	/* Hash already allocated, make sure that we still meet the
+@@ -376,16 +386,6 @@ tcindex_set_parms(struct net *net, struc
+ 	if (tb[TCA_TCINDEX_FALL_THROUGH])
+ 		cp->fall_through = nla_get_u32(tb[TCA_TCINDEX_FALL_THROUGH]);
+ 
+-	if (!cp->hash) {
+-		/* Hash not specified, use perfect hash if the upper limit
+-		 * of the hashing index is below the threshold.
+-		 */
+-		if ((cp->mask >> cp->shift) < PERFECT_HASH_THRESHOLD)
+-			cp->hash = (cp->mask >> cp->shift) + 1;
+-		else
+-			cp->hash = DEFAULT_HASH_SIZE;
+-	}
+-
+ 	if (!cp->perfect && !cp->h)
+ 		cp->alloc_hash = cp->hash;
+ 
 
 
