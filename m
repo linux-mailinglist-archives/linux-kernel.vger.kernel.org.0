@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69E8C157944
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:14:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF810157A95
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:23:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729481AbgBJNOD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:14:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34308 "EHLO mail.kernel.org"
+        id S1728653AbgBJMhK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:37:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728636AbgBJMii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:38 -0500
+        id S1728243AbgBJMgG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:36:06 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93CD62080C;
-        Mon, 10 Feb 2020 12:38:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E07A324672;
+        Mon, 10 Feb 2020 12:36:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338317;
-        bh=8cs4vnXlsHK6BO/SsjAWbXAI1jheAttXscHTh9YVgcA=;
+        s=default; t=1581338166;
+        bh=aVRBNsjbkGq2j5Vekvmr/nzCQ0znuGbtHlWs8JYHqpU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EPnSb9zweQyC2HguOmjvgJws9zuVdDYXHH6l3MtinUPTBiyCI5mWUn70xfIkfipXu
-         TWY/XL9YuoaWRAe3wIFGYvrRKJyO6THIxDW26dLHOfexMEmBKZ+BTQTm8Gm6WDXOC/
-         u+M2yeyCOYp4bFbkFjCVDWwFa9SXMOfHkd+QEM9M=
+        b=E+4Uszmk7rt79VFqDGxvThY5Au8oYG+1VCheWiLUtccFj6NiA3WM2IsQlLVYMM/sI
+         V5dhgQujv6XLhC/HUkEoKQdLgRY1FtPIepTDSN7FCI4sIXxF5KAcOF5UbImM9wrIjo
+         d423Obpyyvr/3WKWH2C+FDxZqgQYCPBwMQ3ZnxzI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Rob Clark <robdclark@chromium.org>
-Subject: [PATCH 5.4 246/309] drm: msm: mdp4: Adjust indentation in mdp4_dsi_encoder_enable
-Date:   Mon, 10 Feb 2020 04:33:22 -0800
-Message-Id: <20200210122430.151268854@linuxfoundation.org>
+        stable@vger.kernel.org, Himanshu Madhani <hmadhani@marvell.com>,
+        Quinn Tran <qutran@marvell.com>,
+        Martin Wilck <mwilck@suse.com>,
+        Daniel Wagner <dwagner@suse.de>,
+        Roman Bolshakov <r.bolshakov@yadro.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.19 145/195] scsi: qla2xxx: Fix the endianness of the qla82xx_get_fw_size() return type
+Date:   Mon, 10 Feb 2020 04:33:23 -0800
+Message-Id: <20200210122319.483574760@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +48,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-commit 251e3cb1418ff3f5061ee31335e346e852b16573 upstream.
+commit 3f5f7335e5e234e340b48ecb24c2aba98a61f934 upstream.
 
-Clang warns:
+Since qla82xx_get_fw_size() returns a number in CPU-endian format, change
+its return type from __le32 into u32. This patch does not change any
+functionality.
 
-../drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c:124:3: warning:
-misleading indentation; statement is not part of the previous 'if'
-[-Wmisleading-indentation]
-         mdp4_crtc_set_config(encoder->crtc,
-         ^
-../drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c:121:2: note:
-previous statement is here
-        if (mdp4_dsi_encoder->enabled)
-        ^
-
-This warning occurs because there is a space after the tab on this line.
-Remove it so that the indentation is consistent with the Linux kernel
-coding style and clang no longer warns.
-
-Fixes: 776638e73a19 ("drm/msm/dsi: Add a mdp4 encoder for DSI")
-Link: https://github.com/ClangBuiltLinux/linux/issues/792
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Rob Clark <robdclark@chromium.org>
+Fixes: 9c2b297572bf ("[SCSI] qla2xxx: Support for loading Unified ROM Image (URI) format firmware file.")
+Cc: Himanshu Madhani <hmadhani@marvell.com>
+Cc: Quinn Tran <qutran@marvell.com>
+Cc: Martin Wilck <mwilck@suse.com>
+Cc: Daniel Wagner <dwagner@suse.de>
+Cc: Roman Bolshakov <r.bolshakov@yadro.com>
+Link: https://lore.kernel.org/r/20191219004905.39586-1-bvanassche@acm.org
+Reviewed-by: Daniel Wagner <dwagner@suse.de>
+Reviewed-by: Roman Bolshakov <r.bolshakov@yadro.com>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_nx.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c
-@@ -121,7 +121,7 @@ static void mdp4_dsi_encoder_enable(stru
- 	if (mdp4_dsi_encoder->enabled)
- 		return;
+--- a/drivers/scsi/qla2xxx/qla_nx.c
++++ b/drivers/scsi/qla2xxx/qla_nx.c
+@@ -1605,8 +1605,7 @@ qla82xx_get_bootld_offset(struct qla_hw_
+ 	return (u8 *)&ha->hablob->fw->data[offset];
+ }
  
--	 mdp4_crtc_set_config(encoder->crtc,
-+	mdp4_crtc_set_config(encoder->crtc,
- 			MDP4_DMA_CONFIG_PACK_ALIGN_MSB |
- 			MDP4_DMA_CONFIG_DEFLKR_EN |
- 			MDP4_DMA_CONFIG_DITHER_EN |
+-static __le32
+-qla82xx_get_fw_size(struct qla_hw_data *ha)
++static u32 qla82xx_get_fw_size(struct qla_hw_data *ha)
+ {
+ 	struct qla82xx_uri_data_desc *uri_desc = NULL;
+ 
+@@ -1617,7 +1616,7 @@ qla82xx_get_fw_size(struct qla_hw_data *
+ 			return cpu_to_le32(uri_desc->size);
+ 	}
+ 
+-	return cpu_to_le32(*(u32 *)&ha->hablob->fw->data[FW_SIZE_OFFSET]);
++	return get_unaligned_le32(&ha->hablob->fw->data[FW_SIZE_OFFSET]);
+ }
+ 
+ static u8 *
+@@ -1808,7 +1807,7 @@ qla82xx_fw_load_from_blob(struct qla_hw_
+ 	}
+ 
+ 	flashaddr = FLASH_ADDR_START;
+-	size = (__force u32)qla82xx_get_fw_size(ha) / 8;
++	size = qla82xx_get_fw_size(ha) / 8;
+ 	ptr64 = (u64 *)qla82xx_get_fw_offs(ha);
+ 
+ 	for (i = 0; i < size; i++) {
 
 
