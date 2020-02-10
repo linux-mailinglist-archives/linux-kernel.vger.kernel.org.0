@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 527A415777D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:01:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CC75157A3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:21:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730421AbgBJNAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:00:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42044 "EHLO mail.kernel.org"
+        id S1731107AbgBJNVT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:21:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729847AbgBJMk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:57 -0500
+        id S1728794AbgBJMhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:33 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 012FF20873;
-        Mon, 10 Feb 2020 12:40:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85B0320661;
+        Mon, 10 Feb 2020 12:37:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338457;
-        bh=u2iqX7hdT43KFEBOlVlHugjmufyzlK2o8rbH+aHviW4=;
+        s=default; t=1581338252;
+        bh=rSh3R8xY6L76Nno7pwqyOzKKxTJ7fEguyZYa2B7n3O0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=srOWarnixEb74fKvobbGyrG1UZ7X7QO06ZrYuCbdPlC9kWR5Fi6FyW9WYkS8fJ1LR
-         OralLZnjZ5wAUkH96ORfTGnS29ozCw+tfxPBFe+vZlWFKJWWZtxowSvIlHbXbOBKIC
-         XNZnWpHBiWiVGchye3bXP2QX9fPDxkXCIYrzRKA8=
+        b=uSNYw5XBC3391L3xtafBf79SJIakVvi/A4AwLYMSbJ3o0NA4DJP7fnV4ZCu4rpbrE
+         iHZgXZQMKOD78OxXVYv+9bSUxpdDD5NxQMsQcM2x67QhfPb6r4PXgod9N9EwOKV4au
+         JRSthC/dgBc6dg9FwNEKr1odvYrjomrRgGcBuMiA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Justin Forbes <jmforbes@linuxtx.org>,
-        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Aurelien Jarno <aurelien@aurel32.net>
-Subject: [PATCH 5.5 158/367] libbpf: Fix readelf output parsing for Fedora
-Date:   Mon, 10 Feb 2020 04:31:11 -0800
-Message-Id: <20200210122439.406936935@linuxfoundation.org>
+        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 5.4 116/309] ovl: fix wrong WARN_ON() in ovl_cache_update_ino()
+Date:   Mon, 10 Feb 2020 04:31:12 -0800
+Message-Id: <20200210122417.690355831@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,55 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+From: Amir Goldstein <amir73il@gmail.com>
 
-commit aa915931ac3e53ccf371308e6750da510e3591dd upstream.
+commit 4c37e71b713ecffe81f8e6273c6835e54306d412 upstream.
 
-Fedora binutils has been patched to show "other info" for a symbol at the
-end of the line. This was done in order to support unmaintained scripts
-that would break with the extra info. [1]
+The WARN_ON() that child entry is always on overlay st_dev became wrong
+when we allowed this function to update d_ino in non-samefs setup with xino
+enabled.
 
-[1] https://src.fedoraproject.org/rpms/binutils/c/b8265c46f7ddae23a792ee8306fbaaeacba83bf8
+It is not true in case of xino bits overflow on a non-dir inode.  Leave the
+WARN_ON() only for directories, where assertion is still true.
 
-This in turn has been done to fix the build of ruby, because of checksec.
-[2] Thanks Michael Ellerman for the pointer.
-
-[2] https://bugzilla.redhat.com/show_bug.cgi?id=1479302
-
-As libbpf Makefile is not unmaintained, we can simply deal with either
-output format, by just removing the "other info" field, as it always comes
-inside brackets.
-
-Fixes: 3464afdf11f9 (libbpf: Fix readelf output parsing on powerpc with recent binutils)
-Reported-by: Justin Forbes <jmforbes@linuxtx.org>
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Acked-by: Andrii Nakryiko <andriin@fb.com>
-Cc: Aurelien Jarno <aurelien@aurel32.net>
-Link: https://lore.kernel.org/bpf/20191213101114.GA3986@calabresa
+Fixes: adbf4f7ea834 ("ovl: consistent d_ino for non-samefs with xino")
+Cc: <stable@vger.kernel.org> # v4.17+
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/lib/bpf/Makefile |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/overlayfs/readdir.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/tools/lib/bpf/Makefile
-+++ b/tools/lib/bpf/Makefile
-@@ -148,6 +148,7 @@ TAGS_PROG := $(if $(shell which etags 2>
+--- a/fs/overlayfs/readdir.c
++++ b/fs/overlayfs/readdir.c
+@@ -504,7 +504,13 @@ get:
+ 		if (err)
+ 			goto fail;
  
- GLOBAL_SYM_COUNT = $(shell readelf -s --wide $(BPF_IN_SHARED) | \
- 			   cut -d "@" -f1 | sed 's/_v[0-9]_[0-9]_[0-9].*//' | \
-+			   sed 's/\[.*\]//' | \
- 			   awk '/GLOBAL/ && /DEFAULT/ && !/UND/ {print $$NF}' | \
- 			   sort -u | wc -l)
- VERSIONED_SYM_COUNT = $(shell readelf -s --wide $(OUTPUT)libbpf.so | \
-@@ -214,6 +215,7 @@ check_abi: $(OUTPUT)libbpf.so
- 		     "versioned in $(VERSION_SCRIPT)." >&2;		 \
- 		readelf -s --wide $(BPF_IN_SHARED) |			 \
- 		    cut -d "@" -f1 | sed 's/_v[0-9]_[0-9]_[0-9].*//' |	 \
-+		    sed 's/\[.*\]//' |					 \
- 		    awk '/GLOBAL/ && /DEFAULT/ && !/UND/ {print $$NF}'|  \
- 		    sort -u > $(OUTPUT)libbpf_global_syms.tmp;		 \
- 		readelf -s --wide $(OUTPUT)libbpf.so |			 \
+-		WARN_ON_ONCE(dir->d_sb->s_dev != stat.dev);
++		/*
++		 * Directory inode is always on overlay st_dev.
++		 * Non-dir with ovl_same_dev() could be on pseudo st_dev in case
++		 * of xino bits overflow.
++		 */
++		WARN_ON_ONCE(S_ISDIR(stat.mode) &&
++			     dir->d_sb->s_dev != stat.dev);
+ 		ino = stat.ino;
+ 	} else if (xinobits && !OVL_TYPE_UPPER(type)) {
+ 		ino = ovl_remap_lower_ino(ino, xinobits,
 
 
