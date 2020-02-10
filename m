@@ -2,177 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24D4B158106
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 18:13:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0B5F15810F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 18:15:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbgBJRNl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 12:13:41 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40259 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728006AbgBJRNk (ORCPT
+        id S1728119AbgBJRN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 12:13:57 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:39423 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728006AbgBJRN4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 12:13:40 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t3so8755345wru.7
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 09:13:39 -0800 (PST)
+        Mon, 10 Feb 2020 12:13:56 -0500
+Received: by mail-il1-f193.google.com with SMTP id f70so867879ill.6;
+        Mon, 10 Feb 2020 09:13:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dT6SGlIAayRtxR7LTqZPmk0Gfcmis2qaH+GTfxwu2fw=;
-        b=LApxvCvQZSOS8im3yL3XTp3sia6J46w3IYYvV71fXEnLvHAOrAN1whLz/i/42Dov04
-         JGkUaMrQrz1JINwmFOqiDDGtJD/NFaUCOs1pZ9Wo03nfmMxCsx+BnTe15r4sig6p7I48
-         KHNehvY4fwWNlrIGMZsQMuBnw0DyEae5fgTRP+F/R/3Hl2ZgIgr0q4EOzQ3BjwnpFrYH
-         Jc5j4pioKx8ZMHeZ/S7AEg8RyCbIB/GDa8QEg8b/1xqTpzi42oqmI8Rj1DF5kGQH0paw
-         MyCUak2nt328yKNe+mNvtVbv7+I55GDbHz6ZsValEHju/AGpImAtW1fKveV/02Fm7Nkd
-         q83w==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2OMBPex9jA3tUl+7G1mNGvd+gODbNk9naFIiYtHyZvE=;
+        b=K3+u35TRE63GpeI94Hcn56aHL8TkE541qoXK4T7pzDuUVHd/PJJs0tLOqs6FC8yY5o
+         726WSroyELFlw1KtSEUQLBCA0g1r7uzJt/iSTVqQUSUw/Jg7nrgOrsdPhmF2s95Cbs9F
+         WlN10IwmMwrfqN+rIKiJSzFhVo4BY3/ZvpEvNt97HH68wf5XE4Ky0RsiiGauGEWUNuOd
+         3l4uNYCbPjjBzRJYg7thZs6TGobcYZhGNhVymUQvPaUR6ttu0q6Fof7fg9Pgt32Xr72p
+         9xf9tMegJuvTL1Jm7qdxggl5uKd7lHKwSzXxA7eJ/FEViiylzLaBH9tnDPFwGuvKz7bA
+         zrOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dT6SGlIAayRtxR7LTqZPmk0Gfcmis2qaH+GTfxwu2fw=;
-        b=WEq73XU4MPjTRDT3p5ngVc5P9IzUIrn5yZmol2OMFxRpQFOwVu56luhGxNeHMf3j+U
-         m63xpD5nP+6gZpgTYe975xSwMXhwWMw4Ujo+A1aY7TmoyzKchRhhyFQVJIa68/HPE+cp
-         bhs6pkOUPPpV9s3JSRGjysOZ0kdCbQgkNSCFECgJonKkBaKLBHfOQKY0vhUK1Qdo4LfD
-         /4Sv7KzxfSvjYRDtKFNFqSEw2HYMrPgZ0Qp+ThreD+nYC43af0YEmd9vOXE0B2a9qGWB
-         ecnnvGNmXVSZmgvA4tgxB/9hBakptAh0Njl/IRT6ge/p1EMvvmvu15OSC+4JM4wgml0V
-         9VgA==
-X-Gm-Message-State: APjAAAXOFe13pWsnto62TNyEEqf9CxB2W7I72rqifpt0Jxk4Xs77s9/1
-        SUHfR92sBH4wn3aU8akdwCd6SoG9kyQ=
-X-Google-Smtp-Source: APXvYqxfaFB4k+8T3DjlAtB0Qivp+v/Gykui7kso1O0BFmhrp7NMhTTjvpaXWgd34aR5HYxvIFv11A==
-X-Received: by 2002:a5d:55c1:: with SMTP id i1mr3193454wrw.347.1581354818558;
-        Mon, 10 Feb 2020 09:13:38 -0800 (PST)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id a5sm1169894wmb.37.2020.02.10.09.13.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Feb 2020 09:13:37 -0800 (PST)
-Subject: Re: [PATCH v2 2/8] ASoC: qdsp6: q6afe: add support to pcm ports
-To:     Adam Serbinski <adam@serbinski.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Patrick Lai <plai@codeaurora.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200207205013.12274-1-adam@serbinski.com>
- <20200209154748.3015-1-adam@serbinski.com>
- <20200209154748.3015-3-adam@serbinski.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <4f0c3528-c7cd-37a9-7ca0-e30eb8e6d103@linaro.org>
-Date:   Mon, 10 Feb 2020 17:13:36 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2OMBPex9jA3tUl+7G1mNGvd+gODbNk9naFIiYtHyZvE=;
+        b=UwBOftJcfwI3FEFxpH9nePAkDvtd/22Ob46ATtv3Z0LZExvRcHR3Xra5vZTmXrQ4Z+
+         HIjzPwfYZSZ6l7tNPTmd4MBOHqx7c5jbdv6o4Zz8t3YXVABf1N0qT5gP6PEHoewnlBaO
+         g6xYXNfAjNTWWpaPcl1HWTgvsSORJ+vBW9m7iv/rwGpJcjJA7ddXmBqbLj85fGouQrZr
+         BVTNj1GTudlGEyaHWBt+qu5JLIrfI1dBqN5p1G6uT2jX8VHWzCnYvG2Yd4pRtJ8GyeSV
+         IZx2Qa4nY7A9R60+ZM6eBeQSeytCLV9+3ePWEInCEuV0euND1Wbrqzi65YOC4+jo9/Ub
+         hcFQ==
+X-Gm-Message-State: APjAAAUP6LaXEki+8fTvkmwpwXzLuNsNprnN5jRkUIX2OCP40WDoJCxG
+        iBE6ETzBaxLtIpGFX8xbglQYkraujhQMcCXchQ4=
+X-Google-Smtp-Source: APXvYqxOleLjjkfnqGbk8s3yYuPx72eh3yoUqE6ukevQxdLc3Qx2eaHu6jnI3/Zfma3Bg3N/Oppma3JGFLT047sLatM=
+X-Received: by 2002:a92:9507:: with SMTP id y7mr2270185ilh.243.1581354835793;
+ Mon, 10 Feb 2020 09:13:55 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200209154748.3015-3-adam@serbinski.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200210105108.1128-1-linux.amoon@gmail.com> <20200210105108.1128-3-linux.amoon@gmail.com>
+ <20200210135008.GA2163@pi3>
+In-Reply-To: <20200210135008.GA2163@pi3>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Mon, 10 Feb 2020 22:43:45 +0530
+Message-ID: <CANAwSgT9_8JhjyN9yfZ6=AUE7kVhrrTwdK1KFQLwxuNSYyBKKA@mail.gmail.com>
+Subject: Re: [PATCHv3 2/3] ARM: dts: exynos: Add missing usbdrd3 suspend clk
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Linux USB Mailing List <linux-usb@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Krzysztof,
 
+Thanks for your review comments.
 
-On 09/02/2020 15:47, Adam Serbinski wrote:
-> This patch adds support to pcm ports in AFE.
-> 
-> Signed-off-by: Adam Serbinski <adam@serbinski.com>
-> CC: Andy Gross <agross@kernel.org>
-> CC: Mark Rutland <mark.rutland@arm.com>
-> CC: Liam Girdwood <lgirdwood@gmail.com>
-> CC: Patrick Lai <plai@codeaurora.org>
-> CC: Banajit Goswami <bgoswami@codeaurora.org>
-> CC: Jaroslav Kysela <perex@perex.cz>
-> CC: Takashi Iwai <tiwai@suse.com>
-> CC: alsa-devel@alsa-project.org
-> CC: linux-arm-msm@vger.kernel.org
-> CC: devicetree@vger.kernel.org
-> CC: linux-kernel@vger.kernel.org
-> ---
->   sound/soc/qcom/qdsp6/q6afe.c | 246 +++++++++++++++++++++++++++++++++++
->   sound/soc/qcom/qdsp6/q6afe.h |   9 +-
->   2 files changed, 254 insertions(+), 1 deletion(-)
-> 
+On Mon, 10 Feb 2020 at 19:20, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Mon, Feb 10, 2020 at 10:51:07AM +0000, Anand Moon wrote:
+> > This patch adds new combatible strings for USBDRD3
+> > for adding missing suspend clk, exynos5422 usbdrd3
+> > support two clk USBD300 and SCLK_USBD300, so add missing
+> > suspemd_clk for Exynos542x DWC3 nodes.
+> >
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> >  arch/arm/boot/dts/exynos5420.dtsi | 8 ++++----
+> >  arch/arm/boot/dts/exynos54xx.dtsi | 4 ++--
+> >  2 files changed, 6 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> > index b672080e7469..bd505256a223 100644
+> > --- a/arch/arm/boot/dts/exynos5420.dtsi
+> > +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> > @@ -1372,8 +1372,8 @@ &trng {
+> >  };
+> >
+> >  &usbdrd3_0 {
+> > -     clocks = <&clock CLK_USBD300>;
+> > -     clock-names = "usbdrd30";
+> > +     clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBD300>;
+> > +     clock-names = "usbdrd30", "usbdrd30_susp_clk";
+> >  };
+> >
+> >  &usbdrd_phy0 {
+> > @@ -1383,8 +1383,8 @@ &usbdrd_phy0 {
+> >  };
+> >
+> >  &usbdrd3_1 {
+> > -     clocks = <&clock CLK_USBD301>;
+> > -     clock-names = "usbdrd30";
+> > +     clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBD301>;
+> > +     clock-names = "usbdrd30", "usbdrd30_susp_clk";
+> >  };
+> >
+> >  &usbdrd_dwc3_1 {
+> > diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+> > index 8aa5117e58ce..0aac6255de5d 100644
+> > --- a/arch/arm/boot/dts/exynos54xx.dtsi
+> > +++ b/arch/arm/boot/dts/exynos54xx.dtsi
+> > @@ -143,7 +143,7 @@ hsi2c_7: i2c@12cd0000 {
+> >               };
+> >
+> >               usbdrd3_0: usb3-0 {
+> > -                     compatible = "samsung,exynos5250-dwusb3";
+> > +                     compatible = "samsung,exynos5420-dwusb3";
+> >                       #address-cells = <1>;
+> >                       #size-cells = <1>;
+> >                       ranges;
+> > @@ -165,7 +165,7 @@ usbdrd_phy0: phy@12100000 {
+> >               };
+> >
+> >               usbdrd3_1: usb3-1 {
+> > -                     compatible = "samsung,exynos5250-dwusb3";
+> > +                     compatible = "samsung,exynos5420-dwusb3";
+>
+> This affects also Exynos5410 but you do not add new clock there.
+>
+> Best regards,
+> Krzysztof
+>
 
-Few general comments.
+Ok I will update this Exynos5410 dts.
 
-1>documentation to  "struct afe_param_id_pcm_cfg "
-Either we follow kerneldoc style or not add this as we did with other 
-similar afe port config structures.
-Am okay either way!
+Is samsung,exynos54xx-dwusb3 is valid compatible string
+for both the SoC.
 
-2> some of the defines in this patch has no reals users, so we better 
-remove all the unused constants.
-
-
-
-
-
-> diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
-> index e0945f7a58c8..b53ad14a78fd 100644
-> --- a/sound/soc/qcom/qdsp6/q6afe.c
-> +++ b/sound/soc/qcom/qdsp6/q6afe.c
-> @@ -40,6 +40,7 @@
->   
-...
-
-> +/**
-> + * q6afe_pcm_port_prepare() - Prepare pcm afe port.
-> + *
-> + * @port: Instance of afe port
-> + * @cfg: PCM configuration for the afe port
-> + *
-> + */
-> +int q6afe_pcm_port_prepare(struct q6afe_port *port, struct q6afe_pcm_cfg *cfg)
-> +{
-> +	union afe_port_config *pcfg = &port->port_cfg;
-> +
-> +	pcfg->pcm_cfg.pcm_cfg_minor_version = AFE_API_VERSION_PCM_CONFIG;
-> +	pcfg->pcm_cfg.aux_mode = AFE_PORT_PCM_AUX_MODE_PCM;
-> +
-> +	switch (cfg->fmt & SND_SOC_DAIFMT_MASTER_MASK) {
-> +	case SND_SOC_DAIFMT_CBS_CFS:
-> +		pcfg->pcm_cfg.sync_src = AFE_PORT_PCM_SYNC_SRC_INTERNAL;
-> +		break;
-> +	case SND_SOC_DAIFMT_CBM_CFM:
-> +		/* CPU is slave */
-> +		pcfg->pcm_cfg.sync_src = AFE_PORT_PCM_SYNC_SRC_EXTERNAL;
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	switch (cfg->sample_rate) {
-> +	case 8000:
-> +		pcfg->pcm_cfg.frame_setting = AFE_PORT_PCM_BITS_PER_FRAME_128;
-> +		break;
-> +	case 16000:
-> +		pcfg->pcm_cfg.frame_setting = AFE_PORT_PCM_BITS_PER_FRAME_64;
-> +		break;
-> +	}
-> +	pcfg->pcm_cfg.quantype = AFE_PORT_PCM_LINEAR_NOPADDING;
-> +	pcfg->pcm_cfg.ctrl_data_out_enable = AFE_PORT_PCM_CTRL_DATA_OE_DISABLE;
-> +	pcfg->pcm_cfg.reserved = 0;
-> +	pcfg->pcm_cfg.sample_rate = cfg->sample_rate;
-> +
-> +	/* 16 bit mono */
-> +	pcfg->pcm_cfg.bit_width = 16;
-> +	pcfg->pcm_cfg.num_channels = 1;
-> +	pcfg->pcm_cfg.slot_number_mapping[0] = 1;
-
-PCM quantization type and Slot Mapping should come from device tree.
-
-
-
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(q6afe_pcm_port_prepare);
-> +
+-Anand
