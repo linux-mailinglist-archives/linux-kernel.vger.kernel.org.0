@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A03AB157AC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:25:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A425F157830
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:06:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729260AbgBJNZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:25:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57602 "EHLO mail.kernel.org"
+        id S1730650AbgBJNF6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:05:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727967AbgBJMg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:59 -0500
+        id S1728730AbgBJMj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:39:58 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A5532051A;
-        Mon, 10 Feb 2020 12:36:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A07924683;
+        Mon, 10 Feb 2020 12:39:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338218;
-        bh=aNUCgyekur5TaYEv7mJwSWqN9fHod0KCFAq+c+HIKq4=;
+        s=default; t=1581338398;
+        bh=/UYY92hIuxlKCb4IasHxTkK8sZop0UB/Sp72zc2SlF0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EOjqkH4eMNpZ9iFLMA2hzZHhh2O5mDj7f7Vra4ucKP4dlSb+pCjDNz2AX5yPdZVMT
-         9xnGuvZsU4BLNH/oTqu557S+3vpZCxvRNT6QOw8IDJ4yjZ4bOCB5/yVy8Ode2geNL4
-         S4G8ZTrqCGu541t5H+HXvjPHAmSO7EyJDv+x1Gc4=
+        b=2KN0n6HuDl5glrchobofBvZwXp/85nT0ijU7LoArk+c56l/YdbqyVEQGUJjuD51UT
+         0TYsbKW+9zFcAY+7QCu/o/AdkICTQoDaUBSXP6eibvksUGGyGfuBBaIRq0pMgRLhks
+         85IPD1ntWn7TIr+zuVVu9QLiZEIRan4yXCtR+JWo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 5.4 051/309] utimes: Clamp the timestamps in notify_change()
-Date:   Mon, 10 Feb 2020 04:30:07 -0800
-Message-Id: <20200210122410.898647246@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 5.5 095/367] ACPI: video: Do not export a non working backlight interface on MSI MS-7721 boards
+Date:   Mon, 10 Feb 2020 04:30:08 -0800
+Message-Id: <20200210122433.134091289@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,197 +43,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit eb31e2f63d85d1bec4f7b136f317e03c03db5503 upstream.
+commit d21a91629f4b8e794fc4c0e0c17c85cedf1d806c upstream.
 
-Push clamping timestamps into notify_change(), so in-kernel
-callers like nfsd and overlayfs will get similar timestamp
-set behavior as utimes.
+Despite our heuristics to not wrongly export a non working ACPI backlight
+interface on desktop machines, we still end up exporting one on desktops
+using a motherboard from the MSI MS-7721 series.
 
-AV: get rid of clamping in ->setattr() instances; we don't need
-to bother with that there, with notify_change() doing normalization
-in all cases now (it already did for implicit case, since current_time()
-clamps).
+I've looked at improving the heuristics, but in this case a quirk seems
+to be the only way to solve this.
 
-Suggested-by: Miklos Szeredi <mszeredi@redhat.com>
-Fixes: 42e729b9ddbb ("utimes: Clamp the timestamps before update")
-Cc: stable@vger.kernel.org # v5.4
-Cc: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+While at it also add a comment to separate the video_detect_force_none
+entries in the video_detect_dmi_table from other type of entries, as we
+already do for the other entry types.
+
+Cc: All applicable <stable@vger.kernel.org>
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1783786
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/attr.c           |   23 +++++++++++------------
- fs/configfs/inode.c |    9 +++------
- fs/f2fs/file.c      |   18 ++++++------------
- fs/ntfs/inode.c     |   18 ++++++------------
- fs/ubifs/file.c     |   18 ++++++------------
- fs/utimes.c         |    4 ++--
- 6 files changed, 34 insertions(+), 56 deletions(-)
+ drivers/acpi/video_detect.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -183,18 +183,12 @@ void setattr_copy(struct inode *inode, c
- 		inode->i_uid = attr->ia_uid;
- 	if (ia_valid & ATTR_GID)
- 		inode->i_gid = attr->ia_gid;
--	if (ia_valid & ATTR_ATIME) {
--		inode->i_atime = timestamp_truncate(attr->ia_atime,
--						  inode);
--	}
--	if (ia_valid & ATTR_MTIME) {
--		inode->i_mtime = timestamp_truncate(attr->ia_mtime,
--						  inode);
--	}
--	if (ia_valid & ATTR_CTIME) {
--		inode->i_ctime = timestamp_truncate(attr->ia_ctime,
--						  inode);
--	}
-+	if (ia_valid & ATTR_ATIME)
-+		inode->i_atime = attr->ia_atime;
-+	if (ia_valid & ATTR_MTIME)
-+		inode->i_mtime = attr->ia_mtime;
-+	if (ia_valid & ATTR_CTIME)
-+		inode->i_ctime = attr->ia_ctime;
- 	if (ia_valid & ATTR_MODE) {
- 		umode_t mode = attr->ia_mode;
- 
-@@ -268,8 +262,13 @@ int notify_change(struct dentry * dentry
- 	attr->ia_ctime = now;
- 	if (!(ia_valid & ATTR_ATIME_SET))
- 		attr->ia_atime = now;
-+	else
-+		attr->ia_atime = timestamp_truncate(attr->ia_atime, inode);
- 	if (!(ia_valid & ATTR_MTIME_SET))
- 		attr->ia_mtime = now;
-+	else
-+		attr->ia_mtime = timestamp_truncate(attr->ia_mtime, inode);
+--- a/drivers/acpi/video_detect.c
++++ b/drivers/acpi/video_detect.c
+@@ -336,6 +336,11 @@ static const struct dmi_system_id video_
+ 		DMI_MATCH(DMI_PRODUCT_NAME, "Precision 7510"),
+ 		},
+ 	},
 +
- 	if (ia_valid & ATTR_KILL_PRIV) {
- 		error = security_inode_need_killpriv(dentry);
- 		if (error < 0)
---- a/fs/configfs/inode.c
-+++ b/fs/configfs/inode.c
-@@ -76,14 +76,11 @@ int configfs_setattr(struct dentry * den
- 	if (ia_valid & ATTR_GID)
- 		sd_iattr->ia_gid = iattr->ia_gid;
- 	if (ia_valid & ATTR_ATIME)
--		sd_iattr->ia_atime = timestamp_truncate(iattr->ia_atime,
--						      inode);
-+		sd_iattr->ia_atime = iattr->ia_atime;
- 	if (ia_valid & ATTR_MTIME)
--		sd_iattr->ia_mtime = timestamp_truncate(iattr->ia_mtime,
--						      inode);
-+		sd_iattr->ia_mtime = iattr->ia_mtime;
- 	if (ia_valid & ATTR_CTIME)
--		sd_iattr->ia_ctime = timestamp_truncate(iattr->ia_ctime,
--						      inode);
-+		sd_iattr->ia_ctime = iattr->ia_ctime;
- 	if (ia_valid & ATTR_MODE) {
- 		umode_t mode = iattr->ia_mode;
++	/*
++	 * Desktops which falsely report a backlight and which our heuristics
++	 * for this do not catch.
++	 */
+ 	{
+ 	 .callback = video_detect_force_none,
+ 	 .ident = "Dell OptiPlex 9020M",
+@@ -344,6 +349,14 @@ static const struct dmi_system_id video_
+ 		DMI_MATCH(DMI_PRODUCT_NAME, "OptiPlex 9020M"),
+ 		},
+ 	},
++	{
++	 .callback = video_detect_force_none,
++	 .ident = "MSI MS-7721",
++	 .matches = {
++		DMI_MATCH(DMI_SYS_VENDOR, "MSI"),
++		DMI_MATCH(DMI_PRODUCT_NAME, "MS-7721"),
++		},
++	},
+ 	{ },
+ };
  
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -751,18 +751,12 @@ static void __setattr_copy(struct inode
- 		inode->i_uid = attr->ia_uid;
- 	if (ia_valid & ATTR_GID)
- 		inode->i_gid = attr->ia_gid;
--	if (ia_valid & ATTR_ATIME) {
--		inode->i_atime = timestamp_truncate(attr->ia_atime,
--						  inode);
--	}
--	if (ia_valid & ATTR_MTIME) {
--		inode->i_mtime = timestamp_truncate(attr->ia_mtime,
--						  inode);
--	}
--	if (ia_valid & ATTR_CTIME) {
--		inode->i_ctime = timestamp_truncate(attr->ia_ctime,
--						  inode);
--	}
-+	if (ia_valid & ATTR_ATIME)
-+		inode->i_atime = attr->ia_atime;
-+	if (ia_valid & ATTR_MTIME)
-+		inode->i_mtime = attr->ia_mtime;
-+	if (ia_valid & ATTR_CTIME)
-+		inode->i_ctime = attr->ia_ctime;
- 	if (ia_valid & ATTR_MODE) {
- 		umode_t mode = attr->ia_mode;
- 
---- a/fs/ntfs/inode.c
-+++ b/fs/ntfs/inode.c
-@@ -2899,18 +2899,12 @@ int ntfs_setattr(struct dentry *dentry,
- 			ia_valid |= ATTR_MTIME | ATTR_CTIME;
- 		}
- 	}
--	if (ia_valid & ATTR_ATIME) {
--		vi->i_atime = timestamp_truncate(attr->ia_atime,
--					       vi);
--	}
--	if (ia_valid & ATTR_MTIME) {
--		vi->i_mtime = timestamp_truncate(attr->ia_mtime,
--					       vi);
--	}
--	if (ia_valid & ATTR_CTIME) {
--		vi->i_ctime = timestamp_truncate(attr->ia_ctime,
--					       vi);
--	}
-+	if (ia_valid & ATTR_ATIME)
-+		vi->i_atime = attr->ia_atime;
-+	if (ia_valid & ATTR_MTIME)
-+		vi->i_mtime = attr->ia_mtime;
-+	if (ia_valid & ATTR_CTIME)
-+		vi->i_ctime = attr->ia_ctime;
- 	mark_inode_dirty(vi);
- out:
- 	return err;
---- a/fs/ubifs/file.c
-+++ b/fs/ubifs/file.c
-@@ -1078,18 +1078,12 @@ static void do_attr_changes(struct inode
- 		inode->i_uid = attr->ia_uid;
- 	if (attr->ia_valid & ATTR_GID)
- 		inode->i_gid = attr->ia_gid;
--	if (attr->ia_valid & ATTR_ATIME) {
--		inode->i_atime = timestamp_truncate(attr->ia_atime,
--						  inode);
--	}
--	if (attr->ia_valid & ATTR_MTIME) {
--		inode->i_mtime = timestamp_truncate(attr->ia_mtime,
--						  inode);
--	}
--	if (attr->ia_valid & ATTR_CTIME) {
--		inode->i_ctime = timestamp_truncate(attr->ia_ctime,
--						  inode);
--	}
-+	if (attr->ia_valid & ATTR_ATIME)
-+		inode->i_atime = attr->ia_atime;
-+	if (attr->ia_valid & ATTR_MTIME)
-+		inode->i_mtime = attr->ia_mtime;
-+	if (attr->ia_valid & ATTR_CTIME)
-+		inode->i_ctime = attr->ia_ctime;
- 	if (attr->ia_valid & ATTR_MODE) {
- 		umode_t mode = attr->ia_mode;
- 
---- a/fs/utimes.c
-+++ b/fs/utimes.c
-@@ -36,14 +36,14 @@ static int utimes_common(const struct pa
- 		if (times[0].tv_nsec == UTIME_OMIT)
- 			newattrs.ia_valid &= ~ATTR_ATIME;
- 		else if (times[0].tv_nsec != UTIME_NOW) {
--			newattrs.ia_atime = timestamp_truncate(times[0], inode);
-+			newattrs.ia_atime = times[0];
- 			newattrs.ia_valid |= ATTR_ATIME_SET;
- 		}
- 
- 		if (times[1].tv_nsec == UTIME_OMIT)
- 			newattrs.ia_valid &= ~ATTR_MTIME;
- 		else if (times[1].tv_nsec != UTIME_NOW) {
--			newattrs.ia_mtime = timestamp_truncate(times[1], inode);
-+			newattrs.ia_mtime = times[1];
- 			newattrs.ia_valid |= ATTR_MTIME_SET;
- 		}
- 		/*
 
 
