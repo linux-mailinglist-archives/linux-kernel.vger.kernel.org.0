@@ -2,75 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EC231571D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 10:37:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61E101571DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 10:38:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbgBJJh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 04:37:56 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33194 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbgBJJhz (ORCPT
+        id S1727508AbgBJJiV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 04:38:21 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:29309 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726118AbgBJJiV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 04:37:55 -0500
-Received: by mail-wm1-f66.google.com with SMTP id m10so7994750wmc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 01:37:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=dpDOC2vuX3yrKvvKK1hi+77AaaSDtXisz2G15iuca58=;
-        b=OaXXDxktFBMWlvKbVIzNPCy+qwddRS9EOAe1gcgM2PK0Y0qCkr6FTYykUrpZBwqmi3
-         k0Y+tJAnh3oM9dnp8JLyv6qHcDCLyROVK6iQPfjfxp/Mh6h8v7TOI8j1bNvpVoshzmco
-         tDeVEARM1Zu0olbOWnmk7czQrGUSjdGt6hM8p2tOb7WVvl5uNe6ZJLLhMwNXIDxgLzIR
-         EjUcRGwYaj1y8QW215GqPjE3dQCM0jYzNwA/FdOPoAENYi+NbLS2hztE6KgsLTrZ2Gv3
-         00wjiisZlboVX5hZfnUT7TIEjUcwK81POAA94l05Qh8L5IjaboY+gjqbltqH3iwInuLL
-         EHJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=dpDOC2vuX3yrKvvKK1hi+77AaaSDtXisz2G15iuca58=;
-        b=Jhqip32P5pgD+E6Hmu+NDE3HUFudziEmg4ZrrEkL0VSuzT+Ve7WgWCkqXIzpc34yvG
-         1X9DMuHizu0OMgAqAld0wsP8Ed+btAaLnd6dlbxCHDoyPx/iMM2ifHq/tHwbW2h/LdqF
-         RpeQjkteHAXLUe9VVpXgmDM7LJD25kBpHJB3D2HH4BWeeKFJhEDAgJMZA9JhJsV6of6P
-         gfNDY3SFPYoe99pcp6YvSnhSWpVK6JVoIq+6/2qxB7ecEoTEzOe8LNXYq6lzFoc3RB5u
-         ZulhhVZkS819AoZ0CEdW4dqZGH4nKJLW5vNDgguwSnKNUZcVUJV65jQHHOf9Vz0DVqYo
-         +57Q==
-X-Gm-Message-State: APjAAAVlg4Gz3sWcFhPiL4cLx6s2Cbiq8Yxdfad4tl7+ZtsCGBIsY8iw
-        iknvq7LpRxgy46iqPDvh8Qxwa1B/JmcIDq4aKJM=
-X-Google-Smtp-Source: APXvYqzY9mHt7Etgg7mr4DEI3ODrozXL8ZvU/A8nkeG207L/6Qv8Krm73uCfrTLGcflIo7hUfDikiP/WNPnWKVB5i8Y=
-X-Received: by 2002:a7b:c204:: with SMTP id x4mr14563064wmi.20.1581327474487;
- Mon, 10 Feb 2020 01:37:54 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:adf:f083:0:0:0:0:0 with HTTP; Mon, 10 Feb 2020 01:37:53
- -0800 (PST)
-Reply-To: tracy2william@yahoo.com
-From:   Tracy William <mrsnicole1901@gmail.com>
-Date:   Mon, 10 Feb 2020 01:37:53 -0800
-Message-ID: <CAHR-wfDLSEovL-evXxo1_nkxnQeHx0EDdSD4BSS+BwHKM==Xzg@mail.gmail.com>
-Subject: Hi Dear
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 10 Feb 2020 04:38:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581327500;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=xX7Esd2LjoEl226z40syD0xaVDhvEyrAmaske0/4mxc=;
+        b=JDb6pzINuqfO/dbbwmgrp1esh2Lp7ZlrrXps3BddvSVKHGMlWltnqaLDLAK8S6oMEC4XVB
+        LpzEPW4i+nwGOWpEOslN2Ib6qdHNa1XrKIxx5wtnjXNH2NAT3ArE6opbBxtqdsB9igcDEr
+        tMDwI7VQnfzFsTTpKK54oT0gV5h9EC8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-412--gqScj6WOSSVCRv19KO4gA-1; Mon, 10 Feb 2020 04:38:06 -0500
+X-MC-Unique: -gqScj6WOSSVCRv19KO4gA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 93B898018DE;
+        Mon, 10 Feb 2020 09:38:05 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-112.ams2.redhat.com [10.36.116.112])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 313D25C1D4;
+        Mon, 10 Feb 2020 09:38:02 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 6CEF8A1E0; Mon, 10 Feb 2020 10:38:01 +0100 (CET)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     daniel@ffwll.ch, Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
+        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] drm/bochs: add drm_driver.release callback.
+Date:   Mon, 10 Feb 2020 10:38:01 +0100
+Message-Id: <20200210093801.4773-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dear,
-how are you today I hope that everything is OK with you as it is my
-great pleasure to contact you in having communication with you
-starting from today, i was just going through the Internet search when
-i found your email address, I want to make a very new and special
-friend, so i decided to contact you to see how we can make it work if
-we can. Please i wish you will have the desire with me so that we can
-get to know each other better and see what happens in future.
+Call drm_dev_unregister() first in bochs_pci_remove().  Hook
+bochs_unload() into the new .release callback, to make sure cleanup
+is done when all users are gone.
 
-My name is Tracy William, I am an American  presently I live in the
-UK, I will be
-happy to see your reply for us to know each other better, and let you
-into the private  part of my life moreso my pictures and details about
-me you can contact me directly to tracy2william@yahoo.com,do have a
-great day.
-Till I read from you.
+Add ready bool to state struct and move bochs_hw_fini() call from
+bochs_unload() to bochs_pci_remove() to make sure hardware is not
+touched after bochs_pci_remove returns.
 
-bye for now
-Tracy
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ drivers/gpu/drm/bochs/bochs.h     |  1 +
+ drivers/gpu/drm/bochs/bochs_drv.c |  6 +++---
+ drivers/gpu/drm/bochs/bochs_hw.c  | 14 ++++++++++++++
+ 3 files changed, 18 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
+index 917767173ee6..f6bce8669274 100644
+--- a/drivers/gpu/drm/bochs/bochs.h
++++ b/drivers/gpu/drm/bochs/bochs.h
+@@ -57,6 +57,7 @@ struct bochs_device {
+ 	unsigned long  fb_base;
+ 	unsigned long  fb_size;
+ 	unsigned long  qext_size;
++	bool           ready;
+ 
+ 	/* mode */
+ 	u16 xres;
+diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
+index 10460878414e..60b5492739ef 100644
+--- a/drivers/gpu/drm/bochs/bochs_drv.c
++++ b/drivers/gpu/drm/bochs/bochs_drv.c
+@@ -23,7 +23,6 @@ static void bochs_unload(struct drm_device *dev)
+ 
+ 	bochs_kms_fini(bochs);
+ 	bochs_mm_fini(bochs);
+-	bochs_hw_fini(dev);
+ 	kfree(bochs);
+ 	dev->dev_private = NULL;
+ }
+@@ -69,6 +68,7 @@ static struct drm_driver bochs_driver = {
+ 	.major			= 1,
+ 	.minor			= 0,
+ 	DRM_GEM_VRAM_DRIVER,
++	.release                = bochs_unload,
+ };
+ 
+ /* ---------------------------------------------------------------------- */
+@@ -148,9 +148,9 @@ static void bochs_pci_remove(struct pci_dev *pdev)
+ {
+ 	struct drm_device *dev = pci_get_drvdata(pdev);
+ 
+-	drm_atomic_helper_shutdown(dev);
+ 	drm_dev_unregister(dev);
+-	bochs_unload(dev);
++	drm_atomic_helper_shutdown(dev);
++	bochs_hw_fini(dev);
+ 	drm_dev_put(dev);
+ }
+ 
+diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
+index b615b7dfdd9d..48c1a6a8b026 100644
+--- a/drivers/gpu/drm/bochs/bochs_hw.c
++++ b/drivers/gpu/drm/bochs/bochs_hw.c
+@@ -168,6 +168,7 @@ int bochs_hw_init(struct drm_device *dev)
+ 	}
+ 	bochs->fb_base = addr;
+ 	bochs->fb_size = size;
++	bochs->ready = true;
+ 
+ 	DRM_INFO("Found bochs VGA, ID 0x%x.\n", id);
+ 	DRM_INFO("Framebuffer size %ld kB @ 0x%lx, %s @ 0x%lx.\n",
+@@ -194,6 +195,10 @@ void bochs_hw_fini(struct drm_device *dev)
+ {
+ 	struct bochs_device *bochs = dev->dev_private;
+ 
++	bochs->ready = false;
++
++	/* TODO: shot down existing vram mappings */
++
+ 	if (bochs->mmio)
+ 		iounmap(bochs->mmio);
+ 	if (bochs->ioports)
+@@ -207,6 +212,9 @@ void bochs_hw_fini(struct drm_device *dev)
+ void bochs_hw_setmode(struct bochs_device *bochs,
+ 		      struct drm_display_mode *mode)
+ {
++	if (!bochs->ready)
++		return;
++
+ 	bochs->xres = mode->hdisplay;
+ 	bochs->yres = mode->vdisplay;
+ 	bochs->bpp = 32;
+@@ -237,6 +245,9 @@ void bochs_hw_setmode(struct bochs_device *bochs,
+ void bochs_hw_setformat(struct bochs_device *bochs,
+ 			const struct drm_format_info *format)
+ {
++	if (!bochs->ready)
++		return;
++
+ 	DRM_DEBUG_DRIVER("format %c%c%c%c\n",
+ 			 (format->format >>  0) & 0xff,
+ 			 (format->format >>  8) & 0xff,
+@@ -264,6 +275,9 @@ void bochs_hw_setbase(struct bochs_device *bochs,
+ 	unsigned long offset;
+ 	unsigned int vx, vy, vwidth;
+ 
++	if (!bochs->ready)
++		return;
++
+ 	bochs->stride = stride;
+ 	offset = (unsigned long)addr +
+ 		y * bochs->stride +
+-- 
+2.18.1
+
