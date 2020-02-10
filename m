@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 569301576DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:56:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09A6F157580
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:41:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730084AbgBJMz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:55:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44324 "EHLO mail.kernel.org"
+        id S1729990AbgBJMl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:41:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729793AbgBJMlo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:41:44 -0500
+        id S1729208AbgBJMip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:45 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A570220873;
-        Mon, 10 Feb 2020 12:41:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83B6920733;
+        Mon, 10 Feb 2020 12:38:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338503;
-        bh=RRVK0oQs8vlOlni2dD9fgIUqyQiHBCOg6uoiikTwBws=;
+        s=default; t=1581338325;
+        bh=mzdjs+2HjVphOcK4CSN3hLYnd9zBpyrzM4m11ddEtJk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zlnAlzJE+cEdJDG/DpaJ7dZ6Qx69NItgTw6qEqeshKCnRCMWmj6ZXLtbDLSS+ildo
-         ibqdJvpulcmY+G1xuuLF+w1bkRY/3Gm0IYyYgV/4KyGTPeFQm/AhCGdfMGv+Kdq9Qz
-         7BIPGOXVT+cSsHm0hbvLES3gprYXMqD6jNjrCIEw=
+        b=iz1Uu74Q7x/Jo6EwuXvjeFaNWT1usFO8omldeFofphXNvqaoTSzFycmulj5EoQloy
+         j7YqZvoaK1w14lpUXpIiVMfkXPlWPR+0AE9WawBzkWkKhnSjupv1y5fS63u9oz1lC+
+         zvwUG+8B88z1tZwSuYHNkIJ86XYN2hfPVzb9zl6Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Wei Wang <wei.w.wang@intel.com>,
-        Liang Li <liang.z.li@intel.com>,
-        David Hildenbrand <david@redhat.com>
-Subject: [PATCH 5.5 302/367] virtio_balloon: Fix memory leaks on errors in virtballoon_probe()
-Date:   Mon, 10 Feb 2020 04:33:35 -0800
-Message-Id: <20200210122451.409743460@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Quanyang Wang <quanyang.wang@windriver.com>,
+        Richard Weinberger <richard@nod.at>
+Subject: [PATCH 5.4 260/309] ubifs: Fix memory leak from c->sup_node
+Date:   Mon, 10 Feb 2020 04:33:36 -0800
+Message-Id: <20200210122431.609894741@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,66 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Hildenbrand <david@redhat.com>
+From: Quanyang Wang <quanyang.wang@windriver.com>
 
-commit 1ad6f58ea9364b0a5d8ae06249653ac9304a8578 upstream.
+commit ff90bdfb206e49c8b418811efbdd0c77380fa8c2 upstream.
 
-We forget to put the inode and unmount the kernfs used for compaction.
+The c->sup_node is allocated in function ubifs_read_sb_node but
+is not freed. This will cause memory leak as below:
 
-Fixes: 71994620bb25 ("virtio_balloon: replace oom notifier with shrinker")
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>
-Cc: Wei Wang <wei.w.wang@intel.com>
-Cc: Liang Li <liang.z.li@intel.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Link: https://lore.kernel.org/r/20200205163402.42627-3-david@redhat.com
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+unreferenced object 0xbc9ce000 (size 4096):
+  comm "mount", pid 500, jiffies 4294952946 (age 315.820s)
+  hex dump (first 32 bytes):
+    31 18 10 06 06 7b f1 11 02 00 00 00 00 00 00 00  1....{..........
+    00 10 00 00 06 00 00 00 00 00 00 00 08 00 00 00  ................
+  backtrace:
+    [<d1c503cd>] ubifs_read_superblock+0x48/0xebc
+    [<a20e14bd>] ubifs_mount+0x974/0x1420
+    [<8589ecc3>] legacy_get_tree+0x2c/0x50
+    [<5f1fb889>] vfs_get_tree+0x28/0xfc
+    [<bbfc7939>] do_mount+0x4f8/0x748
+    [<4151f538>] ksys_mount+0x78/0xa0
+    [<d59910a9>] ret_fast_syscall+0x0/0x54
+    [<1cc40005>] 0x7ea02790
+
+Free it in ubifs_umount and in the error path of mount_ubifs.
+
+Fixes: fd6150051bec ("ubifs: Store read superblock node")
+Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/virtio/virtio_balloon.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ fs/ubifs/super.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/virtio/virtio_balloon.c
-+++ b/drivers/virtio/virtio_balloon.c
-@@ -901,8 +901,7 @@ static int virtballoon_probe(struct virt
- 	vb->vb_dev_info.inode = alloc_anon_inode(balloon_mnt->mnt_sb);
- 	if (IS_ERR(vb->vb_dev_info.inode)) {
- 		err = PTR_ERR(vb->vb_dev_info.inode);
--		kern_unmount(balloon_mnt);
--		goto out_del_vqs;
-+		goto out_kern_unmount;
- 	}
- 	vb->vb_dev_info.inode->i_mapping->a_ops = &balloon_aops;
- #endif
-@@ -913,13 +912,13 @@ static int virtballoon_probe(struct virt
- 		 */
- 		if (virtqueue_get_vring_size(vb->free_page_vq) < 2) {
- 			err = -ENOSPC;
--			goto out_del_vqs;
-+			goto out_iput;
- 		}
- 		vb->balloon_wq = alloc_workqueue("balloon-wq",
- 					WQ_FREEZABLE | WQ_CPU_INTENSIVE, 0);
- 		if (!vb->balloon_wq) {
- 			err = -ENOMEM;
--			goto out_del_vqs;
-+			goto out_iput;
- 		}
- 		INIT_WORK(&vb->report_free_page_work, report_free_page_func);
- 		vb->cmd_id_received_cache = VIRTIO_BALLOON_CMD_ID_STOP;
-@@ -953,6 +952,12 @@ static int virtballoon_probe(struct virt
- out_del_balloon_wq:
- 	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT))
- 		destroy_workqueue(vb->balloon_wq);
-+out_iput:
-+#ifdef CONFIG_BALLOON_COMPACTION
-+	iput(vb->vb_dev_info.inode);
-+out_kern_unmount:
-+	kern_unmount(balloon_mnt);
-+#endif
- out_del_vqs:
- 	vdev->config->del_vqs(vdev);
- out_free_vb:
+--- a/fs/ubifs/super.c
++++ b/fs/ubifs/super.c
+@@ -1599,6 +1599,7 @@ out_free:
+ 	vfree(c->ileb_buf);
+ 	vfree(c->sbuf);
+ 	kfree(c->bottom_up_buf);
++	kfree(c->sup_node);
+ 	ubifs_debugging_exit(c);
+ 	return err;
+ }
+@@ -1641,6 +1642,7 @@ static void ubifs_umount(struct ubifs_in
+ 	vfree(c->ileb_buf);
+ 	vfree(c->sbuf);
+ 	kfree(c->bottom_up_buf);
++	kfree(c->sup_node);
+ 	ubifs_debugging_exit(c);
+ }
+ 
 
 
