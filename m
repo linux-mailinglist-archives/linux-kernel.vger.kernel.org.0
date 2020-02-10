@@ -2,96 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 648B0156F8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 07:37:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC940156F99
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 07:38:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbgBJGgj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 01:36:39 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:35708 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727572AbgBJGgh (ORCPT
+        id S1727599AbgBJGiJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 01:38:09 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:56754 "EHLO
+        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726061AbgBJGiJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 01:36:37 -0500
-Received: by mail-pl1-f193.google.com with SMTP id g6so2424388plt.2
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Feb 2020 22:36:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=U4T1sUZ5d5/lE7jdAROdnSabgnZhFUdcqE+KF1UFLYs=;
-        b=gUSGqIUwzyoakxw3TkxBU5Ql7F+G+0GnrYl+v4e4+nJTwIC+CnFaeoDOvD5toFci+W
-         7eFCHr2zwz9WiHq/IMGHoATS1LQ4FE5zhdc301dfx/vlTkZ/20ULmJnWcdNdj/trPMAg
-         QH0wTrs8BbzERklKZUiY9UAF9H4mF3x6x2EY8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=U4T1sUZ5d5/lE7jdAROdnSabgnZhFUdcqE+KF1UFLYs=;
-        b=oj8YAohX9TF19qPrEJ2HHp6gXc9OFvltyLaflOw8IPihpNnw0yxkYtAN3KWCbbvm1I
-         w3F7uMt2oGrDHq53hd4WUY06QFhyVeVp3Xnw2pUdwlKPPBXELpccFlHoE2Pcf3ScOsvS
-         GKGR6oeJfPPw2mkwCOi41Gh7QRNIzs9GSlY/RPKYOrE++/nRkb+U5YPfKGm1ogBqZQ/E
-         sRRrKuSKpKG/2Phd+4vEbuCOrDCHDsQhCUDbQDlEAaoz7JK+q1fDZBT1mWfmE2HW8NDG
-         bQRcIasl7YypKLw3YeyEySj3hyc6bkt0Ub78GNrPvWjdP+oRPrFcpGRFp5NgRYtG2kax
-         0vNA==
-X-Gm-Message-State: APjAAAWdJqMhdyY8Wg+pv3Bmpcg0wQuaUXDcL1xkktTpKnm5VoANHAtr
-        mD1CT+RF9B7kM7HmlCQfSmWFoA==
-X-Google-Smtp-Source: APXvYqyXUem1drftBReu+mmxe6pn4dX7A8nVAJDHrAsQ3zKM8+P+ZWpWg9JrY64PTKd9Jf7tGph2BA==
-X-Received: by 2002:a17:90a:bf81:: with SMTP id d1mr18701198pjs.21.1581316595020;
-        Sun, 09 Feb 2020 22:36:35 -0800 (PST)
-Received: from hsinyi-z840.tpe.corp.google.com ([2401:fa00:1:10:b852:bd51:9305:4261])
-        by smtp.gmail.com with ESMTPSA id f15sm11070041pgj.30.2020.02.09.22.36.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Feb 2020 22:36:34 -0800 (PST)
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mon, 10 Feb 2020 01:38:09 -0500
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 10 Feb 2020 12:07:17 +0530
+Received: from c-sanm-linux.qualcomm.com ([10.206.25.31])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 10 Feb 2020 12:06:48 +0530
+Received: by c-sanm-linux.qualcomm.com (Postfix, from userid 2343233)
+        id 7DA382198; Mon, 10 Feb 2020 12:06:47 +0530 (IST)
+From:   Sandeep Maheswaram <sanm@codeaurora.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Daniel Kurtz <djkurtz@chromium.org>
-Subject: [PATCH v7 5/5] media: mtk-mdp: Use correct aliases name
-Date:   Mon, 10 Feb 2020 14:35:24 +0800
-Message-Id: <20200210063523.133333-6-hsinyi@chromium.org>
-X-Mailer: git-send-email 2.25.0.225.g125e21ebc7-goog
-In-Reply-To: <20200210063523.133333-1-hsinyi@chromium.org>
-References: <20200210063523.133333-1-hsinyi@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Manu Gautam <mgautam@codeaurora.org>,
+        Sandeep Maheswaram <sanm@codeaurora.org>
+Subject: [PATCH v4 0/2] Add USB DWC3 support for SC7180
+Date:   Mon, 10 Feb 2020 12:06:43 +0530
+Message-Id: <1581316605-29202-1-git-send-email-sanm@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-aliases property name must include only lowercase and '-'. Fix in dts
-and driver.
+Converting dt binding to yaml.
+Adding compatible for SC7180 in dt bindings.
 
-Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
----
- drivers/media/platform/mtk-mdp/mtk_mdp_comp.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Changes in v4:
+Addressed the comments from Doug in yaml file.
 
-diff --git a/drivers/media/platform/mtk-mdp/mtk_mdp_comp.c b/drivers/media/platform/mtk-mdp/mtk_mdp_comp.c
-index 9afe8161a8c0..0c4788af78dd 100644
---- a/drivers/media/platform/mtk-mdp/mtk_mdp_comp.c
-+++ b/drivers/media/platform/mtk-mdp/mtk_mdp_comp.c
-@@ -15,10 +15,10 @@
- 
- 
- static const char * const mtk_mdp_comp_stem[MTK_MDP_COMP_TYPE_MAX] = {
--	"mdp_rdma",
--	"mdp_rsz",
--	"mdp_wdma",
--	"mdp_wrot",
-+	"mdp-rdma",
-+	"mdp-rsz",
-+	"mdp-wdma",
-+	"mdp-wrot",
- };
- 
- struct mtk_mdp_comp_match {
+Changes in v3:
+Dropped the patch for adding the compatible in dwc3 driver from the series.
+Addressed the comments from Doug in yaml file.
+
+Changes in v2:
+Sorted the compatible in dwc3 driver.
+Converted dt binding to yaml.
+Added compatible in yaml.
+
+Sandeep Maheswaram (2):
+  dt-bindings: usb: qcom,dwc3: Convert USB DWC3 bindings
+  dt-bindings: usb: qcom,dwc3: Add compatible for SC7180
+
+ .../devicetree/bindings/usb/qcom,dwc3.txt          | 104 --------------
+ .../devicetree/bindings/usb/qcom,dwc3.yaml         | 156 +++++++++++++++++++++
+ 2 files changed, 156 insertions(+), 104 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/usb/qcom,dwc3.txt
+ create mode 100644 Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+
 -- 
-2.25.0.225.g125e21ebc7-goog
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
 
