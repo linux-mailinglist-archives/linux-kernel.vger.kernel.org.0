@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E137A1577F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:04:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F217157A66
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:22:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730737AbgBJNDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:03:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40276 "EHLO mail.kernel.org"
+        id S1730882AbgBJNWd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:22:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729710AbgBJMkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:21 -0500
+        id S1728729AbgBJMhX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:23 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5475920838;
-        Mon, 10 Feb 2020 12:40:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80E9024671;
+        Mon, 10 Feb 2020 12:37:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338421;
-        bh=PhrbytiY53+0EiMjQUczPdl2l9fB9EvIbAgJEEtFM7g=;
+        s=default; t=1581338242;
+        bh=2XdwohJAbXldaBRjzVGZsPW2JLZP10Ibvofc7iXqyJo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tFIueBe0HMcSnfaCllfOU+X0RFEkK6pl6bOm7bh4Ve9NVLAuu+8oyAXX3RecUq0BH
-         73s7AynCG23Z+UFJq2Bu6yNZj5vppfZjYGW6HWZ75Pp6zPktqQS3Qz8TFN9MZ0EE+R
-         /s0c1F4NcYknS2bSdAOCILXsVQM1j8DGn2kDtJks=
+        b=QiQUfCfC9ek/dphnhR3ARFtqe9kYSdfCR1wfk6agYBaM0Kv2yX1gO09CbvmqokLJc
+         3O5JxSBL9s5rqj3uxgV1pIeSvgceftmfkPUqS2+XxC3WDGQbkvkJ8yHhpct0ol+3n9
+         QelV9dTH4+/X+6pk5cZvOWdG6RVyFMlTWS4qiHgY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Fomichev <dmitry.fomichev@wdc.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 5.5 140/367] dm zoned: support zone sizes smaller than 128MiB
-Date:   Mon, 10 Feb 2020 04:30:53 -0800
-Message-Id: <20200210122437.779661304@linuxfoundation.org>
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 098/309] hv_balloon: Balloon up according to request page number
+Date:   Mon, 10 Feb 2020 04:30:54 -0800
+Message-Id: <20200210122415.590495704@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,117 +45,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Fomichev <dmitry.fomichev@wdc.com>
+From: Tianyu Lan <Tianyu.Lan@microsoft.com>
 
-commit b39962950339912978484cdac50069258545d753 upstream.
+commit d33c240d47dab4fd15123d9e73fc8810cbc6ed6a upstream.
 
-dm-zoned is observed to log failed kernel assertions and not work
-correctly when operating against a device with a zone size smaller
-than 128MiB (e.g. 32768 bits per 4K block). The reason is that the
-bitmap size per zone is calculated as zero with such a small zone
-size. Fix this problem and also make the code related to zone bitmap
-management be able to handle per zone bitmaps smaller than a single
-block.
+Current code has assumption that balloon request memory size aligns
+with 2MB. But actually Hyper-V doesn't guarantee such alignment. When
+balloon driver receives non-aligned balloon request, it produces warning
+and balloon up more memory than requested in order to keep 2MB alignment.
+Remove the warning and balloon up memory according to actual requested
+memory size.
 
-A dm-zoned-tools patch is required to properly format dm-zoned devices
-with zone sizes smaller than 128MiB.
-
-Fixes: 3b1a94c88b79 ("dm zoned: drive-managed zoned block device target")
+Fixes: f6712238471a ("hv: hv_balloon: avoid memory leak on alloc_error of 2MB memory block")
 Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Fomichev <dmitry.fomichev@wdc.com>
-Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-zoned-metadata.c |   23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ drivers/hv/hv_balloon.c |   13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
---- a/drivers/md/dm-zoned-metadata.c
-+++ b/drivers/md/dm-zoned-metadata.c
-@@ -134,6 +134,7 @@ struct dmz_metadata {
+--- a/drivers/hv/hv_balloon.c
++++ b/drivers/hv/hv_balloon.c
+@@ -1213,10 +1213,7 @@ static unsigned int alloc_balloon_pages(
+ 	unsigned int i, j;
+ 	struct page *pg;
  
- 	sector_t		zone_bitmap_size;
- 	unsigned int		zone_nr_bitmap_blocks;
-+	unsigned int		zone_bits_per_mblk;
+-	if (num_pages < alloc_unit)
+-		return 0;
+-
+-	for (i = 0; (i * alloc_unit) < num_pages; i++) {
++	for (i = 0; i < num_pages / alloc_unit; i++) {
+ 		if (bl_resp->hdr.size + sizeof(union dm_mem_page_range) >
+ 			PAGE_SIZE)
+ 			return i * alloc_unit;
+@@ -1254,7 +1251,7 @@ static unsigned int alloc_balloon_pages(
  
- 	unsigned int		nr_bitmap_blocks;
- 	unsigned int		nr_map_blocks;
-@@ -1161,7 +1162,10 @@ static int dmz_init_zones(struct dmz_met
- 
- 	/* Init */
- 	zmd->zone_bitmap_size = dev->zone_nr_blocks >> 3;
--	zmd->zone_nr_bitmap_blocks = zmd->zone_bitmap_size >> DMZ_BLOCK_SHIFT;
-+	zmd->zone_nr_bitmap_blocks =
-+		max_t(sector_t, 1, zmd->zone_bitmap_size >> DMZ_BLOCK_SHIFT);
-+	zmd->zone_bits_per_mblk = min_t(sector_t, dev->zone_nr_blocks,
-+					DMZ_BLOCK_SIZE_BITS);
- 
- 	/* Allocate zone array */
- 	zmd->zones = kcalloc(dev->nr_zones, sizeof(struct dm_zone), GFP_KERNEL);
-@@ -1956,7 +1960,7 @@ int dmz_copy_valid_blocks(struct dmz_met
- 		dmz_release_mblock(zmd, to_mblk);
- 		dmz_release_mblock(zmd, from_mblk);
- 
--		chunk_block += DMZ_BLOCK_SIZE_BITS;
-+		chunk_block += zmd->zone_bits_per_mblk;
  	}
  
- 	to_zone->weight = from_zone->weight;
-@@ -2017,7 +2021,7 @@ int dmz_validate_blocks(struct dmz_metad
+-	return num_pages;
++	return i * alloc_unit;
+ }
  
- 		/* Set bits */
- 		bit = chunk_block & DMZ_BLOCK_MASK_BITS;
--		nr_bits = min(nr_blocks, DMZ_BLOCK_SIZE_BITS - bit);
-+		nr_bits = min(nr_blocks, zmd->zone_bits_per_mblk - bit);
+ static void balloon_up(struct work_struct *dummy)
+@@ -1269,9 +1266,6 @@ static void balloon_up(struct work_struc
+ 	long avail_pages;
+ 	unsigned long floor;
  
- 		count = dmz_set_bits((unsigned long *)mblk->data, bit, nr_bits);
- 		if (count) {
-@@ -2096,7 +2100,7 @@ int dmz_invalidate_blocks(struct dmz_met
+-	/* The host balloons pages in 2M granularity. */
+-	WARN_ON_ONCE(num_pages % PAGES_IN_2M != 0);
+-
+ 	/*
+ 	 * We will attempt 2M allocations. However, if we fail to
+ 	 * allocate 2M chunks, we will go back to 4k allocations.
+@@ -1281,14 +1275,13 @@ static void balloon_up(struct work_struc
+ 	avail_pages = si_mem_available();
+ 	floor = compute_balloon_floor();
  
- 		/* Clear bits */
- 		bit = chunk_block & DMZ_BLOCK_MASK_BITS;
--		nr_bits = min(nr_blocks, DMZ_BLOCK_SIZE_BITS - bit);
-+		nr_bits = min(nr_blocks, zmd->zone_bits_per_mblk - bit);
+-	/* Refuse to balloon below the floor, keep the 2M granularity. */
++	/* Refuse to balloon below the floor. */
+ 	if (avail_pages < num_pages || avail_pages - num_pages < floor) {
+ 		pr_warn("Balloon request will be partially fulfilled. %s\n",
+ 			avail_pages < num_pages ? "Not enough memory." :
+ 			"Balloon floor reached.");
  
- 		count = dmz_clear_bits((unsigned long *)mblk->data,
- 				       bit, nr_bits);
-@@ -2156,6 +2160,7 @@ static int dmz_to_next_set_block(struct
- {
- 	struct dmz_mblock *mblk;
- 	unsigned int bit, set_bit, nr_bits;
-+	unsigned int zone_bits = zmd->zone_bits_per_mblk;
- 	unsigned long *bitmap;
- 	int n = 0;
+ 		num_pages = avail_pages > floor ? (avail_pages - floor) : 0;
+-		num_pages -= num_pages % PAGES_IN_2M;
+ 	}
  
-@@ -2170,15 +2175,15 @@ static int dmz_to_next_set_block(struct
- 		/* Get offset */
- 		bitmap = (unsigned long *) mblk->data;
- 		bit = chunk_block & DMZ_BLOCK_MASK_BITS;
--		nr_bits = min(nr_blocks, DMZ_BLOCK_SIZE_BITS - bit);
-+		nr_bits = min(nr_blocks, zone_bits - bit);
- 		if (set)
--			set_bit = find_next_bit(bitmap, DMZ_BLOCK_SIZE_BITS, bit);
-+			set_bit = find_next_bit(bitmap, zone_bits, bit);
- 		else
--			set_bit = find_next_zero_bit(bitmap, DMZ_BLOCK_SIZE_BITS, bit);
-+			set_bit = find_next_zero_bit(bitmap, zone_bits, bit);
- 		dmz_release_mblock(zmd, mblk);
- 
- 		n += set_bit - bit;
--		if (set_bit < DMZ_BLOCK_SIZE_BITS)
-+		if (set_bit < zone_bits)
- 			break;
- 
- 		nr_blocks -= nr_bits;
-@@ -2281,7 +2286,7 @@ static void dmz_get_zone_weight(struct d
- 		/* Count bits in this block */
- 		bitmap = mblk->data;
- 		bit = chunk_block & DMZ_BLOCK_MASK_BITS;
--		nr_bits = min(nr_blocks, DMZ_BLOCK_SIZE_BITS - bit);
-+		nr_bits = min(nr_blocks, zmd->zone_bits_per_mblk - bit);
- 		n += dmz_count_bits(bitmap, bit, nr_bits);
- 
- 		dmz_release_mblock(zmd, mblk);
+ 	while (!done) {
 
 
