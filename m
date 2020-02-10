@@ -2,97 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40D23156E26
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 04:57:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E495156E5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 05:09:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727496AbgBJD5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 22:57:47 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:51877 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbgBJD5r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 22:57:47 -0500
-Received: from fsav108.sakura.ne.jp (fsav108.sakura.ne.jp [27.133.134.235])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 01A3vOwI089837;
-        Mon, 10 Feb 2020 12:57:24 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav108.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav108.sakura.ne.jp);
- Mon, 10 Feb 2020 12:57:24 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav108.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 01A3vNQ5089833;
-        Mon, 10 Feb 2020 12:57:24 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id 01A3vNNU089831;
-        Mon, 10 Feb 2020 12:57:23 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <202002100357.01A3vNNU089831@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: RE: [PATCH RFC] =?ISO-2022-JP?B?dmlydGlvX2JhbGxvb246IGNvbnNlcnZhdGl2ZSBi?=
- =?ISO-2022-JP?B?YWxsb29uIHBhZ2Ugc2hyaW5raW5n?=
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     "Wang, Wei W" <wei.w.wang@intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "tysand@google.com" <tysand@google.com>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "david@redhat.com" <david@redhat.com>,
-        "alexander.h.duyck@linux.intel.com" 
-        <alexander.h.duyck@linux.intel.com>,
-        "rientjes@google.com" <rientjes@google.com>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "namit@vmware.com" <namit@vmware.com>
-MIME-Version: 1.0
-Date:   Mon, 10 Feb 2020 12:57:23 +0900
-References: <345addae-0945-2f49-52cf-8e53446e63b2@i-love.sakura.ne.jp> <286AC319A985734F985F78AFA26841F73E429F32@shsmsx102.ccr.corp.intel.com>
-In-Reply-To: <286AC319A985734F985F78AFA26841F73E429F32@shsmsx102.ccr.corp.intel.com>
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+        id S1727417AbgBJEJb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 23:09:31 -0500
+Received: from mga14.intel.com ([192.55.52.115]:30804 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726961AbgBJEJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Feb 2020 23:09:31 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2020 20:09:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,423,1574150400"; 
+   d="scan'208";a="251069331"
+Received: from hao-dev.bj.intel.com ([10.238.157.65])
+  by orsmga002.jf.intel.com with ESMTP; 09 Feb 2020 20:09:27 -0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     mdf@kernel.org, will@kernel.org, mark.rutland@arm.com,
+        gregkh@linuxfoundation.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     linux-api@vger.kernel.org, atull@kernel.org, yilun.xu@intel.com,
+        Wu Hao <hao.wu@intel.com>
+Subject: [PATCH v7 0/2] add performance reporting support to FPGA DFL drivers
+Date:   Mon, 10 Feb 2020 11:47:47 +0800
+Message-Id: <1581306469-22629-1-git-send-email-hao.wu@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wang, Wei W wrote:
-> On Saturday, February 8, 2020 8:33 PM, Tetsuo Handa wrote:
-> > 
-> > Is this NUMA aware? Can "node-A's NR_FILE_PAGES is already 0 and
-> > node-B's NR_FILE_PAGES is not 0, but allocation request which triggered this
-> > shrinker wants to allocate from only node-B" happen? 
-> 
-> No, it's a global counter.
-> 
-> >Can some thread keep
-> > this shrinker defunctional by keep increasing NR_FILE_PAGES?
-> 
-> Yes. Actually it's our intention - as long as there are pagecache pages,
-> balloon pages are avoided to be reclaimed.
+Hi all,
 
-Then, "node-A's NR_FILE_PAGES is already 0 and node-B's NR_FILE_PAGES is not 0, but
-allocation request which triggered this shrinker wants to allocate from only node-A"
-would be confused by this change, for the pagecache pages for allocating thread's
-interested node are already depleted but the balloon cannot shrink when it should
-because the pagecache pages for allocating thread's uninterested nodes are not yet
-depleted.
+This patchset adds performance reporting support for FPGA DFL drivers. It
+introduces one pmu to expose userspace interfaces via standard perf API.
+User could use standard perf tool to access perf events exposed via pmu.
 
-> 
-> 
-> > 
-> > Is this patch from "Re: Balloon pressuring page cache" thread? I hope that
-> > the guest could start reclaiming memory based on host's request (like OOM
-> > notifier chain) which is issued when host thinks that host is getting close to
-> > OOM and thus guests should start returning their unused memory to host.
-> > Maybe "periodically (e.g. 5 minutes)" in addition to "upon close to OOM
-> > condition" is also possible.
-> 
-> That's about the host usages. The host side management software decides when to
-> issue a request to balloon (either periodically or event driven), I think there
-> isn't anything we need to do in the balloon driver here.
+This patchset is generated based on 5.6-rc1.
 
-Well, my comment is rather: "Do not try to reserve guest's memory. In other words,
-do not try to maintain balloons on the guest side. Since host would be able to cache
-file data on the host's cache, guests would be able to quickly fetch file data from
-host's cache via normal I/O requests." ;-)
+Main changes from v6:
+ - add a new ABI/testing/ sysfs documentation in patch #2.
+ - fix a warning reported by kbuild in patch #2.
+
+Main changes from v5:
+ - use dev_ext_attribute instead of fme_perf_event_attr.
+ - use is_visible function to decide which events to expose per
+   hardware capability, and add event_init checking for all events.
+
+Main changes from v4:
+ - rebase and clean up.
+ - update Kconfig for PERF_EVENTS dependency.
+
+Main changes from v3:
+ - add more descriptions in doc, including how to use perf tool for these
+   hardware counters. (patch #1)
+ - use standard perf API instead of sysfs entries. (patch #2)
+
+Wu Hao (1):
+  fpga: dfl: fme: add performance reporting support
+
+Xu Yilun (1):
+  Documentation: fpga: dfl: add description for performance reporting
+    support
+
+ .../ABI/testing/sysfs-bus-event_source-devices-fme | 105 +++
+ Documentation/fpga/dfl.rst                         |  83 ++
+ drivers/fpga/Kconfig                               |   2 +-
+ drivers/fpga/Makefile                              |   1 +
+ drivers/fpga/dfl-fme-main.c                        |   4 +
+ drivers/fpga/dfl-fme-perf.c                        | 943 +++++++++++++++++++++
+ drivers/fpga/dfl-fme.h                             |   2 +
+ drivers/fpga/dfl.h                                 |   2 +
+ 8 files changed, 1141 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-event_source-devices-fme
+ create mode 100644 drivers/fpga/dfl-fme-perf.c
+
+-- 
+1.8.3.1
+
