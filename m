@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 382B41574D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:36:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DED8E157748
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:59:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728282AbgBJMgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:36:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53232 "EHLO mail.kernel.org"
+        id S1730316AbgBJM7F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:59:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727884AbgBJMfk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:35:40 -0500
+        id S1729931AbgBJMlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:41:13 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E63E020661;
-        Mon, 10 Feb 2020 12:35:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D7F62085B;
+        Mon, 10 Feb 2020 12:41:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338140;
-        bh=5OUCFKn7EvO/Z8r2/IQTTzh80LJkcm1n3BE4ifWPi2g=;
+        s=default; t=1581338473;
+        bh=1Ei60fEKFvv3S+7A5CpLfwgwVCQjFqc67jAR7LXOVuY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Uuc6NQ5K42jPL45EQ9NDQYB1HJB/89gIv+efCnuSt7bgICX6bQimiUJlT4qD80v/4
-         +23vS7AnD6/rR130rB27ylZvcvk8ZOkvqewDCFY9nq8n5eEM3beYSaOr3RVTVMnhfL
-         QiHDzA33zwUItq6fSjHXg9JDf+Et0oiCFg5uOGF4=
+        b=ifIgqkf91p2potdShoau28BCb5LLY2kTEC1dXRTrAcN3xbUjzCGOsWbK+TG1f5OJJ
+         fqzcoQwiGAU5Z17YDJR8S8SfL9JnfyCqCtiGD/BZyT9EsftVPFjlwGgcZ2dOC5+VqN
+         0OO2F1OJPe42A/Zf0TJ1n5mq2L5YeY16A5O4HVHs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 094/195] ftrace: Add comment to why rcu_dereference_sched() is open coded
-Date:   Mon, 10 Feb 2020 04:32:32 -0800
-Message-Id: <20200210122314.446267921@linuxfoundation.org>
+        stable@vger.kernel.org, Greg Kurz <groug@kaod.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.5 240/367] KVM: PPC: Book3S HV: Uninit vCPU if vcore creation fails
+Date:   Mon, 10 Feb 2020 04:32:33 -0800
+Message-Id: <20200210122446.331830979@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,53 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-[ Upstream commit 16052dd5bdfa16dbe18d8c1d4cde2ddab9d23177 ]
+commit 1a978d9d3e72ddfa40ac60d26301b154247ee0bc upstream.
 
-Because the function graph tracer can execute in sections where RCU is not
-"watching", the rcu_dereference_sched() for the has needs to be open coded.
-This is fine because the RCU "flavor" of the ftrace hash is protected by
-its own RCU handling (it does its own little synchronization on every CPU
-and does not rely on RCU sched).
+Call kvm_vcpu_uninit() if vcore creation fails to avoid leaking any
+resources allocated by kvm_vcpu_init(), i.e. the vcpu->run page.
 
-Acked-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 371fefd6f2dc4 ("KVM: PPC: Allow book3s_hv guests to use SMT processor modes")
+Cc: stable@vger.kernel.org
+Reviewed-by: Greg Kurz <groug@kaod.org>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Acked-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- kernel/trace/trace.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/powerpc/kvm/book3s_hv.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index cf1a7d1f35109..1721b95ba9b7d 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -883,6 +883,11 @@ static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
+--- a/arch/powerpc/kvm/book3s_hv.c
++++ b/arch/powerpc/kvm/book3s_hv.c
+@@ -2368,7 +2368,7 @@ static struct kvm_vcpu *kvmppc_core_vcpu
+ 	mutex_unlock(&kvm->lock);
  
- 	preempt_disable_notrace();
+ 	if (!vcore)
+-		goto free_vcpu;
++		goto uninit_vcpu;
  
-+	/*
-+	 * Have to open code "rcu_dereference_sched()" because the
-+	 * function graph tracer can be called when RCU is not
-+	 * "watching".
-+	 */
- 	hash = rcu_dereference_protected(ftrace_graph_hash, !preemptible());
+ 	spin_lock(&vcore->lock);
+ 	++vcore->num_threads;
+@@ -2385,6 +2385,8 @@ static struct kvm_vcpu *kvmppc_core_vcpu
  
- 	if (ftrace_hash_empty(hash)) {
-@@ -930,6 +935,11 @@ static inline int ftrace_graph_notrace_addr(unsigned long addr)
+ 	return vcpu;
  
- 	preempt_disable_notrace();
- 
-+	/*
-+	 * Have to open code "rcu_dereference_sched()" because the
-+	 * function graph tracer can be called when RCU is not
-+	 * "watching".
-+	 */
- 	notrace_hash = rcu_dereference_protected(ftrace_graph_notrace_hash,
- 						 !preemptible());
- 
--- 
-2.20.1
-
++uninit_vcpu:
++	kvm_vcpu_uninit(vcpu);
+ free_vcpu:
+ 	kmem_cache_free(kvm_vcpu_cache, vcpu);
+ out:
 
 
