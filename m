@@ -2,275 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A074A157E7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:10:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4060C157E77
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:10:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729292AbgBJPKa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 10:10:30 -0500
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:23946 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727347AbgBJPK3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 10:10:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1581347429; x=1612883429;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=hNmJvif+++9bpJXH4ocwEtBZOpr7pyJLf5AMSJbMCdE=;
-  b=D3x5IqdjGAt9Brz77sHFDY6my8u7ZvhVyDVRbBohNth0gHW8i2gsU6Ub
-   m7OjHpXokW1O+Iv2lsHufiQ41HNNql1H+P0DrNtz/SOF8P5a42K1FU5bP
-   cCrGGPNgzirs5ZHB73XqCZs+HRGsQ28uh53Ra8j35756Playsl8HQ+YG/
-   M=;
-IronPort-SDR: qTd2qINutpDE+kMds/NxaKsqI4nJ7UiYNe6hAjUULg5OUjUeS8uDqzZ+uxjF29ZEvhhhomImD6
- nNPXqRC2rB7Q==
-X-IronPort-AV: E=Sophos;i="5.70,425,1574121600"; 
-   d="scan'208";a="16476134"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2a-90c42d1d.us-west-2.amazon.com) ([10.43.8.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 10 Feb 2020 15:10:26 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
-        by email-inbound-relay-2a-90c42d1d.us-west-2.amazon.com (Postfix) with ESMTPS id 60AEDA0666;
-        Mon, 10 Feb 2020 15:10:24 +0000 (UTC)
-Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
- EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Mon, 10 Feb 2020 15:10:23 +0000
-Received: from u886c93fd17d25d.ant.amazon.com (10.43.162.69) by
- EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 10 Feb 2020 15:10:12 +0000
-From:   <sjpark@amazon.com>
-To:     <akpm@linux-foundation.org>
-CC:     SeongJae Park <sjpark@amazon.de>, <acme@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <amit@kernel.org>,
-        <brendan.d.gregg@gmail.com>, <brendanhiggins@google.com>,
-        <cai@lca.pw>, <colin.king@canonical.com>, <corbet@lwn.net>,
-        <dwmw@amazon.com>, <jolsa@redhat.com>, <kirill@shutemov.name>,
-        <mark.rutland@arm.com>, <mgorman@suse.de>, <minchan@kernel.org>,
-        <mingo@redhat.com>, <namhyung@kernel.org>, <peterz@infradead.org>,
-        <rdunlap@infradead.org>, <rostedt@goodmis.org>,
-        <sj38.park@gmail.com>, <vdavydov.dev@gmail.com>,
-        <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 3/3] mm/damon/rules: Implement a debugfs interface
-Date:   Mon, 10 Feb 2020 16:09:21 +0100
-Message-ID: <20200210150921.32482-4-sjpark@amazon.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200210150921.32482-1-sjpark@amazon.com>
-References: <20200210150921.32482-1-sjpark@amazon.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.162.69]
-X-ClientProxiedBy: EX13D17UWB002.ant.amazon.com (10.43.161.141) To
- EX13D31EUA001.ant.amazon.com (10.43.165.15)
+        id S1729219AbgBJPKN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 10:10:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39432 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728994AbgBJPKM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 10:10:12 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A4EB20661;
+        Mon, 10 Feb 2020 15:10:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581347411;
+        bh=vTR6ay2rTMWbD7WmnoyN014vTkNPpyTlmii8NwEA79A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=u4dnRcarX25/fF73QozHItzoHS4cTCd/yH7muQpEKWQyTWvZtZJvmYP2eGJXcidW0
+         SyGsw2xbHDgnFZQvGXi5qljU8VTvithIR2j8RQMqU3lbNmAIMmJLa1ZSD1gFyRuJDk
+         NE7F4nsH+QLuGQZXW9y2Pc22zGuP6uAALGmuCOBQ=
+Date:   Tue, 11 Feb 2020 00:10:07 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [for-next][PATCH 04/26] bootconfig: Add Extra Boot Config
+ support
+Message-Id: <20200211001007.62290c743e049b231bdd7052@kernel.org>
+In-Reply-To: <20200210112512.GA29627@zn.tnic>
+References: <20200114210316.450821675@goodmis.org>
+        <20200114210336.259202220@goodmis.org>
+        <20200206115405.GA22608@zn.tnic>
+        <20200206234100.953b48ecef04f97c112d2e8b@kernel.org>
+        <20200206175858.GG9741@zn.tnic>
+        <20200207114617.3bda49673175d3fa33cbe85e@kernel.org>
+        <20200207114122.GB24074@zn.tnic>
+        <20200208000648.3383f991fee68af5ee229d65@kernel.org>
+        <20200210112512.GA29627@zn.tnic>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: SeongJae Park <sjpark@amazon.de>
+On Mon, 10 Feb 2020 12:25:13 +0100
+Borislav Petkov <bp@alien8.de> wrote:
 
-This commit implements a debugfs interface for the DAMON's access
-pattern based memory management rules.  It is supposed to be used by
-administrators and privileged user space programs.  Users read and
-update the rules using ``<debugfs>/damon/rules`` file.  The format is::
+> On Sat, Feb 08, 2020 at 12:06:48AM +0900, Masami Hiramatsu wrote:
+> > OK, could you tell me your idea to make it better? I'm waiting for such
+> > discussion a half of last year :)
+> 
+> Yah, situation sounds familiar. :)
+> 
+> > For your information, here is the background of this bootconfig.
+> > To build my boot-time tracing, I need a way to pass a flexible and
+> > structured configuration at boot time.
+> 
+> Can I see an actual example of what you're doing?
 
-    <min/max size> <min/max access frequency> <min/max duration> <hint>
+Sure, there are some examples under Documentation/trace/boottime-trace.rst.
+Since the tracefs (ftrace's filesystem user interface) is extensible
+by dynamic events and instanses, I need flexibility of option "keys"
+not only values, also I need structured settings because some keys
+will configure same events or trace instance.
+For example, ftrace has tracing instances (which represents different
+trace logs) which has some set of configuration parameters. Some
+parameters has sub-parameters (trace options), and most parameters
+have default parameters. I don't want to make it a single parametarized
+options, like ftrace.instance="NAME:OPT1,OPT2:CLOCK:SIZE:SNAPSHOT:...",
+because it is not human readable and easy to make mistakes.
+Instead, bootconfig solve that with structured, multi-line keys;
 
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
----
- mm/damon.c | 157 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 155 insertions(+), 2 deletions(-)
+ftrace.instance.NAME {
+	options = OPT1,OPT2
+	trace_clock = CLOCK
+	buffer_size = SIZE
+	...
+}
 
-diff --git a/mm/damon.c b/mm/damon.c
-index 5d33b5d6504b..efb85bdf9400 100644
---- a/mm/damon.c
-+++ b/mm/damon.c
-@@ -195,6 +195,29 @@ static void damon_destroy_task(struct damon_task *t)
- 	damon_free_task(t);
- }
- 
-+static struct damon_rule *damon_new_rule(
-+		unsigned int min_sz_region, unsigned int max_sz_region,
-+		unsigned int min_nr_accesses, unsigned int max_nr_accesses,
-+		unsigned int min_age_region, unsigned int max_age_region,
-+		enum damon_action action)
-+{
-+	struct damon_rule *ret;
-+
-+	ret = kmalloc(sizeof(struct damon_rule), GFP_KERNEL);
-+	if (!ret)
-+		return NULL;
-+	ret->min_sz_region = min_sz_region;
-+	ret->max_sz_region = max_sz_region;
-+	ret->min_nr_accesses = min_nr_accesses;
-+	ret->max_nr_accesses = max_nr_accesses;
-+	ret->min_age_region = min_age_region;
-+	ret->max_age_region = max_age_region;
-+	ret->action = action;
-+	INIT_LIST_HEAD(&ret->list);
-+
-+	return ret;
-+}
-+
- static void damon_add_rule(struct damon_ctx *ctx, struct damon_rule *r)
- {
- 	list_add_tail(&r->list, &ctx->rules_list);
-@@ -1266,6 +1289,130 @@ static ssize_t debugfs_monitor_on_write(struct file *file,
- 	return ret;
- }
- 
-+static ssize_t damon_sprint_rules(struct damon_ctx *c, char *buf, ssize_t len)
-+{
-+	char *cursor = buf;
-+	struct damon_rule *r;
-+	int ret;
-+
-+	damon_for_each_rule(c, r) {
-+		ret = snprintf(cursor, len, "%u %u %u %u %u %u %d\n",
-+				r->min_sz_region, r->max_sz_region,
-+				r->min_nr_accesses, r->max_nr_accesses,
-+				r->min_age_region, r->max_age_region,
-+				r->action);
-+		cursor += ret;
-+	}
-+	return cursor - buf;
-+}
-+
-+static ssize_t debugfs_rules_read(struct file *file, char __user *buf,
-+		size_t count, loff_t *ppos)
-+{
-+	struct damon_ctx *ctx = &damon_user_ctx;
-+	ssize_t len;
-+	char *rules_buf;
-+
-+	rules_buf = kmalloc(sizeof(char) * 1024, GFP_KERNEL);
-+
-+	len = damon_sprint_rules(ctx, rules_buf, 1024);
-+	len = simple_read_from_buffer(buf, count, ppos, rules_buf, len);
-+
-+	kfree(rules_buf);
-+	return len;
-+}
-+
-+static void damon_free_rules(struct damon_rule **rules, ssize_t nr_rules)
-+{
-+	ssize_t i;
-+
-+	for (i = 0; i < nr_rules; i++)
-+		kfree(rules[i]);
-+	kfree(rules);
-+}
-+
-+/*
-+ * Converts a string into an array of struct damon_rule pointers
-+ *
-+ * Returns an array of struct damon_rule pointers that converted, or NULL
-+ * otherwise.
-+ */
-+static struct damon_rule **str_to_rules(const char *str, ssize_t len,
-+				ssize_t *nr_rules)
-+{
-+	struct damon_rule *rule, **rules;
-+	int pos = 0, parsed, ret;
-+	unsigned int min_sz, max_sz, min_nr_a, max_nr_a, min_age, max_age;
-+	int action;
-+
-+	rules = kmalloc_array(256, sizeof(struct damon_rule *), GFP_KERNEL);
-+	if (!rules)
-+		return NULL;
-+
-+	*nr_rules = 0;
-+	while (pos < len && *nr_rules < 256) {
-+		ret = sscanf(&str[pos], "%u %u %u %u %u %u %d%n",
-+				&min_sz, &max_sz, &min_nr_a, &max_nr_a,
-+				&min_age, &max_age, &action, &parsed);
-+		pos += parsed;
-+		if (ret != 7)
-+			break;
-+		if (action >= DAMON_ACTION_LEN) {
-+			pr_err("wrong action %d\n", action);
-+			goto error;
-+		}
-+
-+		rule = damon_new_rule(min_sz, max_sz, min_nr_a, max_nr_a,
-+				min_age, max_age, action);
-+		if (!rule)
-+			goto error;
-+
-+		rules[*nr_rules] = rule;
-+		*nr_rules += 1;
-+	}
-+	return rules;
-+error:
-+	damon_free_rules(rules, *nr_rules);
-+	return NULL;
-+}
-+
-+static ssize_t debugfs_rules_write(struct file *file, const char __user *buf,
-+		size_t count, loff_t *ppos)
-+{
-+	struct damon_ctx *ctx = &damon_user_ctx;
-+	char *rules_buf;
-+	struct damon_rule **rules;
-+	ssize_t nr_rules, ret;
-+
-+	rules_buf = kmalloc(sizeof(char) * 1024, GFP_KERNEL);
-+	ret = simple_write_to_buffer(rules_buf, 1024, ppos, buf, count);
-+	if (ret < 0) {
-+		kfree(rules_buf);
-+		return ret;
-+	}
-+
-+	rules = str_to_rules(rules_buf, ret, &nr_rules);
-+	if (!rules)
-+		return -EINVAL;
-+
-+	spin_lock(&ctx->kdamond_lock);
-+	if (ctx->kdamond)
-+		goto monitor_running;
-+
-+	damon_set_rules(ctx, rules, nr_rules);
-+	spin_unlock(&ctx->kdamond_lock);
-+	kfree(rules_buf);
-+	return ret;
-+
-+monitor_running:
-+	spin_unlock(&ctx->kdamond_lock);
-+	pr_err("%s: kdamond is running. Turn it off first.\n", __func__);
-+	ret = -EINVAL;
-+	damon_free_rules(rules, nr_rules);
-+	kfree(rules_buf);
-+	return ret;
-+}
-+
- static ssize_t damon_sprint_pids(struct damon_ctx *ctx, char *buf, ssize_t len)
- {
- 	char *cursor = buf;
-@@ -1468,6 +1615,12 @@ static const struct file_operations pids_fops = {
- 	.write = debugfs_pids_write,
- };
- 
-+static const struct file_operations rules_fops = {
-+	.owner = THIS_MODULE,
-+	.read = debugfs_rules_read,
-+	.write = debugfs_rules_write,
-+};
-+
- static const struct file_operations record_fops = {
- 	.owner = THIS_MODULE,
- 	.read = debugfs_record_read,
-@@ -1484,10 +1637,10 @@ static struct dentry *debugfs_root;
- 
- static int __init debugfs_init(void)
- {
--	const char * const file_names[] = {"attrs", "record",
-+	const char * const file_names[] = {"attrs", "record", "rules",
- 		"pids", "monitor_on"};
- 	const struct file_operations *fops[] = {&attrs_fops, &record_fops,
--		&pids_fops, &monitor_on_fops};
-+		&rules_fops, &pids_fops, &monitor_on_fops};
- 	int i;
- 
- 	debugfs_root = debugfs_create_dir("damon", NULL);
+If we have 3 or more instances, it is easy to expand it as
+
+ftrace.instance {
+	NAME1 {
+		...
+	}
+	NAME2 {
+		...
+	}
+	NAME3 {
+		...
+	}
+}
+
+(Hmm, maybe I should reserve "default" name for setting a default configuration)
+
+> > I had tried to reuse devicetree at first, but it was rejected because
+> > the devicetree is only for describing hardware. So I introduced this
+> > bootconfig.
+> 
+> Makes sense.
+> 
+> > When I designed the bootconfig, I tried to sort out the requirements.
+> > That config should be able to pass all setting we can do on tracefs.
+> > Since ftrace already has a parser for tracefs, we don't need any types
+> > for each settings. Thus it should be something like sysctl.conf. But the
+> > sysctl.conf was too simple, it couldn't handle several related keys
+> > well. So I decided to introduce braces which put together some related
+> > parameters. And the bootconfig syntax was born.
+> 
+> Ok, here's my boot command line:
+> 
+> [    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-5.5.0-rc7+ root=/dev/nvme0n1p2 ro root=/dev/disk/by-id/nvme-eui.0025385481b2fe2a-part2 resume=/dev/disk/by-id/nvme-eui.0025385481b2fe2a-part1 debug ignore_loglevel log_buf_len=16M no_console_suspend net.ifnames=0 mem_encrypt=off systemd.log_target=null
+> 
+> How do I use the bootconfig thing with it? Or is it not supposed to be
+> used that way? IOW, how is it supposed to be used so that it needs to be
+> enabled on every box?
+
+Sure,
+
+1) write a following bootconfig file
+----
+kernel {
+	# root device and resume devices
+	root = /dev/disk/by-id/nvme-eui.0025385481b2fe2a-part2
+	resume = /dev/disk/by-id/nvme-eui.0025385481b2fe2a-part1
+	ro			# Mount root device readonly.
+	debug			# boot with debug log
+	ignore_loglevel	# this will print all messages
+	log_buf_len = 16M	# So expand log buffer to 16MB
+	no_console_suspend	# Debugging suspend process
+	mem_encrypt = off	# Set AMD SME to off
+}
+
+init {
+	net.ifnames = 0	# Use tradisional ifname
+	systemd.log_target = null	# Ignore systemd log?
+}
+----
+2) Use tools/bootconfig/bootconfig to apply it to your initrd image
+# tools/bootconfig/bootconfig -a <your-bootconfig> <your-initrd>
+3) boot.
+
+Note that I don't intended to "replace" all legacy command line
+(but it is easy for bootloaders to use bootconfig) it seems above example
+seems have some options which added by the bootloader.
+
+> 
+> > Okay, I hope it and try to prove it. Anyway, to use boot-time tracing which
+> > can fully utilize ftrace at boot-time, we have to enable bootconfig.
+> 
+> Ok, this is getting closer. But not everyone is using boottime tracing?
+
+No, (but I HOPE so). 
+
+> 
+> Or is the logic: every user/tool might need to be able to do boottime
+> tracing at some future point in time and bootconfig is a mandatory part
+> of that use case?
+
+Boot time tracing is just a example. I think we can expand this for some
+other subsystems too. And this might be also helpful for adding a bit more
+complex syntax to those parameters without parser.
+
+Thank you,
+
 -- 
-2.17.1
-
+Masami Hiramatsu <mhiramat@kernel.org>
