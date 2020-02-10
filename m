@@ -2,138 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22E7D157E0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:02:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC0F4157E0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:01:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728764AbgBJPC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 10:02:26 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:60672 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726809AbgBJPCZ (ORCPT
+        id S1728501AbgBJPBV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 10:01:21 -0500
+Received: from netrider.rowland.org ([192.131.102.5]:40315 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726627AbgBJPBU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 10:02:25 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01AF1JlZ009377;
-        Mon, 10 Feb 2020 09:01:19 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581346879;
-        bh=B/nOBT8Nq5yZ+RzogfXRvk5kf/L+erqu046VxjWWtjE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=nnYvyvNudOMx7abul3CF1ecAWg13wKMSvZna3blAdDgGRYcgXYaFd/cQBMkkN7RBT
-         ewfZjHv4+pP0P6CurzatKtza+2oFLxNVkK1gCJN+X2HqnLDEKdYCF4+IDgU1tyPJVF
-         C31O1HpGm8HX2yXsmO2fYvaGEb+0RHvtxDrlRujA=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01AF1JBU048306
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Feb 2020 09:01:19 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 10
- Feb 2020 09:01:18 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 10 Feb 2020 09:01:19 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01AF1G2T128816;
-        Mon, 10 Feb 2020 09:01:17 -0600
-Subject: Re: [PATCH] ASoC: dmaengine_pcm: Consider DMA cache caused delay in
- pointer callback
-To:     Takashi Iwai <tiwai@suse.de>
-CC:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <tiwai@suse.com>,
-        <perex@perex.cz>, <lars@metafoo.de>, <alsa-devel@alsa-project.org>,
-        <vkoul@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200210140423.10232-1-peter.ujfalusi@ti.com>
- <s5hmu9qfrq7.wl-tiwai@suse.de> <15c7df10-cf9f-109c-3cbf-e73af7f4f66a@ti.com>
- <s5hk14ufqx9.wl-tiwai@suse.de>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <084c2d48-96dd-4d57-84f9-f02204cfbece@ti.com>
-Date:   Mon, 10 Feb 2020 17:01:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 10 Feb 2020 10:01:20 -0500
+Received: (qmail 16865 invoked by uid 500); 10 Feb 2020 10:01:19 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 10 Feb 2020 10:01:19 -0500
+Date:   Mon, 10 Feb 2020 10:01:19 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@netrider.rowland.org
+To:     Peter Enderborg <peter.enderborg@sony.com>
+cc:     Jiri Kosina <jikos@kernel.org>, Johan Korsnes <jkorsnes@cisco.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>
+Subject: Re: [PATCH] HID: Extend report buffer size
+In-Reply-To: <20200210120847.31737-1-peter.enderborg@sony.com>
+Message-ID: <Pine.LNX.4.44L0.2002100957401.14460-100000@netrider.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <s5hk14ufqx9.wl-tiwai@suse.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 10 Feb 2020, Peter Enderborg wrote:
 
+> In the patch "HID: Fix slab-out-of-bounds read in hid_field_extract"
+> there added a check for buffer overruns. This made Elgato StreamDeck
+> to fail. This patch extend the buffer to 8192 to solve this. It also
+> adds a print of the requested length if it fails on this test.
+> 
+> Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
+> ---
+>  drivers/hid/hid-core.c | 2 +-
+>  include/linux/hid.h    | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+> index 851fe54ea59e..28841219b3d2 100644
+> --- a/drivers/hid/hid-core.c
+> +++ b/drivers/hid/hid-core.c
+> @@ -290,7 +290,7 @@ static int hid_add_field(struct hid_parser *parser, unsigned report_type, unsign
+>  
+>  	/* Total size check: Allow for possible report index byte */
+>  	if (report->size > (HID_MAX_BUFFER_SIZE - 1) << 3) {
+> -		hid_err(parser->device, "report is too long\n");
+> +		hid_err(parser->device, "report is too long (%d)\n", report->size);
+>  		return -1;
+>  	}
+>  
+> diff --git a/include/linux/hid.h b/include/linux/hid.h
+> index cd41f209043f..875f71132b14 100644
+> --- a/include/linux/hid.h
+> +++ b/include/linux/hid.h
+> @@ -492,7 +492,7 @@ struct hid_report_enum {
+>  };
+>  
+>  #define HID_MIN_BUFFER_SIZE	64		/* make sure there is at least a packet size of space */
+> -#define HID_MAX_BUFFER_SIZE	4096		/* 4kb */
+> +#define HID_MAX_BUFFER_SIZE	8192		/* 8kb */
+>  #define HID_CONTROL_FIFO_SIZE	256		/* to init devices with >100 reports */
+>  #define HID_OUTPUT_FIFO_SIZE	64
 
-On 10/02/2020 16.38, Takashi Iwai wrote:
-> On Mon, 10 Feb 2020 15:28:44 +0100,
-> Peter Ujfalusi wrote:
->>
->> Hi Takashi,
->>
->>>> --- a/sound/soc/soc-pcm.c
->>>> +++ b/sound/soc/soc-pcm.c
->>>> @@ -1151,7 +1151,7 @@ static snd_pcm_uframes_t soc_pcm_pointer(struct snd_pcm_substream *substream)
->>>>  	}
->>>>  	delay += codec_delay;
->>>>  
->>>> -	runtime->delay = delay;
->>>> +	runtime->delay += delay;
->>>
->>> Is it correct?
->>> delay already takes runtime->delay as its basis, so it'll result in a
->>> double.
->>
->> The delay here is coming from the DAI and the codec.
->> The runtime->delay hold the PCM (DMA) caused delay.
-> 
-> Well, let's take a look at soc_pcm_pointer():
-> 
-> 	/* clearing the previous total delay */
-> 	runtime->delay = 0;
-> 
-> 	offset = snd_soc_pcm_component_pointer(substream);
-> 
-> 	/* base delay if assigned in pointer callback */
-> 	delay = runtime->delay;
-> 
-> 	delay += snd_soc_dai_delay(cpu_dai, substream);
-> 
-> 	for_each_rtd_codec_dai(rtd, i, codec_dai) {
-> 		codec_delay = max(codec_delay,
-> 				  snd_soc_dai_delay(codec_dai, substream));
-> 	}
-> 	delay += codec_delay;
-> 
-> 	runtime->delay = delay;
-> 
-> So, the code reads the current runtime->delay and saves it as delay
-> variable.  Then it adds the max delay from codec DAIs, and stores back
-> to runtime->delay.
-> 
-> If we change the last line to
-> 	runtime->delay += delay;
-> it'll add to the already existing value again, so it'll be doubly if
-> runtime->delay was non-zero beforehand.
+The second part of this patch is identical to the "HID: core: increase
+HID report buffer size to 8KiB" patch submitted by Johan Korsnes a few
+weeks ago.  You might want to submit just the first part of your patch,
+or not submit anything at all.
 
-Yes, you are right.
-The change is added by
-9fb4c2bf130b ASoC: soc-pcm: Use delay set in component pointer function
+Alan Stern
 
-which I have missed, apparently.
-
-> That said, judging from the code, I believe the current soc-pcm.c code
-> needs no change.
-
-Yes, there is no need to change soc-pcm.
-
-> 
-> 
-> thanks,
-> 
-> Takashi
-> 
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
