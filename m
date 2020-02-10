@@ -2,131 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A01D157E10
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:03:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD5F2157E16
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:05:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728954AbgBJPDO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 10:03:14 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:51874 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726809AbgBJPDN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 10:03:13 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 725CF290B17
-Subject: Re: [PATCH v2] platform/chrome: wilco_ec: Platform data shan't
- include kernel.h
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Nick Crews <ncrews@chromium.org>, linux-kernel@vger.kernel.org,
-        Daniel Campello <campello@chromium.org>
-References: <20200205094828.77940-1-andriy.shevchenko@linux.intel.com>
- <20200210145721.GX10400@smile.fi.intel.com>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <4e78d3ca-7e41-a201-18c8-d91923423827@collabora.com>
-Date:   Mon, 10 Feb 2020 16:03:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1728972AbgBJPFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 10:05:46 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10610 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727636AbgBJPFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 10:05:46 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 9AD5DEF4CB4E4FB8C5F8;
+        Mon, 10 Feb 2020 23:05:39 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Mon, 10 Feb 2020
+ 23:05:30 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <pierre-louis.bossart@linux.intel.com>,
+        <srinivas.kandagatla@linaro.org>, <yuehaibing@huawei.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] ASoC: wcd934x: Remove set but not unused variable 'hph_comp_ctrl7'
+Date:   Mon, 10 Feb 2020 23:04:21 +0800
+Message-ID: <20200210150421.34680-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20200210145721.GX10400@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+sound/soc/codecs/wcd934x.c: In function wcd934x_codec_hphdelay_lutbypass:
+sound/soc/codecs/wcd934x.c:3395:6: warning: variable hph_comp_ctrl7 set but not used [-Wunused-but-set-variable]
 
-On 10/2/20 15:57, Andy Shevchenko wrote:
-> On Wed, Feb 05, 2020 at 11:48:28AM +0200, Andy Shevchenko wrote:
->> Replace with appropriate types.h.
->>
->> Also there is no need to include device.h, but mutex.h.
->> For the pointers to unknown structures use forward declarations.
->>
->> In the *.c files we need to include all headers that provide APIs
->> being used in the module.
-> 
-> Anybody to comment?
-> 
+commit da3e83f8bb86 ("ASoC: wcd934x: add audio routings")
+involved this unused variable.
 
-LGTM, I silently queued this patch this morning in our kernelci branch to give a
-try. Waiting for the results, if all goes well will be queued for-next.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ sound/soc/codecs/wcd934x.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Thanks,
- Enric
+diff --git a/sound/soc/codecs/wcd934x.c b/sound/soc/codecs/wcd934x.c
+index 158e878..11c0439 100644
+--- a/sound/soc/codecs/wcd934x.c
++++ b/sound/soc/codecs/wcd934x.c
+@@ -3392,18 +3392,15 @@ static void wcd934x_codec_hphdelay_lutbypass(struct snd_soc_component *comp,
+ {
+ 	u8 hph_dly_mask;
+ 	u16 hph_lut_bypass_reg = 0;
+-	u16 hph_comp_ctrl7 = 0;
+ 
+ 	switch (interp_idx) {
+ 	case INTERP_HPHL:
+ 		hph_dly_mask = 1;
+ 		hph_lut_bypass_reg = WCD934X_CDC_TOP_HPHL_COMP_LUT;
+-		hph_comp_ctrl7 = WCD934X_CDC_COMPANDER1_CTL7;
+ 		break;
+ 	case INTERP_HPHR:
+ 		hph_dly_mask = 2;
+ 		hph_lut_bypass_reg = WCD934X_CDC_TOP_HPHR_COMP_LUT;
+-		hph_comp_ctrl7 = WCD934X_CDC_COMPANDER2_CTL7;
+ 		break;
+ 	default:
+ 		return;
+-- 
+2.7.4
 
->>
->> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->> ---
->> v2: update *.c files (kbuild test robot)
->>  drivers/platform/chrome/wilco_ec/properties.c | 3 +++
->>  drivers/platform/chrome/wilco_ec/sysfs.c      | 4 ++++
->>  include/linux/platform_data/wilco-ec.h        | 8 ++++++--
->>  3 files changed, 13 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/platform/chrome/wilco_ec/properties.c b/drivers/platform/chrome/wilco_ec/properties.c
->> index e69682c95ea2..a0cbd8bd2851 100644
->> --- a/drivers/platform/chrome/wilco_ec/properties.c
->> +++ b/drivers/platform/chrome/wilco_ec/properties.c
->> @@ -3,8 +3,11 @@
->>   * Copyright 2019 Google LLC
->>   */
->>  
->> +#include <linux/errno.h>
->> +#include <linux/export.h>
->>  #include <linux/platform_data/wilco-ec.h>
->>  #include <linux/string.h>
->> +#include <linux/types.h>
->>  #include <linux/unaligned/le_memmove.h>
->>  
->>  /* Operation code; what the EC should do with the property */
->> diff --git a/drivers/platform/chrome/wilco_ec/sysfs.c b/drivers/platform/chrome/wilco_ec/sysfs.c
->> index f0d174b6bb21..3c587b4054a5 100644
->> --- a/drivers/platform/chrome/wilco_ec/sysfs.c
->> +++ b/drivers/platform/chrome/wilco_ec/sysfs.c
->> @@ -8,8 +8,12 @@
->>   * See Documentation/ABI/testing/sysfs-platform-wilco-ec for more information.
->>   */
->>  
->> +#include <linux/device.h>
->> +#include <linux/kernel.h>
->>  #include <linux/platform_data/wilco-ec.h>
->> +#include <linux/string.h>
->>  #include <linux/sysfs.h>
->> +#include <linux/types.h>
->>  
->>  #define CMD_KB_CMOS			0x7C
->>  #define SUB_CMD_KB_CMOS_AUTO_ON		0x03
->> diff --git a/include/linux/platform_data/wilco-ec.h b/include/linux/platform_data/wilco-ec.h
->> index afede15a95bf..25f46a939637 100644
->> --- a/include/linux/platform_data/wilco-ec.h
->> +++ b/include/linux/platform_data/wilco-ec.h
->> @@ -8,8 +8,8 @@
->>  #ifndef WILCO_EC_H
->>  #define WILCO_EC_H
->>  
->> -#include <linux/device.h>
->> -#include <linux/kernel.h>
->> +#include <linux/mutex.h>
->> +#include <linux/types.h>
->>  
->>  /* Message flags for using the mailbox() interface */
->>  #define WILCO_EC_FLAG_NO_RESPONSE	BIT(0) /* EC does not respond */
->> @@ -17,6 +17,10 @@
->>  /* Normal commands have a maximum 32 bytes of data */
->>  #define EC_MAILBOX_DATA_SIZE		32
->>  
->> +struct device;
->> +struct resource;
->> +struct platform_device;
->> +
->>  /**
->>   * struct wilco_ec_device - Wilco Embedded Controller handle.
->>   * @dev: Device handle.
->> -- 
->> 2.24.1
->>
-> 
+
