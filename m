@@ -2,114 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85385157D0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 15:06:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF7E9157D08
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 15:05:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729197AbgBJOGm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 09:06:42 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:41074 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727884AbgBJOGm (ORCPT
+        id S1728601AbgBJOFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 09:05:54 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44099 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726846AbgBJOFx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 09:06:42 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01AE4O7g041894;
-        Mon, 10 Feb 2020 08:04:24 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581343464;
-        bh=M7oV+dgNDePW9F+75A8vypX+j/v5tDexHBLLV1ccDfU=;
-        h=From:To:CC:Subject:Date;
-        b=x8MujdPN9PMGtYJardUmXjE4MOYPRuJh3p6eY1P17yHBEOMeOlw6pQeWroHLai4ug
-         A7QzYoCcsIlnPtsG/9+M5MOzoR0oLV+LqVtayhQpyFGg0/bMKX2vMvWrJCWG4IwFQc
-         Jm5wAMc/isV2eOzn737sG3Lf3p4b1niknRU5s0wE=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01AE4Ols086430
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Feb 2020 08:04:24 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 10
- Feb 2020 08:04:23 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 10 Feb 2020 08:04:23 -0600
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01AE4Klm024323;
-        Mon, 10 Feb 2020 08:04:21 -0600
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <tiwai@suse.com>,
-        <perex@perex.cz>
-CC:     <lars@metafoo.de>, <alsa-devel@alsa-project.org>,
-        <vkoul@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] ASoC: dmaengine_pcm: Consider DMA cache caused delay in pointer callback
-Date:   Mon, 10 Feb 2020 16:04:23 +0200
-Message-ID: <20200210140423.10232-1-peter.ujfalusi@ti.com>
+        Mon, 10 Feb 2020 09:05:53 -0500
+Received: by mail-wr1-f68.google.com with SMTP id m16so7834969wrx.11
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 06:05:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BC1QTV/GfMFylgzZm/gKJk3DiF0TG5sJ3VTno2jRAlI=;
+        b=Iekk9bq4F28Gr2PTANmaR5TKRz2l2cSkpYQ+qCTfsRVdLawWZdCCp3Af+vlX30kgSi
+         fgL6BHZsIaf1QEoCSi89WYSt0gU856BczLvho22GkdDjbf6RFwTP/8erFdChy6y5HIYE
+         fKV1hc+hOozeBQGUMTQUPOybobwuYykLiBnm2iKZrJHWtXT89YrNZcdDvrO8blIsTpod
+         iwAA2lqThkYXxaAO35y5gjfeXmzAU822WHp6DKA1qZP8kH5qbwcV+mOfK1UomI8uYrlb
+         X49GLHF1Stmhcx311k+ZJ9NAMp8j9WXovacJPkDmNsvNebbSJHEoqF9L/wkH1Sxbd2iX
+         0MdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BC1QTV/GfMFylgzZm/gKJk3DiF0TG5sJ3VTno2jRAlI=;
+        b=YR8ApgZuEvY4zHbd2kl375uaOdN3wDYei9RlXWXBBRwNrLBGuGchG7I+oXgFel8FRj
+         +g4sf1u4Zj/kHZgWIjoKXKMvItPEjqZJ5+Eo4VQUqUlqw+NfnuQcGW83i81DjgCjq5/R
+         RO3oyrnECXlrBfy8IForhw/khFsneYDr7ZW+ZrY4CRDZgM+tmyzA3WEQTU/iX4SQlZJ3
+         4S7AiGuhEsC9M5yu8ztIv5BdQgpcuClk4DIeOZK76G5WNcpr6lo6giIbW4nO8rItkIzA
+         L0lyB5oVER0SXlfq83Gc/V2vj/BKoJD8ypr7AUsUfTezD3bO3gdLSwvQ6G2MFU2pIQN9
+         sa+Q==
+X-Gm-Message-State: APjAAAV5c4cJDK87Gh9IsFmCk2rBoAOljM4QDa52CMVZU11Y3n/e58d4
+        2I4yLpHqURCzyBAGS+WNtSax3Q==
+X-Google-Smtp-Source: APXvYqzsuss4SpmtNHijxh8UGeCSj0dPqDqaFBPHwOVzY4qj/xMJsEIyjCohiinzMrMnHKqQBxSjWQ==
+X-Received: by 2002:adf:f80b:: with SMTP id s11mr2342329wrp.12.1581343550219;
+        Mon, 10 Feb 2020 06:05:50 -0800 (PST)
+Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id y20sm646715wmi.25.2020.02.10.06.05.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Feb 2020 06:05:49 -0800 (PST)
+From:   Dmitry Safonov <dima@arista.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH-4.19-stable 0/2] Backport ENCODE_FRAME_POINTER hint
+Date:   Mon, 10 Feb 2020 14:05:41 +0000
+Message-Id: <20200210140543.79641-1-dima@arista.com>
 X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some DMA engines can have big FIFOs which adds to the latency.
-The DMAengine framework can report the FIFO utilization in bytes. Use this
-information for the delay reporting.
+On 4.19.93 the following warning was observed with CONFIG_FRAME_POINTER:
+> WARNING: kernel stack frame pointer at 00000000bceb5183 in Coronavirus:3282 has bad value           (null)
+>  unwind stack type:0 next_sp:          (null) mask:0x2 graph_idx:0
+>  000000009630aa47: ffffc9000126fdb0 (0xffffc9000126fdb0)
+>  0000000020360f53: ffffffff81038e33 (__save_stack_trace+0xcb/0xee)
+>  00000000675081f2: 0000000000000000 ...
+>  0000000043198fe7: ffffc9000126c000 (0xffffc9000126c000)
+>  0000000008a46231: ffffc90001270000 (0xffffc90001270000)
+[..]
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
-Hi,
+It turns to be missing %rbp hint was making frame pointer unwinder
+a bit tipsy.
+The observed is WARN_ONCE(), so it one time per boot, but imho, worth to
+have in stable too.
 
-5.6-rc1 now have support for reporting the DMA cached data.
-With this patch we can include it to the delay calculation.
-The first DMA driver which reports this is the TI K3 UDMA driver.
+Peter Zijlstra (2):
+  x86/stackframe: Move ENCODE_FRAME_POINTER to asm/frame.h
+  x86/stackframe, x86/ftrace: Add pt_regs frame annotations
 
-Regards,
-Peter
+ arch/x86/entry/calling.h     | 15 -----------
+ arch/x86/entry/entry_32.S    | 16 ------------
+ arch/x86/include/asm/frame.h | 49 ++++++++++++++++++++++++++++++++++++
+ arch/x86/kernel/ftrace_32.S  |  3 +++
+ arch/x86/kernel/ftrace_64.S  |  3 +++
+ 5 files changed, 55 insertions(+), 31 deletions(-)
 
- sound/core/pcm_dmaengine.c | 6 ++++++
- sound/soc/soc-pcm.c        | 2 +-
- 2 files changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/sound/core/pcm_dmaengine.c b/sound/core/pcm_dmaengine.c
-index 5749a8a49784..4f1395fd0160 100644
---- a/sound/core/pcm_dmaengine.c
-+++ b/sound/core/pcm_dmaengine.c
-@@ -247,9 +247,15 @@ snd_pcm_uframes_t snd_dmaengine_pcm_pointer(struct snd_pcm_substream *substream)
- 
- 	status = dmaengine_tx_status(prtd->dma_chan, prtd->cookie, &state);
- 	if (status == DMA_IN_PROGRESS || status == DMA_PAUSED) {
-+		struct snd_pcm_runtime *runtime = substream->runtime;
-+		int sample_bits = snd_pcm_format_physical_width(runtime->format);
-+
- 		buf_size = snd_pcm_lib_buffer_bytes(substream);
- 		if (state.residue > 0 && state.residue <= buf_size)
- 			pos = buf_size - state.residue;
-+
-+		sample_bits *= runtime->channels;
-+		runtime->delay = state.in_flight_bytes / (sample_bits / 8);
- 	}
- 
- 	return bytes_to_frames(substream->runtime, pos);
-diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index ff1b7c7078e5..58ef508d70a3 100644
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -1151,7 +1151,7 @@ static snd_pcm_uframes_t soc_pcm_pointer(struct snd_pcm_substream *substream)
- 	}
- 	delay += codec_delay;
- 
--	runtime->delay = delay;
-+	runtime->delay += delay;
- 
- 	return offset;
- }
 -- 
-Peter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.25.0
 
