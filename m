@@ -2,101 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E56AE157D97
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 15:42:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B0D9157D6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 15:31:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728349AbgBJOmO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 09:42:14 -0500
-Received: from mga03.intel.com ([134.134.136.65]:18244 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728300AbgBJOmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 09:42:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Feb 2020 06:42:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,425,1574150400"; 
-   d="scan'208";a="226213730"
-Received: from ykatsuma-mobl1.gar.corp.intel.com (HELO [10.251.140.95]) ([10.251.140.95])
-  by fmsmga007.fm.intel.com with ESMTP; 10 Feb 2020 06:42:09 -0800
-Subject: Re: [alsa-devel] [PATCH 00/10] soundwire: bus: fix race conditions,
- add suspend-resume
-To:     alsa-devel@alsa-project.org
-Cc:     tiwai@suse.de, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        vkoul@kernel.org, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com,
-        slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>
-References: <20200115000844.14695-1-pierre-louis.bossart@linux.intel.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <f461be74-8acc-85c8-fd4e-8257ca85863f@linux.intel.com>
-Date:   Mon, 10 Feb 2020 08:30:13 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200115000844.14695-1-pierre-louis.bossart@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1728544AbgBJObQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 09:31:16 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:43258 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727120AbgBJObQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 09:31:16 -0500
+Received: by mail-qk1-f196.google.com with SMTP id p7so1684601qkh.10
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 06:31:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=qcAgZw/ui3CLohL6PVMtRlohm+XOB+CMbaeiCefL8Tw=;
+        b=XXf5//gtn9ah4o1Dg3ynTtJvV9QlT9wOauHez+XKzTaZBmpDuv7nb/+Aq5XchwD5qp
+         Cb5yGuRptx8TFxSSM0Ke++M0aRlmnhjBMX+wqCZ/mZuLeA8oRDwx2PAFYW2zQJnbGTYh
+         orbTORk0adPsno9WyR3BbkHdALwJc7sln8jqXZjh6wO+pd1G5KXUO5rqHVcwUbU7B7eu
+         BxYvkPhwwXewl/+rCl6Z34+jl1nTUAIaPHS3WZzLKXy4KmKB0J7Bg/fuTVl2WA/ovjRi
+         VIIcKSKU4+e6S+E5MD1jRpQERWH34lyO4oJMdxrBREzLi4r5aVCzQPTa5MgFRiQNn8Gm
+         NCjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=qcAgZw/ui3CLohL6PVMtRlohm+XOB+CMbaeiCefL8Tw=;
+        b=qaT1Z3TAINFm0onMEw1zzJhaPXHODR7esQLdT6hdqfEY0MXmEKPlJ3qNzyZmmjabxs
+         BoPoZhN02JFmWfdw0GiDHA0Uv/C0g86PVsvh3Tp4L6h/bF2fbmCuxGqlAUifsDoEocaF
+         9lqc3DI9xZv2ZXPof5e2Uxu1cRn50PnMEnPqMikLm0i5w/tPqDysGY0yMV1qPwiQCAnR
+         d8YLLREGhsJGLJXCrkZ/W1dDLMfNEhibUjLJ8wYJOt09FInXUnB6WgfddRVQda7ioVb8
+         YN6BLTRk/CcWH8XPa9pzwkFfHRai3r75Nz32ey7rHOySEUdnXNkTp2kBiAHuDLZTOcYl
+         q3Ew==
+X-Gm-Message-State: APjAAAVNqawDebMX5b3orK+tEOcy/XsshRYNVPGJDTRkgTmZKSpprgVd
+        5zqoKBfA73HWojiDCkCAsCfKOQ==
+X-Google-Smtp-Source: APXvYqzQj7JL3j6ulpB0erhHdZzp7Y5zaTnPaPrnXdAv/X9nGuhFlyVud31K6RxqiPcBhdidYvqYhQ==
+X-Received: by 2002:a37:270b:: with SMTP id n11mr1631942qkn.26.1581345074983;
+        Mon, 10 Feb 2020 06:31:14 -0800 (PST)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id r12sm200397qkm.94.2020.02.10.06.31.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Feb 2020 06:31:14 -0800 (PST)
+Message-ID: <1581345072.7365.30.camel@lca.pw>
+Subject: Re: [PATCH] mm: fix a data race in put_page()
+From:   Qian Cai <cai@lca.pw>
+To:     Marco Elver <elver@google.com>
+Cc:     John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>, ira.weiny@intel.com,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
+Date:   Mon, 10 Feb 2020 09:31:12 -0500
+In-Reply-To: <CANpmjNN=SNr=HJMLrQUno2F1L4PmQL19JfvVjngKee77tN2q-Q@mail.gmail.com>
+References: <CANpmjNNaHAnKCMLb+Njs3AhEoJT9O6-Yh63fcNcVTjBbNQiEPg@mail.gmail.com>
+         <26B88005-28E6-4A09-B3A7-DC982DABE679@lca.pw>
+         <CANpmjNMzF-T=CzMqoJh-5zrsro8Ky7Q85tnX_HwWhsLCa0DsHw@mail.gmail.com>
+         <1581341769.7365.25.camel@lca.pw>
+         <CANpmjNPdwuMpJvwdVj6zm6G5rXzjvkF+GZqqxvpC8Ui4iN8New@mail.gmail.com>
+         <1581342954.7365.27.camel@lca.pw>
+         <CANpmjNN=SNr=HJMLrQUno2F1L4PmQL19JfvVjngKee77tN2q-Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2020-02-10 at 15:12 +0100, Marco Elver wrote:
+> On Mon, 10 Feb 2020 at 14:55, Qian Cai <cai@lca.pw> wrote:
+> > 
+> > On Mon, 2020-02-10 at 14:38 +0100, Marco Elver wrote:
+> > > On Mon, 10 Feb 2020 at 14:36, Qian Cai <cai@lca.pw> wrote:
+> > > > 
+> > > > On Mon, 2020-02-10 at 13:58 +0100, Marco Elver wrote:
+> > > > > On Mon, 10 Feb 2020 at 13:16, Qian Cai <cai@lca.pw> wrote:
+> > > > > > 
+> > > > > > 
+> > > > > > 
+> > > > > > > On Feb 10, 2020, at 2:48 AM, Marco Elver <elver@google.com> wrote:
+> > > > > > > 
+> > > > > > > Here is an alternative:
+> > > > > > > 
+> > > > > > > Let's say KCSAN gives you this:
+> > > > > > >   /* ... Assert that the bits set in mask are not written
+> > > > > > > concurrently; they may still be read concurrently.
+> > > > > > >     The access that immediately follows is assumed to access those
+> > > > > > > bits and safe w.r.t. data races.
+> > > > > > > 
+> > > > > > >     For example, this may be used when certain bits of @flags may
+> > > > > > > only be modified when holding the appropriate lock,
+> > > > > > >     but other bits may still be modified locklessly.
+> > > > > > >   ...
+> > > > > > >  */
+> > > > > > >   #define ASSERT_EXCLUSIVE_BITS(flags, mask)   ....
+> > > > > > > 
+> > > > > > > Then we can write page_zonenum as follows:
+> > > > > > > 
+> > > > > > > static inline enum zone_type page_zonenum(const struct page *page)
+> > > > > > > {
+> > > > > > > +       ASSERT_EXCLUSIVE_BITS(page->flags, ZONES_MASK << ZONES_PGSHIFT);
+> > > > > > >        return (page->flags >> ZONES_PGSHIFT) & ZONES_MASK;
+> > > > > > > }
+> > > > > > > 
+> > > > > > > This will accomplish the following:
+> > > > > > > 1. The current code is not touched, and we do not have to verify that
+> > > > > > > the change is correct without KCSAN.
+> > > > > > > 2. We're not introducing a bunch of special macros to read bits in various ways.
+> > > > > > > 3. KCSAN will assume that the access is safe, and no data race report
+> > > > > > > is generated.
+> > > > > > > 4. If somebody modifies ZONES bits concurrently, KCSAN will tell you
+> > > > > > > about the race.
+> > > > > > > 5. We're documenting the code.
+> > > > > > > 
+> > > > > > > Anything I missed?
+> > > > > > 
+> > > > > > I don’t know. Having to write the same line twice does not feel me any better than data_race() with commenting occasionally.
+> > > > > 
+> > > > > Point 4 above: While data_race() will ignore cause KCSAN to not report
+> > > > > the data race, now you might be missing a real bug: if somebody
+> > > > > concurrently modifies the bits accessed, you want to know about it!
+> > > > > Either way, it's up to you to add the ASSERT_EXCLUSIVE_BITS, but just
+> > > > > remember that if you decide to silence it with data_race(), you need
+> > > > > to be sure there are no concurrent writers to those bits.
+> > > > 
+> > > > Right, in this case, there is no concurrent writers to those bits, so I'll add a
+> > > > comment should be sufficient. However, I'll keep ASSERT_EXCLUSIVE_BITS() in mind
+> > > > for other places.
+> > > 
+> > > Right now there are no concurrent writers to those bits. But somebody
+> > > might introduce a bug that will write them, even though they shouldn't
+> > > have. With ASSERT_EXCLUSIVE_BITS() you can catch that. Once I have the
+> > > patches for this out, I would consider adding it here for this reason.
+> > 
+> > Surely, we could add many of those to catch theoretical issues. I can think of
+> > more like ASSERT_HARMLESS_COUNTERS() because the worry about one day someone
+> > might change the code to use counters from printing out information to making
+> > important MM heuristic decisions. Then, we might end up with those too many
+> > macros situation again. The list goes on, ASSERT_COMPARE_ZERO_NOLOOP(),
+> > ASSERT_SINGLE_BIT() etc.
+> 
+> I'm sorry, but the above don't assert any quantifiable properties in the code.
+> 
+> What we want is to be able to catch bugs that violate the *current*
+> properties of the code *today*. A very real property of the code
+> *today* is that nobody should modify zonenum without taking a lock. If
+> you mark the access here, there is no tool that can help you. I'm
+> trying to change that.
+> 
+> The fact that we have bits that can be modified locklessly and some
+> that can't is an inconvenience, but can be solved.
+> 
+> Makes sense?
+
+OK, go ahead adding it if you really feel like. I'd hope this is not the
+Pandora's box where people will eventually find more way to assert quantifiable
+properties in the code only to address theoretical issues...
 
 
-On 1/14/20 6:08 PM, Pierre-Louis Bossart wrote:
-> The existing mainline code for SoundWire does not handle critical race
-> conditions, and does not have any support for pm_runtime suspend or
-> clock-stop modes needed for e.g. jack detection or external VAD.
 > 
-> As suggested by Vinod, these patches for the bus are shared first -
-> with the risk that they are separated from their actual use in Intel
-> drivers, so reviewers might wonder why they are needed in the first
-> place.
+> Thanks,
+> -- Marco
 > 
-> For reference, the complete set of 90+ patches required for SoundWire
-> on Intel platforms is available here:
-> 
-> https://github.com/thesofproject/linux/pull/1692
-> 
-> These patches are not Intel-specific and are likely required for
-> e.g. Qualcomm-based implementations.
-> 
-> All the patches in this series were generated during the joint
-> Intel-Realtek validation effort on Intel reference designs and
-> form-factor devices. The support for the initialization_complete
-> signaling is already available in the Realtek codecs drivers merged in
-> the ASoC tree (rt700, rt711, rt1308, rt715)
-
-there's been no feedback since January 14, can we move on with the 
-reviews now that r.6-rc1 is out?
-Thanks!
-
-> 
-> Pierre-Louis Bossart (8):
->    soundwire: bus: fix race condition with probe_complete signaling
->    soundwire: bus: fix race condition with enumeration_complete signaling
->    soundwire: bus: fix race condition with initialization_complete
->      signaling
->    soundwire: bus: add PM/no-PM versions of read/write functions
->    soundwire: bus: write Slave Device Number without runtime_pm
->    soundwire: bus: add helper to clear Slave status to UNATTACHED
->    soundwire: bus: disable pm_runtime in sdw_slave_delete
->    soundwire: bus: don't treat CMD_IGNORED as error on ClockStop
-> 
-> Rander Wang (2):
->    soundwire: bus: fix io error when processing alert event
->    soundwire: bus: add clock stop helpers
-> 
->   drivers/soundwire/bus.c       | 509 ++++++++++++++++++++++++++++++++--
->   drivers/soundwire/bus.h       |   9 +
->   drivers/soundwire/bus_type.c  |   5 +
->   drivers/soundwire/slave.c     |   4 +
->   include/linux/soundwire/sdw.h |  24 ++
->   5 files changed, 526 insertions(+), 25 deletions(-)
-> 
+> > On the other hand, maybe to take a more pragmatic approach that if there are
+> > strong evidences that developers could easily make mistakes in a certain place,
+> > then we could add a new macro, so the next time Joe developer wants to a new
+> > macro, he/she has to provide the same strong justifications?
+> > 
+> > > 
+> > > > > 
+> > > > > There is no way to automatically infer all over the kernel which bits
+> > > > > we care about, and the most reliable is to be explicit about it. I
+> > > > > don't see a problem with it per se.
+> > > > > 
+> > > > > Thanks,
+> > > > > -- Marco
