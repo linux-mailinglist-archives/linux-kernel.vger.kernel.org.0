@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DDD2157B76
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:30:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 239E615797C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:15:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728296AbgBJMgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:36:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52932 "EHLO mail.kernel.org"
+        id S1730920AbgBJNPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:15:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727916AbgBJMfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:35:44 -0500
+        id S1729090AbgBJMiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:17 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91449215A4;
-        Mon, 10 Feb 2020 12:35:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20FC620838;
+        Mon, 10 Feb 2020 12:38:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338143;
-        bh=xCAhTSJ8+/Xp3f4QKgv7gQoZxl3+Oh0x9XDmQLmg9/g=;
+        s=default; t=1581338296;
+        bh=Ly0IkmrgmVTdVI+OAkYsXZD7zF/l/VAyYRWTaSoG2EE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e8mHUmRZ2IV80T/TYc6zBjnaKFrbcXzbvsdks4vOk1b8ulSC2GyFKjmak6U+1Ry+8
-         YeNCWAnjWcgdIBV7B7x9J+vvJ2vMop1Xd1Z3b8ba2Sa1qYR91EbFdNW8S5+85bZwHu
-         6/mGd1HFDT4svBRPtirm7Iy6BTBhtUPShN5Li8LI=
+        b=gqu+22HSn8s/6xxkMqFqZUaFJ5neqvSe7RggNbyzck79x7rOiuL8iOZIW2QfunRGE
+         iEAgdz5ph16hJa6em0JB7hjKRAj+300IloaaE9z5Wgq2gtNcY7gtgjlG+2Irnoeu0w
+         k/Q4iaAELmn9wnPFTpuQt2AgCGWZstKYplOcQPnY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 101/195] crypto: picoxcell - adjust the position of tasklet_init and fix missed tasklet_kill
+        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
+        Marios Pomonis <pomonis@google.com>,
+        Andrew Honig <ahonig@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.4 203/309] KVM: x86: Protect kvm_hv_msr_[get|set]_crash_data() from Spectre-v1/L1TF attacks
 Date:   Mon, 10 Feb 2020 04:32:39 -0800
-Message-Id: <20200210122315.049225238@linuxfoundation.org>
+Message-Id: <20200210122426.050196437@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,62 +45,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Marios Pomonis <pomonis@google.com>
 
-commit 7f8c36fe9be46862c4f3c5302f769378028a34fa upstream.
+commit 8618793750071d66028584a83ed0b4fa7eb4f607 upstream.
 
-Since tasklet is needed to be initialized before registering IRQ
-handler, adjust the position of tasklet_init to fix the wrong order.
+This fixes Spectre-v1/L1TF vulnerabilities in kvm_hv_msr_get_crash_data()
+and kvm_hv_msr_set_crash_data().
+These functions contain index computations that use the
+(attacker-controlled) MSR number.
 
-Besides, to fix the missed tasklet_kill, this patch adds a helper
-function and uses devm_add_action to kill the tasklet automatically.
+Fixes: e7d9513b60e8 ("kvm/x86: added hyper-v crash msrs into kvm hyperv context")
 
-Fixes: ce92136843cb ("crypto: picoxcell - add support for the picoxcell crypto engines")
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Nick Finco <nifi@google.com>
+Signed-off-by: Marios Pomonis <pomonis@google.com>
+Reviewed-by: Andrew Honig <ahonig@google.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/picoxcell_crypto.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ arch/x86/kvm/hyperv.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/crypto/picoxcell_crypto.c
-+++ b/drivers/crypto/picoxcell_crypto.c
-@@ -1616,6 +1616,11 @@ static const struct of_device_id spacc_o
- MODULE_DEVICE_TABLE(of, spacc_of_id_table);
- #endif /* CONFIG_OF */
- 
-+static void spacc_tasklet_kill(void *data)
-+{
-+	tasklet_kill(data);
-+}
-+
- static int spacc_probe(struct platform_device *pdev)
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -809,11 +809,12 @@ static int kvm_hv_msr_get_crash_data(str
+ 				     u32 index, u64 *pdata)
  {
- 	int i, err, ret;
-@@ -1659,6 +1664,14 @@ static int spacc_probe(struct platform_d
- 		return -ENXIO;
- 	}
+ 	struct kvm_hv *hv = &vcpu->kvm->arch.hyperv;
++	size_t size = ARRAY_SIZE(hv->hv_crash_param);
  
-+	tasklet_init(&engine->complete, spacc_spacc_complete,
-+		     (unsigned long)engine);
-+
-+	ret = devm_add_action(&pdev->dev, spacc_tasklet_kill,
-+			      &engine->complete);
-+	if (ret)
-+		return ret;
-+
- 	if (devm_request_irq(&pdev->dev, irq->start, spacc_spacc_irq, 0,
- 			     engine->name, engine)) {
- 		dev_err(engine->dev, "failed to request IRQ\n");
-@@ -1716,8 +1729,6 @@ static int spacc_probe(struct platform_d
- 	INIT_LIST_HEAD(&engine->completed);
- 	INIT_LIST_HEAD(&engine->in_progress);
- 	engine->in_flight = 0;
--	tasklet_init(&engine->complete, spacc_spacc_complete,
--		     (unsigned long)engine);
+-	if (WARN_ON_ONCE(index >= ARRAY_SIZE(hv->hv_crash_param)))
++	if (WARN_ON_ONCE(index >= size))
+ 		return -EINVAL;
  
- 	platform_set_drvdata(pdev, engine);
+-	*pdata = hv->hv_crash_param[index];
++	*pdata = hv->hv_crash_param[array_index_nospec(index, size)];
+ 	return 0;
+ }
+ 
+@@ -852,11 +853,12 @@ static int kvm_hv_msr_set_crash_data(str
+ 				     u32 index, u64 data)
+ {
+ 	struct kvm_hv *hv = &vcpu->kvm->arch.hyperv;
++	size_t size = ARRAY_SIZE(hv->hv_crash_param);
+ 
+-	if (WARN_ON_ONCE(index >= ARRAY_SIZE(hv->hv_crash_param)))
++	if (WARN_ON_ONCE(index >= size))
+ 		return -EINVAL;
+ 
+-	hv->hv_crash_param[index] = data;
++	hv->hv_crash_param[array_index_nospec(index, size)] = data;
+ 	return 0;
+ }
  
 
 
