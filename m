@@ -2,137 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48592158536
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 22:45:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83D9D158530
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 22:45:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbgBJVpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 16:45:11 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40645 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727003AbgBJVpK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 16:45:10 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t14so965535wmi.5
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 13:45:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=EKAPXBv9g0SuZQIOWAJHUtATkRZbCU3wSnu3b/TqWkA=;
-        b=MpSasX8fFn9n6tnK60+DnQm5uN9dRfUyDUuvElVUDvijG9Z9A2vG+ooi/7qOF8gFpa
-         s+LyIPsfKaQADXwFs01C2c/1KX7zkl52VV0IK1lAcNYUQEOiFjVaGwzHJUkntW0nyElz
-         eFqGqKIWovWExXMBFbmehK7VOQ2besNXPD9C5GHsm4Fs2L2H9HrL+AeVGAZJfyfF3G6t
-         GNSQUtrNzd+pNyuIp60pJTOdRBtAw5avHNWpJBnCkajcKURVZqI+4L1oOmIm0Yuituo9
-         J0aLeyCmP73cUVk6AViWywnIB/kcjMd8MvtISO8nsnEgABcfKII7LphNJjc7RLufnA+N
-         hOxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=EKAPXBv9g0SuZQIOWAJHUtATkRZbCU3wSnu3b/TqWkA=;
-        b=XUGOb1I9qzPOItFs30a1ashw+MhISJ3ToeM+Nrcb7H49I9XW9cUx8g5D50wKFWtqMI
-         95ngEAPwLGGjnrKE2Bq7Npl6OyMVH9phuQs9/wzhEUc5qew4LQ6jd3UXZR6gw0JGPYQW
-         KqPBJgP/DTIrDGoKSl1qDVdbFs979gZ0W5Gq/DaFJCOOZEhZhDZrRNlzkofZI7UY5dJ3
-         96w0lIB/fJham9hl69GvrfnE8AKny9WEefoCOzuN827gMQnNHnBCKbEvq4tkuKVn34nC
-         E1/V3S9OfJl/ay8HpvFiB4cGrYi5fBEVQ5tHBon32x2/dIgKIZbW1M7afo33VU0nmsm+
-         ICIw==
-X-Gm-Message-State: APjAAAXh7NvRQR8C2p2D/4lm1TDS1YzjWmdrLutFq3za+ZjnFRMfFHI0
-        dvQJ7IVREr+QOO7icvOTTQ4ulv/YJYT1ZA==
-X-Google-Smtp-Source: APXvYqySE0ClGSP8YJgp/fiVNVmDUVVtfUyTropNOxpwQDUP2r/qBohJjXKab/enm6C5rLwbYBNuAQ==
-X-Received: by 2002:a7b:c85a:: with SMTP id c26mr994353wml.107.1581371108243;
-        Mon, 10 Feb 2020 13:45:08 -0800 (PST)
-Received: from localhost.localdomain (ip-213-220-200-127.net.upcbroadband.cz. [213.220.200.127])
-        by smtp.gmail.com with ESMTPSA id m3sm2225983wrs.53.2020.02.10.13.45.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2020 13:45:07 -0800 (PST)
-From:   Andrea Parri <parri.andrea@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Andrea Parri <parri.andrea@gmail.com>
-Subject: [RESEND PATCH v2] workqueue: Document (some) memory-ordering properties of {queue,schedule}_work()
-Date:   Mon, 10 Feb 2020 22:44:47 +0100
-Message-Id: <20200210214447.14685-1-parri.andrea@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        id S1727477AbgBJVo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 16:44:58 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:40895 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727385AbgBJVo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 16:44:58 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48GfZb4QZxz9sPF;
+        Tue, 11 Feb 2020 08:44:55 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1581371095;
+        bh=pFYPa389Myh8Etid3glnG3ZLrUhuvH/ahhE3Z1NHmko=;
+        h=Date:From:To:Cc:Subject:From;
+        b=e+l08ZvJOftRjq0SpqSNch2S8Gaon2mQmEglbUOBX62JWUrCpxvanEKhW+3ZvsaxJ
+         +aSUid4jSeDSHX4r/oBsKARiAIwefXz852Txvx9mnWWh4ctwsCePfrtp9VsQuIqDzK
+         Rjj4W7bIN1vSNi/FOfOX2lFSJrVd378HmmQKDhzvU8z6nrZLqiH4S+uF7BjTWoSuA1
+         oJweNchQuglQF/aLNG9ZS5S+aAeWvsaAiA3P9Sia4xXmdd/7cmX3RVOqJ4pvZoBsXZ
+         Gbg61fzL5r0aKha62eRqJ3ow2lhQZMmiT39kgQQC/nohAKz4Tet93ZeiDavXTDqS/U
+         Q4eN8Wa0f1PKQ==
+Date:   Tue, 11 Feb 2020 08:44:49 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eddie James <eajames@linux.ibm.com>,
+        Vijay Khemka <vijaykhemka@fb.com>
+Subject: linux-next: build failure after merge of the aspeed tree
+Message-ID: <20200211084449.05e3b3cb@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_//uccmwmo=OMY=wvpBR7nK5B";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's desirable to be able to rely on the following property:  All stores
-preceding (in program order) a call to a successful queue_work() will be
-visible from the CPU which will execute the queued work by the time such
-work executes, e.g.,
+--Sig_//uccmwmo=OMY=wvpBR7nK5B
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-  { x is initially 0 }
+Hi all,
 
-    CPU0                              CPU1
+After merging the aspeed tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-    WRITE_ONCE(x, 1);                 [ "work" is being executed ]
-    r0 = queue_work(wq, work);          r1 = READ_ONCE(x);
+arch/arm/boot/dts/aspeed-g6.dtsi:322.35-327.7: ERROR (duplicate_node_names)=
+: /ahb/apb/syscon@1e6e2000/interrupt-controller: Duplicate node name
+ERROR: Input tree has errors, aborting (use -f to force output)
 
-  Forbids: r0 == true && r1 == 0
+Caused by commit
 
-The current implementation of queue_work() provides such memory-ordering
-property:
+  091ff5206ef3 ("ARM: dts: aspeed: ast2600: Fix SCU IRQ controller node add=
+resses")
 
-  - In __queue_work(), the ->lock spinlock is acquired.
+Also these warnings:
 
-  - On the other side, in worker_thread(), this same ->lock is held
-    when dequeueing work.
+arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts:435.11-439.4: Warning (=
+i2c_bus_reg): /ahb/apb/bus@1e78a000/i2c-bus@140/ipmb0@10: I2C bus unit addr=
+ess format error, expected "40000010"
+arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts:437.3-30: Warning (i2c_=
+bus_reg): /ahb/apb/bus@1e78a000/i2c-bus@140/ipmb0@10:reg: I2C address must =
+be less than 10-bits, got "0x40000010"
+arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts:521.11-525.4: Warning (=
+i2c_bus_reg): /ahb/apb/bus@1e78a000/i2c-bus@380/ipmb0@10: I2C bus unit addr=
+ess format error, expected "40000010"
+arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts:523.3-30: Warning (i2c_=
+bus_reg): /ahb/apb/bus@1e78a000/i2c-bus@380/ipmb0@10:reg: I2C address must =
+be less than 10-bits, got "0x40000010"
 
-So the locking ordering makes things work out.
+Caused by commit
 
-Add this property to the DocBook headers of {queue,schedule}_work().
+  a59b1792adf1 ("ARM: dts: aspeed: tiogapass: Add IPMB device")
 
-Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
----
-Unchanged since v2:
+I have used the aspeed tree from next-20200210 for today.
 
-  https://lkml.kernel.org/r/20200122183952.30083-1-parri.andrea@gmail.com
+--=20
+Cheers,
+Stephen Rothwell
 
- include/linux/workqueue.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+--Sig_//uccmwmo=OMY=wvpBR7nK5B
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-index 4261d1c6e87b1..e48554e6526c0 100644
---- a/include/linux/workqueue.h
-+++ b/include/linux/workqueue.h
-@@ -487,6 +487,19 @@ extern void wq_worker_comm(char *buf, size_t size, struct task_struct *task);
-  *
-  * We queue the work to the CPU on which it was submitted, but if the CPU dies
-  * it can be processed by another CPU.
-+ *
-+ * Memory-ordering properties:  If it returns %true, guarantees that all stores
-+ * preceding the call to queue_work() in the program order will be visible from
-+ * the CPU which will execute @work by the time such work executes, e.g.,
-+ *
-+ * { x is initially 0 }
-+ *
-+ *   CPU0				CPU1
-+ *
-+ *   WRITE_ONCE(x, 1);			[ @work is being executed ]
-+ *   r0 = queue_work(wq, work);		  r1 = READ_ONCE(x);
-+ *
-+ * Forbids: r0 == true && r1 == 0
-  */
- static inline bool queue_work(struct workqueue_struct *wq,
- 			      struct work_struct *work)
-@@ -546,6 +559,9 @@ static inline bool schedule_work_on(int cpu, struct work_struct *work)
-  * This puts a job in the kernel-global workqueue if it was not already
-  * queued and leaves it in the same position on the kernel-global
-  * workqueue otherwise.
-+ *
-+ * Shares the same memory-ordering properties of queue_work(), cf. the
-+ * DocBook header of queue_work().
-  */
- static inline bool schedule_work(struct work_struct *work)
- {
--- 
-2.24.0
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5BztEACgkQAVBC80lX
+0GzldQf+JvoIHOKolA59g+PX2HyBgvof6Vp48UXcTxJEmPXGH+xC7Wr6P7jA3Q9/
+gJYdvKDqlRVMiUZsxnUFLWQ1FZ0c8lA89TRUclvTXvkvKXpxbNy8KrkZ5EzV+qhE
+Oc65dPyCYakQN7wOQmYO5pc/TZq7xTeuqkt53CEpw0FufYUS4thUXwOLhvUf5ce9
+uyGuBmdyACi+LREuH/2EWJPPWK+TlTH8cgxm/5Lan+h2WlsWsB9393CXYk9leBzQ
+NU2bEwuG4Dl1QFY0qcZOIz4qfOvNmJ1Uyr1pqFuEUTeNtXSQb3PEN5kervq29/PN
+MHERhjzJn2LGW2MoqtiOXuWMa4hLOg==
+=c5uw
+-----END PGP SIGNATURE-----
+
+--Sig_//uccmwmo=OMY=wvpBR7nK5B--
