@@ -2,55 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E939A1578FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:13:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88AAA157826
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:05:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbgBJMim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:38:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57706 "EHLO mail.kernel.org"
+        id S1728955AbgBJNFd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:05:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728596AbgBJMhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:01 -0500
+        id S1728759AbgBJMkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:01 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76B692465D;
-        Mon, 10 Feb 2020 12:37:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCC6F208C4;
+        Mon, 10 Feb 2020 12:40:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338220;
-        bh=A95hlQ6AVMm6kpXa44K/lEBxP2TWcW8AepWKW9AqfRc=;
+        s=default; t=1581338401;
+        bh=pcYjza1vJD3GTXeNK0U17dkKSU+/KESF8oYozpwbETc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qtFFwoJP5t0TL5Xqwltr2x0rD7zf2N2NK1Q3ut4JC4YgVJRgfQ78/2taJBkmd6Jo+
-         RP3k1Znok9R54jD68hOiVkNEUS8yvsOv03W8UR+MiP0I2nV5mAcLPnNy71LX7lqcts
-         bdYZGpKuyYTrEAxYLMUaHxiBnA4+tc1u73hYrnHY=
+        b=p0eTCOBN7bS28Jhi6WQ2eOULIcUxfvxY4734JiLAO89fxb26L4r3eUnRhC/26qm/M
+         o6fno4jcOadSryYO5Er+X9T7UH+gmL9zp7nwoZkl1LHvWfTko+TdphYEV7MjEn3Ugt
+         khm+uA8zTrfaNVQgLuNgWC65Fbl8YsBqYiY1JwuM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.4 055/309] media/v4l2-core: set pages dirty upon releasing DMA buffers
-Date:   Mon, 10 Feb 2020 04:30:11 -0800
-Message-Id: <20200210122411.262099029@linuxfoundation.org>
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>
+Subject: [PATCH 5.5 099/367] smb3: fix default permissions on new files when mounting with modefromsid
+Date:   Mon, 10 Feb 2020 04:30:12 -0800
+Message-Id: <20200210122433.511214096@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -60,61 +44,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Hubbard <jhubbard@nvidia.com>
+From: Steve French <stfrench@microsoft.com>
 
-commit 3c7470b6f68434acae459482ab920d1e3fabd1c7 upstream.
+commit 643fbceef48e5b22bf8e0905f903e908b5d2ba69 upstream.
 
-After DMA is complete, and the device and CPU caches are synchronized,
-it's still required to mark the CPU pages as dirty, if the data was
-coming from the device.  However, this driver was just issuing a bare
-put_page() call, without any set_page_dirty*() call.
+When mounting with "modefromsid" mount parm most servers will require
+that some default permissions are given to users in the ACL on newly
+created files, files created with the new 'sd context' - when passing in
+an sd context on create, permissions are not inherited from the parent
+directory, so in addition to the ACE with the special SID which contains
+the mode, we also must pass in an ACE allowing users to access the file
+(GENERIC_ALL for authenticated users seemed like a reasonable default,
+although later we could allow a mount option or config switch to make
+it GENERIC_ALL for EVERYONE special sid).
 
-Fix the problem, by calling set_page_dirty_lock() if the CPU pages were
-potentially receiving data from the device.
-
-Link: http://lkml.kernel.org/r/20200107224558.2362728-11-jhubbard@nvidia.com
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: <stable@vger.kernel.org>
-Cc: Alex Williamson <alex.williamson@redhat.com>
-Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Cc: Björn Töpel <bjorn.topel@intel.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Jason Gunthorpe <jgg@mellanox.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Jerome Glisse <jglisse@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Kirill A. Shutemov <kirill@shutemov.name>
-Cc: Leon Romanovsky <leonro@mellanox.com>
-Cc: Mike Rapoport <rppt@linux.ibm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-By: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/v4l2-core/videobuf-dma-sg.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/cifs/cifsacl.c   |   20 ++++++++++++++++++++
+ fs/cifs/cifsproto.h |    1 +
+ fs/cifs/smb2pdu.c   |   11 ++++++++---
+ 3 files changed, 29 insertions(+), 3 deletions(-)
 
---- a/drivers/media/v4l2-core/videobuf-dma-sg.c
-+++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
-@@ -349,8 +349,11 @@ int videobuf_dma_free(struct videobuf_dm
- 	BUG_ON(dma->sglen);
+--- a/fs/cifs/cifsacl.c
++++ b/fs/cifs/cifsacl.c
+@@ -802,6 +802,26 @@ static void parse_dacl(struct cifs_acl *
+ 	return;
+ }
  
- 	if (dma->pages) {
--		for (i = 0; i < dma->nr_pages; i++)
-+		for (i = 0; i < dma->nr_pages; i++) {
-+			if (dma->direction == DMA_FROM_DEVICE)
-+				set_page_dirty_lock(dma->pages[i]);
- 			put_page(dma->pages[i]);
-+		}
- 		kfree(dma->pages);
- 		dma->pages = NULL;
- 	}
++unsigned int setup_authusers_ACE(struct cifs_ace *pntace)
++{
++	int i;
++	unsigned int ace_size = 20;
++
++	pntace->type = ACCESS_ALLOWED_ACE_TYPE;
++	pntace->flags = 0x0;
++	pntace->access_req = cpu_to_le32(GENERIC_ALL);
++	pntace->sid.num_subauth = 1;
++	pntace->sid.revision = 1;
++	for (i = 0; i < NUM_AUTHS; i++)
++		pntace->sid.authority[i] =  sid_authusers.authority[i];
++
++	pntace->sid.sub_auth[0] =  sid_authusers.sub_auth[0];
++
++	/* size = 1 + 1 + 2 + 4 + 1 + 1 + 6 + (psid->num_subauth*4) */
++	pntace->size = cpu_to_le16(ace_size);
++	return ace_size;
++}
++
+ /*
+  * Fill in the special SID based on the mode. See
+  * http://technet.microsoft.com/en-us/library/hh509017(v=ws.10).aspx
+--- a/fs/cifs/cifsproto.h
++++ b/fs/cifs/cifsproto.h
+@@ -213,6 +213,7 @@ extern struct cifs_ntsd *get_cifs_acl_by
+ 						const struct cifs_fid *, u32 *);
+ extern int set_cifs_acl(struct cifs_ntsd *, __u32, struct inode *,
+ 				const char *, int);
++extern unsigned int setup_authusers_ACE(struct cifs_ace *pace);
+ extern unsigned int setup_special_mode_ACE(struct cifs_ace *pace, __u64 nmode);
+ 
+ extern void dequeue_mid(struct mid_q_entry *mid, bool malformed);
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2199,13 +2199,14 @@ create_sd_buf(umode_t mode, unsigned int
+ 	struct cifs_ace *pace;
+ 	unsigned int sdlen, acelen;
+ 
+-	*len = roundup(sizeof(struct crt_sd_ctxt) + sizeof(struct cifs_ace), 8);
++	*len = roundup(sizeof(struct crt_sd_ctxt) + sizeof(struct cifs_ace) * 2,
++			8);
+ 	buf = kzalloc(*len, GFP_KERNEL);
+ 	if (buf == NULL)
+ 		return buf;
+ 
+ 	sdlen = sizeof(struct smb3_sd) + sizeof(struct smb3_acl) +
+-		 sizeof(struct cifs_ace);
++		 2 * sizeof(struct cifs_ace);
+ 
+ 	buf->ccontext.DataOffset = cpu_to_le16(offsetof
+ 					(struct crt_sd_ctxt, sd));
+@@ -2232,8 +2233,12 @@ create_sd_buf(umode_t mode, unsigned int
+ 	/* create one ACE to hold the mode embedded in reserved special SID */
+ 	pace = (struct cifs_ace *)(sizeof(struct crt_sd_ctxt) + (char *)buf);
+ 	acelen = setup_special_mode_ACE(pace, (__u64)mode);
++	/* and one more ACE to allow access for authenticated users */
++	pace = (struct cifs_ace *)(acelen + (sizeof(struct crt_sd_ctxt) +
++		(char *)buf));
++	acelen += setup_authusers_ACE(pace);
+ 	buf->acl.AclSize = cpu_to_le16(sizeof(struct cifs_acl) + acelen);
+-	buf->acl.AceCount = cpu_to_le16(1);
++	buf->acl.AceCount = cpu_to_le16(2);
+ 	return buf;
+ }
+ 
 
 
