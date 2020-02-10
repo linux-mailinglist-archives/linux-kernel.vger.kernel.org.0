@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42BF2157912
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:13:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E8CA157B16
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:28:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730359AbgBJNMQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:12:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35474 "EHLO mail.kernel.org"
+        id S1728522AbgBJN12 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:27:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729260AbgBJMiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:54 -0500
+        id S1728442AbgBJMgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:36:35 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B6B020733;
-        Mon, 10 Feb 2020 12:38:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D253720733;
+        Mon, 10 Feb 2020 12:36:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338334;
-        bh=a5qcjP+kDxAn/qvCFH3xMONL9V4BA5fly2WYTF6a/e0=;
+        s=default; t=1581338194;
+        bh=T8sAqA4upVLNUrxAG8sQJk9Le/ePo3ZgUbOsKHbdoFM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HCHeedslUwg+KcyLjEceiS9M6wBpVhjtr7wmtsGGVKbLaiz5InHN74R4mwEbR1vIQ
-         4agYSN6laASg1bOL0rrijoS0v5VCX7c3R+y0nisfQrhsbkd0nq9L4uQ9gB+s3+/UlY
-         kn5zK8kGIxpUpezujy3zCtAu1QpNZyCf1+65dMhg=
+        b=xluJs+1jKBaqnDY3MuyBANwUhTQQPmlSobW9lUORnj3wka71JTWJfZEJAz/8eNBT1
+         g1PDX/tLSxcSr1F5JlPHZknX9OWta7pUBask72FoKY89bEqJ0BtVb3OAdz+QD9vzZh
+         k0j2tJU+gXo21SAzNHa1/Lzv7mgjWLkkumrP9Qc0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 280/309] taprio: Use taprio_reset_tc() to reset Traffic Classes configuration
-Date:   Mon, 10 Feb 2020 04:33:56 -0800
-Message-Id: <20200210122433.548207342@linuxfoundation.org>
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 179/195] drm: atmel-hlcdc: enable clock before configuring timing engine
+Date:   Mon, 10 Feb 2020 04:33:57 -0800
+Message-Id: <20200210122322.706135785@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
 
-[ Upstream commit 7c16680a08ee1e444a67d232c679ccf5b30fad16 ]
+[ Upstream commit 2c1fb9d86f6820abbfaa38a6836157c76ccb4e7b ]
 
-When destroying the current taprio instance, which can happen when the
-creation of one fails, we should reset the traffic class configuration
-back to the default state.
+Changing pixel clock source without having this clock source enabled
+will block the timing engine and the next operations after (in this case
+setting ATMEL_HLCDC_CFG(5) settings in atmel_hlcdc_crtc_mode_set_nofb()
+will fail). It is recomended (although in datasheet this is not present)
+to actually enabled pixel clock source before doing any changes on timing
+enginge (only SAM9X60 datasheet specifies that the peripheral clock and
+pixel clock must be enabled before using LCD controller).
 
-netdev_reset_tc() is a better way because in addition to setting the
-number of traffic classes to zero, it also resets the priority to
-traffic classes mapping to the default value.
-
-Fixes: 5a781ccbd19e ("tc: Add support for configuring the taprio scheduler")
-Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 1a396789f65a ("drm: add Atmel HLCDC Display Controller support")
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: <stable@vger.kernel.org> # v4.0+
+Link: https://patchwork.freedesktop.org/patch/msgid/1576672109-22707-3-git-send-email-claudiu.beznea@microchip.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sched/sch_taprio.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/net/sched/sch_taprio.c
-+++ b/net/sched/sch_taprio.c
-@@ -1588,7 +1588,7 @@ static void taprio_destroy(struct Qdisc
- 	}
- 	q->qdiscs = NULL;
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+index d73281095faca..976109c20d493 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+@@ -79,7 +79,11 @@ static void atmel_hlcdc_crtc_mode_set_nofb(struct drm_crtc *c)
+ 	struct videomode vm;
+ 	unsigned long prate;
+ 	unsigned int cfg;
+-	int div;
++	int div, ret;
++
++	ret = clk_prepare_enable(crtc->dc->hlcdc->sys_clk);
++	if (ret)
++		return;
  
--	netdev_set_num_tc(dev, 0);
-+	netdev_reset_tc(dev);
+ 	vm.vfront_porch = adj->crtc_vsync_start - adj->crtc_vdisplay;
+ 	vm.vback_porch = adj->crtc_vtotal - adj->crtc_vsync_end;
+@@ -138,6 +142,8 @@ static void atmel_hlcdc_crtc_mode_set_nofb(struct drm_crtc *c)
+ 			   ATMEL_HLCDC_VSPSU | ATMEL_HLCDC_VSPHO |
+ 			   ATMEL_HLCDC_GUARDTIME_MASK | ATMEL_HLCDC_MODE_MASK,
+ 			   cfg);
++
++	clk_disable_unprepare(crtc->dc->hlcdc->sys_clk);
+ }
  
- 	if (q->oper_sched)
- 		call_rcu(&q->oper_sched->rcu, taprio_free_sched_cb);
+ static enum drm_mode_status
+-- 
+2.20.1
+
 
 
