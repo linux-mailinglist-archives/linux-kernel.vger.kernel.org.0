@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC134157903
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:13:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 538FA157AAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:24:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728260AbgBJMir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:38:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57902 "EHLO mail.kernel.org"
+        id S1728739AbgBJNYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:24:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728229AbgBJMhE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:04 -0500
+        id S1728621AbgBJMhF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:05 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96C2D20838;
-        Mon, 10 Feb 2020 12:37:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BCC02051A;
+        Mon, 10 Feb 2020 12:37:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338223;
-        bh=7bro7edFsBzjTkeA0W+QB+A2B3KAv90QXiYmt5hQbTg=;
+        s=default; t=1581338224;
+        bh=Cii59v+tE1D5Tcds59Ldt4r2lnGyvOzYXC1dTbz939M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bFNYZQQt37ys2XiuChmCRN+gcgwus2J0k3dtDm+yN+iHxd3EpiSRjoerG5sToXaE+
-         gQnUnYE1W3jU8MPUyOR2NIcd8GdPtAmX+YrfzwFNRcwWJmsongujB6wBA7e59sShmR
-         vyKXtUfmgV553M0TmKarMFBDD4Pif6IJqG9/U43Y=
+        b=jDzWT/Nz0M6CQx8phgxFxGso7SpL0cGlmshWngtohztnMmnSzSRvklHeYwsFlPX7r
+         Q2f3t2GoFFN8CUBtXfWKdwqDn0iVHIdlnwUUJhS5ZTvhR+cttdiYBFE9UNQ5IeZ2GG
+         8cPml7VKgYaw5N8jS2CnR1+emQ/FJYgaI15cD2uM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Neelima Krishnan <neelima.krishnan@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 5.4 060/309] x86/cpu: Update cached HLE state on write to TSX_CTRL_CPUID_CLEAR
-Date:   Mon, 10 Feb 2020 04:30:16 -0800
-Message-Id: <20200210122411.717497217@linuxfoundation.org>
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 5.4 061/309] platform/x86: intel_scu_ipc: Fix interrupt support
+Date:   Mon, 10 Feb 2020 04:30:17 -0800
+Message-Id: <20200210122411.814933888@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
 References: <20200210122406.106356946@linuxfoundation.org>
@@ -47,63 +44,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-commit 5efc6fa9044c3356d6046c6e1da6d02572dbed6b upstream.
+commit e48b72a568bbd641c91dad354138d3c17d03ee6f upstream.
 
-/proc/cpuinfo currently reports Hardware Lock Elision (HLE) feature to
-be present on boot cpu even if it was disabled during the bootup. This
-is because cpuinfo_x86->x86_capability HLE bit is not updated after TSX
-state is changed via the new MSR IA32_TSX_CTRL.
+Currently the driver has disabled interrupt support for Tangier but
+actually interrupt works just fine if the command is not written twice
+in a row. Also we need to ack the interrupt in the handler.
 
-Update the cached HLE bit also since it is expected to change after an
-update to CPUID_CLEAR bit in MSR IA32_TSX_CTRL.
-
-Fixes: 95c5824f75f3 ("x86/cpu: Add a "tsx=" cmdline option with TSX disabled by default")
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Neelima Krishnan <neelima.krishnan@intel.com>
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/2529b99546294c893dfa1c89e2b3e46da3369a59.1578685425.git.pawan.kumar.gupta@linux.intel.com
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/tsx.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/platform/x86/intel_scu_ipc.c |   21 ++++++++-------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
 
---- a/arch/x86/kernel/cpu/tsx.c
-+++ b/arch/x86/kernel/cpu/tsx.c
-@@ -115,11 +115,12 @@ void __init tsx_init(void)
- 		tsx_disable();
+--- a/drivers/platform/x86/intel_scu_ipc.c
++++ b/drivers/platform/x86/intel_scu_ipc.c
+@@ -67,26 +67,22 @@
+ struct intel_scu_ipc_pdata_t {
+ 	u32 i2c_base;
+ 	u32 i2c_len;
+-	u8 irq_mode;
+ };
  
- 		/*
--		 * tsx_disable() will change the state of the
--		 * RTM CPUID bit.  Clear it here since it is now
--		 * expected to be not set.
-+		 * tsx_disable() will change the state of the RTM and HLE CPUID
-+		 * bits. Clear them here since they are now expected to be not
-+		 * set.
- 		 */
- 		setup_clear_cpu_cap(X86_FEATURE_RTM);
-+		setup_clear_cpu_cap(X86_FEATURE_HLE);
- 	} else if (tsx_ctrl_state == TSX_CTRL_ENABLE) {
+ static const struct intel_scu_ipc_pdata_t intel_scu_ipc_lincroft_pdata = {
+ 	.i2c_base = 0xff12b000,
+ 	.i2c_len = 0x10,
+-	.irq_mode = 0,
+ };
  
- 		/*
-@@ -131,10 +132,10 @@ void __init tsx_init(void)
- 		tsx_enable();
+ /* Penwell and Cloverview */
+ static const struct intel_scu_ipc_pdata_t intel_scu_ipc_penwell_pdata = {
+ 	.i2c_base = 0xff12b000,
+ 	.i2c_len = 0x10,
+-	.irq_mode = 1,
+ };
  
- 		/*
--		 * tsx_enable() will change the state of the
--		 * RTM CPUID bit.  Force it here since it is now
--		 * expected to be set.
-+		 * tsx_enable() will change the state of the RTM and HLE CPUID
-+		 * bits. Force them here since they are now expected to be set.
- 		 */
- 		setup_force_cpu_cap(X86_FEATURE_RTM);
-+		setup_force_cpu_cap(X86_FEATURE_HLE);
- 	}
+ static const struct intel_scu_ipc_pdata_t intel_scu_ipc_tangier_pdata = {
+ 	.i2c_base  = 0xff00d000,
+ 	.i2c_len = 0x10,
+-	.irq_mode = 0,
+ };
+ 
+ struct intel_scu_ipc_dev {
+@@ -99,6 +95,9 @@ struct intel_scu_ipc_dev {
+ 
+ static struct intel_scu_ipc_dev  ipcdev; /* Only one for now */
+ 
++#define IPC_STATUS		0x04
++#define IPC_STATUS_IRQ		BIT(2)
++
+ /*
+  * IPC Read Buffer (Read Only):
+  * 16 byte buffer for receiving data from SCU, if IPC command
+@@ -120,11 +119,8 @@ static DEFINE_MUTEX(ipclock); /* lock us
+  */
+ static inline void ipc_command(struct intel_scu_ipc_dev *scu, u32 cmd)
+ {
+-	if (scu->irq_mode) {
+-		reinit_completion(&scu->cmd_complete);
+-		writel(cmd | IPC_IOC, scu->ipc_base);
+-	}
+-	writel(cmd, scu->ipc_base);
++	reinit_completion(&scu->cmd_complete);
++	writel(cmd | IPC_IOC, scu->ipc_base);
  }
+ 
+ /*
+@@ -610,9 +606,10 @@ EXPORT_SYMBOL(intel_scu_ipc_i2c_cntrl);
+ static irqreturn_t ioc(int irq, void *dev_id)
+ {
+ 	struct intel_scu_ipc_dev *scu = dev_id;
++	int status = ipc_read_status(scu);
+ 
+-	if (scu->irq_mode)
+-		complete(&scu->cmd_complete);
++	writel(status | IPC_STATUS_IRQ, scu->ipc_base + IPC_STATUS);
++	complete(&scu->cmd_complete);
+ 
+ 	return IRQ_HANDLED;
+ }
+@@ -638,8 +635,6 @@ static int ipc_probe(struct pci_dev *pde
+ 	if (!pdata)
+ 		return -ENODEV;
+ 
+-	scu->irq_mode = pdata->irq_mode;
+-
+ 	err = pcim_enable_device(pdev);
+ 	if (err)
+ 		return err;
 
 
