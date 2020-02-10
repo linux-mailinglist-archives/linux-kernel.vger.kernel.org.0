@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F217157A66
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:22:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4365A1577EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:03:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730882AbgBJNWd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:22:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58926 "EHLO mail.kernel.org"
+        id S1729632AbgBJNDn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:03:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728729AbgBJMhX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:23 -0500
+        id S1729717AbgBJMkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:23 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80E9024671;
-        Mon, 10 Feb 2020 12:37:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DF7E20733;
+        Mon, 10 Feb 2020 12:40:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338242;
-        bh=2XdwohJAbXldaBRjzVGZsPW2JLZP10Ibvofc7iXqyJo=;
+        s=default; t=1581338422;
+        bh=gAXkns+sLnDL5n+FubP0AMmmuxWcXtLwL85Bh1X8KQ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QiQUfCfC9ek/dphnhR3ARFtqe9kYSdfCR1wfk6agYBaM0Kv2yX1gO09CbvmqokLJc
-         3O5JxSBL9s5rqj3uxgV1pIeSvgceftmfkPUqS2+XxC3WDGQbkvkJ8yHhpct0ol+3n9
-         QelV9dTH4+/X+6pk5cZvOWdG6RVyFMlTWS4qiHgY=
+        b=aySDzLWTsNmZyAkQK9w1tccFWYXXEaHrUIBolHZ+NNAdCrui3exqHZSmFMGrbeVs/
+         OSFSi/hIgBoF/ZbVaVMU6Y+Q4Dw6DVxoCth3G2oArcB5HoC1a2KYGtwx41M8wG3taQ
+         iInDNgLKoLgxvKSCMH06aMESzpnMEFZDR25Bl8Mo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 098/309] hv_balloon: Balloon up according to request page number
-Date:   Mon, 10 Feb 2020 04:30:54 -0800
-Message-Id: <20200210122415.590495704@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 5.5 142/367] dm writecache: fix incorrect flush sequence when doing SSD mode commit
+Date:   Mon, 10 Feb 2020 04:30:55 -0800
+Message-Id: <20200210122437.953047238@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,77 +43,167 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tianyu Lan <Tianyu.Lan@microsoft.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit d33c240d47dab4fd15123d9e73fc8810cbc6ed6a upstream.
+commit aa9509209c5ac2f0b35d01a922bf9ae072d0c2fc upstream.
 
-Current code has assumption that balloon request memory size aligns
-with 2MB. But actually Hyper-V doesn't guarantee such alignment. When
-balloon driver receives non-aligned balloon request, it produces warning
-and balloon up more memory than requested in order to keep 2MB alignment.
-Remove the warning and balloon up memory according to actual requested
-memory size.
+When committing state, the function writecache_flush does the following:
+1. write metadata (writecache_commit_flushed)
+2. flush disk cache (writecache_commit_flushed)
+3. wait for data writes to complete (writecache_wait_for_ios)
+4. increase superblock seq_count
+5. write the superblock
+6. flush disk cache
 
-Fixes: f6712238471a ("hv: hv_balloon: avoid memory leak on alloc_error of 2MB memory block")
-Cc: stable@vger.kernel.org
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+It may happen that at step 3, when we wait for some write to finish, the
+disk may report the write as finished, but the write only hit the disk
+cache and it is not yet stored in persistent storage. At step 5 we write
+the superblock - it may happen that the superblock is written before the
+write that we waited for in step 3. If the machine crashes, it may result
+in incorrect data being returned after reboot.
+
+In order to fix the bug, we must swap steps 2 and 3 in the above sequence,
+so that we first wait for writes to complete and then flush the disk
+cache.
+
+Fixes: 48debafe4f2f ("dm: add writecache target")
+Cc: stable@vger.kernel.org # 4.18+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hv/hv_balloon.c |   13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+ drivers/md/dm-writecache.c |   42 +++++++++++++++++++++---------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
---- a/drivers/hv/hv_balloon.c
-+++ b/drivers/hv/hv_balloon.c
-@@ -1213,10 +1213,7 @@ static unsigned int alloc_balloon_pages(
- 	unsigned int i, j;
- 	struct page *pg;
- 
--	if (num_pages < alloc_unit)
--		return 0;
--
--	for (i = 0; (i * alloc_unit) < num_pages; i++) {
-+	for (i = 0; i < num_pages / alloc_unit; i++) {
- 		if (bl_resp->hdr.size + sizeof(union dm_mem_page_range) >
- 			PAGE_SIZE)
- 			return i * alloc_unit;
-@@ -1254,7 +1251,7 @@ static unsigned int alloc_balloon_pages(
- 
- 	}
- 
--	return num_pages;
-+	return i * alloc_unit;
+--- a/drivers/md/dm-writecache.c
++++ b/drivers/md/dm-writecache.c
+@@ -442,7 +442,13 @@ static void writecache_notify_io(unsigne
+ 		complete(&endio->c);
  }
  
- static void balloon_up(struct work_struct *dummy)
-@@ -1269,9 +1266,6 @@ static void balloon_up(struct work_struc
- 	long avail_pages;
- 	unsigned long floor;
+-static void ssd_commit_flushed(struct dm_writecache *wc)
++static void writecache_wait_for_ios(struct dm_writecache *wc, int direction)
++{
++	wait_event(wc->bio_in_progress_wait[direction],
++		   !atomic_read(&wc->bio_in_progress[direction]));
++}
++
++static void ssd_commit_flushed(struct dm_writecache *wc, bool wait_for_ios)
+ {
+ 	struct dm_io_region region;
+ 	struct dm_io_request req;
+@@ -488,17 +494,20 @@ static void ssd_commit_flushed(struct dm
+ 	writecache_notify_io(0, &endio);
+ 	wait_for_completion_io(&endio.c);
  
--	/* The host balloons pages in 2M granularity. */
--	WARN_ON_ONCE(num_pages % PAGES_IN_2M != 0);
++	if (wait_for_ios)
++		writecache_wait_for_ios(wc, WRITE);
++
+ 	writecache_disk_flush(wc, wc->ssd_dev);
+ 
+ 	memset(wc->dirty_bitmap, 0, wc->dirty_bitmap_size);
+ }
+ 
+-static void writecache_commit_flushed(struct dm_writecache *wc)
++static void writecache_commit_flushed(struct dm_writecache *wc, bool wait_for_ios)
+ {
+ 	if (WC_MODE_PMEM(wc))
+ 		wmb();
+ 	else
+-		ssd_commit_flushed(wc);
++		ssd_commit_flushed(wc, wait_for_ios);
+ }
+ 
+ static void writecache_disk_flush(struct dm_writecache *wc, struct dm_dev *dev)
+@@ -522,12 +531,6 @@ static void writecache_disk_flush(struct
+ 		writecache_error(wc, r, "error flushing metadata: %d", r);
+ }
+ 
+-static void writecache_wait_for_ios(struct dm_writecache *wc, int direction)
+-{
+-	wait_event(wc->bio_in_progress_wait[direction],
+-		   !atomic_read(&wc->bio_in_progress[direction]));
+-}
 -
- 	/*
- 	 * We will attempt 2M allocations. However, if we fail to
- 	 * allocate 2M chunks, we will go back to 4k allocations.
-@@ -1281,14 +1275,13 @@ static void balloon_up(struct work_struc
- 	avail_pages = si_mem_available();
- 	floor = compute_balloon_floor();
+ #define WFE_RETURN_FOLLOWING	1
+ #define WFE_LOWEST_SEQ		2
  
--	/* Refuse to balloon below the floor, keep the 2M granularity. */
-+	/* Refuse to balloon below the floor. */
- 	if (avail_pages < num_pages || avail_pages - num_pages < floor) {
- 		pr_warn("Balloon request will be partially fulfilled. %s\n",
- 			avail_pages < num_pages ? "Not enough memory." :
- 			"Balloon floor reached.");
+@@ -724,15 +727,12 @@ static void writecache_flush(struct dm_w
+ 		e = e2;
+ 		cond_resched();
+ 	}
+-	writecache_commit_flushed(wc);
+-
+-	if (!WC_MODE_PMEM(wc))
+-		writecache_wait_for_ios(wc, WRITE);
++	writecache_commit_flushed(wc, true);
  
- 		num_pages = avail_pages > floor ? (avail_pages - floor) : 0;
--		num_pages -= num_pages % PAGES_IN_2M;
+ 	wc->seq_count++;
+ 	pmem_assign(sb(wc)->seq_count, cpu_to_le64(wc->seq_count));
+ 	writecache_flush_region(wc, &sb(wc)->seq_count, sizeof sb(wc)->seq_count);
+-	writecache_commit_flushed(wc);
++	writecache_commit_flushed(wc, false);
+ 
+ 	wc->overwrote_committed = false;
+ 
+@@ -756,7 +756,7 @@ static void writecache_flush(struct dm_w
  	}
  
- 	while (!done) {
+ 	if (need_flush_after_free)
+-		writecache_commit_flushed(wc);
++		writecache_commit_flushed(wc, false);
+ }
+ 
+ static void writecache_flush_work(struct work_struct *work)
+@@ -809,7 +809,7 @@ static void writecache_discard(struct dm
+ 	}
+ 
+ 	if (discarded_something)
+-		writecache_commit_flushed(wc);
++		writecache_commit_flushed(wc, false);
+ }
+ 
+ static bool writecache_wait_for_writeback(struct dm_writecache *wc)
+@@ -958,7 +958,7 @@ erase_this:
+ 
+ 	if (need_flush) {
+ 		writecache_flush_all_metadata(wc);
+-		writecache_commit_flushed(wc);
++		writecache_commit_flushed(wc, false);
+ 	}
+ 
+ 	wc_unlock(wc);
+@@ -1342,7 +1342,7 @@ static void __writecache_endio_pmem(stru
+ 			wc->writeback_size--;
+ 			n_walked++;
+ 			if (unlikely(n_walked >= ENDIO_LATENCY)) {
+-				writecache_commit_flushed(wc);
++				writecache_commit_flushed(wc, false);
+ 				wc_unlock(wc);
+ 				wc_lock(wc);
+ 				n_walked = 0;
+@@ -1423,7 +1423,7 @@ pop_from_list:
+ 			writecache_wait_for_ios(wc, READ);
+ 		}
+ 
+-		writecache_commit_flushed(wc);
++		writecache_commit_flushed(wc, false);
+ 
+ 		wc_unlock(wc);
+ 	}
+@@ -1766,10 +1766,10 @@ static int init_memory(struct dm_writeca
+ 		write_original_sector_seq_count(wc, &wc->entries[b], -1, -1);
+ 
+ 	writecache_flush_all_metadata(wc);
+-	writecache_commit_flushed(wc);
++	writecache_commit_flushed(wc, false);
+ 	pmem_assign(sb(wc)->magic, cpu_to_le32(MEMORY_SUPERBLOCK_MAGIC));
+ 	writecache_flush_region(wc, &sb(wc)->magic, sizeof sb(wc)->magic);
+-	writecache_commit_flushed(wc);
++	writecache_commit_flushed(wc, false);
+ 
+ 	return 0;
+ }
 
 
