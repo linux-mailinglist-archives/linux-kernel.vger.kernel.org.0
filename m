@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C68D157730
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:59:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BB411576E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:56:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729953AbgBJMlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:41:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34332 "EHLO mail.kernel.org"
+        id S1730149AbgBJM4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:56:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729174AbgBJMij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:39 -0500
+        id S1730050AbgBJMlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:41:42 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A1BC20838;
-        Mon, 10 Feb 2020 12:38:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CC8D2051A;
+        Mon, 10 Feb 2020 12:41:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338318;
+        s=default; t=1581338501;
         bh=+vlZxH7/7WspdQ5tkO7amYkhKFFU+mFcdbP1wpj3Nhk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MNI6TMJLXzLBRzXEB1OYog4km+KBeBaFrEIiZrmYPP8G7YYNWCzyTtOh8hb8XP1de
-         RMMkV++g1JxCN1kacYqKEh7zT5QlX4HoeijpNU4fl+UYXJKCpcqWx1OlZisz/118BH
-         edinwGzFN5HYmclWeEm1Mbq0zFUwvX5EAHoOW1WE=
+        b=0NuvRAUXBBbUI4a2nFIUixQOXT+hjGp6oCv9PybzPYxQGvG0YgXB06nP8CzeVDXGN
+         bT84O1dAE6g5nehwmTmyOaTAyhRXjhtVjP16nMHckC++eG0zm0qxEJOgaO3aBATaRB
+         HYXWmuD2VAUvwiD+j1oCaN8JVuHd068WpDAXLyfM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Nathan Chancellor <natechancellor@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 247/309] NFC: pn544: Adjust indentation in pn544_hci_check_presence
+Subject: [PATCH 5.5 290/367] NFC: pn544: Adjust indentation in pn544_hci_check_presence
 Date:   Mon, 10 Feb 2020 04:33:23 -0800
-Message-Id: <20200210122430.240762189@linuxfoundation.org>
+Message-Id: <20200210122450.588354980@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
