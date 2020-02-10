@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B95D157665
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:53:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57FDE15759C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:42:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730274AbgBJMmg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:42:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36904 "EHLO mail.kernel.org"
+        id S1730235AbgBJMmV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:42:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729411AbgBJMjY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:39:24 -0500
+        id S1729378AbgBJMjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:39:16 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6815820661;
-        Mon, 10 Feb 2020 12:39:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8A4B2051A;
+        Mon, 10 Feb 2020 12:39:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338363;
-        bh=UV5EDI48PPO5WRD89S+0+8GzekKzxqgCtJh48e9ilio=;
+        s=default; t=1581338355;
+        bh=n0UbAfu7ERDdt5cINZ2ZbcCFsFqWZu/hopV5g2PED90=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c65skbz3ldeJdn/AydHZhaO3XqpGef0S5shzlQ7y7ja+U7ftsrmriU8CrGcoCm6j7
-         djQ32jgHNj6BpVWMYEk0O1BlppR/HlaTFTn0m63LOCUf51u2axPrT7d5qVsyY7yicP
-         /hfDNvegkNajfQ0aK1zlwZHcrcShyOU8DwqaS+jo=
+        b=XYfFVyJuTM5onPvWjO0pGR83QcMySchQj9YYLuGU3TVnavCgAXjkTZyr1dfuNFqb8
+         OjvL5C2GOS3A6twg49K0kc/WO0dyidrfAietkKMwuFFIG23ITL//RBNZpnsUPl6Cz5
+         Vx1WRCHyoyuVZGSLF/j5j7rhtC5GqJESiCXgIyeM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 005/367] net: hsr: fix possible NULL deref in hsr_handle_frame()
-Date:   Mon, 10 Feb 2020 04:28:38 -0800
-Message-Id: <20200210122424.307019756@linuxfoundation.org>
+        Yuchung Cheng <ycheng@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Jakub Kicinski <kuba@kernel.org>
+Subject: [PATCH 5.5 012/367] tcp: clear tp->delivered in tcp_disconnect()
+Date:   Mon, 10 Feb 2020 04:28:45 -0800
+Message-Id: <20200210122424.986981596@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -46,60 +48,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 2b5b8251bc9fe2f9118411f037862ee17cf81e97 ]
+[ Upstream commit 2fbdd56251b5c62f96589f39eded277260de7267 ]
 
-hsr_port_get_rcu() can return NULL, so we need to be careful.
+tp->delivered needs to be cleared in tcp_disconnect().
 
-general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
-CPU: 1 PID: 10249 Comm: syz-executor.5 Not tainted 5.5.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__read_once_size include/linux/compiler.h:199 [inline]
-RIP: 0010:hsr_addr_is_self+0x86/0x330 net/hsr/hsr_framereg.c:44
-Code: 04 00 f3 f3 f3 65 48 8b 04 25 28 00 00 00 48 89 45 d0 31 c0 e8 6b ff 94 f9 4c 89 f2 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f 85 75 02 00 00 48 8b 43 30 49 39 c6 49 89 47 c0 0f
-RSP: 0018:ffffc90000da8a90 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff87e0cc33
-RDX: 0000000000000006 RSI: ffffffff87e035d5 RDI: 0000000000000000
-RBP: ffffc90000da8b20 R08: ffff88808e7de040 R09: ffffed1015d2707c
-R10: ffffed1015d2707b R11: ffff8880ae9383db R12: ffff8880a689bc5e
-R13: 1ffff920001b5153 R14: 0000000000000030 R15: ffffc90000da8af8
-FS:  00007fd7a42be700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b32338000 CR3: 00000000a928c000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- hsr_handle_frame+0x1c5/0x630 net/hsr/hsr_slave.c:31
- __netif_receive_skb_core+0xfbc/0x30b0 net/core/dev.c:5099
- __netif_receive_skb_one_core+0xa8/0x1a0 net/core/dev.c:5196
- __netif_receive_skb+0x2c/0x1d0 net/core/dev.c:5312
- process_backlog+0x206/0x750 net/core/dev.c:6144
- napi_poll net/core/dev.c:6582 [inline]
- net_rx_action+0x508/0x1120 net/core/dev.c:6650
- __do_softirq+0x262/0x98c kernel/softirq.c:292
- do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1082
- </IRQ>
+tcp_disconnect() is rarely used, but it is worth fixing it.
 
-Fixes: c5a759117210 ("net/hsr: Use list_head (and rcu) instead of array for slave devices.")
+Fixes: ddf1af6fa00e ("tcp: new delivery accounting")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Yuchung Cheng <ycheng@google.com>
+Cc: Neal Cardwell <ncardwell@google.com>
+Acked-by: Yuchung Cheng <ycheng@google.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/hsr/hsr_slave.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/ipv4/tcp.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/hsr/hsr_slave.c
-+++ b/net/hsr/hsr_slave.c
-@@ -27,6 +27,8 @@ static rx_handler_result_t hsr_handle_fr
- 
- 	rcu_read_lock(); /* hsr->node_db, hsr->ports */
- 	port = hsr_port_get_rcu(skb->dev);
-+	if (!port)
-+		goto finish_pass;
- 
- 	if (hsr_addr_is_self(port->hsr, eth_hdr(skb)->h_source)) {
- 		/* Directly kill frames sent by ourselves */
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2621,6 +2621,7 @@ int tcp_disconnect(struct sock *sk, int
+ 	tp->snd_cwnd = TCP_INIT_CWND;
+ 	tp->snd_cwnd_cnt = 0;
+ 	tp->window_clamp = 0;
++	tp->delivered = 0;
+ 	tp->delivered_ce = 0;
+ 	tcp_set_ca_state(sk, TCP_CA_Open);
+ 	tp->is_sack_reneg = 0;
 
 
