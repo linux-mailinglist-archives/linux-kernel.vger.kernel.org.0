@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDDA7157559
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:40:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9CA01576EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:56:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728254AbgBJMkV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:40:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33588 "EHLO mail.kernel.org"
+        id S1730157AbgBJM42 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:56:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729110AbgBJMiT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:19 -0500
+        id S1730041AbgBJMlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:41:39 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DE8B2465D;
-        Mon, 10 Feb 2020 12:38:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CA30208C4;
+        Mon, 10 Feb 2020 12:41:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338298;
-        bh=u4syaK1k26muVpgB7yUZuhhiC8BPnRluHbUUcVDMsoU=;
+        s=default; t=1581338499;
+        bh=evifrWkT2Z0Yki/6O4b+V1Z5s99CuQPgLJk5Bx1nAzk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O4stu4tjf4P9rX0O3gle01F4nJzQFUXA/knBCF+Hqc49idg62naUNpijIFqchxHBT
-         H4dp3DoK62/BIY6Yqt8pAsVlPIxTwAoN2h0je6FhZsdhi43vxqN6lgYjhS3XUNXTZs
-         UNE2RFa3iktbST8SckEcr3iqQmCr8+aSYFNCJvDQ=
+        b=1JNi4r0DEwTmq2K2Du2+xe7E7BsbYTrErmNjIcC7Bs8U5LUeUHZPcrfBllVuMeNY3
+         Es6ipVY1Q/+gv4cwTgamq0OfW+pMRupPf+HSSl0kbTf1CJSlFNSkue+zaiIa2WHNdV
+         Ra94IaKoTWe8faL4KmKo6GPEwJhh/PUoPNg8dilg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
-        Marios Pomonis <pomonis@google.com>,
-        Andrew Honig <ahonig@google.com>,
-        Jim Mattson <jmattson@google.com>,
+        stable@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.4 207/309] KVM: x86: Protect MSR-based index computations from Spectre-v1/L1TF attacks in x86.c
-Date:   Mon, 10 Feb 2020 04:32:43 -0800
-Message-Id: <20200210122426.439512225@linuxfoundation.org>
+Subject: [PATCH 5.5 251/367] KVM: VMX: Add non-canonical check on writes to RTIT address MSRs
+Date:   Mon, 10 Feb 2020 04:32:44 -0800
+Message-Id: <20200210122447.361284302@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,54 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marios Pomonis <pomonis@google.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 6ec4c5eee1750d5d17951c4e1960d953376a0dda upstream.
+commit fe6ed369fca98e99df55c932b85782a5687526b5 upstream.
 
-This fixes a Spectre-v1/L1TF vulnerability in set_msr_mce() and
-get_msr_mce().
-Both functions contain index computations based on the
-(attacker-controlled) MSR number.
+Reject writes to RTIT address MSRs if the data being written is a
+non-canonical address as the MSRs are subject to canonical checks, e.g.
+KVM will trigger an unchecked #GP when loading the values to hardware
+during pt_guest_enter().
 
-Fixes: 890ca9aefa78 ("KVM: Add MCE support")
-
-Signed-off-by: Nick Finco <nifi@google.com>
-Signed-off-by: Marios Pomonis <pomonis@google.com>
-Reviewed-by: Andrew Honig <ahonig@google.com>
 Cc: stable@vger.kernel.org
-Reviewed-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ arch/x86/kvm/vmx/vmx.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2494,7 +2494,10 @@ static int set_msr_mce(struct kvm_vcpu *
- 	default:
- 		if (msr >= MSR_IA32_MC0_CTL &&
- 		    msr < MSR_IA32_MCx_CTL(bank_num)) {
--			u32 offset = msr - MSR_IA32_MC0_CTL;
-+			u32 offset = array_index_nospec(
-+				msr - MSR_IA32_MC0_CTL,
-+				MSR_IA32_MCx_CTL(bank_num) - MSR_IA32_MC0_CTL);
-+
- 			/* only 0 or all 1s can be written to IA32_MCi_CTL
- 			 * some Linux kernels though clear bit 10 in bank 4 to
- 			 * workaround a BIOS/GART TBL issue on AMD K8s, ignore
-@@ -2921,7 +2924,10 @@ static int get_msr_mce(struct kvm_vcpu *
- 	default:
- 		if (msr >= MSR_IA32_MC0_CTL &&
- 		    msr < MSR_IA32_MCx_CTL(bank_num)) {
--			u32 offset = msr - MSR_IA32_MC0_CTL;
-+			u32 offset = array_index_nospec(
-+				msr - MSR_IA32_MC0_CTL,
-+				MSR_IA32_MCx_CTL(bank_num) - MSR_IA32_MC0_CTL);
-+
- 			data = vcpu->arch.mce_banks[offset];
- 			break;
- 		}
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -2146,6 +2146,8 @@ static int vmx_set_msr(struct kvm_vcpu *
+ 			(index >= 2 * intel_pt_validate_cap(vmx->pt_desc.caps,
+ 					PT_CAP_num_address_ranges)))
+ 			return 1;
++		if (is_noncanonical_address(data, vcpu))
++			return 1;
+ 		if (index % 2)
+ 			vmx->pt_desc.guest.addr_b[index / 2] = data;
+ 		else
 
 
