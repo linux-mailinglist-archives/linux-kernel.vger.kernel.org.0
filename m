@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48442157974
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:15:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55CA91577C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:03:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730660AbgBJNPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:15:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33634 "EHLO mail.kernel.org"
+        id S1729743AbgBJMk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:40:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729114AbgBJMiU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:20 -0500
+        id S1728537AbgBJMiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:21 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4AC120842;
-        Mon, 10 Feb 2020 12:38:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E8B321739;
+        Mon, 10 Feb 2020 12:38:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338299;
-        bh=L1GsdPk/THW9c/zYiE5ibwAz+d1guyHIhB3MHKaRyHY=;
+        s=default; t=1581338300;
+        bh=WHrUJpBYRnBwqvlg3yOZvpKCUVvhczLfdnNV7q2dW9Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dQ9Aj73FjxH6JrVnclftfWAeM4mGGkLrn3EC8JFTJhA1bR5ipiTEtq6fjojAtu4YH
-         WYFKchny+6wW8kVv4+fjwTEtjVUw1fDq3Pbkg0TIA/nizwYY8BhAfYgiVNIsbU70k6
-         rQquKnIcf+v3hUaZKImbZiIHCnKjSJmtOxo+X7G0=
+        b=KJqIsfvGbOJc2IjecUqxCIvZQlEuc8g4eqLQfqZaKjsracuSgAAqW2Rv/UrrpSGg1
+         efD9AZetxLDZnh4GHGw6f0ATkqMXLWR/jEeV8iDCrv6QPNtB+Y+fQq2avUVbSr5+z3
+         OMKWBFT9+DA8ptwacssni77Nn6veCmvNN3o/EESI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
-        Marios Pomonis <pomonis@google.com>,
-        Andrew Honig <ahonig@google.com>,
-        Jim Mattson <jmattson@google.com>,
+        stable@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.4 209/309] KVM: x86: Protect MSR-based index computations in fixed_msr_to_seg_unit() from Spectre-v1/L1TF attacks
-Date:   Mon, 10 Feb 2020 04:32:45 -0800
-Message-Id: <20200210122426.622976368@linuxfoundation.org>
+Subject: [PATCH 5.4 210/309] KVM: x86: Fix potential put_fpu() w/o load_fpu() on MPX platform
+Date:   Mon, 10 Feb 2020 04:32:46 -0800
+Message-Id: <20200210122426.712308936@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
 References: <20200210122406.106356946@linuxfoundation.org>
@@ -46,47 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marios Pomonis <pomonis@google.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 25a5edea71b7c154b6a0b8cec14c711cafa31d26 upstream.
+commit f958bd2314d117f8c29f4821401bc1925bc2e5ef upstream.
 
-This fixes a Spectre-v1/L1TF vulnerability in fixed_msr_to_seg_unit().
-This function contains index computations based on the
-(attacker-controlled) MSR number.
+Unlike most state managed by XSAVE, MPX is initialized to zero on INIT.
+Because INITs are usually recognized in the context of a VCPU_RUN call,
+kvm_vcpu_reset() puts the guest's FPU so that the FPU state is resident
+in memory, zeros the MPX state, and reloads FPU state to hardware.  But,
+in the unlikely event that an INIT is recognized during
+kvm_arch_vcpu_ioctl_get_mpstate() via kvm_apic_accept_events(),
+kvm_vcpu_reset() will call kvm_put_guest_fpu() without a preceding
+kvm_load_guest_fpu() and corrupt the guest's FPU state (and possibly
+userspace's FPU state as well).
 
-Fixes: de9aef5e1ad6 ("KVM: MTRR: introduce fixed_mtrr_segment table")
+Given that MPX is being removed from the kernel[*], fix the bug with the
+simple-but-ugly approach of loading the guest's FPU during
+KVM_GET_MP_STATE.
 
-Signed-off-by: Nick Finco <nifi@google.com>
-Signed-off-by: Marios Pomonis <pomonis@google.com>
-Reviewed-by: Andrew Honig <ahonig@google.com>
+[*] See commit f240652b6032b ("x86/mpx: Remove MPX APIs").
+
+Fixes: f775b13eedee2 ("x86,kvm: move qemu/guest FPU switching out to vcpu_run")
 Cc: stable@vger.kernel.org
-Reviewed-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/mtrr.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/x86/kvm/x86.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/x86/kvm/mtrr.c
-+++ b/arch/x86/kvm/mtrr.c
-@@ -192,11 +192,15 @@ static bool fixed_msr_to_seg_unit(u32 ms
- 		break;
- 	case MSR_MTRRfix16K_80000 ... MSR_MTRRfix16K_A0000:
- 		*seg = 1;
--		*unit = msr - MSR_MTRRfix16K_80000;
-+		*unit = array_index_nospec(
-+			msr - MSR_MTRRfix16K_80000,
-+			MSR_MTRRfix16K_A0000 - MSR_MTRRfix16K_80000 + 1);
- 		break;
- 	case MSR_MTRRfix4K_C0000 ... MSR_MTRRfix4K_F8000:
- 		*seg = 2;
--		*unit = msr - MSR_MTRRfix4K_C0000;
-+		*unit = array_index_nospec(
-+			msr - MSR_MTRRfix4K_C0000,
-+			MSR_MTRRfix4K_F8000 - MSR_MTRRfix4K_C0000 + 1);
- 		break;
- 	default:
- 		return false;
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -8698,6 +8698,8 @@ int kvm_arch_vcpu_ioctl_get_mpstate(stru
+ 				    struct kvm_mp_state *mp_state)
+ {
+ 	vcpu_load(vcpu);
++	if (kvm_mpx_supported())
++		kvm_load_guest_fpu(vcpu);
+ 
+ 	kvm_apic_accept_events(vcpu);
+ 	if (vcpu->arch.mp_state == KVM_MP_STATE_HALTED &&
+@@ -8706,6 +8708,8 @@ int kvm_arch_vcpu_ioctl_get_mpstate(stru
+ 	else
+ 		mp_state->mp_state = vcpu->arch.mp_state;
+ 
++	if (kvm_mpx_supported())
++		kvm_put_guest_fpu(vcpu);
+ 	vcpu_put(vcpu);
+ 	return 0;
+ }
 
 
