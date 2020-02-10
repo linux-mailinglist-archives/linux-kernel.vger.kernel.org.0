@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6B0E15757A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:41:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 689EA1575E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:48:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729928AbgBJMlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:41:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34208 "EHLO mail.kernel.org"
+        id S1730751AbgBJMq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:46:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729170AbgBJMii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:38 -0500
+        id S1730038AbgBJMlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:41:39 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CA0B20733;
-        Mon, 10 Feb 2020 12:38:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2022020733;
+        Mon, 10 Feb 2020 12:41:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338317;
+        s=default; t=1581338498;
         bh=+rpPukVyXSRat+AIBRd3Dok+i5Z3ZVjtWl1lwbRpOjg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mS3nkh6c1PRFxVbNvjAh5kSp9FRk0EkFCJQBVU6FTGY74iWDZgxZ9NnNC2URIWEl6
-         /8zfmfMOXYShqK+EcGeLERKfkKiTUGnXF83+1p3hd/JDcbSnZgV0mBdHm2MpKtuQOx
-         tKrUqA75EPzH/FWnfU6H5OngQY+HHK4Qh0E5e0Go=
+        b=iBfM75xFG9H3GjnUQlO6Gua9DlfRIVRpBnwQIULdWVzLRnW37L9X2RF7nXOFad4Lj
+         eNeY0KbQQtV+89Jbt2p7Q/vZzmgpjHcMdN/VGlVHEMiidRyDrK+iP3D32rHTk3PNoL
+         2Bq7cVEbPCb553RuoQCVtSe/EtxvSCKUpCfvoOOM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Nathan Chancellor <natechancellor@gmail.com>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.4 245/309] powerpc/44x: Adjust indentation in ibm4xx_denali_fixup_memsize
+Subject: [PATCH 5.5 288/367] powerpc/44x: Adjust indentation in ibm4xx_denali_fixup_memsize
 Date:   Mon, 10 Feb 2020 04:33:21 -0800
-Message-Id: <20200210122430.048569328@linuxfoundation.org>
+Message-Id: <20200210122450.447695766@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
