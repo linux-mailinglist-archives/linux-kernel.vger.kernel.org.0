@@ -2,97 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A436E156FDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 08:31:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E964156FDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 08:31:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbgBJH2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 02:28:07 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:33109 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726061AbgBJH2H (ORCPT
+        id S1727051AbgBJHaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 02:30:07 -0500
+Received: from kernel.crashing.org ([76.164.61.194]:54246 "EHLO
+        kernel.crashing.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726061AbgBJHaH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 02:28:07 -0500
-Received: by mail-qt1-f196.google.com with SMTP id d5so4460348qto.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Feb 2020 23:28:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9aJSYcVShjw9Lb0CxygRCx6IiLyoO1qzlgwQMvTtLho=;
-        b=KzcOIJThFowfRliZtkVfRl6aidxfG7Hhy2CAIlPr2dOIiXnnvNCJD6PAejFWFmLfKI
-         /S4y+W0xcK6BAYIPxVn5DrpPHMnpO8S6aihCp8+r5UdDg15xt3iuiOeXS3im+A3+a/w2
-         CMy8t6fiiAk7BXeWD6MoglyrOmAOd67NaSD+edivJXQAPLt+6hIJ8Bla4meSrPlSLapP
-         hfuTqe1HFTjvht8kWu86WCpts4qiXUuqf7O3XmgpaR/lqZ7lBd9AYsqVMbzvMO94nPuV
-         3vgD0xDw7jyiAhiLV1+4tch70IY4ShQvTcia+iftk52MzXIS6kme4zix7f36CYAc5hFC
-         pBPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9aJSYcVShjw9Lb0CxygRCx6IiLyoO1qzlgwQMvTtLho=;
-        b=fFyJYeE/nTNy8F5OfsddoG8+HdBJSFC6SC7Xp9eFtCaajUSrek4/ffH2uF9KA+fbHN
-         6QQOjAlYiJiCaUx39O7d1NSVAhcZ5InhrwH5QMMtmcTKEob3V7upgVxbh9FBQ2pW357V
-         25R5Sw4GixqWYyq/dmF/jpRz/Jn9e6XqGMGRtlRVih9dZeNmhlCxonf5t3zTAyY1N5pM
-         BpEnBXLgBrZjhDNK9xzl3BUUzGJMLvNFN5I0zz56JqXdflHOJzf1/4sR3C1nI4RsQ5eB
-         pJAH6c63u7Quj97b4pffAzpJKQ3/yp8yr33jhUhSY29aC1iRnOTdSLkFDSiQFXUabS7t
-         qCBA==
-X-Gm-Message-State: APjAAAWXlNpAr/J1QABtBmNKijt8V5ZQFgubp0XIQcRp/SIx66tz45Z7
-        JW18lCYJMoLlh4ronowfTzYWaSNDrYWfrjIbHTZ8Fw==
-X-Google-Smtp-Source: APXvYqzvGDV8241QnMd0vtySTz+Ty3R182/wGhurUpRKMrSSEabtIWqt2bjsWn4Vbaon5w230yBnka5lvOVf+lLs/Z0=
-X-Received: by 2002:ac8:71d7:: with SMTP id i23mr9011849qtp.50.1581319685983;
- Sun, 09 Feb 2020 23:28:05 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1581282103.git.jbi.octave@gmail.com> <1eca01a2537e0500f4f31c335edfecf0a10bd294.1581282103.git.jbi.octave@gmail.com>
-In-Reply-To: <1eca01a2537e0500f4f31c335edfecf0a10bd294.1581282103.git.jbi.octave@gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 10 Feb 2020 08:27:55 +0100
-Message-ID: <CACT4Y+b61vEqw6t-deuCyZvDoqg2HTRUdVKi1RBcpen+0k0QDA@mail.gmail.com>
-Subject: Re: [PATCH 09/11] kasan: add missing annotation for start_report()
-To:     Jules Irenge <jbi.octave@gmail.com>
-Cc:     Boqun Feng <boqun.feng@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Potapenko <glider@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
+        Mon, 10 Feb 2020 02:30:07 -0500
+Received: from localhost (gate.crashing.org [63.228.1.57])
+        (authenticated bits=0)
+        by kernel.crashing.org (8.14.7/8.14.7) with ESMTP id 01A7TN4p010982
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 10 Feb 2020 01:29:29 -0600
+Message-ID: <b7bf421b5fad397a7ef430af6c0c09602dd66c2a.camel@kernel.crashing.org>
+Subject: Re: [PATCH 2/3] usb: gadget: aspeed: add ast2600 vhub support
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Joel Stanley <joel@jms.id.au>, Tao Ren <rentao.bupt@gmail.com>
+Cc:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Date:   Mon, 10 Feb 2020 08:29:22 +0100
+In-Reply-To: <CACPK8XcmUYhnePr1AG2M9P-oGvOM=zCM+r44jWUzPYGxUEGOGw@mail.gmail.com>
+References: <20200131222157.20849-1-rentao.bupt@gmail.com>
+         <20200131222157.20849-3-rentao.bupt@gmail.com>
+         <CACPK8XcmUYhnePr1AG2M9P-oGvOM=zCM+r44jWUzPYGxUEGOGw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 9, 2020 at 11:48 PM Jules Irenge <jbi.octave@gmail.com> wrote:
->
-> Sparse reports a warning at start_report()
->
-> warning: context imbalance in start_report() - wrong count at exit
->
-> The root cause is a missing annotation at start_report()
->
-> Add the missing annotation __acquires(&report_lock)
->
-> Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+On Mon, 2020-02-10 at 02:48 +0000, Joel Stanley wrote:
+> On Fri, 31 Jan 2020 at 22:22, <rentao.bupt@gmail.com> wrote:
+> > 
+> > From: Tao Ren <rentao.bupt@gmail.com>
+> > 
+> > Add AST2600 support in aspeed-vhub driver. There are 3 major differences
+> > between AST2500 and AST2600 vhub:
+> >   - AST2600 supports 7 downstream ports while AST2500 supports 5.
+> >   - AST2600 supports 21 generic endpoints while AST2500 supports 15.
+> >   - EP0 data buffer's 8-byte DMA alignment restriction is removed from
+> >     AST2600.
+> > 
+> > Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
+> > Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
 
-Acked-by: Dmitry Vyukov <dvyukov@google.com>
+Travelling at the moment so my review might be a bit delayed. Also for
+some reason I missed your original submission, sorry about that, please
+poke me next time if I don't reply within a couple of days !
 
-> ---
->  mm/kasan/report.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-> index 5ef9f24f566b..5451624c4e09 100644
-> --- a/mm/kasan/report.c
-> +++ b/mm/kasan/report.c
-> @@ -77,7 +77,7 @@ static void print_error_description(struct kasan_access_info *info)
->
->  static DEFINE_SPINLOCK(report_lock);
->
-> -static void start_report(unsigned long *flags)
-> +static void start_report(unsigned long *flags) __acquires(&report_lock)
->  {
->         /*
->          * Make sure we don't end up in loop.
-> --
-> 2.24.1
->
+One thing to look into as well is the 2600 has revived the "device
+controller" which looks like a cut down version of a vhub device, so we
+should break a bit more the linkage between vhub and the underlying
+devices so the latter can be instanciated standalone...
+
+(Foor for thought, I'm not asking you to do that right now)
+
+Cheers,
+Ben.
+
+> Reviewed-by: Joel Stanley <joel@jms.id.au>
+> 
+> > ---
+> >  drivers/usb/gadget/udc/aspeed-vhub/Kconfig | 4 ++--
+> >  drivers/usb/gadget/udc/aspeed-vhub/core.c  | 9 +++++++++
+> >  2 files changed, 11 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/usb/gadget/udc/aspeed-vhub/Kconfig b/drivers/usb/gadget/udc/aspeed-vhub/Kconfig
+> > index 83ba8a2eb6af..605500b19cf3 100644
+> > --- a/drivers/usb/gadget/udc/aspeed-vhub/Kconfig
+> > +++ b/drivers/usb/gadget/udc/aspeed-vhub/Kconfig
+> > @@ -4,5 +4,5 @@ config USB_ASPEED_VHUB
+> >         depends on ARCH_ASPEED || COMPILE_TEST
+> >         depends on USB_LIBCOMPOSITE
+> >         help
+> > -         USB peripheral controller for the Aspeed AST2500 family
+> > -         SoCs supporting the "vHub" functionality and USB2.0
+> > +         USB peripheral controller for the Aspeed AST2400, AST2500 and
+> > +         AST2600 family SoCs supporting the "vHub" functionality and USB2.0
+> > diff --git a/drivers/usb/gadget/udc/aspeed-vhub/core.c b/drivers/usb/gadget/udc/aspeed-vhub/core.c
+> > index 94081cc04113..c827bf420278 100644
+> > --- a/drivers/usb/gadget/udc/aspeed-vhub/core.c
+> > +++ b/drivers/usb/gadget/udc/aspeed-vhub/core.c
+> > @@ -42,6 +42,11 @@ static const struct ast_vhub_config ast2400_config = {
+> >         .max_epns = 15,
+> >  };
+> > 
+> > +static const struct ast_vhub_config ast2600_config = {
+> > +       .max_ports = 7,
+> > +       .max_epns = 21,
+> > +};
+> > +
+> >  static const struct of_device_id ast_vhub_dt_ids[] = {
+> >         {
+> >                 .compatible = "aspeed,ast2400-usb-vhub",
+> > @@ -51,6 +56,10 @@ static const struct of_device_id ast_vhub_dt_ids[] = {
+> >                 .compatible = "aspeed,ast2500-usb-vhub",
+> >                 .data = &ast2400_config,
+> >         },
+> > +       {
+> > +               .compatible = "aspeed,ast2600-usb-vhub",
+> > +               .data = &ast2600_config,
+> > +       },
+> >         { }
+> >  };
+> >  MODULE_DEVICE_TABLE(of, ast_vhub_dt_ids);
+> > --
+> > 2.17.1
+> > 
+
