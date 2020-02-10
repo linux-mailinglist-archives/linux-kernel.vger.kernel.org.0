@@ -2,79 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F932157215
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 10:50:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA204157218
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 10:51:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbgBJJus (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 04:50:48 -0500
-Received: from ozlabs.org ([203.11.71.1]:59425 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727522AbgBJJus (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 04:50:48 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48GLkX74C9z9s3x;
-        Mon, 10 Feb 2020 20:50:44 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1581328246;
-        bh=/99kW1JQGU81EUDk9dEhG3syiErSyCdbWBPlGCa1TtU=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=q5bW3e8G2nPTRl3I1hb/mWWlvFYW/MohWC7bBx/YnxetK3mITRksR+nJtKXr5mqRq
-         RM7h5SOiDScKEdK9Oe4022L9Mgt6eW73TEwuflc6wigMz3FMh4QdW5mM2fJrqCERma
-         CB7sMtQgAONga+wTyXpyEMX3+zOHBiHn5oYx73MlffakkdCPmROVmDsl8jzPlcnBjO
-         517gziquLB6h9vLGSl3oQCZPrsJhlxCdkL/q7Cw5WRBHnX6/o74oVsNC7/m6uWvLGs
-         00qRanXg2+kwdIxsr+hsB2WmyVkJ8nGFaTBrXUd2dzD+bY5gtILYSpL9RpF8vZ4a3X
-         Zft2yhwhz+nqw==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] tools/bootconfig: Fix wrong __VA_ARGS__ usage
-In-Reply-To: <158108370130.2758.10893830923800978011.stgit@devnote2>
-References: <87o8ua1rg3.fsf@mpe.ellerman.id.au> <158108370130.2758.10893830923800978011.stgit@devnote2>
-Date:   Mon, 10 Feb 2020 20:50:42 +1100
-Message-ID: <87y2tazs7h.fsf@mpe.ellerman.id.au>
+        id S1727577AbgBJJvd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 04:51:33 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:38851 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726796AbgBJJvd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 04:51:33 -0500
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id 01A9pTct031646;
+        Mon, 10 Feb 2020 18:51:30 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 01A9pTct031646
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1581328290;
+        bh=fNKuZ4BeColKJYzbO/lQDeGPMw/RVLynZL0azIAPAdM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=NLiLyJONKPIV2MVN044skGMpcOIEpIZngXCbHBgqX7WPnLgN9SNPpzYEZ0C594pXQ
+         UHVapCNR+sNBd/uBEkgC9mCNvNAKW+TlUo8LgSBSxl/hVu/+fj4U/feAdzAa+qvUex
+         /bBNB6MFjPiB1n+Aul9K6hthV2o+HHuPQT6w3OLpFHvgKuGhv+8PswrsYIwP51Y23Q
+         tfHWzDdBOc1UPFrpenMF6PX9PmPjJ65KBB4xb+ndnzhTuf10PY3nlhbYPuMFYOYdWI
+         lKYlxbPQIElkkDYUPEEJYWDAmIiVH+l0oIXEoQQuU5ky3/0za3qwZ/M3b77gcy6EE6
+         Qo10SG1CnjoTQ==
+X-Nifty-SrcIP: [209.85.217.46]
+Received: by mail-vs1-f46.google.com with SMTP id g15so3717692vsf.1;
+        Mon, 10 Feb 2020 01:51:30 -0800 (PST)
+X-Gm-Message-State: APjAAAVtGFIaiSvEHwfsNQP55lC3mrMaAxAhFDQc38cIK3euo7YDaHiX
+        pGvEF0TOGAU8tq32mG1hEDhVyhGoFoQejqdtZKw=
+X-Google-Smtp-Source: APXvYqxq3f1kAL5bTVLwnhzv6Hm7mM4ERbXcXAsVJ48BcQvRAW9w15eCRVm//W8I52h9j+XTb0KnFn8CpkGVDOZZKF8=
+X-Received: by 2002:a05:6102:190:: with SMTP id r16mr5621699vsq.215.1581328289249;
+ Mon, 10 Feb 2020 01:51:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20200123153341.19947-1-will@kernel.org> <CAHk-=wjC2EDquO8_kzc-FHOGGjgODOLKjswYGJAMh58zTkyX3w@mail.gmail.com>
+ <20200124083307.GA14914@hirez.programming.kicks-ass.net>
+In-Reply-To: <20200124083307.GA14914@hirez.programming.kicks-ass.net>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Mon, 10 Feb 2020 18:50:53 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS=er+Vkvx+vurYMCHS2u1_Vj0zV+tvUzDkSwop3XP1gg@mail.gmail.com>
+Message-ID: <CAK7LNAS=er+Vkvx+vurYMCHS2u1_Vj0zV+tvUzDkSwop3XP1gg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/10] Rework READ_ONCE() to improve codegen
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Will Deacon <will@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masami Hiramatsu <mhiramat@kernel.org> writes:
-> Since printk() wrapper macro uses __VA_ARGS__ without
-> "##" prefix, it causes a build error if there is no
-> variable arguments (e.g. only fmt is specified.)
-> To fix this error, use ##__VA_ARGS__ instead of
-> __VAR_ARGS__.
+On Fri, Jan 24, 2020 at 5:33 PM Peter Zijlstra <peterz@infradead.org> wrote:
 >
-> Fixes: 950313ebf79c ("tools: bootconfig: Add bootconfig command")
-> Reported-by: Michael Ellerman <mpe@ellerman.id.au>
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> ---
->  tools/bootconfig/include/linux/printk.h |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On Thu, Jan 23, 2020 at 09:59:03AM -0800, Linus Torvalds wrote:
+> > On Thu, Jan 23, 2020 at 7:33 AM Will Deacon <will@kernel.org> wrote:
+> > >
+> > > This is version two of the patches I previously posted as an RFC here:
+> >
+> > Looks fine to me, as far as I can tell,
 >
-> diff --git a/tools/bootconfig/include/linux/printk.h b/tools/bootconfig/include/linux/printk.h
-> index 017bcd6912a5..e978a63d3222 100644
-> --- a/tools/bootconfig/include/linux/printk.h
-> +++ b/tools/bootconfig/include/linux/printk.h
-> @@ -7,7 +7,7 @@
->  /* controllable printf */
->  extern int pr_output;
->  #define printk(fmt, ...)	\
-> -	(pr_output ? printf(fmt, __VA_ARGS__) : 0)
-> +	(pr_output ? printf(fmt, ##__VA_ARGS__) : 0)
->  
->  #define pr_err printk
->  #define pr_warn	printk
+> Awesome, I've picked them up with a target for tip/locking/core.
 
-Tested-by: Michael Ellerman <mpe@ellerman.id.au>
+Were they really picked up?
 
-cheers
+The MW is closed now, but I do not them in Linus' tree.
+I do not see them even in linux-next.
+
+
+
+
+--
+Best Regards
+
+Masahiro Yamada
