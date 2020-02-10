@@ -2,224 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0C15158429
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 21:14:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9285115842C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 21:14:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbgBJUOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 15:14:14 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:40277 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726563AbgBJUOO (ORCPT
+        id S1727582AbgBJUOo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 15:14:44 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:39788 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726563AbgBJUOo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 15:14:14 -0500
-Received: by mail-qt1-f195.google.com with SMTP id v25so6158359qto.7
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 12:14:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xOMDnWavIn15dDLzVnJqPByv88cNrnShVSn42nE2Ul4=;
-        b=HQ2foQgsPGuH93b0J3aA0JfgOaRBI95d2lPmnuULyLqjd501YRWEF2cEAH2gDIyYJn
-         T9TiziE/h8jicdzpAIAFZzer7hMgD2paePNC0WP6deD5xT8/TVaKaOMcmxX5R4z7rq41
-         mDKYg7f30ystPbsgrSGG1jbhd3N26mpkisLo0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xOMDnWavIn15dDLzVnJqPByv88cNrnShVSn42nE2Ul4=;
-        b=iecY3ehNqghAfh6pP/DWXTy3qY+tbnF/IbsR/90wQLRbvwYD/3qw6Ooet8fWpia3fl
-         mdd8X4H0/gRh95xv/KXnuRk9FYfKk9c6OhWdFRd7rnHdWo2me5hYwW5KsdlvgXyMv/hH
-         q5ss7tpi4sRATpzQvhbrvbocrqDDab6kXOGD12j6w2ZMzjciI8br8qY0uBQyyITtczG3
-         qwcDo0BPKMkwIV73m4roCRViw9ckRENqCpCNYv7z2a4BfmAbXJrROkJt3dm3KsBeSwtf
-         JT9eBDwZKd1JqV3u7iNmZXx4DMQLYa4bCam/Ax7S/ES5ePC1JKphyCC4tHO1m/K+kfxb
-         B33Q==
-X-Gm-Message-State: APjAAAWHcPIfT9zceMwAAJoZg8Cayv3NrlnzBXzHONOCVu0No28wikvH
-        SuJENkCC8WpPrPL1tMFlocvMSFBsedv16ed5l0Cvgg==
-X-Google-Smtp-Source: APXvYqxHtFTIxiqMhf3eBXEYmAHwMXyMZm/cUSbfieBcuA6QYCTh8X6r0WUL43Mtoz3hz7iK4koxYiYeWIDtp5knvtA=
-X-Received: by 2002:ac8:140c:: with SMTP id k12mr11556042qtj.117.1581365651838;
- Mon, 10 Feb 2020 12:14:11 -0800 (PST)
+        Mon, 10 Feb 2020 15:14:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581365682;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=aru7SYuZXhhhxDg5jfxc1VIsQsLEX+56nBygo91zRPY=;
+        b=LC7Z5v+T17jDhEwHe5nX0F4M1QrSCcQRYhVgZSoOUKfwqmpLfQ9lQO56+UizD3k+AMxKZA
+        VQxdmOkbtu+eHI7XgDQWyQR0UbzVmUkJI7xgDvBzDSWL3HBavgMl86KUTd4zPQSOUeFCNx
+        pzPCWCVKoHTIwvaLbHv4WE+Yy6HsJh0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-407-9VHrNn0mNp24TCJ6OQIh7g-1; Mon, 10 Feb 2020 15:14:38 -0500
+X-MC-Unique: 9VHrNn0mNp24TCJ6OQIh7g-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3E652800D41;
+        Mon, 10 Feb 2020 20:14:37 +0000 (UTC)
+Received: from mail (ovpn-125-144.rdu2.redhat.com [10.10.125.144])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C38E719C70;
+        Mon, 10 Feb 2020 20:14:22 +0000 (UTC)
+Date:   Mon, 10 Feb 2020 15:14:11 -0500
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Will Deacon <will@kernel.org>, Jon Masters <jcm@jonmasters.org>,
+        Rafael Aquini <aquini@redhat.com>,
+        Mark Salter <msalter@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] arm64: tlb: skip tlbi broadcast for single threaded
+ TLB flushes
+Message-ID: <20200210201411.GC3699@redhat.com>
+References: <20200203201745.29986-1-aarcange@redhat.com>
+ <20200203201745.29986-3-aarcange@redhat.com>
+ <20200210175106.GA27215@arrakis.emea.arm.com>
 MIME-Version: 1.0
-References: <20200205190028.183069-1-pmalani@chromium.org> <20200205190028.183069-11-pmalani@chromium.org>
- <20200206121753.7b809631@archlinux> <671a55aa-1e5e-4e21-4a62-55db4dee368a@collabora.com>
- <CACeCKad4zp9O7WAPu5S1rmUDwkzWLjk_1i7YtPvXUG=nDvkYAA@mail.gmail.com>
- <CAPUE2usO-Ny61+wEdTcwR3b+RgGjeQ4Jb24UeF8siscqFQ5ogQ@mail.gmail.com> <2ebc4e17-df7a-d5c2-f657-16d06e402bd4@collabora.com>
-In-Reply-To: <2ebc4e17-df7a-d5c2-f657-16d06e402bd4@collabora.com>
-From:   Prashant Malani <pmalani@chromium.org>
-Date:   Mon, 10 Feb 2020 12:14:01 -0800
-Message-ID: <CACeCKafG35Di+SU2i=DD09tUyFvq0wyDOLj5J1fUhnds3bTeDg@mail.gmail.com>
-Subject: Re: [PATCH v2 10/17] iio: cros_ec: Use cros_ec_cmd()
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Gwendal Grignou <gwendal@chromium.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Fabien Lahoudere <fabien.lahoudere@collabora.com>,
-        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200210175106.GA27215@arrakis.emea.arm.com>
+User-Agent: Mutt/1.13.1 (2019-12-14)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All (trimming most code parts of the thread for the sake of brevity),
+Hello Catalin,
 
-Thanks for listing the points Enric, Please see my notes inline:
+On Mon, Feb 10, 2020 at 05:51:06PM +0000, Catalin Marinas wrote:
+> Relying om mm_users is not sufficient AFAICT. Let's say on CPU0 you have
+> a kernel thread running with the previous user pgd and ASID set in
+> ttbr0_el1. The mm_users would still be 1 since only mm_count is
+> incremented in context_switch(). If the user thread now runs on CPU1, a
+> local tlbi would only invalidate the TLBs on CPU1. However, CPU0 may
+> still walk (speculatively) the user page tables.
+> 
+> An example where this matters is a group of small pages converted to a
+> huge page. If CPU0 already has some TLB entries for small pages in the
+> group but, not being aware of a TLBI for the ptes in the range, may read
+> a block pmd entry (huge page) and we end up with a TLB conflict on CPU0
+> (CPU1 is fine since you do the local tlbi).
+> 
+> There are other examples where this could go wrong as the hardware may
+> keep intermediate pgtable entries in a walk cache. In the arm64 kernel
+> we rely on something the architecture calls break-before-make for any
+> page table updates and these need to be broadcast to other CPUs that may
+> potentially have an entry in their TLB.
+> 
+> It may be better if you used mm_cpumask to mark wherever an mm ever ran
+> than relying on mm_users.
 
-On Mon, Feb 10, 2020 at 3:03 AM Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
->
-> Hi Gwendal, Prashant et all
->
-> On 7/2/20 19:47, Gwendal Grignou wrote:
-> > On Thu, Feb 6, 2020 at 10:50 AM Prashant Malani <pmalani@chromium.org> wrote:
-> >>
-> >> Hi Enric,
-> >>
-> >> Thanks for taking a look at the patch. Please see my response inline:
-....
-> >>>>> @@ -171,9 +162,11 @@ int cros_ec_motion_send_host_cmd(struct cros_ec_sensors_core_state *state,
-> >>>>>
-> >>>>>      memcpy(state->msg->data, &state->param, sizeof(state->param));
-> >>>>>
-> >>>>> -    ret = cros_ec_cmd_xfer_status(state->ec, state->msg);
-> >>>>> +    ret = cros_ec_cmd_xfer(state->ec, state->msg);
-> >>>>>      if (ret < 0)
-> >>>>>              return ret;
-> >>>>> +    else if (state->msg->result != EC_RES_SUCCESS)
-> >>>>> +            return -EPROTO;
-> >>>>>
-> >>>
-> >>> There is no way to use the new cros_ec_cmd here?
-> > When the EC does not support sensor fifo,
-> > cros_ec_motion_send_host_cmd() is on the data path. For instance, it
-> > is called 2 times every 10ms by chrome to calculate the lid angle. I
-> > would be reluctant to call malloc. Given it is well encapsulated into
-> > the sensor stack. Does it make sense to call cros_ec_cmd_xfer
-> > directly?
-> >
->
-> Thanks Gwendal for pointing this, it makes totally sense, and I suspect this can
-> happen on other cases.
->
-> Just to make clear, my concern is not about not using the new 'cros_ec_cmd'
-> here, is about changing 'cros_ec_cmd_xfer_status' for 'cros_ec_cmd_xfer'. Also,
-> my other concern is how useful is the new 'cros_ec_cmd' replacing what we have
-> now if cannot replace all current uses.
->
-> My points of view are this:
->
-> * Actually we have cros_ec_cmd_xfer and cros_ec_cmd_xfer_status, use the second
-> one is better, in fact, we tried to move all the cros_ec_cmd_xfer to the _status
-> version in the past because makes the code and error handling cleaner. So I'm
-> reticent to get back to use cros_ec_cmd_xfer instead of cros_ec_cmd_xfer_status.
->
-> * The users of the cros-ec protocol sometimes they mallocing/freeing at runtime,
-> and sometimes they don't. IMHO *non* mallocing/freeing is usually better, more
-> efficient and faster. Would be nice to standardize this.
+Agreed.
 
-I think we should look at latency (I am assuming that is one of the
-concerns Gwendal was referring to).
-We should certainly do more rigorous measurements, but I did a crude
-measurement across a devm_kzalloc() used on one of the EC commands
-inside platform/chrome for struct EC command:
-- Used ktime_get_ns() to record time before and after the devm_kzalloc()
-- Used ktime_sub to subtract the "after" and "before" values:
+If we can use mm_cpumask to track where the mm ever run, then if I'm
+not mistaken we could optimize also multithreaded processes in the
+same way: if only one thread is running frequently and the others are
+frequently sleeping, we could issue a single tlbi broadcast (modulo
+invalidates of small virtual ranges).
 
-        struct cros_ec_command *msg;
-        int ret;
-+       ktime_t start, end, diff;
+In the meantime the below should be enough to address the concern you
+raised of the proof of concept RFC patch.
 
-+       start = ktime_get_ns();
-        msg = kzalloc(sizeof(*msg) + max(outsize, insize), GFP_KERNEL);
-+       end = ktime_get_ns();
-        if (!msg)
-                return -ENOMEM;
+I already experimented with mm_users == 1 earlier and it doesn't
+change the benchmark results for the "best case" below.
 
-+       diff = ktime_sub(end, start);
-+       printk("%s(): TEST: kzalloc took: %lld\n", __func__, ktime_to_ns(diff));
+(untested)
 
-On an i5 1.6 GHz system, across 16 call measurements I got the
-following latency values (in ns):
-- Count, N:16
-- Average: 72.375
-- Std. Dev : 28.768
-- Max: 143
-- Min:  51
-
-Are these values significant for the various call-sites? I think the
-driver authors might be able to comment better there (unfortunately I
-don't have enough context for each case).
-Of course there will be other overhead (memcpy) but I think this is a
-good starting point for the discussion.
-(My apologies if this measurement method is incorrect/inaccurate.)
-
->
-> * If we want to introduce a new 'cros_ec_cmd', this should make the code cleaner
-> and ideally should be the way we tell the users they should use to communicate
-> with the cros-ec and not open coding constantly. Ideally, should be a
-> replacement of all current 'cros_ec_cmd_xfer*' versions.
-
-As I mentioned previously, I think all calls of cros_ec_cmd_xfer() can
-be converted to use cros_ec_cmd() (especially since the new API has a
-*result pointer),
-but I think it should be staged out a bit more (since cases like iio:
-cros_ec driver require non-trivial refactoring which I think is better
-in a patch/series).
-
->
-> * If 'cros_ec_cmd' *cannot* replace all the cases, it should be clear to the
-> user in which cases he should use this function and in which cases shouldn't use
-> this function.
-
-This seems like a good compromise, but my expectation is that if there
-is a "fast" and "slow" version of the same functionality, developers
-would be inclined to use the "fast" version always?
+diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+index 772bbc45b867..a2d53b301f22 100644
+--- a/arch/arm64/include/asm/tlbflush.h
++++ b/arch/arm64/include/asm/tlbflush.h
+@@ -169,7 +169,8 @@ static inline void flush_tlb_mm(struct mm_struct *mm)
+ 	unsigned long asid = __TLBI_VADDR(0, ASID(mm));
+ 
+ 	/* avoid TLB-i broadcast to remote NUMA nodes if it's a local flush */
+-	if (current->mm == mm && atomic_read(&mm->mm_users) <= 1) {
++	if (current->mm == mm && atomic_read(&mm->mm_users) <= 1 &&
++	    (system_uses_ttbr0_pan() || atomic_read(&mm->mm_count) == 1)) {
+ 		int cpu = get_cpu();
+ 
+ 		cpumask_setall(mm_cpumask(mm));
+@@ -177,7 +178,9 @@ static inline void flush_tlb_mm(struct mm_struct *mm)
+ 
+ 		smp_mb();
+ 
+-		if (atomic_read(&mm->mm_users) <= 1) {
++		if (atomic_read(&mm->mm_users) <= 1 &&
++		    (system_uses_ttbr0_pan() ||
++		     atomic_read(&mm->mm_count) == 1)) {
+ 			dsb(nshst);
+ 			__tlbi(aside1, asid);
+ 			__tlbi_user(aside1, asid);
+@@ -212,7 +215,8 @@ static inline void flush_tlb_page(struct vm_area_struct *vma,
+ 	unsigned long addr = __TLBI_VADDR(uaddr, ASID(mm));
+ 
+ 	/* avoid TLB-i broadcast to remote NUMA nodes if it's a local flush */
+-	if (current->mm == mm && atomic_read(&mm->mm_users) <= 1) {
++	if (current->mm == mm && atomic_read(&mm->mm_users) <= 1 &&
++	    (system_uses_ttbr0_pan() || atomic_read(&mm->mm_count) == 1)) {
+ 		int cpu = get_cpu();
+ 
+ 		cpumask_setall(mm_cpumask(mm));
+@@ -220,7 +224,9 @@ static inline void flush_tlb_page(struct vm_area_struct *vma,
+ 
+ 		smp_mb();
+ 
+-		if (atomic_read(&mm->mm_users) <= 1) {
++		if (atomic_read(&mm->mm_users) <= 1 &&
++		    (system_uses_ttbr0_pan() ||
++		     atomic_read(&mm->mm_count) == 1)) {
+ 			dsb(nshst);
+ 			__tlbi(vale1, addr);
+ 			__tlbi_user(vale1, addr);
+@@ -264,7 +270,8 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
+ 	end = __TLBI_VADDR(end, asid);
+ 
+ 	/* avoid TLB-i broadcast to remote NUMA nodes if it's a local flush */
+-	if (current->mm == mm && atomic_read(&mm->mm_users) <= 1) {
++	if (current->mm == mm && atomic_read(&mm->mm_users) <= 1  &&
++	    (system_uses_ttbr0_pan() || atomic_read(&mm->mm_count) == 1)) {
+ 		int cpu = get_cpu();
+ 
+ 		cpumask_setall(mm_cpumask(mm));
+@@ -272,7 +279,9 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
+ 
+ 		smp_mb();
+ 
+-		if (atomic_read(&mm->mm_users) <= 1) {
++		if (atomic_read(&mm->mm_users) <= 1 &&
++		    (system_uses_ttbr0_pan() ||
++		     atomic_read(&mm->mm_count) == 1)) {
+ 			dsb(nshst);
+ 			for (addr = start; addr < end; addr += stride) {
+ 				if (last_level) {
 
 
-> * Finally, what pointed Gwendal, what's the best approach to send commands to
-> the EC by default, is better use dynamic memory? or is better use the stack? is
-> it always safe use the stack? is always efficient use allocated memory?
->
-> As you can see I have a lot of questions still around, but taking in
-> consideration that this will be an important change I think that makes sense
-> spend some time discussing it.
->
-> What do you think?
->
-> Enric
->
->
-> > Gwendal.
-> >>
-> >> I think it is doable. From looking at the code I felt the factors we
-> >> need to be careful about are:
-> >> - The function cros_ec_motion_send_host_cmd() is called from a few
-> >> other files, each of which set up the struct cros_ec_command
-> >> differently (reference:
-> >> https://elixir.bootlin.com/linux/latest/ident/cros_ec_motion_send_host_cmd)
-> >> - It is not clear to me how readability will be affected by making the
-> >> change to cros_ec_cmd().
-> >>
-> >> Due to the above two factors, but primarily because I wanted to avoid
-> >> making such an involved large change in this 17 patch series, I
-> >> reasoned it would be better to make the transition to cros_ec_cmd()
-> >> for these files in a separate patch/series.
-> >> My plan after this patch series is to work on this driver(perhaps we
-> >> can eliminate cros_ec_motion_send_host_cmd() itself?), and then remove
-> >> cros_ec_cmd_xfer() usage.
-> >>
-> >> WDYT?
-> >>
-> >> Best regards,
-> >>
-> >>
-> >>>
-> >>>
-> >>>>>      if (ret &&
-> >>>>>          state->resp != (struct ec_response_motion_sense *)state->msg->data)
-> >>>>
+> That's a pretty artificial test and it is indeed improved by this patch.
+> However, it would be nice to have some real-world scenarios where this
+> matters.
+
+I don't know exactly how much we should rely on the hardware to snoop
+the asid on NUMA. The hardware to fully optimize would need to
+implement a replicated mm_cpumask bitflag for each asid and every CPU
+would need to tell every other CPU which asid it is loading every time
+it is loading it. Exactly what x86 does with mm_cpumask in software.
+
+That is ideal, but is it an arch requirement to add the above in all
+implementations?
+
+The case I measured has a single socket so it's even simpler because
+it could be optimized all in-core. Even with a single socket I'm not
+sure what's going wrong in the chip: it felt like it's the engine that
+does the broadcast that runs serially system wide and then all CPUs
+have to wait on it.
+
+Still your question if it'll make a difference in practice is a good
+one and I don't have a sure answer yet. I suppose before doing more
+benchmarking it's better to make a new version of this that uses
+mm_cpumask to track where the asid was ever loaded as you suggested,
+so that it will also optimize away tlbi broadcaasts from multithreaded
+processes where only one thread is running frequently?
+
+Thanks!
+Andrea
+
