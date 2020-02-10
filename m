@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2171A157759
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:59:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AD6C1574D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:36:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730130AbgBJM7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:59:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42636 "EHLO mail.kernel.org"
+        id S1728315AbgBJMgQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:36:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729896AbgBJMlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:41:07 -0500
+        id S1728092AbgBJMfp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:45 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 472392051A;
-        Mon, 10 Feb 2020 12:41:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CC602173E;
+        Mon, 10 Feb 2020 12:35:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338467;
-        bh=MkI4Fn1ZQS+DuXc6JBCeYTPbMyJ9HcFdg6Ig2ScxoZs=;
+        s=default; t=1581338144;
+        bh=L5QEUFdgp53XM6uWPht0I6dfy5ezySp3D+5HYloEt1M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wMN4pInGEIfBwrjcA9Ph5aX0KiMhfuuSbTEW8daBvI4uGnPF752RLA8BNRK16EfEE
-         tswfTkvW2ltBT2ypqToBjeGmcNcJHipNp8iuHbva0fi2JO2j0bMNx/Mup7VjGULNDN
-         cDTAV9TV0u2d0V6e+SgCemELdQVWCHv0fZaF3E4I=
+        b=vortSUAolTOrtZnp6AoIc6qByB2LZtl8WHWUbHKfoGN/1mmIDjK6KmlKIt6S0Zk1f
+         vk34zWPJC2aWv/Z+tpq35DG426aDlCAqFGJQzNEAMVMJh7ngJPw+CD/A2tA8tALV67
+         sI8wtagvZaPDtbK6OKjpOkeSBtPvsDLkUNcW15FI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
-        Marios Pomonis <pomonis@google.com>,
-        Andrew Honig <ahonig@google.com>,
-        Jim Mattson <jmattson@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.5 229/367] KVM: x86: Protect pmu_intel.c from Spectre-v1/L1TF attacks
-Date:   Mon, 10 Feb 2020 04:32:22 -0800
-Message-Id: <20200210122445.484838003@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christian Zigotzky <chzigotzky@xenosoft.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH 4.19 085/195] of: Add OF_DMA_DEFAULT_COHERENT & select it on powerpc
+Date:   Mon, 10 Feb 2020 04:32:23 -0800
+Message-Id: <20200210122313.803015195@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,76 +46,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marios Pomonis <pomonis@google.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 66061740f1a487f4ed54fde75e724709f805da53 upstream.
+commit dabf6b36b83a18d57e3d4b9d50544ed040d86255 upstream.
 
-This fixes Spectre-v1/L1TF vulnerabilities in intel_find_fixed_event()
-and intel_rdpmc_ecx_to_pmc().
-kvm_rdpmc() (ancestor of intel_find_fixed_event()) and
-reprogram_fixed_counter() (ancestor of intel_rdpmc_ecx_to_pmc()) are
-exported symbols so KVM should treat them conservatively from a security
-perspective.
+There's an OF helper called of_dma_is_coherent(), which checks if a
+device has a "dma-coherent" property to see if the device is coherent
+for DMA.
 
-Fixes: 25462f7f5295 ("KVM: x86/vPMU: Define kvm_pmu_ops to support vPMU function dispatch")
+But on some platforms devices are coherent by default, and on some
+platforms it's not possible to update existing device trees to add the
+"dma-coherent" property.
 
-Signed-off-by: Nick Finco <nifi@google.com>
-Signed-off-by: Marios Pomonis <pomonis@google.com>
-Reviewed-by: Andrew Honig <ahonig@google.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+So add a Kconfig symbol to allow arch code to tell
+of_dma_is_coherent() that devices are coherent by default, regardless
+of the presence of the property.
+
+Select that symbol on powerpc when NOT_COHERENT_CACHE is not set, ie.
+when the system has a coherent cache.
+
+Fixes: 92ea637edea3 ("of: introduce of_dma_is_coherent() helper")
+Cc: stable@vger.kernel.org # v3.16+
+Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
+Tested-by: Christian Zigotzky <chzigotzky@xenosoft.de>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx/pmu_intel.c |   24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ arch/powerpc/Kconfig |    1 +
+ drivers/of/Kconfig   |    4 ++++
+ drivers/of/address.c |    6 +++++-
+ 3 files changed, 10 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kvm/vmx/pmu_intel.c
-+++ b/arch/x86/kvm/vmx/pmu_intel.c
-@@ -86,10 +86,14 @@ static unsigned intel_find_arch_event(st
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -230,6 +230,7 @@ config PPC
+ 	select NEED_SG_DMA_LENGTH
+ 	select NO_BOOTMEM
+ 	select OF
++	select OF_DMA_DEFAULT_COHERENT		if !NOT_COHERENT_CACHE
+ 	select OF_EARLY_FLATTREE
+ 	select OF_RESERVED_MEM
+ 	select OLD_SIGACTION			if PPC32
+--- a/drivers/of/Kconfig
++++ b/drivers/of/Kconfig
+@@ -103,4 +103,8 @@ config OF_OVERLAY
+ config OF_NUMA
+ 	bool
  
- static unsigned intel_find_fixed_event(int idx)
- {
--	if (idx >= ARRAY_SIZE(fixed_pmc_events))
-+	u32 event;
-+	size_t size = ARRAY_SIZE(fixed_pmc_events);
++config OF_DMA_DEFAULT_COHERENT
++	# arches should select this if DMA is coherent by default for OF devices
++	bool
 +
-+	if (idx >= size)
- 		return PERF_COUNT_HW_MAX;
+ endif # OF
+--- a/drivers/of/address.c
++++ b/drivers/of/address.c
+@@ -970,12 +970,16 @@ EXPORT_SYMBOL_GPL(of_dma_get_range);
+  * @np:	device node
+  *
+  * It returns true if "dma-coherent" property was found
+- * for this device in DT.
++ * for this device in the DT, or if DMA is coherent by
++ * default for OF devices on the current platform.
+  */
+ bool of_dma_is_coherent(struct device_node *np)
+ {
+ 	struct device_node *node = of_node_get(np);
  
--	return intel_arch_events[fixed_pmc_events[idx]].event_type;
-+	event = fixed_pmc_events[array_index_nospec(idx, size)];
-+	return intel_arch_events[event].event_type;
- }
- 
- /* check if a PMC is enabled by comparing it with globl_ctrl bits. */
-@@ -130,16 +134,20 @@ static struct kvm_pmc *intel_rdpmc_ecx_t
- 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
- 	bool fixed = idx & (1u << 30);
- 	struct kvm_pmc *counters;
-+	unsigned int num_counters;
- 
- 	idx &= ~(3u << 30);
--	if (!fixed && idx >= pmu->nr_arch_gp_counters)
--		return NULL;
--	if (fixed && idx >= pmu->nr_arch_fixed_counters)
-+	if (fixed) {
-+		counters = pmu->fixed_counters;
-+		num_counters = pmu->nr_arch_fixed_counters;
-+	} else {
-+		counters = pmu->gp_counters;
-+		num_counters = pmu->nr_arch_gp_counters;
-+	}
-+	if (idx >= num_counters)
- 		return NULL;
--	counters = fixed ? pmu->fixed_counters : pmu->gp_counters;
- 	*mask &= pmu->counter_bitmask[fixed ? KVM_PMC_FIXED : KVM_PMC_GP];
--
--	return &counters[idx];
-+	return &counters[array_index_nospec(idx, num_counters)];
- }
- 
- static bool intel_is_valid_msr(struct kvm_vcpu *vcpu, u32 msr)
++	if (IS_ENABLED(CONFIG_OF_DMA_DEFAULT_COHERENT))
++		return true;
++
+ 	while (node) {
+ 		if (of_property_read_bool(node, "dma-coherent")) {
+ 			of_node_put(node);
 
 
