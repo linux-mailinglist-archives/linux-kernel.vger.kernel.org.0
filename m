@@ -2,184 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B0D9157D6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 15:31:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E7C2157D6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 15:32:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728544AbgBJObQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 09:31:16 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:43258 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727120AbgBJObQ (ORCPT
+        id S1728685AbgBJOcP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 09:32:15 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:50888 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727120AbgBJOcO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 09:31:16 -0500
-Received: by mail-qk1-f196.google.com with SMTP id p7so1684601qkh.10
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 06:31:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qcAgZw/ui3CLohL6PVMtRlohm+XOB+CMbaeiCefL8Tw=;
-        b=XXf5//gtn9ah4o1Dg3ynTtJvV9QlT9wOauHez+XKzTaZBmpDuv7nb/+Aq5XchwD5qp
-         Cb5yGuRptx8TFxSSM0Ke++M0aRlmnhjBMX+wqCZ/mZuLeA8oRDwx2PAFYW2zQJnbGTYh
-         orbTORk0adPsno9WyR3BbkHdALwJc7sln8jqXZjh6wO+pd1G5KXUO5rqHVcwUbU7B7eu
-         BxYvkPhwwXewl/+rCl6Z34+jl1nTUAIaPHS3WZzLKXy4KmKB0J7Bg/fuTVl2WA/ovjRi
-         VIIcKSKU4+e6S+E5MD1jRpQERWH34lyO4oJMdxrBREzLi4r5aVCzQPTa5MgFRiQNn8Gm
-         NCjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qcAgZw/ui3CLohL6PVMtRlohm+XOB+CMbaeiCefL8Tw=;
-        b=qaT1Z3TAINFm0onMEw1zzJhaPXHODR7esQLdT6hdqfEY0MXmEKPlJ3qNzyZmmjabxs
-         BoPoZhN02JFmWfdw0GiDHA0Uv/C0g86PVsvh3Tp4L6h/bF2fbmCuxGqlAUifsDoEocaF
-         9lqc3DI9xZv2ZXPof5e2Uxu1cRn50PnMEnPqMikLm0i5w/tPqDysGY0yMV1qPwiQCAnR
-         d8YLLREGhsJGLJXCrkZ/W1dDLMfNEhibUjLJ8wYJOt09FInXUnB6WgfddRVQda7ioVb8
-         YN6BLTRk/CcWH8XPa9pzwkFfHRai3r75Nz32ey7rHOySEUdnXNkTp2kBiAHuDLZTOcYl
-         q3Ew==
-X-Gm-Message-State: APjAAAVNqawDebMX5b3orK+tEOcy/XsshRYNVPGJDTRkgTmZKSpprgVd
-        5zqoKBfA73HWojiDCkCAsCfKOQ==
-X-Google-Smtp-Source: APXvYqzQj7JL3j6ulpB0erhHdZzp7Y5zaTnPaPrnXdAv/X9nGuhFlyVud31K6RxqiPcBhdidYvqYhQ==
-X-Received: by 2002:a37:270b:: with SMTP id n11mr1631942qkn.26.1581345074983;
-        Mon, 10 Feb 2020 06:31:14 -0800 (PST)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id r12sm200397qkm.94.2020.02.10.06.31.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Feb 2020 06:31:14 -0800 (PST)
-Message-ID: <1581345072.7365.30.camel@lca.pw>
-Subject: Re: [PATCH] mm: fix a data race in put_page()
-From:   Qian Cai <cai@lca.pw>
-To:     Marco Elver <elver@google.com>
-Cc:     John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>, ira.weiny@intel.com,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Date:   Mon, 10 Feb 2020 09:31:12 -0500
-In-Reply-To: <CANpmjNN=SNr=HJMLrQUno2F1L4PmQL19JfvVjngKee77tN2q-Q@mail.gmail.com>
-References: <CANpmjNNaHAnKCMLb+Njs3AhEoJT9O6-Yh63fcNcVTjBbNQiEPg@mail.gmail.com>
-         <26B88005-28E6-4A09-B3A7-DC982DABE679@lca.pw>
-         <CANpmjNMzF-T=CzMqoJh-5zrsro8Ky7Q85tnX_HwWhsLCa0DsHw@mail.gmail.com>
-         <1581341769.7365.25.camel@lca.pw>
-         <CANpmjNPdwuMpJvwdVj6zm6G5rXzjvkF+GZqqxvpC8Ui4iN8New@mail.gmail.com>
-         <1581342954.7365.27.camel@lca.pw>
-         <CANpmjNN=SNr=HJMLrQUno2F1L4PmQL19JfvVjngKee77tN2q-Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 10 Feb 2020 09:32:14 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01AESGpc183425;
+        Mon, 10 Feb 2020 14:32:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=3cp63tY8iZSYGBKxAQ5xSKVEuTJ/BD1ppkEWdOFbtG0=;
+ b=cpKhW6hh6xfyuwSEJ/yNvn9ry5dXnr/dfhWNS610+DKEId9trZdU/KKv18T/k4rbgk8s
+ an8PD2cF1IyrHl0ADeYA7aXOb0DMvaaMqDR/93PoibutK1dfND2wIyA8LH96WFA85owy
+ 7agvuhNE2RbjnagjXd4l7LGNoUXfsAT2HFrNaP9cB6bE3tUje/PH1sOtBULQZS+9nXPv
+ kagDn7DXa05ytz0poGr+nFc9iM2J/Fr+a4BDKeB3VDXyl0S+HVbEyjl6YuVlLbYejD9G
+ MLIifgRQpCzfogiSW0AD2MbnVGXTpwEQaW0qe0cIPVSHE1mIbpELluksoEuNEAKdjFL6 oA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2y2k87vsw8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Feb 2020 14:32:09 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01AESPW0135646;
+        Mon, 10 Feb 2020 14:32:09 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2y26sjavam-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Feb 2020 14:32:09 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01AEW7jf031613;
+        Mon, 10 Feb 2020 14:32:07 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 10 Feb 2020 06:32:03 -0800
+Date:   Mon, 10 Feb 2020 17:31:52 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: dwc3: debug: fix string position formatting mixup
+ with ret and len
+Message-ID: <20200210143151.GZ1778@kadam>
+References: <20200210095139.328711-1-colin.king@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200210095139.328711-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9526 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 bulkscore=0 spamscore=0 suspectscore=0 mlxlogscore=766
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002100112
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9526 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 lowpriorityscore=0
+ suspectscore=0 bulkscore=0 phishscore=0 mlxlogscore=836 mlxscore=0
+ malwarescore=0 impostorscore=0 clxscore=1015 spamscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002100112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-02-10 at 15:12 +0100, Marco Elver wrote:
-> On Mon, 10 Feb 2020 at 14:55, Qian Cai <cai@lca.pw> wrote:
-> > 
-> > On Mon, 2020-02-10 at 14:38 +0100, Marco Elver wrote:
-> > > On Mon, 10 Feb 2020 at 14:36, Qian Cai <cai@lca.pw> wrote:
-> > > > 
-> > > > On Mon, 2020-02-10 at 13:58 +0100, Marco Elver wrote:
-> > > > > On Mon, 10 Feb 2020 at 13:16, Qian Cai <cai@lca.pw> wrote:
-> > > > > > 
-> > > > > > 
-> > > > > > 
-> > > > > > > On Feb 10, 2020, at 2:48 AM, Marco Elver <elver@google.com> wrote:
-> > > > > > > 
-> > > > > > > Here is an alternative:
-> > > > > > > 
-> > > > > > > Let's say KCSAN gives you this:
-> > > > > > >   /* ... Assert that the bits set in mask are not written
-> > > > > > > concurrently; they may still be read concurrently.
-> > > > > > >     The access that immediately follows is assumed to access those
-> > > > > > > bits and safe w.r.t. data races.
-> > > > > > > 
-> > > > > > >     For example, this may be used when certain bits of @flags may
-> > > > > > > only be modified when holding the appropriate lock,
-> > > > > > >     but other bits may still be modified locklessly.
-> > > > > > >   ...
-> > > > > > >  */
-> > > > > > >   #define ASSERT_EXCLUSIVE_BITS(flags, mask)   ....
-> > > > > > > 
-> > > > > > > Then we can write page_zonenum as follows:
-> > > > > > > 
-> > > > > > > static inline enum zone_type page_zonenum(const struct page *page)
-> > > > > > > {
-> > > > > > > +       ASSERT_EXCLUSIVE_BITS(page->flags, ZONES_MASK << ZONES_PGSHIFT);
-> > > > > > >        return (page->flags >> ZONES_PGSHIFT) & ZONES_MASK;
-> > > > > > > }
-> > > > > > > 
-> > > > > > > This will accomplish the following:
-> > > > > > > 1. The current code is not touched, and we do not have to verify that
-> > > > > > > the change is correct without KCSAN.
-> > > > > > > 2. We're not introducing a bunch of special macros to read bits in various ways.
-> > > > > > > 3. KCSAN will assume that the access is safe, and no data race report
-> > > > > > > is generated.
-> > > > > > > 4. If somebody modifies ZONES bits concurrently, KCSAN will tell you
-> > > > > > > about the race.
-> > > > > > > 5. We're documenting the code.
-> > > > > > > 
-> > > > > > > Anything I missed?
-> > > > > > 
-> > > > > > I don’t know. Having to write the same line twice does not feel me any better than data_race() with commenting occasionally.
-> > > > > 
-> > > > > Point 4 above: While data_race() will ignore cause KCSAN to not report
-> > > > > the data race, now you might be missing a real bug: if somebody
-> > > > > concurrently modifies the bits accessed, you want to know about it!
-> > > > > Either way, it's up to you to add the ASSERT_EXCLUSIVE_BITS, but just
-> > > > > remember that if you decide to silence it with data_race(), you need
-> > > > > to be sure there are no concurrent writers to those bits.
-> > > > 
-> > > > Right, in this case, there is no concurrent writers to those bits, so I'll add a
-> > > > comment should be sufficient. However, I'll keep ASSERT_EXCLUSIVE_BITS() in mind
-> > > > for other places.
-> > > 
-> > > Right now there are no concurrent writers to those bits. But somebody
-> > > might introduce a bug that will write them, even though they shouldn't
-> > > have. With ASSERT_EXCLUSIVE_BITS() you can catch that. Once I have the
-> > > patches for this out, I would consider adding it here for this reason.
-> > 
-> > Surely, we could add many of those to catch theoretical issues. I can think of
-> > more like ASSERT_HARMLESS_COUNTERS() because the worry about one day someone
-> > might change the code to use counters from printing out information to making
-> > important MM heuristic decisions. Then, we might end up with those too many
-> > macros situation again. The list goes on, ASSERT_COMPARE_ZERO_NOLOOP(),
-> > ASSERT_SINGLE_BIT() etc.
-> 
-> I'm sorry, but the above don't assert any quantifiable properties in the code.
-> 
-> What we want is to be able to catch bugs that violate the *current*
-> properties of the code *today*. A very real property of the code
-> *today* is that nobody should modify zonenum without taking a lock. If
-> you mark the access here, there is no tool that can help you. I'm
-> trying to change that.
-> 
-> The fact that we have bits that can be modified locklessly and some
-> that can't is an inconvenience, but can be solved.
-> 
-> Makes sense?
+Looks good!
 
-OK, go ahead adding it if you really feel like. I'd hope this is not the
-Pandora's box where people will eventually find more way to assert quantifiable
-properties in the code only to address theoretical issues...
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+regards,
+dan carpenter
 
-> 
-> Thanks,
-> -- Marco
-> 
-> > On the other hand, maybe to take a more pragmatic approach that if there are
-> > strong evidences that developers could easily make mistakes in a certain place,
-> > then we could add a new macro, so the next time Joe developer wants to a new
-> > macro, he/she has to provide the same strong justifications?
-> > 
-> > > 
-> > > > > 
-> > > > > There is no way to automatically infer all over the kernel which bits
-> > > > > we care about, and the most reliable is to be explicit about it. I
-> > > > > don't see a problem with it per se.
-> > > > > 
-> > > > > Thanks,
-> > > > > -- Marco
