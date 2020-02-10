@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D16F81574E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:38:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5A2B15757E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:41:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728499AbgBJMgo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:36:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53642 "EHLO mail.kernel.org"
+        id S1729979AbgBJMlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:41:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728171AbgBJMfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:35:55 -0500
+        id S1728628AbgBJMip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:45 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C86B520842;
-        Mon, 10 Feb 2020 12:35:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BBB720661;
+        Mon, 10 Feb 2020 12:38:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338154;
-        bh=CXxmVY+nxb2f/jpfQHGDhXuKwN55MSDFB94VvBcwYrw=;
+        s=default; t=1581338324;
+        bh=qU62kB4pfng1HB7a6xVFHm3ZLfG8zHz00XM/HwixwVM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zdNFM6VFdLWl3OfP+WbvOY6T1Ielxg3YJjZLuuIKYBveyNLOjQrhm9Es4ZG/r3esD
-         EDJ1vrzIUy2/RO5pFEXgmV6HU2+hzQE553joZKZMYBS1OHwMxiroQ1xNLvdHaQuaJ+
-         VsACl/e/5da7/BofxzuwZsSNiA67B1CsO/E72qs0=
+        b=c4iSOwA5CObWPv8eDVOBqYgA64CnNp4bGoyjIMPsNnty4xKgZ+o5ttjk/K7V0YAU4
+         KwifbYkYnIdoZmYNrTLys9ZQFV755bi/lX6kxwlyyYSA3bRwvE2Jpwt5tARM4IR7I9
+         mkriN8cYRaKyKZpMdLQJC6yc7mcawKJJ2NpPfQUI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 121/195] eventfd: track eventfd_signal() recursion depth
+        stable@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.4 223/309] KVM: x86: Ensure guests FPU state is loaded when accessing for emulation
 Date:   Mon, 10 Feb 2020 04:32:59 -0800
-Message-Id: <20200210122317.199809561@linuxfoundation.org>
+Message-Id: <20200210122427.988080745@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,102 +44,184 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit b5e683d5cab8cd433b06ae178621f083cabd4f63 upstream.
+commit a7baead7e312f5a05381d68585fb6dc68e19e90f upstream.
 
-eventfd use cases from aio and io_uring can deadlock due to circular
-or resursive calling, when eventfd_signal() tries to grab the waitqueue
-lock. On top of that, it's also possible to construct notification
-chains that are deep enough that we could blow the stack.
+Lock the FPU regs and reload the current thread's FPU state, which holds
+the guest's FPU state, to the CPU registers if necessary prior to
+accessing guest FPU state as part of emulation.  kernel_fpu_begin() can
+be called from softirq context, therefore KVM must ensure softirqs are
+disabled (locking the FPU regs disables softirqs) when touching CPU FPU
+state.
 
-Add a percpu counter that tracks the percpu recursion depth, warn if we
-exceed it. The counter is also exposed so that users of eventfd_signal()
-can do the right thing if it's non-zero in the context where it is
-called.
+Note, for all intents and purposes this reverts commit 6ab0b9feb82a7
+("x86,kvm: remove KVM emulator get_fpu / put_fpu"), but at the time it
+was applied, removing get/put_fpu() was correct.  The re-introduction
+of {get,put}_fpu() is necessitated by the deferring of FPU state load.
 
-Cc: stable@vger.kernel.org # 4.19+
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 5f409e20b7945 ("x86/fpu: Defer FPU state load until return to userspace")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/eventfd.c            |   15 +++++++++++++++
- include/linux/eventfd.h |   14 ++++++++++++++
- 2 files changed, 29 insertions(+)
+ arch/x86/kvm/emulate.c |   39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -22,6 +22,8 @@
- #include <linux/proc_fs.h>
- #include <linux/seq_file.h>
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -22,6 +22,7 @@
+ #include "kvm_cache_regs.h"
+ #include <asm/kvm_emulate.h>
+ #include <linux/stringify.h>
++#include <asm/fpu/api.h>
+ #include <asm/debugreg.h>
+ #include <asm/nospec-branch.h>
  
-+DEFINE_PER_CPU(int, eventfd_wake_count);
-+
- struct eventfd_ctx {
- 	struct kref kref;
- 	wait_queue_head_t wqh;
-@@ -55,12 +57,25 @@ __u64 eventfd_signal(struct eventfd_ctx
- {
- 	unsigned long flags;
- 
-+	/*
-+	 * Deadlock or stack overflow issues can happen if we recurse here
-+	 * through waitqueue wakeup handlers. If the caller users potentially
-+	 * nested waitqueues with custom wakeup handlers, then it should
-+	 * check eventfd_signal_count() before calling this function. If
-+	 * it returns true, the eventfd_signal() call should be deferred to a
-+	 * safe context.
-+	 */
-+	if (WARN_ON_ONCE(this_cpu_read(eventfd_wake_count)))
-+		return 0;
-+
- 	spin_lock_irqsave(&ctx->wqh.lock, flags);
-+	this_cpu_inc(eventfd_wake_count);
- 	if (ULLONG_MAX - ctx->count < n)
- 		n = ULLONG_MAX - ctx->count;
- 	ctx->count += n;
- 	if (waitqueue_active(&ctx->wqh))
- 		wake_up_locked_poll(&ctx->wqh, EPOLLIN);
-+	this_cpu_dec(eventfd_wake_count);
- 	spin_unlock_irqrestore(&ctx->wqh.lock, flags);
- 
- 	return n;
---- a/include/linux/eventfd.h
-+++ b/include/linux/eventfd.h
-@@ -12,6 +12,8 @@
- #include <linux/fcntl.h>
- #include <linux/wait.h>
- #include <linux/err.h>
-+#include <linux/percpu-defs.h>
-+#include <linux/percpu.h>
- 
- /*
-  * CAREFUL: Check include/uapi/asm-generic/fcntl.h when defining
-@@ -40,6 +42,13 @@ __u64 eventfd_signal(struct eventfd_ctx
- int eventfd_ctx_remove_wait_queue(struct eventfd_ctx *ctx, wait_queue_entry_t *wait,
- 				  __u64 *cnt);
- 
-+DECLARE_PER_CPU(int, eventfd_wake_count);
-+
-+static inline bool eventfd_signal_count(void)
-+{
-+	return this_cpu_read(eventfd_wake_count);
-+}
-+
- #else /* CONFIG_EVENTFD */
- 
- /*
-@@ -68,6 +77,11 @@ static inline int eventfd_ctx_remove_wai
- 	return -ENOSYS;
+@@ -1075,8 +1076,23 @@ static void fetch_register_operand(struc
+ 	}
  }
  
-+static inline bool eventfd_signal_count(void)
++static void emulator_get_fpu(void)
 +{
-+	return false;
++	fpregs_lock();
++
++	fpregs_assert_state_consistent();
++	if (test_thread_flag(TIF_NEED_FPU_LOAD))
++		switch_fpu_return();
 +}
 +
++static void emulator_put_fpu(void)
++{
++	fpregs_unlock();
++}
++
+ static void read_sse_reg(struct x86_emulate_ctxt *ctxt, sse128_t *data, int reg)
+ {
++	emulator_get_fpu();
+ 	switch (reg) {
+ 	case 0: asm("movdqa %%xmm0, %0" : "=m"(*data)); break;
+ 	case 1: asm("movdqa %%xmm1, %0" : "=m"(*data)); break;
+@@ -1098,11 +1114,13 @@ static void read_sse_reg(struct x86_emul
  #endif
+ 	default: BUG();
+ 	}
++	emulator_put_fpu();
+ }
  
- #endif /* _LINUX_EVENTFD_H */
+ static void write_sse_reg(struct x86_emulate_ctxt *ctxt, sse128_t *data,
+ 			  int reg)
+ {
++	emulator_get_fpu();
+ 	switch (reg) {
+ 	case 0: asm("movdqa %0, %%xmm0" : : "m"(*data)); break;
+ 	case 1: asm("movdqa %0, %%xmm1" : : "m"(*data)); break;
+@@ -1124,10 +1142,12 @@ static void write_sse_reg(struct x86_emu
+ #endif
+ 	default: BUG();
+ 	}
++	emulator_put_fpu();
+ }
+ 
+ static void read_mmx_reg(struct x86_emulate_ctxt *ctxt, u64 *data, int reg)
+ {
++	emulator_get_fpu();
+ 	switch (reg) {
+ 	case 0: asm("movq %%mm0, %0" : "=m"(*data)); break;
+ 	case 1: asm("movq %%mm1, %0" : "=m"(*data)); break;
+@@ -1139,10 +1159,12 @@ static void read_mmx_reg(struct x86_emul
+ 	case 7: asm("movq %%mm7, %0" : "=m"(*data)); break;
+ 	default: BUG();
+ 	}
++	emulator_put_fpu();
+ }
+ 
+ static void write_mmx_reg(struct x86_emulate_ctxt *ctxt, u64 *data, int reg)
+ {
++	emulator_get_fpu();
+ 	switch (reg) {
+ 	case 0: asm("movq %0, %%mm0" : : "m"(*data)); break;
+ 	case 1: asm("movq %0, %%mm1" : : "m"(*data)); break;
+@@ -1154,6 +1176,7 @@ static void write_mmx_reg(struct x86_emu
+ 	case 7: asm("movq %0, %%mm7" : : "m"(*data)); break;
+ 	default: BUG();
+ 	}
++	emulator_put_fpu();
+ }
+ 
+ static int em_fninit(struct x86_emulate_ctxt *ctxt)
+@@ -1161,7 +1184,9 @@ static int em_fninit(struct x86_emulate_
+ 	if (ctxt->ops->get_cr(ctxt, 0) & (X86_CR0_TS | X86_CR0_EM))
+ 		return emulate_nm(ctxt);
+ 
++	emulator_get_fpu();
+ 	asm volatile("fninit");
++	emulator_put_fpu();
+ 	return X86EMUL_CONTINUE;
+ }
+ 
+@@ -1172,7 +1197,9 @@ static int em_fnstcw(struct x86_emulate_
+ 	if (ctxt->ops->get_cr(ctxt, 0) & (X86_CR0_TS | X86_CR0_EM))
+ 		return emulate_nm(ctxt);
+ 
++	emulator_get_fpu();
+ 	asm volatile("fnstcw %0": "+m"(fcw));
++	emulator_put_fpu();
+ 
+ 	ctxt->dst.val = fcw;
+ 
+@@ -1186,7 +1213,9 @@ static int em_fnstsw(struct x86_emulate_
+ 	if (ctxt->ops->get_cr(ctxt, 0) & (X86_CR0_TS | X86_CR0_EM))
+ 		return emulate_nm(ctxt);
+ 
++	emulator_get_fpu();
+ 	asm volatile("fnstsw %0": "+m"(fsw));
++	emulator_put_fpu();
+ 
+ 	ctxt->dst.val = fsw;
+ 
+@@ -4094,8 +4123,12 @@ static int em_fxsave(struct x86_emulate_
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
+ 
++	emulator_get_fpu();
++
+ 	rc = asm_safe("fxsave %[fx]", , [fx] "+m"(fx_state));
+ 
++	emulator_put_fpu();
++
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
+ 
+@@ -4138,6 +4171,8 @@ static int em_fxrstor(struct x86_emulate
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
+ 
++	emulator_get_fpu();
++
+ 	if (size < __fxstate_size(16)) {
+ 		rc = fxregs_fixup(&fx_state, size);
+ 		if (rc != X86EMUL_CONTINUE)
+@@ -4153,6 +4188,8 @@ static int em_fxrstor(struct x86_emulate
+ 		rc = asm_safe("fxrstor %[fx]", : [fx] "m"(fx_state));
+ 
+ out:
++	emulator_put_fpu();
++
+ 	return rc;
+ }
+ 
+@@ -5467,7 +5504,9 @@ static int flush_pending_x87_faults(stru
+ {
+ 	int rc;
+ 
++	emulator_get_fpu();
+ 	rc = asm_safe("fwait");
++	emulator_put_fpu();
+ 
+ 	if (unlikely(rc != X86EMUL_CONTINUE))
+ 		return emulate_exception(ctxt, MF_VECTOR, 0, false);
 
 
