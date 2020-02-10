@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8465C157AAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:24:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC134157903
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:13:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729887AbgBJNYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:24:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57880 "EHLO mail.kernel.org"
+        id S1728260AbgBJMir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:38:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728000AbgBJMhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:03 -0500
+        id S1728229AbgBJMhE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:04 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18702208C4;
+        by mail.kernel.org (Postfix) with ESMTPSA id 96C2D20838;
         Mon, 10 Feb 2020 12:37:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1581338223;
-        bh=Ij0hfG6Hsb9nxUaFvyNt85tsg8GkDcEXtR5HNI+GKqU=;
+        bh=7bro7edFsBzjTkeA0W+QB+A2B3KAv90QXiYmt5hQbTg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X+8DMkF8vGQNX58sUJmEKDvuhUCY8b/ILcqffeemsiLYMV8BP1Qbz7dptpewwyn2i
-         4rj4nf8iriMWlKRslNkBOgUXWg1sxtKyoJgvqvSjFi7uJpv+yvGOnchdKr5IlxBqM8
-         zceMNeZKbOy+tk1jo8Qf9TSmrhSyLlqP5RrtCq6k=
+        b=bFNYZQQt37ys2XiuChmCRN+gcgwus2J0k3dtDm+yN+iHxd3EpiSRjoerG5sToXaE+
+         gQnUnYE1W3jU8MPUyOR2NIcd8GdPtAmX+YrfzwFNRcwWJmsongujB6wBA7e59sShmR
+         vyKXtUfmgV553M0TmKarMFBDD4Pif6IJqG9/U43Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kevin Hao <haokexin@gmail.com>,
-        Marc Zyngier <maz@kernel.org>
-Subject: [PATCH 5.4 059/309] irqdomain: Fix a memory leak in irq_domain_push_irq()
-Date:   Mon, 10 Feb 2020 04:30:15 -0800
-Message-Id: <20200210122411.636308109@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Neelima Krishnan <neelima.krishnan@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH 5.4 060/309] x86/cpu: Update cached HLE state on write to TSX_CTRL_CPUID_CLEAR
+Date:   Mon, 10 Feb 2020 04:30:16 -0800
+Message-Id: <20200210122411.717497217@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
 References: <20200210122406.106356946@linuxfoundation.org>
@@ -43,54 +47,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kevin Hao <haokexin@gmail.com>
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 
-commit 0f394daef89b38d58c91118a2b08b8a1b316703b upstream.
+commit 5efc6fa9044c3356d6046c6e1da6d02572dbed6b upstream.
 
-Fix a memory leak reported by kmemleak:
-unreferenced object 0xffff000bc6f50e80 (size 128):
-  comm "kworker/23:2", pid 201, jiffies 4294894947 (age 942.132s)
-  hex dump (first 32 bytes):
-    00 00 00 00 41 00 00 00 86 c0 03 00 00 00 00 00  ....A...........
-    00 a0 b2 c6 0b 00 ff ff 40 51 fd 10 00 80 ff ff  ........@Q......
-  backtrace:
-    [<00000000e62d2240>] kmem_cache_alloc_trace+0x1a4/0x320
-    [<00000000279143c9>] irq_domain_push_irq+0x7c/0x188
-    [<00000000d9f4c154>] thunderx_gpio_probe+0x3ac/0x438
-    [<00000000fd09ec22>] pci_device_probe+0xe4/0x198
-    [<00000000d43eca75>] really_probe+0xdc/0x320
-    [<00000000d3ebab09>] driver_probe_device+0x5c/0xf0
-    [<000000005b3ecaa0>] __device_attach_driver+0x88/0xc0
-    [<000000004e5915f5>] bus_for_each_drv+0x7c/0xc8
-    [<0000000079d4db41>] __device_attach+0xe4/0x140
-    [<00000000883bbda9>] device_initial_probe+0x18/0x20
-    [<000000003be59ef6>] bus_probe_device+0x98/0xa0
-    [<0000000039b03d3f>] deferred_probe_work_func+0x74/0xa8
-    [<00000000870934ce>] process_one_work+0x1c8/0x470
-    [<00000000e3cce570>] worker_thread+0x1f8/0x428
-    [<000000005d64975e>] kthread+0xfc/0x128
-    [<00000000f0eaa764>] ret_from_fork+0x10/0x18
+/proc/cpuinfo currently reports Hardware Lock Elision (HLE) feature to
+be present on boot cpu even if it was disabled during the bootup. This
+is because cpuinfo_x86->x86_capability HLE bit is not updated after TSX
+state is changed via the new MSR IA32_TSX_CTRL.
 
-Fixes: 495c38d3001f ("irqdomain: Add irq_domain_{push,pop}_irq() functions")
-Signed-off-by: Kevin Hao <haokexin@gmail.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
+Update the cached HLE bit also since it is expected to change after an
+update to CPUID_CLEAR bit in MSR IA32_TSX_CTRL.
+
+Fixes: 95c5824f75f3 ("x86/cpu: Add a "tsx=" cmdline option with TSX disabled by default")
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Neelima Krishnan <neelima.krishnan@intel.com>
+Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20200120043547.22271-1-haokexin@gmail.com
+Link: https://lore.kernel.org/r/2529b99546294c893dfa1c89e2b3e46da3369a59.1578685425.git.pawan.kumar.gupta@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/irq/irqdomain.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kernel/cpu/tsx.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -1459,6 +1459,7 @@ int irq_domain_push_irq(struct irq_domai
- 	if (rv) {
- 		/* Restore the original irq_data. */
- 		*root_irq_data = *child_irq_data;
-+		kfree(child_irq_data);
- 		goto error;
- 	}
+--- a/arch/x86/kernel/cpu/tsx.c
++++ b/arch/x86/kernel/cpu/tsx.c
+@@ -115,11 +115,12 @@ void __init tsx_init(void)
+ 		tsx_disable();
  
+ 		/*
+-		 * tsx_disable() will change the state of the
+-		 * RTM CPUID bit.  Clear it here since it is now
+-		 * expected to be not set.
++		 * tsx_disable() will change the state of the RTM and HLE CPUID
++		 * bits. Clear them here since they are now expected to be not
++		 * set.
+ 		 */
+ 		setup_clear_cpu_cap(X86_FEATURE_RTM);
++		setup_clear_cpu_cap(X86_FEATURE_HLE);
+ 	} else if (tsx_ctrl_state == TSX_CTRL_ENABLE) {
+ 
+ 		/*
+@@ -131,10 +132,10 @@ void __init tsx_init(void)
+ 		tsx_enable();
+ 
+ 		/*
+-		 * tsx_enable() will change the state of the
+-		 * RTM CPUID bit.  Force it here since it is now
+-		 * expected to be set.
++		 * tsx_enable() will change the state of the RTM and HLE CPUID
++		 * bits. Force them here since they are now expected to be set.
+ 		 */
+ 		setup_force_cpu_cap(X86_FEATURE_RTM);
++		setup_force_cpu_cap(X86_FEATURE_HLE);
+ 	}
+ }
 
 
