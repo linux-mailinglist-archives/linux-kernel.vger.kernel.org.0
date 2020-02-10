@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3C9215762D
+	by mail.lfdr.de (Postfix) with ESMTP id 5C44C15762C
 	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730765AbgBJMpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:45:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41692 "EHLO mail.kernel.org"
+        id S1730319AbgBJMpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:45:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729804AbgBJMku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:50 -0500
+        id S1729817AbgBJMkv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:51 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35BBB20733;
-        Mon, 10 Feb 2020 12:40:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE2622085B;
+        Mon, 10 Feb 2020 12:40:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338449;
-        bh=b4HgXi/kmF73E2ta0DmMNsR3/6Ln/Jv6457b+UhrBsk=;
+        s=default; t=1581338450;
+        bh=9vvqBPxbltiYH7PyWIzMbj8xY2dYN+f/9a4CZVWzPik=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y32/7GSi4Svb86tndctvyPFzhqj7b2pD78da6f1xZoinsKZmxDd0MHBUSEUOAX1BH
-         SUuadg14DpLM2QjGuboV52EgZjXt9JLMdEVR6h+VT5FwRjT2Ed3GVT950elFV3Qq4v
-         x3/nosTzQyrqwaOBnPPMHDLa3EgmmEnZmgUhdrtI=
+        b=wt+xtydkFx3OvYCYIRP/ajXi2w3RxU5LbzculH2NOE7TqP0MVqFBCwPiMnLq0H8WG
+         Z+l5Gy9EP+6wqxw8irNG2Hj4ilks6RABUOu2Mb6jpqmwSq4yswYonqYyLhL516xMhR
+         3kQxjbOmYG4atAatlQJ4qroxRb9hswCbDAs2IoH0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 5.5 193/367] ext4: fix deadlock allocating crypto bounce page from mempool
-Date:   Mon, 10 Feb 2020 04:31:46 -0800
-Message-Id: <20200210122442.412464697@linuxfoundation.org>
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.5 196/367] Btrfs: make deduplication with range including the last block work
+Date:   Mon, 10 Feb 2020 04:31:49 -0800
+Message-Id: <20200210122442.678567317@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -43,77 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 547c556f4db7c09447ecf5f833ab6aaae0c5ab58 upstream.
+commit 831d2fa25ab8e27592b1b0268dae6f2dfaf7cc43 upstream.
 
-ext4_writepages() on an encrypted file has to encrypt the data, but it
-can't modify the pagecache pages in-place, so it encrypts the data into
-bounce pages and writes those instead.  All bounce pages are allocated
-from a mempool using GFP_NOFS.
+Since btrfs was migrated to use the generic VFS helpers for clone and
+deduplication, it stopped allowing for the last block of a file to be
+deduplicated when the source file size is not sector size aligned (when
+eof is somewhere in the middle of the last block). There are two reasons
+for that:
 
-This is not correct use of a mempool, and it can deadlock.  This is
-because GFP_NOFS includes __GFP_DIRECT_RECLAIM, which enables the "never
-fail" mode for mempool_alloc() where a failed allocation will fall back
-to waiting for one of the preallocated elements in the pool.
+1) The generic code always rounds down, to a multiple of the block size,
+   the range's length for deduplications. This means we end up never
+   deduplicating the last block when the eof is not block size aligned,
+   even for the safe case where the destination range's end offset matches
+   the destination file's size. That rounding down operation is done at
+   generic_remap_check_len();
 
-But since this mode is used for all a bio's pages and not just the
-first, it can deadlock waiting for pages already in the bio to be freed.
+2) Because of that, the btrfs specific code does not expect anymore any
+   non-aligned range length's for deduplication and therefore does not
+   work if such nona-aligned length is given.
 
-This deadlock can be reproduced by patching mempool_alloc() to pretend
-that pool->alloc() always fails (so that it always falls back to the
-preallocations), and then creating an encrypted file of size > 128 KiB.
+This patch addresses that second part, and it depends on a patch that
+fixes generic_remap_check_len(), in the VFS, which was submitted ealier
+and has the following subject:
 
-Fix it by only using GFP_NOFS for the first page in the bio.  For
-subsequent pages just use GFP_NOWAIT, and if any of those fail, just
-submit the bio and start a new one.
+  "fs: allow deduplication of eof block into the end of the destination file"
 
-This will need to be fixed in f2fs too, but that's less straightforward.
+These two patches address reports from users that started seeing lower
+deduplication rates due to the last block never being deduplicated when
+the file size is not aligned to the filesystem's block size.
 
-Fixes: c9af28fdd449 ("ext4 crypto: don't let data integrity writebacks fail with ENOMEM")
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Link: https://lore.kernel.org/r/20191231181149.47619-1-ebiggers@kernel.org
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Link: https://lore.kernel.org/linux-btrfs/2019-1576167349.500456@svIo.N5dq.dFFD/
+CC: stable@vger.kernel.org # 5.1+
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/page-io.c |   19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ fs/btrfs/ioctl.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -512,17 +512,26 @@ int ext4_bio_write_page(struct ext4_io_s
- 		gfp_t gfp_flags = GFP_NOFS;
- 		unsigned int enc_bytes = round_up(len, i_blocksize(inode));
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -3243,6 +3243,7 @@ static void btrfs_double_extent_lock(str
+ static int btrfs_extent_same_range(struct inode *src, u64 loff, u64 len,
+ 				   struct inode *dst, u64 dst_loff)
+ {
++	const u64 bs = BTRFS_I(src)->root->fs_info->sb->s_blocksize;
+ 	int ret;
  
-+		/*
-+		 * Since bounce page allocation uses a mempool, we can only use
-+		 * a waiting mask (i.e. request guaranteed allocation) on the
-+		 * first page of the bio.  Otherwise it can deadlock.
-+		 */
-+		if (io->io_bio)
-+			gfp_flags = GFP_NOWAIT | __GFP_NOWARN;
- 	retry_encrypt:
- 		bounce_page = fscrypt_encrypt_pagecache_blocks(page, enc_bytes,
- 							       0, gfp_flags);
- 		if (IS_ERR(bounce_page)) {
- 			ret = PTR_ERR(bounce_page);
--			if (ret == -ENOMEM && wbc->sync_mode == WB_SYNC_ALL) {
--				if (io->io_bio) {
-+			if (ret == -ENOMEM &&
-+			    (io->io_bio || wbc->sync_mode == WB_SYNC_ALL)) {
-+				gfp_flags = GFP_NOFS;
-+				if (io->io_bio)
- 					ext4_io_submit(io);
--					congestion_wait(BLK_RW_ASYNC, HZ/50);
--				}
--				gfp_flags |= __GFP_NOFAIL;
-+				else
-+					gfp_flags |= __GFP_NOFAIL;
-+				congestion_wait(BLK_RW_ASYNC, HZ/50);
- 				goto retry_encrypt;
- 			}
+ 	/*
+@@ -3250,7 +3251,7 @@ static int btrfs_extent_same_range(struc
+ 	 * source range to serialize with relocation.
+ 	 */
+ 	btrfs_double_extent_lock(src, loff, dst, dst_loff, len);
+-	ret = btrfs_clone(src, dst, loff, len, len, dst_loff, 1);
++	ret = btrfs_clone(src, dst, loff, len, ALIGN(len, bs), dst_loff, 1);
+ 	btrfs_double_extent_unlock(src, loff, dst, dst_loff, len);
  
+ 	return ret;
 
 
