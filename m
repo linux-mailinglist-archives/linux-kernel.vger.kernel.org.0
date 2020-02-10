@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C02E1574F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:38:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F197C157710
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:58:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbgBJMh2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:37:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55012 "EHLO mail.kernel.org"
+        id S1729521AbgBJM5T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:57:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728289AbgBJMgN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:13 -0500
+        id S1728654AbgBJMlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:41:31 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 839422168B;
-        Mon, 10 Feb 2020 12:36:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6044620838;
+        Mon, 10 Feb 2020 12:41:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338172;
-        bh=t1b8BIai9fdlEGOYSa7En/dbPbIjI40xLMeAasFzZKI=;
+        s=default; t=1581338491;
+        bh=t8k9Q5kSvPI0BJMlh67Q6NDygDBgDn1hjsy20lgJwd0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E5IbeQNCUM8asEm17EdtIDmCoJoBpCc9orQZLYbxG76Ga8Ro7GmmUA2739mbuT5U0
-         tmYekeEkV59w9OlwOJDwq3aq/IX3fPWW1nE1aS4TdvdlfcBIIN5V6Si0oYPeQQJXAV
-         tN6TU2p93GxWWh3igEsLuPv4HmThDQpftm7Jfdjk=
+        b=FgFN02/oxT+7knIIEFZokAmwYiVK7WGoxDlbyNCVpNaSelHBrDkQ3B3WFpL12TmpM
+         F0tllP7ymaFyLqXr0xXxsM45nKPet0SbAGRMwZDSJtpbOTC4Ev0qeXPmKTM3hpYvfU
+         MGAnoGsbu5nHiKY7NsZvs1mbN32dB7iPDnUwjHo4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
-        Marios Pomonis <pomonis@google.com>,
-        Andrew Honig <ahonig@google.com>,
-        Jim Mattson <jmattson@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.19 130/195] KVM: x86: Protect MSR-based index computations in pmu.h from Spectre-v1/L1TF attacks
-Date:   Mon, 10 Feb 2020 04:33:08 -0800
-Message-Id: <20200210122318.023543505@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 5.5 276/367] fix up iter on short count in fuse_direct_io()
+Date:   Mon, 10 Feb 2020 04:33:09 -0800
+Message-Id: <20200210122449.640311198@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,69 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marios Pomonis <pomonis@google.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 13c5183a4e643cc2b03a22d0e582c8e17bb7457d upstream.
+commit f658adeea45e430a24c7a157c3d5448925ac2038 upstream.
 
-This fixes a Spectre-v1/L1TF vulnerability in the get_gp_pmc() and
-get_fixed_pmc() functions.
-They both contain index computations based on the (attacker-controlled)
-MSR number.
+fuse_direct_io() can end up advancing the iterator by more than the amount
+of data read or written.  This case is handled by the generic code if going
+through ->direct_IO(), but not in the FOPEN_DIRECT_IO case.
 
-Fixes: 25462f7f5295 ("KVM: x86/vPMU: Define kvm_pmu_ops to support vPMU function dispatch")
+Fix by reverting the extra bytes from the iterator in case of error or a
+short count.
 
-Signed-off-by: Nick Finco <nifi@google.com>
-Signed-off-by: Marios Pomonis <pomonis@google.com>
-Reviewed-by: Andrew Honig <ahonig@google.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+To test: install lxcfs, then the following testcase
+  int fd = open("/var/lib/lxcfs/proc/uptime", O_RDONLY);
+  sendfile(1, fd, NULL, 16777216);
+  sendfile(1, fd, NULL, 16777216);
+will spew WARN_ON() in iov_iter_pipe().
+
+Reported-by: Peter Geis <pgwipeout@gmail.com>
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: 3c3db095b68c ("fuse: use iov_iter based generic splice helpers")
+Cc: <stable@vger.kernel.org> # v5.1
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/pmu.h |   18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ fs/fuse/file.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kvm/pmu.h
-+++ b/arch/x86/kvm/pmu.h
-@@ -2,6 +2,8 @@
- #ifndef __KVM_X86_PMU_H
- #define __KVM_X86_PMU_H
- 
-+#include <linux/nospec.h>
-+
- #define vcpu_to_pmu(vcpu) (&(vcpu)->arch.pmu)
- #define pmu_to_vcpu(pmu)  (container_of((pmu), struct kvm_vcpu, arch.pmu))
- #define pmc_to_pmu(pmc)   (&(pmc)->vcpu->arch.pmu)
-@@ -86,8 +88,12 @@ static inline bool pmc_is_enabled(struct
- static inline struct kvm_pmc *get_gp_pmc(struct kvm_pmu *pmu, u32 msr,
- 					 u32 base)
- {
--	if (msr >= base && msr < base + pmu->nr_arch_gp_counters)
--		return &pmu->gp_counters[msr - base];
-+	if (msr >= base && msr < base + pmu->nr_arch_gp_counters) {
-+		u32 index = array_index_nospec(msr - base,
-+					       pmu->nr_arch_gp_counters);
-+
-+		return &pmu->gp_counters[index];
-+	}
- 
- 	return NULL;
- }
-@@ -97,8 +103,12 @@ static inline struct kvm_pmc *get_fixed_
- {
- 	int base = MSR_CORE_PERF_FIXED_CTR0;
- 
--	if (msr >= base && msr < base + pmu->nr_arch_fixed_counters)
--		return &pmu->fixed_counters[msr - base];
-+	if (msr >= base && msr < base + pmu->nr_arch_fixed_counters) {
-+		u32 index = array_index_nospec(msr - base,
-+					       pmu->nr_arch_fixed_counters);
-+
-+		return &pmu->fixed_counters[index];
-+	}
- 
- 	return NULL;
- }
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1465,6 +1465,7 @@ ssize_t fuse_direct_io(struct fuse_io_pr
+ 		}
+ 		ia = NULL;
+ 		if (nres < 0) {
++			iov_iter_revert(iter, nbytes);
+ 			err = nres;
+ 			break;
+ 		}
+@@ -1473,8 +1474,10 @@ ssize_t fuse_direct_io(struct fuse_io_pr
+ 		count -= nres;
+ 		res += nres;
+ 		pos += nres;
+-		if (nres != nbytes)
++		if (nres != nbytes) {
++			iov_iter_revert(iter, nbytes - nres);
+ 			break;
++		}
+ 		if (count) {
+ 			max_pages = iov_iter_npages(iter, fc->max_pages);
+ 			ia = fuse_io_alloc(io, max_pages);
 
 
