@@ -2,186 +2,293 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E78E1157187
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 10:21:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D68815718E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 10:22:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727436AbgBJJVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 04:21:14 -0500
-Received: from mga04.intel.com ([192.55.52.120]:34805 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725468AbgBJJVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 04:21:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Feb 2020 01:21:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,424,1574150400"; 
-   d="scan'208";a="227130673"
-Received: from liujing-mobl1.ccr.corp.intel.com (HELO [10.249.174.64]) ([10.249.174.64])
-  by fmsmga008.fm.intel.com with ESMTP; 10 Feb 2020 01:21:12 -0800
-Subject: Re: [virtio-dev][PATCH v1 1/2] virtio-mmio: Add MSI and different
- notification address support
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     virtio-dev@lists.oasis-open.org, slp@redhat.com,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Zha Bin <zhabin@linux.alibaba.com>,
-        Liu Jiang <gerry@linux.alibaba.com>
-References: <1576855504-34947-1-git-send-email-jing2.liu@linux.intel.com>
- <20200106161836.GB350142@stefanha-x1.localdomain>
- <f691fb60-8f59-e827-6a5f-569db29e0a39@linux.intel.com>
- <20200110095217.GB573283@stefanha-x1.localdomain>
- <801cf09a-759f-b6bf-e71b-02dbf0f1d513@linux.intel.com>
- <20200122165637.GD677983@stefanha-x1.localdomain>
-From:   "Liu, Jing2" <jing2.liu@linux.intel.com>
-Message-ID: <46df15c3-5643-f3f1-b0c2-36c451d10875@linux.intel.com>
-Date:   Mon, 10 Feb 2020 17:21:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1727541AbgBJJWH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 04:22:07 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:41173 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725468AbgBJJWH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 04:22:07 -0500
+Received: by mail-qk1-f194.google.com with SMTP id d11so5786310qko.8;
+        Mon, 10 Feb 2020 01:22:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=o4McWFHuhZIYieLna2S1luzgx2zYWjGOpx5Lx4d+d38=;
+        b=l/VmYLh12cIlsgbpQbG9uih4//FNjiS4OCwIga8CNbw2IU7lyDSw3adr4a9L0naK73
+         1v8AKU4R7aaCIy2S9K0gUYs8is+9PEJMH6RpB4SCv6OzCfMkaqPaZWzuwbjV2frHqoh1
+         f0IaFTsFvnEoaKsQhs/dXOXrDiTxvCxSKhMfXg3tr3PwS+8eBcd6ofwk4XFnNK74SifE
+         /q0MeY/CBI/9eFSozeGiMLSQJy8iV9hJdb3yqAr9WfZgi38dmlYXP/m7FCkeBg98y7fZ
+         vJ2a9/Uh5eqummsMkAUyhvbQ0CW6cVrXUi8TZAnbcI/77g4lWxjwJE62yFxJRDV6pTaX
+         zFNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o4McWFHuhZIYieLna2S1luzgx2zYWjGOpx5Lx4d+d38=;
+        b=PpEF6dTeHWV4RZbGiCRKz5u4F9RuNqkIW4IKuZcMULC/LFtjHPky1gLNZ8hpWccA29
+         DxjIXj1qMzgouqyYrPyRGmZ9OhXBRkH1BDtFOqU6q5fQRG6DzKhwW7JMXEBUmDag31cc
+         Q8BpImHVnlI03rY2ztreBJumNmONT4Mo/S/smPIfxoWkleneJxw93ta1Fq9uwJn9KJRR
+         izfSpkE6OovpnKNIyRRJi/jgXRhTZrHVzHwF+sQILfoT4yPoJfFNh1wt8qmOKbd3YLwp
+         ocJBmivXEAUGFl6A62k8ZUT/6ApbXqlb2JqwT+qVHW9DoLMOfbR8+IrPN+LpU6OeLyxm
+         WXtg==
+X-Gm-Message-State: APjAAAU0pO0Cw+abP2T8kPvvCco90w/G8HcGX8aE3raPVOX3BrM2PUC4
+        S1xzIgxPvS2oMevEmpkvDUgxrmQ6jiHQeBd09i8=
+X-Google-Smtp-Source: APXvYqwKuRetvAGmDdbRgiZkukS+NuF+ys7uMfVQBKtnALO3Tg3m/iAoSP9ePH6u2K3ScxIpnr66UDQSXVWhE+hk3jM=
+X-Received: by 2002:a37:8e03:: with SMTP id q3mr415235qkd.395.1581326524895;
+ Mon, 10 Feb 2020 01:22:04 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200122165637.GD677983@stefanha-x1.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <cover.1579164455.git.baolin.wang7@gmail.com> <2fbdb13a61d0db6615b8fd11ddca9106e5417dae.1579164455.git.baolin.wang7@gmail.com>
+In-Reply-To: <2fbdb13a61d0db6615b8fd11ddca9106e5417dae.1579164455.git.baolin.wang7@gmail.com>
+From:   Baolin Wang <baolin.wang7@gmail.com>
+Date:   Mon, 10 Feb 2020 17:21:53 +0800
+Message-ID: <CADBw62q-TUv-m1QKZx0ZHhDpfUe3Wo9MaumdHw-N3y3uNd6NSA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/8] block: Change the dispatch_request() API to
+ support batch requests
+To:     axboe@kernel.dk, Paolo Valente <paolo.valente@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Chunyan Zhang <zhang.lyra@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jens and Paolo,
 
-On 1/23/2020 12:56 AM, Stefan Hajnoczi wrote:
-> On Mon, Jan 13, 2020 at 07:54:06PM +0800, Liu, Jing2 wrote:
->>>>>>         \end{note}
->>>>>>       }
->>>>>>       \hline
->>>>>> @@ -1671,25 +1671,23 @@ \subsection{MMIO Device Register Layout}\label{sec:Virtio Transport Options / Vi
->>>>>>         accesses apply to the queue selected by writing to \field{QueueSel}.
->>>>>>       }
->>>>>>       \hline
->>>>>> -  \mmioreg{QueueNotify}{Queue notifier}{0x050}{W}{%
->>>>>> -    Writing a value to this register notifies the device that
->>>>>> -    there are new buffers to process in a queue.
->>>>>> +  \mmioreg{QueueNotify}{Queue notifier}{0x050}{RW}{%
->>>>>> +    Reading from the register returns the virtqueue notification configuration.
->>>>>> -    When VIRTIO_F_NOTIFICATION_DATA has not been negotiated,
->>>>>> -    the value written is the queue index.
->>>>>> +    See \ref{sec:Virtio Transport Options / Virtio Over MMIO / MMIO-specific Initialization And Device Operation / Notification Address}
->>>>>> +    for the configuration format.
->>>>>> -    When VIRTIO_F_NOTIFICATION_DATA has been negotiated,
->>>>>> -    the \field{Notification data} value has the following format:
->>>>>> +    Writing when the notification address calculated by the notification configuration
->>>>>> +    is just located at this register.
->>>>> I don't understand this sentence.  What happens when the driver writes
->>>>> to this register?
->>>> We're trying to define the notification mechanism that, driver MUST read
->>>> 0x50 to get the notification configuration
->>>>
->>>> and calculate the notify address. The writing case here is that, the notify
->>>> address is just located here e.g. notify_base=0x50, notify_mul=0.
->>> I still don't understand what this means.  It's just an English issue
->>> and it will become clear if you can rephrase what you're saying.
->> Sure, let me try to explain it. :)
->>
->> The different notification locations are calculated via the structure
->> returned by reading this register.
->>
->> le32 {
->>      notify_base : 16;
->>      notify_multiplier : 16;
->> };
->>
->> location=notify_base + queue_index * notify_multiplier
->>
->> The location might be the same when mul=0, and furthermore, it might be
->> equal to 0x50 (notify_base=0x50, notify_mul=0) so we make this register W
->> too.
->>
->> So we said, the register is RW and W is only for such scenario.
->>
->> Feel free to tell me if it's still confusing.
-> I understand now:
+On Fri, Jan 17, 2020 at 1:25 PM Baolin Wang <baolin.wang7@gmail.com> wrote:
 >
->    Devices that only require a single notify address may set
->    notify_base=0x50 and notify_multiplier=0 to use the Queue Notifier
->    register itself for notifications.  In this case the driver writes to
->    Queue Notifier to notify the device that there are new buffers in a
->    virtqueue.
+> Now some SD/MMC host controllers can support packed command or packed request,
+> that means we can package several requests to host controller at one time
+> to improve performence.
 >
-> Perhaps you could include this in the text.
+> But the blk-mq always takes one request from the scheduler and dispatch it to
+> the device, regardless of the driver or the scheduler, so there should only
+> ever be one request in the local list in blk_mq_dispatch_rq_list(), that means
+> the bd.last is always true and the driver can not use bd.last to decide if
+> there are requests are pending now in hardware queue to help to package
+> requests.
+>
+> Thus this is a preparation patch, which tries to change the dispatch_request()
+> API to allow dispatching more than one request from the scheduler.
 
-Thanks for the guide. Since v2 was sent out, we'll add such text in 
-later version.
+Do you have any comments for patch 1 and patch 2 in this patch set? Thanks.
 
-Jing
-
->>>>>> -    \lstinputlisting{notifications-le.c}
->>>>>> -
->>>>>> -    See \ref{sec:Virtqueues / Driver notifications}~\nameref{sec:Virtqueues / Driver notifications}
->>>>>> -    for the definition of the components.
->>>>>> +    See \ref{sec:Virtio Transport Options / Virtio Over MMIO / MMIO-specific Initialization And Device Operation / Available Buffer Notifications}
->>>>>> +    to see the notification data format.
->>>>>>       }
->>>>>>       \hline
->>>>>>       \mmioreg{InterruptStatus}{Interrupt status}{0x60}{R}{%
->>>>>>         Reading from this register returns a bit mask of events that
->>>>>> -    caused the device interrupt to be asserted.
->>>>>> +    caused the device interrupt to be asserted. This is only used
->>>>>> +    when MSI is not enabled.
->>>>>>         The following events are possible:
->>>>>>         \begin{description}
->>>>>>           \item[Used Buffer Notification] - bit 0 - the interrupt was asserted
->>>>>> @@ -1703,7 +1701,7 @@ \subsection{MMIO Device Register Layout}\label{sec:Virtio Transport Options / Vi
->>>>>>       \mmioreg{InterruptACK}{Interrupt acknowledge}{0x064}{W}{%
->>>>>>         Writing a value with bits set as defined in \field{InterruptStatus}
->>>>>>         to this register notifies the device that events causing
->>>>>> -    the interrupt have been handled.
->>>>>> +    the interrupt have been handled. This is only used when MSI is not enabled.
->>>>>>       }
->>>>>>       \hline
->>>>>>       \mmioreg{Status}{Device status}{0x070}{RW}{%
->>>>>> @@ -1762,6 +1760,31 @@ \subsection{MMIO Device Register Layout}\label{sec:Virtio Transport Options / Vi
->>>>>>         \field{SHMSel} is unused) results in a base address of
->>>>>>         0xffffffffffffffff.
->>>>>>       }
->>>>>> +  \hline
->>>>>> +  \mmioreg{MsiStatus}{MSI status}{0x0c0}{R}{%
->>>>>> +    Reading from this register returns the global MSI enable/disable status and maximum
->>>>>> +    number of virtqueues that device supports.
->>>>>> +    \lstinputlisting{msi-status.c}
->>>>>> +  }
->>>>> Why is it necessary to combine the number of virtqueues and global
->>>>> MSI enable/disable into a single 16-bit field?
->>>> Originally, we want this 16-bit Read-Only, so we put some RO things together
->>>> and separate
->>>>
->>>> enable setting command to next register.
->>>>
->>>>> virtio-mmio uses 32-bit registers.  It doesn't try hard to save register
->>>>> space so it's strange to do it here (11-bit number of virtqueue field
->>>>> but 32-bit QueueSel field).
->>>> In order to improve performance/save register space,  we combine some data
->>>> together.
->>>>
->>>> For example, combine MSI cmd operator (e.g. enable/disable, vector setup)
->>>> with argument (e.g. 1/0,  queue index).
->>>>
->>>> But it seems we miss the consistency with QueueSel.  So do you think if the
->>>> max queue number should be 32-bit,
->>>>
->>>> which means it must be the same with QueueSel? If so, I guess we need some
->>>> re-organization. :)
->>> I suggest following the 32-bit register size convention unless there is
->>> a specific reason why using other register sizes is absolutely necessary.
->> Yes, let's keep consistency with QueueSel and re-organize other registers.
->>
->> I feel concern why Available Buﬀer Notifcations (section describing
->> VIRTIO_F_NOTIFICATION_DATA) makes vq index as 16bit?
-> As you mentioned, the valid range of virtqueue numbers is only 16 bits
-> due to non-MMIO parts of the specification using 16 bits.
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+> ---
+>  block/bfq-iosched.c      |   12 +++++++++---
+>  block/blk-mq-sched.c     |   15 ++++-----------
+>  block/kyber-iosched.c    |   20 +++++++++++++-------
+>  block/mq-deadline.c      |   12 +++++++++---
+>  include/linux/elevator.h |    2 +-
+>  5 files changed, 36 insertions(+), 25 deletions(-)
 >
-> However, I think it makes sense to stick to the MMIO transport 32-bit
-> register size convention for consistency.  Devices just won't support
-> values above 0xffff.
+> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+> index ad4af4a..decabc4 100644
+> --- a/block/bfq-iosched.c
+> +++ b/block/bfq-iosched.c
+> @@ -4774,7 +4774,8 @@ static inline void bfq_update_dispatch_stats(struct request_queue *q,
+>                                              bool idle_timer_disabled) {}
+>  #endif /* CONFIG_BFQ_CGROUP_DEBUG */
 >
-> Stefan
+> -static struct request *bfq_dispatch_request(struct blk_mq_hw_ctx *hctx)
+> +static int bfq_dispatch_requests(struct blk_mq_hw_ctx *hctx,
+> +                                struct list_head *list)
+>  {
+>         struct bfq_data *bfqd = hctx->queue->elevator->elevator_data;
+>         struct request *rq;
+> @@ -4796,7 +4797,12 @@ static struct request *bfq_dispatch_request(struct blk_mq_hw_ctx *hctx)
+>         bfq_update_dispatch_stats(hctx->queue, rq, in_serv_queue,
+>                                   idle_timer_disabled);
+>
+> -       return rq;
+> +       if (!rq)
+> +               return 0;
+> +
+> +       list_add(&rq->queuelist, list);
+> +
+> +       return 1;
+>  }
+>
+>  /*
+> @@ -6772,7 +6778,7 @@ static ssize_t bfq_low_latency_store(struct elevator_queue *e,
+>                 .finish_request         = bfq_finish_requeue_request,
+>                 .exit_icq               = bfq_exit_icq,
+>                 .insert_requests        = bfq_insert_requests,
+> -               .dispatch_request       = bfq_dispatch_request,
+> +               .dispatch_requests      = bfq_dispatch_requests,
+>                 .next_request           = elv_rb_latter_request,
+>                 .former_request         = elv_rb_former_request,
+>                 .allow_merge            = bfq_allow_bio_merge,
+> diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
+> index ca22afd..f49f9d9 100644
+> --- a/block/blk-mq-sched.c
+> +++ b/block/blk-mq-sched.c
+> @@ -90,28 +90,21 @@ static void blk_mq_do_dispatch_sched(struct blk_mq_hw_ctx *hctx)
+>         struct request_queue *q = hctx->queue;
+>         struct elevator_queue *e = q->elevator;
+>         LIST_HEAD(rq_list);
+> +       int ret;
+>
+>         do {
+> -               struct request *rq;
+> -
+>                 if (e->type->ops.has_work && !e->type->ops.has_work(hctx))
+>                         break;
+>
+>                 if (!blk_mq_get_dispatch_budget(hctx))
+>                         break;
+>
+> -               rq = e->type->ops.dispatch_request(hctx);
+> -               if (!rq) {
+> +               ret = e->type->ops.dispatch_requests(hctx, &rq_list);
+> +               if (ret == 0) {
+>                         blk_mq_put_dispatch_budget(hctx);
+>                         break;
+>                 }
+>
+> -               /*
+> -                * Now this rq owns the budget which has to be released
+> -                * if this rq won't be queued to driver via .queue_rq()
+> -                * in blk_mq_dispatch_rq_list().
+> -                */
+> -               list_add(&rq->queuelist, &rq_list);
+>         } while (blk_mq_dispatch_rq_list(q, &rq_list, true));
+>  }
+>
+> @@ -171,7 +164,7 @@ void blk_mq_sched_dispatch_requests(struct blk_mq_hw_ctx *hctx)
+>  {
+>         struct request_queue *q = hctx->queue;
+>         struct elevator_queue *e = q->elevator;
+> -       const bool has_sched_dispatch = e && e->type->ops.dispatch_request;
+> +       const bool has_sched_dispatch = e && e->type->ops.dispatch_requests;
+>         LIST_HEAD(rq_list);
+>
+>         /* RCU or SRCU read lock is needed before checking quiesced flag */
+> diff --git a/block/kyber-iosched.c b/block/kyber-iosched.c
+> index 34dcea0..8f58434 100644
+> --- a/block/kyber-iosched.c
+> +++ b/block/kyber-iosched.c
+> @@ -796,12 +796,13 @@ static int kyber_get_domain_token(struct kyber_queue_data *kqd,
+>         return NULL;
+>  }
+>
+> -static struct request *kyber_dispatch_request(struct blk_mq_hw_ctx *hctx)
+> +static int kyber_dispatch_requests(struct blk_mq_hw_ctx *hctx,
+> +                                  struct list_head *list)
+>  {
+>         struct kyber_queue_data *kqd = hctx->queue->elevator->elevator_data;
+>         struct kyber_hctx_data *khd = hctx->sched_data;
+>         struct request *rq;
+> -       int i;
+> +       int i, ret = 0;
+>
+>         spin_lock(&khd->lock);
+>
+> @@ -811,8 +812,11 @@ static struct request *kyber_dispatch_request(struct blk_mq_hw_ctx *hctx)
+>          */
+>         if (khd->batching < kyber_batch_size[khd->cur_domain]) {
+>                 rq = kyber_dispatch_cur_domain(kqd, khd, hctx);
+> -               if (rq)
+> +               if (rq) {
+> +                       list_add(&rq->queuelist, list);
+> +                       ret = 1;
+>                         goto out;
+> +               }
+>         }
+>
+>         /*
+> @@ -832,14 +836,16 @@ static struct request *kyber_dispatch_request(struct blk_mq_hw_ctx *hctx)
+>                         khd->cur_domain++;
+>
+>                 rq = kyber_dispatch_cur_domain(kqd, khd, hctx);
+> -               if (rq)
+> +               if (rq) {
+> +                       list_add(&rq->queuelist, list);
+> +                       ret = 1;
+>                         goto out;
+> +               }
+>         }
+>
+> -       rq = NULL;
+>  out:
+>         spin_unlock(&khd->lock);
+> -       return rq;
+> +       return ret;
+>  }
+>
+>  static bool kyber_has_work(struct blk_mq_hw_ctx *hctx)
+> @@ -1020,7 +1026,7 @@ static int kyber_batching_show(void *data, struct seq_file *m)
+>                 .finish_request = kyber_finish_request,
+>                 .requeue_request = kyber_finish_request,
+>                 .completed_request = kyber_completed_request,
+> -               .dispatch_request = kyber_dispatch_request,
+> +               .dispatch_requests = kyber_dispatch_requests,
+>                 .has_work = kyber_has_work,
+>         },
+>  #ifdef CONFIG_BLK_DEBUG_FS
+> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+> index b490f47..9fbffba 100644
+> --- a/block/mq-deadline.c
+> +++ b/block/mq-deadline.c
+> @@ -378,7 +378,8 @@ static struct request *__dd_dispatch_request(struct deadline_data *dd)
+>   * different hardware queue. This is because mq-deadline has shared
+>   * state for all hardware queues, in terms of sorting, FIFOs, etc.
+>   */
+> -static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
+> +static int dd_dispatch_requests(struct blk_mq_hw_ctx *hctx,
+> +                               struct list_head *list)
+>  {
+>         struct deadline_data *dd = hctx->queue->elevator->elevator_data;
+>         struct request *rq;
+> @@ -387,7 +388,12 @@ static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
+>         rq = __dd_dispatch_request(dd);
+>         spin_unlock(&dd->lock);
+>
+> -       return rq;
+> +       if (!rq)
+> +               return 0;
+> +
+> +       list_add(&rq->queuelist, list);
+> +
+> +       return 1;
+>  }
+>
+>  static void dd_exit_queue(struct elevator_queue *e)
+> @@ -774,7 +780,7 @@ static void deadline_dispatch_stop(struct seq_file *m, void *v)
+>  static struct elevator_type mq_deadline = {
+>         .ops = {
+>                 .insert_requests        = dd_insert_requests,
+> -               .dispatch_request       = dd_dispatch_request,
+> +               .dispatch_requests      = dd_dispatch_requests,
+>                 .prepare_request        = dd_prepare_request,
+>                 .finish_request         = dd_finish_request,
+>                 .next_request           = elv_rb_latter_request,
+> diff --git a/include/linux/elevator.h b/include/linux/elevator.h
+> index 901bda3..a65bf5d 100644
+> --- a/include/linux/elevator.h
+> +++ b/include/linux/elevator.h
+> @@ -42,7 +42,7 @@ struct elevator_mq_ops {
+>         void (*prepare_request)(struct request *, struct bio *bio);
+>         void (*finish_request)(struct request *);
+>         void (*insert_requests)(struct blk_mq_hw_ctx *, struct list_head *, bool);
+> -       struct request *(*dispatch_request)(struct blk_mq_hw_ctx *);
+> +       int (*dispatch_requests)(struct blk_mq_hw_ctx *, struct list_head *);
+>         bool (*has_work)(struct blk_mq_hw_ctx *);
+>         void (*completed_request)(struct request *, u64);
+>         void (*requeue_request)(struct request *);
+> --
+> 1.7.9.5
+>
