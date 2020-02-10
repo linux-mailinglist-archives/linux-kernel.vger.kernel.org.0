@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFE1C157B66
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:30:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F68D157A0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:20:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731283AbgBJN3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:29:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55482 "EHLO mail.kernel.org"
+        id S1728848AbgBJMhl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:37:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728337AbgBJMgU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:20 -0500
+        id S1728339AbgBJMgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:36:21 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F04624650;
+        by mail.kernel.org (Postfix) with ESMTPSA id A1D742085B;
         Mon, 10 Feb 2020 12:36:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1581338180;
-        bh=S9ow9gO52GfcGXXYRjY0xVKGdteFBx5MlxN/YjnS9Y0=;
+        bh=fWFqeUm5Jb7ttHz+jB91/ZkmtLCa2VvqMumc9FiwkAE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qp/1+nNGNtD+DTjtnc+1ExEiCtRw/06Oy2jYdb+XVliNTkKrgUVGBVHwkasXacSEb
-         TxMs0dhUMvuMeFoDrQdwM3jNKwCOJ7qSVZ10SJi9dfYbWnCWzmtHkPJDLMv8s/fCUJ
-         0240rVqQzIwEjwzm07vaboMkhVyjq7FYrGWC/kR0=
+        b=qViKv35CqxH1ucRnGY5zQYZeqaZl+NshFSxAa1Zp+0a6wf7yo607JlbP7FKT6z5zR
+         KD2+X1+uX8qPb7Ez+p2MoEt1yV/Gk4CG8KkqynBvDEfXjIDXLkcOGUusZzW9225Kcq
+         UhYi1wR/xri1AhErzcgKgbPgXz3cMX1em/okA6iQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 170/195] net: systemport: Avoid RBUF stuck in Wake-on-LAN mode
-Date:   Mon, 10 Feb 2020 04:33:48 -0800
-Message-Id: <20200210122321.809578408@linuxfoundation.org>
+        stable@vger.kernel.org, Raed Salem <raeds@mellanox.com>,
+        Boris Pismenny <borisp@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.19 171/195] net/mlx5: IPsec, Fix esp modify function attribute
+Date:   Mon, 10 Feb 2020 04:33:49 -0800
+Message-Id: <20200210122321.894253416@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
 References: <20200210122305.731206734@linuxfoundation.org>
@@ -43,37 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Raed Salem <raeds@mellanox.com>
 
-[ Upstream commit 263a425a482fc495d6d3f9a29b9103a664c38b69 ]
+[ Upstream commit 0dc2c534f17c05bed0622b37a744bc38b48ca88a ]
 
-After a number of suspend and resume cycles, it is possible for the RBUF
-to be stuck in Wake-on-LAN mode, despite the MPD enable bit being
-cleared which instructed the RBUF to exit that mode.
+The function mlx5_fpga_esp_validate_xfrm_attrs is wrongly used
+with negative negation as zero value indicates success but it
+used as failure return value instead.
 
-Avoid creating that problematic condition by clearing the RX_EN and
-TX_EN bits in the UniMAC prior to disable the Magic Packet Detector
-logic which is guaranteed to make the RBUF exit Wake-on-LAN mode.
+Fix by remove the unary not negation operator.
 
-Fixes: 83e82f4c706b ("net: systemport: add Wake-on-LAN support")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 05564d0ae075 ("net/mlx5: Add flow-steering commands for FPGA IPSec implementation")
+Signed-off-by: Raed Salem <raeds@mellanox.com>
+Reviewed-by: Boris Pismenny <borisp@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bcmsysport.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -2716,6 +2716,9 @@ static int __maybe_unused bcm_sysport_re
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
+@@ -1472,7 +1472,7 @@ int mlx5_fpga_esp_modify_xfrm(struct mlx
+ 	if (!memcmp(&xfrm->attrs, attrs, sizeof(xfrm->attrs)))
+ 		return 0;
  
- 	umac_reset(priv);
- 
-+	/* Disable the UniMAC RX/TX */
-+	umac_enable_set(priv, CMD_RX_EN | CMD_TX_EN, 0);
-+
- 	/* We may have been suspended and never received a WOL event that
- 	 * would turn off MPD detection, take care of that now
- 	 */
+-	if (!mlx5_fpga_esp_validate_xfrm_attrs(mdev, attrs)) {
++	if (mlx5_fpga_esp_validate_xfrm_attrs(mdev, attrs)) {
+ 		mlx5_core_warn(mdev, "Tried to create an esp with unsupported attrs\n");
+ 		return -EOPNOTSUPP;
+ 	}
 
 
