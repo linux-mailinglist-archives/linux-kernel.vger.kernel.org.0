@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E113157618
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F18D71575C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:45:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730602AbgBJMoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:44:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40578 "EHLO mail.kernel.org"
+        id S1730609AbgBJMoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:44:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728185AbgBJMk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:27 -0500
+        id S1729742AbgBJMk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:29 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 714AB20838;
+        by mail.kernel.org (Postfix) with ESMTPSA id EE3882051A;
         Mon, 10 Feb 2020 12:40:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338427;
-        bh=LS6bO+2ivjG44XY+zOXDTWo7bKb8WeGQ05o1WT4qEzk=;
+        s=default; t=1581338428;
+        bh=AvajLqGpUfAavsPcZmDIGys8maLrfStkNxpveatiF0E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pTNEgAzvJESKZ/cqsdiwc6U+5qT7TSpCEV9t20DfuRAm98wLRpDTpJVFDfwJcELTf
-         Lsh3GRjBuf54e8NtAhb01qoUyQ16wOPBFwYuVxU+tPuqb2ItfoPOdc0eoMU8pkrmUk
-         qIwQn21nrN9xRc1q+ytHL3Gm1RMiHM/MZBtIGVp8=
+        b=b9eA1cSLol8oEMHqxz00/4MgP0L1SUmobFGBr93YFlnZ0Y436gridvbs1uzJVl6pV
+         doD133L8NdypHtjN0nfZppdvGC8jVAzTWPoxQWPBEAIeOE+0YrUTHbS0wmb/r1bAtE
+         DB+6nYX8ddnnqPLYx3zM7HtxCh8MJuzvW2o1J6jA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Amol Grover <frextrite@gmail.com>,
+        stable@vger.kernel.org,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 151/367] tracing: Annotate ftrace_graph_notrace_hash pointer with __rcu
-Date:   Mon, 10 Feb 2020 04:31:04 -0800
-Message-Id: <20200210122438.777417716@linuxfoundation.org>
+Subject: [PATCH 5.5 152/367] ftrace: Add comment to why rcu_dereference_sched() is open coded
+Date:   Mon, 10 Feb 2020 04:31:05 -0800
+Message-Id: <20200210122438.861741278@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -44,70 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amol Grover <frextrite@gmail.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-[ Upstream commit fd0e6852c407dd9aefc594f54ddcc21d84803d3b ]
+[ Upstream commit 16052dd5bdfa16dbe18d8c1d4cde2ddab9d23177 ]
 
-Fix following instances of sparse error
-kernel/trace/ftrace.c:5667:29: error: incompatible types in comparison
-kernel/trace/ftrace.c:5813:21: error: incompatible types in comparison
-kernel/trace/ftrace.c:5868:36: error: incompatible types in comparison
-kernel/trace/ftrace.c:5870:25: error: incompatible types in comparison
+Because the function graph tracer can execute in sections where RCU is not
+"watching", the rcu_dereference_sched() for the has needs to be open coded.
+This is fine because the RCU "flavor" of the ftrace hash is protected by
+its own RCU handling (it does its own little synchronization on every CPU
+and does not rely on RCU sched).
 
-Use rcu_dereference_protected to dereference the newly annotated pointer.
-
-Link: http://lkml.kernel.org/r/20200205055701.30195-1-frextrite@gmail.com
-
-Signed-off-by: Amol Grover <frextrite@gmail.com>
+Acked-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/ftrace.c | 2 +-
- kernel/trace/trace.h  | 8 ++++++--
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ kernel/trace/trace.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 959ded08dc13f..e85668cdd8c73 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -5597,7 +5597,7 @@ static const struct file_operations ftrace_notrace_fops = {
- static DEFINE_MUTEX(graph_lock);
- 
- struct ftrace_hash __rcu *ftrace_graph_hash = EMPTY_HASH;
--struct ftrace_hash *ftrace_graph_notrace_hash = EMPTY_HASH;
-+struct ftrace_hash __rcu *ftrace_graph_notrace_hash = EMPTY_HASH;
- 
- enum graph_filter_type {
- 	GRAPH_FILTER_NOTRACE	= 0,
 diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 97dad33260208..497defe9ed264 100644
+index 497defe9ed264..b769638f005c7 100644
 --- a/kernel/trace/trace.h
 +++ b/kernel/trace/trace.h
-@@ -951,7 +951,7 @@ extern void __trace_graph_return(struct trace_array *tr,
- 
- #ifdef CONFIG_DYNAMIC_FTRACE
- extern struct ftrace_hash __rcu *ftrace_graph_hash;
--extern struct ftrace_hash *ftrace_graph_notrace_hash;
-+extern struct ftrace_hash __rcu *ftrace_graph_notrace_hash;
- 
- static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
- {
-@@ -1004,10 +1004,14 @@ static inline void ftrace_graph_addr_finish(struct ftrace_graph_ret *trace)
- static inline int ftrace_graph_notrace_addr(unsigned long addr)
- {
- 	int ret = 0;
-+	struct ftrace_hash *notrace_hash;
+@@ -961,6 +961,11 @@ static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
  
  	preempt_disable_notrace();
  
--	if (ftrace_lookup_ip(ftrace_graph_notrace_hash, addr))
-+	notrace_hash = rcu_dereference_protected(ftrace_graph_notrace_hash,
-+						 !preemptible());
-+
-+	if (ftrace_lookup_ip(notrace_hash, addr))
- 		ret = 1;
++	/*
++	 * Have to open code "rcu_dereference_sched()" because the
++	 * function graph tracer can be called when RCU is not
++	 * "watching".
++	 */
+ 	hash = rcu_dereference_protected(ftrace_graph_hash, !preemptible());
  
- 	preempt_enable_notrace();
+ 	if (ftrace_hash_empty(hash)) {
+@@ -1008,6 +1013,11 @@ static inline int ftrace_graph_notrace_addr(unsigned long addr)
+ 
+ 	preempt_disable_notrace();
+ 
++	/*
++	 * Have to open code "rcu_dereference_sched()" because the
++	 * function graph tracer can be called when RCU is not
++	 * "watching".
++	 */
+ 	notrace_hash = rcu_dereference_protected(ftrace_graph_notrace_hash,
+ 						 !preemptible());
+ 
 -- 
 2.20.1
 
