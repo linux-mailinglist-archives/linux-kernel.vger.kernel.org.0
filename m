@@ -2,129 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B3861580FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 18:11:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CA98158100
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 18:13:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbgBJRLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 12:11:00 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43208 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727872AbgBJRK7 (ORCPT
+        id S1727887AbgBJRNV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 12:13:21 -0500
+Received: from smtprelay0064.hostedemail.com ([216.40.44.64]:38163 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727598AbgBJRNU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 12:10:59 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01AH9GmH007379;
-        Mon, 10 Feb 2020 12:10:23 -0500
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y1u2dy35m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 10 Feb 2020 12:10:23 -0500
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 01AH5dYv016782;
-        Mon, 10 Feb 2020 17:10:21 GMT
-Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
-        by ppma03wdc.us.ibm.com with ESMTP id 2y1mm63n74-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 10 Feb 2020 17:10:21 +0000
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01AHAL8X59244978
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Feb 2020 17:10:21 GMT
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E51266A058;
-        Mon, 10 Feb 2020 17:10:20 +0000 (GMT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4CF706A057;
-        Mon, 10 Feb 2020 17:10:20 +0000 (GMT)
-Received: from [9.41.103.158] (unknown [9.41.103.158])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 10 Feb 2020 17:10:20 +0000 (GMT)
-Subject: Re: [PATCH v6 06/12] soc: aspeed: Add XDMA Engine Driver
-To:     Arnd Bergmann <arnd@arndb.de>, Eddie James <eajames@linux.ibm.com>
-Cc:     linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>
-References: <1579123790-6894-1-git-send-email-eajames@linux.ibm.com>
- <1579123790-6894-7-git-send-email-eajames@linux.ibm.com>
- <CAK8P3a3HsdpLz0aDGem1BrQsNo2mEJOnOsLcKFcLjaERx9dhGg@mail.gmail.com>
-From:   Eddie James <eajames@linux.vnet.ibm.com>
-Message-ID: <1a303336-9ffb-353f-efe3-7d45ed114fd0@linux.vnet.ibm.com>
-Date:   Mon, 10 Feb 2020 11:10:19 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Mon, 10 Feb 2020 12:13:20 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 12440180A9558;
+        Mon, 10 Feb 2020 17:13:19 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2553:2560:2563:2682:2685:2691:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3653:3865:3867:3868:3871:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:4605:5007:6119:8985:9025:10004:10400:10471:10848:11026:11232:11658:11914:12043:12050:12295:12296:12297:12438:12740:12760:12895:13069:13255:13311:13357:13439:14181:14659:14721:14777:21080:21433:21451:21611:21627:21740:21819:21985:21990:30003:30054:30055:30060:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: cough69_7412b12c76328
+X-Filterd-Recvd-Size: 2585
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 10 Feb 2020 17:13:17 +0000 (UTC)
+Message-ID: <f666487838350308d2470c30d34a33eb7922e720.camel@perches.com>
+Subject: Re: Checkpatch being daft, Was: [PATCH -v2 08/10] m68k,mm: Extend
+ table allocator for multiple sizes
+From:   Joe Perches <joe@perches.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        sean.j.christopherson@intel.com
+Date:   Mon, 10 Feb 2020 09:12:02 -0800
+In-Reply-To: <20200210163843.GL14897@hirez.programming.kicks-ass.net>
+References: <20200131124531.623136425@infradead.org>
+         <20200131125403.882175409@infradead.org>
+         <CAMuHMdWa8R=3fHLV7W_ni8An_1CwOoJxErnnDA3t4rq2XN+QzA@mail.gmail.com>
+         <20200207113417.GG14914@hirez.programming.kicks-ass.net>
+         <CAMuHMdW8hWpSsf31P0hC=b23GCx4oFwfaVYKQ1qrZfwFCPK5-Q@mail.gmail.com>
+         <20200207123035.GI14914@hirez.programming.kicks-ass.net>
+         <20200207123334.GT14946@hirez.programming.kicks-ass.net>
+         <3f8a8a2f89bfd2d4cca9ac176ef41abf3a0ed4ab.camel@perches.com>
+         <20200210163843.GL14897@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3HsdpLz0aDGem1BrQsNo2mEJOnOsLcKFcLjaERx9dhGg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-10_06:2020-02-10,2020-02-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 malwarescore=0 adultscore=0 mlxlogscore=999 bulkscore=0
- spamscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002100129
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2020-02-10 at 17:38 +0100, Peter Zijlstra wrote:
+> On Sun, Feb 09, 2020 at 10:24:15AM -0800, Joe Perches wrote:
+> > Maybe this?
+> 
+> This isn't anywhere near RFC compliant,
 
-On 2/10/20 10:35 AM, Arnd Bergmann wrote:
-> On Wed, Jan 15, 2020 at 10:31 PM Eddie James <eajames@linux.ibm.com> wrote:
->> The XDMA engine embedded in the AST2500 and AST2600 SOCs performs PCI
->> DMA operations between the SOC (acting as a BMC) and a host processor
->> in a server.
->>
->> This commit adds a driver to control the XDMA engine and adds functions
->> to initialize the hardware and memory and start DMA operations.
->>
->> Signed-off-by: Eddie James <eajames@linux.ibm.com>
-> Hi Eddie,
->
-> I'm missing the bigger picture in the description here, how does this fit into
-> the PCIe endpoint framework and the dmaengine subsystem?
+Nothing really is.
 
+https://metacpan.org/pod/Email::Address
 
-Hi,
+doesn't really do a perfect job either, but I suppose
+it'd be possible to use it one day instead.
 
-It doesn't fit into the PCIe endpoint framework. The XDMA engine 
-abstracts all the PCIe details away so the BMC cannot configure any of 
-the things the PCIe endpoint exposes.
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+[]
+>  one little nit below..
+[]
+> > +sub same_email_addresses {
+> > +	my ($email1, $email2) = @_;
+> > +
+> > +	my ($email1_name, $name1_comment, $email1_address, $comment1) = parse_email($email1);
+> > +	my ($email2_name, $name2_comment, $email2_address, $comment2) = parse_email($email2);
+> > +
+> > +	return $email1_name eq $email2_name &&
+> > +	       $email1_address eq $email2_address;
+> 
+> strictly speaking only _address needs be the same for the whole thing to
+> arrive at the same inbox, but I suppose that for sanity's sake, this
+> comparison makes sense.
 
-It also doesn't fit into the dmaengine subsystem due to the restriction 
-on the ast2500 (and maybe the ast2600) that the XDMA engine can only 
-access certain areas of physical memory. Also problematic would be 
-pausing/resuming/terminating transfers because the XDMA engine can't do 
-those things.
-
-
->
-> Does the AST2500 show up as a PCIe device in the host, or do you just
-> inject DMAs into the host and hope that bypasses the IOMMU?
-> If it shows up as an endpoint, how does the endpoint driver link into the
-> dma driver?
+I know, and I believe that's true too.
 
 
-The AST2500 and AST2600 have two PCIe devices on them, so these will 
-show up on the host if the BMC enables both of them. Either or both can 
-also be disabled and therefore will not show up. On the host side, in 
-order to receive DMA transfers, its simply a matter of registering a PCI 
-device driver and allocating some coherent DMA.... Not sure about the 
-details of endpoints/dma client driver?
-
-
-Hopefully this answers your questions. Thanks,
-
-Eddie
-
-
->
->       Arnd
