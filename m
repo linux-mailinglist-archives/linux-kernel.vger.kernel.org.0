@@ -2,230 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 625D3157DC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 15:49:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 136BC157DC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 15:49:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728714AbgBJOte (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 09:49:34 -0500
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:30991 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728146AbgBJOtd (ORCPT
+        id S1728466AbgBJOtU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 09:49:20 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:10300 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728146AbgBJOtU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 09:49:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1581346172; x=1612882172;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=2wC1R3anMNTqtOwoKo1A1zvWJSTEzJ+dwR/23NCUC4Y=;
-  b=LhQ/0NGz/MV3VIOAbc9tjG1MhX5O9gx9wMZJolrUCTS4q/mu79lzamPa
-   lxF16139jI29XJUQ8NI4YAmUMhRmXDllz0myDUYi6E9zSMFTXLVC1mTHC
-   W3bKtmpAT3ckWygXKauUhDeb/b8EVBT4Y01rMi2QahXm79zlLWrlnWig3
-   U=;
-IronPort-SDR: N+YUsr5679y3iuqOKcF4vx8V4GZxvhEGXnTpxYkz1KEXlxlKHjxI+MlIvXt3WqdCuBgF6r2H7Y
- QYc6BMtEtpPw==
-X-IronPort-AV: E=Sophos;i="5.70,425,1574121600"; 
-   d="scan'208";a="16392363"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1a-821c648d.us-east-1.amazon.com) ([10.43.8.6])
-  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 10 Feb 2020 14:49:31 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1a-821c648d.us-east-1.amazon.com (Postfix) with ESMTPS id 54FC2A1FFE;
-        Mon, 10 Feb 2020 14:49:24 +0000 (UTC)
-Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
- EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Mon, 10 Feb 2020 14:49:23 +0000
-Received: from u886c93fd17d25d.ant.amazon.com (10.43.161.203) by
- EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 10 Feb 2020 14:49:12 +0000
-From:   <sjpark@amazon.com>
-To:     <akpm@linux-foundation.org>
-CC:     SeongJae Park <sjpark@amazon.de>, <acme@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <amit@kernel.org>,
-        <brendan.d.gregg@gmail.com>, <brendanhiggins@google.com>,
-        <cai@lca.pw>, <colin.king@canonical.com>, <corbet@lwn.net>,
-        <dwmw@amazon.com>, <jolsa@redhat.com>, <kirill@shutemov.name>,
-        <mark.rutland@arm.com>, <mgorman@suse.de>, <minchan@kernel.org>,
-        <mingo@redhat.com>, <namhyung@kernel.org>, <peterz@infradead.org>,
-        <rdunlap@infradead.org>, <rostedt@goodmis.org>,
-        <sj38.park@gmail.com>, <vdavydov.dev@gmail.com>,
-        <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 04/11] mm/damon: Apply dynamic memory mapping changes
-Date:   Mon, 10 Feb 2020 15:48:05 +0100
-Message-ID: <20200210144812.26845-5-sjpark@amazon.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200210144812.26845-1-sjpark@amazon.com>
-References: <20200210144812.26845-1-sjpark@amazon.com>
+        Mon, 10 Feb 2020 09:49:20 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e416d300001>; Mon, 10 Feb 2020 06:48:16 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 10 Feb 2020 06:49:19 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 10 Feb 2020 06:49:19 -0800
+Received: from [10.25.75.202] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 10 Feb
+ 2020 14:49:13 +0000
+CC:     <spujar@nvidia.com>, <perex@perex.cz>, <tiwai@suse.com>,
+        <robh+dt@kernel.org>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
+        <thierry.reding@gmail.com>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>,
+        <mkumard@nvidia.com>, <viswanathl@nvidia.com>,
+        <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
+        <atalambedu@nvidia.com>
+Subject: Re: [PATCH v2 6/9] ASoC: tegra: add Tegra186 based DSPK driver
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>
+References: <1580380422-3431-1-git-send-email-spujar@nvidia.com>
+ <1580380422-3431-7-git-send-email-spujar@nvidia.com>
+ <f8ed8c4a-af40-44b2-b720-4d3a9b660fda@gmail.com>
+ <75a63cb3-7d79-7216-6791-3cec57464cd9@nvidia.com>
+ <847f4512-7118-e087-1004-685e476e11d8@gmail.com>
+ <3c19ef99-8051-76f7-a4d6-0d61182fe6e4@nvidia.com>
+ <4c75fc51-fbfd-158f-a096-d4f178921ee3@nvidia.com>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <ffff29e1-7ffb-01a0-a36a-fbc1e0604e5c@nvidia.com>
+Date:   Mon, 10 Feb 2020 20:19:09 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.161.203]
-X-ClientProxiedBy: EX13D35UWC004.ant.amazon.com (10.43.162.180) To
- EX13D31EUA001.ant.amazon.com (10.43.165.15)
+In-Reply-To: <4c75fc51-fbfd-158f-a096-d4f178921ee3@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-GB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1581346097; bh=pGRqxh5K8EuRcbN7wmMZRcTfJvaodHRotMWQZiA3Ab0=;
+        h=X-PGP-Universal:CC:Subject:To:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=Lw6tOnb+ikPrnt3kc9xzVkN/YrTCIVw0uDOdwsjasTHyrKtfOX6ofYuT2/D5ijo0H
+         24A7Vi9tGozF/cwHOAFqb4JFMZbhjXlzWVcF89l4acEl7Es2sH4jZWulLDOz1GscQT
+         fVoFkqHPMOweMnnqq4VPaiUmAeuCT/cstefwq9Cgd7wK7gK5SBeDdzAj5WZtlQ2aqr
+         YyNOKb+CQS6/omYObvyJsLqcD90X/z3VS+G/3u4K9v1LwcBer45pNdYPBXCgCpoAjp
+         PGS5JCijnKZjoCoXOrSSSSMLW1Iwm3TsTlTXsea/aEn6NECDO67mFI8zTe6BFXHymT
+         j923KetnGthqg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: SeongJae Park <sjpark@amazon.de>
 
-Only a number of parts in the virtual address space of the processes is
-mapped to physical memory and accessed.  Thus, tracking the unmapped
-address regions is just wasteful.  However, tracking every memory
-mapping change might incur an overhead.  For the reason, DAMON applies
-the dynamic memory mapping changes to the tracking regions only for each
-of a user-specified time interval (``regions update interval``).
 
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
----
- mm/damon.c | 94 ++++++++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 92 insertions(+), 2 deletions(-)
+On 2/10/2020 5:52 PM, Jon Hunter wrote:
+> On 10/02/2020 11:15, Sameer Pujar wrote:
+>>
+>> On 2/7/2020 11:52 PM, Dmitry Osipenko wrote:
+>>> External email: Use caution opening links or attachments
+>>>
+>>>
+>>> 07.02.2020 14:26, Sameer Pujar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> On 2/6/2020 10:45 PM, Dmitry Osipenko wrote:
+>>>>> External email: Use caution opening links or attachments
+>>>>>
+>>>>>
+>>>>> 30.01.2020 13:33, Sameer Pujar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>> +static const struct dev_pm_ops tegra186_dspk_pm_ops =3D {
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 SET_RUNTIME_PM_OPS(tegra186_dspk_runtime_s=
+uspend,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 te=
+gra186_dspk_runtime_resume, NULL)
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_fo=
+rce_suspend,
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pm_runtime_force_=
+resume)
+>>>>>> +};
+>>>>> Could you please explain why drivers need the "late" system sleep?
+>>>> It was done to ensure core drivers are suspended first and defer the
+>>>> codec driver suspend
+>>> Suspend order is opposite to the drivers registration order. If there i=
+s
+>>> no real problem with that, then you should use the default suspend
+>>> level. Please don't try to fix a non-existent problems.
+>> No. This was done specifically to allow sound core to first stop any
+>> ongoing audio activity during normal suspend and ensure a safe suspend
+>> of AHUB devices by doing a LATE suspend.
+> What Dmitry is saying is that if the DSPK driver is registered after the
+> sound core then we will not need to suspend in the late phase. The DSPK
+> device should only be registered once the sound core is loaded, because
+> otherwise we should fail to register it with the sound core. So I don't
+> think we need this to be late afterall.
 
-diff --git a/mm/damon.c b/mm/damon.c
-index 0639064527a4..c2c40e003580 100644
---- a/mm/damon.c
-+++ b/mm/damon.c
-@@ -60,13 +60,16 @@ struct damon_task {
-  * For each 'sample_interval', DAMON checks whether each region is accessed or
-  * not.  It aggregates and keeps the access information (number of accesses to
-  * each region) for 'aggr_interval' and then flushes it to the result buffer if
-- * an 'aggr_interval' surpassed.
-+ * an 'aggr_interval' surpassed.  And for each 'regions_update_interval', damon
-+ * checks whether the memory mapping of the target tasks has changed (e.g., by
-+ * mmap() calls from the applications) and applies the changes.
-  *
-  * All time intervals are in micro-seconds.
-  */
- struct damon_ctx {
- 	unsigned long sample_interval;
- 	unsigned long aggr_interval;
-+	unsigned long regions_update_interval;
- 	unsigned long min_nr_regions;
- 	unsigned long max_nr_regions;
- 
-@@ -744,6 +747,87 @@ static void kdamond_split_regions(struct damon_ctx *ctx)
- 		damon_split_regions_of(ctx, t);
- }
- 
-+/*
-+ * Check whether it is time to check and apply the dynamic mmap changes
-+ *
-+ * Returns true if it is.
-+ */
-+static bool kdamond_need_update_regions(struct damon_ctx *ctx)
-+{
-+	return damon_check_reset_time_interval(&ctx->last_regions_update,
-+			ctx->regions_update_interval);
-+}
-+
-+static bool damon_intersect(struct damon_region *r, struct region *re)
-+{
-+	return !(r->vm_end <= re->start || re->end <= r->vm_start);
-+}
-+
-+/*
-+ * Update damon regions for the three big regions of the given task
-+ *
-+ * t		the given task
-+ * bregions	the three big regions of the task
-+ */
-+static void damon_apply_three_regions(struct damon_ctx *ctx,
-+		struct damon_task *t, struct region bregions[3])
-+{
-+	struct damon_region *r, *next;
-+	unsigned int i = 0;
-+
-+	/* Remove regions which isn't in the three big regions now */
-+	damon_for_each_region_safe(r, next, t) {
-+		for (i = 0; i < 3; i++) {
-+			if (damon_intersect(r, &bregions[i]))
-+				break;
-+		}
-+		if (i == 3)
-+			damon_destroy_region(r);
-+	}
-+
-+	/* Adjust intersecting regions to fit with the threee big regions */
-+	for (i = 0; i < 3; i++) {
-+		struct damon_region *first = NULL, *last;
-+		struct damon_region *newr;
-+		struct region *br;
-+
-+		br = &bregions[i];
-+		/* Get the first and last regions which intersects with br */
-+		damon_for_each_region(r, t) {
-+			if (damon_intersect(r, br)) {
-+				if (!first)
-+					first = r;
-+				last = r;
-+			}
-+			if (r->vm_start >= br->end)
-+				break;
-+		}
-+		if (!first) {
-+			/* no damon_region intersects with this big region */
-+			newr = damon_new_region(ctx, br->start, br->end);
-+			damon_add_region(newr, damon_prev_region(r), r);
-+		} else {
-+			first->vm_start = br->start;
-+			last->vm_end = br->end;
-+		}
-+	}
-+}
-+
-+/*
-+ * Update regions for current memory mappings
-+ */
-+static void kdamond_update_regions(struct damon_ctx *ctx)
-+{
-+	struct region three_regions[3];
-+	struct damon_task *t;
-+
-+	damon_for_each_task(ctx, t) {
-+		if (damon_three_regions_of(t, three_regions))
-+			continue;
-+		damon_apply_three_regions(ctx, t, three_regions);
-+	}
-+}
-+
- /*
-  * Check whether current monitoring should be stopped
-  *
-@@ -808,6 +892,9 @@ static int kdamond_fn(void *data)
- 			kdamond_split_regions(ctx);
- 		}
- 
-+		if (kdamond_need_update_regions(ctx))
-+			kdamond_update_regions(ctx);
-+
- 		usleep_range(ctx->sample_interval, ctx->sample_interval + 1);
- 	}
- 	damon_flush_rbuffer(ctx);
-@@ -955,6 +1042,7 @@ static int damon_set_recording(struct damon_ctx *ctx,
-  *
-  * sample_int		time interval between samplings
-  * aggr_int		time interval between aggregations
-+ * regions_update_int	time interval between vma update checks
-  * min_nr_reg		minimal number of regions
-  * max_nr_reg		maximum number of regions
-  *
-@@ -964,7 +1052,8 @@ static int damon_set_recording(struct damon_ctx *ctx,
-  * Returns 0 on success, negative error code otherwise.
-  */
- static int damon_set_attrs(struct damon_ctx *ctx, unsigned long sample_int,
--		unsigned long aggr_int, unsigned long min_nr_reg)
-+		unsigned long aggr_int, unsigned long regions_update_int,
-+		unsigned long min_nr_reg, unsigned long max_nr_reg)
- {
- 	if (min_nr_reg < 3) {
- 		pr_err("min_nr_regions (%lu) should be bigger than 2\n",
-@@ -979,6 +1068,7 @@ static int damon_set_attrs(struct damon_ctx *ctx, unsigned long sample_int,
- 
- 	ctx->sample_interval = sample_int;
- 	ctx->aggr_interval = aggr_int;
-+	ctx->regions_update_interval = regions_update_int;
- 	ctx->min_nr_regions = min_nr_reg;
- 	ctx->max_nr_regions = max_nr_reg;
- 	return 0;
--- 
-2.17.1
+I was originally thinking if DMA is the main reason for using LATE=20
+suspend for audio drivers as well. I did a small sanity check and=20
+appears normal suspend is fine. I will update the drivers with normal=20
+suspend. If we come across any issue later, it can be addressed=20
+separately. Thanks Dmitry and Jon.
+>
+> Jon
+>
 
