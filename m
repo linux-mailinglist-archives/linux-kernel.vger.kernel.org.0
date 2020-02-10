@@ -2,87 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33DFC1579FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:19:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF2EC157A4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:22:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730886AbgBJNTd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:19:33 -0500
-Received: from mail-pg1-f201.google.com ([209.85.215.201]:50428 "EHLO
-        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730948AbgBJNTa (ORCPT
+        id S1728841AbgBJNVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:21:49 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:48602 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731118AbgBJNVo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 08:19:30 -0500
-Received: by mail-pg1-f201.google.com with SMTP id q4so5394395pgr.17
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 05:19:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=Fp6MtkUYwRFvvO6uysN//Mlb4ErU1o3j/TgE2RsZDqc=;
-        b=SCqH2t8UW6xatENC08Bks3adEsYcqzl2ydiPjVd95yGYrm1qIPiqIPbJGbPVxOF6N2
-         cXPbr0IBQt6dB17hHDgfd7lRJkGVI8DYoUS5n63DYtkgFOIwvdhZ4zPcFPoI0T3hy5Ru
-         6h8p3HBYl6detqUKT0QbLofddrSssB4yFaWoDFUGUSGu97IlPbNCrhSuGmYn4FHcG1Hu
-         puJqSk26531IpGVb/Z3XJbtj1Anubf+qN498+feR4jcBVrOGxmmypaTnM+V8YSvdXS+8
-         SHA1BEgWGjY6fO803XdXZJebU+i8hOLqSyWNeDAD1CXw0/l1mii1pe9nnC4ZqkDQ7Czy
-         dtpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=Fp6MtkUYwRFvvO6uysN//Mlb4ErU1o3j/TgE2RsZDqc=;
-        b=po8NAZ8yBvrGYibyt9KVc64+cpZmIJtKAgD2PzX1rP6u2NVo6nOfpGDzMvgIZvbXJh
-         1i7LGsfwfWeiytDPQaxNNdUgB+U25W5Y4yqSNKKKPzm8EBfKcRkZqkVOtacxv3eloOoK
-         UbVffVkQ/nPWxnVm7EIGHREdk7KsSwp4vMUpE4mt6EbYF4eqPPxPpc/SOsAeZakliE5D
-         5GpRRAZxBe6rmy1OazuUTdLoApxjzYFTY1ekp0zAWi8keDjvxWi6QRTbpatPBi8AtE8x
-         I7awFKtrhKe6SeQpl5ka25DOrQZjBUIH6L+TdkvZKNrRKbYQygbNZG9MBz/p/iR+eHdD
-         da1w==
-X-Gm-Message-State: APjAAAVOA6LNjzKUujyqHGtDDTilxKHoBkIKki1FtV0qkJnAqvRyDHj8
-        Vii40Rix9qdZ7J0duQa1uJ4dNMZYTnjjbRymGas=
-X-Google-Smtp-Source: APXvYqweHMPn9EpO/hdGK4qeZV47ZWtBbfoAGJfRDlgtpjNgGjfNxpzn3TtErZABuInYR5PUZtGfkXcKDV0cYKcp4Kw=
-X-Received: by 2002:a63:ed01:: with SMTP id d1mr1488010pgi.95.1581340769935;
- Mon, 10 Feb 2020 05:19:29 -0800 (PST)
-Date:   Mon, 10 Feb 2020 05:19:25 -0800
-Message-Id: <20200210131925.145463-1-samitolvanen@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-Subject: [PATCH] kbuild: remove duplicate dependencies from .mod files
-From:   Sami Tolvanen <samitolvanen@google.com>
-To:     Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sami Tolvanen <samitolvanen@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 10 Feb 2020 08:21:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Xtst/Oq1oI0Mc3uxXACsXifgp1sZOBCOF/8SXmhWFbU=; b=OWUhVqzOzsNBs/VxwAiUkYkisS
+        ANl9xWDktCLfJWIUnrLzpc5Nc6BIWG+NnTcfdsDfnSyEwN0ZyFB6rUsIYqwr6fpSTPM8kyOcPNFCw
+        gu1aG3yEm539cIEqBjg3YShylkM1uWuTytDsW+rCr8oIyWm+74ol0XLfgcr41K590o52DDMCZxer6
+        3p6lvXKKZioY8CuLEv5puOfPiXdHLp0LJNEvQzTSufezgllwRJS+FofnS50UNcYUSq8aUl44LH+5a
+        RSDFDW/5DT4drTia+IN00hGkYjK1F0Re40QzQlRBQfhhkqORw4+fdSImqUq/L/GHHHGxuXnmc2eTC
+        CMpG5XXQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j190J-0006Rp-AN; Mon, 10 Feb 2020 13:21:35 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 194E030066E;
+        Mon, 10 Feb 2020 14:19:45 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5661420148931; Mon, 10 Feb 2020 14:21:33 +0100 (CET)
+Date:   Mon, 10 Feb 2020 14:21:33 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Douglas Raillard <douglas.raillard@arm.com>
+Cc:     linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        qperret@google.com, linux-pm@vger.kernel.org
+Subject: Re: [RFC PATCH v4 0/6] sched/cpufreq: Make schedutil energy aware
+Message-ID: <20200210132133.GH14897@hirez.programming.kicks-ass.net>
+References: <20200122173538.1142069-1-douglas.raillard@arm.com>
+ <c49ca012-bb3e-580d-9b45-359caa67d7c1@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c49ca012-bb3e-580d-9b45-359caa67d7c1@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With CONFIG_TRIM_UNUSED_SYMS, if a module has enough dependencies to
-exceed the default xargs command line size limit, the output is split
-into multiple lines, which can result in used symbols getting trimmed.
+On Wed, Jan 22, 2020 at 06:14:24PM +0000, Douglas Raillard wrote:
+> Hi Peter,
+> 
+> Since the v3 was posted a while ago, here is a short recap of the hanging
+> comments:
+> 
+> * The boost margin was relative, but we came to the conclusion it would make
+>   more sense to make it absolute (done in that v4).
 
-This change removes duplicate dependencies, which will reduce the
-probability of this happening and makes .mod files smaller and easier
-to read.
+As per (patch #1):
 
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
----
- scripts/Makefile.build | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
++       max_cost = pd->table[pd->nr_cap_states - 1].cost;
++       cost_margin = (cost_margin * max_cost) / EM_COST_MARGIN_SCALE;
 
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index a1730d42e5f3..a083bcec19d3 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -257,7 +257,7 @@ endef
- 
- # List module undefined symbols (or empty line if not enabled)
- ifdef CONFIG_TRIM_UNUSED_KSYMS
--cmd_undef_syms = $(NM) $< | sed -n 's/^  *U //p' | xargs echo
-+cmd_undef_syms = $(NM) $< | sed -n 's/^  *U //p' | sort -u | xargs echo
- else
- cmd_undef_syms = echo
- endif
+So we'll allow the boost to double energy consumption (or rather, since
+you cannot go above the max OPP, we're allowed that).
 
-base-commit: bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9
--- 
-2.25.0.341.g760bfbb309-goog
+> * The main remaining blur point was why defining boost=(util - util_est) makes
+>   sense. The justification for that is that we use PELT-shaped signal to drive
+>   the frequency, so using a PELT-shaped signal for the boost makes sense for the
+>   same reasons.
+
+As per (patch #4):
+
++       unsigned long boost = 0;
+
++       if (util_est_enqueued == sg_cpu->util_est_enqueued &&
++           util_avg >= sg_cpu->util_avg &&
++           util_avg > util_est_enqueued)
++               boost = util_avg - util_est_enqueued;
+
+The result of that is not, strictly speaking, a PELT shaped signal.
+Although when it is !0 the curves are similar, albeit offset.
+
+> AFAIK there is no specific criteria to meet for frequency selection signal shape
+> for anything else than periodic tasks (if we don't add other constraints on
+> top), so (util - util_est)=(util - constant) seems as good as anything else.
+> Especially since util is deemed to be a good fit in practice for frequency
+> selection. Let me know if I missed anything on that front.
+
+
+Given:
+
+  sugov_get_util() <- cpu_util_cfs() <- UTIL_EST ? util_est.enqueued : util_avg.
+
+our next_f becomes:
+
+  next_f = 1.25 * util_est * max_freq / max;
+
+so our min_freq in em_pd_get_higher_freq() will already be compensated
+for the offset.
+
+So even when:
+
+  boost = util_avg - util_est
+
+is small, despite util_avg being huge (~1024), due to large util_est,
+we'll still get an effective boost to max_cost ASSUMING cs[].cost and
+cost_margin have the same curve.
+
+They have not.
+
+assuming cs[].cost ~ f^3, and given our cost_margin ~ f, that leaves a
+factor f^2 on the table.
+
+So the higher the min_freq, the less effective the boost.
+
+Maybe it all works out in practise, but I'm missing a big picture
+description of it all somewhere.
 
