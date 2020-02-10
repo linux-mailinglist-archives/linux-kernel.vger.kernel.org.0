@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C83F15771D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:58:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80B04157556
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:40:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730228AbgBJM5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:57:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43642 "EHLO mail.kernel.org"
+        id S1729693AbgBJMkS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:40:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729984AbgBJMlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:41:25 -0500
+        id S1729102AbgBJMiS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:18 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0AB5A21569;
-        Mon, 10 Feb 2020 12:41:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93AF82168B;
+        Mon, 10 Feb 2020 12:38:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338485;
-        bh=+5KaXQ8TOffhLQARMIx5vFz0N/clqkg6YMZZF3j0SMk=;
+        s=default; t=1581338297;
+        bh=t1b8BIai9fdlEGOYSa7En/dbPbIjI40xLMeAasFzZKI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KkqUcIy6/pGtoDdf5lImq+ji3Q0EGmaGMvbzLSycblMa3Z8ZjmmA4ReJ0HSiqIbWg
-         xGdyfSiA0aUCKKr3j3me/fem88hpG7swgaqDJ1zjmWTt9XTVORL0CcjCaiCUb6KlpF
-         NqGCcgqZgmNhZSDiq2jOG/auO76yLnSy/K93NQfQ=
+        b=jluivGg8q1dXy9xhhjFWYFvYiAPsbrMWPSQ1T5JhEr8WaAbpGzw5KN9GajsKRdLGu
+         AWKPA9ZkI9CMfd3DYz0a/qAXC/lHAr/+NniJ8Gcyw4pg4SKlRYT2kJ43xSkZYaA4Pk
+         SNEEY7GeedOTigstnxBDFyfKGcaxs4sC7WDVEs94=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
+        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
+        Marios Pomonis <pomonis@google.com>,
+        Andrew Honig <ahonig@google.com>,
+        Jim Mattson <jmattson@google.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.5 247/367] x86/KVM: Make sure KVM_VCPU_FLUSH_TLB flag is not missed
-Date:   Mon, 10 Feb 2020 04:32:40 -0800
-Message-Id: <20200210122446.990481051@linuxfoundation.org>
+Subject: [PATCH 5.4 205/309] KVM: x86: Protect MSR-based index computations in pmu.h from Spectre-v1/L1TF attacks
+Date:   Mon, 10 Feb 2020 04:32:41 -0800
+Message-Id: <20200210122426.243994504@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,129 +46,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+From: Marios Pomonis <pomonis@google.com>
 
-commit b043138246a41064527cf019a3d51d9f015e9796 upstream.
+commit 13c5183a4e643cc2b03a22d0e582c8e17bb7457d upstream.
 
-There is a potential race in record_steal_time() between setting
-host-local vcpu->arch.st.steal.preempted to zero (i.e. clearing
-KVM_VCPU_PREEMPTED) and propagating this value to the guest with
-kvm_write_guest_cached(). Between those two events the guest may
-still see KVM_VCPU_PREEMPTED in its copy of kvm_steal_time, set
-KVM_VCPU_FLUSH_TLB and assume that hypervisor will do the right
-thing. Which it won't.
+This fixes a Spectre-v1/L1TF vulnerability in the get_gp_pmc() and
+get_fixed_pmc() functions.
+They both contain index computations based on the (attacker-controlled)
+MSR number.
 
-Instad of copying, we should map kvm_steal_time and that will
-guarantee atomicity of accesses to @preempted.
+Fixes: 25462f7f5295 ("KVM: x86/vPMU: Define kvm_pmu_ops to support vPMU function dispatch")
 
-This is part of CVE-2019-3016.
-
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
+Signed-off-by: Nick Finco <nifi@google.com>
+Signed-off-by: Marios Pomonis <pomonis@google.com>
+Reviewed-by: Andrew Honig <ahonig@google.com>
 Cc: stable@vger.kernel.org
+Reviewed-by: Jim Mattson <jmattson@google.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |   51 ++++++++++++++++++++++++++++++---------------------
- 1 file changed, 30 insertions(+), 21 deletions(-)
+ arch/x86/kvm/pmu.h |   18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2588,45 +2588,47 @@ static void kvm_vcpu_flush_tlb(struct kv
+--- a/arch/x86/kvm/pmu.h
++++ b/arch/x86/kvm/pmu.h
+@@ -2,6 +2,8 @@
+ #ifndef __KVM_X86_PMU_H
+ #define __KVM_X86_PMU_H
  
- static void record_steal_time(struct kvm_vcpu *vcpu)
++#include <linux/nospec.h>
++
+ #define vcpu_to_pmu(vcpu) (&(vcpu)->arch.pmu)
+ #define pmu_to_vcpu(pmu)  (container_of((pmu), struct kvm_vcpu, arch.pmu))
+ #define pmc_to_pmu(pmc)   (&(pmc)->vcpu->arch.pmu)
+@@ -86,8 +88,12 @@ static inline bool pmc_is_enabled(struct
+ static inline struct kvm_pmc *get_gp_pmc(struct kvm_pmu *pmu, u32 msr,
+ 					 u32 base)
  {
-+	struct kvm_host_map map;
-+	struct kvm_steal_time *st;
+-	if (msr >= base && msr < base + pmu->nr_arch_gp_counters)
+-		return &pmu->gp_counters[msr - base];
++	if (msr >= base && msr < base + pmu->nr_arch_gp_counters) {
++		u32 index = array_index_nospec(msr - base,
++					       pmu->nr_arch_gp_counters);
 +
- 	if (!(vcpu->arch.st.msr_val & KVM_MSR_ENABLED))
- 		return;
++		return &pmu->gp_counters[index];
++	}
  
--	if (unlikely(kvm_read_guest_cached(vcpu->kvm, &vcpu->arch.st.stime,
--		&vcpu->arch.st.steal, sizeof(struct kvm_steal_time))))
-+	/* -EAGAIN is returned in atomic context so we can just return. */
-+	if (kvm_map_gfn(vcpu, vcpu->arch.st.msr_val >> PAGE_SHIFT,
-+			&map, &vcpu->arch.st.cache, false))
- 		return;
- 
-+	st = map.hva +
-+		offset_in_page(vcpu->arch.st.msr_val & KVM_STEAL_VALID_BITS);
-+
- 	/*
- 	 * Doing a TLB flush here, on the guest's behalf, can avoid
- 	 * expensive IPIs.
- 	 */
- 	trace_kvm_pv_tlb_flush(vcpu->vcpu_id,
--		vcpu->arch.st.steal.preempted & KVM_VCPU_FLUSH_TLB);
--	if (xchg(&vcpu->arch.st.steal.preempted, 0) & KVM_VCPU_FLUSH_TLB)
-+		st->preempted & KVM_VCPU_FLUSH_TLB);
-+	if (xchg(&st->preempted, 0) & KVM_VCPU_FLUSH_TLB)
- 		kvm_vcpu_flush_tlb(vcpu, false);
- 
--	if (vcpu->arch.st.steal.version & 1)
--		vcpu->arch.st.steal.version += 1;  /* first time write, random junk */
-+	vcpu->arch.st.steal.preempted = 0;
- 
--	vcpu->arch.st.steal.version += 1;
-+	if (st->version & 1)
-+		st->version += 1;  /* first time write, random junk */
- 
--	kvm_write_guest_cached(vcpu->kvm, &vcpu->arch.st.stime,
--		&vcpu->arch.st.steal, sizeof(struct kvm_steal_time));
-+	st->version += 1;
- 
- 	smp_wmb();
- 
--	vcpu->arch.st.steal.steal += current->sched_info.run_delay -
-+	st->steal += current->sched_info.run_delay -
- 		vcpu->arch.st.last_steal;
- 	vcpu->arch.st.last_steal = current->sched_info.run_delay;
- 
--	kvm_write_guest_cached(vcpu->kvm, &vcpu->arch.st.stime,
--		&vcpu->arch.st.steal, sizeof(struct kvm_steal_time));
--
- 	smp_wmb();
- 
--	vcpu->arch.st.steal.version += 1;
-+	st->version += 1;
- 
--	kvm_write_guest_cached(vcpu->kvm, &vcpu->arch.st.stime,
--		&vcpu->arch.st.steal, sizeof(struct kvm_steal_time));
-+	kvm_unmap_gfn(vcpu, &map, &vcpu->arch.st.cache, true, false);
+ 	return NULL;
  }
- 
- int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
-@@ -3511,18 +3513,25 @@ void kvm_arch_vcpu_load(struct kvm_vcpu
- 
- static void kvm_steal_time_set_preempted(struct kvm_vcpu *vcpu)
+@@ -97,8 +103,12 @@ static inline struct kvm_pmc *get_fixed_
  {
-+	struct kvm_host_map map;
-+	struct kvm_steal_time *st;
-+
- 	if (!(vcpu->arch.st.msr_val & KVM_MSR_ENABLED))
- 		return;
+ 	int base = MSR_CORE_PERF_FIXED_CTR0;
  
- 	if (vcpu->arch.st.steal.preempted)
- 		return;
- 
--	vcpu->arch.st.steal.preempted = KVM_VCPU_PREEMPTED;
-+	if (kvm_map_gfn(vcpu, vcpu->arch.st.msr_val >> PAGE_SHIFT, &map,
-+			&vcpu->arch.st.cache, true))
-+		return;
+-	if (msr >= base && msr < base + pmu->nr_arch_fixed_counters)
+-		return &pmu->fixed_counters[msr - base];
++	if (msr >= base && msr < base + pmu->nr_arch_fixed_counters) {
++		u32 index = array_index_nospec(msr - base,
++					       pmu->nr_arch_fixed_counters);
 +
-+	st = map.hva +
-+		offset_in_page(vcpu->arch.st.msr_val & KVM_STEAL_VALID_BITS);
-+
-+	st->preempted = vcpu->arch.st.steal.preempted = KVM_VCPU_PREEMPTED;
++		return &pmu->fixed_counters[index];
++	}
  
--	kvm_write_guest_offset_cached(vcpu->kvm, &vcpu->arch.st.stime,
--			&vcpu->arch.st.steal.preempted,
--			offsetof(struct kvm_steal_time, preempted),
--			sizeof(vcpu->arch.st.steal.preempted));
-+	kvm_unmap_gfn(vcpu, &map, &vcpu->arch.st.cache, true, true);
+ 	return NULL;
  }
- 
- void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
 
 
