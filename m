@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90240157AFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:27:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E688157785
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:01:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728455AbgBJMgi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:36:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53966 "EHLO mail.kernel.org"
+        id S1729109AbgBJMko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:40:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728143AbgBJMfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:35:52 -0500
+        id S1727581AbgBJMiZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:25 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 426912173E;
-        Mon, 10 Feb 2020 12:35:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAE3C21739;
+        Mon, 10 Feb 2020 12:38:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338151;
-        bh=LRQoC9yuuyD4WWDvDZl85Iz9E1DsKg88NcmVKwZTNXY=;
+        s=default; t=1581338303;
+        bh=oYTQ65IeubCz9PCVytWZA5uF5Kd/jvT5kS05dJ9sBrI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KVkDMKx0vExX2HmblZZCqLkXLZaFTroTcZRNQGm3vMI3FzuoG78arJfQoitwD43lR
-         ZEKzJC5Wl0lXGSq1L7eshNI7WRbeJvNnXdUjLNMj0YFRDMwDetvE3SEvbpJhB/38v8
-         +BUZAgs3rxQBQnSGTLFcTnKQQU9v1G/c07Ol2tKg=
+        b=GgBR7W30A82Riyw0TT+gSrzhTWv7bOjhrwjGosCqyXobadETaq7dQFolwYhoOxs1w
+         igzKIg/ztCZuP2ZUi1qJ5FgTs7lqPL7IFOffo562QNAiLtWMrofwK7N1zPMCBIb5fF
+         PF8pYWudIqjjdTnXMlend5Li6XxJHe1KLPCMnK/M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH 4.19 114/195] gfs2: fix O_SYNC write handling
+        stable@vger.kernel.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Joao Martins <joao.m.martins@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.4 216/309] x86/KVM: Make sure KVM_VCPU_FLUSH_TLB flag is not missed
 Date:   Mon, 10 Feb 2020 04:32:52 -0800
-Message-Id: <20200210122316.597539430@linuxfoundation.org>
+Message-Id: <20200210122427.301862098@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,111 +45,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Gruenbacher <agruenba@redhat.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-commit 6e5e41e2dc4e4413296d5a4af54ac92d7cd52317 upstream.
+commit b043138246a41064527cf019a3d51d9f015e9796 upstream.
 
-In gfs2_file_write_iter, for direct writes, the error checking in the buffered
-write fallback case is incomplete.  This can cause inode write errors to go
-undetected.  Fix and clean up gfs2_file_write_iter along the way.
+There is a potential race in record_steal_time() between setting
+host-local vcpu->arch.st.steal.preempted to zero (i.e. clearing
+KVM_VCPU_PREEMPTED) and propagating this value to the guest with
+kvm_write_guest_cached(). Between those two events the guest may
+still see KVM_VCPU_PREEMPTED in its copy of kvm_steal_time, set
+KVM_VCPU_FLUSH_TLB and assume that hypervisor will do the right
+thing. Which it won't.
 
-Based on a proposed fix by Christoph Hellwig <hch@lst.de>.
+Instad of copying, we should map kvm_steal_time and that will
+guarantee atomicity of accesses to @preempted.
 
-Fixes: 967bcc91b044 ("gfs2: iomap direct I/O support")
-Cc: stable@vger.kernel.org # v4.19+
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+This is part of CVE-2019-3016.
+
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/gfs2/file.c |   51 +++++++++++++++++++++------------------------------
- 1 file changed, 21 insertions(+), 30 deletions(-)
+ arch/x86/kvm/x86.c |   51 ++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 30 insertions(+), 21 deletions(-)
 
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -780,7 +780,7 @@ static ssize_t gfs2_file_write_iter(stru
- 	struct file *file = iocb->ki_filp;
- 	struct inode *inode = file_inode(file);
- 	struct gfs2_inode *ip = GFS2_I(inode);
--	ssize_t written = 0, ret;
-+	ssize_t ret;
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2593,45 +2593,47 @@ static void kvm_vcpu_flush_tlb(struct kv
  
- 	ret = gfs2_rsqa_alloc(ip);
- 	if (ret)
-@@ -812,55 +812,46 @@ static ssize_t gfs2_file_write_iter(stru
+ static void record_steal_time(struct kvm_vcpu *vcpu)
+ {
++	struct kvm_host_map map;
++	struct kvm_steal_time *st;
++
+ 	if (!(vcpu->arch.st.msr_val & KVM_MSR_ENABLED))
+ 		return;
  
- 	if (iocb->ki_flags & IOCB_DIRECT) {
- 		struct address_space *mapping = file->f_mapping;
--		loff_t pos, endbyte;
--		ssize_t buffered;
-+		ssize_t buffered, ret2;
+-	if (unlikely(kvm_read_guest_cached(vcpu->kvm, &vcpu->arch.st.stime,
+-		&vcpu->arch.st.steal, sizeof(struct kvm_steal_time))))
++	/* -EAGAIN is returned in atomic context so we can just return. */
++	if (kvm_map_gfn(vcpu, vcpu->arch.st.msr_val >> PAGE_SHIFT,
++			&map, &vcpu->arch.st.cache, false))
+ 		return;
  
--		written = gfs2_file_direct_write(iocb, from);
--		if (written < 0 || !iov_iter_count(from))
-+		ret = gfs2_file_direct_write(iocb, from);
-+		if (ret < 0 || !iov_iter_count(from))
- 			goto out_unlock;
++	st = map.hva +
++		offset_in_page(vcpu->arch.st.msr_val & KVM_STEAL_VALID_BITS);
++
+ 	/*
+ 	 * Doing a TLB flush here, on the guest's behalf, can avoid
+ 	 * expensive IPIs.
+ 	 */
+ 	trace_kvm_pv_tlb_flush(vcpu->vcpu_id,
+-		vcpu->arch.st.steal.preempted & KVM_VCPU_FLUSH_TLB);
+-	if (xchg(&vcpu->arch.st.steal.preempted, 0) & KVM_VCPU_FLUSH_TLB)
++		st->preempted & KVM_VCPU_FLUSH_TLB);
++	if (xchg(&st->preempted, 0) & KVM_VCPU_FLUSH_TLB)
+ 		kvm_vcpu_flush_tlb(vcpu, false);
  
-+		iocb->ki_flags |= IOCB_DSYNC;
- 		current->backing_dev_info = inode_to_bdi(inode);
--		ret = iomap_file_buffered_write(iocb, from, &gfs2_iomap_ops);
-+		buffered = iomap_file_buffered_write(iocb, from, &gfs2_iomap_ops);
- 		current->backing_dev_info = NULL;
--		if (unlikely(ret < 0))
-+		if (unlikely(buffered <= 0))
- 			goto out_unlock;
--		buffered = ret;
+-	if (vcpu->arch.st.steal.version & 1)
+-		vcpu->arch.st.steal.version += 1;  /* first time write, random junk */
++	vcpu->arch.st.steal.preempted = 0;
  
- 		/*
- 		 * We need to ensure that the page cache pages are written to
- 		 * disk and invalidated to preserve the expected O_DIRECT
--		 * semantics.
-+		 * semantics.  If the writeback or invalidate fails, only report
-+		 * the direct I/O range as we don't know if the buffered pages
-+		 * made it to disk.
- 		 */
--		pos = iocb->ki_pos;
--		endbyte = pos + buffered - 1;
--		ret = filemap_write_and_wait_range(mapping, pos, endbyte);
--		if (!ret) {
--			iocb->ki_pos += buffered;
--			written += buffered;
--			invalidate_mapping_pages(mapping,
--						 pos >> PAGE_SHIFT,
--						 endbyte >> PAGE_SHIFT);
--		} else {
--			/*
--			 * We don't know how much we wrote, so just return
--			 * the number of bytes which were direct-written
--			 */
--		}
-+		iocb->ki_pos += buffered;
-+		ret2 = generic_write_sync(iocb, buffered);
-+		invalidate_mapping_pages(mapping,
-+				(iocb->ki_pos - buffered) >> PAGE_SHIFT,
-+				(iocb->ki_pos - 1) >> PAGE_SHIFT);
-+		if (!ret || ret2 > 0)
-+			ret += ret2;
- 	} else {
- 		current->backing_dev_info = inode_to_bdi(inode);
- 		ret = iomap_file_buffered_write(iocb, from, &gfs2_iomap_ops);
- 		current->backing_dev_info = NULL;
--		if (likely(ret > 0))
-+		if (likely(ret > 0)) {
- 			iocb->ki_pos += ret;
-+			ret = generic_write_sync(iocb, ret);
-+		}
- 	}
+-	vcpu->arch.st.steal.version += 1;
++	if (st->version & 1)
++		st->version += 1;  /* first time write, random junk */
  
- out_unlock:
- 	inode_unlock(inode);
--	if (likely(ret > 0)) {
--		/* Handle various SYNC-type writes */
--		ret = generic_write_sync(iocb, ret);
--	}
--	return written ? written : ret;
-+	return ret;
+-	kvm_write_guest_cached(vcpu->kvm, &vcpu->arch.st.stime,
+-		&vcpu->arch.st.steal, sizeof(struct kvm_steal_time));
++	st->version += 1;
+ 
+ 	smp_wmb();
+ 
+-	vcpu->arch.st.steal.steal += current->sched_info.run_delay -
++	st->steal += current->sched_info.run_delay -
+ 		vcpu->arch.st.last_steal;
+ 	vcpu->arch.st.last_steal = current->sched_info.run_delay;
+ 
+-	kvm_write_guest_cached(vcpu->kvm, &vcpu->arch.st.stime,
+-		&vcpu->arch.st.steal, sizeof(struct kvm_steal_time));
+-
+ 	smp_wmb();
+ 
+-	vcpu->arch.st.steal.version += 1;
++	st->version += 1;
+ 
+-	kvm_write_guest_cached(vcpu->kvm, &vcpu->arch.st.stime,
+-		&vcpu->arch.st.steal, sizeof(struct kvm_steal_time));
++	kvm_unmap_gfn(vcpu, &map, &vcpu->arch.st.cache, true, false);
  }
  
- static int fallocate_chunk(struct inode *inode, loff_t offset, loff_t len,
+ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+@@ -3496,18 +3498,25 @@ void kvm_arch_vcpu_load(struct kvm_vcpu
+ 
+ static void kvm_steal_time_set_preempted(struct kvm_vcpu *vcpu)
+ {
++	struct kvm_host_map map;
++	struct kvm_steal_time *st;
++
+ 	if (!(vcpu->arch.st.msr_val & KVM_MSR_ENABLED))
+ 		return;
+ 
+ 	if (vcpu->arch.st.steal.preempted)
+ 		return;
+ 
+-	vcpu->arch.st.steal.preempted = KVM_VCPU_PREEMPTED;
++	if (kvm_map_gfn(vcpu, vcpu->arch.st.msr_val >> PAGE_SHIFT, &map,
++			&vcpu->arch.st.cache, true))
++		return;
++
++	st = map.hva +
++		offset_in_page(vcpu->arch.st.msr_val & KVM_STEAL_VALID_BITS);
++
++	st->preempted = vcpu->arch.st.steal.preempted = KVM_VCPU_PREEMPTED;
+ 
+-	kvm_write_guest_offset_cached(vcpu->kvm, &vcpu->arch.st.stime,
+-			&vcpu->arch.st.steal.preempted,
+-			offsetof(struct kvm_steal_time, preempted),
+-			sizeof(vcpu->arch.st.steal.preempted));
++	kvm_unmap_gfn(vcpu, &map, &vcpu->arch.st.cache, true, true);
+ }
+ 
+ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
 
 
