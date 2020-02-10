@@ -2,147 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F013158309
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 19:55:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61F3C15831D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 19:58:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727779AbgBJSzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 13:55:03 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40278 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727434AbgBJSzD (ORCPT
+        id S1727738AbgBJS6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 13:58:50 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:53806 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727079AbgBJS6t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 13:55:03 -0500
-Received: by mail-ed1-f65.google.com with SMTP id p3so1575211edx.7;
-        Mon, 10 Feb 2020 10:55:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Jlkep5BMgERBHRiRFRjnqMtZPt75n7yCPDHspM4Vr4s=;
-        b=pEvR8ABTtQkrO9u6pVgAlLHW7KBW3peH1uZYJ2eqTKxZ7Tj9nedUCZoATzhRnostW7
-         PloRMJ5o9wcPZcJXjgPNKdbuky18rMhsSGVmFO8owtO5mFJgCsZFYisCdC2a6oOSkYBR
-         JkrT4YL2WjB/6zdE6xNLDf3hMxGM7PTaJQ+uLpuSFBK/r1W+sQrbHSEiA556+//b836t
-         zkQHNc1Bzt1A6syHSrSDc5qBNMip1Om8XdpActNsX1mSFIrVmzDpHI4cWsJTG33dq98C
-         ZceSe3ZscFFJ2G6+Ke53h4hNBPtL13Ntu0OdAmTDtQx4GqNy1QrkELIgsf+YYq7D4zcw
-         xteQ==
-X-Gm-Message-State: APjAAAWptcotSWc9c73ehDLs8lMSVydvighn6UcGldlIxYcFQzrXJUE5
-        f9OAg4YzH/KBJfapeDs6ddY=
-X-Google-Smtp-Source: APXvYqw0gOeAueOeG/UOMWpy/5re47tSz7mLAaISIcnPIQ/kq1PJH7gsUfZZce4d+I4k2uUUDYoxfQ==
-X-Received: by 2002:a05:6402:14d6:: with SMTP id f22mr2415351edx.59.1581360901336;
-        Mon, 10 Feb 2020 10:55:01 -0800 (PST)
-Received: from kozik-lap ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id j21sm74756eds.8.2020.02.10.10.54.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Feb 2020 10:55:00 -0800 (PST)
-Date:   Mon, 10 Feb 2020 19:54:58 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     Linux USB Mailing List <linux-usb@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv3 2/3] ARM: dts: exynos: Add missing usbdrd3 suspend clk
-Message-ID: <20200210185458.GA16433@kozik-lap>
-References: <20200210105108.1128-1-linux.amoon@gmail.com>
- <20200210105108.1128-3-linux.amoon@gmail.com>
- <20200210135008.GA2163@pi3>
- <CANAwSgT9_8JhjyN9yfZ6=AUE7kVhrrTwdK1KFQLwxuNSYyBKKA@mail.gmail.com>
+        Mon, 10 Feb 2020 13:58:49 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01AIr6ON050048;
+        Mon, 10 Feb 2020 18:58:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=wFgDz4N6HWtjN6jyjTPks3bbgtJyNVrIk8Z3sBNbVBc=;
+ b=fcqt5M6noodBnOuPGFEJTZbnEFrLGIKpz+wS+uc60cxgEMn4xEwVWPq6pmVRkFG7HuKt
+ 26SYjcUQQ2jkTGAqkPcWo8BIcAN5Luj6QT8q5s53VwxCYEqoGoBR/Ie5Z44ZHvCFpJHQ
+ 1907YiDkYmuImKAQ/ezOGOnROImBT112+VlUXOjlB/WOE91rp+YebODgltvKmN3K27VB
+ mPUihBJ0urDvSo4H63VEZYjBfNehbF2w6yN4KsGRsCNePeFsiGl2t01uWi9btfu6zgxD
+ cDzwVQrXcG5twWGzEbA/JhkGW5KMH0Xifbvps+nbQg2rOtld5gLbYEUo+FFJ9ScA1Ucm Mg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2y2p3s6fax-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Feb 2020 18:58:08 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01AIw6NZ026611;
+        Mon, 10 Feb 2020 18:58:07 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2y26htg2wn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Feb 2020 18:58:07 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01AIw2p3018584;
+        Mon, 10 Feb 2020 18:58:02 GMT
+Received: from [192.168.1.206] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 10 Feb 2020 10:58:02 -0800
+Subject: Re: [PATCH] mm: always consider THP when adjusting min_free_kbytes
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     David Rientjes <rientjes@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+        "Kirill A.Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20200204194156.61672-1-mike.kravetz@oracle.com>
+ <alpine.DEB.2.21.2002041218580.58724@chino.kir.corp.google.com>
+ <8cc18928-0b52-7c2e-fbc6-5952eb9b06ab@oracle.com>
+ <20200204215319.GO8731@bombadil.infradead.org>
+ <b6979214-3f0e-6c12-ed63-681b40c6e16c@oracle.com>
+ <2ba63021-d05c-a648-f280-6c751e01adf6@oracle.com>
+ <20200206203945.GZ8731@bombadil.infradead.org>
+ <5e7800f2-3df3-a597-c164-5537b7f66417@oracle.com>
+ <20200206213255.GC8731@bombadil.infradead.org>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <b18a50de-9229-9cbe-3e78-9e0c92edc5f1@oracle.com>
+Date:   Mon, 10 Feb 2020 10:58:01 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
+In-Reply-To: <20200206213255.GC8731@bombadil.infradead.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANAwSgT9_8JhjyN9yfZ6=AUE7kVhrrTwdK1KFQLwxuNSYyBKKA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9527 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ bulkscore=0 adultscore=0 malwarescore=0 suspectscore=2 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002100139
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9527 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 malwarescore=0
+ suspectscore=2 mlxlogscore=999 priorityscore=1501 clxscore=1015
+ impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002100138
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 10:43:45PM +0530, Anand Moon wrote:
-> Hi Krzysztof,
+On 2/6/20 1:32 PM, Matthew Wilcox wrote:
+> On Thu, Feb 06, 2020 at 01:23:21PM -0800, Mike Kravetz wrote:
+>> On 2/6/20 12:39 PM, Matthew Wilcox wrote:
+>>> On Wed, Feb 05, 2020 at 05:36:44PM -0800, Mike Kravetz wrote:
+>>>> The value of min_free_kbytes is calculated in two routines:
+>>>> 1) init_per_zone_wmark_min based on available memory
+>>>> 2) set_recommended_min_free_kbytes may reserve extra space for
+>>>>    THP allocations
+>>>>
+>>>> In both of these routines, a user defined min_free_kbytes value will
+>>>> be overwritten if the value calculated in the code is larger. No message
+>>>> is logged if the user value is overwritten.
+>>>>
+>>>> Change code to never overwrite user defined value.  However, do log a
+>>>> message (once per value) showing the value calculated in code.
+>>>
+>>> But what if the user set min_free_kbytes to, say, half of system memory,
+>>> and then hot-unplugs three quarters of their memory?  I think the kernel
+>>> should protect itself against such foolishness.
+>>
+>> I'm not sure what we should set it to in this case.  Previously you said,
+>>
+>>>> I'm reluctant to suggest we do a more complex adjustment of the value
+>>>> (eg figure out what the adjustment would have been, then apply some
+>>>> fraction of that adjustment to keep the ratios in proportion) because
+>>>> we don't really know why they adjusted it.
+>>
+>> So, I suspect you would suggest setting it to the default computed value?
+>> But then, when do we start adjusting?  What if they only remove a small
+>> amount of memory?  And, then add the same amount back in?
 > 
-> Thanks for your review comments.
+> I don't know about the default computed value ... we don't seem to have
+> any protection against the user setting min_free_kbytes to double the
+> amount of memory in the machine today.  Which would presumably cause
+> problems if I asked to maintain 32GB free at all times on my 16GB laptop?
 > 
-> On Mon, 10 Feb 2020 at 19:20, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > On Mon, Feb 10, 2020 at 10:51:07AM +0000, Anand Moon wrote:
-> > > This patch adds new combatible strings for USBDRD3
-> > > for adding missing suspend clk, exynos5422 usbdrd3
-> > > support two clk USBD300 and SCLK_USBD300, so add missing
-> > > suspemd_clk for Exynos542x DWC3 nodes.
-> > >
-> > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > > ---
-> > >  arch/arm/boot/dts/exynos5420.dtsi | 8 ++++----
-> > >  arch/arm/boot/dts/exynos54xx.dtsi | 4 ++--
-> > >  2 files changed, 6 insertions(+), 6 deletions(-)
-> > >
-> > > diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> > > index b672080e7469..bd505256a223 100644
-> > > --- a/arch/arm/boot/dts/exynos5420.dtsi
-> > > +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> > > @@ -1372,8 +1372,8 @@ &trng {
-> > >  };
-> > >
-> > >  &usbdrd3_0 {
-> > > -     clocks = <&clock CLK_USBD300>;
-> > > -     clock-names = "usbdrd30";
-> > > +     clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBD300>;
-> > > +     clock-names = "usbdrd30", "usbdrd30_susp_clk";
-> > >  };
-> > >
-> > >  &usbdrd_phy0 {
-> > > @@ -1383,8 +1383,8 @@ &usbdrd_phy0 {
-> > >  };
-> > >
-> > >  &usbdrd3_1 {
-> > > -     clocks = <&clock CLK_USBD301>;
-> > > -     clock-names = "usbdrd30";
-> > > +     clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBD301>;
-> > > +     clock-names = "usbdrd30", "usbdrd30_susp_clk";
-> > >  };
-> > >
-> > >  &usbdrd_dwc3_1 {
-> > > diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
-> > > index 8aa5117e58ce..0aac6255de5d 100644
-> > > --- a/arch/arm/boot/dts/exynos54xx.dtsi
-> > > +++ b/arch/arm/boot/dts/exynos54xx.dtsi
-> > > @@ -143,7 +143,7 @@ hsi2c_7: i2c@12cd0000 {
-> > >               };
-> > >
-> > >               usbdrd3_0: usb3-0 {
-> > > -                     compatible = "samsung,exynos5250-dwusb3";
-> > > +                     compatible = "samsung,exynos5420-dwusb3";
-> > >                       #address-cells = <1>;
-> > >                       #size-cells = <1>;
-> > >                       ranges;
-> > > @@ -165,7 +165,7 @@ usbdrd_phy0: phy@12100000 {
-> > >               };
-> > >
-> > >               usbdrd3_1: usb3-1 {
-> > > -                     compatible = "samsung,exynos5250-dwusb3";
-> > > +                     compatible = "samsung,exynos5420-dwusb3";
-> >
-> > This affects also Exynos5410 but you do not add new clock there.
-> >
-> > Best regards,
-> > Krzysztof
-> >
-> 
-> Ok I will update this Exynos5410 dts.
-> 
-> Is samsung,exynos54xx-dwusb3 is valid compatible string
-> for both the SoC.
+> Maybe we should have such protection?
 
-The compatible should not be wildcard so keep it as
-samsung,exynos5420-dwusb3.
+I am not going to attempt to define parameters for user defined values
+of min_free_kbytes.  Someone smarter than me can take that on.  Documentation
+is pretty clear that user is allowed to do bad things which will immediately
+cause them problems.
 
-Best regards,
-Krzysztof
-
+I'm going to explicitly send out the v2 version of patch.  It is not something
+I feel strongly about.  Just an attempt to clean up some inconsistencies
+observed while looking at something else.
+-- 
+Mike Kravetz
