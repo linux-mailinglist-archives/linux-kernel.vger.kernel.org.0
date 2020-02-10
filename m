@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C502D157500
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:38:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B6E7157670
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:53:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728921AbgBJMht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:37:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55826 "EHLO mail.kernel.org"
+        id S1728042AbgBJMwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:52:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728410AbgBJMgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:32 -0500
+        id S1730228AbgBJMmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:42:21 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3210620842;
-        Mon, 10 Feb 2020 12:36:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F56F2051A;
+        Mon, 10 Feb 2020 12:42:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338192;
-        bh=oEM3+nzDqWEevdqdRzE0EAc4DVyMz1ux+ltBjgdHDZc=;
+        s=default; t=1581338540;
+        bh=mXgJDsvXcMB4V3q6nk9hNA+TUE92NqmQrxhg8xXFQ8Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LngIwRZspy3C5f2B2hBYP1VYMcaqi81ZPd+0AIx50R0XB1CGwz3fbwRwo/xVqVGnA
-         JXn3UDHPWO6Bs6utrb9YXyGwFn0EyIiDeP60i61UY5gIk+XQ9hULjL3wTly4/DCEko
-         7N8VULTsOwGz8R6XELwmdfQ9OGkeDeNc92yk7G6M=
+        b=KHYdxsXKcPZS0A2Al97nMu3MZviqRzp0doY0YCXllQuCmrfwUl5Z7qo0wSuC5/ypE
+         mPhAtvJlo0AeAAkrMOwZ3TbBqFavhvGs/WpK37zZ4Ngt4/g0siDYC32BvRIPI7HBna
+         XjrW2dEVUmHdXYFyPtMEPvu2p2uYMLKirYunKeeQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 195/195] rxrpc: Fix service call disconnection
-Date:   Mon, 10 Feb 2020 04:34:13 -0800
-Message-Id: <20200210122324.215756193@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sudarsana Reddy Kalluru <skalluru@marvell.com>,
+        Ariel Elior <aelior@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.5 341/367] qed: Fix timestamping issue for L2 unicast ptp packets.
+Date:   Mon, 10 Feb 2020 04:34:14 -0800
+Message-Id: <20200210122454.128386008@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,63 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+From: Sudarsana Reddy Kalluru <skalluru@marvell.com>
 
-[ Upstream commit b39a934ec72fa2b5a74123891f25273a38378b90 ]
+[ Upstream commit 0202d293c2faecba791ba4afc5aec086249c393d ]
 
-The recent patch that substituted a flag on an rxrpc_call for the
-connection pointer being NULL as an indication that a call was disconnected
-puts the set_bit in the wrong place for service calls.  This is only a
-problem if a call is implicitly terminated by a new call coming in on the
-same connection channel instead of a terminating ACK packet.
+commit cedeac9df4b8 ("qed: Add support for Timestamping the unicast
+PTP packets.") handles the timestamping of L4 ptp packets only.
+This patch adds driver changes to detect/timestamp both L2/L4 unicast
+PTP packets.
 
-In such a case, rxrpc_input_implicit_end_call() calls
-__rxrpc_disconnect_call(), which is now (incorrectly) setting the
-disconnection bit, meaning that when rxrpc_release_call() is later called,
-it doesn't call rxrpc_disconnect_call() and so the call isn't removed from
-the peer's error distribution list and the list gets corrupted.
-
-KASAN finds the issue as an access after release on a call, but the
-position at which it occurs is confusing as it appears to be related to a
-different call (the call site is where the latter call is being removed
-from the error distribution list and either the next or pprev pointer
-points to a previously released call).
-
-Fix this by moving the setting of the flag from __rxrpc_disconnect_call()
-to rxrpc_disconnect_call() in the same place that the connection pointer
-was being cleared.
-
-Fixes: 5273a191dca6 ("rxrpc: Fix NULL pointer deref due to call->conn being cleared on disconnect")
-Signed-off-by: David Howells <dhowells@redhat.com>
+Fixes: cedeac9df4b8 ("qed: Add support for Timestamping the unicast PTP packets.")
+Signed-off-by: Sudarsana Reddy Kalluru <skalluru@marvell.com>
+Signed-off-by: Ariel Elior <aelior@marvell.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/rxrpc/conn_object.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_ptp.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/rxrpc/conn_object.c b/net/rxrpc/conn_object.c
-index a81e64be4a24f..c4c4450891e0f 100644
---- a/net/rxrpc/conn_object.c
-+++ b/net/rxrpc/conn_object.c
-@@ -174,8 +174,6 @@ void __rxrpc_disconnect_call(struct rxrpc_connection *conn,
+--- a/drivers/net/ethernet/qlogic/qed/qed_ptp.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_ptp.c
+@@ -44,8 +44,8 @@
+ /* Add/subtract the Adjustment_Value when making a Drift adjustment */
+ #define QED_DRIFT_CNTR_DIRECTION_SHIFT		31
+ #define QED_TIMESTAMP_MASK			BIT(16)
+-/* Param mask for Hardware to detect/timestamp the unicast PTP packets */
+-#define QED_PTP_UCAST_PARAM_MASK		0xF
++/* Param mask for Hardware to detect/timestamp the L2/L4 unicast PTP packets */
++#define QED_PTP_UCAST_PARAM_MASK              0x70F
  
- 	_enter("%d,%x", conn->debug_id, call->cid);
- 
--	set_bit(RXRPC_CALL_DISCONNECTED, &call->flags);
--
- 	if (rcu_access_pointer(chan->call) == call) {
- 		/* Save the result of the call so that we can repeat it if necessary
- 		 * through the channel, whilst disposing of the actual call record.
-@@ -228,6 +226,7 @@ void rxrpc_disconnect_call(struct rxrpc_call *call)
- 	__rxrpc_disconnect_call(conn, call);
- 	spin_unlock(&conn->channel_lock);
- 
-+	set_bit(RXRPC_CALL_DISCONNECTED, &call->flags);
- 	conn->idle_timestamp = jiffies;
- }
- 
--- 
-2.20.1
-
+ static enum qed_resc_lock qed_ptcdev_to_resc(struct qed_hwfn *p_hwfn)
+ {
 
 
