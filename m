@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3BC81575B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:43:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7552C157655
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730445AbgBJMnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:43:31 -0500
+        id S1730453AbgBJMnd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:43:33 -0500
 Received: from mail.kernel.org ([198.145.29.99]:38920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729573AbgBJMj5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:39:57 -0500
+        id S1729589AbgBJMj7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:39:59 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B454324650;
-        Mon, 10 Feb 2020 12:39:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D03BE2467A;
+        Mon, 10 Feb 2020 12:39:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338396;
-        bh=BSn5R7azljg7e9o9BU85gK//ULJ7l3w8oNS873dz39k=;
+        s=default; t=1581338397;
+        bh=HRQkpN1Mvq7ucN4kQwhBOlr26goTcPiQ9hquQc7J3I8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jqfsfimJaGYl5g/Vefm9+/Nh9Dz893qEeKqWLybS8WY0ZdhL7A+Ckl/6gt0Y6zFwD
-         7CCSdL57b/rKKBlCHfFQP8hExNIUlfxIW8fnrQU4a3VmiYvlWoZYAnuEIYAhZRl3a1
-         WMw5RIYS5NkzlleuI/r87rcu4YeheDLK7C1xc3bM=
+        b=q/OA4twYlMh2K36bbzUwpVU5avMbHiaL9MdqVA6mDzEj3WfzuXP4dYg4bMaDHB5o0
+         /JGbragqr+qLbTv9dnRpQ+X0IUmBK2qYr1oKlYduPSK6Py6MVCufUJRiYxu3ulj68r
+         XrKdkLQTG9Un7/DnpfPcXVtqUP/wrPWJ2dpOvkGU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yurii Monakov <monakov.y@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>
-Subject: [PATCH 5.5 092/367] PCI: keystone: Fix link training retries initiation
-Date:   Mon, 10 Feb 2020 04:30:05 -0800
-Message-Id: <20200210122432.860321951@linuxfoundation.org>
+        stable@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 5.5 094/367] mmc: spi: Toggle SPI polarity, do not hardcode it
+Date:   Mon, 10 Feb 2020 04:30:07 -0800
+Message-Id: <20200210122433.043504041@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -44,36 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yurii Monakov <monakov.y@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-commit 6df19872d881641e6394f93ef2938cffcbdae5bb upstream.
+commit af3ed119329cf9690598c5a562d95dfd128e91d6 upstream.
 
-ks_pcie_stop_link() function does not clear LTSSM_EN_VAL bit so
-link training was not triggered more than once after startup.
-In configurations where link can be unstable during early boot,
-for example, under low temperature, it will never be established.
+The code in mmc_spi_initsequence() tries to send a burst with
+high chipselect and for this reason hardcodes the device into
+SPI_CS_HIGH.
 
-Fixes: 0c4ffcfe1fbc ("PCI: keystone: Add TI Keystone PCIe driver")
-Signed-off-by: Yurii Monakov <monakov.y@gmail.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Andrew Murray <andrew.murray@arm.com>
+This is not good because the SPI_CS_HIGH flag indicates
+logical "asserted" CS not always the physical level. In
+some cases the signal is inverted in the GPIO library and
+in that case SPI_CS_HIGH is already set, and enforcing
+SPI_CS_HIGH again will actually drive it low.
+
+Instead of hard-coding this, toggle the polarity so if the
+default is LOW it goes high to assert chipselect but if it
+is already high then toggle it low instead.
+
+Cc: Phil Elwell <phil@raspberrypi.org>
+Reported-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Link: https://lore.kernel.org/r/20191204152749.12652-1-linus.walleij@linaro.org
 Cc: stable@vger.kernel.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/controller/dwc/pci-keystone.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/mmc_spi.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -510,7 +510,7 @@ static void ks_pcie_stop_link(struct dw_
- 	/* Disable Link training */
- 	val = ks_pcie_app_readl(ks_pcie, CMD_STATUS);
- 	val &= ~LTSSM_EN_VAL;
--	ks_pcie_app_writel(ks_pcie, CMD_STATUS, LTSSM_EN_VAL | val);
-+	ks_pcie_app_writel(ks_pcie, CMD_STATUS, val);
- }
+--- a/drivers/mmc/host/mmc_spi.c
++++ b/drivers/mmc/host/mmc_spi.c
+@@ -1134,17 +1134,22 @@ static void mmc_spi_initsequence(struct
+ 	 * SPI protocol.  Another is that when chipselect is released while
+ 	 * the card returns BUSY status, the clock must issue several cycles
+ 	 * with chipselect high before the card will stop driving its output.
++	 *
++	 * SPI_CS_HIGH means "asserted" here. In some cases like when using
++	 * GPIOs for chip select, SPI_CS_HIGH is set but this will be logically
++	 * inverted by gpiolib, so if we want to ascertain to drive it high
++	 * we should toggle the default with an XOR as we do here.
+ 	 */
+-	host->spi->mode |= SPI_CS_HIGH;
++	host->spi->mode ^= SPI_CS_HIGH;
+ 	if (spi_setup(host->spi) != 0) {
+ 		/* Just warn; most cards work without it. */
+ 		dev_warn(&host->spi->dev,
+ 				"can't change chip-select polarity\n");
+-		host->spi->mode &= ~SPI_CS_HIGH;
++		host->spi->mode ^= SPI_CS_HIGH;
+ 	} else {
+ 		mmc_spi_readbytes(host, 18);
  
- static int ks_pcie_start_link(struct dw_pcie *pci)
+-		host->spi->mode &= ~SPI_CS_HIGH;
++		host->spi->mode ^= SPI_CS_HIGH;
+ 		if (spi_setup(host->spi) != 0) {
+ 			/* Wot, we can't get the same setup we had before? */
+ 			dev_err(&host->spi->dev,
 
 
