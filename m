@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CB7315780A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:04:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E17C157A7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:23:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730776AbgBJNEh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:04:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39770 "EHLO mail.kernel.org"
+        id S1731154AbgBJNXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:23:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729652AbgBJMkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:13 -0500
+        id S1728692AbgBJMhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:16 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F7FC2051A;
-        Mon, 10 Feb 2020 12:40:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0C0620838;
+        Mon, 10 Feb 2020 12:37:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338412;
-        bh=KM0blz/sPOMcLJ1MQfWiz35/SGyUA2nMXUvLEnE2NGE=;
+        s=default; t=1581338236;
+        bh=ERMBUPI2b+Utm9Kh81/B4lVCmtApptrrQn2lLHq7HNw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uT6Fx2aop1FxhO8JDRleK6EntwO4jt3rOerWdzoTVTxJQ+xSBPdY7URqtlyu9eY7z
-         8bZg4csIMGtz/Apf1b2W39dNZKqqg0waqbZhMeUXiFXwzixEwc6OWuOuLEHPu8Sp2F
-         7tVYqNzN6GvM+PDDAN/Sc+11mHYdJaMUoUq1WWqg=
+        b=MZZ8GqR0sKMGKaB27ZyivhJSTM8KhC7Co8qkmtmyRmvy5nqPk5MO9JkxpGeCDNfMJ
+         6zKsq7MRE0GSIRiGoDy3uN12/zt4fqDS3Cp66Y0lH8vhNA0FNSxdyiMUYJx/RaYu/W
+         qZdRLE7rl6hD06ZMThgWuEpcJayPUqVF2/2s9Vgk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-        Anand Lodnoor <anand.lodnoor@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 5.5 124/367] scsi: megaraid_sas: Do not initiate OCR if controller is not in ready state
-Date:   Mon, 10 Feb 2020 04:30:37 -0800
-Message-Id: <20200210122436.271213720@linuxfoundation.org>
+        stable@vger.kernel.org, Yurii Monakov <monakov.y@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH 5.4 082/309] PCI: keystone: Fix outbound region mapping
+Date:   Mon, 10 Feb 2020 04:30:38 -0800
+Message-Id: <20200210122413.725235676@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,70 +46,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anand Lodnoor <anand.lodnoor@broadcom.com>
+From: Yurii Monakov <monakov.y@gmail.com>
 
-commit 6d7537270e3283b92f9b327da9d58a4de40fe8d0 upstream.
+commit 2d0c3fbe43fa0e6fcb7a6c755c5f4cd702c0d2f4 upstream.
 
-Driver initiates OCR if a DCMD command times out. But there is a deadlock
-if the driver attempts to invoke another OCR before the mutex lock
-(reset_mutex) is released from the previous session of OCR.
+The Keystone outbound Address Translation Unit (ATU) maps PCI MMIO space in
+8 MB windows.  When programming the ATU windows, we previously incremented
+the starting address by 8, not 8 MB, so all the windows were mapped to the
+first 8 MB.  Therefore, only 8 MB of MMIO space was accessible.
 
-This patch takes care of the above scenario using new flag
-MEGASAS_FUSION_OCR_NOT_POSSIBLE to indicate if OCR is possible.
+Update the loop so it increments the starting address by 8 MB, not 8, so
+more MMIO space is accessible.
 
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/1579000882-20246-9-git-send-email-anand.lodnoor@broadcom.com
-Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
-Signed-off-by: Anand Lodnoor <anand.lodnoor@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: e75043ad9792 ("PCI: keystone: Cleanup outbound window configuration")
+Link: https://lore.kernel.org/r/20191004154811.GA31397@monakov-y.office.kontur-niirs.ru
+Signed-off-by: Yurii Monakov <monakov.y@gmail.com>
+[bhelgaas: commit log]
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Andrew Murray <andrew.murray@arm.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: stable@vger.kernel.org	# v4.20+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/megaraid/megaraid_sas_base.c   |    3 ++-
- drivers/scsi/megaraid/megaraid_sas_fusion.c |    3 ++-
- drivers/scsi/megaraid/megaraid_sas_fusion.h |    1 +
- 3 files changed, 5 insertions(+), 2 deletions(-)
+ drivers/pci/controller/dwc/pci-keystone.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -4392,7 +4392,8 @@ dcmd_timeout_ocr_possible(struct megasas
- 	if (instance->adapter_type == MFI_SERIES)
- 		return KILL_ADAPTER;
- 	else if (instance->unload ||
--			test_bit(MEGASAS_FUSION_IN_RESET, &instance->reset_flags))
-+			test_bit(MEGASAS_FUSION_OCR_NOT_POSSIBLE,
-+				 &instance->reset_flags))
- 		return IGNORE_TIMEOUT;
- 	else
- 		return INITIATE_OCR;
---- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-@@ -4847,6 +4847,7 @@ int megasas_reset_fusion(struct Scsi_Hos
- 	if (instance->requestorId && !instance->skip_heartbeat_timer_del)
- 		del_timer_sync(&instance->sriov_heartbeat_timer);
- 	set_bit(MEGASAS_FUSION_IN_RESET, &instance->reset_flags);
-+	set_bit(MEGASAS_FUSION_OCR_NOT_POSSIBLE, &instance->reset_flags);
- 	atomic_set(&instance->adprecovery, MEGASAS_ADPRESET_SM_POLLING);
- 	instance->instancet->disable_intr(instance);
- 	megasas_sync_irqs((unsigned long)instance);
-@@ -5046,7 +5047,7 @@ kill_hba:
- 	instance->skip_heartbeat_timer_del = 1;
- 	retval = FAILED;
- out:
--	clear_bit(MEGASAS_FUSION_IN_RESET, &instance->reset_flags);
-+	clear_bit(MEGASAS_FUSION_OCR_NOT_POSSIBLE, &instance->reset_flags);
- 	mutex_unlock(&instance->reset_mutex);
- 	return retval;
- }
---- a/drivers/scsi/megaraid/megaraid_sas_fusion.h
-+++ b/drivers/scsi/megaraid/megaraid_sas_fusion.h
-@@ -89,6 +89,7 @@ enum MR_RAID_FLAGS_IO_SUB_TYPE {
+--- a/drivers/pci/controller/dwc/pci-keystone.c
++++ b/drivers/pci/controller/dwc/pci-keystone.c
+@@ -422,7 +422,7 @@ static void ks_pcie_setup_rc_app_regs(st
+ 				   lower_32_bits(start) | OB_ENABLEN);
+ 		ks_pcie_app_writel(ks_pcie, OB_OFFSET_HI(i),
+ 				   upper_32_bits(start));
+-		start += OB_WIN_SIZE;
++		start += OB_WIN_SIZE * SZ_1M;
+ 	}
  
- #define MEGASAS_FP_CMD_LEN	16
- #define MEGASAS_FUSION_IN_RESET 0
-+#define MEGASAS_FUSION_OCR_NOT_POSSIBLE 1
- #define RAID_1_PEER_CMDS 2
- #define JBOD_MAPS_COUNT	2
- #define MEGASAS_REDUCE_QD_COUNT 64
+ 	val = ks_pcie_app_readl(ks_pcie, CMD_STATUS);
 
 
