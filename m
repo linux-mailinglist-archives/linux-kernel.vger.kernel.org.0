@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AA9F15781E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:05:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CA17157AE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:26:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730809AbgBJNFO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:05:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39394 "EHLO mail.kernel.org"
+        id S1731224AbgBJN0G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:26:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729619AbgBJMkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:06 -0500
+        id S1728529AbgBJMgt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:36:49 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D1632467A;
-        Mon, 10 Feb 2020 12:40:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AB1F2465D;
+        Mon, 10 Feb 2020 12:36:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338406;
-        bh=g8wODqSpfkEv9Y70DI6xQCmerG9xeMQZlte3xZLBM1w=;
+        s=default; t=1581338209;
+        bh=J62eTd3bqr5j/L4W1LyHoRheWIg3gYLbwbNKiE5D1Fo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wXlzfYXlIT7clzhH43pE3j8oFhXAsd0wBl7PBCNsrl7h3pd51hbv3X36gGCNhbJei
-         LJj89Lye/Pftyr9BvFq98StOaBh8WsKHKakU9luOJe5plKqXWcwlmVqiX932Q/AOfv
-         JvtQXyb2WrHv+9T4eW1ppUw64uJt55+E6XO54iEo=
+        b=pIUqMAbwSdmR/IcXaP/zsm93QaMojgwBZ/cxztVJaByhsNsHyFbSCLz3jdHfYWPMy
+         afZR4143BkXv/2fCEepV73njeoq6rFJgMmfyg44/TgQF7g8VXiTTpMo7Sd60tY6477
+         owvct4xQFS77J+qvLabgcY3G7DxeoQk5+tx/yAyc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Alexandru Elisei <alexandru.elisei@arm.com>
-Subject: [PATCH 5.5 073/367] KVM: arm64: Correct PSTATE on exception entry
-Date:   Mon, 10 Feb 2020 04:29:46 -0800
-Message-Id: <20200210122430.926355733@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+99f4ddade3c22ab0cf23@syzkaller.appspotmail.com,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Marco Elver <elver@google.com>
+Subject: [PATCH 5.4 031/309] rcu: Use READ_ONCE() for ->expmask in rcu_read_unlock_special()
+Date:   Mon, 10 Feb 2020 04:29:47 -0800
+Message-Id: <20200210122409.041496530@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,144 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Paul E. McKenney <paulmck@kernel.org>
 
-commit a425372e733177eb0779748956bc16c85167af48 upstream.
+commit c51f83c315c392d9776c33eb16a2fe1349d65c7f upstream.
 
-When KVM injects an exception into a guest, it generates the PSTATE
-value from scratch, configuring PSTATE.{M[4:0],DAIF}, and setting all
-other bits to zero.
+The rcu_node structure's ->expmask field is updated only when holding the
+->lock, but is also accessed locklessly.  This means that all ->expmask
+updates must use WRITE_ONCE() and all reads carried out without holding
+->lock must use READ_ONCE().  This commit therefore changes the lockless
+->expmask read in rcu_read_unlock_special() to use READ_ONCE().
 
-This isn't correct, as the architecture specifies that some PSTATE bits
-are (conditionally) cleared or set upon an exception, and others are
-unchanged from the original context.
-
-This patch adds logic to match the architectural behaviour. To make this
-simple to follow/audit/extend, documentation references are provided,
-and bits are configured in order of their layout in SPSR_EL2. This
-layout can be seen in the diagram on ARM DDI 0487E.a page C5-429.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Alexandru Elisei <alexandru.elisei@arm.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20200108134324.46500-2-mark.rutland@arm.com
+Reported-by: syzbot+99f4ddade3c22ab0cf23@syzkaller.appspotmail.com
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Acked-by: Marco Elver <elver@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/include/uapi/asm/ptrace.h |    1 
- arch/arm64/kvm/inject_fault.c        |   70 ++++++++++++++++++++++++++++++++---
- 2 files changed, 66 insertions(+), 5 deletions(-)
+ kernel/rcu/tree_plugin.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/include/uapi/asm/ptrace.h
-+++ b/arch/arm64/include/uapi/asm/ptrace.h
-@@ -49,6 +49,7 @@
- #define PSR_SSBS_BIT	0x00001000
- #define PSR_PAN_BIT	0x00400000
- #define PSR_UAO_BIT	0x00800000
-+#define PSR_DIT_BIT	0x01000000
- #define PSR_V_BIT	0x10000000
- #define PSR_C_BIT	0x20000000
- #define PSR_Z_BIT	0x40000000
---- a/arch/arm64/kvm/inject_fault.c
-+++ b/arch/arm64/kvm/inject_fault.c
-@@ -14,9 +14,6 @@
- #include <asm/kvm_emulate.h>
- #include <asm/esr.h>
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -612,7 +612,7 @@ static void rcu_read_unlock_special(stru
  
--#define PSTATE_FAULT_BITS_64 	(PSR_MODE_EL1h | PSR_A_BIT | PSR_F_BIT | \
--				 PSR_I_BIT | PSR_D_BIT)
--
- #define CURRENT_EL_SP_EL0_VECTOR	0x0
- #define CURRENT_EL_SP_ELx_VECTOR	0x200
- #define LOWER_EL_AArch64_VECTOR		0x400
-@@ -50,6 +47,69 @@ static u64 get_except_vector(struct kvm_
- 	return vcpu_read_sys_reg(vcpu, VBAR_EL1) + exc_offset + type;
- }
- 
-+/*
-+ * When an exception is taken, most PSTATE fields are left unchanged in the
-+ * handler. However, some are explicitly overridden (e.g. M[4:0]). Luckily all
-+ * of the inherited bits have the same position in the AArch64/AArch32 SPSR_ELx
-+ * layouts, so we don't need to shuffle these for exceptions from AArch32 EL0.
-+ *
-+ * For the SPSR_ELx layout for AArch64, see ARM DDI 0487E.a page C5-429.
-+ * For the SPSR_ELx layout for AArch32, see ARM DDI 0487E.a page C5-426.
-+ *
-+ * Here we manipulate the fields in order of the AArch64 SPSR_ELx layout, from
-+ * MSB to LSB.
-+ */
-+static unsigned long get_except64_pstate(struct kvm_vcpu *vcpu)
-+{
-+	unsigned long sctlr = vcpu_read_sys_reg(vcpu, SCTLR_EL1);
-+	unsigned long old, new;
-+
-+	old = *vcpu_cpsr(vcpu);
-+	new = 0;
-+
-+	new |= (old & PSR_N_BIT);
-+	new |= (old & PSR_Z_BIT);
-+	new |= (old & PSR_C_BIT);
-+	new |= (old & PSR_V_BIT);
-+
-+	// TODO: TCO (if/when ARMv8.5-MemTag is exposed to guests)
-+
-+	new |= (old & PSR_DIT_BIT);
-+
-+	// PSTATE.UAO is set to zero upon any exception to AArch64
-+	// See ARM DDI 0487E.a, page D5-2579.
-+
-+	// PSTATE.PAN is unchanged unless SCTLR_ELx.SPAN == 0b0
-+	// SCTLR_ELx.SPAN is RES1 when ARMv8.1-PAN is not implemented
-+	// See ARM DDI 0487E.a, page D5-2578.
-+	new |= (old & PSR_PAN_BIT);
-+	if (!(sctlr & SCTLR_EL1_SPAN))
-+		new |= PSR_PAN_BIT;
-+
-+	// PSTATE.SS is set to zero upon any exception to AArch64
-+	// See ARM DDI 0487E.a, page D2-2452.
-+
-+	// PSTATE.IL is set to zero upon any exception to AArch64
-+	// See ARM DDI 0487E.a, page D1-2306.
-+
-+	// PSTATE.SSBS is set to SCTLR_ELx.DSSBS upon any exception to AArch64
-+	// See ARM DDI 0487E.a, page D13-3258
-+	if (sctlr & SCTLR_ELx_DSSBS)
-+		new |= PSR_SSBS_BIT;
-+
-+	// PSTATE.BTYPE is set to zero upon any exception to AArch64
-+	// See ARM DDI 0487E.a, pages D1-2293 to D1-2294.
-+
-+	new |= PSR_D_BIT;
-+	new |= PSR_A_BIT;
-+	new |= PSR_I_BIT;
-+	new |= PSR_F_BIT;
-+
-+	new |= PSR_MODE_EL1h;
-+
-+	return new;
-+}
-+
- static void inject_abt64(struct kvm_vcpu *vcpu, bool is_iabt, unsigned long addr)
- {
- 	unsigned long cpsr = *vcpu_cpsr(vcpu);
-@@ -59,7 +119,7 @@ static void inject_abt64(struct kvm_vcpu
- 	vcpu_write_elr_el1(vcpu, *vcpu_pc(vcpu));
- 	*vcpu_pc(vcpu) = get_except_vector(vcpu, except_type_sync);
- 
--	*vcpu_cpsr(vcpu) = PSTATE_FAULT_BITS_64;
-+	*vcpu_cpsr(vcpu) = get_except64_pstate(vcpu);
- 	vcpu_write_spsr(vcpu, cpsr);
- 
- 	vcpu_write_sys_reg(vcpu, addr, FAR_EL1);
-@@ -94,7 +154,7 @@ static void inject_undef64(struct kvm_vc
- 	vcpu_write_elr_el1(vcpu, *vcpu_pc(vcpu));
- 	*vcpu_pc(vcpu) = get_except_vector(vcpu, except_type_sync);
- 
--	*vcpu_cpsr(vcpu) = PSTATE_FAULT_BITS_64;
-+	*vcpu_cpsr(vcpu) = get_except64_pstate(vcpu);
- 	vcpu_write_spsr(vcpu, cpsr);
- 
- 	/*
+ 		t->rcu_read_unlock_special.b.exp_hint = false;
+ 		exp = (t->rcu_blocked_node && t->rcu_blocked_node->exp_tasks) ||
+-		      (rdp->grpmask & rnp->expmask) ||
++		      (rdp->grpmask & READ_ONCE(rnp->expmask)) ||
+ 		      tick_nohz_full_cpu(rdp->cpu);
+ 		// Need to defer quiescent state until everything is enabled.
+ 		if (irqs_were_disabled && use_softirq &&
 
 
