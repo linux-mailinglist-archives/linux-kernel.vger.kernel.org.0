@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6030D157749
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:59:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 382B41574D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:36:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730329AbgBJM7G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:59:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42996 "EHLO mail.kernel.org"
+        id S1728282AbgBJMgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:36:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729930AbgBJMlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:41:13 -0500
+        id S1727884AbgBJMfk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:40 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8472208C4;
-        Mon, 10 Feb 2020 12:41:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E63E020661;
+        Mon, 10 Feb 2020 12:35:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338472;
-        bh=vhRLEy4HV1cqmwL8Bqv3oRFy3zqH/RFeZ1xgFRoe5+E=;
+        s=default; t=1581338140;
+        bh=5OUCFKn7EvO/Z8r2/IQTTzh80LJkcm1n3BE4ifWPi2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d9Z+fqyRVFlw/8uRt0J3GosygYvQM+beUELeBY5N2QnqFXWzQKXxGkGd0vK+ImrED
-         94DrV/N4/Wnz0fDFlf90IP2BPFmccvJdn0KYDrg9hgC8lPNTaOaOrs4AHK9p2imubY
-         x+IbEUbGelVbg4P16BLn7s3dKe9T5yBz+9ccwnhQ=
+        b=Uuc6NQ5K42jPL45EQ9NDQYB1HJB/89gIv+efCnuSt7bgICX6bQimiUJlT4qD80v/4
+         +23vS7AnD6/rR130rB27ylZvcvk8ZOkvqewDCFY9nq8n5eEM3beYSaOr3RVTVMnhfL
+         QiHDzA33zwUItq6fSjHXg9JDf+Et0oiCFg5uOGF4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.5 239/367] KVM: x86: Fix potential put_fpu() w/o load_fpu() on MPX platform
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 094/195] ftrace: Add comment to why rcu_dereference_sched() is open coded
 Date:   Mon, 10 Feb 2020 04:32:32 -0800
-Message-Id: <20200210122446.247266760@linuxfoundation.org>
+Message-Id: <20200210122314.446267921@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit f958bd2314d117f8c29f4821401bc1925bc2e5ef upstream.
+[ Upstream commit 16052dd5bdfa16dbe18d8c1d4cde2ddab9d23177 ]
 
-Unlike most state managed by XSAVE, MPX is initialized to zero on INIT.
-Because INITs are usually recognized in the context of a VCPU_RUN call,
-kvm_vcpu_reset() puts the guest's FPU so that the FPU state is resident
-in memory, zeros the MPX state, and reloads FPU state to hardware.  But,
-in the unlikely event that an INIT is recognized during
-kvm_arch_vcpu_ioctl_get_mpstate() via kvm_apic_accept_events(),
-kvm_vcpu_reset() will call kvm_put_guest_fpu() without a preceding
-kvm_load_guest_fpu() and corrupt the guest's FPU state (and possibly
-userspace's FPU state as well).
+Because the function graph tracer can execute in sections where RCU is not
+"watching", the rcu_dereference_sched() for the has needs to be open coded.
+This is fine because the RCU "flavor" of the ftrace hash is protected by
+its own RCU handling (it does its own little synchronization on every CPU
+and does not rely on RCU sched).
 
-Given that MPX is being removed from the kernel[*], fix the bug with the
-simple-but-ugly approach of loading the guest's FPU during
-KVM_GET_MP_STATE.
-
-[*] See commit f240652b6032b ("x86/mpx: Remove MPX APIs").
-
-Fixes: f775b13eedee2 ("x86,kvm: move qemu/guest FPU switching out to vcpu_run")
-Cc: stable@vger.kernel.org
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Acked-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/x86.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ kernel/trace/trace.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -8724,6 +8724,8 @@ int kvm_arch_vcpu_ioctl_get_mpstate(stru
- 				    struct kvm_mp_state *mp_state)
- {
- 	vcpu_load(vcpu);
-+	if (kvm_mpx_supported())
-+		kvm_load_guest_fpu(vcpu);
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index cf1a7d1f35109..1721b95ba9b7d 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -883,6 +883,11 @@ static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
  
- 	kvm_apic_accept_events(vcpu);
- 	if (vcpu->arch.mp_state == KVM_MP_STATE_HALTED &&
-@@ -8732,6 +8734,8 @@ int kvm_arch_vcpu_ioctl_get_mpstate(stru
- 	else
- 		mp_state->mp_state = vcpu->arch.mp_state;
+ 	preempt_disable_notrace();
  
-+	if (kvm_mpx_supported())
-+		kvm_put_guest_fpu(vcpu);
- 	vcpu_put(vcpu);
- 	return 0;
- }
++	/*
++	 * Have to open code "rcu_dereference_sched()" because the
++	 * function graph tracer can be called when RCU is not
++	 * "watching".
++	 */
+ 	hash = rcu_dereference_protected(ftrace_graph_hash, !preemptible());
+ 
+ 	if (ftrace_hash_empty(hash)) {
+@@ -930,6 +935,11 @@ static inline int ftrace_graph_notrace_addr(unsigned long addr)
+ 
+ 	preempt_disable_notrace();
+ 
++	/*
++	 * Have to open code "rcu_dereference_sched()" because the
++	 * function graph tracer can be called when RCU is not
++	 * "watching".
++	 */
+ 	notrace_hash = rcu_dereference_protected(ftrace_graph_notrace_hash,
+ 						 !preemptible());
+ 
+-- 
+2.20.1
+
 
 
