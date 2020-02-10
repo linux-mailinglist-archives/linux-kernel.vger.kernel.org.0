@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A6DA157BA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:32:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95C04157B7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:30:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728704AbgBJNba (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:31:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54184 "EHLO mail.kernel.org"
+        id S1728263AbgBJMgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:36:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728212AbgBJMgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:01 -0500
+        id S1728059AbgBJMfk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:40 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60E202085B;
-        Mon, 10 Feb 2020 12:36:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 716BB21734;
+        Mon, 10 Feb 2020 12:35:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338160;
-        bh=X1/CGyWzE6LZ7SEvDWQ3CJRkzMG23FuCRVcyoEi87Nk=;
+        s=default; t=1581338139;
+        bh=edlHq5b5UuMqPC9yVMoxJBMe/EDH/q6DwYKRAChigTk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vhaPgB3W5IVzEX+iZ4roQqt1+Bb5s3mfQxVMj5cJ0K/BBu0cGpmJFiZEEzmKOPLc8
-         SUG78tSHYBi62LNQZ2yIriYykC2vH4opFWxR/vcqn+6plBiylCnPOvyQpw6URabOp/
-         91W/KnIVGcsj9X37NgKHhhUhRm/IQ4q50S7BRdaI=
+        b=klH7sAEQGgVvQK6XjTmzretxLX+itlFUIXhwSc96ClgcAX4jD7yqWiXkrjbak1fRA
+         fId9+D4g6CTzoReGan4/5N3eb8WMd2m6VaALLvE4Vn0LH5ny9eTeFXJ/318sku6G/v
+         QNS0X2CV2Vcq78HzV3huWy4a0T/a4/UnT7xxN3Pk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Amol Grover <frextrite@gmail.com>,
+        stable@vger.kernel.org, Amol Grover <frextrite@gmail.com>,
         "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 092/195] tracing: Annotate ftrace_graph_hash pointer with __rcu
-Date:   Mon, 10 Feb 2020 04:32:30 -0800
-Message-Id: <20200210122314.290461607@linuxfoundation.org>
+Subject: [PATCH 4.19 093/195] tracing: Annotate ftrace_graph_notrace_hash pointer with __rcu
+Date:   Mon, 10 Feb 2020 04:32:31 -0800
+Message-Id: <20200210122314.366076019@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
 References: <20200210122305.731206734@linuxfoundation.org>
@@ -48,73 +46,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Amol Grover <frextrite@gmail.com>
 
-[ Upstream commit 24a9729f831462b1d9d61dc85ecc91c59037243f ]
+[ Upstream commit fd0e6852c407dd9aefc594f54ddcc21d84803d3b ]
 
 Fix following instances of sparse error
-kernel/trace/ftrace.c:5664:29: error: incompatible types in comparison
-kernel/trace/ftrace.c:5785:21: error: incompatible types in comparison
-kernel/trace/ftrace.c:5864:36: error: incompatible types in comparison
-kernel/trace/ftrace.c:5866:25: error: incompatible types in comparison
+kernel/trace/ftrace.c:5667:29: error: incompatible types in comparison
+kernel/trace/ftrace.c:5813:21: error: incompatible types in comparison
+kernel/trace/ftrace.c:5868:36: error: incompatible types in comparison
+kernel/trace/ftrace.c:5870:25: error: incompatible types in comparison
 
-Use rcu_dereference_protected to access the __rcu annotated pointer.
+Use rcu_dereference_protected to dereference the newly annotated pointer.
 
-Link: http://lkml.kernel.org/r/20200201072703.17330-1-frextrite@gmail.com
+Link: http://lkml.kernel.org/r/20200205055701.30195-1-frextrite@gmail.com
 
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 Signed-off-by: Amol Grover <frextrite@gmail.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
  kernel/trace/ftrace.c | 2 +-
- kernel/trace/trace.h  | 9 ++++++---
- 2 files changed, 7 insertions(+), 4 deletions(-)
+ kernel/trace/trace.h  | 8 ++++++--
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 37a435bac1618..00d987d9bd4a6 100644
+index 00d987d9bd4a6..09c69ad8439ef 100644
 --- a/kernel/trace/ftrace.c
 +++ b/kernel/trace/ftrace.c
-@@ -5072,7 +5072,7 @@ static const struct file_operations ftrace_notrace_fops = {
- 
+@@ -5073,7 +5073,7 @@ static const struct file_operations ftrace_notrace_fops = {
  static DEFINE_MUTEX(graph_lock);
  
--struct ftrace_hash *ftrace_graph_hash = EMPTY_HASH;
-+struct ftrace_hash __rcu *ftrace_graph_hash = EMPTY_HASH;
- struct ftrace_hash *ftrace_graph_notrace_hash = EMPTY_HASH;
+ struct ftrace_hash __rcu *ftrace_graph_hash = EMPTY_HASH;
+-struct ftrace_hash *ftrace_graph_notrace_hash = EMPTY_HASH;
++struct ftrace_hash __rcu *ftrace_graph_notrace_hash = EMPTY_HASH;
  
  enum graph_filter_type {
+ 	GRAPH_FILTER_NOTRACE	= 0,
 diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index d11d7bfc3fa5c..70806f2f89bab 100644
+index 70806f2f89bab..cf1a7d1f35109 100644
 --- a/kernel/trace/trace.h
 +++ b/kernel/trace/trace.h
-@@ -872,22 +872,25 @@ extern void __trace_graph_return(struct trace_array *tr,
- 				 unsigned long flags, int pc);
+@@ -873,7 +873,7 @@ extern void __trace_graph_return(struct trace_array *tr,
  
  #ifdef CONFIG_DYNAMIC_FTRACE
--extern struct ftrace_hash *ftrace_graph_hash;
-+extern struct ftrace_hash __rcu *ftrace_graph_hash;
- extern struct ftrace_hash *ftrace_graph_notrace_hash;
+ extern struct ftrace_hash __rcu *ftrace_graph_hash;
+-extern struct ftrace_hash *ftrace_graph_notrace_hash;
++extern struct ftrace_hash __rcu *ftrace_graph_notrace_hash;
  
  static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
  {
- 	unsigned long addr = trace->func;
+@@ -926,10 +926,14 @@ static inline void ftrace_graph_addr_finish(struct ftrace_graph_ret *trace)
+ static inline int ftrace_graph_notrace_addr(unsigned long addr)
+ {
  	int ret = 0;
-+	struct ftrace_hash *hash;
++	struct ftrace_hash *notrace_hash;
  
  	preempt_disable_notrace();
  
--	if (ftrace_hash_empty(ftrace_graph_hash)) {
-+	hash = rcu_dereference_protected(ftrace_graph_hash, !preemptible());
+-	if (ftrace_lookup_ip(ftrace_graph_notrace_hash, addr))
++	notrace_hash = rcu_dereference_protected(ftrace_graph_notrace_hash,
++						 !preemptible());
 +
-+	if (ftrace_hash_empty(hash)) {
++	if (ftrace_lookup_ip(notrace_hash, addr))
  		ret = 1;
- 		goto out;
- 	}
  
--	if (ftrace_lookup_ip(ftrace_graph_hash, addr)) {
-+	if (ftrace_lookup_ip(hash, addr)) {
- 
- 		/*
- 		 * This needs to be cleared on the return functions
+ 	preempt_enable_notrace();
 -- 
 2.20.1
 
