@@ -2,91 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CE85158453
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 21:35:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29593158458
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 21:42:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbgBJUfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 15:35:33 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:40378 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727120AbgBJUfd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 15:35:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581366932;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cbrjdh40dEpsDZqqW3INfvQLM26Cbx+DuwGT67kydb0=;
-        b=TqZadlvYMp+pdUR+W3aOKfBdl1rBj57zJwukmUWVRs5A8iHoYDQv3jMYegH3MQinLkzhee
-        ujbUJEBJg/Vvg4yjp+ayPOrIaacLrx0BnL2STbMtIPrWxgeE3w8Qu6gHWXxunkDRBgUtPD
-        b9mitddedhtT3JzdevADQyWfHgFFdZ4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-134-RNYsaog-NBuUfTHpSfxIpA-1; Mon, 10 Feb 2020 15:35:28 -0500
-X-MC-Unique: RNYsaog-NBuUfTHpSfxIpA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727433AbgBJUmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 15:42:18 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:54819 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726563AbgBJUmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 15:42:18 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2DCDDDB66;
-        Mon, 10 Feb 2020 20:35:26 +0000 (UTC)
-Received: from krava (ovpn-204-37.brq.redhat.com [10.40.204.37])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4D09F5C1D6;
-        Mon, 10 Feb 2020 20:35:21 +0000 (UTC)
-Date:   Mon, 10 Feb 2020 21:35:18 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Kim Phillips <kim.phillips@amd.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: Re: [PATCH 0/4] perf tools: Fix kmap handling
-Message-ID: <20200210203518.GC36715@krava>
-References: <20200210143218.24948-1-jolsa@kernel.org>
- <7de7aa09-d59b-3e98-6289-d497aa0496d4@amd.com>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48GdBJ4Qp0z9sPF;
+        Tue, 11 Feb 2020 07:42:16 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1581367336;
+        bh=kXMVdBaIv15+3S5E6H+mlqHGS96jd8kMmA7ruP5v6KM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ZYsxv5Anbr6Hq7FFU0RWgNZ9EsDs0cpOg+dTRuqYvNnwxIsXPjJc7m9eMG+PWs+8H
+         Gps8MJ81lAfM/XmsRsFOXFPrP5klJP2unr8NXcCVGofrQtzwyDB81nvNlCa1pLBUKb
+         EsGsI2bWWslx6sJ5r9piaQW43u/XqvPV48vAUjXYKnTj+csiDUg0xl4Vv2I60xMHTt
+         265rUT1m67VOPRVmM1I4Gqf//5UoALWQwUbw+sEjr+HMex7Kk4Vvgj4XjaCVOzfuTp
+         EAq/CX0VrIYY8HCRQo/GwoLNbx93lY4mX0EO2Fvis543jp1gxov4jDxiYG37BoOwjk
+         GPqt94tPatzeg==
+Date:   Tue, 11 Feb 2020 07:42:09 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Leon Romanovsky <leon@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the mlx5-next tree
+Message-ID: <20200211074209.3e0a1b19@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7de7aa09-d59b-3e98-6289-d497aa0496d4@amd.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: multipart/signed; boundary="Sig_/7a/4BJAxvxPe4hQtVlShozH";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 10:47:11AM -0600, Kim Phillips wrote:
-> On 2/10/20 8:32 AM, Jiri Olsa wrote:
-> > hi,
-> > Ravi Bangoria reported crash in perf top due to wrong kmap
-> > objects management, this patchset should fix that.
-> > 
-> > thanks,
-> > jirka
-> > 
-> > 
-> > ---
-> > Jiri Olsa (4):
-> >       perf tools: Mark modules dsos with kernel type
-> >       perf tools: Mark ksymbol dsos with kernel type
-> >       perf tools: Fix map__clone for struct kmap
-> >       perf tools: Move kmap::kmaps setup to maps__insert
-> > 
-> >  tools/perf/util/machine.c | 24 ++++++++++--------------
-> >  tools/perf/util/map.c     | 17 ++++++++++++++++-
-> >  2 files changed, 26 insertions(+), 15 deletions(-)
-> > 
-> 
-> This series fixes a segmentation fault I was seeing on a
-> couple of AMD systems, so:
-> 
-> Tested-by: Kim Phillips <kim.phillips@amd.com>
+--Sig_/7a/4BJAxvxPe4hQtVlShozH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-great, thanks a lot for testing
+Hi all,
 
-jirka
+Commit
 
+  a4ad6db8a2de ("net/mlx5: Add bit to indicate support for encap/decap in s=
+w-steering managed tables")
+
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/7a/4BJAxvxPe4hQtVlShozH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5BwCEACgkQAVBC80lX
+0GxuVgf/fES8Hrb3HVelFHtFl8gA/XQgSxG3iYWCugiF6beIlEoE5R7rsBoD7S0z
+z+8GY9csShtM9XnGm4z9hKsIUVvVqW6XWW8jQGD9nbqa+1S4Uih5UAbCUQsTOBjI
+BX8kcrmzCBkZT/cbxcU29JGgvRqKepZQfLnRmakjV7tz0JC5O5jElhAXs4TX3B3G
+HR5SyII9dkfIKIVwal0P6WfQYf5ev2CHTwzqYW38aHgX1pwypp6NW9JJZ+BzSyk5
+072krYL/jJtFZX6CARs7jaTLpdYWhtrhuIoamxUyQ38980eJFHxtSvzg6QAmi1J2
+Ui2t6vtTbHIDMktoqCNZacGakMsTGA==
+=9q7M
+-----END PGP SIGNATURE-----
+
+--Sig_/7a/4BJAxvxPe4hQtVlShozH--
