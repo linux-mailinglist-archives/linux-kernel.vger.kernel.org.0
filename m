@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7F47157A97
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:23:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14B4615780D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:05:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729652AbgBJNXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:23:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58240 "EHLO mail.kernel.org"
+        id S1730578AbgBJNEs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:04:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728652AbgBJMhK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:10 -0500
+        id S1729077AbgBJMkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:12 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA9F3208C4;
-        Mon, 10 Feb 2020 12:37:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AB072085B;
+        Mon, 10 Feb 2020 12:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338229;
-        bh=zSg6T09HqcBiqYeTqt4FTCQO6B5h/IbyxlbEvz0yLW8=;
+        s=default; t=1581338412;
+        bh=XLsH/og7nds9+7JWjxVwvyiIrHhkqGnfk/0z9Ma8ezE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PhqQF2rHK98OyIW+Ha9Wd24BLfFI4+fwO8R2u37mjGYSy1Ffr771dVxl+gmx9vyTu
-         ycPS8C1fX7ihnLDF1FSawi+c7MaBuBCHQ1h+eS4K0N2K4SaKdK5ZD8n5wdAgKI78ec
-         vy6YF5nQ0cbyx9dtpCr/qEmJ0DhNSCx2fO7pU2k8=
+        b=kN13iowjcmWPcLJg8fj8Ik8NRqrvBgCNe0ZQbcnVH20vao8g7jPoejSO8mWiNlbAQ
+         OZRV4Xzbi3Dw9u3nANy/N+0U+d7N/ZKZd5lMxyflZLEP77BWzCADy73aPnOLPIc0jd
+         aSsXUQj7iU1H1z8uy3B0C/taCNaZCmvjRCH3YkCA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Lobakin <alobakin@dlink.ru>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Rob Herring <robh@kernel.org>, linux-mips@vger.kernel.org
-Subject: [PATCH 5.4 071/309] MIPS: fix indentation of the RELOCS message
-Date:   Mon, 10 Feb 2020 04:30:27 -0800
-Message-Id: <20200210122412.710756016@linuxfoundation.org>
+        stable@vger.kernel.org, Gilad Ben-Yossef <gilad@benyossef.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 5.5 115/367] crypto: ccree - fix backlog memory leak
+Date:   Mon, 10 Feb 2020 04:30:28 -0800
+Message-Id: <20200210122435.210203228@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,61 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Lobakin <alobakin@dlink.ru>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
 
-commit a53998802e178451701d59d38e36f551422977ba upstream.
+commit 4df2ef25b3b3618fd708ab484fe6239abd130fec upstream.
 
-quiet_cmd_relocs lacks a whitespace which results in:
+Fix brown paper bag bug of not releasing backlog list item buffer
+when backlog was consumed causing a memory leak when backlog is
+used.
 
-  LD      vmlinux
-  SORTEX  vmlinux
-  SYSMAP  System.map
-  RELOCS vmlinux
-  Building modules, stage 2.
-  MODPOST 64 modules
-
-After this patch:
-
-  LD      vmlinux
-  SORTEX  vmlinux
-  SYSMAP  System.map
-  RELOCS  vmlinux
-  Building modules, stage 2.
-  MODPOST 64 modules
-
-Typo is present in kernel tree since the introduction of relocatable
-kernel support in commit e818fac595ab ("MIPS: Generate relocation table
-when CONFIG_RELOCATABLE"), but the relocation scripts were moved to
-Makefile.postlink later with commit 44079d3509ae ("MIPS: Use
-Makefile.postlink to insert relocations into vmlinux").
-
-Fixes: 44079d3509ae ("MIPS: Use Makefile.postlink to insert relocations into vmlinux")
-Cc: <stable@vger.kernel.org> # v4.11+
-Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
-[paulburton@kernel.org: Fixup commit references in commit message.]
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: stable@vger.kernel.org # v4.19+
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/Makefile.postlink |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/ccree/cc_request_mgr.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/mips/Makefile.postlink
-+++ b/arch/mips/Makefile.postlink
-@@ -12,7 +12,7 @@ __archpost:
- include scripts/Kbuild.include
+--- a/drivers/crypto/ccree/cc_request_mgr.c
++++ b/drivers/crypto/ccree/cc_request_mgr.c
+@@ -404,6 +404,7 @@ static void cc_proc_backlog(struct cc_dr
+ 		spin_lock(&mgr->bl_lock);
+ 		list_del(&bli->list);
+ 		--mgr->bl_len;
++		kfree(bli);
+ 	}
  
- CMD_RELOCS = arch/mips/boot/tools/relocs
--quiet_cmd_relocs = RELOCS $@
-+quiet_cmd_relocs = RELOCS  $@
-       cmd_relocs = $(CMD_RELOCS) $@
- 
- # `@true` prevents complaint when there is nothing to be done
+ 	spin_unlock(&mgr->bl_lock);
 
 
