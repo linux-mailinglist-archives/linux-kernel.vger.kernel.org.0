@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E1CC1575C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:45:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBEC31574A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:35:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729616AbgBJMoS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:44:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40654 "EHLO mail.kernel.org"
+        id S1727569AbgBJMe7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:34:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729741AbgBJMk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:29 -0500
+        id S1727008AbgBJMe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:34:58 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 774E92080C;
-        Mon, 10 Feb 2020 12:40:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 101A3214DB;
+        Mon, 10 Feb 2020 12:34:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338428;
-        bh=O9Qnza5TOtxlnIxlJdqlz6+1b2pIsc9BtmUxXOZnTMA=;
+        s=default; t=1581338098;
+        bh=Ap75gvM0w7vFuJG6zO9Hyd65zzOM1aOv3HuZI6MF5p8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2anBNDG5kPLTf7TduEZ+0FJqsTaFTLtwSZreFb6XCIy76bbSnlf00xWfz2dIfNquK
-         qbRITV0PT9iyfSTfPp+D4402qHz/BIEv2j1KLNNv/KjEQdNy0VYQDvPeEKKtepPXxR
-         aU22s4hcpmbWfHcJJHenmEVIa1gIgZvJR5Iw3mR8=
+        b=EoI2EkTVhfiKyIzM7F17pf4F+rcJ3giaaGRiOQiq9xF9lEOwiiJpo44IURwZTfZLb
+         EQ1NpggxPvOItGRt6bKkJ6xvjN4Il8ogLeMSmgy8YHk1t4RKtfcpqf+LK0cSRpDCkb
+         MrcqxokN69tYF5TmGpLgiibF/jAiiGyJf7WErl6o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 153/367] ftrace: Protect ftrace_graph_hash with ftrace_sync
-Date:   Mon, 10 Feb 2020 04:31:06 -0800
-Message-Id: <20200210122438.958915095@linuxfoundation.org>
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 012/195] gtp: use __GFP_NOWARN to avoid memalloc warning
+Date:   Mon, 10 Feb 2020 04:31:10 -0800
+Message-Id: <20200210122306.929921250@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,71 +43,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit 54a16ff6f2e50775145b210bcd94d62c3c2af117 ]
+[ Upstream commit bd5cd35b782abf5437fbd01dfaee12437d20e832 ]
 
-As function_graph tracer can run when RCU is not "watching", it can not be
-protected by synchronize_rcu() it requires running a task on each CPU before
-it can be freed. Calling schedule_on_each_cpu(ftrace_sync) needs to be used.
+gtp hashtable size is received by user-space.
+So, this hashtable size could be too large. If so, kmalloc will internally
+print a warning message.
+This warning message is actually not necessary for the gtp module.
+So, this patch adds __GFP_NOWARN to avoid this message.
 
-Link: https://lore.kernel.org/r/20200205131110.GT2935@paulmck-ThinkPad-P72
+Splat looks like:
+[ 2171.200049][ T1860] WARNING: CPU: 1 PID: 1860 at mm/page_alloc.c:4713 __alloc_pages_nodemask+0x2f3/0x740
+[ 2171.238885][ T1860] Modules linked in: gtp veth openvswitch nsh nf_conncount nf_nat nf_conntrack nf_defrag_ipv]
+[ 2171.262680][ T1860] CPU: 1 PID: 1860 Comm: gtp-link Not tainted 5.5.0+ #321
+[ 2171.263567][ T1860] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[ 2171.264681][ T1860] RIP: 0010:__alloc_pages_nodemask+0x2f3/0x740
+[ 2171.265332][ T1860] Code: 64 fe ff ff 65 48 8b 04 25 c0 0f 02 00 48 05 f0 12 00 00 41 be 01 00 00 00 49 89 47 0
+[ 2171.267301][ T1860] RSP: 0018:ffff8880b51af1f0 EFLAGS: 00010246
+[ 2171.268320][ T1860] RAX: ffffed1016a35e43 RBX: 0000000000000000 RCX: 0000000000000000
+[ 2171.269517][ T1860] RDX: 0000000000000000 RSI: 000000000000000b RDI: 0000000000000000
+[ 2171.270305][ T1860] RBP: 0000000000040cc0 R08: ffffed1018893109 R09: dffffc0000000000
+[ 2171.275973][ T1860] R10: 0000000000000001 R11: ffffed1018893108 R12: 1ffff11016a35e43
+[ 2171.291039][ T1860] R13: 000000000000000b R14: 000000000000000b R15: 00000000000f4240
+[ 2171.292328][ T1860] FS:  00007f53cbc83740(0000) GS:ffff8880da000000(0000) knlGS:0000000000000000
+[ 2171.293409][ T1860] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 2171.294586][ T1860] CR2: 000055f540014508 CR3: 00000000b49f2004 CR4: 00000000000606e0
+[ 2171.295424][ T1860] Call Trace:
+[ 2171.295756][ T1860]  ? mark_held_locks+0xa5/0xe0
+[ 2171.296659][ T1860]  ? __alloc_pages_slowpath+0x21b0/0x21b0
+[ 2171.298283][ T1860]  ? gtp_encap_enable_socket+0x13e/0x400 [gtp]
+[ 2171.298962][ T1860]  ? alloc_pages_current+0xc1/0x1a0
+[ 2171.299475][ T1860]  kmalloc_order+0x22/0x80
+[ 2171.299936][ T1860]  kmalloc_order_trace+0x1d/0x140
+[ 2171.300437][ T1860]  __kmalloc+0x302/0x3a0
+[ 2171.300896][ T1860]  gtp_newlink+0x293/0xba0 [gtp]
+[ ... ]
 
-Cc: stable@vger.kernel.org
-Fixes: b9b0c831bed26 ("ftrace: Convert graph filter to use hash tables")
-Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 459aa660eb1d ("gtp: add initial driver for datapath of GPRS Tunneling Protocol (GTP-U)")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/trace/ftrace.c | 11 +++++++++--
- kernel/trace/trace.h  |  2 ++
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ drivers/net/gtp.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index e85668cdd8c73..3581bd96d6eb3 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -5872,8 +5872,15 @@ ftrace_graph_release(struct inode *inode, struct file *file)
+--- a/drivers/net/gtp.c
++++ b/drivers/net/gtp.c
+@@ -772,12 +772,12 @@ static int gtp_hashtable_new(struct gtp_
+ 	int i;
  
- 		mutex_unlock(&graph_lock);
+ 	gtp->addr_hash = kmalloc_array(hsize, sizeof(struct hlist_head),
+-				       GFP_KERNEL);
++				       GFP_KERNEL | __GFP_NOWARN);
+ 	if (gtp->addr_hash == NULL)
+ 		return -ENOMEM;
  
--		/* Wait till all users are no longer using the old hash */
--		synchronize_rcu();
-+		/*
-+		 * We need to do a hard force of sched synchronization.
-+		 * This is because we use preempt_disable() to do RCU, but
-+		 * the function tracers can be called where RCU is not watching
-+		 * (like before user_exit()). We can not rely on the RCU
-+		 * infrastructure to do the synchronization, thus we must do it
-+		 * ourselves.
-+		 */
-+		schedule_on_each_cpu(ftrace_sync);
+ 	gtp->tid_hash = kmalloc_array(hsize, sizeof(struct hlist_head),
+-				      GFP_KERNEL);
++				      GFP_KERNEL | __GFP_NOWARN);
+ 	if (gtp->tid_hash == NULL)
+ 		goto err1;
  
- 		free_ftrace_hash(old_hash);
- 	}
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index b769638f005c7..85f475bb48238 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -965,6 +965,7 @@ static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
- 	 * Have to open code "rcu_dereference_sched()" because the
- 	 * function graph tracer can be called when RCU is not
- 	 * "watching".
-+	 * Protected with schedule_on_each_cpu(ftrace_sync)
- 	 */
- 	hash = rcu_dereference_protected(ftrace_graph_hash, !preemptible());
- 
-@@ -1017,6 +1018,7 @@ static inline int ftrace_graph_notrace_addr(unsigned long addr)
- 	 * Have to open code "rcu_dereference_sched()" because the
- 	 * function graph tracer can be called when RCU is not
- 	 * "watching".
-+	 * Protected with schedule_on_each_cpu(ftrace_sync)
- 	 */
- 	notrace_hash = rcu_dereference_protected(ftrace_graph_notrace_hash,
- 						 !preemptible());
--- 
-2.20.1
-
 
 
