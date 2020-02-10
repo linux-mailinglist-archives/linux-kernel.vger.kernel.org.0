@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A274157AC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:25:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE87A157842
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:06:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731212AbgBJNZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:25:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57520 "EHLO mail.kernel.org"
+        id S1730568AbgBJNGc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:06:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728573AbgBJMg5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:57 -0500
+        id S1729554AbgBJMjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:39:53 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFBC824671;
-        Mon, 10 Feb 2020 12:36:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C17B208C4;
+        Mon, 10 Feb 2020 12:39:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338217;
-        bh=mKbHDyqHzQt1bToSX31/M4PiWonwYV2QnRGfpBQxjpo=;
+        s=default; t=1581338392;
+        bh=8u5vfo0W6dwew4wkxSb7nqRjuWXE9FNdYdLLyBEAE/Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R3Tt2A6IQgvHRg4QAhqXHg+OFDcP4hq0G6gRpA4rVFp1QmKL38RBQPRsew4MRexSJ
-         SerKzQqdvdF1sfWOET9jyIPLN7Q8bKQcTbic2qucdqDbYYjwnuP47jVVgoy0EVmdHC
-         p9MWB3WHbGHFJHWThNRP73DZoa1Xoql/wBWSULzo=
+        b=MdYmF6REsu87ZdFwirY0MaiYf5Ertsfb6A1aDtLNs/yKoWkZKgl7DuUSK64RAMzBg
+         0dnH0E6Fcw3raSHVSEIuAdPOH3BCBE4iqnKKI3V0P/UxZxf5n/12bD2VtJrLlJo/2J
+         KT3yWGTg93iS/HCJjnpte2G6l/3QqcVmeB/wb4sQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 5.4 040/309] objtool: Silence build output
-Date:   Mon, 10 Feb 2020 04:29:56 -0800
-Message-Id: <20200210122409.934379462@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.5 084/367] powerpc/ptdump: Fix W+X verification
+Date:   Mon, 10 Feb 2020 04:29:57 -0800
+Message-Id: <20200210122432.102362739@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olof Johansson <olof@lixom.net>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 6ec14aa7a58a1c2fb303692f8cb1ff82d9abd10a upstream.
+commit d80ae83f1f932ab7af47b54d0d3bef4f4dba489f upstream.
 
-The sync-check.sh script prints out the path due to a "cd -" at the end
-of the script, even on silent builds. This isn't even needed, since the
-script is executed in our build instead of sourced (so it won't change
-the working directory of the surrounding build anyway).
+Verification cannot rely on simple bit checking because on some
+platforms PAGE_RW is 0, checking that a page is not W means
+checking that PAGE_RO is set instead of checking that PAGE_RW
+is not set.
 
-Just remove the cd to make the build silent.
+Use pte helpers instead of checking bits.
 
-Fixes: 2ffd84ae973b ("objtool: Update sync-check.sh from perf's check-headers.sh")
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/cb002857fafa8186cfb9c3e43fb62e4108a1bab9.1579543924.git.jpoimboe@redhat.com
+Fixes: 453d87f6a8ae ("powerpc/mm: Warn if W+X pages found on boot")
+Cc: stable@vger.kernel.org # v5.2+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/0d894839fdbb19070f0e1e4140363be4f2bb62fc.1578989540.git.christophe.leroy@c-s.fr
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/objtool/sync-check.sh |    2 --
- 1 file changed, 2 deletions(-)
+ arch/powerpc/mm/ptdump/ptdump.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/tools/objtool/sync-check.sh
-+++ b/tools/objtool/sync-check.sh
-@@ -47,5 +47,3 @@ check arch/x86/include/asm/inat.h     '-
- check arch/x86/include/asm/insn.h     '-I "^#include [\"<]\(asm/\)*inat.h[\">]"'
- check arch/x86/lib/inat.c             '-I "^#include [\"<]\(../include/\)*asm/insn.h[\">]"'
- check arch/x86/lib/insn.c             '-I "^#include [\"<]\(../include/\)*asm/in\(at\|sn\).h[\">]"'
--
--cd -
+--- a/arch/powerpc/mm/ptdump/ptdump.c
++++ b/arch/powerpc/mm/ptdump/ptdump.c
+@@ -173,10 +173,12 @@ static void dump_addr(struct pg_state *s
+ 
+ static void note_prot_wx(struct pg_state *st, unsigned long addr)
+ {
++	pte_t pte = __pte(st->current_flags);
++
+ 	if (!IS_ENABLED(CONFIG_PPC_DEBUG_WX) || !st->check_wx)
+ 		return;
+ 
+-	if (!((st->current_flags & pgprot_val(PAGE_KERNEL_X)) == pgprot_val(PAGE_KERNEL_X)))
++	if (!pte_write(pte) || !pte_exec(pte))
+ 		return;
+ 
+ 	WARN_ONCE(1, "powerpc/mm: Found insecure W+X mapping at address %p/%pS\n",
 
 
