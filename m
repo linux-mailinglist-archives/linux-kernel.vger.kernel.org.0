@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D851E15778C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:02:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1613F15791C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:13:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729802AbgBJMks (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:40:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33876 "EHLO mail.kernel.org"
+        id S1730606AbgBJNMg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:12:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728445AbgBJMiZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:25 -0500
+        id S1729228AbgBJMiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:50 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6A172080C;
-        Mon, 10 Feb 2020 12:38:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91AFF24676;
+        Mon, 10 Feb 2020 12:38:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338304;
-        bh=GdQsl52W+pf1MM4uLWeCG97tOYAlxd97t1cJcFhk9LQ=;
+        s=default; t=1581338329;
+        bh=6gUHwGEb4EhGXZYTGAT57kv7ntq7ZXxIulVVr3k+YXY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g47R5V0PnCLZ4po/2mAAKikoz5urTckoHj/SbWliHF009kRxreiBxQBo7Lxb/p9gB
-         cliIaVo4ec0s3cTKv6kbCdwVHwNYkzL3Pmr8kid4I1Vuxh8F00EyCEtqRuBHdP+QWd
-         pa3Zw6CeZUiH6LAsfQDIuxUw4/oG8//8EFaQYfBk=
+        b=fHSb17aHjk0pMIyNqEYpZNgn1zg6tO3vVu9pHvht6+0qcxcFpcmmT2+GGnW+0phiu
+         kquXKvd+qdIxc4c617lmN81bI1DFAgv/9qoaNDzu+d4GXdVU7uNlHgHOewCWQaPgph
+         YI7yPh7ELQz5zdU3Vuy3CxFo4Ycy2MaEyPgTEHag=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.4 218/309] x86/KVM: Clean up hosts steal time structure
-Date:   Mon, 10 Feb 2020 04:32:54 -0800
-Message-Id: <20200210122427.498936332@linuxfoundation.org>
+Subject: [PATCH 5.4 219/309] KVM: VMX: Add non-canonical check on writes to RTIT address MSRs
+Date:   Mon, 10 Feb 2020 04:32:55 -0800
+Message-Id: <20200210122427.587594655@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
 References: <20200210122406.106356946@linuxfoundation.org>
@@ -45,81 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit a6bd811f1209fe1c64c9f6fd578101d6436c6b6e upstream.
+commit fe6ed369fca98e99df55c932b85782a5687526b5 upstream.
 
-Now that we are mapping kvm_steal_time from the guest directly we
-don't need keep a copy of it in kvm_vcpu_arch.st. The same is true
-for the stime field.
+Reject writes to RTIT address MSRs if the data being written is a
+non-canonical address as the MSRs are subject to canonical checks, e.g.
+KVM will trigger an unchecked #GP when loading the values to hardware
+during pt_guest_enter().
 
-This is part of CVE-2019-3016.
-
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
 Cc: stable@vger.kernel.org
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/kvm_host.h |    3 +--
- arch/x86/kvm/x86.c              |   11 +++--------
- 2 files changed, 4 insertions(+), 10 deletions(-)
+ arch/x86/kvm/vmx/vmx.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -667,10 +667,9 @@ struct kvm_vcpu_arch {
- 	bool pvclock_set_guest_stopped_request;
- 
- 	struct {
-+		u8 preempted;
- 		u64 msr_val;
- 		u64 last_steal;
--		struct gfn_to_hva_cache stime;
--		struct kvm_steal_time steal;
- 		struct gfn_to_pfn_cache cache;
- 	} st;
- 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2616,7 +2616,7 @@ static void record_steal_time(struct kvm
- 	if (xchg(&st->preempted, 0) & KVM_VCPU_FLUSH_TLB)
- 		kvm_vcpu_flush_tlb(vcpu, false);
- 
--	vcpu->arch.st.steal.preempted = 0;
-+	vcpu->arch.st.preempted = 0;
- 
- 	if (st->version & 1)
- 		st->version += 1;  /* first time write, random junk */
-@@ -2786,11 +2786,6 @@ int kvm_set_msr_common(struct kvm_vcpu *
- 		if (data & KVM_STEAL_RESERVED_MASK)
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -2140,6 +2140,8 @@ static int vmx_set_msr(struct kvm_vcpu *
+ 			(index >= 2 * intel_pt_validate_cap(vmx->pt_desc.caps,
+ 					PT_CAP_num_address_ranges)))
  			return 1;
- 
--		if (kvm_gfn_to_hva_cache_init(vcpu->kvm, &vcpu->arch.st.stime,
--						data & KVM_STEAL_VALID_BITS,
--						sizeof(struct kvm_steal_time)))
--			return 1;
--
- 		vcpu->arch.st.msr_val = data;
- 
- 		if (!(data & KVM_MSR_ENABLED))
-@@ -3504,7 +3499,7 @@ static void kvm_steal_time_set_preempted
- 	if (!(vcpu->arch.st.msr_val & KVM_MSR_ENABLED))
- 		return;
- 
--	if (vcpu->arch.st.steal.preempted)
-+	if (vcpu->arch.st.preempted)
- 		return;
- 
- 	if (kvm_map_gfn(vcpu, vcpu->arch.st.msr_val >> PAGE_SHIFT, &map,
-@@ -3514,7 +3509,7 @@ static void kvm_steal_time_set_preempted
- 	st = map.hva +
- 		offset_in_page(vcpu->arch.st.msr_val & KVM_STEAL_VALID_BITS);
- 
--	st->preempted = vcpu->arch.st.steal.preempted = KVM_VCPU_PREEMPTED;
-+	st->preempted = vcpu->arch.st.preempted = KVM_VCPU_PREEMPTED;
- 
- 	kvm_unmap_gfn(vcpu, &map, &vcpu->arch.st.cache, true, true);
- }
++		if (is_noncanonical_address(data, vcpu))
++			return 1;
+ 		if (index % 2)
+ 			vmx->pt_desc.guest.addr_b[index / 2] = data;
+ 		else
 
 
