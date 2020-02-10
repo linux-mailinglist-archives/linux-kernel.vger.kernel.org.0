@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7841157591
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:42:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24A461575F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:48:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730144AbgBJMmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:42:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35932 "EHLO mail.kernel.org"
+        id S1728099AbgBJMrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:47:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729314AbgBJMjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:39:06 -0500
+        id S1730149AbgBJMmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:42:05 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED9F120661;
-        Mon, 10 Feb 2020 12:39:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B71320838;
+        Mon, 10 Feb 2020 12:42:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338346;
-        bh=iZcrODLIzXWQ2/eL3Rg0UhdhlDRdxCUugs19j5teulk=;
+        s=default; t=1581338525;
+        bh=q0jTh8NA67CL22jjqtJ3TlVzbORChLP+p/Zwt+T7Fl0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dc6DV8KZ/kCKofI2qXbyymR8tSD8GhKy5mz2vnyBcHJ4tlhIgrYHOM8SpdupacI8D
-         2BR4iCrD89HEE2dYVpo/8W61IG+Bqo98gBQW2gc/NHG3XX5Rm8+B0rTNeOhYmaNfoJ
-         Ry+f70YUstOm3Xis2ydS7uU4B/yU/6eOEwFoM5fs=
+        b=RdAO1yVLEQgk0HR06rSl7GFg47lFl+IAdbyLegs+QalL1Rg5X1ygHmrXe9jCX0YmF
+         3odCNYoy4LSnWCxmofakrWCHiS1FG2G7USax3QmgokA2+47Hq056CH8g+8PG0M9b2E
+         /Qp6TIfn/sqZUFeq4dVdYrLA9jme0sPSdak525+c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 301/309] KVM: Play nice with read-only memslots when querying host page size
-Date:   Mon, 10 Feb 2020 04:34:17 -0800
-Message-Id: <20200210122435.817711429@linuxfoundation.org>
+        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.5 345/367] r8169: fix performance regression related to PCIe max read request size
+Date:   Mon, 10 Feb 2020 04:34:18 -0800
+Message-Id: <20200210122454.429284951@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +43,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-[ Upstream commit 42cde48b2d39772dba47e680781a32a6c4b7dc33 ]
+[ Upstream commit 21b5f672fb2eb1366dedc4ac9d32431146b378d3 ]
 
-Avoid the "writable" check in __gfn_to_hva_many(), which will always fail
-on read-only memslots due to gfn_to_hva() assuming writes.  Functionally,
-this allows x86 to create large mappings for read-only memslots that
-are backed by HugeTLB mappings.
+It turned out that on low performance systems the original change can
+cause lower tx performance. On a N3450-based mini-PC tx performance
+in iperf3 was reduced from 950Mbps to ~900Mbps. Therefore effectively
+revert the original change, just use pcie_set_readrq() now instead of
+changing the PCIe capability register directly.
 
-Note, the changelog for commit 05da45583de9 ("KVM: MMU: large page
-support") states "If the largepage contains write-protected pages, a
-large pte is not used.", but "write-protected" refers to pages that are
-temporarily read-only, e.g. read-only memslots didn't even exist at the
-time.
-
-Fixes: 4d8b81abc47b ("KVM: introduce readonly memslot")
-Cc: stable@vger.kernel.org
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-[Redone using kvm_vcpu_gfn_to_memslot_prot. - Paolo]
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 2df49d365498 ("r8169: remove fiddling with the PCIe max read request size")
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- virt/kvm/kvm_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/realtek/r8169_main.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 877ce955b99cf..b5ea1bafe513c 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1401,7 +1401,7 @@ unsigned long kvm_host_page_size(struct kvm_vcpu *vcpu, gfn_t gfn)
+--- a/drivers/net/ethernet/realtek/r8169_main.c
++++ b/drivers/net/ethernet/realtek/r8169_main.c
+@@ -3865,15 +3865,18 @@ static void rtl_hw_jumbo_enable(struct r
+ 	switch (tp->mac_version) {
+ 	case RTL_GIGA_MAC_VER_12:
+ 	case RTL_GIGA_MAC_VER_17:
++		pcie_set_readrq(tp->pci_dev, 512);
+ 		r8168b_1_hw_jumbo_enable(tp);
+ 		break;
+ 	case RTL_GIGA_MAC_VER_18 ... RTL_GIGA_MAC_VER_26:
++		pcie_set_readrq(tp->pci_dev, 512);
+ 		r8168c_hw_jumbo_enable(tp);
+ 		break;
+ 	case RTL_GIGA_MAC_VER_27 ... RTL_GIGA_MAC_VER_28:
+ 		r8168dp_hw_jumbo_enable(tp);
+ 		break;
+ 	case RTL_GIGA_MAC_VER_31 ... RTL_GIGA_MAC_VER_33:
++		pcie_set_readrq(tp->pci_dev, 512);
+ 		r8168e_hw_jumbo_enable(tp);
+ 		break;
+ 	default:
+@@ -3903,6 +3906,9 @@ static void rtl_hw_jumbo_disable(struct
+ 		break;
+ 	}
+ 	rtl_lock_config_regs(tp);
++
++	if (pci_is_pcie(tp->pci_dev) && tp->supports_gmii)
++		pcie_set_readrq(tp->pci_dev, 4096);
+ }
  
- 	size = PAGE_SIZE;
- 
--	addr = kvm_vcpu_gfn_to_hva(vcpu, gfn);
-+	addr = kvm_vcpu_gfn_to_hva_prot(vcpu, gfn, NULL);
- 	if (kvm_is_error_hva(addr))
- 		return PAGE_SIZE;
- 
--- 
-2.20.1
-
+ static void rtl_jumbo_config(struct rtl8169_private *tp, int mtu)
 
 
