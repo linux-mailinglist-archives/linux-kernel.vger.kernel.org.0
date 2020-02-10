@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AB66157C6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:37:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE2B8157C75
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:37:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbgBJMfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:35:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51156 "EHLO mail.kernel.org"
+        id S1731628AbgBJNhj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:37:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727594AbgBJMfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727592AbgBJMfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 10 Feb 2020 07:35:01 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BFB1208C4;
-        Mon, 10 Feb 2020 12:35:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05D7A2173E;
+        Mon, 10 Feb 2020 12:35:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338100;
-        bh=VGnV3/lfouC4/jrWkmn86cxsPGl55+xsY7xkBTgO0Xw=;
+        s=default; t=1581338101;
+        bh=QBJKuD6NoRo2RqXBcUV+KHBPUQ/3R+OAVYKH+qXQslg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tNuggxqxKu0VPGYFcY8EApGxHDdPgaazl7boOxSeitzBLVhoKS3O3ABzKk/gIzqAi
-         5tUwFaoCErRuSsQaGOvPjU9019MIaSVYdasXmDB5upA7EUEfLOE0zcC36FYM1Nd6CL
-         qhLSFTQ7oAyVOhkihPXxuH4u1PCEntqLf+4Od7Nc=
+        b=sF3cPayrPlG2ge1jFfziqurdN+LjvzfEA3ZYRe2eSyTwci7AXJR0GnFzI1lVij7cZ
+         NkSB0Gs2/KuGcsBED04Jppbel0JQ8sccEmpGajGTB4iVGpe0CUgSjUWs6HCakuhuvM
+         zb4SEDZ1SnmYXETMYofhbCY3755gsDD2y9Nfu84Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolin Chen <nicoleotsuka@gmail.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        SeongJae Park <sjpark@amazon.de>,
         Jakub Kicinski <kuba@kernel.org>
-Subject: [PATCH 4.19 016/195] net: stmmac: Delete txtimer in suspend()
-Date:   Mon, 10 Feb 2020 04:31:14 -0800
-Message-Id: <20200210122307.262390222@linuxfoundation.org>
+Subject: [PATCH 4.19 018/195] tcp: clear tp->total_retrans in tcp_disconnect()
+Date:   Mon, 10 Feb 2020 04:31:16 -0800
+Message-Id: <20200210122307.533336169@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
 References: <20200210122305.731206734@linuxfoundation.org>
@@ -43,72 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolin Chen <nicoleotsuka@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 14b41a2959fbaa50932699d32ceefd6643abacc6 ]
+[ Upstream commit c13c48c00a6bc1febc73902505bdec0967bd7095 ]
 
-When running v5.5 with a rootfs on NFS, memory abort may happen in
-the system resume stage:
- Unable to handle kernel paging request at virtual address dead00000000012a
- [dead00000000012a] address between user and kernel address ranges
- pc : run_timer_softirq+0x334/0x3d8
- lr : run_timer_softirq+0x244/0x3d8
- x1 : ffff800011cafe80 x0 : dead000000000122
- Call trace:
-  run_timer_softirq+0x334/0x3d8
-  efi_header_end+0x114/0x234
-  irq_exit+0xd0/0xd8
-  __handle_domain_irq+0x60/0xb0
-  gic_handle_irq+0x58/0xa8
-  el1_irq+0xb8/0x180
-  arch_cpu_idle+0x10/0x18
-  do_idle+0x1d8/0x2b0
-  cpu_startup_entry+0x24/0x40
-  secondary_start_kernel+0x1b4/0x208
- Code: f9000693 a9400660 f9000020 b4000040 (f9000401)
- ---[ end trace bb83ceeb4c482071 ]---
- Kernel panic - not syncing: Fatal exception in interrupt
- SMP: stopping secondary CPUs
- SMP: failed to stop secondary CPUs 2-3
- Kernel Offset: disabled
- CPU features: 0x00002,2300aa30
- Memory Limit: none
- ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+total_retrans needs to be cleared in tcp_disconnect().
 
-It's found that stmmac_xmit() and stmmac_resume() sometimes might
-run concurrently, possibly resulting in a race condition between
-mod_timer() and setup_timer(), being called by stmmac_xmit() and
-stmmac_resume() respectively.
+tcp_disconnect() is rarely used, but it is worth fixing it.
 
-Since the resume() runs setup_timer() every time, it'd be safer to
-have del_timer_sync() in the suspend() as the counterpart.
-
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: SeongJae Park <sjpark@amazon.de>
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/ipv4/tcp.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -4513,6 +4513,7 @@ int stmmac_suspend(struct device *dev)
- {
- 	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct stmmac_priv *priv = netdev_priv(ndev);
-+	u32 chan;
- 
- 	if (!ndev || !netif_running(ndev))
- 		return 0;
-@@ -4527,6 +4528,9 @@ int stmmac_suspend(struct device *dev)
- 
- 	stmmac_disable_all_queues(priv);
- 
-+	for (chan = 0; chan < priv->plat->tx_queues_to_use; chan++)
-+		del_timer_sync(&priv->tx_queue[chan].txtimer);
-+
- 	/* Stop TX/RX DMA */
- 	stmmac_stop_all_dma(priv);
- 
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2592,6 +2592,7 @@ int tcp_disconnect(struct sock *sk, int
+ 	tcp_set_ca_state(sk, TCP_CA_Open);
+ 	tp->is_sack_reneg = 0;
+ 	tcp_clear_retrans(tp);
++	tp->total_retrans = 0;
+ 	inet_csk_delack_init(sk);
+ 	/* Initialize rcv_mss to TCP_MIN_MSS to avoid division by 0
+ 	 * issue in __tcp_select_window()
 
 
