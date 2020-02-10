@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FEBD157615
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B0051575C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:45:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730579AbgBJMoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:44:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40296 "EHLO mail.kernel.org"
+        id S1728563AbgBJMoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:44:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729713AbgBJMkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:22 -0500
+        id S1729290AbgBJMkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:24 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE8792051A;
-        Mon, 10 Feb 2020 12:40:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64EA42080C;
+        Mon, 10 Feb 2020 12:40:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338421;
-        bh=/i6l/U5Vb1wmXbSl/H8EJrzujIaF09aGsl8Hfcv7yBk=;
+        s=default; t=1581338424;
+        bh=RC5LyErzA5QLiIz6fXV5CAXcGDg3k+bE+UcIo5ET3PU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lO0LFUUi7Ansd85CMEqTooQuBG6YrxJz8K45wiXCtLrtSrsVTisNcenYAHncy2zVH
-         EBrtyC2kBDlso+vc5RcYVyqevOgvEdRWqGo8MLzzQujANopG/0meflkxSuWY0IsvPE
-         oVYrxXcz6PArFmnn1/IuC0E6csfFmh0nWIboB2g0=
+        b=Uy8HT4lpbKmBwtPs9BbF1vVE8ZLGH3tgtxBuxlsabPqn2v52ihyv2f/vLuTxNfvH+
+         pFauJgNRa+RNNWEfGyl33VeaQr5ny4hr2ti1vI8r/jqV9TSzK8LuwKy1P999uUbvEi
+         anJcuaBibsfpHTZeoIlrKEaeCwkoPtZaE2Kr8HlM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Wheeler <dm-devel@lists.ewheeler.net>,
-        Joe Thornber <ejt@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 5.5 141/367] dm space map common: fix to ensure new block isnt already in use
-Date:   Mon, 10 Feb 2020 04:30:54 -0800
-Message-Id: <20200210122437.860278179@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 5.5 145/367] dm thin metadata: use pool locking at end of dm_pool_metadata_close
+Date:   Mon, 10 Feb 2020 04:30:58 -0800
+Message-Id: <20200210122438.233855200@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -44,122 +42,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joe Thornber <ejt@redhat.com>
+From: Mike Snitzer <snitzer@redhat.com>
 
-commit 4feaef830de7ffdd8352e1fe14ad3bf13c9688f8 upstream.
+commit 44d8ebf436399a40fcd10dd31b29d37823d62fcc upstream.
 
-The space-maps track the reference counts for disk blocks allocated by
-both the thin-provisioning and cache targets.  There are variants for
-tracking metadata blocks and data blocks.
+Ensure that the pool is locked during calls to __commit_transaction and
+__destroy_persistent_data_objects.  Just being consistent with locking,
+but reality is dm_pool_metadata_close is called once pool is being
+destroyed so access to pool shouldn't be contended.
 
-Transactionality is implemented by never touching blocks from the
-previous transaction, so we can rollback in the event of a crash.
+Also, use pmd_write_lock_in_core rather than __pmd_write_lock in
+dm_pool_commit_metadata and rename __pmd_write_lock to
+pmd_write_lock_in_core -- there was no need for the alias.
 
-When allocating a new block we need to ensure the block is free (has
-reference count of 0) in both the current and previous transaction.
-Prior to this fix we were doing this by searching for a free block in
-the previous transaction, and relying on a 'begin' counter to track
-where the last allocation in the current transaction was.  This
-'begin' field was not being updated in all code paths (eg, increment
-of a data block reference count due to breaking sharing of a neighbour
-block in the same btree leaf).
+In addition, verify that the pool is locked in __commit_transaction().
 
-This fix keeps the 'begin' field, but now it's just a hint to speed up
-the search.  Instead the current transaction is searched for a free
-block, and then the old transaction is double checked to ensure it's
-free.  Much simpler.
-
-This fixes reports of sm_disk_new_block()'s BUG_ON() triggering when
-DM thin-provisioning's snapshots are heavily used.
-
-Reported-by: Eric Wheeler <dm-devel@lists.ewheeler.net>
+Fixes: 873f258becca ("dm thin metadata: do not write metadata if no changes occurred")
 Cc: stable@vger.kernel.org
-Signed-off-by: Joe Thornber <ejt@redhat.com>
 Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/persistent-data/dm-space-map-common.c   |   27 +++++++++++++++++++++
- drivers/md/persistent-data/dm-space-map-common.h   |    2 +
- drivers/md/persistent-data/dm-space-map-disk.c     |    6 +++-
- drivers/md/persistent-data/dm-space-map-metadata.c |    5 +++
- 4 files changed, 37 insertions(+), 3 deletions(-)
+ drivers/md/dm-thin-metadata.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/md/persistent-data/dm-space-map-common.c
-+++ b/drivers/md/persistent-data/dm-space-map-common.c
-@@ -380,6 +380,33 @@ int sm_ll_find_free_block(struct ll_disk
- 	return -ENOSPC;
+--- a/drivers/md/dm-thin-metadata.c
++++ b/drivers/md/dm-thin-metadata.c
+@@ -387,16 +387,15 @@ static int subtree_equal(void *context,
+  * Variant that is used for in-core only changes or code that
+  * shouldn't put the pool in service on its own (e.g. commit).
+  */
+-static inline void __pmd_write_lock(struct dm_pool_metadata *pmd)
++static inline void pmd_write_lock_in_core(struct dm_pool_metadata *pmd)
+ 	__acquires(pmd->root_lock)
+ {
+ 	down_write(&pmd->root_lock);
  }
+-#define pmd_write_lock_in_core(pmd) __pmd_write_lock((pmd))
  
-+int sm_ll_find_common_free_block(struct ll_disk *old_ll, struct ll_disk *new_ll,
-+	                         dm_block_t begin, dm_block_t end, dm_block_t *b)
-+{
-+	int r;
-+	uint32_t count;
-+
-+	do {
-+		r = sm_ll_find_free_block(new_ll, begin, new_ll->nr_blocks, b);
-+		if (r)
-+			break;
-+
-+		/* double check this block wasn't used in the old transaction */
-+		if (*b >= old_ll->nr_blocks)
-+			count = 0;
-+		else {
-+			r = sm_ll_lookup(old_ll, *b, &count);
-+			if (r)
-+				break;
-+
-+			if (count)
-+				begin = *b + 1;
-+		}
-+	} while (count);
-+
-+	return r;
-+}
-+
- static int sm_ll_mutate(struct ll_disk *ll, dm_block_t b,
- 			int (*mutator)(void *context, uint32_t old, uint32_t *new),
- 			void *context, enum allocation_event *ev)
---- a/drivers/md/persistent-data/dm-space-map-common.h
-+++ b/drivers/md/persistent-data/dm-space-map-common.h
-@@ -109,6 +109,8 @@ int sm_ll_lookup_bitmap(struct ll_disk *
- int sm_ll_lookup(struct ll_disk *ll, dm_block_t b, uint32_t *result);
- int sm_ll_find_free_block(struct ll_disk *ll, dm_block_t begin,
- 			  dm_block_t end, dm_block_t *result);
-+int sm_ll_find_common_free_block(struct ll_disk *old_ll, struct ll_disk *new_ll,
-+	                         dm_block_t begin, dm_block_t end, dm_block_t *result);
- int sm_ll_insert(struct ll_disk *ll, dm_block_t b, uint32_t ref_count, enum allocation_event *ev);
- int sm_ll_inc(struct ll_disk *ll, dm_block_t b, enum allocation_event *ev);
- int sm_ll_dec(struct ll_disk *ll, dm_block_t b, enum allocation_event *ev);
---- a/drivers/md/persistent-data/dm-space-map-disk.c
-+++ b/drivers/md/persistent-data/dm-space-map-disk.c
-@@ -167,8 +167,10 @@ static int sm_disk_new_block(struct dm_s
- 	enum allocation_event ev;
- 	struct sm_disk *smd = container_of(sm, struct sm_disk, sm);
+ static inline void pmd_write_lock(struct dm_pool_metadata *pmd)
+ {
+-	__pmd_write_lock(pmd);
++	pmd_write_lock_in_core(pmd);
+ 	if (unlikely(!pmd->in_service))
+ 		pmd->in_service = true;
+ }
+@@ -831,6 +830,7 @@ static int __commit_transaction(struct d
+ 	 * We need to know if the thin_disk_superblock exceeds a 512-byte sector.
+ 	 */
+ 	BUILD_BUG_ON(sizeof(struct thin_disk_superblock) > 512);
++	BUG_ON(!rwsem_is_locked(&pmd->root_lock));
  
--	/* FIXME: we should loop round a couple of times */
--	r = sm_ll_find_free_block(&smd->old_ll, smd->begin, smd->old_ll.nr_blocks, b);
-+	/*
-+	 * Any block we allocate has to be free in both the old and current ll.
-+	 */
-+	r = sm_ll_find_common_free_block(&smd->old_ll, &smd->ll, smd->begin, smd->ll.nr_blocks, b);
- 	if (r)
- 		return r;
+ 	if (unlikely(!pmd->in_service))
+ 		return 0;
+@@ -953,6 +953,7 @@ int dm_pool_metadata_close(struct dm_poo
+ 		return -EBUSY;
+ 	}
  
---- a/drivers/md/persistent-data/dm-space-map-metadata.c
-+++ b/drivers/md/persistent-data/dm-space-map-metadata.c
-@@ -448,7 +448,10 @@ static int sm_metadata_new_block_(struct
- 	enum allocation_event ev;
- 	struct sm_metadata *smm = container_of(sm, struct sm_metadata, sm);
++	pmd_write_lock_in_core(pmd);
+ 	if (!dm_bm_is_read_only(pmd->bm) && !pmd->fail_io) {
+ 		r = __commit_transaction(pmd);
+ 		if (r < 0)
+@@ -961,6 +962,7 @@ int dm_pool_metadata_close(struct dm_poo
+ 	}
+ 	if (!pmd->fail_io)
+ 		__destroy_persistent_data_objects(pmd);
++	pmd_write_unlock(pmd);
  
--	r = sm_ll_find_free_block(&smm->old_ll, smm->begin, smm->old_ll.nr_blocks, b);
-+	/*
-+	 * Any block we allocate has to be free in both the old and current ll.
-+	 */
-+	r = sm_ll_find_common_free_block(&smm->old_ll, &smm->ll, smm->begin, smm->ll.nr_blocks, b);
- 	if (r)
- 		return r;
+ 	kfree(pmd);
+ 	return 0;
+@@ -1841,7 +1843,7 @@ int dm_pool_commit_metadata(struct dm_po
+ 	 * Care is taken to not have commit be what
+ 	 * triggers putting the thin-pool in-service.
+ 	 */
+-	__pmd_write_lock(pmd);
++	pmd_write_lock_in_core(pmd);
+ 	if (pmd->fail_io)
+ 		goto out;
  
 
 
