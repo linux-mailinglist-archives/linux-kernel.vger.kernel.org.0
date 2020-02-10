@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C40815773B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:59:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C528D1574B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:35:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730294AbgBJM6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:58:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43326 "EHLO mail.kernel.org"
+        id S1728035AbgBJMfi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:35:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729961AbgBJMlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:41:19 -0500
+        id S1727363AbgBJMfX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:23 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1EC920873;
-        Mon, 10 Feb 2020 12:41:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78B1D24650;
+        Mon, 10 Feb 2020 12:35:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338479;
-        bh=Js38owJsJkQcV0rCENJE94oZETMkm+Vu7CywLaQcYrQ=;
+        s=default; t=1581338122;
+        bh=x/XNKUFPLS3neS+LDoNIiq/pjbpPs7OtyRIHTd6zdl0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MRLmlyitZOFH+VRDaGkZO5ox+vpQyBIFVsIwdT7QZ9/8QNFvMKaWTzygztK3AkfjJ
-         lN0KuXSiYMdNwymfMy5c4H9SzOxNlxg8XvNj5z5UozNqK6HOYXL8CNILsBZ53tRWCZ
-         quCg/sVuD1L1an42lfNCajI39XCwX6w/Mql4mq/M=
+        b=nRN/uB8btRh2Qx9XXFoJplwgT12tb0T1YRXR26wL30Vx0D6jjSpdVNGAo5eRzlAAl
+         mYftd4Q2CGAAHaQOhDjDRWCGksu4NsJagulsGX/FtNmZwxHU406qAyFp4ydkBb0+nC
+         sRCaXzFawyeX5697DFz6qFFNnr+RzCbsidoyivVc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.5 202/367] btrfs: flush write bio if we loop in extent_write_cache_pages
-Date:   Mon, 10 Feb 2020 04:31:55 -0800
-Message-Id: <20200210122443.168318047@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.19 059/195] ACPI: video: Do not export a non working backlight interface on MSI MS-7721 boards
+Date:   Mon, 10 Feb 2020 04:31:57 -0800
+Message-Id: <20200210122311.716296774@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,105 +43,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 42ffb0bf584ae5b6b38f72259af1e0ee417ac77f upstream.
+commit d21a91629f4b8e794fc4c0e0c17c85cedf1d806c upstream.
 
-There exists a deadlock with range_cyclic that has existed forever.  If
-we loop around with a bio already built we could deadlock with a writer
-who has the page locked that we're attempting to write but is waiting on
-a page in our bio to be written out.  The task traces are as follows
+Despite our heuristics to not wrongly export a non working ACPI backlight
+interface on desktop machines, we still end up exporting one on desktops
+using a motherboard from the MSI MS-7721 series.
 
-  PID: 1329874  TASK: ffff889ebcdf3800  CPU: 33  COMMAND: "kworker/u113:5"
-   #0 [ffffc900297bb658] __schedule at ffffffff81a4c33f
-   #1 [ffffc900297bb6e0] schedule at ffffffff81a4c6e3
-   #2 [ffffc900297bb6f8] io_schedule at ffffffff81a4ca42
-   #3 [ffffc900297bb708] __lock_page at ffffffff811f145b
-   #4 [ffffc900297bb798] __process_pages_contig at ffffffff814bc502
-   #5 [ffffc900297bb8c8] lock_delalloc_pages at ffffffff814bc684
-   #6 [ffffc900297bb900] find_lock_delalloc_range at ffffffff814be9ff
-   #7 [ffffc900297bb9a0] writepage_delalloc at ffffffff814bebd0
-   #8 [ffffc900297bba18] __extent_writepage at ffffffff814bfbf2
-   #9 [ffffc900297bba98] extent_write_cache_pages at ffffffff814bffbd
+I've looked at improving the heuristics, but in this case a quirk seems
+to be the only way to solve this.
 
-  PID: 2167901  TASK: ffff889dc6a59c00  CPU: 14  COMMAND:
-  "aio-dio-invalid"
-   #0 [ffffc9003b50bb18] __schedule at ffffffff81a4c33f
-   #1 [ffffc9003b50bba0] schedule at ffffffff81a4c6e3
-   #2 [ffffc9003b50bbb8] io_schedule at ffffffff81a4ca42
-   #3 [ffffc9003b50bbc8] wait_on_page_bit at ffffffff811f24d6
-   #4 [ffffc9003b50bc60] prepare_pages at ffffffff814b05a7
-   #5 [ffffc9003b50bcd8] btrfs_buffered_write at ffffffff814b1359
-   #6 [ffffc9003b50bdb0] btrfs_file_write_iter at ffffffff814b5933
-   #7 [ffffc9003b50be38] new_sync_write at ffffffff8128f6a8
-   #8 [ffffc9003b50bec8] vfs_write at ffffffff81292b9d
-   #9 [ffffc9003b50bf00] ksys_pwrite64 at ffffffff81293032
+While at it also add a comment to separate the video_detect_force_none
+entries in the video_detect_dmi_table from other type of entries, as we
+already do for the other entry types.
 
-I used drgn to find the respective pages we were stuck on
-
-page_entry.page 0xffffea00fbfc7500 index 8148 bit 15 pid 2167901
-page_entry.page 0xffffea00f9bb7400 index 7680 bit 0 pid 1329874
-
-As you can see the kworker is waiting for bit 0 (PG_locked) on index
-7680, and aio-dio-invalid is waiting for bit 15 (PG_writeback) on index
-8148.  aio-dio-invalid has 7680, and the kworker epd looks like the
-following
-
-  crash> struct extent_page_data ffffc900297bbbb0
-  struct extent_page_data {
-    bio = 0xffff889f747ed830,
-    tree = 0xffff889eed6ba448,
-    extent_locked = 0,
-    sync_io = 0
-  }
-
-Probably worth mentioning as well that it waits for writeback of the
-page to complete while holding a lock on it (at prepare_pages()).
-
-Using drgn I walked the bio pages looking for page
-0xffffea00fbfc7500 which is the one we're waiting for writeback on
-
-  bio = Object(prog, 'struct bio', address=0xffff889f747ed830)
-  for i in range(0, bio.bi_vcnt.value_()):
-      bv = bio.bi_io_vec[i]
-      if bv.bv_page.value_() == 0xffffea00fbfc7500:
-	  print("FOUND IT")
-
-which validated what I suspected.
-
-The fix for this is simple, flush the epd before we loop back around to
-the beginning of the file during writeout.
-
-Fixes: b293f02e1423 ("Btrfs: Add writepages support")
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Cc: All applicable <stable@vger.kernel.org>
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1783786
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent_io.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/acpi/video_detect.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -4188,7 +4188,16 @@ retry:
- 		 */
- 		scanned = 1;
- 		index = 0;
--		goto retry;
+--- a/drivers/acpi/video_detect.c
++++ b/drivers/acpi/video_detect.c
+@@ -328,6 +328,11 @@ static const struct dmi_system_id video_
+ 		DMI_MATCH(DMI_PRODUCT_NAME, "Precision 7510"),
+ 		},
+ 	},
 +
-+		/*
-+		 * If we're looping we could run into a page that is locked by a
-+		 * writer and that writer could be waiting on writeback for a
-+		 * page in our current bio, and thus deadlock, so flush the
-+		 * write bio here.
-+		 */
-+		ret = flush_write_bio(epd);
-+		if (!ret)
-+			goto retry;
- 	}
++	/*
++	 * Desktops which falsely report a backlight and which our heuristics
++	 * for this do not catch.
++	 */
+ 	{
+ 	 .callback = video_detect_force_none,
+ 	 .ident = "Dell OptiPlex 9020M",
+@@ -336,6 +341,14 @@ static const struct dmi_system_id video_
+ 		DMI_MATCH(DMI_PRODUCT_NAME, "OptiPlex 9020M"),
+ 		},
+ 	},
++	{
++	 .callback = video_detect_force_none,
++	 .ident = "MSI MS-7721",
++	 .matches = {
++		DMI_MATCH(DMI_SYS_VENDOR, "MSI"),
++		DMI_MATCH(DMI_PRODUCT_NAME, "MS-7721"),
++		},
++	},
+ 	{ },
+ };
  
- 	if (wbc->range_cyclic || (wbc->nr_to_write > 0 && range_whole))
 
 
