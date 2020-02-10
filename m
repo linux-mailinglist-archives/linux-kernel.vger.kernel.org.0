@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 871DE157B74
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:30:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0BA8157A2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:21:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731471AbgBJNaK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:30:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55218 "EHLO mail.kernel.org"
+        id S1728811AbgBJMhf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:37:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728306AbgBJMgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:15 -0500
+        id S1728311AbgBJMgQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:36:16 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1653C215A4;
+        by mail.kernel.org (Postfix) with ESMTPSA id 938712467C;
         Mon, 10 Feb 2020 12:36:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1581338175;
-        bh=9dOv/7AJnUDYJu5R96yrbsT6yC+tIg/gjrVajwFjjis=;
+        bh=QU5hlEcn8A5qyauh+f5DdOPlzw74Il9ZLeMFavcEx8c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rl2EjrXDw5SqFW5ym4OSnyttqUqTfuWQCBSFQpqH415uNUSmSPl+2aKdk7NfzG/N6
-         UCmyQzK/Xe6YR3hzA0hXY8M4UmFBK8ktQhJGqNRzQ0GeruW3OBJJM/g0cqv2vCCkzo
-         GzQ7jbZppJLGYyIrSaDzp9FrZixaR4JIv5QEd+gM=
+        b=ByUJrZP9RI/3t6ZyNa79DEvwexV1+K2dGZYMxfXgSuGYmLBktZ+zosbFgaSKf6btv
+         9HNnB3uyclxsWz/Qq/I9vY4yfWL5qnXmNBnqtTPbjz1qi5ZvKtyXKxg5HFTWnNKaYl
+         Lc1t2rmyQ/uo/bCwbAK78ZDwrnTYopDKNlfqmnzg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.19 161/195] nfsd: Return the correct number of bytes written to the file
-Date:   Mon, 10 Feb 2020 04:33:39 -0800
-Message-Id: <20200210122321.005028469@linuxfoundation.org>
+        stable@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.19 162/195] ubi: fastmap: Fix inverted logic in seen selfcheck
+Date:   Mon, 10 Feb 2020 04:33:40 -0800
+Message-Id: <20200210122321.103434498@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
 References: <20200210122305.731206734@linuxfoundation.org>
@@ -44,31 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trondmy@gmail.com>
+From: Sascha Hauer <s.hauer@pengutronix.de>
 
-commit 09a80f2aef06b7c86143f5c14efd3485e0d2c139 upstream.
+commit ef5aafb6e4e9942a28cd300bdcda21ce6cbaf045 upstream.
 
-We must allow for the fact that iov_iter_write() could have returned
-a short write (e.g. if there was an ENOSPC issue).
+set_seen() sets the bit corresponding to the PEB number in the bitmap,
+so when self_check_seen() wants to find PEBs that haven't been seen we
+have to print the PEBs that have their bit cleared, not the ones which
+have it set.
 
-Fixes: d890be159a71 "nfsd: Add I/O trace points in the NFSv4 write path"
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Fixes: 5d71afb00840 ("ubi: Use bitmaps in Fastmap self-check code")
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfsd/vfs.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/mtd/ubi/fastmap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -1016,6 +1016,7 @@ nfsd_vfs_write(struct svc_rqst *rqstp, s
- 	host_err = vfs_iter_write(file, &iter, &pos, flags);
- 	if (host_err < 0)
- 		goto out_nfserr;
-+	*cnt = host_err;
- 	nfsdstats.io_write += *cnt;
- 	fsnotify_modify(file);
+--- a/drivers/mtd/ubi/fastmap.c
++++ b/drivers/mtd/ubi/fastmap.c
+@@ -73,7 +73,7 @@ static int self_check_seen(struct ubi_de
+ 		return 0;
  
+ 	for (pnum = 0; pnum < ubi->peb_count; pnum++) {
+-		if (test_bit(pnum, seen) && ubi->lookuptbl[pnum]) {
++		if (!test_bit(pnum, seen) && ubi->lookuptbl[pnum]) {
+ 			ubi_err(ubi, "self-check failed for PEB %d, fastmap didn't see it", pnum);
+ 			ret = -EINVAL;
+ 		}
 
 
