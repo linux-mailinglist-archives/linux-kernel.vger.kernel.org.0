@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 019C7157625
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21F0F1574A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:35:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730715AbgBJMot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:44:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41448 "EHLO mail.kernel.org"
+        id S1727671AbgBJMfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:35:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728095AbgBJMkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:46 -0500
+        id S1727008AbgBJMfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:02 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21E29208C4;
-        Mon, 10 Feb 2020 12:40:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 867A421739;
+        Mon, 10 Feb 2020 12:35:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338446;
-        bh=MIdrN4eNMf+qGiOgzxhA4qnCELEF867GZBySwRbQpQ4=;
+        s=default; t=1581338100;
+        bh=Afi39Ezz4cCJYHNt/Z/SU5kCcz10+KEkk/WfmbdU3rE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VFTPYCQoXfU47cS3zm4/n5zCk3SVcTWafz/ENjbJk+Js/ZlhgIyLlj6h7r3YvEw0w
-         Lkl3LoP8i+FXoLoBz1QeZGrNm/VblC9J4AQ0X8/P5TZErWUG9bSVC5iKkBISmfQBmB
-         VAaSCiFmZ1ing7sUMPbOPzt1Z4rZRoU5qdv2MRqI=
+        b=J0kwCx+rGzg4V7wMKgoWHJZErcJqjnaF8ServdzRFYAyRvKujgNTiTpJwxH5IJQSD
+         KlOGHtSmZo2xNPAGzqaf180KLyEjzdzSz+OFumwu5pJTIqGPMJzkeUDTQ1ruRmqfY6
+         iWYLlHkXoW5yPXTk9c7/NMWY76vTTxTy5fyasEMw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrii Nakryiko <andriin@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 5.5 161/367] selftests/bpf: Fix perf_buffer test on systems w/ offline CPUs
-Date:   Mon, 10 Feb 2020 04:31:14 -0800
-Message-Id: <20200210122439.685145454@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
+        Jakub Kicinski <kuba@kernel.org>
+Subject: [PATCH 4.19 017/195] bnxt_en: Fix TC queue mapping.
+Date:   Mon, 10 Feb 2020 04:31:15 -0800
+Message-Id: <20200210122307.467637576@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,99 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrii Nakryiko <andriin@fb.com>
+From: Michael Chan <michael.chan@broadcom.com>
 
-commit 91cbdf740a476cf2c744169bf407de2e3ac1f3cf upstream.
+[ Upstream commit 18e4960c18f484ac288f41b43d0e6c4c88e6ea78 ]
 
-Fix up perf_buffer.c selftest to take into account offline/missing CPUs.
+The driver currently only calls netdev_set_tc_queue when the number of
+TCs is greater than 1.  Instead, the comparison should be greater than
+or equal to 1.  Even with 1 TC, we need to set the queue mapping.
 
-Fixes: ee5cf82ce04a ("selftests/bpf: test perf buffer API")
-Signed-off-by: Andrii Nakryiko <andriin@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Link: https://lore.kernel.org/bpf/20191212013621.1691858-1-andriin@fb.com
+This bug can cause warnings when the number of TCs is changed back to 1.
+
+Fixes: 7809592d3e2e ("bnxt_en: Enable MSIX early in bnxt_init_one().")
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- tools/testing/selftests/bpf/prog_tests/perf_buffer.c |   29 +++++++++++++++----
- 1 file changed, 24 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/testing/selftests/bpf/prog_tests/perf_buffer.c
-+++ b/tools/testing/selftests/bpf/prog_tests/perf_buffer.c
-@@ -4,6 +4,7 @@
- #include <sched.h>
- #include <sys/socket.h>
- #include <test_progs.h>
-+#include "libbpf_internal.h"
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -5861,7 +5861,7 @@ static void bnxt_setup_msix(struct bnxt
+ 	int tcs, i;
  
- static void on_sample(void *ctx, int cpu, void *data, __u32 size)
- {
-@@ -19,7 +20,7 @@ static void on_sample(void *ctx, int cpu
+ 	tcs = netdev_get_num_tc(dev);
+-	if (tcs > 1) {
++	if (tcs) {
+ 		int i, off, count;
  
- void test_perf_buffer(void)
- {
--	int err, prog_fd, nr_cpus, i, duration = 0;
-+	int err, prog_fd, on_len, nr_on_cpus = 0,  nr_cpus, i, duration = 0;
- 	const char *prog_name = "kprobe/sys_nanosleep";
- 	const char *file = "./test_perf_buffer.o";
- 	struct perf_buffer_opts pb_opts = {};
-@@ -29,15 +30,27 @@ void test_perf_buffer(void)
- 	struct bpf_object *obj;
- 	struct perf_buffer *pb;
- 	struct bpf_link *link;
-+	bool *online;
- 
- 	nr_cpus = libbpf_num_possible_cpus();
- 	if (CHECK(nr_cpus < 0, "nr_cpus", "err %d\n", nr_cpus))
- 		return;
- 
-+	err = parse_cpu_mask_file("/sys/devices/system/cpu/online",
-+				  &online, &on_len);
-+	if (CHECK(err, "nr_on_cpus", "err %d\n", err))
-+		return;
-+
-+	for (i = 0; i < on_len; i++)
-+		if (online[i])
-+			nr_on_cpus++;
-+
- 	/* load program */
- 	err = bpf_prog_load(file, BPF_PROG_TYPE_KPROBE, &obj, &prog_fd);
--	if (CHECK(err, "obj_load", "err %d errno %d\n", err, errno))
--		return;
-+	if (CHECK(err, "obj_load", "err %d errno %d\n", err, errno)) {
-+		obj = NULL;
-+		goto out_close;
-+	}
- 
- 	prog = bpf_object__find_program_by_title(obj, prog_name);
- 	if (CHECK(!prog, "find_probe", "prog '%s' not found\n", prog_name))
-@@ -64,6 +77,11 @@ void test_perf_buffer(void)
- 	/* trigger kprobe on every CPU */
- 	CPU_ZERO(&cpu_seen);
- 	for (i = 0; i < nr_cpus; i++) {
-+		if (i >= on_len || !online[i]) {
-+			printf("skipping offline CPU #%d\n", i);
-+			continue;
-+		}
-+
- 		CPU_ZERO(&cpu_set);
- 		CPU_SET(i, &cpu_set);
- 
-@@ -81,8 +99,8 @@ void test_perf_buffer(void)
- 	if (CHECK(err < 0, "perf_buffer__poll", "err %d\n", err))
- 		goto out_free_pb;
- 
--	if (CHECK(CPU_COUNT(&cpu_seen) != nr_cpus, "seen_cpu_cnt",
--		  "expect %d, seen %d\n", nr_cpus, CPU_COUNT(&cpu_seen)))
-+	if (CHECK(CPU_COUNT(&cpu_seen) != nr_on_cpus, "seen_cpu_cnt",
-+		  "expect %d, seen %d\n", nr_on_cpus, CPU_COUNT(&cpu_seen)))
- 		goto out_free_pb;
- 
- out_free_pb:
-@@ -91,4 +109,5 @@ out_detach:
- 	bpf_link__destroy(link);
- out_close:
- 	bpf_object__close(obj);
-+	free(online);
- }
+ 		for (i = 0; i < tcs; i++) {
 
 
