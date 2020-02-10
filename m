@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B46C157AC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:25:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59729157B10
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:28:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731090AbgBJNZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:25:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57472 "EHLO mail.kernel.org"
+        id S1731292AbgBJN1R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:27:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727983AbgBJMg4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:56 -0500
+        id S1728449AbgBJMgh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:36:37 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCD952467C;
-        Mon, 10 Feb 2020 12:36:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64BAA20873;
+        Mon, 10 Feb 2020 12:36:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338215;
-        bh=bp8wiRWbr57NzUapszvTFASMRRI7kJytZuF7/tWWOxY=;
+        s=default; t=1581338197;
+        bh=88zAnXw2hLqc8dBEYZYPem3Likizp9uLRhvjzs2exSg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bd0KHSFHgqiXqRXCak0AMmz0mMgAidLFF8eeMceLGWuhorPfybYH1aeGwFN0UYqWH
-         CTDzxXbLwbq88w64bpOQiwLJDlU+PlUmqC1cfdaAPvBfsCFvMph/mzlv9F8kqsUnNX
-         ePwIaQjfiZID3sQ9Ntpgc50jdEBiIJf3wOjRJP/c=
+        b=QPw8ia/dwTZLye+Ml57T/jV8ipcLwb+nDlA+leN599Y6fxHvbN3eZ7cpznCE2wlgL
+         yN90wrK8cK5iCR11rDBmpoG2Vo0eB9/tVlzLjfbyFueb/LHykzDtM2yFXC6UI8Imk1
+         fQY1oi80a73WdMcuWx8I82nzCDA5r1O2qkXOXeS0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
-        Jakub Kicinski <kuba@kernel.org>
-Subject: [PATCH 5.4 009/309] bnxt_en: Fix TC queue mapping.
-Date:   Mon, 10 Feb 2020 04:29:25 -0800
-Message-Id: <20200210122406.952098667@linuxfoundation.org>
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: [PATCH 5.4 010/309] rxrpc: Fix use-after-free in rxrpc_put_local()
+Date:   Mon, 10 Feb 2020 04:29:26 -0800
+Message-Id: <20200210122407.044750061@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
 References: <20200210122406.106356946@linuxfoundation.org>
@@ -43,34 +42,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Chan <michael.chan@broadcom.com>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 18e4960c18f484ac288f41b43d0e6c4c88e6ea78 ]
+[ Upstream commit fac20b9e738523fc884ee3ea5be360a321cd8bad ]
 
-The driver currently only calls netdev_set_tc_queue when the number of
-TCs is greater than 1.  Instead, the comparison should be greater than
-or equal to 1.  Even with 1 TC, we need to set the queue mapping.
+Fix rxrpc_put_local() to not access local->debug_id after calling
+atomic_dec_return() as, unless that returned n==0, we no longer have the
+right to access the object.
 
-This bug can cause warnings when the number of TCs is changed back to 1.
-
-Fixes: 7809592d3e2e ("bnxt_en: Enable MSIX early in bnxt_init_one().")
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Fixes: 06d9532fa6b3 ("rxrpc: Fix read-after-free in rxrpc_queue_local()")
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/rxrpc/local_object.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -7873,7 +7873,7 @@ static void bnxt_setup_msix(struct bnxt
- 	int tcs, i;
+--- a/net/rxrpc/local_object.c
++++ b/net/rxrpc/local_object.c
+@@ -364,11 +364,14 @@ void rxrpc_queue_local(struct rxrpc_loca
+ void rxrpc_put_local(struct rxrpc_local *local)
+ {
+ 	const void *here = __builtin_return_address(0);
++	unsigned int debug_id;
+ 	int n;
  
- 	tcs = netdev_get_num_tc(dev);
--	if (tcs > 1) {
-+	if (tcs) {
- 		int i, off, count;
+ 	if (local) {
++		debug_id = local->debug_id;
++
+ 		n = atomic_dec_return(&local->usage);
+-		trace_rxrpc_local(local->debug_id, rxrpc_local_put, n, here);
++		trace_rxrpc_local(debug_id, rxrpc_local_put, n, here);
  
- 		for (i = 0; i < tcs; i++) {
+ 		if (n == 0)
+ 			call_rcu(&local->rcu, rxrpc_local_rcu);
 
 
