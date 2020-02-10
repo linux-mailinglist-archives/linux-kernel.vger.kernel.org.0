@@ -2,86 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C098F15808E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 18:07:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE2451580CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 18:11:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728107AbgBJRH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 12:07:29 -0500
-Received: from mailoutvs60.siol.net ([185.57.226.251]:47179 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728063AbgBJRH1 (ORCPT
+        id S1728178AbgBJRKM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 12:10:12 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:17750 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728149AbgBJRKJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 12:07:27 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id DB44E521AFF;
-        Mon, 10 Feb 2020 18:07:23 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id SYF6ynxnTZJN; Mon, 10 Feb 2020 18:07:23 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 978E652175A;
-        Mon, 10 Feb 2020 18:07:23 +0100 (CET)
-Received: from localhost.localdomain (cpe-194-152-20-232.static.triera.net [194.152.20.232])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id D9AC5521B82;
-        Mon, 10 Feb 2020 18:07:20 +0100 (CET)
-From:   Jernej Skrabec <jernej.skrabec@siol.net>
-To:     mripard@kernel.org, wens@csie.org
-Cc:     mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v2 5/5] arm64: dts: allwinner: a64: Add deinterlace core node
-Date:   Mon, 10 Feb 2020 18:06:56 +0100
-Message-Id: <20200210170656.82265-6-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210170656.82265-1-jernej.skrabec@siol.net>
-References: <20200210170656.82265-1-jernej.skrabec@siol.net>
+        Mon, 10 Feb 2020 12:10:09 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e418e300000>; Mon, 10 Feb 2020 09:09:04 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 10 Feb 2020 09:10:07 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 10 Feb 2020 09:10:07 -0800
+Received: from [10.2.168.250] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 10 Feb
+ 2020 17:10:07 +0000
+Subject: Re: [PATCH v5 10/12] mm/gup: /proc/vmstat: pin_user_pages (FOLL_PIN)
+ reporting
+To:     Jan Kara <jack@suse.cz>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20200207033735.308000-1-jhubbard@nvidia.com>
+ <20200207033735.308000-11-jhubbard@nvidia.com>
+ <20200210101629.GC12923@quack2.suse.cz>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <7fcc15f4-e548-78bc-788d-f93293a1be74@nvidia.com>
+Date:   Mon, 10 Feb 2020 09:07:07 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200210101629.GC12923@quack2.suse.cz>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1581354545; bh=GFFwsx57sCxj2sUkp7PeUAMx5ZDz2er8KdXyQLBksyc=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=mgiGuvh4a8/j5qP8rVJeI+8VQbHf2jVdOGqN8dzHXZ+aeb7PZyeJbMOhxY+1OUqQ5
+         e12UVW9rEfOpg4y6UBRpdDTiOg0K2Lz6Jd2BtFewg+9KyFwPzPT7AP3Wzt6s+CkwmB
+         rUuU0Q0ki0c9cXfzej3YnAfaBNDiecxV+Lx5Xmw8bNccE+px/ak0HTpJUmMOyZ0hgK
+         9nmpeudR7hWQ2f8b5IKfN1LJlE+w/bvqIwHXLJmN2ZGvt0UHj2RPFjU2kgHWUG+2cM
+         wTUjRMQp5P5znDTg5h0Rzk288BjQiK8Jkvj7oxWo3tMlHRD66hPcedX3dSQGyreutP
+         p41fLIcZHUnWg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A64 contains deinterlace core, compatible to the one found in H3.
-It can be used in combination with VPU unit to decode and process
-interlaced videos.
+On 2/10/20 2:16 AM, Jan Kara wrote:
+> On Thu 06-02-20 19:37:33, John Hubbard wrote:
+>> @@ -2258,6 +2268,8 @@ static int record_subpages(struct page *page, unsigned long addr,
+>>   
+>>   static void put_compound_head(struct page *page, int refs, unsigned int flags)
+>>   {
+>> +	int orig_refs = refs;
+>> +
+>>   	if (flags & FOLL_PIN) {
+>>   		if (hpage_pincount_available(page))
+>>   			hpage_pincount_sub(page, refs);
+>> @@ -2273,6 +2285,8 @@ static void put_compound_head(struct page *page, int refs, unsigned int flags)
+>>   	if (refs > 1)
+>>   		page_ref_sub(page, refs - 1);
+>>   	put_page(page);
+>> +
+>> +	mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_RELEASED, orig_refs);
+>>   }
+> 
+> Still not quite happy about this :) Now you update NR_FOLL_PIN_RELEASED
+> even if 'flags' don't have FOLL_PIN set. You need to have the
+> mod_node_page_state() inside the "if (flags & FOLL_PIN)" branch above...
+> 
+> 									Honza
 
-Add a node for it.
+Arggh, yes that's true. Thanks for catching that, will fix in v6.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/b=
-oot/dts/allwinner/sun50i-a64.dtsi
-index 251c91724de1..72b1b34879c6 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -1114,6 +1114,20 @@ dphy: d-phy@1ca1000 {
- 			#phy-cells =3D <0>;
- 		};
-=20
-+		deinterlace: deinterlace@1e00000 {
-+			compatible =3D "allwinner,sun50i-a64-deinterlace",
-+				     "allwinner,sun8i-h3-deinterlace";
-+			reg =3D <0x01e00000 0x20000>;
-+			clocks =3D <&ccu CLK_BUS_DEINTERLACE>,
-+				 <&ccu CLK_DEINTERLACE>,
-+				 <&ccu CLK_DRAM_DEINTERLACE>;
-+			clock-names =3D "bus", "mod", "ram";
-+			resets =3D <&ccu RST_BUS_DEINTERLACE>;
-+			interrupts =3D <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;
-+			interconnects =3D <&mbus 9>;
-+			interconnect-names =3D "dma-mem";
-+		};
-+
- 		hdmi: hdmi@1ee0000 {
- 			compatible =3D "allwinner,sun50i-a64-dw-hdmi",
- 				     "allwinner,sun8i-a83t-dw-hdmi";
---=20
-2.25.0
-
+thanks,
+-- 
+John Hubbard
+NVIDIA
+  
