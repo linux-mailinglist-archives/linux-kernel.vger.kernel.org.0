@@ -2,65 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47BA2156D19
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 01:00:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C303156D1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 01:10:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbgBJAA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 19:00:26 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38842 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726843AbgBJAA0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 19:00:26 -0500
-Received: by mail-oi1-f194.google.com with SMTP id l9so7585481oii.5;
-        Sun, 09 Feb 2020 16:00:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jLycCzI0xf3B5/M7WGHGiCUQ+zIKY3Ji9ADP5oWlp7E=;
-        b=sCNVjgXvxOf0nIACB5eLk3ZU4yX7MGggr09h1yXGqwKvqkmLTIhP1CzWNY/Zsqb11z
-         MQ8uIZKmK5/CeIT0tU0jD/5qPiFdbJ4EA84gwomMaT/XkYrdhSa45Pw+qUSP4146Hxma
-         IXSpimMeiJT6JxpbvrHrS0rhj2PNmhmAvzg24ACZL7uYDWz2QlhX3bGSeUIjduxpIFVr
-         7pBH4h/kj8Cm80JKq12DD915DyjcnLzuiiKw57vvtUv+eEILTkl3exCdkB1erP9SGiDP
-         4jjlqgBPknqGDQgp2vR2KbVfaKCrWZGoetlpQG5j22k7nPdoWMMm3Oq5GpkcaYkd7dDM
-         hb0A==
-X-Gm-Message-State: APjAAAVql9FKkFq67u1dZ22FsB7wtB/RuhtQ3ePW0bnl16QLlhexkBld
-        ZFRN7ZdSjlVyhf/+2FoLSvl+7m1TO5k2pS3B1RaqUA==
-X-Google-Smtp-Source: APXvYqwTcscglPwrLHEifESum0llaHuX9ihih4ZqPd2v7rp2Y2irhRKtO7zpme2ydt7rgLx4RtIO6RoKHdsbZGmx/tk=
-X-Received: by 2002:a54:488d:: with SMTP id r13mr8774250oic.115.1581292825704;
- Sun, 09 Feb 2020 16:00:25 -0800 (PST)
-MIME-Version: 1.0
-References: <1581237249-29608-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1581237249-29608-1-git-send-email-peng.fan@nxp.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 10 Feb 2020 01:00:09 +0100
-Message-ID: <CAJZ5v0iuLwO0udw+FygrgRfHUpVvz9YziPhKpM-WsJtma+BsSQ@mail.gmail.com>
-Subject: Re: [PATCH] PM: replace S_IRUGO with octal numbers
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727892AbgBJAKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 19:10:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52444 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726915AbgBJAKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Feb 2020 19:10:03 -0500
+Subject: Re: [GIT PULL] New zonefs file system for 5.6-rc1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581293403;
+        bh=+0ab0nW6FMHJRBjMyIMhOaR1V8oIJkxBL7h0WmWrCfo=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=bA2hcZRVtszjl11frrSRyUwAsC22LmQ4ah8n4aemLkrLQMtuAPrRtz4vj5W4kazCW
+         YIXY/1abYJZLrQEXp8d2mz5bRgyoQ5UrzbJgzCSQCf+OM2FWKoevJgKM1Fme0nz/RL
+         TLBjYa7G4oxAQFcTEbYAQ055ziYeaYRD5YLT+cgc=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20200207150239.685712-1-damien.lemoal@wdc.com>
+References: <20200207150239.685712-1-damien.lemoal@wdc.com>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200207150239.685712-1-damien.lemoal@wdc.com>
+X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs.git/
+ tags/zonefs-5.6-rc1
+X-PR-Tracked-Commit-Id: fcb9c24bef3d1d0942c50fb25fbb8ab45c7c3753
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 380a129eb2c20d4b7b5be744e80e2ec18b24220b
+Message-Id: <158129340302.32523.16390158715022108156.pr-tracker-bot@kernel.org>
+Date:   Mon, 10 Feb 2020 00:10:03 +0000
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 9, 2020 at 9:39 AM <peng.fan@nxp.com> wrote:
->
-> From: Peng Fan <peng.fan@nxp.com>
->
-> Per commit f90774e1fd27 ("checkpatch: look for symbolic permissions
-> and suggest octal instead"),
+The pull request you sent on Sat,  8 Feb 2020 00:02:39 +0900:
 
-This applies to new patches.
+> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs.git/ tags/zonefs-5.6-rc1
 
-> octal numbers is preferred, so replace S_IRUGO with octal numbers.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/380a129eb2c20d4b7b5be744e80e2ec18b24220b
 
-Not really.
+Thank you!
 
-Thanks!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
