@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB6601575C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:45:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 019C7157625
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730646AbgBJMo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:44:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40948 "EHLO mail.kernel.org"
+        id S1730715AbgBJMot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:44:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729760AbgBJMkf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:35 -0500
+        id S1728095AbgBJMkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:46 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BACB420873;
-        Mon, 10 Feb 2020 12:40:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21E29208C4;
+        Mon, 10 Feb 2020 12:40:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338434;
-        bh=A8OS+irv9ptR5X5lUbKiugMdJqyLkGJygP7rHJ61eSY=;
+        s=default; t=1581338446;
+        bh=MIdrN4eNMf+qGiOgzxhA4qnCELEF867GZBySwRbQpQ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D8AXpyiGP/s34G2EwhuMdvJDNtki1kZSkLAQEAlOuPF7/W+Ou33pI3tnXNGJZAz8u
-         lox5x1sFOOx6CCvSx0wrTWwb2fSFMmWrWjh0Se9OzYugpBQ8Zu4Y4nYdCNCscCJt9s
-         f1HrdGY3kSSiG/ORKRCuWqh8F8Ji/ErfR1HOADrk=
+        b=VFTPYCQoXfU47cS3zm4/n5zCk3SVcTWafz/ENjbJk+Js/ZlhgIyLlj6h7r3YvEw0w
+         Lkl3LoP8i+FXoLoBz1QeZGrNm/VblC9J4AQ0X8/P5TZErWUG9bSVC5iKkBISmfQBmB
+         VAaSCiFmZ1ing7sUMPbOPzt1Z4rZRoU5qdv2MRqI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Andrii Nakryiko <andriin@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>
-Subject: [PATCH 5.5 159/367] libbpf: Fix printf compilation warnings on ppc64le arch
-Date:   Mon, 10 Feb 2020 04:31:12 -0800
-Message-Id: <20200210122439.509830003@linuxfoundation.org>
+        Alexei Starovoitov <ast@kernel.org>
+Subject: [PATCH 5.5 161/367] selftests/bpf: Fix perf_buffer test on systems w/ offline CPUs
+Date:   Mon, 10 Feb 2020 04:31:14 -0800
+Message-Id: <20200210122439.685145454@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -46,107 +45,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andrii Nakryiko <andriin@fb.com>
 
-commit 679152d3a32e305c213f83160c328c37566ae8bc upstream.
+commit 91cbdf740a476cf2c744169bf407de2e3ac1f3cf upstream.
 
-On ppc64le __u64 and __s64 are defined as long int and unsigned long int,
-respectively. This causes compiler to emit warning when %lld/%llu are used to
-printf 64-bit numbers. Fix this by casting to size_t/ssize_t with %zu and %zd
-format specifiers, respectively.
+Fix up perf_buffer.c selftest to take into account offline/missing CPUs.
 
-v1->v2:
-- use size_t/ssize_t instead of custom typedefs (Martin).
-
-Fixes: 1f8e2bcb2cd5 ("libbpf: Refactor relocation handling")
-Fixes: abd29c931459 ("libbpf: allow specifying map definitions using BTF")
+Fixes: ee5cf82ce04a ("selftests/bpf: test perf buffer API")
 Signed-off-by: Andrii Nakryiko <andriin@fb.com>
 Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
-Link: https://lore.kernel.org/bpf/20191212171918.638010-1-andriin@fb.com
+Link: https://lore.kernel.org/bpf/20191212013621.1691858-1-andriin@fb.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/lib/bpf/libbpf.c |   37 +++++++++++++++++++------------------
- 1 file changed, 19 insertions(+), 18 deletions(-)
+ tools/testing/selftests/bpf/prog_tests/perf_buffer.c |   29 +++++++++++++++----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -1242,15 +1242,15 @@ static int bpf_object__init_user_btf_map
- 			}
- 			sz = btf__resolve_size(obj->btf, t->type);
- 			if (sz < 0) {
--				pr_warn("map '%s': can't determine key size for type [%u]: %lld.\n",
--					map_name, t->type, sz);
-+				pr_warn("map '%s': can't determine key size for type [%u]: %zd.\n",
-+					map_name, t->type, (ssize_t)sz);
- 				return sz;
- 			}
--			pr_debug("map '%s': found key [%u], sz = %lld.\n",
--				 map_name, t->type, sz);
-+			pr_debug("map '%s': found key [%u], sz = %zd.\n",
-+				 map_name, t->type, (ssize_t)sz);
- 			if (map->def.key_size && map->def.key_size != sz) {
--				pr_warn("map '%s': conflicting key size %u != %lld.\n",
--					map_name, map->def.key_size, sz);
-+				pr_warn("map '%s': conflicting key size %u != %zd.\n",
-+					map_name, map->def.key_size, (ssize_t)sz);
- 				return -EINVAL;
- 			}
- 			map->def.key_size = sz;
-@@ -1285,15 +1285,15 @@ static int bpf_object__init_user_btf_map
- 			}
- 			sz = btf__resolve_size(obj->btf, t->type);
- 			if (sz < 0) {
--				pr_warn("map '%s': can't determine value size for type [%u]: %lld.\n",
--					map_name, t->type, sz);
-+				pr_warn("map '%s': can't determine value size for type [%u]: %zd.\n",
-+					map_name, t->type, (ssize_t)sz);
- 				return sz;
- 			}
--			pr_debug("map '%s': found value [%u], sz = %lld.\n",
--				 map_name, t->type, sz);
-+			pr_debug("map '%s': found value [%u], sz = %zd.\n",
-+				 map_name, t->type, (ssize_t)sz);
- 			if (map->def.value_size && map->def.value_size != sz) {
--				pr_warn("map '%s': conflicting value size %u != %lld.\n",
--					map_name, map->def.value_size, sz);
-+				pr_warn("map '%s': conflicting value size %u != %zd.\n",
-+					map_name, map->def.value_size, (ssize_t)sz);
- 				return -EINVAL;
- 			}
- 			map->def.value_size = sz;
-@@ -1817,7 +1817,8 @@ static int bpf_program__record_reloc(str
- 			return -LIBBPF_ERRNO__RELOC;
- 		}
- 		if (sym->st_value % 8) {
--			pr_warn("bad call relo offset: %llu\n", (__u64)sym->st_value);
-+			pr_warn("bad call relo offset: %zu\n",
-+				(size_t)sym->st_value);
- 			return -LIBBPF_ERRNO__RELOC;
- 		}
- 		reloc_desc->type = RELO_CALL;
-@@ -1859,8 +1860,8 @@ static int bpf_program__record_reloc(str
- 			break;
- 		}
- 		if (map_idx >= nr_maps) {
--			pr_warn("map relo failed to find map for sec %u, off %llu\n",
--				shdr_idx, (__u64)sym->st_value);
-+			pr_warn("map relo failed to find map for sec %u, off %zu\n",
-+				shdr_idx, (size_t)sym->st_value);
- 			return -LIBBPF_ERRNO__RELOC;
- 		}
- 		reloc_desc->type = RELO_LD64;
-@@ -1941,9 +1942,9 @@ bpf_program__collect_reloc(struct bpf_pr
- 		name = elf_strptr(obj->efile.elf, obj->efile.strtabidx,
- 				  sym.st_name) ? : "<?>";
+--- a/tools/testing/selftests/bpf/prog_tests/perf_buffer.c
++++ b/tools/testing/selftests/bpf/prog_tests/perf_buffer.c
+@@ -4,6 +4,7 @@
+ #include <sched.h>
+ #include <sys/socket.h>
+ #include <test_progs.h>
++#include "libbpf_internal.h"
  
--		pr_debug("relo for shdr %u, symb %llu, value %llu, type %d, bind %d, name %d (\'%s\'), insn %u\n",
--			 (__u32)sym.st_shndx, (__u64)GELF_R_SYM(rel.r_info),
--			 (__u64)sym.st_value, GELF_ST_TYPE(sym.st_info),
-+		pr_debug("relo for shdr %u, symb %zu, value %zu, type %d, bind %d, name %d (\'%s\'), insn %u\n",
-+			 (__u32)sym.st_shndx, (size_t)GELF_R_SYM(rel.r_info),
-+			 (size_t)sym.st_value, GELF_ST_TYPE(sym.st_info),
- 			 GELF_ST_BIND(sym.st_info), sym.st_name, name,
- 			 insn_idx);
+ static void on_sample(void *ctx, int cpu, void *data, __u32 size)
+ {
+@@ -19,7 +20,7 @@ static void on_sample(void *ctx, int cpu
  
+ void test_perf_buffer(void)
+ {
+-	int err, prog_fd, nr_cpus, i, duration = 0;
++	int err, prog_fd, on_len, nr_on_cpus = 0,  nr_cpus, i, duration = 0;
+ 	const char *prog_name = "kprobe/sys_nanosleep";
+ 	const char *file = "./test_perf_buffer.o";
+ 	struct perf_buffer_opts pb_opts = {};
+@@ -29,15 +30,27 @@ void test_perf_buffer(void)
+ 	struct bpf_object *obj;
+ 	struct perf_buffer *pb;
+ 	struct bpf_link *link;
++	bool *online;
+ 
+ 	nr_cpus = libbpf_num_possible_cpus();
+ 	if (CHECK(nr_cpus < 0, "nr_cpus", "err %d\n", nr_cpus))
+ 		return;
+ 
++	err = parse_cpu_mask_file("/sys/devices/system/cpu/online",
++				  &online, &on_len);
++	if (CHECK(err, "nr_on_cpus", "err %d\n", err))
++		return;
++
++	for (i = 0; i < on_len; i++)
++		if (online[i])
++			nr_on_cpus++;
++
+ 	/* load program */
+ 	err = bpf_prog_load(file, BPF_PROG_TYPE_KPROBE, &obj, &prog_fd);
+-	if (CHECK(err, "obj_load", "err %d errno %d\n", err, errno))
+-		return;
++	if (CHECK(err, "obj_load", "err %d errno %d\n", err, errno)) {
++		obj = NULL;
++		goto out_close;
++	}
+ 
+ 	prog = bpf_object__find_program_by_title(obj, prog_name);
+ 	if (CHECK(!prog, "find_probe", "prog '%s' not found\n", prog_name))
+@@ -64,6 +77,11 @@ void test_perf_buffer(void)
+ 	/* trigger kprobe on every CPU */
+ 	CPU_ZERO(&cpu_seen);
+ 	for (i = 0; i < nr_cpus; i++) {
++		if (i >= on_len || !online[i]) {
++			printf("skipping offline CPU #%d\n", i);
++			continue;
++		}
++
+ 		CPU_ZERO(&cpu_set);
+ 		CPU_SET(i, &cpu_set);
+ 
+@@ -81,8 +99,8 @@ void test_perf_buffer(void)
+ 	if (CHECK(err < 0, "perf_buffer__poll", "err %d\n", err))
+ 		goto out_free_pb;
+ 
+-	if (CHECK(CPU_COUNT(&cpu_seen) != nr_cpus, "seen_cpu_cnt",
+-		  "expect %d, seen %d\n", nr_cpus, CPU_COUNT(&cpu_seen)))
++	if (CHECK(CPU_COUNT(&cpu_seen) != nr_on_cpus, "seen_cpu_cnt",
++		  "expect %d, seen %d\n", nr_on_cpus, CPU_COUNT(&cpu_seen)))
+ 		goto out_free_pb;
+ 
+ out_free_pb:
+@@ -91,4 +109,5 @@ out_detach:
+ 	bpf_link__destroy(link);
+ out_close:
+ 	bpf_object__close(obj);
++	free(online);
+ }
 
 
