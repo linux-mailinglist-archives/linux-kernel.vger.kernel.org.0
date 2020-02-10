@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7F7E1577CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:03:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2435A1578E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:11:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730619AbgBJNCh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:02:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40882 "EHLO mail.kernel.org"
+        id S1729297AbgBJMjC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:39:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729754AbgBJMkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:33 -0500
+        id S1728106AbgBJMhO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:14 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C06120842;
-        Mon, 10 Feb 2020 12:40:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5666420661;
+        Mon, 10 Feb 2020 12:37:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338433;
-        bh=Ass9Qglo5YTankLhHR3RLmxch4QTiOoSFpOhVzRIISk=;
+        s=default; t=1581338234;
+        bh=irbCVC1di7wloz/cOEiX1QG9QpnE2bzNzLB4e3lEqtw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N4cTdnlaU3Ovhh8fb7BiyvhEWOgP1rrYZGB9b+BMVeDGbU6oS0+HmPzb8D+36gwi7
-         t0QZaX7ja9VxF+8QkvhMfE9efKTc9XIKINF0Htvc48nFOgF0IlYLexbG3R2cEeuSUH
-         e5V73vBXmiauOFG7pCLzz2RBoA5zRTFeedgZB4zk=
+        b=O7T59SVTUJjhez7gSzvgIkWJS1c9QGifrZKr8JrLND+pvtr2grBaJJGU72uc0claJ
+         2dVtBf/1jIji3jKErNC7GShH3GzFy+wY6Eljn2bnBZK5psasf/okrKzNYq8BGSn/jY
+         aBV5eiX1B6MWx7oBhCOgz8m1e//ouxSh9Y5hHMFk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 5.5 122/367] scripts/find-unused-docs: Fix massive false positives
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.4 079/309] powerpc/32s: Fix CPU wake-up from sleep mode
 Date:   Mon, 10 Feb 2020 04:30:35 -0800
-Message-Id: <20200210122436.041153823@linuxfoundation.org>
+Message-Id: <20200210122413.425085590@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +43,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 1630146db2111412e7524d05d812ff8f2c75977e upstream.
+commit 9933819099c4600b41a042f27a074470a43cf6b9 upstream.
 
-scripts/find-unused-docs.sh invokes scripts/kernel-doc to find out if a
-source file contains kerneldoc or not.
+Commit f7354ccac844 ("powerpc/32: Remove CURRENT_THREAD_INFO and
+rename TI_CPU") broke the CPU wake-up from sleep mode (i.e. when
+_TLF_SLEEPING is set) by delaying the tovirt(r2, r2).
 
-However, as it passes the no longer supported "-text" option to
-scripts/kernel-doc, the latter prints out its help text, causing all
-files to be considered containing kerneldoc.
+This is because r2 is not restored by fast_exception_return. It used
+to work (by chance ?) because CPU wake-up interrupt never comes from
+user, so r2 is expected to point to 'current' on return.
 
-Get rid of these false positives by removing the no longer supported
-"-text" option from the scripts/kernel-doc invocation.
+Commit e2fb9f544431 ("powerpc/32: Prepare for Kernel Userspace Access
+Protection") broke it even more by clobbering r0 which is not
+restored by fast_exception_return either.
 
-Cc: stable@vger.kernel.org  # 4.16+
-Fixes: b05142675310d2ac ("scripts: kernel-doc: get rid of unused output formats")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20200127093107.26401-1-geert+renesas@glider.be
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+Use r6 instead of r0. This is possible because r3-r6 are restored by
+fast_exception_return and only r3-r5 are used for exception arguments.
+
+For r2 it could be converted back to virtual address, but stay on the
+safe side and restore it from the stack instead. It should be live
+in the cache at that moment, so loading from the stack should make
+no difference compared to converting it from phys to virt.
+
+Fixes: f7354ccac844 ("powerpc/32: Remove CURRENT_THREAD_INFO and rename TI_CPU")
+Fixes: e2fb9f544431 ("powerpc/32: Prepare for Kernel Userspace Access Protection")
+Cc: stable@vger.kernel.org
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/6d02c3ae6ad77af34392e98117e44c2bf6d13ba1.1580121710.git.christophe.leroy@c-s.fr
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- scripts/find-unused-docs.sh |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kernel/entry_32.S |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/scripts/find-unused-docs.sh
-+++ b/scripts/find-unused-docs.sh
-@@ -54,7 +54,7 @@ for file in `find $1 -name '*.c'`; do
- 	if [[ ${FILES_INCLUDED[$file]+_} ]]; then
- 	continue;
- 	fi
--	str=$(scripts/kernel-doc -text -export "$file" 2>/dev/null)
-+	str=$(scripts/kernel-doc -export "$file" 2>/dev/null)
- 	if [[ -n "$str" ]]; then
- 	echo "$file"
- 	fi
+--- a/arch/powerpc/kernel/entry_32.S
++++ b/arch/powerpc/kernel/entry_32.S
+@@ -179,7 +179,7 @@ transfer_to_handler:
+ 2:	/* if from kernel, check interrupted DOZE/NAP mode and
+          * check for stack overflow
+          */
+-	kuap_save_and_lock r11, r12, r9, r2, r0
++	kuap_save_and_lock r11, r12, r9, r2, r6
+ 	addi	r2, r12, -THREAD
+ 	lwz	r9,KSP_LIMIT(r12)
+ 	cmplw	r1,r9			/* if r1 <= ksp_limit */
+@@ -284,6 +284,7 @@ reenable_mmu:
+ 	rlwinm	r9,r9,0,~MSR_EE
+ 	lwz	r12,_LINK(r11)		/* and return to address in LR */
+ 	kuap_restore r11, r2, r3, r4, r5
++	lwz	r2, GPR2(r11)
+ 	b	fast_exception_return
+ #endif
+ 
 
 
