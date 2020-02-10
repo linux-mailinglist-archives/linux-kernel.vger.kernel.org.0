@@ -2,168 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D393157E8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:14:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B02E157E91
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:15:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729238AbgBJPOo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 10:14:44 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40695 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbgBJPOn (ORCPT
+        id S1729326AbgBJPPz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 10:15:55 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:59453 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727732AbgBJPPz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 10:14:43 -0500
-Received: by mail-qt1-f193.google.com with SMTP id v25so5346953qto.7;
-        Mon, 10 Feb 2020 07:14:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9sEfE+Vg+QGs9dNdzDI7cFYNk7IQi+zT8aKliaK6oAA=;
-        b=W0zzzlSKPizTOZA3AoLmgXs9P80alKlMSWILYdjLb2VujxB7IgjBvJnAbUaEkRpxxz
-         r3Jtyw4W0ykU6hkVvF6j77H1yuwYhM/ek+3CYVtWvYOR3e/WHGHoCfTHzEAqrXH1s3nq
-         EOq3dr6YesINrQ5SpV31YikeR9Pn6fLCjJrUv5Zyyv4PTFD7W5H6D2ToWrqdP9UHfd6j
-         mmabWSsbUOQ9tGe1W0U9jWaT4tLxxUnvyIcfgNZY6Oq9IqQFa0BxNSZG8IG798AwxU6B
-         jfFEEG7zz6A85IKQWrsDMUWWWKcm5HqlNQUMPlQELC+JttE+qxRm0k0sBLl9LzuJvAxf
-         KzoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9sEfE+Vg+QGs9dNdzDI7cFYNk7IQi+zT8aKliaK6oAA=;
-        b=CtRkc3IJmc84I54icPzB5lbQAi18uir8IjhOWXr5j4XBIHLlTBK2/QupxbkZpq/6kD
-         gd9x8mz4X4XKv/MyEMjjNgPNOfkhnmRyI4pfYLgi8UX2sVMLqwHWw/XRJknjkh32n6m5
-         wdtM+N6V5enQSdCPghWMOSOaoovFXaiH2MSIRX5Fo0aa68wzIys2WAW5zOggzNOUy4Mk
-         GKe61bHDzO34e0Xqd6vwF897WlO9f0Ep2F3QNuEAAOMSmV/fyhOIp/Nl/kz9Qs1kQsqP
-         H724VLvCEKsIrrjRS94GbFyzRVfQmEaTPsfcWz8x+TJbTZSgCpNR8MpvLMimAV3URiLv
-         BlFw==
-X-Gm-Message-State: APjAAAWautjClJu+2sj7aq5vjLIkBE5yQxsYh9KF1zsENpa0tLGuvNJE
-        y3PArR5MclcyHUnZq8RN7Gs4dHjFdV16XUGqyvo=
-X-Google-Smtp-Source: APXvYqwSUaRPH0ZzeOKVW3XJ6821qKmS7Zo6QHsDR/qDZHmMmRI86qM/YCEl5KNCx3eavnZ2Dh/RvPffO3gCPzBW/sw=
-X-Received: by 2002:ac8:65d4:: with SMTP id t20mr10426164qto.6.1581347682504;
- Mon, 10 Feb 2020 07:14:42 -0800 (PST)
+        Mon, 10 Feb 2020 10:15:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581347754;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NzDCSfm6cuunZU862JWTkUXnbupHV/su3v7Wgsoqbzs=;
+        b=hpNwr9GGCVkoODK+YfaH+SOSzzMC9Sfb+iJGLGHdKa6lfWV6kKBto4JbT+QWrI53RAVxjM
+        ACehH0iyrdnkvLEE29HZgD7ChuNIYOnXR7BqFiCBAfsj09rgsWMmgT7wCKySIiHTWsRH6w
+        7b4QIEVHa3koXN6s1gkupeUVzgNkJKE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-342-nKf9PzXeNJCJKCiTeHZpxQ-1; Mon, 10 Feb 2020 10:15:52 -0500
+X-MC-Unique: nKf9PzXeNJCJKCiTeHZpxQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ECFF7184AEB8;
+        Mon, 10 Feb 2020 15:15:49 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 566FC857A9;
+        Mon, 10 Feb 2020 15:15:48 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     ira.weiny@intel.com
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 00/12] Enable per-file/directory DAX operations V3
+References: <20200208193445.27421-1-ira.weiny@intel.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Mon, 10 Feb 2020 10:15:47 -0500
+In-Reply-To: <20200208193445.27421-1-ira.weiny@intel.com> (ira weiny's message
+        of "Sat, 8 Feb 2020 11:34:33 -0800")
+Message-ID: <x49imke1nj0.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <cover.1578235515.git.gupt21@gmail.com> <9fcb02fafd5fc9b31f3fe358b8e62b8a40ae132a.1578235515.git.gupt21@gmail.com>
- <20200106193500.GC754821@kroah.com> <CALUj-gsaecfZ9HN_JVAnvJijYCHK-A5qeztDLbDOSOAjTVfTeg@mail.gmail.com>
- <20200110072051.GA124387@kroah.com>
-In-Reply-To: <20200110072051.GA124387@kroah.com>
-From:   rishi gupta <gupt21@gmail.com>
-Date:   Mon, 10 Feb 2020 20:44:31 +0530
-Message-ID: <CALUj-gvf5vcwdj=-8Sh9BjecKwGYFJciZ7caHxbzve3XNmE-xg@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] tty/serial: ttvys: add null modem driver emulating
- serial port
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     robh+dt@kernel.org, jslaby@suse.com, linux-serial@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tried dev_groups approach, doesn't fit here. Please see inline.
+Hi, Ira,
 
-On Fri, Jan 10, 2020 at 12:50 PM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Thu, Jan 09, 2020 at 02:59:59PM +0530, rishi gupta wrote:
-> > > > +/* UART frame structure definitions */
-> > > > +#define VS_CRTSCTS       0x0001
-> > > > +#define VS_XON           0x0002
-> > > > +#define VS_NONE          0X0004
-> > > > +#define VS_DATA_5        0X0008
-> > > > +#define VS_DATA_6        0X0010
-> > > > +#define VS_DATA_7        0X0020
-> > > > +#define VS_DATA_8        0X0040
-> > >
-> > > Why the "X"?
-> > Sorry I did not understand, do you mean why VS_XON.
->
-> No, I mean why the "0X0040" instead of "0x0040" like all other hex
-> digits in your list of defines.
->
-> > > > +static int vs_alloc_reg_one_dev(int oidx, int pidx, int rtsmap,
-> > > > +                     int dtrmap, int dtropn)
-> > > > +{
-> > > > +     int ret;
-> > > > +     struct vs_dev *vsdev;
-> > > > +     struct device *dev;
-> > > > +
-> > > > +     /* Allocate and init virtual tty device private data */
-> > > > +     vsdev = kcalloc(1, sizeof(struct vs_dev), GFP_KERNEL);
-> > > > +     if (!vsdev)
-> > > > +             return -ENOMEM;
-> > > > +
-> > > > +     vsdev->own_tty = NULL;
-> > > > +     vsdev->peer_tty = NULL;
-> > > > +     vsdev->own_index = oidx;
-> > > > +     vsdev->peer_index =  pidx;
-> > > > +     vsdev->rts_mappings = rtsmap;
-> > > > +     vsdev->dtr_mappings = dtrmap;
-> > > > +     vsdev->set_odtr_at_open = dtropn;
-> > > > +     vsdev->msr_reg = 0;
-> > > > +     vsdev->mcr_reg = 0;
-> > > > +     vsdev->waiting_msr_chg = 0;
-> > > > +     vsdev->tx_paused = 0;
-> > > > +     vsdev->faulty_cable = 0;
-> > > > +     mutex_init(&vsdev->lock);
-> > > > +
-> > > > +     /* Register with tty core with specific minor number */
-> > > > +     dev = tty_register_device(ttyvs_driver, oidx, NULL);
-> > > > +     if (!dev) {
-> > > > +             ret = -ENOMEM;
-> > > > +             goto fail;
-> > > > +     }
-> > > > +
-> > > > +     vsdev->device = dev;
-> > > > +     dev_set_drvdata(dev, vsdev);
-> > > > +
-> > > > +     /* Create custom sysfs files for this device for events */
-> > > > +     ret = sysfs_create_group(&dev->kobj, &vs_info_attr_grp);
-> > >
-> > > Please no.  You just raced with userspace and lost (i.e. userspace has
-> > > no idea these files are present.)
-> > >
-> > > Please use the correct apis for this, if you _REALLY_ want special sysfs
-> > > files for a tty device.
-> > Any specific API would you like to suggest. I am unable to progress on
-> > how to address this one.
->
-> Now that you have moved things to configfs, maybe you do not need the
-> sysfs files anymore?
->
-> Ah your "control" sysfs files, ok, you need to set the driver's
-> dev_groups variable to point to your sysfs attributes, and then the
-> driver core will properly set up these files.
->
-> hope this helps,
->
-> greg k-h
+Could you please include documentation patches as part of this series?
 
-Everything done except using dev_groups approach (full driver after
-all changes https://github.com/test209/t/blob/master/ttyvs.c#L1957).
+Thanks,
+Jeff
 
-Currently to emulate parity error (or any event), user writes to a
-device specific node (0 is device number):
-echo "2" > /sys/devices/virtual/tty/ttyvs0/event
-
-With dev_groups, sysfs is created (1) for driver not for devices (2)
-for platform devices only
-
-Due to (1), parsing based approach will be needed, for ex (0 is device number);
-echo "0-2" > /sys/devices/platform/ttyvs-card@0/event
-or
-echo "0-parity" > /sys/devices/platform/ttyvs-card@0/event
-
-Due to (2), event file will not exist on desktop systems as there will
-be no device tree node; no platform device.
-
-Original problem was user space doesn't know when
-"/sys/devices/virtual/tty/ttyvs0/event" will exist.
-User space gets a uevent when a device is registered with tty core.
-Application must access only after this.
-Is this okay in case of this particular driver.
-
-Only after open(/dev/ttyvs0) succeeds, application should access
-"/sys/devices/virtual/tty/ttyvs0/event".
-
-Regards,
-Rishi
