@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EE95157A15
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:20:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C28F31579EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:19:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731026AbgBJNUG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:20:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59942 "EHLO mail.kernel.org"
+        id S1731006AbgBJNTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:19:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728868AbgBJMhn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:43 -0500
+        id S1728913AbgBJMht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:49 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF1D22085B;
-        Mon, 10 Feb 2020 12:37:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7448A20838;
+        Mon, 10 Feb 2020 12:37:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338262;
-        bh=G4kgGGeoj+dWTzgCjehelOgG4stCoMbF9iSLP4XKNDQ=;
+        s=default; t=1581338268;
+        bh=On/b13BkslPuTXAbYJbp7a7hdtDg7ESrC7NRhPdErqw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=djIxwElwaSvkYaHzxejqZcKFEaHAK05fe4gBY3uM5y4gsDXHfsUdsW31gqgZbPyAx
-         B/7pNBxNvbXHrpI5vpDrK0GDlsKb2LjnVIIyJOyF/hG3Ynn/84/kYsEn296TBRUAbm
-         Yf0pRGKO1ylOJapIgKzrm/oU+K911+otYMRYqIgk=
+        b=OljBu6XznnAKGdEsSCrfh1joh9IVSuv5U+Ceyes/Z0+OJIZxAPXWUZvmYaXSn8WTD
+         fNPg216NRjtn1NFyaGqtdtGHTNOp0/y2la5y2SGLcO3tMLKKHwuQ73BLXiMVR/68k/
+         C9Z7ZUTY/wq8w1O9+yWxgFHs9u9cqK6PlineWSJs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        stable@vger.kernel.org, Jerad Simpson <jbsimpson@gmail.com>,
+        Milan Broz <gmazyland@gmail.com>,
         Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 5.4 130/309] dm crypt: fix GFP flags passed to skcipher_request_alloc()
-Date:   Mon, 10 Feb 2020 04:31:26 -0800
-Message-Id: <20200210122418.866965236@linuxfoundation.org>
+Subject: [PATCH 5.4 131/309] dm crypt: fix benbi IV constructor crash if used in authenticated mode
+Date:   Mon, 10 Feb 2020 04:31:27 -0800
+Message-Id: <20200210122418.955759660@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
 References: <20200210122406.106356946@linuxfoundation.org>
@@ -43,35 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Milan Broz <gmazyland@gmail.com>
 
-commit 9402e959014a18b4ebf7558733076875808dd66c upstream.
+commit 4ea9471fbd1addb25a4d269991dc724e200ca5b5 upstream.
 
-GFP_KERNEL is not supposed to be or'd with GFP_NOFS (the result is
-equivalent to GFP_KERNEL). Also, we use GFP_NOIO instead of GFP_NOFS
-because we don't want any I/O being submitted in the direct reclaim
-path.
+If benbi IV is used in AEAD construction, for example:
+  cryptsetup luksFormat <device> --cipher twofish-xts-benbi --key-size 512 --integrity=hmac-sha256
+the constructor uses wrong skcipher function and crashes:
 
-Fixes: 39d13a1ac41d ("dm crypt: reuse eboiv skcipher for IV generation")
-Cc: stable@vger.kernel.org # v5.4+
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+ BUG: kernel NULL pointer dereference, address: 00000014
+ ...
+ EIP: crypt_iv_benbi_ctr+0x15/0x70 [dm_crypt]
+ Call Trace:
+  ? crypt_subkey_size+0x20/0x20 [dm_crypt]
+  crypt_ctr+0x567/0xfc0 [dm_crypt]
+  dm_table_add_target+0x15f/0x340 [dm_mod]
+
+Fix this by properly using crypt_aead_blocksize() in this case.
+
+Fixes: ef43aa38063a6 ("dm crypt: add cryptographic data integrity protection (authenticated encryption)")
+Cc: stable@vger.kernel.org # v4.12+
+Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=941051
+Reported-by: Jerad Simpson <jbsimpson@gmail.com>
+Signed-off-by: Milan Broz <gmazyland@gmail.com>
 Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-crypt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-crypt.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 --- a/drivers/md/dm-crypt.c
 +++ b/drivers/md/dm-crypt.c
-@@ -717,7 +717,7 @@ static int crypt_iv_eboiv_gen(struct cry
- 	struct crypto_wait wait;
- 	int err;
+@@ -331,8 +331,14 @@ static int crypt_iv_essiv_gen(struct cry
+ static int crypt_iv_benbi_ctr(struct crypt_config *cc, struct dm_target *ti,
+ 			      const char *opts)
+ {
+-	unsigned bs = crypto_skcipher_blocksize(any_tfm(cc));
+-	int log = ilog2(bs);
++	unsigned bs;
++	int log;
++
++	if (test_bit(CRYPT_MODE_INTEGRITY_AEAD, &cc->cipher_flags))
++		bs = crypto_aead_blocksize(any_tfm_aead(cc));
++	else
++		bs = crypto_skcipher_blocksize(any_tfm(cc));
++	log = ilog2(bs);
  
--	req = skcipher_request_alloc(any_tfm(cc), GFP_KERNEL | GFP_NOFS);
-+	req = skcipher_request_alloc(any_tfm(cc), GFP_NOIO);
- 	if (!req)
- 		return -ENOMEM;
- 
+ 	/* we need to calculate how far we must shift the sector count
+ 	 * to get the cipher block count, we use this shift in _gen */
 
 
