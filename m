@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABF131574D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:36:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 496B61575CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:45:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728242AbgBJMgG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:36:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53232 "EHLO mail.kernel.org"
+        id S1730372AbgBJMo7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:44:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728049AbgBJMfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:35:39 -0500
+        id S1729803AbgBJMkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:49 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBF52208C4;
-        Mon, 10 Feb 2020 12:35:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEB7320661;
+        Mon, 10 Feb 2020 12:40:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338138;
-        bh=wbUDMG5kPZQYJBpnWv7Vhe32u6T1M9aqDvqzu2loVAM=;
+        s=default; t=1581338448;
+        bh=8HSn47iVmVuHK5R6HJ9DPCtyktsjn3EOBpK6AgA2IB0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ObT57h2smKyaxVGKTx89qnhPmO8WhScoBROPLO67U85oGA5I7LqUiU4vouek77k6B
-         s/owmOS3QT3wuduTAlHXsmuvxSN8tubAQ5KEKWVl1qqg4VuvXRfUbTB3RQ66rOu3ol
-         OFPs3xx2oDjpI84KXOHUzmcWTfBclbO567yJ2e6I=
+        b=OF/9f8hHWMkCzGo1FfqkPnbjFvqUyzSCyx5GDoqYaJfyK80vNHGJckrgUWnYsR6cI
+         AqM2DqFuLXhAR5hrVOt0b64+g7n0h3DFDCfMWqFnbL/8evvF6El/e3G8jtJlDQ9Aqj
+         zQfHyB/POSY3RxTWtmziXtSuvdN8ewwkBZvLf/Ns=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Alexandru Elisei <alexandru.elisei@arm.com>
-Subject: [PATCH 4.19 047/195] KVM: arm64: Correct PSTATE on exception entry
+        stable@vger.kernel.org, stable@kernel.org,
+        Vasily Averin <vvs@virtuozzo.com>, Jan Kara <jack@suse.cz>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 5.5 192/367] jbd2_seq_info_next should increase position index
 Date:   Mon, 10 Feb 2020 04:31:45 -0800
-Message-Id: <20200210122310.765807240@linuxfoundation.org>
+Message-Id: <20200210122442.319188014@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,144 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit a425372e733177eb0779748956bc16c85167af48 upstream.
+commit 1a8e9cf40c9a6a2e40b1e924b13ed303aeea4418 upstream.
 
-When KVM injects an exception into a guest, it generates the PSTATE
-value from scratch, configuring PSTATE.{M[4:0],DAIF}, and setting all
-other bits to zero.
+if seq_file .next fuction does not change position index,
+read after some lseek can generate unexpected output.
 
-This isn't correct, as the architecture specifies that some PSTATE bits
-are (conditionally) cleared or set upon an exception, and others are
-unchanged from the original context.
+Script below generates endless output
+ $ q=;while read -r r;do echo "$((++q)) $r";done </proc/fs/jbd2/DEV/info
 
-This patch adds logic to match the architectural behaviour. To make this
-simple to follow/audit/extend, documentation references are provided,
-and bits are configured in order of their layout in SPSR_EL2. This
-layout can be seen in the diagram on ARM DDI 0487E.a page C5-429.
+https://bugzilla.kernel.org/show_bug.cgi?id=206283
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Alexandru Elisei <alexandru.elisei@arm.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20200108134324.46500-2-mark.rutland@arm.com
+Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code and interface")
+Cc: stable@kernel.org
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Link: https://lore.kernel.org/r/d13805e5-695e-8ac3-b678-26ca2313629f@virtuozzo.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/include/uapi/asm/ptrace.h |    1 
- arch/arm64/kvm/inject_fault.c        |   70 ++++++++++++++++++++++++++++++++---
- 2 files changed, 66 insertions(+), 5 deletions(-)
+ fs/jbd2/journal.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm64/include/uapi/asm/ptrace.h
-+++ b/arch/arm64/include/uapi/asm/ptrace.h
-@@ -49,6 +49,7 @@
- #define PSR_SSBS_BIT	0x00001000
- #define PSR_PAN_BIT	0x00400000
- #define PSR_UAO_BIT	0x00800000
-+#define PSR_DIT_BIT	0x01000000
- #define PSR_V_BIT	0x10000000
- #define PSR_C_BIT	0x20000000
- #define PSR_Z_BIT	0x40000000
---- a/arch/arm64/kvm/inject_fault.c
-+++ b/arch/arm64/kvm/inject_fault.c
-@@ -25,9 +25,6 @@
- #include <asm/kvm_emulate.h>
- #include <asm/esr.h>
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -982,6 +982,7 @@ static void *jbd2_seq_info_start(struct
  
--#define PSTATE_FAULT_BITS_64 	(PSR_MODE_EL1h | PSR_A_BIT | PSR_F_BIT | \
--				 PSR_I_BIT | PSR_D_BIT)
--
- #define CURRENT_EL_SP_EL0_VECTOR	0x0
- #define CURRENT_EL_SP_ELx_VECTOR	0x200
- #define LOWER_EL_AArch64_VECTOR		0x400
-@@ -61,6 +58,69 @@ static u64 get_except_vector(struct kvm_
- 	return vcpu_read_sys_reg(vcpu, VBAR_EL1) + exc_offset + type;
+ static void *jbd2_seq_info_next(struct seq_file *seq, void *v, loff_t *pos)
+ {
++	(*pos)++;
+ 	return NULL;
  }
  
-+/*
-+ * When an exception is taken, most PSTATE fields are left unchanged in the
-+ * handler. However, some are explicitly overridden (e.g. M[4:0]). Luckily all
-+ * of the inherited bits have the same position in the AArch64/AArch32 SPSR_ELx
-+ * layouts, so we don't need to shuffle these for exceptions from AArch32 EL0.
-+ *
-+ * For the SPSR_ELx layout for AArch64, see ARM DDI 0487E.a page C5-429.
-+ * For the SPSR_ELx layout for AArch32, see ARM DDI 0487E.a page C5-426.
-+ *
-+ * Here we manipulate the fields in order of the AArch64 SPSR_ELx layout, from
-+ * MSB to LSB.
-+ */
-+static unsigned long get_except64_pstate(struct kvm_vcpu *vcpu)
-+{
-+	unsigned long sctlr = vcpu_read_sys_reg(vcpu, SCTLR_EL1);
-+	unsigned long old, new;
-+
-+	old = *vcpu_cpsr(vcpu);
-+	new = 0;
-+
-+	new |= (old & PSR_N_BIT);
-+	new |= (old & PSR_Z_BIT);
-+	new |= (old & PSR_C_BIT);
-+	new |= (old & PSR_V_BIT);
-+
-+	// TODO: TCO (if/when ARMv8.5-MemTag is exposed to guests)
-+
-+	new |= (old & PSR_DIT_BIT);
-+
-+	// PSTATE.UAO is set to zero upon any exception to AArch64
-+	// See ARM DDI 0487E.a, page D5-2579.
-+
-+	// PSTATE.PAN is unchanged unless SCTLR_ELx.SPAN == 0b0
-+	// SCTLR_ELx.SPAN is RES1 when ARMv8.1-PAN is not implemented
-+	// See ARM DDI 0487E.a, page D5-2578.
-+	new |= (old & PSR_PAN_BIT);
-+	if (!(sctlr & SCTLR_EL1_SPAN))
-+		new |= PSR_PAN_BIT;
-+
-+	// PSTATE.SS is set to zero upon any exception to AArch64
-+	// See ARM DDI 0487E.a, page D2-2452.
-+
-+	// PSTATE.IL is set to zero upon any exception to AArch64
-+	// See ARM DDI 0487E.a, page D1-2306.
-+
-+	// PSTATE.SSBS is set to SCTLR_ELx.DSSBS upon any exception to AArch64
-+	// See ARM DDI 0487E.a, page D13-3258
-+	if (sctlr & SCTLR_ELx_DSSBS)
-+		new |= PSR_SSBS_BIT;
-+
-+	// PSTATE.BTYPE is set to zero upon any exception to AArch64
-+	// See ARM DDI 0487E.a, pages D1-2293 to D1-2294.
-+
-+	new |= PSR_D_BIT;
-+	new |= PSR_A_BIT;
-+	new |= PSR_I_BIT;
-+	new |= PSR_F_BIT;
-+
-+	new |= PSR_MODE_EL1h;
-+
-+	return new;
-+}
-+
- static void inject_abt64(struct kvm_vcpu *vcpu, bool is_iabt, unsigned long addr)
- {
- 	unsigned long cpsr = *vcpu_cpsr(vcpu);
-@@ -70,7 +130,7 @@ static void inject_abt64(struct kvm_vcpu
- 	vcpu_write_elr_el1(vcpu, *vcpu_pc(vcpu));
- 	*vcpu_pc(vcpu) = get_except_vector(vcpu, except_type_sync);
- 
--	*vcpu_cpsr(vcpu) = PSTATE_FAULT_BITS_64;
-+	*vcpu_cpsr(vcpu) = get_except64_pstate(vcpu);
- 	vcpu_write_spsr(vcpu, cpsr);
- 
- 	vcpu_write_sys_reg(vcpu, addr, FAR_EL1);
-@@ -105,7 +165,7 @@ static void inject_undef64(struct kvm_vc
- 	vcpu_write_elr_el1(vcpu, *vcpu_pc(vcpu));
- 	*vcpu_pc(vcpu) = get_except_vector(vcpu, except_type_sync);
- 
--	*vcpu_cpsr(vcpu) = PSTATE_FAULT_BITS_64;
-+	*vcpu_cpsr(vcpu) = get_except64_pstate(vcpu);
- 	vcpu_write_spsr(vcpu, cpsr);
- 
- 	/*
 
 
