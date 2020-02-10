@@ -2,251 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2957615737E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 12:31:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 066D4157386
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 12:35:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbgBJLbe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 06:31:34 -0500
-Received: from foss.arm.com ([217.140.110.172]:59008 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726792AbgBJLbe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 06:31:34 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4E3AB1FB;
-        Mon, 10 Feb 2020 03:31:33 -0800 (PST)
-Received: from [10.1.195.32] (e112269-lin.cambridge.arm.com [10.1.195.32])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A7BA3F6CF;
-        Mon, 10 Feb 2020 03:31:31 -0800 (PST)
-Subject: Re: [PATCH v4 4/7] drm/panfrost: Add support for multiple regulators
-To:     Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "hsinyi@chromium.org" <hsinyi@chromium.org>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
-References: <20200207052627.130118-1-drinkcat@chromium.org>
- <20200207052627.130118-5-drinkcat@chromium.org>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <df99cedb-4c2c-b8b8-14e6-d7b8d8fe351a@arm.com>
-Date:   Mon, 10 Feb 2020 11:31:29 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727435AbgBJLf0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 06:35:26 -0500
+Received: from sonic305-1.consmr.mail.bf2.yahoo.com ([74.6.133.40]:35876 "EHLO
+        sonic305-1.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726792AbgBJLf0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 06:35:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1581334524; bh=iQ/yiqZ2onIU9tXBubbGKHVpMbLcC5j24ZzYARYcFwY=; h=Date:From:Reply-To:Subject:References:From:Subject; b=RG30A0KMAxf80HJlfe7d96RBSP62PYO7bFWbgoZc75nN3caU0ih9tawAYajcX8omsEyi4DniVS3wc+25S/bXu3slQB3LVvvSno9YF8cYLPhPAvAFgMvYr8QKOn8cWfGMKJfFFsaPKIUHx1uOGUqRYgbAGq/x7Htmpmea1PzDc3A+jkXL3owuuc3dgD3wIy1AamwD6YUBeliDmJLJWH+oiZAOgCyzXkdRBvwE55KbcpAncsT4Xb/eQ4/8x48MgjAw8GwQdKOFoFgyc20j+3/Uw03hc6enDGdSSzs5AKBz1GyaIuNl2egc4y8gTTx/6DeThpaOUyz+pCz5dFHaN/bG4Q==
+X-YMail-OSG: 4FMMh5UVM1mil.u2zxyTRJzwMqS1esws7waE9kNprSUPYtMGEEISjKNclPLR16h
+ qSf0WCfLNcZi.qpIpb_0LZLd_lSdMjHUmLIxf17yAeWG9mXxZJF0ImE3Ff7vgPEVoY376lYNfmEy
+ EyUopdaPD7UWLMpNOGZ5Tw2jPNo_mn1VR0V1q.7FmGB48vk6buEQi3.QfAgJJcqzk6kBv8ZuNa_I
+ FGZAZydSflBUlS0Nt1u6JqSJb8izn3EgzJ0PL5.._mRY7x_yoFCD6kD4YsjLAOiwXIYQGZ16_7oi
+ 9LLRF.E3.wqjgULhlhVl_XjUKb0qfszhM3qxI7wVidPUb8QcvGlxlb4FFTTQo6G.39JdFLQ_URpm
+ 5R4zwvzZIHick7Y4xt6IKV5sKueZDheMlxRpv9d2dRWasvfDTzEPOXMYqpYUe5NfD1NDRqpzAnWd
+ YeHY7z8ARrPzdVHg66SVKd3xJjoBkAYICWHd7HHmf9JydMRSRTzcy0MnyeMMPWobuD.6rNAIUck0
+ EVP6bX.lJUVc5_pib7967sD23oY4PvpImcyxyKw9SpmyYYerGjLC2vZYccMU.gZlTJt9t_21vOqL
+ x_sfla61XsGUOf7a2J315xzg_TTAs5MOtL6UYVvnKtdwsK2oLf.AR0MAsnjxnT9331e4ycyuR6pB
+ aJvLRb0LUU_4KhGJtUmSOIaWQntbkzNo6173xNdpccAnZfQVA9uM7gTtvj59V9338t.Pyz4uKn1z
+ x8zCRGeG3Y2fp7JaHrqDjPUIdPMhQnaKp.iZsP_KbutZJlOZGoKQaeuHOa7u53p4FA62iGvlTyZA
+ HT1J7MHDqTe7BtT4BczG54rQOc4.yoamr0yp.M57_8MhJ5kvhJBkLUqcw_BM5z9DYo15Rdcc452F
+ 5yPgb9MQ7zPmhc00KyK.tn5XoYLawJIgEUpwtomMxCcB1Rj8p9k6G2M1f6GDcA8zWPnhc1embuXX
+ dIOh8s54ik8xpYNLshTnOeCjW9JW0TPC_ab.__vt8cUwzNytA.f766XoFIGoJdv4BrheZ1IIthwK
+ 6WY6cmTa5qqKf7yalJ5s31obqx1nYzy1IXRFSTV5_KYMTmltO4nA.4KJGAAVUyIORyjpp20a5BMC
+ lDRPQj6q.qdkg6cBsgOFsDXdkhKLyBefjhIj.Uupqjtnyx20ntzR_hrvIZw08yzGFtPFwLXU7_q5
+ SUxyKda9T4bJqB5Ne3z565t314z7COm3oswvpJGo1FegzzXuw7OQMaD2SItSCu7VTA7sHyJ.Yx8X
+ gJshdevz3vRv6_16ohhyYAvKr8vFOIy_cNWJidMEaENYt7lDvcVpBGqzRTRni6Cxo5YMPkc7Ltgl
+ zuQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Mon, 10 Feb 2020 11:35:24 +0000
+Date:   Mon, 10 Feb 2020 11:35:22 +0000 (UTC)
+From:   Aisha Gaddafi <aishagaddafi11119@gmail.com>
+Reply-To: aishagaddaf02@gmail.com
+Message-ID: <1039336412.534749.1581334522452@mail.yahoo.com>
+Subject: Inquiry for Investment.
 MIME-Version: 1.0
-In-Reply-To: <20200207052627.130118-5-drinkcat@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+References: <1039336412.534749.1581334522452.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.15199 YMailNodin Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/2020 05:26, Nicolas Boichat wrote:
-> Some GPUs, namely, the bifrost/g72 part on MT8183, have a second
-> regulator for their SRAM, let's add support for that.
-> 
-> We extend the framework in a generic manner so that we could
-> support more than 2 regulators, if required.
-> 
-> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
 
-Reviewed-by: Steven Price <steven.price@arm.com>
 
-Thanks,
+Inquiry for Investment.
 
-Steve
+Assalamu Alaikum Wa Rahmatullahi Wa Barakatuh,
 
-> 
-> ---
-> 
-> v4:
->  - nits: Run through latest version of checkpatch:
->    - Use WARN instead of BUG_ON.
->    - Drop braces in single expression for loop.
->    - *comp not * comp
-> v3:
->  - Make this more generic, by allowing any number of regulators
->    (in practice we fix the maximum number of regulators to 2, but
->    this could be increased easily).
->  - We only probe the second regulator if the device tree matching
->    data asks for it.
->  - I couldn't find a way to detect the number of regulators in the
->    device tree, if we wanted to refuse to probe the device if there
->    are too many regulators, which might be required for safety, see
->    the thread on v2 [1].
->  - The discussion also included the idea of a separate device tree
->    entry for a "soft PDC", or at least a separate driver. I'm not
->    sure to understand the full picture, and how different vendors
->    implement this, so I'm still integrating everything in the main
->    driver. I'd be happy to try to make mt8183 fit into such a
->    framework after it's created, but I don't think I'm best placed
->    to implement (and again, the main purpose of this was to test
->    if the binding is correct).
-> 
-> [1] https://patchwork.kernel.org/patch/11322839/
-> 
->  drivers/gpu/drm/panfrost/panfrost_device.c | 26 +++++++++++++-------
->  drivers/gpu/drm/panfrost/panfrost_device.h | 15 +++++++++++-
->  drivers/gpu/drm/panfrost/panfrost_drv.c    | 28 +++++++++++++++-------
->  3 files changed, 51 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c b/drivers/gpu/drm/panfrost/panfrost_device.c
-> index 238fb6d54df4732..3720d50f6d9f965 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_device.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_device.c
-> @@ -87,18 +87,27 @@ static void panfrost_clk_fini(struct panfrost_device *pfdev)
->  
->  static int panfrost_regulator_init(struct panfrost_device *pfdev)
->  {
-> -	int ret;
-> +	int ret, i;
->  
-> -	pfdev->regulator = devm_regulator_get(pfdev->dev, "mali");
-> -	if (IS_ERR(pfdev->regulator)) {
-> -		ret = PTR_ERR(pfdev->regulator);
-> -		dev_err(pfdev->dev, "failed to get regulator: %d\n", ret);
-> +	if (WARN(pfdev->comp->num_supplies > ARRAY_SIZE(pfdev->regulators),
-> +			"Too many supplies in compatible structure.\n"))
-> +		return -EINVAL;
-> +
-> +	for (i = 0; i < pfdev->comp->num_supplies; i++)
-> +		pfdev->regulators[i].supply = pfdev->comp->supply_names[i];
-> +
-> +	ret = devm_regulator_bulk_get(pfdev->dev,
-> +				      pfdev->comp->num_supplies,
-> +				      pfdev->regulators);
-> +	if (ret < 0) {
-> +		dev_err(pfdev->dev, "failed to get regulators: %d\n", ret);
->  		return ret;
->  	}
->  
-> -	ret = regulator_enable(pfdev->regulator);
-> +	ret = regulator_bulk_enable(pfdev->comp->num_supplies,
-> +				    pfdev->regulators);
->  	if (ret < 0) {
-> -		dev_err(pfdev->dev, "failed to enable regulator: %d\n", ret);
-> +		dev_err(pfdev->dev, "failed to enable regulators: %d\n", ret);
->  		return ret;
->  	}
->  
-> @@ -107,7 +116,8 @@ static int panfrost_regulator_init(struct panfrost_device *pfdev)
->  
->  static void panfrost_regulator_fini(struct panfrost_device *pfdev)
->  {
-> -	regulator_disable(pfdev->regulator);
-> +	regulator_bulk_disable(pfdev->comp->num_supplies,
-> +			pfdev->regulators);
->  }
->  
->  int panfrost_device_init(struct panfrost_device *pfdev)
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm/panfrost/panfrost_device.h
-> index 06713811b92cdf7..c9468bc5573ac9d 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_device.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_device.h
-> @@ -7,6 +7,7 @@
->  
->  #include <linux/atomic.h>
->  #include <linux/io-pgtable.h>
-> +#include <linux/regulator/consumer.h>
->  #include <linux/spinlock.h>
->  #include <drm/drm_device.h>
->  #include <drm/drm_mm.h>
-> @@ -19,6 +20,7 @@ struct panfrost_job;
->  struct panfrost_perfcnt;
->  
->  #define NUM_JOB_SLOTS 3
-> +#define MAX_REGULATORS 2
->  
->  struct panfrost_features {
->  	u16 id;
-> @@ -51,6 +53,16 @@ struct panfrost_features {
->  	unsigned long hw_issues[64 / BITS_PER_LONG];
->  };
->  
-> +/*
-> + * Features that cannot be automatically detected and need matching using the
-> + * compatible string, typically SoC-specific.
-> + */
-> +struct panfrost_compatible {
-> +	/* Supplies count and names. */
-> +	int num_supplies;
-> +	const char * const *supply_names;
-> +};
-> +
->  struct panfrost_device {
->  	struct device *dev;
->  	struct drm_device *ddev;
-> @@ -59,10 +71,11 @@ struct panfrost_device {
->  	void __iomem *iomem;
->  	struct clk *clock;
->  	struct clk *bus_clock;
-> -	struct regulator *regulator;
-> +	struct regulator_bulk_data regulators[MAX_REGULATORS];
->  	struct reset_control *rstc;
->  
->  	struct panfrost_features features;
-> +	const struct panfrost_compatible *comp;
->  
->  	spinlock_t as_lock;
->  	unsigned long as_in_use_mask;
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> index b7a618db3ee223e..4d08507526239f2 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> @@ -584,6 +584,10 @@ static int panfrost_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, pfdev);
->  
-> +	pfdev->comp = of_device_get_match_data(&pdev->dev);
-> +	if (!pfdev->comp)
-> +		return -ENODEV;
-> +
->  	/* Allocate and initialze the DRM device. */
->  	ddev = drm_dev_alloc(&panfrost_drm_driver, &pdev->dev);
->  	if (IS_ERR(ddev))
-> @@ -655,16 +659,22 @@ static int panfrost_remove(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> +const char * const default_supplies[] = { "mali" };
-> +static const struct panfrost_compatible default_data = {
-> +	.num_supplies = ARRAY_SIZE(default_supplies),
-> +	.supply_names = default_supplies,
-> +};
-> +
->  static const struct of_device_id dt_match[] = {
-> -	{ .compatible = "arm,mali-t604" },
-> -	{ .compatible = "arm,mali-t624" },
-> -	{ .compatible = "arm,mali-t628" },
-> -	{ .compatible = "arm,mali-t720" },
-> -	{ .compatible = "arm,mali-t760" },
-> -	{ .compatible = "arm,mali-t820" },
-> -	{ .compatible = "arm,mali-t830" },
-> -	{ .compatible = "arm,mali-t860" },
-> -	{ .compatible = "arm,mali-t880" },
-> +	{ .compatible = "arm,mali-t604", .data = &default_data, },
-> +	{ .compatible = "arm,mali-t624", .data = &default_data, },
-> +	{ .compatible = "arm,mali-t628", .data = &default_data, },
-> +	{ .compatible = "arm,mali-t720", .data = &default_data, },
-> +	{ .compatible = "arm,mali-t760", .data = &default_data, },
-> +	{ .compatible = "arm,mali-t820", .data = &default_data, },
-> +	{ .compatible = "arm,mali-t830", .data = &default_data, },
-> +	{ .compatible = "arm,mali-t860", .data = &default_data, },
-> +	{ .compatible = "arm,mali-t880", .data = &default_data, },
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, dt_match);
-> 
+Dear Friend,
 
+I came across your e-mail contact prior a private search while in need of your assistance. My name is Aisha Gaddafi a single Mother and a Widow with three Children. I am the only biological Daughter of late Libyan President (Late Colonel Muammar Gaddafi).
+
+I have an investment funds worth Twenty Seven Million Five Hundred Thousand United State Dollar ($27,500,000.00 ) and i need an investment Manager/Partner and because of the asylum status i will authorize you the ownership of the funds, however, I am interested in you for investment project assistance in your country, may be from there, we can build a business relationship in the near future.
+
+I am willing to negotiate investment/business profit sharing ratio with you base on the future investment earning profits.
+
+If you are willing to handle this project kindly reply urgent to enable me provide you more information about the investment funds.
+
+Your Urgent Reply Will Be Appreciated
+
+Best Regards
+Mrs Aisha Gaddafi
