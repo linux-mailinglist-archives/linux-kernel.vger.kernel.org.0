@@ -2,79 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37DF815861C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 00:19:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D81B1158620
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 00:21:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbgBJXTu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 18:19:50 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:43091 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727422AbgBJXTt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 18:19:49 -0500
-Received: by mail-yb1-f195.google.com with SMTP id b141so2304069ybg.10
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 15:19:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=CZOZ6zJl7K+CX7mG44VkFRrQ+i68m5YSb/XRoNfw+DM=;
-        b=vCtdruf+CDabsQqsi3RHwzOgVsfcApJtGC+uolS2Z1IY41RiPOYczORJne6YDKZOyF
-         xXmQUbYSAIkfHiHLF/v0VvaKwX9Q2ldZsxE2MHx6rKNcxjwTO+vY4IaNdGcytYQmgorS
-         m/IAbNRXk6zemY8R/SUw75vxiiKZ8FpWtBsZnMlQMnPs1U+XaQoXnQOFWKj0MWvFmdoZ
-         ql+ThejhjANpiWKeVavCdEPrQS0Nx4ar4UdDUzcq3pRImCCP+OL4IzJsl3PFHCUSAYSS
-         q3m8PYts17OBV3GC0URpA5YStt1n56UCULQJB7YGt+VdaPTONOIHFmWOXDW5i2HNlmCf
-         3Gog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=CZOZ6zJl7K+CX7mG44VkFRrQ+i68m5YSb/XRoNfw+DM=;
-        b=lGuNL/roH3QP9LNL9DdkitUS8pJxN9bbjfWhwqfekhvqzzb4Q8juuRrn/pMeVA+BJh
-         YJLxWDA+rXHq5lHlLlGfOLE3Q9UE1mOWIWCgPA+dracCl25ghv6Nzt0arsIJad+fVeEG
-         4bzKJfnjQiwsgVpx0omJP2nYbPM8SC3UWMHSSulUGyEOL81rKThVZNj71Kjb7ulz3gi0
-         NeWqjCbh5ZW3JQfQsTSO23Dur1iH7Gt1cCoHbFtIv7GdCJ6p+iwYUnr8MvsDnFg+FWxr
-         IdgMu23BoA0/X7J/iO9W2a50S1yy0pk8BhFNqYJBZ5lj2XNt4qG5IJOp26CQSdCXTWtx
-         KG8Q==
-X-Gm-Message-State: APjAAAVf6c96R6p3FfaR74rFI/kreCL/mZ0rvoIMEWHgzma9WMelEfkt
-        hZ46p0KmMuL6EN5V+/DHF2dF/gIjZ/w6kETG2Bc=
-X-Google-Smtp-Source: APXvYqy0f/XVZm7IJpiO8V1M1H82IlCAjk2THehqhVt5uXVMJcsGRLLlPDG25EwCsVd84pFAuvPYanY2A7rwQEIR/JQ=
-X-Received: by 2002:a25:2e0b:: with SMTP id u11mr3371068ybu.393.1581376788952;
- Mon, 10 Feb 2020 15:19:48 -0800 (PST)
+        id S1727546AbgBJXVV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 18:21:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34926 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727422AbgBJXVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 18:21:21 -0500
+Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88E6B20733;
+        Mon, 10 Feb 2020 23:21:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581376880;
+        bh=5KjlqCgeH01O+i+H5DAYNe8/x8VySwQHzIa2aaxRFVo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=XAwUr7i+dxxSa0/RvqdM3XJfq+6ShPin4IUCxQl/Xct0glQlzMRIe56bfODmDmHMJ
+         QI5QULvia6U8mmt64BKKvLrx8KLRcRfSlnValYZUREW92GW68gIL6oURc4MpGLV56e
+         DJOhp3szWvsUszKiQhJjmJojZiTDtBGpqKrF739U=
+Date:   Mon, 10 Feb 2020 17:21:18 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     Stuart Hayes <stuart.w.hayes@gmail.com>,
+        Austin Bolen <austin_bolen@dell.com>, keith.busch@intel.com,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Enzo Matsumiya <ematsumiya@suse.de>
+Subject: Re: [PATCH v2] PCI: pciehp: Make sure pciehp_isr clears interrupt
+ events
+Message-ID: <20200210232118.GA82108@google.com>
 MIME-Version: 1.0
-Received: by 2002:a25:c7c8:0:0:0:0:0 with HTTP; Mon, 10 Feb 2020 15:19:48
- -0800 (PST)
-Reply-To: azizdake0@gmail.com
-From:   Aziz Dake <legalwaaboki@gmail.com>
-Date:   Mon, 10 Feb 2020 15:19:48 -0800
-Message-ID: <CAAiMQBDTQ-TfGXjA8jXV9VMOjtqksQo8pG227GvdecWXJ__X6g@mail.gmail.com>
-Subject: From Honourable Barrister Aziz Dake,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200209125543.k7u5y6omptbpmwo6@wunner.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Attn: Sir/Madam
+On Sun, Feb 09, 2020 at 01:55:43PM +0100, Lukas Wunner wrote:
+> On Tue, Jan 28, 2020 at 06:51:51PM -0600, Bjorn Helgaas wrote:
 
-I am Honourable Barrister Aziz the personal resident Attorney here in
-Burkina Faso to Late Mr. Muammar Muhammad Abu Minyar al-Gaddafi of
-Libya c. 1942 =E2=80=93 20 October 2011.
+> > I see that Lukas took a look at this earlier; I'd really like to have
+> > his reviewed-by, since he's the expert on this code.
+> 
+> Hm, should we add an entry for pciehp to MAINTAINERS and list me as R: or M:?
 
-My client Late Mr. Muammar Muhammad Abu Minyar al-Gaddafi c. 1942 =E2=80=93=
- 20
-October 2011, was having a deposit sum of {thirty million four Hundred
-thousand united state dollars} only ($30.4M USD) with a security
-finance firm affiliated with African development bank here in Burkina
-Faso.
+That'd be great.  I would certainly apply a patch like that, but I don't
+want to presume by generating it myself.
 
-With the above explanation=E2=80=99s I want to move this money from Burkina
-Faso to your country, affidavit on your name, but note that this is a
-deal between me and you and should not be related to anybody until the
-deal is over for security reasons, please if interested reply as soon
-as possible.
-
-Thanks,
-Honourable Barrister Aziz Dake.
+Bjorn
