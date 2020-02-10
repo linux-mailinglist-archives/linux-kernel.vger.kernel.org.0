@@ -2,168 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C93F1157EE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:36:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BB9F157F03
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:41:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbgBJPgB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 10:36:01 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:53976 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726816AbgBJPf4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 10:35:56 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01AFYLtj188710;
-        Mon, 10 Feb 2020 15:34:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=BAJtlUFBeU9vdpqs1Ne5FDMQCX4Tpeov/LFTBTNfdl0=;
- b=IuZk1WhpYDwpe6vHHg8wIU10EELLc9vg6ZX3nVaXGDLs/vgWnyKkqhrvBtPROEe1WzBq
- 6KsqYXosz3qQhb6RmpJxxawJ1bXLoBRtEMU+tGQknPJOWJTjel2x6x87sCUKmrazn4T1
- UWfLUCSotXq3gKCobHPdyxBgn07LF3IRQFVyiyo2nqjNetsR0RkYW0XKyU3/UdC+AKaM
- cLjwv43qaVPLnZ6j5zEVPX98Uyu86LZmLAhz+MfG5Bvd14aCrU6qN/Jh2OBJ/wmHZD7J
- F9pm3Ve1+YnnBcEULUIaGJU/5SKFsi4eHKOqjT/CTc2qUAflB2IzEI75ZPqLfMeCcr5b yQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2y2jx5wgfy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Feb 2020 15:34:37 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01AFWu1N170522;
-        Mon, 10 Feb 2020 15:34:36 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2y26ffbjmh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Feb 2020 15:34:36 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01AFYXiT023567;
-        Mon, 10 Feb 2020 15:34:34 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 10 Feb 2020 07:34:33 -0800
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id EBFB96A00DD; Mon, 10 Feb 2020 10:38:15 -0500 (EST)
-Date:   Mon, 10 Feb 2020 10:38:15 -0500
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Wanpeng Li <kernellwp@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH v2 1/2] KVM: Introduce pv check helpers
-Message-ID: <20200210153815.GE7395@char.us.oracle.com>
-References: <CANRm+Cxd55Sqi4anpXD_Urmx8BV=R9ZDUwejChJHLBsZeGoWbw@mail.gmail.com>
+        id S1727435AbgBJPlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 10:41:03 -0500
+Received: from mga04.intel.com ([192.55.52.120]:54417 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726809AbgBJPlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 10:41:02 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Feb 2020 07:41:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,425,1574150400"; 
+   d="scan'208";a="227214500"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 10 Feb 2020 07:40:59 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1j1BBD-0005yA-Ei; Mon, 10 Feb 2020 23:40:59 +0800
+Date:   Mon, 10 Feb 2020 23:40:37 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [rcu:kcsan] BUILD SUCCESS
+ f60f0f543333e128c9b653ecdfdf770ccbeb9bc9
+Message-ID: <5e417975.x8O4tTR+fwO7Q8N0%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANRm+Cxd55Sqi4anpXD_Urmx8BV=R9ZDUwejChJHLBsZeGoWbw@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9527 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
- adultscore=0 bulkscore=0 mlxscore=0 spamscore=0 phishscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002100117
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9527 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
- priorityscore=1501 adultscore=0 phishscore=0 impostorscore=0 spamscore=0
- bulkscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002100117
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 02:37:30PM +0800, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> Introduce some pv check helpers for consistency.
-> 
-> Suggested-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git  kcsan
+branch HEAD: f60f0f543333e128c9b653ecdfdf770ccbeb9bc9  kcsan: Expose core configuration parameters as module params
 
-Thank you!
-> ---
->  arch/x86/kernel/kvm.c | 34 ++++++++++++++++++++++++----------
->  1 file changed, 24 insertions(+), 10 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> index d817f25..76ea8c4 100644
-> --- a/arch/x86/kernel/kvm.c
-> +++ b/arch/x86/kernel/kvm.c
-> @@ -425,7 +425,27 @@ static void __init sev_map_percpu_data(void)
->      }
->  }
-> 
-> +static bool pv_tlb_flush_supported(void)
-> +{
-> +    return (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
-> +        !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
-> +        kvm_para_has_feature(KVM_FEATURE_STEAL_TIME));
-> +}
-> +
->  #ifdef CONFIG_SMP
-> +
-> +static bool pv_ipi_supported(void)
-> +{
-> +    return kvm_para_has_feature(KVM_FEATURE_PV_SEND_IPI);
-> +}
-> +
-> +static bool pv_sched_yield_supported(void)
-> +{
-> +    return (kvm_para_has_feature(KVM_FEATURE_PV_SCHED_YIELD) &&
-> +        !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
-> +        kvm_para_has_feature(KVM_FEATURE_STEAL_TIME));
-> +}
-> +
->  #define KVM_IPI_CLUSTER_SIZE    (2 * BITS_PER_LONG)
-> 
->  static void __send_ipi_mask(const struct cpumask *mask, int vector)
-> @@ -619,9 +639,7 @@ static void __init kvm_guest_init(void)
->          pv_ops.time.steal_clock = kvm_steal_clock;
->      }
-> 
-> -    if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
-> -        !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
-> -        kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
-> +    if (pv_tlb_flush_supported()) {
->          pv_ops.mmu.flush_tlb_others = kvm_flush_tlb_others;
->          pv_ops.mmu.tlb_remove_table = tlb_remove_table;
->      }
-> @@ -632,9 +650,7 @@ static void __init kvm_guest_init(void)
->  #ifdef CONFIG_SMP
->      smp_ops.smp_prepare_cpus = kvm_smp_prepare_cpus;
->      smp_ops.smp_prepare_boot_cpu = kvm_smp_prepare_boot_cpu;
-> -    if (kvm_para_has_feature(KVM_FEATURE_PV_SCHED_YIELD) &&
-> -        !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
-> -        kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
-> +    if (pv_sched_yield_supported()) {
->          smp_ops.send_call_func_ipi = kvm_smp_send_call_func_ipi;
->          pr_info("KVM setup pv sched yield\n");
->      }
-> @@ -700,7 +716,7 @@ static uint32_t __init kvm_detect(void)
->  static void __init kvm_apic_init(void)
->  {
->  #if defined(CONFIG_SMP)
-> -    if (kvm_para_has_feature(KVM_FEATURE_PV_SEND_IPI))
-> +    if (pv_ipi_supported())
->          kvm_setup_pv_ipi();
->  #endif
->  }
-> @@ -739,9 +755,7 @@ static __init int kvm_setup_pv_tlb_flush(void)
->      if (!kvm_para_available() || nopv)
->          return 0;
-> 
-> -    if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
-> -        !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
-> -        kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
-> +    if (pv_tlb_flush_supported()) {
->          for_each_possible_cpu(cpu) {
->              zalloc_cpumask_var_node(per_cpu_ptr(&__pv_tlb_mask, cpu),
->                  GFP_KERNEL, cpu_to_node(cpu));
-> --
-> 2.7.4
+elapsed time: 3905m
+
+configs tested: 171
+configs skipped: 0
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm                         at91_dt_defconfig
+arm                           efm32_defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm64                               defconfig
+sparc                            allyesconfig
+csky                                defconfig
+um                                  defconfig
+i386                              allnoconfig
+mips                      malta_kvm_defconfig
+riscv                          rv32_defconfig
+xtensa                       common_defconfig
+m68k                             allmodconfig
+mips                              allnoconfig
+nios2                         10m50_defconfig
+sparc64                             defconfig
+sh                               allmodconfig
+riscv                               defconfig
+arc                                 defconfig
+nds32                               defconfig
+um                             i386_defconfig
+sparc64                          allmodconfig
+powerpc                             defconfig
+sh                          rsk7269_defconfig
+sparc64                           allnoconfig
+um                           x86_64_defconfig
+m68k                       m5475evb_defconfig
+parisc                              defconfig
+sh                                allnoconfig
+i386                                defconfig
+sparc                               defconfig
+c6x                        evmc6678_defconfig
+s390                             allmodconfig
+s390                       zfcpdump_defconfig
+h8300                     edosk2674_defconfig
+riscv                    nommu_virt_defconfig
+parisc                            allnoconfig
+mips                             allmodconfig
+s390                                defconfig
+ia64                                defconfig
+powerpc                       ppc64_defconfig
+nios2                         3c120_defconfig
+sh                            titan_defconfig
+openrisc                    or1ksim_defconfig
+powerpc                           allnoconfig
+microblaze                    nommu_defconfig
+s390                             allyesconfig
+c6x                              allyesconfig
+i386                             alldefconfig
+i386                             allyesconfig
+ia64                             alldefconfig
+ia64                             allmodconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+openrisc                 simple_smp_defconfig
+xtensa                          iss_defconfig
+alpha                               defconfig
+nds32                             allnoconfig
+h8300                    h8300h-sim_defconfig
+h8300                       h8s-sim_defconfig
+m68k                          multi_defconfig
+m68k                           sun3_defconfig
+arc                              allyesconfig
+microblaze                      mmu_defconfig
+powerpc                          rhel-kconfig
+mips                           32r2_defconfig
+mips                         64r6el_defconfig
+mips                             allyesconfig
+mips                      fuloong2e_defconfig
+parisc                           allyesconfig
+parisc                         b180_defconfig
+parisc                        c3000_defconfig
+x86_64               randconfig-a001-20200210
+x86_64               randconfig-a002-20200210
+x86_64               randconfig-a003-20200210
+i386                 randconfig-a001-20200210
+i386                 randconfig-a002-20200210
+i386                 randconfig-a003-20200210
+c6x                  randconfig-a001-20200209
+h8300                randconfig-a001-20200209
+microblaze           randconfig-a001-20200209
+nios2                randconfig-a001-20200209
+sparc64              randconfig-a001-20200209
+c6x                  randconfig-a001-20200210
+h8300                randconfig-a001-20200210
+microblaze           randconfig-a001-20200210
+nios2                randconfig-a001-20200210
+sparc64              randconfig-a001-20200210
+x86_64               randconfig-b001-20200210
+x86_64               randconfig-b002-20200210
+x86_64               randconfig-b003-20200210
+i386                 randconfig-b001-20200210
+i386                 randconfig-b002-20200210
+i386                 randconfig-b003-20200210
+x86_64               randconfig-c001-20200209
+x86_64               randconfig-c002-20200209
+x86_64               randconfig-c003-20200209
+i386                 randconfig-c001-20200209
+i386                 randconfig-c002-20200209
+i386                 randconfig-c003-20200209
+x86_64               randconfig-c001-20200210
+x86_64               randconfig-c002-20200210
+x86_64               randconfig-c003-20200210
+i386                 randconfig-c001-20200210
+i386                 randconfig-c002-20200210
+i386                 randconfig-c003-20200210
+x86_64               randconfig-d001-20200210
+x86_64               randconfig-d002-20200210
+x86_64               randconfig-d003-20200210
+i386                 randconfig-d001-20200210
+i386                 randconfig-d002-20200210
+i386                 randconfig-d003-20200210
+x86_64               randconfig-e001-20200210
+x86_64               randconfig-e002-20200210
+x86_64               randconfig-e003-20200210
+i386                 randconfig-e001-20200210
+i386                 randconfig-e002-20200210
+i386                 randconfig-e003-20200210
+x86_64               randconfig-f001-20200210
+x86_64               randconfig-f002-20200210
+x86_64               randconfig-f003-20200210
+i386                 randconfig-f001-20200210
+i386                 randconfig-f002-20200210
+i386                 randconfig-f003-20200210
+x86_64               randconfig-g001-20200210
+x86_64               randconfig-g002-20200210
+x86_64               randconfig-g003-20200210
+i386                 randconfig-g001-20200210
+i386                 randconfig-g002-20200210
+i386                 randconfig-g003-20200210
+x86_64               randconfig-h001-20200210
+x86_64               randconfig-h002-20200210
+x86_64               randconfig-h003-20200210
+i386                 randconfig-h001-20200210
+i386                 randconfig-h002-20200210
+i386                 randconfig-h003-20200210
+arc                  randconfig-a001-20200209
+arm                  randconfig-a001-20200209
+arm64                randconfig-a001-20200209
+ia64                 randconfig-a001-20200209
+powerpc              randconfig-a001-20200209
+sparc                randconfig-a001-20200209
+arc                  randconfig-a001-20200210
+arm                  randconfig-a001-20200210
+arm64                randconfig-a001-20200210
+ia64                 randconfig-a001-20200210
+powerpc              randconfig-a001-20200210
+sparc                randconfig-a001-20200210
+riscv                            allmodconfig
+riscv                             allnoconfig
+riscv                            allyesconfig
+s390                             alldefconfig
+s390                              allnoconfig
+s390                          debug_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sparc64                          allyesconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
