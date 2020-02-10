@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 498A8157875
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:08:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A05F11579A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:17:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729600AbgBJNIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:08:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37728 "EHLO mail.kernel.org"
+        id S1728997AbgBJMiD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:38:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729469AbgBJMji (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:39:38 -0500
+        id S1728143AbgBJMgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:36:39 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1380220661;
-        Mon, 10 Feb 2020 12:39:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D8092051A;
+        Mon, 10 Feb 2020 12:36:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338378;
-        bh=lomB9OzWT4ltJzoqnP6nX52bK50vue+YwpTDjuCkXRQ=;
+        s=default; t=1581338198;
+        bh=DwlVUYRsxY52GqJ7OR6aQKRN9VoxxlU/3g86icYD6mo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rm66Da5VZu+88erBt+7+M/q5ioS6JX/LY97LPb3p5WIPBwuKomL5ew0C/pKU6d7PH
-         Tp9uL6G5vOZdzDGBfsatbHE9kY/JiDOa54vIa4WwWx/y9ZhLmgM0OJedLGFwLxbqLV
-         /s4x4mwbJ6wvtdcES8A7xbK1y1CUNhZejkLiQYZ4=
+        b=HCbbtRuo1sCpJBNfDgU5aSy1ggPnTnu/xUwSnF+uBMqb+/nPHj4xGi9rjqIujbOto
+         ZCyWARIzH+nLepvDBwdQ/RR8ww8/WRbZo39siPw1mwzgyHuhTF0foWN/HtMkFwDr/F
+         WKJi8h5jmYUG8U1UUQXPde1OqH+s4r1anewvkkuY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        Chris Mason <clm@fb.com>, Tejun Heo <tj@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.5 054/367] memcg: fix a crash in wb_workfn when a device disappears
-Date:   Mon, 10 Feb 2020 04:29:27 -0800
-Message-Id: <20200210122429.033742029@linuxfoundation.org>
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: [PATCH 5.4 012/309] rxrpc: Fix missing active use pinning of rxrpc_local object
+Date:   Mon, 10 Feb 2020 04:29:28 -0800
+Message-Id: <20200210122407.211171405@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,262 +42,251 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: David Howells <dhowells@redhat.com>
 
-commit 68f23b89067fdf187763e75a56087550624fdbee upstream.
+[ Upstream commit 04d36d748fac349b068ef621611f454010054c58 ]
 
-Without memcg, there is a one-to-one mapping between the bdi and
-bdi_writeback structures.  In this world, things are fairly
-straightforward; the first thing bdi_unregister() does is to shutdown
-the bdi_writeback structure (or wb), and part of that writeback ensures
-that no other work queued against the wb, and that the wb is fully
-drained.
+The introduction of a split between the reference count on rxrpc_local
+objects and the usage count didn't quite go far enough.  A number of kernel
+work items need to make use of the socket to perform transmission.  These
+also need to get an active count on the local object to prevent the socket
+from being closed.
 
-With memcg, however, there is a one-to-many relationship between the bdi
-and bdi_writeback structures; that is, there are multiple wb objects
-which can all point to a single bdi.  There is a refcount which prevents
-the bdi object from being released (and hence, unregistered).  So in
-theory, the bdi_unregister() *should* only get called once its refcount
-goes to zero (bdi_put will drop the refcount, and when it is zero,
-release_bdi gets called, which calls bdi_unregister).
+Fix this by getting the active count in those places.
 
-Unfortunately, del_gendisk() in block/gen_hd.c never got the memo about
-the Brave New memcg World, and calls bdi_unregister directly.  It does
-this without informing the file system, or the memcg code, or anything
-else.  This causes the root wb associated with the bdi to be
-unregistered, but none of the memcg-specific wb's are shutdown.  So when
-one of these wb's are woken up to do delayed work, they try to
-dereference their wb->bdi->dev to fetch the device name, but
-unfortunately bdi->dev is now NULL, thanks to the bdi_unregister()
-called by del_gendisk().  As a result, *boom*.
+Also split out the raw active count get/put functions as these places tend
+to hold refs on the rxrpc_local object already, so getting and putting an
+extra object ref is just a waste of time.
 
-Fortunately, it looks like the rest of the writeback path is perfectly
-happy with bdi->dev and bdi->owner being NULL, so the simplest fix is to
-create a bdi_dev_name() function which can handle bdi->dev being NULL.
-This also allows us to bulletproof the writeback tracepoints to prevent
-them from dereferencing a NULL pointer and crashing the kernel if one is
-tracing with memcg's enabled, and an iSCSI device dies or a USB storage
-stick is pulled.
+The problem can lead to symptoms like:
 
-The most common way of triggering this will be hotremoval of a device
-while writeback with memcg enabled is going on.  It was triggering
-several times a day in a heavily loaded production environment.
+    BUG: kernel NULL pointer dereference, address: 0000000000000018
+    ..
+    CPU: 2 PID: 818 Comm: kworker/u9:0 Not tainted 5.5.0-fscache+ #51
+    ...
+    RIP: 0010:selinux_socket_sendmsg+0x5/0x13
+    ...
+    Call Trace:
+     security_socket_sendmsg+0x2c/0x3e
+     sock_sendmsg+0x1a/0x46
+     rxrpc_send_keepalive+0x131/0x1ae
+     rxrpc_peer_keepalive_worker+0x219/0x34b
+     process_one_work+0x18e/0x271
+     worker_thread+0x1a3/0x247
+     kthread+0xe6/0xeb
+     ret_from_fork+0x1f/0x30
 
-Google Bug Id: 145475544
-
-Link: https://lore.kernel.org/r/20191227194829.150110-1-tytso@mit.edu
-Link: http://lkml.kernel.org/r/20191228005211.163952-1-tytso@mit.edu
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: Chris Mason <clm@fb.com>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 730c5fd42c1e ("rxrpc: Fix local endpoint refcounting")
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/fs-writeback.c                |    2 +-
- include/linux/backing-dev.h      |   10 ++++++++++
- include/trace/events/writeback.h |   37 +++++++++++++++++--------------------
- mm/backing-dev.c                 |    1 +
- 4 files changed, 29 insertions(+), 21 deletions(-)
+ net/rxrpc/af_rxrpc.c     |    2 ++
+ net/rxrpc/ar-internal.h  |   10 ++++++++++
+ net/rxrpc/conn_event.c   |   30 ++++++++++++++++++++----------
+ net/rxrpc/local_object.c |   18 +++++++-----------
+ net/rxrpc/peer_event.c   |   40 ++++++++++++++++++++++------------------
+ 5 files changed, 61 insertions(+), 39 deletions(-)
 
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -2063,7 +2063,7 @@ void wb_workfn(struct work_struct *work)
- 						struct bdi_writeback, dwork);
- 	long pages_written;
+--- a/net/rxrpc/af_rxrpc.c
++++ b/net/rxrpc/af_rxrpc.c
+@@ -194,6 +194,7 @@ static int rxrpc_bind(struct socket *soc
+ service_in_use:
+ 	write_unlock(&local->services_lock);
+ 	rxrpc_unuse_local(local);
++	rxrpc_put_local(local);
+ 	ret = -EADDRINUSE;
+ error_unlock:
+ 	release_sock(&rx->sk);
+@@ -899,6 +900,7 @@ static int rxrpc_release_sock(struct soc
+ 	rxrpc_purge_queue(&sk->sk_receive_queue);
  
--	set_worker_desc("flush-%s", dev_name(wb->bdi->dev));
-+	set_worker_desc("flush-%s", bdi_dev_name(wb->bdi));
- 	current->flags |= PF_SWAPWRITE;
+ 	rxrpc_unuse_local(rx->local);
++	rxrpc_put_local(rx->local);
+ 	rx->local = NULL;
+ 	key_put(rx->key);
+ 	rx->key = NULL;
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -1021,6 +1021,16 @@ void rxrpc_unuse_local(struct rxrpc_loca
+ void rxrpc_queue_local(struct rxrpc_local *);
+ void rxrpc_destroy_all_locals(struct rxrpc_net *);
  
- 	if (likely(!current_is_workqueue_rescuer() ||
---- a/include/linux/backing-dev.h
-+++ b/include/linux/backing-dev.h
-@@ -13,6 +13,7 @@
- #include <linux/fs.h>
- #include <linux/sched.h>
- #include <linux/blkdev.h>
-+#include <linux/device.h>
- #include <linux/writeback.h>
- #include <linux/blk-cgroup.h>
- #include <linux/backing-dev-defs.h>
-@@ -504,4 +505,13 @@ static inline int bdi_rw_congested(struc
- 				  (1 << WB_async_congested));
- }
- 
-+extern const char *bdi_unknown_name;
-+
-+static inline const char *bdi_dev_name(struct backing_dev_info *bdi)
++static inline bool __rxrpc_unuse_local(struct rxrpc_local *local)
 +{
-+	if (!bdi || !bdi->dev)
-+		return bdi_unknown_name;
-+	return dev_name(bdi->dev);
++	return atomic_dec_return(&local->active_users) == 0;
 +}
 +
- #endif	/* _LINUX_BACKING_DEV_H */
---- a/include/trace/events/writeback.h
-+++ b/include/trace/events/writeback.h
-@@ -67,8 +67,8 @@ DECLARE_EVENT_CLASS(writeback_page_templ
- 
- 	TP_fast_assign(
- 		strscpy_pad(__entry->name,
--			    mapping ? dev_name(inode_to_bdi(mapping->host)->dev) : "(unknown)",
--			    32);
-+			    bdi_dev_name(mapping ? inode_to_bdi(mapping->host) :
-+					 NULL), 32);
- 		__entry->ino = mapping ? mapping->host->i_ino : 0;
- 		__entry->index = page->index;
- 	),
-@@ -111,8 +111,7 @@ DECLARE_EVENT_CLASS(writeback_dirty_inod
- 		struct backing_dev_info *bdi = inode_to_bdi(inode);
- 
- 		/* may be called for files on pseudo FSes w/ unregistered bdi */
--		strscpy_pad(__entry->name,
--			    bdi->dev ? dev_name(bdi->dev) : "(unknown)", 32);
-+		strscpy_pad(__entry->name, bdi_dev_name(bdi), 32);
- 		__entry->ino		= inode->i_ino;
- 		__entry->state		= inode->i_state;
- 		__entry->flags		= flags;
-@@ -193,7 +192,7 @@ TRACE_EVENT(inode_foreign_history,
- 	),
- 
- 	TP_fast_assign(
--		strncpy(__entry->name, dev_name(inode_to_bdi(inode)->dev), 32);
-+		strncpy(__entry->name, bdi_dev_name(inode_to_bdi(inode)), 32);
- 		__entry->ino		= inode->i_ino;
- 		__entry->cgroup_ino	= __trace_wbc_assign_cgroup(wbc);
- 		__entry->history	= history;
-@@ -222,7 +221,7 @@ TRACE_EVENT(inode_switch_wbs,
- 	),
- 
- 	TP_fast_assign(
--		strncpy(__entry->name,	dev_name(old_wb->bdi->dev), 32);
-+		strncpy(__entry->name,	bdi_dev_name(old_wb->bdi), 32);
- 		__entry->ino		= inode->i_ino;
- 		__entry->old_cgroup_ino	= __trace_wb_assign_cgroup(old_wb);
- 		__entry->new_cgroup_ino	= __trace_wb_assign_cgroup(new_wb);
-@@ -255,7 +254,7 @@ TRACE_EVENT(track_foreign_dirty,
- 		struct address_space *mapping = page_mapping(page);
- 		struct inode *inode = mapping ? mapping->host : NULL;
- 
--		strncpy(__entry->name,	dev_name(wb->bdi->dev), 32);
-+		strncpy(__entry->name,	bdi_dev_name(wb->bdi), 32);
- 		__entry->bdi_id		= wb->bdi->id;
- 		__entry->ino		= inode ? inode->i_ino : 0;
- 		__entry->memcg_id	= wb->memcg_css->id;
-@@ -288,7 +287,7 @@ TRACE_EVENT(flush_foreign,
- 	),
- 
- 	TP_fast_assign(
--		strncpy(__entry->name,	dev_name(wb->bdi->dev), 32);
-+		strncpy(__entry->name,	bdi_dev_name(wb->bdi), 32);
- 		__entry->cgroup_ino	= __trace_wb_assign_cgroup(wb);
- 		__entry->frn_bdi_id	= frn_bdi_id;
- 		__entry->frn_memcg_id	= frn_memcg_id;
-@@ -318,7 +317,7 @@ DECLARE_EVENT_CLASS(writeback_write_inod
- 
- 	TP_fast_assign(
- 		strscpy_pad(__entry->name,
--			    dev_name(inode_to_bdi(inode)->dev), 32);
-+			    bdi_dev_name(inode_to_bdi(inode)), 32);
- 		__entry->ino		= inode->i_ino;
- 		__entry->sync_mode	= wbc->sync_mode;
- 		__entry->cgroup_ino	= __trace_wbc_assign_cgroup(wbc);
-@@ -361,9 +360,7 @@ DECLARE_EVENT_CLASS(writeback_work_class
- 		__field(ino_t, cgroup_ino)
- 	),
- 	TP_fast_assign(
--		strscpy_pad(__entry->name,
--			    wb->bdi->dev ? dev_name(wb->bdi->dev) :
--			    "(unknown)", 32);
-+		strscpy_pad(__entry->name, bdi_dev_name(wb->bdi), 32);
- 		__entry->nr_pages = work->nr_pages;
- 		__entry->sb_dev = work->sb ? work->sb->s_dev : 0;
- 		__entry->sync_mode = work->sync_mode;
-@@ -416,7 +413,7 @@ DECLARE_EVENT_CLASS(writeback_class,
- 		__field(ino_t, cgroup_ino)
- 	),
- 	TP_fast_assign(
--		strscpy_pad(__entry->name, dev_name(wb->bdi->dev), 32);
-+		strscpy_pad(__entry->name, bdi_dev_name(wb->bdi), 32);
- 		__entry->cgroup_ino = __trace_wb_assign_cgroup(wb);
- 	),
- 	TP_printk("bdi %s: cgroup_ino=%lu",
-@@ -438,7 +435,7 @@ TRACE_EVENT(writeback_bdi_register,
- 		__array(char, name, 32)
- 	),
- 	TP_fast_assign(
--		strscpy_pad(__entry->name, dev_name(bdi->dev), 32);
-+		strscpy_pad(__entry->name, bdi_dev_name(bdi), 32);
- 	),
- 	TP_printk("bdi %s",
- 		__entry->name
-@@ -463,7 +460,7 @@ DECLARE_EVENT_CLASS(wbc_class,
- 	),
- 
- 	TP_fast_assign(
--		strscpy_pad(__entry->name, dev_name(bdi->dev), 32);
-+		strscpy_pad(__entry->name, bdi_dev_name(bdi), 32);
- 		__entry->nr_to_write	= wbc->nr_to_write;
- 		__entry->pages_skipped	= wbc->pages_skipped;
- 		__entry->sync_mode	= wbc->sync_mode;
-@@ -514,7 +511,7 @@ TRACE_EVENT(writeback_queue_io,
- 	),
- 	TP_fast_assign(
- 		unsigned long *older_than_this = work->older_than_this;
--		strscpy_pad(__entry->name, dev_name(wb->bdi->dev), 32);
-+		strscpy_pad(__entry->name, bdi_dev_name(wb->bdi), 32);
- 		__entry->older	= older_than_this ?  *older_than_this : 0;
- 		__entry->age	= older_than_this ?
- 				  (jiffies - *older_than_this) * 1000 / HZ : -1;
-@@ -600,7 +597,7 @@ TRACE_EVENT(bdi_dirty_ratelimit,
- 	),
- 
- 	TP_fast_assign(
--		strscpy_pad(__entry->bdi, dev_name(wb->bdi->dev), 32);
-+		strscpy_pad(__entry->bdi, bdi_dev_name(wb->bdi), 32);
- 		__entry->write_bw	= KBps(wb->write_bandwidth);
- 		__entry->avg_write_bw	= KBps(wb->avg_write_bandwidth);
- 		__entry->dirty_rate	= KBps(dirty_rate);
-@@ -665,7 +662,7 @@ TRACE_EVENT(balance_dirty_pages,
- 
- 	TP_fast_assign(
- 		unsigned long freerun = (thresh + bg_thresh) / 2;
--		strscpy_pad(__entry->bdi, dev_name(wb->bdi->dev), 32);
-+		strscpy_pad(__entry->bdi, bdi_dev_name(wb->bdi), 32);
- 
- 		__entry->limit		= global_wb_domain.dirty_limit;
- 		__entry->setpoint	= (global_wb_domain.dirty_limit +
-@@ -726,7 +723,7 @@ TRACE_EVENT(writeback_sb_inodes_requeue,
- 
- 	TP_fast_assign(
- 		strscpy_pad(__entry->name,
--			    dev_name(inode_to_bdi(inode)->dev), 32);
-+			    bdi_dev_name(inode_to_bdi(inode)), 32);
- 		__entry->ino		= inode->i_ino;
- 		__entry->state		= inode->i_state;
- 		__entry->dirtied_when	= inode->dirtied_when;
-@@ -800,7 +797,7 @@ DECLARE_EVENT_CLASS(writeback_single_ino
- 
- 	TP_fast_assign(
- 		strscpy_pad(__entry->name,
--			    dev_name(inode_to_bdi(inode)->dev), 32);
-+			    bdi_dev_name(inode_to_bdi(inode)), 32);
- 		__entry->ino		= inode->i_ino;
- 		__entry->state		= inode->i_state;
- 		__entry->dirtied_when	= inode->dirtied_when;
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -21,6 +21,7 @@ struct backing_dev_info noop_backing_dev
- EXPORT_SYMBOL_GPL(noop_backing_dev_info);
- 
- static struct class *bdi_class;
-+const char *bdi_unknown_name = "(unknown)";
- 
++static inline bool __rxrpc_use_local(struct rxrpc_local *local)
++{
++	return atomic_fetch_add_unless(&local->active_users, 1, 0) != 0;
++}
++
  /*
-  * bdi_lock protects bdi_tree and updates to bdi_list. bdi_list has RCU
+  * misc.c
+  */
+--- a/net/rxrpc/conn_event.c
++++ b/net/rxrpc/conn_event.c
+@@ -438,16 +438,12 @@ again:
+ /*
+  * connection-level event processor
+  */
+-void rxrpc_process_connection(struct work_struct *work)
++static void rxrpc_do_process_connection(struct rxrpc_connection *conn)
+ {
+-	struct rxrpc_connection *conn =
+-		container_of(work, struct rxrpc_connection, processor);
+ 	struct sk_buff *skb;
+ 	u32 abort_code = RX_PROTOCOL_ERROR;
+ 	int ret;
+ 
+-	rxrpc_see_connection(conn);
+-
+ 	if (test_and_clear_bit(RXRPC_CONN_EV_CHALLENGE, &conn->events))
+ 		rxrpc_secure_connection(conn);
+ 
+@@ -475,18 +471,32 @@ void rxrpc_process_connection(struct wor
+ 		}
+ 	}
+ 
+-out:
+-	rxrpc_put_connection(conn);
+-	_leave("");
+ 	return;
+ 
+ requeue_and_leave:
+ 	skb_queue_head(&conn->rx_queue, skb);
+-	goto out;
++	return;
+ 
+ protocol_error:
+ 	if (rxrpc_abort_connection(conn, ret, abort_code) < 0)
+ 		goto requeue_and_leave;
+ 	rxrpc_free_skb(skb, rxrpc_skb_freed);
+-	goto out;
++	return;
++}
++
++void rxrpc_process_connection(struct work_struct *work)
++{
++	struct rxrpc_connection *conn =
++		container_of(work, struct rxrpc_connection, processor);
++
++	rxrpc_see_connection(conn);
++
++	if (__rxrpc_use_local(conn->params.local)) {
++		rxrpc_do_process_connection(conn);
++		rxrpc_unuse_local(conn->params.local);
++	}
++
++	rxrpc_put_connection(conn);
++	_leave("");
++	return;
+ }
+--- a/net/rxrpc/local_object.c
++++ b/net/rxrpc/local_object.c
+@@ -383,14 +383,11 @@ void rxrpc_put_local(struct rxrpc_local
+  */
+ struct rxrpc_local *rxrpc_use_local(struct rxrpc_local *local)
+ {
+-	unsigned int au;
+-
+ 	local = rxrpc_get_local_maybe(local);
+ 	if (!local)
+ 		return NULL;
+ 
+-	au = atomic_fetch_add_unless(&local->active_users, 1, 0);
+-	if (au == 0) {
++	if (!__rxrpc_use_local(local)) {
+ 		rxrpc_put_local(local);
+ 		return NULL;
+ 	}
+@@ -404,14 +401,11 @@ struct rxrpc_local *rxrpc_use_local(stru
+  */
+ void rxrpc_unuse_local(struct rxrpc_local *local)
+ {
+-	unsigned int au;
+-
+ 	if (local) {
+-		au = atomic_dec_return(&local->active_users);
+-		if (au == 0)
++		if (__rxrpc_unuse_local(local)) {
++			rxrpc_get_local(local);
+ 			rxrpc_queue_local(local);
+-		else
+-			rxrpc_put_local(local);
++		}
+ 	}
+ }
+ 
+@@ -468,7 +462,7 @@ static void rxrpc_local_processor(struct
+ 
+ 	do {
+ 		again = false;
+-		if (atomic_read(&local->active_users) == 0) {
++		if (!__rxrpc_use_local(local)) {
+ 			rxrpc_local_destroyer(local);
+ 			break;
+ 		}
+@@ -482,6 +476,8 @@ static void rxrpc_local_processor(struct
+ 			rxrpc_process_local_events(local);
+ 			again = true;
+ 		}
++
++		__rxrpc_unuse_local(local);
+ 	} while (again);
+ 
+ 	rxrpc_put_local(local);
+--- a/net/rxrpc/peer_event.c
++++ b/net/rxrpc/peer_event.c
+@@ -364,27 +364,31 @@ static void rxrpc_peer_keepalive_dispatc
+ 		if (!rxrpc_get_peer_maybe(peer))
+ 			continue;
+ 
+-		spin_unlock_bh(&rxnet->peer_hash_lock);
++		if (__rxrpc_use_local(peer->local)) {
++			spin_unlock_bh(&rxnet->peer_hash_lock);
+ 
+-		keepalive_at = peer->last_tx_at + RXRPC_KEEPALIVE_TIME;
+-		slot = keepalive_at - base;
+-		_debug("%02x peer %u t=%d {%pISp}",
+-		       cursor, peer->debug_id, slot, &peer->srx.transport);
++			keepalive_at = peer->last_tx_at + RXRPC_KEEPALIVE_TIME;
++			slot = keepalive_at - base;
++			_debug("%02x peer %u t=%d {%pISp}",
++			       cursor, peer->debug_id, slot, &peer->srx.transport);
+ 
+-		if (keepalive_at <= base ||
+-		    keepalive_at > base + RXRPC_KEEPALIVE_TIME) {
+-			rxrpc_send_keepalive(peer);
+-			slot = RXRPC_KEEPALIVE_TIME;
+-		}
++			if (keepalive_at <= base ||
++			    keepalive_at > base + RXRPC_KEEPALIVE_TIME) {
++				rxrpc_send_keepalive(peer);
++				slot = RXRPC_KEEPALIVE_TIME;
++			}
+ 
+-		/* A transmission to this peer occurred since last we examined
+-		 * it so put it into the appropriate future bucket.
+-		 */
+-		slot += cursor;
+-		slot &= mask;
+-		spin_lock_bh(&rxnet->peer_hash_lock);
+-		list_add_tail(&peer->keepalive_link,
+-			      &rxnet->peer_keepalive[slot & mask]);
++			/* A transmission to this peer occurred since last we
++			 * examined it so put it into the appropriate future
++			 * bucket.
++			 */
++			slot += cursor;
++			slot &= mask;
++			spin_lock_bh(&rxnet->peer_hash_lock);
++			list_add_tail(&peer->keepalive_link,
++				      &rxnet->peer_keepalive[slot & mask]);
++			rxrpc_unuse_local(peer->local);
++		}
+ 		rxrpc_put_peer_locked(peer);
+ 	}
+ 
 
 
