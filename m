@@ -2,70 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B00715841A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 21:09:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFF1A158420
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 21:09:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbgBJUIN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 15:08:13 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43803 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727669AbgBJUIL (ORCPT
+        id S1727634AbgBJUJ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 15:09:27 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36409 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727003AbgBJUJ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 15:08:11 -0500
-Received: by mail-pl1-f196.google.com with SMTP id p11so3247234plq.10;
-        Mon, 10 Feb 2020 12:08:10 -0800 (PST)
+        Mon, 10 Feb 2020 15:09:26 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p17so657761wma.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 12:09:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wKboNi//DgTEz5deRYoAuburODisq7rqrYp491IRSic=;
+        b=M2/a83Nm4BdBUv9gXQ/mBPZMXXPBjlTQ+Of0m9y1Zsokt99NGzfHs9u8XYqi6MfyOe
+         h28q90RGkIjP5glo6hbfrQe2k57+voxZZAHegwY3sN786x/H7mdgHIpDMp0/iFZaLPsS
+         WbUiG6WUI7q9ndTBaj3vqBwU0gta6SCa+/OP0ZKiVgwJufZXdcy7j4qVjhao+7zWpBru
+         FfHig8sNpO7befw8M5UjR8tfdYhNkd4A5gO9qApA0A1GQCKZcXSFuhLd622nae8EOo/J
+         lKqgkG6KZWgIkRge3HJYTceFH7HKHap8isl6Zr95ubnfLSk4bsSlQXt+LNfqywtRomtF
+         ZoEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vzD8T2ieMGuxRVquXoaKhsc9qQG8vkAzhKmtkEYAgME=;
-        b=Qzw0w0uhDFc0lVDg3qQ7EudAV9KgDGnchjtYiNT6GXRnig/zDmWcoUongraFxg5uzC
-         3MZ47fyJhnZiYxMMn40RSdGWwseMyCvdNDVMKYeHQBJF2w+hPKyvyx8MDeTOubDFCras
-         ZNiVEK86jyaVRQQcLanP7q4pTsFTffS5/GVQF2gN/85kvfcGDtwlE3de/cJM2qHX/QQd
-         D2U8AZa/GZeSV4qoK4GHgt2e/GLeG8g8oHDanmqtxy98RvwBXAd72E1GK3qmLHj9i63H
-         /YoRCR5a+jGqrWKAhtI9ZzQgkVoSI48aT1bPSnho1rpVkMsiszbY+gvBwbIj0FUKWLuR
-         cCKA==
-X-Gm-Message-State: APjAAAXeWEI6ZiHEik6Ej6NiDl+cr1MMaWmXZLBrFdxC3dUzG6E75+0F
-        glDll7RdFEZRcz4t9z2G08s=
-X-Google-Smtp-Source: APXvYqwpRZDVHmwnxkppDE4vflEV7ygmMhLnExpIK0qJ7hBOpSQizNe1MUmbUYX6OUu1qR7MPVYgkg==
-X-Received: by 2002:a17:90a:d78f:: with SMTP id z15mr911773pju.36.1581365290349;
-        Mon, 10 Feb 2020 12:08:10 -0800 (PST)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id az9sm265420pjb.3.2020.02.10.12.08.09
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wKboNi//DgTEz5deRYoAuburODisq7rqrYp491IRSic=;
+        b=cd3w6vZ6vZDFKnUmWW6PWEA/jVtYCd/yLX7rQy91oO61ppIa0Fgi1dQfj4KGLHb6fv
+         GOiW0o+ULKA4K5GqhxSffAMkJ0v6vRnWZ0S0TxBDvjZKysGZkP3gVS1z/CSygKmQM3GZ
+         QrV/ilYTa22qP1+VFb/1EwsqL8a934Obl9XPuBHhkAmmfq1YMd2oA0FoZX7Ii3uXjwtQ
+         WhqVIhrK0GcMs3jYnkRGu1d0YS7mnApwgR+teCMPCOK4NkE4N9X7fnG2Uaz1yd4uq3QX
+         YP7RV5jXH9xD/RqoHaWQ9YQKU0mtVYcvF1Abvawx+pDnh4aqNuBSF6fL2oQni0kyzCyD
+         SVSw==
+X-Gm-Message-State: APjAAAX3xP6ZjYTZr9B4gK9KCCLxuq5umpM9QHP8E4dwyveAe49y+iCo
+        soSIicmFo7aq7aNmvEwxoyA=
+X-Google-Smtp-Source: APXvYqxcQjd5wkMyTqNHabVM+z8hjry3oeYMmwlpO1fz7/AEmC8sk+oRxeZyAaE+u078UHf+e5ERGQ==
+X-Received: by 2002:a1c:7f87:: with SMTP id a129mr708835wmd.156.1581365364842;
+        Mon, 10 Feb 2020 12:09:24 -0800 (PST)
+Received: from localhost.localdomain (ipservice-092-219-207-036.092.219.pools.vodafone-ip.de. [92.219.207.36])
+        by smtp.gmail.com with ESMTPSA id s139sm518577wme.35.2020.02.10.12.09.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2020 12:08:09 -0800 (PST)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 9B1B84060F; Mon, 10 Feb 2020 20:08:08 +0000 (UTC)
-Date:   Mon, 10 Feb 2020 20:08:08 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        broonie@kernel.org, alex.williamson@redhat.com,
-        keescook@chromium.org, yzaikin@google.com,
-        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 2/5] proc/sysctl: optimize proc_sys_readdir
-Message-ID: <20200210200808.GN11244@42.do-not-panic.com>
-References: <20200207180305.11092-1-dave@stgolabs.net>
- <20200207180305.11092-3-dave@stgolabs.net>
+        Mon, 10 Feb 2020 12:09:24 -0800 (PST)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH] staging: rtl8188eu: rename variable pnetdev -> netdev
+Date:   Mon, 10 Feb 2020 21:08:30 +0100
+Message-Id: <20200210200830.22868-1-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200207180305.11092-3-dave@stgolabs.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 10:03:02AM -0800, Davidlohr Bueso wrote:
-> This patch coverts struct ctl_dir to use an llrbtree
-> instead of a regular rbtree such that computing nodes for
-> potential usable entries becomes a branchless O(1) operation,
-> therefore optimizing first_usable_entry(). The cost are
-> mainly three additional pointers: one for the root and two
-> for each struct ctl_node next/prev nodes, enlarging it from
-> 32 to 48 bytes on x86-64.
+Rename the local variable pnetdev in rtw_alloc_etherdev_with_old_priv
+to avoid hungarian notation and clear the last checkpatch warning in
+the file osdep_service.c.
 
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+rtl8188eu/os_dep/osdep_service.c:32: WARNING: line over 80 characters
 
-  Luis
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+---
+ drivers/staging/rtl8188eu/os_dep/osdep_service.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/staging/rtl8188eu/os_dep/osdep_service.c b/drivers/staging/rtl8188eu/os_dep/osdep_service.c
+index 4ba2378a1bb8..4d6d0347ab8e 100644
+--- a/drivers/staging/rtl8188eu/os_dep/osdep_service.c
++++ b/drivers/staging/rtl8188eu/os_dep/osdep_service.c
+@@ -26,17 +26,17 @@ void _rtw_init_queue(struct __queue *pqueue)
+ 
+ struct net_device *rtw_alloc_etherdev_with_old_priv(void *old_priv)
+ {
+-	struct net_device *pnetdev;
++	struct net_device *netdev;
+ 	struct rtw_netdev_priv_indicator *pnpi;
+ 
+-	pnetdev = alloc_etherdev_mq(sizeof(struct rtw_netdev_priv_indicator), 4);
+-	if (!pnetdev)
++	netdev = alloc_etherdev_mq(sizeof(struct rtw_netdev_priv_indicator), 4);
++	if (!netdev)
+ 		return NULL;
+ 
+-	pnpi = netdev_priv(pnetdev);
++	pnpi = netdev_priv(netdev);
+ 	pnpi->priv = old_priv;
+ 
+-	return pnetdev;
++	return netdev;
+ }
+ 
+ void rtw_free_netdev(struct net_device *netdev)
+-- 
+2.25.0
+
