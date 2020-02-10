@@ -2,111 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77336157C05
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:34:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A538D157C1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:35:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730813AbgBJNeX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:34:23 -0500
-Received: from foss.arm.com ([217.140.110.172]:33724 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727960AbgBJNeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 08:34:19 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 96CA41FB;
-        Mon, 10 Feb 2020 05:34:18 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B98A3F68E;
-        Mon, 10 Feb 2020 05:34:17 -0800 (PST)
-Date:   Mon, 10 Feb 2020 13:34:16 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Adam Serbinski <adam@serbinski.com>
-Cc:     Srini Kandagatla <srinivas.kandagatla@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Patrick Lai <plai@codeaurora.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/8] ASoC: qdsp6: q6afe-dai: add support to pcm port
- dais
-Message-ID: <20200210133416.GH7685@sirena.org.uk>
-References: <20200207205013.12274-1-adam@serbinski.com>
- <20200209154748.3015-1-adam@serbinski.com>
- <20200209154748.3015-4-adam@serbinski.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="rCwQ2Y43eQY6RBgR"
+        id S1731378AbgBJNe6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:34:58 -0500
+Received: from mail-eopbgr60056.outbound.protection.outlook.com ([40.107.6.56]:45027
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727810AbgBJNev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 08:34:51 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NVzveOVfN8Xz03ksgNbMr4idgkvXDa4UJuOEVyHJs7yjUdF/NhLEL8xy46vF1DXiGMqx3hJfaffI3/utfy3gBQPC/1P+zsIKZoi5RCCCVUUO30mn2N3Smn1G9YOXe1/6dIoCnm6TO6qKQYP4hOOQDZ02oJAorYRejw7Ee653FcUVwdMR/cvUiCATBCuGtKcUHDZ454xwn2Jg9mFB0Siw7Xm2eKxB2KLEU68huumecTvaPTreCsZD/sYQ5gsKizNZX2VLxHJZqT0eE7vGPu8JUJ8P0xKomxzhhgr0CSBI2yro2ptxf1W62ScLvE++cJzG52NEWFvDmwWNfXK3oAvnwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GaZwTrZDk3+PW79yrrqW4udBycnyk2AgyvXtnszqCh0=;
+ b=CcnW1wcBwhJw+og1Ut8119zGiTAePKe7B7XKjLWDL0DrgiaXw+8kGFY63Smmw2LZsSau7pQM/8hvPR0rpjsteuPx6XRDqp7Ff40elaaGeOUatm8Ix8mPkPJRxgQHdc6U5RrMsjejD+M0gZ6h8AK6umIomFNFph+aFa0VdY1woexieiBWoOzoXhYaGMLdPubEmL4kHZIhQnahUxzuYIVqExsiwsim5cDgOqbQ3Odwei24m1y8HAs0zq4fCoYWnJKwMXxwD/oTcQ3/sBllAFPACyNl+FFKXQ1zBsVFlndNP8eMrW1J8S35xa1VV0DlVhldLkC8085ARzCaXOsCwLg17g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
+ dkim=pass header.d=mellanox.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GaZwTrZDk3+PW79yrrqW4udBycnyk2AgyvXtnszqCh0=;
+ b=kC2Bb9TIdknNEFb3gDBe1E9ApYXXtpQEV/3soJEKHJxcExIbVm0KP6CY/Rk4zZla1lcK5yROaudbo1DZ79Lp9EP4kYT0YE+yXmq8kA6fvK8pvkJNuFd5qJpkORwQB03MjoMEF2fx/ovo4jD/rxJLZlA7z0T5yEfR6boL3nqwnvQ=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (52.133.14.15) by
+ VI1PR05MB5693.eurprd05.prod.outlook.com (20.178.124.87) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.25; Mon, 10 Feb 2020 13:34:46 +0000
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::1c00:7925:d5c6:d60d]) by VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::1c00:7925:d5c6:d60d%7]) with mapi id 15.20.2707.030; Mon, 10 Feb 2020
+ 13:34:46 +0000
+Date:   Mon, 10 Feb 2020 09:34:42 -0400
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     mst@redhat.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        tiwei.bie@intel.com, maxime.coquelin@redhat.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        rob.miller@broadcom.com, xiao.w.wang@intel.com,
+        haotian.wang@sifive.com, lingshan.zhu@intel.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        kevin.tian@intel.com, stefanha@redhat.com, rdunlap@infradead.org,
+        hch@infradead.org, aadam@redhat.com, jiri@mellanox.com,
+        shahafs@mellanox.com, hanand@xilinx.com, mhabets@solarflare.com
+Subject: Re: [PATCH V2 4/5] virtio: introduce a vDPA based transport
+Message-ID: <20200210133442.GS23346@mellanox.com>
+References: <20200210035608.10002-1-jasowang@redhat.com>
+ <20200210035608.10002-5-jasowang@redhat.com>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200209154748.3015-4-adam@serbinski.com>
-X-Cookie: Avoid gunfire in the bathroom tonight.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200210035608.10002-5-jasowang@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: MN2PR10CA0003.namprd10.prod.outlook.com
+ (2603:10b6:208:120::16) To VI1PR05MB4141.eurprd05.prod.outlook.com
+ (2603:10a6:803:44::15)
+MIME-Version: 1.0
+Received: from mlx.ziepe.ca (142.68.57.212) by MN2PR10CA0003.namprd10.prod.outlook.com (2603:10b6:208:120::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2707.21 via Frontend Transport; Mon, 10 Feb 2020 13:34:46 +0000
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)     (envelope-from <jgg@mellanox.com>)      id 1j19D0-0007da-Dx; Mon, 10 Feb 2020 09:34:42 -0400
+X-Originating-IP: [142.68.57.212]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 25ec9ef4-7192-407d-6259-08d7ae2dfe74
+X-MS-TrafficTypeDiagnostic: VI1PR05MB5693:|VI1PR05MB5693:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR05MB56939BD3265A5DA05A710F4FCF190@VI1PR05MB5693.eurprd05.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3826;
+X-Forefront-PRVS: 03094A4065
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(346002)(376002)(366004)(39860400002)(199004)(189003)(33656002)(4744005)(36756003)(86362001)(5660300002)(1076003)(7416002)(316002)(66946007)(66476007)(66556008)(9746002)(9786002)(8936002)(2906002)(81156014)(52116002)(81166006)(4326008)(8676002)(6916009)(478600001)(2616005)(26005)(186003)(24400500001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB5693;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: YtvaUXxzyYCj0pgU9Eg9keN35LKCSqyajPZxI905JRj11wLMxtYAEPa+nLINWL3o0WGqS9oBKxsKm5zmaiBzl2LDzTMDWaudCZBBq145H8ZpPY33e2CoAeHQ2PrO79/9uXAmhuULv8GCn/Ah1OqYIrVimheg2es5qKwOHHbQxIdQUi1iuiRdzgrCn9FNAazngDZuwo+o39s/CYy/4iel+FKT5fLW1weTjKhWZBXTKIyOlIOD95c0jYTn4q1pdciS1vZo14+AIXaG0mC/ZG88Ka3S5cTvmTAGCPxIpnVZ/NQvoR+EWwSDPzP/My3C0qBV5dwi3M9pUXn1XffqFlUW1cTzfzhtRlPeHw9zncG833vHgFqqF4HJaLu5WBKjxVP/G90PH5nDcRPKQ4g9cq6k6s/mlvEwe9OP1+EhPBTCfE1ElzhKnA1+t8ys8MjlxkfzZNFwqh86kN8p9P0Og4wc2KwGzHRqAwi1+eCpwDaupUciDcm8HNQ8hFc4Khi+ZHdq
+X-MS-Exchange-AntiSpam-MessageData: CIfrORGkJvDfy+1AFpTaIVIepe25xJRzSvJHNesSmByTLAqMjmHrCN+QEKzTXE6KqbDIQWiuPiA0NMdEwHgGGOsekA2xCRDrU5emtcnb8XC29S1a8/VbIiaBUn3cAMLbFBpEW05Iak+cXoINndaL4g==
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 25ec9ef4-7192-407d-6259-08d7ae2dfe74
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Feb 2020 13:34:46.5204
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dSYCotorbWwV1JeU4KqH7/avPuFIxu20RpiHphMzFN55hK9WttMyFe2tQNyj3ibEswqN73mEb3fSJqlrvuO0ng==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5693
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 10, 2020 at 11:56:07AM +0800, Jason Wang wrote:
+> This patch introduces a vDPA transport for virtio. This is used to
+> use kernel virtio driver to drive the mediated device that is capable
+> of populating virtqueue directly.
 
---rCwQ2Y43eQY6RBgR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Is this comment still right? Is there a mediated device still?
 
-On Sun, Feb 09, 2020 at 10:47:43AM -0500, Adam Serbinski wrote:
-
-> +static int q6pcm_hw_params(struct snd_pcm_substream *substream,
-> +			   struct snd_pcm_hw_params *params,
-> +			   struct snd_soc_dai *dai)
-> +{
-> +	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
-> +	struct q6afe_pcm_cfg *pcm = &dai_data->port_config[dai->id].pcm_cfg;
-> +
-> +	pcm->sample_rate = params_rate(params);
-> +
-
-This and set_fmt() don't do any validation of the value being set.
-
->  static const struct snd_soc_dai_ops q6tdm_ops = {
->  	.prepare	= q6afe_dai_prepare,
->  	.shutdown	= q6afe_dai_shutdown,
-> -	.set_sysclk	= q6afe_mi2s_set_sysclk,
-> +	.set_sysclk	= q6afe_tdm_set_sysclk,
->  	.set_tdm_slot     = q6tdm_set_tdm_slot,
->  	.set_channel_map  = q6tdm_set_channel_map,
->  	.hw_params        = q6tdm_hw_params,
-
-This looks like a separate bug fix that should be split out?
-
-> +	}, {
-> +		.playback = {
-> +			.stream_name = "Primary PCM Playback",
-> +			.rates = SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000,
-> +			.formats = SNDRV_PCM_FMTBIT_S16_LE |
-> +				   SNDRV_PCM_FMTBIT_S24_LE,
-> +			.rate_min =     8000,
-> +			.rate_max =     16000,
-> +		},
-
-It is surprising to see rate_min and rate_max specified when we're not
-using _KNOT, and again there's weird formatting here with the tabs
-before the rate values.
-
---rCwQ2Y43eQY6RBgR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5BW9cACgkQJNaLcl1U
-h9Dh8wf9GPgsAk8A8fx5UolrgGZJ4NvmqNg6lr8kiZW80V0qguFTuNNYITV/GtSe
-3hR5xFD6RWuu3W60mOEK6zra9dWXC++UUK9zROYY3AHiDqmJAfsPQRx9Pi6SoJSf
-sHWco6VGMY308dMXp9ebWYAWHYjTHE/oKkbuCcjmwg/4qdgknwITb45vKDsGOk7U
-KDq0QvV0RUTw3jtXPiwP93+UGwFOVHTnGPkYQVQPQiUi2N9/f41iWwry69B09wOW
-GT/OYTl2NMH+pjmW+/XWcPwhp2cVaJa7c8v4JNl8QvYgIyEzyYwY945J7AxzhzXT
-o4oM+MZSKad4PBHQ3/tbxddygF5rKg==
-=fc13
------END PGP SIGNATURE-----
-
---rCwQ2Y43eQY6RBgR--
+Jason
