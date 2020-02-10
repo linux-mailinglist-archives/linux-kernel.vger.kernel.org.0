@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 614D2157946
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:14:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69E8C157944
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:14:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730876AbgBJNOI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:14:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34528 "EHLO mail.kernel.org"
+        id S1729481AbgBJNOD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:14:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728328AbgBJMih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:37 -0500
+        id S1728636AbgBJMii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:38 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9926220661;
-        Mon, 10 Feb 2020 12:38:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93CD62080C;
+        Mon, 10 Feb 2020 12:38:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338316;
-        bh=s1mFnvxsI4gPo3aiXIZ6kqtRpYquPMdBQ/2z2dS9MrM=;
+        s=default; t=1581338317;
+        bh=8cs4vnXlsHK6BO/SsjAWbXAI1jheAttXscHTh9YVgcA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uG0UrniRo2wdHKKoEWWhVCjOEv0ig2Wx59EfPrG0mW81/qC5kEe1w47dUl5snGbZD
-         sIiH3K6pO7SeuEsdVa8Wu+c/A2yU1UdeK4A0BIg+AIA6Y5pulHc5MEgIEG6JkRbnUD
-         lYCH02idL8EQ5cOOcP81HFMR5oqjcRQ3wUETNNko=
+        b=EPnSb9zweQyC2HguOmjvgJws9zuVdDYXHH6l3MtinUPTBiyCI5mWUn70xfIkfipXu
+         TWY/XL9YuoaWRAe3wIFGYvrRKJyO6THIxDW26dLHOfexMEmBKZ+BTQTm8Gm6WDXOC/
+         u+M2yeyCOYp4bFbkFjCVDWwFa9SXMOfHkd+QEM9M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Nathan Chancellor <natechancellor@gmail.com>,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH 5.4 244/309] ext2: Adjust indentation in ext2_fill_super
-Date:   Mon, 10 Feb 2020 04:33:20 -0800
-Message-Id: <20200210122429.950426894@linuxfoundation.org>
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Rob Clark <robdclark@chromium.org>
+Subject: [PATCH 5.4 246/309] drm: msm: mdp4: Adjust indentation in mdp4_dsi_encoder_enable
+Date:   Mon, 10 Feb 2020 04:33:22 -0800
+Message-Id: <20200210122430.151268854@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
 References: <20200210122406.106356946@linuxfoundation.org>
@@ -46,48 +47,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit d9e9866803f7b6c3fdd35d345e97fb0b2908bbbc upstream.
+commit 251e3cb1418ff3f5061ee31335e346e852b16573 upstream.
 
 Clang warns:
 
-../fs/ext2/super.c:1076:3: warning: misleading indentation; statement is
-not part of the previous 'if' [-Wmisleading-indentation]
-        sbi->s_groups_count = ((le32_to_cpu(es->s_blocks_count) -
+../drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c:124:3: warning:
+misleading indentation; statement is not part of the previous 'if'
+[-Wmisleading-indentation]
+         mdp4_crtc_set_config(encoder->crtc,
+         ^
+../drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c:121:2: note:
+previous statement is here
+        if (mdp4_dsi_encoder->enabled)
         ^
-../fs/ext2/super.c:1074:2: note: previous statement is here
-        if (EXT2_BLOCKS_PER_GROUP(sb) == 0)
-        ^
-1 warning generated.
 
-This warning occurs because there is a space before the tab on this
-line. Remove it so that the indentation is consistent with the Linux
-kernel coding style and clang no longer warns.
+This warning occurs because there is a space after the tab on this line.
+Remove it so that the indentation is consistent with the Linux kernel
+coding style and clang no longer warns.
 
-Fixes: 41f04d852e35 ("[PATCH] ext2: fix mounts at 16T")
-Link: https://github.com/ClangBuiltLinux/linux/issues/827
-Link: https://lore.kernel.org/r/20191218031930.31393-1-natechancellor@gmail.com
+Fixes: 776638e73a19 ("drm/msm/dsi: Add a mdp4 encoder for DSI")
+Link: https://github.com/ClangBuiltLinux/linux/issues/792
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Rob Clark <robdclark@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext2/super.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ext2/super.c
-+++ b/fs/ext2/super.c
-@@ -1082,9 +1082,9 @@ static int ext2_fill_super(struct super_
+--- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c
++++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c
+@@ -121,7 +121,7 @@ static void mdp4_dsi_encoder_enable(stru
+ 	if (mdp4_dsi_encoder->enabled)
+ 		return;
  
- 	if (EXT2_BLOCKS_PER_GROUP(sb) == 0)
- 		goto cantfind_ext2;
-- 	sbi->s_groups_count = ((le32_to_cpu(es->s_blocks_count) -
-- 				le32_to_cpu(es->s_first_data_block) - 1)
-- 					/ EXT2_BLOCKS_PER_GROUP(sb)) + 1;
-+	sbi->s_groups_count = ((le32_to_cpu(es->s_blocks_count) -
-+				le32_to_cpu(es->s_first_data_block) - 1)
-+					/ EXT2_BLOCKS_PER_GROUP(sb)) + 1;
- 	db_count = (sbi->s_groups_count + EXT2_DESC_PER_BLOCK(sb) - 1) /
- 		   EXT2_DESC_PER_BLOCK(sb);
- 	sbi->s_group_desc = kmalloc_array (db_count,
+-	 mdp4_crtc_set_config(encoder->crtc,
++	mdp4_crtc_set_config(encoder->crtc,
+ 			MDP4_DMA_CONFIG_PACK_ALIGN_MSB |
+ 			MDP4_DMA_CONFIG_DEFLKR_EN |
+ 			MDP4_DMA_CONFIG_DITHER_EN |
 
 
