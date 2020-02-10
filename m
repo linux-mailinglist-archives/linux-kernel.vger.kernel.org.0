@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A46ED15754E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:40:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DA4B15774F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:59:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729199AbgBJMkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:40:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33158 "EHLO mail.kernel.org"
+        id S1729408AbgBJM7T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:59:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729050AbgBJMiL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:11 -0500
+        id S1729237AbgBJMlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:41:11 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C2D124680;
-        Mon, 10 Feb 2020 12:38:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 532A620733;
+        Mon, 10 Feb 2020 12:41:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338290;
-        bh=BqnlbCiXH63Epcz+lc02oqm7krVwoZ59t11L6PvqMQs=;
+        s=default; t=1581338471;
+        bh=qR8NXDPCQMI8FGPV19d0pW79RHVbnYIvHzvQJh07a0Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ca+4rOH2jpX2ldeNyHpU9OOrWiwzy3b9hTVjvdiWN2tnBmAx2L/UYlfNOqSIkB1yT
-         WRpnBghiUPS8nMsdu+xgF5NSGgMu7njYxQKS2UXUlbj418ZokfeaoZYvvPSo4iG5Dp
-         TmMFpdQUDhk8kWY9Knubix0YZv5+DuwnAojc4mdU=
+        b=CKyWhmAX1ik6asdzcD70wK5CNHYQ4KcM2oAD26LWa6hOeqSQSECJHq4ispYTsxe3b
+         e+bMH1BWCweTn7Fgvuv+M/jaXWiVfrqT089zZZuutDMfCTI6ZhelABHuFzy3Z38x+r
+         YOSoSH8GkJArrzg2rmqqcbpK4cFl1jjGG8TSJwJM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 5.4 193/309] xen/balloon: Support xend-based toolstack take two
+        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
+        Marios Pomonis <pomonis@google.com>,
+        Andrew Honig <ahonig@google.com>,
+        Jim Mattson <jmattson@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.5 236/367] KVM: x86: Protect MSR-based index computations from Spectre-v1/L1TF attacks in x86.c
 Date:   Mon, 10 Feb 2020 04:32:29 -0800
-Message-Id: <20200210122425.107505025@linuxfoundation.org>
+Message-Id: <20200210122445.979512283@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,47 +46,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Juergen Gross <jgross@suse.com>
+From: Marios Pomonis <pomonis@google.com>
 
-commit eda4eabf86fd6806eaabc23fb90dd056fdac037b upstream.
+commit 6ec4c5eee1750d5d17951c4e1960d953376a0dda upstream.
 
-Commit 3aa6c19d2f38be ("xen/balloon: Support xend-based toolstack")
-tried to fix a regression with running on rather ancient Xen versions.
-Unfortunately the fix was based on the assumption that xend would
-just use another Xenstore node, but in reality only some downstream
-versions of xend are doing that. The upstream xend does not write
-that Xenstore node at all, so the problem must be fixed in another
-way.
+This fixes a Spectre-v1/L1TF vulnerability in set_msr_mce() and
+get_msr_mce().
+Both functions contain index computations based on the
+(attacker-controlled) MSR number.
 
-The easiest way to achieve that is to fall back to the behavior
-before commit 96edd61dcf4436 ("xen/balloon: don't online new memory
-initially") in case the static memory maximum can't be read.
+Fixes: 890ca9aefa78 ("KVM: Add MCE support")
 
-This is achieved by setting static_max to the current number of
-memory pages known by the system resulting in target_diff becoming
-zero.
-
-Fixes: 3aa6c19d2f38be ("xen/balloon: Support xend-based toolstack")
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: <stable@vger.kernel.org> # 4.13
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Nick Finco <nifi@google.com>
+Signed-off-by: Marios Pomonis <pomonis@google.com>
+Reviewed-by: Andrew Honig <ahonig@google.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/xen/xen-balloon.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/x86.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/xen/xen-balloon.c
-+++ b/drivers/xen/xen-balloon.c
-@@ -94,7 +94,7 @@ static void watch_target(struct xenbus_w
- 				  "%llu", &static_max) == 1))
- 			static_max >>= PAGE_SHIFT - 10;
- 		else
--			static_max = new_target;
-+			static_max = balloon_stats.current_pages;
- 
- 		target_diff = (xen_pv_domain() || xen_initial_domain()) ? 0
- 				: static_max - balloon_stats.target_pages;
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2489,7 +2489,10 @@ static int set_msr_mce(struct kvm_vcpu *
+ 	default:
+ 		if (msr >= MSR_IA32_MC0_CTL &&
+ 		    msr < MSR_IA32_MCx_CTL(bank_num)) {
+-			u32 offset = msr - MSR_IA32_MC0_CTL;
++			u32 offset = array_index_nospec(
++				msr - MSR_IA32_MC0_CTL,
++				MSR_IA32_MCx_CTL(bank_num) - MSR_IA32_MC0_CTL);
++
+ 			/* only 0 or all 1s can be written to IA32_MCi_CTL
+ 			 * some Linux kernels though clear bit 10 in bank 4 to
+ 			 * workaround a BIOS/GART TBL issue on AMD K8s, ignore
+@@ -2930,7 +2933,10 @@ static int get_msr_mce(struct kvm_vcpu *
+ 	default:
+ 		if (msr >= MSR_IA32_MC0_CTL &&
+ 		    msr < MSR_IA32_MCx_CTL(bank_num)) {
+-			u32 offset = msr - MSR_IA32_MC0_CTL;
++			u32 offset = array_index_nospec(
++				msr - MSR_IA32_MC0_CTL,
++				MSR_IA32_MCx_CTL(bank_num) - MSR_IA32_MC0_CTL);
++
+ 			data = vcpu->arch.mce_banks[offset];
+ 			break;
+ 		}
 
 
