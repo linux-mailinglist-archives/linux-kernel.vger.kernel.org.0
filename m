@@ -2,218 +2,507 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 831B2156D3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 01:38:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 064AE156D43
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 01:44:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbgBJAiJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 19:38:09 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:50396 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725868AbgBJAiI (ORCPT
+        id S1727143AbgBJAoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 19:44:03 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35989 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725868AbgBJAoC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 19:38:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581295087;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=43vN4FbVzERwy/ImNWrfFNTq58H1pphk+tKFfI0fZCA=;
-        b=QZKtgdMpOFOQdcFMrV+srj4t6fLw2VVqNx8Ls8AAoYE37tyqEwNxkdb5r3XidOxVSM40hD
-        0Xi/rwN5PvmRl45fdhmtedkvxj9P47ltOco28FECHvmATuQQ4esshgAgT58m0jboOJnvZv
-        sxCAhYBugZeHsFQuIv1W0sHM9XXiwss=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-127-sirKZ2pjOx2V3RX8cZV4Wg-1; Sun, 09 Feb 2020 19:38:04 -0500
-X-MC-Unique: sirKZ2pjOx2V3RX8cZV4Wg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DF06510054E3;
-        Mon, 10 Feb 2020 00:38:02 +0000 (UTC)
-Received: from krava (ovpn-204-79.brq.redhat.com [10.40.204.79])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 05A1787B0A;
-        Mon, 10 Feb 2020 00:37:59 +0000 (UTC)
-Date:   Mon, 10 Feb 2020 01:37:57 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH 3/4] perf map: Set kmap->kmaps backpointer for main
- kernel map chunks
-Message-ID: <20200210003757.GB1907700@krava>
-References: <20191223133241.8578-1-acme@kernel.org>
- <20191223133241.8578-4-acme@kernel.org>
- <2617ead1-60e2-3da6-cde6-9efd68412139@linux.ibm.com>
- <20200209150108.GA1784847@krava>
- <20200209193238.GA1907700@krava>
+        Sun, 9 Feb 2020 19:44:02 -0500
+Received: by mail-lj1-f194.google.com with SMTP id r19so5165890ljg.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Feb 2020 16:44:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=bBAt246ieTrFK8VBs0eJJuZezEBEz3TBYubC5H0Z044=;
+        b=TZtGordVCJy85u+R+JqvR5d+nFvurn+lDm7K8xHrGOFnOEdTLJsWz7PM1OMXoH05TO
+         f+Oo8JOmWjeOimCvMyXJi5w+Kf4aF5dJB0k55pzcWryFpJU+odVRwQ8hwf27xDbKw0mN
+         dwY93mVMm+cwtXHUlSBWS1ZPig3RG1+X7RvA0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=bBAt246ieTrFK8VBs0eJJuZezEBEz3TBYubC5H0Z044=;
+        b=rxw16/MlD70kpIwmOQlW/lZVzHw1xhFrDNQJiZUgyNSaGeStGGZSXoxWKA1wbEMrI9
+         lMPHSCdcKaajvUjvDvoFD9zSczP8vdP0WwOk3uFNF0RPpgtmk6qdcAVDmIP/5cL/xM02
+         FGJlXnlvLjuBDhVtAeJRri8f3sESkBSrnK6QsPVC7Fr4M9keGq+Dz1Oz2j/+Blanx4Mk
+         4y7xWFTDGl4kUs+TSeZaJA0mR61D/BMNVU8LfXq09MYXIF/ffjAXAOQB1u/G4GTFCcVQ
+         +LyBk9zfftq/HJHNdfWYwc7og3fqEuSVwQCSuJuyNIC5AE+ohcZm2Epe//+AkTKkX2YR
+         KbrQ==
+X-Gm-Message-State: APjAAAVmThpTqJ6fs46CcdqeTuOgRQLkhqwkQZ/uPO965iFcfHeJWQk6
+        lfUVe2j/pp6jjfGEb6VoEe1KD1pQsew=
+X-Google-Smtp-Source: APXvYqyZiJCk/4IRyRb2qihJlNLgmLWg2AdXgWPTVRFucgeupBilz0zMUtHeHd1xdS0sgYWYXYqhMQ==
+X-Received: by 2002:a2e:580c:: with SMTP id m12mr6370156ljb.252.1581295438860;
+        Sun, 09 Feb 2020 16:43:58 -0800 (PST)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id e17sm5456477ljg.101.2020.02.09.16.43.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Feb 2020 16:43:58 -0800 (PST)
+Received: by mail-lj1-f177.google.com with SMTP id x14so5106320ljd.13
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Feb 2020 16:43:57 -0800 (PST)
+X-Received: by 2002:a2e:580c:: with SMTP id m12mr6353872ljb.150.1581295437518;
+ Sun, 09 Feb 2020 16:43:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200209193238.GA1907700@krava>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 9 Feb 2020 16:43:41 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjVopuAm5Vwa1kK5O1tTzQAGFtCHm8_Hzy3Us1OC=PgUw@mail.gmail.com>
+Message-ID: <CAHk-=wjVopuAm5Vwa1kK5O1tTzQAGFtCHm8_Hzy3Us1OC=PgUw@mail.gmail.com>
+Subject: Linux 5.6-rc1
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 09, 2020 at 08:32:38PM +0100, Jiri Olsa wrote:
+ The rc1 tag has been pushed out, and so the merge window for 5.6 is closed.
 
-SNIP
+This was actually a slightly smaller merge window than usual, but I
+think that what happened is simply that the holiday season impacted
+new development. It impacted the 5.5 rc series less than I had
+expected, but seems to instead have caused 5.6 to have slightly less
+development than normal.
 
-> > > 
-> > > perf top from perf/core has started crashing at __map__is_kernel():
-> > > 
-> > >   (gdb) bt
-> > >   #0  __map__is_kernel (map=<optimized out>) at util/map.c:935
-> > >   #1  0x000000000045551d in perf_event__process_sample (machine=0xbab8f8,
-> > >       sample=0x7fffe5ffa6d0, evsel=0xba7570, event=0xbcac50, tool=0x7fffffff84e0)
-> > >       at builtin-top.c:833
-> > >   #2  deliver_event (qe=<optimized out>, qevent=<optimized out>) at builtin-top.c:1192
-> > >   #3  0x000000000050b9fb in do_flush (show_progress=false, oe=0x7fffffff87e0)
-> > >       at util/ordered-events.c:244
-> > >   #4  __ordered_events__flush (oe=oe@entry=0x7fffffff87e0, how=how@entry=OE_FLUSH__TOP,
-> > >       timestamp=timestamp@entry=0) at util/ordered-events.c:323
-> > >   #5  0x000000000050c1b5 in __ordered_events__flush (timestamp=<optimized out>,
-> > >       how=<optimized out>, oe=<optimized out>) at util/ordered-events.c:339
-> > >   #6  ordered_events__flush (how=OE_FLUSH__TOP, oe=0x7fffffff87e0) at util/ordered-events.c:341
-> > >   #7  ordered_events__flush (oe=oe@entry=0x7fffffff87e0, how=how@entry=OE_FLUSH__TOP)
-> > >       at util/ordered-events.c:339
-> > >   #8  0x0000000000454e21 in process_thread (arg=0x7fffffff84e0) at builtin-top.c:1104
-> > >   #9  0x00007ffff7f2c4e2 in start_thread () from /lib64/libpthread.so.0
-> > >   #10 0x00007ffff76086d3 in clone () from /lib64/libc.so.6
-> > > 
-> > > I haven't debugged it much but seems like the actual patch that's causing the
-> > > crash is de90d513b246 ("perf map: Use map->dso->kernel + map__kmaps() in
-> > > map__kmaps()").
-> > > 
-> > > Did you face this / aware of it?
-> > 
-> > hum, looks like there are few more places where we don't set
-> > kmaps pointer, patch below fixes that for me
-> > 
-> > I'll still need to do more checking and I'll send a fix
-> > 
-> > jirka
-> > 
-> > 
-> > ---
-> 
-> I found one more place.. please check the attached patch
+Of course, "slightly less" is just that - we still have more than 10k
+commits (11.5k if you count merges too). So it's not like it's tiny,
+and it's still _way_ too big to post full shortlogs or anything like
+that. So below is my usual "mergelog" that shows my merges and who
+they came from.
 
-and third time's the charm.. hopefully ;-)
+And as always, note that my merge log shows who I merged from, which
+is not necessarily at all who developed the code. There's more than
+1400 individual developers in there, and I always feel a bit bad by
+just grouping things by top-level maintainer, but I've never found a
+good way to summarize the merge window development by author (like the
+rc shortlogs are done). So I just keep mentioning this, to make it
+clear that this shows just _one_ side of the credits for getting code
+merged.
 
-I made the fix more central.. it still needs to be split
-into several small fixes, but I'm running perf top for
-few hours now without the crash
+Apart from being slightly smaller than usual, the stats all look
+fairly normal. About two thirds of the patch is drivers (and it's all
+over, but gpu and networking dominate as usual), with the rest being
+the usual mix of arch updates, documentation, filesystem updates,
+networking, tooling, and just misc core kernel updates. And none of
+that is in the least surprising or unusual.
 
-jirka
+From an actual ABI perspective, I guess the openat2() support by
+Aleksa might be worth mentioning - it's been in development for a long
+time, and went through several revisions on the mailing lists. It's
+seldom we end up adding some new interfaces to really core stuff, but
+this makes it much easier to do some path resolution control in user
+space - particularly for sandboxing, You can ask to do filename lookup
+without following symlinks, for example, or not following mountpoints.
+So it's much easier to write code that says "I have this untrusted
+pathname that I want to open - only open it if it doesn't jump out of
+my sandboxed area".
 
+But otherwise it all looks fairly normal. A couple of new specialty
+filesystems if you're into that kind of thing, you can see the big
+picture in the merge log below.
+
+Go forth and test,
+
+               Linus
 
 ---
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index c8c5410315e8..460315476314 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -686,6 +686,7 @@ static struct dso *machine__findnew_module_dso(struct machine *machine,
- 
- 		dso__set_module_info(dso, m, machine);
- 		dso__set_long_name(dso, strdup(filename), true);
-+		dso->kernel = DSO_TYPE_KERNEL;
- 	}
- 
- 	dso__get(dso);
-@@ -726,8 +727,14 @@ static int machine__process_ksymbol_register(struct machine *machine,
- 	struct map *map = maps__find(&machine->kmaps, event->ksymbol.addr);
- 
- 	if (!map) {
--		map = dso__new_map(event->ksymbol.name);
--		if (!map)
-+		struct dso *dso = dso__new(event->ksymbol.name);
-+
-+		if (dso) {
-+			dso->kernel = DSO_TYPE_KERNEL;
-+			map = map__new2(0, dso);
-+		}
-+
-+		if (!dso || !map)
- 			return -ENOMEM;
- 
- 		map->start = event->ksymbol.addr;
-@@ -972,7 +979,6 @@ int machine__create_extra_kernel_map(struct machine *machine,
- 
- 	kmap = map__kmap(map);
- 
--	kmap->kmaps = &machine->kmaps;
- 	strlcpy(kmap->name, xm->name, KMAP_NAME_LEN);
- 
- 	maps__insert(&machine->kmaps, map);
-@@ -1082,9 +1088,6 @@ int __weak machine__create_extra_kernel_maps(struct machine *machine __maybe_unu
- static int
- __machine__create_kernel_maps(struct machine *machine, struct dso *kernel)
- {
--	struct kmap *kmap;
--	struct map *map;
--
- 	/* In case of renewal the kernel map, destroy previous one */
- 	machine__destroy_kernel_maps(machine);
- 
-@@ -1093,14 +1096,7 @@ __machine__create_kernel_maps(struct machine *machine, struct dso *kernel)
- 		return -1;
- 
- 	machine->vmlinux_map->map_ip = machine->vmlinux_map->unmap_ip = identity__map_ip;
--	map = machine__kernel_map(machine);
--	kmap = map__kmap(map);
--	if (!kmap)
--		return -1;
--
--	kmap->kmaps = &machine->kmaps;
--	maps__insert(&machine->kmaps, map);
--
-+	maps__insert(&machine->kmaps, machine->vmlinux_map);
- 	return 0;
- }
- 
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index f67960bedebb..a08ca276098e 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -375,8 +375,13 @@ struct symbol *map__find_symbol_by_name(struct map *map, const char *name)
- 
- struct map *map__clone(struct map *from)
- {
--	struct map *map = memdup(from, sizeof(*map));
-+	size_t size = sizeof(struct map);
-+	struct map *map;
-+
-+	if (from->dso && from->dso->kernel)
-+		size += sizeof(struct kmap);
- 
-+	map = memdup(from, size);
- 	if (map != NULL) {
- 		refcount_set(&map->refcnt, 1);
- 		RB_CLEAR_NODE(&map->rb_node);
-@@ -538,6 +543,16 @@ void maps__insert(struct maps *maps, struct map *map)
- 	__maps__insert(maps, map);
- 	++maps->nr_maps;
- 
-+	if (map->dso && map->dso->kernel) {
-+		struct kmap *kmap = map__kmap(map);
-+
-+		if (kmap)
-+			kmap->kmaps = maps;
-+		else
-+			pr_err("Internal error: kernel dso with non kernel map\n");
-+	}
-+
-+
- 	/*
- 	 * If we already performed some search by name, then we need to add the just
- 	 * inserted map and resort.
 
+Al Viro (7):
+    openat2 support
+    adfs updates
+    vfs timestamp updates
+    vfs recursive removal updates
+    misc vfs updates
+    vfs file system parameter updates
+    vboxfs
+
+Alex Williamson (1):
+    VFIO updates
+
+Alexandre Belloni (1):
+    RTC updates
+
+Andreas Gruenbacher (2):
+    gfs2 updates
+    gfs2 fixes
+
+Andrew Morton (2):
+    updates
+    more updates
+
+Andy Shevchenko (1):
+    x86 platform driver updates
+
+Anton Ivanov (1):
+    UML updates
+
+Arnd Bergmann (2):
+    y2038 updates
+    compat-ioctl fix
+
+Benson Leung (1):
+    chrome platform updates
+
+Bjorn Andersson (2):
+    hwspinlock updates
+    remoteproc updates
+
+Bjorn Helgaas (2):
+    PCI updates
+    PCI fixes
+
+Boris Brezillon (1):
+    i3c updates
+
+Borislav Petkov (3):
+    EDAC updates
+    RAS updates
+    x86 microcode update
+
+Bruce Fields (1):
+    nfsd updates
+
+Casey Schaufler (1):
+    smack fix
+
+Catalin Marinas (1):
+    arm64 KVM fix
+
+Christian Brauner (1):
+    thread management updates
+
+Christoph Hellwig (1):
+    ioremap updates
+
+Damien Le Moal (1):
+    new zonefs file system
+
+Daniel Lezcano (2):
+    thermal updates
+    thermal fixes
+
+Daniel Thompson (2):
+    kgdb updates
+    kgdb fix
+
+Darrick Wong (3):
+    xfs updates
+    iomap fix
+    moar xfs updates
+
+Davbe Airlie (1):
+    drm updates
+
+Dave Airlie (2):
+    drm ttm/mm updates
+    drm fixes
+
+Dave Hansen (1):
+    x86 MPX removal
+
+David Kleikamp (1):
+    jfs update
+
+David Miller (7):
+    networking updates
+    sparc updates
+    IDE updates
+    networking fixes
+    sparc fix
+    networking fixes
+    networking fixes
+
+David Sterba (3):
+    btrfs updates
+    fs deduplication fix
+    more btrfs updates
+
+Dennis Zhou (1):
+    percpu updates
+
+Dmitry Torokhov (1):
+    input updates
+
+Dominik Brodowski (1):
+    pcmcia updates
+
+Eric Biggers (2):
+    fscrypt updates
+    fsverity updates
+
+Gao Xiang (1):
+    erofs updates
+
+Geert Uytterhoeven (1):
+    m68k updates
+
+Greg KH (6):
+    USB/Thunderbolt/PHY driver updates
+    tty/serial driver updates
+    staging and IIO updates
+    driver core updates
+    char/misc driver updates
+    char/misc fix
+
+Greg Ungerer (1):
+    m68knommu updates
+
+Guenter Roeck (1):
+    hwmon updates
+
+Helge Deller (1):
+    parisc updates
+
+Herbert Xu (1):
+    crypto updates
+
+Ilya Dryomov (1):
+    ceph fixes
+
+Ingo Molnar (18):
+    header cleanup
+    objtool updates
+    RCU updates
+    EFI updates
+    locking updates
+    perf updates
+    scheduler updates
+    x86 apic fix
+    x86 asm updates
+    x86 boot update
+    x86 resource control updates
+    x86 cleanups
+    misc x86 updates
+    x86 cpu-features updates
+    x86 FPU updates
+    x86 mtrr updates
+    core fixes
+    x86 fixes
+
+Jaegeuk Kim (1):
+    f2fs updates
+
+James Bottomley (2):
+    SCSI updates
+    misc SCSI fixes
+
+James Morris (1):
+    security subsystem update
+
+Jan Kara (1):
+    UDF, quota, reiserfs, ext2 fixes and cleanups
+
+Jarkko Sakkinen (1):
+    tpm updates
+
+Jason Gunthorpe (2):
+    mmu_notifier updates
+    rdma updates
+
+Jens Axboe (7):
+    core block updates
+    block driver updates
+    libata updates
+    io_uring updates
+    libata updates
+    more block updates
+    io_uring updates
+
+Jessica Yu (1):
+    module updates
+
+Jiri Kosina (2):
+    HID updates
+    livepatching updates
+
+Joerg Roedel (1):
+    iommu updates
+
+Jonathan Corbet (2):
+    documentation updates
+    Documentation fixes
+
+Juergen Gross (1):
+    xen updates
+
+Konrad Rzeszutek Wilk (1):
+    ibft update
+
+Lee Jones (2):
+    MFD updates
+    backlight updates
+
+Linus Walleij (2):
+    GPIO updates
+    pin control updates
+
+Mark Brown (3):
+    regmap updates
+    spi updates
+    regulator updates
+
+Masahiro Yamada (3):
+    Kbuild updates
+    Kconfig updates
+    more Kbuild updates
+
+Mauro Carvalho Chehab (1):
+    media updates
+
+Max Filippov (1):
+    xtensa updates
+
+Michael Ellerman (2):
+    powerpc updates
+    powerpc fixes
+
+Michael Tsirkin (1):
+    virtio updates
+
+Michal Simek (1):
+    Microblaze update
+
+Mike Marshall (1):
+    orangefs fix
+
+Mike Snitzer (1):
+    device mapper updates
+
+Miklos Szeredi (2):
+    overlayfs update
+    fuse fixes
+
+Mimi Zohar (1):
+    IMA updates
+
+Miquel Raynal (2):
+    UBI/UBIFS updates
+    MTD updates
+
+Olof Johansson (5):
+    ARM SoC platform updates
+    ARM Device-tree updates
+    ARM SoC-related driver updates
+    ARM SoC defconfig updates
+    ARM SoC late updates
+
+Palmer Dabbelt (1):
+    RISC-V updates
+
+Paolo Bonzini (2):
+    KVM updates
+    more KVM updates
+
+Paul Burton (1):
+    MIPS changes
+
+Paul McKenney (1):
+    RCU warning removal
+
+Paul Moore (2):
+    audit update
+    SELinux update
+
+Pavel Machek (1):
+    LED updates
+
+Petr Mladek (1):
+    printk update
+
+Rafael Wysocki (8):
+    power management updates
+    ACPI updates
+    device properties framework updates
+    PNP updates
+    more power manadement updates
+    more ACPI updates
+    more power management updates
+    more ACPI updates
+
+Rob Herring (2):
+    devicetree updates
+    devicetree fixes
+
+Russell King (1):
+    ARM updates
+
+Sasha Levin (1):
+    Hyper-V updates
+
+Sebastian Reichel (1):
+    power supply and reset updates
+
+Shuah Khan (2):
+    Kselftest update
+    Kselftest kunit updates
+
+Stephen Boyd (2):
+    clk updates
+    clk fixes
+
+Steve French (3):
+    cifs updates
+    cifs fix
+    cifs fixes
+
+Steven Rostedt (2):
+    tracing fix
+    tracing updates
+
+Takashi Iwai (2):
+    sound updates
+    sound fixes
+
+Ted Ts'o (2):
+    ext4 updates
+    random changes
+
+Tejun Heo (2):
+    workqueue updates
+    cgroup updates
+
+Tetsuo Handa (1):
+    tomoyo update
+
+Thierry Reding (1):
+    pwm updates
+
+Thomas Gleixner (13):
+    timer fixes
+    watchdog updates
+    debugobjects update
+    timer updates
+    core SMP updates
+    irq updates
+    x86 pti updates
+    EFI fix
+    interrupt fixes
+    timer fixes
+    perf fixes
+    SMP fixes
+    x86 fixes
+
+Ulf Hansson (1):
+    MMC updates
+
+Vasily Gorbik (2):
+    s390 updates
+    more s390 updates
+
+Vineet Gupta (1):
+    ARC updates
+
+Vinod Koul (2):
+    dmaengine updates
+    dmaengine fixes
+
+Will Deacon (1):
+    arm64 updates
+
+Wim Van Sebroeck (1):
+    watchdog updates
+
+Wolfram Sang (1):
+    i2c updates
