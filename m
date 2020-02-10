@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0415A157AAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:24:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 614D2157946
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:14:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728614AbgBJMhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:37:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54622 "EHLO mail.kernel.org"
+        id S1730876AbgBJNOI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:14:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728229AbgBJMgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:03 -0500
+        id S1728328AbgBJMih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:37 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61A9F2467D;
-        Mon, 10 Feb 2020 12:36:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9926220661;
+        Mon, 10 Feb 2020 12:38:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338163;
-        bh=vDtliPvSlbfDkb50DUqZRsPnWT/6NC4eXoZfyTTUwxY=;
+        s=default; t=1581338316;
+        bh=s1mFnvxsI4gPo3aiXIZ6kqtRpYquPMdBQ/2z2dS9MrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DWe6hCoveV+TpNW5vNl1JteeVAAlpdGtaR5FBdyIY+FoWxC/lvGYjD9viAtpC8kRR
-         Yv9JTRhoY3VHQxpp6MDsNdZvTJ5rL1YBmOjCLozCdthLKxD0V2/gy28i5jXx1YH72j
-         h3pIeZWXoiOpKX0UnpHjNfLD0eznEX6if800Tb2Y=
+        b=uG0UrniRo2wdHKKoEWWhVCjOEv0ig2Wx59EfPrG0mW81/qC5kEe1w47dUl5snGbZD
+         sIiH3K6pO7SeuEsdVa8Wu+c/A2yU1UdeK4A0BIg+AIA6Y5pulHc5MEgIEG6JkRbnUD
+         lYCH02idL8EQ5cOOcP81HFMR5oqjcRQ3wUETNNko=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.19 140/195] KVM: x86: Free wbinvd_dirty_mask if vCPU creation fails
-Date:   Mon, 10 Feb 2020 04:33:18 -0800
-Message-Id: <20200210122318.972258390@linuxfoundation.org>
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 5.4 244/309] ext2: Adjust indentation in ext2_fill_super
+Date:   Mon, 10 Feb 2020 04:33:20 -0800
+Message-Id: <20200210122429.950426894@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit 16be9ddea268ad841457a59109963fff8c9de38d upstream.
+commit d9e9866803f7b6c3fdd35d345e97fb0b2908bbbc upstream.
 
-Free the vCPU's wbinvd_dirty_mask if vCPU creation fails after
-kvm_arch_vcpu_init(), e.g. when installing the vCPU's file descriptor.
-Do the freeing by calling kvm_arch_vcpu_free() instead of open coding
-the freeing.  This adds a likely superfluous, but ultimately harmless,
-call to kvmclock_reset(), which only clears vcpu->arch.pv_time_enabled.
-Using kvm_arch_vcpu_free() allows for additional cleanup in the future.
+Clang warns:
 
-Fixes: f5f48ee15c2ee ("KVM: VMX: Execute WBINVD to keep data consistency with assigned devices")
-Cc: stable@vger.kernel.org
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+../fs/ext2/super.c:1076:3: warning: misleading indentation; statement is
+not part of the previous 'if' [-Wmisleading-indentation]
+        sbi->s_groups_count = ((le32_to_cpu(es->s_blocks_count) -
+        ^
+../fs/ext2/super.c:1074:2: note: previous statement is here
+        if (EXT2_BLOCKS_PER_GROUP(sb) == 0)
+        ^
+1 warning generated.
+
+This warning occurs because there is a space before the tab on this
+line. Remove it so that the indentation is consistent with the Linux
+kernel coding style and clang no longer warns.
+
+Fixes: 41f04d852e35 ("[PATCH] ext2: fix mounts at 16T")
+Link: https://github.com/ClangBuiltLinux/linux/issues/827
+Link: https://lore.kernel.org/r/20191218031930.31393-1-natechancellor@gmail.com
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext2/super.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -8702,7 +8702,7 @@ void kvm_arch_vcpu_destroy(struct kvm_vc
- 	kvm_mmu_unload(vcpu);
- 	vcpu_put(vcpu);
+--- a/fs/ext2/super.c
++++ b/fs/ext2/super.c
+@@ -1082,9 +1082,9 @@ static int ext2_fill_super(struct super_
  
--	kvm_x86_ops->vcpu_free(vcpu);
-+	kvm_arch_vcpu_free(vcpu);
- }
- 
- void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+ 	if (EXT2_BLOCKS_PER_GROUP(sb) == 0)
+ 		goto cantfind_ext2;
+- 	sbi->s_groups_count = ((le32_to_cpu(es->s_blocks_count) -
+- 				le32_to_cpu(es->s_first_data_block) - 1)
+- 					/ EXT2_BLOCKS_PER_GROUP(sb)) + 1;
++	sbi->s_groups_count = ((le32_to_cpu(es->s_blocks_count) -
++				le32_to_cpu(es->s_first_data_block) - 1)
++					/ EXT2_BLOCKS_PER_GROUP(sb)) + 1;
+ 	db_count = (sbi->s_groups_count + EXT2_DESC_PER_BLOCK(sb) - 1) /
+ 		   EXT2_DESC_PER_BLOCK(sb);
+ 	sbi->s_group_desc = kmalloc_array (db_count,
 
 
