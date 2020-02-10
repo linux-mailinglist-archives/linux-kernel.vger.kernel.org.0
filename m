@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63063157AF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:26:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A2B9157769
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:00:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728483AbgBJMgn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:36:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54076 "EHLO mail.kernel.org"
+        id S1729874AbgBJMlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:41:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728158AbgBJMfy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:35:54 -0500
+        id S1729156AbgBJMie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:34 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5232A20838;
-        Mon, 10 Feb 2020 12:35:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 816D520838;
+        Mon, 10 Feb 2020 12:38:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338153;
-        bh=XEtgZaV6GaEQUR2wpTx5eSE3iu9dhQoZ5ofdCYCYJmM=;
+        s=default; t=1581338313;
+        bh=wvRUXqVNPq82KInHqkt30UgV8U5s4cc5ykq9tY+2ycg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=erQXBidJzhvpc5G+IRlnvOO//hKeKP8I/wNT5BOEb8C1kxJy3msdCDw+yGa4VZidt
-         BFOxMWCJkfBypY6ubC8jtPfNhP0Rlcfe7JOFg13qmPryWOISIPzR0Lowa41TrBMKlB
-         1bI1SpPWmBop82EE+5ITVOsbptnplQd7K57Bm1ig=
+        b=m5ggcDiRdCNQwbFwOdGbURQdYlu7+uGzfFEe1OCtR+SgL1ZNggXrCzCaSKmsDgbfK
+         IWNS/02tDez9ZQFFEA7afQPCFLhcZwNA2ugvn8ibehg05yL3LVr5EMZ8cQKgo4cEYe
+         tMB9MF9Td5Cc8XbEvuWKdYxSgNVIdoZthsZ+KAqs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 4.19 118/195] xen/balloon: Support xend-based toolstack take two
-Date:   Mon, 10 Feb 2020 04:32:56 -0800
-Message-Id: <20200210122316.917651317@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.4 221/309] KVM: x86: Free wbinvd_dirty_mask if vCPU creation fails
+Date:   Mon, 10 Feb 2020 04:32:57 -0800
+Message-Id: <20200210122427.780150087@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,47 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Juergen Gross <jgross@suse.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit eda4eabf86fd6806eaabc23fb90dd056fdac037b upstream.
+commit 16be9ddea268ad841457a59109963fff8c9de38d upstream.
 
-Commit 3aa6c19d2f38be ("xen/balloon: Support xend-based toolstack")
-tried to fix a regression with running on rather ancient Xen versions.
-Unfortunately the fix was based on the assumption that xend would
-just use another Xenstore node, but in reality only some downstream
-versions of xend are doing that. The upstream xend does not write
-that Xenstore node at all, so the problem must be fixed in another
-way.
+Free the vCPU's wbinvd_dirty_mask if vCPU creation fails after
+kvm_arch_vcpu_init(), e.g. when installing the vCPU's file descriptor.
+Do the freeing by calling kvm_arch_vcpu_free() instead of open coding
+the freeing.  This adds a likely superfluous, but ultimately harmless,
+call to kvmclock_reset(), which only clears vcpu->arch.pv_time_enabled.
+Using kvm_arch_vcpu_free() allows for additional cleanup in the future.
 
-The easiest way to achieve that is to fall back to the behavior
-before commit 96edd61dcf4436 ("xen/balloon: don't online new memory
-initially") in case the static memory maximum can't be read.
-
-This is achieved by setting static_max to the current number of
-memory pages known by the system resulting in target_diff becoming
-zero.
-
-Fixes: 3aa6c19d2f38be ("xen/balloon: Support xend-based toolstack")
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: <stable@vger.kernel.org> # 4.13
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Fixes: f5f48ee15c2ee ("KVM: VMX: Execute WBINVD to keep data consistency with assigned devices")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/xen/xen-balloon.c |    2 +-
+ arch/x86/kvm/x86.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/xen/xen-balloon.c
-+++ b/drivers/xen/xen-balloon.c
-@@ -83,7 +83,7 @@ static void watch_target(struct xenbus_w
- 				  "%llu", &static_max) == 1))
- 			static_max >>= PAGE_SHIFT - 10;
- 		else
--			static_max = new_target;
-+			static_max = balloon_stats.current_pages;
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -9180,7 +9180,7 @@ void kvm_arch_vcpu_destroy(struct kvm_vc
+ 	kvm_mmu_unload(vcpu);
+ 	vcpu_put(vcpu);
  
- 		target_diff = (xen_pv_domain() || xen_initial_domain()) ? 0
- 				: static_max - balloon_stats.target_pages;
+-	kvm_x86_ops->vcpu_free(vcpu);
++	kvm_arch_vcpu_free(vcpu);
+ }
+ 
+ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
 
 
