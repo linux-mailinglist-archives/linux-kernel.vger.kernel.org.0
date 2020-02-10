@@ -2,72 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5002157351
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 12:17:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 908C215735C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 12:22:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbgBJLRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 06:17:06 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:33548 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727621AbgBJLRE (ORCPT
+        id S1727516AbgBJLWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 06:22:49 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:10831 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726796AbgBJLWt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 06:17:04 -0500
-Received: by mail-ot1-f65.google.com with SMTP id b18so5960997otp.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 03:17:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Y0UD3fxGboZ2WyqDcVlDsabzbnFPIihaoicayUreTVg=;
-        b=YrU3x4UaniIYmnAMV+wmdkSvWq3CK0FZZFF6S0KuLkoh0EKwxpkKSsnWPHb/lxaIXe
-         UVySk5idQ5qRlKZrXY7PPWsE8iFaRRzEhW8lkkOQi0GLUxD6zIPWscoDG5wYCtyirs2A
-         FW5DRcO1NkUa5enqs4Tr6IGisGBJ/Zk1ewhcW0afJ6yJa2VLrLKwITKgac+T1TJ85l1A
-         r1OQJwrEVmZUCznnCmQwgqOREjcf9c5cbR8+UjYRm2k5+oh1FpHVonR5AsS61I4C0v+4
-         G2MlZ0xCtjX6EcXJZTACeBV1sFNmnWzOeJvEFk3JM8B3V+696SyXLZQ3d95rMoBfA/bL
-         JIZg==
-X-Gm-Message-State: APjAAAUNw9eL6z+foyJ7NpkzAokBW1XCQkazPeYq0ZgHkzS7x1KjwQdw
-        ftH138wKT8/zLwwDKy/t7bOJRzdOVEUTOwTm/+Z/WQ==
-X-Google-Smtp-Source: APXvYqzCVs32bgURSBMbsg+6XDD8UyxECagk6yMxU+gW2aLQrlWpc/JTi5OUAALgcPW5fn/275L4Q79SRVMmdSOd8ok=
-X-Received: by 2002:a05:6830:1d55:: with SMTP id p21mr657723oth.145.1581333423145;
- Mon, 10 Feb 2020 03:17:03 -0800 (PST)
+        Mon, 10 Feb 2020 06:22:49 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e413cfa0000>; Mon, 10 Feb 2020 03:22:34 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 10 Feb 2020 03:22:48 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 10 Feb 2020 03:22:48 -0800
+Received: from [10.24.44.92] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 10 Feb
+ 2020 11:22:43 +0000
+CC:     <spujar@nvidia.com>, <perex@perex.cz>, <tiwai@suse.com>,
+        <robh+dt@kernel.org>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sharadg@nvidia.com>, <mkumard@nvidia.com>,
+        <viswanathl@nvidia.com>, <rlokhande@nvidia.com>,
+        <dramesh@nvidia.com>, <atalambedu@nvidia.com>
+Subject: Re: [PATCH v2 0/9] add ASoC components for AHUB
+To:     Dmitry Osipenko <digetx@gmail.com>
+References: <1580380422-3431-1-git-send-email-spujar@nvidia.com>
+ <fcab0af1-fe84-6028-701b-ab101feaa8de@gmail.com>
+ <d17b2654-a888-8251-468d-12ef1451cd4b@nvidia.com>
+ <40a4d544-7c33-3f28-0b9c-384bc9fe3b53@gmail.com>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <3cb0642f-46be-26e0-4090-f82981538a09@nvidia.com>
+Date:   Mon, 10 Feb 2020 16:52:39 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-References: <20200112174854.2726-1-geert@linux-m68k.org> <55c34fc6-cac0-0c53-37d7-d46658a327fc@linux-m68k.org>
-In-Reply-To: <55c34fc6-cac0-0c53-37d7-d46658a327fc@linux-m68k.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 10 Feb 2020 12:16:52 +0100
-Message-ID: <CAMuHMdVeRYtrPHZ=CFPpStUwKwG6w69a-9KVWZPg2Te0wFqmJg@mail.gmail.com>
-Subject: Re: [PATCH] m68k: Switch to asm-generic/hardirq.h
-To:     Greg Ungerer <gerg@linux-m68k.org>
-Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <40a4d544-7c33-3f28-0b9c-384bc9fe3b53@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-GB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1581333754; bh=D0y6xeonACafAuD+vXIgDjhVKU1a9PB64HFqz8+HmFs=;
+        h=X-PGP-Universal:CC:Subject:To:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=Dv5g3JHfPme0U1x/ORxA4oCce9xyttHVQXD0j5xoFs+aLm48ch9H+pAjWSuWdcWdk
+         r+LsPCy2yiXMjnSbVTtZdri/kh/o9509s3MHd1nLsC2olV9tqPuEOdK0KAHXuVbDOD
+         4DI0YEtWXgk+uYbREBCO1po1FmGp+cfovfajz6aPAxA0o5LNKBHfdvJ3Kl+2k9Es9g
+         fGtQQ6ClCV6GH93GFDfbGY930t+a/g3rS3D1Acn6ihQMIXxopsWYt6rOSAgOqPUIpp
+         vFd2r/5OeHfK7TzehQm1ISfC0xPBmXVyt/AiAYtg2YJz1c5vyk1ULhmxQXAKD0oxT5
+         d2y7DBi8tyk2w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 2:59 AM Greg Ungerer <gerg@linux-m68k.org> wrote:
-> On 13/1/20 3:48 am, Geert Uytterhoeven wrote:
-> > Classic m68k with MMU was converted to generic hardirqs a long time ago,
-> > and there are no longer include dependency issues preventing the direct
-> > use of asm-generic/hardirq.h.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+
+On 2/7/2020 11:55 PM, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
 >
-> Looks good.
 >
-> Acked-by: Greg Ungerer <gerg@linux-m68k.org>
+> 07.02.2020 14:30, Sameer Pujar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>
+>> On 2/6/2020 11:06 PM, Dmitry Osipenko wrote:
+>>> External email: Use caution opening links or attachments
+>>>
+>>>
+>>> 30.01.2020 13:33, Sameer Pujar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> ...
+>>>>    sound/soc/tegra/Kconfig                            |=C2=A0 56 ++
+>>> Probably won't hurt to enable the new drivers in the
+>>> arch/arm64/configs/defconfig?
+>> Do you mean, if drivers can be enabled?
+> Yes, I mean to enable them in the default kernel configuration.
 
-Thanks, applied and queued for v5.7.
+Yes these can be enabled by default. I can push a defconfig patch, if=20
+that is what you were referring in the beginning.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
