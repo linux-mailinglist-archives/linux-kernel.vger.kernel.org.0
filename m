@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42574157598
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:42:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B6AC1576D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:55:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730202AbgBJMmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:42:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36236 "EHLO mail.kernel.org"
+        id S1730049AbgBJMzZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:55:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729346AbgBJMjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:39:11 -0500
+        id S1730075AbgBJMlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:41:49 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C13620842;
-        Mon, 10 Feb 2020 12:39:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B229B2080C;
+        Mon, 10 Feb 2020 12:41:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338350;
-        bh=lUrQunh0+ei5Hfb26Ok1sojhY0Gsu0vIGOsf4QwGHeE=;
+        s=default; t=1581338508;
+        bh=EoklstDWNnn2rWz0l7oezB9IjLDwq59jnrNWLRfUkFg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nDPt7tCzH1xDwWaix7PGUV7BS32knY1wITTHpe4kebh74g8Y+jZunSO+l1gHKIK61
-         tQnk4eh6ax+Gl8KnYi/E35DY+vIeBqZJ70LQplGNwCr6j1jVhxAdIexKRpmAJznIIR
-         oEdDog7e9k4O1onNiw3VQyZnrf3XtO7lya0mY8sY=
+        b=A/TGU23ZwtTK2L9YPJhG6cfR8RhGmg12oX+soGsU1pS7Ty8TSV+ZqBcgz34dpFG2a
+         VHSMQzrU0RiNEWI+tE5zhyOsev0rdNZqDB8r2rQHOcn4wrHJZPDM4RSc46KH9kCD36
+         /G3LD7ORCluAUT7icZxulTTtnhKjiu5A7h4RNEw0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Razvan Stefanescu <razvan.stefanescu@microchip.com>,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 268/309] net: dsa: microchip: enable module autoprobe
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 5.5 311/367] mfd: bd70528: Fix hour register mask
 Date:   Mon, 10 Feb 2020 04:33:44 -0800
-Message-Id: <20200210122432.417664343@linuxfoundation.org>
+Message-Id: <20200210122452.013434780@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,40 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Razvan Stefanescu <razvan.stefanescu@microchip.com>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 
-[ Upstream commit f8c2afa66d5397b0b9293c4347dac6dabb327685 ]
+commit 6c883472e1c11cb05561b6dd0c28bb037c2bf2de upstream.
 
-This matches /sys/devices/.../spi1.0/modalias content.
+When RTC is used in 24H mode (and it is by this driver) the maximum
+hour value is 24 in BCD. This occupies bits [5:0] - which means
+correct mask for HOUR register is 0x3f not 0x1f. Fix the mask
 
-Fixes: 9b2d9f05cddf ("net: dsa: microchip: add ksz9567 to ksz9477 driver")
-Fixes: d9033ae95cf4 ("net: dsa: microchip: add KSZ8563 compatibility string")
-Fixes: 8c29bebb1f8a ("net: dsa: microchip: add KSZ9893 switch support")
-Fixes: 45316818371d ("net: dsa: add support for ksz9897 ethernet switch")
-Fixes: b987e98e50ab ("dsa: add DSA switch driver for Microchip KSZ9477")
-Signed-off-by: Razvan Stefanescu <razvan.stefanescu@microchip.com>
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 32a4a4ebf768 ("rtc: bd70528: Initial support for ROHM bd70528 RTC")
+
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/dsa/microchip/ksz9477_spi.c |    6 ++++++
- 1 file changed, 6 insertions(+)
 
---- a/drivers/net/dsa/microchip/ksz9477_spi.c
-+++ b/drivers/net/dsa/microchip/ksz9477_spi.c
-@@ -101,6 +101,12 @@ static struct spi_driver ksz9477_spi_dri
- 
- module_spi_driver(ksz9477_spi_driver);
- 
-+MODULE_ALIAS("spi:ksz9477");
-+MODULE_ALIAS("spi:ksz9897");
-+MODULE_ALIAS("spi:ksz9893");
-+MODULE_ALIAS("spi:ksz9563");
-+MODULE_ALIAS("spi:ksz8563");
-+MODULE_ALIAS("spi:ksz9567");
- MODULE_AUTHOR("Woojung Huh <Woojung.Huh@microchip.com>");
- MODULE_DESCRIPTION("Microchip KSZ9477 Series Switch SPI access Driver");
- MODULE_LICENSE("GPL");
+---
+ include/linux/mfd/rohm-bd70528.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/include/linux/mfd/rohm-bd70528.h
++++ b/include/linux/mfd/rohm-bd70528.h
+@@ -317,7 +317,7 @@ enum {
+ #define BD70528_MASK_RTC_MINUTE		0x7f
+ #define BD70528_MASK_RTC_HOUR_24H	0x80
+ #define BD70528_MASK_RTC_HOUR_PM	0x20
+-#define BD70528_MASK_RTC_HOUR		0x1f
++#define BD70528_MASK_RTC_HOUR		0x3f
+ #define BD70528_MASK_RTC_DAY		0x3f
+ #define BD70528_MASK_RTC_WEEK		0x07
+ #define BD70528_MASK_RTC_MONTH		0x1f
 
 
