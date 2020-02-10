@@ -2,133 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61F3C15831D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 19:58:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 727FB158317
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 19:58:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbgBJS6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 13:58:50 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:53806 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727079AbgBJS6t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 13:58:49 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01AIr6ON050048;
-        Mon, 10 Feb 2020 18:58:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=wFgDz4N6HWtjN6jyjTPks3bbgtJyNVrIk8Z3sBNbVBc=;
- b=fcqt5M6noodBnOuPGFEJTZbnEFrLGIKpz+wS+uc60cxgEMn4xEwVWPq6pmVRkFG7HuKt
- 26SYjcUQQ2jkTGAqkPcWo8BIcAN5Luj6QT8q5s53VwxCYEqoGoBR/Ie5Z44ZHvCFpJHQ
- 1907YiDkYmuImKAQ/ezOGOnROImBT112+VlUXOjlB/WOE91rp+YebODgltvKmN3K27VB
- mPUihBJ0urDvSo4H63VEZYjBfNehbF2w6yN4KsGRsCNePeFsiGl2t01uWi9btfu6zgxD
- cDzwVQrXcG5twWGzEbA/JhkGW5KMH0Xifbvps+nbQg2rOtld5gLbYEUo+FFJ9ScA1Ucm Mg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2y2p3s6fax-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Feb 2020 18:58:08 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01AIw6NZ026611;
-        Mon, 10 Feb 2020 18:58:07 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2y26htg2wn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Feb 2020 18:58:07 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01AIw2p3018584;
-        Mon, 10 Feb 2020 18:58:02 GMT
-Received: from [192.168.1.206] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 10 Feb 2020 10:58:02 -0800
-Subject: Re: [PATCH] mm: always consider THP when adjusting min_free_kbytes
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     David Rientjes <rientjes@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Song Liu <songliubraving@fb.com>,
-        "Kirill A.Shutemov" <kirill.shutemov@linux.intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20200204194156.61672-1-mike.kravetz@oracle.com>
- <alpine.DEB.2.21.2002041218580.58724@chino.kir.corp.google.com>
- <8cc18928-0b52-7c2e-fbc6-5952eb9b06ab@oracle.com>
- <20200204215319.GO8731@bombadil.infradead.org>
- <b6979214-3f0e-6c12-ed63-681b40c6e16c@oracle.com>
- <2ba63021-d05c-a648-f280-6c751e01adf6@oracle.com>
- <20200206203945.GZ8731@bombadil.infradead.org>
- <5e7800f2-3df3-a597-c164-5537b7f66417@oracle.com>
- <20200206213255.GC8731@bombadil.infradead.org>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <b18a50de-9229-9cbe-3e78-9e0c92edc5f1@oracle.com>
-Date:   Mon, 10 Feb 2020 10:58:01 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727618AbgBJS6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 13:58:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34870 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727121AbgBJS6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 13:58:23 -0500
+Received: from localhost (unknown [104.132.1.111])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 475222085B;
+        Mon, 10 Feb 2020 18:58:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581361102;
+        bh=XhsDSqmZAV5GAixCR38jksBySp8eRi3o9QvzAGZo0T0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fIxlTXuChg1UrtQ3SPibVHWtPQcF/pz1KL2gIKL6c98MEEg8ZkvufcuMOuVVYDIu7
+         Y+Ark2JbEzwEmEDSqMSUsX17i4mlOva9YAwF//tnPztNFiCI1Wr3cWXUivWLPRB3/H
+         Bi6rOloB/jdx2IepZVYCBFyvlbcpd42Sy5XwxzfE=
+Date:   Mon, 10 Feb 2020 10:58:21 -0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     JC Kuo <jckuo@nvidia.com>
+Cc:     thierry.reding@gmail.com, robh@kernel.org, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
+        felipe.balbi@linux.intel.com
+Subject: Re: [PATCH v1] dt-binding: usb: add "super-speed-plus"
+Message-ID: <20200210185821.GA1057764@kroah.com>
+References: <20200113060046.14448-1-jckuo@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20200206213255.GC8731@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9527 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
- bulkscore=0 adultscore=0 malwarescore=0 suspectscore=2 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002100139
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9527 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 malwarescore=0
- suspectscore=2 mlxlogscore=999 priorityscore=1501 clxscore=1015
- impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002100138
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200113060046.14448-1-jckuo@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/6/20 1:32 PM, Matthew Wilcox wrote:
-> On Thu, Feb 06, 2020 at 01:23:21PM -0800, Mike Kravetz wrote:
->> On 2/6/20 12:39 PM, Matthew Wilcox wrote:
->>> On Wed, Feb 05, 2020 at 05:36:44PM -0800, Mike Kravetz wrote:
->>>> The value of min_free_kbytes is calculated in two routines:
->>>> 1) init_per_zone_wmark_min based on available memory
->>>> 2) set_recommended_min_free_kbytes may reserve extra space for
->>>>    THP allocations
->>>>
->>>> In both of these routines, a user defined min_free_kbytes value will
->>>> be overwritten if the value calculated in the code is larger. No message
->>>> is logged if the user value is overwritten.
->>>>
->>>> Change code to never overwrite user defined value.  However, do log a
->>>> message (once per value) showing the value calculated in code.
->>>
->>> But what if the user set min_free_kbytes to, say, half of system memory,
->>> and then hot-unplugs three quarters of their memory?  I think the kernel
->>> should protect itself against such foolishness.
->>
->> I'm not sure what we should set it to in this case.  Previously you said,
->>
->>>> I'm reluctant to suggest we do a more complex adjustment of the value
->>>> (eg figure out what the adjustment would have been, then apply some
->>>> fraction of that adjustment to keep the ratios in proportion) because
->>>> we don't really know why they adjusted it.
->>
->> So, I suspect you would suggest setting it to the default computed value?
->> But then, when do we start adjusting?  What if they only remove a small
->> amount of memory?  And, then add the same amount back in?
+On Mon, Jan 13, 2020 at 02:00:46PM +0800, JC Kuo wrote:
+> This commit adds "super-speed-plus" to valid argument list of
+> "maximum-speed" property.
 > 
-> I don't know about the default computed value ... we don't seem to have
-> any protection against the user setting min_free_kbytes to double the
-> amount of memory in the machine today.  Which would presumably cause
-> problems if I asked to maintain 32GB free at all times on my 16GB laptop?
-> 
-> Maybe we should have such protection?
+> Signed-off-by: JC Kuo <jckuo@nvidia.com>
+> ---
+>  Documentation/devicetree/bindings/usb/generic.txt | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 
-I am not going to attempt to define parameters for user defined values
-of min_free_kbytes.  Someone smarter than me can take that on.  Documentation
-is pretty clear that user is allowed to do bad things which will immediately
-cause them problems.
+What ever happened to this?  Did the DT developers see it?
 
-I'm going to explicitly send out the v2 version of patch.  It is not something
-I feel strongly about.  Just an attempt to clean up some inconsistencies
-observed while looking at something else.
--- 
-Mike Kravetz
+I suggest resending please so it gets into their queue to review.
+
+thanks,
+
+greg k-h
