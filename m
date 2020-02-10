@@ -2,102 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5094D1571C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 10:34:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EAF81571D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 10:36:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbgBJJe1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 04:34:27 -0500
-Received: from relay.sw.ru ([185.231.240.75]:59494 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727452AbgBJJeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 04:34:12 -0500
-Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104] helo=localhost.localdomain)
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1j15S8-0000Jp-4t; Mon, 10 Feb 2020 12:34:04 +0300
-Subject: [PATCH v6 6/6] loop: Add support for REQ_ALLOCATE
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-To:     martin.petersen@oracle.com, bob.liu@oracle.com, axboe@kernel.dk
-Cc:     agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
-        song@kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        Chaitanya.Kulkarni@wdc.com, darrick.wong@oracle.com,
-        ming.lei@redhat.com, osandov@fb.com, jthumshirn@suse.de,
-        minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
-        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
-        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
-        chaitanya.kulkarni@wdc.com, bvanassche@acm.org,
-        dhowells@redhat.com, asml.silence@gmail.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ktkhai@virtuozzo.com
-Date:   Mon, 10 Feb 2020 12:34:04 +0300
-Message-ID: <158132724397.239613.16927024926439560344.stgit@localhost.localdomain>
-In-Reply-To: <158132703141.239613.3550455492676290009.stgit@localhost.localdomain>
-References: <158132703141.239613.3550455492676290009.stgit@localhost.localdomain>
-User-Agent: StGit/0.19
+        id S1727433AbgBJJgc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 04:36:32 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:32858 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbgBJJgc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 04:36:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=KWSALxgD8DPKs4l9QdTGtfSb74FtrWq0gjEnbifVqg8=; b=OVaJfwr6gYS4lvSTolSKQURRnZ
+        bsUfpKOQXpyjcfuQ+GklUxLM+XPufwIZMez5WA9oXfzNCviUFc3Eci9Z6RbdboErXvezS5DW47NrS
+        h87x6BwSNYCSd7QS0SqVwk9mmQNNOwYqkeSdjJq2f0ay0q68Mw3Qm6H9hCIbux1Jwmh1nUDzXhAQ3
+        xf/TJEl+vBfQqP4JZCQkQxgcOU9y45+lDSkmGZGMbZj5oPNk0xBO99OacaScB7EqDQKeMUef8bfDi
+        7m957y9dq4zemVJNKh7uGaRVTVd4sl0BILUhr5oKPsr0h+VeGr1vnUyB9FcfFkC+IJ7mCa+xxx3Mx
+        HAFZmGnQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j15UQ-0002wT-4b; Mon, 10 Feb 2020 09:36:26 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DB5E73012D8;
+        Mon, 10 Feb 2020 10:34:35 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 15C602B1D5567; Mon, 10 Feb 2020 10:36:24 +0100 (CET)
+Date:   Mon, 10 Feb 2020 10:36:24 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Amol Grover <frextrite@gmail.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH] events: Annotate parent_ctx with __rcu
+Message-ID: <20200210093624.GB14879@hirez.programming.kicks-ass.net>
+References: <20200208144648.18833-1-frextrite@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200208144648.18833-1-frextrite@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support for new modifier of REQ_OP_WRITE_ZEROES command.
-This results in allocation extents in backing file instead
-of actual blocks zeroing.
+On Sat, Feb 08, 2020 at 08:16:49PM +0530, Amol Grover wrote:
+> parent_ctx is used under RCU context in kernel/events/core.c,
+> tell sparse about it aswell.
+> 
+> Fixes the following instances of sparse error:
+> kernel/events/core.c:3221:18: error: incompatible types in comparison
+> kernel/events/core.c:3222:23: error: incompatible types in comparison
+> 
+> This introduces the following two sparse errors:
+> kernel/events/core.c:3117:18: error: incompatible types in comparison
+> kernel/events/core.c:3121:30: error: incompatible types in comparison
+> 
+> Hence, use rcu_dereference() to access parent_ctx and silence
+> the newly introduced errors.
+> 
+> Signed-off-by: Amol Grover <frextrite@gmail.com>
+> ---
+>  include/linux/perf_event.h |  2 +-
+>  kernel/events/core.c       | 11 ++++++++---
+>  2 files changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index 6d4c22aee384..e18a7bdc6f98 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -810,7 +810,7 @@ struct perf_event_context {
+>  	 * These fields let us detect when two contexts have both
+>  	 * been cloned (inherited) from a common ancestor.
+>  	 */
+> -	struct perf_event_context	*parent_ctx;
+> +	struct perf_event_context __rcu	*parent_ctx;
+>  	u64				parent_gen;
+>  	u64				generation;
+>  	int				pin_count;
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 2173c23c25b4..2a8c5670b254 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -3106,26 +3106,31 @@ static void ctx_sched_out(struct perf_event_context *ctx,
+>  static int context_equiv(struct perf_event_context *ctx1,
+>  			 struct perf_event_context *ctx2)
+>  {
+> +	struct perf_event_context *parent_ctx1, *parent_ctx2;
+> +
+>  	lockdep_assert_held(&ctx1->lock);
+>  	lockdep_assert_held(&ctx2->lock);
+>  
+> +	parent_ctx1 = rcu_dereference(ctx1->parent_ctx);
+> +	parent_ctx2 = rcu_dereference(ctx2->parent_ctx);
 
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-Reviewed-by: Bob Liu <bob.liu@oracle.com>
----
- drivers/block/loop.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+Bah.
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 739b372a5112..bfe76d9adf09 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -581,6 +581,15 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
- 	return 0;
- }
- 
-+static unsigned int write_zeroes_to_fallocate_mode(unsigned int flags)
-+{
-+	if (flags & REQ_ALLOCATE)
-+		return 0;
-+	if (flags & REQ_NOUNMAP)
-+		return FALLOC_FL_ZERO_RANGE;
-+	return FALLOC_FL_PUNCH_HOLE;
-+}
-+
- static int do_req_filebacked(struct loop_device *lo, struct request *rq)
- {
- 	struct loop_cmd *cmd = blk_mq_rq_to_pdu(rq);
-@@ -604,9 +613,7 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
- 		 * write zeroes the range.  Otherwise, punch them out.
- 		 */
- 		return lo_fallocate(lo, rq, pos,
--			(rq->cmd_flags & REQ_NOUNMAP) ?
--				FALLOC_FL_ZERO_RANGE :
--				FALLOC_FL_PUNCH_HOLE);
-+			write_zeroes_to_fallocate_mode(rq->cmd_flags));
- 	case REQ_OP_DISCARD:
- 		return lo_fallocate(lo, rq, pos, FALLOC_FL_PUNCH_HOLE);
- 	case REQ_OP_WRITE:
-@@ -877,6 +884,7 @@ static void loop_config_discard(struct loop_device *lo)
- 		q->limits.discard_alignment = 0;
- 		blk_queue_max_discard_sectors(q, 0);
- 		blk_queue_max_write_zeroes_sectors(q, 0);
-+		blk_queue_max_allocate_sectors(q, 0);
- 		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
- 		return;
- 	}
-@@ -886,6 +894,7 @@ static void loop_config_discard(struct loop_device *lo)
- 
- 	blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
- 	blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
-+	blk_queue_max_allocate_sectors(q, UINT_MAX >> 9);
- 	blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
- }
- 
-
-
+Why are you  fixing all this sparse crap and making the code worse?
