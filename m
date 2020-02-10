@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D27A21579A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:17:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B97515776F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:00:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729423AbgBJNQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:16:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32860 "EHLO mail.kernel.org"
+        id S1729972AbgBJNAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:00:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728428AbgBJMiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:06 -0500
+        id S1728237AbgBJMlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:41:02 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9219C2080C;
-        Mon, 10 Feb 2020 12:38:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A18C924672;
+        Mon, 10 Feb 2020 12:41:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338285;
-        bh=YVThjQpsf9l33qhOjJ0BlF8aWW2+kSz21nSIDEyouM4=;
+        s=default; t=1581338461;
+        bh=BqnlbCiXH63Epcz+lc02oqm7krVwoZ59t11L6PvqMQs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rQuUw8JCH01yv41S2PMuxUPGhmU30Gi1Hw/NC+PG82HH0ul/nHJ2uIo9xDr/bUC5W
-         ZJ3udvIOsy0ReCsmnOdrzHldUfWb6WXi1fW1Us63vbVQkl1BWS/JD6Lz9YNMbjnlS4
-         JXYTSuN4W655nFHnhUX58Mk/eXADSP3TPenQ6NwI=
+        b=c+zPGGMEqjPlBy3jtPAYgQBTckHT4bmzRtz/1o6E3aa4go6FjvvCpddEaJQ8P65vO
+         Cxo/ClI2Wa2Pk/jIXMVco0mfIQ3e/wyOiB/Ii+fWYGG1ScCRo7g9om2+wolwQ6IsoH
+         JHTFXDI72ZO1NUH7c9xT4+c0dD8tCLPJCnBoRICQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.4 175/309] btrfs: drop log root for dropped roots
-Date:   Mon, 10 Feb 2020 04:32:11 -0800
-Message-Id: <20200210122423.241644538@linuxfoundation.org>
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH 5.5 219/367] xen/balloon: Support xend-based toolstack take two
+Date:   Mon, 10 Feb 2020 04:32:12 -0800
+Message-Id: <20200210122444.353771977@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,86 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Juergen Gross <jgross@suse.com>
 
-commit 889bfa39086e86b52fcfaa04d72c95eaeb12f9a5 upstream.
+commit eda4eabf86fd6806eaabc23fb90dd056fdac037b upstream.
 
-If we fsync on a subvolume and create a log root for that volume, and
-then later delete that subvolume we'll never clean up its log root.  Fix
-this by making switch_commit_roots free the log for any dropped roots we
-encounter.  The extra churn is because we need a btrfs_trans_handle, not
-the btrfs_transaction.
+Commit 3aa6c19d2f38be ("xen/balloon: Support xend-based toolstack")
+tried to fix a regression with running on rather ancient Xen versions.
+Unfortunately the fix was based on the assumption that xend would
+just use another Xenstore node, but in reality only some downstream
+versions of xend are doing that. The upstream xend does not write
+that Xenstore node at all, so the problem must be fixed in another
+way.
 
-CC: stable@vger.kernel.org # 5.4+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+The easiest way to achieve that is to fall back to the behavior
+before commit 96edd61dcf4436 ("xen/balloon: don't online new memory
+initially") in case the static memory maximum can't be read.
+
+This is achieved by setting static_max to the current number of
+memory pages known by the system resulting in target_diff becoming
+zero.
+
+Fixes: 3aa6c19d2f38be ("xen/balloon: Support xend-based toolstack")
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: <stable@vger.kernel.org> # 4.13
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/transaction.c |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ drivers/xen/xen-balloon.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/transaction.c
-+++ b/fs/btrfs/transaction.c
-@@ -77,13 +77,14 @@ void btrfs_put_transaction(struct btrfs_
- 	}
- }
+--- a/drivers/xen/xen-balloon.c
++++ b/drivers/xen/xen-balloon.c
+@@ -94,7 +94,7 @@ static void watch_target(struct xenbus_w
+ 				  "%llu", &static_max) == 1))
+ 			static_max >>= PAGE_SHIFT - 10;
+ 		else
+-			static_max = new_target;
++			static_max = balloon_stats.current_pages;
  
--static noinline void switch_commit_roots(struct btrfs_transaction *trans)
-+static noinline void switch_commit_roots(struct btrfs_trans_handle *trans)
- {
-+	struct btrfs_transaction *cur_trans = trans->transaction;
- 	struct btrfs_fs_info *fs_info = trans->fs_info;
- 	struct btrfs_root *root, *tmp;
- 
- 	down_write(&fs_info->commit_root_sem);
--	list_for_each_entry_safe(root, tmp, &trans->switch_commits,
-+	list_for_each_entry_safe(root, tmp, &cur_trans->switch_commits,
- 				 dirty_list) {
- 		list_del_init(&root->dirty_list);
- 		free_extent_buffer(root->commit_root);
-@@ -95,16 +96,17 @@ static noinline void switch_commit_roots
- 	}
- 
- 	/* We can free old roots now. */
--	spin_lock(&trans->dropped_roots_lock);
--	while (!list_empty(&trans->dropped_roots)) {
--		root = list_first_entry(&trans->dropped_roots,
-+	spin_lock(&cur_trans->dropped_roots_lock);
-+	while (!list_empty(&cur_trans->dropped_roots)) {
-+		root = list_first_entry(&cur_trans->dropped_roots,
- 					struct btrfs_root, root_list);
- 		list_del_init(&root->root_list);
--		spin_unlock(&trans->dropped_roots_lock);
-+		spin_unlock(&cur_trans->dropped_roots_lock);
-+		btrfs_free_log(trans, root);
- 		btrfs_drop_and_free_fs_root(fs_info, root);
--		spin_lock(&trans->dropped_roots_lock);
-+		spin_lock(&cur_trans->dropped_roots_lock);
- 	}
--	spin_unlock(&trans->dropped_roots_lock);
-+	spin_unlock(&cur_trans->dropped_roots_lock);
- 	up_write(&fs_info->commit_root_sem);
- }
- 
-@@ -1359,7 +1361,7 @@ static int qgroup_account_snapshot(struc
- 	ret = commit_cowonly_roots(trans);
- 	if (ret)
- 		goto out;
--	switch_commit_roots(trans->transaction);
-+	switch_commit_roots(trans);
- 	ret = btrfs_write_and_wait_transaction(trans);
- 	if (ret)
- 		btrfs_handle_fs_error(fs_info, ret,
-@@ -2245,7 +2247,7 @@ int btrfs_commit_transaction(struct btrf
- 	list_add_tail(&fs_info->chunk_root->dirty_list,
- 		      &cur_trans->switch_commits);
- 
--	switch_commit_roots(cur_trans);
-+	switch_commit_roots(trans);
- 
- 	ASSERT(list_empty(&cur_trans->dirty_bgs));
- 	ASSERT(list_empty(&cur_trans->io_bgs));
+ 		target_diff = (xen_pv_domain() || xen_initial_domain()) ? 0
+ 				: static_max - balloon_stats.target_pages;
 
 
