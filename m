@@ -2,101 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D14B81584D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 22:35:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C965158512
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 22:40:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbgBJVfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 16:35:24 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45027 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727414AbgBJVfY (ORCPT
+        id S1727606AbgBJVkj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 16:40:39 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46601 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727003AbgBJVkj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 16:35:24 -0500
-Received: by mail-pl1-f196.google.com with SMTP id d9so3334313plo.11
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 13:35:23 -0800 (PST)
+        Mon, 10 Feb 2020 16:40:39 -0500
+Received: by mail-ot1-f68.google.com with SMTP id g64so7932163otb.13;
+        Mon, 10 Feb 2020 13:40:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Pgc2HVuzTlOApbzWYuf2GztwyECo8PvV+6g1YsZKtqs=;
-        b=FcoSNlc8G46a88gf7LS2JXGZXa8BZmfldccNMAMTh3HMkmZOR4Y8ND7XRhLaQj5h0I
-         WZqK/wAnvKP6Y48qAfNScuBN+HWy/nLxY+XY+oabNXOWTfDqZ7Xevxd5K+s+7wr5es1C
-         U41MhQ+QE9oECxJt6BnWNJNQEvJlsFTjNqClM=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Z/D6Fd99EbdIRz8ar+s3m0b7qLUHgWkFrp8oH1lTC6A=;
+        b=Q0RyMKKV63X2bmF78nEErgFcwotd6neuItsYU4LwBKwxVF1x1/mnHCvSZcyI/G429k
+         /Wz/LQnmozI+fBN114EE9TGwx9a1miAj93zul4vvpZBmLyMk2twKCANBwNGH1hHjIr3L
+         n1rocDYnP1qNQ87+7pdnn0j64kZqy6/GMPPTh9hXBvJhhS0i7wrOpAShjk/7bDqF1mcj
+         DonHc0JulP0HxCyWatS4bwWDmOznBI2aZIk9n7S/RLT+q+5kieyc54sUrA4G346J+hLZ
+         Bc4olaL7uMVCJt3XY5pcOPsl611BjF2J2LFH5smdo72E9GEJvMYA9+MiSN7F/u2/zj0f
+         EzUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Pgc2HVuzTlOApbzWYuf2GztwyECo8PvV+6g1YsZKtqs=;
-        b=f8mD3pe1xpVc8Dqq8KdT53uzPyBywiCEaKG8bew0J4rODweKypkl2ASRBrgO6Fgubb
-         nWXmZMhFgvw80U/P4SwO+sdH2OVMWrkwaJn3SY1ufjaSFC9VJL0UDP1y1zySt2GYNoOE
-         j8sqcP/CrL+v5BpD3/BdA3xCXoR6VRV3UhFnJhyY8cmcomKIVzrc/wUnkA1y1jujQsM9
-         j0oc5CwRTKEEwGLlE5IpUea/ZiImFuBjcL6sKkPBrcMoMt3gtvjNQzI6vyt1UmTC2Z51
-         Gr9/41AAckXagVku/sytLbmTL44vNvEHfESe6tYTw23JdXQjwO6sv8/1VzPkwvw9wcDW
-         yUGw==
-X-Gm-Message-State: APjAAAVE+qqbFy8/Ae7K4R0ShfBXHKKKGrJgaVpfyv/GteEYCzOj+eLS
-        8NjYHmsiEucGZP27mfhX4FgG9A==
-X-Google-Smtp-Source: APXvYqzWAJ6Ldly+R57YNfK4lMRkzu3aoVy8A/bfws1EkVQVTJVWLD4vAGFwyFhESIze/ueYbw7EZw==
-X-Received: by 2002:a17:902:6184:: with SMTP id u4mr15038014plj.198.1581370523419;
-        Mon, 10 Feb 2020 13:35:23 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id p18sm622130pjo.3.2020.02.10.13.35.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Feb 2020 13:35:22 -0800 (PST)
-Date:   Mon, 10 Feb 2020 13:35:21 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Sandeep Maheswaram <sanm@codeaurora.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>
-Subject: Re: [PATCH v2 0/3] Add QMP V3 USB3 PHY support for SC7180
-Message-ID: <20200210213521.GD18972@google.com>
-References: <1578486581-7540-1-git-send-email-sanm@codeaurora.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Z/D6Fd99EbdIRz8ar+s3m0b7qLUHgWkFrp8oH1lTC6A=;
+        b=Ed5C5mLsh7LqyeaBg2vboJyCuDmHI2fd50yL8RNeOaYRZqh7ivGRlbhSGJwHA4l/ao
+         IGZfVs/HiMU5eTHDACru7nW9giOtod+FprWAa7R3FVthBjwcNQ2wAYsSTOKPK4mez/hg
+         SlemoFAskUM/UojWSB/iFGoikpnEACqjvg/psnRbGie9U9UNo5iU18pfrWdnUpaL+8Ep
+         Bgi1DamOmq62SitQekXeKm72yUJX5lc4AVLxvoikEJea8Qol5l9poCRVf+i2cyQYU8fG
+         7fVL8kOMHc7jRNttoCtJFx8y06FBC08J/zRBIOch88kuRyaUYddCKbkVAKPcc2ww0slG
+         a2Cw==
+X-Gm-Message-State: APjAAAUt3va7bM9OU5/HG0AMd5SLG5IgOVDQQzaTzsNqLDyMz1ITe5ai
+        zvvp8PhDrwytUhTWo+WnMLs=
+X-Google-Smtp-Source: APXvYqxNmihm3JVRVAFEn1lgn/R6hIt1si+G0//DzErMD0wN763tJOE1i+a3izS5kp51lR7bu22qmA==
+X-Received: by 2002:a05:6830:1615:: with SMTP id g21mr2783459otr.49.1581370838369;
+        Mon, 10 Feb 2020 13:40:38 -0800 (PST)
+Received: from [100.71.96.87] ([143.166.81.254])
+        by smtp.gmail.com with ESMTPSA id n75sm486799ota.68.2020.02.10.13.40.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Feb 2020 13:40:37 -0800 (PST)
+Subject: Re: [PATCH v3] PCI: pciehp: Make sure pciehp_isr clears interrupt
+ events
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Austin Bolen <austin_bolen@dell.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, narendra_k@dell.com
+References: <20200207195450.52026-1-stuart.w.hayes@gmail.com>
+ <20200209150328.2x2zumhqbs6fihmc@wunner.de>
+ <20200209180722.ikuyjignnd7ddfp5@wunner.de>
+ <20200209202512.rzaqoc7tydo2ouog@wunner.de>
+From:   Stuart Hayes <stuart.w.hayes@gmail.com>
+Message-ID: <0f772c73-5616-ae7c-6808-ecefac8ebf13@gmail.com>
+Date:   Mon, 10 Feb 2020 15:40:36 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <20200209202512.rzaqoc7tydo2ouog@wunner.de>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1578486581-7540-1-git-send-email-sanm@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sandeep,
 
-this series has outstanding comments, do you plan to respin it soon?
 
-Thanks
+On 2/9/20 2:25 PM, Lukas Wunner wrote:
+> On Sun, Feb 09, 2020 at 07:07:22PM +0100, Lukas Wunner wrote:
+>> Actually, scratch that.  After thinking about this problem for a day
+>> I've come up with a much simpler and more elegant solution.  Could you
+>> test if the below works for you?
+> 
+> Sorry, I missed a few things:
+> 
+> * pm_runtime_put() is called too often in the MSI case.
+> * If only the CC bit is set or if ignore_hotplug is set, the function
+>   may return prematurely without re-reading the Slot Status register.
+> * Returning IRQ_NONE in the MSI case even though the IRQ thread was woken
+>   may incorrectly signal a spurious interrupt to the genirq code.
+>   It's better to return IRQ_HANDLED instead.
+> 
+> Below is another attempt.  I'll have to take a look at this with a
+> fresh pair of eyeballs though to verify I haven't overlooked anything
+> else and also to determine if this is actually simpler than Stuart's
+> approach.  Again, the advantage here is that processing of the events
+> by the IRQ thread is sped up by not delaying it until the Slot Status
+> register has settled.
+> 
+> Thanks.
+> 
+> -- >8 --
+> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+> index c3e3f53..db5baa5 100644
+> --- a/drivers/pci/hotplug/pciehp_hpc.c
+> +++ b/drivers/pci/hotplug/pciehp_hpc.c
+> @@ -530,6 +530,7 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
+>  	struct controller *ctrl = (struct controller *)dev_id;
+>  	struct pci_dev *pdev = ctrl_dev(ctrl);
+>  	struct device *parent = pdev->dev.parent;
+> +	irqreturn_t ret = IRQ_NONE;
+>  	u16 status, events;
+>  
+>  	/*
+> @@ -553,6 +554,7 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
+>  		}
+>  	}
+>  
+> +read_status:
+>  	pcie_capability_read_word(pdev, PCI_EXP_SLTSTA, &status);
+>  	if (status == (u16) ~0) {
+>  		ctrl_info(ctrl, "%s: no response from device\n", __func__);
+> @@ -579,13 +581,11 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
+>  	if (!events) {
+>  		if (parent)
+>  			pm_runtime_put(parent);
+> -		return IRQ_NONE;
+> +		return ret;
+>  	}
+>  
+>  	pcie_capability_write_word(pdev, PCI_EXP_SLTSTA, events);
+>  	ctrl_dbg(ctrl, "pending interrupts %#06x from Slot Status\n", events);
+> -	if (parent)
+> -		pm_runtime_put(parent);
+>  
+>  	/*
+>  	 * Command Completed notifications are not deferred to the
+> @@ -595,21 +595,33 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
+>  		ctrl->cmd_busy = 0;
+>  		smp_mb();
+>  		wake_up(&ctrl->queue);
+> -
+> -		if (events == PCI_EXP_SLTSTA_CC)
+> -			return IRQ_HANDLED;
+> -
+>  		events &= ~PCI_EXP_SLTSTA_CC;
+>  	}
+>  
+>  	if (pdev->ignore_hotplug) {
+>  		ctrl_dbg(ctrl, "ignoring hotplug event %#06x\n", events);
+> -		return IRQ_HANDLED;
+> +		events = 0;
+>  	}
+>  
+>  	/* Save pending events for consumption by IRQ thread. */
+>  	atomic_or(events, &ctrl->pending_events);
+> -	return IRQ_WAKE_THREAD;
+> +
+> +	/*
+> +	 * In MSI mode, all event bits must be zero before the port will send
+> +	 * a new interrupt (PCIe Base Spec r5.0 sec 6.7.3.4).  So re-read the
+> +	 * Slot Status register in case a bit was set between read and write.
+> +	 */
+> +	if (pci_dev_msi_enabled(pdev) && !pciehp_poll_mode) {
+> +		irq_wake_thread(irq, ctrl);
+> +		ret = IRQ_HANDLED;
+> +		goto read_status;
+> +	}
+> +
+> +	if (parent)
+> +		pm_runtime_put(parent);
+> +	if (events)
+> +		return IRQ_WAKE_THREAD;
+> +	return IRQ_HANDLED;
+>  }
+>  
+>  static irqreturn_t pciehp_ist(int irq, void *dev_id)
+> 
 
-Matthias
-
-On Wed, Jan 08, 2020 at 05:59:38PM +0530, Sandeep Maheswaram wrote:
-> Add QMP V3 USB3 PHY entries for SC7180 in phy driver and
-> device tree bindings.
-> 
-> changes in v2:
-> *Remove global phy reset in QMP phy.
-> *Convert QMP phy bindings to yaml.
-> 
-> Sandeep Maheswaram (3):
->   phy: qcom-qmp: Add QMP V3 USB3 PHY support for SC7180
->   arm64: dts: qcom: sc7180: Remove global phy reset in QMP phy
->   dt-bindings: phy: qcom,qmp: Convert QMP phy bindings to yaml
-> 
->  .../devicetree/bindings/phy/qcom,qmp-phy.yaml      | 201 ++++++++++++++++++
->  .../devicetree/bindings/phy/qcom-qmp-phy.txt       | 227 ---------------------
->  arch/arm64/boot/dts/qcom/sc7180.dtsi               |   5 +-
->  drivers/phy/qualcomm/phy-qcom-qmp.c                |  38 ++++
->  4 files changed, 241 insertions(+), 230 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/phy/qcom,qmp-phy.yaml
->  delete mode 100644 Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-> 
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
-> 
+I tested this patch, and it fixes the issue on my system.
