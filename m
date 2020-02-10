@@ -2,226 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41D56157057
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 09:12:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D0CC157041
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 09:11:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727671AbgBJIMl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 03:12:41 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:8845 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727646AbgBJIMi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 03:12:38 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e41105a0000>; Mon, 10 Feb 2020 00:12:10 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 10 Feb 2020 00:12:37 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 10 Feb 2020 00:12:37 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 10 Feb
- 2020 08:12:36 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 10 Feb 2020 08:12:36 +0000
-Received: from nkristam-ubuntu.nvidia.com (Not Verified[10.19.67.128]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e4110710000>; Mon, 10 Feb 2020 00:12:36 -0800
-From:   Nagarjuna Kristam <nkristam@nvidia.com>
-To:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mark.rutland@arm.com>, <robh+dt@kernel.org>, <kishon@ti.com>
-CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V5 04/21] phy: tegra: xusb: Add usb-phy support
-Date:   Mon, 10 Feb 2020 13:41:30 +0530
-Message-ID: <1581322307-11140-5-git-send-email-nkristam@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1581322307-11140-1-git-send-email-nkristam@nvidia.com>
-References: <1581322307-11140-1-git-send-email-nkristam@nvidia.com>
-X-NVConfidentiality: public
+        id S1727496AbgBJILe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 03:11:34 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40974 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725468AbgBJILe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 03:11:34 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 5B319AF4E;
+        Mon, 10 Feb 2020 08:11:32 +0000 (UTC)
+From:   Jiri Slaby <jslaby@suse.cz>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH 1/2] vt: selection, handle pending signals in paste_selection
+Date:   Mon, 10 Feb 2020 09:11:30 +0100
+Message-Id: <20200210081131.23572-1-jslaby@suse.cz>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1581322330; bh=RDr+f4VWDdPuVBNBVCOfEX4NxvDpI3sfd78jG4l5fGU=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=YT/PO7aisR6GHUc1Rf5jttL9AcnBdKXkDSS4lNS6IVnIhmsrYrgudNU//F8pZ9tG9
-         PaSQSC2lydXVPt72sI0S+C1I8JZPlulFzCqWbg6tOMyZcdXhw9034Q10jJSy1R0JGX
-         3rLYqlE1YQfyZTXGSapp2Q7DUxNMsqfAegrTS826qRxUsM7zy2yRr8JoAxzE2jxclO
-         NCuSMqBS9qU7lHGz4b2E88hOPBy/y5064KVxtb3Mu+LI7imx4pbHWLelM4iprjorYn
-         jq7GqwDG1aOYQk9sjoJhpAlj7r5B96qtN4X8TwlWdNdFijExs2WBBMPTogHAaZ+Jvw
-         zIhkL4SsDr20A==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For USB 2 ports that has usb-role-switch enabled, add usb-phy for
-corresponding USB 2 phy. USB role changes from role switch are then
-updated to corresponding host and device mode drivers via usb-phy notifier
-block.
+When pasting a selection to a vt, the task is set as INTERRUPTIBLE while
+waiting for a tty to unthrottle. But signals are not handled at all.
+Normally, this is not a problem as tty_ldisc_receive_buf receives all
+the goods and a user has no reason to interrupt the task.
 
-Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
----
-V5:
- - No changes.
----
-V4:
- - Addressed nit comments from Thierry.
- - usb_phy_event is set accoring to received usb_role.
- - Added Acked-by info.
-V3:
- - Updated arguments and variable allignments as per Thierry inputs.
----
-V2:
- - Added dev_set_drvdata for port->dev.
----
- drivers/phy/tegra/xusb.c | 84 ++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/phy/tegra/xusb.h |  2 ++
- 2 files changed, 86 insertions(+)
+There are two scenarios where this matters:
+1) when the tty is throttled and a signal is sent to the process, it
+   spins on a CPU until the tty is unthrottled. schedule() does not
+   really echedule, but returns immediately, of course.
+2) when the sel_buffer becomes invalid, KASAN prevents any reads from it
+   and the loop simply does not proceed and spins forever (causing the
+   tty to throttle, but the code never sleeps, the same as above). This
+   sometimes happens as there is a race in the sel_buffer handling code.
 
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index 0fdbaa2..2c0e29c 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -532,6 +532,8 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
- 	if (err < 0)
- 		goto unregister;
+So add signal handling to this ioctl (TIOCL_PASTESEL) and return -EINTR
+in case a signal is pending.
+
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+---
+ drivers/tty/vt/selection.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/vt/selection.c b/drivers/tty/vt/selection.c
+index 78732feaf65b..44d974d4159f 100644
+--- a/drivers/tty/vt/selection.c
++++ b/drivers/tty/vt/selection.c
+@@ -29,6 +29,8 @@
+ #include <linux/console.h>
+ #include <linux/tty_flip.h>
  
-+	dev_set_drvdata(&port->dev, port);
++#include <linux/sched/signal.h>
 +
- 	return 0;
+ /* Don't take this from <ctype.h>: 011-015 on the screen aren't spaces */
+ #define isspace(c)	((c) == ' ')
  
- unregister:
-@@ -544,6 +546,8 @@ static void tegra_xusb_port_unregister(struct tegra_xusb_port *port)
- 	if (!IS_ERR_OR_NULL(port->usb_role_sw)) {
- 		of_platform_depopulate(&port->dev);
- 		usb_role_switch_unregister(port->usb_role_sw);
-+		cancel_work_sync(&port->usb_phy_work);
-+		usb_remove_phy(&port->usb_phy);
- 	}
+@@ -350,6 +352,7 @@ int paste_selection(struct tty_struct *tty)
+ 	unsigned int count;
+ 	struct  tty_ldisc *ld;
+ 	DECLARE_WAITQUEUE(wait, current);
++	int ret = 0;
  
- 	device_unregister(&port->dev);
-@@ -562,15 +566,70 @@ static const char * const usb_roles[] = {
- 	[USB_ROLE_DEVICE]	= "device",
- };
+ 	console_lock();
+ 	poke_blanked_console();
+@@ -363,6 +366,10 @@ int paste_selection(struct tty_struct *tty)
+ 	add_wait_queue(&vc->paste_wait, &wait);
+ 	while (sel_buffer && sel_buffer_lth > pasted) {
+ 		set_current_state(TASK_INTERRUPTIBLE);
++		if (signal_pending(current)) {
++			ret = -EINTR;
++			break;
++		}
+ 		if (tty_throttled(tty)) {
+ 			schedule();
+ 			continue;
+@@ -378,6 +385,6 @@ int paste_selection(struct tty_struct *tty)
  
-+static enum usb_phy_events to_usb_phy_event(enum usb_role role)
-+{
-+	switch (role) {
-+	case USB_ROLE_DEVICE: return USB_EVENT_VBUS;
-+	case USB_ROLE_HOST: return USB_EVENT_ID;
-+	default: return USB_EVENT_NONE;
-+	}
-+}
-+
-+static void tegra_xusb_usb_phy_work(struct work_struct *work)
-+{
-+	struct tegra_xusb_port *port = container_of(work,
-+						    struct tegra_xusb_port,
-+						    usb_phy_work);
-+	enum usb_role role = usb_role_switch_get_role(port->usb_role_sw);
-+
-+	usb_phy_set_event(&port->usb_phy, to_usb_phy_event(role));
-+
-+	dev_dbg(&port->dev, "%s(): calling notifier for role %s\n", __func__,
-+		usb_roles[role]);
-+
-+	atomic_notifier_call_chain(&port->usb_phy.notifier, 0, &port->usb_phy);
-+}
-+
- static int tegra_xusb_role_sw_set(struct device *dev, enum usb_role role)
- {
-+	struct tegra_xusb_port *port = dev_get_drvdata(dev);
-+
- 	dev_dbg(dev, "%s(): role %s\n", __func__, usb_roles[role]);
- 
-+	schedule_work(&port->usb_phy_work);
-+
-+	return 0;
-+}
-+
-+static int tegra_xusb_set_peripheral(struct usb_otg *otg,
-+				     struct usb_gadget *gadget)
-+{
-+	struct tegra_xusb_port *port = container_of(otg->usb_phy,
-+						    struct tegra_xusb_port,
-+						    usb_phy);
-+
-+	if (gadget != NULL)
-+		schedule_work(&port->usb_phy_work);
-+
- 	return 0;
+ 	tty_buffer_unlock_exclusive(&vc->port);
+ 	tty_ldisc_deref(ld);
+-	return 0;
++	return ret;
  }
- 
-+static int tegra_xusb_set_host(struct usb_otg *otg, struct usb_bus *host)
-+{
-+	struct tegra_xusb_port *port = container_of(otg->usb_phy,
-+						    struct tegra_xusb_port,
-+						    usb_phy);
-+
-+	if (host != NULL)
-+		schedule_work(&port->usb_phy_work);
-+
-+	return 0;
-+}
-+
-+
- static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
- {
-+	struct tegra_xusb_lane *lane;
- 	struct usb_role_switch_desc role_sx_desc = {
- 		.fwnode = dev_fwnode(&port->dev),
- 		.set = tegra_xusb_role_sw_set,
-@@ -597,6 +656,31 @@ static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
- 		return err;
- 	}
- 
-+	INIT_WORK(&port->usb_phy_work, tegra_xusb_usb_phy_work);
-+
-+	port->usb_phy.otg = devm_kzalloc(&port->dev, sizeof(struct usb_otg),
-+					 GFP_KERNEL);
-+	if (!port->usb_phy.otg)
-+		return -ENOMEM;
-+
-+	lane = tegra_xusb_find_lane(port->padctl, "usb2", port->index);
-+
-+	/*
-+	 * Assign phy dev to usb-phy dev. Host/device drivers can use phy
-+	 * reference to retrieve usb-phy details.
-+	 */
-+	port->usb_phy.dev = &lane->pad->lanes[port->index]->dev;
-+	port->usb_phy.dev->driver = port->padctl->dev->driver;
-+	port->usb_phy.otg->usb_phy = &port->usb_phy;
-+	port->usb_phy.otg->set_peripheral = tegra_xusb_set_peripheral;
-+	port->usb_phy.otg->set_host = tegra_xusb_set_host;
-+
-+	err = usb_add_phy_dev(&port->usb_phy);
-+	if (err < 0) {
-+		dev_err(&port->dev, "Failed to add USB PHY: %d\n", err);
-+		return err;
-+	}
-+
- 	/* populate connector entry */
- 	of_platform_populate(port->dev.of_node, NULL, NULL, &port->dev);
- 
-diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
-index 9f27899..2345657 100644
---- a/drivers/phy/tegra/xusb.h
-+++ b/drivers/phy/tegra/xusb.h
-@@ -268,6 +268,8 @@ struct tegra_xusb_port {
- 	struct device dev;
- 
- 	struct usb_role_switch *usb_role_sw;
-+	struct work_struct usb_phy_work;
-+	struct usb_phy usb_phy;
- 
- 	const struct tegra_xusb_port_ops *ops;
- };
+ EXPORT_SYMBOL_GPL(paste_selection);
 -- 
-2.7.4
+2.25.0
 
