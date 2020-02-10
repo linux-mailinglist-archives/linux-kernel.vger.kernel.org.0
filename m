@@ -2,156 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E46461571EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 10:42:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 698D51571E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 10:41:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbgBJJmU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 04:42:20 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51732 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727029AbgBJJmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 04:42:18 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id ACD13AF8C;
-        Mon, 10 Feb 2020 09:42:16 +0000 (UTC)
-From:   Roman Penyaev <rpenyaev@suse.de>
-Cc:     Roman Penyaev <rpenyaev@suse.de>,
-        Max Neunhoeffer <max@arangodb.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Christopher Kohlhoff <chris.kohlhoff@clearpool.io>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        Jason Baron <jbaron@akamai.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] kselftest: introduce new epoll test case
-Date:   Mon, 10 Feb 2020 10:41:23 +0100
-Message-Id: <20200210094123.389854-3-rpenyaev@suse.de>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200210094123.389854-1-rpenyaev@suse.de>
-References: <20200210094123.389854-1-rpenyaev@suse.de>
+        id S1727507AbgBJJl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 04:41:58 -0500
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:51037 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726950AbgBJJl5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 04:41:57 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 4428A21A97;
+        Mon, 10 Feb 2020 04:41:54 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Mon, 10 Feb 2020 04:41:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=d9UVYjOFvIhqvu/YHII/qZzXr7G
+        ct38JABDmCn0w5X8=; b=F8jbaGgZDT1zY6FziFyoGrH3wIfbJuPJ73uKI0lkfHv
+        vCi+Pc4X+lIEp08xpgBcD5xGp9t9atMo0Gj0oWynWeNryrVfs/BwlQpSzZcSqAJG
+        vsSBQAdUddK5Lp8vRCwz6khYegKe2o5n7jcnw6BTR5doVtnH60Vhe0ndMTn8+CU3
+        4NAfNmjzEaPup0NiXBymdL8oZmZlIhDw/WjpwVTtKtde5laTJeMmFcvh3oq4HisD
+        +mJTh1Xg1w8gulkp9Um/J6k8Rwj4c3j16QYhtPVx20u0TDsh+dtpbFakhTp5/end
+        WqV/pzp8QopoXaH/8cS1fbQsg75uzzwNz3RFE9/I4gQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=d9UVYj
+        OFvIhqvu/YHII/qZzXr7Gct38JABDmCn0w5X8=; b=fEq3Z14vxDFoPUpI8LNKnT
+        1po7RhhotquPwjoZMoiG522U0RLNM+kL15EwORlMY7ROqKtt1biz6UenZoElBn+P
+        Ongy9vWxFy7Q+0BAjIibG9UYs1TSSLr0t83Q8D7MARwlIiubQD0mH6OfbG6vfi5H
+        Q54LjaYQ61mFDOvBKdvxH9c6ehPf9C+5KElxKLkdSMj9duEtmCr8YXZnkVQ5MnY3
+        8eZFWp6VNlYYuFj6cMTLurWA0apyF7BMO/Fcjw7XlfR8rqA0hNz/frWHGox8qsFF
+        7x0aU/SxygcaB3wGoge15EGHmh4X3QLyun7BV+0BNPodPwqqSDLttE9GJl/t+ALg
+        ==
+X-ME-Sender: <xms:YSVBXrZdgESm-gLNg8o2FjfJ8kFqNc3s10vMd8n0mXnZwWYcp9r2Ug>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedriedugddtiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffukfhfgggtuggjsehgtderre
+    dttddvnecuhfhrohhmpeforgigihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghr
+    nhhordhtvggthheqnecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordht
+    vggthh
+X-ME-Proxy: <xmx:YSVBXguuX4srb9zEpsDxIHDKbieKrmlSaTvfNSxo31KSrDqBv5OZQQ>
+    <xmx:YSVBXqpTd2D-cb2Z-ObYq0wSWBgYy7vThsHVJJIRPI4A4JuUbRVvlw>
+    <xmx:YSVBXgTUaMzlrsKvm9yshoBxnRBwLMvjeXyVaPqEp1cahlaCeg9DWg>
+    <xmx:YiVBXmCnnFqkmhuNBJnGYWlcsJGl2vDH_y_SNEEukQenm-d7gt8hJg>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 6E65D3060717;
+        Mon, 10 Feb 2020 04:41:53 -0500 (EST)
+Date:   Mon, 10 Feb 2020 10:41:51 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     agriveaux@deutnet.info
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: sun5i: Add dts for inet86v_rev2
+Message-ID: <20200210094151.acim7h4yladgluc7@gilmour.lan>
+References: <20200210092736.3208998-1-agriveaux@deutnet.info>
+ <20200210092736.3208998-2-agriveaux@deutnet.info>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="i5c7nphjkfrh5sot"
+Content-Disposition: inline
+In-Reply-To: <20200210092736.3208998-2-agriveaux@deutnet.info>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This testcase repeats epollbug.c from the bug:
 
-  https://bugzilla.kernel.org/show_bug.cgi?id=205933
+--i5c7nphjkfrh5sot
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-What it tests? It tests the race between epoll_ctl() and epoll_wait().
-New event mask passed to epoll_ctl() triggers wake up, which can be
-missed because of the bug described in the link.  Reproduction is 100%,
-so easy to fix. Kudos, Max, for wonderful testcase.
+Hi,
 
-Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
-Cc: Max Neunhoeffer <max@arangodb.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Christopher Kohlhoff <chris.kohlhoff@clearpool.io>
-Cc: Davidlohr Bueso <dbueso@suse.de>
-Cc: Jason Baron <jbaron@akamai.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- Nothing interesting in v2:
-     changed the comment a bit
+On Mon, Feb 10, 2020 at 10:27:36AM +0100, agriveaux@deutnet.info wrote:
+> From: Alexandre GRIVEAUX <agriveaux@deutnet.info>
+>
+> Add Inet 86V Rev 2 support, based upon Inet 86VS.
+>
+> Missing things:
+> - Accelerometer (MXC6225X)
+> - Touchpanel (Sitronix SL1536)
+> - Nand (29F32G08CBACA)
+> - Camera (HCWY0308)
 
- .../filesystems/epoll/epoll_wakeup_test.c     | 67 ++++++++++++++++++-
- 1 file changed, 66 insertions(+), 1 deletion(-)
+Same thing than for U-Boot, you're missing your SoB.
 
-diff --git a/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c b/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
-index 37a04dab56f0..11eee0b60040 100644
---- a/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
-+++ b/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
-@@ -7,13 +7,14 @@
- #include <pthread.h>
- #include <sys/epoll.h>
- #include <sys/socket.h>
-+#include <sys/eventfd.h>
- #include "../../kselftest_harness.h"
- 
- struct epoll_mtcontext
- {
- 	int efd[3];
- 	int sfd[4];
--	int count;
-+	volatile int count;
- 
- 	pthread_t main;
- 	pthread_t waiter;
-@@ -3071,4 +3072,68 @@ TEST(epoll58)
- 	close(ctx.sfd[3]);
- }
- 
-+static void *epoll59_thread(void *ctx_)
-+{
-+	struct epoll_mtcontext *ctx = ctx_;
-+	struct epoll_event e;
-+	int i;
-+
-+	for (i = 0; i < 100000; i++) {
-+		while (ctx->count == 0)
-+			;
-+
-+		e.events = EPOLLIN | EPOLLERR | EPOLLET;
-+		epoll_ctl(ctx->efd[0], EPOLL_CTL_MOD, ctx->sfd[0], &e);
-+		ctx->count = 0;
-+	}
-+
-+	return NULL;
-+}
-+
-+/*
-+ *        t0
-+ *      (p) \
-+ *           e0
-+ *     (et) /
-+ *        e0
-+ *
-+ * Based on https://bugzilla.kernel.org/show_bug.cgi?id=205933
-+ */
-+TEST(epoll59)
-+{
-+	pthread_t emitter;
-+	struct pollfd pfd;
-+	struct epoll_event e;
-+	struct epoll_mtcontext ctx = { 0 };
-+	int i, ret;
-+
-+	signal(SIGUSR1, signal_handler);
-+
-+	ctx.efd[0] = epoll_create1(0);
-+	ASSERT_GE(ctx.efd[0], 0);
-+
-+	ctx.sfd[0] = eventfd(1, 0);
-+	ASSERT_GE(ctx.sfd[0], 0);
-+
-+	e.events = EPOLLIN | EPOLLERR | EPOLLET;
-+	ASSERT_EQ(epoll_ctl(ctx.efd[0], EPOLL_CTL_ADD, ctx.sfd[0], &e), 0);
-+
-+	ASSERT_EQ(pthread_create(&emitter, NULL, epoll59_thread, &ctx), 0);
-+
-+	for (i = 0; i < 100000; i++) {
-+		ret = epoll_wait(ctx.efd[0], &e, 1, 1000);
-+		ASSERT_GT(ret, 0);
-+
-+		while (ctx.count != 0)
-+			;
-+		ctx.count = 1;
-+	}
-+	if (pthread_tryjoin_np(emitter, NULL) < 0) {
-+		pthread_kill(emitter, SIGUSR1);
-+		pthread_join(emitter, NULL);
-+	}
-+	close(ctx.efd[0]);
-+	close(ctx.sfd[0]);
-+}
-+
- TEST_HARNESS_MAIN
--- 
-2.24.1
+> ---
+>  arch/arm/boot/dts/sun5i-a13-inet-86v-rev2.dts | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/sun5i-a13-inet-86v-rev2.dts
+>
+> diff --git a/arch/arm/boot/dts/sun5i-a13-inet-86v-rev2.dts b/arch/arm/boot/dts/sun5i-a13-inet-86v-rev2.dts
+> new file mode 100644
+> index 000000000000..e73abb9a1e32
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/sun5i-a13-inet-86v-rev2.dts
+> @@ -0,0 +1,17 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright 2020 Alexandre Griveaux <agriveaux@deutnet.info>
+> + *
+> + * Minimal dts file for the iNet 86V
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "sun5i-a13.dtsi"
+> +#include "sun5i-reference-design-tablet.dtsi"
+> +
+> +/ {
+> +	model = "iNET 86V Rev 02";
+> +	compatible = "inet,86v-rev2", "allwinner,sun5i-a13";
+> +
+> +};
 
+If it's exactly the same device, why do we need another device tree?
+
+Maxime
+
+--i5c7nphjkfrh5sot
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXkElXwAKCRDj7w1vZxhR
+xVqQAP0WqaoWFqiHegUKPvKlv56b9oGniB5VpWmrxYdYEA2xdAEA72tUhIcb89Xk
+YbyBfShDx6jSAVf/b7hvE/yy2ZX+ogw=
+=YSHF
+-----END PGP SIGNATURE-----
+
+--i5c7nphjkfrh5sot--
