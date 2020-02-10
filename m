@@ -2,151 +2,233 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6350A158444
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 21:30:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 060DA158436
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 21:24:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbgBJUaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 15:30:11 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36072 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727056AbgBJUaL (ORCPT
+        id S1727540AbgBJUXz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 15:23:55 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:34162 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727437AbgBJUXz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 15:30:11 -0500
-Received: by mail-qt1-f194.google.com with SMTP id t13so6233792qto.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 12:30:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rBGfXWGvSNHuOXIBGZlPItb5PRw9RMp9e06MvCgujCw=;
-        b=x47rc5foaVZNrWkyWYHuGgsBgYc4U1L1DmHRs74Ie0inMjqKnmh4b3g6nsPnDsXGAZ
-         PK12pynX5W778k4JgdnJQFbcstqmgbU4p5DC/XVkCQeFDGj5X7lknFCywSb6P1T1dWq5
-         S9W0pxfSl/yPBZ+aMdDmuFgFbp2cTyp3vIPJs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rBGfXWGvSNHuOXIBGZlPItb5PRw9RMp9e06MvCgujCw=;
-        b=G5if3mFTHJT+dUrNLYLTt5JeohvvEw6gUCzAnHGhGca23oG0DmYP5iY0r/Y8TN8BQl
-         FLkRq4Ejq8vZY0sMQYpIJDFfookpUkpK+qopC06LmIKr+TARkQrWyLfewFyQ5BQkoyLc
-         aXLlnD5Hf9GDptGU26G+qTWiYYa/kvkunApS/glPa9yHY3rqJmUNP+ySHQOACJKWiqE/
-         AcK/bfuuSSrB4MWWWbQ9S7XNcEIMB6BN3l3g4ULCIScYdqBqEDvCpU7C00yadO1v+3Zc
-         qG/oorDjvMcRB7hOE/l/krIqRsweXOTDYsSzivocWu7lW7k1Kk8l8jp8KiOS0ko5EZC9
-         6k7A==
-X-Gm-Message-State: APjAAAUcg00mgYIfAJlahOoIzSNxNM3+DfaTDu2xkT5ielB5cC5n7cO1
-        8dyn1dU8gvN9Df4qcZD8yKQ+bA==
-X-Google-Smtp-Source: APXvYqxnN1gZoon6tuXHN5hO86FnC+G5KzzCM0+zIbCkUB5Qkmz/A15k0o56lEN53jZyFJBKK0jiag==
-X-Received: by 2002:ac8:1e90:: with SMTP id c16mr11546777qtm.265.1581366609542;
-        Mon, 10 Feb 2020 12:30:09 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id 135sm747180qkj.55.2020.02.10.12.30.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2020 12:30:09 -0800 (PST)
-Date:   Mon, 10 Feb 2020 15:30:08 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Richard Fontana <rfontana@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        paulmck <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Subject: Re: [RFC 0/3] Revert SRCU from tracepoint infrastructure
-Message-ID: <20200210203008.GA84085@google.com>
-References: <20200207205656.61938-1-joel@joelfernandes.org>
- <1997032737.615438.1581179485507.JavaMail.zimbra@efficios.com>
- <20200210094616.GC14879@hirez.programming.kicks-ass.net>
- <20200210120552.1a06a7aa@gandalf.local.home>
- <1966694237.616758.1581355984287.JavaMail.zimbra@efficios.com>
- <20200210133045.3beb774e@gandalf.local.home>
- <20200210195302.GA231192@google.com>
- <20200210150348.7d0979e6@gandalf.local.home>
+        Mon, 10 Feb 2020 15:23:55 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01AKNIko012856;
+        Mon, 10 Feb 2020 14:23:18 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1581366198;
+        bh=M1Td7beGKvgKckRxRbYjVwuAHcQVfdb9OrWelO0p1/M=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=tcXcOcurD0Qrn1wq7WRo9pz0XiELk9+01wOeqvdq9G59S2RStj7Hm6y+K0X++4R7x
+         MwcahzVNop3u00CdBtmSiSDQ6/wDBQSp2yR0n6QCc++HOtIEELIagEEzbd1aNezo7M
+         ZWa8pS3fDjpP7Zq0hzQAWf9hLaLXvh/cFfeWr/b4=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01AKNI2f127064
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Feb 2020 14:23:18 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 10
+ Feb 2020 14:23:18 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 10 Feb 2020 14:23:18 -0600
+Received: from [158.218.117.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01AKNGFq056049;
+        Mon, 10 Feb 2020 14:23:16 -0600
+Subject: Re: [v1,net-next, 1/2] ethtool: add setting frame preemption of
+ traffic classes
+To:     Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+        Vladimir Oltean <olteanv@gmail.com>
+CC:     Po Liu <po.liu@nxp.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "hauke.mehrtens@intel.com" <hauke.mehrtens@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "allison@lohutok.net" <allison@lohutok.net>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "saeedm@mellanox.com" <saeedm@mellanox.com>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "alexandru.ardelean@analog.com" <alexandru.ardelean@analog.com>,
+        "jiri@mellanox.com" <jiri@mellanox.com>,
+        "ayal@mellanox.com" <ayal@mellanox.com>,
+        "pablo@netfilter.org" <pablo@netfilter.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "simon.horman@netronome.com" <simon.horman@netronome.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Alexandru Marginean <alexandru.marginean@nxp.com>,
+        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
+        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
+        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>
+References: <20191127094517.6255-1-Po.Liu@nxp.com>
+ <87v9p93a2s.fsf@linux.intel.com>
+ <9b13a47e-8ca3-66b0-063c-798a5fa71149@ti.com>
+ <CA+h21hqk2pCfrQg5kC6HzmL=eEqJXjuRsu+cVkGsEi8OXGpKJA@mail.gmail.com>
+ <87d0bajc3l.fsf@linux.intel.com>
+From:   Murali Karicheri <m-karicheri2@ti.com>
+Message-ID: <70deb628-d7bc-d2a3-486d-d3e53854c06e@ti.com>
+Date:   Mon, 10 Feb 2020 15:30:37 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200210150348.7d0979e6@gandalf.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87d0bajc3l.fsf@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+Hi,
 
-On Mon, Feb 10, 2020 at 03:03:48PM -0500, Steven Rostedt wrote:
-> On Mon, 10 Feb 2020 14:53:02 -0500
-> Joel Fernandes <joel@joelfernandes.org> wrote:
+
+On 01/23/2020 12:50 PM, Vinicius Costa Gomes wrote:
+> Hi,
 > 
-> > > diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-> > > index 1fb11daa5c53..a83fd076a312 100644
-> > > --- a/include/linux/tracepoint.h
-> > > +++ b/include/linux/tracepoint.h
-> > > @@ -179,10 +179,8 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
-> > >  		 * For rcuidle callers, use srcu since sched-rcu	\
-> > >  		 * doesn't work from the idle path.			\
-> > >  		 */							\
-> > > -		if (rcuidle) {						\
-> > > +		if (rcuidle)						\
-> > >  			__idx = srcu_read_lock_notrace(&tracepoint_srcu);\
-> > > -			rcu_irq_enter_irqson();				\
-> > > -		}							\  
-> > 
-> > This would still break out-of-tree modules or future code that does
-> > rcu_read_lock() right in a tracepoint callback right?
+> Vladimir Oltean <olteanv@gmail.com> writes:
 > 
-> Yes, and that's fine.
+>> Hi Murali,
+>>
+>> On Wed, 22 Jan 2020 at 20:04, Murali Karicheri <m-karicheri2@ti.com> wrote:
+>>>
+>>> I have question about the below parameters in The Gate Parameter Table
+>>> that are not currently supported by tc command. Looks like they need to
+>>> be shown to user for management.
+>>>
+>>>       - ConfigChange - Looks like this needs to be controlled by
+>>>         user. After sending admin command, user send this trigger to start
+>>>         copying admin schedule to operation schedule. Is this getting
+>>>         added to tc command?
+>>
+>> "The ConfigChange parameter signals the start of a
+>> configuration change for the gate
+>> when it is set to TRUE. This should only be done
+>> when the various administrative parameters
+>> are all set to appropriate values."
+>>
+>> As far as my understanding goes, all tc-taprio commands currently
+>> behave as though this boolean is implicitly set to TRUE after the
+>> structures have been set up. I'm not sure there is any value in doing
+>> otherwise.
+>>
+>>>       - ConfigChangeTime - The time at which the administrative variables
+>>>         that determine the cycle are to be copied across to the
+>>>         corresponding operational variables, expressed as a PTP timescale
+>>
+>> This is the base-time of the admin schedule, no?
+>>
+>> "The PTPtime at which the next config change is scheduled to occur.
+>> The value is a representation of a PTPtime value,
+>> consisting of a 48-bit integer
+>> number of seconds and a 32-bit integer number of nanoseconds."
+>>
+>>>       - TickGranularity - the management parameters specified in Gate
+>>>         Parameter Table allow a management station to discover the
+>>>         characteristics of an implementation’s cycle timer clock
+>>>         (TickGranularity) and to set the parameters for the gating cycle
+>>>         accordingly.
+>>
+>> Not sure who is going to use this and for what purpose, but ok.
+>>
+>>>       - ConfigPending - A Boolean variable, set TRUE to indicate that
+>>>         there is a new cycle configuration awaiting installation.
+>>
+>> I had tried to export something like this (driver calls back into
+>> sch_taprio.c when hw has applied the config, this would result in
+>> ConfigPending = FALSE), but ultimately didn't finish the idea, and it
+>> caused some problems too, due to incorrect RCU usage.
+>>
 > 
-> > 
-> > Or are we saying that rcu_read_lock() in a tracepoint callback is not
-> > allowed? I believe this should then at least be documented somewhere.  Also,
+> If this should be exported, this should be done from taprio, perhaps
+> adding a new field to what is exported via the dump() callback, which
+> should be quite easy.
+>
+We are still working to send a patch for taprio offload on our hardware
+and it may take a while to get to this. So if someone can help to add
+the required kernel/driver interface for this, that will be great!
+
+>>>       - ConfigChangeError - Error in configuration (AdminBaseTime <
+>>>         CurrentTime)
+>>
+>> This can be exported similarly.
 > 
-> No, it's only not allowed if you you attached to a tracepoint that can
-> be called without rcu watching. That's up to the caller to figure it
-> out. Tracepoints were never meant to be a generic thing people should
-> use without knowing what they are really doing.
+> In my view, having this as a "runtime" error is not useful, as we can
+> verify this at configuration time.
 
-Ok, right.
+Looks like this is not an error per 802.1Q standard if I understood it
+correctly.
 
-> > what about code in tracepoint callback that calls rcu_read_lock() indirectly
-> > through a path in the kernel, and also code that may expect RCU readers when
-> > doing preempt_disable()?
+This is what I see.
+=======================================================================
+ From 802.1Q 2018, 8.6.9.1.1 SetCycleStartTime()
+
+If AdminBaseTime is set to the same time in the past in all bridges and
+end stations, OperBaseTime is always in the past, and all cycles start
+synchronized. Using AdminBaseTime in the past is appropriate when you
+can start schedules prior to starting the application that uses the
+schedules. Use of AdminBaseTime in the future is intended to change a
+currently running schedule in all bridges and end stations to a new
+schedule at a future time. Using AdminBaseTime in the future is
+appropriate when schedules must be changed without stopping the
+application
+========================================================================
+
 > 
-> Then they need to know what they are doing.
-
-Ok.
-
-> > So basically we are saying with this patch:
-> > 1. Don't call in a callback: rcu_read_lock() or preempt_disable() and expect RCU to do
-> > anything for you.
+>>
+>>>       - SupportedListMax - Maximum supported Admin/Open shed list.
+>>>
+>>> Is there a plan to export these from driver through tc show or such
+>>> command? The reason being, there would be applications developed to
+>>> manage configuration/schedule of TSN nodes that would requires these
+>>> information from the node. So would need a support either in tc or
+>>> some other means to retrieve them from hardware or driver. That is my
+>>> understanding...
+>>>
 > 
-> We can just say, "If you plan on using RCU, be aware that it man not be
-> watching and you get do deal with the fallout. Use rcu_is_watching() to
-> figure it out."
-
-Ok.
-
-> > 2. Don't call code that does anything that 1. needs.
-> > 
-> > Is that intended? thanks,
-> > 
+> Hm, now I understamd what you meant here...
 > 
-> No, look what the patch did for perf. Why make *all* callbacks suffer
-> if only some use RCU? If you use RCU from a callback, then you need to
-> figure it out. The same goes for attaching to the function tracer.
+>>
+>> Not sure what answer you expect to receive for "is there any plan".
+>> You can go ahead and propose something, as long as it is reasonably
+>> useful to have.
+> 
+> ... if this is indeed useful, perhaps one way to do is to add a subcommand
+> to TC_SETUP_QDISC_TAPRIO, so we can retrieve the stats/information we want
+> from the driver. Similar to what cls_flower does.
+> 
 
-Only the callbacks on the rcuidle ones would suffer though, not all
-callbacks.
+What I understand is that there will be some work done to allow auto
+configuration of TSN nodes from user space and that would need access to
+all or some of the above parameters along with tc command to configure
+the same. May be a open source project for this or some custom
+application? Any such projects existing??
 
-Yes I saw the patch, it looks like a good idea to me and I am Ok with it.
+Regards,
 
-thanks,
+Murali
+>>
+>>> Regards,
+>>>
+>>> Murali
+>>>
+>>> --
+>>> Murali Karicheri
+>>> Texas Instruments
+>>
+>> Thanks,
+>> -Vladimir
+> 
+> Cheers,
+> --
+> Vinicius
+> 
 
- - Joel
-
-
+-- 
+Murali Karicheri
+Texas Instruments
