@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CD3C15766C
+	by mail.lfdr.de (Postfix) with ESMTP id E2D3315766D
 	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:53:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730338AbgBJMmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:42:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37606 "EHLO mail.kernel.org"
+        id S1730088AbgBJMmx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:42:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729440AbgBJMje (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:39:34 -0500
+        id S1729446AbgBJMjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:39:35 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84D8E20733;
-        Mon, 10 Feb 2020 12:39:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 916F820661;
+        Mon, 10 Feb 2020 12:39:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338373;
-        bh=U0zQcrD8B/Cl5/bp3cWObm1nBR8sbM5Dlvaf0yc0KW8=;
+        s=default; t=1581338374;
+        bh=jS83w47p1mXqjnFe6p2467wdGU/BA9mLrI7pCQeZL54=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AHv9/lkKgN3NaIDnLka7tMJ+ERAUucSNanYc8mvoJg8xK7eqJqqYMkiN8tkI9j65l
-         9qwvkb/tthLtAjdByRWGTUYDTcMPGZ9nBCSs4LyT7hV5M2usCG8qNFcR1bUfZHuIm6
-         zQrGi27CJiMltGlGGoLjLJXwOM6dItEcKXFnGGfY=
+        b=TAjuNOY5/9aEfsV9CfFyjxFopicZTT1+zNs3KZPbvVUlRZjh3oostIgwMHjVeoEI9
+         +0OuHB0x0dSEWDyVNiZYA2wcN/mht3/eXxthYgpwltWPS+/pinV82nNeL4F9ks/VeL
+         eS5KQbf+DizEsAG2B1bzs71ct19Vent75FtSkVK0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 5.5 046/367] objtool: Silence build output
-Date:   Mon, 10 Feb 2020 04:29:19 -0800
-Message-Id: <20200210122428.290777184@linuxfoundation.org>
+        stable@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
+        Felipe Balbi <balbi@kernel.org>
+Subject: [PATCH 5.5 048/367] usb: gadget: legacy: set max_speed to super-speed
+Date:   Mon, 10 Feb 2020 04:29:21 -0800
+Message-Id: <20200210122428.478442017@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -44,35 +43,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olof Johansson <olof@lixom.net>
+From: Roger Quadros <rogerq@ti.com>
 
-commit 6ec14aa7a58a1c2fb303692f8cb1ff82d9abd10a upstream.
+commit 463f67aec2837f981b0a0ce8617721ff59685c00 upstream.
 
-The sync-check.sh script prints out the path due to a "cd -" at the end
-of the script, even on silent builds. This isn't even needed, since the
-script is executed in our build instead of sourced (so it won't change
-the working directory of the surrounding build anyway).
+These interfaces do support super-speed so let's not
+limit maximum speed to high-speed.
 
-Just remove the cd to make the build silent.
-
-Fixes: 2ffd84ae973b ("objtool: Update sync-check.sh from perf's check-headers.sh")
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/cb002857fafa8186cfb9c3e43fb62e4108a1bab9.1579543924.git.jpoimboe@redhat.com
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/objtool/sync-check.sh |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/usb/gadget/legacy/cdc2.c  |    2 +-
+ drivers/usb/gadget/legacy/g_ffs.c |    2 +-
+ drivers/usb/gadget/legacy/multi.c |    2 +-
+ drivers/usb/gadget/legacy/ncm.c   |    2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
---- a/tools/objtool/sync-check.sh
-+++ b/tools/objtool/sync-check.sh
-@@ -48,5 +48,3 @@ check arch/x86/include/asm/inat.h     '-
- check arch/x86/include/asm/insn.h     '-I "^#include [\"<]\(asm/\)*inat.h[\">]"'
- check arch/x86/lib/inat.c             '-I "^#include [\"<]\(../include/\)*asm/insn.h[\">]"'
- check arch/x86/lib/insn.c             '-I "^#include [\"<]\(../include/\)*asm/in\(at\|sn\).h[\">]" -I "^#include [\"<]\(../include/\)*asm/emulate_prefix.h[\">]"'
--
--cd -
+--- a/drivers/usb/gadget/legacy/cdc2.c
++++ b/drivers/usb/gadget/legacy/cdc2.c
+@@ -225,7 +225,7 @@ static struct usb_composite_driver cdc_d
+ 	.name		= "g_cdc",
+ 	.dev		= &device_desc,
+ 	.strings	= dev_strings,
+-	.max_speed	= USB_SPEED_HIGH,
++	.max_speed	= USB_SPEED_SUPER,
+ 	.bind		= cdc_bind,
+ 	.unbind		= cdc_unbind,
+ };
+--- a/drivers/usb/gadget/legacy/g_ffs.c
++++ b/drivers/usb/gadget/legacy/g_ffs.c
+@@ -149,7 +149,7 @@ static struct usb_composite_driver gfs_d
+ 	.name		= DRIVER_NAME,
+ 	.dev		= &gfs_dev_desc,
+ 	.strings	= gfs_dev_strings,
+-	.max_speed	= USB_SPEED_HIGH,
++	.max_speed	= USB_SPEED_SUPER,
+ 	.bind		= gfs_bind,
+ 	.unbind		= gfs_unbind,
+ };
+--- a/drivers/usb/gadget/legacy/multi.c
++++ b/drivers/usb/gadget/legacy/multi.c
+@@ -482,7 +482,7 @@ static struct usb_composite_driver multi
+ 	.name		= "g_multi",
+ 	.dev		= &device_desc,
+ 	.strings	= dev_strings,
+-	.max_speed	= USB_SPEED_HIGH,
++	.max_speed	= USB_SPEED_SUPER,
+ 	.bind		= multi_bind,
+ 	.unbind		= multi_unbind,
+ 	.needs_serial	= 1,
+--- a/drivers/usb/gadget/legacy/ncm.c
++++ b/drivers/usb/gadget/legacy/ncm.c
+@@ -197,7 +197,7 @@ static struct usb_composite_driver ncm_d
+ 	.name		= "g_ncm",
+ 	.dev		= &device_desc,
+ 	.strings	= dev_strings,
+-	.max_speed	= USB_SPEED_HIGH,
++	.max_speed	= USB_SPEED_SUPER,
+ 	.bind		= gncm_bind,
+ 	.unbind		= gncm_unbind,
+ };
 
 
