@@ -2,74 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1477915838B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 20:26:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03E3B1583E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 20:45:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbgBJT00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 14:26:26 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:41522 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727003AbgBJT0Z (ORCPT
+        id S1727675AbgBJTo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 14:44:58 -0500
+Received: from gateway20.websitewelcome.com ([192.185.69.18]:33402 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727003AbgBJTo5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 14:26:25 -0500
-Received: by mail-ed1-f66.google.com with SMTP id c26so1689324eds.8;
-        Mon, 10 Feb 2020 11:26:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=A9Cj+87fpHuJUDB5pTL1c5qUUiVRuZkzWGgHfyxXfd4=;
-        b=Wg3kkPkxx7MBTAvKKjV3vTKg+kj70ANBz/vbEPUtKlVouF0kH/USz5UGWPW2pGqf3k
-         d3FGieEcdUdRKpwzhOuclS43sXY0nqYpfI5C7jaCOB+PXCXoKH0tcWIkES6RvUIHhQ44
-         0F5dXVJB4OIehRJFC5pzIJc6lQiWpDRHpwOFfEiUc3zoVv9lLDLgLvdRhTdli/7dPH2c
-         TpZ/C1+72uuVd934uPEfji7CkXG+mTq8ASLfZL0xRrJVGxe4L4YvWi3W5x356P05lfCW
-         LJDSkKzXwDYPSXfr/t5+pTIzU5tW3VXkNGrb4Vei4NsNFk10tSx2kz+ZJEg9u2AhL9y7
-         dGsw==
-X-Gm-Message-State: APjAAAWbkk8YiL+slIIX/jgAB0ttL7Fp9TQ+9KqTow96MCQr/+4nDeqS
-        woCoZYVvUdBArALq4UeXAZ3rcHWNZCM=
-X-Google-Smtp-Source: APXvYqyE6lihHWFDfgdtANnknAzo3u1h7XL/1rgXUN+exu2qPVkKC/1PeCKkHaXWWvmvWCTYLoHKcQ==
-X-Received: by 2002:a05:6402:1755:: with SMTP id v21mr2522428edx.49.1581362782628;
-        Mon, 10 Feb 2020 11:26:22 -0800 (PST)
-Received: from kozik-lap ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id bs4sm79813edb.16.2020.02.10.11.26.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Feb 2020 11:26:21 -0800 (PST)
-Date:   Mon, 10 Feb 2020 20:26:19 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: exynos: Add GPU thermal zone cooling maps
- for Odroid XU3/XU4/HC1
-Message-ID: <20200210192619.GB27658@kozik-lap>
-References: <CGME20200121070520eucas1p29587eed877efcf6e6b9433440f3c10da@eucas1p2.samsung.com>
- <20200121070510.31520-1-m.szyprowski@samsung.com>
+        Mon, 10 Feb 2020 14:44:57 -0500
+X-Greylist: delayed 1232 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Feb 2020 14:44:57 EST
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id F2140400CCD53
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 12:10:53 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 1EfQj9VRSRP4z1EfQjbaNm; Mon, 10 Feb 2020 13:24:24 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=zLJ411YQzZxcjVivpQCSqDHQIKFunCgqDuGk0Y1oDF8=; b=fXZGvH4sfeNwBs35dvxc4x9IO/
+        lGre/eexYjTS79Tv1LTUpIErCF+xC5pMY88XXQBE/ddM44YBKPFEyw+u5ILAQjMYL01Ehq00BAnpF
+        vV8szZbddEA/RgJvXUg/F9/NCrmhJbItNsy7Sm1HUwuDSqEW/BbsQo3Lqqm2V8SQcK2aAHQ43hOCW
+        KT+l7tcrI4cxNKeexSxXg8U+VlW4D48xCs/pslMnOF/s8LT/ch67cGMiWoPaAcFOsAhGBOax5AU4Q
+        u72GiAmyKX6QpUGOshCh2LPBTQFFzObVeWpnNkdOxyy8ac4ovu4z3vMeEh+A0XYsQyaDQKlqU3wK5
+        TpSPyqNw==;
+Received: from [200.68.141.48] (port=6223 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j1EfO-0013oR-Te; Mon, 10 Feb 2020 13:24:23 -0600
+Date:   Mon, 10 Feb 2020 13:26:56 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Thor Thayer <thor.thayer@linux.intel.com>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] i2c: altera: Use 64-bit arithmetic instead of 32-bit
+Message-ID: <20200210192656.GA8412@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200121070510.31520-1-m.szyprowski@samsung.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.141.48
+X-Source-L: No
+X-Exim-ID: 1j1EfO-0013oR-Te
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [200.68.141.48]:6223
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 08:05:10AM +0100, Marek Szyprowski wrote:
-> Add trip points and cooling maps for GPU thermal zone for Odroid
-> XU3/XU4/HC1 boards. Trip points are based on the CPU thermal zone for the
-> those boards.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> v2:
-> - removed polling-delay related properties for HC1 as requested by Krzysztof
-> --
->  arch/arm/boot/dts/exynos5422-odroidhc1.dts    | 30 ++++++++++
->  .../boot/dts/exynos5422-odroidxu3-common.dtsi | 59 +++++++++++++++++++
+Add suffix ULL to constant 300 in order to avoid a potential integer
+overflow and give the compiler complete information about the proper
+arithmetic to use. Notice that this constant is being used in a context
+that expects an expression of type u64, but it's currently evaluated
+using 32-bit arithmetic.
 
-Thanks, applied.
+Addresses-Coverity: 1458369 ("Unintentional integer overflow")
+Fixes: 0560ad576268 ("i2c: altera: Add Altera I2C Controller driver")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/i2c/busses/i2c-altera.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/i2c/busses/i2c-altera.c b/drivers/i2c/busses/i2c-altera.c
+index 5255d3755411..526f453f0ff7 100644
+--- a/drivers/i2c/busses/i2c-altera.c
++++ b/drivers/i2c/busses/i2c-altera.c
+@@ -171,7 +171,8 @@ static void altr_i2c_init(struct altr_i2c_dev *idev)
+ 	/* SCL Low Time */
+ 	writel(t_low, idev->base + ALTR_I2C_SCL_LOW);
+ 	/* SDA Hold Time, 300ns */
+-	writel(div_u64(300 * clk_mhz, 1000), idev->base + ALTR_I2C_SDA_HOLD);
++	writel(div_u64(300ULL * clk_mhz, 1000),
++	       idev->base + ALTR_I2C_SDA_HOLD);
+ 
+ 	/* Mask all master interrupt bits */
+ 	altr_i2c_int_enable(idev, ALTR_I2C_ALL_IRQ, false);
+-- 
+2.25.0
 
