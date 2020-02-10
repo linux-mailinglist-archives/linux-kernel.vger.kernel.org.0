@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65780157AB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:25:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 790A115799B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:17:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728602AbgBJMhB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:37:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54478 "EHLO mail.kernel.org"
+        id S1731009AbgBJNQs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:16:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728209AbgBJMgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:01 -0500
+        id S1728320AbgBJMiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:07 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDBBA20863;
-        Mon, 10 Feb 2020 12:36:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9378B20733;
+        Mon, 10 Feb 2020 12:38:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338161;
-        bh=9Vtt4RMkJOeOyK/O7Mi2scBa7KdVJ9YUq0t/z0Gh2mM=;
+        s=default; t=1581338286;
+        bh=tYeZfu7jqi6yrxklEYqx2fgiuCnEapHBrnMBEtjf6wg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nn81+oT8T7Kll39LA+oSNB+0qGkMn8OUZRMl2vfa5yckSuNkH0/GKoVkFa8CypXGJ
-         BkvwETaiDH5zZTsDZT5g2XxvjrjwTC1gP++3UEqSXeYbRrHeu5ygNjP5r/cYhS7m/9
-         /pQREgUFgbP7KBUnvzZ9ksvJXhiQvmvO6ugXFAg4=
+        b=Wu2OwMZAr5SA+gc5u3CpzAShkFygRnDQ94FNRmIDtBYueDkV5YZbPw/Fdb0nU7mWF
+         olIXQc9myi/Nftu3oQuk3abMgUk+atIsfHfrwa43tXlKickSEi5ZRcXpoKEoiwndtE
+         Dz28BBpEscfqaEOVlTFKBPL6w6z/d0WpUo/OCJyA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chengguang Xu <cgxu519@mykernel.net>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4.19 083/195] f2fs: code cleanup for f2fs_statfs_project()
+        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>
+Subject: [PATCH 5.4 185/309] gfs2: fix O_SYNC write handling
 Date:   Mon, 10 Feb 2020 04:32:21 -0800
-Message-Id: <20200210122313.632723451@linuxfoundation.org>
+Message-Id: <20200210122424.324778763@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,53 +42,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chengguang Xu <cgxu519@mykernel.net>
+From: Andreas Gruenbacher <agruenba@redhat.com>
 
-commit bf2cbd3c57159c2b639ee8797b52ab5af180bf83 upstream.
+commit 6e5e41e2dc4e4413296d5a4af54ac92d7cd52317 upstream.
 
-Calling min_not_zero() to simplify complicated prjquota
-limit comparison in f2fs_statfs_project().
+In gfs2_file_write_iter, for direct writes, the error checking in the buffered
+write fallback case is incomplete.  This can cause inode write errors to go
+undetected.  Fix and clean up gfs2_file_write_iter along the way.
 
-Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Based on a proposed fix by Christoph Hellwig <hch@lst.de>.
+
+Fixes: 967bcc91b044 ("gfs2: iomap direct I/O support")
+Cc: stable@vger.kernel.org # v4.19+
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/f2fs/super.c |   16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+ fs/gfs2/file.c |   51 +++++++++++++++++++++------------------------------
+ 1 file changed, 21 insertions(+), 30 deletions(-)
 
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1148,12 +1148,8 @@ static int f2fs_statfs_project(struct su
- 		return PTR_ERR(dquot);
- 	spin_lock(&dquot->dq_dqb_lock);
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -833,7 +833,7 @@ static ssize_t gfs2_file_write_iter(stru
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = file_inode(file);
+ 	struct gfs2_inode *ip = GFS2_I(inode);
+-	ssize_t written = 0, ret;
++	ssize_t ret;
  
--	limit = 0;
--	if (dquot->dq_dqb.dqb_bsoftlimit)
--		limit = dquot->dq_dqb.dqb_bsoftlimit;
--	if (dquot->dq_dqb.dqb_bhardlimit &&
--			(!limit || dquot->dq_dqb.dqb_bhardlimit < limit))
--		limit = dquot->dq_dqb.dqb_bhardlimit;
-+	limit = min_not_zero(dquot->dq_dqb.dqb_bsoftlimit,
-+					dquot->dq_dqb.dqb_bhardlimit);
- 	if (limit)
- 		limit >>= sb->s_blocksize_bits;
+ 	ret = gfs2_rsqa_alloc(ip);
+ 	if (ret)
+@@ -865,55 +865,46 @@ static ssize_t gfs2_file_write_iter(stru
  
-@@ -1165,12 +1161,8 @@ static int f2fs_statfs_project(struct su
- 			 (buf->f_blocks - curblock) : 0;
+ 	if (iocb->ki_flags & IOCB_DIRECT) {
+ 		struct address_space *mapping = file->f_mapping;
+-		loff_t pos, endbyte;
+-		ssize_t buffered;
++		ssize_t buffered, ret2;
+ 
+-		written = gfs2_file_direct_write(iocb, from);
+-		if (written < 0 || !iov_iter_count(from))
++		ret = gfs2_file_direct_write(iocb, from);
++		if (ret < 0 || !iov_iter_count(from))
+ 			goto out_unlock;
+ 
++		iocb->ki_flags |= IOCB_DSYNC;
+ 		current->backing_dev_info = inode_to_bdi(inode);
+-		ret = iomap_file_buffered_write(iocb, from, &gfs2_iomap_ops);
++		buffered = iomap_file_buffered_write(iocb, from, &gfs2_iomap_ops);
+ 		current->backing_dev_info = NULL;
+-		if (unlikely(ret < 0))
++		if (unlikely(buffered <= 0))
+ 			goto out_unlock;
+-		buffered = ret;
+ 
+ 		/*
+ 		 * We need to ensure that the page cache pages are written to
+ 		 * disk and invalidated to preserve the expected O_DIRECT
+-		 * semantics.
++		 * semantics.  If the writeback or invalidate fails, only report
++		 * the direct I/O range as we don't know if the buffered pages
++		 * made it to disk.
+ 		 */
+-		pos = iocb->ki_pos;
+-		endbyte = pos + buffered - 1;
+-		ret = filemap_write_and_wait_range(mapping, pos, endbyte);
+-		if (!ret) {
+-			iocb->ki_pos += buffered;
+-			written += buffered;
+-			invalidate_mapping_pages(mapping,
+-						 pos >> PAGE_SHIFT,
+-						 endbyte >> PAGE_SHIFT);
+-		} else {
+-			/*
+-			 * We don't know how much we wrote, so just return
+-			 * the number of bytes which were direct-written
+-			 */
+-		}
++		iocb->ki_pos += buffered;
++		ret2 = generic_write_sync(iocb, buffered);
++		invalidate_mapping_pages(mapping,
++				(iocb->ki_pos - buffered) >> PAGE_SHIFT,
++				(iocb->ki_pos - 1) >> PAGE_SHIFT);
++		if (!ret || ret2 > 0)
++			ret += ret2;
+ 	} else {
+ 		current->backing_dev_info = inode_to_bdi(inode);
+ 		ret = iomap_file_buffered_write(iocb, from, &gfs2_iomap_ops);
+ 		current->backing_dev_info = NULL;
+-		if (likely(ret > 0))
++		if (likely(ret > 0)) {
+ 			iocb->ki_pos += ret;
++			ret = generic_write_sync(iocb, ret);
++		}
  	}
  
--	limit = 0;
--	if (dquot->dq_dqb.dqb_isoftlimit)
--		limit = dquot->dq_dqb.dqb_isoftlimit;
--	if (dquot->dq_dqb.dqb_ihardlimit &&
--			(!limit || dquot->dq_dqb.dqb_ihardlimit < limit))
--		limit = dquot->dq_dqb.dqb_ihardlimit;
-+	limit = min_not_zero(dquot->dq_dqb.dqb_isoftlimit,
-+					dquot->dq_dqb.dqb_ihardlimit);
+ out_unlock:
+ 	inode_unlock(inode);
+-	if (likely(ret > 0)) {
+-		/* Handle various SYNC-type writes */
+-		ret = generic_write_sync(iocb, ret);
+-	}
+-	return written ? written : ret;
++	return ret;
+ }
  
- 	if (limit && buf->f_files > limit) {
- 		buf->f_files = limit;
+ static int fallocate_chunk(struct inode *inode, loff_t offset, loff_t len,
 
 
