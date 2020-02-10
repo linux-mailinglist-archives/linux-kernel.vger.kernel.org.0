@@ -2,29 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 978C7156FE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 08:31:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94F48156FE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 08:31:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbgBJHap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 02:30:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60238 "EHLO mx2.suse.de"
+        id S1727563AbgBJHaw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 02:30:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60268 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726061AbgBJHap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 02:30:45 -0500
+        id S1726231AbgBJHaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 02:30:52 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 55EFFACD6;
-        Mon, 10 Feb 2020 07:30:38 +0000 (UTC)
-Date:   Mon, 10 Feb 2020 08:30:38 +0100
-Message-ID: <s5hy2ta5275.wl-tiwai@suse.de>
+        by mx2.suse.de (Postfix) with ESMTP id 32B42AE4E;
+        Mon, 10 Feb 2020 07:30:50 +0000 (UTC)
+Date:   Mon, 10 Feb 2020 08:30:50 +0100
+Message-ID: <s5hwo8u526t.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Colin King <colin.king@canonical.com>
 Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
         <alsa-devel@alsa-project.org>, <kernel-janitors@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: hdsp: remove redundant assignment to variable err
-In-Reply-To: <20200208222006.37376-1-colin.king@canonical.com>
-References: <20200208222006.37376-1-colin.king@canonical.com>
+Subject: Re: [PATCH] ALSA: hda: remove redundant assignment to variable timeout
+In-Reply-To: <20200208222756.37707-1-colin.king@canonical.com>
+References: <20200208222756.37707-1-colin.king@canonical.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -35,14 +36,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 08 Feb 2020 23:20:06 +0100,
+On Sat, 08 Feb 2020 23:27:56 +0100,
 Colin King wrote:
 > 
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> Variable err is being assigned with a value that is never read, it is
-> assigned a new value in the next statement. The assignment is redundant
-> and can be removed.
+> Variable timeout is being assigned with the value 200 that is never
+> read, it is assigned a new value in a following do-loop. The assignment
+> is redundant and can be removed.
 > 
 > Addresses-Coverity: ("Unused value")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
