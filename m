@@ -2,143 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD82915841E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 21:09:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48B6A15842B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 21:14:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbgBJUJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 15:09:13 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:29375 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727121AbgBJUJN (ORCPT
+        id S1727530AbgBJUO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 15:14:26 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:61808 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbgBJUOZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 15:09:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581365352;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=zefW9F6cB3PjlP2xIHsQltDrSp4Pn5FgnQMxBmPCTg4=;
-        b=Ma6w1DXVoAXZonZhfW4Tq12yjqW1f03p3mNP7mZgMBrC1a213Ay0nEz5g4Q3T3BBi/nR8q
-        ssM5OdNwCa9osOzjBxB2OTnR4ckwLm8Kng954x3lvBmpMzbOmyGrT+rV913ulfcg2A6Biw
-        /qQToO3J7/sGL7lhsJKCmeVuU8cm/o0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-373-N4bxFSCuNXCOvtTBjrK68w-1; Mon, 10 Feb 2020 15:09:02 -0500
-X-MC-Unique: N4bxFSCuNXCOvtTBjrK68w-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 987181857342;
-        Mon, 10 Feb 2020 20:09:00 +0000 (UTC)
-Received: from krava (ovpn-204-37.brq.redhat.com [10.40.204.37])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3743E87B01;
-        Mon, 10 Feb 2020 20:08:58 +0000 (UTC)
-Date:   Mon, 10 Feb 2020 21:08:47 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCHv2 2/4] perf tools: Mark ksymbol dsos with kernel type
-Message-ID: <20200210200847.GA36715@krava>
-References: <20200210143218.24948-1-jolsa@kernel.org>
- <20200210143218.24948-3-jolsa@kernel.org>
- <20200210151759.GB25639@kernel.org>
- <20200210152537.GA28110@krava>
+        Mon, 10 Feb 2020 15:14:25 -0500
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id 01AKEG8v025443;
+        Tue, 11 Feb 2020 05:14:17 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com 01AKEG8v025443
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1581365657;
+        bh=OIC2IL6NAo1TCjyWmce0RFIqaE9MA3FUoGaflhN9R74=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=RVBvgi66rTbLqDDAr+h0VSt/geuoej2xlRxd5CYWKXDDP+9lixWgWVjUevd/rdara
+         TL9v0dqG7PtZiyJ9OwSNXLu4/YRINqyM+G1NJdFB5FJiOuD6eZs1tOjVO/7sfJw8tn
+         4yN36qZppsFN3Ano3cwTTdCv+im0RoZhCZk/9BGzDffJ+7mNUZq+T/kM4tJP1MJ6xX
+         Gw/HW8Jm2zdF9U79FpMQZp7ScXn4heCDsl7di0yzdw5y0aLlhCK/wcGsPyR5BpWjpc
+         AJ4L30Z/1M4EbLcf2IVlIuSjp3EUxgz22z3hjmT85kLeV5RT8K3xSzt+1nD16SQQtA
+         +X2ZpvMkUEuFg==
+X-Nifty-SrcIP: [209.85.221.181]
+Received: by mail-vk1-f181.google.com with SMTP id i4so2190103vkc.3;
+        Mon, 10 Feb 2020 12:14:17 -0800 (PST)
+X-Gm-Message-State: APjAAAXcBREuB0uFRnPO+pEoIm+Zux9wqZjMdtNxMPT+rL8Z2jGxRGbR
+        m8L/IK3fx6n9KHc+7VX4JzbLAHk7DbPOYC+2cX8=
+X-Google-Smtp-Source: APXvYqzJS4naQg52GQccTG72db3gni8J+ICEApHBL4C4bI54ORpCd0l3/5uKjLBvJKi1cb4UFzilAV86gj16RQ7U0/g=
+X-Received: by 2002:a1f:bfc2:: with SMTP id p185mr1867956vkf.73.1581365655864;
+ Mon, 10 Feb 2020 12:14:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200210152537.GA28110@krava>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <20200124195859.86991-1-andriy.shevchenko@linux.intel.com> <20200127100542.GV32742@smile.fi.intel.com>
+In-Reply-To: <20200127100542.GV32742@smile.fi.intel.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Tue, 11 Feb 2020 05:13:39 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQkKOheXLVq+sjjmBMzREBZYN8XkxzcVmkkVpN4OjjRGQ@mail.gmail.com>
+Message-ID: <CAK7LNAQkKOheXLVq+sjjmBMzREBZYN8XkxzcVmkkVpN4OjjRGQ@mail.gmail.com>
+Subject: Re: [PATCH v1] kbuild: Fix off-by-one error when generate a new version
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Michal Simek <monstr@monstr.eu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 04:25:37PM +0100, Jiri Olsa wrote:
-> On Mon, Feb 10, 2020 at 12:17:59PM -0300, Arnaldo Carvalho de Melo wrote:
-> > Em Mon, Feb 10, 2020 at 03:32:16PM +0100, Jiri Olsa escreveu:
-> > > We add ksymbol map into machine->kmaps, so it needs to be
-> > > created as 'struct kmap', which is dependent on its dso
-> > > having kernel type.
-> > > 
-> > > Reported-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-> > > Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-> > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > > ---
-> > >  tools/perf/util/machine.c | 10 ++++++++--
-> > >  1 file changed, 8 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> > > index e3e5490f6de5..0a43dc83d7b2 100644
-> > > --- a/tools/perf/util/machine.c
-> > > +++ b/tools/perf/util/machine.c
-> > > @@ -727,8 +727,14 @@ static int machine__process_ksymbol_register(struct machine *machine,
-> > >  	struct map *map = maps__find(&machine->kmaps, event->ksymbol.addr);
-> > >  
-> > >  	if (!map) {
-> > > -		map = dso__new_map(event->ksymbol.name);
-> > > -		if (!map)
-> > > +		struct dso *dso = dso__new(event->ksymbol.name);
-> > > +
-> > > +		if (dso) {
-> > > +			dso->kernel = DSO_TYPE_KERNEL;
-> > > +			map = map__new2(0, dso);
-> > > +		}
-> > > +
-> > > +		if (!dso || !map)
-> > 
-> > We leak dso if map creation fails?
-> 
-> yep :-\ will post v2
+Hi Andy,
 
-v2 attached, it's also all in my perf/top branch
-
-thanks,
-jirka
+On Mon, Jan 27, 2020 at 7:05 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Fri, Jan 24, 2020 at 09:58:59PM +0200, Andy Shevchenko wrote:
+> > When build on, for example, x86 using `make O=... -j64` the version
+> > in the built kernel comes from include/generated/compile.h, which is:
+> >
+> >       #define UTS_VERSION "#351 SMP Fri Jan 24 18:46:34 EET 2020"
+> >
+> > While at the end the x86 specific Makefile prints the contents of
+> > the .version file:
+> >
+> >       Kernel: arch/x86/boot/bzImage is ready  (#352)
+> >
+> > Obviously the latter is not true. This happens because we first
+> > check compile.h and update it and then generate new version, which is
+> > incorrect flow:
+> >
+> >   CHK     include/generated/compile.h
+> >   UPD     include/generated/compile.h
+> >   ...
+> >   GEN     .version
+> >
+> > In order to fix this, move the version generation from link-vmlinux.sh
+> > to scripts/version.sh and re-use it in init/Makefile.
+> >
+> > Additionally provide a unified way to get the current version of the build
+> > and use this in few callers. This will respect the KBUILD_BUILD_VERSION
+> > in case it's provided.
+>
+> Hmm... It looks like a mess in my build tree.
+> I have to setup more experiments here.
+>
 
 
----
-We add ksymbol map into machine->kmaps, so it needs to be
-created as 'struct kmap', which is dependent on its dso
-having kernel type.
+Sorry for the late reply.
 
-Reported-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/util/machine.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+I remember I was also hit by this one month ago or so.
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index e3e5490f6de5..0ad026561c7f 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -727,9 +727,17 @@ static int machine__process_ksymbol_register(struct machine *machine,
- 	struct map *map = maps__find(&machine->kmaps, event->ksymbol.addr);
- 
- 	if (!map) {
--		map = dso__new_map(event->ksymbol.name);
--		if (!map)
-+		struct dso *dso = dso__new(event->ksymbol.name);
-+
-+		if (dso) {
-+			dso->kernel = DSO_TYPE_KERNEL;
-+			map = map__new2(0, dso);
-+		}
-+
-+		if (!dso || !map) {
-+			dso__put(dso);
- 			return -ENOMEM;
-+		}
- 
- 		map->start = event->ksymbol.addr;
- 		map->end = map->start + event->ksymbol.len;
+I did not dig into it at that time
+because the problem disappeared after doing something.
+
+Today, I took a look at this again.
+This is a regression caused by 56d589361572
+
+This patch should fix it:
+https://patchwork.kernel.org/patch/11374047/
+
 -- 
-2.24.1
-
+Best Regards
+Masahiro Yamada
