@@ -2,138 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3238D157B87
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:31:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06405157B95
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:31:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731486AbgBJNac (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:30:32 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:45015 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728489AbgBJNaZ (ORCPT
+        id S1728364AbgBJNbF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:31:05 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:49268 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728236AbgBJNbA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 08:30:25 -0500
-Received: by mail-vk1-f195.google.com with SMTP id y184so1755854vkc.11
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 05:30:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sO0fguFagfrBAk+2OocklHo8Sby77UFX4PPPfRWY+Sg=;
-        b=pDcGNIyyG74kffYSd13ak5T2WdV80gj/oEhQHCoC0gwU8Yo3Iq57Lq6UWUwBgyA75i
-         vO9M6EYQ0hD/hOkFODwFPSVnMs+nhETuACUNaf+J4c+9ZkMRHMc5VKLxyaG6EXrPUm1z
-         hZIGkKFEKNBtSTt28VjEQSTe55Rri4qZPWiGPYdL5mkfGxFJNYzy9V4gvA5BKsOltCdR
-         cRVIxSL8HwWiqSIkbF8ucpmbCe5qbOUY9eILJcQrMJdF2RAVt4qHO3aahY02rOvVMj1s
-         sM063H069FdrgWf0tJq7XOl4N5hc/DsIkoSRZhoL7KrZHcgh2eZTtNScWiTuTGhdLymT
-         XpaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sO0fguFagfrBAk+2OocklHo8Sby77UFX4PPPfRWY+Sg=;
-        b=jiqeKL4tbrGzuEjw54BrE1HgcZOlq25kmqP+SUIMZ79J1aZHnTxubSal0RdPcZnNYr
-         o3Wsl6SzZ3D12HX6T1VWbelfdFXgr6m9jK5zf3cvJLS9H+frTN2f/1mzJSjjjm9ASbIG
-         CYgtENvYa+zSTejMKC5DosvhpxGMpIfabyyRiXhjJE5/Cb/hdzDUFCrH6cFnFgl1IU55
-         mKJExd4KvzW6BOHyPtLr4gNB7lMLnFEQ+NBWCPdPyl173UcGoY6Ya9g3IEnTNP2SCczj
-         RSY8iRCeTpzUVJevS4t1ZhjivPAw5/QpWsocVxOctvWJFtD7xgcP3hzdQGJZKW5ormph
-         oKAw==
-X-Gm-Message-State: APjAAAVopUeaf55XdvzOqSCK2qaUysyYtJlHq3dmVHoGhVrAdaFEdmvv
-        aPFgd8oAZnDU5LxdaYkPocaXlg31LK1xexQQBPE=
-X-Google-Smtp-Source: APXvYqwbgoxZHBa7hZysysH6OEO9Yk7qehrcW3zDNqntpDwRKYKxVzP/J2e+W+eUD7/czD/dFuOyPxLUf6CQhEXvi2g=
-X-Received: by 2002:a1f:9785:: with SMTP id z127mr645665vkd.48.1581341423785;
- Mon, 10 Feb 2020 05:30:23 -0800 (PST)
+        Mon, 10 Feb 2020 08:31:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=zJERE8RQFEvavVoodECE0tC0EkLezz+9Xi+PVOEgn48=; b=tag8GRycoSig7G87Xiy3/Rl1cJ
+        J29GI3xoEKlqPONfUNUIpUxL5OHGGIC5AOxHpHLqU2iwWnBT4RGMH+YTI+sAkCxzjjPeV+C5qj0xi
+        vSmI9H2lva7YSIjtkCsUxz3Sg+JBEWQyBM+LjqqPuod3oMGXbqgWhZbKM+5DLilC8ho2WJLLI/nrb
+        k3dhocsQJic0vn3wWIzHr/gCLhR9G/TmpsTgRAjN7XSThaUx1ZNO9C5oeTi46s+jM7ZAkXyHVoK55
+        i5o8i/+yqBA6HXQzW/V0wkJ54WoAJ08wmrAhdE1BsJMS3D9ACsmrAZzem6gJRjYOdOoCdZUUt5Qwb
+        f9TqO+ig==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j199J-0006YY-0H; Mon, 10 Feb 2020 13:30:53 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3C7B7300E0C;
+        Mon, 10 Feb 2020 14:29:03 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5D8B120148931; Mon, 10 Feb 2020 14:30:51 +0100 (CET)
+Date:   Mon, 10 Feb 2020 14:30:51 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Douglas Raillard <douglas.raillard@arm.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        qperret@google.com, Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [RFC PATCH v4 0/6] sched/cpufreq: Make schedutil energy aware
+Message-ID: <20200210133051.GI14897@hirez.programming.kicks-ass.net>
+References: <20200122173538.1142069-1-douglas.raillard@arm.com>
+ <CAJZ5v0hL9AbpgivRGtCtqQo4XRYdt=SDjD=_FAVZmKAi=+VvzA@mail.gmail.com>
+ <d0155018-52e6-e1c9-a03d-1b9703b7a28a@arm.com>
 MIME-Version: 1.0
-References: <20200124084359.16817-1-christian.gmeiner@gmail.com>
- <CAH9NwWfMwN9cRgMHPF5zPCmdmnrfX7E6cAYW8yfUGTf+t3=HzA@mail.gmail.com> <CAJKOXPdM4s8DAVPh1zOt5kYyEjp4dmbseC3RdrKaVk4H41XOwg@mail.gmail.com>
-In-Reply-To: <CAJKOXPdM4s8DAVPh1zOt5kYyEjp4dmbseC3RdrKaVk4H41XOwg@mail.gmail.com>
-From:   Christian Gmeiner <christian.gmeiner@gmail.com>
-Date:   Mon, 10 Feb 2020 14:30:12 +0100
-Message-ID: <CAH9NwWdg5r1T9TkXAe4=3Zui2vMcnOc2UJ=e02NFbiPhb5n48w@mail.gmail.com>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: enable drm imx support
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Olof Johansson <olof@lixom.net>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Tony Lindgren <tony@atomide.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d0155018-52e6-e1c9-a03d-1b9703b7a28a@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mo., 10. Feb. 2020 um 11:58 Uhr schrieb Krzysztof Kozlowski
-<krzk@kernel.org>:
->
-> On Mon, 10 Feb 2020 at 11:54, Christian Gmeiner
-> <christian.gmeiner@gmail.com> wrote:
-> >
-> > Am Fr., 24. Jan. 2020 um 09:44 Uhr schrieb Christian Gmeiner
-> > <christian.gmeiner@gmail.com>:
-> > >
-> > > Makes it possible to multi v7 defconfig for stm32 and imx based devices with
-> > > full drm support.
-> > >
-> > > Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
-> > > ---
-> > >  arch/arm/configs/multi_v7_defconfig | 6 ++++++
-> > >  1 file changed, 6 insertions(+)
-> > >
-> > > diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> > > index 3f1b96dc7faa..d213a35557ed 100644
-> > > --- a/arch/arm/configs/multi_v7_defconfig
-> > > +++ b/arch/arm/configs/multi_v7_defconfig
-> > > @@ -637,6 +637,7 @@ CONFIG_CEC_PLATFORM_DRIVERS=y
-> > >  CONFIG_VIDEO_SAMSUNG_S5P_CEC=m
-> > >  CONFIG_VIDEO_ADV7180=m
-> > >  CONFIG_VIDEO_ML86V7667=m
-> > > +CONFIG_IMX_IPUV3_CORE=m
-> > >  CONFIG_DRM=y
-> > >  # CONFIG_DRM_I2C_CH7006 is not set
-> > >  # CONFIG_DRM_I2C_SIL164 is not set
-> > > @@ -652,6 +653,11 @@ CONFIG_ROCKCHIP_ANALOGIX_DP=y
-> > >  CONFIG_ROCKCHIP_DW_HDMI=y
-> > >  CONFIG_ROCKCHIP_DW_MIPI_DSI=y
-> > >  CONFIG_ROCKCHIP_INNO_HDMI=y
-> > > +CONFIG_DRM_IMX=m
-> > > +CONFIG_DRM_IMX_PARALLEL_DISPLAY=m
-> > > +CONFIG_DRM_IMX_TVE=m
-> > > +CONFIG_DRM_IMX_LDB=m
-> > > +CONFIG_DRM_IMX_HDMI=m
-> > >  CONFIG_DRM_ATMEL_HLCDC=m
-> > >  CONFIG_DRM_RCAR_DU=m
-> > >  CONFIG_DRM_RCAR_LVDS=y
-> > > --
-> > > 2.24.1
-> > >
-> >
-> >
-> > ping
->
-> Hi,
->
-> It looks like you entirely skipped iMX maintainers in Cc/to list, so
-> whom are you pinging?
->
+On Thu, Jan 23, 2020 at 05:16:52PM +0000, Douglas Raillard wrote:
+> Hi Rafael,
+> 
+> On 1/23/20 3:43 PM, Rafael J. Wysocki wrote:
+> > On Wed, Jan 22, 2020 at 6:36 PM Douglas RAILLARD
+> > <douglas.raillard@arm.com> wrote:
+> >>
+> >> Make schedutil cpufreq governor energy-aware.
+> > 
+> > I have to say that your terminology is confusing to me, like what
+> > exactly does "energy-aware" mean in the first place?
+> 
+> Should be better rephrased as "Make schedutil cpufreq governor use the
+> energy model" I guess. Schedutil is indeed already energy aware since it
+> tries to use the lowest frequency possible for the job to be done (kind of).
 
-I did use git send-email --cc-cmd='./scripts/get_maintainer.pl .. to
-send out this patch so I am not the one to blame here.
+So ARM64 will soon get x86-like power management if I read these here
+patches right:
 
-Adding some imx maintainers...
+  https://lkml.kernel.org/r/20191218182607.21607-2-ionela.voinescu@arm.com
 
--- 
-Thanks
---
-Christian Gmeiner, MSc
+And I'm thinking a part of Rafael's concerns will also apply to those
+platforms.
 
-https://christian-gmeiner.info/privacypolicy
+> Other than that, the only energy-related information schedutil uses is
+> the assumption that lower freq == better efficiency. Explicit use of the
+> EM allows to refine this assumption.
+
+I'm thinking that such platforms guarantee this on their own, if not,
+there just isn't anything we can do about it, so that assumption is
+fair.
+
+(I've always found it weird to have less efficient OPPs listed anyway)
+
+> >> 1) Selecting the highest possible frequency for a given cost. Some
+> >>    platforms can have lower frequencies that are less efficient than
+> >>    higher ones, in which case they should be skipped for most purposes.
+> >>    They can still be useful to give more freedom to thermal throttling
+> >>    mechanisms, but not under normal circumstances.
+> >>    note: the EM framework will warn about such OPPs "hertz/watts ratio
+> >>    non-monotonically decreasing"
+> > 
+> > While all of that is fair enough for platforms using the EM, do you
+> > realize that the EM is not available on the majority of architectures
+> > (including some fairly significant ones) and so adding overhead
+> > related to it for all of them is quite less than welcome?
+> 
+> When CONFIG_ENERGY_MODEL is not defined, em_pd_get_higher_freq() is
+> defined to a static inline no-op function, so that feature won't incur
+> overhead (patch 1+2+3).
+> 
+> Patch 4 and 5 do add some new logic that could be used on any platform.
+> Current code will use the boost as an energy margin, but it would be
+> straightforward to make a util-based version (like iowait boost) on
+> non-EM platforms.
+
+Right, so the condition 'util_avg > util_est' makes sense to trigger
+some sort of boost off of.
+
+What kind would make sense for these platforms? One possibility would be
+to instead of frobbing the energy margin, as you do here, to frob the C
+in get_next_freq().
+
+(I have vague memories of this being proposed earlier; it also avoids
+that double OPP iteration thing complained about elsewhere in this
+thread if I'm not mistaken).
+
+
+That is; I'm thinking it is important (esp. now that we got frequency
+invariance sorted for x86), to have this patch also work for !EM
+architectures (as those ARM64-AMU things would be).
+
+
