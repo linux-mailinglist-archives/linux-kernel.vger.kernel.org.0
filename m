@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E6451579F1
+	by mail.lfdr.de (Postfix) with ESMTP id C4A5F1579F2
 	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:19:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731071AbgBJNTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:19:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59942 "EHLO mail.kernel.org"
+        id S1731075AbgBJNTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:19:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728903AbgBJMhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728909AbgBJMhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 10 Feb 2020 07:37:48 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0668824686;
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F77624650;
         Mon, 10 Feb 2020 12:37:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1581338267;
-        bh=Rb4+5OZy8/cgfkqgiWf+evdbzazPvvSkiaJPEhlwwHA=;
+        bh=7wmqfI+e//pB7XG7ri04ugNCB6heo9KllchceUBRJj4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tjl4jSQppIE7pUXx+nNbeHPlWa4VkgVKuciUty+WL07G3aEXw3nkdKQ5aOoUW70Hx
-         zXwyd78VTJ8WKxctR1jCQEguY1xiUB1veQ8lvT49mJFdgq2Sx3wNEUS4WWq7eTCuQC
-         2UyCHIMke2NODYogPx4o4foXaef35TD3QvgK0R5g=
+        b=RpjxifjfXIRP2kOeNe9gYMWO3GmAJ6UQSpngR3HzAsizvtgBf7B10Rst/bKGj5j5T
+         5DI2RKv27rZJxiFYBXmtMmSkmcpOj4BkvJCGTpGbnLBvWRXDw6wYHKykAg1FbaixHM
+         1Tm2kHceusrPhoOvGydid9INGCKGkje07NXZaAuQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Amol Grover <frextrite@gmail.com>,
+        stable@vger.kernel.org, William Smith <williampsmith@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-Subject: [PATCH 5.4 146/309] bpf, devmap: Pass lockdep expression to RCU lists
-Date:   Mon, 10 Feb 2020 04:31:42 -0800
-Message-Id: <20200210122420.363422717@linuxfoundation.org>
+        Yonghong Song <yhs@fb.com>
+Subject: [PATCH 5.4 147/309] libbpf: Fix realloc usage in bpf_core_find_cands
+Date:   Mon, 10 Feb 2020 04:31:43 -0800
+Message-Id: <20200210122420.451093285@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
 References: <20200210122406.106356946@linuxfoundation.org>
@@ -45,39 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amol Grover <frextrite@gmail.com>
+From: Andrii Nakryiko <andriin@fb.com>
 
-commit 485ec2ea9cf556e9c120e07961b7b459d776a115 upstream.
+commit 35b9211c0a2427e8f39e534f442f43804fc8d5ca upstream.
 
-head is traversed using hlist_for_each_entry_rcu outside an RCU
-read-side critical section but under the protection of dtab->index_lock.
+Fix bug requesting invalid size of reallocated array when constructing CO-RE
+relocation candidate list. This can cause problems if there are many potential
+candidates and a very fine-grained memory allocator bucket sizes are used.
 
-Hence, add corresponding lockdep expression to silence false-positive
-lockdep warnings, and harden RCU lists.
-
-Fixes: 6f9d451ab1a3 ("xdp: Add devmap_hash map type for looking up devices by hashed index")
-Signed-off-by: Amol Grover <frextrite@gmail.com>
+Fixes: ddc7c3042614 ("libbpf: implement BPF CO-RE offset relocation algorithm")
+Reported-by: William Smith <williampsmith@fb.com>
+Signed-off-by: Andrii Nakryiko <andriin@fb.com>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Acked-by: Toke Høiland-Jørgensen <toke@redhat.com>
-Link: https://lore.kernel.org/bpf/20200123120437.26506-1-frextrite@gmail.com
+Acked-by: Yonghong Song <yhs@fb.com>
+Link: https://lore.kernel.org/bpf/20200124201847.212528-1-andriin@fb.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/bpf/devmap.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/lib/bpf/libbpf.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/kernel/bpf/devmap.c
-+++ b/kernel/bpf/devmap.c
-@@ -293,7 +293,8 @@ struct bpf_dtab_netdev *__dev_map_hash_l
- 	struct hlist_head *head = dev_map_index_hash(dtab, key);
- 	struct bpf_dtab_netdev *dev;
- 
--	hlist_for_each_entry_rcu(dev, head, index_hlist)
-+	hlist_for_each_entry_rcu(dev, head, index_hlist,
-+				 lockdep_is_held(&dtab->index_lock))
- 		if (dev->idx == key)
- 			return dev;
- 
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -2541,7 +2541,9 @@ static struct ids_vec *bpf_core_find_can
+ 		if (strncmp(local_name, targ_name, local_essent_len) == 0) {
+ 			pr_debug("[%d] %s: found candidate [%d] %s\n",
+ 				 local_type_id, local_name, i, targ_name);
+-			new_ids = realloc(cand_ids->data, cand_ids->len + 1);
++			new_ids = reallocarray(cand_ids->data,
++					       cand_ids->len + 1,
++					       sizeof(*cand_ids->data));
+ 			if (!new_ids) {
+ 				err = -ENOMEM;
+ 				goto err_out;
 
 
