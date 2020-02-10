@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8660E1578B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:09:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 857D01578B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:09:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730906AbgBJNJt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:09:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36236 "EHLO mail.kernel.org"
+        id S1730900AbgBJNJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:09:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729374AbgBJMjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:39:15 -0500
+        id S1729382AbgBJMjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:39:17 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CA1424672;
-        Mon, 10 Feb 2020 12:39:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B728120842;
+        Mon, 10 Feb 2020 12:39:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338355;
-        bh=GayZkbseHYNKhGsx8rndLM7OQf6MYSTd6h98Jhq5lAs=;
+        s=default; t=1581338356;
+        bh=Gvpt5PObihmq+yOXAZrgvlGx38xG4WBKr073JZjWVdU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0fEozjucHiwySnN1k8hI8yXo6dc7M7eIQXkNsQ3+0E9Yptl8tbHD8TYdnu/85UeIk
-         vOgl3witDWirF3gozT9TKWsD91RSGlZOU6i0TkW1NvDaqapSN2vDDfac2C/AfOeidz
-         +X2u11yMKHtouQ1hGSbxksHVcc+cA5odp29DNjSk=
+        b=SFDVNAnc69tojvRDjow7+aQKFM6hUv8SHpW/RqmNWqyn+OUCNlTVMLCszRSTomvbq
+         5ET6F5JaprjzAscDHDkHBxZsgz0HOAi64jdHqNjmnvqeLOkhbV+oze2Xe075WMHeoO
+         TlM5/LubUhQ7DU+D2J1bqN/gYNcDIQFug66RtWj8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        SeongJae Park <sjpark@amazon.de>,
+        Marcelo Ricardo Leitner <mleitner@redhat.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
         Jakub Kicinski <kuba@kernel.org>
-Subject: [PATCH 5.5 011/367] tcp: clear tp->total_retrans in tcp_disconnect()
-Date:   Mon, 10 Feb 2020 04:28:44 -0800
-Message-Id: <20200210122424.894603466@linuxfoundation.org>
+Subject: [PATCH 5.5 014/367] tcp: clear tp->segs_{in|out} in tcp_disconnect()
+Date:   Mon, 10 Feb 2020 04:28:47 -0800
+Message-Id: <20200210122425.174971418@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -46,30 +48,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit c13c48c00a6bc1febc73902505bdec0967bd7095 ]
+[ Upstream commit 784f8344de750a41344f4bbbebb8507a730fc99c ]
 
-total_retrans needs to be cleared in tcp_disconnect().
+tp->segs_in and tp->segs_out need to be cleared in tcp_disconnect().
 
 tcp_disconnect() is rarely used, but it is worth fixing it.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Fixes: 2efd055c53c0 ("tcp: add tcpi_segs_in and tcpi_segs_out to tcp_info")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: SeongJae Park <sjpark@amazon.de>
+Cc: Marcelo Ricardo Leitner <mleitner@redhat.com>
+Cc: Yuchung Cheng <ycheng@google.com>
+Cc: Neal Cardwell <ncardwell@google.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/ipv4/tcp.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
 --- a/net/ipv4/tcp.c
 +++ b/net/ipv4/tcp.c
-@@ -2625,6 +2625,7 @@ int tcp_disconnect(struct sock *sk, int
- 	tcp_set_ca_state(sk, TCP_CA_Open);
- 	tp->is_sack_reneg = 0;
- 	tcp_clear_retrans(tp);
-+	tp->total_retrans = 0;
- 	inet_csk_delack_init(sk);
- 	/* Initialize rcv_mss to TCP_MIN_MSS to avoid division by 0
- 	 * issue in __tcp_select_window()
+@@ -2638,6 +2638,8 @@ int tcp_disconnect(struct sock *sk, int
+ 	sk->sk_rx_dst = NULL;
+ 	tcp_saved_syn_free(tp);
+ 	tp->compressed_ack = 0;
++	tp->segs_in = 0;
++	tp->segs_out = 0;
+ 	tp->bytes_sent = 0;
+ 	tp->bytes_acked = 0;
+ 	tp->bytes_received = 0;
 
 
