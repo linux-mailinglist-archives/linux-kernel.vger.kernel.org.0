@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44B671579ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:19:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F5E41579E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:19:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731068AbgBJNTI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:19:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60300 "EHLO mail.kernel.org"
+        id S1731064AbgBJNS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:18:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728916AbgBJMht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:49 -0500
+        id S1728379AbgBJMhu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:50 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F018C20873;
-        Mon, 10 Feb 2020 12:37:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75787208C4;
+        Mon, 10 Feb 2020 12:37:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1581338269;
-        bh=R9z6yjPFHF/aRe7qlZDX1G0yJvRepICq+0DcmrCr0Dg=;
+        bh=860PfVHuVvVmnE/uxN+52Ty0cY9gG8ZaYg2GcEvQW/o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CNIdGoeZ3CQ4JcbmB9V2Hd1+UUL7zc83ycR+s6Z+5IfZr7J0mw34bOUnjW4LE8xH4
-         ov7O13iWHtmoGKTTqRZXcQiJ+9W/m05MFKq5OaZRZ5IQ70xsOuj+KLO3A+H3Yk1QPn
-         dpFvjLD64HqoQtHB7EGjGK8jKrh/8DU9v8yfg9u0=
+        b=aOk/4hsiCPi8KJrQrcdihdowkL0daoVDZ1JAqZFnJIh0bSH+C7SODYK0OQsppibJW
+         gSStnLhk38WohzBCjTbEt1qQkRfpqK/tnNsstjtvYXF7IPlLxcwoXztVwdzLCymHN9
+         o4yDwVypVucY16yorkX3DF+0+m2ipeY6qW2CZzeU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        stable@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>,
         Alexei Starovoitov <ast@kernel.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>
-Subject: [PATCH 5.4 149/309] samples/bpf: Dont try to remove users homedir on clean
-Date:   Mon, 10 Feb 2020 04:31:45 -0800
-Message-Id: <20200210122420.620363865@linuxfoundation.org>
+        Andrii Nakryiko <andriin@fb.com>
+Subject: [PATCH 5.4 150/309] samples/bpf: Xdp_redirect_cpu fix missing tracepoint attach
+Date:   Mon, 10 Feb 2020 04:31:46 -0800
+Message-Id: <20200210122420.701561981@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
 References: <20200210122406.106356946@linuxfoundation.org>
@@ -45,41 +44,138 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Toke Høiland-Jørgensen <toke@redhat.com>
+From: Jesper Dangaard Brouer <brouer@redhat.com>
 
-commit b2e5e93ae8af6a34bca536cdc4b453ab1e707b8b upstream.
+commit f9e6bfdbaf0cf304d72c70a05d81acac01a04f48 upstream.
 
-The 'clean' rule in the samples/bpf Makefile tries to remove backup
-files (ending in ~). However, if no such files exist, it will instead try
-to remove the user's home directory. While the attempt is mostly harmless,
-it does lead to a somewhat scary warning like this:
+When sample xdp_redirect_cpu was converted to use libbpf, the
+tracepoints used by this sample were not getting attached automatically
+like with bpf_load.c. The BPF-maps was still getting loaded, thus
+nobody notice that the tracepoints were not updating these maps.
 
-rm: cannot remove '~': Is a directory
+This fix doesn't use the new skeleton code, as this bug was introduced
+in v5.1 and stable might want to backport this. E.g. Red Hat QA uses
+this sample as part of their testing.
 
-Fix this by using find instead of shell expansion to locate any actual
-backup files that need to be removed.
-
-Fixes: b62a796c109c ("samples/bpf: allow make to be run from samples/bpf/ directory")
-Signed-off-by: Toke Høiland-Jørgensen <toke@redhat.com>
+Fixes: bbaf6029c49c ("samples/bpf: Convert XDP samples to libbpf usage")
+Signed-off-by: Jesper Dangaard Brouer <brouer@redhat.com>
 Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Link: https://lore.kernel.org/bpf/157952560126.1683545.7273054725976032511.stgit@toke.dk
+Acked-by: Andrii Nakryiko <andriin@fb.com>
+Link: https://lore.kernel.org/bpf/157685877642.26195.2798780195186786841.stgit@firesoul
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- samples/bpf/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ samples/bpf/xdp_redirect_cpu_user.c |   59 +++++++++++++++++++++++++++++++++---
+ 1 file changed, 55 insertions(+), 4 deletions(-)
 
---- a/samples/bpf/Makefile
-+++ b/samples/bpf/Makefile
-@@ -236,7 +236,7 @@ all:
+--- a/samples/bpf/xdp_redirect_cpu_user.c
++++ b/samples/bpf/xdp_redirect_cpu_user.c
+@@ -16,6 +16,10 @@ static const char *__doc__ =
+ #include <getopt.h>
+ #include <net/if.h>
+ #include <time.h>
++#include <linux/limits.h>
++
++#define __must_check
++#include <linux/err.h>
  
- clean:
- 	$(MAKE) -C ../../ M=$(CURDIR) clean
--	@rm -f *~
-+	@find $(CURDIR) -type f -name '*~' -delete
+ #include <arpa/inet.h>
+ #include <linux/if_link.h>
+@@ -46,6 +50,10 @@ static int cpus_count_map_fd;
+ static int cpus_iterator_map_fd;
+ static int exception_cnt_map_fd;
  
- $(LIBBPF): FORCE
- # Fix up variables inherited from Kbuild that tools/ build system won't like
++#define NUM_TP 5
++struct bpf_link *tp_links[NUM_TP] = { 0 };
++static int tp_cnt = 0;
++
+ /* Exit return codes */
+ #define EXIT_OK		0
+ #define EXIT_FAIL		1
+@@ -88,6 +96,10 @@ static void int_exit(int sig)
+ 			printf("program on interface changed, not removing\n");
+ 		}
+ 	}
++	/* Detach tracepoints */
++	while (tp_cnt)
++		bpf_link__destroy(tp_links[--tp_cnt]);
++
+ 	exit(EXIT_OK);
+ }
+ 
+@@ -588,23 +600,61 @@ static void stats_poll(int interval, boo
+ 	free_stats_record(prev);
+ }
+ 
++static struct bpf_link * attach_tp(struct bpf_object *obj,
++				   const char *tp_category,
++				   const char* tp_name)
++{
++	struct bpf_program *prog;
++	struct bpf_link *link;
++	char sec_name[PATH_MAX];
++	int len;
++
++	len = snprintf(sec_name, PATH_MAX, "tracepoint/%s/%s",
++		       tp_category, tp_name);
++	if (len < 0)
++		exit(EXIT_FAIL);
++
++	prog = bpf_object__find_program_by_title(obj, sec_name);
++	if (!prog) {
++		fprintf(stderr, "ERR: finding progsec: %s\n", sec_name);
++		exit(EXIT_FAIL_BPF);
++	}
++
++	link = bpf_program__attach_tracepoint(prog, tp_category, tp_name);
++	if (IS_ERR(link))
++		exit(EXIT_FAIL_BPF);
++
++	return link;
++}
++
++static void init_tracepoints(struct bpf_object *obj) {
++	tp_links[tp_cnt++] = attach_tp(obj, "xdp", "xdp_redirect_err");
++	tp_links[tp_cnt++] = attach_tp(obj, "xdp", "xdp_redirect_map_err");
++	tp_links[tp_cnt++] = attach_tp(obj, "xdp", "xdp_exception");
++	tp_links[tp_cnt++] = attach_tp(obj, "xdp", "xdp_cpumap_enqueue");
++	tp_links[tp_cnt++] = attach_tp(obj, "xdp", "xdp_cpumap_kthread");
++}
++
+ static int init_map_fds(struct bpf_object *obj)
+ {
+-	cpu_map_fd = bpf_object__find_map_fd_by_name(obj, "cpu_map");
+-	rx_cnt_map_fd = bpf_object__find_map_fd_by_name(obj, "rx_cnt");
++	/* Maps updated by tracepoints */
+ 	redirect_err_cnt_map_fd =
+ 		bpf_object__find_map_fd_by_name(obj, "redirect_err_cnt");
++	exception_cnt_map_fd =
++		bpf_object__find_map_fd_by_name(obj, "exception_cnt");
+ 	cpumap_enqueue_cnt_map_fd =
+ 		bpf_object__find_map_fd_by_name(obj, "cpumap_enqueue_cnt");
+ 	cpumap_kthread_cnt_map_fd =
+ 		bpf_object__find_map_fd_by_name(obj, "cpumap_kthread_cnt");
++
++	/* Maps used by XDP */
++	rx_cnt_map_fd = bpf_object__find_map_fd_by_name(obj, "rx_cnt");
++	cpu_map_fd = bpf_object__find_map_fd_by_name(obj, "cpu_map");
+ 	cpus_available_map_fd =
+ 		bpf_object__find_map_fd_by_name(obj, "cpus_available");
+ 	cpus_count_map_fd = bpf_object__find_map_fd_by_name(obj, "cpus_count");
+ 	cpus_iterator_map_fd =
+ 		bpf_object__find_map_fd_by_name(obj, "cpus_iterator");
+-	exception_cnt_map_fd =
+-		bpf_object__find_map_fd_by_name(obj, "exception_cnt");
+ 
+ 	if (cpu_map_fd < 0 || rx_cnt_map_fd < 0 ||
+ 	    redirect_err_cnt_map_fd < 0 || cpumap_enqueue_cnt_map_fd < 0 ||
+@@ -662,6 +712,7 @@ int main(int argc, char **argv)
+ 			strerror(errno));
+ 		return EXIT_FAIL;
+ 	}
++	init_tracepoints(obj);
+ 	if (init_map_fds(obj) < 0) {
+ 		fprintf(stderr, "bpf_object__find_map_fd_by_name failed\n");
+ 		return EXIT_FAIL;
 
 
