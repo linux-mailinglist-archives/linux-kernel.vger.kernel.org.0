@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64A2C1575C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:45:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7EAF1574B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:35:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730676AbgBJMog (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:44:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41150 "EHLO mail.kernel.org"
+        id S1727870AbgBJMfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:35:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728154AbgBJMkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:39 -0500
+        id S1727729AbgBJMfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:09 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4AB52173E;
-        Mon, 10 Feb 2020 12:40:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32FB52168B;
+        Mon, 10 Feb 2020 12:35:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338439;
-        bh=5QD9YOC95JGAUEOA86RzolZ5SR5kMSDUR274K8u+1o4=;
+        s=default; t=1581338109;
+        bh=iJIScaKcBBiAXvtWaUrzFmJW9LfZUpxI49wQF0wdBig=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gNnAzbckLb5K3bCMF5kRSVYhjWUnLT/SfT3VJLlCW4ByOC59BytdQEiN6CJh3uNay
-         bt0e2VhUqQeUG/1oO+cCTyf25pbnGsFyWO0BcnNwIVn61YIORpO8k5periSDLhUs6x
-         GoCxgQz0Ymbycc55+II3KT50NRK0lkjvqYwLBMfU=
+        b=rpfzdyBBlx9tduUOA3S6+qhl1Jbhw97+h6t8YK0r3wCWIOifqclxh7YykReZFrcy1
+         1GUJdlBzVS5wb79msFKCb6Toxpuz5z4NFDvXaark9HAeUSYkZyGz0QFn236aStoXNZ
+         KRwk84PmxHOSLj0CoJ0+0vedDm5uSfu9Y8sJyg0k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.5 175/367] crypto: amlogic - fix removal of module
-Date:   Mon, 10 Feb 2020 04:31:28 -0800
-Message-Id: <20200210122440.982219829@linuxfoundation.org>
+        stable@vger.kernel.org, Li Jun <jun.li@nxp.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.19 032/195] usb: typec: tcpci: mask event interrupts when remove driver
+Date:   Mon, 10 Feb 2020 04:31:30 -0800
+Message-Id: <20200210122309.639639914@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Corentin Labbe <clabbe.montjoie@gmail.com>
+From: Jun Li <jun.li@nxp.com>
 
-commit 24775ac2fe68132d3e0e7cd3a0521ccb1a5d7243 upstream.
+commit 3ba76256fc4e2a0d7fb26cc95459041ea0e88972 upstream.
 
-Removing the driver cause an oops due to the fact we clean an extra
-channel.
-Let's give the right index to the cleaning function.
-Fixes: 48fe583fe541 ("crypto: amlogic - Add crypto accelerator for amlogic GXL")
+This is to prevent any possible events generated while unregister
+tpcm port.
 
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: 74e656d6b055 ("staging: typec: Type-C Port Controller Interface driver (tcpci)")
+Signed-off-by: Li Jun <jun.li@nxp.com>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/1579502333-4145-1-git-send-email-jun.li@nxp.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/amlogic/amlogic-gxl-core.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/typec/tcpci.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/crypto/amlogic/amlogic-gxl-core.c
-+++ b/drivers/crypto/amlogic/amlogic-gxl-core.c
-@@ -289,7 +289,7 @@ static int meson_crypto_probe(struct pla
- error_alg:
- 	meson_unregister_algs(mc);
- error_flow:
--	meson_free_chanlist(mc, MAXFLOW);
-+	meson_free_chanlist(mc, MAXFLOW - 1);
- 	clk_disable_unprepare(mc->busclk);
- 	return err;
- }
-@@ -304,7 +304,7 @@ static int meson_crypto_remove(struct pl
+--- a/drivers/usb/typec/tcpci.c
++++ b/drivers/usb/typec/tcpci.c
+@@ -581,6 +581,12 @@ static int tcpci_probe(struct i2c_client
+ static int tcpci_remove(struct i2c_client *client)
+ {
+ 	struct tcpci_chip *chip = i2c_get_clientdata(client);
++	int err;
++
++	/* Disable chip interrupts before unregistering port */
++	err = tcpci_write16(chip->tcpci, TCPC_ALERT_MASK, 0);
++	if (err < 0)
++		return err;
  
- 	meson_unregister_algs(mc);
+ 	tcpci_unregister_port(chip->tcpci);
  
--	meson_free_chanlist(mc, MAXFLOW);
-+	meson_free_chanlist(mc, MAXFLOW - 1);
- 
- 	clk_disable_unprepare(mc->busclk);
- 	return 0;
 
 
