@@ -2,127 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3331158647
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 00:44:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B8F715864A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 00:52:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727540AbgBJXoO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 18:44:14 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:49981 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727192AbgBJXoO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 18:44:14 -0500
-Received: by ozlabs.org (Postfix, from userid 1007)
-        id 48GjDC2Qn6z9sRX; Tue, 11 Feb 2020 10:44:11 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=gibson.dropbear.id.au; s=201602; t=1581378251;
-        bh=7K+kTdpfGU1z4smBOeCkzyWWjYgzO+WnbCkyrDmR7p4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AIlf9AZJ1vQff9JYuBdtBRk/crVFqUYXTGsG9OMcAs5seJrjwoszLY4HRDFIRKm2o
-         JW3n0i1P3tSQfMORTkyW1exSiRw0c29BRguD/texL49oDBj4c51t18NkyH2pDVT1wG
-         cMOr3hxl0pP6+I6A/FHfxln2cu/ByV7cC41AuQmI=
-Date:   Tue, 11 Feb 2020 10:44:06 +1100
-From:   David Gibson <david@gibson.dropbear.id.au>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] libfdt: place new nodes & properties after the parent's
- ones
-Message-ID: <20200210234406.GH22584@umbus.fritz.box>
-References: <CGME20200204125854eucas1p19ace564a5f45b9231e0fba8af07009cd@eucas1p1.samsung.com>
- <20200204125844.19955-1-m.szyprowski@samsung.com>
- <20200205054508.GG60221@umbus.fritz.box>
- <bc380fd8-71bb-897e-f060-b51386dec9be@samsung.com>
+        id S1727523AbgBJXvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 18:51:22 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:39990 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727431AbgBJXvW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 18:51:22 -0500
+Received: by mail-ot1-f67.google.com with SMTP id i6so8296392otr.7
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 15:51:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=LKjUxFblOCddqIlO4cv/X5xuXDM/O53Ao0XnXPh7dXw=;
+        b=Uxd7FWgfdqj+OZ4KppbLh2c2zyaV/wFW8d/KYwuvqVi6OwG6YTzyLfMqDzd23sFSDm
+         EDRz4EdEal/IjQg2Al5C9QvvNSH7dNlEgxvDxXcyj5m2VnOrUfnfgUopeWgFidmCp+81
+         JJm9FDgmSQ7R7K/RGGKiRJiuHkecu5ildE/ohvaQjhfxLWCAxRPI+4Rm3jA+D6X1/AgM
+         ctzfJWLZsAzMfD3QZj4GVE9npxAztiP+BsrZWULBlaxoTKzygFitOyrllaWpAX9C1F96
+         N9cHV6P0XJdcFda4kENmq6LJbqOnvRV1i6VgLBZ+Ac+hZEnC4TQY+b3FVlCUDZ1My3ma
+         1+oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=LKjUxFblOCddqIlO4cv/X5xuXDM/O53Ao0XnXPh7dXw=;
+        b=kkn/2ZEqhKugYN00ZLrD3sWMSXbzlUTmsTthKUKgnjxBdkaZMTzjgydZWJrjTbWO2V
+         59SRCSAOiw4hMXcRWe5xM2amZSFzdIqNjWYfPlT/H6gBtURBCwnbQValr+XGXGgiu/2V
+         JGjz/B6uYvO99TTMcYOoycPYylsWH43eSkuMM0hg4SlhTdq8KrQrCvN+Vf2OE9xtjq4e
+         7FrcS1F7e5LvwZlitOHNc/8+bMwmlneAGjkrgTXxtJjGrkIOU7s6jfWC9WxaiLTE3HJE
+         kY7oolKfsPY/ntk45tNuzAVng1a6FxSy5Uu2M2QY5yihfddl0dYr+yau+ys+V+KYjo77
+         huOg==
+X-Gm-Message-State: APjAAAX1m76cnW6TtS5Uwlq+QIn4xAErgnQzBW4N7gfOMfY8vGO5o1wh
+        mQ5s4yW5hwzTb+Xa1vLM1Nvo1LI+uHG4q2x8XDhBfJS5
+X-Google-Smtp-Source: APXvYqwSpmsposXFi4CJjhwbamDidQyZaN15puTl4x+L+lS5EZaK1gIlud6OVpaTlXeC5Ifl09heY4UZCBZys5Hv0UU=
+X-Received: by 2002:a05:6830:1011:: with SMTP id a17mr2899341otp.45.1581378681216;
+ Mon, 10 Feb 2020 15:51:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jaoouwwPWoQSJZYp"
-Content-Disposition: inline
-In-Reply-To: <bc380fd8-71bb-897e-f060-b51386dec9be@samsung.com>
+Received: by 2002:a05:6838:554c:0:0:0:0 with HTTP; Mon, 10 Feb 2020 15:51:20
+ -0800 (PST)
+Reply-To: Aishagaddafi110@hotmail.com
+From:   Aisha Gaddafi <asani4006@gmail.com>
+Date:   Mon, 10 Feb 2020 15:51:20 -0800
+Message-ID: <CADM5EyGfr6zX6jLNQJGh3fNSwKoSjoTGJi7k9uyc+btPusWN_w@mail.gmail.com>
+Subject: DEAR FRIEND
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Assalamu Alaikum Wa Rahmatullahi Wa Barakatuh,
+Dear Friend
+How are you today,I came across your e-mail contact prior a private
+search while in need of your assistance.
+  I hope my mail meet you in good condition of health? Dear I have
+decided to contact you after much thought considering the fact that we
+have not meet before, but because of some circumstance obliged me, I
+decided to contact you due to the urgency of my present situation here
+in the refugee camp for your rescue and also for a business
+venture/project which I need your assistant in this business
+establishment in your country as my foreign partner as well as my
+legal appointed trustee.
 
---jaoouwwPWoQSJZYp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I am Aisha Muammar Gaddafi, the only daughter of the embattled
+president of Libya, Hon. Muammar Gaddafi. Am a   single Mother and a
+Widow with three Children.
+  I am currently residing in Burkina Faso unfortunately as a refugee.
+I am writing this mail with tears and sorrow from my heart asking for
+your urgent help. I have passed through pains and sorrowful moment
+since the death of my late father.
 
-On Mon, Feb 10, 2020 at 12:40:19PM +0100, Marek Szyprowski wrote:
-> Hi David,
->=20
-> On 05.02.2020 06:45, David Gibson wrote:
-> > On Tue, Feb 04, 2020 at 01:58:44PM +0100, Marek Szyprowski wrote:
-> >> While applying dt-overlays using libfdt code, the order of the applied
-> >> properties and sub-nodes is reversed. This should not be a problem in
-> >> ideal world (mainline), but this matters for some vendor specific/cust=
-om
-> >> dtb files. This can be easily fixed by the little change to libfdt cod=
-e:
-> >> any new properties and sub-nodes should be added after the parent's no=
-de
-> >> properties and subnodes.
-> >>
-> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > I'm not convinced this is a good idea.
-> >
-> > First, anything that relies on the order of properties or subnodes in
-> > a dtb is deeply, fundamentally broken.  That can't even really be a
-> > problem with a dtb file itself, only with the code processing it.
->=20
-> I agree about the properties, but generally the order of nodes usually=20
-> implies the order of creation of some devices or objects.
+At the meantime, my family is the target of Western nations led by
+Nato who wants to destroy my father at all costs. Our investments and
+bank accounts in several countries are their targets to freeze. My
+Father of blessed memory deposited the sum of  Twenty Seven Million,
+Five Hundred Thousand, Dollars ($27.500.000.000)  in  Bank Of Africa
+Burkina Faso which he used my name as the next of kin. I have been
+commissioned by the Bank to present an interested foreign
+investor/partner who can stand as my trustee and receive the fund in
+his account for a possible investment in his country due to my refugee
+status here in Burkina Faso.
 
-Huh?  From the device tree client's point of view the devices just
-exist - the order of creation should not be visible to it.
+I am in search of an honest and reliable person who will help me and
+stand as my trustee so that I will present him to the Bank for the
+transfer of the fund to his bank account overseas. I have chosen to
+contact you after my prayers and I believe that you will not betray my
+trust. But rather take me as your own sister or daughter. If this
+transaction interest you, you don't have to disclose it to anybody
+because of what is going with my entire family, if the united nation
+happens to know this account, they will freezing it as they froze
+others, so please keep this transaction only to yourself until we
+finalize it. I am willing to negotiate investment/business profit
+sharing ratio
+with you base on the future investment earning profits.
 
-> This sometimes=20
-> has some side-effects.
+Apologetic for my pictures I will enclose it in my next mail and more
+about me when I hear from you okay. Please I want you to contact me
+here (aishagaddafi110@hotmail.com) for more conversation. Thank and
+Best Regards, Yours Sincerely.
 
-If those side effects matter, your code is broken.  If you need to
-apply an order to nodes, you should be looking at 'reg' or other
-properties.
-
-> For comparison, the other lib used for fdt manipulation (libufdt)=20
-> applies overlays in a such way, that the order of properties and nodes=20
-> is not reversed.
->=20
-> > I'm also concerned this could have a negative performance impact,
-> > since it has to skip over a bunch of existing things before adding the
-> > new one.  On the other hand, that may be offset by the fact that it
-> > will reduce the amount of stuff that needs to be memmove()ed later on.
->=20
-> This code is already slow (especially in the way the uboot's use it for=
-=20
-> 'fdt apply' command), but in practice I've didn't observe negative=20
-> impact on the performance of applying large overlays at all.
-
-I'm going to need numbers, not just "I didn't see anything".
-
---=20
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
-
---jaoouwwPWoQSJZYp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAl5B6sYACgkQbDjKyiDZ
-s5IYVg//RmdG0csx2DA45UVzasqMWpkUTEDrr7pTxkDgmdvZOeC41OK5k1IifXT5
-75hhxVU72PhzmC+m6ymvtrukzItSIgGKoWYdItS+Nykb7Mfs+fWYoN8uwiBLsVgM
-vvdEMzcXyWqDy9+BV0H1kimyj/NJrnMAYmae00aTSR50fDtyNWOU7vgupgOlmVO1
-sSIxdL/wzjORwIEE9C/g6cEOYqZcccbzaVP/jRdBpOJjyArKwVYoirQCmypCT6gI
-a+btXPSNfnEuNnVnFJOHxvlybqvRhx8jjSFs3Duggb+ffMeTTKee5Yao8jzANVRw
-jqiDi3sIBp3pTZzmMGierGpUdQDx6cRDJz6oYNDmJkyLCTpEva3MGiDFwnXZ9AyR
-G2P/BDRjw782sDNzOPPMn8IvxMyL7zix/5+SNs9gsxZnQv/WTWj/O/LxhVXEhfSz
-UXEhLnPmqD8J9tLLy+3PuQ+CpPxxx5bGNhuJbftXCiYrjSjANpjmDMdSBgm1HVkc
-CbuHnPgWzOQ2eIImTN/PhtCTwOAd3Sw94gfYlC2q+9YUO1SGF/WjgAWvvf+uhVzz
-Wc4jQ9Vu9XTCAdWHEJgaj5cL93Lj5KJF6zYQbuoYMNClYJbmwoyrcCfYU/LEIlja
-m4cd0xAiqJet3wGoAtx19x1Yw44++MUvh/hvJpRmxropuRjXDvk=
-=g4vs
------END PGP SIGNATURE-----
-
---jaoouwwPWoQSJZYp--
+Warmest Regards,
+Aisha Gaddafi
