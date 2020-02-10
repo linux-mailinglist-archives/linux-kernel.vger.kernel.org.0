@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D7F11575E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:46:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9535E1574DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:38:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730852AbgBJMqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:46:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43364 "EHLO mail.kernel.org"
+        id S1728392AbgBJMg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:36:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728336AbgBJMlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:41:20 -0500
+        id S1728124AbgBJMft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:49 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06A7920842;
-        Mon, 10 Feb 2020 12:41:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33966208C4;
+        Mon, 10 Feb 2020 12:35:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338480;
-        bh=rANDrOgXbYxPRIcctAMUipvFcg2f5rSxJKS9mHD7wEQ=;
+        s=default; t=1581338149;
+        bh=L4r5YMKdPeOtPohxU0GhCvCY682DwqDYJCwck78rRGY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x9/iTGBp4fX3UJBQbnoPpeBHwcrw1ld0hP/5nGIbAmmAaLYZrUKWHzwyD758Y5Lkh
-         hcJ4PIYL/xM5OAI0T9tuDbbAM3X0aoNGZLL3rglwtLtcNaYzWbKgzmUUXWpjxDRr6x
-         uGuBuMLURE4rzNKqfdFfpC/f94es9RYxHylw9QMw=
+        b=SWf5ZkGNyH2Na0x0+8dY/8eTH3/mXTLaBlcniHV5YlPGvhG2oMgxlVPNs06JWBFyR
+         QyV905L0XLY0wkbr7JJNfqS5rM2lrww4KAUXfwGyIXcfEhJRjGHXe392P8a6ph3bCf
+         ZUCU8fY9avuWvoBBwQN6bZT8yPxodI9SU1fXA48k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.5 255/367] KVM: x86: Handle TIF_NEED_FPU_LOAD in kvm_{load,put}_guest_fpu()
-Date:   Mon, 10 Feb 2020 04:32:48 -0800
-Message-Id: <20200210122447.978478212@linuxfoundation.org>
+        stable@vger.kernel.org, huangwen <huangwenabc@gmail.com>,
+        Ganapathi Bhat <ganapathi.bhat@nxp.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.19 111/195] mwifiex: fix unbalanced locking in mwifiex_process_country_ie()
+Date:   Mon, 10 Feb 2020 04:32:49 -0800
+Message-Id: <20200210122316.365129776@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,67 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Brian Norris <briannorris@chromium.org>
 
-commit c9aef3b85f425d1f6635382ec210ee5a7ef55d7d upstream.
+commit 65b1aae0d9d5962faccc06bdb8e91a2a0b09451c upstream.
 
-Handle TIF_NEED_FPU_LOAD similar to how fpu__copy() handles the flag
-when duplicating FPU state to a new task struct.  TIF_NEED_FPU_LOAD can
-be set any time control is transferred out of KVM, be it voluntarily,
-e.g. if I/O is triggered during a KVM call to get_user_pages, or
-involuntarily, e.g. if softirq runs after an IRQ occurs.  Therefore,
-KVM must account for TIF_NEED_FPU_LOAD whenever it is (potentially)
-accessing CPU FPU state.
+We called rcu_read_lock(), so we need to call rcu_read_unlock() before
+we return.
 
-Fixes: 5f409e20b7945 ("x86/fpu: Defer FPU state load until return to userspace")
+Fixes: 3d94a4a8373b ("mwifiex: fix possible heap overflow in mwifiex_process_country_ie()")
 Cc: stable@vger.kernel.org
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Cc: huangwen <huangwenabc@gmail.com>
+Cc: Ganapathi Bhat <ganapathi.bhat@nxp.com>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Acked-by: Ganapathi Bhat <ganapathi.bhat@nxp.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |   19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/sta_ioctl.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -8517,12 +8517,26 @@ static int complete_emulated_mmio(struct
- 	return 0;
- }
+--- a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+@@ -232,6 +232,7 @@ static int mwifiex_process_country_ie(st
  
-+static void kvm_save_current_fpu(struct fpu *fpu)
-+{
-+	/*
-+	 * If the target FPU state is not resident in the CPU registers, just
-+	 * memcpy() from current, else save CPU state directly to the target.
-+	 */
-+	if (test_thread_flag(TIF_NEED_FPU_LOAD))
-+		memcpy(&fpu->state, &current->thread.fpu.state,
-+		       fpu_kernel_xstate_size);
-+	else
-+		copy_fpregs_to_fpstate(fpu);
-+}
-+
- /* Swap (qemu) user FPU context for the guest FPU context. */
- static void kvm_load_guest_fpu(struct kvm_vcpu *vcpu)
- {
- 	fpregs_lock();
- 
--	copy_fpregs_to_fpstate(vcpu->arch.user_fpu);
-+	kvm_save_current_fpu(vcpu->arch.user_fpu);
-+
- 	/* PKRU is separately restored in kvm_x86_ops->run.  */
- 	__copy_kernel_to_fpregs(&vcpu->arch.guest_fpu->state,
- 				~XFEATURE_MASK_PKRU);
-@@ -8538,7 +8552,8 @@ static void kvm_put_guest_fpu(struct kvm
- {
- 	fpregs_lock();
- 
--	copy_fpregs_to_fpstate(vcpu->arch.guest_fpu);
-+	kvm_save_current_fpu(vcpu->arch.guest_fpu);
-+
- 	copy_kernel_to_fpregs(&vcpu->arch.user_fpu->state);
- 
- 	fpregs_mark_activate();
+ 	if (country_ie_len >
+ 	    (IEEE80211_COUNTRY_STRING_LEN + MWIFIEX_MAX_TRIPLET_802_11D)) {
++		rcu_read_unlock();
+ 		mwifiex_dbg(priv->adapter, ERROR,
+ 			    "11D: country_ie_len overflow!, deauth AP\n");
+ 		return -EINVAL;
 
 
