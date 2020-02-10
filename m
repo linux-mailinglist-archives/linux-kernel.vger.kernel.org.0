@@ -2,94 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15065157C20
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:35:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A17C4157C39
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:36:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730471AbgBJNfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:35:12 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:49618 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731363AbgBJNfI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 08:35:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=GPPTGGCsRaytIz1LpgQIb2TA2p+fTyCYKNF1pAC5bG4=; b=AJMpgVkVmCduDmkUDkFI4Q6Ve0
-        n861FSp5OdNAlagaT4f/pBQ26Pe4rHAfaU62EOxUI72Um/BdtZGXQFjqHcJoR36KiUQrvnnNzcqPl
-        9jYruYDZBmad2L3X/R5ClNIUQO32OCiiA8QXAQGGInaeH8dhHlnQxDV8uzaHdVO+YxFAdN9fkJeru
-        VwoepytTdDPFdNWgUQ7nA+3aUyNHnUSPnn+F0XY7KoX25L+/HpcNN0ajmyl+mxNZMWNtyDu+JMrvw
-        ZT+VnylQiEBuaUyx3oh11pgOfCOy5o+qJYwJNbgRiSuWZk5rb9vtFDbJRsxpoXj3UEE44Qq7mKXn9
-        qAHA2ycQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j19DI-0006c3-NL; Mon, 10 Feb 2020 13:35:00 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C56B630066E;
-        Mon, 10 Feb 2020 14:33:10 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 0CA2829C83CBE; Mon, 10 Feb 2020 14:34:59 +0100 (CET)
-Date:   Mon, 10 Feb 2020 14:34:59 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Amol Grover <frextrite@gmail.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        id S1731623AbgBJNfx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:35:53 -0500
+Received: from foss.arm.com ([217.140.110.172]:33798 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727828AbgBJNfu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 08:35:50 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D43951FB;
+        Mon, 10 Feb 2020 05:35:49 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5A2A63F68E;
+        Mon, 10 Feb 2020 05:35:49 -0800 (PST)
+Date:   Mon, 10 Feb 2020 13:35:47 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Adam Serbinski <adam@serbinski.com>
+Cc:     Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH] events: Annotate parent_ctx with __rcu
-Message-ID: <20200210133459.GJ14897@hirez.programming.kicks-ass.net>
-References: <20200208144648.18833-1-frextrite@gmail.com>
- <20200210093624.GB14879@hirez.programming.kicks-ass.net>
- <20200210125948.GA16485@workstation-portable>
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Patrick Lai <plai@codeaurora.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 6/8] ASoC: qcom/common: Use snd-soc-dummy-dai when
+ codec is not specified
+Message-ID: <20200210133547.GI7685@sirena.org.uk>
+References: <20200207205013.12274-1-adam@serbinski.com>
+ <20200209154748.3015-1-adam@serbinski.com>
+ <20200209154748.3015-7-adam@serbinski.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="16qp2B0xu0fRvRD7"
 Content-Disposition: inline
-In-Reply-To: <20200210125948.GA16485@workstation-portable>
+In-Reply-To: <20200209154748.3015-7-adam@serbinski.com>
+X-Cookie: Avoid gunfire in the bathroom tonight.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 06:29:48PM +0530, Amol Grover wrote:
-> On Mon, Feb 10, 2020 at 10:36:24AM +0100, Peter Zijlstra wrote:
-> > On Sat, Feb 08, 2020 at 08:16:49PM +0530, Amol Grover wrote:
 
-> > > @@ -3106,26 +3106,31 @@ static void ctx_sched_out(struct perf_event_context *ctx,
-> > >  static int context_equiv(struct perf_event_context *ctx1,
-> > >  			 struct perf_event_context *ctx2)
-> > >  {
-> > > +	struct perf_event_context *parent_ctx1, *parent_ctx2;
-> > > +
-> > >  	lockdep_assert_held(&ctx1->lock);
-> > >  	lockdep_assert_held(&ctx2->lock);
-> > >  
-> > > +	parent_ctx1 = rcu_dereference(ctx1->parent_ctx);
-> > > +	parent_ctx2 = rcu_dereference(ctx2->parent_ctx);
-> > 
-> > Bah.
-> > 
-> > Why are you  fixing all this sparse crap and making the code worse?
-> 
-> Hi Peter,
-> 
-> Sparse is quite noisy and we need to eliminate false-positives, right?
+--16qp2B0xu0fRvRD7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Dunno, I've been happy just ignoring it all.
+On Sun, Feb 09, 2020 at 10:47:46AM -0500, Adam Serbinski wrote:
 
-> __rcu will tell the developer, this pointer could change and he needs to
-> take the required steps to make sure the code doesn't break.
+> When not specifying a codec, use snd-soc-dummy-dai. This supports
+> the case where a fixed configuration codec is attached, such as
+> bluetooth hfp.
 
-I know what it does; what I don't know is why you need to make the code
-worse. In paricular, __rcu doesn't mandate rcu_dereference(), esp. not
-when you're actually holding the write side lock.
+Fixed configuration devices should still have normal drivers that say
+what those fixed configurations are.
+
+--16qp2B0xu0fRvRD7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5BXDMACgkQJNaLcl1U
+h9CYzgf8DU6Fw+qDimV4Ug1WnuJrwfbSYr1FZoSZ7Cghuqu1iivMC1eRDp2KmIsO
+OrabAfutm8A+HH6/daaPn0JePCU+/Z/q2MiCJCsf6Kp6yqLcia2N4qfamVOaoZw0
+7TtETvXhLQ5zSqQkV8kqfRlYsyMesAtSD6rGrNBo9nY5ZFh5iJ0dvVCMvwOic/oX
+PMIaJ0ih4lvq3CnuGdP/agOdlC+UvqKmrU10Z1lgKxHrWQxynjjRD0ktIoNygZQx
+RO6T1jVY3wqz4Y59OL0xJaIHECc7Yx05EBwFoBaCr25Zgci0jjbb2RlfHVHazlo3
+gXUz3ap0UdkUw8fp2dxJRiL45BQVyA==
+=+Q3I
+-----END PGP SIGNATURE-----
+
+--16qp2B0xu0fRvRD7--
