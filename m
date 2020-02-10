@@ -2,141 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9136157936
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:14:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33DFC1579FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:19:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730457AbgBJNNk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:13:40 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:44545 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729195AbgBJNNi (ORCPT
+        id S1730886AbgBJNTd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:19:33 -0500
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:50428 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730948AbgBJNTa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 08:13:38 -0500
-Received: by mail-qk1-f195.google.com with SMTP id v195so6349289qkb.11;
-        Mon, 10 Feb 2020 05:13:36 -0800 (PST)
+        Mon, 10 Feb 2020 08:19:30 -0500
+Received: by mail-pg1-f201.google.com with SMTP id q4so5394395pgr.17
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 05:19:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ELueoEBRkgTl4B40PNsdNYDb0SBaJjBLOAUumLTiqbY=;
-        b=MBeV3rRewhJ8Z2qz4yOAmR2cWhPbcyZKmrSvWF15ozDZE1h81jcU9LY2Pn6IbvL5I9
-         pNWo9o+969vGIuz7+NkmwV6QtVvaucOiQsVtwLlla4OOhhxVXjLXeRGFtrKa2M2SdQ9m
-         bhchhU+FqFra2W3Z8z04qnOsXi5Bi3GvUX1B6tQ8uw2x8J2HzS6wnASao6T5lYCbWCX2
-         DvNNht/FONbVZ8tagNaH8yEX9mzX3ds9q2cL3ssTdk/MT5uLqvUcb3nA3kg73lo8o8og
-         HfZMxba6OZMXnlw3up4ocgi/kOzbGWY3o6PtZslz2+Zqg7Sh5GXLJsDxLWfip5jWC40R
-         MjLg==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=Fp6MtkUYwRFvvO6uysN//Mlb4ErU1o3j/TgE2RsZDqc=;
+        b=SCqH2t8UW6xatENC08Bks3adEsYcqzl2ydiPjVd95yGYrm1qIPiqIPbJGbPVxOF6N2
+         cXPbr0IBQt6dB17hHDgfd7lRJkGVI8DYoUS5n63DYtkgFOIwvdhZ4zPcFPoI0T3hy5Ru
+         6h8p3HBYl6detqUKT0QbLofddrSssB4yFaWoDFUGUSGu97IlPbNCrhSuGmYn4FHcG1Hu
+         puJqSk26531IpGVb/Z3XJbtj1Anubf+qN498+feR4jcBVrOGxmmypaTnM+V8YSvdXS+8
+         SHA1BEgWGjY6fO803XdXZJebU+i8hOLqSyWNeDAD1CXw0/l1mii1pe9nnC4ZqkDQ7Czy
+         dtpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ELueoEBRkgTl4B40PNsdNYDb0SBaJjBLOAUumLTiqbY=;
-        b=lfyBj1KjVG1zt09tR425XT0dQe+VSVBMPUgsxl8/PuCxwf7sCk+stoEkJBm0VqWaNB
-         qy7etA2nAVE7SqKouRRJfPg+88427AETkIRRxD7O4p8E7HLlaCbtSynIa8f0ETXnfeBN
-         gxkWSG3QcfLAekUEOaMWrRDIrOx3a/QUQQ5Qzb9w9i2OkLRFCiLu1nVY9ACvasIE5ler
-         tUK54dvgU0jwZ2z0MrCNLERIu9q2wHBXlBdgEaO1gGbxrxIuQ8HbzdVaVPObfWkjW1Ug
-         3/mnjgyB25B9ev4yjaokRayznAhaT6hsQCnclIvFIfC4bgWcDroV2bjjmvkYyyloOXDQ
-         wF0A==
-X-Gm-Message-State: APjAAAXA+PUxKzUPUYRAQWbb+6uVRG4aJJhex6ngLv1zjYrFJgXKNr20
-        iZvrPujfdg5r4d8BHAs/Ono=
-X-Google-Smtp-Source: APXvYqxCw4A7soOdnOjruGJgVoLWi5AiQxVeCMMpgBwVZoZJPeI4B7eBJrBjF8xNDhGYBoBTQLwSvw==
-X-Received: by 2002:a37:2e43:: with SMTP id u64mr1116241qkh.387.1581340415783;
-        Mon, 10 Feb 2020 05:13:35 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id j196sm107192qke.102.2020.02.10.05.13.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2020 05:13:35 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 09B6640A7D; Mon, 10 Feb 2020 10:13:33 -0300 (-03)
-Date:   Mon, 10 Feb 2020 10:13:32 -0300
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH 3/4] perf map: Set kmap->kmaps backpointer for main
- kernel map chunks
-Message-ID: <20200210131332.GB3416@kernel.org>
-References: <20191223133241.8578-1-acme@kernel.org>
- <20191223133241.8578-4-acme@kernel.org>
- <2617ead1-60e2-3da6-cde6-9efd68412139@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2617ead1-60e2-3da6-cde6-9efd68412139@linux.ibm.com>
-X-Url:  http://acmel.wordpress.com
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=Fp6MtkUYwRFvvO6uysN//Mlb4ErU1o3j/TgE2RsZDqc=;
+        b=po8NAZ8yBvrGYibyt9KVc64+cpZmIJtKAgD2PzX1rP6u2NVo6nOfpGDzMvgIZvbXJh
+         1i7LGsfwfWeiytDPQaxNNdUgB+U25W5Y4yqSNKKKPzm8EBfKcRkZqkVOtacxv3eloOoK
+         UbVffVkQ/nPWxnVm7EIGHREdk7KsSwp4vMUpE4mt6EbYF4eqPPxPpc/SOsAeZakliE5D
+         5GpRRAZxBe6rmy1OazuUTdLoApxjzYFTY1ekp0zAWi8keDjvxWi6QRTbpatPBi8AtE8x
+         I7awFKtrhKe6SeQpl5ka25DOrQZjBUIH6L+TdkvZKNrRKbYQygbNZG9MBz/p/iR+eHdD
+         da1w==
+X-Gm-Message-State: APjAAAVOA6LNjzKUujyqHGtDDTilxKHoBkIKki1FtV0qkJnAqvRyDHj8
+        Vii40Rix9qdZ7J0duQa1uJ4dNMZYTnjjbRymGas=
+X-Google-Smtp-Source: APXvYqweHMPn9EpO/hdGK4qeZV47ZWtBbfoAGJfRDlgtpjNgGjfNxpzn3TtErZABuInYR5PUZtGfkXcKDV0cYKcp4Kw=
+X-Received: by 2002:a63:ed01:: with SMTP id d1mr1488010pgi.95.1581340769935;
+ Mon, 10 Feb 2020 05:19:29 -0800 (PST)
+Date:   Mon, 10 Feb 2020 05:19:25 -0800
+Message-Id: <20200210131925.145463-1-samitolvanen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+Subject: [PATCH] kbuild: remove duplicate dependencies from .mod files
+From:   Sami Tolvanen <samitolvanen@google.com>
+To:     Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>
+Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sami Tolvanen <samitolvanen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Feb 06, 2020 at 03:10:38PM +0530, Ravi Bangoria escreveu:
-> Hi Arnaldo,
-> 
-> On 12/23/19 7:02 PM, Arnaldo Carvalho de Melo wrote:
-> > From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > 
-> > When a map is create to represent the main kernel area (vmlinux) with
-> > map__new2() we allocate an extra area to store a pointer to the 'struct
-> > maps' for the kernel maps, so that we can access that struct when
-> > loading ELF files or kallsyms, as we will need to split it in multiple
-> > maps, one per kernel module or ELF section (such as ".init.text").
-> > 
-> > So when map->dso->kernel is non-zero, it is expected that
-> > map__kmap(map)->kmaps to be set to the tree of kernel maps (modules,
-> > chunks of the main kernel, bpf progs put in place via
-> > PERF_RECORD_KSYMBOL, the main kernel).
-> > 
-> > This was not the case when we were splitting the main kernel into chunks
-> > for its ELF sections, which ended up making 'perf report --children'
-> > processing a perf.data file with callchains to trip on
-> > __map__is_kernel(), when we press ENTER to see the popup menu for main
-> > histogram entries that starts at a symbol in the ".init.text" ELF
-> > section, e.g.:
-> > 
-> > -    8.83%     0.00%  swapper     [kernel.vmlinux].init.text  [k] start_kernel
-> >       start_kernel
-> >       cpu_startup_entry
-> >       do_idle
-> >       cpuidle_enter
-> >       cpuidle_enter_state
-> >       intel_idle
-> > 
-> > Fix it.
-> 
-> perf top from perf/core has started crashing at __map__is_kernel():
-> 
->   (gdb) bt
->   #0  __map__is_kernel (map=<optimized out>) at util/map.c:935
->   #1  0x000000000045551d in perf_event__process_sample (machine=0xbab8f8,
->       sample=0x7fffe5ffa6d0, evsel=0xba7570, event=0xbcac50, tool=0x7fffffff84e0)
->       at builtin-top.c:833
->   #2  deliver_event (qe=<optimized out>, qevent=<optimized out>) at builtin-top.c:1192
->   #3  0x000000000050b9fb in do_flush (show_progress=false, oe=0x7fffffff87e0)
->       at util/ordered-events.c:244
->   #4  __ordered_events__flush (oe=oe@entry=0x7fffffff87e0, how=how@entry=OE_FLUSH__TOP,
->       timestamp=timestamp@entry=0) at util/ordered-events.c:323
->   #5  0x000000000050c1b5 in __ordered_events__flush (timestamp=<optimized out>,
->       how=<optimized out>, oe=<optimized out>) at util/ordered-events.c:339
->   #6  ordered_events__flush (how=OE_FLUSH__TOP, oe=0x7fffffff87e0) at util/ordered-events.c:341
->   #7  ordered_events__flush (oe=oe@entry=0x7fffffff87e0, how=how@entry=OE_FLUSH__TOP)
->       at util/ordered-events.c:339
->   #8  0x0000000000454e21 in process_thread (arg=0x7fffffff84e0) at builtin-top.c:1104
->   #9  0x00007ffff7f2c4e2 in start_thread () from /lib64/libpthread.so.0
->   #10 0x00007ffff76086d3 in clone () from /lib64/libc.so.6
-> 
-> I haven't debugged it much but seems like the actual patch that's causing the
-> crash is de90d513b246 ("perf map: Use map->dso->kernel + map__kmaps() in
-> map__kmaps()").
-> 
-> Did you face this / aware of it?
+With CONFIG_TRIM_UNUSED_SYMS, if a module has enough dependencies to
+exceed the default xargs command line size limit, the output is split
+into multiple lines, which can result in used symbols getting trimmed.
 
-No, I wasn't aware of this, will check, getting back from vacations
-today, so may take some time,
+This change removes duplicate dependencies, which will reduce the
+probability of this happening and makes .mod files smaller and easier
+to read.
 
-- Arnaldo
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+---
+ scripts/Makefile.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index a1730d42e5f3..a083bcec19d3 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -257,7 +257,7 @@ endef
+ 
+ # List module undefined symbols (or empty line if not enabled)
+ ifdef CONFIG_TRIM_UNUSED_KSYMS
+-cmd_undef_syms = $(NM) $< | sed -n 's/^  *U //p' | xargs echo
++cmd_undef_syms = $(NM) $< | sed -n 's/^  *U //p' | sort -u | xargs echo
+ else
+ cmd_undef_syms = echo
+ endif
+
+base-commit: bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9
+-- 
+2.25.0.341.g760bfbb309-goog
+
