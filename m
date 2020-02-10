@@ -2,65 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D31B157DD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 15:53:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B081E157DD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 15:53:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728720AbgBJOxf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 09:53:35 -0500
-Received: from mga01.intel.com ([192.55.52.88]:19165 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727570AbgBJOxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 09:53:34 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Feb 2020 06:53:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,425,1574150400"; 
-   d="scan'208";a="405606798"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga005.jf.intel.com with ESMTP; 10 Feb 2020 06:53:31 -0800
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1j1ARJ-000Zbj-E8; Mon, 10 Feb 2020 16:53:33 +0200
-Date:   Mon, 10 Feb 2020 16:53:33 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH v1] MAINTAINERS: Sort entries in database for VSPRINTF
-Message-ID: <20200210145333.GW10400@smile.fi.intel.com>
-References: <20200128143425.47283-1-andriy.shevchenko@linux.intel.com>
- <20200210142154.x2azckvduvh3xuea@pathway.suse.cz>
- <20200210145129.GV10400@smile.fi.intel.com>
+        id S1728782AbgBJOxp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 09:53:45 -0500
+Received: from sonic301-2.consmr.mail.bf2.yahoo.com ([74.6.129.41]:39937 "EHLO
+        sonic301-2.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727570AbgBJOxo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 09:53:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1581346423; bh=ntCsvVlsVYNXsouoo59ZH21v1wHZ5nZJzCG4NsnkusM=; h=Date:From:Reply-To:Subject:References:From:Subject; b=gGp/Vgx7NRyLSa7Mt3nFkcNCi1bHI9rSUdKqaF8SN1B25MCXWQw0Q3AHigSR6DL4BEaUYiv5tCwxoFSptIIyzo5h8FN7IptZongOnU/GlScUqf2oR/E1pceVihnuVuB01ZDKFWZQmK6qV7XwfFIQ71lqUGulr5r0VMrLmzmG1fG2BfBVXfiAKh8liRC3LM+xPN0Du48S2P/K4IhoaDASSMbxQPqj2iEdRKVPAR7dmcows2RzparwRW0/PzZUXwSsHQQ7Tf+nyalgK3A8GJuHdCw2JihHhfGRB3C2Mzo1yHZlcnbWqIFE+uhRvZX6beE3kf3z+7c70F/2vjmlgHU4pg==
+X-YMail-OSG: R1uqNBYVM1kRaY7s9Qf2URSkCJFptKHVaSBGimSOqFpnRmMVjm97cKG6rYgmldV
+ _7QxYM2L.150t4x8hKCKimt8sHYmNhDtvcxAioFL4IJuXWVzgyJ_S9qwRUtxX3Ox1E5vc1Vg4cv4
+ K7GZaROA2X47mjAaBXDhCZtkaMFCziuGK9QXL8Tep.4LSRQHpZMY.sm7pNPz9D.3goybjQ4sEF58
+ dfCm8Gd1zRAhK2PGmwdk7D8WBwMCu1PBajDBOtkh6LwYsKHBIAcs_HCMzCeYC3ZkqJCMgFnyT3PP
+ 9xHeWxDEiZj3WZ39iGxC5y.PVh1c_DJ667jVOES8M1ZetLZ3N_ihb_OPs684TFumMru1zzgR7STH
+ nRRE62G5epRPaLNh5VPtWic0U9H_LLVnyCWsDk_HBjjXs1W1JX.McJQ6KjRTZkWQlp331hm4T0Nl
+ 5DhbFdY1kitPWwxAhM_uqngePSqpg8Pj7KPWZx_Pan0F.jYyzeyKPGYn97HvBGgwcChdZQvMFk_.
+ 02yyx5WixTv8AOnr13e0xjzYaewAzAMNYRoEcdQuBOMGeKGTWkRqKn2M6yAPUKP6f1RR94fM_QJh
+ fLwj3df3FvO8gSntX0r3tOwMPKIdiNczCdmpWDbCBArXP6nm3MZmTmEW7mOS9udQl41ZMbnHeRXo
+ 4s9pyX3N7rXZP4CEGVfCDRnooY5Udy4_Z2gXEzVyFKfcAxYxf.AlUqltt2loudsIKtkcPoZSbOeZ
+ ulyeyHPT3MQ7NQW_9W51ttu4H.9dvA_YdM8L1MSZlOiS1m6hic08xdS5BGnpEqw3s..OT0FVjb6Y
+ T7_ujTy5QCatAFNpIZUPs.pvyQDkr4HaNNjqUIlQT4w4ENpMXo.swa6UiVxURRiFgQ5TOLRAPijY
+ 6qkGFZ9FEohGqf4aXlFMpJZ6V3rIT2PApdUFURdjbubkSRubpH2ePgjk5_tL8E9Sfcconr5cn7SO
+ 49zmW7PFnHnunHo6g2RZyzuuycvmJHvVkK9_acgmwelK7KRhpMBo6NC3oolqNzS_mr2Uva9O5MJn
+ F26L.MleZtgL0IXSxQbHfkVVtvuPIVQpoWBf6y4p4focLyoUyTpxlWZ6Ir.3Z3Z2Srz5Tax.6tPL
+ 0GhoAAYAb6vs4jYgwf_vXvTS4QIC7sMpphvZNQ.RayNwSuUj_4Jw41fI5i9GpAAw_6eIgFX8KS.x
+ DT30TMEjZYUW8zLKg65Yug28HyHM5pSeAC1RP.zxslbw7V3LRNGqqQBGE7paPoMNanccakMv7G0L
+ o3FzqWeEICdOtTF.c8lZw2CYSJnCoBs1BRpNuI4cZhxCTp0T_EbsRcn3a1Zfasym49HNdLg--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.bf2.yahoo.com with HTTP; Mon, 10 Feb 2020 14:53:43 +0000
+Date:   Mon, 10 Feb 2020 14:53:42 +0000 (UTC)
+From:   "Mrs. Aminatou Zainab" <jackson.jacksonn556@gmail.com>
+Reply-To: miss.aminatouzainab@gmail.com
+Message-ID: <1480388708.588666.1581346422044@mail.yahoo.com>
+Subject: WITH DUE RESPECT YOUR ATTENTION IS VERY VERY NEEDED URGENT.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200210145129.GV10400@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <1480388708.588666.1581346422044.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.15199 YMailNodin Mozilla/5.0 (Windows NT 6.1; rv:72.0) Gecko/20100101 Firefox/72.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 04:51:29PM +0200, Andy Shevchenko wrote:
-> On Mon, Feb 10, 2020 at 03:21:55PM +0100, Petr Mladek wrote:
-
-> > Also the order does not look defined in the file. When I run
-> > parse-maintainers.pl on the entire MAINTAINERS file:
-> 
-> See [2] for the details.
-
-"... But in the meantime, at least that MAINTAINERS file should _really_ be
-alpha-sorted now."
-
-> [2]: https://lore.kernel.org/lkml/CA+55aFy3naVgbRubhjfq7k4CcSiFOEdQNkNwHTLDLmepECu9yA@mail.gmail.com/
-
--- 
-With Best Regards,
-Andy Shevchenko
 
 
+
+
+ATTENTION: DEAR BENEFICIARY CONGRATULATIONS TO YOU,
+
+I RECEIVE YOUR CONTENT OF YOUR EMAIL FROM FEDEX ATM CARD OFFICES YOUR FUNDS SUM OF $10.500,000, 000. MILLION DOLLARS, HAS DISCOVER HERE AFTER THE BOARD OF DIRECTORS MEETINGS, THE UNITED NATIONS GOVERNMENT HAVE DECIDED TO ISSUE YOU YOUR (ATM CARD) VALUED @ TEN MILLION FIVE HUNDRED THOUSAND DOLLARS ($) COMPENSATION FUND THROUGH THIS (ATM) CARD.
+
+THIS IS TO BRING TO YOUR NOTICE THAT YOUR VALUED SUM OF 10.5 MILLION DOLLARS HAS BEING CREDITED IN YOUR NAME AS BENEFICIARY TO THIS (ATM CARD), AND HAS BEEN HANDLE TO THE FOREIGN REMITTANCE DEPARTMENT TO SEND IT TO YOU IN YOUR FAVOR IMMEDIATELY WITHOUT ANY DELAY,
+
+YOU HAVE ACCESS TO MAKE DAILY WITHDRAWALS OF ($5,500) UNITED STATE DOLLARS DAILY.
+
+WE RECEIVE YOUR INFORMATIONS AND YOUR HOME ADDRESS OF YOUR COUNTRY AND WE WILL SEND TO YOU YOUR (ATM CARD), WE HAVE ALSO RECEIVED A SIGNAL FROM THE SWISS WORLD BANK TO TRANSFER YOUR BELONGING (ATM) TO YOU WITHIN ONE WEEK, WITHOUT ANY DELAY AS WE RECORD.
+
+WE HAVE JUST FINISHED OUR ANNUAL GENERAL MEETING WITH BANK OF AMERICA (BOA).
+
+FOR MORE INFORMATION PLEASE GET BACK TO ME AS SOON AS POSSIBLE.
+
+YOURS
+SINCERELY.
+
+DIRECTOR FEDEX SERVICE (USA).
+MRS. AMINATOU. Z. MAKEL.
