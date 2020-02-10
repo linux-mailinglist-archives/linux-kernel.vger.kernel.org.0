@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC4C1157B30
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:29:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0C7815796D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:15:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbgBJMgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:36:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53592 "EHLO mail.kernel.org"
+        id S1730966AbgBJNP0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:15:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728116AbgBJMfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:35:48 -0500
+        id S1729123AbgBJMiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:21 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3352E214DB;
-        Mon, 10 Feb 2020 12:35:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A83282168B;
+        Mon, 10 Feb 2020 12:38:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338148;
-        bh=SIsmPf3abXu8RlcQgswvaUTqnh7SxIEE2Cc3DW6G/Lc=;
+        s=default; t=1581338300;
+        bh=UIpegJNULyKBWEMumoWwrG2B15Jat15T2/qa3UZL1g0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XVvka3is5EjMfA3XVB5jAwMDjlkU19N+oYZhOURwNhtjd0UbUEtej4ZhI0D7fS2U0
-         PU4Nr2VHw5KT9nXdCqWcl5ijr8R5ldGu24yWbrWRhMYJotSmK5R3HRvRYBCljaR1UB
-         Um/wIa7/zehty3wjKV5K9vEWoCAfxHzA7Xl6wMRg=
+        b=x+CgYguWmsfS/hq9J7FX+5qH1W00DZC3NfTi/HayRp4BZYNaUiz3OJ1FfjwNO+1gM
+         ddb2lkmt1/rMflw9vWn66LpHIOWDxaobB9ZilQUpxYK26sExG1B2o6jsPVJxVDZ6/n
+         h9aWJN8y2dj7ccCEoqFQSnCu9mdheG5BNL6+AeYQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
-        Stephen Warren <swarren@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: [PATCH 4.19 109/195] ARM: tegra: Enable PLLP bypass during Tegra124 LP1
+        stable@vger.kernel.org, Greg Kurz <groug@kaod.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.4 211/309] KVM: PPC: Book3S HV: Uninit vCPU if vcore creation fails
 Date:   Mon, 10 Feb 2020 04:32:47 -0800
-Message-Id: <20200210122316.106249073@linuxfoundation.org>
+Message-Id: <20200210122426.803087822@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,70 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 1a3388d506bf5b45bb283e6a4c4706cfb4897333 upstream.
+commit 1a978d9d3e72ddfa40ac60d26301b154247ee0bc upstream.
 
-For a little over a year, U-Boot has configured the flow controller to
-perform automatic RAM re-repair on off->on power transitions of the CPU
-rail[1]. This is mandatory for correct operation of Tegra124. However,
-RAM re-repair relies on certain clocks, which the kernel must enable and
-leave running. PLLP is one of those clocks. This clock is shut down
-during LP1 in order to save power. Enable bypass (which I believe routes
-osc_div_clk, essentially the crystal clock, to the PLL output) so that
-this clock signal toggles even though the PLL is not active. This is
-required so that LP1 power mode (system suspend) operates correctly.
+Call kvm_vcpu_uninit() if vcore creation fails to avoid leaking any
+resources allocated by kvm_vcpu_init(), i.e. the vcpu->run page.
 
-The bypass configuration must then be undone when resuming from LP1, so
-that all peripheral clocks run at the expected rate. Without this, many
-peripherals won't work correctly; for example, the UART baud rate would
-be incorrect.
-
-NVIDIA's downstream kernel code only does this if not compiled for
-Tegra30, so the added code is made conditional upon the chip ID.
-NVIDIA's downstream code makes this change conditional upon the active
-CPU cluster. The upstream kernel currently doesn't support cluster
-switching, so this patch doesn't test the active CPU cluster ID.
-
-[1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
-
-Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+Fixes: 371fefd6f2dc4 ("KVM: PPC: Allow book3s_hv guests to use SMT processor modes")
 Cc: stable@vger.kernel.org
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Greg Kurz <groug@kaod.org>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Acked-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mach-tegra/sleep-tegra30.S |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/powerpc/kvm/book3s_hv.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/arm/mach-tegra/sleep-tegra30.S
-+++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -382,6 +382,14 @@ _pll_m_c_x_done:
- 	pll_locked r1, r0, CLK_RESET_PLLC_BASE
- 	pll_locked r1, r0, CLK_RESET_PLLX_BASE
+--- a/arch/powerpc/kvm/book3s_hv.c
++++ b/arch/powerpc/kvm/book3s_hv.c
+@@ -2354,7 +2354,7 @@ static struct kvm_vcpu *kvmppc_core_vcpu
+ 	mutex_unlock(&kvm->lock);
  
-+	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
-+	cmp	r1, #TEGRA30
-+	beq	1f
-+	ldr	r1, [r0, #CLK_RESET_PLLP_BASE]
-+	bic	r1, r1, #(1<<31)	@ disable PllP bypass
-+	str	r1, [r0, #CLK_RESET_PLLP_BASE]
-+1:
-+
- 	mov32	r7, TEGRA_TMRUS_BASE
- 	ldr	r1, [r7]
- 	add	r1, r1, #LOCK_DELAY
-@@ -641,7 +649,10 @@ tegra30_switch_cpu_to_clk32k:
- 	str	r0, [r4, #PMC_PLLP_WB0_OVERRIDE]
+ 	if (!vcore)
+-		goto free_vcpu;
++		goto uninit_vcpu;
  
- 	/* disable PLLP, PLLA, PLLC and PLLX */
-+	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
-+	cmp	r1, #TEGRA30
- 	ldr	r0, [r5, #CLK_RESET_PLLP_BASE]
-+	orrne	r0, r0, #(1 << 31)	@ enable PllP bypass on fast cluster
- 	bic	r0, r0, #(1 << 30)
- 	str	r0, [r5, #CLK_RESET_PLLP_BASE]
- 	ldr	r0, [r5, #CLK_RESET_PLLA_BASE]
+ 	spin_lock(&vcore->lock);
+ 	++vcore->num_threads;
+@@ -2371,6 +2371,8 @@ static struct kvm_vcpu *kvmppc_core_vcpu
+ 
+ 	return vcpu;
+ 
++uninit_vcpu:
++	kvm_vcpu_uninit(vcpu);
+ free_vcpu:
+ 	kmem_cache_free(kvm_vcpu_cache, vcpu);
+ out:
 
 
