@@ -2,57 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75B321584B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 22:27:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D597C1584B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 22:26:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727613AbgBJV0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727641AbgBJV0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 10 Feb 2020 16:26:50 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:59728 "EHLO
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:59716 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727431AbgBJV0t (ORCPT
+        with ESMTP id S1727414AbgBJV0t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 10 Feb 2020 16:26:49 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 1E79429B4C; Mon, 10 Feb 2020 16:26:48 -0500 (EST)
+        id 1350F29B4E; Mon, 10 Feb 2020 16:26:48 -0500 (EST)
 To:     "David S. Miller" <davem@davemloft.net>
 Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         Chris Zankel <chris@zankel.net>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Message-Id: <aab0449ddb0bc15bce268f86d0b2ee7afb0e49c6.1581369531.git.fthain@telegraphics.com.au>
+Message-Id: <0adf9819ded56830f460cd1643e9ce013ed33f6d.1581369531.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1581369530.git.fthain@telegraphics.com.au>
 References: <cover.1581369530.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH net-next 4/7] net/sonic: Remove redundant netif_start_queue()
- call
+Subject: [PATCH net-next 3/7] net/sonic: Remove redundant next_tx variable
 Date:   Tue, 11 Feb 2020 08:18:50 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The transmit queue must be running already otherwise sonic_send_packet()
-would not have been called. If the queue was stopped by the interrupt
-handler, the interrupt handler will restart it again.
+The eol_tx variable is the one that matters to the tx algorithm because
+packets are always placed at the end of the list. The next_tx variable
+just confuses things so remove it.
 
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
- drivers/net/ethernet/natsemi/sonic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/natsemi/sonic.c | 8 ++++----
+ drivers/net/ethernet/natsemi/sonic.h | 1 -
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
-index 9ecdd67e1410..1d6de6706875 100644
+index c066510b348e..9ecdd67e1410 100644
 --- a/drivers/net/ethernet/natsemi/sonic.c
 +++ b/drivers/net/ethernet/natsemi/sonic.c
-@@ -327,7 +327,7 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
+@@ -300,7 +300,7 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
+ 
+ 	spin_lock_irqsave(&lp->lock, flags);
+ 
+-	entry = lp->next_tx;
++	entry = (lp->eol_tx + 1) & SONIC_TDS_MASK;
+ 
+ 	sonic_tda_put(dev, entry, SONIC_TD_STATUS, 0);       /* clear status */
+ 	sonic_tda_put(dev, entry, SONIC_TD_FRAG_COUNT, 1);   /* single fragment */
+@@ -321,8 +321,8 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
+ 				  sonic_tda_get(dev, lp->eol_tx, SONIC_TD_LINK) & ~SONIC_EOL);
+ 	lp->eol_tx = entry;
+ 
+-	lp->next_tx = (entry + 1) & SONIC_TDS_MASK;
+-	if (lp->tx_skb[lp->next_tx] != NULL) {
++	entry = (entry + 1) & SONIC_TDS_MASK;
++	if (lp->tx_skb[entry]) {
+ 		/* The ring is full, the ISR has yet to process the next TD. */
  		netif_dbg(lp, tx_queued, dev, "%s: stopping queue\n", __func__);
  		netif_stop_queue(dev);
- 		/* after this packet, wait for ISR to free up some TDAs */
--	} else netif_start_queue(dev);
-+	}
+@@ -811,7 +811,7 @@ static int sonic_init(struct net_device *dev)
  
- 	netif_dbg(lp, tx_queued, dev, "%s: issuing Tx command\n", __func__);
+ 	SONIC_WRITE(SONIC_UTDA, lp->tda_laddr >> 16);
+ 	SONIC_WRITE(SONIC_CTDA, lp->tda_laddr & 0xffff);
+-	lp->cur_tx = lp->next_tx = 0;
++	lp->cur_tx = 0;
+ 	lp->eol_tx = SONIC_NUM_TDS - 1;
  
+ 	/*
+diff --git a/drivers/net/ethernet/natsemi/sonic.h b/drivers/net/ethernet/natsemi/sonic.h
+index 053f12f5cf4a..3cbb62c860c8 100644
+--- a/drivers/net/ethernet/natsemi/sonic.h
++++ b/drivers/net/ethernet/natsemi/sonic.h
+@@ -321,7 +321,6 @@ struct sonic_local {
+ 	unsigned int cur_tx;           /* first unacked transmit packet */
+ 	unsigned int eol_rx;
+ 	unsigned int eol_tx;           /* last unacked transmit packet */
+-	unsigned int next_tx;          /* next free TD */
+ 	int msg_enable;
+ 	struct device *device;         /* generic device */
+ 	struct net_device_stats stats;
 -- 
 2.24.1
 
