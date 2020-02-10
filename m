@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 303A9157636
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E41061574BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:35:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730844AbgBJMqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:46:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43110 "EHLO mail.kernel.org"
+        id S1728074AbgBJMfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:35:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729950AbgBJMlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:41:17 -0500
+        id S1727910AbgBJMfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:25 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7DD6208C3;
-        Mon, 10 Feb 2020 12:41:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09C7724680;
+        Mon, 10 Feb 2020 12:35:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338477;
-        bh=8Jb3WF7J4RzRLBfrdqdB0TvnGiKJLDBYl2f04hpF+DQ=;
+        s=default; t=1581338125;
+        bh=+67AOZnVfdIJWZiAg1xe49VtFLE3pLReAXONsLs8af4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bjf3RIzfNe07UtpckfWNmz+YBx1bemUTzlJcKfGpfCFOm/Dg1bMoueFqdIxEfzW4O
-         D40viClQu/PQ4uno58UkTq0cdVCeJOPOdgtNIUvsJkzbzZQcwTrV1QGsFAAV8uiTzk
-         OgafcaTNlYezbUoAIhndNBOE073raVI7XiiBPbA0=
+        b=FBqLQ7G0HuXVhOVt0DMl6VCjyjNUZPBUHTbT4SNdh9wu7e38V4npRKoC50daiAEWh
+         KwtuSaO7w6xq0XLRVZ/tudzZU9RBtiu3Tx61rh+AhoYeUOWBW43M95C5B3PNjXRFTa
+         WeoyN5nCwC1gxTO5Y3WDdRpMKRfjLz/7a1bQzQrM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Roberto Bergantinos Corpas <rbergant@redhat.com>,
-        Frank Sorenson <sorenson@redhat.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 5.5 208/367] sunrpc: expiry_time should be seconds not timeval
-Date:   Mon, 10 Feb 2020 04:32:01 -0800
-Message-Id: <20200210122443.600771045@linuxfoundation.org>
+        stable@vger.kernel.org, Hou Tao <houtao1@huawei.com>,
+        Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.19 064/195] ubifs: Reject unsupported ioctl flags explicitly
+Date:   Mon, 10 Feb 2020 04:32:02 -0800
+Message-Id: <20200210122312.110055682@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,54 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roberto Bergantinos Corpas <rbergant@redhat.com>
+From: Hou Tao <houtao1@huawei.com>
 
-commit 3d96208c30f84d6edf9ab4fac813306ac0d20c10 upstream.
+commit 2fe8b2d5578d7d142982e3bf62e4c0caf8b8fe02 upstream.
 
-When upcalling gssproxy, cache_head.expiry_time is set as a
-timeval, not seconds since boot. As such, RPC cache expiry
-logic will not clean expired objects created under
-auth.rpcsec.context cache.
+Reject unsupported ioctl flags explicitly, so the following command
+on a regular ubifs file will fail:
+	chattr +d ubifs_file
 
-This has proven to cause kernel memory leaks on field. Using
-64 bit variants of getboottime/timespec
+And xfstests generic/424 will pass.
 
-Expiration times have worked this way since 2010's c5b29f885afe "sunrpc:
-use seconds since boot in expiry cache".  The gssproxy code introduced
-in 2012 added gss_proxy_save_rsc and introduced the bug.  That's a while
-for this to lurk, but it required a bit of an extreme case to make it
-obvious.
-
-Signed-off-by: Roberto Bergantinos Corpas <rbergant@redhat.com>
-Cc: stable@vger.kernel.org
-Fixes: 030d794bf498 "SUNRPC: Use gssproxy upcall for server..."
-Tested-By: Frank Sorenson <sorenson@redhat.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Hou Tao <houtao1@huawei.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/auth_gss/svcauth_gss.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ fs/ubifs/ioctl.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/net/sunrpc/auth_gss/svcauth_gss.c
-+++ b/net/sunrpc/auth_gss/svcauth_gss.c
-@@ -1248,6 +1248,7 @@ static int gss_proxy_save_rsc(struct cac
- 		dprintk("RPC:       No creds found!\n");
- 		goto out;
- 	} else {
-+		struct timespec64 boot;
+--- a/fs/ubifs/ioctl.c
++++ b/fs/ubifs/ioctl.c
+@@ -28,6 +28,11 @@
+ #include <linux/mount.h>
+ #include "ubifs.h"
  
- 		/* steal creds */
- 		rsci.cred = ud->creds;
-@@ -1268,6 +1269,9 @@ static int gss_proxy_save_rsc(struct cac
- 						&expiry, GFP_KERNEL);
- 		if (status)
- 			goto out;
++/* Need to be kept consistent with checked flags in ioctl2ubifs() */
++#define UBIFS_SUPPORTED_IOCTL_FLAGS \
++	(FS_COMPR_FL | FS_SYNC_FL | FS_APPEND_FL | \
++	 FS_IMMUTABLE_FL | FS_DIRSYNC_FL)
 +
-+		getboottime64(&boot);
-+		expiry -= boot.tv_sec;
- 	}
+ /**
+  * ubifs_set_inode_flags - set VFS inode flags.
+  * @inode: VFS inode to set flags for
+@@ -169,6 +174,9 @@ long ubifs_ioctl(struct file *file, unsi
+ 		if (get_user(flags, (int __user *) arg))
+ 			return -EFAULT;
  
- 	rsci.h.expiry_time = expiry;
++		if (flags & ~UBIFS_SUPPORTED_IOCTL_FLAGS)
++			return -EOPNOTSUPP;
++
+ 		if (!S_ISDIR(inode->i_mode))
+ 			flags &= ~FS_DIRSYNC_FL;
+ 
 
 
