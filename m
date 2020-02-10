@@ -2,75 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD5F2157E16
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:05:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52FCC157E13
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 16:05:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728972AbgBJPFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 10:05:46 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10610 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727636AbgBJPFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 10:05:46 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 9AD5DEF4CB4E4FB8C5F8;
-        Mon, 10 Feb 2020 23:05:39 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Mon, 10 Feb 2020
- 23:05:30 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <pierre-louis.bossart@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <yuehaibing@huawei.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] ASoC: wcd934x: Remove set but not unused variable 'hph_comp_ctrl7'
-Date:   Mon, 10 Feb 2020 23:04:21 +0800
-Message-ID: <20200210150421.34680-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1728965AbgBJPFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 10:05:03 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:33419 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728742AbgBJPFC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 10:05:02 -0500
+Received: by mail-qk1-f195.google.com with SMTP id h4so6831809qkm.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 07:05:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8aliVfr/Np4hkPQ33o46u2Grd4DX7wASnGsm/Zcus3k=;
+        b=mKWMlgmW4/67JTi5qgxd8v5tJFzgIpFofYvpPESc+RYnt/YLGM9XYgTLzPOTJsSq6z
+         VXb90EUoAuQfvw6oke7+8Wsc6KqN/gWNwvR/7pWQjUh0Me2Cua7rWKp3SapilyDHZMho
+         4ex3uOyWGrka1ypF7FCNdpZ/cGsenXObj/OqHYivyN1GvTBB9lVr+7hTdtuiCD53YaxG
+         r+3tYCLzpVXW1X63xGOvlIXjn6w9/tiRZjajhEI9S4Wc9IoDyszOm6sPvYYmDrjm/HOT
+         mfquUK8dDbRpBekKzuajKGhf3mBU5Xw5Z6s3j5nwBKPD+oMSxk9cJk6OXVqS5GxmWbUk
+         5RcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8aliVfr/Np4hkPQ33o46u2Grd4DX7wASnGsm/Zcus3k=;
+        b=cEw9uYVq6+ZQriEh4BZXc/7RxNlJRK26ufoNEP72pSloKSNSAqQmyyuLoO6xcQuTB1
+         eTe33EdA6cD+5CFaKNEj/gYkUAZlqv9rNtFTBXVuYkekXmXmn8GscV7wGzVguVclHMie
+         /OOz+rpT7Vtq4Pta42HPDUoaulhgfBmU2tGZLTk0CdbTMhLPyRQeJ/bnK9JXbqCsxr4n
+         fk+gy8ScapaEkdZvHoPiBPSJgMCMEV3IEJOjWSMPOgdEAXY3Q7nag40jMuvp2RwtpSjB
+         w9xf+iRKFPpbA4lZdRRisRiS9p6aJRWKHXokj258NHLSws+QECORgx6BvS8e1n8n3MwF
+         H1sw==
+X-Gm-Message-State: APjAAAWnePHSNgND7bk8d8DZroob3kyejD4j79dPawn6/7WW5DeT5eXU
+        x/D4QHUD/qFmSOxA/6QJV3nyINA9Kdg2J+aPTxHpLA==
+X-Google-Smtp-Source: APXvYqy5WuodZaOQesAW4SGqZqJqlgDdTnhJCE8jQ98anEcysHXbU+RHZgiXMRVqFWVDMBL40gc8NrlEcUNRjtCS61M=
+X-Received: by 2002:a37:4755:: with SMTP id u82mr1692304qka.43.1581347101107;
+ Mon, 10 Feb 2020 07:05:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+References: <0000000000003313f0058fea8435@google.com> <8736ek9qir.fsf@miraculix.mork.no>
+ <1574159504.28617.5.camel@suse.de> <87pnho85h7.fsf@miraculix.mork.no>
+ <CACT4Y+YgLm2m0JG6qKKn9OpyXT9kKEPeyLSVGSfLbUukoCnB+g@mail.gmail.com>
+ <CACT4Y+ZjiCDgtGVMow3WNzjuqBLaxy_KB4cM10wbfUnDdjBYfQ@mail.gmail.com>
+ <CACT4Y+ZWDMkOmnXpBXFhU8XcHA_-ZcHdZpfrXcCWHRzcbQ39Gg@mail.gmail.com> <ebc7b5e0-e968-0bdb-d75d-346e0b763d14@i-love.sakura.ne.jp>
+In-Reply-To: <ebc7b5e0-e968-0bdb-d75d-346e0b763d14@i-love.sakura.ne.jp>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 10 Feb 2020 16:04:47 +0100
+Message-ID: <CACT4Y+bDNjj_RGLtvRCaV3k9+QX4eENyKyWWAbsHcbwR7CDrWQ@mail.gmail.com>
+Subject: Re: INFO: task hung in wdm_flush
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Oliver Neukum <oneukum@suse.de>,
+        syzbot <syzbot+854768b99f19e89d7f81@syzkaller.appspotmail.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Colin King <colin.king@canonical.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        yuehaibing@huawei.com, =?UTF-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sound/soc/codecs/wcd934x.c: In function wcd934x_codec_hphdelay_lutbypass:
-sound/soc/codecs/wcd934x.c:3395:6: warning: variable hph_comp_ctrl7 set but not used [-Wunused-but-set-variable]
+On Mon, Feb 10, 2020 at 1:46 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2020/02/10 19:09, Dmitry Vyukov wrote:
+> > You may also try on the exact commit the bug was reported, because
+> > usb-fuzzer is tracking branch, things may change there.
+>
+> OK. I explicitly tried
+>
+>   #syz test: https://github.com/google/kasan.git e5cd56e94edde38ca4dafae5a450c5a16b8a5f23
+>
+> but syzbot still cannot reproduce this bug using the reproducer...
+>
+> On 2020/02/10 21:02, syzbot wrote:
+> > Hello,
+> >
+> > syzbot has tested the proposed patch and the reproducer did not trigger crash:
+> >
+> > Reported-and-tested-by: syzbot+854768b99f19e89d7f81@syzkaller.appspotmail.com
+> >
+> > Tested on:
+> >
+> > commit:         e5cd56e9 usb: gadget: add raw-gadget interface
+> > git tree:       https://github.com/google/kasan.git
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=c372cdb7140fc162
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=854768b99f19e89d7f81
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> >
+> > Note: testing is done by a robot and is best-effort only.
+> >
+>
+> Anyway, I'm just suspecting that we are forgetting to wake up all waiters
+> after clearing WDM_IN_USE bit because sometimes multiple threads are reported
+> as hung.
+>
+> On 2020/02/10 15:27, syzbot wrote:
+> > Hello,
+> >
+> > syzbot has tested the proposed patch and the reproducer did not trigger crash:
+> >
+> > Reported-and-tested-by: syzbot+854768b99f19e89d7f81@syzkaller.appspotmail.com
+> >
+> > Tested on:
+> >
+> > commit:         e5cd56e9 usb: gadget: add raw-gadget interface
+> > git tree:       https://github.com/google/kasan.git usb-fuzzer
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=c372cdb7140fc162
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=854768b99f19e89d7f81
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > patch:          https://syzkaller.appspot.com/x/patch.diff?x=117c3ae9e00000
+> >
+> > Note: testing is done by a robot and is best-effort only.
+> >
+>
+> On 2020/02/10 15:55, syzbot wrote:
+> > Hello,
+> >
+> > syzbot has tested the proposed patch and the reproducer did not trigger crash:
+> >
+> > Reported-and-tested-by: syzbot+854768b99f19e89d7f81@syzkaller.appspotmail.com
+> >
+> > Tested on:
+> >
+> > commit:         e5cd56e9 usb: gadget: add raw-gadget interface
+> > git tree:       https://github.com/google/kasan.git usb-fuzzer
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=c372cdb7140fc162
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=854768b99f19e89d7f81
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > patch:          https://syzkaller.appspot.com/x/patch.diff?x=13b3f6e9e00000
+> >
+> > Note: testing is done by a robot and is best-effort only.
+> >
+>
+> On 2020/02/10 16:21, syzbot wrote:
+> > Hello,
+> >
+> > syzbot has tested the proposed patch and the reproducer did not trigger crash:
+> >
+> > Reported-and-tested-by: syzbot+854768b99f19e89d7f81@syzkaller.appspotmail.com
+> >
+> > Tested on:
+> >
+> > commit:         e5cd56e9 usb: gadget: add raw-gadget interface
+> > git tree:       https://github.com/google/kasan.git usb-fuzzer
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=c372cdb7140fc162
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=854768b99f19e89d7f81
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > patch:          https://syzkaller.appspot.com/x/patch.diff?x=115026b5e00000
+> >
+> > Note: testing is done by a robot and is best-effort only.
+> >
+>
+> On 2020/02/10 16:44, syzbot wrote:
+> > Hello,
+> >
+> > syzbot has tested the proposed patch and the reproducer did not trigger crash:
+> >
+> > Reported-and-tested-by: syzbot+854768b99f19e89d7f81@syzkaller.appspotmail.com
+> >
+> > Tested on:
+> >
+> > commit:         e5cd56e9 usb: gadget: add raw-gadget interface
+> > git tree:       https://github.com/google/kasan.git usb-fuzzer
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=c372cdb7140fc162
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=854768b99f19e89d7f81
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > patch:          https://syzkaller.appspot.com/x/patch.diff?x=17285431e00000
+> >
+> > Note: testing is done by a robot and is best-effort only.
+> >
+>
+> On 2020/02/10 17:05, syzbot wrote:
+> > Hello,
+> >
+> > syzbot has tested the proposed patch and the reproducer did not trigger crash:
+> >
+> > Reported-and-tested-by: syzbot+854768b99f19e89d7f81@syzkaller.appspotmail.com
+> >
+> > Tested on:
+> >
+> > commit:         e5cd56e9 usb: gadget: add raw-gadget interface
+> > git tree:       https://github.com/google/kasan.git usb-fuzzer
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=c372cdb7140fc162
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=854768b99f19e89d7f81
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> >
+> > Note: testing is done by a robot and is best-effort only.
 
-commit da3e83f8bb86 ("ASoC: wcd934x: add audio routings")
-involved this unused variable.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- sound/soc/codecs/wcd934x.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/sound/soc/codecs/wcd934x.c b/sound/soc/codecs/wcd934x.c
-index 158e878..11c0439 100644
---- a/sound/soc/codecs/wcd934x.c
-+++ b/sound/soc/codecs/wcd934x.c
-@@ -3392,18 +3392,15 @@ static void wcd934x_codec_hphdelay_lutbypass(struct snd_soc_component *comp,
- {
- 	u8 hph_dly_mask;
- 	u16 hph_lut_bypass_reg = 0;
--	u16 hph_comp_ctrl7 = 0;
- 
- 	switch (interp_idx) {
- 	case INTERP_HPHL:
- 		hph_dly_mask = 1;
- 		hph_lut_bypass_reg = WCD934X_CDC_TOP_HPHL_COMP_LUT;
--		hph_comp_ctrl7 = WCD934X_CDC_COMPANDER1_CTL7;
- 		break;
- 	case INTERP_HPHR:
- 		hph_dly_mask = 2;
- 		hph_lut_bypass_reg = WCD934X_CDC_TOP_HPHR_COMP_LUT;
--		hph_comp_ctrl7 = WCD934X_CDC_COMPANDER2_CTL7;
- 		break;
- 	default:
- 		return;
--- 
-2.7.4
 
 
+On Mon, Feb 10, 2020 at 4:03 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2020/02/10 21:46, Tetsuo Handa wrote:
+> > On 2020/02/10 19:09, Dmitry Vyukov wrote:
+> >> You may also try on the exact commit the bug was reported, because
+> >> usb-fuzzer is tracking branch, things may change there.
+> >
+> > OK. I explicitly tried
+> >
+> >   #syz test: https://github.com/google/kasan.git e5cd56e94edde38ca4dafae5a450c5a16b8a5f23
+> >
+> > but syzbot still cannot reproduce this bug using the reproducer...
+>
+> It seems that there is non-trivial difference between kernel config in dashboard
+> and kernel config in "syz test:" mails. Maybe that's the cause...
