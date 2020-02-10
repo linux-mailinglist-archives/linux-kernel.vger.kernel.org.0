@@ -2,174 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12CBB15809F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 18:09:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6F0E1580B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 18:10:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbgBJRJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 12:09:28 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:7970 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727587AbgBJRJ2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 12:09:28 -0500
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01AH3IPI053090
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 12:09:27 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y1ucjb25a-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 12:09:26 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 10 Feb 2020 17:09:24 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 10 Feb 2020 17:09:20 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01AH9JaV54722608
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Feb 2020 17:09:19 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 37CC7AE053;
-        Mon, 10 Feb 2020 17:09:19 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 74A1FAE051;
-        Mon, 10 Feb 2020 17:09:17 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.140.79])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 10 Feb 2020 17:09:17 +0000 (GMT)
-Subject: Re: [RFC PATCH 0/2] ima: uncompressed module appraisal support
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     Nayna <nayna@linux.vnet.ibm.com>, dmitry.kasatkin@gmail.com,
-        jmorris@namei.org, serge@hallyn.com, dhowells@redhat.com,
-        geert@linux-m68k.org, gregkh@linuxfoundation.org,
-        nayna@linux.ibm.com, tglx@linutronix.de, bauerman@linux.ibm.com,
-        mpe@ellerman.id.au, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Mon, 10 Feb 2020 12:09:16 -0500
-In-Reply-To: <0F13CB66-6962-44AC-A20D-CCBD82B43625@oracle.com>
-References: <20200206164226.24875-1-eric.snowberg@oracle.com>
-         <5c246616-9a3a-3ed2-c1f9-f634cef511c9@linux.vnet.ibm.com>
-         <09D68C13-75E2-4BD6-B4E6-F765B175C7FD@oracle.com>
-         <1581087096.5585.597.camel@linux.ibm.com>
-         <330BDFAC-E778-4E9D-A2D2-DD81B745F6AB@oracle.com>
-         <1581097201.5585.613.camel@linux.ibm.com>
-         <764C5FC8-DF0C-4B7A-8B5B-FD8B83F31568@oracle.com>
-         <1581100125.5585.623.camel@linux.ibm.com>
-         <992E95D5-D4B9-4913-A36F-BB47631DFE0A@oracle.com>
-         <1581101672.5585.628.camel@linux.ibm.com>
-         <C25E5885-F00B-48C0-AEF1-FA3014B2FDA6@oracle.com>
-         <1581205431.5585.645.camel@linux.ibm.com>
-         <0F13CB66-6962-44AC-A20D-CCBD82B43625@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021017-0012-0000-0000-000003859095
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021017-0013-0000-0000-000021C20928
-Message-Id: <1581354556.5585.827.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-10_06:2020-02-10,2020-02-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- phishscore=0 impostorscore=0 adultscore=0 lowpriorityscore=0 mlxscore=0
- mlxlogscore=999 priorityscore=1501 suspectscore=0 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002100128
+        id S1728089AbgBJRKB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 12:10:01 -0500
+Received: from mga14.intel.com ([192.55.52.115]:2424 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727628AbgBJRKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 12:10:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Feb 2020 09:10:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,425,1574150400"; 
+   d="scan'208";a="221621078"
+Received: from orsmsx102.amr.corp.intel.com ([10.22.225.129])
+  by orsmga007.jf.intel.com with ESMTP; 10 Feb 2020 09:10:00 -0800
+Received: from orsmsx151.amr.corp.intel.com (10.22.226.38) by
+ ORSMSX102.amr.corp.intel.com (10.22.225.129) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 10 Feb 2020 09:10:00 -0800
+Received: from orsmsx101.amr.corp.intel.com ([169.254.8.110]) by
+ ORSMSX151.amr.corp.intel.com ([169.254.7.116]) with mapi id 14.03.0439.000;
+ Mon, 10 Feb 2020 09:09:59 -0800
+From:   "Derrick, Jonathan" <jonathan.derrick@intel.com>
+To:     "hch@lst.de" <hch@lst.de>
+CC:     "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+        "Baldysiak, Pawel" <pawel.baldysiak@intel.com>,
+        "helgaas@kernel.org" <helgaas@kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "mr.nuke.me@gmail.com" <mr.nuke.me@gmail.com>,
+        "kbusch@kernel.org" <kbusch@kernel.org>,
+        "okaya@kernel.org" <okaya@kernel.org>
+Subject: Re: [RFC 0/9] PCIe Hotplug Slot Emulation driver
+Thread-Topic: [RFC 0/9] PCIe Hotplug Slot Emulation driver
+Thread-Index: AQHV3hK/y2Hxis+abEWPqwm+8JRaDqgUibyAgACHXACAAB+igIAAAw0A
+Date:   Mon, 10 Feb 2020 17:09:59 +0000
+Message-ID: <8a787f85964c66e8c6efde51f439db26fecfc5c6.camel@intel.com>
+References: <1581120007-5280-1-git-send-email-jonathan.derrick@intel.com>
+         <20200210070115.GA7748@lst.de>
+         <3a4de58ad83a88f90f372e162c39d09eeebd8043.camel@intel.com>
+         <20200210165857.GA19419@lst.de>
+In-Reply-To: <20200210165857.GA19419@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.232.115.25]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F4DD63D01A5CA14E92E60D721897DEF6@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-02-10 at 09:34 -0700, Eric Snowberg wrote:
-> > On Feb 8, 2020, at 4:43 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > 
-> > On Fri, 2020-02-07 at 14:38 -0700, Eric Snowberg wrote:
-> >>> On Feb 7, 2020, at 11:54 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >>> 
-> >>> On Fri, 2020-02-07 at 11:45 -0700, Eric Snowberg wrote:
-> >>>> 
-> >>>>> On Feb 7, 2020, at 11:28 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >>>>> 
-> >>>>> On Fri, 2020-02-07 at 10:49 -0700, Eric Snowberg wrote:
-> >>>>>> 
-> >>>>>>> On Feb 7, 2020, at 10:40 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >>>>>>> 
-> >>>>>>>> $ insmod ./foo.ko
-> >>>>>>>> insmod: ERROR: could not insert module ./foo.ko: Permission denied
-> >>>>>>>> 
-> >>>>>>>> last entry from audit log:
-> >>>>>>>> type=INTEGRITY_DATA msg=audit(1581089373.076:83): pid=2874 uid=0
-> >>>>>>>> auid=0 ses=1 subj=unconfined_u:unconfined_r:unconfined_t:s0-
-> >>>>>>>> s0:c0.c1023 op=appraise_data cause=invalid-signature comm="insmod"
-> >>>>>>>> name="/root/keys/modules/foo.ko" dev="dm-0" ino=10918365
-> >>>>>>>> res=0^]UID="root" AUID=“root"
-> >>>>>>>> 
-> >>>>>>>> This is because modsig_verify() will be called from within
-> >>>>>>>> ima_appraise_measurement(), 
-> >>>>>>>> since try_modsig is true.  Then modsig_verify() will return
-> >>>>>>>> INTEGRITY_FAIL.
-> >>>>>>> 
-> >>>>>>> Why is it an "invalid signature"?  For that you need to look at the
-> >>>>>>> kernel messages.  Most likely it can't find the public key on the .ima
-> >>>>>>> keyring to verify the signature.
-> >>>>>> 
-> >>>>>> It is invalid because the module has not been ima signed. 
-> >>>>> 
-> >>>>> With the IMA policy rule "appraise func=MODULE_CHECK
-> >>>>> appraise_type=imasig|modsig", IMA first tries to verify the IMA
-> >>>>> signature stored as an xattr and on failure then attempts to verify
-> >>>>> the appended signatures.
-> >>>>> 
-> >>>>> The audit message above indicates that there was a signature, but the
-> >>>>> signature validation failed.
-> >>>>> 
-> >>>> 
-> >>>> I do have  CONFIG_IMA_APPRAISE_MODSIG enabled.  I believe the audit message above 
-> >>>> is coming from modsig_verify in security/integrity/ima/ima_appraise.c.
-> >>> 
-> >>> Right, and it's calling:
-> >>> 
-> >>> 	rc = integrity_modsig_verify(INTEGRITY_KEYRING_IMA, modsig);
-> >>> 
-> >>> It's failing because it is trying to find the public key on the .ima
-> >>> keyring.  Make sure that the public needed to validate the kernel
-> >>> module is on the IMA keyring (eg. keyctl show %keyring:.ima).
-> >>> 
-> >> 
-> >> I know that will validate the module properly, but that is not what I’m 
-> >> trying to solve here. I thought the point of adding “|modsig” to the
-> >> ima policy was to tell ima it can either validate against an ima keyring OR 
-> >> default back to the kernel keyring.  This is what happens with the compressed
-> >> module.  There isn’t anything in the ima keyring to validate the compressed
-> >> modules and it loads when I add “|modsig”.
-> > 
-> > "modsig" has nothing to do with keyrings.  The term "modsig" is
-> > juxtaposed to "imasig".  "modsig" refers to kernel module appended
-> > signature. 
-> 
-> Ok, understood, “modsig” refers to strictly kernel module appended signatures
-> without regard to the keyring that verifies it.  Since there are inconsistencies
-> here, would you consider something like my first patch?  It will verify an 
-> uncompressed kernel module containing an appended signature  when the public key
-> is contained within the kernel keyring instead of the ima keyring.  Why force a 
-> person to add the same keys into the ima keyring for validation?  Especially when
-> the kernel keyring is now used to verify appended signatures in the compressed
-> modules.
-
-Different use case scenarios have different requirements.  Suppose for
-example that the group creating the kernel image is not the same as
-using it.  The group using the kernel image could sign all files,
-including kernel modules (imasig), with their own private key. Only
-files that they signed would be permitted.  Your proposal would break
-the current expectations, allowing kernel modules signed by someone
-else to be loaded.
-
-Mimi
-
+T24gTW9uLCAyMDIwLTAyLTEwIGF0IDE3OjU4ICswMTAwLCBoY2hAbHN0LmRlIHdyb3RlOg0KPiBP
+biBNb24sIEZlYiAxMCwgMjAyMCBhdCAwMzowNTo0N1BNICswMDAwLCBEZXJyaWNrLCBKb25hdGhh
+biB3cm90ZToNCj4gPiA+IFRoZSBjb2RlIHNlZW1zIGxpa2Ugb25lIGdpYW50IGhhY2sgdG8gbWUu
+ICBXaGF0IGlzIHRoZSByZWFsIGxpZmUNCj4gPiA+IHVzZSBjYXNlIGZvciB0aGlzPyAgQW5vdGhl
+ciBJbnRlbCBjaGlwc2V0IGZ1Y2t1cCBsaWtlIHZtZCBvciB0aGUgYWhjaQ0KPiA+ID4gcmVtYXBw
+aW5nPw0KPiA+ID4gDQo+ID4gRXhhY3RseSBhcyB0aGUgY292ZXIgbGV0dGVyIGRlc2NyaWJlcy4g
+QW4gaW50ZXJwb3NlciBiZWluZyB1c2VkIG9uIGENCj4gPiBub24taG90cGx1ZyBzbG90Lg0KPiAN
+Cj4gVGhhdCBpc24ndCBhIHVzZSBhIGNhc2UsIHRoYXQgadGVIGEgZGVzY3JpcHRpb24gb2YgdGhl
+IGltcGxlbWVudGF0aW9uLg0KPiBXaHkgd291bGQgeW91IHdhbnQgdGhpcyBjb2RlPw0KSXQgYWxs
+b3dzIG5vbi1ob3RwbHVnIHNsb3RzIHRvIHRha2UgYWR2YW50YWdlIG9mIHRoZSBrZXJuZWwncyBy
+b2J1c3QNCmhvdHBsdWcgZWNvc3lzdGVtLCBpZiB0aGUgcGxhdGZvcm0gY29uZmlndXJhdGlvbiBj
+YW4gdG9sZXJhdGUgdGhlDQpldmVudHMuIFRoaXMgY291bGQgYWxzbyByZWR1Y2UgQk9NIGNvc3Qg
+YnkgZWxpbWluYXRpbmcgc29tZSBzbG90DQpjb250cm9sbGVycy4gU2F5IHlvdSBoYWQgc29tZXRo
+aW5nIHRoYXQgb25seSBuZWVkZWQgdG8gYmUgaG90cGx1Z2dlZA0KdmVyeSBpbmZyZXF1ZW50bHks
+IGxpa2UgUkFJRGVkIE9TIGRyaXZlcywgdmVyc3VzIHNvbWV0aGluZyBuZWVkaW5nIHRvDQpiZSBo
+b3RwbHVnZ2VkIHZlcnkgZnJlcXVlbnRseSBsaWtlIGRhdGEgZHJpdmVzLg0KDQoNCkdyYW50ZWQg
+aXQgcHJvYmFibHkgY291bGQgYmUgZml0IGludG8gcGNpZWhwX3BvbGwsIGJ1dCBpdCBzZWVtZWQg
+dG8NCmhhdmUgYSBkaWZmZXJlbnQgb2JqZWN0aXZlIChlbXVsYXRpbmcgc2xvdCkNCg==
