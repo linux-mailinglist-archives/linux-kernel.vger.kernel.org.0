@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD174157544
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:40:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 702421574BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:35:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729574AbgBJMj5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:39:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60728 "EHLO mail.kernel.org"
+        id S1728085AbgBJMfn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:35:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728981AbgBJMiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:00 -0500
+        id S1727916AbgBJMf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:26 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2052D24650;
-        Mon, 10 Feb 2020 12:37:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EC7A24650;
+        Mon, 10 Feb 2020 12:35:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338278;
-        bh=gZjRPmNca0NHA9D6FXoRdzdcoMOP0o5FB1DbHMFVvHY=;
+        s=default; t=1581338125;
+        bh=QAZXJ/sae3h0vsMDXh6DwTtV4mUQUtgNoAGVanXsHw8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xca3g16yxNV7U0o8AA9JKfBRt1n7zQg7JYnVFpExz7sThVlajWFzZFiNuoaM0Rszz
-         /ycEdJ/dEk+CNS5TUY3y3o8UR16eZDlobI6eSd4Xp62NKk/eoZcf9Q8JBAsC8MtMA7
-         cJpA+EZkbZ7AjMLXMIOo2T8JP3VjaY38G7xexk2Q=
+        b=ARY9er1s3RD2TY7ACucpQnalbILBmUuOmXW0QraB05HNNqe7Cb7etej0nRH4sZ3xG
+         xL1BxPPfNDBlw/ziEr8ZpDHJ8uSgfEgd0lovA95xn0kDJymDt5LH4aU2B3qiXIW9Qy
+         c4yzd9exVc0M87W39SsntZSG1yDnavdAVMs4IFQA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 5.4 166/309] NFS: Directory page cache pages need to be locked when read
-Date:   Mon, 10 Feb 2020 04:32:02 -0800
-Message-Id: <20200210122422.239965814@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>
+Subject: [PATCH 4.19 065/195] ubifs: dont trigger assertion on invalid no-key filename
+Date:   Mon, 10 Feb 2020 04:32:03 -0800
+Message-Id: <20200210122312.195454150@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,112 +42,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trondmy@gmail.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 114de38225d9b300f027e2aec9afbb6e0def154b upstream.
+commit f0d07a98a070bb5e443df19c3aa55693cbca9341 upstream.
 
-When a NFS directory page cache page is removed from the page cache,
-its contents are freed through a call to nfs_readdir_clear_array().
-To prevent the removal of the page cache entry until after we've
-finished reading it, we must take the page lock.
+If userspace provides an invalid fscrypt no-key filename which encodes a
+hash value with any of the UBIFS node type bits set (i.e. the high 3
+bits), gracefully report ENOENT rather than triggering ubifs_assert().
 
-Fixes: 11de3b11e08c ("NFS: Fix a memory leak in nfs_readdir")
-Cc: stable@vger.kernel.org # v2.6.37+
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Test case with kvm-xfstests shell:
+
+    . fs/ubifs/config
+    . ~/xfstests/common/encrypt
+    dev=$(__blkdev_to_ubi_volume /dev/vdc)
+    ubiupdatevol $dev -t
+    mount $dev /mnt -t ubifs
+    mkdir /mnt/edir
+    xfs_io -c set_encpolicy /mnt/edir
+    rm /mnt/edir/_,,,,,DAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+With the bug, the following assertion fails on the 'rm' command:
+
+    [   19.066048] UBIFS error (ubi0:0 pid 379): ubifs_assert_failed: UBIFS assert failed: !(hash & ~UBIFS_S_KEY_HASH_MASK), in fs/ubifs/key.h:170
+
+Fixes: f4f61d2cc6d8 ("ubifs: Implement encrypted filenames")
+Cc: <stable@vger.kernel.org> # v4.10+
+Link: https://lore.kernel.org/r/20200120223201.241390-5-ebiggers@kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/dir.c |   30 +++++++++++++++++++-----------
- 1 file changed, 19 insertions(+), 11 deletions(-)
+ fs/ubifs/dir.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/nfs/dir.c
-+++ b/fs/nfs/dir.c
-@@ -702,8 +702,6 @@ int nfs_readdir_filler(void *data, struc
- static
- void cache_page_release(nfs_readdir_descriptor_t *desc)
- {
--	if (!desc->page->mapping)
--		nfs_readdir_clear_array(desc->page);
- 	put_page(desc->page);
- 	desc->page = NULL;
- }
-@@ -717,19 +715,28 @@ struct page *get_cache_page(nfs_readdir_
- 
- /*
-  * Returns 0 if desc->dir_cookie was found on page desc->page_index
-+ * and locks the page to prevent removal from the page cache.
-  */
- static
--int find_cache_page(nfs_readdir_descriptor_t *desc)
-+int find_and_lock_cache_page(nfs_readdir_descriptor_t *desc)
- {
- 	int res;
- 
- 	desc->page = get_cache_page(desc);
- 	if (IS_ERR(desc->page))
- 		return PTR_ERR(desc->page);
--
--	res = nfs_readdir_search_array(desc);
-+	res = lock_page_killable(desc->page);
- 	if (res != 0)
--		cache_page_release(desc);
-+		goto error;
-+	res = -EAGAIN;
-+	if (desc->page->mapping != NULL) {
-+		res = nfs_readdir_search_array(desc);
-+		if (res == 0)
-+			return 0;
-+	}
-+	unlock_page(desc->page);
-+error:
-+	cache_page_release(desc);
- 	return res;
- }
- 
-@@ -744,7 +751,7 @@ int readdir_search_pagecache(nfs_readdir
- 		desc->last_cookie = 0;
- 	}
- 	do {
--		res = find_cache_page(desc);
-+		res = find_and_lock_cache_page(desc);
- 	} while (res == -EAGAIN);
- 	return res;
- }
-@@ -783,7 +790,6 @@ int nfs_do_filldir(nfs_readdir_descripto
- 		desc->eof = true;
- 
- 	kunmap(desc->page);
--	cache_page_release(desc);
- 	dfprintk(DIRCACHE, "NFS: nfs_do_filldir() filling ended @ cookie %Lu; returning = %d\n",
- 			(unsigned long long)*desc->dir_cookie, res);
- 	return res;
-@@ -829,13 +835,13 @@ int uncached_readdir(nfs_readdir_descrip
- 
- 	status = nfs_do_filldir(desc);
- 
-+ out_release:
-+	nfs_readdir_clear_array(desc->page);
-+	cache_page_release(desc);
-  out:
- 	dfprintk(DIRCACHE, "NFS: %s: returns %d\n",
- 			__func__, status);
- 	return status;
-- out_release:
--	cache_page_release(desc);
--	goto out;
- }
- 
- /* The file offset position represents the dirent entry number.  A
-@@ -900,6 +906,8 @@ static int nfs_readdir(struct file *file
- 			break;
- 
- 		res = nfs_do_filldir(desc);
-+		unlock_page(desc->page);
-+		cache_page_release(desc);
- 		if (res < 0)
- 			break;
- 	} while (!desc->eof);
+--- a/fs/ubifs/dir.c
++++ b/fs/ubifs/dir.c
+@@ -242,6 +242,8 @@ static struct dentry *ubifs_lookup(struc
+ 	if (nm.hash) {
+ 		ubifs_assert(c, fname_len(&nm) == 0);
+ 		ubifs_assert(c, fname_name(&nm) == NULL);
++		if (nm.hash & ~UBIFS_S_KEY_HASH_MASK)
++			goto done; /* ENOENT */
+ 		dent_key_init_hash(c, &key, dir->i_ino, nm.hash);
+ 		err = ubifs_tnc_lookup_dh(c, &key, dent, nm.minor_hash);
+ 	} else {
 
 
