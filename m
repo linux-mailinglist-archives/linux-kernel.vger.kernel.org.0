@@ -2,378 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 817701585ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 00:07:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDBFC1585F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 00:08:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbgBJXHD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 18:07:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46716 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727116AbgBJXHB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 18:07:01 -0500
-Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEFCD2085B;
-        Mon, 10 Feb 2020 23:06:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581376020;
-        bh=afyPCGAwGj1goBG2krjsQCBhvk3lRnSQ27+rG3N8Uag=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=IyusxjLpLCF1qDZyKe/IixE+I/TAgzcPktUUeQshBDw3Ho1nuWfQ05gupS/S0j5G5
-         9nypjjNgt7ebrhUjI9Y+xXDhbXQ+GJE0lYrUsji1XRnsJbdZ4CHD0FyzFVaMCQ53a8
-         r2hZGqZuLvQGRRx8er8xND6c++AV0YO4q47EF83U=
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     rostedt@goodmis.org
-Cc:     artem.bityutskiy@linux.intel.com, mhiramat@kernel.org,
-        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
-Subject: [PATCH 3/3] tracing: Consolidate trace() functions
-Date:   Mon, 10 Feb 2020 17:06:50 -0600
-Message-Id: <b1f3108d0f450e58192955a300e31d0405ab4149.1581374549.git.zanussi@kernel.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1581374549.git.zanussi@kernel.org>
-References: <cover.1581374549.git.zanussi@kernel.org>
-In-Reply-To: <cover.1581374549.git.zanussi@kernel.org>
-References: <cover.1581374549.git.zanussi@kernel.org>
+        id S1727665AbgBJXH5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 18:07:57 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38283 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727516AbgBJXH5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 18:07:57 -0500
+Received: by mail-ot1-f67.google.com with SMTP id z9so8208584oth.5;
+        Mon, 10 Feb 2020 15:07:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jRiq/HHzhlZ9XSHrTt87uvpDh68wK+B7Fb3SKhNR96E=;
+        b=mmWthATiZMjQ0XrMTxA59hikIPhEucZP+mt7+oAihEqjXm6Wyb3Lrpq2cG91kOtB34
+         1vMY1/Gv1Fh8aafOu36K+ir/jex3cbKsfmLy3JqANBIy+XAXo5KshNmkhi0mkXf3WScm
+         6MaW3lQsPdW0Sp60fAq4JW6zTOAHkOoSyMw4hq5X5fp0JORR14wf99EQqdaKTt1wydEl
+         KuYsxDRNVWhoxNMtSr/8yWNjpHGWhq1vwGgautz8EAV9UrV9DP2VU+WlttEaWZeEZBxl
+         YpMOLF2t1vBgUrQFw9ZCsJCQeL/K6jKwi59Ql41zGvB9cnwytfHoBPd+G+FklCRuIEg+
+         Gelw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jRiq/HHzhlZ9XSHrTt87uvpDh68wK+B7Fb3SKhNR96E=;
+        b=h1Y/8ytBLIQdfZV3c2k0ioyNAkgrza+sXCklg6RpYzlRYzrOgQLZmGhae0YERoIQOD
+         iQXHggFRpI+6rpoS4UxSQ4w6eZO0rC551MqKR9ksDxPha8TjUtuAPNXmgzq23EZvnDEk
+         645giraU1BdaUDcL7K5E6TKE7xNqH6U6mB4S3QUxI64Q5tnh0pUjHznwxcs85XhI8KSc
+         sQ39BSU7c/v8liRHx85yKyeO2KTmGOebyBAGuH0/6sTZMTBetSA2moGCULN4lSvAb5G+
+         G1kD+orfC/BbpvwPWOjRWmmk963SAUIKTLJxmTSOxSYJqvMEOdB6Pd1vTkMC+/XkTW6I
+         Ok4g==
+X-Gm-Message-State: APjAAAXJj++UP4N82ke+ryHMijlWSM+cbuf6fnLm3nZEXKWMumeut6/r
+        itlcqEW5zUmoosBaearMputtcMC5xWIwjOnP1nw=
+X-Google-Smtp-Source: APXvYqwjMxBgYv9PzzxcHqfZhfSm4YWQLuMPKkkW21qvNdzy/laP5WsI/5fj67N+oxeU/bXXOndxzomwWW/Bs9gWHr4=
+X-Received: by 2002:a9d:53c4:: with SMTP id i4mr3144957oth.48.1581376076151;
+ Mon, 10 Feb 2020 15:07:56 -0800 (PST)
+MIME-Version: 1.0
+References: <00000000000019ff88059e3d0013@google.com>
+In-Reply-To: <00000000000019ff88059e3d0013@google.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Mon, 10 Feb 2020 15:07:45 -0800
+Message-ID: <CAM_iQpWaO5C8FtaP6BGRAc3v0CTTOySH-SmTyd21vU8R_LwWCw@mail.gmail.com>
+Subject: Re: WARNING: proc registration bug in hashlimit_mt_check_common
+To:     syzbot <syzbot+d195fd3b9a364ddd6731@syzkaller.appspotmail.com>
+Cc:     coreteam@netfilter.org, David Miller <davem@davemloft.net>,
+        Florian Westphal <fw@strlen.de>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the checking, buffer reserve and buffer commit code in
-synth_event_trace_start/end() into inline functions
-__synth_event_trace_start/end() so they can also be used by
-synth_event_trace() and synth_event_trace_array(), and then have all
-those functions use them.
+On Mon, Feb 10, 2020 at 10:35 AM syzbot
+<syzbot+d195fd3b9a364ddd6731@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    2981de74 Add linux-next specific files for 20200210
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=104b16b5e00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=53fc3c3fcb36274f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d195fd3b9a364ddd6731
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=136321d9e00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159f7431e00000
+>
+> The bug was bisected to:
+>
+> commit 8d0015a7ab76b8b1e89a3e5f5710a6e5103f2dd5
+> Author: Cong Wang <xiyou.wangcong@gmail.com>
+> Date:   Mon Feb 3 04:30:53 2020 +0000
+>
+>     netfilter: xt_hashlimit: limit the max size of hashtable
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12a7f25ee00000
+> final crash:    https://syzkaller.appspot.com/x/report.txt?x=11a7f25ee00000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16a7f25ee00000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+d195fd3b9a364ddd6731@syzkaller.appspotmail.com
+> Fixes: 8d0015a7ab76 ("netfilter: xt_hashlimit: limit the max size of hashtable")
+>
+> xt_hashlimit: size too large, truncated to 1048576
+> xt_hashlimit: max too large, truncated to 1048576
+> ------------[ cut here ]------------
+> proc_dir_entry 'ip6t_hashlimit/syzkaller1' already registered
 
-Also, change synth_event_trace_state.enabled to disabled so it only
-needs to be set if the event is disabled, which is not normally the
-case.
+I think we probably have to remove the procfs file too before releasing
+the global mutex. Or, we can mark the table as deleted before actually
+delete it, but this requires to change the search logic as well.
 
-Signed-off-by: Tom Zanussi <zanussi@kernel.org>
----
- include/linux/trace_events.h     |   2 +-
- kernel/trace/trace_events_hist.c | 220 +++++++++++++++------------------------
- 2 files changed, 87 insertions(+), 135 deletions(-)
+I will work on a patch.
 
-diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-index 67f528ecb9e5..21098298b49b 100644
---- a/include/linux/trace_events.h
-+++ b/include/linux/trace_events.h
-@@ -424,7 +424,7 @@ struct synth_event_trace_state {
- 	struct synth_event *event;
- 	unsigned int cur_field;
- 	unsigned int n_u64;
--	bool enabled;
-+	bool disabled;
- 	bool add_next;
- 	bool add_name;
- };
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 99a02168599b..65b54d6a1422 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -1791,6 +1791,60 @@ void synth_event_cmd_init(struct dynevent_cmd *cmd, char *buf, int maxlen)
- }
- EXPORT_SYMBOL_GPL(synth_event_cmd_init);
- 
-+static inline int
-+__synth_event_trace_start(struct trace_event_file *file,
-+			  struct synth_event_trace_state *trace_state)
-+{
-+	int entry_size, fields_size = 0;
-+	int ret = 0;
-+
-+	/*
-+	 * Normal event tracing doesn't get called at all unless the
-+	 * ENABLED bit is set (which attaches the probe thus allowing
-+	 * this code to be called, etc).  Because this is called
-+	 * directly by the user, we don't have that but we still need
-+	 * to honor not logging when disabled.  For the the iterated
-+	 * trace case, we save the enabed state upon start and just
-+	 * ignore the following data calls.
-+	 */
-+	if (!(file->flags & EVENT_FILE_FL_ENABLED) ||
-+	    trace_trigger_soft_disabled(file)) {
-+		trace_state->disabled = true;
-+		ret = -ENOENT;
-+		goto out;
-+	}
-+
-+	trace_state->event = file->event_call->data;
-+
-+	fields_size = trace_state->event->n_u64 * sizeof(u64);
-+
-+	/*
-+	 * Avoid ring buffer recursion detection, as this event
-+	 * is being performed within another event.
-+	 */
-+	trace_state->buffer = file->tr->array_buffer.buffer;
-+	ring_buffer_nest_start(trace_state->buffer);
-+
-+	entry_size = sizeof(*trace_state->entry) + fields_size;
-+	trace_state->entry = trace_event_buffer_reserve(&trace_state->fbuffer,
-+							file,
-+							entry_size);
-+	if (!trace_state->entry) {
-+		ring_buffer_nest_end(trace_state->buffer);
-+		ret = -EINVAL;
-+	}
-+out:
-+	return ret;
-+}
-+
-+static inline void
-+__synth_event_trace_end(struct synth_event_trace_state *trace_state)
-+{
-+	trace_event_buffer_commit(&trace_state->fbuffer);
-+
-+	ring_buffer_nest_end(trace_state->buffer);
-+}
-+
- /**
-  * synth_event_trace - Trace a synthetic event
-  * @file: The trace_event_file representing the synthetic event
-@@ -1812,69 +1866,38 @@ EXPORT_SYMBOL_GPL(synth_event_cmd_init);
-  */
- int synth_event_trace(struct trace_event_file *file, unsigned int n_vals, ...)
- {
--	struct trace_event_buffer fbuffer;
--	struct synth_trace_event *entry;
--	struct trace_buffer *buffer;
--	struct synth_event *event;
-+	struct synth_event_trace_state state;
- 	unsigned int i, n_u64;
--	int fields_size = 0;
- 	va_list args;
--	int ret = 0;
--
--	/*
--	 * Normal event generation doesn't get called at all unless
--	 * the ENABLED bit is set (which attaches the probe thus
--	 * allowing this code to be called, etc).  Because this is
--	 * called directly by the user, we don't have that but we
--	 * still need to honor not logging when disabled.
--	 */
--	if (!(file->flags & EVENT_FILE_FL_ENABLED) ||
--	    trace_trigger_soft_disabled(file))
--		return 0;
--
--	event = file->event_call->data;
--
--	if (n_vals != event->n_fields)
--		return -EINVAL;
--
--	fields_size = event->n_u64 * sizeof(u64);
--
--	/*
--	 * Avoid ring buffer recursion detection, as this event
--	 * is being performed within another event.
--	 */
--	buffer = file->tr->array_buffer.buffer;
--	ring_buffer_nest_start(buffer);
-+	int ret;
- 
--	entry = trace_event_buffer_reserve(&fbuffer, file,
--					   sizeof(*entry) + fields_size);
--	if (!entry) {
--		ret = -EINVAL;
--		goto out;
-+	ret = __synth_event_trace_start(file, &state);
-+	if (ret) {
-+		if (ret == -ENOENT)
-+			ret = 0; /* just disabled, not really an error */
-+		return ret;
- 	}
- 
- 	va_start(args, n_vals);
--	for (i = 0, n_u64 = 0; i < event->n_fields; i++) {
-+	for (i = 0, n_u64 = 0; i < state.event->n_fields; i++) {
- 		u64 val;
- 
- 		val = va_arg(args, u64);
- 
--		if (event->fields[i]->is_string) {
-+		if (state.event->fields[i]->is_string) {
- 			char *str_val = (char *)(long)val;
--			char *str_field = (char *)&entry->fields[n_u64];
-+			char *str_field = (char *)&state.entry->fields[n_u64];
- 
- 			strscpy(str_field, str_val, STR_VAR_LEN_MAX);
- 			n_u64 += STR_VAR_LEN_MAX / sizeof(u64);
- 		} else {
--			entry->fields[n_u64] = val;
-+			state.entry->fields[n_u64] = val;
- 			n_u64++;
- 		}
- 	}
- 	va_end(args);
- 
--	trace_event_buffer_commit(&fbuffer);
--out:
--	ring_buffer_nest_end(buffer);
-+	__synth_event_trace_end(&state);
- 
- 	return ret;
- }
-@@ -1901,62 +1924,31 @@ EXPORT_SYMBOL_GPL(synth_event_trace);
- int synth_event_trace_array(struct trace_event_file *file, u64 *vals,
- 			    unsigned int n_vals)
- {
--	struct trace_event_buffer fbuffer;
--	struct synth_trace_event *entry;
--	struct trace_buffer *buffer;
--	struct synth_event *event;
-+	struct synth_event_trace_state state;
- 	unsigned int i, n_u64;
--	int fields_size = 0;
--	int ret = 0;
--
--	/*
--	 * Normal event generation doesn't get called at all unless
--	 * the ENABLED bit is set (which attaches the probe thus
--	 * allowing this code to be called, etc).  Because this is
--	 * called directly by the user, we don't have that but we
--	 * still need to honor not logging when disabled.
--	 */
--	if (!(file->flags & EVENT_FILE_FL_ENABLED) ||
--	    trace_trigger_soft_disabled(file))
--		return 0;
--
--	event = file->event_call->data;
--
--	if (n_vals != event->n_fields)
--		return -EINVAL;
--
--	fields_size = event->n_u64 * sizeof(u64);
--
--	/*
--	 * Avoid ring buffer recursion detection, as this event
--	 * is being performed within another event.
--	 */
--	buffer = file->tr->array_buffer.buffer;
--	ring_buffer_nest_start(buffer);
-+	int ret;
- 
--	entry = trace_event_buffer_reserve(&fbuffer, file,
--					   sizeof(*entry) + fields_size);
--	if (!entry) {
--		ret = -EINVAL;
--		goto out;
-+	ret = __synth_event_trace_start(file, &state);
-+	if (ret) {
-+		if (ret == -ENOENT)
-+			ret = 0; /* just disabled, not really an error */
-+		return ret;
- 	}
- 
--	for (i = 0, n_u64 = 0; i < event->n_fields; i++) {
--		if (event->fields[i]->is_string) {
-+	for (i = 0, n_u64 = 0; i < state.event->n_fields; i++) {
-+		if (state.event->fields[i]->is_string) {
- 			char *str_val = (char *)(long)vals[i];
--			char *str_field = (char *)&entry->fields[n_u64];
-+			char *str_field = (char *)&state.entry->fields[n_u64];
- 
- 			strscpy(str_field, str_val, STR_VAR_LEN_MAX);
- 			n_u64 += STR_VAR_LEN_MAX / sizeof(u64);
- 		} else {
--			entry->fields[n_u64] = vals[i];
-+			state.entry->fields[n_u64] = vals[i];
- 			n_u64++;
- 		}
- 	}
- 
--	trace_event_buffer_commit(&fbuffer);
--out:
--	ring_buffer_nest_end(buffer);
-+	__synth_event_trace_end(&state);
- 
- 	return ret;
- }
-@@ -1993,55 +1985,17 @@ EXPORT_SYMBOL_GPL(synth_event_trace_array);
- int synth_event_trace_start(struct trace_event_file *file,
- 			    struct synth_event_trace_state *trace_state)
- {
--	struct synth_trace_event *entry;
--	int fields_size = 0;
--	int ret = 0;
-+	int ret;
- 
--	if (!trace_state) {
--		ret = -EINVAL;
--		goto out;
--	}
-+	if (!trace_state)
-+		return -EINVAL;
- 
- 	memset(trace_state, '\0', sizeof(*trace_state));
- 
--	/*
--	 * Normal event tracing doesn't get called at all unless the
--	 * ENABLED bit is set (which attaches the probe thus allowing
--	 * this code to be called, etc).  Because this is called
--	 * directly by the user, we don't have that but we still need
--	 * to honor not logging when disabled.  For the the iterated
--	 * trace case, we save the enabed state upon start and just
--	 * ignore the following data calls.
--	 */
--	if (!(file->flags & EVENT_FILE_FL_ENABLED) ||
--	    trace_trigger_soft_disabled(file)) {
--		trace_state->enabled = false;
--		goto out;
--	}
--
--	trace_state->enabled = true;
-+	ret = __synth_event_trace_start(file, trace_state);
-+	if (ret == -ENOENT)
-+		ret = 0; /* just disabled, not really an error */
- 
--	trace_state->event = file->event_call->data;
--
--	fields_size = trace_state->event->n_u64 * sizeof(u64);
--
--	/*
--	 * Avoid ring buffer recursion detection, as this event
--	 * is being performed within another event.
--	 */
--	trace_state->buffer = file->tr->array_buffer.buffer;
--	ring_buffer_nest_start(trace_state->buffer);
--
--	entry = trace_event_buffer_reserve(&trace_state->fbuffer, file,
--					   sizeof(*entry) + fields_size);
--	if (!entry) {
--		ring_buffer_nest_end(trace_state->buffer);
--		ret = -EINVAL;
--		goto out;
--	}
--
--	trace_state->entry = entry;
--out:
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(synth_event_trace_start);
-@@ -2074,7 +2028,7 @@ static int __synth_event_add_val(const char *field_name, u64 val,
- 		trace_state->add_next = true;
- 	}
- 
--	if (!trace_state->enabled)
-+	if (trace_state->disabled)
- 		goto out;
- 
- 	event = trace_state->event;
-@@ -2209,9 +2163,7 @@ int synth_event_trace_end(struct synth_event_trace_state *trace_state)
- 	if (!trace_state)
- 		return -EINVAL;
- 
--	trace_event_buffer_commit(&trace_state->fbuffer);
--
--	ring_buffer_nest_end(trace_state->buffer);
-+	__synth_event_trace_end(trace_state);
- 
- 	return 0;
- }
--- 
-2.14.1
-
+Thanks.
