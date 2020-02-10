@@ -2,65 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2276E1570E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 09:36:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F4010157136
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 09:53:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbgBJIgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 03:36:36 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58722 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727079AbgBJIgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 03:36:35 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E4AAAE82F780F6B7DEDF;
-        Mon, 10 Feb 2020 16:36:28 +0800 (CST)
-Received: from euler.huawei.com (10.175.104.193) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 10 Feb 2020 16:36:22 +0800
-From:   Chen Wandun <chenwandun@huawei.com>
-To:     <pablo@netfilter.org>, <kadlec@netfilter.org>, <fw@strlen.de>,
-        <davem@davemloft.net>, <kuba@kernel.org>, <sbrivio@redhat.com>,
-        <netfilter-devel@vger.kernel.org>, <coreteam@netfilter.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <chenwandun@huawei.com>
-Subject: [PATCH next] nf_tables: make the symbol 'nft_pipapo_get' static
-Date:   Mon, 10 Feb 2020 16:51:09 +0800
-Message-ID: <20200210085109.13954-1-chenwandun@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727563AbgBJIxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 03:53:00 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:59939 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727121AbgBJIxA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 03:53:00 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1j14oK-0006s0-CM; Mon, 10 Feb 2020 08:52:56 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI/ACPI: make array pcie_to_hpx3_type static const, makes object smaller
+Date:   Mon, 10 Feb 2020 08:52:56 +0000
+Message-Id: <20200210085256.319424-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.104.193]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following sparse warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-net/netfilter/nft_set_pipapo.c:739:6: warning: symbol 'nft_pipapo_get' was not declared. Should it be static?
+Don't populate the array pcie_to_hpx3_type on the stack but instead
+make it static const. Makes the object code smaller by 6 bytes:
 
-Fixes: 3c4287f62044 ("nf_tables: Add set type for arbitrary concatenation of ranges")
-Signed-off-by: Chen Wandun <chenwandun@huawei.com>
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  19247	   3048	     64	  22359	   5757	drivers/pci/pci-acpi.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  19177	   3112	     64	  22353	   5751	drivers/pci/pci-acpi.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/netfilter/nft_set_pipapo.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pci/pci-acpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/netfilter/nft_set_pipapo.c b/net/netfilter/nft_set_pipapo.c
-index f0cb1e13af50..f5b9bb6bfcc3 100644
---- a/net/netfilter/nft_set_pipapo.c
-+++ b/net/netfilter/nft_set_pipapo.c
-@@ -736,8 +736,8 @@ static struct nft_pipapo_elem *pipapo_get(const struct net *net,
-  * @elem:	nftables API element representation containing key data
-  * @flags:	Unused
-  */
--void *nft_pipapo_get(const struct net *net, const struct nft_set *set,
--		     const struct nft_set_elem *elem, unsigned int flags)
-+static void *nft_pipapo_get(const struct net *net, const struct nft_set *set,
-+			    const struct nft_set_elem *elem, unsigned int flags)
+diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+index 0c02d500158f..d914f8bc31ea 100644
+--- a/drivers/pci/pci-acpi.c
++++ b/drivers/pci/pci-acpi.c
+@@ -439,7 +439,7 @@ enum hpx_type3_dev_type {
+ static u16 hpx3_device_type(struct pci_dev *dev)
  {
- 	return pipapo_get(net, set, (const u8 *)elem->key.val.data,
- 			  nft_genmask_cur(net));
+ 	u16 pcie_type = pci_pcie_type(dev);
+-	const int pcie_to_hpx3_type[] = {
++	static const int pcie_to_hpx3_type[] = {
+ 		[PCI_EXP_TYPE_ENDPOINT]    = HPX_TYPE_ENDPOINT,
+ 		[PCI_EXP_TYPE_LEG_END]     = HPX_TYPE_LEG_END,
+ 		[PCI_EXP_TYPE_RC_END]      = HPX_TYPE_RC_END,
 -- 
-2.17.1
+2.25.0
 
