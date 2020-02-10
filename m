@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB67B15755C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:40:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AD4915763E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729724AbgBJMkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:40:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33546 "EHLO mail.kernel.org"
+        id S1730542AbgBJMqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:46:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729108AbgBJMiT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:19 -0500
+        id S1729384AbgBJMlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:41:36 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19A3B2085B;
-        Mon, 10 Feb 2020 12:38:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13F702051A;
+        Mon, 10 Feb 2020 12:41:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338298;
-        bh=A/2U5VX3ZwwTAy8Oy69vmzKMOlRkiaXXOgPpFnlDUzc=;
+        s=default; t=1581338496;
+        bh=86r4UqeeZ+aKmHn3QahEc9xR1oMyCEz9S0COPm5NdfM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UjAVeufyrcw2Vi05zCmi4nL65o01BjRa+7siFCG9Hdj4nteCfNM/9z65xFyf4wV7g
-         DxMWxF/yGpIIVMw4NsFhidzuaWQq/JQ4usz4K96mroySxllx2nJWwB6tokD55IyvAu
-         Qsoh/sMUlSzKRM/PTiWifl50oI9FQ4c2LjvBl1yg=
+        b=xl5ykg0gW2p0DRifMJDZn2UNdXaWNG9KDXeDklIaoeDmOEm4dWG1AYP4UlyTx4Ly9
+         ZkWj4+Tdv9GmIXn02XTmwozwyyK0XtpLV8+m5j/FPEGHUrrZTr9Vp8kCOKiqzs2ET+
+         CNVCk3N3ycGh5lx72R7fajXwrrCIBYbtWdOMnVF4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
-        Marios Pomonis <pomonis@google.com>,
-        Andrew Honig <ahonig@google.com>,
-        Jim Mattson <jmattson@google.com>,
+        stable@vger.kernel.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Joao Martins <joao.m.martins@oracle.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.4 206/309] KVM: x86: Protect ioapic_read_indirect() from Spectre-v1/L1TF attacks
+Subject: [PATCH 5.5 249/367] x86/KVM: Clean up hosts steal time structure
 Date:   Mon, 10 Feb 2020 04:32:42 -0800
-Message-Id: <20200210122426.341223766@linuxfoundation.org>
+Message-Id: <20200210122447.183043847@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
-References: <20200210122406.106356946@linuxfoundation.org>
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
+References: <20200210122423.695146547@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,58 +45,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marios Pomonis <pomonis@google.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-commit 8c86405f606ca8508b8d9280680166ca26723695 upstream.
+commit a6bd811f1209fe1c64c9f6fd578101d6436c6b6e upstream.
 
-This fixes a Spectre-v1/L1TF vulnerability in ioapic_read_indirect().
-This function contains index computations based on the
-(attacker-controlled) IOREGSEL register.
+Now that we are mapping kvm_steal_time from the guest directly we
+don't need keep a copy of it in kvm_vcpu_arch.st. The same is true
+for the stime field.
 
-Fixes: a2c118bfab8b ("KVM: Fix bounds checking in ioapic indirect register reads (CVE-2013-1798)")
+This is part of CVE-2019-3016.
 
-Signed-off-by: Nick Finco <nifi@google.com>
-Signed-off-by: Marios Pomonis <pomonis@google.com>
-Reviewed-by: Andrew Honig <ahonig@google.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
 Cc: stable@vger.kernel.org
-Reviewed-by: Jim Mattson <jmattson@google.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/ioapic.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/kvm_host.h |    3 +--
+ arch/x86/kvm/x86.c              |   11 +++--------
+ 2 files changed, 4 insertions(+), 10 deletions(-)
 
---- a/arch/x86/kvm/ioapic.c
-+++ b/arch/x86/kvm/ioapic.c
-@@ -36,6 +36,7 @@
- #include <linux/io.h>
- #include <linux/slab.h>
- #include <linux/export.h>
-+#include <linux/nospec.h>
- #include <asm/processor.h>
- #include <asm/page.h>
- #include <asm/current.h>
-@@ -68,13 +69,14 @@ static unsigned long ioapic_read_indirec
- 	default:
- 		{
- 			u32 redir_index = (ioapic->ioregsel - 0x10) >> 1;
--			u64 redir_content;
-+			u64 redir_content = ~0ULL;
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -685,10 +685,9 @@ struct kvm_vcpu_arch {
+ 	bool pvclock_set_guest_stopped_request;
  
--			if (redir_index < IOAPIC_NUM_PINS)
--				redir_content =
--					ioapic->redirtbl[redir_index].bits;
--			else
--				redir_content = ~0ULL;
-+			if (redir_index < IOAPIC_NUM_PINS) {
-+				u32 index = array_index_nospec(
-+					redir_index, IOAPIC_NUM_PINS);
-+
-+				redir_content = ioapic->redirtbl[index].bits;
-+			}
+ 	struct {
++		u8 preempted;
+ 		u64 msr_val;
+ 		u64 last_steal;
+-		struct gfn_to_hva_cache stime;
+-		struct kvm_steal_time steal;
+ 		struct gfn_to_pfn_cache cache;
+ 	} st;
  
- 			result = (ioapic->ioregsel & 0x1) ?
- 			    (redir_content >> 32) & 0xffffffff :
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2611,7 +2611,7 @@ static void record_steal_time(struct kvm
+ 	if (xchg(&st->preempted, 0) & KVM_VCPU_FLUSH_TLB)
+ 		kvm_vcpu_flush_tlb(vcpu, false);
+ 
+-	vcpu->arch.st.steal.preempted = 0;
++	vcpu->arch.st.preempted = 0;
+ 
+ 	if (st->version & 1)
+ 		st->version += 1;  /* first time write, random junk */
+@@ -2795,11 +2795,6 @@ int kvm_set_msr_common(struct kvm_vcpu *
+ 		if (data & KVM_STEAL_RESERVED_MASK)
+ 			return 1;
+ 
+-		if (kvm_gfn_to_hva_cache_init(vcpu->kvm, &vcpu->arch.st.stime,
+-						data & KVM_STEAL_VALID_BITS,
+-						sizeof(struct kvm_steal_time)))
+-			return 1;
+-
+ 		vcpu->arch.st.msr_val = data;
+ 
+ 		if (!(data & KVM_MSR_ENABLED))
+@@ -3519,7 +3514,7 @@ static void kvm_steal_time_set_preempted
+ 	if (!(vcpu->arch.st.msr_val & KVM_MSR_ENABLED))
+ 		return;
+ 
+-	if (vcpu->arch.st.steal.preempted)
++	if (vcpu->arch.st.preempted)
+ 		return;
+ 
+ 	if (kvm_map_gfn(vcpu, vcpu->arch.st.msr_val >> PAGE_SHIFT, &map,
+@@ -3529,7 +3524,7 @@ static void kvm_steal_time_set_preempted
+ 	st = map.hva +
+ 		offset_in_page(vcpu->arch.st.msr_val & KVM_STEAL_VALID_BITS);
+ 
+-	st->preempted = vcpu->arch.st.steal.preempted = KVM_VCPU_PREEMPTED;
++	st->preempted = vcpu->arch.st.preempted = KVM_VCPU_PREEMPTED;
+ 
+ 	kvm_unmap_gfn(vcpu, &map, &vcpu->arch.st.cache, true, true);
+ }
 
 
