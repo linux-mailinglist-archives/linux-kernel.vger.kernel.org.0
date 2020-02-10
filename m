@@ -2,66 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF7AC1571D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 10:37:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EC231571D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 10:37:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbgBJJhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 04:37:02 -0500
-Received: from 8bytes.org ([81.169.241.247]:51698 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726118AbgBJJhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 04:37:01 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 7BC0534A; Mon, 10 Feb 2020 10:36:59 +0100 (CET)
-From:   Joerg Roedel <joro@8bytes.org>
-To:     iommu@lists.linux-foundation.org
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>, CQ Tang <cq.tang@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] iommu/vt-d: Fix compile warning from intel-svm.h
-Date:   Mon, 10 Feb 2020 10:36:56 +0100
-Message-Id: <20200210093656.8961-1-joro@8bytes.org>
-X-Mailer: git-send-email 2.17.1
+        id S1727481AbgBJJh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 04:37:56 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33194 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbgBJJhz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 04:37:55 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m10so7994750wmc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 01:37:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=dpDOC2vuX3yrKvvKK1hi+77AaaSDtXisz2G15iuca58=;
+        b=OaXXDxktFBMWlvKbVIzNPCy+qwddRS9EOAe1gcgM2PK0Y0qCkr6FTYykUrpZBwqmi3
+         k0Y+tJAnh3oM9dnp8JLyv6qHcDCLyROVK6iQPfjfxp/Mh6h8v7TOI8j1bNvpVoshzmco
+         tDeVEARM1Zu0olbOWnmk7czQrGUSjdGt6hM8p2tOb7WVvl5uNe6ZJLLhMwNXIDxgLzIR
+         EjUcRGwYaj1y8QW215GqPjE3dQCM0jYzNwA/FdOPoAENYi+NbLS2hztE6KgsLTrZ2Gv3
+         00wjiisZlboVX5hZfnUT7TIEjUcwK81POAA94l05Qh8L5IjaboY+gjqbltqH3iwInuLL
+         EHJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=dpDOC2vuX3yrKvvKK1hi+77AaaSDtXisz2G15iuca58=;
+        b=Jhqip32P5pgD+E6Hmu+NDE3HUFudziEmg4ZrrEkL0VSuzT+Ve7WgWCkqXIzpc34yvG
+         1X9DMuHizu0OMgAqAld0wsP8Ed+btAaLnd6dlbxCHDoyPx/iMM2ifHq/tHwbW2h/LdqF
+         RpeQjkteHAXLUe9VVpXgmDM7LJD25kBpHJB3D2HH4BWeeKFJhEDAgJMZA9JhJsV6of6P
+         gfNDY3SFPYoe99pcp6YvSnhSWpVK6JVoIq+6/2qxB7ecEoTEzOe8LNXYq6lzFoc3RB5u
+         ZulhhVZkS819AoZ0CEdW4dqZGH4nKJLW5vNDgguwSnKNUZcVUJV65jQHHOf9Vz0DVqYo
+         +57Q==
+X-Gm-Message-State: APjAAAVlg4Gz3sWcFhPiL4cLx6s2Cbiq8Yxdfad4tl7+ZtsCGBIsY8iw
+        iknvq7LpRxgy46iqPDvh8Qxwa1B/JmcIDq4aKJM=
+X-Google-Smtp-Source: APXvYqzY9mHt7Etgg7mr4DEI3ODrozXL8ZvU/A8nkeG207L/6Qv8Krm73uCfrTLGcflIo7hUfDikiP/WNPnWKVB5i8Y=
+X-Received: by 2002:a7b:c204:: with SMTP id x4mr14563064wmi.20.1581327474487;
+ Mon, 10 Feb 2020 01:37:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: by 2002:adf:f083:0:0:0:0:0 with HTTP; Mon, 10 Feb 2020 01:37:53
+ -0800 (PST)
+Reply-To: tracy2william@yahoo.com
+From:   Tracy William <mrsnicole1901@gmail.com>
+Date:   Mon, 10 Feb 2020 01:37:53 -0800
+Message-ID: <CAHR-wfDLSEovL-evXxo1_nkxnQeHx0EDdSD4BSS+BwHKM==Xzg@mail.gmail.com>
+Subject: Hi Dear
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+Hi Dear,
+how are you today I hope that everything is OK with you as it is my
+great pleasure to contact you in having communication with you
+starting from today, i was just going through the Internet search when
+i found your email address, I want to make a very new and special
+friend, so i decided to contact you to see how we can make it work if
+we can. Please i wish you will have the desire with me so that we can
+get to know each other better and see what happens in future.
 
-The intel_svm_is_pasid_valid() needs to be marked inline, otherwise it
-causes the compile warning below:
+My name is Tracy William, I am an American  presently I live in the
+UK, I will be
+happy to see your reply for us to know each other better, and let you
+into the private  part of my life moreso my pictures and details about
+me you can contact me directly to tracy2william@yahoo.com,do have a
+great day.
+Till I read from you.
 
-  CC [M]  drivers/dma/idxd/cdev.o
-In file included from drivers/dma/idxd/cdev.c:9:0:
-./include/linux/intel-svm.h:125:12: warning: ‘intel_svm_is_pasid_valid’ defined but not used [-Wunused-function]
- static int intel_svm_is_pasid_valid(struct device *dev, int pasid)
-            ^~~~~~~~~~~~~~~~~~~~~~~~
-
-Reported-by: Borislav Petkov <bp@alien8.de>
-Fixes: 15060aba71711 ('iommu/vt-d: Helper function to query if a pasid has any active users')
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- include/linux/intel-svm.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/intel-svm.h b/include/linux/intel-svm.h
-index 94f047a8a845..d7c403d0dd27 100644
---- a/include/linux/intel-svm.h
-+++ b/include/linux/intel-svm.h
-@@ -122,7 +122,7 @@ static inline int intel_svm_unbind_mm(struct device *dev, int pasid)
- 	BUG();
- }
- 
--static int intel_svm_is_pasid_valid(struct device *dev, int pasid)
-+static inline int intel_svm_is_pasid_valid(struct device *dev, int pasid)
- {
- 	return -EINVAL;
- }
--- 
-2.16.4
-
+bye for now
+Tracy
