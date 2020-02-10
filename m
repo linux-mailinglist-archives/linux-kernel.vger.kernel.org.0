@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADE3D157BF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:33:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C4A9157BE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:33:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbgBJMfe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:35:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51476 "EHLO mail.kernel.org"
+        id S1728024AbgBJMfh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:35:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727872AbgBJMfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:35:21 -0500
+        id S1727883AbgBJMfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:22 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC01320661;
-        Mon, 10 Feb 2020 12:35:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F089D215A4;
+        Mon, 10 Feb 2020 12:35:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338121;
-        bh=wvKp2q99nRBiRC5mtyIHVKjE2rlgtcti68SxKBOh2HA=;
+        s=default; t=1581338122;
+        bh=dUIA7XYKh2tjWz5vcmmzWs7dwmjsqJYdL6fQNXnZiDE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZoK6iFcG7hw4KLMIM+dZutzpYrq6KGsiYGofY/LP8fk2h85MCQS2WIT2ap5TXkfb6
-         iiEoaZ5mS7hqrWG/RXl4gen5xy/0bny+iXLM9gmCacOtrAS1WHmtgv61l6GjeUHsKH
-         5iybwSlrM0sBeXpTJ3cWgej0R7keR4g+uAoPp0dE=
+        b=kb2tGYo7efg3oe9PJ4wzk1iLDW2l2c07wYqjrtZ1pZnJLH6FBZdOAQxUrAi0CHAAK
+         8VmFWSzpk/9ClsOl2K3TX0RudflPUJ37sQX0YoH90nJOTuHOApawucdPsVB/l43qAy
+         KZte+aH3nXplnAYwVUS+OPuOBc44OSNeVnbRNSeg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Engraf <david.engraf@sysgo.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>
-Subject: [PATCH 4.19 057/195] PCI: tegra: Fix return value check of pm_runtime_get_sync()
-Date:   Mon, 10 Feb 2020 04:31:55 -0800
-Message-Id: <20200210122311.572246879@linuxfoundation.org>
+        stable@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.19 058/195] mmc: spi: Toggle SPI polarity, do not hardcode it
+Date:   Mon, 10 Feb 2020 04:31:56 -0800
+Message-Id: <20200210122311.656219366@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
 References: <20200210122305.731206734@linuxfoundation.org>
@@ -45,38 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Engraf <david.engraf@sysgo.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-commit 885199148442f56b880995d703d2ed03b6481a3c upstream.
+commit af3ed119329cf9690598c5a562d95dfd128e91d6 upstream.
 
-pm_runtime_get_sync() returns the device's usage counter. This might
-be >0 if the device is already powered up or CONFIG_PM is disabled.
+The code in mmc_spi_initsequence() tries to send a burst with
+high chipselect and for this reason hardcodes the device into
+SPI_CS_HIGH.
 
-Abort probe function on real error only.
+This is not good because the SPI_CS_HIGH flag indicates
+logical "asserted" CS not always the physical level. In
+some cases the signal is inverted in the GPIO library and
+in that case SPI_CS_HIGH is already set, and enforcing
+SPI_CS_HIGH again will actually drive it low.
 
-Fixes: da76ba50963b ("PCI: tegra: Add power management support")
-Link: https://lore.kernel.org/r/20191216111825.28136-1-david.engraf@sysgo.com
-Signed-off-by: David Engraf <david.engraf@sysgo.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Andrew Murray <andrew.murray@arm.com>
-Cc: stable@vger.kernel.org	# v4.17+
+Instead of hard-coding this, toggle the polarity so if the
+default is LOW it goes high to assert chipselect but if it
+is already high then toggle it low instead.
+
+Cc: Phil Elwell <phil@raspberrypi.org>
+Reported-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Link: https://lore.kernel.org/r/20191204152749.12652-1-linus.walleij@linaro.org
+Cc: stable@vger.kernel.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/controller/pci-tegra.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/mmc_spi.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -2398,7 +2398,7 @@ static int tegra_pcie_probe(struct platf
+--- a/drivers/mmc/host/mmc_spi.c
++++ b/drivers/mmc/host/mmc_spi.c
+@@ -1154,17 +1154,22 @@ static void mmc_spi_initsequence(struct
+ 	 * SPI protocol.  Another is that when chipselect is released while
+ 	 * the card returns BUSY status, the clock must issue several cycles
+ 	 * with chipselect high before the card will stop driving its output.
++	 *
++	 * SPI_CS_HIGH means "asserted" here. In some cases like when using
++	 * GPIOs for chip select, SPI_CS_HIGH is set but this will be logically
++	 * inverted by gpiolib, so if we want to ascertain to drive it high
++	 * we should toggle the default with an XOR as we do here.
+ 	 */
+-	host->spi->mode |= SPI_CS_HIGH;
++	host->spi->mode ^= SPI_CS_HIGH;
+ 	if (spi_setup(host->spi) != 0) {
+ 		/* Just warn; most cards work without it. */
+ 		dev_warn(&host->spi->dev,
+ 				"can't change chip-select polarity\n");
+-		host->spi->mode &= ~SPI_CS_HIGH;
++		host->spi->mode ^= SPI_CS_HIGH;
+ 	} else {
+ 		mmc_spi_readbytes(host, 18);
  
- 	pm_runtime_enable(pcie->dev);
- 	err = pm_runtime_get_sync(pcie->dev);
--	if (err) {
-+	if (err < 0) {
- 		dev_err(dev, "fail to enable pcie controller: %d\n", err);
- 		goto teardown_msi;
- 	}
+-		host->spi->mode &= ~SPI_CS_HIGH;
++		host->spi->mode ^= SPI_CS_HIGH;
+ 		if (spi_setup(host->spi) != 0) {
+ 			/* Wot, we can't get the same setup we had before? */
+ 			dev_err(&host->spi->dev,
 
 
