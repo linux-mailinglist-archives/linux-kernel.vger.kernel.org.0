@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3C8E157654
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BE6A1575B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:43:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730460AbgBJMnf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:43:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38920 "EHLO mail.kernel.org"
+        id S1730298AbgBJMnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:43:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728813AbgBJMkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:03 -0500
+        id S1729608AbgBJMkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:05 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70CE82085B;
-        Mon, 10 Feb 2020 12:40:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CF9A20842;
+        Mon, 10 Feb 2020 12:40:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338403;
-        bh=BvFCv21X/M3zlOubwmJLJSz0U2M68Y+y6binuJ8WJEo=;
+        s=default; t=1581338404;
+        bh=T7Jlt3dNLd93gjQSIyq8D/dlHKKX/+NIVSauKQY4LqE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YP+rFEmGPFzoQNEPKv9fkj8cIXeywO9+A7HPkuv4YbovC3obHDDl3iJSBPlFwHCBG
-         pdDRFaXlyLEWf4HqPdtw2gy65KQ0qGlQbi1LF7YxTm4XmXNg/SQj637E01hiJtyZhl
-         qjJQBvKbutY2DRCC+hYFkNlbUkT3fMOqdwBUr7fI=
+        b=KTPa/rgtAaVaonnnUdsIAH6efrY9o7UOx6OgT7uxSFgb5HbwKibzxJvDvx/EW5FM6
+         jTs/oZgMR2ruWcZ9r9Y1BXCnaMGoa84hLSK+oNonSigEPBZoewP9Y+sJ1yQ61FeFvO
+         qujTn0LUmo2nQZHxexioCjehi8NIIqY6C+SpwpuM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 5.5 104/367] ubifs: Fix FS_IOC_SETFLAGS unexpectedly clearing encrypt flag
-Date:   Mon, 10 Feb 2020 04:30:17 -0800
-Message-Id: <20200210122433.984203459@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 106/367] mmc: sdhci-of-at91: fix memleak on clk_get failure
+Date:   Mon, 10 Feb 2020 04:30:19 -0800
+Message-Id: <20200210122434.180284190@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -43,57 +47,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 
-commit 2b57067a7778484c10892fa191997bfda29fea13 upstream.
+[ Upstream commit a04184ce777b46e92c2b3c93c6dcb2754cb005e1 ]
 
-UBIFS's implementation of FS_IOC_SETFLAGS fails to preserve existing
-inode flags that aren't settable by FS_IOC_SETFLAGS, namely the encrypt
-flag.  This causes the encrypt flag to be unexpectedly cleared.
+sdhci_alloc_host() does its work not using managed infrastructure, so
+needs explicit free on error path. Add it where needed.
 
-Fix it by preserving existing unsettable flags, like ext4 and f2fs do.
-
-Test case with kvm-xfstests shell:
-
-    FSTYP=ubifs KEYCTL_PROG=keyctl
-    . fs/ubifs/config
-    . ~/xfstests/common/encrypt
-    dev=$(__blkdev_to_ubi_volume /dev/vdc)
-    ubiupdatevol -t $dev
-    mount $dev /mnt -t ubifs
-    k=$(_generate_session_encryption_key)
-    mkdir /mnt/edir
-    xfs_io -c "set_encpolicy $k" /mnt/edir
-    echo contents > /mnt/edir/file
-    chattr +i /mnt/edir/file
-    chattr -i /mnt/edir/file
-
-With the bug, the following errors occur on the last command:
-
-    [   18.081559] fscrypt (ubifs, inode 67): Inconsistent encryption context (parent directory: 65)
-    chattr: Operation not permitted while reading flags on /mnt/edir/file
-
-Fixes: d475a507457b ("ubifs: Add skeleton for fscrypto")
-Cc: <stable@vger.kernel.org> # v4.10+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: <stable@vger.kernel.org>
+Fixes: bb5f8ea4d514 ("mmc: sdhci-of-at91: introduce driver for the Atmel SDMMC")
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Link: https://lore.kernel.org/r/b2a44d5be2e06ff075f32477e466598bb0f07b36.1577961679.git.mirq-linux@rere.qmqm.pl
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ubifs/ioctl.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mmc/host/sdhci-of-at91.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/fs/ubifs/ioctl.c
-+++ b/fs/ubifs/ioctl.c
-@@ -113,7 +113,8 @@ static int setflags(struct inode *inode,
- 	if (err)
- 		goto out_unlock;
+diff --git a/drivers/mmc/host/sdhci-of-at91.c b/drivers/mmc/host/sdhci-of-at91.c
+index 5959e394b416f..99d82c1874d62 100644
+--- a/drivers/mmc/host/sdhci-of-at91.c
++++ b/drivers/mmc/host/sdhci-of-at91.c
+@@ -335,19 +335,22 @@ static int sdhci_at91_probe(struct platform_device *pdev)
+ 	priv->mainck = devm_clk_get(&pdev->dev, "baseclk");
+ 	if (IS_ERR(priv->mainck)) {
+ 		dev_err(&pdev->dev, "failed to get baseclk\n");
+-		return PTR_ERR(priv->mainck);
++		ret = PTR_ERR(priv->mainck);
++		goto sdhci_pltfm_free;
+ 	}
  
--	ui->flags = ioctl2ubifs(flags);
-+	ui->flags &= ~ioctl2ubifs(UBIFS_SUPPORTED_IOCTL_FLAGS);
-+	ui->flags |= ioctl2ubifs(flags);
- 	ubifs_set_inode_flags(inode);
- 	inode->i_ctime = current_time(inode);
- 	release = ui->dirty;
+ 	priv->hclock = devm_clk_get(&pdev->dev, "hclock");
+ 	if (IS_ERR(priv->hclock)) {
+ 		dev_err(&pdev->dev, "failed to get hclock\n");
+-		return PTR_ERR(priv->hclock);
++		ret = PTR_ERR(priv->hclock);
++		goto sdhci_pltfm_free;
+ 	}
+ 
+ 	priv->gck = devm_clk_get(&pdev->dev, "multclk");
+ 	if (IS_ERR(priv->gck)) {
+ 		dev_err(&pdev->dev, "failed to get multclk\n");
+-		return PTR_ERR(priv->gck);
++		ret = PTR_ERR(priv->gck);
++		goto sdhci_pltfm_free;
+ 	}
+ 
+ 	ret = sdhci_at91_set_clks_presets(&pdev->dev);
+-- 
+2.20.1
+
 
 
