@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FD64157890
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:08:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22D7315788B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:08:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730643AbgBJNIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:08:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37156 "EHLO mail.kernel.org"
+        id S1730792AbgBJNIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:08:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728968AbgBJMj3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:39:29 -0500
+        id S1728971AbgBJMja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:39:30 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F31D20733;
-        Mon, 10 Feb 2020 12:39:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DA2C20842;
+        Mon, 10 Feb 2020 12:39:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338368;
-        bh=J62eTd3bqr5j/L4W1LyHoRheWIg3gYLbwbNKiE5D1Fo=;
+        s=default; t=1581338370;
+        bh=H1rDOZ11KHe0nX1EtfcHPf1Y4oEDWPCo9Bgq0ldHZUo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f1vR7aXl5Tq3kwmzDXFioElrNzpJB6SfZ4WarQHMp/qsPzSve0a9njU+y8YyLf0Uf
-         350Fl9DmOIFlPK35mBhg+pH6d8tcv3L3v4FW9CY3zxpCsni/H/Oa2jm0eetb+WZdZX
-         m/U/RSEZmKsUKq0qQKO0ZAN/QVpmU2cicH5WDlyA=
+        b=Evcli9vdPFYcRLCcn8xM0Pojym3pJeZ3+iFcTeTUq/YQTCsBiBxw0ln9VJ5SpZ7vb
+         i+OxVUcer7oYp5Rt8wGF3jA0jH4j0FydhHBZ3uZqeHB5LJfsZNyeguh5V8JhqnYeUq
+         idY5fomye0PlZ06zaVGO3VpZvFdxp44d+YffdNfM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+99f4ddade3c22ab0cf23@syzkaller.appspotmail.com,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Marco Elver <elver@google.com>
-Subject: [PATCH 5.5 037/367] rcu: Use READ_ONCE() for ->expmask in rcu_read_unlock_special()
-Date:   Mon, 10 Feb 2020 04:29:10 -0800
-Message-Id: <20200210122427.406919433@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 5.5 040/367] Bluetooth: btusb: fix memory leak on fw
+Date:   Mon, 10 Feb 2020 04:29:13 -0800
+Message-Id: <20200210122427.695693359@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -45,35 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul E. McKenney <paulmck@kernel.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit c51f83c315c392d9776c33eb16a2fe1349d65c7f upstream.
+commit 3168c19d7eb17a0108a3b60ad8e8c1b18ea05c63 upstream.
 
-The rcu_node structure's ->expmask field is updated only when holding the
-->lock, but is also accessed locklessly.  This means that all ->expmask
-updates must use WRITE_ONCE() and all reads carried out without holding
-->lock must use READ_ONCE().  This commit therefore changes the lockless
-->expmask read in rcu_read_unlock_special() to use READ_ONCE().
+Currently the error return path when the call to btusb_mtk_hci_wmt_sync
+fails does not free fw.  Fix this by returning via the error_release_fw
+label that performs the free'ing.
 
-Reported-by: syzbot+99f4ddade3c22ab0cf23@syzkaller.appspotmail.com
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Acked-by: Marco Elver <elver@google.com>
+Addresses-Coverity: ("Resource leak")
+Fixes: a1c49c434e15 ("Bluetooth: btusb: Add protocol support for MediaTek MT7668U USB devices")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/rcu/tree_plugin.h |    2 +-
+ drivers/bluetooth/btusb.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -612,7 +612,7 @@ static void rcu_read_unlock_special(stru
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -2867,7 +2867,7 @@ static int btusb_mtk_setup_firmware(stru
+ 	err = btusb_mtk_hci_wmt_sync(hdev, &wmt_params);
+ 	if (err < 0) {
+ 		bt_dev_err(hdev, "Failed to send wmt rst (%d)", err);
+-		return err;
++		goto err_release_fw;
+ 	}
  
- 		t->rcu_read_unlock_special.b.exp_hint = false;
- 		exp = (t->rcu_blocked_node && t->rcu_blocked_node->exp_tasks) ||
--		      (rdp->grpmask & rnp->expmask) ||
-+		      (rdp->grpmask & READ_ONCE(rnp->expmask)) ||
- 		      tick_nohz_full_cpu(rdp->cpu);
- 		// Need to defer quiescent state until everything is enabled.
- 		if (irqs_were_disabled && use_softirq &&
+ 	/* Wait a few moments for firmware activation done */
 
 
