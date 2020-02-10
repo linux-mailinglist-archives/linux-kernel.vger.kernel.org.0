@@ -2,309 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2A82157C8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:43:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25A9F157CA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:45:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727930AbgBJNmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:42:52 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:53494 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727369AbgBJNmv (ORCPT
+        id S1729298AbgBJNnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:43:49 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:53893 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727369AbgBJNnp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 08:42:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1581342165; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=T4TUWiJ5K8tO53J5lYKr8Kh1Wm9miMwjFQ0IZuMzEOQ=;
-        b=WCY1mZcQSIGHreg16ZQYS9+dbEi3p1zFBtoWdKBMWXFued75k2bARdokVzl++gbxFsJK8/
-        xdTypmWuyDuEs9/w4TVeIlQ0lfyyE+8sfCI1uMBav0BUuLh5J+jCidNE5hdxAVL4zwcy6R
-        Bca+MHmr8jnEeogKqyrT5NxJgNEbg4c=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Zhou Yanjie <zhouyanjie@wanyeetech.com>, od@zcrc.me,
-        linux-kernel@vger.kernel.org,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Artur Rojek <contact@artur-rojek.eu>
-Subject: [PATCH v4 2/2] clocksource: Add driver for the Ingenic JZ47xx OST
-Date:   Mon, 10 Feb 2020 10:42:13 -0300
-Message-Id: <20200210134213.8324-2-paul@crapouillou.net>
-In-Reply-To: <20200210134213.8324-1-paul@crapouillou.net>
-References: <20200210134213.8324-1-paul@crapouillou.net>
+        Mon, 10 Feb 2020 08:43:45 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01ADebXV018034;
+        Mon, 10 Feb 2020 14:43:33 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=FrkdY4tsBuYMECkQYYjvl6NPFI1bBJ0eMZYUwhekgN0=;
+ b=Qfl9XKphuwdpR0VNKmRuSOgtxYn9wMCbnLJSQgpPl1AK4Q3itqA89ehMhj7K/LFH1jAg
+ VNq3bfVCjCGIKp6yraLBzpnNdhB4Gs2T/uvF49ivJpGvRmeDHxga5gnYZOC8ngh3RCZK
+ wkKy3UxGJjmXRLg7P7I5rVjgMrNRfvqCUbjyTW2DKJGkVR60hyZ81Y8zpItbLxuwMa6N
+ 7s3znNKiRvlalB7VLV8kyzKyrsD1bI+PwJTAtUsyggcfhN/dmehv/4t88xvc34rIBYYR
+ WfbAlbZIGdwF1PO4GC+FgDfsYMwxiQPUO0Esa3jcB3CKPDG46lHofM9gf6guFtmuv75R Nw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2y1urgt43c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 10 Feb 2020 14:43:33 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E85D410002A;
+        Mon, 10 Feb 2020 14:43:32 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B91572AD24B;
+        Mon, 10 Feb 2020 14:43:32 +0100 (CET)
+Received: from localhost (10.75.127.47) by SFHDAG3NODE3.st.com (10.75.127.9)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 10 Feb 2020 14:43:32
+ +0100
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH] ARM: dts: stm32: Correct stmfx node name on stm32746g-eval board
+Date:   Mon, 10 Feb 2020 14:43:30 +0100
+Message-ID: <20200210134331.14039-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG3NODE3.st.com
+ (10.75.127.9)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-10_04:2020-02-10,2020-02-10 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maarten ter Huurne <maarten@treewalker.org>
+Change stmfx node name to fit with yaml requirements.
 
-OST is the OS Timer, a 64-bit timer/counter with buffered reading.
-
-SoCs before the JZ4770 had (if any) a 32-bit OST; the JZ4770 and
-JZ4780 have a 64-bit OST.
-
-This driver will register both a clocksource and a sched_clock to the
-system.
-
-Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Tested-by: Artur Rojek <contact@artur-rojek.eu>
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 ---
+ arch/arm/boot/dts/stm32746g-eval.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Notes:
-    v2: local_irq_save/restore were moved within sched_clock_register
-    v3: Only register as 32-bit clocksource to simplify things
-    v4: - Bypass regmap to read counters.
-        - Use sched_clock_register_new() to avoid having a global pointer to
-    	  the ingenic_ost.
-    	- Don't print error codes in probe, since they will be printed anyway
-    	  if the probe function fails.
-    	- Rebased on 5.6-rc1.
-
- drivers/clocksource/Kconfig       |   8 ++
- drivers/clocksource/Makefile      |   1 +
- drivers/clocksource/ingenic-ost.c | 194 ++++++++++++++++++++++++++++++
- 3 files changed, 203 insertions(+)
- create mode 100644 drivers/clocksource/ingenic-ost.c
-
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index cc909e465823..f2142e6bbea3 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -697,6 +697,14 @@ config INGENIC_TIMER
- 	help
- 	  Support for the timer/counter unit of the Ingenic JZ SoCs.
+diff --git a/arch/arm/boot/dts/stm32746g-eval.dts b/arch/arm/boot/dts/stm32746g-eval.dts
+index fcc804e3c158..4ea3f98dd275 100644
+--- a/arch/arm/boot/dts/stm32746g-eval.dts
++++ b/arch/arm/boot/dts/stm32746g-eval.dts
+@@ -165,7 +165,7 @@
+ 		interrupts = <8 IRQ_TYPE_EDGE_RISING>;
+ 		interrupt-parent = <&gpioi>;
  
-+config INGENIC_OST
-+	bool "Clocksource for Ingenic OS Timer"
-+	depends on MIPS || COMPILE_TEST
-+	depends on COMMON_CLK
-+	select MFD_SYSCON
-+	help
-+	  Support for the Operating System Timer of the Ingenic JZ SoCs.
-+
- config MICROCHIP_PIT64B
- 	bool "Microchip PIT64B support"
- 	depends on OF || COMPILE_TEST
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index 713686faa549..641ba5383ab5 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -80,6 +80,7 @@ obj-$(CONFIG_ASM9260_TIMER)		+= asm9260_timer.o
- obj-$(CONFIG_H8300_TMR8)		+= h8300_timer8.o
- obj-$(CONFIG_H8300_TMR16)		+= h8300_timer16.o
- obj-$(CONFIG_H8300_TPU)			+= h8300_tpu.o
-+obj-$(CONFIG_INGENIC_OST)		+= ingenic-ost.o
- obj-$(CONFIG_INGENIC_TIMER)		+= ingenic-timer.o
- obj-$(CONFIG_CLKSRC_ST_LPC)		+= clksrc_st_lpc.o
- obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
-diff --git a/drivers/clocksource/ingenic-ost.c b/drivers/clocksource/ingenic-ost.c
-new file mode 100644
-index 000000000000..6abafd0eae63
---- /dev/null
-+++ b/drivers/clocksource/ingenic-ost.c
-@@ -0,0 +1,194 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * JZ47xx SoCs TCU Operating System Timer driver
-+ *
-+ * Copyright (C) 2016 Maarten ter Huurne <maarten@treewalker.org>
-+ * Copyright (C) 2020 Paul Cercueil <paul@crapouillou.net>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clocksource.h>
-+#include <linux/mfd/ingenic-tcu.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm.h>
-+#include <linux/regmap.h>
-+#include <linux/sched_clock.h>
-+
-+#define TCU_OST_TCSR_MASK	0xffc0
-+#define TCU_OST_TCSR_CNT_MD	BIT(15)
-+
-+#define TCU_OST_CHANNEL		15
-+
-+/*
-+ * The TCU_REG_OST_CNT{L,R} from <linux/mfd/ingenic-tcu.h> are only for the
-+ * regmap; these are for use with the __iomem pointer.
-+ */
-+#define OST_REG_CNTL		0x4
-+#define OST_REG_CNTH		0x8
-+
-+struct ingenic_ost_soc_info {
-+	bool is64bit;
-+};
-+
-+struct ingenic_ost {
-+	void __iomem *regs;
-+	struct clk *clk;
-+
-+	struct clocksource cs;
-+};
-+
-+static inline struct ingenic_ost *clocksource_to_ost(struct clocksource *cs)
-+{
-+	return container_of(cs, struct ingenic_ost, cs);
-+}
-+
-+static u64 notrace ingenic_ost_read_cntl(void *data)
-+{
-+	struct ingenic_ost *ost = data;
-+
-+	/* Read using __iomem pointer instead of regmap to avoid locking */
-+	return readl(ost->regs + OST_REG_CNTL);
-+}
-+
-+static u64 notrace ingenic_ost_read_cnth(void *data)
-+{
-+	struct ingenic_ost *ost = data;
-+
-+	/* Read using __iomem pointer instead of regmap to avoid locking */
-+	return readl(ost->regs + OST_REG_CNTH);
-+}
-+
-+static u64 notrace ingenic_ost_clocksource_readl(struct clocksource *cs)
-+{
-+	return ingenic_ost_read_cntl(clocksource_to_ost(cs));
-+}
-+
-+static u64 notrace ingenic_ost_clocksource_readh(struct clocksource *cs)
-+{
-+	return ingenic_ost_read_cnth(clocksource_to_ost(cs));
-+}
-+
-+static int __init ingenic_ost_probe(struct platform_device *pdev)
-+{
-+	const struct ingenic_ost_soc_info *soc_info;
-+	struct device *dev = &pdev->dev;
-+	struct ingenic_ost *ost;
-+	struct clocksource *cs;
-+	struct regmap *map;
-+	unsigned long rate;
-+	int err;
-+
-+	soc_info = device_get_match_data(dev);
-+	if (!soc_info)
-+		return -EINVAL;
-+
-+	ost = devm_kzalloc(dev, sizeof(*ost), GFP_KERNEL);
-+	if (!ost)
-+		return -ENOMEM;
-+
-+	ost->regs = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(ost->regs))
-+		return PTR_ERR(ost->regs);
-+
-+	map = device_node_to_regmap(dev->parent->of_node);
-+	if (!map) {
-+		dev_err(dev, "regmap not found");
-+		return -EINVAL;
-+	}
-+
-+	ost->clk = devm_clk_get(dev, "ost");
-+	if (IS_ERR(ost->clk))
-+		return PTR_ERR(ost->clk);
-+
-+	err = clk_prepare_enable(ost->clk);
-+	if (err)
-+		return err;
-+
-+	/* Clear counter high/low registers */
-+	if (soc_info->is64bit)
-+		regmap_write(map, TCU_REG_OST_CNTL, 0);
-+	regmap_write(map, TCU_REG_OST_CNTH, 0);
-+
-+	/* Don't reset counter at compare value. */
-+	regmap_update_bits(map, TCU_REG_OST_TCSR,
-+			   TCU_OST_TCSR_MASK, TCU_OST_TCSR_CNT_MD);
-+
-+	rate = clk_get_rate(ost->clk);
-+
-+	/* Enable OST TCU channel */
-+	regmap_write(map, TCU_REG_TESR, BIT(TCU_OST_CHANNEL));
-+
-+	cs = &ost->cs;
-+	cs->name	= "ingenic-ost";
-+	cs->rating	= 320;
-+	cs->flags	= CLOCK_SOURCE_IS_CONTINUOUS;
-+	cs->mask	= CLOCKSOURCE_MASK(32);
-+
-+	if (soc_info->is64bit)
-+		cs->read = ingenic_ost_clocksource_readl;
-+	else
-+		cs->read = ingenic_ost_clocksource_readh;
-+
-+	err = clocksource_register_hz(cs, rate);
-+	if (err) {
-+		dev_err(dev, "clocksource registration failed");
-+		clk_disable_unprepare(ost->clk);
-+		return err;
-+	}
-+
-+	if (soc_info->is64bit)
-+		sched_clock_register_new(ingenic_ost_read_cntl, 32, rate, ost);
-+	else
-+		sched_clock_register_new(ingenic_ost_read_cnth, 32, rate, ost);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused ingenic_ost_suspend(struct device *dev)
-+{
-+	struct ingenic_ost *ost = dev_get_drvdata(dev);
-+
-+	clk_disable(ost->clk);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused ingenic_ost_resume(struct device *dev)
-+{
-+	struct ingenic_ost *ost = dev_get_drvdata(dev);
-+
-+	return clk_enable(ost->clk);
-+}
-+
-+static const struct dev_pm_ops __maybe_unused ingenic_ost_pm_ops = {
-+	/* _noirq: We want the OST clock to be gated last / ungated first */
-+	.suspend_noirq = ingenic_ost_suspend,
-+	.resume_noirq  = ingenic_ost_resume,
-+};
-+
-+static const struct ingenic_ost_soc_info jz4725b_ost_soc_info = {
-+	.is64bit = false,
-+};
-+
-+static const struct ingenic_ost_soc_info jz4770_ost_soc_info = {
-+	.is64bit = true,
-+};
-+
-+static const struct of_device_id ingenic_ost_of_match[] = {
-+	{ .compatible = "ingenic,jz4725b-ost", .data = &jz4725b_ost_soc_info, },
-+	{ .compatible = "ingenic,jz4770-ost", .data = &jz4770_ost_soc_info, },
-+	{ }
-+};
-+
-+static struct platform_driver ingenic_ost_driver = {
-+	.driver = {
-+		.name = "ingenic-ost",
-+#ifdef CONFIG_PM_SUSPEND
-+		.pm = &ingenic_ost_pm_ops,
-+#endif
-+		.of_match_table = ingenic_ost_of_match,
-+	},
-+};
-+builtin_platform_driver_probe(ingenic_ost_driver, ingenic_ost_probe);
+-		stmfx_pinctrl: stmfx-pin-controller {
++		stmfx_pinctrl: pinctrl {
+ 			compatible = "st,stmfx-0300-pinctrl";
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
 -- 
-2.24.1
+2.15.0
 
