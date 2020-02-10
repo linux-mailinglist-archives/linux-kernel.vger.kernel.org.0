@@ -2,205 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9F7415738A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 12:37:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B416215738E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 12:38:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbgBJLhc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 06:37:32 -0500
-Received: from foss.arm.com ([217.140.110.172]:59062 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726961AbgBJLhc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 06:37:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0C6C11FB;
-        Mon, 10 Feb 2020 03:37:31 -0800 (PST)
-Received: from [10.1.195.43] (e107049-lin.cambridge.arm.com [10.1.195.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC73B3F6CF;
-        Mon, 10 Feb 2020 03:37:29 -0800 (PST)
-From:   Douglas Raillard <douglas.raillard@arm.com>
-Subject: Re: [RFC PATCH v4 0/6] sched/cpufreq: Make schedutil energy aware
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Quentin Perret <qperret@google.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>
-References: <20200122173538.1142069-1-douglas.raillard@arm.com>
- <CAKfTPtC9A6KVwYsQWgXXk-12GeJhkJfEm3Lk=LjcoOJvvoZ1uA@mail.gmail.com>
-Organization: ARM
-Message-ID: <0fa87613-d74f-ad2c-38a9-76e2efd172d1@arm.com>
-Date:   Mon, 10 Feb 2020 11:37:28 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
-MIME-Version: 1.0
-In-Reply-To: <CAKfTPtC9A6KVwYsQWgXXk-12GeJhkJfEm3Lk=LjcoOJvvoZ1uA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB-large
-Content-Transfer-Encoding: 7bit
+        id S1727536AbgBJLiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 06:38:02 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:42709 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727029AbgBJLiB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 06:38:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581334680;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
+        bh=2ZushtPj0Mf6FOFUwvlbWGwy1n8DO8RBRToVDjY41Ks=;
+        b=AgKtBnK8yszwvl0J6YlHLu1qK2P9xNFtCiH55dfCvDto8UmtvpKCY6FS1i9x4laMz19Ls7
+        koCvWag0ZF5vwmx2ds4/gjiUV8KWjSh7RrzpFyH84Qr9sahDVmw6Zj7FFTiwfJodGKv/bc
+        ZN1EoE/19+6RslQjdGylHcWvD0jtwqE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-375-2_OboHYZMlyNc_yP1VF34w-1; Mon, 10 Feb 2020 06:37:58 -0500
+X-MC-Unique: 2_OboHYZMlyNc_yP1VF34w-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 75B62477;
+        Mon, 10 Feb 2020 11:37:57 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-112.ams2.redhat.com [10.36.116.112])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B29495D9C9;
+        Mon, 10 Feb 2020 11:37:53 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 265949D1E; Mon, 10 Feb 2020 12:37:53 +0100 (CET)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Gerd Hoffmann <kraxel@redhat.com>,
+        Dave Airlie <airlied@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR QXL
+        VIRTUAL GPU),
+        spice-devel@lists.freedesktop.org (open list:DRM DRIVER FOR QXL VIRTUAL
+        GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 1/2] drm/qxl: reorder calls in qxl_device_fini().
+Date:   Mon, 10 Feb 2020 12:37:51 +0100
+Message-Id: <20200210113753.5614-2-kraxel@redhat.com>
+In-Reply-To: <20200210113753.5614-1-kraxel@redhat.com>
+References: <20200210113753.5614-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincent,
+Reorder calls in qxl_device_fini().  Cleaning up gem & ttm
+might trigger qxl commands, so we should do that before
+releaseing command rings.
 
-On 1/27/20 5:16 PM, Vincent Guittot wrote:
-> On Wed, 22 Jan 2020 at 18:36, Douglas RAILLARD <douglas.raillard@arm.com> wrote:
->>
->> Make schedutil cpufreq governor energy-aware.
->>
->> - patch 1 introduces a function to retrieve a frequency given a base
->>   frequency and an energy cost margin.
->> - patch 2 links Energy Model perf_domain to sugov_policy.
->> - patch 3 updates get_next_freq() to make use of the Energy Model.
->> - patch 4 adds sugov_cpu_ramp_boost() function.
->> - patch 5 updates sugov_update_(single|shared)() to make use of
->>   sugov_cpu_ramp_boost().
->> - patch 6 introduces a tracepoint in get_next_freq() for
->>   testing/debugging. Since it's not a trace event, it's not exposed to
->>   userspace in a directly usable way, allowing for painless future
->>   updates/removal.
->>
->> The benefits of using the EM in schedutil are twofold:
->>
->> 1) Selecting the highest possible frequency for a given cost. Some
->>    platforms can have lower frequencies that are less efficient than
->>    higher ones, in which case they should be skipped for most purposes.
-> 
-> This make sense. Why using a lower frequency when a higher one is more
-> power efficient
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ drivers/gpu/drm/qxl/qxl_kms.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Apparently in some cases it can be useful for thermal capping. AFAIU the
-alternate solution is to race to idle with a more efficient OPP (idle
-injection work of Linaro).
+diff --git a/drivers/gpu/drm/qxl/qxl_kms.c b/drivers/gpu/drm/qxl/qxl_kms.c
+index bfc1631093e9..70b20ee4741a 100644
+--- a/drivers/gpu/drm/qxl/qxl_kms.c
++++ b/drivers/gpu/drm/qxl/qxl_kms.c
+@@ -299,12 +299,12 @@ void qxl_device_fini(struct qxl_device *qdev)
+ {
+ 	qxl_bo_unref(&qdev->current_release_bo[0]);
+ 	qxl_bo_unref(&qdev->current_release_bo[1]);
+-	flush_work(&qdev->gc_work);
+-	qxl_ring_free(qdev->command_ring);
+-	qxl_ring_free(qdev->cursor_ring);
+-	qxl_ring_free(qdev->release_ring);
+ 	qxl_gem_fini(qdev);
+ 	qxl_bo_fini(qdev);
++	flush_work(&qdev->gc_work);
++	qxl_ring_free(qdev->command_ring);
++	qxl_ring_free(qdev->cursor_ring);
++	qxl_ring_free(qdev->release_ring);
+ 	io_mapping_free(qdev->surface_mapping);
+ 	io_mapping_free(qdev->vram_mapping);
+ 	iounmap(qdev->ram_header);
+-- 
+2.18.1
 
->>    They can still be useful to give more freedom to thermal throttling
->>    mechanisms, but not under normal circumstances.
->>    note: the EM framework will warn about such OPPs "hertz/watts ratio
->>    non-monotonically decreasing"
->>
->> 2) Driving the frequency selection with power in mind, in addition to
->>    maximizing the utilization of the non-idle CPUs in the system.
->>
->> Point 1) is implemented in "PM: Introduce em_pd_get_higher_freq()" and
->> enabled in schedutil by
->> "sched/cpufreq: Hook em_pd_get_higher_power() into get_next_freq()".
->>
->> Point 2) is enabled in
->> "sched/cpufreq: Boost schedutil frequency ramp up". It allows using
->> higher frequencies when it is known that the true utilization of
->> currently running tasks is exceeding their previous stable point.
->> The benefits are:
->>
->> * Boosting the frequency when the behavior of a runnable task changes,
->>   leading to an increase in utilization. That shortens the frequency
->>   ramp up duration, which in turns allows the utilization signal to
->>   reach stable values quicker.  Since the allowed frequency boost is
->>   bounded in energy, it will behave consistently across platforms,
->>   regardless of the OPP cost range.
-> 
-> Could you explain this a bit more ?
-
-The goal is to detect when the task starts asking more CPU time than it
-did during the previous period. At this stage, we don't know how much
-more, so we increase the frequency faster to allow signals to settle
-more quickly.
-
-The PELT signal does increases independently from the chosen frequency,
-but that's only up until idle time shows up. At this point, the util
-will drop again, and the frequency with it.
-
->>
->> * The boost is only transient, and should not impact a lot the energy
->>   consumed of workloads with very stable utilization signals.
->>
->> This has been lightly tested with a rtapp task ramping from 10% to 75%
->> utilisation on a big core.
-> 
-> Which kind of UC are you targeting ?
-
-One case are tasks with "random" behavior like threads in thread pools
-that can end up doing very different things. There may be other cases as
-well, but I'll need to do more extensive testing with actual applications.
-
-> 
-> Do you have some benchmark showing the benefit and how you can bound
-> the increase of energy ?
-
-In the test setup described above, it increases the energy consumption
-by ~2.5%.
-
-I also did some preliminary experiments to reduce the margin taken in
-map_util_freq(), which becomes less necessary if the frequency is
-boosted in the cases where util increase is getting out of hands. That
-can recover some amount of lost power.
-
-The real cost in practice heavily depends on:
-* the workloads (if its util jumps around, it will boost more frequently)
-* the discrete frequencies available (if boosting does not bring us to
-the next freq, no boost is actually applied).
-
-> 
-> The benefit of point2 is less obvious for me. We already have uclamp
-> which helps to overwrite the "utilization" that is seen by schedutil
-> to boost or cap the frequency when some tasks are running. I'm curious
-> to see what would be the benefit of this on top.
-
-uclamp is only useful when a target utilization is known beforehand by
-the task itself or some kind of manager. In all the cases relying on
-plain PELT, we can decrease the freq change reaction time.
-
-Note that schedutil is already built around the duty cycle detection
-with a bias for higher frequency when the task period increases (using
-util est enqueued). What this series bring is a way to detect when util
-est enqueued turns from a set-point into a lower bound.
-
->>
->> v1 -> v2:
->>
->>   * Split the new sugov_cpu_ramp_boost() from the existing
->>     sugov_cpu_is_busy() as they seem to seek a different goal.
->>
->>   * Implement sugov_cpu_ramp_boost() based on CFS util_avg and
->>     util_est_enqueued signals, rather than using idle calls count.
->>     This makes the ramp boost much more accurate in finding boost
->>     opportunities, and give a "continuous" output rather than a boolean.
->>
->>   * Add EM_COST_MARGIN_SCALE=1024 to represent the
->>     margin values of em_pd_get_higher_freq().
->>
->> v2 -> v3:
->>
->>   * Check util_avg >= sg_cpu->util_avg in sugov_cpu_ramp_boost_update()
->>     to avoid boosting when the utilization is decreasing.
->>
->>   * Add a tracepoint for testing.
->>
->> v3 -> v4:
->>
->>   * em_pd_get_higher_freq() now interprets the margin as absolute,
->>     rather than relative to the cost of the base frequency.
->>
->>   * Modify misleading comment in em_pd_get_higher_freq() since min_freq
->>     can actually be higher than the max available frequency in normal
->>     operations.
->>
->> Douglas RAILLARD (6):
->>   PM: Introduce em_pd_get_higher_freq()
->>   sched/cpufreq: Attach perf domain to sugov policy
->>   sched/cpufreq: Hook em_pd_get_higher_power() into get_next_freq()
->>   sched/cpufreq: Introduce sugov_cpu_ramp_boost
->>   sched/cpufreq: Boost schedutil frequency ramp up
->>   sched/cpufreq: Add schedutil_em_tp tracepoint
->>
->>  include/linux/energy_model.h     |  56 ++++++++++++++
->>  include/trace/events/power.h     |   9 +++
->>  kernel/sched/cpufreq_schedutil.c | 124 +++++++++++++++++++++++++++++--
->>  3 files changed, 182 insertions(+), 7 deletions(-)
->>
->> --
->> 2.24.1
->>
