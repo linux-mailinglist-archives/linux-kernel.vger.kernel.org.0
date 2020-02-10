@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87E1F157B04
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:27:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9930157AF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:26:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731266AbgBJN0t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:26:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56700 "EHLO mail.kernel.org"
+        id S1731259AbgBJN0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:26:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728476AbgBJMgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:42 -0500
+        id S1728493AbgBJMgo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:36:44 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EDDD24671;
-        Mon, 10 Feb 2020 12:36:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A35542051A;
+        Mon, 10 Feb 2020 12:36:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338202;
-        bh=pg1azpsCiiloSPcxUHew4TYvgj+L96tSqQDNNU7hbeo=;
+        s=default; t=1581338203;
+        bh=pnJ6H7TyYYyp1B+q916+0lMdWSoHfJ/VUKuCSLuQoRY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tvbZ3sWbwNDVqxcJ847cAlMNztabvUo7jsXYsTpilJJ9txJDo1w+4HlX3mzS6zpzv
-         qecBT3GVQ4kDYwPUJR1Ldph5z5bvxPDZPqlVpkpf04h8e+UaMQijHp3xNmScO5Hk/P
-         aUxPdxcyaLkG4zYPKNnUu+mtwk5pGOcuHTlbZVZk=
+        b=f9IcMdjSp2CuydVzkxrPbPW1EulxfSXoJ1ss4EFnA6pzuzXF4gePB3XB6U/G492Ic
+         yy62+weDZtmAlDtpL7bxVb5sFn+u0ASHzxyU9yk6lMcQbWrrXkqz6d8SWK7FGVYYuG
+         dlahwgoLcAU/j6T6zrAQjJoGmSXLljelfa6MrZmU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Jakub Kicinski <kuba@kernel.org>
-Subject: [PATCH 5.4 019/309] MAINTAINERS: correct entries for ISDN/mISDN section
-Date:   Mon, 10 Feb 2020 04:29:35 -0800
-Message-Id: <20200210122407.824411612@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Jakub Kicinski <kuba@kernel.org>
+Subject: [PATCH 5.4 021/309] bnxt_en: Fix logic that disables Bus Master during firmware reset.
+Date:   Mon, 10 Feb 2020 04:29:37 -0800
+Message-Id: <20200210122408.025809959@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
 References: <20200210122406.106356946@linuxfoundation.org>
@@ -43,46 +45,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
 
-[ Upstream commit dff6bc1bfd462b76dc13ec19dedc2c134a62ac59 ]
+[ Upstream commit d407302895d3f3ca3a333c711744a95e0b1b0150 ]
 
-Commit 6d97985072dc ("isdn: move capi drivers to staging") cleaned up the
-isdn drivers and split the MAINTAINERS section for ISDN, but missed to add
-the terminal slash for the two directories mISDN and hardware. Hence, all
-files in those directories were not part of the new ISDN/mISDN SUBSYSTEM,
-but were considered to be part of "THE REST".
+The current logic that calls pci_disable_device() in __bnxt_close_nic()
+during firmware reset is flawed.  If firmware is still alive, we're
+disabling the device too early, causing some firmware commands to
+not reach the firmware.
 
-Rectify the situation, and while at it, also complete the section with two
-further build files that belong to that subsystem.
+Fix it by moving the logic to bnxt_reset_close().  If firmware is
+in fatal condition, we call pci_disable_device() before we free
+any of the rings to prevent DMA corruption of the freed rings.  If
+firmware is still alive, we call pci_disable_device() after the
+last firmware message has been sent.
 
-This was identified with a small script that finds all files belonging to
-"THE REST" according to the current MAINTAINERS file, and I investigated
-upon its output.
-
-Fixes: 6d97985072dc ("isdn: move capi drivers to staging")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 3bc7d4a352ef ("bnxt_en: Add BNXT_STATE_IN_FW_RESET state.")
+Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- MAINTAINERS |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8704,8 +8704,10 @@ L:	isdn4linux@listserv.isdn4linux.de (su
- L:	netdev@vger.kernel.org
- W:	http://www.isdn4linux.de
- S:	Maintained
--F:	drivers/isdn/mISDN
--F:	drivers/isdn/hardware
-+F:	drivers/isdn/mISDN/
-+F:	drivers/isdn/hardware/
-+F:	drivers/isdn/Kconfig
-+F:	drivers/isdn/Makefile
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -9273,10 +9273,6 @@ static void __bnxt_close_nic(struct bnxt
+ 	bnxt_debug_dev_exit(bp);
+ 	bnxt_disable_napi(bp);
+ 	del_timer_sync(&bp->timer);
+-	if (test_bit(BNXT_STATE_IN_FW_RESET, &bp->state) &&
+-	    pci_is_enabled(bp->pdev))
+-		pci_disable_device(bp->pdev);
+-
+ 	bnxt_free_skbs(bp);
  
- ISDN/CAPI SUBSYSTEM
- M:	Karsten Keil <isdn@linux-pingi.de>
+ 	/* Save ring stats before shutdown */
+@@ -10052,8 +10048,15 @@ static void bnxt_fw_reset_close(struct b
+ {
+ 	__bnxt_close_nic(bp, true, false);
+ 	bnxt_ulp_irq_stop(bp);
++	/* When firmware is fatal state, disable PCI device to prevent
++	 * any potential bad DMAs before freeing kernel memory.
++	 */
++	if (test_bit(BNXT_STATE_FW_FATAL_COND, &bp->state))
++		pci_disable_device(bp->pdev);
+ 	bnxt_clear_int_mode(bp);
+ 	bnxt_hwrm_func_drv_unrgtr(bp);
++	if (pci_is_enabled(bp->pdev))
++		pci_disable_device(bp->pdev);
+ 	bnxt_free_ctx_mem(bp);
+ 	kfree(bp->ctx);
+ 	bp->ctx = NULL;
 
 
