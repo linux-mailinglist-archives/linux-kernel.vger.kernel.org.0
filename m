@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84DB71575BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:44:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F11F157613
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730553AbgBJMoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:44:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40068 "EHLO mail.kernel.org"
+        id S1730150AbgBJMoF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:44:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729134AbgBJMkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:18 -0500
+        id S1729700AbgBJMkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:40:20 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4119620733;
-        Mon, 10 Feb 2020 12:40:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FCE220838;
+        Mon, 10 Feb 2020 12:40:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338418;
-        bh=kmQVuxoiX5ikHORHDfl8KXgDzSS6R5KWecgoJhjI3B8=;
+        s=default; t=1581338419;
+        bh=48TEUTnydgvfKvfHMu92SI76lcQD60sAxKeahChds5g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aqzGMY807fPZzTL0BrzC4CQQuyC5IGnxlooLE4b0zB5GE1osnTUGoGXjxOKskqAaj
-         ebKS4VUYLBuUlhOyfAiBcVk/lYav2K7Zs98ZQjSTurAYtU+svMEFG8DmIOuERXt7AX
-         JKIDrGEV7tuAKkP1LxfNCBLQMKqcoKdd0d1P7RXc=
+        b=XaLP77e3Fucy3NTtx6KqVe8yvQz/17qfxm2wmhbOhGJQIa1ZrXDHxZQ+yBr+45m2q
+         pgdVzMo9frWHmhKDL6qY7bTdi9YiO5NWUta8zJoDtHkBSMA4IK6egZzfcUFeY//jRo
+         o06BO0Og2UMOs6umR2rbSpLdeXHu8CGWlvmgGjoQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 5.5 134/367] f2fs: fix dcache lookup of !casefolded directories
-Date:   Mon, 10 Feb 2020 04:30:47 -0800
-Message-Id: <20200210122437.232045429@linuxfoundation.org>
+        stable@vger.kernel.org, Chanho Min <chanho.min@lge.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 5.5 136/367] PM: core: Fix handling of devices deleted during system-wide resume
+Date:   Mon, 10 Feb 2020 04:30:49 -0800
+Message-Id: <20200210122437.424309269@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 References: <20200210122423.695146547@linuxfoundation.org>
@@ -43,35 +43,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit 5515eae647426169e4b7969271fb207881eba7f6 upstream.
+commit 0552e05fdfea191a2cf3a0abd33574b5ef9ca818 upstream.
 
-Do the name comparison for non-casefolded directories correctly.
+If a device is deleted by one of its system-wide resume callbacks
+(for example, because it does not appear to be present or accessible
+any more) along with its children, the resume of the children may
+continue leading to use-after-free errors and other issues
+(potentially).
 
-This is analogous to ext4's commit 66883da1eee8 ("ext4: fix dcache
-lookup of !casefolded directories").
+Namely, if the device's children are resumed asynchronously, their
+resume may have been scheduled already before the device's callback
+runs and so the device may be deleted while dpm_wait_for_superior()
+is being executed for them.  The memory taken up by the parent device
+object may be freed then while dpm_wait() is waiting for the parent's
+resume callback to complete, which leads to a use-after-free.
+Moreover, the resume of the children is really not expected to
+continue after they have been unregistered, so it must be terminated
+right away in that case.
 
-Fixes: 2c2eb7a300cd ("f2fs: Support case-insensitive file name lookups")
-Cc: <stable@vger.kernel.org> # v5.4+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+To address this problem, modify dpm_wait_for_superior() to check
+if the target device is still there in the system-wide PM list of
+devices and if so, to increment its parent's reference counter, both
+under dpm_list_mtx which prevents device_del() running for the child
+from dropping the parent's reference counter prematurely.
+
+If the device is not present in the system-wide PM list of devices
+any more, the resume of it cannot continue, so check that again after
+dpm_wait() returns, which means that the parent's callback has been
+completed, and pass the result of that check to the caller of
+dpm_wait_for_superior() to allow it to abort the device's resume
+if it is not there any more.
+
+Link: https://lore.kernel.org/linux-pm/1579568452-27253-1-git-send-email-chanho.min@lge.com
+Reported-by: Chanho Min <chanho.min@lge.com>
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/f2fs/dir.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/base/power/main.c |   42 +++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 37 insertions(+), 5 deletions(-)
 
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -1073,7 +1073,7 @@ static int f2fs_d_compare(const struct d
- 	if (!IS_CASEFOLDED(dentry->d_parent->d_inode)) {
- 		if (len != name->len)
- 			return -1;
--		return memcmp(str, name, len);
-+		return memcmp(str, name->name, len);
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -273,10 +273,38 @@ static void dpm_wait_for_suppliers(struc
+ 	device_links_read_unlock(idx);
+ }
+ 
+-static void dpm_wait_for_superior(struct device *dev, bool async)
++static bool dpm_wait_for_superior(struct device *dev, bool async)
+ {
+-	dpm_wait(dev->parent, async);
++	struct device *parent;
++
++	/*
++	 * If the device is resumed asynchronously and the parent's callback
++	 * deletes both the device and the parent itself, the parent object may
++	 * be freed while this function is running, so avoid that by reference
++	 * counting the parent once more unless the device has been deleted
++	 * already (in which case return right away).
++	 */
++	mutex_lock(&dpm_list_mtx);
++
++	if (!device_pm_initialized(dev)) {
++		mutex_unlock(&dpm_list_mtx);
++		return false;
++	}
++
++	parent = get_device(dev->parent);
++
++	mutex_unlock(&dpm_list_mtx);
++
++	dpm_wait(parent, async);
++	put_device(parent);
++
+ 	dpm_wait_for_suppliers(dev, async);
++
++	/*
++	 * If the parent's callback has deleted the device, attempting to resume
++	 * it would be invalid, so avoid doing that then.
++	 */
++	return device_pm_initialized(dev);
+ }
+ 
+ static void dpm_wait_for_consumers(struct device *dev, bool async)
+@@ -621,7 +649,8 @@ static int device_resume_noirq(struct de
+ 	if (!dev->power.is_noirq_suspended)
+ 		goto Out;
+ 
+-	dpm_wait_for_superior(dev, async);
++	if (!dpm_wait_for_superior(dev, async))
++		goto Out;
+ 
+ 	skip_resume = dev_pm_may_skip_resume(dev);
+ 
+@@ -829,7 +858,8 @@ static int device_resume_early(struct de
+ 	if (!dev->power.is_late_suspended)
+ 		goto Out;
+ 
+-	dpm_wait_for_superior(dev, async);
++	if (!dpm_wait_for_superior(dev, async))
++		goto Out;
+ 
+ 	callback = dpm_subsys_resume_early_cb(dev, state, &info);
+ 
+@@ -944,7 +974,9 @@ static int device_resume(struct device *
+ 		goto Complete;
  	}
  
- 	return f2fs_ci_compare(dentry->d_parent->d_inode, name, &qstr, false);
+-	dpm_wait_for_superior(dev, async);
++	if (!dpm_wait_for_superior(dev, async))
++		goto Complete;
++
+ 	dpm_watchdog_set(&wd, dev);
+ 	device_lock(dev);
+ 
 
 
