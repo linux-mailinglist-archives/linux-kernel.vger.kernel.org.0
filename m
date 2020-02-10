@@ -2,100 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05579158531
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 22:45:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67635158537
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 22:46:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727538AbgBJVpB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 16:45:01 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43892 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727003AbgBJVo6 (ORCPT
+        id S1727455AbgBJVq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 16:46:28 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:12529 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727003AbgBJVq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 16:44:58 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p11so3348350plq.10
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 13:44:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=t+13fvzNsA3W3IKzD16kC7FQP1bNXynWnDk+WN5MOzw=;
-        b=RTjCSPz4i6Ocw2e9eaRmFAI/J2aDI1HOHJX0nuwSOzkinHFAWTVoGHbvCsdA7obkiw
-         wjLURhgRA2lBpgDoXVxvRmJFAHvfbO+4nlt96JPvUommVtTEp9JJc6wMxRCD/HqQMbH2
-         4n142Ebc4FN60Va7QFe904j208V6SrshdNus4bP0DH2r3eVpty8tB9Uwji+XRIqpFde1
-         nvBtRQLUGE4Vum8N2n+yYkxbpaLYZ65cW7kbxq08ZWWTnSR/g5BQeJaUg9CDve9ZKsYF
-         k8lXgjQ7mNcUAjjSfC+Hp2LRavoA2DrZcoJhemwoKrzPcPr1wL2eYcW294ka8QBe9p/K
-         jBOw==
-X-Gm-Message-State: APjAAAUoLenHWxIUh04OBDIo0dod3JYGU+LZo9izR+5sJB6J9hr1T0bp
-        V1WDOWEvR9cLreYLX8OHBH0=
-X-Google-Smtp-Source: APXvYqwKDvX0o+Ef/84eXTM6XegMzFwcLEJZdbcPGcGQRn03n69VEHk2f9CvqkXDGYcf/qvMZztSpA==
-X-Received: by 2002:a17:90a:e28e:: with SMTP id d14mr1380322pjz.56.1581371097577;
-        Mon, 10 Feb 2020 13:44:57 -0800 (PST)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id v7sm1331980pfn.61.2020.02.10.13.44.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2020 13:44:56 -0800 (PST)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id E01234060F; Mon, 10 Feb 2020 21:44:55 +0000 (UTC)
-Date:   Mon, 10 Feb 2020 21:44:55 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        broonie@kernel.org, alex.williamson@redhat.com,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 1/5] lib/rbtree: introduce linked-list rbtree interface
-Message-ID: <20200210214455.GO11244@42.do-not-panic.com>
-References: <20200207180305.11092-1-dave@stgolabs.net>
- <20200207180305.11092-2-dave@stgolabs.net>
- <20200210200712.GM11244@42.do-not-panic.com>
- <20200210212832.2i2i3kbybhk2rcee@linux-p48b>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200210212832.2i2i3kbybhk2rcee@linux-p48b>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 10 Feb 2020 16:46:27 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01ALi8FI125765
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 16:46:26 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2y1u80qvxp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 16:46:26 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 10 Feb 2020 21:46:24 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 10 Feb 2020 21:46:20 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01ALkKb463569932
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Feb 2020 21:46:20 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 02791A4051;
+        Mon, 10 Feb 2020 21:46:20 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 20BF1A4040;
+        Mon, 10 Feb 2020 21:46:19 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.140.79])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 10 Feb 2020 21:46:19 +0000 (GMT)
+Subject: Re: [PATCH] IMA: Add log statements for failure conditions.
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        Joe Perches <joe@perches.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org, khan@linuxfoundation.org
+Cc:     sashal@kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 10 Feb 2020 16:46:18 -0500
+In-Reply-To: <0c9099b5-da29-3e71-0933-123dfe08442c@linux.microsoft.com>
+References: <20200207195346.4017-1-tusharsu@linux.microsoft.com>
+         <20200207195346.4017-2-tusharsu@linux.microsoft.com>
+         <1581253027.5585.671.camel@linux.ibm.com>
+         <da7bd0441ef3044cb40d705b8bb176bfdf391557.camel@perches.com>
+         <41d61aa5-db98-6291-d91f-104f029c897f@linux.microsoft.com>
+         <13eb9760ba13cee2f25c74c665198faac6a5a2f3.camel@perches.com>
+         <0c9099b5-da29-3e71-0933-123dfe08442c@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20021021-4275-0000-0000-0000039FDEB2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20021021-4276-0000-0000-000038B4148A
+Message-Id: <1581371178.5585.913.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-10_07:2020-02-10,2020-02-10 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ mlxlogscore=999 spamscore=0 priorityscore=1501 suspectscore=0
+ impostorscore=0 lowpriorityscore=0 phishscore=0 mlxscore=0 clxscore=1015
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002100151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 01:28:32PM -0800, Davidlohr Bueso wrote:
-> On Mon, 10 Feb 2020, Luis Chamberlain wrote:
-> > > access to the first node as well as
-> > > both its in-order successor and predecessor. This is done at the cost of higher
-> > > memory footprint: mainly additional prev and next pointers for each node. Such
-> > > benefits can be seen in this table showing the amount of cycles it takes to
-> > > do a full tree traversal:
-> > > 
-> > >    +--------+--------------+-----------+
-> > >    | #nodes | plain rbtree | ll-rbtree |
-> > >    +--------+--------------+-----------+
-> > >    |     10 |          138 |        24 |
-> > >    |    100 |        7,200 |       425 |
-> > >    |   1000 |       17,000 |     8,000 |
-> > >    |  10000 |      501,090 |   222,500 |
-> > >    +--------+--------------+-----------+
-> > 
-> > Sold, however I wonder if we can have *one new API* where based on just one
-> > Kconfig you either get the two pointers or not, the performance gain
-> > then would only be observed if this new kconfig entry is enabled. The
-> > benefit of this is that we don't shove the performance benefit down
-> > all user's throughts but rather this can be decided by distributions
-> > and system integrators.
+Hi Tushar,
+
+On Mon, 2020-02-10 at 13:33 -0800, Tushar Sugandhi wrote:
+> On 2020-02-10 8:50 a.m., Joe Perches wrote:
+> > On Mon, 2020-02-10 at 08:40 -0800, Lakshmi Ramasubramanian wrote:
+> >> On 2/9/20 6:46 PM, Joe Perches wrote:
+> >>
+> >>>> In addition, as Shuah Khan suggested for the security/integrity/
+> >>>> directory, "there is an opportunity here to add #define pr_fmt(fmt)
+> >>>> KBUILD_MODNAME ": " fmt to integrity.h and get rid of duplicate
+> >>>> defines."
+> >> Good point - we'll make that change.
+> >>
+> >> With Joe Perches patch (waiting for it to be re-posted),
+> >>>> are all the pr_fmt definitions needed in each file in the
+> >>>> integrity/ima directory?
+> >>> btw Tushar and Lakshmi:
+> >>>
+> >>> I am not formally submitting a patch here.
+> >>>
+> >>> I was just making suggestions and please do
+> >>> with it as you think appropriate.
+> >> Joe - it's not clear to me what you are suggesting.
+> >> We'll move the #define for pr_fmt to integrity.h.
+> >>
+> >> What's other changes are you proposing?
+> > https://lore.kernel.org/lkml/4b4ee302f2f97e3907ab03e55a92ccd46b6cf171.camel@perches.com/
+> >
+> Thanks Joe.
 > 
-> I don't think we want an all or nothing approach
+> Joe, Shuah:
+> 
+> Could one of you please clarify if the changes proposed in the above URL 
+> will be part of Shuah's future patchset?
+> 
+> Or should I include those in my patchset? I am referring to the 
+> following snippet in security/integrity/integrity.h.
 
-I'm not suggesting all or nothing for all rb tree users, I'm suggesting
-an all or nothing approach to users of a *new* API. That is, users would
-still need to be converted over, and *iff* the new kconfig entry is
-enabled would the two pointers be added / used, otherwise we'd fallback
-to the default current boring rbtree.
+Joe is saying that he made some suggestions, which Shuah commented on,
+but has no intention of posting a formal patch.  The end result of
+that discussion is to define pr_fmt once in integrity/integrity.h and
+remove any duplication in the integrity/ files.
 
-> as different users in the
-> kernel have different needs and some users are simply unable to deal with
-> enlarging data structures, while others have no problem.
+I'd appreciate your including that change in this patch set, and if
+needed a similar one in ima/ima.h.
 
-The approach would allow distros which are not yet sure if two pointers
-are worth it yet to continue to chug on as they used to, but also allow
-them to explore this prospect in a flexible way.
+thanks,
 
-  Luis
+Mimi
+
