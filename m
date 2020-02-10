@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BE6A1575B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:43:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11579157520
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:40:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730298AbgBJMnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:43:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38512 "EHLO mail.kernel.org"
+        id S1728194AbgBJMiv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:38:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57962 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729608AbgBJMkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:05 -0500
+        id S1728031AbgBJMhF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:05 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CF9A20842;
-        Mon, 10 Feb 2020 12:40:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 236412173E;
+        Mon, 10 Feb 2020 12:37:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338404;
-        bh=T7Jlt3dNLd93gjQSIyq8D/dlHKKX/+NIVSauKQY4LqE=;
+        s=default; t=1581338225;
+        bh=ATjVZI95HKz0joPCxO4Xw4Jaok4lNLf9bk00A4fPUa8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KTPa/rgtAaVaonnnUdsIAH6efrY9o7UOx6OgT7uxSFgb5HbwKibzxJvDvx/EW5FM6
-         jTs/oZgMR2ruWcZ9r9Y1BXCnaMGoa84hLSK+oNonSigEPBZoewP9Y+sJ1yQ61FeFvO
-         qujTn0LUmo2nQZHxexioCjehi8NIIqY6C+SpwpuM=
+        b=R19/3niXE6vsMEyocdoWzg78ma2GGqGe1rqBegZJ/jypoIT/XpVjf6OeTTwzArErz
+         YzUVJejty8x/kNCxttdzHsY170e7LMRWJgQXer5mIRRsrOFXh7/57CfSBed4GJdUqf
+         UtFPy/bImPvQ1BtiMgAVXsIJZZwj9xVg7EeQAUh8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 106/367] mmc: sdhci-of-at91: fix memleak on clk_get failure
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.4 063/309] ALSA: hda: Add Clevo W65_67SB the power_save blacklist
 Date:   Mon, 10 Feb 2020 04:30:19 -0800
-Message-Id: <20200210122434.180284190@linuxfoundation.org>
+Message-Id: <20200210122411.999422686@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,57 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit a04184ce777b46e92c2b3c93c6dcb2754cb005e1 ]
+commit d8feb6080bb0c9f4d799a423d9453048fdd06990 upstream.
 
-sdhci_alloc_host() does its work not using managed infrastructure, so
-needs explicit free on error path. Add it where needed.
+Using HDA power-saving on the Clevo W65_67SB causes the first 0.5
+seconds of audio to be missing every time audio starts playing.
 
-Cc: <stable@vger.kernel.org>
-Fixes: bb5f8ea4d514 ("mmc: sdhci-of-at91: introduce driver for the Atmel SDMMC")
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Link: https://lore.kernel.org/r/b2a44d5be2e06ff075f32477e466598bb0f07b36.1577961679.git.mirq-linux@rere.qmqm.pl
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This commit adds the Clevo W65_67SB the power_save blacklist to avoid
+this issue.
+
+Cc: stable@vger.kernel.org
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1525104
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Link: https://lore.kernel.org/r/20200125181021.70446-1-hdegoede@redhat.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/mmc/host/sdhci-of-at91.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ sound/pci/hda/hda_intel.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-of-at91.c b/drivers/mmc/host/sdhci-of-at91.c
-index 5959e394b416f..99d82c1874d62 100644
---- a/drivers/mmc/host/sdhci-of-at91.c
-+++ b/drivers/mmc/host/sdhci-of-at91.c
-@@ -335,19 +335,22 @@ static int sdhci_at91_probe(struct platform_device *pdev)
- 	priv->mainck = devm_clk_get(&pdev->dev, "baseclk");
- 	if (IS_ERR(priv->mainck)) {
- 		dev_err(&pdev->dev, "failed to get baseclk\n");
--		return PTR_ERR(priv->mainck);
-+		ret = PTR_ERR(priv->mainck);
-+		goto sdhci_pltfm_free;
- 	}
- 
- 	priv->hclock = devm_clk_get(&pdev->dev, "hclock");
- 	if (IS_ERR(priv->hclock)) {
- 		dev_err(&pdev->dev, "failed to get hclock\n");
--		return PTR_ERR(priv->hclock);
-+		ret = PTR_ERR(priv->hclock);
-+		goto sdhci_pltfm_free;
- 	}
- 
- 	priv->gck = devm_clk_get(&pdev->dev, "multclk");
- 	if (IS_ERR(priv->gck)) {
- 		dev_err(&pdev->dev, "failed to get multclk\n");
--		return PTR_ERR(priv->gck);
-+		ret = PTR_ERR(priv->gck);
-+		goto sdhci_pltfm_free;
- 	}
- 
- 	ret = sdhci_at91_set_clks_presets(&pdev->dev);
--- 
-2.20.1
-
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -2156,6 +2156,8 @@ static struct snd_pci_quirk power_save_b
+ 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1581607 */
+ 	SND_PCI_QUIRK(0x1558, 0x3501, "Clevo W35xSS_370SS", 0),
+ 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
++	SND_PCI_QUIRK(0x1558, 0x6504, "Clevo W65_67SB", 0),
++	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
+ 	SND_PCI_QUIRK(0x1028, 0x0497, "Dell Precision T3600", 0),
+ 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
+ 	/* Note the P55A-UD3 and Z87-D3HP share the subsys id for the HDA dev */
 
 
