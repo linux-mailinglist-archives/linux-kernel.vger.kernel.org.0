@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D153C157671
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:53:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B57A1576A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:55:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728423AbgBJMwe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:52:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46392 "EHLO mail.kernel.org"
+        id S1730134AbgBJMmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:42:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730230AbgBJMmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:42:21 -0500
+        id S1729308AbgBJMjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:39:05 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD71320838;
-        Mon, 10 Feb 2020 12:42:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E84AA2080C;
+        Mon, 10 Feb 2020 12:39:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338540;
-        bh=pBNVe5B5TuxLtTBe56iYx6Q7FVo7ZnEtWgxBdzTyK7M=;
+        s=default; t=1581338345;
+        bh=iBJV8z6P+Zf94LXo81DFHALHM43z37b15SOTOjepXZ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fl/t4HiOQaELbQg9q+M119a6BtNMYyjIh+0pL54mwqnUh7m7XEwoJmg1ksxMARtFX
-         gZ8cXGtnbT11602+Q8yjQziFsKThx/HNcUxQ5HmTWgMUV5Kz1BvDVjGZJ810vYplPc
-         63iqE1QXnmvXeY+cQn4oXkWBm1/DprnVYCT216X8=
+        b=r4FlRD0nm+g+Igt0FUrhfIL3WtNOPNkf9JuEdwCnZiA7yYM53DFyz7oAKSEFUaVRv
+         JH9FgGNk/CmCcJ97uZdtz3L+BVIyVKfXvzHuZi/le1s1x8dLsMEia2/8AvK9mwO68t
+         L7o1ifk8OMzkgDTdOkU+jw0ueyd+pHzBdDQwa6gY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 342/367] drop_monitor: Do not cancel uninitialized work item
+        stable@vger.kernel.org, Liran Alon <liran.alon@oracle.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 299/309] KVM: nVMX: vmread should not set rflags to specify success in case of #PF
 Date:   Mon, 10 Feb 2020 04:34:15 -0800
-Message-Id: <20200210122454.202227499@linuxfoundation.org>
+Message-Id: <20200210122435.577795320@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,64 +46,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ido Schimmel <idosch@mellanox.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
 
-[ Upstream commit dfa7f709596be5ca46c070d4f8acbb344322056a ]
+[ Upstream commit a4d956b9390418623ae5d07933e2679c68b6f83c ]
 
-Drop monitor uses a work item that takes care of constructing and
-sending netlink notifications to user space. In case drop monitor never
-started to monitor, then the work item is uninitialized and not
-associated with a function.
+In case writing to vmread destination operand result in a #PF, vmread
+should not call nested_vmx_succeed() to set rflags to specify success.
+Similar to as done in VMPTRST (See handle_vmptrst()).
 
-Therefore, a stop command from user space results in canceling an
-uninitialized work item which leads to the following warning [1].
-
-Fix this by not processing a stop command if drop monitor is not
-currently monitoring.
-
-[1]
-[   31.735402] ------------[ cut here ]------------
-[   31.736470] WARNING: CPU: 0 PID: 143 at kernel/workqueue.c:3032 __flush_work+0x89f/0x9f0
-...
-[   31.738120] CPU: 0 PID: 143 Comm: dwdump Not tainted 5.5.0-custom-09491-g16d4077796b8 #727
-[   31.741968] RIP: 0010:__flush_work+0x89f/0x9f0
-...
-[   31.760526] Call Trace:
-[   31.771689]  __cancel_work_timer+0x2a6/0x3b0
-[   31.776809]  net_dm_cmd_trace+0x300/0xef0
-[   31.777549]  genl_rcv_msg+0x5c6/0xd50
-[   31.781005]  netlink_rcv_skb+0x13b/0x3a0
-[   31.784114]  genl_rcv+0x29/0x40
-[   31.784720]  netlink_unicast+0x49f/0x6a0
-[   31.787148]  netlink_sendmsg+0x7cf/0xc80
-[   31.790426]  ____sys_sendmsg+0x620/0x770
-[   31.793458]  ___sys_sendmsg+0xfd/0x170
-[   31.802216]  __sys_sendmsg+0xdf/0x1a0
-[   31.806195]  do_syscall_64+0xa0/0x540
-[   31.806885]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Fixes: 8e94c3bc922e ("drop_monitor: Allow user to start monitoring hardware drops")
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Reviewed-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Liran Alon <liran.alon@oracle.com>
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/drop_monitor.c |    4 +++-
+ arch/x86/kvm/vmx/nested.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/core/drop_monitor.c
-+++ b/net/core/drop_monitor.c
-@@ -1004,8 +1004,10 @@ static void net_dm_hw_monitor_stop(struc
- {
- 	int cpu;
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index d0523741fb037..931d3b5f3acd4 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -4663,8 +4663,10 @@ static int handle_vmread(struct kvm_vcpu *vcpu)
+ 				vmx_instruction_info, true, len, &gva))
+ 			return 1;
+ 		/* _system ok, nested_vmx_check_permission has verified cpl=0 */
+-		if (kvm_write_guest_virt_system(vcpu, gva, &field_value, len, &e))
++		if (kvm_write_guest_virt_system(vcpu, gva, &field_value, len, &e)) {
+ 			kvm_inject_page_fault(vcpu, &e);
++			return 1;
++		}
+ 	}
  
--	if (!monitor_hw)
-+	if (!monitor_hw) {
- 		NL_SET_ERR_MSG_MOD(extack, "Hardware monitoring already disabled");
-+		return;
-+	}
- 
- 	monitor_hw = false;
- 
+ 	return nested_vmx_succeed(vcpu);
+-- 
+2.20.1
+
 
 
