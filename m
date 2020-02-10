@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C44C15762C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:51:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74F0F1574B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 13:35:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730319AbgBJMpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:45:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41670 "EHLO mail.kernel.org"
+        id S1727979AbgBJMfc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:35:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729817AbgBJMkv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:40:51 -0500
+        id S1727836AbgBJMfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:35:18 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE2622085B;
-        Mon, 10 Feb 2020 12:40:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CCD624680;
+        Mon, 10 Feb 2020 12:35:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338450;
-        bh=9vvqBPxbltiYH7PyWIzMbj8xY2dYN+f/9a4CZVWzPik=;
+        s=default; t=1581338118;
+        bh=NtsZhrgDJIlTF5zSo7Bs2rx2dneDPsrJqbQN4iPbGGg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wt+xtydkFx3OvYCYIRP/ajXi2w3RxU5LbzculH2NOE7TqP0MVqFBCwPiMnLq0H8WG
-         Z+l5Gy9EP+6wqxw8irNG2Hj4ilks6RABUOu2Mb6jpqmwSq4yswYonqYyLhL516xMhR
-         3kQxjbOmYG4atAatlQJ4qroxRb9hswCbDAs2IoH0=
+        b=dNhr77tMuzLb2yj7AuSL74Iw60GhAANdxGJjzrs97cE7lRALkCheNGwiMk1azqQQa
+         /aJ8zs2bUCSOGmKkyEx9vB1Ssv+yGXnWxecuy2nqk8yR2EOxC1GKS2ApbIHitBhHqC
+         PW7M59T+qma+DSkbGyKMnkaWa4tVWM5EbtlQYf44=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.5 196/367] Btrfs: make deduplication with range including the last block work
-Date:   Mon, 10 Feb 2020 04:31:49 -0800
-Message-Id: <20200210122442.678567317@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Lobakin <alobakin@dlink.ru>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Rob Herring <robh@kernel.org>, linux-mips@vger.kernel.org
+Subject: [PATCH 4.19 052/195] MIPS: boot: fix typo in vmlinux.lzma.its target
+Date:   Mon, 10 Feb 2020 04:31:50 -0800
+Message-Id: <20200210122311.112142227@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
-References: <20200210122423.695146547@linuxfoundation.org>
+In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
+References: <20200210122305.731206734@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,67 +47,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Alexander Lobakin <alobakin@dlink.ru>
 
-commit 831d2fa25ab8e27592b1b0268dae6f2dfaf7cc43 upstream.
+commit 16202c09577f3d0c533274c0410b7de05fb0d458 upstream.
 
-Since btrfs was migrated to use the generic VFS helpers for clone and
-deduplication, it stopped allowing for the last block of a file to be
-deduplicated when the source file size is not sector size aligned (when
-eof is somewhere in the middle of the last block). There are two reasons
-for that:
+Commit 92b34a976348 ("MIPS: boot: add missing targets for vmlinux.*.its")
+fixed constant rebuild of *.its files on every make invocation, but due
+to typo ("lzmo") it made no sense for vmlinux.lzma.its.
 
-1) The generic code always rounds down, to a multiple of the block size,
-   the range's length for deduplications. This means we end up never
-   deduplicating the last block when the eof is not block size aligned,
-   even for the safe case where the destination range's end offset matches
-   the destination file's size. That rounding down operation is done at
-   generic_remap_check_len();
-
-2) Because of that, the btrfs specific code does not expect anymore any
-   non-aligned range length's for deduplication and therefore does not
-   work if such nona-aligned length is given.
-
-This patch addresses that second part, and it depends on a patch that
-fixes generic_remap_check_len(), in the VFS, which was submitted ealier
-and has the following subject:
-
-  "fs: allow deduplication of eof block into the end of the destination file"
-
-These two patches address reports from users that started seeing lower
-deduplication rates due to the last block never being deduplicated when
-the file size is not aligned to the filesystem's block size.
-
-Link: https://lore.kernel.org/linux-btrfs/2019-1576167349.500456@svIo.N5dq.dFFD/
-CC: stable@vger.kernel.org # 5.1+
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 92b34a976348 ("MIPS: boot: add missing targets for vmlinux.*.its")
+Cc: <stable@vger.kernel.org> # v4.19+
+Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
+[paulburton@kernel.org: s/invokation/invocation/]
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/ioctl.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/mips/boot/Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -3243,6 +3243,7 @@ static void btrfs_double_extent_lock(str
- static int btrfs_extent_same_range(struct inode *src, u64 loff, u64 len,
- 				   struct inode *dst, u64 dst_loff)
- {
-+	const u64 bs = BTRFS_I(src)->root->fs_info->sb->s_blocksize;
- 	int ret;
+--- a/arch/mips/boot/Makefile
++++ b/arch/mips/boot/Makefile
+@@ -123,7 +123,7 @@ $(obj)/vmlinux.its.S: $(addprefix $(srct
+ targets += vmlinux.its
+ targets += vmlinux.gz.its
+ targets += vmlinux.bz2.its
+-targets += vmlinux.lzmo.its
++targets += vmlinux.lzma.its
+ targets += vmlinux.lzo.its
  
- 	/*
-@@ -3250,7 +3251,7 @@ static int btrfs_extent_same_range(struc
- 	 * source range to serialize with relocation.
- 	 */
- 	btrfs_double_extent_lock(src, loff, dst, dst_loff, len);
--	ret = btrfs_clone(src, dst, loff, len, len, dst_loff, 1);
-+	ret = btrfs_clone(src, dst, loff, len, ALIGN(len, bs), dst_loff, 1);
- 	btrfs_double_extent_unlock(src, loff, dst, dst_loff, len);
- 
- 	return ret;
+ quiet_cmd_cpp_its_S = ITS     $@
 
 
