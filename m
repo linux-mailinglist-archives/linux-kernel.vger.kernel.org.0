@@ -2,1262 +2,584 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A7CD156E64
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 05:09:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5F60156E33
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 05:00:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbgBJEJl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Feb 2020 23:09:41 -0500
-Received: from mga14.intel.com ([192.55.52.115]:30804 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726961AbgBJEJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Feb 2020 23:09:40 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2020 20:09:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,423,1574150400"; 
-   d="scan'208";a="251069371"
-Received: from hao-dev.bj.intel.com ([10.238.157.65])
-  by orsmga002.jf.intel.com with ESMTP; 09 Feb 2020 20:09:34 -0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     mdf@kernel.org, will@kernel.org, mark.rutland@arm.com,
-        gregkh@linuxfoundation.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     linux-api@vger.kernel.org, atull@kernel.org, yilun.xu@intel.com,
-        Wu Hao <hao.wu@intel.com>, Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v7 2/2] fpga: dfl: fme: add performance reporting support
-Date:   Mon, 10 Feb 2020 11:47:49 +0800
-Message-Id: <1581306469-22629-3-git-send-email-hao.wu@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1581306469-22629-1-git-send-email-hao.wu@intel.com>
-References: <1581306469-22629-1-git-send-email-hao.wu@intel.com>
+        id S1727541AbgBJEAq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Feb 2020 23:00:46 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36464 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727051AbgBJEAq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Feb 2020 23:00:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581307244;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=WqGTOYIlK0mcWFece+Ozxgg60ZKXa/Fx/wYNfsFIvlM=;
+        b=MVx/ns0lb2ahI2Uf+kviyodoAnHZsV/M1CXvN813PyWSIvsjCMgt1OFgapgis7YOfrKziE
+        a/lg6Y5/fs/3qlev/cPQP6RSEW9Rv+5pTHboSjW2qDxCJtLtQbzQ1Yw2TZpbip2OQz7DfX
+        tIj7lcUuBBD8nMg04cDafg7Ay71VCQ4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-96-0guyPbBxOnCUt3f0i0gy3w-1; Sun, 09 Feb 2020 23:00:42 -0500
+X-MC-Unique: 0guyPbBxOnCUt3f0i0gy3w-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 29D2B1137846;
+        Mon, 10 Feb 2020 04:00:40 +0000 (UTC)
+Received: from jason-ThinkPad-X1-Carbon-6th.redhat.com (ovpn-13-219.pek2.redhat.com [10.72.13.219])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B2BF1101D481;
+        Mon, 10 Feb 2020 03:59:42 +0000 (UTC)
+From:   Jason Wang <jasowang@redhat.com>
+To:     mst@redhat.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Cc:     tiwei.bie@intel.com, jgg@mellanox.com, maxime.coquelin@redhat.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        rob.miller@broadcom.com, xiao.w.wang@intel.com,
+        haotian.wang@sifive.com, lingshan.zhu@intel.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        kevin.tian@intel.com, stefanha@redhat.com, rdunlap@infradead.org,
+        hch@infradead.org, aadam@redhat.com, jiri@mellanox.com,
+        shahafs@mellanox.com, hanand@xilinx.com, mhabets@solarflare.com,
+        Jason Wang <jasowang@redhat.com>
+Subject: [PATCH V2 3/5] vDPA: introduce vDPA bus
+Date:   Mon, 10 Feb 2020 11:56:06 +0800
+Message-Id: <20200210035608.10002-4-jasowang@redhat.com>
+In-Reply-To: <20200210035608.10002-1-jasowang@redhat.com>
+References: <20200210035608.10002-1-jasowang@redhat.com>
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for performance reporting private feature
-for FPGA Management Engine (FME). Now it supports several different
-performance counters, including 'basic', 'cache', 'fabric', 'vtd'
-and 'vtd_sip'. It allows user to use standard linux tools to access
-these performance counters.
+vDPA device is a device that uses a datapath which complies with the
+virtio specifications with vendor specific control path. vDPA devices
+can be both physically located on the hardware or emulated by
+software. vDPA hardware devices are usually implemented through PCIE
+with the following types:
 
-e.g. List all events by "perf list"
+- PF (Physical Function) - A single Physical Function
+- VF (Virtual Function) - Device that supports single root I/O
+  virtualization (SR-IOV). Its Virtual Function (VF) represents a
+  virtualized instance of the device that can be assigned to different
+  partitions
+- ADI (Assignable Device Interface) and its equivalents - With
+  technologies such as Intel Scalable IOV, a virtual device (VDEV)
+  composed by host OS utilizing one or more ADIs. Or its equivalent
+  like SF (Sub function) from Mellanox.
 
-  perf list | grep fme
+From a driver's perspective, depends on how and where the DMA
+translation is done, vDPA devices are split into two types:
 
-  fme0/cache_read_hit/                         [Kernel PMU event]
-  fme0/cache_read_miss/                        [Kernel PMU event]
-  ...
+- Platform specific DMA translation - From the driver's perspective,
+  the device can be used on a platform where device access to data in
+  memory is limited and/or translated. An example is a PCIE vDPA whose
+  DMA request was tagged via a bus (e.g PCIE) specific way. DMA
+  translation and protection are done at PCIE bus IOMMU level.
+- Device specific DMA translation - The device implements DMA
+  isolation and protection through its own logic. An example is a vDPA
+  device which uses on-chip IOMMU.
 
-  fme0/fab_mmio_read/                          [Kernel PMU event]
-  fme0/fab_mmio_write/                         [Kernel PMU event]
-  ...
+To hide the differences and complexity of the above types for a vDPA
+device/IOMMU options and in order to present a generic virtio device
+to the upper layer, a device agnostic framework is required.
 
-  fme0/fab_port_mmio_read,portid=?/            [Kernel PMU event]
-  fme0/fab_port_mmio_write,portid=?/           [Kernel PMU event]
-  ...
+This patch introduces a software vDPA bus which abstracts the
+common attributes of vDPA device, vDPA bus driver and the
+communication method (vdpa_config_ops) between the vDPA device
+abstraction and the vDPA bus driver:
 
-  fme0/vtd_port_devtlb_1g_fill,portid=?/       [Kernel PMU event]
-  fme0/vtd_port_devtlb_2m_fill,portid=?/       [Kernel PMU event]
-  ...
+With the abstraction of vDPA bus and vDPA bus operations, the
+difference and complexity of the under layer hardware is hidden from
+upper layer. The vDPA bus drivers on top can use a unified
+vdpa_config_ops to control different types of vDPA device.
 
-  fme0/vtd_sip_iotlb_1g_hit/                   [Kernel PMU event]
-  fme0/vtd_sip_iotlb_1g_miss/                  [Kernel PMU event]
-  ...
-
-  fme0/clock                                   [Kernel PMU event]
-  ...
-
-e.g. check increased counter value after run one application using
-"perf stat" command.
-
- perf stat -e fme0/fab_mmio_read/,fme0/fab_mmio_write/ ./test
-
- Performance counter stats for './test':
-
-                 1      fme0/fab_mmio_read/
-                 2      fme0/fab_mmio_write/
-
-       1.009496520 seconds time elapsed
-
-Please note that fabric counters support both fab_* and fab_port_*, but
-actually they are sharing one set of performance counters in hardware.
-If user wants to monitor overall data events on fab_* then fab_port_*
-can't be supported at the same time, see example below:
-
-perf stat -e fme0/fab_mmio_read/,fme0/fab_port_mmio_write,portid=0/
-
- Performance counter stats for 'system wide':
-
-                 0      fme0/fab_mmio_read/
-   <not supported>      fme0/fab_port_mmio_write,portid=0/
-
-       2.141064085 seconds time elapsed
-
-Signed-off-by: Luwei Kang <luwei.kang@intel.com>
-Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-Signed-off-by: Wu Hao <hao.wu@intel.com>
+Signed-off-by: Jason Wang <jasowang@redhat.com>
 ---
-v3: replace scnprintf with sprintf in sysfs interfaces.
-    update sysfs doc kernel version and date.
-    fix sysfs doc issue for fabric counter.
-    refine PERF_OBJ_ATTR_* macro, doesn't count on __ATTR anymore.
-    introduce PERF_OBJ_ATTR_F_* macro, as it needs to use different
-    filenames for some of the sysfs attributes.
-    remove kobject_del when destroy kobject, kobject_put is enough.
-    do sysfs_remove_groups first when destroying perf_obj.
-    WARN_ON_ONCE in case internal parms are wrong in read_*_count().
-v4: rework this patch to use standard perf API as user interfaces.
-v5: rebase and clean up.
-v6: use dev_ext_attribute instead of creating new fme_perf_attribute
-    use is_visible function to decide which events to expose per
-    hardware capability, and add event_init checking for all events.
-v7: fix a kbuild warning and add a sysfs documentation.
----
- .../ABI/testing/sysfs-bus-event_source-devices-fme | 105 +++
- drivers/fpga/Kconfig                               |   2 +-
- drivers/fpga/Makefile                              |   1 +
- drivers/fpga/dfl-fme-main.c                        |   4 +
- drivers/fpga/dfl-fme-perf.c                        | 943 +++++++++++++++++++++
- drivers/fpga/dfl-fme.h                             |   2 +
- drivers/fpga/dfl.h                                 |   2 +
- 7 files changed, 1058 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-event_source-devices-fme
- create mode 100644 drivers/fpga/dfl-fme-perf.c
+ MAINTAINERS                  |   1 +
+ drivers/virtio/Kconfig       |   2 +
+ drivers/virtio/Makefile      |   1 +
+ drivers/virtio/vdpa/Kconfig  |   9 ++
+ drivers/virtio/vdpa/Makefile |   2 +
+ drivers/virtio/vdpa/vdpa.c   | 160 ++++++++++++++++++++++++
+ include/linux/vdpa.h         | 233 +++++++++++++++++++++++++++++++++++
+ 7 files changed, 408 insertions(+)
+ create mode 100644 drivers/virtio/vdpa/Kconfig
+ create mode 100644 drivers/virtio/vdpa/Makefile
+ create mode 100644 drivers/virtio/vdpa/vdpa.c
+ create mode 100644 include/linux/vdpa.h
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-event_source-devices-fme b/Documentation/ABI/testing/sysfs-bus-event_source-devices-fme
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d4bda9c900fa..578d2a581e3b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17540,6 +17540,7 @@ F:	tools/virtio/
+ F:	drivers/net/virtio_net.c
+ F:	drivers/block/virtio_blk.c
+ F:	include/linux/virtio*.h
++F:	include/linux/vdpa.h
+ F:	include/uapi/linux/virtio_*.h
+ F:	drivers/crypto/virtio/
+ F:	mm/balloon_compaction.c
+diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
+index 078615cf2afc..9c4fdb64d9ac 100644
+--- a/drivers/virtio/Kconfig
++++ b/drivers/virtio/Kconfig
+@@ -96,3 +96,5 @@ config VIRTIO_MMIO_CMDLINE_DEVICES
+ 	 If unsure, say 'N'.
+=20
+ endif # VIRTIO_MENU
++
++source "drivers/virtio/vdpa/Kconfig"
+diff --git a/drivers/virtio/Makefile b/drivers/virtio/Makefile
+index 3a2b5c5dcf46..fdf5eacd0d0a 100644
+--- a/drivers/virtio/Makefile
++++ b/drivers/virtio/Makefile
+@@ -6,3 +6,4 @@ virtio_pci-y :=3D virtio_pci_modern.o virtio_pci_common.o
+ virtio_pci-$(CONFIG_VIRTIO_PCI_LEGACY) +=3D virtio_pci_legacy.o
+ obj-$(CONFIG_VIRTIO_BALLOON) +=3D virtio_balloon.o
+ obj-$(CONFIG_VIRTIO_INPUT) +=3D virtio_input.o
++obj-$(CONFIG_VDPA) +=3D vdpa/
+diff --git a/drivers/virtio/vdpa/Kconfig b/drivers/virtio/vdpa/Kconfig
 new file mode 100644
-index 0000000..71bcd98
+index 000000000000..7a99170e6c30
 --- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-event_source-devices-fme
-@@ -0,0 +1,105 @@
-+What:		/sys/bus/event_source/devices/fmeX/format
-+Date:		February 2020
-+KernelVersion:  5.7
-+Contact:	Wu Hao <hao.wu@intel.com>
-+Description:	Read-only. Attribute group to describe the magic bits
-+		that go into perf_event_attr.config for a particular pmu.
-+		(See ABI/testing/sysfs-bus-event_source-devices-format).
++++ b/drivers/virtio/vdpa/Kconfig
+@@ -0,0 +1,9 @@
++# SPDX-License-Identifier: GPL-2.0-only
++config VDPA
++	tristate
++        default m
++        help
++          Enable this module to support vDPA device that uses a
++          datapath which complies with virtio specifications with
++          vendor specific control path.
 +
-+		Each attribute under this group defines a bit range of the
-+		perf_event_attr.config. All supported attributes are listed
-+		below.
-+
-+		  event  = "config:0-11"  - event ID
-+		  evtype = "config:12-15" - event type
-+		  portid = "config:16-23" - event source
-+
-+		For example,
-+
-+		  fab_mmio_read = "event=0x06,evtype=0x02,portid=0xff"
-+
-+		It shows this fab_mmio_read is a fabric type (0x02) event with
-+		0x06 local event id for overall monitoring (portid=0xff).
-+
-+What:		/sys/bus/event_source/devices/fmeX/cpumask
-+Date:		February 2020
-+KernelVersion:  5.7
-+Contact:	Wu Hao <hao.wu@intel.com>
-+Description:	Read-only. This file always returns 0 as all fme pmu performance
-+		monitoring events are not specific to any processor, just from
-+		fme device.
-+
-+What:		/sys/bus/event_source/devices/fmeX/events
-+Date:		February 2020
-+KernelVersion:  5.7
-+Contact:	Wu Hao <hao.wu@intel.com>
-+Description:	Read-only. Attribute group to describe performance monitoring
-+		events specific to fme. Each attribute in this group describes
-+		a single performance monitoring event supported by this fme pmu.
-+		The name of the file is the name of the event.
-+		(See ABI/testing/sysfs-bus-event_source-devices-events).
-+
-+		All supported performance monitoring events are listed below.
-+
-+		Basic events (evtype=0x00)
-+
-+		  clock = "event=0x00,evtype=0x00,portid=0xff"
-+
-+		Cache events (evtype=0x01)
-+
-+		  cache_read_hit      = "event=0x00,evtype=0x01,portid=0xff"
-+		  cache_read_miss     = "event=0x01,evtype=0x01,portid=0xff"
-+		  cache_write_hit     = "event=0x02,evtype=0x01,portid=0xff"
-+		  cache_write_miss    = "event=0x03,evtype=0x01,portid=0xff"
-+		  cache_hold_request  = "event=0x05,evtype=0x01,portid=0xff"
-+		  cache_data_write_port_contention =
-+		                        "event=0x06,evtype=0x01,portid=0xff"
-+		  cache_tag_write_port_contention =
-+		                        "event=0x07,evtype=0x01,portid=0xff"
-+		  cache_tx_req_stall  = "event=0x08,evtype=0x01,portid=0xff"
-+		  cache_rx_req_stall  = "event=0x09,evtype=0x01,portid=0xff"
-+		  cache_eviction      = "event=0x0a,evtype=0x01,portid=0xff"
-+
-+		Fabric events (evtype=0x02)
-+
-+		  fab_pcie0_read       = "event=0x00,evtype=0x02,portid=0xff"
-+		  fab_pcie0_write      = "event=0x01,evtype=0x02,portid=0xff"
-+		  fab_pcie1_read       = "event=0x02,evtype=0x02,portid=0xff"
-+		  fab_pcie1_write      = "event=0x03,evtype=0x02,portid=0xff"
-+		  fab_upi_read         = "event=0x04,evtype=0x02,portid=0xff"
-+		  fab_upi_write        = "event=0x05,evtype=0x02,portid=0xff"
-+		  fab_mmio_read        = "event=0x06,evtype=0x02,portid=0xff"
-+		  fab_mmio_write       = "event=0x07,evtype=0x02,portid=0xff"
-+		  fab_port_pcie0_read  = "event=0x00,evtype=0x02,portid=?"
-+		  fab_port_pcie0_write = "event=0x01,evtype=0x02,portid=?"
-+		  fab_port_pcie1_read  = "event=0x02,evtype=0x02,portid=?"
-+		  fab_port_pcie1_write = "event=0x03,evtype=0x02,portid=?"
-+		  fab_port_upi_read    = "event=0x04,evtype=0x02,portid=?"
-+		  fab_port_upi_write   = "event=0x05,evtype=0x02,portid=?"
-+		  fab_port_mmio_read   = "event=0x06,evtype=0x02,portid=?"
-+		  fab_port_mmio_write  = "event=0x07,evtype=0x02,portid=?"
-+
-+		VTD events (evtype=0x03)
-+
-+		  vtd_port_read_transaction  = "event=0x00,evtype=0x03,portid=?"
-+		  vtd_port_write_transaction = "event=0x01,evtype=0x03,portid=?"
-+		  vtd_port_devtlb_read_hit   = "event=0x02,evtype=0x03,portid=?"
-+		  vtd_port_devtlb_write_hit  = "event=0x03,evtype=0x03,portid=?"
-+		  vtd_port_devtlb_4k_fill    = "event=0x04,evtype=0x03,portid=?"
-+		  vtd_port_devtlb_2m_fill    = "event=0x05,evtype=0x03,portid=?"
-+		  vtd_port_devtlb_1g_fill    = "event=0x06,evtype=0x03,portid=?"
-+
-+		VTD SIP events (evtype=0x04)
-+
-+		  vtd_sip_iotlb_4k_hit  = "event=0x00,evtype=0x04,portid=0xff"
-+		  vtd_sip_iotlb_2m_hit  = "event=0x01,evtype=0x04,portid=0xff"
-+		  vtd_sip_iotlb_1g_hit  = "event=0x02,evtype=0x04,portid=0xff"
-+		  vtd_sip_slpwc_l3_hit  = "event=0x03,evtype=0x04,portid=0xff"
-+		  vtd_sip_slpwc_l4_hit  = "event=0x04,evtype=0x04,portid=0xff"
-+		  vtd_sip_rcc_hit       = "event=0x05,evtype=0x04,portid=0xff"
-+		  vtd_sip_iotlb_4k_miss = "event=0x06,evtype=0x04,portid=0xff"
-+		  vtd_sip_iotlb_2m_miss = "event=0x07,evtype=0x04,portid=0xff"
-+		  vtd_sip_iotlb_1g_miss = "event=0x08,evtype=0x04,portid=0xff"
-+		  vtd_sip_slpwc_l3_miss = "event=0x09,evtype=0x04,portid=0xff"
-+		  vtd_sip_slpwc_l4_miss = "event=0x0a,evtype=0x04,portid=0xff"
-+		  vtd_sip_rcc_miss      = "event=0x0b,evtype=0x04,portid=0xff"
-diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-index 72380e1..b2408a7 100644
---- a/drivers/fpga/Kconfig
-+++ b/drivers/fpga/Kconfig
-@@ -156,7 +156,7 @@ config FPGA_DFL
- 
- config FPGA_DFL_FME
- 	tristate "FPGA DFL FME Driver"
--	depends on FPGA_DFL && HWMON
-+	depends on FPGA_DFL && HWMON && PERF_EVENTS
- 	help
- 	  The FPGA Management Engine (FME) is a feature device implemented
- 	  under Device Feature List (DFL) framework. Select this option to
-diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
-index 4865b74..d8e21df 100644
---- a/drivers/fpga/Makefile
-+++ b/drivers/fpga/Makefile
-@@ -40,6 +40,7 @@ obj-$(CONFIG_FPGA_DFL_FME_REGION)	+= dfl-fme-region.o
- obj-$(CONFIG_FPGA_DFL_AFU)		+= dfl-afu.o
- 
- dfl-fme-objs := dfl-fme-main.o dfl-fme-pr.o dfl-fme-error.o
-+dfl-fme-objs += dfl-fme-perf.o
- dfl-afu-objs := dfl-afu-main.o dfl-afu-region.o dfl-afu-dma-region.o
- dfl-afu-objs += dfl-afu-error.o
- 
-diff --git a/drivers/fpga/dfl-fme-main.c b/drivers/fpga/dfl-fme-main.c
-index 1d4690c..3533056 100644
---- a/drivers/fpga/dfl-fme-main.c
-+++ b/drivers/fpga/dfl-fme-main.c
-@@ -580,6 +580,10 @@ static int fme_power_mgmt_init(struct platform_device *pdev,
- 		.ops = &fme_power_mgmt_ops,
- 	},
- 	{
-+		.id_table = fme_perf_id_table,
-+		.ops = &fme_perf_ops,
-+	},
-+	{
- 		.ops = NULL,
- 	},
- };
-diff --git a/drivers/fpga/dfl-fme-perf.c b/drivers/fpga/dfl-fme-perf.c
+diff --git a/drivers/virtio/vdpa/Makefile b/drivers/virtio/vdpa/Makefile
 new file mode 100644
-index 0000000..7c6ed1e
+index 000000000000..ee6a35e8a4fb
 --- /dev/null
-+++ b/drivers/fpga/dfl-fme-perf.c
-@@ -0,0 +1,943 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/drivers/virtio/vdpa/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0
++obj-$(CONFIG_VDPA) +=3D vdpa.o
+diff --git a/drivers/virtio/vdpa/vdpa.c b/drivers/virtio/vdpa/vdpa.c
+new file mode 100644
+index 000000000000..4003d90f5df3
+--- /dev/null
++++ b/drivers/virtio/vdpa/vdpa.c
+@@ -0,0 +1,160 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Driver for FPGA Management Engine (FME) Global Performance Reporting
++ * vDPA bus.
 + *
-+ * Copyright 2019 Intel Corporation, Inc.
++ * Copyright (c) 2020, Red Hat. All rights reserved.
++ *     Author: Jason Wang <jasowang@redhat.com>
 + *
-+ * Authors:
-+ *   Kang Luwei <luwei.kang@intel.com>
-+ *   Xiao Guangrong <guangrong.xiao@linux.intel.com>
-+ *   Wu Hao <hao.wu@intel.com>
-+ *   Xu Yilun <yilun.xu@intel.com>
-+ *   Joseph Grecco <joe.grecco@intel.com>
-+ *   Enno Luebbers <enno.luebbers@intel.com>
-+ *   Tim Whisonant <tim.whisonant@intel.com>
-+ *   Ananda Ravuri <ananda.ravuri@intel.com>
-+ *   Mitchel, Henry <henry.mitchel@intel.com>
 + */
 +
-+#include <linux/perf_event.h>
-+#include "dfl.h"
-+#include "dfl-fme.h"
++#include <linux/module.h>
++#include <linux/idr.h>
++#include <linux/vdpa.h>
 +
-+/*
-+ * Performance Counter Registers for Cache.
-+ *
-+ * Cache Events are listed below as CACHE_EVNT_*.
-+ */
-+#define CACHE_CTRL			0x8
-+#define CACHE_RESET_CNTR		BIT_ULL(0)
-+#define CACHE_FREEZE_CNTR		BIT_ULL(8)
-+#define CACHE_CTRL_EVNT			GENMASK_ULL(19, 16)
-+#define CACHE_EVNT_RD_HIT		0x0
-+#define CACHE_EVNT_WR_HIT		0x1
-+#define CACHE_EVNT_RD_MISS		0x2
-+#define CACHE_EVNT_WR_MISS		0x3
-+#define CACHE_EVNT_RSVD			0x4
-+#define CACHE_EVNT_HOLD_REQ		0x5
-+#define CACHE_EVNT_DATA_WR_PORT_CONTEN	0x6
-+#define CACHE_EVNT_TAG_WR_PORT_CONTEN	0x7
-+#define CACHE_EVNT_TX_REQ_STALL		0x8
-+#define CACHE_EVNT_RX_REQ_STALL		0x9
-+#define CACHE_EVNT_EVICTIONS		0xa
-+#define CACHE_EVNT_MAX			CACHE_EVNT_EVICTIONS
-+#define CACHE_CHANNEL_SEL		BIT_ULL(20)
-+#define CACHE_CHANNEL_RD		0
-+#define CACHE_CHANNEL_WR		1
-+#define CACHE_CNTR0			0x10
-+#define CACHE_CNTR1			0x18
-+#define CACHE_CNTR_EVNT_CNTR		GENMASK_ULL(47, 0)
-+#define CACHE_CNTR_EVNT			GENMASK_ULL(63, 60)
++static DEFINE_IDA(vdpa_index_ida);
 +
-+/*
-+ * Performance Counter Registers for Fabric.
-+ *
-+ * Fabric Events are listed below as FAB_EVNT_*
-+ */
-+#define FAB_CTRL			0x20
-+#define FAB_RESET_CNTR			BIT_ULL(0)
-+#define FAB_FREEZE_CNTR			BIT_ULL(8)
-+#define FAB_CTRL_EVNT			GENMASK_ULL(19, 16)
-+#define FAB_EVNT_PCIE0_RD		0x0
-+#define FAB_EVNT_PCIE0_WR		0x1
-+#define FAB_EVNT_PCIE1_RD		0x2
-+#define FAB_EVNT_PCIE1_WR		0x3
-+#define FAB_EVNT_UPI_RD			0x4
-+#define FAB_EVNT_UPI_WR			0x5
-+#define FAB_EVNT_MMIO_RD		0x6
-+#define FAB_EVNT_MMIO_WR		0x7
-+#define FAB_EVNT_MAX			FAB_EVNT_MMIO_WR
-+#define FAB_PORT_ID			GENMASK_ULL(21, 20)
-+#define FAB_PORT_FILTER			BIT_ULL(23)
-+#define FAB_PORT_FILTER_DISABLE		0
-+#define FAB_PORT_FILTER_ENABLE		1
-+#define FAB_CNTR			0x28
-+#define FAB_CNTR_EVNT_CNTR		GENMASK_ULL(59, 0)
-+#define FAB_CNTR_EVNT			GENMASK_ULL(63, 60)
-+
-+/*
-+ * Performance Counter Registers for Clock.
-+ *
-+ * Clock Counter can't be reset or frozen by SW.
-+ */
-+#define CLK_CNTR			0x30
-+#define BASIC_EVNT_CLK			0x0
-+#define BASIC_EVNT_MAX			BASIC_EVNT_CLK
-+
-+/*
-+ * Performance Counter Registers for IOMMU / VT-D.
-+ *
-+ * VT-D Events are listed below as VTD_EVNT_* and VTD_SIP_EVNT_*
-+ */
-+#define VTD_CTRL			0x38
-+#define VTD_RESET_CNTR			BIT_ULL(0)
-+#define VTD_FREEZE_CNTR			BIT_ULL(8)
-+#define VTD_CTRL_EVNT			GENMASK_ULL(19, 16)
-+#define VTD_EVNT_AFU_MEM_RD_TRANS	0x0
-+#define VTD_EVNT_AFU_MEM_WR_TRANS	0x1
-+#define VTD_EVNT_AFU_DEVTLB_RD_HIT	0x2
-+#define VTD_EVNT_AFU_DEVTLB_WR_HIT	0x3
-+#define VTD_EVNT_DEVTLB_4K_FILL		0x4
-+#define VTD_EVNT_DEVTLB_2M_FILL		0x5
-+#define VTD_EVNT_DEVTLB_1G_FILL		0x6
-+#define VTD_EVNT_MAX			VTD_EVNT_DEVTLB_1G_FILL
-+#define VTD_CNTR			0x40
-+#define VTD_CNTR_EVNT_CNTR		GENMASK_ULL(47, 0)
-+#define VTD_CNTR_EVNT			GENMASK_ULL(63, 60)
-+
-+#define VTD_SIP_CTRL			0x48
-+#define VTD_SIP_RESET_CNTR		BIT_ULL(0)
-+#define VTD_SIP_FREEZE_CNTR		BIT_ULL(8)
-+#define VTD_SIP_CTRL_EVNT		GENMASK_ULL(19, 16)
-+#define VTD_SIP_EVNT_IOTLB_4K_HIT	0x0
-+#define VTD_SIP_EVNT_IOTLB_2M_HIT	0x1
-+#define VTD_SIP_EVNT_IOTLB_1G_HIT	0x2
-+#define VTD_SIP_EVNT_SLPWC_L3_HIT	0x3
-+#define VTD_SIP_EVNT_SLPWC_L4_HIT	0x4
-+#define VTD_SIP_EVNT_RCC_HIT		0x5
-+#define VTD_SIP_EVNT_IOTLB_4K_MISS	0x6
-+#define VTD_SIP_EVNT_IOTLB_2M_MISS	0x7
-+#define VTD_SIP_EVNT_IOTLB_1G_MISS	0x8
-+#define VTD_SIP_EVNT_SLPWC_L3_MISS	0x9
-+#define VTD_SIP_EVNT_SLPWC_L4_MISS	0xa
-+#define VTD_SIP_EVNT_RCC_MISS		0xb
-+#define VTD_SIP_EVNT_MAX		VTD_SIP_EVNT_SLPWC_L4_MISS
-+#define VTD_SIP_CNTR			0X50
-+#define VTD_SIP_CNTR_EVNT_CNTR		GENMASK_ULL(47, 0)
-+#define VTD_SIP_CNTR_EVNT		GENMASK_ULL(63, 60)
-+
-+#define PERF_TIMEOUT			30
-+
-+#define PERF_MAX_PORT_NUM		1U
-+
-+/**
-+ * struct fme_perf_priv - priv data structure for fme perf driver
-+ *
-+ * @dev: parent device.
-+ * @ioaddr: mapped base address of mmio region.
-+ * @pmu: pmu data structure for fme perf counters.
-+ * @id: id of this fme performance report private feature.
-+ * @fab_users: current user number on fabric counters.
-+ * @fab_port_id: used to indicate current working mode of fabric counters.
-+ * @fab_lock: lock to protect fabric counters working mode.
-+ */
-+struct fme_perf_priv {
-+	struct device *dev;
-+	void __iomem *ioaddr;
-+	struct pmu pmu;
-+	u64 id;
-+
-+	u32 fab_users;
-+	u32 fab_port_id;
-+	spinlock_t fab_lock;
-+};
-+
-+/**
-+ * struct fme_perf_event_ops - callbacks for fme perf events
-+ *
-+ * @event_init: callback invoked during event init.
-+ * @event_destroy: callback invoked during event destroy.
-+ * @read_counter: callback to read hardware counters.
-+ */
-+struct fme_perf_event_ops {
-+	int (*event_init)(struct fme_perf_priv *priv, u32 event, u32 portid);
-+	void (*event_destroy)(struct fme_perf_priv *priv, u32 event,
-+			      u32 portid);
-+	u64 (*read_counter)(struct fme_perf_priv *priv, u32 event, u32 portid);
-+};
-+
-+#define to_fme_perf_priv(_pmu)	container_of(_pmu, struct fme_perf_priv, pmu)
-+
-+static cpumask_t fme_perf_cpumask = CPU_MASK_CPU0;
-+
-+static ssize_t cpumask_show(struct device *dev,
-+			    struct device_attribute *attr, char *buf)
++static int vdpa_dev_probe(struct device *d)
 +{
-+	return cpumap_print_to_pagebuf(true, buf, &fme_perf_cpumask);
-+}
-+static DEVICE_ATTR_RO(cpumask);
++	struct vdpa_device *vdev =3D dev_to_vdpa(d);
++	struct vdpa_driver *drv =3D drv_to_vdpa(vdev->dev.driver);
++	int ret =3D 0;
 +
-+static struct attribute *fme_perf_cpumask_attrs[] = {
-+	&dev_attr_cpumask.attr,
-+	NULL,
-+};
++	if (drv && drv->probe)
++		ret =3D drv->probe(vdev);
 +
-+static struct attribute_group fme_perf_cpumask_group = {
-+	.attrs = fme_perf_cpumask_attrs,
-+};
-+
-+#define FME_EVENT_MASK		GENMASK_ULL(11, 0)
-+#define FME_EVENT_SHIFT		0
-+#define FME_EVTYPE_MASK		GENMASK_ULL(15, 12)
-+#define FME_EVTYPE_SHIFT	12
-+#define FME_EVTYPE_BASIC	0
-+#define FME_EVTYPE_CACHE	1
-+#define FME_EVTYPE_FABRIC	2
-+#define FME_EVTYPE_VTD		3
-+#define FME_EVTYPE_VTD_SIP	4
-+#define FME_EVTYPE_MAX		FME_EVTYPE_VTD_SIP
-+#define FME_PORTID_MASK		GENMASK_ULL(23, 16)
-+#define FME_PORTID_SHIFT	16
-+#define FME_PORTID_ROOT		(0xffU)
-+
-+#define get_event(_config)	FIELD_GET(FME_EVENT_MASK, _config)
-+#define get_evtype(_config)	FIELD_GET(FME_EVTYPE_MASK, _config)
-+#define get_portid(_config)	FIELD_GET(FME_PORTID_MASK, _config)
-+
-+PMU_FORMAT_ATTR(event,		"config:0-11");
-+PMU_FORMAT_ATTR(evtype,		"config:12-15");
-+PMU_FORMAT_ATTR(portid,		"config:16-23");
-+
-+static struct attribute *fme_perf_format_attrs[] = {
-+	&format_attr_event.attr,
-+	&format_attr_evtype.attr,
-+	&format_attr_portid.attr,
-+	NULL,
-+};
-+
-+static struct attribute_group fme_perf_format_group = {
-+	.name = "format",
-+	.attrs = fme_perf_format_attrs,
-+};
-+
-+static struct attribute *fme_perf_events_attrs_empty[] = {
-+	NULL,
-+};
-+
-+static struct attribute_group fme_perf_events_group = {
-+	.name = "events",
-+	.attrs = fme_perf_events_attrs_empty,
-+};
-+
-+static const struct attribute_group *fme_perf_groups[] = {
-+	&fme_perf_format_group,
-+	&fme_perf_cpumask_group,
-+	&fme_perf_events_group,
-+	NULL,
-+};
-+
-+static bool is_portid_root(u32 portid)
-+{
-+	return portid == FME_PORTID_ROOT;
-+}
-+
-+static bool is_portid_port(u32 portid)
-+{
-+	return portid < PERF_MAX_PORT_NUM;
-+}
-+
-+static bool is_portid_root_or_port(u32 portid)
-+{
-+	return is_portid_root(portid) || is_portid_port(portid);
-+}
-+
-+static int basic_event_init(struct fme_perf_priv *priv, u32 event, u32 portid)
-+{
-+	if (event <= BASIC_EVNT_MAX && is_portid_root(portid))
-+		return 0;
-+
-+	return -EINVAL;
-+}
-+
-+static u64 basic_read_event_counter(struct fme_perf_priv *priv,
-+				    u32 event, u32 portid)
-+{
-+	void __iomem *base = priv->ioaddr;
-+
-+	return readq(base + CLK_CNTR);
-+}
-+
-+static int cache_event_init(struct fme_perf_priv *priv, u32 event, u32 portid)
-+{
-+	if (priv->id == FME_FEATURE_ID_GLOBAL_IPERF &&
-+	    event <= CACHE_EVNT_MAX && is_portid_root(portid))
-+		return 0;
-+
-+	return -EINVAL;
-+}
-+
-+static u64 cache_read_event_counter(struct fme_perf_priv *priv,
-+				    u32 event, u32 portid)
-+{
-+	void __iomem *base = priv->ioaddr;
-+	u64 v, count;
-+	u8 channel;
-+
-+	if (event == CACHE_EVNT_WR_HIT || event == CACHE_EVNT_WR_MISS ||
-+	    event == CACHE_EVNT_DATA_WR_PORT_CONTEN ||
-+	    event == CACHE_EVNT_TAG_WR_PORT_CONTEN)
-+		channel = CACHE_CHANNEL_WR;
-+	else
-+		channel = CACHE_CHANNEL_RD;
-+
-+	/* set channel access type and cache event code. */
-+	v = readq(base + CACHE_CTRL);
-+	v &= ~(CACHE_CHANNEL_SEL | CACHE_CTRL_EVNT);
-+	v |= FIELD_PREP(CACHE_CHANNEL_SEL, channel);
-+	v |= FIELD_PREP(CACHE_CTRL_EVNT, event);
-+	writeq(v, base + CACHE_CTRL);
-+
-+	if (readq_poll_timeout_atomic(base + CACHE_CNTR0, v,
-+				      FIELD_GET(CACHE_CNTR_EVNT, v) == event,
-+				      1, PERF_TIMEOUT)) {
-+		dev_err(priv->dev, "timeout, unmatched cache event code in counter register.\n");
-+		return 0;
-+	}
-+
-+	v = readq(base + CACHE_CNTR0);
-+	count = FIELD_GET(CACHE_CNTR_EVNT_CNTR, v);
-+	v = readq(base + CACHE_CNTR1);
-+	count += FIELD_GET(CACHE_CNTR_EVNT_CNTR, v);
-+
-+	return count;
-+}
-+
-+static bool is_fabric_event_supported(struct fme_perf_priv *priv, u32 event,
-+				      u32 portid)
-+{
-+	if (event > FAB_EVNT_MAX || !is_portid_root_or_port(portid))
-+		return false;
-+
-+	if (priv->id == FME_FEATURE_ID_GLOBAL_DPERF &&
-+	    (event == FAB_EVNT_PCIE1_RD || event == FAB_EVNT_UPI_RD ||
-+	     event == FAB_EVNT_PCIE1_WR || event == FAB_EVNT_UPI_WR))
-+		return false;
-+
-+	return true;
-+}
-+
-+static int fabric_event_init(struct fme_perf_priv *priv, u32 event, u32 portid)
-+{
-+	void __iomem *base = priv->ioaddr;
-+	int ret = 0;
-+	u64 v;
-+
-+	if (!is_fabric_event_supported(priv, event, portid))
-+		return -EINVAL;
-+
-+	/*
-+	 * as fabric counter set only can be in either overall or port mode.
-+	 * In overall mode, it counts overall data for FPGA, and in port mode,
-+	 * it is configured to monitor on one individual port.
-+	 *
-+	 * so every time, a new event is initialized, driver checks
-+	 * current working mode and if someone is using this counter set.
-+	 */
-+	spin_lock(&priv->fab_lock);
-+	if (priv->fab_users && priv->fab_port_id != portid) {
-+		dev_dbg(priv->dev, "conflict fabric event monitoring mode.\n");
-+		ret = -EOPNOTSUPP;
-+		goto exit;
-+	}
-+
-+	priv->fab_users++;
-+
-+	/*
-+	 * skip if current working mode matches, otherwise change the working
-+	 * mode per input port_id, to monitor overall data or another port.
-+	 */
-+	if (priv->fab_port_id == portid)
-+		goto exit;
-+
-+	priv->fab_port_id = portid;
-+
-+	v = readq(base + FAB_CTRL);
-+	v &= ~(FAB_PORT_FILTER | FAB_PORT_ID);
-+
-+	if (is_portid_root(portid)) {
-+		v |= FIELD_PREP(FAB_PORT_FILTER, FAB_PORT_FILTER_DISABLE);
-+	} else {
-+		v |= FIELD_PREP(FAB_PORT_FILTER, FAB_PORT_FILTER_ENABLE);
-+		v |= FIELD_PREP(FAB_PORT_ID, portid);
-+	}
-+	writeq(v, base + FAB_CTRL);
-+
-+exit:
-+	spin_unlock(&priv->fab_lock);
 +	return ret;
 +}
 +
-+static void fabric_event_destroy(struct fme_perf_priv *priv, u32 event,
-+				 u32 portid)
++static int vdpa_dev_remove(struct device *d)
 +{
-+	spin_lock(&priv->fab_lock);
-+	priv->fab_users--;
-+	spin_unlock(&priv->fab_lock);
-+}
++	struct vdpa_device *vdev =3D dev_to_vdpa(d);
++	struct vdpa_driver *drv =3D drv_to_vdpa(vdev->dev.driver);
 +
-+static u64 fabric_read_event_counter(struct fme_perf_priv *priv, u32 event,
-+				     u32 portid)
-+{
-+	void __iomem *base = priv->ioaddr;
-+	u64 v;
-+
-+	v = readq(base + FAB_CTRL);
-+	v &= ~FAB_CTRL_EVNT;
-+	v |= FIELD_PREP(FAB_CTRL_EVNT, event);
-+	writeq(v, base + FAB_CTRL);
-+
-+	if (readq_poll_timeout_atomic(base + FAB_CNTR, v,
-+				      FIELD_GET(FAB_CNTR_EVNT, v) == event,
-+				      1, PERF_TIMEOUT)) {
-+		dev_err(priv->dev, "timeout, unmatched fab event code in counter register.\n");
-+		return 0;
-+	}
-+
-+	v = readq(base + FAB_CNTR);
-+	return FIELD_GET(FAB_CNTR_EVNT_CNTR, v);
-+}
-+
-+static int vtd_event_init(struct fme_perf_priv *priv, u32 event, u32 portid)
-+{
-+	if (priv->id == FME_FEATURE_ID_GLOBAL_IPERF &&
-+	    event <= VTD_EVNT_MAX && is_portid_port(portid))
-+		return 0;
-+
-+	return -EINVAL;
-+}
-+
-+static u64 vtd_read_event_counter(struct fme_perf_priv *priv, u32 event,
-+				  u32 portid)
-+{
-+	void __iomem *base = priv->ioaddr;
-+	u64 v;
-+
-+	event += (portid * (VTD_EVNT_MAX + 1));
-+
-+	v = readq(base + VTD_CTRL);
-+	v &= ~VTD_CTRL_EVNT;
-+	v |= FIELD_PREP(VTD_CTRL_EVNT, event);
-+	writeq(v, base + VTD_CTRL);
-+
-+	if (readq_poll_timeout_atomic(base + VTD_CNTR, v,
-+				      FIELD_GET(VTD_CNTR_EVNT, v) == event,
-+				      1, PERF_TIMEOUT)) {
-+		dev_err(priv->dev, "timeout, unmatched vtd event code in counter register.\n");
-+		return 0;
-+	}
-+
-+	v = readq(base + VTD_CNTR);
-+	return FIELD_GET(VTD_CNTR_EVNT_CNTR, v);
-+}
-+
-+static int vtd_sip_event_init(struct fme_perf_priv *priv, u32 event, u32 portid)
-+{
-+	if (priv->id == FME_FEATURE_ID_GLOBAL_IPERF &&
-+	    event <= VTD_SIP_EVNT_MAX && is_portid_root(portid))
-+		return 0;
-+
-+	return -EINVAL;
-+}
-+
-+static u64 vtd_sip_read_event_counter(struct fme_perf_priv *priv, u32 event,
-+				      u32 portid)
-+{
-+	void __iomem *base = priv->ioaddr;
-+	u64 v;
-+
-+	v = readq(base + VTD_SIP_CTRL);
-+	v &= ~VTD_SIP_CTRL_EVNT;
-+	v |= FIELD_PREP(VTD_SIP_CTRL_EVNT, event);
-+	writeq(v, base + VTD_SIP_CTRL);
-+
-+	if (readq_poll_timeout_atomic(base + VTD_SIP_CNTR, v,
-+				      FIELD_GET(VTD_SIP_CNTR_EVNT, v) == event,
-+				      1, PERF_TIMEOUT)) {
-+		dev_err(priv->dev, "timeout, unmatched vtd sip event code in counter register\n");
-+		return 0;
-+	}
-+
-+	v = readq(base + VTD_SIP_CNTR);
-+	return FIELD_GET(VTD_SIP_CNTR_EVNT_CNTR, v);
-+}
-+
-+static struct fme_perf_event_ops fme_perf_event_ops[] = {
-+	[FME_EVTYPE_BASIC]	= {.event_init = basic_event_init,
-+				   .read_counter = basic_read_event_counter,},
-+	[FME_EVTYPE_CACHE]	= {.event_init = cache_event_init,
-+				   .read_counter = cache_read_event_counter,},
-+	[FME_EVTYPE_FABRIC]	= {.event_init = fabric_event_init,
-+				   .event_destroy = fabric_event_destroy,
-+				   .read_counter = fabric_read_event_counter,},
-+	[FME_EVTYPE_VTD]	= {.event_init = vtd_event_init,
-+				   .read_counter = vtd_read_event_counter,},
-+	[FME_EVTYPE_VTD_SIP]	= {.event_init = vtd_sip_event_init,
-+				   .read_counter = vtd_sip_read_event_counter,},
-+};
-+
-+static ssize_t fme_perf_event_show(struct device *dev,
-+				   struct device_attribute *attr, char *buf)
-+{
-+	struct dev_ext_attribute *eattr;
-+	unsigned long config;
-+	char *ptr = buf;
-+
-+	eattr = container_of(attr, struct dev_ext_attribute, attr);
-+	config = (unsigned long)eattr->var;
-+
-+	ptr += sprintf(ptr, "event=0x%02x", (unsigned int)get_event(config));
-+	ptr += sprintf(ptr, ",evtype=0x%02x", (unsigned int)get_evtype(config));
-+
-+	if (is_portid_root(get_portid(config)))
-+		ptr += sprintf(ptr, ",portid=0x%02x\n", FME_PORTID_ROOT);
-+	else
-+		ptr += sprintf(ptr, ",portid=?\n");
-+
-+	return (ssize_t)(ptr - buf);
-+}
-+
-+#define FME_EVENT_ATTR(_name) \
-+	__ATTR(_name, 0444, fme_perf_event_show, NULL)
-+
-+#define FME_PORT_EVENT_CONFIG(_event, _type)				\
-+	(void *)((((_event) << FME_EVENT_SHIFT) & FME_EVENT_MASK) |	\
-+		(((_type) << FME_EVTYPE_SHIFT) & FME_EVTYPE_MASK))
-+
-+#define FME_EVENT_CONFIG(_event, _type)					\
-+	(void *)((((_event) << FME_EVENT_SHIFT) & FME_EVENT_MASK) |	\
-+		(((_type) << FME_EVTYPE_SHIFT) & FME_EVTYPE_MASK) |	\
-+		(FME_PORTID_ROOT << FME_PORTID_SHIFT))
-+
-+/* FME Perf Basic Events */
-+#define FME_EVENT_BASIC(_name, _event)					\
-+static struct dev_ext_attribute fme_perf_event_##_name = {		\
-+	.attr = FME_EVENT_ATTR(_name),					\
-+	.var = FME_EVENT_CONFIG(_event, FME_EVTYPE_BASIC),		\
-+}
-+
-+FME_EVENT_BASIC(clock, BASIC_EVNT_CLK);
-+
-+static struct attribute *fme_perf_basic_events_attrs[] = {
-+	&fme_perf_event_clock.attr.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group fme_perf_basic_events_group = {
-+	.name = "events",
-+	.attrs = fme_perf_basic_events_attrs,
-+};
-+
-+/* FME Perf Cache Events */
-+#define FME_EVENT_CACHE(_name, _event)					\
-+static struct dev_ext_attribute fme_perf_event_cache_##_name = {	\
-+	.attr = FME_EVENT_ATTR(cache_##_name),				\
-+	.var = FME_EVENT_CONFIG(_event, FME_EVTYPE_CACHE),		\
-+}
-+
-+FME_EVENT_CACHE(read_hit,     CACHE_EVNT_RD_HIT);
-+FME_EVENT_CACHE(read_miss,    CACHE_EVNT_RD_MISS);
-+FME_EVENT_CACHE(write_hit,    CACHE_EVNT_WR_HIT);
-+FME_EVENT_CACHE(write_miss,   CACHE_EVNT_WR_MISS);
-+FME_EVENT_CACHE(hold_request, CACHE_EVNT_HOLD_REQ);
-+FME_EVENT_CACHE(tx_req_stall, CACHE_EVNT_TX_REQ_STALL);
-+FME_EVENT_CACHE(rx_req_stall, CACHE_EVNT_RX_REQ_STALL);
-+FME_EVENT_CACHE(eviction,     CACHE_EVNT_EVICTIONS);
-+FME_EVENT_CACHE(data_write_port_contention, CACHE_EVNT_DATA_WR_PORT_CONTEN);
-+FME_EVENT_CACHE(tag_write_port_contention,  CACHE_EVNT_TAG_WR_PORT_CONTEN);
-+
-+static struct attribute *fme_perf_cache_events_attrs[] = {
-+	&fme_perf_event_cache_read_hit.attr.attr,
-+	&fme_perf_event_cache_read_miss.attr.attr,
-+	&fme_perf_event_cache_write_hit.attr.attr,
-+	&fme_perf_event_cache_write_miss.attr.attr,
-+	&fme_perf_event_cache_hold_request.attr.attr,
-+	&fme_perf_event_cache_tx_req_stall.attr.attr,
-+	&fme_perf_event_cache_rx_req_stall.attr.attr,
-+	&fme_perf_event_cache_eviction.attr.attr,
-+	&fme_perf_event_cache_data_write_port_contention.attr.attr,
-+	&fme_perf_event_cache_tag_write_port_contention.attr.attr,
-+	NULL,
-+};
-+
-+static umode_t fme_perf_events_visible(struct kobject *kobj,
-+				       struct attribute *attr, int n)
-+{
-+	struct pmu *pmu = dev_get_drvdata(kobj_to_dev(kobj));
-+	struct fme_perf_priv *priv = to_fme_perf_priv(pmu);
-+
-+	return (priv->id == FME_FEATURE_ID_GLOBAL_IPERF) ? attr->mode : 0;
-+}
-+
-+static const struct attribute_group fme_perf_cache_events_group = {
-+	.name = "events",
-+	.attrs = fme_perf_cache_events_attrs,
-+	.is_visible = fme_perf_events_visible,
-+};
-+
-+/* FME Perf Fabric Events */
-+#define FME_EVENT_FABRIC(_name, _event)					\
-+static struct dev_ext_attribute fme_perf_event_fab_##_name = {		\
-+	.attr = FME_EVENT_ATTR(fab_##_name),				\
-+	.var = FME_EVENT_CONFIG(_event, FME_EVTYPE_FABRIC),		\
-+}
-+
-+#define FME_EVENT_FABRIC_PORT(_name, _event)				\
-+static struct dev_ext_attribute fme_perf_event_fab_port_##_name = {	\
-+	.attr = FME_EVENT_ATTR(fab_port_##_name),			\
-+	.var = FME_PORT_EVENT_CONFIG(_event, FME_EVTYPE_FABRIC),	\
-+}
-+
-+FME_EVENT_FABRIC(pcie0_read,  FAB_EVNT_PCIE0_RD);
-+FME_EVENT_FABRIC(pcie0_write, FAB_EVNT_PCIE0_WR);
-+FME_EVENT_FABRIC(pcie1_read,  FAB_EVNT_PCIE1_RD);
-+FME_EVENT_FABRIC(pcie1_write, FAB_EVNT_PCIE1_WR);
-+FME_EVENT_FABRIC(upi_read,    FAB_EVNT_UPI_RD);
-+FME_EVENT_FABRIC(upi_write,   FAB_EVNT_UPI_WR);
-+FME_EVENT_FABRIC(mmio_read,   FAB_EVNT_MMIO_RD);
-+FME_EVENT_FABRIC(mmio_write,  FAB_EVNT_MMIO_WR);
-+
-+FME_EVENT_FABRIC_PORT(pcie0_read,  FAB_EVNT_PCIE0_RD);
-+FME_EVENT_FABRIC_PORT(pcie0_write, FAB_EVNT_PCIE0_WR);
-+FME_EVENT_FABRIC_PORT(pcie1_read,  FAB_EVNT_PCIE1_RD);
-+FME_EVENT_FABRIC_PORT(pcie1_write, FAB_EVNT_PCIE1_WR);
-+FME_EVENT_FABRIC_PORT(upi_read,    FAB_EVNT_UPI_RD);
-+FME_EVENT_FABRIC_PORT(upi_write,   FAB_EVNT_UPI_WR);
-+FME_EVENT_FABRIC_PORT(mmio_read,   FAB_EVNT_MMIO_RD);
-+FME_EVENT_FABRIC_PORT(mmio_write,  FAB_EVNT_MMIO_WR);
-+
-+static struct attribute *fme_perf_fabric_events_attrs[] = {
-+	&fme_perf_event_fab_pcie0_read.attr.attr,
-+	&fme_perf_event_fab_pcie0_write.attr.attr,
-+	&fme_perf_event_fab_pcie1_read.attr.attr,
-+	&fme_perf_event_fab_pcie1_write.attr.attr,
-+	&fme_perf_event_fab_upi_read.attr.attr,
-+	&fme_perf_event_fab_upi_write.attr.attr,
-+	&fme_perf_event_fab_mmio_read.attr.attr,
-+	&fme_perf_event_fab_mmio_write.attr.attr,
-+	&fme_perf_event_fab_port_pcie0_read.attr.attr,
-+	&fme_perf_event_fab_port_pcie0_write.attr.attr,
-+	&fme_perf_event_fab_port_pcie1_read.attr.attr,
-+	&fme_perf_event_fab_port_pcie1_write.attr.attr,
-+	&fme_perf_event_fab_port_upi_read.attr.attr,
-+	&fme_perf_event_fab_port_upi_write.attr.attr,
-+	&fme_perf_event_fab_port_mmio_read.attr.attr,
-+	&fme_perf_event_fab_port_mmio_write.attr.attr,
-+	NULL,
-+};
-+
-+static umode_t fme_perf_fabric_events_visible(struct kobject *kobj,
-+					      struct attribute *attr, int n)
-+{
-+	struct pmu *pmu = dev_get_drvdata(kobj_to_dev(kobj));
-+	struct fme_perf_priv *priv = to_fme_perf_priv(pmu);
-+	struct dev_ext_attribute *eattr;
-+	unsigned long var;
-+
-+	eattr = container_of(attr, struct dev_ext_attribute, attr.attr);
-+	var = (unsigned long)eattr->var;
-+
-+	if (is_fabric_event_supported(priv, get_event(var), get_portid(var)))
-+		return attr->mode;
++	if (drv && drv->remove)
++		drv->remove(vdev);
 +
 +	return 0;
 +}
 +
-+static const struct attribute_group fme_perf_fabric_events_group = {
-+	.name = "events",
-+	.attrs = fme_perf_fabric_events_attrs,
-+	.is_visible = fme_perf_fabric_events_visible,
++static struct bus_type vdpa_bus =3D {
++	.name  =3D "vdpa",
++	.probe =3D vdpa_dev_probe,
++	.remove =3D vdpa_dev_remove,
 +};
 +
-+/* FME Perf VTD Events */
-+#define FME_EVENT_VTD_PORT(_name, _event)				\
-+static struct dev_ext_attribute fme_perf_event_vtd_port_##_name = {	\
-+	.attr = FME_EVENT_ATTR(vtd_port_##_name),			\
-+	.var = FME_PORT_EVENT_CONFIG(_event, FME_EVTYPE_VTD),		\
-+}
-+
-+FME_EVENT_VTD_PORT(read_transaction,  VTD_EVNT_AFU_MEM_RD_TRANS);
-+FME_EVENT_VTD_PORT(write_transaction, VTD_EVNT_AFU_MEM_WR_TRANS);
-+FME_EVENT_VTD_PORT(devtlb_read_hit,   VTD_EVNT_AFU_DEVTLB_RD_HIT);
-+FME_EVENT_VTD_PORT(devtlb_write_hit,  VTD_EVNT_AFU_DEVTLB_WR_HIT);
-+FME_EVENT_VTD_PORT(devtlb_4k_fill,    VTD_EVNT_DEVTLB_4K_FILL);
-+FME_EVENT_VTD_PORT(devtlb_2m_fill,    VTD_EVNT_DEVTLB_2M_FILL);
-+FME_EVENT_VTD_PORT(devtlb_1g_fill,    VTD_EVNT_DEVTLB_1G_FILL);
-+
-+static struct attribute *fme_perf_vtd_events_attrs[] = {
-+	&fme_perf_event_vtd_port_read_transaction.attr.attr,
-+	&fme_perf_event_vtd_port_write_transaction.attr.attr,
-+	&fme_perf_event_vtd_port_devtlb_read_hit.attr.attr,
-+	&fme_perf_event_vtd_port_devtlb_write_hit.attr.attr,
-+	&fme_perf_event_vtd_port_devtlb_4k_fill.attr.attr,
-+	&fme_perf_event_vtd_port_devtlb_2m_fill.attr.attr,
-+	&fme_perf_event_vtd_port_devtlb_1g_fill.attr.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group fme_perf_vtd_events_group = {
-+	.name = "events",
-+	.attrs = fme_perf_vtd_events_attrs,
-+	.is_visible = fme_perf_events_visible,
-+};
-+
-+/* FME Perf VTD SIP Events */
-+#define FME_EVENT_VTD_SIP(_name, _event)				\
-+static struct dev_ext_attribute fme_perf_event_vtd_sip_##_name = {	\
-+	.attr = FME_EVENT_ATTR(vtd_sip_##_name),			\
-+	.var = FME_EVENT_CONFIG(_event, FME_EVTYPE_VTD_SIP),		\
-+}
-+
-+FME_EVENT_VTD_SIP(iotlb_4k_hit,  VTD_SIP_EVNT_IOTLB_4K_HIT);
-+FME_EVENT_VTD_SIP(iotlb_2m_hit,  VTD_SIP_EVNT_IOTLB_2M_HIT);
-+FME_EVENT_VTD_SIP(iotlb_1g_hit,  VTD_SIP_EVNT_IOTLB_1G_HIT);
-+FME_EVENT_VTD_SIP(slpwc_l3_hit,  VTD_SIP_EVNT_SLPWC_L3_HIT);
-+FME_EVENT_VTD_SIP(slpwc_l4_hit,  VTD_SIP_EVNT_SLPWC_L4_HIT);
-+FME_EVENT_VTD_SIP(rcc_hit,       VTD_SIP_EVNT_RCC_HIT);
-+FME_EVENT_VTD_SIP(iotlb_4k_miss, VTD_SIP_EVNT_IOTLB_4K_MISS);
-+FME_EVENT_VTD_SIP(iotlb_2m_miss, VTD_SIP_EVNT_IOTLB_2M_MISS);
-+FME_EVENT_VTD_SIP(iotlb_1g_miss, VTD_SIP_EVNT_IOTLB_1G_MISS);
-+FME_EVENT_VTD_SIP(slpwc_l3_miss, VTD_SIP_EVNT_SLPWC_L3_MISS);
-+FME_EVENT_VTD_SIP(slpwc_l4_miss, VTD_SIP_EVNT_SLPWC_L4_MISS);
-+FME_EVENT_VTD_SIP(rcc_miss,      VTD_SIP_EVNT_RCC_MISS);
-+
-+static struct attribute *fme_perf_vtd_sip_events_attrs[] = {
-+	&fme_perf_event_vtd_sip_iotlb_4k_hit.attr.attr,
-+	&fme_perf_event_vtd_sip_iotlb_2m_hit.attr.attr,
-+	&fme_perf_event_vtd_sip_iotlb_1g_hit.attr.attr,
-+	&fme_perf_event_vtd_sip_slpwc_l3_hit.attr.attr,
-+	&fme_perf_event_vtd_sip_slpwc_l4_hit.attr.attr,
-+	&fme_perf_event_vtd_sip_rcc_hit.attr.attr,
-+	&fme_perf_event_vtd_sip_iotlb_4k_miss.attr.attr,
-+	&fme_perf_event_vtd_sip_iotlb_2m_miss.attr.attr,
-+	&fme_perf_event_vtd_sip_iotlb_1g_miss.attr.attr,
-+	&fme_perf_event_vtd_sip_slpwc_l3_miss.attr.attr,
-+	&fme_perf_event_vtd_sip_slpwc_l4_miss.attr.attr,
-+	&fme_perf_event_vtd_sip_rcc_miss.attr.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group fme_perf_vtd_sip_events_group = {
-+	.name = "events",
-+	.attrs = fme_perf_vtd_sip_events_attrs,
-+	.is_visible = fme_perf_events_visible,
-+};
-+
-+static const struct attribute_group *fme_perf_events_groups[] = {
-+	&fme_perf_basic_events_group,
-+	&fme_perf_cache_events_group,
-+	&fme_perf_fabric_events_group,
-+	&fme_perf_vtd_events_group,
-+	&fme_perf_vtd_sip_events_group,
-+	NULL,
-+};
-+
-+static struct fme_perf_event_ops *get_event_ops(u32 evtype)
++/**
++ * vdpa_init_device - initilaize a vDPA device
++ * This allows driver to some prepartion between after device is
++ * initialized but before vdpa_register_device()
++ * @vdev: the vdpa device to be initialized
++ * @parent: the paretn device
++ * @dma_dev: the actual device that is performing DMA
++ * @config: the bus operations support by this device
++ *
++ * Returns an error when parent/config/dma_dev is not set or fail to get
++ * ida.
++ */
++int vdpa_init_device(struct vdpa_device *vdev, struct device *parent,
++		     struct device *dma_dev,
++		     const struct vdpa_config_ops *config)
 +{
-+	if (evtype > FME_EVTYPE_MAX)
-+		return NULL;
++	int err;
 +
-+	return &fme_perf_event_ops[evtype];
-+}
-+
-+static void fme_perf_event_destroy(struct perf_event *event)
-+{
-+	struct fme_perf_event_ops *ops = get_event_ops(event->hw.event_base);
-+	struct fme_perf_priv *priv = to_fme_perf_priv(event->pmu);
-+
-+	if (ops->event_destroy)
-+		ops->event_destroy(priv, event->hw.idx, event->hw.config_base);
-+}
-+
-+static int fme_perf_event_init(struct perf_event *event)
-+{
-+	struct fme_perf_priv *priv = to_fme_perf_priv(event->pmu);
-+	struct hw_perf_event *hwc = &event->hw;
-+	struct fme_perf_event_ops *ops;
-+	u32 eventid, evtype, portid;
-+
-+	/* test the event attr type check for PMU enumeration */
-+	if (event->attr.type != event->pmu->type)
-+		return -ENOENT;
-+
-+	/*
-+	 * fme counters are shared across all cores.
-+	 * Therefore, it does not support per-process mode.
-+	 * Also, it does not support event sampling mode.
-+	 */
-+	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
++	if (!parent || !dma_dev || !config)
 +		return -EINVAL;
 +
-+	if (event->cpu < 0)
-+		return -EINVAL;
++	err =3D ida_simple_get(&vdpa_index_ida, 0, 0, GFP_KERNEL);
++	if (err < 0)
++		return -EFAULT;
 +
-+	eventid = get_event(event->attr.config);
-+	portid = get_portid(event->attr.config);
-+	evtype = get_evtype(event->attr.config);
-+	if (evtype > FME_EVTYPE_MAX)
-+		return -EINVAL;
++	vdev->dev.bus =3D &vdpa_bus;
++	vdev->dev.parent =3D parent;
 +
-+	hwc->event_base = evtype;
-+	hwc->idx = (int)eventid;
-+	hwc->config_base = portid;
++	device_initialize(&vdev->dev);
 +
-+	event->destroy = fme_perf_event_destroy;
++	vdev->index =3D err;
++	vdev->dma_dev =3D dma_dev;
++	vdev->config =3D config;
 +
-+	dev_dbg(priv->dev, "%s event=0x%x, evtype=0x%x, portid=0x%x,\n",
-+		__func__, eventid, evtype, portid);
-+
-+	ops = get_event_ops(evtype);
-+	if (ops->event_init)
-+		return ops->event_init(priv, eventid, portid);
++	dev_set_name(&vdev->dev, "vdpa%u", vdev->index);
 +
 +	return 0;
 +}
++EXPORT_SYMBOL_GPL(vdpa_init_device);
 +
-+static void fme_perf_event_update(struct perf_event *event)
++/**
++ * vdpa_register_device - register a vDPA device
++ * Callers must have a succeed call of vdpa_init_device() before.
++ * @vdev: the vdpa device to be registered to vDPA bus
++ *
++ * Returns an error when fail to add to vDPA bus
++ */
++int vdpa_register_device(struct vdpa_device *vdev)
 +{
-+	struct fme_perf_event_ops *ops = get_event_ops(event->hw.event_base);
-+	struct fme_perf_priv *priv = to_fme_perf_priv(event->pmu);
-+	struct hw_perf_event *hwc = &event->hw;
-+	u64 now, prev, delta;
++	int err =3D device_add(&vdev->dev);
 +
-+	now = ops->read_counter(priv, (u32)hwc->idx, hwc->config_base);
-+	prev = local64_read(&hwc->prev_count);
-+	delta = now - prev;
++	if (err) {
++		put_device(&vdev->dev);
++		ida_simple_remove(&vdpa_index_ida, vdev->index);
++	}
 +
-+	local64_add(delta, &event->count);
++	return err;
 +}
++EXPORT_SYMBOL_GPL(vdpa_register_device);
 +
-+static void fme_perf_event_start(struct perf_event *event, int flags)
++/**
++ * vdpa_unregister_device - unregister a vDPA device
++ * @vdev: the vdpa device to be unregisted from vDPA bus
++ */
++void vdpa_unregister_device(struct vdpa_device *vdev)
 +{
-+	struct fme_perf_event_ops *ops = get_event_ops(event->hw.event_base);
-+	struct fme_perf_priv *priv = to_fme_perf_priv(event->pmu);
-+	struct hw_perf_event *hwc = &event->hw;
-+	u64 count;
++	int index =3D vdev->index;
 +
-+	count = ops->read_counter(priv, (u32)hwc->idx, hwc->config_base);
-+	local64_set(&hwc->prev_count, count);
++	device_unregister(&vdev->dev);
++	ida_simple_remove(&vdpa_index_ida, index);
 +}
++EXPORT_SYMBOL_GPL(vdpa_unregister_device);
 +
-+static void fme_perf_event_stop(struct perf_event *event, int flags)
++/**
++ * __vdpa_register_driver - register a vDPA device driver
++ * @drv: the vdpa device driver to be registered
++ * @owner: module owner of the driver
++ *
++ * Returns an err when fail to do the registration
++ */
++int __vdpa_register_driver(struct vdpa_driver *drv, struct module *owner=
+)
 +{
-+	fme_perf_event_update(event);
++	drv->driver.bus =3D &vdpa_bus;
++	drv->driver.owner =3D owner;
++
++	return driver_register(&drv->driver);
 +}
++EXPORT_SYMBOL_GPL(__vdpa_register_driver);
 +
-+static int fme_perf_event_add(struct perf_event *event, int flags)
++/**
++ * vdpa_unregister_driver - unregister a vDPA device driver
++ * @drv: the vdpa device driver to be unregistered
++ */
++void vdpa_unregister_driver(struct vdpa_driver *drv)
 +{
-+	if (flags & PERF_EF_START)
-+		fme_perf_event_start(event, flags);
++	driver_unregister(&drv->driver);
++}
++EXPORT_SYMBOL_GPL(vdpa_unregister_driver);
 +
++static int vdpa_init(void)
++{
++	if (bus_register(&vdpa_bus) !=3D 0)
++		panic("virtio bus registration failed");
 +	return 0;
 +}
 +
-+static void fme_perf_event_del(struct perf_event *event, int flags)
++static void __exit vdpa_exit(void)
 +{
-+	fme_perf_event_stop(event, PERF_EF_UPDATE);
++	bus_unregister(&vdpa_bus);
++	ida_destroy(&vdpa_index_ida);
 +}
++core_initcall(vdpa_init);
++module_exit(vdpa_exit);
 +
-+static void fme_perf_event_read(struct perf_event *event)
-+{
-+	fme_perf_event_update(event);
-+}
++MODULE_AUTHOR("Jason Wang <jasowang@redhat.com>");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
+new file mode 100644
+index 000000000000..52543a862801
+--- /dev/null
++++ b/include/linux/vdpa.h
+@@ -0,0 +1,233 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_VDPA_H
++#define _LINUX_VDPA_H
 +
-+static void fme_perf_setup_hardware(struct fme_perf_priv *priv)
-+{
-+	void __iomem *base = priv->ioaddr;
-+	u64 v;
++#include <linux/device.h>
++#include <linux/interrupt.h>
++#include <linux/vhost_iotlb.h>
 +
-+	/* read and save current working mode for fabric counters */
-+	v = readq(base + FAB_CTRL);
-+
-+	if (FIELD_GET(FAB_PORT_FILTER, v) == FAB_PORT_FILTER_DISABLE)
-+		priv->fab_port_id = FME_PORTID_ROOT;
-+	else
-+		priv->fab_port_id = FIELD_GET(FAB_PORT_ID, v);
-+}
-+
-+static int fme_perf_pmu_register(struct platform_device *pdev,
-+				 struct fme_perf_priv *priv)
-+{
-+	struct pmu *pmu = &priv->pmu;
-+	char *name;
-+	int ret;
-+
-+	spin_lock_init(&priv->fab_lock);
-+
-+	fme_perf_setup_hardware(priv);
-+
-+	pmu->task_ctx_nr =	perf_invalid_context;
-+	pmu->attr_groups =	fme_perf_groups;
-+	pmu->attr_update =	fme_perf_events_groups;
-+	pmu->event_init =	fme_perf_event_init;
-+	pmu->add =		fme_perf_event_add;
-+	pmu->del =		fme_perf_event_del;
-+	pmu->start =		fme_perf_event_start;
-+	pmu->stop =		fme_perf_event_stop;
-+	pmu->read =		fme_perf_event_read;
-+	pmu->capabilities =	PERF_PMU_CAP_NO_INTERRUPT |
-+				PERF_PMU_CAP_NO_EXCLUDE;
-+
-+	name = devm_kasprintf(priv->dev, GFP_KERNEL, "fme%d", pdev->id);
-+
-+	ret = perf_pmu_register(pmu, name, -1);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static void fme_perf_pmu_unregister(struct fme_perf_priv *priv)
-+{
-+	perf_pmu_unregister(&priv->pmu);
-+}
-+
-+static int fme_perf_init(struct platform_device *pdev,
-+			 struct dfl_feature *feature)
-+{
-+	struct fme_perf_priv *priv;
-+	int ret;
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = &pdev->dev;
-+	priv->ioaddr = feature->ioaddr;
-+	priv->id = feature->id;
-+
-+	ret = fme_perf_pmu_register(pdev, priv);
-+	if (ret)
-+		return ret;
-+
-+	feature->priv = priv;
-+	return 0;
-+}
-+
-+static void fme_perf_uinit(struct platform_device *pdev,
-+			   struct dfl_feature *feature)
-+{
-+	struct fme_perf_priv *priv = feature->priv;
-+
-+	fme_perf_pmu_unregister(priv);
-+}
-+
-+const struct dfl_feature_id fme_perf_id_table[] = {
-+	{.id = FME_FEATURE_ID_GLOBAL_IPERF,},
-+	{.id = FME_FEATURE_ID_GLOBAL_DPERF,},
-+	{0,}
++/**
++ * vDPA callback definition.
++ * @callback: interrupt callback function
++ * @private: the data passed to the callback function
++ */
++struct vdpa_callback {
++	irqreturn_t (*callback)(void *data);
++	void *private;
 +};
 +
-+const struct dfl_feature_ops fme_perf_ops = {
-+	.init = fme_perf_init,
-+	.uinit = fme_perf_uinit,
++/**
++ * vDPA device - representation of a vDPA device
++ * @dev: underlying device
++ * @dma_dev: the actual device that is performing DMA
++ * @config: the configuration ops for this device.
++ * @index: device index
++ */
++struct vdpa_device {
++	struct device dev;
++	struct device *dma_dev;
++	const struct vdpa_config_ops *config;
++	int index;
 +};
-diff --git a/drivers/fpga/dfl-fme.h b/drivers/fpga/dfl-fme.h
-index 6685c8e..4195dd6 100644
---- a/drivers/fpga/dfl-fme.h
-+++ b/drivers/fpga/dfl-fme.h
-@@ -38,5 +38,7 @@ struct dfl_fme {
- extern const struct dfl_feature_ops fme_global_err_ops;
- extern const struct dfl_feature_id fme_global_err_id_table[];
- extern const struct attribute_group fme_global_err_group;
-+extern const struct dfl_feature_ops fme_perf_ops;
-+extern const struct dfl_feature_id fme_perf_id_table[];
- 
- #endif /* __DFL_FME_H */
-diff --git a/drivers/fpga/dfl.h b/drivers/fpga/dfl.h
-index 9f0e656..d312678 100644
---- a/drivers/fpga/dfl.h
-+++ b/drivers/fpga/dfl.h
-@@ -197,12 +197,14 @@ struct dfl_feature_driver {
-  *		    feature dev (platform device)'s reources.
-  * @ioaddr: mapped mmio resource address.
-  * @ops: ops of this sub feature.
-+ * @priv: priv data of this feature.
-  */
- struct dfl_feature {
- 	u64 id;
- 	int resource_index;
- 	void __iomem *ioaddr;
- 	const struct dfl_feature_ops *ops;
-+	void *priv;
- };
- 
- #define DEV_STATUS_IN_USE	0
--- 
-1.8.3.1
++
++/**
++ * vDPA_config_ops - operations for configuring a vDPA device.
++ * Note: vDPA device drivers are required to implement all of the
++ * operations unless it is mentioned to be optional in the following
++ * list.
++ *
++ * @set_vq_address:		Set the address of virtqueue
++ *				@vdev: vdpa device
++ *				@idx: virtqueue index
++ *				@desc_area: address of desc area
++ *				@driver_area: address of driver area
++ *				@device_area: address of device area
++ *				Returns integer: success (0) or error (< 0)
++ * @set_vq_num:			Set the size of virtqueue
++ *				@vdev: vdpa device
++ *				@idx: virtqueue index
++ *				@num: the size of virtqueue
++ * @kick_vq:			Kick the virtqueue
++ *				@vdev: vdpa device
++ *				@idx: virtqueue index
++ * @set_vq_cb:			Set the interrupt callback function for
++ *				a virtqueue
++ *				@vdev: vdpa device
++ *				@idx: virtqueue index
++ *				@cb: virtio-vdev interrupt callback structure
++ * @set_vq_ready:		Set ready status for a virtqueue
++ *				@vdev: vdpa device
++ *				@idx: virtqueue index
++ *				@ready: ready (true) not ready(false)
++ * @get_vq_ready:		Get ready status for a virtqueue
++ *				@vdev: vdpa device
++ *				@idx: virtqueue index
++ *				Returns boolean: ready (true) or not (false)
++ * @set_vq_state:		Set the state for a virtqueue
++ *				@vdev: vdpa device
++ *				@idx: virtqueue index
++ *				@state: virtqueue state (last_avail_idx)
++ *				Returns integer: success (0) or error (< 0)
++ * @get_vq_state:		Get the state for a virtqueue
++ *				@vdev: vdpa device
++ *				@idx: virtqueue index
++ *				Returns virtqueue state (last_avail_idx)
++ * @get_vq_align:		Get the virtqueue align requirement
++ *				for the device
++ *				@vdev: vdpa device
++ *				Returns virtqueue algin requirement
++ * @get_features:		Get virtio features supported by the device
++ *				@vdev: vdpa device
++ *				Returns the virtio features support by the
++ *				device
++ * @set_features:		Set virtio features supported by the driver
++ *				@vdev: vdpa device
++ *				@features: feature support by the driver
++ *				Returns integer: success (0) or error (< 0)
++ * @set_config_cb:		Set the config interrupt callback
++ *				@vdev: vdpa device
++ *				@cb: virtio-vdev interrupt callback structure
++ * @get_vq_num_max:		Get the max size of virtqueue
++ *				@vdev: vdpa device
++ *				Returns u16: max size of virtqueue
++ * @get_device_id:		Get virtio device id
++ *				@vdev: vdpa device
++ *				Returns u32: virtio device id
++ * @get_vendor_id:		Get id for the vendor that provides this device
++ *				@vdev: vdpa device
++ *				Returns u32: virtio vendor id
++ * @get_status:			Get the device status
++ *				@vdev: vdpa device
++ *				Returns u8: virtio device status
++ * @set_status:			Set the device status
++ *				@vdev: vdpa device
++ *				@status: virtio device status
++ * @get_config:			Read from device specific configuration space
++ *				@vdev: vdpa device
++ *				@offset: offset from the beginning of
++ *				configuration space
++ *				@buf: buffer used to read to
++ *				@len: the length to read from
++ *				configuration space
++ * @set_config:			Write to device specific configuration space
++ *				@vdev: vdpa device
++ *				@offset: offset from the beginning of
++ *				configuration space
++ *				@buf: buffer used to write from
++ *				@len: the length to write to
++ *				configuration space
++ * @get_generation:		Get device config generation (optional)
++ *				@vdev: vdpa device
++ *				Returns u32: device generation
++ * @set_map:			Set device memory mapping (optional)
++ *				and only needed for device that using
++ *				device specific DMA translation
++ *				(on-chip IOMMU)
++ *				@vdev: vdpa device
++ *				@iotlb: vhost memory mapping to be
++ *				used by the vDPA
++ *				Returns integer: success (0) or error (< 0)
++ * @dma_map:			Map an area of PA to IOVA
++ *				@vdev: vdpa device
++ *				@iova: iova to be mapped
++ *				@size: size of the area
++ *				@pa: physical address for the map
++ *				@perm: device access permission (VHOST_MAP_XX)
++ *				Returns integer: success (0) or error (< 0)
++ * @dma_unmap:			Unmap an area of IOVA
++ *				@vdev: vdpa device
++ *				@iova: iova to be unmapped
++ *				@size: size of the area
++ *				Returns integer: success (0) or error (< 0)
++ */
++struct vdpa_config_ops {
++	/* Virtqueue ops */
++	int (*set_vq_address)(struct vdpa_device *vdev,
++			      u16 idx, u64 desc_area, u64 driver_area,
++			      u64 device_area);
++	void (*set_vq_num)(struct vdpa_device *vdev, u16 idx, u32 num);
++	void (*kick_vq)(struct vdpa_device *vdev, u16 idx);
++	void (*set_vq_cb)(struct vdpa_device *vdev, u16 idx,
++			  struct vdpa_callback *cb);
++	void (*set_vq_ready)(struct vdpa_device *vdev, u16 idx, bool ready);
++	bool (*get_vq_ready)(struct vdpa_device *vdev, u16 idx);
++	int (*set_vq_state)(struct vdpa_device *vdev, u16 idx, u64 state);
++	u64 (*get_vq_state)(struct vdpa_device *vdev, u16 idx);
++
++	/* Device ops */
++	u16 (*get_vq_align)(struct vdpa_device *vdev);
++	u64 (*get_features)(struct vdpa_device *vdev);
++	int (*set_features)(struct vdpa_device *vdev, u64 features);
++	void (*set_config_cb)(struct vdpa_device *vdev,
++			      struct vdpa_callback *cb);
++	u16 (*get_vq_num_max)(struct vdpa_device *vdev);
++	u32 (*get_device_id)(struct vdpa_device *vdev);
++	u32 (*get_vendor_id)(struct vdpa_device *vdev);
++	u8 (*get_status)(struct vdpa_device *vdev);
++	void (*set_status)(struct vdpa_device *vdev, u8 status);
++	void (*get_config)(struct vdpa_device *vdev, unsigned int offset,
++			   void *buf, unsigned int len);
++	void (*set_config)(struct vdpa_device *vdev, unsigned int offset,
++			   const void *buf, unsigned int len);
++	u32 (*get_generation)(struct vdpa_device *vdev);
++
++	/* DMA ops */
++	int (*set_map)(struct vdpa_device *vdev, struct vhost_iotlb *iotlb);
++	int (*dma_map)(struct vdpa_device *vdev, u64 iova, u64 size,
++		       u64 pa, u32 perm);
++	int (*dma_unmap)(struct vdpa_device *vdev, u64 iova, u64 size);
++};
++
++int vdpa_init_device(struct vdpa_device *vdev,
++		     struct device *parent,
++		     struct device *dma_dev,
++		     const struct vdpa_config_ops *config);
++int vdpa_register_device(struct vdpa_device *vdev);
++void vdpa_unregister_device(struct vdpa_device *vdev);
++
++/**
++ * vdpa_driver - operations for a vDPA driver
++ * @driver: underlying device driver
++ * @probe: the function to call when a device is found.  Returns 0 or -e=
+rrno.
++ * @remove: the function to call when a device is removed.
++ */
++struct vdpa_driver {
++	struct device_driver driver;
++	int (*probe)(struct vdpa_device *vdev);
++	void (*remove)(struct vdpa_device *vdev);
++};
++
++#define vdpa_register_driver(drv) \
++	__vdpa_register_driver(drv, THIS_MODULE)
++int __vdpa_register_driver(struct vdpa_driver *drv, struct module *owner=
+);
++void vdpa_unregister_driver(struct vdpa_driver *drv);
++
++#define module_vdpa_driver(__vdpa_driver) \
++        module_driver(__vdpa_driver, vdpa_register_driver, \
++		      vdpa_unregister_driver)
++
++static inline struct vdpa_driver *drv_to_vdpa(struct device_driver *driv=
+er)
++{
++	return container_of(driver, struct vdpa_driver, driver);
++}
++
++static inline struct vdpa_device *dev_to_vdpa(struct device *_dev)
++{
++	return container_of(_dev, struct vdpa_device, dev);
++}
++
++static inline void *vdpa_get_drvdata(const struct vdpa_device *vdev)
++{
++	return dev_get_drvdata(&vdev->dev);
++}
++
++static inline void vdpa_set_drvdata(struct vdpa_device *vdev, void *data=
+)
++{
++	dev_set_drvdata(&vdev->dev, data);
++}
++
++static inline struct device *vdpa_get_dma_dev(struct vdpa_device *vdev)
++{
++	return vdev->dma_dev;
++}
++#endif /* _LINUX_VDPA_H */
+--=20
+2.19.1
 
