@@ -2,77 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7102157247
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 11:00:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2CEA157269
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 11:04:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbgBJKAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 05:00:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35178 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726451AbgBJKAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 05:00:03 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 681D1208C4;
-        Mon, 10 Feb 2020 10:00:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581328802;
-        bh=Dn46n2AYSU+Z2vVl+we06BNQDli46LIuwB29XqOrtZs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xvupraef/J5VNBksDf2N2owNALT325yZj25BG93XIBMcTAKsB8SzyYZvunwJ6Wjrg
-         eI8dvJJTfu7dNBhBuRYP4DjhoFvE41BYy/dRv9qxoB0tiHyBDW6X7z1xyswhZtoWw2
-         wGvV7tOl3q7l1mwiZ2Zk6ZD1r/MiR7y62HKLUPGk=
-Date:   Mon, 10 Feb 2020 09:59:56 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH v2 00/10] Rework READ_ONCE() to improve codegen
-Message-ID: <20200210095956.GA15056@willie-the-truck>
-References: <20200123153341.19947-1-will@kernel.org>
- <CAHk-=wjC2EDquO8_kzc-FHOGGjgODOLKjswYGJAMh58zTkyX3w@mail.gmail.com>
- <20200124083307.GA14914@hirez.programming.kicks-ass.net>
- <CAK7LNAS=er+Vkvx+vurYMCHS2u1_Vj0zV+tvUzDkSwop3XP1gg@mail.gmail.com>
+        id S1727507AbgBJKEO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 05:04:14 -0500
+Received: from srv1.deutnet.info ([116.203.153.70]:47854 "EHLO
+        srv1.deutnet.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727061AbgBJKEO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 05:04:14 -0500
+X-Greylist: delayed 2187 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Feb 2020 05:04:13 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=deutnet.info; s=default; h=Message-Id:Date:Subject:Cc:To:From:in-reply-to;
+         bh=Vjm+UzdU4EFGRYU3esvZaagkde+R1fpPiensw/dr2Go=; b=TpoMVyfbdIvJ71K1ZGmEePIjz
+        cjvj611qh2sD3SbSrxINVDva2ZX6mSueuJnz0q6XAPvqFJpyxOyJyPCiCTkao5hFmC5aXP3leIsaO
+        aUR3KrsjGglA9l2nQ7HPYvplymwx8hH59FzIoeHE+bZVVo5ObED3tgQBchGu9Lvk0vA3hHGNO0kUN
+        DA2BVeUc67xvKoB5ieaF+Q0PbRWCGrg7qIiRFdazgg/yOtUXodnqAWvKZEGwMU0rFxFYmV4VZP+RD
+        DExP4FIffBu0XFHYC0+fj7HGvJnHrOyw79xaksjDPvPqf5oQhrwEWkrdpx8eGKDCZNLF5wn58i+CG
+        mrTdBCOFA==;
+Received: from [2001:bc8:3dc9::1] (helo=srv100.deutnet.info)
+        by srv1.deutnet.info with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <agriveaux@deutnet.info>)
+        id 1j15Lw-0007fi-2U; Mon, 10 Feb 2020 10:27:40 +0100
+Received: from agriveaux by srv100.deutnet.info with local (Exim 4.92)
+        (envelope-from <agriveaux@deutnet.info>)
+        id 1j15Lv-00DSou-NC; Mon, 10 Feb 2020 10:27:39 +0100
+From:   agriveaux@deutnet.info
+To:     robh+dt@kernel.org, mark.rutland@arm.com, mripard@kernel.org,
+        wens@csie.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        agriveaux@deutnet.info
+Subject: ARM: dts: sun5i: Add dts for inet86v_rev2
+Date:   Mon, 10 Feb 2020 10:27:35 +0100
+Message-Id: <20200210092736.3208998-1-agriveaux@deutnet.info>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAS=er+Vkvx+vurYMCHS2u1_Vj0zV+tvUzDkSwop3XP1gg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 06:50:53PM +0900, Masahiro Yamada wrote:
-> On Fri, Jan 24, 2020 at 5:33 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Thu, Jan 23, 2020 at 09:59:03AM -0800, Linus Torvalds wrote:
-> > > On Thu, Jan 23, 2020 at 7:33 AM Will Deacon <will@kernel.org> wrote:
-> > > >
-> > > > This is version two of the patches I previously posted as an RFC here:
-> > >
-> > > Looks fine to me, as far as I can tell,
-> >
-> > Awesome, I've picked them up with a target for tip/locking/core.
-> 
-> Were they really picked up?
-> 
-> The MW is closed now, but I do not them in Linus' tree.
-> I do not see them even in linux-next.
+ARM: dts: sun5i: Add dts for inet86v_rev2
 
-We ended up running into build issues with m68k which took quite a bit of
-effort to fix, so that meant we missed the merge window. It also seems that
-we've now run into similar looking issues for sparc32 :(
+Add Inet 86V Rev 2 support, based upon Inet 86VS.
 
-Will
+Missing things:
+- Accelerometer (MXC6225X)
+- Touchpanel (Sitronix SL1536)
+- Nand (29F32G08CBACA)
+- Camera (HCWY0308)
+
+
