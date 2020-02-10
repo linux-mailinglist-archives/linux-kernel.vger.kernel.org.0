@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C62F157B61
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:30:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E4A615795B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:15:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731324AbgBJN32 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:29:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55584 "EHLO mail.kernel.org"
+        id S1729948AbgBJNOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:14:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728353AbgBJMgW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:22 -0500
+        id S1729147AbgBJMic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:32 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 313F1215A4;
-        Mon, 10 Feb 2020 12:36:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00C4F20842;
+        Mon, 10 Feb 2020 12:38:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338182;
-        bh=YqFCPjKgWc4DKAjrGg9o1HNbm1MIWgIOHOp4cprPImA=;
+        s=default; t=1581338312;
+        bh=xPjFRomVxdpO+HM2q+A9172l/tUjWzy5wahhYlj59YE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UEp5z2EDdVXkt1QTSWHbdcnSuEbeNqseEqDQP3KlbFl8pj2zKkZZcQ3h07auciNir
-         p7BnDnvsWZf9HOR8xskSLIaw4673gd2/1MfQxyzOc3MtfRgTPqxQN+qkdJ4gouYnT5
-         1tQR3ffzU5zAlnnJZZrl3UYqyqfzVqPfnKShvvS0=
+        b=SE6AOFVnb9ClD7tuM7/+Wwn+s+sB2lzVxezaU3+Ar8R4+Na4qnjpCv8/cy/VgNcWu
+         hh8Gs8DUCrvgB+Vl4aqPWn8hpFppbPrgv78xDAYvUaJiJ77mIAjdQBZMc6Zovmk5mq
+         DgtYOQtWNPRzNqjPWAMSU/fkTAeB/Rn4FMoceeh4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
-        Marios Pomonis <pomonis@google.com>,
-        Andrew Honig <ahonig@google.com>,
-        Jim Mattson <jmattson@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.19 134/195] KVM: x86: Protect MSR-based index computations in fixed_msr_to_seg_unit() from Spectre-v1/L1TF attacks
+        stable@vger.kernel.org, Erdem Aktas <erdemaktas@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Dennis Zhou <dennis@kernel.org>
+Subject: [PATCH 5.4 236/309] percpu: Separate decrypted varaibles anytime encryption can be enabled
 Date:   Mon, 10 Feb 2020 04:33:12 -0800
-Message-Id: <20200210122318.475526191@linuxfoundation.org>
+Message-Id: <20200210122429.193975577@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,47 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marios Pomonis <pomonis@google.com>
+From: Erdem Aktas <erdemaktas@google.com>
 
-commit 25a5edea71b7c154b6a0b8cec14c711cafa31d26 upstream.
+commit 264b0d2bee148073c117e7bbbde5be7125a53be1 upstream.
 
-This fixes a Spectre-v1/L1TF vulnerability in fixed_msr_to_seg_unit().
-This function contains index computations based on the
-(attacker-controlled) MSR number.
+CONFIG_VIRTUALIZATION may not be enabled for memory encrypted guests.  If
+disabled, decrypted per-CPU variables may end up sharing the same page
+with variables that should be left encrypted.
 
-Fixes: de9aef5e1ad6 ("KVM: MTRR: introduce fixed_mtrr_segment table")
+Always separate per-CPU variables that should be decrypted into their own
+page anytime memory encryption can be enabled in the guest rather than
+rely on any other config option that may not be enabled.
 
-Signed-off-by: Nick Finco <nifi@google.com>
-Signed-off-by: Marios Pomonis <pomonis@google.com>
-Reviewed-by: Andrew Honig <ahonig@google.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Fixes: ac26963a1175 ("percpu: Introduce DEFINE_PER_CPU_DECRYPTED")
+Cc: stable@vger.kernel.org # 4.15+
+Signed-off-by: Erdem Aktas <erdemaktas@google.com>
+Signed-off-by: David Rientjes <rientjes@google.com>
+Signed-off-by: Dennis Zhou <dennis@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/mtrr.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ include/linux/percpu-defs.h |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/arch/x86/kvm/mtrr.c
-+++ b/arch/x86/kvm/mtrr.c
-@@ -194,11 +194,15 @@ static bool fixed_msr_to_seg_unit(u32 ms
- 		break;
- 	case MSR_MTRRfix16K_80000 ... MSR_MTRRfix16K_A0000:
- 		*seg = 1;
--		*unit = msr - MSR_MTRRfix16K_80000;
-+		*unit = array_index_nospec(
-+			msr - MSR_MTRRfix16K_80000,
-+			MSR_MTRRfix16K_A0000 - MSR_MTRRfix16K_80000 + 1);
- 		break;
- 	case MSR_MTRRfix4K_C0000 ... MSR_MTRRfix4K_F8000:
- 		*seg = 2;
--		*unit = msr - MSR_MTRRfix4K_C0000;
-+		*unit = array_index_nospec(
-+			msr - MSR_MTRRfix4K_C0000,
-+			MSR_MTRRfix4K_F8000 - MSR_MTRRfix4K_C0000 + 1);
- 		break;
- 	default:
- 		return false;
+--- a/include/linux/percpu-defs.h
++++ b/include/linux/percpu-defs.h
+@@ -175,8 +175,7 @@
+  * Declaration/definition used for per-CPU variables that should be accessed
+  * as decrypted when memory encryption is enabled in the guest.
+  */
+-#if defined(CONFIG_VIRTUALIZATION) && defined(CONFIG_AMD_MEM_ENCRYPT)
+-
++#ifdef CONFIG_AMD_MEM_ENCRYPT
+ #define DECLARE_PER_CPU_DECRYPTED(type, name)				\
+ 	DECLARE_PER_CPU_SECTION(type, name, "..decrypted")
+ 
 
 
