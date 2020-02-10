@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE0CE157A4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:22:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF8D21578A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:09:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730081AbgBJNVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:21:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58926 "EHLO mail.kernel.org"
+        id S1729407AbgBJMjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 07:39:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728772AbgBJMh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:37:29 -0500
+        id S1727516AbgBJMha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:37:30 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14EC22467A;
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C23A20661;
         Mon, 10 Feb 2020 12:37:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1581338249;
-        bh=GRrgdaBKjL7H/DYU4S4r9eSeGzhbrKumaiPdWRarlHE=;
+        bh=KM0blz/sPOMcLJ1MQfWiz35/SGyUA2nMXUvLEnE2NGE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YBPFBMLmP/YtEdeGmigF93TuEXxwUGZo67W4xW3xy5rCXb9L4DpPhTjfEfZBce7N7
-         4kor8zjgKAGb+U+q32ZwRN8LvSwiX03MztgbtCGNBIBD3eyZ7RSlvUCsLqYbdf7UYK
-         uSyJjfnxzJCFeAVtF6/Yx89AbZnC8rjJcQoSxUEY=
+        b=bcHcXGBpFZbZydPtp/P5cegrO/giijDrz+8sZRJBlE8kHZAzsZxnzM2skfIa4XY85
+         8rtjp3LZlh2gEH3/cCCfBEmLZSWj+iRgzIegAZc1HQmtO0RWTLO0a/ZnyVaNjE5R+D
+         YwW4gW4ZojuIX3S2W+V5lyd1ivtqy9VMlahRCeHw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 5.4 110/309] erofs: fix out-of-bound read for shifted uncompressed block
-Date:   Mon, 10 Feb 2020 04:31:06 -0800
-Message-Id: <20200210122417.201476227@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        Anand Lodnoor <anand.lodnoor@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 5.4 111/309] scsi: megaraid_sas: Do not initiate OCR if controller is not in ready state
+Date:   Mon, 10 Feb 2020 04:31:07 -0800
+Message-Id: <20200210122417.279849489@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
 References: <20200210122406.106356946@linuxfoundation.org>
@@ -43,61 +45,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gao Xiang <gaoxiang25@huawei.com>
+From: Anand Lodnoor <anand.lodnoor@broadcom.com>
 
-commit 4d2024370d877f9ac8b98694bcff666da6a5d333 upstream.
+commit 6d7537270e3283b92f9b327da9d58a4de40fe8d0 upstream.
 
-rq->out[1] should be valid before accessing. Otherwise,
-in very rare cases, out-of-bound dirty onstack rq->out[1]
-can equal to *in and lead to unintended memmove behavior.
+Driver initiates OCR if a DCMD command times out. But there is a deadlock
+if the driver attempts to invoke another OCR before the mutex lock
+(reset_mutex) is released from the previous session of OCR.
 
-Link: https://lore.kernel.org/r/20200107022546.19432-1-gaoxiang25@huawei.com
-Fixes: 7fc45dbc938a ("staging: erofs: introduce generic decompression backend")
-Cc: <stable@vger.kernel.org> # 5.3+
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+This patch takes care of the above scenario using new flag
+MEGASAS_FUSION_OCR_NOT_POSSIBLE to indicate if OCR is possible.
+
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/1579000882-20246-9-git-send-email-anand.lodnoor@broadcom.com
+Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+Signed-off-by: Anand Lodnoor <anand.lodnoor@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/erofs/decompressor.c |   22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ drivers/scsi/megaraid/megaraid_sas_base.c   |    3 ++-
+ drivers/scsi/megaraid/megaraid_sas_fusion.c |    3 ++-
+ drivers/scsi/megaraid/megaraid_sas_fusion.h |    1 +
+ 3 files changed, 5 insertions(+), 2 deletions(-)
 
---- a/fs/erofs/decompressor.c
-+++ b/fs/erofs/decompressor.c
-@@ -306,24 +306,22 @@ static int z_erofs_shifted_transform(con
- 	}
- 
- 	src = kmap_atomic(*rq->in);
--	if (!rq->out[0]) {
--		dst = NULL;
--	} else {
-+	if (rq->out[0]) {
- 		dst = kmap_atomic(rq->out[0]);
- 		memcpy(dst + rq->pageofs_out, src, righthalf);
-+		kunmap_atomic(dst);
- 	}
- 
--	if (rq->out[1] == *rq->in) {
--		memmove(src, src + righthalf, rq->pageofs_out);
--	} else if (nrpages_out == 2) {
--		if (dst)
--			kunmap_atomic(dst);
-+	if (nrpages_out == 2) {
- 		DBG_BUGON(!rq->out[1]);
--		dst = kmap_atomic(rq->out[1]);
--		memcpy(dst, src + righthalf, rq->pageofs_out);
-+		if (rq->out[1] == *rq->in) {
-+			memmove(src, src + righthalf, rq->pageofs_out);
-+		} else {
-+			dst = kmap_atomic(rq->out[1]);
-+			memcpy(dst, src + righthalf, rq->pageofs_out);
-+			kunmap_atomic(dst);
-+		}
- 	}
--	if (dst)
--		kunmap_atomic(dst);
- 	kunmap_atomic(src);
- 	return 0;
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -4392,7 +4392,8 @@ dcmd_timeout_ocr_possible(struct megasas
+ 	if (instance->adapter_type == MFI_SERIES)
+ 		return KILL_ADAPTER;
+ 	else if (instance->unload ||
+-			test_bit(MEGASAS_FUSION_IN_RESET, &instance->reset_flags))
++			test_bit(MEGASAS_FUSION_OCR_NOT_POSSIBLE,
++				 &instance->reset_flags))
+ 		return IGNORE_TIMEOUT;
+ 	else
+ 		return INITIATE_OCR;
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+@@ -4847,6 +4847,7 @@ int megasas_reset_fusion(struct Scsi_Hos
+ 	if (instance->requestorId && !instance->skip_heartbeat_timer_del)
+ 		del_timer_sync(&instance->sriov_heartbeat_timer);
+ 	set_bit(MEGASAS_FUSION_IN_RESET, &instance->reset_flags);
++	set_bit(MEGASAS_FUSION_OCR_NOT_POSSIBLE, &instance->reset_flags);
+ 	atomic_set(&instance->adprecovery, MEGASAS_ADPRESET_SM_POLLING);
+ 	instance->instancet->disable_intr(instance);
+ 	megasas_sync_irqs((unsigned long)instance);
+@@ -5046,7 +5047,7 @@ kill_hba:
+ 	instance->skip_heartbeat_timer_del = 1;
+ 	retval = FAILED;
+ out:
+-	clear_bit(MEGASAS_FUSION_IN_RESET, &instance->reset_flags);
++	clear_bit(MEGASAS_FUSION_OCR_NOT_POSSIBLE, &instance->reset_flags);
+ 	mutex_unlock(&instance->reset_mutex);
+ 	return retval;
  }
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.h
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.h
+@@ -89,6 +89,7 @@ enum MR_RAID_FLAGS_IO_SUB_TYPE {
+ 
+ #define MEGASAS_FP_CMD_LEN	16
+ #define MEGASAS_FUSION_IN_RESET 0
++#define MEGASAS_FUSION_OCR_NOT_POSSIBLE 1
+ #define RAID_1_PEER_CMDS 2
+ #define JBOD_MAPS_COUNT	2
+ #define MEGASAS_REDUCE_QD_COUNT 64
 
 
