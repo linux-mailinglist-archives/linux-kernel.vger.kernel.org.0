@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A2B9157769
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:00:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FC2A15793D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:14:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729874AbgBJMlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 07:41:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34358 "EHLO mail.kernel.org"
+        id S1730644AbgBJNNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:13:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729156AbgBJMie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:38:34 -0500
+        id S1729182AbgBJMij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:38:39 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 816D520838;
-        Mon, 10 Feb 2020 12:38:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2895F20661;
+        Mon, 10 Feb 2020 12:38:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338313;
-        bh=wvRUXqVNPq82KInHqkt30UgV8U5s4cc5ykq9tY+2ycg=;
+        s=default; t=1581338319;
+        bh=pwgh38ltuMnOL+4RvfiyDg7TiATd0kVlvmn7UumDg1k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m5ggcDiRdCNQwbFwOdGbURQdYlu7+uGzfFEe1OCtR+SgL1ZNggXrCzCaSKmsDgbfK
-         IWNS/02tDez9ZQFFEA7afQPCFLhcZwNA2ugvn8ibehg05yL3LVr5EMZ8cQKgo4cEYe
-         tMB9MF9Td5Cc8XbEvuWKdYxSgNVIdoZthsZ+KAqs=
+        b=R4uuziuUTL+4ZltmffFeVKaPwKMDZZ6G13NvYIA2+3Rr/0xOduBOFtWUxgm6WinbA
+         uApOhMgrdwqHJi/a5U8ZxfXPY29RaFcGj9tUUzSbGYC2XOODHpykp0YxMm6GrIPpCQ
+         qZ72M34EGaRYvFBvHXuQWnDhl649vW5P+97OPnts=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.4 221/309] KVM: x86: Free wbinvd_dirty_mask if vCPU creation fails
-Date:   Mon, 10 Feb 2020 04:32:57 -0800
-Message-Id: <20200210122427.780150087@linuxfoundation.org>
+Subject: [PATCH 5.4 222/309] KVM: x86: Handle TIF_NEED_FPU_LOAD in kvm_{load,put}_guest_fpu()
+Date:   Mon, 10 Feb 2020 04:32:58 -0800
+Message-Id: <20200210122427.883826991@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
 References: <20200210122406.106356946@linuxfoundation.org>
@@ -46,35 +46,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 16be9ddea268ad841457a59109963fff8c9de38d upstream.
+commit c9aef3b85f425d1f6635382ec210ee5a7ef55d7d upstream.
 
-Free the vCPU's wbinvd_dirty_mask if vCPU creation fails after
-kvm_arch_vcpu_init(), e.g. when installing the vCPU's file descriptor.
-Do the freeing by calling kvm_arch_vcpu_free() instead of open coding
-the freeing.  This adds a likely superfluous, but ultimately harmless,
-call to kvmclock_reset(), which only clears vcpu->arch.pv_time_enabled.
-Using kvm_arch_vcpu_free() allows for additional cleanup in the future.
+Handle TIF_NEED_FPU_LOAD similar to how fpu__copy() handles the flag
+when duplicating FPU state to a new task struct.  TIF_NEED_FPU_LOAD can
+be set any time control is transferred out of KVM, be it voluntarily,
+e.g. if I/O is triggered during a KVM call to get_user_pages, or
+involuntarily, e.g. if softirq runs after an IRQ occurs.  Therefore,
+KVM must account for TIF_NEED_FPU_LOAD whenever it is (potentially)
+accessing CPU FPU state.
 
-Fixes: f5f48ee15c2ee ("KVM: VMX: Execute WBINVD to keep data consistency with assigned devices")
+Fixes: 5f409e20b7945 ("x86/fpu: Defer FPU state load until return to userspace")
 Cc: stable@vger.kernel.org
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/x86.c |   19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -9180,7 +9180,7 @@ void kvm_arch_vcpu_destroy(struct kvm_vc
- 	kvm_mmu_unload(vcpu);
- 	vcpu_put(vcpu);
- 
--	kvm_x86_ops->vcpu_free(vcpu);
-+	kvm_arch_vcpu_free(vcpu);
+@@ -8493,12 +8493,26 @@ static int complete_emulated_mmio(struct
+ 	return 0;
  }
  
- void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
++static void kvm_save_current_fpu(struct fpu *fpu)
++{
++	/*
++	 * If the target FPU state is not resident in the CPU registers, just
++	 * memcpy() from current, else save CPU state directly to the target.
++	 */
++	if (test_thread_flag(TIF_NEED_FPU_LOAD))
++		memcpy(&fpu->state, &current->thread.fpu.state,
++		       fpu_kernel_xstate_size);
++	else
++		copy_fpregs_to_fpstate(fpu);
++}
++
+ /* Swap (qemu) user FPU context for the guest FPU context. */
+ static void kvm_load_guest_fpu(struct kvm_vcpu *vcpu)
+ {
+ 	fpregs_lock();
+ 
+-	copy_fpregs_to_fpstate(vcpu->arch.user_fpu);
++	kvm_save_current_fpu(vcpu->arch.user_fpu);
++
+ 	/* PKRU is separately restored in kvm_x86_ops->run.  */
+ 	__copy_kernel_to_fpregs(&vcpu->arch.guest_fpu->state,
+ 				~XFEATURE_MASK_PKRU);
+@@ -8514,7 +8528,8 @@ static void kvm_put_guest_fpu(struct kvm
+ {
+ 	fpregs_lock();
+ 
+-	copy_fpregs_to_fpstate(vcpu->arch.guest_fpu);
++	kvm_save_current_fpu(vcpu->arch.guest_fpu);
++
+ 	copy_kernel_to_fpregs(&vcpu->arch.user_fpu->state);
+ 
+ 	fpregs_mark_activate();
 
 
