@@ -2,47 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF253157B29
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:28:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 798941578F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Feb 2020 14:11:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731218AbgBJN16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 08:27:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55954 "EHLO mail.kernel.org"
+        id S1729281AbgBJNLd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 08:11:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728394AbgBJMg3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 07:36:29 -0500
+        id S1729291AbgBJMjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 07:39:01 -0500
 Received: from localhost (unknown [209.37.97.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0B4620838;
-        Mon, 10 Feb 2020 12:36:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D590D20873;
+        Mon, 10 Feb 2020 12:39:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581338188;
-        bh=8ZzzrsQnJJ0TULN/Xqd/x3Y2vrdR9yMH4ESJCqx+HcM=;
+        s=default; t=1581338340;
+        bh=B3mne9+qPVBALFmbCLgPw94rzFHvYr7oAqx4NkE7v2U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AiA2az5zDWUEMCPNLvCg6W7jK74dGSWEOpz6i7Kw6rwb8VnNXCL0qgSHpMrUbT2Cj
-         AauSPG64BdxB0zmxkCMK5QDI5mUmmPRPt+U50p5ZX+AD5bqzUwcvGSlzxGSXWdJIeA
-         rAuL0wEIdRmYQmF95qy6+PKn621cB27F6sVhzJ9Y=
+        b=R0seOsjxlZsfVC8zwEPN/X+3xpiH4Lpmb0KCxlVHIkdgUCoFLgH++t7cQ4WI7a9pD
+         hvwXykV6EeU66XYItS0ca+GN4CTcZdcIQ5l1TfpeEwadKyNnuwcjdgsqfL1yV2N0Va
+         GEtcmHy0vaw3+g7E21cugVfCsGvPnivrRqnq8wQ4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 189/195] mm: return zero_resv_unavail optimization
-Date:   Mon, 10 Feb 2020 04:34:07 -0800
-Message-Id: <20200210122323.673345339@linuxfoundation.org>
+Subject: [PATCH 5.4 292/309] btrfs: use bool argument in free_root_pointers()
+Date:   Mon, 10 Feb 2020 04:34:08 -0800
+Message-Id: <20200210122434.815166372@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200210122305.731206734@linuxfoundation.org>
-References: <20200210122305.731206734@linuxfoundation.org>
+In-Reply-To: <20200210122406.106356946@linuxfoundation.org>
+References: <20200210122406.106356946@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,111 +45,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Tatashin <pavel.tatashin@microsoft.com>
+From: Anand Jain <anand.jain@oracle.com>
 
-[ Upstream commit ec393a0f014eaf688a3dbe8c8a4cbb52d7f535f9 ]
+[ Upstream commit 4273eaff9b8d5e141113a5bdf9628c02acf3afe5 ]
 
-When checking for valid pfns in zero_resv_unavail(), it is not necessary
-to verify that pfns within pageblock_nr_pages ranges are valid, only the
-first one needs to be checked.  This is because memory for pages are
-allocated in contiguous chunks that contain pageblock_nr_pages struct
-pages.
+We don't need int argument bool shall do in free_root_pointers().  And
+rename the argument as it confused two people.
 
-Link: http://lkml.kernel.org/r/20181002143821.5112-3-msys.mizuma@gmail.com
-Signed-off-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Reviewed-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Anand Jain <anand.jain@oracle.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/page_alloc.c | 46 ++++++++++++++++++++++++++--------------------
- 1 file changed, 26 insertions(+), 20 deletions(-)
+ fs/btrfs/disk-io.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 19f2e77d1c50b..8a00c32191263 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6456,6 +6456,29 @@ void __init free_area_init_node(int nid, unsigned long *zones_size,
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 68266928a4aa7..835abaabd67d6 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -2016,7 +2016,7 @@ static void free_root_extent_buffers(struct btrfs_root *root)
  }
  
- #if defined(CONFIG_HAVE_MEMBLOCK) && !defined(CONFIG_FLAT_NODE_MEM_MAP)
-+
-+/*
-+ * Zero all valid struct pages in range [spfn, epfn), return number of struct
-+ * pages zeroed
-+ */
-+static u64 zero_pfn_range(unsigned long spfn, unsigned long epfn)
-+{
-+	unsigned long pfn;
-+	u64 pgcnt = 0;
-+
-+	for (pfn = spfn; pfn < epfn; pfn++) {
-+		if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages))) {
-+			pfn = ALIGN_DOWN(pfn, pageblock_nr_pages)
-+				+ pageblock_nr_pages - 1;
-+			continue;
-+		}
-+		mm_zero_struct_page(pfn_to_page(pfn));
-+		pgcnt++;
-+	}
-+
-+	return pgcnt;
-+}
-+
- /*
-  * Only struct pages that are backed by physical memory are zeroed and
-  * initialized by going through __init_single_page(). But, there are some
-@@ -6471,7 +6494,6 @@ void __init free_area_init_node(int nid, unsigned long *zones_size,
- void __init zero_resv_unavail(void)
+ /* helper to cleanup tree roots */
+-static void free_root_pointers(struct btrfs_fs_info *info, int chunk_root)
++static void free_root_pointers(struct btrfs_fs_info *info, bool free_chunk_root)
  {
- 	phys_addr_t start, end;
--	unsigned long pfn;
- 	u64 i, pgcnt;
- 	phys_addr_t next = 0;
+ 	free_root_extent_buffers(info->tree_root);
  
-@@ -6481,34 +6503,18 @@ void __init zero_resv_unavail(void)
- 	pgcnt = 0;
- 	for_each_mem_range(i, &memblock.memory, NULL,
- 			NUMA_NO_NODE, MEMBLOCK_NONE, &start, &end, NULL) {
--		if (next < start) {
--			for (pfn = PFN_DOWN(next); pfn < PFN_UP(start); pfn++) {
--				if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages)))
--					continue;
--				mm_zero_struct_page(pfn_to_page(pfn));
--				pgcnt++;
--			}
--		}
-+		if (next < start)
-+			pgcnt += zero_pfn_range(PFN_DOWN(next), PFN_UP(start));
- 		next = end;
- 	}
--	for (pfn = PFN_DOWN(next); pfn < max_pfn; pfn++) {
--		if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages)))
--			continue;
--		mm_zero_struct_page(pfn_to_page(pfn));
--		pgcnt++;
--	}
--
-+	pgcnt += zero_pfn_range(PFN_DOWN(next), max_pfn);
- 
- 	/*
- 	 * Struct pages that do not have backing memory. This could be because
- 	 * firmware is using some of this memory, or for some other reasons.
--	 * Once memblock is changed so such behaviour is not allowed: i.e.
--	 * list of "reserved" memory must be a subset of list of "memory", then
--	 * this code can be removed.
- 	 */
- 	if (pgcnt)
- 		pr_info("Zeroed struct page in unavailable ranges: %lld pages", pgcnt);
--
+@@ -2025,7 +2025,7 @@ static void free_root_pointers(struct btrfs_fs_info *info, int chunk_root)
+ 	free_root_extent_buffers(info->csum_root);
+ 	free_root_extent_buffers(info->quota_root);
+ 	free_root_extent_buffers(info->uuid_root);
+-	if (chunk_root)
++	if (free_chunk_root)
+ 		free_root_extent_buffers(info->chunk_root);
+ 	free_root_extent_buffers(info->free_space_root);
  }
- #endif /* CONFIG_HAVE_MEMBLOCK && !CONFIG_FLAT_NODE_MEM_MAP */
+@@ -3323,7 +3323,7 @@ int open_ctree(struct super_block *sb,
+ 	btrfs_put_block_group_cache(fs_info);
+ 
+ fail_tree_roots:
+-	free_root_pointers(fs_info, 1);
++	free_root_pointers(fs_info, true);
+ 	invalidate_inode_pages2(fs_info->btree_inode->i_mapping);
+ 
+ fail_sb_buffer:
+@@ -3355,7 +3355,7 @@ int open_ctree(struct super_block *sb,
+ 	if (!btrfs_test_opt(fs_info, USEBACKUPROOT))
+ 		goto fail_tree_roots;
+ 
+-	free_root_pointers(fs_info, 0);
++	free_root_pointers(fs_info, false);
+ 
+ 	/* don't use the log in recovery mode, it won't be valid */
+ 	btrfs_set_super_log_root(disk_super, 0);
+@@ -4049,7 +4049,7 @@ void close_ctree(struct btrfs_fs_info *fs_info)
+ 	btrfs_free_block_groups(fs_info);
+ 
+ 	clear_bit(BTRFS_FS_OPEN, &fs_info->flags);
+-	free_root_pointers(fs_info, 1);
++	free_root_pointers(fs_info, true);
+ 
+ 	iput(fs_info->btree_inode);
  
 -- 
 2.20.1
