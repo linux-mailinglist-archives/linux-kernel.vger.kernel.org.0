@@ -2,67 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB840158F8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:13:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D7DC158F9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:13:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728925AbgBKNNO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 08:13:14 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33257 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729083AbgBKNNI (ORCPT
+        id S1729137AbgBKNNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 08:13:35 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40941 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728604AbgBKNNe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 08:13:08 -0500
-Received: by mail-wr1-f68.google.com with SMTP id u6so12362702wrt.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 05:13:07 -0800 (PST)
+        Tue, 11 Feb 2020 08:13:34 -0500
+Received: by mail-wm1-f65.google.com with SMTP id t14so3519661wmi.5
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 05:13:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1vPmpeWQjbELhAAh7qUDhl/FE61ojZhZ+nedC+mmNBA=;
-        b=YMVL4UutOUUUBwxTLjas1GuxZpiRAyZ1QAJDqZuCsiixVQ0HwJ8iqYUKqX4By5wK1O
-         xh5q5/mIudN6g8VmBHS+ZVag+52200shz8xC+qEl5LTCcxOS9snJLRjuDHpc6Uq/8VMD
-         /6BZpEia3GazsYMJfmihNFHq7HA0BMFugaXVwo6qJag3ClvXZPuzjUW8pACj2AN6HJCY
-         EDpVS9GLXJtxdNC9SmGGn9C7fNvv2wno61s8xPnkugdealVsXLRUmJxHRks0PlH6hyGb
-         s73Uvf0fZhev9/ZOwoT21KBAA23sMroSApT3hyDQqvHJKDqVrtogp75kjFOM4er1dKUX
-         /l8g==
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TM3D5gJmLNcWVrpmlMmrLPvgDmF2FwGOuN5DI7d3s1Q=;
+        b=AhDcWTYsyh0N+Ep8GLiV9XmWq4Rj+NQC5sqjSOU5PxOAHfnwDML0cTkwS0SZgftZR9
+         SoCNDybhZ7GW4bCi9AIJEOKj8d1hAZWjTEfmOi37ybqt/YnUgdOeKLSCmdPqC4+3LN8B
+         3FQtAvk4bI7F4NN29FsGgjUe8ncwyh7RTaSJiyEToYQBQrfHusokHwwGsaOgr9e+qUFR
+         mjPGWm7OthZhnV6HZ9/IBq61MNVubH2MaMUNr2N/myYiIeTuB4SXZZ183bhXRKO5ZMG9
+         kMfgeWeBVx/oUP3aCKcg0ctSFUtEr7CGeD6g7pl+1BwA1NGxCPB+1k4DrStgOucxEXRu
+         hWxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1vPmpeWQjbELhAAh7qUDhl/FE61ojZhZ+nedC+mmNBA=;
-        b=grOT8tqeT4+7IkTv0s+dAi2G7CLChZHE+MdSH62PbUqD8kMtKrv9PKaodLbms1r60p
-         fhsNRjxowFoscDPTPImbNLbCfyrg9mWUDUG+iJuhyW3tI0BjwJ27nS74sbiE4mVaSmwQ
-         Fo3H3GzRLPyXiMHz3eIaEGOCJZJRLa4an7HIsNrVT/9iWOyjB9JYB9peYves8fjhlGNg
-         XMdY66yJoIFKvMkrgtisW1H1SCYtV8XABVsuySbJ95hptKdgCIZBoFiRYOTODZc/n3EY
-         GLjy8G/8z5O8IxiLE0i0hPP6ZI6Zx14W+xd9fBr9Au2ClRHiyKC31Df6cccK4j7Eaod5
-         3wkA==
-X-Gm-Message-State: APjAAAUQHSKphX/chMsgV0pjos5Oxmz5PxUZMMQoF/LBjbDKzPTYUop2
-        i/MmVJ3l2+OicN6+wL8cgGsv4w==
-X-Google-Smtp-Source: APXvYqwsqGPsgxct0EcwFH2nXNkyOmhcAIVbam2T5OBf09TafGb/SaZA0NIR5OfaTljHguvsgfn4aA==
-X-Received: by 2002:a5d:4d12:: with SMTP id z18mr8658792wrt.139.1581426786597;
-        Tue, 11 Feb 2020 05:13:06 -0800 (PST)
-Received: from localhost.localdomain (lfbn-nic-1-65-232.w2-15.abo.wanadoo.fr. [2.15.156.232])
-        by smtp.gmail.com with ESMTPSA id b21sm3873013wmd.37.2020.02.11.05.13.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 05:13:06 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 6/6] irqchip: keystone: use irq_domain_dispose_mappings()
-Date:   Tue, 11 Feb 2020 14:12:40 +0100
-Message-Id: <20200211131240.15853-7-brgl@bgdev.pl>
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=TM3D5gJmLNcWVrpmlMmrLPvgDmF2FwGOuN5DI7d3s1Q=;
+        b=rK39psfu3rvRrnleKBz4uuqiQvqczBnxVSyj4g9+TpHGPn2lg2fexuJKG1+QHJf70w
+         G6sGnO90HfaNDTTNwFeVEA3lGPQE3hFy13TPSSRoUIYxMfLV6lgwrS0zubCqOLis+40F
+         krTw0Ma4nKTKHOtsH0lVDLZdbz71qR3VFQ+9ATabrpO2jJHgK1NlY/oOofKQ6WX4WCke
+         W1rtTuLsceFRk+6LaRGcoIjP9+aA4QtbnQ6OUegTclWd4lAZ6SX6StlSZEZE9hHe+woZ
+         RGHIsDHTRf6rxmKA+Vgh4MKMtpTOxKhzhg7eaeJVG+AacoepRCymPV0OkiEQOCePu2uQ
+         OpgA==
+X-Gm-Message-State: APjAAAVDY/PTppIDsq56leW2fZ6wYwuiC5m1zG8Ut9d4+SHLKQekExqL
+        V+Hbnj+LUnGyRKaWAfUaJR9ykeXG2ChK6g==
+X-Google-Smtp-Source: APXvYqwt34ByPAzkvLONxky/4m1GSJHbBoG+a20VJ1gEoN/FcP62d54Rj6Dq3OuTU/gFq9p6qtHZ2g==
+X-Received: by 2002:a1c:66d6:: with SMTP id a205mr5620935wmc.10.1581426812372;
+        Tue, 11 Feb 2020 05:13:32 -0800 (PST)
+Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id x11sm3694490wmg.46.2020.02.11.05.13.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Feb 2020 05:13:31 -0800 (PST)
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        michal.simek@xilinx.com, git@xilinx.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Subject: [PATCH v2] microblaze: Kernel parameters should be parsed earlier
+Date:   Tue, 11 Feb 2020 14:13:30 +0100
+Message-Id: <06e23d4a305d87bb1f3403b3130f130d784399c1.1581426806.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200211131240.15853-1-brgl@bgdev.pl>
-References: <20200211131240.15853-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -70,41 +65,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Kernel command line should be parsed before cma initialization to be able
+to get cma sizes from command line. That's why call parse_early_param()
+before dma_continugous_reserve().
 
-Shrink the code a bit by using the new irq_domain_dispose_mappings()
-helper.
+Unfortunately it can't be called earlier in machine_early_init() because
+if earlycon is passed in the command line the parse_early_param() attempts
+an ioremap which fails as the memory params are not set yet.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 ---
- drivers/irqchip/irq-keystone.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/irqchip/irq-keystone.c b/drivers/irqchip/irq-keystone.c
-index 8118ebe80b09..57819d1c3c32 100644
---- a/drivers/irqchip/irq-keystone.c
-+++ b/drivers/irqchip/irq-keystone.c
-@@ -135,6 +135,7 @@ static int keystone_irq_map(struct irq_domain *h, unsigned int virq,
- static const struct irq_domain_ops keystone_irq_ops = {
- 	.map	= keystone_irq_map,
- 	.xlate	= irq_domain_xlate_onecell,
-+	.remove	= irq_domain_dispose_mappings,
- };
+Changes in v2:
+- Fix case with earlycon
+
+ arch/microblaze/kernel/setup.c | 1 -
+ arch/microblaze/mm/init.c      | 2 ++
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/microblaze/kernel/setup.c b/arch/microblaze/kernel/setup.c
+index 511c1ab7f57f..a8fc15ac4291 100644
+--- a/arch/microblaze/kernel/setup.c
++++ b/arch/microblaze/kernel/setup.c
+@@ -54,7 +54,6 @@ void __init setup_arch(char **cmdline_p)
+ 	*cmdline_p = boot_command_line;
  
- static int keystone_irq_probe(struct platform_device *pdev)
-@@ -203,13 +204,9 @@ static int keystone_irq_probe(struct platform_device *pdev)
- static int keystone_irq_remove(struct platform_device *pdev)
- {
- 	struct keystone_irq_device *kirq = platform_get_drvdata(pdev);
--	int hwirq;
+ 	setup_memory();
+-	parse_early_param();
  
- 	free_irq(kirq->irq, kirq);
+ 	console_verbose();
  
--	for (hwirq = 0; hwirq < KEYSTONE_N_IRQ; hwirq++)
--		irq_dispose_mapping(irq_find_mapping(kirq->irqd, hwirq));
--
- 	irq_domain_remove(kirq->irqd);
- 	return 0;
+diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
+index 1056f1674065..9899ff2ef9b6 100644
+--- a/arch/microblaze/mm/init.c
++++ b/arch/microblaze/mm/init.c
+@@ -347,6 +347,8 @@ asmlinkage void __init mmu_init(void)
+ 	 * inside 768MB limit */
+ 	memblock_set_current_limit(memory_start + lowmem_size - 1);
+ 
++	parse_early_param();
++
+ 	/* CMA initialization */
+ 	dma_contiguous_reserve(memory_start + lowmem_size - 1);
  }
 -- 
 2.25.0
