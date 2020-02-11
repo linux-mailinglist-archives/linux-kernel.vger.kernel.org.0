@@ -2,150 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CDA51590F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:56:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B1EF159063
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:52:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729932AbgBKN4t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 08:56:49 -0500
-Received: from 8bytes.org ([81.169.241.247]:52178 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729518AbgBKNxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 08:53:24 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 5B59EE48; Tue, 11 Feb 2020 14:53:12 +0100 (CET)
-From:   Joerg Roedel <joro@8bytes.org>
-To:     x86@kernel.org
-Cc:     hpa@zytor.com, Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Joerg Roedel <joro@8bytes.org>, Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 29/62] x86/head/64: Load IDT earlier
-Date:   Tue, 11 Feb 2020 14:52:23 +0100
-Message-Id: <20200211135256.24617-30-joro@8bytes.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200211135256.24617-1-joro@8bytes.org>
-References: <20200211135256.24617-1-joro@8bytes.org>
+        id S1729360AbgBKNwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 08:52:32 -0500
+Received: from mail.serbinski.com ([162.218.126.2]:54546 "EHLO
+        mail.serbinski.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728624AbgBKNwa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 08:52:30 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mail.serbinski.com (Postfix) with ESMTP id CADA7D006F9;
+        Tue, 11 Feb 2020 13:52:28 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at serbinski.com
+Received: from mail.serbinski.com ([127.0.0.1])
+        by localhost (mail.serbinski.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id MnOnwGJcKCEn; Tue, 11 Feb 2020 08:52:23 -0500 (EST)
+Received: from mail.serbinski.com (localhost [127.0.0.1])
+        by mail.serbinski.com (Postfix) with ESMTP id 4F86CD00693;
+        Tue, 11 Feb 2020 08:52:23 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.serbinski.com 4F86CD00693
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=serbinski.com;
+        s=default; t=1581429143;
+        bh=4UgsNF2DfSAJSAEAuD7fkyhncR/ncVh8kAIH7kgJv2A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Ssoit/C7jtU+uEyLBQlHyTfLDiONn8FBviOZQ0wZQ7bzpeDh/52Y6RjL0hK95iw6w
+         CAsfhZGI5lqAnLqnO/pA3fRbCr2t+TeGXKjon6ZvGiVTc+vduNIAZmmKhNUTBOCw0b
+         nwYbCqj3d60oW8U+tkAROVgAxx84Q5ivNylYa9tA=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 11 Feb 2020 08:52:23 -0500
+From:   Adam Serbinski <adam@serbinski.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Patrick Lai <plai@codeaurora.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 8/8] ASoC: qcom: apq8096: add kcontrols to set PCM rate
+In-Reply-To: <20200211114256.GC4543@sirena.org.uk>
+References: <20200207205013.12274-1-adam@serbinski.com>
+ <20200209154748.3015-1-adam@serbinski.com>
+ <20200209154748.3015-9-adam@serbinski.com>
+ <20200210133636.GJ7685@sirena.org.uk>
+ <18057b47c76d350f8380f277713e0936@serbinski.com>
+ <20200210182609.GA14166@sirena.org.uk>
+ <f88d21773f47f5a543a17ad07d66f9b7@serbinski.com>
+ <20200210200839.GG14166@sirena.org.uk>
+ <7c57801d8f671c40d4c6094e5ce89681@serbinski.com>
+ <20200211114256.GC4543@sirena.org.uk>
+User-Agent: Roundcube Webmail/1.4-beta
+Message-ID: <b386237a1c21a417afb25f79a8b3d4ce@serbinski.com>
+X-Sender: adam@serbinski.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+On 2020-02-11 06:42, Mark Brown wrote:
+> On Mon, Feb 10, 2020 at 04:13:52PM -0500, Adam Serbinski wrote:
+> 
+>> I am not aware of how this could be done for bluetooth, since the 
+>> value
+>> still has to originate from userspace. The driver you referred to 
+>> supports
+>> only a single sample rate, whereas for bluetooth, 2 sample rates are
+>> required, and nothing in the kernel is aware of the appropriate rate, 
+>> at
+>> least in the case of the qca6174a I'm working with right now, or for 
+>> that
+>> matter, TI Wilink 8, which I've also worked with.
+> 
+> There's generic support in the CODEC<->CODEC link code for setting the
+> DAI configuration from userspace.
 
-Load the IDT right after switching to virtual addresses in head_64.S
-so that the kernel can handle #VC exceptions.
+Ok. Its going to take some time to get my head around that, so for the 
+time being I'm going to drop this feature and get the rest fixed for 
+inclusion.
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- arch/x86/include/asm/desc.h |  1 +
- arch/x86/kernel/head64.c    |  7 +++++++
- arch/x86/kernel/head_64.S   | 17 +++++++++++++++++
- arch/x86/kernel/idt.c       | 22 ++++++++++++++++++++++
- 4 files changed, 47 insertions(+)
-
-diff --git a/arch/x86/include/asm/desc.h b/arch/x86/include/asm/desc.h
-index 68a99d2a5f33..8a4c642ee2b3 100644
---- a/arch/x86/include/asm/desc.h
-+++ b/arch/x86/include/asm/desc.h
-@@ -440,6 +440,7 @@ extern void idt_setup_apic_and_irq_gates(void);
- extern void idt_setup_early_pf(void);
- extern void idt_setup_ist_traps(void);
- extern void idt_setup_debugidt_traps(void);
-+extern void setup_early_handlers(gate_desc *idt);
- #else
- static inline void idt_setup_early_pf(void) { }
- static inline void idt_setup_ist_traps(void) { }
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 206a4b6144c2..7cdfb7113811 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -489,3 +489,10 @@ void __init x86_64_start_reservations(char *real_mode_data)
- 
- 	start_kernel();
- }
-+
-+void __head early_idt_setup_early_handler(unsigned long physaddr)
-+{
-+	gate_desc *idt = fixup_pointer(idt_table, physaddr);
-+
-+	setup_early_handlers(idt);
-+}
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index eefd6838b895..0af79f783659 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -98,6 +98,20 @@ SYM_CODE_START_NOALIGN(startup_64)
- 	leaq	_text(%rip), %rdi
- 	pushq	%rsi
- 	call	__startup_64
-+	/* Save return value */
-+	pushq	%rax
-+
-+	/*
-+	 * Load IDT with early handlers - needed for SEV-ES
-+	 * Do this here because this must only happen on the boot CPU
-+	 * and the code below is shared with secondary CPU bringup.
-+	 */
-+	leaq	_text(%rip), %rdi
-+	call	early_idt_setup_early_handler
-+
-+	/* Restore __startup_64 return value*/
-+	popq	%rax
-+	/* Restore pointer to real_mode_data */
- 	popq	%rsi
- 
- 	/* Form the CR3 value being sure to include the CR3 modifier */
-@@ -194,6 +208,9 @@ SYM_CODE_START(secondary_startup_64)
- 	 */
- 	movq initial_stack(%rip), %rsp
- 
-+	/* Load IDT */
-+	lidt	idt_descr(%rip)
-+
- 	/* Check if nx is implemented */
- 	movl	$0x80000001, %eax
- 	cpuid
-diff --git a/arch/x86/kernel/idt.c b/arch/x86/kernel/idt.c
-index 7d8fa631dca9..84250c090596 100644
---- a/arch/x86/kernel/idt.c
-+++ b/arch/x86/kernel/idt.c
-@@ -347,6 +347,28 @@ void __init idt_setup_early_handler(void)
- 	load_idt(&idt_descr);
- }
- 
-+#ifdef CONFIG_X86_64
-+/*
-+ * This function does the same as idt_setup_early_handler(), but is
-+ * called directly from head_64.S before the kernel switches to virtual
-+ * addresses.  PV-ops don't work at that point, so set_intr_gate() can't
-+ * be used here.
-+ */
-+void __init setup_early_handlers(gate_desc *idt)
-+{
-+	int i;
-+
-+	for (i = 0; i < NUM_EXCEPTION_VECTORS; i++) {
-+		struct idt_data data;
-+		gate_desc desc;
-+
-+		init_idt_data(&data, i, early_idt_handler_array[i]);
-+		idt_init_desc(&desc, &data);
-+		native_write_idt_entry(idt, i, &desc);
-+	}
-+}
-+#endif
-+
- /**
-  * idt_invalidate - Invalidate interrupt descriptor table
-  * @addr:	The virtual address of the 'invalid' IDT
--- 
-2.17.1
-
+Thanks.
