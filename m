@@ -2,112 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 057F9159CEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 00:10:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E79F2159CFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 00:13:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbgBKXKT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 18:10:19 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.190]:12020 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727330AbgBKXKT (ORCPT
+        id S1727902AbgBKXNA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 18:13:00 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:42235 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727770AbgBKXM7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 18:10:19 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 1FEE18EA73B
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 17:10:19 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 1efbjGrk7Sl8q1efbjzwac; Tue, 11 Feb 2020 17:10:19 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=yFnjx64dgiiZ1XH9rrRxswSzvLdbpn4JZOzII56j4gI=; b=RTAP6TFYsYbS3jnM1H8QKtOyew
-        liDksF7Xr+Shdf4rVEJd6rPyamrfoXRqhl6lm38z7UJ9+7PZPMQhLrWU2w1YXuvlbKnUZEduQSebB
-        dNIjUzN/P7cM6XyIS4uRD7NEtoJX9m1WForLlBVuc0pCXwV6j1xEh2Ohf4pNzzQ1aXpsAIdYQDsXx
-        y6/trsllEObVjj+zMyQhK87K8ZMrxKDAP8ydwroUK9MZ8HXj4R2XXatHDNdvoB56bfLThueeHZjYr
-        PehUGF1bm4hHcTZba5bO++hpCpgq0DAQQP1ukDMI1/puCCdySCpHP17wXnDPJvfrkZeFlfC68iqFP
-        RD0i6exA==;
-Received: from [200.68.140.36] (port=29435 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j1efZ-003Ugu-Qg; Tue, 11 Feb 2020 17:10:17 -0600
-Date:   Tue, 11 Feb 2020 17:12:52 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] firmware: arm_scmi: perf: replace zero-length array with
- flexible-array member
-Message-ID: <20200211231252.GA14830@embeddedor>
+        Tue, 11 Feb 2020 18:12:59 -0500
+Received: by mail-yb1-f193.google.com with SMTP id z125so6270066ybf.9
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 15:12:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=asxH5rE1mHmxca38giWrHRQ20XhnB22SkpjtANiGhwo=;
+        b=yz4M8AJnylgO83dqd5cHyCjYaG5DRQ4oA07sMnefBQQQRRBCvVJY+osWsi+9Nu03Ym
+         Nd18a44FRrJAJZ8GtRwQxwQpmiKD3/0GcxsgtiKJ50Oju6HP+mnhBMLqOxFNVrA6OJWt
+         XSebUd/CBV4Y5UMZsn9YFteKAlIMCXiRs740o+q3oOGzk5H5nUFVQcxvtaqcZCrJXyZ4
+         BSLVbiNVuufPe1A+TwmfZFeG7PX4HQvLeCsHqB47yQI69ky0//yxUSf9DnwZBJ+lktSw
+         OQwg05nLXKwaryExroWR4AWqlmEVCxSUAH7YtiRHXA+t3Rb0xlAw3HW1Cr/74HddoJab
+         zl+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=asxH5rE1mHmxca38giWrHRQ20XhnB22SkpjtANiGhwo=;
+        b=c+b8CY5/vvhlZp3AIVRtBmo7G7ydk1YgH+ptlx4mYVpFAM1k8cmrsylMI5mzDLpTb9
+         mg//hFIx6UOm/QTb90njUjOwEroOaWEVO2L5DKHCBgDmsiAJHgGHWKucIkXiBvc0d/NW
+         uA0jzat9VTlcBgfWKIxZqW4L40fN+SEKUUB0CMxLNKQXd1yXGTabphKpOYlI0bv03tTX
+         8gurnI1ZqF2f1p1VrZAse1o/+L7enNGmJ6zkFYnYk62aZSkF1H6RX7fR2d9XkVRP3ZIz
+         su7noiEVqeIT+r2Bk+kyvx347VJ+71OqHDOBrfI5WJIWe/wSxJYZtk0umnrumBI27/Au
+         1vcw==
+X-Gm-Message-State: APjAAAXBUK9IhbVlhSytpDVJcFyyGee94fQZyP8RRgL4zP08MPL5WPEC
+        R0NutcTsqZR3QS4hgHV8plQqPw==
+X-Google-Smtp-Source: APXvYqwJAiJjVFrxBA/F030e6zWj2VmgaEv8EblImL79DbW353avRqr/AqP54XIFrQYHhF+KJtDchA==
+X-Received: by 2002:a05:6902:526:: with SMTP id y6mr1973370ybs.132.1581462777524;
+        Tue, 11 Feb 2020 15:12:57 -0800 (PST)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id s31sm2597687ywa.30.2020.02.11.15.12.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2020 15:12:56 -0800 (PST)
+Date:   Tue, 11 Feb 2020 16:12:53 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Cc:     Clement Leger <cleger@kalray.eu>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-remoteproc@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org,
+        Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>
+Subject: Re: [PATCH v4 0/5] remoteproc: Add elf64 support
+Message-ID: <20200211231253.GC27770@xps15>
+References: <527785289.2852303.1581062223707.JavaMail.zimbra@kalray.eu>
+ <20200210162209.23149-1-cleger@kalray.eu>
+ <5b8045be-0942-2ecf-5dba-dad58071f6af@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.36
-X-Source-L: No
-X-Exim-ID: 1j1efZ-003Ugu-Qg
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.36]:29435
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 15
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <5b8045be-0942-2ecf-5dba-dad58071f6af@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Tue, Feb 11, 2020 at 04:57:18PM +0100, Arnaud POULIQUEN wrote:
+> Hi Clement,
+> 
+> I tested the series on the stm32 platform for remote proc firmwre load: no regression found.
+> I do not test the da_to_va feature as not implemented on stm32 platform.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+It would be very interesting if you could test the coredump, that would give us
+a lot more confidence in the implementation.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertenly introduced[3] to the codebase from now on.
+Thanks,
+Mathieu
 
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/firmware/arm_scmi/perf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
-index 3c8ae7cc35de..8f79a98041c4 100644
---- a/drivers/firmware/arm_scmi/perf.c
-+++ b/drivers/firmware/arm_scmi/perf.c
-@@ -84,7 +84,7 @@ struct scmi_msg_resp_perf_describe_levels {
- 		__le32 power;
- 		__le16 transition_latency_us;
- 		__le16 reserved;
--	} opp[0];
-+	} opp[];
- };
- 
- struct perf_dom_info {
--- 
-2.25.0
-
+> 
+> Regards,
+> Arnaud
+> 
+> 
+> 
+> On 2/10/20 5:22 PM, Clement Leger wrote:
+> > This serie add support for elf64 in remoteproc (elf loader, coredump). 
+> > First two patches modifies the type of len argument (in da_to_va) and
+> > boot_addr in order to allow loading elf64 segment with a u64 size
+> > and a u64 entry point.
+> > Next patch introduce a set of macros to access elf64 and elf32
+> > transparently.
+> > Last two patches are the actual modification in the elf loader and
+> > remoteproc coredump support to add elf64 support.
+> > 
+> > Changes from V3:
+> >  - Adapt coredump to elf64 file format
+> >  - Rename remoteproc_elf_loader.h to remoteproc_elf_helpers.h
+> >  - Update copyright year in remoteproc_elf_helpers.h
+> >  - Rename macros elf_hdr_* to elf_get_hdr_* for coherency with elf_hdr_set_*
+> >  - Split elf64 loader patch in 3:
+> >    - boot_addr u64 change
+> >    - remoteproc_elf_helpers.h creation
+> >    - elf64 loading
+> > 
+> > Clement Leger (5):
+> >   remoteproc: Use u64 len for da_to_va
+> >   remoteproc: Use u64 type for boot_addr
+> >   remoteproc: Add elf helpers to access elf64 and elf32 fields
+> >   remoteproc: Add elf64 support in elf loader
+> >   remoteproc: Adapt coredump to generate correct elf type
+> > 
+> >  Documentation/remoteproc.txt                |   2 +-
+> >  drivers/remoteproc/imx_rproc.c              |  11 +-
+> >  drivers/remoteproc/keystone_remoteproc.c    |   4 +-
+> >  drivers/remoteproc/qcom_q6v5_adsp.c         |   2 +-
+> >  drivers/remoteproc/qcom_q6v5_mss.c          |   2 +-
+> >  drivers/remoteproc/qcom_q6v5_pas.c          |   2 +-
+> >  drivers/remoteproc/qcom_q6v5_wcss.c         |   2 +-
+> >  drivers/remoteproc/qcom_wcnss.c             |   2 +-
+> >  drivers/remoteproc/remoteproc_core.c        |  69 +++++++------
+> >  drivers/remoteproc/remoteproc_elf_helpers.h |  95 ++++++++++++++++++
+> >  drivers/remoteproc/remoteproc_elf_loader.c  | 150 ++++++++++++++++++----------
+> >  drivers/remoteproc/remoteproc_internal.h    |   4 +-
+> >  drivers/remoteproc/st_remoteproc.c          |   2 +-
+> >  drivers/remoteproc/st_slim_rproc.c          |   4 +-
+> >  drivers/remoteproc/wkup_m3_rproc.c          |   4 +-
+> >  include/linux/remoteproc.h                  |   7 +-
+> >  16 files changed, 252 insertions(+), 110 deletions(-)
+> >  create mode 100644 drivers/remoteproc/remoteproc_elf_helpers.h
+> > 
