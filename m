@@ -2,102 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 716721588E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 04:41:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC5AC158905
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 04:49:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727985AbgBKDlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 22:41:12 -0500
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:60918 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727831AbgBKDlM (ORCPT
+        id S1727716AbgBKDtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 22:49:05 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:56026 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727045AbgBKDtF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 22:41:12 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R681e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04396;MF=guoren@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TpeDRM7_1581392468;
-Received: from localhost(mailfrom:guoren@linux.alibaba.com fp:SMTPD_---0TpeDRM7_1581392468)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 11 Feb 2020 11:41:09 +0800
-From:   Guo Ren <guoren@linux.alibaba.com>
-To:     linux-csky@vger.kernel.org, majun258@linux.alibaba.com
-Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guo Ren <guoren@linux.alibaba.com>
-Subject: [PATCH] csky: Add PCI support
-Date:   Tue, 11 Feb 2020 11:41:07 +0800
-Message-Id: <20200211034107.11192-1-guoren@linux.alibaba.com>
-X-Mailer: git-send-email 2.17.0
+        Mon, 10 Feb 2020 22:49:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=a7NvNilpUl5bhc9T/eXq6L5I1GFPcDpbrAQedowqMwY=; b=CYQ9LsW7rkCgbKw2z+J2rI0Ma0
+        Va6fm0irz2nQg6MMMbI8eRTHUzmutpvZiw/YaOuIUFMH0+tAPVU1YkDwJn61UBTqRaadOdRCdn8qb
+        qDi/Y9mUUYaQ8sj7247kA7yYazGNRnY0xrFOKHq+udYn1zDqgtQSpbPRWuwk3ttUCXIjtDPOLcuWv
+        U2WvvYmGkeDqKHQJmZfUuM/pPdQJ6OiW67uFcFvDPtExaLicCdMnLdc1YEK3Fz5i6wjNanH6/ZMFf
+        RoxhuQuyyI7UXfwKp4erVrmnWy9ZHc82s+r68BAGK3fxrSpCb+EGC8tqUKIbCpgnDyNR3kcKLxdLD
+        i1opX2/Q==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1MXl-0004eR-1f; Tue, 11 Feb 2020 03:49:01 +0000
+Date:   Mon, 10 Feb 2020 19:49:00 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     akpm@linux-foundation.org, elver@google.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill@shutemov.name>
+Subject: Re: [PATCH v2] mm/filemap: fix a data race in filemap_fault()
+Message-ID: <20200211034900.GQ8731@bombadil.infradead.org>
+References: <20200211030134.1847-1-cai@lca.pw>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200211030134.1847-1-cai@lca.pw>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: MaJun <majun258@linux.alibaba.com>
+On Mon, Feb 10, 2020 at 10:01:34PM -0500, Qian Cai wrote:
+> struct file_ra_state ra.mmap_miss could be accessed concurrently during
+> page faults as noticed by KCSAN,
+> 
+>  BUG: KCSAN: data-race in filemap_fault / filemap_map_pages
+> 
+>  write to 0xffff9b1700a2c1b4 of 4 bytes by task 3292 on cpu 30:
+>   filemap_fault+0x920/0xfc0
+>   do_sync_mmap_readahead at mm/filemap.c:2384
+>   (inlined by) filemap_fault at mm/filemap.c:2486
+>   __xfs_filemap_fault+0x112/0x3e0 [xfs]
+>   xfs_filemap_fault+0x74/0x90 [xfs]
+>   __do_fault+0x9e/0x220
+>   do_fault+0x4a0/0x920
+>   __handle_mm_fault+0xc69/0xd00
+>   handle_mm_fault+0xfc/0x2f0
+>   do_page_fault+0x263/0x6f9
+>   page_fault+0x34/0x40
+> 
+>  read to 0xffff9b1700a2c1b4 of 4 bytes by task 3313 on cpu 32:
+>   filemap_map_pages+0xc2e/0xd80
+>   filemap_map_pages at mm/filemap.c:2625
+>   do_fault+0x3da/0x920
+>   __handle_mm_fault+0xc69/0xd00
+>   handle_mm_fault+0xfc/0x2f0
+>   do_page_fault+0x263/0x6f9
+>   page_fault+0x34/0x40
+> 
+>  Reported by Kernel Concurrency Sanitizer on:
+>  CPU: 32 PID: 3313 Comm: systemd-udevd Tainted: G        W    L 5.5.0-next-20200210+ #1
+>  Hardware name: HPE ProLiant DL385 Gen10/ProLiant DL385 Gen10, BIOS A40 07/10/2019
+> 
+> ra.mmap_miss is used to contribute the readahead decisions, a data race
+> could be undesirable. Both the read and write is only under
+> non-exclusive mmap_sem, two concurrent writers could even overflow the
+> counter. Fixing the underflow by writing to a local variable before
+> committing a final store to ra.mmap_miss given a small inaccuracy of the
+> counter should be acceptable.
+> 
+> Suggested-by: Kirill A. Shutemov <kirill@shutemov.name>
+> Signed-off-by: Qian Cai <cai@lca.pw>
 
-Add the pci related code for csky arch to support basic pci virtual
-function, such as qemu virt-pci-9pfs.
+That's more than Suggested-by.  The correct way to submit this patch is:
 
-Signed-off-by: MaJun <majun258@linux.alibaba.com>
-Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
----
- arch/csky/Kconfig           |  5 +++++
- arch/csky/include/asm/pci.h | 34 ++++++++++++++++++++++++++++++++++
- 2 files changed, 39 insertions(+)
- create mode 100644 arch/csky/include/asm/pci.h
+From: Kirill A. Shutemov <kirill@shutemov.name>
+(at the top of the patch, so it gets credited to Kirill)
 
-diff --git a/arch/csky/Kconfig b/arch/csky/Kconfig
-index bf246b036dee..72b2999a889a 100644
---- a/arch/csky/Kconfig
-+++ b/arch/csky/Kconfig
-@@ -58,6 +58,11 @@ config CSKY
- 	select TIMER_OF
- 	select USB_ARCH_HAS_EHCI
- 	select USB_ARCH_HAS_OHCI
-+	select GENERIC_PCI_IOMAP
-+	select HAVE_PCI
-+	select PCI_DOMAINS_GENERIC if PCI
-+	select PCI_SYSCALL if PCI
-+	select PCI_MSI if PCI
- 
- config CPU_HAS_CACHEV2
- 	bool
-diff --git a/arch/csky/include/asm/pci.h b/arch/csky/include/asm/pci.h
-new file mode 100644
-index 000000000000..ebc765b1f78b
---- /dev/null
-+++ b/arch/csky/include/asm/pci.h
-@@ -0,0 +1,34 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+#ifndef __ASM_CSKY_PCI_H
-+#define __ASM_CSKY_PCI_H
-+
-+#include <linux/types.h>
-+#include <linux/slab.h>
-+#include <linux/dma-mapping.h>
-+
-+#include <asm/io.h>
-+
-+#define PCIBIOS_MIN_IO		0
-+#define PCIBIOS_MIN_MEM		0
-+
-+/* C-SKY shim does not initialize PCI bus */
-+#define pcibios_assign_all_busses() 1
-+
-+extern int isa_dma_bridge_buggy;
-+
-+#ifdef CONFIG_PCI
-+static inline int pci_get_legacy_ide_irq(struct pci_dev *dev, int channel)
-+{
-+	/* no legacy IRQ on csky */
-+	return -ENODEV;
-+}
-+
-+static inline int pci_proc_domain(struct pci_bus *bus)
-+{
-+	/* always show the domain in /proc */
-+	return 1;
-+}
-+#endif  /* CONFIG_PCI */
-+
-+#endif  /* __ASM_CSKY_PCI_H */
--- 
-2.17.0
+then in this section:
 
+Signed-off-by: Kirill A. Shutemov <kirill@shutemov.name>
+Tested-by: Qian Cai <cai@lca.pw>
+
+And now you can add:
+
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
