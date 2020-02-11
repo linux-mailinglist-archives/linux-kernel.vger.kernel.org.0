@@ -2,98 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DC9F159AD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 21:59:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47F5C159ADB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 21:59:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729192AbgBKU70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 15:59:26 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:42117 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728624AbgBKU7Z (ORCPT
+        id S1731942AbgBKU7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 15:59:52 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:46092 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729286AbgBKU7w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 15:59:25 -0500
-Received: by mail-io1-f68.google.com with SMTP id s6so13396135iol.9
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 12:59:25 -0800 (PST)
+        Tue, 11 Feb 2020 15:59:52 -0500
+Received: by mail-oi1-f196.google.com with SMTP id a22so14163572oid.13
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 12:59:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=aBmOqLH1PZiFTOFcGqDZh0Dx5zViJtKjdR8Za6YFAus=;
-        b=RZXwnueiFOQ2Vf+tKDg+B+Uev1it96O0IUJDh9R1bQyR0+ak9Dssh/ddGPvF5lVm3q
-         nmiC1cXE16tJgM3RfZx9lxRF9ZxbRbpq27hm9Il2WxLH2EBSYMZsKZ4F2rHEk1uefYDB
-         mtt5lUNt9nue5gZBaRxGw1FV2a8RaIHeZ06UrLAlgvpOq2R4kRHT8JA0OS4BLetuFuR8
-         JSvJtqbpDT7awWyh/HxqOuwCgrBwF6t+/qB3/OlOSiJkcpGJgtdOutFZlVAvPZZVP5eg
-         kH3Ursuv1/G2DwDFNlDZwCtreOx4DaGPQQOm1mb0zDd3yseu5feQAoZPNz56+dMhTO7/
-         UJDg==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=extxsRRjmkIJZEh/sTfq/VSUaht64zLviDFgNerAR0E=;
+        b=I1xwH6Byix/62gQ54cfQkAhK3Jz6DZUnPEusCbQQ20skEH7t7q1ersOxFM2h8eTjFq
+         W7bs4biU+p5p2rBb8nacmQ+AyuU973vMUnU/taHRlqpu4s2LfDLV9nh68R67/9IHN54V
+         Zh1uALOWVcrlvsNNTZj0JZWfKbx+OG02U4MDSQGMPZxKTRuUDEWL3k7FpR4YqEPKNedQ
+         mbTRld4FShJFNSCJLfhgOHJtcCGpyJIJ05CACfqm36E8Iq18xxlsLL5OWXDS1sXJ/AEq
+         eWX5eMKrKADz9NYuNYEImIqQzMkm5dSAeKK6nzyOMYNcJHbAsQb7Ua1pJrY91i0sa1G7
+         ooQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aBmOqLH1PZiFTOFcGqDZh0Dx5zViJtKjdR8Za6YFAus=;
-        b=QFB+61NR74N57FzdUEm9riHns9RShnLZCB87lQdX1cuQjkal59TVME53859Pj/ZI7f
-         cUVMydK0HlozpD3EerFuuoS+0VJf+Yoj/Glxw2gQmpdr1s15nrj0msFK4A4xfClQGZ6p
-         sm0ffWPCT/b4UndwpaFmtHlq/U4UEFp26lYbeHOHpakEnocEZLoWkzzXu2xhn7UDKIcL
-         OvSm9V07EM7vDs311g8H3pVbGmxID3gsaGll6JI4vc28q/iyR81bKimsX4zQyzmhbJFm
-         LkDGeQSeu6K0Bzfx6/4hW81Xlwgx/EBt439RSwVoyaXcCwZlN64VBH9aKsq8ml+x9L4r
-         pVDA==
-X-Gm-Message-State: APjAAAVHvXFmPjbKRS0p8egkD1TSriHupftiOes6j7D0uMTdAXkUSO1o
-        xZnDjRE1P4aj5TX+NWzUYqTEPqa3gR0=
-X-Google-Smtp-Source: APXvYqxkwPPDOptyox7XmE/lCLxP8AujzfTr+EZ40zj7c/nzlgkdK9x+bGuWaPNnrb+xsIqFfYBqNQ==
-X-Received: by 2002:a05:6638:81:: with SMTP id v1mr16179966jao.143.1581454764728;
-        Tue, 11 Feb 2020 12:59:24 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id h6sm1308495iom.43.2020.02.11.12.59.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Feb 2020 12:59:24 -0800 (PST)
-Subject: Re: [PATCH 3/5] io_uring: fix reassigning work.task_pid from io-wq
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1581450491.git.asml.silence@gmail.com>
- <728f583e7835cf0c74b8dc8fbeddb58970f477a5.1581450491.git.asml.silence@gmail.com>
- <4a08cc5a-2100-3a31-becb-c16592905c86@kernel.dk>
- <e60026f7-8e8f-7133-57e3-762a1d84269b@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <82bef6dc-608e-6fde-44fb-58ee517d234d@kernel.dk>
-Date:   Tue, 11 Feb 2020 13:59:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=extxsRRjmkIJZEh/sTfq/VSUaht64zLviDFgNerAR0E=;
+        b=duHyUSHguPOanrmXcmzIxFfH6bNnvV1qkRCjKkIxo/2tAnUeLT7adTPqhcO5CEf/80
+         wKMpZWL/qg0bpLZ1e/DdbCiuNCNR8hbhMXJ6EpfjRq93VEJXrkZaAw8hRzUXRPz+OQWN
+         4VVZEKVEX4K1a5bAm3Bwff1yhcqnRm3luTVcGTnxAtBWwd6R2irkzzCQK+vAfVMWDKkR
+         GzEzaR1I3CZKIMpt/7WTDvvNaVu1FTKm/C6HNMeU43SW1+iP7VGEU2pctHYi4ErK3HXO
+         eb4IMXthiFU4eTKr15N/lodhGZ0oRfEQbO+i9TU61aUJ/2jq1TkfszvHzfKUSRVh9he0
+         Me8A==
+X-Gm-Message-State: APjAAAVU1kzZYhvUQ35m3ZoaG5JZZcEQ/un2wx4uBRZEHQPeGYmWhQEb
+        QgHxYi+cWAozDLhwHMONV2zVxTYWsrJoAItS/bBXrw==
+X-Google-Smtp-Source: APXvYqy2e6QuQme8tks+nFn6MGTK47SXBGcqgqEabGAFW6zHHoWaB1wrKQLyHPWb+JU7T/jGznd8vWOuaKeaLDE7Ygk=
+X-Received: by 2002:aca:3f54:: with SMTP id m81mr3957419oia.73.1581454791852;
+ Tue, 11 Feb 2020 12:59:51 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <e60026f7-8e8f-7133-57e3-762a1d84269b@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200208193445.27421-1-ira.weiny@intel.com> <20200208193445.27421-8-ira.weiny@intel.com>
+ <20200211080035.GI10776@dread.disaster.area> <20200211201430.GE12866@iweiny-DESK2.sc.intel.com>
+In-Reply-To: <20200211201430.GE12866@iweiny-DESK2.sc.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 11 Feb 2020 12:59:40 -0800
+Message-ID: <CAPcyv4hLTg+1dx2bE2S7sLRK17EP_gT5kutwhyUfVB7Ad8khgw@mail.gmail.com>
+Subject: Re: [PATCH v3 07/12] fs: Add locking for a dynamic DAX state
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/11/20 1:57 PM, Pavel Begunkov wrote:
-> On 11/02/2020 23:21, Jens Axboe wrote:
->> On 2/11/20 1:01 PM, Pavel Begunkov wrote:
->>> If a request got into io-wq context, io_prep_async_work() has already
->>> been called. Most of the stuff there is idempotent with an exception
->>> that it'll set work.task_pid to task_pid_vnr() of an io_wq worker thread
->>>
->>> Do only what's needed, that's io_prep_linked_timeout() and setting
->>> IO_WQ_WORK_UNBOUND.
->>
->> Rest of the series aside, I'm going to fix-up the pid addition to
->> only set if it's zero like the others.
-> 
-> IMO, io_req_work_grab_env() should never be called from io-wq. It'd do nothing
-> good but open space for subtle bugs. And if that's enforced (as done in this
-> patch), it's safe to set @pid multiple times.
+On Tue, Feb 11, 2020 at 12:14 PM Ira Weiny <ira.weiny@intel.com> wrote:
+>
+> On Tue, Feb 11, 2020 at 07:00:35PM +1100, Dave Chinner wrote:
+> > On Sat, Feb 08, 2020 at 11:34:40AM -0800, ira.weiny@intel.com wrote:
+> > > From: Ira Weiny <ira.weiny@intel.com>
+> > >
+> > > DAX requires special address space operations but many other functions
+> > > check the IS_DAX() state.
+> > >
+> > > While DAX is a property of the inode we perfer a lock at the super block
+> > > level because of the overhead of a rwsem within the inode.
+> > >
+> > > Define a vfs per superblock percpu rs semaphore to lock the DAX state
+> >
+> > ????
+>
+> oops...  I must have forgotten to update the commit message when I did the
+> global RW sem.  I implemented the per-SB, percpu rwsem first but it was
+> suggested that the percpu nature of the lock combined with the anticipated
+> infrequent use of the write side made using a global easier.
+>
+> But before I proceed on V4 I'd like to get consensus on which of the 2 locking
+> models to go with.
+>
+>         1) percpu per superblock lock
+>         2) per inode rwsem
+>
+> Depending on my mood I can convince myself of both being performant but the
+> percpu is very attractive because I don't anticipate many changes of state
+> during run time.  OTOH concurrent threads accessing the same file at run time
+> may also be low so there is likely to be little read contention across CPU's on
+> the per-inode lock?
+>
+> Opinions?
 
-I agree, it'd be an issue if we ever did the first iteration through the
-worker. And it'd be nice to make the flow self explanatory in that
-regard.
-
-> Probably, it worth to add the check just to not go through task_pid_vnr()
-> several times.
-
-Good point, that is worth it on its own.
-
--- 
-Jens Axboe
-
+As one who thought a global lock would be reasonable relative to how
+often dax address_space_operations are swapped out (on the order of
+taking cgroup_threadgroup_rwsem for write), I think a per-superblock
+lock is also an ok starting point. We can always go to finer grained
+locking in the future if we see evidence that the benefits of percpu
+are lost to stopping the world at the superblock level.
