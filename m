@@ -2,60 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11841158AF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 08:59:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 768B3158AF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 09:00:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbgBKH7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 02:59:15 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:33252 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727637AbgBKH7O (ORCPT
+        id S1727931AbgBKIAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 03:00:42 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:52470 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727613AbgBKIAl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 02:59:14 -0500
-Received: by mail-vk1-f194.google.com with SMTP id i78so2734402vke.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 23:59:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=IP1qcBtUVW99xkVH2L4lN++bJQ5pAvrdSWHuwzkX3tw=;
-        b=NcrvtxhCH6ZtxyT1lUegl/NqHqHyrBAaFbp4ew67Z1UFIWMU8gzbIDWxKwN03XiD+V
-         B46sMmbJe1PrneDkXFLgB+NwEsQDaap/Tw9K9+B6wOnhiHM8NSKRlUYmrWMQ9Ej7wRCh
-         O98A5/CBQ6yP1H1NUR2NlU/F0M0y+/Dm7KSP9keKs+PyadgxADfcK4FU3vPgtqomz4Sg
-         yg3kYIhZ74r4ASCrAef+lOxZORWbWTyKQDOJxjVIeEJM3NNMEbUC55M9spJ1lOq5aaGh
-         rxlVJXUEtR0j0Zo/OhcW6L0jymAW0DA4FU59skFCY2RcFeqrQOQIO6LjAa/c/ChnEWHB
-         SrjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=IP1qcBtUVW99xkVH2L4lN++bJQ5pAvrdSWHuwzkX3tw=;
-        b=nMUNBYuxctur5pumaQYbZKETp3oq1u5SR8odHVq2Yv5Ny2FWGZNPbXt/XbRSZwsKuo
-         0Mkbylr2Z2GxaUl4zJoWaHadhQOIZQBEm6/+YEKnLWioO9gde0Nr53Css6FTtkMCtGlI
-         tfr8AL/FgUsmsLPXCZOQWc75p1yqoAPG+1v/2GUzhq4wzBR5q1wJkC4jzYoMRTWOV8wR
-         2fxQ4rbfP9qWPfw5oHozyZEFrCodqPObc/82tFVqUhkokj0fwVZ/6cbq/hFCdhv/MzL3
-         rUaDJV7XmXraqa+51CsfPqWWZuckc3wTCtVprTu6HfUQwlZBgU8wGdjvWVznV/mCxxaM
-         Iq9w==
-X-Gm-Message-State: APjAAAUaWlxFt48ZvLJosl/ZpP8HRnou/yYS4uWtBZAKvHA/xPV04vxz
-        j9hKxjtZLSuoUU6S8R38c7qOigtU0yU7eXw0uws=
-X-Google-Smtp-Source: APXvYqwIB7RXr73J6laOd0OFerkXV2LeS4Zo0zmviHWWxOdETjveC2H6wolKCCTGf0r02GNDGLqA94iUcc9h5ziJp2E=
-X-Received: by 2002:ac5:c5c2:: with SMTP id g2mr4061163vkl.82.1581407953044;
- Mon, 10 Feb 2020 23:59:13 -0800 (PST)
+        Tue, 11 Feb 2020 03:00:41 -0500
+Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au [49.179.138.28])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id E14517E80BF;
+        Tue, 11 Feb 2020 19:00:36 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1j1QTE-0006r3-0q; Tue, 11 Feb 2020 19:00:36 +1100
+Date:   Tue, 11 Feb 2020 19:00:35 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     ira.weiny@intel.com
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 07/12] fs: Add locking for a dynamic DAX state
+Message-ID: <20200211080035.GI10776@dread.disaster.area>
+References: <20200208193445.27421-1-ira.weiny@intel.com>
+ <20200208193445.27421-8-ira.weiny@intel.com>
 MIME-Version: 1.0
-Received: by 2002:a05:6102:2424:0:0:0:0 with HTTP; Mon, 10 Feb 2020 23:59:12
- -0800 (PST)
-From:   Fabio verde <fabioverde060@gmail.com>
-Date:   Tue, 11 Feb 2020 08:59:12 +0100
-Message-ID: <CAAPJqJWJ159v2MhQ2AD9KpY7qmTbzU9hJX_ys-21wXj1SE+2YA@mail.gmail.com>
-Subject: PRIVEE
-To:     fabioverde060@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200208193445.27421-8-ira.weiny@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
+        a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8 a=h3PP_tJamRO6jpvV3pwA:9
+        a=WmZtUv9hpVdxJtTz:21 a=_coJ81u7d_13xe0U:21 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good day , my name is Fabio Verde, i sent you a mail and there was no
-response , please confirm that you did get this mail for more details.
+On Sat, Feb 08, 2020 at 11:34:40AM -0800, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
+> 
+> DAX requires special address space operations but many other functions
+> check the IS_DAX() state.
+> 
+> While DAX is a property of the inode we perfer a lock at the super block
+> level because of the overhead of a rwsem within the inode.
+> 
+> Define a vfs per superblock percpu rs semaphore to lock the DAX state
 
-Regards.
+????
 
-Fabio Verde
+> while performing various VFS layer operations.  Write lock calls are
+> provided here but are used in subsequent patches by the file systems
+> themselves.
+> 
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> 
+> ---
+> Changes from V2
+> 
+> 	Rebase on linux-next-08-02-2020
+> 
+> 	Fix locking order
+> 	Change all references from mode to state where appropriate
+> 	add CONFIG_FS_DAX requirement for state change
+> 	Use a static branch to enable locking only when a dax capable
+> 		device has been seen.
+> 
+> 	Move the lock to a global vfs lock
+> 
+> 		this does a few things
+> 			1) preps us better for ext4 support
+> 			2) removes funky callbacks from inode ops
+> 			3) remove complexity from XFS and probably from
+> 			   ext4 later
+> 
+> 		We can do this because
+> 			1) the locking order is required to be at the
+> 			   highest level anyway, so why complicate xfs
+> 			2) We had to move the sem to the super_block
+> 			   because it is too heavy for the inode.
+> 			3) After internal discussions with Dan we
+> 			   decided that this would be easier, just as
+> 			   performant, and with slightly less overhead
+> 			   than in the VFS SB.
+> 
+> 		We also change the functions names to up/down;
+> 		read/write as appropriate.  Previous names were over
+> 		simplified.
+
+This, IMO, is a bit of a train wreck.
+
+This patch has nothing to do with "DAX state", it's about
+serialising access to the aops vector. There should be zero
+references to DAX in this patch at all, except maybe to say
+"switching DAX on dynamically requires atomic switching of address
+space ops".
+
+Big problems I see here:
+
+1. static key to turn it on globally.
+  - just a gross hack around doing it properly with a per-sb
+    mechanism and enbaling it only on filesystems that are on DAX
+    capable block devices.
+  - you're already passing in an inode to all these functions. It's
+    trivial to do:
+
+	if (!inode->i_sb->s_flags & S_DYNAMIC_AOPS)
+		return
+	/* do sb->s_aops_lock manipulation */
+
+2. global lock
+  - OMG!
+  - global lock will cause entire system IO/page fault stalls
+    when someone does recursive/bulk DAX flag modification
+    operations. Per-cpu rwsem Contention on  large systems will be
+    utterly awful.
+  - ext4's use case almost never hits the exclusive lock side of the
+    percpu-rwsem - only when changing the journal mode flag on the
+    inode. And it only affects writeback in progress, so it's not
+    going to have massive concurrency on it like a VFS level global
+    lock has. -> Bad model to follow.
+  - per-sb lock is trivial - see #1 - which limits scope to single
+    filesystem
+  - per-inode rwsem would make this problem go away entirely.
+
+3. If we can use a global per-cpu rwsem, why can't we just use a
+   per-inode rwsem?
+  - locking context rules are the same
+  - rwsem scales pretty damn well for shared ops
+  - no "global" contention problems
+  - small enough that we can put another rwsem in the inode.
+
+4. "inode_dax_state_up_read"
+  - Eye bleeds.
+  - this is about the aops structure serialisation, not dax.
+  - The name makes no sense in the places that it has been added.
+
+5. We already have code that does almost exactly what we need: the
+   superblock freezing infrastructure.
+  - freezing implements a "hold operations on this superblock until
+    further notice" model we can easily follow.
+  - sb_start_write/sb_end_write provides a simple API model and a
+    clean, clear and concise naming convention we can use, too.
+
+
+Really, I'm struggling to understand how we got to "global locking
+that stops the world" from "need to change per-inode state
+atomically". Can someone please explain to me why this patch isn't
+just a simple set of largely self-explanitory functions like this:
+
+XX_start_aop()
+XX_end_aop()
+
+XX_lock_aops()
+XX_switch_aops(aops)
+XX_unlock_aops()
+
+where "XX" is "sb" or "inode" depending on what locking granularity
+is used...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
