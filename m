@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FE4D158EE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:48:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38451158EEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:48:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728678AbgBKMsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 07:48:00 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:46029 "EHLO
+        id S1728891AbgBKMsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 07:48:13 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:46033 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728636AbgBKMr6 (ORCPT
+        with ESMTP id S1728673AbgBKMsB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 07:47:58 -0500
+        Tue, 11 Feb 2020 07:48:01 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1j1UxF-0007bT-Jl; Tue, 11 Feb 2020 13:47:53 +0100
+        id 1j1UxG-0007bw-K8; Tue, 11 Feb 2020 13:47:54 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2F2D91C2018;
-        Tue, 11 Feb 2020 13:47:48 +0100 (CET)
-Date:   Tue, 11 Feb 2020 12:47:47 -0000
-From:   "tip-bot2 for Suren Baghdasaryan" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 135B31C201B;
+        Tue, 11 Feb 2020 13:47:49 +0100 (CET)
+Date:   Tue, 11 Feb 2020 12:47:48 -0000
+From:   "tip-bot2 for Valentin Schneider" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/urgent] sched/psi: Fix OOB write when writing 0 bytes to
- PSI files
-Cc:     Suren Baghdasaryan <surenb@google.com>,
+Subject: [tip: sched/core] sched/core: Remove for_each_lower_domain()
+Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, x86 <x86@kernel.org>,
+        Quentin Perret <qperret@google.com>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200203212216.7076-1-surenb@google.com>
-References: <20200203212216.7076-1-surenb@google.com>
+In-Reply-To: <20200206191957.12325-4-valentin.schneider@arm.com>
+References: <20200206191957.12325-4-valentin.schneider@arm.com>
 MIME-Version: 1.0
-Message-ID: <158142526792.411.11655053168783625036.tip-bot2@tip-bot2>
+Message-ID: <158142526882.411.9814224085429490758.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,42 +48,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the sched/urgent branch of tip:
+The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     6fcca0fa48118e6d63733eb4644c6cd880c15b8f
-Gitweb:        https://git.kernel.org/tip/6fcca0fa48118e6d63733eb4644c6cd880c15b8f
-Author:        Suren Baghdasaryan <surenb@google.com>
-AuthorDate:    Mon, 03 Feb 2020 13:22:16 -08:00
+Commit-ID:     afbcf99785a580e2cc089646e971deceb31a18b1
+Gitweb:        https://git.kernel.org/tip/afbcf99785a580e2cc089646e971deceb31a18b1
+Author:        Valentin Schneider <valentin.schneider@arm.com>
+AuthorDate:    Thu, 06 Feb 2020 19:19:56 
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 11 Feb 2020 13:00:02 +01:00
+CommitterDate: Tue, 11 Feb 2020 13:03:35 +01:00
 
-sched/psi: Fix OOB write when writing 0 bytes to PSI files
+sched/core: Remove for_each_lower_domain()
 
-Issuing write() with count parameter set to 0 on any file under
-/proc/pressure/ will cause an OOB write because of the access to
-buf[buf_size-1] when NUL-termination is performed. Fix this by checking
-for buf_size to be non-zero.
+The last remaining user of this macro has just been removed, get rid of it.
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Suggested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Link: https://lkml.kernel.org/r/20200203212216.7076-1-surenb@google.com
+Reviewed-by: Quentin Perret <qperret@google.com>
+Link: https://lkml.kernel.org/r/20200206191957.12325-4-valentin.schneider@arm.com
 ---
- kernel/sched/psi.c | 3 +++
- 1 file changed, 3 insertions(+)
+ kernel/sched/sched.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index db7b50b..38ccd49 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -1199,6 +1199,9 @@ static ssize_t psi_write(struct file *file, const char __user *user_buf,
- 	if (static_branch_likely(&psi_disabled))
- 		return -EOPNOTSUPP;
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 0844e81..878910e 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1337,8 +1337,6 @@ extern void sched_ttwu_pending(void);
+ 	for (__sd = rcu_dereference_check_sched_domain(cpu_rq(cpu)->sd); \
+ 			__sd; __sd = __sd->parent)
  
-+	if (!nbytes)
-+		return -EINVAL;
-+
- 	buf_size = min(nbytes, sizeof(buf));
- 	if (copy_from_user(buf, user_buf, buf_size))
- 		return -EFAULT;
+-#define for_each_lower_domain(sd) for (; sd; sd = sd->child)
+-
+ /**
+  * highest_flag_domain - Return highest sched_domain containing flag.
+  * @cpu:	The CPU whose highest level of sched domain is to
