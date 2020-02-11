@@ -2,98 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7F02158CFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:56:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46481158D07
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:56:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728463AbgBKKz6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 05:55:58 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:44206 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727805AbgBKKz5 (ORCPT
+        id S1728495AbgBKK4e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 05:56:34 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:60260 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727884AbgBKK4d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 05:55:57 -0500
-Received: by mail-il1-f193.google.com with SMTP id s85so3028112ill.11
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 02:55:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=/ip/rGfkF7G/a6O30OvCDbXytusxYnQXnVEqCr+9FAQ=;
-        b=k6I0EA0094zzaaYZwbZeS99DaTzpQusIutEmeqRj1UtEdjv0Vh3LOf6XO1D0Bm/peU
-         5D5r3PKLynXB0MvhlV0ILEuPXhlx0Z/pp7Zu4XZGdcRfCKrwOliMh7ZPi4sedDdBcid/
-         zqQBSheUtB8mg8pvzIlBj7yOuJb19GWr7//Kk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=/ip/rGfkF7G/a6O30OvCDbXytusxYnQXnVEqCr+9FAQ=;
-        b=WSTUef2nJ+YZu5t3cNLLdL8R+vjHtsibalI+ijj8hm/bE+V3NCCAi+iqcGpBuqZgR0
-         ivKY3KfWmG8rtxYCrBUlHs8t+5IM35lcB85xVrmrhZkVzOKZOdRvrda6VQchMfDHT1Q3
-         /Dad8RkIMh1d4T8nO4erOLn2zS+ksbXPfm29DVKobR0pDYRLy2EGX8B2tLOwOtao9zr8
-         y01BIiHjGxKpbF/ZOcdKv8HwDZioiw8U9wah5axNFY0DksKukQoRzwcFiEWGv/jLcw8w
-         Ab4Yhu+cZ7NkQZg8Av3R6Uv/kx5Jgu3A3jkElr9nO2ehh+2j03ORxW1fvQDiE3eIrb9O
-         EbEQ==
-X-Gm-Message-State: APjAAAVMvEoh7HUJxgDH4BxXcgXyDl/0D8StsxijKu+vUkb5hOuIDic3
-        7OSWff1wZQ4ug+hp86tbryvXGv1sqhYZ897jRRX+cA==
-X-Google-Smtp-Source: APXvYqyG1RSF3lCIDiXWjx7JsJ8UmF3VhDB5MzH7ll4xhEJWj8zjGQdeG4rb9OxDTACRSBDR6cbzpWfO3/2tQV7BEV8=
-X-Received: by 2002:a92:5d8d:: with SMTP id e13mr5633269ilg.285.1581418557300;
- Tue, 11 Feb 2020 02:55:57 -0800 (PST)
+        Tue, 11 Feb 2020 05:56:33 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01BAuKJR011415;
+        Tue, 11 Feb 2020 11:56:25 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=cV1Wais5QMnCi8AYrjauwcQtc7x8Akg7kC3DCHNTrfI=;
+ b=cKJVTis8lYfFtJmiAwNtEstgu8ZuVu2qme2/jqgNfi7pG9/H8KjgeBt4JOPrcc/790wY
+ ijOpUeKHTdkXZiW4s2GpQ5TARF1uFND/zPKxeJVMfGH/ryd4E4nglrEkvomKjcIfQ8uk
+ NpGvOdYh0TnLxQYM7CLRDaaaz6ajHx3kv3l4loO3SAabEbPQEctkz8x6EQLXSmPLbPCv
+ WwGQUUXgqs/50JLQEHG9Ho8g5q+ouF1s7IdkRvtR033cAT0Cpqu59gjz81I910V1mZ2x
+ mBA1tHHsuktI3Gbi2QXPZE6za+GsD7erMLutX7W/4mdOMHvDKiNhlqVYISlpZIpGqecx PQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2y1ud9m85f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Feb 2020 11:56:25 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A7594100050;
+        Tue, 11 Feb 2020 11:56:20 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 96D282AEAB8;
+        Tue, 11 Feb 2020 11:56:20 +0100 (CET)
+Received: from localhost (10.75.127.44) by SFHDAG5NODE3.st.com (10.75.127.15)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 11 Feb 2020 11:56:20
+ +0100
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     <jic23@kernel.org>
+CC:     <vilhelm.gray@gmail.com>, <alexandre.torgue@st.com>,
+        <mcoquelin.stm32@gmail.com>, <benjamin.gaignard@st.com>,
+        <fabrice.gasnier@st.com>, <linux-iio@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] counter: stm32-timer-cnt: remove iio headers
+Date:   Tue, 11 Feb 2020 11:56:06 +0100
+Message-ID: <1581418566-31954-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <CAJfpegtUAHPL9tsFB85ZqjAfy0xwz7ATRcCtLbzFBo8=WnCvLw@mail.gmail.com>
- <20200209080918.1562823-1-michael+lkml@stapelberg.ch>
-In-Reply-To: <20200209080918.1562823-1-michael+lkml@stapelberg.ch>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 11 Feb 2020 11:55:46 +0100
-Message-ID: <CAJfpegv4iL=bW3TXP3F9w1z6-LUox8KiBmw7UBcWE-0jiK0YsA@mail.gmail.com>
-Subject: Re: Still a pretty bad time on 5.4.6 with fuse_request_end.
-To:     michael+lkml@stapelberg.ch
-Cc:     fuse-devel <fuse-devel@lists.sourceforge.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kyle Sanderson <kyle.leet@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-11_03:2020-02-10,2020-02-11 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 9, 2020 at 9:09 AM <michael+lkml@stapelberg.ch> wrote:
->
-> From: Michael Stapelberg <michael+lkml@stapelberg.ch>
->
-> Hey,
->
-> I recently ran into this, too. The symptom for me is that processes using=
- the
-> affected FUSE file system hang indefinitely, sync(2) system calls hang
-> indefinitely, and even triggering an abort via echo 1 >
-> /sys/fs/fuse/connections/*/abort does not get the file system unstuck (th=
-ere is
-> always 1 request still pending). Only removing power will get the machine
-> unstuck.
->
-> I=E2=80=99m triggering this when building packages for https://distr1.org=
-/, which uses a
-> FUSE daemon (written in Go using the jacobsa/fuse package) to provide pac=
-kage
-> contents.
->
-> I bisected the issue to commit
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
-/?id=3D2b319d1f6f92a4ced9897678113d176ee16ae85d
->
-> With that commit, I run into a kernel oops within =E2=89=881 minute after=
- starting my
-> batch build. With the commit before, I can batch build for many minutes w=
-ithout
-> issues.
+The stm32-timer-cnt driver doesn't use the iio interface. The iio headers
+aren't relevant and can be removed as reported by William in [1].
+With this change, mod_devicetable.h needs to be added to define the
+'of_device_id' struct.
 
-Pretty weird.   I'm not seeing how this could change behavior, as the
-args->end value is not changed after being initialized, and so moving
-the test later should not make a difference.
+[1] https://lkml.org/lkml/2020/2/10/1516
 
-Could you print out the complete contents of req->args?
+Reported-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+---
+Note this applies on top of:
+- "counter: stm32-timer-cnt: add power management support"
+---
+ drivers/counter/stm32-timer-cnt.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks,
-Miklos
+diff --git a/drivers/counter/stm32-timer-cnt.c b/drivers/counter/stm32-timer-cnt.c
+index 50496f4..ef2a974 100644
+--- a/drivers/counter/stm32-timer-cnt.c
++++ b/drivers/counter/stm32-timer-cnt.c
+@@ -8,9 +8,8 @@
+  *
+  */
+ #include <linux/counter.h>
+-#include <linux/iio/iio.h>
+-#include <linux/iio/types.h>
+ #include <linux/mfd/stm32-timers.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+-- 
+2.7.4
+
