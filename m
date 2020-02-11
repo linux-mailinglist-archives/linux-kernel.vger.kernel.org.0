@@ -2,111 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E5A3159A1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:59:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE78C159A34
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 21:05:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730911AbgBKT7Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 14:59:25 -0500
-Received: from mga01.intel.com ([192.55.52.88]:5496 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727955AbgBKT7Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 14:59:24 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 11:59:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="251661231"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga002.jf.intel.com with ESMTP; 11 Feb 2020 11:59:24 -0800
-Received: from [10.251.4.129] (kliang2-mobl.ccr.corp.intel.com [10.251.4.129])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id BEEB658045B;
-        Tue, 11 Feb 2020 11:59:22 -0800 (PST)
-Subject: =?UTF-8?Q?Re=3a_=5bPATCH_v5_3/3=5d_perf_x86=3a_Exposing_an_Uncore_u?=
- =?UTF-8?Q?nit_to_PMON_for_Intel_Xeon=c2=ae_server_platform?=
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Andi Kleen <ak@linux.intel.com>
-Cc:     roman.sudarikov@linux.intel.com, peterz@infradead.org,
-        mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        eranian@google.com, bgregg@netflix.com, alexander.antonov@intel.com
-References: <20200211161549.19828-1-roman.sudarikov@linux.intel.com>
- <20200211161549.19828-4-roman.sudarikov@linux.intel.com>
- <20200211171544.GA1933705@kroah.com>
- <20200211184200.GA302770@tassilo.jf.intel.com>
- <20200211185759.GA1941673@kroah.com>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <25dca8dd-c52d-676d-ffe4-90f3a6ddc915@linux.intel.com>
-Date:   Tue, 11 Feb 2020 14:59:21 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S1730278AbgBKUFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 15:05:43 -0500
+Received: from gateway20.websitewelcome.com ([192.185.51.6]:45590 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727762AbgBKUFm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 15:05:42 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id E0959400CD89E
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 12:27:55 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 1bPVj5eAKEfyq1bPVjFdRM; Tue, 11 Feb 2020 13:41:29 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=zy3tdOGXiMDwDaFgGp+R4wrqpQG0fvEKRGsyvX+r27c=; b=VhbPAVK4RebZmfDEA0qCOmyGwn
+        41oYOomcCfTjKF5urio79DEo/GywqImqPisIH/vyiPOsD6y72DdVz/R4jTJWKx5c1HRz6d/UyKCAR
+        Onz3ZAZqzW13WfGGJ5F5bZlgbJ69w1j0feAS8G9mMnmwmjmtxZh3+fsjGHRfS8L9P469q5hg+vJ8+
+        QQY5Q67iWw+jPnJpzHaJPnpmpI2Yf/xTg7xyfgeZArDbdxakwCl3IWtQFaskBW/PFR4DBKrYg2P4b
+        zGI+dy1Nt7JNb8/Pw5j0o+gZV2KX3P9bH6Yh8FKsOhdE3faqXpbGPj5T8mM1qutk8mLXsLLD+dGlU
+        kT+SKJNw==;
+Received: from [200.68.140.36] (port=6133 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j1bPU-001Jy8-8X; Tue, 11 Feb 2020 13:41:28 -0600
+Date:   Tue, 11 Feb 2020 13:44:03 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ALSA: hda/ca0132 - Replace zero-length array with
+ flexible-array member
+Message-ID: <20200211194403.GA10318@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <20200211185759.GA1941673@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.140.36
+X-Source-L: No
+X-Exim-ID: 1j1bPU-001Jy8-8X
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [200.68.140.36]:6133
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 20
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-On 2/11/2020 1:57 PM, Greg KH wrote:
-> On Tue, Feb 11, 2020 at 10:42:00AM -0800, Andi Kleen wrote:
->> On Tue, Feb 11, 2020 at 09:15:44AM -0800, Greg KH wrote:
->>> On Tue, Feb 11, 2020 at 07:15:49PM +0300, roman.sudarikov@linux.intel.com wrote:
->>>> +static ssize_t skx_iio_mapping_show(struct device *dev,
->>>> +				struct device_attribute *attr, char *buf)
->>>> +{
->>>> +	struct pmu *pmu = dev_get_drvdata(dev);
->>>> +	struct intel_uncore_pmu *uncore_pmu =
->>>> +		container_of(pmu, struct intel_uncore_pmu, pmu);
->>>> +
->>>> +	struct dev_ext_attribute *ea =
->>>> +		container_of(attr, struct dev_ext_attribute, attr);
->>>> +	long die = (long)ea->var;
->>>> +
->>>> +	return sprintf(buf, "0000:%02x\n", skx_iio_stack(uncore_pmu, die));
->>>
->>> If "0000:" is always the "prefix" of the output of this file, why have
->>> it at all as you always know it is there?
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertenly introduced[3] to the codebase from now on.
 
+This issue was found with the help of Coccinelle.
 
-I think Roman only test with BIOS configured as single-segment. So he 
-hard-code the segment# here.
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 
-I'm not sure if Roman can do some test with multiple-segment BIOS. If 
-not, I think we should at least print a warning here.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ sound/pci/hda/patch_ca0132.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->>>
->>> What is ever going to cause that to change?
->>
->> I think it's just to make it a complete PCI address.
-> 
-> Is that what this really is?  If so, it's not a "complete" pci address,
-> is it?  If it is, use the real pci address please.
+diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
+index e1ebc6d5f382..ab5632502206 100644
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -2708,7 +2708,7 @@ struct dsp_image_seg {
+ 	u32 magic;
+ 	u32 chip_addr;
+ 	u32 count;
+-	u32 data[0];
++	u32 data[];
+ };
+ 
+ static const u32 g_magic_value = 0x4c46584d;
+-- 
+2.25.0
 
-I think we don't need a complete PCI address here. The attr is to 
-disclose the mapping information between die and PCI BUS. Segment:BUS 
-should be good enough.
-
-Thanks,
-Kan
-
-> 
->> In theory it might be different on a complex multi node system with
->> custom interconnect and multiple PCI segments, but that would need code
->> changes too.
->>
->> This version of the patchkit only supports standard SKX systems
->> at this point.
-> 
-> I have no idea what that means, please translate for non-Intel people :)
-> 
-> greg k-h
-> 
