@@ -2,151 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2AE5158909
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 04:50:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C07715890E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 04:52:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727921AbgBKDua (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 22:50:30 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37047 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727045AbgBKDua (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 22:50:30 -0500
-Received: by mail-pf1-f193.google.com with SMTP id p14so4766066pfn.4
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 19:50:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=F0U52WoOTmznpmVQlips03nRcDHW124eA6wJkCew2vE=;
-        b=NL+ktiBPYYZ8zpXButlfJWwqcrHceS7f+3rgqCXGxa4b1J9sQcm+Izzs3jSMbuLvXS
-         wmZgfKzkymB752daqLQRXYSSjmjcQfqTQrQArmhNuSj0WYHexB1zhHZLDkXM6M8Zbb7u
-         sRy+i6OXluZ43OTQb2U6TD6FMmvXPMQ0LVEwOJMJRRttU4yMnU8PxWoXIP6Zty0EcqU3
-         QdM13bpXtf0j9aYF4TilBLL8yolnqqpzRrkwUGTeP5EKUW1JROJDxM64aPrOV7ABl3kd
-         yAdZ3WIeMLEoFeLEGUNBkb24Lq/S1gR1oDNwrIoT1eYh40wdI5STHbWhedsJ9tQ7kRXT
-         FmLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=F0U52WoOTmznpmVQlips03nRcDHW124eA6wJkCew2vE=;
-        b=g93i8BHMGwHMYhNAcQTc8DPB3miD/zjvwpr7IGg1gLdleI/5L42jJ0xE8N1adNXoF0
-         ooNxORrDUlkZhphiEZbGTbNRBhvouMRVdA4PFk4REETMPCmAR0x/7FZBbVwqN8rOly48
-         khotryqHcYPXeFOm2VDKXxGL6opaBexJju7ujYV/FD+MmRhJ6PmglxgKDofw5MpGTu8w
-         7DI3a7faHQrE9rxw34+0bh2CteGFOh5+1K/uDl27B6BdgmN779ZLOYTF37ESsIZx+/bl
-         696fa9TkMf2p9/H/nPxTapPAZMO5XuoVLzJ5NkIv/6Szeak8trFtONiE/RHOOGV2lgGb
-         tZpQ==
-X-Gm-Message-State: APjAAAVSelhViM/hO7lqTIOk/3EZ+d7wDMZRZtfxoyfnAE3YgCZ4002B
-        yJD2Pd8I4mRRu6VsKbVt0lAC
-X-Google-Smtp-Source: APXvYqzKmjTxhZKI1zpyKOREnV/LDVQAEKBbMyHrXGkxmtbsTL98gQk3MjS2BVFjI386gOomzrBYAg==
-X-Received: by 2002:aa7:9218:: with SMTP id 24mr1188856pfo.145.1581393029174;
-        Mon, 10 Feb 2020 19:50:29 -0800 (PST)
-Received: from Mani-XPS-13-9360 ([2409:4072:638b:7653:754d:196d:c455:1f88])
-        by smtp.gmail.com with ESMTPSA id e16sm1513040pgk.77.2020.02.10.19.50.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Feb 2020 19:50:28 -0800 (PST)
-Date:   Tue, 11 Feb 2020 09:20:20 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Chris Lew <clew@codeaurora.org>
-Cc:     Jakub Kicinski <kuba@kernel.org>, gregkh@linuxfoundation.org,
-        arnd@arndb.de, smohanad@codeaurora.org, jhugo@codeaurora.org,
-        kvalo@codeaurora.org, bjorn.andersson@linaro.org,
-        hemantk@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 14/16] net: qrtr: Add MHI transport layer
-Message-ID: <20200211035020.GA3358@Mani-XPS-13-9360>
-References: <20200131135009.31477-1-manivannan.sadhasivam@linaro.org>
- <20200131135009.31477-15-manivannan.sadhasivam@linaro.org>
- <20200203101225.43bd27bc@cakuba.hsd1.ca.comcast.net>
- <20200204081914.GB7452@Mani-XPS-13-9360>
- <53018abf-4bc9-1ddb-0be5-a9a3b9871a33@codeaurora.org>
+        id S1727982AbgBKDwo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 22:52:44 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9720 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727800AbgBKDwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 22:52:44 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 0293FC4337C545197046;
+        Tue, 11 Feb 2020 11:52:42 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Tue, 11 Feb 2020
+ 11:52:33 +0800
+From:   yu kuai <yukuai3@huawei.com>
+To:     <axboe@kernel.dk>, <ming.lei@redhat.com>
+CC:     <yukuai3@huawei.com>, <yi.zhang@huawei.com>,
+        <zhangxiaoxu5@huawei.com>, <luoshijie1@huawei.com>,
+        <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] block: rename 'q->debugfs_dir' in blk_unregister_queue()
+Date:   Tue, 11 Feb 2020 11:51:37 +0800
+Message-ID: <20200211035137.19454-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <53018abf-4bc9-1ddb-0be5-a9a3b9871a33@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chris,
+syzbot is reporting use after free bug in debugfs_remove[1].
 
-On Thu, Feb 06, 2020 at 04:14:19PM -0800, Chris Lew wrote:
-> 
-> On 2/4/2020 12:19 AM, Manivannan Sadhasivam wrote:
-> > Hi Jakub,
-> > 
-> > On Mon, Feb 03, 2020 at 10:12:25AM -0800, Jakub Kicinski wrote:
-> > > On Fri, 31 Jan 2020 19:20:07 +0530, Manivannan Sadhasivam wrote:
-> > > > +/* From QRTR to MHI */
-> > > > +static void qcom_mhi_qrtr_ul_callback(struct mhi_device *mhi_dev,
-> > > > +				      struct mhi_result *mhi_res)
-> > > > +{
-> > > > +	struct qrtr_mhi_dev *qdev = dev_get_drvdata(&mhi_dev->dev);
-> > > > +	struct qrtr_mhi_pkt *pkt;
-> > > > +	unsigned long flags;
-> > > > +
-> > > > +	spin_lock_irqsave(&qdev->ul_lock, flags);
-> > > > +	pkt = list_first_entry(&qdev->ul_pkts, struct qrtr_mhi_pkt, node);
-> > > > +	list_del(&pkt->node);
-> > > > +	complete_all(&pkt->done);
-> > > > +
-> > > > +	kref_put(&pkt->refcount, qrtr_mhi_pkt_release);
-> > > Which kref_get() does this pair with?
-> > > 
-> > > Looks like qcom_mhi_qrtr_send() will release a reference after
-> > > completion, too.
-> > > 
-> > Yikes, there is some issue here...
-> > 
-> > Acutally the issue is not in what you referred above but the overall kref
-> > handling itself. Please see below.
-> > 
-> > kref_put() should be present in qcom_mhi_qrtr_ul_callback() as it will
-> > decrement the refcount which got incremented in qcom_mhi_qrtr_send(). It
-> > should be noted that kref_init() will fix the refcount to 1 and kref_get() will
-> > increment to 2. So for properly releasing the refcount to 0, we need to call
-> > kref_put() twice.
-> > 
-> > So if all goes well, the refcount will get decremented twice in
-> > qcom_mhi_qrtr_ul_callback() as well as in qcom_mhi_qrtr_send() and we are good.
-> > 
-> > But, if the transfer has failed ie., when qcom_mhi_qrtr_ul_callback() doesn't
-> > get called, then we are leaking the refcount. I need to rework the kref handling
-> > code in next iteration.
-> > 
-> > Thanks for triggering this!
-> > 
-> > Regards,
-> > Mani
-> > 
-> > > > +	spin_unlock_irqrestore(&qdev->ul_lock, flags);
-> > > > +}
-> 
-> Hi Mani,
-> 
-> I'm not sure if this was changed in your patches but MHI is supposed to give a
-> ul_callback() for any packet that is successfully queued. In the case of the
-> transfer failing, the ul_callback() should still be called so there should
-> be no refcount leaking. It is an essential assumption I made, if that no longer
-> holds true then the entire driver needs to be reworked.
-> 
+This is because in request_queue, 'q->debugfs_dir' and
+'q->blk_trace->dir' could be the same dir. And in __blk_release_queue(),
+blk_mq_debugfs_unregister() will remove everything inside the dir.
 
-Your assumption is correct. Only when the packet gets queued into the transfer
-ring, the ul_xfer_cb will be called irrespective of the transfer state (success
-or failure). But when the mhi_queue_transfer() returns even before queuing any
-packet, then we need to decrease the refcount in the error path.
+With futher investigation of the reporduce repro, the problem can be
+reporduced by following procedure:
 
-Please correct me if I'm wrong.
+1. LOOP_CTL_ADD, create a request_queue q1, blk_mq_debugfs_register() will
+create the dir.
+2. LOOP_CTL_REMOVE, blk_release_queue() will add q1 to release queue.
+3. LOOP_CTL_ADD, create another request_queue q2,blk_mq_debugfs_register()
+will fail because the dir aready exist.
+4. BLKTRACESETUP, create two files(msg and dropped) inside the dir.
+5. call __blk_release_queue() for q1, debugfs_remove_recursive() will
+delete the files created in step 4.
+6. LOOP_CTL_REMOVE, blk_release_queue() will add q2 to release queue.
+And when __blk_release_queue() is called for q2, blk_trace_shutdown() will
+try to release the two files created in step 4, wich are aready released
+in step 5.
 
-Thanks,
-Mani
+|thread1		  |kworker	             |thread2               |
+| ----------------------- | ------------------------ | -------------------- |
+|loop_control_ioctl       |                          |                      |
+| loop_add                |                          |                      |
+|  blk_mq_debugfs_register|                          |                      |
+|   debugfs_create_dir    |                          |                      |
+|loop_control_ioctl       |                          |                      |
+| loop_remove		  |                          |                      |
+|  blk_release_queue      |                          |                      |
+|   schedule_work         |                          |                      |
+|			  |			     |loop_control_ioctl    |
+|			  |			     | loop_add             |
+|			  |			     |  ...                 |
+|			  |			     |blk_trace_ioctl       |
+|			  |			     | __blk_trace_setup    |
+|			  |			     |   debugfs_create_file|
+|			  |__blk_release_queue       |                      |
+|			  | blk_mq_debugfs_unregister|                      |
+|			  |  debugfs_remove_recursive|                      |
+|			  |			     |loop_control_ioctl    |
+|			  |			     | loop_remove          |
+|			  |			     |  ...                 |
+|			  |__blk_release_queue       |                      |
+|			  | blk_trace_shutdown       |                      |
+|			  |  debugfs_remove          |                      |
 
-> Thanks,
-> Chris
-> 
-> -- 
-> 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
+commit dc9edc44de6c ("block: Fix a blk_exit_rl() regression") pushed the
+final release of request_queue to a workqueue, so, when loop_add() is
+called again(step 3), __blk_release_queue() might not been called yet,
+which causes the problem.
+
+Fix the problem by renaming 'q->debugfs_dir' in blk_unregister_queue().
+
+[1] https://syzkaller.appspot.com/bug?extid=903b72a010ad6b7a40f2
+References: CVE-2019-19770
+Fixes: commit dc9edc44de6c ("block: Fix a blk_exit_rl() regression")
+Reported-by: syzbot <syz...@syzkaller.appspotmail.com>
+Signed-off-by: yu kuai <yukuai3@huawei.com>
+---
+ block/blk-sysfs.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+index fca9b158f4a0..69d28b3f52d0 100644
+--- a/block/blk-sysfs.c
++++ b/block/blk-sysfs.c
+@@ -11,6 +11,7 @@
+ #include <linux/blktrace_api.h>
+ #include <linux/blk-mq.h>
+ #include <linux/blk-cgroup.h>
++#include <linux/debugfs.h>
+ 
+ #include "blk.h"
+ #include "blk-mq.h"
+@@ -1011,6 +1012,33 @@ int blk_register_queue(struct gendisk *disk)
+ }
+ EXPORT_SYMBOL_GPL(blk_register_queue);
+ 
++/*
++ * blk_prepare_release_queue - rename q->debugfs_dir
++ * @q: request_queue of which the dir to be renamed belong to.
++ *
++ * Because the final release of request_queue is in a workqueue, the
++ * cleanup might not been finished yet while the same device start to
++ * create. It's not correct if q->debugfs_dir still exist while trying
++ * to create a new one.
++ */
++static struct dentry *blk_prepare_release_queue(struct request_queue *q)
++{
++	struct dentry *new = NULL;
++	char name[DNAME_INLINE_LEN];
++	int i = 0;
++
++	if (IS_ERR_OR_NULL(q->debugfs_dir))
++		return q->debugfs_dir;
++
++	while (new == NULL) {
++		sprintf(name, "ready_to_remove_%d", i++);
++		new = debugfs_rename(blk_debugfs_root, q->debugfs_dir,
++				     blk_debugfs_root, name);
++	}
++
++	return new;
++}
++
+ /**
+  * blk_unregister_queue - counterpart of blk_register_queue()
+  * @disk: Disk of which the request queue should be unregistered from sysfs.
+@@ -1039,6 +1067,7 @@ void blk_unregister_queue(struct gendisk *disk)
+ 	mutex_unlock(&q->sysfs_lock);
+ 
+ 	mutex_lock(&q->sysfs_dir_lock);
++	q->debugfs_dir = blk_prepare_release_queue(q);
+ 	/*
+ 	 * Remove the sysfs attributes before unregistering the queue data
+ 	 * structures that can be modified through sysfs.
+-- 
+2.17.2
+
