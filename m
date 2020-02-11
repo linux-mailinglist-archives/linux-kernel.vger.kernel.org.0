@@ -2,128 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0F97159A7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 21:26:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C33D159A85
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 21:29:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731114AbgBKU0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 15:26:43 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:33027 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728918AbgBKU0n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 15:26:43 -0500
-Received: by mail-oi1-f193.google.com with SMTP id q81so14139748oig.0;
-        Tue, 11 Feb 2020 12:26:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8xXHirnYMsfW42qWffCZKCgeTYoQTR/f/eFrssIvcBc=;
-        b=S3vxb9w3RWHDDEzilj4NQtbOUARTaH1lr+ujyEc2cUA4GRiqYAZz+pZX7j7X1TijVP
-         aS5OKS/lNuJ4cLs6ntKVetezUVStwUoZW85DrzOMr4WCRRViu/bfQjPjLK6pVtko3xz9
-         LitC/zBWxG0mvqvUHY0TLMpzpuPJEZarQpBdE9hdLYBvYD60KoSch9BY/BUBtifH7PJb
-         o4soU9961YGI2+DTu2Onfeiwjh5vzuJgpxMwgp3jd+obzcSUaaaLt2y8D0Ehq3lyuRd8
-         9b9zgIeA4sN9qNQ/RhFgL/+w0WEeKOl8keMif/a/IT3EWC7kAFtM31ZojwMpez7gTvM7
-         6txw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8xXHirnYMsfW42qWffCZKCgeTYoQTR/f/eFrssIvcBc=;
-        b=ZgMm1heamQyFs28/zEFiGHXQXGRT4QxWxqLqTpyJrOh8gaLBfR1OK/pXdFxkW4LTPA
-         qUwFe6o9F5cjF61pyLpL0g7fVlv9PBsYctiBhm9HXm3bxUmjpIMzeoRahFdnBVfkZ7D7
-         A1FYI/QrohwVNrsH6ys4gMXbYRbgyall57FOrHfbqtIQjG0aH3YAniWkDNVY9a6uMw5+
-         WpA9WU5z/wwSvpujpsZ2ZmWu43rsJDuFMilAnEcpWbAJmo1HVQQsqQMsIFy8QwCkRAdo
-         pZWgpDL1n5NONcJloZovX1Bf+wD+9gVxipPOYH5i+aVbv+Rs6hfcVDxWkLcimrdDMTRe
-         VlhQ==
-X-Gm-Message-State: APjAAAV7yOG9Ze81QunG1xNsMD60/oRevR3PDqbB8EMnvDoEJzye6dhR
-        FaLAYGbDuxeiOQDbkyniVDwlZNYcZtM=
-X-Google-Smtp-Source: APXvYqwkLrD/lcZdWyvfZL+xRXLTYRLL+YSpy1Pi9PDEQeB2T6ELFnW6anz5shH/513wcRpK8HEPQg==
-X-Received: by 2002:aca:cf12:: with SMTP id f18mr4119986oig.81.1581452802362;
-        Tue, 11 Feb 2020 12:26:42 -0800 (PST)
-Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id 17sm1567260oty.48.2020.02.11.12.26.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Feb 2020 12:26:41 -0800 (PST)
-Date:   Tue, 11 Feb 2020 13:26:40 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Vasily Gorbik <gor@linux.ibm.com>
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: Re: -Wtautological-constant-compare in arch/s390/include/asm/page.h
-Message-ID: <20200211202640.GA12483@ubuntu-m2-xlarge-x86>
-References: <20200208125714.GA9164@ubuntu-x2-xlarge-x86>
- <1f54ae4c-8748-496b-0833-80749d8d4f6c@de.ibm.com>
- <your-ad-here.call-01581426089-ext-6170@work.hours>
+        id S1731816AbgBKU3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 15:29:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60066 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728019AbgBKU3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 15:29:35 -0500
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0566F20842;
+        Tue, 11 Feb 2020 20:29:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581452975;
+        bh=050Spu/rOU3M2mOId8IXyEhwRlEOjhxlUycw+DTlrAU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LefOiRP31zOt17a/0mZeErAs3SLjX6rxUajiE6zk+ZHw5rNpW0kPYozl2m3vp2OvQ
+         HTUuTEX4/6m9nO8mHTctSbXZ+j7kHj5fdynX4FmZfVJsBmiKpM6eIPUkSXdnnXoY6H
+         o3er5cfpYWlylCbvpwchBWOog+/g/IfGeFIzw2Ro=
+Received: by mail-qv1-f43.google.com with SMTP id y8so5666231qvk.6;
+        Tue, 11 Feb 2020 12:29:34 -0800 (PST)
+X-Gm-Message-State: APjAAAUVTN7tt6WYFKAoFCsLCDPUfg0JDMmLUk1WUpsIDpGEAXXOuCqo
+        GCdbPISWrAAOBcDbTabTbUUsDOWjaRiUXDHVkQ==
+X-Google-Smtp-Source: APXvYqzMzy8SAQGTADa4Ad/96d4YLO1HXcb+kYrifg+OyLqqb/8mxacdP4IS2fUuUglqP9jTUMsTBcYW3SYhp8BSfEE=
+X-Received: by 2002:ad4:4511:: with SMTP id k17mr4321626qvu.135.1581452974077;
+ Tue, 11 Feb 2020 12:29:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <your-ad-here.call-01581426089-ext-6170@work.hours>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <CGME20200204125854eucas1p19ace564a5f45b9231e0fba8af07009cd@eucas1p1.samsung.com>
+ <20200204125844.19955-1-m.szyprowski@samsung.com> <20200205054508.GG60221@umbus.fritz.box>
+ <bc380fd8-71bb-897e-f060-b51386dec9be@samsung.com> <20200210234406.GH22584@umbus.fritz.box>
+In-Reply-To: <20200210234406.GH22584@umbus.fritz.box>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 11 Feb 2020 14:29:22 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJLLWnx-K9T5wv_i+FnPwbWpfak4RD_9P1Xz_2-XkYncA@mail.gmail.com>
+Message-ID: <CAL_JsqJLLWnx-K9T5wv_i+FnPwbWpfak4RD_9P1Xz_2-XkYncA@mail.gmail.com>
+Subject: Re: [PATCH] libfdt: place new nodes & properties after the parent's ones
+To:     David Gibson <david@gibson.dropbear.id.au>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Devicetree Compiler <devicetree-compiler@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 02:01:29PM +0100, Vasily Gorbik wrote:
-> On Mon, Feb 10, 2020 at 08:55:46AM +0100, Christian Borntraeger wrote:
-> > 
-> > 
-> > On 08.02.20 13:57, Nathan Chancellor wrote:
-> > > Hi all,
-> > > 
-> > > We noticed that you all added support for building s390 with clang,
-> > > which is great! I have noticed a few warnings for which I will send
-> > > patches but this one has me stumped.
-> > > 
-> > > In file included from ../lib/crypto/sha256.c:16:
-> > > In file included from ../include/linux/module.h:13:
-> > > In file included from ../include/linux/stat.h:19:
-> > > In file included from ../include/linux/time.h:6:
-> > > In file included from ../include/linux/seqlock.h:36:
-> > > In file included from ../include/linux/spinlock.h:51:
-> > > In file included from ../include/linux/preempt.h:78:
-> > > In file included from ../arch/s390/include/asm/preempt.h:6:
-> > > In file included from ../include/linux/thread_info.h:38:
-> > > In file included from ../arch/s390/include/asm/thread_info.h:26:
-> > > ../arch/s390/include/asm/page.h:45:6: warning: converting the result of '<<' to a boolean always evaluates to false [-Wtautological-constant-compare]
-> > >         if (PAGE_DEFAULT_KEY)
-> > >             ^
-> > > ../arch/s390/include/asm/page.h:23:44: note: expanded from macro 'PAGE_DEFAULT_KEY'
-> > > #define PAGE_DEFAULT_KEY        (PAGE_DEFAULT_ACC << 4)
-> > >                                                   ^
-> > > 1 warning generated.
-> 
-> This warning only shows up for the decompressor code and purgatory which
-> have separate set of build flags not derived from top level KBUILD_CFLAGS.
-> For the rest of the code this warning is suppressed by:
-> Makefile:
->  740 ifdef CONFIG_CC_IS_CLANG
-> ...
->  744 # Quiet clang warning: comparison of unsigned expression < 0 is always false
->  745 KBUILD_CFLAGS += -Wno-tautological-compare
-> 
-> At the same time both decompressor and purgatory Makefiles include
-> CLANG_FLAGS into their CFLAGS. And this -Wno-tautological-compare is
-> clang specific. So I believe this option belongs to CLANG_FLAGS
-> rather than being included into KBUILD_CFLAGS under ifdef
-> CONFIG_CC_IS_CLANG. But this raises question about other clang
-> specific options inside that ifdef CONFIG_CC_IS_CLANG. Should they all
-> be made part of CLANG_FLAGS?
+On Mon, Feb 10, 2020 at 5:44 PM David Gibson
+<david@gibson.dropbear.id.au> wrote:
+>
+> On Mon, Feb 10, 2020 at 12:40:19PM +0100, Marek Szyprowski wrote:
+> > Hi David,
+> >
+> > On 05.02.2020 06:45, David Gibson wrote:
+> > > On Tue, Feb 04, 2020 at 01:58:44PM +0100, Marek Szyprowski wrote:
+> > >> While applying dt-overlays using libfdt code, the order of the applied
+> > >> properties and sub-nodes is reversed. This should not be a problem in
+> > >> ideal world (mainline), but this matters for some vendor specific/custom
+> > >> dtb files. This can be easily fixed by the little change to libfdt code:
+> > >> any new properties and sub-nodes should be added after the parent's node
+> > >> properties and subnodes.
+> > >>
+> > >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > > I'm not convinced this is a good idea.
+> > >
+> > > First, anything that relies on the order of properties or subnodes in
+> > > a dtb is deeply, fundamentally broken.  That can't even really be a
+> > > problem with a dtb file itself, only with the code processing it.
+> >
+> > I agree about the properties, but generally the order of nodes usually
+> > implies the order of creation of some devices or objects.
+>
+> Huh?  From the device tree client's point of view the devices just
+> exist - the order of creation should not be visible to it.
 
-Hi Vasily,
+I'm not sure if downstream is different, but upstream this stems from
+Linux initcalls being processed in link order within a given level.
+It's much better than it used to be, but short of randomizing the
+ordering, I'm not sure we'll ever find and fix all these hidden
+dependencies.
 
-I am trying to turn on -Wtautological-compare for the kernel as a whole,
-hence me trying to deal with this one now :) That flag controls a bunch
-of useful subwarnings that can point out potentially problematic code.
+> > This sometimes
+> > has some side-effects.
+>
+> If those side effects matter, your code is broken.  If you need to
+> apply an order to nodes, you should be looking at 'reg' or other
+> properties.
 
-I think that it would be worth adding warnings that we want disabled in
-all code to CLANG_FLAGS but as of right now, this is the only instance
-of this warning that I see within the s390 code so it is probably just
-worth silencing with an explicit comparison (!= 0). I will send a patch
-for this later.
+The general preference is to sort by 'reg'. And we try to catch and
+reject any node re-ordering patches.
 
-Cheers,
-Nathan
+Rob
