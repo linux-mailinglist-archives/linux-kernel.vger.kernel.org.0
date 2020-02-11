@@ -2,104 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B204215951F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:39:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AE6F159515
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:38:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730915AbgBKQjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 11:39:19 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:51178 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728049AbgBKQjT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 11:39:19 -0500
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id 01BGcrQs030668;
-        Wed, 12 Feb 2020 01:38:53 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 01BGcrQs030668
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1581439134;
-        bh=Fx7J1tLvigpB2TQEKEHL9mZZJiUbmOHvoP/GiGlFxss=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Ml5vePaorXfWR1IkIk8aVOLkwlszo/+IPtOdpx3YlN/JlOhIDQ1811ZmaQg7TQzKf
-         bcDqvAXL4TZhPPQP3QYuoomkHT+lEzdWKy0TWGCJ0+LapfKTzHltrwMTcheEu9mzYu
-         SXLbW1/Bfmtc1F6G4cZifJzDpf35danf/c1FpWsQWYcMk6TOtRcAXpV+kFrgItqOz3
-         YZUK/KUSpMN7kT6+3AhYk5oHM+exipqr+dgQ/12DV4pkfyT79UCk/jOU4rokh3E/DZ
-         FgjL5ZyrIoqWGTRNUbmKU3Fx+yx4yPtBV+1cBl4SxehYVGl2Zr4PDx5okApw3FZt0F
-         Kp2SnkqOUuqTQ==
-X-Nifty-SrcIP: [209.85.222.50]
-Received: by mail-ua1-f50.google.com with SMTP id h32so4188299uah.4;
-        Tue, 11 Feb 2020 08:38:53 -0800 (PST)
-X-Gm-Message-State: APjAAAXjXLcxN7pwBgvcFvWjBouV4X8r9VfvNJ7+WGSqeYind4wQ1Q0m
-        /J+C9JhESH2Qjh3YIxQ4di4X9NcTYs/NEgyrkAI=
-X-Google-Smtp-Source: APXvYqwHm08bawF4IR7j/P5H17OzWDZmArcl2jYMsqSgfZ5kjpP6JGy/GtBXXkiRnojqD0Ml3k0SUtEHhHi7Machn7o=
-X-Received: by 2002:ab0:2ea6:: with SMTP id y6mr2151127uay.25.1581439132256;
- Tue, 11 Feb 2020 08:38:52 -0800 (PST)
+        id S1730072AbgBKQid (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 11:38:33 -0500
+Received: from mga06.intel.com ([134.134.136.31]:63625 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728049AbgBKQid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 11:38:33 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 08:38:32 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
+   d="scan'208";a="405993172"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga005.jf.intel.com with ESMTP; 11 Feb 2020 08:38:31 -0800
+Date:   Tue, 11 Feb 2020 08:38:31 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 05/12] fs: remove unneeded IS_DAX() check
+Message-ID: <20200211163831.GC12866@iweiny-DESK2.sc.intel.com>
+References: <20200208193445.27421-1-ira.weiny@intel.com>
+ <20200208193445.27421-6-ira.weiny@intel.com>
+ <20200211053401.GE10776@dread.disaster.area>
 MIME-Version: 1.0
-References: <20200207091351.18133-1-geert@linux-m68k.org> <CAK7LNAQGcw1jbb=fWd_CbWv5hQrkqG_QFCw3uY4LXroONGM6BA@mail.gmail.com>
- <20200211161905.GM4543@sirena.org.uk>
-In-Reply-To: <20200211161905.GM4543@sirena.org.uk>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Wed, 12 Feb 2020 01:38:16 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARCr8afvs=h5-ZWVs=Bkk7PSMNvX+M_SeBSF-L99UencA@mail.gmail.com>
-Message-ID: <CAK7LNARCr8afvs=h5-ZWVs=Bkk7PSMNvX+M_SeBSF-L99UencA@mail.gmail.com>
-Subject: Re: [PATCH] [RFC] ASoC: Use imply for SND_SOC_ALL_CODECS
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200211053401.GE10776@dread.disaster.area>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 1:19 AM Mark Brown <broonie@kernel.org> wrote:
->
-> On Wed, Feb 12, 2020 at 01:09:30AM +0900, Masahiro Yamada wrote:
->
-> > Why does SND_SOC_ALL_CODECS exist in the first place?
-> > Is this compile-test or run-test?
->
-> It's for compile coverage.
->
-> > If it is the former, allyesconfig / allmodconfig
-> > covers all of them.
->
-> No it doesn't.  Those only enable user selectable options, many CODEC
-> drivers don't have user selectable options as they are selected by
-> machine drivers some of which either have more platform specific
-> dependencies that the CODEC drivers or aren't upstream.
+On Tue, Feb 11, 2020 at 04:34:01PM +1100, Dave Chinner wrote:
+> On Sat, Feb 08, 2020 at 11:34:38AM -0800, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > The IS_DAX() check in io_is_direct() causes a race between changing the
+> > DAX state and creating the iocb flags.
+> > 
+> > Remove the check because DAX now emulates the page cache API and
+> > therefore it does not matter if the file state is DAX or not when the
+> > iocb flags are created.
+> 
+> This statement is ... weird.
+> 
+> DAX doesn't "emulate" the page cache API at all
 
+ah...  yea emulate is a bad word here.
 
-Maybe, can you add a prompt which is only displayed
-if COMPILE_TEST is enabled?
+> - it has it's own
+> read/write methods that filesystems call based on the iomap
+> infrastructure (dax_iomap_rw()). i.e. there are 3 different IO paths
+> through the filesystems: the DAX IO path, the direct IO path, and
+> the buffered IO path.
+> 
+> Indeed, it seems like this works a bit by luck: Ext4 and XFS always
+> check IS_DAX(inode) in the read/write_iter methods before checking
+> for IOCB_DIRECT, and hence the IOCB_DIRECT flag is ignored by the
+> filesystems. i.e. when we got rid of the O_DIRECT paths from DAX, we
+> forgot to clean up io_is_direct() and it's only due to the ordering
+> of checks that we went down the DAX path correctly....
+> 
+> That said, the code change is good, but the commit message needs a
+> rewrite.
 
+How about?
 
+<commit msg>
+  fs: Remove unneeded IS_DAX() check
+  
+  The IS_DAX() check in io_is_direct() causes a race between changing the
+  DAX state and creating the iocb flags.
 
-For example,
+  Remove the check because DAX now has it's own read/write methods and
+  file systems which support DAX check IS_DAX() prior to IOCB_DIRECT.
+  Therefore, it does not matter if the file state is DAX when the iocb
+  flags are created, and we can avoid the race.
 
-config SND_SOC_L3
-        tristate "some prompt" if COMPILE_TEST
+  Reviewed-by: Jan Kara <jack@suse.cz>
+  Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+</commit msg>
 
+Ira
 
-
-
-In normal use-cases, this CONFIG option is hidden
-since we expect it to be selected by some machine options.
-
-If COMPILE_TEST is enabled, we can toggle as you like.
-
-
-If I run
- $ git grep  "if COMPILE_TEST"
-
-I see many usages of this tip.
-
-
--- 
-Best Regards
-Masahiro Yamada
+> 
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
