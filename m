@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9B98158F0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:49:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75D4C158F07
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:49:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729125AbgBKMtJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 07:49:09 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:46089 "EHLO
+        id S1729114AbgBKMs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 07:48:59 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:46101 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729020AbgBKMs3 (ORCPT
+        with ESMTP id S1729030AbgBKMsb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 07:48:29 -0500
+        Tue, 11 Feb 2020 07:48:31 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1j1Uxk-0007m2-7B; Tue, 11 Feb 2020 13:48:24 +0100
+        id 1j1Uxl-0007o1-EJ; Tue, 11 Feb 2020 13:48:25 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C1F011C2019;
-        Tue, 11 Feb 2020 13:48:23 +0100 (CET)
-Date:   Tue, 11 Feb 2020 12:48:23 -0000
-From:   "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2366B1C2019;
+        Tue, 11 Feb 2020 13:48:25 +0100 (CET)
+Date:   Tue, 11 Feb 2020 12:48:24 -0000
+From:   "tip-bot2 for Waiman Long" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] locking/percpu-rwsem: Move __this_cpu_inc() into
- the slowpath
-Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        Will Deacon <will@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>, x86 <x86@kernel.org>,
+Subject: [tip: locking/core] locking/lockdep: Track number of zapped lock chains
+Cc:     Waiman Long <longman@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200131151540.041600199@infradead.org>
-References: <20200131151540.041600199@infradead.org>
+In-Reply-To: <20200206152408.24165-6-longman@redhat.com>
+References: <20200206152408.24165-6-longman@redhat.com>
 MIME-Version: 1.0
-Message-ID: <158142530355.411.14343435951635053168.tip-bot2@tip-bot2>
+Message-ID: <158142530491.411.13846763021268112187.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -52,68 +48,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the locking/core branch of tip:
 
-Commit-ID:     71365d40232110f7b029befc9033ea311d680611
-Gitweb:        https://git.kernel.org/tip/71365d40232110f7b029befc9033ea311d680611
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Wed, 30 Oct 2019 20:17:51 +01:00
+Commit-ID:     797b82eb906eeba24dcd6e9ab92faef01fc684cb
+Gitweb:        https://git.kernel.org/tip/797b82eb906eeba24dcd6e9ab92faef01fc684cb
+Author:        Waiman Long <longman@redhat.com>
+AuthorDate:    Thu, 06 Feb 2020 10:24:07 -05:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 11 Feb 2020 13:10:54 +01:00
+CommitterDate: Tue, 11 Feb 2020 13:10:51 +01:00
 
-locking/percpu-rwsem: Move __this_cpu_inc() into the slowpath
+locking/lockdep: Track number of zapped lock chains
 
-As preparation to rework __percpu_down_read() move the
-__this_cpu_inc() into it.
+Add a new counter nr_zapped_lock_chains to track the number lock chains
+that have been removed.
 
+Signed-off-by: Waiman Long <longman@redhat.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Davidlohr Bueso <dbueso@suse.de>
-Acked-by: Will Deacon <will@kernel.org>
-Acked-by: Waiman Long <longman@redhat.com>
-Tested-by: Juri Lelli <juri.lelli@redhat.com>
-Link: https://lkml.kernel.org/r/20200131151540.041600199@infradead.org
+Link: https://lkml.kernel.org/r/20200206152408.24165-6-longman@redhat.com
 ---
- include/linux/percpu-rwsem.h  | 10 ++++++----
- kernel/locking/percpu-rwsem.c |  2 ++
- 2 files changed, 8 insertions(+), 4 deletions(-)
+ kernel/locking/lockdep.c           | 2 ++
+ kernel/locking/lockdep_internals.h | 1 +
+ kernel/locking/lockdep_proc.c      | 4 ++++
+ 3 files changed, 7 insertions(+)
 
-diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
-index 4ceaa19..bb5b71c 100644
---- a/include/linux/percpu-rwsem.h
-+++ b/include/linux/percpu-rwsem.h
-@@ -59,8 +59,9 @@ static inline void percpu_down_read(struct percpu_rw_semaphore *sem)
- 	 * and that once the synchronize_rcu() is done, the writer will see
- 	 * anything we did within this RCU-sched read-size critical section.
- 	 */
--	__this_cpu_inc(*sem->read_count);
--	if (unlikely(!rcu_sync_is_idle(&sem->rss)))
-+	if (likely(rcu_sync_is_idle(&sem->rss)))
-+		__this_cpu_inc(*sem->read_count);
-+	else
- 		__percpu_down_read(sem, false); /* Unconditional memory barrier */
- 	/*
- 	 * The preempt_enable() prevents the compiler from
-@@ -77,8 +78,9 @@ static inline bool percpu_down_read_trylock(struct percpu_rw_semaphore *sem)
- 	/*
- 	 * Same as in percpu_down_read().
- 	 */
--	__this_cpu_inc(*sem->read_count);
--	if (unlikely(!rcu_sync_is_idle(&sem->rss)))
-+	if (likely(rcu_sync_is_idle(&sem->rss)))
-+		__this_cpu_inc(*sem->read_count);
-+	else
- 		ret = __percpu_down_read(sem, true); /* Unconditional memory barrier */
- 	preempt_enable();
- 	/*
-diff --git a/kernel/locking/percpu-rwsem.c b/kernel/locking/percpu-rwsem.c
-index 969389d..becf925 100644
---- a/kernel/locking/percpu-rwsem.c
-+++ b/kernel/locking/percpu-rwsem.c
-@@ -47,6 +47,8 @@ EXPORT_SYMBOL_GPL(percpu_free_rwsem);
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index ef2a643..a63976c 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -2626,6 +2626,7 @@ out_bug:
+ struct lock_chain lock_chains[MAX_LOCKDEP_CHAINS];
+ static DECLARE_BITMAP(lock_chains_in_use, MAX_LOCKDEP_CHAINS);
+ static u16 chain_hlocks[MAX_LOCKDEP_CHAIN_HLOCKS];
++unsigned long nr_zapped_lock_chains;
+ unsigned int nr_chain_hlocks;
  
- bool __percpu_down_read(struct percpu_rw_semaphore *sem, bool try)
- {
-+	__this_cpu_inc(*sem->read_count);
-+
- 	/*
- 	 * Due to having preemption disabled the decrement happens on
- 	 * the same CPU as the increment, avoiding the
+ struct lock_class *lock_chain_get_class(struct lock_chain *chain, int i)
+@@ -4797,6 +4798,7 @@ free_lock_chain:
+ 	 */
+ 	hlist_del_rcu(&chain->entry);
+ 	__set_bit(chain - lock_chains, pf->lock_chains_being_freed);
++	nr_zapped_lock_chains++;
+ #endif
+ }
+ 
+diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
+index 926bfa4..af722ce 100644
+--- a/kernel/locking/lockdep_internals.h
++++ b/kernel/locking/lockdep_internals.h
+@@ -131,6 +131,7 @@ struct lock_class *lock_chain_get_class(struct lock_chain *chain, int i);
+ 
+ extern unsigned long nr_lock_classes;
+ extern unsigned long nr_zapped_classes;
++extern unsigned long nr_zapped_lock_chains;
+ extern unsigned long nr_list_entries;
+ long lockdep_next_lockchain(long i);
+ unsigned long lock_chain_count(void);
+diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
+index 53c2a2a..524580d 100644
+--- a/kernel/locking/lockdep_proc.c
++++ b/kernel/locking/lockdep_proc.c
+@@ -349,6 +349,10 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
+ 	seq_puts(m, "\n");
+ 	seq_printf(m, " zapped classes:                %11lu\n",
+ 			nr_zapped_classes);
++#ifdef CONFIG_PROVE_LOCKING
++	seq_printf(m, " zapped lock chains:            %11lu\n",
++			nr_zapped_lock_chains);
++#endif
+ 	return 0;
+ }
+ 
