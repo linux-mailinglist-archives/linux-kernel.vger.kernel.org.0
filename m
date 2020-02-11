@@ -2,76 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E47E15955E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:51:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85218159568
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:54:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730933AbgBKQvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 11:51:14 -0500
-Received: from foss.arm.com ([217.140.110.172]:49706 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728188AbgBKQvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 11:51:14 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6900C1FB;
-        Tue, 11 Feb 2020 08:51:13 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.71])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9FEAC3F68E;
-        Tue, 11 Feb 2020 08:51:12 -0800 (PST)
-Date:   Tue, 11 Feb 2020 16:51:10 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Qian Cai <cai@lca.pw>
-Cc:     akpm@linux-foundation.org, elver@google.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] mm/kmemleak: annotate a data race in checksum
-Message-ID: <20200211165110.GI153117@arrakis.emea.arm.com>
-References: <1581438245-24391-1-git-send-email-cai@lca.pw>
+        id S1730958AbgBKQyM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 11:54:12 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:42112 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730298AbgBKQyJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 11:54:09 -0500
+Received: from 79.184.254.199.ipv4.supernova.orange.pl (79.184.254.199) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
+ id d2a3bbaa5cdf3a2b; Tue, 11 Feb 2020 17:54:07 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux ACPI <linux-acpi@vger.kernel.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        David Box <david.e.box@linux.intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Tsuchiya Yuto <kitakar@gmail.com>,
+        Bob Moore <robert.moore@intel.com>,
+        Erik Kaneda <erik.kaneda@intel.com>
+Subject: [PATCH 0/2] ACPI: PM: s2idle: Prevent spurious SCIs from waking up the system
+Date:   Tue, 11 Feb 2020 17:51:36 +0100
+Message-ID: <6974889.tv0o8xEHfr@kreacher>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1581438245-24391-1-git-send-email-cai@lca.pw>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 11:24:05AM -0500, Qian Cai wrote:
-> The value of object->pointer could be accessed concurrently as noticed
-> by KCSAN,
-> 
->  BUG: KCSAN: data-race in crc32_le_base / do_raw_spin_lock
-> 
->  write to 0xffffb0ea683a7d50 of 4 bytes by task 23575 on cpu 12:
->   do_raw_spin_lock+0x114/0x200
->   debug_spin_lock_after at kernel/locking/spinlock_debug.c:91
->   (inlined by) do_raw_spin_lock at kernel/locking/spinlock_debug.c:115
->   _raw_spin_lock+0x40/0x50
->   __handle_mm_fault+0xa9e/0xd00
->   handle_mm_fault+0xfc/0x2f0
->   do_page_fault+0x263/0x6f9
->   page_fault+0x34/0x40
-> 
->  read to 0xffffb0ea683a7d50 of 4 bytes by task 839 on cpu 60:
->   crc32_le_base+0x67/0x350
->   crc32_le_base+0x67/0x350:
->   crc32_body at lib/crc32.c:106
->   (inlined by) crc32_le_generic at lib/crc32.c:179
->   (inlined by) crc32_le at lib/crc32.c:197
->   kmemleak_scan+0x528/0xd90
->   update_checksum at mm/kmemleak.c:1172
->   (inlined by) kmemleak_scan at mm/kmemleak.c:1497
->   kmemleak_scan_thread+0xcc/0xfa
->   kthread+0x1e0/0x200
->   ret_from_fork+0x27/0x50
-> 
->  Reported by Kernel Concurrency Sanitizer on:
->  CPU: 60 PID: 839 Comm: kmemleak Tainted: G        W    L 5.5.0-next-20200210+ #3
->  Hardware name: HPE ProLiant DL385 Gen10/ProLiant DL385 Gen10, BIOS A40 07/10/2019
-> 
-> crc32() will dereference object->pointer. If a shattered value was
-> returned due to a data race, it will be corrected in the next scan.
-> Thus, annotate it as an intentional data race using the data_race()
-> macro.
-> 
-> Signed-off-by: Qian Cai <cai@lca.pw>
+Hi All,
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+On some systems the platform generates spurious SCIs while the system is
+suspended to idle and those SCIs are treated as genuine system events after
+the rework of the main suspend-to-idle control flow in 5.4.  The patches
+here address this problem by adding a mechanism to check whether or not
+SCIs generated while the system is suspended to idle are spurious and to
+discard the spurious ones.
+
+Patch [1/2] updates ACPICA to provide a way to examine the status bits of
+all GPEs enabled at the moment in one go.
+
+Patch [2/2] uses that mechanism to implement the check mentioned above.
+
+This series is on top of https://patchwork.kernel.org/patch/11373185/ which
+should appear in linux-next tomorrow.
+
+Thanks!
+
+
+
