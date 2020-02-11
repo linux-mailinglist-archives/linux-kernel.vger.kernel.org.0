@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64EA3159DDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 01:18:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FB04159DE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 01:20:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbgBLAST (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 19:18:19 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.202]:31627 "EHLO
+        id S1728132AbgBLAT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 19:19:59 -0500
+Received: from gateway24.websitewelcome.com ([192.185.51.202]:29769 "EHLO
         gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727985AbgBLASS (ORCPT
+        by vger.kernel.org with ESMTP id S1728117AbgBLAT6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 19:18:18 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id C09EE26C66A
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 17:40:05 -0600 (CST)
+        Tue, 11 Feb 2020 19:19:58 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 76114432A50
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 17:44:36 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 1f8PjYyr08vkB1f8PjX85Q; Tue, 11 Feb 2020 17:40:05 -0600
+        id 1fCmjf2P7RP4z1fCmj6rDE; Tue, 11 Feb 2020 17:44:36 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -25,25 +25,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=826huAG5ON0O/lfMhDpKUhNKj75IXOzCCcEnxbYam4I=; b=J8DOEd5+Zj56yKjv9GxEr/9liR
-        UxDb0yEozNCQtzTvTsjQ/6Nzv7jY4PMpcocRI1RLtNWUcZdEfadqZcNsYKNTtGPlWbh64mO46Z5fc
-        HSmPuT+YqB+oY4cyV7ADajR1EKG1xmts+TOzRBPHNuirE+T2pnefl+SZTFNOL+SpV38VFZwrD4Cq3
-        VjGWpDTya1CN0iqllnWMJvE5g8YzTR4zl27fE40CPAQkpP23qk7tJJeHxOyNnENQVBp9r55FJHO+v
-        xzmsjHdTZIcGqgGm7cCr6eCyBBuFzxLr5fYeImmEC0zCP1VQv4S/dLs/x56PEYF1/HqKLtx7U3A+3
-        4nZJpRdA==;
-Received: from [200.68.140.36] (port=31131 helo=embeddedor)
+        bh=3amEQsF/pWaQW0ZdmjVL4Wgo7HC7zMjKomqEb1UwY9w=; b=dtwL3ccmEPdB2X2E0oE+oR5rtA
+        /OvePgquBq2tCj3A90pJUt6j3VEX92sdFacASdnozUiIGwH63hkdUUdP0OdFp4EALqKwZIgJINcSP
+        9vLzP4j0/GJ5xFmMRfQG9Bo7veT/wb45fW0NRAvmLb0AeAIArFB4nAlVYl3sebz//FICGNra2PYzz
+        WCZb1AVMMdZAZoi4bpPrCL68Ry85T5YzQ7FD4G3QX5xuY05ghibdyNdM1jV3x5i6YuWrW4scavTep
+        xfpFZ5Kh29Fv+GFx0kIMF+swh3eRVhKz2+DtxT2dfWp6Jel3z6I9zqRazEMQTwBaF7UA+nsCCKPeU
+        s+yseETQ==;
+Received: from [200.68.140.36] (port=7097 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1j1f8O-003iJb-Fb; Tue, 11 Feb 2020 17:40:04 -0600
-Date:   Tue, 11 Feb 2020 17:42:37 -0600
+        id 1j1fCl-003kXF-2z; Tue, 11 Feb 2020 17:44:35 -0600
+Date:   Tue, 11 Feb 2020 17:47:10 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Support Opensource <support.opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] hwmon: (ibmaem) Replace zero-length array with
+Subject: [PATCH] regulator: da9063: Replace zero-length array with
  flexible-array member
-Message-ID: <20200211234237.GA26971@embeddedor>
+Message-ID: <20200211234710.GA29532@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -56,13 +57,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 200.68.140.36
 X-Source-L: No
-X-Exim-ID: 1j1f8O-003iJb-Fb
+X-Exim-ID: 1j1fCl-003kXF-2z
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.36]:31131
+X-Source-Sender: (embeddedor) [200.68.140.36]:7097
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 52
+X-Email-Count: 60
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -93,22 +94,22 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/hwmon/ibmaem.c | 2 +-
+ drivers/regulator/da9063-regulator.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/ibmaem.c b/drivers/hwmon/ibmaem.c
-index db63c1295cb2..fb052c2d9c34 100644
---- a/drivers/hwmon/ibmaem.c
-+++ b/drivers/hwmon/ibmaem.c
-@@ -232,7 +232,7 @@ struct aem_read_sensor_req {
+diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
+index 2b0c7a85306a..368f8ad2a9f9 100644
+--- a/drivers/regulator/da9063-regulator.c
++++ b/drivers/regulator/da9063-regulator.c
+@@ -119,7 +119,7 @@ struct da9063_regulator {
+ struct da9063_regulators {
+ 	unsigned				n_regulators;
+ 	/* Array size to be defined during init. Keep at end. */
+-	struct da9063_regulator			regulator[0];
++	struct da9063_regulator			regulator[];
+ };
  
- struct aem_read_sensor_resp {
- 	struct aem_iana_id	id;
--	u8			bytes[0];
-+	u8			bytes[];
- } __packed;
- 
- /* Data structures to talk to the IPMI layer */
+ /* BUCK modes for DA9063 */
 -- 
 2.25.0
 
