@@ -2,132 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C48EC159285
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 16:07:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB8C715928C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 16:08:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730036AbgBKPHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 10:07:36 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2408 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728574AbgBKPHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 10:07:35 -0500
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 8D03C9F91ED670DD7329;
-        Tue, 11 Feb 2020 15:07:33 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- LHREML713-CAH.china.huawei.com (10.201.108.36) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 11 Feb 2020 15:07:33 +0000
-Received: from [127.0.0.1] (10.202.226.45) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 11 Feb
- 2020 15:07:33 +0000
-Subject: Re: [PATCH RFC 5/7] perf pmu: Support matching by sysid
-To:     Jiri Olsa <jolsa@redhat.com>
-CC:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
-        <namhyung@kernel.org>, <will@kernel.org>, <ak@linux.intel.com>,
-        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <suzuki.poulose@arm.com>,
-        <james.clark@arm.com>, <zhangshaokun@hisilicon.com>,
-        <robin.murphy@arm.com>
-References: <1579876505-113251-1-git-send-email-john.garry@huawei.com>
- <1579876505-113251-6-git-send-email-john.garry@huawei.com>
- <20200210120759.GG1907700@krava>
- <63799909-067b-e5f4-dcf1-9ba1ec145348@huawei.com>
- <20200211134704.GB93194@krava>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <2a51ce93-fa68-8088-f31f-2fd692253335@huawei.com>
-Date:   Tue, 11 Feb 2020 15:07:31 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1730139AbgBKPIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 10:08:45 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:49440 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727668AbgBKPIo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 10:08:44 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-101.corp.google.com [104.133.0.101] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 01BF7pYW001934
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Feb 2020 10:07:52 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id D3E46420324; Tue, 11 Feb 2020 10:07:50 -0500 (EST)
+Date:   Tue, 11 Feb 2020 10:07:50 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Mark Salyzyn <salyzyn@android.com>, linux-kernel@vger.kernel.org,
+        kernel-team@android.com, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Kees Cook <keescook@chromium.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Potapenko <glider@google.com>,
+        Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH] random: add rng-seed= command line option
+Message-ID: <20200211150750.GA3630@mit.edu>
+References: <20200207150809.19329-1-salyzyn@android.com>
+ <20200207155828.GB122530@mit.edu>
+ <d35bacd4-ba3f-335d-85c4-57e87abd8e9a@android.com>
+ <20200208004922.GE122530@mit.edu>
+ <20200210121325.GA7685@sirena.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20200211134704.GB93194@krava>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.45]
-X-ClientProxiedBy: lhreml720-chm.china.huawei.com (10.201.108.71) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200210121325.GA7685@sirena.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/02/2020 13:47, Jiri Olsa wrote:
-
-Hi Jirka,
-
->>>> +
->>>> +	return buf;
->>>> +}
->>>> +
->>
->> I have another series to add kernel support for a system identifier sysfs
->> entry, which I sent after this series:
->>
->> https://lore.kernel.org/linux-acpi/1580210059-199540-1-git-send-email-john.garry@huawei.com/
->>
->> It is different to what I am relying on here - it uses a kernel soc driver
->> for firmware ACPI PPTT identifier. Progress is somewhat blocked at the
->> moment however and I may have to use a different method:
->>
->> https://lore.kernel.org/linux-acpi/20200128123415.GB36168@bogus/
+On Mon, Feb 10, 2020 at 12:13:25PM +0000, Mark Brown wrote:
+> > The second is that we're treating rng_seed as being magic, and if
+> > someone tries to pass in something like rng_seed=0x7932dca76b51
+> > because they didn't understand how rng_seed was going to work, it
+> > would be surprising.
 > 
-> I'll try to check ;-)
+> We already have a kaslr-seed property on arm64 since we need a seed for
+> KASLR *super* early, we could generalize that I guess but it's not clear
+> to me that it's a good idea.  One fun thing here is that the kernel
+> command line is visible to userspace so we go and erase the seed from
+> the command line after reading it.
 
-Summary is that there exists an ACPI firmware field which we could 
-expose to userspace via sysfs - this would provide the system id. 
-However there is a proposal to deprecate it in the ACPI standard and, as 
-such, would prefer that we don't add kernel support for it at this stage.
+This is exactly what this patch is doing, in fact (it is erasing the
+seed from the command line).
 
-So I am evaluating the alternative in the meantime, which again is some 
-firmware method which should allow us to expose a system id to userspace 
-via sysfs. Unfortunately this is arm specific. However, other archs can 
-still provide their own method, maybe a soc driver:
-
-Documentation/ABI/testing/sysfs-devices-soc#n15
-
+> > My preference would be to pass in the random seed *not* on the
+> > command-line at all, but as a separate parameter which is passed to
+> > the bootloader, just as we pass in the device-tree, the initrd and the
+> > command-line as separate things.  The problem is that how we pass in
+> > extra boot parameters is architecture specific, and how we might do it
+> > for x86 is different than for arm64.  So yeah, it's a bit more
+> > inconvenient to do things that way; but I think it's also much
+> > cleaner.
 > 
->>
->>>> +static char *perf_pmu__getsysid(void)
->>>> +{
->>>> +	char *sysid;
->>>> +	static bool printed;
->>>> +
->>>> +	sysid = getenv("PERF_SYSID");
->>>> +	if (sysid)
->>>> +		sysid = strdup(sysid);
->>>> +
->>>> +	if (!sysid)
->>>> +		sysid = get_sysid_str();
->>>> +	if (!sysid)
->>>> +		return NULL;
->>>> +
->>>> +	if (!printed) {
->>>> +		pr_debug("Using SYSID %s\n", sysid);
->>>> +		printed = true;
->>>> +	}
->>>> +	return sysid;
->>>> +}
->>>
->>> this part is getting complicated and AFAIK we have no tests for it
->>>
->>> if you could think of any tests that'd be great.. Perhaps we could
->>> load 'our' json test files and check appropriate events/aliasses
->>> via in pmu object.. or via parse_events interface.. those test aliases
->>> would have to be part of perf, but we have tests compiled in anyway
->>
->> Sorry, I don't fully follow.
->>
->> Are you suggesting that we could load the specific JSONs tables for a system
->> from the host filesystem?
-> 
-> I wish to see some test for all this.. I can only think about having
-> 'test' json files compiled with perf and 'perf test' that looks them
-> up and checks that all is in the proper place
+> Anything that requires boot protocol updates is going to be rather
+> difficult to deploy for the use it'll likely get - as far as I can see
+> we're basically just talking about the cases where there's some entropy
+> source available to the bootloader that the kernel can't get at
+> directly.  With the arm64 kaslr-seed it's not clear that people are
+> feeding actual entropy in there, they could be using something like the
+> device serial number to give different layouts on different devices even
+> if they can't get any useful entropy for boot to boot variation.
 
-OK, let me consider this part for perf test support.
+So here's one thing we could do; we could require something like:
 
-Thanks,
-John
+rng_seed=<nr_bits>,<base-64 encoded string of 32 bytes>
+
+... where the kernel parses rng_seed, and errors out if nr_bits is
+greater than 256, and errors out if the base-64 encoded string is not
+valid, and then replaces it with the SHA-256 hash of the rng seed,
+base-64 encoded.
+
+That way if there is a crappy handset which is just encoding the
+device serial number, it becomes painfully obvious that someone is
+cheating.
+
+Is that overkill?  Well, from my perspective, we're talking about an
+industry that was willing to turn the CPU thermal safety limits when
+certain benchmark applications were detected to be running, just to
+gain a commercial advantage.  So trust doesn't come easily to me, when
+it comes to corporate desires of expediency.  :-)
+
+	       	     	     	  	    - Ted
