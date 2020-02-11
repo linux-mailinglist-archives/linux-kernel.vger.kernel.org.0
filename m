@@ -2,119 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B36D159229
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 15:47:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A38E159230
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 15:47:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730241AbgBKOrF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 09:47:05 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:25834 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727511AbgBKOrE (ORCPT
+        id S1730258AbgBKOri (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 09:47:38 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:6314 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727511AbgBKOrh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 09:47:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581432423;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=AREW9gFLm5gusZ2z//TUVRAYCVObZ/wwLl56roh1D+s=;
-        b=b8DC93i80Cc65/ABHrrsK7lyUzpuxsaMdsSjtEJ7e/RR2Pw4n7iucpwrq/XuUf132Ni2LU
-        R6V0BQC3EADo3p3/ENNJmQB/SbPV8NJ9msj1t8rXVtFP8fIIEvWKXfG32PU84A6MRfJ2tl
-        jaR6XF9U/2WGWhO6JFVh3BtLjWI1Hew=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-241-JvW_ZqV2OTyZrIbkaNku0g-1; Tue, 11 Feb 2020 09:47:01 -0500
-X-MC-Unique: JvW_ZqV2OTyZrIbkaNku0g-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5C5EB10054E3;
-        Tue, 11 Feb 2020 14:46:58 +0000 (UTC)
-Received: from krava (ovpn-206-93.brq.redhat.com [10.40.206.93])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 47FE55C240;
-        Tue, 11 Feb 2020 14:46:54 +0000 (UTC)
-Date:   Tue, 11 Feb 2020 15:46:51 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     John Garry <john.garry@huawei.com>
-Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        namhyung@kernel.org, will@kernel.org, ak@linux.intel.com,
-        linuxarm@huawei.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, suzuki.poulose@arm.com,
-        james.clark@arm.com, zhangshaokun@hisilicon.com,
-        robin.murphy@arm.com
-Subject: Re: [PATCH RFC 3/7] perf jevents: Add support for a system events PMU
-Message-ID: <20200211144651.GD93194@krava>
-References: <1579876505-113251-1-git-send-email-john.garry@huawei.com>
- <1579876505-113251-4-git-send-email-john.garry@huawei.com>
- <20200210120749.GF1907700@krava>
- <b148f0b6-d2ae-6520-8da1-7aed2c9e1d6b@huawei.com>
+        Tue, 11 Feb 2020 09:47:37 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01BEhxtu031462;
+        Tue, 11 Feb 2020 15:47:27 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=4odbdGyV5/+IAGjp9TQdg9pxlhPR5wtUbp4gIY0SBm8=;
+ b=1MOS4e4ncw/kDNfQr8/cX7QpgjwFPMEHqD2n3akoDcWaw3SXXs3MZlNcqXzns/nILAQ0
+ AYy55VbzeWSDdblBzLcEYdCK4g+MV2mz9OkgqpDZvNMBjsKn+My9En+6sPGXgWrHu2HX
+ ksFM9bc3uNFzNl1b5zGh3gk3h4HtRsaI3tcmBuzZjC2uDwMFnVt85Fx4Tmd2/nxTT2gA
+ 6MnF8IUPsr2umgdYLnc0uzdxu2rwNR3LY/Jyc/uVsz3NXbl4hD1ji9uThAIF45emp3Le
+ YiK1M1ljfRs+ohhH4uYRuu/UT0XVfA2pknjw0LAAbPdIaKbjX9TDtqVd/B/f4MQqcKbB IA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2y1uvddt9x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Feb 2020 15:47:27 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2BDBC10002A;
+        Tue, 11 Feb 2020 15:47:27 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1AC802BD409;
+        Tue, 11 Feb 2020 15:47:27 +0100 (CET)
+Received: from lmecxl0923.lme.st.com (10.75.127.48) by SFHDAG6NODE1.st.com
+ (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 11 Feb
+ 2020 15:47:26 +0100
+Subject: Re: [PATCH V2 0/9] mmc: mmci: sdmmc: add sdr104 support
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20200128090636.13689-1-ludovic.barre@st.com>
+From:   Ludovic BARRE <ludovic.barre@st.com>
+Message-ID: <0d4a3df8-fd1a-4839-116c-149f9e478f42@st.com>
+Date:   Tue, 11 Feb 2020 15:47:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b148f0b6-d2ae-6520-8da1-7aed2c9e1d6b@huawei.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <20200128090636.13689-1-ludovic.barre@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-11_04:2020-02-10,2020-02-11 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 03:55:00PM +0000, John Garry wrote:
-> On 10/02/2020 12:07, Jiri Olsa wrote:
-> > On Fri, Jan 24, 2020 at 10:35:01PM +0800, John Garry wrote:
-> > 
-> > SNIP
-> > 
-> > >   	- Set of 'PMU events tables' for all known CPUs in the architecture,
-> > > @@ -83,11 +93,11 @@ NOTES:
-> > >   	2. The 'pmu-events.h' has an extern declaration for the mapping table
-> > >   	   and the generated 'pmu-events.c' defines this table.
-> > > -	3. _All_ known CPU tables for architecture are included in the perf
-> > > -	   binary.
-> > > +	3. _All_ known CPU and system tables for architecture are included in
-> > > +	   the perf binary.
-> > > -At run time, perf determines the actual CPU it is running on, finds the
-> > > -matching events table and builds aliases for those events. This allows
-> > > +At run time, perf determines the actual CPU or system it is running on, finds
-> > > +the matching events table and builds aliases for those events. This allows
-> > >   users to specify events by their name:
-> > >   	$ perf stat -e pm_1plus_ppc_cmpl sleep 1
-> > > @@ -150,3 +160,18 @@ where:
-> > >   	i.e the three CPU models use the JSON files (i.e PMU events) listed
-> > >   	in the directory 'tools/perf/pmu-events/arch/x86/silvermont'.
-> > > +
-> > > +The mapfile_sys.csv format is slightly different, in that it contains a SYSID
-> > > +instead of the CPUID:
-> > > +
-> > > +	Header line
-> > > +	SYSID,Version,Dir/path/name,Type
-> > 
-> 
-> Hi jirka,
-> 
-> > can't we just add prefix to SYSID types? like:
-> > 
-> > 	SYSID-HIP08,v1,hisilicon/hip08/sys,sys
-> > 	0x00000000480fd010,v1,hisilicon/hip08/cpu,core
-> > 	0x00000000500f0000,v1,ampere/emag,core
-> > 
-> > because the rest of the line is the same, right?
-> 
-> I did consider that already. It should be workable.
-> 
-> > 
-> > seems to me that having one mapfile type would be less confusing
-> 
-> I thought that having it all in a single file would be more confusing :)
+hi Ulf
 
-hum, I think that if we keep it separated like:
+Just a "gentleman ping" on this series
+https://patchwork.kernel.org/project/linux-mmc/list/?series=234011
 
-	SYSID-HIP08,v1,hisilicon/hip08/sys,sys
-	SYSID-krava,v1,hisilicon/krava/sys,sys
-	0x00000000480fd010,v1,hisilicon/hip08/cpu,core
-	0x00000000500f0000,v1,ampere/emag,core
+Regards
+Ludo
 
-then we should be fine.. not too many humans read that file anyway ;-)
-
-jirka
-
+Le 1/28/20 à 10:06 AM, Ludovic Barre a écrit :
+> To support the sdr104 mode, sdmmc variant needs:
+> -Hardware delay block support for sdmmc variant
+>   with tuning procedure
+> -Voltage switch callbacks
+> -sdmmc revision 2.0
+> 
+> V2:
+> -regroup host->mmc_ops & mmc->ops assignment
+> -add timeout define
+> -rename prep_volt_switch to pre_sig_volt_switch
+> -rename volt_switch to post_sig_volt_switch
+> -add 'why' comment for "mmc: mmci: add volt_switch callbacks"
+> 
+> Ludovic Barre (9):
+>    mmc: mmci: sdmmc: replace sg_dma_xxx macros
+>    mmc: mmci: sdmmc: rename sdmmc_priv struct to sdmmc_idma
+>    mmc: mmci: add a reference at mmc_host_ops in mmci struct
+>    mmc: mmci: add private pointer for variant
+>    dt-bindings: mmc: mmci: add delay block base register for sdmmc
+>    mmc: mmci: sdmmc: add execute tuning with delay block
+>    mmc: mmci: add volt_switch callbacks
+>    mmc: mmci: sdmmc: add voltage switch functions
+>    mmc: mmci: add sdmmc variant revision 2.0
+> 
+>   .../devicetree/bindings/mmc/mmci.txt          |   2 +
+>   drivers/mmc/host/mmci.c                       |  42 +++-
+>   drivers/mmc/host/mmci.h                       |   8 +
+>   drivers/mmc/host/mmci_stm32_sdmmc.c           | 204 +++++++++++++++++-
+>   4 files changed, 248 insertions(+), 8 deletions(-)
+> 
