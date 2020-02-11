@@ -2,76 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4C86158C20
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 10:52:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB775158C03
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 10:42:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbgBKJv5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 04:51:57 -0500
-Received: from mail.netline.ch ([148.251.143.178]:47311 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727947AbgBKJv4 (ORCPT
+        id S1727829AbgBKJmW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 04:42:22 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:33010 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbgBKJmV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 04:51:56 -0500
-X-Greylist: delayed 604 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Feb 2020 04:51:55 EST
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id 577EE2A6048;
-        Tue, 11 Feb 2020 10:41:50 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id Y5c4P5LHANWr; Tue, 11 Feb 2020 10:41:50 +0100 (CET)
-Received: from thor (252.80.76.83.dynamic.wline.res.cust.swisscom.ch [83.76.80.252])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id E7C9F2A6046;
-        Tue, 11 Feb 2020 10:41:49 +0100 (CET)
-Received: from [::1]
-        by thor with esmtp (Exim 4.93)
-        (envelope-from <michel@daenzer.net>)
-        id 1j1S3A-000eJE-I2; Tue, 11 Feb 2020 10:41:48 +0100
-Subject: Re: [PATCH v2] drm/i915: Disable
- -Wtautological-constant-out-of-range-compare
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc:     clang-built-linux@googlegroups.com,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <20200211050808.29463-1-natechancellor@gmail.com>
- <20200211061338.23666-1-natechancellor@gmail.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Message-ID: <4c806435-f32d-1559-9563-ffe3fa69f0d1@daenzer.net>
-Date:   Tue, 11 Feb 2020 10:41:48 +0100
+        Tue, 11 Feb 2020 04:42:21 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 30B93293EE0
+Subject: Re: [PATCH v6] platform/chrome: cros_ec: Query EC protocol version if
+ EC transitions between RO/RW
+To:     Yicheng Li <yichengli@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     bleung@chromium.org, groeck@chromium.org, lee.jones@linaro.org,
+        gwendal@chromium.org, andriy.shevchenko@linux.intel.com,
+        Jonathan.Cameron@huawei.com, evgreen@chromium.org,
+        rushikesh.s.kadam@intel.com, tglx@linutronix.de
+References: <20200203225356.203946-1-yichengli@chromium.org>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <8a4273cc-3700-8398-598e-cbcb05e6e595@collabora.com>
+Date:   Tue, 11 Feb 2020 10:42:17 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20200211061338.23666-1-natechancellor@gmail.com>
+In-Reply-To: <20200203225356.203946-1-yichengli@chromium.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-11 7:13 a.m., Nathan Chancellor wrote:
-> A recent commit in clang added -Wtautological-compare to -Wall, which is
-> enabled for i915 so we see the following warning:
+
+On 3/2/20 23:53, Yicheng Li wrote:
+> RO and RW of EC may have different EC protocol version. If EC transitions
+> between RO and RW, but AP does not reboot (this is true for fingerprint
+> microcontroller / cros_fp, but not true for main ec / cros_ec), the AP
+> still uses the protocol version queried before transition, which can
+> cause problems. In the case of fingerprint microcontroller, this causes
+> AP to send the wrong version of EC_CMD_GET_NEXT_EVENT to RO in the
+> interrupt handler, which in turn prevents RO to clear the interrupt
+> line to AP, in an infinite loop.
 > 
-> ../drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c:1485:22: warning:
-> result of comparison of constant 576460752303423487 with expression of
-> type 'unsigned int' is always false
-> [-Wtautological-constant-out-of-range-compare]
->         if (unlikely(remain > N_RELOC(ULONG_MAX)))
->             ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+> Once an EC_HOST_EVENT_INTERFACE_READY is received, we know that there
+> might have been a transition between RO and RW, so re-query the protocol.
 > 
-> This warning only happens on x86_64 but that check is relevant for
-> 32-bit x86 so we cannot remove it.
+> Signed-off-by: Yicheng Li <yichengli@chromium.org>
+> ---
 
-That's suprising. AFAICT N_RELOC(ULONG_MAX) works out to the same value
-in both cases, and remain is a 32-bit value in both cases. How can it be
-larger than N_RELOC(ULONG_MAX) on 32-bit (but not on 64-bit)?
-
-
--- 
-Earthling Michel Dänzer               |               https://redhat.com
-Libre software enthusiast             |             Mesa and X developer
+Queued for 5.7 with all the collected tags, thanks.
