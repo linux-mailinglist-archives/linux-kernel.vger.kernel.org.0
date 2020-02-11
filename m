@@ -2,77 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 770A8159D43
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 00:37:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B35AE159D49
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 00:38:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbgBKXhj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 18:37:39 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:40438 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727847AbgBKXhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 18:37:39 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id AD1D7224B1B;
-        Wed, 12 Feb 2020 00:37:36 +0100 (CET)
-Received: from smtp.na-rdc02.nxp.com (usphx01srsp001v.us-phx01.nxp.com [134.27.49.11])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0B42F224B09;
-        Wed, 12 Feb 2020 00:37:36 +0100 (CET)
-Received: from right.am.freescale.net (right.am.freescale.net [10.81.116.70])
-        by usphx01srsp001v.us-phx01.nxp.com (Postfix) with ESMTP id 37E4340CB6;
-        Tue, 11 Feb 2020 16:37:35 -0700 (MST)
-From:   Li Yang <leoyang.li@nxp.com>
-To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc:     Li Yang <leoyang.li@nxp.com>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] iommu/arm-smmu: fix the module name for disable_bypass parameter
-Date:   Tue, 11 Feb 2020 17:36:55 -0600
-Message-Id: <1581464215-24777-1-git-send-email-leoyang.li@nxp.com>
-X-Mailer: git-send-email 1.9.0
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728033AbgBKXim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 18:38:42 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:64962 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727933AbgBKXil (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 18:38:41 -0500
+Received: from 79.184.254.199.ipv4.supernova.orange.pl (79.184.254.199) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
+ id 58cecbe0eccce4dc; Wed, 12 Feb 2020 00:38:39 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH 28/28] PM: QoS: Make CPU latency QoS depend on CONFIG_CPU_IDLE
+Date:   Wed, 12 Feb 2020 00:37:11 +0100
+Message-ID: <3915146.cHaPKLg5L1@kreacher>
+In-Reply-To: <1654227.8mz0SueHsU@kreacher>
+References: <1654227.8mz0SueHsU@kreacher>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit cd221bd24ff5 ("iommu/arm-smmu: Allow building as a module"),
-there is a side effect that the module name is changed from arm-smmu to
-arm-smmu-mod.  So the kernel parameter for disable_bypass need to be
-changed too.  Fix the Kconfig help and error message to the correct
-parameter name.
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-Signed-off-by: Li Yang <leoyang.li@nxp.com>
+Because cpuidle is the only user of the effective constraint coming
+from the CPU latency QoS, add #ifdef CONFIG_CPU_IDLE around that code
+to avoid building it unnecessarily.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/iommu/Kconfig    | 2 +-
- drivers/iommu/arm-smmu.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ include/linux/pm_qos.h | 13 +++++++++++++
+ kernel/power/qos.c     |  2 ++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index d2fade984999..fb54be903c60 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -415,7 +415,7 @@ config ARM_SMMU_DISABLE_BYPASS_BY_DEFAULT
- 	  hardcode the bypass disable in the code.
+diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
+index df065db3f57a..4a69d4af3ff8 100644
+--- a/include/linux/pm_qos.h
++++ b/include/linux/pm_qos.h
+@@ -143,11 +143,24 @@ bool pm_qos_update_flags(struct pm_qos_flags *pqf,
+ 			 struct pm_qos_flags_request *req,
+ 			 enum pm_qos_req_action action, s32 val);
  
- 	  NOTE: the kernel command line parameter
--	  'arm-smmu.disable_bypass' will continue to override this
-+	  'arm-smmu-mod.disable_bypass' will continue to override this
- 	  config.
++#ifdef CONFIG_CPU_IDLE
+ s32 cpu_latency_qos_limit(void);
+ bool cpu_latency_qos_request_active(struct pm_qos_request *req);
+ void cpu_latency_qos_add_request(struct pm_qos_request *req, s32 value);
+ void cpu_latency_qos_update_request(struct pm_qos_request *req, s32 new_value);
+ void cpu_latency_qos_remove_request(struct pm_qos_request *req);
++#else
++static inline s32 cpu_latency_qos_limit(void) { return INT_MAX; }
++static inline bool cpu_latency_qos_request_active(struct pm_qos_request *req)
++{
++	return false;
++}
++static inline void cpu_latency_qos_add_request(struct pm_qos_request *req,
++					       s32 value) {}
++static inline void cpu_latency_qos_update_request(struct pm_qos_request *req,
++						  s32 new_value) {}
++static inline void cpu_latency_qos_remove_request(struct pm_qos_request *req) {}
++#endif
  
- config ARM_SMMU_V3
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 16c4b87af42b..2ffe8ff04393 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -512,7 +512,7 @@ static irqreturn_t arm_smmu_global_fault(int irq, void *dev)
- 		if (IS_ENABLED(CONFIG_ARM_SMMU_DISABLE_BYPASS_BY_DEFAULT) &&
- 		    (gfsr & ARM_SMMU_sGFSR_USF))
- 			dev_err(smmu->dev,
--				"Blocked unknown Stream ID 0x%hx; boot with \"arm-smmu.disable_bypass=0\" to allow, but this may have security implications\n",
-+				"Blocked unknown Stream ID 0x%hx; boot with \"arm-smmu-mod.disable_bypass=0\" to allow, but this may have security implications\n",
- 				(u16)gfsynr1);
- 		else
- 			dev_err(smmu->dev,
+ #ifdef CONFIG_PM
+ enum pm_qos_flags_status __dev_pm_qos_flags(struct device *dev, s32 mask);
+diff --git a/kernel/power/qos.c b/kernel/power/qos.c
+index ef73573db43d..32927682bcc4 100644
+--- a/kernel/power/qos.c
++++ b/kernel/power/qos.c
+@@ -209,6 +209,7 @@ bool pm_qos_update_flags(struct pm_qos_flags *pqf,
+ 	return prev_value != curr_value;
+ }
+ 
++#ifdef CONFIG_CPU_IDLE
+ /* Definitions related to the CPU latency QoS. */
+ 
+ static struct pm_qos_constraints cpu_latency_constraints = {
+@@ -421,6 +422,7 @@ static int __init cpu_latency_qos_init(void)
+ 	return ret;
+ }
+ late_initcall(cpu_latency_qos_init);
++#endif /* CONFIG_CPU_IDLE */
+ 
+ /* Definitions related to the frequency QoS below. */
+ 
 -- 
-2.17.1
+2.16.4
+
+
+
+
 
