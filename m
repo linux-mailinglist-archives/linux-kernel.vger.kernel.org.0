@@ -2,110 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 890C4158BCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 10:23:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE865158BE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 10:32:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbgBKJXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 04:23:17 -0500
-Received: from mga03.intel.com ([134.134.136.65]:26356 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727121AbgBKJXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 04:23:16 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 01:23:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="380377287"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.106])
-  by orsmga004.jf.intel.com with ESMTP; 11 Feb 2020 01:23:13 -0800
-Date:   Tue, 11 Feb 2020 16:05:41 +0000
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Zha Bin <zhabin@linux.alibaba.com>, linux-kernel@vger.kernel.org,
-        jasowang@redhat.com, slp@redhat.com,
-        virtio-dev@lists.oasis-open.org, qemu-devel@nongnu.org,
-        gerry@linux.alibaba.com, jing2.liu@linux.intel.com
-Subject: Re: [PATCH v2 0/5] virtio mmio specification enhancement
-Message-ID: <20200211160541.GA37446@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <cover.1581305609.git.zhabin@linux.alibaba.com>
- <20200210062938-mutt-send-email-mst@kernel.org>
+        id S1727802AbgBKJcT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 04:32:19 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:21208 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727579AbgBKJcT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 04:32:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581413537;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vUIoKsy00yC8FduSIq6A0fM/o1AiegnuIk2T9JsHl8s=;
+        b=TepcdiYtRvdMteBPrTZU6lmjory4r1dMLbBx/6WmkiWHpJF0p55gvFl/Txu3lD/yVjjIaB
+        zFCrwETcqVjbkHLR9iUKtkfYURgMhdzY/vYYjo33+7mODLNoEaN7LEzebxTFwJQEvKehKF
+        nNFLWYDOZniNw3GdFhJP2XVnEbyu9aQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-110-yhNg-sQ5N2ClZiwoQy9BMQ-1; Tue, 11 Feb 2020 04:32:14 -0500
+X-MC-Unique: yhNg-sQ5N2ClZiwoQy9BMQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C3F60107B7DC;
+        Tue, 11 Feb 2020 09:32:12 +0000 (UTC)
+Received: from localhost (unknown [10.36.118.99])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4B6175C21B;
+        Tue, 11 Feb 2020 09:32:10 +0000 (UTC)
+Date:   Tue, 11 Feb 2020 09:32:09 +0000
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Avi Kivity <avi@scylladb.com>,
+        Davide Libenzi <davidel@xmailserver.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Masatake YAMATO <yamato@redhat.com>
+Subject: Re: [RFC] eventfd: add EFD_AUTORESET flag
+Message-ID: <20200211093209.GA420951@stefanha-x1.localdomain>
+References: <20200129172010.162215-1-stefanha@redhat.com>
+ <20200204154035.GA47059@stefanha-x1.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200210062938-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200204154035.GA47059@stefanha-x1.localdomain>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 06:44:50AM -0500, Michael S. Tsirkin wrote:
-> On Mon, Feb 10, 2020 at 05:05:16PM +0800, Zha Bin wrote:
-> > We have compared the number of files and the lines of code between
-> > virtio-mmio and virio-pci.
+On Tue, Feb 04, 2020 at 03:40:35PM +0000, Stefan Hajnoczi wrote:
+> On Wed, Jan 29, 2020 at 05:20:10PM +0000, Stefan Hajnoczi wrote:
+> > Some applications simply use eventfd for inter-thread notifications
+> > without requiring counter or semaphore semantics.  They wait for the
+> > eventfd to become readable using poll(2)/select(2) and then call read(2)
+> > to reset the counter.
 > > 
-> > 				Virtio-PCI	    Virtio-MMIO	
-> > 	number of files(Linux)	    161			1
-> > 	lines of code(Linux)	    78237		538
+> > This patch adds the EFD_AUTORESET flag to reset the counter when
+> > f_ops->poll() finds the eventfd is readable, eliminating the need to
+> > call read(2) to reset the counter.
+> > 
+> > This results in a small but measurable 1% performance improvement with
+> > QEMU virtio-blk emulation.  Each read(2) takes 1 microsecond execution
+> > time in the event loop according to perf.
+> > 
+> > Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+> > ---
+> > Does this look like a reasonable thing to do?  I'm not very familiar
+> > with f_ops->poll() or the eventfd internals, so maybe I'm overlooking a
+> > design flaw.
 > 
-> 
-> 
-> Something's very wrong here. virtio PCI is 161 files?
-> Are you counting the whole PCI subsystem?
+> Ping?
 
-Right, that is just a rough statistics. Surely enough, some drivers will
-never get enabled in a typcial config.
+Ping?
 
-> Sure enough:
-> 
-> $ find drivers/pci -name '*c' |wc -l
-> 150
+I would appreciate an indication of whether EFD_AUTORESET is an
+acceptable new feature.  Thanks!
 
-and plus:
-$ find arch/x86/pci/ -name '*c' |wc -l
-22
+> > I've tested this with QEMU and it works fine:
+> > https://github.com/stefanha/qemu/commits/eventfd-autoreset
+> > ---
+> >  fs/eventfd.c            | 99 +++++++++++++++++++++++++----------------
+> >  include/linux/eventfd.h |  3 +-
+> >  2 files changed, 62 insertions(+), 40 deletions(-)
+> > 
+> > diff --git a/fs/eventfd.c b/fs/eventfd.c
+> > index 8aa0ea8c55e8..208f6b9e2234 100644
+> > --- a/fs/eventfd.c
+> > +++ b/fs/eventfd.c
+> > @@ -116,45 +116,62 @@ static __poll_t eventfd_poll(struct file *file, poll_table *wait)
+> >  
+> >  	poll_wait(file, &ctx->wqh, wait);
+> >  
+> > -	/*
+> > -	 * All writes to ctx->count occur within ctx->wqh.lock.  This read
+> > -	 * can be done outside ctx->wqh.lock because we know that poll_wait
+> > -	 * takes that lock (through add_wait_queue) if our caller will sleep.
+> > -	 *
+> > -	 * The read _can_ therefore seep into add_wait_queue's critical
+> > -	 * section, but cannot move above it!  add_wait_queue's spin_lock acts
+> > -	 * as an acquire barrier and ensures that the read be ordered properly
+> > -	 * against the writes.  The following CAN happen and is safe:
+> > -	 *
+> > -	 *     poll                               write
+> > -	 *     -----------------                  ------------
+> > -	 *     lock ctx->wqh.lock (in poll_wait)
+> > -	 *     count = ctx->count
+> > -	 *     __add_wait_queue
+> > -	 *     unlock ctx->wqh.lock
+> > -	 *                                        lock ctx->qwh.lock
+> > -	 *                                        ctx->count += n
+> > -	 *                                        if (waitqueue_active)
+> > -	 *                                          wake_up_locked_poll
+> > -	 *                                        unlock ctx->qwh.lock
+> > -	 *     eventfd_poll returns 0
+> > -	 *
+> > -	 * but the following, which would miss a wakeup, cannot happen:
+> > -	 *
+> > -	 *     poll                               write
+> > -	 *     -----------------                  ------------
+> > -	 *     count = ctx->count (INVALID!)
+> > -	 *                                        lock ctx->qwh.lock
+> > -	 *                                        ctx->count += n
+> > -	 *                                        **waitqueue_active is false**
+> > -	 *                                        **no wake_up_locked_poll!**
+> > -	 *                                        unlock ctx->qwh.lock
+> > -	 *     lock ctx->wqh.lock (in poll_wait)
+> > -	 *     __add_wait_queue
+> > -	 *     unlock ctx->wqh.lock
+> > -	 *     eventfd_poll returns 0
+> > -	 */
+> > -	count = READ_ONCE(ctx->count);
+> > +	if (ctx->flags & EFD_AUTORESET) {
+> > +		unsigned long flags;
+> > +		__poll_t requested = poll_requested_events(wait);
+> > +
+> > +		spin_lock_irqsave(&ctx->wqh.lock, flags);
+> > +		count = ctx->count;
+> > +
+> > +		/* Reset counter if caller is polling for read */
+> > +		if (count != 0 && (requested & EPOLLIN)) {
+> > +			ctx->count = 0;
+> > +			events |= EPOLLOUT;
+> > +			/* TODO is a EPOLLOUT wakeup necessary here? */
+> > +		}
+> > +
+> > +		spin_unlock_irqrestore(&ctx->wqh.lock, flags);
+> > +	} else {
+> > +		/*
+> > +		 * All writes to ctx->count occur within ctx->wqh.lock.  This read
+> > +		 * can be done outside ctx->wqh.lock because we know that poll_wait
+> > +		 * takes that lock (through add_wait_queue) if our caller will sleep.
+> > +		 *
+> > +		 * The read _can_ therefore seep into add_wait_queue's critical
+> > +		 * section, but cannot move above it!  add_wait_queue's spin_lock acts
+> > +		 * as an acquire barrier and ensures that the read be ordered properly
+> > +		 * against the writes.  The following CAN happen and is safe:
+> > +		 *
+> > +		 *     poll                               write
+> > +		 *     -----------------                  ------------
+> > +		 *     lock ctx->wqh.lock (in poll_wait)
+> > +		 *     count = ctx->count
+> > +		 *     __add_wait_queue
+> > +		 *     unlock ctx->wqh.lock
+> > +		 *                                        lock ctx->qwh.lock
+> > +		 *                                        ctx->count += n
+> > +		 *                                        if (waitqueue_active)
+> > +		 *                                          wake_up_locked_poll
+> > +		 *                                        unlock ctx->qwh.lock
+> > +		 *     eventfd_poll returns 0
+> > +		 *
+> > +		 * but the following, which would miss a wakeup, cannot happen:
+> > +		 *
+> > +		 *     poll                               write
+> > +		 *     -----------------                  ------------
+> > +		 *     count = ctx->count (INVALID!)
+> > +		 *                                        lock ctx->qwh.lock
+> > +		 *                                        ctx->count += n
+> > +		 *                                        **waitqueue_active is false**
+> > +		 *                                        **no wake_up_locked_poll!**
+> > +		 *                                        unlock ctx->qwh.lock
+> > +		 *     lock ctx->wqh.lock (in poll_wait)
+> > +		 *     __add_wait_queue
+> > +		 *     unlock ctx->wqh.lock
+> > +		 *     eventfd_poll returns 0
+> > +		 */
+> > +		count = READ_ONCE(ctx->count);
+> > +	}
+> >  
+> >  	if (count > 0)
+> >  		events |= EPOLLIN;
+> > @@ -400,6 +417,10 @@ static int do_eventfd(unsigned int count, int flags)
+> >  	if (flags & ~EFD_FLAGS_SET)
+> >  		return -EINVAL;
+> >  
+> > +	/* Semaphore semantics don't make sense when autoreset is enabled */
+> > +	if ((flags & EFD_SEMAPHORE) && (flags & EFD_AUTORESET))
+> > +		return -EINVAL;
+> > +
+> >  	ctx = kmalloc(sizeof(*ctx), GFP_KERNEL);
+> >  	if (!ctx)
+> >  		return -ENOMEM;
+> > diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
+> > index ffcc7724ca21..27577fafc553 100644
+> > --- a/include/linux/eventfd.h
+> > +++ b/include/linux/eventfd.h
+> > @@ -21,11 +21,12 @@
+> >   * shared O_* flags.
+> >   */
+> >  #define EFD_SEMAPHORE (1 << 0)
+> > +#define EFD_AUTORESET (1 << 6) /* aliases O_CREAT */
+> >  #define EFD_CLOEXEC O_CLOEXEC
+> >  #define EFD_NONBLOCK O_NONBLOCK
+> >  
+> >  #define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
+> > -#define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
+> > +#define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE | EFD_AUTORESET)
+> >  
+> >  struct eventfd_ctx;
+> >  struct file;
+> > -- 
+> > 2.24.1
+> > 
 
-> 
-> That's not reasonable, this includes a bunch of drivers that
-> never run on a typical hypervisor.
-> 
-> MMIO is also not as small as you are trying to show:
-> 
-> $ cloc drivers/virtio/virtio_mmio.c include/uapi/linux/virtio_mmio.h
->        2 text files.
->        2 unique files.                              
->        0 files ignored.
-> 
-> github.com/AlDanial/cloc v 1.82  T=0.01 s (230.7 files/s, 106126.5 lines/s)
-> -------------------------------------------------------------------------------
-> Language                     files          blank        comment           code
-> -------------------------------------------------------------------------------
-> C                                1            144            100            535
-> C/C++ Header                     1             39             66             36
-> -------------------------------------------------------------------------------
-> SUM:                             2            183            166            571
-> -------------------------------------------------------------------------------
-> 
-> 
-> I don't doubt MMIO is smaller than PCI. Of course that's because it has
-> no features to speak of - just this patch already doubles it's size. If
-> we keep doing that because we want the features then they will reach
-> the same size in about 4 iterations.
 
-Since current virtio-mmio size is small enough, so adding any notable
-feature would easily double it. I have no objection that it may one day
-reach the same level of PCI, but in this patch some are actually
-generic changes and for MSI specific code we provide the option to
-confige away.
-
-Thanks,
-Chao
-
-> 
-> 
-> -- 
-> MST
