@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B7D21594A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:16:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 564311594A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:16:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730764AbgBKQQ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 11:16:26 -0500
+        id S1730798AbgBKQQ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 11:16:29 -0500
 Received: from mga09.intel.com ([134.134.136.24]:16669 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729560AbgBKQQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729335AbgBKQQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Feb 2020 11:16:26 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 08:15:59 -0800
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 08:16:03 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="266309611"
+   d="scan'208";a="266309672"
 Received: from nntpdsd52-183.inn.intel.com ([10.125.52.183])
-  by fmsmga002.fm.intel.com with ESMTP; 11 Feb 2020 08:15:55 -0800
+  by fmsmga002.fm.intel.com with ESMTP; 11 Feb 2020 08:15:59 -0800
 From:   roman.sudarikov@linux.intel.com
 To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
@@ -28,14 +28,13 @@ To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         bgregg@netflix.com, ak@linux.intel.com, kan.liang@linux.intel.com,
         gregkh@linuxfoundation.org
 Cc:     alexander.antonov@intel.com, roman.sudarikov@linux.intel.com
-Subject: [PATCH v5 1/3] perf x86: Infrastructure for exposing an Uncore unit to PMON mapping
-Date:   Tue, 11 Feb 2020 19:15:47 +0300
-Message-Id: <20200211161549.19828-2-roman.sudarikov@linux.intel.com>
+Subject: [PATCH v5 2/3] perf x86: topology max dies for whole system
+Date:   Tue, 11 Feb 2020 19:15:48 +0300
+Message-Id: <20200211161549.19828-3-roman.sudarikov@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20200211161549.19828-1-roman.sudarikov@linux.intel.com>
 References: <20200211161549.19828-1-roman.sudarikov@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -44,101 +43,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Roman Sudarikov <roman.sudarikov@linux.intel.com>
 
-Intel® Xeon® Scalable processor family (code name Skylake-SP) makes
-significant changes in the integrated I/O (IIO) architecture. The new
-solution introduces IIO stacks which are responsible for managing traffic
-between the PCIe domain and the Mesh domain. Each IIO stack has its own
-PMON block and can handle either DMI port, x16 PCIe root port, MCP-Link
-or various built-in accelerators. IIO PMON blocks allow concurrent
-monitoring of I/O flows up to 4 x4 bifurcation within each IIO stack.
-
-Software is supposed to program required perf counters within each IIO
-stack and gather performance data. The tricky thing here is that IIO PMON
-reports data per IIO stack but users have no idea what IIO stacks are -
-they only know devices which are connected to the platform.
-
-Understanding IIO stack concept to find which IIO stack that particular
-IO device is connected to, or to identify an IIO PMON block to program
-for monitoring specific IIO stack assumes a lot of implicit knowledge
-about given Intel server platform architecture.
-
-Usage example:
-    ls /sys/devices/uncore_<type>_<pmu_idx>/node*
-
-Each Uncore unit type, by its nature, can be mapped to its own context,
-for example:
-1. CHA - each uncore_cha_<pmu_idx> is assigned to manage a distinct slice
-   of LLC capacity;
-2. UPI - each uncore_upi_<pmu_idx> is assigned to manage one link of Intel
-   UPI Subsystem;
-3. IIO - each uncore_iio_<pmu_idx> is assigned to manage one stack of the
-   IIO module;
-4. IMC - each uncore_imc_<pmu_idx> is assigned to manage one channel of
-   Memory Controller.
-
-Implementation details:
-Optional callback added to struct intel_uncore_type to discover and map
-Uncore units to PMONs:
-    int (*set_mapping)(struct intel_uncore_type *type)
-
-Details of IIO Uncore unit mapping to IIO PMON:
-Each IIO stack is either DMI port, x16 PCIe root port, MCP-Link or various
-built-in accelerators. For Uncore IIO Unit type, the mapping file
-holds bus numbers of devices, which can be monitored by that IIO PMON block
-on each die.
+Helper fuction to return number of dies on the platform.
 
 Co-developed-by: Alexander Antonov <alexander.antonov@intel.com>
 Signed-off-by: Alexander Antonov <alexander.antonov@intel.com>
 Signed-off-by: Roman Sudarikov <roman.sudarikov@linux.intel.com>
 ---
- arch/x86/events/intel/uncore.c | 5 +++++
- arch/x86/events/intel/uncore.h | 5 +++++
- 2 files changed, 10 insertions(+)
+ arch/x86/events/intel/uncore.c | 13 +++++++------
+ arch/x86/events/intel/uncore.h |  3 +++
+ 2 files changed, 10 insertions(+), 6 deletions(-)
 
 diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index 86467f85c383..98ab8539f126 100644
+index 98ab8539f126..e6297fe42c54 100644
 --- a/arch/x86/events/intel/uncore.c
 +++ b/arch/x86/events/intel/uncore.c
-@@ -843,10 +843,12 @@ static int uncore_pmu_register(struct intel_uncore_pmu *pmu)
- 			.read		= uncore_pmu_event_read,
- 			.module		= THIS_MODULE,
- 			.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
-+			.attr_update	= pmu->type->attr_update,
- 		};
- 	} else {
- 		pmu->pmu = *pmu->type->pmu;
- 		pmu->pmu.attr_groups = pmu->type->attr_groups;
-+		pmu->pmu.attr_update = pmu->type->attr_update;
- 	}
+@@ -16,7 +16,7 @@ struct pci_driver *uncore_pci_driver;
+ DEFINE_RAW_SPINLOCK(pci2phy_map_lock);
+ struct list_head pci2phy_map_head = LIST_HEAD_INIT(pci2phy_map_head);
+ struct pci_extra_dev *uncore_extra_pci_dev;
+-static int max_dies;
++int __uncore_max_dies;
  
- 	if (pmu->type->num_boxes == 1) {
-@@ -954,6 +956,9 @@ static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
+ /* mask of cpus that collect uncore events */
+ static cpumask_t uncore_cpu_mask;
+@@ -108,7 +108,7 @@ struct intel_uncore_box *uncore_pmu_to_box(struct intel_uncore_pmu *pmu, int cpu
+ 	 * The unsigned check also catches the '-1' return value for non
+ 	 * existent mappings in the topology map.
+ 	 */
+-	return dieid < max_dies ? pmu->boxes[dieid] : NULL;
++	return dieid < uncore_max_dies() ? pmu->boxes[dieid] : NULL;
+ }
  
- 	type->pmu_group = &uncore_pmu_attr_group;
+ u64 uncore_msr_read_counter(struct intel_uncore_box *box, struct perf_event *event)
+@@ -879,7 +879,7 @@ static void uncore_free_boxes(struct intel_uncore_pmu *pmu)
+ {
+ 	int die;
  
-+	if (type->set_mapping)
-+		type->set_mapping(type);
-+
- 	return 0;
+-	for (die = 0; die < max_dies; die++)
++	for (die = 0; die < uncore_max_dies(); die++)
+ 		kfree(pmu->boxes[die]);
+ 	kfree(pmu->boxes);
+ }
+@@ -917,7 +917,7 @@ static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
+ 	if (!pmus)
+ 		return -ENOMEM;
  
- err:
+-	size = max_dies * sizeof(struct intel_uncore_box *);
++	size = uncore_max_dies() * sizeof(struct intel_uncore_box *);
+ 
+ 	for (i = 0; i < type->num_boxes; i++) {
+ 		pmus[i].func_id	= setid ? i : -1;
+@@ -1117,7 +1117,7 @@ static int __init uncore_pci_init(void)
+ 	size_t size;
+ 	int ret;
+ 
+-	size = max_dies * sizeof(struct pci_extra_dev);
++	size = uncore_max_dies() * sizeof(struct pci_extra_dev);
+ 	uncore_extra_pci_dev = kzalloc(size, GFP_KERNEL);
+ 	if (!uncore_extra_pci_dev) {
+ 		ret = -ENOMEM;
+@@ -1529,7 +1529,8 @@ static int __init intel_uncore_init(void)
+ 	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
+ 		return -ENODEV;
+ 
+-	max_dies = topology_max_packages() * topology_max_die_per_package();
++	__uncore_max_dies =
++		topology_max_packages() * topology_max_die_per_package();
+ 
+ 	uncore_init = (struct intel_uncore_init_fun *)id->driver_data;
+ 	if (uncore_init->pci_init) {
 diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
-index bbfdaa720b45..8821f35e32f0 100644
+index 8821f35e32f0..12bfcb0a8223 100644
 --- a/arch/x86/events/intel/uncore.h
 +++ b/arch/x86/events/intel/uncore.h
-@@ -72,7 +72,12 @@ struct intel_uncore_type {
- 	struct uncore_event_desc *event_descs;
- 	struct freerunning_counters *freerunning;
- 	const struct attribute_group *attr_groups[4];
-+	const struct attribute_group **attr_update;
- 	struct pmu *pmu; /* for custom pmu ops */
-+	/* PMON's topologies */
-+	u64 *topology;
-+	/* mapping Uncore units to PMON ranges */
-+	int (*set_mapping)(struct intel_uncore_type *type);
- };
+@@ -173,6 +173,9 @@ int uncore_pcibus_to_physid(struct pci_bus *bus);
+ ssize_t uncore_event_show(struct kobject *kobj,
+ 			  struct kobj_attribute *attr, char *buf);
  
- #define pmu_group attr_groups[0]
++extern int __uncore_max_dies;
++#define uncore_max_dies()	(__uncore_max_dies)
++
+ #define INTEL_UNCORE_EVENT_DESC(_name, _config)			\
+ {								\
+ 	.attr	= __ATTR(_name, 0444, uncore_event_show, NULL),	\
 -- 
 2.19.1
 
