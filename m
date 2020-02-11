@@ -2,113 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FDAD159D19
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 00:20:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D208159D1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 00:23:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727986AbgBKXUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 18:20:32 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.175]:27870 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727811AbgBKXUb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 18:20:31 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 5F5C1400C9D19
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 17:20:30 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 1epSjKOWOvBMd1epSjdzCK; Tue, 11 Feb 2020 17:20:30 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ZeEly4URcPzI9V6orzk6NjOSoTiGretqTjD58lLekkE=; b=eQCMYuZHqbsCvYuKUdAzhiRThO
-        F5cD2QfOAU6oUbZiMgeL9o9NWf7LLp8QkEWcQxmVztE+b8OyabyfUglGuUBTIn3Srj1Xi0oCPaf5e
-        AKWs6fJWzYy8xzP58ncH2FBLq5swhPrMAim1V37yi8/ItkPRynJEfTF0kGdYm060kjUKIedmYjKjX
-        PoqfFLrqQfXNKvt53nsKBnOokyOzBdLtt3SbonN7TdtdD9UYjlGzu8SDuAkvVrmsMIs9CwsDi2T2G
-        tV/vIdzxRtu/3rd+LKM47+03q7tukF+CA5pKhGblaXcgCEjnSoPMo2eQF5OxzbekWiCfVf09f/Qt0
-        m+39ZRXg==;
-Received: from [200.68.140.36] (port=5119 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j1epQ-003ZeJ-Ra; Tue, 11 Feb 2020 17:20:28 -0600
-Date:   Tue, 11 Feb 2020 17:23:03 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] usb: gadget: f_phonet: Replace zero-length array with
- flexible-array member
-Message-ID: <20200211232303.GA21495@embeddedor>
+        id S1727958AbgBKXXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 18:23:13 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:44349 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727817AbgBKXXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 18:23:13 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48HJjV74lvz9sP7;
+        Wed, 12 Feb 2020 10:23:10 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1581463391;
+        bh=bRFdwr1yIJuc3EcV6OsD8j33boY4/PcXu5Y4KzG6ok4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=XU25pqpYaUos07ZmrbUdYJgzuaQgziYVXOvmCBlgYzvnFn1Ojtf4ZRIJitFKSaa9C
+         Kqf3ZGQXRnngittXhqJkJCzpgDRcJZQKS+l3q/gFXETkskk0E7UglthdONFXutpTrr
+         WHDIaho/iIIl+lCdALlkEY/jhqItLQgO1XpXLp4Mole7TRSfGO/R35TfsHjHBP10RS
+         R1RsW2xCCvfL9RMtsQG/Mb9zx2JWOg1IZ1lEU/fmA3pWAdMIC11wd8jaCxVtrs5Yul
+         XGZD4DpsuuCn8k5a9xhjhjglvdr2rYQR68IaZiAlD5K7CFhkqhqBE0HB8Gv2BsKWi5
+         yPXmFEFD6y6Kg==
+Date:   Wed, 12 Feb 2020 10:23:09 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the keys tree
+Message-ID: <20200212102309.61c3fa7e@canb.auug.org.au>
+In-Reply-To: <20200210100743.7a6a0116@canb.auug.org.au>
+References: <20200210100555.7497d69b@canb.auug.org.au>
+        <20200210100743.7a6a0116@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.36
-X-Source-L: No
-X-Exim-ID: 1j1epQ-003ZeJ-Ra
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.36]:5119
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 40
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: multipart/signed; boundary="Sig_/E/cTBMWLd7RjEmxLl0rLyEw";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+--Sig_/E/cTBMWLd7RjEmxLl0rLyEw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+Hi all,
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertenly introduced[3] to the codebase from now on.
+On Mon, 10 Feb 2020 10:07:43 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Mon, 10 Feb 2020 10:05:55 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > After merging the keys tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this: =20
+>=20
+> kernel/watch_queue.c: In function 'post_one_notification':
+> kernel/watch_queue.c:89:21: error: 'struct pipe_inode_info' has no member=
+ named 'wait'
+>    89 |  spin_lock_irq(&pipe->wait.lock);
+>       |                     ^~
+> kernel/watch_queue.c:122:24: error: 'struct pipe_inode_info' has no membe=
+r named 'wait'
+>   122 |   spin_unlock_irq(&pipe->wait.lock);
+>       |                        ^~
+> In file included from include/linux/mmzone.h:10,
+>                  from include/linux/gfp.h:6,
+>                  from include/linux/umh.h:4,
+>                  from include/linux/kmod.h:9,
+>                  from include/linux/module.h:16,
+>                  from kernel/watch_queue.c:11:
+> kernel/watch_queue.c:125:46: error: 'struct pipe_inode_info' has no membe=
+r named 'wait'
+>   125 |  wake_up_interruptible_sync_poll_locked(&pipe->wait, EPOLLIN | EP=
+OLLRDNORM);
+>       |                                              ^~
+> include/linux/wait.h:234:29: note: in definition of macro 'wake_up_interr=
+uptible_sync_poll_locked'
+>   234 |  __wake_up_locked_sync_key((x), TASK_INTERRUPTIBLE, poll_to_key(m=
+))
+>       |                             ^
+> kernel/watch_queue.c:129:23: error: 'struct pipe_inode_info' has no membe=
+r named 'wait'
+>   129 |  spin_unlock_irq(&pipe->wait.lock);
+>       |                       ^~
+>=20
+> > Caused by commit(s) in the keys tree interacting with commit
+> >=20
+> >   0ddad21d3e99 ("pipe: use exclusive waits when reading or writing")
+> >=20
+> > from Linus' tree.
+> >=20
+> > Given that I haven't seen a pull request for the keys tree yet, it seems
+> > that this work will not be in v5.6, so I have just dropped the keys tree
+> > for today. =20
 
-This issue was found with the help of Coccinelle.
+=46rom today, I have just disabled CONFIG_WATCH_QUEUE instead of dropping
+the keys tree completely.  Please let me know when it has been fixed up
+in case I don't notice.
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+--=20
+Cheers,
+Stephen Rothwell
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/usb/gadget/function/f_phonet.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--Sig_/E/cTBMWLd7RjEmxLl0rLyEw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-diff --git a/drivers/usb/gadget/function/f_phonet.c b/drivers/usb/gadget/function/f_phonet.c
-index 8b72b192c747..d7f6cc51b7ec 100644
---- a/drivers/usb/gadget/function/f_phonet.c
-+++ b/drivers/usb/gadget/function/f_phonet.c
-@@ -48,7 +48,7 @@ struct f_phonet {
- 	struct usb_ep			*in_ep, *out_ep;
- 
- 	struct usb_request		*in_req;
--	struct usb_request		*out_reqv[0];
-+	struct usb_request		*out_reqv[];
- };
- 
- static int phonet_rxq_size = 17;
--- 
-2.25.0
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5DN10ACgkQAVBC80lX
+0GycMwgAgx3N4wiuk/navM0aVqqNQPa1vV00JX25nr4b1TM8QTustgKk3z8miXGP
+xiRd9t940N5uhQxhrJZDHL/sss5gViRfjlZ6g+wWSC7vRJ5R/LCW4glddExZTVmc
+jW6/BdoG15cTaVjAiS/E/0GtSy3toiTMdxtK8y/PTng8m0bXg3MX+nvYPs9Rk4Ba
+kAw3l6BRE83nL9+m4Tk12fsUH+aacl5IMZ4gBMDieoY3o7muTaUqCo8JvRCm11/x
+qpXohFPbF5ejkxslLFtYVYZsrELxS6Wns7HLxIJQKN9F0PYeTv8JUrWLJ2Cd2bk+
+E9JzgGUbvOhmYtCp0CxIt5j1ON5oaQ==
+=9gIq
+-----END PGP SIGNATURE-----
+
+--Sig_/E/cTBMWLd7RjEmxLl0rLyEw--
