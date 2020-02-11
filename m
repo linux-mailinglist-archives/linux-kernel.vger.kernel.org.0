@@ -2,107 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4D9515951D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:39:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B90C6159520
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:39:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730905AbgBKQjN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 11:39:13 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:37333 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728049AbgBKQjM (ORCPT
+        id S1730924AbgBKQjW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 11:39:22 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:48487 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728049AbgBKQjU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 11:39:12 -0500
-Received: by mail-pj1-f66.google.com with SMTP id m13so1464591pjb.2;
-        Tue, 11 Feb 2020 08:39:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=b5SWMMkJOd/6WCjohw4ec3oXVDA3cc/tfQSWjqNAn/k=;
-        b=Vy4ePc0nmBwtSpe2cs/4Ul4iDsNg6N7bc/SK+figGy/l9SVtogqnjXYvGTLXsmyo40
-         jRzkP6aTk4echAqPd+Fux6uExsVWmnMLF/jp2JgtPGp46Bf7g6MUc1IjDAzonEosGVwH
-         ZA1joxtUK61iXCKj2amtxUCvCJYT/vNMc+OhdA5FRKeCOD1qurIPhGmRXc4N0YOXqLgj
-         JPvmtw10jYDSXnCvKcaDK7Gn5PI/w6LN8tLnA8lfKr8lD5SaCGrm1HjpyC5zM9DBq8k6
-         zEjc91Qop2Fnl32R69LsJusylLG+gRjdQHPFqFzbyqsumXe+v2DxK/Cc871C984jbVKk
-         JmVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=b5SWMMkJOd/6WCjohw4ec3oXVDA3cc/tfQSWjqNAn/k=;
-        b=ZfhoH6wLwfShINRIQFNNvPqqATA1ShiPXyTaikU4tsonFkiPhTRKG7j/UEBhRer204
-         ICv34dB4aHjx/O6YxTRKfl6kWmsK/LI/uI0uV6+jzr9h18jtPO8N5MqTX9xz/jaaraei
-         FzoBv2exrztcSoGxyWHtBrF9E0/4NV4yLYKz1Cp4mHcbMzpPYbPFp1Ll8CenEzXZb0Vo
-         A7Z+9nMplyeMTe6g6QThdfdTuuLqt/9wZLiPxb0qpzSpM92m5gzgnQGZ+kosGO3tjkBd
-         LUNudPvEzblFyb6tlIE+SQRPF1S+tKXbeqMKEjQ52a6/twVHsPTpLAT4Ie4KOh8MRiZz
-         82uw==
-X-Gm-Message-State: APjAAAWK9YBfCWwz9RxFaggp7413Y/z4IhA2u55ky+veNmE+gOUgZ1E0
-        Evgq4Nag9DqRhaT5SbgmyTikK0Bp
-X-Google-Smtp-Source: APXvYqwIewJIKXckCSq0MvZkIQaU4p16PRmxkgrFLcOQqIkZOG0FcWhRxrjqw+6XMtCu19kM5aQjtg==
-X-Received: by 2002:a17:90a:e397:: with SMTP id b23mr4487379pjz.135.1581439151751;
-        Tue, 11 Feb 2020 08:39:11 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id s124sm5086820pfc.57.2020.02.11.08.39.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Feb 2020 08:39:10 -0800 (PST)
-Date:   Tue, 11 Feb 2020 08:39:10 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] hwmon: axi-fan-control: fix uninitialized
- dereference of pointer res
-Message-ID: <20200211163910.GA2975@roeck-us.net>
-References: <20200211162059.94233-1-colin.king@canonical.com>
+        Tue, 11 Feb 2020 11:39:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581439159;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=xky2KislxK5IxZzkAgr2Tmutbb9TMu3YGRpEz4bopS4=;
+        b=EosOjjoopjcjr6VtDhLVLMR8e/GdggO0zd+gd63sAGv/6tSuXydGOQznX3PYon6Ci6b8TO
+        mwA4Tthh6p+daTReZYSu+Jq1cAg6PwgQDlMtug0aobSG9WKRRDzgQDp2QZg32aiabI3yQq
+        RcodaHgahwPuD7H0YYzu0uxnFShLP2k=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-97-V-cC41HZPnSqRFAyQOy5mA-1; Tue, 11 Feb 2020 11:39:17 -0500
+X-MC-Unique: V-cC41HZPnSqRFAyQOy5mA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 972E810054E3;
+        Tue, 11 Feb 2020 16:39:15 +0000 (UTC)
+Received: from [10.10.123.148] (ovpn-123-148.rdu2.redhat.com [10.10.123.148])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A48F60BF1;
+        Tue, 11 Feb 2020 16:39:14 +0000 (UTC)
+Subject: Re: [v3] nbd: fix potential NULL pointer fault in nbd_genl_disconnect
+To:     "sunke (E)" <sunke32@huawei.com>, josef@toxicpanda.com,
+        axboe@kernel.dk
+References: <20200210073241.41813-1-sunke32@huawei.com>
+ <5E418D62.8090102@redhat.com>
+ <c3531fc5-73b3-6ef4-816e-97f491f45c18@huawei.com>
+Cc:     linux-block@vger.kernel.org, nbd@other.debian.org,
+        linux-kernel@vger.kernel.org
+From:   Mike Christie <mchristi@redhat.com>
+Message-ID: <5E42D8B1.406@redhat.com>
+Date:   Tue, 11 Feb 2020 10:39:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200211162059.94233-1-colin.king@canonical.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <c3531fc5-73b3-6ef4-816e-97f491f45c18@huawei.com>
+Content-Type: text/plain; charset=utf-8
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 04:20:59PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the resource pointer ret is uninitialized and it is
-> being dereferenced when printing out a debug message. Fix this
-> by fetching the resource and assigning pointer res.  It is
-> a moot point that we sanity check for a null res since a successful
-> call to devm_platform_ioremap_resource has already occurred so
-> in theory it should never be non-null.
-> 
-> Addresses-Coverity: ("Uninitialized pointer read")
-> Fixes: 690dd9ce04f6 ("hwmon: Support ADI Fan Control IP")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On 02/10/2020 10:12 PM, sunke (E) wrote:
+>=20
+>=20
+> =E5=9C=A8 2020/2/11 1:05, Mike Christie =E5=86=99=E9=81=93:
+>> On 02/10/2020 01:32 AM, Sun Ke wrote:
+>>> Open /dev/nbdX first, the config_refs will be 1 and
+>>> the pointers in nbd_device are still null. Disconnect
+>>> /dev/nbdX, then reference a null recv_workq. The
+>>> protection by config_refs in nbd_genl_disconnect is useless.
+>>>
+>>> To fix it, just add a check for a non null task_recv in
+>>> nbd_genl_disconnect.
+>>>
+>>> Signed-off-by: Sun Ke <sunke32@huawei.com>
+>>> ---
+>>> v1 -> v2:
+>>> Add an omitted mutex_unlock.
+>>>
+>>> v2 -> v3:
+>>> Add nbd->config_lock, suggested by Josef.
+>>> ---
+>>>   drivers/block/nbd.c | 8 ++++++++
+>>>   1 file changed, 8 insertions(+)
+>>>
+>>> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+>>> index b4607dd96185..870b3fd0c101 100644
+>>> --- a/drivers/block/nbd.c
+>>> +++ b/drivers/block/nbd.c
+>>> @@ -2008,12 +2008,20 @@ static int nbd_genl_disconnect(struct sk_buff
+>>> *skb, struct genl_info *info)
+>>>                  index);
+>>>           return -EINVAL;
+>>>       }
+>>> +    mutex_lock(&nbd->config_lock);
+>>>       if (!refcount_inc_not_zero(&nbd->refs)) {
+>>> +        mutex_unlock(&nbd->config_lock);
+>>>           mutex_unlock(&nbd_index_mutex);
+>>>           printk(KERN_ERR "nbd: device at index %d is going down\n",
+>>>                  index);
+>>>           return -EINVAL;
+>>>       }
+>>> +    if (!nbd->recv_workq) {
+>>> +        mutex_unlock(&nbd->config_lock);
+>>> +        mutex_unlock(&nbd_index_mutex);
+>>> +        return -EINVAL;
+>>> +    }
+>>> +    mutex_unlock(&nbd->config_lock);
+>>>       mutex_unlock(&nbd_index_mutex);
+>>>       if (!refcount_inc_not_zero(&nbd->config_refs)) {
+>>>           nbd_put(nbd);
+>>>
+>>
+>> With my other patch then we will not need this right? It handles your
+>> case by just being integrated with the existing checks in:
+>>
+>> nbd_disconnect_and_put->nbd_clear_sock->sock_shutdown
+>>
+>> ...
+>>
+>> static void sock_shutdown(struct nbd_device *nbd)
+>> {
+>>
+>> ....
+>>
+>>          if (config->num_connections =3D=3D 0)
+>>                  return;
+>>
+>>
+>> num_connections is zero for your case since we never did a
+>> nbd_genl_disconnect so we would return here.
+>>
+>>
+>> .
+>>
+> Hi Mike
+>=20
+> Your point is not right totally.
+>=20
+> Yes, config->num_connections is 0 and will return in sock_shutdown. The=
+n
+> it will back to nbd_disconnect_and_put and do flush_workqueue
+> (nbd->recv_workq).
+>=20
+> nbd_disconnect_and_put
+>     ->nbd_clear_sock
+>         ->sock_shutdown
+>     ->flush_workqueue
+>=20
 
-This has already been fixed by removing the message (and the
-then unused variable). The message was useless anyway since
-it printed the remapped address with %p.
+My patch removed that extra flush_workqueue in nbd_disconnect_and_put.
 
-Guenter
+The idea of the patch was to move the flush calls to when we do
+sock_shutdown in the config (connect, disconnect, clear sock) code
+paths, because that is the time we know we will need to kill the recv
+workers and wait for them to complete so we know they are not still
+running when userspace does a new config operation.
 
-> ---
->  drivers/hwmon/axi-fan-control.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/hwmon/axi-fan-control.c b/drivers/hwmon/axi-fan-control.c
-> index 8041ba7cc152..36e0d060510a 100644
-> --- a/drivers/hwmon/axi-fan-control.c
-> +++ b/drivers/hwmon/axi-fan-control.c
-> @@ -415,6 +415,9 @@ static int axi_fan_control_probe(struct platform_device *pdev)
->  	if (!ctl->clk_rate)
->  		return -EINVAL;
->  
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!res)
-> +		return -EINVAL;
->  	dev_dbg(&pdev->dev, "Re-mapped from 0x%08llX to %p\n",
->  		(unsigned long long)res->start, ctl->base);
->  
-> -- 
-> 2.25.0
-> 
