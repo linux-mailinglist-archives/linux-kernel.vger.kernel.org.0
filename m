@@ -2,127 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79CEE159A10
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:52:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F0B0159A15
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:54:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730892AbgBKTwv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 14:52:51 -0500
-Received: from mga03.intel.com ([134.134.136.65]:7803 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728049AbgBKTwu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 14:52:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 11:52:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="226597654"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by fmsmga007.fm.intel.com with ESMTP; 11 Feb 2020 11:52:48 -0800
-Received: from fmsmsx158.amr.corp.intel.com (10.18.116.75) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 11 Feb 2020 11:52:49 -0800
-Received: from FMSEDG001.ED.cps.intel.com (10.1.192.133) by
- fmsmsx158.amr.corp.intel.com (10.18.116.75) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 11 Feb 2020 11:52:49 -0800
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.42) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server (TLS) id
- 14.3.439.0; Tue, 11 Feb 2020 11:52:48 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Y/yk5zEL61ve7bwwaXmn10aPuqeW3SGe6CXcmAmA4hKkPejolpTKvXpSO5rufL49EJxXw+Q3UeO6kTwjv8EfW3tTe0kJX3UU0xpgXeyIpqG7efWzOc8xEwCYTlivEh/IG/+eHGC4AuLhHzL3DaMwVwb4If187VtzT4E0bRaKC6YIADj/KNrlNZHplRIr6BqEVTQhKQcFmzjGInSTAUq1ey/bpuXyriPd6OCsZZqTEb4+U5K/p1qw786NcSNMSskGYI0AoKrIcfzGR8G9vNmdG2UMMrlwUlSHemJBy6d3ReEdwMjZyPTgETxJsd7YRLfwRZpsczOp6FfP69JIFKYsdw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RxuEGOeu03+jjzS/vLmydq24ldf9GcYLhMh0Ul+c52Q=;
- b=AGHBDl29proY9x+9ErGyHXThDF99HS1/XWKF311a8HqGTKdzxw+d6BaguhrK4m7/JVcL7jwYAgTjb7pwR0cBQMfAUztHTIAdUF9/01iT10cZcE3WYi/KNmU8Awkaam+lW75OU1nq4SA8AN9/DIvMOYGp0Sgz5ojKsQNcRqBxq4w1vBjsPU6Lr+bRv6nNj9wXLPtwgsSSjS0gCmAXzId8leH7UYI6E2XZLO2EIgyQQw4UInLCT1Oz7gVHdzTIqQlieKlkmuXd5fjHkUJzOtBrUh/h+GW0tp+hrerIuHfW0czL0hKaNbYITyE25/9NJ3tnLhQ3VgERSa5viICfEuSUcw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
- s=selector2-intel-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RxuEGOeu03+jjzS/vLmydq24ldf9GcYLhMh0Ul+c52Q=;
- b=qH3iCtZaMlL9SN4unIdIZ0HNAOrXoKnB7z7qTqZOwhvd7KcodmtU88fGeUkN6qdD/lpwu+yfGJbQPlh+op15kYlyB+ML6WYaV+tohPDAKETqWe1Y/Au2lA8Z1kjw2c8+fGNw95pNb3228PMgR9ich5y6tq4IfeYPBvRRoNFZcik=
-Received: from CY4PR11MB0072.namprd11.prod.outlook.com (10.171.253.27) by
- CY4PR11MB1463.namprd11.prod.outlook.com (10.172.65.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2707.23; Tue, 11 Feb 2020 19:52:47 +0000
-Received: from CY4PR11MB0072.namprd11.prod.outlook.com
- ([fe80::38cc:5fb0:e16e:7b5b]) by CY4PR11MB0072.namprd11.prod.outlook.com
- ([fe80::38cc:5fb0:e16e:7b5b%3]) with mapi id 15.20.2707.030; Tue, 11 Feb 2020
- 19:52:47 +0000
-From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To:     "rppt@kernel.org" <rppt@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "alan@linux.intel.com" <alan@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "cl@linux.com" <cl@linux.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "Reshetova, Elena" <elena.reshetova@intel.com>,
-        "tycho@tycho.ws" <tycho@tycho.ws>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "kirill@shutemov.name" <kirill@shutemov.name>
-Subject: Re: [RFC PATCH] mm: extend memfd with ability to create "secret"
- memory areas
-Thread-Topic: [RFC PATCH] mm: extend memfd with ability to create "secret"
- memory areas
-Thread-Index: AQHV4QFPx/fsO70zbUuEQhjuwQxhXagOesyAgAMQlgCABNxdgA==
-Date:   Tue, 11 Feb 2020 19:52:47 +0000
-Message-ID: <ab0a11ad5fde0cc71a725aac3ea81cc996e35bf1.camel@intel.com>
-References: <20200130162340.GA14232@rapoport-lnx>
-         <df5a888b-1a11-e806-741d-94684b22c966@intel.com>
-         <20200208173922.GA15879@hump>
-In-Reply-To: <20200208173922.GA15879@hump>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=rick.p.edgecombe@intel.com; 
-x-originating-ip: [134.134.136.197]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4be565f4-d500-4eb9-ece9-08d7af2bf7d2
-x-ms-traffictypediagnostic: CY4PR11MB1463:
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CY4PR11MB14633850EBF445A503316FEFC9180@CY4PR11MB1463.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 0310C78181
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39860400002)(366004)(136003)(396003)(346002)(189003)(199004)(71200400001)(2616005)(478600001)(6506007)(36756003)(186003)(2906002)(4326008)(4744005)(5660300002)(66446008)(86362001)(7416002)(6512007)(110136005)(54906003)(8936002)(66946007)(8676002)(76116006)(91956017)(26005)(6636002)(66476007)(64756008)(66556008)(316002)(6486002)(81166006)(81156014)(219293001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR11MB1463;H:CY4PR11MB0072.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 8XFYgOItGaM8aZMiGNJC1FM85GNL8J0pVNenceTZn/cGgtDbZ7xdDJEur+lk/dJ0WdFQdktOcVQ7LhM2OArSBeQC5tYnGsGUH+IzfgCevXfMNeklcVEvkqzqTGu1O4qYNUjyA9eH3xiz7mt5YtjdDgo35KIBeGYCD4/mSY4vxWO75smWzuQ1jwFhgMsRul4U4F+vAt6IFYzBjlYdooyKcLRJNcWhCWyLonHrKBr6Ugza8TFjZ36OSGbZTVCE5qvK3Y86mx6IgMfaDyyXtsXRwf2g5OuHeaSuXvL2lEMmgaskxOQLvzRbZ5BOz1f3r2H3ItfkcC8Bi2NudansJMBE+E/fE/2FtppBGdUXlCTrPTcUjzpYtXtTJqOOAzTQGDVGNZ1v3/E2/Ddd2Efv2YD/jbXgEswU3hk8LJmO9hKITKaglS/0AB+N4byBgW6VoJZAcBWqHB+6uuLJGAuIh2qgjZoo2hlgY4yxKGEDRIw93fw3vVGoLAzojVKE5VfHDBtp
-x-ms-exchange-antispam-messagedata: N/N8ZPfIdcxe6CDXK/63fZ0LmrVg6wzOnpsaS3/9kQeK7NAVDFvjkP97LIkd8ij9MN9apJm+l41RS5v5VbQ44/yD7SHevyWlHARBjEuavfgLykLUhRI/BBZD4yVE9KNCyO/w9yqjdF/q4q2YN+6laA==
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7C45F3DD1BF1A748ACA077A657B22C5C@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4be565f4-d500-4eb9-ece9-08d7af2bf7d2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2020 19:52:47.0995
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Pid0PXboa76kq5nMOGZjzxhKOK9NoB86oJCFIeowZBrOTdSkOM5+ETzZwbb3kZpDZ59BGsrsj9J3zvTWpZrsZV07I9uHoaZVyQqrypNoTSA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR11MB1463
-X-OriginatorOrg: intel.com
+        id S1731711AbgBKTyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 14:54:44 -0500
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:42400 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730021AbgBKTyo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 14:54:44 -0500
+Received: by mail-qv1-f67.google.com with SMTP id dc14so5593462qvb.9
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 11:54:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=YBwt2MVU6nNAOe4QsbbS2Wq8hC+X3+hnvO1hd669kyE=;
+        b=bNkzHJqcIbI9AGRseJS/hpar5VZUMk3hF0nwURpQlNFRYDlq0eOz3zvUNIt+7G6fv9
+         cct8I1VFykeWKa/q+TDiXCPtUEPaYZaUJmx3ewF0TOdLhX5769K2GOnYbWXJ6m2VPawB
+         t0d8RLV0cxjsvSlBoOapyco4bWtS2ZkeCH7pMU2ewnt9stGtAvbn/3yTL+kJ8oqG6e5N
+         Jp7K9rt7IZzGrrIUYnW5ZxlAi13HnRKu79XQadDcekY+0Tj8hbRBDzGGbGr8gcZ6fVTd
+         T/1Mks2cdNz548n75JhdhryCxm56LPZuuNQcfkTKaNbYqrDmB36FOxmYDAuQByV2PPmP
+         ri0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YBwt2MVU6nNAOe4QsbbS2Wq8hC+X3+hnvO1hd669kyE=;
+        b=DwS8kvIy7mLFTRY9hhSpjUOMmdfC4AXnNR5gaWyebdq4iiy+3zgQI1715mHYSO7zMq
+         u9kY4MExeVou1CK0DbCnL8S6b7d/atPccFQBNKzzH0CWjkAf4NUoVqushuW98U8YY+RZ
+         23yffT0/50Jd0uIcC7w6mWqXSGh8UMe3JjQlrc+mkTk2fF4zuCU6sHWp8bUgCnUWzRsi
+         T6QOiZwmPQUZKxxn2eqPBW6ctpCBFii77LWKOCXVmzIKIKzQn42AuuabH6u1rCyeKENq
+         bQTXq1ScSIN2XXt2GxXPaZ3O3dypjto3cXcPKnPumlzZHAGDni56Vq9L6W4A2m3ia/+A
+         IjJQ==
+X-Gm-Message-State: APjAAAWDSl4UlJ0q9qCHKQW8FhV5GfOr8BLFquVIx+xClG9HWvAFS/du
+        Zrm4epWfVZ8tW95DtJ2t8UZLgLmPUC+AjQ==
+X-Google-Smtp-Source: APXvYqxG4o0AqrcL5cNxPIj5MSCzJZzrIg1LV+xpXY+PlPSxzrGJUnqHcW13cNE3gP04Zi5ACEFIjQ==
+X-Received: by 2002:a05:6214:923:: with SMTP id dk3mr4282819qvb.96.1581450882350;
+        Tue, 11 Feb 2020 11:54:42 -0800 (PST)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id w16sm2454811qkj.135.2020.02.11.11.54.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Feb 2020 11:54:41 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     elver@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH -next] mm/rmap: annotate a data race at tlb_flush_batched
+Date:   Tue, 11 Feb 2020 14:53:03 -0500
+Message-Id: <1581450783-8262-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gU2F0LCAyMDIwLTAyLTA4IGF0IDE5OjM5ICswMjAwLCBNaWtlIFJhcG9wb3J0IHdyb3RlOg0K
-PiA+IERvIHdlIG5lZWQgdG8gbWFrZSBrbWFwKCkgd29yayBvbiB0aGVzZT8NCj4gDQo+IEkgZG9u
-J3QgdGhpbmsgd2UgbmVlZCB0byBtYWtlIGttYXAoKSB3b3JrIG9uIHRoZXNlLiBUaGUgaWRlYSBp
-cyB0byBwcmV2ZW50DQo+IGtlcm5lbCBmcm9tIGFjY2Vzc2luZyBzdWNoIG1lbW9yeSBhcmVhcy4N
-Cg0KRm9yIHRoZSBWTSB1c2UgY2FzZSwgS1ZNIGRvZXMga21hcCgpIGd1ZXN0IG1lbW9yeSB3aGVu
-IGVtdWxhdGluZyBwYWdlIHRhYmxlDQpvcGVyYXRpb25zIGluIHNvbWUgY2FzZXM6DQphcmNoL3g4
-Ni9rdm0vcGFnaW5nX3RtcGwuaDpGTkFNRShjbXB4Y2hnX2dwdGUpLg0K
+mm->tlb_flush_batched could be accessed concurrently as noticed by
+KCSAN,
+
+ BUG: KCSAN: data-race in flush_tlb_batched_pending / try_to_unmap_one
+
+ write to 0xffff93f754880bd0 of 1 bytes by task 822 on cpu 6:
+  try_to_unmap_one+0x59a/0x1ab0
+  set_tlb_ubc_flush_pending at mm/rmap.c:635
+  (inlined by) try_to_unmap_one at mm/rmap.c:1538
+  rmap_walk_anon+0x296/0x650
+  rmap_walk+0xdf/0x100
+  try_to_unmap+0x18a/0x2f0
+  shrink_page_list+0xef6/0x2870
+  shrink_inactive_list+0x316/0x880
+  shrink_lruvec+0x8dc/0x1380
+  shrink_node+0x317/0xd80
+  balance_pgdat+0x652/0xd90
+  kswapd+0x396/0x8d0
+  kthread+0x1e0/0x200
+  ret_from_fork+0x27/0x50
+
+ read to 0xffff93f754880bd0 of 1 bytes by task 6364 on cpu 4:
+  flush_tlb_batched_pending+0x29/0x90
+  flush_tlb_batched_pending at mm/rmap.c:682
+  change_p4d_range+0x5dd/0x1030
+  change_pte_range at mm/mprotect.c:44
+  (inlined by) change_pmd_range at mm/mprotect.c:212
+  (inlined by) change_pud_range at mm/mprotect.c:240
+  (inlined by) change_p4d_range at mm/mprotect.c:260
+  change_protection+0x222/0x310
+  change_prot_numa+0x3e/0x60
+  task_numa_work+0x219/0x350
+  task_work_run+0xed/0x140
+  prepare_exit_to_usermode+0x2cc/0x2e0
+  ret_from_intr+0x32/0x42
+
+ Reported by Kernel Concurrency Sanitizer on:
+ CPU: 4 PID: 6364 Comm: mtest01 Tainted: G        W    L 5.5.0-next-20200210+ #5
+ Hardware name: HPE ProLiant DL385 Gen10/ProLiant DL385 Gen10, BIOS A40 07/10/2019
+
+flush_tlb_batched_pending() is under PTL but the write is not, but
+mm->tlb_flush_batched is only a bool type, so the value is unlikely to
+be shattered. Thus, mark it as an intentional data race by using the
+data race macro.
+
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ mm/rmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/rmap.c b/mm/rmap.c
+index b3e381919835..6983f5d5b114 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -679,7 +679,7 @@ static bool should_defer_flush(struct mm_struct *mm, enum ttu_flags flags)
+  */
+ void flush_tlb_batched_pending(struct mm_struct *mm)
+ {
+-	if (mm->tlb_flush_batched) {
++	if (data_race(mm->tlb_flush_batched)) {
+ 		flush_tlb_mm(mm);
+ 
+ 		/*
+-- 
+1.8.3.1
+
