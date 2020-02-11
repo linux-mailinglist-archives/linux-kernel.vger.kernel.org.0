@@ -2,129 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B2C9158C89
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:19:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5DB3158C9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:23:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728265AbgBKKTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 05:19:06 -0500
-Received: from mga05.intel.com ([192.55.52.43]:31253 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727937AbgBKKTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 05:19:06 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 02:19:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="227464038"
-Received: from orsmsx108.amr.corp.intel.com ([10.22.240.6])
-  by fmsmga008.fm.intel.com with ESMTP; 11 Feb 2020 02:19:04 -0800
-Received: from orsmsx156.amr.corp.intel.com (10.22.240.22) by
- ORSMSX108.amr.corp.intel.com (10.22.240.6) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 11 Feb 2020 02:19:04 -0800
-Received: from ORSEDG002.ED.cps.intel.com (10.7.248.5) by
- ORSMSX156.amr.corp.intel.com (10.22.240.22) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 11 Feb 2020 02:19:04 -0800
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.49) by
- edgegateway.intel.com (134.134.137.101) with Microsoft SMTP Server (TLS) id
- 14.3.439.0; Tue, 11 Feb 2020 02:19:04 -0800
+        id S1728320AbgBKKXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 05:23:20 -0500
+Received: from mail-vi1eur05on2049.outbound.protection.outlook.com ([40.107.21.49]:6250
+        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727805AbgBKKXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 05:23:19 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LkDIw5ZyglY/H9xhPwxH6pzusE5nsPes8nWUeL0gOzAy2KijQ62E/EmAzoXjTXLgVx8deJwP87qFpC3TH1ailAAzrSDwZvyN0ba6Bl5NrOC6vNtLibKTkf/50kadyhdezvo1F13sAaQaE4tU01FTHjgI9OuXNuNeW1RgG2XZtzvbOnvRb0kVffh2RADKzkl7kISeMcF5I/PmQ7588BX2UInzxOdlZ5N8KXx0yAf27xVTrUCRfHEURnJfR1KcqC2FquAnMl/2AT6G77gTnhxDgCqA0LNSUtX+QsoSJpmzIMBF4v6/ZX7wC2hnuICmj0q1peNN3ZL9RJKe3nMaZjyhcA==
+ b=CEd2NuYHC+Q6dIe1elHQ9Z0BYf7jUJ9OGxdlq3OqQEqO6oYTZAB/apjSR0mtznnHPCfseMeDao3YLO9EniOb3gTp4UzrbYj6JDQY/v5J8UdlEey5Tw5HhdmIzaQN/ORSHEA2PpH4/n2QerHpPhXKtsTyyGRcfVr4ZtkEBj/dE9I7zJgWyOkFeCun9/2dE0L1ErCjvUrT/wsgyCMaktXxBxIsdJYdd1XSLiJfKEEX1AGDlK9o/8bobTrEsgACdVfyxWaIO7kLicu/NCOdrDO893OmtmIDKE7JO08y0qDoXGCe1QUp8g327tpS1pMwcml/TzOdI7gAisfhDwOfWVXVug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t08cy6hoYoRcKho4WsOuUzRFbk4jrnmuBPHcix7WOVM=;
- b=a4guwUgR3JUYXTUUMDeuQxvbfOt7s89CRSHvmbTnzhQWkRZ5gQej5RU3e54oW7thk4gLUfQZMtwTnVoOs8PkqPKfh/t+fH1e72mDFXCN00cGlDNGl6u9sLOeGTRJMR46Qed1WVRCk1eUcB7CiQzREVEIwAxSQSQgyoWWGvu4Twn6/WF/ZJsavVNrvfjp5gRsr9tNN7E1jMnWl7M6lhD0HHormFU7JlWuXcLoCTVBovZfbYHs0yK2W/EQcIfwtYKV6RLKalZ+73M+Nicy8NIMtywRk7eFNv8uqd0/u1oQ4+R8Pk0JTJaKWFF2DPB7OxXMMDaAh9HDmnMRH41ReTNtuA==
+ bh=8j2Nc+pznExCtiV4UhEtGNKv5B4VM3THBdI84mcmTjY=;
+ b=oWga5jLiXJQItvxBiBucaa7VbEwujpVnISWn94Xvd+jOS3Cbazf7Q0oCMWrHZ9yDNdl9yf2tXzte8fesbQN7sWinElVQ65DyBpFpVF/LpZ23jc+V5cWKVyjPp93Uq7/hfVwaQHq4G7FYI/jbuJdBwHVAXNqtlfdGUERfWsFniQIvJkQUGi806q/ZrQAaGBsPnBSZ5wksnnGtLzqRYuCVeT3jkWS27nZYOH/o80/ozYCDeTQ7ovRFKJ8BTZ+cKbk2lIGg9XG+MCGJlerhoQruzT+fh4/9g8iuPULDtMzGX1r1GUKaG+NmCa8nYW6Ftg4tK0hw2MXlKJJTEm+jM571Wg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
- s=selector2-intel-onmicrosoft-com;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t08cy6hoYoRcKho4WsOuUzRFbk4jrnmuBPHcix7WOVM=;
- b=MHJXjCtmBf7W37WD164H5Ikuv4GJZpTzil2Qs8IyhmNns2r9SeWU7qmPO2ZHy9k8J9hZj6LdLY0w6J+//L7U5WTU4AovLp9b6qx5VCaEmYgwluWjl4LhF0FGFcuo23jeTEv9ljJRqSSTPZ+bgx+J6mcyEAxxpWLApd+11H22fJA=
-Received: from SN6PR11MB2670.namprd11.prod.outlook.com (52.135.96.25) by
- SN6PR11MB2637.namprd11.prod.outlook.com (52.135.89.139) with Microsoft SMTP
+ bh=8j2Nc+pznExCtiV4UhEtGNKv5B4VM3THBdI84mcmTjY=;
+ b=FYr4WAkg5kDpu/VDTTBHACF+xhZ0QaFy4meEffz1ciF8thD4Q2mYdWSyAzn5wiS7IWqawtQjgtB26t5So1gG2FUWVVXl7cEr5z62mHXHZ3GUbjWfd52ZOBXoLFX+JksTAEkxE6JTDkWGZHuwh6bfV9tLGvjUNW3jZIrbmJP108Q=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB3327.eurprd04.prod.outlook.com (52.134.1.29) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2707.23; Tue, 11 Feb 2020 10:19:03 +0000
-Received: from SN6PR11MB2670.namprd11.prod.outlook.com
- ([fe80::d9a3:52a2:97d7:89ec]) by SN6PR11MB2670.namprd11.prod.outlook.com
- ([fe80::d9a3:52a2:97d7:89ec%4]) with mapi id 15.20.2707.028; Tue, 11 Feb 2020
- 10:19:03 +0000
-From:   "Lu, Brent" <brent.lu@intel.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "Support Opensource" <support.opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
+ 15.20.2707.21; Tue, 11 Feb 2020 10:23:16 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::85e9:f844:f8b0:27d]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::85e9:f844:f8b0:27d%7]) with mapi id 15.20.2707.030; Tue, 11 Feb 2020
+ 10:23:16 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        Silvano Di Ninno <silvano.dininno@nxp.com>,
+        Franck Lenormand <franck.lenormand@nxp.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "cychiang@google.com" <cychiang@google.com>,
-        "Chiang, Mac" <mac.chiang@intel.com>
-Subject: RE: [PATCH] ASoC: da7219: check SRM lock in trigger callback
-Thread-Topic: [PATCH] ASoC: da7219: check SRM lock in trigger callback
-Thread-Index: AQHV3+tuqX6FpQoz5UK6Rt5tUMk2f6gUyH2AgAD/0UA=
-Date:   Tue, 11 Feb 2020 10:19:03 +0000
-Message-ID: <SN6PR11MB26709809E6900F1F1F9F422A97180@SN6PR11MB2670.namprd11.prod.outlook.com>
-References: <1581322611-25695-1-git-send-email-brent.lu@intel.com>
- <20200210185905.GD14166@sirena.org.uk>
-In-Reply-To: <20200210185905.GD14166@sirena.org.uk>
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v5 8/9] crypto: caam - add crypto_engine support for RSA
+ algorithms
+Thread-Topic: [PATCH v5 8/9] crypto: caam - add crypto_engine support for RSA
+ algorithms
+Thread-Index: AQHV1wcsXP+aUn5J/EewRx4lhuSAGQ==
+Date:   Tue, 11 Feb 2020 10:23:16 +0000
+Message-ID: <VI1PR0402MB34854BA34A65EE7131F3831198180@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <1580345364-7606-1-git-send-email-iuliana.prodan@nxp.com>
+ <1580345364-7606-9-git-send-email-iuliana.prodan@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-dlp-version: 11.2.0.6
-dlp-product: dlpe-windows
-dlp-reaction: no-action
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=brent.lu@intel.com; 
-x-originating-ip: [192.55.52.208]
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [212.146.100.6]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5a59ade5-5f38-49b9-00f3-08d7aedbd1a2
-x-ms-traffictypediagnostic: SN6PR11MB2637:
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 0784ff92-c0e7-4d50-4948-08d7aedc6894
+x-ms-traffictypediagnostic: VI1PR0402MB3327:|VI1PR0402MB3327:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN6PR11MB26373C0C5B68E724C748F9BB97180@SN6PR11MB2637.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-microsoft-antispam-prvs: <VI1PR0402MB3327F3A3844C5562C53E7AAE98180@VI1PR0402MB3327.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1091;
 x-forefront-prvs: 0310C78181
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(346002)(376002)(39860400002)(396003)(189003)(199004)(8936002)(26005)(4326008)(71200400001)(4744005)(7696005)(107886003)(54906003)(6506007)(186003)(478600001)(66946007)(55016002)(9686003)(5660300002)(76116006)(66556008)(66476007)(86362001)(81166006)(81156014)(64756008)(6916009)(66446008)(2906002)(33656002)(316002)(8676002)(52536014);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB2637;H:SN6PR11MB2670.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(376002)(136003)(396003)(346002)(189003)(199004)(44832011)(6506007)(86362001)(9686003)(8936002)(55016002)(5660300002)(7696005)(4326008)(66476007)(64756008)(91956017)(66446008)(66556008)(76116006)(66946007)(53546011)(316002)(26005)(54906003)(52536014)(2906002)(478600001)(4744005)(33656002)(186003)(6636002)(8676002)(81156014)(71200400001)(110136005)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3327;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: RTbFnD1j8GuV0+dA93vad6bWbhhQiazpVrjJdDczAlkWvtm92lrG4Od5T2+g3Edqs/a3TsbNQZP/zS4aejbJrnhmCG+Q2dCEJVLhEkBi5tf6MtxLqbfGVCYMvdKSXpWDXCeDfYazb6wYkmLCAC/sAujDatsqJRmRzNXi5Phi8BxFfrZKKcP8b7yQDleI3DxcwpYMHJYDmSGsyO5esTYpUEUCnarHjJWQEn96EcZokTmQcTTuT2mjMLMqp7wWTuzGXXK2CyeWJS1xdb6BJdf9R/U92HmxBXWkUEcoMf0d48Sh+7ZDl5tydCaLx7Yg6LbEjkz5f36YMnbnZ8L5o0uQFLQN082YYHQlKvwBIjGaIDURAm5p2YVDtQjHNW+wGJzzNnHxgiQP6bY5vH6wOMWDyMAtliqUWlLdFCxuX8l9BjU7UWwVI7sz+k+vBXWENWn5
-x-ms-exchange-antispam-messagedata: jXa7beB+fKYuauN3ThpeBwujcDTGRuUPjAnuoFTWSL3AOp78U+HhmrT2Ow10VAbHC+WORm/Q5biLPfSuRfrXnh/awnlhWqzSc2Jv2WvjsULNq/C6qysFKf9TKUbOfeSX1ujS2KTEoSsnw5TK49xwtw==
+x-microsoft-antispam-message-info: 63aS5UlIRIna2Eoe5p0+zCv4U8FmdCtbKDyh0f0sXQNtl2zET9/P0heFtm9syy7ymnxUq/1JrWOD6OSpoth6tgwhft/y7PCiGJwsiU6udqra4WA0sZFNwIXrE+u55O/k4FbscGGhrmxR1fTaeIdOUCEboYjo00X2ePa97k12mWjjYTdvo7yuYph3oAld0t2qs20yOyNPwOrY/SDUjtGDDam/sSw2Swdf7DegZ4hKujSpinsj39fn3iDAnei3a5sQbV3yquczZuR4r7u3OeFP83rflcTkdM6itbBqKTSuAYfhNIMwf6KfCrCrYSfy654E5269kwO2JWe4kqA3fem5z7h+iiAE4P+9/a0wx91Xy73BrIgaMwsK9g4qETvLZozeeJn36bZhlUAzrFuEphhiLUJ6ExzBTd0gtUTb5gD98H+5ONRCy9n1ifOBoIFkLguI
+x-ms-exchange-antispam-messagedata: xS0aArJgMT32nxaPCde/wTBqNWhguHFMaprvFJmquSpSxrvfsVZfiAXY4TuC6BJdK2b2VAxs4uyUzvyZDB/uOVhLRJyVB3dxwjcmF2vp+iAHrtrPWRD/Hx6CuerE5duzUeBA/s6qSvzVuE8WpyWfcQ==
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a59ade5-5f38-49b9-00f3-08d7aedbd1a2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2020 10:19:03.2901
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0784ff92-c0e7-4d50-4948-08d7aedc6894
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2020 10:23:16.5711
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: chE3dSI6K9jQiPnMO1DxOdwrY9em9QqKUFz0QTFvrrB1hukoXfG5QiRsOKun/tR0qU1mKQl8Yi9c+dR9t4QePw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB2637
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-userprincipalname: J3PhaAeL89NzOzC7NyVsoIcEFHc8EH63FDMaa1gTaBqYtywSZJ13xAO4WTt6G7VLMu0g2wEWZyd+bplzMY9xTg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3327
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->=20
-> Independently of any other discussion trigger is expected to run very fas=
-t so
-> doesn't feel like a good place to do this - given that we're talking abou=
-t doing
-> this to avoid noise the mute operation seems like a more idiomatic place =
-to
-> do this, it exists to avoid playing back glitches from the digitial inter=
-face
-> during startup.
-
-It still take 50ms waiting for lock on in the trigger so I guess it's not a=
- good
-implementation here. And I thought digital mute is called in the pcm_prepar=
-e?
-I'm afraid it does not work in our case...
-
-Regards,
-Brent
+On 1/30/2020 2:49 AM, Iuliana Prodan wrote:=0A=
+> @@ -1029,6 +1107,10 @@ static int caam_rsa_init_tfm(struct crypto_akciphe=
+r *tfm)=0A=
+>  		return -ENOMEM;=0A=
+>  	}=0A=
+>  =0A=
+> +	ctx->enginectx.op.do_one_request =3D akcipher_do_one_req;=0A=
+> +=0A=
+> +	akcipher_set_reqsize(tfm, sizeof(struct caam_rsa_req_ctx));=0A=
+This is redundant with the static initialization of caam_rsa:=0A=
+	.reqsize =3D sizeof(struct caam_rsa_req_ctx),=0A=
+=0A=
+Horia=0A=
