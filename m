@@ -2,22 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87B00159D0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 00:16:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CC13159D11
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 00:17:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbgBKXQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 18:16:39 -0500
-Received: from gateway23.websitewelcome.com ([192.185.49.218]:36925 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727770AbgBKXQj (ORCPT
+        id S1727912AbgBKXRh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 18:17:37 -0500
+Received: from gateway20.websitewelcome.com ([192.185.52.45]:48361 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727597AbgBKXRh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 18:16:39 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id DEC3C2C53
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 17:16:37 -0600 (CST)
+        Tue, 11 Feb 2020 18:17:37 -0500
+X-Greylist: delayed 12966 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Feb 2020 18:17:36 EST
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 0EEC9400C5D1B
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 16:04:02 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 1elhjA1qsEfyq1elhjJydw; Tue, 11 Feb 2020 17:16:37 -0600
+        id 1emejedtYRP4z1emej6SvH; Tue, 11 Feb 2020 17:17:36 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -25,17 +26,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=t8jOCByl/+oOmdkjlnU8AU+JzuMxScO8sVhn8lDHLNM=; b=kMEQmdim4IZ8kPaIhgRSDTVaA6
-        7Z2F+Avd7zbKC4yL0TZ3npV/MoXWRRVCDq/eS0+5a9efcZlrgJe58i/EfiOz7anLV/B3LYji/xHq6
-        NNL95Ye5HcqeOcUYLf//v2B7DHDKbBP+t0Vz8qiUzokdR+c6qUX0mctglvuqS0+ofgvU6auA6n+Hm
-        ZYTwjXe4ob47GBp95yCTJjfahMpPR4DxFqWYeLx2D8FsiVxq4qJ7G4+7x+IPIENEkcaBtUEozk0Xl
-        o1DyUhhI9GPP79LfOHtv7lNAYpahPImdU3KLfn+G5Sv5MyWevJT8s0pv4DoflBK+RT4rabKEt+X+h
-        JBxyCmwQ==;
-Received: from [200.68.140.36] (port=4701 helo=embeddedor)
+        bh=hVb/zj0rQi7ExOruAnZZPMpOWXBGiv8uW2JQqbBqmPY=; b=r+dJJXzfXuC1icigTXBmlDzDbj
+        qL5VPjDbz0VAIEUjALS/MGwK8xsIF9eaVUbmRu076io4pCjVyb0Qm/TBEzKuSSnV+1F2NSSCkfwYe
+        3fFr4zTa4FRq7X89QfQPKKU1BVGawtu2ojw6q1AqYXKuNYD3YatzKV0hc7EUNj1sz8JLIh76xGNCt
+        xq75Ta8TrtVmeTT4t+V66LHDOJr1TEIFLVj71RdbIux0pErNApL6jP+2Gbd2dyZXDtY6D1Dn6e6xK
+        z9/FKlsCFwwyJVystj3MPyaY6eih5ZCFh+FvJqEHxI62pht3sYqrIMMkIVMNjPN06+Q6CWLqi7ksC
+        hFs/9qXw==;
+Received: from [200.68.140.36] (port=9123 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1j1elg-003Xvz-Iy; Tue, 11 Feb 2020 17:16:36 -0600
-Date:   Tue, 11 Feb 2020 17:19:11 -0600
+        id 1j1emc-003YKT-Td; Tue, 11 Feb 2020 17:17:34 -0600
+Date:   Tue, 11 Feb 2020 17:20:09 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To:     Andreas Noever <andreas.noever@gmail.com>,
         Michael Jamet <michael.jamet@intel.com>,
@@ -43,9 +44,9 @@ To:     Andreas Noever <andreas.noever@gmail.com>,
         Yehezkel Bernat <YehezkelShB@gmail.com>
 Cc:     linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] thunderbolt: eeprom: Replace zero-length array with
+Subject: [PATCH] thunderbolt: icm: Replace zero-length array with
  flexible-array member
-Message-ID: <20200211231911.GA18208@embeddedor>
+Message-ID: <20200211232009.GA19088@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -58,13 +59,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 200.68.140.36
 X-Source-L: No
-X-Exim-ID: 1j1elg-003Xvz-Iy
+X-Exim-ID: 1j1emc-003YKT-Td
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.36]:4701
+X-Source-Sender: (embeddedor) [200.68.140.36]:9123
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 26
+X-Email-Count: 31
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -95,22 +96,22 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/thunderbolt/eeprom.c | 2 +-
+ drivers/thunderbolt/icm.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thunderbolt/eeprom.c b/drivers/thunderbolt/eeprom.c
-index 81e8ac4c5805..96e885e48f5e 100644
---- a/drivers/thunderbolt/eeprom.c
-+++ b/drivers/thunderbolt/eeprom.c
-@@ -208,7 +208,7 @@ struct tb_drom_entry_header {
- 
- struct tb_drom_entry_generic {
- 	struct tb_drom_entry_header header;
+diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
+index e3fc920af682..3eb0501c3875 100644
+--- a/drivers/thunderbolt/icm.c
++++ b/drivers/thunderbolt/icm.c
+@@ -100,7 +100,7 @@ struct icm_notification {
+ struct ep_name_entry {
+ 	u8 len;
+ 	u8 type;
 -	u8 data[0];
 +	u8 data[];
- } __packed;
+ };
  
- struct tb_drom_entry_port {
+ #define EP_NAME_INTEL_VSS	0x10
 -- 
 2.25.0
 
