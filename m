@@ -2,87 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A698C159A13
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:54:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12A40159A0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:51:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730927AbgBKTyD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 14:54:03 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:20952 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728049AbgBKTyD (ORCPT
+        id S1730038AbgBKTvv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 14:51:51 -0500
+Received: from gateway33.websitewelcome.com ([192.185.145.221]:34988 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728049AbgBKTvu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 14:54:03 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01BJmlXZ092278
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 14:54:02 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2y3wxdb87q-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 14:54:02 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <gor@linux.ibm.com>;
-        Tue, 11 Feb 2020 19:54:00 -0000
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 11 Feb 2020 19:53:57 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01BJruiq42664406
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Feb 2020 19:53:56 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0DF08A4051;
-        Tue, 11 Feb 2020 19:53:56 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 92DB8A4040;
-        Tue, 11 Feb 2020 19:53:55 +0000 (GMT)
-Received: from localhost (unknown [9.145.75.133])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 11 Feb 2020 19:53:55 +0000 (GMT)
-Date:   Tue, 11 Feb 2020 20:53:54 +0100
-From:   Vasily Gorbik <gor@linux.ibm.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH] s390/time: Fix clk type in get_tod_clock
-References: <20200208140858.47970-1-natechancellor@gmail.com>
- <your-ad-here.call-01581426728-ext-3459@work.hours>
- <CAKwvOd=CWKnrY_T8vP4a-KXkz-V57dFqk+6FC_krm=pVAVibyg@mail.gmail.com>
+        Tue, 11 Feb 2020 14:51:50 -0500
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 0B90D3399C4
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 13:51:49 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 1bZUjUTKa8vkB1bZUjSeSk; Tue, 11 Feb 2020 13:51:49 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=i48Lhnv8GQvU89eRF+t1XT8THut/4ziywIysSJs41mw=; b=JR/LUQnv6JgWNKPcPXy7n34xSN
+        PlYAM8jnlD4dziIrey8tu/lc4WWc+J6snzvKeoLNgUrbuKQWwwwetsaCR4FWR4RGeKliXcvE1GTy2
+        xn8iSFE/jRVUbW5qS8kxOpcxeHjpAkrC8EV7mgqQyAOKSa3VSmdvpOSEYV+QvWh1nFO+lrzYX1+Ip
+        hsc39xqxVlpPUKx9KkFpLylb9E8VX+UneqcS94VRa/zjOzEfWAJ6+f5X3d4jOnB+GywHo7lFeKHzj
+        pLwB8hUsLIxkVt4OWh1GD3N/Vm/Vq2P7AlsqMfGhTPBCPLQvZM7exGjoB4Uh0ffbXhFZcGzSvWv9d
+        gWDyeUNw==;
+Received: from [200.68.140.36] (port=19713 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j1bZU-001PIl-4B; Tue, 11 Feb 2020 13:51:48 -0600
+Subject: Re: [PATCH] treewide: Replace zero-length arrays with flexible-array
+ member
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org
+References: <20200211174126.GA29960@embeddedor>
+ <20200211183229.GA1938663@kroah.com>
+ <3fdbb16a-897c-aa5b-d45d-f824f6810412@embeddedor.com>
+ <202002111129.77DB1CCC7B@keescook> <20200211193854.GA1972490@kroah.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <88e09425-8207-7a1e-8802-886f9694a37f@embeddedor.com>
+Date:   Tue, 11 Feb 2020 13:54:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
+In-Reply-To: <20200211193854.GA1972490@kroah.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKwvOd=CWKnrY_T8vP4a-KXkz-V57dFqk+6FC_krm=pVAVibyg@mail.gmail.com>
-X-TM-AS-GCONF: 00
-x-cbid: 20021119-4275-0000-0000-000003A03793
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021119-4276-0000-0000-000038B4700C
-Message-Id: <your-ad-here.call-01581450834-ext-0583@work.hours>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-11_05:2020-02-11,2020-02-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- malwarescore=0 suspectscore=0 clxscore=1015 mlxscore=0 priorityscore=1501
- bulkscore=0 mlxlogscore=753 lowpriorityscore=0 impostorscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002110132
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.140.36
+X-Source-L: No
+X-Exim-ID: 1j1bZU-001PIl-4B
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [200.68.140.36]:19713
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 23
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 05:30:24PM +0000, Nick Desaulniers wrote:
-> On Tue, Feb 11, 2020 at 5:12 AM Vasily Gorbik <gor@linux.ibm.com> wrote:
-> > Applied, thanks.
-> 
-> Hi Vasily, is this the expected tree+branch that the patch will be
-> pushed to? (I'm trying to track when+where our patches land).
-> https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git/log/?h=fixes
-> 
-Hi Nick,
-yes, this is correct. There might be some delay due to ci runs. But
-this particular patch is now landed on that fixes branch.
 
+
+On 2/11/20 13:38, Greg KH wrote:
+> On Tue, Feb 11, 2020 at 11:32:04AM -0800, Kees Cook wrote:
+>> On Tue, Feb 11, 2020 at 01:20:36PM -0600, Gustavo A. R. Silva wrote:
+>>>
+>>>
+>>> On 2/11/20 12:32, Greg KH wrote:
+>>>> On Tue, Feb 11, 2020 at 11:41:26AM -0600, Gustavo A. R. Silva wrote:
+>>>>> The current codebase makes use of the zero-length array language
+>>>>> extension to the C90 standard, but the preferred mechanism to declare
+>>>>> variable-length types such as these ones is a flexible array member[1][2],
+>>>>> introduced in C99:
+>>>>>
+>>>>> struct foo {
+>>>>>         int stuff;
+>>>>>         struct boo array[];
+>>>>> };
+>>>>>
+>>>>> By making use of the mechanism above, we will get a compiler warning
+>>>>> in case the flexible array does not occur last in the structure, which
+>>>>> will help us prevent some kind of undefined behavior bugs from being
+>>>>> unadvertenly introduced[3] to the codebase from now on.
+>>>>>
+>>>>> All these instances of code were found with the help of the following
+>>>>> Coccinelle script:
+>>>>>
+>>>>> @@
+>>>>> identifier S, member, array;
+>>>>> type T1, T2;
+>>>>> @@
+>>>>>
+>>>>> struct S {
+>>>>>   ...
+>>>>>   T1 member;
+>>>>>   T2 array[
+>>>>> - 0
+>>>>>   ];
+>>>>> };
+>>>>>
+>>>>> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+>>>>> [2] https://github.com/KSPP/linux/issues/21
+>>>>> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+>>>>>
+>>>>> NOTE: I'll carry this in my -next tree for the v5.6 merge window.
+>>>>
+>>>> Why not carve this up into per-subsystem patches so that we can apply
+>>>> them to our 5.7-rc1 trees and then you submit the "remaining" that don't
+>>>> somehow get merged at that timeframe for 5.7-rc2?
+>>>>
+>>>
+>>> Yep, sounds good. I'll do that.
+>>
+>> FWIW, I'd just like to point out that since this is a mechanical change
+>> with no code generation differences (unlike the pre-C90 1-byte array
+>> conversions), it's a way better use of everyone's time to just splat
+>> this in all at once.
+>>
+>> That said, it looks like Gustavo is up for it, but I'd like us to
+>> generally consider these kinds of mechanical changes as being easier to
+>> manage in a single patch. (Though getting Acks tends to be a bit
+>> harder...)
+> 
+> Hey, if this is such a mechanical patch, let's get it to Linus now,
+> what's preventing that from being merged now?
+> 
+
+Well, the only thing is that this has never been in linux-next.
+
+Thanks
+--
+Gustavo
