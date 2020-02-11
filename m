@@ -2,80 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B240D158A22
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 07:57:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D505A158A33
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 08:06:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbgBKG5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 01:57:03 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44975 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727541AbgBKG5D (ORCPT
+        id S1728023AbgBKHGK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 02:06:10 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:46262 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727686AbgBKHGJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 01:57:03 -0500
-Received: by mail-ot1-f68.google.com with SMTP id h9so9038701otj.11
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 22:57:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=tGb8STEUWtOMe8ZT/Ad5wFyJA2xpK0RC0jJolxSTgUc=;
-        b=XikK3iKA3i5ECK/cWrEIHqccsfcwnyVdZWjVPfx+bXszFvnYc1zrfbmgJDlj/MtxRA
-         vgSNRwob+8JAEgCGGrnSEGE6C46hwl76KGI55IggVNOE/m3aTQAa9XrXVyIIcXrHcd5U
-         Qdx1ImfDXjyt3aTkY4WNmuIAf2mfk6/c2OCnJoR4aquvPTZVpSTR8PudHfHZ0ppN7Ju/
-         mLEbR/1UsGg+ERER/THNiih9OOl0dm42syb/51YILEp1XQNH4ocVtw4kN4YN2FOoLIGW
-         1VVVr/KCsLAK9IX3fEXTxKxLWXWeLEHUZS4nwDeXHZ/DeAQwneHnhGCPXfrD/Vq07ajp
-         YDUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=tGb8STEUWtOMe8ZT/Ad5wFyJA2xpK0RC0jJolxSTgUc=;
-        b=PlMYM7qWP8C4wCDJ3iBzfsIBFOoCxr8FIzSA/s5k+ClLxOKUqpDUxenWqzp3pTII4Z
-         hSTQ0kkTd7H8UBSSjOqozJ2KDS68uq6c7KUgc6uLLQ4pROYdu70ty+8T3jHxa6xAO8eE
-         usB42nttbLSr2rIfoqPkVvvSw2RbCwK1WL3bMObrHBe+qEQYgm8eZRls0QDmU4sLahOL
-         s2PlemmdIqZ7vDqvRiWAiBCcOXL8HDv0C0WkldzYLF5V1R30P8Ox5IvJPgNkowP8oC5H
-         uo/pdnkZD8f4qx8eyb5sbnYFvNlf1Tih2tzGQV1hW3EPbZJuCD+2JRmZEvNexaU6DzKx
-         rm8A==
-X-Gm-Message-State: APjAAAXVYY24k6BNlrw8PzpOpF4sEZmC87K+1xeGmW9myo8wNM4Tgzs3
-        oUJgblsiBWtatBkBS9+j9vKiFbev5basH9Wa+Us=
-X-Google-Smtp-Source: APXvYqwhGRiUQ3Kk2zlh4cyoCrwWo5q378vDonaFuX+B4yTKBRI0dI+IkzxvXeuW7JCbptLrwMgdv7Tz+hjM91tooxc=
-X-Received: by 2002:a9d:10e:: with SMTP id 14mr3989726otu.59.1581404220871;
- Mon, 10 Feb 2020 22:57:00 -0800 (PST)
+        Tue, 11 Feb 2020 02:06:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=2m3bJGcjxT5w2At1D6gwWee6qZSAoYez4Br/b+/pfLg=; b=BdxaDYVl1q7FXFALHROLjfbP2X
+        rnmeYPRJzn21xXVs0qg+Nw3pnX+VvQMBc3jRB+6TYRLy0OQY0AifZwyD3jyxjIoMXoYW6s7XJp6uD
+        XepOs/4dcpSjTOsRj3KVDQohqS7C0a4b8gTJ7IdhZCCes29UJgpJpor8I5puhD0ly6/M5HaEwzM/f
+        VcpEidrvaJu0Kp/gJXRoVVVyZTIO8MUalO43SKXxdu2qpAjA89d5OSXz0TgRQzErLFemrE0pQ0JYn
+        NR/4OjXKTOOwzaK8nRCZbE8zsfY1jSckC1dtIlLgzYKeVZn0SKfvDmArZKIsABcUsBRJQOnbQ17PD
+        B7F9r7iA==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1PcX-0002HA-5y; Tue, 11 Feb 2020 07:06:09 +0000
+Subject: Re: linux-next: Tree for Feb 11
+ (drivers/platform/x86/intel_pmc_core.c)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+        Vishwanath Somayaji <vishwanath.somayaji@intel.com>
+References: <20200211130054.001bfce9@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <f0d576b6-7204-0caf-1ca8-aae6c82d3b8d@infradead.org>
+Date:   Mon, 10 Feb 2020 23:06:05 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Reply-To: maliksanfo1@email.cz
-Received: by 2002:a05:6838:748f:0:0:0:0 with HTTP; Mon, 10 Feb 2020 22:57:00
- -0800 (PST)
-From:   Malik Sanfo <maliksanfo1@gmail.com>
-Date:   Mon, 10 Feb 2020 22:57:00 -0800
-X-Google-Sender-Auth: ahzxFpd7tqf0FbwAG2s--OX19Mc
-Message-ID: <CA+s6uNwUetci_dKSEKd=ep0wWuq23=TYfP1boyPKvJvOogk89Q@mail.gmail.com>
-Subject: Confidential Trust
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200211130054.001bfce9@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With Due Respect,
+On 2/10/20 6:00 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20200210:
+> 
 
-I want to transfer $12,300.000.00 Twelve million three hundred
-thousand United States Dollars from here in Burkina Faso to overseas
-account.
+on i386:
+
+Function args are reversed (offset and status);
+
+../drivers/platform/x86/intel_pmc_core.c: In function 'pmc_core_resume':
+../drivers/platform/x86/intel_pmc_core.c:1329:43: warning: passing argument 4 of 'pmc_core_lpm_display' makes integer from pointer without a cast [-Wint-conversion]
+   pmc_core_lpm_display(pmcdev, dev, NULL, "STATUS", offset, maps);
+                                           ^~~~~~~~
+../drivers/platform/x86/intel_pmc_core.c:977:13: note: expected 'u32 {aka unsigned int}' but argument is of type 'char *'
+ static void pmc_core_lpm_display(struct pmc_dev *pmcdev, struct device *dev,
+             ^~~~~~~~~~~~~~~~~~~~
+../drivers/platform/x86/intel_pmc_core.c:1329:53: warning: passing argument 5 of 'pmc_core_lpm_display' makes pointer from integer without a cast [-Wint-conversion]
+   pmc_core_lpm_display(pmcdev, dev, NULL, "STATUS", offset, maps);
+                                                     ^~~~~~
+../drivers/platform/x86/intel_pmc_core.c:977:13: note: expected 'const char *' but argument is of type 'int'
+ static void pmc_core_lpm_display(struct pmc_dev *pmcdev, struct device *dev,
+             ^~~~~~~~~~~~~~~~~~~~
 
 
-Your assistance as a foreigner is necessary because the management of
-the bank will welcome any foreigner who has correct information to
-this account which I will give to you immediately, if you are
-interested to do this business with me. Please reply with the
-assurance, include your private telephone and fax numbers, it is
-necessary to facilitate an easy communication in this transaction. As
-soon as you reply, so that i will let you know the next step to follow
-in order to finalize this transaction immediately.
-
-
-Upon your response and strong assurance that you will not let me down
-once the fund goes into your account. I will let you know the origin
-of the fund and the transfer procedures without delay.
-
-Best regards,
-Mr. Malik Sanfo.
+-- 
+~Randy
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
