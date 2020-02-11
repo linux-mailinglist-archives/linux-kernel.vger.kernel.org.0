@@ -2,98 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C87B158C78
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:14:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E08A5158C9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:23:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbgBKKN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 05:13:57 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:40178 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728154AbgBKKN5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 05:13:57 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01BADnsq041177;
-        Tue, 11 Feb 2020 04:13:49 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581416029;
-        bh=Ab19tWANqLz4W0BIfQpv5yDQrKNtAPUTkU+NkqUXqRw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=RhMzGbJYhtVdiTbgfJe8SzC3v7cVRd/6fVu44qXlxTeInoTUFfiZh5CbpW7+YD7qq
-         IrdnapR1koxUifUS+sPrnyG2fSoZRoCUnG/pE1hX5dQq/3M+vkuLNJwn8EWgObHjMa
-         fbuDVKNHWUFJS3s0ioCGaou6D7ONSDPTWRDdS0G4=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01BADnMO007640;
-        Tue, 11 Feb 2020 04:13:49 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 11
- Feb 2020 04:13:49 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 11 Feb 2020 04:13:49 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01BADlRO027902;
-        Tue, 11 Feb 2020 04:13:48 -0600
-Subject: Re: [PATCH for-next 1/4] dmaengine: ti: k3-udma: Use
- ktime/usleep_range based TX completion check
-To:     Vinod Koul <vkoul@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dan.j.williams@intel.com>, <grygorii.strashko@ti.com>
-References: <20200127132111.20464-1-peter.ujfalusi@ti.com>
- <20200127132111.20464-2-peter.ujfalusi@ti.com>
- <20200128114820.GS2841@vkoul-mobl>
- <d968f32d-dc5f-0567-5aa4-faf318025c23@ti.com>
- <20200128124403.GV2841@vkoul-mobl>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <f6f6b1ca-03ee-c2f0-ffeb-c274e787706c@ti.com>
-Date:   Tue, 11 Feb 2020 12:13:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20200128124403.GV2841@vkoul-mobl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1728333AbgBKKXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 05:23:43 -0500
+Received: from mga17.intel.com ([192.55.52.151]:61464 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727840AbgBKKXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 05:23:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 02:23:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
+   d="scan'208";a="221888886"
+Received: from joy-optiplex-7040.sh.intel.com ([10.239.13.16])
+  by orsmga007.jf.intel.com with ESMTP; 11 Feb 2020 02:23:40 -0800
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     alex.williamson@redhat.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        cohuck@redhat.com, zhenyuw@linux.intel.com, zhi.a.wang@intel.com,
+        kevin.tian@intel.com, shaopeng.he@intel.com, yi.l.liu@intel.com,
+        Yan Zhao <yan.y.zhao@intel.com>
+Subject: [RFC PATCH v3 6/9] vfio/pci: export vfio_pci_setup_barmap
+Date:   Tue, 11 Feb 2020 05:14:19 -0500
+Message-Id: <20200211101419.21067-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200211095727.20426-1-yan.y.zhao@intel.com>
+References: <20200211095727.20426-1-yan.y.zhao@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This allows vendor driver to read/write to bars directly which is useful
+in security checking condition.
 
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+---
+ drivers/vfio/pci/vfio_pci_rdwr.c | 26 +++++++++++++-------------
+ include/linux/vfio.h             |  2 ++
+ 2 files changed, 15 insertions(+), 13 deletions(-)
 
-On 28/01/2020 14.44, Vinod Koul wrote:
-> On 28-01-20, 17:35, Vignesh Raghavendra wrote:
-> 
->>>> +	/* Transfer is incomplete, store current residue and time stamp */
->>>>  	if (peer_bcnt < bcnt) {
->>>>  		uc->tx_drain.residue = bcnt - peer_bcnt;
->>>> -		uc->tx_drain.jiffie = jiffies;
->>>> +		uc->tx_drain.tstamp = ktime_get();
->>>
->>> Any reason why ktime_get() is better than jiffies..?
->>
->> Resolution of jiffies is 4ms. ktime_t is has better resolution (upto ns
->> scale). With jiffies, I observed that code was either always polling DMA
->> progress counters (which affects HW data transfer speed) or sleeping too
->> long, both causing performance loss. Switching to ktime_t provides
->> better prediction of how long transfer takes to complete.
-> 
-> Thanks for explanation, i think it is good info to add in changelog.
+diff --git a/drivers/vfio/pci/vfio_pci_rdwr.c b/drivers/vfio/pci/vfio_pci_rdwr.c
+index a0ef1de4f74a..3ba85fb2af5b 100644
+--- a/drivers/vfio/pci/vfio_pci_rdwr.c
++++ b/drivers/vfio/pci/vfio_pci_rdwr.c
+@@ -129,7 +129,7 @@ static ssize_t do_io_rw(void __iomem *io, char __user *buf,
+ 	return done;
+ }
+ 
+-static int vfio_pci_setup_barmap(struct vfio_pci_device *vdev, int bar)
++void __iomem *vfio_pci_setup_barmap(struct vfio_pci_device *vdev, int bar)
+ {
+ 	struct pci_dev *pdev = vdev->pdev;
+ 	struct vfio_pci_device_private *priv = VDEV_TO_PRIV(vdev);
+@@ -137,22 +137,23 @@ static int vfio_pci_setup_barmap(struct vfio_pci_device *vdev, int bar)
+ 	void __iomem *io;
+ 
+ 	if (priv->barmap[bar])
+-		return 0;
++		return priv->barmap[bar];
+ 
+ 	ret = pci_request_selected_regions(pdev, 1 << bar, "vfio");
+ 	if (ret)
+-		return ret;
++		return NULL;
+ 
+ 	io = pci_iomap(pdev, bar, 0);
+ 	if (!io) {
+ 		pci_release_selected_regions(pdev, 1 << bar);
+-		return -ENOMEM;
++		return NULL;
+ 	}
+ 
+ 	priv->barmap[bar] = io;
+ 
+-	return 0;
++	return io;
+ }
++EXPORT_SYMBOL_GPL(vfio_pci_setup_barmap);
+ 
+ ssize_t vfio_pci_bar_rw(struct vfio_pci_device *vdev, char __user *buf,
+ 			size_t count, loff_t *ppos, bool iswrite)
+@@ -190,11 +191,9 @@ ssize_t vfio_pci_bar_rw(struct vfio_pci_device *vdev, char __user *buf,
+ 			return -ENOMEM;
+ 		x_end = end;
+ 	} else {
+-		int ret = vfio_pci_setup_barmap(vdev, bar);
+-		if (ret)
+-			return ret;
+-
+-		io = priv->barmap[bar];
++		io = vfio_pci_setup_barmap(vdev, bar);
++		if (!io)
++			return -EFAULT;
+ 	}
+ 
+ 	if (bar == priv->msix_bar) {
+@@ -309,6 +308,7 @@ long vfio_pci_ioeventfd(struct vfio_pci_device *vdev, loff_t offset,
+ 	loff_t pos = offset & VFIO_PCI_OFFSET_MASK;
+ 	int ret, bar = VFIO_PCI_OFFSET_TO_INDEX(offset);
+ 	struct vfio_pci_ioeventfd *ioeventfd;
++	void __iomem *io;
+ 
+ 	/* Only support ioeventfds into BARs */
+ 	if (bar > VFIO_PCI_BAR5_REGION_INDEX)
+@@ -328,9 +328,9 @@ long vfio_pci_ioeventfd(struct vfio_pci_device *vdev, loff_t offset,
+ 		return -EINVAL;
+ #endif
+ 
+-	ret = vfio_pci_setup_barmap(vdev, bar);
+-	if (ret)
+-		return ret;
++	io = vfio_pci_setup_barmap(vdev, bar);
++	if (!io)
++		return -EFAULT;
+ 
+ 	mutex_lock(&priv->ioeventfds_lock);
+ 
+diff --git a/include/linux/vfio.h b/include/linux/vfio.h
+index 4d7e80b2ed1b..00112ffd9ad0 100644
+--- a/include/linux/vfio.h
++++ b/include/linux/vfio.h
+@@ -223,6 +223,8 @@ extern int vfio_pci_mmap(void *device_data, struct vm_area_struct *vma);
+ extern void vfio_pci_request(void *device_data, unsigned int count);
+ extern int vfio_pci_open(void *device_data);
+ extern void vfio_pci_release(void *device_data);
++extern void __iomem *vfio_pci_setup_barmap(struct vfio_pci_device *vdev,
++					   int bar);
+ 
+ #define vfio_pci_register_vendor_driver(__name, __probe, __remove,	\
+ 					__device_ops)			\
+-- 
+2.17.1
 
-It turns out that this patch causes lockup with UART stress testing.
-The strange thing is that we have identical patch in production with
-4.19 without issues.
-
-I'll send two series for UDMA update as we have found a way to induce a
-kernel crash with experimental UART patches.
-One with patches as must bug fixes for 5.6 and another one with lower
-priority fixes.
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
