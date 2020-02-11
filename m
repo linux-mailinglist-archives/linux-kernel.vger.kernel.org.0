@@ -2,77 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B03B158BFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 10:40:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4C86158C20
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 10:52:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbgBKJkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 04:40:16 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:32994 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727652AbgBKJkQ (ORCPT
+        id S1728068AbgBKJv5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 04:51:57 -0500
+Received: from mail.netline.ch ([148.251.143.178]:47311 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727947AbgBKJv4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 04:40:16 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 24040293ECA
-Subject: Re: [PATCH] platform/chrome: wilco_ec: Include asm/unaligned instead
- of linux/ path
-To:     Stephen Boyd <swboyd@chromium.org>,
-        Benson Leung <bleung@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, Nick Crews <ncrews@chromium.org>,
-        kbuild test robot <lkp@intel.com>
-References: <20200203174619.68861-1-swboyd@chromium.org>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <e4bdff9a-4cd9-70a2-7625-accc6146e063@collabora.com>
-Date:   Tue, 11 Feb 2020 10:40:11 +0100
+        Tue, 11 Feb 2020 04:51:56 -0500
+X-Greylist: delayed 604 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Feb 2020 04:51:55 EST
+Received: from localhost (localhost [127.0.0.1])
+        by netline-mail3.netline.ch (Postfix) with ESMTP id 577EE2A6048;
+        Tue, 11 Feb 2020 10:41:50 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
+Received: from netline-mail3.netline.ch ([127.0.0.1])
+        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id Y5c4P5LHANWr; Tue, 11 Feb 2020 10:41:50 +0100 (CET)
+Received: from thor (252.80.76.83.dynamic.wline.res.cust.swisscom.ch [83.76.80.252])
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id E7C9F2A6046;
+        Tue, 11 Feb 2020 10:41:49 +0100 (CET)
+Received: from [::1]
+        by thor with esmtp (Exim 4.93)
+        (envelope-from <michel@daenzer.net>)
+        id 1j1S3A-000eJE-I2; Tue, 11 Feb 2020 10:41:48 +0100
+Subject: Re: [PATCH v2] drm/i915: Disable
+ -Wtautological-constant-out-of-range-compare
+To:     Nathan Chancellor <natechancellor@gmail.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc:     clang-built-linux@googlegroups.com,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <20200211050808.29463-1-natechancellor@gmail.com>
+ <20200211061338.23666-1-natechancellor@gmail.com>
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Message-ID: <4c806435-f32d-1559-9563-ffe3fa69f0d1@daenzer.net>
+Date:   Tue, 11 Feb 2020 10:41:48 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-In-Reply-To: <20200203174619.68861-1-swboyd@chromium.org>
+In-Reply-To: <20200211061338.23666-1-natechancellor@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
-
-On 3/2/20 18:46, Stephen Boyd wrote:
-> It seems that we shouldn't try to include the include/linux/ path to
-> unaligned functions. Just include asm/unaligned.h instead so that we
-> don't run into compilation warnings like below.
+On 2020-02-11 7:13 a.m., Nathan Chancellor wrote:
+> A recent commit in clang added -Wtautological-compare to -Wall, which is
+> enabled for i915 so we see the following warning:
 > 
->    In file included from drivers/platform/chrome/wilco_ec/properties.c:8:0:
->    include/linux/unaligned/le_memmove.h:7:19: error: redefinition of 'get_unaligned_le16'
->     static inline u16 get_unaligned_le16(const void *p)
->                       ^~~~~~~~~~~~~~~~~~
->    In file included from arch/ia64/include/asm/unaligned.h:5:0,
->                     from arch/ia64/include/asm/io.h:23,
->                     from arch/ia64/include/asm/smp.h:21,
->                     from include/linux/smp.h:68,
->                     from include/linux/percpu.h:7,
->                     from include/linux/arch_topology.h:9,
->                     from include/linux/topology.h:30,
->                     from include/linux/gfp.h:9,
->                     from include/linux/xarray.h:14,
->                     from include/linux/radix-tree.h:18,
->                     from include/linux/idr.h:15,
->                     from include/linux/kernfs.h:13,
->                     from include/linux/sysfs.h:16,
->                     from include/linux/kobject.h:20,
->                     from include/linux/device.h:16,
->                     from include/linux/platform_data/wilco-ec.h:11,
->                     from drivers/platform/chrome/wilco_ec/properties.c:6:
->    include/linux/unaligned/le_struct.h:7:19: note: previous definition of 'get_unaligned_le16' was here
->     static inline u16 get_unaligned_le16(const void *p)
->                       ^~~~~~~~~~~~~~~~~~
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Fixes: 60fb8a8e93ca ("platform/chrome: wilco_ec: Allow wilco to be compiled in COMPILE_TEST")
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
+> ../drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c:1485:22: warning:
+> result of comparison of constant 576460752303423487 with expression of
+> type 'unsigned int' is always false
+> [-Wtautological-constant-out-of-range-compare]
+>         if (unlikely(remain > N_RELOC(ULONG_MAX)))
+>             ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+> 
+> This warning only happens on x86_64 but that check is relevant for
+> 32-bit x86 so we cannot remove it.
 
-Queued as a fix for 5.6. Thanks,
+That's suprising. AFAICT N_RELOC(ULONG_MAX) works out to the same value
+in both cases, and remain is a 32-bit value in both cases. How can it be
+larger than N_RELOC(ULONG_MAX) on 32-bit (but not on 64-bit)?
 
-  Enric
+
+-- 
+Earthling Michel Dänzer               |               https://redhat.com
+Libre software enthusiast             |             Mesa and X developer
