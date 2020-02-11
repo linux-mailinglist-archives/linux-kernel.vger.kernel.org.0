@@ -2,151 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6096215868F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 01:16:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2537B1586BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 01:18:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727815AbgBKAQD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 19:16:03 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:4306 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727723AbgBKAPn (ORCPT
+        id S1727592AbgBKASl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 19:18:41 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:44639 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbgBKASl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 19:15:43 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e41f1ec0003>; Mon, 10 Feb 2020 16:14:36 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 10 Feb 2020 16:15:39 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 10 Feb 2020 16:15:39 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 11 Feb
- 2020 00:15:38 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 11 Feb 2020 00:15:39 +0000
-Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e41f22a000b>; Mon, 10 Feb 2020 16:15:38 -0800
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH v6 12/12] mm: dump_page(): additional diagnostics for huge pinned pages
-Date:   Mon, 10 Feb 2020 16:15:36 -0800
-Message-ID: <20200211001536.1027652-13-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200211001536.1027652-1-jhubbard@nvidia.com>
-References: <20200211001536.1027652-1-jhubbard@nvidia.com>
+        Mon, 10 Feb 2020 19:18:41 -0500
+Received: by mail-oi1-f195.google.com with SMTP id d62so11085190oia.11
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 16:18:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:reply-to:mime-version
+         :content-disposition:user-agent;
+        bh=UhxPcj6/40TrfxQ8X9WmhGzj5RubLTtga5je0QqGKtU=;
+        b=t1/CNSDasjvg213eVPV628rx/NqyicZ9MHL3nZV9iyRb0gnoDGAyk3zo2CbHrXMmUl
+         WFvhDLBN1hBcGYvlgHjIs/vG4BS/ytAYuojaB6RCLOVzXa2Tm+GoJk8yREM2gpGS8rad
+         6ytY2A+Ek+kI5aA4FUBNcCPGjW4ZjNxbaPQ/OCdyP9+S/o+cMdtK/JKqbp9+6vzzD8vX
+         rDntq7w+1rgHOGeB5wwpBBDVQ2vQaWYcKSpSjw7syD7i4O00HiWDx8WYrL6JGkY9BC3n
+         g6A3TEldiQH2H+5/bufsQFXEln8xfTcdA/4B+Pp2Y6pgpFb+DN6dcVKT/XxYvOpE3HFG
+         OPBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :reply-to:mime-version:content-disposition:user-agent;
+        bh=UhxPcj6/40TrfxQ8X9WmhGzj5RubLTtga5je0QqGKtU=;
+        b=Y91gICEvaFVcg6hvVNUPcov1FsPyiYuYsIsfv3rX/+6J1DVUkjj8ccaGaTwCAc4F4S
+         2RSR0d6i/vcREZWkStJVXr4sGHQqfhNQwkmvuY3vHH+Xo/V79ytNqPYPmNX5gDkGJNSb
+         EyhDgiwzUKGJMvyL2PUTUDWN6dWyTbe0uES3qw/I0JVja5ovmgcOAmB6wsnbStymVBlM
+         +Wz1UDG9xLOoUl/Z5F1Q+uVYnuv3p5M+3V/WC4ymhI+auoPe4BYFGIyEFd6xUILt8r7Y
+         25DcqVa7l1YEG4gPGLcbzRA2FVTcXiyYgp730/ZSSviCDD+soGK2TDUYyRIpZy/k4blL
+         DBmA==
+X-Gm-Message-State: APjAAAVwoouUvYslNxo2kfvgzebvURk+oCXqkYZMabwLWop/jW8X3BEf
+        CtUSN+w1FKRuXkHk77Olgwhsi1E=
+X-Google-Smtp-Source: APXvYqzo0+ahUj2sFEaT94kJPwXL9G3Uy6b+rEKAM/F/An1bpHkf8Zo5HWsdpCGERzDKdO4w+fT8YA==
+X-Received: by 2002:a05:6808:358:: with SMTP id j24mr1223199oie.89.1581380319211;
+        Mon, 10 Feb 2020 16:18:39 -0800 (PST)
+Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
+        by smtp.gmail.com with ESMTPSA id m185sm606084oia.26.2020.02.10.16.18.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Feb 2020 16:18:38 -0800 (PST)
+Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:4d7:9d24:84b2:ef45])
+        by serve.minyard.net (Postfix) with ESMTPSA id 4A338180046;
+        Tue, 11 Feb 2020 00:18:37 +0000 (UTC)
+Date:   Mon, 10 Feb 2020 18:18:36 -0600
+From:   Corey Minyard <minyard@acm.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        openipmi-developer@lists.sourceforge.net
+Subject: [GIT PULL] IPMI bug fixes for 5.6
+Message-ID: <20200211001836.GI7842@minyard.net>
+Reply-To: minyard@acm.org
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1581380076; bh=G6zg3dRvhO6eAf8mbf4UXoagNxuHvI4R2GOif2CoQS4=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=Cd1yfw1/9CzPbKF6OSrgzdmEliYQ3R0HZd3+GQjeV4c0D3J3OusAurjqoXn7uEWpl
-         +LmNHWyGx0F8fXhtaLdXTzZvppVpddmCFnj+rmtLp5kgyxnI/MRZG5guKgEpyIlCqa
-         mmaobcG/RqaV4u3zFUiQKpqT8crsGJWtsPE3i/YQoXDv+emdSSOIa9yEjzPQKVbB1e
-         ZAtnLutXaqXjnpGVwBAbX7eo+vSKYDKCiDBJFT7/rRfE3V8StQpOM+cz/B00Y7d5vV
-         XHlNCGaY8lwO5FkrbQBa+LBxF1OvpglLDXXeV58ipgmai6fx3Q6Poed18DHTkyzAv9
-         5Q0c80gnKiDgA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As part of pin_user_pages() and related API calls, pages are
-"dma-pinned". For the case of compound pages of order > 1, the per-page
-accounting of dma pins is accomplished via the 3rd struct page in the
-compound page. In order to support debugging of any pin_user_pages()-
-related problems, enhance dump_page() so as to report the pin count
-in that case.
+The following changes since commit 6794862a16ef41f753abd75c03a152836e4c8028:
 
-Documentation/core-api/pin_user_pages.rst is also updated accordingly.
+  Merge tag 'for-5.5-rc1-kconfig-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux (2019-12-09 12:14:31 -0800)
 
-Cc: Jan Kara <jack@suse.cz>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- Documentation/core-api/pin_user_pages.rst |  7 +++++++
- mm/debug.c                                | 21 ++++++++++++++++-----
- 2 files changed, 23 insertions(+), 5 deletions(-)
+are available in the Git repository at:
 
-diff --git a/Documentation/core-api/pin_user_pages.rst b/Documentation/core=
--api/pin_user_pages.rst
-index 5c8a5f89756b..2e939ff10b86 100644
---- a/Documentation/core-api/pin_user_pages.rst
-+++ b/Documentation/core-api/pin_user_pages.rst
-@@ -238,6 +238,13 @@ long-term [R]DMA pins in place, or during pin/unpin tr=
-ansitions.
- (...unless it was already out of balance due to a long-term RDMA pin being=
- in
- place.)
-=20
-+Other diagnostics
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+
-+dump_page() has been enhanced slightly, to handle these new counting field=
-s, and
-+to better report on compound pages in general. Specifically, for compound =
-pages
-+with order > 1, the exact (hpage_pinned_refcount) pincount is reported.
-+
- References
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
-diff --git a/mm/debug.c b/mm/debug.c
-index f5ffb0784559..2189357f0987 100644
---- a/mm/debug.c
-+++ b/mm/debug.c
-@@ -85,11 +85,22 @@ void __dump_page(struct page *page, const char *reason)
- 	mapcount =3D PageSlab(head) ? 0 : page_mapcount(page);
-=20
- 	if (compound)
--		pr_warn("page:%px refcount:%d mapcount:%d mapping:%p "
--			"index:%#lx head:%px order:%u compound_mapcount:%d\n",
--			page, page_ref_count(head), mapcount,
--			mapping, page_to_pgoff(page), head,
--			compound_order(head), compound_mapcount(page));
-+		if (hpage_pincount_available(page)) {
-+			pr_warn("page:%px refcount:%d mapcount:%d mapping:%p "
-+				"index:%#lx head:%px order:%u "
-+				"compound_mapcount:%d compound_pincount:%d\n",
-+				page, page_ref_count(head), mapcount,
-+				mapping, page_to_pgoff(page), head,
-+				compound_order(head), compound_mapcount(page),
-+				compound_pincount(page));
-+		} else {
-+			pr_warn("page:%px refcount:%d mapcount:%d mapping:%p "
-+				"index:%#lx head:%px order:%u "
-+				"compound_mapcount:%d\n",
-+				page, page_ref_count(head), mapcount,
-+				mapping, page_to_pgoff(page), head,
-+				compound_order(head), compound_mapcount(page));
-+		}
- 	else
- 		pr_warn("page:%px refcount:%d mapcount:%d mapping:%p index:%#lx\n",
- 			page, page_ref_count(page), mapcount,
---=20
-2.25.0
+  https://github.com/cminyard/linux-ipmi.git tags/for-linus-5.6-1
+
+for you to fetch changes up to e0354d147e5889b5faa12e64fa38187aed39aad4:
+
+  drivers: ipmi: fix off-by-one bounds check that leads to a out-of-bounds write (2020-01-20 11:01:00 -0600)
+
+----------------------------------------------------------------
+Minor bug fixes for IPMI
+
+I know this is late; I've been travelling and, well, I've been
+distracted.
+
+This is just a few bug fixes and adding i2c support to the IPMB driver,
+which is something I wanted from the beginning for it.  It would be
+nice for the people doing IPMB to get this in.
+
+-corey
+
+----------------------------------------------------------------
+Colin Ian King (1):
+      drivers: ipmi: fix off-by-one bounds check that leads to a out-of-bounds write
+
+Corey Minyard (1):
+      ipmi:ssif: Handle a possible NULL pointer reference
+
+Vijay Khemka (2):
+      drivers: ipmi: Support raw i2c packet in IPMB
+      drivers: ipmi: Modify max length of IPMB packet
+
+ Documentation/driver-api/ipmb.rst |  4 ++++
+ drivers/char/ipmi/ipmb_dev_int.c  | 33 +++++++++++++++++++++++++++++++--
+ drivers/char/ipmi/ipmi_ssif.c     | 10 +++++++---
+ 3 files changed, 42 insertions(+), 5 deletions(-)
 
