@@ -2,141 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B69E11594F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:29:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6D8A1594D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:25:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730791AbgBKQ30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 11:29:26 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:52386 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729769AbgBKQ3Z (ORCPT
+        id S1730120AbgBKQZk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 11:25:40 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:59287 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730020AbgBKQZk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 11:29:25 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01BGTBSI003892;
-        Tue, 11 Feb 2020 10:29:11 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581438551;
-        bh=s1rC3bq7DiLStu9i9FHCNZqJRoyzQUYiiRwZ0lgfqNk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=OqEGPXPt5QwUNgkg/gJ83e8RQiQA1cziseyMFONvToT9J19EOR1xLkr/hYeIJDZgO
-         zMlzp8JU1iAaFXl3PvZoDoIunbcxrU+RCl+QKuhLDRsgCn9enG+LnR+Te/9TR7CHk3
-         CVjBpAscqMiQg6QPj6u2cgbsc5MrO1uys1f6rFVg=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01BGTBel084455
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Feb 2020 10:29:11 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 11
- Feb 2020 10:29:11 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 11 Feb 2020 10:29:11 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01BGTAKw024424;
-        Tue, 11 Feb 2020 10:29:10 -0600
-Subject: Re: [PATCH 2/2] ASoC: tlv320adcx140: Add the tlv320adcx140 codec
- driver family
-To:     Mark Brown <broonie@kernel.org>
-CC:     <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-References: <20200207194533.29967-1-dmurphy@ti.com>
- <20200207194533.29967-2-dmurphy@ti.com> <20200210135252.GK7685@sirena.org.uk>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <1148672d-4053-65cd-61dd-0039658d85a4@ti.com>
-Date:   Tue, 11 Feb 2020 10:24:36 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 11 Feb 2020 11:25:40 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j1YLw-0006Fa-Ay; Tue, 11 Feb 2020 17:25:36 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j1YLu-0002ou-Uk; Tue, 11 Feb 2020 17:25:34 +0100
+Date:   Tue, 11 Feb 2020 17:25:34 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Thierry Reding <thierry.reding@gmail.com>, od@zcrc.me,
+        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mathieu Malaterre <malat@debian.org>,
+        Artur Rojek <contact@artur-rojek.eu>, kernel@pengutronix.de
+Subject: Re: [PATCH v2 1/3] pwm: jz4740: Use clocks from TCU driver
+Message-ID: <20200211162534.s2whc3ndfckn6j6i@pengutronix.de>
+References: <20191116173613.72647-1-paul@crapouillou.net>
+ <20191116173613.72647-2-paul@crapouillou.net>
+ <20191117202028.4chgjv2kulyyq2eu@pengutronix.de>
+ <1574031523.3.0@crapouillou.net>
+ <20191118071538.46egokrswvjxdvfp@pengutronix.de>
+ <1574074556.3.0@crapouillou.net>
+ <20191118111933.vipfycc2j7j6esb7@pengutronix.de>
+ <1574084574.3.1@crapouillou.net>
 MIME-Version: 1.0
-In-Reply-To: <20200210135252.GK7685@sirena.org.uk>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <1574084574.3.1@crapouillou.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark
+Hi Paul,
 
-Thanks for the review
+On Mon, Nov 18, 2019 at 02:42:54PM +0100, Paul Cercueil wrote:
+> Le lun., nov. 18, 2019 at 12:19, Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> a écrit :
+> > On Mon, Nov 18, 2019 at 11:55:56AM +0100, Paul Cercueil wrote:
+> > >  Le lun., nov. 18, 2019 at 08:15, Uwe Kleine-König
+> > >  <u.kleine-koenig@pengutronix.de> a écrit :
+> > >  > On Sun, Nov 17, 2019 at 11:58:43PM +0100, Paul Cercueil wrote:
+> > >  > >  Le dim., nov. 17, 2019 at 21:20, Uwe Kleine-König
+> > >  > >  <u.kleine-koenig@pengutronix.de> a écrit :
+> > >  > >  > On Sat, Nov 16, 2019 at 06:36:11PM +0100, Paul Cercueil wrote:
+> > >  > >  > >   struct jz4740_pwm_chip {
+> > >  > >  > >   	struct pwm_chip chip;
+> > >  > >  > >  -	struct clk *clk;
+> > >  > >  >
+> > >  > >  > What is the motivation to go away from this approach to store the clock?
+> > >  > >
+> > >  > >  It's actually not the same clock. Instead of obtaining "ext" clock from the
+> > >  > >  probe, we obtain "timerX" clocks (X being the PWM channel) from the request
+> > >  > >  callback.
+> > >  >
+> > >  > Before you used driver data and container_of to get it, now you used
+> > >  > pwm_set_chip_data. I wondered why you changed the approach to store
+> > >  > data. That the actual data is different now is another thing (and
+> > >  > obviously ok).
+> > > 
+> > >  Thierry suggested it: https://lkml.org/lkml/2019/3/4/486
+> > 
+> > If you motivate that in the commit log (preferably with a better
+> > rationale than "Thierry suggested it") that's fine for. (Do I claim now
+> > without having read the rationale :-)
+> 
+> I don't really have a better rationale. The alternative was to have a
+> "struct clk[NB_PWMS];" in the struct jz4740_pwm_chip, so this is arguably
+> better. I'm not sure it's worth mentioning in the commit message, is it?
 
-On 2/10/20 7:52 AM, Mark Brown wrote:
-> On Fri, Feb 07, 2020 at 01:45:33PM -0600, Dan Murphy wrote:
->
->> +	/* interface format */
->> +	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
->> +	case SND_SOC_DAIFMT_I2S:
->> +		iface_reg1 |= ADCX140_I2S_MODE_BIT;
->> +		break;
->> +	case SND_SOC_DAIFMT_LEFT_J:
->> +		iface_reg1 |= ADCX140_LEFT_JUST_BIT;
->> +		break;
->> +	case SND_SOC_DAIFMT_DSP_A:
->> +	case SND_SOC_DAIFMT_DSP_B:
->> +		break;
-> _DSP_A and _DSP_B are two different format so I'd expect the device to
-> be configured differently for them, or for only one to be supported.
-Ack.  I will need to adjust the TX offset for these.  I will do add a 
-prepare call back and set the offset there.  These can fall through 
-since TDM is default.
->
->> +static int adcx140_mute(struct snd_soc_dai *codec_dai, int mute)
->> +{
->> +	struct snd_soc_component *component = codec_dai->component;
->> +	int config_reg;
->> +	int mic_enable;
->> +	int i;
->> +
->> +	/* There is not a single register to mute.  Each enabled path has to be
->> +	 * muted individually.  Read which path is enabled and mute it.
->> +	 */
->> +	snd_soc_component_read(component, ADCX140_IN_CH_EN, &mic_enable);
->> +	if (!mic_enable)
->> +		return 0;
-> You could also just offer this control to userspace, it's not
-> *essential* to have this operation though it can help with glitching
-> during stream startup.
->
->> +
->> +	for (i = 0; i < ADCX140_MAX_CHANNELS; i++) {
->> +		config_reg = ADCX140_CH8_CFG2 - (5 * i);
->> +		if (!(mic_enable & BIT(i)))
->> +			continue;
->> +
->> +		if (mute)
->> +			snd_soc_component_write(component, config_reg, 0);
->> +	}
-> How does the unmute work?
-This is unmuted through volume control.  I can remove this as the device 
-is muted when the volume register is set to 0.  That will force the user 
-to have to set a volume.
->
->> +	internal_reg = device_property_present(adcx140->dev,
->> +					       "ti,use-internal-areg");
->> +
->> +	if (internal_reg)
->> +		sleep_cfg_val |= ADCX140_AREG_INTERNAL;
-> Does this actually need a specific property or could you support the
-> regulator API and then use regulator_get_optional() to figure out if an
-> external AVDD is attached?
+It depends what you want to achieve. An array in the chip data might be
+too big, with per-pwm data your memory fragments. Still worth to mention
+something like:
 
-Yes we could set internal AREG bit if no supply is given.
+	The new code now uses a clk pointer per PWM (instead of a clk
+	per pwm-chip before). So the pointer is stored in per-pwm data
+	now.
+ 
+> They are actually all in the same register range. Each channel has 4 32-bit
+> registers, the first one is the CTRL (aka. TCSR) register which is written
+> to here. The following two configure the duty/period values, the last one is
+> the counter. The 'timer enable' bit is however in the global TCU registers
+> area.
+> 
+> The clock bits of the TCSRs registers (including the TCSR registers of the
+> watchdog and 64-bit OS timer) are controlled by the clocks driver. All
+> register accesses are properly handled thanks to regmap, that we add in
+> patch [2/3].
 
->
->> +static int adcx140_codec_probe(struct snd_soc_component *component)
->> +{
->> +	struct adcx140_priv *adcx140 = snd_soc_component_get_drvdata(component);
->> +
->> +	return adc5410_init(adcx140);
->> +}
-> Does the separate init function buy us anything?
+You reshuffled in v3 which obsoletes some of the statements here I
+think. Will take a look there.
 
-No that is an artifact of my development I can move everything to 
-codec_probe
+Best regards
+Uwe
 
-Dan
-
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
