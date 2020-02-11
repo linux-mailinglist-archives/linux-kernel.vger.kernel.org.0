@@ -2,135 +2,277 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E65D21591D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 15:26:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D5B01591E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 15:27:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730187AbgBKO0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 09:26:40 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:55667 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730145AbgBKO0j (ORCPT
+        id S1729953AbgBKO1R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 09:27:17 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33300 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728575AbgBKO1R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 09:26:39 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1j1WUb-0000HK-BK; Tue, 11 Feb 2020 15:26:25 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1j1WUY-0004Dr-A2; Tue, 11 Feb 2020 15:26:22 +0100
-Date:   Tue, 11 Feb 2020 15:26:22 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Roy Im <roy.im.opensource@diasemi.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Brian Masney <masneyb@onstation.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>, Luca Weiss <luca@z3ntu.xyz>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Pascal PAILLET-LME <p.paillet@st.com>,
-        Rob Herring <robh@kernel.org>,
-        Samuel Ortiz <sameo@linux.intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Support Opensource <support.opensource@diasemi.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org
-Subject: Re: [RESEND PATCH V8 3/3] Input: new da7280 haptic driver
-Message-ID: <20200211142622.5vt34ftdt242agaq@pengutronix.de>
-References: <cover.1581383604.git.Roy.Im@diasemi.com>
- <ba04fc95afbf3d77a49ad6d52ade20fe79a4b7eb.1581383604.git.Roy.Im@diasemi.com>
+        Tue, 11 Feb 2020 09:27:17 -0500
+Received: by mail-wr1-f66.google.com with SMTP id u6so12664427wrt.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 06:27:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=B81Helubz/3hZDr2f63ZyA0xlysSr7WeBi3vAb4q+7w=;
+        b=FBpDQadfDssHONzIdiz6TzdfWN2OUK4/oJmSDUM8STx8nE/rHkGNZppmXPn0PtL584
+         ZbMojHbXPDAo2sR1WlTlluWErQJsmcSkvosVYg4dliUtAhVReZ5B6PD6C6uljS4T+M+m
+         7quwsA0hgYXCJ7RFuhOD6iW1AIx6jz2Bve7XU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=B81Helubz/3hZDr2f63ZyA0xlysSr7WeBi3vAb4q+7w=;
+        b=mDrW5L+O3W5cEJjz8vwONG5N5YqssdaPjkOvYzYXBamka5DVZ/n6ySl8LeqCdiG6yB
+         LGgokSjPvGCmPg25zhjEkw/2mYahrM1UXLaS1uPZvcOuCJqWxvNeHd8QsxpoMRYv0wsB
+         7jehox+G66MGxJgXAIBnzFohnovB3GkEC8GWxt+ayW23Xb8BXTrYYgRt2HNGS7xy2XYy
+         F5JU7QGFru4jKSL+RROdevjBPg4HfSSNmElY7RRnATAqOe5MCwpVIGOdAR9Jkbyt/Vmk
+         PVC4uym4CftNROXR1W7+oanu8XNXYGz3sKPmBioGGNp9JVj6VkHVY0ZPD61hDLOG+Eqz
+         S8xw==
+X-Gm-Message-State: APjAAAXaqBF4vrR1gnTE4KX2Z9Q36Z9YzscUckVo+i1mpcIeQ6T8DsZF
+        9KeYN4qScE/tbBfCj/kBTQ5U8g==
+X-Google-Smtp-Source: APXvYqxPdtmD49fRWAf6OVDfFpYPRx5XA1Kpu2Wc+SB5UGRs/6jQXQ2Be543NV6S5p7xjnOwRk6G2A==
+X-Received: by 2002:adf:f606:: with SMTP id t6mr8812978wrp.304.1581431234436;
+        Tue, 11 Feb 2020 06:27:14 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id o15sm5465805wra.83.2020.02.11.06.27.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2020 06:27:13 -0800 (PST)
+Date:   Tue, 11 Feb 2020 15:27:11 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, olvaffe@gmail.com,
+        gurchetansingh@chromium.org, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] drm/virtio: add drm_driver.release callback.
+Message-ID: <20200211142711.GE2363188@phenom.ffwll.local>
+Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
+        dri-devel@lists.freedesktop.org, olvaffe@gmail.com,
+        gurchetansingh@chromium.org, David Airlie <airlied@linux.ie>,
+        "open list:VIRTIO GPU DRIVER" <virtualization@lists.linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20200211135805.24436-1-kraxel@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ba04fc95afbf3d77a49ad6d52ade20fe79a4b7eb.1581383604.git.Roy.Im@diasemi.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20200211135805.24436-1-kraxel@redhat.com>
+X-Operating-System: Linux phenom 5.3.0-3-amd64 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 10:13:24AM +0900, Roy Im wrote:
-> diff --git a/drivers/input/misc/da7280.c b/drivers/input/misc/da7280.c
-> new file mode 100644
-> index 0000000..4d1d1fc
-> --- /dev/null
-> +++ b/drivers/input/misc/da7280.c
-> @@ -0,0 +1,1688 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * DA7280 Haptic device driver
-> + *
-> + * Copyright (c) 2019 Dialog Semiconductor.
-> + * Author: Roy Im <Roy.Im.Opensource@diasemi.com>
-> + */
+On Tue, Feb 11, 2020 at 02:58:04PM +0100, Gerd Hoffmann wrote:
+> Split virtio_gpu_deinit(), move the drm shutdown and release to
+> virtio_gpu_release().  Drop vqs_ready variable, instead use
+> drm_dev_{enter,exit,unplug} to avoid touching hardware after
+> device removal.  Tidy up here and there.
+> 
+> v4: add changelog.
+> v3: use drm_dev_*().
+> 
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+
+Looks reasonable I think.
+
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+I didn't review whether you need more drm_dev_enter/exit pairs, virtio is
+a bit more complex for that and I have no idea how exactly it works. Maybe
+for these more complex drivers we need a drm_dev_assert_entered() or so
+that uses the right srcu lockdep annotations to make sure we do this
+right. Sprinkling that check into a few low-level hw functions (touching
+registers or whatever) should catch most issues.
+-Daniel
+
+> ---
+>  drivers/gpu/drm/virtio/virtgpu_drv.h     |  3 ++-
+>  drivers/gpu/drm/virtio/virtgpu_display.c |  1 -
+>  drivers/gpu/drm/virtio/virtgpu_drv.c     |  6 +++++-
+>  drivers/gpu/drm/virtio/virtgpu_kms.c     |  7 ++++--
+>  drivers/gpu/drm/virtio/virtgpu_vq.c      | 27 +++++++++++++-----------
+>  5 files changed, 27 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
+> index 7fd8361e1c9e..af9403e1cf78 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
+> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
+> @@ -32,6 +32,7 @@
+>  #include <linux/virtio_gpu.h>
+>  
+>  #include <drm/drm_atomic.h>
+> +#include <drm/drm_drv.h>
+>  #include <drm/drm_encoder.h>
+>  #include <drm/drm_fb_helper.h>
+>  #include <drm/drm_gem.h>
+> @@ -177,7 +178,6 @@ struct virtio_gpu_device {
+>  	struct virtio_gpu_queue ctrlq;
+>  	struct virtio_gpu_queue cursorq;
+>  	struct kmem_cache *vbufs;
+> -	bool vqs_ready;
+>  
+>  	bool disable_notify;
+>  	bool pending_notify;
+> @@ -219,6 +219,7 @@ extern struct drm_ioctl_desc virtio_gpu_ioctls[DRM_VIRTIO_NUM_IOCTLS];
+>  /* virtio_kms.c */
+>  int virtio_gpu_init(struct drm_device *dev);
+>  void virtio_gpu_deinit(struct drm_device *dev);
+> +void virtio_gpu_release(struct drm_device *dev);
+>  int virtio_gpu_driver_open(struct drm_device *dev, struct drm_file *file);
+>  void virtio_gpu_driver_postclose(struct drm_device *dev, struct drm_file *file);
+>  
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_display.c b/drivers/gpu/drm/virtio/virtgpu_display.c
+> index 7b0f0643bb2d..af953db4a0c9 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_display.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_display.c
+> @@ -368,6 +368,5 @@ void virtio_gpu_modeset_fini(struct virtio_gpu_device *vgdev)
+>  
+>  	for (i = 0 ; i < vgdev->num_scanouts; ++i)
+>  		kfree(vgdev->outputs[i].edid);
+> -	drm_atomic_helper_shutdown(vgdev->ddev);
+>  	drm_mode_config_cleanup(vgdev->ddev);
+>  }
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
+> index 8cf27af3ad53..ab4bed78e656 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_drv.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/pci.h>
+>  
+>  #include <drm/drm.h>
+> +#include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_drv.h>
+>  #include <drm/drm_file.h>
+>  
+> @@ -135,7 +136,8 @@ static void virtio_gpu_remove(struct virtio_device *vdev)
+>  {
+>  	struct drm_device *dev = vdev->priv;
+>  
+> -	drm_dev_unregister(dev);
+> +	drm_dev_unplug(dev);
+> +	drm_atomic_helper_shutdown(dev);
+>  	virtio_gpu_deinit(dev);
+>  	drm_dev_put(dev);
+>  }
+> @@ -214,4 +216,6 @@ static struct drm_driver driver = {
+>  	.major = DRIVER_MAJOR,
+>  	.minor = DRIVER_MINOR,
+>  	.patchlevel = DRIVER_PATCHLEVEL,
 > +
-> +#include <linux/err.h>
-> +#include <linux/i2c.h>
-> +#include <linux/input.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/module.h>
-> +#include <linux/pwm.h>
-> +#include <linux/regmap.h>
-> +#include <linux/workqueue.h>
-> +#include <linux/uaccess.h>
-> +#include "da7280.h"
-
-Don't introduce a header file that is only used once. Better put the
-definitions into the c file then.
-
-> [...]
-> +static int da7280_haptic_set_pwm(struct da7280_haptic *haptics)
+> +	.release = virtio_gpu_release,
+>  };
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
+> index c1086df49816..4009c2f97d08 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_kms.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
+> @@ -199,7 +199,6 @@ int virtio_gpu_init(struct drm_device *dev)
+>  	virtio_gpu_modeset_init(vgdev);
+>  
+>  	virtio_device_ready(vgdev->vdev);
+> -	vgdev->vqs_ready = true;
+>  
+>  	if (num_capsets)
+>  		virtio_gpu_get_capsets(vgdev, num_capsets);
+> @@ -234,12 +233,16 @@ void virtio_gpu_deinit(struct drm_device *dev)
+>  	struct virtio_gpu_device *vgdev = dev->dev_private;
+>  
+>  	flush_work(&vgdev->obj_free_work);
+> -	vgdev->vqs_ready = false;
+>  	flush_work(&vgdev->ctrlq.dequeue_work);
+>  	flush_work(&vgdev->cursorq.dequeue_work);
+>  	flush_work(&vgdev->config_changed_work);
+>  	vgdev->vdev->config->reset(vgdev->vdev);
+>  	vgdev->vdev->config->del_vqs(vgdev->vdev);
+> +}
+> +
+> +void virtio_gpu_release(struct drm_device *dev)
 > +{
-> +	struct pwm_args pargs;
-> +	u64 period_mag_multi;
-> +	unsigned int pwm_duty;
-> +	int error;
+> +	struct virtio_gpu_device *vgdev = dev->dev_private;
+>  
+>  	virtio_gpu_modeset_fini(vgdev);
+>  	virtio_gpu_free_vbufs(vgdev);
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+> index a682c2fcbe9a..cfe9c54f87a3 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_vq.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+> @@ -330,7 +330,14 @@ static void virtio_gpu_queue_ctrl_sgs(struct virtio_gpu_device *vgdev,
+>  {
+>  	struct virtqueue *vq = vgdev->ctrlq.vq;
+>  	bool notify = false;
+> -	int ret;
+> +	int ret, idx;
 > +
-> +	pwm_get_args(haptics->pwm_dev, &pargs);
-> +	period_mag_multi =
-> +		(u64)(pargs.period * haptics->gain);
-
-This cast does not do anything, does it?
-
-> +	if (haptics->acc_en)
-> +		pwm_duty =
-> +			(unsigned int)(period_mag_multi >> 16);
-> +	else
-> +		pwm_duty =
-> +			(unsigned int)((period_mag_multi >> 16)
-> +				+ pargs.period) / 2;
-> +
-> +	error = pwm_config(haptics->pwm_dev,
-> +			   pwm_duty, pargs.period);
-> +	if (error) {
-> +		dev_err(haptics->dev,
-> +			"failed to configure pwm : %d\n", error);
-> +		return error;
+> +	if (!drm_dev_enter(vgdev->ddev, &idx)) {
+> +		if (fence && vbuf->objs)
+> +			virtio_gpu_array_unlock_resv(vbuf->objs);
+> +		free_vbuf(vgdev, vbuf);
+> +		return;
 > +	}
-> +
-> +	error = pwm_enable(haptics->pwm_dev);
-> +	if (error) {
-> +		pwm_disable(haptics->pwm_dev);
-> +		dev_err(haptics->dev,
-> +			"failed to enable haptics pwm device : %d\n", error);
+>  
+>  	if (vgdev->has_indirect)
+>  		elemcnt = 1;
+> @@ -338,14 +345,6 @@ static void virtio_gpu_queue_ctrl_sgs(struct virtio_gpu_device *vgdev,
+>  again:
+>  	spin_lock(&vgdev->ctrlq.qlock);
+>  
+> -	if (!vgdev->vqs_ready) {
+> -		spin_unlock(&vgdev->ctrlq.qlock);
+> -
+> -		if (fence && vbuf->objs)
+> -			virtio_gpu_array_unlock_resv(vbuf->objs);
+> -		return;
+> -	}
+> -
+>  	if (vq->num_free < elemcnt) {
+>  		spin_unlock(&vgdev->ctrlq.qlock);
+>  		wait_event(vgdev->ctrlq.ack_queue, vq->num_free >= elemcnt);
+> @@ -379,6 +378,7 @@ static void virtio_gpu_queue_ctrl_sgs(struct virtio_gpu_device *vgdev,
+>  		else
+>  			virtqueue_notify(vq);
+>  	}
+> +	drm_dev_exit(idx);
+>  }
+>  
+>  static void virtio_gpu_queue_fenced_ctrl_buffer(struct virtio_gpu_device *vgdev,
+> @@ -460,12 +460,13 @@ static void virtio_gpu_queue_cursor(struct virtio_gpu_device *vgdev,
+>  {
+>  	struct virtqueue *vq = vgdev->cursorq.vq;
+>  	struct scatterlist *sgs[1], ccmd;
+> +	int idx, ret, outcnt;
+>  	bool notify;
+> -	int ret;
+> -	int outcnt;
+>  
+> -	if (!vgdev->vqs_ready)
+> +	if (!drm_dev_enter(vgdev->ddev, &idx)) {
+> +		free_vbuf(vgdev, vbuf);
+>  		return;
 > +	}
-
-You should not use the legacy pwm API. Please stick to
-pwm_apply_state().
-
-Also consider using %pE for more expressive error messages.
-
-Best regards
-Uwe
+>  
+>  	sg_init_one(&ccmd, vbuf->buf, vbuf->size);
+>  	sgs[0] = &ccmd;
+> @@ -490,6 +491,8 @@ static void virtio_gpu_queue_cursor(struct virtio_gpu_device *vgdev,
+>  
+>  	if (notify)
+>  		virtqueue_notify(vq);
+> +
+> +	drm_dev_exit(idx);
+>  }
+>  
+>  /* just create gem objects for userspace and long lived objects,
+> -- 
+> 2.18.2
+> 
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
