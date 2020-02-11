@@ -2,104 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE53915949A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:14:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A851B159443
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:04:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730732AbgBKQOp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 11:14:45 -0500
-Received: from gateway23.websitewelcome.com ([192.185.47.80]:23995 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727561AbgBKQOp (ORCPT
+        id S1730698AbgBKQET (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 11:04:19 -0500
+Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.221]:24114 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728102AbgBKQES (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 11:14:45 -0500
-X-Greylist: delayed 1494 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Feb 2020 11:14:44 EST
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 9B31DED33
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 09:24:58 -0600 (CST)
-Received: from br540.hostgator.com.br ([108.179.252.180])
-        by cmsmtp with SMTP
-        id 1XPGjTITeRP4z1XPGjvCTQ; Tue, 11 Feb 2020 09:24:58 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=mpdesouza.com; s=default; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=hm/23NW+SCo6nlE9b57ji0EYuqf5cV9tPkdyZTDdTQ8=; b=RfIyznYBariRuSfgxU4Tdx787H
-        vM29DFGT+UBMC1lYUWWzG/2T+qhEPz8mu8sg4bbA1WCbn6+c6yIJjByz5rtNg2AkwaBcATwOY6Inm
-        /8jkjJktneFBKgwqL6n+SS6HoU4zvVj1rkiT7U5s7MNWv+/+tmh5LKYdcPGs4O/fXW2m/zIJFutU6
-        M/00Mk0nND/H4j+tWH6WFuRHzdLo+kakzwsYgRkp3Xh1/ZEbBn38HSqKpMtOEHzoRV1wL/pWbYRvO
-        29yUGa6ESVLJ0LDgxihW2gKQLAR7XSTd9ELbEzmmgWIVVQRLSdAT56rNpY35/zOJRvpzZH0iCZMtd
-        PwavwcaQ==;
-Received: from [189.114.219.35] (port=33352 helo=hephaestus.suse.de)
-        by br540.hostgator.com.br with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <marcos@mpdesouza.com>)
-        id 1j1Vj7-000xng-1U; Tue, 11 Feb 2020 10:37:21 -0300
-From:   Marcos Paulo de Souza <marcos@mpdesouza.com>
+        Tue, 11 Feb 2020 11:04:18 -0500
+X-Greylist: delayed 356 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Feb 2020 11:04:17 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581437056;
+        s=strato-dkim-0002; d=rohdewald.de;
+        h=Date:To:From:Subject:Message-ID:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=qJmySs6qQV9IutXAi+VuRvohRb5yxnhpN42gg+YHbGQ=;
+        b=cVrovohoPSMQdDEUeudPZ/5VXUc4OEVzoX01iOUZwxWz1L1HRmGms4JqnyQcfW5usQ
+        Serxz2KWfDkD7rl/b6XFnbZBfMEXrZ+X6VYR2fecrYeVE5265gBlrKSboU0IZB7++SmT
+        CwCQSrqMLhbB3p2MV1xN/dQqf/ImTUNo5EbrGLwyoa7Hv0ONQ4NyLa8DqieTDBbbXBJG
+        s9fvTcViMxFsHaI3P5vQs3ASDE2sx7SGUG4Fa8hAGaHqg5vZcKc6qyj+YwPntAehuE9s
+        iWJzrANyRW0KPIJvcqfTA91PZ2yAkZTwKZPAGK1fikUwyCCr0x9cHHTDOUj+wo7fc4YH
+        UWbg==
+X-RZG-AUTH: ":O2MIc0epdfgAjoV+frHI3UhxNCLBO5P+YT7khnlEbwYQlWfkbhtsmC7w4vbjaDWHXQAjCw=="
+X-RZG-CLASS-ID: mo00
+Received: from skull
+        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
+        with ESMTPSA id e01925w1BFwGgUs
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate)
+        for <linux-kernel@vger.kernel.org>;
+        Tue, 11 Feb 2020 16:58:16 +0100 (CET)
+Message-ID: <22d66e6fe7439db9c29f6715cdc3290680b6598d.camel@rohdewald.de>
+Subject: iwlwifi trigger 15 fired.
+From:   Wolfgang Rohdewald <wolfgang.kde@rohdewald.de>
 To:     linux-kernel@vger.kernel.org
-Cc:     Marcos Paulo de Souza <marcos@mpdesouza.com>
-Subject: [PATCH] btrfs: ioctl: resize: Only how new size if size changed
-Date:   Tue, 11 Feb 2020 10:39:57 -0300
-Message-Id: <20200211133957.14399-1-marcos@mpdesouza.com>
-X-Mailer: git-send-email 2.24.0
+Date:   Tue, 11 Feb 2020 16:58:11 +0100
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-3 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - br540.hostgator.com.br
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - mpdesouza.com
-X-BWhitelist: no
-X-Source-IP: 189.114.219.35
-X-Source-L: No
-X-Exim-ID: 1j1Vj7-000xng-1U
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (hephaestus.suse.de) [189.114.219.35]:33352
-X-Source-Auth: marcos@mpdesouza.com
-X-Email-Count: 0
-X-Source-Cap: bXBkZXNvNTM7bXBkZXNvNTM7YnI1NDAuaG9zdGdhdG9yLmNvbS5icg==
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no point to inform the user about "new size" if didn't changed
-at all.
+Kernel 5.5.2 on an Intel NUC Skull Canyon
 
-Signed-off-by: Marcos Paulo de Souza <marcos@mpdesouza.com>
----
- fs/btrfs/ioctl.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Happened today for the first time when booting. 
+Worked again after rmmod / modprobe iwlmvm and iwlwifi
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index be5350582955..fa31a8021d24 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -1712,9 +1712,6 @@ static noinline int btrfs_ioctl_resize(struct file *file,
- 
- 	new_size = round_down(new_size, fs_info->sectorsize);
- 
--	btrfs_info_in_rcu(fs_info, "new size for %s is %llu",
--			  rcu_str_deref(device->name), new_size);
--
- 	if (new_size > old_size) {
- 		trans = btrfs_start_transaction(root, 0);
- 		if (IS_ERR(trans)) {
-@@ -1727,6 +1724,9 @@ static noinline int btrfs_ioctl_resize(struct file *file,
- 		ret = btrfs_shrink_device(device, new_size);
- 	} /* equal, nothing need to do */
- 
-+	if (ret == 0 && new_size != old_size)
-+		btrfs_info_in_rcu(fs_info, "new size for %s is %llu",
-+			  rcu_str_deref(device->name), new_size);
- out_free:
- 	kfree(vol_args);
- out:
+# dmesg |grep iwlwifi
+[    3.762226] iwlwifi 0000:03:00.0: enabling device (0000 -> 0002)
+[    3.776264] iwlwifi 0000:03:00.0: loaded firmware version 36.8fd77bb3.0 op_mode iwlmvm
+[    3.962808] iwlwifi 0000:03:00.0: Detected Intel(R) Dual Band Wireless AC 8260, REV=0x208
+[    5.017086] iwlwifi 0000:03:00.0: Collecting data: trigger 15 fired.
+[    5.265221] iwlwifi 0000:03:00.0: Not valid error log pointer 0x00000000 for Init uCode
+[    5.265931] iwlwifi 0000:03:00.0: Fseq Registers:
+[    5.266633] iwlwifi 0000:03:00.0: 0x252030D9 | FSEQ_ERROR_CODE
+[    5.267340] iwlwifi 0000:03:00.0: 0x745346CD | FSEQ_TOP_INIT_VERSION
+[    5.268026] iwlwifi 0000:03:00.0: 0x66904604 | FSEQ_CNVIO_INIT_VERSION
+[    5.268732] iwlwifi 0000:03:00.0: 0x0000A052 | FSEQ_OTP_VERSION
+[    5.269499] iwlwifi 0000:03:00.0: 0xFC308367 | FSEQ_TOP_CONTENT_VERSION
+[    5.270179] iwlwifi 0000:03:00.0: 0xD74D5BB1 | FSEQ_ALIVE_TOKEN
+[    5.270884] iwlwifi 0000:03:00.0: 0xE4092179 | FSEQ_CNVI_ID
+[    5.271559] iwlwifi 0000:03:00.0: 0x54DEAD4D | FSEQ_CNVR_ID
+[    5.272260] iwlwifi 0000:03:00.0: 0x03000000 | CNVI_AUX_MISC_CHIP
+[    5.272957] iwlwifi 0000:03:00.0: 0x0BADCAFE | CNVR_AUX_MISC_CHIP
+[    5.273713] iwlwifi 0000:03:00.0: 0x0BADCAFE | CNVR_SCU_SD_REGS_SD_REG_DIG_DCDC_VTRIM
+[    5.274407] iwlwifi 0000:03:00.0: 0x0BADCAFE | CNVR_SCU_SD_REGS_SD_REG_ACTIVE_VDIG_MIRROR
+[    5.275931] iwlwifi 0000:03:00.0: SecBoot CPU1 Status: 0x3090001, CPU2 Status: 0x0
+[    5.276525] iwlwifi 0000:03:00.0: Failed to start INIT ucode: -110
+[    5.277182] iwlwifi 0000:03:00.0: Firmware not running - cannot dump error
+[    5.290893] iwlwifi 0000:03:00.0: Failed to run INIT ucode: -110
+
 -- 
-2.24.0
+mit freundlichen Grüssen
+
+Wolfgang Rohdewald
 
