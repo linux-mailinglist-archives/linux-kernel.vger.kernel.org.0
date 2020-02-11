@@ -2,124 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2AC8159876
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 19:24:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 614F6159888
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 19:26:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731196AbgBKSYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 13:24:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53262 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729169AbgBKSYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 13:24:47 -0500
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95D8F21569;
-        Tue, 11 Feb 2020 18:24:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581445486;
-        bh=15RkB8/lsxkdGVyrfUT3PmibNwKSs3pakIPq9O2QKGA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=A8Zqm6fJP2FLzduLIBDokEhN/2d/UrH1tTPxjD5ihd4BFsmr4U+TmlhZKIyLl5OeE
-         y8tyZK1Z+LwxdaT3JO7a63fwdEV45iurNjgynCzt3Az2dG8qrc/SS5bt9W9L6m3vm8
-         E4RlmQ+12GEi7n7znDshSniOcw1AMCbrmborQU5w=
-Received: by mail-qv1-f52.google.com with SMTP id m5so5451862qvv.4;
-        Tue, 11 Feb 2020 10:24:46 -0800 (PST)
-X-Gm-Message-State: APjAAAVWVPt0aQfAjtZ+25pKee02DYuBkCsSHZvoTSb/5yltM791ECxQ
-        DVFgRweIAJZ8wRqtiX/KlHfI0kJzeI87u4hfPw==
-X-Google-Smtp-Source: APXvYqxfEK6hEL7IX2KvoJP4sjzXqu7vc6OB5e1z94Q1gXnPXU2WIumcI1fS/UN5s1vfda4olh8aSlNY95DTbeSQkqo=
-X-Received: by 2002:a05:6214:11ac:: with SMTP id u12mr4114530qvv.85.1581445485691;
- Tue, 11 Feb 2020 10:24:45 -0800 (PST)
+        id S1731224AbgBKS02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 13:26:28 -0500
+Received: from mail-bn8nam12on2130.outbound.protection.outlook.com ([40.107.237.130]:49907
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729999AbgBKS00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 13:26:26 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=acxdJ3JnvSh6Y6x/EVeAkqmqy7TVmrBIUrRZYOpHssPMl224md3GUNhasevl4LR3yQW7kOY+3IbQrW70hFmrgTwowpfPAfNnQgNYYB718dyVEhY/aCxXLUzcROr1Saoca+peQrSeOUUtZAw5a953GHn8dQhmyXDLYpiCXyf/Zd7KlJLHGud/qAaexdvaPNdTCN/HpLWMI6VQVZAd0eYkdMd48HLk8hHuoERjqiVGtkXU0xEaxDyCeQ2xqk1ghy8H7j+b/nPP2QGsTTPyGmRIh5lYm7qQoby/6nrA/oZnoCx6StKioTJ89/BM9Ow7YStaoeMI76vk0U1EgEL5LbRJcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X3j9pRVvybtgSK9j4HFGSXB8R1S6Bq+ifgk7L37jtyU=;
+ b=jyuzFoITFxbDsVn0CxJefEhRKu4PrSkL9B0yCNUKcJ5xWMWy9xzUaaGeDbEtlABt1gXNDcp+w51LQ08t2iv/u+aC3nxwMWoAb1NlMvqA2TUlwAQ1G02KlTxI5hW+ZJoSkmM7TFhgwb4BVv+0o8/g5v5Q/CRsKP/MRaLawP+uQM2AlIYNtXUHrUScYMAh7ikNC5cdV9b78mNijJeIQhefNVDyFFBPHyKNfAo9LNV2w9vUacKTH37VJGdWDaQFe3YPFolfF/9c+iUEVwLdZBNTiO50VX1AT5cpNhUSXilAPg9pfksOKwbkGdOSeC+iDlpcC7U6Fg94oMOW+a4mlpsyow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
+ dkim=pass header.d=sony.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Sony.onmicrosoft.com;
+ s=selector2-Sony-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X3j9pRVvybtgSK9j4HFGSXB8R1S6Bq+ifgk7L37jtyU=;
+ b=WCHM5vqLWgv+RwueKHT9JtB7H/sFO8LvwJUPr/NW/fupyhcRvMBxDqZqE04/d2TemMUemJVDYYUhxE3N7BblIjxCzf7U5BM10bm3+2eP2KoM4M5xjFyNaZvwR6WOnle2MGLGzW/3pi6+bB9MvphgIgZvzBHjV8JfsfuutUxABmE=
+Received: from MWHPR13MB0895.namprd13.prod.outlook.com (10.169.172.155) by
+ MWHPR13MB1728.namprd13.prod.outlook.com (10.171.147.135) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.16; Tue, 11 Feb 2020 18:26:23 +0000
+Received: from MWHPR13MB0895.namprd13.prod.outlook.com
+ ([fe80::7544:fc2:b078:5dcd]) by MWHPR13MB0895.namprd13.prod.outlook.com
+ ([fe80::7544:fc2:b078:5dcd%3]) with mapi id 15.20.2729.018; Tue, 11 Feb 2020
+ 18:26:23 +0000
+From:   "Bird, Tim" <Tim.Bird@sony.com>
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        Heidi Fahim <heidifahim@google.com>,
+        David Gow <davidgow@google.com>,
+        Daniel Latypov <dlatypov@google.com>
+CC:     "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] kunit: run kunit_tool from any directory
+Thread-Topic: [PATCH] kunit: run kunit_tool from any directory
+Thread-Index: AQHV4HHxcx6AhuKPSkaTrpxC2rSXeKgVJGKAgAETQaA=
+Date:   Tue, 11 Feb 2020 18:26:22 +0000
+Message-ID: <MWHPR13MB08959C9951D826A9D0B19BCFFD180@MWHPR13MB0895.namprd13.prod.outlook.com>
+References: <20200211002551.147187-1-heidifahim@google.com>
+ <CAFd5g47LFvRxHMJ+XHcw2dFe2xU+1GmDnXsm=STvCFAT74rm7g@mail.gmail.com>
+In-Reply-To: <CAFd5g47LFvRxHMJ+XHcw2dFe2xU+1GmDnXsm=STvCFAT74rm7g@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tim.Bird@sony.com; 
+x-originating-ip: [160.33.195.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 36d5e490-4804-4fd1-bbc7-08d7af1fe5ee
+x-ms-traffictypediagnostic: MWHPR13MB1728:
+x-microsoft-antispam-prvs: <MWHPR13MB1728482F91EA6F2CF873210BFD180@MWHPR13MB1728.namprd13.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0310C78181
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(366004)(396003)(39860400002)(376002)(136003)(199004)(189003)(55016002)(316002)(2906002)(52536014)(7696005)(6506007)(66556008)(66476007)(53546011)(33656002)(5660300002)(8676002)(66946007)(81156014)(81166006)(66446008)(64756008)(86362001)(9686003)(8936002)(71200400001)(54906003)(110136005)(26005)(186003)(478600001)(4326008)(76116006);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR13MB1728;H:MWHPR13MB0895.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: sony.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: l63R0fSkryJELQiQIKGhOGYnOkl9a9xtCy9GoPXcLI/KiE9i/6q9XBR2bto/ect8NCxNog9zqjznbPRVRIzLxqPvLrB5ffQRTbfpvYekLORNzWIpM24FV6txTYunJ/nCc38kE3okF9pB51g1BHfqiVwiP8lx3u016QA+Kwl2LeWDkAhW2qY+NoIoZMgyzQbLMvp6x4HVRWyiwFPedySeZh1iR0IaWbo85tDvRO73/o59ymRhn/Kp3MjFDR8WXoxjz3lzR3C+wtj6um7GJySnIOjHQfaqzsJhC5uFXHsIlHmwRGWx8IEAei275KNRLNegpanK+hws66Tj8ZGhkbnyIAeqITYvzeWZp8zXfWNlTTwgBT/DixiG0EIWRXFpOdPyOmB+waf6mkvlU9o/XwOHuTfLTT48H5Xfm6m4/UhmALioc4yzX+DIoQdWU18Yma9e
+x-ms-exchange-antispam-messagedata: 5s2ZTjiHMJi12eFRXGDh/6/J0LKo1FoP2oWLLFX+QZk/nscbRfFknl1OKltHJ3E/nzS4cgLQQmD/OJq8ZxX2/GS2YJCzvIX5MqBrHiSelrSRMEdOBZUbXUeI+wvV8PC79hcByCKelDw/RjuqTpYF7Q==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <cover.1580570160.git.saiprakash.ranjan@codeaurora.org>
- <ff71077aa09c489b2b072c6f5605dccb96f60051.1580570160.git.saiprakash.ranjan@codeaurora.org>
- <20200206183808.GA5019@bogus> <f26464226f74dffe2db0583b9482a489@codeaurora.org>
-In-Reply-To: <f26464226f74dffe2db0583b9482a489@codeaurora.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 11 Feb 2020 12:24:34 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKeytW=k5efjcfcuK6vbGggdO9nVdwq7YGNtMpzPQHWMg@mail.gmail.com>
-Message-ID: <CAL_JsqKeytW=k5efjcfcuK6vbGggdO9nVdwq7YGNtMpzPQHWMg@mail.gmail.com>
-Subject: Re: [PATCHv2 2/2] dt-bindings: watchdog: Add compatible for QCS404,
- SC7180, SDM845, SM8150
-To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree-owner@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: sony.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36d5e490-4804-4fd1-bbc7-08d7af1fe5ee
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2020 18:26:23.0121
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dK4eaCAzNu1d9gCt+vNsLgWoVugVG2FRXwudnGRIE9reYoCI7sDFkq0db1qBteyKppsDKnlq/Rd1Uo2Y6fxwzQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR13MB1728
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 7, 2020 at 12:10 AM Sai Prakash Ranjan
-<saiprakash.ranjan@codeaurora.org> wrote:
->
-> Hi Rob,
->
-> On 2020-02-07 00:08, Rob Herring wrote:
-> > On Sat, Feb 01, 2020 at 08:59:49PM +0530, Sai Prakash Ranjan wrote:
-> >> Add missing compatible for watchdog timer on QCS404,
-> >> SC7180, SDM845 and SM8150 SoCs.
-> >
-> > That's not what the commit does. You are changing what's valid.
-> >
-> > One string was valid, now 2 are required.
-> >
->
-> Does this look good?
-
-No. First of all, what's the base for the diff? It's not what you
-originally had nor incremental on top of this patch.
-
-Second, a value of 'qcom,kpss-timer' or 'qcom,kpss-wdt' or
-'qcom,scss-timer' will fail validation because 2 clauses of 'oneOf'
-will be true.
-
->
-> diff --git a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
-> b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
-> index 46d6aad5786a..3378244b67cd 100644
-> --- a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
-> +++ b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
-> @@ -14,19 +14,22 @@ allOf:
->
->   properties:
->     compatible:
-> -    items:
-> +    oneOf:
->         - enum:
->             - qcom,apss-wdt-qcs404
->             - qcom,apss-wdt-sc7180
->             - qcom,apss-wdt-sdm845
->             - qcom,apss-wdt-sm8150
-> -          - qcom,kpss-timer
-> -          - qcom,kpss-wdt
->             - qcom,kpss-wdt-apq8064
->             - qcom,kpss-wdt-ipq4019
->             - qcom,kpss-wdt-ipq8064
->             - qcom,kpss-wdt-msm8960
-> +          - qcom,kpss-timer
-> +          - qcom,kpss-wdt
->             - qcom,scss-timer
-> +      - const: qcom,kpss-timer
-> +      - const: qcom,kpss-wdt
-> +      - const: qcom,scss-timer
->
->     reg:
->       maxItems: 1
->
-> Thanks,
-> Sai
->
-> --
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a
-> member
-> of Code Aurora Forum, hosted by The Linux Foundation
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQnJlbmRhbiBIaWdnaW5z
+DQo+IFNlbnQ6IE1vbmRheSwgRmVicnVhcnkgMTAsIDIwMjAgNTozMiBQTQ0KPiBUbzogSGVpZGkg
+RmFoaW0gPGhlaWRpZmFoaW1AZ29vZ2xlLmNvbT47IERhdmlkIEdvdyA8ZGF2aWRnb3dAZ29vZ2xl
+LmNvbT47IERhbmllbCBMYXR5cG92IDxkbGF0eXBvdkBnb29nbGUuY29tPg0KPiBDYzogb3BlbiBs
+aXN0OktFUk5FTCBTRUxGVEVTVCBGUkFNRVdPUksgPGxpbnV4LWtzZWxmdGVzdEB2Z2VyLmtlcm5l
+bC5vcmc+OyBLVW5pdCBEZXZlbG9wbWVudCA8a3VuaXQtZGV2QGdvb2dsZWdyb3Vwcy5jb20+OyBM
+aW51eA0KPiBLZXJuZWwgTWFpbGluZyBMaXN0IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3Jn
+Pg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBrdW5pdDogcnVuIGt1bml0X3Rvb2wgZnJvbSBhbnkg
+ZGlyZWN0b3J5DQo+IA0KPiBPbiBNb24sIEZlYiAxMCwgMjAyMCBhdCA0OjI2IFBNIEhlaWRpIEZh
+aGltIDxoZWlkaWZhaGltQGdvb2dsZS5jb20+IHdyb3RlOg0KPiA+DQo+ID4gSW1wbGVtZW50ZWQg
+c21hbGwgZml4IHNvIHRoYXQgdGhlIHNjcmlwdCBjaGFuZ2VzIHdvcmsgZGlyZWN0b3JpZXMgdG8g
+dGhlDQo+ID4gbGludXggZGlyZWN0b3J5IHdoZXJlIGt1bml0LnB5IGlzIHJ1bi4gVGhpcyBlbmFi
+bGVzIHRoZSB1c2VyIHRvIHJ1bg0KPiA+IGt1bml0IGZyb20gYW55IHdvcmtpbmcgZGlyZWN0b3J5
+LiBPcmlnaW5hbGx5IGNvbnNpZGVyZWQgdXNpbmcNCj4gPiBvcy5wYXRoLmpvaW4gYnV0IHRoaXMg
+aXMgbW9yZSBlcnJvciBwcm9uZSBhcyB3ZSB3b3VsZCBoYXZlIHRvIGZpbmQgYWxsDQo+ID4gZmls
+ZSBwYXRoIHVzYWdlcyBhbmQgbW9kaWZ5IHRoZW0gYWNjb3JkaW5nbHkuIFVzaW5nIG9zLmNoZGly
+IGVuc3VyZXMNCj4gPiB0aGF0IHRoZSBlbnRpcmUgc2NyaXB0IGlzIHJ1biB3aXRoaW4gL2xpbnV4
+Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogSGVpZGkgRmFoaW0gPGhlaWRpZmFoaW1AZ29vZ2xl
+LmNvbT4NCj4gDQo+IFJldmlld2VkLWJ5OiBCcmVuZGFuIEhpZ2dpbnMgPGJyZW5kYW5oaWdnaW5z
+QGdvb2dsZS5jb20+DQo+IA0KU29ycnkgLSBJJ20gbm90IGEgY3VycmVudCBrdW5pdCB1c2VyLCBi
+dXQgZG9lcyB0aGlzIG1lYW4gdGhhdCB0aGUNCmtlcm5lbCBzb3VyY2UgaGFzIHRvIGJlIHByZXNl
+bnQgaW4gb3JkZXIgdG8gcnVuIHRoZSB1bml0IHRlc3RzPw0KVGhhdCdzIHByb2JsZW1hdGljYWwg
+Zm9yIGVtYmVkZGVkIHN5c3RlbXMuICBNYXliZSB0aGF0J3Mgb3V0c2lkZQ0KdGhlIHNjb3BlIG9m
+IHdoYXQgdW5pdCB0ZXN0cyB3ZXJlIGVudmlzaW9uZWQgZm9yPw0KIC0tIFRpbQ0KDQo=
