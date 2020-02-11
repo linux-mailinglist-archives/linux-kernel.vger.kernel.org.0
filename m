@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B24921599DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:36:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01E3A1599E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:39:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731678AbgBKTgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 14:36:40 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.155]:14749 "EHLO
+        id S1731053AbgBKTjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 14:39:52 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.155]:20246 "EHLO
         gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730960AbgBKTgi (ORCPT
+        by vger.kernel.org with ESMTP id S1727668AbgBKTjw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 14:36:38 -0500
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id C9D2B400C5AB2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 13:36:37 -0600 (CST)
+        Tue, 11 Feb 2020 14:39:52 -0500
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 46666400C5F67
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 13:39:51 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 1bKnjfioiAGTX1bKnjs7vb; Tue, 11 Feb 2020 13:36:37 -0600
+        id 1bNvjUERM8vkB1bNvjSPfl; Tue, 11 Feb 2020 13:39:51 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -25,24 +25,25 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=UM0S/XX22/eXnz8emf2UzrArwB+5xzNNImR9J+pKjzA=; b=LEUl6BRslj1G7JB0krKO9LhFO+
-        TtVynXO3yhi2pAvhqYjAn3QzO2D2W1urUOIBbth6z9A3oi+IbdJZLsC9GTxjLDdneqfCBiOkdgpk9
-        WnaAF9hp2Y7AwOgpwk9nsp7HOEJKl6j1TOuLwj/w6GKN5iqfgxrl60+SUG5d92yp5Y92rZWxxguIT
-        mPuoBbRqyQTHUj5lXPVcTWudocAzlkJeIzKHzY8mYikjoVtDxGqY6fikZSrEIr7n2TPhhIpe2pkBB
-        HTIOpnm1ieqm9HR2H7ge31UCcJ+modFhD5GDvUEoazAabs2X3girzdicFvbPmr6fvhwdEcT7lMeCk
-        zKyVGjfw==;
-Received: from [200.68.140.36] (port=5745 helo=embeddedor)
+        bh=n3MEAaSo+ySPB0dRTUiR+Yk3gNhROG/lQbEkZaa1y24=; b=NdyQDeY10ga3LJUt2mEUQXYizX
+        GGnVRgiKkwBIo/n9rJmvYeMnNGcS/mniXbS3v2Th5jI2k1QV3I1E0QwVMXrQfqAtqnjJWu5u+n3Jz
+        tyzDNAe0T6LkjhBQTApfCSDB1rRd+rsTtUb+EkbbK/uLNuFBYVDDAZBhG0r+y0DPIQlBi0iTI3kXj
+        SPST3mjGZbdSp992CXwzoQsS9E/OWFl3fXZRxHY+lbvCA/GKGs+S9pmenaKOC8ATeZo0OjtnRpC1E
+        /zmR5SU0fpdhtbMq9jA31DkENeTHoEvxpqNaNSeIh+kTbsR0H00P/wit+0QS5MxkEDTJvbqNW2KXu
+        IqtDHizw==;
+Received: from [200.68.140.36] (port=1945 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1j1bKm-001Hcy-7Z; Tue, 11 Feb 2020 13:36:36 -0600
-Date:   Tue, 11 Feb 2020 13:39:10 -0600
+        id 1j1bNt-001JBU-S3; Tue, 11 Feb 2020 13:39:49 -0600
+Date:   Tue, 11 Feb 2020 13:42:24 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+To:     Clemens Ladisch <clemens@ladisch.de>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ALSA: core: Replace zero-length array with flexible-array
- member
-Message-ID: <20200211193910.GA4596@embeddedor>
+Subject: [PATCH] ALSA: usb-midi: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200211194224.GA9383@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -55,13 +56,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 200.68.140.36
 X-Source-L: No
-X-Exim-ID: 1j1bKm-001Hcy-7Z
+X-Exim-ID: 1j1bNt-001JBU-S3
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.36]:5745
+X-Source-Sender: (embeddedor) [200.68.140.36]:1945
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
+X-Email-Count: 16
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -92,22 +93,22 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- sound/core/oss/rate.c | 2 +-
+ sound/usb/midi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/core/oss/rate.c b/sound/core/oss/rate.c
-index 2fa9299a440d..e9f20fefb117 100644
---- a/sound/core/oss/rate.c
-+++ b/sound/core/oss/rate.c
-@@ -47,7 +47,7 @@ struct rate_priv {
- 	unsigned int pos;
- 	rate_f func;
- 	snd_pcm_sframes_t old_src_frames, old_dst_frames;
--	struct rate_channel channels[0];
-+	struct rate_channel channels[];
- };
+diff --git a/sound/usb/midi.c b/sound/usb/midi.c
+index b737f0ec77d0..f15d36731cbe 100644
+--- a/sound/usb/midi.c
++++ b/sound/usb/midi.c
+@@ -91,7 +91,7 @@ struct usb_ms_endpoint_descriptor {
+ 	__u8  bDescriptorType;
+ 	__u8  bDescriptorSubtype;
+ 	__u8  bNumEmbMIDIJack;
+-	__u8  baAssocJackID[0];
++	__u8  baAssocJackID[];
+ } __attribute__ ((packed));
  
- static void rate_init(struct snd_pcm_plugin *plugin)
+ struct snd_usb_midi_in_endpoint;
 -- 
 2.25.0
 
