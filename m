@@ -2,107 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03094159636
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 18:33:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 781E315963E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 18:33:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729602AbgBKRd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 12:33:27 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33848 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729470AbgBKRd0 (ORCPT
+        id S1729694AbgBKRd4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 12:33:56 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:55534 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729669AbgBKRdz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 12:33:26 -0500
-Received: by mail-pf1-f194.google.com with SMTP id i6so5832942pfc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 09:33:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lH4EbrzVbu3CvaS8sns78JlEG0bpnC0mv7bE+liJ2nA=;
-        b=RH32kiQsCKo1Gs+FkFdDvj1Kq3PKeLTjbRXjVS542Tg6Gb8IzEOXCl8KrAydPkosHL
-         SYGwlAdLYd5do6FGm6AtvSvYjLsBhTB3Zd2J02IAI1lWNxUZQ/5+ah4appWH9FO9tCfN
-         4dmS1PhdaopzWfZZudmSODT/lwSAYlGW8ZyJE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lH4EbrzVbu3CvaS8sns78JlEG0bpnC0mv7bE+liJ2nA=;
-        b=sAuHlFtdh08ExvKgzG64L0DRND452w5AfSnYDXX8ViZVBLTnpAME7qdXBuDLraryho
-         FFCgQw8TbwN0Ca/yZg7udyU19CE0r6h8Nnfiwq+LruBR4jR8F3rN5j/IVcNV/QQgYbGy
-         N34t73HPd7Uzd3rHZUd9DE70Yq+Q9jrG2aomee2juVtenuM9jbrKxqBO3Ws7/lG6hc35
-         VaC0y6OzO1378sYglojq8KVSybV/k04p/jIrxMV1mYSuOmvYXN/ZWiOaubZY45GPHmUP
-         EMkK3EMYu18B4KEz+EQyKeXNqJc88N+dYKxXhj+hAw7AGKJFEfojcKSr8ZmQwjC++0M3
-         8XIA==
-X-Gm-Message-State: APjAAAUw1U6kSkyuwpMfq9URFwV61cKSGgCO25ocROkwrRzVc1VCA32J
-        x9agdJ7yXbKYA1lsjv7fpD0fkg==
-X-Google-Smtp-Source: APXvYqxk99B0t8EHkrjFPb34havVNfFdZ7CHuqxMGO1VQir/2llQ9LuL+WBmfTO4aiFx3jXiqWC3cg==
-X-Received: by 2002:a63:6c82:: with SMTP id h124mr7923471pgc.328.1581442405558;
-        Tue, 11 Feb 2020 09:33:25 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id c26sm5104896pfj.8.2020.02.11.09.33.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Feb 2020 09:33:25 -0800 (PST)
-Date:   Tue, 11 Feb 2020 09:33:23 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, agross@kernel.org,
-        bjorn.andersson@linaro.org, hemantg@codeaurora.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, gubbaven@codeaurora.org
-Subject: Re: [PATCH v1] arm64: dts: qcom: sc7180: Add node for bluetooth soc
- wcn3990
-Message-ID: <20200211173323.GE18972@google.com>
-References: <20200211121612.29075-1-bgodavar@codeaurora.org>
-MIME-Version: 1.0
+        Tue, 11 Feb 2020 12:33:55 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01BHWZmD127875;
+        Tue, 11 Feb 2020 17:33:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2020-01-29; bh=ZTcGVgHgraMOZBpC35dpCZY9cj88Yni9DaxHSLbn1QI=;
+ b=ATvl/L3tQz/8dk9eq9GxVgTQvMIfyGT+39ALanE+ImerkpFi8HDNxocHp+jC+HkpcZuE
+ cR5oe3qXPp9yUzXKpTjHvvCPsUwUzRog2VGGbFeIpTQ7bAC/5F3KcOx1gZDnJQoSql/U
+ EeV+H742SPicBUvTDaxD4QSMaWrp5KWlgWy8/JLBKjxVwJC2ynOoG49Z0UV+azi47Y+z
+ eKEOe8JiEL1Hnzh43/RYiX1gPiERrGlVn3tSa4JHsXjG+Gx77q0Sea+bsgq8nbfmjf8v
+ GPZ3Xvvbw6a/nkn/y2KaHZVehmChTaAzNvmX70TvhWHJI0S//7U7g40/8K/83HdoZRJc CQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2y2jx656pm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 11 Feb 2020 17:33:16 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01BHSDoX010841;
+        Tue, 11 Feb 2020 17:33:16 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2y26hvarrt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Feb 2020 17:33:15 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01BHX5HL032092;
+        Tue, 11 Feb 2020 17:33:05 GMT
+Received: from dhcp-10-65-186-145.vpn.oracle.com (/10.65.186.145)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 11 Feb 2020 09:33:05 -0800
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200211121612.29075-1-bgodavar@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [RFC PATCH 0/2] ima: uncompressed module appraisal support
+From:   Eric Snowberg <eric.snowberg@oracle.com>
+In-Reply-To: <1581366829.5585.898.camel@linux.ibm.com>
+Date:   Tue, 11 Feb 2020 10:33:25 -0700
+Cc:     Nayna <nayna@linux.vnet.ibm.com>, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com, dhowells@redhat.com,
+        geert@linux-m68k.org, gregkh@linuxfoundation.org,
+        nayna@linux.ibm.com, tglx@linutronix.de, bauerman@linux.ibm.com,
+        mpe@ellerman.id.au, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <0842A02F-3166-4E29-9CC5-9E4C5057E270@oracle.com>
+References: <20200206164226.24875-1-eric.snowberg@oracle.com>
+ <5c246616-9a3a-3ed2-c1f9-f634cef511c9@linux.vnet.ibm.com>
+ <09D68C13-75E2-4BD6-B4E6-F765B175C7FD@oracle.com>
+ <1581087096.5585.597.camel@linux.ibm.com>
+ <330BDFAC-E778-4E9D-A2D2-DD81B745F6AB@oracle.com>
+ <1581097201.5585.613.camel@linux.ibm.com>
+ <764C5FC8-DF0C-4B7A-8B5B-FD8B83F31568@oracle.com>
+ <1581100125.5585.623.camel@linux.ibm.com>
+ <992E95D5-D4B9-4913-A36F-BB47631DFE0A@oracle.com>
+ <1581101672.5585.628.camel@linux.ibm.com>
+ <C25E5885-F00B-48C0-AEF1-FA3014B2FDA6@oracle.com>
+ <1581205431.5585.645.camel@linux.ibm.com>
+ <0F13CB66-6962-44AC-A20D-CCBD82B43625@oracle.com>
+ <1581354556.5585.827.camel@linux.ibm.com>
+ <90E53A33-530B-40FB-9982-2818FFD78D73@oracle.com>
+ <1581366829.5585.898.camel@linux.ibm.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+X-Mailer: Apple Mail (2.3273)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9528 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ bulkscore=0 adultscore=0 malwarescore=0 suspectscore=3 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002110122
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9528 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
+ priorityscore=1501 adultscore=0 phishscore=0 impostorscore=0 spamscore=0
+ bulkscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=3 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002110122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 05:46:12PM +0530, Balakrishna Godavarthi wrote:
 
-> subject: arm64: dts: qcom: sc7180: Add node for bluetooth soc wcn3990
+> On Feb 10, 2020, at 1:33 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+>=20
+> On Mon, 2020-02-10 at 12:24 -0700, Eric Snowberg wrote:
+>>> On Feb 10, 2020, at 10:09 AM, Mimi Zohar <zohar@linux.ibm.com> =
+wrote:
+>=20
+>>>>=20
+>>>> Ok, understood, =E2=80=9Cmodsig=E2=80=9D refers to strictly kernel =
+module appended signatures
+>>>> without regard to the keyring that verifies it.  Since there are =
+inconsistencies
+>>>> here, would you consider something like my first patch?  It will =
+verify an=20
+>>>> uncompressed kernel module containing an appended signature  when =
+the public key
+>>>> is contained within the kernel keyring instead of the ima keyring.  =
+Why force a=20
+>>>> person to add the same keys into the ima keyring for validation?  =
+Especially when
+>>>> the kernel keyring is now used to verify appended signatures in the =
+compressed
+>>>> modules.
+>>>=20
+>>> Different use case scenarios have different requirements.  Suppose =
+for
+>>> example that the group creating the kernel image is not the same as
+>>> using it.  The group using the kernel image could sign all files,
+>>> including kernel modules (imasig), with their own private key. Only
+>>> files that they signed would be permitted.  Your proposal would =
+break
+>>> the current expectations, allowing kernel modules signed by someone
+>>> else to be loaded.
+>>>=20
+>>=20
+>> All the end user needs to do is compress any module created by the =
+group that built
+>> the original kernel image to work around the scenario above.  Then =
+the appended=20
+>> signature in the compressed module will be verified by the kernel =
+keyring. Does=20
+>> this mean there is a security problem that should be fixed, if this =
+is a concern?
+>=20
+> Again, the issue isn't compressed/uncompressed kernel modules, but the
+> syscall used to load the kernel module.  IMA can prevent using the the
+> init_module syscall.  Refer to the ima_load_data() LOADING_MODULE
+> case.
 
-Preferably say in the subjct that the node is added for the IDP board.
+Within the ima_load_data() LOADING_MODULE case, to prevent IMA from =
+using
+the init_module syscall, is_module_sig_enforced() must return false. =
+Currently
+when is_module_sig_enforced() returns true, the kernel keyring is always =
+used
+for verification.
 
-> Add node for bluetooth soc wcn3990.
-> 
-> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/sc7180-idp.dts | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-> index 388f50ad4fde..19f82ddc1f09 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-> +++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-> @@ -19,6 +19,7 @@
->  	aliases {
->  		hsuart0 = &uart3;
->  		serial0 = &uart8;
-> +		bluetooth0 = &bluetooth;
->  	};
->  
->  	chosen {
-> @@ -256,6 +257,16 @@
->  
->  &uart3 {
->  	status = "okay";
+What if I change this part of my patch from
 
-nit: add a blank line
++       if (rc && func =3D=3D MODULE_CHECK)
 
-> +	bluetooth: wcn3990-bt {
-> +		compatible = "qcom,wcn3990-bt";
-> +		vddio-supply = <&vreg_l10a_1p8>;
-> +		vddxo-supply = <&vreg_l1c_1p8>;
-> +		vddrf-supply = <&vreg_l2c_1p3>;
-> +		vddch0-supply = <&vreg_l10c_3p3>;
-> +		max-speed = <3200000>;
-> +		clocks = <&rpmhcc RPMH_RF_CLK2>;
-> +		status = "okay";
+to
 
-status is not needed here AFAIK.
++       sig_enforce =3D is_module_sig_enforced();
++       if (sig_enforce && rc && func =3D=3D MODULE_CHECK)
+
+Now when the init_module syscall is available, finit_module syscall will =
+use
+both the ima keyring and kernel keyring for verification.  When the
+init_module syscall is blocked from use, the finit_module syscall will =
+only use
+the ima keyring for validation.  I believe this would satisfy both your =
+use
+case and mine.
+
