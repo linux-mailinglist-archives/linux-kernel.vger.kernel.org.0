@@ -2,183 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 826C5159AC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 21:56:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 290CC159AC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 21:53:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731902AbgBKU4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 15:56:15 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:40204 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731844AbgBKU4P (ORCPT
+        id S1731884AbgBKUxs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 15:53:48 -0500
+Received: from gateway31.websitewelcome.com ([192.185.143.40]:18845 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727786AbgBKUxr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 15:56:15 -0500
-Received: by mail-oi1-f196.google.com with SMTP id a142so14196343oii.7
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 12:56:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=8CmYe462WzzksuPoSriUQOLEMXkyrL5p8rPiP/wqsQE=;
-        b=oSTwn0d967GW3bvPpoBPc4xhMNU+afmUYTMc5sQAtO/Ma8lCfPJAv7HDesC+gIohzv
-         DkMgSufBV3LkIlRnO8ywR8ElxhA0xazO1a2X1EbTK9CPzmmDGuVdsOscmiYi9VuWm70X
-         X4QugCq1j+ND5muENF+hw/7uZsm0+pB5emMxJt5J03IBuPoLcY5imni1oxNwtN0QogdK
-         WAEagflmLFa9Wa5QWR/mFSJKRXQpW/pCGiRZEZdFevJ2+fsXxxJwszGEIlweNqHKaZQR
-         OT/n2MH+QFAJl9CN6AifWx4rVch6UDYBcDpoOITmpCYfCzaqslfwsQD44XYhI2I7wpvH
-         apqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=8CmYe462WzzksuPoSriUQOLEMXkyrL5p8rPiP/wqsQE=;
-        b=SHFhL5Xzad0ewOD2Q0ye5p4dV586UFVuCJsN80sEVlQQr7sfl7pWfV4VfWD3mg4rJi
-         khhSkm23jp1zfQYL4clIs+BYKbFR7QHwPttqNkgUaxxSGeEcdVewC1OiIfrIKapETq0L
-         k+CDBOEMOgEKvDSUz3aj7rerzBB29RfNz6UeF0APOzEoOTpZcUrruOBqkm3NEDPTGpNn
-         7oqC7kjOpjQGq62gIFCh4S+XS1GnInpcc8MsWJglo2v2Xu1dx6nIY5cAt2fwLBGnWFwH
-         c2oUJ4fzKysIX9azpMpifgiX/6rYaMv1pCfXvn14MMYoA0Y8rBRCBCK9ZBdOjFPb6Ekl
-         5bNw==
-X-Gm-Message-State: APjAAAWT7eykU1GAal+839Jlu35PV57ENQRSB9OgvzqDqBTFfbLZAk75
-        X3bnNgvjKdkUJlsicRR5R3x870S7LUI2Y4N5mW9I/9ra0lfwDQ==
-X-Google-Smtp-Source: APXvYqwwlaPw3WuE7pvp2R5+l4ejpzIZmHKNHqXHYwDJ9Aqnqi8TIPcj6j2+bVdD0QcpNjFx5mAc4EwEtqlmtCOsHEY=
-X-Received: by 2002:aca:b187:: with SMTP id a129mr4153590oif.175.1581454572660;
- Tue, 11 Feb 2020 12:56:12 -0800 (PST)
+        Tue, 11 Feb 2020 15:53:47 -0500
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id EB712132F447
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 14:53:46 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 1cXSjHYSDvBMd1cXSjbAGm; Tue, 11 Feb 2020 14:53:46 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=09Yy50q1zaBedUbH5K7LBiquQOrxktM3eLjWmlSWnEM=; b=aQZDQpEXGWwJ02U9MMNMPZm/bH
+        fgdL1INynphOl24Zf+4auclQ/alj/FyI5N/5w9C1T0+MC/q95z98nNTPYb2W7ts17yrQkY7sWdW7A
+        CHXg+BSDMMynOJypDpyxSNDH03fr5XbrLPMAzCoyKLXpEy5oopCtk6pPCumz7aizZpiim02CQZXBf
+        Y2etP8KffbabWOVNKtKuyFnQYoEeRDssAg3m+HPAWxU1M0JqHyqi0ugX0YeF0mtDhofNPrrCm0p4i
+        7lhXGfzyx7kufv+60L716QST9iAHfQz1xekYAwVI+LJuK52M3NijBOBxY7+8GLiX1zrsDX68e6XcC
+        x9xGgh6Q==;
+Received: from [200.68.140.36] (port=23277 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j1cXR-001yJu-Du; Tue, 11 Feb 2020 14:53:45 -0600
+Date:   Tue, 11 Feb 2020 14:56:20 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] lib/ts_bm: Replace zero-length array with flexible-array
+ member
+Message-ID: <20200211205620.GA24694@embeddedor>
 MIME-Version: 1.0
-References: <20200211165753.356508-1-christian.brauner@ubuntu.com>
-In-Reply-To: <20200211165753.356508-1-christian.brauner@ubuntu.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 11 Feb 2020 21:55:46 +0100
-Message-ID: <CAG48ez1GKOfXDZFD7-hGGjT8L9YEojn94DU5_=W8HL3pzdrCgg@mail.gmail.com>
-Subject: Re: [PATCH 00/24] user_namespace: introduce fsid mappings
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, smbarber@chromium.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.140.36
+X-Source-L: No
+X-Exim-ID: 1j1cXR-001yJu-Du
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [200.68.140.36]:23277
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 45
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 5:59 PM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
-> This is the implementation of shiftfs which was cooked up during lunch at
-> Linux Plumbers 2019 the day after the container's microconference. The
-> idea is a design-stew from St=C3=A9phane, Aleksa, Eric, and myself. Back =
-then
-> we all were quite busy with other work and couldn't really sit down and
-> implement it. But I took a few days last week to do this work, including
-> demos and performance testing.
-> This implementation does not require us to touch the vfs substantially
-> at all. Instead, we implement shiftfs via fsid mappings.
-> With this patch, it took me 20 mins to port both LXD and LXC to support
-> shiftfs via fsid mappings.
->
-> For anyone wanting to play with this the branch can be pulled from:
-> https://github.com/brauner/linux/tree/fsid_mappings
-> https://gitlab.com/brauner/linux/-/tree/fsid_mappings
-> https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/log/?h=
-=3Dfsid_mappings
->
-> The main use case for shiftfs for us is in allowing shared writable
-> storage to multiple containers using non-overlapping id mappings.
-> In such a scenario you want the fsids to be valid and identical in both
-> containers for the shared mount. A demo for this exists in [3].
-> If you don't want to read on, go straight to the other demos below in
-> [1] and [2].
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-I guess essentially this means that you want to have UID separation
-between containers to prevent the containers - or their owners - from
-interfering between each other, but for filesystem access, you don't
-want to isolate them from each other using DAC controls on the files
-and folders inside the containers' directory hierarchies, instead
-relying on mode-0700 parent directories to restrict access to the
-container owner? Or would you still have separate UIDs for e.g. the
-container's UID range 0-65535, and then map the shared UID range at
-100000, or something like that?
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-> People not as familiar with user namespaces might not be aware that fsid
-> mappings already exist. Right now, fsid mappings are always identical to
-> id mappings. Specifically, the kernel will lookup fsuids in the uid
-> mappings and fsgids in the gid mappings of the relevant user namespace.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertenly introduced[3] to the codebase from now on.
 
-That's a bit like saying that a kernel without CONFIG_USER_NS still
-has user ID mappings, they just happen to be identity mappings. :P
+This issue was found with the help of Coccinelle.
 
-> With this patch series we simply introduce the ability to create fsid
-> mappings that are different from the id mappings of a user namespace.
->
-> In the usual case of running an unprivileged container we will have
-> setup an id mapping, e.g. 0 100000 100000. The on-disk mapping will
-> correspond to this id mapping, i.e. all files which we want to appear as
-> 0:0 inside the user namespace will be chowned to 100000:100000 on the
-> host. This works, because whenever the kernel needs to do a filesystem
-> access it will lookup the corresponding uid and gid in the idmapping
-> tables of the container.
-> Now think about the case where we want to have an id mapping of 0 100000
-> 100000 but an on-disk mapping of 0 300000 100000 which is needed to e.g.
-> share a single on-disk mapping with multiple containers that all have
-> different id mappings.
-> This will be problematic. Whenever a filesystem access is requested, the
-> kernel will now try to lookup a mapping for 300000 in the id mapping
-> tables of the user namespace but since there is none the files will
-> appear to be owned by the overflow id, i.e. usually 65534:65534 or
-> nobody:nogroup.
->
-> With fsid mappings we can solve this by writing an id mapping of 0
-> 100000 100000 and an fsid mapping of 0 300000 100000. On filesystem
-> access the kernel will now lookup the mapping for 300000 in the fsid
-> mapping tables of the user namespace. And since such a mapping exists,
-> the corresponding files will have correct ownership.
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 
-Sorry to bring up something as disgusting as setuid execution, but:
-What happens when there's a setuid root file with ->i_uid=3D=3D300000? I
-guess the only way to make that work inside the containers would be
-something like make_kuid(current_user_ns(),
-from_kfsuid(current_user_ns(), inode->i_uid)) in the setuid execve
-path?
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ lib/ts_bm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> A note on proc (and sys), the proc filesystem is special in sofar as it
-> only has a single superblock that is (currently but might be about to
-> change) visible in all user namespaces (same goes for sys). This means
-> it has special semantics in many ways, including how file ownership and
-> access works. The fsid mapping implementation does not alter how proc
-> (and sys) ownership works. proc and sys will both continue to lookup
-> filesystem access in id mapping tables.
+diff --git a/lib/ts_bm.c b/lib/ts_bm.c
+index 9e66ee4020e9..9d64629fa8b8 100644
+--- a/lib/ts_bm.c
++++ b/lib/ts_bm.c
+@@ -56,7 +56,7 @@ struct ts_bm
+ 	u8 *		pattern;
+ 	unsigned int	patlen;
+ 	unsigned int 	bad_shift[ASIZE];
+-	unsigned int	good_shift[0];
++	unsigned int	good_shift[];
+ };
+ 
+ static unsigned int bm_find(struct ts_config *conf, struct ts_state *state)
+-- 
+2.25.0
 
-In your example, a process with namespaced UID set (0, 0, 0, 0) will
-have kernel UIDs (100000, 100000, 100000, 300000), right? And then if
-I want to open /proc/$pid/personality of another process with the same
-UIDs, may_open() will call inode_permission() -> do_inode_permission()
--> generic_permission() -> acl_permission_check(), which will compare
-current_fsuid() (which is 300000) against inode->i_uid. But
-inode->i_uid was filled by proc_pid_make_inode()->task_dump_owner(),
-which set inode->i_uid to 100000, right?
-
-Also, e.g. __ptrace_may_access() uses cred->fsuid for a comparison
-with another task's real/effective/saved UID.
-
-[...]
-> # Demos
-> [1]: Create a container with different id and fsid mappings.
->      https://asciinema.org/a/300233
-> [2]: Create a container with id mappings but without fsid mappings.
->      https://asciinema.org/a/300234
-> [3]: Share storage between multiple containers with non-overlapping id
->      mappings.
->      https://asciinema.org/a/300235
-
-(I really dislike this asciinema thing; if you want to quickly glance
-through the output instead of reading at the same speed as it was
-typed, a simple pastebin works much better unless you absolutely have
-to show things that use stuff like ncurses UI.)
