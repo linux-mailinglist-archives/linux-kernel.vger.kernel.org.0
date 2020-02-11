@@ -2,182 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33F38158F19
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:49:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 369D6158F2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:52:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729156AbgBKMtb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 07:49:31 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:3934 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728250AbgBKMt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 07:49:28 -0500
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 48H2fF1038z6x;
-        Tue, 11 Feb 2020 13:49:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1581425366; bh=Oi4cDhIGtxiZAoWxm80J+ow/YXQ40nADnyXOVF9DgGo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=L5yGDynUPr8QO3TpQJfDopTDQLwT2QGZroz7/JT0aSpQNALg5077ZwQNVGlAAXrrA
-         Sf2Y+3/FtLySC6GDuDq9oLFUOCQk8F38NQo9T79cbkMoJkr8QtLelhIQJCen5NXeX/
-         3wIxmnN966lWo6iRyM+4TuC+E2r4YMKa64Rkzr/Nh4OuYATkrcgWn6IvU253EPEMav
-         63Fz+PHs3ujBj+u6qZOJVdtTOfFJrEVBM2F5cGfxfdxmDn/IBsPdi4UIyS03IdXUCK
-         sYVt3x99QVQKVN7NqkbG8KYdJQuZxibTbvzmgB5vyWIvxb+kD+t+qAlzx58s92riL4
-         F9HiCbqFfngZA==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.102.1 at mail
-Date:   Tue, 11 Feb 2020 13:49:22 +0100
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     =?iso-8859-2?B?Suly9G1l?= Pouiller <Jerome.Pouiller@silabs.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/6] staging: wfx: fix init/remove vs IRQ race
-Message-ID: <20200211124922.GA23464@qmqm.qmqm.pl>
-References: <cover.1581416843.git.mirq-linux@rere.qmqm.pl>
- <f0c66cbb3110c2736cd4357c753fba8c14ee3aee.1581416843.git.mirq-linux@rere.qmqm.pl>
- <4119656.HTyy427nan@pc-42>
+        id S1728209AbgBKMwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 07:52:01 -0500
+Received: from mail-qv1-f66.google.com ([209.85.219.66]:46782 "EHLO
+        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727781AbgBKMwB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 07:52:01 -0500
+Received: by mail-qv1-f66.google.com with SMTP id y2so4878871qvu.13;
+        Tue, 11 Feb 2020 04:52:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=msU5D8ZEdFDxxqo3nG1mhJAEftZgJdXHg5DB8i9r690=;
+        b=ccP7FtOinfozM6R4vDJjCau6Npe4Tmqbkt8xc6j/l11pnNzuBm6vI5fsmdieL/ssPx
+         5d1ujsopUtmxY6FwQTj2bb6gY5H0LwU+T5AwI4TgaMsbfHI/lfKm2EDAeg9E8lMCa0y7
+         fRE2U1e8JQtiHHh7pYrOpk1lPZiAuoYhTxvXyoKUmZO4V9KFGJZViITCvqzc2z5F1xxM
+         WMB23So0V3C1qOmHSwSuAUCUsTqrDPiDHP9lHB9DSNOF1ljTVmViEgkynESAdWxnq5PP
+         +JlxFV/lo9K39OYXk314wrESa58rnFNKCm/PdSHxRnGdlZF3fOxkGX0oZqVW6AwR0oSq
+         8gzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=msU5D8ZEdFDxxqo3nG1mhJAEftZgJdXHg5DB8i9r690=;
+        b=sjZ0G/+YaBa6SQeV+NmwxO4H7sZgTSf59BLDrnzTtlnkEXAZIl+3qTLBzylJnt4ANW
+         LIC225f22RoL9yb9MBhHTXu0OHvSSqvouUx6+fu/iuaU7s6zUkYfNXf0s/ghR03lhKyQ
+         lWSFyUEHUvJYxyBazLv/SiEpC2p+77yPnXgyuZG/DpYfE2snGl2v6T17fjuIfvfNRsv5
+         1KWx+Wg9jN8rGSvUjR0yrHlW0YUfKLxUqhZySc3lC2SbuUqDWqtuL70yxNXy3oa8tJ7h
+         6/eTq1CSqkzezRcGPxbNjoYLk05E9ysK2+Zyrf0CcWba4MGFIWuQPCLeROqjwjJ/218M
+         W6ng==
+X-Gm-Message-State: APjAAAUB/BKJ/9WrfRWYhSOlZY5unq5U/gWwneFKf3/IsPsez0eRnqTr
+        Bz3FRmXQu3N7wjuv5wSBdzCMBqwp0ZzlepCERAE=
+X-Google-Smtp-Source: APXvYqwydnhG3yipz32Mkawa1LY3shaGvP6aeMT6scUZRjDnvZWkB3pSebXbk6lUTdgpE6f543iT2FwAZB4DPHPTEps=
+X-Received: by 2002:a0c:e34e:: with SMTP id a14mr14875544qvm.73.1581425520017;
+ Tue, 11 Feb 2020 04:52:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4119656.HTyy427nan@pc-42>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1580894083.git.baolin.wang7@gmail.com> <3fd82478e82b19c72dddcc17c85313725aa13ff6.1580894083.git.baolin.wang7@gmail.com>
+ <CAPDyKFq_tj+2yYf3YLA2vQkHGWWrY_ULUP=6-anpSJ0q+YvkFw@mail.gmail.com>
+In-Reply-To: <CAPDyKFq_tj+2yYf3YLA2vQkHGWWrY_ULUP=6-anpSJ0q+YvkFw@mail.gmail.com>
+From:   Baolin Wang <baolin.wang7@gmail.com>
+Date:   Tue, 11 Feb 2020 20:51:48 +0800
+Message-ID: <CADBw62oWCO=LtGU9YA-hrfVnb3-45cr1f8gh31DMNV9dggbzHg@mail.gmail.com>
+Subject: Re: [PATCH v8 1/5] mmc: Add MMC host software queue support
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 11:19:18AM +0000, Jérôme Pouiller wrote:
-> On Tuesday 11 February 2020 11:35:01 CET Micha³ Miros³aw wrote:
-> > Current code races in init/exit with interrupt handlers. This is noticed
-> > by the warning below. Fix it by using devres for ordering allocations and
-> > IRQ de/registration.
-> > 
-> > WARNING: CPU: 0 PID: 827 at drivers/staging/wfx/bus_spi.c:142 wfx_spi_irq_handler+0x5c/0x64 [wfx]
-> > race condition in driver init/deinit
-[...]
-> > --- a/drivers/staging/wfx/bus_spi.c
-> > +++ b/drivers/staging/wfx/bus_spi.c
-> > @@ -154,6 +154,11 @@ static void wfx_spi_request_rx(struct work_struct *work)
-> >         wfx_bh_request_rx(bus->core);
-> >  }
-> > 
-> > +static void wfx_flush_irq_work(void *w)
-> > +{
-> > +       flush_work(w);
-> > +}
+On Tue, Feb 11, 2020 at 5:45 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Wed, 5 Feb 2020 at 13:51, Baolin Wang <baolin.wang7@gmail.com> wrote:
+> >
+> > From: Baolin Wang <baolin.wang@linaro.org>
+> >
+> > Now the MMC read/write stack will always wait for previous request is
+> > completed by mmc_blk_rw_wait(), before sending a new request to hardware,
+> > or queue a work to complete request, that will bring context switching
+> > overhead, especially for high I/O per second rates, to affect the IO
+> > performance.
+>
+> Would you mind adding some more context about the mmc_blk_rw_wait()?
+> Especially I want to make it clear that mmc_blk_rw_wait() is also used
+> to poll the card for busy completion for I/O writes, via sending
+> CMD13.
+
+Sure.
+
+>
+> >
+> > Thus this patch introduces MMC software queue interface based on the
+> > hardware command queue engine's interfaces, which is similar with the
+> > hardware command queue engine's idea, that can remove the context
+> > switching. Moreover we set the default queue depth as 64 for software
+> > queue, which allows more requests to be prepared, merged and inserted
+> > into IO scheduler to improve performance, but we only allow 2 requests
+> > in flight, that is enough to let the irq handler always trigger the
+> > next request without a context switch, as well as avoiding a long latency.
+>
+> I think it's important to clarify that to use this new interface, hsq,
+> the host controller/driver needs to support HW busy detection for I/O
+> operations.
+>
+> In other words, the host driver must not complete a data transfer
+> request, until after the card stops signals busy. This behaviour is
+> also required for "closed-ended-transmissions" with CMD23, as in this
+> path there is no CMD12 sent to complete the transfer, thus no R1B
+> response flag to trigger the HW busy detection behaviour in the
+> driver.
+
+Sure.
+
+>
+> >
+> > From the fio testing data in cover letter, we can see the software
+> > queue can improve some performance with 4K block size, increasing
+> > about 16% for random read, increasing about 90% for random write,
+> > though no obvious improvement for sequential read and write.
+> >
+> > Moreover we can expand the software queue interface to support MMC
+> > packed request or packed command in future.
+> >
+> > Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> > Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+> > ---
+>
+> [...]
+>
+> > diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> > index f6912de..7a9976f 100644
+> > --- a/drivers/mmc/core/mmc.c
+> > +++ b/drivers/mmc/core/mmc.c
+> > @@ -1851,15 +1851,22 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+> >          */
+> >         card->reenable_cmdq = card->ext_csd.cmdq_en;
+> >
+> > -       if (card->ext_csd.cmdq_en && !host->cqe_enabled) {
+> > +       if (host->cqe_ops && !host->cqe_enabled) {
+> >                 err = host->cqe_ops->cqe_enable(host, card);
+> >                 if (err) {
+> >                         pr_err("%s: Failed to enable CQE, error %d\n",
+> >                                 mmc_hostname(host), err);
+>
+> This means we are going to start printing an error message for those
+> eMMCs that doesn't support command queuing, but the host supports
+> MMC_CAP2_CQE.
+>
+> Not sure how big of a problem this is, but another option is simply to
+> leave the logging of the *failures* to the host driver, rather than
+> doing it here.
+>
+> Oh well, feel free to change or leave this as is for now. We can
+> always change it on top, if needed.
+
+OK. I will move the failure log to cqe_enable() callback to keep the
+same logs'  logic. Thanks.
+
+> >                 } else {
+> >                         host->cqe_enabled = true;
+> > -                       pr_info("%s: Command Queue Engine enabled\n",
+> > -                               mmc_hostname(host));
 > > +
-> >  static size_t wfx_spi_align_size(void *priv, size_t size)
-> >  {
-> >         // Most of SPI controllers avoid DMA if buffer size is not 32bit aligned
-> > @@ -207,22 +212,23 @@ static int wfx_spi_probe(struct spi_device *func)
-> >                 udelay(2000);
+> > +                       if (card->ext_csd.cmdq_en) {
+> > +                               pr_info("%s: Command Queue Engine enabled\n",
+> > +                                       mmc_hostname(host));
+> > +                       } else {
+> > +                               host->hsq_enabled = true;
+> > +                               pr_info("%s: Host Software Queue enabled\n",
+> > +                                       mmc_hostname(host));
+> > +                       }
+> >                 }
 > >         }
-> > 
-> > -       ret = devm_request_irq(&func->dev, func->irq, wfx_spi_irq_handler,
-> > -                              IRQF_TRIGGER_RISING, "wfx", bus);
-> > -       if (ret)
-> > -               return ret;
-> > -
-> >         INIT_WORK(&bus->request_rx, wfx_spi_request_rx);
-> >         bus->core = wfx_init_common(&func->dev, &wfx_spi_pdata,
-> >                                     &wfx_spi_hwbus_ops, bus);
-> >         if (!bus->core)
-> >                 return -EIO;
-> > 
-> > -       ret = wfx_probe(bus->core);
-> > +       ret = devm_add_action_or_reset(&func->dev, wfx_flush_irq_work,
-> > +                                      &bus->request_rx);
-> >         if (ret)
-> > -               wfx_free_common(bus->core);
-> > +               return ret;
-> > 
-> > -       return ret;
-> > +       ret = devm_request_irq(&func->dev, func->irq, wfx_spi_irq_handler,
-> > +                              IRQF_TRIGGER_RISING, "wfx", bus);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       return wfx_probe(bus->core);
-> >  }
-> > 
-> >  static int wfx_spi_remove(struct spi_device *func)
-> > @@ -230,11 +236,6 @@ static int wfx_spi_remove(struct spi_device *func)
-> >         struct wfx_spi_priv *bus = spi_get_drvdata(func);
-> > 
-> >         wfx_release(bus->core);
-> > -       wfx_free_common(bus->core);
-> > -       // A few IRQ will be sent during device release. Hopefully, no IRQ
-> > -       // should happen after wdev/wvif are released.
-> > -       devm_free_irq(&func->dev, func->irq, bus);
-> > -       flush_work(&bus->request_rx);
-> >         return 0;
-> >  }
-> > 
-> > diff --git a/drivers/staging/wfx/main.c b/drivers/staging/wfx/main.c
-> > index 84adad64fc30..76b2ff7fc7fe 100644
-> > --- a/drivers/staging/wfx/main.c
-> > +++ b/drivers/staging/wfx/main.c
-> > @@ -262,6 +262,16 @@ static int wfx_send_pdata_pds(struct wfx_dev *wdev)
-> >         return ret;
-> >  }
-> > 
-> > +static void wfx_free_common(void *data)
-> > +{
-> > +       struct wfx_dev *wdev = data;
-> > +
-> > +       mutex_destroy(&wdev->rx_stats_lock);
-> > +       mutex_destroy(&wdev->conf_mutex);
-> > +       wfx_tx_queues_deinit(wdev);
-> > +       ieee80211_free_hw(wdev->hw);
-> > +}
-> > +
-> >  struct wfx_dev *wfx_init_common(struct device *dev,
-> >                                 const struct wfx_platform_data *pdata,
-> >                                 const struct hwbus_ops *hwbus_ops,
-> > @@ -332,17 +342,12 @@ struct wfx_dev *wfx_init_common(struct device *dev,
-> >         wfx_init_hif_cmd(&wdev->hif_cmd);
-> >         wfx_tx_queues_init(wdev);
-> > 
-> > +       if (devm_add_action_or_reset(dev, wfx_free_common, wdev))
-> > +               return NULL;
-> > +
-> >         return wdev;
-> >  }
-> > 
-> > -void wfx_free_common(struct wfx_dev *wdev)
-> > -{
-> > -       mutex_destroy(&wdev->rx_stats_lock);
-> > -       mutex_destroy(&wdev->conf_mutex);
-> > -       wfx_tx_queues_deinit(wdev);
-> > -       ieee80211_free_hw(wdev->hw);
-> > -}
-> > -
-> >  int wfx_probe(struct wfx_dev *wdev)
-> >  {
-> >         int i;
-> > diff --git a/drivers/staging/wfx/main.h b/drivers/staging/wfx/main.h
-> > index 875f8c227803..9c9410072def 100644
-> > --- a/drivers/staging/wfx/main.h
-> > +++ b/drivers/staging/wfx/main.h
-> > @@ -34,7 +34,6 @@ struct wfx_dev *wfx_init_common(struct device *dev,
-> >                                 const struct wfx_platform_data *pdata,
-> >                                 const struct hwbus_ops *hwbus_ops,
-> >                                 void *hwbus_priv);
-> > -void wfx_free_common(struct wfx_dev *wdev);
-> > 
-> >  int wfx_probe(struct wfx_dev *wdev);
-> >  void wfx_release(struct wfx_dev *wdev);
-> > --
-> > 2.20.1
-> > 
-> 
-> Are you sure you can completely drop wfx_free_common()? If you want to
-> use devres, I think that wfx_flush_irq_work() should call
-> wfx_free_common(), no?
-
-wfx_free_common() will be called by devres in the right order. That's ensured
-by devm_add_action_or_reset() at the end of wfx_init_common().
-
-Best Regards,
-Micha³ Miros³aw
+>
+> [...]
+>
+> Kind regards
+> Uffe
