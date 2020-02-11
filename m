@@ -2,104 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF26F159961
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:06:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7136159962
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:06:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730678AbgBKTGE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 14:06:04 -0500
-Received: from shelob.surriel.com ([96.67.55.147]:58556 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728503AbgBKTGD (ORCPT
+        id S1730823AbgBKTGK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 14:06:10 -0500
+Received: from mail-yw1-f46.google.com ([209.85.161.46]:46432 "EHLO
+        mail-yw1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728503AbgBKTGJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 14:06:03 -0500
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1j1ar4-0001St-CT; Tue, 11 Feb 2020 14:05:54 -0500
-Message-ID: <29b6e848ff4ad69b55201751c9880921266ec7f4.camel@surriel.com>
-Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
- LRU
-From:   Rik van Riel <riel@surriel.com>
-To:     Johannes Weiner <hannes@cmpxchg.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com
-Date:   Tue, 11 Feb 2020 14:05:38 -0500
-In-Reply-To: <20200211175507.178100-1-hannes@cmpxchg.org>
-References: <20200211175507.178100-1-hannes@cmpxchg.org>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-be8J/gfsysm0dy6l7psF"
-User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+        Tue, 11 Feb 2020 14:06:09 -0500
+Received: by mail-yw1-f46.google.com with SMTP id z141so5683043ywd.13
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 11:06:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:references:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=wPdyB8BXraQOD7tLtMr9ZV817UwsVe3LQShrz9AB71o=;
+        b=hcviG1/qorx7l4xH40ZtuRYm2w+B4cOpjR68es00EDjvVqtgKLGTMp2tWDQpxurDSP
+         B2tcidAOREXJ9g+9tnplWkUnE5PqcH/1Pwjk6J1ybG1r3+ZapTsYc0/p7CRZ2CMEFvci
+         gsLFkVJjDaR6SATkziFS3Kw5aLXZIPzbiVZ01nDpLHIxXdor2e9PXVo49LyE4nV6B2jI
+         NN/CVR7/rhSWKG1QzTDHQwWxeOAuRDelG1lSrSLoLK48sDXhqJPw7B7QSAntf/s1SeOn
+         GzAFSvu1GZdKPKWFQUVffJSllZ0lruxX1XgAWHQrUfsoGAn12KxdWf0R7isqwYxBiSYY
+         H5Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wPdyB8BXraQOD7tLtMr9ZV817UwsVe3LQShrz9AB71o=;
+        b=F6pogeqdrq0CQbqLKNdRBBYgE/8yuo+7dVileP9Dn5kqhri0NONuCKjb2mHHAI9h2t
+         VK7z4uAVzk19RmEHgCzPLCOBLQcoRCW4PQKVjR3C8kHTten24Mt28jnacQqlhHfCguKZ
+         +V1M3L9MeQ+ifoUxJx4rw9zxavWvS/7TAjfel0ssUq7ktoDshe3NgicYwRwnZtIh9UCK
+         hiZG73wUSXqIeE5r+kALbCPkajDkvLANjN+k2qaNjY5LOhm2Jmu9X2IAq1rfFe1QdqRj
+         eapH6MvkzImMFjNpcum45i+KiAArd2rhewtBeJq31m0dwr4v7wtBW27s1Smpg7mIV+e+
+         KoZA==
+X-Gm-Message-State: APjAAAUfpbeiINWWpyJrtXPGAPS797V+6SJGaKSDqJ17TyGq8elUI4CX
+        ea3oZKY0WmU8wWEXO0r4gHc=
+X-Google-Smtp-Source: APXvYqyrbf0Yi0My9AVtmvvXRiHg+YhKUVB+wqHwXuqkiygW0m3qa3XX1OCLmDSfhL6EsR/P1W3kDw==
+X-Received: by 2002:a81:50d6:: with SMTP id e205mr6470075ywb.208.1581447967258;
+        Tue, 11 Feb 2020 11:06:07 -0800 (PST)
+Received: from [192.168.1.46] (c-73-88-245-53.hsd1.tn.comcast.net. [73.88.245.53])
+        by smtp.gmail.com with ESMTPSA id b73sm2281079ywe.28.2020.02.11.11.06.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Feb 2020 11:06:06 -0800 (PST)
+Subject: Re: build error: f7655d42fcee drm/edid: Add CTA-861-G modes with VIC
+ >= 193
+From:   Frank Rowand <frowand.list@gmail.com>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+References: <4e918a35-dbcd-b2fd-1888-a86e7d448128@gmail.com>
+Message-ID: <3e5d7142-cacc-6830-94d3-f57ef18592d9@gmail.com>
+Date:   Tue, 11 Feb 2020 13:06:05 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
+In-Reply-To: <4e918a35-dbcd-b2fd-1888-a86e7d448128@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2/11/20 12:48 PM, Frank Rowand wrote:
+> I am getting a kernel build error at version 5.6-rc1:
+> 
+> drivers/gpu/drm/drm_edid.c: In function 'cea_mode_alternate_timings':
+> drivers/gpu/drm/drm_edid.c:3275:2: error: call to '__compiletime_assert_3282' declared with attribute error: BUILD_BUG_ON failed: cea_mode_for_vic(8)->vtotal != 262 || cea_mode_for_vic(9)->vtotal != 262 || cea_mode_for_vic(12)->vtotal != 262 || cea_mode_for_vic(13)->vtotal != 262 || cea_mode_for_vic(23)->vtotal != 312 || cea_mode_for_vic(24)->vtotal != 312 || cea_mode_for_vic(27)->vtotal != 312 || cea_mode_for_vic(28)->vtotal != 312
+> make[4]: *** [drivers/gpu/drm/drm_edid.o] Error 1
+> 
+> 
+> Kernel configuration:
+>   make qcom_defconfig
+> 
+>   (arch/arm/configs/qcom_defconfig)
+> 
+> 
+> Compiler is arm-eabi-gcc 4.6.x
+> 
+> 
+> The build error goes away if I revert:
+> 
+>    f7655d42fcee drm/edid: Add CTA-861-G modes with VIC >= 193
 
---=-be8J/gfsysm0dy6l7psF
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+I did not actually revert f7655d42fcee from 5.6-rc1.  I checked out the commit
+before f7655d42fcee and was able to build the kernel.  Then I checked out
+f7655d42fcee and the build failed in the same manner as at 5.6-rc1.
 
-On Tue, 2020-02-11 at 12:55 -0500, Johannes Weiner wrote:
-> The VFS inode shrinker is currently allowed to reclaim inodes with
-> populated page cache. As a result it can drop gigabytes of hot and
-> active page cache on the floor without consulting the VM (recorded as
-> "inodesteal" events in /proc/vmstat).
->=20
-> This causes real problems in practice. Consider for example how the
-> VM
-> would cache a source tree, such as the Linux git tree. As large parts
-> of the checked out files and the object database are accessed
-> repeatedly, the page cache holding this data gets moved to the active
-> list, where it's fully (and indefinitely) insulated from one-off
-> cache
-> moving through the inactive list.
+Simply reverting f7655d42fcee at 5.6-rc1 does not result in a buildable
+kernel due to other related changes.
 
-> This behavior of invalidating page cache from the inode shrinker goes
-> back to even before the git import of the kernel tree. It may have
-> been less noticeable when the VM itself didn't have real workingset
-> protection, and floods of one-off cache would push out any active
-> cache over time anyway. But the VM has come a long way since then and
-> the inode shrinker is now actively subverting its caching strategy.
+-Frank
 
-Two things come to mind when looking at this:
-- highmem
-- NUMA
-
-IIRC one of the reasons reclaim is done in this way is
-because a page cache page in one area of memory (highmem,
-or a NUMA node) can end up pinning inode slab memory in
-another memory area (normal zone, other NUMA node).
-
-I do not know how much of a concern that still is nowadays,
-but it seemed something worth bringing up.
-
---=20
-All Rights Reversed.
-
---=-be8J/gfsysm0dy6l7psF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAl5C+wIACgkQznnekoTE
-3oO/IQgAl8ZKBW1n3o9BCqwLSqcu66jPS/q2dziIacDoXS3zW7ME3LAqluQa3Qen
-cN2+lPymRfObV9cUMHBd5Q8lZSPu4ABn/Vgp5I37pyA9WOgfC3yLVWvgbWIXn40u
-Rnl9TQn6TIsvZTY/3VD3MYrbry3Q87wrOrrUyRzeL7kZQ3s6njARKXrN44yN+ABf
-DirTGAH3PeBMd+JZNVT3yAGcp3EW1Oe2Fda99orpAh/kD7dKK1Gat/s2k0AwHvZz
-o3zhYqLbIi+4cNGj/g234KsMJpEfRwjZxVcsYaenm3qaWR4arNYV/5+M0lYsRNYK
-8YRHaOQR5GDctvip88bDvdThWfDplw==
-=XJG5
------END PGP SIGNATURE-----
-
---=-be8J/gfsysm0dy6l7psF--
+> 
+> 
+> The build error also goes away if I comment out the two lines added to cea_mode_for_vic():
+> 
+>  	if (vic >= 193 && vic < 193 + ARRAY_SIZE(edid_cea_modes_193))
+>  		return &edid_cea_modes_193[vic - 193];
+> 
+> 
+> -Frank
+> 
 
