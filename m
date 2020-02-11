@@ -2,31 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 950841593B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 16:50:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA4CA1593CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 16:51:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730571AbgBKPtx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 10:49:53 -0500
-Received: from foss.arm.com ([217.140.110.172]:48698 "EHLO foss.arm.com"
+        id S1729563AbgBKPvX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 10:51:23 -0500
+Received: from foss.arm.com ([217.140.110.172]:48782 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728953AbgBKPtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 10:49:51 -0500
+        id S1727838AbgBKPvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 10:51:22 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DA5C143D;
-        Tue, 11 Feb 2020 07:49:50 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B23230E;
+        Tue, 11 Feb 2020 07:51:22 -0800 (PST)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 01DC13F68E;
-        Tue, 11 Feb 2020 07:49:49 -0800 (PST)
-Date:   Tue, 11 Feb 2020 15:49:48 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C4B933F68E;
+        Tue, 11 Feb 2020 07:51:21 -0800 (PST)
+Date:   Tue, 11 Feb 2020 15:51:20 +0000
 From:   Mark Brown <broonie@kernel.org>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     alsa-devel@alsa-project.org, clang-built-linux@googlegroups.com,
-        Liam Girdwood <lgirdwood@gmail.com>,
+To:     Saravanan Sekar <sravanhome@gmail.com>
+Cc:     broonie@kernel.org, davem@davemloft.net,
+        devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
+        Jonathan.Cameron@huawei.com, lgirdwood@gmail.com,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Applied "ASoC: wcd934x: Remove some unnecessary NULL checks" to the asoc tree
-In-Reply-To: <20200204060143.23393-1-natechancellor@gmail.com>
-Message-Id: <applied-20200204060143.23393-1-natechancellor@gmail.com>
+        mark.rutland@arm.com, mchehab+samsung@kernel.org,
+        robh+dt@kernel.org, sravanhome@gmail.com
+Subject: Applied "MAINTAINERS: Add entry for mp5416 PMIC driver" to the regulator tree
+In-Reply-To: <20200204110419.25933-4-sravanhome@gmail.com>
+Message-Id: <applied-20200204110419.25933-4-sravanhome@gmail.com>
 X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -35,11 +37,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: wcd934x: Remove some unnecessary NULL checks
+   MAINTAINERS: Add entry for mp5416 PMIC driver
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.7
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.7
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -60,68 +62,34 @@ to this mail.
 Thanks,
 Mark
 
-From 918d0aba86ed8c1f4ff7f39e39e5c1b46fff2bc2 Mon Sep 17 00:00:00 2001
-From: Nathan Chancellor <natechancellor@gmail.com>
-Date: Mon, 3 Feb 2020 23:01:44 -0700
-Subject: [PATCH] ASoC: wcd934x: Remove some unnecessary NULL checks
+From c1e1fa0ae5ba99f502bd2f5a4fd34d0ea22f1fdf Mon Sep 17 00:00:00 2001
+From: Saravanan Sekar <sravanhome@gmail.com>
+Date: Tue, 4 Feb 2020 12:04:19 +0100
+Subject: [PATCH] MAINTAINERS: Add entry for mp5416 PMIC driver
 
-Clang warns:
+Add MAINTAINERS entry for Monolithic Power Systems mp5416 PMIC driver.
 
-../sound/soc/codecs/wcd934x.c:1886:11: warning: address of array
-'wcd->rx_chs' will always evaluate to 'true' [-Wpointer-bool-conversion]
-        if (wcd->rx_chs) {
-        ~~  ~~~~~^~~~~~
-../sound/soc/codecs/wcd934x.c:1894:11: warning: address of array
-'wcd->tx_chs' will always evaluate to 'true' [-Wpointer-bool-conversion]
-        if (wcd->tx_chs) {
-        ~~  ~~~~~^~~~~~
-2 warnings generated.
-
-Arrays that are in the middle of a struct are never NULL so they don't
-need a check like this.
-
-Fixes: a61f3b4f476e ("ASoC: wcd934x: add support to wcd9340/wcd9341 codec")
-Link: https://github.com/ClangBuiltLinux/linux/issues/854
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Link: https://lore.kernel.org/r/20200204060143.23393-1-natechancellor@gmail.com
+Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+Link: https://lore.kernel.org/r/20200204110419.25933-4-sravanhome@gmail.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/wcd934x.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+ MAINTAINERS | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/wcd934x.c b/sound/soc/codecs/wcd934x.c
-index 158e878abd6c..e780ecd554d2 100644
---- a/sound/soc/codecs/wcd934x.c
-+++ b/sound/soc/codecs/wcd934x.c
-@@ -1883,20 +1883,16 @@ static int wcd934x_set_channel_map(struct snd_soc_dai *dai,
- 		return -EINVAL;
- 	}
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 38fe2f3f7b6f..060d48e5615c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11259,7 +11259,8 @@ F:	drivers/tty/mxser.*
+ MONOLITHIC POWER SYSTEM PMIC DRIVER
+ M:	Saravanan Sekar <sravanhome@gmail.com>
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/regulator/mpq7920.yaml
++F:	Documentation/devicetree/bindings/regulator/mps,mp*.yaml
++F:	drivers/regulator/mp5416.c
+ F:	drivers/regulator/mpq7920.c
+ F:	drivers/regulator/mpq7920.h
  
--	if (wcd->rx_chs) {
--		wcd->num_rx_port = rx_num;
--		for (i = 0; i < rx_num; i++) {
--			wcd->rx_chs[i].ch_num = rx_slot[i];
--			INIT_LIST_HEAD(&wcd->rx_chs[i].list);
--		}
-+	wcd->num_rx_port = rx_num;
-+	for (i = 0; i < rx_num; i++) {
-+		wcd->rx_chs[i].ch_num = rx_slot[i];
-+		INIT_LIST_HEAD(&wcd->rx_chs[i].list);
- 	}
- 
--	if (wcd->tx_chs) {
--		wcd->num_tx_port = tx_num;
--		for (i = 0; i < tx_num; i++) {
--			wcd->tx_chs[i].ch_num = tx_slot[i];
--			INIT_LIST_HEAD(&wcd->tx_chs[i].list);
--		}
-+	wcd->num_tx_port = tx_num;
-+	for (i = 0; i < tx_num; i++) {
-+		wcd->tx_chs[i].ch_num = tx_slot[i];
-+		INIT_LIST_HEAD(&wcd->tx_chs[i].list);
- 	}
- 
- 	return 0;
 -- 
 2.20.1
 
