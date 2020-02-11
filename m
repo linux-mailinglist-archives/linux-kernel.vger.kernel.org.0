@@ -2,90 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B0C9159109
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:57:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0495D159113
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:58:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729997AbgBKN5e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 08:57:34 -0500
-Received: from foss.arm.com ([217.140.110.172]:46444 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729986AbgBKN5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 08:57:33 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8CB6431B;
-        Tue, 11 Feb 2020 05:57:32 -0800 (PST)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 541BF3F68F;
-        Tue, 11 Feb 2020 05:57:30 -0800 (PST)
-Subject: Re: [PATCH v7 11/11] arm64: scs: add shadow stacks for SDEI
-To:     Sami Tolvanen <samitolvanen@google.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jann Horn <jannh@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        clang-built-linux@googlegroups.com,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20200128184934.77625-1-samitolvanen@google.com>
- <20200128184934.77625-12-samitolvanen@google.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <dbb090ae-d1ec-cb1a-0710-e1d3cfe762b9@arm.com>
-Date:   Tue, 11 Feb 2020 13:57:29 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1730024AbgBKN5v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 08:57:51 -0500
+Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:41711 "EHLO
+        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729509AbgBKN5t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 08:57:49 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.west.internal (Postfix) with ESMTP id 3E42970F;
+        Tue, 11 Feb 2020 08:57:47 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Tue, 11 Feb 2020 08:57:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding:content-type; s=mesmtp;
+         bh=noAzCHI04Ek8RDpgVHZPtuU30mmVFLmEki2n2dFXUfk=; b=hEAdjWREXeec
+        UBe4OGm3aAkBhgEuC6s/I22PkSk8Qp5WD9sZd2YG3U1I9YFFI1jI2JPfe7CE8kua
+        a9cwQ8EDSb1wXlcDnnJxxz05qpS73YVTsL1jk9BUPMwYuZQo55VetRWR4jgubvkw
+        VE0SEnS5aHX6ey2GRCcfRVDcGKBgVuY=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=noAzCHI04Ek8RDpgVHZPtuU30mmVFLmEki2n2dFXU
+        fk=; b=y5Paqyy4NiV6O7SNz07Qb80FTYAjxZH4YjIhM2t1gTxOdGMvkqxirSsjJ
+        Q6fSwKqri9dK8G3gtNgxo1R640+6+xgzBlaGD1ayurch2P6wA5yLj8n78rvxaiGI
+        Yd544n7+BS/0xChp4rzcHA5C4jkZDNiP2D4jcv+yyhWPyakBFyKM+hF5ezz0B+Tv
+        wVJpwUb4yM7QOHA7St4ivDthMER/Mxt+eMyQio8kRsUURkvHDRfHa5hZOTeTu77r
+        M0V9DbaHQcHuuWh7yYn1Tou9rsdsc1u3gZLL/OpXADtsIVOv9fN1fTxIelwXcRg2
+        zRedtOWfwsJyFjmaVOP8u1ziPH/5g==
+X-ME-Sender: <xms:2rJCXpDm4fNVO8qyaB36A6ti_RSmVSf2tsLD7ela3qvNr7hgN6edGA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrieefgdehlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufffkjghfggfgtgesthfuredttddtvdenucfhrhhomhepvfhhohhmrghs
+    ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucfkph
+    epjeejrddufeegrddvtdefrddukeegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghr
+    rghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvth
+X-ME-Proxy: <xmx:2rJCXq7fF8aqvNdXEcyrvltANgu3CGdUxC0WpymCsa7MaNj8jgW4VA>
+    <xmx:2rJCXv2jjxQEkHCAQQYcMaI-DJDPYIKZPbiGvfK8f24-MoY664lTzw>
+    <xmx:2rJCXlSQdpgKERW12Dki5jngEP_sTxf67BMK7q97PS56vK1cDBp-dA>
+    <xmx:2rJCXuSprx1LlVxeacnKLUvMQm8fKQ7rvAe4dbSq2z_2yE6U4nH1TxQxK-0>
+Received: from xps.localnet (184.203.134.77.rev.sfr.net [77.134.203.184])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 4AB833060840;
+        Tue, 11 Feb 2020 08:57:45 -0500 (EST)
+From:   Thomas Monjalon <thomas@monjalon.net>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     dev@dpdk.org, kvm@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dev@dpdk.org, mtosatti@redhat.com,
+        Luca Boccassi <bluca@debian.org>,
+        "Richardson, Bruce" <bruce.richardson@intel.com>,
+        cohuck@redhat.com, Vamsi Attunuru <vattunuru@marvell.com>,
+        Jerin Jacob <jerinjacobk@gmail.com>
+Subject: Re: [dpdk-dev] [RFC PATCH 0/7] vfio/pci: SR-IOV support
+Date:   Tue, 11 Feb 2020 14:57:44 +0100
+Message-ID: <2203508.9fHWaBTJ5E@xps>
+In-Reply-To: <CALBAE1Oz2u+cmoL8LhEZ-4paXEebKh3DzfWGLQLQx0oaW=tBXw@mail.gmail.com>
+References: <158085337582.9445.17682266437583505502.stgit@gimli.home> <CALBAE1Oz2u+cmoL8LhEZ-4paXEebKh3DzfWGLQLQx0oaW=tBXw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200128184934.77625-12-samitolvanen@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sami,
+11/02/2020 12:18, Jerin Jacob:
+> On Wed, Feb 5, 2020 at 4:35 AM Alex Williamson wrote:
+> >
+> > There seems to be an ongoing desire to use userspace, vfio-based
+> > drivers for both SR-IOV PF and VF devices.  The fundamental issue
+> > with this concept is that the VF is not fully independent of the PF
+> > driver.  Minimally the PF driver might be able to deny service to the
+> > VF, VF data paths might be dependent on the state of the PF device,
+> > or the PF my have some degree of ability to inspect or manipulate the
+> > VF data.  It therefore would seem irresponsible to unleash VFs onto
+> > the system, managed by a user owned PF.
+> >
+> > We address this in a few ways in this series.  First, we can use a bus
+> > notifier and the driver_override facility to make sure VFs are bound
+> > to the vfio-pci driver by default.  This should eliminate the chance
+> > that a VF is accidentally bound and used by host drivers.  We don't
+> > however remove the ability for a host admin to change this override.
+> >
+> > The next issue we need to address is how we let userspace drivers
+> > opt-in to this participation with the PF driver.  We do not want an
+> > admin to be able to unwittingly assign one of these VFs to a tenant
+> > that isn't working in collaboration with the PF driver.  We could use
+> > IOMMU grouping, but this seems to push too far towards tightly coupled
+> > PF and VF drivers.  This series introduces a "VF token", implemented
+> > as a UUID, as a shared secret between PF and VF drivers.  The token
+> > needs to be set by the PF driver and used as part of the device
+> > matching by the VF driver.  Provisions in the code also account for
+> > restarting the PF driver with active VF drivers, requiring the PF to
+> > use the current token to re-gain access to the PF.
+> 
+> Thanks Alex for the series. DPDK realizes this use-case through, an out of
+> tree igb_uio module, for non VFIO devices. Supporting this use case, with
+> VFIO, will be a great enhancement for DPDK as we are planning to
+> get rid of out of tree modules any focus only on userspace aspects.
+[..]
+> Regarding the use case where  PF bound to DPDK/VFIO and
+> VF bound to DPDK/VFIO are _two different_ processes then sharing the UUID
+> will be a little tricky thing in terms of usage. But if that is the
+> purpose of bringing UUID to the equation then it fine.
+> 
+> Overall this series looks good to me.  We can test the next non-RFC
+> series and give
+> Tested-by by after testing with DPDK.
+[..]
+> > Please comment.  In particular, does this approach meet the DPDK needs
+> > for userspace PF and VF drivers, with the hopefully minor hurdle of
+> > sharing a token between drivers.  The token is of course left to
+> > userspace how to manage, and might be static (and not very secret) for
+> > a given set of drivers.  Thanks,
 
-On 28/01/2020 18:49, Sami Tolvanen wrote:
-> This change adds per-CPU shadow call stacks for the SDEI handler.
-> Similarly to how the kernel stacks are handled, we add separate shadow
-> stacks for normal and critical events.
+Thanks Alex, it looks to be a great improvement.
 
-Reviewed-by: James Morse <james.morse@arm.com>
-Tested-by: James Morse <james.morse@arm.com>
-
-
-> diff --git a/arch/arm64/kernel/scs.c b/arch/arm64/kernel/scs.c
-> index eaadf5430baa..dddb7c56518b 100644
-> --- a/arch/arm64/kernel/scs.c
-> +++ b/arch/arm64/kernel/scs.c
-
-> +static int scs_alloc_percpu(unsigned long * __percpu *ptr, int cpu)
-> +{
-> +	unsigned long *p;
-> +
-> +	p = __vmalloc_node_range(PAGE_SIZE, SCS_SIZE,
-> +				 VMALLOC_START, VMALLOC_END,
-> +				 GFP_SCS, PAGE_KERNEL,
-> +				 0, cpu_to_node(cpu),
-> +				 __builtin_return_address(0));
-
-(What makes this arch specific? arm64 has its own calls like this for the regular vmap
-stacks because it plays tricks with the alignment. Here the alignment requirement comes
-from the core SCS code... Would another architecture implement these
-scs_alloc_percpu()/scs_free_percpu() differently?)
+In the meantime, DPDK is going to move igb_uio (an out-of-tree
+Linux kernel module) from the main DPDK repository to a side-repo.
+This move and this patchset will hopefully encourage using VFIO.
+As Jerin said, DPDK prefers relying on upstream Linux modules.
 
 
-Thanks,
-
-James
