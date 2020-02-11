@@ -2,70 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1250A158DBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 12:49:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 167A2158DC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 12:50:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728517AbgBKLtJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 06:49:09 -0500
-Received: from relay.sw.ru ([185.231.240.75]:55014 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727686AbgBKLtI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 06:49:08 -0500
-Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1j1U2F-0007Ti-OE; Tue, 11 Feb 2020 14:49:00 +0300
-Subject: Re: [PATCH] mm: Add missed mem_cgroup_iter_break() into
- shrink_node_memcgs()
-To:     Vasily Averin <vvs@virtuozzo.com>, akpm@linux-foundation.org,
-        guro@fb.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <158142103093.888182.8911729633457501747.stgit@localhost.localdomain>
- <792e25d0-413f-28e0-1fd0-560523b63a45@virtuozzo.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <ce5efea0-19b7-cd37-3b40-ba6b2cefd37c@virtuozzo.com>
-Date:   Tue, 11 Feb 2020 14:48:58 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S1728621AbgBKLuw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 06:50:52 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:53110 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728009AbgBKLuw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 06:50:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=y67BwQMxRYM3PjeNYdtynviH/nF5k899kzzr0M34J3E=; b=D2a6GjUK41it4NsOtJ7f5KRfMr
+        PNF+xhX+Z+sgjso57V+MQ6YauMkNsAC9IsiKN9fBnl7JV13BXgksYnZmpjvEG5+WxAILBwayynov6
+        OQNHBMClv3xJEwNNXW+dFt8AmwY55F07VIA1Qe1s/ieRvSTGhY3QFMLjTQnCgiCwqFLtlis8vl4Se
+        spnT1fKOnUbVoGSsbcgQDos5uey52EyeRDGLGHQAPY/taOmj5ud95qVa8MqLUTcCLM59/nNiRFLNN
+        wASswfi4R6GXaE0UX89wPFamBTyg+OT7tzMq1sxgIm4pGB0cb7vuqtelZWit8Bei0ENu2GgPygqbG
+        jrj0RANw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1U3B-0002TI-FS; Tue, 11 Feb 2020 11:49:57 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 867D3300739;
+        Tue, 11 Feb 2020 12:48:05 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2810B2B88D75C; Tue, 11 Feb 2020 12:49:54 +0100 (CET)
+Date:   Tue, 11 Feb 2020 12:49:54 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [PATCH] tracing/perf: Move rcu_irq_enter/exit_irqson() to perf
+ trace point hook
+Message-ID: <20200211114954.GK14914@hirez.programming.kicks-ass.net>
+References: <20200210170643.3544795d@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <792e25d0-413f-28e0-1fd0-560523b63a45@virtuozzo.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200210170643.3544795d@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.02.2020 14:46, Vasily Averin wrote:
-> On 2/11/20 2:38 PM, Kirill Tkhai wrote:
->> Leaving mem_cgroup_iter() loop requires mem_cgroup_iter_break().
->>
->> Fixes: bf8d5d52ffe8 "memcg: introduce memory.min"
->> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
->> ---
->>  mm/vmscan.c |    3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/mm/vmscan.c b/mm/vmscan.c
->> index b1863de475fb..f6efe2348ba3 100644
->> --- a/mm/vmscan.c
->> +++ b/mm/vmscan.c
->> @@ -2653,8 +2653,9 @@ static void shrink_node_memcgs(pg_data_t *pgdat, struct scan_control *sc)
->>  				continue;
->>  			}
->>  			memcg_memory_event(memcg, MEMCG_LOW);
->> -			break;
-> 
-> It is not cycle break, it is switch/case break.
+On Mon, Feb 10, 2020 at 05:06:43PM -0500, Steven Rostedt wrote:
+> +	if (!rcu_watching) {						\
+> +		/* Can not use RCU if rcu is not watching and in NMI */	\
+> +		if (in_nmi())						\
+> +			return;						\
+> +		rcu_irq_enter_irqson();					\
+> +	}								\
 
-Oh, I missed this, thanks.
- 
->> +			/* fallthrough */
->>  		case MEMCG_PROT_NONE:
->> +			mem_cgroup_iter_break(target_memcg, memcg);
->>  			/*
->>  			 * All protection thresholds breached. We may
->>  			 * still choose to vary the scan pressure
->>
->>
+I saw the same weirdness in __trace_stack(), and I'm confused by it.
 
+How can we ever get to: in_nmi() && !rcu_watching() ? That should be a
+BUG.  In particular, nmi_enter() has rcu_nmi_enter().
+
+Paul, can that really happen?
