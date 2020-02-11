@@ -2,151 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E4C91594D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:24:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5C541594CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:24:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729983AbgBKQYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 11:24:38 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:47844 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727815AbgBKQYi (ORCPT
+        id S1729615AbgBKQYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 11:24:18 -0500
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:42256 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727722AbgBKQYS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 11:24:38 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01BG2W58169327;
-        Tue, 11 Feb 2020 16:24:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=8KhVmZwN6F4dWziVKrI4JGlNBaP+UKS7RCQREi4lP3Y=;
- b=vPR3la4evpb6xFLxXnrf6AxxpvMDgqC2MpU/cJeQB2RB8oWbP1ffdeJc6aTHVXA3oeu+
- ns9iNJiKTybifTyME+VGkg7bYJpKUDRfk9t50XHlG86ULqDEvyBCMYnqe8nkuhIYVR3G
- LrCz9dViuid8Qu6a9XoAnIH8N1jKET4XjRsusIVX+mdTkEN1RNr37AiV3d1oq9JjQ146
- wcFV3lq/+WcPgsQr4fCaQncXm8jeFVnzjlxZr2fWjc/ZPMe/59RRQnBEh5o5jNI64DnM
- sdsyGsnJFFO90FmcfqWDLAQfe0tXbvtba7WX4LcVTOQ0PWNIa60CNvu1Ww6pjSgqAlvf Uw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2y2jx64q3g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Feb 2020 16:24:01 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01BGCRuq138219;
-        Tue, 11 Feb 2020 16:24:01 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2y26srqt22-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Feb 2020 16:24:00 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01BGNueX028061;
-        Tue, 11 Feb 2020 16:23:56 GMT
-Received: from [10.175.211.251] (/10.175.211.251)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 11 Feb 2020 08:23:55 -0800
-Subject: Re: [PATCH RFC 09/10] vfio/type1: Use follow_pfn for VM_FPNMAP VMAs
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-nvdimm@lists.01.org, Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Liran Alon <liran.alon@oracle.com>,
-        Nikita Leshenko <nikita.leshchenko@oracle.com>,
-        Barret Rhoden <brho@google.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-References: <20200110190313.17144-1-joao.m.martins@oracle.com>
- <20200110190313.17144-10-joao.m.martins@oracle.com>
- <20200207210831.GA31015@ziepe.ca>
-From:   Joao Martins <joao.m.martins@oracle.com>
-Message-ID: <98351044-a710-1d52-f030-022eec89d1d5@oracle.com>
-Date:   Tue, 11 Feb 2020 16:23:49 +0000
-MIME-Version: 1.0
-In-Reply-To: <20200207210831.GA31015@ziepe.ca>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9528 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 mlxscore=0
- malwarescore=0 bulkscore=0 spamscore=0 suspectscore=1 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002110116
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9528 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
- priorityscore=1501 adultscore=0 phishscore=0 impostorscore=0 spamscore=0
- bulkscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=1 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002110115
+        Tue, 11 Feb 2020 11:24:18 -0500
+Received: by mail-qv1-f68.google.com with SMTP id dc14so5234285qvb.9
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 08:24:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=wLPl/cstzWTeMlUQRCBJAM9GpFQjWbFFR3GkPG8wzQ4=;
+        b=YXpNNOp7JzrPirfuXj4Fw25ulXJOqSKTXSPMTVYD9fnCBtHtOGvBwQrHPCC3N8K77O
+         B1nOurTpEqdnUGs/JUG4AS3TKNe1cQjqkHH8YZxwy6BYHb5vIKSqnOnKvYwn5FLAt9uY
+         u5pdbKDdsbXdPFPBu6Rleu1Np1Nepu3O3Hfn+v3pRY3uv/K4nd5mWQ8pIS/5Sc257iLm
+         9q9ak1rO4E8PK0mfS8gyzF2o55Mv11UBU7bdPD4TLLSj1mIm/Eru1KA3tTovFGVOAc1m
+         5EDP2K3WtRMkMKhq4Te52he7Zms7OHmkZxoTfz5ltoRnv2TdY65neO41fWQ1ngljxVN6
+         ZyVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wLPl/cstzWTeMlUQRCBJAM9GpFQjWbFFR3GkPG8wzQ4=;
+        b=blcd1moFH1hsUkrbY8xnUl3uRkMGW5LNRSBitwpNBVk1OYXu46+bsVeVu51DDQMEne
+         a3nW4OiKSeN1/ywYZkSDJBrAZoH97y3hRDoNxsxkyHoO3H8zhST41pN+e+NNVR4q64sG
+         2i+2SLI7jYr+deZIqXv4G52aPzjv0CYbaecstNqlyT9QQA0fq4l/B6KBylB1Tk3Z8r0A
+         SByopz4TvExIS4n8LfOZKvWQOqA0gvVPhliNI86R6tX4ysnm+BVnpcOMMoT/mOTNwBTb
+         Jubcx+yI9gbPoN0dB4QpQSVU1/P12YVs7Nn129VtUaKGosRUcx6oIkIg1g20oIGeaKtY
+         V9+w==
+X-Gm-Message-State: APjAAAW/0j8nPWn3tFI9H183hukg8eXPawVkJisfs0Nl6G3jMnpRGRLr
+        EJhkflKzIhScGx9xwu5PVHO9tw==
+X-Google-Smtp-Source: APXvYqzs+bk5h6W/Qj9KvzQVLRqIJFLobB26Q9E2sfed40GYLzcTZmIP0wnbXsGmesBTAwmcsiz69g==
+X-Received: by 2002:a0c:eac7:: with SMTP id y7mr3695907qvp.86.1581438257600;
+        Tue, 11 Feb 2020 08:24:17 -0800 (PST)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id k4sm2315242qtj.74.2020.02.11.08.24.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Feb 2020 08:24:17 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     elver@google.com, catalin.marinas@arm.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH -next] mm/kmemleak: annotate a data race in checksum
+Date:   Tue, 11 Feb 2020 11:24:05 -0500
+Message-Id: <1581438245-24391-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/7/20 9:08 PM, Jason Gunthorpe wrote:
-> On Fri, Jan 10, 2020 at 07:03:12PM +0000, Joao Martins wrote:
->> From: Nikita Leshenko <nikita.leshchenko@oracle.com>
->>
->> Unconditionally interpreting vm_pgoff as a PFN is incorrect.
->>
->> VMAs created by /dev/mem do this, but in general VM_PFNMAP just means
->> that the VMA doesn't have an associated struct page and is being managed
->> directly by something other than the core mmu.
->>
->> Use follow_pfn like KVM does to find the PFN.
->>
->> Signed-off-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
->>  drivers/vfio/vfio_iommu_type1.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
->> index 2ada8e6cdb88..1e43581f95ea 100644
->> +++ b/drivers/vfio/vfio_iommu_type1.c
->> @@ -362,9 +362,9 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
->>  	vma = find_vma_intersection(mm, vaddr, vaddr + 1);
->>  
->>  	if (vma && vma->vm_flags & VM_PFNMAP) {
->> -		*pfn = ((vaddr - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
->> -		if (is_invalid_reserved_pfn(*pfn))
->> -			ret = 0;
->> +		ret = follow_pfn(vma, vaddr, pfn);
->> +		if (!ret && !is_invalid_reserved_pfn(*pfn))
->> +			ret = -EOPNOTSUPP;
->>  	}
-> 
-> FWIW this existing code is a huge hack and a security problem.
-> 
-> I'm not sure how you could be successfully using this path on actual
-> memory without hitting bad bugs?
-> 
-ATM I think this codepath is largelly hit at the moment for MMIO (GPU
-passthrough, or mdev). In the context of this patch, guest memory would be
-treated similarly meaning the device-dax backing memory wouldn't have a 'struct
-page' (as introduced in this series).
+The value of object->pointer could be accessed concurrently as noticed
+by KCSAN,
 
-> Fudamentally VFIO can't retain a reference to a page from within a VMA
-> without some kind of recount/locking/etc to allow the thing that put
-> the page there to know it is still being used (ie programmed in a
-> IOMMU) by VFIO.
-> 
-> Otherwise it creates use-after-free style security problems on the
-> page.
-> 
-I take it you're referring to the past problems with long term page pinning +
-fsdax? Or you had something else in mind, perhaps related to your LSFMM topic?
+ BUG: KCSAN: data-race in crc32_le_base / do_raw_spin_lock
 
-Here the memory can't be used by the kernel (and there's no struct page) except
-from device-dax managing/tearing/driving the pfn region (which is static and the
-underlying PFNs won't change throughout device lifetime), and vfio
-pinning/unpinning the pfns (which are refcounted against multiple map/unmaps);
+ write to 0xffffb0ea683a7d50 of 4 bytes by task 23575 on cpu 12:
+  do_raw_spin_lock+0x114/0x200
+  debug_spin_lock_after at kernel/locking/spinlock_debug.c:91
+  (inlined by) do_raw_spin_lock at kernel/locking/spinlock_debug.c:115
+  _raw_spin_lock+0x40/0x50
+  __handle_mm_fault+0xa9e/0xd00
+  handle_mm_fault+0xfc/0x2f0
+  do_page_fault+0x263/0x6f9
+  page_fault+0x34/0x40
 
-> This code needs to be deleted, not extended :(
+ read to 0xffffb0ea683a7d50 of 4 bytes by task 839 on cpu 60:
+  crc32_le_base+0x67/0x350
+  crc32_le_base+0x67/0x350:
+  crc32_body at lib/crc32.c:106
+  (inlined by) crc32_le_generic at lib/crc32.c:179
+  (inlined by) crc32_le at lib/crc32.c:197
+  kmemleak_scan+0x528/0xd90
+  update_checksum at mm/kmemleak.c:1172
+  (inlined by) kmemleak_scan at mm/kmemleak.c:1497
+  kmemleak_scan_thread+0xcc/0xfa
+  kthread+0x1e0/0x200
+  ret_from_fork+0x27/0x50
 
-To some extent it isn't really an extension: the patch was just removing the
-assumption @vm_pgoff being the 'start pfn' on PFNMAP vmas. This is also
-similarly done by get_vaddr_frames().
+ Reported by Kernel Concurrency Sanitizer on:
+ CPU: 60 PID: 839 Comm: kmemleak Tainted: G        W    L 5.5.0-next-20200210+ #3
+ Hardware name: HPE ProLiant DL385 Gen10/ProLiant DL385 Gen10, BIOS A40 07/10/2019
 
-	Joao
+crc32() will dereference object->pointer. If a shattered value was
+returned due to a data race, it will be corrected in the next scan.
+Thus, annotate it as an intentional data race using the data_race()
+macro.
+
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ mm/kmemleak.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 3a4259eeb5a0..25b4bcc32b5f 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -1169,7 +1169,12 @@ static bool update_checksum(struct kmemleak_object *object)
+ 	u32 old_csum = object->checksum;
+ 
+ 	kasan_disable_current();
+-	object->checksum = crc32(0, (void *)object->pointer, object->size);
++	/*
++	 * crc32() will dereference object->pointer. If an unstable value was
++	 * returned due to a data race, it will be corrected in the next scan.
++	 */
++	object->checksum = data_race(crc32(0, (void *)object->pointer,
++					   object->size));
+ 	kasan_enable_current();
+ 
+ 	return object->checksum != old_csum;
+-- 
+1.8.3.1
+
