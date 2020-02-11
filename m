@@ -2,267 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C2261594CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:22:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E4C91594D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:24:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729769AbgBKQWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 11:22:46 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:36533 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728280AbgBKQWp (ORCPT
+        id S1729983AbgBKQYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 11:24:38 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:47844 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727815AbgBKQYi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 11:22:45 -0500
-Received: by mail-qk1-f193.google.com with SMTP id w25so10657833qki.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 08:22:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=ifYHcGEZ47HawduF+9kuCJY3eJwqlcOkoE2tiKEW4fo=;
-        b=Gndk2/8/ixVGUmVUqPAT19T++s6BVn+TS/QiAVhK8l/yxPsqrPYAk8oSS+YTJOEDnU
-         Hw4kAB1xbHSjgyD1JXXL4QCRrt5znpkSjYlCU+1RKNVc/u0gXvcoYKcqnKlr8BLlydyH
-         RrNaRsyUEdSxfEtuetPw4WfCBaMtCghxOHsORfARX31bPqIvm9AiHlOGqTC04nqrJi1W
-         YruJtqQQQkvkJ0ZXbQJVsTeAI5Eq8S9kNiPtjUoYbHNeo7RuS6S/mpJXQKRdimoY7fUD
-         Z8L8shS2fmt5qe8bq5PFBf3akvHsxkeriFPGEkwY88iBOOyAuZN+tcAw2TdMdLngiKf1
-         CdDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=ifYHcGEZ47HawduF+9kuCJY3eJwqlcOkoE2tiKEW4fo=;
-        b=X8t6e7GKGX14SrlbloaKb3JXoZFVOgHM+YN3BDQzQSaUAoZ/Ep7F0UY1zivhCjbNJY
-         rhTrjCJwdBNjE2Y5dtsMAhD6stmwGQDzS2IbeYKDehR9GUh/AKSbe+rCN3eoIn9/9n6Y
-         PwJ9K8mNyPohytFRjrnCWrSEx4Hthb1OoFA3LzwVBAu1UuXmXDaScCJMGtwKwrZPUNVU
-         uz7B1qiuqzzD6gTVGn717XnD5SHvRwLxs3mfueQEwC8q14enth8ALQZVB/JnPxOldwlv
-         HttGVB4px4awAeUsUTMPcZudmyQ/Z0cVXgjQs4w48TbYNzqaLsRpPzgBO+UqSgJD9Soi
-         0Hmw==
-X-Gm-Message-State: APjAAAWzsdnV0hyPSYkJe3/xAL/Hzstwyh3QGWJEu1x776Fj4kVMmsdt
-        j0BVkZ+r3Rt1aYb5AKJyBPLJsQ==
-X-Google-Smtp-Source: APXvYqwAS7aGM+9WbwBbFLd2zIwVKIXma+oVOgDPqXaHqpL0YiNeXdiWv4iDvhOMJzvJPPIUh7LJqg==
-X-Received: by 2002:a05:620a:cee:: with SMTP id c14mr3343747qkj.402.1581438164149;
-        Tue, 11 Feb 2020 08:22:44 -0800 (PST)
-Received: from nicolas-tpx395.localdomain ([2610:98:8005::527])
-        by smtp.gmail.com with ESMTPSA id o21sm2204112qki.56.2020.02.11.08.22.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 08:22:43 -0800 (PST)
-Message-ID: <9655c8b0cf58c93e26159503120f37890731f313.camel@ndufresne.ca>
-Subject: Re: [PATCH v3 0/3] Enable Hantro G1 post-processor
-From:   Nicolas Dufresne <nicolas@ndufresne.ca>
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Ezequiel Garcia <ezequiel@collabora.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        kernel@collabora.com,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexandre Courbot <acourbot@chromium.org>
-Date:   Tue, 11 Feb 2020 11:22:41 -0500
-In-Reply-To: <f3b8c40fa84f9819959bf60cc9a1f4951bcda36a.camel@ndufresne.ca>
-References: <20191113175603.24742-1-ezequiel@collabora.com>
-         <74fea061a52ee3f8e25793bf9e47eba90a52c3e3.camel@ndufresne.ca>
-         <CAAFQd5A8Y3C64NozqXjMDV0CQ5==dW9Y-6KtFigYFmO3EDd3+A@mail.gmail.com>
-         <f3b8c40fa84f9819959bf60cc9a1f4951bcda36a.camel@ndufresne.ca>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
+        Tue, 11 Feb 2020 11:24:38 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01BG2W58169327;
+        Tue, 11 Feb 2020 16:24:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=8KhVmZwN6F4dWziVKrI4JGlNBaP+UKS7RCQREi4lP3Y=;
+ b=vPR3la4evpb6xFLxXnrf6AxxpvMDgqC2MpU/cJeQB2RB8oWbP1ffdeJc6aTHVXA3oeu+
+ ns9iNJiKTybifTyME+VGkg7bYJpKUDRfk9t50XHlG86ULqDEvyBCMYnqe8nkuhIYVR3G
+ LrCz9dViuid8Qu6a9XoAnIH8N1jKET4XjRsusIVX+mdTkEN1RNr37AiV3d1oq9JjQ146
+ wcFV3lq/+WcPgsQr4fCaQncXm8jeFVnzjlxZr2fWjc/ZPMe/59RRQnBEh5o5jNI64DnM
+ sdsyGsnJFFO90FmcfqWDLAQfe0tXbvtba7WX4LcVTOQ0PWNIa60CNvu1Ww6pjSgqAlvf Uw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2y2jx64q3g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 11 Feb 2020 16:24:01 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01BGCRuq138219;
+        Tue, 11 Feb 2020 16:24:01 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2y26srqt22-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Feb 2020 16:24:00 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01BGNueX028061;
+        Tue, 11 Feb 2020 16:23:56 GMT
+Received: from [10.175.211.251] (/10.175.211.251)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 11 Feb 2020 08:23:55 -0800
+Subject: Re: [PATCH RFC 09/10] vfio/type1: Use follow_pfn for VM_FPNMAP VMAs
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-nvdimm@lists.01.org, Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Liran Alon <liran.alon@oracle.com>,
+        Nikita Leshenko <nikita.leshchenko@oracle.com>,
+        Barret Rhoden <brho@google.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+References: <20200110190313.17144-1-joao.m.martins@oracle.com>
+ <20200110190313.17144-10-joao.m.martins@oracle.com>
+ <20200207210831.GA31015@ziepe.ca>
+From:   Joao Martins <joao.m.martins@oracle.com>
+Message-ID: <98351044-a710-1d52-f030-022eec89d1d5@oracle.com>
+Date:   Tue, 11 Feb 2020 16:23:49 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200207210831.GA31015@ziepe.ca>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9528 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 bulkscore=0 spamscore=0 suspectscore=1 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002110116
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9528 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
+ priorityscore=1501 adultscore=0 phishscore=0 impostorscore=0 spamscore=0
+ bulkscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=1 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002110115
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On lun, 2020-02-10 at 23:16 -0500, Nicolas Dufresne wrote:
-> Le lundi 10 février 2020 à 11:45 +0900, Tomasz Figa a écrit :
-> > On Mon, Feb 10, 2020 at 4:52 AM Nicolas Dufresne <nicolas@ndufresne.ca>
-> > wrote:
-> > > Le mercredi 13 novembre 2019 à 14:56 -0300, Ezequiel Garcia a écrit :
-> > > > Hi all,
-> > > > 
-> > > > The Hantro G1 VPU post-processor block can be pipelined with
-> > > > the decoder hardware, allowing to perform operations such as
-> > > > color conversion, scaling, rotation, cropping, among others.
-> > > > 
-> > > > When the post-processor is enabled, the decoder hardware
-> > > > needs its own set of NV12 buffers (the native decoder format),
-> > > > and the post-processor is the owner of the CAPTURE buffers,
-> > > > allocated for the post-processed format.
-> > > > 
-> > > > This way, applications obtain post-processed
-> > > > (scaled, converted, etc) buffers transparently.
-> > > > 
-> > > > This feature is implemented by exposing the post-processed pixel
-> > > > formats on ENUM_FMT, ordered as "preferred pixelformat first":
-> > > > 
-> > > > v4l2-ctl -d 1 --list-formats
-> > > > ioctl: VIDIOC_ENUM_FMT
-> > > >       Type: Video Capture Multiplanar
-> > > > 
-> > > >       [0]: 'NV12' (Y/CbCr 4:2:0)
-> > > >       [1]: 'YUYV' (YUYV 4:2:2)
-> > > > 
-> > > > The order of preference in ENUM_FMT can be used as a hint
-> > > > by applications. This series updates the uAPI specification
-> > > > accordingly.
-> > > 
-> > > As I'm implementing this, I realize that there may me a gap in being
-> > > able to implement both IPP and non-IPP support in a generic framework.
-> > > Unlike the above comment, we for non-IPP decoder we cannot naively pick
-> > > the first format. In fact we parse the chroma and depth information
-> > > from the headers (like pps from H264), and we pick a matching pixel
-> > > format. This way, if we have a 10bit stream, and our IP supports 10bit,
-> > > we will pick a 10bit pixel formats, otherwise decoding will just fail.
-> > > 
-> > > None of this information is passed to the driver prior to the first
-> > > Request being made, so there is no way (as of current spec) that the
-> > > driver can validate this in try_fmt ahead of time. Unless I set picture
-> > > parameters without a request_fd for that purpose. If this is the way,
-> > > then we should document this.
-> > 
-> > +Alexandre Courbot
-> > 
-> > It was suggested in the very early RFC stage, but it looks like it
-> > didn't make it to the final spec.
-> > https://patchwork.kernel.org/patch/10583233/#22209555
+On 2/7/20 9:08 PM, Jason Gunthorpe wrote:
+> On Fri, Jan 10, 2020 at 07:03:12PM +0000, Joao Martins wrote:
+>> From: Nikita Leshenko <nikita.leshchenko@oracle.com>
+>>
+>> Unconditionally interpreting vm_pgoff as a PFN is incorrect.
+>>
+>> VMAs created by /dev/mem do this, but in general VM_PFNMAP just means
+>> that the VMA doesn't have an associated struct page and is being managed
+>> directly by something other than the core mmu.
+>>
+>> Use follow_pfn like KVM does to find the PFN.
+>>
+>> Signed-off-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
+>>  drivers/vfio/vfio_iommu_type1.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+>> index 2ada8e6cdb88..1e43581f95ea 100644
+>> +++ b/drivers/vfio/vfio_iommu_type1.c
+>> @@ -362,9 +362,9 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
+>>  	vma = find_vma_intersection(mm, vaddr, vaddr + 1);
+>>  
+>>  	if (vma && vma->vm_flags & VM_PFNMAP) {
+>> -		*pfn = ((vaddr - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
+>> -		if (is_invalid_reserved_pfn(*pfn))
+>> -			ret = 0;
+>> +		ret = follow_pfn(vma, vaddr, pfn);
+>> +		if (!ret && !is_invalid_reserved_pfn(*pfn))
+>> +			ret = -EOPNOTSUPP;
+>>  	}
 > 
-> Ok, maybe we should revive it, it would fill that gap. Again, only an
-> issue if you have a post processor. I'm still surprised we didn't
-> expose the IPP functions through the topology, it would make so much
-> sense to me, and I can make better code with that knowledge.
+> FWIW this existing code is a huge hack and a security problem.
 > 
-> I found while coding this, that even if it's more difficult,
-> classification of device by looking at the topology and the entity
-> functions is much nicer, less of a guess.
+> I'm not sure how you could be successfully using this path on actual
+> memory without hitting bad bugs?
 > 
-> Though, we lack some documentation (or clarification) for how to
-> properly handle formats, size and selection in order to configure the
-> IPP. Ezequiel was saying that we don't implement selection in Hanto, so
-> I guess the scaling is a bit ambiguous then in regard to coded/display
-> sizes. Though we pass a size to the OUTPUT side, so the driver can
-> always control a little bit.
+ATM I think this codepath is largelly hit at the moment for MMIO (GPU
+passthrough, or mdev). In the context of this patch, guest memory would be
+treated similarly meaning the device-dax backing memory wouldn't have a 'struct
+page' (as introduced in this series).
 
-Re-reading the "initialization process", it's actually still there:
-
-"Call VIDIOC_S_EXT_CTRLS() to set all the controls (parsed headers, etc.)
-required by the OUTPUT format to enumerate the CAPTURE formats."
-
-And then it suggest to use G_FMT to retreive the optimal format as selected by
-the driver. So I guess this is a false alarm. And we probably don't need to play
-with the subsampling to filter the formats, as the driver is expected to do so.
-
-So what could be improve, is have in the per-codec documentation the list of
-controls that are "required by the OUTPUT format to enumerate the CAPTURE
-formats.". Could just be a comment in the control doc so say, "this control is
-needed to allow enumerationg of the CAPTURE formats".
-
+> Fudamentally VFIO can't retain a reference to a page from within a VMA
+> without some kind of recount/locking/etc to allow the thing that put
+> the page there to know it is still being used (ie programmed in a
+> IOMMU) by VFIO.
 > 
-> > > Is this the intended way to negotiation IPP functions with the driver ?
-> > > 
-> > 
-> > In theory, if the userspace knows whether the stream is 4:2:0 or 4:2:2
-> > and 8-bit or 10-bit, it can still select the first format from the top
-> > that matches these properties.
+> Otherwise it creates use-after-free style security problems on the
+> page.
 > 
-> That's exactly what I do, I have a map of the formats and their
-> chroma/depth, and take the first one that match. If that fails, I just
-> fallback to the first one. It's something you need to do anyway, as we
-> prefer the native format first (even if there is an IPP).
-> 
-> > That's not how format handling in V4L2 works, though. ENUM_FMT is
-> > expected to return a list of valid formats and if we forget about the
-> > image processor for a moment, a stateless decoder would always return
-> > any possible format, including ones invalid for the stream.
-> > 
-> > Now back to the image processor, if it handles conversions from any to
-> > any format listed by ENUM_FMT, we kind of regain the V4L2 compliance,
-> > but if the conversions are limited, the above requirement still
-> > doesn't hold and we're not implementing V4L2 correctly.
-> > 
-> > Perhaps we can still amend the spec and require controls that
-> > determine the stream properties to be set before starting the
-> > streaming? I can imagine it could also help the driver filter out some
-> > unsupported streams early, before allocating buffers and attempting to
-> > decode.
-> 
-> I think it would make sense, so just to make sure, for H264 we could
-> set the V4L2_CID_MPEG_VIDEO_H264_SPS along with the OUTPUT format,
-> prior to CAPTURE enumeration.
-> 
-> > Best regards,
-> > Tomasz
-> > 
-> > > > When the application sets a pixel format other than NV12,
-> > > > the post-processor is transparently enabled.
-> > > > 
-> > > > Patch 1 is a cleanups needed to easier integrate the post-processor.
-> > > > Patch 2 introduces the post-processing support.
-> > > > Patch 3 updates the uAPI specification.
-> > > > 
-> > > > This is tested on RK3288 platforms with MPEG-2, VP8 and
-> > > > H264 streams, decoding to YUY2 surfaces. For now, this series
-> > > > is only adding support for NV12-to-YUY2 conversion.
-> > > > 
-> > > > Applies to media/master.
-> > > > 
-> > > > Future plans
-> > > > ------------
-> > > > 
-> > > > It seems to me that we should start moving this driver to use
-> > > > regmap-based access to registers. However, such move is out of scope
-> > > > and not entirely related to this post-processor enablement.
-> > > > 
-> > > > We'll work on that as follow-up patches.
-> > > > 
-> > > > Changelog
-> > > > ---------
-> > > > 
-> > > > Changes v3:
-> > > > 
-> > > > * After discussing with Hans and Tomasz during the media summit
-> > > > in ELCE, we decided to go back on the MC changes. The MC topology
-> > > > is now untouched. This means the series is now similar to v1,
-> > > > except we explicitly use the ENUM_FMT to hint about the post-processed
-> > > > formats.
-> > > > 
-> > > > Changes v2:
-> > > > 
-> > > > * The decoder->post-processor topology is now exposed
-> > > >   explicitly and applications need to configure the pipeline.
-> > > >   By default, the decoder is enabled and the post-processor
-> > > >   is disabled.
-> > > > 
-> > > > * RGB post-processing output has been dropped. We might
-> > > >   add this in the future, but for now, it seems it would
-> > > >   make the code more complex without a use-case in mind.
-> > > >   RGB is much more memory-consuming so less attractive
-> > > >   than YUV, and modern GPUs and display controllers support YUV.
-> > > > 
-> > > > * The post-processor implementation still supports RK3288
-> > > >   only. However, a generic register infrastructure is introduced
-> > > >   to make addition of other variants such as RK3399 really easy.
-> > > > 
-> > > > Ezequiel Garcia (3):
-> > > >   media: hantro: Cleanup format negotiation helpers
-> > > >   media: hantro: Support color conversion via post-processing
-> > > >   media: vidioc-enum-fmt.rst: clarify format preference
-> > > > 
-> > > >  .../media/uapi/v4l/vidioc-enum-fmt.rst        |   4 +-
-> > > >  drivers/staging/media/hantro/Makefile         |   1 +
-> > > >  drivers/staging/media/hantro/hantro.h         |  64 +++++++-
-> > > >  drivers/staging/media/hantro/hantro_drv.c     |   8 +-
-> > > >  .../staging/media/hantro/hantro_g1_h264_dec.c |   2 +-
-> > > >  .../media/hantro/hantro_g1_mpeg2_dec.c        |   2 +-
-> > > >  drivers/staging/media/hantro/hantro_g1_regs.h |  53 +++++++
-> > > >  .../staging/media/hantro/hantro_g1_vp8_dec.c  |   2 +-
-> > > >  drivers/staging/media/hantro/hantro_h264.c    |   6 +-
-> > > >  drivers/staging/media/hantro/hantro_hw.h      |  13 ++
-> > > >  .../staging/media/hantro/hantro_postproc.c    | 141 ++++++++++++++++++
-> > > >  drivers/staging/media/hantro/hantro_v4l2.c    | 105 ++++++++-----
-> > > >  drivers/staging/media/hantro/rk3288_vpu_hw.c  |  10 ++
-> > > >  13 files changed, 366 insertions(+), 45 deletions(-)
-> > > >  create mode 100644 drivers/staging/media/hantro/hantro_postproc.c
-> > > > 
+I take it you're referring to the past problems with long term page pinning +
+fsdax? Or you had something else in mind, perhaps related to your LSFMM topic?
 
+Here the memory can't be used by the kernel (and there's no struct page) except
+from device-dax managing/tearing/driving the pfn region (which is static and the
+underlying PFNs won't change throughout device lifetime), and vfio
+pinning/unpinning the pfns (which are refcounted against multiple map/unmaps);
+
+> This code needs to be deleted, not extended :(
+
+To some extent it isn't really an extension: the patch was just removing the
+assumption @vm_pgoff being the 'start pfn' on PFNMAP vmas. This is also
+similarly done by get_vaddr_frames().
+
+	Joao
