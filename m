@@ -2,210 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E5E91587D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 02:16:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 453691587CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 02:16:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbgBKBQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 20:16:51 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34715 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727120AbgBKBQu (ORCPT
+        id S1727505AbgBKBQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 20:16:13 -0500
+Received: from mail-il1-f197.google.com ([209.85.166.197]:40949 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727120AbgBKBQN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 20:16:50 -0500
-Received: by mail-pf1-f194.google.com with SMTP id i6so4607119pfc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 17:16:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=L94wnmuPGmPtklUH/qWzd8d0kQjfVjGh7Zgzyio4HMc=;
-        b=a/i9AzIFMsTZnIJp2DeLdmKOPd92z3kTLAKJiRmIsEeGS+/W49KEIPoYpMULLAtm+m
-         oCzvmHNTXf1B5Pj4FZylZ1OCH0xyENwVgrCY2Fajg7kBijc7TdlELC+gVzTXxbUlw3Tu
-         QytWBhTWb5ij7bRZuZY6bCTq2GD125uwgfFapFRVM1BZTVE9wj29rh4JZEAcmm4oF0Ad
-         eSs6UnIoXgeY6Ne1JJ6JZ8pnnFuVtFOnkTZYTjPJaKlaI3NOhL/xv2RhzoCzGuuODdiK
-         6AO8dqtMnhrecg5sUt6R6quaK8o7Sh0xXZh2ghXeBpmZN9JM3Y7+URUDtFJklSsyiKC1
-         HlhA==
+        Mon, 10 Feb 2020 20:16:13 -0500
+Received: by mail-il1-f197.google.com with SMTP id m18so8275196ill.7
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 17:16:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=L94wnmuPGmPtklUH/qWzd8d0kQjfVjGh7Zgzyio4HMc=;
-        b=X79PnPqvyFzETDHbse6RlvWEqTzL1myS4AchXUV+4xV5hMXg2tvXPUcyS8aX7ooeJV
-         y0rrMazUths2Tqk4LuEJVAx40hanRrF9Ms0TV3G1RfmsxtNNUHqubbg0E+w8C32z7ryA
-         6Uu4fQAlx0GssifkxN/tAy7u+rSRM8xS0Noc1o4Jiy/0mrfsj+FT2oir0C9muGV3ES4v
-         OtU/46/rNouMhW5YyQ3LzmGNrYblzkHOvos+ea5D7b0d0nzlwA54d+TrKpqJ12TStqB/
-         un0lI73+y/WQJxwZ1VtDS3nlI3fW1nZDCqdaNgXRWG/6cF+dDv0IEwpC7KWuCx5Vbn6w
-         nJAQ==
-X-Gm-Message-State: APjAAAWMca0HGalpWBZdjn6WbkK4ZojKPFtE4m9+0jbjRhOHKc77tdYA
-        /2WnjZJlAvqsmMw5OCqUksvOWQ==
-X-Google-Smtp-Source: APXvYqwNHPPj+04G7TT3812Rn18q0s53KRLsMjhjKXZtlA6OKi0UVTvUtXIPosZYeLnPthh3D0BOcw==
-X-Received: by 2002:aa7:820d:: with SMTP id k13mr4038374pfi.10.1581383809472;
-        Mon, 10 Feb 2020 17:16:49 -0800 (PST)
-Received: from ripper (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id k29sm1618869pfh.77.2020.02.10.17.16.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2020 17:16:48 -0800 (PST)
-Date:   Mon, 10 Feb 2020 17:16:01 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] remoteproc: qcom_q6v5_mss: Don't reassign mpss
- region on shutdown
-Message-ID: <20200211011601.GD3261042@ripper>
-References: <20200204062641.393949-1-bjorn.andersson@linaro.org>
- <20200204062641.393949-2-bjorn.andersson@linaro.org>
- <20200210230548.GA20652@xps15>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=C4ZSySAadciP/qy5lHe+8m4JJ/rKCTer5ZGKdDebbL0=;
+        b=XYXoOed/76eagGBrI4XuJa1fLAmhJ3JdLzrBX1DkInnRLNaRCIazdXlMVlTpOLskjk
+         6davurOAZNWaES+9D5NIIMQZfv1SGKDmlyDA169g8q+Q83I3oYcQZVVKYrbwOcL33sKJ
+         R1/9ebt4Pjxi0LVdW7/I7kOtq/HczHovLgjQAnhsKyCcfz6G3Mcb7XMKzQycoIqLL/jb
+         0nfsv2rC1zqpjRvLjZcdAvhlYmGIC+Xya6AHpNBDS5vOn2mBhtJSne3EW5VlrvYY5hIG
+         wAZ/vVgk0MUHn8kfHj+ExQSk7emgmaxI9YgdNFbQrqWjL9aKyiAoddORnIOCyHYZlYES
+         qXVg==
+X-Gm-Message-State: APjAAAXb1vnO88507bppga/WiWDEPbYCLlUT8fCpytmLNSJRShCkLGnM
+        kAvslEz4dwoiQcUm72iNhwX7qFEtZMN1n7QDEoDyFAA1PdQ6
+X-Google-Smtp-Source: APXvYqwsOT/OwXGXrX7P8JU//4vXFQ8QPjqEYzAvGCMjyLsMo6zisZL5EM4kfxLU0VJ/pqwzmXj/HXZ1oJjwLVRKdrIhVcb4VKKJ
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200210230548.GA20652@xps15>
+X-Received: by 2002:a6b:b206:: with SMTP id b6mr11661758iof.299.1581383772669;
+ Mon, 10 Feb 2020 17:16:12 -0800 (PST)
+Date:   Mon, 10 Feb 2020 17:16:12 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000610eb059e429abd@google.com>
+Subject: KASAN: slab-out-of-bounds Write in betop_probe
+From:   syzbot <syzbot+07efed3bc5a1407bd742@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
+        jikos@kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 10 Feb 15:05 PST 2020, Mathieu Poirier wrote:
+Hello,
 
-> Hi Bjorn,
-> 
-> On Mon, Feb 03, 2020 at 10:26:40PM -0800, Bjorn Andersson wrote:
-> > Trying to reclaim mpss memory while the mba is not running causes the
-> > system to crash on devices with security fuses blown, so leave it
-> > assigned to the remote on shutdown and recover it on a subsequent boot.
-> > 
-> > Fixes: 6c5a9dc2481b ("remoteproc: qcom: Make secure world call for mem ownership switch")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> > 
-> > Changes since v2:
-> > - The assignment of mpss memory back to Linux is rejected in the coredump case
-> >   on production devices, so check the return value of q6v5_xfer_mem_ownership()
-> >   before attempting to memcpy() the data.
-> > 
-> >  drivers/remoteproc/qcom_q6v5_mss.c | 23 +++++++++++++----------
-> >  1 file changed, 13 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> > index 471128a2e723..25c03a26bf88 100644
-> > --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> > +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> > @@ -887,11 +887,6 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
-> >  		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> >  	}
-> >  
-> > -	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
-> > -				      false, qproc->mpss_phys,
-> > -				      qproc->mpss_size);
-> > -	WARN_ON(ret);
-> > -
-> >  	q6v5_reset_assert(qproc);
-> >  
-> >  	q6v5_clk_disable(qproc->dev, qproc->reset_clks,
-> > @@ -981,6 +976,10 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
-> >  			max_addr = ALIGN(phdr->p_paddr + phdr->p_memsz, SZ_4K);
-> >  	}
-> >  
-> > +	/* Try to reset ownership back to Linux */
-> > +	q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, false,
-> > +				qproc->mpss_phys, qproc->mpss_size);
-> 
-> Would you mind adding more chatter here, something like what is mentioned in the
-> changelog?  That way I anyone trying to review this code doesn't have to suffer
-> through the same mental gymnastic. 
-> 
+syzbot found the following crash on:
 
-Sure thing, as this patch shows this dynamic wasn't clear - and this
-patch is based on my observations. With it we no longer crash the entire
-system by hitting a security violation during a crash, but there's still
-some details that I'm uncertain about.
+HEAD commit:    e5cd56e9 usb: gadget: add raw-gadget interface
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=1517fed9e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8cff427cc8996115
+dashboard link: https://syzkaller.appspot.com/bug?extid=07efed3bc5a1407bd742
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=147026b5e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1683b6b5e00000
 
-> > +
-> >  	mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
-> >  	qproc->mpss_reloc = mpss_reloc;
-> >  	/* Load firmware segments */
-> > @@ -1070,8 +1069,16 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
-> >  	void *ptr = rproc_da_to_va(rproc, segment->da, segment->size);
-> >  
-> >  	/* Unlock mba before copying segments */
-> > -	if (!qproc->dump_mba_loaded)
-> > +	if (!qproc->dump_mba_loaded) {
-> >  		ret = q6v5_mba_load(qproc);
-> > +		if (!ret) {
-> > +			/* Try to reset ownership back to Linux */
-> > +			ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
-> > +						      false,
-> > +						      qproc->mpss_phys,
-> > +						      qproc->mpss_size);
-> > +		}
-> 
-> I'm a bit puzzled here as to why a different reclaim strategy is needed.  It is
-> clear to me that if q6v5_mba_load() returns 0 then the MBA is running and we can
-> safely reclaim ownership of the memory.  But is it absolutely needed when we
-> know that 1) the MCU has crashed and 2) said memory will be reclaimed in
-> q6v5_mpss_load()?
-> 
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+07efed3bc5a1407bd742@syzkaller.appspotmail.com
 
-The ownership transfer here is a jump into secure world, which somehow
-together with the firmware running on the modem processor will update
-the access permissions for the mpss memory region.
+betop 0003:20BC:5500.0001: unknown main item tag 0x0
+betop 0003:20BC:5500.0001: hidraw0: USB HID v0.00 Device [HID 20bc:5500] on usb-dummy_hcd.0-1/input0
+==================================================================
+BUG: KASAN: slab-out-of-bounds in set_bit include/asm-generic/bitops/instrumented-atomic.h:28 [inline]
+BUG: KASAN: slab-out-of-bounds in betopff_init drivers/hid/hid-betopff.c:99 [inline]
+BUG: KASAN: slab-out-of-bounds in betop_probe+0x396/0x570 drivers/hid/hid-betopff.c:134
+Write of size 8 at addr ffff8881d4f43ac0 by task kworker/1:2/94
 
-As we enter this function the recovery handling in the core has just
-stopped the remote processor, so we know it's off. As such we must first
-boot the remote processor again, in order to reclaim the access to the
-mpss memory region.
+CPU: 1 PID: 94 Comm: kworker/1:2 Not tainted 5.5.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xef/0x16e lib/dump_stack.c:118
+ print_address_description.constprop.0.cold+0xd3/0x314 mm/kasan/report.c:374
+ __kasan_report.cold+0x37/0x77 mm/kasan/report.c:506
+ kasan_report+0xe/0x20 mm/kasan/common.c:641
+ check_memory_region_inline mm/kasan/generic.c:185 [inline]
+ check_memory_region+0x152/0x1c0 mm/kasan/generic.c:192
+ set_bit include/asm-generic/bitops/instrumented-atomic.h:28 [inline]
+ betopff_init drivers/hid/hid-betopff.c:99 [inline]
+ betop_probe+0x396/0x570 drivers/hid/hid-betopff.c:134
+ hid_device_probe+0x2be/0x3f0 drivers/hid/hid-core.c:2261
+ really_probe+0x290/0xac0 drivers/base/dd.c:551
+ driver_probe_device+0x223/0x350 drivers/base/dd.c:724
+ __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:831
+ bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:431
+ __device_attach+0x217/0x390 drivers/base/dd.c:897
+ bus_probe_device+0x1e4/0x290 drivers/base/bus.c:491
+ device_add+0x1459/0x1bf0 drivers/base/core.c:2487
+ hid_add_device drivers/hid/hid-core.c:2417 [inline]
+ hid_add_device+0x33c/0x9a0 drivers/hid/hid-core.c:2366
+ usbhid_probe+0xa81/0xfa0 drivers/hid/usbhid/hid-core.c:1386
+ usb_probe_interface+0x310/0x800 drivers/usb/core/driver.c:361
+ really_probe+0x290/0xac0 drivers/base/dd.c:551
+ driver_probe_device+0x223/0x350 drivers/base/dd.c:724
+ __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:831
+ bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:431
+ __device_attach+0x217/0x390 drivers/base/dd.c:897
+ bus_probe_device+0x1e4/0x290 drivers/base/bus.c:491
+ device_add+0x1459/0x1bf0 drivers/base/core.c:2487
+ usb_set_configuration+0xe47/0x17d0 drivers/usb/core/message.c:2023
+ generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+ usb_probe_device+0xaf/0x140 drivers/usb/core/driver.c:266
+ really_probe+0x290/0xac0 drivers/base/dd.c:551
+ driver_probe_device+0x223/0x350 drivers/base/dd.c:724
+ __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:831
+ bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:431
+ __device_attach+0x217/0x390 drivers/base/dd.c:897
+ bus_probe_device+0x1e4/0x290 drivers/base/bus.c:491
+ device_add+0x1459/0x1bf0 drivers/base/core.c:2487
+ usb_new_device.cold+0x540/0xcd0 drivers/usb/core/hub.c:2538
+ hub_port_connect drivers/usb/core/hub.c:5185 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5325 [inline]
+ port_event drivers/usb/core/hub.c:5471 [inline]
+ hub_event+0x21cb/0x4300 drivers/usb/core/hub.c:5553
+ process_one_work+0x94b/0x1620 kernel/workqueue.c:2264
+ worker_thread+0x96/0xe20 kernel/workqueue.c:2410
+ kthread+0x318/0x420 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
 
-New in this revision is the fact that this operation might actually be
-rejected (e.g. on end-user hardware).
+Allocated by task 94:
+ save_stack+0x1b/0x80 mm/kasan/common.c:72
+ set_track mm/kasan/common.c:80 [inline]
+ __kasan_kmalloc mm/kasan/common.c:515 [inline]
+ __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:488
+ kmalloc include/linux/slab.h:556 [inline]
+ kzalloc include/linux/slab.h:670 [inline]
+ hidraw_connect+0x4b/0x3e0 drivers/hid/hidraw.c:521
+ hid_connect+0x5c7/0xbb0 drivers/hid/hid-core.c:1937
+ hid_hw_start drivers/hid/hid-core.c:2033 [inline]
+ hid_hw_start+0xa2/0x130 drivers/hid/hid-core.c:2024
+ betop_probe+0xbc/0x570 drivers/hid/hid-betopff.c:128
+ hid_device_probe+0x2be/0x3f0 drivers/hid/hid-core.c:2261
+ really_probe+0x290/0xac0 drivers/base/dd.c:551
+ driver_probe_device+0x223/0x350 drivers/base/dd.c:724
+ __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:831
+ bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:431
+ __device_attach+0x217/0x390 drivers/base/dd.c:897
+ bus_probe_device+0x1e4/0x290 drivers/base/bus.c:491
+ device_add+0x1459/0x1bf0 drivers/base/core.c:2487
+ hid_add_device drivers/hid/hid-core.c:2417 [inline]
+ hid_add_device+0x33c/0x9a0 drivers/hid/hid-core.c:2366
+ usbhid_probe+0xa81/0xfa0 drivers/hid/usbhid/hid-core.c:1386
+ usb_probe_interface+0x310/0x800 drivers/usb/core/driver.c:361
+ really_probe+0x290/0xac0 drivers/base/dd.c:551
+ driver_probe_device+0x223/0x350 drivers/base/dd.c:724
+ __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:831
+ bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:431
+ __device_attach+0x217/0x390 drivers/base/dd.c:897
+ bus_probe_device+0x1e4/0x290 drivers/base/bus.c:491
+ device_add+0x1459/0x1bf0 drivers/base/core.c:2487
+ usb_set_configuration+0xe47/0x17d0 drivers/usb/core/message.c:2023
+ generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+ usb_probe_device+0xaf/0x140 drivers/usb/core/driver.c:266
+ really_probe+0x290/0xac0 drivers/base/dd.c:551
+ driver_probe_device+0x223/0x350 drivers/base/dd.c:724
+ __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:831
+ bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:431
+ __device_attach+0x217/0x390 drivers/base/dd.c:897
+ bus_probe_device+0x1e4/0x290 drivers/base/bus.c:491
+ device_add+0x1459/0x1bf0 drivers/base/core.c:2487
+ usb_new_device.cold+0x540/0xcd0 drivers/usb/core/hub.c:2538
+ hub_port_connect drivers/usb/core/hub.c:5185 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5325 [inline]
+ port_event drivers/usb/core/hub.c:5471 [inline]
+ hub_event+0x21cb/0x4300 drivers/usb/core/hub.c:5553
+ process_one_work+0x94b/0x1620 kernel/workqueue.c:2264
+ worker_thread+0x96/0xe20 kernel/workqueue.c:2410
+ kthread+0x318/0x420 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
 
-So we need to guard the memcpy below on either of these cases, as unless
-we've successfully booted the modem processor and gotten permission to
-read the mpss memory this operation will trigger a security violation
-and the device will reboot.
+Freed by task 12:
+ save_stack+0x1b/0x80 mm/kasan/common.c:72
+ set_track mm/kasan/common.c:80 [inline]
+ kasan_set_free_info mm/kasan/common.c:337 [inline]
+ __kasan_slab_free+0x117/0x160 mm/kasan/common.c:476
+ slab_free_hook mm/slub.c:1444 [inline]
+ slab_free_freelist_hook mm/slub.c:1477 [inline]
+ slab_free mm/slub.c:3024 [inline]
+ kfree+0xd5/0x300 mm/slub.c:3976
+ urb_destroy drivers/usb/core/urb.c:26 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ usb_free_urb.part.0+0xaf/0x110 drivers/usb/core/urb.c:96
+ usb_free_urb+0x1b/0x30 drivers/usb/core/urb.c:95
+ usb_start_wait_urb+0x1e8/0x4c0 drivers/usb/core/message.c:79
+ usb_internal_control_msg drivers/usb/core/message.c:101 [inline]
+ usb_control_msg+0x31c/0x4a0 drivers/usb/core/message.c:152
+ get_port_status drivers/usb/core/hub.c:570 [inline]
+ hub_ext_port_status+0x125/0x460 drivers/usb/core/hub.c:587
+ hub_port_status drivers/usb/core/hub.c:609 [inline]
+ hub_activate+0x51f/0x17c0 drivers/usb/core/hub.c:1112
+ process_one_work+0x94b/0x1620 kernel/workqueue.c:2264
+ worker_thread+0x96/0xe20 kernel/workqueue.c:2410
+ kthread+0x318/0x420 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
 
-> If so I think an explanation in the code is needed.
-> 
+The buggy address belongs to the object at ffff8881d4f43a00
+ which belongs to the cache kmalloc-192 of size 192
+The buggy address is located 0 bytes to the right of
+ 192-byte region [ffff8881d4f43a00, ffff8881d4f43ac0)
+The buggy address belongs to the page:
+page:ffffea000753d0c0 refcount:1 mapcount:0 mapping:ffff8881da002a00 index:0x0
+flags: 0x200000000000200(slab)
+raw: 0200000000000200 ffffea0007567200 0000000300000003 ffff8881da002a00
+raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
 
-Makes sense, I will formulate above explanation into a comment. As well
-as review the other callers of q6v5_xfer_mem_ownership().
+Memory state around the buggy address:
+ ffff8881d4f43980: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff8881d4f43a00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff8881d4f43a80: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
+                                           ^
+ ffff8881d4f43b00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff8881d4f43b80: 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc
+==================================================================
 
-> I also assume there is no way to know if the mba is running, hence not taking
-> any chance.  If that's the case it would be nice to add that to the comment in
-> q6v5_mpss_load().
-> 
 
-We know that we enter q6v5_mpss_load() with the modem processor just
-booted, but the memory assignment is there to handle the case where the
-mpss memory region for some reason was left in the hands on the modem.
-I will have to do some more digging to figure out if this is a valid
-scenario or not.
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Thanks for your review Mathieu!
-
-Regards,
-Bjorn
-
-> Thanks,
-> Mathieu
-> 
-> > +	}
-> >  
-> >  	if (!ptr || ret)
-> >  		memset(dest, 0xff, segment->size);
-> > @@ -1123,10 +1130,6 @@ static int q6v5_start(struct rproc *rproc)
-> >  	return 0;
-> >  
-> >  reclaim_mpss:
-> > -	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
-> > -						false, qproc->mpss_phys,
-> > -						qproc->mpss_size);
-> > -	WARN_ON(xfermemop_ret);
-> >  	q6v5_mba_reclaim(qproc);
-> >  
-> >  	return ret;
-> > -- 
-> > 2.23.0
-> > 
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
