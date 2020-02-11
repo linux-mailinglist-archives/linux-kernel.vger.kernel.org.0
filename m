@@ -2,187 +2,352 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82A411591ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 15:28:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 265851591F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 15:30:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729733AbgBKO2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 09:28:40 -0500
-Received: from mail-qk1-f173.google.com ([209.85.222.173]:46882 "EHLO
-        mail-qk1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728339AbgBKO2k (ORCPT
+        id S1729820AbgBKOaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 09:30:00 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:44759 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729474AbgBKOaA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 09:28:40 -0500
-Received: by mail-qk1-f173.google.com with SMTP id g195so10189322qke.13
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 06:28:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=gOs5a+mgKve4DnZzNf0lqUu/OQjXvBUZNfAzTYDDF2Y=;
-        b=joB7El9ADY1cF0Yk+MwRZHoeiuiwh5j8aAJY7MKimmI67xe9ldLwveNUuTqP38qbjY
-         9a2Y2EJ39JpHU0fM16QkHDa9liX/Smnge0/bzRsjhK334pOd0DvjIJOtZnI9gUElWKBL
-         1dTUtiTPWlPzBV9ZX2XGX/OGNaN6eMMVllWuIMxnokd3+ylFS3w282dtsYmuD+rf0539
-         UV2u5Wk/pjL4Gk+Q3CNdhaw0cC+3SlyvizVJePcfHb9mhv/p2kJupsawMuc3vEaca0Jf
-         DOPbCB+THOVl4wcrDPgy3QLCBt2/wwcxiqyjd630oBLcfUMHF8Lvb7tce6r3NvgbIsSZ
-         MXjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=gOs5a+mgKve4DnZzNf0lqUu/OQjXvBUZNfAzTYDDF2Y=;
-        b=Rgi2sVAhhLrvnoTU/FX2EzG7XOSryrY7D7kONl8zrOjHLLnoy6HQzvmTPbOWjjmOhN
-         Q16hsrZ0LW0JalccQi75hGUl27dAKgTggJ+eKYTxL35njCpOFc6WfZr02aE5D69AKpuG
-         AHVELbi1OJMkRrFfMJhO9nVcou51gkrp0EM36rr8enP7lkun+kVxqMnS2mG5HjoE8YDy
-         GjnSDfE1MTY2c+V2wYivBsfVjHUIBKxA3Ii61vIGTpemzukjbt6UA/0UFj+1v+pAuIP7
-         pa6zaHa2GjUro4S2aN+JKa9DSD5xyrAUSeRMPyXMJJ5HsJBLALAnk2Lpy0DVU2So0A54
-         WhqQ==
-X-Gm-Message-State: APjAAAXVPYP4o/gkvYMR5JoE79IxCkLYV1isdM8C9YgdLRRBMi+O65/0
-        yN5pNP5l/ZEp/es2W+Eqi3E=
-X-Google-Smtp-Source: APXvYqx1Y7n3hqbF0FyRaxCDLSdG5+1LUj4bmV+2b4sHNmefefkPfUy6o5R9e/p/Kz0GiwrNzck8VA==
-X-Received: by 2002:a37:de16:: with SMTP id h22mr2919327qkj.400.1581431317390;
-        Tue, 11 Feb 2020 06:28:37 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id m68sm2090912qke.17.2020.02.11.06.28.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 06:28:36 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 0B44040A7D; Tue, 11 Feb 2020 11:28:34 -0300 (-03)
-Date:   Tue, 11 Feb 2020 11:28:33 -0300
-To:     Marek Majkowski <marek@cloudflare.com>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Ivan Babrou <ivan@cloudflare.com>,
-        kernel-team <kernel-team@cloudflare.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, sashal@kernel.org,
-        Kenton Varda <kenton@cloudflare.com>
-Subject: Re: perf not picking up symbols for namespaced processes
-Message-ID: <20200211142833.GC32066@kernel.org>
-References: <CABWYdi1ZKR=jmKnjoJTik08Q9uJBvyZ4W0C29iPiUJ5ef1obvw@mail.gmail.com>
- <20191205123302.GA25750@kernel.org>
- <CABWYdi1+E7MQD8mC2xQfSP0m9_WFdx9mbLkw-36tJ8EtLaw2Jg@mail.gmail.com>
- <CAJPywTKC8=O0zmNm-W4OUENpoZfrbr1Ts38gQw2ZA608_u5wpw@mail.gmail.com>
- <20200204192657.GB1554679@krava>
- <CAJPywTKuu+RPsspAT4Z_243KvtchTe7p7c4DpvG07Nv5A67fnw@mail.gmail.com>
- <20200211134624.GA32066@kernel.org>
- <CAJPywTLH9=MzX_LYns3PGsY1z3ko_BijET4bn__7zcQf5+QHyA@mail.gmail.com>
+        Tue, 11 Feb 2020 09:30:00 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1581431399; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=tXbzOxT33xBNpwEltNBTeJiAoDFd0feVxR0V8ZWCyCQ=; b=JyHmesMTQKwRCjuA/1PDPxyMj3y6ILHUT9x/ShZIw6eooie9qoBYBD6DOph/M1FfMhjjdTSn
+ oCBz/7q/RwCZS13H2X9TJZ0ThkpdQK5Za4CBjMtlm09XLaW5fVeMhITioY5x5BJh52sXTkJH
+ 49CpgvbvWwqOLDdGMM6eix2IWbM=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e42ba62.7f1e7e0a2570-smtp-out-n03;
+ Tue, 11 Feb 2020 14:29:54 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 6D081C447A0; Tue, 11 Feb 2020 14:29:54 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from [10.206.25.140] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vbadigan)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C51E4C43383;
+        Tue, 11 Feb 2020 14:29:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C51E4C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
+Subject: Re: [PATCH V3] arm64: dts: qcom: sc7180: Add nodes for eMMC and SD
+ card
+To:     Shaik Sajida Bhanu <sbhanu@codeaurora.org>,
+        adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        robh+dt@kernel.org, mka@chromium.org
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <1578495250-10672-1-git-send-email-sbhanu@codeaurora.org>
+From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+Message-ID: <25a96f3f-c4cd-4ff1-3ce6-d894fb1c20fe@codeaurora.org>
+Date:   Tue, 11 Feb 2020 19:59:47 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJPywTLH9=MzX_LYns3PGsY1z3ko_BijET4bn__7zcQf5+QHyA@mail.gmail.com>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <1578495250-10672-1-git-send-email-sbhanu@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Feb 11, 2020 at 01:54:33PM +0000, Marek Majkowski escreveu:
-> On Tue, Feb 11, 2020 at 1:46 PM Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com> wrote:
-> > Em Tue, Feb 11, 2020 at 10:06:35AM +0000, Marek Majkowski escreveu:
-> > > On Tue, Feb 4, 2020 at 7:27 PM Jiri Olsa <jolsa@redhat.com> wrote:
-> > > > > 11913 openat(AT_FDCWD, "/proc/9512/ns/mnt", O_RDONLY) = 197
-> > > > > 11913 setns(197, CLONE_NEWNS) = 0
-> > > > > 11913 stat("/home/marek/bin/runsc-debug", 0x7fffffff8480) = -1 ENOENT
-> > > > > (No such file or directory)
-> > > > > 11913 setns(196, CLONE_NEWNS) = 0
+ping!
 
-> > > > could you guys please share more details on what you run exactly,
-> > > > and perhaps that change you mentioned?
-
-> > > I was debugging gvisor (runsc), which does execve(/proc/self/exe), and
-> > > then messes up with its mount namespace. The effect is that the binary
-> > > running doesn't exist in the mount namespace. This confuses perf,
-> > > which fails to load symbols for that process.
-
-> > > To my understanding, by default, perf looks for the binary in the
-> > > process mount namespace. In this case clearly the binary wasn't there.
-> > > Ivan wrote a rough patch [1], which I just confirmed works. The patch
-> > > attempts, after a failure to load binary from pids mount namespace, to
-> > > load binary from the default mount namespace (the one running perf).
-
-> > > [1] https://lkml.org/lkml/2019/12/5/878
-
-> > That is a fallback that works in this specific case, and, with a warning
-> > or some explicitely specified option makes perf work with this specific
-> > usecase, but either a warning ("fallback to root namespace binary
-> > /foo/bar") or the explicit option, please, is that what that patch does?
-
-> You got it right, custom patch, to do something custom (look up in top
-> mount ns) yet on failure. I'm not sure how to make it more generic.
-
-We have buildids in binaries:
-
-[acme@quaco ~]$ file /bin/bash
-/bin/bash: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=0cb50a07a621d02a0d2c7efec6743fddec845bfb, stripped
-[acme@quaco ~]$ file /lib64/libc-2.29.so
-/lib64/libc-2.29.so: ELF 64-bit LSB shared object, x86-64, version 1 (GNU/Linux), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=7ddecbbf9f22ec76c9e4a256fd1c06004a1907ce, for GNU/Linux 3.2.0, not stripped, too many notes (256)
-[acme@quaco ~]$
-
-We need to get this somehow from a given executable map, this comes and
-goes in situations like this :-\
-
-I.e. this info is in an ELF section:
-
-[acme@quaco ~]$ readelf -SW /bin/bash | grep build-id
-  [ 4] .note.gnu.build-id NOTE            0000000000000340 000340 000024 00   A  0   0  4
-[acme@quaco ~]$
-
-Somebody needs to associate that with that executable mmap at load time,
-so that perf gets it via PERF_RECORD_MMAP3 instead of having to try,
-optimistically, to get it from the binary (that may not be there when we
-try to read it, or maybe in some place like you describe in this
-message, or...) when generating its build-id perf.data header section:
-
-[acme@seventh ~]$ perf record stress-ng --cpu 1 --timeout 1s
-stress-ng: info:  [17622] dispatching hogs: 1 cpu
-stress-ng: info:  [17622] successful run completed in 1.02s
-[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 0.159 MB perf.data (4105 samples) ]
-[acme@seventh ~]$ perf buildid-list
-e9e69be73f7c5a4cee110ced52409371e95fe2a8 [kernel.kallsyms]
-7133e5dbdfae821a9bbe4ba5467e49f6cf166e1d /usr/bin/stress-ng
-bd5e36f101b175755c7943105390078dff596657 /usr/lib64/ld-2.29.so
-1e292b30223c69eff986710c62eda48c561d43ca [vdso]
-b8d7438178da8f84d89869addf6b5e36d356c555 /usr/lib64/libm-2.29.so
-7ddecbbf9f22ec76c9e4a256fd1c06004a1907ce /usr/lib64/libc-2.29.so
-[acme@seventh ~]$ file /usr/bin/stress-ng
-/usr/bin/stress-ng: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=7133e5dbdfae821a9bbe4ba5467e49f6cf166e1d, stripped, too many notes (256)
-[acme@seventh ~]$
- 
-> Furthermore, there is one more use case this patch doesn't support:
-> namely a situation when the binary is reachable in some mount
-> namespace, but not under sensible path. This can happen when we launch
-> a command under gvisor. Gvisor-sandbox runs under empty mount
-> namespace, the binary is delivered over 9p from gvisor-gofer process,
-> from potentially arbitrary path. In that scenario we have three mount
-> namespaces: the empty one running process, another one with access to
-> the binary, and host one.
- 
-> I have two ideas how to solve the symbol discovery here:
->  (a) give perf an explicit link (potentially including mount namespace
-> pid) to the binary
->  (b) supply perf with /tmp/perf-<pid>.map file with symbols, extracted
-> via some external helper.
-> 
-> I tried (b) but failed, I'm not sure how to produce perf-pid.map from
-> a proper binary, using basic tools like readelf.
-
-Have you looked at:
-
-[acme@quaco ~]$ perf report -h symfs
-
- Usage: perf report [<options>]
-
-        --symfs <directory>
-                          Look for files with symbols relative to this directory
-
-[acme@quaco ~]$
-
-?
-
-- Arnaldo
+On 1/8/2020 8:24 PM, Shaik Sajida Bhanu wrote:
+> From: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+>
+> Add sdhc instances for supporting eMMC and SD-card on sc7180.
+> The regulators should be in HPM state for proper functionality of
+> eMMC and SD-card. Updating corresponding regulators accordingly.
+>
+> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+> Signed-off-by: Shaik Sajida Bhanu <sbhanu@codeaurora.org>
+> ---
+> Changes since V2:
+> 	- Added cmdq register space and support-cqe flag.
+> 	- Incorporated review comments by Matthias Kaehlcke.
+>
+> Changes since V1:
+> 	- Updated the regulator min, max voltages as per
+> 	  eMMC/SD-card voltage requirements
+> 	- Enabled IOMMU for eMMC and SD-card.
+> 	- Added pull and drive strength to SD-card cd-gpio.
+> 	- Incorporated review comments by Matthias Kaehlcke.
+> ---
+>   arch/arm64/boot/dts/qcom/sc7180-idp.dts |  47 +++++++---
+>   arch/arm64/boot/dts/qcom/sc7180.dtsi    | 148 ++++++++++++++++++++++++++++++++
+>   2 files changed, 183 insertions(+), 12 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> index 388f50a..a790d82 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> +++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> @@ -7,6 +7,7 @@
+>   
+>   /dts-v1/;
+>   
+> +#include <dt-bindings/gpio/gpio.h>
+>   #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+>   #include "sc7180.dtsi"
+>   #include "pm6150.dtsi"
+> @@ -101,9 +102,9 @@
+>   		};
+>   
+>   		vreg_l12a_1p8: ldo12 {
+> -			regulator-min-microvolt = <1696000>;
+> -			regulator-max-microvolt = <1952000>;
+> -			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
+> +			regulator-min-microvolt = <1800000>;
+> +			regulator-max-microvolt = <1800000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l13a_1p8: ldo13 {
+> @@ -143,9 +144,9 @@
+>   		};
+>   
+>   		vreg_l19a_2p9: ldo19 {
+> -			regulator-min-microvolt = <2696000>;
+> -			regulator-max-microvolt = <3304000>;
+> -			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
+> +			regulator-min-microvolt = <2960000>;
+> +			regulator-max-microvolt = <2960000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   	};
+>   
+> @@ -189,9 +190,9 @@
+>   		};
+>   
+>   		vreg_l6c_2p9: ldo6 {
+> -			regulator-min-microvolt = <2696000>;
+> -			regulator-max-microvolt = <3304000>;
+> -			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
+> +			regulator-min-microvolt = <1800000>;
+> +			regulator-max-microvolt = <2950000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l7c_3p0: ldo7 {
+> @@ -207,9 +208,9 @@
+>   		};
+>   
+>   		vreg_l9c_2p9: ldo9 {
+> -			regulator-min-microvolt = <2952000>;
+> -			regulator-max-microvolt = <3304000>;
+> -			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
+> +			regulator-min-microvolt = <2960000>;
+> +			regulator-max-microvolt = <2960000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l10c_3p3: ldo10 {
+> @@ -254,6 +255,28 @@
+>   	status = "okay";
+>   };
+>   
+> +&sdhc_1 {
+> +	status = "okay";
+> +
+> +	pinctrl-names = "default", "sleep";
+> +	pinctrl-0 = <&sdc1_on>;
+> +	pinctrl-1 = <&sdc1_off>;
+> +	vmmc-supply = <&vreg_l19a_2p9>;
+> +	vqmmc-supply = <&vreg_l12a_1p8>;
+> +};
+> +
+> +&sdhc_2 {
+> +	status = "okay";
+> +
+> +	pinctrl-names = "default","sleep";
+> +	pinctrl-0 = <&sdc2_on>;
+> +	pinctrl-1 = <&sdc2_off>;
+> +	vmmc-supply  = <&vreg_l9c_2p9>;
+> +	vqmmc-supply = <&vreg_l6c_2p9>;
+> +
+> +	cd-gpios = <&tlmm 69 GPIO_ACTIVE_LOW>;
+> +};
+> +
+>   &uart3 {
+>   	status = "okay";
+>   };
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> index 3676bfd..525bc02 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> @@ -226,6 +226,33 @@
+>   			};
+>   		};
+>   
+> +		sdhc_1: sdhci@7c4000 {
+> +			compatible = "qcom,sc7180-sdhci", "qcom,sdhci-msm-v5";
+> +			reg = <0 0x7c4000 0 0x1000>,
+> +				<0 0x07c5000 0 0x1000>;
+> +			reg-names = "hc_mem", "cqhci_mem";
+> +
+> +			iommus = <&apps_smmu 0x60 0x0>;
+> +			interrupts = <GIC_SPI 641 IRQ_TYPE_LEVEL_HIGH>,
+> +					<GIC_SPI 644 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "hc_irq", "pwr_irq";
+> +
+> +			clocks = <&gcc GCC_SDCC1_APPS_CLK>,
+> +					<&gcc GCC_SDCC1_AHB_CLK>;
+> +			clock-names = "core", "iface";
+> +
+> +			bus-width = <8>;
+> +			non-removable;
+> +			supports-cqe;
+> +
+> +			mmc-ddr-1_8v;
+> +			mmc-hs200-1_8v;
+> +			mmc-hs400-1_8v;
+> +			mmc-hs400-enhanced-strobe;
+> +
+> +			status = "disabled";
+> +		};
+> +
+>   		qupv3_id_0: geniqup@8c0000 {
+>   			compatible = "qcom,geni-se-qup";
+>   			reg = <0 0x008c0000 0 0x6000>;
+> @@ -929,6 +956,127 @@
+>   					function = "qup15";
+>   				};
+>   			};
+> +
+> +			sdc1_on: sdc1-on {
+> +				pinconf-clk {
+> +					pins = "sdc1_clk";
+> +					bias-disable;
+> +					drive-strength = <16>;
+> +				};
+> +
+> +				pinconf-cmd {
+> +					pins = "sdc1_cmd";
+> +					bias-pull-up;
+> +					drive-strength = <10>;
+> +				};
+> +
+> +				pinconf-data {
+> +					pins = "sdc1_data";
+> +					bias-pull-up;
+> +					drive-strength = <10>;
+> +				};
+> +
+> +				pinconf-rclk {
+> +					pins = "sdc1_rclk";
+> +					bias-pull-down;
+> +				};
+> +			};
+> +
+> +			sdc1_off: sdc1-off {
+> +				pinconf-clk {
+> +					pins = "sdc1_clk";
+> +					bias-disable;
+> +					drive-strength = <2>;
+> +				};
+> +
+> +				pinconf-cmd {
+> +					pins = "sdc1_cmd";
+> +					bias-pull-up;
+> +					drive-strength = <2>;
+> +				};
+> +
+> +				pinconf-data {
+> +					pins = "sdc1_data";
+> +					bias-pull-up;
+> +					drive-strength = <2>;
+> +				};
+> +
+> +				pinconf-rclk {
+> +					pins = "sdc1_rclk";
+> +					bias-pull-down;
+> +				};
+> +			};
+> +
+> +			sdc2_on: sdc2-on {
+> +				pinconf-clk {
+> +					pins = "sdc2_clk";
+> +					bias-disable;
+> +					drive-strength = <16>;
+> +				};
+> +
+> +				pinconf-cmd {
+> +					pins = "sdc2_cmd";
+> +					bias-pull-up;
+> +					drive-strength = <10>;
+> +				};
+> +
+> +				pinconf-data {
+> +					pins = "sdc2_data";
+> +					bias-pull-up;
+> +					drive-strength = <10>;
+> +				};
+> +
+> +				pinconf-sd-cd {
+> +					pins = "gpio69";
+> +					bias-pull-up;
+> +					drive-strength = <2>;
+> +				};
+> +			};
+> +
+> +			sdc2_off: sdc2-off {
+> +				pinconf-clk {
+> +					pins = "sdc2_clk";
+> +					bias-disable;
+> +					drive-strength = <2>;
+> +				};
+> +
+> +				pinconf-cmd {
+> +					pins = "sdc2_cmd";
+> +					bias-pull-up;
+> +					drive-strength = <2>;
+> +				};
+> +
+> +				pinconf-data {
+> +					pins = "sdc2_data";
+> +					bias-pull-up;
+> +					drive-strength = <2>;
+> +				};
+> +
+> +				pinconf-sd-cd {
+> +					pins = "gpio69";
+> +					bias-disable;
+> +					drive-strength = <2>;
+> +				};
+> +			};
+> +		};
+> +
+> +		sdhc_2: sdhci@8804000 {
+> +			compatible = "qcom,sc7180-sdhci", "qcom,sdhci-msm-v5";
+> +			reg = <0 0x08804000 0 0x1000>;
+> +			reg-names = "hc_mem";
+> +
+> +			iommus = <&apps_smmu 0x80 0>;
+> +			interrupts = <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
+> +					<GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "hc_irq", "pwr_irq";
+> +
+> +			clocks = <&gcc GCC_SDCC2_APPS_CLK>,
+> +					<&gcc GCC_SDCC2_AHB_CLK>;
+> +			clock-names = "core", "iface";
+> +
+> +			bus-width = <4>;
+> +
+> +			status = "disabled";
+>   		};
+>   
+>   		qspi: spi@88dc000 {
