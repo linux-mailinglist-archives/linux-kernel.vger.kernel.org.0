@@ -2,261 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A33A158665
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 01:04:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5D6515866B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 01:08:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbgBKAEK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 19:04:10 -0500
-Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:52275 "EHLO
-        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727516AbgBKAEK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 19:04:10 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.west.internal (Postfix) with ESMTP id 30ABA664;
-        Mon, 10 Feb 2020 19:04:08 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 10 Feb 2020 19:04:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=+YWviiEypY4/uSM7a/KOZGTlyXo
-        Sv+afDb7oMnLU4Ew=; b=MZYF0oN+qiSGhEtb1doYqf263EKGpRuUZQ6vmRnGSJY
-        +LnaukjCb+JPyKVzeqBqFDSL4Ze5UGigIJe7GkEbPVF2PAJ1hZin2Zb2aAKaRbgY
-        uIicwBeblBGJF5GHf7YaN26mwCMCUqEBILPaVW2eyHPWgAjt+uau49tEwjs2kDAw
-        +klTO0G95XTkcryioGbN/U7iLAbPXrIrue/LznK9A+tMk2EK8ah3FNxw3cZI2ETv
-        4azPneN9A6F1V2fhG3/DCFcz/vrmFVXlwQs4TEylPEK7Q64Y874i+Sy9BIrHkRCT
-        jhsnV+Zw4r7QcrnR8OzT6YlTHHP8eb6b9eqS/KsfLqw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=+YWvii
-        EypY4/uSM7a/KOZGTlyXoSv+afDb7oMnLU4Ew=; b=LMi7uQsdhZcpFyxYXa4hPx
-        Xx8GnZwxIZO+lTki/ZSVbZRlCb72kNRLIAiH1THDEGfjH92d2pge0rPnb798ffFu
-        oWo0psgjieDdbX9n+6IRUzeyJlkcTbMuqPVjt+jtlQFqji2MXH6ygvWMNPpZCTE5
-        c9nJUk5AbFqraHXBwhqv+wQNoo5VgpuABbDvS5amB7uvNdJKEFRoxzQucSxRSM0T
-        phP7LWBr3SmqcT1VrPWdy2gvMXmJa9m/zwgdn6b8Ls8zKXhwIUZsLvjdtfJPl6o2
-        IQW3bwLJMREK8FNUyQ71ExKzfPnss9f5Bfqr0k6FSTdts53PaO+StUn1ezJkRU7Q
-        ==
-X-ME-Sender: <xms:du9BXrjrEmO6EdnJ_pc7WI-NfG5m8OGt-ycdBihJj8Ja4VmZPwMncQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedriedvgdduiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughrvghs
-    ucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecuffhomhgrih
-    hnpehkvghrnhgvlhdrohhrghenucfkphepieejrdduiedtrddvudejrddvhedtnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvghsse
-    grnhgrrhgriigvlhdruggv
-X-ME-Proxy: <xmx:du9BXsSimq3cbHRr3nc7ziO8uEVPm-gCoNUp0Sc3HNWbBnhCGcXD7w>
-    <xmx:du9BXmFSbp83JHg_MPLSAqletsvqFPURC73kAGM22v6nxALTg7iZcA>
-    <xmx:du9BXslCZx5yOxfoh1xo5J6slwBt3PXipUO1qeaFCyK4aloLpYHYaQ>
-    <xmx:d-9BXrMAhFwi34YIb3KXjcE38Y_2CmGLQ_gAFji5DgsVihsWlPpNJRDrZu0>
-Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5A45830606FB;
-        Mon, 10 Feb 2020 19:04:06 -0500 (EST)
-Date:   Mon, 10 Feb 2020 16:04:05 -0800
-From:   Andres Freund <andres@anarazel.de>
-To:     Dave Chinner <david@fromorbit.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, willy@infradead.org,
-        dhowells@redhat.com, hch@infradead.org, jack@suse.cz,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH v3 0/3] vfs: have syncfs() return error when there are
- writeback errors
-Message-ID: <20200211000405.5fohxgpt554gmnhu@alap3.anarazel.de>
-References: <20200207170423.377931-1-jlayton@kernel.org>
- <20200207205243.GP20628@dread.disaster.area>
- <20200207212012.7jrivg2bvuvvful5@alap3.anarazel.de>
- <20200210214657.GA10776@dread.disaster.area>
+        id S1727579AbgBKAIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 19:08:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58446 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727490AbgBKAIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 19:08:18 -0500
+Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6FA220715;
+        Tue, 11 Feb 2020 00:08:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581379698;
+        bh=+3hiyGuKOYyaqXG4pIEL/1L3LLikzfXOz15j+Jhb6pM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=ULwi5x7ggKtgzEzf7EHCkIEFJUx5je94d+AcEN7bFUkBdWJHASfoZODfJ8zuYDdw5
+         psQNybyCNK+qFSp5SBPofHsotsJXkWqCCgEWz+gmLpGvv7RrCbmJoTOJS/QfsQfALF
+         PAYTaaJIYdLeHEAffeYz+JvlLb+z09dTLHD9zM9g=
+Date:   Mon, 10 Feb 2020 18:08:16 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Stuart Hayes <stuart.w.hayes@gmail.com>
+Cc:     Austin Bolen <austin_bolen@dell.com>, keith.busch@intel.com,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lukas@wunner.de,
+        Libor Pechacek <lpechacek@suse.cz>
+Subject: Re: [PATCH v4 0/3] PCI: pciehp: Do not turn off slot if presence
+ comes up after link
+Message-ID: <20200211000816.GA89075@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200210214657.GA10776@dread.disaster.area>
+In-Reply-To: <20191025190047.38130-1-stuart.w.hayes@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+[+cc Libor (thanks for the ping!)]
 
-(sorry if somebody got this twice)
-
-David added you, because there's discussion about your notify work
-below.
-
-On 2020-02-11 08:46:57 +1100, Dave Chinner wrote:
-> On Fri, Feb 07, 2020 at 01:20:12PM -0800, Andres Freund wrote:
-> > Hi,
-> > 
-> > On 2020-02-08 07:52:43 +1100, Dave Chinner wrote:
-> > > On Fri, Feb 07, 2020 at 12:04:20PM -0500, Jeff Layton wrote:
-> > > > You're probably wondering -- Where are v1 and v2 sets?
-> > 
-> > > > The basic idea is to track writeback errors at the superblock level,
-> > > > so that we can quickly and easily check whether something bad happened
-> > > > without having to fsync each file individually. syncfs is then changed
-> > > > to reliably report writeback errors, and a new ioctl is added to allow
-> > > > userland to get at the current errseq_t value w/o having to sync out
-> > > > anything.
-> > > 
-> > > So what, exactly, can userspace do with this error? It has no idea
-> > > at all what file the writeback failure occurred on or even
-> > > what files syncfs() even acted on so there's no obvious error
-> > > recovery that it could perform on reception of such an error.
-> > 
-> > Depends on the application.  For e.g. postgres it'd to be to reset
-> > in-memory contents and perform WAL replay from the last checkpoint.
+On Fri, Oct 25, 2019 at 03:00:44PM -0400, Stuart Hayes wrote:
+> In older PCIe specs, PDS (presence detect) would come up when the
+> "in-band" presence detect pin connected, and would be up before DLLLA
+> (link active).
 > 
-> What happens if a user runs 'sync -f /path/to/postgres/data' instead
-> of postgres? All the writeback errors are consumed at that point by
-> reporting them to the process that ran syncfs()...
-
-We'd have to keep an fd open from *before* we start durable operations,
-which has a sampled errseq_t from before we rely on seeing errors.
-
-
-> > Due to various reasons* it's very hard for us (without major performance
-> > and/or reliability impact) to fully guarantee that by the time we fsync
-> > specific files we do so on an old enough fd to guarantee that we'd see
-> > the an error triggered by background writeback.  But keeping track of
-> > all potential filesystems data resides on (with one fd open permanently
-> > for each) and then syncfs()ing them at checkpoint time is quite doable.
+> In PCIe 4.0 (as an ECN) and in PCIe 5.0, there is a new bit to show if
+> in-band presence detection can be disabled for the slot, and another bit
+> that disables it--and a recommendation that it should be disabled if it
+> can be. In addition, certain OEMs disable in-band presence detection
+> without implementing these bits.
 > 
-> Oh, you have to keep an fd permanently open to every superblock that
-> application holds data on so that errors detected by other users of
-> that filesystem are also reported to the application?
+> This means it is possible to get a "card present" interrupt after the
+> link is up and the driver is loaded.  This causes an erroneous removal
+> of the device driver, followed by an immediate re-probing.
+> 
+> This patch set defines these new bits, uses them to disable in-band
+> presence detection if it can be, waits for PDS to go up if in-band
+> presence detection is disabled, and adds a DMI table that will let us
+> know if we should assume in-band presence is disabled on a system.
+> 
+> The first two patches in this set come from a patch set that was
+> submitted but not accepted many months ago by Alexandru Gagniuc [1].
+> The first is unmodified, the second has the commit message and timeout 
+> modified.
+> 
+> [1] https://patchwork.kernel.org/cover/10909167/
+>     [v3,0/4] PCI: pciehp: Do not turn off slot if presence comes up after link
+> 
+> v2:
+> - modify loop in pcie_wait_for_presence to do..while
+> 
+> v3:
+> - remove unused variable declaration
+> - modify text of warning message
+> 
+> v4:
+> - remove "!!" boolean conversion in an "if" condition for readability
+> - add explanation comment in dmi table
+> 
+> Alexandru Gagniuc (2):
+>   PCI: pciehp: Add support for disabling in-band presence
+>   PCI: pciehp: Wait for PDS if in-band presence is disabled
+> 
+> Stuart Hayes (1):
+>   PCI: pciehp: Add dmi table for in-band presence disabled
+> 
+>  drivers/pci/hotplug/pciehp.h     |  1 +
+>  drivers/pci/hotplug/pciehp_hpc.c | 50 +++++++++++++++++++++++++++++++-
+>  include/uapi/linux/pci_regs.h    |  2 ++
+>  3 files changed, 52 insertions(+), 1 deletion(-)
 
-Right
+I added the spec reference to the 1/3 commit log, tried to make the
+tweaks Lukas suggested (interdiff below), used ctrl_info() instead of
+pci_info() (I would actually like to change the whole driver to use
+pci_info(), but better to be consistent for now), and applied to
+pci/hotplug for v5.7.
 
-Currently it's much worse (you probably now?):
+Somebody should also update lspci to:
 
-Without error reporting capabilities in syncfs or such you have to keep
-an fd open to *every* single inode you want to reliably get errors
-for. Fds have an errseq_t to keep track of which errors have been seen
-by that fd, so if you have one open from *before* an error is triggered,
-you can be sure to detect that. But if the fd is not guaranteed to be
-old enough you can hit two cases:
+  - Do something with DevCap AttnBtn, AttnInd, PwrInd to indicate that
+    they were only defined for PCIe r1.0 and have been explicitly
+    undefined since then.  If there's a way to identify those 1.0
+    devices and only decode those fields for 1.0, that would be nice.
 
-1) Some other application actually sees an error, address_space->wb_err
-   is marked ERRSEQ_SEEN. Any new fd will not see a report the problem
-   anymore.
-2) The inode with the error gets evicted (memory pressure on a database
-   server isn't rare) while there is no fd open. Nobody might see the
-   error.
+  - Add SltCap2 and SltCtrl2 decoding.
 
-If there were a reliable (i.e. it may not wrap around or such) error
-counter available *somewhere*, we could just keep track of that, instead
-of actually needing an "old" open fd in the right process.
+Speak up if you plan to do this so we don't duplicate effort.
 
+Bjorn
 
-> This seems like a fairly important requirement for applications to
-> ensure this error reporting is "reliable" and that certainly wasn't
-> apparent from the patches or their description.  i.e. the API has an
-> explicit userspace application behaviour requirement for reliable
-> functioning, and that was not documented.  "we suck at APIs" and all
-> that..
-
-Yup.
-
-
-> It also seems to me as useful only to applications that have a
-> "rollback and replay" error recovery mechanism. If the application
-> doesn't have the ability to go back in time to before the
-> "unfindable" writeback error occurred, then this error is largely
-> useless to those applications because they can't do anything with
-> it, and so....
-
-That's a pretty common thing these days for applications that actually
-care about data to some degree. Either they immediately f[data]sync
-after writing, or they use some form of storage that has journalling
-capabilities. Which e.g. sqlite provides for the myriad of cases that
-don't want a separate server.
-
-And even if they can't recover from the error, there's a huge difference
-between not noticing that shit has hit the fan and happily continuing to
-accept further data , and telling the user that something has gone wrong
-with data integrity without details.
-
-
-> .... most applications will still require users to scrape their
-> logs to find out what error actually occurred. IOWs, we haven't
-> really changed the status quo with this new mechanism.
-
-I think there's a huge practical difference between having to do so in
-case there was an actual error (on the relevant FSs), and having to do
-so continually.
-
-
-> FWIW, explicit userspace error notifications for data loss events is
-> one of the features that David Howell's generic filesystem
-> notification mechanism is intended to provide.  Hence I'm not sure
-> that there's a huge amount of value in providing a partial solution
-> that only certain applications can use when there's a fully generic
-> mechanism for error notification just around the corner.
-
-Interesting. I largely missed that work, unfortunately. It's hard to
-keep up with all kernel things, while also maintaining / developing an
-RDBMS :/
-
-I assume the last state that includes the superblock layer stuff is at
-https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=notifications
-whereas there's a newer
-https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=notifications-core
-not including that. There do seem to be some significant changes between
-the two.
-
-As far as I can tell the superblock based stuff does *not* actually
-report any errors yet (contrast to READONLY, EDQUOT). Is the plan here
-to include writeback errors as well? Or just filesystem metadata/journal
-IO?
-
-I don't think that block layer notifications would be sufficient for an
-individual userspace application's data integrity purposes? For one,
-it'd need to map devices to relevant filesystems afaictl. And there's
-also errors above the block layer.
-
-
-Based on skimming the commits in those two trees, I'm not quite sure I
-understand what the permission model will be for accessing the
-notifications will be? Seems anyone, even within a container or
-something, will see blockdev errors from everywhere?  The earlier
-superblock support (I'm not sure I like that name btw, hard to
-understand for us userspace folks), seems to have required exec
-permission, but nothing else.
-
-For it to be usable for integrity purposes delivery has to be reliable
-and there needs to be a clear ordering, in the sense that reading
-notification needs to return all errors that occured timewise before the
-last pending notification has been read. Looks like that's largely the
-case, although I'm a bit scared after seeing:
-
-+void __post_watch_notification(struct watch_list *wlist,
-+			       struct watch_notification *n,
-+			       const struct cred *cred,
-+			       u64 id)
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index ae0108b92084..469873b44a8e 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -284,7 +284,7 @@ static void pcie_wait_for_presence(struct pci_dev *pdev)
+ 		timeout -= 10;
+ 	} while (timeout > 0);
+ 
+-	pci_info(pdev, "Timeout waiting for Presence Detect state to be set\n");
++	ctrl_info(ctrl, "Timeout waiting for Presence Detect\n");
+ }
+ 
+ int pciehp_check_link_status(struct controller *ctrl)
+@@ -921,6 +921,16 @@ struct controller *pcie_init(struct pcie_device *dev)
+ 	ctrl->state = list_empty(&subordinate->devices) ? OFF_STATE : ON_STATE;
+ 	up_read(&pci_bus_sem);
+ 
++	pcie_capability_read_dword(pdev, PCI_EXP_SLTCAP2, &slot_cap2);
++	if (slot_cap2 & PCI_EXP_SLTCAP2_IBPD) {
++		pcie_write_cmd_nowait(ctrl, PCI_EXP_SLTCTL_IBPD_DISABLE,
++				      PCI_EXP_SLTCTL_IBPD_DISABLE);
++		ctrl->inband_presence_disabled = 1;
++	}
 +
-+		if (security_post_notification(watch->cred, cred, n) < 0)
-+			continue;
++	if (dmi_first_match(inband_presence_disabled_dmi_table))
++		ctrl->inband_presence_disabled = 1;
 +
-
-if an LSM module just decides to hide notifications that relied upon for
-integrity, we'll be in trouble.
-
-
-> > I'm not sure it makes sense to
-> > expose the errseq_t bits straight though - seems like it'd
-> > enshrine them in userspace ABI too much?
-> 
-> Even a little is way too much. Userspace ABI needs to be completely
-> independent of the kernel internal structures and implementation.
-> This is basic "we suck at APIs 101" stuff...
-
-Well, if it were just a counter of errors that gets stuck at some well
-defined max, it seems like it'd be ok. But I agree that it'd not be the
-best possible interface, and that the notify API seems like it could
-turn into that.
-
-Greetings,
-
-Andres Freund
+ 	/* Check if Data Link Layer Link Active Reporting is implemented */
+ 	pcie_capability_read_dword(pdev, PCI_EXP_LNKCAP, &link_cap);
+ 
+@@ -930,7 +940,7 @@ struct controller *pcie_init(struct pcie_device *dev)
+ 		PCI_EXP_SLTSTA_MRLSC | PCI_EXP_SLTSTA_CC |
+ 		PCI_EXP_SLTSTA_DLLSC | PCI_EXP_SLTSTA_PDC);
+ 
+-	ctrl_info(ctrl, "Slot #%d AttnBtn%c PwrCtrl%c MRL%c AttnInd%c PwrInd%c HotPlug%c Surprise%c Interlock%c NoCompl%c LLActRep%c%s\n",
++	ctrl_info(ctrl, "Slot #%d AttnBtn%c PwrCtrl%c MRL%c AttnInd%c PwrInd%c HotPlug%c Surprise%c Interlock%c NoCompl%c IbPresDis%c LLActRep%c%s\n",
+ 		(slot_cap & PCI_EXP_SLTCAP_PSN) >> 19,
+ 		FLAG(slot_cap, PCI_EXP_SLTCAP_ABP),
+ 		FLAG(slot_cap, PCI_EXP_SLTCAP_PCP),
+@@ -941,19 +951,10 @@ struct controller *pcie_init(struct pcie_device *dev)
+ 		FLAG(slot_cap, PCI_EXP_SLTCAP_HPS),
+ 		FLAG(slot_cap, PCI_EXP_SLTCAP_EIP),
+ 		FLAG(slot_cap, PCI_EXP_SLTCAP_NCCS),
++		ctrl->inband_presence_disabled,
+ 		FLAG(link_cap, PCI_EXP_LNKCAP_DLLLARC),
+ 		pdev->broken_cmd_compl ? " (with Cmd Compl erratum)" : "");
+ 
+-	pcie_capability_read_dword(pdev, PCI_EXP_SLTCAP2, &slot_cap2);
+-	if (slot_cap2 & PCI_EXP_SLTCAP2_IBPD) {
+-		pcie_write_cmd_nowait(ctrl, PCI_EXP_SLTCTL_IBPD_DISABLE,
+-				      PCI_EXP_SLTCTL_IBPD_DISABLE);
+-		ctrl->inband_presence_disabled = 1;
+-	}
+-
+-	if (dmi_first_match(inband_presence_disabled_dmi_table))
+-		ctrl->inband_presence_disabled = 1;
+-
+ 	/*
+ 	 * If empty slot's power status is on, turn power off.  The IRQ isn't
+ 	 * requested yet, so avoid triggering a notification with this command.
+diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+index b464d2f76513..f9701410d3b5 100644
+--- a/include/uapi/linux/pci_regs.h
++++ b/include/uapi/linux/pci_regs.h
+@@ -681,7 +681,7 @@
+ #define PCI_EXP_LNKSTA2		50	/* Link Status 2 */
+ #define PCI_CAP_EXP_ENDPOINT_SIZEOF_V2	52	/* v2 endpoints with link end here */
+ #define PCI_EXP_SLTCAP2		52	/* Slot Capabilities 2 */
+-#define  PCI_EXP_SLTCAP2_IBPD	0x0001	/* In-band PD Disable Supported */
++#define  PCI_EXP_SLTCAP2_IBPD	0x00000001 /* In-band PD Disable Supported */
+ #define PCI_EXP_SLTCTL2		56	/* Slot Control 2 */
+ #define PCI_EXP_SLTSTA2		58	/* Slot Status 2 */
+ 
