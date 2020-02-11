@@ -2,98 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 979BE159B60
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 22:42:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 945E5159B86
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 22:45:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbgBKVmc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 16:42:32 -0500
-Received: from mo4-p04-ob.smtp.rzone.de ([85.215.255.122]:12041 "EHLO
-        mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727682AbgBKVlz (ORCPT
+        id S1727604AbgBKVpX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 16:45:23 -0500
+Received: from smtprelay0002.hostedemail.com ([216.40.44.2]:35935 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727361AbgBKVpW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 16:41:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581457312;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=HJKkK+L/+IvQc4t06WFqnt4bWf+FyU8DIYq2eP8LWiA=;
-        b=nKjjKE8y0iuVhSxf1aDlgkV+vhXAIRL34cIN1KMeYzaESe/Y/CBxtoUifbPMOSRa6r
-        Hc7GszW+vR8oJRxH/p2O7ryxIFKI8IDrB0c/xnnGwZdZuPuKM4J7cXPJ6zpIYCCZqetV
-        La548fWfLtbmo62U4lZrhh+rgHYkt521G+o8tFKzhtFCZd4/B95La8XXLur02Yd6UtJe
-        j4Je8wY/xS7dvpzUItrYOYp06KJL2dLYD+sdpQCK4GrE1MLq6nZqMhArxNajR/WiTHw6
-        5jUyTiN8FgpxufafnfAnOp70E8FCmrUHT9gMcP0msVZxPocdPXb4vTl94EtRgBcH6Wyj
-        5tRw==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M0P2mp10IM"
-X-RZG-CLASS-ID: mo00
-Received: from iMac.fritz.box
-        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
-        with ESMTPSA id U06217w1BLfh0EV
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Tue, 11 Feb 2020 22:41:43 +0100 (CET)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-To:     Paul Cercueil <paul@crapouillou.net>,
-        Paul Boddie <paul@boddie.org.uk>,
-        Alex Smith <alex.smith@imgtec.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        James Hogan <jhogan@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
-        Richard Fontana <rfontana@redhat.com>,
-        Allison Randal <allison@lohutok.net>,
-        Stephen Boyd <swboyd@chromium.org>
-Cc:     devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-i2c@vger.kernel.org, netdev@vger.kernel.org,
-        linux-gpio@vger.kernel.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com
-Subject: [PATCH 14/14] MIPS: DTS: CI20: fix interrupt for pcf8563 RTC
-Date:   Tue, 11 Feb 2020 22:41:31 +0100
-Message-Id: <9d300f1bac15ef4a91052973f2ed593dd2513656.1581457290.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1581457290.git.hns@goldelico.com>
-References: <cover.1581457290.git.hns@goldelico.com>
+        Tue, 11 Feb 2020 16:45:22 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id F0EAE45BC;
+        Tue, 11 Feb 2020 21:45:20 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3870:3871:3872:4321:4605:5007:7514:8660:8957:10004:10400:10848:11026:11232:11658:11914:12043:12050:12297:12555:12740:12760:12895:13069:13148:13230:13255:13311:13357:13439:14096:14097:14181:14659:14721:21080:21451:21627:21810:30054:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: dad09_4b9b27a703123
+X-Filterd-Recvd-Size: 1989
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf10.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 11 Feb 2020 21:45:19 +0000 (UTC)
+Message-ID: <161f395543309adb94475cbfbdd442616b68cda9.camel@perches.com>
+Subject: Re: [PATCH 07/22] staging: exfat: Rename variable "MilliSecond" to
+ "milli_second"
+From:   Joe Perches <joe@perches.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Pragat Pandya <pragat.pandya@gmail.com>
+Cc:     valdis.kletnieks@vt.edu, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Date:   Tue, 11 Feb 2020 13:44:03 -0800
+In-Reply-To: <20200127115530.GZ1847@kadam>
+References: <20200127101343.20415-1-pragat.pandya@gmail.com>
+         <20200127101343.20415-8-pragat.pandya@gmail.com>
+         <20200127115530.GZ1847@kadam>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Interrupts should not be specified by interrupt line but by
-gpio parent and reference.
+On Mon, 2020-01-27 at 14:55 +0300, Dan Carpenter wrote:
+> On Mon, Jan 27, 2020 at 03:43:28PM +0530, Pragat Pandya wrote:
+> > Change all the occurrences of "MilliSecond" to "milli_second" in exfat.
+> > 
+> > Signed-off-by: Pragat Pandya <pragat.pandya@gmail.com>
+> > ---
+> >  drivers/staging/exfat/exfat.h       |  2 +-
+> >  drivers/staging/exfat/exfat_super.c | 16 ++++++++--------
+> >  2 files changed, 9 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
+> > index 85fbea44219a..5c207d715f44 100644
+> > --- a/drivers/staging/exfat/exfat.h
+> > +++ b/drivers/staging/exfat/exfat.h
+> > @@ -228,7 +228,7 @@ struct date_time_t {
+> >  	u16      hour;
+> >  	u16      minute;
+> >  	u16      second;
+> > -	u16      MilliSecond;
+> > +	u16      milli_second;
+> 
+> Normally we would just call it "ms".
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- arch/mips/boot/dts/ingenic/ci20.dts | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+msec is a bit more common.
 
-diff --git a/arch/mips/boot/dts/ingenic/ci20.dts b/arch/mips/boot/dts/ingenic/ci20.dts
-index 8f9d182566db..4bacefa2cfce 100644
---- a/arch/mips/boot/dts/ingenic/ci20.dts
-+++ b/arch/mips/boot/dts/ingenic/ci20.dts
-@@ -298,7 +298,9 @@ Optional input supply properties:
- 		rtc@51 {
- 			compatible = "nxp,pcf8563";
- 			reg = <0x51>;
--			interrupts = <110>;
-+
-+			interrupt-parent = <&gpf>;
-+			interrupts = <30 IRQ_TYPE_LEVEL_LOW>;
- 		};
- };
- 
--- 
-2.23.0
 
