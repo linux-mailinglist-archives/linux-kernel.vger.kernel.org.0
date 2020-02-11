@@ -2,98 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 455AF158FD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:26:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AFE5158FF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:31:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729230AbgBKN03 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 08:26:29 -0500
-Received: from mga07.intel.com ([134.134.136.100]:34196 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729185AbgBKN0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 08:26:18 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 05:26:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="251542716"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 11 Feb 2020 05:26:13 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 97327704; Tue, 11 Feb 2020 15:26:04 +0200 (EET)
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        "David E . Box" <david.e.box@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 18/18] MAINTAINERS: Update entry for Intel Broxton PMC driver
-Date:   Tue, 11 Feb 2020 16:26:03 +0300
-Message-Id: <20200211132603.73509-19-mika.westerberg@linux.intel.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200211132603.73509-1-mika.westerberg@linux.intel.com>
-References: <20200211132603.73509-1-mika.westerberg@linux.intel.com>
+        id S1728205AbgBKNbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 08:31:36 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:56156 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728060AbgBKNbg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 08:31:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1581427893; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YFd1WqWUfqjVwYd943I7JoTwmQPb1o38AUdJkGGRoSY=;
+        b=miDOA1zHZdFX22gWUzfJizafdcA0sVeZf8W7XGe9zHW/L9Hnx1ix5yGZUUGFuXxodqDb6J
+        YMMDw4QRB1pu9Pqy6D0b0aqA1VoxSY0SzRsLyl083phmjGL/Qpl4l0G0RUcDzbDMJyco9N
+        w3oxY364POzfrXy2JPIBmIbQpbZ30Hc=
+Date:   Tue, 11 Feb 2020 10:31:13 -0300
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v4 1/2] sched: Add sched_clock_register_new()
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Zhou Yanjie <zhouyanjie@wanyeetech.com>, od@zcrc.me,
+        linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
+Message-Id: <1581427873.3.0@crapouillou.net>
+In-Reply-To: <87lfp94duq.fsf@nanos.tec.linutronix.de>
+References: <20200210134213.8324-1-paul@crapouillou.net>
+        <87lfp94duq.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver lives now under MFD so split the current entry into two parts
-and add me as co-maintainer of the Intel Broxton PMC driver. While there
-correct formatting of Zha Qipeng's email address.
+Hi Thomas,
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- MAINTAINERS | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4d4e3241bf99..241f17bb309e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8371,6 +8371,13 @@ L:	platform-driver-x86@vger.kernel.org
- S:	Maintained
- F:	drivers/platform/x86/intel_atomisp2_pm.c
- 
-+INTEL BROXTON PMC DRIVER
-+M:	Mika Westerberg <mika.westerberg@linux.intel.com>
-+M:	Zha Qipeng <qipeng.zha@intel.com>
-+S:	Maintained
-+F:	drivers/mfd/intel_pmc_bxt.c
-+F:	include/linux/mfd/intel_pmc_bxt.h
-+
- INTEL C600 SERIES SAS CONTROLLER DRIVER
- M:	Intel SCU Linux support <intel-linux-scu@intel.com>
- M:	Artur Paszkiewicz <artur.paszkiewicz@intel.com>
-@@ -8586,13 +8593,11 @@ L:	platform-driver-x86@vger.kernel.org
- S:	Maintained
- F:	drivers/platform/x86/intel_pmc_core*
- 
--INTEL PMC/P-Unit IPC DRIVER
--M:	Zha Qipeng<qipeng.zha@intel.com>
-+INTEL P-Unit IPC DRIVER
-+M:	Zha Qipeng <qipeng.zha@intel.com>
- L:	platform-driver-x86@vger.kernel.org
- S:	Maintained
--F:	arch/x86/include/asm/intel_pmc_ipc.h
- F:	arch/x86/include/asm/intel_punit_ipc.h
--F:	drivers/platform/x86/intel_pmc_ipc.c
- F:	drivers/platform/x86/intel_punit_ipc.c
- 
- INTEL PMIC GPIO DRIVERS
--- 
-2.25.0
+Le mar., f=E9vr. 11, 2020 at 11:28, Thomas Gleixner <tglx@linutronix.de>=20
+a =E9crit :
+> Paul!
+>=20
+> Paul Cercueil <paul@crapouillou.net> writes:
+>=20
+>>  The sched_clock_register_new() behaves like sched_clock_register()=20
+>> but
+>=20
+> This function name does not make any sense. Two years from now you are
+> going to provide sched_clock_register_new_2_dot_0() ?
+
+I'm open to suggestions :)
+The point of using a different function was to avoid a huge patchset to=20
+fix the 50+ drivers that use sched_clock_register().
+
+>>  takes an extra parameter which is passed to the read callback.
+>=20
+> This lacks any form of justification why this function and the data
+> pointer is required.
+>=20
+>>    * @sched_clock_mask:   Bitmask for two's complement subtraction=20
+>> of non 64bit
+>>    *			clocks.
+>>    * @read_sched_clock:	Current clock source (or dummy source when=20
+>> suspended).
+>>  + * @data:		Callback data for the current clock source.
+>>    * @mult:		Multipler for scaled math conversion.
+>>    * @shift:		Shift value for scaled math conversion.
+>>    *
+>>  @@ -39,7 +40,8 @@ struct clock_read_data {
+>>   	u64 epoch_ns;
+>>   	u64 epoch_cyc;
+>>   	u64 sched_clock_mask;
+>>  -	u64 (*read_sched_clock)(void);
+>>  +	u64 (*read_sched_clock)(void *);
+>=20
+> How is that supposed to work without fixing up _all_ sched clock
+> instances? So the below typecast
+>=20
+>>  +void __init
+>>  +sched_clock_register(u64 (*read)(void), int bits, unsigned long=20
+>> rate)
+>>  +{
+>>  +	sched_clock_register_new((u64 (*)(void *))read, bits, rate, NULL);
+>=20
+> makes it compile.
+>=20
+> By pure luck this does not explode in your face at runtime when the
+> existing read(void) functions are called with an argument. Any stack
+> based argument passing calling convention would fall flat on it's=20
+> nose.
+>=20
+> While clever this is really an ugly hack.
+
+Alright, I really didn't think it was that bad. Next time I'll use a=20
+wrapper.
+
+> As the clocksource for which you are doing this is a single instance,
+> what's wrong with having some static storage for the information you
+> need as any other driver which has the same problem does as well?
+
+The fact that every other driver with the same problem decides to add a=20
+workaround instead of a proper fix does not mean that the problem does=20
+not exist.
+
+> If there is really a point in avoiding a few bytes of static storage,
+> then this needs to be cleaned up treewide and not hacked around.
+
+My allergy of static storage is not worth the trouble of a treewide=20
+pathset so I'll just drop this patch and send a v5.
+
+Thanks,
+-Paul
+
+
+=
 
