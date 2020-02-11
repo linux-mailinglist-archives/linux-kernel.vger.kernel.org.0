@@ -2,157 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E45BF158EDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:47:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC0CB158EE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:48:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728243AbgBKMrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 07:47:01 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:57040 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728023AbgBKMrB (ORCPT
+        id S1728460AbgBKMrt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 07:47:49 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:45926 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728023AbgBKMrp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 07:47:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581425220;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=/aoK1QXCzMorlswoGVCOoMeDkLwKz3AeoTqS+YSOfSw=;
-        b=fqZNEJG0yTotnJQV9KTWjyUGl6PyU2DY8qc2Bv2qZjDn2CkS1rS46Mg+wyf8BH89+WwuR7
-        rhpcwp0TbbOSiQr34Mg9Q8sDyUpC7kxzbjy72lnRXJjahL/hBDzW/5Ore45lUs24kx8rrb
-        f+ZV0bmxm97u8+BqVuEXxvaOc6l79Mg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-214-SXnDScXhMiOTsLtNUoNaXQ-1; Tue, 11 Feb 2020 07:46:56 -0500
-X-MC-Unique: SXnDScXhMiOTsLtNUoNaXQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D097C477;
-        Tue, 11 Feb 2020 12:46:54 +0000 (UTC)
-Received: from localhost (ovpn-12-50.pek2.redhat.com [10.72.12.50])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2754B5D9E2;
-        Tue, 11 Feb 2020 12:46:51 +0000 (UTC)
-Date:   Tue, 11 Feb 2020 20:46:48 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, dan.j.williams@intel.com,
-        richardw.yang@linux.intel.com
-Subject: Re: [PATCH 1/7] mm/sparse.c: Introduce new function
- fill_subsection_map()
-Message-ID: <20200211124648.GF8965@MiWiFi-R3L-srv>
-References: <20200209104826.3385-1-bhe@redhat.com>
- <20200209104826.3385-2-bhe@redhat.com>
- <0463a54b-12cb-667e-7c86-66cd707cec84@redhat.com>
+        Tue, 11 Feb 2020 07:47:45 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1j1Ux0-0007Wz-AS; Tue, 11 Feb 2020 13:47:38 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C86A01C2017;
+        Tue, 11 Feb 2020 13:47:37 +0100 (CET)
+Date:   Tue, 11 Feb 2020 12:47:37 -0000
+From:   "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: core/objtool] objtool: Add relocation check for alternative sections
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Borislav Petkov <bp@suse.de>,
+        Julien Thierry <jthierry@redhat.com>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <7b90b68d093311e4e8f6b504a9e1c758fd7e0002.1581359535.git.jpoimboe@redhat.com>
+References: <7b90b68d093311e4e8f6b504a9e1c758fd7e0002.1581359535.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0463a54b-12cb-667e-7c86-66cd707cec84@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Message-ID: <158142525750.411.6760839149757331330.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/10/20 at 10:49am, David Hildenbrand wrote:
-> On 09.02.20 11:48, Baoquan He wrote:
-> > Wrap the codes filling subsection map in section_activate() into
-> > fill_subsection_map(), this makes section_activate() cleaner and
-> > easier to follow.
-> > 
-> > Signed-off-by: Baoquan He <bhe@redhat.com>
-> > ---
-> >  mm/sparse.c | 45 ++++++++++++++++++++++++++++++++++-----------
-> >  1 file changed, 34 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/mm/sparse.c b/mm/sparse.c
-> > index c184b69460b7..9ad741ccbeb6 100644
-> > --- a/mm/sparse.c
-> > +++ b/mm/sparse.c
-> > @@ -788,24 +788,28 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
-> >  		depopulate_section_memmap(pfn, nr_pages, altmap);
-> >  }
-> >  
-> > -static struct page * __meminit section_activate(int nid, unsigned long pfn,
-> > -		unsigned long nr_pages, struct vmem_altmap *altmap)
-> > +/**
-> > + * fill_subsection_map - fill subsection map of a memory region
-> > + * @pfn - start pfn of the memory range
-> > + * @nr_pages - number of pfns to add in the region
-> > + *
-> > + * This clears the related subsection map inside one section, and only
-> > + * intended for hotplug.
-> > + *
-> > + * Return:
-> > + * * 0		- On success.
-> > + * * -EINVAL	- Invalid memory region.
-> > + * * -EEXIST	- Subsection map has been set.
-> > + */
-> > +static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
-> >  {
-> > -	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
-> >  	struct mem_section *ms = __pfn_to_section(pfn);
-> > -	struct mem_section_usage *usage = NULL;
-> > +	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
-> >  	unsigned long *subsection_map;
-> > -	struct page *memmap;
-> >  	int rc = 0;
-> >  
-> >  	subsection_mask_set(map, pfn, nr_pages);
-> >  
-> > -	if (!ms->usage) {
-> > -		usage = kzalloc(mem_section_usage_size(), GFP_KERNEL);
-> > -		if (!usage)
-> > -			return ERR_PTR(-ENOMEM);
-> > -		ms->usage = usage;
-> > -	}
-> >  	subsection_map = &ms->usage->subsection_map[0];
-> >  
-> >  	if (bitmap_empty(map, SUBSECTIONS_PER_SECTION))
-> > @@ -816,6 +820,25 @@ static struct page * __meminit section_activate(int nid, unsigned long pfn,
-> >  		bitmap_or(subsection_map, map, subsection_map,
-> >  				SUBSECTIONS_PER_SECTION);
-> >  
-> > +	return rc;
-> > +}
-> > +
-> > +static struct page * __meminit section_activate(int nid, unsigned long pfn,
-> > +		unsigned long nr_pages, struct vmem_altmap *altmap)
-> > +{
-> > +	struct mem_section *ms = __pfn_to_section(pfn);
-> > +	struct mem_section_usage *usage = NULL;
-> > +	struct page *memmap;
-> > +	int rc = 0;
-> > +
-> > +	if (!ms->usage) {
-> > +		usage = kzalloc(mem_section_usage_size(), GFP_KERNEL);
-> > +		if (!usage)
-> > +			return ERR_PTR(-ENOMEM);
-> > +		ms->usage = usage;
-> > +	}
-> > +
-> > +	rc = fill_subsection_map(pfn, nr_pages);
-> >  	if (rc) {
-> >  		if (usage)
-> >  			ms->usage = NULL;
-> > 
-> 
-> What about having two variants of
-> section_activate()/section_deactivate() instead? Then we don't have any
-> subsection related stuff in !subsection code.
+The following commit has been merged into the core/objtool branch of tip:
 
-Thanks for looking into this, David.
+Commit-ID:     dc4197236c20e761f2007c641afd193f81a00a74
+Gitweb:        https://git.kernel.org/tip/dc4197236c20e761f2007c641afd193f81a00a74
+Author:        Josh Poimboeuf <jpoimboe@redhat.com>
+AuthorDate:    Mon, 10 Feb 2020 12:32:40 -06:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Tue, 11 Feb 2020 13:39:52 +01:00
 
-Having two variants of section_activate()/section_deactivate() is also
-good. Just not like memmap handling which is very different between classic
-sparse and vmemmap, makes having two variants very attractive, the code
-and logic in section_activate()/section_deactivate() is not too much,
-and both of them basically can share the most of code, these make the
-variants way not so necessary. I personally prefer the current way, what
-do you think?
+objtool: Add relocation check for alternative sections
 
-Thanks
-Baoquan
+Relocations in alternative code can be dangerous, because the code is
+copy/pasted to the text section after relocations have been resolved,
+which can corrupt PC-relative addresses.
 
+However, relocations might be acceptable in some cases, depending on the
+architecture.  For example, the x86 alternatives code manually fixes up
+the target addresses for PC-relative jumps and calls.
+
+So disallow relocations in alternative code, except where the x86 arch
+code allows it.
+
+This code may need to be tweaked for other arches when objtool gets
+support for them.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Julien Thierry <jthierry@redhat.com>
+Link: https://lkml.kernel.org/r/7b90b68d093311e4e8f6b504a9e1c758fd7e0002.1581359535.git.jpoimboe@redhat.com
+---
+ tools/objtool/check.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 9016ae1..b038de2 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -768,6 +768,27 @@ static int handle_group_alt(struct objtool_file *file,
+ 		insn->ignore = orig_insn->ignore_alts;
+ 		insn->func = orig_insn->func;
+ 
++		/*
++		 * Since alternative replacement code is copy/pasted by the
++		 * kernel after applying relocations, generally such code can't
++		 * have relative-address relocation references to outside the
++		 * .altinstr_replacement section, unless the arch's
++		 * alternatives code can adjust the relative offsets
++		 * accordingly.
++		 *
++		 * The x86 alternatives code adjusts the offsets only when it
++		 * encounters a branch instruction at the very beginning of the
++		 * replacement group.
++		 */
++		if ((insn->offset != special_alt->new_off ||
++		    (insn->type != INSN_CALL && !is_static_jump(insn))) &&
++		    find_rela_by_dest_range(insn->sec, insn->offset, insn->len)) {
++
++			WARN_FUNC("unsupported relocation in alternatives section",
++				  insn->sec, insn->offset);
++			return -1;
++		}
++
+ 		if (!is_static_jump(insn))
+ 			continue;
+ 
