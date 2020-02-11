@@ -2,99 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D327159849
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 19:21:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD080159872
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 19:23:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731327AbgBKSU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 13:20:58 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:40468 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729345AbgBKSU5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 13:20:57 -0500
-Received: by mail-qt1-f195.google.com with SMTP id v25so8683112qto.7
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 10:20:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=d6/Te+6lAVYFK89u5s4ITvONIuwvEzCRENBRMlel8AM=;
-        b=aLYA6QD7r8l7BRmVYCdYFhLJ6+BTNSmfcsvcr1NKaO2FUg7e2sB0f5KZcSPi6p74nR
-         6O933w7cbNN+FMz4YGCHH4AVN9pElo92zZlPlGuW0gSBq93BAPgEVr601eiAKnaapD/P
-         GrnClfjV4wYOcuftH0Q5ekckpEe3ICyZVzmuNt9p75AlrUcLSUbK/YzbcYm34mH8OxqT
-         SfQIEy8AuBFAXjI1EbnHUegO1y6lcC3eyPs+Uqaoqt4qUKVp8fvgx9LN7qxXVuWu884y
-         xs/XxkT5R1DXkbm4qW8hogIMuJAsKO58D/GM+ADGdFgzSYgN2zco6ccBy5HHxO5WoFvi
-         2Zwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=d6/Te+6lAVYFK89u5s4ITvONIuwvEzCRENBRMlel8AM=;
-        b=BnkN0PIYflJh+rJJSO4VXIE0NXZV6oYTh5quMBIFwbwWIbxfeMActE8BxBHy6er1Sh
-         yCcOC1Z9YRdBz5Gubus7Am+pQiQCVtrPcIOwyAD1ap7FUfdPI1QY+f9gTp1Gj45g3RQ0
-         FFvMS4t+QJjCsrJt8uz73HnxZtSSqnwFvAgVXJcSvHdyIh934JPeuex4wz0l2w+t4w1z
-         QJ37DekVzZZljq4nS1R4IVkOl3PKqEZWCszHsgcUvGj6a588rLiZtQcdK+lHZmQK+stF
-         hzYEPvdh2zoEc0xg/FfvBGcKnxwf75YiMiNlXlWTXXVM5Teo4NScHWvCBSY3WrxDiE5S
-         UFUA==
-X-Gm-Message-State: APjAAAUsxqiPSn1i2DWF0j0Njp0YKG9wKKiAoFpMU15xSNeBur5qw23n
-        nonkk7Yj138rFIHDXLd47yYC1Q==
-X-Google-Smtp-Source: APXvYqwDVs8B12ktsqqe14aSoG5G5O9rjJ6O2GFDhj+2bdU0bqJzMwN1LLweA+J2YzGHbm2yyex9eQ==
-X-Received: by 2002:ac8:4410:: with SMTP id j16mr3712001qtn.261.1581445256183;
-        Tue, 11 Feb 2020 10:20:56 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::3:3189])
-        by smtp.gmail.com with ESMTPSA id r37sm2562886qtj.44.2020.02.11.10.20.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 10:20:55 -0800 (PST)
-Date:   Tue, 11 Feb 2020 13:20:54 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com
-Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
- LRU
-Message-ID: <20200211182054.GA178155@cmpxchg.org>
-References: <20200211175507.178100-1-hannes@cmpxchg.org>
+        id S1730125AbgBKSXd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 13:23:33 -0500
+Received: from mail-eopbgr20051.outbound.protection.outlook.com ([40.107.2.51]:5443
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729169AbgBKSXc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 13:23:32 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cS76Go5dIgSaOXXvrINr9EhlRYZuPXR/jgHwNMh8GwtBvMuz4ruXMgDgMRQSyvEgfjYqRArPyeCTuh6w8TCH+4hBzOT2HSSCz4jD9VCa3XTVQL1ysw0hApPs0jUmtuPzaSeqn2YSAVh5jzqm0w6tAznhDBy2YDBgqFyLUk8LNMBfSvCJ4FVGGQrATCtBGlxOIB842dFjV0r9JvRsO37p9RV6uu43qrMT+QpbkhgHHBNX6fqEL6NHLRCFWHWjJg6V4+2hToDM4kS+s+7+MxH6Nfj5pftCA4gdBwLQDPaxo0g9o0exen8ThKsq9S7DVf2y90UkDd3l5t6b96TqaNXLNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1xs20VpbpUL9XF2WJlkF6Mvu7881/xB2hjEaPx0vvgk=;
+ b=edsYjrM+MNv9OCrpOSIuh6a0AtK8VHC4r1tRPFGHytCoHH7Wr6Lewt75lMJJLKcNt7eIHpgtDEc1ZI+sbj5Z6Eahz1Ef7ek95b3vm7PwILd/DTB4qsCR0BlCGSbRC91n5LzikWhtzOuMbVWggX850en6DmxWCmAeplhr2X1qh/UjBmGLc2D2xA0+xFuxFIaYxHNUF55xL717m5c9KjV2H3gYGwZC0UjUhKqZ6ogfl+cykloDgIbnPllHVsRkbNWfHjy2NLFJhW46KpAQTIT+smk0NKkthRaUH0wcWa/pvpaG03l6SrarWJ5zGEAOJedv8aYZxB/uE7+LJvXG7lxdbg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1xs20VpbpUL9XF2WJlkF6Mvu7881/xB2hjEaPx0vvgk=;
+ b=qaogSs3m6U3sFq5rRUlvprleAfDPCxFc0SfISWu68FnnucfpbWcDx/aKQp1PNatspxOkKOt40U2NQ0lzgxFoNz6ZFl7T0Oiis3mcuu0t5GDKTNbZIehxODigKyCnsODID3ZbJ3kDYC274IM9jTYqstOYmuw8AG4Jm02rqLTkeY8=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB3901.eurprd04.prod.outlook.com (52.134.12.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.21; Tue, 11 Feb 2020 18:23:28 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::85e9:f844:f8b0:27d]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::85e9:f844:f8b0:27d%7]) with mapi id 15.20.2707.030; Tue, 11 Feb 2020
+ 18:23:28 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
+CC:     Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v7 3/9] crypto: caam - use devm_kzalloc to allocate JR
+ data
+Thread-Topic: [PATCH v7 3/9] crypto: caam - use devm_kzalloc to allocate JR
+ data
+Thread-Index: AQHV1TLRWesVqHI1ZkCUMB3X/8VqBg==
+Date:   Tue, 11 Feb 2020 18:23:28 +0000
+Message-ID: <VI1PR0402MB348585D73873E2DFE6B8751698180@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <20200127165646.19806-1-andrew.smirnov@gmail.com>
+ <20200127165646.19806-4-andrew.smirnov@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [84.117.251.185]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: bb5e2784-d242-49a6-ffa5-08d7af1f7dd4
+x-ms-traffictypediagnostic: VI1PR0402MB3901:|VI1PR0402MB3901:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR0402MB39019ABD5D16F0EE32A3C2B098180@VI1PR0402MB3901.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:612;
+x-forefront-prvs: 0310C78181
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(376002)(346002)(366004)(136003)(189003)(199004)(54906003)(4744005)(26005)(110136005)(186003)(91956017)(8676002)(44832011)(8936002)(81166006)(81156014)(66476007)(66446008)(66946007)(66556008)(64756008)(478600001)(76116006)(71200400001)(2906002)(6506007)(53546011)(33656002)(316002)(86362001)(7696005)(52536014)(9686003)(5660300002)(55016002)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3901;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: u0Dw3+qX+03Ct2DGvoiNqVhc28RI7+51BySRc3YR8rKe8YUzigI4HEPG/4boC1PuOuwcsn1dUzZNSQBzteUZE1eaugMvB+PDerbf3C9sQvxJNkAmzqEfqt34aeSC3Xr56yIWuCNtuJ9Vxcwbyr+x4eBRowxk5E1Suwe0w9wXHDtAkMCk01zoqT9z+tnyNTKgvGsC7C3QZJk8jqaoUPKhviPu7wYtTC8K4inVYGCHA+a0Ai6E49PMkK+gMXooT+gGWkz+0Mo1Xlj6illEG2pNUXwktHrqn9OXxD59ns6qXxQlzYQabGfxMlfqG7KBML4pGBVlJJC1tfzsjCf1pkdhtXpRK2MQsxlRrY+EyordR7G8yVJjWox8FKezrBt4zuI7FWRl5cgbLEtvicxdAlfz0K0jfnjdu6SSwOMOzQaPd93SZTXapgocMzCBG0Vra2DC
+x-ms-exchange-antispam-messagedata: SYhgYwUlHsdf744tksmOJzF7Gri2tspLbZLVc4S1dmAPcCJNXsQGWcgYD1dcd8YMXRrCVOQ2uJXDM3uPqyXCbqr0bZ5WNlMSIMai6uJmmkzvw3KSboO86PD5P55XdYbAckjvynFk/o4X18W+gy5zcQ==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200211175507.178100-1-hannes@cmpxchg.org>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb5e2784-d242-49a6-ffa5-08d7af1f7dd4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2020 18:23:28.4473
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4d5bVzWf6XJFS8hIyI/S104yeHKmBHq8OX0Kadp0mlpqHJBzM2HuWtjYRQU3no6EG/jkAtcYlQlAMSzfR2RlqQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3901
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 12:55:07PM -0500, Johannes Weiner wrote:
-> However, this change had to be reverted in 69056ee6a8a3 ("Revert "mm:
-> don't reclaim inodes with many attached pages"") because it caused
-> severe reclaim performance problems: Inodes that sit on the shrinker
-> LRU are attracting reclaim pressure away from the page cache and
-> toward the VFS. If we then permanently exempt sizable portions of this
-> pool from actually getting reclaimed when looked at, this pressure
-> accumulates as deferred shrinker work (a mechanism for *temporarily*
-> unreclaimable objects) until it causes mayhem in the VFS cache pools.
-> 
-> In the bug quoted in 69056ee6a8a3 in particular, the excessive
-> pressure drove the XFS shrinker into dirty objects, where it caused
-> synchronous, IO-bound stalls, even as there was plenty of clean page
-> cache that should have been reclaimed instead.
-
-A note on testing: the patch behaves much better on my machine and the
-inode shrinker doesn't drop hot page cache anymore, without noticable
-downsides so far.
-
-However, I tried to reproduce the xfs case that caused the
-69056ee6a8a3 revert and haven't managed to do so yet on 5.5 plus the
-reverted patch. I cannot provoke higher inode sync stalls in the xfs
-shrinker regardless of shrinker strategy. Maybe something else changed
-since 4.19 and it's less of a concern now.
-
-Nonetheless, I'm interested in opinions on the premise of this
-patch. And Yafang is working on his memcg-specific fix for this issue,
-so I wanted to put this proposal on the table sooner than later.
-
-Thanks
+On 1/27/2020 6:57 PM, Andrey Smirnov wrote:=0A=
+> Use devm_kzalloc() to allocate JR data in order to make sure that it=0A=
+> is initialized consistently every time.=0A=
+> =0A=
+The commit message is a bit vague.=0A=
+=0A=
+I assume this is needed in patch 4/9, which adds a new member (hwrng)=0A=
+in caam_drv_private_jr structure.=0A=
+=0A=
+If so, it's probably better to have the change merged into patch 4/9.=0A=
+=0A=
+Horia=0A=
