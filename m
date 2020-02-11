@@ -2,213 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35C10159A7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 21:27:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 793E9159A8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 21:34:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731131AbgBKU1p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 15:27:45 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.23]:48491 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727910AbgBKU1o (ORCPT
+        id S1731830AbgBKUeR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 15:34:17 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:36939 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730566AbgBKUeR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 15:27:44 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 8FE50133785
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 14:27:43 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 1c8FjDiCsSl8q1c8FjwpN9; Tue, 11 Feb 2020 14:27:43 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=PPWWdaifeZzk9RLwFlJ5meY5m2rkkfSdPZkRBHo2zLg=; b=lMUWu+8neDtCWoM7HC7ndnZLve
-        CNLfWODYRH0dKfbYGWeisHnLSxwNAv69i74ZGjwscfb0/qmOAypEZD+6HBJFL+fTIjsho7HOEtwG1
-        MkHOsPZmKwA2Q5pvtdb3Fiw15YCeLaJIrWEpEr+djGYU1UyM4rUwYKd2T+uOu6kMzs+8Zoi0P1/fV
-        bYOr6VWSaXgDAjg9G1QXzRO17lr07NmB7n60KgWN3y8bbtk63wqdlYlBwoJS8OYKCJNFDxDDjsT2Q
-        kEdxfEnZv6oclhIyZH55YS7WheIc/5xVs6zTjk/g7Dp8gA06Fof0OK0Aw9jCl+XbJ8x4i5IDqZi6S
-        pym9IHiw==;
-Received: from [200.68.140.36] (port=27441 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j1c8F-001jRM-5K; Tue, 11 Feb 2020 14:27:43 -0600
-Subject: Re: [PATCH] treewide: Replace zero-length arrays with flexible-array
- member
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org
-References: <20200211174126.GA29960@embeddedor>
- <20200211183229.GA1938663@kroah.com>
- <3fdbb16a-897c-aa5b-d45d-f824f6810412@embeddedor.com>
- <202002111129.77DB1CCC7B@keescook> <20200211193854.GA1972490@kroah.com>
- <88e09425-8207-7a1e-8802-886f9694a37f@embeddedor.com>
- <202002111210.876CEB6@keescook>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <2b73d115-1259-24ae-6f56-e3aa12e5e408@embeddedor.com>
-Date:   Tue, 11 Feb 2020 14:30:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 11 Feb 2020 15:34:17 -0500
+Received: by mail-ot1-f65.google.com with SMTP id d3so11533618otp.4
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 12:34:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=q11zsssSHeKjTpfbV0UQcFcGMIVXHOWVWu3BFYxakp4=;
+        b=qeozm3+R7EnJiUqxAO5WKU6Hyo8tOvNoKIv3sqG0gwJnruWChpe1RHY1CoExS/DHwK
+         he5Szs4itn3GjZWTFLBu9ib1jeaKQF7I8F/J6ZCd+raCeXX8Ml8qL2LsKQzBrsvmpZWi
+         LQGGl/dWBrexM2f/haFE13HCd+3IpMAZkvvGpB5n55Z5/Ag2N3RjnXl8xgLc2+1aFkTR
+         UPSbLDiLCbU/Cb4J4f2WFKJTYxS11Fr3qOVTalvoCvAxRpL5kc/w5gTC8sfJ/NDgEgT6
+         jeFEpLJm7a3am8dmDSuwym2sTtDNasMRQr77XiJDdvOXMmN3Pf70q/USLL7OUWvG29yX
+         4aCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=q11zsssSHeKjTpfbV0UQcFcGMIVXHOWVWu3BFYxakp4=;
+        b=XpNMa9eo0cBNLyRs6gPXILG92EmLc2NsHCd6LohUUDNstNL1I291i9c/qvwJaEu6Jv
+         mhlI2FNGVwio1xKlhBybDXjydAUX6QAmhgienWuoH3Nrx5BnCnQzyIjVVBNyp3XOYztt
+         pqWz3+yXl/sdI1GUWT54cdNx/87Dt2h1TC3QJX/5AiVH2gaiyXMsqzMusMoaCML6cU/R
+         jf2BlNBxmfaov+mqHFDiwMzvS5YuNzc3HESyZNmd/jMBiM/rIIrtqt02piBGkmgDposf
+         qJXGHcPkDBY2lI4hJvyDFZp/fPWz9dQfje1xnnLbBdM8kVLbH2SQrVg2WA/5GU83qTix
+         iWJg==
+X-Gm-Message-State: APjAAAVdHNpg36diOxVZ6U/Ji8JAyhpiOJJ6vhsCF438BkMrGWSrD8dn
+        rU9WhUDdStZy/kNonBThG/gESqgov14tlAqMEDk1lQ==
+X-Google-Smtp-Source: APXvYqwN+vAsdRxgGOaSrJORQpfpoOK0DTUx7e2DVI860NZpm9RoWnlwAaQwqmRW/lEAu1tBxxXl1zt3MnY8gyqlm3Y=
+X-Received: by 2002:a9d:65c1:: with SMTP id z1mr6936015oth.180.1581453255514;
+ Tue, 11 Feb 2020 12:34:15 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <202002111210.876CEB6@keescook>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.36
-X-Source-L: No
-X-Exim-ID: 1j1c8F-001jRM-5K
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [200.68.140.36]:27441
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 21
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20200123152440.28956-1-kpsingh@chromium.org> <20200123152440.28956-5-kpsingh@chromium.org>
+ <20200211031208.e6osrcathampoog7@ast-mbp> <20200211124334.GA96694@google.com>
+ <20200211175825.szxaqaepqfbd2wmg@ast-mbp> <CAG48ez25mW+_oCxgCtbiGMX07g_ph79UOJa07h=o_6B6+Q-u5g@mail.gmail.com>
+ <20200211190943.sysdbz2zuz5666nq@ast-mbp> <CAG48ez2gvo1dA4P1L=ASz7TRfbH-cgLZLmOPmr0NweayL-efLw@mail.gmail.com>
+ <20200211201039.om6xqoscfle7bguz@ast-mbp>
+In-Reply-To: <20200211201039.om6xqoscfle7bguz@ast-mbp>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 11 Feb 2020 21:33:49 +0100
+Message-ID: <CAG48ez1qGqF9z7APajFyzjZh82YxFV9sHE64f5kdKBeH9J3YPg@mail.gmail.com>
+Subject: Re: BPF LSM and fexit [was: [PATCH bpf-next v3 04/10] bpf: lsm: Add
+ mutable hooks list for the BPF LSM]
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     KP Singh <kpsingh@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        bpf@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kernel Team <kernel-team@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+()On Tue, Feb 11, 2020 at 9:10 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+> On Tue, Feb 11, 2020 at 08:36:18PM +0100, Jann Horn wrote:
+> > On Tue, Feb 11, 2020 at 8:09 PM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > > On Tue, Feb 11, 2020 at 07:44:05PM +0100, Jann Horn wrote:
+> > > > On Tue, Feb 11, 2020 at 6:58 PM Alexei Starovoitov
+> > > > <alexei.starovoitov@gmail.com> wrote:
+> > > > > On Tue, Feb 11, 2020 at 01:43:34PM +0100, KP Singh wrote:
+> > > > [...]
+> > > > > > * When using the semantic provided by fexit, the BPF LSM program will
+> > > > > >   always be executed and will be able to override / clobber the
+> > > > > >   decision of LSMs which appear before it in the ordered list. This
+> > > > > >   semantic is very different from what we currently have (i.e. the BPF
+> > > > > >   LSM hook is only called if all the other LSMs allow the action) and
+> > > > > >   seems to be bypassing the LSM framework.
+> > > > >
+> > > > > It that's a concern it's trivial to add 'if (RC == 0)' check to fexit
+> > > > > trampoline generator specific to lsm progs.
+> > > > [...]
+> > > > > Using fexit mechanism and bpf_sk_storage generalization is
+> > > > > all that is needed. None of it should touch security/*.
+> > > >
+> > > > If I understand your suggestion correctly, that seems like a terrible
+> > > > idea to me from the perspective of inspectability and debuggability.
+> > > > If at runtime, a function can branch off elsewhere to modify its
+> > > > decision, I want to see that in the source code. If someone e.g.
+> > > > changes the parameters or the locking rules around a security hook,
+> > > > how are they supposed to understand the implications if that happens
+> > > > through some magic fexit trampoline that is injected at runtime?
+> > >
+> > > I'm not following the concern. There is error injection facility that is
+> > > heavily used with and without bpf. In this case there is really no difference
+> > > whether trampoline is used with direct call or indirect callback via function
+> > > pointer. Both will jump to bpf prog. The _source code_ of bpf program will
+> > > _always_ be available for humans to examine via "bpftool prog dump" since BTF
+> > > is required. So from inspectability and debuggability point of view lsm+bpf
+> > > stuff is way more visible than any builtin LSM. At any time people will be able
+> > > to see what exactly is running on the system. Assuming folks can read C code.
+> >
+> > You said that you want to use fexit without touching security/, which
+> > AFAIU means that the branch from security_*() to the BPF LSM will be
+> > invisible in the *kernel's* source code unless the reader already
+> > knows about the BPF LSM. But maybe I'm just misunderstanding your
+> > idea.
+> >
+> > If a random developer is trying to change the locking rules around
+> > security_blah(), and wants to e.g. figure out whether it's okay to
+> > call that thing with a spinlock held, or whether one of the arguments
+> > is actually used, or stuff like that, the obvious way to verify that
+> > is to follow all the direct and indirect calls made from
+> > security_blah(). It's tedious, but it works, unless something is
+> > hooked up to it in a way that is visible in no way in the source code.
+> >
+> > I agree that the way in which the call happens behind the scenes
+> > doesn't matter all that much - I don't really care all that much
+> > whether it's an indirect call, a runtime-patched direct call in inline
+> > assembly, or an fexit hook. What I do care about is that someone
+> > reading through any affected function can immediately see that the
+> > branch exists - in other words, ideally, I'd like it to be something
+> > happening in the method body, but if you think that's unacceptable, I
+> > think there should at least be a function attribute that makes it very
+> > clear what's going on.
+>
+> Got it. Then let's whitelist them ?
+> All error injection points are marked with ALLOW_ERROR_INJECTION().
+> We can do something similar here, but let's do it via BTF and avoid
+> abusing yet another elf section for this mark.
+> I think BTF_TYPE_EMIT() should work. Just need to pick explicit enough
+> name and extensive comment about what is going on.
 
+Sounds reasonable to me. :)
 
-On 2/11/20 14:12, Kees Cook wrote:
-> On Tue, Feb 11, 2020 at 01:54:22PM -0600, Gustavo A. R. Silva wrote:
->>
->>
->> On 2/11/20 13:38, Greg KH wrote:
->>> On Tue, Feb 11, 2020 at 11:32:04AM -0800, Kees Cook wrote:
->>>> On Tue, Feb 11, 2020 at 01:20:36PM -0600, Gustavo A. R. Silva wrote:
->>>>>
->>>>>
->>>>> On 2/11/20 12:32, Greg KH wrote:
->>>>>> On Tue, Feb 11, 2020 at 11:41:26AM -0600, Gustavo A. R. Silva wrote:
->>>>>>> The current codebase makes use of the zero-length array language
->>>>>>> extension to the C90 standard, but the preferred mechanism to declare
->>>>>>> variable-length types such as these ones is a flexible array member[1][2],
->>>>>>> introduced in C99:
->>>>>>>
->>>>>>> struct foo {
->>>>>>>         int stuff;
->>>>>>>         struct boo array[];
->>>>>>> };
->>>>>>>
->>>>>>> By making use of the mechanism above, we will get a compiler warning
->>>>>>> in case the flexible array does not occur last in the structure, which
->>>>>>> will help us prevent some kind of undefined behavior bugs from being
->>>>>>> unadvertenly introduced[3] to the codebase from now on.
->>>>>>>
->>>>>>> All these instances of code were found with the help of the following
->>>>>>> Coccinelle script:
->>>>>>>
->>>>>>> @@
->>>>>>> identifier S, member, array;
->>>>>>> type T1, T2;
->>>>>>> @@
->>>>>>>
->>>>>>> struct S {
->>>>>>>   ...
->>>>>>>   T1 member;
->>>>>>>   T2 array[
->>>>>>> - 0
->>>>>>>   ];
->>>>>>> };
->>>>>>>
->>>>>>> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
->>>>>>> [2] https://github.com/KSPP/linux/issues/21
->>>>>>> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
->>>>>>>
->>>>>>> NOTE: I'll carry this in my -next tree for the v5.6 merge window.
->>>>>>
->>>>>> Why not carve this up into per-subsystem patches so that we can apply
->>>>>> them to our 5.7-rc1 trees and then you submit the "remaining" that don't
->>>>>> somehow get merged at that timeframe for 5.7-rc2?
->>>>>>
->>>>>
->>>>> Yep, sounds good. I'll do that.
->>>>
->>>> FWIW, I'd just like to point out that since this is a mechanical change
->>>> with no code generation differences (unlike the pre-C90 1-byte array
->>>> conversions), it's a way better use of everyone's time to just splat
->>>> this in all at once.
->>>>
->>>> That said, it looks like Gustavo is up for it, but I'd like us to
->>>> generally consider these kinds of mechanical changes as being easier to
->>>> manage in a single patch. (Though getting Acks tends to be a bit
->>>> harder...)
->>>
->>> Hey, if this is such a mechanical patch, let's get it to Linus now,
->>> what's preventing that from being merged now?
-> 
-> Now would be a good time, yes. (Linus has wanted Acks for such things
-> sometimes, but those were more "risky" changes...)
-> 
->> Well, the only thing is that this has never been in linux-next.
-> 
-> Hmm. Was it in one of your 0day-tested trees?
-> 
+> Locking rules and cleanup around security_blah() shouldn't change though.
+> Like security_task_alloc() should be paired with security_task_free().
+> And so on. With bpf_sk_storage like logic the alloc/free of scratch
+> space will be similar to the way socket and bpf progs deal with it.
+>
+> Some of the lsm hooks are in critical path. Like security_socket_sendmsg().
+> retpoline hurts. If we go with indirect calls right now it will be harder to
+> optimize later. It took us long time to come up with bpf trampoline and build
+> bpf dispatcher on top of it to remove single indirect call from XDP runtime.
+> For bpf+lsm would be good to avoid it from the start.
 
-It was in my tree for quite a while, but it was never 0day-tested.
-Just recently, the 0day guys started testing my _new_ branches,
-regularly.
+Just out of curiosity: Are fexit hooks really much cheaper than indirect calls?
 
-Today, I updated my -next branch to v5.6-rc1 and added the
-treewide patch. So, I expect it to be 0day-tested in a couple
-of days.
+AFAIK ftrace on x86-64 replaces the return pointer for fexit
+instrumentation (see prepare_ftrace_return()). So when the function
+returns, there is one return misprediction for branching into
+return_to_handler(), and then the processor's internal return stack
+will probably be misaligned so that after ftrace_return_to_handler()
+is done running, all the following returns will also be mispredicted.
 
---
-Gustavo
+So I would've thought that fexit hooks would have at least roughly the
+same impact as indirect calls - indirect calls via retpoline do one
+mispredicted branch, fexit hooks do at least two AFAICS. But I guess
+indirect calls could still be slower if fexit benefits from having all
+the mispredicted pointers stored on the cache-hot stack while the
+indirect branch target is too infrequently accessed to be in L1D, or
+something like that?
