@@ -2,105 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C8A9158F33
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:54:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EEC7158F47
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:54:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728135AbgBKMyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 07:54:15 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48964 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727041AbgBKMyP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 07:54:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=+uQN30cS5Bj87iEEBzdOLx8lg9+i0ExEu8VOZjq8Ndo=; b=eWC7poTUmbgHCYbKut5tUcDZwL
-        w3YYTT854/6orjDXWt0o8myOrLaqYxmNildHwtqHwB9P6sAmRSzUVkC2ndTa5MBo6vPhEIM38iBQg
-        3QFH9rbgbTMx5jUAauOSubj91u3I4QqJCftUeJ3u2BRZFY7uw1LRQwqgp3/dZBByXH8F5OzZAb0t+
-        miBihdnvmVJGXqnRBr1rG3atRoSZFunPwyyK3rI6Tg1RqDm7wVtET7WbIVm0KlJr9sAYInPEKF3Lu
-        GTYeC4TiyWPK4e73vfdDf6T1j5MFZMYQQejC42VttS5bt+wx+jfOtOIGuI60RBaTCQF1YD4hRLaX6
-        1eYOefYA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1V3O-0006U6-1C; Tue, 11 Feb 2020 12:54:14 +0000
-Date:   Tue, 11 Feb 2020 04:54:13 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v5 04/13] mm: Add readahead address space operation
-Message-ID: <20200211125413.GU8731@bombadil.infradead.org>
-References: <20200211010348.6872-1-willy@infradead.org>
- <20200211010348.6872-5-willy@infradead.org>
- <20200211045230.GD10776@dread.disaster.area>
+        id S1728660AbgBKMyh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 07:54:37 -0500
+Received: from mga03.intel.com ([134.134.136.65]:39917 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727567AbgBKMye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 07:54:34 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 04:54:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
+   d="scan'208";a="226494130"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga007.fm.intel.com with ESMTP; 11 Feb 2020 04:54:31 -0800
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1j1V3h-000kFh-9o; Tue, 11 Feb 2020 14:54:33 +0200
+Date:   Tue, 11 Feb 2020 14:54:33 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v5 1/7] console: Don't perform test for CON_BRL flag
+Message-ID: <20200211125433.GB10400@smile.fi.intel.com>
+References: <20200203133130.11591-1-andriy.shevchenko@linux.intel.com>
+ <20200204013426.GB41358@google.com>
+ <20200211113213.eaftwrq3tbt3rjwo@pathway.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200211045230.GD10776@dread.disaster.area>
+In-Reply-To: <20200211113213.eaftwrq3tbt3rjwo@pathway.suse.cz>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 03:52:30PM +1100, Dave Chinner wrote:
-> > +struct readahead_control {
-> > +	struct file *file;
-> > +	struct address_space *mapping;
-> > +/* private: use the readahead_* accessors instead */
-> > +	pgoff_t start;
-> > +	unsigned int nr_pages;
-> > +	unsigned int batch_count;
-> > +};
-> > +
-> > +static inline struct page *readahead_page(struct readahead_control *rac)
-> > +{
-> > +	struct page *page;
-> > +
-> > +	if (!rac->nr_pages)
-> > +		return NULL;
-> > +
-> > +	page = xa_load(&rac->mapping->i_pages, rac->start);
-> > +	VM_BUG_ON_PAGE(!PageLocked(page), page);
-> > +	rac->batch_count = hpage_nr_pages(page);
-> > +	rac->start += rac->batch_count;
+On Tue, Feb 11, 2020 at 12:32:13PM +0100, Petr Mladek wrote:
+> On Tue 2020-02-04 10:34:26, Sergey Senozhatsky wrote:
+> > On (20/02/03 15:31), Andy Shevchenko wrote:
+> > > 
+> > > We don't call braille_register_console() without CON_BRL flag set.
+> > > And the _braille_unregister_console() already tests for console to have
+> > > CON_BRL flag. No need to repeat this in braille_unregister_console().
+> > > 
+> > > Drop the repetitive checks from Braille console driver.
+> > > 
+> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > Reviewed-by: Petr Mladek <pmladek@suse.com>
+> > 
+> > Looks good to me overall
+> > 
+> > Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 > 
-> There's no mention of large page support in the patch description
-> and I don't recall this sort of large page batching in previous
-> iterations.
-> 
-> This seems like new functionality to me, not directly related to
-> the initial ->readahead API change? What have I missed?
+> The entire patchset has been commited into printk.git,
+> branch for-5.7-console-exit
 
-I had a crisis of confidence when I was working on this -- the loop
-originally looked like this:
+Thank you, Petr!
 
-#define readahead_for_each(rac, page)                                   \
-        for (; (page = readahead_page(rac)); rac->nr_pages--)
+-- 
+With Best Regards,
+Andy Shevchenko
 
-and then I started thinking about what I'd need to do to support large
-pages, and that turned into
 
-#define readahead_for_each(rac, page)                                   \
-        for (; (page = readahead_page(rac));				\
-		rac->nr_pages -= hpage_nr_pages(page))
-
-but I realised that was potentially a use-after-free because 'page' has
-certainly had put_page() called on it by then.  I had a brief period
-where I looked at moving put_page() away from being the filesystem's
-responsibility and into the iterator, but that would introduce more
-changes into the patchset, as well as causing problems for filesystems
-that want to break out of the loop.
-
-By this point, I was also looking at the readahead_for_each_batch()
-iterator that btrfs uses, and so we have the batch count anyway, and we
-might as well use it to store the number of subpages of the large page.
-And so it became easier to just put the whole ball of wax into the initial
-patch set, rather than introduce the iterator now and then fix it up in
-the patch set that I'm basing on this.
-
-So yes, there's a certain amount of excess functionality in this patch
-set ... I can remove it for the next release.
