@@ -2,207 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CC6C15914A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 15:02:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B8A1159147
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 15:02:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729668AbgBKOAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 09:00:33 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:24839 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728734AbgBKOAd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 09:00:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581429630;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IiJCNKCKara6122SLriCEZQxiJm9yQK9HeliuKGXOc0=;
-        b=I8gf/pvpNWY44s7QJJMMuU3cZRyr8FUfpXajLZ0oeJE9amqSbJERYtOhKYEqFsGGbwb0uM
-        DVSfO8Qv/66EnDnILP4HPaVXzGi88YvNS8Ow5lhxWcFYZEdPVoI+JnjAQvHhXgvqqFWr4p
-        YYdseOOYSK6awQfa+S+HyQuGKHwezl0=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-24-nUqL_lqaP_OmVJpdihEiHg-1; Tue, 11 Feb 2020 09:00:27 -0500
-X-MC-Unique: nUqL_lqaP_OmVJpdihEiHg-1
-Received: by mail-qk1-f198.google.com with SMTP id y6so7094595qki.13
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 06:00:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=IiJCNKCKara6122SLriCEZQxiJm9yQK9HeliuKGXOc0=;
-        b=gHlg3Fso17bLaYUJK25BcTPmFcE19w5v3ce4ocreJq4cQyvKQ00WOLCvzo9nOSuEsW
-         7OYJhvl7CwAGNdaEVrGwm5QIg8/BGariNl0nug9YxFcwKmyZO1glpIINf7JprCBuozOJ
-         rALuACxg2Cl/2sQEaT4O9uk5qesZ02BtZ0hexlpEM8/2COfKhuqWYSUfc9og2+dC605y
-         833puxTsiLCIQjPeFZC8NaEJRcgnGqZAOHIjEqhye8HjII74dR6+gs4r0HhQCvnjpXZ0
-         FOj1t+QKEYU61dWCU9AMBTQYWwWFHb0cstHprZFzHhmdc49vTLGxfkaFx3lqIwF+RTVI
-         udFQ==
-X-Gm-Message-State: APjAAAVbGX6i21obmfKy5b9SQt82bq8lDS6m8nipM21DUAR8iHR5VFLu
-        foGXNTCEgsBnI9yp/FcWq3G8G9fA+awLzBnub7bZ27LRSsAUE77M71pCI0q+FspJvdryXz002qk
-        aL39T7gTI5f3lt34QRu6HIzq7
-X-Received: by 2002:ac8:38e6:: with SMTP id g35mr15121171qtc.120.1581429627225;
+        id S1729372AbgBKOA3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 09:00:29 -0500
+Received: from foss.arm.com ([217.140.110.172]:46624 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728734AbgBKOA3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 09:00:29 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6210A30E;
+        Tue, 11 Feb 2020 06:00:28 -0800 (PST)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.71])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4917E3F68F;
         Tue, 11 Feb 2020 06:00:27 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzul9u4swtFOk02v4Rwi5cC4SpS1I1htVnEFQL+BCn8ZrTnpx5sW3iqgZ6OFG5Lv6LVBMzmXQ==
-X-Received: by 2002:ac8:38e6:: with SMTP id g35mr15121130qtc.120.1581429626863;
-        Tue, 11 Feb 2020 06:00:26 -0800 (PST)
-Received: from redhat.com (bzq-79-176-41-183.red.bezeqint.net. [79.176.41.183])
-        by smtp.gmail.com with ESMTPSA id t23sm2118020qto.88.2020.02.11.06.00.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 06:00:26 -0800 (PST)
-Date:   Tue, 11 Feb 2020 09:00:21 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     virtio-dev@lists.oasis-open.org,
-        Zha Bin <zhabin@linux.alibaba.com>, slp@redhat.com,
-        "Liu, Jing2" <jing2.liu@linux.intel.com>,
-        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
-        chao.p.peng@linux.intel.com, gerry@linux.alibaba.com
-Subject: Re: [virtio-dev] Re: [PATCH v2 4/5] virtio-mmio: add MSI interrupt
- feature support
-Message-ID: <20200211090003-mutt-send-email-mst@kernel.org>
-References: <4c3d13be5a391b1fc50416838de57d903cbf8038.1581305609.git.zhabin@linux.alibaba.com>
- <0c71ff9d-1a7f-cfd2-e682-71b181bdeae4@redhat.com>
- <c42c8b49-5357-f341-2942-ba84afc25437@linux.intel.com>
- <ad96269f-753d-54b8-a4ae-59d1595dd3b2@redhat.com>
- <5522f205-207b-b012-6631-3cc77dde3bfe@linux.intel.com>
- <45e22435-08d3-08fe-8843-d8db02fcb8e3@redhat.com>
- <20200211065319-mutt-send-email-mst@kernel.org>
- <c4a78a15-c889-df3f-3e1e-7df1a4d67838@redhat.com>
- <20200211070523-mutt-send-email-mst@kernel.org>
- <fdb19ef4-2003-6c6f-5c6f-c757a6320130@redhat.com>
+Date:   Tue, 11 Feb 2020 14:00:25 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Andrea Arcangeli <aarcange@redhat.com>
+Cc:     Will Deacon <will@kernel.org>, Jon Masters <jcm@jonmasters.org>,
+        Rafael Aquini <aquini@redhat.com>,
+        Mark Salter <msalter@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] arm64: tlb: skip tlbi broadcast for single threaded
+ TLB flushes
+Message-ID: <20200211140025.GB153117@arrakis.emea.arm.com>
+References: <20200203201745.29986-1-aarcange@redhat.com>
+ <20200203201745.29986-3-aarcange@redhat.com>
+ <20200210175106.GA27215@arrakis.emea.arm.com>
+ <20200210201411.GC3699@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fdb19ef4-2003-6c6f-5c6f-c757a6320130@redhat.com>
+In-Reply-To: <20200210201411.GC3699@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 08:18:54PM +0800, Jason Wang wrote:
-> 
-> On 2020/2/11 下午8:08, Michael S. Tsirkin wrote:
-> > On Tue, Feb 11, 2020 at 08:04:24PM +0800, Jason Wang wrote:
-> > > On 2020/2/11 下午7:58, Michael S. Tsirkin wrote:
-> > > > On Tue, Feb 11, 2020 at 03:40:23PM +0800, Jason Wang wrote:
-> > > > > On 2020/2/11 下午2:02, Liu, Jing2 wrote:
-> > > > > > On 2/11/2020 12:02 PM, Jason Wang wrote:
-> > > > > > > On 2020/2/11 上午11:35, Liu, Jing2 wrote:
-> > > > > > > > On 2/11/2020 11:17 AM, Jason Wang wrote:
-> > > > > > > > > On 2020/2/10 下午5:05, Zha Bin wrote:
-> > > > > > > > > > From: Liu Jiang<gerry@linux.alibaba.com>
-> > > > > > > > > > 
-> > > > > > > > > > Userspace VMMs (e.g. Qemu microvm, Firecracker) take
-> > > > > > > > > > advantage of using
-> > > > > > > > > > virtio over mmio devices as a lightweight machine model for modern
-> > > > > > > > > > cloud. The standard virtio over MMIO transport layer
-> > > > > > > > > > only supports one
-> > > > > > > > > > legacy interrupt, which is much heavier than virtio over
-> > > > > > > > > > PCI transport
-> > > > > > > > > > layer using MSI. Legacy interrupt has long work path and
-> > > > > > > > > > causes specific
-> > > > > > > > > > VMExits in following cases, which would considerably slow down the
-> > > > > > > > > > performance:
-> > > > > > > > > > 
-> > > > > > > > > > 1) read interrupt status register
-> > > > > > > > > > 2) update interrupt status register
-> > > > > > > > > > 3) write IOAPIC EOI register
-> > > > > > > > > > 
-> > > > > > > > > > We proposed to add MSI support for virtio over MMIO via new feature
-> > > > > > > > > > bit VIRTIO_F_MMIO_MSI[1] which increases the interrupt performance.
-> > > > > > > > > > 
-> > > > > > > > > > With the VIRTIO_F_MMIO_MSI feature bit supported, the virtio-mmio MSI
-> > > > > > > > > > uses msi_sharing[1] to indicate the event and vector mapping.
-> > > > > > > > > > Bit 1 is 0: device uses non-sharing and fixed vector per
-> > > > > > > > > > event mapping.
-> > > > > > > > > > Bit 1 is 1: device uses sharing mode and dynamic mapping.
-> > > > > > > > > I believe dynamic mapping should cover the case of fixed vector?
-> > > > > > > > > 
-> > > > > > > > Actually this bit*aims*  for msi sharing or msi non-sharing.
-> > > > > > > > 
-> > > > > > > > It means, when msi sharing bit is 1, device doesn't want vector
-> > > > > > > > per queue
-> > > > > > > > 
-> > > > > > > > (it wants msi vector sharing as name) and doesn't want a high
-> > > > > > > > interrupt rate.
-> > > > > > > > 
-> > > > > > > > So driver turns to !per_vq_vectors and has to do dynamical mapping.
-> > > > > > > > 
-> > > > > > > > So they are opposite not superset.
-> > > > > > > > 
-> > > > > > > > Thanks!
-> > > > > > > > 
-> > > > > > > > Jing
-> > > > > > > I think you need add more comments on the command.
-> > > > > > > 
-> > > > > > > E.g if I want to map vector 0 to queue 1, how do I need to do?
-> > > > > > > 
-> > > > > > > write(1, queue_sel);
-> > > > > > > write(0, vector_sel);
-> > > > > > That's true. Besides, two commands are used for msi sharing mode,
-> > > > > > 
-> > > > > > VIRTIO_MMIO_MSI_CMD_MAP_CONFIG and VIRTIO_MMIO_MSI_CMD_MAP_QUEUE.
-> > > > > > 
-> > > > > > "To set up the event and vector mapping for MSI sharing mode, driver
-> > > > > > SHOULD write a valid MsiVecSel followed by
-> > > > > > VIRTIO_MMIO_MSI_CMD_MAP_CONFIG/VIRTIO_MMIO_MSI_CMD_MAP_QUEUE command to
-> > > > > > map the configuration change/selected queue events respectively.  " (See
-> > > > > > spec patch 5/5)
-> > > > > > 
-> > > > > > So if driver detects the msi sharing mode, when it does setup vq, writes
-> > > > > > the queue_sel (this already exists in setup vq), vector sel and then
-> > > > > > MAP_QUEUE command to do the queue event mapping.
-> > > > > > 
-> > > > > So actually the per vq msix could be done through this. I don't get why you
-> > > > > need to introduce MSI_SHARING_MASK which is the charge of driver instead of
-> > > > > device. The interrupt rate should have no direct relationship with whether
-> > > > > it has been shared or not.
-> > > > > 
-> > > > > Btw, you introduce mask/unmask without pending, how to deal with the lost
-> > > > > interrupt during the masking then?
-> > > > pending can be an internal device register. as long as device
-> > > > does not lose interrupts while masked, all's well.
-> > > 
-> > > You meant raise the interrupt during unmask automatically?
-> > > 
-> > 
-> > yes - that's also what pci does.
-> > 
-> > the guest visible pending bit is partially implemented in qemu
-> > as per pci spec but it's unused.
-> 
-> 
-> Ok.
-> 
-> 
-> > 
-> > > > There's value is being able to say "this queue sends no
-> > > > interrupts do not bother checking used notification area".
-> > > > so we need way to say that. So I guess an enable interrupts
-> > > > register might have some value...
-> > > > But besides that, it's enough to have mask/unmask/address/data
-> > > > per vq.
-> > > 
-> > > Just to check, do you mean "per vector" here?
-> > > 
-> > > Thanks
-> > > 
-> > No, per VQ. An indirection VQ -> vector -> address/data isn't
-> > necessary for PCI either, but that ship has sailed.
-> 
-> 
-> Yes, it can work but it may bring extra effort when you want to mask a
-> vector which is was shared by a lot of queues.
-> 
-> Thanks
-> 
+Hi Andrea,
 
-masking should be per vq too.
+On Mon, Feb 10, 2020 at 03:14:11PM -0500, Andrea Arcangeli wrote:
+> On Mon, Feb 10, 2020 at 05:51:06PM +0000, Catalin Marinas wrote:
+> > It may be better if you used mm_cpumask to mark wherever an mm ever ran
+> > than relying on mm_users.
+> 
+> Agreed.
+> 
+> If we can use mm_cpumask to track where the mm ever run, then if I'm
+> not mistaken we could optimize also multithreaded processes in the
+> same way: if only one thread is running frequently and the others are
+> frequently sleeping, we could issue a single tlbi broadcast (modulo
+> invalidates of small virtual ranges).
+
+Possibly, though not sure how you'd detect such scenario.
+
+> In the meantime the below should be enough to address the concern you
+> raised of the proof of concept RFC patch.
+> 
+> I already experimented with mm_users == 1 earlier and it doesn't
+> change the benchmark results for the "best case" below.
+> 
+> (untested)
+> 
+> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+> index 772bbc45b867..a2d53b301f22 100644
+> --- a/arch/arm64/include/asm/tlbflush.h
+> +++ b/arch/arm64/include/asm/tlbflush.h
+[...]
+> @@ -212,7 +215,8 @@ static inline void flush_tlb_page(struct vm_area_struct *vma,
+>  	unsigned long addr = __TLBI_VADDR(uaddr, ASID(mm));
+>  
+>  	/* avoid TLB-i broadcast to remote NUMA nodes if it's a local flush */
+> -	if (current->mm == mm && atomic_read(&mm->mm_users) <= 1) {
+> +	if (current->mm == mm && atomic_read(&mm->mm_users) <= 1 &&
+> +	    (system_uses_ttbr0_pan() || atomic_read(&mm->mm_count) == 1)) {
+>  		int cpu = get_cpu();
+>  
+>  		cpumask_setall(mm_cpumask(mm));
+
+I think there is another race here. IIUC, the assumption you make is
+that when mm_users <= 1 && mm_count == 1, the only active user of this
+pgd/ASID is on the CPU doing the TLBI. This is not the case for
+try_to_unmap() where the above condition may be true but the active
+thread on a different CPU won't notice the local TLBI.
+
+> > That's a pretty artificial test and it is indeed improved by this patch.
+> > However, it would be nice to have some real-world scenarios where this
+> > matters.
+[...]
+> Still your question if it'll make a difference in practice is a good
+> one and I don't have a sure answer yet. I suppose before doing more
+> benchmarking it's better to make a new version of this that uses
+> mm_cpumask to track where the asid was ever loaded as you suggested,
+> so that it will also optimize away tlbi broadcasts from multithreaded
+> processes where only one thread is running frequently?
+
+I was actually curious what triggered this patch series, whether you've
+seen a real use-case where the TLBI was a bottleneck.
 
 -- 
-MST
-
+Catalin
