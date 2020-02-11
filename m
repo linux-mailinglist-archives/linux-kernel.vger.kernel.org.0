@@ -2,86 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6ACF1599A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:22:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 731AF15999E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:21:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731643AbgBKTWh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 14:22:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37662 "EHLO mail.kernel.org"
+        id S1731627AbgBKTVZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 14:21:25 -0500
+Received: from mga14.intel.com ([192.55.52.115]:52862 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730822AbgBKTWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 14:22:37 -0500
-Received: from localhost (unknown [104.133.9.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B924120842;
-        Tue, 11 Feb 2020 19:22:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581448956;
-        bh=6QUFO4XLIl152E/aHV9pWHYp1OSMRQfAtAj8YjYbj2o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=idbo4s+/FPE3E/07cj+a1jbxOwhs5O3G+6H/GRfnEOt/KiMoy5jI4Eha8wrYRw6qB
-         LCha0a3iz+Xy66b0zWDBmBhFjUs72qIO+SYea/TBEwaJtGbjDrlXpZMNxOu25uSo1+
-         E+25XjTOGNz82OFPoDm5FG8tdA5ywuxz5uPGa7T8=
-Date:   Tue, 11 Feb 2020 11:22:36 -0800
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     arnd@arndb.de, smohanad@codeaurora.org, jhugo@codeaurora.org,
-        kvalo@codeaurora.org, bjorn.andersson@linaro.org,
-        hemantk@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/16] bus: mhi: core: Add support for registering MHI
- controllers
-Message-ID: <20200211192236.GB1962867@kroah.com>
-References: <20200131135009.31477-1-manivannan.sadhasivam@linaro.org>
- <20200131135009.31477-3-manivannan.sadhasivam@linaro.org>
- <20200206165606.GA3894455@kroah.com>
- <20200211191147.GB11908@Mani-XPS-13-9360>
+        id S1729800AbgBKTVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 14:21:23 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 11:21:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
+   d="scan'208";a="433791170"
+Received: from vcostago-desk1.jf.intel.com (HELO vcostago-desk1) ([10.54.70.26])
+  by fmsmga006.fm.intel.com with ESMTP; 11 Feb 2020 11:21:21 -0800
+From:   Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To:     Murali Karicheri <m-karicheri2@ti.com>,
+        Vladimir Oltean <olteanv@gmail.com>
+Cc:     Po Liu <po.liu@nxp.com>,
+        "davem\@davemloft.net" <davem@davemloft.net>,
+        "hauke.mehrtens\@intel.com" <hauke.mehrtens@intel.com>,
+        "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "allison\@lohutok.net" <allison@lohutok.net>,
+        "tglx\@linutronix.de" <tglx@linutronix.de>,
+        "hkallweit1\@gmail.com" <hkallweit1@gmail.com>,
+        "saeedm\@mellanox.com" <saeedm@mellanox.com>,
+        "andrew\@lunn.ch" <andrew@lunn.ch>,
+        "f.fainelli\@gmail.com" <f.fainelli@gmail.com>,
+        "alexandru.ardelean\@analog.com" <alexandru.ardelean@analog.com>,
+        "jiri\@mellanox.com" <jiri@mellanox.com>,
+        "ayal\@mellanox.com" <ayal@mellanox.com>,
+        "pablo\@netfilter.org" <pablo@netfilter.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
+        "simon.horman\@netronome.com" <simon.horman@netronome.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Alexandru Marginean <alexandru.marginean@nxp.com>,
+        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
+        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
+        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>
+Subject: Re: [v1,net-next, 1/2] ethtool: add setting frame preemption of traffic classes
+In-Reply-To: <70deb628-d7bc-d2a3-486d-d3e53854c06e@ti.com>
+References: <20191127094517.6255-1-Po.Liu@nxp.com> <87v9p93a2s.fsf@linux.intel.com> <9b13a47e-8ca3-66b0-063c-798a5fa71149@ti.com> <CA+h21hqk2pCfrQg5kC6HzmL=eEqJXjuRsu+cVkGsEi8OXGpKJA@mail.gmail.com> <87d0bajc3l.fsf@linux.intel.com> <70deb628-d7bc-d2a3-486d-d3e53854c06e@ti.com>
+Date:   Tue, 11 Feb 2020 11:22:56 -0800
+Message-ID: <877e0tx71r.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200211191147.GB11908@Mani-XPS-13-9360>
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 12:41:47AM +0530, Manivannan Sadhasivam wrote:
-> Hi Greg,
-> 
-> On Thu, Feb 06, 2020 at 05:56:06PM +0100, Greg KH wrote:
-> > On Fri, Jan 31, 2020 at 07:19:55PM +0530, Manivannan Sadhasivam wrote:
-> > > +static void mhi_release_device(struct device *dev)
-> > > +{
-> > > +	struct mhi_device *mhi_dev = to_mhi_device(dev);
-> > > +
-> > > +	if (mhi_dev->ul_chan)
-> > > +		mhi_dev->ul_chan->mhi_dev = NULL;
-> > 
-> > That looks really odd.  Why didn't you just drop the reference you
-> > should have grabbed here for this pointer?  You did properly increment
-> > it when you saved it, right?  :)
-> > 
-> 
-> Well, there is no reference count (kref) exist for mhi_dev.
+Murali Karicheri <m-karicheri2@ti.com> writes:
 
-Then something is wrong with your model :(
+> We are still working to send a patch for taprio offload on our hardware
+> and it may take a while to get to this. So if someone can help to add
+> the required kernel/driver interface for this, that will be great!
 
-You can't save pointers off to things without reference counting, that
-is going to cause you real problems.  See the coding style document for
-all the details.
+Will add this to my todo list. But if anyone else has the spare cycles
+feel free to have a go at it.
 
-> And we really needed to NULL the mhi_dev to avoid any dangling
-> reference to it.
+>
+>>>>       - ConfigChangeError - Error in configuration (AdminBaseTime <
+>>>>         CurrentTime)
+>>>
+>>> This can be exported similarly.
+>> 
+>> In my view, having this as a "runtime" error is not useful, as we can
+>> verify this at configuration time.
+>
+> Looks like this is not an error per 802.1Q standard if I understood it
+> correctly.
+>
+> This is what I see.
+> =======================================================================
+>  From 802.1Q 2018, 8.6.9.1.1 SetCycleStartTime()
+>
+> If AdminBaseTime is set to the same time in the past in all bridges and
+> end stations, OperBaseTime is always in the past, and all cycles start
+> synchronized. Using AdminBaseTime in the past is appropriate when you
+> can start schedules prior to starting the application that uses the
+> schedules. Use of AdminBaseTime in the future is intended to change a
+> currently running schedule in all bridges and end stations to a new
+> schedule at a future time. Using AdminBaseTime in the future is
+> appropriate when schedules must be changed without stopping the
+> application
+> ========================================================================
+>
 
-Again, that's not how to do this correctly.
+What I meant here is the case that I already have an "oper" schedule
+running, so my "oper->base_time" is in the past, and I try to add an
+"admin" schedule with a "base_time" also in the past. What's the
+expected behavior in this case? The text about stopping/starting
+applications doesn't seem to apply to the way the tc subsystem interacts
+with the applications.
 
-> The reason for not having kref is that, each mhi_dev will be used by
-> maximum of 2 channels only. So thought that refcounting is not needed.
-> Please correct me if I'm wrong.
+>> 
+>>>
+>>>>       - SupportedListMax - Maximum supported Admin/Open shed list.
+>>>>
+>>>> Is there a plan to export these from driver through tc show or such
+>>>> command? The reason being, there would be applications developed to
+>>>> manage configuration/schedule of TSN nodes that would requires these
+>>>> information from the node. So would need a support either in tc or
+>>>> some other means to retrieve them from hardware or driver. That is my
+>>>> understanding...
+>>>>
+>> 
+>> Hm, now I understamd what you meant here...
+>> 
+>>>
+>>> Not sure what answer you expect to receive for "is there any plan".
+>>> You can go ahead and propose something, as long as it is reasonably
+>>> useful to have.
+>> 
+>> ... if this is indeed useful, perhaps one way to do is to add a subcommand
+>> to TC_SETUP_QDISC_TAPRIO, so we can retrieve the stats/information we want
+>> from the driver. Similar to what cls_flower does.
+>> 
+>
+> What I understand is that there will be some work done to allow auto
+> configuration of TSN nodes from user space and that would need access to
+> all or some of the above parameters along with tc command to configure
+> the same. May be a open source project for this or some custom
+> application? Any such projects existing??
 
-Please read section 11 of Documentation/process/coding-style.rst
+Yeah, this is a big missing piece for TSN. I've heard 'netopeer2' and
+'sysrepo' mentioned when similar questions were asked, but I have still
+to take a look at them and see what's missing. (Or if they are the right
+tool for the job)
 
-thanks,
 
-greg k-h
+-- 
+Vinicius
