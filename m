@@ -2,92 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FD1C15999C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:21:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E29E15999F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:21:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731612AbgBKTVW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 14:21:22 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:32943 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729800AbgBKTVW (ORCPT
+        id S1731637AbgBKTVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 14:21:33 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:53425 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729800AbgBKTVd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 14:21:22 -0500
-Received: by mail-wr1-f67.google.com with SMTP id u6so13947816wrt.0;
-        Tue, 11 Feb 2020 11:21:21 -0800 (PST)
+        Tue, 11 Feb 2020 14:21:33 -0500
+Received: by mail-pj1-f65.google.com with SMTP id n96so1763425pjc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 11:21:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AEGWYfFX9245MukYgsGUL84+IjZfZx4XP83WQpnQkHw=;
-        b=A2TzVFOW6F10JBsePK3zu458Q3Vas14sw10YF6Uo0daSQJAYxApnG0/CppNxgLNFkC
-         62caMBdepV56f3CUUlOGU1KMLPNHRoueumUKE2HrBlFOmST6YIO4peQ2p09gyEwJmj45
-         5blcd8z3oTfYeXi546h4IE/QNiwSLqbjbYFZVKoWrNvWW0WeybSkyQY1qjOuCk6lwS8M
-         146Tc1XPAJNAS2SJg0O/FbFcT2NnuCqFGrRnMU6Bm9SAQOAOsLY81z3wjRg7l0fxhw/P
-         Ag1ghXSk0KrokGHYloHR6z3m78+C13HNldnl1QEKCm6GXf9PpRXqqhzs1e6y0eITbChv
-         jfHA==
+         :content-disposition:in-reply-to;
+        bh=LWdO903JlL7mrIroJ1DR4H0Lf0OnGW3IvW4RvhYAFg0=;
+        b=QvD20COfVzxuay6xGJSzAAWXcjptzM8MyBsKCfYGfkNUpP3ZsfpRCnB1a9xLwfnTHB
+         wKNeAxR0CVstaTCqWBMgJCLOT41JKo13HUck+vjHHNU6vzraPrnd3cDFUvgFWIPAtFMt
+         nAsJb50vycy90MUlcKEG44K3kaE7ytB6v2oE8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AEGWYfFX9245MukYgsGUL84+IjZfZx4XP83WQpnQkHw=;
-        b=Y5Yz3woum8OPo0SeENOeGLCqv4o3WhKjZaVXWzKnoWrHrKN/6McoDpJTHGYF568QeR
-         7Agl3KK1LfpSIEwKO7EG8cq9C+WBbC3083dWtHLiTVzNF/oCb6FZ9Sl19ylMJ1M7A+wu
-         wMmHJMh5J/gxgMb356WB1Ve0pm/slZiA+qBFnW5qzFy8jDjr1Lmx2lCvZ/CLJzhH/KuS
-         EwPAHokT2zGNN/GFpTmQYHMHNuIPWK2NU9QTyo0wrjNsWA6YZStq3iT1X09nt153VewS
-         dU6pMtJ9WebRFV/AXZnulLMYIzpH3vb3YrYwAIqSzOa1e03xaSxrlYJisx8cvJlU8DHk
-         pg+w==
-X-Gm-Message-State: APjAAAWEFxXD6uWqrZHxCUHAf4N20Yw1B7u7zGbVsSDMK3DhSeuS6Oip
-        2F7KTIAP1QfW++ijoIDohO8=
-X-Google-Smtp-Source: APXvYqwMsryykfh9h+LtceOZt3ZKFIXxSljklwP6UXWA+eNQZ2lUmaSyqT7uS6SmQh98ZjvSee7Rwg==
-X-Received: by 2002:a5d:6082:: with SMTP id w2mr10143766wrt.300.1581448880361;
-        Tue, 11 Feb 2020 11:21:20 -0800 (PST)
-Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id q10sm4941740wme.16.2020.02.11.11.21.19
+         :mime-version:content-disposition:in-reply-to;
+        bh=LWdO903JlL7mrIroJ1DR4H0Lf0OnGW3IvW4RvhYAFg0=;
+        b=VyJTZodQZ3eEjfmmMEvY0yXYwO6B85KjITY4ml4GGXTt8Hn/j80tA8NHP04HvPOWqv
+         n5x6toHK5PFiUsluI1jsyHhRtSvJaqRMJ9f0PRbG1pRf54R5Y78ZYxoylQNbEujxSFNJ
+         jQdtBwaJSfF2IBZRvyL4WfZpv9L8bw8bAd15o4WSz0IEnVXlm4erJlyUXZEmIx9ewGSi
+         vGq1TV+7W5xL0FV/22IMfUXY/MWKL9WDfIYMj/1qMjhSsBCWiuNC3ehtLYhHBGkkEJXi
+         hKQnojBLonjgkJoxl9iHhA1bfXiSoJuHFEJZRfQ/FcvCgopNpMStIWaQrkgFL+AyesMU
+         gdSw==
+X-Gm-Message-State: APjAAAU5F9uhe5YgdV6npHz/h7e9kerbbDvPA94h5y5sa+oCMeQqyxnQ
+        SvH7vWn7JyR4IbGXY37fxuQ9LQ==
+X-Google-Smtp-Source: APXvYqw1YwEZ93PZj55gFovRIY7+WfkCv4LbdL59T6UWNYBnl5teLRUx7UPTsrLJB/UZSKSu0YhImQ==
+X-Received: by 2002:a17:90a:9311:: with SMTP id p17mr5315663pjo.140.1581448892021;
+        Tue, 11 Feb 2020 11:21:32 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id f43sm4267444pje.23.2020.02.11.11.21.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 11:21:19 -0800 (PST)
-Date:   Tue, 11 Feb 2020 20:21:18 +0100
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Eric Biggers <ebiggers@kernel.org>, davem@davemloft.net,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [BUG] crypto: export() overran state buffer on test vector
-Message-ID: <20200211192118.GA24059@Red>
-References: <20200206085442.GA5585@Red>
- <20200207065719.GA8284@sol.localdomain>
- <20200207104659.GA10979@Red>
- <20200208085713.ftuqxhatk6iioz7e@gondor.apana.org.au>
+        Tue, 11 Feb 2020 11:21:31 -0800 (PST)
+Date:   Tue, 11 Feb 2020 11:21:29 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+Subject: Re: [PATCH] lib/test_lockup: test module to generate lockups
+Message-ID: <202002111120.91782E0686@keescook>
+References: <158132859146.2797.525923171323227836.stgit@buzz>
+ <202002101725.EE6D5A6@keescook>
+ <5e5ee6b7-68a9-1bcc-66c5-814e40a627be@yandex-team.ru>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200208085713.ftuqxhatk6iioz7e@gondor.apana.org.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5e5ee6b7-68a9-1bcc-66c5-814e40a627be@yandex-team.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 08, 2020 at 04:57:13PM +0800, Herbert Xu wrote:
-> On Fri, Feb 07, 2020 at 11:46:59AM +0100, Corentin Labbe wrote:
-> >
-> > My goal is to do like n2-crypto/rk3288crypto/etc..., fallback for init/update/final/finup and only do stuff with digest().
-> > So I have just exactly copied what they do.
+On Tue, Feb 11, 2020 at 03:57:42PM +0300, Konstantin Khlebnikov wrote:
+> On 11/02/2020 04.26, Kees Cook wrote:
+> > On Mon, Feb 10, 2020 at 12:56:31PM +0300, Konstantin Khlebnikov wrote:
+> > > CONFIG_TEST_LOCKUP=m adds module "test_lockup" that helps to make sure
+> > > that watchdogs and lockup detectors are working properly.
+> > 
+> > Isn't this all already possible with CONFIG_LKDTM ?
 > 
-> n2 at least is totally broken wrt import/export.  The other ones
-> would work provided that the fallback have the same statesize as
-> the generic sha implementations.
+> Yep, LKDTM covers some cases. But they are unrecoverable.
 > 
+> It seems LKDTM is more like a fixed set of unit tests while
+> test_lockup is a flexible tool for stress load.
 
-This behavour happen only on arm64, so it is why probably nobody (rockchip/n2) found it.
+Okay, cool. I just wanted to make sure you'd seen LKDTM and there wasn't
+too much wheel-reinvention happening. :) Thanks for checking!
 
-> Are you not using the standard state sizes?
+-Kees
 
-I use the standard size (statesize = sizeof(struct shaxxx_state))
-
-As a quick workaround, By simply adding (+ 8), all test pass.
-
-> 
-> This should probably be switched over to lib/crypto or at least
-> shash.
-> 
-
-Do you mean that I should abandon ahash as a fallback ?
+-- 
+Kees Cook
