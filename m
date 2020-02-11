@@ -2,143 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C35A5158C46
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:00:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7861158C8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:19:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbgBKKAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 05:00:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45760 "EHLO mail.kernel.org"
+        id S1728278AbgBKKTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 05:19:07 -0500
+Received: from mga17.intel.com ([192.55.52.151]:61104 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727945AbgBKKAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 05:00:08 -0500
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5851D20714;
-        Tue, 11 Feb 2020 10:00:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581415207;
-        bh=Rf1cVsXYoyZPTMZMbH8vZlwFAWASWhkCsYObkjMQ9Ko=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ZjYMZLNqPENaRh+mcuqb7UfkV1Eo12AXIsjC468Zej2Z0m3Xd4BRmSMg9JSvvGj5H
-         d9HH7b+bMenMTDHwqZ70TklYjBBZWv2Wy0UHKUXpqRyPPMqRkx8b8FAYDwNKRYW4Ui
-         v81OVzKUWodAvvqpc8bQnpxEao6X/kS36AWJyp8o=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1j1SKn-004I7J-J6; Tue, 11 Feb 2020 10:00:01 +0000
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 11 Feb 2020 10:00:01 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jann Horn <jannh@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        clang-built-linux@googlegroups.com,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 09/11] arm64: disable SCS for hypervisor code
-In-Reply-To: <20200211095519.GB8560@willie-the-truck>
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20200128184934.77625-1-samitolvanen@google.com>
- <20200128184934.77625-10-samitolvanen@google.com>
- <6f62b3c0-e796-e91c-f53b-23bd80fcb065@arm.com>
- <20200210175214.GA23318@willie-the-truck>
- <20200210180327.GB20840@lakrids.cambridge.arm.com>
- <20200210180740.GA24354@willie-the-truck>
- <43839239237869598b79cab90e100127@kernel.org>
- <20200211095519.GB8560@willie-the-truck>
-Message-ID: <fed83df0e9140b9655b00f315814fab8@kernel.org>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/1.3.10
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: will@kernel.org, mark.rutland@arm.com, james.morse@arm.com, samitolvanen@google.com, catalin.marinas@arm.com, rostedt@goodmis.org, mhiramat@kernel.org, ard.biesheuvel@linaro.org, Dave.Martin@arm.com, keescook@chromium.org, labbott@redhat.com, ndesaulniers@google.com, jannh@google.com, miguel.ojeda.sandonis@gmail.com, yamada.masahiro@socionext.com, clang-built-linux@googlegroups.com, kernel-hardening@lists.openwall.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        id S1728257AbgBKKTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 05:19:06 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 02:19:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
+   d="scan'208";a="405896777"
+Received: from joy-optiplex-7040.sh.intel.com ([10.239.13.16])
+  by orsmga005.jf.intel.com with ESMTP; 11 Feb 2020 02:19:03 -0800
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     alex.williamson@redhat.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        cohuck@redhat.com, zhenyuw@linux.intel.com, zhi.a.wang@intel.com,
+        kevin.tian@intel.com, shaopeng.he@intel.com, yi.l.liu@intel.com,
+        Yan Zhao <yan.y.zhao@intel.com>
+Subject: [RFC PATCH v3 0/9] Introduce vendor ops in vfio-pci
+Date:   Tue, 11 Feb 2020 04:57:27 -0500
+Message-Id: <20200211095727.20426-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-11 09:55, Will Deacon wrote:
-> On Tue, Feb 11, 2020 at 09:14:52AM +0000, Marc Zyngier wrote:
->> On 2020-02-10 18:07, Will Deacon wrote:
->> > On Mon, Feb 10, 2020 at 06:03:28PM +0000, Mark Rutland wrote:
->> > > On Mon, Feb 10, 2020 at 05:52:15PM +0000, Will Deacon wrote:
->> > > > On Mon, Feb 10, 2020 at 05:18:58PM +0000, James Morse wrote:
->> > > > > On 28/01/2020 18:49, Sami Tolvanen wrote:
->> > > > > > Filter out CC_FLAGS_SCS and -ffixed-x18 for code that runs at a
->> > > > > > different exception level.
->> > > > >
->> > > > > Hmmm, there are two things being disabled here.
->> > > > >
->> > > > > Stashing the lr in memory pointed to by VA won't work transparently at EL2 ... but
->> > > > > shouldn't KVM's C code still treat x18 as a fixed register?
->> > > >
->> > > > My review of v6 suggested dropping the -ffixed-x18 as well, since it's only
->> > > > introduced by SCS (in patch 5) and so isn't required by anything else. Why
->> > > > do you think it's needed?
->> > >
->> > > When EL1 code calls up to hyp, it expects x18 to be preserved across
->> > > the
->> > > call, so hyp needs to either preserve it explicitly across a
->> > > transitions
->> > > from/to EL1 or always preserve it.
->> >
->> > I thought we explicitly saved/restored it across the call after
->> > af12376814a5 ("arm64: kvm: stop treating register x18 as caller save").
->> > Is
->> > that not sufficient?
->> >
->> > > The latter is easiest since any code used by VHE hyp code will need
->> > > x18
->> > > saved anyway (ans so any common hyp code needs to).
->> >
->> > I would personally prefer to split the VHE and non-VHE code so they can
->> > be
->> > compiled with separate options.
->> 
->> This is going to generate a lot of code duplication (or at least 
->> object
->> duplication),
->> as the two code paths are intricately linked and splitting them to 
->> support
->> different
->> compilation options and/or calling conventions.
->> 
->> I'm not fundamentally opposed to that, but it should come with ways to 
->> still
->> manage it as a unified code base as much as possible, as ways to 
->> discard the
->> unused part at runtime (which should become easy to do once we have 
->> two
->> distinct sets of objects).
-> 
-> Agreed, and I don't want to hold up the SCS patches because of this. 
-> I'm
-> just nervous about the function attribute because I've only ever had
-> terrible experiences with them. Maybe it will work this time (!)
+When using module vfio-pci to pass through devices, though for the most
+of time, it is desired to use default implementations in vfio-pci, vendors
+sometimes may want to do certain kind of customization.
+For example, vendors may want to add a vendor device region or may want to
+intercept writes to a BAR region.
+So, in this patch set, we introduce a way to allow vendors to focus on
+handling of regions of their interest and call default vfio-pci ops to
+handle the reset ones.
 
-I have the same experience chasing missing __hyp_text attributes. Until 
-we
-have tooling that picks on this *at compile time*, we'll have to play
-wack-a-mole with them...
+It goes like this:
+(1) macros are provided to let vendor drivers register/unregister
+vfio_pci_vendor_driver_ops to vfio_pci in their module_init() and
+module_exit().
+vfio_pci_vendor_driver_ops contains callbacks probe() and remove() and a
+pointer to vfio_device_ops.
 
-         M.
+(2) vendor drivers define their module aliases as
+"vfio-pci:$vendor_id-$device_id".
+E.g. A vendor module for VF devices of Intel(R) Ethernet Controller XL710
+family can define its module alias as MODULE_ALIAS("vfio-pci:8086-154c").
+
+(3) when module vfio_pci is bound to a device, it would call modprobe in
+user space for modules of alias "vfio-pci:$vendor_id-$device_id", which
+would trigger unloaded vendor drivers to register their
+vfio_pci_vendor_driver_ops to vfio_pci.
+Then it searches registered ops list and calls probe() to test whether this
+vendor driver supports this physical device.
+A success probe() would make vfio_pci to use vfio_device_ops provided
+vendor driver as the ops of the vfio device. So vfio_pci_ops are not to be
+called for this device any more. Instead, they are exported to be called
+from vendor drivers as a default implementation.
+
+
+                                        _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+                                  
+ __________   (un)register vendor ops  |  ___________    ___________   |
+|          |<----------------------------|    VF    |   |           |   
+| vfio-pci |                           | |  vendor  |   | PF driver |  |
+|__________|---------------------------->|  driver  |   |___________|   
+     |           probe/remove()        |  -----------          |       |
+     |                                                         |         
+     |                                 |_ _ _ _ _ _ _ _ _ _ _ _|_ _ _ _|
+    \|/                                                       \|/
+-----------                                              ------------
+|    VF   |                                              |    PF    |
+-----------                                              ------------
+                   a typical usage in SRIOV
+
+
+
+Ref counts:
+(1) vendor drivers must be a module and compiled to depend on module
+vfio_pci.
+(2) In vfio_pci, a successful register would add refs of itself, and a
+successful unregister would derefs of itself.
+(3) In vfio_pci, a successful probe() of a vendor driver would add ref of
+the vendor module. It derefs of the vendor module after calling remove().
+(4) macro provided to make sure vendor module always unregister itself in
+its module_exit
+
+Those are to prevent below conditions:
+a. vfio_pci is unloaded after a successful register from vendor driver.
+   Though vfio_pci would later call modprobe to ask the vendor module to
+   register again, it cannot help if vendor driver remain as loaded
+   across unloading-loading of vfio_pci.
+b. vendor driver unregisters itself after successfully probed by vfio_pci.
+c. circular dependency between vfio_pci and the vendor driver.
+   if vfio_pci adds refs to both vfio_pci and vendor driver on a successful
+   register and if vendor driver only do the unregister in its module_exit,
+   then it would have no chance to do the unregister.
+
+
+Patch Overview
+patches 1-2 making struct vfio_pci_device public and functions
+            in struct vfio_pci_ops exported
+patches 3-4 provide register/unregister interfaces for vendor drivers
+patches 5-6 some more enhancements
+patch 7 provides an sample to pass through IGD devices
+patches 8-9 implement VF live migration on Intel's 710 SRIOV devices.
+            Some dirty page tracking functions are intentionally
+            commented out and would send out later in future.
+
+Changelog:
+RFC v2- RFC v3:
+- embedding struct vfio_pci_device into struct vfio_pci_device_private.
+(Alex)
+
+RFC v1- RFC v2:
+- renamed mediate ops to vendor ops
+- use of request_module and module alias to manage vendor driver load
+  (Alex)
+- changed from vfio_pci_ops calling vendor ops
+  to vendor ops calling default vfio_pci_ops  (Alex)
+- dropped patches for dynamic traps of BARs. will submit them later.
+
+Links:
+Previous versions:
+RFC v2:
+https://lkml.org/lkml/2020/1/30/956
+
+RFC v1:
+kernel part: https://www.spinics.net/lists/kernel/msg3337337.html.
+qemu part: https://www.spinics.net/lists/kernel/msg3337337.html.
+
+VFIO live migration v8:
+https://lists.gnu.org/archive/html/qemu-devel/2019-08/msg05542.html.
+
+
+Yan Zhao (9):
+  vfio/pci: export vfio_pci_device public and add
+    vfio_pci_device_private
+  vfio/pci: export functions in vfio_pci_ops
+  vfio/pci: register/unregister vfio_pci_vendor_driver_ops
+  vfio/pci: macros to generate module_init and module_exit for vendor
+    modules
+  vfio/pci: let vfio_pci know how many vendor regions are registered
+  vfio/pci: export vfio_pci_setup_barmap
+  samples/vfio-pci: add a sample vendor module of vfio-pci for IGD
+    devices
+  vfio: header for vfio live migration region.
+  i40e/vf_migration: vfio-pci vendor driver for VF live migration
+
+ drivers/net/ethernet/intel/Kconfig            |  10 +
+ drivers/net/ethernet/intel/i40e/Makefile      |   2 +
+ drivers/net/ethernet/intel/i40e/i40e.h        |   2 +
+ .../ethernet/intel/i40e/i40e_vf_migration.c   | 635 ++++++++++++++++++
+ .../ethernet/intel/i40e/i40e_vf_migration.h   |  92 +++
+ drivers/vfio/pci/vfio_pci.c                   | 385 +++++++----
+ drivers/vfio/pci/vfio_pci_config.c            | 186 ++---
+ drivers/vfio/pci/vfio_pci_igd.c               |  19 +-
+ drivers/vfio/pci/vfio_pci_intrs.c             | 186 ++---
+ drivers/vfio/pci/vfio_pci_nvlink2.c           |  22 +-
+ drivers/vfio/pci/vfio_pci_private.h           |  13 +-
+ drivers/vfio/pci/vfio_pci_rdwr.c              |  64 +-
+ include/linux/vfio.h                          |  57 ++
+ include/uapi/linux/vfio.h                     | 149 ++++
+ samples/Kconfig                               |   6 +
+ samples/Makefile                              |   1 +
+ samples/vfio-pci/Makefile                     |   2 +
+ samples/vfio-pci/igd_pt.c                     | 148 ++++
+ 18 files changed, 1645 insertions(+), 334 deletions(-)
+ create mode 100644 drivers/net/ethernet/intel/i40e/i40e_vf_migration.c
+ create mode 100644 drivers/net/ethernet/intel/i40e/i40e_vf_migration.h
+ create mode 100644 samples/vfio-pci/Makefile
+ create mode 100644 samples/vfio-pci/igd_pt.c
+
 -- 
-Jazz is not dead. It just smells funny...
+2.17.1
+
