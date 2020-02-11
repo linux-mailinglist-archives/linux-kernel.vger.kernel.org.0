@@ -2,105 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B780A159D77
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 00:40:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEB6A159D37
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 00:31:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728109AbgBKXit (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 18:38:49 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:42015 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728052AbgBKXio (ORCPT
+        id S1727991AbgBKXbN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 18:31:13 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:52356 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727911AbgBKXbM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 18:38:44 -0500
-Received: from 79.184.254.199.ipv4.supernova.orange.pl (79.184.254.199) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
- id 1502ec76482e32b6; Wed, 12 Feb 2020 00:38:43 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Peter Chen <Peter.Chen@nxp.com>, linux-usb@vger.kernel.org
-Subject: [PATCH 23/28] drivers: usb: Call cpu_latency_qos_*() instead of pm_qos_*()
-Date:   Wed, 12 Feb 2020 00:28:44 +0100
-Message-ID: <19064076.ICumzjfW0v@kreacher>
-In-Reply-To: <1654227.8mz0SueHsU@kreacher>
-References: <1654227.8mz0SueHsU@kreacher>
+        Tue, 11 Feb 2020 18:31:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581463871;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Y+cFOa0w3KLlC+RAL3jce6oG/pms2+VbYregt8avzBA=;
+        b=IqdlIkqlvPK7yX6FLtVn6JY7LMJEE+/WBs9qgZeTN8kM7y8kKkybOWqV117z+s3hfdVyzv
+        eRTyCdfcIgvDqq2x8Z3AgigSc1YbfkYoF12ZaGJICl8lTCThdSjKZdMhVatWLRk9EM+Al9
+        wh1mv6qBkdXN2lISHZ2y9wOxeRxXLbc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-418-c4xth61jOHCBnJi1LdoZtQ-1; Tue, 11 Feb 2020 18:31:10 -0500
+X-MC-Unique: c4xth61jOHCBnJi1LdoZtQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 75561DB61;
+        Tue, 11 Feb 2020 23:31:08 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-124-198.rdu2.redhat.com [10.10.124.198])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5520F5DA7B;
+        Tue, 11 Feb 2020 23:31:07 +0000 (UTC)
+Subject: Re: [PATCH 0/3] locking/mutex: Add mutex_timed_lock() to solve
+ potential deadlock problems
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20200210204651.21674-1-longman@redhat.com>
+ <20200211123138.GN14914@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <a8f67483-5ae1-98b6-a1f8-5985e5a8f889@redhat.com>
+Date:   Tue, 11 Feb 2020 18:31:06 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20200211123138.GN14914@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+On 2/11/20 7:31 AM, Peter Zijlstra wrote:
+> On Mon, Feb 10, 2020 at 03:46:48PM -0500, Waiman Long wrote:
+>> An alternative solution proposed by this patchset is to add a new
+>> mutex_timed_lock() call that allows an additional timeout argument. This
+>> function will return an error code if timeout happens. The use of this
+>> new API will prevent deadlock from happening while allowing the task
+>> to wait a sufficient period of time before giving up.
+> We've always rejected timed_lock implementation because, as akpm has
+> already expressed, their need is disgusting.
+>
+That is fine. I will see if the lock order can be changed in a way to
+address the problem.
 
-Call cpu_latency_qos_add/remove_request() instead of
-pm_qos_add/remove_request(), respectively, because the
-latter are going to be dropped.
-
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/usb/chipidea/ci_hdrc_imx.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/usb/chipidea/ci_hdrc_imx.c b/drivers/usb/chipidea/ci_hdrc_imx.c
-index d8e7eb2f97b9..a479af3ae31d 100644
---- a/drivers/usb/chipidea/ci_hdrc_imx.c
-+++ b/drivers/usb/chipidea/ci_hdrc_imx.c
-@@ -393,8 +393,7 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
- 	}
- 
- 	if (pdata.flags & CI_HDRC_PMQOS)
--		pm_qos_add_request(&data->pm_qos_req,
--			PM_QOS_CPU_DMA_LATENCY, 0);
-+		cpu_latency_qos_add_request(&data->pm_qos_req, 0);
- 
- 	ret = imx_get_clks(dev);
- 	if (ret)
-@@ -478,7 +477,7 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
- 		/* don't overwrite original ret (cf. EPROBE_DEFER) */
- 		regulator_disable(data->hsic_pad_regulator);
- 	if (pdata.flags & CI_HDRC_PMQOS)
--		pm_qos_remove_request(&data->pm_qos_req);
-+		cpu_latency_qos_remove_request(&data->pm_qos_req);
- 	data->ci_pdev = NULL;
- 	return ret;
- }
-@@ -499,7 +498,7 @@ static int ci_hdrc_imx_remove(struct platform_device *pdev)
- 	if (data->ci_pdev) {
- 		imx_disable_unprepare_clks(&pdev->dev);
- 		if (data->plat_data->flags & CI_HDRC_PMQOS)
--			pm_qos_remove_request(&data->pm_qos_req);
-+			cpu_latency_qos_remove_request(&data->pm_qos_req);
- 		if (data->hsic_pad_regulator)
- 			regulator_disable(data->hsic_pad_regulator);
- 	}
-@@ -527,7 +526,7 @@ static int __maybe_unused imx_controller_suspend(struct device *dev)
- 
- 	imx_disable_unprepare_clks(dev);
- 	if (data->plat_data->flags & CI_HDRC_PMQOS)
--		pm_qos_remove_request(&data->pm_qos_req);
-+		cpu_latency_qos_remove_request(&data->pm_qos_req);
- 
- 	data->in_lpm = true;
- 
-@@ -547,8 +546,7 @@ static int __maybe_unused imx_controller_resume(struct device *dev)
- 	}
- 
- 	if (data->plat_data->flags & CI_HDRC_PMQOS)
--		pm_qos_add_request(&data->pm_qos_req,
--			PM_QOS_CPU_DMA_LATENCY, 0);
-+		cpu_latency_qos_add_request(&data->pm_qos_req, 0);
- 
- 	ret = imx_prepare_enable_clks(dev);
- 	if (ret)
--- 
-2.16.4
-
-
-
-
+Thanks,
+Longman
 
