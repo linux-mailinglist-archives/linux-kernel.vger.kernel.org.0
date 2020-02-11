@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30A90158CC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:35:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE22F158CBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:35:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728446AbgBKKfT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 05:35:19 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:39234 "EHLO rere.qmqm.pl"
+        id S1728413AbgBKKfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 05:35:06 -0500
+Received: from rere.qmqm.pl ([91.227.64.183]:57186 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728368AbgBKKfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 05:35:04 -0500
+        id S1728388AbgBKKfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 05:35:05 -0500
 Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 48GzgB1Ct2zfJ;
-        Tue, 11 Feb 2020 11:35:02 +0100 (CET)
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 48GzgC0Wtzz20t;
+        Tue, 11 Feb 2020 11:35:03 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1581417302; bh=vJ8NUWITEPRXpkbxoGsrULQBqI+6p7Npd4ClhxGYj/Y=;
+        t=1581417303; bh=ZyBwZUGyD7qjPPbQlhdlCzFxIwy0/NfhkGAFyrsfD7Q=;
         h=Date:In-Reply-To:References:From:Subject:To:Cc:From;
-        b=OagUjMkQfG5ZYGu77ODgUQyZtbdGkOXc/fjC4sC6MtxSDwdGw19s/NRUrAzkPM1Cp
-         ROA40S2z9fowEyomLfG7EdyQxp77js26SH/69y911FaTyMuIsrtyuJYubUKmMBa6um
-         p1N4PO0I67nfQ9RZVw33+AhfFkhCpyEuC/cZK15SoidZYowb4VAKhCOSvZCpLpX36w
-         BO34mOHS4r++XtbCDr0aoUvmElVJizgD7ltpvpyD+DnjrWEresoXkKAC8/FxF6/9S+
-         PDJ0PyrxpYhHGsraXzJ4kHqFktwWqAe54LTo+xof1TZd3ooA9QltnsIwggRPHNSSzJ
-         XcGVscxrRaQFw==
+        b=CaoXz8EhHAoo2lAK9lz+Q0VDhnel5DjRjx1ioqTJSf2RloKgI7K1WvmVuJbLFhcgE
+         Ljl6Dt/EzGzT7yYfNwWKnMcW4SCQvZIiHhYDjwOFliEPxju8RJqpDAacAX5JV2MwF0
+         hiEctQogTxhvsZPfneLihAiIY5XLY2C9vB+RWTdnpZ3gZyeuIy7zkPjz3HC7MjK0FL
+         1G7MnTDUDoI/NbjkIur8emYcMk0hQvF0qrXmw3gz1l7Hloa1QOoykcQNMTLWmzgS1Q
+         NpnCXIQOOUXoNESfbL+GCiVeXpS0/bhxKrN2GhyqnxmmTyhUZByNZakGKxBDiBTK2q
+         y+LkXFDWpuhEw==
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.102.1 at mail
-Date:   Tue, 11 Feb 2020 11:35:01 +0100
-Message-Id: <5e30397af95854b4a7deea073b730c00229f42ba.1581416843.git.mirq-linux@rere.qmqm.pl>
+Date:   Tue, 11 Feb 2020 11:35:02 +0100
+Message-Id: <96b95d52d0b613065fe655f1d0fe9d7c6adf65fb.1581416843.git.mirq-linux@rere.qmqm.pl>
 In-Reply-To: <cover.1581416843.git.mirq-linux@rere.qmqm.pl>
 References: <cover.1581416843.git.mirq-linux@rere.qmqm.pl>
 From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v2 2/6] staging: wfx: annotate nested gc_list vs tx queue
- locking
+Subject: [PATCH v2 4/6] staging: wfx: follow compatible = vendor,chip format
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -43,90 +42,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lockdep is complaining about recursive locking, because it can't make
-a difference between locked skb_queues. Annotate nested locks and avoid
-double bh_disable/enable.
+As for SPI, follow "vendor,chip" format 'compatible' string also for
+SDIO bus.
 
-[...]
-insmod/815 is trying to acquire lock:
-cb7d6418 (&(&list->lock)->rlock){+...}, at: wfx_tx_queues_clear+0xfc/0x198 [wfx]
-
-but task is already holding lock:
-cb7d61f4 (&(&list->lock)->rlock){+...}, at: wfx_tx_queues_clear+0xa0/0x198 [wfx]
-
-[...]
-Possible unsafe locking scenario:
-
-      CPU0
-      ----
- lock(&(&list->lock)->rlock);
- lock(&(&list->lock)->rlock);
-
-Cc: stable@vger.kernel.org
-Fixes: 9bca45f3d692 ("staging: wfx: allow to send 802.11 frames")
+Fixes: 0096214a59a7 ("staging: wfx: add support for I/O access")
 Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 ---
- drivers/staging/wfx/queue.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ .../devicetree/bindings/net/wireless/siliabs,wfx.txt          | 4 ++--
+ drivers/staging/wfx/bus_sdio.c                                | 1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/wfx/queue.c b/drivers/staging/wfx/queue.c
-index 0bcc61feee1d..51d6c55ae91f 100644
---- a/drivers/staging/wfx/queue.c
-+++ b/drivers/staging/wfx/queue.c
-@@ -130,12 +130,12 @@ static void wfx_tx_queue_clear(struct wfx_dev *wdev, struct wfx_queue *queue,
- 	spin_lock_bh(&queue->queue.lock);
- 	while ((item = __skb_dequeue(&queue->queue)) != NULL)
- 		skb_queue_head(gc_list, item);
--	spin_lock_bh(&stats->pending.lock);
-+	spin_lock_nested(&stats->pending.lock, 1);
- 	for (i = 0; i < ARRAY_SIZE(stats->link_map_cache); ++i) {
- 		stats->link_map_cache[i] -= queue->link_map_cache[i];
- 		queue->link_map_cache[i] = 0;
- 	}
--	spin_unlock_bh(&stats->pending.lock);
-+	spin_unlock(&stats->pending.lock);
- 	spin_unlock_bh(&queue->queue.lock);
- }
+diff --git a/drivers/staging/wfx/Documentation/devicetree/bindings/net/wireless/siliabs,wfx.txt b/drivers/staging/wfx/Documentation/devicetree/bindings/net/wireless/siliabs,wfx.txt
+index 52f97673da1e..ffec79c14786 100644
+--- a/drivers/staging/wfx/Documentation/devicetree/bindings/net/wireless/siliabs,wfx.txt
++++ b/drivers/staging/wfx/Documentation/devicetree/bindings/net/wireless/siliabs,wfx.txt
+@@ -45,7 +45,7 @@ case. Thus declaring WFxxx chip in device tree is strongly recommended (and may
+ become mandatory in the future).
  
-@@ -207,9 +207,9 @@ void wfx_tx_queue_put(struct wfx_dev *wdev, struct wfx_queue *queue,
+ Required properties:
+- - compatible: Should be "silabs,wfx-sdio"
++ - compatible: Should be "silabs,wf200"
+  - reg: Should be 1
  
- 	++queue->link_map_cache[tx_priv->link_id];
+ In addition, it is recommended to declare a mmc-pwrseq on SDIO host above WFx.
+@@ -71,7 +71,7 @@ Example:
+ 	#size = <0>;
  
--	spin_lock_bh(&stats->pending.lock);
-+	spin_lock_nested(&stats->pending.lock, 1);
- 	++stats->link_map_cache[tx_priv->link_id];
--	spin_unlock_bh(&stats->pending.lock);
-+	spin_unlock(&stats->pending.lock);
- 	spin_unlock_bh(&queue->queue.lock);
- }
- 
-@@ -237,11 +237,11 @@ static struct sk_buff *wfx_tx_queue_get(struct wfx_dev *wdev,
- 		__skb_unlink(skb, &queue->queue);
- 		--queue->link_map_cache[tx_priv->link_id];
- 
--		spin_lock_bh(&stats->pending.lock);
-+		spin_lock_nested(&stats->pending.lock, 1);
- 		__skb_queue_tail(&stats->pending, skb);
- 		if (!--stats->link_map_cache[tx_priv->link_id])
- 			wakeup_stats = true;
--		spin_unlock_bh(&stats->pending.lock);
-+		spin_unlock(&stats->pending.lock);
- 	}
- 	spin_unlock_bh(&queue->queue.lock);
- 	if (wakeup_stats)
-@@ -259,10 +259,10 @@ int wfx_pending_requeue(struct wfx_dev *wdev, struct sk_buff *skb)
- 	spin_lock_bh(&queue->queue.lock);
- 	++queue->link_map_cache[tx_priv->link_id];
- 
--	spin_lock_bh(&stats->pending.lock);
-+	spin_lock_nested(&stats->pending.lock, 1);
- 	++stats->link_map_cache[tx_priv->link_id];
- 	__skb_unlink(skb, &stats->pending);
--	spin_unlock_bh(&stats->pending.lock);
-+	spin_unlock(&stats->pending.lock);
- 	__skb_queue_tail(&queue->queue, skb);
- 	spin_unlock_bh(&queue->queue.lock);
- 	return 0;
+ 	mmc@1 {
+-		compatible = "silabs,wfx-sdio";
++		compatible = "silabs,wf200";
+ 		reg = <1>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&wfx_wakeup>;
+diff --git a/drivers/staging/wfx/bus_sdio.c b/drivers/staging/wfx/bus_sdio.c
+index 5450bd5e1b5d..dedc3ff58d3e 100644
+--- a/drivers/staging/wfx/bus_sdio.c
++++ b/drivers/staging/wfx/bus_sdio.c
+@@ -251,6 +251,7 @@ MODULE_DEVICE_TABLE(sdio, wfx_sdio_ids);
+ #ifdef CONFIG_OF
+ static const struct of_device_id wfx_sdio_of_match[] = {
+ 	{ .compatible = "silabs,wfx-sdio" },
++	{ .compatible = "silabs,wf200" },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, wfx_sdio_of_match);
 -- 
 2.20.1
 
