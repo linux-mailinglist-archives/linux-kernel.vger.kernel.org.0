@@ -2,73 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 334621589D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 06:58:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 030EB1589D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 06:58:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728264AbgBKF5u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 00:57:50 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:54887 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726942AbgBKF5t (ORCPT
+        id S1728287AbgBKF6O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 00:58:14 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:58632 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728023AbgBKF6O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 00:57:49 -0500
-Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au [49.179.138.28])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 20B3F3A2BF5;
-        Tue, 11 Feb 2020 16:57:47 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j1OYL-000674-Vx; Tue, 11 Feb 2020 16:57:45 +1100
-Date:   Tue, 11 Feb 2020 16:57:45 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     ira.weiny@intel.com
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 04/12] fs/xfs: Clean up DAX support check
-Message-ID: <20200211055745.GG10776@dread.disaster.area>
-References: <20200208193445.27421-1-ira.weiny@intel.com>
- <20200208193445.27421-5-ira.weiny@intel.com>
+        Tue, 11 Feb 2020 00:58:14 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1581400694; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=90LwSLciKSX0tDR6UyVjm6zI/ZPE7pQez+xZZMUCPQw=;
+ b=qGpCAFOU5jUGdYrkhnmSTMpNeYpeA72Txvhez9IU2/1yqzlQGYwx8i6MAKgdz7xpjeUwF6nP
+ +CqoAaF2tUJgLlTn82RqJET6g+bjiWAkKsRzza47iO07KyxgbiEGokRfQG/BHN9tOIa2/B1v
+ iiEPrJ4UNufgORthA4Tvb98G9nA=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e424275.7faea0ea1030-smtp-out-n01;
+ Tue, 11 Feb 2020 05:58:13 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id E05DCC4479C; Tue, 11 Feb 2020 05:58:12 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: harigovi)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 29BE2C43383;
+        Tue, 11 Feb 2020 05:58:12 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200208193445.27421-5-ira.weiny@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
-        a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8 a=Tb5DaYjIPDbvzpWIyIsA:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 11 Feb 2020 11:28:12 +0530
+From:   harigovi@codeaurora.org
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        DTML <devicetree@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Rob Clark <robdclark@gmail.com>, nganji@codeaurora.org,
+        Sean Paul <seanpaul@chromium.org>, kalyan_t@codeaurora.org,
+        "Kristian H. Kristensen" <hoegsberg@chromium.org>
+Subject: Re: [Freedreno] [v1] drm/msm/dsi/pll: call vco set rate explicitly
+In-Reply-To: <CAOCk7NoCH9p9gOd7as=ty-EMeerAAhQtKZa8f2wZrDeV2LtGrw@mail.gmail.com>
+References: <1580980321-19256-1-git-send-email-harigovi@codeaurora.org>
+ <CAOCk7Nr9n-xLtWq=LEM-QFhJcY+QOuzazsoi-yjErA9od2Jwmw@mail.gmail.com>
+ <2f5abc857910f70faa119fea5bda81d7@codeaurora.org>
+ <CAOCk7NoCH9p9gOd7as=ty-EMeerAAhQtKZa8f2wZrDeV2LtGrw@mail.gmail.com>
+Message-ID: <1d201377996e16ce25acb640867e1214@codeaurora.org>
+X-Sender: harigovi@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 08, 2020 at 11:34:37AM -0800, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
+On 2020-02-07 19:40, Jeffrey Hugo wrote:
+> On Fri, Feb 7, 2020 at 5:38 AM <harigovi@codeaurora.org> wrote:
+>> 
+>> On 2020-02-06 20:29, Jeffrey Hugo wrote:
+>> > On Thu, Feb 6, 2020 at 2:13 AM Harigovindan P <harigovi@codeaurora.org>
+>> > wrote:
+>> >>
+>> >> For a given byte clock, if VCO recalc value is exactly same as
+>> >> vco set rate value, vco_set_rate does not get called assuming
+>> >> VCO is already set to required value. But Due to GDSC toggle,
+>> >> VCO values are erased in the HW. To make sure VCO is programmed
+>> >> correctly, we forcefully call set_rate from vco_prepare.
+>> >
+>> > Is this specific to certain SoCs? I don't think I've observed this.
+>> 
+>> As far as Qualcomm SOCs are concerned, since pll is analog and the 
+>> value
+>> is directly read from hardware if we get recalc value same as set rate
+>> value, the vco_set_rate will not be invoked. We checked in our idp
+>> device which has the same SOC but it works there since the rates are
+>> different.
 > 
-> Rather than open coding xfs_inode_supports_dax() in
-> xfs_ioctl_setattr_dax_invalidate() export xfs_inode_supports_dax() and
-> call it in preparation for swapping dax flags.
-> 
-> This also means updating xfs_inode_supports_dax() to return true for a
-> directory.
+> This doesn't seem to be an answer to my question.  What Qualcomm SoCs
+> does this issue apply to?  Everything implementing the 10nm pll?  One
+> specific SoC?  I don't believe I've seen this on MSM8998, nor SDM845,
+> so I'm interested to know what is the actual impact here.  I don't see
+> an "IDP" SoC in the IP catalog, so I really have no idea what you are
+> referring to.
 
-That's not correct. This now means S_DAX gets set on directory inodes
-because both xfs_inode_supports_dax() and the on-disk inode flag
-checks return true in xfs_diflags_to_iflags(). Hence when we
-instantiate a directory inode with a DAX inherit hint set on it
-we'll set S_DAX on the inode and so IS_DAX() will return true for
-directory inodes...
 
-Cheers,
+This is not 10nm specific. It is applicable for other nms also.
+Its specific to the frequency being set. If vco_recalc returns the same 
+value as being set by vco_set_rate,
+vco_set_rate will not be invoked second time onwards.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+For example: Lets take below devices:
+
+Cheza is based on SDM845 which is 10nm only.
+Clk frequency:206016
+dsi_pll_10nm_vco_set_rate - DSI PLL0 rate=1236096000
+dsi_pll_10nm_vco_recalc_rate - DSI PLL0 returning vco rate = 1236095947
+
+Trogdor is based on sc7180 which is also 10nm.
+Clk frequency:69300
+dsi_pll_10nm_vco_set_rate - DSI PLL0 rate=1663200000
+dsi_pll_10nm_vco_recalc_rate - DSI PLL0 returning vco rate = 1663200000
+
+In same trogdor device, we slightly changed the clock frequency and the 
+values actually differ which will not cause any issue.
+Clk frequency:69310
+dsi_pll_10nm_vco_set_rate - DSI PLL0 rate=1663440000
+dsi_pll_10nm_vco_recalc_rate - DSI PLL0 returning vco rate = 1663439941
