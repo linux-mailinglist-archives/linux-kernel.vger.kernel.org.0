@@ -2,100 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28C8C158D2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 12:05:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DE95158D37
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 12:09:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728521AbgBKLFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 06:05:07 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36700 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727561AbgBKLFG (ORCPT
+        id S1728473AbgBKLJT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 06:09:19 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41041 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727558AbgBKLJS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 06:05:06 -0500
-Received: by mail-lj1-f193.google.com with SMTP id r19so11090764ljg.3;
-        Tue, 11 Feb 2020 03:05:05 -0800 (PST)
+        Tue, 11 Feb 2020 06:09:18 -0500
+Received: by mail-oi1-f195.google.com with SMTP id i1so12372020oie.8
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 03:09:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=1D2nt+GacM9CEt1jV/UYuxD3rZiAt9wG1MftPzXIiHo=;
-        b=Uh4pYGFerV/M/TVkNahm3cZf2CENx0DaXz9sX1H6t4dfvaUp9WBCut2qkMGPw5Ip8n
-         8URwmZHlOBmABk51D42K0mskOPkiJLBxuhxbViwgKU5PiRhPLQi2sK3Krz8uHGnjK1Sc
-         /0g7Vj+2tv0yymy83NryPYlCGtUg/NIib5TmAskU4LTP+pCVEB1tT3KHhUQ3T5D5+1oC
-         jgyIUmIYnCN0n+wyD3atryG1Wt6qDwbfezfFKEg3XLQJh4KHDnFccVZjip/yZmtAm3YK
-         aBDz1Ya0CyBe286o9yV8sd4Z67kJr49XFMnKRWZ78bw1BBT6CQuD9jieIG9A3THJxDVK
-         lAFg==
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=dHEIW95ZE960xyjJh5Z43+73PZtnrtSa/hCflNBzCcE=;
+        b=EZWiFAPIifHMg2IHjBOQVUQQrGJHFhq8tGRa5BRHfeQIUywm3NOdfXHcswMQ5zpIly
+         gjBlFqVEogxBKYzHnxWA/Qz7OaqQWyflL/YGdxvOw9b3WUFxCb0gDQU/3CH0NZo0RbDp
+         3NvuWMdQsQA6nCxB34kw8Yl/a/H4tdYG/8vb5dPfYZ+4yMPDJi/Xili+Cl0BZRgzkpQt
+         li3WBrNc0QURqWlzn6nma0t6qNiSPTt5z4HqzhWizyPckYKo4nAMnQ0qB/XGnVcIof6c
+         sf/2tswJViniqddOJmWlTJxLLdQ0uti5mns1tlV4+kqt8rVbglqyGpYYx2yeJzTRMgE7
+         9X+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1D2nt+GacM9CEt1jV/UYuxD3rZiAt9wG1MftPzXIiHo=;
-        b=SclQC6wq3n2SDe+E6rAIdj8NTPD5vcXk2KRlP6PuK2AtukYPTFGZ7cOv2/gzmBycvQ
-         dpSuZONbzPkx+VjpOnyuAzmZoLLZXBZnkfY3fg0+cHOgGGe56Arn9fzbx55hc34L+3hG
-         o83ggWV//dOQRkw1Vh5OCUgymxw2Oz2E3QNHEIc5yQ/lCv5CtdLurCm9MMaDVrvIq4BS
-         iyKGJZbrsi7JR8ULP3ec+n/aKt7nmOgW3NAEinwnp50iSY9rTr2yx+Hn17MZEMH6RqIi
-         fHF7QngxOYcQekj1yia3FAGaBCHRg9y1FSoYEjUNI8phzokfrTY+hkghnbRgyz4KlnRE
-         bJpg==
-X-Gm-Message-State: APjAAAUGs/NkTiXJQ+wapWXTe1myoNUxnrQeIAgRhsle8U5C+vl65+EO
-        h+3sVwWRrkx5MfN4PYYFXvCrdCXcO/E=
-X-Google-Smtp-Source: APXvYqwVhf0u8O4n5wWgM3M7b8yJSva3e+gawxM/GkDxyXJ58dkm/dvgLjAqvwO6vDKpmEEdNZ0dNw==
-X-Received: by 2002:a2e:9a93:: with SMTP id p19mr3956144lji.177.1581419104119;
-        Tue, 11 Feb 2020 03:05:04 -0800 (PST)
-Received: from [172.31.190.83] ([86.57.146.226])
-        by smtp.gmail.com with ESMTPSA id l22sm1907701lje.40.2020.02.11.03.05.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Feb 2020 03:05:03 -0800 (PST)
-Subject: Re: [PATCH] io_uring: fix iovec leaks
-To:     David Laight <David.Laight@ACULAB.COM>,
-        Jens Axboe <axboe@kernel.dk>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <03aa734fcea29805635689cc2f1aa648f23b5cd3.1581102250.git.asml.silence@gmail.com>
- <1255e56851a54c8c805695f1160bec9f@AcuMS.aculab.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <045f6c04-a6d8-146c-75f3-2c0d65e482d6@gmail.com>
-Date:   Tue, 11 Feb 2020 14:05:02 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=dHEIW95ZE960xyjJh5Z43+73PZtnrtSa/hCflNBzCcE=;
+        b=qtF8rY1m/wPuFKoiuSYCJ7pG3ZvK6JIa/s+ificxF342GIKwaNqjKdpfVRIzJUVl9L
+         fM8LE/Kry+t7aL7Okd/tLv9OPeVVFWDfhc/dF61kRiPb/pBqMLQmdS4jWjXRp2lDGpby
+         aylPEbtJs+mCxRG9U/ctm4glPa3kEDgUgMt9O6POAMbrX5rLpAt6omK/Kb6ZJ7FNKMOT
+         Nk8CVZFe8e3pY0H34hdBLEYHtPwBd3/e2rN7STSzepCAWaUgAruECJJFSWnRcoP66uja
+         Bm/+3HZhhdm4QgdZcPsaeyKAAkPJx6UPggrJ+mQcI+eV9Pc6/udTlzsEQDY3ei4idYJa
+         611w==
+X-Gm-Message-State: APjAAAVEEgqA16LtICe8zK1aR/nvt7Xn62gdxWqfWpj5eL17cFAQbYHC
+        2ow0F98Y5c/B5sgprjy4/bVqjjf6XnVfINhGldE=
+X-Google-Smtp-Source: APXvYqzR1Am0DcVPHEpQcZcwiRLw1RTPZVMFv+3B71hGSS57ehTlCKpJknNGm+zRKXTlSKdNU4P7la8AeTr3HGBZjtQ=
+X-Received: by 2002:aca:6543:: with SMTP id j3mr2471092oiw.150.1581419357586;
+ Tue, 11 Feb 2020 03:09:17 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1255e56851a54c8c805695f1160bec9f@AcuMS.aculab.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a05:6838:f9e3:0:0:0:0 with HTTP; Tue, 11 Feb 2020 03:09:17
+ -0800 (PST)
+Reply-To: j-cd0077@hotmail.com
+From:   Jean Claud Dupont <germaineleroux73@gmail.com>
+Date:   Tue, 11 Feb 2020 12:09:17 +0100
+Message-ID: <CAG9YCVNDKxiTv4vgsvdf6enkKzyBrNVoAuwaGvnBBghfP706FQ@mail.gmail.com>
+Subject: Bonjour,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/11/2020 1:07 PM, David Laight wrote:
-> From: Pavel Begunkov
->> Sent: 07 February 2020 19:05
->> Allocated iovec is freed only in io_{read,write,send,recv)(), and just
->> leaves it if an error occured. There are plenty of such cases:
->> - cancellation of non-head requests
->> - fail grabbing files in __io_queue_sqe()
->> - set REQ_F_NOWAIT and returning in __io_queue_sqe()
->> - etc.
->>
->> Add REQ_F_NEED_CLEANUP, which will force such requests with custom
->> allocated resourses go through cleanup handlers on put.
-> 
-> This looks horribly fragile.
+Bonjour,
 
-Well, not as horrible as it may appear -- set the flag, whenever you
-want the corresponding destructor to be called, and clear it when is not
-needed anymore.
 
-I'd love to have something better, maybe even something more intrusive
-for-next, but that shouldn't hurt the hot path. Any ideas?
+Je vous prie de m'excuser pour le d=C3=A9sagr=C3=A9ment que pourrait vous c=
+auser
+mon courrier.
 
-> 	David
-> 
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
-> 
+En effet, je suis Mr Jean Claude Dupont de nationalit=C3=A9 fran=C3=A7ais, =
+sous
+surveillance m=C3=A9dicale en Australie.
 
--- 
-Pavel Begunkov
+Je ne sais comment vivre avec ce rien qui reste, seulement la foi et
+l'espoir pour tout soutien. Le jour se l=C3=A8ve ,le temps passe, et mon
+c=C5=93ur bat de moins en moins, j'ai peur de mourir , j'ai vraiment peur,
+J'ose esp=C3=A9r=C3=A9e que je ne me suis pas tromp=C3=A9e sur votre bonne =
+foi car
+avant que je ne vous ai contact=C3=A9 , j'ai d=C3=BB veuillez la nuit enti=
+=C3=A8re
+malgr=C3=A9 que ma sant=C3=A9 allait vraiment mal ,en priant notre Dieu le =
+tout
+mis=C3=A9ricordieux qu'il puisse m'envoyer une personne s=C3=A9rieuse qui s=
+aura
+bien g=C3=A9rer mon argent et offrir aux plus d=C3=A9munies la joie et le
+sourire de vivre =C3=A9galement .
+
+Je vous ai donc choisi avec la b=C3=A9n=C3=A9diction de Dieu.
+
+Je vous contacte de la sorte car je souhaite communiquer avec le monde
+et faire une chose que je ne devrais peut-=C3=AAtre pas d=C3=BB. Je souffre
+=C3=A9norm=C3=A9ment d'une maladie tr=C3=A8s grave que je n=E2=80=99arrive =
+presque pas =C3=A0
+trouver le sommeil. J'envisage de l=C3=A9guer mes biens familiaux. J'avais
+travaill=C3=A9 dans le secteur p=C3=A9trolier au Kowe=C3=AFt. Ensuite j'ai =
+travaill=C3=A9
+=C3=A0 la mine d'or de Bourra au Burkina Faso. J=E2=80=99ai d=C3=A9pos=C3=
+=A9 une carte bleu
+visa contenant une somme d'argent au service de s=C3=A9curit=C3=A9 de chron=
+opost
+Burkina avant mon d=C3=A9part en Australie pour mes soins m=C3=A9dicaux.
+
+Je vous embrasse donc, avec sinc=C3=A9rit=C3=A9 et affection. Merci de bien
+vouloir m'aider a sourire de nouveau malgr=C3=A9 ma situation de
+souffrance. C'est ainsi au gr=C3=A9 du vent que se s=C3=A8ment les petites
+graines qui font les grands champs de fleurs.
+
+Aussi Je tiens =C3=A0 vous informer que j'ai laiss=C3=A9 des instructions
+chronopost Burkina afin que ma CARTE BLEU VISA vous soit envoy=C3=A9e sous
+une Assurance Diplomatique en toute s=C3=A9curit=C3=A9.
+
+Veuillez contacter chronopost Burkina aujourd'hui m=C3=AAme afin que mes
+instructions se fassent comme je l'ai ordonn=C3=A9e .L'argent que vous
+allez recevoir, est une b=C3=A9n=C3=A9diction de Dieu pour vous .Je vie ces
+derniers heures dans la peur, peur de mourir sans savoir le sort qui
+sera r=C3=A9serv=C3=A9 =C3=A0 mon argent que j'ai laiss=C3=A9 derri=C3=A8re=
+ moi .C'est la
+raison pour laquelle j'ai pris l'initiative de vous l=C3=A9guer mon argent.
+
+Contactez chronopost au Burkina Faso.
+
+J'ai laiss=C3=A9 des instructions que vous viendrez retirer mes biens
+.L'argent soit (un Million d'euro (1 000,000.00 =E2=82=AC) charger sur cett=
+e
+carte bleu visa. est dans ma mallette de couleur noir que j'ai mise
+dans mon coffre sous contr=C3=B4le a chronopost Burkina. le code que vous
+allez commenc=C3=A9 vos retrais. ses ta dire les quatre chiffre (4) Vous
+serais communiquer par une grand banque au Burkina une fois que vous
+aurai la carte en main .
+
+IMPORTANT
+
+Vous enverrez les d=C3=A9tails sur mon coffre ci-dessous par e-mail a
+chronopost Burkina pour confirmer que c'est bien moi qui vous ai
+envoy=C3=A9. Vous devez =C3=A9galement communiquer une adresse pour qu'il v=
+ous
+l'envoi .Pour cela vous devez remplir le texte ci-dessous et le lui
+envoy=C3=A9.
+
+Aussi je vous recommande la discr=C3=A9tion et ne divulguez par cette
+lettre a personne .Soyez vraiment discrets =C3=A0 l'=C3=A9gard de vos proch=
+es et
+amis jusqu=E2=80=99=C3=A0 ce que vous recevez la carte
+
+Donc soyez totalement discret autour de vous .En vous l=C3=A9guant cet
+argent, je suis persuad=C3=A9 qu=E2=80=99apr=C3=A8s ma mort je serai avec D=
+ieu le plus
+mis=C3=A9ricordieux et bienfaiteur.
+
+Contactez chronopost Burkina =C3=A0 son e-mail
+
+Ci-dessous et faite vite pour l'amour de Dieu, et surtout ne lui dite
+aussi rien sur le r=C3=A9el contenue de la mallette.
+
+chronopost Burkina TRANSPORTS COURRIER EXPRESS ET COMMERCES
+OUAGADOUGOU. (BURKINA FASO)
+
+=C3=89mail :chronopostburkina@yandex.ru
+
+.............................. .......TEXTE..................
+............................
+
+A Monsieur le Directeur de chronopost Burkina
+
+Je viens en qualit=C3=A9 du b=C3=A9n=C3=A9ficiaire des biens de Mr Jean Cla=
+ude Dupont
+de nationalit=C3=A9 fran=C3=A7ais r=C3=A9sidente en r=C3=A9publique Burkina=
+ Faso o=C3=B9 il est
+d=C3=A9tenteur d'un coffre dans votre institution ; les renseignements
+secrets de son coffre sont :
+
+Titulaire du Coffre : Mr Jean Claude Dupont
+
+Contenue du coffre : Mallette de couleur noir
+
+Num=C3=A9ro du coffre : BM212288
+
+Code de s=C3=A9curit=C3=A9 secret:
+
+NENIBBI20014
+
+Contenue de la mallette : Bien personnel
+
+Autre information: ANV/CC2203
+
+Code Guichet : 14011
+
+Par ailleurs Je souhaite que vous m'envoyer expressivement la mallette
+=C3=A0 mon adresse ci-dessous.
+
+NOM : .............................. ...........
+
+PR=C3=89NOM .............................. ........
+
+AGE :............................. ..............
+
+ADRESSE .............................. ........
+
+PAYS .............................. ..........
+
+T=C3=89L=C3=89PHONE:.................... ................
+
+PROFESSION:.................. .................
+
+J=E2=80=99attends de vous lire.
+
+
+
+Jean Claude Dupont
