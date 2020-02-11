@@ -2,101 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D2CF15991E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 19:48:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5039B15991C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 19:48:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730803AbgBKSsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 13:48:31 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39590 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730752AbgBKSsb (ORCPT
+        id S1730718AbgBKSs0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 13:48:26 -0500
+Received: from mail-yw1-f46.google.com ([209.85.161.46]:33072 "EHLO
+        mail-yw1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729235AbgBKSs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 13:48:31 -0500
-Received: by mail-pl1-f195.google.com with SMTP id g6so4617257plp.6
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 10:48:30 -0800 (PST)
+        Tue, 11 Feb 2020 13:48:26 -0500
+Received: by mail-yw1-f46.google.com with SMTP id 192so5694270ywy.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 10:48:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CU1W+ehrAiS3jw2NJvVJpdaUBPu6nkbnRDzhgkpWwa0=;
-        b=dlqQhCmuU8Uioh1M8bOeS+GLp9N1MbISkwrAfoMmSuChZxiDVR397U7J+9XD3riMI2
-         8V6PLYYK4JZ/5qhJF2R/sfHyPLuErPmjTkqKN44uiSfNvd8WJMpVvAMpZDHQTMYyQ+Fx
-         lgS31IAh+J0IdJPNMYcvqtyOV2jkqRWOlMfJMwyyHc0E+IfbWg9MMgUR/8nWFxOb6z0+
-         bshcTHAfb3KR6uEGGp8sca69Kve7JaCeJ9Rr/J41Rk0BYi0/QshjvfXwyQuEqMR40uIi
-         g81JgSc+2rBNpyRq7x6Xo0DAhHfu8HZIoXxxX29qDSnjXyFGDTPkvmpuNV+Q1TBBPU4C
-         TleQ==
+        d=gmail.com; s=20161025;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=+kQqg894ymcaPpTU+slbxV54o97AEArgCde/E/E3bK8=;
+        b=FZKGrFc5FVnFTZZQnm3tPFg0oD94ghQ5VqaGUx2qBVBlU4FBgKsQXLzTmXhI+totLr
+         3J1YcvUYg/r65kODV/71Vu55zJ600BnoSTl4jWLwqgwd8exJy5o2qpqzwQyBykWoDvVo
+         Vsru6M9oY+ION7cV0s5uXU7gvO8aw9EEwW+4FC2q4e5wfxrj4WAzq+d1jhHkJ52jUKoi
+         6XuFNWndwgXP4B9CyYJ7mWKt6In4v2VahQyNqrc3hh+grUQo/HzOcH/E96FqibsKky49
+         syD7h+kJeiEdjBf8zW6vCx799/LSIo6o3uPIkhHu2U/QxP8sp2UvBOQ9DOy8Q5jNZDa1
+         S6vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CU1W+ehrAiS3jw2NJvVJpdaUBPu6nkbnRDzhgkpWwa0=;
-        b=I/Rh2RJZ3QlMNA+GSbSkBJwRXH3RChgLGlWji5hiq/nX6KpUu7U4ckzAMlm8YhjbGw
-         DZkLXAdRiLscm7LnNH8JVJ28j9XZ8bEkwIGR6TXMR/yh/yisDoGheAP/bjoB6UPwt0kH
-         WlCC+HFPw7TtO7Pcb6org/k+/7GGyFdTjqlRlvouTKZmCN8jhfTDBWfWeAYoac5csLvP
-         WLNXcxjJvFLQ0TS7eLt6BBqoz9h/mSfFBeB0kn0YnxWE754DC1G73QliLw/kBsgt3BT3
-         tHI6LDz6U60BbNqTICMtZXjm4CbSb2oRpaHM6u0ZIwyrair4476r20LPz8w1/w8U+Jxs
-         P44A==
-X-Gm-Message-State: APjAAAWRC60GAQPIIPkvOkK7pYAwSL7RuGVMY7nFTIx50qgQKr/oe8wh
-        DnDY8syuM5AAV9s9YlV3PwNfpKPIeichDvWk+U/KkQ==
-X-Google-Smtp-Source: APXvYqzCtifK++9lU+veDLagxYT88pdnTXDwtsRsjuJox3lr45kptA7x3tmjR8V6/ceymntHN46hg1A0VktNhSWpNEg=
-X-Received: by 2002:a17:90a:858a:: with SMTP id m10mr5191369pjn.117.1581446909986;
- Tue, 11 Feb 2020 10:48:29 -0800 (PST)
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=+kQqg894ymcaPpTU+slbxV54o97AEArgCde/E/E3bK8=;
+        b=lehQ0P/uPGz0YwfYQYl4u0zskHML6ziv+WOn4RowiJAvwQUblHU3AjzJhzEQ9AZzt/
+         ZeEBu0iOiD/vopqLOcNRhnJ/Arn4t6nbbws6FtuZJSESzW2l7VMAshGuCdWH7q7n5vu0
+         EILI3dv1VvvAtzW6FjS9RSR5LKvqJqTcuD8ssXsS2U/q1e9vqdoXQ8V+y4UNRHda/8Px
+         u7V3YNV0E0rLlLik090eXpYH506cKnWVp2U7kicgpy15hfmRh9kbOz2WFT1T5PEx1m84
+         VgkmbDZVcmpGQAAsztoTdgUaAqD2QPwB4gQj2L/S1qlJhWsgNx6iOIBG6snFZ4tw5rGr
+         5Hrw==
+X-Gm-Message-State: APjAAAXYrsOm2atINU8R0eB+KmSG+hHdwE1BSg2QilHIT2/qXEs/mYRQ
+        wH4ywlsO8QyYzXa5mWwl7MY=
+X-Google-Smtp-Source: APXvYqz+yitDKBvBiImcBkAM8FgYP/5DBkRVCPyXQDlV/fhwFrrf9G3aKZAZ7P/sM9vt68EBYj8tTA==
+X-Received: by 2002:a0d:c4c1:: with SMTP id g184mr6620334ywd.305.1581446905354;
+        Tue, 11 Feb 2020 10:48:25 -0800 (PST)
+Received: from [192.168.1.46] (c-73-88-245-53.hsd1.tn.comcast.net. [73.88.245.53])
+        by smtp.gmail.com with ESMTPSA id d9sm2242276ywh.55.2020.02.11.10.48.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Feb 2020 10:48:25 -0800 (PST)
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+Subject: build error: f7655d42fcee drm/edid: Add CTA-861-G modes with VIC >=
+ 193
+Message-ID: <4e918a35-dbcd-b2fd-1888-a86e7d448128@gmail.com>
+Date:   Tue, 11 Feb 2020 12:48:23 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20200211002551.147187-1-heidifahim@google.com>
- <CAFd5g47LFvRxHMJ+XHcw2dFe2xU+1GmDnXsm=STvCFAT74rm7g@mail.gmail.com> <MWHPR13MB08959C9951D826A9D0B19BCFFD180@MWHPR13MB0895.namprd13.prod.outlook.com>
-In-Reply-To: <MWHPR13MB08959C9951D826A9D0B19BCFFD180@MWHPR13MB0895.namprd13.prod.outlook.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 11 Feb 2020 10:48:19 -0800
-Message-ID: <CAFd5g44E=OFaMun7Y4FaOrjGewZybjgC54hBzMrBeLi51g7Nag@mail.gmail.com>
-Subject: Re: [PATCH] kunit: run kunit_tool from any directory
-To:     "Bird, Tim" <Tim.Bird@sony.com>
-Cc:     Heidi Fahim <heidifahim@google.com>,
-        David Gow <davidgow@google.com>,
-        Daniel Latypov <dlatypov@google.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 10:26 AM Bird, Tim <Tim.Bird@sony.com> wrote:
-> > -----Original Message-----
-> > From: Brendan Higgins
-> > Sent: Monday, February 10, 2020 5:32 PM
-> > To: Heidi Fahim <heidifahim@google.com>; David Gow <davidgow@google.com>; Daniel Latypov <dlatypov@google.com>
-> > Cc: open list:KERNEL SELFTEST FRAMEWORK <linux-kselftest@vger.kernel.org>; KUnit Development <kunit-dev@googlegroups.com>; Linux
-> > Kernel Mailing List <linux-kernel@vger.kernel.org>
-> > Subject: Re: [PATCH] kunit: run kunit_tool from any directory
-> >
-> > On Mon, Feb 10, 2020 at 4:26 PM Heidi Fahim <heidifahim@google.com> wrote:
-> > >
-> > > Implemented small fix so that the script changes work directories to the
-> > > linux directory where kunit.py is run. This enables the user to run
-> > > kunit from any working directory. Originally considered using
-> > > os.path.join but this is more error prone as we would have to find all
-> > > file path usages and modify them accordingly. Using os.chdir ensures
-> > > that the entire script is run within /linux.
-> > >
-> > > Signed-off-by: Heidi Fahim <heidifahim@google.com>
-> >
-> > Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
-> >
-> Sorry - I'm not a current kunit user, but does this mean that the
-> kernel source has to be present in order to run the unit tests?
-> That's problematical for embedded systems.  Maybe that's outside
-> the scope of what unit tests were envisioned for?
+I am getting a kernel build error at version 5.6-rc1:
 
-No worries.
+drivers/gpu/drm/drm_edid.c: In function 'cea_mode_alternate_timings':
+drivers/gpu/drm/drm_edid.c:3275:2: error: call to '__compiletime_assert_3282' declared with attribute error: BUILD_BUG_ON failed: cea_mode_for_vic(8)->vtotal != 262 || cea_mode_for_vic(9)->vtotal != 262 || cea_mode_for_vic(12)->vtotal != 262 || cea_mode_for_vic(13)->vtotal != 262 || cea_mode_for_vic(23)->vtotal != 312 || cea_mode_for_vic(24)->vtotal != 312 || cea_mode_for_vic(27)->vtotal != 312 || cea_mode_for_vic(28)->vtotal != 312
+make[4]: *** [drivers/gpu/drm/drm_edid.o] Error 1
 
-It is already the case that the kunit_tool assumes you have the
-source. It's purpose is to build tests, run them, and collect results.
-We are working on separating these functions, but right now given that
-the script assumes it will build the kernel for you, it is necessarily
-the case that you have source.
 
-You can, nevertheless, build and run KUnit tests without the use of
-our scripts, which should work for most applications.
+Kernel configuration:
+  make qcom_defconfig
+
+  (arch/arm/configs/qcom_defconfig)
+
+
+Compiler is arm-eabi-gcc 4.6.x
+
+
+The build error goes away if I revert:
+
+   f7655d42fcee drm/edid: Add CTA-861-G modes with VIC >= 193
+
+
+The build error also goes away if I comment out the two lines added to cea_mode_for_vic():
+
+ 	if (vic >= 193 && vic < 193 + ARRAY_SIZE(edid_cea_modes_193))
+ 		return &edid_cea_modes_193[vic - 193];
+
+
+-Frank
