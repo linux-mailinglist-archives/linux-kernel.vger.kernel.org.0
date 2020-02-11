@@ -2,150 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F48E15941D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:00:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE53915949A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:14:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730034AbgBKP77 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 10:59:59 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:44370 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728389AbgBKP77 (ORCPT
+        id S1730732AbgBKQOp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 11:14:45 -0500
+Received: from gateway23.websitewelcome.com ([192.185.47.80]:23995 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727561AbgBKQOp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 10:59:59 -0500
-Received: by mail-io1-f66.google.com with SMTP id z16so12269527iod.11;
-        Tue, 11 Feb 2020 07:59:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9yyotndcLhvUKHC5GDiLNlYrWJmGfmUU1jrbauqKqrw=;
-        b=bRMRCR8oY9RFO5yYVwxFSVaEFSLu7eMobI6WkVrdMWmn1fF8mC2oPP75BDVReMKHqO
-         gOvFHPKRuWxVGzMpbjPO51vL3zSa9cEcp7Ee8VO6wdUEnmQEFzeHboPSV8H9e0zTJyA1
-         dDtUnOLnqTac3hlWF0mQTuuvRrgT9AdhG3ac0Nm6oi9FS6C/Hkd4N0/lisIHAXHz0CM5
-         hhKN8NCyUijGCoarBqU6EDfcDs+aqYuxXP55PX2TJHSBqxawBE7l5pqd2Ag+cYxxRdug
-         pkHH2hk1S8foGsylqyDjG/ITdVfSI4bKw8CuAbD9eLi/+BJmRgqz8N9zb2Y8I6wPBdm7
-         5XJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9yyotndcLhvUKHC5GDiLNlYrWJmGfmUU1jrbauqKqrw=;
-        b=UHL1zcYpJeVNwhzYIrK+KxEo+z+uD0M3avBCgSODrXHDDzh5hDHS65v5hrJCA9K7+v
-         Leah0ii1aJxMWhh9t/IWlCWy9KrV6RoFYece9XK3qhEbJnjb16oCIuAMMVf+NznSTSTe
-         /8t6Z0bUyMAM+LAMpI2RhQQ6C56gk6KzXvu5Fn9tklk9cTTduD86nRYpIyBESPbBy2Az
-         iS39Ir00qBt1qKUJE4AEDMWWVC/JvD4qtogIum7/sd+e1Sv1nZf2EntAYLBcX0+JAaTa
-         MpRObGYi617C5ac9OjWSkBXUkBhYV2ba9g0yZnwVILaozurgCGc1hUYAheYkxUdObSen
-         593g==
-X-Gm-Message-State: APjAAAXeX7fYFglcteHtImqWBJu7chpOLUmDk9xwMbF+Z6WGAF+v27mC
-        EBm1MygcXaPkTYdyDCuvNHDKHUisRB3/ZUHRPfo=
-X-Google-Smtp-Source: APXvYqzRgDSxtpGoPVVkFNDjDpnOEbay2M89fpnAYpRCiHPDQf41hjNJcWT+m5zGf6F3a1WQILXy8TFaYzj1gZKv58U=
-X-Received: by 2002:a6b:6205:: with SMTP id f5mr14270198iog.42.1581436797145;
- Tue, 11 Feb 2020 07:59:57 -0800 (PST)
+        Tue, 11 Feb 2020 11:14:45 -0500
+X-Greylist: delayed 1494 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Feb 2020 11:14:44 EST
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 9B31DED33
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 09:24:58 -0600 (CST)
+Received: from br540.hostgator.com.br ([108.179.252.180])
+        by cmsmtp with SMTP
+        id 1XPGjTITeRP4z1XPGjvCTQ; Tue, 11 Feb 2020 09:24:58 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=mpdesouza.com; s=default; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=hm/23NW+SCo6nlE9b57ji0EYuqf5cV9tPkdyZTDdTQ8=; b=RfIyznYBariRuSfgxU4Tdx787H
+        vM29DFGT+UBMC1lYUWWzG/2T+qhEPz8mu8sg4bbA1WCbn6+c6yIJjByz5rtNg2AkwaBcATwOY6Inm
+        /8jkjJktneFBKgwqL6n+SS6HoU4zvVj1rkiT7U5s7MNWv+/+tmh5LKYdcPGs4O/fXW2m/zIJFutU6
+        M/00Mk0nND/H4j+tWH6WFuRHzdLo+kakzwsYgRkp3Xh1/ZEbBn38HSqKpMtOEHzoRV1wL/pWbYRvO
+        29yUGa6ESVLJ0LDgxihW2gKQLAR7XSTd9ELbEzmmgWIVVQRLSdAT56rNpY35/zOJRvpzZH0iCZMtd
+        PwavwcaQ==;
+Received: from [189.114.219.35] (port=33352 helo=hephaestus.suse.de)
+        by br540.hostgator.com.br with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <marcos@mpdesouza.com>)
+        id 1j1Vj7-000xng-1U; Tue, 11 Feb 2020 10:37:21 -0300
+From:   Marcos Paulo de Souza <marcos@mpdesouza.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Marcos Paulo de Souza <marcos@mpdesouza.com>
+Subject: [PATCH] btrfs: ioctl: resize: Only how new size if size changed
+Date:   Tue, 11 Feb 2020 10:39:57 -0300
+Message-Id: <20200211133957.14399-1-marcos@mpdesouza.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <1580980321-19256-1-git-send-email-harigovi@codeaurora.org>
- <CAOCk7Nr9n-xLtWq=LEM-QFhJcY+QOuzazsoi-yjErA9od2Jwmw@mail.gmail.com>
- <2f5abc857910f70faa119fea5bda81d7@codeaurora.org> <CAOCk7NoCH9p9gOd7as=ty-EMeerAAhQtKZa8f2wZrDeV2LtGrw@mail.gmail.com>
- <1d201377996e16ce25acb640867e1214@codeaurora.org> <CAF6AEGu8265DWN-XABwR1N-124m1j=EkgeNDEWZ16TVpSCZSZw@mail.gmail.com>
-In-Reply-To: <CAF6AEGu8265DWN-XABwR1N-124m1j=EkgeNDEWZ16TVpSCZSZw@mail.gmail.com>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Tue, 11 Feb 2020 08:59:46 -0700
-Message-ID: <CAOCk7NrH6hWiHL29_DozXcXrXhkCaZ6LTCtJUrvqtXc=nQuLrg@mail.gmail.com>
-Subject: Re: [Freedreno] [v1] drm/msm/dsi/pll: call vco set rate explicitly
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     Harigovindan P <harigovi@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        nganji@codeaurora.org, Sean Paul <seanpaul@chromium.org>,
-        Kalyan Thota <kalyan_t@codeaurora.org>,
-        "Kristian H. Kristensen" <hoegsberg@chromium.org>,
-        freedreno <freedreno@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - br540.hostgator.com.br
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - mpdesouza.com
+X-BWhitelist: no
+X-Source-IP: 189.114.219.35
+X-Source-L: No
+X-Exim-ID: 1j1Vj7-000xng-1U
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (hephaestus.suse.de) [189.114.219.35]:33352
+X-Source-Auth: marcos@mpdesouza.com
+X-Email-Count: 0
+X-Source-Cap: bXBkZXNvNTM7bXBkZXNvNTM7YnI1NDAuaG9zdGdhdG9yLmNvbS5icg==
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 8:44 AM Rob Clark <robdclark@gmail.com> wrote:
->
-> On Mon, Feb 10, 2020 at 9:58 PM <harigovi@codeaurora.org> wrote:
-> >
-> > On 2020-02-07 19:40, Jeffrey Hugo wrote:
-> > > On Fri, Feb 7, 2020 at 5:38 AM <harigovi@codeaurora.org> wrote:
-> > >>
-> > >> On 2020-02-06 20:29, Jeffrey Hugo wrote:
-> > >> > On Thu, Feb 6, 2020 at 2:13 AM Harigovindan P <harigovi@codeaurora.org>
-> > >> > wrote:
-> > >> >>
-> > >> >> For a given byte clock, if VCO recalc value is exactly same as
-> > >> >> vco set rate value, vco_set_rate does not get called assuming
-> > >> >> VCO is already set to required value. But Due to GDSC toggle,
-> > >> >> VCO values are erased in the HW. To make sure VCO is programmed
-> > >> >> correctly, we forcefully call set_rate from vco_prepare.
-> > >> >
-> > >> > Is this specific to certain SoCs? I don't think I've observed this.
-> > >>
-> > >> As far as Qualcomm SOCs are concerned, since pll is analog and the
-> > >> value
-> > >> is directly read from hardware if we get recalc value same as set rate
-> > >> value, the vco_set_rate will not be invoked. We checked in our idp
-> > >> device which has the same SOC but it works there since the rates are
-> > >> different.
-> > >
-> > > This doesn't seem to be an answer to my question.  What Qualcomm SoCs
-> > > does this issue apply to?  Everything implementing the 10nm pll?  One
-> > > specific SoC?  I don't believe I've seen this on MSM8998, nor SDM845,
-> > > so I'm interested to know what is the actual impact here.  I don't see
-> > > an "IDP" SoC in the IP catalog, so I really have no idea what you are
-> > > referring to.
-> >
-> >
-> > This is not 10nm specific. It is applicable for other nms also.
-> > Its specific to the frequency being set. If vco_recalc returns the same
-> > value as being set by vco_set_rate,
-> > vco_set_rate will not be invoked second time onwards.
-> >
-> > For example: Lets take below devices:
-> >
-> > Cheza is based on SDM845 which is 10nm only.
-> > Clk frequency:206016
-> > dsi_pll_10nm_vco_set_rate - DSI PLL0 rate=1236096000
-> > dsi_pll_10nm_vco_recalc_rate - DSI PLL0 returning vco rate = 1236095947
-> >
-> > Trogdor is based on sc7180 which is also 10nm.
-> > Clk frequency:69300
-> > dsi_pll_10nm_vco_set_rate - DSI PLL0 rate=1663200000
-> > dsi_pll_10nm_vco_recalc_rate - DSI PLL0 returning vco rate = 1663200000
-> >
-> > In same trogdor device, we slightly changed the clock frequency and the
-> > values actually differ which will not cause any issue.
-> > Clk frequency:69310
-> > dsi_pll_10nm_vco_set_rate - DSI PLL0 rate=1663440000
-> > dsi_pll_10nm_vco_recalc_rate - DSI PLL0 returning vco rate = 1663439941
->
->
-> tbh, loosing state when power is off is kind of the behavior that I'd
-> expect.  It kinda makes me wonder if things are not getting powered
-> off all the way on some SoCs?
->
-> jhugo, are you worried that this patch will cause problems on other
-> users of the 10nm pll?
+There is no point to inform the user about "new size" if didn't changed
+at all.
 
-Essentially yes.  Conceptually it doesn't seem like this change should
-cause any harm, however -
+Signed-off-by: Marcos Paulo de Souza <marcos@mpdesouza.com>
+---
+ fs/btrfs/ioctl.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-This sounds like we are trying to work around the clk framework, which
-seems wrong.  It feels like we should be able to set a clk flag for
-this and make the framework deal with it.
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index be5350582955..fa31a8021d24 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -1712,9 +1712,6 @@ static noinline int btrfs_ioctl_resize(struct file *file,
+ 
+ 	new_size = round_down(new_size, fs_info->sectorsize);
+ 
+-	btrfs_info_in_rcu(fs_info, "new size for %s is %llu",
+-			  rcu_str_deref(device->name), new_size);
+-
+ 	if (new_size > old_size) {
+ 		trans = btrfs_start_transaction(root, 0);
+ 		if (IS_ERR(trans)) {
+@@ -1727,6 +1724,9 @@ static noinline int btrfs_ioctl_resize(struct file *file,
+ 		ret = btrfs_shrink_device(device, new_size);
+ 	} /* equal, nothing need to do */
+ 
++	if (ret == 0 && new_size != old_size)
++		btrfs_info_in_rcu(fs_info, "new size for %s is %llu",
++			  rcu_str_deref(device->name), new_size);
+ out_free:
+ 	kfree(vol_args);
+ out:
+-- 
+2.24.0
 
-Also, this fix is 10nm specific, yet this issue affects all
-implementations?  Seems like this should perhaps be in common code so
-that we don't need to play whack-a-mole by fixing every implementation
-piecemeal.
-
-Finally, the PLLs are notorious for not taking a configuration unless
-they are running.  I admit, I haven't looked at this patch in detail
-to determine if that is the case here, but there doesn't seem to be
-any indication from the commit test or a comment that doing so is
-actually valid in all cases.
