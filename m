@@ -2,103 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C7A9158BCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 10:22:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DE72158BD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 10:24:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbgBKJWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 04:22:15 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:47023 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbgBKJWP (ORCPT
+        id S1727847AbgBKJYP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 04:24:15 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:39218 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727121AbgBKJYP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 04:22:15 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z7so11252147wrl.13
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 01:22:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=nUWzJepeO8PjNg3axFni2Tq1paDQdlPMubFeA83+qK8=;
-        b=mgQZbLuO3ncl1qvdDTrwLI2Ei6/TFSnWqgPp05KdJFvUhFKgUzDmarzsXAnyfmI5Nn
-         cDZKrt2grBYJXdBkDBcQGd57IQ5FDCAz4v6ZJ+v0CcHokBhVANONxA5iPJaoLcAZtCQa
-         iNvyd4Y/PBAsaOP8la/vjfdmCqnEQ+75Z8IarkVKlV5lscEQHUZChsAiiWGLA/hCJsDp
-         vDe+rJOM0rg8PkFLvyYcp3/3agIyJoO/3mEIfrDCsWJlZuRbIuE7giVZ+426L3jw7UB1
-         lquqgSIpncdr3d4eAsJLtYVX13eDFcB+v/7N382hTQnLzxPVOHd31EfYTohfD268we5G
-         nxhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=nUWzJepeO8PjNg3axFni2Tq1paDQdlPMubFeA83+qK8=;
-        b=aLK18Hmq1Tf5R9PWkmm6Keh5xZJYqE4kc1jhKtStJm9r8mxpwmq5N8JjTsuU4p/vgb
-         zi4C+dUdjQsvLzy6SK6nLnMhoUyb1sJLTumxTFqoZGGZh9TL3LhCaC3ff6e292YzILfU
-         Ij/qi1z0BxsGEQuNiH2wvl9tnxfmQFqpFoxuwLzmoNj/fnC6bY360m3SlotXoW6VwjPD
-         EoE5yeQAnkCO6KbQmGHQ+w2g2BSNRg7YeRa7EFsM/N+r1rsF34ql4UQ/yKjJmTLAAMvd
-         VGm+xo57pXYVxFXTUU1LN3m6t+QSBU3Mpfj8IshLlu9p1KQKIZeQrA/4oWZgSpSfvuK5
-         mLWw==
-X-Gm-Message-State: APjAAAVRoFWa0bMPq+GyrdgknFmHSAFk81lPD8+ril4xyvjke97E9tzS
-        iZBRRw89bcaiU+pX16DGKfbgPzZhW4o=
-X-Google-Smtp-Source: APXvYqybp72IycU6BC7bQav7xevh/OBGYXZyvEJb5mbHU09SESDWFEbGRgF+kitOaDsCUHQaER6xtA==
-X-Received: by 2002:adf:ef92:: with SMTP id d18mr7192940wro.234.1581412933453;
-        Tue, 11 Feb 2020 01:22:13 -0800 (PST)
-Received: from ogabbay-VM ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id m9sm4455566wrx.55.2020.02.11.01.22.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Feb 2020 01:22:12 -0800 (PST)
-Date:   Tue, 11 Feb 2020 11:22:11 +0200
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [git pull] habanalabs fixes for 5.6-rc2
-Message-ID: <20200211092211.GA23598@ogabbay-VM>
+        Tue, 11 Feb 2020 04:24:15 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01B9ELRu104881;
+        Tue, 11 Feb 2020 09:24:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2020-01-29;
+ bh=0qUVxjzf2QqnC2Y7oVbJJ3KMjgd8797fWBccis9x61w=;
+ b=kc0nANLb+izqhEptDHGMlYYuxdxolAJ/DvY/OSdG8TZ8z6TnhnJ6CPIJOY1oIqDTlRaR
+ dIOhiEEfnRk85Kro+jXJaLpgOzT8pc5QhwZ/A2n5XZgkiNohgtgKSvKNpnJG96qfQsV7
+ E7Xlp+R4MHyx5NkaV0bLA5f1n5vwuBjFo9rmNcvF42rwed+9HFEpIH0VKnS23GElMMqw
+ MLFfzVol/iT/X8MpGFZjvuXz8MCm/ARxTewfXNWqv16hSZjaiD7Fz991/C6xo3qAdyWK
+ Kj5zCt2XU6BfcK4tQpH3jU2WOBmltXGUnoxZxY1MSlEQupyvqW9voP4hNKCRt0i10v3X mw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2y2k881xjy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 11 Feb 2020 09:24:05 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01B9CxIx033252;
+        Tue, 11 Feb 2020 09:24:05 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2y26fgtxju-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Feb 2020 09:24:05 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01B9O3a3008057;
+        Tue, 11 Feb 2020 09:24:03 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 11 Feb 2020 01:24:02 -0800
+Date:   Tue, 11 Feb 2020 12:23:54 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     =?iso-8859-1?B?Suly9G1l?= Pouiller <jerome.pouiller@silabs.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [[PATCH staging] 3/7] staging: wfx: fix init/remove vs IRQ race
+Message-ID: <20200211092354.GE1778@kadam>
+References: <cover.1581410026.git.mirq-linux@rere.qmqm.pl>
+ <8f0c51acc3b98fc55d6960036daef7556445cd0a.1581410026.git.mirq-linux@rere.qmqm.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8f0c51acc3b98fc55d6960036daef7556445cd0a.1581410026.git.mirq-linux@rere.qmqm.pl>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9527 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=8
+ adultscore=0 bulkscore=0 mlxscore=0 spamscore=0 phishscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002110069
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9527 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 lowpriorityscore=0
+ suspectscore=8 bulkscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
+ malwarescore=0 impostorscore=0 clxscore=1011 spamscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002110069
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Greg,
+On Tue, Feb 11, 2020 at 09:46:54AM +0100, Michał Mirosław wrote:
+> @@ -218,9 +218,9 @@ static int wfx_sdio_probe(struct sdio_func *func,
+>  	return 0;
+>  
+>  err3:
+> -	wfx_free_common(bus->core);
+> +	wfx_sdio_irq_unsubscribe(bus);
+>  err2:
+> -	wfx_sdio_irq_unsubscribe(bus);
+> +	wfx_free_common(bus->core);
+>  err1:
+>  	sdio_claim_host(func);
+>  	sdio_disable_func(func);
+> @@ -234,8 +234,8 @@ static void wfx_sdio_remove(struct sdio_func *func)
+>  	struct wfx_sdio_priv *bus = sdio_get_drvdata(func);
+>  
+>  	wfx_release(bus->core);
+> -	wfx_free_common(bus->core);
+>  	wfx_sdio_irq_unsubscribe(bus);
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This is habanalabs fixes pull request for 5.6-rc2.
-It contains two important fixes for the reset code of the ASIC and another
-fix to reference counting of a command buffer object.
+This calls sdio_release_host(func);
 
-Thanks,
-Oded
+> +	wfx_free_common(bus->core);
+>  	sdio_claim_host(func);
+>  	sdio_disable_func(func);
+>  	sdio_release_host(func);
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+so is this a double free?
 
-The following changes since commit 95ba79e89c107851bad4492ca23e9b9c399b8592:
+> diff --git a/drivers/staging/wfx/bus_spi.c b/drivers/staging/wfx/bus_spi.c
+> index 3ba705477ca8..2b108a9fa5ae 100644
+> --- a/drivers/staging/wfx/bus_spi.c
+> +++ b/drivers/staging/wfx/bus_spi.c
+> @@ -211,20 +211,22 @@ static int wfx_spi_probe(struct spi_device *func)
+>  		udelay(2000);
+>  	}
+>  
+> -	ret = devm_request_irq(&func->dev, func->irq, wfx_spi_irq_handler,
+> -			       IRQF_TRIGGER_RISING, "wfx", bus);
+> -	if (ret)
+> -		return ret;
+> -
+>  	INIT_WORK(&bus->request_rx, wfx_spi_request_rx);
+>  	bus->core = wfx_init_common(&func->dev, &wfx_spi_pdata,
+>  				    &wfx_spi_hwbus_ops, bus);
+>  	if (!bus->core)
+>  		return -EIO;
+>  
+> +	ret = devm_request_irq(&func->dev, func->irq, wfx_spi_irq_handler,
+> +			       IRQF_TRIGGER_RISING, "wfx", bus);
+> +	if (ret)
+> +		return ret;
 
-  MAINTAINERS: remove unnecessary ':' characters (2020-02-10 15:29:09 -0800)
+Shouldn't this call wfx_free_common(bus->core); before returning?
 
-are available in the Git repository at:
+> +
+>  	ret = wfx_probe(bus->core);
+> -	if (ret)
+> +	if (ret) {
+> +		devm_free_irq(&func->dev, func->irq, bus);
 
-  git://people.freedesktop.org/~gabbayo/linux tags/misc-habanalabs-fixes-2020-02-11
+We shouldn't have to free devm_ resource.
 
-for you to fetch changes up to cf01514c5c6efa2d521d35e68dff2e0674d08e91:
+>  		wfx_free_common(bus->core);
+> +	}
+>  
+>  	return ret;
+>  }
+> @@ -234,11 +236,11 @@ static int wfx_spi_remove(struct spi_device *func)
+>  	struct wfx_spi_priv *bus = spi_get_drvdata(func);
+>  
+>  	wfx_release(bus->core);
+> -	wfx_free_common(bus->core);
+>  	// A few IRQ will be sent during device release. Hopefully, no IRQ
+>  	// should happen after wdev/wvif are released.
+>  	devm_free_irq(&func->dev, func->irq, bus);
 
-  habanalabs: patched cb equals user cb in device memset (2020-02-11 11:12:47 +0200)
+Is this devm_ free required?
 
-----------------------------------------------------------------
-This tag contains the following fixes:
+>  	flush_work(&bus->request_rx);
+> +	wfx_free_common(bus->core);
+>  	return 0;
+>  }
 
-- Two fixes to the reset process of the ASIC. Without these fixes, the
-  reset process might take a long time and produce a kernel panic.
-  Alternatively, the ASIC could get stuck.
+regards,
+dan carpenter
 
-- Fix to reference counting of a command buffer object. It was kref_put
-  one more time than it should have been.
-
-----------------------------------------------------------------
-Oded Gabbay (2):
-      habanalabs: halt the engines before hard-reset
-      habanalabs: patched cb equals user cb in device memset
-
-Omer Shpigelman (1):
-      habanalabs: do not halt CoreSight during hard reset
-
- drivers/misc/habanalabs/device.c    |  5 ++++-
- drivers/misc/habanalabs/goya/goya.c | 44 +++++++++++++++++++++++++++++++++++--
- 2 files changed, 46 insertions(+), 3 deletions(-)
