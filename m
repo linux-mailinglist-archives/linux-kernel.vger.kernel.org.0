@@ -2,275 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C589158732
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 02:02:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F383D15875F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 02:04:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbgBKBCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 20:02:45 -0500
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:50790 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727577AbgBKBCo (ORCPT
+        id S1728055AbgBKBEM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 20:04:12 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54850 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727982AbgBKBEA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 20:02:44 -0500
-Received: by mail-pg1-f202.google.com with SMTP id q4so6477663pgr.17
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 17:02:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=FCGShYhhgcnM7PF8/ijIsVVXLdpFwigYVMP37PnwTck=;
-        b=EqgHqsJxa8C7fn+Wki1EguP3hB8hrPbXer3KQY4gcZM3fKrqEzRZ8NTHY5MnEIYZJB
-         Bbn4aEd1g5VOEpmII9h0Ec0zV7vxNz/n06/mOIo62Blq/+WyIy3NgZQbB+kfZPBSWulq
-         j3JJ6C94RC3QI4+oCb7MxiE43D7Pe7elDkjd2NuZlDHl4Q6FhO8EFkGygVB3suOVzlrS
-         b3kDULf5xE5achu9xERnQX1+iLNqcQNFfc0ZsTYcUF+rrQ00a5Pr4cUR8elzlaTHCCLC
-         z9u6SIQ+LoQTP8bYRb7fqNYQ3OqACuYnK55+lsNDJhfbO0ENbtUqIif94c+JqPwe9YlB
-         oSOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=FCGShYhhgcnM7PF8/ijIsVVXLdpFwigYVMP37PnwTck=;
-        b=JOHqBC7KO7lfj9Plnc+Tsqqb+xMsX2rrCzU3NN63CFefszHIcn1vjYCBHWlIN5WIhR
-         ivLCc5yQNruZu26Z8CBbEROnbRCBNWhjgkmcMy0no1div1cxzj9Igo3UKXBftFtRLm1m
-         IsrLRZPdyEpJl0KAy18J2GP3dXKuOJSYTBX8k8UgrGpXiN6H4Pc6dClDTdl6Hnb+Fc3o
-         5ehQEgpq0Hdot6G0jv57iHHwAvK10D7uV5rf+8BNn20uBxGjydxPV8qsTsxan6A1z8eX
-         uELATCq/RbDs7fkPPivo1uFWNFZt+LTKykVERDScnCE9Z9cpDNwRktqvftJilPWbP3eh
-         3q3w==
-X-Gm-Message-State: APjAAAVhcZiz8zi2AfPLthXzkl+O/zf5q3J/bU1oUNMjj2NYzfFyLbal
-        9A6RJlovp9K6clc6ufywymGF2ZndIrC6sw==
-X-Google-Smtp-Source: APXvYqxCByTRssGEeDlgq5LA62XXMvHAm0cbNRguxcdJFP14OSmy+8fUY9L+EKvGWgX12ZkT7VWIiqgFbLf5vQ==
-X-Received: by 2002:a63:d94d:: with SMTP id e13mr4236681pgj.240.1581382963408;
- Mon, 10 Feb 2020 17:02:43 -0800 (PST)
-Date:   Mon, 10 Feb 2020 17:02:29 -0800
-Message-Id: <20200211010229.251757-1-davidgow@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-Subject: [PATCH] Documentation: kunit: Make the KUnit documentation less UML-specific
-From:   David Gow <davidgow@google.com>
-To:     brendanhiggins@google.com, skhan@linuxfoundation.org,
-        corbet@lwn.net
-Cc:     kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        frowand.list@gmail.com, David Gow <davidgow@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 10 Feb 2020 20:04:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=g3I96AED9xpuGVWKIIlCSpxOQGT6kirVfcGE/lGEHHY=; b=IXp8ySq9j05vmGKD4e3tUEEGfd
+        hOOyiHFx8qObGT74MoBcbdPXktSRwwJozKH2633qw95TupzWzEwuw1RJ+zmC1prIg4EQiX6bkcTS/
+        0aEQnOicMRpSjIA7dWMiAfE/9Cf++1qsl2uYViTvYIU9O27fy+VPmGQaU+EVbrXiIS/Ve7Cz47wmm
+        QwBj1rPdBjR5+Q91XSAGgtCeOxAmZq1V5TIWdDqAdbUwe1ENxNkasVWcWE/bLyd5sZX47hK5A5qP4
+        3u2UGE1vs769eDMQYnouLR87lD0ngEJvRttC6ZyZmpI+LPbwedvBRKxNUYNCE7pOiiMAsD7nQkHUb
+        vwpQTIXg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1Jxu-0001ne-9M; Tue, 11 Feb 2020 01:03:50 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, ocfs2-devel@oss.oracle.com,
+        linux-xfs@vger.kernel.org
+Subject: [PATCH v5 00/13] Change readahead API
+Date:   Mon, 10 Feb 2020 17:03:35 -0800
+Message-Id: <20200211010348.6872-1-willy@infradead.org>
+X-Mailer: git-send-email 2.21.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove some of the outmoded "Why KUnit" rationale -- which focuses
-significantly on UML -- and update the Getting Started guide to mention
-running tests without the kunit_tool wrapper.
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Signed-off-by: David Gow <davidgow@google.com>
----
-This is an attempt at resolving some of the issues with the KUnit
-documentation pointed out here:
-https://lore.kernel.org/linux-kselftest/CABVgOSkiLi0UNijH1xTSvmsJEE5+ocCZ7nkzmKzxDLzzfqBSzQ@mail.gmail.com/
+This series adds a readahead address_space operation to eventually
+replace the readpages operation.  The key difference is that
+pages are added to the page cache as they are allocated (and
+then looked up by the filesystem) instead of passing them on a
+list to the readpages operation and having the filesystem add
+them to the page cache.  It's a net reduction in code for each
+implementation, more efficient than walking a list, and solves
+the direct-write vs buffered-read problem reported by yu kuai at
+https://lore.kernel.org/linux-fsdevel/20200116063601.39201-1-yukuai3@huawei.com/
 
-There's definitely room for further work on the KUnit documentation
-(e.g., adding more information around the environment tests run in), but
-this hopefully is better than nothing as a starting point.
+v5 switches to passing a readahead_control struct (mirroring the
+writepages_control struct passed to writepages).  This has a number of
+advantages:
+ - It fixes a number of bugs in various implementations, eg forgetting to
+   increment 'start', an off-by-one error in 'nr_pages' or treating 'start'
+   as a byte offset instead of a page offset.
+ - It allows us to change the arguments without changing all the
+   implementations of ->readahead which just call mpage_readahead() or
+   iomap_readahead()
+ - Figuring out which pages haven't been attempted by the implementation
+   is more natural this way.
+ - There's less code in each implementation.
 
+This version deletes a lot more lines than previous versions of the patch
+-- we're net -97 lines instead of -17 with v4.  It'll be even more when
+we can finish the conversion and remove all the ->readpages support code,
+including read_cache_pages().
 
- Documentation/dev-tools/kunit/index.rst | 60 ++++---------------
- Documentation/dev-tools/kunit/start.rst | 80 +++++++++++++++++++++----
- 2 files changed, 78 insertions(+), 62 deletions(-)
+Also new in v5 is patch 5 which adds page_cache_readahead_limit() and
+converts ext4 and f2fs to use it for their Merkel trees.
 
-diff --git a/Documentation/dev-tools/kunit/index.rst b/Documentation/dev-tools/kunit/index.rst
-index d16a4d2c3a41..6064cd14dfad 100644
---- a/Documentation/dev-tools/kunit/index.rst
-+++ b/Documentation/dev-tools/kunit/index.rst
-@@ -17,63 +17,23 @@ What is KUnit?
- ==============
- 
- KUnit is a lightweight unit testing and mocking framework for the Linux kernel.
--These tests are able to be run locally on a developer's workstation without a VM
--or special hardware.
- 
- KUnit is heavily inspired by JUnit, Python's unittest.mock, and
- Googletest/Googlemock for C++. KUnit provides facilities for defining unit test
- cases, grouping related test cases into test suites, providing common
- infrastructure for running tests, and much more.
- 
--Get started now: :doc:`start`
--
--Why KUnit?
--==========
--
--A unit test is supposed to test a single unit of code in isolation, hence the
--name. A unit test should be the finest granularity of testing and as such should
--allow all possible code paths to be tested in the code under test; this is only
--possible if the code under test is very small and does not have any external
--dependencies outside of the test's control like hardware.
--
--Outside of KUnit, there are no testing frameworks currently
--available for the kernel that do not require installing the kernel on a test
--machine or in a VM and all require tests to be written in userspace running on
--the kernel; this is true for Autotest, and kselftest, disqualifying
--any of them from being considered unit testing frameworks.
-+KUnit consists of a kernel component, which provides a set of macros for easily
-+writing unit tests. Tests written against KUnit will run on kernel boot if
-+built-in, or when loaded if built as a module. These tests write out results to
-+the kernel log in `TAP <https://testanything.org/>`_ format.
- 
--KUnit addresses the problem of being able to run tests without needing a virtual
--machine or actual hardware with User Mode Linux. User Mode Linux is a Linux
--architecture, like ARM or x86; however, unlike other architectures it compiles
--to a standalone program that can be run like any other program directly inside
--of a host operating system; to be clear, it does not require any virtualization
--support; it is just a regular program.
-+To make running these tests (and reading the results) easier, KUnit offsers
-+:doc:`kunit_tool <kunit-tool>`, which builds a `User Mode Linux
-+<http://user-mode-linux.sourceforge.net>`_ kernel, runs it, and parses the test
-+results. This provides a quick way of running KUnit tests during development.
- 
--Alternatively, kunit and kunit tests can be built as modules and tests will
--run when the test module is loaded.
--
--KUnit is fast. Excluding build time, from invocation to completion KUnit can run
--several dozen tests in only 10 to 20 seconds; this might not sound like a big
--deal to some people, but having such fast and easy to run tests fundamentally
--changes the way you go about testing and even writing code in the first place.
--Linus himself said in his `git talk at Google
--<https://gist.github.com/lorn/1272686/revisions#diff-53c65572127855f1b003db4064a94573R874>`_:
--
--	"... a lot of people seem to think that performance is about doing the
--	same thing, just doing it faster, and that is not true. That is not what
--	performance is all about. If you can do something really fast, really
--	well, people will start using it differently."
--
--In this context Linus was talking about branching and merging,
--but this point also applies to testing. If your tests are slow, unreliable, are
--difficult to write, and require a special setup or special hardware to run,
--then you wait a lot longer to write tests, and you wait a lot longer to run
--tests; this means that tests are likely to break, unlikely to test a lot of
--things, and are unlikely to be rerun once they pass. If your tests are really
--fast, you run them all the time, every time you make a change, and every time
--someone sends you some code. Why trust that someone ran all their tests
--correctly on every change when you can just run them yourself in less time than
--it takes to read their test log?
-+Get started now: :doc:`start`
- 
- How do I use it?
- ================
-@@ -81,3 +41,5 @@ How do I use it?
- *   :doc:`start` - for new users of KUnit
- *   :doc:`usage` - for a more detailed explanation of KUnit features
- *   :doc:`api/index` - for the list of KUnit APIs used for testing
-+*   :doc:`kunit-tool` - for more information on the kunit_tool helper script
-+*   :doc:`faq` - for answers to some common questions about KUnit
-diff --git a/Documentation/dev-tools/kunit/start.rst b/Documentation/dev-tools/kunit/start.rst
-index 4e1d24db6b13..e1c5ce80ce12 100644
---- a/Documentation/dev-tools/kunit/start.rst
-+++ b/Documentation/dev-tools/kunit/start.rst
-@@ -9,11 +9,10 @@ Installing dependencies
- KUnit has the same dependencies as the Linux kernel. As long as you can build
- the kernel, you can run KUnit.
- 
--KUnit Wrapper
--=============
--Included with KUnit is a simple Python wrapper that helps format the output to
--easily use and read KUnit output. It handles building and running the kernel, as
--well as formatting the output.
-+Running tests with the KUnit Wrapper
-+====================================
-+Included with KUnit is a simple Python wrapper which runs tests under User Mode
-+Linux, and formats the test results.
- 
- The wrapper can be run with:
- 
-@@ -21,22 +20,42 @@ The wrapper can be run with:
- 
- 	./tools/testing/kunit/kunit.py run --defconfig
- 
--For more information on this wrapper (also called kunit_tool) checkout the
-+For more information on this wrapper (also called kunit_tool) check out the
- :doc:`kunit-tool` page.
- 
- Creating a .kunitconfig
--=======================
--The Python script is a thin wrapper around Kbuild. As such, it needs to be
--configured with a ``.kunitconfig`` file. This file essentially contains the
--regular Kernel config, with the specific test targets as well.
--
-+-----------------------
-+If you want to run a specific set of tests (rather than those listed in the
-+KUnit defconfig), you can provide Kconfig options in the ``.kunitconfig`` file.
-+This file essentially contains the regular Kernel config, with the specific
-+test targets as well. The ``.kunitconfig`` should also contain any other config
-+options required by the tests.
-+
-+A good starting point for a ``.kunitconfig`` is the KUnit defconfig:
- .. code-block:: bash
- 
- 	cd $PATH_TO_LINUX_REPO
- 	cp arch/um/configs/kunit_defconfig .kunitconfig
- 
--Verifying KUnit Works
-----------------------
-+You can then add any other Kconfig options you wish, e.g.:
-+.. code-block:: none
-+
-+        CONFIG_LIST_KUNIT_TEST=y
-+
-+:doc:`kunit_tool <kunit-tool>` will ensure that all config options set in
-+``.kunitconfig`` are set in the kernel ``.config`` before running the tests.
-+It'll warn you if you haven't included the dependencies of the options you're
-+using.
-+
-+.. note::
-+   Note that removing something from the ``.kunitconfig`` will not trigger a
-+   rebuild of the ``.config`` file: the configuration is only updated if the
-+   ``.kunitconfig`` is not a subset of ``.config``. This means that you can use
-+   other tools (such as make menuconfig) to adjust other config options.
-+
-+
-+Running the tests
-+-----------------
- 
- To make sure that everything is set up correctly, simply invoke the Python
- wrapper from your kernel repo:
-@@ -62,6 +81,41 @@ followed by a list of tests that are run. All of them should be passing.
- 	Because it is building a lot of sources for the first time, the
- 	``Building KUnit kernel`` step may take a while.
- 
-+Running tests without the KUnit Wrapper
-+=======================================
-+
-+If you'd rather not use the KUnit Wrapper (if, for example, you need to
-+integrate with other systems, or use an architecture other than UML), KUnit can
-+be included in any kernel, and the results read out and parsed manually.
-+
-+.. note::
-+   KUnit is not designed for use in a production system, and it's possible that
-+   tests may reduce the stability or security of the system.
-+
-+
-+
-+Configuring the kernel
-+----------------------
-+
-+In order to enable KUnit itself, you simply need to enable the ``CONFIG_KUNIT``
-+Kconfig option (it's under Kernel Hacking/Kernel Testing and Coverage in
-+menuconfig). From there, you can enable any KUnit tests you want: they usually
-+have config options ending in ``_KUNIT_TEST``.
-+
-+KUnit and KUnit tests can be compiled as modules: in this case the tests in a
-+module will be run when the module is loaded.
-+
-+Running the tests
-+-----------------
-+
-+Build and run your kernel as usual. Test output will be written to the kernel
-+log in `TAP <https://testanything.org/>`_ format.
-+
-+.. note::
-+   It's possible that there will be other lines and/or data interspersed in the
-+   TAP output.
-+
-+
- Writing your first test
- =======================
- 
+Matthew Wilcox (Oracle) (13):
+  mm: Fix the return type of __do_page_cache_readahead
+  mm: Ignore return value of ->readpages
+  mm: Put readahead pages in cache earlier
+  mm: Add readahead address space operation
+  mm: Add page_cache_readahead_limit
+  fs: Convert mpage_readpages to mpage_readahead
+  btrfs: Convert from readpages to readahead
+  erofs: Convert uncompressed files from readpages to readahead
+  erofs: Convert compressed files from readpages to readahead
+  ext4: Convert from readpages to readahead
+  f2fs: Convert from readpages to readahead
+  fuse: Convert from readpages to readahead
+  iomap: Convert from readpages to readahead
+
+ Documentation/filesystems/locking.rst |   6 +-
+ Documentation/filesystems/vfs.rst     |  13 +++
+ drivers/staging/exfat/exfat_super.c   |   7 +-
+ fs/block_dev.c                        |   7 +-
+ fs/btrfs/extent_io.c                  |  48 +++------
+ fs/btrfs/extent_io.h                  |   3 +-
+ fs/btrfs/inode.c                      |  16 ++-
+ fs/erofs/data.c                       |  39 +++----
+ fs/erofs/zdata.c                      |  29 ++----
+ fs/ext2/inode.c                       |  10 +-
+ fs/ext4/ext4.h                        |   3 +-
+ fs/ext4/inode.c                       |  23 ++---
+ fs/ext4/readpage.c                    |  22 ++--
+ fs/ext4/verity.c                      |  35 +------
+ fs/f2fs/data.c                        |  50 ++++-----
+ fs/f2fs/f2fs.h                        |   5 +-
+ fs/f2fs/verity.c                      |  35 +------
+ fs/fat/inode.c                        |   7 +-
+ fs/fuse/file.c                        |  46 ++++-----
+ fs/gfs2/aops.c                        |  23 ++---
+ fs/hpfs/file.c                        |   7 +-
+ fs/iomap/buffered-io.c                | 103 ++++++-------------
+ fs/iomap/trace.h                      |   2 +-
+ fs/isofs/inode.c                      |   7 +-
+ fs/jfs/inode.c                        |   7 +-
+ fs/mpage.c                            |  38 +++----
+ fs/nilfs2/inode.c                     |  15 +--
+ fs/ocfs2/aops.c                       |  34 +++---
+ fs/omfs/file.c                        |   7 +-
+ fs/qnx6/inode.c                       |   7 +-
+ fs/reiserfs/inode.c                   |   8 +-
+ fs/udf/inode.c                        |   7 +-
+ fs/xfs/xfs_aops.c                     |  13 +--
+ fs/zonefs/super.c                     |   7 +-
+ include/linux/fs.h                    |   2 +
+ include/linux/iomap.h                 |   3 +-
+ include/linux/mpage.h                 |   4 +-
+ include/linux/pagemap.h               |  84 +++++++++++++++
+ include/trace/events/erofs.h          |   6 +-
+ include/trace/events/f2fs.h           |   6 +-
+ mm/internal.h                         |   2 +-
+ mm/migrate.c                          |   2 +-
+ mm/readahead.c                        | 143 ++++++++++++++++----------
+ 43 files changed, 422 insertions(+), 519 deletions(-)
+
 -- 
-2.25.0.341.g760bfbb309-goog
+2.25.0
 
