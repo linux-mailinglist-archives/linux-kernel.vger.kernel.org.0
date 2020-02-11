@@ -2,114 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9558A159C2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 23:27:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9090159C39
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 23:30:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbgBKW1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 17:27:08 -0500
-Received: from gateway22.websitewelcome.com ([192.185.46.187]:39115 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727029AbgBKW1I (ORCPT
+        id S1727594AbgBKWaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 17:30:46 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:44405 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbgBKWaq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 17:27:08 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 8AC4D726D
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 16:27:07 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 1dznjJQnjvBMd1dznjd1u6; Tue, 11 Feb 2020 16:27:07 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=GT9/8iTyzoretqTW563JGcIiH9xdxc8okk4pGNkhU+o=; b=i2IjA2NIeoNkwbaY1nAFU9RngI
-        nx2Gh68LYUYYugaMNl+OTX263qdqji5CptmX5W+7p1hseNa1rH6ASvBwx0lAZtUiFBmJ+BC/cXpyy
-        Nq9qTl8Y4n0qKR8h6/ydjoa3bDpYBBkOVsp5Cms7hXhItUCpKCgNurIU43b2f92Hg5qHmDeZkCIPa
-        zDIYOQL6ozIcB9eVtnH+QBY5DwGwBGWdR+HAWT+INJKN4QnbJr5tGQrolLkUbmklBP3hwan8eOA2u
-        poCQEg8fPwGfqz9zz1rckf4EOmwyX2ilc5JxukY1D0Z7eLSRPFeVX/tdmutmiCjDHfUw25UaRw2vK
-        cWMn+NnQ==;
-Received: from [200.68.140.36] (port=8063 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j1dzm-00369D-4u; Tue, 11 Feb 2020 16:27:06 -0600
-Date:   Tue, 11 Feb 2020 16:29:41 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] char: virtio: Replace zero-length array with flexible-array
- member
-Message-ID: <20200211222941.GA7657@embeddedor>
+        Tue, 11 Feb 2020 17:30:46 -0500
+Received: by mail-yb1-f196.google.com with SMTP id f21so6207799ybg.11;
+        Tue, 11 Feb 2020 14:30:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=CHoiFuVyPb6jGydbvdkP7hbmi4a+GAh7Qj76wkBaMrw=;
+        b=KqXh8ljWsaeJuL5FZXSBYEMOEtwIDGtNhPOg0K+XUvNK9WNzlf102sQ8jl82PFo8XF
+         s+Ljzb/2DZuO0hfDjig0E+42lrnPZv/TPE7RJ8Aqcx5xI9V7autaDv1tzexHXbY8iQty
+         emEUEpwNSlANK1zORXQhRhy5tNQf2Ob0zLmcHG55uqs/alcX9ODLzR5BetAN9ZF5rmQ2
+         L25xAQtPyXz4zTfuqZZ/CpTP5vh7LsBhN8NpOxxgp0t58Zctl7vxGJbVRa2ovEgfn55s
+         i7Ls6CX0QpJTP0yd4t9igAHATrBZ+sxcHJfF2O09c0ls0c51XDilEOQdV2YfxfRxZoPj
+         KfZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=CHoiFuVyPb6jGydbvdkP7hbmi4a+GAh7Qj76wkBaMrw=;
+        b=KdSoHhjkmF8+9QF0hlURq0C116oVY6hm7M8wSwZ0ulNqUei6pLlCFXShzIFMt+zN2Y
+         lSNfRwOYbeldU9r2VwMbbSSAHx8VxaN8tC5kcK0NNHpjikK1m0IMs/b47O2+P7UVpQt2
+         u5NcYqGfr3r8I3JEFsX3OxPJmCMHR/MrGSYiqxWsn0StM+iZw7co91ZyeLLbD234oik8
+         DeQUFpd+t3qIucZjO8GDCeMNu7LnF49OSUnIJHZ33+3kTR+XzFqpnallAUHILKEmJF6l
+         Mly0d1U9oFrHUKFHi1FkWGxFbQnG4cUDAwMprVVrw5locLsSXCnS5yTP/Wls5Hqzwkf0
+         6Jsw==
+X-Gm-Message-State: APjAAAVDKaqjWLDAB1h36pY43rps0qF71RQniRyhX24u5vTuJGuvNHgM
+        eAYZcPdvPrWfG4ZIbsi5kCU=
+X-Google-Smtp-Source: APXvYqyilsRsa87oczzBpnbDDzSd9mSalUhB8qVYON+pfbtfykYkhrGIfyKeqrrb88A0edcvtP8mkQ==
+X-Received: by 2002:a25:8290:: with SMTP id r16mr7654104ybk.4.1581460245400;
+        Tue, 11 Feb 2020 14:30:45 -0800 (PST)
+Received: from icarus (072-189-064-225.res.spectrum.com. [72.189.64.225])
+        by smtp.gmail.com with ESMTPSA id q130sm2560552ywg.52.2020.02.11.14.30.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2020 14:30:44 -0800 (PST)
+Date:   Tue, 11 Feb 2020 17:30:28 -0500
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc:     jic23@kernel.org, alexandre.torgue@st.com,
+        mcoquelin.stm32@gmail.com, benjamin.gaignard@st.com,
+        linux-iio@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] counter: stm32-timer-cnt: add power management support
+Message-ID: <20200211223028.GA7369@icarus>
+References: <1581355198-30428-1-git-send-email-fabrice.gasnier@st.com>
+ <20200210174550.GA4626@icarus>
+ <b1e2930a-eeaf-dcfe-3e2c-b666908262bf@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.36
-X-Source-L: No
-X-Exim-ID: 1j1dzm-00369D-4u
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.36]:8063
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <b1e2930a-eeaf-dcfe-3e2c-b666908262bf@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Tue, Feb 11, 2020 at 11:54:17AM +0100, Fabrice Gasnier wrote:
+> On 2/10/20 6:45 PM, William Breathitt Gray wrote:
+> > On Mon, Feb 10, 2020 at 06:19:58PM +0100, Fabrice Gasnier wrote:
+> >> Add suspend/resume PM sleep ops. When going to low power, enforce the
+> >> counter isn't active. Gracefully restore its state upon resume in case
+> >> it's been left enabled prior to suspend.
+> >>
+> >> Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> >> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> >> ---
+> >> Changes in v2:
+> >> - Don't refuse to suspend in case the counter has been left enabled.
+> >>   Gracefully disable it and restore its state upon resume.
+> >> ---
+> >>  drivers/counter/stm32-timer-cnt.c | 63 +++++++++++++++++++++++++++++++++++++++
+> >>  1 file changed, 63 insertions(+)
+> >>
+> >> diff --git a/drivers/counter/stm32-timer-cnt.c b/drivers/counter/stm32-timer-cnt.c
+> >> index 3eafcce..50496f4 100644
+> >> --- a/drivers/counter/stm32-timer-cnt.c
+> >> +++ b/drivers/counter/stm32-timer-cnt.c
+> >> @@ -12,6 +12,7 @@
+> >>  #include <linux/iio/types.h>
+> > 
+> > Unrelated to your patch but it caught my eye: are iio headers necessary
+> > for this file? I suspect they are not needed since this driver does not
+> > make use of the IIO interface.
+> 
+> Hi William,
+> 
+> Yes, you're right. Thanks for pointing this!
+> I'll push a patch on top of this one to fix it. BTW, I'm not sure if
+> this needs to be a marked as a fix, as this seems a quite minor issue?
+> 
+> Best Regards,
+> Fabrice
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+No need for a Fixes tag in this case since this is not a bug fix, but
+rather just a minor clean up of the included headers.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertenly introduced[3] to the codebase from now on.
+Thanks,
 
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/char/virtio_console.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-index fbeb71953526..a136239e4c14 100644
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -125,7 +125,7 @@ struct port_buffer {
- 	unsigned int sgpages;
- 
- 	/* sg is used if spages > 0. sg must be the last in is struct */
--	struct scatterlist sg[0];
-+	struct scatterlist sg[];
- };
- 
- /*
--- 
-2.25.0
-
+William Breathitt Gray
