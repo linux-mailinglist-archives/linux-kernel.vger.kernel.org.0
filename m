@@ -2,33 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03323158CBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:35:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A678C158CCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:35:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728386AbgBKKfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 05:35:03 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:26389 "EHLO rere.qmqm.pl"
+        id S1728456AbgBKKfU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 05:35:20 -0500
+Received: from rere.qmqm.pl ([91.227.64.183]:15594 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727805AbgBKKfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 05:35:03 -0500
+        id S1728237AbgBKKfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 05:35:04 -0500
 Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 48Gzg90fyZz6x;
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 48Gzg94jdqzC7;
         Tue, 11 Feb 2020 11:35:01 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1581417301; bh=vQXfboMzSuI7E1x57jf2aEN96A5Gr8vG74E+9+CiSm0=;
-        h=Date:From:Subject:To:Cc:From;
-        b=MBRvBX8Fkrrv0txLhfyeRIEqzhVmhKd1/ouHdqiqlI1mv+AV3VLLcJA18//vhbGCo
-         jjrxtF1GxurPrEGCYRDPnM9rodDiNG6k/S8Az9GyN2IOv5hnGjbQq2OCBapyFwcA5e
-         b7q/JbPDRX7tU14jeOkWU8B1+V403V17S6EkiikTsjQ7gYKiLHnF+XIHZCF9UTBisr
-         SxTx9dVns4T+wjSWIs6Gu+iBBYFJxvgaG2QWvoQ4/sQBmGMhXEEe961qu7E2rX5Ol1
-         R5NkPE30Wy2vEmcjDnJOlpXQ2Gp4rI5epDkvf/QBj4Y6A9NF6RlsOs17XdCOSBji08
-         2RXMvIVQCyCOg==
+        t=1581417301; bh=gsI64DD1kNeK+TXxunWfPL4x93Hi8VLx1d+WlAIlPgE=;
+        h=Date:In-Reply-To:References:From:Subject:To:Cc:From;
+        b=GX/TfeW0mldC+XmYLfwocJWvzPuONFxy6JTFHHhauhWhlMHI2lK5bZxM6h0+zcA4N
+         whoGDhAgD9ECfey8Ui/9fWsOUhxU2DJvExM9YZBm9/k5XM3CFK7skhClvGJ2GTAtC9
+         8rWdTKnxqpLXZs1fLDiuFQpsoRP/qXt8gXieu6izZjXtosl43Htk1OvUiiqcCcmKrM
+         tDVSvBNG78SBC0cIUSgoq5CJ+8ISfpDJoj8NJlAkFMP7cAs82K42As5BjGQ91VqDwp
+         m3Ij5p2Ek9m3CfIlNo6iBjp2p8I2Vpt7zcl0oCvZXwF4hUReeQg+KV4uS6l9iCBcQY
+         ZR8sw4VsNdt+w==
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.102.1 at mail
-Date:   Tue, 11 Feb 2020 11:34:59 +0100
-Message-Id: <cover.1581416843.git.mirq-linux@rere.qmqm.pl>
+Date:   Tue, 11 Feb 2020 11:35:01 +0100
+Message-Id: <f0c66cbb3110c2736cd4357c753fba8c14ee3aee.1581416843.git.mirq-linux@rere.qmqm.pl>
+In-Reply-To: <cover.1581416843.git.mirq-linux@rere.qmqm.pl>
+References: <cover.1581416843.git.mirq-linux@rere.qmqm.pl>
 From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v2 0/6] staging: WF200 driver fixes
+Subject: [PATCH v2 1/6] staging: wfx: fix init/remove vs IRQ race
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -40,67 +42,183 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A set of fixes for WF200 WiFi module driver. Three are bug fixes,
-all the rest: cleanups and optimizations.
+Current code races in init/exit with interrupt handlers. This is noticed
+by the warning below. Fix it by using devres for ordering allocations and
+IRQ de/registration.
 
-v2:
-  use devres for fixing init/interrupt race, as suggested by Dan Carpenter
-  add Fixes: tags dropped by accident
-  remove 8-bit SPI fall-back patch
+WARNING: CPU: 0 PID: 827 at drivers/staging/wfx/bus_spi.c:142 wfx_spi_irq_handler+0x5c/0x64 [wfx]
+race condition in driver init/deinit
 
-Michał Mirosław (6):
-  staging: wfx: fix init/remove vs IRQ race
-  staging: wfx: annotate nested gc_list vs tx queue locking
-  staging: wfx: add proper "compatible" string
-  staging: wfx: follow compatible = vendor,chip format
-  staging: wfx: use sleeping gpio accessors
-  staging: wfx: use more power-efficient sleep for reset
+Cc: stable@vger.kernel.org
+Fixes: 0096214a59a7 ("staging: wfx: add support for I/O access")
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+---
+v2: use devres to fix the races
+---
+ drivers/staging/wfx/bus_sdio.c | 15 ++++++---------
+ drivers/staging/wfx/bus_spi.c  | 27 ++++++++++++++-------------
+ drivers/staging/wfx/main.c     | 21 +++++++++++++--------
+ drivers/staging/wfx/main.h     |  1 -
+ 4 files changed, 33 insertions(+), 31 deletions(-)
 
- .../bindings/net/wireless/siliabs,wfx.txt     | 11 ++---
- drivers/staging/wfx/bh.c                      |  8 ++--
- drivers/staging/wfx/bus_sdio.c                | 16 +++----
- drivers/staging/wfx/bus_spi.c                 | 45 +++++++++++--------
- drivers/staging/wfx/hwio.c                    |  2 +-
- drivers/staging/wfx/main.c                    | 23 ++++++----
- drivers/staging/wfx/main.h                    |  1 -
- drivers/staging/wfx/queue.c                   | 16 +++----
- 8 files changed, 66 insertions(+), 56 deletions(-)
-
--- 
-2.20.1
-
-
-From 08a65da2e2ce94be8a7d00cc692166404ea3e08d Mon Sep 17 00:00:00 2001
-Message-Id: <cover.1581416380.git.mirq-linux@rere.qmqm.pl>
-From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Date: Tue, 11 Feb 2020 11:19:40 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To:	=?UTF-8?B?SsOpcsO0bWU=?= Pouiller <jerome.pouiller@silabs.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:	devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org
-
-Michał Mirosław (7):
-  staging: wfx: fix init/remove vs IRQ race
-  staging: wfx: annotate nested gc_list vs tx queue locking
-  staging: wfx: add proper "compatible" string
-  staging: wfx: follow compatible = vendor,chip format
-  staging: wfx: try 16-bit word mode first
-  staging: wfx: use sleeping gpio accessors
-  staging: wfx: use more power-efficient sleep for reset
-
- .../bindings/net/wireless/siliabs,wfx.txt     | 11 ++--
- drivers/staging/wfx/bh.c                      |  8 +--
- drivers/staging/wfx/bus_sdio.c                | 16 +++---
- drivers/staging/wfx/bus_spi.c                 | 52 +++++++++++--------
- drivers/staging/wfx/hwio.c                    |  2 +-
- drivers/staging/wfx/main.c                    | 23 ++++----
- drivers/staging/wfx/main.h                    |  1 -
- drivers/staging/wfx/queue.c                   | 16 +++---
- 8 files changed, 71 insertions(+), 58 deletions(-)
-
+diff --git a/drivers/staging/wfx/bus_sdio.c b/drivers/staging/wfx/bus_sdio.c
+index f8901164c206..5450bd5e1b5d 100644
+--- a/drivers/staging/wfx/bus_sdio.c
++++ b/drivers/staging/wfx/bus_sdio.c
+@@ -200,25 +200,23 @@ static int wfx_sdio_probe(struct sdio_func *func,
+ 	if (ret)
+ 		goto err0;
+ 
+-	ret = wfx_sdio_irq_subscribe(bus);
+-	if (ret)
+-		goto err1;
+-
+ 	bus->core = wfx_init_common(&func->dev, &wfx_sdio_pdata,
+ 				    &wfx_sdio_hwbus_ops, bus);
+ 	if (!bus->core) {
+ 		ret = -EIO;
+-		goto err2;
++		goto err1;
+ 	}
+ 
++	ret = wfx_sdio_irq_subscribe(bus);
++	if (ret)
++		goto err1;
++
+ 	ret = wfx_probe(bus->core);
+ 	if (ret)
+-		goto err3;
++		goto err2;
+ 
+ 	return 0;
+ 
+-err3:
+-	wfx_free_common(bus->core);
+ err2:
+ 	wfx_sdio_irq_unsubscribe(bus);
+ err1:
+@@ -234,7 +232,6 @@ static void wfx_sdio_remove(struct sdio_func *func)
+ 	struct wfx_sdio_priv *bus = sdio_get_drvdata(func);
+ 
+ 	wfx_release(bus->core);
+-	wfx_free_common(bus->core);
+ 	wfx_sdio_irq_unsubscribe(bus);
+ 	sdio_claim_host(func);
+ 	sdio_disable_func(func);
+diff --git a/drivers/staging/wfx/bus_spi.c b/drivers/staging/wfx/bus_spi.c
+index 40bc33035de2..605ad74068b7 100644
+--- a/drivers/staging/wfx/bus_spi.c
++++ b/drivers/staging/wfx/bus_spi.c
+@@ -154,6 +154,11 @@ static void wfx_spi_request_rx(struct work_struct *work)
+ 	wfx_bh_request_rx(bus->core);
+ }
+ 
++static void wfx_flush_irq_work(void *w)
++{
++	flush_work(w);
++}
++
+ static size_t wfx_spi_align_size(void *priv, size_t size)
+ {
+ 	// Most of SPI controllers avoid DMA if buffer size is not 32bit aligned
+@@ -207,22 +212,23 @@ static int wfx_spi_probe(struct spi_device *func)
+ 		udelay(2000);
+ 	}
+ 
+-	ret = devm_request_irq(&func->dev, func->irq, wfx_spi_irq_handler,
+-			       IRQF_TRIGGER_RISING, "wfx", bus);
+-	if (ret)
+-		return ret;
+-
+ 	INIT_WORK(&bus->request_rx, wfx_spi_request_rx);
+ 	bus->core = wfx_init_common(&func->dev, &wfx_spi_pdata,
+ 				    &wfx_spi_hwbus_ops, bus);
+ 	if (!bus->core)
+ 		return -EIO;
+ 
+-	ret = wfx_probe(bus->core);
++	ret = devm_add_action_or_reset(&func->dev, wfx_flush_irq_work,
++				       &bus->request_rx);
+ 	if (ret)
+-		wfx_free_common(bus->core);
++		return ret;
+ 
+-	return ret;
++	ret = devm_request_irq(&func->dev, func->irq, wfx_spi_irq_handler,
++			       IRQF_TRIGGER_RISING, "wfx", bus);
++	if (ret)
++		return ret;
++
++	return wfx_probe(bus->core);
+ }
+ 
+ static int wfx_spi_remove(struct spi_device *func)
+@@ -230,11 +236,6 @@ static int wfx_spi_remove(struct spi_device *func)
+ 	struct wfx_spi_priv *bus = spi_get_drvdata(func);
+ 
+ 	wfx_release(bus->core);
+-	wfx_free_common(bus->core);
+-	// A few IRQ will be sent during device release. Hopefully, no IRQ
+-	// should happen after wdev/wvif are released.
+-	devm_free_irq(&func->dev, func->irq, bus);
+-	flush_work(&bus->request_rx);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/staging/wfx/main.c b/drivers/staging/wfx/main.c
+index 84adad64fc30..76b2ff7fc7fe 100644
+--- a/drivers/staging/wfx/main.c
++++ b/drivers/staging/wfx/main.c
+@@ -262,6 +262,16 @@ static int wfx_send_pdata_pds(struct wfx_dev *wdev)
+ 	return ret;
+ }
+ 
++static void wfx_free_common(void *data)
++{
++	struct wfx_dev *wdev = data;
++
++	mutex_destroy(&wdev->rx_stats_lock);
++	mutex_destroy(&wdev->conf_mutex);
++	wfx_tx_queues_deinit(wdev);
++	ieee80211_free_hw(wdev->hw);
++}
++
+ struct wfx_dev *wfx_init_common(struct device *dev,
+ 				const struct wfx_platform_data *pdata,
+ 				const struct hwbus_ops *hwbus_ops,
+@@ -332,17 +342,12 @@ struct wfx_dev *wfx_init_common(struct device *dev,
+ 	wfx_init_hif_cmd(&wdev->hif_cmd);
+ 	wfx_tx_queues_init(wdev);
+ 
++	if (devm_add_action_or_reset(dev, wfx_free_common, wdev))
++		return NULL;
++
+ 	return wdev;
+ }
+ 
+-void wfx_free_common(struct wfx_dev *wdev)
+-{
+-	mutex_destroy(&wdev->rx_stats_lock);
+-	mutex_destroy(&wdev->conf_mutex);
+-	wfx_tx_queues_deinit(wdev);
+-	ieee80211_free_hw(wdev->hw);
+-}
+-
+ int wfx_probe(struct wfx_dev *wdev)
+ {
+ 	int i;
+diff --git a/drivers/staging/wfx/main.h b/drivers/staging/wfx/main.h
+index 875f8c227803..9c9410072def 100644
+--- a/drivers/staging/wfx/main.h
++++ b/drivers/staging/wfx/main.h
+@@ -34,7 +34,6 @@ struct wfx_dev *wfx_init_common(struct device *dev,
+ 				const struct wfx_platform_data *pdata,
+ 				const struct hwbus_ops *hwbus_ops,
+ 				void *hwbus_priv);
+-void wfx_free_common(struct wfx_dev *wdev);
+ 
+ int wfx_probe(struct wfx_dev *wdev);
+ void wfx_release(struct wfx_dev *wdev);
 -- 
 2.20.1
 
