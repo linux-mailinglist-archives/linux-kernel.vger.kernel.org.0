@@ -2,195 +2,309 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69644158F01
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:49:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 095BE158F39
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:54:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729094AbgBKMsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 07:48:40 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:46120 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729044AbgBKMsf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 07:48:35 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1j1Uxo-0007oV-Rm; Tue, 11 Feb 2020 13:48:28 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 7089E1C2018;
-        Tue, 11 Feb 2020 13:48:25 +0100 (CET)
-Date:   Tue, 11 Feb 2020 12:48:25 -0000
-From:   "tip-bot2 for Waiman Long" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] locking/lockdep: Throw away all lock chains with
- zapped class
-Cc:     Waiman Long <longman@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200206152408.24165-5-longman@redhat.com>
-References: <20200206152408.24165-5-longman@redhat.com>
-MIME-Version: 1.0
-Message-ID: <158142530520.411.3716453825368432855.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        id S1728460AbgBKMyX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 07:54:23 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:35310 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728394AbgBKMyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 07:54:21 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 01983203168;
+        Tue, 11 Feb 2020 13:54:19 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 376D0222B6F;
+        Tue, 11 Feb 2020 13:54:03 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 1DA1D402DF;
+        Tue, 11 Feb 2020 20:53:50 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, andrew.smirnov@gmail.com,
+        manivannan.sadhasivam@linaro.org, marcel.ziswiler@toradex.com,
+        rjones@gateworks.com, sebastien.szymanski@armadeus.com,
+        aisheng.dong@nxp.com, gary.bisson@boundarydevices.com,
+        angus@akkea.ca, pramod.kumar_1@nxp.com, rabeeh@solid-run.com,
+        cosmin.stoica@nxp.com, l.stach@pengutronix.de,
+        leonard.crestez@nxp.com, daniel.baluta@nxp.com, jun.li@nxp.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V3 3/4] arm64: dts: freescale: Add i.MX8MP EVK board support
+Date:   Tue, 11 Feb 2020 20:48:26 +0800
+Message-Id: <1581425307-18567-3-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1581425307-18567-1-git-send-email-Anson.Huang@nxp.com>
+References: <1581425307-18567-1-git-send-email-Anson.Huang@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the locking/core branch of tip:
+Add basic i.MM8MP EVK board support.
 
-Commit-ID:     836bd74b5957779171c9648e9e29145fc089fffe
-Gitweb:        https://git.kernel.org/tip/836bd74b5957779171c9648e9e29145fc089fffe
-Author:        Waiman Long <longman@redhat.com>
-AuthorDate:    Thu, 06 Feb 2020 10:24:06 -05:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 11 Feb 2020 13:10:50 +01:00
-
-locking/lockdep: Throw away all lock chains with zapped class
-
-If a lock chain contains a class that is zapped, the whole lock chain is
-likely to be invalid. If the zapped class is at the end of the chain,
-the partial chain without the zapped class should have been stored
-already as the current code will store all its predecessor chains. If
-the zapped class is somewhere in the middle, there is no guarantee that
-the partial chain will actually happen. It may just clutter up the hash
-and make searching slower. I would rather prefer storing the chain only
-when it actually happens.
-
-So just dump the corresponding chain_hlocks entries for now. A latter
-patch will try to reuse the freed chain_hlocks entries.
-
-This patch also changes the type of nr_chain_hlocks to unsigned integer
-to be consistent with the other counters.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lkml.kernel.org/r/20200206152408.24165-5-longman@redhat.com
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- kernel/locking/lockdep.c           | 37 +++--------------------------
- kernel/locking/lockdep_internals.h |  4 +--
- kernel/locking/lockdep_proc.c      |  2 +-
- 3 files changed, 7 insertions(+), 36 deletions(-)
+No change.
+---
+ arch/arm64/boot/dts/freescale/Makefile       |   1 +
+ arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 231 +++++++++++++++++++++++++++
+ 2 files changed, 232 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-evk.dts
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 28222d0..ef2a643 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -2625,8 +2625,8 @@ out_bug:
- 
- struct lock_chain lock_chains[MAX_LOCKDEP_CHAINS];
- static DECLARE_BITMAP(lock_chains_in_use, MAX_LOCKDEP_CHAINS);
--int nr_chain_hlocks;
- static u16 chain_hlocks[MAX_LOCKDEP_CHAIN_HLOCKS];
-+unsigned int nr_chain_hlocks;
- 
- struct lock_class *lock_chain_get_class(struct lock_chain *chain, int i)
- {
-@@ -4772,36 +4772,23 @@ static void remove_class_from_lock_chain(struct pending_free *pf,
- 					 struct lock_class *class)
- {
- #ifdef CONFIG_PROVE_LOCKING
--	struct lock_chain *new_chain;
--	u64 chain_key;
- 	int i;
- 
- 	for (i = chain->base; i < chain->base + chain->depth; i++) {
- 		if (chain_hlocks[i] != class - lock_classes)
- 			continue;
--		/* The code below leaks one chain_hlock[] entry. */
--		if (--chain->depth > 0) {
--			memmove(&chain_hlocks[i], &chain_hlocks[i + 1],
--				(chain->base + chain->depth - i) *
--				sizeof(chain_hlocks[0]));
--		}
- 		/*
- 		 * Each lock class occurs at most once in a lock chain so once
- 		 * we found a match we can break out of this loop.
- 		 */
--		goto recalc;
-+		goto free_lock_chain;
- 	}
- 	/* Since the chain has not been modified, return. */
- 	return;
- 
--recalc:
--	chain_key = INITIAL_CHAIN_KEY;
--	for (i = chain->base; i < chain->base + chain->depth; i++)
--		chain_key = iterate_chain_key(chain_key, chain_hlocks[i]);
--	if (chain->depth && chain->chain_key == chain_key)
--		return;
-+free_lock_chain:
- 	/* Overwrite the chain key for concurrent RCU readers. */
--	WRITE_ONCE(chain->chain_key, chain_key);
-+	WRITE_ONCE(chain->chain_key, INITIAL_CHAIN_KEY);
- 	dec_chains(chain->irq_context);
- 
- 	/*
-@@ -4810,22 +4797,6 @@ recalc:
- 	 */
- 	hlist_del_rcu(&chain->entry);
- 	__set_bit(chain - lock_chains, pf->lock_chains_being_freed);
--	if (chain->depth == 0)
--		return;
--	/*
--	 * If the modified lock chain matches an existing lock chain, drop
--	 * the modified lock chain.
--	 */
--	if (lookup_chain_cache(chain_key))
--		return;
--	new_chain = alloc_lock_chain();
--	if (WARN_ON_ONCE(!new_chain)) {
--		debug_locks_off();
--		return;
--	}
--	*new_chain = *chain;
--	hlist_add_head_rcu(&new_chain->entry, chainhashentry(chain_key));
--	inc_chains(new_chain->irq_context);
- #endif
- }
- 
-diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
-index 76db804..926bfa4 100644
---- a/kernel/locking/lockdep_internals.h
-+++ b/kernel/locking/lockdep_internals.h
-@@ -134,14 +134,14 @@ extern unsigned long nr_zapped_classes;
- extern unsigned long nr_list_entries;
- long lockdep_next_lockchain(long i);
- unsigned long lock_chain_count(void);
--extern int nr_chain_hlocks;
- extern unsigned long nr_stack_trace_entries;
- 
- extern unsigned int nr_hardirq_chains;
- extern unsigned int nr_softirq_chains;
- extern unsigned int nr_process_chains;
--extern unsigned int max_lockdep_depth;
-+extern unsigned int nr_chain_hlocks;
- 
-+extern unsigned int max_lockdep_depth;
- extern unsigned int max_bfs_queue_depth;
- 
- #ifdef CONFIG_PROVE_LOCKING
-diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
-index 99e2f3f..53c2a2a 100644
---- a/kernel/locking/lockdep_proc.c
-+++ b/kernel/locking/lockdep_proc.c
-@@ -278,7 +278,7 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
- #ifdef CONFIG_PROVE_LOCKING
- 	seq_printf(m, " dependency chains:             %11lu [max: %lu]\n",
- 			lock_chain_count(), MAX_LOCKDEP_CHAINS);
--	seq_printf(m, " dependency chain hlocks:       %11d [max: %lu]\n",
-+	seq_printf(m, " dependency chain hlocks:       %11u [max: %lu]\n",
- 			nr_chain_hlocks, MAX_LOCKDEP_CHAIN_HLOCKS);
- #endif
- 
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index bac293e..f04c49f 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -26,6 +26,7 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-lx2160a-rdb.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mm-evk.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mn-evk.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mn-ddr4-evk.dtb
++dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mq-evk.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mq-hummingboard-pulse.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mq-librem5-devkit.dtb
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+new file mode 100644
+index 0000000..6df3beb
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+@@ -0,0 +1,231 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2019 NXP
++ */
++
++/dts-v1/;
++
++#include "imx8mp.dtsi"
++
++/ {
++	model = "NXP i.MX8MPlus EVK board";
++	compatible = "fsl,imx8mp-evk", "fsl,imx8mp";
++
++	chosen {
++		stdout-path = &uart2;
++	};
++
++	memory@40000000 {
++		device_type = "memory";
++		reg = <0x0 0x40000000 0 0xc0000000>,
++		      <0x1 0x00000000 0 0xc0000000>;
++	};
++
++	reg_usdhc2_vmmc: regulator-usdhc2 {
++		compatible = "regulator-fixed";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_reg_usdhc2_vmmc>;
++		regulator-name = "VSD_3V3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&gpio2 19 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++};
++
++&fec {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_fec>;
++	phy-mode = "rgmii-id";
++	phy-handle = <&ethphy1>;
++	fsl,magic-packet;
++	status = "okay";
++
++	mdio {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ethphy1: ethernet-phy@1 {
++			compatible = "ethernet-phy-ieee802.3-c22";
++			reg = <1>;
++			eee-broken-1000t;
++			reset-gpios = <&gpio4 2 GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&snvs_pwrkey {
++	status = "okay";
++};
++
++&uart2 {
++	/* console */
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart2>;
++	status = "okay";
++};
++
++&usdhc2 {
++	assigned-clocks = <&clk IMX8MP_CLK_USDHC2>;
++	assigned-clock-rates = <400000000>;
++	pinctrl-names = "default", "state_100mhz", "state_200mhz";
++	pinctrl-0 = <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
++	pinctrl-1 = <&pinctrl_usdhc2_100mhz>, <&pinctrl_usdhc2_gpio>;
++	pinctrl-2 = <&pinctrl_usdhc2_200mhz>, <&pinctrl_usdhc2_gpio>;
++	cd-gpios = <&gpio2 12 GPIO_ACTIVE_LOW>;
++	vmmc-supply = <&reg_usdhc2_vmmc>;
++	bus-width = <4>;
++	status = "okay";
++};
++
++&usdhc3 {
++	assigned-clocks = <&clk IMX8MP_CLK_USDHC3>;
++	assigned-clock-rates = <400000000>;
++	pinctrl-names = "default", "state_100mhz", "state_200mhz";
++	pinctrl-0 = <&pinctrl_usdhc3>;
++	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
++	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
++};
++
++&wdog1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_wdog>;
++	fsl,ext-reset-output;
++	status = "okay";
++};
++
++&iomuxc {
++	pinctrl-names = "default";
++
++	pinctrl_fec: fecgrp {
++		fsl,pins = <
++			MX8MP_IOMUXC_SAI1_RXD2__ENET1_MDC		0x3
++			MX8MP_IOMUXC_SAI1_RXD3__ENET1_MDIO		0x3
++			MX8MP_IOMUXC_SAI1_RXD4__ENET1_RGMII_RD0		0x91
++			MX8MP_IOMUXC_SAI1_RXD5__ENET1_RGMII_RD1		0x91
++			MX8MP_IOMUXC_SAI1_RXD6__ENET1_RGMII_RD2		0x91
++			MX8MP_IOMUXC_SAI1_RXD7__ENET1_RGMII_RD3		0x91
++			MX8MP_IOMUXC_SAI1_TXC__ENET1_RGMII_RXC		0x91
++			MX8MP_IOMUXC_SAI1_TXFS__ENET1_RGMII_RX_CTL	0x91
++			MX8MP_IOMUXC_SAI1_TXD0__ENET1_RGMII_TD0		0x1f
++			MX8MP_IOMUXC_SAI1_TXD1__ENET1_RGMII_TD1		0x1f
++			MX8MP_IOMUXC_SAI1_TXD2__ENET1_RGMII_TD2		0x1f
++			MX8MP_IOMUXC_SAI1_TXD3__ENET1_RGMII_TD3		0x1f
++			MX8MP_IOMUXC_SAI1_TXD4__ENET1_RGMII_TX_CTL	0x1f
++			MX8MP_IOMUXC_SAI1_TXD5__ENET1_RGMII_TXC		0x1f
++			MX8MP_IOMUXC_SAI1_RXD0__GPIO4_IO02		0x19
++		>;
++	};
++
++	pinctrl_reg_usdhc2_vmmc: regusdhc2vmmc {
++		fsl,pins = <
++			MX8MP_IOMUXC_SD2_RESET_B__GPIO2_IO19	0x41
++		>;
++	};
++
++	pinctrl_uart2: uart2grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_UART2_RXD__UART2_DCE_RX	0x49
++			MX8MP_IOMUXC_UART2_TXD__UART2_DCE_TX	0x49
++		>;
++	};
++
++	pinctrl_usdhc2: usdhc2grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK	0x190
++			MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD	0x1d0
++			MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0	0x1d0
++			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1	0x1d0
++			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2	0x1d0
++			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d0
++			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT	0xc1
++		>;
++	};
++
++	pinctrl_usdhc2_100mhz: usdhc2grp-100mhz {
++		fsl,pins = <
++			MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK	0x194
++			MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD	0x1d4
++			MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0	0x1d4
++			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1	0x1d4
++			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2	0x1d4
++			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d4
++			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT 0xc1
++		>;
++	};
++
++	pinctrl_usdhc2_200mhz: usdhc2grp-200mhz {
++		fsl,pins = <
++			MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK	0x196
++			MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD	0x1d6
++			MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0	0x1d6
++			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1	0x1d6
++			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2	0x1d6
++			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d6
++			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT 0xc1
++		>;
++	};
++
++	pinctrl_usdhc2_gpio: usdhc2grp-gpio {
++		fsl,pins = <
++			MX8MP_IOMUXC_SD2_CD_B__GPIO2_IO12	0x1c4
++		>;
++	};
++
++	pinctrl_usdhc3: usdhc3grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK	0x190
++			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD	0x1d0
++			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0	0x1d0
++			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1	0x1d0
++			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2	0x1d0
++			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3	0x1d0
++			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4	0x1d0
++			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5	0x1d0
++			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6	0x1d0
++			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7	0x1d0
++			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE	0x190
++		>;
++	};
++
++	pinctrl_usdhc3_100mhz: usdhc3grp-100mhz {
++		fsl,pins = <
++			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK	0x194
++			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD	0x1d4
++			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0	0x1d4
++			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1	0x1d4
++			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2	0x1d4
++			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3	0x1d4
++			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4	0x1d4
++			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5	0x1d4
++			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6	0x1d4
++			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7	0x1d4
++			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE	0x194
++		>;
++	};
++
++	pinctrl_usdhc3_200mhz: usdhc3grp-200mhz {
++		fsl,pins = <
++			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK	0x196
++			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD	0x1d6
++			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0	0x1d6
++			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1	0x1d6
++			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2	0x1d6
++			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3	0x1d6
++			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4	0x1d6
++			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5	0x1d6
++			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6	0x1d6
++			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7	0x1d6
++			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE	0x196
++		>;
++	};
++
++	pinctrl_wdog: wdoggrp {
++		fsl,pins = <
++			MX8MP_IOMUXC_GPIO1_IO02__WDOG1_WDOG_B	0xc6
++		>;
++	};
++};
+-- 
+2.7.4
+
