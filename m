@@ -2,111 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7136159962
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:06:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAB3C159964
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:06:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730823AbgBKTGK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 14:06:10 -0500
-Received: from mail-yw1-f46.google.com ([209.85.161.46]:46432 "EHLO
-        mail-yw1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728503AbgBKTGJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 14:06:09 -0500
-Received: by mail-yw1-f46.google.com with SMTP id z141so5683043ywd.13
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 11:06:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=wPdyB8BXraQOD7tLtMr9ZV817UwsVe3LQShrz9AB71o=;
-        b=hcviG1/qorx7l4xH40ZtuRYm2w+B4cOpjR68es00EDjvVqtgKLGTMp2tWDQpxurDSP
-         B2tcidAOREXJ9g+9tnplWkUnE5PqcH/1Pwjk6J1ybG1r3+ZapTsYc0/p7CRZ2CMEFvci
-         gsLFkVJjDaR6SATkziFS3Kw5aLXZIPzbiVZ01nDpLHIxXdor2e9PXVo49LyE4nV6B2jI
-         NN/CVR7/rhSWKG1QzTDHQwWxeOAuRDelG1lSrSLoLK48sDXhqJPw7B7QSAntf/s1SeOn
-         GzAFSvu1GZdKPKWFQUVffJSllZ0lruxX1XgAWHQrUfsoGAn12KxdWf0R7isqwYxBiSYY
-         H5Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wPdyB8BXraQOD7tLtMr9ZV817UwsVe3LQShrz9AB71o=;
-        b=F6pogeqdrq0CQbqLKNdRBBYgE/8yuo+7dVileP9Dn5kqhri0NONuCKjb2mHHAI9h2t
-         VK7z4uAVzk19RmEHgCzPLCOBLQcoRCW4PQKVjR3C8kHTten24Mt28jnacQqlhHfCguKZ
-         +V1M3L9MeQ+ifoUxJx4rw9zxavWvS/7TAjfel0ssUq7ktoDshe3NgicYwRwnZtIh9UCK
-         hiZG73wUSXqIeE5r+kALbCPkajDkvLANjN+k2qaNjY5LOhm2Jmu9X2IAq1rfFe1QdqRj
-         eapH6MvkzImMFjNpcum45i+KiAArd2rhewtBeJq31m0dwr4v7wtBW27s1Smpg7mIV+e+
-         KoZA==
-X-Gm-Message-State: APjAAAUfpbeiINWWpyJrtXPGAPS797V+6SJGaKSDqJ17TyGq8elUI4CX
-        ea3oZKY0WmU8wWEXO0r4gHc=
-X-Google-Smtp-Source: APXvYqyrbf0Yi0My9AVtmvvXRiHg+YhKUVB+wqHwXuqkiygW0m3qa3XX1OCLmDSfhL6EsR/P1W3kDw==
-X-Received: by 2002:a81:50d6:: with SMTP id e205mr6470075ywb.208.1581447967258;
-        Tue, 11 Feb 2020 11:06:07 -0800 (PST)
-Received: from [192.168.1.46] (c-73-88-245-53.hsd1.tn.comcast.net. [73.88.245.53])
-        by smtp.gmail.com with ESMTPSA id b73sm2281079ywe.28.2020.02.11.11.06.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Feb 2020 11:06:06 -0800 (PST)
-Subject: Re: build error: f7655d42fcee drm/edid: Add CTA-861-G modes with VIC
- >= 193
-From:   Frank Rowand <frowand.list@gmail.com>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-References: <4e918a35-dbcd-b2fd-1888-a86e7d448128@gmail.com>
-Message-ID: <3e5d7142-cacc-6830-94d3-f57ef18592d9@gmail.com>
-Date:   Tue, 11 Feb 2020 13:06:05 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1730872AbgBKTGR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 14:06:17 -0500
+Received: from foss.arm.com ([217.140.110.172]:52708 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728503AbgBKTGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 14:06:17 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 447741FB;
+        Tue, 11 Feb 2020 11:06:16 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD8913F68F;
+        Tue, 11 Feb 2020 11:06:15 -0800 (PST)
+Date:   Tue, 11 Feb 2020 19:06:14 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, mikko.mutanen@fi.rohmeurope.com,
+        markus.laine@fi.rohmeurope.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/3] power: (regmap:) Add linear_range helper
+Message-ID: <20200211190614.GP4543@sirena.org.uk>
+References: <cover.1581327762.git.matti.vaittinen@fi.rohmeurope.com>
+ <20b107ac6e40206b82d014a145abe0569d7a6f81.1581327762.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-In-Reply-To: <4e918a35-dbcd-b2fd-1888-a86e7d448128@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ftQmbtOmUf2cr8rB"
+Content-Disposition: inline
+In-Reply-To: <20b107ac6e40206b82d014a145abe0569d7a6f81.1581327762.git.matti.vaittinen@fi.rohmeurope.com>
+X-Cookie: Hire the morally handicapped.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/11/20 12:48 PM, Frank Rowand wrote:
-> I am getting a kernel build error at version 5.6-rc1:
-> 
-> drivers/gpu/drm/drm_edid.c: In function 'cea_mode_alternate_timings':
-> drivers/gpu/drm/drm_edid.c:3275:2: error: call to '__compiletime_assert_3282' declared with attribute error: BUILD_BUG_ON failed: cea_mode_for_vic(8)->vtotal != 262 || cea_mode_for_vic(9)->vtotal != 262 || cea_mode_for_vic(12)->vtotal != 262 || cea_mode_for_vic(13)->vtotal != 262 || cea_mode_for_vic(23)->vtotal != 312 || cea_mode_for_vic(24)->vtotal != 312 || cea_mode_for_vic(27)->vtotal != 312 || cea_mode_for_vic(28)->vtotal != 312
-> make[4]: *** [drivers/gpu/drm/drm_edid.o] Error 1
-> 
-> 
-> Kernel configuration:
->   make qcom_defconfig
-> 
->   (arch/arm/configs/qcom_defconfig)
-> 
-> 
-> Compiler is arm-eabi-gcc 4.6.x
-> 
-> 
-> The build error goes away if I revert:
-> 
->    f7655d42fcee drm/edid: Add CTA-861-G modes with VIC >= 193
 
-I did not actually revert f7655d42fcee from 5.6-rc1.  I checked out the commit
-before f7655d42fcee and was able to build the kernel.  Then I checked out
-f7655d42fcee and the build failed in the same manner as at 5.6-rc1.
+--ftQmbtOmUf2cr8rB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Simply reverting f7655d42fcee at 5.6-rc1 does not result in a buildable
-kernel due to other related changes.
+On Mon, Feb 10, 2020 at 02:13:13PM +0200, Matti Vaittinen wrote:
 
--Frank
+> Provide a linear_range helper which can do conversion from user value
+> to register value 'selector'.
 
-> 
-> 
-> The build error also goes away if I comment out the two lines added to cea_mode_for_vic():
-> 
->  	if (vic >= 193 && vic < 193 + ARRAY_SIZE(edid_cea_modes_193))
->  		return &edid_cea_modes_193[vic - 193];
-> 
-> 
-> -Frank
-> 
+> Mark, this is loosely bound to register handling... Do you think
+> the regmap could host these helpers?
 
+There's no real tie to regmap here, something like this could quite
+happily be used by memory mapped devices where regmap has limited uses
+and would be a lot to pull in.  A separate library would probably make
+more sense.  Not sure how many users there would be outside of power
+related stuff, I don't recall seeing the pattern elsewhere.
+
+Note also that we already have quite extensive helpers for this sort of
+stuff in the regulator API which I sense may have been involved in this
+implementation and to an extent in ALSA which takes a different approach
+with TLVs since it baked selectors directly into the ABI.
+
+--ftQmbtOmUf2cr8rB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5C+yUACgkQJNaLcl1U
+h9BvKAf/RRzCbi0uxTdR1wgKG+fIeGPs3TkKagNkbWs4xD+Ppm3RpSu7lGNVDe2P
+pNzxz4qP/9Q46Dm6iRplC5CsAARbYKjkflALvQ1TvuZB+vss5jc/9ARdOeKpRuhJ
+T9kFP6CfRPh5JgDPwqqk/lUhe9fe5Ta26uoegdG9wZsn8J/vW5pnY7EDUkV4axPt
+43zEvmzeyYnSBMARnvl9jdj4ysDEh6YpGy/lKGV9wvUMN8JmwtuEqbXgrtrVFzBd
+dS12KPckixezMm7VwMrcZ9ain+W5knJt1yh/fjnBCqjd73rsWvsD8ijNNn7U0wPR
+NdkkyrqpvCiXu7Om10I9uS2DhFOfYg==
+=hzV/
+-----END PGP SIGNATURE-----
+
+--ftQmbtOmUf2cr8rB--
