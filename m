@@ -2,87 +2,244 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63BBF159638
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 18:33:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52E55159640
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 18:35:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729636AbgBKRdf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 12:33:35 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38119 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729031AbgBKRdf (ORCPT
+        id S1729693AbgBKRfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 12:35:24 -0500
+Received: from mail.efficios.com ([167.114.26.124]:39696 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729441AbgBKRfY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 12:33:35 -0500
-Received: by mail-qt1-f195.google.com with SMTP id c24so8564125qtp.5
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 09:33:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9hy5VYrSpPRzSWsdE9Qh19BgQ81h4mh453g6SqrdWcw=;
-        b=Zf8OUKnxYvxruI9lBGY+hN7khWeBLlD/UIgs5IGOdZh+mrEC0XF2dhrinM158ZrEk0
-         VYrtbO6dOe1I8+aueX44F7J7wS7wYJhjJ3s/b3xOfozkt/a8Rrcuahd6z8PotFW4/aaa
-         W/S7XKZPVB2LczFV9ilPlwe83xXyHjfGbvzrEmyUsak7n/J5c0PCx6K4R4Afo2w4fdZO
-         cLqWF+QwsR8VE4jc4q6KCle3YiD3EM4l9RFErNc55be4X8/MwcTiswkHyRrslbRkK3/S
-         UyMQyL0p/qGjzhmwWeE1bEN8JovVjivt2ZtQeWTzasha2SGBsgWxcvEPvijGhyFgqyo9
-         W3Qw==
-X-Gm-Message-State: APjAAAUGGPJgKLY0fwUFBFsZby5bDhtioZtemTkFSfsakF5gBtMtv+8w
-        RtuBFelHrBCHVvz9AKu+sBTKVEvu
-X-Google-Smtp-Source: APXvYqxJHC+1IudxQfJW5M/z2mq9D0Zw8EKoXL9uXLCUIK3lAUTAdrK4YvezbbfG0xm+SNwvtoBRLA==
-X-Received: by 2002:ac8:3fd7:: with SMTP id v23mr3363918qtk.293.1581442414496;
-        Tue, 11 Feb 2020 09:33:34 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id k15sm2269903qkk.103.2020.02.11.09.33.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 09:33:34 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Michael Matz <matz@suse.de>
-Subject: [PATCH v2] x86/boot: Use 32-bit (zero-extended) move for z_output_len
-Date:   Tue, 11 Feb 2020 12:33:33 -0500
-Message-Id: <20200211173333.1722739-1-nivedita@alum.mit.edu>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200211161739.GE32279@zn.tnic>
-References: <20200211161739.GE32279@zn.tnic>
+        Tue, 11 Feb 2020 12:35:24 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.efficios.com (Postfix) with ESMTP id 783F824E53B;
+        Tue, 11 Feb 2020 12:35:22 -0500 (EST)
+Received: from mail.efficios.com ([127.0.0.1])
+        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id C82W7pGQFo5I; Tue, 11 Feb 2020 12:35:22 -0500 (EST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.efficios.com (Postfix) with ESMTP id 10FC124E53A;
+        Tue, 11 Feb 2020 12:35:22 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 10FC124E53A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1581442522;
+        bh=/ncu85jy9QYzxOapw3vQN2Z1DasSLYW0wGKkcEnxS+c=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=hrWHTnI5wrQ6j4BQunRg4Qujr/vwpYNr8JfhJY2V8hx9xSEi/+O61tRemE7OROyGZ
+         dUIWh1dIrSB84agGSdXWCrXkIIm1ocNr2gS+aTyPA4V/DlaIEId7Nt8KRXSvfK44Vy
+         ny4hpcDfj1AT7edRgaFq/GdRHH8gURv+9pDk+Hutz7VRnoCMAMWg5zRpR/iewE5S4S
+         5XCGxdXUPZ+IuC32oq5RrxDEZKS1C9gy6MzTewmCXWKrLWWlQfw24K2pL3fsCkZlTy
+         2FPjxExg390nWOUq9OtAw0s2n9x+/mPNxmUEVRABsVkSXRQ3QyEtusdEqOAPyXqBnh
+         qvXwc6xweisbQ==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([127.0.0.1])
+        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id awdzjgBspZS9; Tue, 11 Feb 2020 12:35:21 -0500 (EST)
+Received: from mail03.efficios.com (mail03.efficios.com [167.114.26.124])
+        by mail.efficios.com (Postfix) with ESMTP id ECE9D24E539;
+        Tue, 11 Feb 2020 12:35:21 -0500 (EST)
+Date:   Tue, 11 Feb 2020 12:35:21 -0500 (EST)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     rostedt <rostedt@goodmis.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Joel Fernandes, Google" <joel@joelfernandes.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        paulmck <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Message-ID: <903136616.617885.1581442521855.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20200211172952.GY14914@hirez.programming.kicks-ass.net>
+References: <20200211095047.58ddf750@gandalf.local.home> <20200211153452.GW14914@hirez.programming.kicks-ass.net> <20200211111828.48058768@gandalf.local.home> <20200211172952.GY14914@hirez.programming.kicks-ass.net>
+Subject: Re: [PATCH v2] tracing/perf: Move rcu_irq_enter/exit_irqson() to
+ perf trace point hook
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.26.124]
+X-Mailer: Zimbra 8.8.15_GA_3895 (ZimbraWebClient - FF72 (Linux)/8.8.15_GA_3895)
+Thread-Topic: tracing/perf: Move rcu_irq_enter/exit_irqson() to perf trace point hook
+Thread-Index: cTaWISqMAxfaIbpGln6Epeys9Qbhgw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-z_output_len is the size of the decompressed payload (i.e. vmlinux +
-vmlinux.relocs) and is generated as an unsigned 32-bit quantity by
-mkpiggy.c.
+----- On Feb 11, 2020, at 12:29 PM, Peter Zijlstra peterz@infradead.org wrote:
 
-The current movq $z_output_len, %r9 instruction generates a
-sign-extended move to %r9. Using movl $z_output_len, %r9d will instead
-zero-extend into %r9, which is appropriate for an unsigned 32-bit
-quantity. This is also what we already do for z_input_len, the size of
-the compressed payload.
+> On Tue, Feb 11, 2020 at 11:18:28AM -0500, Steven Rostedt wrote:
+>> On Tue, 11 Feb 2020 16:34:52 +0100
+>> Peter Zijlstra <peterz@infradead.org> wrote:
+>> 
+>> > > +		if (unlikely(in_nmi()))
+>> > > +			goto out;
+>> > 
+>> > unless I'm mistaken, we can simply do rcu_nmi_enter() in this case, and
+>> > rcu_nmi_exit() on the other end.
+>> > 
+>> > > +		rcu_irq_enter_irqson();
+>> 
+>> The thing is, I don't think this can ever happen.
+> 
+> Per your own argument it should be true in the trace_preempt_off()
+> tracepoint from nmi_enter():
+> 
+>  <idle>
+>    // rcu_is_watching() := false
+>    <NMI>
+>      nmi_enter()
+>        preempt_count_add(NMI_OFFSET + HARDIRQ_OFFSET)
+>	  __preempt_count_add()
+>	  // in_nmi() := true
+>	  preempt_latency_start()
+>	    // .oO -- we'll never hit this tracepoint because idle has
+>	    // preempt_count() == 1, so we'll have:
+>	    //   preempt_count() != val
+> 
+>	    // .oO-2 we should be able to this this when the NMI
+>	    // hits userspace and we have NOHZ_FULL on.
+>	rcu_nmi_enter() // function tracer
+> 
+> 
+> But the point is, if we ever do hit it, rcu_nmi_enter() is the right
+> thing to call when '!rcu_is_watching() && in_nmi()', because, as per the
+> rcu_nmi_enter() comments, that function fully supports nested NMIs.
+> 
+> How about something like so? And then you get to use the same in
+> __trace_stack() or something, and anywhere else you're doing this dance.
+> 
+> ---
+> 
+> diff --git a/include/linux/hardirq.h b/include/linux/hardirq.h
+> index da0af631ded5..e987236abf95 100644
+> --- a/include/linux/hardirq.h
+> +++ b/include/linux/hardirq.h
+> @@ -89,4 +89,52 @@ extern void irq_exit(void);
+> 		arch_nmi_exit();				\
+> 	} while (0)
+> 
+> +/*
+> + * Tracing vs rcu_is_watching()
+> + * ----------------------------
+> + *
+> + * tracepoints and function-tracing can happen when RCU isn't watching (idle,
+> + * or early IRQ/NMI entry).
+> + *
+> + * When it happens during idle or early during IRQ entry, tracing will have
+> + * to inform RCU that it ought to pay attention, this is done by calling
+> + * rcu_irq_enter_irqon().
+> + *
+> + * On NMI entry, we must be very careful that tracing only happens after we've
+> + * incremented preempt_count(), otherwise we cannot tell we're in NMI and take
+> + * the special path.
+> + */
+> +
+> +#define __TR_IRQ	1
+> +#define __TR_NMI	2
 
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
----
-v2: Improve commit message
+Minor nits:
 
- arch/x86/boot/compressed/head_64.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Why not make these an enum ?
 
-diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index 1f1f6c8139b3..03369246a4ff 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -484,7 +484,7 @@ SYM_FUNC_START_LOCAL_NOALIGN(.Lrelocated)
- 	leaq	input_data(%rip), %rdx  /* input_data */
- 	movl	$z_input_len, %ecx	/* input_len */
- 	movq	%rbp, %r8		/* output target address */
--	movq	$z_output_len, %r9	/* decompressed length, end of relocs */
-+	movl	$z_output_len, %r9d	/* decompressed length, end of relocs */
- 	call	extract_kernel		/* returns kernel location in %rax */
- 	popq	%rsi
- 
+> +
+> +#define trace_rcu_enter()					\
+> +({								\
+> +	unsigned long state = 0;				\
+> +	if (!rcu_is_watching())	{				\
+> +		if (in_nmi()) {					\
+> +			state = __TR_NMI;			\
+> +			rcu_nmi_enter();			\
+> +		} else {					\
+> +			state = __TR_IRQ;			\
+> +			rcu_irq_enter_irqson();			\
+> +		}						\
+> +	}							\
+> +	state;							\
+> +})
+> +
+> +#define trace_rcu_exit(state)					\
+> +do {								\
+> +	switch (state) {					\
+> +	case __TR_IRQ:						\
+> +		rcu_irq_exit_irqson();				\
+> +		break;						\
+> +	case __IRQ_NMI:						\
+> +		rcu_nmi_exit();					\
+> +		break;						\
+> +	default:						\
+> +		break;						\
+> +	}							\
+> +} while (0)
+
+And convert these into static inline functions ?
+
+Thanks,
+
+Mathieu
+
+> +
+> #endif /* LINUX_HARDIRQ_H */
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index e453589da97c..8f34592a1355 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -8950,6 +8950,7 @@ void perf_tp_event(u16 event_type, u64 count, void
+> *record, int entry_size,
+> {
+> 	struct perf_sample_data data;
+> 	struct perf_event *event;
+> +	unsigned long rcu_flags;
+> 
+> 	struct perf_raw_record raw = {
+> 		.frag = {
+> @@ -8961,6 +8962,8 @@ void perf_tp_event(u16 event_type, u64 count, void
+> *record, int entry_size,
+> 	perf_sample_data_init(&data, 0, 0);
+> 	data.raw = &raw;
+> 
+> +	rcu_flags = trace_rcu_enter();
+> +
+> 	perf_trace_buf_update(record, event_type);
+> 
+> 	hlist_for_each_entry_rcu(event, head, hlist_entry) {
+> @@ -8996,6 +8999,8 @@ void perf_tp_event(u16 event_type, u64 count, void
+> *record, int entry_size,
+> 	}
+> 
+> 	perf_swevent_put_recursion_context(rctx);
+> +
+> +	trace_rcu_exit(rcu_flags);
+> }
+> EXPORT_SYMBOL_GPL(perf_tp_event);
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 45f79bcc3146..62f87807bbe6 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -3781,7 +3781,7 @@ static inline void preempt_latency_start(int val)
+> 	}
+> }
+> 
+> -void preempt_count_add(int val)
+> +void notrace preempt_count_add(int val)
+> {
+> #ifdef CONFIG_DEBUG_PREEMPT
+> 	/*
+> @@ -3813,7 +3813,7 @@ static inline void preempt_latency_stop(int val)
+> 		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
+> }
+> 
+> -void preempt_count_sub(int val)
+> +void notrace preempt_count_sub(int val)
+> {
+> #ifdef CONFIG_DEBUG_PREEMPT
+>  	/*
+
 -- 
-2.24.1
-
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
