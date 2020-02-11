@@ -2,118 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75D4C158F07
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:49:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09344158F36
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:54:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729114AbgBKMs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 07:48:59 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:46101 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729030AbgBKMsb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 07:48:31 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1j1Uxl-0007o1-EJ; Tue, 11 Feb 2020 13:48:25 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2366B1C2019;
-        Tue, 11 Feb 2020 13:48:25 +0100 (CET)
-Date:   Tue, 11 Feb 2020 12:48:24 -0000
-From:   "tip-bot2 for Waiman Long" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] locking/lockdep: Track number of zapped lock chains
-Cc:     Waiman Long <longman@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200206152408.24165-6-longman@redhat.com>
-References: <20200206152408.24165-6-longman@redhat.com>
-MIME-Version: 1.0
-Message-ID: <158142530491.411.13846763021268112187.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        id S1728351AbgBKMyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 07:54:18 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:48932 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727567AbgBKMyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 07:54:16 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9F6831A355E;
+        Tue, 11 Feb 2020 13:54:14 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8A20C1A354D;
+        Tue, 11 Feb 2020 13:53:59 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CB51F40297;
+        Tue, 11 Feb 2020 20:53:45 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, andrew.smirnov@gmail.com,
+        manivannan.sadhasivam@linaro.org, marcel.ziswiler@toradex.com,
+        rjones@gateworks.com, sebastien.szymanski@armadeus.com,
+        aisheng.dong@nxp.com, gary.bisson@boundarydevices.com,
+        angus@akkea.ca, pramod.kumar_1@nxp.com, rabeeh@solid-run.com,
+        cosmin.stoica@nxp.com, l.stach@pengutronix.de,
+        leonard.crestez@nxp.com, daniel.baluta@nxp.com, jun.li@nxp.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V3 1/4] dt-bindings: spi: imx: Add i.MX8MM/i.MX8MN/i.MX8MP compatible
+Date:   Tue, 11 Feb 2020 20:48:24 +0800
+Message-Id: <1581425307-18567-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the locking/core branch of tip:
+Add compatible for imx8mm/imx8mn/imx8mp.
 
-Commit-ID:     797b82eb906eeba24dcd6e9ab92faef01fc684cb
-Gitweb:        https://git.kernel.org/tip/797b82eb906eeba24dcd6e9ab92faef01fc684cb
-Author:        Waiman Long <longman@redhat.com>
-AuthorDate:    Thu, 06 Feb 2020 10:24:07 -05:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 11 Feb 2020 13:10:51 +01:00
-
-locking/lockdep: Track number of zapped lock chains
-
-Add a new counter nr_zapped_lock_chains to track the number lock chains
-that have been removed.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lkml.kernel.org/r/20200206152408.24165-6-longman@redhat.com
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- kernel/locking/lockdep.c           | 2 ++
- kernel/locking/lockdep_internals.h | 1 +
- kernel/locking/lockdep_proc.c      | 4 ++++
- 3 files changed, 7 insertions(+)
+Changes since V2:
+	- fix typo in commit message, compatbile -> compatible.
+---
+ Documentation/devicetree/bindings/spi/fsl-imx-cspi.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index ef2a643..a63976c 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -2626,6 +2626,7 @@ out_bug:
- struct lock_chain lock_chains[MAX_LOCKDEP_CHAINS];
- static DECLARE_BITMAP(lock_chains_in_use, MAX_LOCKDEP_CHAINS);
- static u16 chain_hlocks[MAX_LOCKDEP_CHAIN_HLOCKS];
-+unsigned long nr_zapped_lock_chains;
- unsigned int nr_chain_hlocks;
- 
- struct lock_class *lock_chain_get_class(struct lock_chain *chain, int i)
-@@ -4797,6 +4798,7 @@ free_lock_chain:
- 	 */
- 	hlist_del_rcu(&chain->entry);
- 	__set_bit(chain - lock_chains, pf->lock_chains_being_freed);
-+	nr_zapped_lock_chains++;
- #endif
- }
- 
-diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
-index 926bfa4..af722ce 100644
---- a/kernel/locking/lockdep_internals.h
-+++ b/kernel/locking/lockdep_internals.h
-@@ -131,6 +131,7 @@ struct lock_class *lock_chain_get_class(struct lock_chain *chain, int i);
- 
- extern unsigned long nr_lock_classes;
- extern unsigned long nr_zapped_classes;
-+extern unsigned long nr_zapped_lock_chains;
- extern unsigned long nr_list_entries;
- long lockdep_next_lockchain(long i);
- unsigned long lock_chain_count(void);
-diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
-index 53c2a2a..524580d 100644
---- a/kernel/locking/lockdep_proc.c
-+++ b/kernel/locking/lockdep_proc.c
-@@ -349,6 +349,10 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
- 	seq_puts(m, "\n");
- 	seq_printf(m, " zapped classes:                %11lu\n",
- 			nr_zapped_classes);
-+#ifdef CONFIG_PROVE_LOCKING
-+	seq_printf(m, " zapped lock chains:            %11lu\n",
-+			nr_zapped_lock_chains);
-+#endif
- 	return 0;
- }
- 
+diff --git a/Documentation/devicetree/bindings/spi/fsl-imx-cspi.txt b/Documentation/devicetree/bindings/spi/fsl-imx-cspi.txt
+index 2d32641..33bc58f 100644
+--- a/Documentation/devicetree/bindings/spi/fsl-imx-cspi.txt
++++ b/Documentation/devicetree/bindings/spi/fsl-imx-cspi.txt
+@@ -10,7 +10,10 @@ Required properties:
+   - "fsl,imx35-cspi" for SPI compatible with the one integrated on i.MX35
+   - "fsl,imx51-ecspi" for SPI compatible with the one integrated on i.MX51
+   - "fsl,imx53-ecspi" for SPI compatible with the one integrated on i.MX53 and later Soc
+-  - "fsl,imx8mq-ecspi" for SPI compatible with the one integrated on i.MX8M
++  - "fsl,imx8mq-ecspi" for SPI compatible with the one integrated on i.MX8MQ
++  - "fsl,imx8mm-ecspi" for SPI compatible with the one integrated on i.MX8MM
++  - "fsl,imx8mn-ecspi" for SPI compatible with the one integrated on i.MX8MN
++  - "fsl,imx8mp-ecspi" for SPI compatible with the one integrated on i.MX8MP
+ - reg : Offset and length of the register set for the device
+ - interrupts : Should contain CSPI/eCSPI interrupt
+ - clocks : Clock specifiers for both ipg and per clocks.
+-- 
+2.7.4
+
