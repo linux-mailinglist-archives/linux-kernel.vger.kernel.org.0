@@ -2,112 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81452159A33
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 21:05:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17212159A3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 21:08:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729981AbgBKUFG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 15:05:06 -0500
-Received: from gateway30.websitewelcome.com ([192.185.198.26]:45517 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727762AbgBKUFG (ORCPT
+        id S1730944AbgBKUIf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 15:08:35 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:38631 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728537AbgBKUIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 15:05:06 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id AF7564F63
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 14:05:05 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 1bmLjDBaeSl8q1bmLjwJ4y; Tue, 11 Feb 2020 14:05:05 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/tp6uW3/KGGzX+IaZSk0xiuqdbBGhNQT/R1tOYylFy8=; b=weMQvBYmjgdObbIebT4M8WF6fv
-        kPl/oEy0+cyPOhCdmXHd4fMLEObGBQID/VsVYRX6pKJw90lddBPBbvyASHnaZl21iUcRzgvhAN+Xv
-        QTFJY2U3KEB28zzoeKVCwql8KG0s88fEnIaNTcWaIrwglakJRH3UI7jvJHOs4ip04IaWFJECOrA5/
-        KRe/FR9CmiUnG+kLNg8gTPlvPGndr/cHja091MEST2cR7/3onb487vMXL7p8R22Xs0Hc/4pE9By/z
-        h2YS5t+S6gOiOUhWpMcMepZjvk18jfNW67YiYXwZGHOF/PezTs2wmrlmbri5KUCtdvXpYuhDkStgj
-        1XaoIm4Q==;
-Received: from [200.68.140.36] (port=21189 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j1bmK-001XNW-Bj; Tue, 11 Feb 2020 14:05:04 -0600
-Date:   Tue, 11 Feb 2020 14:07:39 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ALSA: hda_codec: Replace zero-length array with
- flexible-array member
-Message-ID: <20200211200739.GA12948@embeddedor>
+        Tue, 11 Feb 2020 15:08:35 -0500
+Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au [49.179.138.28])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 2D0293A3899;
+        Wed, 12 Feb 2020 07:08:28 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1j1bpa-0002l0-DL; Wed, 12 Feb 2020 07:08:26 +1100
+Date:   Wed, 12 Feb 2020 07:08:26 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v5 04/13] mm: Add readahead address space operation
+Message-ID: <20200211200826.GK10776@dread.disaster.area>
+References: <20200211010348.6872-1-willy@infradead.org>
+ <20200211010348.6872-5-willy@infradead.org>
+ <20200211045230.GD10776@dread.disaster.area>
+ <20200211125413.GU8731@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.36
-X-Source-L: No
-X-Exim-ID: 1j1bmK-001XNW-Bj
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.36]:21189
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20200211125413.GU8731@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
+        a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=7-415B0cAAAA:8 a=EnYlyWvjhy6VBD_eMqkA:9 a=CdacwtsPoHkD4rhW:21
+        a=vlsg44Ume0T2P6Xz:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Tue, Feb 11, 2020 at 04:54:13AM -0800, Matthew Wilcox wrote:
+> On Tue, Feb 11, 2020 at 03:52:30PM +1100, Dave Chinner wrote:
+> > > +struct readahead_control {
+> > > +	struct file *file;
+> > > +	struct address_space *mapping;
+> > > +/* private: use the readahead_* accessors instead */
+> > > +	pgoff_t start;
+> > > +	unsigned int nr_pages;
+> > > +	unsigned int batch_count;
+> > > +};
+> > > +
+> > > +static inline struct page *readahead_page(struct readahead_control *rac)
+> > > +{
+> > > +	struct page *page;
+> > > +
+> > > +	if (!rac->nr_pages)
+> > > +		return NULL;
+> > > +
+> > > +	page = xa_load(&rac->mapping->i_pages, rac->start);
+> > > +	VM_BUG_ON_PAGE(!PageLocked(page), page);
+> > > +	rac->batch_count = hpage_nr_pages(page);
+> > > +	rac->start += rac->batch_count;
+> > 
+> > There's no mention of large page support in the patch description
+> > and I don't recall this sort of large page batching in previous
+> > iterations.
+> > 
+> > This seems like new functionality to me, not directly related to
+> > the initial ->readahead API change? What have I missed?
+> 
+> I had a crisis of confidence when I was working on this -- the loop
+> originally looked like this:
+> 
+> #define readahead_for_each(rac, page)                                   \
+>         for (; (page = readahead_page(rac)); rac->nr_pages--)
+> 
+> and then I started thinking about what I'd need to do to support large
+> pages, and that turned into
+> 
+> #define readahead_for_each(rac, page)                                   \
+>         for (; (page = readahead_page(rac));				\
+> 		rac->nr_pages -= hpage_nr_pages(page))
+> 
+> but I realised that was potentially a use-after-free because 'page' has
+> certainly had put_page() called on it by then.  I had a brief period
+> where I looked at moving put_page() away from being the filesystem's
+> responsibility and into the iterator, but that would introduce more
+> changes into the patchset, as well as causing problems for filesystems
+> that want to break out of the loop.
+> 
+> By this point, I was also looking at the readahead_for_each_batch()
+> iterator that btrfs uses, and so we have the batch count anyway, and we
+> might as well use it to store the number of subpages of the large page.
+> And so it became easier to just put the whole ball of wax into the initial
+> patch set, rather than introduce the iterator now and then fix it up in
+> the patch set that I'm basing on this.
+> 
+> So yes, there's a certain amount of excess functionality in this patch
+> set ... I can remove it for the next release.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+I'd say "Just document it" as that was the main reason I noticed it.
+Or perhaps add the batching function as a stand-alone patch so it's
+clear that the batch interface solves two problems at once - large
+pages and the btrfs page batching implementation...
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertenly introduced[3] to the codebase from now on.
+Cheers,
 
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- sound/pci/hda/hda_codec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/pci/hda/hda_codec.c b/sound/pci/hda/hda_codec.c
-index 701a69d856f5..0fbca35509cd 100644
---- a/sound/pci/hda/hda_codec.c
-+++ b/sound/pci/hda/hda_codec.c
-@@ -102,7 +102,7 @@ struct hda_conn_list {
- 	struct list_head list;
- 	int len;
- 	hda_nid_t nid;
--	hda_nid_t conns[0];
-+	hda_nid_t conns[];
- };
- 
- /* look up the cached results */
+Dave.
 -- 
-2.25.0
-
+Dave Chinner
+david@fromorbit.com
