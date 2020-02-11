@@ -2,135 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4751159223
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 15:44:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F29415922C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 15:47:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730238AbgBKOol (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 09:44:41 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:31254 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727728AbgBKOol (ORCPT
+        id S1730247AbgBKOrc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 09:47:32 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:42840 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727511AbgBKOrc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 09:44:41 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01BEiRXu032757;
-        Tue, 11 Feb 2020 15:44:28 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=zMrqEZqOCVnlA3/9d0Rc7Rgo4RLOby/Y5h96V1K6k5k=;
- b=GtWzjgWpZQmghAi169LU0uuY4j7UF/y4Gxjub5zSHljucQ9SciIS1fLFx8NgjERgpEqd
- wD2ePTUv/IS4QpFL9ashW1yofY0nK/2ZRkTrwnh5vpa39jIgJSyf0bP0MsxLWB3JnPwC
- c1nSsQxR/ELJ1NNAZiSh6qB5VMdSGOdzJw/piJ0VJCKihyErlkdRkV9gaiGiZggHXRb3
- JKG1oAfc3Pk3dP48IbxrRU1u7fZArbuL1j1hAOco7JtMhjlz4ZZv7pVn4VOAXp9fdizr
- uotji9CPN2DDHDLLtx4hKF92yFf7FnBzwHslCu1jX0mj3fq8XgNV6R/j+ka/1TtPFeHt PA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2y1ufh5xf0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 11 Feb 2020 15:44:28 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6748F100046;
-        Tue, 11 Feb 2020 15:44:18 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 535752BD3FC;
-        Tue, 11 Feb 2020 15:44:18 +0100 (CET)
-Received: from lmecxl0923.lme.st.com (10.75.127.48) by SFHDAG6NODE1.st.com
- (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 11 Feb
- 2020 15:44:17 +0100
-Subject: Re: [PATCH V2 9/9] mmc: mmci: add sdmmc variant revision 2.0
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <srinivas.kandagatla@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20200128090636.13689-1-ludovic.barre@st.com>
- <20200128090636.13689-10-ludovic.barre@st.com>
-From:   Ludovic BARRE <ludovic.barre@st.com>
-Message-ID: <853f4b14-a188-f329-34e5-8e88fcafa775@st.com>
-Date:   Tue, 11 Feb 2020 15:44:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        Tue, 11 Feb 2020 09:47:32 -0500
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id 01BElErD023152;
+        Tue, 11 Feb 2020 23:47:15 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com 01BElErD023152
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1581432435;
+        bh=eK4UEfP1oZq3xGwyYCFOa/ywH4zsvgqp7UQXXtIcfqs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=crroNUFQPqc5SssgcTr9um9PNEZK2LvgAeaZkwnGSWhon21TAY4Tp5uZmJ2X8r1nX
+         GGhnlMxrGyK7//gl8GrNAOKd5Gkts/LeSgIMQOIaCOT1r9BH6e6ehhmPZNMpGwYJQB
+         wsj+5Hm5/YVm8ZPnqYG7lVQU+Tk10YW0pNH2nmbhzntPvycP3BPNcliqyXK2mbLab8
+         N0TN9jvUiIUgh/dkvOrLstIGUcBELQzEoayKMC+FDCu4ret7NfFRbG593PVhdGLneN
+         Vf4jTBHirudUZqst9vtnbBkL2f39jTc/XdQbZZ1MvIgCnH1+h1t1AL2cyGbzDlaXxO
+         16YnFG/BXQBNQ==
+X-Nifty-SrcIP: [209.85.222.51]
+Received: by mail-ua1-f51.google.com with SMTP id w15so4041015uap.0;
+        Tue, 11 Feb 2020 06:47:15 -0800 (PST)
+X-Gm-Message-State: APjAAAUeES/6yNFHUaxEIFsHkB3acpSzXa8A42rQ/J1Lr8ng7H04AtgD
+        O/+3BoBHZHbHZtFLFbNKxZzkGUdRKUXv9VtM3zQ=
+X-Google-Smtp-Source: APXvYqzDPRbZecWv+oOo/Lrsuuq5Z7QghTxTaXBXXeUAt6x2WB0jCtkjC+HDS/jqpuSByLl+CoFvHPehizJkb1SyP4I=
+X-Received: by 2002:ab0:45c7:: with SMTP id u65mr3961359uau.109.1581432434139;
+ Tue, 11 Feb 2020 06:47:14 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200128090636.13689-10-ludovic.barre@st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG6NODE1.st.com
- (10.75.127.16)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-11_04:2020-02-10,2020-02-11 signatures=0
+References: <20200210161852.842-1-masahiroy@kernel.org> <CAMrEMU86jmds8LMmbdVk=54h+ziY=6MHwyzHxVRXy5dLGFTmGA@mail.gmail.com>
+In-Reply-To: <CAMrEMU86jmds8LMmbdVk=54h+ziY=6MHwyzHxVRXy5dLGFTmGA@mail.gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Tue, 11 Feb 2020 23:46:38 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARV34onaXiZA-UAvKZdwnfX_D3g=k0a8EJkD4HzEWRo-Q@mail.gmail.com>
+Message-ID: <CAK7LNARV34onaXiZA-UAvKZdwnfX_D3g=k0a8EJkD4HzEWRo-Q@mail.gmail.com>
+Subject: Re: [PATCH] scripts/kallsyms: fix memory corruption caused by write over-run
+To:     Justin Capella <justincapella@gmail.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        youling257 <youling257@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hi Ulf
+Hi.
 
-Le 1/28/20 à 10:06 AM, Ludovic Barre a écrit :
-> This patch adds a sdmmc variant revision 2.0.
-> This revision is backward compatible with 1.1, and adds dma
-> link list support.
-> 
-> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-> ---
->   drivers/mmc/host/mmci.c | 30 ++++++++++++++++++++++++++++++
->   1 file changed, 30 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-> index 24e630183ed4..a774c329c212 100644
-> --- a/drivers/mmc/host/mmci.c
-> +++ b/drivers/mmc/host/mmci.c
-> @@ -275,6 +275,31 @@ static struct variant_data variant_stm32_sdmmc = {
->   	.init			= sdmmc_variant_init,
->   };
->   
-> +static struct variant_data variant_stm32_sdmmcv2 = {
-> +	.fifosize		= 16 * 4,
-> +	.fifohalfsize		= 8 * 4,
-> +	.f_max			= 208000000,
-> +	.stm32_clkdiv		= true,
-> +	.cmdreg_cpsm_enable	= MCI_CPSM_STM32_ENABLE,
-> +	.cmdreg_lrsp_crc	= MCI_CPSM_STM32_LRSP_CRC,
-> +	.cmdreg_srsp_crc	= MCI_CPSM_STM32_SRSP_CRC,
-> +	.cmdreg_srsp		= MCI_CPSM_STM32_SRSP,
-> +	.cmdreg_stop		= MCI_CPSM_STM32_CMDSTOP,
-> +	.data_cmd_enable	= MCI_CPSM_STM32_CMDTRANS,
-> +	.irq_pio_mask		= MCI_IRQ_PIO_STM32_MASK,
-> +	.datactrl_first		= true,
-> +	.datacnt_useless	= true,
-> +	.datalength_bits	= 25,
-> +	.datactrl_blocksz	= 14,
-> +	.datactrl_any_blocksz	= true,
-> +	.stm32_idmabsize_mask	= GENMASK(16, 5),
-> +	.dma_lli		= true,
-> +	.busy_timeout		= true,
+On Tue, Feb 11, 2020 at 11:36 AM Justin Capella <justincapella@gmail.com> wrote:
+>
+> Looks like len is already +1, maybe it shouldn't be?
 
-I forget "busy_detect		= true," property
-I add this in next patch set
+This increment is for storing one more character, 'type'.
 
-> +	.busy_detect_flag	= MCI_STM32_BUSYD0,
-> +	.busy_detect_mask	= MCI_STM32_BUSYD0ENDMASK,
-> +	.init			= sdmmc_variant_init,
-> +};
-> +
->   static struct variant_data variant_qcom = {
->   	.fifosize		= 16 * 4,
->   	.fifohalfsize		= 8 * 4,
-> @@ -2343,6 +2368,11 @@ static const struct amba_id mmci_ids[] = {
->   		.mask	= 0xf0ffffff,
->   		.data	= &variant_stm32_sdmmc,
->   	},
-> +	{
-> +		.id     = 0x00253180,
-> +		.mask	= 0xf0ffffff,
-> +		.data	= &variant_stm32_sdmmcv2,
-> +	},
->   	/* Qualcomm variants */
->   	{
->   		.id     = 0x00051180,
-> 
+        sym->sym[0] = type;
+
+
+
+> >         len = strlen(name) + 1;
+> >
+> > -       sym = malloc(sizeof(*sym) + len);
+> > +       sym = malloc(sizeof(*sym) + len + 1);
+
+
+This increment is for the '\0' termination.
+
+
+
+So, malloc() needs to allocate:
+sizeof(*sym) + strlen(name) + 2.
+
+
+
+
+
+>
+>
+> Maybe strlcpy or if len wasn't incremented?
+>
+> >
+> > -       memcpy(sym_name(sym), name, len);
+> > +       strcpy(sym_name(sym), name);
+> >
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
