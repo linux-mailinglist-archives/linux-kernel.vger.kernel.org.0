@@ -2,112 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE78C159A34
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 21:05:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AEBB159A23
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 21:02:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730278AbgBKUFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 15:05:43 -0500
-Received: from gateway20.websitewelcome.com ([192.185.51.6]:45590 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727762AbgBKUFm (ORCPT
+        id S1730930AbgBKUCu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 15:02:50 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34411 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727955AbgBKUCu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 15:05:42 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id E0959400CD89E
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 12:27:55 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 1bPVj5eAKEfyq1bPVjFdRM; Tue, 11 Feb 2020 13:41:29 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=zy3tdOGXiMDwDaFgGp+R4wrqpQG0fvEKRGsyvX+r27c=; b=VhbPAVK4RebZmfDEA0qCOmyGwn
-        41oYOomcCfTjKF5urio79DEo/GywqImqPisIH/vyiPOsD6y72DdVz/R4jTJWKx5c1HRz6d/UyKCAR
-        Onz3ZAZqzW13WfGGJ5F5bZlgbJ69w1j0feAS8G9mMnmwmjmtxZh3+fsjGHRfS8L9P469q5hg+vJ8+
-        QQY5Q67iWw+jPnJpzHaJPnpmpI2Yf/xTg7xyfgeZArDbdxakwCl3IWtQFaskBW/PFR4DBKrYg2P4b
-        zGI+dy1Nt7JNb8/Pw5j0o+gZV2KX3P9bH6Yh8FKsOhdE3faqXpbGPj5T8mM1qutk8mLXsLLD+dGlU
-        kT+SKJNw==;
-Received: from [200.68.140.36] (port=6133 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j1bPU-001Jy8-8X; Tue, 11 Feb 2020 13:41:28 -0600
-Date:   Tue, 11 Feb 2020 13:44:03 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ALSA: hda/ca0132 - Replace zero-length array with
- flexible-array member
-Message-ID: <20200211194403.GA10318@embeddedor>
+        Tue, 11 Feb 2020 15:02:50 -0500
+Received: by mail-wr1-f67.google.com with SMTP id t2so14094332wrr.1;
+        Tue, 11 Feb 2020 12:02:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=23v7TZXuNq67B9vNMnB2JOzcUNo7fx1FqP4BXdmSU+Y=;
+        b=dRCCjuK3T3v/6PPVyqufsmmGHNay2UWxLNFhfwOv1STRrFCXLYMZ/tfOvpS6O5V0D1
+         L692vMbe892qCoXbahjvChiR/zqqHRurZzh7Eyqj1EC1aMUHE6Mgoa9q2uqB529/j36w
+         Pmv5pLqCY25siQt9fYZHcfXamCxYSB0utVaCuH1QUhZOjrUdNhRXIbliIrf8iHUVfnTP
+         OhVKEd5eUSjzAlEalq2bSbqLKRhmB5LhwFwkSt7LtT1oYXCb9ranP9ycsg1rPEJ9Z3nn
+         gKqe/qBhSkFuM6fQrnJMCMzxpFQtGJCgI/g9SNHcFSrC/kDLgdTHvifL6nUj4RhqPnXT
+         1OvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=23v7TZXuNq67B9vNMnB2JOzcUNo7fx1FqP4BXdmSU+Y=;
+        b=b8C2ut4zjV7ijoRY19iGbzi3I6gUEUzBcwpBH7HdwHGi/gOZHx4PR87CMVUiv4hwwj
+         Yy1jvd0hhzw5aD/uzxnU1mMMzWCjc3N23NAWRRHEYNhvgPVaO1QvLXHrKvEEurzhX9Qo
+         96uCO+VePmuUBUbEOrRr3xLMqmvszavM+VbWeEDOBzcA5r6ThkAMjRhDSPG/PiteG/R5
+         v/wIEiyNqXr95tBoys8N0pTrmC9PrPVvBqJ/Dx/q1cv9czItjbc1Ls04OlpI4KndMVXA
+         txsnVyRpBugdQ6gtUE3YsG+HdqdvErbqTgPE7Etpvu4IRXmcidL6QTNuEsiUX0lXOOyD
+         h8iA==
+X-Gm-Message-State: APjAAAVc+0z/FKgTipf7Arzw70y3O4OpvqPjUJLwguWOsapBzU2+7igy
+        b9R2ceMszIY7ZifYgsSu2cgxPl7f
+X-Google-Smtp-Source: APXvYqyXK2uy4r0ccxX9msxhn2bG71jbWadFAWPP77tGywkKq4nDUndwIfP5GZz1Tv6InMz245X6CA==
+X-Received: by 2002:adf:ea8a:: with SMTP id s10mr9880713wrm.278.1581451368100;
+        Tue, 11 Feb 2020 12:02:48 -0800 (PST)
+Received: from localhost.localdomain ([109.126.145.62])
+        by smtp.gmail.com with ESMTPSA id 4sm4955101wmg.22.2020.02.11.12.02.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2020 12:02:47 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] async punting improvements for io_uring
+Date:   Tue, 11 Feb 2020 23:01:53 +0300
+Message-Id: <cover.1581450491.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.36
-X-Source-L: No
-X-Exim-ID: 1j1bPU-001Jy8-8X
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.36]:6133
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 20
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+This cleans up io-wq punting paths, doing small fixes and removing
+unnecessary logic from different submission paths. The last patch is
+a resubmission after a rebase bundled into this patchset.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+Pavel Begunkov (5):
+  io_uring: remove REQ_F_MUST_PUNT
+  io_uring: don't call work.func from sync ctx
+  io_uring: fix reassigning work.task_pid from io-wq
+  io_uring: add missing io_req_cancelled()
+  io_uring: purge req->in_async
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertenly introduced[3] to the codebase from now on.
+ fs/io_uring.c | 122 ++++++++++++++++++++++++++------------------------
+ 1 file changed, 64 insertions(+), 58 deletions(-)
 
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- sound/pci/hda/patch_ca0132.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index e1ebc6d5f382..ab5632502206 100644
---- a/sound/pci/hda/patch_ca0132.c
-+++ b/sound/pci/hda/patch_ca0132.c
-@@ -2708,7 +2708,7 @@ struct dsp_image_seg {
- 	u32 magic;
- 	u32 chip_addr;
- 	u32 count;
--	u32 data[0];
-+	u32 data[];
- };
- 
- static const u32 g_magic_value = 0x4c46584d;
 -- 
-2.25.0
+2.24.0
 
