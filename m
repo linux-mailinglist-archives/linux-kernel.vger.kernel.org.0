@@ -2,94 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 428F5159AFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 22:12:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AFDD159AF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 22:09:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731088AbgBKVMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 16:12:03 -0500
-Received: from mga03.intel.com ([134.134.136.65]:13437 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728078AbgBKVMD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 16:12:03 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 13:12:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="256603823"
-Received: from lmgarret-mobl2.amr.corp.intel.com (HELO [10.251.152.253]) ([10.251.152.253])
-  by fmsmga004.fm.intel.com with ESMTP; 11 Feb 2020 13:12:01 -0800
-Subject: Re: [alsa-devel] [PATCH] ASoC: da7219: check SRM lock in trigger
- callback
-To:     "Sridharan, Ranjani" <ranjani.sridharan@intel.com>
-Cc:     "Lu, Brent" <brent.lu@intel.com>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        "Chiang, Mac" <mac.chiang@intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        "cychiang@google.com" <cychiang@google.com>
-References: <1581322611-25695-1-git-send-email-brent.lu@intel.com>
- <AM6PR10MB2263F302A86B17C95B16361280190@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
- <SN6PR11MB26702B2E7E5F705425517F4897180@SN6PR11MB2670.namprd11.prod.outlook.com>
- <855c88fb-4438-aefb-ac9b-a9a5a2dc8caa@linux.intel.com>
- <CAFQqKeWHDyyd_YBBaD6P2sCL5OCNEsiUU6B7eUwtiLv8GZU0yg@mail.gmail.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <2eeca7fe-aec9-c680-5d61-930de18b952b@linux.intel.com>
-Date:   Tue, 11 Feb 2020 15:12:01 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1729818AbgBKVJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 16:09:47 -0500
+Received: from gateway30.websitewelcome.com ([192.185.198.26]:15479 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728917AbgBKVJr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 16:09:47 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 691E51C358
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 15:09:46 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 1cmwjhoZPAGTX1cmwjuCsT; Tue, 11 Feb 2020 15:09:46 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Mk3WhDLxsBAaFhC3hPwZLxkMI8ikxsU22UXupLlwnzQ=; b=TQ2iQ4mxQ/zxiw55YX4zE6ENkG
+        gr37828XhuokEXIdh6kaNm9wL8W0ZUFfzTdmTwDhkGTLL1oP5ESeKRp1X0wuErMEtSz6kuj/004IW
+        leWNrd0MGv4euAT4o2g5CSGUEM5jk218ebG33eAxpHmLgUTnT2+dxYlvs8PxvoQsMgBgqOyBVzZFT
+        9VcnKGG67izpf/Rk+1vMIKrHyONBajFAN5c+Lw6CJCBZ1f/Ub5l+exSY1k3nor+xaC8MesHki+nys
+        dhO0pajaI8gZtEKXOdbk6U3GdZJoQ4TqSYYfo4ff3789I1XynLgOCruuCV+gsFlHL0cx/TC3BxAMJ
+        624IRPSQ==;
+Received: from [200.68.140.36] (port=2913 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j1cmu-002Aqs-R0; Tue, 11 Feb 2020 15:09:44 -0600
+Date:   Tue, 11 Feb 2020 15:12:19 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] staging: greybus: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200211211219.GA673@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <CAFQqKeWHDyyd_YBBaD6P2sCL5OCNEsiUU6B7eUwtiLv8GZU0yg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.140.36
+X-Source-L: No
+X-Exim-ID: 1j1cmu-002Aqs-R0
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [200.68.140.36]:2913
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 28
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-On 2/11/20 2:37 PM, Sridharan, Ranjani wrote:
-> 
->      > I think the patch is for those systems which enable I2S clocks in
->     pcm_start instead
->      > of pcm_prepare. It has no effect on systems already be able to
->     turn on clocks in
->      > supply widgets or set_bias_level() function.
->      >
->      > If the trigger type in the DAI link is TRIGGER_PRE, then the
->     trigger function of FE port
->      > (component or CPU DAI) will be called before codec driver's
->     trigger function. In this
->      > case we will be able to turn on the clock in time. However, if
->     the trigger type is
->      > TRIGGER_POST, then the patch does not help because just like what
->     you said, codec
->      > driver's trigger function is called first.
-> 
->     IIRC we recently did a change to deal with underflows. Ranjani, can you
->     remind us what the issue was?
-> 
-> Hi Pierre,
-> 
-> Are you talking about the change in this commit acbf27746ecfa96b
-> "ASoC: pcm: update FE/BE trigger order based on the command"?
-> 
-> We made this change to handle xruns during pause/release particularly on 
-> the Intel HDA platforms.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertenly introduced[3] to the codebase from now on.
 
-this change was just to mirror the behavior between start/stop, I 
-thought there was a patch where we moved to TRIGGER_POST by default?
+This issue was found with the help of Coccinelle.
 
-What I am trying to figure out if whether using TRIGGER_PRE is ok or not 
-for the SOF firmware.
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 
-Thanks!
--Pierre
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/staging/greybus/raw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/greybus/raw.c b/drivers/staging/greybus/raw.c
+index 838acbe84ca0..2b301b2aa107 100644
+--- a/drivers/staging/greybus/raw.c
++++ b/drivers/staging/greybus/raw.c
+@@ -30,7 +30,7 @@ struct gb_raw {
+ struct raw_data {
+ 	struct list_head entry;
+ 	u32 len;
+-	u8 data[0];
++	u8 data[];
+ };
+ 
+ static struct class *raw_class;
+-- 
+2.25.0
+
