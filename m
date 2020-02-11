@@ -2,94 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81BD7158CDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:40:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0F9B158CE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:41:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728390AbgBKKkp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 05:40:45 -0500
-Received: from outbound-smtp55.blacknight.com ([46.22.136.239]:47731 "EHLO
-        outbound-smtp55.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728312AbgBKKko (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 05:40:44 -0500
-Received: from mail.blacknight.com (pemlinmail02.blacknight.ie [81.17.254.11])
-        by outbound-smtp55.blacknight.com (Postfix) with ESMTPS id BFB55FA8A1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 10:40:42 +0000 (GMT)
-Received: (qmail 4116 invoked from network); 11 Feb 2020 10:40:42 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 11 Feb 2020 10:40:42 -0000
-Date:   Tue, 11 Feb 2020 10:40:41 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     akpm@linux-foundation.org, david@redhat.com,
-        yang.zhang.wz@gmail.com, nitesh@redhat.com, konrad.wilk@oracle.com,
-        pagupta@redhat.com, riel@surriel.com, lcapitulino@redhat.com,
-        dave.hansen@intel.com, wei.w.wang@intel.com, aarcange@redhat.com,
-        pbonzini@redhat.com, dan.j.williams@intel.com, osalvador@suse.de,
-        vbabka@suse.cz, AlexanderDuyck <alexander.duyck@gmail.com>,
-        kvm@vger.kernel.org, mst@redhat.com, linux-kernel@vger.kernel.org,
-        willy@infradead.org, mhocko@kernel.org, linux-mm@kvack.org
-Subject: Re: Should I repost? (was: Re: [PATCH v16.1 0/9] mm / virtio:
- Provide support for free page reporting)
-Message-ID: <20200211104041.GK3466@techsingularity.net>
-References: <20200122173040.6142.39116.stgit@localhost.localdomain>
- <6758b1e3373fc06b37af1c87901237974d52322f.camel@linux.intel.com>
- <d943ada56babfbebf408ad0f94988a5b09d2b472.camel@linux.intel.com>
+        id S1728426AbgBKKla (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 05:41:30 -0500
+Received: from mail-dm6nam11on2073.outbound.protection.outlook.com ([40.107.223.73]:29242
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727805AbgBKKl3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 05:41:29 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=L8XLFqFipVUW6v1pTDG0d/7hRDjNG6TRCqOpUXxXKEAbZZzTDwIbYFCbaZjeV4GRfMzZ8Y//+UiBQkw6CfehKgtWmsLYz+omlmQjgdH0IqUZ9czobjznkuzdwI10ll4kDzThubUPJWN5VvOlJUzqcaooSIsIZ9uyEnXK8vEty035ASTW4S3wo655UZpDnwKatfk95VyqSBP/rxiRRSNaS4R/ZzEY9GuqwjkQIDXJnA3zVRotAkvEc8PUcY5NRxACDL/J3NOoPb5B0AeIF/kUSS6BfHO/tHdbUn6Fwjkc1ql18FzW8huqTGClvmolOyPnRMkwrtt6VZlRMuieL91jvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2tDkihZo0MP/9rHRel5OKyOilvsl7lmsUIUxuPWJEVk=;
+ b=JMWYDdA/JwmLgutumUvRPkg0K+xyqWUgSkbPH9sT9nOUa935r3GLimDGMLKwsexdcr30GLCr5wYtqQ5XpO6CR8GYNS53o1WtDYUVe9lKVTQUgIHVyS1HZU1uNy1LF0TjxQVzQALdM33aklI3cszBIkEqXyOtbkpk+eSvCushRfqwXvbROOl7Z+4A9KhGrTKG3hxKQBHdrRulcSN6ODIAj9NbRpPgOYa7zDUcJZZv7KENpWktiKUvuMHRqT6mKTDmr57FJrJhJFXfrsk0sbVRy9I/zp89deU3jLFlg/KlN0zrjm3ax9A5GIGgbsBipOi6OH8PKEs0e9M/tn45mfs7iQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=silabs.com; dmarc=pass action=none header.from=silabs.com;
+ dkim=pass header.d=silabs.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=silabs.onmicrosoft.com; s=selector2-silabs-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2tDkihZo0MP/9rHRel5OKyOilvsl7lmsUIUxuPWJEVk=;
+ b=EgO5rA34JrZx9+//3exvQe23BfcE4GPY8KcRaYO0H84UQrZ9IO7yVyiaO2RazalsMUFVR3jq3QOjoc+kgC3ouxUwA2Wmwy0o1qjHEia/fVPij6J14E8lNw2mWxf1TooU+qHOiTvZR9bnQvewO4VKD6YWF0W+BqpFp+luuT/eOM0=
+Received: from MN2PR11MB4063.namprd11.prod.outlook.com (10.255.180.22) by
+ MN2PR11MB3566.namprd11.prod.outlook.com (20.178.251.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.21; Tue, 11 Feb 2020 10:41:26 +0000
+Received: from MN2PR11MB4063.namprd11.prod.outlook.com
+ ([fe80::ade4:5702:1c8b:a2b3]) by MN2PR11MB4063.namprd11.prod.outlook.com
+ ([fe80::ade4:5702:1c8b:a2b3%7]) with mapi id 15.20.2707.030; Tue, 11 Feb 2020
+ 10:41:26 +0000
+From:   =?utf-8?B?SsOpcsO0bWUgUG91aWxsZXI=?= <Jerome.Pouiller@silabs.com>
+To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [[PATCH staging] 6/7] staging: wfx: use sleeping gpio accessors
+Thread-Topic: [[PATCH staging] 6/7] staging: wfx: use sleeping gpio accessors
+Thread-Index: AQHV4LfWip/3nlTlaUy2h9rm5Cx/R6gVzi2A
+Date:   Tue, 11 Feb 2020 10:41:26 +0000
+Message-ID: <1829603.oaOZQPt0r4@pc-42>
+References: <cover.1581410026.git.mirq-linux@rere.qmqm.pl>
+ <01ac32e4318da8a7db085c82cfca9831ecec5d40.1581410026.git.mirq-linux@rere.qmqm.pl>
+In-Reply-To: <01ac32e4318da8a7db085c82cfca9831ecec5d40.1581410026.git.mirq-linux@rere.qmqm.pl>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Jerome.Pouiller@silabs.com; 
+x-originating-ip: [37.71.187.125]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6c25a25e-0de5-4a21-74b5-08d7aedef256
+x-ms-traffictypediagnostic: MN2PR11MB3566:
+x-microsoft-antispam-prvs: <MN2PR11MB356663A702F98E2DD9E7D70793180@MN2PR11MB3566.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:663;
+x-forefront-prvs: 0310C78181
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(136003)(366004)(39860400002)(396003)(346002)(376002)(199004)(189003)(6486002)(81166006)(2906002)(8936002)(6916009)(186003)(6506007)(8676002)(81156014)(26005)(6512007)(9686003)(64756008)(66446008)(478600001)(33716001)(91956017)(76116006)(316002)(54906003)(66476007)(66946007)(4326008)(66556008)(71200400001)(85202003)(86362001)(85182001)(5660300002)(39026012);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB3566;H:MN2PR11MB4063.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: silabs.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: AhSt70E1ZnoEUIYiElP82JCC/EUTllr8sH/LbLHrgvwRyNs+f/cSRlTsWTis1Y/F1MHUVGdoNIf4I+CV6crz69HPF0N7I8nYM+xzLh2AJ7vBVbD8VopYFh/eCphazh4zEoiqAXTAr08Hya5vzgtNNk8E6jSRybwqYMDA8nDD5WeDs4JGLRhKR1PhXYa57AechHZVoyn/Iaf9HDdtTKB65dpnHT9vacwt2Z706x2AGfH1YI8rN71f7xrl6X4OCZviXikibTE+Z9bl/43MSrw6bhOtUjKU/Nz1E4uTGJX20iAgOjnWBwdPD2pqgYqFpBP+CJ7JsdAFRFttVMgCqD/Om9zA6TwcSXt27WAuigDSfKHw1qW1G9h5nFT995R6Ha3n6G0FGo4Y+bmn+wypLXOkklCyWk9Urp5n4FwJOewf/ZsU9ANs3k9/y6xnRwC4Xscr/7ZOr1/1dnek2FGvu+rXFrAdQh3QEMCRN6V3R/KmHl2Ek7EGMNYeyignoHd9+lTC
+x-ms-exchange-antispam-messagedata: OdR80dhz999SiLQdsnsW1CHo7ieZN9U9EdYbE3ZfhhQO0/2pH5M4Njovb6jOyvVIX6/djfntpI9ngqxjJO4LYcNho7ZaahzvxTZP9n3+H9KAJWPd42hsTVtSWNRGhiAKOteJflN8gNTzMmUgIELoxQ==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <95E258236B5B4A49AEECCC2A7732F570@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <d943ada56babfbebf408ad0f94988a5b09d2b472.camel@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: silabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c25a25e-0de5-4a21-74b5-08d7aedef256
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2020 10:41:26.5870
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 54dbd822-5231-4b20-944d-6f4abcd541fb
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Z0DoIyU4GojM99WzmBu9lE1DurPF0EYOD4/DMJH3YK9L82DT1og1dCLi9BlvoKkub6lqn2t4eqTKU05agYoLkQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB3566
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 11:18:59AM -0800, Alexander Duyck wrote:
-> > So I thought I would put out a gentle nudge since it has been about 4
-> > weeks since v16 was submitted, a little over a week and a half for v16.1,
-> > and I have yet to get any feedback on the code contained in the patchset.
-> > Codewise nothing has changed from the v16 patchset other than rebasing it
-> > off of the linux-next tree to resolve some merge conflicts that I saw
-> > recently, and discussion around v16.1 was mostly about next steps and how
-> > to deal with the page cache instead of discussing the code itself.
-> > 
-> > The full patchset can be found at:
-> > https://lore.kernel.org/lkml/20200122173040.6142.39116.stgit@localhost.localdomain/
-> > 
-> > I believe I still need review feedback for patches 3, 4, 7, 8, and 9.
-> > 
-> > Thanks.
-> > 
-> > - Alex
-> 
-> So I had posted this patch set a few days before Linus's merge window
-> opened. When I posted it the discussion was about what the follow-up on
-> this patch set will be in terms of putting pressure on the page cache to
-> force it to shrink. However I didn't get any review comments on the code
-> itself.
-> 
-> My last understanding on this patch set is that I am waiting on patch
-> feedback from Mel Gorman as he had the remaining requests that led to most
-> of the changes in v15 and v16. I believe I have addressed them, but I
-> don't believe he has had a chance to review them.
-> 
-> I am wondering now if it is still possible to either get it reviewed
-> and/or applied without reposting, or do I need to repost it since it has
-> been several weeks since I submitted it? The patch set still applies to
-> the linux-next tree without any issues.
-> 
-
-Please repost to take into account that this is confirmed to be working
-as expected after the merge window and has not conflicted with anything
-else that got merged in the meantime. This fell off my radar because of the
-timing when it was posted and the volume of mail I was receiving. I simply
-noted a large amount of traffic in response to the series and assumed
-others had issues that would get resolved without looking closely. Now
-I see that it was all comments on future work instead of the series itself.
-
-Sorry.
-
--- 
-Mel Gorman
-SUSE Labs
+T24gVHVlc2RheSAxMSBGZWJydWFyeSAyMDIwIDA5OjQ2OjU1IENFVCBNaWNoYcWCIE1pcm9zxYJh
+dyB3cm90ZToNCj4gRHJpdmVyIGNhbGxzIEdQSU8gZ2V0L3NldCBvbmx5IGZyb20gbm9uLWF0b21p
+YyBjb250ZXh0IGFuZCBzbyBjYW4gdXNlIGFueQ0KPiBHUElPcy4NCj4gDQo+IFNpZ25lZC1vZmYt
+Ynk6IE1pY2hhxYIgTWlyb3PFgmF3IDxtaXJxLWxpbnV4QHJlcmUucW1xbS5wbD4NCj4gLS0tDQo+
+ICBkcml2ZXJzL3N0YWdpbmcvd2Z4L2JoLmMgICAgICB8IDYgKysrLS0tDQo+ICBkcml2ZXJzL3N0
+YWdpbmcvd2Z4L2J1c19zcGkuYyB8IDQgKystLQ0KPiAgZHJpdmVycy9zdGFnaW5nL3dmeC9tYWlu
+LmMgICAgfCAyICstDQo+ICAzIGZpbGVzIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwgNiBkZWxl
+dGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvd2Z4L2JoLmMgYi9k
+cml2ZXJzL3N0YWdpbmcvd2Z4L2JoLmMNCj4gaW5kZXggOTgzYzQxZDFmZTdjLi5jNjMxOWFiN2U3
+MWEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy93ZngvYmguYw0KPiArKysgYi9kcml2
+ZXJzL3N0YWdpbmcvd2Z4L2JoLmMNCj4gQEAgLTIwLDEwICsyMCwxMCBAQCBzdGF0aWMgdm9pZCBk
+ZXZpY2Vfd2FrZXVwKHN0cnVjdCB3ZnhfZGV2ICp3ZGV2KQ0KPiAgew0KPiAgICAgICAgIGlmICgh
+d2Rldi0+cGRhdGEuZ3Bpb193YWtldXApDQo+ICAgICAgICAgICAgICAgICByZXR1cm47DQo+IC0g
+ICAgICAgaWYgKGdwaW9kX2dldF92YWx1ZSh3ZGV2LT5wZGF0YS5ncGlvX3dha2V1cCkpDQo+ICsg
+ICAgICAgaWYgKGdwaW9kX2dldF92YWx1ZV9jYW5zbGVlcCh3ZGV2LT5wZGF0YS5ncGlvX3dha2V1
+cCkpDQo+ICAgICAgICAgICAgICAgICByZXR1cm47DQo+IA0KPiAtICAgICAgIGdwaW9kX3NldF92
+YWx1ZSh3ZGV2LT5wZGF0YS5ncGlvX3dha2V1cCwgMSk7DQo+ICsgICAgICAgZ3Bpb2Rfc2V0X3Zh
+bHVlX2NhbnNsZWVwKHdkZXYtPnBkYXRhLmdwaW9fd2FrZXVwLCAxKTsNCj4gICAgICAgICBpZiAo
+d2Z4X2FwaV9vbGRlcl90aGFuKHdkZXYsIDEsIDQpKSB7DQo+ICAgICAgICAgICAgICAgICBpZiAo
+IWNvbXBsZXRpb25fZG9uZSgmd2Rldi0+aGlmLmN0cmxfcmVhZHkpKQ0KPiAgICAgICAgICAgICAg
+ICAgICAgICAgICB1ZGVsYXkoMjAwMCk7DQo+IEBAIC00NSw3ICs0NSw3IEBAIHN0YXRpYyB2b2lk
+IGRldmljZV9yZWxlYXNlKHN0cnVjdCB3ZnhfZGV2ICp3ZGV2KQ0KPiAgICAgICAgIGlmICghd2Rl
+di0+cGRhdGEuZ3Bpb193YWtldXApDQo+ICAgICAgICAgICAgICAgICByZXR1cm47DQo+IA0KPiAt
+ICAgICAgIGdwaW9kX3NldF92YWx1ZSh3ZGV2LT5wZGF0YS5ncGlvX3dha2V1cCwgMCk7DQo+ICsg
+ICAgICAgZ3Bpb2Rfc2V0X3ZhbHVlX2NhbnNsZWVwKHdkZXYtPnBkYXRhLmdwaW9fd2FrZXVwLCAw
+KTsNCj4gIH0NCj4gDQo+ICBzdGF0aWMgaW50IHJ4X2hlbHBlcihzdHJ1Y3Qgd2Z4X2RldiAqd2Rl
+diwgc2l6ZV90IHJlYWRfbGVuLCBpbnQgKmlzX2NuZikNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+c3RhZ2luZy93ZngvYnVzX3NwaS5jIGIvZHJpdmVycy9zdGFnaW5nL3dmeC9idXNfc3BpLmMNCj4g
+aW5kZXggYzVmNzgxNjEyMzRkLi42MzRiNGU1YmIwNTUgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMv
+c3RhZ2luZy93ZngvYnVzX3NwaS5jDQo+ICsrKyBiL2RyaXZlcnMvc3RhZ2luZy93ZngvYnVzX3Nw
+aS5jDQo+IEBAIC0yMDgsOSArMjA4LDkgQEAgc3RhdGljIGludCB3Znhfc3BpX3Byb2JlKHN0cnVj
+dCBzcGlfZGV2aWNlICpmdW5jKQ0KPiAgICAgICAgIH0gZWxzZSB7DQo+ICAgICAgICAgICAgICAg
+ICBpZiAoc3BpX2dldF9kZXZpY2VfaWQoZnVuYyktPmRyaXZlcl9kYXRhICYgV0ZYX1JFU0VUX0lO
+VkVSVEVEKQ0KPiAgICAgICAgICAgICAgICAgICAgICAgICBncGlvZF90b2dnbGVfYWN0aXZlX2xv
+dyhidXMtPmdwaW9fcmVzZXQpOw0KPiAtICAgICAgICAgICAgICAgZ3Bpb2Rfc2V0X3ZhbHVlKGJ1
+cy0+Z3Bpb19yZXNldCwgMSk7DQo+ICsgICAgICAgICAgICAgICBncGlvZF9zZXRfdmFsdWVfY2Fu
+c2xlZXAoYnVzLT5ncGlvX3Jlc2V0LCAxKTsNCj4gICAgICAgICAgICAgICAgIHVkZWxheSgxMDAp
+Ow0KPiAtICAgICAgICAgICAgICAgZ3Bpb2Rfc2V0X3ZhbHVlKGJ1cy0+Z3Bpb19yZXNldCwgMCk7
+DQo+ICsgICAgICAgICAgICAgICBncGlvZF9zZXRfdmFsdWVfY2Fuc2xlZXAoYnVzLT5ncGlvX3Jl
+c2V0LCAwKTsNCj4gICAgICAgICAgICAgICAgIHVkZWxheSgyMDAwKTsNCj4gICAgICAgICB9DQo+
+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL3dmeC9tYWluLmMgYi9kcml2ZXJzL3N0
+YWdpbmcvd2Z4L21haW4uYw0KPiBpbmRleCA4NGFkYWQ2NGZjMzAuLmU4YmRlYjlhYTNhOSAxMDA2
+NDQNCj4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL3dmeC9tYWluLmMNCj4gKysrIGIvZHJpdmVycy9z
+dGFnaW5nL3dmeC9tYWluLmMNCj4gQEAgLTQyMCw3ICs0MjAsNyBAQCBpbnQgd2Z4X3Byb2JlKHN0
+cnVjdCB3ZnhfZGV2ICp3ZGV2KQ0KPiAgICAgICAgICAgICAgICAgICAgICAgICAiZW5hYmxlICdx
+dWllc2NlbnQnIHBvd2VyIG1vZGUgd2l0aCBncGlvICVkIGFuZCBQRFMgZmlsZSAlc1xuIiwNCj4g
+ICAgICAgICAgICAgICAgICAgICAgICAgZGVzY190b19ncGlvKHdkZXYtPnBkYXRhLmdwaW9fd2Fr
+ZXVwKSwNCj4gICAgICAgICAgICAgICAgICAgICAgICAgd2Rldi0+cGRhdGEuZmlsZV9wZHMpOw0K
+PiAtICAgICAgICAgICAgICAgZ3Bpb2Rfc2V0X3ZhbHVlKHdkZXYtPnBkYXRhLmdwaW9fd2FrZXVw
+LCAxKTsNCj4gKyAgICAgICAgICAgICAgIGdwaW9kX3NldF92YWx1ZV9jYW5zbGVlcCh3ZGV2LT5w
+ZGF0YS5ncGlvX3dha2V1cCwgMSk7DQo+ICAgICAgICAgICAgICAgICBjb250cm9sX3JlZ193cml0
+ZSh3ZGV2LCAwKTsNCj4gICAgICAgICAgICAgICAgIGhpZl9zZXRfb3BlcmF0aW9uYWxfbW9kZSh3
+ZGV2LCBISUZfT1BfUE9XRVJfTU9ERV9RVUlFU0NFTlQpOw0KPiAgICAgICAgIH0gZWxzZSB7DQo+
+IC0tDQo+IDIuMjAuMQ0KPiANCg0KUmV2aWV3ZWQtYnk6IErDqXLDtG1lIFBvdWlsbGVyIDxqZXJv
+bWUucG91aWxsZXJAc2lsYWJzLmNvbT4NCg0KLS0gDQpKw6lyw7RtZSBQb3VpbGxlcg0KDQo=
