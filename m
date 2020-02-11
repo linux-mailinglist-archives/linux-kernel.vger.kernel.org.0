@@ -2,76 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F121158F3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:54:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33F38158F19
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:49:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728567AbgBKMyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 07:54:25 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:49054 "EHLO inva020.nxp.com"
+        id S1729156AbgBKMtb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 07:49:31 -0500
+Received: from rere.qmqm.pl ([91.227.64.183]:3934 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728396AbgBKMyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 07:54:21 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B62711A3557;
-        Tue, 11 Feb 2020 13:54:20 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 344C91A1CD7;
-        Tue, 11 Feb 2020 13:54:05 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 12F8B402E0;
-        Tue, 11 Feb 2020 20:53:52 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, andrew.smirnov@gmail.com,
-        manivannan.sadhasivam@linaro.org, marcel.ziswiler@toradex.com,
-        rjones@gateworks.com, sebastien.szymanski@armadeus.com,
-        aisheng.dong@nxp.com, gary.bisson@boundarydevices.com,
-        angus@akkea.ca, pramod.kumar_1@nxp.com, rabeeh@solid-run.com,
-        cosmin.stoica@nxp.com, l.stach@pengutronix.de,
-        leonard.crestez@nxp.com, daniel.baluta@nxp.com, jun.li@nxp.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V3 4/4] dt-bindings: arm: imx: Add the i.MX8MP EVK board
-Date:   Tue, 11 Feb 2020 20:48:27 +0800
-Message-Id: <1581425307-18567-4-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1581425307-18567-1-git-send-email-Anson.Huang@nxp.com>
-References: <1581425307-18567-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728250AbgBKMt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 07:49:28 -0500
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 48H2fF1038z6x;
+        Tue, 11 Feb 2020 13:49:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1581425366; bh=Oi4cDhIGtxiZAoWxm80J+ow/YXQ40nADnyXOVF9DgGo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=L5yGDynUPr8QO3TpQJfDopTDQLwT2QGZroz7/JT0aSpQNALg5077ZwQNVGlAAXrrA
+         Sf2Y+3/FtLySC6GDuDq9oLFUOCQk8F38NQo9T79cbkMoJkr8QtLelhIQJCen5NXeX/
+         3wIxmnN966lWo6iRyM+4TuC+E2r4YMKa64Rkzr/Nh4OuYATkrcgWn6IvU253EPEMav
+         63Fz+PHs3ujBj+u6qZOJVdtTOfFJrEVBM2F5cGfxfdxmDn/IBsPdi4UIyS03IdXUCK
+         sYVt3x99QVQKVN7NqkbG8KYdJQuZxibTbvzmgB5vyWIvxb+kD+t+qAlzx58s92riL4
+         F9HiCbqFfngZA==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.102.1 at mail
+Date:   Tue, 11 Feb 2020 13:49:22 +0100
+From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+To:     =?iso-8859-2?B?Suly9G1l?= Pouiller <Jerome.Pouiller@silabs.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/6] staging: wfx: fix init/remove vs IRQ race
+Message-ID: <20200211124922.GA23464@qmqm.qmqm.pl>
+References: <cover.1581416843.git.mirq-linux@rere.qmqm.pl>
+ <f0c66cbb3110c2736cd4357c753fba8c14ee3aee.1581416843.git.mirq-linux@rere.qmqm.pl>
+ <4119656.HTyy427nan@pc-42>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-2
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4119656.HTyy427nan@pc-42>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add board binding for i.MX8MP EVK board.
+On Tue, Feb 11, 2020 at 11:19:18AM +0000, Jérôme Pouiller wrote:
+> On Tuesday 11 February 2020 11:35:01 CET Micha³ Miros³aw wrote:
+> > Current code races in init/exit with interrupt handlers. This is noticed
+> > by the warning below. Fix it by using devres for ordering allocations and
+> > IRQ de/registration.
+> > 
+> > WARNING: CPU: 0 PID: 827 at drivers/staging/wfx/bus_spi.c:142 wfx_spi_irq_handler+0x5c/0x64 [wfx]
+> > race condition in driver init/deinit
+[...]
+> > --- a/drivers/staging/wfx/bus_spi.c
+> > +++ b/drivers/staging/wfx/bus_spi.c
+> > @@ -154,6 +154,11 @@ static void wfx_spi_request_rx(struct work_struct *work)
+> >         wfx_bh_request_rx(bus->core);
+> >  }
+> > 
+> > +static void wfx_flush_irq_work(void *w)
+> > +{
+> > +       flush_work(w);
+> > +}
+> > +
+> >  static size_t wfx_spi_align_size(void *priv, size_t size)
+> >  {
+> >         // Most of SPI controllers avoid DMA if buffer size is not 32bit aligned
+> > @@ -207,22 +212,23 @@ static int wfx_spi_probe(struct spi_device *func)
+> >                 udelay(2000);
+> >         }
+> > 
+> > -       ret = devm_request_irq(&func->dev, func->irq, wfx_spi_irq_handler,
+> > -                              IRQF_TRIGGER_RISING, "wfx", bus);
+> > -       if (ret)
+> > -               return ret;
+> > -
+> >         INIT_WORK(&bus->request_rx, wfx_spi_request_rx);
+> >         bus->core = wfx_init_common(&func->dev, &wfx_spi_pdata,
+> >                                     &wfx_spi_hwbus_ops, bus);
+> >         if (!bus->core)
+> >                 return -EIO;
+> > 
+> > -       ret = wfx_probe(bus->core);
+> > +       ret = devm_add_action_or_reset(&func->dev, wfx_flush_irq_work,
+> > +                                      &bus->request_rx);
+> >         if (ret)
+> > -               wfx_free_common(bus->core);
+> > +               return ret;
+> > 
+> > -       return ret;
+> > +       ret = devm_request_irq(&func->dev, func->irq, wfx_spi_irq_handler,
+> > +                              IRQF_TRIGGER_RISING, "wfx", bus);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       return wfx_probe(bus->core);
+> >  }
+> > 
+> >  static int wfx_spi_remove(struct spi_device *func)
+> > @@ -230,11 +236,6 @@ static int wfx_spi_remove(struct spi_device *func)
+> >         struct wfx_spi_priv *bus = spi_get_drvdata(func);
+> > 
+> >         wfx_release(bus->core);
+> > -       wfx_free_common(bus->core);
+> > -       // A few IRQ will be sent during device release. Hopefully, no IRQ
+> > -       // should happen after wdev/wvif are released.
+> > -       devm_free_irq(&func->dev, func->irq, bus);
+> > -       flush_work(&bus->request_rx);
+> >         return 0;
+> >  }
+> > 
+> > diff --git a/drivers/staging/wfx/main.c b/drivers/staging/wfx/main.c
+> > index 84adad64fc30..76b2ff7fc7fe 100644
+> > --- a/drivers/staging/wfx/main.c
+> > +++ b/drivers/staging/wfx/main.c
+> > @@ -262,6 +262,16 @@ static int wfx_send_pdata_pds(struct wfx_dev *wdev)
+> >         return ret;
+> >  }
+> > 
+> > +static void wfx_free_common(void *data)
+> > +{
+> > +       struct wfx_dev *wdev = data;
+> > +
+> > +       mutex_destroy(&wdev->rx_stats_lock);
+> > +       mutex_destroy(&wdev->conf_mutex);
+> > +       wfx_tx_queues_deinit(wdev);
+> > +       ieee80211_free_hw(wdev->hw);
+> > +}
+> > +
+> >  struct wfx_dev *wfx_init_common(struct device *dev,
+> >                                 const struct wfx_platform_data *pdata,
+> >                                 const struct hwbus_ops *hwbus_ops,
+> > @@ -332,17 +342,12 @@ struct wfx_dev *wfx_init_common(struct device *dev,
+> >         wfx_init_hif_cmd(&wdev->hif_cmd);
+> >         wfx_tx_queues_init(wdev);
+> > 
+> > +       if (devm_add_action_or_reset(dev, wfx_free_common, wdev))
+> > +               return NULL;
+> > +
+> >         return wdev;
+> >  }
+> > 
+> > -void wfx_free_common(struct wfx_dev *wdev)
+> > -{
+> > -       mutex_destroy(&wdev->rx_stats_lock);
+> > -       mutex_destroy(&wdev->conf_mutex);
+> > -       wfx_tx_queues_deinit(wdev);
+> > -       ieee80211_free_hw(wdev->hw);
+> > -}
+> > -
+> >  int wfx_probe(struct wfx_dev *wdev)
+> >  {
+> >         int i;
+> > diff --git a/drivers/staging/wfx/main.h b/drivers/staging/wfx/main.h
+> > index 875f8c227803..9c9410072def 100644
+> > --- a/drivers/staging/wfx/main.h
+> > +++ b/drivers/staging/wfx/main.h
+> > @@ -34,7 +34,6 @@ struct wfx_dev *wfx_init_common(struct device *dev,
+> >                                 const struct wfx_platform_data *pdata,
+> >                                 const struct hwbus_ops *hwbus_ops,
+> >                                 void *hwbus_priv);
+> > -void wfx_free_common(struct wfx_dev *wdev);
+> > 
+> >  int wfx_probe(struct wfx_dev *wdev);
+> >  void wfx_release(struct wfx_dev *wdev);
+> > --
+> > 2.20.1
+> > 
+> 
+> Are you sure you can completely drop wfx_free_common()? If you want to
+> use devres, I think that wfx_flush_irq_work() should call
+> wfx_free_common(), no?
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-No change.
----
- Documentation/devicetree/bindings/arm/fsl.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+wfx_free_common() will be called by devres in the right order. That's ensured
+by devm_add_action_or_reset() at the end of wfx_init_common().
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-index c5b0270..b8c8c72b 100644
---- a/Documentation/devicetree/bindings/arm/fsl.yaml
-+++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-@@ -324,6 +324,12 @@ properties:
-               - fsl,imx8mn-evk            # i.MX8MN LPDDR4 EVK Board
-           - const: fsl,imx8mn
- 
-+      - description: i.MX8MP based Boards
-+        items:
-+          - enum:
-+              - fsl,imx8mp-evk            # i.MX8MP EVK Board
-+          - const: fsl,imx8mp
-+
-       - description: i.MX8MQ based Boards
-         items:
-           - enum:
--- 
-2.7.4
-
+Best Regards,
+Micha³ Miros³aw
