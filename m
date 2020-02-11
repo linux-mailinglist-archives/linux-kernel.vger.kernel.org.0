@@ -2,118 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC4081592CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 16:19:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50EBE1592D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 16:20:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730353AbgBKPTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 10:19:21 -0500
-Received: from mail.efficios.com ([167.114.26.124]:53654 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728563AbgBKPTT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 10:19:19 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 932F424D18E;
-        Tue, 11 Feb 2020 10:19:18 -0500 (EST)
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 26pbH5EzZl0C; Tue, 11 Feb 2020 10:19:18 -0500 (EST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 3B31224D18D;
-        Tue, 11 Feb 2020 10:19:18 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 3B31224D18D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1581434358;
-        bh=9R5XSbWrIWWtI2XeGqI7V3shuI47gpCNPyA7CiyFgus=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=jHKHuzjLurBa/hVKB2CzVt7qMtBIqWlIlpKygHHDS2+fC7n+8i45kZ7Erh5UeiFJZ
-         ftY6tg0cWlHrne75ZsahYMnYFU/WssVxBF/KFk7bC2hYVBPgBOx/rtQixDG16H8L/p
-         tR2xL06yHlTcbJfO0LUv08J451x9TTAPAhPQ6BAjwLAxeYgFh/ZNRN41qRmLvCBhBe
-         3dWsaO/D9PdiYxzsA8WH0/z3m+HjzXnU1qBt/OuG2jOXurXFT/AMa6iOadIZ7t6PGI
-         w66ffX19kqnBbyu22GIz/wO7r/1fnLMW6bRmronNDG9D/rAU+Ef+oQJzzA8XrSaWcb
-         CTdBoszBSITUg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id gWyJNOxmf0j8; Tue, 11 Feb 2020 10:19:18 -0500 (EST)
-Received: from mail03.efficios.com (mail03.efficios.com [167.114.26.124])
-        by mail.efficios.com (Postfix) with ESMTP id 24C9624CBA0;
-        Tue, 11 Feb 2020 10:19:18 -0500 (EST)
-Date:   Tue, 11 Feb 2020 10:19:18 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        paulmck <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Message-ID: <962026294.617571.1581434358053.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20200210212222.59a8c519@rorschach.local.home>
-References: <20200210170643.3544795d@gandalf.local.home> <576504045.617212.1581381032132.JavaMail.zimbra@efficios.com> <20200210212222.59a8c519@rorschach.local.home>
-Subject: Re: [PATCH] tracing/perf: Move rcu_irq_enter/exit_irqson() to perf
- trace point hook
+        id S1729181AbgBKPUT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 10:20:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54800 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728068AbgBKPUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 10:20:18 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F49F2086A;
+        Tue, 11 Feb 2020 15:20:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581434418;
+        bh=Be6Zsbal8nGWhLXNcPwHMCsqIgYS3+azBCOwQNEdmPc=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=zUHhURWQCUBRmuutm1dzvilmd3/emPKY+MziJgo3D7+JGOkdiwk6WWGndFe5kN+Tq
+         iglQpVXrmMVxKRdsVygBI6f4CUMqqCHEntsT8lqtT+8t/jMCRRSE2qRMPQ7cKyteka
+         s1U6bGyNVWGo4EgneWMVuvyn5vjB4OxTR/o5tieQ=
+Subject: Re: [PATCH] Removing a duplicate condition.
+To:     Isaac Young <isaac.young5@gmail.com>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shuah <shuah@kernel.org>
+References: <20200211113257.451781-1-isaac.young5@gmail.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <3bace0e9-7ce7-aaea-9a6c-3949a6e52a08@kernel.org>
+Date:   Tue, 11 Feb 2020 08:19:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200211113257.451781-1-isaac.young5@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.26.124]
-X-Mailer: Zimbra 8.8.15_GA_3895 (ZimbraWebClient - FF72 (Linux)/8.8.15_GA_3895)
-Thread-Topic: tracing/perf: Move rcu_irq_enter/exit_irqson() to perf trace point hook
-Thread-Index: Qsnlc2BD5rDXAR83Nev90DoiF2Bx7g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Feb 10, 2020, at 9:22 PM, rostedt rostedt@goodmis.org wrote:
+Please include subsystem and test name in the subject line.
 
-> On Mon, 10 Feb 2020 19:30:32 -0500 (EST)
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+On 2/11/20 4:32 AM, Isaac Young wrote:
+> Signed-off-by: Isaac Young <isaac.young5@gmail.com>
+
+Missing commit log
+
+> ---
+>   tools/testing/selftests/bpf/prog_tests/select_reuseport.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->> ----- On Feb 10, 2020, at 5:06 PM, rostedt rostedt@goodmis.org wrote:
->> 
->> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
->> 
->> Hi Steven,
+> diff --git a/tools/testing/selftests/bpf/prog_tests/select_reuseport.c b/tools/testing/selftests/bpf/prog_tests/select_reuseport.c
+> index 098bcae5f827..0954c7a8aa08 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/select_reuseport.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/select_reuseport.c
+> @@ -823,7 +823,7 @@ void test_select_reuseport(void)
+>   
+>   	saved_tcp_fo = read_int_sysctl(TCP_FO_SYSCTL);
+>   	saved_tcp_syncookie = read_int_sysctl(TCP_SYNCOOKIE_SYSCTL);
+> -	if (saved_tcp_syncookie < 0 || saved_tcp_syncookie < 0)
+
+This might not be the right fix. I think the check should be
+if (saved_tcp_fo < 0 || saved_tcp_syncookie < 0)
+
+at least makes the most sense based on the code.
+
+
+> +	if (saved_tcp_syncookie < 0)
+>   		goto out;
+>   
+>   	if (enable_fastopen())
 > 
-> Hi Mathieu!
-[...]
->> 
->> Which brings a question about handling of NMIs: in the proposed patch, if
->> a NMI nests over rcuidle context, AFAIU it will be in a state
->> !rcu_is_watching() && in_nmi(), which is handled by this patch with a simple
->> "return", meaning important NMIs doing hardware event sampling can be
->> completely lost.
->> 
->> Considering that we cannot use rcu_irq_enter/exit_irqson() from NMI context,
->> is it at all valid to use rcu_read_lock/unlock() as perf does from NMI handlers,
->> considering that those can be nested on top of rcuidle context ?
->> 
-> 
-> Note, in the __DO_TRACE macro, we've had this for a long time:
-> 
->		/* srcu can't be used from NMI */			\
->		WARN_ON_ONCE(rcuidle && in_nmi());			\
-> 
-> With nothing triggering.
 
-The "rcuidle" argument is only true for tracepoints which are declared to be used
-within the rcuidle code. AFAIK, it does not cover tracepoints which can be placed
-in NMI handlers. The state I am concerned about is really:
-
-WARN_ON_ONCE(!rcu_is_watching() && in_nmi())
-
-As pointed out by Peter further down in this thread.
-
-Thanks,
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+thanks,
+-- Shuah
