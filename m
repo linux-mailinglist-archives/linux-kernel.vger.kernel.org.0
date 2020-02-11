@@ -2,271 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37E9A158EED
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:48:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32B41158F17
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:49:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728797AbgBKMsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 07:48:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57618 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728680AbgBKMsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 07:48:05 -0500
-Received: from localhost (unknown [209.37.97.194])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1609C20842;
-        Tue, 11 Feb 2020 12:48:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581425284;
-        bh=IEMmRHvU26st71jvjIMOxidWurLcy+y23gwdpZADlqQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=laZdw/y8kDeCJOxdPcpiQNClTbi0V7NCceFzysRdB9n6Tu76jaLr4hAzZlm/jTXSV
-         HPctyEkiZtFTqNNKs47A87mnwFbXBXCJRg340UM5166kMCc/bSEjyWRYO79Fa0t9JQ
-         ZjQ3QF3caXYAiEAsvdngNQetSBlDYHtw1sJtSeCU=
-Date:   Tue, 11 Feb 2020 04:48:03 -0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-usb@vger.kernel.org, devel@driverdev.osuosl.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] Staging: remove wusbcore and UWB from the kernel tree.
-Message-ID: <20200211124803.GA1880331@kroah.com>
+        id S1729148AbgBKMtX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 07:49:23 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:46066 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728946AbgBKMs0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 07:48:26 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1j1Uxi-0007kD-Fw; Tue, 11 Feb 2020 13:48:22 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 148A11C2017;
+        Tue, 11 Feb 2020 13:48:22 +0100 (CET)
+Date:   Tue, 11 Feb 2020 12:48:21 -0000
+From:   "tip-bot2 for Davidlohr Bueso" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/core] locking/percpu-rwsem: Add might_sleep() for
+ writer locking
+Cc:     Davidlohr Bueso <dbueso@suse.de>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
+        Waiman Long <longman@redhat.com>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200108013305.7732-1-dave@stgolabs.net>
+References: <20200108013305.7732-1-dave@stgolabs.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Message-ID: <158142530179.411.17952389583883812912.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's been over 6 months, and no one has noticed that these drivers are
-deleted, probably because no one actually has this hardware.  As no one
-has volunteered to maintain the code, let's drop it for good.
+The following commit has been merged into the locking/core branch of tip:
 
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Commit-ID:     41f0e29190ac9e38099a37abd1a8a4cb1dc21233
+Gitweb:        https://git.kernel.org/tip/41f0e29190ac9e38099a37abd1a8a4cb1dc21233
+Author:        Davidlohr Bueso <dave@stgolabs.net>
+AuthorDate:    Tue, 07 Jan 2020 17:33:04 -08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 11 Feb 2020 13:11:02 +01:00
+
+locking/percpu-rwsem: Add might_sleep() for writer locking
+
+We are missing this annotation in percpu_down_write(). Correct
+this.
+
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Will Deacon <will@kernel.org>
+Acked-by: Waiman Long <longman@redhat.com>
+Link: https://lkml.kernel.org/r/20200108013305.7732-1-dave@stgolabs.net
 ---
-[resending and deleting the actual diffs as the patch was too big for
-the lists]
+ kernel/locking/percpu-rwsem.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- MAINTAINERS                                   |   10 -
- drivers/staging/Kconfig                       |    3 -
- drivers/staging/Makefile                      |    2 -
- drivers/staging/uwb/Kconfig                   |   72 -
- drivers/staging/uwb/Makefile                  |   32 -
- drivers/staging/uwb/TODO                      |    8 -
- drivers/staging/uwb/address.c                 |  352 --
- drivers/staging/uwb/allocator.c               |  374 ---
- drivers/staging/uwb/beacon.c                  |  595 ----
- drivers/staging/uwb/driver.c                  |  143 -
- drivers/staging/uwb/drp-avail.c               |  278 --
- drivers/staging/uwb/drp-ie.c                  |  305 --
- drivers/staging/uwb/drp.c                     |  842 -----
- drivers/staging/uwb/est.c                     |  450 ---
- drivers/staging/uwb/hwa-rc.c                  |  929 ------
- drivers/staging/uwb/i1480/Makefile            |    2 -
- drivers/staging/uwb/i1480/dfu/Makefile        |   10 -
- drivers/staging/uwb/i1480/dfu/dfu.c           |  198 --
- drivers/staging/uwb/i1480/dfu/i1480-dfu.h     |  246 --
- drivers/staging/uwb/i1480/dfu/mac.c           |  496 ---
- drivers/staging/uwb/i1480/dfu/phy.c           |  190 --
- drivers/staging/uwb/i1480/dfu/usb.c           |  448 ---
- drivers/staging/uwb/i1480/i1480-est.c         |   85 -
- drivers/staging/uwb/ie-rcv.c                  |   42 -
- drivers/staging/uwb/ie.c                      |  366 ---
- drivers/staging/uwb/include/debug-cmd.h       |   57 -
- drivers/staging/uwb/include/spec.h            |  767 -----
- drivers/staging/uwb/include/umc.h             |  192 --
- drivers/staging/uwb/include/whci.h            |  102 -
- drivers/staging/uwb/lc-dev.c                  |  457 ---
- drivers/staging/uwb/lc-rc.c                   |  569 ----
- drivers/staging/uwb/neh.c                     |  606 ----
- drivers/staging/uwb/pal.c                     |  128 -
- drivers/staging/uwb/radio.c                   |  196 --
- drivers/staging/uwb/reset.c                   |  379 ---
- drivers/staging/uwb/rsv.c                     | 1000 ------
- drivers/staging/uwb/scan.c                    |  120 -
- drivers/staging/uwb/umc-bus.c                 |  211 --
- drivers/staging/uwb/umc-dev.c                 |   94 -
- drivers/staging/uwb/umc-drv.c                 |   31 -
- drivers/staging/uwb/uwb-debug.c               |  354 --
- drivers/staging/uwb/uwb-internal.h            |  366 ---
- drivers/staging/uwb/uwb.h                     |  817 -----
- drivers/staging/uwb/uwbd.c                    |  356 --
- drivers/staging/uwb/whc-rc.c                  |  467 ---
- drivers/staging/uwb/whci.c                    |  257 --
- .../staging/wusbcore/Documentation/wusb-cbaf  |  130 -
- .../Documentation/wusb-design-overview.rst    |  457 ---
- drivers/staging/wusbcore/Kconfig              |   39 -
- drivers/staging/wusbcore/Makefile             |   28 -
- drivers/staging/wusbcore/TODO                 |    8 -
- drivers/staging/wusbcore/cbaf.c               |  645 ----
- drivers/staging/wusbcore/crypto.c             |  441 ---
- drivers/staging/wusbcore/dev-sysfs.c          |  124 -
- drivers/staging/wusbcore/devconnect.c         | 1085 ------
- drivers/staging/wusbcore/host/Kconfig         |   28 -
- drivers/staging/wusbcore/host/Makefile        |    3 -
- drivers/staging/wusbcore/host/hwa-hc.c        |  875 -----
- drivers/staging/wusbcore/host/whci/Makefile   |   14 -
- drivers/staging/wusbcore/host/whci/asl.c      |  376 ---
- drivers/staging/wusbcore/host/whci/debug.c    |  153 -
- drivers/staging/wusbcore/host/whci/hcd.c      |  356 --
- drivers/staging/wusbcore/host/whci/hw.c       |   93 -
- drivers/staging/wusbcore/host/whci/init.c     |  177 -
- drivers/staging/wusbcore/host/whci/int.c      |   82 -
- drivers/staging/wusbcore/host/whci/pzl.c      |  404 ---
- drivers/staging/wusbcore/host/whci/qset.c     |  831 -----
- drivers/staging/wusbcore/host/whci/whcd.h     |  202 --
- drivers/staging/wusbcore/host/whci/whci-hc.h  |  401 ---
- drivers/staging/wusbcore/host/whci/wusb.c     |  210 --
- .../staging/wusbcore/include/association.h    |  151 -
- drivers/staging/wusbcore/include/wusb-wa.h    |  304 --
- drivers/staging/wusbcore/include/wusb.h       |  362 --
- drivers/staging/wusbcore/mmc.c                |  303 --
- drivers/staging/wusbcore/pal.c                |   45 -
- drivers/staging/wusbcore/reservation.c        |  110 -
- drivers/staging/wusbcore/rh.c                 |  426 ---
- drivers/staging/wusbcore/security.c           |  599 ----
- drivers/staging/wusbcore/wa-hc.c              |   88 -
- drivers/staging/wusbcore/wa-hc.h              |  467 ---
- drivers/staging/wusbcore/wa-nep.c             |  289 --
- drivers/staging/wusbcore/wa-rpipe.c           |  539 ---
- drivers/staging/wusbcore/wa-xfer.c            | 2927 -----------------
- drivers/staging/wusbcore/wusbhc.c             |  490 ---
- drivers/staging/wusbcore/wusbhc.h             |  487 ---
- 85 files changed, 28753 deletions(-)
- delete mode 100644 drivers/staging/uwb/Kconfig
- delete mode 100644 drivers/staging/uwb/Makefile
- delete mode 100644 drivers/staging/uwb/TODO
- delete mode 100644 drivers/staging/uwb/address.c
- delete mode 100644 drivers/staging/uwb/allocator.c
- delete mode 100644 drivers/staging/uwb/beacon.c
- delete mode 100644 drivers/staging/uwb/driver.c
- delete mode 100644 drivers/staging/uwb/drp-avail.c
- delete mode 100644 drivers/staging/uwb/drp-ie.c
- delete mode 100644 drivers/staging/uwb/drp.c
- delete mode 100644 drivers/staging/uwb/est.c
- delete mode 100644 drivers/staging/uwb/hwa-rc.c
- delete mode 100644 drivers/staging/uwb/i1480/Makefile
- delete mode 100644 drivers/staging/uwb/i1480/dfu/Makefile
- delete mode 100644 drivers/staging/uwb/i1480/dfu/dfu.c
- delete mode 100644 drivers/staging/uwb/i1480/dfu/i1480-dfu.h
- delete mode 100644 drivers/staging/uwb/i1480/dfu/mac.c
- delete mode 100644 drivers/staging/uwb/i1480/dfu/phy.c
- delete mode 100644 drivers/staging/uwb/i1480/dfu/usb.c
- delete mode 100644 drivers/staging/uwb/i1480/i1480-est.c
- delete mode 100644 drivers/staging/uwb/ie-rcv.c
- delete mode 100644 drivers/staging/uwb/ie.c
- delete mode 100644 drivers/staging/uwb/include/debug-cmd.h
- delete mode 100644 drivers/staging/uwb/include/spec.h
- delete mode 100644 drivers/staging/uwb/include/umc.h
- delete mode 100644 drivers/staging/uwb/include/whci.h
- delete mode 100644 drivers/staging/uwb/lc-dev.c
- delete mode 100644 drivers/staging/uwb/lc-rc.c
- delete mode 100644 drivers/staging/uwb/neh.c
- delete mode 100644 drivers/staging/uwb/pal.c
- delete mode 100644 drivers/staging/uwb/radio.c
- delete mode 100644 drivers/staging/uwb/reset.c
- delete mode 100644 drivers/staging/uwb/rsv.c
- delete mode 100644 drivers/staging/uwb/scan.c
- delete mode 100644 drivers/staging/uwb/umc-bus.c
- delete mode 100644 drivers/staging/uwb/umc-dev.c
- delete mode 100644 drivers/staging/uwb/umc-drv.c
- delete mode 100644 drivers/staging/uwb/uwb-debug.c
- delete mode 100644 drivers/staging/uwb/uwb-internal.h
- delete mode 100644 drivers/staging/uwb/uwb.h
- delete mode 100644 drivers/staging/uwb/uwbd.c
- delete mode 100644 drivers/staging/uwb/whc-rc.c
- delete mode 100644 drivers/staging/uwb/whci.c
- delete mode 100644 drivers/staging/wusbcore/Documentation/wusb-cbaf
- delete mode 100644 drivers/staging/wusbcore/Documentation/wusb-design-overview.rst
- delete mode 100644 drivers/staging/wusbcore/Kconfig
- delete mode 100644 drivers/staging/wusbcore/Makefile
- delete mode 100644 drivers/staging/wusbcore/TODO
- delete mode 100644 drivers/staging/wusbcore/cbaf.c
- delete mode 100644 drivers/staging/wusbcore/crypto.c
- delete mode 100644 drivers/staging/wusbcore/dev-sysfs.c
- delete mode 100644 drivers/staging/wusbcore/devconnect.c
- delete mode 100644 drivers/staging/wusbcore/host/Kconfig
- delete mode 100644 drivers/staging/wusbcore/host/Makefile
- delete mode 100644 drivers/staging/wusbcore/host/hwa-hc.c
- delete mode 100644 drivers/staging/wusbcore/host/whci/Makefile
- delete mode 100644 drivers/staging/wusbcore/host/whci/asl.c
- delete mode 100644 drivers/staging/wusbcore/host/whci/debug.c
- delete mode 100644 drivers/staging/wusbcore/host/whci/hcd.c
- delete mode 100644 drivers/staging/wusbcore/host/whci/hw.c
- delete mode 100644 drivers/staging/wusbcore/host/whci/init.c
- delete mode 100644 drivers/staging/wusbcore/host/whci/int.c
- delete mode 100644 drivers/staging/wusbcore/host/whci/pzl.c
- delete mode 100644 drivers/staging/wusbcore/host/whci/qset.c
- delete mode 100644 drivers/staging/wusbcore/host/whci/whcd.h
- delete mode 100644 drivers/staging/wusbcore/host/whci/whci-hc.h
- delete mode 100644 drivers/staging/wusbcore/host/whci/wusb.c
- delete mode 100644 drivers/staging/wusbcore/include/association.h
- delete mode 100644 drivers/staging/wusbcore/include/wusb-wa.h
- delete mode 100644 drivers/staging/wusbcore/include/wusb.h
- delete mode 100644 drivers/staging/wusbcore/mmc.c
- delete mode 100644 drivers/staging/wusbcore/pal.c
- delete mode 100644 drivers/staging/wusbcore/reservation.c
- delete mode 100644 drivers/staging/wusbcore/rh.c
- delete mode 100644 drivers/staging/wusbcore/security.c
- delete mode 100644 drivers/staging/wusbcore/wa-hc.c
- delete mode 100644 drivers/staging/wusbcore/wa-hc.h
- delete mode 100644 drivers/staging/wusbcore/wa-nep.c
- delete mode 100644 drivers/staging/wusbcore/wa-rpipe.c
- delete mode 100644 drivers/staging/wusbcore/wa-xfer.c
- delete mode 100644 drivers/staging/wusbcore/wusbhc.c
- delete mode 100644 drivers/staging/wusbcore/wusbhc.h
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 38fe2f3f7b6f..9a4c715d1e50 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3919,11 +3919,6 @@ F:	certs/
- F:	scripts/sign-file.c
- F:	scripts/extract-cert.c
+diff --git a/kernel/locking/percpu-rwsem.c b/kernel/locking/percpu-rwsem.c
+index 8048a9a..183a3aa 100644
+--- a/kernel/locking/percpu-rwsem.c
++++ b/kernel/locking/percpu-rwsem.c
+@@ -212,6 +212,7 @@ static bool readers_active_check(struct percpu_rw_semaphore *sem)
  
--CERTIFIED WIRELESS USB (WUSB) SUBSYSTEM:
--L:	devel@driverdev.osuosl.org
--S:	Obsolete
--F:	drivers/staging/wusbcore/
--
- CFAG12864B LCD DRIVER
- M:	Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
- S:	Maintained
-@@ -17094,11 +17089,6 @@ S:	Maintained
- F:	drivers/usb/common/ulpi.c
- F:	include/linux/ulpi/
+ void percpu_down_write(struct percpu_rw_semaphore *sem)
+ {
++	might_sleep();
+ 	rwsem_acquire(&sem->dep_map, 0, 0, _RET_IP_);
  
--ULTRA-WIDEBAND (UWB) SUBSYSTEM:
--L:	devel@driverdev.osuosl.org
--S:	Obsolete
--F:	drivers/staging/uwb/
--
- UNICODE SUBSYSTEM:
- M:	Gabriel Krisman Bertazi <krisman@collabora.com>
- L:	linux-fsdevel@vger.kernel.org
-diff --git a/drivers/staging/Kconfig b/drivers/staging/Kconfig
-index baccd7c883cc..0f82e23e151b 100644
---- a/drivers/staging/Kconfig
-+++ b/drivers/staging/Kconfig
-@@ -112,9 +112,6 @@ source "drivers/staging/fieldbus/Kconfig"
- 
- source "drivers/staging/kpc2000/Kconfig"
- 
--source "drivers/staging/wusbcore/Kconfig"
--source "drivers/staging/uwb/Kconfig"
--
- source "drivers/staging/exfat/Kconfig"
- 
- source "drivers/staging/qlge/Kconfig"
-diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
-index fdd03fd6e704..49b21951b6f2 100644
---- a/drivers/staging/Makefile
-+++ b/drivers/staging/Makefile
-@@ -46,8 +46,6 @@ obj-$(CONFIG_STAGING_GASKET_FRAMEWORK)	+= gasket/
- obj-$(CONFIG_XIL_AXIS_FIFO)	+= axis-fifo/
- obj-$(CONFIG_FIELDBUS_DEV)     += fieldbus/
- obj-$(CONFIG_KPC2000)		+= kpc2000/
--obj-$(CONFIG_UWB)		+= uwb/
--obj-$(CONFIG_USB_WUSB)		+= wusbcore/
- obj-$(CONFIG_STAGING_EXFAT_FS)	+= exfat/
- obj-$(CONFIG_QLGE)		+= qlge/
- obj-$(CONFIG_NET_VENDOR_HP)	+= hp/
+ 	/* Notify readers to take the slow path. */
