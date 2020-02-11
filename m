@@ -2,262 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0208158D5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 12:16:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 984A9158D65
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 12:19:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbgBKLQz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 06:16:55 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:46282 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727950AbgBKLQz (ORCPT
+        id S1728567AbgBKLTE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 06:19:04 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:44373 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727761AbgBKLTE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 06:16:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581419812;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=vKGNGn2it1JwwsYxCfUMczjolXl+hAYY/ftpLhJ2kO0=;
-        b=DxPu2FumFFjgpDy1JlA8dKXqH3TrBq+rBbN47JPKlMOecORTdnOzGlRQxsPkLriLWFbA95
-        uIj1xyPqYNOHmTQtP+S7yLf/PQSlzCwOd9If8j+ylpSx0xl1sDHmLzJuI2jYZs/8Q0SIBc
-        p46IC8fCf5ycEkhGyXq4W8m/0zqT1JU=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-32-D5glyEqIPUSLs47xim0anw-1; Tue, 11 Feb 2020 06:16:51 -0500
-X-MC-Unique: D5glyEqIPUSLs47xim0anw-1
-Received: by mail-qk1-f200.google.com with SMTP id b23so6811889qkg.17
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 03:16:51 -0800 (PST)
+        Tue, 11 Feb 2020 06:19:04 -0500
+Received: by mail-il1-f194.google.com with SMTP id s85so3083078ill.11;
+        Tue, 11 Feb 2020 03:19:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rVhcVjlq8na3czw/tkwf6l6sePScsOfYU5Ogr7k0eCs=;
+        b=jhM+87nIV3eGnOzI14WbJNrPKm1HIDv1USv22qODslUnAdL8F6u/kl61BxSpUOTnW4
+         xZfVVaajACAOZw+wxOUBKyxBjupzu/ErjqCyQD0iSgVqVP7l2q8KOOSRFZIyT4JiBq6K
+         NjNBWnlrJ7A0/ZnaU/nWC7qvGwzm6sEfZOKgzSncc1YwHqePggXpcG3QlQ9DiNQFINo8
+         2qN3krHATdz6m5NZOlpfV47HNzgcMQ6XB9B291HeVn78wmzUayrPbTOaiTgUaBLHKkrX
+         x/ajVJmuewSo2LRLOHlDcqkqJS1Jb5DhWnwimEEda3wtR4Ts7kxuu7G+n+4tu6ZuYfIi
+         lC+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=vKGNGn2it1JwwsYxCfUMczjolXl+hAYY/ftpLhJ2kO0=;
-        b=f1M14gA+VeU9qmS/SYcjvEYz7ljqST8BAa0xLPe0KakEVE/MDjDH7wbFWjieW5rIZl
-         2m7vtUQHnzoTQwDf8ZjD5weAE8+QUQncOVS0j/6PErdlwqsxykVVPQF6BJbQ9x0jLh9i
-         qGg8Qp9i/4Im0eoI4CoWRTcM4zyQrhIpsW0fDxS6V5hskadmPf6Dwu2mU6djHjWvlc6s
-         cqpf4xShj3kknJOayzp7oGTq05HXukF3Q8qMksxCHSRh0hwgdnOssZ5Glzl8gLEvb7V3
-         uJZgGZSrS3YibcY+4h1ISEUM69l5Rl2UhH0Sl9IvH8kWt9ysRq1YPwXbiAgARC+XXaII
-         asBA==
-X-Gm-Message-State: APjAAAX/18suSyOS8rWeWH/5pJjS8fTjiS1Nr1T78W8Px+n8RMEla55W
-        ZGogiqGxLF3h3OIKG+dc6bl3Zt9+pEsbSBBUbXrhoKDJjWlQEBBL9W8S4nmrWplT4EAXfrH2mvL
-        qO6h2MtY41fdxw4fXXCvVNjH4
-X-Received: by 2002:a37:8683:: with SMTP id i125mr2161814qkd.491.1581419811124;
-        Tue, 11 Feb 2020 03:16:51 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzpubveRI33Yzc0hGrHTQqqdWpmrDXHJXaUUgY3HWWAVkliyxjcqXfwsVPK/NbnSdEAahm0Yw==
-X-Received: by 2002:a37:8683:: with SMTP id i125mr2161788qkd.491.1581419810854;
-        Tue, 11 Feb 2020 03:16:50 -0800 (PST)
-Received: from redhat.com (bzq-79-176-41-183.red.bezeqint.net. [79.176.41.183])
-        by smtp.gmail.com with ESMTPSA id d25sm1788100qka.39.2020.02.11.03.16.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 03:16:50 -0800 (PST)
-Date:   Tue, 11 Feb 2020 06:16:45 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Zha Bin <zhabin@linux.alibaba.com>
-Cc:     linux-kernel@vger.kernel.org, jasowang@redhat.com, slp@redhat.com,
-        virtio-dev@lists.oasis-open.org, qemu-devel@nongnu.org,
-        gerry@linux.alibaba.com, jing2.liu@linux.intel.com,
-        chao.p.peng@linux.intel.com
-Subject: Re: [PATCH v2 3/5] virtio-mmio: create a generic MSI irq domain
-Message-ID: <20200211061503-mutt-send-email-mst@kernel.org>
-References: <cover.1581305609.git.zhabin@linux.alibaba.com>
- <4c52548758eefe1fe7078d3b6f10492a001c0636.1581305609.git.zhabin@linux.alibaba.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rVhcVjlq8na3czw/tkwf6l6sePScsOfYU5Ogr7k0eCs=;
+        b=trBsuCdFfreE7U4bN2o5TgQZ4L0qjo0j5/F8GYHmEE5LHXh9fe/FYTPZeJuIkyGkqD
+         nCvnM1WwN40uK/fcDYpTSd4YNa96CC0K+WRnucvuM6ueR8V4DKDRsbcNuy2ayLw3iBxH
+         xTw9p8BLRQe2hVqQCIPoufLyv0PK5y6nbt0pBNbddXT35Q4oIRmdAQYM9DQQs+msedQ2
+         9v0ptihqNp+hXx/qja68XmTpoZ66czkVy0iDeEtw0VQkk+bdy4chfF66We0JW+6S2wkr
+         s9qushjV814HSu5+w59NkLsdRTJt0qJUQw7DFhaDnzJyRMJyMbxjNudx4rKlZRC8bRZF
+         yCFQ==
+X-Gm-Message-State: APjAAAXgNPEq4R3DNnLZAO+d5/iesGm+drpaCdE2QljuRB5+O6kNKSfp
+        WxqKTbD3dAv7/NdNhaAzih6O3rP8nAkuDs90NHY=
+X-Google-Smtp-Source: APXvYqwpJFGGow05e+peGMiccU09OXwxzA3q7JgF8vOUFvh3CVcgIle2N9uPDYB0Zu84nghhzJetQpekPDvKMOVQPjY=
+X-Received: by 2002:a92:50a:: with SMTP id q10mr6210854ile.294.1581419943357;
+ Tue, 11 Feb 2020 03:19:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4c52548758eefe1fe7078d3b6f10492a001c0636.1581305609.git.zhabin@linux.alibaba.com>
+References: <158085337582.9445.17682266437583505502.stgit@gimli.home>
+In-Reply-To: <158085337582.9445.17682266437583505502.stgit@gimli.home>
+From:   Jerin Jacob <jerinjacobk@gmail.com>
+Date:   Tue, 11 Feb 2020 16:48:47 +0530
+Message-ID: <CALBAE1Oz2u+cmoL8LhEZ-4paXEebKh3DzfWGLQLQx0oaW=tBXw@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/7] vfio/pci: SR-IOV support
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dpdk-dev <dev@dpdk.org>,
+        mtosatti@redhat.com, Thomas Monjalon <thomas@monjalon.net>,
+        Luca Boccassi <bluca@debian.org>,
+        "Richardson, Bruce" <bruce.richardson@intel.com>,
+        cohuck@redhat.com, Vamsi Attunuru <vattunuru@marvell.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 05:05:19PM +0800, Zha Bin wrote:
-> From: Liu Jiang <gerry@linux.alibaba.com>
-> 
-> Create a generic irq domain for all architectures which
-> supports virtio-mmio. The device offering VIRTIO_F_MMIO_MSI
-> feature bit can use this irq domain.
-> 
-> Signed-off-by: Liu Jiang <gerry@linux.alibaba.com>
-> Co-developed-by: Zha Bin <zhabin@linux.alibaba.com>
-> Signed-off-by: Zha Bin <zhabin@linux.alibaba.com>
-> Co-developed-by: Jing Liu <jing2.liu@linux.intel.com>
-> Signed-off-by: Jing Liu <jing2.liu@linux.intel.com>
-> Co-developed-by: Chao Peng <chao.p.peng@linux.intel.com>
-> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+On Wed, Feb 5, 2020 at 4:35 AM Alex Williamson
+<alex.williamson@redhat.com> wrote:
+>
+> There seems to be an ongoing desire to use userspace, vfio-based
+> drivers for both SR-IOV PF and VF devices.  The fundamental issue
+> with this concept is that the VF is not fully independent of the PF
+> driver.  Minimally the PF driver might be able to deny service to the
+> VF, VF data paths might be dependent on the state of the PF device,
+> or the PF my have some degree of ability to inspect or manipulate the
+> VF data.  It therefore would seem irresponsible to unleash VFs onto
+> the system, managed by a user owned PF.
+>
+> We address this in a few ways in this series.  First, we can use a bus
+> notifier and the driver_override facility to make sure VFs are bound
+> to the vfio-pci driver by default.  This should eliminate the chance
+> that a VF is accidentally bound and used by host drivers.  We don't
+> however remove the ability for a host admin to change this override.
+>
+> The next issue we need to address is how we let userspace drivers
+> opt-in to this participation with the PF driver.  We do not want an
+> admin to be able to unwittingly assign one of these VFs to a tenant
+> that isn't working in collaboration with the PF driver.  We could use
+> IOMMU grouping, but this seems to push too far towards tightly coupled
+> PF and VF drivers.  This series introduces a "VF token", implemented
+> as a UUID, as a shared secret between PF and VF drivers.  The token
+> needs to be set by the PF driver and used as part of the device
+> matching by the VF driver.  Provisions in the code also account for
+> restarting the PF driver with active VF drivers, requiring the PF to
+> use the current token to re-gain access to the PF.
+
+Thanks Alex for the series. DPDK realizes this use-case through, an out of
+tree igb_uio module, for non VFIO devices. Supporting this use case, with
+VFIO, will be a great enhancement for DPDK as we are planning to
+get rid of out of tree modules any focus only on userspace aspects.
+
+From the DPDK perspective, we have following use-cases
+
+1) VF representer or OVS/vSwitch  use cases where
+DPDK PF acts as an HW switch to steer traffic to VF
+using the rte_flow library backed by HW CAMs.
+
+2) Unlike, other PCI class of devices, Network class of PCIe devices
+would have additional
+capability on the PF devices such as promiscuous mode support etc
+leverage that in DPDK
+PF and VF use cases.
+
+That would boil down to the use of the following topology.
+a)  PF bound to DPDK/VFIO  and  VF bound to Linux
+b)  PF bound to DPDK/VFIO  and  VF bound to DPDK/VFIO
+
+Tested the use case (a) and it works this patch. Tested use case(b), it
+works with patch provided both PF and VF under the same application.
+
+Regarding the use case where  PF bound to DPDK/VFIO and
+VF bound to DPDK/VFIO are _two different_ processes then sharing the UUID
+will be a little tricky thing in terms of usage. But if that is the
+purpose of bringing
+UUID to the equation then it fine.
+
+Overall this series looks good to me.  We can test the next non-RFC
+series and give
+Tested-by by after testing with DPDK.
+
+
+>
+> The above solutions introduce a bit of a modification to the VFIO ABI
+> and an additional ABI extension.  The modification is that the
+> VFIO_GROUP_GET_DEVICE_FD ioctl is specified to require a char string
+> from the user providing the device name.  For this solution, we extend
+> the syntax to allow the device name followed by key/value pairs.  In
+> this case we add "vf_token=3e7e882e-1daf-417f-ad8d-882eea5ee337", for
+> example.  These options are expected to be space separated.  Matching
+> these key/value pairs is entirely left to the vfio bus driver (ex.
+> vfio-pci) and the internal ops structure is extended to allow this
+> optional support.  This extension should be fully backwards compatible
+> to existing userspace, such code will simply fail to open these newly
+> exposed devices, as intended.
+>
+> I've been debating whether instead of the above we should allow the
+> user to get the device fd as normal, but restrict the interfaces until
+> the user authenticates, but I'm afraid this would be a less backwards
+> compatible solution.  It would be just as unclear to the user why a
+> device read/write/mmap/ioctl failed as it might be to why getting the
+> device fd could fail.  However in the latter case, I believe we do a
+> better job of restricting how far userspace code might go before they
+> ultimately fail.  I'd welcome discussion in the space, and or course
+> the extension of the GET_DEVICE_FD string.
+>
+> Finally, the user needs to be able to set a VF token.  I add a
+> VFIO_DEVICE_FEATURE ioctl for this that's meant to be reusable for
+> getting, setting, and probing arbitrary features of a device.
+>
+> I'll reply to this cover letter with a very basic example of a QEMU
+> update to support this interface, though I haven't found a device yet
+> that behaves well with the PF running in one VM with the VF in
+> another, or really even just a PF running in a VM with SR-IOV enabled.
+> I know these devices exist though, and I suspect QEMU will not be the
+> primary user of this support for now, but this behavior reaffirms my
+> concerns to prevent mis-use.
+>
+> Please comment.  In particular, does this approach meet the DPDK needs
+> for userspace PF and VF drivers, with the hopefully minor hurdle of
+> sharing a token between drivers.  The token is of course left to
+> userspace how to manage, and might be static (and not very secret) for
+> a given set of drivers.  Thanks,
+>
+> Alex
+>
 > ---
->  drivers/base/platform-msi.c      |  4 +-
->  drivers/virtio/Kconfig           |  9 ++++
->  drivers/virtio/virtio_mmio_msi.h | 93 ++++++++++++++++++++++++++++++++++++++++
->  include/linux/msi.h              |  1 +
->  4 files changed, 105 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/virtio/virtio_mmio_msi.h
-
-
-This patch needs to copy maintainers for drivers/base/platform-msi.c and
-include/linux/msi.h
-
-> diff --git a/drivers/base/platform-msi.c b/drivers/base/platform-msi.c
-> index 8da314b..45752f1 100644
-> --- a/drivers/base/platform-msi.c
-> +++ b/drivers/base/platform-msi.c
-> @@ -31,12 +31,11 @@ struct platform_msi_priv_data {
->  /* The devid allocator */
->  static DEFINE_IDA(platform_msi_devid_ida);
->  
-> -#ifdef GENERIC_MSI_DOMAIN_OPS
->  /*
->   * Convert an msi_desc to a globaly unique identifier (per-device
->   * devid + msi_desc position in the msi_list).
->   */
-> -static irq_hw_number_t platform_msi_calc_hwirq(struct msi_desc *desc)
-> +irq_hw_number_t platform_msi_calc_hwirq(struct msi_desc *desc)
->  {
->  	u32 devid;
->  
-> @@ -45,6 +44,7 @@ static irq_hw_number_t platform_msi_calc_hwirq(struct msi_desc *desc)
->  	return (devid << (32 - DEV_ID_SHIFT)) | desc->platform.msi_index;
->  }
->  
-> +#ifdef GENERIC_MSI_DOMAIN_OPS
->  static void platform_msi_set_desc(msi_alloc_info_t *arg, struct msi_desc *desc)
->  {
->  	arg->desc = desc;
-> diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
-> index 078615c..551a9f7 100644
-> --- a/drivers/virtio/Kconfig
-> +++ b/drivers/virtio/Kconfig
-> @@ -84,6 +84,15 @@ config VIRTIO_MMIO
->  
->   	 If unsure, say N.
->  
-> +config VIRTIO_MMIO_MSI
-> +	bool "Memory-mapped virtio device MSI"
-> +	depends on VIRTIO_MMIO && GENERIC_MSI_IRQ_DOMAIN && GENERIC_MSI_IRQ
-> +	help
-> +	 This allows device drivers to support msi interrupt handling for
-> +	 virtio-mmio devices. It can improve performance greatly.
-> +
-> +	 If unsure, say N.
-> +
->  config VIRTIO_MMIO_CMDLINE_DEVICES
->  	bool "Memory mapped virtio devices parameter parsing"
->  	depends on VIRTIO_MMIO
-> diff --git a/drivers/virtio/virtio_mmio_msi.h b/drivers/virtio/virtio_mmio_msi.h
-> new file mode 100644
-> index 0000000..27cb2af
-> --- /dev/null
-> +++ b/drivers/virtio/virtio_mmio_msi.h
-> @@ -0,0 +1,93 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +#ifndef _DRIVERS_VIRTIO_VIRTIO_MMIO_MSI_H
-> +#define _DRIVERS_VIRTIO_VIRTIO_MMIO_MSI_H
-> +
-> +#ifdef CONFIG_VIRTIO_MMIO_MSI
-> +
-> +#include <linux/msi.h>
-> +#include <linux/irq.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/platform_device.h>
-> +
-> +static irq_hw_number_t mmio_msi_hwirq;
-> +static struct irq_domain *mmio_msi_domain;
-> +
-> +struct irq_domain *__weak arch_msi_root_irq_domain(void)
-> +{
-> +	return NULL;
-> +}
-> +
-> +void __weak irq_msi_compose_msg(struct irq_data *data, struct msi_msg *msg)
-> +{
-> +}
-> +
-> +static void mmio_msi_mask_irq(struct irq_data *data)
-> +{
-> +}
-> +
-> +static void mmio_msi_unmask_irq(struct irq_data *data)
-> +{
-> +}
-> +
-> +static struct irq_chip mmio_msi_controller = {
-> +	.name			= "VIRTIO-MMIO-MSI",
-> +	.irq_mask		= mmio_msi_mask_irq,
-> +	.irq_unmask		= mmio_msi_unmask_irq,
-> +	.irq_ack		= irq_chip_ack_parent,
-> +	.irq_retrigger		= irq_chip_retrigger_hierarchy,
-> +	.irq_compose_msi_msg	= irq_msi_compose_msg,
-> +	.flags			= IRQCHIP_SKIP_SET_WAKE,
-> +};
-> +
-> +static int mmio_msi_prepare(struct irq_domain *domain, struct device *dev,
-> +				int nvec, msi_alloc_info_t *arg)
-> +{
-> +	memset(arg, 0, sizeof(*arg));
-> +	return 0;
-> +}
-> +
-> +static void mmio_msi_set_desc(msi_alloc_info_t *arg, struct msi_desc *desc)
-> +{
-> +	mmio_msi_hwirq = platform_msi_calc_hwirq(desc);
-> +}
-
-
-This call isn't exported to modules. How will it work when virtio is
-modular?
-
-> +
-> +static irq_hw_number_t mmio_msi_get_hwirq(struct msi_domain_info *info,
-> +					      msi_alloc_info_t *arg)
-> +{
-> +	return mmio_msi_hwirq;
-> +}
-> +
-> +static struct msi_domain_ops mmio_msi_domain_ops = {
-> +	.msi_prepare	= mmio_msi_prepare,
-> +	.set_desc	= mmio_msi_set_desc,
-> +	.get_hwirq	= mmio_msi_get_hwirq,
-> +};
-> +
-> +static struct msi_domain_info mmio_msi_domain_info = {
-> +	.flags          = MSI_FLAG_USE_DEF_DOM_OPS |
-> +			  MSI_FLAG_USE_DEF_CHIP_OPS |
-> +			  MSI_FLAG_ACTIVATE_EARLY,
-> +	.ops            = &mmio_msi_domain_ops,
-> +	.chip           = &mmio_msi_controller,
-> +	.handler        = handle_edge_irq,
-> +	.handler_name   = "edge",
-> +};
-> +
-> +static inline void mmio_msi_create_irq_domain(void)
-> +{
-> +	struct fwnode_handle *fn;
-> +	struct irq_domain *parent = arch_msi_root_irq_domain();
-> +
-> +	fn = irq_domain_alloc_named_fwnode("VIRTIO-MMIO-MSI");
-> +	if (fn && parent) {
-> +		mmio_msi_domain =
-> +			platform_msi_create_irq_domain(fn,
-> +				&mmio_msi_domain_info, parent);
-> +		irq_domain_free_fwnode(fn);
-> +	}
-> +}
-> +#else
-> +static inline void mmio_msi_create_irq_domain(void) {}
-> +#endif
-> +
-> +#endif
-> diff --git a/include/linux/msi.h b/include/linux/msi.h
-> index 8ad679e..ee5f566 100644
-> --- a/include/linux/msi.h
-> +++ b/include/linux/msi.h
-> @@ -362,6 +362,7 @@ int platform_msi_domain_alloc(struct irq_domain *domain, unsigned int virq,
->  void platform_msi_domain_free(struct irq_domain *domain, unsigned int virq,
->  			      unsigned int nvec);
->  void *platform_msi_get_host_data(struct irq_domain *domain);
-> +irq_hw_number_t platform_msi_calc_hwirq(struct msi_desc *desc);
->  #endif /* CONFIG_GENERIC_MSI_IRQ_DOMAIN */
->  
->  #ifdef CONFIG_PCI_MSI_IRQ_DOMAIN
-> -- 
-> 1.8.3.1
-
+>
+> Alex Williamson (7):
+>       vfio: Include optional device match in vfio_device_ops callbacks
+>       vfio/pci: Implement match ops
+>       vfio/pci: Introduce VF token
+>       vfio: Introduce VFIO_DEVICE_FEATURE ioctl and first user
+>       vfio/pci: Add sriov_configure support
+>       vfio/pci: Remove dev_fmt definition
+>       vfio/pci: Cleanup .probe() exit paths
+>
+>
+>  drivers/vfio/pci/vfio_pci.c         |  315 ++++++++++++++++++++++++++++++++---
+>  drivers/vfio/pci/vfio_pci_private.h |   10 +
+>  drivers/vfio/vfio.c                 |   19 ++
+>  include/linux/vfio.h                |    3
+>  include/uapi/linux/vfio.h           |   37 ++++
+>  5 files changed, 356 insertions(+), 28 deletions(-)
+>
