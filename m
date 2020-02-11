@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F429159A79
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 21:23:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81452159A33
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 21:05:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731826AbgBKUX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 15:23:26 -0500
-Received: from gateway34.websitewelcome.com ([192.185.148.222]:31286 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731817AbgBKUXZ (ORCPT
+        id S1729981AbgBKUFG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 15:05:06 -0500
+Received: from gateway30.websitewelcome.com ([192.185.198.26]:45517 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727762AbgBKUFG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 15:23:25 -0500
+        Tue, 11 Feb 2020 15:05:06 -0500
 Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 318555D0D7
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 14:03:16 -0600 (CST)
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id AF7564F63
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 14:05:05 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 1bkZjD8EmSl8q1bkajwFkt; Tue, 11 Feb 2020 14:03:16 -0600
+        id 1bmLjDBaeSl8q1bmLjwJ4y; Tue, 11 Feb 2020 14:05:05 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -25,27 +25,24 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=QizRvNIXF5DCCYH7u737lg5G394CbFtXby/EhqCQDuw=; b=Geu0/VC1a9bUnDK6UTB9KqkiDb
-        00iQRld7kRim+DS53Mfew6B4tfD75rs5d7hV33SuZJUKAlBhhtA5v19dV0b5rK/hoF9iFJ5Yy6v/D
-        Rty6bJrYNpI1JA/ph9yYQ3TAJeCDi+4WLy2Dy67gi0cJiXngA7QhZkyikdbM2IirBJVbCNDV99TdY
-        Uuw8dhb4u7Kcfu1c3veFSLBtQwJDRE9SNefXYznkTWyDajHwpEgjC2gQjKhXA5vPgHic5SmaowxEb
-        7WrO7VW5d44awiisOW/SPTSncQGo0MSx5YC7s7aT22F3DjPZGZ8FsdpaksTXeZEbRZAXfbp3x3Fu5
-        TIdLIjwA==;
-Received: from [200.68.140.36] (port=25245 helo=embeddedor)
+        bh=/tp6uW3/KGGzX+IaZSk0xiuqdbBGhNQT/R1tOYylFy8=; b=weMQvBYmjgdObbIebT4M8WF6fv
+        kPl/oEy0+cyPOhCdmXHd4fMLEObGBQID/VsVYRX6pKJw90lddBPBbvyASHnaZl21iUcRzgvhAN+Xv
+        QTFJY2U3KEB28zzoeKVCwql8KG0s88fEnIaNTcWaIrwglakJRH3UI7jvJHOs4ip04IaWFJECOrA5/
+        KRe/FR9CmiUnG+kLNg8gTPlvPGndr/cHja091MEST2cR7/3onb487vMXL7p8R22Xs0Hc/4pE9By/z
+        h2YS5t+S6gOiOUhWpMcMepZjvk18jfNW67YiYXwZGHOF/PezTs2wmrlmbri5KUCtdvXpYuhDkStgj
+        1XaoIm4Q==;
+Received: from [200.68.140.36] (port=21189 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1j1bkY-001WQz-Cy; Tue, 11 Feb 2020 14:03:14 -0600
-Date:   Tue, 11 Feb 2020 14:05:49 -0600
+        id 1j1bmK-001XNW-Bj; Tue, 11 Feb 2020 14:05:04 -0600
+Date:   Tue, 11 Feb 2020 14:07:39 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ASoC: wm0010: Replace zero-length array with flexible-array
- member
-Message-ID: <20200211200549.GA12072@embeddedor>
+Subject: [PATCH] ALSA: hda_codec: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200211200739.GA12948@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -58,13 +55,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 200.68.140.36
 X-Source-L: No
-X-Exim-ID: 1j1bkY-001WQz-Cy
+X-Exim-ID: 1j1bmK-001XNW-Bj
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.36]:25245
+X-Source-Sender: (embeddedor) [200.68.140.36]:21189
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
+X-Email-Count: 11
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -95,22 +92,22 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- sound/soc/codecs/wm0010.c | 2 +-
+ sound/pci/hda/hda_codec.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/wm0010.c b/sound/soc/codecs/wm0010.c
-index abd2defe7530..d7a882a6adf2 100644
---- a/sound/soc/codecs/wm0010.c
-+++ b/sound/soc/codecs/wm0010.c
-@@ -46,7 +46,7 @@ struct dfw_binrec {
- 	u8 command;
- 	u32 length:24;
- 	u32 address;
--	uint8_t data[0];
-+	uint8_t data[];
- } __packed;
+diff --git a/sound/pci/hda/hda_codec.c b/sound/pci/hda/hda_codec.c
+index 701a69d856f5..0fbca35509cd 100644
+--- a/sound/pci/hda/hda_codec.c
++++ b/sound/pci/hda/hda_codec.c
+@@ -102,7 +102,7 @@ struct hda_conn_list {
+ 	struct list_head list;
+ 	int len;
+ 	hda_nid_t nid;
+-	hda_nid_t conns[0];
++	hda_nid_t conns[];
+ };
  
- struct dfw_inforec {
+ /* look up the cached results */
 -- 
 2.25.0
 
