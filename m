@@ -2,135 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41DBA1586FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 01:52:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34DA115871A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 01:56:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbgBKAw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 19:52:27 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:52127 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727753AbgBKAwU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 19:52:20 -0500
-Received: by mail-pj1-f67.google.com with SMTP id fa20so530824pjb.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 16:52:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GYcfh7fMvYAlIR4aXXQzSt3C06chntR52at8wJa3tek=;
-        b=SjRakv+7HKKrp8NEOCX6VIPeMG11xHX8mJW3D+GViIV7v/rUbknzfoWGD0potFL2Ya
-         TrH3x9E6SmsvIRYJXb+wZzcUZG74z3A4hCT1zGy6vaWGkoo29WuZG/Juz1fNPwu3dZ9i
-         zJVy0AN1d12ARHC111yN0xNgL1xmfRiN/v6oLaG1sYZw9+rYZVpLxti/3vV7gUCpyk6n
-         sjzITxfb819yxQs05nd58woWMNZmuSyJJguUK+OjN1cRYKgRCi9yZJmDvp7nY/m9XBuw
-         5cOnSiqNgDHn1viFutg6GcTlXZeQH0PxU1/DoDSkcmnMkKmMDcjYWiOLw5bpZmlNo3UA
-         OI6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GYcfh7fMvYAlIR4aXXQzSt3C06chntR52at8wJa3tek=;
-        b=ptQH2QQBHcXz0GeI/Hu6wbm/6aoIYLqhX9AkDyrP7HrZB8HuiZbWWYN5gqj6L2sWuS
-         8WKozymCMy2r0KRf3gLMMwWtCCbpdHGc6CEdQ01aLPn21XaExLFadODeKrU+iIH/ljx0
-         KYRAHfZHf4aEBWt8MamLkpBeF8A2/T1mUxmlpDiX/aDa4whdUeaRepokHgqqS9vNAxm8
-         pPXyx4t0/6nKE/TAEnqri7x167hti+v22iQMLUdUn7fl0o7UTORB70ajR3bqEWV/zNAp
-         Ef9KWanQHOYbxyydqu5uzvCgchlAJ8zM4ThCURru3nAnBSftRT8LoLqoVf2yDwohOElQ
-         x4ew==
-X-Gm-Message-State: APjAAAXa7UKEvdkKFqfM7idoF+vxZ8BJorwMU99dcVUgmxgsMrPhpA71
-        t6jxkVJAfYPFzMzdbrh9Xd2Nqg==
-X-Google-Smtp-Source: APXvYqy3iW4pbURn69ZVNZ5cxr/DdFPKQ0xbucqlfM3QXmYD5SG1FCE8u5y7dSubB0s6uoRDoGzQFg==
-X-Received: by 2002:a17:902:760e:: with SMTP id k14mr590560pll.119.1581382339888;
-        Mon, 10 Feb 2020 16:52:19 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id q21sm1538480pff.105.2020.02.10.16.52.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2020 16:52:19 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Subject: [PATCH v3 8/8] remoteproc: qcom: Introduce panic handler for PAS and ADSP
-Date:   Mon, 10 Feb 2020 16:50:59 -0800
-Message-Id: <20200211005059.1377279-9-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200211005059.1377279-1-bjorn.andersson@linaro.org>
-References: <20200211005059.1377279-1-bjorn.andersson@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727634AbgBKA4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 19:56:18 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:48654 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727120AbgBKA4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 19:56:17 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 75DC61C1DCE;
+        Tue, 11 Feb 2020 01:56:15 +0100 (CET)
+Received: from smtp.na-rdc02.nxp.com (usphx01srsp001v.us-phx01.nxp.com [134.27.49.11])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3FF0E1C1DC2;
+        Tue, 11 Feb 2020 01:56:15 +0100 (CET)
+Received: from right.am.freescale.net (right.am.freescale.net [10.81.116.70])
+        by usphx01srsp001v.us-phx01.nxp.com (Postfix) with ESMTP id 7EC0D40CD8;
+        Mon, 10 Feb 2020 17:56:14 -0700 (MST)
+From:   Li Yang <leoyang.li@nxp.com>
+To:     shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, Li Yang <leoyang.li@nxp.com>
+Subject: [PATCH 1/2] arm64: defconfig: run through savedefconfig for ordering
+Date:   Mon, 10 Feb 2020 18:55:58 -0600
+Message-Id: <1581382559-18520-1-git-send-email-leoyang.li@nxp.com>
+X-Mailer: git-send-email 1.9.0
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make the PAS and ADSP/CDSP remoteproc drivers implement the panic
-handler that will invoke a stop to prepare the remoteprocs for post
-mortem debugging.
+Used "make defconfig savedefconfig" to regenerate defconfig file in the
+right order to prepare for additional defconfig changes.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Li Yang <leoyang.li@nxp.com>
 ---
+ arch/arm64/configs/defconfig | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-Changes since v2:
-- Update return type and pass the return value through
-
- drivers/remoteproc/qcom_q6v5_adsp.c | 8 ++++++++
- drivers/remoteproc/qcom_q6v5_pas.c  | 8 ++++++++
- 2 files changed, 16 insertions(+)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index 19f784adf91c..822881534d37 100644
---- a/drivers/remoteproc/qcom_q6v5_adsp.c
-+++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -291,12 +291,20 @@ static void *adsp_da_to_va(struct rproc *rproc, u64 da, int len)
- 	return adsp->mem_region + offset;
- }
- 
-+static unsigned int adsp_panic(struct rproc *rproc)
-+{
-+	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+
-+	return qcom_q6v5_panic(&adsp->q6v5);
-+}
-+
- static const struct rproc_ops adsp_ops = {
- 	.start = adsp_start,
- 	.stop = adsp_stop,
- 	.da_to_va = adsp_da_to_va,
- 	.parse_fw = qcom_register_dump_segments,
- 	.load = adsp_load,
-+	.panic = adsp_panic,
- };
- 
- static int adsp_init_clock(struct qcom_adsp *adsp, const char **clk_ids)
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index d20ce3c62256..ac38624fb14d 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -242,12 +242,20 @@ static void *adsp_da_to_va(struct rproc *rproc, u64 da, int len)
- 	return adsp->mem_region + offset;
- }
- 
-+static unsigned int adsp_panic(struct rproc *rproc)
-+{
-+	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+
-+	return qcom_q6v5_panic(&adsp->q6v5);
-+}
-+
- static const struct rproc_ops adsp_ops = {
- 	.start = adsp_start,
- 	.stop = adsp_stop,
- 	.da_to_va = adsp_da_to_va,
- 	.parse_fw = qcom_register_dump_segments,
- 	.load = adsp_load,
-+	.panic = adsp_panic,
- };
- 
- static int adsp_init_clock(struct qcom_adsp *adsp)
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 0f212889c931..618001ef5c81 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -471,9 +471,9 @@ CONFIG_DW_WATCHDOG=y
+ CONFIG_SUNXI_WATCHDOG=m
+ CONFIG_IMX2_WDT=y
+ CONFIG_IMX_SC_WDT=m
++CONFIG_QCOM_WDT=m
+ CONFIG_MESON_GXBB_WATCHDOG=m
+ CONFIG_MESON_WATCHDOG=m
+-CONFIG_QCOM_WDT=m
+ CONFIG_RENESAS_WDT=y
+ CONFIG_UNIPHIER_WATCHDOG=y
+ CONFIG_BCM2835_WDT=y
+@@ -594,8 +594,8 @@ CONFIG_SND_SOC_TAS571X=m
+ CONFIG_SND_SIMPLE_CARD=m
+ CONFIG_SND_AUDIO_GRAPH_CARD=m
+ CONFIG_I2C_HID=m
+-CONFIG_USB=y
+ CONFIG_USB_CONN_GPIO=m
++CONFIG_USB=y
+ CONFIG_USB_OTG=y
+ CONFIG_USB_XHCI_HCD=y
+ CONFIG_USB_XHCI_TEGRA=y
+@@ -617,7 +617,6 @@ CONFIG_USB_CHIPIDEA_HOST=y
+ CONFIG_USB_ISP1760=y
+ CONFIG_USB_HSIC_USB3503=y
+ CONFIG_NOP_USB_XCEIV=y
+-CONFIG_USB_ULPI=y
+ CONFIG_USB_GADGET=y
+ CONFIG_USB_RENESAS_USBHS_UDC=m
+ CONFIG_USB_RENESAS_USB3=m
+@@ -756,7 +755,6 @@ CONFIG_OWL_PM_DOMAINS=y
+ CONFIG_RASPBERRYPI_POWER=y
+ CONFIG_IMX_SCU_SOC=y
+ CONFIG_QCOM_AOSS_QMP=y
+-CONFIG_QCOM_COMMAND_DB=y
+ CONFIG_QCOM_GENI_SE=y
+ CONFIG_QCOM_GLINK_SSR=m
+ CONFIG_QCOM_RMTFS_MEM=m
+@@ -771,14 +769,12 @@ CONFIG_ARCH_R8A774A1=y
+ CONFIG_ARCH_R8A774B1=y
+ CONFIG_ARCH_R8A774C0=y
+ CONFIG_ARCH_R8A7795=y
+-CONFIG_ARCH_R8A7796=y
+ CONFIG_ARCH_R8A77961=y
+ CONFIG_ARCH_R8A77965=y
+ CONFIG_ARCH_R8A77970=y
+ CONFIG_ARCH_R8A77980=y
+ CONFIG_ARCH_R8A77990=y
+ CONFIG_ARCH_R8A77995=y
+-CONFIG_QCOM_PDC=y
+ CONFIG_ROCKCHIP_PM_DOMAINS=y
+ CONFIG_ARCH_TEGRA_132_SOC=y
+ CONFIG_ARCH_TEGRA_210_SOC=y
+@@ -809,6 +805,7 @@ CONFIG_PWM_ROCKCHIP=y
+ CONFIG_PWM_SAMSUNG=y
+ CONFIG_PWM_SUN4I=m
+ CONFIG_PWM_TEGRA=m
++CONFIG_QCOM_PDC=y
+ CONFIG_RESET_QCOM_AOSS=y
+ CONFIG_RESET_QCOM_PDC=m
+ CONFIG_RESET_TI_SCI=y
+@@ -880,16 +877,16 @@ CONFIG_NLS_ISO8859_1=y
+ CONFIG_SECURITY=y
+ CONFIG_CRYPTO_ECHAINIV=y
+ CONFIG_CRYPTO_ANSI_CPRNG=y
++CONFIG_CRYPTO_USER_API_RNG=m
+ CONFIG_CRYPTO_DEV_SUN8I_CE=m
+ CONFIG_CRYPTO_DEV_FSL_CAAM=m
+-CONFIG_CRYPTO_DEV_HISI_ZIP=m
+-CONFIG_CRYPTO_USER_API_RNG=m
+ CONFIG_CRYPTO_DEV_QCOM_RNG=m
++CONFIG_CRYPTO_DEV_HISI_ZIP=m
+ CONFIG_CMA_SIZE_MBYTES=32
+ CONFIG_PRINTK_TIME=y
+ CONFIG_DEBUG_INFO=y
+-CONFIG_DEBUG_FS=y
+ CONFIG_MAGIC_SYSRQ=y
++CONFIG_DEBUG_FS=y
+ CONFIG_DEBUG_KERNEL=y
+ # CONFIG_SCHED_DEBUG is not set
+ # CONFIG_DEBUG_PREEMPT is not set
 -- 
-2.24.0
+2.17.1
 
