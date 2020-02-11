@@ -2,89 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ADAB158CA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:24:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71745158CB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:28:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728353AbgBKKYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 05:24:10 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:56092 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728236AbgBKKYK (ORCPT
+        id S1728344AbgBKK2W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 05:28:22 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:33500 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728276AbgBKK2W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 05:24:10 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01BAO3JI080604;
-        Tue, 11 Feb 2020 04:24:03 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581416643;
-        bh=IT0XtP14rOcxVvIjEkJLAVhnV8MbpGdBDYqA20Ogvvg=;
-        h=To:CC:From:Subject:Date;
-        b=ieDwTSX3jBi/zU1u4phaOZr/3Ii8HGFTXg5HGFMr7ljayvLceHG8Ur/umMkvypjRh
-         QAQk97bS+itM9Sg0T+qBvIFm/dBtzumU10HinzZarwXkKrmUxTzv/JcfNi8oIXIkIW
-         SvftF7u0/x73WxmsKAgW8ob+31xkdvsU5ZvYCsdk=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01BAO2kT021354;
-        Tue, 11 Feb 2020 04:24:03 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 11
- Feb 2020 04:24:02 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 11 Feb 2020 04:24:03 -0600
-Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01BAO08Y044972;
-        Tue, 11 Feb 2020 04:24:01 -0600
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Petr Mladek <pmladek@suse.com>
-CC:     <linux-rt-users@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        netdev <netdev@vger.kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Question about kthread_mod_delayed_work() allowed context
-Message-ID: <cfa886ad-e3b7-c0d2-3ff8-58d94170eab5@ti.com>
-Date:   Tue, 11 Feb 2020 12:23:59 +0200
+        Tue, 11 Feb 2020 05:28:22 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 9F6E22909F8
+Subject: Re: [PATCH v2 1/4] dt-bindings: Add cros-ec Type C port driver
+To:     Prashant Malani <pmalani@chromium.org>,
+        linux-kernel@vger.kernel.org
+Cc:     heikki.krogerus@intel.com, bleung@chromium.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Guenter Roeck <groeck@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20200207203752.209296-1-pmalani@chromium.org>
+ <20200207203752.209296-2-pmalani@chromium.org>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <dd9a8fa7-db6b-87a0-889d-b56a626a3078@collabora.com>
+Date:   Tue, 11 Feb 2020 11:28:16 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20200207203752.209296-2-pmalani@chromium.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+Hi Prashant,
 
-I'd like to ask question about allowed calling context for kthread_mod_delayed_work().
+On 7/2/20 21:37, Prashant Malani wrote:
+> Some Chrome OS devices with Embedded Controllers (EC) can read and
+> modify Type C port state.
+> 
+> Add an entry in the DT Bindings documentation that lists out the logical
+> device and describes the relevant port information, to be used by the
+> corresponding driver.
+> 
+> Signed-off-by: Prashant Malani <pmalani@chromium.org>
+> ---
+> 
+> Changes in v2:
+> - No changes. Patch first introduced in v2 of series.
+> 
+>  .../bindings/chrome/google,cros-ec-typec.yaml | 77 +++++++++++++++++++
+>  1 file changed, 77 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
+> new file mode 100644
+> index 00000000000000..46ebcbe76db3c2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
+> @@ -0,0 +1,77 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
-The comment to kthread_mod_delayed_work() says:
+I think that Google is fine with the dual licensing here. Would be good if this
+can be (GPL-2.0-only OR BSD-2-Clause)
 
-  * This function is safe to call from any context including IRQ handler.
-  * See __kthread_cancel_work() and kthread_delayed_work_timer_fn()
-  * for details.
-  */
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/chrome/google,cros-ec-typec.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Google Chrome OS EC(Embedded Controller) Type C port driver.
+> +
+> +maintainers:
+> +  - Benson Leung <bleung@chromium.org>
+> +  - Prashant Malani <pmalani@chromium.org>
+> +
+> +description:
+> +  Chrome OS devices have an Embedded Controller(EC) which has access to
+> +  Type C port state. This node is intended to allow the host to read and
+> +  control the Type C ports. The node for this device should be under a
+> +  cros-ec node like google,cros-ec-spi.
+> +
+> +properties:
+> +  compatible:
+> +    const: google,cros-ec-typec
+> +
+> +  port:
+> +    description: A node that represents a physical Type C port on the
+> +      device.
+> +    type: object
+> +    properties:
+> +      port-number:
+> +        description: The number used by the Chrome OS EC to identify
+> +          this type C port.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
 
-But it has del_timer_sync() inside which seems can't be called from hard_irq context:
-kthread_mod_delayed_work()
-   |-__kthread_cancel_work()
-      |- del_timer_sync()
-	|- WARN_ON(in_irq() && !(timer->flags & TIMER_IRQSAFE));
+Any range of values allowed? 0 is okay?
 
-My use case is related to PTP processing using PTP auxiliary worker:
-(commit d9535cb7b760 ("ptp: introduce ptp auxiliary worker")):
-  - periodic work A is started and res-schedules itself for every dtX
-  - on IRQ - the work A need to be scheduled immediately
+> +      power-role:
 
-Any advice on how to proceed?
-Can kthread_queue_work() be used even if there is delayed work is
-scheduled already (in general, don't care if work A will be executed one
-more time after timer expiration)?
+Sorry if this question is silly, aren't this and below properties the same as
+provided by usb-connector?  Can't this be usb-c-connector?
 
--- 
-Best regards,
-grygorii
+Documentation/devicetree/bindings/connector/usb-connector.txt
+
+> +        description: Determines the power role that the Type C port will
+> +          adopt.
+> +        oneOf:
+> +          - items:
+> +            - const: sink
+> +            - const: source
+> +            - const: dual
+> +      data-role:
+> +        description: Determines the data role that the Type C port will
+> +          adopt.
+> +        oneOf:
+> +          - items:
+> +            - const: host
+> +            - const: device
+> +            - const: dual
+> +      try-power-role:
+> +        description: Determines the preferred power role of the Type C port.
+> +        oneOf:
+> +          - items:
+> +            - const: sink
+> +            - const: source
+> +            - const: dual
+> +
+> +    required:
+> +      - port-number
+> +      - power-role
+> +      - data-role
+> +      - try-power-role
+> +
+> +required:
+> +  - compatible
+> +  - port
+> +
+> +examples:
+> +  - |+
+
+Rob can confirm, but I think is a good practice add the parent node, so add the
+cros-ec-spi node here?
+
+> +    typec {
+> +      compatible = "google,cros-ec-typec";
+> +
+> +      port@0 {
+
+You can run:
+
+  make dt_binding_check DT_SCHEMA_FILES=<...>/chrome/google,cros-ec-typec.yaml
+
+And you'll get an error:
+
+ typec: 'port' is a required property
+
+> +        port-number = <0>;
+> +        power-role = "dual";
+> +        data-role = "dual";
+> +        try-power-role = "source";
+> +      };
+> +    };
+> 
+Thanks,
+
+ Enric
