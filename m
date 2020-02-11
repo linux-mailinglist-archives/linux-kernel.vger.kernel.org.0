@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42AA01589FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 07:20:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57B551589FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 07:21:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728342AbgBKGUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 01:20:37 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39944 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727938AbgBKGUf (ORCPT
+        id S1728347AbgBKGUn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 01:20:43 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36732 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727870AbgBKGUk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 01:20:35 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z7so5157787pgk.7
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 22:20:35 -0800 (PST)
+        Tue, 11 Feb 2020 01:20:40 -0500
+Received: by mail-pg1-f196.google.com with SMTP id d9so5167436pgu.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 22:20:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hUsW4h0Q2Yi32kJtCDyUXPnl4z2/9q9YG773fr2bDbk=;
-        b=mY1euNlOdCA2C6rfWChJVGDCpurwr/b+T7/UB0h6nIHFYoz71noGGGSGS29ZkpzL2I
-         TVP8L96ffUqVW62xSZL0EkG3nN3QucnMY+9uLzlcIgG8qwC1w44yhCm6QzYVo9tcSOKA
-         Z2Nt9zie6BA+MiOtky5RKTkOxWjd4/Zka+MzcvKNxpDRNBLvZCBKr6q9uwvjvUtaM7ng
-         T1nerxeZjHRGYegeaSdyV9lv/HFnB/mkNU61rAo09yDTsQVbERs9C7ay+mXwtZFMwlcf
-         Evjl4AKaTAsu+W6tVrMehcF/8DUc92pQv9nEZODLDMxcLNq8EPPUEpLROvtK0xswy764
-         EbAQ==
+        bh=7LP0sMYBzl+D2JqY2Soygzltfk1AIpMooW3/Su409nk=;
+        b=BzmseVnyVt2mzXgZKqt/KT8OSaDMTAG/OG9ViGWylPV390jMQ4NzWavfnpMYOKxJqU
+         PJM7DSfyn3hga72bfGoOSLNm2iP3YoxosN9PpoUhJ3afpUx49INK0biaoCpglFvUpWJD
+         i+r4jeuek+ERCuQv56g8ZchtqCZiszeL15Y9mpjugEA0upkB0d9DYBt7j562iQpmN1xe
+         NlAKq5t1ljSmgYEZ+zAEPOKb6fjPrcXdbVipYtwRDNJ7aV0aexMTqnNoQ3kzzBDZbXjT
+         O8/Hd+iY2HR7+UoogRctV5mmz1+bgDj/V73u6oBpdg8bRo5LB7JBtedzkhA9fItnE4B1
+         c/KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=hUsW4h0Q2Yi32kJtCDyUXPnl4z2/9q9YG773fr2bDbk=;
-        b=dWJ4WOFmJUCJx63z6uDoMgflGe5Oarr/uWTppLGqXrlamkqWHSdFRBANg3GQeHQamn
-         oEVZ7m2Jzy+J/ZeAek9w79MolNjG0XTQYh6gyCMvx/p2Mxvq84CQkUw5hDIrezXKL4l7
-         xvdtepPBkMbD4xpLcvcWadQyK0biqopCUjdJYL/75EedGce3ygQRZgNRo9K6hOwW7EaB
-         3w1nnb/ia/LycstP7E3bmCoqUOK9aFwRoDYvldO+eE0KMv8HJw5SLlIp98HCJXrSKAlD
-         280oB8TcSqdkFFjI+tFsu1uIRiVifdrSghhNz/x2+tVUS1pVX7tcemzbSrU3vw7pXlwp
-         jJAA==
-X-Gm-Message-State: APjAAAUUriIMhGGBRysdoQWxlGs430v/Oin5NgY6ikcMv7JS56mOEZcT
-        RkA+tuOd3bD1CYpi8f/n1N12azuWrtI=
-X-Google-Smtp-Source: APXvYqz/EunkFhFAPYs6HlqM6zE2fauxOTg+/R7GBZ29Zoc5coMAbYC6dlLPfOAP3A3lSOEydNGWUA==
-X-Received: by 2002:aa7:8b17:: with SMTP id f23mr1737594pfd.197.1581402035048;
-        Mon, 10 Feb 2020 22:20:35 -0800 (PST)
+        bh=7LP0sMYBzl+D2JqY2Soygzltfk1AIpMooW3/Su409nk=;
+        b=tYZ+qy8TexSnjZ8sXDUFafyTed5DgwU9woU/U2KDVnh4GpbaMfDUViOBpJ/166o8+h
+         pEO1IMSX5TuYabD/QcKkwsFM1gtlprcjwcUBjZsNle71mr/6YFW3G0kHRYjXeFuBh4T7
+         rma2eqBfprbAWhLFJROlIFF2vWmsyR+l0i4muJTQ/cyq76CFK/jxhfYJfTbifcmM4iN1
+         bZRI00CGHi2yBkOLavCIeZPbMO6ueju9E2WDtHLlWi42YDnM6gK0zEXawrloOCtivv/j
+         N/l05gyYqSGho592pXtpx7/FNUR2TOiJSlIk4yyt3CcJhpGSbfVaX7OHGsPUDSGqPQtB
+         d23w==
+X-Gm-Message-State: APjAAAUYnRtusfeidAMjJpTMXFFBOj21ghIinE5v248ALhWdaPYK7d5e
+        1u/IhIOlLIVKR1Lx3BfoJbM=
+X-Google-Smtp-Source: APXvYqwD43b5f6a9ZK7182mcpuONNYGNgb3CyUpqtMDbfH9Kbcehamm0qCBK4GY4On3Rd6TY1b4ssA==
+X-Received: by 2002:a05:6a00:5b:: with SMTP id i27mr1781402pfk.112.1581402038202;
+        Mon, 10 Feb 2020 22:20:38 -0800 (PST)
 Received: from localhost.localdomain ([114.206.198.176])
-        by smtp.gmail.com with ESMTPSA id x197sm2578696pfc.1.2020.02.10.22.20.32
+        by smtp.gmail.com with ESMTPSA id x197sm2578696pfc.1.2020.02.10.22.20.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 10 Feb 2020 22:20:34 -0800 (PST)
+        Mon, 10 Feb 2020 22:20:37 -0800 (PST)
 From:   js1304@gmail.com
 X-Google-Original-From: iamjoonsoo.kim@lge.com
 To:     Andrew Morton <akpm@linux-foundation.org>
@@ -55,9 +55,9 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Vlastimil Babka <vbabka@suse.cz>,
         Mel Gorman <mgorman@techsingularity.net>, kernel-team@lge.com,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Subject: [PATCH 8/9] mm/vmscan: restore active/inactive ratio for anonymous LRU
-Date:   Tue, 11 Feb 2020 15:19:52 +0900
-Message-Id: <1581401993-20041-9-git-send-email-iamjoonsoo.kim@lge.com>
+Subject: [PATCH 9/9] mm/swap: count a new anonymous page as a reclaim_state's rotate
+Date:   Tue, 11 Feb 2020 15:19:53 +0900
+Message-Id: <1581401993-20041-10-git-send-email-iamjoonsoo.kim@lge.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1581401993-20041-1-git-send-email-iamjoonsoo.kim@lge.com>
 References: <1581401993-20041-1-git-send-email-iamjoonsoo.kim@lge.com>
@@ -68,28 +68,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
 
-Now, workingset detection is implemented for anonymous LRU.
-We don't have to worry about the misfound for workingset due to
-the ratio of active/inactive. Let's restore the ratio.
+reclaim_stat's rotate is used for controlling the ratio of scanning page
+between file and anonymous LRU. All new anonymous pages are counted
+for rotate before the patch, protecting anonymous pages on active LRU, and,
+it makes that reclaim on anonymous LRU is less happened than file LRU.
+
+Now, situation is changed. all new anonymous pages are not added
+to the active LRU so rotate would be far less than before. It will cause
+that reclaim on anonymous LRU happens more and it would result in bad
+effect on some system that is optimized for previous setting.
+
+Therefore, this patch counts a new anonymous page as a reclaim_state's
+rotate. Although it is non-logical to add this count to
+the reclaim_state's rotate in current algorithm, reducing the regression
+would be more important.
+
+I found this regression on kernel-build test and it is roughly 2~5%
+performance degradation. With this workaround, performance is completely
+restored.
 
 Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
 ---
- mm/vmscan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/swap.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index a1892e7..81ff725 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2237,7 +2237,7 @@ static bool inactive_is_low(struct lruvec *lruvec, enum lru_list inactive_lru)
- 	active = lruvec_page_state(lruvec, NR_LRU_BASE + active_lru);
+diff --git a/mm/swap.c b/mm/swap.c
+index 18b2735..c3584af 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -187,6 +187,9 @@ int get_kernel_page(unsigned long start, int write, struct page **pages)
+ }
+ EXPORT_SYMBOL_GPL(get_kernel_page);
  
- 	gb = (inactive + active) >> (30 - PAGE_SHIFT);
--	if (gb && is_file_lru(inactive_lru))
-+	if (gb)
- 		inactive_ratio = int_sqrt(10 * gb);
- 	else
- 		inactive_ratio = 1;
++static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec,
++				 void *arg);
++
+ static void pagevec_lru_move_fn(struct pagevec *pvec,
+ 	void (*move_fn)(struct page *page, struct lruvec *lruvec, void *arg),
+ 	void *arg)
+@@ -207,6 +210,19 @@ static void pagevec_lru_move_fn(struct pagevec *pvec,
+ 			spin_lock_irqsave(&pgdat->lru_lock, flags);
+ 		}
+ 
++		if (move_fn == __pagevec_lru_add_fn) {
++			struct list_head *entry = &page->lru;
++			unsigned long next = (unsigned long)entry->next;
++			unsigned long rotate = next & 2;
++
++			if (rotate) {
++				VM_BUG_ON(arg);
++
++				next = next & ~2;
++				entry->next = (struct list_head *)next;
++				arg = (void *)rotate;
++			}
++		}
+ 		lruvec = mem_cgroup_page_lruvec(page, pgdat);
+ 		(*move_fn)(page, lruvec, arg);
+ 	}
+@@ -475,6 +491,14 @@ void lru_cache_add_inactive_or_unevictable(struct page *page,
+ 				    hpage_nr_pages(page));
+ 		count_vm_event(UNEVICTABLE_PGMLOCKED);
+ 	}
++
++	if (PageSwapBacked(page) && evictable) {
++		struct list_head *entry = &page->lru;
++		unsigned long next = (unsigned long)entry->next;
++
++		next = next | 2;
++		entry->next = (struct list_head *)next;
++	}
+ 	lru_cache_add(page);
+ }
+ 
+@@ -927,6 +951,7 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec,
+ {
+ 	enum lru_list lru;
+ 	int was_unevictable = TestClearPageUnevictable(page);
++	unsigned long rotate = (unsigned long)arg;
+ 
+ 	VM_BUG_ON_PAGE(PageLRU(page), page);
+ 
+@@ -962,7 +987,7 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec,
+ 	if (page_evictable(page)) {
+ 		lru = page_lru(page);
+ 		update_page_reclaim_stat(lruvec, page_is_file_cache(page),
+-					 PageActive(page));
++					 PageActive(page) | rotate);
+ 		if (was_unevictable)
+ 			count_vm_event(UNEVICTABLE_PGRESCUED);
+ 	} else {
 -- 
 2.7.4
 
