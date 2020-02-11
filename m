@@ -2,114 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E2FC159D97
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 00:44:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFA28159DA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 00:48:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727996AbgBKXoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 18:44:11 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.221]:34222 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727911AbgBKXoL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 18:44:11 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 4EE1C15CDB63
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 17:44:10 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 1fCMjf244RP4z1fCMj6qsN; Tue, 11 Feb 2020 17:44:10 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=HuWWbn9mG6qCqANbQu9GYRVgDmlnQe5rjU+iHf/AjzI=; b=qD3S4rvooZjnwz0ZXghoPw7ZpL
-        ngFyK6PbFW5DKFEiTRqdJF3WxsrLAJTFBKSod5A8MT6ahHCKWXh5AsWuJA1VqIcQdeuEqJ11BWW8K
-        M7pDnGAv80xQIg3wMeazsVGLx3qOaZeP1RVOBAiU7SVlg1b11u4YAC2romgUrX3lsKTNbgtcg02ua
-        OZ3ialpRyByBp2dNzfKBVMBmIubk3wzvJlQnXUN3UlJ5qi+YPeR5NSqsVrL+3Ws5mjZAhqiO03SUq
-        QVzq4cQS58Ec/U866KCYtJFwY1c7qkH4PmI7NWWDYWCyZcreqrnXCE3WCP30HJLDEY8xZbuHOIW8F
-        fq9ewb5w==;
-Received: from [200.68.140.36] (port=6741 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j1fBp-003k23-1O; Tue, 11 Feb 2020 17:43:37 -0600
-Date:   Tue, 11 Feb 2020 17:46:12 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Support Opensource <support.opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] regulator: da9062: Replace zero-length array with
- flexible-array member
-Message-ID: <20200211234612.GA28682@embeddedor>
+        id S1728023AbgBKXsK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 18:48:10 -0500
+Received: from mga06.intel.com ([134.134.136.31]:29089 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727955AbgBKXsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 18:48:10 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 15:48:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
+   d="asc'?scan'208";a="233621554"
+Received: from jtkirshe-desk1.jf.intel.com ([134.134.177.74])
+  by orsmga003.jf.intel.com with ESMTP; 11 Feb 2020 15:48:09 -0800
+Message-ID: <43c9336e1c0c23e374420586868052e947b75126.camel@intel.com>
+Subject: Re: [PATCH 20/28] drivers: net: Call cpu_latency_qos_*() instead of
+ pm_qos_*()
+From:   Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Reply-To: jeffrey.t.kirsher@intel.com
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        intel-wired-lan@lists.osuosl.org,
+        Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless@vger.kernel.org
+Date:   Tue, 11 Feb 2020 15:48:09 -0800
+In-Reply-To: <10624145.o336LLEsho@kreacher>
+References: <1654227.8mz0SueHsU@kreacher> <10624145.o336LLEsho@kreacher>
+Organization: Intel
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-GaZoanpPv4L3uFpFpUoG"
+User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.36
-X-Source-L: No
-X-Exim-ID: 1j1fBp-003k23-1O
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.36]:6741
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 56
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+--=-GaZoanpPv4L3uFpFpUoG
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertenly introduced[3] to the codebase from now on.
+On Wed, 2020-02-12 at 00:24 +0100, Rafael J. Wysocki wrote:
+> From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+>=20
+> Call cpu_latency_qos_add/update/remove_request() instead of
+> pm_qos_add/update/remove_request(), respectively, because the
+> latter are going to be dropped.
+>=20
+> No intentional functional impact.
+>=20
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-This issue was found with the help of Coccinelle.
+Acked-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+For the e1000e changes
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/regulator/da9062-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> ---
+>  drivers/net/ethernet/intel/e1000e/netdev.c   | 13 ++++++-------
+>  drivers/net/wireless/ath/ath10k/core.c       |  4 ++--
+>  drivers/net/wireless/intel/ipw2x00/ipw2100.c | 10 +++++-----
+>  3 files changed, 13 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/regulator/da9062-regulator.c b/drivers/regulator/da9062-regulator.c
-index b064d8a19d4c..c3b6ba9bafdf 100644
---- a/drivers/regulator/da9062-regulator.c
-+++ b/drivers/regulator/da9062-regulator.c
-@@ -86,7 +86,7 @@ struct da9062_regulators {
- 	int					irq_ldo_lim;
- 	unsigned				n_regulators;
- 	/* Array size to be defined during init. Keep at end. */
--	struct da9062_regulator			regulator[0];
-+	struct da9062_regulator			regulator[];
- };
- 
- /* BUCK modes */
--- 
-2.25.0
+
+--=-GaZoanpPv4L3uFpFpUoG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAl5DPTkACgkQ5W/vlVpL
+7c4a3g//SCBWhCZ3vnz6qb26ASH5pK5fgz/l9o0FmD/sOn6jHfXbGmD3C8zTo6ic
+j1pQ488wAXMKm+Ay6CNyy3tqC3l9Lg1GKu6wQ4R/evm7cCk38Mwg7+sHa5aNdjwo
+6+KmMvHD9aY3Ya+QzsrJg5ZztvW/CWP69SJ1J2JfM9a401S0Us5MX/O2WmdyYo/9
+nXRGTYYj3Aekg1Ghs2JdWkYyiPGUDTic1R8psB8I7rDHZV5zmrrBferSMz8jB9Gk
+ReQE43h5rF0CZKQevMws/J6gO2Ndfbre5BZoXA7wydzs4kkV2O98u0aTc/HBP16l
+q8vf//TZ0cJy+rTEexxKIlWsfdIKQbYsWIenY6GEjR7W0n/chJYQZw40wGODisMd
+Et4ZZwL7fVpWxLxVtSrhlAieD2RpAYyCYl6l9s46lcmHSf59kbx1EyN/EmwrpEIn
+N9wCiCX9s1Nj4kH1CQAdTXhK8InLFKxKdApKSbACTwXyKuxMB/Pk65fbh4BVGTGo
+kX0PZgKNIFo4+YvZZUwin+rioyBGQopgfbgy5z4StXQ2Rd0jEpwrMIu0mxXy39PG
+X9A0+gUBAlsWDr+Jv8NCXpw5Q74vbSzHuUZwi4wpDbwnjqb6WO2yXv9mJXJCgR+b
+xJA8RDrjt9XmBr4zk43EzPZqqPlp5w2oiPH3e7cJ84sDSG7H9Sc=
+=6ivJ
+-----END PGP SIGNATURE-----
+
+--=-GaZoanpPv4L3uFpFpUoG--
 
