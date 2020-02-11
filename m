@@ -2,187 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0748158A88
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 08:40:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EA3B158AD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 08:47:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbgBKHkf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 02:40:35 -0500
-Received: from mail1.perex.cz ([77.48.224.245]:55612 "EHLO mail1.perex.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727561AbgBKHkf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 02:40:35 -0500
-Received: from mail1.perex.cz (localhost [127.0.0.1])
-        by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 0B3F1A0040;
-        Tue, 11 Feb 2020 08:40:32 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 0B3F1A0040
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
-        t=1581406832; bh=REuN32AszY9i63pAP7wyB0Bevs0Di3fTL0d0VlG4R+8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=YkVpS+MWC0LjjHaa1no+jx6K9PwzwYMFwWqQFHeLq58Elbailo9PdMeJjpX5yn/BB
-         v+bcqMDe/oEJkYJf0vY8DWKCUYs69iVVV2PgjdxPRrznFbS1R5ECQVm1CENKNCi//0
-         dPLD1aLSaYEiFKRTD+8hECYKB1k8MAiNcjke7w9k=
-Received: from p50.perex-int.cz (unknown [192.168.100.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: perex)
-        by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
-        Tue, 11 Feb 2020 08:40:26 +0100 (CET)
-Subject: Re: [PATCH 2/2] ALSA: hda/realtek - Fix Lenovo Thinkpad X1 Carbon 7th
- quirk value
-To:     Benjamin Poirier <benjamin.poirier@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>
-Cc:     Kailang Yang <kailang@realtek.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-References: <20200211055651.4405-1-benjamin.poirier@gmail.com>
- <20200211055651.4405-2-benjamin.poirier@gmail.com>
-From:   Jaroslav Kysela <perex@perex.cz>
-Message-ID: <b23abac0-401c-9472-320c-4e9d7eab26de@perex.cz>
-Date:   Tue, 11 Feb 2020 08:40:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200211055651.4405-2-benjamin.poirier@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1727810AbgBKHrn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 02:47:43 -0500
+Received: from us-smtp-delivery-148.mimecast.com ([216.205.24.148]:20695 "EHLO
+        us-smtp-delivery-148.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727787AbgBKHrm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 02:47:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rambus.com;
+        s=mimecast20161209; t=1581407260;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=yi69RZrYM5y2k1f16rw/mtrnHWssfjhZ7X5ko5PeHLo=;
+        b=M/7iS8TAyuran9WHnlNNM80zy6r+dSbTFkT/3TKZxoShZXQzsCKKtFbQ1JyIj0SRVuhLr7
+        2jC7nlGa2Ql62lcstVUK5DRZHQJ89o9frx1ys44VKK7xFVfQGaz4JfPr8KjjwuaLpQIv8m
+        gewZPdRy+MT1T4NFhEbKU0CN4WqHSYc=
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com
+ (mail-bn8nam12lp2173.outbound.protection.outlook.com [104.47.55.173])
+ (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-391-tZ2jPCVePsGkWv7OxJz_kg-1; Tue, 11 Feb 2020 02:47:38 -0500
+Received: from SN4PR0401MB3663.namprd04.prod.outlook.com (10.167.133.19) by
+ SN4PR0401MB3551.namprd04.prod.outlook.com (10.167.129.152) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.21; Tue, 11 Feb 2020 07:47:36 +0000
+Received: from SN4PR0401MB3663.namprd04.prod.outlook.com
+ ([fe80::c071:99a5:6da8:924e]) by SN4PR0401MB3663.namprd04.prod.outlook.com
+ ([fe80::c071:99a5:6da8:924e%7]) with mapi id 15.20.2707.030; Tue, 11 Feb 2020
+ 07:47:35 +0000
+From:   "Van Leeuwen, Pascal" <pvanleeuwen@rambus.com>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "ebiggers@kernel.org" <ebiggers@kernel.org>
+CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2] crypto: rename sm3-256 to sm3 in hash_algo_name
+Thread-Topic: [PATCH 1/2] crypto: rename sm3-256 to sm3 in hash_algo_name
+Thread-Index: AQHV4A/19AwGoOkcZEG8ivP2s3l+UKgVnvzA
+Date:   Tue, 11 Feb 2020 07:47:35 +0000
+Message-ID: <SN4PR0401MB366384487DB71207FD64A89FC3180@SN4PR0401MB3663.namprd04.prod.outlook.com>
+References: <20200210124440.23929-1-tianjia.zhang@linux.alibaba.com>
+ <42b6db00b1864da9ad76a8d5964fdb74@MN2PR20MB2973.namprd20.prod.outlook.com>
+In-Reply-To: <42b6db00b1864da9ad76a8d5964fdb74@MN2PR20MB2973.namprd20.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [188.204.2.113]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: bd9b058a-f7bd-4f6e-6607-08d7aec6a908
+x-ms-traffictypediagnostic: SN4PR0401MB3551:
+x-microsoft-antispam-prvs: <SN4PR0401MB35518A8AAF4427B24D6BDA5CC3180@SN4PR0401MB3551.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0310C78181
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(39850400004)(346002)(376002)(366004)(199004)(189003)(71200400001)(316002)(7696005)(478600001)(2906002)(6506007)(53546011)(54906003)(26005)(110136005)(8936002)(4326008)(186003)(8676002)(86362001)(55016002)(66476007)(9686003)(81156014)(81166006)(66446008)(64756008)(66946007)(76116006)(66556008)(7416002)(52536014)(33656002)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN4PR0401MB3551;H:SN4PR0401MB3663.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: +pnP7vcaX2z3G5aubULp+UgF6yEoOFoVVojpcyr+kE8DV8+7XDAA0bs34soNivbyrVlLaKN5GSt8V1CwVnfcAU49nF3BO2JpC4JkgoeSx/3oh8OmWqHHvj0DKbuiURNMHDedwgJydFavxkllgMjGS/F5k5MtdRkyLNW8cfqtI6Azm3qOomYU41WB2j7WlZJzJPBFqEoMRzOZSXFQ69/pBlTnr/lLUGJQ85Sh/D3t6S2+k5UQn4XO/rIolfhEXD//sYVmPxodTY46o3WyaNMVvCfNkKhH+5xgzAJSB76LTFbzUR61AbV10Ddu2ROU+QXhbD58O0TdCFQb+49JVx/f/m4rsU9OFDNG9OYSxP57POUA31nQvmZAspZIKVpDGM9W35co9gpQrylVV3HO2hu0CeI1XAWorrdg9PLSWiKtml5A2QWzVutesRsrKVwcxkrD
+x-ms-exchange-antispam-messagedata: OPG8b6RSwKoAi7prNlTpxNR9PjI2pCjOJWONc8HdlwTJFJCj+dXfq7Vv2o75kr6RNuKxsY7kV2ZvxVm/kFwLkrNPon7RhI+WjURPyg5x+l5bbfULQf8SVTV8U4OofUW0uG/tgSuHqkO7kBNx6wO63g==
+x-ms-exchange-transport-forked: True
+MIME-Version: 1.0
+X-OriginatorOrg: rambus.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd9b058a-f7bd-4f6e-6607-08d7aec6a908
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2020 07:47:35.6413
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: bd0ba799-c2b9-413c-9c56-5d1731c4827c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: l8HW6al+ehDCyyVzGEcoEhJJQOjdntOBPzxaU6P/6TTAaobtMhM9YwwFnuNIF2YxkZ6FFpAhcg1bpOpbdX0Leg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3551
+X-MC-Unique: tZ2jPCVePsGkWv7OxJz_kg-1
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: rambus.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne 11. 02. 20 v 6:56 Benjamin Poirier napsal(a):
-> As a result of commit d2cd795c4ece ("ALSA: hda - fixup for the bass speaker
-> on Lenovo Carbon X1 7th gen"), the maximum sound output level on my
-> machine, an X1 Carbon, was reduced to ~60% of its previous level.
-> 
-> This laptop model has two sets of stereo speakers: Front and Bass (aka Rear
-> in some contexts).
-> Before commit d2cd795c4ece, volume control was commonly ineffective (using
-> the Master slider in alsa or pulseaudio apparently had little effect or
-> alternated between mute or max with nothing in between - more details
-> below)
-> commit d2cd795c4ece added quirk ALC285_FIXUP_SPEAKER2_TO_DAC1 which
-> resulted in assigning both sets of speakers to the same DAC, bringing
-> the two sets of speakers under one effective volume control but also
-> lowering the max output volume noticeably.
-> 
-> Fix this by changing the quirk so that each set of speakers can be
-> controlled individually and the max output volume is restored to what it
-> was before commit d2cd795c4ece.
-> 
-> Since there is no documentation about the audio codec, here is some
-> detailed information about the result of applying different quirks.
-> DAC connection (which is what's affected by the quirk) is reported as found
-> in /proc/asound/card0/codec#0, Node 0x17.
-> pavucontrol controls are reported with the device configured with the
-> "Analog Surround 4.0 Output" profile.
-> 
-> no quirk
-> 	Loud max output volume
-> 	DAC connection
-> 	  Connection: 3
-> 	     0x02 0x03 0x06*
-> 	Controls in alsamixer
-> 		Master controls front speakers only.
-> 		Speaker controls front speakers only.
-> 		Bass Speaker is a toggle that mutes everything.
-> 		PCM controls all speakers.
-> 		There is no "Front" mixer.
-> 	Controls in pavucontrol
-> 		"Front Left"/"Front Right" sliders work as expected.
-> 		"Rear Left"/"Rear Right" sliders seem to operate in a
-> 		non-linear fashion such that most values above 0% result in
-> 		max volume output.
-> 		-> Because the bass speakers (Rear) are more powerful, the
-> 		net effect is that when the channels are linked into a
-> 		single slider, it seems like it has just two modes: mute or
-> 		max.
-> ALC285_FIXUP_SPEAKER2_TO_DAC1
-> 	Weak (~60%) max output volume
-> 	DAC connection
-> 	  Connection: 3
-> 	     0x02* 0x03 0x06
-> 	  In-driver Connection: 1
-> 	     0x02
-> 	Controls in alsamixer
-> 		Master controls all four speakers.
-> 		Speaker controls all four speakers.
-> 		Bass Speaker is a toggle that mutes everything.
-> 		PCM controls all four speakers.
-> 		There is no "Front" mixer.
-> 	Controls in pavucontrol
-> 		"Front Left"/"Front Right" sliders have no effect.
-> 		"Rear Left"/"Rear Right" sliders control both front and
-> 		bass speakers.
-> 		-> Volume control is effective but it's not possible to
-> 		control front and bass speakers individually.
-> ALC295_FIXUP_DISABLE_DAC3
-> 	Loud max output volume
-> 	DAC connection
-> 	  Connection: 3
-> 	     0x02 0x03* 0x06
-> 	  In-driver Connection: 2
-> 	     0x02 0x03
-> 	Controls in alsamixer
-> 		Master controls all speakers.
-> 		Speaker is a toggle that mutes everything.
-> 		Bass Speaker controls bass speakers only.
-> 		PCM controls all speakers.
-> 		Front controls front speakers only.
-> 	Controls in pavucontrol
-> 		"Front Left"/"Front Right" sliders control front speakers
-> 		only.
-> 		"Rear Left"/"Rear Right" sliders control bass speakers
-> 		only.
-> 		-> Volume control is effective and it's possible to control
-> 		each of the four speakers individually.
-> 
-> In summary, Node 0x17 DAC connection 0x3 offers the loudest max volume and
-> the most detailed mixer controls. That connection is obtained with quirk
-> ALC295_FIXUP_DISABLE_DAC3. Therefore, change the ThinkPad X1 Carbon 7th to
-> use ALC295_FIXUP_DISABLE_DAC3.
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1jcnlwdG8tb3duZXJA
+dmdlci5rZXJuZWwub3JnIDxsaW51eC1jcnlwdG8tb3duZXJAdmdlci5rZXJuZWwub3JnPiBPbiBC
+ZWhhbGYgT2YgVGlhbmppYSBaaGFuZw0KPiBTZW50OiBNb25kYXksIEZlYnJ1YXJ5IDEwLCAyMDIw
+IDE6NDUgUE0NCj4gVG86IGhlcmJlcnRAZ29uZG9yLmFwYW5hLm9yZy5hdTsgZGF2ZW1AZGF2ZW1s
+b2Z0Lm5ldDsgem9oYXJAbGludXguaWJtLmNvbTsgZG1pdHJ5Lmthc2F0a2luQGdtYWlsLmNvbTsg
+am1vcnJpc0BuYW1laS5vcmc7DQo+IHNlcmdlQGhhbGx5bi5jb207IGViaWdnZXJzQGtlcm5lbC5v
+cmcNCj4gQ2M6IGxpbnV4LWNyeXB0b0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWludGVncml0eUB2
+Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXNlY3VyaXR5LW1vZHVsZUB2Z2VyLmtlcm5lbC5vcmc7IGxp
+bnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFtQQVRDSCAxLzJdIGNy
+eXB0bzogcmVuYW1lIHNtMy0yNTYgdG8gc20zIGluIGhhc2hfYWxnb19uYW1lDQo+DQo+IDw8PCBF
+eHRlcm5hbCBFbWFpbCA+Pj4NCj4gQ0FVVElPTjogVGhpcyBlbWFpbCBvcmlnaW5hdGVkIGZyb20g
+b3V0c2lkZSBvZiB0aGUgb3JnYW5pemF0aW9uLiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBh
+dHRhY2htZW50cyB1bmxlc3MgeW91IHJlY29nbml6ZSB0aGUNCj4gc2VuZGVyL3NlbmRlciBhZGRy
+ZXNzIGFuZCBrbm93IHRoZSBjb250ZW50IGlzIHNhZmUuDQo+DQo+DQo+IFRoZSBuYW1lIHNtMy0y
+NTYgaXMgZGVmaW5lZCBpbiBoYXNoX2FsZ29fbmFtZSBpbiBoYXNoX2luZm8sIGJ1dCB0aGUNCj4g
+YWxnb3JpdGhtIG5hbWUgaW1wbGVtZW50ZWQgaW4gc20zX2dlbmVyaWMuYyBpcyBzbTMsIHdoaWNo
+IHdpbGwgY2F1c2UNCj4gdGhlIHNtMy0yNTYgYWxnb3JpdGhtIHRvIGJlIG5vdCBmb3VuZCBpbiBz
+b21lIGFwcGxpY2F0aW9uIHNjZW5hcmlvcyBvZg0KPiB0aGUgaGFzaCBhbGdvcml0aG0sIGFuZCBh
+biBFTk9FTlQgZXJyb3Igd2lsbCBvY2N1ci4gRm9yIGV4YW1wbGUsDQo+IElNQSwga2V5cywgYW5k
+IG90aGVyIHN1YnN5c3RlbXMgdGhhdCByZWZlcmVuY2UgaGFzaF9hbGdvX25hbWUgYWxsIHVzZQ0K
+PiB0aGUgaGFzaCBhbGdvcml0aG0gb2Ygc20zLg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBUaWFuamlh
+IFpoYW5nIDx0aWFuamlhLnpoYW5nQGxpbnV4LmFsaWJhYmEuY29tPg0KUmV2aWV3ZWQtYnk6IFBh
+c2NhbCB2YW4gTGVldXdlbiA8cHZhbmxlZXV3ZW5AcmFtYnVzLmNvbT4NCg0KPiAtLS0NCj4gIGNy
+eXB0by9oYXNoX2luZm8uYyB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigr
+KSwgMSBkZWxldGlvbigtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvY3J5cHRvL2hhc2hfaW5mby5jIGIv
+Y3J5cHRvL2hhc2hfaW5mby5jDQo+IGluZGV4IGM3NTRjYjc1ZGQxYS4uYTQ5ZmY5NmJkZTc3IDEw
+MDY0NA0KPiAtLS0gYS9jcnlwdG8vaGFzaF9pbmZvLmMNCj4gKysrIGIvY3J5cHRvL2hhc2hfaW5m
+by5jDQo+IEBAIC0yNiw3ICsyNiw3IEBAIGNvbnN0IGNoYXIgKmNvbnN0IGhhc2hfYWxnb19uYW1l
+W0hBU0hfQUxHT19fTEFTVF0gPSB7DQo+ICAgICAgICAgW0hBU0hfQUxHT19UR1JfMTI4XSAgICAg
+PSAidGdyMTI4IiwNCj4gICAgICAgICBbSEFTSF9BTEdPX1RHUl8xNjBdICAgICA9ICJ0Z3IxNjAi
+LA0KPiAgICAgICAgIFtIQVNIX0FMR09fVEdSXzE5Ml0gICAgID0gInRncjE5MiIsDQo+IC0gICAg
+ICAgW0hBU0hfQUxHT19TTTNfMjU2XSAgICAgPSAic20zLTI1NiIsDQo+ICsgICAgICAgW0hBU0hf
+QUxHT19TTTNfMjU2XSAgICAgPSAic20zIiwNCj4gICAgICAgICBbSEFTSF9BTEdPX1NUUkVFQk9H
+XzI1Nl0gPSAic3RyZWVib2cyNTYiLA0KPiAgICAgICAgIFtIQVNIX0FMR09fU1RSRUVCT0dfNTEy
+XSA9ICJzdHJlZWJvZzUxMiIsDQo+ICB9Ow0KPiAtLQ0KPiAyLjE3LjENCg0KUmVnYXJkcywNClBh
+c2NhbCB2YW4gTGVldXdlbg0KU2lsaWNvbiBJUCBBcmNoaXRlY3QgTXVsdGktUHJvdG9jb2wgRW5n
+aW5lcywgUmFtYnVzIFNlY3VyaXR5DQpSYW1idXMgUk9UVyBIb2xkaW5nIEJWDQorMzEtNzMgNjU4
+MTk1Mw0KDQpOb3RlOiBUaGUgSW5zaWRlIFNlY3VyZS9WZXJpbWF0cml4IFNpbGljb24gSVAgdGVh
+bSB3YXMgcmVjZW50bHkgYWNxdWlyZWQgYnkgUmFtYnVzLg0KUGxlYXNlIGJlIHNvIGtpbmQgdG8g
+dXBkYXRlIHlvdXIgZS1tYWlsIGFkZHJlc3MgYm9vayB3aXRoIG15IG5ldyBlLW1haWwgYWRkcmVz
+cy4NCg0KDQoqKiBUaGlzIG1lc3NhZ2UgYW5kIGFueSBhdHRhY2htZW50cyBhcmUgZm9yIHRoZSBz
+b2xlIHVzZSBvZiB0aGUgaW50ZW5kZWQgcmVjaXBpZW50KHMpLiBJdCBtYXkgY29udGFpbiBpbmZv
+cm1hdGlvbiB0aGF0IGlzIGNvbmZpZGVudGlhbCBhbmQgcHJpdmlsZWdlZC4gSWYgeW91IGFyZSBu
+b3QgdGhlIGludGVuZGVkIHJlY2lwaWVudCBvZiB0aGlzIG1lc3NhZ2UsIHlvdSBhcmUgcHJvaGli
+aXRlZCBmcm9tIHByaW50aW5nLCBjb3B5aW5nLCBmb3J3YXJkaW5nIG9yIHNhdmluZyBpdC4gUGxl
+YXNlIGRlbGV0ZSB0aGUgbWVzc2FnZSBhbmQgYXR0YWNobWVudHMgYW5kIG5vdGlmeSB0aGUgc2Vu
+ZGVyIGltbWVkaWF0ZWx5LiAqKg0KDQpSYW1idXMgSW5jLjxodHRwOi8vd3d3LnJhbWJ1cy5jb20+
+DQo=
 
-The volume split (individual volume control) will cause trouble for the UCM 
-volume control at the moment which is the target for this device to get the 
-digital microphone working. If there is no possibility to share DAC, it would 
-be probably more nice to join the volume control in the driver.
-
-Have you tried to use 0x03 as source for all four speakers?
-
-Why PA handles the rear volume control with the current driver code in the 
-legacy ALSA driver? It should be handled like standard stereo device. I'll check.
-
-You should also test PA with UCM.
-
-				Thanks,
-					Jaroslav
-
-> 
-> Fixes: d2cd795c4ece ("ALSA: hda - fixup for the bass speaker on Lenovo Carbon X1 7th gen")
-> Link: https://lore.kernel.org/alsa-devel/20200210025249.GA2700@f3/
-> Cc: Jaroslav Kysela <perex@perex.cz>
-> Cc: Kailang Yang <kailang@realtek.com>
-> Signed-off-by: Benjamin Poirier <benjamin.poirier@gmail.com>
-> ---
->   sound/pci/hda/patch_realtek.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-> index 05d44df2008e..3171da10123e 100644
-> --- a/sound/pci/hda/patch_realtek.c
-> +++ b/sound/pci/hda/patch_realtek.c
-> @@ -7268,7 +7268,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
->   	SND_PCI_QUIRK(0x17aa, 0x224c, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
->   	SND_PCI_QUIRK(0x17aa, 0x224d, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
->   	SND_PCI_QUIRK(0x17aa, 0x225d, "Thinkpad T480", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
-> -	SND_PCI_QUIRK(0x17aa, 0x2292, "Thinkpad X1 Carbon 7th", ALC285_FIXUP_SPEAKER2_TO_DAC1),
-> +	SND_PCI_QUIRK(0x17aa, 0x2292, "Thinkpad X1 Carbon 7th", ALC295_FIXUP_DISABLE_DAC3),
->   	SND_PCI_QUIRK(0x17aa, 0x30bb, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
->   	SND_PCI_QUIRK(0x17aa, 0x30e2, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
->   	SND_PCI_QUIRK(0x17aa, 0x310c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
-> 
-
-
--- 
-Jaroslav Kysela <perex@perex.cz>
-Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
