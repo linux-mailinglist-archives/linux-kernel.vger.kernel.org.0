@@ -2,98 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED2A51594EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:28:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F07E7159501
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:33:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730848AbgBKQ2c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 11:28:32 -0500
-Received: from mga01.intel.com ([192.55.52.88]:50955 "EHLO mga01.intel.com"
+        id S1730817AbgBKQdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 11:33:20 -0500
+Received: from mga09.intel.com ([134.134.136.24]:18514 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729650AbgBKQ2c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 11:28:32 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1728295AbgBKQdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 11:33:19 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 08:28:31 -0800
-X-ExtLoop1: 1
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 08:33:18 -0800
 X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="233501271"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga003.jf.intel.com with ESMTP; 11 Feb 2020 08:28:30 -0800
-Date:   Tue, 11 Feb 2020 08:28:30 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 04/12] fs/xfs: Clean up DAX support check
-Message-ID: <20200211162830.GB12866@iweiny-DESK2.sc.intel.com>
-References: <20200208193445.27421-1-ira.weiny@intel.com>
- <20200208193445.27421-5-ira.weiny@intel.com>
- <20200211055745.GG10776@dread.disaster.area>
+   d="scan'208";a="237443521"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 08:33:18 -0800
+Message-ID: <3a8d9e1a3a5528c3a0889448f2ffd02c186399b7.camel@linux.intel.com>
+Subject: Re: [PATCH v16.1 6/9] virtio-balloon: Add support for providing
+ free page reports to host
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     David Hildenbrand <david@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Alexander Duyck <alexander.duyck@gmail.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, willy@infradead.org,
+        mhocko@kernel.org, linux-mm@kvack.org, akpm@linux-foundation.org,
+        mgorman@techsingularity.net, vbabka@suse.cz,
+        yang.zhang.wz@gmail.com, nitesh@redhat.com, konrad.wilk@oracle.com,
+        pagupta@redhat.com, riel@surriel.com, lcapitulino@redhat.com,
+        dave.hansen@intel.com, wei.w.wang@intel.com, aarcange@redhat.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com, osalvador@suse.de
+Date:   Tue, 11 Feb 2020 08:33:18 -0800
+In-Reply-To: <314cb54e-8dfc-7606-7135-c21dbf416505@redhat.com>
+References: <20200122173040.6142.39116.stgit@localhost.localdomain>
+         <20200122174347.6142.92803.stgit@localhost.localdomain>
+         <b8cbf72d-55a7-4a58-6d08-b0ac5fa86e82@redhat.com>
+         <20200211063441-mutt-send-email-mst@kernel.org>
+         <ada0ec83-8e7d-abb3-7053-0ec2bf2a9aa5@redhat.com>
+         <20200211090052-mutt-send-email-mst@kernel.org>
+         <d6b481fb-6c72-455d-f8e4-600a8677c7a8@redhat.com>
+         <20200211094357-mutt-send-email-mst@kernel.org>
+         <314cb54e-8dfc-7606-7135-c21dbf416505@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200211055745.GG10776@dread.disaster.area>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 04:57:45PM +1100, Dave Chinner wrote:
-> On Sat, Feb 08, 2020 at 11:34:37AM -0800, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
+On Tue, 2020-02-11 at 16:13 +0100, David Hildenbrand wrote:
+>  >> AFAIKs, the guest could inflate/deflate (esp. temporarily) and
+> > > communicate via "actual" the actual balloon size as he sees it.
 > > 
-> > Rather than open coding xfs_inode_supports_dax() in
-> > xfs_ioctl_setattr_dax_invalidate() export xfs_inode_supports_dax() and
-> > call it in preparation for swapping dax flags.
-> > 
-> > This also means updating xfs_inode_supports_dax() to return true for a
-> > directory.
+> > OK so you want hinted but unused pages counted, and reported
+> > in "actual"? That's a vmexit before each page use ...
 > 
-> That's not correct. This now means S_DAX gets set on directory inodes
-> because both xfs_inode_supports_dax() and the on-disk inode flag
-> checks return true in xfs_diflags_to_iflags(). Hence when we
-> instantiate a directory inode with a DAX inherit hint set on it
-> we'll set S_DAX on the inode and so IS_DAX() will return true for
-> directory inodes...
-
-I'm not following.  Don't we want S_DAX to get set on directory inodes?
-
-IIRC what we wanted was something like this where IS_DAX is the current state
-and "dax" is the inode flag:
-
-/ <IS_DAX=0 dax=0>
-	dir1 <IS_DAX=0 dax=0>
-		f0 <IS_DAX=0 dax=0>
-		f1 <IS_DAX=1 dax=1>
-	dir2 <IS_DAX=1 dax=1>
-		f2 <IS_DAX=1 dax=1>
-		f3 <IS_DAX=0 dax=0>
-		dir3 <IS_DAX=1 dax=1>
-			f4 <IS_DAX=1 dax=1>
-		dir4 <IS_DAX=0 dax=0>
-			f5 <IS_DAX=0 dax=0>
-		f6 <IS_DAX=1 dax=1>
-
-Where f1, dir2, f3, and dir4 required explicit state changes when they were
-created.  Because they inherited their dax state from the parent.  All the
-other creations happened based on the DAX state of the parent directory.  So we
-need to store and know the state of the directories.  What am I missing?
-
-Ira
-
+> No, not at all. I rather meant, that it is unclear how
+> inflation/deflation requests and "actual" *could* interact. Especially
+> if we would consider free page reporting as some way of inflation
+> (+immediate deflation) triggered by the guest. IMHO, we would not touch
+> "actual" in that case.
 > 
-> Cheers,
+> But as I said, I am totally fine with keeping it as is in this patch.
+> IOW not glue free page reporting to inflation/deflation but let it act
+> like something different with its own semantics (and document these
+> properly).
 > 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+
+Okay, so before I post v17 am I leaving the virtio-balloon changes as they
+were then?
+
+For what it is worth I agree with Michael that there is more to this than
+just a scatter-gather queue. For now I am trying to keep the overall
+impact on QEMU on the smaller side, and if we do end up supporting the
+MADV_FREE instead of MADV_DONTNEED that would also have an impact on
+things as it would be yet another difference between ballooning and
+hinting.
+
+Thanks.
+
+- Alex
+
