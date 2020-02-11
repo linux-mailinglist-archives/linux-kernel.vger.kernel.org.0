@@ -2,92 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B1EF159063
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:52:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 393FB1590FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:57:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729360AbgBKNwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 08:52:32 -0500
-Received: from mail.serbinski.com ([162.218.126.2]:54546 "EHLO
-        mail.serbinski.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728624AbgBKNwa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 08:52:30 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mail.serbinski.com (Postfix) with ESMTP id CADA7D006F9;
-        Tue, 11 Feb 2020 13:52:28 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at serbinski.com
-Received: from mail.serbinski.com ([127.0.0.1])
-        by localhost (mail.serbinski.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id MnOnwGJcKCEn; Tue, 11 Feb 2020 08:52:23 -0500 (EST)
-Received: from mail.serbinski.com (localhost [127.0.0.1])
-        by mail.serbinski.com (Postfix) with ESMTP id 4F86CD00693;
-        Tue, 11 Feb 2020 08:52:23 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.serbinski.com 4F86CD00693
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=serbinski.com;
-        s=default; t=1581429143;
-        bh=4UgsNF2DfSAJSAEAuD7fkyhncR/ncVh8kAIH7kgJv2A=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Ssoit/C7jtU+uEyLBQlHyTfLDiONn8FBviOZQ0wZQ7bzpeDh/52Y6RjL0hK95iw6w
-         CAsfhZGI5lqAnLqnO/pA3fRbCr2t+TeGXKjon6ZvGiVTc+vduNIAZmmKhNUTBOCw0b
-         nwYbCqj3d60oW8U+tkAROVgAxx84Q5ivNylYa9tA=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 11 Feb 2020 08:52:23 -0500
-From:   Adam Serbinski <adam@serbinski.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Srini Kandagatla <srinivas.kandagatla@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Patrick Lai <plai@codeaurora.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 8/8] ASoC: qcom: apq8096: add kcontrols to set PCM rate
-In-Reply-To: <20200211114256.GC4543@sirena.org.uk>
-References: <20200207205013.12274-1-adam@serbinski.com>
- <20200209154748.3015-1-adam@serbinski.com>
- <20200209154748.3015-9-adam@serbinski.com>
- <20200210133636.GJ7685@sirena.org.uk>
- <18057b47c76d350f8380f277713e0936@serbinski.com>
- <20200210182609.GA14166@sirena.org.uk>
- <f88d21773f47f5a543a17ad07d66f9b7@serbinski.com>
- <20200210200839.GG14166@sirena.org.uk>
- <7c57801d8f671c40d4c6094e5ce89681@serbinski.com>
- <20200211114256.GC4543@sirena.org.uk>
-User-Agent: Roundcube Webmail/1.4-beta
-Message-ID: <b386237a1c21a417afb25f79a8b3d4ce@serbinski.com>
-X-Sender: adam@serbinski.com
+        id S1729939AbgBKN5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 08:57:07 -0500
+Received: from 8bytes.org ([81.169.241.247]:52122 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729522AbgBKNxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 08:53:24 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 7C652E49; Tue, 11 Feb 2020 14:53:12 +0100 (CET)
+From:   Joerg Roedel <joro@8bytes.org>
+To:     x86@kernel.org
+Cc:     hpa@zytor.com, Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Joerg Roedel <joro@8bytes.org>, Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 30/62] x86/head/64: Move early exception dispatch to C code
+Date:   Tue, 11 Feb 2020 14:52:24 +0100
+Message-Id: <20200211135256.24617-31-joro@8bytes.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200211135256.24617-1-joro@8bytes.org>
+References: <20200211135256.24617-1-joro@8bytes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-11 06:42, Mark Brown wrote:
-> On Mon, Feb 10, 2020 at 04:13:52PM -0500, Adam Serbinski wrote:
-> 
->> I am not aware of how this could be done for bluetooth, since the 
->> value
->> still has to originate from userspace. The driver you referred to 
->> supports
->> only a single sample rate, whereas for bluetooth, 2 sample rates are
->> required, and nothing in the kernel is aware of the appropriate rate, 
->> at
->> least in the case of the qca6174a I'm working with right now, or for 
->> that
->> matter, TI Wilink 8, which I've also worked with.
-> 
-> There's generic support in the CODEC<->CODEC link code for setting the
-> DAI configuration from userspace.
+From: Joerg Roedel <jroedel@suse.de>
 
-Ok. Its going to take some time to get my head around that, so for the 
-time being I'm going to drop this feature and get the rest fixed for 
-inclusion.
+Move the assembly coded dispatch between page-faults and all other
+exceptions to C code to make it easier to maintain and extend.
 
-Thanks.
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ arch/x86/kernel/head64.c  | 20 ++++++++++++++++++++
+ arch/x86/kernel/head_64.S | 11 +----------
+ 2 files changed, 21 insertions(+), 10 deletions(-)
+
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 7cdfb7113811..d83c62ebaa85 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -36,6 +36,8 @@
+ #include <asm/microcode.h>
+ #include <asm/kasan.h>
+ #include <asm/fixmap.h>
++#include <asm/extable.h>
++#include <asm/trap_defs.h>
+ 
+ /*
+  * Manage page tables very early on.
+@@ -377,6 +379,24 @@ int __init early_make_pgtable(unsigned long address)
+ 	return __early_make_pgtable(address, pmd);
+ }
+ 
++void __init early_exception(struct pt_regs *regs, int trapnr)
++{
++	unsigned long cr2;
++	int r;
++
++	switch (trapnr) {
++	case X86_TRAP_PF:
++		cr2 = native_read_cr2();
++		r = early_make_pgtable(cr2);
++		break;
++	default:
++		r = 1;
++	}
++
++	if (r)
++		early_fixup_exception(regs, trapnr);
++}
++
+ /* Don't add a printk in there. printk relies on the PDA which is not initialized 
+    yet. */
+ static void __init clear_bss(void)
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 0af79f783659..81cf6c5763ef 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -357,18 +357,9 @@ SYM_CODE_START_LOCAL(early_idt_handler_common)
+ 	pushq %r15				/* pt_regs->r15 */
+ 	UNWIND_HINT_REGS
+ 
+-	cmpq $14,%rsi		/* Page fault? */
+-	jnz 10f
+-	GET_CR2_INTO(%rdi)	/* can clobber %rax if pv */
+-	call early_make_pgtable
+-	andl %eax,%eax
+-	jz 20f			/* All good */
+-
+-10:
+ 	movq %rsp,%rdi		/* RDI = pt_regs; RSI is already trapnr */
+-	call early_fixup_exception
++	call early_exception
+ 
+-20:
+ 	decl early_recursion_flag(%rip)
+ 	jmp restore_regs_and_return_to_kernel
+ SYM_CODE_END(early_idt_handler_common)
+-- 
+2.17.1
+
