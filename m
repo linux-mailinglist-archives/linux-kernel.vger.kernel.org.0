@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75A2B15939A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 16:49:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BD921593B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 16:50:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730367AbgBKPtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 10:49:24 -0500
-Received: from foss.arm.com ([217.140.110.172]:48460 "EHLO foss.arm.com"
+        id S1730574AbgBKPuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 10:50:03 -0500
+Received: from foss.arm.com ([217.140.110.172]:48476 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730259AbgBKPtU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 10:49:20 -0500
+        id S1730343AbgBKPtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 10:49:22 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 065A731B;
-        Tue, 11 Feb 2020 07:49:20 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C74D31B;
+        Tue, 11 Feb 2020 07:49:22 -0800 (PST)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7F19F3F68E;
-        Tue, 11 Feb 2020 07:49:19 -0800 (PST)
-Date:   Tue, 11 Feb 2020 15:49:18 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D63A03F68E;
+        Tue, 11 Feb 2020 07:49:21 -0800 (PST)
+Date:   Tue, 11 Feb 2020 15:49:20 +0000
 From:   Mark Brown <broonie@kernel.org>
 To:     Paul Olaru <paul.olaru@nxp.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
@@ -25,9 +25,9 @@ Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
         devicetree@vger.kernel.org, festevam@gmail.com, linux-imx@nxp.com,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
         robh+dt@kernel.org
-Subject: Applied "ASoC: SOF: imx8: Add ops for i.MX8QM" to the asoc tree
-In-Reply-To: <20200210095817.13226-3-daniel.baluta@oss.nxp.com>
-Message-Id: <applied-20200210095817.13226-3-daniel.baluta@oss.nxp.com>
+Subject: Applied "ASoC: SOF: Rename i.MX8 platform to i.MX8X" to the asoc tree
+In-Reply-To: <20200210095817.13226-2-daniel.baluta@oss.nxp.com>
+Message-Id: <applied-20200210095817.13226-2-daniel.baluta@oss.nxp.com>
 X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -36,7 +36,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: SOF: imx8: Add ops for i.MX8QM
+   ASoC: SOF: Rename i.MX8 platform to i.MX8X
 
 has been applied to the asoc tree at
 
@@ -61,93 +61,81 @@ to this mail.
 Thanks,
 Mark
 
-From acfa52027bb64b8f93324da2277ff662c7a95679 Mon Sep 17 00:00:00 2001
+From 9da9ace29ba556d5a2ae6d044070daba5b7d3638 Mon Sep 17 00:00:00 2001
 From: Paul Olaru <paul.olaru@nxp.com>
-Date: Mon, 10 Feb 2020 11:58:15 +0200
-Subject: [PATCH] ASoC: SOF: imx8: Add ops for i.MX8QM
+Date: Mon, 10 Feb 2020 11:58:14 +0200
+Subject: [PATCH] ASoC: SOF: Rename i.MX8 platform to i.MX8X
 
-i.MX8QM and i.MX8QXP are mostly identical platforms with minor hardware
-differences. One of these differences affects the firmware boot process,
-requiring the run operation to differ. All other ops are reused.
+i.MX8 and i.MX8X platforms are very similar and were treated the same.
+Anyhow, we need to account for the differences somehow.
+
+Current supported platform is i.MX8QXP which is from i.MX8X family.
+Rename i.MX8 platform to i.MX8X to prepare for future i.MX8 platforms.
 
 Signed-off-by: Paul Olaru <paul.olaru@nxp.com>
 Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
 Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Link: https://lore.kernel.org/r/20200210095817.13226-3-daniel.baluta@oss.nxp.com
+Link: https://lore.kernel.org/r/20200210095817.13226-2-daniel.baluta@oss.nxp.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sof/imx/imx8.c | 51 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+ sound/soc/sof/imx/imx8.c   | 10 +++++-----
+ sound/soc/sof/sof-of-dev.c |  4 ++--
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/sound/soc/sof/imx/imx8.c b/sound/soc/sof/imx/imx8.c
-index 9ffc2a955e4f..b692752b2178 100644
+index b2556f5e2871..9ffc2a955e4f 100644
 --- a/sound/soc/sof/imx/imx8.c
 +++ b/sound/soc/sof/imx/imx8.c
-@@ -178,6 +178,24 @@ static int imx8x_run(struct snd_sof_dev *sdev)
- 	return 0;
- }
- 
-+static int imx8_run(struct snd_sof_dev *sdev)
-+{
-+	struct imx8_priv *dsp_priv = (struct imx8_priv *)sdev->private;
-+	int ret;
-+
-+	ret = imx_sc_misc_set_control(dsp_priv->sc_ipc, IMX_SC_R_DSP,
-+				      IMX_SC_C_OFS_SEL, 0);
-+	if (ret < 0) {
-+		dev_err(sdev->dev, "Error system address offset source select\n");
-+		return ret;
-+	}
-+
-+	imx_sc_pm_cpu_start(dsp_priv->sc_ipc, IMX_SC_R_DSP, true,
-+			    RESET_VECTOR_VADDR);
-+
-+	return 0;
-+}
-+
- static int imx8_probe(struct snd_sof_dev *sdev)
+@@ -138,7 +138,7 @@ static int imx8_send_msg(struct snd_sof_dev *sdev, struct snd_sof_ipc_msg *msg)
+ /*
+  * DSP control.
+  */
+-static int imx8_run(struct snd_sof_dev *sdev)
++static int imx8x_run(struct snd_sof_dev *sdev)
  {
- 	struct platform_device *pdev =
-@@ -360,6 +378,39 @@ static struct snd_soc_dai_driver imx8_dai[] = {
+ 	struct imx8_priv *dsp_priv = (struct imx8_priv *)sdev->private;
+ 	int ret;
+@@ -360,13 +360,13 @@ static struct snd_soc_dai_driver imx8_dai[] = {
  },
  };
  
-+/* i.MX8 ops */
-+struct snd_sof_dsp_ops sof_imx8_ops = {
-+	/* probe and remove */
-+	.probe		= imx8_probe,
-+	.remove		= imx8_remove,
-+	/* DSP core boot */
-+	.run		= imx8_run,
-+
-+	/* Block IO */
-+	.block_read	= sof_block_read,
-+	.block_write	= sof_block_write,
-+
-+	/* ipc */
-+	.send_msg	= imx8_send_msg,
-+	.fw_ready	= sof_fw_ready,
-+	.get_mailbox_offset	= imx8_get_mailbox_offset,
-+	.get_window_offset	= imx8_get_window_offset,
-+
-+	.ipc_msg_data	= imx8_ipc_msg_data,
-+	.ipc_pcm_params	= imx8_ipc_pcm_params,
-+
-+	/* module loading */
-+	.load_module	= snd_sof_parse_module_memcpy,
-+	.get_bar_index	= imx8_get_bar_index,
-+	/* firmware loading */
-+	.load_firmware	= snd_sof_load_firmware_memcpy,
-+
-+	/* DAI drivers */
-+	.drv = imx8_dai,
-+	.num_drv = 1, /* we have only 1 ESAI interface on i.MX8 */
-+};
-+EXPORT_SYMBOL(sof_imx8_ops);
-+
- /* i.MX8X ops */
- struct snd_sof_dsp_ops sof_imx8x_ops = {
+-/* i.MX8  ops */
+-struct snd_sof_dsp_ops sof_imx8_ops = {
++/* i.MX8X ops */
++struct snd_sof_dsp_ops sof_imx8x_ops = {
  	/* probe and remove */
+ 	.probe		= imx8_probe,
+ 	.remove		= imx8_remove,
+ 	/* DSP core boot */
+-	.run		= imx8_run,
++	.run		= imx8x_run,
+ 
+ 	/* Block IO */
+ 	.block_read	= sof_block_read,
+@@ -398,6 +398,6 @@ struct snd_sof_dsp_ops sof_imx8_ops = {
+ 			SNDRV_PCM_INFO_PAUSE |
+ 			SNDRV_PCM_INFO_NO_PERIOD_WAKEUP
+ };
+-EXPORT_SYMBOL(sof_imx8_ops);
++EXPORT_SYMBOL(sof_imx8x_ops);
+ 
+ MODULE_LICENSE("Dual BSD/GPL");
+diff --git a/sound/soc/sof/sof-of-dev.c b/sound/soc/sof/sof-of-dev.c
+index 39ea8af6213f..2da1bd859d98 100644
+--- a/sound/soc/sof/sof-of-dev.c
++++ b/sound/soc/sof/sof-of-dev.c
+@@ -19,9 +19,9 @@ extern struct snd_sof_dsp_ops sof_imx8_ops;
+ static struct sof_dev_desc sof_of_imx8qxp_desc = {
+ 	.default_fw_path = "imx/sof",
+ 	.default_tplg_path = "imx/sof-tplg",
+-	.default_fw_filename = "sof-imx8.ri",
++	.default_fw_filename = "sof-imx8x.ri",
+ 	.nocodec_tplg_filename = "sof-imx8-nocodec.tplg",
+-	.ops = &sof_imx8_ops,
++	.ops = &sof_imx8x_ops,
+ };
+ #endif
+ 
 -- 
 2.20.1
 
