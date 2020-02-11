@@ -2,113 +2,435 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E220159B7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 22:45:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4386F159B1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 22:31:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbgBKVoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 16:44:16 -0500
-Received: from gateway36.websitewelcome.com ([192.185.188.18]:39150 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727043AbgBKVoQ (ORCPT
+        id S1727589AbgBKVbt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 16:31:49 -0500
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:39103 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727330AbgBKVbt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 16:44:16 -0500
-X-Greylist: delayed 2916 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Feb 2020 16:44:16 EST
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 1BF4D40BC0795
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 14:09:40 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 1cZHjIfMOXVkQ1cZIjgzwJ; Tue, 11 Feb 2020 14:55:40 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Zjc5LElXJ0zIygghxh2TaQQ5QMBnKhOZ9bRBJCzRtXs=; b=fKj5Y5hxtG77C4OrRGtRsmqzFH
-        LmOdqavyDRDgSomroylBrffEtkaEUQlF/iwt2phvzghztPuyMqar6XMggvExMLKHjY9uj184VB4Mf
-        17Q8Ko8/U6QvGAbIGbebs6knEZuUnfu9z8+TGrA9OVskmBEcAbFjJzi1hCZiM9vx5vmaYxidtkLed
-        baps6upgIypNw/lIsT1kq/aErDchueSF04reoDkrhxEQdCfob2PsTZhrLbigDDOp2Naeweh6Y4BcJ
-        nkMbbK9GuLdHBcrYWzoyztdteIRPM/Ilp3Vxm1MTPwoxtcjUMH5XzPVeRiwu+KpqDLu0zUUy/oG1l
-        G3MCiGjw==;
-Received: from [200.68.140.36] (port=27335 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j1cZG-001zvC-G4; Tue, 11 Feb 2020 14:55:38 -0600
-Date:   Tue, 11 Feb 2020 14:58:13 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] lib/ts_fsm: Replace zero-length array with flexible-array
- member
-Message-ID: <20200211205813.GA25602@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.36
-X-Source-L: No
-X-Exim-ID: 1j1cZG-001zvC-G4
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.36]:27335
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 47
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Tue, 11 Feb 2020 16:31:49 -0500
+Received: by mail-pg1-f202.google.com with SMTP id r192so8237pgr.6
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 13:31:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=c+fsn30b3pWjnYOr6E6zF4UMAJj0Yx+BEAwnB5sP5J8=;
+        b=o72uVg9sJpd+UvYFuuzb65EzpdlHVgYlzpuacdYP9/+wTv2Z4axtnAWPKWaSxG6IpQ
+         i9dcYqDm3EvPgsU/gGmlv2hTh3VcuRQMBXk2ozPhdauogUYRRANuln5bEnykkP+r283Z
+         y23eVMMdbUea3L6hEh3nAVGVTJqqrXlksY/MBw3ew1KYrFawiAyBXrY1U2TJkaUQBdpC
+         Nk+mZAJJfw5/PcOuC0WhR0edQwbSvlAULRVTswulrGNWxCSBfahLjUWCi7m5hR7p0llS
+         GQweJbD6gKuLzUzXqd9B0/10J5D4hSIEkG/TTKksfnHRk0yRCplQk0U2I9jQLPOOf0Mf
+         S5Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=c+fsn30b3pWjnYOr6E6zF4UMAJj0Yx+BEAwnB5sP5J8=;
+        b=G16aDrpk7H6Vfd2Y5LzFTKGyKr9MLbgQvhjxiLcJoit5SrVSL6UxuciY8WfL3Q6bXu
+         hZVB3ziQ/PDNPsGGcKsyr9twosHxhP9hss2cFx9O27FR2jrZpvdYSdabVBXy/YdXq0QR
+         G982TN9XjXWlwTCJALJL9vIvmogu2qcyccShzObClPGI0VPFgZyuw0Fax5owUdoVMzBy
+         u+F1+5aWQ4gELPg7rDNjT3gzcWyG5fif4YWgOsOVK+/QioXAsiGyF0IWvwbH+2l5t4El
+         WsZth8XhnIlhzCX11BVAmGe3/YgWBqaRfbnCzaUZD3nZ864SogGm+Pw7pSC9VaQCSnre
+         PHNw==
+X-Gm-Message-State: APjAAAWHOTjPvArXr+HNIYZ5CC9kZUaAbwGzw3UdzK6I/YaLnjSYrzfD
+        98l4h3eAIEUVIywrttQxYQ4FGatNVZ2aCwtV1g==
+X-Google-Smtp-Source: APXvYqwZcXavNgTvnHSepciYL/g+tzwV0kKfoKESWhUKYljcoZs5uTuH1N/KR7k5ejc8vOjtoShaglNvaJ6+zmDRLg==
+X-Received: by 2002:a65:5283:: with SMTP id y3mr5113587pgp.370.1581456706831;
+ Tue, 11 Feb 2020 13:31:46 -0800 (PST)
+Date:   Tue, 11 Feb 2020 13:31:20 -0800
+Message-Id: <20200211213128.73302-1-almasrymina@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.225.g125e21ebc7-goog
+Subject: [PATCH v12 1/9] hugetlb_cgroup: Add hugetlb_cgroup reservation counter
+From:   Mina Almasry <almasrymina@google.com>
+To:     mike.kravetz@oracle.com
+Cc:     shuah@kernel.org, almasrymina@google.com, rientjes@google.com,
+        shakeelb@google.com, gthelen@google.com, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+These counters will track hugetlb reservations rather than hugetlb
+memory faulted in. This patch only adds the counter, following patches
+add the charging and uncharging of the counter.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+This is patch 1 of an 9 patch series.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertenly introduced[3] to the codebase from now on.
+Problem:
+Currently tasks attempting to reserve more hugetlb memory than is
+available get a failure at mmap/shmget time. This is thanks to
+Hugetlbfs Reservations [1].  However, if a task attempts to reserve
+more hugetlb memory than its hugetlb_cgroup limit allows, the kernel
+will allow the mmap/shmget call, but will SIGBUS the task when it
+attempts to fault in the excess memory.
 
-This issue was found with the help of Coccinelle.
+We have users hitting their hugetlb_cgroup limits and thus we've been
+looking at this failure mode. We'd like to improve this behavior such
+that users violating the hugetlb_cgroup limits get an error on
+mmap/shmget time, rather than getting SIGBUS'd when they try to fault
+the excess memory in. This gives the user an opportunity to fallback
+more gracefully to non-hugetlbfs memory for example.
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+The underlying problem is that today's hugetlb_cgroup accounting happens
+at hugetlb memory *fault* time, rather than at *reservation* time.
+Thus, enforcing the hugetlb_cgroup limit only happens at fault time, and
+the offending task gets SIGBUS'd.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Proposed Solution:
+A new page counter named
+'hugetlb.xMB.rsvd.[limit|usage|max_usage]_in_bytes'. This counter has
+slightly different semantics than
+'hugetlb.xMB.[limit|usage|max_usage]_in_bytes':
+
+- While usage_in_bytes tracks all *faulted* hugetlb memory,
+rsvd.usage_in_bytes tracks all *reserved* hugetlb memory and
+hugetlb memory faulted in without a prior reservation.
+
+- If a task attempts to reserve more memory than limit_in_bytes allows,
+the kernel will allow it to do so. But if a task attempts to reserve
+more memory than rsvd.limit_in_bytes, the kernel will fail this
+reservation.
+
+This proposal is implemented in this patch series, with tests to verify
+functionality and show the usage.
+
+Alternatives considered:
+1. A new cgroup, instead of only a new page_counter attached to
+   the existing hugetlb_cgroup. Adding a new cgroup seemed like a lot
+   of code duplication with hugetlb_cgroup. Keeping hugetlb related
+   page counters under hugetlb_cgroup seemed cleaner as well.
+
+2. Instead of adding a new counter, we considered adding a sysctl that
+   modifies the behavior of hugetlb.xMB.[limit|usage]_in_bytes, to do
+   accounting at reservation time rather than fault time. Adding a new
+   page_counter seems better as userspace could, if it wants, choose to
+   enforce different cgroups differently: one via limit_in_bytes, and
+   another via rsvd.limit_in_bytes.  This could be very useful if
+   you're transitioning how hugetlb memory is partitioned on your system
+   one cgroup at a time, for example. Also, someone may find usage for
+   both limit_in_bytes and rsvd.limit_in_bytes concurrently, and this
+   approach gives them the option to do so.
+
+Testing:
+- Added tests passing.
+- Used libhugetlbfs for regression testing.
+
+[1]: https://www.kernel.org/doc/html/latest/vm/hugetlbfs_reserv.html
+
+Signed-off-by: Mina Almasry <almasrymina@google.com>
+Acked-by: David Rientjes <rientjes@google.com>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+
 ---
- lib/ts_fsm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v12:
+- Minor code formatting.
 
-diff --git a/lib/ts_fsm.c b/lib/ts_fsm.c
-index 69557c74ef9f..f7aed7b6f3fe 100644
---- a/lib/ts_fsm.c
-+++ b/lib/ts_fsm.c
-@@ -36,7 +36,7 @@
- struct ts_fsm
- {
- 	unsigned int		ntokens;
--	struct ts_fsm_token	tokens[0];
-+	struct ts_fsm_token	tokens[];
+Changes in v11:
+- Renamed resv.* or 'reservation' or 'reserved' to rsvd.*
+- Renamed hugetlb_cgroup_get_counter() to
+hugetlb_cgroup_counter_from_cgroup().
+
+Changes in v10:
+- Renamed reservation_* to resv.*
+
+---
+ include/linux/hugetlb.h |   4 +-
+ mm/hugetlb_cgroup.c     | 115 +++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 104 insertions(+), 15 deletions(-)
+
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 1e897e4168ac1..dea6143aa0685 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -432,8 +432,8 @@ struct hstate {
+ 	unsigned int surplus_huge_pages_node[MAX_NUMNODES];
+ #ifdef CONFIG_CGROUP_HUGETLB
+ 	/* cgroup control files */
+-	struct cftype cgroup_files_dfl[5];
+-	struct cftype cgroup_files_legacy[5];
++	struct cftype cgroup_files_dfl[7];
++	struct cftype cgroup_files_legacy[9];
+ #endif
+ 	char name[HSTATE_NAME_LEN];
  };
- 
- /* other values derived from ctype.h */
--- 
-2.25.0
+diff --git a/mm/hugetlb_cgroup.c b/mm/hugetlb_cgroup.c
+index e434b05416c68..08b2adcdb5c1c 100644
+--- a/mm/hugetlb_cgroup.c
++++ b/mm/hugetlb_cgroup.c
+@@ -36,6 +36,11 @@ struct hugetlb_cgroup {
+ 	 */
+ 	struct page_counter hugepage[HUGE_MAX_HSTATE];
 
++	/*
++	 * the counter to account for hugepage reservations from hugetlb.
++	 */
++	struct page_counter rsvd_hugepage[HUGE_MAX_HSTATE];
++
+ 	atomic_long_t events[HUGE_MAX_HSTATE][HUGETLB_NR_MEMORY_EVENTS];
+ 	atomic_long_t events_local[HUGE_MAX_HSTATE][HUGETLB_NR_MEMORY_EVENTS];
+
+@@ -55,6 +60,15 @@ struct hugetlb_cgroup {
+
+ static struct hugetlb_cgroup *root_h_cgroup __read_mostly;
+
++static inline struct page_counter *
++hugetlb_cgroup_counter_from_cgroup(struct hugetlb_cgroup *h_cg, int idx,
++				   bool rsvd)
++{
++	if (rsvd)
++		return &h_cg->rsvd_hugepage[idx];
++	return &h_cg->hugepage[idx];
++}
++
+ static inline
+ struct hugetlb_cgroup *hugetlb_cgroup_from_css(struct cgroup_subsys_state *s)
+ {
+@@ -295,28 +309,42 @@ void hugetlb_cgroup_uncharge_cgroup(int idx, unsigned long nr_pages,
+
+ enum {
+ 	RES_USAGE,
++	RES_RSVD_USAGE,
+ 	RES_LIMIT,
++	RES_RSVD_LIMIT,
+ 	RES_MAX_USAGE,
++	RES_RSVD_MAX_USAGE,
+ 	RES_FAILCNT,
++	RES_RSVD_FAILCNT,
+ };
+
+ static u64 hugetlb_cgroup_read_u64(struct cgroup_subsys_state *css,
+ 				   struct cftype *cft)
+ {
+ 	struct page_counter *counter;
++	struct page_counter *rsvd_counter;
+ 	struct hugetlb_cgroup *h_cg = hugetlb_cgroup_from_css(css);
+
+ 	counter = &h_cg->hugepage[MEMFILE_IDX(cft->private)];
++	rsvd_counter = &h_cg->rsvd_hugepage[MEMFILE_IDX(cft->private)];
+
+ 	switch (MEMFILE_ATTR(cft->private)) {
+ 	case RES_USAGE:
+ 		return (u64)page_counter_read(counter) * PAGE_SIZE;
++	case RES_RSVD_USAGE:
++		return (u64)page_counter_read(rsvd_counter) * PAGE_SIZE;
+ 	case RES_LIMIT:
+ 		return (u64)counter->max * PAGE_SIZE;
++	case RES_RSVD_LIMIT:
++		return (u64)rsvd_counter->max * PAGE_SIZE;
+ 	case RES_MAX_USAGE:
+ 		return (u64)counter->watermark * PAGE_SIZE;
++	case RES_RSVD_MAX_USAGE:
++		return (u64)rsvd_counter->watermark * PAGE_SIZE;
+ 	case RES_FAILCNT:
+ 		return counter->failcnt;
++	case RES_RSVD_FAILCNT:
++		return rsvd_counter->failcnt;
+ 	default:
+ 		BUG();
+ 	}
+@@ -338,10 +366,16 @@ static int hugetlb_cgroup_read_u64_max(struct seq_file *seq, void *v)
+ 			   1 << huge_page_order(&hstates[idx]));
+
+ 	switch (MEMFILE_ATTR(cft->private)) {
++	case RES_RSVD_USAGE:
++		counter = &h_cg->rsvd_hugepage[idx];
++		/* Fall through. */
+ 	case RES_USAGE:
+ 		val = (u64)page_counter_read(counter);
+ 		seq_printf(seq, "%llu\n", val * PAGE_SIZE);
+ 		break;
++	case RES_RSVD_LIMIT:
++		counter = &h_cg->rsvd_hugepage[idx];
++		/* Fall through. */
+ 	case RES_LIMIT:
+ 		val = (u64)counter->max;
+ 		if (val == limit)
+@@ -365,6 +399,7 @@ static ssize_t hugetlb_cgroup_write(struct kernfs_open_file *of,
+ 	int ret, idx;
+ 	unsigned long nr_pages;
+ 	struct hugetlb_cgroup *h_cg = hugetlb_cgroup_from_css(of_css(of));
++	bool rsvd = false;
+
+ 	if (hugetlb_cgroup_is_root(h_cg)) /* Can't set limit on root */
+ 		return -EINVAL;
+@@ -378,9 +413,14 @@ static ssize_t hugetlb_cgroup_write(struct kernfs_open_file *of,
+ 	nr_pages = round_down(nr_pages, 1 << huge_page_order(&hstates[idx]));
+
+ 	switch (MEMFILE_ATTR(of_cft(of)->private)) {
++	case RES_RSVD_LIMIT:
++		rsvd = true;
++		/* Fall through. */
+ 	case RES_LIMIT:
+ 		mutex_lock(&hugetlb_limit_mutex);
+-		ret = page_counter_set_max(&h_cg->hugepage[idx], nr_pages);
++		ret = page_counter_set_max(
++			hugetlb_cgroup_counter_from_cgroup(h_cg, idx, rsvd),
++			nr_pages);
+ 		mutex_unlock(&hugetlb_limit_mutex);
+ 		break;
+ 	default:
+@@ -406,18 +446,25 @@ static ssize_t hugetlb_cgroup_reset(struct kernfs_open_file *of,
+ 				    char *buf, size_t nbytes, loff_t off)
+ {
+ 	int ret = 0;
+-	struct page_counter *counter;
++	struct page_counter *counter, *rsvd_counter;
+ 	struct hugetlb_cgroup *h_cg = hugetlb_cgroup_from_css(of_css(of));
+
+ 	counter = &h_cg->hugepage[MEMFILE_IDX(of_cft(of)->private)];
++	rsvd_counter = &h_cg->rsvd_hugepage[MEMFILE_IDX(of_cft(of)->private)];
+
+ 	switch (MEMFILE_ATTR(of_cft(of)->private)) {
+ 	case RES_MAX_USAGE:
+ 		page_counter_reset_watermark(counter);
+ 		break;
++	case RES_RSVD_MAX_USAGE:
++		page_counter_reset_watermark(rsvd_counter);
++		break;
+ 	case RES_FAILCNT:
+ 		counter->failcnt = 0;
+ 		break;
++	case RES_RSVD_FAILCNT:
++		rsvd_counter->failcnt = 0;
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 		break;
+@@ -472,7 +519,7 @@ static void __init __hugetlb_cgroup_file_dfl_init(int idx)
+ 	struct hstate *h = &hstates[idx];
+
+ 	/* format the size */
+-	mem_fmt(buf, 32, huge_page_size(h));
++	mem_fmt(buf, sizeof(buf), huge_page_size(h));
+
+ 	/* Add the limit file */
+ 	cft = &h->cgroup_files_dfl[0];
+@@ -482,15 +529,30 @@ static void __init __hugetlb_cgroup_file_dfl_init(int idx)
+ 	cft->write = hugetlb_cgroup_write_dfl;
+ 	cft->flags = CFTYPE_NOT_ON_ROOT;
+
+-	/* Add the current usage file */
++	/* Add the reservation limit file */
+ 	cft = &h->cgroup_files_dfl[1];
++	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.max", buf);
++	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_LIMIT);
++	cft->seq_show = hugetlb_cgroup_read_u64_max;
++	cft->write = hugetlb_cgroup_write_dfl;
++	cft->flags = CFTYPE_NOT_ON_ROOT;
++
++	/* Add the current usage file */
++	cft = &h->cgroup_files_dfl[2];
+ 	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.current", buf);
+ 	cft->private = MEMFILE_PRIVATE(idx, RES_USAGE);
+ 	cft->seq_show = hugetlb_cgroup_read_u64_max;
+ 	cft->flags = CFTYPE_NOT_ON_ROOT;
+
++	/* Add the current reservation usage file */
++	cft = &h->cgroup_files_dfl[3];
++	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.current", buf);
++	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_USAGE);
++	cft->seq_show = hugetlb_cgroup_read_u64_max;
++	cft->flags = CFTYPE_NOT_ON_ROOT;
++
+ 	/* Add the events file */
+-	cft = &h->cgroup_files_dfl[2];
++	cft = &h->cgroup_files_dfl[4];
+ 	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.events", buf);
+ 	cft->private = MEMFILE_PRIVATE(idx, 0);
+ 	cft->seq_show = hugetlb_events_show;
+@@ -498,7 +560,7 @@ static void __init __hugetlb_cgroup_file_dfl_init(int idx)
+ 	cft->flags = CFTYPE_NOT_ON_ROOT;
+
+ 	/* Add the events.local file */
+-	cft = &h->cgroup_files_dfl[3];
++	cft = &h->cgroup_files_dfl[5];
+ 	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.events.local", buf);
+ 	cft->private = MEMFILE_PRIVATE(idx, 0);
+ 	cft->seq_show = hugetlb_events_local_show;
+@@ -507,7 +569,7 @@ static void __init __hugetlb_cgroup_file_dfl_init(int idx)
+ 	cft->flags = CFTYPE_NOT_ON_ROOT;
+
+ 	/* NULL terminate the last cft */
+-	cft = &h->cgroup_files_dfl[4];
++	cft = &h->cgroup_files_dfl[6];
+ 	memset(cft, 0, sizeof(*cft));
+
+ 	WARN_ON(cgroup_add_dfl_cftypes(&hugetlb_cgrp_subsys,
+@@ -521,7 +583,7 @@ static void __init __hugetlb_cgroup_file_legacy_init(int idx)
+ 	struct hstate *h = &hstates[idx];
+
+ 	/* format the size */
+-	mem_fmt(buf, 32, huge_page_size(h));
++	mem_fmt(buf, sizeof(buf), huge_page_size(h));
+
+ 	/* Add the limit file */
+ 	cft = &h->cgroup_files_legacy[0];
+@@ -530,28 +592,55 @@ static void __init __hugetlb_cgroup_file_legacy_init(int idx)
+ 	cft->read_u64 = hugetlb_cgroup_read_u64;
+ 	cft->write = hugetlb_cgroup_write_legacy;
+
+-	/* Add the usage file */
++	/* Add the reservation limit file */
+ 	cft = &h->cgroup_files_legacy[1];
++	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.limit_in_bytes", buf);
++	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_LIMIT);
++	cft->read_u64 = hugetlb_cgroup_read_u64;
++	cft->write = hugetlb_cgroup_write_legacy;
++
++	/* Add the usage file */
++	cft = &h->cgroup_files_legacy[2];
+ 	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.usage_in_bytes", buf);
+ 	cft->private = MEMFILE_PRIVATE(idx, RES_USAGE);
+ 	cft->read_u64 = hugetlb_cgroup_read_u64;
+
++	/* Add the reservation usage file */
++	cft = &h->cgroup_files_legacy[3];
++	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.usage_in_bytes", buf);
++	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_USAGE);
++	cft->read_u64 = hugetlb_cgroup_read_u64;
++
+ 	/* Add the MAX usage file */
+-	cft = &h->cgroup_files_legacy[2];
++	cft = &h->cgroup_files_legacy[4];
+ 	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.max_usage_in_bytes", buf);
+ 	cft->private = MEMFILE_PRIVATE(idx, RES_MAX_USAGE);
+ 	cft->write = hugetlb_cgroup_reset;
+ 	cft->read_u64 = hugetlb_cgroup_read_u64;
+
++	/* Add the MAX reservation usage file */
++	cft = &h->cgroup_files_legacy[5];
++	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.max_usage_in_bytes", buf);
++	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_MAX_USAGE);
++	cft->write = hugetlb_cgroup_reset;
++	cft->read_u64 = hugetlb_cgroup_read_u64;
++
+ 	/* Add the failcntfile */
+-	cft = &h->cgroup_files_legacy[3];
++	cft = &h->cgroup_files_legacy[6];
+ 	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.failcnt", buf);
+-	cft->private  = MEMFILE_PRIVATE(idx, RES_FAILCNT);
++	cft->private = MEMFILE_PRIVATE(idx, RES_FAILCNT);
++	cft->write = hugetlb_cgroup_reset;
++	cft->read_u64 = hugetlb_cgroup_read_u64;
++
++	/* Add the reservation failcntfile */
++	cft = &h->cgroup_files_legacy[7];
++	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.failcnt", buf);
++	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_FAILCNT);
+ 	cft->write = hugetlb_cgroup_reset;
+ 	cft->read_u64 = hugetlb_cgroup_read_u64;
+
+ 	/* NULL terminate the last cft */
+-	cft = &h->cgroup_files_legacy[4];
++	cft = &h->cgroup_files_legacy[8];
+ 	memset(cft, 0, sizeof(*cft));
+
+ 	WARN_ON(cgroup_add_legacy_cftypes(&hugetlb_cgrp_subsys,
+--
+2.25.0.225.g125e21ebc7-goog
