@@ -2,147 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 053801594CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:24:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B69E11594F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:29:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729866AbgBKQY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 11:24:28 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:21133 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727722AbgBKQY1 (ORCPT
+        id S1730791AbgBKQ30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 11:29:26 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:52386 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729769AbgBKQ3Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 11:24:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581438266;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=W0ZDjuaIZ1KLsnFDXhfjcN6b+4tlT6PGYmx69L4Q8Yg=;
-        b=PCzzM/8kQ/YV2yJT8Rt4CFCs3meBEOD1tAdMZo2XntNWViZM/dPMcMEAicoPxGsNxigc1T
-        k3mxWd83JzSdrpAVon85BriDyORsUFfQiJZb4XNgPSqyuUnCxeIaC5bOPWs2xyItq9H7Ru
-        gc3BZdhBIpZr4n926V6yv+RnMkeiHjU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-93-IyBcJEbxMLGWlODOxC7_dA-1; Tue, 11 Feb 2020 11:24:25 -0500
-X-MC-Unique: IyBcJEbxMLGWlODOxC7_dA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2B4A1107ACC4;
-        Tue, 11 Feb 2020 16:24:24 +0000 (UTC)
-Received: from lithium.redhat.com (ovpn-204-63.brq.redhat.com [10.40.204.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9889A26FB0;
-        Tue, 11 Feb 2020 16:24:22 +0000 (UTC)
-From:   Giuseppe Scrivano <gscrivan@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     rcu@vger.kernel.org, ebiederm@xmission.com, paulmck@kernel.org
-Subject: [PATCH] ipc: use a work queue to free_ipc
-Date:   Tue, 11 Feb 2020 17:24:08 +0100
-Message-Id: <20200211162408.2194037-1-gscrivan@redhat.com>
+        Tue, 11 Feb 2020 11:29:25 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01BGTBSI003892;
+        Tue, 11 Feb 2020 10:29:11 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1581438551;
+        bh=s1rC3bq7DiLStu9i9FHCNZqJRoyzQUYiiRwZ0lgfqNk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=OqEGPXPt5QwUNgkg/gJ83e8RQiQA1cziseyMFONvToT9J19EOR1xLkr/hYeIJDZgO
+         zMlzp8JU1iAaFXl3PvZoDoIunbcxrU+RCl+QKuhLDRsgCn9enG+LnR+Te/9TR7CHk3
+         CVjBpAscqMiQg6QPj6u2cgbsc5MrO1uys1f6rFVg=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01BGTBel084455
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 11 Feb 2020 10:29:11 -0600
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 11
+ Feb 2020 10:29:11 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 11 Feb 2020 10:29:11 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01BGTAKw024424;
+        Tue, 11 Feb 2020 10:29:10 -0600
+Subject: Re: [PATCH 2/2] ASoC: tlv320adcx140: Add the tlv320adcx140 codec
+ driver family
+To:     Mark Brown <broonie@kernel.org>
+CC:     <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+References: <20200207194533.29967-1-dmurphy@ti.com>
+ <20200207194533.29967-2-dmurphy@ti.com> <20200210135252.GK7685@sirena.org.uk>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <1148672d-4053-65cd-61dd-0039658d85a4@ti.com>
+Date:   Tue, 11 Feb 2020 10:24:36 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200210135252.GK7685@sirena.org.uk>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-it avoids blocking on synchronize_rcu() in kern_umount().
+Mark
 
-the code:
+Thanks for the review
 
-\#define _GNU_SOURCE
-\#include <sched.h>
-\#include <error.h>
-\#include <errno.h>
-\#include <stdlib.h>
-int main()
-{
-  int i;
-  for (i  =3D 0; i < 1000; i++)
-    if (unshare (CLONE_NEWIPC) < 0)
-      error (EXIT_FAILURE, errno, "unshare");
-}
+On 2/10/20 7:52 AM, Mark Brown wrote:
+> On Fri, Feb 07, 2020 at 01:45:33PM -0600, Dan Murphy wrote:
+>
+>> +	/* interface format */
+>> +	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+>> +	case SND_SOC_DAIFMT_I2S:
+>> +		iface_reg1 |= ADCX140_I2S_MODE_BIT;
+>> +		break;
+>> +	case SND_SOC_DAIFMT_LEFT_J:
+>> +		iface_reg1 |= ADCX140_LEFT_JUST_BIT;
+>> +		break;
+>> +	case SND_SOC_DAIFMT_DSP_A:
+>> +	case SND_SOC_DAIFMT_DSP_B:
+>> +		break;
+> _DSP_A and _DSP_B are two different format so I'd expect the device to
+> be configured differently for them, or for only one to be supported.
+Ack.  I will need to adjust the TX offset for these.  I will do add a 
+prepare call back and set the offset there.  These can fall through 
+since TDM is default.
+>
+>> +static int adcx140_mute(struct snd_soc_dai *codec_dai, int mute)
+>> +{
+>> +	struct snd_soc_component *component = codec_dai->component;
+>> +	int config_reg;
+>> +	int mic_enable;
+>> +	int i;
+>> +
+>> +	/* There is not a single register to mute.  Each enabled path has to be
+>> +	 * muted individually.  Read which path is enabled and mute it.
+>> +	 */
+>> +	snd_soc_component_read(component, ADCX140_IN_CH_EN, &mic_enable);
+>> +	if (!mic_enable)
+>> +		return 0;
+> You could also just offer this control to userspace, it's not
+> *essential* to have this operation though it can help with glitching
+> during stream startup.
+>
+>> +
+>> +	for (i = 0; i < ADCX140_MAX_CHANNELS; i++) {
+>> +		config_reg = ADCX140_CH8_CFG2 - (5 * i);
+>> +		if (!(mic_enable & BIT(i)))
+>> +			continue;
+>> +
+>> +		if (mute)
+>> +			snd_soc_component_write(component, config_reg, 0);
+>> +	}
+> How does the unmute work?
+This is unmuted through volume control.  I can remove this as the device 
+is muted when the volume register is set to 0.  That will force the user 
+to have to set a volume.
+>
+>> +	internal_reg = device_property_present(adcx140->dev,
+>> +					       "ti,use-internal-areg");
+>> +
+>> +	if (internal_reg)
+>> +		sleep_cfg_val |= ADCX140_AREG_INTERNAL;
+> Does this actually need a specific property or could you support the
+> regulator API and then use regulator_get_optional() to figure out if an
+> external AVDD is attached?
 
-gets from:
+Yes we could set internal AREG bit if no supply is given.
 
-	Command being timed: "./ipc-namespace"
-	User time (seconds): 0.00
-	System time (seconds): 0.06
-	Percent of CPU this job got: 0%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:08.05
+>
+>> +static int adcx140_codec_probe(struct snd_soc_component *component)
+>> +{
+>> +	struct adcx140_priv *adcx140 = snd_soc_component_get_drvdata(component);
+>> +
+>> +	return adc5410_init(adcx140);
+>> +}
+> Does the separate init function buy us anything?
 
-to:
+No that is an artifact of my development I can move everything to 
+codec_probe
 
-	Command being timed: "./ipc-namespace"
-	User time (seconds): 0.00
-	System time (seconds): 0.02
-	Percent of CPU this job got: 96%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.03
-
-Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
----
- include/linux/ipc_namespace.h |  2 ++
- ipc/namespace.c               | 17 +++++++++++++++--
- 2 files changed, 17 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/ipc_namespace.h b/include/linux/ipc_namespace.=
-h
-index c309f43bde45..a06a78c67f19 100644
---- a/include/linux/ipc_namespace.h
-+++ b/include/linux/ipc_namespace.h
-@@ -68,6 +68,8 @@ struct ipc_namespace {
- 	struct user_namespace *user_ns;
- 	struct ucounts *ucounts;
-=20
-+	struct llist_node mnt_llist;
-+
- 	struct ns_common ns;
- } __randomize_layout;
-=20
-diff --git a/ipc/namespace.c b/ipc/namespace.c
-index b3ca1476ca51..37d27e1b807a 100644
---- a/ipc/namespace.c
-+++ b/ipc/namespace.c
-@@ -117,6 +117,7 @@ void free_ipcs(struct ipc_namespace *ns, struct ipc_i=
-ds *ids,
-=20
- static void free_ipc_ns(struct ipc_namespace *ns)
- {
-+	mq_put_mnt(ns);
- 	sem_exit_ns(ns);
- 	msg_exit_ns(ns);
- 	shm_exit_ns(ns);
-@@ -127,6 +128,17 @@ static void free_ipc_ns(struct ipc_namespace *ns)
- 	kfree(ns);
- }
-=20
-+static LLIST_HEAD(free_ipc_list);
-+static void free_ipc(struct work_struct *unused)
-+{
-+	struct llist_node *node =3D llist_del_all(&free_ipc_list);
-+	struct ipc_namespace *n, *t;
-+
-+	llist_for_each_entry_safe(n, t, node, mnt_llist)
-+		free_ipc_ns(n);
-+}
-+static DECLARE_WORK(free_ipc_work, free_ipc);
-+
- /*
-  * put_ipc_ns - drop a reference to an ipc namespace.
-  * @ns: the namespace to put
-@@ -148,8 +160,9 @@ void put_ipc_ns(struct ipc_namespace *ns)
- 	if (refcount_dec_and_lock(&ns->count, &mq_lock)) {
- 		mq_clear_sbinfo(ns);
- 		spin_unlock(&mq_lock);
--		mq_put_mnt(ns);
--		free_ipc_ns(ns);
-+
-+		if (llist_add(&ns->mnt_llist, &free_ipc_list))
-+			schedule_work(&free_ipc_work);
- 	}
- }
-=20
---=20
-2.24.1
+Dan
 
