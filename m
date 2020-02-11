@@ -2,326 +2,664 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D1D715946D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:08:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4451415947A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:10:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730709AbgBKQII (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 11:08:08 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42405 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730048AbgBKQIH (ORCPT
+        id S1730774AbgBKQK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 11:10:26 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:36515 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729390AbgBKQK0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 11:08:07 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 66so10589609otd.9
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 08:08:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9hnUT6qESAq7DlFLNCIERdoa2al8Z8MvMWl2WRSW1VA=;
-        b=i2/994BZwHIwIUx7NGS2mlvS5svoj0DIDzS0VWKwdpZYsNoo0yXsp/8hEBQ1LDvDM5
-         +ROySafKtus8buTdY9nkbs6W7kWRPtbJb9G+FUhLZC4yWB5p0wlSlc/GkJxMr2YdjvXD
-         brWYt34b0qWigfFpPQtL5siLvCenik9FbkzBbn0ZTNYTJeDthenWB/NyMGeBHHgWqeib
-         haiTzmwaFlZ5q5n+LHeNsPZGAkYGAvVmtkIG+YDQ4PfJWrWsjr/wQk+TI9AhnU+ZcTwP
-         vKZVjH6whLAGk1ciow0cSVz2Ys67l4F/kywEfNjl+jjikR8OqMP7fPh1G9XEFn1q+vU/
-         90/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9hnUT6qESAq7DlFLNCIERdoa2al8Z8MvMWl2WRSW1VA=;
-        b=Pt9dt8kWRq4u3W9Jhf2zFrb3oUr4G2z2ggnICXb9F1s4o+Zexo1bWYLR1XnTReF68b
-         pKG/Gysxi8vSOHQERZumtZgbE9ZhR005y87WyNHENIrsj2l/tQkCdSu6pYq05RplMe7Y
-         LUcQ1NjiqSnkcHi2o0vOtu+nPwzx1MJGQ9wCTlK0h0xVG4g3VYo//ulqOjxznYVe1jKe
-         UqylAalOq07B+DbdSKClKLF0dDAgUJc+dZzDlSoC4esGm9zch/hFGY9TPVAmXg4lzDvq
-         eLRAEKn1SKbFNz6RwGgim1pE0gajumaVZZEEtriCfW4Rqo3bWWcZC8kLPGdmUnmClVYe
-         1Mig==
-X-Gm-Message-State: APjAAAXruT6jrs4+yt/nz4GyOaep99YoasVKvbXWuspyayfofXlwuJBx
-        +9IKjsnBfGJ46CKjaKAmJPKTZnJrDzIrGIyKh8daTg==
-X-Google-Smtp-Source: APXvYqwakplkQ7nkZyMOyWSaoAiV6URYHO2AWlxQ9jMDKcGcjOFrNHIij3LwLbQPIHuIGbSaB18wbBgb5DEDdYmBSzY=
-X-Received: by 2002:a9d:7f12:: with SMTP id j18mr6082544otq.17.1581437285234;
- Tue, 11 Feb 2020 08:08:05 -0800 (PST)
+        Tue, 11 Feb 2020 11:10:26 -0500
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id 01BGA7hw013898;
+        Wed, 12 Feb 2020 01:10:07 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com 01BGA7hw013898
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1581437408;
+        bh=GUsm46ILdvJrI1VW4nchRj71RejrWIqhX+8W/cgwNsk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=k0qQ8cm5UAgQ0eb92RIb/6O6+e7IXcHxbVK1P0GHWj8aaRHcyOf1fysg0o5PtG2pX
+         82Cmf+l2WZ5Ex0W5veh/VKqZ3tXYLuHsKskgnN06ced7SeV6AScZ2xhfTQx/92qj7H
+         fv8eS/nVgBU6TUaAHYRppJoEDqs0qKVF+c3gpAsKbrQIjWh1gB8eNRAcoKlEKkcf6c
+         +DpbsGIOedt2u6Gm1VVgXzBD3mipFYYAc3l0MWYa+D8hp5XCYkQ+Q7sMGfQVJF3xna
+         /HK9T7mp66Pt5l4P49/U1k6H0I+Smh4atCLtXhE3BYzmes/HEBolcqnB+zKz61ysA8
+         /4/IxF60Xm63Q==
+X-Nifty-SrcIP: [209.85.221.170]
+Received: by mail-vk1-f170.google.com with SMTP id i4so3133201vkc.3;
+        Tue, 11 Feb 2020 08:10:07 -0800 (PST)
+X-Gm-Message-State: APjAAAVsUoCPaMZ07+YHsSkbLUWOM7ZJK2NSSPp/oiXjgjkBGwjP1cBC
+        q7z0eP8+7JAmI/ILW6QnI/ylcBTbVY/KrTDiHKo=
+X-Google-Smtp-Source: APXvYqwuTwCPNzN28DHlnuEOju0DmsOL6NBrMb2HjlRQv2NIb8TXNwI+/wYZUVkpqpBneRYjjtSoSzcwKZS5NMWQk6E=
+X-Received: by 2002:a1f:6344:: with SMTP id x65mr5078713vkb.26.1581437406168;
+ Tue, 11 Feb 2020 08:10:06 -0800 (PST)
 MIME-Version: 1.0
-References: <20200210184317.233039-1-elver@google.com> <20200210184317.233039-5-elver@google.com>
- <3963b39c-bdc9-d188-a086-f5ea443477d1@nvidia.com>
-In-Reply-To: <3963b39c-bdc9-d188-a086-f5ea443477d1@nvidia.com>
-From:   Marco Elver <elver@google.com>
-Date:   Tue, 11 Feb 2020 17:07:53 +0100
-Message-ID: <CANpmjNNJbt3HRg-CNw8w5jnfNzU0hNqd8Y-r1J9_H0o83MvO5w@mail.gmail.com>
-Subject: Re: [PATCH 5/5] kcsan: Introduce ASSERT_EXCLUSIVE_BITS(var, mask)
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>, Jan Kara <jack@suse.cz>,
-        Qian Cai <cai@lca.pw>
+References: <20200207091351.18133-1-geert@linux-m68k.org>
+In-Reply-To: <20200207091351.18133-1-geert@linux-m68k.org>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 12 Feb 2020 01:09:30 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQGcw1jbb=fWd_CbWv5hQrkqG_QFCw3uY4LXroONGM6BA@mail.gmail.com>
+Message-ID: <CAK7LNAQGcw1jbb=fWd_CbWv5hQrkqG_QFCw3uY4LXroONGM6BA@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] ASoC: Use imply for SND_SOC_ALL_CODECS
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v2: https://lore.kernel.org/lkml/20200211160423.138870-5-elver@google.com/
+On Fri, Feb 7, 2020 at 6:13 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Currently SND_SOC_ALL_CODECS selects the config symbols for all codec
+> drivers.  As "select" bypasses dependencies, lots of "select" statements
+> need explicit dependencies, which are hard to get right, and hard to
+> maintain[*].
+>
+> Fix this by using "imply" instead, which is a weak version of "select",
+> and which obeys dependencies of target symbols.
+>
+> Add dependencies to invisible symbols that are currently selected only
+> if their dependencies are fulfilled.
+>
+> [*] See e.g. commit 13426feaf46c48fc ("ASoC: wcd934x: Add missing
+>     COMMON_CLK dependency to SND_SOC_ALL_CODECS").
 
-On Mon, 10 Feb 2020 at 22:07, John Hubbard <jhubbard@nvidia.com> wrote:
->
-> On 2/10/20 10:43 AM, Marco Elver wrote:
-> > This introduces ASSERT_EXCLUSIVE_BITS(var, mask).
-> > ASSERT_EXCLUSIVE_BITS(var, mask) will cause KCSAN to assume that the
-> > following access is safe w.r.t. data races (however, please see the
-> > docbook comment for disclaimer here).
-> >
-> > For more context on why this was considered necessary, please see:
-> >   http://lkml.kernel.org/r/1580995070-25139-1-git-send-email-cai@lca.pw
-> >
-> > In particular, data races between reads (that use @mask bits of an
-> > access that should not be modified concurrently) and writes (that change
-> > ~@mask bits not used by the read) should ordinarily be marked. After
-> > marking these, we would no longer be able to detect harmful races
-> > between reads to @mask bits and writes to @mask bits.
->
-> I know this is "just" the commit log, but as long as I'm reviewing the
-> whole thing...to make the above a little clearer, see if you like this
-> revised wording:
->
-> In particular, before this patch, data races between reads (that use
-> @mask bits of an access that should not be modified concurrently) and
-> writes (that change ~@mask bits not used by the readers) would have
-> been annotated with "data_race()". However, doing so would then hide
-> real problems: we would no longer be able to detect harmful races
-> between reads to @mask bits and writes to @mask bits.
 
-Thanks, applied.
 
-> >
-> > Therefore, by using ASSERT_EXCLUSIVE_BITS(var, mask), we accomplish:
-> >
-> >   1. No new macros introduced elsewhere; since there are numerous ways in
-> >      which we can extract the same bits, a one-size-fits-all macro is
-> >      less preferred.
->
-> This somehow confuses me a lot. Maybe say it like this:
->
-> 1. Avoid a proliferation of specific macros at the call sites: by including a
->    mask in the argument list, we can use the same macro in a wide variety of
->    call sites, regardless of which bits in a field each call site uses.
->
-> ?
+Why does SND_SOC_ALL_CODECS exist in the first place?
+Is this compile-test or run-test?
 
-Thanks, I took that mostly as-is.
+If it is the former, allyesconfig / allmodconfig
+covers all of them.
 
-> >
-> >   2. The existing code does not need to be modified (although READ_ONCE()
-> >      may still be advisable if we cannot prove that the data race is
-> >      always safe).
-> >
-> >   3. We catch bugs where the exclusive bits are modified concurrently.
-> >
-> >   4. We document properties of the current code.
-> >
-> > Signed-off-by: Marco Elver <elver@google.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: David Hildenbrand <david@redhat.com>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: John Hubbard <jhubbard@nvidia.com>
-> > Cc: Paul E. McKenney <paulmck@kernel.org>
-> > Cc: Qian Cai <cai@lca.pw>
-> > ---
-> >  include/linux/kcsan-checks.h | 57 ++++++++++++++++++++++++++++++++----
-> >  kernel/kcsan/debugfs.c       | 15 +++++++++-
-> >  2 files changed, 65 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/include/linux/kcsan-checks.h b/include/linux/kcsan-checks.h
-> > index 4ef5233ff3f04..eae6030cd4348 100644
-> > --- a/include/linux/kcsan-checks.h
-> > +++ b/include/linux/kcsan-checks.h
-> > @@ -152,9 +152,9 @@ static inline void kcsan_check_access(const volatile void *ptr, size_t size,
-> >  #endif
-> >
-> >  /**
-> > - * ASSERT_EXCLUSIVE_WRITER - assert no other threads are writing @var
-> > + * ASSERT_EXCLUSIVE_WRITER - assert no concurrent writes to @var
-> >   *
-> > - * Assert that there are no other threads writing @var; other readers are
-> > + * Assert that there are no concurrent writes to @var; other readers are
-> >   * allowed. This assertion can be used to specify properties of concurrent code,
-> >   * where violation cannot be detected as a normal data race.
-> >   *
-> > @@ -171,11 +171,11 @@ static inline void kcsan_check_access(const volatile void *ptr, size_t size,
-> >       __kcsan_check_access(&(var), sizeof(var), KCSAN_ACCESS_ASSERT)
-> >
-> >  /**
-> > - * ASSERT_EXCLUSIVE_ACCESS - assert no other threads are accessing @var
-> > + * ASSERT_EXCLUSIVE_ACCESS - assert no concurrent accesses to @var
-> >   *
-> > - * Assert that no other thread is accessing @var (no readers nor writers). This
-> > - * assertion can be used to specify properties of concurrent code, where
-> > - * violation cannot be detected as a normal data race.
-> > + * Assert that there are no concurrent accesses to @var (no readers nor
-> > + * writers). This assertion can be used to specify properties of concurrent
-> > + * code, where violation cannot be detected as a normal data race.
-> >   *
-> >   * For example, in a reference-counting algorithm where exclusive access is
-> >   * expected after the refcount reaches 0. We can check that this property
-> > @@ -191,4 +191,49 @@ static inline void kcsan_check_access(const volatile void *ptr, size_t size,
-> >  #define ASSERT_EXCLUSIVE_ACCESS(var)                                           \
-> >       __kcsan_check_access(&(var), sizeof(var), KCSAN_ACCESS_WRITE | KCSAN_ACCESS_ASSERT)
-> >
-> > +/**
-> > + * ASSERT_EXCLUSIVE_BITS - assert no concurrent writes to subset of bits in @var
-> > + *
-> > + * [Bit-granular variant of ASSERT_EXCLUSIVE_WRITER(var)]
->
->
-> No need for the square brackets, unless that's some emerging convention in the
-> documentation world.
+Masahiro Yamada
 
-Done.
 
->
-> > + *
-> > + * Assert that there are no concurrent writes to a subset of bits in @var;
-> > + * concurrent readers are permitted. Concurrent writes (or reads) to ~@mask bits
-> > + * are ignored. This assertion can be used to specify properties of concurrent
-> > + * code, where marked accesses imply violations cannot be detected as a normal
-> > + * data race.
->
->
-> How about this wording:
->
-> /*
->  * Assert that there are no concurrent writes to a subset of bits in @var;
->  * concurrent readers are permitted. Concurrent writes (or reads) to ~@mask bits
->  * are ignored. This assertion provides more detailed, bit-level information to
->  * the KCSAN system than most of the other (word granularity) annotations. As
->  * such, it allows KCSAN to safely overlook some bits while still continuing to
->  * check the remaining bits for unsafe access patterns.
->  *
->  * Use this if you have some bits that are read-only, and other bits that are
->  * not, within a variable.
->  */
->
-> ?
 
-I've updated it based on the information you want to convey here. I've
-removed mention to KCSAN in the first paragraph, since KCSAN is an
-implementation of this, but a user of the API shouldn't care too much
-about that.
-
-Hopefully it makes more sense in v2.
-
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+> Does this sound like a good solution?
+> Anything I'm missing w.r.t. the "imply" semantics?
+> FIXME Nothing but SND_SOC_ALL_CODECS selects SND_SOC_WM8400!
 >
-> > + *
-> > + * For example, this may be used when certain bits of @var may only be modified
-> > + * when holding the appropriate lock, but other bits may still be modified
-> > + * concurrently. Writers, where other bits may change concurrently, could use
-> > + * the assertion as follows:
-> > + *
-> > + *   spin_lock(&foo_lock);
-> > + *   ASSERT_EXCLUSIVE_BITS(flags, FOO_MASK);
-> > + *   old_flags = READ_ONCE(flags);
-> > + *   new_flags = (old_flags & ~FOO_MASK) | (new_foo << FOO_SHIFT);
-> > + *   if (cmpxchg(&flags, old_flags, new_flags) != old_flags) { ... }
-> > + *   spin_unlock(&foo_lock);
-> > + *
-> > + * Readers, could use it as follows:
-> > + *
-> > + *   ASSERT_EXCLUSIVE_BITS(flags, FOO_MASK);
-> > + *   foo = (READ_ONCE(flags) & FOO_MASK) >> FOO_SHIFT;
+> Tested with m68k/allmodconfig and m68k/allyesconfig only.
+> Hence some other invisible symbols may still have missing dependencies.
+> ---
+>  sound/soc/codecs/Kconfig | 520 ++++++++++++++++++++-------------------
+>  1 file changed, 263 insertions(+), 257 deletions(-)
 >
+> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+> index 7e90f5d830971309..7a14b1c416b55e46 100644
+> --- a/sound/soc/codecs/Kconfig
+> +++ b/sound/soc/codecs/Kconfig
+> @@ -14,262 +14,262 @@ menu "CODEC drivers"
+>  config SND_SOC_ALL_CODECS
+>         tristate "Build all ASoC CODEC drivers"
+>         depends on COMPILE_TEST
+> -       select SND_SOC_88PM860X if MFD_88PM860X
+> -       select SND_SOC_L3
+> -       select SND_SOC_AB8500_CODEC if ABX500_CORE
+> -       select SND_SOC_AC97_CODEC
+> -       select SND_SOC_AD1836 if SPI_MASTER
+> -       select SND_SOC_AD193X_SPI if SPI_MASTER
+> -       select SND_SOC_AD193X_I2C if I2C
+> -       select SND_SOC_AD1980 if SND_SOC_AC97_BUS
+> -       select SND_SOC_AD73311
+> -       select SND_SOC_ADAU1373 if I2C
+> -       select SND_SOC_ADAU1761_I2C if I2C
+> -       select SND_SOC_ADAU1761_SPI if SPI
+> -       select SND_SOC_ADAU1781_I2C if I2C
+> -       select SND_SOC_ADAU1781_SPI if SPI
+> -       select SND_SOC_ADAV801 if SPI_MASTER
+> -       select SND_SOC_ADAV803 if I2C
+> -       select SND_SOC_ADAU1977_SPI if SPI_MASTER
+> -       select SND_SOC_ADAU1977_I2C if I2C
+> -       select SND_SOC_ADAU1701 if I2C
+> -       select SND_SOC_ADAU7002
+> -       select SND_SOC_ADAU7118_I2C if I2C
+> -       select SND_SOC_ADAU7118_HW
+> -       select SND_SOC_ADS117X
+> -       select SND_SOC_AK4104 if SPI_MASTER
+> -       select SND_SOC_AK4118 if I2C
+> -       select SND_SOC_AK4458 if I2C
+> -       select SND_SOC_AK4535 if I2C
+> -       select SND_SOC_AK4554
+> -       select SND_SOC_AK4613 if I2C
+> -       select SND_SOC_AK4641 if I2C
+> -       select SND_SOC_AK4642 if I2C
+> -       select SND_SOC_AK4671 if I2C
+> -       select SND_SOC_AK5386
+> -       select SND_SOC_AK5558 if I2C
+> -       select SND_SOC_ALC5623 if I2C
+> -       select SND_SOC_ALC5632 if I2C
+> -       select SND_SOC_BT_SCO
+> -       select SND_SOC_BD28623
+> -       select SND_SOC_CQ0093VC
+> -       select SND_SOC_CROS_EC_CODEC if CROS_EC
+> -       select SND_SOC_CS35L32 if I2C
+> -       select SND_SOC_CS35L33 if I2C
+> -       select SND_SOC_CS35L34 if I2C
+> -       select SND_SOC_CS35L35 if I2C
+> -       select SND_SOC_CS35L36 if I2C
+> -       select SND_SOC_CS42L42 if I2C
+> -       select SND_SOC_CS42L51_I2C if I2C
+> -       select SND_SOC_CS42L52 if I2C && INPUT
+> -       select SND_SOC_CS42L56 if I2C && INPUT
+> -       select SND_SOC_CS42L73 if I2C
+> -       select SND_SOC_CS4265 if I2C
+> -       select SND_SOC_CS4270 if I2C
+> -       select SND_SOC_CS4271_I2C if I2C
+> -       select SND_SOC_CS4271_SPI if SPI_MASTER
+> -       select SND_SOC_CS42XX8_I2C if I2C
+> -       select SND_SOC_CS43130 if I2C
+> -       select SND_SOC_CS4341 if SND_SOC_I2C_AND_SPI
+> -       select SND_SOC_CS4349 if I2C
+> -       select SND_SOC_CS47L15 if MFD_CS47L15
+> -       select SND_SOC_CS47L24 if MFD_CS47L24
+> -       select SND_SOC_CS47L35 if MFD_CS47L35
+> -       select SND_SOC_CS47L85 if MFD_CS47L85
+> -       select SND_SOC_CS47L90 if MFD_CS47L90
+> -       select SND_SOC_CS47L92 if MFD_CS47L92
+> -       select SND_SOC_CS53L30 if I2C
+> -       select SND_SOC_CX20442 if TTY
+> -       select SND_SOC_CX2072X if I2C
+> -       select SND_SOC_DA7210 if SND_SOC_I2C_AND_SPI
+> -       select SND_SOC_DA7213 if I2C
+> -       select SND_SOC_DA7218 if I2C
+> -       select SND_SOC_DA7219 if I2C
+> -       select SND_SOC_DA732X if I2C
+> -       select SND_SOC_DA9055 if I2C
+> -       select SND_SOC_DMIC if GPIOLIB
+> -       select SND_SOC_ES8316 if I2C
+> -       select SND_SOC_ES8328_SPI if SPI_MASTER
+> -       select SND_SOC_ES8328_I2C if I2C
+> -       select SND_SOC_ES7134
+> -       select SND_SOC_ES7241
+> -       select SND_SOC_GTM601
+> -       select SND_SOC_HDAC_HDMI
+> -       select SND_SOC_HDAC_HDA
+> -       select SND_SOC_ICS43432
+> -       select SND_SOC_INNO_RK3036
+> -       select SND_SOC_ISABELLE if I2C
+> -       select SND_SOC_JZ4740_CODEC
+> -       select SND_SOC_JZ4725B_CODEC
+> -       select SND_SOC_JZ4770_CODEC
+> -       select SND_SOC_LM4857 if I2C
+> -       select SND_SOC_LM49453 if I2C
+> -       select SND_SOC_LOCHNAGAR_SC if MFD_LOCHNAGAR
+> -       select SND_SOC_MAX98088 if I2C
+> -       select SND_SOC_MAX98090 if I2C
+> -       select SND_SOC_MAX98095 if I2C
+> -       select SND_SOC_MAX98357A if GPIOLIB
+> -       select SND_SOC_MAX98371 if I2C
+> -       select SND_SOC_MAX98504 if I2C
+> -       select SND_SOC_MAX9867 if I2C
+> -       select SND_SOC_MAX98925 if I2C
+> -       select SND_SOC_MAX98926 if I2C
+> -       select SND_SOC_MAX98927 if I2C
+> -       select SND_SOC_MAX98373 if I2C
+> -       select SND_SOC_MAX9850 if I2C
+> -       select SND_SOC_MAX9860 if I2C
+> -       select SND_SOC_MAX9759
+> -       select SND_SOC_MAX9768 if I2C
+> -       select SND_SOC_MAX9877 if I2C
+> -       select SND_SOC_MC13783 if MFD_MC13XXX
+> -       select SND_SOC_ML26124 if I2C
+> -       select SND_SOC_MT6351 if MTK_PMIC_WRAP
+> -       select SND_SOC_MT6358 if MTK_PMIC_WRAP
+> -       select SND_SOC_MT6660 if I2C
+> -       select SND_SOC_NAU8540 if I2C
+> -       select SND_SOC_NAU8810 if I2C
+> -       select SND_SOC_NAU8822 if I2C
+> -       select SND_SOC_NAU8824 if I2C
+> -       select SND_SOC_NAU8825 if I2C
+> -       select SND_SOC_HDMI_CODEC
+> -       select SND_SOC_PCM1681 if I2C
+> -       select SND_SOC_PCM1789_I2C if I2C
+> -       select SND_SOC_PCM179X_I2C if I2C
+> -       select SND_SOC_PCM179X_SPI if SPI_MASTER
+> -       select SND_SOC_PCM186X_I2C if I2C
+> -       select SND_SOC_PCM186X_SPI if SPI_MASTER
+> -       select SND_SOC_PCM3008
+> -       select SND_SOC_PCM3060_I2C if I2C
+> -       select SND_SOC_PCM3060_SPI if SPI_MASTER
+> -       select SND_SOC_PCM3168A_I2C if I2C
+> -       select SND_SOC_PCM3168A_SPI if SPI_MASTER
+> -       select SND_SOC_PCM5102A
+> -       select SND_SOC_PCM512x_I2C if I2C
+> -       select SND_SOC_PCM512x_SPI if SPI_MASTER
+> -       select SND_SOC_RK3328
+> -       select SND_SOC_RT274 if I2C
+> -       select SND_SOC_RT286 if I2C
+> -       select SND_SOC_RT298 if I2C
+> -       select SND_SOC_RT1011 if I2C
+> -       select SND_SOC_RT1015 if I2C
+> -       select SND_SOC_RT1305 if I2C
+> -       select SND_SOC_RT1308 if I2C
+> -       select SND_SOC_RT5514 if I2C
+> -       select SND_SOC_RT5616 if I2C
+> -       select SND_SOC_RT5631 if I2C
+> -       select SND_SOC_RT5640 if I2C
+> -       select SND_SOC_RT5645 if I2C
+> -       select SND_SOC_RT5651 if I2C
+> -       select SND_SOC_RT5659 if I2C
+> -       select SND_SOC_RT5660 if I2C
+> -       select SND_SOC_RT5663 if I2C
+> -       select SND_SOC_RT5665 if I2C
+> -       select SND_SOC_RT5668 if I2C
+> -       select SND_SOC_RT5670 if I2C
+> -       select SND_SOC_RT5677 if I2C && SPI_MASTER
+> -       select SND_SOC_RT5682 if I2C
+> -       select SND_SOC_RT700_SDW if SOUNDWIRE
+> -       select SND_SOC_RT711_SDW if SOUNDWIRE
+> -       select SND_SOC_RT715_SDW if SOUNDWIRE
+> -       select SND_SOC_RT1308_SDW if SOUNDWIRE
+> -       select SND_SOC_SGTL5000 if I2C
+> -       select SND_SOC_SI476X if MFD_SI476X_CORE
+> -       select SND_SOC_SIMPLE_AMPLIFIER
+> -       select SND_SOC_SIRF_AUDIO_CODEC
+> -       select SND_SOC_SPDIF
+> -       select SND_SOC_SSM2305
+> -       select SND_SOC_SSM2518 if I2C
+> -       select SND_SOC_SSM2602_SPI if SPI_MASTER
+> -       select SND_SOC_SSM2602_I2C if I2C
+> -       select SND_SOC_SSM4567 if I2C
+> -       select SND_SOC_STA32X if I2C
+> -       select SND_SOC_STA350 if I2C
+> -       select SND_SOC_STA529 if I2C
+> -       select SND_SOC_STAC9766 if SND_SOC_AC97_BUS
+> -       select SND_SOC_STI_SAS
+> -       select SND_SOC_TAS2552 if I2C
+> -       select SND_SOC_TAS2562 if I2C
+> -       select SND_SOC_TAS2770 if I2C
+> -       select SND_SOC_TAS5086 if I2C
+> -       select SND_SOC_TAS571X if I2C
+> -       select SND_SOC_TAS5720 if I2C
+> -       select SND_SOC_TAS6424 if I2C
+> -       select SND_SOC_TDA7419 if I2C
+> -       select SND_SOC_TFA9879 if I2C
+> -       select SND_SOC_TLV320AIC23_I2C if I2C
+> -       select SND_SOC_TLV320AIC23_SPI if SPI_MASTER
+> -       select SND_SOC_TLV320AIC26 if SPI_MASTER
+> -       select SND_SOC_TLV320AIC31XX if I2C
+> -       select SND_SOC_TLV320AIC32X4_I2C if I2C && COMMON_CLK
+> -       select SND_SOC_TLV320AIC32X4_SPI if SPI_MASTER && COMMON_CLK
+> -       select SND_SOC_TLV320AIC3X if I2C
+> -       select SND_SOC_TPA6130A2 if I2C
+> -       select SND_SOC_TLV320DAC33 if I2C
+> -       select SND_SOC_TSCS42XX if I2C
+> -       select SND_SOC_TSCS454 if I2C
+> -       select SND_SOC_TS3A227E if I2C
+> -       select SND_SOC_TWL4030 if TWL4030_CORE
+> -       select SND_SOC_TWL6040 if TWL6040_CORE
+> -       select SND_SOC_UDA1334 if GPIOLIB
+> -       select SND_SOC_UDA134X
+> -       select SND_SOC_UDA1380 if I2C
+> -       select SND_SOC_WCD9335 if SLIMBUS
+> -       select SND_SOC_WCD934X if MFD_WCD934X && COMMON_CLK
+> -       select SND_SOC_WL1273 if MFD_WL1273_CORE
+> -       select SND_SOC_WM0010 if SPI_MASTER
+> -       select SND_SOC_WM1250_EV1 if I2C
+> -       select SND_SOC_WM2000 if I2C
+> -       select SND_SOC_WM2200 if I2C
+> -       select SND_SOC_WM5100 if I2C
+> -       select SND_SOC_WM5102 if MFD_WM5102
+> -       select SND_SOC_WM5110 if MFD_WM5110
+> -       select SND_SOC_WM8350 if MFD_WM8350
+> -       select SND_SOC_WM8400 if MFD_WM8400
+> -       select SND_SOC_WM8510 if SND_SOC_I2C_AND_SPI
+> -       select SND_SOC_WM8523 if I2C
+> -       select SND_SOC_WM8524 if GPIOLIB
+> -       select SND_SOC_WM8580 if I2C
+> -       select SND_SOC_WM8711 if SND_SOC_I2C_AND_SPI
+> -       select SND_SOC_WM8727
+> -       select SND_SOC_WM8728 if SND_SOC_I2C_AND_SPI
+> -       select SND_SOC_WM8731 if SND_SOC_I2C_AND_SPI
+> -       select SND_SOC_WM8737 if SND_SOC_I2C_AND_SPI
+> -       select SND_SOC_WM8741 if SND_SOC_I2C_AND_SPI
+> -       select SND_SOC_WM8750 if SND_SOC_I2C_AND_SPI
+> -       select SND_SOC_WM8753 if SND_SOC_I2C_AND_SPI
+> -       select SND_SOC_WM8770 if SPI_MASTER
+> -       select SND_SOC_WM8776 if SND_SOC_I2C_AND_SPI
+> -       select SND_SOC_WM8782
+> -       select SND_SOC_WM8804_I2C if I2C
+> -       select SND_SOC_WM8804_SPI if SPI_MASTER
+> -       select SND_SOC_WM8900 if I2C
+> -       select SND_SOC_WM8903 if I2C
+> -       select SND_SOC_WM8904 if I2C
+> -       select SND_SOC_WM8940 if I2C
+> -       select SND_SOC_WM8955 if I2C
+> -       select SND_SOC_WM8960 if I2C
+> -       select SND_SOC_WM8961 if I2C
+> -       select SND_SOC_WM8962 if I2C && INPUT
+> -       select SND_SOC_WM8971 if I2C
+> -       select SND_SOC_WM8974 if I2C
+> -       select SND_SOC_WM8978 if I2C
+> -       select SND_SOC_WM8983 if SND_SOC_I2C_AND_SPI
+> -       select SND_SOC_WM8985 if SND_SOC_I2C_AND_SPI
+> -       select SND_SOC_WM8988 if SND_SOC_I2C_AND_SPI
+> -       select SND_SOC_WM8990 if I2C
+> -       select SND_SOC_WM8991 if I2C
+> -       select SND_SOC_WM8993 if I2C
+> -       select SND_SOC_WM8994 if MFD_WM8994
+> -       select SND_SOC_WM8995 if SND_SOC_I2C_AND_SPI
+> -       select SND_SOC_WM8996 if I2C
+> -       select SND_SOC_WM8997 if MFD_WM8997
+> -       select SND_SOC_WM8998 if MFD_WM8998
+> -       select SND_SOC_WM9081 if I2C
+> -       select SND_SOC_WM9090 if I2C
+> -       select SND_SOC_WM9705 if (SND_SOC_AC97_BUS || SND_SOC_AC97_BUS_NEW)
+> -       select SND_SOC_WM9712 if (SND_SOC_AC97_BUS || SND_SOC_AC97_BUS_NEW)
+> -       select SND_SOC_WM9713 if (SND_SOC_AC97_BUS || SND_SOC_AC97_BUS_NEW)
+> -       select SND_SOC_WSA881X if SOUNDWIRE
+> +       imply SND_SOC_88PM860X
+> +       imply SND_SOC_L3
+> +       imply SND_SOC_AB8500_CODEC
+> +       imply SND_SOC_AC97_CODEC
+> +       imply SND_SOC_AD1836
+> +       imply SND_SOC_AD193X_SPI
+> +       imply SND_SOC_AD193X_I2C
+> +       imply SND_SOC_AD1980
+> +       imply SND_SOC_AD73311
+> +       imply SND_SOC_ADAU1373
+> +       imply SND_SOC_ADAU1761_I2C
+> +       imply SND_SOC_ADAU1761_SPI
+> +       imply SND_SOC_ADAU1781_I2C
+> +       imply SND_SOC_ADAU1781_SPI
+> +       imply SND_SOC_ADAV801
+> +       imply SND_SOC_ADAV803
+> +       imply SND_SOC_ADAU1977_SPI
+> +       imply SND_SOC_ADAU1977_I2C
+> +       imply SND_SOC_ADAU1701
+> +       imply SND_SOC_ADAU7002
+> +       imply SND_SOC_ADAU7118_I2C
+> +       imply SND_SOC_ADAU7118_HW
+> +       imply SND_SOC_ADS117X
+> +       imply SND_SOC_AK4104
+> +       imply SND_SOC_AK4118
+> +       imply SND_SOC_AK4458
+> +       imply SND_SOC_AK4535
+> +       imply SND_SOC_AK4554
+> +       imply SND_SOC_AK4613
+> +       imply SND_SOC_AK4641
+> +       imply SND_SOC_AK4642
+> +       imply SND_SOC_AK4671
+> +       imply SND_SOC_AK5386
+> +       imply SND_SOC_AK5558
+> +       imply SND_SOC_ALC5623
+> +       imply SND_SOC_ALC5632
+> +       imply SND_SOC_BT_SCO
+> +       imply SND_SOC_BD28623
+> +       imply SND_SOC_CQ0093VC
+> +       imply SND_SOC_CROS_EC_CODEC
+> +       imply SND_SOC_CS35L32
+> +       imply SND_SOC_CS35L33
+> +       imply SND_SOC_CS35L34
+> +       imply SND_SOC_CS35L35
+> +       imply SND_SOC_CS35L36
+> +       imply SND_SOC_CS42L42
+> +       imply SND_SOC_CS42L51_I2C
+> +       imply SND_SOC_CS42L52
+> +       imply SND_SOC_CS42L56
+> +       imply SND_SOC_CS42L73
+> +       imply SND_SOC_CS4265
+> +       imply SND_SOC_CS4270
+> +       imply SND_SOC_CS4271_I2C
+> +       imply SND_SOC_CS4271_SPI
+> +       imply SND_SOC_CS42XX8_I2C
+> +       imply SND_SOC_CS43130
+> +       imply SND_SOC_CS4341
+> +       imply SND_SOC_CS4349
+> +       imply SND_SOC_CS47L15
+> +       imply SND_SOC_CS47L24
+> +       imply SND_SOC_CS47L35
+> +       imply SND_SOC_CS47L85
+> +       imply SND_SOC_CS47L90
+> +       imply SND_SOC_CS47L92
+> +       imply SND_SOC_CS53L30
+> +       imply SND_SOC_CX20442
+> +       imply SND_SOC_CX2072X
+> +       imply SND_SOC_DA7210
+> +       imply SND_SOC_DA7213
+> +       imply SND_SOC_DA7218
+> +       imply SND_SOC_DA7219
+> +       imply SND_SOC_DA732X
+> +       imply SND_SOC_DA9055
+> +       imply SND_SOC_DMIC
+> +       imply SND_SOC_ES8316
+> +       imply SND_SOC_ES8328_SPI
+> +       imply SND_SOC_ES8328_I2C
+> +       imply SND_SOC_ES7134
+> +       imply SND_SOC_ES7241
+> +       imply SND_SOC_GTM601
+> +       imply SND_SOC_HDAC_HDMI
+> +       imply SND_SOC_HDAC_HDA
+> +       imply SND_SOC_ICS43432
+> +       imply SND_SOC_INNO_RK3036
+> +       imply SND_SOC_ISABELLE
+> +       imply SND_SOC_JZ4740_CODEC
+> +       imply SND_SOC_JZ4725B_CODEC
+> +       imply SND_SOC_JZ4770_CODEC
+> +       imply SND_SOC_LM4857
+> +       imply SND_SOC_LM49453
+> +       imply SND_SOC_LOCHNAGAR_SC
+> +       imply SND_SOC_MAX98088
+> +       imply SND_SOC_MAX98090
+> +       imply SND_SOC_MAX98095
+> +       imply SND_SOC_MAX98357A
+> +       imply SND_SOC_MAX98371
+> +       imply SND_SOC_MAX98504
+> +       imply SND_SOC_MAX9867
+> +       imply SND_SOC_MAX98925
+> +       imply SND_SOC_MAX98926
+> +       imply SND_SOC_MAX98927
+> +       imply SND_SOC_MAX98373
+> +       imply SND_SOC_MAX9850
+> +       imply SND_SOC_MAX9860
+> +       imply SND_SOC_MAX9759
+> +       imply SND_SOC_MAX9768
+> +       imply SND_SOC_MAX9877
+> +       imply SND_SOC_MC13783
+> +       imply SND_SOC_ML26124
+> +       imply SND_SOC_MT6351
+> +       imply SND_SOC_MT6358
+> +       imply SND_SOC_MT6660
+> +       imply SND_SOC_NAU8540
+> +       imply SND_SOC_NAU8810
+> +       imply SND_SOC_NAU8822
+> +       imply SND_SOC_NAU8824
+> +       imply SND_SOC_NAU8825
+> +       imply SND_SOC_HDMI_CODEC
+> +       imply SND_SOC_PCM1681
+> +       imply SND_SOC_PCM1789_I2C
+> +       imply SND_SOC_PCM179X_I2C
+> +       imply SND_SOC_PCM179X_SPI
+> +       imply SND_SOC_PCM186X_I2C
+> +       imply SND_SOC_PCM186X_SPI
+> +       imply SND_SOC_PCM3008
+> +       imply SND_SOC_PCM3060_I2C
+> +       imply SND_SOC_PCM3060_SPI
+> +       imply SND_SOC_PCM3168A_I2C
+> +       imply SND_SOC_PCM3168A_SPI
+> +       imply SND_SOC_PCM5102A
+> +       imply SND_SOC_PCM512x_I2C
+> +       imply SND_SOC_PCM512x_SPI
+> +       imply SND_SOC_RK3328
+> +       imply SND_SOC_RT274
+> +       imply SND_SOC_RT286
+> +       imply SND_SOC_RT298
+> +       imply SND_SOC_RT1011
+> +       imply SND_SOC_RT1015
+> +       imply SND_SOC_RT1305
+> +       imply SND_SOC_RT1308
+> +       imply SND_SOC_RT5514
+> +       imply SND_SOC_RT5616
+> +       imply SND_SOC_RT5631
+> +       imply SND_SOC_RT5640
+> +       imply SND_SOC_RT5645
+> +       imply SND_SOC_RT5651
+> +       imply SND_SOC_RT5659
+> +       imply SND_SOC_RT5660
+> +       imply SND_SOC_RT5663
+> +       imply SND_SOC_RT5665
+> +       imply SND_SOC_RT5668
+> +       imply SND_SOC_RT5670
+> +       imply SND_SOC_RT5677
+> +       imply SND_SOC_RT5682
+> +       imply SND_SOC_RT700_SDW
+> +       imply SND_SOC_RT711_SDW
+> +       imply SND_SOC_RT715_SDW
+> +       imply SND_SOC_RT1308_SDW
+> +       imply SND_SOC_SGTL5000
+> +       imply SND_SOC_SI476X
+> +       imply SND_SOC_SIMPLE_AMPLIFIER
+> +       imply SND_SOC_SIRF_AUDIO_CODEC
+> +       imply SND_SOC_SPDIF
+> +       imply SND_SOC_SSM2305
+> +       imply SND_SOC_SSM2518
+> +       imply SND_SOC_SSM2602_SPI
+> +       imply SND_SOC_SSM2602_I2C
+> +       imply SND_SOC_SSM4567
+> +       imply SND_SOC_STA32X
+> +       imply SND_SOC_STA350
+> +       imply SND_SOC_STA529
+> +       imply SND_SOC_STAC9766
+> +       imply SND_SOC_STI_SAS
+> +       imply SND_SOC_TAS2552
+> +       imply SND_SOC_TAS2562
+> +       imply SND_SOC_TAS2770
+> +       imply SND_SOC_TAS5086
+> +       imply SND_SOC_TAS571X
+> +       imply SND_SOC_TAS5720
+> +       imply SND_SOC_TAS6424
+> +       imply SND_SOC_TDA7419
+> +       imply SND_SOC_TFA9879
+> +       imply SND_SOC_TLV320AIC23_I2C
+> +       imply SND_SOC_TLV320AIC23_SPI
+> +       imply SND_SOC_TLV320AIC26
+> +       imply SND_SOC_TLV320AIC31XX
+> +       imply SND_SOC_TLV320AIC32X4_I2C
+> +       imply SND_SOC_TLV320AIC32X4_SPI
+> +       imply SND_SOC_TLV320AIC3X
+> +       imply SND_SOC_TPA6130A2
+> +       imply SND_SOC_TLV320DAC33
+> +       imply SND_SOC_TSCS42XX
+> +       imply SND_SOC_TSCS454
+> +       imply SND_SOC_TS3A227E
+> +       imply SND_SOC_TWL4030
+> +       imply SND_SOC_TWL6040
+> +       imply SND_SOC_UDA1334
+> +       imply SND_SOC_UDA134X
+> +       imply SND_SOC_UDA1380
+> +       imply SND_SOC_WCD9335
+> +       imply SND_SOC_WCD934X
+> +       imply SND_SOC_WL1273
+> +       imply SND_SOC_WM0010
+> +       imply SND_SOC_WM1250_EV1
+> +       imply SND_SOC_WM2000
+> +       imply SND_SOC_WM2200
+> +       imply SND_SOC_WM5100
+> +       imply SND_SOC_WM5102
+> +       imply SND_SOC_WM5110
+> +       imply SND_SOC_WM8350
+> +       imply SND_SOC_WM8400
+> +       imply SND_SOC_WM8510
+> +       imply SND_SOC_WM8523
+> +       imply SND_SOC_WM8524
+> +       imply SND_SOC_WM8580
+> +       imply SND_SOC_WM8711
+> +       imply SND_SOC_WM8727
+> +       imply SND_SOC_WM8728
+> +       imply SND_SOC_WM8731
+> +       imply SND_SOC_WM8737
+> +       imply SND_SOC_WM8741
+> +       imply SND_SOC_WM8750
+> +       imply SND_SOC_WM8753
+> +       imply SND_SOC_WM8770
+> +       imply SND_SOC_WM8776
+> +       imply SND_SOC_WM8782
+> +       imply SND_SOC_WM8804_I2C
+> +       imply SND_SOC_WM8804_SPI
+> +       imply SND_SOC_WM8900
+> +       imply SND_SOC_WM8903
+> +       imply SND_SOC_WM8904
+> +       imply SND_SOC_WM8940
+> +       imply SND_SOC_WM8955
+> +       imply SND_SOC_WM8960
+> +       imply SND_SOC_WM8961
+> +       imply SND_SOC_WM8962
+> +       imply SND_SOC_WM8971
+> +       imply SND_SOC_WM8974
+> +       imply SND_SOC_WM8978
+> +       imply SND_SOC_WM8983
+> +       imply SND_SOC_WM8985
+> +       imply SND_SOC_WM8988
+> +       imply SND_SOC_WM8990
+> +       imply SND_SOC_WM8991
+> +       imply SND_SOC_WM8993
+> +       imply SND_SOC_WM8994
+> +       imply SND_SOC_WM8995
+> +       imply SND_SOC_WM8996
+> +       imply SND_SOC_WM8997
+> +       imply SND_SOC_WM8998
+> +       imply SND_SOC_WM9081
+> +       imply SND_SOC_WM9090
+> +       imply SND_SOC_WM9705
+> +       imply SND_SOC_WM9712
+> +       imply SND_SOC_WM9713
+> +       imply SND_SOC_WSA881X
+>         help
+>           Normally ASoC codec drivers are only built if a machine driver which
+>           uses them is also built since they are only usable with a machine
+> @@ -283,6 +283,7 @@ config SND_SOC_ALL_CODECS
 >
-> In the general case (which is what this documentation covers), the
-> READ_ONCE() is not required. So this should either leave it out, or
-> explain that it's not necessarily required.
-
-I've updated the example to lead to the fact you can omit the
-READ_ONCE. However, I want to be very careful here, since I still
-can't prove to myself no compiler will mess this up. In the general
-case, we likely won't need the READ_ONCE, because you'd need a pretty
-unfortunate compiler + architecture combo to mess this up for you. But
-you never know.
-
-Thanks,
--- Marco
-
+>  config SND_SOC_88PM860X
+>         tristate
+> +       depends on MFD_88PM860X
 >
-> > + *
-> > + * NOTE: The access that immediately follows is assumed to access the masked
-> > + * bits only, and safe w.r.t. data races. While marking this access is optional
-> > + * from KCSAN's point-of-view, it may still be advisable to do so, since we
-> > + * cannot reason about all possible compiler optimizations when it comes to bit
-> > + * manipulations (on the reader and writer side).
-> > + *
-> > + * @var variable to assert on
-> > + * @mask only check for modifications to bits set in @mask
-> > + */
-> > +#define ASSERT_EXCLUSIVE_BITS(var, mask)                                       \
+>  config SND_SOC_ARIZONA
+>         tristate
+> @@ -1301,11 +1302,13 @@ config SND_SOC_TSCS454
+>           Add support for Tempo Semiconductor's TSCS454 audio CODEC.
 >
+>  config SND_SOC_TWL4030
+> -       select MFD_TWL4030_AUDIO
+>         tristate
+> +       depends on TWL4030_CORE
+> +       select MFD_TWL4030_AUDIO
 >
-> This API looks good to me.
+>  config SND_SOC_TWL6040
+>         tristate
+> +       depends on TWL6040_CORE
 >
+>  config SND_SOC_UDA1334
+>         tristate "NXP UDA1334 DAC"
+> @@ -1366,9 +1369,12 @@ config SND_SOC_WM5110
 >
-> > +     do {                                                                   \
-> > +             kcsan_set_access_mask(mask);                                   \
-> > +             __kcsan_check_access(&(var), sizeof(var), KCSAN_ACCESS_ASSERT);\
-> > +             kcsan_set_access_mask(0);                                      \
-> > +             kcsan_atomic_next(1);                                          \
-> > +     } while (0)
-> > +
-> >  #endif /* _LINUX_KCSAN_CHECKS_H */
-> > diff --git a/kernel/kcsan/debugfs.c b/kernel/kcsan/debugfs.c
-> > index 9bbba0e57c9b3..2ff1961239778 100644
-> > --- a/kernel/kcsan/debugfs.c
-> > +++ b/kernel/kcsan/debugfs.c
-> > @@ -100,8 +100,10 @@ static noinline void microbenchmark(unsigned long iters)
-> >   * debugfs file from multiple tasks to generate real conflicts and show reports.
-> >   */
-> >  static long test_dummy;
-> > +static long test_flags;
-> >  static noinline void test_thread(unsigned long iters)
-> >  {
-> > +     const long CHANGE_BITS = 0xff00ff00ff00ff00L;
-> >       const struct kcsan_ctx ctx_save = current->kcsan_ctx;
-> >       cycles_t cycles;
-> >
-> > @@ -109,16 +111,27 @@ static noinline void test_thread(unsigned long iters)
-> >       memset(&current->kcsan_ctx, 0, sizeof(current->kcsan_ctx));
-> >
-> >       pr_info("KCSAN: %s begin | iters: %lu\n", __func__, iters);
-> > +     pr_info("test_dummy@%px, test_flags@%px\n", &test_dummy, &test_flags);
-> >
-> >       cycles = get_cycles();
-> >       while (iters--) {
-> > +             /* These all should generate reports. */
-> >               __kcsan_check_read(&test_dummy, sizeof(test_dummy));
-> > -             __kcsan_check_write(&test_dummy, sizeof(test_dummy));
-> >               ASSERT_EXCLUSIVE_WRITER(test_dummy);
-> >               ASSERT_EXCLUSIVE_ACCESS(test_dummy);
-> >
-> > +             ASSERT_EXCLUSIVE_BITS(test_flags, ~CHANGE_BITS); /* no report */
-> > +             __kcsan_check_read(&test_flags, sizeof(test_flags)); /* no report */
-> > +
-> > +             ASSERT_EXCLUSIVE_BITS(test_flags, CHANGE_BITS); /* report */
-> > +             __kcsan_check_read(&test_flags, sizeof(test_flags)); /* no report */
-> > +
-> >               /* not actually instrumented */
-> >               WRITE_ONCE(test_dummy, iters);  /* to observe value-change */
-> > +             __kcsan_check_write(&test_dummy, sizeof(test_dummy));
-> > +
-> > +             test_flags ^= CHANGE_BITS; /* generate value-change */
-> > +             __kcsan_check_write(&test_flags, sizeof(test_flags));
-> >       }
-> >       cycles = get_cycles() - cycles;
-> >
-> >
+>  config SND_SOC_WM8350
+>         tristate
+> +       depends on MFD_WM8350
 >
+>  config SND_SOC_WM8400
+>         tristate
+> +       # FIXME nothing selects SND_SOC_WM8400??
+> +       depends on MFD_WM8400
 >
->
-> thanks,
+>  config SND_SOC_WM8510
+>         tristate "Wolfson Microelectronics WM8510 CODEC"
 > --
-> John Hubbard
-> NVIDIA
+> 2.17.1
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
