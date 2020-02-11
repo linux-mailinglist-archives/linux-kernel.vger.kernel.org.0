@@ -2,116 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BC34159B9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 22:49:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3689D159B96
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 22:49:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbgBKVtV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 16:49:21 -0500
-Received: from mail.andi.de1.cc ([85.214.55.253]:45244 "EHLO mail.andi.de1.cc"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727043AbgBKVtU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 16:49:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1jBWyPqMrzGV+HgABFq6zy5XXPza8yinORW6h9VLx9o=; b=IQytAEHkFWeDt0l+Eixp3Mc8E
-        FD8nT06U5+KhlqrSIhE5LA7e2YNmJ+8PuNxuytAwQexxw32EIjZIQeX4Ajc37jkTTKhmhOKkXNol5
-        Kr3ts38EX4B811dW5iJwdpYrDiCshDcrUG0nX4/F+SXNiNgjrGAWhMQ2xIDP3wTle0KRM=;
-Received: from p200300ccff0bd500e2cec3fffe93fc31.dip0.t-ipconnect.de ([2003:cc:ff0b:d500:e2ce:c3ff:fe93:fc31] helo=eeepc)
-        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1j1dOj-0004Pf-Fl; Tue, 11 Feb 2020 22:48:49 +0100
-Received: from [::1] (helo=localhost)
-        by eeepc with esmtp (Exim 4.92)
-        (envelope-from <andreas@kemnade.info>)
-        id 1j1dOi-0003ve-P9; Tue, 11 Feb 2020 22:48:48 +0100
-Date:   Tue, 11 Feb 2020 22:48:40 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Paul Boddie <paul@boddie.org.uk>,
-        Alex Smith <alex.smith@imgtec.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        James Hogan <jhogan@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Petr =?UTF-8?Q?=C5=A0tetiar?= <ynezz@true.cz>,
-        Richard Fontana <rfontana@redhat.com>,
-        Allison Randal <allison@lohutok.net>,
-        Stephen Boyd <swboyd@chromium.org>, devicetree@vger.kernel.org,
-        netdev@vger.kernel.org, linux-mips@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        kernel@pyra-handheld.com
-Subject: Re: [Letux-kernel] [PATCH 07/14] MIPS: DTS: CI20: fix PMU
- definitions for ACT8600
-Message-ID: <20200211224840.40bf549d@kemnade.info>
-In-Reply-To: <aa9725056a1d2bfb490a1c912f34302de0e27fad.1581457290.git.hns@goldelico.com>
-References: <cover.1581457290.git.hns@goldelico.com>
-        <aa9725056a1d2bfb490a1c912f34302de0e27fad.1581457290.git.hns@goldelico.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; i686-pc-linux-gnu)
+        id S1727556AbgBKVtH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 16:49:07 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42869 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbgBKVtH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 16:49:07 -0500
+Received: by mail-oi1-f195.google.com with SMTP id j132so14320513oih.9
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 13:49:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=FVB/FcS1YOjObTBIYNnVwzrPxX/PinI+dOSwT8ez2L8=;
+        b=y9yAC60AVrZQixjl326TyeNDbhyODKMwz9kKbdXLmYJ7yuLP7+N/R7imC2n5zmdjsd
+         xbQWK68oFv3C0BdUgO/mnokdGoADVVi54e6xpDyWasTg/i9BHP37QqPhIMeru8YsxH81
+         L76OFlAE096nnOxGKP1NP0crqf6AQGzM145x0vn2YDA3gi7kemrtwulQmVhIF0KumRDs
+         qT24enBkvSv6FAkgalwyqYijjHETJLlx2tCbLwLAShAX4rlYMjAJ94HFB9HlauYK6Rxn
+         no/KdVjAPrJon48Fth0FK03FqHomy5Pzl0NvHWL2YUQzxOk1aGvQA3OC0n4hJOnB1hvq
+         hgdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=FVB/FcS1YOjObTBIYNnVwzrPxX/PinI+dOSwT8ez2L8=;
+        b=O+h6STbUtnX55tx1XXqV18CNrt1i7JpRTGeo2ZOyf936wwn6Gc//bH5kHTxOiEeW1X
+         M5wAXGLDgh7UC8i5lm2SyKhAk6KSAFIIrXGHInoZ7mlBPKUHaTp/mPsBhqT1K6XRdcuD
+         QOLg3btMz+tcm1rrujZC1uqrca6YEhVubrr4SHYhE9zwUOxLJfeNrdpKQLWMhIAAy4j5
+         st1NhiXPHSRySU2dHDfPVmmSszN8ORlcS/zrgGEek24vI76tXT7yS4L7SOETvDKEQm45
+         gKN8Jgrtg1eaS26rzjZVzSDmxl6juxIIeRQU1jSEqSxdrXXPZD7J9HVaB+1l8X+AqKN9
+         bzsA==
+X-Gm-Message-State: APjAAAUv9AvwxzYZt+lfXyZj5V/PKQ+eJkO2j8e/XLQAUU/FsjmQ1zca
+        H2ybainE3hQbZwP+SWpNTs5NEFk6Cf9lpFxkhXPjp4OnnRY=
+X-Google-Smtp-Source: APXvYqy8Gw71waEd6oNkzeNXV51JRxA7IyRoFOyWOQUMhEEWpqf0WTeOmjmyRiRWGbyVxa175PNVu9gVDG5VrM6mXw4=
+X-Received: by 2002:aca:aa0e:: with SMTP id t14mr4249907oie.149.1581457747093;
+ Tue, 11 Feb 2020 13:49:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/tv7EBQvO_xk_m_DPrEdmChx"; protocol="application/pgp-signature"
-X-Spam-Score: -1.0 (-)
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 11 Feb 2020 13:48:56 -0800
+Message-ID: <CAPcyv4iQf80XGwYVU3-GnbxU7u+bu2bn=+MwM54WGyG1kN=ddQ@mail.gmail.com>
+Subject: [GIT PULL] dax fixes for v5.6-rc2
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/tv7EBQvO_xk_m_DPrEdmChx
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Linus, please pull from:
 
-On Tue, 11 Feb 2020 22:41:24 +0100
-"H. Nikolaus Schaller" <hns@goldelico.com> wrote:
+  git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm
+tags/dax-fixes-5.6-rc1
 
-> There is a ACT8600 on the CI20 board and the bindings of the
-> ACT8865 driver have changed without updating the CI20 device
-> tree. Therefore the PMU can not be probed successfully and
-> is running in power-on reset state.
->=20
-> Fix DT to match the latest act8865-regulator bindings.
->=20
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-hmm, what about a Fixes: tag here? Sounds like a regression.
+...to receive a fix for an xfstest failure and some and an update that
+removes an fsdax dependency on block devices. The update is small
+enough that I held it back to merge with the fix post -rc1 and let it
+all appear in a -next release. No reported issues in -next.
 
-Regards,
-Andreas
+---
 
---Sig_/tv7EBQvO_xk_m_DPrEdmChx
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+The following changes since commit d1eef1c619749b2a57e514a3fa67d9a516ffa919:
 
------BEGIN PGP SIGNATURE-----
+  Linux 5.5-rc2 (2019-12-15 15:16:08 -0800)
 
-iQIzBAEBCAAdFiEEPIWxmAFyOaBcwCpFl4jFM1s/ye8FAl5DITkACgkQl4jFM1s/
-ye+rRw/+LUooQ7fIDcxBsFY9+xZRq6snbWx9wkMgAycU5UuVyjUZEzYUizVNm8pT
-FfSwVCGf0hHXaz+2Xnm8d6Igp0ii2IWf7LQmE+eoLOOPWeEGIN74eIWXZ+OkJcG8
-33+weHfRRx5Lx0SpRKx8g6nIQbGPXs9fWYB3ZjJwei+9DelyNKUqTbJY5xbAxeP5
-C6qzOVgO9Py459cXYEXH3HsmW6vATceC+wZQO737h0IF3rclYsdTtNjBhELIT4xG
-EgirCfreDPbCn3Y6g2AnAjqk151ssuhEF/p2JWu8VeNIegpksj2BbIRvKG3uWXc6
-1sG6EkJ+E8gCdDOhc500PeLdWVPCWk9h9m7w/KMAuCqEr00uY313ya0nfp7EpDSu
-oznxzkbQoP1Sy+zUYoaMJ759HELay07sHqI9juk7sLX7DXYeOKdxsoqOk45hEN0o
-jU67WS/h6GvsKUgRBKxX0NidVnIikg1/XiMLjBaPyF+Hwq6eq4VL7DTc/86+6u6h
-Anv+s3/C0hWq/de/Wr95j+yHtQQy8DMZ73bo8IwaihXbvuaW3IcgWj+lhACwvOjD
-nEyj+GAnnBERn7rhRVrGdYgF8Uyq7u9yjOt87EjSPOfRxsOBW4zLFRG8GRiFAmbF
-PQtd/UwQ17zKvCf3dezqrXcfQ3rOs9nxHT33IRmzbcPx5hiPwaA=
-=WkOg
------END PGP SIGNATURE-----
+are available in the Git repository at:
 
---Sig_/tv7EBQvO_xk_m_DPrEdmChx--
+  git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm
+tags/dax-fixes-5.6-rc1
+
+for you to fetch changes up to 96222d53842dfe54869ec4e1b9d4856daf9105a2:
+
+  dax: pass NOWAIT flag to iomap_apply (2020-02-05 20:34:32 -0800)
+
+----------------------------------------------------------------
+dax fixes 5.6-rc1
+
+- Fix RWF_NOWAIT writes to properly return -EAGAIN
+
+- Clean up an unused helper
+
+- Update dax_writeback_mapping_range to not need a block_device argument
+
+----------------------------------------------------------------
+Jeff Moyer (1):
+      dax: pass NOWAIT flag to iomap_apply
+
+Vivek Goyal (2):
+      dax: Pass dax_dev instead of bdev to dax_writeback_mapping_range()
+      dax: Get rid of fs_dax_get_by_host() helper
+
+ drivers/dax/super.c |  2 +-
+ fs/dax.c            | 11 ++++-------
+ fs/ext2/inode.c     |  5 +++--
+ fs/ext4/inode.c     |  2 +-
+ fs/xfs/xfs_aops.c   |  2 +-
+ include/linux/dax.h | 14 ++------------
+ 6 files changed, 12 insertions(+), 24 deletions(-)
