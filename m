@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE22F158CBE
+	by mail.lfdr.de (Postfix) with ESMTP id 78AE5158CBD
 	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:35:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728413AbgBKKfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 05:35:06 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:57186 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728388AbgBKKfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728401AbgBKKfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 11 Feb 2020 05:35:05 -0500
+Received: from rere.qmqm.pl ([91.227.64.183]:30738 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727805AbgBKKfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 05:35:04 -0500
 Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 48GzgC0Wtzz20t;
-        Tue, 11 Feb 2020 11:35:03 +0100 (CET)
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 48GzgB3DDSz204;
+        Tue, 11 Feb 2020 11:35:02 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1581417303; bh=ZyBwZUGyD7qjPPbQlhdlCzFxIwy0/NfhkGAFyrsfD7Q=;
+        t=1581417302; bh=pM3kHma+Yvip/GLz2vbupcyRhREUkJGO1ZAbFLVGKU0=;
         h=Date:In-Reply-To:References:From:Subject:To:Cc:From;
-        b=CaoXz8EhHAoo2lAK9lz+Q0VDhnel5DjRjx1ioqTJSf2RloKgI7K1WvmVuJbLFhcgE
-         Ljl6Dt/EzGzT7yYfNwWKnMcW4SCQvZIiHhYDjwOFliEPxju8RJqpDAacAX5JV2MwF0
-         hiEctQogTxhvsZPfneLihAiIY5XLY2C9vB+RWTdnpZ3gZyeuIy7zkPjz3HC7MjK0FL
-         1G7MnTDUDoI/NbjkIur8emYcMk0hQvF0qrXmw3gz1l7Hloa1QOoykcQNMTLWmzgS1Q
-         NpnCXIQOOUXoNESfbL+GCiVeXpS0/bhxKrN2GhyqnxmmTyhUZByNZakGKxBDiBTK2q
-         y+LkXFDWpuhEw==
+        b=o6WsPurwin5fAaNOs8xOSe39rwq7VCDL8BRIpeupmWcrGT3UUVq7C295xB2OqqIK9
+         YtyugyBobgVjLJfkP8Gz9/COu2sOtMFj/MQ85/p7BE+SHLlj2v/FFcb4cT7YLxRuw5
+         WoKLDk/MhMhXaKxFXDKb0MxQVTZIL7R+jgmVEV1UVctj6VYLnpU8m75dLiZqMXVAQI
+         x4YNlv9whNIIF2g2xuFt4REcayXPw+AwEIpSC8PfJL9JdVySBDiB/wWJqmEfvmcqms
+         Nf56LrQNu1suABUD6fmawP/SZQGTdPoUz1EDPs3qtNksS24WBd9bEDLCRl4kyoL4OF
+         cVWMLBjvFKsZQ==
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.102.1 at mail
 Date:   Tue, 11 Feb 2020 11:35:02 +0100
-Message-Id: <96b95d52d0b613065fe655f1d0fe9d7c6adf65fb.1581416843.git.mirq-linux@rere.qmqm.pl>
+Message-Id: <0e6dda06f145676861860f073a53dc95987c7ab5.1581416843.git.mirq-linux@rere.qmqm.pl>
 In-Reply-To: <cover.1581416843.git.mirq-linux@rere.qmqm.pl>
 References: <cover.1581416843.git.mirq-linux@rere.qmqm.pl>
 From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v2 4/6] staging: wfx: follow compatible = vendor,chip format
+Subject: [PATCH v2 3/6] staging: wfx: add proper "compatible" string
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -42,50 +42,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As for SPI, follow "vendor,chip" format 'compatible' string also for
-SDIO bus.
+Add "compatible" string matching "vendor,chip" template and proper
+GPIO flags handling. Keep support for old name and reset polarity
+for older devicetrees.
 
+Cc: stable@vger.kernel.org   # d3a5bcb4a17f ("gpio: add gpiod_toggle_active_low()")
+Cc: stable@vger.kernel.org
 Fixes: 0096214a59a7 ("staging: wfx: add support for I/O access")
 Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 ---
- .../devicetree/bindings/net/wireless/siliabs,wfx.txt          | 4 ++--
- drivers/staging/wfx/bus_sdio.c                                | 1 +
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ .../bindings/net/wireless/siliabs,wfx.txt          |  7 ++++---
+ drivers/staging/wfx/bus_spi.c                      | 14 ++++++++++----
+ 2 files changed, 14 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/staging/wfx/Documentation/devicetree/bindings/net/wireless/siliabs,wfx.txt b/drivers/staging/wfx/Documentation/devicetree/bindings/net/wireless/siliabs,wfx.txt
-index 52f97673da1e..ffec79c14786 100644
+index 26de6762b942..52f97673da1e 100644
 --- a/drivers/staging/wfx/Documentation/devicetree/bindings/net/wireless/siliabs,wfx.txt
 +++ b/drivers/staging/wfx/Documentation/devicetree/bindings/net/wireless/siliabs,wfx.txt
-@@ -45,7 +45,7 @@ case. Thus declaring WFxxx chip in device tree is strongly recommended (and may
- become mandatory in the future).
+@@ -6,7 +6,7 @@ SPI
+ You have to declare the WFxxx chip in your device tree.
  
  Required properties:
-- - compatible: Should be "silabs,wfx-sdio"
+- - compatible: Should be "silabs,wfx-spi"
 + - compatible: Should be "silabs,wf200"
-  - reg: Should be 1
+  - reg: Chip select address of device
+  - spi-max-frequency: Maximum SPI clocking speed of device in Hz
+  - interrupts-extended: Should contain interrupt line (interrupt-parent +
+@@ -15,6 +15,7 @@ Required properties:
+ Optional properties:
+  - reset-gpios: phandle of gpio that will be used to reset chip during probe.
+    Without this property, you may encounter issues with warm boot.
++   (Legacy: when compatible == "silabs,wfx-spi", the gpio is inverted.)
  
- In addition, it is recommended to declare a mmc-pwrseq on SDIO host above WFx.
-@@ -71,7 +71,7 @@ Example:
- 	#size = <0>;
+ Please consult Documentation/devicetree/bindings/spi/spi-bus.txt for optional
+ SPI connection related properties,
+@@ -23,12 +24,12 @@ Example:
  
- 	mmc@1 {
--		compatible = "silabs,wfx-sdio";
+ &spi1 {
+ 	wfx {
+-		compatible = "silabs,wfx-spi";
 +		compatible = "silabs,wf200";
- 		reg = <1>;
  		pinctrl-names = "default";
- 		pinctrl-0 = <&wfx_wakeup>;
-diff --git a/drivers/staging/wfx/bus_sdio.c b/drivers/staging/wfx/bus_sdio.c
-index 5450bd5e1b5d..dedc3ff58d3e 100644
---- a/drivers/staging/wfx/bus_sdio.c
-+++ b/drivers/staging/wfx/bus_sdio.c
-@@ -251,6 +251,7 @@ MODULE_DEVICE_TABLE(sdio, wfx_sdio_ids);
+ 		pinctrl-0 = <&wfx_irq &wfx_gpios>;
+ 		interrupts-extended = <&gpio 16 IRQ_TYPE_EDGE_RISING>;
+ 		wakeup-gpios = <&gpio 12 GPIO_ACTIVE_HIGH>;
+-		reset-gpios = <&gpio 13 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
+ 		reg = <0>;
+ 		spi-max-frequency = <42000000>;
+ 	};
+diff --git a/drivers/staging/wfx/bus_spi.c b/drivers/staging/wfx/bus_spi.c
+index 605ad74068b7..d6a75bd61595 100644
+--- a/drivers/staging/wfx/bus_spi.c
++++ b/drivers/staging/wfx/bus_spi.c
+@@ -27,6 +27,8 @@ MODULE_PARM_DESC(gpio_reset, "gpio number for reset. -1 for none.");
+ #define SET_WRITE 0x7FFF        /* usage: and operation */
+ #define SET_READ 0x8000         /* usage: or operation */
+ 
++#define WFX_RESET_INVERTED 1
++
+ static const struct wfx_platform_data wfx_spi_pdata = {
+ 	.file_fw = "wfm_wf200",
+ 	.file_pds = "wf200.pds",
+@@ -206,9 +208,11 @@ static int wfx_spi_probe(struct spi_device *func)
+ 	if (!bus->gpio_reset) {
+ 		dev_warn(&func->dev, "try to load firmware anyway\n");
+ 	} else {
+-		gpiod_set_value(bus->gpio_reset, 0);
+-		udelay(100);
++		if (spi_get_device_id(func)->driver_data & WFX_RESET_INVERTED)
++			gpiod_toggle_active_low(bus->gpio_reset);
+ 		gpiod_set_value(bus->gpio_reset, 1);
++		udelay(100);
++		gpiod_set_value(bus->gpio_reset, 0);
+ 		udelay(2000);
+ 	}
+ 
+@@ -245,14 +249,16 @@ static int wfx_spi_remove(struct spi_device *func)
+  * stripped.
+  */
+ static const struct spi_device_id wfx_spi_id[] = {
+-	{ "wfx-spi", 0 },
++	{ "wfx-spi", WFX_RESET_INVERTED },
++	{ "wf200", 0 },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(spi, wfx_spi_id);
+ 
  #ifdef CONFIG_OF
- static const struct of_device_id wfx_sdio_of_match[] = {
- 	{ .compatible = "silabs,wfx-sdio" },
+ static const struct of_device_id wfx_spi_of_match[] = {
+-	{ .compatible = "silabs,wfx-spi" },
++	{ .compatible = "silabs,wfx-spi", .data = (void *)WFX_RESET_INVERTED },
 +	{ .compatible = "silabs,wf200" },
  	{ },
  };
- MODULE_DEVICE_TABLE(of, wfx_sdio_of_match);
+ MODULE_DEVICE_TABLE(of, wfx_spi_of_match);
 -- 
 2.20.1
 
