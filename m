@@ -2,66 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7297F159118
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:58:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8D19159061
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:52:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730059AbgBKN6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 08:58:01 -0500
-Received: from 8bytes.org ([81.169.241.247]:52240 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729511AbgBKNxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 08:53:22 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 5B8FCE1A; Tue, 11 Feb 2020 14:53:11 +0100 (CET)
-From:   Joerg Roedel <joro@8bytes.org>
-To:     x86@kernel.org
-Cc:     hpa@zytor.com, Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Joerg Roedel <joro@8bytes.org>, Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 23/62] x86/idt: Move IDT to data segment
-Date:   Tue, 11 Feb 2020 14:52:17 +0100
-Message-Id: <20200211135256.24617-24-joro@8bytes.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200211135256.24617-1-joro@8bytes.org>
-References: <20200211135256.24617-1-joro@8bytes.org>
+        id S1729074AbgBKNw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 08:52:29 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:56196 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728624AbgBKNw3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 08:52:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581429148;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=o2XF+6S9QP9MMONzva7MUWo1VqNBPmt53WQKr9NpEek=;
+        b=YxQ7ZaN7L8ohZIj+uyV8HP0bfWLi3q/G3snJXSjHzXBso+IGzUu77LuPFJXaFVQ90Y3SR0
+        xzxNFIZBAJ73fb61CYN4vUUzTMuqTRSLwLj6WprmfWoEQjwo2NTYLuCWuZpCGcAgFnx8Vo
+        NBMG+SNO8OUK9CfU8c9mt4CGED9WqAM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-329-o7wJ414CP6SyQ53u_9hlhA-1; Tue, 11 Feb 2020 08:52:24 -0500
+X-MC-Unique: o7wJ414CP6SyQ53u_9hlhA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E5A2F100726A;
+        Tue, 11 Feb 2020 13:52:22 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-112.ams2.redhat.com [10.36.116.112])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8E95B26FB6;
+        Tue, 11 Feb 2020 13:52:19 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 90E0717447; Tue, 11 Feb 2020 14:52:18 +0100 (CET)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     daniel@ffwll.ch, Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
+        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4] drm/bochs: add drm_driver.release callback.
+Date:   Tue, 11 Feb 2020 14:52:18 +0100
+Message-Id: <20200211135218.22871-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+Call bochs_unload via drm_driver.release to make sure we release stuff
+when it is safe to do so.  Use drm_dev_{enter,exit,unplug} to avoid
+touching hardware after device removal.  Tidy up here and there.
 
-With SEV-ES, exception handling is needed very early, even before the
-kernel has cleared the bss segment. In order to prevent clearing the
-currently used IDT, move the IDT to the data segment.
+v4: add changelog.
+v3: use drm_dev_*().
+v2: move hardware deinit to pci_remove().
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- arch/x86/kernel/idt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/bochs/bochs_drv.c |  6 +++---
+ drivers/gpu/drm/bochs/bochs_hw.c  | 24 +++++++++++++++++++++++-
+ 2 files changed, 26 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/idt.c b/arch/x86/kernel/idt.c
-index 87ef69a72c52..7f81c1294847 100644
---- a/arch/x86/kernel/idt.c
-+++ b/arch/x86/kernel/idt.c
-@@ -166,7 +166,7 @@ static const __initconst struct idt_data dbg_idts[] = {
- #endif
+diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
+index 10460878414e..addb0568c1af 100644
+--- a/drivers/gpu/drm/bochs/bochs_drv.c
++++ b/drivers/gpu/drm/bochs/bochs_drv.c
+@@ -23,7 +23,6 @@ static void bochs_unload(struct drm_device *dev)
  
- /* Must be page-aligned because the real IDT is used in a fixmap. */
--gate_desc idt_table[IDT_ENTRIES] __page_aligned_bss;
-+gate_desc idt_table[IDT_ENTRIES] __page_aligned_data;
+ 	bochs_kms_fini(bochs);
+ 	bochs_mm_fini(bochs);
+-	bochs_hw_fini(dev);
+ 	kfree(bochs);
+ 	dev->dev_private = NULL;
+ }
+@@ -69,6 +68,7 @@ static struct drm_driver bochs_driver = {
+ 	.major			= 1,
+ 	.minor			= 0,
+ 	DRM_GEM_VRAM_DRIVER,
++	.release                = bochs_unload,
+ };
  
- struct desc_ptr idt_descr __ro_after_init = {
- 	.size		= (IDT_ENTRIES * 2 * sizeof(unsigned long)) - 1,
+ /* ---------------------------------------------------------------------- */
+@@ -148,9 +148,9 @@ static void bochs_pci_remove(struct pci_dev *pdev)
+ {
+ 	struct drm_device *dev = pci_get_drvdata(pdev);
+ 
++	drm_dev_unplug(dev);
+ 	drm_atomic_helper_shutdown(dev);
+-	drm_dev_unregister(dev);
+-	bochs_unload(dev);
++	bochs_hw_fini(dev);
+ 	drm_dev_put(dev);
+ }
+ 
+diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
+index b615b7dfdd9d..952199cc0462 100644
+--- a/drivers/gpu/drm/bochs/bochs_hw.c
++++ b/drivers/gpu/drm/bochs/bochs_hw.c
+@@ -4,6 +4,7 @@
+ 
+ #include <linux/pci.h>
+ 
++#include <drm/drm_drv.h>
+ #include <drm/drm_fourcc.h>
+ 
+ #include "bochs.h"
+@@ -194,6 +195,8 @@ void bochs_hw_fini(struct drm_device *dev)
+ {
+ 	struct bochs_device *bochs = dev->dev_private;
+ 
++	/* TODO: shot down existing vram mappings */
++
+ 	if (bochs->mmio)
+ 		iounmap(bochs->mmio);
+ 	if (bochs->ioports)
+@@ -207,6 +210,11 @@ void bochs_hw_fini(struct drm_device *dev)
+ void bochs_hw_setmode(struct bochs_device *bochs,
+ 		      struct drm_display_mode *mode)
+ {
++	int idx;
++
++	if (!drm_dev_enter(bochs->dev, &idx))
++		return;
++
+ 	bochs->xres = mode->hdisplay;
+ 	bochs->yres = mode->vdisplay;
+ 	bochs->bpp = 32;
+@@ -232,11 +240,18 @@ void bochs_hw_setmode(struct bochs_device *bochs,
+ 
+ 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_ENABLE,
+ 			  VBE_DISPI_ENABLED | VBE_DISPI_LFB_ENABLED);
++
++	drm_dev_exit(idx);
+ }
+ 
+ void bochs_hw_setformat(struct bochs_device *bochs,
+ 			const struct drm_format_info *format)
+ {
++	int idx;
++
++	if (!drm_dev_enter(bochs->dev, &idx))
++		return;
++
+ 	DRM_DEBUG_DRIVER("format %c%c%c%c\n",
+ 			 (format->format >>  0) & 0xff,
+ 			 (format->format >>  8) & 0xff,
+@@ -256,13 +271,18 @@ void bochs_hw_setformat(struct bochs_device *bochs,
+ 			  __func__, format->format);
+ 		break;
+ 	}
++
++	drm_dev_exit(idx);
+ }
+ 
+ void bochs_hw_setbase(struct bochs_device *bochs,
+ 		      int x, int y, int stride, u64 addr)
+ {
+ 	unsigned long offset;
+-	unsigned int vx, vy, vwidth;
++	unsigned int vx, vy, vwidth, idx;
++
++	if (!drm_dev_enter(bochs->dev, &idx))
++		return;
+ 
+ 	bochs->stride = stride;
+ 	offset = (unsigned long)addr +
+@@ -277,4 +297,6 @@ void bochs_hw_setbase(struct bochs_device *bochs,
+ 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_VIRT_WIDTH, vwidth);
+ 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_X_OFFSET, vx);
+ 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_Y_OFFSET, vy);
++
++	drm_dev_exit(idx);
+ }
 -- 
-2.17.1
+2.18.2
 
