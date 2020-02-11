@@ -2,89 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9506158DA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 12:43:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DB56158DAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 12:43:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728427AbgBKLm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 06:42:59 -0500
-Received: from foss.arm.com ([217.140.110.172]:44432 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727770AbgBKLm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 06:42:59 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F48231B;
-        Tue, 11 Feb 2020 03:42:58 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C78C33F6CF;
-        Tue, 11 Feb 2020 03:42:57 -0800 (PST)
-Date:   Tue, 11 Feb 2020 11:42:56 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Adam Serbinski <adam@serbinski.com>
-Cc:     Srini Kandagatla <srinivas.kandagatla@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Patrick Lai <plai@codeaurora.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 8/8] ASoC: qcom: apq8096: add kcontrols to set PCM rate
-Message-ID: <20200211114256.GC4543@sirena.org.uk>
-References: <20200207205013.12274-1-adam@serbinski.com>
- <20200209154748.3015-1-adam@serbinski.com>
- <20200209154748.3015-9-adam@serbinski.com>
- <20200210133636.GJ7685@sirena.org.uk>
- <18057b47c76d350f8380f277713e0936@serbinski.com>
- <20200210182609.GA14166@sirena.org.uk>
- <f88d21773f47f5a543a17ad07d66f9b7@serbinski.com>
- <20200210200839.GG14166@sirena.org.uk>
- <7c57801d8f671c40d4c6094e5ce89681@serbinski.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ctP54qlpMx3WjD+/"
-Content-Disposition: inline
-In-Reply-To: <7c57801d8f671c40d4c6094e5ce89681@serbinski.com>
-X-Cookie: Hire the morally handicapped.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1728539AbgBKLny (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 06:43:54 -0500
+Received: from mail-qt1-f175.google.com ([209.85.160.175]:45374 "EHLO
+        mail-qt1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728392AbgBKLnx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 06:43:53 -0500
+Received: by mail-qt1-f175.google.com with SMTP id d9so7628521qte.12
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 03:43:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=z75+bGdWHvULEy5xQeR/Cnz90mUXwhICSr70HK1Znyg=;
+        b=bw4RN8XrMRK5cjD9JA6rYF3oWeOYriApi6IB9fa+DRg9YbKVXwH/0/RgbWKmsbMhwE
+         KmvYbu8ChXd/xdm0sMoTueNxKWr3HrKPi6JgWWbzryshkA0Ati+kCsuhm3LCrxvypWlI
+         oKslL1LRdEX49X8cqldi3s1MS8TkXUE4GyA+blnP61qqYatLnmGbUosfeEDoOBB5VdS/
+         TtSokj25YUDD9dAuJrHg+0lkXYSEl7Oot2Imuxc7iq5fLpMrjWs+6meevfxvdpFu9Wot
+         iPZ20wpqVJAZiJEh691i+T1kTdEQ/N9eBsmbMK1sLFoCN50G8RjUltNTfUppyRIT6l1P
+         cCSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=z75+bGdWHvULEy5xQeR/Cnz90mUXwhICSr70HK1Znyg=;
+        b=tIL/b5IjM+6/7bBTRfbUZBFbzd+iu1HEdB2bmMuTZjArgpVssjySGBkas/SgjtnNl0
+         n/xVtJ7ww7FXBT5pWClGNdAipwmDOCwNlTVCQJm39Jl6kMGxOZ5uw+HQLKlkjiDO6/IK
+         sRVt1DcvaB3o3I36yDoBwzsqRWk4B92VoorHFyWdO1g0PRhnMlgHoCCIKyCW4XQYRJcn
+         ORvVUg+IZmlq2ecmhV5jLKUsjHtsnlmChETNgtWl+xgXxl3rCNX8LJSA4tXaSlrd1od1
+         9aGnO5UcMIHsJ9BOcCBucDnXdgWYiqIkuwr1PYg/yHR1RHR1ZTvJ004c8fTJdR05rurv
+         /5Mw==
+X-Gm-Message-State: APjAAAXkrPXnTOGKMmB2tScgFUK+DI9bwdqWEJU03mB9zWLZvPNSmCJC
+        lspYNcSGZFY2FZsyasaBU7Edgg==
+X-Google-Smtp-Source: APXvYqxC7OlZC3LOOZJu9UhJRV9ovGLGstfCFzDBLvad75qVK9P9fr+e4sdpsH26iJXWZYJsITJTaQ==
+X-Received: by 2002:ac8:73c7:: with SMTP id v7mr1976189qtp.269.1581421432153;
+        Tue, 11 Feb 2020 03:43:52 -0800 (PST)
+Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id d17sm1848774qkc.9.2020.02.11.03.43.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Feb 2020 03:43:51 -0800 (PST)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH -next] mm/util: annotate an intentional data race
+Date:   Tue, 11 Feb 2020 06:43:50 -0500
+Message-Id: <11DD224B-FDD7-48ED-B205-6C5DBFD61DF1@lca.pw>
+References: <20200130200150.GA99121@dennisz-mbp>
+Cc:     akpm@linux-foundation.org, tj@kernel.org, cl@linux.com,
+        elver@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20200130200150.GA99121@dennisz-mbp>
+To:     Dennis Zhou <dennis@kernel.org>
+X-Mailer: iPhone Mail (17D50)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---ctP54qlpMx3WjD+/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Mon, Feb 10, 2020 at 04:13:52PM -0500, Adam Serbinski wrote:
+> On Jan 30, 2020, at 3:02 PM, Dennis Zhou <dennis@kernel.org> wrote:
+> 
+> Acked-by: Dennis Zhou <dennis@kernel.org>
 
-> I am not aware of how this could be done for bluetooth, since the value
-> still has to originate from userspace. The driver you referred to supports
-> only a single sample rate, whereas for bluetooth, 2 sample rates are
-> required, and nothing in the kernel is aware of the appropriate rate, at
-> least in the case of the qca6174a I'm working with right now, or for that
-> matter, TI Wilink 8, which I've also worked with.
-
-There's generic support in the CODEC<->CODEC link code for setting the
-DAI configuration from userspace.
-
---ctP54qlpMx3WjD+/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5Ckz8ACgkQJNaLcl1U
-h9ALGQf/Ss3ZIdJmQ7t1NLJpgkPvfgCHptgk+NO5wYCwd0pQJbzaflRdG45mcDPG
-bQRKfEaZEqvPWxASdTQTiFdmJg6zLqlvkQYPcor4DCPcB1bCkPS9hkeOSUxXSsOa
-ICLmJPQyoUqNyb6pHa6ghgfdVRPIr+GWPn0Zob/QpwybzWKBA7VHKmTEnxGDIq0z
-pLzYVaV03fmVkJUowVTUdZ40LP8mjTWVcXnk/NzM1qEs3T39Q6DmAUyR7IemHBBf
-wJr/MPk4Nr/9nPsmtD+5eJIG6m68tUximFPFeYIfid+WrHlY68RVcpgOBUG4LuvT
-ENG+UsqfuA8Olmmq+tnZG3Imx6tmzg==
-=pysG
------END PGP SIGNATURE-----
-
---ctP54qlpMx3WjD+/--
+Andrew, you might forget to pick up this patch?
