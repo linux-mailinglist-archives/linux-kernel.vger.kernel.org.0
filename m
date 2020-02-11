@@ -2,77 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2717615890B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 04:52:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9BF815890F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 04:54:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbgBKDw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 22:52:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33354 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727800AbgBKDw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 22:52:27 -0500
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E590208C3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 03:52:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581393146;
-        bh=SwOJ007DlzVaHhAfxj8kTa2Qa2osckocmYAkhDLCzo8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=X45AOYTK/2z2tJBJ2/KPVqQ75Plm5YduM66SbWef3glBImIIrrgcHzxXyiq04edaS
-         cZUxrLhCRvpCatPBYmm+UzMLw7V8YEUMFgs0AOiYvg2d+UWSMqkADFsrC37us26jmo
-         BJ/kjXsSKupVKlApw9nMkm7Y0+Pq+P5QOHRJk1Ho=
-Received: by mail-wm1-f47.google.com with SMTP id s144so1295212wme.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Feb 2020 19:52:26 -0800 (PST)
-X-Gm-Message-State: APjAAAViEVgs8kTXiUVbo8CzUgt7Ix5KhKjtcQP68Yaftlq2FBcGKDy0
-        7ov3uTkBriUgZc+WFC84cAQny79834qT7aK3N3iDAQ==
-X-Google-Smtp-Source: APXvYqxgbhqU637eohL+mE8vS87HxSjkCSN70aYM1/0pu6EKsQATjp/v+OfI4bu1ySc4Mfq5i4rBqGuW6P+CNAnBMec=
-X-Received: by 2002:a1c:bb82:: with SMTP id l124mr2708818wmf.176.1581393144706;
- Mon, 10 Feb 2020 19:52:24 -0800 (PST)
+        id S1727986AbgBKDyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 22:54:17 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:56156 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727697AbgBKDyR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 22:54:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=xyUxhDDylUL+UjwdQ8hbkvgcFL8EGI0zwerP7xmjMTY=; b=Ce3uez2venNJGkWfXOA3f8Qvpc
+        Z5WqJfuP4vnPqODgs/VUySyyQi02UwgVnbp9Dl+eKedNQi76FPTHzP2l2rmVE/sA3q0sQKgua5ZCi
+        Cfd5iWheXsoFFYcyugFnNrTFfablimvCWS7KcVgChJU5cT+A3QKVBfqiLKCxL6XTSMSlovKCGAzQJ
+        XmiloqT+o2B4DFQHpl7f+Sy9Vbw/lvLYOWbK/PVkA20vbYG1DeqWkGYFDy2b2ovf0ytSckeWnktU6
+        QYjyuWN/FMza0xOK6ap9YMPcQHi6BCU8GXsMoy3t7ko0gOwZ4jWKT47xUIFy7fxMckOh41ESzF23m
+        6BGgTQFg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1Mcm-00069F-51; Tue, 11 Feb 2020 03:54:12 +0000
+Date:   Mon, 10 Feb 2020 19:54:12 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm: fix long time stall from mm_populate
+Message-ID: <20200211035412.GR8731@bombadil.infradead.org>
+References: <20200211001958.170261-1-minchan@kernel.org>
+ <20200211011021.GP8731@bombadil.infradead.org>
+ <20200211035004.GA242563@google.com>
 MIME-Version: 1.0
-References: <20200203151608.28053-1-xiaoyao.li@intel.com> <20200203151608.28053-6-xiaoyao.li@intel.com>
- <20200203214300.GI19638@linux.intel.com> <829bd606-6852-121f-0d95-e9f1d35a3dde@intel.com>
- <20200204093725.GC14879@hirez.programming.kicks-ass.net>
-In-Reply-To: <20200204093725.GC14879@hirez.programming.kicks-ass.net>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 10 Feb 2020 19:52:13 -0800
-X-Gmail-Original-Message-ID: <CALCETrUAsUzqLhhNkLSC2612odskjqPQvj4uXgBOaoBGoCQD0A@mail.gmail.com>
-Message-ID: <CALCETrUAsUzqLhhNkLSC2612odskjqPQvj4uXgBOaoBGoCQD0A@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] kvm: x86: Emulate MSR IA32_CORE_CAPABILITIES
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Xiaoyao Li <xiaoyao.li@intel.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        X86 ML <x86@kernel.org>, kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Laight <David.Laight@aculab.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200211035004.GA242563@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 4, 2020 at 1:37 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Tue, Feb 04, 2020 at 05:19:26PM +0800, Xiaoyao Li wrote:
->
-> > > > + case MSR_IA32_CORE_CAPS:
-> > > > +         if (!msr_info->host_initiated)
-> > >
-> > > Shouldn't @data be checked against kvm_get_core_capabilities()?
-> >
-> > Maybe it's for the case that userspace might have the ability to emulate SLD
-> > feature? And we usually let userspace set whatever it wants, e.g.,
-> > ARCH_CAPABILITIES.
->
-> If the 'sq_misc.split_lock' event is sufficiently accurate, I suppose
-> the host could use that to emulate the feature at the cost of one
-> counter used.
+On Mon, Feb 10, 2020 at 07:50:04PM -0800, Minchan Kim wrote:
+> On Mon, Feb 10, 2020 at 05:10:21PM -0800, Matthew Wilcox wrote:
+> > On Mon, Feb 10, 2020 at 04:19:58PM -0800, Minchan Kim wrote:
+> > >       filemap_fault
+> > >         find a page form page(PG_uptodate|PG_readahead|PG_writeback)
+> > 
+> > Uh ... That shouldn't be possible.
+> 
+> Please see shrink_page_list. Vmscan uses PG_reclaim to accelerate
+> page reclaim when the writeback is done so the page will have both
+> flags at the same time and the PG reclaim could be regarded as
+> PG_readahead in fault conext.
 
-I would be impressed if the event were to fire before executing the
-offending split lock.  Wouldn't the best possible result be for it to
-fire with RIP pointing to the *next* instruction?  This seems like it
-could be quite confusing to a guest.
+What part of fault context can make that mistake?  The snippet I quoted
+below is from page_cache_async_readahead() where it will clearly not
+make that mistake.  There's a lot of code here; please don't presume I
+know all the areas you're talking about.
+
+> > 
+> >         /*
+> >          * Same bit is used for PG_readahead and PG_reclaim.
+> >          */
+> >         if (PageWriteback(page))
+> >                 return;
+> > 
+> >         ClearPageReadahead(page);
