@@ -2,231 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0572158FA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:15:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 334CE158F85
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:13:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728929AbgBKNPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 08:15:08 -0500
-Received: from mail-dm6nam11on2060.outbound.protection.outlook.com ([40.107.223.60]:6226
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727111AbgBKNPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 08:15:08 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MGFZdLw4yhAwo7JEI9G6AB/XyRuvF33XPXfWueVhpbm7nTQEeiNu6nf5Al8vrT1R9hbsR1lDTHMB7oGosT4u/UBnzTC/tez9tOzA/9Ltsuw3LP8xKl2rWVbrPQWeO8Ss0Cp1ogypXI6IklPHkNIUt5xhj4vkuZ0spIzoX1LCrp9CcOtFNoQmWt7AcF6b0ikvWdD5vy/Jiw/vfgZunJuAVHZl55+anbWy3bIsS3j9j2+xlXwNpnjcXzVsDc8awl7ZSl4x1aOwpIdtJpnavGDAKlIvplWb+QrgtdQMOvmPl3KCFNMoyFjNrz1wIarvaOiGDJL6m1OAL1ty3gSm3iHCAg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PtCyoG3S19+HEBXd1vO0E8dxMwf4RutRwh58bgELnJ8=;
- b=Qlw+Y5pq3tVB44dv2Lnzhk84agPCc2nb4bajc7FBBi//85wfZ0hAFiRiwv0i1FJugVjm7n+N8sNCVslKKhlpMmfyZuWIYuudXXv8G4IGV47YjgpwO00SfSQZeMjJ1jPjFjTEw7mpIZWVcHdEeoaEq2rWP06r99dT209xd9nwaS7ck98rw/5Q1mo9ceaWvQ6nXNU/BkkerQ/yYB+3nYudkTNQsA+lYwKhpj8ZzsA1cHv4z02oYwyRaK2lvucCFOF6XBq/4XxLMZAzKjWSuT7Qm2F9ybAThbwclndW8j8Kq+HxMqPCCOl5Wlg5g0MPsV73pXUlyIeLElJqhVJAKI1NwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com;
- dmarc=permerror action=none header.from=amd.com; dkim=none (message not
- signed); arc=none
+        id S1729029AbgBKNNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 08:13:01 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36399 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727567AbgBKNNA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 08:13:00 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z3so12343375wru.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 05:12:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PtCyoG3S19+HEBXd1vO0E8dxMwf4RutRwh58bgELnJ8=;
- b=Rxb0aqCAik2BxV9jslltG4AyvXi98UTZ27tdpF8aubADqZdmqeRzaBsn7HfH+anQYY3pBfDJymXlvCazKKjSrWNRFDbWvzVUSSU30rRn5aqhnQgaM5RsNIgvPCUrJWF9VKq7n2f2YQqUMxd3qhJRGp+Qf3ryzIvfU17iQTzviTQ=
-Received: from MWHPR1201CA0011.namprd12.prod.outlook.com
- (2603:10b6:301:4a::21) by DM6PR12MB3881.namprd12.prod.outlook.com
- (2603:10b6:5:148::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2707.28; Tue, 11 Feb
- 2020 13:15:05 +0000
-Received: from DM6NAM11FT063.eop-nam11.prod.protection.outlook.com
- (2a01:111:f400:7eaa::203) by MWHPR1201CA0011.outlook.office365.com
- (2603:10b6:301:4a::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.22 via Frontend
- Transport; Tue, 11 Feb 2020 13:15:05 +0000
-Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=permerror action=none header.from=amd.com;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-Received: from SATLEXMB01.amd.com (165.204.84.17) by
- DM6NAM11FT063.mail.protection.outlook.com (10.13.172.219) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.2707.21 via Frontend Transport; Tue, 11 Feb 2020 13:15:05 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB01.amd.com
- (10.181.40.142) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 11 Feb
- 2020 07:15:04 -0600
-Received: from SATLEXMB02.amd.com (10.181.40.143) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 11 Feb
- 2020 07:15:04 -0600
-Received: from vishnu-All-Series.amd.com (10.180.168.240) by
- SATLEXMB02.amd.com (10.181.40.143) with Microsoft SMTP Server id 15.1.1713.5
- via Frontend Transport; Tue, 11 Feb 2020 07:15:00 -0600
-From:   Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-CC:     <Alexander.Deucher@amd.com>, <broonie@kernel.org>,
-        "Ravulapati Vishnu vardhan rao" <Vishnuvardhanrao.Ravulapati@amd.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH] ASoC: amd: Buffer Size instead of MAX Buffer
-Date:   Tue, 11 Feb 2020 18:42:28 +0530
-Message-ID: <1581426768-8937-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-X-Mailer: git-send-email 2.7.4
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=be2U1w8cWMwS1znOLLGvyu9gD3io+mzqfXIBluHdiTA=;
+        b=GWfuVkDEtXOKWb5CKYVmrPobVMV94DGgOuRHpsqw2XWeoGhMbdxDxumKlK9Op5DeDf
+         xN5P/aLKYPIW0lEAyt2mJCnBPsvzDGf1yt2NQ9KLtf4Qn0QjL67LUup7M21qw9ezHC9s
+         7x1iOjCYu7lcLVLRSaHSTmL/fQF4ppIeaxJfYT7EtAHMYIb+Ks62eYtXQeMsGx4goji2
+         273sZ3Bk1Yp//t6wamQJa2QMN559SRkp4uplHKlxyE6ghi7OL49znMiHs4fwNXiz51q8
+         Gj7wusjiQmpRgseNqAXkIQvaWRFnMNDBPUxn6Qs2ct2BTCMuymaDWbnqaYhsn8a/QaNr
+         onbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=be2U1w8cWMwS1znOLLGvyu9gD3io+mzqfXIBluHdiTA=;
+        b=uBxz079R/XrK2AY7pUpJnnf2mUC8RdozldN00OnGwdyb0G7v6EKVzkcqemVWZPU8sf
+         +IlYxeJFLCa/Xk845Mr1Xn33ia1V3d935clJU+1/SIrMmXRHK77C2stgs29azS3b15xF
+         nJtq+1lGHQH3we6xRm6ByRTpCelLr8X+PQ5UihsAmvTiAsxPojYK+sQvJcWqG5GlV0yV
+         suBncAxHNQiKQYywno9lm5Jj63uK1ZR2Wj7xF4MysBeI4Pf/kYwgW2NJkkwE93EldNPB
+         BToqcBjeVNnyDGftHdAl6rJpE0pHdMC4gQz9LW93kL4tJXWCEervzi8Er5Cmlfmyo4wb
+         hKjQ==
+X-Gm-Message-State: APjAAAUAXHrh1ABf+Q+9a9ny+GDidHvHaYjbRbjr1s9pLGXeGg2kD2N7
+        DJVafxXrfm1lO5z/5fVduO6ZrA==
+X-Google-Smtp-Source: APXvYqzpLaJmI7tDPA2tDGvz6dBZ9VXm3sif/kYnoWcVrXtWSXV8CQS0YhFVElrGpct/CZfo4eHAnQ==
+X-Received: by 2002:adf:f581:: with SMTP id f1mr8638594wro.264.1581426778842;
+        Tue, 11 Feb 2020 05:12:58 -0800 (PST)
+Received: from localhost.localdomain (lfbn-nic-1-65-232.w2-15.abo.wanadoo.fr. [2.15.156.232])
+        by smtp.gmail.com with ESMTPSA id b21sm3873013wmd.37.2020.02.11.05.12.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2020 05:12:58 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 0/6] irq/irq_sim: try to improve the API
+Date:   Tue, 11 Feb 2020 14:12:34 +0100
+Message-Id: <20200211131240.15853-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(136003)(346002)(376002)(428003)(189003)(199004)(81156014)(81166006)(109986005)(426003)(36756003)(86362001)(8936002)(316002)(7696005)(6666004)(70206006)(70586007)(54906003)(8676002)(186003)(356004)(2616005)(478600001)(4326008)(7416002)(26005)(336012)(2906002)(5660300002)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3881;H:SATLEXMB01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a4185146-1515-4b1c-2536-08d7aef468e0
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3881:
-X-Microsoft-Antispam-PRVS: <DM6PR12MB3881B793BCDFD9393B50EF75E7180@DM6PR12MB3881.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2733;
-X-Forefront-PRVS: 0310C78181
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 95ZTNplCBs7/PodsaTaMYQ+A3MKThoGTaGKBTiFu1ZK8zdTZuhQ1XdiBmM4dlUkXF40DEGZKV1+/MJI1+jTKWd80u8prqrF9x+xdApbWdh4S081JMzOUCU31H2a8RULIqR7eNvf32W2LzSEqGscLZdsCZ5J1lWAdASr3R2f7Ta0iIR0vKU+bgvrJh1MJKWRhEDSZK1TOaO0CxJyyqxOvWBbORuoC2q9/7Wzp+2vUxzDOV77zySPUZ2UouBHti1be/NxWsPY63Wpi6OJCvZw7iqq3Pol2o3KPwlJf/+TbEZTy0YTvBxMGYPs20SU4X2BOxn5BkNHm44buWIjTmpWhocX24DrfaSvWv1GD3NNcItSSEeIOsVPynCsiEO+kfSZlH1U2UmdVk+zvhSl2XFHdQLWZb7YTAx84W60ajX9VlP/lzZK4IVhNW60XebL/j1aO22GEBj518HVsTXA3ey9DvjDB0fNrfuS+1o9dgWkr+oM=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Feb 2020 13:15:05.0014
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4185146-1515-4b1c-2536-08d7aef468e0
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB01.amd.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3881
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because of MAX BUFFER size in register,when user/app give small
-buffer size produces noise of old data in buffer.
-This patch rectifies this noise when using different
-buffer sizes less than MAX BUFFER.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Signed-off-by: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
----
- sound/soc/amd/raven/acp3x-i2s.c     | 8 ++++++++
- sound/soc/amd/raven/acp3x-pcm-dma.c | 7 +------
- 2 files changed, 9 insertions(+), 6 deletions(-)
+This is my second take at improving the interrupt simulator interface.
+I marked it as v2 but it actually takes a completely different approach.
 
-diff --git a/sound/soc/amd/raven/acp3x-i2s.c b/sound/soc/amd/raven/acp3x-i2s.c
-index 31cd400..91a3881 100644
---- a/sound/soc/amd/raven/acp3x-i2s.c
-+++ b/sound/soc/amd/raven/acp3x-i2s.c
-@@ -170,6 +170,7 @@ static int acp3x_i2s_trigger(struct snd_pcm_substream *substream,
- 	struct snd_soc_card *card;
- 	struct acp3x_platform_info *pinfo;
- 	u32 ret, val, period_bytes, reg_val, ier_val, water_val;
-+	u32 buf_size, buf_reg;
- 
- 	prtd = substream->private_data;
- 	rtd = substream->runtime->private_data;
-@@ -183,6 +184,8 @@ static int acp3x_i2s_trigger(struct snd_pcm_substream *substream,
- 	}
- 	period_bytes = frames_to_bytes(substream->runtime,
- 			substream->runtime->period_size);
-+	buf_size = frames_to_bytes(substream->runtime,
-+			substream->runtime->buffer_size);
- 	switch (cmd) {
- 	case SNDRV_PCM_TRIGGER_START:
- 	case SNDRV_PCM_TRIGGER_RESUME:
-@@ -196,6 +199,7 @@ static int acp3x_i2s_trigger(struct snd_pcm_substream *substream,
- 					mmACP_BT_TX_INTR_WATERMARK_SIZE;
- 				reg_val = mmACP_BTTDM_ITER;
- 				ier_val = mmACP_BTTDM_IER;
-+				buf_reg = mmACP_BT_TX_RINGBUFSIZE;
- 				break;
- 			case I2S_SP_INSTANCE:
- 			default:
-@@ -203,6 +207,7 @@ static int acp3x_i2s_trigger(struct snd_pcm_substream *substream,
- 					mmACP_I2S_TX_INTR_WATERMARK_SIZE;
- 				reg_val = mmACP_I2STDM_ITER;
- 				ier_val = mmACP_I2STDM_IER;
-+				buf_reg = mmACP_I2S_TX_RINGBUFSIZE;
- 			}
- 		} else {
- 			switch (rtd->i2s_instance) {
-@@ -211,6 +216,7 @@ static int acp3x_i2s_trigger(struct snd_pcm_substream *substream,
- 					mmACP_BT_RX_INTR_WATERMARK_SIZE;
- 				reg_val = mmACP_BTTDM_IRER;
- 				ier_val = mmACP_BTTDM_IER;
-+				buf_reg = mmACP_BT_RX_RINGBUFSIZE;
- 				break;
- 			case I2S_SP_INSTANCE:
- 			default:
-@@ -218,9 +224,11 @@ static int acp3x_i2s_trigger(struct snd_pcm_substream *substream,
- 					mmACP_I2S_RX_INTR_WATERMARK_SIZE;
- 				reg_val = mmACP_I2STDM_IRER;
- 				ier_val = mmACP_I2STDM_IER;
-+				buf_reg = mmACP_I2S_RX_RINGBUFSIZE;
- 			}
- 		}
- 		rv_writel(period_bytes, rtd->acp3x_base + water_val);
-+		rv_writel(buf_size, rtd->acp3x_base + buf_reg);
- 		val = rv_readl(rtd->acp3x_base + reg_val);
- 		val = val | BIT(0);
- 		rv_writel(val, rtd->acp3x_base + reg_val);
-diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
-index aecc3c0..d62c0d9 100644
---- a/sound/soc/amd/raven/acp3x-pcm-dma.c
-+++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
-@@ -110,7 +110,7 @@ static void config_acp3x_dma(struct i2s_stream_instance *rtd, int direction)
- {
- 	u16 page_idx;
- 	u32 low, high, val, acp_fifo_addr, reg_fifo_addr;
--	u32 reg_ringbuf_size, reg_dma_size, reg_fifo_size;
-+	u32 reg_dma_size, reg_fifo_size;
- 	dma_addr_t addr;
- 
- 	addr = rtd->dma_addr;
-@@ -157,7 +157,6 @@ static void config_acp3x_dma(struct i2s_stream_instance *rtd, int direction)
- 	if (direction == SNDRV_PCM_STREAM_PLAYBACK) {
- 		switch (rtd->i2s_instance) {
- 		case I2S_BT_INSTANCE:
--			reg_ringbuf_size = mmACP_BT_TX_RINGBUFSIZE;
- 			reg_dma_size = mmACP_BT_TX_DMA_SIZE;
- 			acp_fifo_addr = ACP_SRAM_PTE_OFFSET +
- 						BT_PB_FIFO_ADDR_OFFSET;
-@@ -169,7 +168,6 @@ static void config_acp3x_dma(struct i2s_stream_instance *rtd, int direction)
- 
- 		case I2S_SP_INSTANCE:
- 		default:
--			reg_ringbuf_size = mmACP_I2S_TX_RINGBUFSIZE;
- 			reg_dma_size = mmACP_I2S_TX_DMA_SIZE;
- 			acp_fifo_addr = ACP_SRAM_PTE_OFFSET +
- 						SP_PB_FIFO_ADDR_OFFSET;
-@@ -181,7 +179,6 @@ static void config_acp3x_dma(struct i2s_stream_instance *rtd, int direction)
- 	} else {
- 		switch (rtd->i2s_instance) {
- 		case I2S_BT_INSTANCE:
--			reg_ringbuf_size = mmACP_BT_RX_RINGBUFSIZE;
- 			reg_dma_size = mmACP_BT_RX_DMA_SIZE;
- 			acp_fifo_addr = ACP_SRAM_PTE_OFFSET +
- 						BT_CAPT_FIFO_ADDR_OFFSET;
-@@ -193,7 +190,6 @@ static void config_acp3x_dma(struct i2s_stream_instance *rtd, int direction)
- 
- 		case I2S_SP_INSTANCE:
- 		default:
--			reg_ringbuf_size = mmACP_I2S_RX_RINGBUFSIZE;
- 			reg_dma_size = mmACP_I2S_RX_DMA_SIZE;
- 			acp_fifo_addr = ACP_SRAM_PTE_OFFSET +
- 						SP_CAPT_FIFO_ADDR_OFFSET;
-@@ -203,7 +199,6 @@ static void config_acp3x_dma(struct i2s_stream_instance *rtd, int direction)
- 				rtd->acp3x_base + mmACP_I2S_RX_RINGBUFADDR);
- 		}
- 	}
--	rv_writel(MAX_BUFFER, rtd->acp3x_base + reg_ringbuf_size);
- 	rv_writel(DMA_SIZE, rtd->acp3x_base + reg_dma_size);
- 	rv_writel(acp_fifo_addr, rtd->acp3x_base + reg_fifo_addr);
- 	rv_writel(FIFO_SIZE, rtd->acp3x_base + reg_fifo_size);
+The interrupt simulator API exposes a lot of custom data structures and
+functions and doesn't reuse the interfaces already exposed by the irq
+subsystem. This series tries to address it.
+
+First, we make irq_domain_reset_irq_data() available to non-V2 domain API
+users - that'll be used in the subsequent patch. Next we overhaul the
+public interfaces - we hide all specific data structures and instead
+rely on the irq_domain struct and virtual interrupt numberspace.
+
+Next four patches simplify the interface even more, but since the change
+may be a bit more controversial due to modification of the irq_domain
+I decided to split them out of the second patch.
+
+In patch 3/6 we're adding a new callback to irq_domain_ops that is called
+right before all the other code in irq_domain_remove(). Next we use it to
+remove the simulator-specific cleanup function from irq_sim.h - users now
+can simply use the regular irq_domain_remove().
+
+Last two patches show that the new callback isn't limited to the interrupt
+simulator and can be used to shrink code in real driver too. We introduce
+a new helper for a common use case of disposing of all mappings before
+removing the irq_domain and use it in the keystone irqchip driver.
+
+The end effect is that we limit the interrupt simulator API to two
+functions (plus one device managed variant) and zero new structures.
+
+v1: https://lkml.org/lkml/2019/8/12/558
+
+v1 -> v2:
+- instead of just making the new data structures opaque for users, remove
+  them entirely in favor of irq_domain
+- call irq_set_handler() & irq_domain_reset_irq_data() when unmapping
+  the simulated interrupt
+- fix a memory leak in error path
+- make it possible to use irq_find_matching_fwnode() with the simulator
+  domain
+- correctly use irq_create_mapping() and irq_find_mapping(): only use the
+  former at init-time and the latter at interrupt-time
+
+Bartosz Golaszewski (6):
+  irq: make irq_domain_reset_irq_data() available even for non-V2 users
+  irq/irq_sim: simplify the API
+  irq/domain: add a new callback to domain ops
+  irq/irq_sim: remove irq_domain_remove_sim()
+  irq/domain: provide irq_domain_dispose_mappings() helper
+  irqchip: keystone: use irq_domain_dispose_mappings()
+
+ drivers/gpio/gpio-mockup.c          |  47 ++++--
+ drivers/iio/dummy/iio_dummy_evgen.c |  32 ++--
+ drivers/irqchip/irq-keystone.c      |   5 +-
+ include/linux/irq_sim.h             |  33 ++--
+ include/linux/irqdomain.h           |   9 +-
+ kernel/irq/Kconfig                  |   1 +
+ kernel/irq/irq_sim.c                | 225 ++++++++++++++++------------
+ kernel/irq/irqdomain.c              |  44 ++++--
+ 8 files changed, 238 insertions(+), 158 deletions(-)
+
 -- 
-2.7.4
+2.25.0
 
