@@ -2,166 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CFEF159CAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 23:56:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02272159CB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 23:57:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727938AbgBKW42 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 17:56:28 -0500
-Received: from mail-yw1-f73.google.com ([209.85.161.73]:52506 "EHLO
-        mail-yw1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727906AbgBKW41 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 17:56:27 -0500
-Received: by mail-yw1-f73.google.com with SMTP id r75so263932ywg.19
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 14:56:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to;
-        bh=aOL9U/iY2dMKzhjMVeVV6Ai5vMkOfKpOd0BcDILMuYA=;
-        b=dcDpEH7ZN45igP4l8mc9PLVcF4M9BgFDWIlzqYNPFVHD6Z9a751NvNdASr+aSkxqGo
-         hQ1XpwVZvmIanE1Ex5O04cjcsPkuZVxJAfOCqRqyiPxgoy1ysb6uxY3UGdHfafMSX1MU
-         fTeN9/ZqOmoZXeHp5x+PY060mJJ/fE8HJF+tBMze97Qu/dFQrzoasWRUYb2tXGqKUKYo
-         bChRMEJPWxfwTZKUbB2x5blZWDc93pOqsuHp/kZZCSWvmA/er+k58DSej0RKcNcSDyRM
-         DcPDwp14VI4GIRj2OGVYPhefz4RsPm7OZMkVfFDpukpkiDh+ff0A61+ElYpQWuqcMJRW
-         mJrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to;
-        bh=aOL9U/iY2dMKzhjMVeVV6Ai5vMkOfKpOd0BcDILMuYA=;
-        b=g4aR0MKsaAtqGytaJrqvAdWEx+KEDlPgCHQL7DTFz3nx8Ue/107oNsz2o0x5DykWK0
-         XKMROuAlo5E7PtQwV+e5lz6pMw0q0QycKCldLrylnjoWVMPb6PLQZtocHP3dv51PMM8u
-         gIwnnv5GgNtQ1YLsX+5pn4H7T3b3gb42wy3Z1RusaqUvTzN05iOZ124VtFjqS06B/1x5
-         iCf7Tro3XkXaHwKxR5HOKwTCDBDS9m67GDHe7aGhLuci+0E7RQNP7CwJbLug+/i55dNc
-         40y0vpwKMCOtix2ZsCaMZvhss+jhSBfazTUmUm1/Z+ILfisqT6b9ZLIiO5mW4UcbzT2Q
-         CWWQ==
-X-Gm-Message-State: APjAAAXopGtoG/r/N4znVi4TU+FyWkEeTUmCXyuBNlOzVj9o6/2nCZ0a
-        dp6s737HLJuHKIYK3vwBFiVBxorc3wY=
-X-Google-Smtp-Source: APXvYqzllhiKHdQpM4uPNwyqX+Good3/YFtj2svIu2Spz84zHU9aLEFd2AKu32ak6wuV1+Ian4qkJ4nZyhg=
-X-Received: by 2002:a0d:e2d1:: with SMTP id l200mr7607645ywe.122.1581461784825;
- Tue, 11 Feb 2020 14:56:24 -0800 (PST)
-Date:   Tue, 11 Feb 2020 14:55:47 -0800
-In-Reply-To: <20200211225547.235083-1-dancol@google.com>
-Message-Id: <20200211225547.235083-7-dancol@google.com>
-Mime-Version: 1.0
-References: <20200211225547.235083-1-dancol@google.com>
-X-Mailer: git-send-email 2.25.0.225.g125e21ebc7-goog
-Subject: [PATCH v2 6/6] Add a new sysctl for limiting userfaultfd to user mode faults
-From:   Daniel Colascione <dancol@google.com>
-To:     dancol@google.com, timmurray@google.com, nosh@google.com,
-        nnk@google.com, lokeshgidra@google.com,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        selinux@vger.kernel.org
+        id S1727773AbgBKW5x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 17:57:53 -0500
+Received: from mga18.intel.com ([134.134.136.126]:7940 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727199AbgBKW5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 17:57:52 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 14:57:47 -0800
+X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
+   d="scan'208";a="251710669"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 14:57:47 -0800
+Message-ID: <17f2a84522bbbf920b0a34344829df10b89b249e.camel@linux.intel.com>
+Subject: Re: Should I repost? (was: Re: [PATCH v16.1 0/9] mm / virtio:
+ Provide support for free page reporting)
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     akpm@linux-foundation.org, david@redhat.com,
+        yang.zhang.wz@gmail.com, nitesh@redhat.com, konrad.wilk@oracle.com,
+        pagupta@redhat.com, riel@surriel.com, lcapitulino@redhat.com,
+        dave.hansen@intel.com, wei.w.wang@intel.com, aarcange@redhat.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com, osalvador@suse.de,
+        vbabka@suse.cz, AlexanderDuyck <alexander.duyck@gmail.com>,
+        kvm@vger.kernel.org, mst@redhat.com, linux-kernel@vger.kernel.org,
+        willy@infradead.org, mhocko@kernel.org, linux-mm@kvack.org
+Date:   Tue, 11 Feb 2020 14:57:47 -0800
+In-Reply-To: <20200211104041.GK3466@techsingularity.net>
+References: <20200122173040.6142.39116.stgit@localhost.localdomain>
+         <6758b1e3373fc06b37af1c87901237974d52322f.camel@linux.intel.com>
+         <d943ada56babfbebf408ad0f94988a5b09d2b472.camel@linux.intel.com>
+         <20200211104041.GK3466@techsingularity.net>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new sysctl knob unprivileged_userfaultfd_user_mode_only.
-This sysctl can be set to either zero or one. When zero (the default)
-the system lets all users call userfaultfd with or without
-UFFD_USER_MODE_ONLY, modulo other access controls. When
-unprivileged_userfaultfd_user_mode_only is set to one, users without
-CAP_SYS_PTRACE must pass UFFD_USER_MODE_ONLY to userfaultfd or the API
-will fail with EPERM. This facility allows administrators to reduce
-the likelihood that an attacker with access to userfaultfd can delay
-faulting kernel code to widen timing windows for other exploits.
+On Tue, 2020-02-11 at 10:40 +0000, Mel Gorman wrote:
+> On Mon, Feb 10, 2020 at 11:18:59AM -0800, Alexander Duyck wrote:
+> > > So I thought I would put out a gentle nudge since it has been about 4
+> > > weeks since v16 was submitted, a little over a week and a half for v16.1,
+> > > and I have yet to get any feedback on the code contained in the patchset.
+> > > Codewise nothing has changed from the v16 patchset other than rebasing it
+> > > off of the linux-next tree to resolve some merge conflicts that I saw
+> > > recently, and discussion around v16.1 was mostly about next steps and how
+> > > to deal with the page cache instead of discussing the code itself.
+> > > 
+> > > The full patchset can be found at:
+> > > https://lore.kernel.org/lkml/20200122173040.6142.39116.stgit@localhost.localdomain/
+> > > 
+> > > I believe I still need review feedback for patches 3, 4, 7, 8, and 9.
+> > > 
+> > > Thanks.
+> > > 
+> > > - Alex
+> > 
+> > So I had posted this patch set a few days before Linus's merge window
+> > opened. When I posted it the discussion was about what the follow-up on
+> > this patch set will be in terms of putting pressure on the page cache to
+> > force it to shrink. However I didn't get any review comments on the code
+> > itself.
+> > 
+> > My last understanding on this patch set is that I am waiting on patch
+> > feedback from Mel Gorman as he had the remaining requests that led to most
+> > of the changes in v15 and v16. I believe I have addressed them, but I
+> > don't believe he has had a chance to review them.
+> > 
+> > I am wondering now if it is still possible to either get it reviewed
+> > and/or applied without reposting, or do I need to repost it since it has
+> > been several weeks since I submitted it? The patch set still applies to
+> > the linux-next tree without any issues.
+> > 
+> 
+> Please repost to take into account that this is confirmed to be working
+> as expected after the merge window and has not conflicted with anything
+> else that got merged in the meantime. This fell off my radar because of the
+> timing when it was posted and the volume of mail I was receiving. I simply
+> noted a large amount of traffic in response to the series and assumed
+> others had issues that would get resolved without looking closely. Now
+> I see that it was all comments on future work instead of the series itself.
+> 
+> Sorry.
+> 
 
-Signed-off-by: Daniel Colascione <dancol@google.com>
----
- Documentation/admin-guide/sysctl/vm.rst | 13 +++++++++++++
- fs/userfaultfd.c                        | 11 ++++++++++-
- include/linux/userfaultfd_k.h           |  1 +
- kernel/sysctl.c                         |  9 +++++++++
- 4 files changed, 33 insertions(+), 1 deletion(-)
+No problem.
 
-diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-index 64aeee1009ca..1f416aff68b9 100644
---- a/Documentation/admin-guide/sysctl/vm.rst
-+++ b/Documentation/admin-guide/sysctl/vm.rst
-@@ -847,6 +847,19 @@ privileged users (with SYS_CAP_PTRACE capability).
- 
- The default value is 1.
- 
-+unprivileged_userfaultfd_user_mode_only
-+========================================
-+
-+This flag controls whether unprivileged users can use the userfaultfd
-+system calls to handle page faults in kernel mode.  If set to zero,
-+userfaultfd works with or without UFFD_USER_MODE_ONLY, modulo
-+unprivileged_userfaultfd above.  If set to one, users without
-+SYS_CAP_PTRACE must pass UFFD_USER_MODE_ONLY in order for userfaultfd
-+to succeed.  Prohibiting use of userfaultfd for handling faults from
-+kernel mode may make certain vulnerabilities more difficult
-+to exploit.
-+
-+The default value is 0.
- 
- user_reserve_kbytes
- ===================
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 47825a804d63..d39bdf177f8c 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -29,6 +29,7 @@
- #include <linux/hugetlb.h>
- 
- int sysctl_unprivileged_userfaultfd __read_mostly = 1;
-+int sysctl_unprivileged_userfaultfd_user_mode_only __read_mostly = 0;
- 
- static struct kmem_cache *userfaultfd_ctx_cachep __read_mostly;
- 
-@@ -1951,8 +1952,16 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
- 	static const int uffd_flags = UFFD_USER_MODE_ONLY;
- 	struct userfaultfd_ctx *ctx;
- 	int fd;
-+	bool need_cap_check = false;
- 
--	if (!sysctl_unprivileged_userfaultfd && !capable(CAP_SYS_PTRACE))
-+	if (!sysctl_unprivileged_userfaultfd)
-+		need_cap_check = true;
-+
-+	if (sysctl_unprivileged_userfaultfd_user_mode_only &&
-+	    (flags & UFFD_USER_MODE_ONLY) == 0)
-+		need_cap_check = true;
-+
-+	if (need_cap_check && !capable(CAP_SYS_PTRACE))
- 		return -EPERM;
- 
- 	BUG_ON(!current->mm);
-diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-index 549c8b0cca52..efe14abb2dc8 100644
---- a/include/linux/userfaultfd_k.h
-+++ b/include/linux/userfaultfd_k.h
-@@ -29,6 +29,7 @@
- #define UFFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS)
- 
- extern int sysctl_unprivileged_userfaultfd;
-+extern int sysctl_unprivileged_userfaultfd_user_mode_only;
- 
- extern const struct file_operations userfaultfd_fops;
- 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index d396aaaf19a3..0650063c3741 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1740,6 +1740,15 @@ static struct ctl_table vm_table[] = {
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_ONE,
- 	},
-+	{
-+		.procname	= "unprivileged_userfaultfd_user_mode_only",
-+		.data		= &sysctl_unprivileged_userfaultfd_user_mode_only,
-+		.maxlen		= sizeof(sysctl_unprivileged_userfaultfd_user_mode_only),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
- #endif
- 	{ }
- };
--- 
-2.25.0.225.g125e21ebc7-goog
+I have reposted as v17. I made a slight tweak to the cover page, rebased
+on today's linux-next and QEMU, rebuilt and reran some of the tests to
+verify the functionality and performance are still running about the same.
+
+The full patch set with QEMU patches can be found here:
+https://lore.kernel.org/lkml/20200211224416.29318.44077.stgit@localhost.localdomain/
+
+Thanks.
+
+- Alex
 
