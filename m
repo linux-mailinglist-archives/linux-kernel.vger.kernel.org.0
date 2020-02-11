@@ -2,177 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8D19159061
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:52:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82BB7159110
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:58:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729074AbgBKNw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 08:52:29 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:56196 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728624AbgBKNw3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 08:52:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581429148;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc; bh=o2XF+6S9QP9MMONzva7MUWo1VqNBPmt53WQKr9NpEek=;
-        b=YxQ7ZaN7L8ohZIj+uyV8HP0bfWLi3q/G3snJXSjHzXBso+IGzUu77LuPFJXaFVQ90Y3SR0
-        xzxNFIZBAJ73fb61CYN4vUUzTMuqTRSLwLj6WprmfWoEQjwo2NTYLuCWuZpCGcAgFnx8Vo
-        NBMG+SNO8OUK9CfU8c9mt4CGED9WqAM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-329-o7wJ414CP6SyQ53u_9hlhA-1; Tue, 11 Feb 2020 08:52:24 -0500
-X-MC-Unique: o7wJ414CP6SyQ53u_9hlhA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E5A2F100726A;
-        Tue, 11 Feb 2020 13:52:22 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-112.ams2.redhat.com [10.36.116.112])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8E95B26FB6;
-        Tue, 11 Feb 2020 13:52:19 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 90E0717447; Tue, 11 Feb 2020 14:52:18 +0100 (CET)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     daniel@ffwll.ch, Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4] drm/bochs: add drm_driver.release callback.
+        id S1729999AbgBKN5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 08:57:44 -0500
+Received: from 8bytes.org ([81.169.241.247]:52104 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729509AbgBKNxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 08:53:22 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 6C46DE16; Tue, 11 Feb 2020 14:53:11 +0100 (CET)
+From:   Joerg Roedel <joro@8bytes.org>
+To:     x86@kernel.org
+Cc:     hpa@zytor.com, Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Joerg Roedel <joro@8bytes.org>, Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 24/62] x86/idt: Split idt_data setup out of set_intr_gate()
 Date:   Tue, 11 Feb 2020 14:52:18 +0100
-Message-Id: <20200211135218.22871-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Message-Id: <20200211135256.24617-25-joro@8bytes.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200211135256.24617-1-joro@8bytes.org>
+References: <20200211135256.24617-1-joro@8bytes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Call bochs_unload via drm_driver.release to make sure we release stuff
-when it is safe to do so.  Use drm_dev_{enter,exit,unplug} to avoid
-touching hardware after device removal.  Tidy up here and there.
+From: Joerg Roedel <jroedel@suse.de>
 
-v4: add changelog.
-v3: use drm_dev_*().
-v2: move hardware deinit to pci_remove().
+The code to setup idt_data is needed for early exception handling, but
+set_intr_gate() can't be used that early because it has pv-ops in its
+code path, which don't work that early.
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Split out the idt_data initialization part from set_intr_gate() so
+that it can be used separatly.
+
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/gpu/drm/bochs/bochs_drv.c |  6 +++---
- drivers/gpu/drm/bochs/bochs_hw.c  | 24 +++++++++++++++++++++++-
- 2 files changed, 26 insertions(+), 4 deletions(-)
+ arch/x86/kernel/idt.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
-index 10460878414e..addb0568c1af 100644
---- a/drivers/gpu/drm/bochs/bochs_drv.c
-+++ b/drivers/gpu/drm/bochs/bochs_drv.c
-@@ -23,7 +23,6 @@ static void bochs_unload(struct drm_device *dev)
- 
- 	bochs_kms_fini(bochs);
- 	bochs_mm_fini(bochs);
--	bochs_hw_fini(dev);
- 	kfree(bochs);
- 	dev->dev_private = NULL;
- }
-@@ -69,6 +68,7 @@ static struct drm_driver bochs_driver = {
- 	.major			= 1,
- 	.minor			= 0,
- 	DRM_GEM_VRAM_DRIVER,
-+	.release                = bochs_unload,
- };
- 
- /* ---------------------------------------------------------------------- */
-@@ -148,9 +148,9 @@ static void bochs_pci_remove(struct pci_dev *pdev)
- {
- 	struct drm_device *dev = pci_get_drvdata(pdev);
- 
-+	drm_dev_unplug(dev);
- 	drm_atomic_helper_shutdown(dev);
--	drm_dev_unregister(dev);
--	bochs_unload(dev);
-+	bochs_hw_fini(dev);
- 	drm_dev_put(dev);
- }
- 
-diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
-index b615b7dfdd9d..952199cc0462 100644
---- a/drivers/gpu/drm/bochs/bochs_hw.c
-+++ b/drivers/gpu/drm/bochs/bochs_hw.c
-@@ -4,6 +4,7 @@
- 
- #include <linux/pci.h>
- 
-+#include <drm/drm_drv.h>
- #include <drm/drm_fourcc.h>
- 
- #include "bochs.h"
-@@ -194,6 +195,8 @@ void bochs_hw_fini(struct drm_device *dev)
- {
- 	struct bochs_device *bochs = dev->dev_private;
- 
-+	/* TODO: shot down existing vram mappings */
-+
- 	if (bochs->mmio)
- 		iounmap(bochs->mmio);
- 	if (bochs->ioports)
-@@ -207,6 +210,11 @@ void bochs_hw_fini(struct drm_device *dev)
- void bochs_hw_setmode(struct bochs_device *bochs,
- 		      struct drm_display_mode *mode)
- {
-+	int idx;
-+
-+	if (!drm_dev_enter(bochs->dev, &idx))
-+		return;
-+
- 	bochs->xres = mode->hdisplay;
- 	bochs->yres = mode->vdisplay;
- 	bochs->bpp = 32;
-@@ -232,11 +240,18 @@ void bochs_hw_setmode(struct bochs_device *bochs,
- 
- 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_ENABLE,
- 			  VBE_DISPI_ENABLED | VBE_DISPI_LFB_ENABLED);
-+
-+	drm_dev_exit(idx);
- }
- 
- void bochs_hw_setformat(struct bochs_device *bochs,
- 			const struct drm_format_info *format)
- {
-+	int idx;
-+
-+	if (!drm_dev_enter(bochs->dev, &idx))
-+		return;
-+
- 	DRM_DEBUG_DRIVER("format %c%c%c%c\n",
- 			 (format->format >>  0) & 0xff,
- 			 (format->format >>  8) & 0xff,
-@@ -256,13 +271,18 @@ void bochs_hw_setformat(struct bochs_device *bochs,
- 			  __func__, format->format);
- 		break;
+diff --git a/arch/x86/kernel/idt.c b/arch/x86/kernel/idt.c
+index 7f81c1294847..7d8fa631dca9 100644
+--- a/arch/x86/kernel/idt.c
++++ b/arch/x86/kernel/idt.c
+@@ -227,18 +227,24 @@ idt_setup_from_table(gate_desc *idt, const struct idt_data *t, int size, bool sy
  	}
-+
-+	drm_dev_exit(idx);
  }
  
- void bochs_hw_setbase(struct bochs_device *bochs,
- 		      int x, int y, int stride, u64 addr)
++static void init_idt_data(struct idt_data *data, unsigned int n,
++			  const void *addr)
++{
++	BUG_ON(n > 0xFF);
++
++	memset(data, 0, sizeof(*data));
++	data->vector	= n;
++	data->addr	= addr;
++	data->segment	= __KERNEL_CS;
++	data->bits.type	= GATE_INTERRUPT;
++	data->bits.p	= 1;
++}
++
+ static void set_intr_gate(unsigned int n, const void *addr)
  {
- 	unsigned long offset;
--	unsigned int vx, vy, vwidth;
-+	unsigned int vx, vy, vwidth, idx;
-+
-+	if (!drm_dev_enter(bochs->dev, &idx))
-+		return;
+ 	struct idt_data data;
  
- 	bochs->stride = stride;
- 	offset = (unsigned long)addr +
-@@ -277,4 +297,6 @@ void bochs_hw_setbase(struct bochs_device *bochs,
- 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_VIRT_WIDTH, vwidth);
- 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_X_OFFSET, vx);
- 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_Y_OFFSET, vy);
-+
-+	drm_dev_exit(idx);
+-	BUG_ON(n > 0xFF);
+-
+-	memset(&data, 0, sizeof(data));
+-	data.vector	= n;
+-	data.addr	= addr;
+-	data.segment	= __KERNEL_CS;
+-	data.bits.type	= GATE_INTERRUPT;
+-	data.bits.p	= 1;
++	init_idt_data(&data, n, addr);
+ 
+ 	idt_setup_from_table(idt_table, &data, 1, false);
  }
 -- 
-2.18.2
+2.17.1
 
