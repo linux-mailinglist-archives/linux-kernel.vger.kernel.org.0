@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A58D15934C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 16:38:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8F32159353
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 16:39:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729493AbgBKPiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 10:38:50 -0500
-Received: from foss.arm.com ([217.140.110.172]:47980 "EHLO foss.arm.com"
+        id S1729350AbgBKPjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 10:39:18 -0500
+Received: from foss.arm.com ([217.140.110.172]:48008 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729114AbgBKPiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 10:38:50 -0500
+        id S1727962AbgBKPjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 10:39:17 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 400CF30E;
-        Tue, 11 Feb 2020 07:38:49 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 430A231B;
+        Tue, 11 Feb 2020 07:39:15 -0800 (PST)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B88483F68E;
-        Tue, 11 Feb 2020 07:38:48 -0800 (PST)
-Date:   Tue, 11 Feb 2020 15:38:47 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 98DA83F68E;
+        Tue, 11 Feb 2020 07:39:14 -0800 (PST)
+Date:   Tue, 11 Feb 2020 15:39:13 +0000
 From:   Mark Brown <broonie@kernel.org>
-To:     Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-Cc:     Alexander.Deucher@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: amd: Buffer Size instead of MAX Buffer
-Message-ID: <20200211153847.GK4543@sirena.org.uk>
-References: <1581426768-8937-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        andrew.smirnov@gmail.com, manivannan.sadhasivam@linaro.org,
+        marcel.ziswiler@toradex.com, rjones@gateworks.com,
+        sebastien.szymanski@armadeus.com, aisheng.dong@nxp.com,
+        gary.bisson@boundarydevices.com, angus@akkea.ca,
+        pramod.kumar_1@nxp.com, rabeeh@solid-run.com,
+        cosmin.stoica@nxp.com, l.stach@pengutronix.de,
+        leonard.crestez@nxp.com, daniel.baluta@nxp.com, jun.li@nxp.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH V3 1/4] dt-bindings: spi: imx: Add
+ i.MX8MM/i.MX8MN/i.MX8MP compatible
+Message-ID: <20200211153913.GL4543@sirena.org.uk>
+References: <1581425307-18567-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lildS9pRFgpM/xzO"
+        protocol="application/pgp-signature"; boundary="xjamM5M9kpPM/bcu"
 Content-Disposition: inline
-In-Reply-To: <1581426768-8937-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+In-Reply-To: <1581425307-18567-1-git-send-email-Anson.Huang@nxp.com>
 X-Cookie: Hire the morally handicapped.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -49,35 +49,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---lildS9pRFgpM/xzO
+--xjamM5M9kpPM/bcu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Feb 11, 2020 at 06:42:28PM +0530, Ravulapati Vishnu vardhan rao wrote:
+On Tue, Feb 11, 2020 at 08:48:24PM +0800, Anson Huang wrote:
+> Add compatible for imx8mm/imx8mn/imx8mp.
 
-> Because of MAX BUFFER size in register,when user/app give small
-> buffer size produces noise of old data in buffer.
-> This patch rectifies this noise when using different
-> buffer sizes less than MAX BUFFER.
+Please submit patches using subject lines reflecting the style for the
+subsystem, this makes it easier for people to identify relevant patches.
+Look at what existing commits in the area you're changing are doing and
+make sure your subject lines visually resemble what they're doing.
+There's no need to resubmit to fix this alone.
 
-In what way does this patch fix the issue?  I looks like it's moving a
-buffer size setting from DMA to I2S but it's not clear why or how this
-fixes the issue, or indeed what the actual issue that's causing what are
-presumably underruns is?
-
---lildS9pRFgpM/xzO
+--xjamM5M9kpPM/bcu
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5CyoYACgkQJNaLcl1U
-h9DyKAf/ZqhMDhn36gZKS7USGUlNR9zhfLFj4h/Cwx4a0d+eNSjpmYaELKeXq060
-kbOYE49cI3V4OnSDP1yoDQ7Tsuz9hQzebIzC+0KJdpCRIGyU10lKhK1pDI8JV3lK
-vFofPqpWSGaTUj8abYbTHXyQf2T2ZPQqm14Sx7FQgPSnXI6M0gfo4I9hEyT4oe0E
-NJqNs6e8uSUerJdPSDfSeV2hR04V8A8MEd4g4kjDM4ktTqmyv0HetsXFMiAfH3wF
-ws4lB18nTxEDkvq1pZL/3Vfp5GVs8HVU1qWcJHgtUoZ5yLFUAF96MnAhPabLz2xH
-V6keJYLuBDl29iEV1T20hO9NFdt7aQ==
-=Evcz
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5CyqAACgkQJNaLcl1U
+h9DOwwf9FtG/iaQJVuAEOHRrJ9sfIJHvcKeiEzx4CbvNw5x48fs24VzAWO2rg7+t
+iyze1NRFVPS9oH0RLhrQ7jTj+W2t/2Ab8aF6SdK7GhHrIHPRnISNg9Gw15CpTNhv
+G28a9MR8eOddt9JprJ9GE37oyZyaBrFKCojNYlCIRDUxWVQH9RLjh4WjEy2RXxFi
+/OY2G513MX3vivd/04F+9O3KtfOqYdMjgeZ5gi0wbmK4MauyjdMGdrkMbrFcWwKC
+HdoAfGE9ounM1hYtYgAJRoGl20p6Z1n5MQ8HUHeEQkViPA+x4hiFgnRfV3xxtMiu
+rMm3Cu+06Jk9hh/fqB6Qlc92m6Up0Q==
+=TZK0
 -----END PGP SIGNATURE-----
 
---lildS9pRFgpM/xzO--
+--xjamM5M9kpPM/bcu--
