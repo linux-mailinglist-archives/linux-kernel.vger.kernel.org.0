@@ -2,90 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 284E115943D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:04:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14424159450
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:05:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730670AbgBKQD7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 11:03:59 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:35636 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728252AbgBKQD6 (ORCPT
+        id S1730701AbgBKQFw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 11:05:52 -0500
+Received: from mail-wr1-f74.google.com ([209.85.221.74]:36543 "EHLO
+        mail-wr1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729905AbgBKQFw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 11:03:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1581437025; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GxhdVQMuODyhj8Ef1OMGPYNtTlY3IQiUcj0GELNasU4=;
-        b=aS9S3lr0RX/TZHUDSfSMyjljjgL6X7fGX0B/FV4bcp7eOErZXfYDigSnFOe7UXe/T5aufw
-        bptWWqlgAXme/vwC2h/JJe7J5q60EROG4LV46T+mHPIqM9uqGnDp+frhwbj2FqzmrA2VWV
-        QluMd154+yb1J0ZFtL8hNPmE8Oezbew=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>, od@zcrc.me,
-        linux-pm@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [RFC PATCH 3/3] mmc: jz4740: Use pm_sleep_ptr() macro
-Date:   Tue, 11 Feb 2020 13:03:21 -0300
-Message-Id: <20200211160321.22124-4-paul@crapouillou.net>
-In-Reply-To: <20200211160321.22124-1-paul@crapouillou.net>
-References: <20200211160321.22124-1-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 11 Feb 2020 11:05:52 -0500
+Received: by mail-wr1-f74.google.com with SMTP id t6so7160884wru.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 08:05:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=fPyPj6YXKlNnOn1twoWGjqPJDWM/gm79Q9ZakEnsr3Y=;
+        b=Wi8bgarSTrgQE0LHOAgjWN5y+UOmdZAXDCDDqS4Xl//tm/ab2PRuBL+m+ZV4fEuGCT
+         LBN+1P+92h5nmEcvgxOxoo0J3risVqx7nriYaWeZrizVUMlibdBHxh2SLWpPcjgA9EFC
+         e9AHZRbAygFp3t26xwIPhIV7tPHVIao0eYYBgRG2+5j1UYd+bwZLI0WmgX8vgQuEJd9p
+         TLHUNgZ2CtFhMl6JVfeSrIsTZZNJDwVp/UQLzhwFtMxhkg4/f+Kt4I7dqIAPCcs3ivVd
+         MxoRdEHczXPfymaT7lQVrgHnryh1BButaQ/AnXMhpC32R9JafHwqwtfqY+IqmK9ALjEy
+         7+7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=fPyPj6YXKlNnOn1twoWGjqPJDWM/gm79Q9ZakEnsr3Y=;
+        b=K34xUf9EOocc+2EbPJtLaznotXt33uJseolmYLIrWGNR9tMcsuc3AZO9hoIQSycLc8
+         qplVxNE/SsMiAPAIpQqgyfgLXWwctSuI8dVjwVpWdgqvdGLKrH2P2G4nYJz/BhxtFShH
+         M9bUUQPUcqKi9bg1NbzxLkK2eZsLMTdBq3h6NpeJpU9ReNrnWSHagQtKFO3NspZzc2Kc
+         Bs0ObyP+bM+7iNjhOLsb2BQhKheC/UukMiPE19IFsC4S/jOSn4GJyLEg1FVwTLDWI86L
+         fUYT6IznyLE7y3JttT5e58OCJTVGYM2z7bmF+8+DPqvR0Ayicqqf45Dbgf1xLxA2S1hm
+         wqrw==
+X-Gm-Message-State: APjAAAViANeAewnNp69n13AZF+UGTtN9lCvq5VdTqWiQPhhhkmuA170H
+        QOSIt5eCpt8ZRoLKbnb1GslT4cLUcw==
+X-Google-Smtp-Source: APXvYqyT2BXQcpEnVTgCOo0D6aB+ikDiUifc71EECv9RsfSJjuuSjwfsCQlvQO+G2Qpm+M6x1B9QQmLXZg==
+X-Received: by 2002:a5d:474d:: with SMTP id o13mr8979251wrs.309.1581437149565;
+ Tue, 11 Feb 2020 08:05:49 -0800 (PST)
+Date:   Tue, 11 Feb 2020 17:04:19 +0100
+Message-Id: <20200211160423.138870-1-elver@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.225.g125e21ebc7-goog
+Subject: [PATCH v2 1/5] kcsan: Move interfaces that affects checks to kcsan-checks.h
+From:   Marco Elver <elver@google.com>
+To:     elver@google.com
+Cc:     paulmck@kernel.org, andreyknvl@google.com, glider@google.com,
+        dvyukov@google.com, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the newly introduced pm_sleep_ptr() macro to simplify the code.
+This moves functions that affect state changing the behaviour of
+kcsan_check_access() to kcsan-checks.h. Since these are likely used with
+kcsan_check_access() it makes more sense to have them in kcsan-checks.h,
+to avoid including all of 'include/linux/kcsan.h'.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+No functional change intended.
+
+Signed-off-by: Marco Elver <elver@google.com>
 ---
- drivers/mmc/host/jz4740_mmc.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ include/linux/kcsan-checks.h | 48 ++++++++++++++++++++++++++++++++++--
+ include/linux/kcsan.h        | 41 ------------------------------
+ 2 files changed, 46 insertions(+), 43 deletions(-)
 
-diff --git a/drivers/mmc/host/jz4740_mmc.c b/drivers/mmc/host/jz4740_mmc.c
-index fbae87d1f017..09554f9831de 100644
---- a/drivers/mmc/host/jz4740_mmc.c
-+++ b/drivers/mmc/host/jz4740_mmc.c
-@@ -1099,24 +1099,18 @@ static int jz4740_mmc_remove(struct platform_device *pdev)
- 	return 0;
- }
+diff --git a/include/linux/kcsan-checks.h b/include/linux/kcsan-checks.h
+index cf6961794e9a1..8675411c8dbcd 100644
+--- a/include/linux/kcsan-checks.h
++++ b/include/linux/kcsan-checks.h
+@@ -32,10 +32,54 @@
+  */
+ void __kcsan_check_access(const volatile void *ptr, size_t size, int type);
  
--#ifdef CONFIG_PM_SLEEP
--
--static int jz4740_mmc_suspend(struct device *dev)
-+static int __maybe_unused jz4740_mmc_suspend(struct device *dev)
- {
- 	return pinctrl_pm_select_sleep_state(dev);
- }
- 
--static int jz4740_mmc_resume(struct device *dev)
-+static int __maybe_unused jz4740_mmc_resume(struct device *dev)
- {
- 	return pinctrl_select_default_state(dev);
- }
- 
- static SIMPLE_DEV_PM_OPS(jz4740_mmc_pm_ops, jz4740_mmc_suspend,
- 	jz4740_mmc_resume);
--#define JZ4740_MMC_PM_OPS (&jz4740_mmc_pm_ops)
 -#else
--#define JZ4740_MMC_PM_OPS NULL
++/**
++ * kcsan_nestable_atomic_begin - begin nestable atomic region
++ *
++ * Accesses within the atomic region may appear to race with other accesses but
++ * should be considered atomic.
++ */
++void kcsan_nestable_atomic_begin(void);
++
++/**
++ * kcsan_nestable_atomic_end - end nestable atomic region
++ */
++void kcsan_nestable_atomic_end(void);
++
++/**
++ * kcsan_flat_atomic_begin - begin flat atomic region
++ *
++ * Accesses within the atomic region may appear to race with other accesses but
++ * should be considered atomic.
++ */
++void kcsan_flat_atomic_begin(void);
++
++/**
++ * kcsan_flat_atomic_end - end flat atomic region
++ */
++void kcsan_flat_atomic_end(void);
++
++/**
++ * kcsan_atomic_next - consider following accesses as atomic
++ *
++ * Force treating the next n memory accesses for the current context as atomic
++ * operations.
++ *
++ * @n number of following memory accesses to treat as atomic.
++ */
++void kcsan_atomic_next(int n);
++
++#else /* CONFIG_KCSAN */
++
+ static inline void __kcsan_check_access(const volatile void *ptr, size_t size,
+ 					int type) { }
 -#endif
++
++static inline void kcsan_nestable_atomic_begin(void)	{ }
++static inline void kcsan_nestable_atomic_end(void)	{ }
++static inline void kcsan_flat_atomic_begin(void)	{ }
++static inline void kcsan_flat_atomic_end(void)		{ }
++static inline void kcsan_atomic_next(int n)		{ }
++
++#endif /* CONFIG_KCSAN */
  
- static struct platform_driver jz4740_mmc_driver = {
- 	.probe = jz4740_mmc_probe,
-@@ -1124,7 +1118,7 @@ static struct platform_driver jz4740_mmc_driver = {
- 	.driver = {
- 		.name = "jz4740-mmc",
- 		.of_match_table = of_match_ptr(jz4740_mmc_of_match),
--		.pm = JZ4740_MMC_PM_OPS,
-+		.pm = pm_sleep_ptr(&jz4740_mmc_pm_ops),
- 	},
- };
+ /*
+  * kcsan_*: Only calls into the runtime when the particular compilation unit has
+diff --git a/include/linux/kcsan.h b/include/linux/kcsan.h
+index 1019e3a2c6897..7a614ca558f65 100644
+--- a/include/linux/kcsan.h
++++ b/include/linux/kcsan.h
+@@ -56,52 +56,11 @@ void kcsan_disable_current(void);
+  */
+ void kcsan_enable_current(void);
+ 
+-/**
+- * kcsan_nestable_atomic_begin - begin nestable atomic region
+- *
+- * Accesses within the atomic region may appear to race with other accesses but
+- * should be considered atomic.
+- */
+-void kcsan_nestable_atomic_begin(void);
+-
+-/**
+- * kcsan_nestable_atomic_end - end nestable atomic region
+- */
+-void kcsan_nestable_atomic_end(void);
+-
+-/**
+- * kcsan_flat_atomic_begin - begin flat atomic region
+- *
+- * Accesses within the atomic region may appear to race with other accesses but
+- * should be considered atomic.
+- */
+-void kcsan_flat_atomic_begin(void);
+-
+-/**
+- * kcsan_flat_atomic_end - end flat atomic region
+- */
+-void kcsan_flat_atomic_end(void);
+-
+-/**
+- * kcsan_atomic_next - consider following accesses as atomic
+- *
+- * Force treating the next n memory accesses for the current context as atomic
+- * operations.
+- *
+- * @n number of following memory accesses to treat as atomic.
+- */
+-void kcsan_atomic_next(int n);
+-
+ #else /* CONFIG_KCSAN */
+ 
+ static inline void kcsan_init(void)			{ }
+ static inline void kcsan_disable_current(void)		{ }
+ static inline void kcsan_enable_current(void)		{ }
+-static inline void kcsan_nestable_atomic_begin(void)	{ }
+-static inline void kcsan_nestable_atomic_end(void)	{ }
+-static inline void kcsan_flat_atomic_begin(void)	{ }
+-static inline void kcsan_flat_atomic_end(void)		{ }
+-static inline void kcsan_atomic_next(int n)		{ }
+ 
+ #endif /* CONFIG_KCSAN */
  
 -- 
-2.25.0
+2.25.0.225.g125e21ebc7-goog
 
