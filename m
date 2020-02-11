@@ -2,112 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55A91159035
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:46:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9960A159039
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 14:47:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728712AbgBKNq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 08:46:28 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:46483 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727779AbgBKNq2 (ORCPT
+        id S1728895AbgBKNr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 08:47:26 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:29940 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727887AbgBKNr0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 08:46:28 -0500
-Received: by mail-qt1-f193.google.com with SMTP id e21so3925025qtp.13
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 05:46:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=TQjrRYBQgNu22Yu5TuB1IALhpcVLswinVmpWMZoh7QI=;
-        b=W20jeNcDFxXtwP90Aq4vDRmKH82/qSMzW/Hq0xGnX5KBBnJhTx1bMSwwzp/HilQQ2R
-         vndfW6jy55/+tS+Cx7/sfWSDKVVuYbN+DCt12yW8/iBH6RoMMyeibZ+AchR8asNL/dRs
-         iJ77BEZXdFVgDuR6WBovNZDGhlYQBvhanZujz/uamK94F3lcayltXlVvH04hQ+zL9Cnk
-         lUXhv81z1Fp8XqSxsIALjkA3a8y9wEv9qUNNjucPO87nksR+7Qmi8hXOUaCV2pPjAPRK
-         +3o8gwR/d8oj/l3PhqnjspquYT3Fa4WYz/sDmUtQXy2iUrrROLYOAmAS2NjHARAMJEYr
-         SPYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=TQjrRYBQgNu22Yu5TuB1IALhpcVLswinVmpWMZoh7QI=;
-        b=bjim1HrIcR04JZCrKV7lluP1Umsq6uvqyDrFUqqtBFYAKqZU7kKkFoPE5WgDd1hreH
-         DtTnzmDTBPqxPur9n7DWWlrLdab/NwM/BaP0MjcQRz0IP+ms3joezXPDmcHSEnom/hAl
-         AMeKktMBHWqaE1QJSknf+97rWMUyhBW1r9u40+XPtAO7SYj1z4aQRzhexaCsl5b2QTTR
-         SriNQcUb6MCmynimM4w1IbpylXv+j5YI/kGLtf+347vat6d6qt+zT71a/MpxKBjfHGPy
-         RKNMhS+WP/ePdRXcAWo7W6cdJJQ0epG8r7Kzq0ZLASQZxt8fdd9fNBWiZW3Eobq4he7u
-         f+nQ==
-X-Gm-Message-State: APjAAAUkoyXKs0tnXjjDL09BoscXqqc6lNVD0SZqSDKDWeW0axzxTDHX
-        /8pgj/ejA88X15lcio0GGFU=
-X-Google-Smtp-Source: APXvYqymE7hVmjKA4y9KEECJWuSfRA1BEusXP0BD+tG/76sK9Ogw1v4G/kR9pzNtzRz3nwNzVComKw==
-X-Received: by 2002:ac8:7217:: with SMTP id a23mr2511705qtp.241.1581428787324;
-        Tue, 11 Feb 2020 05:46:27 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id v55sm2269572qtc.1.2020.02.11.05.46.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 05:46:26 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 6523E40A7D; Tue, 11 Feb 2020 10:46:24 -0300 (-03)
-Date:   Tue, 11 Feb 2020 10:46:24 -0300
-To:     Marek Majkowski <marek@cloudflare.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Ivan Babrou <ivan@cloudflare.com>,
-        kernel-team <kernel-team@cloudflare.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, sashal@kernel.org,
-        Kenton Varda <kenton@cloudflare.com>
-Subject: Re: perf not picking up symbols for namespaced processes
-Message-ID: <20200211134624.GA32066@kernel.org>
-References: <CABWYdi1ZKR=jmKnjoJTik08Q9uJBvyZ4W0C29iPiUJ5ef1obvw@mail.gmail.com>
- <20191205123302.GA25750@kernel.org>
- <CABWYdi1+E7MQD8mC2xQfSP0m9_WFdx9mbLkw-36tJ8EtLaw2Jg@mail.gmail.com>
- <CAJPywTKC8=O0zmNm-W4OUENpoZfrbr1Ts38gQw2ZA608_u5wpw@mail.gmail.com>
- <20200204192657.GB1554679@krava>
- <CAJPywTKuu+RPsspAT4Z_243KvtchTe7p7c4DpvG07Nv5A67fnw@mail.gmail.com>
+        Tue, 11 Feb 2020 08:47:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581428845;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vZZXarGtig3tAtPPECD18uPxu8CsjJJba6XrWOt6Ku8=;
+        b=QZ77FHaU1qq9hKyJTf6kaJUnIW1o9hW/CCKK6L2FnUTJ2X5f6McuAMjxAnEu4ACgJrOaB7
+        kQux6/jV7G6qkk4Bc1cwEXIZDO8QwjNUDmojqDgwCqZ5Oe1q4GsT4zfd54CKhizo0JTmEP
+        mFTsMOaDF+P8xyWy7bG5SFRCpKRsq+U=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-41-mOtB-_kLPb29C5VUCfBX7w-1; Tue, 11 Feb 2020 08:47:13 -0500
+X-MC-Unique: mOtB-_kLPb29C5VUCfBX7w-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1C6231800D42;
+        Tue, 11 Feb 2020 13:47:11 +0000 (UTC)
+Received: from krava (ovpn-204-250.brq.redhat.com [10.40.204.250])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2D54F5DA7B;
+        Tue, 11 Feb 2020 13:47:06 +0000 (UTC)
+Date:   Tue, 11 Feb 2020 14:47:04 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     John Garry <john.garry@huawei.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, will@kernel.org, ak@linux.intel.com,
+        linuxarm@huawei.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, suzuki.poulose@arm.com,
+        james.clark@arm.com, zhangshaokun@hisilicon.com,
+        robin.murphy@arm.com
+Subject: Re: [PATCH RFC 5/7] perf pmu: Support matching by sysid
+Message-ID: <20200211134704.GB93194@krava>
+References: <1579876505-113251-1-git-send-email-john.garry@huawei.com>
+ <1579876505-113251-6-git-send-email-john.garry@huawei.com>
+ <20200210120759.GG1907700@krava>
+ <63799909-067b-e5f4-dcf1-9ba1ec145348@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJPywTKuu+RPsspAT4Z_243KvtchTe7p7c4DpvG07Nv5A67fnw@mail.gmail.com>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <63799909-067b-e5f4-dcf1-9ba1ec145348@huawei.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Feb 11, 2020 at 10:06:35AM +0000, Marek Majkowski escreveu:
-> Jirka,
+On Mon, Feb 10, 2020 at 04:22:56PM +0000, John Garry wrote:
+> Hi jirka,
 > 
-> On Tue, Feb 4, 2020 at 7:27 PM Jiri Olsa <jolsa@redhat.com> wrote:
-> > > 11913 openat(AT_FDCWD, "/proc/9512/ns/mnt", O_RDONLY) = 197
-> > > 11913 setns(197, CLONE_NEWNS) = 0
-> > > 11913 stat("/home/marek/bin/runsc-debug", 0x7fffffff8480) = -1 ENOENT
-> > > (No such file or directory)
-> > > 11913 setns(196, CLONE_NEWNS) = 0
-> >
-> > hi,
-> > could you guys please share more details on what you run exactly,
-> > and perhaps that change you mentioned?
+> > 
+> > > +		fclose(file);
+> > > +		pr_debug("gets failed for file %s\n", path);
+> > > +		free(buf);
+> > > +		return NULL;
+> > > +	}
+> > > +	fclose(file);
+> > > +
+> > > +	/* Remove any whitespace, this could be from ACPI HID */
+> > > +	s = strlen(buf);
+> > > +	for (i = 0; i < s; i++) {
+> > > +		if (buf[i] == ' ') {
+> > > +			buf[i] = 0;
+> > > +			break;
+> > > +		};
+> > > +	}
+> > > +
+> > > +	return buf;
+> > > +}
+> > > +
 > 
-> I was debugging gvisor (runsc), which does execve(/proc/self/exe), and
-> then messes up with its mount namespace. The effect is that the binary
-> running doesn't exist in the mount namespace. This confuses perf,
-> which fails to load symbols for that process.
+> I have another series to add kernel support for a system identifier sysfs
+> entry, which I sent after this series:
 > 
-> To my understanding, by default, perf looks for the binary in the
-> process mount namespace. In this case clearly the binary wasn't there.
-> Ivan wrote a rough patch [1], which I just confirmed works. The patch
-> attempts, after a failure to load binary from pids mount namespace, to
-> load binary from the default mount namespace (the one running perf).
+> https://lore.kernel.org/linux-acpi/1580210059-199540-1-git-send-email-john.garry@huawei.com/
 > 
-> [1] https://lkml.org/lkml/2019/12/5/878
+> It is different to what I am relying on here - it uses a kernel soc driver
+> for firmware ACPI PPTT identifier. Progress is somewhat blocked at the
+> moment however and I may have to use a different method:
+> 
+> https://lore.kernel.org/linux-acpi/20200128123415.GB36168@bogus/
 
-That is a fallback that works in this specific case, and, with a warning
-or some explicitely specified option makes perf work with this specific
-usecase, but either a warning ("fallback to root namespace binary
-/foo/bar") or the explicit option, please, is that what that patch does?
+I'll try to check ;-)
 
-- Arnaldo
+> 
+> > > +static char *perf_pmu__getsysid(void)
+> > > +{
+> > > +	char *sysid;
+> > > +	static bool printed;
+> > > +
+> > > +	sysid = getenv("PERF_SYSID");
+> > > +	if (sysid)
+> > > +		sysid = strdup(sysid);
+> > > +
+> > > +	if (!sysid)
+> > > +		sysid = get_sysid_str();
+> > > +	if (!sysid)
+> > > +		return NULL;
+> > > +
+> > > +	if (!printed) {
+> > > +		pr_debug("Using SYSID %s\n", sysid);
+> > > +		printed = true;
+> > > +	}
+> > > +	return sysid;
+> > > +}
+> > 
+> > this part is getting complicated and AFAIK we have no tests for it
+> > 
+> > if you could think of any tests that'd be great.. Perhaps we could
+> > load 'our' json test files and check appropriate events/aliasses
+> > via in pmu object.. or via parse_events interface.. those test aliases
+> > would have to be part of perf, but we have tests compiled in anyway
+> 
+> Sorry, I don't fully follow.
+> 
+> Are you suggesting that we could load the specific JSONs tables for a system
+> from the host filesystem?
+
+I wish to see some test for all this.. I can only think about having
+'test' json files compiled with perf and 'perf test' that looks them
+up and checks that all is in the proper place
+
+jirka
+
