@@ -2,215 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3B89159B2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 22:32:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E3F7159B3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 22:33:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727896AbgBKVcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 16:32:09 -0500
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:33372 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727879AbgBKVcG (ORCPT
+        id S1727944AbgBKVdF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 16:33:05 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36560 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbgBKVdF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 16:32:06 -0500
-Received: by mail-pl1-f202.google.com with SMTP id bd7so5277886plb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 13:32:06 -0800 (PST)
+        Tue, 11 Feb 2020 16:33:05 -0500
+Received: by mail-ot1-f68.google.com with SMTP id j20so11712137otq.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 13:33:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vqDD6Gs7ngqLSWc3KTUHIOcGSlcLabi4lsGh3QCG31M=;
-        b=AW3+a6HpfbMIZUeziVe7326NVlNXRe6KKs/Jy9Bv8LgX23ZEmjRGxE1TOSLx5zOLGd
-         BStdGUu6ZAK+vjPmmeQgLrLCE8aZNR2rMSWNwhwdr5rFsnOjag/nmx+wEftHYHwaqwQD
-         uXhiUe/ZBtNo9TfsWaykRXTr0r/C8//JshbuuaHo1/nr7oFrZyn6VskYeG+8muDz8UWe
-         pVBtP0+7C8imVM8fJiV1R+aH8xRUUm4VNkoBB0P78V3sSpdAHBXYuPeTrgNuSAr/htFh
-         wVDP5VM/1gmKrcBnQ559/C3apZyOuBlSJyJBljyoPDEsdxiIu+eUll01s9kuOape4yWl
-         XH8Q==
+        bh=w7t90g4c6XNbG2IVEsLyCTMS996Wdaa8ZX4sfkSxqPY=;
+        b=sPb+i27ruMFTvdaOm/MyeY4Oz9L1b8r1xJSqYOfN+o5NMuR8tLmfXcwUTIumlqIiYW
+         2N8lzmIaxjR+23jnTm7qAer4rFagk617Vw5fp6rbbZAoseCihITs9GNCZ4bnVda2WJnk
+         oiLpm3H8xB22+xnzg0KozaxmzWdWjbLz64ru6WrEx0MMiBBMRsPvHBFlRVuQAdlBaR5O
+         YUpX/nkFwO39yJTtfwvmkOhu73zPYObk0PdEjCMmWCpJ2YWhjbHOa+ZOUJCgxialqOvU
+         x3LpOiDBJtwItD0ieD23vk+I1qQp1gvNs12BQTOn4RGIJYOyWze2v5PeqFwz0IpDf+dV
+         UZiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=vqDD6Gs7ngqLSWc3KTUHIOcGSlcLabi4lsGh3QCG31M=;
-        b=iHnyYdtx0cf9eppJnV9mUFELnkXhPbaHtTSKMb0t3lcLUL3yLw3ef/cZx7bL8LN1sN
-         h/6Oem1JSu0rMVfszOAKE3ahbZmUsKpyKLtqAAR4Ojce28eIvFXFV3n8MUGKlRnaFxIe
-         udRPkuXil+cfPSzeOtOWOEh7WwrZGbTUxTntcBJOPjcQ1Klcuxo3ENqYUJOGbo1rPYmP
-         3Ic9UidwJvDtJTEGLSJXwgncw4HSpssqkvBS9mGbeAxBMw4P0tgCg1U8BzPVomnKri94
-         7Xw8Z2CNOzbkFvm6c25zj818r+OE32k9niXcPHgS5YzMK9dunHDjD5cflMu1VCJ5S1Po
-         joiQ==
-X-Gm-Message-State: APjAAAVdwq1qjy4gn6NkNdQg4bEJ+pGBd4kkBZ8UFbKCaCbgFMojXfrE
-        G7rFwCw8Fd40kl83IcpPuJaMCB+QhMP6dBu/vQ==
-X-Google-Smtp-Source: APXvYqzQHWOyvxutWwSWozD1YwqfvrNdtFLk+uHTrMAzzyDXIUBRUgauYZSzihOXYE/q8NSPm50+Tb4mcBrAeZ2aHg==
-X-Received: by 2002:a63:348c:: with SMTP id b134mr8572145pga.197.1581456726045;
- Tue, 11 Feb 2020 13:32:06 -0800 (PST)
-Date:   Tue, 11 Feb 2020 13:31:28 -0800
-In-Reply-To: <20200211213128.73302-1-almasrymina@google.com>
-Message-Id: <20200211213128.73302-9-almasrymina@google.com>
-Mime-Version: 1.0
-References: <20200211213128.73302-1-almasrymina@google.com>
-X-Mailer: git-send-email 2.25.0.225.g125e21ebc7-goog
-Subject: [PATCH v12 9/9] hugetlb_cgroup: Add hugetlb_cgroup reservation docs
-From:   Mina Almasry <almasrymina@google.com>
-To:     mike.kravetz@oracle.com
-Cc:     shuah@kernel.org, almasrymina@google.com, rientjes@google.com,
-        shakeelb@google.com, gthelen@google.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w7t90g4c6XNbG2IVEsLyCTMS996Wdaa8ZX4sfkSxqPY=;
+        b=A0MeaGQXIYFaZvWfOnY+oJ6AqkhM1N1s5FhHTkOF6guaMGTiKvXU5ClKrMYLG+jrGg
+         tDrIHefBH2kbE6xeVzr8H33MsTDYGRTBa2h7/TAF8SjfA4vuxxvD9zfsOlaUBDMTLDLM
+         2jFd3PSwtPGnpPcPQPF/5Q4G0DU37OPA+4Uk20ILc9Za+bxuzBRXfmDfQU5J+X0WjxhC
+         IfiERnkdHY73sCqqYJ8epn2oB5WVRWlWL/q79H/HcBI+Jv/oKkbPlKrl3eiZdRwuYnfA
+         cc5/aTSGz+dpLeQWIocGHq+ncZmJHCMB60abt8U0mFDxXOTL2NfzoLr1fW3jUZ24Y/X+
+         UMaQ==
+X-Gm-Message-State: APjAAAWXgPWc2CuFOFAmMdQMHIJhdokKRdHBpQP2G94CNds0Iqt9ajCm
+        sY6NY2cYg9oPMBY/pXH7LQXAq+Y3qcazV25J1vZFMQ==
+X-Google-Smtp-Source: APXvYqyx2YfO3CrgVT8Ue7KGbrpANlKv/7s2kPE1d6utD3uoHxPksjBi0y8VM3cugmkfUj0o0k+v0rF5MEB6CHlQjRg=
+X-Received: by 2002:a05:6830:22cc:: with SMTP id q12mr7016668otc.110.1581456783363;
+ Tue, 11 Feb 2020 13:33:03 -0800 (PST)
+MIME-Version: 1.0
+References: <20200123152440.28956-1-kpsingh@chromium.org> <20200123152440.28956-5-kpsingh@chromium.org>
+ <20200211031208.e6osrcathampoog7@ast-mbp> <20200211124334.GA96694@google.com>
+ <20200211175825.szxaqaepqfbd2wmg@ast-mbp> <CAG48ez25mW+_oCxgCtbiGMX07g_ph79UOJa07h=o_6B6+Q-u5g@mail.gmail.com>
+ <20200211190943.sysdbz2zuz5666nq@ast-mbp> <CAG48ez2gvo1dA4P1L=ASz7TRfbH-cgLZLmOPmr0NweayL-efLw@mail.gmail.com>
+ <20200211201039.om6xqoscfle7bguz@ast-mbp> <CAG48ez1qGqF9z7APajFyzjZh82YxFV9sHE64f5kdKBeH9J3YPg@mail.gmail.com>
+In-Reply-To: <CAG48ez1qGqF9z7APajFyzjZh82YxFV9sHE64f5kdKBeH9J3YPg@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 11 Feb 2020 22:32:37 +0100
+Message-ID: <CAG48ez0gxY5bzTpk+6DjkXqTPDM+06yy8spKdqoF7Edt9Nx_JQ@mail.gmail.com>
+Subject: Re: BPF LSM and fexit [was: [PATCH bpf-next v3 04/10] bpf: lsm: Add
+ mutable hooks list for the BPF LSM]
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     KP Singh <kpsingh@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        bpf@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kernel Team <kernel-team@fb.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add docs for how to use hugetlb_cgroup reservations, and their behavior.
+On Tue, Feb 11, 2020 at 9:33 PM Jann Horn <jannh@google.com> wrote:
+> On Tue, Feb 11, 2020 at 9:10 PM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+> > On Tue, Feb 11, 2020 at 08:36:18PM +0100, Jann Horn wrote:
+> > > On Tue, Feb 11, 2020 at 8:09 PM Alexei Starovoitov
+> > > <alexei.starovoitov@gmail.com> wrote:
+> > > > On Tue, Feb 11, 2020 at 07:44:05PM +0100, Jann Horn wrote:
+> > > > > On Tue, Feb 11, 2020 at 6:58 PM Alexei Starovoitov
+> > > > > <alexei.starovoitov@gmail.com> wrote:
+> > > > > > On Tue, Feb 11, 2020 at 01:43:34PM +0100, KP Singh wrote:
+> > > > > [...]
+> > > > > > > * When using the semantic provided by fexit, the BPF LSM program will
+> > > > > > >   always be executed and will be able to override / clobber the
+> > > > > > >   decision of LSMs which appear before it in the ordered list. This
+> > > > > > >   semantic is very different from what we currently have (i.e. the BPF
+> > > > > > >   LSM hook is only called if all the other LSMs allow the action) and
+> > > > > > >   seems to be bypassing the LSM framework.
+> > > > > >
+> > > > > > It that's a concern it's trivial to add 'if (RC == 0)' check to fexit
+> > > > > > trampoline generator specific to lsm progs.
+> > > > > [...]
+> > > > > > Using fexit mechanism and bpf_sk_storage generalization is
+> > > > > > all that is needed. None of it should touch security/*.
+[...]
+> > Some of the lsm hooks are in critical path. Like security_socket_sendmsg().
+> > retpoline hurts. If we go with indirect calls right now it will be harder to
+> > optimize later. It took us long time to come up with bpf trampoline and build
+> > bpf dispatcher on top of it to remove single indirect call from XDP runtime.
+> > For bpf+lsm would be good to avoid it from the start.
+>
+> Just out of curiosity: Are fexit hooks really much cheaper than indirect calls?
+>
+> AFAIK ftrace on x86-64 replaces the return pointer for fexit
+> instrumentation (see prepare_ftrace_return()). So when the function
+> returns, there is one return misprediction for branching into
+> return_to_handler(), and then the processor's internal return stack
+> will probably be misaligned so that after ftrace_return_to_handler()
+> is done running, all the following returns will also be mispredicted.
+>
+> So I would've thought that fexit hooks would have at least roughly the
+> same impact as indirect calls - indirect calls via retpoline do one
+> mispredicted branch, fexit hooks do at least two AFAICS. But I guess
+> indirect calls could still be slower if fexit benefits from having all
+> the mispredicted pointers stored on the cache-hot stack while the
+> indirect branch target is too infrequently accessed to be in L1D, or
+> something like that?
 
-Signed-off-by: Mina Almasry <almasrymina@google.com>
-
----
-
-Changes in v11:
-- Changed resv.* to rsvd.*
-Changes in v10:
-- Clarify reparenting behavior.
-- Reword benefits of reservation limits.
-Changes in v6:
-- Updated docs to reflect the new design based on a new counter that
-tracks both reservations and faults.
-
----
- .../admin-guide/cgroup-v1/hugetlb.rst         | 103 ++++++++++++++++--
- 1 file changed, 92 insertions(+), 11 deletions(-)
-
-diff --git a/Documentation/admin-guide/cgroup-v1/hugetlb.rst b/Documentation/admin-guide/cgroup-v1/hugetlb.rst
-index a3902aa253a96..338f2c7d7a1cd 100644
---- a/Documentation/admin-guide/cgroup-v1/hugetlb.rst
-+++ b/Documentation/admin-guide/cgroup-v1/hugetlb.rst
-@@ -2,13 +2,6 @@
- HugeTLB Controller
- ==================
-
--The HugeTLB controller allows to limit the HugeTLB usage per control group and
--enforces the controller limit during page fault. Since HugeTLB doesn't
--support page reclaim, enforcing the limit at page fault time implies that,
--the application will get SIGBUS signal if it tries to access HugeTLB pages
--beyond its limit. This requires the application to know beforehand how much
--HugeTLB pages it would require for its use.
--
- HugeTLB controller can be created by first mounting the cgroup filesystem.
-
- # mount -t cgroup -o hugetlb none /sys/fs/cgroup
-@@ -28,10 +21,14 @@ process (bash) into it.
-
- Brief summary of control files::
-
-- hugetlb.<hugepagesize>.limit_in_bytes     # set/show limit of "hugepagesize" hugetlb usage
-- hugetlb.<hugepagesize>.max_usage_in_bytes # show max "hugepagesize" hugetlb  usage recorded
-- hugetlb.<hugepagesize>.usage_in_bytes     # show current usage for "hugepagesize" hugetlb
-- hugetlb.<hugepagesize>.failcnt		   # show the number of allocation failure due to HugeTLB limit
-+ hugetlb.<hugepagesize>.rsvd.limit_in_bytes            # set/show limit of "hugepagesize" hugetlb reservations
-+ hugetlb.<hugepagesize>.rsvd.max_usage_in_bytes        # show max "hugepagesize" hugetlb reservations and no-reserve faults
-+ hugetlb.<hugepagesize>.rsvd.usage_in_bytes            # show current reservations and no-reserve faults for "hugepagesize" hugetlb
-+ hugetlb.<hugepagesize>.rsvd.failcnt                   # show the number of allocation failure due to HugeTLB reservation limit
-+ hugetlb.<hugepagesize>.limit_in_bytes                 # set/show limit of "hugepagesize" hugetlb faults
-+ hugetlb.<hugepagesize>.max_usage_in_bytes             # show max "hugepagesize" hugetlb  usage recorded
-+ hugetlb.<hugepagesize>.usage_in_bytes                 # show current usage for "hugepagesize" hugetlb
-+ hugetlb.<hugepagesize>.failcnt                        # show the number of allocation failure due to HugeTLB usage limit
-
- For a system supporting three hugepage sizes (64k, 32M and 1G), the control
- files include::
-@@ -40,11 +37,95 @@ files include::
-   hugetlb.1GB.max_usage_in_bytes
-   hugetlb.1GB.usage_in_bytes
-   hugetlb.1GB.failcnt
-+  hugetlb.1GB.rsvd.limit_in_bytes
-+  hugetlb.1GB.rsvd.max_usage_in_bytes
-+  hugetlb.1GB.rsvd.usage_in_bytes
-+  hugetlb.1GB.rsvd.failcnt
-   hugetlb.64KB.limit_in_bytes
-   hugetlb.64KB.max_usage_in_bytes
-   hugetlb.64KB.usage_in_bytes
-   hugetlb.64KB.failcnt
-+  hugetlb.64KB.rsvd.limit_in_bytes
-+  hugetlb.64KB.rsvd.max_usage_in_bytes
-+  hugetlb.64KB.rsvd.usage_in_bytes
-+  hugetlb.64KB.rsvd.failcnt
-   hugetlb.32MB.limit_in_bytes
-   hugetlb.32MB.max_usage_in_bytes
-   hugetlb.32MB.usage_in_bytes
-   hugetlb.32MB.failcnt
-+  hugetlb.32MB.rsvd.limit_in_bytes
-+  hugetlb.32MB.rsvd.max_usage_in_bytes
-+  hugetlb.32MB.rsvd.usage_in_bytes
-+  hugetlb.32MB.rsvd.failcnt
-+
-+
-+1. Page fault accounting
-+
-+hugetlb.<hugepagesize>.limit_in_bytes
-+hugetlb.<hugepagesize>.max_usage_in_bytes
-+hugetlb.<hugepagesize>.usage_in_bytes
-+hugetlb.<hugepagesize>.failcnt
-+
-+The HugeTLB controller allows users to limit the HugeTLB usage (page fault) per
-+control group and enforces the limit during page fault. Since HugeTLB
-+doesn't support page reclaim, enforcing the limit at page fault time implies
-+that, the application will get SIGBUS signal if it tries to fault in HugeTLB
-+pages beyond its limit. Therefore the application needs to know exactly how many
-+HugeTLB pages it uses before hand, and the sysadmin needs to make sure that
-+there are enough available on the machine for all the users to avoid processes
-+getting SIGBUS.
-+
-+
-+2. Reservation accounting
-+
-+hugetlb.<hugepagesize>.rsvd.limit_in_bytes
-+hugetlb.<hugepagesize>.rsvd.max_usage_in_bytes
-+hugetlb.<hugepagesize>.rsvd.usage_in_bytes
-+hugetlb.<hugepagesize>.rsvd.failcnt
-+
-+The HugeTLB controller allows to limit the HugeTLB reservations per control
-+group and enforces the controller limit at reservation time and at the fault of
-+HugeTLB memory for which no reservation exists. Since reservation limits are
-+enforced at reservation time (on mmap or shget), reservation limits never causes
-+the application to get SIGBUS signal if the memory was reserved before hand. For
-+MAP_NORESERVE allocations, the reservation limit behaves the same as the fault
-+limit, enforcing memory usage at fault time and causing the application to
-+receive a SIGBUS if it's crossing its limit.
-+
-+Reservation limits are superior to page fault limits described above, since
-+reservation limits are enforced at reservation time (on mmap or shget), and
-+never causes the application to get SIGBUS signal if the memory was reserved
-+before hand. This allows for easier fallback to alternatives such as
-+non-HugeTLB memory for example. In the case of page fault accounting, it's very
-+hard to avoid processes getting SIGBUS since the sysadmin needs precisely know
-+the HugeTLB usage of all the tasks in the system and make sure there is enough
-+pages to satisfy all requests. Avoiding tasks getting SIGBUS on overcommited
-+systems is practically impossible with page fault accounting.
-+
-+
-+3. Caveats with shared memory
-+
-+For shared HugeTLB memory, both HugeTLB reservation and page faults are charged
-+to the first task that causes the memory to be reserved or faulted, and all
-+subsequent uses of this reserved or faulted memory is done without charging.
-+
-+Shared HugeTLB memory is only uncharged when it is unreserved or deallocated.
-+This is usually when the HugeTLB file is deleted, and not when the task that
-+caused the reservation or fault has exited.
-+
-+
-+4. Caveats with HugeTLB cgroup offline.
-+
-+When a HugeTLB cgroup goes offline with some reservations or faults still
-+charged to it, the behavior is as follows:
-+
-+- The fault charges are charged to the parent HugeTLB cgroup (reparented),
-+- the reservation charges remain on the offline HugeTLB cgroup.
-+
-+This means that if a HugeTLB cgroup gets offlined while there is still HugeTLB
-+reservations charged to it, that cgroup persists as a zombie until all HugeTLB
-+reservations are uncharged. HugeTLB reservations behave in this manner to match
-+the memory controller whose cgroups also persist as zombie until all charged
-+memory is uncharged. Also, the tracking of HugeTLB reservations is a bit more
-+complex compared to the tracking of HugeTLB faults, so it is significantly
-+harder to reparent reservations at offline time.
---
-2.25.0.225.g125e21ebc7-goog
+Ah, kpsingh explained to me that BPF trampolines work differently from
+normal ftrace and don't do the return address poking. Still, the
+processor's internal call stack will be misaligned by the BPF
+trampoline, right? Since there is one more call than return, if e.g.
+security_blah() is hooked, then the kernel will probably predict
+security_blah+5 as the target when returning from the trampoline to
+security_blah's parent, then when returning from security_blah's
+parent to the grandparent predict the parent, and so on, right?
