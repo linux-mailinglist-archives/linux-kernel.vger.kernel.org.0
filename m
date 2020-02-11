@@ -2,39 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F2C2159A0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:52:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E5A3159A1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:59:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730850AbgBKTwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 14:52:22 -0500
-Received: from mga09.intel.com ([134.134.136.24]:40698 "EHLO mga09.intel.com"
+        id S1730911AbgBKT7Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 14:59:25 -0500
+Received: from mga01.intel.com ([192.55.52.88]:5496 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730182AbgBKTwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 14:52:22 -0500
+        id S1727955AbgBKT7Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 14:59:24 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 11:52:21 -0800
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 11:59:24 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="347346714"
-Received: from tthayer-hp-z620.an.intel.com (HELO [10.122.105.146]) ([10.122.105.146])
-  by fmsmga001.fm.intel.com with ESMTP; 11 Feb 2020 11:52:21 -0800
-Reply-To: thor.thayer@linux.intel.com
-Subject: Re: [PATCH v2] i2c: altera: Fix potential integer overflow
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        David Laight <David.Laight@ACULAB.COM>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200211144704.GA6461@embeddedor>
-From:   Thor Thayer <thor.thayer@linux.intel.com>
-Message-ID: <4e1127bc-a4f2-fea2-225f-dfb00f0b5a10@linux.intel.com>
-Date:   Tue, 11 Feb 2020 13:54:29 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+   d="scan'208";a="251661231"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga002.jf.intel.com with ESMTP; 11 Feb 2020 11:59:24 -0800
+Received: from [10.251.4.129] (kliang2-mobl.ccr.corp.intel.com [10.251.4.129])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by linux.intel.com (Postfix) with ESMTPS id BEEB658045B;
+        Tue, 11 Feb 2020 11:59:22 -0800 (PST)
+Subject: =?UTF-8?Q?Re=3a_=5bPATCH_v5_3/3=5d_perf_x86=3a_Exposing_an_Uncore_u?=
+ =?UTF-8?Q?nit_to_PMON_for_Intel_Xeon=c2=ae_server_platform?=
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Andi Kleen <ak@linux.intel.com>
+Cc:     roman.sudarikov@linux.intel.com, peterz@infradead.org,
+        mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        eranian@google.com, bgregg@netflix.com, alexander.antonov@intel.com
+References: <20200211161549.19828-1-roman.sudarikov@linux.intel.com>
+ <20200211161549.19828-4-roman.sudarikov@linux.intel.com>
+ <20200211171544.GA1933705@kroah.com>
+ <20200211184200.GA302770@tassilo.jf.intel.com>
+ <20200211185759.GA1941673@kroah.com>
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <25dca8dd-c52d-676d-ffe4-90f3a6ddc915@linux.intel.com>
+Date:   Tue, 11 Feb 2020 14:59:21 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-In-Reply-To: <20200211144704.GA6461@embeddedor>
+In-Reply-To: <20200211185759.GA1941673@kroah.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -43,37 +54,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/11/20 8:47 AM, Gustavo A. R. Silva wrote:
-> Factor out 100 from the equation and do 32-bit arithmetic (3 * clk_mhz / 10)
-> instead of 64-bit.
+
+
+On 2/11/2020 1:57 PM, Greg KH wrote:
+> On Tue, Feb 11, 2020 at 10:42:00AM -0800, Andi Kleen wrote:
+>> On Tue, Feb 11, 2020 at 09:15:44AM -0800, Greg KH wrote:
+>>> On Tue, Feb 11, 2020 at 07:15:49PM +0300, roman.sudarikov@linux.intel.com wrote:
+>>>> +static ssize_t skx_iio_mapping_show(struct device *dev,
+>>>> +				struct device_attribute *attr, char *buf)
+>>>> +{
+>>>> +	struct pmu *pmu = dev_get_drvdata(dev);
+>>>> +	struct intel_uncore_pmu *uncore_pmu =
+>>>> +		container_of(pmu, struct intel_uncore_pmu, pmu);
+>>>> +
+>>>> +	struct dev_ext_attribute *ea =
+>>>> +		container_of(attr, struct dev_ext_attribute, attr);
+>>>> +	long die = (long)ea->var;
+>>>> +
+>>>> +	return sprintf(buf, "0000:%02x\n", skx_iio_stack(uncore_pmu, die));
+>>>
+>>> If "0000:" is always the "prefix" of the output of this file, why have
+>>> it at all as you always know it is there?
+
+
+I think Roman only test with BIOS configured as single-segment. So he 
+hard-code the segment# here.
+
+I'm not sure if Roman can do some test with multiple-segment BIOS. If 
+not, I think we should at least print a warning here.
+
+>>>
+>>> What is ever going to cause that to change?
+>>
+>> I think it's just to make it a complete PCI address.
 > 
-> Notice that clk_mhz is MHz, so the multiplication will never wrap 32 bits
-> and there is no need for div_u64().
+> Is that what this really is?  If so, it's not a "complete" pci address,
+> is it?  If it is, use the real pci address please.
+
+I think we don't need a complete PCI address here. The attr is to 
+disclose the mapping information between die and PCI BUS. Segment:BUS 
+should be good enough.
+
+Thanks,
+Kan
+
 > 
-> Addresses-Coverity: 1458369 ("Unintentional integer overflow")
-> Fixes: 0560ad576268 ("i2c: altera: Add Altera I2C Controller driver")
-> Suggested-by: David Laight <David.Laight@ACULAB.COM>
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
-> Changes in v2:
->   - Update subject and changelog text.
->   - Avoid the need for 64-bit arithmetic at all.
+>> In theory it might be different on a complex multi node system with
+>> custom interconnect and multiple PCI segments, but that would need code
+>> changes too.
+>>
+>> This version of the patchkit only supports standard SKX systems
+>> at this point.
 > 
->   drivers/i2c/busses/i2c-altera.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> I have no idea what that means, please translate for non-Intel people :)
 > 
-> diff --git a/drivers/i2c/busses/i2c-altera.c b/drivers/i2c/busses/i2c-altera.c
-> index 5255d3755411..1de23b4f3809 100644
-> --- a/drivers/i2c/busses/i2c-altera.c
-> +++ b/drivers/i2c/busses/i2c-altera.c
-> @@ -171,7 +171,7 @@ static void altr_i2c_init(struct altr_i2c_dev *idev)
->   	/* SCL Low Time */
->   	writel(t_low, idev->base + ALTR_I2C_SCL_LOW);
->   	/* SDA Hold Time, 300ns */
-> -	writel(div_u64(300 * clk_mhz, 1000), idev->base + ALTR_I2C_SDA_HOLD);
-> +	writel(3 * clk_mhz / 10, idev->base + ALTR_I2C_SDA_HOLD);
->   
->   	/* Mask all master interrupt bits */
->   	altr_i2c_int_enable(idev, ALTR_I2C_ALL_IRQ, false);
+> greg k-h
 > 
-Reviewed-by: Thor Thayer <thor.thayer@linux.intel.com>
