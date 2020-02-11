@@ -2,123 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01A491588A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 04:20:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32D201588A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 04:22:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727877AbgBKDTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 22:19:47 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:22099 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727509AbgBKDTr (ORCPT
+        id S1727966AbgBKDV7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 22:21:59 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:58045 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727697AbgBKDV6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 22:19:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581391185;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=LVGmAaQelGG2wmtr8ypBYNb9UdLgn2L2ZnfBdIYaqns=;
-        b=KoYe1MpG73Vb0IQLe4U7riB0GwTXYCeTc33Nq2AZeK1wK2MuzYHaVK3MmkCZXfOotOuiCu
-        wthkRh1Qd+N213ZOhU+xWk968tfczBy7AYQTi+5zNvMIZYHgNj/KBr7kwpuQ43gIpMggfl
-        4OzXhZuco9NhD+k1lJFxMSCLeEy5J0g=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-396-IMnbuXGMNLOCkryZsl8Ayg-1; Mon, 10 Feb 2020 22:19:43 -0500
-X-MC-Unique: IMnbuXGMNLOCkryZsl8Ayg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E7F498017CC;
-        Tue, 11 Feb 2020 03:19:42 +0000 (UTC)
-Received: from [10.72.12.184] (ovpn-12-184.pek2.redhat.com [10.72.12.184])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 56F335C1D4;
-        Tue, 11 Feb 2020 03:19:39 +0000 (UTC)
-Subject: Re: [PATCH v2] tools/virtio: option to build an out of tree module
-To:     "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     virtualization@lists.linux-foundation.org
-References: <20200207073327.1205669-1-mst@redhat.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <e361e68d-e7c8-1fe0-45c1-21e6be8333d1@redhat.com>
-Date:   Tue, 11 Feb 2020 11:19:37 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 10 Feb 2020 22:21:58 -0500
+X-UUID: 279d14474d654630bd47f8e963492b34-20200211
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=Przgcn+caKj20u1aUM314jPYjqMO0fjjKp7YGppq5UI=;
+        b=OflNnNmMnjG9fGswLEYXi2MP0dTN3Mh62lcSBUMIxzoGMzGli2yqdNL5y6R40J3pqmdknlb3FaLKuK/YB/EhiKnqtc1towbDz+/Dhd7BbM7QHQGyyKCc4rcFeJvOnjN1L8H1iCVBD7/VU+WnTXLMzcbdkKORKOszV4MPwNt6yrY=;
+X-UUID: 279d14474d654630bd47f8e963492b34-20200211
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 933524121; Tue, 11 Feb 2020 11:21:51 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 11 Feb 2020 11:20:03 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 11 Feb 2020 11:20:53 +0800
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [RESEND PATCH v5 01/11] dt-bindings: phy-mtk-tphy: add two optional properties for u2phy
+Date:   Tue, 11 Feb 2020 11:21:06 +0800
+Message-ID: <bfcf6a4dd6829dfa1bd0119b34043db7364dfd8e.1581389234.git.chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-In-Reply-To: <20200207073327.1205669-1-mst@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 73A7B8D2F734242113F0EA94675AEA20FAAF7F1E295A14BE518A57E453EFCBB12000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 2020/2/7 =E4=B8=8B=E5=8D=883:35, Michael S. Tsirkin wrote:
-> Handy for testing with distro kernels.
-> Warn that the resulting module is completely unsupported,
-> and isn't intended for production use.
->
-> Usage:
->          make oot # builds vhost_test.ko, vhost.ko
->          make oot-clean # cleans out files created
->
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
->
-> changes from v1:
-> 	lots of refactoring
-> 	disable all modules except vhost by default (more of a chance
-> 						     it'll build)
-> 	oot-clean target
->
->   tools/virtio/Makefile | 27 ++++++++++++++++++++++++++-
->   1 file changed, 26 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/virtio/Makefile b/tools/virtio/Makefile
-> index 8e2a908115c2..f33f32f1d208 100644
-> --- a/tools/virtio/Makefile
-> +++ b/tools/virtio/Makefile
-> @@ -8,7 +8,32 @@ CFLAGS +=3D -g -O2 -Werror -Wall -I. -I../include/ -I =
-../../usr/include/ -Wno-poin
->   vpath %.c ../../drivers/virtio ../../drivers/vhost
->   mod:
->   	${MAKE} -C `pwd`/../.. M=3D`pwd`/vhost_test V=3D${V}
-> -.PHONY: all test mod clean
-> +
-> +#oot: build vhost as an out of tree module for a distro kernel
-> +#no effort is taken to make it actually build or work, but tends to mo=
-stly work
-> +#if the distro kernel is very close to upstream
-> +#unsupported! this is a development tool only, don't use the
-> +#resulting modules in production!
-> +OOT_KSRC=3D/lib/modules/$$(uname -r)/build
-> +OOT_VHOST=3D`pwd`/../../drivers/vhost
-> +#Everyone depends on vhost
-> +#Tweak the below to enable more modules
-> +OOT_CONFIGS=3D\
-> +	CONFIG_VHOST=3Dm \
-> +	CONFIG_VHOST_NET=3Dn \
-> +	CONFIG_VHOST_SCSI=3Dn \
-> +	CONFIG_VHOST_VSOCK=3Dn
-> +OOT_BUILD=3DKCFLAGS=3D"-I "${OOT_VHOST} ${MAKE} -C ${OOT_KSRC} V=3D${V=
-}
-> +oot-build:
-> +	echo "UNSUPPORTED! Don't use the resulting modules in production!"
-> +	${OOT_BUILD} M=3D`pwd`/vhost_test
-> +	${OOT_BUILD} M=3D${OOT_VHOST} ${OOT_CONFIGS}
-> +
-> +oot-clean: oot-build
-> +oot: oot-build
-> +oot-clean: OOT_BUILD+=3Dclean
-> +
-> +.PHONY: all test mod clean vhost oot oot-clean oot-build
->   clean:
->   	${RM} *.o vringh_test virtio_test vhost_test/*.o vhost_test/.*.cmd \
->                 vhost_test/Module.symvers vhost_test/modules.order *.d
-
-
-Acked-by: Jason Wang <jasowang@redhat.com>
-
+QWRkIHR3byBvcHRpb25hbCBwcm9wZXJ0aWVzLCBvbmUgZm9yIHR1bmluZyBKLUsgdm9sdGFnZSBi
+eSBJTlRSLA0KYW5vdGhlciBmb3IgZGlzY29ubmVjdCB0aHJlc2hvbGQsIGJvdGggb2YgdGhlbSBh
+cmUgcmVsYXRlZCB3aXRoDQpjb25uZWN0IGRldGVjdGlvbg0KDQpTaWduZWQtb2ZmLWJ5OiBDaHVu
+ZmVuZyBZdW4gPGNodW5mZW5nLnl1bkBtZWRpYXRlay5jb20+DQpBY2tlZC1ieTogUm9iIEhlcnJp
+bmcgPHJvYmhAa2VybmVsLm9yZz4NCi0tLQ0KdjU6IGFkZCBhY2tlZC1ieSBSb2INCg0KdjQ6IG5v
+IGNoYW5nZXMNCg0KdjM6IGNoYW5nZSBjb21taXQgbG9nDQoNCnYyOiBjaGFuZ2UgZGVzY3JpcHRp
+b24NCi0tLQ0KIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waHkvcGh5LW10ay10
+cGh5LnR4dCB8IDIgKysNCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspDQoNCmRpZmYg
+LS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5L3BoeS1tdGstdHBo
+eS50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5L3BoeS1tdGstdHBo
+eS50eHQNCmluZGV4IGE1ZjdhNGYwZGJjMS4uY2U2YWJmYmRmYmUxIDEwMDY0NA0KLS0tIGEvRG9j
+dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BoeS9waHktbXRrLXRwaHkudHh0DQorKysg
+Yi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5L3BoeS1tdGstdHBoeS50eHQN
+CkBAIC01Miw2ICs1Miw4IEBAIE9wdGlvbmFsIHByb3BlcnRpZXMgKFBIWV9UWVBFX1VTQjIgcG9y
+dCAoY2hpbGQpIG5vZGUpOg0KIC0gbWVkaWF0ZWssZXllLXZydAk6IHUzMiwgdGhlIHNlbGVjdGlv
+biBvZiBWUlQgcmVmZXJlbmNlIHZvbHRhZ2UNCiAtIG1lZGlhdGVrLGV5ZS10ZXJtCTogdTMyLCB0
+aGUgc2VsZWN0aW9uIG9mIEhTX1RYIFRFUk0gcmVmZXJlbmNlIHZvbHRhZ2UNCiAtIG1lZGlhdGVr
+LGJjMTIJOiBib29sLCBlbmFibGUgQkMxMiBvZiB1MnBoeSBpZiBzdXBwb3J0IGl0DQorLSBtZWRp
+YXRlayxkaXNjdGgJOiB1MzIsIHRoZSBzZWxlY3Rpb24gb2YgZGlzY29ubmVjdCB0aHJlc2hvbGQN
+CistIG1lZGlhdGVrLGludHIJOiB1MzIsIHRoZSBzZWxlY3Rpb24gb2YgaW50ZXJuYWwgUiAocmVz
+aXN0YW5jZSkNCiANCiBFeGFtcGxlOg0KIA0KLS0gDQoyLjI1LjANCg==
 
