@@ -2,160 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24B57158C1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 10:51:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57620158C26
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 10:54:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728051AbgBKJvZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 04:51:25 -0500
-Received: from mail-eopbgr60059.outbound.protection.outlook.com ([40.107.6.59]:29702
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727947AbgBKJvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 04:51:25 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DTWSbDPHxyM8TH54eKRefePnxhm13gE/JmTSGrM9dWXit8ZB0qT3ZJzh8UbhuDT4ahSFv0F9zqCKFl5mbjCOmoPwLZ61d5Awl87VhDODOwYXZylq6wUg9plcrSy+ghfnqoM9+FQjM/ZciNlXzWvGG6XjTM4FVTVgShRjeFTXW/p8wQ4eXONsTcrpixnF26wACAKER7ZzHqej4CB2n4XkyJ8UgDhQY+p4NhKTcFfBp6AQZUUv4vv+2EqHAIlT3+CkMBC0WTEJR1hmEW2pJnFHnRQNFbE3cOZOH0l0JaV7Fylxqtmr4iPEFoAIxdYSlLzI4bGviWpGwTuNwRbaK0Z3Yg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Due0pS6A0vooP9mgN6gP2+0SZTxxDQO3DpDfxXSEBlI=;
- b=cO5fzBZzbj1UbFvNMk1tAN29LIQas95WtKFRvhWnFDvw9JkZdzn2hdv9MQjl+dhH3LsJfYQoa/5cqmqU65QBCrBOPFDmh7DF4q3o6t/0l9wgqkZssAKZSeDxz3rwZvWOiqaOJiJKjwVwoQVGwaKE8ixwQLAg/LSTQ8e4u3pfSn+UH4T8yz5HESXpL3J9sPI0ed3PC4gLR19si4eAQakl6guz43T4JEZaY1xIwQuUyvtCFoYqswl3TUke0Ma5J4uXL/kIoo0Q1Fb2wHpgk+Co28r1w1Q+Olr7J4U3t38JDQVP7JxLT/Vn9dwSgZqoqy4nrBF06WZF3vWI6z6m+QeS+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Due0pS6A0vooP9mgN6gP2+0SZTxxDQO3DpDfxXSEBlI=;
- b=O3mHA/19J/ub05cgYWPJdevP4MJru4WG2YgJDOb1TTJ2yPK7Qxn+3ThW5AtVY790n4g4eDBEjQRwAv+Pkmjoc25S5eNjkjHdNIqMDxLn615d+10DKaSbUtTnE3TqNqBUSprlmFTMwjRDSh1R4n0A24o+o3z7i0J1Qw5n15yDRz0=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3440.eurprd04.prod.outlook.com (52.134.3.32) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2707.21; Tue, 11 Feb 2020 09:51:20 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::85e9:f844:f8b0:27d]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::85e9:f844:f8b0:27d%7]) with mapi id 15.20.2707.030; Tue, 11 Feb 2020
- 09:51:20 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Iuliana Prodan <iuliana.prodan@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        Silvano Di Ninno <silvano.dininno@nxp.com>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v5 6/9] crypto: caam - support crypto_engine framework for
- SKCIPHER algorithms
-Thread-Topic: [PATCH v5 6/9] crypto: caam - support crypto_engine framework
- for SKCIPHER algorithms
-Thread-Index: AQHV1wcr0m0Ki7Td90i9OY9gtILG6A==
-Date:   Tue, 11 Feb 2020 09:51:20 +0000
-Message-ID: <VI1PR0402MB3485F56EEA82139A2BCF698F98180@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <1580345364-7606-1-git-send-email-iuliana.prodan@nxp.com>
- <1580345364-7606-7-git-send-email-iuliana.prodan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [212.146.100.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 95a6e84b-2e8c-45ee-02bf-08d7aed7f2aa
-x-ms-traffictypediagnostic: VI1PR0402MB3440:|VI1PR0402MB3440:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR0402MB3440428DACD430F1CFE4A0F098180@VI1PR0402MB3440.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3173;
-x-forefront-prvs: 0310C78181
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(366004)(376002)(39860400002)(136003)(346002)(199004)(189003)(6636002)(54906003)(91956017)(110136005)(6506007)(53546011)(86362001)(76116006)(2906002)(478600001)(316002)(26005)(44832011)(4326008)(81156014)(8936002)(5660300002)(52536014)(81166006)(8676002)(186003)(7696005)(33656002)(66446008)(64756008)(66556008)(66476007)(66946007)(71200400001)(9686003)(55016002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3440;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ek+6UIFh7PcbOU50tQCU3PHw87au0XTdm2u5kttDL/8API4CjipAEYvFDUrRTnMltC3i4G/BdDxP2lr3/f1714xcWyamyaYSWE1OkhwexSyV+tpfD0IwC6h5HCvqKpY9TuXFpxwLkwZwSig68fE+w/tsbB639dWyG4sXLt6zT9/0cuB1tJWvlAqvq4xOIM7NHUE3LzfGuCmvITv8h2VoexwQkuTPy4BA5zxnVVLoojhBCi0XWp4iNowxc6Y9pBjGx52P2hugw9Qo47rkxB1vvqL1WuzwvwUrjJSm+geOZoAiPTBP98QXdVkBQiFbaQoS1n4Xf0DjipOH5vtkEn+2r3ujfy/FPlej2vTlwEL9xyDK+BmbmT/UZJES0JeKoJPsoZ5aVS36DRCODIqNrFbWvDxh4ZyYE66ZHNgDBMuXhG3okd03C07wiaWOwRuwDkpX
-x-ms-exchange-antispam-messagedata: qjnKcDXOwEz3e9vq06eVsltV16Kn/iJ/C4q42jI3Ic6liqR8YUQc4Sd5SG9lu674tcdXyNqYRE3o7wdlKnJupuflSukdkiGEn8nXRdFpfCqP4frk5TV3hoe2zobPBzGHXn7+cg/9Tk/eCNk52DMF5w==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1728076AbgBKJyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 04:54:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42404 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727264AbgBKJyJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 04:54:09 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E938F20714;
+        Tue, 11 Feb 2020 09:54:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581414849;
+        bh=dZ6CUij+Y34KbHJA5uYdVJiJ5KihU8UAFU+V7kMs+eE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wPuXWwxpf67WBRCSd6gmmbHXBuqvSvmM7CL5fmZPWW/D8lxpA6mBLOiyCCe82Ondo
+         3bLF5Mk0tp3wc7yciEiT9D+0q01TUCgH5co17XExIGf17qY4ndjc51TU5p8+1Z7yee
+         ZmH+8o2VhBQKJpV1BsMvZ2mVsLoV5sPSz3ZIWmH4=
+Date:   Tue, 11 Feb 2020 09:54:02 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     James Morse <james.morse@arm.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        clang-built-linux@googlegroups.com,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 09/11] arm64: disable SCS for hypervisor code
+Message-ID: <20200211095401.GA8560@willie-the-truck>
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20200128184934.77625-1-samitolvanen@google.com>
+ <20200128184934.77625-10-samitolvanen@google.com>
+ <6f62b3c0-e796-e91c-f53b-23bd80fcb065@arm.com>
+ <20200210175214.GA23318@willie-the-truck>
+ <20200210180327.GB20840@lakrids.cambridge.arm.com>
+ <20200210180740.GA24354@willie-the-truck>
+ <20200210182431.GC20840@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95a6e84b-2e8c-45ee-02bf-08d7aed7f2aa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2020 09:51:20.7414
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: haZCj0f7iRnS5v2x+DI6QY2S8GXaGXagvqbIXCT32rmzdPiOpDZfaJuaw85U4TqIOM52CUD4u+vS3wGdOxHQpA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3440
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200210182431.GC20840@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/30/2020 2:49 AM, Iuliana Prodan wrote:=0A=
-> @@ -1618,6 +1636,8 @@ static struct skcipher_edesc *skcipher_edesc_alloc(=
-struct skcipher_request *req,=0A=
->  	edesc->sec4_sg_bytes =3D sec4_sg_bytes;=0A=
->  	edesc->sec4_sg =3D (struct sec4_sg_entry *)((u8 *)edesc->hw_desc +=0A=
->  						  desc_bytes);=0A=
-> +	edesc->bklog =3D false;=0A=
-Since edesc is allocated using kzalloc(), this is redundant.=0A=
-=0A=
-> @@ -3236,7 +3288,9 @@ static int caam_init_common(struct caam_ctx *ctx, s=
-truct caam_alg_entry *caam,=0A=
->  =0A=
->  	dma_addr =3D dma_map_single_attrs(ctx->jrdev, ctx->sh_desc_enc,=0A=
->  					offsetof(struct caam_ctx,=0A=
-> -						 sh_desc_enc_dma),=0A=
-> +						 sh_desc_enc_dma) -=0A=
-> +					offsetof(struct caam_ctx,=0A=
-> +						 sh_desc_enc),=0A=
->  					ctx->dir, DMA_ATTR_SKIP_CPU_SYNC);=0A=
->  	if (dma_mapping_error(ctx->jrdev, dma_addr)) {=0A=
->  		dev_err(ctx->jrdev, "unable to map key, shared descriptors\n");=0A=
-> @@ -3246,8 +3300,12 @@ static int caam_init_common(struct caam_ctx *ctx, =
-struct caam_alg_entry *caam,=0A=
->  =0A=
->  	ctx->sh_desc_enc_dma =3D dma_addr;=0A=
->  	ctx->sh_desc_dec_dma =3D dma_addr + offsetof(struct caam_ctx,=0A=
-> -						   sh_desc_dec);=0A=
-> -	ctx->key_dma =3D dma_addr + offsetof(struct caam_ctx, key);=0A=
-> +						   sh_desc_dec) -=0A=
-> +					offsetof(struct caam_ctx,=0A=
-> +						 sh_desc_enc);=0A=
-> +	ctx->key_dma =3D dma_addr + offsetof(struct caam_ctx, key) -=0A=
-> +					offsetof(struct caam_ctx,=0A=
-> +						 sh_desc_enc);=0A=
-Let's make this clearer by using a local variable for=0A=
-offsetof(struct caam_ctx, sh_desc_enc).=0A=
-=0A=
-> @@ -538,6 +547,26 @@ static int caam_jr_probe(struct platform_device *pde=
-v)=0A=
->  		return error;=0A=
->  	}=0A=
->  =0A=
-> +	/* Initialize crypto engine */=0A=
-> +	jrpriv->engine =3D crypto_engine_alloc_init(jrdev, false);=0A=
-> +	if (!jrpriv->engine) {=0A=
-> +		dev_err(jrdev, "Could not init crypto-engine\n");=0A=
-> +		return -ENOMEM;=0A=
-> +	}=0A=
-> +=0A=
-> +	/* Start crypto engine */=0A=
-> +	error =3D crypto_engine_start(jrpriv->engine);=0A=
-> +	if (error) {=0A=
-> +		dev_err(jrdev, "Could not start crypto-engine\n");=0A=
-> +		crypto_engine_exit(jrpriv->engine);=0A=
-> +		return error;=0A=
-> +	}=0A=
-> +=0A=
-> +	error =3D devm_add_action_or_reset(jrdev, caam_jr_crypto_engine_exit,=
-=0A=
-> +					 jrdev);=0A=
-> +	if (error)=0A=
-> +		return error;=0A=
-This should be moved right after crypto_engine_alloc_init(),=0A=
-and crypto_engine_exit() should be removed from=0A=
-crypto_engine_start() error path.=0A=
-=0A=
-Horia=0A=
+On Mon, Feb 10, 2020 at 06:24:32PM +0000, Mark Rutland wrote:
+> On Mon, Feb 10, 2020 at 06:07:41PM +0000, Will Deacon wrote:
+> > On Mon, Feb 10, 2020 at 06:03:28PM +0000, Mark Rutland wrote:
+> > > On Mon, Feb 10, 2020 at 05:52:15PM +0000, Will Deacon wrote:
+> > > > On Mon, Feb 10, 2020 at 05:18:58PM +0000, James Morse wrote:
+> > > > > On 28/01/2020 18:49, Sami Tolvanen wrote:
+> > > > > > Filter out CC_FLAGS_SCS and -ffixed-x18 for code that runs at a
+> > > > > > different exception level.
+> > > > > 
+> > > > > Hmmm, there are two things being disabled here.
+> > > > > 
+> > > > > Stashing the lr in memory pointed to by VA won't work transparently at EL2 ... but
+> > > > > shouldn't KVM's C code still treat x18 as a fixed register?
+> > > > 
+> > > > My review of v6 suggested dropping the -ffixed-x18 as well, since it's only
+> > > > introduced by SCS (in patch 5) and so isn't required by anything else. Why
+> > > > do you think it's needed?
+> > > 
+> > > When EL1 code calls up to hyp, it expects x18 to be preserved across the
+> > > call, so hyp needs to either preserve it explicitly across a transitions
+> > > from/to EL1 or always preserve it.
+> > 
+> > I thought we explicitly saved/restored it across the call after
+> > af12376814a5 ("arm64: kvm: stop treating register x18 as caller save"). Is
+> > that not sufficient?
+> 
+> That covers the hyp->guest->hyp round trip, but not the host->hyp->host
+> portion surrounding that.
+
+Thanks, I missed that. It's annoying that we'll end up needing /both/
+-ffixed-x18 *and* the save/restore around guest transitions, but if we
+actually want to use SCS for the VHE code then I see that it will be
+required.
+
+Sami -- can you restore -ffixed-x18 and then try the function attribute
+as suggested by James, please?
+
+Will
