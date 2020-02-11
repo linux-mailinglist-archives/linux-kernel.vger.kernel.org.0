@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F432158F21
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:49:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30797158F13
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 13:49:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729193AbgBKMtt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 07:49:49 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:45998 "EHLO
+        id S1728925AbgBKMsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 07:48:25 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:46027 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728573AbgBKMry (ORCPT
+        with ESMTP id S1728629AbgBKMr4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 07:47:54 -0500
+        Tue, 11 Feb 2020 07:47:56 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1j1Ux8-0007Zh-RU; Tue, 11 Feb 2020 13:47:46 +0100
+        id 1j1UxF-0007b9-6A; Tue, 11 Feb 2020 13:47:53 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 86E2D1C2018;
-        Tue, 11 Feb 2020 13:47:46 +0100 (CET)
-Date:   Tue, 11 Feb 2020 12:47:46 -0000
-From:   "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id CAFA61C2019;
+        Tue, 11 Feb 2020 13:47:47 +0100 (CET)
+Date:   Tue, 11 Feb 2020 12:47:47 -0000
+From:   "tip-bot2 for Madhuparna Bhowmik" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf/x86/cstate: Add Tremont support
-Cc:     Kan Liang <kan.liang@linux.intel.com>,
+Subject: [tip: sched/urgent] sched/core: Annotate curr pointer in rq with __rcu
+Cc:     Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>, x86 <x86@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <1580236279-35492-2-git-send-email-kan.liang@linux.intel.com>
-References: <1580236279-35492-2-git-send-email-kan.liang@linux.intel.com>
+In-Reply-To: <20200201125803.20245-1-madhuparnabhowmik10@gmail.com>
+References: <20200201125803.20245-1-madhuparnabhowmik10@gmail.com>
 MIME-Version: 1.0
-Message-ID: <158142526622.411.6550480951011995887.tip-bot2@tip-bot2>
+Message-ID: <158142526758.411.13426115731353964686.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,100 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/core branch of tip:
+The following commit has been merged into the sched/urgent branch of tip:
 
-Commit-ID:     ecf71fbccb9ac5cb964eb7de59bb9da3755b7885
-Gitweb:        https://git.kernel.org/tip/ecf71fbccb9ac5cb964eb7de59bb9da3755b7885
-Author:        Kan Liang <kan.liang@linux.intel.com>
-AuthorDate:    Tue, 28 Jan 2020 10:31:18 -08:00
+Commit-ID:     4104a562e0ca62e971089db9d3c47794a0d7d4eb
+Gitweb:        https://git.kernel.org/tip/4104a562e0ca62e971089db9d3c47794a0d7d4eb
+Author:        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+AuthorDate:    Sat, 01 Feb 2020 18:28:03 +05:30
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 11 Feb 2020 13:17:49 +01:00
+CommitterDate: Tue, 11 Feb 2020 13:00:37 +01:00
 
-perf/x86/cstate: Add Tremont support
+sched/core: Annotate curr pointer in rq with __rcu
 
-Tremont is Intel's successor to Goldmont Plus. From the perspective of
-Intel cstate residency counters, there is nothing changed compared with
-Goldmont Plus and Goldmont.
+This patch fixes the following sparse warnings in sched/core.c
+and sched/membarrier.c:
 
-Share glm_cstates with Goldmont Plus and Goldmont.
-Update the comments for Tremont.
+  kernel/sched/core.c:2372:27: error: incompatible types in comparison expression
+  kernel/sched/core.c:4061:17: error: incompatible types in comparison expression
+  kernel/sched/core.c:6067:9: error: incompatible types in comparison expression
+  kernel/sched/membarrier.c:108:21: error: incompatible types in comparison expression
+  kernel/sched/membarrier.c:177:21: error: incompatible types in comparison expression
+  kernel/sched/membarrier.c:243:21: error: incompatible types in comparison expression
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Link: https://lkml.kernel.org/r/1580236279-35492-2-git-send-email-kan.liang@linux.intel.com
+Link: https://lkml.kernel.org/r/20200201125803.20245-1-madhuparnabhowmik10@gmail.com
 ---
- arch/x86/events/intel/cstate.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ kernel/sched/sched.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
-index e1daf41..4814c96 100644
---- a/arch/x86/events/intel/cstate.c
-+++ b/arch/x86/events/intel/cstate.c
-@@ -40,17 +40,18 @@
-  * Model specific counters:
-  *	MSR_CORE_C1_RES: CORE C1 Residency Counter
-  *			 perf code: 0x00
-- *			 Available model: SLM,AMT,GLM,CNL
-+ *			 Available model: SLM,AMT,GLM,CNL,TNT
-  *			 Scope: Core (each processor core has a MSR)
-  *	MSR_CORE_C3_RESIDENCY: CORE C3 Residency Counter
-  *			       perf code: 0x01
-  *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,GLM,
-- *						CNL,KBL,CML
-+ *						CNL,KBL,CML,TNT
-  *			       Scope: Core
-  *	MSR_CORE_C6_RESIDENCY: CORE C6 Residency Counter
-  *			       perf code: 0x02
-  *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW,
-- *						SKL,KNL,GLM,CNL,KBL,CML,ICL,TGL
-+ *						SKL,KNL,GLM,CNL,KBL,CML,ICL,TGL,
-+ *						TNT
-  *			       Scope: Core
-  *	MSR_CORE_C7_RESIDENCY: CORE C7 Residency Counter
-  *			       perf code: 0x03
-@@ -60,17 +61,18 @@
-  *	MSR_PKG_C2_RESIDENCY:  Package C2 Residency Counter.
-  *			       perf code: 0x00
-  *			       Available model: SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL,
-- *						KBL,CML,ICL,TGL
-+ *						KBL,CML,ICL,TGL,TNT
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C3_RESIDENCY:  Package C3 Residency Counter.
-  *			       perf code: 0x01
-  *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,KNL,
-- *						GLM,CNL,KBL,CML,ICL,TGL
-+ *						GLM,CNL,KBL,CML,ICL,TGL,TNT
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C6_RESIDENCY:  Package C6 Residency Counter.
-  *			       perf code: 0x02
-- *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW
-- *						SKL,KNL,GLM,CNL,KBL,CML,ICL,TGL
-+ *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW,
-+ *						SKL,KNL,GLM,CNL,KBL,CML,ICL,TGL,
-+ *						TNT
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C7_RESIDENCY:  Package C7 Residency Counter.
-  *			       perf code: 0x03
-@@ -87,7 +89,8 @@
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C10_RESIDENCY: Package C10 Residency Counter.
-  *			       perf code: 0x06
-- *			       Available model: HSW ULT,KBL,GLM,CNL,CML,ICL,TGL
-+ *			       Available model: HSW ULT,KBL,GLM,CNL,CML,ICL,TGL,
-+ *						TNT
-  *			       Scope: Package (physical package)
-  *
-  */
-@@ -640,8 +643,9 @@ static const struct x86_cpu_id intel_cstates_match[] __initconst = {
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 5876e6b..9ea6478 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -896,7 +896,7 @@ struct rq {
+ 	 */
+ 	unsigned long		nr_uninterruptible;
  
- 	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_GOLDMONT,   glm_cstates),
- 	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_GOLDMONT_D, glm_cstates),
--
- 	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_GOLDMONT_PLUS, glm_cstates),
-+	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_TREMONT_D, glm_cstates),
-+	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_TREMONT, glm_cstates),
- 
- 	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_L, icl_cstates),
- 	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE,   icl_cstates),
+-	struct task_struct	*curr;
++	struct task_struct __rcu	*curr;
+ 	struct task_struct	*idle;
+ 	struct task_struct	*stop;
+ 	unsigned long		next_balance;
