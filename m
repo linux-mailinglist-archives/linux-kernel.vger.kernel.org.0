@@ -2,141 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 731AF15999E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:21:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A45441599A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:23:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731627AbgBKTVZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 14:21:25 -0500
-Received: from mga14.intel.com ([192.55.52.115]:52862 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729800AbgBKTVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 14:21:23 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 11:21:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="433791170"
-Received: from vcostago-desk1.jf.intel.com (HELO vcostago-desk1) ([10.54.70.26])
-  by fmsmga006.fm.intel.com with ESMTP; 11 Feb 2020 11:21:21 -0800
-From:   Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To:     Murali Karicheri <m-karicheri2@ti.com>,
-        Vladimir Oltean <olteanv@gmail.com>
-Cc:     Po Liu <po.liu@nxp.com>,
-        "davem\@davemloft.net" <davem@davemloft.net>,
-        "hauke.mehrtens\@intel.com" <hauke.mehrtens@intel.com>,
-        "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "allison\@lohutok.net" <allison@lohutok.net>,
-        "tglx\@linutronix.de" <tglx@linutronix.de>,
-        "hkallweit1\@gmail.com" <hkallweit1@gmail.com>,
-        "saeedm\@mellanox.com" <saeedm@mellanox.com>,
-        "andrew\@lunn.ch" <andrew@lunn.ch>,
-        "f.fainelli\@gmail.com" <f.fainelli@gmail.com>,
-        "alexandru.ardelean\@analog.com" <alexandru.ardelean@analog.com>,
-        "jiri\@mellanox.com" <jiri@mellanox.com>,
-        "ayal\@mellanox.com" <ayal@mellanox.com>,
-        "pablo\@netfilter.org" <pablo@netfilter.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
-        "simon.horman\@netronome.com" <simon.horman@netronome.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Alexandru Marginean <alexandru.marginean@nxp.com>,
-        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
-        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>
-Subject: Re: [v1,net-next, 1/2] ethtool: add setting frame preemption of traffic classes
-In-Reply-To: <70deb628-d7bc-d2a3-486d-d3e53854c06e@ti.com>
-References: <20191127094517.6255-1-Po.Liu@nxp.com> <87v9p93a2s.fsf@linux.intel.com> <9b13a47e-8ca3-66b0-063c-798a5fa71149@ti.com> <CA+h21hqk2pCfrQg5kC6HzmL=eEqJXjuRsu+cVkGsEi8OXGpKJA@mail.gmail.com> <87d0bajc3l.fsf@linux.intel.com> <70deb628-d7bc-d2a3-486d-d3e53854c06e@ti.com>
-Date:   Tue, 11 Feb 2020 11:22:56 -0800
-Message-ID: <877e0tx71r.fsf@linux.intel.com>
+        id S1731649AbgBKTXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 14:23:14 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:38399 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728895AbgBKTXO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 14:23:14 -0500
+Received: by mail-qt1-f196.google.com with SMTP id c24so8869623qtp.5;
+        Tue, 11 Feb 2020 11:23:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NTVErdOhPMqjmKH4Vt71WjG/xvlQSdoZyLcqJPs8NyI=;
+        b=P3ooChq6kvZIhr7XcOEtiiRxc1687DPEqbEg4/4yMkZhT8qGD5aqKeMyl05jMud3pW
+         v0DFaIgytKCSt3qmM3qLAnSUJT9aFYUbLxNv059lWm365fFijRLnkEBUNPzfiABQUrjm
+         BLlJ/Sl1g61AOhoMV2/+1ROKHVq1NFlYwW0JVa+V2ZZJWMoc2CDVy2YzF06f083YM6tz
+         5eJhHBV/PcKr3VsTIbNbwWrxFEY1AXZLwgglvsOf3zzfeHQCYGZ3b7+X5b/qLFj5u7uG
+         Sx1MduyIhxbuIBLBwpxLRqy2iN8z75+Y+5o9k5wFbX+mXo5tlvTewGLyB7S49NQAg8MM
+         basA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NTVErdOhPMqjmKH4Vt71WjG/xvlQSdoZyLcqJPs8NyI=;
+        b=ONFH2xzWINEcgbPdb9IC14WFvj0NIz6YuLondUXV+U92NlXzT5TW6ozmqm15ELm46m
+         4Wi2m2Yds1Gbs1ESvvU1stXRHMsD6hUqasIwBJ0OGR83olaG3txURy3m0sJY/KKzg4SU
+         Yp0Cj35OuwOc/7uonxzcqx+8uWy3685li9vCdka0QuKBJrc26XWSt932owdDk3fZBbw+
+         50S4O82hK428AoEP2hydTqGf1kyrbiJMd8Jl8obchFQOfnuPxtfCWGy9e3RHtCNhs4au
+         m4Enw1V9WhjOJFHIFk+A8pByWOx2li/q9WMyHaiydBuvX1b2AoKIraA/Txf6RS9ytL2m
+         oRwA==
+X-Gm-Message-State: APjAAAWlfO2IF7VII/hqfn5UkjL9TSGwYJAZmrioiil8K/+sU8v1NzK9
+        vBPDq+RbomrN/Qn30R8p5IGv3+0qe2ozVRHW4ZYCyA==
+X-Google-Smtp-Source: APXvYqy7K2lHlyu4N49KYs7vxWcAZ4y1Gxr0ggx+na2NVWHrszh8DaCu9lR76bxZywcKDUpajBeMMauL5EJn+mHXZZc=
+X-Received: by 2002:ac8:1385:: with SMTP id h5mr3799172qtj.59.1581448993092;
+ Tue, 11 Feb 2020 11:23:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20200210200737.13866-1-dxu@dxuuu.xyz> <20200210200737.13866-2-dxu@dxuuu.xyz>
+In-Reply-To: <20200210200737.13866-2-dxu@dxuuu.xyz>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Tue, 11 Feb 2020 11:23:02 -0800
+Message-ID: <CAEf4Bzam8ikJO7atrSS8s-rLJ0jHKNjahcuVEWFh7AAbGTaoGw@mail.gmail.com>
+Subject: Re: [PATCH v7 bpf-next RESEND 1/2] bpf: Add bpf_read_branch_records() helper
+To:     Daniel Xu <dxu@dxuuu.xyz>
+Cc:     bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>,
+        Peter Ziljstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Murali Karicheri <m-karicheri2@ti.com> writes:
-
-> We are still working to send a patch for taprio offload on our hardware
-> and it may take a while to get to this. So if someone can help to add
-> the required kernel/driver interface for this, that will be great!
-
-Will add this to my todo list. But if anyone else has the spare cycles
-feel free to have a go at it.
-
+On Mon, Feb 10, 2020 at 12:09 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
 >
->>>>       - ConfigChangeError - Error in configuration (AdminBaseTime <
->>>>         CurrentTime)
->>>
->>> This can be exported similarly.
->> 
->> In my view, having this as a "runtime" error is not useful, as we can
->> verify this at configuration time.
+> Branch records are a CPU feature that can be configured to record
+> certain branches that are taken during code execution. This data is
+> particularly interesting for profile guided optimizations. perf has had
+> branch record support for a while but the data collection can be a bit
+> coarse grained.
 >
-> Looks like this is not an error per 802.1Q standard if I understood it
-> correctly.
+> We (Facebook) have seen in experiments that associating metadata with
+> branch records can improve results (after postprocessing). We generally
+> use bpf_probe_read_*() to get metadata out of userspace. That's why bpf
+> support for branch records is useful.
 >
-> This is what I see.
-> =======================================================================
->  From 802.1Q 2018, 8.6.9.1.1 SetCycleStartTime()
+> Aside from this particular use case, having branch data available to bpf
+> progs can be useful to get stack traces out of userspace applications
+> that omit frame pointers.
 >
-> If AdminBaseTime is set to the same time in the past in all bridges and
-> end stations, OperBaseTime is always in the past, and all cycles start
-> synchronized. Using AdminBaseTime in the past is appropriate when you
-> can start schedules prior to starting the application that uses the
-> schedules. Use of AdminBaseTime in the future is intended to change a
-> currently running schedule in all bridges and end stations to a new
-> schedule at a future time. Using AdminBaseTime in the future is
-> appropriate when schedules must be changed without stopping the
-> application
-> ========================================================================
+> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> ---
+
+LGTM, one typo in description of the helper. bpf-next is still closed,
+btw, but should hopefully open soon.
+
+Acked-by: Andrii Nakryiko <andriin@fb.com>
+
+>  include/uapi/linux/bpf.h | 25 +++++++++++++++++++++++-
+>  kernel/trace/bpf_trace.c | 41 ++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 65 insertions(+), 1 deletion(-)
 >
+> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> index f1d74a2bd234..3004470b7269 100644
+> --- a/include/uapi/linux/bpf.h
+> +++ b/include/uapi/linux/bpf.h
+> @@ -2892,6 +2892,25 @@ union bpf_attr {
+>   *             Obtain the 64bit jiffies
+>   *     Return
+>   *             The 64 bit jiffies
+> + *
+> + * int bpf_read_branch_records(struct bpf_perf_event_data *ctx, void *buf, u32 size, u64 flags)
+> + *     Description
+> + *             For an eBPF program attached to a perf event, retrieve the
+> + *             branch records (struct perf_branch_entry) associated to *ctx*
+> + *             and store it in the buffer pointed by *buf* up to size
+> + *             *buf_size* bytes.
+> + *     Return
+> + *             On success, number of bytes written to *buf*. On error, a
+> + *             negative value.
+> + *
+> + *             The *flags* can be set to **BPF_F_GET_BRANCH_RECORDS_SIZE** to
+> + *             instead return the number of bytes required to store all the
+> + *             branch entries. If this flag is set, *buf* may be NULL.
+> + *
+> + *             **-EINVAL** if arguments invalid or **buf_size** not a multiple
 
-What I meant here is the case that I already have an "oper" schedule
-running, so my "oper->base_time" is in the past, and I try to add an
-"admin" schedule with a "base_time" also in the past. What's the
-expected behavior in this case? The text about stopping/starting
-applications doesn't seem to apply to the way the tc subsystem interacts
-with the applications.
+buf_size -> size
 
->> 
->>>
->>>>       - SupportedListMax - Maximum supported Admin/Open shed list.
->>>>
->>>> Is there a plan to export these from driver through tc show or such
->>>> command? The reason being, there would be applications developed to
->>>> manage configuration/schedule of TSN nodes that would requires these
->>>> information from the node. So would need a support either in tc or
->>>> some other means to retrieve them from hardware or driver. That is my
->>>> understanding...
->>>>
->> 
->> Hm, now I understamd what you meant here...
->> 
->>>
->>> Not sure what answer you expect to receive for "is there any plan".
->>> You can go ahead and propose something, as long as it is reasonably
->>> useful to have.
->> 
->> ... if this is indeed useful, perhaps one way to do is to add a subcommand
->> to TC_SETUP_QDISC_TAPRIO, so we can retrieve the stats/information we want
->> from the driver. Similar to what cls_flower does.
->> 
->
-> What I understand is that there will be some work done to allow auto
-> configuration of TSN nodes from user space and that would need access to
-> all or some of the above parameters along with tc command to configure
-> the same. May be a open source project for this or some custom
-> application? Any such projects existing??
+> + *             of sizeof(struct perf_branch_entry).
+> + *
+> + *             **-ENOENT** if architecture does not support branch records.
+>   */
 
-Yeah, this is a big missing piece for TSN. I've heard 'netopeer2' and
-'sysrepo' mentioned when similar questions were asked, but I have still
-to take a look at them and see what's missing. (Or if they are the right
-tool for the job)
-
-
--- 
-Vinicius
+[...]
