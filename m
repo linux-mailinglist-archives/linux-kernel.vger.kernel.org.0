@@ -2,57 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEF85159B17
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 22:28:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAC9A159B13
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 22:26:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbgBKV2X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 16:28:23 -0500
-Received: from sonic308-2.consmr.mail.bf2.yahoo.com ([74.6.130.41]:36632 "EHLO
-        sonic308-2.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727675AbgBKV2X (ORCPT
+        id S1727652AbgBKVZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 16:25:50 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:38177 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726968AbgBKVZu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 16:28:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1581456502; bh=B+qUant9zxaSySoUSH4LDR6FflTfsnHsa6B91Xilm9U=; h=Date:From:Reply-To:Subject:References:From:Subject; b=O4KxXQJysO47LEQVBlRH1TOyk2kY5RekQuPTU6xSczp47ZtwKKCRzLMKLbHVePIyMpoqxxxsjom3CefZ2F9zHSbr3cfq/VKnD6SmgXfidjdqZYx5UioPf8Qu0besd3ExgQWI2ihzcOLD7E8gfCWlts2PHDfvKBMFpIWIix3UCYQwFpfDNOb5Js+K269c66/3+eEp7ACJuNuicFfr+3vE9V0Mwqy0w2sGwTQ+kblcOrF8G+mZq32CMcUs0aspBQ5aMRfsbXpiUGhwvs+I1UqZsTev2fFlq2BKNNxBktEnXwPp05ZB9udsmfzssa0e30w5MTVaIT46GzE2PzYBLuQr2w==
-X-YMail-OSG: fF4oj8AVM1mntNw5UEo1crNnHp7FiPe63iolrcFY9toP8FRfOiUbaQ8Q5TqW8Pg
- 6A_BRvGoXw9gg98D28X38_clVBDQzTWnwxVwl_jAOgahOWwNt5WfthlRSsXzU_zCIOrxVesJGt3I
- qhztkU.gUmXKCQ6LtH5_m4SO7uXp95Eiw0zVEoqM2DUBSfbd_PEx31geBkb7OfVScPDd7_dh6NNf
- Wp9wnQFKitqy.k.Kmyur12y9kwx3CU1IUYTa8D_E7SPdIOwO3SUwmsksaQERBR18G8GJbkDlkOKc
- dmJgW2CCmM_Ex3jBDFFqDXqtEbuUF6pQxEsPj3cCyfucFvdtlpetUEWWdlQ6UUROYeHEXlf9zsvQ
- YD.f0jjav1Uyi6JCKqkkafzx.F0WLgBZibr7sl2m9D2qR3krLkpuyZGkshHP9rU4tvOTuOq4wpog
- _hRWdD0jKkPFlvPb_D6pR5Fz0PpltLCWeOTaAd.Q9p9gxdEl2OfMKRB02b6rBhzROMJd41vUfVbg
- _OE4AxW.01BVMLWonyvEtGwD.CZbWJED9NV3Fq9jE0AlyZ59kZNayrp9oCiCP54NF87yrl899Ma6
- __w.Ie.atLzC62zo1PdB7O.VjjrJiTD6DEBp3AtXZyaev0yaQ0aLBnIaEv2MFIu_6eD1nJ5TzhNU
- gsi5DBiVsA_bTUY0zCf1OcGzNlq_TSRPZVc145sXUnCx18Yi1PN7XyOPHYMO5nPFZxBl6JBbdPnY
- waJSB6XFQZ9wZTmchLQMaaK9MdVaw7Jg.zgA1PTlQpH5vjDcoM_nVSEl5AMNmNUALxsSrhcRhlbA
- Sss8R111vUe.0fledQYhtwPJyz1FeSf8tKddqD.eivajhOcRthMuzkdJN4hkNWx0ve9.MOn99dso
- 3CLBQhZZhvoh0XA2yg85BATjmTp3xxCC4NoACkN4SrVcUL9jiNbXQhr8tAVnBD62fhtZxKwpNlg8
- P7ZyVl0GjIkr4KLyW4vd3ZT7EBeuGqLmjjUPVSYlIC1959YCFxmw9tlkr.AA6uvUS9ZjOAykFfjN
- WXDBTlCo7Z05AQAU7XbnLIEOimTBNPd1mOMoV5LgJbxytpoPo0UriReKLbH04tSYwurEohvLlN6a
- HEKbPV7reQ_S9HMwF7Cqno1aZdkjKVfOeze4zAYJLbvCKFCuL_1uiDQAOsCW9BEw3WczKYfMsZ3_
- d2YbyAJqNT3wARNPqs2iGLo3o34Hhys52mni.A_BwZSpwliAlLBFupeWoj.ZPZngU7vYoq9xyC2N
- ZeSrHAgujv81l2w9wNl_k2aMrYk.ehEtNuyQg5jfMkfSvh8ld6lci_REt9.DhTAPBFQJiOavzNne
- Sa11c
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.bf2.yahoo.com with HTTP; Tue, 11 Feb 2020 21:28:22 +0000
-Date:   Tue, 11 Feb 2020 21:18:19 +0000 (UTC)
-From:   Linda cbally <lindacbally@aol.com>
-Reply-To: lindacbally@aol.com
-Message-ID: <295242989.1161128.1581455899297@mail.yahoo.com>
-Subject: My Dear
+        Tue, 11 Feb 2020 16:25:50 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id D44B683645;
+        Wed, 12 Feb 2020 10:25:45 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1581456345;
+        bh=ONoY5ukSuvAaVQlnYYP1oxWrnP8W7ytfW+V8qQuhakY=;
+        h=From:To:Cc:Subject:Date;
+        b=AgSZIRiEZ0S7iVDBoAawArJpEYt/Rz+g5DIZMp6Pvs5IJsv3ulj9htoU/9Gr5LX7P
+         yF16Dd/ZUGFOh8i+xgfeMuIiPhWIibX5hmPpw6RLO8ZN3pkxYSzaKA5BvtYJIDmut5
+         KPKWHwXFT5OuOsUsl7EmedTK1IfqfKxYdAcB3MtlF9n8MfYT4HBenKRsLkt1PXkYTW
+         VO29odw0uWkKkKC9S0ZLI45pk3NVdHpl/D58T3ASbkp/nWTD+OaAkOuGRrChv4UIig
+         Lt32BkhiO2M1aueqB8ZIaTyuHtkl66NIQ5mU3RvDjPqCU6zKriEbev7AjgjTJJZna+
+         AGdT6FFN+efqw==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5e431bd90000>; Wed, 12 Feb 2020 10:25:45 +1300
+Received: from markto-dl.ws.atlnz.lc (markto-dl.ws.atlnz.lc [10.33.23.25])
+        by smtp (Postfix) with ESMTP id 8342513EED4;
+        Wed, 12 Feb 2020 10:25:45 +1300 (NZDT)
+Received: by markto-dl.ws.atlnz.lc (Postfix, from userid 1155)
+        id 9BBFB341316; Wed, 12 Feb 2020 10:25:45 +1300 (NZDT)
+From:   Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>
+To:     paulburton@kernel.org, linux-mips@vger.kernel.org
+Cc:     chris.packham@alliedtelesis.co.nz, linux-kernel@vger.kernel.org,
+        Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>
+Subject: [PATCH] MIPS: cavium_octeon: Fix syncw generation.
+Date:   Wed, 12 Feb 2020 10:24:55 +1300
+Message-Id: <20200211212455.3307-1-mark.tomlinson@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <295242989.1161128.1581455899297.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.15199 YMailNodin Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.100 Safari/537.36
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The Cavium Octeon CPU uses a special sync instruction for implementing
+wmb, and due to a CPU bug, the instruction must appear twice. A macro
+had been defined to hide this:
 
+ #define __SYNC_rpt(type)     (1 + (type =3D=3D __SYNC_wmb))
 
-My Dear
+which was intended to evaluate to 2 for __SYNC_wmb, and 1 for any other
+type of sync. However, this expression is evaluated by the assembler,
+and not the compiler, and the result of '=3D=3D' in the assembler is 0 or
+-1, not 0 or 1 as it is in C. The net result was wmb() producing no code
+at all. The simple fix in this patch is to change the '+' to '-'.
 
-With warm heart, I offer my friendship and greetings, I hope this message meet you in good time. However, Mine names are Ms. Linda Ibrahim Coulibaly. I am 24 years old female. I have sent you mail twice but you never replied any of them. I humbly ask that you reply this message, to enable me disclose the reason while I have been trying to reach out to you. I do apologize for infringing on your privacy.
+Fixes: bf92927251b3 ("MIPS: barrier: Add __SYNC() infrastructure")
+Signed-off-by: Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>
+---
+ arch/mips/include/asm/sync.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-greetings Linda Ibrahim Coulibaly
+diff --git a/arch/mips/include/asm/sync.h b/arch/mips/include/asm/sync.h
+index 7c6a1095f5..aabd097933 100644
+--- a/arch/mips/include/asm/sync.h
++++ b/arch/mips/include/asm/sync.h
+@@ -155,9 +155,11 @@
+  * effective barrier as noted by commit 6b07d38aaa52 ("MIPS: Octeon: Use
+  * optimized memory barrier primitives."). Here we specify that the affe=
+cted
+  * sync instructions should be emitted twice.
++ * Note that this expression is evaluated by the assembler (not the comp=
+iler),
++ * and that the assembler evaluates '=3D=3D' as 0 or -1, not 0 or 1.
+  */
+ #ifdef CONFIG_CPU_CAVIUM_OCTEON
+-# define __SYNC_rpt(type)	(1 + (type =3D=3D __SYNC_wmb))
++# define __SYNC_rpt(type)	(1 - (type =3D=3D __SYNC_wmb))
+ #else
+ # define __SYNC_rpt(type)	1
+ #endif
+--=20
+2.25.0
+
