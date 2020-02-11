@@ -2,141 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41DB9158814
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 03:02:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38A87158822
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 03:14:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbgBKCCM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 21:02:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41834 "EHLO mail.kernel.org"
+        id S1727769AbgBKCN4 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 10 Feb 2020 21:13:56 -0500
+Received: from mg.richtek.com ([220.130.44.152]:53942 "EHLO mg.richtek.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727398AbgBKCCM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 21:02:12 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED9E02070A;
-        Tue, 11 Feb 2020 02:02:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581386531;
-        bh=ZionIfc0gJyrO2taTIjl+OmJyY0BF7Kh4yrggTreWcQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Ro6K2cnHNwuVa6lxNLaH5gQnV1RcDSIrR12eCmu0KB99Snxj/1ZbGoyswRAkTjb3l
-         v54KJeg22PFgB/Q+Hpj0FG6Rxa+YdCQiQwdWAKsj8E5AOI7yDca0ljg5uJBW8rPdzW
-         QiSowF4eOV3gduvAEY0n2BFBSMOk3ZDm5sNAOtR0=
-Date:   Tue, 11 Feb 2020 11:02:07 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [for-next][PATCH 04/26] bootconfig: Add Extra Boot Config
- support
-Message-Id: <20200211110207.7e0f1b048cc207e1a31ddd31@kernel.org>
-In-Reply-To: <20200210174053.GD29627@zn.tnic>
-References: <20200114210316.450821675@goodmis.org>
-        <20200114210336.259202220@goodmis.org>
-        <20200206115405.GA22608@zn.tnic>
-        <20200206234100.953b48ecef04f97c112d2e8b@kernel.org>
-        <20200206175858.GG9741@zn.tnic>
-        <20200207114617.3bda49673175d3fa33cbe85e@kernel.org>
-        <20200207114122.GB24074@zn.tnic>
-        <20200208000648.3383f991fee68af5ee229d65@kernel.org>
-        <20200210112512.GA29627@zn.tnic>
-        <20200211001007.62290c743e049b231bdd7052@kernel.org>
-        <20200210174053.GD29627@zn.tnic>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727612AbgBKCNz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Feb 2020 21:13:55 -0500
+X-Greylist: delayed 514 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Feb 2020 21:13:54 EST
+X-MailGates: (flag:3,DYNAMIC,RELAY,NOHOST:PASS)(compute_score:DELIVER,40
+        ,3)
+Received: from 192.168.8.21
+        by mg.richtek.com with MailGates ESMTP Server V3.0(24508:0:AUTH_RELAY)
+        (envelope-from <prvs=13081D10B8=jeff_chang@richtek.com>); Tue, 11 Feb 2020 10:13:50 +0800 (CST)
+X-MailGates: (compute_score:DELIVER,40,3)
+Received: from 192.168.8.45
+        by mg.richtek.com with MailGates ESMTP Server V5.0(29549:0:AUTH_RELAY)
+        (envelope-from <jeff_chang@richtek.com>); Tue, 11 Feb 2020 10:04:43 +0800 (CST)
+Received: from ex1.rt.l (192.168.8.44) by ex2.rt.l (192.168.8.45) with
+ Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 11 Feb 2020 10:04:42 +0800
+Received: from ex1.rt.l ([fe80::557d:30f0:a3f8:3efc]) by ex1.rt.l
+ ([fe80::557d:30f0:a3f8:3efc%15]) with mapi id 15.00.1497.000; Tue, 11 Feb
+ 2020 10:04:42 +0800
+From:   =?iso-2022-jp?B?amVmZl9jaGFuZygbJEJEJUAkMkIbKEIp?= 
+        <jeff_chang@richtek.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Jeff Chang <richtek.jeff.chang@gmail.com>
+CC:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] ASoC: MT6660 update to 1.0.8_G
+Thread-Topic: [PATCH] ASoC: MT6660 update to 1.0.8_G
+Thread-Index: AQHV2w0GcMtTuyakxUCJKOCjmW3FI6gUSfWAgAD90+A=
+Date:   Tue, 11 Feb 2020 02:04:42 +0000
+Message-ID: <a9895e583c9b47608aeb3e29d7852f47@ex1.rt.l>
+References: <1580787697-3041-1-git-send-email-richtek.jeff.chang@gmail.com>
+ <20200210185121.GC14166@sirena.org.uk>
+In-Reply-To: <20200210185121.GC14166@sirena.org.uk>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [192.168.94.128]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Feb 2020 18:40:53 +0100
-Borislav Petkov <bp@alien8.de> wrote:
+Dear Mark:
 
-> On Tue, Feb 11, 2020 at 12:10:07AM +0900, Masami Hiramatsu wrote:
-> > Sure, there are some examples under Documentation/trace/boottime-trace.rst.
-> > Since the tracefs (ftrace's filesystem user interface) is extensible
-> > by dynamic events and instanses, I need flexibility of option "keys"
-> > not only values, also I need structured settings because some keys
-> > will configure same events or trace instance.
-> 
->  [ ... ]
-> 
-> Yap, gotcha. It makes a lot of sense for you guys because you don't want
-> to be typing all those long ftrace command lines on every boot. And the
-> command line in grub can become too long and hard to handle too.
+Thanks for your replying.
 
-Thanks :)
+This INIT SETTING is always be set, and we don't want anyone to modify it.
 
-> 
-> > 1) write a following bootconfig file
-> > ----
-> > kernel {
-> > 	# root device and resume devices
-> > 	root = /dev/disk/by-id/nvme-eui.0025385481b2fe2a-part2
-> > 	resume = /dev/disk/by-id/nvme-eui.0025385481b2fe2a-part1
-> > 	ro			# Mount root device readonly.
-> > 	debug			# boot with debug log
-> > 	ignore_loglevel	# this will print all messages
-> > 	log_buf_len = 16M	# So expand log buffer to 16MB
-> > 	no_console_suspend	# Debugging suspend process
-> > 	mem_encrypt = off	# Set AMD SME to off
-> > }
-> > 
-> > init {
-> > 	net.ifnames = 0	# Use tradisional ifname
-> > 	systemd.log_target = null	# Ignore systemd log?
-> > }
-> 
-> Ok.
-> 
-> However, this has a downside. When you request dmesg from a user because
-> you're debugging an issue - and we do that all the time - if the command
-> line were in a config file, we would have to see that config file too.
-> 
-> VS now, it is simply in dmesg.
+What should I do is just apply them to be hard code into the driver? I cannot use event a table to descript it like below?
 
-The above kernel.* and init.* are merged into the legacy command line
-before printing it out to dmesg. For boot-time tracing, yes, we need
-/proc/bootconfig too.
+static const struct codec_reg_val e4_reg_inits[] = {
+        { MT6660_REG_WDT_CTRL, 0x80, 0x00 },
+        { MT6660_REG_SPS_CTRL, 0x01, 0x00 },
+        { MT6660_REG_AUDIO_IN2_SEL, 0x1c, 0x04 },
+        { MT6660_REG_RESV11, 0x0c, 0x00 },
+        { MT6660_REG_RESV31, 0x03, 0x03 },
+        { MT6660_REG_RESV40, 0x01, 0x00 },
+        { MT6660_REG_RESV0, 0x44, 0x04 },
+        { MT6660_REG_RESV19, 0xff, 0x82 },
+        { MT6660_REG_RESV17, 0x7777, 0x7273 },
+        { MT6660_REG_RESV16, 0x07, 0x03 },
+        { MT6660_REG_DRE_CORASE, 0xe0, 0x20 },
+        { MT6660_REG_ADDA_CLOCK, 0xff, 0x70 },
+        { MT6660_REG_RESV21, 0xff, 0x20 },
+        { MT6660_REG_DRE_THDMODE, 0xff, 0x40 },
+        { MT6660_REG_RESV23, 0xffff, 0x17f8 },
+        { MT6660_REG_PWM_CTRL, 0xff, 0x15 },
+        { MT6660_REG_ADC_USB_MODE, 0xff, 0x00 },
+        { MT6660_REG_PROTECTION_CFG, 0xff, 0x1d },
+        { MT6660_REG_HPF1_COEF, 0xffffffff, 0x7fdb7ffe },
+        { MT6660_REG_HPF2_COEF, 0xffffffff, 0x7fdb7ffe },
+        { MT6660_REG_SIG_GAIN, 0xff, 0x58 },
+        { MT6660_REG_RESV6, 0xff, 0xce },
+        { MT6660_REG_SIGMAX, 0xffff, 0x7fff },
+        { MT6660_REG_DA_GAIN, 0xffff, 0x0116 },
+        { MT6660_REG_TDM_CFG3, 0x1800, 0x0800 },
+        { MT6660_REG_DRE_CTRL, 0x1f, 0x07 },
+};
+
+Just hard coded??
 
 
-> > Boot time tracing is just a example. I think we can expand this for some
-> > other subsystems too. And this might be also helpful for adding a bit more
-> > complex syntax to those parameters without parser.
-> 
-> Yes, I think I see it now. And I still don't think you want this enabled
-> by default on every box. It is expressed perfectly fine here:
-> 
-> config BOOTTIME_TRACING
->         bool "Boot-time Tracing support"
->         depends on BOOT_CONFIG && TRACING
+Thanks & BRs
+Jeff Chang
+Tel 886-3-5526789 Ext 2357
+14F, No. 8, Taiyuen 1st st., Zhubei City,
+Hsinchu County, Taiwan 30288
 
-Hm, at least "select BOOT_CONFIG" so that user can see this option is
-there on menuconfig :)
 
-> so if distros want to enable that, they will enable BOOT_CONFIG too,
-> transitively. And other subsystems would simply depend on it the same if
-> they wanna use bootconfig.
-> 
-> But the way we supply command line args now ain't broke. And they normal
-> user doesn't care - grub simply pastes them everywhere.
-> 
-> Don't get me wrong - I don't mind using a bootconfig. I simply don't see
-> a compelling argument to have it enabled everywhere and by default and
-> think that other stuff selecting it is perfectly fine. IMO, of course.
 
-Sorry, you might misunderstand that the bootconfig replaces legacy command
-line. No, the legacy command line is still there and at least the part of
-suppremental command line parts of bootconfig are merged into the command
-line and shown in dmesg. So even if the user use bootconfig, their kernel
-command line was just updated, they can grub it and simply paste on other
-machine (if it accepts longer command line)
+-----Original Message-----
+From: Mark Brown [mailto:broonie@kernel.org]
+Sent: Tuesday, February 11, 2020 2:51 AM
+To: Jeff Chang <richtek.jeff.chang@gmail.com>
+Cc: lgirdwood@gmail.com; perex@perex.cz; tiwai@suse.com; matthias.bgg@gmail.com; alsa-devel@alsa-project.org; linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; jeff_chang(張世佳) <jeff_chang@richtek.com>
+Subject: Re: [PATCH] ASoC: MT6660 update to 1.0.8_G
 
-Thank you,
+On Tue, Feb 04, 2020 at 11:41:37AM +0800, Jeff Chang wrote:
+> From: Jeff Chang <jeff_chang@richtek.com>
+>
+> 1. add parsing register initial table via device tree.
+> 2. add applying initial register value function at component driver.
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+OK, so there's still a problem with the whole concept of putting "initial register settings" in the device tree - this is clearly not idiomatic for an ASoC driver.  If there are machine specific settings that need to be done unconditionally (eg, values controlled by external passive components) there should be specific properties for them.  If there are runtime options these should be normal ALSA controls with the default values being whatever the hardware defaults are.  If there are things that should just always be set no matter what then they should just be hard coded into the driver.
+************* Email Confidentiality Notice ********************
+
+The information contained in this e-mail message (including any attachments) may be confidential, proprietary, privileged, or otherwise exempt from disclosure under applicable laws. It is intended to be conveyed only to the designated recipient(s). Any use, dissemination, distribution, printing, retaining or copying of this e-mail (including its attachments) by unintended recipient(s) is strictly prohibited and may be unlawful. If you are not an intended recipient of this e-mail, or believe that you have received this e-mail in error, please notify the sender immediately (by replying to this e-mail), delete any and all copies of this e-mail (including any attachments) from your system, and do not disclose the content of this e-mail to any other person. Thank you!
