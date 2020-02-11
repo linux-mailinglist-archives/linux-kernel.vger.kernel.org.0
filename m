@@ -2,65 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E8801594AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9A351594AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 17:19:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730791AbgBKQSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 11:18:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52600 "EHLO mail.kernel.org"
+        id S1730822AbgBKQTI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 11:19:08 -0500
+Received: from foss.arm.com ([217.140.110.172]:49324 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729022AbgBKQSb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 11:18:31 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A4222070A;
-        Tue, 11 Feb 2020 16:18:30 +0000 (UTC)
-Date:   Tue, 11 Feb 2020 11:18:28 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: Re: [PATCH v2] tracing/perf: Move rcu_irq_enter/exit_irqson() to
- perf trace point hook
-Message-ID: <20200211111828.48058768@gandalf.local.home>
-In-Reply-To: <20200211153452.GW14914@hirez.programming.kicks-ass.net>
-References: <20200211095047.58ddf750@gandalf.local.home>
-        <20200211153452.GW14914@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727561AbgBKQTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 11:19:08 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6478830E;
+        Tue, 11 Feb 2020 08:19:07 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DDA833F68E;
+        Tue, 11 Feb 2020 08:19:06 -0800 (PST)
+Date:   Tue, 11 Feb 2020 16:19:05 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] [RFC] ASoC: Use imply for SND_SOC_ALL_CODECS
+Message-ID: <20200211161905.GM4543@sirena.org.uk>
+References: <20200207091351.18133-1-geert@linux-m68k.org>
+ <CAK7LNAQGcw1jbb=fWd_CbWv5hQrkqG_QFCw3uY4LXroONGM6BA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="AQYPrgrEUc/1pSX1"
+Content-Disposition: inline
+In-Reply-To: <CAK7LNAQGcw1jbb=fWd_CbWv5hQrkqG_QFCw3uY4LXroONGM6BA@mail.gmail.com>
+X-Cookie: Hire the morally handicapped.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Feb 2020 16:34:52 +0100
-Peter Zijlstra <peterz@infradead.org> wrote:
 
-> > +		if (unlikely(in_nmi()))
-> > +			goto out;  
-> 
-> unless I'm mistaken, we can simply do rcu_nmi_enter() in this case, and
-> rcu_nmi_exit() on the other end.
-> 
-> > +		rcu_irq_enter_irqson();
+--AQYPrgrEUc/1pSX1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The thing is, I don't think this can ever happen. We've had in the
-tracepoint.h:
+On Wed, Feb 12, 2020 at 01:09:30AM +0900, Masahiro Yamada wrote:
 
-		/* srcu can't be used from NMI */			\
-		WARN_ON_ONCE(rcuidle && in_nmi());			\
+> Why does SND_SOC_ALL_CODECS exist in the first place?
+> Is this compile-test or run-test?
 
-And this has yet to trigger.
+It's for compile coverage.
 
--- Steve
+> If it is the former, allyesconfig / allmodconfig
+> covers all of them.
+
+No it doesn't.  Those only enable user selectable options, many CODEC
+drivers don't have user selectable options as they are selected by
+machine drivers some of which either have more platform specific
+dependencies that the CODEC drivers or aren't upstream.
+
+--AQYPrgrEUc/1pSX1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5C0/gACgkQJNaLcl1U
+h9DTdQf9Gk62wuqjst/9b6n+rQ0tlvq5rLi2q9impw+CjR2IVskAK4uCiioeMyQr
+XiKWja8Ip1YsZT5ZPBJLSrti3pphLOQCn52hL8FsJiOrlvork/ZdOP3ebEJnE038
+1ASs3ReEJ90eNmA54QJQaC1ufL9CyxJ023osbd9dZTEJ6UNSfEEPxCBnNznINYHw
+KGxkJyxzCKpyDi1Ri1VBCuIgt0phvhXeYlQDn071epm/w6RQbOknmJnHK8DKrkTh
+N26AF0h8JXdOKEKalEcVgVbjNf/ZZDaWWiRh+KmmYdVCkMbtzlUP3uTMLrDTF3Vw
+TD0x1ByKAWkdsVxKpKH8jw/3BfGpYQ==
+=uTKZ
+-----END PGP SIGNATURE-----
+
+--AQYPrgrEUc/1pSX1--
