@@ -2,185 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7861158C8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:19:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 726F3158C4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 11:03:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728278AbgBKKTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 05:19:07 -0500
-Received: from mga17.intel.com ([192.55.52.151]:61104 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728257AbgBKKTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 05:19:06 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 02:19:06 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="405896777"
-Received: from joy-optiplex-7040.sh.intel.com ([10.239.13.16])
-  by orsmga005.jf.intel.com with ESMTP; 11 Feb 2020 02:19:03 -0800
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     alex.williamson@redhat.com
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        cohuck@redhat.com, zhenyuw@linux.intel.com, zhi.a.wang@intel.com,
-        kevin.tian@intel.com, shaopeng.he@intel.com, yi.l.liu@intel.com,
-        Yan Zhao <yan.y.zhao@intel.com>
-Subject: [RFC PATCH v3 0/9] Introduce vendor ops in vfio-pci
-Date:   Tue, 11 Feb 2020 04:57:27 -0500
-Message-Id: <20200211095727.20426-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1728167AbgBKKDA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 05:03:00 -0500
+Received: from mail-wm1-f73.google.com ([209.85.128.73]:58630 "EHLO
+        mail-wm1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728073AbgBKKDA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 05:03:00 -0500
+Received: by mail-wm1-f73.google.com with SMTP id p2so1106340wmi.8
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 02:02:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=4ErgepGfDI3yrrGPodBZCow6kOhTX1ReLVCDrlwlOKY=;
+        b=FqQJM5dW1/FooZ2cFt2xQ5iJ1Tqxr/S+zlg1ivQ1SkzX+LJssklGFCSACCll8ncIth
+         S83G93n7UzkiRiLY4LZVPlBGJxjWhKyEOCfzt2k5IQxEuZUar1fNNb31Je07/gdPtqN3
+         GR5HvEGi2L0eWu31vlJE0S7lQaYr33Rib8WyHmURGcmy7+o+p9DW/VX6TqT+WNhZpo8P
+         EWlDnL+65tIdbLAnOxZQkDkXijD2FU7yD1U6IZicFllGphHU5B7O3M+jXYR6kMIs3/7L
+         zJqrwdE593crtsJvki30OZSyR34/duLqlP5/c07V4IdIa08jE5nKE/Y1RmxYbZ0RES0u
+         woOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=4ErgepGfDI3yrrGPodBZCow6kOhTX1ReLVCDrlwlOKY=;
+        b=f4VlAtgsWgGuLKSTIs49FFVorhWEqQit7zdCgR2GRAw2A6i0VweY//aqhFcra6xvtq
+         9qSxAhFBmo52e58cioZdHJ5IFfsJWXSay19NOherbqYUPzixwQcj09It5riT/rQhnV5N
+         llDj+pzMtt8ScqoIc4QQEmXTKiGeQKHVxYYvn0w9MES5uxX7XDaysBoIKgSAG9pU9bEJ
+         NVuL9hyIldK5dz16KHBYpUPhYQxx6EKeQW+PTpjd9ovjltSl2BuqhfeACAU1rvQdcHh3
+         Rsk/1ObVdAGj6MW88TA5di1lEFy00eJCjaMQKx59GUBuFFoYUm2mlkaNPSMkZw1tJVOX
+         BU8g==
+X-Gm-Message-State: APjAAAWn9/se7D+fvXOO8MX/fIzwz1oO3oBIC20PgpMDf3bKPJsvzM+L
+        JKq34ndVxtE8U6HXvCYub7Ow3nZAVw==
+X-Google-Smtp-Source: APXvYqxnsn5PVOziySVAlxU2el27ltIMmQsBTqh/nhzrnNWSlvuM7AUfSZCkjKrx+UCr7I7R6vQfm5DalQ==
+X-Received: by 2002:adf:fe43:: with SMTP id m3mr8140672wrs.213.1581415377060;
+ Tue, 11 Feb 2020 02:02:57 -0800 (PST)
+Date:   Tue, 11 Feb 2020 11:02:43 +0100
+Message-Id: <20200211100243.101187-1-elver@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.225.g125e21ebc7-goog
+Subject: [PATCH v2] kcsan: Fix misreporting if concurrent races on same address
+From:   Marco Elver <elver@google.com>
+To:     elver@google.com
+Cc:     paulmck@kernel.org, andreyknvl@google.com, glider@google.com,
+        dvyukov@google.com, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using module vfio-pci to pass through devices, though for the most
-of time, it is desired to use default implementations in vfio-pci, vendors
-sometimes may want to do certain kind of customization.
-For example, vendors may want to add a vendor device region or may want to
-intercept writes to a BAR region.
-So, in this patch set, we introduce a way to allow vendors to focus on
-handling of regions of their interest and call default vfio-pci ops to
-handle the reset ones.
+If there are at least 4 threads racing on the same address, it can
+happen that one of the readers may observe another matching reader in
+other_info. To avoid locking up, we have to consume 'other_info'
+regardless, but skip the report. See the added comment for more details.
 
-It goes like this:
-(1) macros are provided to let vendor drivers register/unregister
-vfio_pci_vendor_driver_ops to vfio_pci in their module_init() and
-module_exit().
-vfio_pci_vendor_driver_ops contains callbacks probe() and remove() and a
-pointer to vfio_device_ops.
+Signed-off-by: Marco Elver <elver@google.com>
+---
+v2:
+* Improve comment to illustrate more concrete case.
+---
+ kernel/kcsan/report.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-(2) vendor drivers define their module aliases as
-"vfio-pci:$vendor_id-$device_id".
-E.g. A vendor module for VF devices of Intel(R) Ethernet Controller XL710
-family can define its module alias as MODULE_ALIAS("vfio-pci:8086-154c").
-
-(3) when module vfio_pci is bound to a device, it would call modprobe in
-user space for modules of alias "vfio-pci:$vendor_id-$device_id", which
-would trigger unloaded vendor drivers to register their
-vfio_pci_vendor_driver_ops to vfio_pci.
-Then it searches registered ops list and calls probe() to test whether this
-vendor driver supports this physical device.
-A success probe() would make vfio_pci to use vfio_device_ops provided
-vendor driver as the ops of the vfio device. So vfio_pci_ops are not to be
-called for this device any more. Instead, they are exported to be called
-from vendor drivers as a default implementation.
-
-
-                                        _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-                                  
- __________   (un)register vendor ops  |  ___________    ___________   |
-|          |<----------------------------|    VF    |   |           |   
-| vfio-pci |                           | |  vendor  |   | PF driver |  |
-|__________|---------------------------->|  driver  |   |___________|   
-     |           probe/remove()        |  -----------          |       |
-     |                                                         |         
-     |                                 |_ _ _ _ _ _ _ _ _ _ _ _|_ _ _ _|
-    \|/                                                       \|/
------------                                              ------------
-|    VF   |                                              |    PF    |
------------                                              ------------
-                   a typical usage in SRIOV
-
-
-
-Ref counts:
-(1) vendor drivers must be a module and compiled to depend on module
-vfio_pci.
-(2) In vfio_pci, a successful register would add refs of itself, and a
-successful unregister would derefs of itself.
-(3) In vfio_pci, a successful probe() of a vendor driver would add ref of
-the vendor module. It derefs of the vendor module after calling remove().
-(4) macro provided to make sure vendor module always unregister itself in
-its module_exit
-
-Those are to prevent below conditions:
-a. vfio_pci is unloaded after a successful register from vendor driver.
-   Though vfio_pci would later call modprobe to ask the vendor module to
-   register again, it cannot help if vendor driver remain as loaded
-   across unloading-loading of vfio_pci.
-b. vendor driver unregisters itself after successfully probed by vfio_pci.
-c. circular dependency between vfio_pci and the vendor driver.
-   if vfio_pci adds refs to both vfio_pci and vendor driver on a successful
-   register and if vendor driver only do the unregister in its module_exit,
-   then it would have no chance to do the unregister.
-
-
-Patch Overview
-patches 1-2 making struct vfio_pci_device public and functions
-            in struct vfio_pci_ops exported
-patches 3-4 provide register/unregister interfaces for vendor drivers
-patches 5-6 some more enhancements
-patch 7 provides an sample to pass through IGD devices
-patches 8-9 implement VF live migration on Intel's 710 SRIOV devices.
-            Some dirty page tracking functions are intentionally
-            commented out and would send out later in future.
-
-Changelog:
-RFC v2- RFC v3:
-- embedding struct vfio_pci_device into struct vfio_pci_device_private.
-(Alex)
-
-RFC v1- RFC v2:
-- renamed mediate ops to vendor ops
-- use of request_module and module alias to manage vendor driver load
-  (Alex)
-- changed from vfio_pci_ops calling vendor ops
-  to vendor ops calling default vfio_pci_ops  (Alex)
-- dropped patches for dynamic traps of BARs. will submit them later.
-
-Links:
-Previous versions:
-RFC v2:
-https://lkml.org/lkml/2020/1/30/956
-
-RFC v1:
-kernel part: https://www.spinics.net/lists/kernel/msg3337337.html.
-qemu part: https://www.spinics.net/lists/kernel/msg3337337.html.
-
-VFIO live migration v8:
-https://lists.gnu.org/archive/html/qemu-devel/2019-08/msg05542.html.
-
-
-Yan Zhao (9):
-  vfio/pci: export vfio_pci_device public and add
-    vfio_pci_device_private
-  vfio/pci: export functions in vfio_pci_ops
-  vfio/pci: register/unregister vfio_pci_vendor_driver_ops
-  vfio/pci: macros to generate module_init and module_exit for vendor
-    modules
-  vfio/pci: let vfio_pci know how many vendor regions are registered
-  vfio/pci: export vfio_pci_setup_barmap
-  samples/vfio-pci: add a sample vendor module of vfio-pci for IGD
-    devices
-  vfio: header for vfio live migration region.
-  i40e/vf_migration: vfio-pci vendor driver for VF live migration
-
- drivers/net/ethernet/intel/Kconfig            |  10 +
- drivers/net/ethernet/intel/i40e/Makefile      |   2 +
- drivers/net/ethernet/intel/i40e/i40e.h        |   2 +
- .../ethernet/intel/i40e/i40e_vf_migration.c   | 635 ++++++++++++++++++
- .../ethernet/intel/i40e/i40e_vf_migration.h   |  92 +++
- drivers/vfio/pci/vfio_pci.c                   | 385 +++++++----
- drivers/vfio/pci/vfio_pci_config.c            | 186 ++---
- drivers/vfio/pci/vfio_pci_igd.c               |  19 +-
- drivers/vfio/pci/vfio_pci_intrs.c             | 186 ++---
- drivers/vfio/pci/vfio_pci_nvlink2.c           |  22 +-
- drivers/vfio/pci/vfio_pci_private.h           |  13 +-
- drivers/vfio/pci/vfio_pci_rdwr.c              |  64 +-
- include/linux/vfio.h                          |  57 ++
- include/uapi/linux/vfio.h                     | 149 ++++
- samples/Kconfig                               |   6 +
- samples/Makefile                              |   1 +
- samples/vfio-pci/Makefile                     |   2 +
- samples/vfio-pci/igd_pt.c                     | 148 ++++
- 18 files changed, 1645 insertions(+), 334 deletions(-)
- create mode 100644 drivers/net/ethernet/intel/i40e/i40e_vf_migration.c
- create mode 100644 drivers/net/ethernet/intel/i40e/i40e_vf_migration.h
- create mode 100644 samples/vfio-pci/Makefile
- create mode 100644 samples/vfio-pci/igd_pt.c
-
+diff --git a/kernel/kcsan/report.c b/kernel/kcsan/report.c
+index 3bc590e6be7e3..abf6852dff72f 100644
+--- a/kernel/kcsan/report.c
++++ b/kernel/kcsan/report.c
+@@ -422,6 +422,44 @@ static bool prepare_report(unsigned long *flags, const volatile void *ptr,
+ 			return false;
+ 		}
+ 
++		access_type |= other_info.access_type;
++		if ((access_type & KCSAN_ACCESS_WRITE) == 0) {
++			/*
++			 * While the address matches, this is not the other_info
++			 * from the thread that consumed our watchpoint, since
++			 * neither this nor the access in other_info is a write.
++			 * It is invalid to continue with the report, since we
++			 * only have information about reads.
++			 *
++			 * This can happen due to concurrent races on the same
++			 * address, with at least 4 threads. To avoid locking up
++			 * other_info and all other threads, we have to consume
++			 * it regardless.
++			 *
++			 * A concrete case to illustrate why we might lock up if
++			 * we do not consume other_info:
++			 *
++			 *   We have 4 threads, all accessing the same address
++			 *   (or matching address ranges). Assume the following
++			 *   watcher and watchpoint consumer pairs:
++			 *   write1-read1, read2-write2. The first to populate
++			 *   other_info is write2, however, write1 consumes it,
++			 *   resulting in a report of write1-write2. This report
++			 *   is valid, however, now read1 populates other_info;
++			 *   read2-read1 is an invalid conflict, yet, no other
++			 *   conflicting access is left. Therefore, we must
++			 *   consume read1's other_info.
++			 *
++			 * Since this case is assumed to be rare, it is
++			 * reasonable to omit this report: one of the other
++			 * reports includes information about the same shared
++			 * data, and at this point the likelihood that we
++			 * re-report the same race again is high.
++			 */
++			release_report(flags, KCSAN_REPORT_RACE_SIGNAL);
++			return false;
++		}
++
+ 		/*
+ 		 * Matching & usable access in other_info: keep other_info_lock
+ 		 * locked, as this thread consumes it to print the full report;
 -- 
-2.17.1
+2.25.0.225.g125e21ebc7-goog
 
