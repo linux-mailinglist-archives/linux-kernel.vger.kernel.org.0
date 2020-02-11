@@ -2,113 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F295E1588F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 04:41:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 716721588E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 04:41:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728148AbgBKDlh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Feb 2020 22:41:37 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:56650 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728107AbgBKDlc (ORCPT
+        id S1727985AbgBKDlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Feb 2020 22:41:12 -0500
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:60918 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727831AbgBKDlM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Feb 2020 22:41:32 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1581392492; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=c6+KThHyJTaUW7p9HtxxGeAiZNKSUAk916YtKObcJ8w=; b=M1SwIRt1/d/7fjxz72j9kQrW0VV4Ckwbh6cHs9lwydkOX/ss+rwIpeDI/frnXDJd87E7tig2
- QKDYoJGNOiPYy3TVDm8MGSAjo812boOUjqxC5oa7c4yQ1QQXq6EKfUUIPkW0GTY3WgpKTEb4
- N+AMeJBypP8LmcKuf3YxmjJdiaQ=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e42226b.7fa0ed5bad50-smtp-out-n02;
- Tue, 11 Feb 2020 03:41:31 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id A16B1C447B9; Tue, 11 Feb 2020 03:41:29 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 94629C447A5;
-        Tue, 11 Feb 2020 03:41:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 94629C447A5
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
-From:   Can Guo <cang@codeaurora.org>
-To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        hongwus@codeaurora.org, rnayak@codeaurora.org,
-        linux-scsi@vger.kernel.org, kernel-team@android.com,
-        saravanak@google.com, salyzyn@google.com, cang@codeaurora.org
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v10 7/7] scsi: ufs-qcom: Delay specific time before gate ref clk
-Date:   Mon, 10 Feb 2020 19:40:50 -0800
-Message-Id: <1581392451-28743-8-git-send-email-cang@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1581392451-28743-1-git-send-email-cang@codeaurora.org>
-References: <1581392451-28743-1-git-send-email-cang@codeaurora.org>
+        Mon, 10 Feb 2020 22:41:12 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R681e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04396;MF=guoren@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TpeDRM7_1581392468;
+Received: from localhost(mailfrom:guoren@linux.alibaba.com fp:SMTPD_---0TpeDRM7_1581392468)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 11 Feb 2020 11:41:09 +0800
+From:   Guo Ren <guoren@linux.alibaba.com>
+To:     linux-csky@vger.kernel.org, majun258@linux.alibaba.com
+Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guo Ren <guoren@linux.alibaba.com>
+Subject: [PATCH] csky: Add PCI support
+Date:   Tue, 11 Feb 2020 11:41:07 +0800
+Message-Id: <20200211034107.11192-1-guoren@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After enter hibern8, as UFS JEDEC ver 3.0 requires, a specific gating wait
-time is required before disable the device reference clock. If it is not
-specified, use the old delay.
+From: MaJun <majun258@linux.alibaba.com>
 
-Signed-off-by: Can Guo <cang@codeaurora.org>
-Reviewed-by: Asutosh Das <asutoshd@codeaurora.org>
-Reviewed-by: Hongwu Su <hongwus@codeaurora.org>
+Add the pci related code for csky arch to support basic pci virtual
+function, such as qemu virt-pci-9pfs.
+
+Signed-off-by: MaJun <majun258@linux.alibaba.com>
+Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
 ---
- drivers/scsi/ufs/ufs-qcom.c | 22 +++++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
+ arch/csky/Kconfig           |  5 +++++
+ arch/csky/include/asm/pci.h | 34 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 39 insertions(+)
+ create mode 100644 arch/csky/include/asm/pci.h
 
-diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-index 4ce293f..d593523 100644
---- a/drivers/scsi/ufs/ufs-qcom.c
-+++ b/drivers/scsi/ufs/ufs-qcom.c
-@@ -845,11 +845,27 @@ static void ufs_qcom_dev_ref_clk_ctrl(struct ufs_qcom_host *host, bool enable)
- 		/*
- 		 * If we are here to disable this clock it might be immediately
- 		 * after entering into hibern8 in which case we need to make
--		 * sure that device ref_clk is active at least 1us after the
-+		 * sure that device ref_clk is active for specific time after
- 		 * hibern8 enter.
- 		 */
--		if (!enable)
--			udelay(1);
-+		if (!enable) {
-+			unsigned long gating_wait;
+diff --git a/arch/csky/Kconfig b/arch/csky/Kconfig
+index bf246b036dee..72b2999a889a 100644
+--- a/arch/csky/Kconfig
++++ b/arch/csky/Kconfig
+@@ -58,6 +58,11 @@ config CSKY
+ 	select TIMER_OF
+ 	select USB_ARCH_HAS_EHCI
+ 	select USB_ARCH_HAS_OHCI
++	select GENERIC_PCI_IOMAP
++	select HAVE_PCI
++	select PCI_DOMAINS_GENERIC if PCI
++	select PCI_SYSCALL if PCI
++	select PCI_MSI if PCI
+ 
+ config CPU_HAS_CACHEV2
+ 	bool
+diff --git a/arch/csky/include/asm/pci.h b/arch/csky/include/asm/pci.h
+new file mode 100644
+index 000000000000..ebc765b1f78b
+--- /dev/null
++++ b/arch/csky/include/asm/pci.h
+@@ -0,0 +1,34 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
 +
-+			gating_wait = host->hba->dev_info.clk_gating_wait_us;
-+			if (!gating_wait) {
-+				udelay(1);
-+			} else {
-+				/*
-+				 * bRefClkGatingWaitTime defines the minimum
-+				 * time for which the reference clock is
-+				 * required by device during transition from
-+				 * HS-MODE to LS-MODE or HIBERN8 state. Give it
-+				 * more delay to be on the safe side.
-+				 */
-+				gating_wait += 10;
-+				usleep_range(gating_wait, gating_wait + 10);
-+			}
-+		}
- 
- 		writel_relaxed(temp, host->dev_ref_clk_ctrl_mmio);
- 
++#ifndef __ASM_CSKY_PCI_H
++#define __ASM_CSKY_PCI_H
++
++#include <linux/types.h>
++#include <linux/slab.h>
++#include <linux/dma-mapping.h>
++
++#include <asm/io.h>
++
++#define PCIBIOS_MIN_IO		0
++#define PCIBIOS_MIN_MEM		0
++
++/* C-SKY shim does not initialize PCI bus */
++#define pcibios_assign_all_busses() 1
++
++extern int isa_dma_bridge_buggy;
++
++#ifdef CONFIG_PCI
++static inline int pci_get_legacy_ide_irq(struct pci_dev *dev, int channel)
++{
++	/* no legacy IRQ on csky */
++	return -ENODEV;
++}
++
++static inline int pci_proc_domain(struct pci_bus *bus)
++{
++	/* always show the domain in /proc */
++	return 1;
++}
++#endif  /* CONFIG_PCI */
++
++#endif  /* __ASM_CSKY_PCI_H */
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.0
+
