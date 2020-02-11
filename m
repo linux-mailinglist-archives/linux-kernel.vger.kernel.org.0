@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93B0A159C3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 23:34:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76F8A159C56
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 23:37:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727439AbgBKWe0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 17:34:26 -0500
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:35806 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727041AbgBKWe0 (ORCPT
+        id S1727658AbgBKWhG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 17:37:06 -0500
+Received: from mail-ua1-f74.google.com ([209.85.222.74]:42011 "EHLO
+        mail-ua1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727041AbgBKWhF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 17:34:26 -0500
-Received: by mail-pl1-f202.google.com with SMTP id v24so5363113plo.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 14:34:25 -0800 (PST)
+        Tue, 11 Feb 2020 17:37:05 -0500
+Received: by mail-ua1-f74.google.com with SMTP id p15so38303uao.9
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 14:37:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:message-id:mime-version:subject:from:to:cc;
-        bh=tCp39nGmh6jfHffZt6h0GnEI2p4k3vAcc1eu6SXs2AA=;
-        b=EZ9WVyoWLXE02i7Y/3ZJ4Tadn7u6Jh16ATWGwkj4iIcfHwD6Q5PrJgiyF1fLolo1kf
-         G8+VB/3TXt0o6s5jORy1pmkNdIgEo2rudsmW28fXSpBvk2bDJXn5wor3+PopK+lhGOpT
-         fGINzh3d/4wTeGBHoleb+loZ5Zvh1hNd5icRXHQJAlq3JL2gqYaiiK1gHegOUUBdr2H4
-         /M7q3pkkn3WrdTSSc51R32H1A0VnyC+yTWtXSOyHl3gB3BmUwN7q5a0Ta4lLoEMHgYDT
-         ODjfkXMYEV9NwI0CJ/++R2ZzKrhzUtAMmPyX62TafJ0zLyLAjT5y37KT6uzcF1zN8T6+
-         EHKA==
+        bh=tn5KLhV2UflAg8SWktUj0z7+eGphwmGyKjf8wzfFF6c=;
+        b=urSRtZifT/QzvZKFDFC7/ZnQJbkvRzX80g/fbmNyhIMIZj/8ubezc0r7GhuCo3gyv2
+         5ww+otf5kKowLgPCCt/07eDrHteSifb/OmAcx9VEH+SCpMf4mazjoPz8mIyQDDp9xC2W
+         OmllTh9rDMxYl40+vl9RFvRlxrztbrK27yD4zEun0wkFGcnBmxp34adEaVDFaA0SvSTD
+         rPgT9lIp3j/H/DOH9dz+6/gxhd0q2AaqM5u3r1s1UOK3E9YzIz3y+p+At9GTNI+X7PUl
+         DJSJfY+VIAAsd6sDTaA3U2UpygMsRQuGNH81kkq4Lkp/Eu+SK+PtWsex4eRPzgJztDyp
+         PxxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=tCp39nGmh6jfHffZt6h0GnEI2p4k3vAcc1eu6SXs2AA=;
-        b=gWQckjET7fnFU9TT2muB36Hbm5qhD2Mnyiwmlo+8Tfvcgsb4PK6jT09NDdOnfF5Tmj
-         WMm8wpKGLabz+FRbATq37Td9EbAp0RcUt2FDYipB/twF5slXCIOxdfEnCcbBMTb+JUAW
-         O+5f4Ij49kUAar129Qd29NPDb5bZcSn+KxDB/GxKzW4djozu14RlmQchiUq90jIN2YY/
-         5g8IJv0kTohQbnITMvjlwJ1W0eJekRlNFHeuCzP/48pbrX+u13Wd15JTfsFtXelp1eUK
-         llx0GD2cTuijHpCjCcjhgzlyoWNgOp1tHUzx8R2WNY6Hud/DqBW9kp3IMrLxt/PZ1pTk
-         7rVQ==
-X-Gm-Message-State: APjAAAUIl++3i19EcpfozgMCGaB8tCBF/a7X4MCOnpI55UAOFlYFPR0P
-        q0JrOrEgr00McK0cKFWat87iUcF9WwFb
-X-Google-Smtp-Source: APXvYqzL+9Pb948p0Oh4VuEriyt9PtxXSCFN9TUUDh3yeG1rALRrce/dUGXJG8xbwe+qbGzOAhmWir/vouDB
-X-Received: by 2002:a63:2266:: with SMTP id t38mr9426357pgm.145.1581460465371;
- Tue, 11 Feb 2020 14:34:25 -0800 (PST)
-Date:   Tue, 11 Feb 2020 14:34:00 -0800
-Message-Id: <20200211223400.107604-1-rajatja@google.com>
+        bh=tn5KLhV2UflAg8SWktUj0z7+eGphwmGyKjf8wzfFF6c=;
+        b=hfQXeYp3UFTVOYj3ZmQwfx+kRfK2fe51enWYzY26ffDSql/bYlg6ND3pmzKxMqCpHw
+         5ghsZdQ6pgRNsWJ5omLjvObkvRxC+1Kn8ptLCVNuTNfqUZwbXMRw11uYL+YFI4/HyXOJ
+         c4gLPGV/Dh8fKMT21xddcnxDIWd8SWLJPJ/1AQw5pSjHc9XtWiT55itOE/RRc/md2BpW
+         1kyj4LcPmhZh7pagEjSCu/wAy09pGFJLmzcCjwOgtLgkVqg2zLAeN8qEIWJ/uSYf+edx
+         R5WABeYGMUrxuLhP1emzTNr03rNDnSD/QjUJ/nabyy3PuoOzgU642HVtEDA8D0LfRWRP
+         36WQ==
+X-Gm-Message-State: APjAAAUD0xwTCAG0BPtLclYwC6Xfu5fvLSEgjsRNF7BtPZcN9+pyS3aF
+        enm4dRTeWze9s5Na0aT8hHnrh0wvn1ZN
+X-Google-Smtp-Source: APXvYqyijGY6ooh56SzAuJ6qMrGW2ziMqaiWvXL+KvmMIdnSvi6OHZKuQczrNVVXElDF4HtcbvOaNYXHgan8
+X-Received: by 2002:ab0:6902:: with SMTP id b2mr5251519uas.32.1581460624477;
+ Tue, 11 Feb 2020 14:37:04 -0800 (PST)
+Date:   Tue, 11 Feb 2020 14:37:00 -0800
+Message-Id: <20200211223700.110252-1-rajatja@google.com>
 Mime-Version: 1.0
 X-Mailer: git-send-email 2.25.0.225.g125e21ebc7-goog
-Subject: 
+Subject: [PATCH] spi: pxa2xx: Add CS control clock quirk
 From:   Rajat Jain <rajatja@google.com>
 To:     Daniel Mack <daniel@zonque.org>,
         Haojian Zhuang <haojian.zhuang@gmail.com>,
@@ -61,9 +61,6 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Evan Green <evgreen@chromium.org>
-
-Date: Wed, 29 Jan 2020 13:54:16 -0800
-Subject: [PATCH] spi: pxa2xx: Add CS control clock quirk
 
 In some circumstances on Intel LPSS controllers, toggling the LPSS
 CS control register doesn't actually cause the CS line to toggle.
