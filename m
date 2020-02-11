@@ -2,88 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B964615962C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 18:31:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 758B1159627
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 18:30:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729475AbgBKRbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 12:31:50 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47678 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729132AbgBKRbt (ORCPT
+        id S1729405AbgBKRa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 12:30:29 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:59194 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727785AbgBKRa3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 12:31:49 -0500
+        Tue, 11 Feb 2020 12:30:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=4o9PB9m+IrGK3QGZcB85cx3hPfCNyy1f4QLXCxJ20so=; b=s2Qm4CYlmVLrKiJ3B5meGqaMuw
-        iYaWQtUPnnBkS/wk9a9oLvTi/TcaSPyxSTleSDGPh2MfUqmAXwlUAHRZlkEnBuOX/+fdKRgZxDc8d
-        O8M84kaEeeSMsHwHl6tYMd0i4UXW6GdNIX2v9vmUSmIGr/dogFqJlHqJO2CskamMZpIXDEAaotHFU
-        CjBssQegvOGv8spzKEIIfbmmi6SahH83wZTjwPBIlRfvnhtt5eVCzoCOyLu0+dNQuPolRLyam6l1F
-        nqmABq7IbMaQInJ0yBq4aOnU18cYNuwYcQ3WuWuw67VTNC8w5VTVWfoyRcrnrwe6uLnaU1ewokZ1q
-        TqlHpoJg==;
-Received: from [2603:3004:32:9a00::c450]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1ZNz-0001g0-7U; Tue, 11 Feb 2020 17:31:47 +0000
-Subject: Re: [PATCH 01/24] user_namespace: introduce fsid mappings
- infrastructure
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        =?UTF-8?Q?St=c3=a9phane_Graber?= <stgraber@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>
-Cc:     smbarber@chromium.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
-References: <20200211165753.356508-1-christian.brauner@ubuntu.com>
- <20200211165753.356508-2-christian.brauner@ubuntu.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <25217d8b-f3e9-7362-e3d9-d8c37bf39558@infradead.org>
-Date:   Tue, 11 Feb 2020 09:26:17 -0800
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=tft67AgEbN+sLqwt5f8HWk481eltg1oxQ1lCTGDpTog=; b=P/9Hm6oJRIT5xdd1KPyt2tWa6k
+        k3L048HX2u2u5DGjEJ7nG0LUVBLPsUIjzynccEFGJQHIlwn4+XO209jpVIh6EHJWBzZiWAMScP2D3
+        fxLjhCt1rCVw1lsGEHHo7zqTEPZUodOIZOQh/wvNKahC/yHyZFHRNJHEq+G8Sb9GnnDNJF/soinVt
+        atnPjUh7uwVd5iqeczgILth/spiJR0gFR2ttvR8EpiOH5okXo7sca989qc/rojiVN42aL1Hc8y1x6
+        uYPa3kyEyyPHuAtpMPhii4Y1YuVjrJMHfZvnZX3aRZHmgJxWwsXkUTx9y9xvnPhY47Q5nprE6ZxlV
+        MDY5Ip5Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1ZMC-0000jn-Vl; Tue, 11 Feb 2020 17:29:57 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E5826300F7A;
+        Tue, 11 Feb 2020 18:28:03 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9D9F12B91EB95; Tue, 11 Feb 2020 18:29:52 +0100 (CET)
+Date:   Tue, 11 Feb 2020 18:29:52 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [PATCH v2] tracing/perf: Move rcu_irq_enter/exit_irqson() to
+ perf trace point hook
+Message-ID: <20200211172952.GY14914@hirez.programming.kicks-ass.net>
+References: <20200211095047.58ddf750@gandalf.local.home>
+ <20200211153452.GW14914@hirez.programming.kicks-ass.net>
+ <20200211111828.48058768@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <20200211165753.356508-2-christian.brauner@ubuntu.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200211111828.48058768@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/11/20 8:57 AM, Christian Brauner wrote:
-> diff --git a/init/Kconfig b/init/Kconfig
-> index a34064a031a5..4da082e4f787 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1102,6 +1102,17 @@ config USER_NS
->  
->  	  If unsure, say N.
->  
-> +config USER_NS_FSID
-> +	bool "User namespace fsid mappings"
-> +	depends on USER_NS
-> +	default n
-> +	help
-> +	  This allows containers, to alter their filesystem id mappings.
+On Tue, Feb 11, 2020 at 11:18:28AM -0500, Steven Rostedt wrote:
+> On Tue, 11 Feb 2020 16:34:52 +0100
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > > +		if (unlikely(in_nmi()))
+> > > +			goto out;  
+> > 
+> > unless I'm mistaken, we can simply do rcu_nmi_enter() in this case, and
+> > rcu_nmi_exit() on the other end.
+> > 
+> > > +		rcu_irq_enter_irqson();
+> 
+> The thing is, I don't think this can ever happen. 
 
-                   no comma   ^^^^
+Per your own argument it should be true in the trace_preempt_off()
+tracepoint from nmi_enter():
 
-> +	  With this containers with different id mappings can still share
-> +	  the same filesystem.
-> +
-> +	  If unsure, say N.
-> +
->  config PID_NS
->  	bool "PID Namespaces"
->  	default y
+  <idle>
+    // rcu_is_watching() := false
+    <NMI>
+      nmi_enter()
+        preempt_count_add(NMI_OFFSET + HARDIRQ_OFFSET)
+	  __preempt_count_add()
+	  // in_nmi() := true
+	  preempt_latency_start()
+	    // .oO -- we'll never hit this tracepoint because idle has
+	    // preempt_count() == 1, so we'll have:
+	    //   preempt_count() != val
+
+	    // .oO-2 we should be able to this this when the NMI
+	    // hits userspace and we have NOHZ_FULL on.
+	rcu_nmi_enter() // function tracer
 
 
--- 
-~Randy
+But the point is, if we ever do hit it, rcu_nmi_enter() is the right
+thing to call when '!rcu_is_watching() && in_nmi()', because, as per the
+rcu_nmi_enter() comments, that function fully supports nested NMIs.
+
+How about something like so? And then you get to use the same in
+__trace_stack() or something, and anywhere else you're doing this dance.
+
+---
+
+diff --git a/include/linux/hardirq.h b/include/linux/hardirq.h
+index da0af631ded5..e987236abf95 100644
+--- a/include/linux/hardirq.h
++++ b/include/linux/hardirq.h
+@@ -89,4 +89,52 @@ extern void irq_exit(void);
+ 		arch_nmi_exit();				\
+ 	} while (0)
+ 
++/*
++ * Tracing vs rcu_is_watching()
++ * ----------------------------
++ *
++ * tracepoints and function-tracing can happen when RCU isn't watching (idle,
++ * or early IRQ/NMI entry).
++ *
++ * When it happens during idle or early during IRQ entry, tracing will have
++ * to inform RCU that it ought to pay attention, this is done by calling
++ * rcu_irq_enter_irqon().
++ *
++ * On NMI entry, we must be very careful that tracing only happens after we've
++ * incremented preempt_count(), otherwise we cannot tell we're in NMI and take
++ * the special path.
++ */
++
++#define __TR_IRQ	1
++#define __TR_NMI	2
++
++#define trace_rcu_enter()					\
++({								\
++	unsigned long state = 0;				\
++	if (!rcu_is_watching())	{				\
++		if (in_nmi()) {					\
++			state = __TR_NMI;			\
++			rcu_nmi_enter();			\
++		} else {					\
++			state = __TR_IRQ;			\
++			rcu_irq_enter_irqson();			\
++		}						\
++	}							\
++	state;							\
++})
++
++#define trace_rcu_exit(state)					\
++do {								\
++	switch (state) {					\
++	case __TR_IRQ:						\
++		rcu_irq_exit_irqson();				\
++		break;						\
++	case __IRQ_NMI:						\
++		rcu_nmi_exit();					\
++		break;						\
++	default:						\
++		break;						\
++	}							\
++} while (0)
++
+ #endif /* LINUX_HARDIRQ_H */
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index e453589da97c..8f34592a1355 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8950,6 +8950,7 @@ void perf_tp_event(u16 event_type, u64 count, void *record, int entry_size,
+ {
+ 	struct perf_sample_data data;
+ 	struct perf_event *event;
++	unsigned long rcu_flags;
+ 
+ 	struct perf_raw_record raw = {
+ 		.frag = {
+@@ -8961,6 +8962,8 @@ void perf_tp_event(u16 event_type, u64 count, void *record, int entry_size,
+ 	perf_sample_data_init(&data, 0, 0);
+ 	data.raw = &raw;
+ 
++	rcu_flags = trace_rcu_enter();
++
+ 	perf_trace_buf_update(record, event_type);
+ 
+ 	hlist_for_each_entry_rcu(event, head, hlist_entry) {
+@@ -8996,6 +8999,8 @@ void perf_tp_event(u16 event_type, u64 count, void *record, int entry_size,
+ 	}
+ 
+ 	perf_swevent_put_recursion_context(rctx);
++
++	trace_rcu_exit(rcu_flags);
+ }
+ EXPORT_SYMBOL_GPL(perf_tp_event);
+ 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 45f79bcc3146..62f87807bbe6 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3781,7 +3781,7 @@ static inline void preempt_latency_start(int val)
+ 	}
+ }
+ 
+-void preempt_count_add(int val)
++void notrace preempt_count_add(int val)
+ {
+ #ifdef CONFIG_DEBUG_PREEMPT
+ 	/*
+@@ -3813,7 +3813,7 @@ static inline void preempt_latency_stop(int val)
+ 		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
+ }
+ 
+-void preempt_count_sub(int val)
++void notrace preempt_count_sub(int val)
+ {
+ #ifdef CONFIG_DEBUG_PREEMPT
+ 	/*
