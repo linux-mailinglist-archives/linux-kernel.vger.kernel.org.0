@@ -2,86 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64E681599D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:35:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8BE21599DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 20:36:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730481AbgBKTfx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 14:35:53 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:53507 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728849AbgBKTfw (ORCPT
+        id S1731712AbgBKTgs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 14:36:48 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39644 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730971AbgBKTgp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 14:35:52 -0500
-Received: by mail-pj1-f67.google.com with SMTP id n96so1782617pjc.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 11:35:52 -0800 (PST)
+        Tue, 11 Feb 2020 14:36:45 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 77so11327945oty.6
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 11:36:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=L1zT4iXTmWfkI4wOwmMZ4o18MfCPpAamevZivwdVEg8=;
-        b=D9wD+88CtwMSTo6hpt8CWePsexABKBgd3bM2lbSnUnErdTW3pUNzJUdCuGMAzLbOZz
-         cDfhYUBxOrCJMOu9ol+HfjPC8DWM1NpgIgakMQcEVRijF9iFb5oyS13p8VGc+Bx5b8Ot
-         A7O+sHqutssENyq01UVN0onEWX5QVZFLqdIT4=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vxqF+VNeMWZGe5ApL4PlqNlBNetErOePHfuXXbpvPY8=;
+        b=IZhloKZlSi90VZuyomEqK+wb28Ls462eDYugPvp1S7ESpuRD4Rfl6jLj2xl2jhqEVH
+         7ho7YjhbHTbVYCyzKyNalVjYOxoQbOO1JHWlIPbYbpej0Q62uLfuEXSWZcUj9KfIv0Gd
+         QZTUlFVV5gdTcvaT6/P165+oF7SbzBPL2GjYEKXQXLq2ZfuVBlj7RCbVUnqa+L7lBdwX
+         o2d6FYR7ZmxhttJWZM06H/Cjb1GxGmlwA/tAi+NjvbFsx5T3j0Qt8V1ZOVOua8p2nBVG
+         bXPVjnPAiq0mc8uFLwuc2NsrL8+cV53joMVXnRy60OaZKL5CJsjqbXpW1cJaEECq7a9z
+         F8aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=L1zT4iXTmWfkI4wOwmMZ4o18MfCPpAamevZivwdVEg8=;
-        b=pCfmHVwg4RVFPPNc3leKcOpe8bhok4oDmmTxI7cg4t4tfaiibQSFVfGMCZbec/Ua2D
-         emwsTMFo0q+I5HC/zhmueymKMfYpH04kIfPZX01v2Iy5+JnGWMTne1Gzoj/H9unFJI0q
-         n+wDhDuFtWy8Y6wzxvx10w+gdo+FxQ3No7vCQLhA8/vmAuXH+7gOI0iOSIBbr2AMlPEu
-         a68sqvKcbms915FQBGT4URJozY5O2hbX+y0QkBFZ5m4Gxa7KT7s3M4D7sz/PhAD8+8Vt
-         +DxOYKlwRcvD/AVJFXtPgtXDY8qXlT4KYJ30pjCdztNiFBgT3+ENlSXtZqytmP6TC3uf
-         WUjQ==
-X-Gm-Message-State: APjAAAXo3JMmznCMIEXgC18DQC60KiKIRmz8aYcSQB7XGXCOoxIqaaBk
-        H//1jCgInMaaB1GFmD2751R+7g==
-X-Google-Smtp-Source: APXvYqyV7C7MX+UFBFOj086mAZSDkpLAhR277H/ITNkZlAITmYHn/RMBUw0+zaF3eCaXvQvEAnLGdw==
-X-Received: by 2002:a17:90a:2004:: with SMTP id n4mr6984510pjc.20.1581449752154;
-        Tue, 11 Feb 2020 11:35:52 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 70sm5014226pgd.28.2020.02.11.11.35.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 11:35:51 -0800 (PST)
-Date:   Tue, 11 Feb 2020 11:35:50 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-crypto@vger.kernel.org, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH] treewide: Replace zero-length arrays with flexible-array
- member
-Message-ID: <202002111132.4A4F073CAF@keescook>
-References: <20200211174126.GA29960@embeddedor>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vxqF+VNeMWZGe5ApL4PlqNlBNetErOePHfuXXbpvPY8=;
+        b=Ul1yDzoqf/N7XUzP+CLIR7hHd6crjlFwcEHWIzLuF/agDBgGhtz8r7MyQ1Vnjznuym
+         TsoRfQZzlheGy/T5E9MGg3POy2wSJ7anECjr+9Qj2/rZ4mD/iDKKzy0/x5YG1+0T3gHH
+         fybalQWI32zJsusY1S5p10nFJsdKgYKHbfkOWOhqG4wSstrjebDlZhIebTkx/VlhoL5g
+         0Mep+TJUqk6JIb9rCWpUolxCmM/7UJKQCUZvAvBfc03DDzw81J+fylEVj/0qS0VumGYs
+         wv+hMVpkIb8a9DKfq+rkRLQcMTz4DWTRQDaBRZRlEnjpEo7MApZqMeRfZuTwpyjZpQXb
+         +xLQ==
+X-Gm-Message-State: APjAAAWocCvxhmik56qfa1HtC68sodEwIuNBkJ2X7THVBzomBlvPWFKh
+        cgks0hulfF71bOYByA/0ZwRlnawXdEXyjhDADs2Pw80LJiI=
+X-Google-Smtp-Source: APXvYqyyrnBUsCabs/CQ6Qhae2j7QYXzMx9OL94W1lELvhgv0t9KfhU7xnAJyW+zD5QqB4wH0A0UXDdV+EVyKDdBOx0=
+X-Received: by 2002:a9d:65c1:: with SMTP id z1mr6740319oth.180.1581449804497;
+ Tue, 11 Feb 2020 11:36:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200211174126.GA29960@embeddedor>
+References: <20200123152440.28956-1-kpsingh@chromium.org> <20200123152440.28956-5-kpsingh@chromium.org>
+ <20200211031208.e6osrcathampoog7@ast-mbp> <20200211124334.GA96694@google.com>
+ <20200211175825.szxaqaepqfbd2wmg@ast-mbp> <CAG48ez25mW+_oCxgCtbiGMX07g_ph79UOJa07h=o_6B6+Q-u5g@mail.gmail.com>
+ <20200211190943.sysdbz2zuz5666nq@ast-mbp>
+In-Reply-To: <20200211190943.sysdbz2zuz5666nq@ast-mbp>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 11 Feb 2020 20:36:18 +0100
+Message-ID: <CAG48ez2gvo1dA4P1L=ASz7TRfbH-cgLZLmOPmr0NweayL-efLw@mail.gmail.com>
+Subject: Re: BPF LSM and fexit [was: [PATCH bpf-next v3 04/10] bpf: lsm: Add
+ mutable hooks list for the BPF LSM]
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     KP Singh <kpsingh@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        bpf@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kernel Team <kernel-team@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 11:41:26AM -0600, Gustavo A. R. Silva wrote:
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
-> 
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
-> 
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> unadvertenly introduced[3] to the codebase from now on.
+On Tue, Feb 11, 2020 at 8:09 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+> On Tue, Feb 11, 2020 at 07:44:05PM +0100, Jann Horn wrote:
+> > On Tue, Feb 11, 2020 at 6:58 PM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > > On Tue, Feb 11, 2020 at 01:43:34PM +0100, KP Singh wrote:
+> > [...]
+> > > > * When using the semantic provided by fexit, the BPF LSM program will
+> > > >   always be executed and will be able to override / clobber the
+> > > >   decision of LSMs which appear before it in the ordered list. This
+> > > >   semantic is very different from what we currently have (i.e. the BPF
+> > > >   LSM hook is only called if all the other LSMs allow the action) and
+> > > >   seems to be bypassing the LSM framework.
+> > >
+> > > It that's a concern it's trivial to add 'if (RC == 0)' check to fexit
+> > > trampoline generator specific to lsm progs.
+> > [...]
+> > > Using fexit mechanism and bpf_sk_storage generalization is
+> > > all that is needed. None of it should touch security/*.
+> >
+> > If I understand your suggestion correctly, that seems like a terrible
+> > idea to me from the perspective of inspectability and debuggability.
+> > If at runtime, a function can branch off elsewhere to modify its
+> > decision, I want to see that in the source code. If someone e.g.
+> > changes the parameters or the locking rules around a security hook,
+> > how are they supposed to understand the implications if that happens
+> > through some magic fexit trampoline that is injected at runtime?
+>
+> I'm not following the concern. There is error injection facility that is
+> heavily used with and without bpf. In this case there is really no difference
+> whether trampoline is used with direct call or indirect callback via function
+> pointer. Both will jump to bpf prog. The _source code_ of bpf program will
+> _always_ be available for humans to examine via "bpftool prog dump" since BTF
+> is required. So from inspectability and debuggability point of view lsm+bpf
+> stuff is way more visible than any builtin LSM. At any time people will be able
+> to see what exactly is running on the system. Assuming folks can read C code.
 
-Is there a compiler warning we can enable to avoid new 0-byte arrays
-from entering the kernel source tree? I can only find "-pedantic" which
-enables way too many other checks.
+You said that you want to use fexit without touching security/, which
+AFAIU means that the branch from security_*() to the BPF LSM will be
+invisible in the *kernel's* source code unless the reader already
+knows about the BPF LSM. But maybe I'm just misunderstanding your
+idea.
 
--- 
-Kees Cook
+If a random developer is trying to change the locking rules around
+security_blah(), and wants to e.g. figure out whether it's okay to
+call that thing with a spinlock held, or whether one of the arguments
+is actually used, or stuff like that, the obvious way to verify that
+is to follow all the direct and indirect calls made from
+security_blah(). It's tedious, but it works, unless something is
+hooked up to it in a way that is visible in no way in the source code.
+
+I agree that the way in which the call happens behind the scenes
+doesn't matter all that much - I don't really care all that much
+whether it's an indirect call, a runtime-patched direct call in inline
+assembly, or an fexit hook. What I do care about is that someone
+reading through any affected function can immediately see that the
+branch exists - in other words, ideally, I'd like it to be something
+happening in the method body, but if you think that's unacceptable, I
+think there should at least be a function attribute that makes it very
+clear what's going on.
