@@ -2,188 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1CE8159CD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 00:08:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12A39159CB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 00:05:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727928AbgBKXIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 18:08:19 -0500
-Received: from gateway36.websitewelcome.com ([192.185.194.2]:28787 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727613AbgBKXIS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 18:08:18 -0500
-X-Greylist: delayed 1425 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Feb 2020 18:08:18 EST
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id AB3114027D810
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 15:58:32 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 1eGejY1MQ8vkB1eGejWB2z; Tue, 11 Feb 2020 16:44:32 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:Subject:From:References:Cc:To:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=tGaen2zN4n4fBuNEI/B3Mev+m5mJ6ydP46gyGXcio4Q=; b=hc1Vb4z20nqUflHZ4aZXZFc3VE
-        uHjONEi2YmZYjfEy3BeCOcNXTSGaw9f0zO1fCF3b4potoZX6iHbmKkXDO7f92EtP5DJrYWEhyQoa+
-        YNQIQ/nlVfUuRjBnUj2msI9ulRt0po/I9P0TH6y123XuOHi0/mwNb5k7wQ4v4NCuIPqxnyK/4QwDu
-        5IDOk/11fOzjW7F+mA9YbyhPZn1KWRVa7HqETYWAcUTeI2+iVXA9HlRmDZQucrh6R0xIOWun9fGme
-        yK3yaF+hDx+Yy8Q+X4967bWDpvkVkM/upySMFwyPojNbwjSqlqwx7HqXllIq0yWtDtzuc/4mv5u7Z
-        VBjvZSeA==;
-Received: from [200.68.140.36] (port=22367 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j1eGe-003Fzq-1q; Tue, 11 Feb 2020 16:44:32 -0600
-To:     Alex Elder <elder@linaro.org>, Johan Hovold <johan@kernel.org>,
-        Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, greybus-dev@lists.linaro.org,
-        linux-kernel@vger.kernel.org
-References: <20200211211219.GA673@embeddedor>
- <e465ca6e-ed9f-4340-9f4c-104f9b6acb74@linaro.org>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [greybus-dev] [PATCH] staging: greybus: Replace zero-length array
- with flexible-array member
-Message-ID: <ebd179c5-29d6-4c86-e047-76815572fcf6@embeddedor.com>
-Date:   Tue, 11 Feb 2020 16:47:06 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <e465ca6e-ed9f-4340-9f4c-104f9b6acb74@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.36
-X-Source-L: No
-X-Exim-ID: 1j1eGe-003Fzq-1q
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [200.68.140.36]:22367
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 12
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        id S1727743AbgBKXFN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 18:05:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37076 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727330AbgBKXFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 18:05:13 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 675F720714;
+        Tue, 11 Feb 2020 23:05:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581462312;
+        bh=gc7DhHS8YjgFqXgvKUqHpLvMtqF3t8p2EA8qJid/pJY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=V6bxjjhNqk+LQXvjilFlPGb+JcXh/YTC+kQuFiSPDgRNmHjDuW0wN/J0u47oGlz9V
+         1VeENODzGvOpqjQds1qR9LXUqyPWa4nsMMPRnDSF0OtKAmUlkZn7kQM0c/exr/9sPM
+         amIUZavHzMsLH/5n1r8LQJwsC00OEyjlfvnb4SOw=
+Date:   Tue, 11 Feb 2020 15:05:10 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     kvm@vger.kernel.org, david@redhat.com, mst@redhat.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mgorman@techsingularity.net, yang.zhang.wz@gmail.com,
+        pagupta@redhat.com, konrad.wilk@oracle.com, nitesh@redhat.com,
+        riel@surriel.com, willy@infradead.org, lcapitulino@redhat.com,
+        dave.hansen@intel.com, wei.w.wang@intel.com, aarcange@redhat.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com, mhocko@kernel.org,
+        alexander.h.duyck@linux.intel.com, vbabka@suse.cz,
+        osalvador@suse.de
+Subject: Re: [PATCH v17 0/9] mm / virtio: Provide support for free page
+ reporting
+Message-Id: <20200211150510.ca864143284c8ccaa906f524@linux-foundation.org>
+In-Reply-To: <20200211224416.29318.44077.stgit@localhost.localdomain>
+References: <20200211224416.29318.44077.stgit@localhost.localdomain>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 11 Feb 2020 14:45:51 -0800 Alexander Duyck <alexander.duyck@gmail.com> wrote:
 
+> This series provides an asynchronous means of reporting free guest pages
+> to a hypervisor so that the memory associated with those pages can be
+> dropped and reused by other processes and/or guests on the host. Using
+> this it is possible to avoid unnecessary I/O to disk and greatly improve
+> performance in the case of memory overcommit on the host.
 
-On 2/11/20 16:15, Alex Elder wrote:
-> On 2/11/20 3:12 PM, Gustavo A. R. Silva wrote:
->> The current codebase makes use of the zero-length array language
->> extension to the C90 standard, but the preferred mechanism to declare
->> variable-length types such as these ones is a flexible array member[1][2],
->> introduced in C99:
->>
->> struct foo {
->>         int stuff;
->>         struct boo array[];
->> };
->>
->> By making use of the mechanism above, we will get a compiler warning
->> in case the flexible array does not occur last in the structure, which
->> will help us prevent some kind of undefined behavior bugs from being
->> inadvertenly introduced[3] to the codebase from now on.
->>
->> This issue was found with the help of Coccinelle.
->>
->> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
->> [2] https://github.com/KSPP/linux/issues/21
->> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  drivers/staging/greybus/raw.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/staging/greybus/raw.c b/drivers/staging/greybus/raw.c
->> index 838acbe84ca0..2b301b2aa107 100644
->> --- a/drivers/staging/greybus/raw.c
->> +++ b/drivers/staging/greybus/raw.c
->> @@ -30,7 +30,7 @@ struct gb_raw {
->>  struct raw_data {
->>  	struct list_head entry;
->>  	u32 len;
->> -	u8 data[0];
->> +	u8 data[];
->>  };
->>  
->>  static struct class *raw_class;
->>
+"greatly improve" sounds nice.
+
+> When enabled we will be performing a scan of free memory every 2 seconds
+> while pages of sufficiently high order are being freed. In each pass at
+> least one sixteenth of each free list will be reported. By doing this we
+> avoid racing against other threads that may be causing a high amount of
+> memory churn.
 > 
-> Does the kamlloc() call in receive_data() have any problems
-> with the sizeof(*raw_data) passed as its argument?
+> The lowest page order currently scanned when reporting pages is
+> pageblock_order so that this feature will not interfere with the use of
+> Transparent Huge Pages in the case of virtualization.
 > 
-
-Not in this case. It'd be different with a one-element array (u8 data[1]),
-though.
-
-> I'm not entirely sure what sizeof(struct-with-flexible-array-member)
-> produces.
+> Currently this is only in use by virtio-balloon however there is the hope
+> that at some point in the future other hypervisors might be able to make
+> use of it. In the virtio-balloon/QEMU implementation the hypervisor is
+> currently using MADV_DONTNEED to indicate to the host kernel that the page
+> is currently free. It will be zeroed and faulted back into the guest the
+> next time the page is accessed.
 > 
+> To track if a page is reported or not the Uptodate flag was repurposed and
+> used as a Reported flag for Buddy pages. We walk though the free list
+> isolating pages and adding them to the scatterlist until we either
+> encounter the end of the list or have processed at least one sixteenth of
+> the pages that were listed in nr_free prior to us starting. If we fill the
+> scatterlist before we reach the end of the list we rotate the list so that
+> the first unreported page we encounter is moved to the head of the list as
+> that is where we will resume after we have freed the reported pages back
+> into the tail of the list.
+> 
+> Below are the results from various benchmarks. I primarily focused on two
+> tests. The first is the will-it-scale/page_fault2 test, and the other is
+> a modified version of will-it-scale/page_fault1 that was enabled to use
+> THP. I did this as it allows for better visibility into different parts
+> of the memory subsystem. The guest is running with 32G for RAM on one
+> node of a E5-2630 v3. The host has had some features such as CPU turbo
+> disabled in the BIOS.
+> 
+> Test                   page_fault1 (THP)    page_fault2
+> Name            tasks  Process Iter  STDEV  Process Iter  STDEV
+> Baseline            1    1012402.50  0.14%     361855.25  0.81%
+>                    16    8827457.25  0.09%    3282347.00  0.34%
+> 
+> Patches Applied     1    1007897.00  0.23%     361887.00  0.26%
+>                    16    8784741.75  0.39%    3240669.25  0.48%
+> 
+> Patches Enabled     1    1010227.50  0.39%     359749.25  0.56%
+>                    16    8756219.00  0.24%    3226608.75  0.97%
+> 
+> Patches Enabled     1    1050982.00  4.26%     357966.25  0.14%
+>  page shuffle      16    8672601.25  0.49%    3223177.75  0.40%
+> 
+> Patches enabled     1    1003238.00  0.22%     360211.00  0.22%
+>  shuffle w/ RFC    16    8767010.50  0.32%    3199874.00  0.71%
 
-The same as sizeof(struct-with-zero-length-array):
+But these differences seem really small - around 1%?  I think we're
+just showing not much harm was caused?
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+> The results above are for a baseline with a linux-next-20191219 kernel,
+> that kernel with this patch set applied but page reporting disabled in
+> virtio-balloon, the patches applied and page reporting fully enabled, the
+> patches enabled with page shuffling enabled, and the patches applied with
+> page shuffling enabled and an RFC patch that makes used of MADV_FREE in
+> QEMU. These results include the deviation seen between the average value
+> reported here versus the high and/or low value. I observed that during the
+> test memory usage for the first three tests never dropped whereas with the
+> patches fully enabled the VM would drop to using only a few GB of the
+> host's memory when switching from memhog to page fault tests.
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+And this is the "great improvement", yes?
 
---
-Gustavo
+Is it possible to measure the end-user-visible benefits of this?
+
+> Any of the overhead visible with this patch set enabled seems due to page
+> faults caused by accessing the reported pages and the host zeroing the page
+> before giving it back to the guest. This overhead is much more visible when
+> using THP than with standard 4K pages. In addition page shuffling seemed to
+> increase the amount of faults generated due to an increase in memory churn.
+> The overehad is reduced when using MADV_FREE as we can avoid the extra
+> zeroing of the pages when they are reintroduced to the host, as can be seen
+> when the RFC is applied with shuffling enabled.
+> 
+> The overall guest size is kept fairly small to only a few GB while the test
+> is running. If the host memory were oversubscribed this patch set should
+> result in a performance improvement as swapping memory in the host can be
+> avoided.
+
+"should result".  Can we firm this up a lot?
