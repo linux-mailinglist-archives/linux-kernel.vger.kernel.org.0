@@ -2,64 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72CBF1591AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 15:17:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A55B1591BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2020 15:20:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730013AbgBKORN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 09:17:13 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:52088 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728495AbgBKORN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 09:17:13 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 12EAC98FE9F5F2753074;
-        Tue, 11 Feb 2020 22:16:55 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Tue, 11 Feb 2020
- 22:16:45 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <linux-net-drivers@solarflare.com>, <ecree@solarflare.com>,
-        <mhabets@solarflare.com>, <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] sfc: remove unused variable 'efx_default_channel_type'
-Date:   Tue, 11 Feb 2020 22:16:06 +0800
-Message-ID: <20200211141606.47180-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1730082AbgBKOUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 09:20:40 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:57047 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728124AbgBKOUk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 09:20:40 -0500
+Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 01BEIxQr052722;
+        Tue, 11 Feb 2020 23:18:59 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav105.sakura.ne.jp);
+ Tue, 11 Feb 2020 23:18:59 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav105.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 01BEIxhe052716
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 11 Feb 2020 23:18:59 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH RFC] virtio_balloon: conservative balloon page shrinking
+To:     "Wang, Wei W" <wei.w.wang@intel.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "tysand@google.com" <tysand@google.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "alexander.h.duyck@linux.intel.com" 
+        <alexander.h.duyck@linux.intel.com>,
+        "rientjes@google.com" <rientjes@google.com>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "namit@vmware.com" <namit@vmware.com>
+References: <345addae-0945-2f49-52cf-8e53446e63b2@i-love.sakura.ne.jp>
+ <286AC319A985734F985F78AFA26841F73E429F32@shsmsx102.ccr.corp.intel.com>
+ <202002100357.01A3vNNU089831@www262.sakura.ne.jp>
+ <286AC319A985734F985F78AFA26841F73E42AD6D@shsmsx102.ccr.corp.intel.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <51306985-90ac-6e6b-d085-4e076698c48c@i-love.sakura.ne.jp>
+Date:   Tue, 11 Feb 2020 23:18:56 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+In-Reply-To: <286AC319A985734F985F78AFA26841F73E42AD6D@shsmsx102.ccr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drivers/net/ethernet/sfc/efx.c:116:38: warning:
- efx_default_channel_type defined but not used [-Wunused-const-variable=]
+On 2020/02/10 16:27, Wang, Wei W wrote:
+>> Well, my comment is rather: "Do not try to reserve guest's memory. In other
+>> words, do not try to maintain balloons on the guest side. Since host would
+>> be able to cache file data on the host's cache, guests would be able to
+>> quickly fetch file data from host's cache via normal I/O requests." ;-)
+> 
+> Didn't this one. The discussion was about guest pagecache pages v.s. guest balloon pages.
+> Why is host's pagecache here?
 
-commit 83975485077d ("sfc: move channel alloc/removal code")
-left behind this, remove it.
+I'm expecting a mode: "Guests should try to minimize pagecache pages (and teach
+host to treat reclaimed pages as if POSIX_FADV_DONTNEED) instead of managing
+guest balloon pages". In other words, as if
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/ethernet/sfc/efx.c | 1 -
- 1 file changed, 1 deletion(-)
+  while :; sleep 5; echo 1 > /proc/sys/vm/drop_caches; done
 
-diff --git a/drivers/net/ethernet/sfc/efx.c b/drivers/net/ethernet/sfc/efx.c
-index 4481f21a1f43..256807c28ff7 100644
---- a/drivers/net/ethernet/sfc/efx.c
-+++ b/drivers/net/ethernet/sfc/efx.c
-@@ -113,7 +113,6 @@ MODULE_PARM_DESC(debug, "Bitmapped debugging message enable value");
-  *
-  *************************************************************************/
- 
--static const struct efx_channel_type efx_default_channel_type;
- static void efx_remove_port(struct efx_nic *efx);
- static int efx_xdp_setup_prog(struct efx_nic *efx, struct bpf_prog *prog);
- static int efx_xdp(struct net_device *dev, struct netdev_bpf *xdp);
--- 
-2.20.1
+is running in the guest's kernel. And as if
 
+  echo 2 > /proc/sys/vm/drop_caches
+
+is triggered in the guest's kernel when host requested guests to reclaim
+memory. No long-life balloons. Guest balloons do not need to care about
+NUMA. Just leave the management of pagecache pages to the host.
 
