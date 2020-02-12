@@ -2,109 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C98B15A99D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 14:02:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6093315A9A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 14:03:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727962AbgBLNCB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 08:02:01 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49366 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726728AbgBLNCB (ORCPT
+        id S1728042AbgBLNDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 08:03:04 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:58959 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbgBLNDE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 08:02:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=PrfoQn8vKuGaB8AXEbs3Tnqd85k9K0jENuwUtYeXIDU=; b=Z2qfFEHHXtaKNTkfUtjuyEM5XP
-        76QMG0G9GzhovCTT1l2WNUgEiJFOLqTL5jzXnupqhGJl0hrRU4jU3WIOCLU/q8kaYKrQkDvr5uQNI
-        cKMrR32TTh6oGz3HgksXyTA2phG+DFkw5xHrBKBY26dkxgvmYdyGgIrteqPqqim++uFBJ0AFt1hC2
-        /j4XOOjeicMD+AN1QCV0bGUMFF3ZrwE2VFiECftcMBR6F1GKELeiVhi79mBCoYDy6uglQOk0q93Bg
-        MC7YElTajOssrz3E2owrRwel/GNP7wwjrbtJIXFZf7vuUZ7vfeKU8CTqoVcFtmKJwWxkIYh6Pflwk
-        tYxYn51w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1reS-0000bf-TX; Wed, 12 Feb 2020 13:02:00 +0000
-Date:   Wed, 12 Feb 2020 05:02:00 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/25] mm: Optimise find_subpage for !THP
-Message-ID: <20200212130200.GC7778@bombadil.infradead.org>
-References: <20200212041845.25879-1-willy@infradead.org>
- <20200212041845.25879-3-willy@infradead.org>
- <20200212074105.GE7068@infradead.org>
+        Wed, 12 Feb 2020 08:03:04 -0500
+Received: from mail-qt1-f171.google.com ([209.85.160.171]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MgRYd-1jhmbB30Rj-00hwqJ; Wed, 12 Feb 2020 14:03:02 +0100
+Received: by mail-qt1-f171.google.com with SMTP id c5so1465166qtj.6;
+        Wed, 12 Feb 2020 05:03:02 -0800 (PST)
+X-Gm-Message-State: APjAAAWRWtdXZfUQUTC8wFCdhHAnjmvxzzn00eJYoFtelnYyjnmzaduT
+        ZLOf6hkCtvd/0EvTZGmWkJTBWKck5aI4ueOj6ic=
+X-Google-Smtp-Source: APXvYqy06iM4mphE8iImJ5H3xGHM0E61H0W3gl72SDsnuQ8ERp4zy8pETyfnDlE0AXLBVDG71JEvVqBMlcGftON602Q=
+X-Received: by 2002:ac8:1977:: with SMTP id g52mr18800788qtk.18.1581512581526;
+ Wed, 12 Feb 2020 05:03:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200212074105.GE7068@infradead.org>
+References: <cover.1581497860.git.michal.simek@xilinx.com>
+In-Reply-To: <cover.1581497860.git.michal.simek@xilinx.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 12 Feb 2020 14:02:45 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1NymovoUxYBF8Ok8Rfke7ECW49bmc+K-=vtH_Bz8_7jQ@mail.gmail.com>
+Message-ID: <CAK8P3a1NymovoUxYBF8Ok8Rfke7ECW49bmc+K-=vtH_Bz8_7jQ@mail.gmail.com>
+Subject: Re: [PATCH 00/10] Hi,
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Simek <monstr@monstr.eu>, git@xilinx.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Borislav Petkov <bp@suse.de>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Mubin Sayyed <mubinusm@xilinx.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Siva Durga Prasad Paladugu <siva.durga.paladugu@xilinx.com>,
+        Stefan Asserhall <stefan.asserhall@xilinx.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:dYBbjfk8Z7SogIlHkWnFJ6gFDKjQUD1ts7iX5TjNDEwv+GB/QB2
+ xjMGy7pc5+Dzq0zrrM6MYBYXjJSCkIEQpiKomeNMc8LsD2PjcHNWJfhH0iPTdTsWtdeeFJI
+ kVig434j7RwFrzXVuQ+y1s8yuO/NV4MNy7MtE8D+NlkaN2bxdsF08GaNkgjcMZmQ9Q+IlJJ
+ d0qWW2kRHSujsPIuW41Uw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:efXOSkONAIg=:aEwYcKVo+l66r/Gv02BnMG
+ yYo0mAAEwCxHIdeu6JbZ+rmeydcpnORwtksxJN/t7ROs8TegQp8KSUvlrgb2x4lx5zjT5wRVP
+ 6ylDZTPegC+1u+ULugfAzLXVJCrqe6dWn6+10X2V0Wt1HkgwLMW7EUto+/w7IqcMhiOJV5QRR
+ u9OR3/bta09DyOhqQfCMrjebk3VliSGad0ZgAYVmgZgUc4V+O7bAvlqZH5vSYtk8wD+4W94kp
+ QXj/eFXNP9pVYGNwJFTwmvwgDD0yYZG8GMxx4DsMS54h1edK8K1AZgC5qmruFY4RG4Dtec+TE
+ OJICgMmlmja/T6UUOiNB4RjGrfHcjW8bwHEzfDMdCYRFPQVZTklQzcp6Bej14TMDN0dHvwD7T
+ Vtn5sebb2uVb3og/6V1KeLBcHbGbZcnAhsNgmlvovDgpDHwkAkni8QG3hOYQl9euQxYykZ3Vs
+ AyutUPdqBLny335336I/cruO+eYYjWeL8Yk1AnhKuaNTAMKodRV1aPysAum4EhQupgMTUiKrD
+ h6l9zxgNdT0sSpSJj7ocG+cRlnrcN8K84ewcYLQ07T4kk2rBI476W3RjA1p4hlhdyVPIBRXfq
+ Iiy7A/QJu9dYJR5HpmFJoBGNJf/88Bs1/gWzgzMkDo6nEw+9xOPe2bWgXUQnguvZIi9fJtkdP
+ qfVgoJm8XF2gNvaOFpeBcWbJnS7r43pgjGK+A5BY9UAHQhUQJqxTozXsUicQFDLFEAPvxuHF9
+ +YVVHG6mm5qFLdfUH3SiYkw7HQQFntMgcABQGcw/yqHhPzc0LpUkEJ+R8FjhT/iMNt2FdNrwq
+ cBHQdb9uHX12sxg+7OMqlhUtYaMuurNUUp2NPB8wizou3gQr4A=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 11:41:05PM -0800, Christoph Hellwig wrote:
-> On Tue, Feb 11, 2020 at 08:18:22PM -0800, Matthew Wilcox wrote:
-> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > 
-> > If THP is disabled, find_subpage can become a no-op.
-> > 
-> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > ---
-> >  include/linux/pagemap.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> > index 75bdfec49710..0842622cca90 100644
-> > --- a/include/linux/pagemap.h
-> > +++ b/include/linux/pagemap.h
-> > @@ -340,7 +340,7 @@ static inline struct page *find_subpage(struct page *page, pgoff_t offset)
-> >  
-> >  	VM_BUG_ON_PAGE(PageTail(page), page);
-> >  
-> > -	return page + (offset & (compound_nr(page) - 1));
-> > +	return page + (offset & (hpage_nr_pages(page) - 1));
-> >  }
-> 
-> So just above the quoted code is a
-> 
-> 	if (PageHuge(page))
-> 		return page;
-> 
-> So how can we get into a compound page that is not a huge page, but
-> only if THP is enabled?  (Yes, maybe I'm a little rusty on VM
-> internals).
+On Wed, Feb 12, 2020 at 9:58 AM Michal Simek <michal.simek@xilinx.com> wrote:
+>
+>
+> I am sending this series as before SMP support.
+> Most of these patches are clean ups and should be easy to review them. I
+> expect there will be more discussions about SMP support.
 
-That's for hugetlbfs:
+Agreed.
 
-        if (!PageCompound(page))
-                return 0;
+I had one question about a detail, other than that:
 
-        page = compound_head(page);
-        return page[1].compound_dtor == HUGETLB_PAGE_DTOR;
-
-> Can you add comments describing the use case of this function and why
-> it does all these checks?  It looks like black magic to me.
-
-Would this help?
-
--static inline struct page *find_subpage(struct page *page, pgoff_t offset)
-+/*
-+ * Given the page we found in the page cache, return the page corresponding
-+ * to this offset in the file
-+ */
-+static inline struct page *find_subpage(struct page *head, pgoff_t offset)
- {
--       if (PageHuge(page))
--               return page;
-+       /* HugeTLBfs wants the head page regardless */
-+       if (PageHuge(head))
-+               return head;
- 
--       VM_BUG_ON_PAGE(PageTail(page), page);
-+       VM_BUG_ON_PAGE(PageTail(head), head);
- 
--       return page + (offset & (hpage_nr_pages(page) - 1));
-+       return head + (offset & (hpage_nr_pages(head) - 1));
- }
-
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
