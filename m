@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B44A15A4F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:37:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE59215A4F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:37:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728926AbgBLJhE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 04:37:04 -0500
-Received: from outbound-smtp38.blacknight.com ([46.22.139.221]:45574 "EHLO
-        outbound-smtp38.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728904AbgBLJhC (ORCPT
+        id S1728945AbgBLJhK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 04:37:10 -0500
+Received: from outbound-smtp51.blacknight.com ([46.22.136.235]:53027 "EHLO
+        outbound-smtp51.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728626AbgBLJhB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:37:02 -0500
-Received: from mail.blacknight.com (unknown [81.17.254.10])
-        by outbound-smtp38.blacknight.com (Postfix) with ESMTPS id 7F145C28
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 09:36:59 +0000 (GMT)
-Received: (qmail 25367 invoked from network); 12 Feb 2020 09:36:59 -0000
+        Wed, 12 Feb 2020 04:37:01 -0500
+Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
+        by outbound-smtp51.blacknight.com (Postfix) with ESMTPS id 2CA22FA775
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 09:37:00 +0000 (GMT)
+Received: (qmail 25413 invoked from network); 12 Feb 2020 09:37:00 -0000
 Received: from unknown (HELO stampy.112glenside.lan) (mgorman@techsingularity.net@[84.203.18.57])
   by 81.17.254.9 with ESMTPA; 12 Feb 2020 09:36:59 -0000
 From:   Mel Gorman <mgorman@techsingularity.net>
@@ -30,9 +30,9 @@ Cc:     Ingo Molnar <mingo@kernel.org>,
         Phil Auld <pauld@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 06/11] sched/numa: Prefer using an idle cpu as a migration target instead of comparing tasks
-Date:   Wed, 12 Feb 2020 09:36:49 +0000
-Message-Id: <20200212093654.4816-7-mgorman@techsingularity.net>
+Subject: [PATCH 07/11] sched/numa: Find an alternative idle CPU if the CPU is part of an active NUMA balance
+Date:   Wed, 12 Feb 2020 09:36:50 +0000
+Message-Id: <20200212093654.4816-8-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20200212093654.4816-1-mgorman@techsingularity.net>
 References: <20200212093654.4816-1-mgorman@techsingularity.net>
@@ -41,218 +41,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-task_numa_find_cpu can scan a node multiple times. Minimally it scans to
-gather statistics and later to find a suitable target. In some cases, the
-second scan will simply pick an idle CPU if the load is not imbalanced.
-
-This patch caches information on an idle core while gathering statistics
-and uses it immediately if load is not imbalanced to avoid a second scan
-of the node runqueues. Preference is given to an idle core rather than an
-idle SMT sibling to avoid packing HT siblings due to linearly scanning the
-node cpumask.
-
-As a side-effect, even when the second scan is necessary, the importance
-of using select_idle_sibling is much reduced because information on idle
-CPUs is cached and can be reused.
-
-Note that this patch actually makes is harder to move to an idle CPU
-as multiple tasks can race for the same idle CPU due to a race checking
-numa_migrate_on. This is addressed in the next patch.
+Multiple tasks can attempt to select and idle CPU but fail because
+numa_migrate_on is already set and the migration fails. Instead of failing,
+scan for an alternative idle CPU. select_idle_sibling is not used because
+it requires IRQs to be disabled and it ignores numa_migrate_on allowing
+multiple tasks to stack. This scan may still fail if there are idle
+candidate CPUs due to races but if this occurs, it's best that a task
+stay on an available CPU that move to a contended one.
 
 Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 ---
- kernel/sched/fair.c | 123 +++++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 107 insertions(+), 16 deletions(-)
+ kernel/sched/fair.c | 40 ++++++++++++++++++++++------------------
+ 1 file changed, 22 insertions(+), 18 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 6005ce28033b..d2a58b19430e 100644
+index d2a58b19430e..3f518b0d9261 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -1486,23 +1486,87 @@ struct numa_stats {
- 
- 	/* Total compute capacity of CPUs on a node */
- 	unsigned long compute_capacity;
-+
-+	/* Details on idle CPUs */
-+	int idle_cpu;
- };
- 
-+static inline bool is_core_idle(int cpu)
-+{
-+#ifdef CONFIG_SCHED_SMT
-+	int sibling;
-+
-+	for_each_cpu(sibling, cpu_smt_mask(cpu)) {
-+		if (cpu == sibling)
-+			continue;
-+
-+		if (!idle_cpu(cpu))
-+			return false;
-+	}
-+#endif
-+
-+	return true;
-+}
-+
-+/* Forward declarations of select_idle_sibling helpers */
-+static inline bool test_idle_cores(int cpu, bool def);
-+
- /*
-- * XXX borrowed from update_sg_lb_stats
-+ * Gather all necessary information to make NUMA balancing placement
-+ * decisions that are compatible with standard load balanced. This
-+ * borrows code and logic from update_sg_lb_stats but sharing a
-+ * common implementation is impractical.
-  */
--static void update_numa_stats(struct numa_stats *ns, int nid)
-+static void
-+update_numa_stats(struct numa_stats *ns, int nid,
-+		  struct task_struct *p, bool find_idle)
+@@ -1590,15 +1590,34 @@ static void task_numa_assign(struct task_numa_env *env,
  {
--	int cpu;
-+	int cpu, idle_core = -1;
-+	int last_llc_id = -1;
-+	bool check_smt = false;
- 
- 	memset(ns, 0, sizeof(*ns));
-+	ns->idle_cpu = -1;
- 	for_each_cpu(cpu, cpumask_of_node(nid)) {
- 		struct rq *rq = cpu_rq(cpu);
- 
- 		ns->load += cpu_runnable_load(rq);
- 		ns->compute_capacity += capacity_of(cpu);
-+
-+		if (find_idle && !rq->nr_running && idle_cpu(cpu)) {
-+			int this_llc_id;
-+
-+			if (READ_ONCE(rq->numa_migrate_on) ||
-+			    !cpumask_test_cpu(cpu, p->cpus_ptr))
-+				continue;
-+
-+			if (ns->idle_cpu == -1)
-+				ns->idle_cpu = cpu;
-+
-+			if (!static_branch_likely(&sched_smt_present) ||
-+			    idle_core >= 0) {
-+				continue;
-+			}
-+
-+			/* Check if idle cores exist on this LLC */
-+			this_llc_id = per_cpu(sd_llc_id, cpu);
-+			if (last_llc_id != this_llc_id) {
-+				check_smt = test_idle_cores(cpu, false);
-+				last_llc_id = this_llc_id;
-+			}
-+
-+			/*
-+			 * Prefer cores instead of packing HT siblings
-+			 * and triggering future load balancing.
-+			 */
-+			if (check_smt && is_core_idle(cpu))
-+				idle_core = cpu;
-+			check_smt = false;
-+		}
- 	}
- 
-+	if (idle_core >= 0)
-+		ns->idle_cpu = idle_core;
- }
- 
- struct task_numa_env {
-@@ -1527,7 +1591,7 @@ static void task_numa_assign(struct task_numa_env *env,
  	struct rq *rq = cpu_rq(env->dst_cpu);
  
- 	/* Bail out if run-queue part of active NUMA balance. */
--	if (xchg(&rq->numa_migrate_on, 1))
-+	if (env->best_cpu != env->dst_cpu && xchg(&rq->numa_migrate_on, 1))
+-	/* Bail out if run-queue part of active NUMA balance. */
+-	if (env->best_cpu != env->dst_cpu && xchg(&rq->numa_migrate_on, 1))
++	/* Check if run-queue part of active NUMA balance. */
++	if (env->best_cpu != env->dst_cpu && xchg(&rq->numa_migrate_on, 1)) {
++		int cpu;
++		int start = env->dst_cpu;
++
++		/* Find alternative idle CPU. */
++		for_each_cpu_wrap(cpu, cpumask_of_node(env->dst_nid), start) {
++			if (cpu == env->best_cpu || !idle_cpu(cpu) ||
++			    !cpumask_test_cpu(cpu, env->p->cpus_ptr)) {
++				continue;
++			}
++
++			env->dst_cpu = cpu;
++			rq = cpu_rq(env->dst_cpu);
++			if (!xchg(&rq->numa_migrate_on, 1))
++				goto assign;
++		}
++
++		/* Failed to find an alternative idle CPU */
  		return;
- 
- 	/*
-@@ -1691,19 +1755,39 @@ static void task_numa_compare(struct task_numa_env *env,
- 		goto unlock;
- 
- assign:
--	/*
--	 * One idle CPU per node is evaluated for a task numa move.
--	 * Call select_idle_sibling to maybe find a better one.
--	 */
-+	/* Evaluate an idle CPU for a task numa move. */
- 	if (!cur) {
-+		int cpu = env->dst_stats.idle_cpu;
-+
-+		/* Nothing cached so current CPU went idle since the search. */
-+		if (cpu < 0)
-+			cpu = env->dst_cpu;
-+
- 		/*
--		 * select_idle_siblings() uses an per-CPU cpumask that
--		 * can be used from IRQ context.
-+		 * If the CPU is no longer truly idle and the previous best CPU
-+		 * is, keep using it.
- 		 */
--		local_irq_disable();
--		env->dst_cpu = select_idle_sibling(env->p, env->src_cpu,
-+		if (!idle_cpu(cpu) && env->best_cpu >= 0 &&
-+		    idle_cpu(env->best_cpu)) {
-+			cpu = env->best_cpu;
-+		}
-+
-+		/*
-+		 * Use select_idle_sibling if the previously found idle CPU is
-+		 * not idle any more.
-+		 */
-+		if (!idle_cpu(cpu)) {
-+			/*
-+			 * select_idle_siblings() uses an per-CPU cpumask that
-+			 * can be used from IRQ context.
-+			 */
-+			local_irq_disable();
-+			cpu = select_idle_sibling(env->p, env->src_cpu,
- 						   env->dst_cpu);
--		local_irq_enable();
-+			local_irq_enable();
-+		}
-+
-+		env->dst_cpu = cpu;
- 	}
- 
- 	task_numa_assign(env, cur, imp);
-@@ -1728,6 +1812,13 @@ static void task_numa_find_cpu(struct task_numa_env *env,
- 	 */
- 	maymove = !load_too_imbalanced(src_load, dst_load, env);
- 
-+	/* Use an idle CPU if one has been found already */
-+	if (maymove && env->dst_stats.idle_cpu >= 0) {
-+		env->dst_cpu = env->dst_stats.idle_cpu;
-+		task_numa_assign(env, NULL, 0);
-+		return;
 +	}
-+
- 	for_each_cpu(cpu, cpumask_of_node(env->dst_nid)) {
- 		/* Skip this CPU if the source task cannot migrate */
- 		if (!cpumask_test_cpu(cpu, env->p->cpus_ptr))
-@@ -1788,10 +1879,10 @@ static int task_numa_migrate(struct task_struct *p)
- 	dist = env.dist = node_distance(env.src_nid, env.dst_nid);
- 	taskweight = task_weight(p, env.src_nid, dist);
- 	groupweight = group_weight(p, env.src_nid, dist);
--	update_numa_stats(&env.src_stats, env.src_nid);
-+	update_numa_stats(&env.src_stats, env.src_nid, env.p, false);
- 	taskimp = task_weight(p, env.dst_nid, dist) - taskweight;
- 	groupimp = group_weight(p, env.dst_nid, dist) - groupweight;
--	update_numa_stats(&env.dst_stats, env.dst_nid);
-+	update_numa_stats(&env.dst_stats, env.dst_nid, env.p, true);
  
- 	/* Try to find a spot on the preferred nid. */
- 	task_numa_find_cpu(&env, taskimp, groupimp);
-@@ -1824,7 +1915,7 @@ static int task_numa_migrate(struct task_struct *p)
- 
- 			env.dist = dist;
- 			env.dst_nid = nid;
--			update_numa_stats(&env.dst_stats, env.dst_nid);
-+			update_numa_stats(&env.dst_stats, env.dst_nid, env.p, true);
- 			task_numa_find_cpu(&env, taskimp, groupimp);
- 		}
++assign:
+ 	/*
+ 	 * Clear previous best_cpu/rq numa-migrate flag, since task now
+ 	 * found a better CPU to move/swap.
+ 	 */
+-	if (env->best_cpu != -1) {
++	if (env->best_cpu != -1 && env->best_cpu != env->dst_cpu) {
+ 		rq = cpu_rq(env->best_cpu);
+ 		WRITE_ONCE(rq->numa_migrate_on, 0);
  	}
+@@ -1772,21 +1791,6 @@ static void task_numa_compare(struct task_numa_env *env,
+ 			cpu = env->best_cpu;
+ 		}
+ 
+-		/*
+-		 * Use select_idle_sibling if the previously found idle CPU is
+-		 * not idle any more.
+-		 */
+-		if (!idle_cpu(cpu)) {
+-			/*
+-			 * select_idle_siblings() uses an per-CPU cpumask that
+-			 * can be used from IRQ context.
+-			 */
+-			local_irq_disable();
+-			cpu = select_idle_sibling(env->p, env->src_cpu,
+-						   env->dst_cpu);
+-			local_irq_enable();
+-		}
+-
+ 		env->dst_cpu = cpu;
+ 	}
+ 
 -- 
 2.16.4
 
