@@ -2,99 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4064D15A1E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 08:25:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CC5815A1F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 08:27:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728334AbgBLHZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 02:25:52 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44876 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728237AbgBLHZw (ORCPT
+        id S1728353AbgBLH1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 02:27:37 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36583 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728315AbgBLH1h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 02:25:52 -0500
-Received: by mail-pf1-f195.google.com with SMTP id y5so776166pfb.11;
-        Tue, 11 Feb 2020 23:25:50 -0800 (PST)
+        Wed, 12 Feb 2020 02:27:37 -0500
+Received: by mail-pg1-f195.google.com with SMTP id d9so748252pgu.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 23:27:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :in-reply-to;
-        bh=vsblHe4BrZXvpcTixylwUCR+Uct1lSaVWajbm+319XI=;
-        b=HYj9kQWzQZ3fTJMk/bGjgfSATXE1MFXHn2Bh1bfBiqZL5oU1T/C6I4MSTVU5O4AX91
-         BM/yA4DXtx9BpAXYND1akj0Z4GZ4pxCjV3+d0y+4jG7rgIhT4EQJCz7TgimW6coMuaW0
-         nxKmXGPboS5FSnkZd878rI4rXkrUevqhM3XOsh2oFB+r+hHzwWbiuR9qEeWYJhznIqYp
-         Gv17x96BCWlZVUWNYjXZsrE40l1Oug8Qc7+wI0MncYS/I+BxtZvxKNTrU5xbbgxqo55S
-         knHy4QuAGo0sHzdH+zkLtT6p8CiEzXMNAUTwoE8I6oyIIzQV8GAHjgSbLFCImIaVYTMD
-         iZnA==
+        d=rajagiritech-edu-in.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=8ibAYzH7JwVChn/H9xG7OZ9qhyi4dW0rrjKwNb5KAWM=;
+        b=GQn85WKXRnkAY5iH0k9SE+x/iSThmMmKghqDjUFg2sHbDyFtvdqI7TM4RiX0EEwmLe
+         h8u2IonB0PxHjglmyiEljJSChjO3yQaFpkKcnxPszQPElPJPu22iukCoWSV8Wj3L65uc
+         ZnWtY4izdXQj881iVbMNCkRu4Q3dWL52WAgDjIB6lbE6qGQAV95RmpfY6giTClUumhz7
+         jK8UkZ6Q3m5gpzW1JYBVxBGJilyHnqkPfasDpSU62lG7p9WFXOY+zHrhsPnDunSFwIQF
+         hXy7J/9QM2WJdw4A4s86oS5VqVeqp8MML4qvl7tZ9T23zzImJ/1tjdELNWk8/AcReZ3n
+         D1Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:in-reply-to;
-        bh=vsblHe4BrZXvpcTixylwUCR+Uct1lSaVWajbm+319XI=;
-        b=Pl1l5+fiUqxf4cHv7D8c9z/Xx5JBJYJ2nrA/Ht08DnXqoIui3IqJO2BG5eRzWU3NqK
-         pvO6Ss7/IBpFT6Sl/Ks5bCYRLsQTKxFERvyp4WrKQ10Rzd+eSLYyL4vvXEOHilniBY26
-         Jmc+MMscX8NY6CwZSTH/yQbZTYJa2oOUwYgp+zGq0f5YyIFS5/j+4VVOm1rUjYl4DDTZ
-         te5CbRBglq5x7sTPpAAlrEdDwe4aiJQ5XiIrTmbJYlmW1ndqHYG/cyygwxybsgfMmybT
-         swuIAOmQv9zOs5lNSkMHu3Byrj8P4Y08EeFuzfE3DrszaN+VG6WAuwBn4R/1BXNGdzk2
-         q8eg==
-X-Gm-Message-State: APjAAAUD7qeK3CQgs+1FO+4ewPzSKbxG81D1mHsDbhaF+SVAwSoin+Un
-        rccWhMEgU3+OiCVBkq38P8I=
-X-Google-Smtp-Source: APXvYqxc/lSW35juqj9FltNn78TjgtbMbrka6XgwjPBR0EJH2QpY1Uqq7tJ3PWBdgH3NEhMLHLi9Jg==
-X-Received: by 2002:aa7:8804:: with SMTP id c4mr7328335pfo.214.1581492349926;
-        Tue, 11 Feb 2020 23:25:49 -0800 (PST)
-Received: from workstation-portable ([103.211.17.79])
-        by smtp.gmail.com with ESMTPSA id e2sm5510979pjs.25.2020.02.11.23.25.46
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=8ibAYzH7JwVChn/H9xG7OZ9qhyi4dW0rrjKwNb5KAWM=;
+        b=dzdJuQKM7wQTCtR6OwbH9kGUsf6ahjaeqjgf/quh43hp5u2ycCw7+RXzyhb47Jks63
+         HHGi2+ACBwKuNjRXE2c9nH21jhAXL5o47kA3hoOs2KPn2e/8aA3T7834AVD7KfpvutEC
+         WhoP4QtSI6juriBhNDSWRQxMAUkD7u9cHuGSlERvQ82fAoWNpYJhhZtm419Aq0FOdh9d
+         Dkya9nPmlMYVVm9zaceu8aW+D49zUNzx+S/He9CEYptLyheVZQn0HRRTwVY5QQQE8TDi
+         8Or9LvgQ+CRuT55uiLXp0TbpZrA9l4JiiQu7bVSc2E+6wHYOayo3N2QsCYaguwAIe7tE
+         dDPA==
+X-Gm-Message-State: APjAAAUp6EV1K0tPS+HBMvc4w/quuwWu4shlxyKp7lB7s5xITFRMnvBN
+        zWvQCnu31GcVoaGXW4rUWUkA5Q==
+X-Google-Smtp-Source: APXvYqzb1q6Be3UwEdG2DOk2jCioBvFQ1A3EV8QQ+Cxg85nPVGVMz8mF0U3jqDZ6cDb4AbclPMYhCA==
+X-Received: by 2002:a63:9dcd:: with SMTP id i196mr10811370pgd.93.1581492456207;
+        Tue, 11 Feb 2020 23:27:36 -0800 (PST)
+Received: from debian ([122.183.169.124])
+        by smtp.gmail.com with ESMTPSA id 23sm6843069pfh.28.2020.02.11.23.27.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 23:25:49 -0800 (PST)
-Date:   Wed, 12 Feb 2020 12:55:43 +0530
-From:   Amol Grover <frextrite@gmail.com>
-To:     Hannes Reinecke <hare@suse.de>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Amol Grover <frextrite@gmail.com>
-Subject: [PATCH 2/2 RESEND] scsi: qedf: qedf_main: Pass lockdep expression to
- RCU lists
-Message-ID: <20200212072543.GI14453@workstation-portable>
+        Tue, 11 Feb 2020 23:27:35 -0800 (PST)
+Date:   Wed, 12 Feb 2020 12:57:28 +0530
+From:   Jeffrin Jose <jeffrin@rajagiritech.edu.in>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
+        jeffrin@rajagiritech.edu.in
+Subject: Re: [PATCH 5.5 000/367] 5.5.3-stable review
+Message-ID: <20200212072728.GA4944@debian>
+References: <20200210122423.695146547@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200212072339.GH14453@workstation-portable>
-X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200210122423.695146547@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-lport->disc.rports is traversed using list_for_each_entry_rcu
-outside an RCU read-side critical section but under the protection
-of lport->disc.disc_mutex.
+On Mon, Feb 10, 2020 at 04:28:33AM -0800, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.5.3 release.
+> There are 367 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 12 Feb 2020 12:18:57 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.5.3-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.5.y
+> and the diffstat can be found below.
 
-Hence, add corresponding lockdep expression to silence false-positive
-lockdep warnings, and harden RCU lists.
+hello,
 
-Signed-off-by: Amol Grover <frextrite@gmail.com>
----
- drivers/scsi/qedf/qedf_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/qedf/qedf_main.c b/drivers/scsi/qedf/qedf_main.c
-index 604856e72cfb..17eab7f8cf05 100644
---- a/drivers/scsi/qedf/qedf_main.c
-+++ b/drivers/scsi/qedf/qedf_main.c
-@@ -420,7 +420,8 @@ static void qedf_link_recovery(struct work_struct *work)
- 	 * ADISC since the rport is in state ready.
- 	 */
- 	mutex_lock(&lport->disc.disc_mutex);
--	list_for_each_entry_rcu(rdata, &lport->disc.rports, peers) {
-+	list_for_each_entry_rcu(rdata, &lport->disc.rports, peers,
-+				lockdep_is_held(&lport->disc.disc_mutex)) {
- 		if (kref_get_unless_zero(&rdata->kref)) {
- 			fc_rport_login(rdata);
- 			kref_put(&rdata->kref, fc_rport_destroy);
--- 
-2.24.1
-
+compiled and booted 5.5.3-rc2+ . No new error according to "sudo dmesg -l err"
