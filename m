@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8330515B124
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:31:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41C3E15B12B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:32:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728911AbgBLTbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 14:31:12 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.101]:34067 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727361AbgBLTbL (ORCPT
+        id S1728949AbgBLTcu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 14:32:50 -0500
+Received: from gateway31.websitewelcome.com ([192.185.143.31]:38351 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727439AbgBLTcu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 14:31:11 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id B4D0E607B87
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 13:31:10 -0600 (CST)
+        Wed, 12 Feb 2020 14:32:50 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 4D4572B41
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 13:32:49 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 1xj4j0knLRP4z1xj4jSNtQ; Wed, 12 Feb 2020 13:31:10 -0600
+        id 1xkfjcwi3Sl8q1xkfjLi9m; Wed, 12 Feb 2020 13:32:49 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -25,28 +25,25 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=qVT3JEBGacGB2ITpJDbesv5hNV8nBdRWBrUKUxTwmPU=; b=SO0RE1grbeu4rE7C9/5vgBTS9v
-        K+ivX9nq4nObO5gnVyWWT0j5krix2wwszSD9HtfY7xNU83Ao1JIqSDAcivueHllxK5q5NjlumO/9x
-        lAkWMdQtrLxYO0DsEm2ozZ2D/WyOlP32QTmLnBGrNxsm51sc9eiIcBkCLbzAB9YxV2lslJvU/CBDK
-        JBy1DJsGvdL4CdSrL13a6+iARyCiqeFtU6ZhV1jTHmbBX1u+VO8A+gG1QuEH5wC5WyfukIx26BZYM
-        uOGnBXi930Jwk5WOrLliqaaVy4DpJ73ipH895mNAE+lTfv3eMlLKmUFgijJ0BD7C9/TeKFSumIaWP
-        xKngX4VQ==;
-Received: from [201.144.174.25] (port=10240 helo=embeddedor)
+        bh=BP5sguBbX0hQJxC50qnvMrrOb4NGZsy3OYZYhmQRyOg=; b=BGl7aV0/nJq8AgDBf1oDacH614
+        bWQhNebXkmiFR28mZg1wmXIxySFWT+vDQHbJDhMMY6T9/gMBaSg4Q6NCI1k0kmxRcG7Jd3AmiSXOZ
+        eKYOIDdWDXSvc0lxQOs0iM09rBVv7pzshzpF7TMwCtODY7FevEr8Vfad5A3g1kIl18PiUGq2g/Cir
+        uZqtqUQsUqeeCVnZF3fv5whzpD7YHA39igpv4TF2JizWbJEMss9KNMkFcEgyHtbpG8UKSYw/7QyBZ
+        w5ZUj+VArk+SDl0PVi45MfubOTw/CFwsQTctZBSsw90fQazz8cy+2DTUJD6VFES3fNBQHi955bTwz
+        hqVusP7w==;
+Received: from [201.144.174.25] (port=23494 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1j1xj3-0017cN-2B; Wed, 12 Feb 2020 13:31:09 -0600
-Date:   Wed, 12 Feb 2020 13:33:44 -0600
+        id 1j1xkd-0018b1-TF; Wed, 12 Feb 2020 13:32:48 -0600
+Date:   Wed, 12 Feb 2020 13:35:23 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Dave Airlie <airlied@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     virtualization@lists.linux-foundation.org,
-        spice-devel@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] drm/qxl: replace zero-length array with flexible-array member
-Message-ID: <20200212193344.GA27929@embeddedor>
+Subject: [PATCH] tty: n_gsm: Replace zero-length array with flexible-array
+ member
+Message-ID: <20200212193523.GA28826@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -59,13 +56,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 201.144.174.25
 X-Source-L: No
-X-Exim-ID: 1j1xj3-0017cN-2B
+X-Exim-ID: 1j1xkd-0018b1-TF
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.144.174.25]:10240
+X-Source-Sender: (embeddedor) [201.144.174.25]:23494
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 24
+X-Email-Count: 27
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -103,22 +100,22 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/gpu/drm/qxl/qxl_cmd.c | 2 +-
+ drivers/tty/n_gsm.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/qxl/qxl_cmd.c b/drivers/gpu/drm/qxl/qxl_cmd.c
-index ef09dc6bc635..d1086b2a6892 100644
---- a/drivers/gpu/drm/qxl/qxl_cmd.c
-+++ b/drivers/gpu/drm/qxl/qxl_cmd.c
-@@ -36,7 +36,7 @@ static int qxl_reap_surface_id(struct qxl_device *qdev, int max_to_reap);
- 
- struct ring {
- 	struct qxl_ring_header      header;
--	uint8_t                     elements[0];
-+	uint8_t                     elements[];
+diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
+index f1c90fa2978e..5f8c30f0538e 100644
+--- a/drivers/tty/n_gsm.c
++++ b/drivers/tty/n_gsm.c
+@@ -97,7 +97,7 @@ struct gsm_msg {
+ 	u8 ctrl;		/* Control byte + flags */
+ 	unsigned int len;	/* Length of data block (can be zero) */
+ 	unsigned char *data;	/* Points into buffer but not at the start */
+-	unsigned char buffer[0];
++	unsigned char buffer[];
  };
  
- struct qxl_ring {
+ /*
 -- 
 2.25.0
 
