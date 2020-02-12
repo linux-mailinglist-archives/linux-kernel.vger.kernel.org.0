@@ -2,61 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE2B715A41D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:58:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D49D015A41F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:58:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728826AbgBLI62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 03:58:28 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42929 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728810AbgBLI60 (ORCPT
+        id S1728852AbgBLI6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 03:58:30 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45864 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728816AbgBLI62 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 03:58:26 -0500
-Received: by mail-wr1-f66.google.com with SMTP id k11so1179283wrd.9
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:58:25 -0800 (PST)
+        Wed, 12 Feb 2020 03:58:28 -0500
+Received: by mail-wr1-f65.google.com with SMTP id g3so1170358wrs.12
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:58:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=monstr-eu.20150623.gappssmtp.com; s=20150623;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lzoziiVR7vR4PzyoA0R1BtNvL298bTwPbZ8hvbCMo1k=;
-        b=c2oOuwjQAiTZ7GPYvkNIjvl9NWvz4/CTahKxhijQ1hN8Adwfa06Z/GVtGe3o5StzrT
-         /VhUf+E4b69zWDv19xPgeoane1VcpT/5lqmNw7aBFN5Mo0BkRzsNNrmHsJ3dL6XxEI5A
-         ZI66pEcR77E4obf895OK/PMVEuYRKHWHUDFuVa8x2ZkIM1+BReFipnrL3A53mUQeAY2t
-         QTCt/cJ4KTnRLoAd5sdjkH14RJAueDkJ1YHru/5I/hP1AXipArjAEAXfK8G/4MeV0Wbg
-         i/zVIEt+OWhh9U50Uoo7YtvKlhN5SgXW5c5n4IHo9hy9nEol+nUdSBmOR69SiLZFiyR0
-         7unA==
+        bh=PaNb/Wp11IhwyKZtaeQKdn01ArSCATdD8YJx8G+8pWE=;
+        b=pvAOFnQmyb0XpA+3rrFTqQcXgWZcZCpPzPU33FovZQy6p03SaD2vv8L9o14UdUxpV4
+         lRnvQWA8AhmVTmy+NXcIyx+3RCBFVt6T52mgROqI4g7nEo7B28nJJ110uTTtCENtgFUU
+         MHfpS/MJ3RQtT+12WCGlJII+jr1NL8Zf7S3JhzWhUCKPzhIUKHF6ZBH9+rMTQASlDrKr
+         nOGpUIWJYfO8faoOhN1iAJVDyc7QhTXdVDgaSzgG9kA8jBoyGWc4cTkOdbIohA5LTqbJ
+         NoHHgIL5VwYGSa+tx0onKADDLFh9xu3UA1RyVj9ngAQUODL/Vy4dXJ3VDcncqarJLsZ8
+         iITw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=lzoziiVR7vR4PzyoA0R1BtNvL298bTwPbZ8hvbCMo1k=;
-        b=SEET94QkOUURViQLiKW94MQo5Q/qP5/dc8UgXjdp7zRQWljmfgANEufBjQYreBpSMn
-         IeYMNTNEyCbnLBvV4eidz9v1f3b0D4tjsgfnVkV104aW1A39zbQPiNfjH8DSXErfVcp1
-         lHT4YxAfj/T14ToIRXJsbdwAIN03XsydSiAzNd6OMY5Z+O+GEfIaIEUDp6mfEJJIwi/p
-         nI3NjbqGTbDvi0nr3JYTSKHBr/IyJ+UwM/dhe6ENEP6Sh45KNLHTQiyz1nfrvusAE6CV
-         /zd3yA+EZP5Kdhe5uP1Q1fsBqs/2E/IoXOrYLR9Psbi4RAIongWBzvCngm0OZq0uHpq7
-         iXqw==
-X-Gm-Message-State: APjAAAVk9UDiR+tFlEeaD9eFLTZAJdIomldmv/Oj88Ih2k7AanMHKmMO
-        nvespiiGkkZc5VuUTkQC2y4y8s87qGQQFQ==
-X-Google-Smtp-Source: APXvYqxsRfOKMsZAEeJFezagdc1amW5plUSVvpuO5+opnrUcBWR+oaI/xUF3fEwPbQ+ATLCn1AOpkA==
-X-Received: by 2002:adf:f3d0:: with SMTP id g16mr14546209wrp.2.1581497904511;
-        Wed, 12 Feb 2020 00:58:24 -0800 (PST)
+        bh=PaNb/Wp11IhwyKZtaeQKdn01ArSCATdD8YJx8G+8pWE=;
+        b=REDt6nvNneneDPIrDEwi8zom4o7M/Tl1n98zyqWqjMNZiq0PaLlvK1bhSOWlq8oIxw
+         fCQA+AY9kBB/lzdvbEqYmOgdK68uva2wMd8oyXpr7i2SdbCf5T4kC5Felpm2V6PNYub4
+         Gu7Dy2c+yWJh9q22F9MeMCVIhO7r7H3QhPDAFuGCf5YZDnBy9a24NaL8E1Z8HdNToRXL
+         I3kTFQHi/GbMDcat7rdD59wgfjOgjXpLYBYcMIYVZC6E89vQ5l18Wt0eg1QK9+UsSg6y
+         vm7MzFXwbHVsWWY5sqsZMGWnOyTJCp7WBXZtbTKXK1RWNUfq0r4zw/BfYRx9YydRdjy4
+         kJyA==
+X-Gm-Message-State: APjAAAUTC+lBqWabaCgLJxmaP7wHvr4T9siNPrEjspkvDG+jOv6hf51d
+        17s9QvDryRItds4OL+x8EO3yVBsk6numJA==
+X-Google-Smtp-Source: APXvYqzKiH9zifcTTIKwEkQwuhqhZwzylYLpbie9d/XFWY0VwbhKL+YdrSFnArDcgBvpusTZBora6w==
+X-Received: by 2002:a5d:4bd0:: with SMTP id l16mr5409699wrt.271.1581497906135;
+        Wed, 12 Feb 2020 00:58:26 -0800 (PST)
 Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id a22sm7476983wmd.20.2020.02.12.00.58.23
+        by smtp.gmail.com with ESMTPSA id n13sm7498001wmd.21.2020.02.12.00.58.25
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Feb 2020 00:58:24 -0800 (PST)
+        Wed, 12 Feb 2020 00:58:25 -0800 (PST)
 From:   Michal Simek <michal.simek@xilinx.com>
 To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
         michal.simek@xilinx.com, git@xilinx.com, arnd@arndb.de
-Cc:     Stefan Asserhall <stefan.asserhall@xilinx.com>,
-        Borislav Petkov <bp@suse.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Siva Durga Prasad Paladugu <siva.durga.paladugu@xilinx.com>
-Subject: [PATCH 09/10] microblaze: Define percpu sestion in linker file
-Date:   Wed, 12 Feb 2020 09:58:06 +0100
-Message-Id: <cc32b5d984c7f3087d16f6248b012d9b8d59fa78.1581497860.git.michal.simek@xilinx.com>
+Cc:     Stefan Asserhall <stefan.asserhall@xilinx.com>
+Subject: [PATCH 10/10] microblaze: Use asm generic cmpxchg.h for !SMP case
+Date:   Wed, 12 Feb 2020 09:58:07 +0100
+Message-Id: <4d8c08bc549fc663eba0237a4ccd5e1e0e1bc01c.1581497860.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <cover.1581497860.git.michal.simek@xilinx.com>
 References: <cover.1581497860.git.michal.simek@xilinx.com>
@@ -67,38 +62,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Asserhall <stefan.asserhall@xilinx.com>
+The whole implementation is done in asm-generic/cmpxchg.h file and there is
+no reason to duplicate it.
+Also do not include asm-generic/cmpxchg-local.h because it is already
+included from asm-generic/cmpxchg.h
 
-Adding SMP requires to have percpu section defined.
-
-Signed-off-by: Stefan Asserhall <stefan.asserhall@xilinx.com>
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Reviewed-by: Stefan Asserhall <stefan.asserhall@xilinx.com>
 ---
 
- arch/microblaze/kernel/vmlinux.lds.S | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/microblaze/include/asm/cmpxchg.h | 40 ++-------------------------
+ 1 file changed, 3 insertions(+), 37 deletions(-)
 
-diff --git a/arch/microblaze/kernel/vmlinux.lds.S b/arch/microblaze/kernel/vmlinux.lds.S
-index 2c09fa3a8a01..df07b3d06cd6 100644
---- a/arch/microblaze/kernel/vmlinux.lds.S
-+++ b/arch/microblaze/kernel/vmlinux.lds.S
-@@ -13,6 +13,7 @@ ENTRY(microblaze_start)
+diff --git a/arch/microblaze/include/asm/cmpxchg.h b/arch/microblaze/include/asm/cmpxchg.h
+index 596300c74509..3523b51aab36 100644
+--- a/arch/microblaze/include/asm/cmpxchg.h
++++ b/arch/microblaze/include/asm/cmpxchg.h
+@@ -2,42 +2,8 @@
+ #ifndef _ASM_MICROBLAZE_CMPXCHG_H
+ #define _ASM_MICROBLAZE_CMPXCHG_H
  
- #define RO_EXCEPTION_TABLE_ALIGN	16
+-#include <linux/irqflags.h>
+-
+-void __bad_xchg(volatile void *ptr, int size);
+-
+-static inline unsigned long __xchg(unsigned long x, volatile void *ptr,
+-								int size)
+-{
+-	unsigned long ret;
+-	unsigned long flags;
+-
+-	switch (size) {
+-	case 1:
+-		local_irq_save(flags);
+-		ret = *(volatile unsigned char *)ptr;
+-		*(volatile unsigned char *)ptr = x;
+-		local_irq_restore(flags);
+-		break;
+-
+-	case 4:
+-		local_irq_save(flags);
+-		ret = *(volatile unsigned long *)ptr;
+-		*(volatile unsigned long *)ptr = x;
+-		local_irq_restore(flags);
+-		break;
+-	default:
+-		__bad_xchg(ptr, size), ret = 0;
+-		break;
+-	}
+-
+-	return ret;
+-}
+-
+-#define xchg(ptr, x) \
+-	((__typeof__(*(ptr))) __xchg((unsigned long)(x), (ptr), sizeof(*(ptr))))
+-
+-#include <asm-generic/cmpxchg.h>
+-#include <asm-generic/cmpxchg-local.h>
++#ifndef CONFIG_SMP
++# include <asm-generic/cmpxchg.h>
++#endif
  
-+#include <asm/cache.h>
- #include <asm/page.h>
- #include <asm-generic/vmlinux.lds.h>
- #include <asm/thread_info.h>
-@@ -89,6 +90,8 @@ SECTIONS {
- 		_KERNEL_SDA_BASE_ = _ssro + (_ssro_size / 2) ;
- 	}
- 
-+	PERCPU_SECTION(L1_CACHE_BYTES)
-+
- 	. = ALIGN(PAGE_SIZE);
- 	__init_begin = .;
- 
+ #endif /* _ASM_MICROBLAZE_CMPXCHG_H */
 -- 
 2.25.0
 
