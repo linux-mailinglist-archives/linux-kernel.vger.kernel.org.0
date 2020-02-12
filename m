@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0AC515B4B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 00:30:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A30915B4B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 00:30:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729215AbgBLXaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 18:30:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45056 "EHLO mail.kernel.org"
+        id S1729237AbgBLXaw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 18:30:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727117AbgBLXaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 18:30:22 -0500
+        id S1727117AbgBLXav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 18:30:51 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 732C220848;
-        Wed, 12 Feb 2020 23:30:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4309E20848;
+        Wed, 12 Feb 2020 23:30:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581550221;
-        bh=DgeEtztmH8rUblkjsfH84edNl1u66hTKoubiNZqo7/Y=;
+        s=default; t=1581550251;
+        bh=we5n/gcqUjIvedGn0eRQwQef3T06WrtffLUf78P4t3Q=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=adOv6Bv3u1mR3c/TB6Qf4iPFqEhq1uuf4vVr66P//lXF+mXvvakVmYekn1u0CG8gi
-         9Brhu/2KLvuHsOz537/lzZ/qxRbEC8OBMiAzB3kwo8FBCreRXIL96GVda+YbbMeKni
-         /bMVwVoMIo5aK/A8IoQvZDm0Z7MKGIrR1ZgkET+A=
+        b=frwv+dEI1N/HfY5SRH4s9yaL236SUHB3p4gtn6gG0ZWYS2yL96CfFV8sdwhAHVuZL
+         CdXTiPWZqYvzrT9dBLaSKX+iKZrW9YaZMEUCb3vzHGvhIipwSKxBmwlJKpxC3ZxAyA
+         gKlRMr+91LDQdPpaGz3UYh5nU+X66gGKMHJiNtW4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200131115816.12483-1-codrin.ciubotariu@microchip.com>
-References: <20200131115816.12483-1-codrin.ciubotariu@microchip.com>
-Subject: Re: [PATCH v2] clk: at91: sam9x60: Don't use audio PLL
+In-Reply-To: <1579522208-19523-5-git-send-email-claudiu.beznea@microchip.com>
+References: <1579522208-19523-1-git-send-email-claudiu.beznea@microchip.com> <1579522208-19523-5-git-send-email-claudiu.beznea@microchip.com>
+Subject: Re: [PATCH 4/8] ARM: at91: pm: add pmc_version member to at91_pm_data
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        ludovic.desroches@microchip.com, eugen.hristev@microchip.com,
-        Claudiu.Beznea@microchip.com,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 12 Feb 2020 15:30:20 -0800
-Message-ID: <158155022061.184098.2526430305237294211@swboyd.mtv.corp.google.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
+        alexandre.belloni@bootlin.com, linux@armlinux.org.uk,
+        ludovic.desroches@microchip.com, mturquette@baylibre.com,
+        nicolas.ferre@microchip.com
+Date:   Wed, 12 Feb 2020 15:30:50 -0800
+Message-ID: <158155025048.184098.9718921656256470902@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Codrin Ciubotariu (2020-01-31 03:58:16)
-> On sam9x60, there is not audio PLL and so I2S and classD have to use one
-> of the best matching parents for their generated clock.
+Quoting Claudiu Beznea (2020-01-20 04:10:04)
+> This will be used to differentiate b/w different PLLs settings to be
+> applied in the final/first steps of the suspend/resume process by doing
+> PLL specific configurations.
 >=20
-> Fixes: 01e2113de9a5 ("clk: at91: add sam9x60 pmc driver")
-> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 > ---
 
-Applied to clk-next
+Acked-by: Stephen Boyd <sboyd@kernel.org>
