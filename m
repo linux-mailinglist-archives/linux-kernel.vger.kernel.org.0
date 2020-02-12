@@ -2,139 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40B48159FA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 04:51:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 465E5159F94
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 04:40:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbgBLDvv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 22:51:51 -0500
-Received: from ozlabs.org ([203.11.71.1]:51757 "EHLO ozlabs.org"
+        id S1727960AbgBLDkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 22:40:16 -0500
+Received: from mga05.intel.com ([192.55.52.43]:25726 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727784AbgBLDvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 22:51:51 -0500
-Received: by ozlabs.org (Postfix, from userid 1007)
-        id 48HQgN6wPvz9s29; Wed, 12 Feb 2020 14:51:44 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=gibson.dropbear.id.au; s=201602; t=1581479504;
-        bh=DZ9vUOyD6APNdhGUV5sRMQYorkTXrslBxqQ8fUxqHgU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S9Ku0r6Ux1UikTOnbcC98sl3kTZKC8RxbOrlfc33FSo2RBSyXUHnfTFeWN7BpCqJ4
-         kb/8E8/6xL0p30ah1pU05yTox1CR2yXUAFMH/W8Sg1hkISeOYifKDjaMYinUIHm2es
-         CDM+TfqdDlKE5ont+CUwmxw3k/vbx0W169rwKk2c=
-Date:   Wed, 12 Feb 2020 13:09:33 +1100
-From:   David Gibson <david@gibson.dropbear.id.au>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Devicetree Compiler <devicetree-compiler@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] libfdt: place new nodes & properties after the parent's
- ones
-Message-ID: <20200212020933.GP22584@umbus.fritz.box>
-References: <CGME20200204125854eucas1p19ace564a5f45b9231e0fba8af07009cd@eucas1p1.samsung.com>
- <20200204125844.19955-1-m.szyprowski@samsung.com>
- <20200205054508.GG60221@umbus.fritz.box>
- <bc380fd8-71bb-897e-f060-b51386dec9be@samsung.com>
- <20200210234406.GH22584@umbus.fritz.box>
- <CAL_JsqJLLWnx-K9T5wv_i+FnPwbWpfak4RD_9P1Xz_2-XkYncA@mail.gmail.com>
+        id S1727602AbgBLDkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 22:40:16 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 19:40:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
+   d="scan'208";a="380645109"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by orsmga004.jf.intel.com with ESMTP; 11 Feb 2020 19:40:11 -0800
+Date:   Wed, 12 Feb 2020 11:19:29 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Will Deacon <will@kernel.org>
+Cc:     mdf@kernel.org, mark.rutland@arm.com, gregkh@linuxfoundation.org,
+        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, atull@kernel.org, yilun.xu@intel.com,
+        Luwei Kang <luwei.kang@intel.com>
+Subject: Re: [PATCH v7 2/2] fpga: dfl: fme: add performance reporting support
+Message-ID: <20200212031929.GB5645@hao-dev>
+References: <1581306469-22629-1-git-send-email-hao.wu@intel.com>
+ <1581306469-22629-3-git-send-email-hao.wu@intel.com>
+ <20200210163400.GA21900@willie-the-truck>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="RtGa12sjXv8gVUZO"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAL_JsqJLLWnx-K9T5wv_i+FnPwbWpfak4RD_9P1Xz_2-XkYncA@mail.gmail.com>
+In-Reply-To: <20200210163400.GA21900@willie-the-truck>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 10, 2020 at 04:34:01PM +0000, Will Deacon wrote:
+> Hi,
+> 
+> On Mon, Feb 10, 2020 at 11:47:49AM +0800, Wu Hao wrote:
+> > This patch adds support for performance reporting private feature
+> > for FPGA Management Engine (FME). Now it supports several different
+> > performance counters, including 'basic', 'cache', 'fabric', 'vtd'
+> > and 'vtd_sip'. It allows user to use standard linux tools to access
+> > these performance counters.
+> 
+> I had a quick look at this, and it mostly looks alright to me. Just a few
+> high-level comments/questions:
 
---RtGa12sjXv8gVUZO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Will
 
-On Tue, Feb 11, 2020 at 02:29:22PM -0600, Rob Herring wrote:
-> On Mon, Feb 10, 2020 at 5:44 PM David Gibson
-> <david@gibson.dropbear.id.au> wrote:
-> >
-> > On Mon, Feb 10, 2020 at 12:40:19PM +0100, Marek Szyprowski wrote:
-> > > Hi David,
-> > >
-> > > On 05.02.2020 06:45, David Gibson wrote:
-> > > > On Tue, Feb 04, 2020 at 01:58:44PM +0100, Marek Szyprowski wrote:
-> > > >> While applying dt-overlays using libfdt code, the order of the app=
-lied
-> > > >> properties and sub-nodes is reversed. This should not be a problem=
- in
-> > > >> ideal world (mainline), but this matters for some vendor specific/=
-custom
-> > > >> dtb files. This can be easily fixed by the little change to libfdt=
- code:
-> > > >> any new properties and sub-nodes should be added after the parent'=
-s node
-> > > >> properties and subnodes.
-> > > >>
-> > > >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > > > I'm not convinced this is a good idea.
-> > > >
-> > > > First, anything that relies on the order of properties or subnodes =
-in
-> > > > a dtb is deeply, fundamentally broken.  That can't even really be a
-> > > > problem with a dtb file itself, only with the code processing it.
-> > >
-> > > I agree about the properties, but generally the order of nodes usually
-> > > implies the order of creation of some devices or objects.
-> >
-> > Huh?  From the device tree client's point of view the devices just
-> > exist - the order of creation should not be visible to it.
->=20
-> I'm not sure if downstream is different, but upstream this stems from
-> Linux initcalls being processed in link order within a given level.
-> It's much better than it used to be, but short of randomizing the
-> ordering, I'm not sure we'll ever find and fix all these hidden
-> dependencies.
+Thanks a lot for the review! :)
 
-Uhh... I don't really see how that relates to device tree encoding
-order.  That's another source of non-stable device identifications,
-which dtb order can also be, but they're not really connected beyond
-that as far as I can tell.
+> 
+>   - I would still prefer for the PMU drivers to live under drivers/perf/
 
-> > > This sometimes
-> > > has some side-effects.
-> >
-> > If those side effects matter, your code is broken.  If you need to
-> > apply an order to nodes, you should be looking at 'reg' or other
-> > properties.
->=20
-> The general preference is to sort by 'reg'. And we try to catch and
-> reject any node re-ordering patches.
->=20
-> Rob
->=20
+Hm.. one possible way is to create a platform device, and introduce a new
+platform device driver under drivers/perf/.
 
---=20
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
+> 
+>   - You should probably give the PMU a better name than "fme%d", for example
+>     "intel_fpga_dfl_fme%d".
 
---RtGa12sjXv8gVUZO
-Content-Type: application/pgp-signature; name="signature.asc"
+Sure. as it's not intel only, so will use "fpga_dfl_fme" or "dfl_fme" instead.
 
------BEGIN PGP SIGNATURE-----
+> 
+>   - CPU0 can be hotplugged off on non-x86 systems. How do you cope with
+>     that?
 
-iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAl5DXl0ACgkQbDjKyiDZ
-s5KLlxAAjyXW7V27xgExlGGyZvAGtP/5zveAVLOJVzYSFYfL0eJCnMGPxZrMgggL
-PD/HXI8qocWsHtqzIZJMVr27hLx+3emh62CgaTKEBMzfBFFX7QEH7yCQ0zA/IpqW
-Kz1x/hU3ZjYOrq3mbK2ILQJxGjYGX/LoLSFLXblrnQbVaf4Mpebl0f/RpRymh4bV
-3kmBMVAZHqhbvP0q/epmdJbD2nf+aEh+aM2f1SL3mw3nkFOPPG1fNTbwufrHvy1V
-0KkrlanZdT1n5ktCA6FxZsHX6g/XTxC2M6qjrFLqgRbj1Zp0UXKZu0niu+I4Lq3f
-n3CCtev7qndQ26olWYHPip50byZM8g1oefCC5FpInyYRsSMP/ZqH4x5yfWsJBpUJ
-q9YWAQGaVTas6UwkeLgmIPRwEDODZqDM8u1L22DPdk5MX4Poe0unAoqPMfRib0Jl
-I6w3ylmVEccAsQ9bmzdMxeCnWbECsI1IfCDHe0TFSK0WY/9rJZEIDMv9XZU1YIQY
-i3o1omMrnA6uxecoDuRaH6DTDC/3AqXOgmRWeSy9qwvZWvLNalbQfwi3xfCf4F3g
-VqUPpObYvoFXt8egkbUIPhe5jjTeHCxyXTw7bKugWTpd91LRfXLemEMcpQUHC1TO
-1H1hkCONspu7nHWsMvl8PmaDf1qJoaXm4o27nTHQP32tVi6DrMs=
-=HAvE
------END PGP SIGNATURE-----
+Oh.. then we can't just always return CPU0 for cpumask, have to switch
+to another available cpu. Will add code to handle this case in the next
+version. Thanks!
 
---RtGa12sjXv8gVUZO--
+> 
+>   - readq() will emit 2x32-bit reads on some architectures. What happens
+>     in this case?
+
+64bit counter may increase and carry out of bit31 between 2-32bit reads,
+we probably need some more code (add extra reads?) to handle this case.
+
+
+Thanks again for these valuable comments, will try to fix all of them in
+the next version. : )
+
+Hao
+
+> 
+> Will
