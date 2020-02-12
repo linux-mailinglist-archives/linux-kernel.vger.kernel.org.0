@@ -2,109 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A52F615A3B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:46:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFE0815A370
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:40:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbgBLIqi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 03:46:38 -0500
-Received: from esa2.mentor.iphmx.com ([68.232.141.98]:34515 "EHLO
-        esa2.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728642AbgBLIqh (ORCPT
+        id S1728508AbgBLIkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 03:40:04 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35104 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728370AbgBLIkE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 03:46:37 -0500
-IronPort-SDR: 2TaUWfGz159jBrIxLvkvbG003RsTsfUQdEWkDyCfQ3Quvp2igP1+epXJpHTxq5NeluR5o/Tf4U
- QDAoJYl9PeXp/pPycO9PSW0MQWyxDpT0BudQj/KT2MOT6cCqhAgrHWoCPbNLzp8Hg5Ud7JEl+/
- hijxypV/Z6O5Tvg1pAu3oVkqwRKoOYpupBOnaccBfTutVt3Sgl4ufwzA9VHr2K5v03Gc6k2vkw
- dao+oSKrhDMQ993IkSJs143LMHyTkVBmpTdGnAA6rmu6OaSPFDVCOBXN+8+AVA2mNvKWaAnt9j
- /cU=
-X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="45686076"
-Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa2.mentor.iphmx.com with ESMTP; 12 Feb 2020 00:39:30 -0800
-IronPort-SDR: pQpryPK47i03139lAwDnAblCiPUOtB7ZZx0CRFiUUCN9ujhFnqVvZg7adoMOdRnBu06nFofL4Q
- 1CzXqBTB//uCB/5PTkHxvAOg7P9bZQePAT3/bEZTcLM55HQTYYvwVASaVtFKxCzKjZK7TyYC2N
- qU1c6GCFkf2jqwOOrvvJ9tLMSanB3r6lLqyBkT3wu6p41V07N17k3LzGFghJsmlu7QslBjA+K/
- oBWNTssnX0pYrlHZOIfKLCaTwAwdVoWUbK49202YQw4UmgAbm5RJfmvZS9NVaIZE8LoUZpvLZF
- rak=
-Subject: Re: [PATCH v6 24/48] Input: atmel_mxt_ts - make bootloader interrupt
- driven
-To:     Bartosz Szczepanek <bsz@semihalf.com>, <nick.dyer@itdev.co.uk>
-CC:     <Andrew_Gabbasov@mentor.com>, <benjamin.tissoires@redhat.com>,
-        <dmitry.torokhov@gmail.com>, <erosca@de.adit-jv.com>,
-        <jikos@kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <nick@shmanahar.org>,
-        <rydberg@bitmath.org>, <levinale@google.com>, <rad@semihalf.com>
-References: <20191122082402.18173-25-jiada_wang@mentor.com>
- <20200127174127.25522-1-bsz@semihalf.com>
-From:   "Wang, Jiada" <jiada_wang@mentor.com>
-Message-ID: <884a9ce0-b6db-6716-e366-e4c8ed7b4910@mentor.com>
-Date:   Wed, 12 Feb 2020 17:39:07 +0900
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        Wed, 12 Feb 2020 03:40:04 -0500
+Received: by mail-wr1-f68.google.com with SMTP id w12so1136513wrt.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:40:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sh9edya09m3ampotYP3rKXxFWAQAZ1sl203zZxDnubY=;
+        b=Rd9ZsYVqBQpLNRN1NUoCJwtgrHIvxjFXbiYEbesFFL+EtggZeSkMBsmX6aQN4sRPqk
+         BFm7ziMyioakOHPenVv+pazCq1xMgITET4yi3liedrfDOAYUiIlLzo7E7XNEIvegXUBX
+         VVryKZVBrlSDZxSLbfYqPEDFJgSbi3oy3nDXlTZs8GcWdZZwU3frgCCR/swJU89rUorq
+         q2MuolQSmMWjjazZ+JadmnTMhsRcwMVWiPPvoHqIzEPRmpPdhSyYd0CI+AdR0i+Jc/rO
+         DdIo+gr5eG0/N7R7ER0Wvm5aB55R/zxAvE9YDjWfOqt+5/iPXeOQxA4BGm1SPsdQctNB
+         PeXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=sh9edya09m3ampotYP3rKXxFWAQAZ1sl203zZxDnubY=;
+        b=rqz6kIP1WPT82MZtn5i7hAacp85dacj9XUMhKDiJVeS/hb7WtdYRIDNfmf3pSzbxJ0
+         kTqYT7D559RtXnZG43cnuFBVrfma7CXwtIkbf/eXftN2X1t045lbCGfu5S4FnRQRA7B8
+         hLMnscVOIo/4l/qGZPrg/17PUoMR2jklTGsyNFHWHWlFm9aJBpTFL/2kAs9y41Y63t3j
+         rSmB7V1qT08VoI214F7/naTRrUs/cMQokNaLpcmiaHFNHmtsQAWzrfAZ6Ui3P+eIC33Z
+         4s+GV/oIgcyYDb0xKFVXrSeDh821KNeb6KuROnjOX9not2+v60wjGvVNvwZYyXNSHPdy
+         SeyQ==
+X-Gm-Message-State: APjAAAXzAhAFMXUJLb6sRI9zDMSVfwkVJj98BrGf4jLO+SUfaEOA8oxe
+        nMECb/+LUOUJqHu4YMhIFA9cdCNT/cOoyA==
+X-Google-Smtp-Source: APXvYqwuS7+TqsdETIEjYnS5F+Hk3WQXvU5tJoIGMYYgCfRi7CqmSIQCIAeJ5eLjixqHvrdhZP54DA==
+X-Received: by 2002:a5d:42c6:: with SMTP id t6mr13871376wrr.151.1581496800421;
+        Wed, 12 Feb 2020 00:40:00 -0800 (PST)
+Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id x17sm8482201wrt.74.2020.02.12.00.39.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Feb 2020 00:39:59 -0800 (PST)
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        michal.simek@xilinx.com, git@xilinx.com
+Cc:     Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>,
+        Mubin Sayyed <mubinusm@xilinx.com>,
+        Stefan Asserhall <stefan.asserhall@xilinx.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/3] irqchip: xilinx: Switch to generic domain handler
+Date:   Wed, 12 Feb 2020 09:39:55 +0100
+Message-Id: <cover.1581496793.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <20200127174127.25522-1-bsz@semihalf.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
- svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Bartosz
+Hi,
 
-On 2020/01/28 2:41, Bartosz Szczepanek wrote:
-> Hi,
-> 
-> I've been testing this patchset on Chromebook equipped with Atmel touchscreen &
-> touchpad. In my setup, this particular patch seems to introduce a regression
-> on firmware update:
-> 
->> localhost /sys/devices/pci0000:00/0000:00:15.0/i2c_designware.0/i2c-6/i2c-ATML0001:00 # echo maxtouch-ts.fw > update_fw
->> bash: echo: write error: Remote I/O error
-> 
-> Kernel logs show that the reason is failed I2C transfer:
-> 
->> [ 111.632131] atmel_mxt_ts i2c-ATML0001:00: Found bootloader addr:27 ID:21 version:4
->> [ 111.637711] atmel_mxt_ts i2c-ATML0001:00: Unlocking bootloader
->> [ 129.155091] atmel_mxt_ts i2c-ATML0001:00: Sent 1356 frames, 212224 bytes
->> [ 129.263269] atmel_mxt_ts i2c-ATML0001:00: The firmware update succeeded
->> [ 129.263952] atmel_mxt_ts i2c-ATML0001:00: __mxt_read_chunk: i2c transfer failed (-121)
->> [ 129.265072] atmel_mxt_ts i2c-ATML0001:00: mxt_bootloader_read: i2c recv failed (-121)
->> [ 129.265588] atmel_mxt_ts i2c-ATML0001:00: Trying alternate bootloader address
->> [ 129.266375] atmel_mxt_ts i2c-ATML0001:00: mxt_bootloader_read: i2c recv failed (-121)
-> 
-> Surprisingly, only touchscreen device is affected. When I checked out to
-> 119e1b7e8481 ("Input: atmel_mxt_ts - refactor code to enter bootloader into
-> separate func") all worked fine. In between these commits I got some mixed
-> results, including timeout while waiting for completion:
-> 
->> [ 190.006174] atmel_mxt_ts i2c-ATML0001:00: Found bootloader addr:27 ID:21 version:4
->> [ 190.317819] atmel_mxt_ts i2c-ATML0001:00: Wait for completion timed out.
->> [ 190.318267] atmel_mxt_ts i2c-ATML0001:00: Update wait error -110
->> [ 190.319310] atmel_mxt_ts i2c-ATML0001:00: Unlocking bootloader
->> [ 208.369825] atmel_mxt_ts i2c-ATML0001:00: Sent 1356 frames, 212224 bytes
->> [ 208.536942] atmel_mxt_ts i2c-ATML0001:00: The firmware update succeeded
->> [ 208.544835] atmel_mxt_ts i2c-ATML0001:00: Family: 164 Variant: 14 Firmware V2.3.AA Objects: 40
->> [ 208.547623] atmel_mxt_ts i2c-ATML0001:00: Touchscreen size X4095Y2729
-> 
-> Some more details - the touchscreen device reports itself as:
-> 
->> atmel_mxt_ts i2c-ATML0001:00: Family: 164 Variant: 14 Firmware V2.3.AA Objects: 40
-> 
-> Due to Chromebook limitations on kernel version, I'm running 4.19 kernel
-> with patches backported from master (so that atmel_mxt_ts is aligned between
-> master and 4.19). The platform is Samsung Chromebook Pro.
-> 
-I have found the root cause for the regression,
-will submit v7 patch-set shortly,
-if you could validate for the update,
-it will be very helpful
+this series is based on cascade mode patch sent by Mubin
+(https://lkml.org/lkml/2020/2/11/888 - v3 series).
 
-thanks,
-Jiada
-> Best regards,
-> Bartosz
-> 
+The first patch is just fixing error patch. The second and the third are
+converting microblaze do_IRQ() to generic IRQ handler with appropriate
+changes in xilinx intc driver. I have done it in two steps to be visible
+how it was done.
+
+The last patch removes concurrent_irq global variable which wasn't wired
+anywhere but it stores number of concurrent IRQs handled by one call. There
+is option to get it back if needed but I haven't seen it in other archs
+that's why I have removed it too.
+
+Thanks,
+Michal
+
+
+Michal Simek (3):
+  irqchip: xilinx: Fill error code when irq domain registration fails
+  irqchip: xilinx: Enable generic irq multi handler
+  irqchip: xilinx: Use handle_domain_irq()
+
+ arch/microblaze/Kconfig           |  2 ++
+ arch/microblaze/include/asm/irq.h |  3 ---
+ arch/microblaze/kernel/irq.c      | 21 +------------------
+ drivers/irqchip/irq-xilinx-intc.c | 35 ++++++++++++++++++-------------
+ 4 files changed, 24 insertions(+), 37 deletions(-)
+
+-- 
+2.25.0
+
