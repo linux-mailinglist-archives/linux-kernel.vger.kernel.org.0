@@ -2,99 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D18C15B137
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:38:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 168D615B134
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:36:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729007AbgBLTil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 14:38:41 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:47095 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728947AbgBLTil (ORCPT
+        id S1728911AbgBLTgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 14:36:36 -0500
+Received: from gateway22.websitewelcome.com ([192.185.47.179]:30012 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727361AbgBLTgf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 14:38:41 -0500
-Received: by mail-lf1-f68.google.com with SMTP id z26so2420169lfg.13
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 11:38:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VIVJ6ANZNwBCwjgFThVMTCailc9/69GGrp4L4rWNwm4=;
-        b=hdHh1wCknTiwBSThElO35g/BIz9H/CXTPpcMPEmkD7NNxb1ozOciv/jVLwmHAP9+xH
-         SE22Kf5VT7lrVTGDE6xKzIb7CnH8V5I894iDrLLlIPUmUHSvXb1WnFbkAngWq15Gx57/
-         9dgUML7Oux8tp2Z0WsoLZEhj9ZVcf6LEbzN6o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VIVJ6ANZNwBCwjgFThVMTCailc9/69GGrp4L4rWNwm4=;
-        b=fSkArxRAQq0Uyl7lIsl/8A4mfmCB1DFztEqmeKyGnm7njhlwvdQ/7FaWNEUBMkXuOd
-         Pnwb0WrQwSwfw/cM4waObHq3wyC1c4xDivVVu1Nd/q30tS6q2PCJjoOQQ7VvhmjVurRo
-         nwGDrWlfU1xiT9VzVSYDRYC+ZVyaRAdrImiBpKqEai8f2jQoMiKbkITtN33Cn6+FRkC9
-         UTy0cobt4H/FzlIN1c1dBH8+DFZC/feEbRGu+Ah2F4kqnBqM0X6JtgFLR3oBINlw/ke9
-         +3Iw/vqQkuQKeAdZwx94BU7P+1ufnrcWgYTATelR74sL9mozWWDioqCwu2yzVPBUySIF
-         xqqA==
-X-Gm-Message-State: APjAAAWkgnumpEWQN4YgalaKsSmPXfTi78PkpfdB3Wr2pXTLKYD0cd0o
-        lbpze+paNsLzM+O/zhkkyMaZo6MJTdg=
-X-Google-Smtp-Source: APXvYqyzL81bD7Q4OrxUcBVOqe/xNg2s3jHkRHwS5HWgL3U4NRMSfiCTI+HthBxBpjaTaxSvSHzZ7g==
-X-Received: by 2002:ac2:5ec3:: with SMTP id d3mr7559227lfq.176.1581536317657;
-        Wed, 12 Feb 2020 11:38:37 -0800 (PST)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id e17sm54990ljg.101.2020.02.12.11.38.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2020 11:38:36 -0800 (PST)
-Received: by mail-lf1-f47.google.com with SMTP id z26so2420094lfg.13
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 11:38:36 -0800 (PST)
-X-Received: by 2002:a19:4849:: with SMTP id v70mr7590327lfa.30.1581536316181;
- Wed, 12 Feb 2020 11:38:36 -0800 (PST)
+        Wed, 12 Feb 2020 14:36:35 -0500
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id AE87A8E02
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 13:36:34 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 1xoIj1NeavBMd1xoIj02OP; Wed, 12 Feb 2020 13:36:34 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Ej4epKkgtd78pmu2soBpc7h1dUAyIncXzyPzor29u0Q=; b=GKdpEggZVyr3zWD2G0+2JmrFq/
+        lAYolu14OCpJjaibWW7sCc9mBM3WR98A5yx6uizd/LTleIQ3V1ub3bEaLRccXFd7S7rbgZAFmdJJN
+        AfE5M9qOTEYuHbscThqnpVVpRWpksIfx9KhK6fP+1o/ElwZGo8KHaHlBN9z6qsUX1WjmYRZvyNHlr
+        Sbsjf7THeVS4vd/eyF8IF3ax9NrfGRRVLAoN0KeN9sq10fqOSyP6v6eOJsZ00DXfvX1C6EWR/KP2g
+        jjJqU0+mRKqvj+dW+TLHJJiJbltLNnN7cLTrgMq6en+sI7F+kj7nWE8SF+4SQ/NquuVnIrl/vhK4l
+        IdhGjnCA==;
+Received: from [201.144.174.25] (port=7008 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j1xoH-001AQk-1y; Wed, 12 Feb 2020 13:36:33 -0600
+Date:   Wed, 12 Feb 2020 13:39:08 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jiri Pirko <jiri@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next] net: devlink: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200212193908.GA30620@embeddedor>
 MIME-Version: 1.0
-References: <20200212164714.7733-1-pbonzini@redhat.com> <CAHk-=wh6KEgPz_7TFqSgg3T29SrCBU+h64t=BWyCKwJOrk3RLQ@mail.gmail.com>
- <b90a886e-b320-43d3-b2b6-7032aac57abe@redhat.com>
-In-Reply-To: <b90a886e-b320-43d3-b2b6-7032aac57abe@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 12 Feb 2020 11:38:20 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wh8eYt9b8SrP0+L=obHWKU0=vXj8BxBNZ3DYd=6wZTKqw@mail.gmail.com>
-Message-ID: <CAHk-=wh8eYt9b8SrP0+L=obHWKU0=vXj8BxBNZ3DYd=6wZTKqw@mail.gmail.com>
-Subject: Re: [GIT PULL] KVM changes for Linux 5.6-rc2
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        Oliver Upton <oupton@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.144.174.25
+X-Source-L: No
+X-Exim-ID: 1j1xoH-001AQk-1y
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.144.174.25]:7008
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 36
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 11:19 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> > So this clearly never even got a _whiff_ of build-testing.
->
-> Oh come on.
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-Seriously - if you don't even _look_ at the warnings the build
-generates, then it hasn't been build-tested.
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-I don't want to hear "Oh come on". I'm 100% serious.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertenly introduced[3] to the codebase from now on.
 
-Build-testing is not just "building". It's the "testing" of the build
-too. You clearly never did _any_ testing of the build, since the build
-had huge warnings.
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-Without the checking of the result, "build-testing" is just
-"building", and completely irrelevant.
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
 
-If you have problems seeing the warnings, add a "-Werror" to your scripts.
+This issue was found with the help of Coccinelle.
 
-I do not want to see a _single_ warning in the kernel build. Yes, we
-have one in the samples code, and even that annoys the hell out of me.
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 
-And exactly because we don't have any warnings in the default build,
-it should be really really easy to check for new ones - it's not like
-you have to wade through pages of warnings to see if any of them are
-your new ones.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ net/core/devlink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-So no "Oh come on". You did *zero* testing of this crap, and you need
-to own that fact instead of making excuses about it.
+diff --git a/net/core/devlink.c b/net/core/devlink.c
+index 549ee56b7a21..a8c1f46319da 100644
+--- a/net/core/devlink.c
++++ b/net/core/devlink.c
+@@ -4232,7 +4232,7 @@ struct devlink_fmsg_item {
+ 	int attrtype;
+ 	u8 nla_type;
+ 	u16 len;
+-	int value[0];
++	int value[];
+ };
+ 
+ struct devlink_fmsg {
+-- 
+2.25.0
 
-                   Linus
