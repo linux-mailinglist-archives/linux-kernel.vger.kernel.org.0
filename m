@@ -2,70 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B29D15AC2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:42:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C4F715AC2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:42:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728386AbgBLPmd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 10:42:33 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39504 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727026AbgBLPmd (ORCPT
+        id S1728566AbgBLPmh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 10:42:37 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40272 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727026AbgBLPmf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 10:42:33 -0500
-Received: by mail-wm1-f68.google.com with SMTP id c84so3035692wme.4
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 07:42:31 -0800 (PST)
+        Wed, 12 Feb 2020 10:42:35 -0500
+Received: by mail-wm1-f65.google.com with SMTP id t14so3030339wmi.5
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 07:42:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=monstr-eu.20150623.gappssmtp.com; s=20150623;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Px26pf7EXM1W2V2xAjAh/vP9L1myxsWPT5mia8fyb6o=;
-        b=iiHDHGleyiMEEbRFVTO5T0+iJy+NzduG/SZ3j/LsaT438a+ah2ZOpk6xVU54KoLTVu
-         PX4Usu716O2rm0+bwNmlQpomsZGvjIwrYi1yYv5s5auhwMlcp4qtw0JsZT27tGROf6Xx
-         1uCAinSeSG68QXsVsFp03rduLqSZ0dyIrupBKPw3EAHQkmtMTNsD5seR1JK2pWDB2/oy
-         IreOw4Fea6Yts3IAM3WHzixkcaBpyAEmAFm8qXvhU5spd/vLH9I0ETXuDDHXAHUfaEwH
-         tejNju+7uU3hAFgVhZY924LDQhTpiswmwDb65NVzf6pIlxwbGHfmirJrRgywgsfzWOel
-         PkUA==
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=cACQsJWwFiJ//Fu4o4mSWW0Y1rR0wMyJpy57QHPtjPY=;
+        b=QS0q6vs54hVcocgFUFeK+4LINB+ftiuYx3YaH2ZUQloL2B9Ib6fut8o1VorSdq6RLI
+         XQmW3qkpXYvzFVgyr+OQhPEC12Z9VYPkpnli3/9QlzOlfUMcRK+0roA1weQzHRnKPxdS
+         wklsQhODuG87Ynos/740IvX1K9ia/mPkB6duJi9kmoqMMbgQ3krmWauUBpwizoNd56Y2
+         tsdPX6kXueM/IJLDmLify8bKrHeD/+H1dQfInoUtMWejcfKtSrNnCZJMD3OYzfDXhi6G
+         9x/yQCNQ1AU+iN7QzG0TlHrDYUx1p+UJcHA2nBiC0Sn4XjtrWQRDT4khMUSgubfy3NEG
+         IKpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=Px26pf7EXM1W2V2xAjAh/vP9L1myxsWPT5mia8fyb6o=;
-        b=m5EGS4H+ebp2mHQ0O+rJ95p3om/zfl6LcrylNQqbhogkbQ46CIGE/mKjjIgVuGsyk8
-         vYJtZjAvTtyJRfTZEICPz7ErCRq3ENWN4aiXi2Egy0nI0hdSzvW3E//a5bQAL8qUabcl
-         wMPCD1ForMlQ6TUT5MxLCDYYOVyOsGMksk96KNgNdUhZnLuZCfBnGHkj1Dgh4gQLcfrx
-         OPSZaGjeoa4KupHWoM1cKoi3ES0LDfFouzv3aRz3TzyvsPhFOsKp9LnfQqQxfiPcEJRG
-         U0u16g91naxgA7CaBvOQUQq+hMgLeXkYRtAnFWAPOf1X9lbURlJSUgOMjFY/NBQQGd36
-         A/xQ==
-X-Gm-Message-State: APjAAAUAlp8rqicc/UnUA6FD13BD30A1flHjip/nTcyaBEO10LzF4BcB
-        +GKL0L/bgWMtF7v4uU5vYeyyiRlNt0EvUbNA
-X-Google-Smtp-Source: APXvYqzooVJGC1YQxNy5tLKmbGFb3uxwSR328xav52qW4lNyZzFuzUwh5ZDo6+gW1ESNTOY+cC3ffQ==
-X-Received: by 2002:a05:600c:294:: with SMTP id 20mr13765397wmk.135.1581522150880;
-        Wed, 12 Feb 2020 07:42:30 -0800 (PST)
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=cACQsJWwFiJ//Fu4o4mSWW0Y1rR0wMyJpy57QHPtjPY=;
+        b=W5CKpS267W5v0okWBGChPlqeWN0fOfmDYH8mCQ5jpiYs/b6y6udb3IGyAJY5zwWwcF
+         Nz4jzel53Dxmv1waVqxFppFSs9uvlzyrmBsNrJbBJGUqLM3H2dOakYYVT8bb5eTxYgE/
+         W02uvqGjGlAGHAd6r90BYM8hiL+PIdBjSBjQPyUCDMKo2+kKfAaLpB0rCHLt4eypaDMv
+         hIU4iX9IluyX8HlOIZTTlEC0fhx+fTtNT2Hg2Bu66zkS00f9/3PebLG4sPI0blKsC+3z
+         I4gw56UppUWhfRO2/HMLB5t1zFj/Qhr57tI1sYaFoIO8e1mKVLqDh7MjTmtVnhI8+Rz5
+         b9aA==
+X-Gm-Message-State: APjAAAUku3nRB/fler2cz1nHOH+d4HAc732Cs/w36FC98Ok3sluWmelm
+        nBIvptK+1//JxSQXtHMuVC25gusdlGrK6xlA
+X-Google-Smtp-Source: APXvYqxqVa0cdlyOfL7M1L5U+eix9NH2dA5/fQUbNwnzifAbMCYZ7uRxDTerFKfXVwijAwK3IYu9+g==
+X-Received: by 2002:a7b:c416:: with SMTP id k22mr14021469wmi.25.1581522152442;
+        Wed, 12 Feb 2020 07:42:32 -0800 (PST)
 Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id g2sm1000605wrw.76.2020.02.12.07.42.30
+        by smtp.gmail.com with ESMTPSA id 16sm1226250wmi.0.2020.02.12.07.42.31
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Feb 2020 07:42:30 -0800 (PST)
+        Wed, 12 Feb 2020 07:42:31 -0800 (PST)
 From:   Michal Simek <michal.simek@xilinx.com>
 To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
         michal.simek@xilinx.com, git@xilinx.com, arnd@arndb.de
-Cc:     Allison Randal <allison@lohutok.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Enrico Weigelt <info@metux.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Stefan Asserhall <stefan.asserhall@xilinx.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>
-Subject: [PATCH 0/7] microblaze: Define SMP safe operations
-Date:   Wed, 12 Feb 2020 16:42:22 +0100
-Message-Id: <cover.1581522136.git.michal.simek@xilinx.com>
+Cc:     Stefan Asserhall <stefan.asserhall@xilinx.com>
+Subject: [PATCH 1/7] microblaze: timer: Don't use cpu timer setting
+Date:   Wed, 12 Feb 2020 16:42:23 +0100
+Message-Id: <8e3b6647c57de3f6a65e1f46f852f019985fa893.1581522136.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 2.25.0
+In-Reply-To: <cover.1581522136.git.michal.simek@xilinx.com>
+References: <cover.1581522136.git.michal.simek@xilinx.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -73,54 +62,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+There is no longer valid that timer runs at the same frequency as cpu.
+That's why don't use cpuinfo setup for timer clock base. Better is to error
+out instead of using incorrect frequency.
 
-This is follow up series on the top of cleanup series available here.
-https://lkml.org/lkml/2020/2/12/215
-There are two things together.
-1. Changes in cpuinfo structure in patches 1 and 2
-2. Defining SMP safe operations instead of IRQ disabling
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Reviewed-by: Stefan Asserhall <stefan.asserhall@xilinx.com>
+---
 
-Microblaze has 32bit exclusive load/store instructions which should be used
-instead of irq enable/disable. For more information take a look at
-https://www.xilinx.com/support/documentation/sw_manuals/xilinx2019_2/ug984-vivado-microblaze-ref.pdf
-starting from page 25.
+ arch/microblaze/kernel/timer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Michal
-
-
-Michal Simek (1):
-  microblaze: timer: Don't use cpu timer setting
-
-Stefan Asserhall (5):
-  microblaze: Make cpuinfo structure SMP aware
-  microblaze: Define SMP safe bit operations
-  microblaze: Add SMP implementation of xchg and cmpxchg
-  microblaze: Remove disabling IRQ while pte_update() run
-  microblaze: Implement architecture spinlock
-
-Stefan Asserhall load and store (1):
-  microblaze: Do atomic operations by using exclusive ops
-
- arch/microblaze/include/asm/Kbuild           |   1 -
- arch/microblaze/include/asm/atomic.h         | 265 ++++++++++++++++++-
- arch/microblaze/include/asm/bitops.h         | 189 +++++++++++++
- arch/microblaze/include/asm/cmpxchg.h        |  87 ++++++
- arch/microblaze/include/asm/cpuinfo.h        |   2 +-
- arch/microblaze/include/asm/pgtable.h        |  19 +-
- arch/microblaze/include/asm/spinlock.h       | 240 +++++++++++++++++
- arch/microblaze/include/asm/spinlock_types.h |  25 ++
- arch/microblaze/kernel/cpu/cache.c           | 154 ++++++-----
- arch/microblaze/kernel/cpu/cpuinfo.c         |  38 ++-
- arch/microblaze/kernel/cpu/mb.c              | 207 ++++++++-------
- arch/microblaze/kernel/timer.c               |   2 +-
- arch/microblaze/mm/consistent.c              |   8 +-
- 13 files changed, 1040 insertions(+), 197 deletions(-)
- create mode 100644 arch/microblaze/include/asm/bitops.h
- create mode 100644 arch/microblaze/include/asm/spinlock.h
- create mode 100644 arch/microblaze/include/asm/spinlock_types.h
-
+diff --git a/arch/microblaze/kernel/timer.c b/arch/microblaze/kernel/timer.c
+index a6683484b3a1..65bce785e6ed 100644
+--- a/arch/microblaze/kernel/timer.c
++++ b/arch/microblaze/kernel/timer.c
+@@ -304,7 +304,7 @@ static int __init xilinx_timer_init(struct device_node *timer)
+ 
+ 	if (!timer_clock_freq) {
+ 		pr_err("ERROR: Using CPU clock frequency\n");
+-		timer_clock_freq = cpuinfo.cpu_clock_freq;
++		return -EINVAL;
+ 	}
+ 
+ 	freq_div_hz = timer_clock_freq / HZ;
 -- 
 2.25.0
 
