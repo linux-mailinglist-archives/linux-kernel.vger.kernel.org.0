@@ -2,117 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1DDB15AC16
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:38:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1648615AC1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:39:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728508AbgBLPiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 10:38:00 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42894 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727531AbgBLPh7 (ORCPT
+        id S1728639AbgBLPjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 10:39:05 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:33512 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727026AbgBLPjE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 10:37:59 -0500
-Received: by mail-pl1-f195.google.com with SMTP id e8so1089961plt.9;
-        Wed, 12 Feb 2020 07:37:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=+D92sQbIQX9b/mYM74RryufGT0Oe3W4lj/eAkEZQ33o=;
-        b=ERx0Q2v2e6DsNOGzzk7jGKHe9GVGWQubrkyTzlxcGm87Lbm/Ipp20rE/d0kHP3Qrx5
-         BaBVCu+4+407P27vgDl38QV6WzlmUGTu+FibnnKjkKYb2FaXb7NMIAB0y6zUQeYk5NR4
-         w6Tw0Vd0iGEv5YdMVrUxDPtfzcTdB8afpTI4j3ardAtEqBpGtLhPKaQSDgWA73iN/FME
-         LZbfbhMahfU6UIQ9vxElZCb9KkmB6azZKCvFunero33gpIIqwy6UxzPw4heZhgBJtYmT
-         FW7iAtVU5nbBfjXfdMEHp6m0iHB1sRA2MfVXRYMAPQUz92onMJyTVqM07mhGDFG1c6lB
-         98Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=+D92sQbIQX9b/mYM74RryufGT0Oe3W4lj/eAkEZQ33o=;
-        b=buckQbwSFbic8K97BGMjL6fHL2wOR46RJGGURAAM1cyqhM+tVPYIr6QSb0TMt/4zLx
-         iNgsytsAIT9gbV/sgGXz8opCsSz+miyLwu6mBdt751aa8JTTb40QGboPxsBfnyiKinhe
-         8XHT0QweXNk5mrfHqmDY/hFTGwAqT9WkxzUbnpIlndhVVsO/Izph2v9Ng5YTsZRZU824
-         j2cUQiMdc9V+uOKD2Sp3+DOTalDvXa7uSQn+uMRhQUmElSMvOxItVOYo8ntRC9cWF4p3
-         O5UvMUchaFBKChL+Snafr3qqQf9rUBw6n/gES81hr0ofefAbHYFORVG8t1wk5yZSRFMA
-         Jx/w==
-X-Gm-Message-State: APjAAAW8dFpbIhqwvmr/gSWz4QIogFfie/uCE2cC9zghOiCeK6vqyB+4
-        92XXYlcy5GRXibdiyUxWORU=
-X-Google-Smtp-Source: APXvYqzIXChqTVHEHaHlQ9k0LaQMeJkdk7TONDJIcTAVx8iIrqPXCCXuvIOMJ5TNDFOJM+PzmWjDTA==
-X-Received: by 2002:a17:902:9f86:: with SMTP id g6mr8225939plq.299.1581521879059;
-        Wed, 12 Feb 2020 07:37:59 -0800 (PST)
-Received: from fkuchars-mobl1.ger.corp.intel.com ([192.55.55.43])
-        by smtp.gmail.com with ESMTPSA id p17sm1295106pfn.31.2020.02.12.07.37.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Feb 2020 07:37:58 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: Re: [Bluez PATCH v3] bluetooth: secure bluetooth stack from bluedump
- attack
-From:   Johan Hedberg <johan.hedberg@gmail.com>
-In-Reply-To: <89D0B633-381D-4700-AB33-5F803BCB6E94@holtmann.org>
-Date:   Wed, 12 Feb 2020 17:37:53 +0200
-Cc:     Howard Chung <howardchung@google.com>,
-        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
-        ChromeOS Bluetooth Upstreaming 
-        <chromeos-bluetooth-upstreaming@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <86D0ACD5-BEF7-45B3-B621-BA2E457AB57B@gmail.com>
-References: <20200212212316.Bluez.v3.1.Ia71869d2f3e19a76a6a352c61088a085a1d41ba6@changeid>
- <89D0B633-381D-4700-AB33-5F803BCB6E94@holtmann.org>
-To:     Marcel Holtmann <marcel@holtmann.org>
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+        Wed, 12 Feb 2020 10:39:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=eCwIZ8Hf6W398rCvWhZ+i5ZRPRRZxaxzUmzv2wz82pE=; b=1JAp9IgMQN6yuuPOz8FEz6IG3t
+        dc4IWKrCf+0M6ik8hAb2VJ5w1rGW+hPlEqE1EgRVVsrDHmfT5RzRxWfpezdA17dnXPpHUhx3wegav
+        WXX3rtSjqMnUwIqLcHKoSbEV+KQhOXqK3Y1CyxTbiZIig1O8UwHwCNqDPHQczpl2Z5M8MsxJHajj7
+        JIVjUS1Idgs1ngdUH0ggJeVXNk9nSOwjlEnHMCEYMeYuOQdtar/uXNKDXT+ckjy4Mx4E4As3Tc9AX
+        hl6FdDOeY5a4lOsMkGp51wPs6YElRwxapa/T9tG/XDx6fN9UIVqcpsXNLWfFdvNkVhywgK/aUKuA9
+        ZuQxRC2w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1u5r-00046F-4s; Wed, 12 Feb 2020 15:38:27 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C7E6E300E0C;
+        Wed, 12 Feb 2020 16:36:34 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B17F120149390; Wed, 12 Feb 2020 16:38:23 +0100 (CET)
+Date:   Wed, 12 Feb 2020 16:38:23 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, joel@joelfernandes.org,
+        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
+        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com
+Subject: Re: [PATCH 4/8] sched,rcu,tracing: Mark preempt_count_{add,sub}()
+ notrace
+Message-ID: <20200212153823.GW14897@hirez.programming.kicks-ass.net>
+References: <20200212093210.468391728@infradead.org>
+ <20200212094107.838108888@infradead.org>
+ <20200212092417.04c3da8c@gandalf.local.home>
+ <20200212150211.GS14897@hirez.programming.kicks-ass.net>
+ <20200212101415.3615d66c@gandalf.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200212101415.3615d66c@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marcel,
+On Wed, Feb 12, 2020 at 10:14:15AM -0500, Steven Rostedt wrote:
+> > My initial patch has __preempt_count_add/sub() in, but then I figured
+> > someone would go complain the tracepoint would go missing.
+> 
+> Fine, but what bug are you trying to fix? I haven't seen one mentioned
+> yet. Function tracing has recursion protection, and tracing
+> preempt_count in nmi_enter() causes no problems. What's the problem you
+> are trying to solve?
 
-On 12. Feb 2020, at 17.19, Marcel Holtmann <marcel@holtmann.org> wrote:
->> +		key =3D hci_find_ltk(hcon->hdev, &hcon->dst, =
-hcon->dst_type,
->> +				   hcon->role);
->> +
->> +		/* If there already exists link key in local host, leave =
-the
->> +		 * decision to user space since the remote device could =
-be
->> +		 * legitimate or malicious.
->> +		 */
->> +		if (smp->method =3D=3D JUST_WORKS && key) {
->> +			err =3D mgmt_user_confirm_request(hcon->hdev, =
-&hcon->dst,
->> +							hcon->type,
->> +							hcon->dst_type, =
-passkey,
->> +							1);
->> +			if (err)
->> +				return SMP_UNSPECIFIED;
->> +			set_bit(SMP_FLAG_WAIT_USER, &smp->flags);
->> +		}
->> 	}
->=20
-> while this looks good, I like to optimize this to only look up the LTK =
-when needed.
->=20
-> 	/* comment here */
-> 	if (smp->method !=3D JUST_WORKS)
-> 		goto mackey_and_ltk;
->=20
->=20
-> 	/* and command here */
-> 	if (hci_find_ltk()) {
-> 		mgmt_user_confirm_request()
-> 		..
-> 	}
->=20
-> And my preference that we also get an Ack from Johan or Luiz that =
-double checked that this is fine.
-
-Acked-by: Johan Hedberg <johan.hedberg@intel.com>
-
-Johan=
+The same one as yesterday; if we hit a tracer in NMI context, when
+!rcu_is_watching() and in_nmi() is still 0, we're fucked.
