@@ -2,113 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0C8315B13D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:41:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2B8A15B143
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:43:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728984AbgBLTlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 14:41:14 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:22508 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727600AbgBLTlN (ORCPT
+        id S1728887AbgBLTnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 14:43:31 -0500
+Received: from gateway24.websitewelcome.com ([192.185.51.202]:35642 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727372AbgBLTna (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 14:41:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581536472;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=/niUyGCzwKmL8P0YFidMu7QFy/0jVujYkp3YM5pI1SY=;
-        b=awJhzI94hXRcMKM1p1XY4flBHo6cJ8udaZzzy4sXDb7F9bqNP5/PulFkQ8xmkTowHcv54T
-        EEan9M+Shd++jMIQbpVOaTwN/djdtmbMAaJ/fhdKPjgCOwI8JBXrKcqOUZG3R//MUJZtrU
-        deoDnLr7369VB/nv12QHaeXKcn+dLTA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-216-UosBqSVOMsOqpSSGjRWgwA-1; Wed, 12 Feb 2020 14:41:09 -0500
-X-MC-Unique: UosBqSVOMsOqpSSGjRWgwA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E0246A0CBF;
-        Wed, 12 Feb 2020 19:41:06 +0000 (UTC)
-Received: from mail (ovpn-122-89.rdu2.redhat.com [10.10.122.89])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8EE086E40A;
-        Wed, 12 Feb 2020 19:41:01 +0000 (UTC)
-Date:   Wed, 12 Feb 2020 14:41:00 -0500
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>,
-        Daniel Colascione <dancol@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Nosh Minwalla <nosh@google.com>,
-        Nick Kralevich <nnk@google.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 0/6] Harden userfaultfd
-Message-ID: <20200212194100.GA29809@redhat.com>
-References: <20200211225547.235083-1-dancol@google.com>
- <202002112332.BE71455@keescook>
- <CAG48ez0ogRxvCK1aCnviN+nBqp6gmbUD7NjaMKvA7bF=esAc1A@mail.gmail.com>
- <20200212171416.GD1083891@xz-x1>
+        Wed, 12 Feb 2020 14:43:30 -0500
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 8A3EEB0AFE
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 13:43:29 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 1xuzjv4JS8vkB1xuzjt2Ds; Wed, 12 Feb 2020 13:43:29 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=8FWXDkVW2wDjkeRVhdg2pGdPCjOZiCetHczI8jearAI=; b=wSKpavxf1MKDOkewMMDptIziQj
+        DKEcF0hjxEfd0gk75Qp79sxH8dhY+hhDeWpcCIx9QAFYbqFP3+R7bFE+iVYGPE5y9Pwhw19A/7WhE
+        wPYL/clnYeUdUCxyP/VgOMCW63JJulyeaEJUVyBYcyD8ZHMzXVFcvs00OyjQz5PUpnGAdfm5vE1SA
+        mJ4ThVrzbKA0dEo3MwZsh2ma+OPwToVT3lxS683aHSHTZR4fWcpJ+H9vwCOXbQjD0M9LZHiQiCfk7
+        tkxXgukA5hR4/0ev8m4yQqJNm+YkBEUWeb9VpWiNkkkWdSMYtzl0EHwdxxx6UKc7p58e6P7HOJViY
+        CCH6iSmQ==;
+Received: from [201.144.174.25] (port=23782 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j1xux-001DLa-VL; Wed, 12 Feb 2020 13:43:28 -0600
+Date:   Wed, 12 Feb 2020 13:46:02 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Joshua Morris <josh.h.morris@us.ibm.com>,
+        Philip Kelleher <pjk1939@linux.ibm.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] rsxx: Replace zero-length array with flexible-array member
+Message-ID: <20200212194602.GA31712@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200212171416.GD1083891@xz-x1>
-User-Agent: Mutt/1.13.1 (2019-12-14)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.144.174.25
+X-Source-L: No
+X-Exim-ID: 1j1xux-001DLa-VL
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.144.174.25]:23782
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 41
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello everyone,
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-On Wed, Feb 12, 2020 at 12:14:16PM -0500, Peter Xu wrote:
-> Right. AFAICT QEMU uses it far more than disk IOs.  A guest page can
-> be accessed by any kernel component on the destination host during a
-> postcopy procedure.  It can be as simple as when a vcpu writes to a
-> missing guest page which still resides on the source host, then KVM
-> will get a page fault and trap into userfaultfd asking for that page.
-> The same thing happens to other modules like vhost, etc., as long as a
-> missing guest page is touched by a kernel module.
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-Correct.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertenly introduced[3] to the codebase from now on.
 
-How does the android garbage collection work to make sure there cannot
-be kernel faults on the missing memory?
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-If I understood correctly (I didn't have much time to review sorry)
-what's proposed with regard to limiting uffd events from kernel
-faults, the only use case I know that could deal with it is the
-UFFD_FEATURE_SIGBUS but that's not normal userfaultfd: that's also the
-only feature required from uffd to implement a pure malloc library in
-userland that never takes the mmap sem for writing to implement
-userland mremap/mmap/munmap lib calls (as those will convert to
-UFFDIO_ZEROPAGE and MADV_DONTNEED internally to the lib and there will
-be always a single vma). We just need to extend UFFDIO_ZEROPAGE to map
-the THP zeropage to make this future pure-uffd malloc lib perform
-better.
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
 
-On the other end I'm also planning a mremap_vma_merge userland syscall
-that will merge fragmented vmas.
+This issue was found with the help of Coccinelle.
 
-Currently once you have a nice heap all contiguous but with small
-objects and you free the fragments you can't build THP anymore even if
-you make the memory virtually contiguous again by calling mremap. That
-just build up a ton of vmas slowing down the app forever and also
-preventing THP collapsing ever again.
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 
-mremap_vma_merge will require no new kernel feature, but it
-fundamentally must be able to handle kernel faults. If databases
-starts to use that, how can you enable this feature without breaking
-random apps then?
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/block/rsxx/dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-So it'd be a feature usable only by one user (Android) perhaps? And
-only until you start defragging the vmas of small objects?
-
-Thanks,
-Andrea
+diff --git a/drivers/block/rsxx/dma.c b/drivers/block/rsxx/dma.c
+index 111eb659e66d..1914f5488b22 100644
+--- a/drivers/block/rsxx/dma.c
++++ b/drivers/block/rsxx/dma.c
+@@ -80,7 +80,7 @@ struct dma_tracker {
+ struct dma_tracker_list {
+ 	spinlock_t		lock;
+ 	int			head;
+-	struct dma_tracker	list[0];
++	struct dma_tracker	list[];
+ };
+ 
+ 
+-- 
+2.25.0
 
