@@ -2,96 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71CAD15A546
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:48:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A3EE15A553
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:52:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728890AbgBLJss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 04:48:48 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:43915 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728737AbgBLJsr (ORCPT
+        id S1728809AbgBLJwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 04:52:05 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36372 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728715AbgBLJwE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:48:47 -0500
-Received: by mail-vs1-f65.google.com with SMTP id 7so734064vsr.10
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 01:48:47 -0800 (PST)
+        Wed, 12 Feb 2020 04:52:04 -0500
+Received: by mail-wr1-f66.google.com with SMTP id z3so1408412wru.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 01:52:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=zdxUWMWXTEs/zs0LJh1bxLoOHpDg1k5nkLimqXptzik=;
-        b=H+Fm6etSpj2MWADhXyV9PGzYJlmqEQ52/Wr0GihWUEQXNK+fU+p0POGfytLAx/6Bsp
-         BzMlNVCPKeEvhzVGjstuhRht1bH7ywg7kSlenTMuAPtkHHMMoeUTnXu7WEeU74X3foCD
-         isFOv3LKoMB5fibUdrkLkOdJ7MJ5UH3K7/nltzZqvO/4UUxs8qIxacnfwVD9F5NcbHc8
-         qSzLfmoRNq0cIYImWKhe9Uyl4pSVe4kF5uuP9h0Svm79jimK7mwgFO642CgG3cm45e8F
-         B3B2GqzYetAzsiW4KI5yYXMopwOsEyKhKnWphUw+G2jISTsn4cckJPSEfmrAqry6xSFz
-         RuRg==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=P1BE/J6k12sw+5b4sdZJAqIoEkv4CupE36M6VkS2iPk=;
+        b=QYsqlI9CK3W1WYd+81VRLDbVrXSvTLcqcOtmxlp7DQqLG8nG/Imqsojr2LpIE7SoEf
+         KmLq+Vx+nr7l8mAU5rSKGgywBXGYPFRXb55OR7wPtZ5D089rMiRwyn00uHzZFwZ26/aX
+         E+LJIV2U5RWB9jFrn30qBqiZ5eBQavfsGrVkN8xD8N1XC4MiL0Dqk5DTSjJGAhVcCspk
+         OxEnJpwgOBKG6+uvrk/6Zbh91r+M63HFYDQndyQaDLRNQhm2FLIpoJppJpsG3E374l4E
+         3pq8uu3IAGg6FW2KVCkpM7eh8KDMrsKBA7vSRwrtqqVJq4/YwKNzU2R6l6tC3H6HiLFM
+         1XFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=zdxUWMWXTEs/zs0LJh1bxLoOHpDg1k5nkLimqXptzik=;
-        b=Xo9+NMp3gNvSG1mG/iH8TURzd94Axat0pp+AXYk2tpIHfsgwqdctmeIKTEm6m7IxIG
-         WbAbfXQoa7Bd6txarhW3yzuK/CoB2iKZqrx3aunhQfrwr+M1IOyjG6cHXr0em2ore79u
-         DQARwmxaS5hcgB5ViFV8X2deuk7/9VBMXbL0c16FYNtI2Ik9oJOYaUq0BizOsrl67VTd
-         h6nLbmGm/XzQbLQwyYMohFAfQUYnkNnePFAvfVqJqBECwYSE665Gq6rcTaTfYfxsWlxV
-         FrAYRxuCw5jbx4AijCp/vBJmos9xF9ijGz6+tPSPSGsyxgfHhH7oxLObTxtT9RxeVQ+g
-         9Hfg==
-X-Gm-Message-State: APjAAAX3oG6Z608x96M2yyf7uupwv8UEzScndL0aVkO15AduXpyYC0wK
-        qj8GmTRQZ2+0a2PXIV7xgvfzHDg6cUfyuXv3fBg=
-X-Google-Smtp-Source: APXvYqwOiQbmR0FBvILhRTHuu7V+eRHPP+VcfL0g8Fma4XTHqSQ6mg0H05Af2W8R1Vn3xK4Cdsf+GJ06YFvAWkM72MM=
-X-Received: by 2002:a05:6102:2e4:: with SMTP id j4mr11694498vsj.134.1581500927003;
- Wed, 12 Feb 2020 01:48:47 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=P1BE/J6k12sw+5b4sdZJAqIoEkv4CupE36M6VkS2iPk=;
+        b=AeCiv9q5dmkKJXehpPLFM6CJUatMLZlJ1WQJrEsZr85Xh318fN1bKCPHQU3G6tFnkG
+         9ZmF+rmfGHEXwNXWgbqajiIT71SX4uI6FwqGL6CKF3pQTkqpS/0JwGWi7yrgbiJiVKXc
+         ttkqNgzVCRU9l7HQGDkHc8W9vita6sK0YCFRZ88UcPCq2useSYmkxKPu+AUHSjBchsJF
+         EPUvzBF6PEeWGC7XwlcqvA1zxCenIPk1A47KAL6f1dpLuwQcv44RF93qu3aMzenF0eUg
+         TaBrBWFfXLpdVy1QUHTfIComWzx62jDYdxiuiZr9N5LN34BKG4y3U4nT5WDPlqDY0yGJ
+         xqBA==
+X-Gm-Message-State: APjAAAVfYkeheEAxoRM3gVMBvC64gnuWL48oNGNOeZrbmY44WjKCJZ3C
+        4QgcXHJJItH9gW+Xk1CxeaJKVZnq8gc=
+X-Google-Smtp-Source: APXvYqzsQwheQau9uolf3pWBRAMxduG9Z1N4tSP3VvEA0X/qjSw6MaHP8j8sf7/aCCkRVNTE9MxaRQ==
+X-Received: by 2002:adf:97d6:: with SMTP id t22mr14099564wrb.407.1581501122445;
+        Wed, 12 Feb 2020 01:52:02 -0800 (PST)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id d9sm8887197wrx.94.2020.02.12.01.52.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Feb 2020 01:52:01 -0800 (PST)
+Subject: Re: [PATCH v3 3/6] ASoC: qdsp6: q6afe-dai: add support to pcm port
+ dais
+To:     Adam Serbinski <adam@serbinski.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Patrick Lai <plai@codeaurora.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200212015222.8229-1-adam@serbinski.com>
+ <20200212015222.8229-4-adam@serbinski.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <1875fb89-6a25-0d1a-c367-183ae6980ac8@linaro.org>
+Date:   Wed, 12 Feb 2020 09:52:00 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Received: by 2002:a05:6102:109d:0:0:0:0 with HTTP; Wed, 12 Feb 2020 01:48:46
- -0800 (PST)
-Reply-To: ayishagddafio@mail.ru
-From:   AISHA GADDAFI <mahasaliou99999@gmail.com>
-Date:   Wed, 12 Feb 2020 01:48:46 -0800
-Message-ID: <CAMugOs_Nqd3VGiRvkGZe9Z+YzyvjpAovouRdUNBFsOsy-QXWCw@mail.gmail.com>
-Subject: Lieber Freund (Assalamu Alaikum),?
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200212015222.8229-4-adam@serbinski.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=20
-Lieber Freund (Assalamu Alaikum),
 
-Ich bin vor einer privaten Suche auf Ihren E-Mail-Kontakt gesto=C3=9Fen
-Ihre Hilfe. Mein Name ist Aisha Al-Qaddafi, eine alleinerziehende
-Mutter und eine Witwe
-mit drei Kindern. Ich bin die einzige leibliche Tochter des Sp=C3=A4tlibysc=
-hen
-Pr=C3=A4sident (verstorbener Oberst Muammar Gaddafi).
 
-Ich habe Investmentfonds im Wert von siebenundzwanzig Millionen
-f=C3=BCnfhunderttausend
-United State Dollar ($ 27.500.000.00) und ich brauche eine
-vertrauensw=C3=BCrdige Investition
-Manager / Partner aufgrund meines aktuellen Fl=C3=BCchtlingsstatus bin ich =
-jedoch
-M=C3=B6glicherweise interessieren Sie sich f=C3=BCr die Unterst=C3=BCtzung =
-von
-Investitionsprojekten in Ihrem Land
-Von dort aus k=C3=B6nnen wir in naher Zukunft Gesch=C3=A4ftsbeziehungen auf=
-bauen.
+On 12/02/2020 01:52, Adam Serbinski wrote:
+> +			ret = of_property_read_u32(node, "qcom,pcm-quantype",
+> +						   &priv->quantype);
+> +			if (ret) {
+> +				dev_err(dev, "No quantype from DT\n");
+> +				break;
+> +			}
+> +
+> +			ret = of_property_read_variable_u32_array(node,
+> +						"qcom,pcm-slot-mapping",
+> +						priv->slot_number_mapping,
+> +						1, AFE_MAX_PCM_SLOT_COUNT);
 
-Ich bin bereit, mit Ihnen =C3=BCber das Verh=C3=A4ltnis zwischen Investitio=
-n und
-Unternehmensgewinn zu verhandeln
-Basis f=C3=BCr die zuk=C3=BCnftige Investition Gewinne zu erzielen.
+These new bindings needs to be documented in 
+Documentation/devicetree/bindings/sound/qcom,q6afe.txt
 
-Wenn Sie bereit sind, dieses Projekt in meinem Namen zu bearbeiten,
-antworten Sie bitte dringend
-Damit ich Ihnen mehr Informationen =C3=BCber die Investmentfonds geben kann=
-.
-
-Ihre dringende Antwort wird gesch=C3=A4tzt. schreibe mir an diese email adr=
-esse (
-ayishagddafio@mail.ru ) zur weiteren Diskussion.
-
-Freundliche Gr=C3=BC=C3=9Fe
-Frau Aisha Al-Qaddafi
+--srini
