@@ -2,57 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2332315A2FB
+	by mail.lfdr.de (Postfix) with ESMTP id 989B415A2FE
 	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:13:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728476AbgBLINl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 03:13:41 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:34404 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728287AbgBLINk (ORCPT
+        id S1728495AbgBLINo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 03:13:44 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38545 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728478AbgBLINn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 03:13:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=xZfWd1AJTNbOk+bHxFddhCEkeI06/CUELyUjy4uk11c=; b=Xg4US8EARSSirwDPiLRmi6pFg8
-        Y8KP6yaDbZBjT/yx0qcM6BGzgIX4PwGmHse6ymcZeKuh56v8RoWo1DQliTHeYqMmnApT9ThTOjoJZ
-        IVsIQwA6lBduQfWD0CmtX0lE1Meq+/VfJl7fq7ItZYhjJQlikAFej3HwC3Lx3+k2F4lX551cxIl46
-        uNP0KBdRrrUHUFpormJ+sYXenWUTcaiqvn0HdIlqxkb3dWvuwcYKsFQA9hsPGa6/K4mg2X8ZCggN0
-        Dk6nf6clFcmqH/JVTYE9vUqh3K5DyQYtsqqKVyWV8Q/+Hkd+BE+TxqVnm1SMswtJdRjVHa0VXMzUV
-        gMMlu0MQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1n9Q-0005DC-8F; Wed, 12 Feb 2020 08:13:40 +0000
-Date:   Wed, 12 Feb 2020 00:13:40 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Wed, 12 Feb 2020 03:13:43 -0500
+Received: by mail-pl1-f195.google.com with SMTP id t6so665977plj.5
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:13:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5/XIkUC5xt608XQA38mKMGkwHHAPePjWb6+7/svVCz4=;
+        b=N8yXAYthamMwjGoB3Fqo14OoXi1DjUjzGgv/Dof/FW8plapj2+7o8yLycCw4/BxRPk
+         tUyVRH7jnPikfFvLzOv7EXAKF+CeDC52xEYcERN/yCbf8qiMA9Y3MABoxxHE2V/2omSI
+         nuAo+Kj4ZgCF6B2zp8NaQzVBwVrwnRgZ+FltMa+k7keAFwwAedCLZB91BUVwh7B4JDVe
+         VtmZBKZTaX0ilhcIQ6jPo91aVnO+qoTREGzeDxJjMsputR/ZvFLrf3TxwPgZFy89/m2i
+         PqPrys78Ev063Jxp6Wgb4wu8GANjjb/9fFHvQBcZrGsC1wA5vpJGghd3VAxLICUzbHnP
+         LLKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5/XIkUC5xt608XQA38mKMGkwHHAPePjWb6+7/svVCz4=;
+        b=ZS88J1HH2UE9n5MDgPgqOWH1P9YUo5bcGtRXvgDVuLxkc9AL04RrGZzZ3pX0XNkfB9
+         yHCHiW6uEwFnt/+Mi/wJFkFEiBH18hHYOvwpSoADNrepl+WZALefFL0aOqzHwXDnfGG0
+         eXVR9Q/v7Egy1I3aO1jxU00xpfG7c9LJ9z91o0hZG5mYwc9sZCZGgwcR7H6nsx8mDHoT
+         W+tGNsw8g1XrjlYGSC0Tjk2V+KoPn6dI/OxsTDOfhhFdE8TIg2JEU+AbOlybFqhZwx+s
+         UKWNCu1OASPJ2JAJS/T84YFx7ovzx0nVoa2ijiOn/MRV2xD5BBXUKwbbM8qsXSp96VN1
+         R/ZQ==
+X-Gm-Message-State: APjAAAUHG5Vk6Dwubost7ZnFdHW8bwPGyCpttwh5V2F96JnvoAUk4rn8
+        RyKMn7jVxrl2Iy/sLI+D6zL/EQ==
+X-Google-Smtp-Source: APXvYqwiwlgquZSrfRRe9GXgzaxQNYsFdG2vBK3QHlEx7aqDRs5dqgE7Z/a58C9Y8QAnnT4cjgE0zw==
+X-Received: by 2002:a17:90a:3243:: with SMTP id k61mr8843323pjb.43.1581495223019;
+        Wed, 12 Feb 2020 00:13:43 -0800 (PST)
+Received: from localhost ([122.167.210.63])
+        by smtp.gmail.com with ESMTPSA id 17sm7101028pfv.142.2020.02.12.00.13.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Feb 2020 00:13:42 -0800 (PST)
+Date:   Wed, 12 Feb 2020 13:43:40 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 16/25] iomap: Support large pages in read paths
-Message-ID: <20200212081340.GD24497@infradead.org>
-References: <20200212041845.25879-1-willy@infradead.org>
- <20200212041845.25879-17-willy@infradead.org>
+Subject: Re: [PATCH] PM / OPP: Add support for multiple regulators
+Message-ID: <20200212081340.vcfd3t5w5pgxfuha@vireshk-i7>
+References: <20200212075529.156756-1-drinkcat@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200212041845.25879-17-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200212075529.156756-1-drinkcat@chromium.org>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +/*
-> + * Estimate the number of vectors we need based on the current page size;
-> + * if we're wrong we'll end up doing an overly large allocation or needing
-> + * to do a second allocation, neither of which is a big deal.
-> + */
-> +static unsigned int iomap_nr_vecs(struct page *page, loff_t length)
-> +{
-> +	return (length + thp_size(page) - 1) >> page_shift(page);
-> +}
+On 12-02-20, 15:55, Nicolas Boichat wrote:
+> The OPP table can contain multiple voltages and regulators, and
+> implementing that logic does not add a lot of code or complexity,
+> so let's modify _generic_set_opp_regulator to support that use
+> case.
+> 
+> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
 
-With the multipage bvecs a huge page (or any physically contigous piece
-of memory) will always use one or less (if merged into the previous)
-bio_vec.  So this can be simplified and optimized.
+This is already supported in a different way. See how following driver
+does this (hint dev_pm_opp_register_set_opp_helper()).
+
+drivers/opp/ti-opp-supply.c
+
+The problem with a generic solution is that we can't assume an order
+for programming of the regulators, as this can be complex on few
+platforms.
+
+-- 
+viresh
