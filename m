@@ -2,79 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54AE915ACA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 17:03:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2899115AC90
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 17:01:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728617AbgBLQDy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 11:03:54 -0500
-Received: from mga02.intel.com ([134.134.136.20]:17620 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726728AbgBLQDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 11:03:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 08:03:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,433,1574150400"; 
-   d="scan'208";a="313442360"
-Received: from gmoralez-mobl.amr.corp.intel.com (HELO [10.252.135.232]) ([10.252.135.232])
-  by orsmga001.jf.intel.com with ESMTP; 12 Feb 2020 08:03:41 -0800
-Subject: Re: [alsa-devel] [PATCH] ASoC: da7219: check SRM lock in trigger
- callback
-To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        "Sridharan, Ranjani" <ranjani.sridharan@intel.com>
-Cc:     "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Chiang, Mac" <mac.chiang@intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        "Lu, Brent" <brent.lu@intel.com>,
-        "cychiang@google.com" <cychiang@google.com>
-References: <1581322611-25695-1-git-send-email-brent.lu@intel.com>
- <AM6PR10MB2263F302A86B17C95B16361280190@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
- <SN6PR11MB26702B2E7E5F705425517F4897180@SN6PR11MB2670.namprd11.prod.outlook.com>
- <855c88fb-4438-aefb-ac9b-a9a5a2dc8caa@linux.intel.com>
- <CAFQqKeWHDyyd_YBBaD6P2sCL5OCNEsiUU6B7eUwtiLv8GZU0yg@mail.gmail.com>
- <2eeca7fe-aec9-c680-5d61-930de18b952b@linux.intel.com>
- <CAFQqKeXK3OG7KXaHGUuC75sxWrdf11xJooC7XsDCOyd6KUgPTQ@mail.gmail.com>
- <c9dbcdd8-b943-94a6-581f-7bbebe8c6d25@linux.intel.com>
- <AM6PR10MB22630C79D08CE74878A6A096801B0@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <043c8384-6ce2-c78e-f52c-6a37a4bab3a0@linux.intel.com>
-Date:   Wed, 12 Feb 2020 09:48:24 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727960AbgBLQBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 11:01:20 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:51212 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbgBLQBT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 11:01:19 -0500
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id 01CG16c2028562;
+        Thu, 13 Feb 2020 01:01:07 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 01CG16c2028562
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1581523267;
+        bh=jgMnyQ6e7taMrN8XKE/t9JYcKQ9mse0rEF0i3IfkYKI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=1S/cJkKlAJeh6h10+kNdwwLm0alsFbhhpDuomD82uTqxwpUKjdBo7bm0tNu9IGuoR
+         g8BIDCNcwQLG0olfosqKhqO/yKiwf3SuVv7stCSJN6/DHSFx2uRrVhIkCdryOwoWn1
+         HFppgDq56bfFdTTGiRhQrG80amOnb9QXeHuS4x8Y8WLMAAhyu8PCW7ayMoCtYYgnkq
+         t7jBrXGu2a+jtv7R7BBUQV/7Taut6eLx2L3GxW6maCmKoCqexmTIPQp0j/M5viYe3Z
+         HAWFgyY9nWXMsprQ79jocZOxGwdQVIvGQY6+l6QnZntu7kgymQLQYnIhXVjvx4y1pw
+         TU+gCky17Qf9g==
+X-Nifty-SrcIP: [209.85.222.50]
+Received: by mail-ua1-f50.google.com with SMTP id l6so1029876uap.13;
+        Wed, 12 Feb 2020 08:01:07 -0800 (PST)
+X-Gm-Message-State: APjAAAXNvxrWfaQwpqWgZhV8KHJDfDT2Yh96r1cvseUlUdaijGnJ37ND
+        qob6GdI43GhDlCn3mBnJBYnbl7UB2Zz74slZp20=
+X-Google-Smtp-Source: APXvYqyKzqwHthQ8w1eAIJMmKLc+sLNIsGW9LHJ8gcgtKMBHGIwfbGI0e0E8i/00XA5LhyKz8e3B92sv5418kTN4DdA=
+X-Received: by 2002:ab0:45c7:: with SMTP id u65mr7016799uau.109.1581523266111;
+ Wed, 12 Feb 2020 08:01:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <AM6PR10MB22630C79D08CE74878A6A096801B0@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200210200634.950-1-masahiroy@kernel.org>
+In-Reply-To: <20200210200634.950-1-masahiroy@kernel.org>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Thu, 13 Feb 2020 01:00:30 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASYsNcdL8L_do7McOKf1sJJRvBbMS_wQeU-HefYJnfU3Q@mail.gmail.com>
+Message-ID: <CAK7LNASYsNcdL8L_do7McOKf1sJJRvBbMS_wQeU-HefYJnfU3Q@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: fix mismatch between .version and include/generated/compile.h
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Feb 11, 2020 at 5:06 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> Since commit 56d589361572 ("kbuild: do not create orphan built-in.a or
+> obj-y objects"), scripts/link-vmlinux.sh does nothing when descending
+> into init/.
+>
+> Once the version number becomes out of sync between .version and
+> include/generated/compile.h, it is not self-healing.
+>
+> [How to reproduce]
+>
+>  $ echo 100 > .version
+>  $ make
+>
+> You will see the number in the .version is always bigger than that in
+> compile.h by one. After this, every time you run 'make', the vmlinux is
+> re-linked even when none of source files is updated.
+>
+> Fixes: 56d589361572 ("kbuild: do not create orphan built-in.a or obj-y objects")
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
 
->> Thanks Ranjani. That information closes the door on the idea of playing
->> with the trigger order suggested earlier in the thread, so my guess is
->> that we really need to expose the MCLK/BCLK with the clk API and turn
->> them on/off from the machine driver as needed. I hope is that we don't
->> need the FSYNC as well, that would be rather painful to implement.
-> 
-> Am not going to make myself popular here. It's MCLK and FSYNC (or WCLK as it's
-> termed for our device) that is required for SRM to lock in the PLL.
-> 
-> So far I've not found a way in the codec driver to be able to get around this.
-> I spent a very long time with Sathya in the early days (Apollo Lake) looking at
-> options but nothing would fit which is why I have the solution that's in place
-> right now. We could probably reduce the number of rechecks before timeout in the
-> driver but that's really just papering over the crack and there's still the
-> possibility of noise later when SRM finally does lock.
+Applied.
 
-Sorry, you lost me at "the solution that's in place right now". There is 
-nothing in the bxt_da7219_max98357a.c code that deals with clocks or 
-defines a trigger order?
+
+>  scripts/link-vmlinux.sh | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+> index 1919c311c149..dd484e92752e 100755
+> --- a/scripts/link-vmlinux.sh
+> +++ b/scripts/link-vmlinux.sh
+> @@ -239,7 +239,7 @@ else
+>  fi;
+>
+>  # final build of init/
+> -${MAKE} -f "${srctree}/scripts/Makefile.build" obj=init
+> +${MAKE} -f "${srctree}/scripts/Makefile.build" obj=init need-builtin=1
+>
+>  #link vmlinux.o
+>  info LD vmlinux.o
+> --
+> 2.17.1
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
