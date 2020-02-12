@@ -2,209 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C452215AB3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 15:47:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DC6715AB43
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 15:49:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbgBLOrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 09:47:45 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40384 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727092AbgBLOro (ORCPT
+        id S1728373AbgBLOtU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 09:49:20 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:2706 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727781AbgBLOtT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 09:47:44 -0500
-Received: by mail-lf1-f67.google.com with SMTP id c23so1796739lfi.7
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 06:47:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=R9iMxDXlfk87YsgzDeP791j5DHdY7d352oDqG74g8oE=;
-        b=mhTbWlqB4B/YnOIkDMFmGC6d/h8lPpOoSODi42Nd5NoLs/r7sztqO9brEUNE2SfevL
-         VLvHLu+aQ+cHhJPmtMx2XNyV1KGiWarcffK538VyXy6UCht7aKyoPnVd6QDZe00qVbJt
-         1r71KDsGfB+s/JjT8iHMJvovEbTBC9ANzQZYIIFL7dD6VGtBhMdFkbifTbyVXhYU887+
-         5jcCBwVhEPMto1tbExEGjM+tAbnBKJRjwlUY0KZ0Cpc6pdNAj3qMdJI43rV8FXCTST42
-         HadSVppithhIn/MJ9hiLPajTcWMctR70R3Mlc8y+APcOLegiK5WQfdU6KzKhTGXtFG14
-         ltWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R9iMxDXlfk87YsgzDeP791j5DHdY7d352oDqG74g8oE=;
-        b=jpCIMlE7nXhhiF6iPiaMPfR+8kWyGLvA9rZGOsrVqHRhH9z76CkN+r/r72sOqydqv3
-         BcEHwko2qSiOB/9l5v9OucULkJkauH0oULvTkgx2lYt5sa0KpntG4JUOictAPR1689tw
-         Jb/jkHSjhkWnvZqDPNZ+BezIff0Hm9EI2E38f8OsDva1jFhAZv5XScrbMHA56gOfHuui
-         FZrelsi5TlChnmnKmtBO9T8J7KVNb3TtOIabnyXbVx4fYxYD0ybmU61rp9ZYqR8ZkGtb
-         smCje+mRsAhc7tUPIXfftqwi+THxkxxL1WfYTXFEeFhHfBsT1lZPMX/yrXAp8urSuoJC
-         2PgA==
-X-Gm-Message-State: APjAAAXtdDI9jyNEZlIzg6U3AQM6kdeFM5lrpZu6i8iWRFBn8bBAz5+j
-        BGSbbjI7JlMS+Mw+uZ7Q4U/VMeAnOl7YncnEhJzbzg==
-X-Google-Smtp-Source: APXvYqxka93P9g6KFjVSoTaMOubCrne0KDBr3L5bwLfQyBl/LLgHmBKzN0ckBLfufjR6il1qbAtVVFuZsCJHTAqBk70=
-X-Received: by 2002:ac2:4add:: with SMTP id m29mr6880686lfp.190.1581518862177;
- Wed, 12 Feb 2020 06:47:42 -0800 (PST)
-MIME-Version: 1.0
-References: <20200211174651.10330-1-vincent.guittot@linaro.org>
- <20200211174651.10330-2-vincent.guittot@linaro.org> <20200212132036.GT3420@suse.de>
-In-Reply-To: <20200212132036.GT3420@suse.de>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 12 Feb 2020 15:47:30 +0100
-Message-ID: <CAKfTPtAM=kgF7Fz-JKFY+s_k5KFirs-8Bub3s1Eqtq7P0NMa0w@mail.gmail.com>
-Subject: Re: [PATCH 1/4] sched/fair: reorder enqueue/dequeue_task_fair path
-To:     Mel Gorman <mgorman@suse.de>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>
+        Wed, 12 Feb 2020 09:49:19 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01CETcwE033307
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 09:49:19 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2y3pqguk8h-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 09:49:18 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 12 Feb 2020 14:49:16 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 12 Feb 2020 14:49:13 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01CEnCot31654022
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Feb 2020 14:49:12 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 13A8F52092;
+        Wed, 12 Feb 2020 14:49:12 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.205.134])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 3F0885207E;
+        Wed, 12 Feb 2020 14:49:11 +0000 (GMT)
+Subject: Re: [PATCH v3 1/3] IMA: Update KBUILD_MODNAME for IMA files to ima
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>, joe@perches.com,
+        skhan@linuxfoundation.org, linux-integrity@vger.kernel.org
+Cc:     sashal@kernel.org, nramas@linux.microsoft.com,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 12 Feb 2020 09:49:10 -0500
+In-Reply-To: <20200211231414.6640-2-tusharsu@linux.microsoft.com>
+References: <20200211231414.6640-1-tusharsu@linux.microsoft.com>
+         <20200211231414.6640-2-tusharsu@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20021214-4275-0000-0000-000003A073E6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20021214-4276-0000-0000-000038B4AF5D
+Message-Id: <1581518950.8515.51.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-12_07:2020-02-11,2020-02-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ bulkscore=0 malwarescore=0 mlxlogscore=999 adultscore=0 spamscore=0
+ lowpriorityscore=0 mlxscore=0 suspectscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002120114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Feb 2020 at 14:20, Mel Gorman <mgorman@suse.de> wrote:
->
-> On Tue, Feb 11, 2020 at 06:46:48PM +0100, Vincent Guittot wrote:
-> > The walk through the cgroup hierarchy during the enqueue/dequeue of a task
-> > is split in 2 distinct parts for throttled cfs_rq without any added value
-> > but making code less readable.
-> >
-> > Change the code ordering such that everything related to a cfs_rq
-> > (throttled or not) will be done in the same loop.
-> >
-> > In addition, the same steps ordering is used when updating a cfs_rq:
-> > - update_load_avg
-> > - update_cfs_group
-> > - update *h_nr_running
-> >
-> > No functional and performance changes are expected and have been noticed
-> > during tests.
-> >
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > ---
-> >  kernel/sched/fair.c | 42 ++++++++++++++++++++----------------------
-> >  1 file changed, 20 insertions(+), 22 deletions(-)
-> >
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 1a0ce83e835a..a1ea02b5362e 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -5259,32 +5259,31 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
-> >               cfs_rq = cfs_rq_of(se);
-> >               enqueue_entity(cfs_rq, se, flags);
-> >
-> > -             /*
-> > -              * end evaluation on encountering a throttled cfs_rq
-> > -              *
-> > -              * note: in the case of encountering a throttled cfs_rq we will
-> > -              * post the final h_nr_running increment below.
-> > -              */
-> > -             if (cfs_rq_throttled(cfs_rq))
-> > -                     break;
-> >               cfs_rq->h_nr_running++;
-> >               cfs_rq->idle_h_nr_running += idle_h_nr_running;
-> >
-> > +             /* end evaluation on encountering a throttled cfs_rq */
-> > +             if (cfs_rq_throttled(cfs_rq))
-> > +                     goto enqueue_throttle;
-> > +
-> >               flags = ENQUEUE_WAKEUP;
-> >       }
-> >
-> >       for_each_sched_entity(se) {
-> >               cfs_rq = cfs_rq_of(se);
-> > -             cfs_rq->h_nr_running++;
-> > -             cfs_rq->idle_h_nr_running += idle_h_nr_running;
-> >
-> > +             /* end evaluation on encountering a throttled cfs_rq */
-> >               if (cfs_rq_throttled(cfs_rq))
-> > -                     break;
-> > +                     goto enqueue_throttle;
-> > AFAICT, there are in tip/sched/core
-> >               update_load_avg(cfs_rq, se, UPDATE_TG);
-> >               update_cfs_group(se);
-> > +
-> > +             cfs_rq->h_nr_running++;
-> > +             cfs_rq->idle_h_nr_running += idle_h_nr_running;
-> >       }
-> >
-> > +enqueue_throttle:
-> >       if (!se) {
-> >               add_nr_running(rq, 1);
-> >               /*
->
-> I'm having trouble reconciling the patch with the description and the
-> comments explaining the intent behind the code are unhelpful.
->
-> There are two loops before and after your patch -- the first dealing with
-> sched entities that are not on a runqueue and the second for the remaining
-> entities that are. The intent appears to be to update the load averages
-> once the entity is active on a runqueue.
->
-> I'm not getting why the changelog says everything related to cfs is
-> now done in one loop because there are still two. But even if you do
-> get throttled, it's not clear why you jump to the !se check given that
-> for_each_sched_entity did not complete. What it *does* appear to do is
-> have all the h_nr_running related to entities being enqueued updated in
-> one loop and all remaining entities stats updated in the other.
+On Tue, 2020-02-11 at 15:14 -0800, Tushar Sugandhi wrote:
+> Log statements from ima_mok.c, ima_asymmetric_keys.c, and
+> ima_queue_keys.c are prefixed with the respective file names
+> and not with the string "ima". 
 
-Let's take the example of 2 levels in addition to root so we have :
-root->cfs1->cfs2
-Now we enqueue a task T1 on cfs2 but cfs1 is throttled, we will have
-the sequence:
+Before listing the specific filenames, the patch description should
+provide a generic explanation of the problem.  For example, the kernel
+Makefile "obj-$CONFIG_XXXX" specifies object files which may be built
+as loadable kernel modules[1].
 
-In 1st for_each_sched_entity loop:
-  loop 1
-    enqueue_entity (T1->se, cfs2) which calls update load_avg(cfs2)
-    cfs2->h_nr_running++;
-  loop 2
-    enqueue_entity (cfs2->gse, cfs1) which calls update load_avg(cfs1)
-    break because cfs1 is throttled
+Mimi
 
-In 2nd for_each_sched_entity loop:
-  loop 1
-    cfs1->h_nr_running++
-    break because throttled
+[1] Refer to Documentation/kbuild/makefiles.rst
 
-Using the 2nd loop for incrementing h_nr_running of the throttled cfs
-is useless and we could do that directly in 1st loop and skip the 2nd
-loop
+> 
+> This change fixes the log statement prefix to be consistent with the rest
+> of the IMA files.
+> 
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> ---
+>  security/integrity/ima/Makefile | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
+> index 064a256f8725..67dabca670e2 100644
+> --- a/security/integrity/ima/Makefile
+> +++ b/security/integrity/ima/Makefile
+> @@ -11,6 +11,6 @@ ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
+>  ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
+>  ima-$(CONFIG_IMA_APPRAISE_MODSIG) += ima_modsig.o
+>  ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
+> -obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
+> -obj-$(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) += ima_asymmetric_keys.o
+> -obj-$(CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS) += ima_queue_keys.o
+> +ima-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
+> +ima-$(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) += ima_asymmetric_keys.o
+> +ima-$(CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS) += ima_queue_keys.o
 
-With this patch we have :
-
-In 1st for_each_sched_entity loop:
-  loop 1
-    enqueue_entity (T1->se, cfs2) which update load_avg(cfs2)
-    cfs2->h_nr_running++;
-  loop 2
-    enqueue_entity (cfs2->gse, cfs1) which update load_avg(cfs1)
-    cfs1->h_nr_running++
-    skip the 2nd for_each_sched_entity entirely
-
-Then the patch also reorders the call to update_load_avg() and the
-increment of h_nr_running
-
-Before the patch we had different order between the to
-for_each_sched_entity which is not a problem because there is
-currently no relation between both. But the following patches make
-PELT using h_nr_running so we must have the same ordering to prevent
-updating pelt with the wrong h_nr_running value
-
->
-> Following the accounting is tricky. Before the patch, if throttling
-> happened then h_nr_running was updated without updating the corresponding
-> nr_running counter in rq. They are out of sync until unthrottle_cfs_rq
-> is called at the very least. After your patch, the same is true and while
-> the accounting appears to be equivalent, it's not clear it's correct and
-> I do not find the code any easier to understand after the patch or how
-> it's connected to runnable_load_avg which this series is about :(
->
-> I think the patch is functionally ok but I am having trouble figuring
-> out the motive. Maybe it'll be obvious after I read the rest of the series.
->
-> --
-> Mel Gorman
-> SUSE Labs
