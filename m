@@ -2,91 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 428A915AECD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 18:34:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A943E15AED3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 18:36:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728742AbgBLRe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 12:34:56 -0500
-Received: from relay.sw.ru ([185.231.240.75]:43222 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727054AbgBLRe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 12:34:56 -0500
-Received: from [192.168.15.107]
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1j1vuX-0007GT-JU; Wed, 12 Feb 2020 20:34:53 +0300
-Subject: Re: [PATCH v6 6/6] loop: Add support for REQ_ALLOCATE
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     martin.petersen@oracle.com, bob.liu@oracle.com, axboe@kernel.dk,
-        agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
-        song@kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        Chaitanya.Kulkarni@wdc.com, ming.lei@redhat.com, osandov@fb.com,
-        jthumshirn@suse.de, minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
-        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
-        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
-        bvanassche@acm.org, dhowells@redhat.com, asml.silence@gmail.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <158132703141.239613.3550455492676290009.stgit@localhost.localdomain>
- <158132724397.239613.16927024926439560344.stgit@localhost.localdomain>
- <20200212170156.GM6874@magnolia>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <786c991e-cfaa-b2af-cac2-7165e6d7fa34@virtuozzo.com>
-Date:   Wed, 12 Feb 2020 20:34:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S1728715AbgBLRgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 12:36:36 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:42559 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbgBLRgf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 12:36:35 -0500
+Received: by mail-ua1-f65.google.com with SMTP id p2so1172323uao.9
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 09:36:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oXC2J3nEK5SwOdFoK4ULqW0570rBTdySIYo3+gIlo9M=;
+        b=WTUFnbqwYf+rL57s/FGxM1+vxE9Jz5IK7E+OqB1D8Yag+QT+LdUeuoco6oTC4zgy7L
+         TKipBuXtB2O8hn6XUjmdUpdrUfke0F8SCdmbLI53UNP2BplyGiw6vXFuWmFYFzZtLQeN
+         5wpar/5ILukP9S05BShLrDSCKEPCKcsSH/oAGyElM1PsKMhn2zidyE008XJx5PD7dUMg
+         n4j6E1083epW+BkViMtDeuVftqlXVyhEyjY2m1kZGGBAfrXmhWXYSRy7y6cbm8taKOCJ
+         y3l8mKYES7s2h2SOYn+hKiFfdkCBn2+SUUTjhfBmJGbvU+drkZVcb4Ou3zqNKzp4BpKd
+         nG4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oXC2J3nEK5SwOdFoK4ULqW0570rBTdySIYo3+gIlo9M=;
+        b=Y4oVU/AhlH9eO/UCFQvp/cJnN2CK5oC+QwyLjIOd3y2w78QxBwNnnEpeH6OBNrVp+S
+         g9udZ0OwZFV+VZpZHamNFprKEv4ow5AQbcxTPmkhgiecaeYRpX7oJfColCAlYhDlKNoH
+         mcZxUX6yCc2UulhgSShtsmNtT/bc1AcTWnlMDEHfAYbK0Tu1G06zf5LXIVVnugJ388J8
+         uPL+AFNDUitpt4hqsIzr9NM/82aGdjvFAFUxSSlJIFeigz/ovRiMeftauY5+OsuVRB8O
+         xGdZ+jJ8LvqqOKgqtZuakFQcTbKhTjleVJy86sGSQSJNZlOTQiGy9XJrY24Cs+Q9hxp1
+         gctA==
+X-Gm-Message-State: APjAAAXN9pm7NzArLEDnzH5EkHzS8GvXYe4GGnnvfQ1+fVQQrDEH5Op8
+        MdKZkejAOquzNJlOiMfXXJEVnoeCkisAoxrKi8dqGA==
+X-Google-Smtp-Source: APXvYqySnCPpjBgnelV684/U07lYpWTQs3A+aOrC5t4BnyXhAn03wUz7JH8o/EDUYvzcfRllMDnDJ3B306fqXtaeZDQ=
+X-Received: by 2002:ab0:422:: with SMTP id 31mr5283734uav.98.1581528994562;
+ Wed, 12 Feb 2020 09:36:34 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200212170156.GM6874@magnolia>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20200128184934.77625-1-samitolvanen@google.com> <63517cff-4bd6-bb6c-9a54-23de4f5fbb4a@arm.com>
+In-Reply-To: <63517cff-4bd6-bb6c-9a54-23de4f5fbb4a@arm.com>
+From:   Sami Tolvanen <samitolvanen@google.com>
+Date:   Wed, 12 Feb 2020 09:36:23 -0800
+Message-ID: <CABCJKuff08oGqg-2WO-J=SkGHcX+2KCrqhmgVnQT7ujKGUcvag@mail.gmail.com>
+Subject: Re: [PATCH v7 00/11] add support for Clang's Shadow Call Stack
+To:     James Morse <james.morse@arm.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.02.2020 20:01, Darrick J. Wong wrote:
-> On Mon, Feb 10, 2020 at 12:34:04PM +0300, Kirill Tkhai wrote:
->> Support for new modifier of REQ_OP_WRITE_ZEROES command.
->> This results in allocation extents in backing file instead
->> of actual blocks zeroing.
->>
->> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
->> Reviewed-by: Bob Liu <bob.liu@oracle.com>
->> ---
->>  drivers/block/loop.c |   15 ++++++++++++---
->>  1 file changed, 12 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
->> index 739b372a5112..bfe76d9adf09 100644
->> --- a/drivers/block/loop.c
->> +++ b/drivers/block/loop.c
->> @@ -581,6 +581,15 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
->>  	return 0;
->>  }
->>  
->> +static unsigned int write_zeroes_to_fallocate_mode(unsigned int flags)
->> +{
->> +	if (flags & REQ_ALLOCATE)
->> +		return 0;
->> +	if (flags & REQ_NOUNMAP)
->> +		return FALLOC_FL_ZERO_RANGE;
->> +	return FALLOC_FL_PUNCH_HOLE;
->> +}
->> +
->>  static int do_req_filebacked(struct loop_device *lo, struct request *rq)
->>  {
->>  	struct loop_cmd *cmd = blk_mq_rq_to_pdu(rq);
->> @@ -604,9 +613,7 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
->>  		 * write zeroes the range.  Otherwise, punch them out.
->>  		 */
-> 
-> Please update this comment to reflect the new REQ_ALLOCATE mode, and
-> move it to where you define write_zeroes_to_fallocate_mode().
+On Tue, Feb 11, 2020 at 5:57 AM James Morse <james.morse@arm.com> wrote:
+> I found I had to add:
+> | KBUILD_CFLAGS := $(filter-out -ffixed-x18 $(CC_FLAGS_SCS), $(KBUILD_CFLAGS))
+>
+> to drivers/firmware/efi/libstub/Makefile, to get this going.
 
-Ok, I'll update it in v7
+Ah, good catch!
 
-> With that fixed,
-> 
-> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> I don't think there is much point supporting SCS for the EFIstub, its already isolated
+> from the rest of the kernel's C code by the __efistub symbol prefix machinery, and trying
+> to use it would expose us to buggy firmware at a point we can't handle it!
 
-Thanks
+Yes, fully agreed.
+
+> I can send a patch if its easier for you,
+
+It's not a problem, I will include a patch for this in v8.
+
+Sami
