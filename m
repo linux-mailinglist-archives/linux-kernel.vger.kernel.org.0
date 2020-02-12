@@ -2,78 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BA9115A5CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:12:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C949415A587
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:01:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729111AbgBLKK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 05:10:28 -0500
-Received: from mx7.zte.com.cn ([202.103.147.169]:25060 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728809AbgBLKK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 05:10:28 -0500
-X-Greylist: delayed 935 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Feb 2020 05:10:26 EST
-Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
-        by Forcepoint Email with ESMTPS id 24D58A4FEEEF343EF461;
-        Wed, 12 Feb 2020 17:54:45 +0800 (CST)
-Received: from notes_smtp.zte.com.cn (notessmtp.zte.com.cn [10.30.1.239])
-        by mse-fl1.zte.com.cn with ESMTP id 01C9sDsc032663;
-        Wed, 12 Feb 2020 17:54:13 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2020021217543472-2102565 ;
-          Wed, 12 Feb 2020 17:54:34 +0800 
-From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     sudeep.dutt@intel.com
-Cc:     ashutosh.dixit@intel.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, vincent.whitchurch@axis.com,
-        alexios.zavras@intel.com, tglx@linutronix.de, allison@lohutok.net,
-        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
-        wang.yi59@zte.com.cn, wang.liang82@zte.com.cn,
-        Huang Zijiang <huang.zijiang@zte.com.cn>
-Subject: [PATCH] misc: Use kzalloc() instead of kmalloc() with flag GFP_ZERO.
-Date:   Wed, 12 Feb 2020 17:54:07 +0800
-Message-Id: <1581501247-5479-1-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2020-02-12 17:54:34,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2020-02-12 17:54:16,
-        Serialize complete at 2020-02-12 17:54:16
-X-MAIL: mse-fl1.zte.com.cn 01C9sDsc032663
+        id S1728947AbgBLKBE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 05:01:04 -0500
+Received: from xavier.telenet-ops.be ([195.130.132.52]:39966 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728846AbgBLKBE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 05:01:04 -0500
+Received: from ramsan ([84.195.182.253])
+        by xavier.telenet-ops.be with bizsmtp
+        id 1m0x2200U5USYZQ01m0x7W; Wed, 12 Feb 2020 11:01:02 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j1opF-0001AK-FG; Wed, 12 Feb 2020 11:00:57 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j1opF-0005cL-DI; Wed, 12 Feb 2020 11:00:57 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Vineet Gupta <vgupta@synopsys.com>
+Cc:     linux-snps-arc@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] ARC: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+Date:   Wed, 12 Feb 2020 11:00:47 +0100
+Message-Id: <20200212100047.18642-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huang Zijiang <huang.zijiang@zte.com.cn>
+The ARC platform code is not a clock provider, and just needs to call
+of_clk_init().
 
-Use kzalloc instead of manually setting kmalloc
-with flag GFP_ZERO since kzalloc sets allocated memory
-to zero.
+Hence it can include <linux/of_clk.h> instead of <linux/clk-provider.h>.
 
-Change in v2:
-     add indation
-
-Signed-off-by: Huang Zijiang <huang.zijiang@zte.com.cn>
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/misc/mic/host/mic_boot.c | 2 +-
+ arch/arc/kernel/setup.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/mic/host/mic_boot.c b/drivers/misc/mic/host/mic_boot.c
-index 4f2d921..fb5b398 100644
---- a/drivers/misc/mic/host/mic_boot.c
-+++ b/drivers/misc/mic/host/mic_boot.c
-@@ -137,7 +137,7 @@ static void *__mic_dma_alloc(struct device *dev, size_t size,
- 	struct scif_hw_dev *scdev = dev_get_drvdata(dev);
- 	struct mic_device *mdev = scdev_to_mdev(scdev);
- 	dma_addr_t tmp;
--	void *va = kmalloc(size, gfp | __GFP_ZERO);
-+	void *va = kzalloc(size, gfp);
- 
- 	if (va) {
- 		tmp = mic_map_single(mdev, va, size);
+diff --git a/arch/arc/kernel/setup.c b/arch/arc/kernel/setup.c
+index e1c647490f00e910..aa41af6ef4ac6ecc 100644
+--- a/arch/arc/kernel/setup.c
++++ b/arch/arc/kernel/setup.c
+@@ -8,11 +8,11 @@
+ #include <linux/delay.h>
+ #include <linux/root_dev.h>
+ #include <linux/clk.h>
+-#include <linux/clk-provider.h>
+ #include <linux/clocksource.h>
+ #include <linux/console.h>
+ #include <linux/module.h>
+ #include <linux/cpu.h>
++#include <linux/of_clk.h>
+ #include <linux/of_fdt.h>
+ #include <linux/of.h>
+ #include <linux/cache.h>
 -- 
-1.9.1
+2.17.1
 
