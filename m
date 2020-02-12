@@ -2,163 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BC8E15A818
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 12:43:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF85715A815
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 12:43:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728237AbgBLLnT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 06:43:19 -0500
-Received: from foss.arm.com ([217.140.110.172]:59864 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727264AbgBLLnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 06:43:18 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D1EF30E;
-        Wed, 12 Feb 2020 03:43:18 -0800 (PST)
-Received: from [10.37.12.187] (unknown [10.37.12.187])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 487C53F68F;
-        Wed, 12 Feb 2020 03:43:14 -0800 (PST)
-Subject: Re: [PATCH v3 7/7] clocksource/drivers/arm_arch_timer: validate
- arch_timer_rate
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Ionela Voinescu <ionela.voinescu@arm.com>, catalin.marinas@arm.com,
-        will@kernel.org, mark.rutland@arm.com, suzuki.poulose@arm.com,
-        sudeep.holla@arm.com, valentin.schneider@arm.com,
-        rjw@rjwysocki.net, peterz@infradead.org, mingo@redhat.com,
-        vincent.guittot@linaro.org, viresh.kumar@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20200211184542.29585-1-ionela.voinescu@arm.com>
- <20200211184542.29585-8-ionela.voinescu@arm.com>
- <89339501-5ee4-e871-3076-c8b02c6fbf6e@arm.com>
- <a24aa6c86e7a565b6269f48d4026bca2@kernel.org>
- <289c6110-b7ea-1d61-d795-551723263803@arm.com>
- <f01a6384e7297de87a434e83bd1479d8@kernel.org>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <b7b0f4c6-cf59-e390-a67b-cfe3ff50a61f@arm.com>
-Date:   Wed, 12 Feb 2020 11:43:12 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728173AbgBLLnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 06:43:14 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:28180 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728147AbgBLLnO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 06:43:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581507793;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IEsa1BUq0bWPEOZUtW+wdRfon7IBIMbGMK3y3jxH0WI=;
+        b=XgqXDyTci9kc+rOUxebQ3foyNSJg5XWv6WzUhLjx7aMnxOrJhRSm7kkN3GTnYNT8C9wPE/
+        vrO1BrQ2atawpUuQY+f1q0r9gvTdIwt5dEZNpZ9kXI0gxOoYLSnQpraiGOjllOA3VD0069
+        TJdO7x9SIFBg9kb9kzrKqZAiE0SO8WE=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-95-r6i-q6JRP8KvGRX-35u-cg-1; Wed, 12 Feb 2020 06:43:11 -0500
+X-MC-Unique: r6i-q6JRP8KvGRX-35u-cg-1
+Received: by mail-wr1-f71.google.com with SMTP id u8so705805wrp.10
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 03:43:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IEsa1BUq0bWPEOZUtW+wdRfon7IBIMbGMK3y3jxH0WI=;
+        b=iEQp0hZEctv5Xo1K7ZPRkuNlXW9JwRKzyl+Ercz7Yh+VrFquV9twukubBkeWE/sye7
+         9AmTRoUd9fBGwYdg3PKb9fAOpDfWHYcUTJkH0B8iOya1DeOE57eYH/1T22K7iTeZG0Bi
+         ueGWkgLyH6rS0Dxy1Af9zj4F5nItfeHAT47HrKOWBH9JGaKKNt/TcMHlTG6kudNSUHgE
+         aBkdEpKfEiq1GRzItS+0/QEMM0E9cE0JEE61Mq7PPIAtsXS/nUFYWuHIlS0qP7uqaNCt
+         NzHvEmYfIoeiNZwfcvcw8zKJMDhTK+D/YIdWzaxSNQoQijArTUjTjz990R7b6QRLxCRW
+         R+CA==
+X-Gm-Message-State: APjAAAV8YWEauKzYKv9Tac0P5/V4Juzrb5a6Jrzdujpl7phrTOq4WNzK
+        Lsr0w0SVNo5VjwpC7joQF8milkuxscCkhAA5ictpCrUdGuyd5uO2hoeuRMdyzDGhPzA14fuBD6+
+        TTRpCvnqagJyGTaDiaAtbH1IX
+X-Received: by 2002:a7b:c0c7:: with SMTP id s7mr13029513wmh.129.1581507790624;
+        Wed, 12 Feb 2020 03:43:10 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyvvGB6t9rTwkD5wOcWPzS3g4rf1aL3jnLVeGk4ga2e33TJdyaD2AbO4OgPZgsH90lWZaY+4Q==
+X-Received: by 2002:a7b:c0c7:: with SMTP id s7mr13029498wmh.129.1581507790434;
+        Wed, 12 Feb 2020 03:43:10 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:652c:29a6:517b:66d9? ([2001:b07:6468:f312:652c:29a6:517b:66d9])
+        by smtp.gmail.com with ESMTPSA id n3sm389509wmc.27.2020.02.12.03.43.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2020 03:43:08 -0800 (PST)
+Subject: Re: [PATCH v4 3/3] selftests: KVM: SVM: Add vmcall test
+To:     Auger Eric <eric.auger@redhat.com>, Wei Huang <wei.huang2@amd.com>
+Cc:     eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, vkuznets@redhat.com, thuth@redhat.com,
+        drjones@redhat.com
+References: <20200206104710.16077-1-eric.auger@redhat.com>
+ <20200206104710.16077-4-eric.auger@redhat.com>
+ <20200206173931.GC2465308@weiserver.amd.com>
+ <130c32bc-7533-1b4e-b913-d9596ed4e94d@redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <7f9c89b5-c1df-011f-917d-89d2e880049d@redhat.com>
+Date:   Wed, 12 Feb 2020 12:43:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <f01a6384e7297de87a434e83bd1479d8@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <130c32bc-7533-1b4e-b913-d9596ed4e94d@redhat.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/02/20 11:15, Auger Eric wrote:
+>> Probably rename the file to svm_nested_vmcall_test.c. This matches with
+>> the naming convention of VMX's nested tests. Otherwise people might not know
+>> it is a nested one.
+> From what I understand, all the vmx_* (including vmx_tsc_adjust_test for
+> instance) are related to nested. So I'd rather leave svm_ prefix for
+> nested SVM.
 
+That is not strictly necessary, as there could be tests for Intel or
+AMD-specific bugs or features.  But in practice you are right, "vmx_"
+right now means it's testing nested.  We can rename all of them to
+"nvmx_*" and "nsvm_*", but in the meanwhile your patch does not
+introduce any inconsistency.
 
-On 2/12/20 11:10 AM, Marc Zyngier wrote:
-> On 2020-02-12 10:55, Lukasz Luba wrote:
->> On 2/12/20 10:12 AM, Marc Zyngier wrote:
->>> On 2020-02-12 10:01, Lukasz Luba wrote:
->>>> Hi Ionela, Valentin
->>>>
->>>> On 2/11/20 6:45 PM, Ionela Voinescu wrote:
->>>>> From: Valentin Schneider <valentin.schneider@arm.com>
->>>>>
->>>>> Using an arch timer with a frequency of less than 1MHz can result 
->>>>> in an
->>>>> incorrect functionality of the system which assumes a reasonable rate.
->>>>>
->>>>> One example is the use of activity monitors for frequency invariance
->>>>> which uses the rate of the arch timer as the known rate of the 
->>>>> constant
->>>>> cycle counter in computing its ratio compared to the maximum frequency
->>>>> of a CPU. For arch timer frequencies less than 1MHz this ratio could
->>>>> end up being 0 which is an invalid value for its use.
->>>>>
->>>>> Therefore, warn if the arch timer rate is below 1MHz which contravenes
->>>>> the recommended architecture interval of 1 to 50MHz.
->>>>>
->>>>> Signed-off-by: Ionela Voinescu <ionela.voinescu@arm.com>
->>>>> Cc: Mark Rutland <mark.rutland@arm.com>
->>>>> Cc: Marc Zyngier <maz@kernel.org>
->>>>> ---
->>>>>   drivers/clocksource/arm_arch_timer.c | 18 +++++++++++++++---
->>>>>   1 file changed, 15 insertions(+), 3 deletions(-)
->>>>>
->>>>> diff --git a/drivers/clocksource/arm_arch_timer.c 
->>>>> b/drivers/clocksource/arm_arch_timer.c
->>>>> index 9a5464c625b4..4faa930eabf8 100644
->>>>> --- a/drivers/clocksource/arm_arch_timer.c
->>>>> +++ b/drivers/clocksource/arm_arch_timer.c
->>>>> @@ -885,6 +885,17 @@ static int arch_timer_starting_cpu(unsigned 
->>>>> int cpu)
->>>>>       return 0;
->>>>>   }
->>>>>   +static int validate_timer_rate(void)
->>>>> +{
->>>>> +    if (!arch_timer_rate)
->>>>> +        return -EINVAL;
->>>>> +
->>>>> +    /* Arch timer frequency < 1MHz can cause trouble */
->>>>> +    WARN_ON(arch_timer_rate < 1000000);
->>>>
->>>> I don't see a big value of having a patch just to add one extra 
->>>> warning,
->>>> in a situation which we handle in our code with in 6/7 with:
->>>>
->>>> +    if (!ratio) {
->>>> +        pr_err("System timer frequency too low.\n");
->>>> +        return -EINVAL;
->>>> +    }
->>>>
->>>> Furthermore, the value '100000' here is because of our code and
->>>> calculation in there, so it does not belong to arch timer. Someone
->>>> might ask why it's not 200000 or a define in our header...
->>>> Or questions asking why do you warn when that arch timer and cpu is not
->>>> AMU capable...
->>>
->>> Because, as the commit message outlines it, such a frequency is terribly
->>> out of spec?
->>
->> I don't see in the RM that < 1MHz is terribly out of spec.
->> 'Frequency
->> Increments at a fixed frequency, typically in the range 1-50MHz.
->> Can support one or more alternative operating modes in which it
->> increments by larger amounts at a
->> lower frequency, typically for power-saving.'
-> 
-> Hint: constant apparent frequency.
-> 
->> There is even an example how to operate at 20kHz and increment by 500.
->>
->> I don't know the code if it's supported, thought.
-> 
-> You're completely missing the point, I'm afraid. Nobody has to know that
-> this is happening. For all intent and purposes, the counter has always
-> the same frequency, even if the HW does fewer ticks of larger increments.
+Queued, thanks!
 
-Fair enough. As I said I don't know details of that code.
+Paolo
 
-> 
-> 
-> [...]
-> 
->>>> Lastly, this is arch timer.
->>>> To increase chances of getting merge soon, I would recommend to drop
->>>> the patch from this series.
->>>
->>> And? It seems to address a potential issue where the time frequency
->>> is out of spec, and makes sure we don't end up with additional problems
->>> in the AMU code.
->>
->> This patch just prints warning, does not change anything in booting or
->> in any code related to AMU.
-> 
-> It seems to solve an issue with an assumption made in the AMU driver,
-> and would help debugging the problem on broken systems. Are you saying
-> that this is not the case and that the AMU code can perfectly cope with
-> the frequency being less than 1MHz?
-
-What I was saying is that patch 6/7 has the code which checks the rate
-and reacts, so it does not need this patch. In case of helping with
-debugging, the patch 6/7 also prints error
-"System timer frequency too low" and bails out.
-The commit message could have better emphasize it.
-
-Regards,
-Lukasz
