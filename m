@@ -2,62 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08A5C15A460
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:15:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E601015A448
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:10:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728703AbgBLJPV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 04:15:21 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:40156 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728150AbgBLJPU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:15:20 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D18BF200F35;
-        Wed, 12 Feb 2020 10:15:18 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 30903203959;
-        Wed, 12 Feb 2020 10:15:12 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5A522402CF;
-        Wed, 12 Feb 2020 17:15:04 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        abel.vesa@nxp.com, peng.fan@nxp.com, chen.fang@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] clk: imx7ulp: Include clk-provider.h instead of clk.h
-Date:   Wed, 12 Feb 2020 17:09:43 +0800
-Message-Id: <1581498584-14674-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728663AbgBLJKM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 04:10:12 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43341 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728567AbgBLJKL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 04:10:11 -0500
+Received: by mail-pg1-f196.google.com with SMTP id u12so517876pgb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 01:10:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rMWEtLnC4u+GSkpyrMggEcsRqsLKGC5Kgx8RCoWgoP8=;
+        b=S3xL0M+iWbah1a5O2X9Ter5DBgCXGP2spoBe9HeyBU9F+JKH06Wyyhjtp44GJAmUmf
+         3/6rdzhHsX3KBDKwzgUYBO2mwQztR6RuS0ZOS5LgRabbo8YvX0WcqTmQigE8PIYstjSG
+         m4A4xvsSBQzUKebBqoyei996nGneoiREz8kmx4gOO2IK0E/8vm9C5eRwFOI4jD++hApP
+         J1m5Hv8S+H8IkB7fj1mWC9DkKSR7Dw4VhwzffPlgzheUn0lxjHlnojexRA6PooAc5I8H
+         z+G8WTgzb5UwWqHYiJp2gAmH2a1oCcDq35n4azrD8wvuJytckCaU0Ur10YkzLksVFP5E
+         idSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rMWEtLnC4u+GSkpyrMggEcsRqsLKGC5Kgx8RCoWgoP8=;
+        b=EvZfpOlzfJM4L8iCDZU5OKLdLJEqoCOIMMt1TDhEJELW87tTt2CB65edjb6eq1Sc6J
+         zV8DO5Cp7httE1N9mxaA6uAtqAxIKb/UFIyZwOn2MSYWlwqIZQrGY/EULBUc2Ge+WobJ
+         13optf6FLRAEmAByu7qmrOoSNrGd1OxShY6ykg2KA2f9HSn13EQusVdQNaE6IjCEWWKl
+         0V57+z2dJZW0sT5eKsgkKDH0qBKjBF8PtnSgzXYMNMRyjowjfmnCM7MJVSKafxv7BBJ7
+         GI6NS5c4Uc8siOqQruxGp60Y3J9cDQVsPt05I5Vo8x/tm/Vn0zXx3jhWX6gc7uVvTe+O
+         THfw==
+X-Gm-Message-State: APjAAAXNR/wZ38IN+8ZLvSnJSzRv/mO7iO0drpKBpJbv8DJqsDXBzHux
+        xV+YvwNpkbhRi7sGcWVDkTO+qR8imxZwrwH2Esg=
+X-Google-Smtp-Source: APXvYqzTyTPBy6ErJ7sdnn64C7zYEpu4NkgvC94ld48iVT2BcZSQyrHuPKvNYehhj2FTj2NFitd4ubKoO4TcYjWQO2s=
+X-Received: by 2002:a63:fc0c:: with SMTP id j12mr11223909pgi.378.1581498611254;
+ Wed, 12 Feb 2020 01:10:11 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1581478323.git.afzal.mohd.ma@gmail.com> <85574e1ae1e6870ef01b6e61c5b1c5f393c2ac4b.1581478324.git.afzal.mohd.ma@gmail.com>
+In-Reply-To: <85574e1ae1e6870ef01b6e61c5b1c5f393c2ac4b.1581478324.git.afzal.mohd.ma@gmail.com>
+From:   Max Filippov <jcmvbkbc@gmail.com>
+Date:   Wed, 12 Feb 2020 01:10:00 -0800
+Message-ID: <CAMo8BfJU5Uz7uDcbX8QZX=16JJNKvaZvDoS1fqK1fsOaKQ-0mg@mail.gmail.com>
+Subject: Re: [PATCH 15/18] xtensa: replace setup_irq() by request_irq()
+To:     afzal mohammed <afzal.mohd.ma@gmail.com>
+Cc:     "open list:TENSILICA XTENSA PORT (xtensa)" 
+        <linux-xtensa@linux-xtensa.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Chris Zankel <chris@zankel.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sinan Kaya <okaya@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The i.MX7ULP clock driver is provider, NOT consumer, so clk-provider.h
-should be used instead of clk.h.
+On Wed, Feb 12, 2020 at 12:05 AM afzal mohammed <afzal.mohd.ma@gmail.com> wrote:
+>
+> request_irq() is preferred over setup_irq(). Existing callers of
+> setup_irq() reached mostly via 'init_IRQ()' & 'time_init()', while
+> memory allocators are ready by 'mm_init()'.
+>
+> Per tglx[1], setup_irq() existed in olden days when allocators were not
+> ready by the time early interrupts were initialized.
+>
+> Hence replace setup_irq() by request_irq().
+>
+> Seldom remove_irq() usage has been observed coupled with setup_irq(),
+> wherever that has been found, it too has been replaced by free_irq().
+>
+> [1] https://lkml.kernel.org/r/alpine.DEB.2.20.1710191609480.1971@nanos
+>
+> Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+> ---
+>  arch/xtensa/kernel/smp.c  |  8 ++------
+>  arch/xtensa/kernel/time.c | 10 +++-------
+>  2 files changed, 5 insertions(+), 13 deletions(-)
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-imx7ulp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Max Filippov <jcmvbkbc@gmail.com>
 
-diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
-index 0620d6c..3710aa0 100644
---- a/drivers/clk/imx/clk-imx7ulp.c
-+++ b/drivers/clk/imx/clk-imx7ulp.c
-@@ -8,7 +8,7 @@
-  */
- 
- #include <dt-bindings/clock/imx7ulp-clock.h>
--#include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/err.h>
- #include <linux/init.h>
- #include <linux/io.h>
 -- 
-2.7.4
-
+Thanks.
+-- Max
