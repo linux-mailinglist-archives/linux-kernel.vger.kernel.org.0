@@ -2,159 +2,328 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 145AD159FE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 05:19:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 664F5159FE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 05:18:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbgBLESs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 23:18:48 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53906 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727965AbgBLESr (ORCPT
+        id S1727946AbgBLESl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 23:18:41 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39207 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727602AbgBLESl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 23:18:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=5fxK0+YFXSkJnTT1JbNUHf7Rkjo4ppyqzoiB3mODWTo=; b=UoKeR+uDs6mPf2KwwVwGp8Y8n7
-        EZNJYoeThkt8fZ0c/Zl3wznWrJqQ+tE8q5Q1vB+D3kW99hjtNNmSiX3LMu/Qvb8rils17qJy6BQWU
-        6pQPxQkv1QrXKwZlAY0jwvVoYYAU4AkXSB5DB+VzmvFIGphY1ZZRjpnD1dVkYQYzE+FkHxV/m13WW
-        i735Pqrqr4igy2Jta9pUn3WREr4oFJH8PYtL7vCPdoYvObVwIpI4FxD8Eq5gesahTePe8Ncg1gijI
-        /u5Dyjnwx3ObHccnydEVez2c+hVP2sWPTndWnQ0+X+pQ3QCeE9OPYHAiV9VSfWioHrFxcMPeiFERZ
-        s9EjqAdw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1jU6-0006n2-OM; Wed, 12 Feb 2020 04:18:46 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 07/25] mm: Introduce thp_size
-Date:   Tue, 11 Feb 2020 20:18:27 -0800
-Message-Id: <20200212041845.25879-8-willy@infradead.org>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200212041845.25879-1-willy@infradead.org>
-References: <20200212041845.25879-1-willy@infradead.org>
+        Tue, 11 Feb 2020 23:18:41 -0500
+Received: by mail-wm1-f66.google.com with SMTP id c84so497235wme.4
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 20:18:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ArsqRBwFCDQFmJjaAOG0lbeuON4s+vxOWLsIsCpXzF0=;
+        b=yq7kEkwR6yY/A2mPTK/4zRGYThBBXDWZg/iJGRToSHTKqdAufRzywXK14/y36SzTrv
+         1DpaVzzpHdTK+mb5VG/P8a7FEYUAWWF+ydzUfOl3LoAIS71WuyJvoiry78POty+r9hTK
+         icBPnB5vfdZ0QC88DGUNOjK94JkpswUBn+aLY4XPpiLo4wZhQyELFSskVu9iNv2toorY
+         Cme25ynBkxlYdUCl75FT2dOgL2Ep91xryKykdmCsjfNhkBbXpGYZAGE41WqXkU3YwvnR
+         zXmoZoIbYhvCsLitQAQdahsUC+s/7V0lfD6wWJlTtB5rFikllQZvpYTtxG+8arZFhMCm
+         M4qQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ArsqRBwFCDQFmJjaAOG0lbeuON4s+vxOWLsIsCpXzF0=;
+        b=oPDpJDLDv2+tYxKZCXW1Sv44PX9RCciWL1SPcUNp00kxhydpuAaUIySu5SnYM44CI0
+         eA8ZeL3K2uPPMP5mEOpPSNIRuo/aTJLQ661bZCcuLl397gIGDFataGutd0z1aUVTMCh2
+         UXMkmwzRlnCCml9xGQc+E3UrnPKZ57k37hzLvVZRZP3ZG9FW6e1ZeSg3hs16NPO5vzIw
+         IQUFEn6r3LAkMcDb60jkCYkWAaCtwj8/ylfLXpy2SH3D3GljVpo2g8NupF62rchZWrkw
+         cl6jpEiM7JMTk4yXeSJ0wb7bTroMmtd/i8oT95H1hH4gWlKjXXvwdas4I+BgIi+wqPI3
+         RDYg==
+X-Gm-Message-State: APjAAAVBk69Eic6zrr2ym5GywRJbc80H7yH2EVzBjUE9zY1VbFTc9XWO
+        VV4brqMJ99lxhgO1AM0nLfZ0tAB3n61Wkh7LOz3jCg==
+X-Google-Smtp-Source: APXvYqwpUiS2Lp1rXar8NZkoeRDlVYsmEIzb/nDeNhHXRHRIEhoz9uavRNS4rW+lM4L0mSmDnuWdqhb6m+s/ADOD/gw=
+X-Received: by 2002:a1c:6246:: with SMTP id w67mr9682916wmb.141.1581481118704;
+ Tue, 11 Feb 2020 20:18:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200212014822.28684-1-atish.patra@wdc.com> <20200212014822.28684-7-atish.patra@wdc.com>
+In-Reply-To: <20200212014822.28684-7-atish.patra@wdc.com>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Wed, 12 Feb 2020 09:48:27 +0530
+Message-ID: <CAAhSdy2YRnmdxYu7zSYOUxMvFDbEz1Cwg69FgnYz3Rd8wEwQfw@mail.gmail.com>
+Subject: Re: [PATCH v8 06/11] RISC-V: Move relocate and few other functions
+ out of __init
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Allison Randal <allison@lohutok.net>,
+        Borislav Petkov <bp@suse.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Kees Cook <keescook@chromium.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Mao Han <han_mao@c-sky.com>, Marc Zyngier <maz@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Chen <vincent.chen@sifive.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Wed, Feb 12, 2020 at 7:21 AM Atish Patra <atish.patra@wdc.com> wrote:
+>
+> The secondary hart booting and relocation code are under .init section.
+> As a result, it will be freed once kernel booting is done. However,
+> ordered booting protocol and CPU hotplug always requires these sections
 
-This is like page_size(), but compiles down to just PAGE_SIZE if THP
-are disabled.  Convert the users of hpage_nr_pages() which would prefer
-this interface.
+I think you meant "... require these functions" here.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- drivers/nvdimm/btt.c    | 4 +---
- drivers/nvdimm/pmem.c   | 3 +--
- include/linux/huge_mm.h | 2 ++
- mm/internal.h           | 2 +-
- mm/page_io.c            | 2 +-
- mm/page_vma_mapped.c    | 4 ++--
- 6 files changed, 8 insertions(+), 9 deletions(-)
+> to be present to bringup harts after initial kernel boot.
+>
+> Move the required sections to a different section and make sure that
 
-diff --git a/drivers/nvdimm/btt.c b/drivers/nvdimm/btt.c
-index 0d04ea3d9fd7..5d6a2a22f5a0 100644
---- a/drivers/nvdimm/btt.c
-+++ b/drivers/nvdimm/btt.c
-@@ -1488,10 +1488,8 @@ static int btt_rw_page(struct block_device *bdev, sector_t sector,
- {
- 	struct btt *btt = bdev->bd_disk->private_data;
- 	int rc;
--	unsigned int len;
- 
--	len = hpage_nr_pages(page) * PAGE_SIZE;
--	rc = btt_do_bvec(btt, NULL, page, len, 0, op, sector);
-+	rc = btt_do_bvec(btt, NULL, page, thp_size(page), 0, op, sector);
- 	if (rc == 0)
- 		page_endio(page, op_is_write(op), 0);
- 
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index 4eae441f86c9..9c71c81f310f 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -223,8 +223,7 @@ static int pmem_rw_page(struct block_device *bdev, sector_t sector,
- 	struct pmem_device *pmem = bdev->bd_queue->queuedata;
- 	blk_status_t rc;
- 
--	rc = pmem_do_bvec(pmem, page, hpage_nr_pages(page) * PAGE_SIZE,
--			  0, op, sector);
-+	rc = pmem_do_bvec(pmem, page, thp_size(page), 0, op, sector);
- 
- 	/*
- 	 * The ->rw_page interface is subtle and tricky.  The core
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 16367e2f771e..3680ae2d9019 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -232,6 +232,7 @@ static inline spinlock_t *pud_trans_huge_lock(pud_t *pud,
- }
- 
- #define hpage_nr_pages(page)	(long)compound_nr(page)
-+#define thp_size(page)		page_size(page)
- 
- struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
- 		pmd_t *pmd, int flags, struct dev_pagemap **pgmap);
-@@ -286,6 +287,7 @@ static inline struct list_head *page_deferred_list(struct page *page)
- #define HPAGE_PUD_SIZE ({ BUILD_BUG(); 0; })
- 
- #define hpage_nr_pages(x) 1L
-+#define thp_size(x)		PAGE_SIZE
- 
- static inline bool __transparent_hugepage_enabled(struct vm_area_struct *vma)
- {
-diff --git a/mm/internal.h b/mm/internal.h
-index 41b93c4b3ab7..390d81d8b85f 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -358,7 +358,7 @@ vma_address(struct page *page, struct vm_area_struct *vma)
- 	unsigned long start, end;
- 
- 	start = __vma_address(page, vma);
--	end = start + PAGE_SIZE * (hpage_nr_pages(page) - 1);
-+	end = start + thp_size(page) - PAGE_SIZE;
- 
- 	/* page should be within @vma mapping range */
- 	VM_BUG_ON_VMA(end < vma->vm_start || start >= vma->vm_end, vma);
-diff --git a/mm/page_io.c b/mm/page_io.c
-index 76965be1d40e..dd935129e3cb 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -41,7 +41,7 @@ static struct bio *get_swap_bio(gfp_t gfp_flags,
- 		bio->bi_iter.bi_sector <<= PAGE_SHIFT - 9;
- 		bio->bi_end_io = end_io;
- 
--		bio_add_page(bio, page, PAGE_SIZE * hpage_nr_pages(page), 0);
-+		bio_add_page(bio, page, thp_size(page), 0);
- 	}
- 	return bio;
- }
-diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
-index 719c35246cfa..e65629c056e8 100644
---- a/mm/page_vma_mapped.c
-+++ b/mm/page_vma_mapped.c
-@@ -227,7 +227,7 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
- 			if (pvmw->address >= pvmw->vma->vm_end ||
- 			    pvmw->address >=
- 					__vma_address(pvmw->page, pvmw->vma) +
--					hpage_nr_pages(pvmw->page) * PAGE_SIZE)
-+					thp_size(pvmw->page))
- 				return not_found(pvmw);
- 			/* Did we cross page table boundary? */
- 			if (pvmw->address % PMD_SIZE == 0) {
-@@ -268,7 +268,7 @@ int page_mapped_in_vma(struct page *page, struct vm_area_struct *vma)
- 	unsigned long start, end;
- 
- 	start = __vma_address(page, vma);
--	end = start + PAGE_SIZE * (hpage_nr_pages(page) - 1);
-+	end = start + thp_size(page) - PAGE_SIZE;
- 
- 	if (unlikely(end < vma->vm_start || start >= vma->vm_end))
- 		return 0;
--- 
-2.25.0
+Same here, I think you meant "... the required functions to a
+different section ..."
 
+> they are in memory within first 2MB offset as trampoline page directory
+> only maps first 2MB.
+>
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> ---
+>  arch/riscv/kernel/head.S        | 153 +++++++++++++++++---------------
+>  arch/riscv/kernel/vmlinux.lds.S |   5 +-
+>  2 files changed, 86 insertions(+), 72 deletions(-)
+>
+> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+> index a4242be66966..c1be597d22a1 100644
+> --- a/arch/riscv/kernel/head.S
+> +++ b/arch/riscv/kernel/head.S
+> @@ -14,7 +14,7 @@
+>  #include <asm/hwcap.h>
+>  #include <asm/image.h>
+>
+> -__INIT
+> +__HEAD
+>  ENTRY(_start)
+>         /*
+>          * Image header expected by Linux boot-loaders. The image header data
+> @@ -45,8 +45,85 @@ ENTRY(_start)
+>         .ascii RISCV_IMAGE_MAGIC2
+>         .word 0
+>
+> -.global _start_kernel
+> -_start_kernel:
+> +.align 2
+> +#ifdef CONFIG_MMU
+> +relocate:
+> +       /* Relocate return address */
+> +       li a1, PAGE_OFFSET
+> +       la a2, _start
+> +       sub a1, a1, a2
+> +       add ra, ra, a1
+> +
+> +       /* Point stvec to virtual address of intruction after satp write */
+> +       la a2, 1f
+> +       add a2, a2, a1
+> +       csrw CSR_TVEC, a2
+> +
+> +       /* Compute satp for kernel page tables, but don't load it yet */
+> +       srl a2, a0, PAGE_SHIFT
+> +       li a1, SATP_MODE
+> +       or a2, a2, a1
+> +
+> +       /*
+> +        * Load trampoline page directory, which will cause us to trap to
+> +        * stvec if VA != PA, or simply fall through if VA == PA.  We need a
+> +        * full fence here because setup_vm() just wrote these PTEs and we need
+> +        * to ensure the new translations are in use.
+> +        */
+> +       la a0, trampoline_pg_dir
+> +       srl a0, a0, PAGE_SHIFT
+> +       or a0, a0, a1
+> +       sfence.vma
+> +       csrw CSR_SATP, a0
+> +.align 2
+> +1:
+> +       /* Set trap vector to spin forever to help debug */
+> +       la a0, .Lsecondary_park
+> +       csrw CSR_TVEC, a0
+> +
+> +       /* Reload the global pointer */
+> +.option push
+> +.option norelax
+> +       la gp, __global_pointer$
+> +.option pop
+> +
+> +       /*
+> +        * Switch to kernel page tables.  A full fence is necessary in order to
+> +        * avoid using the trampoline translations, which are only correct for
+> +        * the first superpage.  Fetching the fence is guarnteed to work
+> +        * because that first superpage is translated the same way.
+> +        */
+> +       csrw CSR_SATP, a2
+> +       sfence.vma
+> +
+> +       ret
+> +#endif /* CONFIG_MMU */
+> +#ifdef CONFIG_SMP
+> +       /* Set trap vector to spin forever to help debug */
+> +       la a3, .Lsecondary_park
+> +       csrw CSR_TVEC, a3
+> +
+> +       slli a3, a0, LGREG
+> +       .global secondary_start_common
+> +secondary_start_common:
+> +
+> +#ifdef CONFIG_MMU
+> +       /* Enable virtual memory and relocate to virtual address */
+> +       la a0, swapper_pg_dir
+> +       call relocate
+> +#endif
+> +       tail smp_callin
+> +#endif /* CONFIG_SMP */
+> +
+> +.Lsecondary_park:
+> +       /* We lack SMP support or have too many harts, so park this hart */
+> +       wfi
+> +       j .Lsecondary_park
+> +
+> +END(_start)
+> +
+> +       __INIT
+> +ENTRY(_start_kernel)
+>         /* Mask all interrupts */
+>         csrw CSR_IE, zero
+>         csrw CSR_IP, zero
+> @@ -125,59 +202,6 @@ clear_bss_done:
+>         call parse_dtb
+>         tail start_kernel
+>
+> -#ifdef CONFIG_MMU
+> -relocate:
+> -       /* Relocate return address */
+> -       li a1, PAGE_OFFSET
+> -       la a2, _start
+> -       sub a1, a1, a2
+> -       add ra, ra, a1
+> -
+> -       /* Point stvec to virtual address of intruction after satp write */
+> -       la a2, 1f
+> -       add a2, a2, a1
+> -       csrw CSR_TVEC, a2
+> -
+> -       /* Compute satp for kernel page tables, but don't load it yet */
+> -       srl a2, a0, PAGE_SHIFT
+> -       li a1, SATP_MODE
+> -       or a2, a2, a1
+> -
+> -       /*
+> -        * Load trampoline page directory, which will cause us to trap to
+> -        * stvec if VA != PA, or simply fall through if VA == PA.  We need a
+> -        * full fence here because setup_vm() just wrote these PTEs and we need
+> -        * to ensure the new translations are in use.
+> -        */
+> -       la a0, trampoline_pg_dir
+> -       srl a0, a0, PAGE_SHIFT
+> -       or a0, a0, a1
+> -       sfence.vma
+> -       csrw CSR_SATP, a0
+> -.align 2
+> -1:
+> -       /* Set trap vector to spin forever to help debug */
+> -       la a0, .Lsecondary_park
+> -       csrw CSR_TVEC, a0
+> -
+> -       /* Reload the global pointer */
+> -.option push
+> -.option norelax
+> -       la gp, __global_pointer$
+> -.option pop
+> -
+> -       /*
+> -        * Switch to kernel page tables.  A full fence is necessary in order to
+> -        * avoid using the trampoline translations, which are only correct for
+> -        * the first superpage.  Fetching the fence is guarnteed to work
+> -        * because that first superpage is translated the same way.
+> -        */
+> -       csrw CSR_SATP, a2
+> -       sfence.vma
+> -
+> -       ret
+> -#endif /* CONFIG_MMU */
+> -
+>  .Lsecondary_start:
+>  #ifdef CONFIG_SMP
+>         /* Set trap vector to spin forever to help debug */
+> @@ -202,16 +226,10 @@ relocate:
+>         beqz tp, .Lwait_for_cpu_up
+>         fence
+>
+> -#ifdef CONFIG_MMU
+> -       /* Enable virtual memory and relocate to virtual address */
+> -       la a0, swapper_pg_dir
+> -       call relocate
+> +       tail secondary_start_common
+>  #endif
+>
+> -       tail smp_callin
+> -#endif
+> -
+> -END(_start)
+> +END(_start_kernel)
+>
+>  #ifdef CONFIG_RISCV_M_MODE
+>  ENTRY(reset_regs)
+> @@ -292,13 +310,6 @@ ENTRY(reset_regs)
+>  END(reset_regs)
+>  #endif /* CONFIG_RISCV_M_MODE */
+>
+> -.section ".text", "ax",@progbits
+> -.align 2
+> -.Lsecondary_park:
+> -       /* We lack SMP support or have too many harts, so park this hart */
+> -       wfi
+> -       j .Lsecondary_park
+> -
+>  __PAGE_ALIGNED_BSS
+>         /* Empty zero page */
+>         .balign PAGE_SIZE
+> diff --git a/arch/riscv/kernel/vmlinux.lds.S b/arch/riscv/kernel/vmlinux.lds.S
+> index 12f42f96d46e..18c397953bfc 100644
+> --- a/arch/riscv/kernel/vmlinux.lds.S
+> +++ b/arch/riscv/kernel/vmlinux.lds.S
+> @@ -10,6 +10,7 @@
+>  #include <asm/cache.h>
+>  #include <asm/thread_info.h>
+>
+> +#include <linux/sizes.h>
+>  OUTPUT_ARCH(riscv)
+>  ENTRY(_start)
+>
+> @@ -20,8 +21,10 @@ SECTIONS
+>         /* Beginning of code and text segment */
+>         . = LOAD_OFFSET;
+>         _start = .;
+> -       __init_begin = .;
+>         HEAD_TEXT_SECTION
+> +       . = ALIGN(PAGE_SIZE);
+> +
+> +       __init_begin = .;
+>         INIT_TEXT_SECTION(PAGE_SIZE)
+>         INIT_DATA_SECTION(16)
+>         /* we have to discard exit text and such at runtime, not link time */
+> --
+> 2.24.0
+>
+
+Apart from above nit in commit description, looks good to me.
+
+Reviewed-by: Anup Patel <anup@brainfault.org>
+
+Regards,
+Anup
