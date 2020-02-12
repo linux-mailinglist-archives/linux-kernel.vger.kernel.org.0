@@ -2,79 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08A4215A437
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:06:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE77B15A445
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:08:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728670AbgBLJGn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 04:06:43 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:33138 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728150AbgBLJGn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:06:43 -0500
-Received: by mail-oi1-f195.google.com with SMTP id q81so1363537oig.0;
-        Wed, 12 Feb 2020 01:06:43 -0800 (PST)
+        id S1728708AbgBLJI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 04:08:56 -0500
+Received: from mail-eopbgr750072.outbound.protection.outlook.com ([40.107.75.72]:50797
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728150AbgBLJIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 04:08:55 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=C9HBgyw/MCki5eoDurA7EFkMrYHLzvaW8aRcEIYlkAco65zDv2Hot0yiSzpg762xYSAlB4WM6THwQ6mlrIhegogjGG/uaxKAAEHZ4VreIS0S1oHMg65Moy6Pt2UvoFSW2OXGz7yQ+F3WG6uVGEzxk///3f4I/RwRnxx9U8Ur3qOn9zTY33W1f0haBaDlsMUXH5WHg4NJLjoyy++z/5RnvnkW0KX7DZ0l8EbN893Nzc0awlsD3uS25/hCPG1hpvYhRrK7zklTwy9Jxts8DXSv2PPKD1gLwPhhLUDQj9WDQcIXdXXkRf7gvPnSw2+DRwz0eQRssDmwGrAmVKjoZilb1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VXTivQ7eLvuhRAMBqe3k4QgJPPe6DRGwzA+6HB/RF0A=;
+ b=LH3U2n5MRv8O2Cn4XfATy7Rr0Kn8Ax3TyGPRmEJ3JzTm7qT34TNM6lu+QjYszYjuPKNL6wArLYZKm2XlH/jyXrZuI/ZDGj3zzGspSqwT67kuIEXEKTd6u2Tly0VCohXUeeI33h8OdycuMlp1kp4y4h8ctMa8MAMI68hETlIWSIhI423Z79yrVeaWscmqmCH+Z0WxJZ6cu7q3o3eenlBAV3wh83D0eh0XSZo5AVRs9zs31g0oeSmdCr1dGSBZL1M60dT3h2u0kO+spWQ/6nN3pwr9XvFlyKtGYZttAHKnTZYj/RKMCFwBeM5kK3BxRPGS2Sc1LShcdwIBbJWZgs5pAQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KdiHyv1C8Z3O51Il2rRtKfTPYZzHq2aAiI21t6YVfMs=;
-        b=cte8xNkI44GgsFD77ysg/J0+ROdUNaqr+8/qMeiMSvUTstItSyKa+1zbC936kxrWBR
-         cv0glfQP1KHjjzFbxYSTJao3VNZztB19IYH2m+ItrGt5d0F6SOq5qdEuZx+drk27kCpQ
-         pGKZokcJiORu3/nxErNnRCWc+jHy2i0FoqBD0TpcDWp5R1nSQkYEKW1obTRdpv3yIaqX
-         g60WNW95r77sjFcgekae14GjYakaPLg0/z8gOgdEpXQvSsttsRAlnOLg3/ke3ZtUw0Bg
-         VsFxYg0aJZifwjQBgCa0LFsXmndcr6s4ag/0rW6/l/G1dQ1/RmSEQj672xfEbY+TveLV
-         SC2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KdiHyv1C8Z3O51Il2rRtKfTPYZzHq2aAiI21t6YVfMs=;
-        b=gz1jKyhc45qy7Kk3oBWTSPwbmWtHlJ5iR6dixGYdt5oksvPg+rzJ1VuQgSMEmOssf4
-         vBmsY2yLZozXbUIHPWu4i3ED8Q45ZrizYzyLHlRdvgMHMnpvVnMX5pPZkCkCBbiB9TdE
-         oavniu+w+JutmnVAr+mviYPZE6xGDlumFuuysJKhX4tdSd2TdKpfQvsMunZCo1IVzTLj
-         mqnJ9Leo3oX+swomvhWlyFkvlCm/wV1dK/cEdTOxgTdlzLCdaUfMc/KbE/jVTqQ7qs+/
-         urLlR+OxjacsVV20rOUdCbI4M9Kzm7RXnftRbv94eJ14T2clw4GAeVkjkTy9Kd1E+C7p
-         gyTA==
-X-Gm-Message-State: APjAAAWZ/6WlaLRCdDGPeWyxi9Ows5humYtw5SlCxt9Yk+3PVs15yp5Y
-        Xwq2lCmDeAB7nA9vnjseCoZT69xCr3MMHaOSCqI=
-X-Google-Smtp-Source: APXvYqz8LnWunxxKZNW1cjt4ireZgvOfph0KWPT5e7ByuK9ekEqH5ZKVzzbSPgDtk7Xf0cv7GXM0tk/J2jgQ4cISQQk=
-X-Received: by 2002:aca:3114:: with SMTP id x20mr5662123oix.121.1581498402770;
- Wed, 12 Feb 2020 01:06:42 -0800 (PST)
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VXTivQ7eLvuhRAMBqe3k4QgJPPe6DRGwzA+6HB/RF0A=;
+ b=Cm1guE96R5CmV21CcX3QUIRndAkralc45OQxFKgLbjumfJGzqZRO3dX54C6QUjARM1X8nmlduYbgkCAP6A4CH4m1kRkhX7qpa/x1ZAyOAfpohapHyXMl+TIFwTc+4XvnUjex+4xkykWEYpwt7l2GMpkcqXvu+/Rd5/NtQlsay/I=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Vishnuvardhanrao.Ravulapati@amd.com; 
+Received: from DM6PR12MB3868.namprd12.prod.outlook.com (10.255.173.213) by
+ DM6PR12MB2986.namprd12.prod.outlook.com (20.178.198.75) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.28; Wed, 12 Feb 2020 09:08:52 +0000
+Received: from DM6PR12MB3868.namprd12.prod.outlook.com
+ ([fe80::acd1:24ec:991:f353]) by DM6PR12MB3868.namprd12.prod.outlook.com
+ ([fe80::acd1:24ec:991:f353%5]) with mapi id 15.20.2707.030; Wed, 12 Feb 2020
+ 09:08:52 +0000
+Subject: Re: [PATCH] ASoC: amd: Buffer Size instead of MAX Buffer
+To:     Mark Brown <broonie@kernel.org>,
+        Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+Cc:     Alexander.Deucher@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1581426768-8937-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <20200211153847.GK4543@sirena.org.uk>
+From:   vishnu <vravulap@amd.com>
+Message-ID: <c4b900ee-743e-8ce0-1061-02c383bff90e@amd.com>
+Date:   Wed, 12 Feb 2020 14:36:32 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+In-Reply-To: <20200211153847.GK4543@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BMXPR01CA0036.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:b00:c::22) To DM6PR12MB3868.namprd12.prod.outlook.com
+ (2603:10b6:5:1c8::21)
 MIME-Version: 1.0
-References: <20200207052627.130118-1-drinkcat@chromium.org>
- <20200207052627.130118-8-drinkcat@chromium.org> <CANMq1KBL-S2DVKbCB2h_XNpfUro+pZ96-C5ft0p-8GX_tbXELQ@mail.gmail.com>
-In-Reply-To: <CANMq1KBL-S2DVKbCB2h_XNpfUro+pZ96-C5ft0p-8GX_tbXELQ@mail.gmail.com>
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-Date:   Wed, 12 Feb 2020 14:36:31 +0530
-Message-ID: <CAOh2x=kS_X-zmwWKfm2CAHAjuLqEcOZ61gkCLKKi8webmpLTOw@mail.gmail.com>
-Subject: Re: [PATCH v4 7/7] RFC: drm/panfrost: devfreq: Add support for 2 regulators
-To:     Nicolas Boichat <drinkcat@chromium.org>, sboyd@kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, vireshk@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Received: from [10.129.9.12] (165.204.159.251) by BMXPR01CA0036.INDPRD01.PROD.OUTLOOK.COM (2603:1096:b00:c::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.22 via Frontend Transport; Wed, 12 Feb 2020 09:08:48 +0000
+X-Originating-IP: [165.204.159.251]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 64dd54c0-e341-4ab9-9ef8-08d7af9b2e02
+X-MS-TrafficTypeDiagnostic: DM6PR12MB2986:|DM6PR12MB2986:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DM6PR12MB2986C3710F2A4230585E4A0CE71B0@DM6PR12MB2986.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Forefront-PRVS: 0311124FA9
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(39860400002)(346002)(366004)(376002)(199004)(189003)(81166006)(81156014)(26005)(110136005)(36756003)(2616005)(8676002)(31696002)(6636002)(956004)(7416002)(8936002)(52116002)(478600001)(4326008)(6486002)(186003)(53546011)(66946007)(16526019)(54906003)(16576012)(316002)(6666004)(5660300002)(31686004)(66476007)(2906002)(66556008)(43062003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB2986;H:DM6PR12MB3868.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: cEmVanYSlK2r3LWwnyNdoEJ1bfExplo6LuFjX1v4sqp5zUihTljpfdOLoMxmcFm5NalJ8/S37GOcoa86NR2IexkRPpQhHRkMKM0/0pkyQ17ZF4Km96Hg5qcbcaS8R01OjGNregn1uqTk/Kmc8rkR+vagZBManCcLUlkz0awZo7+m0gf6UcdU16ItarArlbvQbBzUpi9fxbVXhI9nQqlZtZP6vgNLJd1U1bBS87jiRQ9UMWCOuDfkiYgSQRI3AmTU4kqhNfOh0jkXcdbo5bgMH1zseJlKo+V/rKR+9rR+NJwwU+w62AulqQPp8kxWI2xFZlZnwcaAzyqt7HBZX0SC2N6bFanCYOH1/XRe042cxrSQu4g0sFgMkL2NZ1KlbHHIfG27AEUEpqjcgzdm3pzsPM2iDQFVmk+X1ADCJAMUDXSsex74mjSGOaf0QUiCOmX6C3Hqu2r3PfSoPfFhiAsyPwJOtl8cQP3nm6xs2esGZKY/raZQ3hACxEms1RFLoFRT
+X-MS-Exchange-AntiSpam-MessageData: tl7kj3LiJ5IKYjrazo8LSlu10xCpyWvRQPxbMpA4kzyBneyulX4C3EiU+J8GauNB/GcoDchseEY6dh0fL3hFpjJoOJOQ8vSaFZ9Gey5lR1IhglN3/KNtobeyxCSmEB6EDr9XkyxC6l/HL860pS1n+g==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64dd54c0-e341-4ab9-9ef8-08d7af9b2e02
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2020 09:08:52.6248
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iEswVZVh0AK8b5Dz+CICfLvWX2hIUpbLFZZxUKz+8DHkVU4OwbDoIxR6A2kYwDcH+ZAUF5exckLW56ddkcVVcA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2986
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 2:19 PM Nicolas Boichat <drinkcat@chromium.org> wrote:
->
-> +Viresh Kumar +Stephen Boyd for clock advice.
 
-You missed adding us in the cc list of the email, fixed that now :)
+
+On 11/02/20 9:08 PM, Mark Brown wrote:
+> On Tue, Feb 11, 2020 at 06:42:28PM +0530, Ravulapati Vishnu vardhan rao wrote:
+> 
+>> Because of MAX BUFFER size in register,when user/app give small
+>> buffer size produces noise of old data in buffer.
+>> This patch rectifies this noise when using different
+>> buffer sizes less than MAX BUFFER.
+> 
+> In what way does this patch fix the issue?  I looks like it's moving a
+> buffer size setting from DMA to I2S but it's not clear why or how this
+> fixes the issue, or indeed what the actual issue that's causing what are
+> presumably underruns is?
+> 
+prior to this fix the value in Tx/Rx Ring Buffer Size register 
+ACP_BT_TX_RINGBUFSIZE,ACP_BT_RX_RINGBUFSIZE and same in I2S RINGBUFSIZE 
+registers was statically set to maximum which is wrong.
+Buffer size must be equal to actual allocated.
+
+Due to which When I play any audio:aplay -Dhw:2,0 test.wav and then stop 
+and play  aplay -Dhw:2,0 -c2 -fS16_LE -r48000 /dev/zero 
+--buffer-size=2048 I hear some part of old audio.
+
+
+So after adding above fix the issue is not reproduced.
