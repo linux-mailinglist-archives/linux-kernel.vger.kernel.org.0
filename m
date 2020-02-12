@@ -2,75 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9037C15AD89
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 17:40:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C483F15AD96
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 17:43:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728612AbgBLQko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 11:40:44 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:47206 "EHLO
+        id S1728714AbgBLQms (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 11:42:48 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:60174 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727548AbgBLQko (ORCPT
+        with ESMTP id S1728673AbgBLQmr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 11:40:44 -0500
+        Wed, 12 Feb 2020 11:42:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581525642;
+        s=mimecast20190719; t=1581525766;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=NrzhUur53Q4Y2ZEl1kiuBFTu/KwLXcTXVoqRdvHJiBI=;
-        b=MmT6dKzIFED2xhfqhOBjly+jhYXiP1wFlnVwK+4da6z35cIqLUZEyrDvnfQqFh8nH2rw9O
-        8hHQPz48rA3YiLWxNpia0pGSfrRJ1K/z+eps2lM4jCNEDHIQiyWJxwo0/xeJ7rxkM5w1CF
-        YNFbI1rPmbILrpTIJfmyhLz5ENm1eGQ=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-291-Mdftop4CNUWSWA7jm5_pNw-1; Wed, 12 Feb 2020 11:40:40 -0500
-X-MC-Unique: Mdftop4CNUWSWA7jm5_pNw-1
-Received: by mail-wr1-f69.google.com with SMTP id c6so1026144wrm.18
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 08:40:40 -0800 (PST)
+        bh=1adZyTOfR/v6s80ffHMqqXSo2pdemYsunr3oiNOk5/8=;
+        b=MGdrdDKTh7HkDluVDpa/DI2fmmOV3Ub0U4tkw96Fv1vGT+2dYYcVhh2Wz/lyLOAH3bw2om
+        QKo7+N2WVnvvKwy8u5IxNJkvlu7z5wwZL/rCfzoqRzRqTr5bh0WX1FXokhI8L3UoPziCiP
+        0MbpGKtP2Nsuw4zsV+k8v/lsWVwe6ec=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-327-QUpHotblOvCV6CrWzx77ig-1; Wed, 12 Feb 2020 11:42:44 -0500
+X-MC-Unique: QUpHotblOvCV6CrWzx77ig-1
+Received: by mail-wr1-f70.google.com with SMTP id w6so1034400wrm.16
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 08:42:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=NrzhUur53Q4Y2ZEl1kiuBFTu/KwLXcTXVoqRdvHJiBI=;
-        b=uSlkbqLo0g8QU7Nmd54+o2OHGzYeHdmE+ZWgEHXFaRrzqJYiGrrEWKitGKc89lyn6M
-         iiF3taOKjJrx6QdqE72T6FRLuUciILHnKoMZs9zM4wX3dYAiruS1WRYX/1FzTCWCQYs5
-         2CtlN3dDTgz4tU1wsS8SDP/1tUT/5TDEgdcj61taUotFAJKm270zWLiQVq7/dITsjFcr
-         6CWwowPyxe/LNg+5VXUsXw5JxhbiuiVwvZdxAsA3B3ESEwWwY4joGTbJcdcRyRfey3wh
-         Zh/cm+8ITapfTUP6h3eSjkaYBUvgLbfIpGAZMOiAOyg0oN2N2JIVC4zac/OF51VsglYT
-         Fyvw==
-X-Gm-Message-State: APjAAAUA5m+zLM42EM1VEqjynqbLk/gnm+gw1e5pI2f5i1LuWD840v1n
-        l+XZ5WPy3UBr8WLQC9qbsfoEsJIdwAvNFOmmTD5gPsuWG/v8g7sJUpYSvIND+/hHviWZgdsjVw/
-        exn7YMUDGYZy4+Aw1KXhKCJi6
-X-Received: by 2002:adf:f288:: with SMTP id k8mr17060151wro.301.1581525639840;
-        Wed, 12 Feb 2020 08:40:39 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzXp2B+0mO+xq5e6mZFerIe0v8m3gwrAdj/HKSYiJvdfgdAfcAjS2vwUxPN1hDCGYWFBWWsgQ==
-X-Received: by 2002:adf:f288:: with SMTP id k8mr17060137wro.301.1581525639611;
-        Wed, 12 Feb 2020 08:40:39 -0800 (PST)
+        bh=1adZyTOfR/v6s80ffHMqqXSo2pdemYsunr3oiNOk5/8=;
+        b=ftnUB65apN492LOxck1kkIY39+GWQ8VUMCgXoaFd6BbrtiN3YbXU8ZiQFHhqSlNh6P
+         Oy22Foai+d2UB2HtJoFjVKiR8EBIObdgWzYjVlI79aLn73eVIryUrb5mw/5J9Zvr7RSk
+         QXQ4CyShIZ2K5JoNe3ReqlDYxZqTm6ops1tSU4y3JnKT28w6uVXv+bcMOpmca4+UgZUK
+         zaaQTFDDztRU2itw/7DiO5s0JQLE2hQqiQ8MU8GV/TFVInsmLfO5GbA4VPK5epeHY0ES
+         3/Cl9YwnVV5kp31MG2I2TCQpEif+kEpuvqU8AX9+710iZ5YU4qcZxMLwf3LwDRQCJrZp
+         gDhQ==
+X-Gm-Message-State: APjAAAVCSGo0A+bnCR1fREuAfce7QgNxpPRsab6ZEnBeerCMdNixf2oe
+        O0K+W4mgMP2L8M6GfYN36/JjoviCBQSf5gVTePwNHPxS7gBBUAlK7T5AA4EjqDjG4PzPhdIy4kK
+        84dZtFwk4UePyhp8awpIkFPI2
+X-Received: by 2002:adf:f6c8:: with SMTP id y8mr15775962wrp.167.1581525755303;
+        Wed, 12 Feb 2020 08:42:35 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxB0bsei9MGFy/+qFOztBrTBKZisUs5CRha1tPks1V/Cpgkk6GhQwqh67eqtc4RvdpsN+FipA==
+X-Received: by 2002:adf:f6c8:: with SMTP id y8mr15775940wrp.167.1581525755032;
+        Wed, 12 Feb 2020 08:42:35 -0800 (PST)
 Received: from [192.168.178.40] ([151.30.86.140])
-        by smtp.gmail.com with ESMTPSA id n8sm1179999wrx.42.2020.02.12.08.40.38
+        by smtp.gmail.com with ESMTPSA id w11sm867177wrt.35.2020.02.12.08.42.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2020 08:40:39 -0800 (PST)
-Subject: Re: [PATCH RFC 0/4] KVM: MIPS: Provide arch-specific
- kvm_flush_remote_tlbs()
-To:     Paul Burton <paulburton@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        linux-mips@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>
-References: <20200207223520.735523-1-peterx@redhat.com>
- <44ba59d6-39a5-4221-1ae6-41e5a305d316@redhat.com>
- <20200212163004.cpd33ux4zslfc3es@lantea.localdomain>
+        Wed, 12 Feb 2020 08:42:34 -0800 (PST)
+Subject: Re: [PATCH v2 6/7] KVM: x86/mmu: Rename kvm_mmu->get_cr3() to
+ ->get_guest_cr3_or_eptp()
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200207173747.6243-1-sean.j.christopherson@intel.com>
+ <20200207173747.6243-7-sean.j.christopherson@intel.com>
+ <1424348b-7f09-513a-960b-6d15ac3a9ae4@redhat.com>
+ <20200212162816.GB15617@linux.intel.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <66e0a38c-a7f5-dcd1-d06b-b317588fad7a@redhat.com>
-Date:   Wed, 12 Feb 2020 17:40:37 +0100
+Message-ID: <de17199e-aff3-b664-73f5-9c88727d064e@redhat.com>
+Date:   Wed, 12 Feb 2020 17:42:33 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <20200212163004.cpd33ux4zslfc3es@lantea.localdomain>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200212162816.GB15617@linux.intel.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,28 +79,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/02/20 17:30, Paul Burton wrote:
-> Hi Paolo,
+On 12/02/20 17:28, Sean Christopherson wrote:
+> On Wed, Feb 12, 2020 at 01:00:59PM +0100, Paolo Bonzini wrote:
+>> On 07/02/20 18:37, Sean Christopherson wrote:
+>>> Rename kvm_mmu->get_cr3() to call out that it is retrieving a guest
+>>> value, as opposed to kvm_mmu->set_cr3(), which sets a host value, and to
+>>> note that it will return L1's EPTP when nested EPT is in use.  Hopefully
+>>> the new name will also make it more obvious that L1's nested_cr3 is
+>>> returned in SVM's nested NPT case.
+>>>
+>>> No functional change intended.
+>>
+>> Should we call it "get_pgd", since that is how Linux calls the top-level
+>> directory?  I always get confused by PUD/PMD, but as long as we only
+>> keep one /p.d/ moniker it should be fine.
 > 
-> On Wed, Feb 12, 2020 at 01:25:30PM +0100, Paolo Bonzini wrote:
->> MIPS folks, I see that arch/mips/kvm/mmu.c uses pud_index, so it's not
->> clear to me if it's meant to only work if CONFIG_PGTABLE_LEVELS=4 or
->> it's just bit rot.  Should I add a "depends on PGTABLE_LEVEL=4" to
->> arch/mips/Kconfig?
-> 
-> I'm no expert on this bit of code, but I'm pretty sure the systems
-> KVM/VZ has been used on the most internally had PGTABLE_LEVEL=3.
-> 
-> I suspect this is actually a regression from commit 31168f033e37 ("mips:
-> drop __pXd_offset() macros that duplicate pXd_index() ones"). Whilst
-> that commit is correct that pud_index() & __pud_offset() are the same
-> when pud_index() is actually provided, it doesn't take into account the
-> __PAGETABLE_PUD_FOLDED case. There __pud_offset() was available but
-> would always evaluate to zero, whereas pud_index() isn't defined...
+> Heh, I have the exact same sentiment.  get_pgd() works for me.
 
-Ok, I'll try to whip out a patch that handles __PAGETABLE_PUD_FOLDED.
-On the other hand this makes me worry about how much KVM is being tested
-by people that care about MIPS (even just compile-tested).
+Ok, I'll post a patch that uses get_guest_pgd() as soon as I open
+kvm/next for 5.7 material.
 
 Paolo
 
