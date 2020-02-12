@@ -2,139 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAE1315B37A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 23:16:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACFE815B380
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 23:19:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729202AbgBLWQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 17:16:28 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39006 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727947AbgBLWQ0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 17:16:26 -0500
-Received: by mail-pg1-f195.google.com with SMTP id j15so1934888pgm.6
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 14:16:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=D/5iSeGXxDP+lyJUNU19NRvUdswxslkbz5wrgabobm4=;
-        b=RgghztW93FIsObaDVTciRjZtfHpXEir8OzbNJN4SLfBEcm0ZxYvARrdoRfoXg+LwMe
-         jwiPMshiVt5Onf2q1iAfqMGoHt/WNe9/ARKxkJHYkx8V4VZQ/dzVrs3R+y43UPMVH6Gd
-         rkB8L7CTQkylxONFx0N68n5Yt4bLQPcZj9G0Dg2dw1d9ksO8J5Gha2Ci5J2LEMK30HQO
-         AzHycbYzANEqFI7IuT4k4eUWczU6MiwGLtqSos2qS+eaEfioQMTKAXhXKWFO4ifupbG3
-         E6/7183vg2hJ+yeMpUJh+q9TdtbUJbf+s9+wi9ObLW3GaWrcAfrc9g/LKACZVKX6dNzH
-         g0kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=D/5iSeGXxDP+lyJUNU19NRvUdswxslkbz5wrgabobm4=;
-        b=oGsfzc/MKpkw+sL01j6LZp9696fMhiJQvmq7ZrRR6/qwdLZF/gqW9fno1BUqyZlshM
-         rZ8YZIJuatCZZ3urnGXYPTwOMYeDYRAmtSHdmSG0hg6BoJyOgJzMNMf579C36bv680i9
-         QDNEQECWsiCHVNaqm8+ioiKj2EpEOXAXNnDzqgr9t/hlU6CV0hJ3sJAMJySZGq7FkZrH
-         MXycJzQMF4MtuS6frwGby4u3vE0SSNNcDlsAWS3mqhBKzYWrv4+bsWgIZjcLqDQHL6Ua
-         wFhLk69fj3SplyI2c253N3QfT4XngLX800qINlfXkUw4XmubtvDEIckjSwsJNll1l8vF
-         VVxA==
-X-Gm-Message-State: APjAAAW68v0q510KzeWKUjSRcTfKMIBaypl9uGPHj8zdrugESxwNphUX
-        x3uPNHx2/AjoKOVQ1V83bTI=
-X-Google-Smtp-Source: APXvYqz1nem2XDQSzeUCQA8Znbwsf82xp456uPoXIqYlQNqSSDiN2zIXgfgWRsDJA3ckF8qu9qTo7w==
-X-Received: by 2002:a63:42c4:: with SMTP id p187mr14713432pga.57.1581545785766;
-        Wed, 12 Feb 2020 14:16:25 -0800 (PST)
-Received: from bbox-1.mtv.corp.google.com ([2620:15c:211:1:3e01:2939:5992:52da])
-        by smtp.gmail.com with ESMTPSA id o10sm117683pgq.68.2020.02.12.14.16.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 14:16:24 -0800 (PST)
-From:   Minchan Kim <minchan@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Minchan Kim <minchan@kernel.org>, Robert Stupp <snazy@gmx.de>
-Subject: [PATCH 3/3] mm: make PageReadahead more strict
-Date:   Wed, 12 Feb 2020 14:16:14 -0800
-Message-Id: <20200212221614.215302-3-minchan@kernel.org>
-X-Mailer: git-send-email 2.25.0.225.g125e21ebc7-goog
-In-Reply-To: <20200212221614.215302-1-minchan@kernel.org>
-References: <20200212221614.215302-1-minchan@kernel.org>
+        id S1729174AbgBLWTx convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 12 Feb 2020 17:19:53 -0500
+Received: from mga14.intel.com ([192.55.52.115]:28120 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728603AbgBLWTw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 17:19:52 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 14:19:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,434,1574150400"; 
+   d="scan'208";a="237849203"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by orsmga006.jf.intel.com with ESMTP; 12 Feb 2020 14:19:51 -0800
+Received: from lcsmsx602.ger.corp.intel.com (10.109.210.11) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 12 Feb 2020 14:19:51 -0800
+Received: from hasmsx602.ger.corp.intel.com (10.184.107.142) by
+ LCSMSX602.ger.corp.intel.com (10.109.210.11) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 13 Feb 2020 00:19:49 +0200
+Received: from hasmsx602.ger.corp.intel.com ([10.184.107.142]) by
+ HASMSX602.ger.corp.intel.com ([10.184.107.142]) with mapi id 15.01.1713.004;
+ Thu, 13 Feb 2020 00:19:48 +0200
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "Lubart, Vitaly" <vitaly.lubart@intel.com>
+Subject: RE: [PATCH] mei: bus: replace zero-length array with flexible-array
+ member
+Thread-Topic: [PATCH] mei: bus: replace zero-length array with flexible-array
+ member
+Thread-Index: AQHV4R8PZ6+DToj5cUCD4Y1TT5B8IKgYIqMQ
+Date:   Wed, 12 Feb 2020 22:19:48 +0000
+Message-ID: <71cd2c9eba7f4ac68de55148edb08e19@intel.com>
+References: <20200211210822.GA31368@embeddedor>
+In-Reply-To: <20200211210822.GA31368@embeddedor>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-reaction: no-action
+dlp-version: 11.2.0.6
+x-originating-ip: [10.184.70.1]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PG_readahead flag is shared with PG_reclaim but PG_reclaim is only
-used in write context while PG_readahead is used for read context.
 
-To make it clear, let's introduce PageReadahead wrapper with
-!PageWriteback so it could make code clear and we could drop
-PageWriteback check in page_cache_async_readahead, which removes
-pointless dropping mmap_sem.
 
-Signed-off-by: Minchan Kim <minchan@kernel.org>
----
- include/linux/page-flags.h | 28 ++++++++++++++++++++++++++--
- mm/readahead.c             |  6 ------
- 2 files changed, 26 insertions(+), 8 deletions(-)
+> -----Original Message-----
+> From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Sent: Tuesday, February 11, 2020 23:08
+> To: Winkler, Tomas <tomas.winkler@intel.com>; Arnd Bergmann
+> <arnd@arndb.de>; Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-kernel@vger.kernel.org; Gustavo A. R. Silva
+> <gustavo@embeddedor.com>
+> Subject: [PATCH] mei: bus: replace zero-length array with flexible-array member
+> 
+> The current codebase makes use of the zero-length array language extension to
+> the C90 standard, but the preferred mechanism to declare variable-length types
+> such as these ones is a flexible array member[1][2], introduced in C99:
+> 
+> struct foo {
+>         int stuff;
+>         struct boo array[];
+> };
+> 
+> By making use of the mechanism above, we will get a compiler warning in case
+> the flexible array does not occur last in the structure, which will help us prevent
+> some kind of undefined behavior bugs from being inadvertenly introduced[3] to
+> the codebase from now on.
+> 
+> This issue was found with the help of Coccinelle.
+> 
+> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+> [2] https://github.com/KSPP/linux/issues/21
+> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Ack.
 
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 1bf83c8fcaa7..f91a9b2a49bd 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -363,8 +363,32 @@ PAGEFLAG(MappedToDisk, mappedtodisk, PF_NO_TAIL)
- /* PG_readahead is only used for reads; PG_reclaim is only for writes */
- PAGEFLAG(Reclaim, reclaim, PF_NO_TAIL)
- 	TESTCLEARFLAG(Reclaim, reclaim, PF_NO_TAIL)
--PAGEFLAG(Readahead, reclaim, PF_NO_COMPOUND)
--	TESTCLEARFLAG(Readahead, reclaim, PF_NO_COMPOUND)
-+
-+SETPAGEFLAG(Readahead, reclaim, PF_NO_COMPOUND)
-+CLEARPAGEFLAG(Readahead, reclaim, PF_NO_COMPOUND)
-+
-+/*
-+ * Since PG_readahead is shared with PG_reclaim of the page flags,
-+ * PageReadahead should double check whether it's readahead marker
-+ * or PG_reclaim. It could be done by PageWriteback check because
-+ * PG_reclaim is always with PG_writeback.
-+ */
-+static inline int PageReadahead(struct page *page)
-+{
-+	VM_BUG_ON_PGFLAGS(PageCompound(page), page);
-+
-+	return (page->flags & (1UL << PG_reclaim | 1UL << PG_writeback)) ==
-+		(1UL << PG_reclaim);
-+}
-+
-+/* Clear PG_readahead only if it's PG_readahead, not PG_reclaim */
-+static inline int TestClearPageReadahead(struct page *page)
-+{
-+	VM_BUG_ON_PGFLAGS(PageCompound(page), page);
-+
-+	return !PageWriteback(page) ||
-+			test_and_clear_bit(PG_reclaim, &page->flags);
-+}
- 
- #ifdef CONFIG_HIGHMEM
- /*
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 2fe72cd29b47..85b15e5a1d7b 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -553,12 +553,6 @@ page_cache_async_readahead(struct address_space *mapping,
- 	if (!ra->ra_pages)
- 		return;
- 
--	/*
--	 * Same bit is used for PG_readahead and PG_reclaim.
--	 */
--	if (PageWriteback(page))
--		return;
--
- 	ClearPageReadahead(page);
- 
- 	/*
--- 
-2.25.0.225.g125e21ebc7-goog
+> ---
+>  drivers/misc/mei/bus-fixup.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/misc/mei/bus-fixup.c b/drivers/misc/mei/bus-fixup.c index
+> 5fcac02233af..aa3648d59a8a 100644
+> --- a/drivers/misc/mei/bus-fixup.c
+> +++ b/drivers/misc/mei/bus-fixup.c
+> @@ -107,7 +107,7 @@ struct mkhi_rule_id {  struct mkhi_fwcaps {
+>  	struct mkhi_rule_id id;
+>  	u8 len;
+> -	u8 data[0];
+> +	u8 data[];
+>  } __packed;
+> 
+>  struct mkhi_fw_ver_block {
+> @@ -135,7 +135,7 @@ struct mkhi_msg_hdr {
+> 
+>  struct mkhi_msg {
+>  	struct mkhi_msg_hdr hdr;
+> -	u8 data[0];
+> +	u8 data[];
+>  } __packed;
+> 
+>  #define MKHI_OSVER_BUF_LEN (sizeof(struct mkhi_msg_hdr) + \
+> --
+> 2.25.0
 
