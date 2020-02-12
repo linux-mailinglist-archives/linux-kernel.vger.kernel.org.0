@@ -2,61 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C42E515B136
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:37:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D18C15B137
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:38:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728809AbgBLThy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 14:37:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54374 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727361AbgBLThx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 14:37:53 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE251206D7;
-        Wed, 12 Feb 2020 19:37:52 +0000 (UTC)
-Date:   Wed, 12 Feb 2020 14:37:51 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Yiwei Zhang <zzyiwei@google.com>
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
-        Prahlad Kilambi <prahladk@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        android-kernel <android-kernel@google.com>
-Subject: Re: [PATCH] Add gpu memory tracepoints
-Message-ID: <20200212143751.0114fe78@gandalf.local.home>
-In-Reply-To: <CAKT=dDk+CiMQ_-f6Daa_ea2FOW=De6PKmcyiGrm4KEkVbH2fDQ@mail.gmail.com>
-References: <20200211011631.7619-1-zzyiwei@google.com>
-        <20200210211951.1633c7d0@rorschach.local.home>
-        <CAKT=dDm+UKqa7j744iTsvYs+jqrdOHpTqdksRUjDe-6vqkigew@mail.gmail.com>
-        <20200210221521.59928416@rorschach.local.home>
-        <CAKT=dDk+CiMQ_-f6Daa_ea2FOW=De6PKmcyiGrm4KEkVbH2fDQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729007AbgBLTil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 14:38:41 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:47095 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728947AbgBLTil (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 14:38:41 -0500
+Received: by mail-lf1-f68.google.com with SMTP id z26so2420169lfg.13
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 11:38:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VIVJ6ANZNwBCwjgFThVMTCailc9/69GGrp4L4rWNwm4=;
+        b=hdHh1wCknTiwBSThElO35g/BIz9H/CXTPpcMPEmkD7NNxb1ozOciv/jVLwmHAP9+xH
+         SE22Kf5VT7lrVTGDE6xKzIb7CnH8V5I894iDrLLlIPUmUHSvXb1WnFbkAngWq15Gx57/
+         9dgUML7Oux8tp2Z0WsoLZEhj9ZVcf6LEbzN6o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VIVJ6ANZNwBCwjgFThVMTCailc9/69GGrp4L4rWNwm4=;
+        b=fSkArxRAQq0Uyl7lIsl/8A4mfmCB1DFztEqmeKyGnm7njhlwvdQ/7FaWNEUBMkXuOd
+         Pnwb0WrQwSwfw/cM4waObHq3wyC1c4xDivVVu1Nd/q30tS6q2PCJjoOQQ7VvhmjVurRo
+         nwGDrWlfU1xiT9VzVSYDRYC+ZVyaRAdrImiBpKqEai8f2jQoMiKbkITtN33Cn6+FRkC9
+         UTy0cobt4H/FzlIN1c1dBH8+DFZC/feEbRGu+Ah2F4kqnBqM0X6JtgFLR3oBINlw/ke9
+         +3Iw/vqQkuQKeAdZwx94BU7P+1ufnrcWgYTATelR74sL9mozWWDioqCwu2yzVPBUySIF
+         xqqA==
+X-Gm-Message-State: APjAAAWkgnumpEWQN4YgalaKsSmPXfTi78PkpfdB3Wr2pXTLKYD0cd0o
+        lbpze+paNsLzM+O/zhkkyMaZo6MJTdg=
+X-Google-Smtp-Source: APXvYqyzL81bD7Q4OrxUcBVOqe/xNg2s3jHkRHwS5HWgL3U4NRMSfiCTI+HthBxBpjaTaxSvSHzZ7g==
+X-Received: by 2002:ac2:5ec3:: with SMTP id d3mr7559227lfq.176.1581536317657;
+        Wed, 12 Feb 2020 11:38:37 -0800 (PST)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id e17sm54990ljg.101.2020.02.12.11.38.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2020 11:38:36 -0800 (PST)
+Received: by mail-lf1-f47.google.com with SMTP id z26so2420094lfg.13
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 11:38:36 -0800 (PST)
+X-Received: by 2002:a19:4849:: with SMTP id v70mr7590327lfa.30.1581536316181;
+ Wed, 12 Feb 2020 11:38:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20200212164714.7733-1-pbonzini@redhat.com> <CAHk-=wh6KEgPz_7TFqSgg3T29SrCBU+h64t=BWyCKwJOrk3RLQ@mail.gmail.com>
+ <b90a886e-b320-43d3-b2b6-7032aac57abe@redhat.com>
+In-Reply-To: <b90a886e-b320-43d3-b2b6-7032aac57abe@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 12 Feb 2020 11:38:20 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh8eYt9b8SrP0+L=obHWKU0=vXj8BxBNZ3DYd=6wZTKqw@mail.gmail.com>
+Message-ID: <CAHk-=wh8eYt9b8SrP0+L=obHWKU0=vXj8BxBNZ3DYd=6wZTKqw@mail.gmail.com>
+Subject: Re: [GIT PULL] KVM changes for Linux 5.6-rc2
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        Oliver Upton <oupton@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Feb 2020 11:26:08 -0800
-Yiwei Zhang <zzyiwei@google.com> wrote:
+On Wed, Feb 12, 2020 at 11:19 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> > So this clearly never even got a _whiff_ of build-testing.
+>
+> Oh come on.
 
-> Hi Steven,
-> 
-> I can move the stuff out from the kernel/trace. Then can we still
-> leave include/trace/events/gpu_mem.h where it is right now? Or do we
-> have to move that out as well? Because we would need a non-drm common
-> header place for the tracepoint so that downstream drivers can find
-> the tracepoint definition.
-> 
+Seriously - if you don't even _look_ at the warnings the build
+generates, then it hasn't been build-tested.
 
-You can leave the header there. The include/trace/events/ is the place
-to put trace event headers for common code.
+I don't want to hear "Oh come on". I'm 100% serious.
 
-It just did not belong in kernel/trace/
+Build-testing is not just "building". It's the "testing" of the build
+too. You clearly never did _any_ testing of the build, since the build
+had huge warnings.
 
-Thanks!
+Without the checking of the result, "build-testing" is just
+"building", and completely irrelevant.
 
--- Steve
+If you have problems seeing the warnings, add a "-Werror" to your scripts.
+
+I do not want to see a _single_ warning in the kernel build. Yes, we
+have one in the samples code, and even that annoys the hell out of me.
+
+And exactly because we don't have any warnings in the default build,
+it should be really really easy to check for new ones - it's not like
+you have to wade through pages of warnings to see if any of them are
+your new ones.
+
+So no "Oh come on". You did *zero* testing of this crap, and you need
+to own that fact instead of making excuses about it.
+
+                   Linus
