@@ -2,182 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6738615A3E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:50:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B7B915A3F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:51:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728772AbgBLItU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 03:49:20 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:38902 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728712AbgBLItT (ORCPT
+        id S1728781AbgBLIue (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 03:50:34 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:35430 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728699AbgBLIuc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 03:49:19 -0500
-Received: by mail-qt1-f194.google.com with SMTP id f3so918765qtc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:49:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BPMiAB16vFeuTny9mUeuPkgcErc/c1u/+DPFpZpBO4k=;
-        b=OQE3DuQq8CSnmuvX45YQR0RHiYLUGWs9u/r3JwctxlV8TEpNMLx/YMPZIei1Z67SOj
-         0gEvNwWN+/xeYQZkOHf+6kBok3+slMsYBUX9OkzK4tjvEd0pZDfxbvlMjSBD0n8hDoTF
-         BWP+0WkA8vvCdMDpt2dOH1ibDeLpIIZe+axss=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BPMiAB16vFeuTny9mUeuPkgcErc/c1u/+DPFpZpBO4k=;
-        b=Jjyqu5WF5O6LIePk+KiqfYni4wU25BGErxlWycuT3SX+mkNMgs66XFnYt4aj3hPeIN
-         v2fstiVPi3QGvs3L2R5b8DczrdxJDWycjTiucEgTjKdr0bBDwJ1TtNs+lXr73U3eJmEs
-         QE6y6B43AkXA6CiVKjSVX1YwleZDFp220JUM6K1FFGu8AyhZl6fKdiQ4/xyZAoTMznbt
-         J7TaoTAh3SZnyqxquSMFymL8MNFrK8tq+AwE3+3rYCCKTbOoAM0JasNkyChEYI1qYM/5
-         Ki3u95c5JprWXJkoBnUrJPyQHfUjPnvJgea9ZuA8087qk/bZNnomOlcXmDff9U50Hij1
-         1DcQ==
-X-Gm-Message-State: APjAAAWmnfngz+TTQDH5hr4ZTZQoUE00LWoxV6QiY8BdlYgXamlpd/rJ
-        IJaQjGSe9BV1viODVY3jO86SF9JhidcshSi7UV/3zg==
-X-Google-Smtp-Source: APXvYqzmVKHpUTNXqrbIKC3EqSdbu2muveQewCve0sKVxzWsWtlKrXbYUc3Qqq6GrpJeSuO++OcFsP8+K90kFIcIFgk=
-X-Received: by 2002:ac8:4446:: with SMTP id m6mr6253965qtn.159.1581497358305;
- Wed, 12 Feb 2020 00:49:18 -0800 (PST)
+        Wed, 12 Feb 2020 03:50:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NpTlCgYb/z6Vi+BVrieZmKjPIGNXZC/UxztwFhX/oFk=; b=1GpmvKdEeXdDZ/5zRSW5wO/Ao
+        nIujDFAzKzE3wq0D2nTcxVjtYyGVdgu1Jd5MgAcflDcQotS08VoIoR0OIO/fNaU0VVhPk8cID0BAL
+        QEAkby765VihaP7Gjoam3MhHORaKOqUuSWkPj7RvVZXr+I34PhC2m7RFnanmtkN8r7DQrlrm1G7DI
+        ArD1iqCp0xPVPiIUKYD+Gob2cBT0UT4YUKEWG2R3mNUdWaA7FXqEQd2nGm4WtJhllzYfyZE9AYJUT
+        TA43u+2ZLmgsFKARTkcG9MICatJ953z6e8k5lEgMM03lkQDPJkMtQjKyp7zW/IwKFqKSCHzzLLK0G
+        0D0f9OELg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50926)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1j1nim-0001dz-8f; Wed, 12 Feb 2020 08:50:12 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1j1nie-0001HG-SN; Wed, 12 Feb 2020 08:50:04 +0000
+Date:   Wed, 12 Feb 2020 08:50:04 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Rik van Riel <riel@surriel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com
+Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
+ LRU
+Message-ID: <20200212085004.GL25745@shell.armlinux.org.uk>
+References: <20200211175507.178100-1-hannes@cmpxchg.org>
+ <29b6e848ff4ad69b55201751c9880921266ec7f4.camel@surriel.com>
+ <20200211193101.GA178975@cmpxchg.org>
+ <20200211154438.14ef129db412574c5576facf@linux-foundation.org>
+ <CAHk-=wiGbz3oRvAVFtN-whW-d2F-STKsP1MZT4m_VeycAr1_VQ@mail.gmail.com>
+ <20200211164701.4ac88d9222e23d1e8cc57c51@linux-foundation.org>
+ <CAHk-=wg1ZDADD3Vuw_sXhmBOrQ2xsp8YWxmtWiA6vG0RT-ZQ+A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20200207052627.130118-1-drinkcat@chromium.org> <20200207052627.130118-8-drinkcat@chromium.org>
-In-Reply-To: <20200207052627.130118-8-drinkcat@chromium.org>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Wed, 12 Feb 2020 16:49:07 +0800
-Message-ID: <CANMq1KBL-S2DVKbCB2h_XNpfUro+pZ96-C5ft0p-8GX_tbXELQ@mail.gmail.com>
-Subject: Re: [PATCH v4 7/7] RFC: drm/panfrost: devfreq: Add support for 2 regulators
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wg1ZDADD3Vuw_sXhmBOrQ2xsp8YWxmtWiA6vG0RT-ZQ+A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Viresh Kumar +Stephen Boyd for clock advice.
+On Tue, Feb 11, 2020 at 05:03:02PM -0800, Linus Torvalds wrote:
+> On Tue, Feb 11, 2020 at 4:47 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+> >
+> > What's the situation with highmem on ARM?
+> 
+> Afaik it's exactly the same as highmem on x86 - only 32-bit ARM ever
+> needed it, and I was ranting at some people for repeating all the
+> mistakes Intel did.
+> 
+> But arm64 doesn't need it, and while 32-bit arm is obviosuly still
+> selling, I think that in many ways the switch-over to 64-bit has been
+> quicker on ARM than it was on x86. Partly because it happened later
+> (so all the 64-bit teething pains were dealt with), but largely
+> because everybody ended up actively discouraging 32-bit on the Android
+> side.
+> 
+> There were a couple of unfortunate early 32-bit arm server attempts,
+> but they were - predictably - complete garbage and nobody bought them.
+> They don't exist any more.
+> 
+> So at least my gut feel is that the arm people don't have any big
+> reason to push for maintaining HIGHMEM support either.
+> 
+> But I'm adding a couple of arm people and the arm list just in case
+> they have some input.
+> 
+> [ Obvious background for newly added people: we're talking about
+> making CONFIG_HIGHMEM a deprecated feature and saying that if you want
+> to run with lots of memory on a 32-bit kernel, you're doing legacy
+> stuff and can use a legacy kernel ]
 
-On Fri, Feb 7, 2020 at 1:27 PM Nicolas Boichat <drinkcat@chromium.org> wrote:
->
-> The Bifrost GPU on MT8183 uses 2 regulators (core and SRAM) for
-> devfreq, and provides OPP table with 2 sets of voltages.
->
-> TODO: This is incomplete as we'll need add support for setting
-> a pair of voltages as well.
+Well, the recent 32-bit ARM systems generally have more than 1G
+of memory, so make use of highmem as a rule.  You're probably
+talking about crippling support for any 32-bit ARM system produced
+in the last 8 to 10 years.
 
-So all we need for this to work (at least apparently, that is, I can
-change frequency) is this:
-https://lore.kernel.org/patchwork/patch/1192945/
-(ah well, Viresh just replied, so, probably not, I'll check that out
-and use the correct API)
-
-But then there's a slight problem: panfrost_devfreq uses a bunch of
-clk_get_rate calls, and the clock PLLs (at least on MTK platform) are
-never fully precise, so we get back 299999955 for 300 Mhz and
-799999878 for 800 Mhz. That means that the kernel is unable to keep
-devfreq stats as neither of these values are in the table:
-[ 4802.470952] devfreq devfreq1: Couldn't update frequency transition
-information.
-The kbase driver fixes this by remembering the last set frequency, and
-reporting that to devfreq. Should we do that as well or is there a
-better fix?
-
-Another thing that I'm not implementing is the dance that Mediatek
-does in their kbase driver when changing the clock (described in patch
-2/7):
-""
-The binding we use with out-of-tree Mali drivers includes more
-clocks, this is used for devfreq: the out-of-tree driver switches
-clk_mux to clk_sub_parent (26Mhz), adjusts clk_main_parent, then
-switches clk_mux back to clk_main_parent:
-(see https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-4.19/drivers/gpu/arm/midgard/platform/mediatek/mali_kbase_runtime_pm.c#423)
-clocks =
-        <&topckgen CLK_TOP_MFGPLL_CK>,
-        <&topckgen CLK_TOP_MUX_MFG>,
-        <&clk26m>,
-        <&mfgcfg CLK_MFG_BG3D>;
-clock-names =
-        "clk_main_parent",
-        "clk_mux",
-        "clk_sub_parent",
-        "subsys_mfg_cg";
-""
-Is there a clean/simple way to implement this in the clock
-framework/device tree? Or should we implement something in the
-panfrost driver?
-
-Thanks!
-
-
-
->
-> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
->
-> ---
->  drivers/gpu/drm/panfrost/panfrost_devfreq.c | 17 +++++++++++++++++
->  drivers/gpu/drm/panfrost/panfrost_device.h  |  1 +
->  2 files changed, 18 insertions(+)
->
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_devfreq.c b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-> index 413987038fbfccb..9c0987a3d71c597 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-> @@ -79,6 +79,21 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
->         struct devfreq *devfreq;
->         struct thermal_cooling_device *cooling;
->
-> +       /* If we have 2 regulator, we need an OPP table with 2 voltages. */
-> +       if (pfdev->comp->num_supplies > 1) {
-> +               pfdev->devfreq.dev_opp_table =
-> +                       dev_pm_opp_set_regulators(dev,
-> +                                       pfdev->comp->supply_names,
-> +                                       pfdev->comp->num_supplies);
-> +               if (IS_ERR(pfdev->devfreq.dev_opp_table)) {
-> +                       ret = PTR_ERR(pfdev->devfreq.dev_opp_table);
-> +                       pfdev->devfreq.dev_opp_table = NULL;
-> +                       dev_err(dev,
-> +                               "Failed to init devfreq opp table: %d\n", ret);
-> +                       return ret;
-> +               }
-> +       }
-> +
->         ret = dev_pm_opp_of_add_table(dev);
->         if (ret == -ENODEV) /* Optional, continue without devfreq */
->                 return 0;
-> @@ -119,6 +134,8 @@ void panfrost_devfreq_fini(struct panfrost_device *pfdev)
->         if (pfdev->devfreq.cooling)
->                 devfreq_cooling_unregister(pfdev->devfreq.cooling);
->         dev_pm_opp_of_remove_table(&pfdev->pdev->dev);
-> +       if (pfdev->devfreq.dev_opp_table)
-> +               dev_pm_opp_put_regulators(pfdev->devfreq.dev_opp_table);
->  }
->
->  void panfrost_devfreq_resume(struct panfrost_device *pfdev)
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm/panfrost/panfrost_device.h
-> index c30c719a805940a..5009a8b7c853ea1 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_device.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_device.h
-> @@ -110,6 +110,7 @@ struct panfrost_device {
->         struct {
->                 struct devfreq *devfreq;
->                 struct thermal_cooling_device *cooling;
-> +               struct opp_table *dev_opp_table;
->                 ktime_t busy_time;
->                 ktime_t idle_time;
->                 ktime_t time_last_update;
-> --
-> 2.25.0.341.g760bfbb309-goog
->
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
