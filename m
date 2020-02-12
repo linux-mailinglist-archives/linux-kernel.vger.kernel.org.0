@@ -2,50 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A40C415A6B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:44:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 452B415A6C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:44:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbgBLKoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 05:44:07 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35923 "EHLO
+        id S1728226AbgBLKoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 05:44:19 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33590 "EHLO
         mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727347AbgBLKoC (ORCPT
+        with ESMTP id S1728108AbgBLKoD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 05:44:02 -0500
-Received: by mail-lf1-f67.google.com with SMTP id f24so1257756lfh.3;
-        Wed, 12 Feb 2020 02:44:00 -0800 (PST)
+        Wed, 12 Feb 2020 05:44:03 -0500
+Received: by mail-lf1-f67.google.com with SMTP id n25so1270102lfl.0;
+        Wed, 12 Feb 2020 02:44:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rfdJBTNvCTI7BpYX85qLAk9HwyLTmyD1T6kKp6aaYPs=;
-        b=f12MfN6xCIlrVOd/ZCKQQyjygg4gWpIALxSVF6rWneyHGy7FNiH9RyqkUfsETd7LQD
-         XL7HOtpI3AZButlPhUnqHZo8YsZkR1LBeNEXcig5k5DWcWhB3xGjFRIgU6SkWei5mWkS
-         iXvzaijeMOygdHRAAu+r2q85Wyixuc+144w5kWCYzHN9GK2coPpT6rGjQWrJNBLrbvnF
-         /BjBrF8LLc9JKL4UQrmQnVd9EVYxkiQ7Ig0T50XveUuqSgmgA8LrsQcBV9K73i6jTIHm
-         eZiAoG8OYlo1XG5DUPe6+4ipz3cc1dOlUoeSKmFRno+r6LDtN0+QF2drAdyAiaqKRf6s
-         lbxA==
-X-Gm-Message-State: APjAAAXrFJNWcm6mZrQImtXAK5YqA9OsK1wxvNSJ8nGJOQk7TqpEZiLU
-        rOHnJCoq075avrBk1Cv7g3Q=
-X-Google-Smtp-Source: APXvYqzIshsThoHFCzhoumPwFpQqdmQWyTtvhlbbJqwYfwu6qPvpCG83PEOZAQCFyBEPM10yO6VJkA==
-X-Received: by 2002:ac2:4246:: with SMTP id m6mr6415511lfl.165.1581504239993;
-        Wed, 12 Feb 2020 02:43:59 -0800 (PST)
+        bh=dW/gtpmwTFw+oEFIzLCTetdu7jdvkgezHPX1Sr93TwA=;
+        b=VZ6vSPQ1+bh+AetrOMjQ/4Gm4kyUD55HounmT4vy3toVjhbL0FNrU2NcB8FInoOUmL
+         R6tIDImjmBb0l50ccGa9QvgvcZgyuiC0vckW+kNeVv22uWGLaLS5C3H6glaTSNDxfMr+
+         D1yYT9o84o+J1Z/YSBakCsJ4vboXO2dBPz9Zi54ZpBgwEjsdKV3zMkfdrwbfLZDTYvjU
+         ZA1uoRHH5J93ZC0/fBE5kwOKRqI60nGOt3VS/APWKkdC7in6STYjGTrvd44sG9mElcMU
+         lvVppOTSaZ+2TgD267ZmgXns6M/Il0Qe6KlzjGSHe+fihuyyL3qmnZxjA5Ih6rrUKVUI
+         nxxg==
+X-Gm-Message-State: APjAAAU5WeS8P55hTEjT4L54VOsPZ74D/UPa58NHFpYlzx3NypqD4hLR
+        IsX+EdsZlzyLlzI0Li+FZLU=
+X-Google-Smtp-Source: APXvYqzLv9Q5S1c1DIe6LSv7xAjK0nV9/GigVpccCCM69py78gj1tLuTt8v/gphZF/9ei+4cDgjc9Q==
+X-Received: by 2002:a19:23d7:: with SMTP id j206mr6361123lfj.108.1581504240882;
+        Wed, 12 Feb 2020 02:44:00 -0800 (PST)
 Received: from xi.terra (c-12aae455.07-184-6d6c6d4.bbcust.telenor.se. [85.228.170.18])
-        by smtp.gmail.com with ESMTPSA id k4sm82303lfo.48.2020.02.12.02.43.58
+        by smtp.gmail.com with ESMTPSA id v2sm95791lfo.6.2020.02.12.02.43.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 02:43:58 -0800 (PST)
+        Wed, 12 Feb 2020 02:43:59 -0800 (PST)
 Received: from johan by xi.terra with local (Exim 4.92.3)
         (envelope-from <johan@xi.terra>)
-        id 1j1pUs-0005CS-4J; Wed, 12 Feb 2020 11:43:58 +0100
+        id 1j1pUs-0005CW-7b; Wed, 12 Feb 2020 11:43:58 +0100
 From:   Johan Hovold <johan@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>
 Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Barry Song <Baohua.Song@csr.com>,
-        Johan Hovold <johan@kernel.org>,
-        Zhiwu Song <Zhiwu.Song@csr.com>, Hao Liu <Hao.Liu@csr.com>
-Subject: [PATCH 1/3] ARM: dts: atlas7: fix space in flexnoc compatible strings
-Date:   Wed, 12 Feb 2020 11:43:46 +0100
-Message-Id: <20200212104348.19940-2-johan@kernel.org>
+        Johan Hovold <johan@kernel.org>, Ye He <Ye.He@csr.com>
+Subject: [PATCH 2/3] ARM: dts: atlas7: fix space in gmac compatible string
+Date:   Wed, 12 Feb 2020 11:43:47 +0100
+Message-Id: <20200212104348.19940-3-johan@kernel.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200212104348.19940-1-johan@kernel.org>
 References: <20200212104348.19940-1-johan@kernel.org>
@@ -56,143 +55,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop the space between manufacturer and model in the Arteris FlexNoC
-compatible string in the noc-bus nodes so that it matches the
-recommended format.
+Drop the space between manufacturer and model in the Synopsis compatible
+string in the gmac node so that it matches the recommended format.
 
-Note that there are no in-kernel drivers that use this compatible and it
-is not present in any binding.
+Note that there are no in-kernel drivers that use this compatible and
+it is not present in any binding.
 
-Fixes: 7d76d03b9be8 ("ARM: dts: add init dts file for CSR atlas7 SoC")
-Cc: Zhiwu Song <Zhiwu.Song@csr.com>
-Cc: Hao Liu <Hao.Liu@csr.com>
+Fixes: 153645b3e037 ("ARM: dts: atlas7: add lost gmac node")
+Cc: Ye He <Ye.He@csr.com>
 Cc: Barry Song <Baohua.Song@csr.com>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- arch/arm/boot/dts/atlas7.dtsi | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ arch/arm/boot/dts/atlas7.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/atlas7.dtsi b/arch/arm/boot/dts/atlas7.dtsi
-index 99c9d9d9267f..92b00e4740f6 100644
+index 92b00e4740f6..f1e8c772a59e 100644
 --- a/arch/arm/boot/dts/atlas7.dtsi
 +++ b/arch/arm/boot/dts/atlas7.dtsi
-@@ -1164,7 +1164,7 @@ vi_vip1_high8bit {
- 		};
- 
- 		pmipc {
--			compatible = "arteris, flexnoc", "simple-bus";
-+			compatible = "arteris,flexnoc", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0x13240000 0x13240000 0x00010000>;
-@@ -1175,7 +1175,7 @@ pmipc@0x13240000 {
- 		};
- 
- 		dramfw {
--			compatible = "arteris, flexnoc", "simple-bus";
-+			compatible = "arteris,flexnoc", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0x10830000 0x10830000 0x18000>;
-@@ -1186,7 +1186,7 @@ dramfw@10820000 {
- 		};
- 
- 		spramfw {
--			compatible = "arteris, flexnoc", "simple-bus";
-+			compatible = "arteris,flexnoc", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0x10250000 0x10250000 0x3000>;
-@@ -1197,7 +1197,7 @@ spramfw@10820000 {
- 		};
- 
- 		cpum {
--			compatible = "arteris, flexnoc", "simple-bus";
-+			compatible = "arteris,flexnoc", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0x10200000 0x10200000 0x3000>;
-@@ -1208,7 +1208,7 @@ cpum@10200000 {
- 		};
- 
- 		cgum {
--			compatible = "arteris, flexnoc", "simple-bus";
-+			compatible = "arteris,flexnoc", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0x18641000 0x18641000 0x3000>,
-@@ -1238,7 +1238,7 @@ pwm: pwm@18630000 {
- 		};
- 
- 		gnssm {
--			compatible = "arteris, flexnoc", "simple-bus";
-+			compatible = "arteris,flexnoc", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0x18000000 0x18000000 0x0000ffff>,
-@@ -1365,7 +1365,7 @@ spi1: spi@18200000 {
- 
- 
- 		gpum {
--			compatible = "arteris, flexnoc", "simple-bus";
-+			compatible = "arteris,flexnoc", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0x13000000 0x13000000 0x3000>,
-@@ -1407,7 +1407,7 @@ sdr@0x13010000 {
- 		};
- 
- 		mediam {
--			compatible = "arteris, flexnoc", "simple-bus";
-+			compatible = "arteris,flexnoc", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0x15000000 0x15000000 0x00600000>,
-@@ -1549,7 +1549,7 @@ i2c0: i2c@17020000 {
- 		};
- 
- 		vdifm {
--			compatible = "arteris, flexnoc", "simple-bus";
-+			compatible = "arteris,flexnoc", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0x13290000 0x13290000 0x3000>,
-@@ -1652,7 +1652,7 @@ sd7: sdhci@14700000 {
- 		};
- 
- 		audiom {
--			compatible = "arteris, flexnoc", "simple-bus";
-+			compatible = "arteris,flexnoc", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0x10d50000 0x10d50000 0x0000ffff>,
-@@ -1767,7 +1767,7 @@ usp2: usp@10d40000 {
- 		};
- 
- 		ddrm {
--			compatible = "arteris, flexnoc", "simple-bus";
-+			compatible = "arteris,flexnoc", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0x10820000 0x10820000 0x3000>,
-@@ -1786,7 +1786,7 @@ memory-controller@0x10800000 {
- 		};
- 
- 		btm {
--			compatible = "arteris, flexnoc", "simple-bus";
-+			compatible = "arteris,flexnoc", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0x11002000 0x11002000 0x0000ffff>,
-@@ -1838,7 +1838,7 @@ btm@11010000 {
- 		};
- 
- 		rtcm {
--			compatible = "arteris, flexnoc", "simple-bus";
-+			compatible = "arteris,flexnoc", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0x18810000 0x18810000 0x3000>,
+@@ -1333,7 +1333,7 @@ uart5: uart@18060000 {
+ 				status = "disabled";
+ 			};
+ 			gmac: eth@180b0000 {
+-				compatible = "snps, dwc-eth-qos";
++				compatible = "snps,dwc-eth-qos";
+ 				reg = <0x180b0000 0x4000>;
+ 				interrupts = <0 59 0>, <0 70 0>;
+ 				interrupt-names = "macirq", "macpmt";
 -- 
 2.24.1
 
