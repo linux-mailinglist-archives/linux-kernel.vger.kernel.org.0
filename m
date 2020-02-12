@@ -2,83 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B432A15A8AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 13:04:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72CBC15A8C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 13:07:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728529AbgBLMEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 07:04:43 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:48418 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728092AbgBLMEm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 07:04:42 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1j1qkw-0003Zy-8B; Wed, 12 Feb 2020 13:04:38 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D45451C202A;
-        Wed, 12 Feb 2020 13:04:37 +0100 (CET)
-Date:   Wed, 12 Feb 2020 12:04:37 -0000
-From:   "tip-bot2 for Arvind Sankar" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/boot] x86/boot/compressed/64: Use LEA to initialize boot
- stack pointer
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200107194436.2166846-2-nivedita@alum.mit.edu>
-References: <20200107194436.2166846-2-nivedita@alum.mit.edu>
+        id S1727589AbgBLMH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 07:07:56 -0500
+Received: from foss.arm.com ([217.140.110.172]:60322 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726470AbgBLMH4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 07:07:56 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D1F730E;
+        Wed, 12 Feb 2020 04:07:55 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 115DB3F6CF;
+        Wed, 12 Feb 2020 04:07:54 -0800 (PST)
+Date:   Wed, 12 Feb 2020 12:07:53 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        linux-spi <linux-spi@vger.kernel.org>, Han Xu <han.xu@nxp.com>,
+        Yogesh Gaur <yogeshgaur.83@gmail.com>,
+        Ashish Kumar <ashish.kumar@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH V2 2/5] spi: fspi: dynamically alloc AHB memory
+Message-ID: <20200212120753.GF4028@sirena.org.uk>
+References: <20200202125950.1825013-1-aford173@gmail.com>
+ <20200202125950.1825013-2-aford173@gmail.com>
+ <CAOMZO5D3emrAk84wDS04qJC-3AyvFnqodhoMsXO-ukHnYsU+PQ@mail.gmail.com>
+ <CAHCN7xJyZRwJhnWW2mAbOeGyrMsB7Au_e6AvwiNmNS8gFUfSyw@mail.gmail.com>
 MIME-Version: 1.0
-Message-ID: <158150907763.411.16186019828079681497.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rWhLK7VZz0iBluhq"
+Content-Disposition: inline
+In-Reply-To: <CAHCN7xJyZRwJhnWW2mAbOeGyrMsB7Au_e6AvwiNmNS8gFUfSyw@mail.gmail.com>
+X-Cookie: Violence is molding.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/boot branch of tip:
 
-Commit-ID:     48bfdb9deffdc6b683feb25e15f4f26aac503501
-Gitweb:        https://git.kernel.org/tip/48bfdb9deffdc6b683feb25e15f4f26aac503501
-Author:        Arvind Sankar <nivedita@alum.mit.edu>
-AuthorDate:    Tue, 07 Jan 2020 14:44:35 -05:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Wed, 12 Feb 2020 11:11:06 +01:00
+--rWhLK7VZz0iBluhq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-x86/boot/compressed/64: Use LEA to initialize boot stack pointer
+On Mon, Feb 03, 2020 at 04:53:34AM -0600, Adam Ford wrote:
 
-It's shorter, and it's what is used in every other place, so make it
-consistent.
+> My motivation is to get the flexspi on the i.MX8MM to work, and I did
+> a list of the patches applied on the NXP branch to see what was
+> applied on top of their 4.19 kernel and this patch series generated
+> from that list.  Most of the NXP commits are one-line commits, and I
+> don't know the motivation for what's happening.  NXP did it, and I
+> know it works on the Flexspi driver.
 
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/20200107194436.2166846-2-nivedita@alum.mit.edu
----
- arch/x86/boot/compressed/head_64.S | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Adding new compatibles and so on seems fine but the patches making
+random changes without explanation like the one for octal mode I just
+replied to are more worrying, do they work with older versions of the IP
+or in all use cases for example?  I'd suggest cutting the initial patch
+series down to the bare minimum needed to get things working and then
+building on top of that if that's not already been done.
 
-diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index 1f1f6c8..d1220de 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -81,9 +81,7 @@ SYM_FUNC_START(startup_32)
- 	subl	$1b, %ebp
- 
- /* setup a stack and make sure cpu supports long mode. */
--	movl	$boot_stack_end, %eax
--	addl	%ebp, %eax
--	movl	%eax, %esp
-+	leal	boot_stack_end(%ebp), %esp
- 
- 	call	verify_cpu
- 	testl	%eax, %eax
+--rWhLK7VZz0iBluhq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5D6pgACgkQJNaLcl1U
+h9CVMgf/QyhKBWAfMkP4Rp+HGO7kGTkLUcFcDDEVLppg3P994e+Hw7xkEhHlxZzR
+Pk3L02ATqS7BzaqcD6YYWlUNUhq84BASOdHvlXmkHbj2zUH1YXHGToNmImnyz+ij
+PvQMg+4jX2+O/lS74JysuPSmnBaKzjCow8YHCD7eOF4/vBOpUbf2mSl2j5FqiQ61
+epX3f2ggXN/mHWb5lHsRFg0BeiX0FY0z6x+eKtRhkMlcWFDSi4tEAtCWQeJdln/Z
+fBzuVHcuRml1QT7eUkipD/rvtj5X04qwFvOHjHdVFRTlsWT9NqAEKyvwofEAml9G
+LQ/fLV2WIr5f6MFYAgsFwhj6PpLOYA==
+=3v+9
+-----END PGP SIGNATURE-----
+
+--rWhLK7VZz0iBluhq--
