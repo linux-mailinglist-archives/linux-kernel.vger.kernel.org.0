@@ -2,98 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E41C15AD39
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 17:22:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B448B15AD3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 17:22:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728576AbgBLQWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 11:22:18 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40061 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbgBLQWS (ORCPT
+        id S1728767AbgBLQW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 11:22:28 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45487 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728708AbgBLQW1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 11:22:18 -0500
-Received: by mail-pf1-f195.google.com with SMTP id q8so1474008pfh.7
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 08:22:17 -0800 (PST)
+        Wed, 12 Feb 2020 11:22:27 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 2so1461151pfg.12;
+        Wed, 12 Feb 2020 08:22:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=UtBs909g2Ug5B/GmWLl9syqH2ckGGAYGctQB3xVEPLk=;
-        b=V0nJ4J4nOpEq7kQ1dqdvmNnRxG670BfZwH5PqrHNkdmszKt+Nuf5IkDfEPLa6hHtjy
-         oQ/5HvIyGCUiyO+DKLpmEhjIaRtaMGsX4Ho4j+g5PEHbDGEU4EJj2lBNBfX3LEUu9h39
-         U7haCGvFvvtAEpjYU7/qWar6H5YvcL/BQUp2/+6JPuTRlsj3hgsVKRDQdiJerCImp4VP
-         9O/2vHiw/xH7JQHP6NWurerQCjwskocQQpbyiomB2Q4aqgBGsB4wCYS4fgUtTV5EJVqO
-         a9lsRy8l7mxCuMF2IuG8tVVKQVL4K7Y4LzMZWYykNg9SJMfePai7QvvlNM7P3AxhiqI8
-         2brg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i/S/gu5ls056hur5YDfXFsWlqa/VXA1YVt8W07oi8A0=;
+        b=t4Q/rqVY5SzGQA3770fHEw4TUpO31savs1Ccvpjf9zd84waVs3yJM9pfnejClHR1UE
+         Lkp0sns0cE09dZfQRmq0oBofdY/9iVWCF74zdbMQWdFJsibQaCR/Wkpk7VSi5NCMrOTn
+         FesMXEcb+2UEfy27+9j8iysokL7EZwdF07767X/5FXrobZfLI+8TCaTcIPe70Um0JggX
+         qSAcy19J5mp5d1/lU2nLrFTadHzRHzD3f4cQ18i84bdKvjuTVxHi5uvrNXN+xyysxxE3
+         ZpdgdexrOcsf6Xy54p3acue3hOABe+IBI5+5XfOCRiOmULIb1TFF6cTljQJOB3NDRPp0
+         ixNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=UtBs909g2Ug5B/GmWLl9syqH2ckGGAYGctQB3xVEPLk=;
-        b=GEYVc6MflupvVHB03nsuUOm388aaG2YX0abB9Eiocysf4n+ghjQG/ru3sw8m7XuYYz
-         KSXiNxW39EeSPdP2Mfl3hCV6Hv4eevvDd/mcc3pHVuF5Fez7vRK+VNBpJmMgfXD3d4Cg
-         GDCF9+M60oT5MDOUS+Lcg3oXLMh592aHxaExg1eu4YeNQfgoFCoBEcNqxbo47BJAvyCy
-         ueKLlJ1poJ0HXQU47uM/hpB+ppV75eLbNVvrcMVDmzcjKJvL681QfTNbWrtfK/uM+ikc
-         TJf8ZzUqyWRwHprGPUOK+mDHHhR/ATHQFGqbMQpjMIgMM4fBUUmzXHOC1SMqk8Pns4cE
-         tRkw==
-X-Gm-Message-State: APjAAAVt8IzFr1oAWcH947p2Cdl3BmA0pqQSmI2/Pi15CHG8cvSowbYT
-        SNehuZX8MFpkfJmuWT+zZU7u8A==
-X-Google-Smtp-Source: APXvYqyksnxVfiGQnmL2dJDTJhvH3Jj2OjnrG6wn2hFFnBKljhf5Nl9AB7BmudDVKXJXj5Ka8PadqA==
-X-Received: by 2002:aa7:86c2:: with SMTP id h2mr9202566pfo.45.1581524537390;
-        Wed, 12 Feb 2020 08:22:17 -0800 (PST)
-Received: from ?IPv6:2601:646:c200:1ef2:6918:d286:95c1:bba2? ([2601:646:c200:1ef2:6918:d286:95c1:bba2])
-        by smtp.gmail.com with ESMTPSA id z19sm1429801pfn.49.2020.02.12.08.22.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2020 08:22:16 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 14/62] x86/boot/compressed/64: Add stage1 #VC handler
-Date:   Wed, 12 Feb 2020 08:22:14 -0800
-Message-Id: <A67CC291-C07A-496C-BD67-2A795813E93F@amacapital.net>
-References: <20200212113840.GB20066@8bytes.org>
-Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Tom Lendacky <Thomas.Lendacky@amd.com>,
-        Juergen Gross <JGross@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Joerg Roedel <jroedel@suse.de>
-In-Reply-To: <20200212113840.GB20066@8bytes.org>
-To:     Joerg Roedel <joro@8bytes.org>
-X-Mailer: iPhone Mail (17D50)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i/S/gu5ls056hur5YDfXFsWlqa/VXA1YVt8W07oi8A0=;
+        b=iXiImyetsOCpIi7UdS+AzadsCa22PyGGlZPe8/eErvuSqkDhDuqrhpArfNmSoJVrR+
+         zmaKaWXJzyZdxt6iS+g++Qfob/8MlcTCI6ILTM2fyrgoroJl9u4UaXbXtkS+/MgTgv8b
+         HuYgmUBecjXFpcFLQoUg0mXmsJy62mGNv2tB6fViMp1fv9aYHydGRDIuf69SLbumfxVM
+         46oR4V/paCEvfNtrPmW9yoBs+9bOdTDPQJtpfHy8Pkq706gGcFaAcZ1uVnE5ZrexQye2
+         6uoUdipD4vKRsHj5vUYaFrEGkOLQaYJr3oEGxK9hsBYCBYoTp5ithy5i5UIG5KA9bRBw
+         lCuw==
+X-Gm-Message-State: APjAAAVOOmOERCT0jiqddL9ujbTky35kidzTGRXAe4OUEFK9DHfRZ+Tq
+        f1WG8PxxMJth3Kv7TxWj2wk/OVwSIH8V+VNbqfk=
+X-Google-Smtp-Source: APXvYqyxHKklmuKov1yA4Urj79T+gfbmYj+Vp5gE+wLeOgEhYafxRpjw4Lg5cY3ZnSZXyB3yPILql+1nG6BAZerDyog=
+X-Received: by 2002:a63:583:: with SMTP id 125mr9258604pgf.100.1581524546569;
+ Wed, 12 Feb 2020 08:22:26 -0800 (PST)
+MIME-Version: 1.0
+References: <20200128110102.11522-1-martin@kaiser.cx> <20200128110102.11522-2-martin@kaiser.cx>
+In-Reply-To: <20200128110102.11522-2-martin@kaiser.cx>
+From:   PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Date:   Wed, 12 Feb 2020 21:52:15 +0530
+Message-ID: <CANc+2y4Suv0iZ38uxC97U0x73RcKnKiRnjcC-xNh9gNZYn3aUQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] hwrng: imx-rngc - fix an error path
+To:     Martin Kaiser <martin@kaiser.cx>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Martin,
 
+On Tue, 28 Jan 2020 at 16:31, Martin Kaiser <martin@kaiser.cx> wrote:
+>
+> Make sure that the rngc interrupt is masked if the rngc self test fails.
+> Self test failure means that probe fails as well. Interrupts should be
+> masked in this case, regardless of the error.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 1d5449445bd0 ("hwrng: mx-rngc - add a driver for Freescale RNGC")
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+> ---
+>  drivers/char/hw_random/imx-rngc.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/char/hw_random/imx-rngc.c b/drivers/char/hw_random/imx-rngc.c
+> index 30cf00f8e9a0..0576801944fd 100644
+> --- a/drivers/char/hw_random/imx-rngc.c
+> +++ b/drivers/char/hw_random/imx-rngc.c
+> @@ -105,8 +105,10 @@ static int imx_rngc_self_test(struct imx_rngc *rngc)
+>                 return -ETIMEDOUT;
+>         }
+>
+> -       if (rngc->err_reg != 0)
+> +       if (rngc->err_reg != 0) {
+> +               imx_rngc_irq_mask_clear(rngc);
+>                 return -EIO;
+> +       }
+>
+>         return 0;
+>  }
+> --
+> 2.20.1
+>
 
-> On Feb 12, 2020, at 3:38 AM, Joerg Roedel <joro@8bytes.org> wrote:
->=20
-> =EF=BB=BFOn Tue, Feb 11, 2020 at 02:23:22PM -0800, Andy Lutomirski wrote:
->>> On Tue, Feb 11, 2020 at 5:53 AM Joerg Roedel <joro@8bytes.org> wrote:
->>> +void __init no_ghcb_vc_handler(struct pt_regs *regs)
->>=20
->> Isn't there a second parameter: unsigned long error_code?
->=20
-> No, the function gets the error-code from regs->orig_ax. This particular
-> function only needs to check for error_code =3D=3D SVM_EXIT_CPUID, as that=
+Looks good to me. You can add
+Reviewed-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
 
-> is the only one supported when there is no GHCB.
->=20
-
-Hmm. It might be nice to use the same signature for early handlers as for no=
-rmal ones.
-
-> Regards,
->=20
->    Joerg
+Regards,
+PrasannaKumar
