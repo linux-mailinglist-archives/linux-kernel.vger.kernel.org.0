@@ -2,89 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B9D715A52D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:44:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 758A615A4D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:32:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729062AbgBLJoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 04:44:03 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:59456 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729008AbgBLJoA (ORCPT
+        id S1728868AbgBLJck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 04:32:40 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:37052 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728530AbgBLJcj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:44:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To;
-        bh=XeL6LCi2HGnzcbE5ZCpOQlzWnrcj0g6s0cgd62YAoiY=; b=ZBwKYFS1bFAtH/co5Xr+8Bs/ps
-        HEsQr8l9CJyfyXwNOMqmXCK9ehnCXcCdh4XUS26aoVQGvnKgiDdWM5wii1tdeJnoPGUpU9yMUhojE
-        3X8At/BK+nSrtfMpqOuhhdyWDLq/KEF7v1A5NLCkx2BHFs6kokSXTf8Nx+DWXsDYjT9vzV5YxkpaZ
-        S71j5DLrVtWQPcvS1uK8fa20C6reT14+PJshg+q/bvzGtCE9SlswJwJRZotedo8Fwf6UE1ORfuI6B
-        Tr6jjYdFiiasG6oqY4brZRf7vHGYhqJdoBdxDAVsDkyHRvBzEum95LFqJ5p/MaBc1keH4dDj56GED
-        xz8jI50g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1oYH-0006Az-Md; Wed, 12 Feb 2020 09:43:25 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 22AB7307851;
-        Wed, 12 Feb 2020 10:41:33 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 647DA2B9154FD; Wed, 12 Feb 2020 10:43:21 +0100 (CET)
-Message-Id: <20200212094108.063885035@infradead.org>
-User-Agent: quilt/0.65
-Date:   Wed, 12 Feb 2020 10:32:18 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        rostedt@goodmis.org
-Cc:     peterz@infradead.org, mingo@kernel.org, joel@joelfernandes.org,
-        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
-        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com
-Subject: [PATCH 8/8] tracing: Remove regular RCU context for _rcuidle tracepoints (again)
-References: <20200212093210.468391728@infradead.org>
+        Wed, 12 Feb 2020 04:32:39 -0500
+Received: by mail-oi1-f196.google.com with SMTP id q84so1407554oic.4;
+        Wed, 12 Feb 2020 01:32:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fbl16QLWOk16BbpGJnBM6ITNh/OXaqd9qdxwFkNXjtY=;
+        b=JvhsPYEUaeeK7KbUnv7HXvNL2DqGDkkKcSFQurlaubDp0i4OUymw+p/npEtcoaWB7S
+         aiVyvhtXfRwKL9vFcCI641secM3Q5pP4/c2cMthfvTdhJow3dwuz1BDay3nH7PR9f4AQ
+         qs1zm1HKcZ6pOfXiTtLsHmvzhccnlQpceR6bhnCzFQCanL0v3Q1cxydvqWyDcZFAYRI3
+         EyXi7htNo/acu0CupQhih1qmFiGqBwqcXs3BBGCq9Vge+Gd7CKXiHRz/w/QiW+v0UIja
+         C//psjZdR5eIy3NW8CSTji+By/l/ctSmwyVXfx+9we4brR5KqJQyfA1LSMQ6HcVpTDcG
+         F+UQ==
+X-Gm-Message-State: APjAAAUQSlYw2r07G2XgRxnPrYE14q1hn8VANcensh+zCHpPmgRgd6gH
+        G5C/Z9zj+Srh6goR8N237Dl4QJbV1MhuE8AhTEg=
+X-Google-Smtp-Source: APXvYqw2r8z8Vc2w1tJlwrxGXuJOMY7YWRpy7v7NNenZTHTtUJxjFWBwZTlQgI0gtLqTBX6zyCXSm2/SjWcl6JKwack=
+X-Received: by 2002:aca:c4d2:: with SMTP id u201mr5697570oif.54.1581499958571;
+ Wed, 12 Feb 2020 01:32:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <dcdd615f77dacf8a98e18950b66fb5a675277f38.1581498987.git.michal.simek@xilinx.com>
+ <CAMo8BfLYM-_SbqmMUCVjwqL7MpA2W7toTg_F6HTY4Sg5QxGzfw@mail.gmail.com>
+ <CAMuHMdUZ_e9JsF0fuLxBwdoy7YVLarH6E98z5nKUZ2CccSkV-Q@mail.gmail.com> <6128aa3a-a99c-2ab0-82d1-d5c419e4f5b9@xilinx.com>
+In-Reply-To: <6128aa3a-a99c-2ab0-82d1-d5c419e4f5b9@xilinx.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 12 Feb 2020 10:32:27 +0100
+Message-ID: <CAMuHMdX3O6aL_yGSfqrbdfPf-HHqqdkMwPHS=Y0WxMRTYOtJ4w@mail.gmail.com>
+Subject: Re: [PATCH v2] asm-generic: Fix unistd_32.h generation format
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     Max Filippov <jcmvbkbc@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Simek <monstr@monstr.eu>, git@xilinx.com,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stefan Asserhall <stefan.asserhall@xilinx.com>,
+        Chris Zankel <chris@zankel.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Helge Deller <deller@gmx.de>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Rich Felker <dalias@libc.org>,
+        Richard Henderson <rth@twiddle.net>,
+        Tony Luck <tony.luck@intel.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        "open list:ALPHA PORT" <linux-alpha@vger.kernel.org>,
+        "open list:IA64 (Itanium) PL..." <linux-ia64@vger.kernel.org>,
+        "open list:M68K ARCHITECTURE" <linux-m68k@lists.linux-m68k.org>,
+        "open list:PARISC ARCHITECTURE" <linux-parisc@vger.kernel.org>,
+        "open list:SUPERH" <linux-sh@vger.kernel.org>,
+        "open list:TENSILICA XTENSA PORT (xtensa)" 
+        <linux-xtensa@linux-xtensa.org>,
+        "open list:SPARC + UltraSPAR..." <sparclinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Effectively revert commit 865e63b04e9b2 ("tracing: Add back in
-rcu_irq_enter/exit_irqson() for rcuidle tracepoints") now that we've
-taught perf how to deal with not having an RCU context provided.
+Hi Michal,
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- include/linux/tracepoint.h |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+On Wed, Feb 12, 2020 at 10:27 AM Michal Simek <michal.simek@xilinx.com> wrote:
+> On 12. 02. 20 10:25, Geert Uytterhoeven wrote:
+> > On Wed, Feb 12, 2020 at 10:23 AM Max Filippov <jcmvbkbc@gmail.com> wrote:
+> >> On Wed, Feb 12, 2020 at 1:16 AM Michal Simek <michal.simek@xilinx.com> wrote:
+> >>>
+> >>> Generated files are also checked by sparse that's why add newline
+> >>> to remove sparse (C=1) warning.
+> >>>
+> >>> The issue was found on Microblaze and reported like this:
+> >>> ./arch/microblaze/include/generated/uapi/asm/unistd_32.h:438:45:
+> >>> warning: no newline at end of file
+> >>>
+> >>> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> >>> Reviewed-by: Stefan Asserhall <stefan.asserhall@xilinx.com>
+> >
+> >>> --- a/arch/m68k/kernel/syscalls/syscallhdr.sh
+> >>> +++ b/arch/m68k/kernel/syscalls/syscallhdr.sh
+> >>> @@ -33,4 +33,5 @@ grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
+> >>>         printf "#endif\n"
+> >>>         printf "\n"
+> >>>         printf "#endif /* %s */\n" "${fileguard}"
+> >>
+> >> Here there's already \n at the end, so no need for another one?
+> >
+> > Thanks! I completely missed that.
+> > So I did fix the original while applying ;-)
+>
+> I can drop m68k or align with with others. I would prefer to have the
+> same solution in all these scripts.
 
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -179,10 +179,8 @@ static inline struct tracepoint *tracepo
- 		 * For rcuidle callers, use srcu since sched-rcu	\
- 		 * doesn't work from the idle path.			\
- 		 */							\
--		if (rcuidle) {						\
-+		if (rcuidle)						\
- 			__idx = srcu_read_lock_notrace(&tracepoint_srcu);\
--			rcu_irq_enter_irqsave();			\
--		}							\
- 									\
- 		it_func_ptr = rcu_dereference_raw((tp)->funcs);		\
- 									\
-@@ -194,10 +192,8 @@ static inline struct tracepoint *tracepo
- 			} while ((++it_func_ptr)->func);		\
- 		}							\
- 									\
--		if (rcuidle) {						\
--			rcu_irq_exit_irqsave();				\
-+		if (rcuidle)						\
- 			srcu_read_unlock_notrace(&tracepoint_srcu, __idx);\
--		}							\
- 									\
- 		preempt_enable_notrace();				\
- 	} while (0)
+Yeah, it makes sense to align as much as possible.
+IIRC, the original plan was to consolidate more later.
 
+Note that all other lines are terminated with a "\n" at the end.
+The separate 'printf "\n"' is an extra blank line, not the terminator for the
+previous line.
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
