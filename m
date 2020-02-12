@@ -2,44 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DE1415A562
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:55:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8FE115A566
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:55:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbgBLJzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 04:55:04 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:41084 "EHLO mxhk.zte.com.cn"
+        id S1729001AbgBLJzR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 04:55:17 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:48150 "EHLO mxhk.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728712AbgBLJzE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:55:04 -0500
-Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
-        by Forcepoint Email with ESMTPS id 2D67C77E27890162EE2D;
-        Wed, 12 Feb 2020 17:55:03 +0800 (CST)
-Received: from notes_smtp.zte.com.cn (notes_smtp.zte.com.cn [10.30.1.239])
-        by mse-fl2.zte.com.cn with ESMTP id 01C9sSL8090064;
-        Wed, 12 Feb 2020 17:54:28 +0800 (GMT-8)
+        id S1728846AbgBLJzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 04:55:15 -0500
+Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
+        by Forcepoint Email with ESMTPS id 0429CB67386CD6FE23CF;
+        Wed, 12 Feb 2020 17:55:14 +0800 (CST)
+Received: from notes_smtp.zte.com.cn (notessmtp.zte.com.cn [10.30.1.239])
+        by mse-fl1.zte.com.cn with ESMTP id 01C9sg5i032881;
+        Wed, 12 Feb 2020 17:54:42 +0800 (GMT-8)
         (envelope-from wang.yi59@zte.com.cn)
 Received: from fox-host8.localdomain ([10.74.120.8])
           by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2020021217544887-2102570 ;
-          Wed, 12 Feb 2020 17:54:48 +0800 
+          with ESMTP id 2020021217550296-2102571 ;
+          Wed, 12 Feb 2020 17:55:02 +0800 
 From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     mingo@redhat.com
-Cc:     peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
-        wang.yi59@zte.com.cn, wang.liang82@zte.com.cn,
-        Huang Zijiang <huang.zijiang@zte.com.cn>
-Subject: [PATCH] sched: Use kmem_cache_zalloc() instead of kmem_cache_alloc() with flag GFP_ZERO.
-Date:   Wed, 12 Feb 2020 17:54:21 +0800
-Message-Id: <1581501261-5558-1-git-send-email-wang.yi59@zte.com.cn>
+To:     steffen.klassert@secunet.com
+Cc:     herbert@gondor.apana.org.au, davem@davemloft.net, kuba@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
+        wang.liang82@zte.com.cn, Huang Zijiang <huang.zijiang@zte.com.cn>
+Subject: [PATCH] xfrm: Use kmem_cache_zalloc() instead of kmem_cache_alloc() with flag GFP_ZERO.
+Date:   Wed, 12 Feb 2020 17:54:36 +0800
+Message-Id: <1581501276-5636-1-git-send-email-wang.yi59@zte.com.cn>
 X-Mailer: git-send-email 1.8.3.1
 X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2020-02-12 17:54:48,
+ 21, 2013) at 2020-02-12 17:55:03,
         Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2020-02-12 17:54:30,
-        Serialize complete at 2020-02-12 17:54:30
-X-MAIL: mse-fl2.zte.com.cn 01C9sSL8090064
+ 2020-02-12 17:54:45,
+        Serialize complete at 2020-02-12 17:54:45
+X-MAIL: mse-fl1.zte.com.cn 01C9sg5i032881
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -47,32 +45,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Huang Zijiang <huang.zijiang@zte.com.cn>
 
- Use kmem_cache_zalloc instead of manually setting kmem_cache_alloc
- with flag GFP_ZERO since kzalloc sets allocated memory
- to zero.
+Use kmem_cache_zalloc instead of manually setting kmem_cache_alloc
+with flag GFP_ZERO since kzalloc sets allocated memory
+to zero.
 
- Change in v2:
-      add indation
+Change in v2:
+     add indation
 
 Signed-off-by: Huang Zijiang <huang.zijiang@zte.com.cn>
 Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
 ---
- kernel/sched/core.c | 2 +-
+ net/xfrm/xfrm_state.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 90e4b00..20ea28f 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6949,7 +6949,7 @@ struct task_group *sched_create_group(struct task_group *parent)
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index f342356..6ac25f7 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -612,7 +612,7 @@ struct xfrm_state *xfrm_state_alloc(struct net *net)
  {
- 	struct task_group *tg;
+ 	struct xfrm_state *x;
  
--	tg = kmem_cache_alloc(task_group_cache, GFP_KERNEL | __GFP_ZERO);
-+	tg = kmem_cache_zalloc(task_group_cache, GFP_KERNEL);
- 	if (!tg)
- 		return ERR_PTR(-ENOMEM);
+-	x = kmem_cache_alloc(xfrm_state_cache, GFP_ATOMIC | __GFP_ZERO);
++	x = kmem_cache_zalloc(xfrm_state_cache, GFP_ATOMIC);
  
+ 	if (x) {
+ 		write_pnet(&x->xs_net, net);
 -- 
 1.9.1
 
