@@ -2,90 +2,242 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CACEB15B399
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 23:25:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5043515B39C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 23:25:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729236AbgBLWZU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 17:25:20 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:46070 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727564AbgBLWZU (ORCPT
+        id S1729262AbgBLWZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 17:25:27 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:44534 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729238AbgBLWZX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 17:25:20 -0500
-Received: from [10.137.112.97] (unknown [131.107.147.225])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 601FE20B9C02;
-        Wed, 12 Feb 2020 14:25:19 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 601FE20B9C02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1581546319;
-        bh=EK492kUpferPtd3ir32dLEL2sG+uHfaicrUji4e0uDo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=pCKkrMlySrkSHXPiF1TAQtj9W/1MGhSzjq6QV0x6wLdndbAs/krqJT63bgwl9X56r
-         iBQoAIiDKhRvVlSmallft66lsgoRw5bY3UWHSAzGTA5lZi6h5oR8uIGxZhEcm94gPI
-         nyr3s15WlQLhYLpQTDSTYR3IgxVJu2vL+NNJVhCA=
-Subject: Re: [PATCH v3 1/3] IMA: Update KBUILD_MODNAME for IMA files to ima
-To:     Mimi Zohar <zohar@linux.ibm.com>, joe@perches.com,
-        skhan@linuxfoundation.org, linux-integrity@vger.kernel.org
-Cc:     sashal@kernel.org, nramas@linux.microsoft.com,
-        linux-kernel@vger.kernel.org
-References: <20200211231414.6640-1-tusharsu@linux.microsoft.com>
- <20200211231414.6640-2-tusharsu@linux.microsoft.com>
- <1581518950.8515.51.camel@linux.ibm.com>
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Message-ID: <a3cbb918-887a-4534-144b-7a392d766bdb@linux.microsoft.com>
-Date:   Wed, 12 Feb 2020 14:25:19 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 12 Feb 2020 17:25:23 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by kvm5.telegraphics.com.au (Postfix) with ESMTP id CE6B929AAE;
+        Wed, 12 Feb 2020 17:25:19 -0500 (EST)
+Date:   Thu, 13 Feb 2020 09:25:19 +1100 (AEDT)
+From:   Finn Thain <fthain@telegraphics.com.au>
+To:     afzal mohammed <afzal.mohd.ma@gmail.com>
+cc:     linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 06/18] m68k: Replace setup_irq() by request_irq()
+In-Reply-To: <1941c51a3237c4e9df6d9a5b87615cd1bba572dc.1581478324.git.afzal.mohd.ma@gmail.com>
+Message-ID: <alpine.LNX.2.22.394.2002130912140.8@nippy.intranet>
+References: <cover.1581478323.git.afzal.mohd.ma@gmail.com> <1941c51a3237c4e9df6d9a5b87615cd1bba572dc.1581478324.git.afzal.mohd.ma@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1581518950.8515.51.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 12 Feb 2020, afzal mohammed wrote:
 
-On 2020-02-12 6:49 a.m., Mimi Zohar wrote:
-> On Tue, 2020-02-11 at 15:14 -0800, Tushar Sugandhi wrote:
->> Log statements from ima_mok.c, ima_asymmetric_keys.c, and
->> ima_queue_keys.c are prefixed with the respective file names
->> and not with the string "ima".
+> request_irq() is preferred over setup_irq(). Existing callers of
+> setup_irq() reached mostly via 'init_IRQ()' & 'time_init()', while
+> memory allocators are ready by 'mm_init()'.
 > 
-> Before listing the specific filenames, the patch description should
-> provide a generic explanation of the problem.  For example, the kernel
-> Makefile "obj-$CONFIG_XXXX" specifies object files which may be built
-> as loadable kernel modules[1].
+> Per tglx[1], setup_irq() existed in olden days when allocators were not
+> ready by the time early interrupts were initialized.
 > 
-Thanks Mimi. I will update the patch description in the next iteration.
+> Hence replace setup_irq() by request_irq().
+> 
+> Seldom remove_irq() usage has been observed coupled with setup_irq(),
+> wherever that has been found, it too has been replaced by free_irq().
+> 
+> [1] https://lkml.kernel.org/r/alpine.DEB.2.20.1710191609480.1971@nanos
+> 
+> Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+> ---
+> 
+> Since cc'ing cover letter to all maintainers/reviewers would be too
+> many, refer for cover letter,
+>  https://lkml.kernel.org/r/cover.1581478323.git.afzal.mohd.ma@gmail.com
+> 
+>  arch/m68k/68000/timers.c      |  9 ++-------
+>  arch/m68k/coldfire/pit.c      |  9 ++-------
+>  arch/m68k/coldfire/sltimers.c | 19 +++++--------------
+>  arch/m68k/coldfire/timers.c   | 19 +++++--------------
+>  4 files changed, 14 insertions(+), 42 deletions(-)
+> 
+> diff --git a/arch/m68k/68000/timers.c b/arch/m68k/68000/timers.c
+> index 71ddb4c98726..7a55d664592e 100644
+> --- a/arch/m68k/68000/timers.c
+> +++ b/arch/m68k/68000/timers.c
+> @@ -68,12 +68,6 @@ static irqreturn_t hw_tick(int irq, void *dummy)
+>  
+>  /***************************************************************************/
+>  
+> -static struct irqaction m68328_timer_irq = {
+> -	.name	 = "timer",
+> -	.flags	 = IRQF_TIMER,
+> -	.handler = hw_tick,
+> -};
+> -
+>  /***************************************************************************/
+>  
+>  static u64 m68328_read_clk(struct clocksource *cs)
+> @@ -106,7 +100,8 @@ void hw_timer_init(irq_handler_t handler)
+>  	TCTL = 0;
+>  
+>  	/* set ISR */
+> -	setup_irq(TMR_IRQ_NUM, &m68328_timer_irq);
+> +	if (request_irq(TMR_IRQ_NUM, hw_tick, IRQF_TIMER, "timer", NULL))
+> +		pr_err("request_irq() on %s failed\n", "timer");
 
+"request_irq() on timer failed" is bad grammar and doesn't convey what 
+went wrong. It could be taken to mean that request_irq() was called 
+because a timer went off.
 
-> Mimi
+Have you considered,
+
+		pr_err("%s: request_irq() failed\n", "timer");
+
+I think that would be more typical of error messages on UNIX. E.g.
+
+$ grep x -- /tmp/foo
+grep: /tmp/foo: No such file or directory
+
+>  
+>  	/* Restart mode, Enable int, Set clock source */
+>  	TCTL = TCTL_OM | TCTL_IRQEN | CLOCK_SOURCE;
+> diff --git a/arch/m68k/coldfire/pit.c b/arch/m68k/coldfire/pit.c
+> index eb6f16b0e2e6..d09e253abe5a 100644
+> --- a/arch/m68k/coldfire/pit.c
+> +++ b/arch/m68k/coldfire/pit.c
+> @@ -111,12 +111,6 @@ static irqreturn_t pit_tick(int irq, void *dummy)
+>  
+>  /***************************************************************************/
+>  
+> -static struct irqaction pit_irq = {
+> -	.name	 = "timer",
+> -	.flags	 = IRQF_TIMER,
+> -	.handler = pit_tick,
+> -};
+> -
+>  /***************************************************************************/
+>  
+>  static u64 pit_read_clk(struct clocksource *cs)
+> @@ -156,7 +150,8 @@ void hw_timer_init(irq_handler_t handler)
+>  	cf_pit_clockevent.min_delta_ticks = 0x3f;
+>  	clockevents_register_device(&cf_pit_clockevent);
+>  
+> -	setup_irq(MCF_IRQ_PIT1, &pit_irq);
+> +	if (request_irq(MCF_IRQ_PIT1, pit_tick, IRQF_TIMER, "timer", NULL))
+> +		pr_err("request_irq() on %s failed\n", "timer");
+>  
+
+Same here.
+
+>  	clocksource_register_hz(&pit_clk, FREQ);
+>  }
+> diff --git a/arch/m68k/coldfire/sltimers.c b/arch/m68k/coldfire/sltimers.c
+> index 1b11e7bacab3..2188a21e5413 100644
+> --- a/arch/m68k/coldfire/sltimers.c
+> +++ b/arch/m68k/coldfire/sltimers.c
+> @@ -50,18 +50,14 @@ irqreturn_t mcfslt_profile_tick(int irq, void *dummy)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> -static struct irqaction mcfslt_profile_irq = {
+> -	.name	 = "profile timer",
+> -	.flags	 = IRQF_TIMER,
+> -	.handler = mcfslt_profile_tick,
+> -};
+> -
+>  void mcfslt_profile_init(void)
+>  {
+>  	printk(KERN_INFO "PROFILE: lodging TIMER 1 @ %dHz as profile timer\n",
+>  	       PROFILEHZ);
+>  
+> -	setup_irq(MCF_IRQ_PROFILER, &mcfslt_profile_irq);
+> +	if (request_irq(MCF_IRQ_PROFILER, mcfslt_profile_tick, IRQF_TIMER,
+> +			"profile timer", NULL))
+> +		pr_err("request_irq() on %s failed\n", "profile timer");
+>  
+
+And here.
+
+>  	/* Set up TIMER 2 as high speed profile clock */
+>  	__raw_writel(MCF_BUSCLK / PROFILEHZ - 1, PA(MCFSLT_STCNT));
+> @@ -92,12 +88,6 @@ static irqreturn_t mcfslt_tick(int irq, void *dummy)
+>  	return timer_interrupt(irq, dummy);
+>  }
+>  
+> -static struct irqaction mcfslt_timer_irq = {
+> -	.name	 = "timer",
+> -	.flags	 = IRQF_TIMER,
+> -	.handler = mcfslt_tick,
+> -};
+> -
+>  static u64 mcfslt_read_clk(struct clocksource *cs)
+>  {
+>  	unsigned long flags;
+> @@ -140,7 +130,8 @@ void hw_timer_init(irq_handler_t handler)
+>  	mcfslt_cnt = mcfslt_cycles_per_jiffy;
+>  
+>  	timer_interrupt = handler;
+> -	setup_irq(MCF_IRQ_TIMER, &mcfslt_timer_irq);
+> +	if (request_irq(MCF_IRQ_TIMER, mcfslt_tick, IRQF_TIMER, "timer", NULL))
+> +		pr_err("request_irq() on %s failed\n", "timer");
+>  
+
+And so on.
+
+>  	clocksource_register_hz(&mcfslt_clk, MCF_BUSCLK);
+>  
+> diff --git a/arch/m68k/coldfire/timers.c b/arch/m68k/coldfire/timers.c
+> index 227aa5d13709..f384e92d8b1c 100644
+> --- a/arch/m68k/coldfire/timers.c
+> +++ b/arch/m68k/coldfire/timers.c
+> @@ -82,12 +82,6 @@ static irqreturn_t mcftmr_tick(int irq, void *dummy)
+>  
+>  /***************************************************************************/
+>  
+> -static struct irqaction mcftmr_timer_irq = {
+> -	.name	 = "timer",
+> -	.flags	 = IRQF_TIMER,
+> -	.handler = mcftmr_tick,
+> -};
+> -
+>  /***************************************************************************/
+>  
+>  static u64 mcftmr_read_clk(struct clocksource *cs)
+> @@ -134,7 +128,8 @@ void hw_timer_init(irq_handler_t handler)
+>  
+>  	timer_interrupt = handler;
+>  	init_timer_irq();
+> -	setup_irq(MCF_IRQ_TIMER, &mcftmr_timer_irq);
+> +	if (request_irq(MCF_IRQ_TIMER, mcftmr_tick, IRQF_TIMER, "timer", NULL))
+> +		pr_err("request_irq() on %s failed\n", "timer");
+>  
+>  #ifdef CONFIG_HIGHPROFILE
+>  	coldfire_profile_init();
+> @@ -170,12 +165,6 @@ irqreturn_t coldfire_profile_tick(int irq, void *dummy)
+>  
+>  /***************************************************************************/
+>  
+> -static struct irqaction coldfire_profile_irq = {
+> -	.name	 = "profile timer",
+> -	.flags	 = IRQF_TIMER,
+> -	.handler = coldfire_profile_tick,
+> -};
+> -
+>  void coldfire_profile_init(void)
+>  {
+>  	printk(KERN_INFO "PROFILE: lodging TIMER2 @ %dHz as profile timer\n",
+> @@ -188,7 +177,9 @@ void coldfire_profile_init(void)
+>  	__raw_writew(MCFTIMER_TMR_ENORI | MCFTIMER_TMR_CLK16 |
+>  		MCFTIMER_TMR_RESTART | MCFTIMER_TMR_ENABLE, PA(MCFTIMER_TMR));
+>  
+> -	setup_irq(MCF_IRQ_PROFILER, &coldfire_profile_irq);
+> +	if (request_irq(MCF_IRQ_PROFILER, coldfire_profile_tick, IRQF_TIMER,
+> +			"profile timer", NULL))
+> +		pr_err("request_irq() on %s failed\n", "profile timer");
+>  }
+>  
+>  /***************************************************************************/
 > 
-> [1] Refer to Documentation/kbuild/makefiles.rst
-> 
->>
->> This change fixes the log statement prefix to be consistent with the rest
->> of the IMA files.
->>
->> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->> Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
->> ---
->>   security/integrity/ima/Makefile | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
->> index 064a256f8725..67dabca670e2 100644
->> --- a/security/integrity/ima/Makefile
->> +++ b/security/integrity/ima/Makefile
->> @@ -11,6 +11,6 @@ ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
->>   ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
->>   ima-$(CONFIG_IMA_APPRAISE_MODSIG) += ima_modsig.o
->>   ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
->> -obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
->> -obj-$(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) += ima_asymmetric_keys.o
->> -obj-$(CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS) += ima_queue_keys.o
->> +ima-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
->> +ima-$(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) += ima_asymmetric_keys.o
->> +ima-$(CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS) += ima_queue_keys.o
+
