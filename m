@@ -2,108 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC49C15B06E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:04:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACF7015B0ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:25:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728911AbgBLTEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 14:04:05 -0500
-Received: from mail-eopbgr40058.outbound.protection.outlook.com ([40.107.4.58]:45470
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727279AbgBLTEE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 14:04:04 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=l4MosG+wUcopBb2+16J2wXCLSGEh/+yVfa7RZusVZWvpspokhNpOY3KA8FwNuV3gWmUz+92FTx+cfkeeSFvSjA+K11MoDnj8suPndDe1GFQ6uVIOWLmmB6zQVBQrH4Bi25Noe+EGUlA5ZQPxfGy4igjWTIlgiUjlibYb6vzv9CF6gUqoU4gRjMbUm94hBq8qQev5u7pNYYUZTPbO3njSNPKz4EjYjFrtDBqnFHFq5lRIPaOLXHMbYfW7OJjByJar297t8So5qi/LWUusnQVANobVccIzOkj8zJHirr3oFYvuDdwQYlitHhesINgJH4sC6aZ21PyzvMh8rW5MDiEOQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BupAzrf4hRlps4RyCb3qPGDq4kdNSbPzlOsPfbwnxB8=;
- b=g9FV35Y96R5xcbesw7wdJcIGstT80IM60d/mu2bcT4lkZEBGtYvMQqhcRB8RozU+wY98nR6NA+JImX3P11dq2bbis9DL2pHAPyjaMWKJkeqV+uGfUsl8AQl+dZvuXy0I20sazBXzVPEusi8N0PdA3rIHYag3oRE4twKlxqhNuvsvR82POOCoOE0LhMKolgMtUsmKYXQcwpLA3DRY1MV+CMJ72vC1XUb9i4aXIT16QULRYwF1asp7Q4146rfyii5vdK3WOfgU9fKUO30aXat1C967cN59sW+l/tP9XOgHLZTZO2klZf0PH0Sg5zZbbAUgShIaKc/bd9oMGUZvRyIxxg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BupAzrf4hRlps4RyCb3qPGDq4kdNSbPzlOsPfbwnxB8=;
- b=fxlFMUw4SydKipALbsp2Dc8oRtl6iO2J25Jb8KV/2pXPqfWekXINEYsUBfOLIZx2edq/Et9e6cYrNM3SXEvt6ZXtO6Hm3xYEs03A3DcqCMUIAP6o7nO/sQrh584IuZ1y2r/JzDPV61uTtgW4gacd3DEIV8d/7b50CJ1uMBkujLk=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3743.eurprd04.prod.outlook.com (52.134.16.155) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2707.21; Wed, 12 Feb 2020 19:04:01 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::85e9:f844:f8b0:27d]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::85e9:f844:f8b0:27d%7]) with mapi id 15.20.2707.030; Wed, 12 Feb 2020
- 19:04:01 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Iuliana Prodan <iuliana.prodan@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        Silvano Di Ninno <silvano.dininno@nxp.com>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v6 9/9] crypto: caam - add crypto_engine support for HASH
- algorithms
-Thread-Topic: [PATCH v6 9/9] crypto: caam - add crypto_engine support for HASH
- algorithms
-Thread-Index: AQHV4c23DLQNOiVYCkuTVfZUIsa9Ug==
-Date:   Wed, 12 Feb 2020 19:04:00 +0000
-Message-ID: <VI1PR0402MB348598008AC64EAAFF970087981B0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <1581530124-9135-1-git-send-email-iuliana.prodan@nxp.com>
- <1581530124-9135-10-git-send-email-iuliana.prodan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [84.117.251.185]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 8443e5f1-db68-4752-5d3e-08d7afee5223
-x-ms-traffictypediagnostic: VI1PR0402MB3743:|VI1PR0402MB3743:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR0402MB3743DE1D58F1C5F72340287E981B0@VI1PR0402MB3743.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0311124FA9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(39860400002)(396003)(346002)(376002)(199004)(189003)(186003)(26005)(4326008)(91956017)(7696005)(478600001)(76116006)(44832011)(9686003)(4744005)(55016002)(64756008)(66476007)(66946007)(6636002)(8676002)(54906003)(110136005)(5660300002)(81166006)(8936002)(66556008)(66446008)(86362001)(52536014)(2906002)(33656002)(316002)(53546011)(81156014)(6506007)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3743;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: QYOWl9Mnt9lzeXJ/OM2XKXkLNrwGIf11C4NDNDik3q1+QX917Mdwj42f8EXLLop9XECsURFfG4M68Pk+gttATW9i26ZbamV3keJ2jaG8ZFdaVJAJH/kD2WC/mwr1Qtgg96fZVQJyNGbqBe0fPP2cyybgIXey1raY51vfDeUBsOppybdtabSloma3Go1/IVHYMQv6edqcvHTx+7Iw0ru21ytJ/r5LsG2NXnSs4pnrfjSw/q9+0I5sFjCZt79br1jX1zEA/FfSDsDoc6k6Q7ekOme7+4ruupVG1lvIL58zGQOUBxzZQTHyqZ1zZapGKoJEttM6wqam0d7EdE86J5jpnmkebvSPhAiwJ0w1ukx5HsUQQrkZG7XGvrZPQtw5Q9YjeX6qS/I73Jj45QIkeG8p+dlfzMGcXH2dNOxM3g22KCAe4Ah5PNBnDVICR5ka23B1
-x-ms-exchange-antispam-messagedata: E0No7jsPQLYMRBEGZ0z5F2qmadF2D//V6yVywXHmYzBIR7OiQ7fneC7u3QRGcb31CFQD2ns53ik7Nzy6zMwt2FL5B+UTTHq8ZGl/U1xqFUuEDskC6UhanEpe2kk5kdJUhc1984ojIfpzPyCPp3hunw==
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+        id S1728866AbgBLTZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 14:25:05 -0500
+Received: from gateway33.websitewelcome.com ([192.185.146.68]:44368 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727231AbgBLTZF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 14:25:05 -0500
+X-Greylist: delayed 1408 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Feb 2020 14:25:04 EST
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id DD5BF150589A
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 13:01:35 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 1xGRjVYM3Efyq1xGRjfGQW; Wed, 12 Feb 2020 13:01:35 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=e+ToTum+/zbH7vOFT++WaTINSUI9PozMldXFPNOHlFg=; b=BVTxbz64ZCqJW7b5fn3KsJfnKX
+        Y5RoT1Mt/ewwZ9crpnAKZtPmVV2bzcMLs9AsZ/v8V8BlAQBymHYjE9ENZi+ZT90x+UR7aPRSON5gJ
+        626sp1ErNTi7GFMEKupTfcsnjXKtlDag2vtk4+zZITErTVdJjEETpX3XxDvWCWn9Loi9u9AlNKtRz
+        zyvCzURjkwnnZ1H0s6+cdvq5btNY/pd7upbiRZjVVc09nJRl//gBMRChE4dGwnyDXf0AHHjK9Bowp
+        mKCnGMJuOBLkua1o9m8aKsagM45Ktd+9ma7d9wmKcFbX/rviuUPk+rKoX43tY/8Adu0zuIiWHAKIB
+        x+13kyCA==;
+Received: from [201.144.174.25] (port=2686 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j1xGR-000t2i-F9; Wed, 12 Feb 2020 13:01:35 -0600
+Subject: Re: [PATCH] USB: serial: ti_usb_3410_5052: Replace zero-length array
+ with flexible-array member
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200211232420.GA22388@embeddedor>
+ <20200212075929.GE4150@localhost>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <245fb407-d5d3-f0ce-1909-ec1febb55c93@embeddedor.com>
+Date:   Wed, 12 Feb 2020 13:04:09 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8443e5f1-db68-4752-5d3e-08d7afee5223
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2020 19:04:00.9812
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: DauUF3Coz08QYE53HK6OzvNv2UEy78eHsugYgC5vVjLoAgZUfVKkQEbyPYaPxdqzREJXOarjzqKIt8vZ/4yP6Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3743
+In-Reply-To: <20200212075929.GE4150@localhost>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.144.174.25
+X-Source-L: No
+X-Exim-ID: 1j1xGR-000t2i-F9
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [201.144.174.25]:2686
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/12/2020 7:56 PM, Iuliana Prodan wrote:=0A=
-> Add crypto_engine support for HASH algorithms, to make use of=0A=
-> the engine queue.=0A=
-> The requests, with backlog flag, will be listed into crypto-engine=0A=
-> queue and processed by CAAM when free.=0A=
-> Only the backlog request are sent to crypto-engine since the others=0A=
-> can be handled by CAAM, if free, especially since JR has up to 1024=0A=
-> entries (more than the 10 entries from crypto-engine).=0A=
-> =0A=
-> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>=0A=
-Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
-=0A=
-Thanks,=0A=
-Horia=0A=
-=0A=
+
+
+On 2/12/20 01:59, Johan Hovold wrote:
+> On Tue, Feb 11, 2020 at 05:24:20PM -0600, Gustavo A. R. Silva wrote:
+>> The current codebase makes use of the zero-length array language
+>> extension to the C90 standard, but the preferred mechanism to declare
+>> variable-length types such as these ones is a flexible array member[1][2],
+>> introduced in C99:
+>>
+>> struct foo {
+>>         int stuff;
+>>         struct boo array[];
+>> };
+>>
+>> By making use of the mechanism above, we will get a compiler warning
+>> in case the flexible array does not occur last in the structure, which
+>> will help us prevent some kind of undefined behavior bugs from being
+>> inadvertenly introduced[3] to the codebase from now on.
+>>
+>> This issue was found with the help of Coccinelle.
+> 
+> Same here, the scripts may need to be updated as you missed a couple of
+> instances:
+> 
+> 	$ git grep '\[0\];' drivers/usb/serial
+> 	...
+> 	drivers/usb/serial/io_usbvend.h:        __u8    Data[0];                // Data starts here
+> 	drivers/usb/serial/io_usbvend.h:        __u8    Data[0];                // Download starts here
+> 	...
+> 
+> Could you replace these as well so that is done in one patch per
+> subsystem?
+> 
+
+Sure thing. I'll do that.
+
+Thanks for the feedback.
+--
+Gustavo
