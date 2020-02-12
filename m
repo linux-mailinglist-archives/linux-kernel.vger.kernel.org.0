@@ -2,159 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACF7015B0ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:25:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF3C415B073
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:05:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728866AbgBLTZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 14:25:05 -0500
-Received: from gateway33.websitewelcome.com ([192.185.146.68]:44368 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727231AbgBLTZF (ORCPT
+        id S1728970AbgBLTFd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 14:05:33 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38320 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727439AbgBLTFd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 14:25:05 -0500
-X-Greylist: delayed 1408 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Feb 2020 14:25:04 EST
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id DD5BF150589A
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 13:01:35 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 1xGRjVYM3Efyq1xGRjfGQW; Wed, 12 Feb 2020 13:01:35 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=e+ToTum+/zbH7vOFT++WaTINSUI9PozMldXFPNOHlFg=; b=BVTxbz64ZCqJW7b5fn3KsJfnKX
-        Y5RoT1Mt/ewwZ9crpnAKZtPmVV2bzcMLs9AsZ/v8V8BlAQBymHYjE9ENZi+ZT90x+UR7aPRSON5gJ
-        626sp1ErNTi7GFMEKupTfcsnjXKtlDag2vtk4+zZITErTVdJjEETpX3XxDvWCWn9Loi9u9AlNKtRz
-        zyvCzURjkwnnZ1H0s6+cdvq5btNY/pd7upbiRZjVVc09nJRl//gBMRChE4dGwnyDXf0AHHjK9Bowp
-        mKCnGMJuOBLkua1o9m8aKsagM45Ktd+9ma7d9wmKcFbX/rviuUPk+rKoX43tY/8Adu0zuIiWHAKIB
-        x+13kyCA==;
-Received: from [201.144.174.25] (port=2686 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j1xGR-000t2i-F9; Wed, 12 Feb 2020 13:01:35 -0600
-Subject: Re: [PATCH] USB: serial: ti_usb_3410_5052: Replace zero-length array
- with flexible-array member
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200211232420.GA22388@embeddedor>
- <20200212075929.GE4150@localhost>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <245fb407-d5d3-f0ce-1909-ec1febb55c93@embeddedor.com>
-Date:   Wed, 12 Feb 2020 13:04:09 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 12 Feb 2020 14:05:33 -0500
+Received: by mail-ot1-f67.google.com with SMTP id z9so3038415oth.5
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 11:05:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=foWRYWO78ULZBWItaixgqqE1dZLXg8h/ArW04ZpV+3U=;
+        b=aV9YD0PIqGsFxeLHhOyB8Ic2JiX3zbqDjHrTiODkiO0DoQ18h/n+sV2sdQkaEqbuuP
+         buYE1urSPPsSwhLczKzrO7hU4fml11RrGw+fG6rdYBVA4IwNLn18yZOQw0GncgXlkBaE
+         +a2FGKnnD/Kq+QmgJe+kwhuP1xaIigldCfY/DvmtZnTiA2LJjpsXhiKGWDM2hKDQ0UW0
+         weucAY2C1KlByL01wxA4iblHegp2xD2Zfu/wz/Q1ZpdE5+XjraGgBA2jDnLVTBjYxqHq
+         MWJ8vk1fcDqo5XTfJr1HCSb8HJNlr+VV/T8mVGVjlpM+eK7SKWzwkJEqrXC0vwZ3nBPT
+         KLMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=foWRYWO78ULZBWItaixgqqE1dZLXg8h/ArW04ZpV+3U=;
+        b=Gr1w0k5Phh77oSknK4u5Olg1VKfrjY6kZAfCzCjxMeE2Wwc5Q3R3XhGh4sIBpF2bK3
+         N/aMD+4l0l0nF+pPxDJ3ndGJ+4gbkdLVxfWRYDEhrxnWU7mMCHX7lH+62NFrc+fR4NsE
+         tj5PmurjYFTy55ojr3DwCfyqXxVdB/YRoJwTGlhZrrrbkAS7UzrG5uq18icc61YKpFMn
+         gMYQ9S75/w+uhRXBG8+YAF8A+9cDnSoKHNJJwF3xuiHpSOXuJL0lZb4TyUsq7bylzxdF
+         bMvuq2uQ/vCfynft/2gQ9pxU72MIA5/56rKKIxNCHKrET4C3/lVaViNv2b6R9aJ05icM
+         u+ZQ==
+X-Gm-Message-State: APjAAAVbdzIH3mw1ENSlmqO7CMw0om1dxyzMlnT4/jkvn04HtMlL8RRP
+        YSI6yDla7BLo8FOK47ioXM82VMzpFkIrfzAKpWZ+GQ==
+X-Google-Smtp-Source: APXvYqzgQj4eDYx0PaukBLn97gYpuIIZIXS0SSSHkr8pXEUse5dom9XQvCPHDdC+zo2PWeBUw9eJ1c3lLD2e0BuplHY=
+X-Received: by 2002:a9d:7586:: with SMTP id s6mr10267881otk.342.1581534331557;
+ Wed, 12 Feb 2020 11:05:31 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200212075929.GE4150@localhost>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.144.174.25
-X-Source-L: No
-X-Exim-ID: 1j1xGR-000t2i-F9
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [201.144.174.25]:2686
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20200211225547.235083-1-dancol@google.com> <20200211225547.235083-4-dancol@google.com>
+ <ef13d728-9f1e-5e38-28a1-7ed7134840e4@tycho.nsa.gov> <CAKOZuesUVSYJ6EjHFL3QyiWKVmyhm1fLp5Bm_SHjB3_s1gn08A@mail.gmail.com>
+ <ae8adb92-9c6e-2318-a3b9-903ead3848b5@tycho.nsa.gov> <69f4ccce-18b2-42c1-71ac-3fe9caf2dfb6@tycho.nsa.gov>
+In-Reply-To: <69f4ccce-18b2-42c1-71ac-3fe9caf2dfb6@tycho.nsa.gov>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Wed, 12 Feb 2020 11:04:54 -0800
+Message-ID: <CAKOZuevoKDYGVSooWAhi7Jr6Ww-+NEd-sStaPcN5Q6g+NKKRPQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] Teach SELinux about a new userfaultfd class
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Tim Murray <timmurray@google.com>, Nosh Minwalla <nosh@google.com>,
+        Nick Kralevich <nnk@google.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 12, 2020 at 10:59 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+>
+> On 2/12/20 1:04 PM, Stephen Smalley wrote:
+> > On 2/12/20 12:19 PM, Daniel Colascione wrote:
+> >> Thanks for taking a look.
+> >>
+> >> On Wed, Feb 12, 2020 at 9:04 AM Stephen Smalley <sds@tycho.nsa.gov>
+> >> wrote:
+> >>>
+> >>> On 2/11/20 5:55 PM, Daniel Colascione wrote:
+> >>>> Use the secure anonymous inode LSM hook we just added to let SELinux
+> >>>> policy place restrictions on userfaultfd use. The create operation
+> >>>> applies to processes creating new instances of these file objects;
+> >>>> transfer between processes is covered by restrictions on read, write,
+> >>>> and ioctl access already checked inside selinux_file_receive.
+> >>>>
+> >>>> Signed-off-by: Daniel Colascione <dancol@google.com>
+> >>>
+> >>> (please add linux-fsdevel and viro to the cc for future versions of this
+> >>> patch since it changes the VFS)
+> >>>
+> >>>> ---
+> >>>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> >>>> index 1659b59fb5d7..e178f6f40e93 100644
+> >>>> --- a/security/selinux/hooks.c
+> >>>> +++ b/security/selinux/hooks.c
+> >>>> @@ -2915,6 +2919,69 @@ static int selinux_inode_init_security(struct
+> >>>> inode *inode, struct inode *dir,
+> >>>> +
+> >>>> +     /*
+> >>>> +      * We shouldn't be creating secure anonymous inodes before LSM
+> >>>> +      * initialization completes.
+> >>>> +      */
+> >>>> +     if (unlikely(!selinux_state.initialized))
+> >>>> +             return -EBUSY;
+> >>>
+> >>> I don't think this is viable; any arbitrary actions are possible before
+> >>> policy is loaded, and a Linux distro can be brought up fully with
+> >>> SELinux enabled and no policy loaded.  You'll just need to have a
+> >>> default behavior prior to initialization.
+> >>
+> >> We'd have to fail open then, I think, and return an S_PRIVATE inode
+> >> (the regular anon inode).
+> >
+> > Not sure why.  You aren't doing anything in the hook that actually
+> > relies on selinux_state.initialized being set (i.e. nothing requires a
+> > policy).  The avc_has_perm() call will just succeed until a policy is
+> > loaded.  So if these inodes are created prior to policy load, they will
+> > get assigned the task SID (which would be the kernel SID prior to policy
+> > load or first exec or write to /proc/self/attr/current afterward) and
+> > UFFD class (in your current code), be permitted, and then once policy is
+> > loaded any further access will get checked against the kernel SID.
+> >
+> >>>> +     /*
+> >>>> +      * We only get here once per ephemeral inode.  The inode has
+> >>>> +      * been initialized via inode_alloc_security but is otherwise
+> >>>> +      * untouched, so check that the state is as
+> >>>> +      * inode_alloc_security left it.
+> >>>> +      */
+> >>>> +     BUG_ON(isec->initialized != LABEL_INVALID);
+> >>>> +     BUG_ON(isec->sclass != SECCLASS_FILE);
+> >>>
+> >>> I think the kernel discourages overuse of BUG_ON/BUG/...
+> >>
+> >> I'm not sure what counts as overuse.
+> >
+> > Me either (not my rule) but I'm pretty sure this counts or you'd see a
+> > lot more of these kinds of BUG_ON() checks throughout.  Try to reserve
+> > them for really critical cases.
+> >
+> >>>> +
+> >>>> +#ifdef CONFIG_USERFAULTFD
+> >>>> +     if (fops == &userfaultfd_fops)
+> >>>> +             isec->sclass = SECCLASS_UFFD;
+> >>>> +#endif
+> >>>
+> >>> Not sure we want or need to introduce a new security class for each user
+> >>> of anonymous inodes since the permissions should be the same as for
+> >>> file.
+> >>
+> >> The purpose of this change is to apply special policy to userfaultfd
+> >> FDs in particular. Isn't having a UFFD security class the best way to
+> >> go about that? (There's no path.) Am I missing something?
+> >
+> > It is probably the simplest approach; it just doesn't generalize to all
+> > users of anonymous inodes. We can distinguish them in one of two ways:
+> > use a different class like you did (requires a code change every time we
+> > add a new one and yet another duplicate of the file class) or use a
+> > different SID/context/type. The latter could be achieved by calling
+> > security_transition_sid() with the provided name wrapped in a qstr and
+> > specifying type_transition rules on the name.  Then policy could define
+> > derived types for each domain, ala
+> > type_transition init self:file "[userfaultfd]" init_userfaultfd;
+> > type_transition untrusted_app self:file "[userfaultfd]"
+> > untrusted_app_userfaultfd;
+> > ...
+> >
+> >>> Also not sure we want to be testing fops for each such case.
+> >>
+> >> I was also thinking of just providing some kind of context string
+> >> (maybe the name), which might be friendlier to modules, but the loose
+> >> coupling kind of scares me, and for this particular application, since
+> >> UFFD is always in the core and never in a module, checking the fops
+> >> seems a bit more robust and doesn't hurt anything.
+> >
+> > Yes, not sure how the vfs folks feel about either coupling (the
+> > name-based one or the fops-based one).  Neither seems great.
+> >
+> >>> We
+> >>> were looking at possibly leveraging the name as a key and using
+> >>> security_transition_sid() to generate a distinct SID/context/type for
+> >>> the inode via type_transition rules in policy.  We have some WIP along
+> >>> those lines.
+> >>
+> >> Where? Any chance it would be ready soon? I'd rather not hold up this
+> >> work for a more general mechanism.
+> >
+> > Hopefully will have a patch available soon.  But not saying this
+> > necessarily has to wait either.
+> >
+> >>>> +     /*
+> >>>> +      * Always give secure anonymous inodes the sid of the
+> >>>> +      * creating task.
+> >>>> +      */
+> >>>> +
+> >>>> +     isec->sid = tsec->sid;
+> >>>
+> >>> This doesn't generalize for other users of anonymous inodes, e.g. the
+> >>> /dev/kvm case where we'd rather inherit the SID and class from the
+> >>> original /dev/kvm inode itself.
+> >>
+> >> I think someone mentioned on the first version of this patch that we
+> >> could make it more flexible if the need arose. If we do want to do it
+> >> now, we could have the anon_inode security hook accept a "parent" or
+> >> "context" inode that modules could inspect for the purposes of forming
+> >> the new inode's SID. Does that make sense to you?
+> >
+> > Yes, that's the approach in our current WIP, except we call it a
+> > "related" inode since it isn't necessarily connected to the anon inode
+> > in any vfs sense.
+>
+> The other key difference in our WIP approach is that we assumed that we
+> couldn't mandate allocating a separate anon inode for each of these fds
+> and we wanted to cover all anonymous inodes (not opt-in), so we are
+> storing the SID/class pair as additional fields in the
+> file_security_struct and have modified file_has_perm() and others to
+> look there for anonymous inodes.
 
-
-On 2/12/20 01:59, Johan Hovold wrote:
-> On Tue, Feb 11, 2020 at 05:24:20PM -0600, Gustavo A. R. Silva wrote:
->> The current codebase makes use of the zero-length array language
->> extension to the C90 standard, but the preferred mechanism to declare
->> variable-length types such as these ones is a flexible array member[1][2],
->> introduced in C99:
->>
->> struct foo {
->>         int stuff;
->>         struct boo array[];
->> };
->>
->> By making use of the mechanism above, we will get a compiler warning
->> in case the flexible array does not occur last in the structure, which
->> will help us prevent some kind of undefined behavior bugs from being
->> inadvertenly introduced[3] to the codebase from now on.
->>
->> This issue was found with the help of Coccinelle.
-> 
-> Same here, the scripts may need to be updated as you missed a couple of
-> instances:
-> 
-> 	$ git grep '\[0\];' drivers/usb/serial
-> 	...
-> 	drivers/usb/serial/io_usbvend.h:        __u8    Data[0];                // Data starts here
-> 	drivers/usb/serial/io_usbvend.h:        __u8    Data[0];                // Download starts here
-> 	...
-> 
-> Could you replace these as well so that is done in one patch per
-> subsystem?
-> 
-
-Sure thing. I'll do that.
-
-Thanks for the feedback.
---
-Gustavo
+A separate inode seems like the simpler approach for now, because it
+means that we have fewer places to check for security information ---
+and it's not as if an inode is particularly expensive. We can always
+switch later.
