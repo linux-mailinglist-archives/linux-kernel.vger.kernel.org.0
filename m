@@ -2,57 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5600E15A420
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:58:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44B5015A418
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:58:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728865AbgBLI6m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 03:58:42 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36169 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728150AbgBLI6R (ORCPT
+        id S1728748AbgBLI6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 03:58:18 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41335 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728426AbgBLI6R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 12 Feb 2020 03:58:17 -0500
-Received: by mail-wm1-f65.google.com with SMTP id p17so1225880wma.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:58:15 -0800 (PST)
+Received: by mail-wr1-f66.google.com with SMTP id c9so1182310wrw.8
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:58:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=monstr-eu.20150623.gappssmtp.com; s=20150623;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=BTHaz5A4SC+OE/B+HYkWcFMMrrKRsAAfwl9I0dHXQig=;
-        b=0YLaUSPEev7kaxHsythr6FiLAS95ainxwjb0zEqEk7WFYfBIy45dlNcbLPjk8ISI84
-         5Mn5rShSknxIeDyAEQk4eBWlPx/OJDTAsDy4sR2A+IQDyICSXXBS57oFNm4oKhv1ea7Y
-         xQiFsk2fJE1LwowkzpkmlSUWphUrBG//YQvChPKLrr5+7cqk1E6dj3ErS90ANm5Ag6QP
-         kBF0wJgqzEN8C5z1Apku0m+2B+8rYT33ujkm68DifEq67dpmt+8eMUrMViSdu3gOYGKB
-         iRkrtfQJclO/S7RUXpT07FlJoGwb4XyqnnOlojfnGiMFRBm1fmS5+Wdn+62VYsZV30pR
-         xHug==
+        bh=P+oTW1oqdZZpvbExNtN6cEjZVuY6rtlPN76BdLxBHrg=;
+        b=osBvUAaRLXIEwRLMbGoLedaXv4Ac/y455olJmGTpqe5ljva0Yw+gPcmSx9YkiwtDGU
+         GPRWNmQBjq5v5mhfRD4J5XGkpXLUyr90q1fg8Xbb0foc6EknCKctaBhVSX3jt+o4xSyd
+         VzKq6dfq6nLYtXQVPRoH6L+VBz/uZAzdnQ40OhQDfXbMR6fbOeYuwfrit1E2rznbAkt5
+         akFkP2JxhxkckgNK9xIu29XLqdBKrsdaiffg+nuHIbnDLkwxeOBsKWXN6hwJTqq/fFRf
+         fN7CrLm6zXITFjeZHT/96E/viQudh5o+DfbSMWh036vS8Lw/cl1GA3202YNpykH/btDO
+         YLKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=BTHaz5A4SC+OE/B+HYkWcFMMrrKRsAAfwl9I0dHXQig=;
-        b=JsfduT+ctn2Hh7K1qpHnywD6A9MQN9E/HqZQ1I4BRC73OAZyXsdLczaIDiZBJIcNY8
-         ETCt2j3qQ6AUm0Z+9/1N+KniE0f62vS9pv3S7wsBg9K4rqQsQ3vy2lil060OVSo/kXzf
-         Z+VEcUy5Ahl0GCmtdt6At1XjnI3Lhe1O34ib+QDphkbcAavkrOdP5lesbZ001rx31dPV
-         TX1vsgkLYqFSMGPbKigmLOaS/h02PD43BosQrE3du8kkc3wYjO3OH4aQFmkU8ev+6Qic
-         SIX0rjMdKACxFbvKs9Ch8YFAvDDyYNGV7mjjBAUdPrrINBbaw6s3zyB7D6785ZYMkk8D
-         v7zg==
-X-Gm-Message-State: APjAAAXoCeLEHVnk3Bk6URu0KcpCxjGQ1cDhduKUT9HvM6MnE+k9ZF4Y
-        QdmuNe2Xqvcbu9RXBXWNs3fFF3DJo/hEdw==
-X-Google-Smtp-Source: APXvYqwP033Pm/oULStN0JuRd5+bgJdBfmjtr1fO9ZnhNDC5V9wvDdn1xk9WGKVppIQ4ZkL4YXtczg==
-X-Received: by 2002:a1c:9d08:: with SMTP id g8mr10969356wme.141.1581497894599;
-        Wed, 12 Feb 2020 00:58:14 -0800 (PST)
+        bh=P+oTW1oqdZZpvbExNtN6cEjZVuY6rtlPN76BdLxBHrg=;
+        b=S51e8VQGAbo06PE7xJmNKYtjI7zjmX0Me5JdQK6sG9kCuC83YHwguNsuw8mHk5r7Lj
+         yz4LDaN/cDS0TtzgMnx4SLVwFVR3lnotjLuzj7uTFF4glm/34hoQUBc1k+co3OUJqkDd
+         ggBbpHPp5nehbTI0W6V10JI3+TLPRKyQtNz3Ke9e2ymnVOg/mYhLFXAFEGOeBbvcrMkC
+         j7vZhEeDaXrJtv2AC7M7qloVlr7U03gZ2vlbz/PXJcTyLVun0IMAxXnNCPdC5M7chQVm
+         iNHjBr5fnYyFIlXyjrHrPgKmERiodZmKFtBOWxslrjNscckASyQ5J/ncdwuSgGJhc1Yk
+         d6dg==
+X-Gm-Message-State: APjAAAVRZLnq3UZSZS8CeQMJrkkv8XmQmo7dvYKlo0ngvQ7efuJmvB4P
+        +W7UTT/IaOEEMwdhv1ep9zXwZNvZMPPiZw==
+X-Google-Smtp-Source: APXvYqxy+QfVMd4+1vZhPJKba77efLsRGHXlJCHu4Ro6lxGOfIRXmptsY7EVm8UfLvjKuITEfALCMA==
+X-Received: by 2002:adf:f3d1:: with SMTP id g17mr13443885wrp.378.1581497896214;
+        Wed, 12 Feb 2020 00:58:16 -0800 (PST)
 Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id t131sm7929579wmb.13.2020.02.12.00.58.13
+        by smtp.gmail.com with ESMTPSA id n13sm7497505wmd.21.2020.02.12.00.58.15
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Feb 2020 00:58:14 -0800 (PST)
+        Wed, 12 Feb 2020 00:58:15 -0800 (PST)
 From:   Michal Simek <michal.simek@xilinx.com>
 To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
         michal.simek@xilinx.com, git@xilinx.com, arnd@arndb.de
 Cc:     Stefan Asserhall <stefan.asserhall@xilinx.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 03/10] microblaze: Remove early printk setup
-Date:   Wed, 12 Feb 2020 09:58:00 +0100
-Message-Id: <af15f3f69b877bb547ffbf5df8454f749692939f.1581497860.git.michal.simek@xilinx.com>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Will Deacon <will@kernel.org>
+Subject: [PATCH 04/10] microblaze: Remove empty headers
+Date:   Wed, 12 Feb 2020 09:58:01 +0100
+Message-Id: <9cca0a17b62cfa548a9cac7a58d516f967163f4d.1581497860.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <cover.1581497860.git.michal.simek@xilinx.com>
 References: <cover.1581497860.git.michal.simek@xilinx.com>
@@ -63,36 +65,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Early printk has been removed already that's why this setting doesn't make
-any sense. Also change printk level from pr_info to pr_err.
+There is no reason to keep empty headers if asm-generic one can be used
+instead. That's why remove empty file and use asm-generic equivalent.
+cputable.h is completely unused that's why remove it.
 
-Fixes: 96f0e6fcc9ad ("microblaze: remove redundant early_printk support")
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 Reviewed-by: Stefan Asserhall <stefan.asserhall@xilinx.com>
 ---
 
- arch/microblaze/kernel/cpu/cpuinfo-pvr-full.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ arch/microblaze/include/asm/Kbuild     | 2 ++
+ arch/microblaze/include/asm/cputable.h | 1 -
+ arch/microblaze/include/asm/hw_irq.h   | 1 -
+ arch/microblaze/include/asm/user.h     | 1 -
+ 4 files changed, 2 insertions(+), 3 deletions(-)
+ delete mode 100644 arch/microblaze/include/asm/cputable.h
+ delete mode 100644 arch/microblaze/include/asm/hw_irq.h
+ delete mode 100644 arch/microblaze/include/asm/user.h
 
-diff --git a/arch/microblaze/kernel/cpu/cpuinfo-pvr-full.c b/arch/microblaze/kernel/cpu/cpuinfo-pvr-full.c
-index a32daec96c12..c7ee51b0900e 100644
---- a/arch/microblaze/kernel/cpu/cpuinfo-pvr-full.c
-+++ b/arch/microblaze/kernel/cpu/cpuinfo-pvr-full.c
-@@ -22,13 +22,8 @@
- 
- #define CI(c, p) { ci->c = PVR_##p(pvr); }
- 
--#if defined(CONFIG_EARLY_PRINTK) && defined(CONFIG_SERIAL_UARTLITE_CONSOLE)
- #define err_printk(x) \
--	early_printk("ERROR: Microblaze " x "-different for PVR and DTS\n");
--#else
--#define err_printk(x) \
--	pr_info("ERROR: Microblaze " x "-different for PVR and DTS\n");
--#endif
-+	pr_err("ERROR: Microblaze " x "-different for PVR and DTS\n");
- 
- void set_cpuinfo_pvr_full(struct cpuinfo *ci, struct device_node *cpu)
- {
+diff --git a/arch/microblaze/include/asm/Kbuild b/arch/microblaze/include/asm/Kbuild
+index 7ae427f73105..a11407112e9a 100644
+--- a/arch/microblaze/include/asm/Kbuild
++++ b/arch/microblaze/include/asm/Kbuild
+@@ -13,6 +13,7 @@ generic-y += exec.h
+ generic-y += extable.h
+ generic-y += fb.h
+ generic-y += hardirq.h
++generic-y += hw_irq.h
+ generic-y += irq_regs.h
+ generic-y += irq_work.h
+ generic-y += kdebug.h
+@@ -34,6 +35,7 @@ generic-y += syscalls.h
+ generic-y += tlb.h
+ generic-y += topology.h
+ generic-y += trace_clock.h
++generic-y += user.h
+ generic-y += vga.h
+ generic-y += word-at-a-time.h
+ generic-y += xor.h
+diff --git a/arch/microblaze/include/asm/cputable.h b/arch/microblaze/include/asm/cputable.h
+deleted file mode 100644
+index 8b137891791f..000000000000
+--- a/arch/microblaze/include/asm/cputable.h
++++ /dev/null
+@@ -1 +0,0 @@
+-
+diff --git a/arch/microblaze/include/asm/hw_irq.h b/arch/microblaze/include/asm/hw_irq.h
+deleted file mode 100644
+index 8b137891791f..000000000000
+--- a/arch/microblaze/include/asm/hw_irq.h
++++ /dev/null
+@@ -1 +0,0 @@
+-
+diff --git a/arch/microblaze/include/asm/user.h b/arch/microblaze/include/asm/user.h
+deleted file mode 100644
+index 8b137891791f..000000000000
+--- a/arch/microblaze/include/asm/user.h
++++ /dev/null
+@@ -1 +0,0 @@
+-
 -- 
 2.25.0
 
