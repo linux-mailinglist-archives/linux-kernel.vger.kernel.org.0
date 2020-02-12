@@ -2,88 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DF2F15B1B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 21:19:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7DE615B1B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 21:21:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729030AbgBLUTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 15:19:45 -0500
-Received: from foss.arm.com ([217.140.110.172]:37624 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727361AbgBLUTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 15:19:44 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F4AB328;
-        Wed, 12 Feb 2020 12:19:44 -0800 (PST)
-Received: from localhost (unknown [10.1.198.52])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C2DB03F68E;
-        Wed, 12 Feb 2020 12:19:43 -0800 (PST)
-Date:   Wed, 12 Feb 2020 20:19:42 +0000
-From:   Ionela Voinescu <ionela.voinescu@arm.com>
-To:     Suzuki Kuruppassery Poulose <suzuki.poulose@arm.com>
-Cc:     catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com,
-        maz@kernel.org, sudeep.holla@arm.com, lukasz.luba@arm.com,
-        valentin.schneider@arm.com, rjw@rjwysocki.net,
-        peterz@infradead.org, mingo@redhat.com, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] arm64: add support for the AMU extension v1
-Message-ID: <20200212201942.GA12970@arm.com>
-References: <20200211184542.29585-1-ionela.voinescu@arm.com>
- <20200211184542.29585-2-ionela.voinescu@arm.com>
- <93472f17-6465-641d-ea82-3230b5697ffd@arm.com>
- <20200212161045.GA7475@arm.com>
- <133890f7-59bb-63b9-0ca8-2294e3596058@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <133890f7-59bb-63b9-0ca8-2294e3596058@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1729056AbgBLUVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 15:21:45 -0500
+Received: from mail-wr1-f73.google.com ([209.85.221.73]:38722 "EHLO
+        mail-wr1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727548AbgBLUVp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 15:21:45 -0500
+Received: by mail-wr1-f73.google.com with SMTP id p8so1301118wrw.5
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 12:21:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=LMPJhMzPfaYAiOg4KXDrtaLoPSxo0Q5MCJWGzcuAkns=;
+        b=tzczW4OxIUhqBMrvE/nen0aHH88YpFYcx4mkz4K+J00oXDgZWpYIlehNq1KXrUcdXE
+         ZjvvpNlWXIUVWlYmeH+pG1Nbz5z7xBsykvNEmAUoqsBPnLfp9VDoNmWqxau0HD10IWoE
+         /j3V016+VVB7P47+/dbVQ9jI1pOLE1z8Z8ohZ4mhu+QTRgprf9J1kjsrPE7lQyvr146n
+         zpYzgp4KP2I5d2/k5uX9LdBPslPkdXbaWF1D5B60FfK3shdxfPJ6pT7PXkqXN6OeHEKH
+         Wv9HLNEDRcXCmPCGxkd10VhDFLy50/h5adTdKbShuEHQkOiwgM7oyZNcwVvu5X/SoJZe
+         oZTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=LMPJhMzPfaYAiOg4KXDrtaLoPSxo0Q5MCJWGzcuAkns=;
+        b=Zc2zBPvPjjeZESkm0OkuMTvxoF8I5D8Yi2EvvywmTFNjhkoZVxBK+8WPEraEaj7Tnf
+         VX1WB8rgI4HSwdEG1ASZTgBDXg2ljdLscrljRjjHVDuq9KElaYMrTpkT73H/mH3fSBf2
+         cmT7QGvx3/LaMs4+R0y7PAS3ClPSrHYbIUwXL5Yan/jX9IWap5UA7k4849gDVR1eB1HW
+         InEjsvlyL5RB8eOTg3rt5krybHJtLZwvK4volJ9QYRXpYnPER7H7c1lqa5+Z0pxRbcTZ
+         oLiSeU7TzXO/uZQkaherFnTMPa+mkytU64Lawc+e++WE8zGRNVBv96B/4x7yth3jzTaJ
+         7GSQ==
+X-Gm-Message-State: APjAAAU13QB/p/KtdM638lU6hm7Wjw5QC8Z6oEsyiBqiDSiq1JYrW/3t
+        fS1k9yq8HWN6RMaofwVqN3DuU5JKEBrI
+X-Google-Smtp-Source: APXvYqy1AvDaWXYpUYfPuOgo7uvLIzY5UNgMyOPVQkKU4eiIhkbt+TrZSsYZIeLBvPq5LBAF9kA7rVCCYF8O
+X-Received: by 2002:adf:f80c:: with SMTP id s12mr16957213wrp.1.1581538903144;
+ Wed, 12 Feb 2020 12:21:43 -0800 (PST)
+Date:   Wed, 12 Feb 2020 20:21:37 +0000
+Message-Id: <20200212202140.138092-1-qperret@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.225.g125e21ebc7-goog
+Subject: [PATCH v4 0/3] kbuild: allow symbol whitelisting with TRIM_UNUSED_KSYM
+From:   Quentin Perret <qperret@google.com>
+To:     masahiroy@kernel.org, nico@fluxnic.net
+Cc:     linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        maennich@google.com, kernel-team@android.com, jeyu@kernel.org,
+        hch@infradead.org, qperret@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi guys,
+The current norm on Android and many other systems is for vendors to
+introduce significant changes to their downstream kernels, and to
+contribute very little (if any) code back upstream. The Generic Kernel
+Image (GKI) project in Android attempts to improve the status-quo by
+having a unique kernel for all android devices of the same architecture,
+regardless of the SoC vendor. The key idea is to make all interested
+parties agree on a common solution, and contribute their code upstream
+to make it available to use by the wider community.
 
-On Wednesday 12 Feb 2020 at 16:20:56 (+0000), Suzuki Kuruppassery Poulose wrote:
-> > For better handling I could have a cpumask_available check before the
-> > allocation just in case the capability type changes in the future, or to
-> > at least not rely on assumptions based on the type of the capability.
-> > 
-> > The reason this is dynamic is that I wanted to avoid the memory being
-> > allocated when disable_amu is true - as Valentin mentioned in a comment
-> > in the meantime "the static allocation is done against NR_CPUS whereas
-> > the dynamic one is done against nr_cpu_ids".
-> > 
-> > Would this be alright?
-> > 
-> > diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> > index 182e05ca3410..4cee6b147ddd 100644
-> > --- a/arch/arm64/kernel/cpufeature.c
-> > +++ b/arch/arm64/kernel/cpufeature.c
-> > @@ -1222,7 +1222,11 @@ static bool has_amu(const struct arm64_cpu_capabilities *cap,
-> >           * The enable function will also print a detection message.
-> >           */
-> > -       if (!disable_amu && !zalloc_cpumask_var(&amu_cpus, GFP_KERNEL)) {
-> > +       if (disable_amu)
-> > +               return false;
-> > +
-> > +       if (!cpumask_available(amu_cpus) &&
-> > +           !zalloc_cpumask_var(&amu_cpus, GFP_KERNEL)) {
-> >                  pr_err("Activity Monitors Unit (AMU): fail to allocate memory");
-> >                  disable_amu = true;
-> >          }
+The kernel-to-drivers ABI on Android devices varies significantly from
+one vendor kernel to another today because of changes to exported
+symbols, dependencies on vendor symbols, and surely other things. The
+first step for GKI is to try and put some order into this by agreeing on
+one version of the ABI that works for everybody.
 
-Going down the rabbit hole in regards to this section, it seems it's
-actually not fine. When CONFIG_CPUMASK_OFFSTACK==y it fails to
-allocate memory because zalloc_cpumask_var cannot be used before
-initializing the slub allocator (mm_init) to allocate a cpumask.
+For practical reasons, we need to reduce the ABI surface to a subset of
+the exported symbols, simply to make the problem realistically solvable,
+but there is currently no upstream support for this use-case.
 
-The alternative alloc_bootmem_cpumask_var is an __init function that
-can be used only during the initialization phase, which is not the case
-for has_amu that can be called later (for hotplugged CPUs). Therefore,
-dynamic allocation is not an option here.
+As such, this series attempts to improve the situation by enabling users
+to specify a symbol 'whitelist' at compile time. Any symbol specified in
+this whitelist will be kept exported when CONFIG_TRIM_UNUSED_KSYMS is
+set, even if it has no in-tree user. The whitelist is defined as a
+simple text file, listing symbols, one per line.
 
-Thanks,
-Ionela.
+v4:
+ - removed [[]] bash-specific pattern from the scripts (Nicolas)
+ - use $CONFIG_SHELL consistently in all patches (Masahiro)
+ - added shortlog for initial generation of autoksyms.h (Masahiro)
+ - added comment on how 'eval' expands the whitelist path (Masahiro)
+
+v3:
+ - added a cover letter to explain why this is in fact an attempt to
+   help upstream in the long term (Christoph)
+ - made path relative to the kernel source tree (Matthias)
+ - made the Kconfig help text less confusing (Jessica)
+ - added patch 02 and 03 to optimize build time when a whitelist is
+   provided
+
+v2:
+ - make sure to quote the whitelist path properly (Nicolas)
+
+Quentin Perret (3):
+  kbuild: allow symbol whitelisting with TRIM_UNUSED_KSYMS
+  kbuild: split adjust_autoksyms.sh in two parts
+  kbuild: generate autoksyms.h early
+
+ Makefile                    |  7 ++++--
+ init/Kconfig                | 13 +++++++++++
+ scripts/adjust_autoksyms.sh | 24 ++++----------------
+ scripts/gen_autoksyms.sh    | 45 +++++++++++++++++++++++++++++++++++++
+ 4 files changed, 67 insertions(+), 22 deletions(-)
+ create mode 100755 scripts/gen_autoksyms.sh
+
+-- 
+2.25.0.225.g125e21ebc7-goog
+
