@@ -2,85 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5BF815A92A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 13:29:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B180E15A930
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 13:30:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727640AbgBLM2z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 07:28:55 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40291 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725887AbgBLM2y (ORCPT
+        id S1727698AbgBLMaT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 07:30:19 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:37613 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbgBLMaT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 07:28:54 -0500
-Received: by mail-wm1-f65.google.com with SMTP id t14so2172242wmi.5;
-        Wed, 12 Feb 2020 04:28:52 -0800 (PST)
+        Wed, 12 Feb 2020 07:30:19 -0500
+Received: by mail-qk1-f196.google.com with SMTP id c188so1835729qkg.4
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 04:30:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=t4Q1OJdYjIIxxl8hiEppJFQjj2ZAX1Z78z3H6fI5ihw=;
-        b=RUCBPiK0KzfTLbmBjqf58NyLqNYH8NtZ4mYkYKzY5lQu1o5xBjeGMK4pVCUodMm3c5
-         AGq95P3KX2+llMuF/JbBEGqXbZspUek0Odh3FQSb42+fyn+MyNcyJzSg7Fm+SWtjrH8W
-         AvcDfNPAYi1Z1wK8X2nEWVnQvJ+uNzFVJKAMUEWUHaPk2PfJtpPcMWvqWNr+EqbgH303
-         VLMouazPFSKoWavfXIUxlKL7V44b1pukn32iLJul+kx/7ccUFFN7SP5dNyRCocE0u+yo
-         2TBqdr/h7dLju9WUYy8oe7ErTNIGoXPvau+FW5Dnv9gsbwl7MLKUf6LbL0OUX9utcgmY
-         OIXg==
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=2YAAi82KRVa7ktUoT85C9ZCSdgpeOgvdOFNrlRCdrz8=;
+        b=JsRbV06qHVZ6Qn1F5A9M7UlSU3cMwrfgLbddxXDwgDf3VoUPVMkd1m81kUBpsElspj
+         v1qTjgctpyYP+3WIvzQlhA6VRGmg6t5d/TBPiyi8LD6zJCLq2p1r6CUSIB2UfYekSDQG
+         MCVpSQIQNryDJNULr2EI4o6/of6g66yoCz4NgRhrblwsSkgYhwf2/+GbWVIHaCneQ4WT
+         4Tj69IZwAR8o1XkTNpyKTx7vHmKgy7u/BfRlvu2IRaxaGUwF7LJ3MmIMqLRZwPSSIWnu
+         7mMxK4N6AyeBdiTHNj/8EOeJMl+s7lOURLZmfNAcH1R1C3eXAN5g5XLAijvpw+/WAhUO
+         fsnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=t4Q1OJdYjIIxxl8hiEppJFQjj2ZAX1Z78z3H6fI5ihw=;
-        b=eGceuNU4JX1rbTUQfW0X6eEJYueNt39DkcD08foMi0/2YrZPtBWSayLH1T7+8CURPu
-         WN8subWQO0FMepwPhFHTX1h8myO1en2ySFixzWJdrtReYkCnbp74MhQhOQRzJD5ikgGO
-         Ya6lSMHlLEPCV4X2rzl5xKe9BEw4VMnaBBHBTd5QSd1uvBZbsxhIPbyqAOr9imEOk5gG
-         tqtK/K0Ivjqo0ckdbpY0DHMp3eQyyXlpq3TbMkMt+xHbpuMjEmIac/x08MHqx9NiDAv3
-         rceeAOmuISm50yFl6r8caSJjtZPm5evISoePiiZTmcbObh8NDR7e0CKMf1vRyOkVqrcR
-         ECTQ==
-X-Gm-Message-State: APjAAAUCK570NsXXCQkWZdExWx3XU2TQ5k014q6pBG7XIlr7zZ5joRQR
-        ZLkJ4vHq2oigDw7MB/uupMn6kq8K
-X-Google-Smtp-Source: APXvYqyzRtoVd0HNOXCQ12XYPRhWe0kHrAmc7+K+dCm+eaNdrx1pFvWCt6rcZIsMbwMR/JvCy3SMGA==
-X-Received: by 2002:a1c:1b93:: with SMTP id b141mr13172375wmb.114.1581510531962;
-        Wed, 12 Feb 2020 04:28:51 -0800 (PST)
-Received: from 640k.lan ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id 59sm522255wre.29.2020.02.12.04.28.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Feb 2020 04:28:50 -0800 (PST)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     colin.king@canonical.com, sean.j.christopherson@intel.com
-Subject: [PATCH] KVM: x86: fix WARN_ON check of an unsigned less than zero
-Date:   Wed, 12 Feb 2020 13:28:48 +0100
-Message-Id: <1581510528-19303-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=2YAAi82KRVa7ktUoT85C9ZCSdgpeOgvdOFNrlRCdrz8=;
+        b=L0WR/ZHHJaaRJWbHZZ2OI7KaoG0VeEKaaBQcj80QyeEBgcMpyyp9+64KQrJwLk9155
+         fPIX6qJF71rmf8wrz/C8ljyLKtjSprTGNiEU84INOe+TqFgNTHYcBIsy103l4SIjcAX1
+         mYJQYzy+wU4ZGVUzRYKWPz3kD7tzoSyFfgTM/Kw0lasXuqOdcWLxfNX01+5krApnooDo
+         M4txQ7MW3zGUpnbKg5c8TrDX/ApTlsn8YVI+Q5he2xiNjJBqXjmOEuZwNgc+EZvb+l/M
+         05qbwAoR1m2Yx6zEDGz0ImN1kR2SPX5bbVFZYAiN1cQBC/I7b9Sn68eEw2bGgQgvCt6L
+         e99g==
+X-Gm-Message-State: APjAAAU5HYUDSKhlLnhGOXzhpmbbBEckDbAfyG2uDNzoWDeCkkwZ9P3S
+        /oQ5uyr6YkgwA7yMymf70dOTqQ==
+X-Google-Smtp-Source: APXvYqxS/gQQHOq0dxkxvnTrRkEJ/mYkj/ZHJsPvgbmrK3JOtXMegtyrLV1boEHF7JvNv72J4td8oA==
+X-Received: by 2002:a05:620a:122a:: with SMTP id v10mr6440245qkj.79.1581510617666;
+        Wed, 12 Feb 2020 04:30:17 -0800 (PST)
+Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id 65sm41786qtf.95.2020.02.12.04.30.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2020 04:30:17 -0800 (PST)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v2 5/5] kcsan: Introduce ASSERT_EXCLUSIVE_BITS(var, mask)
+Date:   Wed, 12 Feb 2020 07:30:16 -0500
+Message-Id: <ED2B665D-CF42-45BD-B476-523E3549F127@lca.pw>
+References: <CANpmjNOWzWB2GgJiZx7c96qoy-e+BDFUx9zYr+1hZS1SUS7LBQ@mail.gmail.com>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>, Jan Kara <jack@suse.cz>
+In-Reply-To: <CANpmjNOWzWB2GgJiZx7c96qoy-e+BDFUx9zYr+1hZS1SUS7LBQ@mail.gmail.com>
+To:     Marco Elver <elver@google.com>
+X-Mailer: iPhone Mail (17D50)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The check cpu->hv_clock.system_time < 0 is redundant since system_time
-is a u64 and hence can never be less than zero.  But what was actually
-meant is to check that the result is positive, since kernel_ns and
-v->kvm->arch.kvmclock_offset are both s64.
 
-Reported-by: Colin King <colin.king@canonical.com>
-Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Addresses-Coverity: ("Macro compares unsigned to 0")
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/x86.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 54e8142b15d0..359fcd395132 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2444,7 +2444,7 @@ static int kvm_guest_time_update(struct kvm_vcpu *v)
- 	vcpu->hv_clock.tsc_timestamp = tsc_timestamp;
- 	vcpu->hv_clock.system_time = kernel_ns + v->kvm->arch.kvmclock_offset;
- 	vcpu->last_guest_tsc = tsc_timestamp;
--	WARN_ON(vcpu->hv_clock.system_time < 0);
-+	WARN_ON((s64)vcpu->hv_clock.system_time < 0);
- 
- 	/* If the host uses TSC clocksource, then it is stable */
- 	pvclock_flags = 0;
--- 
-1.8.3.1
+> On Feb 12, 2020, at 5:57 AM, Marco Elver <elver@google.com> wrote:
+>=20
+> KCSAN is currently in -rcu (kcsan branch has the latest version),
+> -tip, and -next.
 
+It would like be nice to at least have this patchset can be applied against t=
+he linux-next, so I can try it a spin.
+
+Maybe a better question to Paul if he could push all the latest kcsan code b=
+ase to linux-next soon since we are now past the merging window. I also noti=
+ced some data races in rcu but only found out some of them had already been f=
+ixed in rcu tree but not in linux-next.=
