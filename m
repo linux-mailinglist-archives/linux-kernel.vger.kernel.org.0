@@ -2,58 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC3F915B454
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 00:03:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B506A15B45B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 00:04:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729286AbgBLXDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 18:03:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46802 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728447AbgBLXDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 18:03:39 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E3DE21569;
-        Wed, 12 Feb 2020 23:03:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581548619;
-        bh=fU30PkEF5AzebTofCICkBipjj6UxPaHZSLK931dkXp4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=E83cguvoAQC5HFH0GrNnwtJUxEEOFnZ7gorksbX3QSdB/S1P8myeRnzTqSyM7quor
-         ygBTInUWmYxUSatmw6no5B5HC/oZ84l/WoepqBi7Wb92GnlhxKuQLEYqXYzBLsFyS3
-         TtqFSzDf9CCSoabSoU6ptcoTv3lNDP4HgjnL6H00=
-Content-Type: text/plain; charset="utf-8"
+        id S1729331AbgBLXDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 18:03:52 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:47064 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729095AbgBLXDw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 18:03:52 -0500
+Received: by mail-ed1-f66.google.com with SMTP id m8so4360684edi.13
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 15:03:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mANb3MJ7SwHX/aisyLGjfvCuzvNAyVJWEC7aYrPPn4M=;
+        b=z4SEjtUqoddOGb7EzSuAze78E9C1koF7GGUUxNrvWFK4BPdFQOHuadZP0VwtVjhzoY
+         k7Kw2mWca9vpTu7twrNgPVvOjWO48Pwoaw+O32A7w1COMa3qbIF7HCBDjI1PnLQLgudx
+         XaHtHygp12xeRMhMxsvTRWGTzGyczlgTKFczi01pY3G82adPfTDoCfTDRi7Kdu7U6P7w
+         hATb1n9sYp8ipK+4pXMylM4Rm9LP7yRKxkssY5tuUyO4uEJ4bunabOQ+GYh3hwcCSCci
+         TjVuYyQHD2+3INBGlro+aHtH/5jB+3RQJf5fWOQnHdDC2XAhTB/Dv5O474IYaLywNtxx
+         Oyeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mANb3MJ7SwHX/aisyLGjfvCuzvNAyVJWEC7aYrPPn4M=;
+        b=sQvA1oicrsJsYK58pT8ogCDnHX38wfyCd1qu3QI2T5I64/YWfjD9SlelfW2a0qQfpR
+         ike0W8pCYLg7dIusK74HlyRjeIQ/D8lmDY373UZiUHbf5pFoTnLq/wwq9OmVP/Ym6RX5
+         pXLV+FTF01JLUqVPkZnjWWcKM5n1TRIowujjOZJLYXYDnS1Poh1y8OJMNzP2TgPAO1/4
+         nPZ9MHjGWxFI99YVr3wOn/WDHkod4ko6DQwxXpJxSnGPS0EBun9YgOy6V4zgTkdsz1mG
+         +50B6ZjpayKqQ1JVf8iSbzjgODbI4jiZLvdhdCes9El95zJZX74NNxXUIyLkVTRNRAvT
+         paDQ==
+X-Gm-Message-State: APjAAAW2ZRtmogPNTP23Fg1dmhuVOsPFHg51XY7bTScHZjXz8ot3Xnp1
+        8kSJ/9CmqHj9KC1B/QN0AqxqnZ3q2+eN+UUfrwgpfyfIgQ==
+X-Google-Smtp-Source: APXvYqzy0QEr2aSzOfpdxGyokni+yy+P+S72lAI7lUMjop0zSoKQdAuHHzO3m1E+hsqnujAyqfCmQ1CaxLrxqWl+hj4=
+X-Received: by 2002:a05:6402:61a:: with SMTP id n26mr11930215edv.135.1581548629957;
+ Wed, 12 Feb 2020 15:03:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1581423236-21341-1-git-send-email-tdas@codeaurora.org>
-References: <1581423236-21341-1-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v1 1/2] clk: qcom: videocc: Update the clock flag for video_cc_vcodec0_core_clk
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, Doug Anderson <dianders@chromium.org>,
-        Taniya Das <tdas@codeaurora.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>, robh@kernel.org
-Date:   Wed, 12 Feb 2020 15:03:38 -0800
-Message-ID: <158154861845.184098.5172409402237427332@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+References: <20200213094844.6bafd9e1@canb.auug.org.au>
+In-Reply-To: <20200213094844.6bafd9e1@canb.auug.org.au>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 12 Feb 2020 18:03:39 -0500
+Message-ID: <CAHC9VhQnot6FOaJDDsu45JkJBM7B_5frhevO5=xwpu_2=+XBCw@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the selinux tree with Linus' tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hridya Valsaraju <hridya@google.com>,
+        "Connor O'Brien" <connoro@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2020-02-11 04:13:55)
-> The clock disable signal for video_cc_vcodec0_core_clk is tied to
-> vcodec0_gdsc which is supported in the HW control mode. Thus turning off
-> the clock would be taken care automatically when the GDSC turns OFF by
-> hardware and clock driver does not require to poll on the CLK_OFF bit.
->=20
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
+On Wed, Feb 12, 2020 at 5:48 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Today's linux-next merge of the selinux tree got a conflict in:
+>
+>   security/selinux/hooks.c
+>
+> between commit:
+>
+>   a20456aef80f ("selinux: fix typo in filesystem name")
+>
+> from Linus' tree and commit:
+>
+>   4ca54d3d3022 ("security: selinux: allow per-file labeling for bpffs")
+>
+> from the selinux tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Applied to clk-fixes
+Yes, I ran into the same problem this morning.  That is the correct
+fix, thanks Stephen.
+
+> diff --cc security/selinux/hooks.c
+> index ae891d712800,44f6f4e20cba..000000000000
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@@ -698,7 -701,8 +701,8 @@@ static int selinux_set_mnt_opts(struct
+>
+>         if (!strcmp(sb->s_type->name, "debugfs") ||
+>             !strcmp(sb->s_type->name, "tracefs") ||
+>  -          !strcmp(sb->s_type->name, "binderfs") ||
+>  +          !strcmp(sb->s_type->name, "binder") ||
+> +           !strcmp(sb->s_type->name, "bpf") ||
+>             !strcmp(sb->s_type->name, "pstore"))
+>                 sbsec->flags |= SE_SBGENFS;
+>
+
+-- 
+paul moore
+www.paul-moore.com
