@@ -2,107 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FDDF15B032
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 19:53:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E724715B02B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 19:52:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728992AbgBLSw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 13:52:56 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34433 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728948AbgBLSw4 (ORCPT
+        id S1728887AbgBLSwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 13:52:13 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33897 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbgBLSwN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 13:52:56 -0500
-Received: by mail-ed1-f65.google.com with SMTP id r18so3666477edl.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 10:52:55 -0800 (PST)
+        Wed, 12 Feb 2020 13:52:13 -0500
+Received: by mail-qt1-f196.google.com with SMTP id h12so2431015qtu.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 10:52:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8S2w7jKfhj8nqr2BEN6cbFr7nckGF3MBI5pTAOk2Bgk=;
-        b=E/vN3AE3iyzGDOzjrhIyYOh5wyK5H3COrkDAy4Yb/0fuIwlyf50yEW7S/x5cDf9tHW
-         zWbCuDLoLaAGtRSBjikTyE8yY06byotE/cGEhEbxOklsxfNCa9G0PsCjeYAs62WP1DSa
-         M2BG1IabKnVo1IvqnOENDDauUUlMg+SJyMK4U=
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ATjtj9uhoqbutpORm3twmVpl6WMWrzgSu/Pef3LSt8M=;
+        b=CeOgukl06W8Hf4S1CRY2NUWa4z3u+gGuwykBw8jvgPAOCOEqPHzjcGo8O/kZffzk05
+         v6pDOrnWKwO2Uc0Pv9YX1Gf3iRrqs1SZe9rz76aKfncwXlCGXaX4/VL3H8LkvrFOhDl6
+         Q/W3RYEYvohBIFAMpqLUXnH67k2XGZf76gyo0SvoWnVwRbyTqyYt37GB5wSC2VoiiPF/
+         +vb+eYKGZOVcrxuDvI2ZJ5+appiYzcQnj8hBF1TDF+Bef5PGXixPhNinsokmZ0m4fFXU
+         tK8oQWE7EEyOZ+8guuS0/DagdIi9RENopyLQ8RF+FKBFkgaLAf+f6D+ZfNhPgp1YAEdo
+         Xkyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8S2w7jKfhj8nqr2BEN6cbFr7nckGF3MBI5pTAOk2Bgk=;
-        b=Rt9/Z7eOPTOvdlvBe/PjHygA8sJUPc4WNpDYFTtGPxzeQDwWttytHnA8swd6k2ViEb
-         gndde7M2BPAw+dvhKH0AcTyFgnXIwPOvpBhXgU4GO/gLPSauGAYccSJS5GC6QV7xNk/V
-         JIfaprEymSe1c+GR2vG7He45CGQKFtRjtIx+wbtu1ONbkBdbtzm8RIaY8fL9QcIdCMK0
-         bB7z2csZbAsBAkp50cSziNcHNeePa91WG+THTc9qTtKCwMsjHbuAtn2D0sZ2KngeGnbI
-         I7Jvg6BFPJuQfB9VWw5c1YnXclPrmPWDZd4AY1WQBy00SCBayQLV1SW2Z6U9InOsPq9y
-         OumQ==
-X-Gm-Message-State: APjAAAW3NBqzo5AzDluzWigSMMlcL/SRVfh3fI1qDLY4IEffET7adhIS
-        /HM6ial7qdHF4zz4lo/wI176dSMVMis=
-X-Google-Smtp-Source: APXvYqz2YYUPTwgrL9FiB75EowOgglMyMdYnMoj9hKxXoKpr6z5+0gfGO0YfuP44up4EeSPTrhjCTQ==
-X-Received: by 2002:a05:6402:b59:: with SMTP id bx25mr12417752edb.5.1581533574078;
-        Wed, 12 Feb 2020 10:52:54 -0800 (PST)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id dd20sm101018ejb.59.2020.02.12.10.52.53
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2020 10:52:53 -0800 (PST)
-Received: by mail-ed1-f45.google.com with SMTP id p23so3645205edr.5
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 10:52:53 -0800 (PST)
-X-Received: by 2002:a2e:97cc:: with SMTP id m12mr8440902ljj.241.1581533122702;
- Wed, 12 Feb 2020 10:45:22 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ATjtj9uhoqbutpORm3twmVpl6WMWrzgSu/Pef3LSt8M=;
+        b=TW1EwHnX38s1nuHbbLI+Fl126Sg5LFv3fSFT+Eg3cVP9aQt5u0VrlmJXI661FJg9YQ
+         pX9+2sr4P9Et7IoFn414U/oNMau2oD7epi99hKohC+e8Upn/RvThwUV6MyNixCmK7T3G
+         D9Gb0DJPSQDiGb7w7FSqiYWv6QbqTuIcA6Nan3zcbYtfBVYOFdEi9+4Iir9J4fVjwb6M
+         gDlnB/EoXBAQTEAsyt//kQuqH+sCBvGhliaGkD0lBIb3M4g4IRQ/7nYccunfmfIq0dBI
+         z4+46io3Zlur+/biVpcF/e3ysGQ1gHofgCggaT1kG2z5A6WwimfDv7HpsSQ7AiX2HNck
+         faQQ==
+X-Gm-Message-State: APjAAAV9V5foJa8QxFsJI290+9Vl073jElTAcxTwHMHZaMXlqUZ2R35i
+        70997P09vHcF8Z/nHvJts89wlg==
+X-Google-Smtp-Source: APXvYqx5Ca61AWNH6d2djo58vJ8Cb09R7uCxhUTN2gPc4ax8cB+65DSTSeMcWR0luIlwyTq0lYXeaw==
+X-Received: by 2002:ac8:365c:: with SMTP id n28mr8285715qtb.260.1581533530780;
+        Wed, 12 Feb 2020 10:52:10 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::5a94])
+        by smtp.gmail.com with ESMTPSA id g53sm682746qtk.76.2020.02.12.10.52.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2020 10:52:09 -0800 (PST)
+Date:   Wed, 12 Feb 2020 13:52:09 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Rik van Riel <riel@surriel.com>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Dave Chinner <david@fromorbit.com>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com
+Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
+ LRU
+Message-ID: <20200212185209.GA206066@cmpxchg.org>
+References: <20200211175507.178100-1-hannes@cmpxchg.org>
+ <29b6e848ff4ad69b55201751c9880921266ec7f4.camel@surriel.com>
+ <20200211193101.GA178975@cmpxchg.org>
+ <20200211154438.14ef129db412574c5576facf@linux-foundation.org>
+ <20200212163540.GA180867@cmpxchg.org>
+ <20200212102645.7b2e5b228048b6d22331e47d@linux-foundation.org>
 MIME-Version: 1.0
-References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
- <20200210150519.538333-8-gladkov.alexey@gmail.com> <87v9odlxbr.fsf@x220.int.ebiederm.org>
- <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6> <87tv3vkg1a.fsf@x220.int.ebiederm.org>
-In-Reply-To: <87tv3vkg1a.fsf@x220.int.ebiederm.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 12 Feb 2020 10:45:06 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
-Message-ID: <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
-Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs instances
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200212102645.7b2e5b228048b6d22331e47d@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 7:01 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->
-> Fundamentally proc_flush_task is an optimization.  Just getting rid of
-> dentries earlier.  At least at one point it was an important
-> optimization because the old process dentries would just sit around
-> doing nothing for anyone.
+On Wed, Feb 12, 2020 at 10:26:45AM -0800, Andrew Morton wrote:
+> On Wed, 12 Feb 2020 11:35:40 -0500 Johannes Weiner <hannes@cmpxchg.org> wrote:
+> 
+> > Since the cache purging code was written for highmem scenarios, how
+> > about making it specific to CONFIG_HIGHMEM at least?
+> 
+> Why do I have memories of suggesting this a couple of weeks ago ;)
 
-I'm pretty sure it's still important. It's very easy to generate a
-_ton_ of dentries with /proc.
+Sorry, you did. I went back and found your email now. It completely
+slipped my mind after that thread went off into another direction.
 
-> I wonder if instead of invalidating specific dentries we could instead
-> fire wake up a shrinker and point it at one or more instances of proc.
+> > That way we improve the situation for the more common setups, without
+> > regressing highmem configurations. And if somebody wanted to improve
+> > the CONFIG_HIGHMEM behavior as well, they could still do so.
+> > 
+> > Somethig like the below delta on top of my patch?
+> 
+> Does it need to be that complicated?  What's wrong with
+> 
+> --- a/fs/inode.c~a
+> +++ a/fs/inode.c
+> @@ -761,6 +761,10 @@ static enum lru_status inode_lru_isolate
+>  		return LRU_ROTATE;
+>  	}
+>  
+> +#ifdef CONFIG_HIGHMEM
+> +	/*
+> +	 * lengthy blah
+> +	 */
+>  	if (inode_has_buffers(inode) || inode->i_data.nrpages) {
+>  		__iget(inode);
+>  		spin_unlock(&inode->i_lock);
+> @@ -779,6 +783,7 @@ static enum lru_status inode_lru_isolate
+>  		spin_lock(lru_lock);
+>  		return LRU_RETRY;
+>  	}
+> +#endif
 
-It shouldn't be the dentries themselves that are a freeing problem.
-They're being RCU-free'd anyway because of lookup. It's the
-proc_mounts list that is the problem, isn't it?
+Pages can show up here even under !CONFIG_HIGHMEM. Because of the lock
+order to maintain LRU state (i_lock -> xa_lock), when the page cache
+inserts new pages it doesn't unlink the inode from the LRU atomically,
+and the shrinker might get here before inode_pages_set(). In that case
+we need the shrinker to punt the inode off the LRU (the #else branch).
 
-So it's just fs_info that needs to be rcu-delayed because it contains
-that list. Or is there something else?
+>  	WARN_ON(inode->i_state & I_NEW);
+>  	inode->i_state |= I_FREEING;
+> _
+> 
+> Whatever we do will need plenty of testing.  It wouldn't surprise me
+> if there are people who unknowingly benefit from this code on
+> 64-bit machines.
 
-               Linus
+If we agree this is the way to go, I can put the patch into our tree
+and gather data from the Facebook fleet before we merge it.
