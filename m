@@ -2,119 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9040515B07F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:11:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADC0515B08A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:14:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728930AbgBLTLq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 14:11:46 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42032 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbgBLTLp (ORCPT
+        id S1728988AbgBLTN6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 14:13:58 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:38277 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728866AbgBLTN5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 14:11:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Fdj4pjSLaEA0mriWg+9pPCfLYyKsbL26nDUwmXyEzZY=; b=BDKWxixyiR+ivlBsbW/hOT2dnx
-        kmmfDKzRELyGIkQTNvQz34ICsJuL0HwBvqXENn0RKUhRNDWn/S8FiU9517p3DRTbcnwkpJfEC2dlB
-        sSbJYkZ9PnUKiOXEkTPb1Dn4bb3fp4gtOf3eoSWsWTzrZFDux87hLp4n1RcackMkqQektV8tVOitw
-        /tFW4hTg+1K7xbbSNhdy5Ka+FtlMXfIuiMwtLNOCOViJg8f4h1g6xHhcW4XJwcRbBCfzAkVvIfoLO
-        9TtVSwyPFGkUqyNWVzC1ThG3bg9tWUlvSnt54FNNXOFp3HS6CnM7bw5pnvH3atoQQR1HJkfeJWdmd
-        So7/134g==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1xQH-0001lZ-L3; Wed, 12 Feb 2020 19:11:45 +0000
-Date:   Wed, 12 Feb 2020 11:11:45 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/25] mm: Fix documentation of FGP flags
-Message-ID: <20200212191145.GH7778@bombadil.infradead.org>
-References: <20200212041845.25879-1-willy@infradead.org>
- <20200212041845.25879-6-willy@infradead.org>
- <20200212074215.GF7068@infradead.org>
+        Wed, 12 Feb 2020 14:13:57 -0500
+Received: by mail-lf1-f67.google.com with SMTP id r14so2402837lfm.5
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 11:13:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I06fyRDks5FMNPE8pzvW1AHtl9WVfw+Iclcibe5sL5I=;
+        b=M6+NEBtyexJuRT56GUMQB0rJRMOVtxgJ1IVorHkU8iAnjo7i990+lTjuPGlqC0FFMK
+         HvoFOyw71CLCqTyoe0DLTodTZqeb337TBUpPfBg9ygQqR8TAfzt3A6iYdvyNZoVz7yyM
+         XnbSrU1QnyYGt6gvqcIJ+Yb6DQSDHc0bF60f/ZnhGcU7Tv9f8UBsvMqYnjFFYrzLvzMh
+         N15NyWuAge+/aQUYQe5Ki4SD/eedKnJNHJamCx9CkFpiiHNQP7mvi/O0pGHJDuDYafr+
+         Uznkqg3PqSAAymgVPlwrPWnVjqYsaI28LaA60HVtRjaqbpJQ0Il8b4dc4huGF5sTbTsg
+         I70Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I06fyRDks5FMNPE8pzvW1AHtl9WVfw+Iclcibe5sL5I=;
+        b=Se/PpqHkLiAL11AUFOEFIhYXxIBbPfVxlumVcZMrLrBawQm2djqCV36wvWCaLeOWli
+         AopZwSPnvYhwKmOxmGOqLPaaZI0JnkhTrC0NW2GI4zfR+OnGS6dgrEom47PQpFqnDEbD
+         6nPFA6FjH8y2/xJJuaaj2DpuePcDD6L6PXc74R0+GObCSWM9asIAeNUc+zdLbv1VMeL3
+         Zx90TrKSbHZMEjkGVDisYs65H78p+c3Yl303QrFR3CPtvXLjr8XhfCZ2ZyjSl6r+1C+Y
+         u1beFcfvL+XxYMSeTv/D0YbnJnzm1aAB9qA281nxLTghsF7bxFMP7EckGgVoaXxte6yG
+         /GRg==
+X-Gm-Message-State: APjAAAWsvY9oYV6MVQ6itLwC9nSMuKvZNmVxolrmWQtDbB1YlXMkjhRf
+        135OInPYBuJUaABkLf5nYl8+/kBA/bd7DFrChqsUFA==
+X-Google-Smtp-Source: APXvYqyPlcw1fC5VvVDu/AtVfz10bTK68J9eSr5zUR20mn4BxBGJ15oJK3qRg6GlS21IzhqwdNqUqw5hjbILKn0QWbE=
+X-Received: by 2002:ac2:5339:: with SMTP id f25mr7321250lfh.180.1581534833509;
+ Wed, 12 Feb 2020 11:13:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200212074215.GF7068@infradead.org>
+References: <20200211225547.235083-1-dancol@google.com> <20200211225547.235083-4-dancol@google.com>
+ <ef13d728-9f1e-5e38-28a1-7ed7134840e4@tycho.nsa.gov> <CAKOZuesUVSYJ6EjHFL3QyiWKVmyhm1fLp5Bm_SHjB3_s1gn08A@mail.gmail.com>
+ <ae8adb92-9c6e-2318-a3b9-903ead3848b5@tycho.nsa.gov> <69f4ccce-18b2-42c1-71ac-3fe9caf2dfb6@tycho.nsa.gov>
+ <CAKOZuevoKDYGVSooWAhi7Jr6Ww-+NEd-sStaPcN5Q6g+NKKRPQ@mail.gmail.com> <626a2302-5b5f-d7c1-fdef-51094bb1fe0d@tycho.nsa.gov>
+In-Reply-To: <626a2302-5b5f-d7c1-fdef-51094bb1fe0d@tycho.nsa.gov>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Wed, 12 Feb 2020 11:13:16 -0800
+Message-ID: <CAKOZueuM0CZE_p-+khA13v5a4jScXKNg5evN3=qU0fT0U=FcVA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] Teach SELinux about a new userfaultfd class
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Tim Murray <timmurray@google.com>, Nosh Minwalla <nosh@google.com>,
+        Nick Kralevich <nnk@google.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 11:42:15PM -0800, Christoph Hellwig wrote:
-> On Tue, Feb 11, 2020 at 08:18:25PM -0800, Matthew Wilcox wrote:
-> > - * @fgp_flags: PCG flags
-> > + * @fgp_flags: FGP flags
-> >   * @gfp_mask: gfp mask to use for the page cache data page allocation
-> >   *
-> >   * Looks up the page cache slot at @mapping & @offset.
-> >   *
-> > - * PCG flags modify how the page is returned.
-> > + * FGP flags modify how the page is returned.
-> 
-> This still looks weird.  Why not just a single line:
-> 
-> 	* @fgp_flags: FGP_* flags that control how the page is returned.
+On Wed, Feb 12, 2020 at 11:10 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+>
+> On 2/12/20 2:04 PM, Daniel Colascione wrote:
+> > On Wed, Feb 12, 2020 at 10:59 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> >>
+> >> On 2/12/20 1:04 PM, Stephen Smalley wrote:
+> >>> On 2/12/20 12:19 PM, Daniel Colascione wrote:
+> >>>> Thanks for taking a look.
+> >>>>
+> >>>> On Wed, Feb 12, 2020 at 9:04 AM Stephen Smalley <sds@tycho.nsa.gov>
+> >>>> wrote:
+> >>>>>
+> >>>>> On 2/11/20 5:55 PM, Daniel Colascione wrote:
+> >>>>>> Use the secure anonymous inode LSM hook we just added to let SELinux
+> >>>>>> policy place restrictions on userfaultfd use. The create operation
+> >>>>>> applies to processes creating new instances of these file objects;
+> >>>>>> transfer between processes is covered by restrictions on read, write,
+> >>>>>> and ioctl access already checked inside selinux_file_receive.
+> >>>>>>
+> >>>>>> Signed-off-by: Daniel Colascione <dancol@google.com>
+> >>>>>
+> >>>>> (please add linux-fsdevel and viro to the cc for future versions of this
+> >>>>> patch since it changes the VFS)
+> >>>>>
+> >>>>>> ---
+> >>>>>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> >>>>>> index 1659b59fb5d7..e178f6f40e93 100644
+> >>>>>> --- a/security/selinux/hooks.c
+> >>>>>> +++ b/security/selinux/hooks.c
+> >>>>>> @@ -2915,6 +2919,69 @@ static int selinux_inode_init_security(struct
+> >>>>>> inode *inode, struct inode *dir,
+> >>>>>> +
+> >>>>>> +     /*
+> >>>>>> +      * We shouldn't be creating secure anonymous inodes before LSM
+> >>>>>> +      * initialization completes.
+> >>>>>> +      */
+> >>>>>> +     if (unlikely(!selinux_state.initialized))
+> >>>>>> +             return -EBUSY;
+> >>>>>
+> >>>>> I don't think this is viable; any arbitrary actions are possible before
+> >>>>> policy is loaded, and a Linux distro can be brought up fully with
+> >>>>> SELinux enabled and no policy loaded.  You'll just need to have a
+> >>>>> default behavior prior to initialization.
+> >>>>
+> >>>> We'd have to fail open then, I think, and return an S_PRIVATE inode
+> >>>> (the regular anon inode).
+> >>>
+> >>> Not sure why.  You aren't doing anything in the hook that actually
+> >>> relies on selinux_state.initialized being set (i.e. nothing requires a
+> >>> policy).  The avc_has_perm() call will just succeed until a policy is
+> >>> loaded.  So if these inodes are created prior to policy load, they will
+> >>> get assigned the task SID (which would be the kernel SID prior to policy
+> >>> load or first exec or write to /proc/self/attr/current afterward) and
+> >>> UFFD class (in your current code), be permitted, and then once policy is
+> >>> loaded any further access will get checked against the kernel SID.
+> >>>
+> >>>>>> +     /*
+> >>>>>> +      * We only get here once per ephemeral inode.  The inode has
+> >>>>>> +      * been initialized via inode_alloc_security but is otherwise
+> >>>>>> +      * untouched, so check that the state is as
+> >>>>>> +      * inode_alloc_security left it.
+> >>>>>> +      */
+> >>>>>> +     BUG_ON(isec->initialized != LABEL_INVALID);
+> >>>>>> +     BUG_ON(isec->sclass != SECCLASS_FILE);
+> >>>>>
+> >>>>> I think the kernel discourages overuse of BUG_ON/BUG/...
+> >>>>
+> >>>> I'm not sure what counts as overuse.
+> >>>
+> >>> Me either (not my rule) but I'm pretty sure this counts or you'd see a
+> >>> lot more of these kinds of BUG_ON() checks throughout.  Try to reserve
+> >>> them for really critical cases.
+> >>>
+> >>>>>> +
+> >>>>>> +#ifdef CONFIG_USERFAULTFD
+> >>>>>> +     if (fops == &userfaultfd_fops)
+> >>>>>> +             isec->sclass = SECCLASS_UFFD;
+> >>>>>> +#endif
+> >>>>>
+> >>>>> Not sure we want or need to introduce a new security class for each user
+> >>>>> of anonymous inodes since the permissions should be the same as for
+> >>>>> file.
+> >>>>
+> >>>> The purpose of this change is to apply special policy to userfaultfd
+> >>>> FDs in particular. Isn't having a UFFD security class the best way to
+> >>>> go about that? (There's no path.) Am I missing something?
+> >>>
+> >>> It is probably the simplest approach; it just doesn't generalize to all
+> >>> users of anonymous inodes. We can distinguish them in one of two ways:
+> >>> use a different class like you did (requires a code change every time we
+> >>> add a new one and yet another duplicate of the file class) or use a
+> >>> different SID/context/type. The latter could be achieved by calling
+> >>> security_transition_sid() with the provided name wrapped in a qstr and
+> >>> specifying type_transition rules on the name.  Then policy could define
+> >>> derived types for each domain, ala
+> >>> type_transition init self:file "[userfaultfd]" init_userfaultfd;
+> >>> type_transition untrusted_app self:file "[userfaultfd]"
+> >>> untrusted_app_userfaultfd;
+> >>> ...
+> >>>
+> >>>>> Also not sure we want to be testing fops for each such case.
+> >>>>
+> >>>> I was also thinking of just providing some kind of context string
+> >>>> (maybe the name), which might be friendlier to modules, but the loose
+> >>>> coupling kind of scares me, and for this particular application, since
+> >>>> UFFD is always in the core and never in a module, checking the fops
+> >>>> seems a bit more robust and doesn't hurt anything.
+> >>>
+> >>> Yes, not sure how the vfs folks feel about either coupling (the
+> >>> name-based one or the fops-based one).  Neither seems great.
+> >>>
+> >>>>> We
+> >>>>> were looking at possibly leveraging the name as a key and using
+> >>>>> security_transition_sid() to generate a distinct SID/context/type for
+> >>>>> the inode via type_transition rules in policy.  We have some WIP along
+> >>>>> those lines.
+> >>>>
+> >>>> Where? Any chance it would be ready soon? I'd rather not hold up this
+> >>>> work for a more general mechanism.
+> >>>
+> >>> Hopefully will have a patch available soon.  But not saying this
+> >>> necessarily has to wait either.
+> >>>
+> >>>>>> +     /*
+> >>>>>> +      * Always give secure anonymous inodes the sid of the
+> >>>>>> +      * creating task.
+> >>>>>> +      */
+> >>>>>> +
+> >>>>>> +     isec->sid = tsec->sid;
+> >>>>>
+> >>>>> This doesn't generalize for other users of anonymous inodes, e.g. the
+> >>>>> /dev/kvm case where we'd rather inherit the SID and class from the
+> >>>>> original /dev/kvm inode itself.
+> >>>>
+> >>>> I think someone mentioned on the first version of this patch that we
+> >>>> could make it more flexible if the need arose. If we do want to do it
+> >>>> now, we could have the anon_inode security hook accept a "parent" or
+> >>>> "context" inode that modules could inspect for the purposes of forming
+> >>>> the new inode's SID. Does that make sense to you?
+> >>>
+> >>> Yes, that's the approach in our current WIP, except we call it a
+> >>> "related" inode since it isn't necessarily connected to the anon inode
+> >>> in any vfs sense.
+> >>
+> >> The other key difference in our WIP approach is that we assumed that we
+> >> couldn't mandate allocating a separate anon inode for each of these fds
+> >> and we wanted to cover all anonymous inodes (not opt-in), so we are
+> >> storing the SID/class pair as additional fields in the
+> >> file_security_struct and have modified file_has_perm() and others to
+> >> look there for anonymous inodes.
+> >
+> > A separate inode seems like the simpler approach for now, because it
+> > means that we have fewer places to check for security information ---
+> > and it's not as if an inode is particularly expensive. We can always
+> > switch later.
+>
+> We'd prefer having a separate inode if possible but didn't think that
+> would fly with the vfs folks,
 
-Well, now you got me reading the entire comment for this function, and
-looking at the html output, so I ended up rewriting it entirely.
+Let's ask them.
 
-+++ b/mm/filemap.c
-@@ -1574,37 +1574,34 @@ struct page *find_lock_entry(struct address_space *mapping, pgoff_t offset)
- EXPORT_SYMBOL(find_lock_entry);
- 
- /**
-- * pagecache_get_page - find and get a page reference
-- * @mapping: the address_space to search
-- * @offset: the page index
-- * @fgp_flags: FGP flags
-- * @gfp_mask: gfp mask to use for the page cache data page allocation
-- *
-- * Looks up the page cache slot at @mapping & @offset.
-+ * pagecache_get_page - Find and get a reference to a page.
-+ * @mapping: The address_space to search.
-+ * @offset: The page index.
-+ * @fgp_flags: %FGP flags modify how the page is returned.
-+ * @gfp_mask: Memory allocation flags to use if %FGP_CREAT is specified.
-  *
-- * FGP flags modify how the page is returned.
-+ * Looks up the page cache entry at @mapping & @offset.
-  *
-- * @fgp_flags can be:
-+ * @fgp_flags can be zero or more of these flags:
-  *
-- * - FGP_ACCESSED: the page will be marked accessed
-- * - FGP_LOCK: Page is return locked
-- * - FGP_CREAT: If page is not present then a new page is allocated using
-- *   @gfp_mask and added to the page cache and the VM's LRU
-- *   list. The page is returned locked and with an increased
-- *   refcount.
-- * - FGP_FOR_MMAP: Similar to FGP_CREAT, only we want to allow the caller to do
-- *   its own locking dance if the page is already in cache, or unlock the page
-- *   before returning if we had to add the page to pagecache.
-+ * * %FGP_ACCESSED - The page will be marked accessed.
-+ * * %FGP_LOCK - The page is returned locked.
-+ * * %FGP_CREAT - If no page is present then a new page is allocated using
-+ *   @gfp_mask and added to the page cache and the VM's LRU list.
-+ *   The page is returned locked and with an increased refcount.
-+ * * %FGP_FOR_MMAP - The caller wants to do its own locking dance if the
-+ *   page is already in cache.  If the page was allocated, unlock it before
-+ *   returning so the caller can do the same dance.
-  *
-- * If FGP_LOCK or FGP_CREAT are specified then the function may sleep even
-- * if the GFP flags specified for FGP_CREAT are atomic.
-+ * If %FGP_LOCK or %FGP_CREAT are specified then the function may sleep even
-+ * if the %GFP flags specified for %FGP_CREAT are atomic.
-  *
-  * If there is a page cache page, it is returned with an increased refcount.
-  *
-- * Return: the found page or %NULL otherwise.
-+ * Return: The found page or %NULL otherwise.
-  */
- struct page *pagecache_get_page(struct address_space *mapping, pgoff_t offset,
--       int fgp_flags, gfp_t gfp_mask)
-+               int fgp_flags, gfp_t gfp_mask)
- {
+> especially if we try to apply this to all
+> anonymous inodes.
 
+For the moment, we're not.
+
+> It might be ok for userfaultfd usage as a specific
+> case but there is a reason why anonymous inodes were introduced and
+> creating a separate inode each time defeats that purpose IIUC.  It will
+> be interesting to see how they respond.
+
+Sort of. Anonymous inodes also free other parts of the kernel from
+having to deal with special-purpose filesystems (like pipefs) on which
+to hang custom inodes. It's just a generic "just give me an inode and
+I don't care about the filesystem" feature, and if we actually get a
+new inode each time, we still do the job. Pipe seems to be good with
+creating inodes each time.
