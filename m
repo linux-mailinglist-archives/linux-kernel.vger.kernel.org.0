@@ -2,98 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5377915A9D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 14:14:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ABEE15A9C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 14:11:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbgBLNOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 08:14:07 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:58242 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727662AbgBLNOH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 08:14:07 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01CDE3Cw046651;
-        Wed, 12 Feb 2020 07:14:03 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581513243;
-        bh=pWvehROhyzqlYPUoIwnFewaNSzBZhFyj02g/FxkBm0c=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=r3mB5w5Trj+c93oPVqyxOjgh3j1DKJGiWugmtwCE32CxAIqos+/M5xfuKMbsSfVsz
-         b+1ezAWzJIC3CAR90xsmCaS6eGk9yn9bPCCBvhh3OsTj1G0CV2aCZWDrhuMjBkdYrn
-         /eMq2t+G7u9v1VYYFo8G9BOMaKJ5peRZ2PPyQGYo=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01CDE2oj004100
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Feb 2020 07:14:03 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 12
- Feb 2020 07:14:02 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 12 Feb 2020 07:14:02 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01CDE2mV068653;
-        Wed, 12 Feb 2020 07:14:02 -0600
-Subject: Re: [RESEND PATCH v17 00/17] Multi Color LED Framework
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200127150032.31350-1-dmurphy@ti.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <42d9687b-b488-22cf-0e9a-ff635b2094e3@ti.com>
-Date:   Wed, 12 Feb 2020 07:09:26 -0600
+        id S1727966AbgBLNLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 08:11:08 -0500
+Received: from mga11.intel.com ([192.55.52.93]:2442 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726728AbgBLNLI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 08:11:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 05:11:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
+   d="scan'208";a="347513465"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
+  by fmsmga001.fm.intel.com with ESMTP; 12 Feb 2020 05:11:05 -0800
+Subject: Re: [PATCH v4 0/4] perf tools: Add support for some spe events and
+ precise ip
+To:     Jiri Olsa <jolsa@redhat.com>, James Clark <james.clark@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        nd@arm.com
+References: <20200210122509.GA2005279@krava>
+ <20200211140445.21986-1-james.clark@arm.com> <20200212122425.GA194466@krava>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <abac26ad-2b27-0bc7-d1d6-9a92ece3718e@intel.com>
+Date:   Wed, 12 Feb 2020 15:10:11 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200127150032.31350-1-dmurphy@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200212122425.GA194466@krava>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+On 12/02/20 2:24 pm, Jiri Olsa wrote:
+> On Tue, Feb 11, 2020 at 02:04:41PM +0000, James Clark wrote:
+>> Hi Jirka,
+>>
+>> Oops. I've removed all the changes to evlist.c and evsel.h
+> 
+> hi,
+> it looks ok from my POV, but I don't follow auxtrace that much
+> 
+> Adrian,
+> it's changing some generic bits of the auxtrace framework,
+> could you please check?
 
-On 1/27/20 9:00 AM, Dan Murphy wrote:
-> Hello
->
-> This is a re-send of the v17 multi color LED framework.  I removed the last
-> patch from the series.  In addition I rebased this series on Pavel's for-next
-> LED branch and added all ACKs from the list.
->
-> Dan
->
-> Dan Murphy (17):
->    dt-bindings: leds: Add multicolor ID to the color ID list
->    leds: Add multicolor ID to the color ID list
->    leds: multicolor: Introduce a multicolor class definition
->    dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
->    leds: lp50xx: Add the LP50XX family of the RGB LED driver
->    dt: bindings: lp55xx: Be consistent in the document with LED acronym
->    dt: bindings: lp55xx: Update binding for Multicolor Framework
->    ARM: dts: n900: Add reg property to the LP5523 channel node
->    ARM: dts: imx6dl-yapp4: Add reg property to the lp5562 channel node
->    ARM: dts: ste-href: Add reg property to the LP5521 channel nodes
->    leds: lp55xx: Convert LED class registration to devm_*
->    leds: lp55xx: Add multicolor framework support to lp55xx
->    leds: lp5523: Update the lp5523 code to add multicolor brightness
->      function
->    leds: lp5521: Add multicolor framework multicolor brightness support
->    leds: lp55xx: Fix checkpatch file permissions issues
->    leds: lp5523: Fix checkpatch issues in the code
->    dt: bindings: Update lp55xx binding to recommended LED naming
+Sure, in the next few days.
 
-I have no open comments on this patchset except for a DT change 
-requested by Shawn Gao but this change should wait till after this 
-patchset is merged.
-
-Is there something holding this up?
-
-Dan
-
+> 
+> thanks,
+> jirka
+> 
+>>
+>>
+>> James
+>>
+>> Tan Xiaojun (4):
+>>   perf tools: Move arm-spe-pkt-decoder.h/c to the new dir
+>>   perf tools: Add support for "report" for some spe events
+>>   perf report: Add SPE options to --itrace argument
+>>   perf tools: Support "branch-misses:pp" on arm64
+>>
+>>  tools/perf/Documentation/itrace.txt           |   5 +-
+>>  tools/perf/arch/arm/util/auxtrace.c           |  38 +
+>>  tools/perf/builtin-record.c                   |   5 +
+>>  tools/perf/util/Build                         |   2 +-
+>>  tools/perf/util/arm-spe-decoder/Build         |   1 +
+>>  .../util/arm-spe-decoder/arm-spe-decoder.c    | 225 ++++++
+>>  .../util/arm-spe-decoder/arm-spe-decoder.h    |  66 ++
+>>  .../arm-spe-pkt-decoder.c                     |   0
+>>  .../arm-spe-pkt-decoder.h                     |   2 +
+>>  tools/perf/util/arm-spe.c                     | 756 +++++++++++++++++-
+>>  tools/perf/util/arm-spe.h                     |   3 +
+>>  tools/perf/util/auxtrace.c                    |  13 +
+>>  tools/perf/util/auxtrace.h                    |  14 +-
+>>  13 files changed, 1089 insertions(+), 41 deletions(-)
+>>  create mode 100644 tools/perf/util/arm-spe-decoder/Build
+>>  create mode 100644 tools/perf/util/arm-spe-decoder/arm-spe-decoder.c
+>>  create mode 100644 tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+>>  rename tools/perf/util/{ => arm-spe-decoder}/arm-spe-pkt-decoder.c (100%)
+>>  rename tools/perf/util/{ => arm-spe-decoder}/arm-spe-pkt-decoder.h (96%)
+>>
+>> -- 
+>> 2.17.1
+>>
+> 
 
