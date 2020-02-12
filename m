@@ -2,135 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CAD715AB75
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 15:57:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 769BE15AB27
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 15:43:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728098AbgBLO5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 09:57:05 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:51952 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727101AbgBLO5E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 09:57:04 -0500
-Received: from ramsan ([84.195.182.253])
-        by baptiste.telenet-ops.be with bizsmtp
-        id 1qwu2200V5USYZQ01qwuij; Wed, 12 Feb 2020 15:57:02 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j1tRe-0004yt-OW; Wed, 12 Feb 2020 15:56:54 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j1tRe-0001Dk-NQ; Wed, 12 Feb 2020 15:56:54 +0100
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 3/3] ASoC: Fix SND_SOC_ALL_CODECS imply misc fallout
-Date:   Wed, 12 Feb 2020 15:56:50 +0100
-Message-Id: <20200212145650.4602-4-geert@linux-m68k.org>
+        id S1728286AbgBLOnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 09:43:23 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9725 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727092AbgBLOnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 09:43:23 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1F0034A4288EE7177A00;
+        Wed, 12 Feb 2020 22:43:14 +0800 (CST)
+Received: from euler.huawei.com (10.175.104.193) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 12 Feb 2020 22:43:07 +0800
+From:   Chen Wandun <chenwandun@huawei.com>
+To:     <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <chenwandun@huawei.com>
+Subject: [PATCH] mm/swapfile.c: fix comments for swapcache_prepare
+Date:   Wed, 12 Feb 2020 22:57:54 +0800
+Message-ID: <20200212145754.27123-1-chenwandun@huawei.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200212145650.4602-1-geert@linux-m68k.org>
-References: <20200212145650.4602-1-geert@linux-m68k.org>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.175.104.193]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes for missing miscellaneous support:
+the -EEXIST returned by __swap_duplicate means there is a swap
+cache instead -EBUSY
 
-    ERROR: "abx500_get_register_interruptible" [...] undefined!
-    ERROR: "abx500_set_register_interruptible" [...] undefined!
-    ERROR: "arizona_free_irq" [...] undefined!
-    ERROR: "arizona_request_irq" [...] undefined!
-    ERROR: "arizona_set_irq_wake" [...] undefined!
-    ERROR: "mc13xxx_reg_rmw" [...] undefined!
-    ERROR: "mc13xxx_reg_write" [...] undefined!
-    ERROR: "snd_soc_free_ac97_component" [...] undefined!
-    ERROR: "snd_soc_new_ac97_component" [...] undefined!
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Fixes: ea00d95200d02ece ("ASoC: Use imply for SND_SOC_ALL_CODECS")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Chen Wandun <chenwandun@huawei.com>
 ---
- sound/soc/codecs/Kconfig | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ mm/swapfile.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index 3ef804d07deea41d..d957fd6980b10a92 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -319,6 +319,7 @@ config SND_SOC_WM_ADSP
- 
- config SND_SOC_AB8500_CODEC
- 	tristate
-+	depends on ABX500_CORE
- 
- config SND_SOC_AC97_CODEC
- 	tristate "Build generic ASoC AC97 CODEC driver"
-@@ -343,8 +344,9 @@ config SND_SOC_AD193X_I2C
- 	select SND_SOC_AD193X
- 
- config SND_SOC_AD1980
--	select REGMAP_AC97
- 	tristate
-+	depends on SND_SOC_AC97_BUS
-+	select REGMAP_AC97
- 
- config SND_SOC_AD73311
- 	tristate
-@@ -646,6 +648,7 @@ config SND_SOC_CS47L15
- 
- config SND_SOC_CS47L24
- 	tristate
-+	depends on MFD_CS47L24
- 
- config SND_SOC_CS47L35
- 	tristate
-@@ -1234,6 +1237,7 @@ config SND_SOC_STA529
- 
- config SND_SOC_STAC9766
- 	tristate
-+	depends on SND_SOC_AC97_BUS
- 
- config SND_SOC_STI_SAS
- 	tristate "codec Audio support for STI SAS codec"
-@@ -1415,9 +1419,11 @@ config SND_SOC_WM5100
- 
- config SND_SOC_WM5102
- 	tristate
-+	depends on MFD_WM5102
- 
- config SND_SOC_WM5110
- 	tristate
-+	depends on MFD_WM5110
- 
- config SND_SOC_WM8350
- 	tristate
-@@ -1579,9 +1585,11 @@ config SND_SOC_WM8996
- 
- config SND_SOC_WM8997
- 	tristate
-+	depends on MFD_WM8997
- 
- config SND_SOC_WM8998
- 	tristate
-+	depends on MFD_WM8998
- 
- config SND_SOC_WM9081
- 	tristate
-@@ -1639,6 +1647,7 @@ config SND_SOC_MAX9877
- 
- config SND_SOC_MC13783
- 	tristate
-+	depends on MFD_MC13XXX
- 
- config SND_SOC_ML26124
- 	tristate
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 2c33ff456ed5..0e23c123a545 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -3476,7 +3476,7 @@ int swap_duplicate(swp_entry_t entry)
+  *
+  * Called when allocating swap cache for existing swap entry,
+  * This can return error codes. Returns 0 at success.
+- * -EBUSY means there is a swap cache.
++ * -EEXIST means there is a swap cache.
+  * Note: return code is different from swap_duplicate().
+  */
+ int swapcache_prepare(swp_entry_t entry)
 -- 
 2.17.1
 
