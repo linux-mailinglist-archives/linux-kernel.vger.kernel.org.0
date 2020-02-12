@@ -2,74 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F07815A452
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:12:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A616F15A42D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:03:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728754AbgBLJLy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 04:11:54 -0500
-Received: from michel.telenet-ops.be ([195.130.137.88]:52476 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728688AbgBLJLx (ORCPT
+        id S1728605AbgBLJD0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 04:03:26 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:28387 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728353AbgBLJD0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:11:53 -0500
-Received: from ramsan ([84.195.182.253])
-        by michel.telenet-ops.be with bizsmtp
-        id 1lBo2200o5USYZQ06lBpcD; Wed, 12 Feb 2020 10:11:51 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j1o3g-0000Zh-ND; Wed, 12 Feb 2020 10:11:48 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j1nkB-0002cA-D5; Wed, 12 Feb 2020 09:51:39 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] scsi: zorro_esp: Restore devm_ioremap() alignment
-Date:   Wed, 12 Feb 2020 09:51:38 +0100
-Message-Id: <20200212085138.10009-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Wed, 12 Feb 2020 04:03:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581498204;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=5IoPBqo+Oel8z/CspcuRSyjTueKzrK71W8q6WEn9u3o=;
+        b=RdDPGoTE4Fd793VKwIWsGayqeLIFAH8r1S+EnVVjFuLUCEWKLk+RlaBqMig1JfvLZFaJkf
+        9acgsnAE/7DEgYdOVYznfv1P2HnAj9xvHu8B9Ha3iXF0u9JJPe1UETRn8GEVK+51aNPrxc
+        0m7z3wqg0ewQx4850qBOiJDBDbnlCzs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-109-uaTa3GGBMNuPjnow_DvAgA-1; Wed, 12 Feb 2020 04:03:22 -0500
+X-MC-Unique: uaTa3GGBMNuPjnow_DvAgA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2E9BE100551C;
+        Wed, 12 Feb 2020 09:03:19 +0000 (UTC)
+Received: from [10.72.13.111] (ovpn-13-111.pek2.redhat.com [10.72.13.111])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6BA2526FDB;
+        Wed, 12 Feb 2020 09:03:03 +0000 (UTC)
+Subject: Re: [virtio-dev] Re: [PATCH v2 4/5] virtio-mmio: add MSI interrupt
+ feature support
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     virtio-dev@lists.oasis-open.org,
+        Zha Bin <zhabin@linux.alibaba.com>, slp@redhat.com,
+        "Liu, Jing2" <jing2.liu@linux.intel.com>,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
+        chao.p.peng@linux.intel.com, gerry@linux.alibaba.com
+References: <4c3d13be5a391b1fc50416838de57d903cbf8038.1581305609.git.zhabin@linux.alibaba.com>
+ <0c71ff9d-1a7f-cfd2-e682-71b181bdeae4@redhat.com>
+ <c42c8b49-5357-f341-2942-ba84afc25437@linux.intel.com>
+ <ad96269f-753d-54b8-a4ae-59d1595dd3b2@redhat.com>
+ <5522f205-207b-b012-6631-3cc77dde3bfe@linux.intel.com>
+ <45e22435-08d3-08fe-8843-d8db02fcb8e3@redhat.com>
+ <20200211065319-mutt-send-email-mst@kernel.org>
+ <c4a78a15-c889-df3f-3e1e-7df1a4d67838@redhat.com>
+ <20200211070523-mutt-send-email-mst@kernel.org>
+ <fdb19ef4-2003-6c6f-5c6f-c757a6320130@redhat.com>
+ <20200211090003-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <4557a5e8-74eb-f238-1579-b7b558cb2969@redhat.com>
+Date:   Wed, 12 Feb 2020 17:03:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20200211090003-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Restore alignment of the continuations of the ioremap() calls in
-zorro_esp_probe().  Join lines where all parameters can fit on a single
-line.
 
-Fixes: 4bdc0d676a643140 ("remove ioremap_nocache and devm_ioremap_nocache")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/scsi/zorro_esp.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+On 2020/2/11 =E4=B8=8B=E5=8D=8810:00, Michael S. Tsirkin wrote:
+>> Yes, it can work but it may bring extra effort when you want to mask a
+>> vector which is was shared by a lot of queues.
+>>
+>> Thanks
+>>
+> masking should be per vq too.
+>
+> --=20
 
-diff --git a/drivers/scsi/zorro_esp.c b/drivers/scsi/zorro_esp.c
-index bdd82e497d5fcb7c..c6727bcbc2e3268d 100644
---- a/drivers/scsi/zorro_esp.c
-+++ b/drivers/scsi/zorro_esp.c
-@@ -801,8 +801,7 @@ static int zorro_esp_probe(struct zorro_dev *z,
- 	/* additional setup required for Fastlane */
- 	if (zep->zorro3 && ent->driver_data == ZORRO_BLZ1230II) {
- 		/* map full address space up to ESP base for DMA */
--		zep->board_base = ioremap(board,
--						FASTLANE_ESP_ADDR-1);
-+		zep->board_base = ioremap(board, FASTLANE_ESP_ADDR - 1);
- 		if (!zep->board_base) {
- 			pr_err("Cannot allocate board address space\n");
- 			err = -ENOMEM;
-@@ -843,7 +842,7 @@ static int zorro_esp_probe(struct zorro_dev *z,
- 		 * dma_registers size if adding any more
- 		 */
- 		esp->dma_regs = ioremap(dmaaddr,
--				sizeof(struct fastlane_dma_registers));
-+					sizeof(struct fastlane_dma_registers));
- 	} else
- 		/* ZorroII address space remapped nocache by early startup */
- 		esp->dma_regs = ZTWO_VADDR(dmaaddr);
--- 
-2.17.1
+
+Yes, but if the vector is shard by e.g 16 queues, then all those=20
+virtqueues needs to be masked which is expensive.
+
+Thanks
+
 
