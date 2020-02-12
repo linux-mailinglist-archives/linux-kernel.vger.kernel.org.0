@@ -2,66 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E793615A41B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:58:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5600E15A420
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:58:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728730AbgBLI6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 03:58:18 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43015 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728658AbgBLI6P (ORCPT
+        id S1728865AbgBLI6m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 03:58:42 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36169 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728150AbgBLI6R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 03:58:15 -0500
-Received: by mail-wr1-f66.google.com with SMTP id r11so1170825wrq.10
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:58:13 -0800 (PST)
+        Wed, 12 Feb 2020 03:58:17 -0500
+Received: by mail-wm1-f65.google.com with SMTP id p17so1225880wma.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:58:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=monstr-eu.20150623.gappssmtp.com; s=20150623;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=YuUuRZ5bjGI5stcrrhH2oCqZtxeGefrisf5kOUhppog=;
-        b=pOue1wgzvhPnbKVZTqrahekk0CuQ+y0tthB5h0OtFbXKF48lbAQ8TtUYN2GO72M9dz
-         akQLmiAUBE19dJrNi+leHSBvnXIOeogNB/utZ4xS8x/owwzxOD7SmEq8sYT+tG7hvo47
-         /YNCcQskgIDmp9g64RUpqps+XjzqSyL/ftIiaSlJ3i667d5oxARCbi8CATOSi9d0Hlav
-         DEF2heosWa8UeVf5TEYxYYJa+EJClRumZjaApJWokJQ0OV5xPbqL5F95KeuKNhfhAqRU
-         zqMGcwTsVTtsKgSkyw3guoxl24khgl/J6HMPoheiaOyaovlgmv0yQeMrfOta7U1iFAVz
-         34Ag==
+        bh=BTHaz5A4SC+OE/B+HYkWcFMMrrKRsAAfwl9I0dHXQig=;
+        b=0YLaUSPEev7kaxHsythr6FiLAS95ainxwjb0zEqEk7WFYfBIy45dlNcbLPjk8ISI84
+         5Mn5rShSknxIeDyAEQk4eBWlPx/OJDTAsDy4sR2A+IQDyICSXXBS57oFNm4oKhv1ea7Y
+         xQiFsk2fJE1LwowkzpkmlSUWphUrBG//YQvChPKLrr5+7cqk1E6dj3ErS90ANm5Ag6QP
+         kBF0wJgqzEN8C5z1Apku0m+2B+8rYT33ujkm68DifEq67dpmt+8eMUrMViSdu3gOYGKB
+         iRkrtfQJclO/S7RUXpT07FlJoGwb4XyqnnOlojfnGiMFRBm1fmS5+Wdn+62VYsZV30pR
+         xHug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=YuUuRZ5bjGI5stcrrhH2oCqZtxeGefrisf5kOUhppog=;
-        b=VK5RqMf0DmJ2JPE+4b6FO9kZKN2KHybwc2w0sL9Ehsn93S2ESMG8wNvsJMo3jfie9k
-         FgZKZvzoaRTfirtMogYQCMKQCnUwqKBLshwm2QmCymFilYNBTHVdRtqVJwreVKGQwfwV
-         HjDVAWJRIvKOMhXj0IX+/Zm2kMh4LFhvorkm+KE0RuEBMePn2dhNUaA53v1n1mBGFVg9
-         G93+W5vWjXq3lioCh7fADKrFVGbs37lDUFZ6R4BPK9KdJ3hNv0TArPSitbWnfy3Q2cGO
-         uSdVG5bPY7NRAZAPLMAsqwokiR6X1TXdpDhoIH77jsLQ0BsIBhl6J+bUF93+UlTIrJHC
-         31Qg==
-X-Gm-Message-State: APjAAAXiMiwva0bUtf0d93SsU7RKCDisH9Wif3lY13fvieYPASlCwoIJ
-        bCc1UCuMfHz1/gQQVR4SHpzSP+e1fQEiRw==
-X-Google-Smtp-Source: APXvYqxZLlN0XaNPm3I3n7JrfLmeFdbmq8dTGm92xiaDpJ5tBoL+HHDVh1LG7X9a9sK0YJtOPgsmeg==
-X-Received: by 2002:a5d:534b:: with SMTP id t11mr13884522wrv.120.1581497892963;
-        Wed, 12 Feb 2020 00:58:12 -0800 (PST)
+        bh=BTHaz5A4SC+OE/B+HYkWcFMMrrKRsAAfwl9I0dHXQig=;
+        b=JsfduT+ctn2Hh7K1qpHnywD6A9MQN9E/HqZQ1I4BRC73OAZyXsdLczaIDiZBJIcNY8
+         ETCt2j3qQ6AUm0Z+9/1N+KniE0f62vS9pv3S7wsBg9K4rqQsQ3vy2lil060OVSo/kXzf
+         Z+VEcUy5Ahl0GCmtdt6At1XjnI3Lhe1O34ib+QDphkbcAavkrOdP5lesbZ001rx31dPV
+         TX1vsgkLYqFSMGPbKigmLOaS/h02PD43BosQrE3du8kkc3wYjO3OH4aQFmkU8ev+6Qic
+         SIX0rjMdKACxFbvKs9Ch8YFAvDDyYNGV7mjjBAUdPrrINBbaw6s3zyB7D6785ZYMkk8D
+         v7zg==
+X-Gm-Message-State: APjAAAXoCeLEHVnk3Bk6URu0KcpCxjGQ1cDhduKUT9HvM6MnE+k9ZF4Y
+        QdmuNe2Xqvcbu9RXBXWNs3fFF3DJo/hEdw==
+X-Google-Smtp-Source: APXvYqwP033Pm/oULStN0JuRd5+bgJdBfmjtr1fO9ZnhNDC5V9wvDdn1xk9WGKVppIQ4ZkL4YXtczg==
+X-Received: by 2002:a1c:9d08:: with SMTP id g8mr10969356wme.141.1581497894599;
+        Wed, 12 Feb 2020 00:58:14 -0800 (PST)
 Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id z133sm7530894wmb.7.2020.02.12.00.58.11
+        by smtp.gmail.com with ESMTPSA id t131sm7929579wmb.13.2020.02.12.00.58.13
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Feb 2020 00:58:12 -0800 (PST)
+        Wed, 12 Feb 2020 00:58:14 -0800 (PST)
 From:   Michal Simek <michal.simek@xilinx.com>
 To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
         michal.simek@xilinx.com, git@xilinx.com, arnd@arndb.de
 Cc:     Stefan Asserhall <stefan.asserhall@xilinx.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>, linux-arch@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH 02/10] microblaze: Remove architecture tlb.h and use generic one
-Date:   Wed, 12 Feb 2020 09:57:59 +0100
-Message-Id: <1243cf3b894f81b728011621b2fd3d40b8935e99.1581497860.git.michal.simek@xilinx.com>
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH 03/10] microblaze: Remove early printk setup
+Date:   Wed, 12 Feb 2020 09:58:00 +0100
+Message-Id: <af15f3f69b877bb547ffbf5df8454f749692939f.1581497860.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <cover.1581497860.git.michal.simek@xilinx.com>
 References: <cover.1581497860.git.michal.simek@xilinx.com>
@@ -72,53 +63,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no reason to have this empty file if it is just link to
-asm-generic/tlb.h.
+Early printk has been removed already that's why this setting doesn't make
+any sense. Also change printk level from pr_info to pr_err.
 
+Fixes: 96f0e6fcc9ad ("microblaze: remove redundant early_printk support")
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 Reviewed-by: Stefan Asserhall <stefan.asserhall@xilinx.com>
 ---
 
- arch/microblaze/include/asm/Kbuild |  1 +
- arch/microblaze/include/asm/tlb.h  | 17 -----------------
- 2 files changed, 1 insertion(+), 17 deletions(-)
- delete mode 100644 arch/microblaze/include/asm/tlb.h
+ arch/microblaze/kernel/cpu/cpuinfo-pvr-full.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/arch/microblaze/include/asm/Kbuild b/arch/microblaze/include/asm/Kbuild
-index e5c9170a07fc..7ae427f73105 100644
---- a/arch/microblaze/include/asm/Kbuild
-+++ b/arch/microblaze/include/asm/Kbuild
-@@ -31,6 +31,7 @@ generic-y += preempt.h
- generic-y += serial.h
- generic-y += shmparam.h
- generic-y += syscalls.h
-+generic-y += tlb.h
- generic-y += topology.h
- generic-y += trace_clock.h
- generic-y += vga.h
-diff --git a/arch/microblaze/include/asm/tlb.h b/arch/microblaze/include/asm/tlb.h
-deleted file mode 100644
-index 628a78ee0a72..000000000000
---- a/arch/microblaze/include/asm/tlb.h
-+++ /dev/null
-@@ -1,17 +0,0 @@
--/*
-- * Copyright (C) 2008-2009 Michal Simek <monstr@monstr.eu>
-- * Copyright (C) 2008-2009 PetaLogix
-- * Copyright (C) 2006 Atmark Techno, Inc.
-- *
-- * This file is subject to the terms and conditions of the GNU General Public
-- * License. See the file "COPYING" in the main directory of this archive
-- * for more details.
-- */
--
--#ifndef _ASM_MICROBLAZE_TLB_H
--#define _ASM_MICROBLAZE_TLB_H
--
--#include <linux/pagemap.h>
--#include <asm-generic/tlb.h>
--
--#endif /* _ASM_MICROBLAZE_TLB_H */
+diff --git a/arch/microblaze/kernel/cpu/cpuinfo-pvr-full.c b/arch/microblaze/kernel/cpu/cpuinfo-pvr-full.c
+index a32daec96c12..c7ee51b0900e 100644
+--- a/arch/microblaze/kernel/cpu/cpuinfo-pvr-full.c
++++ b/arch/microblaze/kernel/cpu/cpuinfo-pvr-full.c
+@@ -22,13 +22,8 @@
+ 
+ #define CI(c, p) { ci->c = PVR_##p(pvr); }
+ 
+-#if defined(CONFIG_EARLY_PRINTK) && defined(CONFIG_SERIAL_UARTLITE_CONSOLE)
+ #define err_printk(x) \
+-	early_printk("ERROR: Microblaze " x "-different for PVR and DTS\n");
+-#else
+-#define err_printk(x) \
+-	pr_info("ERROR: Microblaze " x "-different for PVR and DTS\n");
+-#endif
++	pr_err("ERROR: Microblaze " x "-different for PVR and DTS\n");
+ 
+ void set_cpuinfo_pvr_full(struct cpuinfo *ci, struct device_node *cpu)
+ {
 -- 
 2.25.0
 
