@@ -2,79 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B664315A637
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:22:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 578AB15A598
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:03:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbgBLKW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 05:22:58 -0500
-Received: from mga07.intel.com ([134.134.136.100]:46280 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725710AbgBLKW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 05:22:57 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 02:22:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="226820686"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by orsmga008.jf.intel.com with ESMTP; 12 Feb 2020 02:22:53 -0800
-Date:   Wed, 12 Feb 2020 18:02:11 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Will Deacon <will@kernel.org>, mdf@kernel.org,
-        mark.rutland@arm.com, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        atull@kernel.org, yilun.xu@intel.com,
-        Luwei Kang <luwei.kang@intel.com>
-Subject: Re: [PATCH v7 2/2] fpga: dfl: fme: add performance reporting support
-Message-ID: <20200212100211.GA10436@hao-dev>
-References: <1581306469-22629-1-git-send-email-hao.wu@intel.com>
- <1581306469-22629-3-git-send-email-hao.wu@intel.com>
- <20200210163400.GA21900@willie-the-truck>
- <20200212031929.GB5645@hao-dev>
- <20200212053035.GA382718@kroah.com>
+        id S1728952AbgBLKDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 05:03:50 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51906 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728715AbgBLKDt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 05:03:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=/g3wWot6qhpaIN6InSmMeDgjV6uWOVP/yABQGqj6p/M=; b=ehj1QJjS+sfIYafRTZRJ1alg6f
+        +fsWX2YuTfxDjGP1Io0rQ9ZfdIN4tuk3MiqP9V7yEgBWEHjmL5QzkR9G4vq0GO5BOf8duyzf39BKO
+        rgNs7308TWVi4oei79W/lO7+ta1hd/NdCwnwdK6qM9+napnvRDzi8t88r7iAzthZmGNfvlfSB063M
+        BwBEcaAVyBxVY9y3HJPD80Vvv5aDMChugzRCMctq//S/t4yr9N7wbC5gVrOgZasq7H5+JSd0qWC0s
+        T6mf2xnpCj66D0d3oaUAxGoPXjHL4HwsYmFKKtuqbijVv3TTFplNNDrLc8v9ceAWrITIXJ1W1mDPN
+        TIWqGxeQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1ori-0005x5-LP; Wed, 12 Feb 2020 10:03:30 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8FDEC300235;
+        Wed, 12 Feb 2020 11:01:39 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6DE752026E97A; Wed, 12 Feb 2020 11:03:28 +0100 (CET)
+Date:   Wed, 12 Feb 2020 11:03:28 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        rostedt@goodmis.org, mpe@ellerman.id.au
+Cc:     mingo@kernel.org, joel@joelfernandes.org,
+        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
+        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com
+Subject: Re: [PATCH 0/8] tracing vs rcu vs nmi
+Message-ID: <20200212100328.GB14914@hirez.programming.kicks-ass.net>
+References: <20200212093210.468391728@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200212053035.GA382718@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20200212093210.468391728@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 09:30:35PM -0800, Greg KH wrote:
-> On Wed, Feb 12, 2020 at 11:19:29AM +0800, Wu Hao wrote:
-> > On Mon, Feb 10, 2020 at 04:34:01PM +0000, Will Deacon wrote:
-> > > Hi,
-> > > 
-> > > On Mon, Feb 10, 2020 at 11:47:49AM +0800, Wu Hao wrote:
-> > > > This patch adds support for performance reporting private feature
-> > > > for FPGA Management Engine (FME). Now it supports several different
-> > > > performance counters, including 'basic', 'cache', 'fabric', 'vtd'
-> > > > and 'vtd_sip'. It allows user to use standard linux tools to access
-> > > > these performance counters.
-> > > 
-> > > I had a quick look at this, and it mostly looks alright to me. Just a few
-> > > high-level comments/questions:
-> > 
-> > Hi Will
-> > 
-> > Thanks a lot for the review! :)
-> > 
-> > > 
-> > >   - I would still prefer for the PMU drivers to live under drivers/perf/
-> > 
-> > Hm.. one possible way is to create a platform device, and introduce a new
-> > platform device driver under drivers/perf/.
+On Wed, Feb 12, 2020 at 10:32:10AM +0100, Peter Zijlstra wrote:
+> Hi all,
 > 
-> No, do not abuse platform drivers, you have a real device, use it.
+> These here patches are the result of Mathieu and Steve trying to get commit
+> 865e63b04e9b2 ("tracing: Add back in rcu_irq_enter/exit_irqson() for rcuidle
+> tracepoints") reverted again.
+> 
+> One of the things discovered is that tracing MUST NOT happen before nmi_enter()
+> or after nmi_exit(). I've only fixed x86, but quickly gone through other
+> architectures and there is definitely more stuff to be fixed (simply grep for
+> nmi_enter in your arch).
 
-Sure, thanks for the comments. Then I don't have any other idea to move code to
-drivers/perf/ directory, so probably only can live with current code.
+For Power:
 
-Thanks
-Hao
+ - system_reset_exception()
+ - machine_check_exception()
+ - soft_nmi_interrupt()
+ - __perf_event_interrupt() (book3s)
+ - perf_event_interrupt() (fsl)
+
+will want looking at.
