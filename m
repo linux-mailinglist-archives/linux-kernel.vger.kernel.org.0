@@ -2,163 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 537D815AEB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 18:29:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9293E15AEB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 18:30:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728698AbgBLR3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 12:29:30 -0500
-Received: from mga18.intel.com ([134.134.136.126]:64771 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727231AbgBLR33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 12:29:29 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 09:29:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,433,1574150400"; 
-   d="scan'208";a="251980707"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga002.jf.intel.com with ESMTP; 12 Feb 2020 09:29:28 -0800
-Received: from [10.7.201.16] (skuppusw-desk.jf.intel.com [10.7.201.16])
-        by linux.intel.com (Postfix) with ESMTP id CA48B5803DA;
-        Wed, 12 Feb 2020 09:29:28 -0800 (PST)
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: Re: [PATCH v14 0/5] Add Error Disconnect Recover (EDR) support
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com
-References: <20200212143842.GA133681@google.com>
-From:   Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Organization: Intel
-Message-ID: <3d24296d-5bba-ee37-17d2-3a378b230f63@linux.intel.com>
-Date:   Wed, 12 Feb 2020 09:26:58 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728815AbgBLR36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 12:29:58 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41240 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728731AbgBLR35 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 12:29:57 -0500
+Received: by mail-oi1-f195.google.com with SMTP id i1so2779387oie.8
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 09:29:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=BOdYYefDIdhBYxqjo49OO1VaD1yMp38+cA0CbT37JV8=;
+        b=py/q/LY2i0AdlUKUhKtX41GzhVRohbZA0sQT82tn0VG50xy/ALTFKNUHG1uyvlDjES
+         AhmFjHle1tR9lbP9cKrOoudbRlMCqtwhba2/hkLVbYR/IjB9ml80UoNFT2Dq5RR3+PzE
+         Dcm8XDyexlQ1d76oIgq743U60KluyzXU8qTvnSAforo67Ut7Og2OCoCYllF7ftyktIGk
+         RBXjkHsMEHsPedZ4PNivpKdP2JNKD/1R0Q5AEinSIdFj1QG4WV66ulIXUX9cT4fBWUVL
+         YkgIe6vzMtMNosotDQ/jND3TPqrATO4dSMVdFYpDw7JwIsegNR2re2TRVf54TGfAFp8b
+         Li3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=BOdYYefDIdhBYxqjo49OO1VaD1yMp38+cA0CbT37JV8=;
+        b=pSwDjokWjX0oDrLFciZWdH6RukN3bIisHXbmDMsQpLAkgoKtY90iQlL1feDIPbe79F
+         NwJDipcJDlOHYMXmybVyww6EjUA5GY1GImNu/EM42UqJZkovBwJJ6XrB647TwrMcBGRh
+         npIKwzi/osOkT78jJeK/WqsGLDKBGhX1kkyRc06Aj7L+6qMMpGc7QJlg7K6u2G4Kq+2l
+         9j204/HiCzij7IKLFZXc4wmH+BPk4GqAzILPzjEgFTqmRJhHLa2dWsWzC6qweEb08XJP
+         Acl5rq6d8dKW/ns/fU1VFcoty7c6sDBAV7spI2TMRxIEWm4BDllM4PQutSMNlZ2ulW+n
+         PgTg==
+X-Gm-Message-State: APjAAAUwc6z8dnRB21yfG5uyP6uytO6e++fqRvSG+3PqlP/BszSWcaSg
+        5ESCBXjBIBwqh6qvBkKMTzrH9Lx4TCuIw//G5Yo=
+X-Google-Smtp-Source: APXvYqwI2JEIrlG/g/o3eZ7DQQDk1uGfknqR2VVIeAvI7vw0Nmtt46FQZM7bamnUXTAVTeR8XSO+VETs5KFE5WES600=
+X-Received: by 2002:a54:4117:: with SMTP id l23mr108024oic.140.1581528596836;
+ Wed, 12 Feb 2020 09:29:56 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200212143842.GA133681@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Received: by 2002:a4a:33d3:0:0:0:0:0 with HTTP; Wed, 12 Feb 2020 09:29:56
+ -0800 (PST)
+Reply-To: stellar074maoris@gmail.com
+From:   "Mrs.Stellar Maoris" <mrsbeccy8@gmail.com>
+Date:   Wed, 12 Feb 2020 17:29:56 +0000
+Message-ID: <CAHU1do1Yotgee_3_qzA4pruyMzk2tqpN2-=m_BrMNu0fRL5WOw@mail.gmail.com>
+Subject: Hello Dear Friend
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+Hello Dear Friend.
 
-On 2/12/20 6:38 AM, Bjorn Helgaas wrote:
-> On Fri, Feb 07, 2020 at 04:03:30PM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
->> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->>
->> This patchset adds support for following features:
->>
->> 1. Error Disconnect Recover (EDR) support.
->> 2. _OSC based negotiation support for DPC.
->>
->> You can find EDR spec in the following link.
->>
->> https://members.pcisig.com/wg/PCI-SIG/document/12614
-> Hi Sathy,
->
-> Bad timing!  Linus tagged v5.6-rc1 on Feb 9, shortly after you posted
-> this.  Would you mind refreshing this so it applies on my "master"
-> branch (v5.6-rc1)?
-Sure.
->
->> Changes since v13:
->>   * Moved all EDR related code to edr.c
->>   * Addressed Bjorns comments.
->>
->> Changes since v12:
->>   * Addressed Bjorns comments.
->>   * Added check for CONFIG_PCIE_EDR before requesting DPC control from firmware.
->>   * Removed ff_check parameter from AER APIs.
->>   * Used macros for _OST return status values in DPC driver.
->>
->> Changes since v11:
->>   * Allowed error recovery to proceed after successful reset_link().
->>   * Used correct ACPI handle for sending EDR status.
->>   * Rebased on top of v5.5-rc5
->>
->> Changes since v10:
->>   * Added "edr_enabled" member to dpc priv structure, which is used to cache EDR
->>     enabling status based on status of pcie_ports_dpc_native and FF mode.
->>   * Changed type of _DSM argument from Integer to Package in acpi_enable_dpc_port()
->>     function to fix ACPI related boot warnings.
->>   * Rebased on top of v5.5-rc3
->>
->> Changes since v9:
->>   * Removed caching of pcie_aer_get_firmware_first() in dpc driver.
->>   * Added proper spec reference in git log for patch 5 & 7.
->>   * Added new function parameter "ff_check" to pci_cleanup_aer_uncorrect_error_status(),
->>     pci_aer_clear_fatal_status() and pci_cleanup_aer_error_status_regs() functions.
->>   * Rebased on top of v5.4-rc5
->>
->> Changes since v8:
->>   * Rebased on top of v5.4-rc1
->>
->> Changes since v7:
->>   * Updated DSM version number to match the spec.
->>
->> Changes since v6:
->>   * Modified the order of patches to enable EDR only after all necessary support is added in kernel.
->>   * Addressed Bjorn comments.
->>
->> Changes since v5:
->>   * Addressed Keith's comments.
->>   * Added additional check for FF mode in pci_aer_init().
->>   * Updated commit history of "PCI/DPC: Add support for DPC recovery on NON_FATAL errors" patch.
->>
->> Changes since v4:
->>   * Rebased on top of v5.3-rc1
->>   * Fixed lock/unlock issue in edr_handle_event().
->>   * Merged "Update error status after reset_link()" patch into this patchset.
->>
->> Changes since v3:
->>   * Moved EDR related ACPI functions/definitions to pci-acpi.c
->>   * Modified commit history in few patches to include spec reference.
->>   * Added support to handle DPC triggered by NON_FATAL errors.
->>   * Added edr_lock to protect PCI device receiving duplicate EDR notifications.
->>   * Addressed Bjorn comments.
->>
->> Changes since v2:
->>   * Split EDR support patch into multiple patches.
->>   * Addressed Bjorn comments.
->>
->> Changes since v1:
->>   * Rebased on top of v5.1-rc1
->>
->> Kuppuswamy Sathyanarayanan (5):
->>    PCI/ERR: Update error status after reset_link()
->>    PCI/DPC: Remove pcie_device reference from dpc_dev structure
->>    PCI/EDR: Export AER, DPC and error recovery functions
->>    PCI/DPC: Add Error Disconnect Recover (EDR) support
->>    PCI/ACPI: Enable EDR support
->>
->>   drivers/acpi/pci_root.c   |  16 +++
->>   drivers/pci/pci-acpi.c    |   3 +
->>   drivers/pci/pci.h         |   8 ++
->>   drivers/pci/pcie/Kconfig  |  10 ++
->>   drivers/pci/pcie/Makefile |   1 +
->>   drivers/pci/pcie/aer.c    |  39 ++++--
->>   drivers/pci/pcie/dpc.c    |  92 ++++++++------
->>   drivers/pci/pcie/dpc.h    |  20 +++
->>   drivers/pci/pcie/edr.c    | 259 ++++++++++++++++++++++++++++++++++++++
->>   drivers/pci/pcie/err.c    |  35 ++++--
->>   drivers/pci/probe.c       |   1 +
->>   include/linux/acpi.h      |   6 +-
->>   include/linux/pci-acpi.h  |   8 ++
->>   include/linux/pci.h       |   1 +
->>   14 files changed, 441 insertions(+), 58 deletions(-)
->>   create mode 100644 drivers/pci/pcie/dpc.h
->>   create mode 100644 drivers/pci/pcie/edr.c
->>
->> -- 
->> 2.21.0
->>
--- 
-Sathyanarayanan Kuppuswamy
-Linux kernel developer
+I=E2=80=99m Mrs. Stellar Maoris from united state of America a manger in
+HSBC bank in Spain Madrid, 31 years old of age, single, I am
+sending
+this brief letter to seek for your partnership and long term
+relationship, I have an important and urgent issue I want to discuss
+with you privately about Transaction fund worth the sum of $9.5 million
+America dollars left by most of the greedy Asia Kuwait politician in
+our bank here in Spain Madrid A fund which suppose to have been use to
+develop the continent.
 
+If you know that you can invest this fund into a profitable business
+in your country by the end we shall have 50%50 share each, kindly get
+back to me for more detail and procedures.
+
+Your urgent respond will be highly appreciated Awaiting to hear from you as=
+ap.
+My Regard.
+Stellar Maoris
+Email: stellar074maoris@gmail.com
+Phone Number: +34(62) 768 5146
