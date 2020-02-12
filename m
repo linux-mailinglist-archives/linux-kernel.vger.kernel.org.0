@@ -2,75 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C913159FFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 05:19:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B753715A017
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 05:21:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728286AbgBLETf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 23:19:35 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:54010 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728021AbgBLESr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 23:18:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=rIiQdfF70UH/NrhNrIlb2hDhHJTI1cNopc0LJtiqgNw=; b=QgJ8JI65whKFKU40aTGC2KbUv3
-        BOdg/4SyM3pmx8HK0RKR0bP0589Kia3x6ulK2ToRDjDsrVpakDyE40tBu88D3EmHYynUa5oa0x+vc
-        P/Vjoatctq97kYIa2S2vMPDKfP4r2k/f0gNCt62+MxHeqanSZ8qOyxEvD2jNCUdjh46X0lt5y8esb
-        S7OVD4wbUosgzfkOI/s3dIYt8CU6AWifyjf0xFKTHvPILoi7jnbFXffxzvggiwGWHV/hRquBL2D9O
-        O0T4AU04ap+pZLPolLLlUVH51OTrxxe90oEQdd1CP0m62bmrSIRBjfQKMvVWSLqAbqIE3StRc5Ces
-        IvgLH8Tw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1jU7-0006pL-Ic; Wed, 12 Feb 2020 04:18:47 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Cc:     William Kucharski <william.kucharski@oracle.com>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v2 25/25] mm: Align THP mappings for non-DAX
-Date:   Tue, 11 Feb 2020 20:18:45 -0800
-Message-Id: <20200212041845.25879-26-willy@infradead.org>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200212041845.25879-1-willy@infradead.org>
-References: <20200212041845.25879-1-willy@infradead.org>
+        id S1728115AbgBLEVA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 23:21:00 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10613 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727602AbgBLEU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 23:20:59 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B424F22BED64EA8E65D6;
+        Wed, 12 Feb 2020 12:20:57 +0800 (CST)
+Received: from [127.0.0.1] (10.173.220.66) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Wed, 12 Feb 2020
+ 12:20:51 +0800
+Subject: Re: [PATCH] block: rename 'q->debugfs_dir' in blk_unregister_queue()
+To:     Bart Van Assche <bvanassche@acm.org>, <axboe@kernel.dk>,
+        <ming.lei@redhat.com>
+CC:     <yi.zhang@huawei.com>, <zhangxiaoxu5@huawei.com>,
+        <luoshijie1@huawei.com>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200211035137.19454-1-yukuai3@huawei.com>
+ <c57b050d-9ed7-9d6b-b1d0-628a197f6ea6@acm.org>
+From:   "yukuai (C)" <yukuai3@huawei.com>
+Message-ID: <18bf436a-9c6a-dba8-46a4-ef57132f467a@huawei.com>
+Date:   Wed, 12 Feb 2020 12:20:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <c57b050d-9ed7-9d6b-b1d0-628a197f6ea6@acm.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.220.66]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: William Kucharski <william.kucharski@oracle.com>
+On 2020/2/12 11:27, Bart Van Assche wrote:
+> What is the behavior of this loop if multiple block devices are being
+> removed concurrently? Does it perhaps change remove block device removal
+> from an O(1) into an O(n) operation?
+Yes, there may be performance overhead.(I thought it's minimal) However,
+I can change the name of dir form "read_to_remove_%d" to
+"read_to_remove_%s(dev_name)_%d" to fix that.
+> 
+> Since this scenario may only matter to syzbot tests: has it been
+> considered to delay block device creation if the debugfs directory from
+> a previous incarnation of the block device still exists?
+> 
+I think it's a bug device creation succeed when the debugfs directory
+exist. Of course delay block device creation can fix the problem, but I
+haven't come up with a good solution. And by renaming the dir, there is
+no need to delay cration.
 
-When we have the opportunity to use transparent huge pages to map a
-file, we want to follow the same rules as DAX.
-
-Signed-off-by: William Kucharski <william.kucharski@oracle.com>
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- mm/huge_memory.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index b52e007f0856..b8d9e0d76062 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -577,13 +577,10 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
- 	unsigned long ret;
- 	loff_t off = (loff_t)pgoff << PAGE_SHIFT;
- 
--	if (!IS_DAX(filp->f_mapping->host) || !IS_ENABLED(CONFIG_FS_DAX_PMD))
--		goto out;
--
- 	ret = __thp_get_unmapped_area(filp, addr, len, off, flags, PMD_SIZE);
- 	if (ret)
- 		return ret;
--out:
-+
- 	return current->mm->get_unmapped_area(filp, addr, len, pgoff, flags);
- }
- EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
--- 
-2.25.0
+Thanks!
+Yu Kuai
 
