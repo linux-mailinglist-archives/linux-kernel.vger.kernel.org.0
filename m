@@ -2,265 +2,287 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FF6615B43B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 00:01:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2CFA15B433
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 00:00:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729246AbgBLXBE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 18:01:04 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:50337 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729225AbgBLXBE (ORCPT
+        id S1729176AbgBLXAv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 18:00:51 -0500
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:40937 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727692AbgBLXAv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 18:01:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581548462;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=LUOvcPqe2i5tg8ix9spKm1/Vxx5uEj37Q1ziBWqwxiM=;
-        b=YyAffLQrCTFEn2c4Y/S5sIQGdfLsPoH4ke84tNwyJWCWV34XZr2SDQL4NOmgs7P0E7/hhZ
-        JqnlGC8xbdVxE7dxoxz18Y0xeoYkQkRmVzVsRD7n/2U5Cz/ABxi8p0mIlvsS96oUNbA4jB
-        RQpFll6voyKPyWQXKlrGSBcIyl45GME=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-240-eh0lBEsfPUKuRIDqJxJebg-1; Wed, 12 Feb 2020 18:01:00 -0500
-X-MC-Unique: eh0lBEsfPUKuRIDqJxJebg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D80CC1800D6B;
-        Wed, 12 Feb 2020 23:00:58 +0000 (UTC)
-Received: from Ruby.bss.redhat.com (dhcp-10-20-1-196.bss.redhat.com [10.20.1.196])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9F7B55C109;
-        Wed, 12 Feb 2020 23:00:57 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     nouveau@lists.freedesktop.org
-Cc:     stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Sean Paul <seanpaul@chromium.org>,
-        Dave Airlie <airlied@redhat.com>,
-        Mikita Lipski <mikita.lipski@amd.com>,
-        Takashi Iwai <tiwai@suse.de>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] drm/nouveau/kms/nv50-: Share DP SST mode_valid() handling with MST
-Date:   Wed, 12 Feb 2020 18:00:38 -0500
-Message-Id: <20200212230043.170477-5-lyude@redhat.com>
-In-Reply-To: <20200212230043.170477-1-lyude@redhat.com>
-References: <20200212230043.170477-1-lyude@redhat.com>
-MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-Content-Transfer-Encoding: quoted-printable
+        Wed, 12 Feb 2020 18:00:51 -0500
+Received: by mail-pf1-f202.google.com with SMTP id d127so2373143pfa.7
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 15:00:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=i8kdIQ19n7cR//fVVzBsd2FkDhAXpoYMbJAVQKSi+g0=;
+        b=CHCmyVHDuAq7mnNJOL5H9cU4OZGtv51FwhU5obEtvlelqnRxf3ZQpIAFsNOs65gfDQ
+         JEWUE7pcM8Y25OrPTLzNGUCb7ZlFjsyxS1Vd32mfSOu3xUDmYFqgv3zcg4UAhoEimS3E
+         eH99Zy947B6Iez74fDgU+EUQRPDaMC/YmwhVpeMpCYiErOtTIr3B3f1qU5cJZxyDLhdf
+         Cx3A9vWdfiGNT3TsER+f4od4yFBljnuSqnUpj/wqglWZQsu9jQlB8Tr0VXfOnyYt+e/y
+         kh5RgO3rytiOzis34hkDwGrH1ugFV1X9c4p3c/fyyA2+0qAjEy1UnHGANQxahJ6AoGpN
+         VmSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=i8kdIQ19n7cR//fVVzBsd2FkDhAXpoYMbJAVQKSi+g0=;
+        b=r6NXr5SIgBKOytFTwl8KZiw3xelUJu383kiSiwWbFs3Yw6OMl0xbdJyeVZiYnGKHdr
+         LrHOvECSTGsaN5GNYN76oRp2B5cQLByjs5DmH3i07sG5BLQ34rcInUx6m65Sw0MwRSPe
+         b0uePv05FGGNpEpgS8ofJRaaB5hdRszeS4NnCDdg7ucd1iw9eMDMMldcMCLPbbpyfKse
+         zg3JhJ/gt2sSOFnnIK73nAeBPN0vtFBOhmAn19g4qcMsRfsJPbsMWBhN02spiGeLQ4sc
+         5xA6oPuH8V2M2F7dgD74vzMS0JK8Q4o61JEpvN9WcevCH77Q1ObeKNu2T06ibd9wzaA+
+         +7aA==
+X-Gm-Message-State: APjAAAUuXO9sJ6UbIdI+hIX/VQkpHEJYdOVN3FaVE96xxRYaTsjkqvkW
+        e/hZbe6bCGX3PugwVb7e9bf0qWlARsGKyg==
+X-Google-Smtp-Source: APXvYqyzehGGOphcxkzWdnGWBg95lH9F+buV+dVhs9LSfNjwJTSK+bCgtimmnuiOsaqSyBs+uybypZro/4rhgg==
+X-Received: by 2002:a63:8f49:: with SMTP id r9mr14992531pgn.190.1581548449972;
+ Wed, 12 Feb 2020 15:00:49 -0800 (PST)
+Date:   Wed, 12 Feb 2020 15:00:46 -0800
+Message-Id: <20200212230046.84007-1-davidgow@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
+Subject: [PATCH v2] Documentation: kunit: Make the KUnit documentation less UML-specific
+From:   David Gow <davidgow@google.com>
+To:     brendanhiggins@google.com, skhan@linuxfoundation.org,
+        corbet@lwn.net
+Cc:     kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        frowand.list@gmail.com, Tim.Bird@sony.com,
+        David Gow <davidgow@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the nv50_mstc_mode_valid() function is happy to take any and
-all modes, even the ones we can't actually support sometimes like
-interlaced modes.
+Remove some of the outmoded "Why KUnit" rationale, and move some
+UML-specific information to the kunit_tool page. Also update the Getting
+Started guide to mention running tests without the kunit_tool wrapper.
 
-Luckily, the only difference between the mode validation that needs to
-be performed for MST vs. SST is that eventually we'll need to check the
-minimum PBN against the MSTB's full PBN capabilities (remember-we don't
-care about the current bw state here). Otherwise, all of the other code
-can be shared.
-
-So, we move all of the common mode validation in
-nouveau_connector_mode_valid() into a separate helper,
-nv50_dp_mode_valid(), and use that from both nv50_mstc_mode_valid() and
-nouveau_connector_mode_valid(). Note that we allow for returning the
-calculated clock that nv50_dp_mode_valid() came up with, since we'll
-eventually want to use that for PBN calculation in
-nv50_mstc_mode_valid().
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: stable@vger.kernel.org
+Signed-off-by: David Gow <davidgow@google.com>
 ---
- drivers/gpu/drm/nouveau/dispnv50/disp.c     |  9 ++++-
- drivers/gpu/drm/nouveau/nouveau_connector.c | 41 +++++++++++----------
- drivers/gpu/drm/nouveau/nouveau_connector.h |  5 +++
- drivers/gpu/drm/nouveau/nouveau_dp.c        | 27 ++++++++++++++
- drivers/gpu/drm/nouveau/nouveau_encoder.h   |  4 ++
- 5 files changed, 66 insertions(+), 20 deletions(-)
+Thanks for your comments. I've reinstated the "Why KUnit" section with
+some minor changes.
 
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/no=
-uveau/dispnv50/disp.c
-index 766b8e80a8f5..65b0655ff3c5 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-@@ -1051,7 +1051,14 @@ static enum drm_mode_status
- nv50_mstc_mode_valid(struct drm_connector *connector,
- 		     struct drm_display_mode *mode)
- {
--	return MODE_OK;
-+	struct nv50_mstc *mstc =3D nv50_mstc(connector);
-+	struct nouveau_encoder *outp =3D mstc->mstm->outp;
+Changes since v1[1]:
+- Reinstated the "Why Kunit?" section, minus the comparison with other
+  testing frameworks (covered in the FAQ), and the description of UML.
+- Moved the description of UML into to kunit_tool page.
+- Tidied up the wording around how KUnit is built and run to make it work
+  without the UML description.
+
+
+[1]:
+https://lore.kernel.org/linux-kselftest/9c703dea-a9e1-94e2-c12d-3cb0a09e75ac@gmail.com/T/
+
+
+
+ Documentation/dev-tools/kunit/index.rst      | 33 ++++----
+ Documentation/dev-tools/kunit/kunit-tool.rst |  7 ++
+ Documentation/dev-tools/kunit/start.rst      | 80 ++++++++++++++++----
+ 3 files changed, 92 insertions(+), 28 deletions(-)
+
+diff --git a/Documentation/dev-tools/kunit/index.rst b/Documentation/dev-tools/kunit/index.rst
+index d16a4d2c3a41..ca6cd6dd6ab7 100644
+--- a/Documentation/dev-tools/kunit/index.rst
++++ b/Documentation/dev-tools/kunit/index.rst
+@@ -17,14 +17,23 @@ What is KUnit?
+ ==============
+ 
+ KUnit is a lightweight unit testing and mocking framework for the Linux kernel.
+-These tests are able to be run locally on a developer's workstation without a VM
+-or special hardware.
+ 
+ KUnit is heavily inspired by JUnit, Python's unittest.mock, and
+ Googletest/Googlemock for C++. KUnit provides facilities for defining unit test
+ cases, grouping related test cases into test suites, providing common
+ infrastructure for running tests, and much more.
+ 
++KUnit consists of a kernel component, which provides a set of macros for easily
++writing unit tests. Tests written against KUnit will run on kernel boot if
++built-in, or when loaded if built as a module. These tests write out results to
++the kernel log in `TAP <https://testanything.org/>`_ format.
 +
-+	/* TODO: calculate the PBN from the dotclock and validate against the
-+	 * MSTB's max possible PBN
-+	 */
++To make running these tests (and reading the results) easier, KUnit offsers
++:doc:`kunit_tool <kunit-tool>`, which builds a `User Mode Linux
++<http://user-mode-linux.sourceforge.net>`_ kernel, runs it, and parses the test
++results. This provides a quick way of running KUnit tests during development,
++without requiring a virtual machine or separate hardware.
 +
-+	return nv50_dp_mode_valid(connector, outp, mode, NULL);
- }
-=20
- static int
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/dr=
-m/nouveau/nouveau_connector.c
-index 97a84daf8eab..3a3e1533d3e7 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -38,6 +38,7 @@
- #include "nouveau_reg.h"
- #include "nouveau_drv.h"
- #include "dispnv04/hw.h"
-+#include "dispnv50/disp.h"
- #include "nouveau_acpi.h"
-=20
- #include "nouveau_display.h"
-@@ -1033,6 +1034,24 @@ get_tmds_link_bandwidth(struct drm_connector *conn=
-ector)
- 		return 112000 * duallink_scale;
- }
-=20
-+enum drm_mode_status
-+nouveau_conn_mode_clock_valid(const struct drm_display_mode *mode,
-+			      const unsigned min_clock,
-+			      const unsigned max_clock,
-+			      unsigned *clock)
-+{
-+	if ((mode->flags & DRM_MODE_FLAG_3D_MASK) =3D=3D
-+	    DRM_MODE_FLAG_3D_FRAME_PACKING)
-+		*clock *=3D 2;
-+
-+	if (*clock < min_clock)
-+		return MODE_CLOCK_LOW;
-+	if (*clock > max_clock)
-+		return MODE_CLOCK_HIGH;
-+
-+	return MODE_OK;
-+}
-+
- static enum drm_mode_status
- nouveau_connector_mode_valid(struct drm_connector *connector,
- 			     struct drm_display_mode *mode)
-@@ -1041,7 +1060,6 @@ nouveau_connector_mode_valid(struct drm_connector *=
-connector,
- 	struct nouveau_encoder *nv_encoder =3D nv_connector->detected_encoder;
- 	struct drm_encoder *encoder =3D to_drm_encoder(nv_encoder);
- 	unsigned min_clock =3D 25000, max_clock =3D min_clock;
--	unsigned clock =3D mode->clock;
-=20
- 	switch (nv_encoder->dcb->type) {
- 	case DCB_OUTPUT_LVDS:
-@@ -1064,29 +1082,14 @@ nouveau_connector_mode_valid(struct drm_connector=
- *connector,
- 	case DCB_OUTPUT_TV:
- 		return get_slave_funcs(encoder)->mode_valid(encoder, mode);
- 	case DCB_OUTPUT_DP:
--		if (mode->flags & DRM_MODE_FLAG_INTERLACE &&
--		    !nv_encoder->dp.caps.interlace)
--			return MODE_NO_INTERLACE;
+ Get started now: :doc:`start`
+ 
+ Why KUnit?
+@@ -36,20 +45,11 @@ allow all possible code paths to be tested in the code under test; this is only
+ possible if the code under test is very small and does not have any external
+ dependencies outside of the test's control like hardware.
+ 
+-Outside of KUnit, there are no testing frameworks currently
+-available for the kernel that do not require installing the kernel on a test
+-machine or in a VM and all require tests to be written in userspace running on
+-the kernel; this is true for Autotest, and kselftest, disqualifying
+-any of them from being considered unit testing frameworks.
++KUnit provides a common framework for unit tests within the kernel.
+ 
+-KUnit addresses the problem of being able to run tests without needing a virtual
+-machine or actual hardware with User Mode Linux. User Mode Linux is a Linux
+-architecture, like ARM or x86; however, unlike other architectures it compiles
+-to a standalone program that can be run like any other program directly inside
+-of a host operating system; to be clear, it does not require any virtualization
+-support; it is just a regular program.
 -
--		max_clock  =3D nv_encoder->dp.link_nr;
--		max_clock *=3D nv_encoder->dp.link_bw;
--		clock =3D clock * (connector->display_info.bpc * 3) / 10;
--		break;
-+		return nv50_dp_mode_valid(connector, nv_encoder, mode, NULL);
- 	default:
- 		BUG();
- 		return MODE_BAD;
- 	}
-=20
--	if ((mode->flags & DRM_MODE_FLAG_3D_MASK) =3D=3D DRM_MODE_FLAG_3D_FRAME=
-_PACKING)
--		clock *=3D 2;
+-Alternatively, kunit and kunit tests can be built as modules and tests will
++KUnit tests can be run on most kernel configurations, and most tests are
++architecture independent. All built-in KUnit tests run on kernel startup.
++Alternatively, KUnit and KUnit tests can be built as modules and tests will
+ run when the test module is loaded.
+ 
+ KUnit is fast. Excluding build time, from invocation to completion KUnit can run
+@@ -75,9 +75,12 @@ someone sends you some code. Why trust that someone ran all their tests
+ correctly on every change when you can just run them yourself in less time than
+ it takes to read their test log?
+ 
++
+ How do I use it?
+ ================
+ 
+ *   :doc:`start` - for new users of KUnit
+ *   :doc:`usage` - for a more detailed explanation of KUnit features
+ *   :doc:`api/index` - for the list of KUnit APIs used for testing
++*   :doc:`kunit-tool` - for more information on the kunit_tool helper script
++*   :doc:`faq` - for answers to some common questions about KUnit
+diff --git a/Documentation/dev-tools/kunit/kunit-tool.rst b/Documentation/dev-tools/kunit/kunit-tool.rst
+index 50d46394e97e..949af2da81e5 100644
+--- a/Documentation/dev-tools/kunit/kunit-tool.rst
++++ b/Documentation/dev-tools/kunit/kunit-tool.rst
+@@ -12,6 +12,13 @@ the Linux kernel as UML (`User Mode Linux
+ <http://user-mode-linux.sourceforge.net/>`_), running KUnit tests, parsing
+ the test results and displaying them in a user friendly manner.
+ 
++kunit_tool addresses the problem of being able to run tests without needing a
++virtual machine or actual hardware with User Mode Linux. User Mode Linux is a
++Linux architecture, like ARM or x86; however, unlike other architectures it
++compiles the kernel as a standalone Linux executable that can be run like any
++other program directly inside of a host operating system. To be clear, it does
++not require any virtualization support: it is just a regular program.
++
+ What is a kunitconfig?
+ ======================
+ 
+diff --git a/Documentation/dev-tools/kunit/start.rst b/Documentation/dev-tools/kunit/start.rst
+index 4e1d24db6b13..e1c5ce80ce12 100644
+--- a/Documentation/dev-tools/kunit/start.rst
++++ b/Documentation/dev-tools/kunit/start.rst
+@@ -9,11 +9,10 @@ Installing dependencies
+ KUnit has the same dependencies as the Linux kernel. As long as you can build
+ the kernel, you can run KUnit.
+ 
+-KUnit Wrapper
+-=============
+-Included with KUnit is a simple Python wrapper that helps format the output to
+-easily use and read KUnit output. It handles building and running the kernel, as
+-well as formatting the output.
++Running tests with the KUnit Wrapper
++====================================
++Included with KUnit is a simple Python wrapper which runs tests under User Mode
++Linux, and formats the test results.
+ 
+ The wrapper can be run with:
+ 
+@@ -21,22 +20,42 @@ The wrapper can be run with:
+ 
+ 	./tools/testing/kunit/kunit.py run --defconfig
+ 
+-For more information on this wrapper (also called kunit_tool) checkout the
++For more information on this wrapper (also called kunit_tool) check out the
+ :doc:`kunit-tool` page.
+ 
+ Creating a .kunitconfig
+-=======================
+-The Python script is a thin wrapper around Kbuild. As such, it needs to be
+-configured with a ``.kunitconfig`` file. This file essentially contains the
+-regular Kernel config, with the specific test targets as well.
 -
--	if (clock < min_clock)
--		return MODE_CLOCK_LOW;
--
--	if (clock > max_clock)
--		return MODE_CLOCK_HIGH;
--
--	return MODE_OK;
-+	return nouveau_conn_mode_clock_valid(mode, min_clock, max_clock,
-+					     NULL);
- }
-=20
- static struct drm_encoder *
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.h b/drivers/gpu/dr=
-m/nouveau/nouveau_connector.h
-index de84fb4708c7..9e062c7adec8 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.h
-@@ -195,6 +195,11 @@ int nouveau_conn_atomic_get_property(struct drm_conn=
-ector *,
- 				     const struct drm_connector_state *,
- 				     struct drm_property *, u64 *);
- struct drm_display_mode *nouveau_conn_native_mode(struct drm_connector *=
-);
-+enum drm_mode_status
-+nouveau_conn_mode_clock_valid(const struct drm_display_mode *,
-+			      const unsigned min_clock,
-+			      const unsigned max_clock,
-+			      unsigned *clock);
-=20
- #ifdef CONFIG_DRM_NOUVEAU_BACKLIGHT
- extern int nouveau_backlight_init(struct drm_connector *);
-diff --git a/drivers/gpu/drm/nouveau/nouveau_dp.c b/drivers/gpu/drm/nouve=
-au/nouveau_dp.c
-index 2674f1587457..5cba2a23781d 100644
---- a/drivers/gpu/drm/nouveau/nouveau_dp.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_dp.c
-@@ -98,3 +98,30 @@ nouveau_dp_detect(struct nouveau_encoder *nv_encoder)
- 		return NOUVEAU_DP_SST;
- 	return ret;
- }
++-----------------------
++If you want to run a specific set of tests (rather than those listed in the
++KUnit defconfig), you can provide Kconfig options in the ``.kunitconfig`` file.
++This file essentially contains the regular Kernel config, with the specific
++test targets as well. The ``.kunitconfig`` should also contain any other config
++options required by the tests.
 +
-+/* TODO:
-+ * Use the minimum possible BPC here, once we add support for the max bp=
-c
-+ * property.
-+ */
-+enum drm_mode_status
-+nv50_dp_mode_valid(struct drm_connector *connector,
-+		   struct nouveau_encoder *outp,
-+		   const struct drm_display_mode *mode,
-+		   unsigned *out_clock)
-+{
-+	const unsigned min_clock =3D 25000;
-+	unsigned max_clock, clock;
-+	enum drm_mode_status ret;
++A good starting point for a ``.kunitconfig`` is the KUnit defconfig:
+ .. code-block:: bash
+ 
+ 	cd $PATH_TO_LINUX_REPO
+ 	cp arch/um/configs/kunit_defconfig .kunitconfig
+ 
+-Verifying KUnit Works
+----------------------
++You can then add any other Kconfig options you wish, e.g.:
++.. code-block:: none
 +
-+	if (mode->flags & DRM_MODE_FLAG_INTERLACE && !outp->dp.caps.interlace)
-+		return MODE_NO_INTERLACE;
++        CONFIG_LIST_KUNIT_TEST=y
 +
-+	max_clock =3D outp->dp.link_nr * outp->dp.link_bw;
-+	clock =3D mode->clock * (connector->display_info.bpc * 3) / 10;
++:doc:`kunit_tool <kunit-tool>` will ensure that all config options set in
++``.kunitconfig`` are set in the kernel ``.config`` before running the tests.
++It'll warn you if you haven't included the dependencies of the options you're
++using.
 +
-+	ret =3D nouveau_conn_mode_clock_valid(mode, min_clock, max_clock,
-+					    &clock);
-+	if (out_clock)
-+		*out_clock =3D clock;
-+	return ret;
-+}
-diff --git a/drivers/gpu/drm/nouveau/nouveau_encoder.h b/drivers/gpu/drm/=
-nouveau/nouveau_encoder.h
-index 2a8a7aec48c4..e6e782d81330 100644
---- a/drivers/gpu/drm/nouveau/nouveau_encoder.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_encoder.h
-@@ -103,6 +103,10 @@ enum nouveau_dp_status {
- };
-=20
- int nouveau_dp_detect(struct nouveau_encoder *);
-+enum drm_mode_status nv50_dp_mode_valid(struct drm_connector *,
-+					struct nouveau_encoder *,
-+					const struct drm_display_mode *,
-+					unsigned *clock);
-=20
- struct nouveau_connector *
- nouveau_encoder_connector_get(struct nouveau_encoder *encoder);
---=20
-2.24.1
++.. note::
++   Note that removing something from the ``.kunitconfig`` will not trigger a
++   rebuild of the ``.config`` file: the configuration is only updated if the
++   ``.kunitconfig`` is not a subset of ``.config``. This means that you can use
++   other tools (such as make menuconfig) to adjust other config options.
++
++
++Running the tests
++-----------------
+ 
+ To make sure that everything is set up correctly, simply invoke the Python
+ wrapper from your kernel repo:
+@@ -62,6 +81,41 @@ followed by a list of tests that are run. All of them should be passing.
+ 	Because it is building a lot of sources for the first time, the
+ 	``Building KUnit kernel`` step may take a while.
+ 
++Running tests without the KUnit Wrapper
++=======================================
++
++If you'd rather not use the KUnit Wrapper (if, for example, you need to
++integrate with other systems, or use an architecture other than UML), KUnit can
++be included in any kernel, and the results read out and parsed manually.
++
++.. note::
++   KUnit is not designed for use in a production system, and it's possible that
++   tests may reduce the stability or security of the system.
++
++
++
++Configuring the kernel
++----------------------
++
++In order to enable KUnit itself, you simply need to enable the ``CONFIG_KUNIT``
++Kconfig option (it's under Kernel Hacking/Kernel Testing and Coverage in
++menuconfig). From there, you can enable any KUnit tests you want: they usually
++have config options ending in ``_KUNIT_TEST``.
++
++KUnit and KUnit tests can be compiled as modules: in this case the tests in a
++module will be run when the module is loaded.
++
++Running the tests
++-----------------
++
++Build and run your kernel as usual. Test output will be written to the kernel
++log in `TAP <https://testanything.org/>`_ format.
++
++.. note::
++   It's possible that there will be other lines and/or data interspersed in the
++   TAP output.
++
++
+ Writing your first test
+ =======================
+ 
+-- 
+2.25.0.265.gbab2e86ba0-goog
 
