@@ -2,79 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BAF515AC6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:53:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D051C15AC6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:53:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728614AbgBLPxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 10:53:21 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:34774 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727458AbgBLPxU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 10:53:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=I78sEJ8+ptaFjhSR0f/UOcUJHo+xxWDSJ6PGpnWy2jA=; b=aAolVHgx06P+LyOsg4e1QFeLQO
-        pEH2ZkVZkDAChnLpn2F7UjN+8aAl5G5iLMiQho18nhIs5C3ZGq5tuvYmG8c2I36BjVtN0BGFuK9Et
-        kQBtDgqYPw5vx1rbOIxjoq0PBuDYEDZsMfdpHeJTy3SrQUUd+1tJPQzhzVj+jxb+h5iRxhJzukjUb
-        79+lHj+yHwA1dGqwDE7Y/Qum1Usy+OHYQsW3WL3F6iWSw/Y1WYShGh5+1yqVog6ZAWn4iYhOrPse0
-        i0UE878SuDcL1wrmejG7Bjyts2pD1slBEeq6cn1lV8BCvfP6VXSuRr3870DAD4JsPXtxsHl3Cdr+L
-        VZPgbRHA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1uK7-0004NF-GR; Wed, 12 Feb 2020 15:53:11 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5E41E300E0C;
-        Wed, 12 Feb 2020 16:51:20 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8C3EF203A89A7; Wed, 12 Feb 2020 16:53:09 +0100 (CET)
-Date:   Wed, 12 Feb 2020 16:53:09 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     linux-kernel@vger.kernel.org, monstr@monstr.eu, git@xilinx.com,
-        arnd@arndb.de, Stefan Asserhall <stefan.asserhall@xilinx.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [PATCH 3/7] microblaze: Define SMP safe bit operations
-Message-ID: <20200212155309.GA14973@hirez.programming.kicks-ass.net>
-References: <cover.1581522136.git.michal.simek@xilinx.com>
- <6a052c943197ed33db09ad42877e8a2b7dad6b96.1581522136.git.michal.simek@xilinx.com>
+        id S1728689AbgBLPxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 10:53:16 -0500
+Received: from mga04.intel.com ([192.55.52.120]:37261 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728052AbgBLPxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 10:53:14 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 07:53:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,433,1574150400"; 
+   d="scan'208";a="347535140"
+Received: from kuha.fi.intel.com ([10.237.72.53])
+  by fmsmga001.fm.intel.com with SMTP; 12 Feb 2020 07:53:10 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 12 Feb 2020 17:53:09 +0200
+Date:   Wed, 12 Feb 2020 17:53:09 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Prashant Malani <pmalani@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        heikki.krogerus@intel.com,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Benson Leung <bleung@chromium.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Guenter Roeck <groeck@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: Add cros-ec Type C port driver
+Message-ID: <20200212155309.GG1498@kuha.fi.intel.com>
+References: <20200207203752.209296-1-pmalani@chromium.org>
+ <20200207203752.209296-2-pmalani@chromium.org>
+ <CAL_JsqKnQDhnb14TsOeHhXS0UAX6kexe44pfOntrbEcxB0CC9A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6a052c943197ed33db09ad42877e8a2b7dad6b96.1581522136.git.michal.simek@xilinx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAL_JsqKnQDhnb14TsOeHhXS0UAX6kexe44pfOntrbEcxB0CC9A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 04:42:25PM +0100, Michal Simek wrote:
-> From: Stefan Asserhall <stefan.asserhall@xilinx.com>
+Hi Rob,
+
+On Tue, Feb 11, 2020 at 05:25:13PM -0600, Rob Herring wrote:
+> > +examples:
+> > +  - |+
+> > +    typec {
+> > +      compatible = "google,cros-ec-typec";
+> > +
+> > +      port@0 {
 > 
-> For SMP based system there is a need to have proper bit operations.
-> Microblaze is using exclusive load and store instructions.
+> 'port' is reserved for OF graph binding which this is not.
 > 
-> Signed-off-by: Stefan Asserhall <stefan.asserhall@xilinx.com>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> > +        port-number = <0>;
+> > +        power-role = "dual";
+> > +        data-role = "dual";
+> > +        try-power-role = "source";
+> 
+> These are usb-connector binding properties, but this is not a
+> usb-connector node. However, I think it should be. The main thing to
+> work out seems to be have multiple connectors.
+> 
+> With your binding, how does one associate the USB host controller with
+> each port/connector? That's a solved problem with the connector
+> binding.
 
-> +/*
-> + * clear_bit doesn't imply a memory barrier
-> + */
-> +#define smp_mb__before_clear_bit()	smp_mb()
-> +#define smp_mb__after_clear_bit()	smp_mb()
+It looks like OF graph is required to be used for that. The plan was
+actually to propose that we use device properties "usb2-port" and
+"usb3-port" that directly reference the port nodes under the USB host
+controller, but I guess that's too late for that.
 
-These macros no longer exist.
+OF graph creates one problem. We are going to need to identify the
+endpoints somehow in the USB Type-C drivers, so how do we know which
+endpoint is for example the USB2 port, which is USB3, which is
+DisplayPort, etc?
 
-Also, might I draw your attention to:
+Does the remote-endpoint parent need to have a specific compatible
+property, like the USB2 port needs to have compatible = "usb2-port"
+and so on?
 
-  include/asm-generic/bitops/atomic.h
+thanks,
 
-This being a ll/sc arch, I'm thinking that if you do your atomic_t
-implementation right, the generic atomic bitop code should be near
-optimal.
+-- 
+heikki
