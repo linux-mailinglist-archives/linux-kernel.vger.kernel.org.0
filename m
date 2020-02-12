@@ -2,168 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3A7915AE82
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 18:14:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A63315ADEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 18:01:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728793AbgBLRN4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 12:13:56 -0500
-Received: from a80-127-99-228.adsl.xs4all.nl ([80.127.99.228]:37756 "EHLO
-        hetgrotebos.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726728AbgBLRNz (ORCPT
+        id S1728576AbgBLRBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 12:01:11 -0500
+Received: from mail1.bemta26.messagelabs.com ([85.158.142.2]:47105 "EHLO
+        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726351AbgBLRBK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 12:13:55 -0500
-X-Greylist: delayed 1723 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Feb 2020 12:13:54 EST
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=wizzup.org;
-         s=mail; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:
-        Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=ZrFv79XmQN2t/hZYh19DmJQWLHJ5TcEW4pzIc6Gdimk=; b=X6IaEaPT6V8oEPKYGhmzZ6bZ4N
-        y49T9nnJzEaOmmXPy6ksXVy42j2NK1otan9Q6MGvFbKnllnhQ46fxmZQrjwZdT8Fh3G9wdNWpKQV2
-        uRDVh+UhBNwGL4U5aiUqz6ZdM52x8jYEASZ8/0GRAVecz2T+QAFa00ykA+KALT+cGmr7kpwy3kB0/
-        B1iDGwepDU9iOnenBbs+0f0QT2fe0kBvvHmAWFzSomNp+obhbirp5lBBGxXMh+sJM+2QROQm2o9qX
-        A4TK9+Jfns2Vm8f79zDUgKEdjAqitAWQVEsidkbPP0V3oYwM1rq3/ZmM/cGDNM2Tb3LwCiUIlxWdt
-        QDcK3Q5A==;
-Received: from archivecd-merlijn-development-nuc-1.fritz.box ([192.168.178.36])
-        by hetgrotebos.org with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <merlijn@wizzup.org>)
-        id 1j1v8P-0001jl-8M; Wed, 12 Feb 2020 16:45:09 +0000
-From:   Merlijn Wajer <merlijn@wizzup.org>
-To:     merlijn@wizzup.org, linux-scsi@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] scsi: sr: get rid of sr global mutex
-Date:   Wed, 12 Feb 2020 17:44:45 +0100
-Message-Id: <20200212164445.1171-1-merlijn@wizzup.org>
-X-Mailer: git-send-email 2.17.1
+        Wed, 12 Feb 2020 12:01:10 -0500
+Received: from [100.113.3.77] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-2.bemta.az-a.eu-central-1.aws.symcld.net id 65/3D-54715-25F244E5; Wed, 12 Feb 2020 17:01:06 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA1VTbUxbVRjm3Hvb3iFdDgXSQ6UCdV/gWlox7i7
+  bzIyE1cR9yNwfnbgLvaM1/cC2ZIUlZnyoFGRsDNxoKGOzRNwoYHGTMaYGjKNEHGMQYQKRrGOA
+  oigoyEZnb2839c/J87zP+z7nOSfnkLioSCAhGZuVMRtpvYwfTmhThKnyjJS0TGXJdUAN3ezGq
+  ObiUoyqmfTxqd6eQpz6ayhAb3XW8akOv4dPrTycwqiJtimcGm9ZJai2JTfY+YS6baGIr77iGB
+  eoGzx56o+7ZjC154Kdr673vqpu/XyYUC94ntpHvs7TGbNMtkM87cS9y7zcxihbqX2cOAZKosp
+  AOAlgI44qHxQBjnxLILurGONIO0D3K/7ms4SAvThqWKwPKiJYhSHf7bkQGQdo4kFFgKwh+ZBC
+  p3p/Co5Ew08BuuavDjrjsA9HV2vb8TJAklFwPzrZRLID0fA15D9djHHYhAbGFoKYgOvRWF0Hz
+  mIhfBN5J77mcbu5eGjs+AcC1mcNfAmdc8exPQBK0WLhxWA/DsXotu9s0AdBiFxdN3AOx6CZO3
+  4e188gb9EI4OqbUf8PvhBORF3fnwvNStHg2fJQfTfqW+gL4WS0cvV+qIdCrvL3CDYOguuQvzu
+  fK+vR8PQAj8Mb0MgvpaEIcehibUvwKAi6CdR4vJA4AZSO/8R2BKxwmIRaO1O4ciKqLp8UOII3
+  EYm8tT6iARAXAJVl1uVorQZap5erlEq5SpUqV8m3bFHQBXJaweTJsxmj1UwHRAV9xKKw5Buy9
+  RqFkbF6QOAJat4BuzvATfdvim4QS2KyGOFsQlqmaG2WSZOvpS3at8x5esbSDeJIUoaEWfKAFm
+  lmchjbYZ0+8JAfyYiMkEULD7Ky0JJLGyy6HE7qA1vJEzPO8zjZ7mwMrN+wq4gwmoyMRCwcZgc
+  gO6DNMz62e/Q1BoFUEiUEYWFhoohcxmzQWf+vzwIxCWRRwhLWJUJntD7edTYQCAsEqkgKBrLS
+  /0qSY9i+z1Kdp5Pmn7xSCXbGXnIb91eRvFWt4+EmDP6Ysp3fHb634M/1f4hXP/pK5mxR8Zol0
+  S9MZZnemEkfrZ5/UdB/RvOzt2AOXRt6zjT74dzyweVs1UjzAf8zbunSnW1ltshdmwa+WEzY3P
+  C7Y7UuQzDfceDd1qr4dTtG4s7YJjMlM7727Zobtl1NR7eOvp/cpah+pZYUJ9y6nLdBtG2ghFd
+  jt/fugXcH6zw9lU0bpwWHv0x/marUxKc545cyNi6PP902fy/hSHKlpTPd3hYjkhqEPcqKX+fv
+  To9Yvmsc9sDrz4fhO55dWUsl1nhOuuS2S/V+a6dyr/uo/9Dy2/2jhk/yY50ywqKlVcm42UL/A
+  14sn0qVBAAA
+X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
+X-Msg-Ref: server-6.tower-233.messagelabs.com!1581526865!1083509!1
+X-Originating-IP: [104.47.13.51]
+X-SYMC-ESS-Client-Auth: mailfrom-relay-check=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.44.25; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 9140 invoked from network); 12 Feb 2020 17:01:05 -0000
+Received: from mail-he1eur04lp2051.outbound.protection.outlook.com (HELO EUR04-HE1-obe.outbound.protection.outlook.com) (104.47.13.51)
+  by server-6.tower-233.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 12 Feb 2020 17:01:05 -0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=auYkxJ4dhXxeKRbP8K/gga0OroGV5kAqkgIQOCLn/nplUw5B+9Z5LQY7yFBfVs/umdVU6iBZeR7inr5cZcSZz3R/qC0qMpX3qppmhUQwF4dJps78bikNbvK0Q40EZXfHU2HS5Rgfh23GaCqmBacsCKn3PTH1jTWoc5wt20O6x+lm3+fXYdbvH6T6tnt7oIvG8TjpoB7xO2nYkxZNjtMn0/z93405j4Mpa51AJ4cFOd9mglo2QQK1R2uBLEXJtQZGQ8BDPb5glPVINklFaMhbkedvJhFzEEdlu0yUoYoDbcGZHEWKRX2HxM1NLggJPWtybfnDWe8pljuqeDOrqf5/Sg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BhpGFwof2GNhCRRD26ntc9hHvmXKpz85pZfAR6EE2TY=;
+ b=IlghsstShRM4h0i7Y4j/+N1COuZ+r3RT47rFTYIzxsuuTpvxyo2lRnUtt083AJoA7J6ZU/gbQfN7UPUHq73PEs2iJCPz6btx/JAGNSdWwfpAjct2XZS3mD/YFsgSc9Cf443ZiH+7G3VtJCTEi2+v1U7Vw2qy65Johlj5oJ2fge7wY95uNLUH7u/+L1YPcAoZY9enLmV0n4MRqfbNqO/gHRTngBrPffr8BcFbJaNch886I5YCs2U71ksZROKM6VWlyJvhBiZKPxdgk3UazDoIL4xmhJq0EmHdgOVKMmqPrdoLyjbNcPCPvZosYt2Ye9PAfczw3XfqhDK6oF1Rlfkv+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=diasemi.com; dmarc=pass action=none header.from=diasemi.com;
+ dkim=pass header.d=diasemi.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=dialogsemiconductor.onmicrosoft.com;
+ s=selector1-dialogsemiconductor-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BhpGFwof2GNhCRRD26ntc9hHvmXKpz85pZfAR6EE2TY=;
+ b=IK9pxZec0qltlqVcKAQlgkbYJ6c78DwDVqs8fXXa0lnmwwbe4hcwaMqnyFomBXEsVF3i9kUn3MwJLE01AzqK+ocCD4p6http3M9rN+8ZrHsu2YVXacaW8F8D2ERWWG/6f1bJmw0iRmB7P7j6Zbuea7bhYjtPN76ca3HQTJJHusc=
+Received: from AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM (20.177.116.141) by
+ AM6PR10MB2952.EURPRD10.PROD.OUTLOOK.COM (10.255.122.161) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.22; Wed, 12 Feb 2020 17:01:03 +0000
+Received: from AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::993f:cdb5:bb05:b01]) by AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::993f:cdb5:bb05:b01%7]) with mapi id 15.20.2729.021; Wed, 12 Feb 2020
+ 17:01:03 +0000
+From:   Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        "Sridharan, Ranjani" <ranjani.sridharan@intel.com>
+CC:     "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        Support Opensource <Support.Opensource@diasemi.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Chiang, Mac" <mac.chiang@intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        "Lu, Brent" <brent.lu@intel.com>,
+        "cychiang@google.com" <cychiang@google.com>
+Subject: RE: [alsa-devel] [PATCH] ASoC: da7219: check SRM lock in trigger
+ callback
+Thread-Topic: [alsa-devel] [PATCH] ASoC: da7219: check SRM lock in trigger
+ callback
+Thread-Index: AQHV3+t05QGFzNuez06VZ5VdF8K2kqgUfAmAgAFKeYCAAGrTgIAARPoAgAAJp4CAAAclgIAAAzgAgADQubCAAFzUAIAAEt9Q
+Date:   Wed, 12 Feb 2020 17:01:03 +0000
+Message-ID: <AM6PR10MB22636A4193260B94F17EB9FC801B0@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
+References: <1581322611-25695-1-git-send-email-brent.lu@intel.com>
+ <AM6PR10MB2263F302A86B17C95B16361280190@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
+ <SN6PR11MB26702B2E7E5F705425517F4897180@SN6PR11MB2670.namprd11.prod.outlook.com>
+ <855c88fb-4438-aefb-ac9b-a9a5a2dc8caa@linux.intel.com>
+ <CAFQqKeWHDyyd_YBBaD6P2sCL5OCNEsiUU6B7eUwtiLv8GZU0yg@mail.gmail.com>
+ <2eeca7fe-aec9-c680-5d61-930de18b952b@linux.intel.com>
+ <CAFQqKeXK3OG7KXaHGUuC75sxWrdf11xJooC7XsDCOyd6KUgPTQ@mail.gmail.com>
+ <c9dbcdd8-b943-94a6-581f-7bbebe8c6d25@linux.intel.com>
+ <AM6PR10MB22630C79D08CE74878A6A096801B0@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
+ <043c8384-6ce2-c78e-f52c-6a37a4bab3a0@linux.intel.com>
+In-Reply-To: <043c8384-6ce2-c78e-f52c-6a37a4bab3a0@linux.intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.225.80.85]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 4598d1e0-e647-4365-475c-08d7afdd24ab
+x-ms-traffictypediagnostic: AM6PR10MB2952:
+x-ms-exchange-sharedmailbox-routingagent-processed: True
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM6PR10MB295218A3A4F6B07319F111F6A71B0@AM6PR10MB2952.EURPRD10.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0311124FA9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(346002)(366004)(376002)(39850400004)(199004)(189003)(86362001)(186003)(7696005)(52536014)(26005)(66556008)(64756008)(66446008)(55016002)(33656002)(8936002)(2906002)(8676002)(4326008)(81156014)(81166006)(7416002)(71200400001)(478600001)(9686003)(55236004)(53546011)(6506007)(5660300002)(66476007)(110136005)(54906003)(76116006)(316002)(66946007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR10MB2952;H:AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: diasemi.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 4H933pgnTXGUvOLyVwxmuwDDvK/yw+AiwIwUN5XgnnDlv101OVNxG7B9/WlkyoQv4ciIZV5gVK/YA7BaxLsZ555qM/YIK8lWlcPw/lJQ3qOP7g1yN+SJN6wBo9cF0IQxIQbeK7Zpp+91rAM2AhMU6TdJJMAHMuuSr5PMNWWx48gOTkfPRTL+5Iv5oUBS79/cHv3zHazo/bM2z0SjgLlibvCx5d7xMtJpfRBuQad2bi0dym2TLi9ryBu5jScRrP+/NcpbOz60lww+jQtg26RbAFQ5G5WR4Oc+HYljauaIIhxCrDeuXt2tM4RivOGwWljjkESo1Ry4YykV3h/PR4nhGTiHGIlPl5oxESRtHAHcPp6vSTER5Ez/WMobYTU2wXdZBJ/j5gEaZIfgD9oVHnAAjT1TjmNPQLTE40bqwUuz6WfzgnRGZiMqTSKB/CA+Ww9+
+x-ms-exchange-antispam-messagedata: VvVnlXU9e+ZaSI3Fkv/6y1Jc1DYZx8F+QgCoIBmBpRxNIApuUcReOn/68gNrzXCSyBo7wSY4v0dHGpZ61ev6iX7zw0ie5XROcXUDvXpXiYYbLCbITA+GUH1JCLSjeMZ3Q2JyXSNQlMwQKpYy7Hx5xw==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: diasemi.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4598d1e0-e647-4365-475c-08d7afdd24ab
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2020 17:01:03.2443
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 511e3c0e-ee96-486e-a2ec-e272ffa37b7c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3aTMzBTjpFUAkcBu7VK13jgXRiQs2IC4buoqp2sGTPnZPe+YIt0+Bkx0X4lTH0Kr+8vCN5Skz3n4JtsMZERo1iRyxjpBBR6vpUfc83RHqPM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR10MB2952
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When replacing the Big Kernel Lock in commit:
-<2a48fc0ab24241755dc93bfd4f01d68efab47f5a> ("block: autoconvert trivial BKL
-users to private mutex") , the lock was replaced with a sr-wide lock.
-
-This causes very poor performance when using multiple sr devices, as the
-sr driver was not able to execute more than one command to one drive at
-any given time, even when there were many CD drives available.
-
-Replace the global mutex with per-sr-device mutex.
-
-Someone tried this patch at the time, but it never made it
-upstream, due to possible concerns with race conditions, but it's not
-clear the patch actually caused those:
-
-https://www.spinics.net/lists/linux-scsi/msg63706.html
-https://www.spinics.net/lists/linux-scsi/msg63750.html
-
-Also see
-
-http://lists.xiph.org/pipermail/paranoia/2019-December/001647.html
-
-Signed-off-by: Merlijn Wajer <merlijn@wizzup.org>
----
- drivers/scsi/sr.c | 16 +++++++++-------
- drivers/scsi/sr.h |  2 ++
- 2 files changed, 11 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
-index 38ddbbfe5..6809fdcfd 100644
---- a/drivers/scsi/sr.c
-+++ b/drivers/scsi/sr.c
-@@ -77,7 +77,6 @@ MODULE_ALIAS_SCSI_DEVICE(TYPE_WORM);
- 	 CDC_CD_R|CDC_CD_RW|CDC_DVD|CDC_DVD_R|CDC_DVD_RAM|CDC_GENERIC_PACKET| \
- 	 CDC_MRW|CDC_MRW_W|CDC_RAM)
- 
--static DEFINE_MUTEX(sr_mutex);
- static int sr_probe(struct device *);
- static int sr_remove(struct device *);
- static blk_status_t sr_init_command(struct scsi_cmnd *SCpnt);
-@@ -535,9 +534,9 @@ static int sr_block_open(struct block_device *bdev, fmode_t mode)
- 	scsi_autopm_get_device(sdev);
- 	check_disk_change(bdev);
- 
--	mutex_lock(&sr_mutex);
-+	mutex_lock(&cd->lock);
- 	ret = cdrom_open(&cd->cdi, bdev, mode);
--	mutex_unlock(&sr_mutex);
-+	mutex_unlock(&cd->lock);
- 
- 	scsi_autopm_put_device(sdev);
- 	if (ret)
-@@ -550,10 +549,10 @@ static int sr_block_open(struct block_device *bdev, fmode_t mode)
- static void sr_block_release(struct gendisk *disk, fmode_t mode)
- {
- 	struct scsi_cd *cd = scsi_cd(disk);
--	mutex_lock(&sr_mutex);
-+	mutex_lock(&cd->lock);
- 	cdrom_release(&cd->cdi, mode);
- 	scsi_cd_put(cd);
--	mutex_unlock(&sr_mutex);
-+	mutex_unlock(&cd->lock);
- }
- 
- static int sr_block_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
-@@ -564,7 +563,7 @@ static int sr_block_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
- 	void __user *argp = (void __user *)arg;
- 	int ret;
- 
--	mutex_lock(&sr_mutex);
-+	mutex_lock(&cd->lock);
- 
- 	ret = scsi_ioctl_block_when_processing_errors(sdev, cmd,
- 			(mode & FMODE_NDELAY) != 0);
-@@ -594,7 +593,7 @@ static int sr_block_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
- 	scsi_autopm_put_device(sdev);
- 
- out:
--	mutex_unlock(&sr_mutex);
-+	mutex_unlock(&cd->lock);
- 	return ret;
- }
- 
-@@ -700,6 +699,7 @@ static int sr_probe(struct device *dev)
- 	disk = alloc_disk(1);
- 	if (!disk)
- 		goto fail_free;
-+	mutex_init(&cd->lock);
- 
- 	spin_lock(&sr_index_lock);
- 	minor = find_first_zero_bit(sr_index_bits, SR_DISKS);
-@@ -1009,6 +1009,8 @@ static void sr_kref_release(struct kref *kref)
- 
- 	put_disk(disk);
- 
-+	mutex_destroy(&cd->lock);
-+
- 	kfree(cd);
- }
- 
-diff --git a/drivers/scsi/sr.h b/drivers/scsi/sr.h
-index a2bb7b8ba..339c624e0 100644
---- a/drivers/scsi/sr.h
-+++ b/drivers/scsi/sr.h
-@@ -20,6 +20,7 @@
- 
- #include <linux/genhd.h>
- #include <linux/kref.h>
-+#include <linux/mutex.h>
- 
- #define MAX_RETRIES	3
- #define SR_TIMEOUT	(30 * HZ)
-@@ -51,6 +52,7 @@ typedef struct scsi_cd {
- 	bool ignore_get_event:1;	/* GET_EVENT is unreliable, use TUR */
- 
- 	struct cdrom_device_info cdi;
-+	struct mutex lock;
- 	/* We hold gendisk and scsi_device references on probe and use
- 	 * the refs on this kref to decide when to release them */
- 	struct kref kref;
--- 
-2.17.1
-
+T24gMTIgRmVicnVhcnkgMjAyMCAxNTo0OCwgUGllcnJlLUxvdWlzIEJvc3NhcnQgd3JvdGU6DQoN
+Cj4gPj4gVGhhbmtzIFJhbmphbmkuIFRoYXQgaW5mb3JtYXRpb24gY2xvc2VzIHRoZSBkb29yIG9u
+IHRoZSBpZGVhIG9mIHBsYXlpbmcNCj4gPj4gd2l0aCB0aGUgdHJpZ2dlciBvcmRlciBzdWdnZXN0
+ZWQgZWFybGllciBpbiB0aGUgdGhyZWFkLCBzbyBteSBndWVzcyBpcw0KPiA+PiB0aGF0IHdlIHJl
+YWxseSBuZWVkIHRvIGV4cG9zZSB0aGUgTUNMSy9CQ0xLIHdpdGggdGhlIGNsayBBUEkgYW5kIHR1
+cm4NCj4gPj4gdGhlbSBvbi9vZmYgZnJvbSB0aGUgbWFjaGluZSBkcml2ZXIgYXMgbmVlZGVkLiBJ
+IGhvcGUgaXMgdGhhdCB3ZSBkb24ndA0KPiA+PiBuZWVkIHRoZSBGU1lOQyBhcyB3ZWxsLCB0aGF0
+IHdvdWxkIGJlIHJhdGhlciBwYWluZnVsIHRvIGltcGxlbWVudC4NCj4gPg0KPiA+IEFtIG5vdCBn
+b2luZyB0byBtYWtlIG15c2VsZiBwb3B1bGFyIGhlcmUuIEl0J3MgTUNMSyBhbmQgRlNZTkMgKG9y
+IFdDTEsgYXMNCj4gaXQncw0KPiA+IHRlcm1lZCBmb3Igb3VyIGRldmljZSkgdGhhdCBpcyByZXF1
+aXJlZCBmb3IgU1JNIHRvIGxvY2sgaW4gdGhlIFBMTC4NCj4gPg0KPiA+IFNvIGZhciBJJ3ZlIG5v
+dCBmb3VuZCBhIHdheSBpbiB0aGUgY29kZWMgZHJpdmVyIHRvIGJlIGFibGUgdG8gZ2V0IGFyb3Vu
+ZCB0aGlzLg0KPiA+IEkgc3BlbnQgYSB2ZXJ5IGxvbmcgdGltZSB3aXRoIFNhdGh5YSBpbiB0aGUg
+ZWFybHkgZGF5cyAoQXBvbGxvIExha2UpIGxvb2tpbmcgYXQNCj4gPiBvcHRpb25zIGJ1dCBub3Ro
+aW5nIHdvdWxkIGZpdCB3aGljaCBpcyB3aHkgSSBoYXZlIHRoZSBzb2x1dGlvbiB0aGF0J3MgaW4g
+cGxhY2UNCj4gPiByaWdodCBub3cuIFdlIGNvdWxkIHByb2JhYmx5IHJlZHVjZSB0aGUgbnVtYmVy
+IG9mIHJlY2hlY2tzIGJlZm9yZSB0aW1lb3V0IGluDQo+IHRoZQ0KPiA+IGRyaXZlciBidXQgdGhh
+dCdzIHJlYWxseSBqdXN0IHBhcGVyaW5nIG92ZXIgdGhlIGNyYWNrIGFuZCB0aGVyZSdzIHN0aWxs
+IHRoZQ0KPiA+IHBvc3NpYmlsaXR5IG9mIG5vaXNlIGxhdGVyIHdoZW4gU1JNIGZpbmFsbHkgZG9l
+cyBsb2NrLg0KPiANCj4gU29ycnksIHlvdSBsb3N0IG1lIGF0ICJ0aGUgc29sdXRpb24gdGhhdCdz
+IGluIHBsYWNlIHJpZ2h0IG5vdyIuIFRoZXJlIGlzDQo+IG5vdGhpbmcgaW4gdGhlIGJ4dF9kYTcy
+MTlfbWF4OTgzNTdhLmMgY29kZSB0aGF0IGRlYWxzIHdpdGggY2xvY2tzIG9yDQo+IGRlZmluZXMg
+YSB0cmlnZ2VyIG9yZGVyPw0KDQpJIG1lYW50IHNvbHV0aW9uIGluIHRoZSBjb250ZXh0IG9mIHRo
+ZSBjb2RlYyBkcml2ZXIuIFRoZSBhcHByb2FjaCBvcg0KZXhwZWN0YXRpb24gKG1heWJlIG1vcmUg
+c3VpdGFibGUgd29yZGluZykgZm9yIHRoZSBkcml2ZXIgaXMgdGhhdCB0aGUgcmVxdWlyZWQNCmNs
+b2NraW5nIGNhbiBiZSBlbmFibGVkIHByaW9yIHRvIHRoZSBEQUkgd2lkZ2V0IGZvciB0aGUgY29k
+ZWMgYmVpbmcgcG93ZXJlZCB2aWENCkRBUE0gYXMgcGFydCBvZiBhbiBhdWRpbyBwYXRoLiBUaGlz
+IGFwcHJvYWNoIGhhcyBiZWVuIHRoZXJlIHNpbmNlIHRoZSBiZWdpbm5pbmcsDQpmb3Igd2FudCBv
+ZiBhIGJldHRlciBvcHRpb24sIGFuZCBJJ3ZlIGFsd2F5cyBoaWdobGlnaHRlZCB0aGlzIG5lZWQg
+d2hlbg0KcGxhdGZvcm1zIGFyZSB1c2luZyBvdXIgZGV2aWNlIHdpdGggU1JNLg0KDQpZb3UncmUg
+cmlnaHQgdGhvdWdoIHRoYXQgdGhpcyBpc24ndCB0YWtlbiBjYXJlIG9mIGluIGV4aXN0aW5nIG1h
+aW5saW5lIExpbnV4DQptYWNoaW5lIGZpbGVzIHRoYXQgdXNlIHRoaXMgZGV2aWNlIHdpdGggU1JN
+Lg0K
