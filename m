@@ -2,85 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B180E15A930
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 13:30:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5371215A932
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 13:31:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbgBLMaT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 07:30:19 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:37613 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725887AbgBLMaT (ORCPT
+        id S1727856AbgBLMaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 07:30:55 -0500
+Received: from fw.difson.gob.mx ([200.38.154.174]:41876 "EHLO
+        mail.difson.gob.mx" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725887AbgBLMaz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 07:30:19 -0500
-Received: by mail-qk1-f196.google.com with SMTP id c188so1835729qkg.4
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 04:30:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=2YAAi82KRVa7ktUoT85C9ZCSdgpeOgvdOFNrlRCdrz8=;
-        b=JsRbV06qHVZ6Qn1F5A9M7UlSU3cMwrfgLbddxXDwgDf3VoUPVMkd1m81kUBpsElspj
-         v1qTjgctpyYP+3WIvzQlhA6VRGmg6t5d/TBPiyi8LD6zJCLq2p1r6CUSIB2UfYekSDQG
-         MCVpSQIQNryDJNULr2EI4o6/of6g66yoCz4NgRhrblwsSkgYhwf2/+GbWVIHaCneQ4WT
-         4Tj69IZwAR8o1XkTNpyKTx7vHmKgy7u/BfRlvu2IRaxaGUwF7LJ3MmIMqLRZwPSSIWnu
-         7mMxK4N6AyeBdiTHNj/8EOeJMl+s7lOURLZmfNAcH1R1C3eXAN5g5XLAijvpw+/WAhUO
-         fsnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=2YAAi82KRVa7ktUoT85C9ZCSdgpeOgvdOFNrlRCdrz8=;
-        b=L0WR/ZHHJaaRJWbHZZ2OI7KaoG0VeEKaaBQcj80QyeEBgcMpyyp9+64KQrJwLk9155
-         fPIX6qJF71rmf8wrz/C8ljyLKtjSprTGNiEU84INOe+TqFgNTHYcBIsy103l4SIjcAX1
-         mYJQYzy+wU4ZGVUzRYKWPz3kD7tzoSyFfgTM/Kw0lasXuqOdcWLxfNX01+5krApnooDo
-         M4txQ7MW3zGUpnbKg5c8TrDX/ApTlsn8YVI+Q5he2xiNjJBqXjmOEuZwNgc+EZvb+l/M
-         05qbwAoR1m2Yx6zEDGz0ImN1kR2SPX5bbVFZYAiN1cQBC/I7b9Sn68eEw2bGgQgvCt6L
-         e99g==
-X-Gm-Message-State: APjAAAU5HYUDSKhlLnhGOXzhpmbbBEckDbAfyG2uDNzoWDeCkkwZ9P3S
-        /oQ5uyr6YkgwA7yMymf70dOTqQ==
-X-Google-Smtp-Source: APXvYqxS/gQQHOq0dxkxvnTrRkEJ/mYkj/ZHJsPvgbmrK3JOtXMegtyrLV1boEHF7JvNv72J4td8oA==
-X-Received: by 2002:a05:620a:122a:: with SMTP id v10mr6440245qkj.79.1581510617666;
-        Wed, 12 Feb 2020 04:30:17 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id 65sm41786qtf.95.2020.02.12.04.30.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2020 04:30:17 -0800 (PST)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2 5/5] kcsan: Introduce ASSERT_EXCLUSIVE_BITS(var, mask)
-Date:   Wed, 12 Feb 2020 07:30:16 -0500
-Message-Id: <ED2B665D-CF42-45BD-B476-523E3549F127@lca.pw>
-References: <CANpmjNOWzWB2GgJiZx7c96qoy-e+BDFUx9zYr+1hZS1SUS7LBQ@mail.gmail.com>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>, Jan Kara <jack@suse.cz>
-In-Reply-To: <CANpmjNOWzWB2GgJiZx7c96qoy-e+BDFUx9zYr+1hZS1SUS7LBQ@mail.gmail.com>
-To:     Marco Elver <elver@google.com>
-X-Mailer: iPhone Mail (17D50)
+        Wed, 12 Feb 2020 07:30:55 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.difson.gob.mx (Postfix) with ESMTP id 6185D322584;
+        Wed, 12 Feb 2020 05:25:16 -0700 (MST)
+Received: from mail.difson.gob.mx ([127.0.0.1])
+        by localhost (mail.difson.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 81g18dWODj1d; Wed, 12 Feb 2020 05:25:15 -0700 (MST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.difson.gob.mx (Postfix) with ESMTP id B0B9D32276F;
+        Wed, 12 Feb 2020 05:25:06 -0700 (MST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.difson.gob.mx B0B9D32276F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=difson.gob.mx;
+        s=D7CA4582-F2E2-11E6-8966-AB4C44A37E80; t=1581510307;
+        bh=CCsdjUn93d2HhSd5ktyBvMZanwOvK273mCFKi6ndu1s=;
+        h=Date:From:Message-ID:MIME-Version;
+        b=IrlPExfEkRG6YUAUmXXn3fmwPrNOwxkTxnHMW6Blf5O+OiSXOP+Io4HqFivfHmouQ
+         1KZOOeEdUj3RFzJbUVkv0r06FO4mYS0lH6tsM5bS4ySRXAw5qZjAfYS8EVjH2TNI7m
+         aYsdgEyzWbEflowlDMgO3OGgKHMbtrU/v13kQAbA=
+X-Virus-Scanned: amavisd-new at difson.gob.mx
+Received: from mail.difson.gob.mx ([127.0.0.1])
+        by localhost (mail.difson.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id UGgDv3rE7tB6; Wed, 12 Feb 2020 05:25:05 -0700 (MST)
+Received: from mail.difson.gob.mx (mail.difson.gob.mx [10.0.0.28])
+        by mail.difson.gob.mx (Postfix) with ESMTP id 69B4232237D;
+        Wed, 12 Feb 2020 05:24:19 -0700 (MST)
+Date:   Wed, 12 Feb 2020 05:24:18 -0700 (MST)
+From:   Friedrich And Annand Mayrhofer <rossy.kuroda@difson.gob.mx>
+Reply-To: Friedrich And Annand Mayrhofer <friedricmayrhofer8@gmail.com>
+Message-ID: <1298935037.49425.1581510258660.JavaMail.zimbra@difson.gob.mx>
+Subject: Did You Get My Message This Time?
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.12_GA_3803 (zclient/8.8.12_GA_3803)
+Thread-Index: ou9Z4BLFSjWa54tOwre/7KML5IJusw==
+Thread-Topic: Did You Get My Message This Time?
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-
-> On Feb 12, 2020, at 5:57 AM, Marco Elver <elver@google.com> wrote:
->=20
-> KCSAN is currently in -rcu (kcsan branch has the latest version),
-> -tip, and -next.
-
-It would like be nice to at least have this patchset can be applied against t=
-he linux-next, so I can try it a spin.
-
-Maybe a better question to Paul if he could push all the latest kcsan code b=
-ase to linux-next soon since we are now past the merging window. I also noti=
-ced some data races in rcu but only found out some of them had already been f=
-ixed in rcu tree but not in linux-next.=
+This is the second time i am sending you this mail.I, Friedrich Mayrhofer Donate $ 1,000,000.00 to You, Email Me personally for more details
+.Regards.
+Friedrich Mayrhofer
