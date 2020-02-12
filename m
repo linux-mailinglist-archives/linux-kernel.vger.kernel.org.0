@@ -2,147 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3246915ACAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 17:04:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B60EA15ACB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 17:04:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728690AbgBLQEE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 11:04:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53926 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726728AbgBLQEE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 11:04:04 -0500
-Received: from localhost (unknown [104.132.1.104])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26EFD2082F;
-        Wed, 12 Feb 2020 16:04:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581523443;
-        bh=xU2rLIEhWXbj7R8laJx0IdOIdIu2LUAcXTPhXJVEGts=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=s2wmDc2m/nLk75G4YSx5bHyDiFUbZLlVFIIXygs098A1skc2j+utskUCrOA66qQl9
-         7jGPPvqRTxjMSKJI4frmiE3XkvpjPDGb/qSUUdl6X3x7jT6kc/DQxsph1C3AF0veK7
-         Y5inDoL9lP0tLIbht/gumou5mEGOejK6bkPVT/ng=
-Date:   Wed, 12 Feb 2020 08:04:02 -0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH net-next 05/10] sysfs: add sysfs_change_owner()
-Message-ID: <20200212160402.GA1799124@kroah.com>
-References: <20200212104321.43570-1-christian.brauner@ubuntu.com>
- <20200212104321.43570-6-christian.brauner@ubuntu.com>
- <20200212131808.GA1789899@kroah.com>
- <20200212150743.zyubvz53unyevbkx@wittgenstein>
+        id S1728767AbgBLQEc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 11:04:32 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41630 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728698AbgBLQEb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 11:04:31 -0500
+Received: by mail-wr1-f65.google.com with SMTP id c9so3032180wrw.8
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 08:04:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KiqSA/av2ZNWBE7nJHGVa6/1LBWU3I7cZAwdWxWzGmE=;
+        b=GANCPNe9XjsbmeyJHI+SqNuFhFhrU5no91yuB/KbQIxyRrRL2oqnecs84I6PI/QFGs
+         0tOu2a8IbgyAQNajlvF4iGbdZkTzztqH1wn352I4W+zIv3zTlm73NfMid12H8TlJlTz/
+         q4VKWsBQ4W3eQD87vL2C3NiCwHrFZGuhegr5o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KiqSA/av2ZNWBE7nJHGVa6/1LBWU3I7cZAwdWxWzGmE=;
+        b=WKKA9bjkwmR1f2zo6m2SADvWFpUZ3Nj9leSjQZMy1BD2XH8rA0uZMU4BVecEfIse8P
+         IXFWUd5YaYOKOYOGX6ZQWtfFtlP2E8GlWj2ONpMtKQVZzmmYrW8RqnmEVt57/HdZLpSU
+         PHb41j7C2qhyNk+IKfLsOK+IPa/O8+D0lCGegGr+uqN8Wr+p5wjEs060oI+txJxJQb+m
+         1KxYTx1lhulq8AQDlaSH09BsPX5ArbUlBbtVdiXV4TpDC8yhvfY52Yeyffj5rqizIKSa
+         MN32ZbN1B28V1dRkgUbp8QPxBh8Yyac0vRT8kLwzMa+bL4BDY3NzC+v2EiA7ZTzRZG1P
+         tEBg==
+X-Gm-Message-State: APjAAAWU6B8iCXXah3SCzFLAwsCxUdlJW7o1tvv94E2I+TAvJcWb4G4X
+        oe+FZR2QH1yR9cbUq5LLgWAN3A==
+X-Google-Smtp-Source: APXvYqwiFlaR/PcLMnFrEko6dVuZAo41bD1fmgeH/VsTsTT+BFsSRrriqlqG425HJ7hspZN+2aM0cQ==
+X-Received: by 2002:a5d:4b88:: with SMTP id b8mr16010468wrt.343.1581523470287;
+        Wed, 12 Feb 2020 08:04:30 -0800 (PST)
+Received: from google.com ([2a00:79e0:42:204:8a21:ba0c:bb42:75ec])
+        by smtp.gmail.com with ESMTPSA id b21sm1346559wmd.37.2020.02.12.08.04.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2020 08:04:29 -0800 (PST)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Wed, 12 Feb 2020 17:04:27 +0100
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Jann Horn <jannh@google.com>, KP Singh <kpsingh@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kernel Team <kernel-team@fb.com>
+Subject: Re: BPF LSM and fexit [was: [PATCH bpf-next v3 04/10] bpf: lsm: Add
+ mutable hooks list for the BPF LSM]
+Message-ID: <20200212160427.GA259057@google.com>
+References: <CAG48ez25mW+_oCxgCtbiGMX07g_ph79UOJa07h=o_6B6+Q-u5g@mail.gmail.com>
+ <20200211190943.sysdbz2zuz5666nq@ast-mbp>
+ <CAG48ez2gvo1dA4P1L=ASz7TRfbH-cgLZLmOPmr0NweayL-efLw@mail.gmail.com>
+ <20200211201039.om6xqoscfle7bguz@ast-mbp>
+ <CAG48ez1qGqF9z7APajFyzjZh82YxFV9sHE64f5kdKBeH9J3YPg@mail.gmail.com>
+ <20200211213819.j4ltrjjkuywihpnv@ast-mbp>
+ <CAADnVQLsiWgSBXbuxmpkC9TS8d1aQRw2zDHG8J6E=kfcRoXtKQ@mail.gmail.com>
+ <1cd10710-a81b-8f9b-696d-aa40b0a67225@iogearbox.net>
+ <20200212024542.gdsafhvqykucdp4h@ast-mbp>
+ <ff6dec98-5e33-4603-1b90-e4bff23695cc@iogearbox.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200212150743.zyubvz53unyevbkx@wittgenstein>
+In-Reply-To: <ff6dec98-5e33-4603-1b90-e4bff23695cc@iogearbox.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 04:07:43PM +0100, Christian Brauner wrote:
-> On Wed, Feb 12, 2020 at 05:18:08AM -0800, Greg Kroah-Hartman wrote:
-> > On Wed, Feb 12, 2020 at 11:43:16AM +0100, Christian Brauner wrote:
-> > > Add a helper to change the owner of sysfs objects.
-> > 
-> > Seems sane, but:
-> > 
-> > > The ownership of a sysfs object is determined based on the ownership of
-> > > the corresponding kobject, i.e. only if the ownership of a kobject is
-> > > changed will this function change the ownership of the corresponding
-> > > sysfs entry.
-> > 
-> > A "sysfs object" is a kobject.  So I don't understand this sentance,
-> > sorry.
-> 
-> I meant that only if you change the uid/gid the underlying kobject is
-> associated with will this function do anything, meaning that you can't
-> pass in uids/gids directly. I'll explain why I did this down below [1].
-> Sorry if that was confusing.
-> 
-> > 
-> > > This function will be used to correctly account for kobject ownership
-> > > changes, e.g. when moving network devices between network namespaces.
+On 12-Feb 14:27, Daniel Borkmann wrote:
+> On 2/12/20 3:45 AM, Alexei Starovoitov wrote:
+> > On Wed, Feb 12, 2020 at 01:09:07AM +0100, Daniel Borkmann wrote:
 > > > 
-> > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> > > ---
-> > >  fs/sysfs/file.c       | 35 +++++++++++++++++++++++++++++++++++
-> > >  include/linux/sysfs.h |  6 ++++++
-> > >  2 files changed, 41 insertions(+)
-> > > 
-> > > diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
-> > > index 6239d9584f0b..6a0fe88061fd 100644
-> > > --- a/fs/sysfs/file.c
-> > > +++ b/fs/sysfs/file.c
-> > > @@ -642,3 +642,38 @@ int sysfs_file_change_owner(struct kobject *kobj, const char *name)
-> > >  	return error;
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(sysfs_file_change_owner);
-> > > +
-> > > +/**
-> > > + *	sysfs_change_owner - change owner of the given object.
-> > > + *	@kobj:	object.
-> > > + */
-> > > +int sysfs_change_owner(struct kobject *kobj)
+> > > Another approach could be to have a special nop inside call_int_hook()
+> > > macro which would then get patched to avoid these situations. Somewhat
+> > > similar like static keys where it could be defined anywhere in text but
+> > > with updating of call_int_hook()'s RC for the verdict.
 > > 
-> > What does this change the owner of the given object _to_?
-> 
-> [1]:
-> So ownership only changes if the kobject's uid/gid have been changed.
-> So when to stick with the networking example, when a network device is
-> moved into a new network namespace, the uid/gid of the kobject will be
-> changed to the root user of the owning user namespace of that network
-> namespace. So when the move of the network device has completed and
-> kobject_get_ownership() is called it will now return a different
-> uid/gid.
-
-Ok, then this needs to say "change the uid/gid of the kobject to..." in
-order to explain what it is now being set to.  Otherwise this is really
-confusing if you only read the kerneldoc, right?
-
-> So my reasoning was that ownership is determined dynamically that way. I
-> guess what you're hinting at is that we could simply add uid_t uid,
-> gid_t gid arguments to these sysfs helpers. That's fine with me too.
-
-It's fine if you want to set it to the "root owner", just say that
-somewhere :)
-
-> It
-> means that callers are responsible to either retrieve the ownership from
-> the kobject (in case it was changed through another call) or the call to
-> syfs_change_owner(kobj, uid, gid) sets the new owner of the kobject. I
-> don't know what the best approach is. Maybe a hybrid whereby we allow
-> passing in uid/gid but also allow passing in ({g,u}id_t - 1) to indicate
-> that we want the ownership to be taken from the kobject itself (e.g.
-> when a network device has been updated by dev_change_net_namespace()).
-> 
+> > Sounds nice in theory. I couldn't quite picture how that would look
+> > in the code, so I hacked:
+> > diff --git a/security/security.c b/security/security.c
+> > index 565bc9b67276..ce4bc1e5e26c 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -28,6 +28,7 @@
+> >   #include <linux/string.h>
+> >   #include <linux/msg.h>
+> >   #include <net/flow.h>
+> > +#include <linux/jump_label.h>
 > > 
-> > > +{
-> > > +	int error;
-> > > +	const struct kobj_type *ktype;
-> > > +
-> > > +	if (!kobj->state_in_sysfs)
-> > > +		return -EINVAL;
-> > > +
-> > > +	error = sysfs_file_change_owner(kobj, NULL);
+> >   #define MAX_LSM_EVM_XATTR      2
 > > 
-> > It passes NULL?
+> > @@ -678,12 +679,26 @@ static void __init lsm_early_task(struct task_struct *task)
+> >    *     This is a hook that returns a value.
+> >    */
+> > 
+> > +#define LSM_HOOK_NAME(FUNC) \
+> > +       DEFINE_STATIC_KEY_FALSE(bpf_lsm_key_##FUNC);
+> > +#include <linux/lsm_hook_names.h>
+> > +#undef LSM_HOOK_NAME
+> > +__diag_push();
+> > +__diag_ignore(GCC, 8, "-Wstrict-prototypes", "");
+> > +#define LSM_HOOK_NAME(FUNC) \
+> > +       int bpf_lsm_call_##FUNC() {return 0;}
+> > +#include <linux/lsm_hook_names.h>
+> > +#undef LSM_HOOK_NAME
+> > +__diag_pop();
+> > +
+> >   #define call_void_hook(FUNC, ...)                              \
+> >          do {                                                    \
+> >                  struct security_hook_list *P;                   \
+> >                                                                  \
+> >                  hlist_for_each_entry(P, &security_hook_heads.FUNC, list) \
+> >                          P->hook.FUNC(__VA_ARGS__);              \
+> > +               if (static_branch_unlikely(&bpf_lsm_key_##FUNC)) \
+> > +                      (void)bpf_lsm_call_##FUNC(__VA_ARGS__); \
+> >          } while (0)
+> > 
+> >   #define call_int_hook(FUNC, IRC, ...) ({                       \
+> > @@ -696,6 +711,8 @@ static void __init lsm_early_task(struct task_struct *task)
+> >                          if (RC != 0)                            \
+> >                                  break;                          \
+> >                  }                                               \
+> > +               if (RC == IRC && static_branch_unlikely(&bpf_lsm_key_##FUNC)) \
+> > +                      RC = bpf_lsm_call_##FUNC(__VA_ARGS__); \
 > 
-> Which means, change the ownership of "kobj" itself and not lookup a file
-> relative to "kobj".
+> Nit: the `RC == IRC` test could be moved behind the static_branch_unlikely() so
+> that it would be bypassed when not enabled.
+> 
+> >          } while (0);                                            \
+> >          RC;                                                     \
+> >   })
+> > 
+> > The assembly looks good from correctness and performance points.
+> > union security_list_options can be split into lsm_hook_names.h too
+> > to avoid __diag_ignore. Is that what you have in mind?
+> > I don't see how one can improve call_int_hook() macro without
+> > full refactoring of linux/lsm_hooks.h
+> > imo static_key doesn't have to be there in the first set. We can add this
+> > optimization later.
+> 
+> Yes, like the above diff looks good, and then we'd dynamically attach the program
+> at bpf_lsm_call_##FUNC()'s fexit hook for a direct jump, so all the security_blah()
+> internals could stay as-is which then might also address Jann's concerns wrt
+> concrete annotation as well as potential locking changes inside security_blah().
+> Agree that patching out via static key could be optional but since you were talking
+> about avoiding indirect jumps..
 
-Ok, that's totally not obvious at all :(
+I like this approach as well. Will give it a go and update the
+patches. Thanks a lot for your inputs!
 
-Better naming please, I know it's hard, but it matters.
+- KP
 
-thanks,
-
-greg k-h
+> 
+> Thanks,
+> Daniel
