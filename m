@@ -2,95 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A257515B55D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 00:53:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4948015B57B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 00:55:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729518AbgBLXwp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 18:52:45 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43284 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729453AbgBLXwb (ORCPT
+        id S1729289AbgBLXyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 18:54:50 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.155]:45572 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727117AbgBLXyt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 18:52:31 -0500
-Received: by mail-lf1-f65.google.com with SMTP id 9so2864727lfq.10;
-        Wed, 12 Feb 2020 15:52:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OX3etwg8UyXmbbSJQLCscVLMHChzcySiKJD4V7kijDA=;
-        b=pb0kujSMPSK9w5g/NZnWBfK3adbQLCtsLhaqCVMO1zfTwrmWPfIqE9FfIUTklifwcQ
-         EpG+m0tpurnUvzieFdKYgbEdgACJYECFHzlBdD2lP8Roe56xjXoSBuQmgO2gDo/PsvZi
-         SFlzdWhQYGZI6EZsLX/fDgvQ0V4V8RgGi0yGYcDpoJXqKm5ZjEdRb2J3c39S7uy3iVta
-         6aHw5RcIuYMcWcbj35bIe5BG2v8ci45vzA54VVZy1ik+OqyvwHF4+6+WsH39gMqPVQpT
-         bLpYVtgl7JBk5ajwAHpy6FIeenOMRAc+wtA7M6jHtaZ3K6SwXJ5a+fMo7OZ3bSIWIl9o
-         LsnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OX3etwg8UyXmbbSJQLCscVLMHChzcySiKJD4V7kijDA=;
-        b=tGhtz7D2IDZCWDyDv5n/MIvMZNtoA0bF2fWiF3Y60dYn611ZHEjkvBz1E4TFCuTnD+
-         D4oHaW+EMc0XRGvpMWpAzPhkgXx9DQafAccpd2zdm25bTvc6Vul550fzuwYO8GnWcjAi
-         n1GFl0Bj9gtKuOajK3w7/9bJsiKb798MHiwb8A+IQNJboe6ST+SohzgOU2GEluEDn3M2
-         w6WJL5kUr/Zx7g4PNlazhYhj5wQ+Mod/1RPrGxCv/Fo2Zs5DvY/MimTcdX53D7nahiDs
-         k/YCAIkKe7cnvDLZxXyXVJv6e4Kko0h9pntZI7XgktcukGzQElQn1WVKr69PsilS1G59
-         sZjw==
-X-Gm-Message-State: APjAAAVibMkF9phuCNVetTmRmd9cE9483vcXglWs2DMmbSE9FXLOBNkv
-        8149uG5OzfHZPOmUoQ9cJl4=
-X-Google-Smtp-Source: APXvYqzB2TcbLmdxgpXvaaPhZYtm6jwsllo4cX22rC0BJrqGpeJtyb78eZi0LoL0mfpDNpirtJvZjQ==
-X-Received: by 2002:a19:7401:: with SMTP id v1mr7867766lfe.129.1581551547805;
-        Wed, 12 Feb 2020 15:52:27 -0800 (PST)
-Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id d5sm251686lfb.20.2020.02.12.15.52.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 15:52:27 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Jasper Korten <jja2000@gmail.com>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v9 17/17] ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
-Date:   Thu, 13 Feb 2020 02:51:34 +0300
-Message-Id: <20200212235134.12638-18-digetx@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200212235134.12638-1-digetx@gmail.com>
-References: <20200212235134.12638-1-digetx@gmail.com>
+        Wed, 12 Feb 2020 18:54:49 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 540C64021DEFD
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 17:54:47 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 21qBjbMAEEfyq21qBjl0tL; Wed, 12 Feb 2020 17:54:47 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=t8u2HZ0HT5+/SCewfd6rUWGx4Yw1GUSodEHJxdPQKF4=; b=azvhQhwBDDmuyVDI/uM62r+9SM
+        BOEAVq7UOdExmHQCPBOb4acQEgMhNNFOnHgA2gOnuCuqhSimmn5sOJY+H5kZmdOS/LwtwLwMbYmzV
+        rle1j8TAsLJZg+ct7qgPr6kPlBGbOm7gRau1quVzOjOzE3ODCHSWpPVtARzAQ5KSn/1YqCnAr97sI
+        6E1h/wdDdXSKx3C15KGrSQ5NJoVMJjAjlwPQX4VlAjCerx9SpI8vKYqfkjC1Ssi241jxPf5QY3JWO
+        1biH+LPt70wlF5MdCLLNaHPH11xkitdQizVnrW5A2JzqMOM3RgWAQWcBtWbyYfC6cNi/smj7PKDRp
+        0E6aCF6w==;
+Received: from [200.68.141.42] (port=1531 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j21q9-003KPE-9T; Wed, 12 Feb 2020 17:54:45 -0600
+Date:   Wed, 12 Feb 2020 17:54:43 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Cc:     linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] stm class: Replace zero-length array with flexible-array
+ member
+Message-ID: <20200212235443.GA18334@embeddedor.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.141.42
+X-Source-L: No
+X-Exim-ID: 1j21q9-003KPE-9T
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [200.68.141.42]:1531
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Tegra CPU Idle driver was moved out into driver/cpuidle/ directory and
-it is now a proper platform driver.
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+struct foo {
+        int stuff;
+        struct boo array[];
+};
+
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
+
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
+
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- arch/arm/configs/tegra_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/hwtracing/stm/policy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index a27592d3b1fa..aa94369bdd0f 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -25,6 +25,7 @@ CONFIG_CPU_FREQ=y
- CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
- CONFIG_CPUFREQ_DT=y
- CONFIG_CPU_IDLE=y
-+CONFIG_ARM_TEGRA_CPUIDLE=y
- CONFIG_VFP=y
- CONFIG_NEON=y
- CONFIG_TRUSTED_FOUNDATIONS=y
+diff --git a/drivers/hwtracing/stm/policy.c b/drivers/hwtracing/stm/policy.c
+index 4f932a419752..603b4a9969d3 100644
+--- a/drivers/hwtracing/stm/policy.c
++++ b/drivers/hwtracing/stm/policy.c
+@@ -34,7 +34,7 @@ struct stp_policy_node {
+ 	unsigned int		first_channel;
+ 	unsigned int		last_channel;
+ 	/* this is the one that's exposed to the attributes */
+-	unsigned char		priv[0];
++	unsigned char		priv[];
+ };
+ 
+ void *stp_policy_node_priv(struct stp_policy_node *pn)
 -- 
-2.24.0
+2.23.0
 
