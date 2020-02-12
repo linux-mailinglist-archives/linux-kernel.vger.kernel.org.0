@@ -2,119 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3D2815B154
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:50:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D46F15B160
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:53:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729044AbgBLTuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 14:50:00 -0500
-Received: from gateway22.websitewelcome.com ([192.185.47.179]:34487 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729018AbgBLTt7 (ORCPT
+        id S1728986AbgBLTxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 14:53:21 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39019 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728098AbgBLTxV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 14:49:59 -0500
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 6C441411A
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 13:49:57 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 1y1Fj6jghAGTX1y1FjIuwh; Wed, 12 Feb 2020 13:49:57 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=TtzHE9bt3EsnQaUgQbettd2dBBa+zgbK1XhwIh6LAZ8=; b=bJr9lPFUVcqwf7A5m+kbN5zfIQ
-        ZM5QxBS1BMjGSLSBomD228kTD9jX8NFst6tcdo0H8OOBMysEt/yfLe0V3JuZlIKLiMAxVBrf2Jftg
-        aX/AjrSQvqADKCSXHxae5RMnUuB2Dn7nP6PSpaqixfsJFt3vdWqVuMDpNUMp8AcGxA7jCZrdWVw+E
-        BsE7mcIZubgYGTw/aPAM3kxXqxXqAv5w6E+2Vk2CruwQoaw+q5UNpm7N2vw6fZe6q30bsiRxk7CkL
-        VyjaijJHlHZnEEO3nei1AgRqHhQFsOCjMEW/dTKBVIa2Vgd2qYFI0V9O0Di0pWd6QSBNZQsw32X5b
-        RjEGWtQA==;
-Received: from [201.144.174.25] (port=3740 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j1y1D-001GNE-QC; Wed, 12 Feb 2020 13:49:56 -0600
-Date:   Wed, 12 Feb 2020 13:52:31 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] auxdisplay: charlcd: replace zero-length array with
- flexible-array member
-Message-ID: <20200212195231.GA2867@embeddedor>
+        Wed, 12 Feb 2020 14:53:21 -0500
+Received: by mail-pg1-f194.google.com with SMTP id j15so1757267pgm.6
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 11:53:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1AWXJaZ+M/XEkvhiKGrLr+34R/ByznWv2S2mVXPNnjg=;
+        b=YamDIrDwFddysAcDWua56hzXv7lDB4HKrdSODVsPwHBE4HHsAYGn+XDZXaLyGGJLuD
+         4N6BTWo6LRFS5vXXP6KAh/l1wvA65OHmtw/S1qbPAdcyTCBTaxonp4pggsf0hy6oitMf
+         nKfCWU9CgVkCLAkcf+IIObAX4N2fivvdfm3BKqhD7SygUsmFFS04afPpEQEn/CexEjIi
+         Uoi9/c1Q4IzArRa+H3OBoOJPbEYqEFKDZcI5QfDUAP1xlIRyhb8ado0qBp7XXWgoaWkS
+         jgAsn9GLQd68qpur8Cz34vSBaC/8FytAq/rnOnK9IxLsgg83nRXtIFX/rUaMDekw5LFg
+         HThw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1AWXJaZ+M/XEkvhiKGrLr+34R/ByznWv2S2mVXPNnjg=;
+        b=ZASy7MF3x4VXrlJvlFL2bJkp+y927crmX0HwW/MgFMHT0VpzauUmITFq6yKEkYCOtJ
+         IfVSNdvcKlwCqOUD9pSnGX5RDov30q+8MwJG1DceFwINxmKg4wmCCyajzZ8GZi8IqCfq
+         0XEA4qKWDAJjTWwDxuAKgn+cbHTsLW+nSp1cVWMu4TzGDuSk89c1kOZHtLfmFnkTWT0v
+         Tt2k6kPAe3MzJnsPxo417QYI3kp6bWhHVPXgBahZY7hNBm6bvvGLKNUWHYbMPtP0o7Of
+         XdPz6k4fp0D1ShafUR3ZqN0D6U5+LV2GEdk+L/B6A6C9UeBo/ShQvt4V6WYDx3xRAIMN
+         eSvg==
+X-Gm-Message-State: APjAAAVwCs/3uao3bkYSVdVdlid9yqquzgZJLKdHU2LnlMw3Zsj8Tmx7
+        718uzG3vDWZLYpDjim1hnIR0Ig==
+X-Google-Smtp-Source: APXvYqwiBlO43Srtx0lyJj2MrAKlNqXYg1FIQ7p5Qm51cLDiEjDInDuC0790jSVHcD0Qe04DoyWBZg==
+X-Received: by 2002:aa7:84c4:: with SMTP id x4mr10064136pfn.144.1581537199973;
+        Wed, 12 Feb 2020 11:53:19 -0800 (PST)
+Received: from google.com ([2620:15c:100:202:d78:d09d:ec00:5fa7])
+        by smtp.gmail.com with ESMTPSA id x21sm49255pfn.164.2020.02.12.11.53.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2020 11:53:18 -0800 (PST)
+Date:   Wed, 12 Feb 2020 11:53:14 -0800
+From:   Oliver Upton <oupton@google.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>
+Subject: Re: [GIT PULL] KVM changes for Linux 5.6-rc2
+Message-ID: <20200212195314.GA27069@google.com>
+References: <20200212164714.7733-1-pbonzini@redhat.com>
+ <CAHk-=wh6KEgPz_7TFqSgg3T29SrCBU+h64t=BWyCKwJOrk3RLQ@mail.gmail.com>
+ <b90a886e-b320-43d3-b2b6-7032aac57abe@redhat.com>
+ <CAHk-=wh8eYt9b8SrP0+L=obHWKU0=vXj8BxBNZ3DYd=6wZTKqw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.144.174.25
-X-Source-L: No
-X-Exim-ID: 1j1y1D-001GNE-QC
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.144.174.25]:3740
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 48
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <CAHk-=wh8eYt9b8SrP0+L=obHWKU0=vXj8BxBNZ3DYd=6wZTKqw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Wed, Feb 12, 2020 at 11:38:20AM -0800, Linus Torvalds wrote:
+> On Wed, Feb 12, 2020 at 11:19 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
+> >
+> > > So this clearly never even got a _whiff_ of build-testing.
+> >
+> > Oh come on.
+> 
+> Seriously - if you don't even _look_ at the warnings the build
+> generates, then it hasn't been build-tested.
+> 
+> I don't want to hear "Oh come on". I'm 100% serious.
+> 
+> Build-testing is not just "building". It's the "testing" of the build
+> too. You clearly never did _any_ testing of the build, since the build
+> had huge warnings.
+> 
+> Without the checking of the result, "build-testing" is just
+> "building", and completely irrelevant.
+> 
+> If you have problems seeing the warnings, add a "-Werror" to your scripts.
+> 
+> I do not want to see a _single_ warning in the kernel build. Yes, we
+> have one in the samples code, and even that annoys the hell out of me.
+> 
+> And exactly because we don't have any warnings in the default build,
+> it should be really really easy to check for new ones - it's not like
+> you have to wade through pages of warnings to see if any of them are
+> your new ones.
+> 
+> So no "Oh come on". You did *zero* testing of this crap, and you need
+> to own that fact instead of making excuses about it.
+> 
+>                    Linus
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+I should've caught this before even a build test, let alone sending it
+out. My apologies for such an obvious + crap mistake.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertenly introduced[3] to the codebase from now on.
-
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/auxdisplay/charlcd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/auxdisplay/charlcd.c b/drivers/auxdisplay/charlcd.c
-index 874c259a8829..c0da3820454b 100644
---- a/drivers/auxdisplay/charlcd.c
-+++ b/drivers/auxdisplay/charlcd.c
-@@ -88,7 +88,7 @@ struct charlcd_priv {
- 		int len;
- 	} esc_seq;
- 
--	unsigned long long drvdata[0];
-+	unsigned long long drvdata[];
- };
- 
- #define charlcd_to_priv(p)	container_of(p, struct charlcd_priv, lcd)
--- 
-2.25.0
-
+--
+Oliver
