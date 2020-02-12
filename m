@@ -2,101 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ACC015A366
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:36:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3804415A36E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:38:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728508AbgBLIg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 03:36:26 -0500
-Received: from smtpq3.tb.mail.iss.as9143.net ([212.54.42.166]:56332 "EHLO
-        smtpq3.tb.mail.iss.as9143.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728462AbgBLIg0 (ORCPT
+        id S1728537AbgBLIih (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 03:38:37 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:46768 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728478AbgBLIih (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 03:36:26 -0500
-Received: from [212.54.42.110] (helo=smtp7.tb.mail.iss.as9143.net)
-        by smtpq3.tb.mail.iss.as9143.net with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <karsdejong@home.nl>)
-        id 1j1nVO-0002VA-AH; Wed, 12 Feb 2020 09:36:22 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=home.nl;
-        s=201809corplgsmtpnl; h=To:Subject:Date:From;
-        bh=OuSzKhfxW8Gje2W8iT3ROQfQieVCxF7/6LjQe5C2nlU=; b=C1tZig2yOeXhiBttMk490YvCX0
-        dpjontyCTTk/xJa/3dIL65DhVpdOJl5etAJlJxJpIPaz33rrpjIsfK4AQFqsys7mUHJ8k6E7s361f
-        4VFIvxmByp2Qyf5nNrThPYAiIlpQZmtbeZJhVuj3wktmZDe+zwOF4wpJ53cm87asc54F09BhOAWq9
-        UNKuaM8R91Dm7zoNYtPn8ZoQrsZX6cWb+E7pn1pdSZA7940UEDqS5NMyL487f9B13ldMXerHc0LLJ
-        Q+kh82B5NlCChuB7Jt4gGza35fScNsVN+Xw9ezZgOJ7PLskAv4PPQj7KSpRwXqxbqfijzj8iT0zWL
-        HsH5ALgQ==;
-Received: from mail-wr1-f48.google.com ([209.85.221.48])
-        by smtp7.tb.mail.iss.as9143.net with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <karsdejong@home.nl>)
-        id 1j1nVO-0001vK-75; Wed, 12 Feb 2020 09:36:22 +0100
-Received: by mail-wr1-f48.google.com with SMTP id y11so1106568wrt.6;
-        Wed, 12 Feb 2020 00:36:22 -0800 (PST)
-X-Gm-Message-State: APjAAAV3AtQMX4mqcKQ6yTeGknTVyv9+ft5rP0fFnE0vl0SRCBYbDp/r
-        PGE5GiMfgh4prLzfEEZWg7GRysDLsYUagi6WL8s=
-X-Google-Smtp-Source: APXvYqypjRsTG8DHRIbsXdGcPAkCfbey86PfEpUgceAU5FztilErtQJztFGZaFVToi09qUn3H+IsvJz7CZ3ylvF5Cf0=
-X-Received: by 2002:a5d:4d04:: with SMTP id z4mr15132130wrt.157.1581496581870;
- Wed, 12 Feb 2020 00:36:21 -0800 (PST)
+        Wed, 12 Feb 2020 03:38:37 -0500
+Received: by mail-vs1-f66.google.com with SMTP id t12so615674vso.13
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:38:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IHqIf5M4paWRQqNMsUfuUrTYwOKU9w45APayE5qNVvs=;
+        b=vUVL+4E/ghJvS34Gw+Yj3FC8/V75VOYPhxzpJQgUT6tMqtb9vakYs2GI0k47MFdUq3
+         hQ1YQcUXc0R3WTcUgNgO26qcrxwrfbqBk8S03K72PonAAM+wa+C7YAI/+/h1u75Nz7/6
+         bXs/K7tD0boEOfEK1j5rFSpxQ77Uht/WRcvdkmaS3Qj/Koerbc7RXmgQiNpT2BqMIviV
+         c1aPNJQ2gzdl+kOtoNYtLEv30u82JjAHSQ6Ha2Pvzj9QtPHdRuICR1mVFVspd4LEEt2F
+         HLSKF5IedVsH0ZCyqPErwfyRP6aU38jYRni922g7VV6DWoY0s4Hj+QxK6PLixQimyXkh
+         AKRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IHqIf5M4paWRQqNMsUfuUrTYwOKU9w45APayE5qNVvs=;
+        b=sy4AFsXhh0dXqxXBo6ELqsURPw49CUE0i1Ve2GkosYTlO99Z5/3DwxT6CvG9qymR0u
+         X7Nv0BE0Aoib7PZECUkW+pNQAMCe56KgnzNLcpOwu6P33JtPGRAHKxFAiH04em9AgMXZ
+         nBgqas1ZjkZf65VAQOvDfYpNCnbDEzWFmjNo4ZsH3XjuGeVkPvBMe1yIxs8US9MSojI3
+         OYOCZxVUZsjC0Odlqao3s0qUIPj+C3gt0rZCjmaQJjNu5oECmJviap1G2SlT9evrJmXm
+         5gc8D90BSl9MH+w0CIFq29GCsUnF8XWw8C8knYUXTNpc+fw6dAcB0vqYSJcI/2K7MuHP
+         OUnQ==
+X-Gm-Message-State: APjAAAWiKP648Ef7HkNG8v42mczpx/vMGDWT94LeaDIc2DcmGtJDsV+M
+        DR574ML2FQR/FwLUay69RVCg32nknlIDeIs+gU76MvW7
+X-Google-Smtp-Source: APXvYqxbfXdatWIwHYUuqWnHyNbcSLk+ziuVt3G+MpDqiO/zFVXyM6TIy0v6BZusgksxp8Nbds6bc8i2h3q/OgH6Deg=
+X-Received: by 2002:a67:f591:: with SMTP id i17mr605202vso.34.1581496715171;
+ Wed, 12 Feb 2020 00:38:35 -0800 (PST)
 MIME-Version: 1.0
-References: <20200211174126.GA29960@embeddedor> <CAMuHMdV3DY1X3s7fvZz8MpxvqsUZAOivc18f40Ca8kHiZqfqKw@mail.gmail.com>
-In-Reply-To: <CAMuHMdV3DY1X3s7fvZz8MpxvqsUZAOivc18f40Ca8kHiZqfqKw@mail.gmail.com>
-From:   Kars de Jong <karsdejong@home.nl>
-Date:   Wed, 12 Feb 2020 09:36:10 +0100
-X-Gmail-Original-Message-ID: <CACz-3rgCkoJ-Zx_RBTLBH0yOhz36dH+io+VFRgsXNx2qqwKVMQ@mail.gmail.com>
-Message-ID: <CACz-3rgCkoJ-Zx_RBTLBH0yOhz36dH+io+VFRgsXNx2qqwKVMQ@mail.gmail.com>
-Subject: Re: [PATCH] treewide: Replace zero-length arrays with flexible-array member
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>
+References: <1654227.8mz0SueHsU@kreacher>
+In-Reply-To: <1654227.8mz0SueHsU@kreacher>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 12 Feb 2020 09:37:59 +0100
+Message-ID: <CAPDyKFrcRzDE9=A28uf2sp=zaJpbEGrW5jm3L6CBVVc=GaL-Jg@mail.gmail.com>
+Subject: Re: [PATCH 00/28] PM: QoS: Get rid of unuseful code and rework CPU
+ latency QoS interface
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-X-SourceIP: 209.85.221.48
-X-Authenticated-Sender: karsdejong@home.nl (via SMTP)
-X-Ziggo-spambar: /
-X-Ziggo-spamscore: 0.0
-X-Ziggo-spamreport: CMAE Analysis: v=2.3 cv=UJNG4BXy c=1 sm=1 tr=0 a=9+rZDBEiDlHhcck0kWbJtElFXBc=:19 a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=IkcTkHD0fZMA:10 a=l697ptgUJYAA:10 a=tBb2bbeoAAAA:8 a=_Wotqz80AAAA:8 a=YMzxVbYnAAAA:20 a=wNy__qbTz1_nECwbz_UA:9 a=QEXdDO2ut3YA:10 a=Oj-tNtZlA1e06AYgeCfH:22 a=buJP51TR1BpY-zbLSsyS:22
-X-Ziggo-Spam-Status: No
-X-Spam-Status: No
-X-Spam-Flag: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Op wo 12 feb. 2020 om 09:00 schreef Geert Uytterhoeven <geert@linux-m68k.org>:
+On Wed, 12 Feb 2020 at 00:39, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
 >
-> Hi Gustavo,
+> Hi All,
 >
-> On Tue, Feb 11, 2020 at 10:49 PM Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
-> > --- a/arch/m68k/tools/amiga/dmesg.c
-> > +++ b/arch/m68k/tools/amiga/dmesg.c
-> > @@ -34,7 +34,7 @@ struct savekmsg {
-> >      u_long magic2;     /* SAVEKMSG_MAGIC2 */
-> >      u_long magicptr;   /* address of magic1 */
-> >      u_long size;
-> > -    char data[0];
-> > +       char data[];
-> >  };
+> This series of patches is based on the observation that after commit
+> c3082a674f46 ("PM: QoS: Get rid of unused flags") the only global PM QoS class
+> in use is PM_QOS_CPU_DMA_LATENCY, but there is still a significant amount of
+> code dedicated to the handling of global PM QoS classes in general.  That code
+> takes up space and adds overhead in vain, so it is better to get rid of it.
 >
-> JFTR, this file is not really part of the kernel, but supposed to be compiled
-> by an AmigaOS compiler, which may predate the introduction of support
-> for flexible array members.
+> Moreover, with that unuseful code removed, the interface for adding QoS
+> requests for CPU latency becomes inelegant and confusing, so it is better to
+> clean it up.
+>
+> Patches [01/28-12/28] do the first part described above, which also includes
+> some assorted cleanups of the core PM QoS code that doesn't go away.
+>
+> Patches [13/28-25/28] rework the CPU latency QoS interface (in the classic
+> "define stubs, migrate users, change the API proper" manner), patches
+> [26-27/28] update the general comments and documentation to match the code
+> after the previous changes and the last one makes the CPU latency QoS depend
+> on CPU_IDLE (because cpuidle is the only user of its target value today).
+>
+> The majority of the patches in this series don't change the functionality of
+> the code at all (at least not intentionally).
+>
+> Please refer to the changelogs of individual patches for details.
+>
+> Thanks!
 
-FYI, there's a reasonably modern toolchain for AmigaOS which can
-compile this just fine (https://github.com/bebbo/amiga-gcc).
+A big thanks for cleaning this up! The PM_QOS_CPU_DMA_LATENCY and
+friends, has been annoying me for a long time. This certainly makes
+the code far better and more understandable!
 
-> Well, even if you keep it included, I guess the rare users can manage ;-)
-> My binary dates back to 1996, and I have no plans to recompile it.
+I have looked through the series and couldn't find any obvious
+mistakes, so feel free to add:
 
-I did, just to check whether it still worked.
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Kind regards,
+Note, the review tag also means, that's fine for you to pick the mmc
+patch via your tree.
 
-Kars.
+Kind regards
+Uffe
