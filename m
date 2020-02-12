@@ -2,109 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D333515A979
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 13:51:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D0C415A97E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 13:53:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728270AbgBLMvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 07:51:22 -0500
-Received: from mail-eopbgr140053.outbound.protection.outlook.com ([40.107.14.53]:8417
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725887AbgBLMvS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 07:51:18 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cVN3pEZLk7RuLRjABcQWSaZKc6WGzC/KfWM+H3MMD/T8x3pQTZFPadDk3Qg1iC8rkFQ679gvUVcKLTJe6LI12H3vm3r96Ecsch2vCqyeYjcWBVQOopLk67ERV50dHHKzr5ZyIlP0U73/YMj1+5dkW6m2fEtrlEC4NuJFNpOztxVMtN3GwaEK3nyU9gpHfsDzHosN4BnWcexkkJoN/m/l5mwO+C2ZfjS9gneC/XNjk3P5UZlTlP2NllKkmY72TBx5Z+U8maOMjWne96rTGKHuTq4v+73XdvQzm+w/i6FI6zU88UYeSLUTw2wLMCZus1bd+eXq0WtmtStIGCLhr337hw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=raNv4B1CGya4jkTomUvQp5srpXT78rPNqVMaS88pbdk=;
- b=TeLrifVuPbF3jwXOmPU2lCqClQwRgjj3OmRLd4UVvExsMVwu/JzOWwv34QjZSAftvALnZbXRVcu1n/Csd139EhBieDACuqcAq0vTBTYjMkkoq/OHBf6WCX0V8UDq26WKbyV+btXayzdVN6PeNLj6iiovakQqO1Ky5Go5uX46xtE1ozCbGk6EaIL6R13IhlTw2H/vZBjfG7geDcvud0DHvNQMlZT5hFU6H6a8Bm27nGVNC3anGvsuZWZxVOz69FPRzR+X1MSeVDT5wbeBYrkywr9wnPm5s3RCgcvdDP9eMbwpi3nP/4Z02zaSPurrzG2yvUhNAC6ZgPI8wz52EzJMJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
- dkim=pass header.d=mellanox.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=raNv4B1CGya4jkTomUvQp5srpXT78rPNqVMaS88pbdk=;
- b=kIgp6Z9vbjYXi6lvzY/FeajA8XO4ButnTgC/U1fEN7QK0qaaj57nqpOaH3ziL+l0uX39wgeGmYryeydyt4Y/k1t9sTHarWke8kefklvbFrfG+G1Vk9QXaNQ2eFakt/458Yyiqq9krBCLma53zUOp0F6Cxz/yHv5Ua2D2f9oGBO0=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-Received: from DB7PR05MB4138.eurprd05.prod.outlook.com (52.135.129.16) by
- DB7PR05MB4956.eurprd05.prod.outlook.com (20.176.237.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2729.22; Wed, 12 Feb 2020 12:51:12 +0000
-Received: from DB7PR05MB4138.eurprd05.prod.outlook.com
- ([fe80::3942:d5fb:e94f:503d]) by DB7PR05MB4138.eurprd05.prod.outlook.com
- ([fe80::3942:d5fb:e94f:503d%6]) with mapi id 15.20.2707.030; Wed, 12 Feb 2020
- 12:51:12 +0000
-Date:   Wed, 12 Feb 2020 08:51:08 -0400
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     mst@redhat.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        tiwei.bie@intel.com, maxime.coquelin@redhat.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com,
-        rob.miller@broadcom.com, xiao.w.wang@intel.com,
-        haotian.wang@sifive.com, lingshan.zhu@intel.com,
-        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
-        kevin.tian@intel.com, stefanha@redhat.com, rdunlap@infradead.org,
-        hch@infradead.org, aadam@redhat.com, jiri@mellanox.com,
-        shahafs@mellanox.com, hanand@xilinx.com, mhabets@solarflare.com
-Subject: Re: [PATCH V2 3/5] vDPA: introduce vDPA bus
-Message-ID: <20200212125108.GS4271@mellanox.com>
-References: <20200210035608.10002-1-jasowang@redhat.com>
- <20200210035608.10002-4-jasowang@redhat.com>
- <20200211134746.GI4271@mellanox.com>
- <cf7abcc9-f8ef-1fe2-248e-9b9028788ade@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cf7abcc9-f8ef-1fe2-248e-9b9028788ade@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: MN2PR18CA0004.namprd18.prod.outlook.com
- (2603:10b6:208:23c::9) To DB7PR05MB4138.eurprd05.prod.outlook.com
- (2603:10a6:5:23::16)
+        id S1727781AbgBLMxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 07:53:16 -0500
+Received: from mail-io1-f54.google.com ([209.85.166.54]:32989 "EHLO
+        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbgBLMxQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 07:53:16 -0500
+Received: by mail-io1-f54.google.com with SMTP id z8so2116132ioh.0;
+        Wed, 12 Feb 2020 04:53:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=8uUbtIUDOW9ebVPssPKku+drjcOUJo/uTJ9SaDOnJuw=;
+        b=lHYm9cVGTtyA8EiT1D0sqLSb/jKtkCxagH9ASKv9owFIoKOYqhwIWFFOTeEeC8uBVy
+         46hUmqQq+PkyS/mU/NByGdrVF9AFXzjiP0hWR2h1B1K2eASskBK587/8MMKVcLJGPcSA
+         tsbJ7Ll2fMVmKkwxkifsb0uyWU7MvL+7fOEuz9t7w09ht+c1jCJ6+tk3sTBZWUttVe7X
+         2sn2nTuSMetpweeqhPSMNF9eMmF3mvAF29dZcXa3O+TPZUXvvRu3AObjEpfZAy/kjOKa
+         U+ORlpik+ZuI5VYmeps5yTXx0PWjNTSnwod/KQU9UIdyjxikqILCeP+UVFcrwlnIaVSz
+         ++Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=8uUbtIUDOW9ebVPssPKku+drjcOUJo/uTJ9SaDOnJuw=;
+        b=CskD1aAmMAqfhE7AUlqLjXKryUrogUgdHHXKzj6Q4xqoYz8h0L/y/8Ly/TkoT/Lxe1
+         mHj9fRoU9Wnbr1vbhon1/RPym1HGFxtXMMpW3ns1swI/UzlzpY32eYeyDl8XBZmxYsu3
+         fABB9UM0uuSSxLdHdFq/MsrAkgfmy1+zlfE+v7l8qpoLn19S/YKURu+IG0qR6zEwUCMN
+         s4cGhPIVMFIFjbaBlNw+gZMOORg2c0RavqqsWReWHi5NYUT4LY9e996aDKxp+ZbICKHI
+         hseomwn70QNCyXDzeHADQnz+Ex3iKOPsmUvD+zAVf8/s8PbkVSDYBVQwp73okpMgQevc
+         XHfg==
+X-Gm-Message-State: APjAAAXOj0ZhKIvc6ruGJBhAe0oqtJezgmdvI6zuodTOyoSmULDqyBVT
+        hKGS6sDd+6LOPo/wIULonsVUuJustzdOOlr4evQ=
+X-Google-Smtp-Source: APXvYqwenciTJqmwlFW6J+SzmV88Taxk40rh0SJ/KvqEvhgKlj/Xxm/QR6ynx3a5PYe6nSlUw1F3G3nRefDQUE1y3/U=
+X-Received: by 2002:a6b:8e51:: with SMTP id q78mr16467343iod.179.1581511995705;
+ Wed, 12 Feb 2020 04:53:15 -0800 (PST)
 MIME-Version: 1.0
-Received: from mlx.ziepe.ca (142.68.57.212) by MN2PR18CA0004.namprd18.prod.outlook.com (2603:10b6:208:23c::9) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.23 via Frontend Transport; Wed, 12 Feb 2020 12:51:12 +0000
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)     (envelope-from <jgg@mellanox.com>)      id 1j1rTw-0000B9-CE; Wed, 12 Feb 2020 08:51:08 -0400
-X-Originating-IP: [142.68.57.212]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: ed96b891-59f9-4a94-0d5e-08d7afba3d1c
-X-MS-TrafficTypeDiagnostic: DB7PR05MB4956:|DB7PR05MB4956:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DB7PR05MB4956AA17C07270CACC5C8FF8CF1B0@DB7PR05MB4956.eurprd05.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5236;
-X-Forefront-PRVS: 0311124FA9
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(396003)(39860400002)(136003)(346002)(199004)(189003)(7416002)(86362001)(33656002)(2906002)(66946007)(4744005)(52116002)(1076003)(186003)(36756003)(2616005)(26005)(478600001)(5660300002)(316002)(66556008)(8676002)(9786002)(81156014)(6916009)(8936002)(66476007)(4326008)(9746002)(81166006)(24400500001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR05MB4956;H:DB7PR05MB4138.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 1fsf6/9TirB9zdd8ibh8ca3PfvZQY3rF5xp9QwPOUtT+NePlUAxvmceW6mK2UgaFwyzu61OJIBKdpAB+TY/f922pgqm6kgyvRFsGt+ais8JL1kF1Jav3iazMPLuYawFa0xfmh5dLlALqCBN/UO6zTSuXDwsXS8NtFrjYXkB0G4WOuIBVNS0eKNalPbVsBpqQUr4g6pntxDbs1HrUNSOJW6JR6tx+DbOxLi5ogiEFarPlfX7SsdkP/JCRSEATuAFaPD4rEg32vO8grT3+vJXOGVEq0RklZbR/h5Wt2YXMNWioHlXbNGRKX+ssIB0KYaHbS8V0CiloQpRZGzMUIgwRLp3YuMk9gtDyI7Lk27+gOvRUJ2cponOeuqICTkpIAiivJ/R9t3nKqOpyHtrKUW8b4nxTMtlZY/4MiGJIo6LvPb894hpQMTCIMO2ofWkVkvOrzHc2PN+hVBBtxJC4XpUTYgnGYV91TqAGZoRtZX7LwmTl8DagvXzEZ3PxYKSNgAzN
-X-MS-Exchange-AntiSpam-MessageData: HgdQ42Q+9akSUY+Gvqw/Sh0W+EjPBozu2I+v6CNDkYgZEkvUgssCsCAq4HN3aRAVlWDjkFDrOh9+YneoFiua9Qmt4Xi4Gj178z9BnZOjc8wIaOOatWX9bDO/OXrn9NcSeGCLhOIEE2ACkFR5J63HqA==
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed96b891-59f9-4a94-0d5e-08d7afba3d1c
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2020 12:51:12.4008
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: x8D6xDbWq8wQq7TMiTAlPcoBxWXvCy/6rBbFG1RIYOuIVI5B4wyOz1D7048hLWS/pBRkvH1ZMM2duyS0ZpQaQg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR05MB4956
+References: <CABXGCsMfzj+mpjvuZifzWEKbX7X36v7iMVPampSS6kOc2Hzoow@mail.gmail.com>
+ <2405a741abf0d5fe8f55b5d3de8488e3054cc5e1.camel@archlinux.org>
+In-Reply-To: <2405a741abf0d5fe8f55b5d3de8488e3054cc5e1.camel@archlinux.org>
+From:   Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Date:   Wed, 12 Feb 2020 17:53:04 +0500
+Message-ID: <CABXGCsPYaXYFqQfnYWeeOKYq-SCjBvixo-Mme-fGLSB8Kw5H+g@mail.gmail.com>
+Subject: Re: [BUG] Kernel log flooded by message "logitech-djreceiver
+ 0003:046D:C53A.000C: logi_dj_hidpp_event: invalid device index:7"
+To:     =?UTF-8?Q?Filipe_La=C3=ADns?= <lains@archlinux.org>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-input@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 03:55:31PM +0800, Jason Wang wrote:
-> > The ida_simple_remove should probably be part of the class release
-> > function to make everything work right
-> 
-> It looks to me bus instead of class is the correct abstraction here since
-> the devices share a set of programming interface but not the semantics.
+On Mon, 10 Feb 2020 at 17:38, Filipe La=C3=ADns <lains@archlinux.org> wrote=
+:
+>
+> On Mon, 2020-02-10 at 13:21 +0500, Mikhail Gavrilov wrote:
+> > Kernel log flooded by message
+> > logitech-djreceiver 0003:046D:C53A.000C: logi_dj_hidpp_event: invalid
+> > device index:7
+> > This happens when the mouse is idle.
+> > And it started since I begin using the mouse pad with Power Play
+> > technology.
+> >
+> >
+> > Kernel ver: 5.6 pre RC
+> > --
+> > Best Regards,
+> > Mike Gavrilov.
+>
+> Hello Mike,
+>
+> Yes, the Powerplay mat exports a static HID++ 2.0 device with index 7
+> to configure the led on the mat. The current code expects devices to
+> have a maximum index of 6, which is the maximum index of pairable
+> devices.
+>
+> I already submitted a patch adding support for the Logitech G Powerplay
+> mat but it wasn't been upstreamed it. I will attach it in case you want
+> to try it.
+>
 
-device_release() doesn't call the bus release? You have dev, type or
-class to choose from. Type is rarely used and doesn't seem to be used
-by vdpa, so class seems the right choice
 
-Jason
+Thanks, I tested the patch for a day and "logitech-djreceiver"
+messages was not appear anymore and no other regressions are noted.
+Why this patch wasn't been upstreamed?
+
+Also would be good if "logitech-djreceiver" provides information for
+upower daemon as how did it happening with unifying receiver and my
+previous mouse Logitech Zone Touch Mouse T400.
+
+For example:
+
+$ upower --dump
+Device: /org/freedesktop/UPower/devices/mouse_hidpp_battery_0
+  native-path:          hidpp_battery_0
+  model:                Zone Touch Mouse T400
+  serial:               4026-cf-15-61-0d
+  power supply:         no
+  updated:              Sun 22 Dec 2019 02:41:30 PM +05 (89 seconds ago)
+  has history:          yes
+  has statistics:       yes
+  mouse
+    present:             yes
+    rechargeable:        yes
+    state:               discharging
+    warning-level:       none
+    battery-level:       normal
+    percentage:          55% (should be ignored)
+    icon-name:          'battery-low-symbolic'
+
+Device: /org/freedesktop/UPower/devices/DisplayDevice
+  power supply:         no
+  updated:              Sun 22 Dec 2019 10:58:54 AM +05 (13445 seconds ago)
+  has history:          no
+  has statistics:       no
+  unknown
+    warning-level:       none
+    icon-name:          'battery-missing-symbolic'
+
+Daemon:
+  daemon-version:  0.99.11
+  on-battery:      no
+  lid-is-closed:   no
+  lid-is-present:  no
+  critical-action: HybridSleep
+
+https://user-images.githubusercontent.com/200750/71320201-d8a5ea80-24c9-11e=
+a-9ea9-97100545d294.png
+
+Currently, only sensors show the power charge level, but without
+"upower" daemon user-friendly indication not available in DE.
+
+$ sensors
+hidpp_battery_0-hid-3-9
+Adapter: HID adapter
+in0:           4.08 V
+
+
+
+--
+Best Regards,
+Mike Gavrilov.
