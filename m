@@ -2,83 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83A6415AD57
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 17:24:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A941215AD5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 17:25:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728544AbgBLQYq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 11:24:46 -0500
-Received: from foss.arm.com ([217.140.110.172]:34918 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727041AbgBLQYq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 11:24:46 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E9EEF328;
-        Wed, 12 Feb 2020 08:24:45 -0800 (PST)
-Received: from [10.1.28.191] (e121487-lin.cambridge.arm.com [10.1.28.191])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BCD9A3F68F;
-        Wed, 12 Feb 2020 08:24:43 -0800 (PST)
-Subject: Re: [PATCH v3 1/7] arm64: add support for the AMU extension v1
-To:     Ionela Voinescu <ionela.voinescu@arm.com>,
-        Suzuki Kuruppassery Poulose <suzuki.poulose@arm.com>
-Cc:     mark.rutland@arm.com, maz@kernel.org, linux-doc@vger.kernel.org,
-        peterz@infradead.org, catalin.marinas@arm.com,
-        linux-pm@vger.kernel.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org,
-        sudeep.holla@arm.com, will@kernel.org, valentin.schneider@arm.com,
-        lukasz.luba@arm.com
-References: <20200211184542.29585-1-ionela.voinescu@arm.com>
- <20200211184542.29585-2-ionela.voinescu@arm.com>
- <93472f17-6465-641d-ea82-3230b5697ffd@arm.com>
- <20200212161045.GA7475@arm.com>
-From:   Vladimir Murzin <vladimir.murzin@arm.com>
-Message-ID: <ade32e03-b56b-7c5d-628d-124e52279d34@arm.com>
-Date:   Wed, 12 Feb 2020 16:24:42 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728742AbgBLQZD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 11:25:03 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37238 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726728AbgBLQZC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 11:25:02 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z12so1479072pgl.4;
+        Wed, 12 Feb 2020 08:25:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zweDaFEU0USsV+JX/LUuDeDmSUEHYWtL+9GANBjwgS4=;
+        b=cP7Dc2VtOxGDgxZ6JHdE2q9Lyhmqv0k2cCO7w6iMWAwBuUc4X1hTFNxnXVCptDXT5x
+         NkTwJ4HwJDTYlXQ/5Q7HYPa3LjvpoW91An4WuKSfHiHl1cCp/idPPX1hDnIWFfwgILph
+         QW9+RaPIhjuK1G7zJ38FF3O6vqRsLjyTFD1u6DPY3hwHwnUAu83W+GE02P7wMvEy32l3
+         eXIX+9iUpxb5H7wLek1JA/nyj2rTQruJVFD7L9dgv3URdIlaLvOkvra0G4uAdd98IqUt
+         FLJTU0BiinQI0yNZwHtYRV5wtxUSO5kAqzg2SG6UUvGIfNaKdm2lxG4iEEO/0uByivN6
+         2ENg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zweDaFEU0USsV+JX/LUuDeDmSUEHYWtL+9GANBjwgS4=;
+        b=IVjO0a134bw4yJMmWAJVond4xkwVesau28rgyMA5uNt9aiRwgd5B1wBNO8w3YTcB/f
+         UF/DwqdTuutW/dd/TWsz+Lo0gVDjDDyVCwKUzzWibX6tFnAWYjQSTMNaXueFCRonNJuO
+         ynrakaJe8thJuOYQ8EmJc7seFIDYo/PWmSQrHvXJSsmS9Pl8g9+SmUm4REC9nKYHHrBf
+         mJxL2Lf++Lc0JOySCvLhXZtSc0nuQr2Gn5tcMDNbFBmStRbxiUyja+BL4Nlq2wMnTDAB
+         n+Zn9RXW03gtrws7hCYfN2VQG2jYhQxaXdjju+jLaiUv66Vt3Rlo/Wt9bSYFLudjQa/m
+         JAlQ==
+X-Gm-Message-State: APjAAAUIk15enj7dsG5CJ7HXmnpjy2W4ZQZbDis2LC/I6kOQ3W+E3MlR
+        BY8c+f70PCE+yGkT+dqrNmxiPdNO9j6DGfAqrsw=
+X-Google-Smtp-Source: APXvYqxdvvvgkWHaTR3wCKLim8YYFZ3Gilg23ZQv1CNAsUnE4dlwsUOhdWPRIYUJ8aFymPSp2AKT9wOK4ZMF4Mx3X+0=
+X-Received: by 2002:a63:306:: with SMTP id 6mr9363242pgd.337.1581524702320;
+ Wed, 12 Feb 2020 08:25:02 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200212161045.GA7475@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200128110102.11522-1-martin@kaiser.cx> <20200128110102.11522-3-martin@kaiser.cx>
+In-Reply-To: <20200128110102.11522-3-martin@kaiser.cx>
+From:   PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Date:   Wed, 12 Feb 2020 21:54:51 +0530
+Message-ID: <CANc+2y60cCtDwBi1jaV=eMtTwoihRf2WiKW7Zo3iC9ALv2OVSw@mail.gmail.com>
+Subject: Re: [PATCH 2/6] hwrng: imx-rngc - use automatic seeding
+To:     Martin Kaiser <martin@kaiser.cx>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, 28 Jan 2020 at 16:31, Martin Kaiser <martin@kaiser.cx> wrote:
+>
+> The rngc requires a new seed for its prng after generating 2^20 160-bit
+> words of random data. At the moment, we seed the prng only once during
+> initalisation.
+>
+> Set the rngc to auto seed mode so that it kicks off the internal
+> reseeding operation when a new seed is required.
+>
+> Keep the manual calculation of the initial seed when the device is
+> probed and switch to automatic seeding afterwards.
+>
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+> ---
+>  drivers/char/hw_random/imx-rngc.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/char/hw_random/imx-rngc.c b/drivers/char/hw_random/imx-rngc.c
+> index 0576801944fd..903894518c8d 100644
+> --- a/drivers/char/hw_random/imx-rngc.c
+> +++ b/drivers/char/hw_random/imx-rngc.c
+> @@ -31,6 +31,7 @@
+>
+>  #define RNGC_CTRL_MASK_ERROR           0x00000040
+>  #define RNGC_CTRL_MASK_DONE            0x00000020
+> +#define RNGC_CTRL_AUTO_SEED            0x00000010
+>
+>  #define RNGC_STATUS_ERROR              0x00010000
+>  #define RNGC_STATUS_FIFO_LEVEL_MASK    0x00000f00
+> @@ -167,7 +168,7 @@ static irqreturn_t imx_rngc_irq(int irq, void *priv)
+>  static int imx_rngc_init(struct hwrng *rng)
+>  {
+>         struct imx_rngc *rngc = container_of(rng, struct imx_rngc, rng);
+> -       u32 cmd;
+> +       u32 cmd, ctrl;
+>         int ret;
+>
+>         /* clear error */
+> @@ -192,7 +193,18 @@ static int imx_rngc_init(struct hwrng *rng)
+>
+>         } while (rngc->err_reg == RNGC_ERROR_STATUS_STAT_ERR);
+>
+> -       return rngc->err_reg ? -EIO : 0;
+> +       if (rngc->err_reg)
+> +               return -EIO;
+> +
+> +       /*
+> +        * enable automatic seeding, the rngc creates a new seed automatically
+> +        * after serving 2^20 random 160-bit words
+> +        */
+> +       ctrl = readl(rngc->base + RNGC_CONTROL);
+> +       ctrl |= RNGC_CTRL_AUTO_SEED;
+> +       writel(ctrl, rngc->base + RNGC_CONTROL);
+> +
+> +       return 0;
+>  }
+>
+>  static int imx_rngc_probe(struct platform_device *pdev)
+> --
+> 2.20.1
+>
 
-On 2/12/20 4:10 PM, Ionela Voinescu wrote:
-> Hi Suzuki,
-> 
-> On Wednesday 12 Feb 2020 at 11:30:44 (+0000), Suzuki Kuruppassery Poulose wrote:
->>> +static int __init set_disable_amu(char *str)
->>> +{
->>> +	int value = 0;
->>> +
->>> +	disable_amu = get_option(&str, &value) ? !!value : true;
->> minor nit: You could simply use strtobool(str) here, which accepts:
->>
->> disable_amu= [0/1/on/off/y/n]
->>
-> Yes, this was intentional as I wanted "disable_amu" to be a valid option
-> as well, not only "disable_amu=<option>".
-> 
-> If you don't mind I'd like to keep it like this. Currently the use of
-> AMU is enabled by default, and the most common kernel parameter to
-> disable it would be "disable_amu". Allowing "disable_amu=0" is just in
-> case we change the default in the kernel to not support AMU and we'd
-> like platforms to be able to enable it. 
-> 
-
-Sorry for jumping into thread, but can we avoid negatives into naming which
-accept values? If is always tricky to get expected effect when both are combined.
-
-If value doesn't really mater than can it be just "noamu"?
-
-If value does matter can it be (per Suzuki) amu=[0/1/on/off/y/n]?
-
-Or can you postpone introduction of "just in case" option till that case happens?
-
-Cheers
-Vladimir
+Reviewed-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
