@@ -2,103 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7476115B229
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 21:50:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9F3615B22F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 21:52:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729089AbgBLUuB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 15:50:01 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38845 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbgBLUuA (ORCPT
+        id S1729056AbgBLUwh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 15:52:37 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:53163 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727111AbgBLUwh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 15:50:00 -0500
-Received: by mail-lj1-f195.google.com with SMTP id w1so3958602ljh.5
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 12:49:59 -0800 (PST)
+        Wed, 12 Feb 2020 15:52:37 -0500
+Received: by mail-pj1-f68.google.com with SMTP id ep11so1385399pjb.2;
+        Wed, 12 Feb 2020 12:52:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=lV7hvjNmswlLvWeK5lw61miY9L53LZTaOCTXifOja2E=;
-        b=dEAWMqhkvKRQ2NLUxoF2wQS5EvmJBsSSQ5lj3v1zKZfcpaWEew8A03ii1GUv0Rzyb4
-         li60+Iho5s/vJRVdYPiov613XgUf2+HHqZbQPUanhs0Y5tbFmi5BkYyjl+LOlO/l5l/G
-         ybjpyGNVmWEJMZ/AyNUF22OGpDxnhRybIAzDNUEI1lhLZQxUBC4NCsRKKOiPET0b26jW
-         2HijBLo7SKgtfJe1v07bFOii0CIjiuFknYNjZZOhfToitf3MBUv9wLdLQ3L5/FdbOKlU
-         1vdoGXWmB2uaCpyadlAxNTfqqeChTjzPkIEOXDYWkNgVUDRBVL/NKL0eOKPzH8e8c4wv
-         mfkg==
+        bh=ktEu+4lqCDbKO9qnX2sTlUigBje7mt6XvSgw9jTL1Mk=;
+        b=uTDlFixc9E3zW4wTk0TrpEQ2A3Yli1behriN27YAL8w35rHbk2z+09sIys8fE4GSiO
+         L5jyVxcLE5sYowM0Mkb+TgFO66yvc5H+CjNsF6nlPAmfrH3NwrA4aDcqMslox3XL7AMm
+         FdSXPyFcop/k3XTrwwTNEkf5kayQUlnEUq/7/suKwCn92RI0hVjsPXI0+rXxHqVC3NLb
+         3xDXT9x7DXMJBdrxZH1KxnezomenMaoz7H4Xe3kv13FwzwM3nYKwN+BA8VB+3dPOKErS
+         iuLTXzw8ztaXWV7aW62YauSfz9ya4Txr9pikwo20YqYEBHddQNVuPeNnBjY+2TLeKe1P
+         meww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=lV7hvjNmswlLvWeK5lw61miY9L53LZTaOCTXifOja2E=;
-        b=DVihTG9p084gYrBByWd1GjA3LBSL7coTu5nNDx/dXrikQ4GRP5YOgYo8oC7fZ1dYhF
-         zFX0Dgf8CQ9i7Ei0Od3GTD9LXtop2MplqLdZoSI+kZqP4rkmfSqZwCalnjMhidD7Ja5a
-         Nq1ZOPeDhTRdN2BQhGmx8jlAObj+WvVYBRnLdxyMdNL+8rja2ZPBhhL7IvdSMb+vMKh+
-         MirtZH9kU5RMjPKFmNTXL6coUxnhQo+B6wLohug0QOKq7YSRlmvlCoAiwjViWRtTwlpU
-         i1sMd/I329rMkex6FWR8/o5OkkzBbfP7vsBTBqNfpOc1Vi8FlLdAlGXzh1pyMSfUFAGz
-         RRfg==
-X-Gm-Message-State: APjAAAUTqMC41a4dNNyv8x+qQIq7OrtghjnyYKBbDEyDp2sAAAjdBukZ
-        1WxHk5GCWrXTaCVW1XGO8mp/DFoBUU+cbikbBsyGkABM
-X-Google-Smtp-Source: APXvYqymY/lQ1elEp2Ss9xlTL+56MB8I4hRX+1ShsPJ8o/QTu8wjBIKXeGwPdHIzZn/xSBuyGol0riXyg7okTiO32nQ=
-X-Received: by 2002:a05:651c:2046:: with SMTP id t6mr9097388ljo.180.1581540598513;
- Wed, 12 Feb 2020 12:49:58 -0800 (PST)
+        bh=ktEu+4lqCDbKO9qnX2sTlUigBje7mt6XvSgw9jTL1Mk=;
+        b=ho300KLIBdptAD7IISUY04CXIHK/ebnjX9EXm1m95kCNS1yEkn0poZIhksOu4Hm/WC
+         mRFwd/6DU/E0RWcUNWp+/KzJNAaN59aHGktkqloJvet8T15/Y/qepP39nAydMzBFfGsT
+         O0LTg38dq8+fF0+ZT0zOQxU0gHAYHIahDia94NraL/S8To+PFhV00mbtf2xdEuNxzYog
+         gh/I/2+H6fruUcKuHWb5bhAv6EODRwpSn7VrghuL8v+b9D0bTzJzDO6RXuV1bxOVEYK5
+         jr00FLWF6zDwrww+0Jvi2z5g/CFOzhcCS1g0JaGxAqNbtHMuIN/Ob7GnsnVJndt119/n
+         zyjQ==
+X-Gm-Message-State: APjAAAVAMgJdivf8ZWHiwShGqdx0H6Ekidg38LdDHS4l8Ikqr8700rve
+        QcfLbGGSfhfkTV+qPbAlpB4d96lQW0oLo/5+AjUmY4E5
+X-Google-Smtp-Source: APXvYqwxpkbf0L8zsRg5l2ML4V17u7r9J3ky+ezHWyvI6+qF3r5FN6i0X2ddHsr1cxJGlD0sr2lEoIiUu0uJATfEkKs=
+X-Received: by 2002:a17:90b:f06:: with SMTP id br6mr974150pjb.125.1581540756516;
+ Wed, 12 Feb 2020 12:52:36 -0800 (PST)
 MIME-Version: 1.0
-References: <20200212195231.GA2867@embeddedor>
-In-Reply-To: <20200212195231.GA2867@embeddedor>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Wed, 12 Feb 2020 21:49:47 +0100
-Message-ID: <CANiq72nt19x2Z6ErT8a1_2c0sKfjkv_yUFMZS2mf3HWp3RvnDQ@mail.gmail.com>
-Subject: Re: [PATCH] auxdisplay: charlcd: replace zero-length array with
- flexible-array member
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>
+References: <20200212101947.9534-1-geert+renesas@glider.be>
+In-Reply-To: <20200212101947.9534-1-geert+renesas@glider.be>
+From:   Max Filippov <jcmvbkbc@gmail.com>
+Date:   Wed, 12 Feb 2020 12:52:24 -0800
+Message-ID: <CAMo8BfK9LFfopJcNUDruFK-G_KqYP=7u9zdpNgZ5OZ_Ty7rO8w@mail.gmail.com>
+Subject: Re: [PATCH] xtensa: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Chris Zankel <chris@zankel.net>,
+        "open list:TENSILICA XTENSA PORT (xtensa)" 
+        <linux-xtensa@linux-xtensa.org>, linux-clk@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+On Wed, Feb 12, 2020 at 2:19 AM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> The Xtensa time code is not a clock provider, and just needs to call
+> of_clk_init().
+>
+> Hence it can include <linux/of_clk.h> instead of <linux/clk-provider.h>.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  arch/xtensa/kernel/time.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Wed, Feb 12, 2020 at 8:49 PM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
->
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
->
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
->
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertenly introduced[3] to the codebase from now on.
+Acked-by: Max Filippov <jcmvbkbc@gmail.com>
 
-s:inadvertenly:inadvertently:
-
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
->
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
->
-> This issue was found with the help of Coccinelle.
->
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
->
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-I saw the discussion regarding this -- thanks! Do you want me to
-handle this or will you push everything centrally? If the latter, have
-my
-
-Acked-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-
-Cheers,
-Miguel
+-- 
+Thanks.
+-- Max
