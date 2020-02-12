@@ -2,80 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9293E15AEB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 18:30:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF1A915AEB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 18:30:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728815AbgBLR36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 12:29:58 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:41240 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728731AbgBLR35 (ORCPT
+        id S1728833AbgBLRab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 12:30:31 -0500
+Received: from us03-smtprelay2.synopsys.com ([149.117.87.133]:37926 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727041AbgBLRab (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 12:29:57 -0500
-Received: by mail-oi1-f195.google.com with SMTP id i1so2779387oie.8
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 09:29:57 -0800 (PST)
+        Wed, 12 Feb 2020 12:30:31 -0500
+Received: from mailhost.synopsys.com (badc-mailhost2.synopsys.com [10.192.0.18])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 50ED3C0626;
+        Wed, 12 Feb 2020 17:30:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1581528629; bh=sxejxhbJ1f3uOUzXUDDvGmo5PthiUVeQLc2Un0OTFQQ=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=OJ0VTs+oDDUOC0p1gaXMn7rwQ6ZPvSefI1D2JWfq6zp3s4ttTpyX57P25eDmdxXN+
+         TIRfEehfX3fug8IcW6BKTHjPs2mS4BEmrFLZqm1IqMj8vsBBgWdaZO2fiMJgaohiMq
+         lGAAgtI0s5DS4RjwOeKfzhxzH6N0s/Tx4otZ6roIc1dEPyFhKmEdg8CP9KbkrN+Hez
+         1XKBzY/YSpt9hwfwlhEFQy2c86BiuwE+fWs8XzsZ45Jfu5cSEE/ZSCdxXH/f8xpSw0
+         okfrcyVUFQlS3UcbNtdhvKaa1gDsdWsWPEtMezJROEApB3gdf+xYiiMmBC46SnXBuF
+         mUXg3LXmc73XA==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 6D0CAA0067;
+        Wed, 12 Feb 2020 17:30:17 +0000 (UTC)
+Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 12 Feb 2020 09:30:15 -0800
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (10.202.3.67) by
+ mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Wed, 12 Feb 2020 09:30:15 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=P1oMEotak4xJB0VyvYS4mjE6LVAENVuMw01ALTwN3aBUa5oBHjg5BlaKi+OoYAGbVhyLrx/SBpR25P4Y0Dk3RPlp/3T1ysDg+4M9DbZBAIjY7bDW5xHvhcLJESksCsrZF2aLRpWXeEPdRb7NMXFx8P6Qy7uu0qpOJdbw8ZP86o0cKU77b89EwBr6wSS9tQsfhtiJ6HJCnm4ZPs+YL7LqTs68r7HoGP7FdWq5Odm4Sn5hRy+XWbe8vlJKqIKdN6R8w0fLg5z+w9T1DPvZJ+wXv3C9dpBEvnkXcupeSY+Vh/EG1ZWgDt5xQKhe63MsLDCHpZ+NTLmYBxEaqmh16bdLzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sxejxhbJ1f3uOUzXUDDvGmo5PthiUVeQLc2Un0OTFQQ=;
+ b=Gb77eIQBwqoV5TVxspFbl8Mq99+1/oPRQEgLcs3o0VIVDgw8ii7zS/uCmmxPq+6TgT1uH/NvPE9KmK3SyuPmv23XwqYC207qTwdder/o41BOqyVaslyZWxALz2iQQbo6nd82pLHNkCl8FzOHXWw9wnknWWiPAiRJDoPHl/BlpSz2pdtRJdSvKk26KFPPYlQAQf8AA1mCjeebRFjIruF//YytFcpNlFjFCq+y12zMjtMuDnLwDNvI5emj++IR2QNlBZyiYhkvDG9uOIvWd95xUa752z9lrqsoIw/+jZZ5+3RhVwvE9Op3NvqM2t10XXD+0hdNyAcZr+9Liw25rSZ2Ng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
+ dkim=pass header.d=synopsys.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=BOdYYefDIdhBYxqjo49OO1VaD1yMp38+cA0CbT37JV8=;
-        b=py/q/LY2i0AdlUKUhKtX41GzhVRohbZA0sQT82tn0VG50xy/ALTFKNUHG1uyvlDjES
-         AhmFjHle1tR9lbP9cKrOoudbRlMCqtwhba2/hkLVbYR/IjB9ml80UoNFT2Dq5RR3+PzE
-         Dcm8XDyexlQ1d76oIgq743U60KluyzXU8qTvnSAforo67Ut7Og2OCoCYllF7ftyktIGk
-         RBXjkHsMEHsPedZ4PNivpKdP2JNKD/1R0Q5AEinSIdFj1QG4WV66ulIXUX9cT4fBWUVL
-         YkgIe6vzMtMNosotDQ/jND3TPqrATO4dSMVdFYpDw7JwIsegNR2re2TRVf54TGfAFp8b
-         Li3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=BOdYYefDIdhBYxqjo49OO1VaD1yMp38+cA0CbT37JV8=;
-        b=pSwDjokWjX0oDrLFciZWdH6RukN3bIisHXbmDMsQpLAkgoKtY90iQlL1feDIPbe79F
-         NwJDipcJDlOHYMXmybVyww6EjUA5GY1GImNu/EM42UqJZkovBwJJ6XrB647TwrMcBGRh
-         npIKwzi/osOkT78jJeK/WqsGLDKBGhX1kkyRc06Aj7L+6qMMpGc7QJlg7K6u2G4Kq+2l
-         9j204/HiCzij7IKLFZXc4wmH+BPk4GqAzILPzjEgFTqmRJhHLa2dWsWzC6qweEb08XJP
-         Acl5rq6d8dKW/ns/fU1VFcoty7c6sDBAV7spI2TMRxIEWm4BDllM4PQutSMNlZ2ulW+n
-         PgTg==
-X-Gm-Message-State: APjAAAUwc6z8dnRB21yfG5uyP6uytO6e++fqRvSG+3PqlP/BszSWcaSg
-        5ESCBXjBIBwqh6qvBkKMTzrH9Lx4TCuIw//G5Yo=
-X-Google-Smtp-Source: APXvYqwI2JEIrlG/g/o3eZ7DQQDk1uGfknqR2VVIeAvI7vw0Nmtt46FQZM7bamnUXTAVTeR8XSO+VETs5KFE5WES600=
-X-Received: by 2002:a54:4117:: with SMTP id l23mr108024oic.140.1581528596836;
- Wed, 12 Feb 2020 09:29:56 -0800 (PST)
+ d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sxejxhbJ1f3uOUzXUDDvGmo5PthiUVeQLc2Un0OTFQQ=;
+ b=TX1XebtJ2to5Xls1pk+9E9yosqifL+3A69CjXCq8ViqXq1MvsfHAhgguE2MFN4wBHEirygWRmK7SZfSnOfybhfr0OsQBoBh9P4frFfLZcJuWud8MXbrTlj49coXWYv/laNYuJRwjwGQSMIJywWaoV/5am7kOT6DLwrE4SUtzIFg=
+Received: from BYAPR12MB3592.namprd12.prod.outlook.com (20.178.54.89) by
+ BYAPR12MB3367.namprd12.prod.outlook.com (20.178.53.96) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.22; Wed, 12 Feb 2020 17:30:14 +0000
+Received: from BYAPR12MB3592.namprd12.prod.outlook.com
+ ([fe80::5d03:e088:d949:7f24]) by BYAPR12MB3592.namprd12.prod.outlook.com
+ ([fe80::5d03:e088:d949:7f24%7]) with mapi id 15.20.2729.021; Wed, 12 Feb 2020
+ 17:30:13 +0000
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+CC:     "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ARC: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+Thread-Topic: [PATCH] ARC: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+Thread-Index: AQHV4Yt2N0DebMkAcES6FRQ2RHyd9agX0REA
+Date:   Wed, 12 Feb 2020 17:30:13 +0000
+Message-ID: <adba9217-352b-97a0-b1f7-d6895eb0c0d5@synopsys.com>
+References: <20200212100047.18642-1-geert+renesas@glider.be>
+In-Reply-To: <20200212100047.18642-1-geert+renesas@glider.be>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=vgupta@synopsys.com; 
+x-originating-ip: [149.117.75.11]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0342bf07-3ade-4ea0-357f-08d7afe13804
+x-ms-traffictypediagnostic: BYAPR12MB3367:
+x-microsoft-antispam-prvs: <BYAPR12MB33676ECF41FDE77D05B07B34B61B0@BYAPR12MB3367.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1265;
+x-forefront-prvs: 0311124FA9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(376002)(346002)(136003)(366004)(189003)(199004)(64756008)(76116006)(6512007)(186003)(66556008)(81156014)(31686004)(81166006)(31696002)(2616005)(66946007)(66446008)(66476007)(26005)(2906002)(8936002)(8676002)(54906003)(558084003)(4326008)(6506007)(53546011)(478600001)(316002)(6486002)(86362001)(5660300002)(36756003)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR12MB3367;H:BYAPR12MB3592.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: NZIRHmmgDTkgA62K0+EPLX7N2AL47FAe4ajnkTYZBGNPW1V9nKLNWNmCKs8UXl7cu8sIKuaR7EfVX0q8Ox3kseDZypqwyFKr4+Q3VGpDwxZlfJO7CfB1m71bvre24Y1xNx2fP27ZB/uPXGV2eEjhal7fwPDFbZvjgtRylrV94xSKm1t8cnSue7+7V60XR3WliiBr9vaaW68ic2GoDjWOv975eRTStYR9uegZy7TmVFcYoXn2ddmuBZao58Y1S2TMpfjgYQvFyl7o/IyBphDW8p0XY58noVD5b+ZMl0apNa4guBF75EZJoe234pCvK/vHgm6Okq0wDrec3s0swV3j/FX4NoRweIWm4oQ5UNjn3MOxznjg7Nmfzs5XDafeJmQsbGMDPypHS7brGgp7zlJ6C4Z19qvTnQWNzJzvI27cPdBRwTOQK2yDwIODX+AZcGhH
+x-ms-exchange-antispam-messagedata: iIvc/fBi07YN/Tbw2Fhg6CzxqtCvFXBeywyWN4wogP/0sjyPbaDFnoH3GLquUCf/82Buaz52yED+Ft3mdwE80qOCi7Kr0eetli+BTGxbSrZQz2aYk3RZign2YpJg7EXBqlxgXHpzOdTXPDcTHlwyag==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BB9A91B8C3CD004F83FEACA941747D3E@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Received: by 2002:a4a:33d3:0:0:0:0:0 with HTTP; Wed, 12 Feb 2020 09:29:56
- -0800 (PST)
-Reply-To: stellar074maoris@gmail.com
-From:   "Mrs.Stellar Maoris" <mrsbeccy8@gmail.com>
-Date:   Wed, 12 Feb 2020 17:29:56 +0000
-Message-ID: <CAHU1do1Yotgee_3_qzA4pruyMzk2tqpN2-=m_BrMNu0fRL5WOw@mail.gmail.com>
-Subject: Hello Dear Friend
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0342bf07-3ade-4ea0-357f-08d7afe13804
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2020 17:30:13.7437
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 8Xlzr9fkRk72Df6o4So7sT2Hqfz0m0Csp6hBv66A5F3NJlG+5dS7ADtbGPs7iQJthbhSzkJmvYSU3DYZSrkXfA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3367
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dear Friend.
-
-I=E2=80=99m Mrs. Stellar Maoris from united state of America a manger in
-HSBC bank in Spain Madrid, 31 years old of age, single, I am
-sending
-this brief letter to seek for your partnership and long term
-relationship, I have an important and urgent issue I want to discuss
-with you privately about Transaction fund worth the sum of $9.5 million
-America dollars left by most of the greedy Asia Kuwait politician in
-our bank here in Spain Madrid A fund which suppose to have been use to
-develop the continent.
-
-If you know that you can invest this fund into a profitable business
-in your country by the end we shall have 50%50 share each, kindly get
-back to me for more detail and procedures.
-
-Your urgent respond will be highly appreciated Awaiting to hear from you as=
-ap.
-My Regard.
-Stellar Maoris
-Email: stellar074maoris@gmail.com
-Phone Number: +34(62) 768 5146
+T24gMi8xMi8yMCAyOjAwIEFNLCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+IFRoZSBBUkMg
+cGxhdGZvcm0gY29kZSBpcyBub3QgYSBjbG9jayBwcm92aWRlciwgYW5kIGp1c3QgbmVlZHMgdG8g
+Y2FsbA0KPiBvZl9jbGtfaW5pdCgpLg0KPg0KPiBIZW5jZSBpdCBjYW4gaW5jbHVkZSA8bGludXgv
+b2ZfY2xrLmg+IGluc3RlYWQgb2YgPGxpbnV4L2Nsay1wcm92aWRlci5oPi4NCj4NCj4gU2lnbmVk
+LW9mZi1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT4NCg0K
+VGh4IGZvciB0aGlzIEdlZXJ0LiBEbyB5b3Ugd2FudCBtZSB0byBwaWNrIHRoaXMgdXAuDQoNClRo
+eCwNCi1WaW5lZXQNCg0K
