@@ -2,106 +2,267 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E592515B3B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 23:30:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD68915B3B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 23:31:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729194AbgBLWa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 17:30:27 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:47882 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727564AbgBLWa1 (ORCPT
+        id S1729240AbgBLWbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 17:31:18 -0500
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:13530 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727564AbgBLWbS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 17:30:27 -0500
-Received: from [10.137.112.97] (unknown [131.107.147.225])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 8670020B9C02;
-        Wed, 12 Feb 2020 14:30:26 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8670020B9C02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1581546626;
-        bh=NUHobxfL+geUi+bYVC6mVUzTu5F8T6tQj72MtVtjTGg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=emcoU9vBbJ592sx4KQcu6JfCoKEWTR6ew1L19xR88+ixXeBb49RETwSge7xyTZB8U
-         YlmtOoxJRqG6PtdHijT44jEe4ibgxh7cqmjB4FtYZNoxp3u1SHfLXT7kLGJ4shDrUn
-         2/eRY636y4r2i4hzN95XuUfz/30de3V5hKpoYPiY=
-Subject: Re: [PATCH v3 2/3] IMA: Add log statements for failure conditions.
-To:     Mimi Zohar <zohar@linux.ibm.com>, joe@perches.com,
-        skhan@linuxfoundation.org, linux-integrity@vger.kernel.org
-Cc:     sashal@kernel.org, nramas@linux.microsoft.com,
-        linux-kernel@vger.kernel.org
-References: <20200211231414.6640-1-tusharsu@linux.microsoft.com>
- <20200211231414.6640-3-tusharsu@linux.microsoft.com>
- <1581518823.8515.49.camel@linux.ibm.com>
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Message-ID: <ce89d382-8e8b-71d0-5271-4db83d324f94@linux.microsoft.com>
-Date:   Wed, 12 Feb 2020 14:30:26 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 12 Feb 2020 17:31:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1581546677; x=1613082677;
+  h=date:from:to:subject:message-id:mime-version;
+  bh=i32EpGwooPZB678+D/0hzPuRDA1ywUkOMkk4sBBTlvc=;
+  b=W4UpfbIrD/yGFPpDHOkc3MjBOeL62CFImeFLF1szsk/RWA05jzmNmpgp
+   g+mnwmtYV1Wmmu9QfPge/W6QZBFi5MJTnhCH90788PJ9WigX0BVWrtTRC
+   PM//D1zdLt+KagdA5l3emH+p/T5deeXDYNScVlULr9NESZFx3XiDz4ZUm
+   Q=;
+IronPort-SDR: qn2VCGL67F8NU6wHmD7uN4NTt1lAzS4kjoxt6t2Mmjy3qyK1SegDvIKuhhwGlsKxrbuCXMqUQs
+ nNRiMn5MMHhg==
+X-IronPort-AV: E=Sophos;i="5.70,434,1574121600"; 
+   d="scan'208";a="16853770"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2b-c300ac87.us-west-2.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 12 Feb 2020 22:31:02 +0000
+Received: from EX13MTAUEE002.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2b-c300ac87.us-west-2.amazon.com (Postfix) with ESMTPS id 5F065A2708;
+        Wed, 12 Feb 2020 22:31:00 +0000 (UTC)
+Received: from EX13D08UEE001.ant.amazon.com (10.43.62.126) by
+ EX13MTAUEE002.ant.amazon.com (10.43.62.24) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 12 Feb 2020 22:30:41 +0000
+Received: from EX13MTAUEE002.ant.amazon.com (10.43.62.24) by
+ EX13D08UEE001.ant.amazon.com (10.43.62.126) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 12 Feb 2020 22:30:42 +0000
+Received: from dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com
+ (172.22.96.68) by mail-relay.amazon.com (10.43.62.224) with Microsoft SMTP
+ Server id 15.0.1367.3 via Frontend Transport; Wed, 12 Feb 2020 22:30:41 +0000
+Received: by dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com (Postfix, from userid 4335130)
+        id A365E400D1; Wed, 12 Feb 2020 22:30:41 +0000 (UTC)
+Date:   Wed, 12 Feb 2020 22:30:41 +0000
+From:   Anchal Agarwal <anchalag@amazon.com>
+To:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>, <x86@kernel.org>, <boris.ostrovsky@oracle.com>,
+        <jgross@suse.com>, <linux-pm@vger.kernel.org>,
+        <linux-mm@kvack.org>, <kamatam@amazon.com>,
+        <sstabellini@kernel.org>, <konrad.wilk@oracle.com>,
+        <roger.pau@citrix.com>, <axboe@kernel.dk>, <davem@davemloft.net>,
+        <rjw@rjwysocki.net>, <len.brown@intel.com>, <pavel@ucw.cz>,
+        <peterz@infradead.org>, <eduval@amazon.com>, <sblbir@amazon.com>,
+        <anchalag@amazon.com>, <xen-devel@lists.xenproject.org>,
+        <vkuznets@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dwmw@amazon.co.uk>,
+        <fllinden@amaozn.com>, <benh@kernel.crashing.org>
+Subject: [RFC PATCH v3 02/12] xenbus: add freeze/thaw/restore callbacks
+ support
+Message-ID: <20200212223041.GA3597@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
 MIME-Version: 1.0
-In-Reply-To: <1581518823.8515.49.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Munehisa Kamata <kamatam@amazon.com>
 
+Since commit b3e96c0c7562 ("xen: use freeze/restore/thaw PM events for
+suspend/resume/chkpt"), xenbus uses PMSG_FREEZE, PMSG_THAW and
+PMSG_RESTORE events for Xen suspend. However, they're actually assigned
+to xenbus_dev_suspend(), xenbus_dev_cancel() and xenbus_dev_resume()
+respectively, and only suspend and resume callbacks are supported at
+driver level. To support PM suspend and PM hibernation, modify the bus
+level PM callbacks to invoke not only device driver's suspend/resume but
+also freeze/thaw/restore.
 
-On 2020-02-12 6:47 a.m., Mimi Zohar wrote:
-> Hi Tushar,
-> 
-> Please remove the period at the end of the  Subject line.
-Thanks. I will fix it in the next iteration.
-> 
-> On Tue, 2020-02-11 at 15:14 -0800, Tushar Sugandhi wrote:
->> process_buffer_measurement() does not have log messages for failure
->> conditions.
->>
->> This change adds a log statement in the above function.
-> 
-> I agree some form of notification needs to be added.  The question is
-> whether the failure should be audited or a kernel message emitted.
->   IMA emits audit messages (integrity_audit_msg) for a number of
-> reasons - on failure to calculate a file hash, invalid policy rules,
-> failure to communicate with the TPM, signature verification errors,
-> etc.
-I believe both IMA audit messages and kernel message should be emitted -
-for better discoverability and diagnosability.
-> 
->>
->> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->> Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
->> Suggested-by: Joe Perches <joe@perches.com>
->> ---
->>   security/integrity/ima/ima_main.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
->> index 9fe949c6a530..6e1576d9eb48 100644
->> --- a/security/integrity/ima/ima_main.c
->> +++ b/security/integrity/ima/ima_main.c
->> @@ -757,6 +757,9 @@ void process_buffer_measurement(const void *buf, int size,
->>   		ima_free_template_entry(entry);
->>   
->>   out:
->> +	if (ret < 0)
->> +		pr_err("%s: failed, result: %d\n", __func__, ret);
->> +
->>   	return;
->>   }
->>   
-> 
-> With 3/3 "IMA: Add module name and base name prefix to log", the
-> resulting message will be "KBUILD_MODNAME: KBUILD_BASENAME: func:".
->   Isn't that a bit much?
-> 
-For this specific message, it will look like below.
-"ima: ima_main: process_buffer_measurement: failed, result: %d"
+Note that we'll use freeze/restore callbacks even for PM suspend whereas
+suspend/resume callbacks are normally used in the case, becausae the
+existing xenbus device drivers already have suspend/resume callbacks
+specifically designed for Xen suspend. So we can allow the device
+drivers to keep the existing callbacks wihtout modification.
 
-In general, adding KBUILD_BASENAME seems helpful to pinpoint the 
-location of the issue.
+[Anchal Changelog: Refactored the callbacks code]
+Signed-off-by: Agarwal Anchal <anchalag@amazon.com>
+Signed-off-by: Munehisa Kamata <kamatam@amazon.com>
 
+---
+Changes since V2: None
+---
+ drivers/xen/xenbus/xenbus_probe.c | 99 +++++++++++++++++++++++++------
+ include/xen/xenbus.h              |  3 +
+ 2 files changed, 84 insertions(+), 18 deletions(-)
 
-> Mimi
-> 
+diff --git a/drivers/xen/xenbus/xenbus_probe.c b/drivers/xen/xenbus/xenbus_probe.c
+index 5b471889d723..0fa8eeee68c2 100644
+--- a/drivers/xen/xenbus/xenbus_probe.c
++++ b/drivers/xen/xenbus/xenbus_probe.c
+@@ -49,6 +49,7 @@
+ #include <linux/io.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
++#include <linux/suspend.h>
+ 
+ #include <asm/page.h>
+ #include <asm/pgtable.h>
+@@ -597,27 +598,44 @@ int xenbus_dev_suspend(struct device *dev)
+ 	struct xenbus_driver *drv;
+ 	struct xenbus_device *xdev
+ 		= container_of(dev, struct xenbus_device, dev);
+-
++	bool xen_suspend = xen_suspend_mode_is_xen_suspend();
+ 	DPRINTK("%s", xdev->nodename);
+ 
+ 	if (dev->driver == NULL)
+ 		return 0;
+ 	drv = to_xenbus_driver(dev->driver);
+-	if (drv->suspend)
+-		err = drv->suspend(xdev);
+-	if (err)
+-		pr_warn("suspend %s failed: %i\n", dev_name(dev), err);
++
++	if (xen_suspend) {
++		if (drv->suspend)
++			err = drv->suspend(xdev);
++	} else {
++		if (drv->freeze) {
++			err = drv->freeze(xdev);
++			if (!err) {
++				free_otherend_watch(xdev);
++				free_otherend_details(xdev);
++				return 0;
++			}
++		}
++	}
++
++	if (err) {
++		pr_warn("%s %s failed: %i\n", xen_suspend ?
++			"suspend" : "freeze", dev_name(dev), err);
++		return err;
++	}
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(xenbus_dev_suspend);
+ 
+ int xenbus_dev_resume(struct device *dev)
+ {
+-	int err;
++	int err = 0;
+ 	struct xenbus_driver *drv;
+ 	struct xenbus_device *xdev
+ 		= container_of(dev, struct xenbus_device, dev);
+-
++	bool xen_suspend = xen_suspend_mode_is_xen_suspend();
+ 	DPRINTK("%s", xdev->nodename);
+ 
+ 	if (dev->driver == NULL)
+@@ -625,24 +643,32 @@ int xenbus_dev_resume(struct device *dev)
+ 	drv = to_xenbus_driver(dev->driver);
+ 	err = talk_to_otherend(xdev);
+ 	if (err) {
+-		pr_warn("resume (talk_to_otherend) %s failed: %i\n",
++		pr_warn("%s (talk_to_otherend) %s failed: %i\n",
++			xen_suspend ? "resume" : "restore",
+ 			dev_name(dev), err);
+ 		return err;
+ 	}
+ 
+-	xdev->state = XenbusStateInitialising;
++	if (xen_suspend) {
++		xdev->state = XenbusStateInitialising;
++		if (drv->resume)
++			err = drv->resume(xdev);
++	} else {
++		if (drv->restore)
++			err = drv->restore(xdev);
++	}
+ 
+-	if (drv->resume) {
+-		err = drv->resume(xdev);
+-		if (err) {
+-			pr_warn("resume %s failed: %i\n", dev_name(dev), err);
+-			return err;
+-		}
++	if (err) {
++		pr_warn("%s %s failed: %i\n",
++			xen_suspend ? "resume" : "restore",
++			dev_name(dev), err);
++		return err;
+ 	}
+ 
+ 	err = watch_otherend(xdev);
+ 	if (err) {
+-		pr_warn("resume (watch_otherend) %s failed: %d.\n",
++		pr_warn("%s (watch_otherend) %s failed: %d.\n",
++			xen_suspend ? "resume" : "restore",
+ 			dev_name(dev), err);
+ 		return err;
+ 	}
+@@ -653,8 +679,45 @@ EXPORT_SYMBOL_GPL(xenbus_dev_resume);
+ 
+ int xenbus_dev_cancel(struct device *dev)
+ {
+-	/* Do nothing */
+-	DPRINTK("cancel");
++	int err = 0;
++	struct xenbus_driver *drv;
++	struct xenbus_device *xdev
++		= container_of(dev, struct xenbus_device, dev);
++	bool xen_suspend = xen_suspend_mode_is_xen_suspend();
++
++	if (xen_suspend) {
++		/* Do nothing */
++		DPRINTK("cancel");
++		return 0;
++	}
++
++	DPRINTK("%s", xdev->nodename);
++
++	if (dev->driver == NULL)
++		return 0;
++	drv = to_xenbus_driver(dev->driver);
++	err = talk_to_otherend(xdev);
++	if (err) {
++		pr_warn("thaw (talk_to_otherend) %s failed: %d.\n",
++			dev_name(dev), err);
++		return err;
++	}
++
++	if (drv->thaw) {
++		err = drv->thaw(xdev);
++		if (err) {
++			pr_warn("thaw %s failed: %i\n", dev_name(dev), err);
++			return err;
++		}
++	}
++
++	err = watch_otherend(xdev);
++	if (err) {
++		pr_warn("thaw (watch_otherend) %s failed: %d.\n",
++			dev_name(dev), err);
++		return err;
++	}
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(xenbus_dev_cancel);
+diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
+index 869c816d5f8c..20261d5f4e78 100644
+--- a/include/xen/xenbus.h
++++ b/include/xen/xenbus.h
+@@ -100,6 +100,9 @@ struct xenbus_driver {
+ 	int (*remove)(struct xenbus_device *dev);
+ 	int (*suspend)(struct xenbus_device *dev);
+ 	int (*resume)(struct xenbus_device *dev);
++	int (*freeze)(struct xenbus_device *dev);
++	int (*thaw)(struct xenbus_device *dev);
++	int (*restore)(struct xenbus_device *dev);
+ 	int (*uevent)(struct xenbus_device *, struct kobj_uevent_env *);
+ 	struct device_driver driver;
+ 	int (*read_otherend_details)(struct xenbus_device *dev);
+-- 
+2.24.1.AMZN
+
