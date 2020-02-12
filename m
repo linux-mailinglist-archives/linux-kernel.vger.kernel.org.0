@@ -2,119 +2,289 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E246615ABA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:02:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C29BC15ABA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:03:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728234AbgBLPCf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 10:02:35 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38437 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727231AbgBLPCe (ORCPT
+        id S1728497AbgBLPDn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 10:03:43 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43815 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728094AbgBLPDn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 10:02:34 -0500
-Received: by mail-pl1-f195.google.com with SMTP id t6so1062684plj.5
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 07:02:33 -0800 (PST)
+        Wed, 12 Feb 2020 10:03:43 -0500
+Received: by mail-lf1-f66.google.com with SMTP id 9so1824523lfq.10
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 07:03:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FR6J0RTBbPdiqIfgczIlNViu+Jfpdo5P+6apUdMx6rM=;
-        b=fXJEbKcPz4oZt4vjeQJC2jNIOrpZ1m2hZnnwZkP5rU7AE2QIVND8VnVMxzeeqSSoOE
-         aaGtrB9l3mGgYnaDu6hBgE8HqEV/vlrEpzSTLPJMZtzBdy0U7sA++/WL2Tasz6q1t2DL
-         TJA5cIkn3M9qod38ONclfYM57sLuwI2y41BcyXlLoNeNJCFTZle9xCkJGpI0ShEPH/TZ
-         Ef8lVuQKM5KuYVuBrg5lMfWivUlln/vjvsZicO5bgPPUB3JFRztvcgEHmKxRO1w3PA2B
-         XoEKYiqP5t2BHeGzn0QEEwhurrfy+LJht3miMz511brInMhXFsN4R8i0LAaJ8+tD6Wrw
-         nBFg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mJjUPQPGWzcs5bvAiI21vS0L5Gpnej33TBvxNbVOgSU=;
+        b=B/EY/1voNoXzgMNiBuTQdRkXq4qfG/V3Zx2xexNx/Q1pMAyzZvwTj83zHfZ8KjiYnb
+         sZ24ECoyQ/8awiQUnvwW8Bp66smCmY/ZGoHjqwnAIPDOgOY1xu/KHPW6wH56h2/5UV3A
+         DM6Ve9M+3C3Em2YSQb/2q1dh9e0RBPnbUVXXU/sCeaxgga+DzP9AzDUMIYRiTwfnW52S
+         2TxjSfJQXZeYDubAgyjdoSOpVvLt6ghQS0N918IRhizYXfXSs/c7yLX66erZEUwBbk3E
+         SMhyYLvyQ4PXRg7dhke4qqqrUAY+5ymxxpcuag/1sm7dK3boOaE5t1ty0IQ341ZweA4b
+         152A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FR6J0RTBbPdiqIfgczIlNViu+Jfpdo5P+6apUdMx6rM=;
-        b=T+fRnea6NE1JfrPU4TMot6WsoLLVppjU4ohxijJiiZ4Yw5LTap691qg7kcMD90HB0h
-         f6RMuN/70M0MYFY0Ed3yJqaLMJr2SCGXDTU9+qTP1NvhOG9vmIkghBxHx/ju1IBWIR0u
-         CQDmn206/P4AtAFKtyX5395GtiGjq9hT10LmUrlAd651YlwINLWUkvJwcjaDOsrB6YjC
-         KvnRdOvldXm2CdkIysk2j0VE4kXyFzFy4GQTvrL5UB/in6fYs+j+u+0m9ewugQyWXLsb
-         BY0ghydwm0VDZzFrnOfi/SgINOmEunSjBW+H3Gs6No77TpDjCASUwW1KKZRCiR7HbvRf
-         VIuw==
-X-Gm-Message-State: APjAAAWLgUW6AOFR9/bOCIII/xrHx5m1wv0zPDYgEMzWSEsMRbJBT7Lr
-        NdCemogkcWuwyQpZt2A40nTJLQ==
-X-Google-Smtp-Source: APXvYqx6grvy4ycKCwhlUc6ND3/5PFcUMpv8fDnyny3EdLaNp4drcF3H+3/1rlIxxUXFqoQfmv7M6Q==
-X-Received: by 2002:a17:90a:e996:: with SMTP id v22mr10613007pjy.53.1581519752767;
-        Wed, 12 Feb 2020 07:02:32 -0800 (PST)
-Received: from localhost.localdomain (220-133-186-239.HINET-IP.hinet.net. [220.133.186.239])
-        by smtp.gmail.com with ESMTPSA id d73sm1312155pfd.109.2020.02.12.07.02.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 07:02:31 -0800 (PST)
-From:   Axel Lin <axel.lin@ingics.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Saravanan Sekar <sravanhome@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH RFT] regulator: mp5416: Fix output discharge enable bit for LDOs
-Date:   Wed, 12 Feb 2020 23:02:23 +0800
-Message-Id: <20200212150223.20042-1-axel.lin@ingics.com>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mJjUPQPGWzcs5bvAiI21vS0L5Gpnej33TBvxNbVOgSU=;
+        b=UqO/hajS6wxtdDU3qkIUf8fvtf6EysER+4BnMcMjpavChwmp9msxODmSwMUAq73Lka
+         YafmDXLEikYmdGuZ4u8XlICghEePF/uEw4IYuJXVYzD6AD6n2Y8LIwUPRDdPlsooYuNg
+         rOyWEGJcUmXUKxT4YaGz+Mgt5HKaw+3gzz9tZN644i5h2oYnr7lUfsrr9bSyD4SC77Lf
+         ifJFOElymstXwIlYNKjRSaCyroOnl5F6d5pKdWI6JhFBv4B75tLPkqkT+bHF4MO2lT67
+         qsp9e8lJybkuTNDZiu9/h2sOrcTutfY6nqWOIp7LuuUfhe3yqvJT+0uB/ACHPfIkSJX1
+         GeGg==
+X-Gm-Message-State: APjAAAWWwabJHbdRKEvyk/QB/TVZ7WyYeOSaQ63qwU0m06TIFWAdL0Bi
+        c3FQvBNtB0aoRijdIklrLgIfBcfpE+Jgu8Sr4y/jYefvY1SLng==
+X-Google-Smtp-Source: APXvYqzdKTMQbbWbkl4hxV5duXRwdbTo16CAKO67F9sB05Hk18MPwDKsxrsmtBk8IJD+A8k/LoYk7X7Vm7SJzRBwgRk=
+X-Received: by 2002:ac2:59dd:: with SMTP id x29mr6818241lfn.95.1581519820104;
+ Wed, 12 Feb 2020 07:03:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200211174651.10330-1-vincent.guittot@linaro.org>
+ <20200211174651.10330-3-vincent.guittot@linaro.org> <20200212133715.GU3420@suse.de>
+In-Reply-To: <20200212133715.GU3420@suse.de>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 12 Feb 2020 16:03:28 +0100
+Message-ID: <CAKfTPtAJE_eDgR8dmScgVbOgS9sQSJg27Mw62Z1htMCmgN_Yew@mail.gmail.com>
+Subject: Re: [RFC 2/4] sched/numa: replace runnable_load_avg by load_avg
+To:     Mel Gorman <mgorman@suse.de>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The .active_discharge_on/.active_discharge_mask settings does not match
-the datasheet, fix it.
+On Wed, 12 Feb 2020 at 14:37, Mel Gorman <mgorman@suse.de> wrote:
+>
+> On Tue, Feb 11, 2020 at 06:46:49PM +0100, Vincent Guittot wrote:
+> > Similarly to what has been done for the normal load balance, we can
+> > replace runnable_load_avg by load_avg in numa load balancing and track
+> > other statistics like the utilization and the number of running tasks to
+> > get to better view of the current state of a node.
+> >
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> >  kernel/sched/fair.c | 102 ++++++++++++++++++++++++++++++++------------
+> >  1 file changed, 75 insertions(+), 27 deletions(-)
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index a1ea02b5362e..6e4c2b012c48 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -1473,38 +1473,35 @@ bool should_numa_migrate_memory(struct task_struct *p, struct page * page,
+> >              group_faults_cpu(ng, src_nid) * group_faults(p, dst_nid) * 4;
+> >  }
+> >
+> > -static inline unsigned long cfs_rq_runnable_load_avg(struct cfs_rq *cfs_rq);
+> > -
+> > -static unsigned long cpu_runnable_load(struct rq *rq)
+> > -{
+> > -     return cfs_rq_runnable_load_avg(&rq->cfs);
+> > -}
+> > +/*
+> > + * 'numa_type' describes the node at the moment of load balancing.
+> > + */
+> > +enum numa_type {
+> > +     /* The node has spare capacity that can be used to run more tasks.  */
+> > +     node_has_spare = 0,
+> > +     /*
+> > +      * The node is fully used and the tasks don't compete for more CPU
+> > +      * cycles. Nevertheless, some tasks might wait before running.
+> > +      */
+> > +     node_fully_busy,
+> > +     /*
+> > +      * The node is overloaded and can't provide expected CPU cycles to all
+> > +      * tasks.
+> > +      */
+> > +     node_overloaded
+> > +};
+> >
+>
+> Ok, to reconcile this with the load balancer, it would need to account
+> for imbalanced but that's ok in the context of this patch.
+>
+> >  /* Cached statistics for all CPUs within a node */
+> >  struct numa_stats {
+> >       unsigned long load;
+> > -
+> > +     unsigned long util;
+> >       /* Total compute capacity of CPUs on a node */
+> >       unsigned long compute_capacity;
+> > +     unsigned int nr_running;
+> > +     unsigned int weight;
+> > +     enum numa_type node_type;
+> >  };
+> >
+> > -/*
+> > - * XXX borrowed from update_sg_lb_stats
+> > - */
+> > -static void update_numa_stats(struct numa_stats *ns, int nid)
+> > -{
+> > -     int cpu;
+> > -
+> > -     memset(ns, 0, sizeof(*ns));
+> > -     for_each_cpu(cpu, cpumask_of_node(nid)) {
+> > -             struct rq *rq = cpu_rq(cpu);
+> > -
+> > -             ns->load += cpu_runnable_load(rq);
+> > -             ns->compute_capacity += capacity_of(cpu);
+> > -     }
+> > -
+> > -}
+> > -
+> >  struct task_numa_env {
+> >       struct task_struct *p;
+> >
+> > @@ -1521,6 +1518,47 @@ struct task_numa_env {
+> >       int best_cpu;
+> >  };
+> >
+> > +static unsigned long cpu_load(struct rq *rq);
+> > +static unsigned long cpu_util(int cpu);
+> > +
+> > +static inline enum
+> > +numa_type numa_classify(unsigned int imbalance_pct,
+> > +                      struct numa_stats *ns)
+> > +{
+> > +     if ((ns->nr_running > ns->weight) &&
+> > +         ((ns->compute_capacity * 100) < (ns->util * imbalance_pct)))
+> > +             return node_overloaded;
+> > +
+>
+> Ok, so this is essentially group_is_overloaded.
+>
+>
+> > +     if ((ns->nr_running < ns->weight) ||
+> > +         ((ns->compute_capacity * 100) > (ns->util * imbalance_pct)))
+> > +             return node_has_spare;
+> > +
+>
+> And this is group_has_capacity. What I did was have a common helper
+> for both NUMA and normal load balancing and translated the fields from
+> sg_lb_stats and numa_stats into a common helper. This is to prevent them
+> getting out of sync. The conversion was incomplete in my case but in
+> principle, both NUMA and CPU load balancing should use common helpers or
+> they'll get out of sync.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
-Hi Saravanan,
-I don't have the h/w to test, please help review and test this patch.
+I fact, I wanted to keep this patch simple and readable for the 1st
+version in order to not afraid people from reviewing it. That's the
+main reason I didn't merge it with load_balance but i agree that some
+common helper function might be possible.
 
-Thanks,
-Axel
+Also the struct sg_lb_stats has a lot more fields compared to struct numa_stats
 
- drivers/regulator/mp5416.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Then, I wonder if we could end up with different rules for numa like
+taking into account some NUMA specifics metrics to classify the node
 
-diff --git a/drivers/regulator/mp5416.c b/drivers/regulator/mp5416.c
-index 7954ad17249b..67ce1b52a1a1 100644
---- a/drivers/regulator/mp5416.c
-+++ b/drivers/regulator/mp5416.c
-@@ -73,7 +73,7 @@
- 		.owner			= THIS_MODULE,			\
- 	}
- 
--#define MP5416LDO(_name, _id)						\
-+#define MP5416LDO(_name, _id, _dval)					\
- 	[MP5416_LDO ## _id] = {						\
- 		.id = MP5416_LDO ## _id,				\
- 		.name = _name,						\
-@@ -87,9 +87,9 @@
- 		.vsel_mask = MP5416_MASK_VSET,				\
- 		.enable_reg = MP5416_REG_LDO ##_id,			\
- 		.enable_mask = MP5416_REGULATOR_EN,			\
--		.active_discharge_on	= BIT(_id),			\
-+		.active_discharge_on	= _dval,			\
- 		.active_discharge_reg	= MP5416_REG_CTL2,		\
--		.active_discharge_mask	= BIT(_id),			\
-+		.active_discharge_mask	= _dval,			\
- 		.owner			= THIS_MODULE,			\
- 	}
- 
-@@ -155,10 +155,10 @@ static struct regulator_desc mp5416_regulators_desc[MP5416_MAX_REGULATORS] = {
- 	MP5416BUCK("buck2", 2, mp5416_I_limits2, MP5416_REG_CTL1, BIT(1), 2),
- 	MP5416BUCK("buck3", 3, mp5416_I_limits1, MP5416_REG_CTL1, BIT(2), 1),
- 	MP5416BUCK("buck4", 4, mp5416_I_limits2, MP5416_REG_CTL2, BIT(5), 2),
--	MP5416LDO("ldo1", 1),
--	MP5416LDO("ldo2", 2),
--	MP5416LDO("ldo3", 3),
--	MP5416LDO("ldo4", 4),
-+	MP5416LDO("ldo1", 1, BIT(4)),
-+	MP5416LDO("ldo2", 2, BIT(3)),
-+	MP5416LDO("ldo3", 3, BIT(2)),
-+	MP5416LDO("ldo4", 4, BIT(1)),
- };
- 
- /*
--- 
-2.20.1
-
+>
+>
+> > +     return node_fully_busy;
+> > +}
+> > +
+> > +/*
+> > + * XXX borrowed from update_sg_lb_stats
+> > + */
+> > +static void update_numa_stats(struct task_numa_env *env,
+> > +                           struct numa_stats *ns, int nid)
+> > +{
+> > +     int cpu;
+> > +
+> > +     memset(ns, 0, sizeof(*ns));
+> > +     for_each_cpu(cpu, cpumask_of_node(nid)) {
+> > +             struct rq *rq = cpu_rq(cpu);
+> > +
+> > +             ns->load += cpu_load(rq);
+> > +             ns->util += cpu_util(cpu);
+> > +             ns->nr_running += rq->cfs.h_nr_running;
+> > +             ns->compute_capacity += capacity_of(cpu);
+> > +     }
+> > +
+> > +     ns->weight = cpumask_weight(cpumask_of_node(nid));
+> > +
+> > +     ns->node_type = numa_classify(env->imbalance_pct, ns);
+> > +}
+> > +
+>
+> Ok, this is more or less what I had except I wedged other stuff in there
+> too specific to NUMA balancing to avoid multiple walks of the cpumask.
+>
+> >  static void task_numa_assign(struct task_numa_env *env,
+> >                            struct task_struct *p, long imp)
+> >  {
+> > @@ -1556,6 +1594,11 @@ static bool load_too_imbalanced(long src_load, long dst_load,
+> >       long orig_src_load, orig_dst_load;
+> >       long src_capacity, dst_capacity;
+> >
+> > +
+> > +     /* If dst node has spare capacity, there is no real load imbalance */
+> > +     if (env->dst_stats.node_type == node_has_spare)
+> > +             return false;
+> > +
+>
+> Not exactly what the load balancer thinks though, the load balancer
+> may decide to balance the tasks between NUMA groups even when there is
+> capacity. That said, what you did here is compatible with the current code.
+>
+> I'll want to test this further but in general
+>
+> Acked-by: Mel Gorman <mgorman@techsingularity.net>
+>
+> However, I really would have preferred if numa_classify shared common
+> code with group_[is_overloaded|has_capacity] instead of having
+> equivalent but different implementations.
+>
+> >       /*
+> >        * The load is corrected for the CPU capacity available on each node.
+> >        *
+> > @@ -1788,10 +1831,10 @@ static int task_numa_migrate(struct task_struct *p)
+> >       dist = env.dist = node_distance(env.src_nid, env.dst_nid);
+> >       taskweight = task_weight(p, env.src_nid, dist);
+> >       groupweight = group_weight(p, env.src_nid, dist);
+> > -     update_numa_stats(&env.src_stats, env.src_nid);
+> > +     update_numa_stats(&env, &env.src_stats, env.src_nid);
+> >       taskimp = task_weight(p, env.dst_nid, dist) - taskweight;
+> >       groupimp = group_weight(p, env.dst_nid, dist) - groupweight;
+> > -     update_numa_stats(&env.dst_stats, env.dst_nid);
+> > +     update_numa_stats(&env, &env.dst_stats, env.dst_nid);
+> >
+> >       /* Try to find a spot on the preferred nid. */
+> >       task_numa_find_cpu(&env, taskimp, groupimp);
+> > @@ -1824,7 +1867,7 @@ static int task_numa_migrate(struct task_struct *p)
+> >
+> >                       env.dist = dist;
+> >                       env.dst_nid = nid;
+> > -                     update_numa_stats(&env.dst_stats, env.dst_nid);
+> > +                     update_numa_stats(&env, &env.dst_stats, env.dst_nid);
+> >                       task_numa_find_cpu(&env, taskimp, groupimp);
+> >               }
+> >       }
+> > @@ -5446,6 +5489,11 @@ static unsigned long cpu_load_without(struct rq *rq, struct task_struct *p)
+> >       return load;
+> >  }
+> >
+> > +static unsigned long cpu_runnable_load(struct rq *rq)
+> > +{
+> > +     return cfs_rq_runnable_load_avg(&rq->cfs);
+> > +}
+> > +
+> >  static unsigned long capacity_of(int cpu)
+> >  {
+> >       return cpu_rq(cpu)->cpu_capacity;
+> > --
+> > 2.17.1
+> >
+>
+> --
+> Mel Gorman
+> SUSE Labs
