@@ -2,60 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6D7B15A428
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:01:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86CB315A47C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:20:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728637AbgBLJBD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 04:01:03 -0500
-Received: from fw.difson.gob.mx ([200.38.154.174]:33626 "EHLO
-        mail.difson.gob.mx" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728150AbgBLJBD (ORCPT
+        id S1728715AbgBLJUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 04:20:10 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:55800 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728530AbgBLJUK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:01:03 -0500
-X-Greylist: delayed 1577 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Feb 2020 04:01:03 EST
-Received: from localhost (localhost [127.0.0.1])
-        by mail.difson.gob.mx (Postfix) with ESMTP id B5F953217AF;
-        Wed, 12 Feb 2020 01:33:19 -0700 (MST)
-Received: from mail.difson.gob.mx ([127.0.0.1])
-        by localhost (mail.difson.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id RXUwRof2L-tt; Wed, 12 Feb 2020 01:33:18 -0700 (MST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.difson.gob.mx (Postfix) with ESMTP id 8C6B43217A1;
-        Wed, 12 Feb 2020 01:33:17 -0700 (MST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.difson.gob.mx 8C6B43217A1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=difson.gob.mx;
-        s=D7CA4582-F2E2-11E6-8966-AB4C44A37E80; t=1581496398;
-        bh=zI5MTMWZOlxtiunPusKdidxivWrdVtbxAb/b19Fq+v8=;
-        h=Date:From:Message-ID:MIME-Version;
-        b=H2zEn+FhsxlhQI7iOnwOZ4LbW4FycSrG2KXEs+YD48QSFNXnO7LJCQ3SfCzlVcqy6
-         RGdIJKkSeHVr5crlEGv7NUBOOdtvs0aoz5f3Lwr0m6eF4yAxfpKEnaT3YuuMEsqC0c
-         gzZ3U/NgC2/MhQcmpoTmczmC82vhIyeiK4KCRtLI=
-X-Virus-Scanned: amavisd-new at difson.gob.mx
-Received: from mail.difson.gob.mx ([127.0.0.1])
-        by localhost (mail.difson.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id qTqYiiZ4zw2H; Wed, 12 Feb 2020 01:33:17 -0700 (MST)
-Received: from mail.difson.gob.mx (mail.difson.gob.mx [10.0.0.28])
-        by mail.difson.gob.mx (Postfix) with ESMTP id 021E632153B;
-        Wed, 12 Feb 2020 01:33:06 -0700 (MST)
-Date:   Wed, 12 Feb 2020 01:33:06 -0700 (MST)
-From:   Friedrich And Annand Mayrhofer <rossy.kuroda@difson.gob.mx>
-Reply-To: Friedrich And Annand Mayrhofer <friedricmayrhofer8@gmail.com>
-Message-ID: <247332313.40895.1581496386846.JavaMail.zimbra@difson.gob.mx>
-Subject: Did You get My Message This Time?
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.12_GA_3803 (zclient/8.8.12_GA_3803)
-Thread-Index: BEmvUs2pVAZAOCOlCJFxxON+RniP9g==
-Thread-Topic: Did You get My Message This Time?
-To:     unlisted-recipients:; (no To-header on input)
+        Wed, 12 Feb 2020 04:20:10 -0500
+Received: from ramsan ([84.195.182.253])
+        by baptiste.telenet-ops.be with bizsmtp
+        id 1lL8220015USYZQ01lL8uS; Wed, 12 Feb 2020 10:20:08 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j1o3h-0000Zh-5L; Wed, 12 Feb 2020 10:11:49 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j1nbX-0002IJ-Ab; Wed, 12 Feb 2020 09:42:43 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Akinobu Mita <akinobu.mita@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] lib/scatterlist: Fix sg_copy_buffer() kerneldoc
+Date:   Wed, 12 Feb 2020 09:42:41 +0100
+Message-Id: <20200212084241.8778-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add the missing closing parenthesis to the description for the to_buffer
+parameter of sg_copy_buffer().
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ lib/scatterlist.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is the second time i am sending you this mail.I, Friedrich Mayrhofer Donate $ 1,000,000.00 to You, Email Me personally for more details
-.Regards.
-Friedrich Mayrhofer
+diff --git a/lib/scatterlist.c b/lib/scatterlist.c
+index 5813072bc58955ac..5d63a8857f361d00 100644
+--- a/lib/scatterlist.c
++++ b/lib/scatterlist.c
+@@ -832,7 +832,7 @@ EXPORT_SYMBOL(sg_miter_stop);
+  * @buflen:		 The number of bytes to copy
+  * @skip:		 Number of bytes to skip before copying
+  * @to_buffer:		 transfer direction (true == from an sg list to a
+- *			 buffer, false == from a buffer to an sg list
++ *			 buffer, false == from a buffer to an sg list)
+  *
+  * Returns the number of copied bytes.
+  *
+-- 
+2.17.1
+
