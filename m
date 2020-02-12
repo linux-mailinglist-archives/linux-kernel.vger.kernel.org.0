@@ -2,128 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 601E615B0D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:18:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEF1A15B0D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:19:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728947AbgBLTSP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 14:18:15 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:43326 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727231AbgBLTSP (ORCPT
+        id S1728775AbgBLTTc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 14:19:32 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:27810 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728930AbgBLTTb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 14:18:15 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01CJI2nt129769;
-        Wed, 12 Feb 2020 13:18:02 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581535082;
-        bh=RddroMl+8V9fWReNg0unj/DoPpgOqUAGzQHwwWEjayM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=iyt0kwiq+Zq9gc61whMBKHqQL+1AHSFr0zlCgr2krxL8AEBt0WMnafVGBgcTZRAln
-         sUPOlXS6XQeoKNMR+92LDJ/Uy6jX+TNZL3hZma9YBqfn3V0LeXHQR0Qedl1n8Jo+rW
-         Xyc9RZbHtIEFz2UAKmeNTj7RjcDWQLHZrCGBCfoI=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01CJI2OO121270
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Feb 2020 13:18:02 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 12
- Feb 2020 13:18:01 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 12 Feb 2020 13:18:01 -0600
-Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01CJHxFU129951;
-        Wed, 12 Feb 2020 13:18:00 -0600
-Subject: Re: Question about kthread_mod_delayed_work() allowed context
-To:     Petr Mladek <pmladek@suse.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <linux-rt-users@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        netdev <netdev@vger.kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>
-References: <cfa886ad-e3b7-c0d2-3ff8-58d94170eab5@ti.com>
- <20200212154116.hh2vdyi7e2xflxr5@pathway.suse.cz>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <59802c56-1013-3042-167d-89f288f51b58@ti.com>
-Date:   Wed, 12 Feb 2020 21:17:53 +0200
+        Wed, 12 Feb 2020 14:19:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581535170;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ALtsPsHoJJ/yr/NY82gjbpHubR4mBebZy4GAbdTJqzM=;
+        b=dYl0w06gTBlDDuT/cwWaN8yaKoSNW/BKDCotNM1A4GQlMXjT5omgzcVMP735cpxaRGILsU
+        Mdb7zKn3rGpVoGjSmK2sKAOjyrxAAJD1288G0yem2c01VsW1W8dYHmrOCQblur2wBUbfP+
+        I/a7E+7JWVDqkP8q69ykX16/LXIkilw=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-167-lkLT1y3OPRWFrdghI_P21g-1; Wed, 12 Feb 2020 14:19:28 -0500
+X-MC-Unique: lkLT1y3OPRWFrdghI_P21g-1
+Received: by mail-wm1-f70.google.com with SMTP id f66so1349057wmf.9
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 11:19:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ALtsPsHoJJ/yr/NY82gjbpHubR4mBebZy4GAbdTJqzM=;
+        b=kzyIhGeBCiigoHxnNU2YwMZp5/Bgj3rgP+LrSyLr/T8uW601uxfG/IKnOnslCldYeq
+         AXniIdM+ZA/Cdz7s0UDyQZ9gsQLQtzwLlYeFhyePK210pQl18FeZc6V5TmlPbojSS6d3
+         fkWj+07jeF/MSRJOMMwLYpCXUugpm/d8EeZDZeDQRpOJNfe9O+xXIAKNlNc8BqlekJQ5
+         YS/UA/bXAAm30wbtCx4iIEDJoT3no9snyM7rRW+rg2Wr7bPTd7b5X0ygzuT0cTCVXdFO
+         tpZmpMJsxtzOJ9kS81mw3FvVedwqE37mOpxkcbZYKh2TvbLAhcQMGSFI9/C3zYWBzL/r
+         Ibqg==
+X-Gm-Message-State: APjAAAX9DMWPB2JFmqmXwpfCZfs5RJ67AiucBjtTx8vL3urmj/N5yfTM
+        GeIQaiSbpY1EZmwupqnsg/bpPa0k+D9+EDYFOh23Lt1Hi7N9mag1Lpa7rvkHpqPyy+Hygv9bF1/
+        pMs+ZN6r0bejkLcCE6Xj1vc8V
+X-Received: by 2002:a1c:3b09:: with SMTP id i9mr560742wma.31.1581535167688;
+        Wed, 12 Feb 2020 11:19:27 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyeyaA14PxiDCO4uOSF5JvBIm+xF1sF2jVONkZ/53zgfRVuwKC20eBEA1OtGwEYi/yLlQpFbg==
+X-Received: by 2002:a1c:3b09:: with SMTP id i9mr560716wma.31.1581535167364;
+        Wed, 12 Feb 2020 11:19:27 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:652c:29a6:517b:66d9? ([2001:b07:6468:f312:652c:29a6:517b:66d9])
+        by smtp.gmail.com with ESMTPSA id d204sm1919873wmd.30.2020.02.12.11.19.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2020 11:19:26 -0800 (PST)
+Subject: Re: [GIT PULL] KVM changes for Linux 5.6-rc2
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        Oliver Upton <oupton@google.com>
+References: <20200212164714.7733-1-pbonzini@redhat.com>
+ <CAHk-=wh6KEgPz_7TFqSgg3T29SrCBU+h64t=BWyCKwJOrk3RLQ@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <b90a886e-b320-43d3-b2b6-7032aac57abe@redhat.com>
+Date:   Wed, 12 Feb 2020 20:19:25 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <20200212154116.hh2vdyi7e2xflxr5@pathway.suse.cz>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <CAHk-=wh6KEgPz_7TFqSgg3T29SrCBU+h64t=BWyCKwJOrk3RLQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/02/20 19:53, Linus Torvalds wrote:
+> It doesn't even compile. Just in the patch itself - so this is not a
+> merge issue, I see this:
+> 
+>           int (*skip_emulated_instruction)(struct kvm_vcpu *vcpu);
+>   ..
+>   @@ -1599,6 +1599,40 @@ static int skip_emulated_instruction(struct
+> kvm_vcpu *vcpu)
+>   ..
+>   +static void vmx_skip_emulated_instruction(struct kvm_vcpu *vcpu)
+>   +       return skip_emulated_instruction(vcpu);
+>   ..
+>   -       .skip_emulated_instruction = skip_emulated_instruction,
+>   +       .skip_emulated_instruction = vmx_skip_emulated_instruction,
+> 
+> ie note how that vmx_skip_emulated_instruction() is a void function,
+> and then you have
+> 
+>          return skip_emulated_instruction(vcpu);
+> 
+> in it, and you assign that garbage to ".skip_emulated_instruction"
+> which is supposed to be returning 'int'.
 
+Indeed I missed the warning.  Of course the return value is in %rax so,
+despite the patch being shitty (it is), it is also true that it
+*happens* to pass the corresponding unit test.
 
-On 12/02/2020 17:41, Petr Mladek wrote:
-> On Tue 2020-02-11 12:23:59, Grygorii Strashko wrote:
->> Hi All,
->>
->> I'd like to ask question about allowed calling context for kthread_mod_delayed_work().
->>
->> The comment to kthread_mod_delayed_work() says:
->>
->>   * This function is safe to call from any context including IRQ handler.
->>   * See __kthread_cancel_work() and kthread_delayed_work_timer_fn()
->>   * for details.
->>   */
->>
->> But it has del_timer_sync() inside which seems can't be called from hard_irq context:
->> kthread_mod_delayed_work()
->>    |-__kthread_cancel_work()
->>       |- del_timer_sync()
->> 	|- WARN_ON(in_irq() && !(timer->flags & TIMER_IRQSAFE));
-> 
-> It is safe because kthread_delayed_work_timer_fn() is IRQ safe.
-> Note that it uses raw_spin_lock_irqsave(). It is the reason why
-> the timer could have set TIMER_IRQSAFE flag, see
-> KTHREAD_DELAYED_WORK_INIT().
-> 
-> In more details. The timer is either canceled before the callback
-> is called. Or it waits for the callback but the callback is safe
-> because it can't sleep.
+Not a particularly high bar to clear I admit, but enough to explain the
+mistake and ensure it doesn't happen again; I have now added "ccflags-y
++= -Werror" to the KVM makefile.
 
-I think, my issue (warning) could be related to the fact that kthread_init_delayed_work()
-is used, which seems doesn't set TIMER_IRQSAFE flag.
+> So this clearly never even got a _whiff_ of build-testing.
 
-> 
-> 
->> My use case is related to PTP processing using PTP auxiliary worker:
->> (commit d9535cb7b760 ("ptp: introduce ptp auxiliary worker")):
->>   - periodic work A is started and res-schedules itself for every dtX
->>   - on IRQ - the work A need to be scheduled immediately
-> 
-> This is exactly where kthread_mod_delayed_work() need to be used
-> in the IRQ context with 0 delay.
-> 
-> 
->> Any advice on how to proceed?
->> Can kthread_queue_work() be used even if there is delayed work is
->> scheduled already (in general, don't care if work A will be executed one
->> more time after timer expiration)?
-> 
-> Yes, it can be used this way. It should behave the same way as
-> the workqueue API.
-> 
-> I am happy that there are more users for this API. I wanted to
-> convert more kthreads but it was just falling down in my TODO.
-> 
-> I hope that I answered all questions. Feel free to ask more
-> when in doubts.
-> 
-> Best Regards,
-> Petr
-> 
+Oh come on.
 
--- 
-Best regards,
-grygorii
+> You're now on my shit-list, which means that I want to see only (a)
+> pure fixes and (b) well-tested such. Nothing else will be pulled.
+
+Fair enough, I removed the following patches from the pull request and
+will resend:
+
+ KVM: nVMX: Emulate MTF when performing instruction emulation
+ KVM: nVMX: Rename nested_ept_get_cr3() to nested_ept_get_eptp()
+ KVM: nVMX: Rename EPTP validity helper and associated variables
+ KVM: nVMX: Drop unnecessary check on ept caps for execute-only
+ KVM: Provide kvm_flush_remote_tlbs_common()
+ KVM: MIPS: Drop flush_shadow_memslot() callback
+ KVM: MIPS: Replace all the kvm_flush_remote_tlbs() references
+ KVM: MIPS: Define arch-specific kvm_flush_remote_tlbs()
+
+The first one is a bug fix, but since it's the one that caused all the
+mess I guess it's not really a good idea to argue about it.
+
+Paolo
+
