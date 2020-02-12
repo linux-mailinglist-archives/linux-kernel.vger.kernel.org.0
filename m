@@ -2,86 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63DDF159E95
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 02:31:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A61AD159E97
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 02:35:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728168AbgBLBbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 20:31:36 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38307 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727330AbgBLBbg (ORCPT
+        id S1728148AbgBLBfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 20:35:22 -0500
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:42036 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727865AbgBLBfV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 20:31:36 -0500
-Received: by mail-pg1-f193.google.com with SMTP id d6so324197pgn.5
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 17:31:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+DK3X5s5bAedOsctDapXXhz9ixgced4ShaVeh1Nqq2I=;
-        b=dAB4762+JGtjVgDtbWgl6TV1oc/2qyuIF85pCzS7p9b9WdxpKj8ThZD7/UeTOV2e24
-         S6YvHkv1/5FrtrQGoU3Fd2Q2MIPUDGt2qPIk5vwrhYMG/JqajxXPB4Mv6GDx054ayrjh
-         U7Xhx1EG9og17M3a6l5NJNiEqrRzUWLSNt9YHXDyh7DJpYCpqEbV3k4WgT8eAgseNRRg
-         ltc79n5Opl7aCrARS3bZhht/ILrJJ7KlTHdUSx+6/MtCWzs2dk2eNgN+mCNlMTuGgG9v
-         zLv09C8bxWhILUPV0mXb01xHQxrW+xH8BqA50B+hEhmbRf9dvOz8bfDpG/MRXvP4d+Jq
-         iaOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+DK3X5s5bAedOsctDapXXhz9ixgced4ShaVeh1Nqq2I=;
-        b=Vj79wDns7PCaTFQAd3earp/nj+cDklwK2c050comx9lJPjF2yaJthu1wQyq4bkxm+K
-         hZ3LI8jPHkBKMZo84vG8nu3TVDX1RXQ+RZiMqiXf0KkAZ8Ag3I2BxeS413kXrp0gU4LN
-         86DIMoeHXm3im6X/WLwRMCx2VoWml+a6ulMzgGBOPcINESIaQXuv7wMz7+Fq1v/VXHt8
-         1EetSFUc5vKeSvo8DITgMNtC7mHGNtofmAf+gRmFTt4MfN5f7Bw5O4Li/tyEN4Vxji1E
-         NYl9zT0ZG551OOxF47i9BbeyEP+aAsvqAmORINXbSl06N8aciyAzLtGZVlWeB0mbnywi
-         kkRw==
-X-Gm-Message-State: APjAAAUckPt96JXfreZdzKx3u3yPHA7wKyotXSgdFIsZKcvwc+EI4YvI
-        fAwppukz5HBnV+JC3qt7tRE=
-X-Google-Smtp-Source: APXvYqwnTkkD+C5w4tbCrNIWOpC85746oTzvOp46YedvqglJXCvBRk7WLzjqZ0zPC1C4zKkrXZ/C/g==
-X-Received: by 2002:a63:d0d:: with SMTP id c13mr5816064pgl.388.1581471095840;
-        Tue, 11 Feb 2020 17:31:35 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
-        by smtp.gmail.com with ESMTPSA id r198sm5871499pfr.54.2020.02.11.17.31.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 17:31:35 -0800 (PST)
-Date:   Wed, 12 Feb 2020 10:31:33 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v1] printk: Declare log_wait as external variable
-Message-ID: <20200212013133.GB13208@google.com>
-References: <20200203131528.52825-1-andriy.shevchenko@linux.intel.com>
- <20200211124317.x5erhl7kvxj2nq6a@pathway.suse.cz>
+        Tue, 11 Feb 2020 20:35:21 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Tpjb1uS_1581471318;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0Tpjb1uS_1581471318)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 12 Feb 2020 09:35:19 +0800
+Subject: Re: [RFC] why can't dynamic isolation just like the static way
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        "open list:SCHEDULER" <linux-kernel@vger.kernel.org>
+References: <fed10a26-7423-23b5-316c-c74d354870dd@linux.alibaba.com>
+ <20200211114350.GJ14914@hirez.programming.kicks-ass.net>
+ <20200211090028.4e12d02e@gandalf.local.home>
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Message-ID: <6b4fda32-b9b0-b8ce-968e-7e5a65a7e1f0@linux.alibaba.com>
+Date:   Wed, 12 Feb 2020 09:35:18 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0)
+ Gecko/20100101 Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200211124317.x5erhl7kvxj2nq6a@pathway.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200211090028.4e12d02e@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (20/02/11 13:43), Petr Mladek wrote:
->
-> Even better solution might be to move fs/proc/kmsg.c to
-> kernel/printk/proc_kmsg.c and declare printk_log_wait only
-> in kernel/printk/internal.h. I think that this is what
-> Sergey suggested.
 
-Yes, right.
 
-> Another great thing would be to extract devkmsg stuff from
-> kernel/printk/printk.c and put it into kernel/printk/dev_kmsg.c.
+On 2020/2/11 下午10:00, Steven Rostedt wrote:
+> On Tue, 11 Feb 2020 12:43:50 +0100
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+>> On Tue, Feb 11, 2020 at 04:17:34PM +0800, 王贇 wrote:
+>>> Hi, folks
+>>>
+>>> We are dealing with isolcpus these days and try to do the isolation
+>>> dynamically.
+>>>
+>>> The kernel doc lead us into the cpuset.sched_load_balance, it's fine
+>>> to achieve the dynamic isolation with it, however we got problem with
+>>> the systemd stuff.  
+>>
+>> Then don't use systemd :-) Also, if systemd is the problem, why are you
+>> bugging us?
+> 
+> [ Background. Peter is someone that doesn't even use systemd. ;-) ]
 
-Yeah, can do, I would still prefer proc_kmsg to "move in".
-Either both can live in printk.c (won't make it much worse),
-or in kernel/printk/dev_kmsg.c and kernel/printk/proc_kmsg.c
+I would be happy to get rid of that too ;-) but seems like it's getting
+popular now as the basic init stuff, and I guess they have no idea about
+how they are breaking the dynamic isolation.
 
-I can take a look at dev_ksmg.c/proc_kmsg.c option, unless
-someone else wants to spend their time on this.
+Regards,
+Michael Wang
 
-	-ss
+> 
+> -- Steve
+> 
