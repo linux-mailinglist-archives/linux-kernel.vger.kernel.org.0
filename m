@@ -2,121 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 168D615B134
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:36:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 839DA15B139
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:40:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728911AbgBLTgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 14:36:36 -0500
-Received: from gateway22.websitewelcome.com ([192.185.47.179]:30012 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727361AbgBLTgf (ORCPT
+        id S1728767AbgBLTkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 14:40:32 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38397 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727361AbgBLTkc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 14:36:35 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id AE87A8E02
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 13:36:34 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 1xoIj1NeavBMd1xoIj02OP; Wed, 12 Feb 2020 13:36:34 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Ej4epKkgtd78pmu2soBpc7h1dUAyIncXzyPzor29u0Q=; b=GKdpEggZVyr3zWD2G0+2JmrFq/
-        lAYolu14OCpJjaibWW7sCc9mBM3WR98A5yx6uizd/LTleIQ3V1ub3bEaLRccXFd7S7rbgZAFmdJJN
-        AfE5M9qOTEYuHbscThqnpVVpRWpksIfx9KhK6fP+1o/ElwZGo8KHaHlBN9z6qsUX1WjmYRZvyNHlr
-        Sbsjf7THeVS4vd/eyF8IF3ax9NrfGRRVLAoN0KeN9sq10fqOSyP6v6eOJsZ00DXfvX1C6EWR/KP2g
-        jjJqU0+mRKqvj+dW+TLHJJiJbltLNnN7cLTrgMq6en+sI7F+kj7nWE8SF+4SQ/NquuVnIrl/vhK4l
-        IdhGjnCA==;
-Received: from [201.144.174.25] (port=7008 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j1xoH-001AQk-1y; Wed, 12 Feb 2020 13:36:33 -0600
-Date:   Wed, 12 Feb 2020 13:39:08 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jiri Pirko <jiri@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] net: devlink: Replace zero-length array with
- flexible-array member
-Message-ID: <20200212193908.GA30620@embeddedor>
+        Wed, 12 Feb 2020 14:40:32 -0500
+Received: by mail-lj1-f194.google.com with SMTP id w1so3732103ljh.5
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 11:40:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DqEPluF1YjWMHllKIvFCE3R/reccWsSyy085Om1UZM8=;
+        b=T9cMirXct8SOHRkNT8nUDSpJX8PptpdoGUyxFMSJMVKDNnhk0Q4yntq40cZnRq6zwg
+         ZO9fhgWEfD/Yqo6UFGnxgg6At25kWkovMNafMQ8qUi+WOlA6cy77H4Xovl/VF7qXugK/
+         zOxYW3bRpefvV3Xg+Qj6kAeRC4QjlVfcKrudKVWx/8/T7LO+2NNe/oX/iyHfAoabzo9S
+         xlJaI9zeP7EdWIrsm5ticTjUqt5nM0YI28q1ylXV95l1HtkionzsEUZySJLCF50iWQDl
+         BLl/eoydSMhSuWx3GBNF4TDklolk+Q7waokZlZc7NV8dzRJZj17JVT528Zhcd0upUjzW
+         2M0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DqEPluF1YjWMHllKIvFCE3R/reccWsSyy085Om1UZM8=;
+        b=IQbDp0E1ijV0i6/lmTBsnqFbQGTHdMjiJKQbAl6MM/doVpcxbkjMPW88ZiCnc7lCj6
+         LOWAxAh6t5/EkEzW9gdv3q3I2ZBHjXBPznp4UDR4On9JhKSb0GBVIhENBGYvyCzmL/WK
+         GjRUyyOFTKXpqLW/9gR9sV6CQiqh1JLmiilRZxKA7gJAQflH0JsJIkQMLj1gG/5deL9K
+         m5CVuZQcwTNCGm8a0bFYkKLrldrkygcMBAzNAC6h/y3PshccK9K6aWwr/i5T91Cb9aEO
+         Uup7IX7stIZvxvsubYF8nCVNbVoIyQ1LoeCn3T1iYB4wWKDnyYzTTAq/BshaugC1PVbO
+         ioEA==
+X-Gm-Message-State: APjAAAXnDFXR7HHTEvjalmm1ORBlDt6Wtj95zs/v012vU0exeAaYBI2Z
+        8V1n6S2GBqJuC4xOeIzWg7K2hKDg8Iurz92HqUfM
+X-Google-Smtp-Source: APXvYqwvXyxnKZV4j7eT5ZvUPLXdR7r6x3tGLHB9G48Hlyw2Jzy0zQ6Am+wzZDHyn84jUT52FIP2y+d4DWWDX04EgOg=
+X-Received: by 2002:a2e:b0e3:: with SMTP id h3mr8402668ljl.56.1581536429803;
+ Wed, 12 Feb 2020 11:40:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.144.174.25
-X-Source-L: No
-X-Exim-ID: 1j1xoH-001AQk-1y
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.144.174.25]:7008
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 36
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20200211011631.7619-1-zzyiwei@google.com> <20200210211951.1633c7d0@rorschach.local.home>
+ <CAKT=dDm+UKqa7j744iTsvYs+jqrdOHpTqdksRUjDe-6vqkigew@mail.gmail.com>
+ <20200210221521.59928416@rorschach.local.home> <CAKT=dDk+CiMQ_-f6Daa_ea2FOW=De6PKmcyiGrm4KEkVbH2fDQ@mail.gmail.com>
+ <20200212143751.0114fe78@gandalf.local.home>
+In-Reply-To: <20200212143751.0114fe78@gandalf.local.home>
+From:   Yiwei Zhang <zzyiwei@google.com>
+Date:   Wed, 12 Feb 2020 11:40:18 -0800
+Message-ID: <CAKT=dDnnSrkGx1KN8t0-c7cqXCCE=xj=usUT9COfmTDbirx5WQ@mail.gmail.com>
+Subject: Re: [PATCH] Add gpu memory tracepoints
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
+        Prahlad Kilambi <prahladk@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        android-kernel <android-kernel@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+Thanks for the info! I'll update the patch accordingly.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+Best regards,
+Yiwei
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertenly introduced[3] to the codebase from now on.
-
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- net/core/devlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/core/devlink.c b/net/core/devlink.c
-index 549ee56b7a21..a8c1f46319da 100644
---- a/net/core/devlink.c
-+++ b/net/core/devlink.c
-@@ -4232,7 +4232,7 @@ struct devlink_fmsg_item {
- 	int attrtype;
- 	u8 nla_type;
- 	u16 len;
--	int value[0];
-+	int value[];
- };
- 
- struct devlink_fmsg {
--- 
-2.25.0
-
+On Wed, Feb 12, 2020 at 11:37 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Wed, 12 Feb 2020 11:26:08 -0800
+> Yiwei Zhang <zzyiwei@google.com> wrote:
+>
+> > Hi Steven,
+> >
+> > I can move the stuff out from the kernel/trace. Then can we still
+> > leave include/trace/events/gpu_mem.h where it is right now? Or do we
+> > have to move that out as well? Because we would need a non-drm common
+> > header place for the tracepoint so that downstream drivers can find
+> > the tracepoint definition.
+> >
+>
+> You can leave the header there. The include/trace/events/ is the place
+> to put trace event headers for common code.
+>
+> It just did not belong in kernel/trace/
+>
+> Thanks!
+>
+> -- Steve
