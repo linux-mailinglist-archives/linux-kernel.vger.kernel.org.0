@@ -2,75 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C811215A564
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:55:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1C0015A56A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:55:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728969AbgBLJzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 04:55:11 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:62115 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728712AbgBLJzK (ORCPT
+        id S1729013AbgBLJzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 04:55:31 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33471 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728846AbgBLJza (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:55:10 -0500
-X-UUID: 569e267dd7884339957488b3b7250a38-20200212
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=Vr1pHkQVOl3JW4Dfr5vCs2HYOfLXE6nj+3u5wfIpXq4=;
-        b=o4z8ZeqJWm49Rh9nJxQ30LLooRuKQ5JAS1tzIbEjKZ5cY3AOtA0CXNYqijJEXuBLLtzNm0TV7B10vpqGK0HYuzHi4f9/9LBXwZFZYidwKCRc8S8a5jrAnEdGWZg8nXRuUNEFnBMKHiU8y+vJic8iqaXxHkXkwvpU2qe1Iq8y/9E=;
-X-UUID: 569e267dd7884339957488b3b7250a38-20200212
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <bibby.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1879772572; Wed, 12 Feb 2020 17:55:04 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 12 Feb 2020 17:54:20 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 12 Feb 2020 17:55:10 +0800
-From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
-To:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
-        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>
-Subject: [PATCH 2/2] drm/mediatek: move gce event property to mutex device node
-Date:   Wed, 12 Feb 2020 17:55:01 +0800
-Message-ID: <20200212095501.12124-2-bibby.hsieh@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20200212095501.12124-1-bibby.hsieh@mediatek.com>
-References: <20200212095501.12124-1-bibby.hsieh@mediatek.com>
+        Wed, 12 Feb 2020 04:55:30 -0500
+Received: by mail-wr1-f66.google.com with SMTP id u6so1436600wrt.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 01:55:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5qqmmgh1mRA8+uKd3OvijHJxqdZDdPNm7C7N0rHwtQ0=;
+        b=ZQTj4phV6Ct6hAZ9+3hpFPdlE3z+Cx/i/rtMRiLdQSrUdYcPxaojrRblBDxxa9sUFr
+         z4/+4zKw6rfRxYW1MyKnDCMlDrNwIEqHnZ2oRp6ckiZA6XWcT8zUmtRvkopMkOfRmunq
+         a0X31u+6mOY7gexXKHddCIOlf2V9zMC2huzBvbOBm5jznmroIIpWafVfqoJLwEYdE5M8
+         pT2y5sVIRhjfuakBod8G4f5eJXiYCUZ+8j3897A0IK+3idy4rTesYmDiBfm2L03KOUxi
+         nS2WG4GzIK8YAls2dsBBOYXz/riEAmjDZi9MO3zW9DqQMRvwBZGz0VJ08eC6f3J96v2l
+         nhUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5qqmmgh1mRA8+uKd3OvijHJxqdZDdPNm7C7N0rHwtQ0=;
+        b=Y8OFqHPma3USYJvaEjYTjD6JQTTN3OnFOHMREpiOrsuVDOYDtclLX9oBxu9/Z6+6W3
+         nlZpCuGOoiRYCiTJ8oW/Kx823NzPNahp8uaeI66O67kCBXu92BGwNyjkLyg202dvk23f
+         8eeyjpGm0EZ2JuvOOnUBKWr5ziLU/8tRL98+ObyIsaD/9HTo1bwSMwoxxcfgfy4zvd4M
+         wXSkpy0B10WKz8Deq3RkFNSIeWPDGueKPzGWblYQGZ+b0yucJvaIC/XdEIbZ3vMm9KDr
+         s4b8xbITrhrxv0rr0BM+WVZczFZTS5LC6RGkmZ+knPMS5je6J/NtcWLxnbk687zFMgnL
+         c44g==
+X-Gm-Message-State: APjAAAXDT4ScHd6+Lp3l0W7P8WBeJXOvv3DPOsXSR3bHLMntEJw0xI29
+        SZBcxajkddb6VaptBnJnbkzK5Bl4KxItu5GuJk6YJNpjLf0=
+X-Google-Smtp-Source: APXvYqxL9Eo4qb2sOJrd1wkpY5K5/0EEQ1noRNaNgdXfALwcSpj9a+jGRMYLeglfrh/aGIAZ7gTQTMGTxHsaLfrIN3k=
+X-Received: by 2002:adf:f7c6:: with SMTP id a6mr15060118wrq.164.1581501328222;
+ Wed, 12 Feb 2020 01:55:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+References: <20200210061544.7600-1-yuehaibing@huawei.com> <9351a746-8823-ee26-70da-fd3127a02c91@linux.intel.com>
+ <be093793-3514-840a-ff2f-4dc21d8ee7f1@huawei.com> <CAEnQRZDWFgXocRJxtc2e7McRCAtod6-GwPJaVMdb4ymBZgSD1w@mail.gmail.com>
+ <CAJKOXPcxL2vpWGwO1OL9Vv0g6hzbW-AyGJNn=7Yq2iy10_cbhg@mail.gmail.com>
+In-Reply-To: <CAJKOXPcxL2vpWGwO1OL9Vv0g6hzbW-AyGJNn=7Yq2iy10_cbhg@mail.gmail.com>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Wed, 12 Feb 2020 11:55:16 +0200
+Message-ID: <CAEnQRZB2n+NOEete9fe7=EU9D2gfURf52NnUZTRDM0n9ey_FSw@mail.gmail.com>
+Subject: Re: [alsa-devel] [PATCH -next] ASoC: SOF: imx8: Fix randbuild error
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Yuehaibing <yuehaibing@huawei.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QWNjb3JkaW5nIG10ayBoYXJkd2FyZSBkZXNpZ24sIHN0cmVhbV9kb25lMCBhbmQgc3RyZWFtX2Rv
-bmUxIGFyZQ0KZ2VuZXJhdGVkIGJ5IG11dGV4LCBzbyB3ZSBtb3ZlIGdjZSBldmVudCBwcm9wZXJ0
-eSB0byBtdXRleCBkZXZpY2UgbW9kZS4NCg0KU2lnbmVkLW9mZi1ieTogQmliYnkgSHNpZWggPGJp
-YmJ5LmhzaWVoQG1lZGlhdGVrLmNvbT4NCi0tLQ0KIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9t
-dGtfZHJtX2NydGMuYyB8IDIgKy0NCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEg
-ZGVsZXRpb24oLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtf
-ZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYw0KaW5k
-ZXggM2M1M2VhMjIyMDhjLi44YTMxZTViOTgzZGIgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMNCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRl
-ay9tdGtfZHJtX2NydGMuYw0KQEAgLTgxOSw3ICs4MTksNyBAQCBpbnQgbXRrX2RybV9jcnRjX2Ny
-ZWF0ZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiwNCiAJCQlkcm1fY3J0Y19pbmRleCgmbXRr
-X2NydGMtPmJhc2UpKTsNCiAJCW10a19jcnRjLT5jbWRxX2NsaWVudCA9IE5VTEw7DQogCX0NCi0J
-cmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzJfaW5kZXgoZGV2LT5vZl9ub2RlLCAibWVkaWF0ZWss
-Z2NlLWV2ZW50cyIsDQorCXJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyX2luZGV4KHByaXYtPm11
-dGV4X25vZGUsICJtZWRpYXRlayxnY2UtZXZlbnRzIiwNCiAJCQkJCSBkcm1fY3J0Y19pbmRleCgm
-bXRrX2NydGMtPmJhc2UpLA0KIAkJCQkJICZtdGtfY3J0Yy0+Y21kcV9ldmVudCk7DQogCWlmIChy
-ZXQpDQotLSANCjIuMTguMA0K
+On Tue, Feb 11, 2020 at 11:59 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Tue, 11 Feb 2020 at 10:46, Daniel Baluta <daniel.baluta@gmail.com> wrote:
+> >
+> > On Tue, Feb 11, 2020 at 3:59 AM Yuehaibing <yuehaibing@huawei.com> wrote:
+> > >
+> > > On 2020/2/11 5:00, Pierre-Louis Bossart wrote:
+> > > >
+> > > >
+> > > > On 2/10/20 12:15 AM, YueHaibing wrote:
+> > > >> when do randconfig like this:
+> > > >> CONFIG_SND_SOC_SOF_IMX8_SUPPORT=y
+> > > >> CONFIG_SND_SOC_SOF_IMX8=y
+> > > >> CONFIG_SND_SOC_SOF_OF=y
+> > > >> CONFIG_IMX_DSP=m
+> > > >> CONFIG_IMX_SCU=y
+> > > >>
+> > > >> there is a link error:
+> > > >>
+> > > >> sound/soc/sof/imx/imx8.o: In function 'imx8_send_msg':
+> > > >> imx8.c:(.text+0x380): undefined reference to 'imx_dsp_ring_doorbell'
+> > > >>
+> > > >> Select IMX_DSP in SND_SOC_SOF_IMX8_SUPPORT to fix this
+> > > >>
+> > > >> Reported-by: Hulk Robot <hulkci@huawei.com>
+> > > >> Fixes: f9ad75468453 ("ASoC: SOF: imx: fix reverse CONFIG_SND_SOC_SOF_OF dependency")
+> > > >> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> > > >
+> > > > Thanks for the report.
+> > > >
+> > > > Would you mind sharing the .config and instructions to reproduce this case? we have an unrelated issue with allyesconfig that was reviewed here:
+> > > >
+> > > > https://github.com/thesofproject/linux/pull/1778
+> > > >
+> > > > and I'd probably a good thing to fix everything in one shot.
+> > >
+> > > config is attached, which is on x86_64
+> >
+> > Thanks, I think this is legit. It was introduced with:
+> >
+> > commit f52cdcce9197fef9d4a68792dd3b840ad2b77117
+> > Author: Daniel Baluta <daniel.baluta@nxp.com>
+> > Date:   Sat Jan 4 15:39:53 2020 +0000
+> >
+> >     firmware: imx: Allow IMX DSP to be selected as module
+> >
+> >     IMX DSP is only needed by SOF or any other module that
+> >     wants to communicate with the DSP. When SOF is build
+> >     as a module IMX DSP is forced to be built inside the
+> >     kernel image. This is not optimal, so allow IMX DSP
+> >     to be built as a module.
+> >
+> >     Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> >     Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+>
+> Hi,
+>
+> Since it's a module, don't you just miss EXPORT_SYMBOL there?
 
+This is a good point. Will have a deeper look at this asap and sent a
+fix .
+
+>
+> > So, I think we should change the Fixes tag. Are there
+> > any clear rules on when to use select vs depends?
+> >
+> > On my side, I know what both are doing but it is not clear
+> > when to use them.
+>
+> Visible symbols usually should not be selected. The same with symbols
+> with dependencies. The docs have this rule mentioned.
+
+I see. Thanks!
