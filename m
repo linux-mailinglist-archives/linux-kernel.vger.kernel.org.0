@@ -2,104 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85D0315B59E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 01:03:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06AB815B5BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 01:17:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729409AbgBMADV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 19:03:21 -0500
-Received: from ishtar.tlinx.org ([173.164.175.65]:53526 "EHLO
-        Ishtar.sc.tlinx.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727117AbgBMADU (ORCPT
+        id S1729299AbgBMARI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 19:17:08 -0500
+Received: from gateway20.websitewelcome.com ([192.185.55.25]:48861 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729256AbgBMARI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 19:03:20 -0500
-X-Greylist: delayed 1819 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Feb 2020 19:03:20 EST
-Received: from [192.168.3.12] (Athenae [192.168.3.12])
-        by Ishtar.sc.tlinx.org (8.14.7/8.14.4/SuSE Linux 0.8) with ESMTP id 01CNWvUV014523;
-        Wed, 12 Feb 2020 15:33:00 -0800
-Message-ID: <5E448B29.1080705@tlinx.org>
-Date:   Wed, 12 Feb 2020 15:32:57 -0800
-From:   L Walsh <cifs@tlinx.org>
-User-Agent: Thunderbird
+        Wed, 12 Feb 2020 19:17:08 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id BAA67400C6921
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 16:43:08 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 21s6j5sQURP4z21s6jXTKl; Wed, 12 Feb 2020 17:56:46 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=/EEuWjIs24zKWMIqBOvxcb5j49JwVhYdPasyL1DoPcI=; b=f39zQB0NnhSRj5vhaap+92XVNE
+        xeAw/tYgbka4ARFX6aMzPd1+63LR4h0GXQEV/haTWYmf1y5s0m9UYd/cTLRreqzjlnTxQ+OvQvziw
+        7KMZWzHzONfscu6Go9KdVoSK1UfBbcqQnGn+WV28xlsbPaadi5TZ9fySDFUrPfOeTRHQ2agR34XP4
+        ZggByW/Y34dLChIkjXbUme/OtWzjghVZF/iBCnkl89iN1j9g4j5RDc1+6A7mMWPRkgNg9t/F0wGWg
+        9nlf8zluM7fsPEiCy9NFqGcENnN6NHg4a7oiq8z/Ms2CGnyAb2Gawgl9gHA05pob3jPCT5Q9V31NI
+        iRmDeNFw==;
+Received: from [200.68.141.42] (port=22005 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j21s4-003LCB-B0; Wed, 12 Feb 2020 17:56:44 -0600
+Date:   Wed, 12 Feb 2020 17:56:42 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>
+Cc:     linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] mfd: omap-usb-tll: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200212235642.GA19206@embeddedor.com>
 MIME-Version: 1.0
-To:     Steve French <smfrench@gmail.com>
-CC:     CIFS <linux-cifs@vger.kernel.org>,
-        Linux-Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [CIFS][PATCH] Add SMB3/Win10-only  Change Notify
-References: <CAH2r5mtQRVX3_-_sVjvigRSv2LpSoUBQo7YeY5v0nXm7BGaDig@mail.gmail.com> <5E413F22.3070101@tlinx.org> <CAH2r5mst9FjdPrBQdjt1HGkf73VoNzDUxPSEQNZwyi=9W9XGhA@mail.gmail.com>
-In-Reply-To: <CAH2r5mst9FjdPrBQdjt1HGkf73VoNzDUxPSEQNZwyi=9W9XGhA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.141.42
+X-Source-L: No
+X-Exim-ID: 1j21s4-003LCB-B0
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [200.68.141.42]:22005
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/02/10 06:30, Steve French wrote:
->
->>     By calling it a SMB3 feature, does that mean you are removing
->> it from SMB2?
->>     
->
-> That is a good question.  I should have made more clear that although
-> many servers support Change Notify prior to SMB3 dialect, we chose
-> to implement it in SMB3 (late 2012 and later dialect) to minimize testing
-> risks and since we want to encourage users to use SMB3 or later (or
-> at least SMB2.1 or later since security is significantly better for later
-> dialects than for SMB1 and even SMB2)
->   
-----
-    SMB2.1 would be fine for my purposes, I find it a bit odd though that
-my linux server running these changes won't be as capable of detecting
-directory changes as an outdated Win7 machine. 
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-    There are many below-SMB3 speaking devices out in the world right now. 
-Probably many below 2.1. 
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-    You say you want to "encourage users to use SMB3 or later (or at least
-SMB2.1)", how does adding SMB3-only support allow users to use SMB2.1?
-Say your encouragement of users is taken to heart, and they want to use 
-SMB3.
-How would those users upgrade the dialect of SMB used in their
-machine or device?  I don't know of any easy way to upgrade existing 
-devices -
-even existing OS's, if a user ran Win7, how would they upgrade the CIFS
-drivers to 3.0?
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-    If it is not possible to upgrade existing devices, then wouldn't that
-encouragement boil down to junking the device and buying a new one?
-> Change Notify is available in all dialects (SMB2, SMB2.1, SMB3, SMB3.1.1)
-> for many servers but for the client we just implemented it for SMB3 and later.
->   
-    Doesn't that mean that the linux client won't be able to access 
-existing
-NAS servers or Win-Client machine running anything other than Win10?  Does
-the current version of samba provide full SMB3 support?  If not, doesn't 
-that
-imply that the client for CIFS won't be able to access or use these features
-from another linux server?
-> If you have a server that you want to support that requires
-> SMB2 or SMB2.1 mounts, I wouldn't mind a patch to add notify support
-> for those older dialects but I would like to encourage use of SMB3 or later (or
-> at least SMB2.1 or later) where possible.
->   
-    Again, how does implementing SMB3-only, only support SMB2.1 or later?
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-    If you feel it would be trivial to add such a patch, wouldn't you be in
-the position of, probably, having the most knowledge about the subject 
-and be
-likely to do the best job without breaking anything else?  Certainly doesn't
-mean someone else couldn't but seems riskier than offering a Linux 
-client that
-would be able to access the widest range of existing devices and 
-computers from
-the start.
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
 
-Thanks!
-Linda
+This issue was found with the help of Coccinelle.
 
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/mfd/omap-usb-tll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-
-
+diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
+index 265f5e350e1c..1cf259a48966 100644
+--- a/drivers/mfd/omap-usb-tll.c
++++ b/drivers/mfd/omap-usb-tll.c
+@@ -99,7 +99,7 @@
+ struct usbtll_omap {
+ 	void __iomem	*base;
+ 	int		nch;		/* num. of channels */
+-	struct clk	*ch_clk[0];	/* must be the last member */
++	struct clk	*ch_clk[];	/* must be the last member */
+ };
+ 
+ /*-------------------------------------------------------------------------*/
+-- 
+2.23.0
 
