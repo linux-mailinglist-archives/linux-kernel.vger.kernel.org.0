@@ -2,60 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A8C215B474
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 00:05:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 678C415B478
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 00:06:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729318AbgBLXFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 18:05:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48294 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728674AbgBLXFm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 18:05:42 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 461BF21569;
-        Wed, 12 Feb 2020 23:05:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581548741;
-        bh=zoHJIVwhMASkDGemE+WVpt+ECpAdmrv/geeULqCSSvY=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=DWWpcl/5iq4RiRXmnPpX9cZGUKtz6UBHZ7rPLZRKE9egTqlI6sYVXKx7EZ/mvWXr6
-         SUUAKQL7Ci+tdYeMmUdDIe86RXQ3HTaZ75IqQ8aBfkeIoSVrYy+1veJyAF8ms26sQR
-         kXe8dPGwvuqV0CY3EBEUgAXhhPgDBAjrn2RVvnFE=
-Content-Type: text/plain; charset="utf-8"
+        id S1729254AbgBLXGm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 18:06:42 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:46305 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727692AbgBLXGm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 18:06:42 -0500
+Received: by mail-qk1-f193.google.com with SMTP id u124so3328411qkh.13;
+        Wed, 12 Feb 2020 15:06:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=jrnsMbO/zuCHlgaM/a/FjOvE1m1S8Xf2JYCWP8EYCzM=;
+        b=j25pRrxQLvVZl/hEdj5hXOzR1QKKISX1INcpFeUQwW54ZkvXglE2Q8is0HTnPgMVhY
+         +rrllujU687I53A7vCShJl/TveRHUdGZ7FLptbaNixQzozpWPI0q2u00LR0jlKDRjkuP
+         d0JFMpSmy6fiaW+th1QywF2c8Kw4Qq1NGxrlOZvw6+qow4skZ3y1Ywg9vLEP/OLLL+uH
+         tvDX3ICWcLknKYTPQoH6mOUomjQnTai2SXty1W3W1b0zZ35Oqj3GFmY81AZurUAiiUWR
+         5zka7dCR9XMARQQxkUKkhslnuVIlmbsMgSRGtPvWpe/4ckBcScSgES52ks4wZSQK18sd
+         MsTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=jrnsMbO/zuCHlgaM/a/FjOvE1m1S8Xf2JYCWP8EYCzM=;
+        b=jCpO0mq4tiS60s+0tvdbwId92LqygdA0JJmgGwn0/NJwN05lbpdg1u5w//fY0E2XYv
+         nlYI5m8qPwi9yQFQrc7Nxq3nnUT15QXEWjLQNJwHgd0l86bp/JyAaEMy18wfsGztu8aN
+         VJOHMquqlidFbxGhXUbunYfpfZJm/HE1k24wuc1aqqSEOWmVXjTae9bw9ziOBmxMjgJr
+         BQJZSl/f+7sf9hGo2wakzkBgNJ2GFb0ib74HQeXc2X/Ian4voOgZe5/or+PtM7BxR8YI
+         04zyihQ51Bv1vNWhwPCnY8YOauGs2I/zgiPogaLVdstuDKbUAKGgDax3WtSm7Hz0HfVH
+         UJrg==
+X-Gm-Message-State: APjAAAXQ29A28l0omkOyEVFsNQP8/X90MgZJUu+cZh0BulN/yG7XhNfe
+        OzjUXNGBVYGHMUXQYYwuPRY=
+X-Google-Smtp-Source: APXvYqzyupirnc7FNqs6+23Z+NrOu4SQsRZxZIR/DBtolDAuCBUvyT7P4LDYC1xY7Hzx8LVsTZx3Cg==
+X-Received: by 2002:a37:4894:: with SMTP id v142mr9221211qka.220.1581548801036;
+        Wed, 12 Feb 2020 15:06:41 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::1:985a])
+        by smtp.gmail.com with ESMTPSA id b7sm224522qka.67.2020.02.12.15.06.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2020 15:06:40 -0800 (PST)
+Date:   Wed, 12 Feb 2020 18:06:39 -0500
+From:   Tejun Heo <tj@kernel.org>
+To:     Dan Schatzberg <dschatzberg@fb.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        "open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" 
+        <linux-mm@kvack.org>
+Subject: Re: [PATCH 1/2] mm: Charge current memcg when no mm is set
+Message-ID: <20200212230639.GC88887@mtj.thefacebook.com>
+References: <20200205223348.880610-1-dschatzberg@fb.com>
+ <20200205223348.880610-2-dschatzberg@fb.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1579905147-12142-2-git-send-email-vnkgutta@codeaurora.org>
-References: <1579905147-12142-1-git-send-email-vnkgutta@codeaurora.org> <1579905147-12142-2-git-send-email-vnkgutta@codeaurora.org>
-Subject: Re: [PATCH v2 1/7] dt-bindings: clock: Add RPMHCC bindings for SM8250
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        devicetree@vger.kernel.org, jshriram@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, psodagud@codeaurora.org,
-        robh+dt@kernel.org, tdas@codeaurora.org, tsoni@codeaurora.org,
-        vinod.koul@linaro.org, vnkgutta@codeaurora.org
-Date:   Wed, 12 Feb 2020 15:05:40 -0800
-Message-ID: <158154874056.184098.12906798791051466643@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200205223348.880610-2-dschatzberg@fb.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Venkata Narendra Kumar Gutta (2020-01-24 14:32:21)
-> From: Taniya Das <tdas@codeaurora.org>
->=20
-> Add bindings and update documentation for clock rpmh driver on SM8250.
->=20
-> Acked-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Vinod Koul <vkoul@kernel.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-> ---
+On Wed, Feb 05, 2020 at 02:33:47PM -0800, Dan Schatzberg wrote:
+> This modifies the shmem and mm charge logic so that now if there is no
+> mm set (as in the case of tmpfs backed loop device), we charge the
+> current memcg, if set.
+> 
+> Signed-off-by: Dan Schatzberg <dschatzberg@fb.com>
 
-Applied to clk-next
+Acked-by: Tejun Heo <tj@kernel.org>
+
+Thanks.
+
+-- 
+tejun
