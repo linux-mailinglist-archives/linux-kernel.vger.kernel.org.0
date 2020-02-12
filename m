@@ -2,130 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34F4A15A171
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 07:57:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D47EF15A186
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 08:08:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728298AbgBLG5i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 01:57:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33294 "EHLO mail.kernel.org"
+        id S1728294AbgBLHID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 02:08:03 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:34026 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728148AbgBLG5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 01:57:37 -0500
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E34E22073C;
-        Wed, 12 Feb 2020 06:57:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581490656;
-        bh=19SiagyBycCgiJZF31FnbdIK3NQ4MFyvHwRPT//W9JE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=h+dAaEROsZffCQMVY8G50cRWmHjM/wRDc/9JlSSWDsBr6/IAgHBKtnX222ZTx5Q2Q
-         H77nJ9ax+MWcXCxYZ+7U/B4M3oavH5FuxwsoOg4BTYZI36prcxXHdxlvNgfXkOy/lv
-         avaF1djrLaSPyjJTb1dEC5HGal0mzJPA5odqCW9M=
-Date:   Tue, 11 Feb 2020 22:57:34 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Daniel Rosenberg <drosen@google.com>,
-        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com
-Subject: Re: [PATCH v7 2/8] fs: Add standard casefolding support
-Message-ID: <20200212065734.GA157327@sol.localdomain>
-References: <20200208013552.241832-1-drosen@google.com>
- <20200208013552.241832-3-drosen@google.com>
- <20200208021216.GE23230@ZenIV.linux.org.uk>
- <CA+PiJmTYbEA-hgrKwtp0jZXqsfYrzgogOZ0Pt=gTCtqhBfnqFA@mail.gmail.com>
- <20200210234207.GJ23230@ZenIV.linux.org.uk>
- <20200212063440.GL870@sol.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200212063440.GL870@sol.localdomain>
+        id S1728150AbgBLHIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 02:08:02 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 95D4C1A39F6;
+        Wed, 12 Feb 2020 08:08:00 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 138E81C74D7;
+        Wed, 12 Feb 2020 08:07:53 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DDDD0402E0;
+        Wed, 12 Feb 2020 15:07:43 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        leonard.crestez@nxp.com, abel.vesa@nxp.com, peng.fan@nxp.com,
+        ping.bai@nxp.com, jun.li@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] clk: imx: Include clk-provider.h instead of clk.h for i.MX8M SoCs clock driver
+Date:   Wed, 12 Feb 2020 15:02:23 +0800
+Message-Id: <1581490943-17920-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 10:34:40PM -0800, Eric Biggers wrote:
-> On Mon, Feb 10, 2020 at 11:42:07PM +0000, Al Viro wrote:
-> > On Mon, Feb 10, 2020 at 03:11:13PM -0800, Daniel Rosenberg wrote:
-> > > On Fri, Feb 7, 2020 at 6:12 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > > >
-> > > > On Fri, Feb 07, 2020 at 05:35:46PM -0800, Daniel Rosenberg wrote:
-> > > >
-> > > >
-> > > > Again, is that safe in case when the contents of the string str points to
-> > > > keeps changing under you?
-> > > 
-> > > I'm not sure what you mean. I thought it was safe to use the str and
-> > > len passed into d_compare. Even if it gets changed under RCU
-> > > conditions I thought there was some code to ensure that the name/len
-> > > pair passed in is consistent, and any other inconsistencies would get
-> > > caught by d_seq later. Are there unsafe code paths that can follow?
-> > 
-> > If you ever fetch the same byte twice, you might see different values.
-> > You need a fairly careful use of READ_ONCE() or equivalents to make
-> > sure that you don't get screwed over by that.
-> > 
-> > Sure, ->d_seq mismatch will throw the result out, but you need to make
-> > sure you won't oops/step on uninitialized memory/etc. in process.
-> > 
-> > It's not impossible to get right, but it's not trivial and you need all
-> > code working with that much more careful than normal for string handling.
-> 
-> It looks like this is a real problem, not just a "theoretical" data race.
-> For example, see:
-> 
-> utf8ncursor():
->         /* The first byte of s may not be an utf8 continuation. */
->         if (len > 0 && (*s & 0xC0) == 0x80)
->                 return -1;
-> 
-> and then utf8byte():
->                 } else if ((*u8c->s & 0xC0) == 0x80) {
->                         /* This is a continuation of the current character. */
->                         if (!u8c->p)
->                                 u8c->len--;
->                         return (unsigned char)*u8c->s++;
-> 
-> The first byte of the string is checked in two different functions, so it's very
-> likely to be loaded twice.  In between, it could change from a non-continuation
-> byte to a continuation byte.  That would cause the string length to be
-> decremented from 0 to UINT_MAX.  Then utf8_strncasecmp() would run beyond the
-> bounds of the string until something happened to mismatch.
-> 
-> That's just an example that I found right away; there are probably more.
-> 
-> IMO, this needs to be fixed before anyone can actually use the ext4 and f2fs
-> casefolding stuff.
-> 
-> I don't know the best solution.  One option is to fix fs/unicode/ to handle
-> concurrently modified strings.  Another could be to see what it would take to
-> serialize lookups and renames for casefolded directories...
-> 
+The i.MX8M SoCs clock driver are provider, NOT consumer, so clk-provider.h
+should be used instead of clk.h.
 
-Or (just throwing another idea out there) the dentry's name could be copied to a
-temporary buffer in ->d_compare().  The simplest version would be:
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-imx8mm.c | 2 +-
+ drivers/clk/imx/clk-imx8mn.c | 2 +-
+ drivers/clk/imx/clk-imx8mq.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-	u8 _name[NAME_MAX];
+diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
+index 2ed93fc..3d19e87 100644
+--- a/drivers/clk/imx/clk-imx8mm.c
++++ b/drivers/clk/imx/clk-imx8mm.c
+@@ -4,7 +4,7 @@
+  */
+ 
+ #include <dt-bindings/clock/imx8mm-clock.h>
+-#include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+index c5e7316..ad20487 100644
+--- a/drivers/clk/imx/clk-imx8mn.c
++++ b/drivers/clk/imx/clk-imx8mn.c
+@@ -4,7 +4,7 @@
+  */
+ 
+ #include <dt-bindings/clock/imx8mn-clock.h>
+-#include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+index 4c0edca..8c82e7a 100644
+--- a/drivers/clk/imx/clk-imx8mq.c
++++ b/drivers/clk/imx/clk-imx8mq.c
+@@ -5,7 +5,7 @@
+  */
+ 
+ #include <dt-bindings/clock/imx8mq-clock.h>
+-#include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+-- 
+2.7.4
 
-	memcpy(_name, name, len);
-	name = _name;
-
-Though, 255 bytes is a bit large for a stack buffer (so for long names it may
-need kmalloc with GFP_ATOMIC), and technically it would need a special version
-of memcpy() to be guaranteed safe from compiler optimizations (though I expect
-this would work in practice).
-
-Alternatively, take_dentry_name_snapshot() kind of does this already, except
-that it takes a dentry and not a (name, len) pair.
-
-- Eric
