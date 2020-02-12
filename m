@@ -2,54 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C99C15B4C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 00:32:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C16A015B4C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 00:32:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729354AbgBLXcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 18:32:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48206 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727117AbgBLXcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 18:32:22 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F51320578;
-        Wed, 12 Feb 2020 23:32:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581550341;
-        bh=Sx7mVuf/x+Km9lDwz5M4AufiDC+BvLCJ+/UJUAOLWB0=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=S3BBEpAcBvWxAdUoD7YPP7WabTann2mJjeP9Y754XEJX02V3opsx8Dx5YARGKB4fM
-         7i+3yjYCupX2cpNi/tZC31QgJV60/ltUZ6oQdvRf+IKqKs4KG6SBriSKxTVgdgoxTJ
-         My01g0eaj6NyNMSxY/WCBu+E0uBLByYeAnOPx6tk=
-Content-Type: text/plain; charset="utf-8"
+        id S1729366AbgBLXcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 18:32:24 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:12761 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727117AbgBLXcX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 18:32:23 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e448af90000>; Wed, 12 Feb 2020 15:32:09 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 12 Feb 2020 15:32:23 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 12 Feb 2020 15:32:23 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 12 Feb
+ 2020 23:32:22 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 12 Feb 2020 23:32:22 +0000
+Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5e448b060001>; Wed, 12 Feb 2020 15:32:22 -0800
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Joe Perches <joe@perches.com>
+CC:     Andy Whitcroft <apw@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 1/1] checkpatch: support "base-commit:" format
+Date:   Wed, 12 Feb 2020 15:32:21 -0800
+Message-ID: <20200212233221.47662-2-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200212233221.47662-1-jhubbard@nvidia.com>
+References: <20200212233221.47662-1-jhubbard@nvidia.com>
 MIME-Version: 1.0
+X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1579261009-4573-4-git-send-email-claudiu.beznea@microchip.com>
-References: <1579261009-4573-1-git-send-email-claudiu.beznea@microchip.com> <1579261009-4573-4-git-send-email-claudiu.beznea@microchip.com>
-Subject: Re: [PATCH 3/4] clk: at91: usb: use proper usbs_mask
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
-        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
-        mturquette@baylibre.com, nicolas.ferre@microchip.com
-Date:   Wed, 12 Feb 2020 15:32:20 -0800
-Message-ID: <158155034081.184098.1411951142774904787@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1581550329; bh=FRuYVUnC7K1U/LqgpvS/vWTnisUzXBRoaqzkfsIXevs=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
+         Content-Transfer-Encoding:Content-Type;
+        b=B7ll61A6N7ZeDDyVelqd7SYXmE7rdK5rt85E6B/QZV4mIs/aLMMh8fC3jWcFDosdm
+         esZUppfRjYe2e9fPbr97uk328nmpBxOWfxNWY07j9/izK4EYMOLyLI8rKTtd0WAuo/
+         4q8v5lNPsaniSIi3h+okjmrPGU9k+xWmGJ4z6sm7idTfL8EOC00CNamjkFhQAqiBt6
+         7xaWIImPGgF3xTg+jm5RHsvrgvYUysiJa4Tl91qLt5ht0y6ZhTUaxF+yKNL2cB1Au+
+         XiSdVVYgi+sfv0IDFwVwaImPh1E1faoYZa154OU4dQrnZefTpgvRu8TlZufLXwoDXB
+         UzaWTFbwRGURQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Claudiu Beznea (2020-01-17 03:36:48)
-> Use usbs_mask passed as argument. The usbs_mask is different for
-> SAM9X60.
->=20
-> Fixes: 2423eeaead6f8 ("clk: at91: usb: Add sam9x60 support")
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
+In order to support the get-lore-mbox.py tool described in [1], I ran:
 
-Applied to clk-next
+    git format-patch --base=3D<commit> --cover-letter <revrange>
+
+...which generated a "base-commit: <commit-hash>" tag at the end of the
+cover letter. However, checkpatch.pl generated an error upon encounting
+"base-commit:" in the cover letter:
+
+    "ERROR: Please use git commit description style..."
+
+...because it found the "commit" keyword, and failed to recognize that
+it was part of the "base-commit" phrase, and as such, should not be
+subjected to the same commit description style rules.
+
+Update checkpatch.pl to include a special case for "base-commit:", so
+that that tag no longer generates a checkpatch error.
+
+[1] https://lwn.net/Articles/811528/ "Better tools for kernel
+    developers"
+
+Cc: Andy Whitcroft <apw@canonical.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+ scripts/checkpatch.pl | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index a63380c6b0d2..f241865cedb3 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2761,6 +2761,7 @@ sub process {
+=20
+ # Check for git id commit length and improperly formed commit descriptions
+ 		if ($in_commit_log && !$commit_log_possible_stack_dump &&
++		    $line !~ /base-commit:/ &&
+ 		    $line !~ /^\s*(?:Link|Patchwork|http|https|BugLink):/i &&
+ 		    $line !~ /^This reverts commit [0-9a-f]{7,40}/ &&
+ 		    ($line =3D~ /\bcommit\s+[0-9a-f]{5,}\b/i ||
+--=20
+2.25.0
+
