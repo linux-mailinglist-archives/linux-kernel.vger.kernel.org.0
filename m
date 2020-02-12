@@ -2,95 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF85715A815
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 12:43:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 288A815A81D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 12:43:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728173AbgBLLnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 06:43:14 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:28180 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728147AbgBLLnO (ORCPT
+        id S1728269AbgBLLnp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 06:43:45 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:36026 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728139AbgBLLnp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 06:43:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581507793;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IEsa1BUq0bWPEOZUtW+wdRfon7IBIMbGMK3y3jxH0WI=;
-        b=XgqXDyTci9kc+rOUxebQ3foyNSJg5XWv6WzUhLjx7aMnxOrJhRSm7kkN3GTnYNT8C9wPE/
-        vrO1BrQ2atawpUuQY+f1q0r9gvTdIwt5dEZNpZ9kXI0gxOoYLSnQpraiGOjllOA3VD0069
-        TJdO7x9SIFBg9kb9kzrKqZAiE0SO8WE=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-95-r6i-q6JRP8KvGRX-35u-cg-1; Wed, 12 Feb 2020 06:43:11 -0500
-X-MC-Unique: r6i-q6JRP8KvGRX-35u-cg-1
-Received: by mail-wr1-f71.google.com with SMTP id u8so705805wrp.10
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 03:43:11 -0800 (PST)
+        Wed, 12 Feb 2020 06:43:45 -0500
+Received: by mail-wm1-f67.google.com with SMTP id p17so1950700wma.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 03:43:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KOvpD7jZ6dU2lykqqwZ1WffWjcj24MrFs0WAUYdtKH4=;
+        b=lDfQr6Liipb++iFWX6iJLPM9MLax/98YrjUMx2NSCP8nRQEJxYPjeazAW44phauv1J
+         zDMSgxErIqX4lltTO8KyGkxULwpxH6e9bJjady6qCsW+AebfdzEjQF+Mcss/P6lo3+OS
+         FF91PfU0aV/URWm4wh3GjSVnh613RzCiGx7tWGzzdRYi6ewXTPYxFjEv1efuDc7Jqwge
+         zn5xpPgaLdj2zpQqUiy9CKCUKgX907JZl8MXHgLWLPzbAIeBDfLt3go9I+tWL4EHPVdP
+         006LMBAjbJpqTAWatWWABjuhtYLmX8EQ7svmcDYwPWKzjX5P+6qeN/fAarriHxmM6Zfn
+         q7rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=IEsa1BUq0bWPEOZUtW+wdRfon7IBIMbGMK3y3jxH0WI=;
-        b=iEQp0hZEctv5Xo1K7ZPRkuNlXW9JwRKzyl+Ercz7Yh+VrFquV9twukubBkeWE/sye7
-         9AmTRoUd9fBGwYdg3PKb9fAOpDfWHYcUTJkH0B8iOya1DeOE57eYH/1T22K7iTeZG0Bi
-         ueGWkgLyH6rS0Dxy1Af9zj4F5nItfeHAT47HrKOWBH9JGaKKNt/TcMHlTG6kudNSUHgE
-         aBkdEpKfEiq1GRzItS+0/QEMM0E9cE0JEE61Mq7PPIAtsXS/nUFYWuHIlS0qP7uqaNCt
-         NzHvEmYfIoeiNZwfcvcw8zKJMDhTK+D/YIdWzaxSNQoQijArTUjTjz990R7b6QRLxCRW
-         R+CA==
-X-Gm-Message-State: APjAAAV8YWEauKzYKv9Tac0P5/V4Juzrb5a6Jrzdujpl7phrTOq4WNzK
-        Lsr0w0SVNo5VjwpC7joQF8milkuxscCkhAA5ictpCrUdGuyd5uO2hoeuRMdyzDGhPzA14fuBD6+
-        TTRpCvnqagJyGTaDiaAtbH1IX
-X-Received: by 2002:a7b:c0c7:: with SMTP id s7mr13029513wmh.129.1581507790624;
-        Wed, 12 Feb 2020 03:43:10 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyvvGB6t9rTwkD5wOcWPzS3g4rf1aL3jnLVeGk4ga2e33TJdyaD2AbO4OgPZgsH90lWZaY+4Q==
-X-Received: by 2002:a7b:c0c7:: with SMTP id s7mr13029498wmh.129.1581507790434;
-        Wed, 12 Feb 2020 03:43:10 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:652c:29a6:517b:66d9? ([2001:b07:6468:f312:652c:29a6:517b:66d9])
-        by smtp.gmail.com with ESMTPSA id n3sm389509wmc.27.2020.02.12.03.43.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2020 03:43:08 -0800 (PST)
-Subject: Re: [PATCH v4 3/3] selftests: KVM: SVM: Add vmcall test
-To:     Auger Eric <eric.auger@redhat.com>, Wei Huang <wei.huang2@amd.com>
-Cc:     eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, vkuznets@redhat.com, thuth@redhat.com,
-        drjones@redhat.com
-References: <20200206104710.16077-1-eric.auger@redhat.com>
- <20200206104710.16077-4-eric.auger@redhat.com>
- <20200206173931.GC2465308@weiserver.amd.com>
- <130c32bc-7533-1b4e-b913-d9596ed4e94d@redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <7f9c89b5-c1df-011f-917d-89d2e880049d@redhat.com>
-Date:   Wed, 12 Feb 2020 12:43:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        bh=KOvpD7jZ6dU2lykqqwZ1WffWjcj24MrFs0WAUYdtKH4=;
+        b=uO4U+s5PZCgeBFShxgbKXCVTKRJGffSmIEuJZHJrktdNFAthESSGmRPrLIQMqOFctn
+         OM2zUih5fMfA7dWyHs+Y8UDABPpHwqDzhvd1WbkY9VhsdSGZOy/p7idnHrwCGqGP2zbb
+         xJg/ZN/cvA0YDqCrmgl9fB/PCelpXEqpztZTMmLNNFkPAHyYTgCSeZUuvYTf0OT+oacw
+         1LMrsI5NQ7BkhB/l/oN1WxlHIGKJniqvsm4ktysKLqb7jcIm1dq9YkOe/9zi9TEylQ5h
+         Bs4TrwJ4PaW06QB49gSbXUS5iPMJrr5DdLKyGq0uRB0cQjtlHYt3vCuBIG+g2F5nswPR
+         7d0A==
+X-Gm-Message-State: APjAAAVq9Rv1YYytKuKam/gqBRXfCY7NI8d9s8VXMHTol6dWEbxXRbYr
+        CWE9q3cXrqUTsyBIBkSvUAQgH/pe3nc=
+X-Google-Smtp-Source: APXvYqzE17zeWea41ReY8EYtUfOouJpQCc5O05qfY1oQPGPCmX9DhPfP9NiRKKy53KgUTk1hUJxU6A==
+X-Received: by 2002:a05:600c:2046:: with SMTP id p6mr11846557wmg.167.1581507821024;
+        Wed, 12 Feb 2020 03:43:41 -0800 (PST)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id q130sm473499wme.19.2020.02.12.03.43.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Feb 2020 03:43:38 -0800 (PST)
+Subject: Re: [PATCH v3 6/6] ASoC: qdsp6: dt-bindings: Add q6afe pcm dt binding
+ documentation
+To:     Adam Serbinski <adam@serbinski.com>
+Cc:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Patrick Lai <plai@codeaurora.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200212015222.8229-1-adam@serbinski.com>
+ <20200212015222.8229-7-adam@serbinski.com>
+ <579e0ae1-f257-7af3-eac9-c8e3ab3b52c7@linaro.org>
+ <2989c09149976a28d13d4b4eb10b7c7e@serbinski.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <b5c1328a-e3ca-826d-9ff0-f2bbce24ac22@linaro.org>
+Date:   Wed, 12 Feb 2020 11:43:37 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <130c32bc-7533-1b4e-b913-d9596ed4e94d@redhat.com>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <2989c09149976a28d13d4b4eb10b7c7e@serbinski.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/20 11:15, Auger Eric wrote:
->> Probably rename the file to svm_nested_vmcall_test.c. This matches with
->> the naming convention of VMX's nested tests. Otherwise people might not know
->> it is a nested one.
-> From what I understand, all the vmx_* (including vmx_tsc_adjust_test for
-> instance) are related to nested. So I'd rather leave svm_ prefix for
-> nested SVM.
 
-That is not strictly necessary, as there could be tests for Intel or
-AMD-specific bugs or features.  But in practice you are right, "vmx_"
-right now means it's testing nested.  We can rename all of them to
-"nvmx_*" and "nsvm_*", but in the meanwhile your patch does not
-introduce any inconsistency.
 
-Queued, thanks!
+On 12/02/2020 11:01, Adam Serbinski wrote:
+>>>
+>>> +
+>>> + - qcom,pcm-slot-mapping
+>>> +    Usage: required for pcm interface
+>>
+>> Are these not specific to 8k and 16k mode ?
+>> We should probably list values for both modes here.
+> 
+> No, this is just the offset that the audio sample is placed in with 
+> respect to a maximum of 4 slots, 16 bits wide, beginning with the sync 
+> pulse.
 
-Paolo
 
+That's not true atleast by the QDSP documentation,
+according to it we will use more slots to transfer at higher sample 
+rate. ex:
+16 kHz data can be transferred using 8 kHz samples in two
+slots.
+
+Also there are 32 slots for each of 4 supported channels for PCM AFE port.
+
+
+> 
+> When switching between 8 and 16k sample rate, it is just the sync pulse 
+> rate that is changed. The audio sample will be delivered in the same 
+> slot, just at a different frequency.
