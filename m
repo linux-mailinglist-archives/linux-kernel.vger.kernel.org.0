@@ -2,177 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0689015B589
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 00:58:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85D0315B59E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 01:03:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729426AbgBLX6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 18:58:33 -0500
-Received: from foss.arm.com ([217.140.110.172]:39856 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729103AbgBLX6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 18:58:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F9FA101E;
-        Wed, 12 Feb 2020 15:58:32 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 885CC3F68E;
-        Wed, 12 Feb 2020 15:58:31 -0800 (PST)
-Date:   Wed, 12 Feb 2020 23:58:30 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>, broonie@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        mark.rutland@arm.com, robh+dt@kernel.org
-Subject: Applied "dt-bindings: spi: Document binding for generic SPI multiplexer" to the spi tree
-In-Reply-To: <20200204032838.20739-2-chris.packham@alliedtelesis.co.nz>
-Message-Id: <applied-20200204032838.20739-2-chris.packham@alliedtelesis.co.nz>
-X-Patchwork-Hint: ignore
+        id S1729409AbgBMADV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 19:03:21 -0500
+Received: from ishtar.tlinx.org ([173.164.175.65]:53526 "EHLO
+        Ishtar.sc.tlinx.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727117AbgBMADU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 19:03:20 -0500
+X-Greylist: delayed 1819 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Feb 2020 19:03:20 EST
+Received: from [192.168.3.12] (Athenae [192.168.3.12])
+        by Ishtar.sc.tlinx.org (8.14.7/8.14.4/SuSE Linux 0.8) with ESMTP id 01CNWvUV014523;
+        Wed, 12 Feb 2020 15:33:00 -0800
+Message-ID: <5E448B29.1080705@tlinx.org>
+Date:   Wed, 12 Feb 2020 15:32:57 -0800
+From:   L Walsh <cifs@tlinx.org>
+User-Agent: Thunderbird
+MIME-Version: 1.0
+To:     Steve French <smfrench@gmail.com>
+CC:     CIFS <linux-cifs@vger.kernel.org>,
+        Linux-Kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [CIFS][PATCH] Add SMB3/Win10-only  Change Notify
+References: <CAH2r5mtQRVX3_-_sVjvigRSv2LpSoUBQo7YeY5v0nXm7BGaDig@mail.gmail.com> <5E413F22.3070101@tlinx.org> <CAH2r5mst9FjdPrBQdjt1HGkf73VoNzDUxPSEQNZwyi=9W9XGhA@mail.gmail.com>
+In-Reply-To: <CAH2r5mst9FjdPrBQdjt1HGkf73VoNzDUxPSEQNZwyi=9W9XGhA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 2020/02/10 06:30, Steve French wrote:
+>
+>>     By calling it a SMB3 feature, does that mean you are removing
+>> it from SMB2?
+>>     
+>
+> That is a good question.  I should have made more clear that although
+> many servers support Change Notify prior to SMB3 dialect, we chose
+> to implement it in SMB3 (late 2012 and later dialect) to minimize testing
+> risks and since we want to encourage users to use SMB3 or later (or
+> at least SMB2.1 or later since security is significantly better for later
+> dialects than for SMB1 and even SMB2)
+>   
+----
+    SMB2.1 would be fine for my purposes, I find it a bit odd though that
+my linux server running these changes won't be as capable of detecting
+directory changes as an outdated Win7 machine. 
 
-   dt-bindings: spi: Document binding for generic SPI multiplexer
+    There are many below-SMB3 speaking devices out in the world right now. 
+Probably many below 2.1. 
 
-has been applied to the spi tree at
+    You say you want to "encourage users to use SMB3 or later (or at least
+SMB2.1)", how does adding SMB3-only support allow users to use SMB2.1?
+Say your encouragement of users is taken to heart, and they want to use 
+SMB3.
+How would those users upgrade the dialect of SMB used in their
+machine or device?  I don't know of any easy way to upgrade existing 
+devices -
+even existing OS's, if a user ran Win7, how would they upgrade the CIFS
+drivers to 3.0?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.7
+    If it is not possible to upgrade existing devices, then wouldn't that
+encouragement boil down to junking the device and buying a new one?
+> Change Notify is available in all dialects (SMB2, SMB2.1, SMB3, SMB3.1.1)
+> for many servers but for the client we just implemented it for SMB3 and later.
+>   
+    Doesn't that mean that the linux client won't be able to access 
+existing
+NAS servers or Win-Client machine running anything other than Win10?  Does
+the current version of samba provide full SMB3 support?  If not, doesn't 
+that
+imply that the client for CIFS won't be able to access or use these features
+from another linux server?
+> If you have a server that you want to support that requires
+> SMB2 or SMB2.1 mounts, I wouldn't mind a patch to add notify support
+> for those older dialects but I would like to encourage use of SMB3 or later (or
+> at least SMB2.1 or later) where possible.
+>   
+    Again, how does implementing SMB3-only, only support SMB2.1 or later?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+    If you feel it would be trivial to add such a patch, wouldn't you be in
+the position of, probably, having the most knowledge about the subject 
+and be
+likely to do the best job without breaking anything else?  Certainly doesn't
+mean someone else couldn't but seems riskier than offering a Linux 
+client that
+would be able to access the widest range of existing devices and 
+computers from
+the start.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Thanks!
+Linda
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
 
-Thanks,
-Mark
 
-From d548ed71cb8862c96a1a8d17861bb5dabd1e2299 Mon Sep 17 00:00:00 2001
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Date: Tue, 4 Feb 2020 16:28:37 +1300
-Subject: [PATCH] dt-bindings: spi: Document binding for generic SPI
- multiplexer
 
-Add binding documentation for the spi-mux driver. This allows a generic
-multiplexer to be used to provide access to multiple SPI devices.
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Link: https://lore.kernel.org/r/20200204032838.20739-2-chris.packham@alliedtelesis.co.nz
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- .../devicetree/bindings/spi/spi-mux.yaml      | 89 +++++++++++++++++++
- 1 file changed, 89 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/spi/spi-mux.yaml
-
-diff --git a/Documentation/devicetree/bindings/spi/spi-mux.yaml b/Documentation/devicetree/bindings/spi/spi-mux.yaml
-new file mode 100644
-index 000000000000..0ae692dc28b5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/spi-mux.yaml
-@@ -0,0 +1,89 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/spi/spi-mux.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Generic SPI Multiplexer
-+
-+description: |
-+  This binding describes a SPI bus multiplexer to route the SPI chip select
-+  signals. This can be used when you need more devices than the SPI controller
-+  has chip selects available. An example setup is shown in ASCII art; the actual
-+  setting of the multiplexer to a channel needs to be done by a specific SPI mux
-+  driver.
-+
-+        MOSI /--------------------------------+--------+--------+--------\
-+        MISO |/------------------------------+|-------+|-------+|-------\|
-+         SCL ||/----------------------------+||------+||------+||------\||
-+             |||                            |||      |||      |||      |||
-+      +------------+                        |||      |||      |||      |||
-+      | SoC  |||   |                      +-+++-+  +-+++-+  +-+++-+  +-+++-+
-+      |      |||   |                      | dev |  | dev |  | dev |  | dev |
-+      |   +--+++-+ | CS-X  +------+\      +--+--+  +--+--+  +--+--+  +--+--+
-+      |   | SPI  +-|-------+ Mux  |\\   CS-0 |        |        |        |
-+      |   +------+ |       +--+---+\\\-------/   CS-1 |        |        |
-+      |            |          |    \\\----------------/   CS-2 |        |
-+      |   +------+ |          |     \\-------------------------/   CS-3 |
-+      |   | ?    +-|----------/      \----------------------------------/
-+      |   +------+ |
-+      +------------+
-+
-+allOf:
-+  - $ref: "/schemas/spi/spi-controller.yaml#"
-+
-+maintainers:
-+  - Chris Packham <chris.packham@alliedtelesis.co.nz>
-+
-+properties:
-+  compatible:
-+    const: spi-mux
-+
-+  mux-controls:
-+    maxItems: 1
-+
-+required:
-+   - compatible
-+   - reg
-+   - spi-max-frequency
-+   - mux-controls
-+
-+examples:
-+   - |
-+     #include <dt-bindings/gpio/gpio.h>
-+     mux: mux-controller {
-+       compatible = "gpio-mux";
-+       #mux-control-cells = <0>;
-+
-+       mux-gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
-+     };
-+
-+     spi {
-+       #address-cells = <1>;
-+       #size-cells = <0>;
-+       spi@0 {
-+         compatible = "spi-mux";
-+         reg = <0>;
-+         #address-cells = <1>;
-+         #size-cells = <0>;
-+         spi-max-frequency = <100000000>;
-+
-+         mux-controls = <&mux>;
-+
-+         spi-flash@0 {
-+           compatible = "jedec,spi-nor";
-+           reg = <0>;
-+           #address-cells = <1>;
-+           #size-cells = <0>;
-+           spi-max-frequency = <40000000>;
-+         };
-+
-+         spi-device@1 {
-+           compatible = "lineartechnology,ltc2488";
-+           reg = <1>;
-+           #address-cells = <1>;
-+           #size-cells = <0>;
-+           spi-max-frequency = <10000000>;
-+         };
-+       };
-+     };
--- 
-2.20.1
 
