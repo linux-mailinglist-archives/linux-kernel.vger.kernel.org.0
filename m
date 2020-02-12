@@ -2,183 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 590CF15A7E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 12:30:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F35715A7E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 12:30:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbgBLLaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 06:30:35 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48300 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725874AbgBLLae (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 06:30:34 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01CBTSM2073378
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 06:30:33 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y1tpdyn43-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 06:30:33 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <psampat@linux.ibm.com>;
-        Wed, 12 Feb 2020 11:20:29 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Feb 2020 11:20:26 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01CBKOBe37093380
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Feb 2020 11:20:24 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 87B09A4068;
-        Wed, 12 Feb 2020 11:20:24 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9E95AA4082;
-        Wed, 12 Feb 2020 11:20:22 +0000 (GMT)
-Received: from pratiks-thinkpad.ibmuc.com (unknown [9.199.42.59])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 12 Feb 2020 11:20:22 +0000 (GMT)
-From:   Pratik Rajesh Sampat <psampat@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org,
-        mpe@ellerman.id.au, svaidy@linux.ibm.com, ego@linux.vnet.ibm.com,
-        linuxram@us.ibm.com, pratik.sampat@in.ibm.com,
-        psampat@linux.ibm.com, pratik.r.sampat@gmail.com
-Subject: [PATCH v4 3/3] powerpc/powernv: Parse device tree, population of SPR support
-Date:   Wed, 12 Feb 2020 16:50:13 +0530
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <cover.1581505210.git.psampat@linux.ibm.com>
-References: <cover.1581505210.git.psampat@linux.ibm.com>
+        id S1728124AbgBLLas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 06:30:48 -0500
+Received: from foss.arm.com ([217.140.110.172]:59722 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725874AbgBLLas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 06:30:48 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C87A30E;
+        Wed, 12 Feb 2020 03:30:47 -0800 (PST)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E1BE3F68F;
+        Wed, 12 Feb 2020 03:30:45 -0800 (PST)
+Subject: Re: [PATCH v3 1/7] arm64: add support for the AMU extension v1
+To:     Ionela Voinescu <ionela.voinescu@arm.com>, catalin.marinas@arm.com,
+        will@kernel.org, mark.rutland@arm.com, maz@kernel.org,
+        sudeep.holla@arm.com, lukasz.luba@arm.com,
+        valentin.schneider@arm.com, rjw@rjwysocki.net
+Cc:     peterz@infradead.org, mingo@redhat.com, vincent.guittot@linaro.org,
+        viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+References: <20200211184542.29585-1-ionela.voinescu@arm.com>
+ <20200211184542.29585-2-ionela.voinescu@arm.com>
+From:   Suzuki Kuruppassery Poulose <suzuki.poulose@arm.com>
+Message-ID: <93472f17-6465-641d-ea82-3230b5697ffd@arm.com>
+Date:   Wed, 12 Feb 2020 11:30:44 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021211-0008-0000-0000-0000035228C7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021211-0009-0000-0000-00004A72CD7C
-Message-Id: <1f5138b5080606804162b0a7cf20c134589b96b1.1581505210.git.psampat@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-12_06:2020-02-11,2020-02-12 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
- clxscore=1015 mlxlogscore=999 mlxscore=0 suspectscore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002120094
+In-Reply-To: <20200211184542.29585-2-ionela.voinescu@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Parse the device tree for nodes self-save, self-restore and populate
-support for the preferred SPRs based what was advertised by the device
-tree.
+Hi Ionela,
 
-Signed-off-by: Pratik Rajesh Sampat <psampat@linux.ibm.com>
-Reviewed-by: Ram Pai <linuxram@us.ibm.com>
----
- arch/powerpc/platforms/powernv/idle.c | 82 +++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
+On 11/02/2020 18:45, Ionela Voinescu wrote:
+> The activity monitors extension is an optional extension introduced
+> by the ARMv8.4 CPU architecture. This implements basic support for
+> version 1 of the activity monitors architecture, AMUv1.
+> 
+> This support includes:
+> - Extension detection on each CPU (boot, secondary, hotplugged)
+> - Register interface for AMU aarch64 registers
+> - disable_amu kernel parameter to disable detection/counter access
+>    at runtime
+> 
+> Signed-off-by: Ionela Voinescu <ionela.voinescu@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> ---
+>   .../admin-guide/kernel-parameters.txt         | 10 ++
+>   arch/arm64/Kconfig                            | 31 ++++++
+>   arch/arm64/include/asm/cpucaps.h              |  3 +-
+>   arch/arm64/include/asm/cpufeature.h           |  5 +
+>   arch/arm64/include/asm/sysreg.h               | 38 ++++++++
+>   arch/arm64/kernel/cpufeature.c                | 97 +++++++++++++++++++
+>   6 files changed, 183 insertions(+), 1 deletion(-)
+> 
+...
 
-diff --git a/arch/powerpc/platforms/powernv/idle.c b/arch/powerpc/platforms/powernv/idle.c
-index 97aeb45e897b..27dfadf609e8 100644
---- a/arch/powerpc/platforms/powernv/idle.c
-+++ b/arch/powerpc/platforms/powernv/idle.c
-@@ -1436,6 +1436,85 @@ static void __init pnv_probe_idle_states(void)
- 		supported_cpuidle_states |= pnv_idle_states[i].flags;
- }
- 
-+/*
-+ * Extracts and populates the self save or restore capabilities
-+ * passed from the device tree node
-+ */
-+static int extract_save_restore_state_dt(struct device_node *np, int type)
-+{
-+	int nr_sprns = 0, i, bitmask_index;
-+	int rc = 0;
-+	u64 *temp_u64;
-+	u64 bit_pos;
-+
-+	nr_sprns = of_property_count_u64_elems(np, "sprn-bitmask");
-+	if (nr_sprns <= 0)
-+		return rc;
-+	temp_u64 = kcalloc(nr_sprns, sizeof(u64), GFP_KERNEL);
-+	if (of_property_read_u64_array(np, "sprn-bitmask",
-+				       temp_u64, nr_sprns)) {
-+		pr_warn("cpuidle-powernv: failed to find registers in DT\n");
-+		kfree(temp_u64);
-+		return -EINVAL;
-+	}
-+	/*
-+	 * Populate acknowledgment of support for the sprs in the global vector
-+	 * gotten by the registers supplied by the firmware.
-+	 * The registers are in a bitmask, bit index within
-+	 * that specifies the SPR
-+	 */
-+	for (i = 0; i < nr_preferred_sprs; i++) {
-+		bitmask_index = preferred_sprs[i].spr / 64;
-+		bit_pos = preferred_sprs[i].spr % 64;
-+		if ((temp_u64[bitmask_index] & (1UL << bit_pos)) == 0) {
-+			if (type == SELF_RESTORE_TYPE)
-+				preferred_sprs[i].supported_mode &=
-+					~SELF_RESTORE_STRICT;
-+			else
-+				preferred_sprs[i].supported_mode &=
-+					~SELF_SAVE_STRICT;
-+			continue;
-+		}
-+		if (type == SELF_RESTORE_TYPE) {
-+			preferred_sprs[i].supported_mode |=
-+				SELF_RESTORE_STRICT;
-+		} else {
-+			preferred_sprs[i].supported_mode |=
-+				SELF_SAVE_STRICT;
-+		}
-+	}
-+
-+	kfree(temp_u64);
-+	return rc;
-+}
-+
-+static int pnv_parse_deepstate_dt(void)
-+{
-+	struct device_node *sr_np, *ss_np;
-+	int rc = 0, i;
-+
-+	/* Self restore register population */
-+	sr_np = of_find_node_by_path("/ibm,opal/power-mgt/self-restore");
-+	if (!sr_np) {
-+		pr_warn("opal: self restore Node not found");
-+	} else {
-+		rc = extract_save_restore_state_dt(sr_np, SELF_RESTORE_TYPE);
-+		if (rc != 0)
-+			return rc;
-+	}
-+	/* Self save register population */
-+	ss_np = of_find_node_by_path("/ibm,opal/power-mgt/self-save");
-+	if (!ss_np) {
-+		pr_warn("opal: self save Node not found");
-+		pr_warn("Legacy firmware. Assuming default self-restore support");
-+		for (i = 0; i < nr_preferred_sprs; i++)
-+			preferred_sprs[i].supported_mode &= ~SELF_SAVE_STRICT;
-+	} else {
-+		rc = extract_save_restore_state_dt(ss_np, SELF_SAVE_TYPE);
-+	}
-+	return rc;
-+}
-+
- /*
-  * This function parses device-tree and populates all the information
-  * into pnv_idle_states structure. It also sets up nr_pnv_idle_states
-@@ -1584,6 +1663,9 @@ static int __init pnv_init_idle_states(void)
- 		return rc;
- 	pnv_probe_idle_states();
- 
-+	rc = pnv_parse_deepstate_dt();
-+	if (rc)
-+		return rc;
- 	if (!cpu_has_feature(CPU_FTR_ARCH_300)) {
- 		if (!(supported_cpuidle_states & OPAL_PM_SLEEP_ENABLED_ER1)) {
- 			power7_fastsleep_workaround_entry = false;
--- 
-2.17.1
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 04cf64e9f0c9..029a473ad273 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -156,6 +156,7 @@ static const struct arm64_ftr_bits ftr_id_aa64pfr0[] = {
+>   	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_CSV3_SHIFT, 4, 0),
+>   	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_CSV2_SHIFT, 4, 0),
+>   	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_DIT_SHIFT, 4, 0),
+> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_AMU_SHIFT, 4, 0),
+>   	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_SVE),
+>   				   FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_SVE_SHIFT, 4, 0),
+>   	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_RAS_SHIFT, 4, 0),
+> @@ -1150,6 +1151,84 @@ static bool has_hw_dbm(const struct arm64_cpu_capabilities *cap,
+>   
+>   #endif
+>   
+> +#ifdef CONFIG_ARM64_AMU_EXTN
+> +
+> +/*
+> + * The "amu_cpus" cpumask only signals that the CPU implementation for the
+> + * flagged CPUs supports the Activity Monitors Unit (AMU) but does not provide
+> + * information regarding all the events that it supports. When a CPU bit is
+> + * set in the cpumask, the user of this feature can only rely on the presence
+> + * of the 4 fixed counters for that CPU. But this does not guarantee that the
+> + * counters are enabled or access to these counters is enabled by code
+> + * executed at higher exception levels (firmware).
+> + */
+> +static cpumask_var_t amu_cpus;
+> +
+> +bool cpu_has_amu_feat(int cpu)
+> +{
+> +	if (cpumask_available(amu_cpus))
+> +		return cpumask_test_cpu(cpu, amu_cpus);
+> +
+> +	return false;
+> +}
+> +
+> +static void cpu_amu_enable(struct arm64_cpu_capabilities const *cap)
+> +{
+> +	if (has_cpuid_feature(cap, SCOPE_LOCAL_CPU)) {
+> +		pr_info("detected CPU%d: Activity Monitors Unit (AMU)\n",
+> +			smp_processor_id());
+> +		cpumask_set_cpu(smp_processor_id(), amu_cpus);
+> +	}
+> +}
+> +
+> +/*
+> + * For known broken firmware, a kernel parameter ("disable_amu") is provided
+> + * to ensure access to AMU counter registers is not attempted. By default,
+> + * the feature is enabled, but disable_amu can both be used to disable or
+> + * enable the capability at runtime in case the default changes in the future.
+> + *
+> + * To be noted that for security considerations, this does not bypass the
+> + * setting of AMUSERENR_EL0 to trap accesses from EL0 (userspace) to EL1
+> + * (kernel). Therefore, firmware should still ensure accesses to AMU registers
+> + * are not trapped in EL2/EL3.
+> + */
+> +static bool disable_amu;
+> +
+> +static int __init set_disable_amu(char *str)
+> +{
+> +	int value = 0;
+> +
+> +	disable_amu = get_option(&str, &value) ? !!value : true;
 
+minor nit: You could simply use strtobool(str) here, which accepts:
+
+disable_amu= [0/1/on/off/y/n]
+
+
+> +
+> +	return 0;
+> +}
+> +early_param("disable_amu", set_disable_amu);
+> +
+> +static bool has_amu(const struct arm64_cpu_capabilities *cap,
+> +		       int __unused)
+> +{
+> +	/*
+> +	 * The AMU extension is a non-conflicting feature: the kernel can
+> +	 * safely run a mix of CPUs with and without support for the
+> +	 * activity monitors extension. Therefore, if not disabled through
+> +	 * the kernel command line early parameter, enable the capability
+> +	 * to allow any late CPU to use the feature.
+> +	 *
+> +	 * With this feature enabled, the cpu_enable function will be called
+> +	 * for all CPUs that match the criteria, including secondary and
+> +	 * hotplugged, marking this feature as present on that respective CPU.
+> +	 * The enable function will also print a detection message.
+> +	 */
+> +
+> +	if (!disable_amu && !zalloc_cpumask_var(&amu_cpus, GFP_KERNEL)) {
+
+This looks problematic. Don't we end up in allocating the memory during
+"each CPU" check and thus leaking memory ? Do we really need to allocate
+this dynamically ?
+
+> +		pr_err("Activity Monitors Unit (AMU): fail to allocate memory");
+> +		disable_amu = true;
+> +	}
+> +
+> +	return !disable_amu;
+> +}
+> +#endif
+> +
+>   #ifdef CONFIG_ARM64_VHE
+>   static bool runs_at_el2(const struct arm64_cpu_capabilities *entry, int __unused)
+>   {
+> @@ -1419,6 +1498,24 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>   		.cpu_enable = cpu_clear_disr,
+>   	},
+>   #endif /* CONFIG_ARM64_RAS_EXTN */
+> +#ifdef CONFIG_ARM64_AMU_EXTN
+> +	{
+> +		/*
+> +		 * The feature is enabled by default if CONFIG_ARM64_AMU_EXTN=y.
+> +		 * Therefore, don't provide .desc as we don't want the detection
+> +		 * message to be shown until at least one CPU is detected to
+> +		 * support the feature.
+> +		 */
+> +		.capability = ARM64_HAS_AMU_EXTN,
+> +		.type = ARM64_CPUCAP_WEAK_LOCAL_CPU_FEATURE,
+> +		.matches = has_amu,
+> +		.sys_reg = SYS_ID_AA64PFR0_EL1,
+> +		.sign = FTR_UNSIGNED,
+> +		.field_pos = ID_AA64PFR0_AMU_SHIFT,
+> +		.min_field_value = ID_AA64PFR0_AMU,
+> +		.cpu_enable = cpu_amu_enable,
+> +	},
+> +#endif /* CONFIG_ARM64_AMU_EXTN */
+>   	{
+>   		.desc = "Data cache clean to the PoU not required for I/D coherence",
+>   		.capability = ARM64_HAS_CACHE_IDC,
+> 
+
+
+Thanks
+Suzuki
