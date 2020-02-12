@@ -2,84 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D8E015B11E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:30:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 512F115B0F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:27:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729217AbgBLT3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 14:29:40 -0500
-Received: from foss.arm.com ([217.140.110.172]:37194 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729169AbgBLT3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 14:29:36 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 338BD106F;
-        Wed, 12 Feb 2020 11:29:36 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 899633F68E;
-        Wed, 12 Feb 2020 11:29:35 -0800 (PST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H . J . Lu " <hjl.tools@gmail.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        =?UTF-8?q?Kristina=20Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Sudakshina Das <sudi.das@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH v6 11/11] arm64: mm: Display guarded pages in ptdump
-Date:   Wed, 12 Feb 2020 19:29:06 +0000
-Message-Id: <20200212192906.53366-12-broonie@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200212192906.53366-1-broonie@kernel.org>
-References: <20200212192906.53366-1-broonie@kernel.org>
+        id S1729014AbgBLT1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 14:27:48 -0500
+Received: from gateway20.websitewelcome.com ([192.185.45.27]:37596 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728575AbgBLT1s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 14:27:48 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 26DD6400CC554
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 12:14:09 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 1xfmj6HMHAGTX1xfmjISnD; Wed, 12 Feb 2020 13:27:46 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=cXVVVZahdCREnDttxEPWWOQJmnDqogHhZzVkeyWG2aw=; b=ZFX5J1092d9sXY15O402Wqynw5
+        jAnEzwJo/vD1J7w+VciAy0jPtfrMvvQlFLtHGBwV/8QEpRmbeHNvy60VE5e/V1fkMi6Ofx84Nx+zt
+        kaNOmWgn/JSO0QK8/WV7hDaBkjIlszSTqgzQ4wTD1j+CQFjcWFpFMwqYMjZHR/Z34fP9YXylf2TxW
+        kvpTW+pHlYytl058H7zc1TvWkdJwLC8GV704krajCaTT0DTUWbyckQw5k/ijKtGt69JNHRZcBoFXW
+        Q4NgMDxW+3Enos+NZOEHLL/S4o3w27I7IDLweZFWwNByHiWmWasYhKRMLbuiPMj480Q2JlMiHPZhP
+        W7pE4fFQ==;
+Received: from [201.144.174.25] (port=2142 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j1xfk-0015wx-Hq; Wed, 12 Feb 2020 13:27:44 -0600
+Date:   Wed, 12 Feb 2020 13:30:19 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>
+Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] Bluetooth: hci_uart: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200212193019.GA26196@embeddedor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.144.174.25
+X-Source-L: No
+X-Exim-ID: 1j1xfk-0015wx-Hq
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.144.174.25]:2142
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v8.5-BTI introduces the GP field in stage 1 translation tables which
-indicates that blocks and pages with it set are guarded pages for which
-branch target identification checks should be performed. Decode this
-when dumping the page tables to aid debugging.
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
+struct foo {
+        int stuff;
+        struct boo array[];
+};
+
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertenly introduced[3] to the codebase from now on.
+
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
+
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- arch/arm64/mm/dump.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/bluetooth/hci_ag6xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/mm/dump.c b/arch/arm64/mm/dump.c
-index 860c00ec8bd3..78163b7a7dde 100644
---- a/arch/arm64/mm/dump.c
-+++ b/arch/arm64/mm/dump.c
-@@ -145,6 +145,11 @@ static const struct prot_bits pte_bits[] = {
- 		.val	= PTE_UXN,
- 		.set	= "UXN",
- 		.clear	= "   ",
-+	}, {
-+		.mask	= PTE_GP,
-+		.val	= PTE_GP,
-+		.set	= "GP",
-+		.clear	= "  ",
- 	}, {
- 		.mask	= PTE_ATTRINDX_MASK,
- 		.val	= PTE_ATTRINDX(MT_DEVICE_nGnRnE),
+diff --git a/drivers/bluetooth/hci_ag6xx.c b/drivers/bluetooth/hci_ag6xx.c
+index 8bafa650b5b0..1f55df93e4ce 100644
+--- a/drivers/bluetooth/hci_ag6xx.c
++++ b/drivers/bluetooth/hci_ag6xx.c
+@@ -27,7 +27,7 @@ struct ag6xx_data {
+ struct pbn_entry {
+ 	__le32 addr;
+ 	__le32 plen;
+-	__u8 data[0];
++	__u8 data[];
+ } __packed;
+ 
+ static int ag6xx_open(struct hci_uart *hu)
 -- 
-2.20.1
+2.25.0
 
