@@ -2,120 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF79F15B0F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:28:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B2DA15B130
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:36:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728866AbgBLT2s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 14:28:48 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.202]:33318 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727361AbgBLT2r (ORCPT
+        id S1728979AbgBLTgJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 14:36:09 -0500
+Received: from alln-iport-8.cisco.com ([173.37.142.95]:48852 "EHLO
+        alln-iport-8.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727361AbgBLTgJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 14:28:47 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 06B7F1D03D
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 13:28:46 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 1xgjjulix8vkB1xgkjsjkM; Wed, 12 Feb 2020 13:28:46 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=GLQRqO9qBiBgvx5iIVYH7SAy6igUj4/Se4YJcTpd4Uc=; b=djvwU+RtA4hzE8ETixJL+QtaCH
-        DPmZeGdoGlryypEb/bZCGw85EkV5aOI+Up5JbbulEpxubacWLqiFETsw/YNFcVRYLqQbU5IhyHsqo
-        kqNxXDv9fpX9wCISf9bryT4alB2hy2cSFa3wMR71d1NFIxqAhB+J6iriahyU2E78HGQNpY03FbTDY
-        SaR6BOe8aQ4aQcdXNFgGz+L0eRwxTre5U8iPSDK6K4RvPoj5Zczt+XfiKvaXrDxhxJsZ5n0HaX4Nk
-        HgmoAioHcPEO+HJv7rugmZWVCw0D2zgYafZ10TRCRDCEf94Y95j3/1n+T4DopDWUu4dl+2mcxz/zY
-        i+/Sqqkw==;
-Received: from [201.144.174.25] (port=14408 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j1xgi-0016Mw-Gn; Wed, 12 Feb 2020 13:28:44 -0600
-Date:   Wed, 12 Feb 2020 13:31:19 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>
-Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] Bluetooth: hci_intel: Replace zero-length array with
- flexible-array member
-Message-ID: <20200212193119.GA27048@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.144.174.25
-X-Source-L: No
-X-Exim-ID: 1j1xgi-0016Mw-Gn
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.144.174.25]:14408
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Wed, 12 Feb 2020 14:36:09 -0500
+X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Feb 2020 14:36:08 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=4752; q=dns/txt; s=iport;
+  t=1581536168; x=1582745768;
+  h=from:to:cc:subject:date:message-id;
+  bh=9zcQWBaPNM6CcS8hmrmnBCPaodg8GgYBKqA4jri8k5E=;
+  b=b7QdyvPAtMJGJPQpWCG5p4XYYP2mVoXC8yQXvvVHYU1T49zX4JdYuPjG
+   0etczV/rtitz1hM+eB4ISSKMMS/gRBFSUcRtEeKKxNYo2Haj9DkxasKr5
+   BoVt6yzqyDFak+3N1s0fYUgk+GBJwtjp3ktaAuwZ44ogj/RUJ/B2GWquC
+   s=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0B9AACoUERe/5ldJa1mHAEBAQEBBwE?=
+ =?us-ascii?q?BEQEEBAEBgWcHAQELAYIogUEyKow3nSyFGoF7CQEBAQ4vBAEBhECCSyQ0CQ4?=
+ =?us-ascii?q?CAw0BAQUBAQECAQUEbYVDhmYpgRUTgyaCfKwdgieFSoNFgT6BOAGHRYReGoF?=
+ =?us-ascii?q?BP4RihCOGFgSWYYEql2uCRHyVSQwcmxQBLYpXnzmBUjmBWDMaCBsVgydQGA2?=
+ =?us-ascii?q?OJAUXjkQgAzCPH4JCAQE?=
+X-IronPort-AV: E=Sophos;i="5.70,433,1574121600"; 
+   d="scan'208";a="438477709"
+Received: from rcdn-core-2.cisco.com ([173.37.93.153])
+  by alln-iport-8.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 12 Feb 2020 19:29:02 +0000
+Received: from zorba.cisco.com ([10.154.200.25])
+        by rcdn-core-2.cisco.com (8.15.2/8.15.2) with ESMTP id 01CJT10q011732;
+        Wed, 12 Feb 2020 19:29:02 GMT
+From:   Daniel Walker <danielwa@cisco.com>
+To:     Evgeniy Polyakov <zbr@ioremap.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drivers: connector: cn_proc: allow limiting certain messages
+Date:   Wed, 12 Feb 2020 11:29:01 -0800
+Message-Id: <20200212192901.6402-1-danielwa@cisco.com>
+X-Mailer: git-send-email 2.17.1
+X-Outbound-SMTP-Client: 10.154.200.25, [10.154.200.25]
+X-Outbound-Node: rcdn-core-2.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+This adds a way for system administrators to limit which messages can be
+seen on the interface. Currently cn_proc is rather noisy, and it sends a
+lot of different messages which may not be needed.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+At Cisco we need to receive the coredump messages, and no others. This
+interface currently has no way to allow this. This patch provides a set
+of bool module parameters to enable or disable each message type. The
+parameters end up looking like this,
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertenly introduced[3] to the codebase from now on.
+$ ls -al /sys/module/cn_proc/parameters/
+total 0
+drwxr-xr-x 2 root root    0 Feb 10 16:51 .
+drwxr-xr-x 3 root root    0 Feb 10 16:50 ..
+-rw-r--r-- 1 root root 4096 Feb 10 16:51 enabled_comm
+-rw-r--r-- 1 root root 4096 Feb 10 16:51 enabled_coredump
+-rw-r--r-- 1 root root 4096 Feb 10 16:51 enabled_exec
+-rw-r--r-- 1 root root 4096 Feb 10 16:51 enabled_exit
+-rw-r--r-- 1 root root 4096 Feb 10 16:51 enabled_fork
+-rw-r--r-- 1 root root 4096 Feb 10 16:51 enabled_gid
+-rw-r--r-- 1 root root 4096 Feb 10 16:51 enabled_none
+-rw-r--r-- 1 root root 4096 Feb 10 16:51 enabled_ptrace
+-rw-r--r-- 1 root root 4096 Feb 10 16:51 enabled_sid
+-rw-r--r-- 1 root root 4096 Feb 10 16:51 enabled_uid
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+All messages are enabled by default. To disable one you can run the following,
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+echo N > /sys/module/cn_proc/parameters/enabled_comm
 
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Daniel Walker <danielwa@cisco.com>
 ---
- drivers/bluetooth/hci_intel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/connector/cn_proc.c | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/bluetooth/hci_intel.c b/drivers/bluetooth/hci_intel.c
-index 31f25153087d..f1299da6eed8 100644
---- a/drivers/bluetooth/hci_intel.c
-+++ b/drivers/bluetooth/hci_intel.c
-@@ -49,7 +49,7 @@
- struct hci_lpm_pkt {
- 	__u8 opcode;
- 	__u8 dlen;
--	__u8 data[0];
-+	__u8 data[];
- } __packed;
+diff --git a/drivers/connector/cn_proc.c b/drivers/connector/cn_proc.c
+index d58ce664da84..23b934ee9862 100644
+--- a/drivers/connector/cn_proc.c
++++ b/drivers/connector/cn_proc.c
+@@ -38,6 +38,22 @@ static inline struct cn_msg *buffer_to_cn_msg(__u8 *buffer)
+ static atomic_t proc_event_num_listeners = ATOMIC_INIT(0);
+ static struct cb_id cn_proc_event_id = { CN_IDX_PROC, CN_VAL_PROC };
  
- struct intel_device {
++#define CN_PROC_MSG_PARAM(name) \
++	static bool enabled_##name = true; \
++	module_param(enabled_##name, bool, 0644); \
++	MODULE_PARM_DESC(enabled_##name, "Enable message #name");
++
++CN_PROC_MSG_PARAM(none)
++CN_PROC_MSG_PARAM(fork)
++CN_PROC_MSG_PARAM(exec)
++CN_PROC_MSG_PARAM(uid)
++CN_PROC_MSG_PARAM(gid)
++CN_PROC_MSG_PARAM(sid)
++CN_PROC_MSG_PARAM(ptrace)
++CN_PROC_MSG_PARAM(comm)
++CN_PROC_MSG_PARAM(coredump)
++CN_PROC_MSG_PARAM(exit)
++
+ /* proc_event_counts is used as the sequence number of the netlink message */
+ static DEFINE_PER_CPU(__u32, proc_event_counts) = { 0 };
+ 
+@@ -66,6 +82,8 @@ void proc_fork_connector(struct task_struct *task)
+ 	__u8 buffer[CN_PROC_MSG_SIZE] __aligned(8);
+ 	struct task_struct *parent;
+ 
++	if (!enabled_fork)
++		return;
+ 	if (atomic_read(&proc_event_num_listeners) < 1)
+ 		return;
+ 
+@@ -95,6 +113,8 @@ void proc_exec_connector(struct task_struct *task)
+ 	struct proc_event *ev;
+ 	__u8 buffer[CN_PROC_MSG_SIZE] __aligned(8);
+ 
++	if (!enabled_exec)
++		return;
+ 	if (atomic_read(&proc_event_num_listeners) < 1)
+ 		return;
+ 
+@@ -120,6 +140,8 @@ void proc_id_connector(struct task_struct *task, int which_id)
+ 	__u8 buffer[CN_PROC_MSG_SIZE] __aligned(8);
+ 	const struct cred *cred;
+ 
++	if (!enabled_uid)
++		return;
+ 	if (atomic_read(&proc_event_num_listeners) < 1)
+ 		return;
+ 
+@@ -157,6 +179,8 @@ void proc_sid_connector(struct task_struct *task)
+ 	struct proc_event *ev;
+ 	__u8 buffer[CN_PROC_MSG_SIZE] __aligned(8);
+ 
++	if (!enabled_sid)
++		return;
+ 	if (atomic_read(&proc_event_num_listeners) < 1)
+ 		return;
+ 
+@@ -181,6 +205,8 @@ void proc_ptrace_connector(struct task_struct *task, int ptrace_id)
+ 	struct proc_event *ev;
+ 	__u8 buffer[CN_PROC_MSG_SIZE] __aligned(8);
+ 
++	if (!enabled_ptrace)
++		return;
+ 	if (atomic_read(&proc_event_num_listeners) < 1)
+ 		return;
+ 
+@@ -213,6 +239,8 @@ void proc_comm_connector(struct task_struct *task)
+ 	struct proc_event *ev;
+ 	__u8 buffer[CN_PROC_MSG_SIZE] __aligned(8);
+ 
++	if (!enabled_comm)
++		return;
+ 	if (atomic_read(&proc_event_num_listeners) < 1)
+ 		return;
+ 
+@@ -239,6 +267,8 @@ void proc_coredump_connector(struct task_struct *task)
+ 	struct task_struct *parent;
+ 	__u8 buffer[CN_PROC_MSG_SIZE] __aligned(8);
+ 
++	if (!enabled_coredump)
++		return;
+ 	if (atomic_read(&proc_event_num_listeners) < 1)
+ 		return;
+ 
+@@ -272,6 +302,8 @@ void proc_exit_connector(struct task_struct *task)
+ 	struct task_struct *parent;
+ 	__u8 buffer[CN_PROC_MSG_SIZE] __aligned(8);
+ 
++	if (!enabled_exit)
++		return;
+ 	if (atomic_read(&proc_event_num_listeners) < 1)
+ 		return;
+ 
+@@ -314,6 +346,8 @@ static void cn_proc_ack(int err, int rcvd_seq, int rcvd_ack)
+ 	struct proc_event *ev;
+ 	__u8 buffer[CN_PROC_MSG_SIZE] __aligned(8);
+ 
++	if (!enabled_none)
++		return;
+ 	if (atomic_read(&proc_event_num_listeners) < 1)
+ 		return;
+ 
 -- 
-2.25.0
+2.17.1
 
