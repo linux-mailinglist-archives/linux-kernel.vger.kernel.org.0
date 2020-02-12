@@ -2,232 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A179215A473
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:17:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EC5215A480
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:21:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728832AbgBLJRt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 04:17:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47802 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728150AbgBLJRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:17:48 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 5A7EDAC16;
-        Wed, 12 Feb 2020 09:17:44 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 132C61E0E01; Wed, 12 Feb 2020 10:17:43 +0100 (CET)
-Date:   Wed, 12 Feb 2020 10:17:43 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v6 08/12] mm/gup: /proc/vmstat: pin_user_pages (FOLL_PIN)
- reporting
-Message-ID: <20200212091743.GC25573@quack2.suse.cz>
-References: <20200211001536.1027652-1-jhubbard@nvidia.com>
- <20200211001536.1027652-9-jhubbard@nvidia.com>
+        id S1728759AbgBLJV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 04:21:28 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:33624 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728530AbgBLJV1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 04:21:27 -0500
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01C9CMd7030569;
+        Wed, 12 Feb 2020 03:20:32 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=8HhGU6yaLOtpr5hOSd5iA2lPFMINYOyqL+TaAgpB1Fg=;
+ b=l4APu5AT6ALyNG3zEI22OUCvYGlvSEqhltargsGgNtZ33SQExwhsfGc2MyR9isW9Ad2w
+ ArXbXNdXwVWxElXK7Uftoo6zCEIpVpWuDoQSAy2In3ORV+NVCKt9O4s4bQhVnKYJfYBE
+ bKbjHB0suxwNCuDlGfFvfNXCnRCi0VALGdYX0Futh0A80W0KDJWw2ZOc/eUBSxwky/A+
+ icGQntcFCVurtnrSjCHoOytB5d0nR8oow3s9AgSVwkjrZQNvysbZSYTU5WVnExT1vvcP
+ I9K4xXvmtW9E3YTTKjQ/NxYfjzaAZo0pVT8+caPmV41AQz1g+3x10UqUp1AV6APmWnYX Ww== 
+Authentication-Results: ppops.net;
+        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex02.ad.cirrus.com ([5.172.152.52])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2y1ta165f0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Wed, 12 Feb 2020 03:20:32 -0600
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 12 Feb
+ 2020 09:20:30 +0000
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Wed, 12 Feb 2020 09:20:30 +0000
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 6C9A72AB;
+        Wed, 12 Feb 2020 09:20:30 +0000 (UTC)
+Date:   Wed, 12 Feb 2020 09:20:30 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+CC:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, <patches@opensource.cirrus.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: wm0010: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200212092030.GE4098@ediswmail.ad.cirrus.com>
+References: <20200211200549.GA12072@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20200211001536.1027652-9-jhubbard@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200211200549.GA12072@embeddedor>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-SPF-Result: fail
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 suspectscore=0
+ phishscore=0 spamscore=0 impostorscore=0 mlxlogscore=755 adultscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002120075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 10-02-20 16:15:32, John Hubbard wrote:
-> Now that pages are "DMA-pinned" via pin_user_page*(), and unpinned via
-> unpin_user_pages*(), we need some visibility into whether all of this is
-> working correctly.
+On Tue, Feb 11, 2020 at 02:05:49PM -0600, Gustavo A. R. Silva wrote:
+> The current codebase makes use of the zero-length array language
+> extension to the C90 standard, but the preferred mechanism to declare
+> variable-length types such as these ones is a flexible array member[1][2],
+> introduced in C99:
 > 
-> Add two new fields to /proc/vmstat:
+> struct foo {
+>         int stuff;
+>         struct boo array[];
+> };
 > 
->     nr_foll_pin_acquired
->     nr_foll_pin_released
+> By making use of the mechanism above, we will get a compiler warning
+> in case the flexible array does not occur last in the structure, which
+> will help us prevent some kind of undefined behavior bugs from being
+> inadvertenly introduced[3] to the codebase from now on.
 > 
-> These are documented in Documentation/core-api/pin_user_pages.rst.
-> They represent the number of pages (since boot time) that have been
-> pinned ("nr_foll_pin_acquired") and unpinned ("nr_foll_pin_released"),
-> via pin_user_pages*() and unpin_user_pages*().
+> This issue was found with the help of Coccinelle.
 > 
-> In the absence of long-running DMA or RDMA operations that hold pages
-> pinned, the above two fields will normally be equal to each other.
+> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+> [2] https://github.com/KSPP/linux/issues/21
+> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 > 
-> Also: update Documentation/core-api/pin_user_pages.rst, to remove an
-> earlier (now confirmed untrue) claim about a performance problem with
-> /proc/vmstat.
-> 
-> Also: updated Documentation/core-api/pin_user_pages.rst to rename the
-> new /proc/vmstat entries, to the names listed here.
-> 
-> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-
-The patch looks good to me now. You can add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > ---
->  Documentation/core-api/pin_user_pages.rst | 33 +++++++++++++++++++----
->  include/linux/mmzone.h                    |  2 ++
->  mm/gup.c                                  | 13 +++++++++
->  mm/vmstat.c                               |  2 ++
->  4 files changed, 45 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/core-api/pin_user_pages.rst b/Documentation/core-api/pin_user_pages.rst
-> index 7e5dd8b1b3f2..5c8a5f89756b 100644
-> --- a/Documentation/core-api/pin_user_pages.rst
-> +++ b/Documentation/core-api/pin_user_pages.rst
-> @@ -208,12 +208,35 @@ has the following new calls to exercise the new pin*() wrapper functions:
->  You can monitor how many total dma-pinned pages have been acquired and released
->  since the system was booted, via two new /proc/vmstat entries: ::
->  
-> -    /proc/vmstat/nr_foll_pin_requested
-> -    /proc/vmstat/nr_foll_pin_requested
-> +    /proc/vmstat/nr_foll_pin_acquired
-> +    /proc/vmstat/nr_foll_pin_released
->  
-> -Those are both going to show zero, unless CONFIG_DEBUG_VM is set. This is
-> -because there is a noticeable performance drop in unpin_user_page(), when they
-> -are activated.
-> +Under normal conditions, these two values will be equal unless there are any
-> +long-term [R]DMA pins in place, or during pin/unpin transitions.
-> +
-> +* nr_foll_pin_acquired: This is the number of logical pins that have been
-> +  acquired since the system was powered on. For huge pages, the head page is
-> +  pinned once for each page (head page and each tail page) within the huge page.
-> +  This follows the same sort of behavior that get_user_pages() uses for huge
-> +  pages: the head page is refcounted once for each tail or head page in the huge
-> +  page, when get_user_pages() is applied to a huge page.
-> +
-> +* nr_foll_pin_released: The number of logical pins that have been released since
-> +  the system was powered on. Note that pages are released (unpinned) on a
-> +  PAGE_SIZE granularity, even if the original pin was applied to a huge page.
-> +  Becaused of the pin count behavior described above in "nr_foll_pin_acquired",
-> +  the accounting balances out, so that after doing this::
-> +
-> +    pin_user_pages(huge_page);
-> +    for (each page in huge_page)
-> +        unpin_user_page(page);
-> +
-> +...the following is expected::
-> +
-> +    nr_foll_pin_released == nr_foll_pin_acquired
-> +
-> +(...unless it was already out of balance due to a long-term RDMA pin being in
-> +place.)
->  
->  References
->  ==========
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index 462f6873905a..4bca42eeb439 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -243,6 +243,8 @@ enum node_stat_item {
->  	NR_DIRTIED,		/* page dirtyings since bootup */
->  	NR_WRITTEN,		/* page writings since bootup */
->  	NR_KERNEL_MISC_RECLAIMABLE,	/* reclaimable non-slab kernel pages */
-> +	NR_FOLL_PIN_ACQUIRED,	/* via: pin_user_page(), gup flag: FOLL_PIN */
-> +	NR_FOLL_PIN_RELEASED,	/* pages returned via unpin_user_page() */
->  	NR_VM_NODE_STAT_ITEMS
->  };
->  
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 4d0d94405639..441f7a48f370 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -86,6 +86,8 @@ static __maybe_unused struct page *try_grab_compound_head(struct page *page,
->  	if (flags & FOLL_GET)
->  		return try_get_compound_head(page, refs);
->  	else if (flags & FOLL_PIN) {
-> +		int orig_refs = refs;
-> +
->  		/*
->  		 * When pinning a compound page of order > 1 (which is what
->  		 * hpage_pincount_available() checks for), use an exact count to
-> @@ -104,6 +106,9 @@ static __maybe_unused struct page *try_grab_compound_head(struct page *page,
->  		if (hpage_pincount_available(page))
->  			hpage_pincount_add(page, refs);
->  
-> +		mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_ACQUIRED,
-> +				    orig_refs);
-> +
->  		return page;
->  	}
->  
-> @@ -158,6 +163,8 @@ bool __must_check try_grab_page(struct page *page, unsigned int flags)
->  		 * once, so that the page really is pinned.
->  		 */
->  		page_ref_add(page, refs);
-> +
-> +		mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_ACQUIRED, 1);
->  	}
->  
->  	return true;
-> @@ -178,6 +185,7 @@ static bool __unpin_devmap_managed_user_page(struct page *page)
->  
->  	count = page_ref_sub_return(page, refs);
->  
-> +	mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_RELEASED, 1);
->  	/*
->  	 * devmap page refcounts are 1-based, rather than 0-based: if
->  	 * refcount is 1, then the page is free and the refcount is
-> @@ -228,6 +236,8 @@ void unpin_user_page(struct page *page)
->  
->  	if (page_ref_sub_and_test(page, refs))
->  		__put_page(page);
-> +
-> +	mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_RELEASED, 1);
->  }
->  EXPORT_SYMBOL(unpin_user_page);
->  
-> @@ -2259,6 +2269,9 @@ static int record_subpages(struct page *page, unsigned long addr,
->  static void put_compound_head(struct page *page, int refs, unsigned int flags)
->  {
->  	if (flags & FOLL_PIN) {
-> +		mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_RELEASED,
-> +				    refs);
-> +
->  		if (hpage_pincount_available(page))
->  			hpage_pincount_sub(page, refs);
->  		else
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index 78d53378db99..c9c0d71f917f 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1168,6 +1168,8 @@ const char * const vmstat_text[] = {
->  	"nr_dirtied",
->  	"nr_written",
->  	"nr_kernel_misc_reclaimable",
-> +	"nr_foll_pin_acquired",
-> +	"nr_foll_pin_released",
->  
->  	/* enum writeback_stat_item counters */
->  	"nr_dirty_threshold",
-> -- 
-> 2.25.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+
+Thanks,
+Charles
