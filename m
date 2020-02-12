@@ -2,98 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B17E315B15A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:50:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3D2815B154
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 20:50:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729087AbgBLTu3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 14:50:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60442 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729070AbgBLTu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 14:50:29 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05C9024671;
-        Wed, 12 Feb 2020 19:50:27 +0000 (UTC)
-Date:   Wed, 12 Feb 2020 14:50:26 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     kernel test robot <rong.a.chen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        lkp@lists.01.org
-Subject: [PATCH] tracing: Remove bogus 64-bit synth_event_trace() vararg 
- assumption
-Message-ID: <20200212145026.0cbaa86b@gandalf.local.home>
-In-Reply-To: <1581523144.8740.8.camel@kernel.org>
-References: <20200212113444.GS12867@shao2-debian>
-        <1581523144.8740.8.camel@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729044AbgBLTuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 14:50:00 -0500
+Received: from gateway22.websitewelcome.com ([192.185.47.179]:34487 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729018AbgBLTt7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 14:49:59 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 6C441411A
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 13:49:57 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 1y1Fj6jghAGTX1y1FjIuwh; Wed, 12 Feb 2020 13:49:57 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=TtzHE9bt3EsnQaUgQbettd2dBBa+zgbK1XhwIh6LAZ8=; b=bJr9lPFUVcqwf7A5m+kbN5zfIQ
+        ZM5QxBS1BMjGSLSBomD228kTD9jX8NFst6tcdo0H8OOBMysEt/yfLe0V3JuZlIKLiMAxVBrf2Jftg
+        aX/AjrSQvqADKCSXHxae5RMnUuB2Dn7nP6PSpaqixfsJFt3vdWqVuMDpNUMp8AcGxA7jCZrdWVw+E
+        BsE7mcIZubgYGTw/aPAM3kxXqxXqAv5w6E+2Vk2CruwQoaw+q5UNpm7N2vw6fZe6q30bsiRxk7CkL
+        VyjaijJHlHZnEEO3nei1AgRqHhQFsOCjMEW/dTKBVIa2Vgd2qYFI0V9O0Di0pWd6QSBNZQsw32X5b
+        RjEGWtQA==;
+Received: from [201.144.174.25] (port=3740 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j1y1D-001GNE-QC; Wed, 12 Feb 2020 13:49:56 -0600
+Date:   Wed, 12 Feb 2020 13:52:31 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] auxdisplay: charlcd: replace zero-length array with
+ flexible-array member
+Message-ID: <20200212195231.GA2867@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.144.174.25
+X-Source-L: No
+X-Exim-ID: 1j1y1D-001GNE-QC
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.144.174.25]:3740
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 48
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-From: Tom Zanussi <zanussi@kernel.org>
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-[ Tom, please send patches normally, and not embedded in a reply.
-Otherwise it will not be picked up by my patchwork, and may be lost. ]
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertenly introduced[3] to the codebase from now on.
 
-The vararg code in synth_event_trace() assumed the args were 64 bit
-which is not the case on 32 bit systems.  Just use long which should
-work on every system, and remove the u64 casts from the synth event
-test module.
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-Reported-by: kernel test robot <rong.a.chen@intel.com>
-Signed-off-by: Tom Zanussi <zanussi@kernel.org>
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- kernel/trace/synth_event_gen_test.c | 4 ++--
- kernel/trace/trace_events_hist.c    | 6 +++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/auxdisplay/charlcd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/synth_event_gen_test.c b/kernel/trace/synth_event_gen_test.c
-index 4aefe003cb7c..2a7465569a43 100644
---- a/kernel/trace/synth_event_gen_test.c
-+++ b/kernel/trace/synth_event_gen_test.c
-@@ -424,11 +424,11 @@ static int __init test_trace_synth_event(void)
- 	/* Trace some bogus values just for testing */
- 	ret = synth_event_trace(create_synth_test, 7,	/* number of values */
- 				444,			/* next_pid_field */
--				(u64)"clackers",	/* next_comm_field */
-+				"clackers",		/* next_comm_field */
- 				1000000,		/* ts_ns */
- 				1000,			/* ts_ms */
- 				smp_processor_id(),	/* cpu */
--				(u64)"Thneed",		/* my_string_field */
-+				"Thneed",		/* my_string_field */
- 				999);			/* my_int_field */
- 	return ret;
- }
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 2fcb755e900a..e65276c3c9d1 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -1883,12 +1883,12 @@ int synth_event_trace(struct trace_event_file *file, unsigned int n_vals, ...)
+diff --git a/drivers/auxdisplay/charlcd.c b/drivers/auxdisplay/charlcd.c
+index 874c259a8829..c0da3820454b 100644
+--- a/drivers/auxdisplay/charlcd.c
++++ b/drivers/auxdisplay/charlcd.c
+@@ -88,7 +88,7 @@ struct charlcd_priv {
+ 		int len;
+ 	} esc_seq;
  
- 	va_start(args, n_vals);
- 	for (i = 0, n_u64 = 0; i < state.event->n_fields; i++) {
--		u64 val;
-+		long val;
+-	unsigned long long drvdata[0];
++	unsigned long long drvdata[];
+ };
  
--		val = va_arg(args, u64);
-+		val = va_arg(args, long);
- 
- 		if (state.event->fields[i]->is_string) {
--			char *str_val = (char *)(long)val;
-+			char *str_val = (char *)val;
- 			char *str_field = (char *)&state.entry->fields[n_u64];
- 
- 			strscpy(str_field, str_val, STR_VAR_LEN_MAX);
+ #define charlcd_to_priv(p)	container_of(p, struct charlcd_priv, lcd)
 -- 
-2.14.1
+2.25.0
+
