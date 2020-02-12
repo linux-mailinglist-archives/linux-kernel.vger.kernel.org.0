@@ -2,52 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8718715B437
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 00:01:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFE0715B446
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 00:01:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729215AbgBLXAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 18:00:55 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47519 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727692AbgBLXAx (ORCPT
+        id S1729302AbgBLXBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 18:01:15 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:33766 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729283AbgBLXBM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 18:00:53 -0500
+        Wed, 12 Feb 2020 18:01:12 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581548452;
+        s=mimecast20190719; t=1581548471;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=VWlt+bgXIf5/iv+Jhlc8cQtwPoqiZeX+qbSML/8mt+s=;
-        b=OqanHHKhfIvFlJgo4RmJi47bxvDgRunupB7gQo8ckCpV1GYgoBvCnHcBU5LlZ6ThrIK+xr
-        1lI1bCKny/PHg0VoN0JtrGVrOUfZU+TYmbosx2gtbn0rLhYER9hF4x8mNSTVEQv0C3PwJu
-        d3wgHy5yhu9ogOceD9a0urL8W8c45Ig=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=T7ssd3WUg57xOpsdw6H7Y8SPEq2D0xhwPC+MXaKd81Y=;
+        b=DFJx1Cf1YocxZ81qahV2v3L4+KHvt03OcqChTCeXmuKablkS2kzIBtEavAmdtMaFcVyh7j
+        Nd65FFxkOjGzfGarHNhuAYRK8PsxRanMqs05tJJaFujDcQCccHzMeqtvJWJ9/Ja5jX7t4o
+        kx8Xi33ahrHAz3434/Cn6urt+UrAIbs=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-432-PPQ5D6jdPdewmS9mXXbLnA-1; Wed, 12 Feb 2020 18:00:50 -0500
-X-MC-Unique: PPQ5D6jdPdewmS9mXXbLnA-1
+ us-mta-147-KAfS8exQMqun0Pn3GMSzMg-1; Wed, 12 Feb 2020 18:00:52 -0500
+X-MC-Unique: KAfS8exQMqun0Pn3GMSzMg-1
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 60DEF107ACCC;
-        Wed, 12 Feb 2020 23:00:48 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D8117800D48;
+        Wed, 12 Feb 2020 23:00:50 +0000 (UTC)
 Received: from Ruby.bss.redhat.com (dhcp-10-20-1-196.bss.redhat.com [10.20.1.196])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B84A5C109;
-        Wed, 12 Feb 2020 23:00:46 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9E6A15C109;
+        Wed, 12 Feb 2020 23:00:49 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     nouveau@lists.freedesktop.org
-Cc:     "Daniel Vetter" <daniel@ffwll.ch>,
-        "Mikita Lipski" <mikita.lipski@amd.com>,
-        "David Airlie" <airlied@linux.ie>, "Takashi Iwai" <tiwai@suse.de>,
-        "Manasi Navare" <manasi.d.navare@intel.com>,
-        "Sean Paul" <seanpaul@chromium.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, "Ben Skeggs" <bskeggs@redhat.com>,
-        "Lyude Paul" <lyude@redhat.com>,
-        "Ilia Mirkin" <imirkin@alum.mit.edu>,
-        "Dave Airlie" <airlied@redhat.com>,
-        "Alex Deucher" <alexander.deucher@amd.com>
-Subject: [PATCH 0/4] drm/nouveau: DP interlace fixes
-Date:   Wed, 12 Feb 2020 18:00:34 -0500
-Message-Id: <20200212230043.170477-1-lyude@redhat.com>
+Cc:     stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sean Paul <seanpaul@chromium.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Manasi Navare <manasi.d.navare@intel.com>,
+        Takashi Iwai <tiwai@suse.de>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] drm/nouveau/kms/nv50-: Probe SOR caps for DP interlacing support
+Date:   Wed, 12 Feb 2020 18:00:35 -0500
+Message-Id: <20200212230043.170477-2-lyude@redhat.com>
+In-Reply-To: <20200212230043.170477-1-lyude@redhat.com>
+References: <20200212230043.170477-1-lyude@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Content-Transfer-Encoding: quoted-printable
@@ -56,34 +57,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, nouveau doesn't actually bother to try probing whether or not
-it can actually handle interlaced modes over DisplayPort. As a result,
-on volta and later we'll end up trying to set an interlaced mode even
-when it's not supported and cause the front end for the display engine
-to hang.
+Right now, we make the mistake of allowing interlacing on all
+connectors. Nvidia hardware does not always support interlacing with DP
+though, so we need to make sure that we don't allow interlaced modes to
+be set in such situations as otherwise we'll end up accidentally hanging
+the display HW.
 
-So, let's teach nouveau to reject interlaced modes on hardware that
-can't actually handle it. Additionally for MST, since we accomplish this
-by simply reusing more of the SST mode validation we also get (some)
-basic bw validation for modes we detect on MST connectors completely for
-free.
+This fixes some hangs with Turing, which would be caused by attempting
+to set an interlaced mode on hardware that doesn't support it. This
+patch likely fixes other hardware hanging in the same way as well.
 
-Lyude Paul (4):
-  drm/nouveau/kms/nv50-: Probe SOR caps for DP interlacing support
-  drm/nouveau/kms/gv100-: Add support for interlaced modes
-  drm/nouveau/kms/nv50-: Move 8BPC limit for MST into
-    nv50_mstc_get_modes()
-  drm/nouveau/kms/nv50-: Share DP SST mode_valid() handling with MST
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/gpu/drm/nouveau/dispnv50/disp.c     | 21 ++++++++++++++-------
+ drivers/gpu/drm/nouveau/nouveau_connector.c | 10 +++++++++-
+ drivers/gpu/drm/nouveau/nouveau_encoder.h   |  3 +++
+ 3 files changed, 26 insertions(+), 8 deletions(-)
 
- drivers/gpu/drm/nouveau/dispnv50/disp.c     | 55 ++++++++++++++-------
- drivers/gpu/drm/nouveau/dispnv50/headc37d.c |  5 +-
- drivers/gpu/drm/nouveau/dispnv50/headc57d.c |  5 +-
- drivers/gpu/drm/nouveau/nouveau_connector.c | 43 ++++++++++------
- drivers/gpu/drm/nouveau/nouveau_connector.h |  5 ++
- drivers/gpu/drm/nouveau/nouveau_dp.c        | 27 ++++++++++
- drivers/gpu/drm/nouveau/nouveau_encoder.h   |  7 +++
- 7 files changed, 108 insertions(+), 39 deletions(-)
-
+diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/no=
+uveau/dispnv50/disp.c
+index a3dc2ba19fb2..32a1c4221f1e 100644
+--- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
++++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+@@ -1714,6 +1714,9 @@ nv50_sor_create(struct drm_connector *connector, st=
+ruct dcb_output *dcbe)
+ 		struct nv50_disp *disp =3D nv50_disp(encoder->dev);
+ 		struct nvkm_i2c_aux *aux =3D
+ 			nvkm_i2c_aux_find(i2c, dcbe->i2c_index);
++		u32 caps =3D nvif_rd32(&disp->disp->object,
++				     0x00640144 + (nv_encoder->or * 8));
++
+ 		if (aux) {
+ 			if (disp->disp->object.oclass < GF110_DISP) {
+ 				/* HW has no support for address-only
+@@ -1727,13 +1730,17 @@ nv50_sor_create(struct drm_connector *connector, =
+struct dcb_output *dcbe)
+ 			nv_encoder->aux =3D aux;
+ 		}
+=20
+-		if (nv_connector->type !=3D DCB_CONNECTOR_eDP &&
+-		    nv50_has_mst(drm)) {
+-			ret =3D nv50_mstm_new(nv_encoder, &nv_connector->aux,
+-					    16, nv_connector->base.base.id,
+-					    &nv_encoder->dp.mstm);
+-			if (ret)
+-				return ret;
++		if (nv_connector->type !=3D DCB_CONNECTOR_eDP) {
++			if (nv50_has_mst(drm)) {
++				ret =3D nv50_mstm_new(nv_encoder,
++						    &nv_connector->aux,
++						    16,
++						    connector->base.id,
++						    &nv_encoder->dp.mstm);
++				if (ret)
++					return ret;
++			}
++			nv_encoder->dp.caps.interlace =3D !!(caps & 0x04000000);
+ 		}
+ 	} else {
+ 		struct nvkm_i2c_bus *bus =3D
+diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/dr=
+m/nouveau/nouveau_connector.c
+index 9a9a7f5003d3..97a84daf8eab 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_connector.c
++++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
+@@ -509,7 +509,11 @@ nouveau_connector_set_encoder(struct drm_connector *=
+connector,
+ 	nv_connector->detected_encoder =3D nv_encoder;
+=20
+ 	if (drm->client.device.info.family >=3D NV_DEVICE_INFO_V0_TESLA) {
+-		connector->interlace_allowed =3D true;
++		if (nv_encoder->dcb->type =3D=3D DCB_OUTPUT_DP)
++			connector->interlace_allowed =3D
++				nv_encoder->dp.caps.interlace;
++		else
++			connector->interlace_allowed =3D true;
+ 		connector->doublescan_allowed =3D true;
+ 	} else
+ 	if (nv_encoder->dcb->type =3D=3D DCB_OUTPUT_LVDS ||
+@@ -1060,6 +1064,10 @@ nouveau_connector_mode_valid(struct drm_connector =
+*connector,
+ 	case DCB_OUTPUT_TV:
+ 		return get_slave_funcs(encoder)->mode_valid(encoder, mode);
+ 	case DCB_OUTPUT_DP:
++		if (mode->flags & DRM_MODE_FLAG_INTERLACE &&
++		    !nv_encoder->dp.caps.interlace)
++			return MODE_NO_INTERLACE;
++
+ 		max_clock  =3D nv_encoder->dp.link_nr;
+ 		max_clock *=3D nv_encoder->dp.link_bw;
+ 		clock =3D clock * (connector->display_info.bpc * 3) / 10;
+diff --git a/drivers/gpu/drm/nouveau/nouveau_encoder.h b/drivers/gpu/drm/=
+nouveau/nouveau_encoder.h
+index 3517f920bf89..2a8a7aec48c4 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_encoder.h
++++ b/drivers/gpu/drm/nouveau/nouveau_encoder.h
+@@ -63,6 +63,9 @@ struct nouveau_encoder {
+ 			struct nv50_mstm *mstm;
+ 			int link_nr;
+ 			int link_bw;
++			struct {
++				bool interlace : 1;
++			} caps;
+ 		} dp;
+ 	};
+=20
 --=20
 2.24.1
 
