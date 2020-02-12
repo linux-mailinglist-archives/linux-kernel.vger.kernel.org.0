@@ -2,88 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBE3715ACD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 17:10:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9016A15ACDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 17:10:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728264AbgBLQKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 11:10:43 -0500
-Received: from mga01.intel.com ([192.55.52.88]:30528 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726351AbgBLQKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 11:10:43 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 08:10:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,433,1574150400"; 
-   d="scan'208";a="266718994"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga002.fm.intel.com with ESMTP; 12 Feb 2020 08:10:41 -0800
-Date:   Wed, 12 Feb 2020 08:10:42 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 06/12] fs/xfs: Check if the inode supports DAX under
- lock
-Message-ID: <20200212161041.GE20214@iweiny-DESK2.sc.intel.com>
-References: <20200208193445.27421-1-ira.weiny@intel.com>
- <20200208193445.27421-7-ira.weiny@intel.com>
- <20200211061639.GH10776@dread.disaster.area>
- <20200211175509.GD12866@iweiny-DESK2.sc.intel.com>
- <20200211204220.GN10776@dread.disaster.area>
+        id S1728627AbgBLQKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 11:10:53 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:33849 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726351AbgBLQKw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 11:10:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581523851;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=SVVq6qjRCsdQwLjJ3Pl2oKorAivzLQr7S00rXFIKNVM=;
+        b=Hh/9JA8ckC15wtm2NIqgxhL5Dzdqu2WOyQKpRyusIpH+T2NIsD7j8zE/ECnD1GXWUlIWVY
+        3sKN/bJitoPm2KpyiP/KMCM3fpuwEAFdYduhjnLw23xlTQfT8k81dO04wjoJLtf9edfYyw
+        4GRZ0IympuO9am3MK8Ks1Ak7ryiU8S0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-166-y1KLSIPVOpe_iMVvs1g-Og-1; Wed, 12 Feb 2020 11:10:47 -0500
+X-MC-Unique: y1KLSIPVOpe_iMVvs1g-Og-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7DA7D107ACCC;
+        Wed, 12 Feb 2020 16:10:45 +0000 (UTC)
+Received: from emilne (unknown [10.18.25.205])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C5AF45C100;
+        Wed, 12 Feb 2020 16:10:44 +0000 (UTC)
+Message-ID: <eac106d0fd30e20b6df4287f8bc01844191d29c6.camel@redhat.com>
+Subject: Re: [PATCH] scsi: Delete scsi_use_blk_mq
+From:   "Ewan D. Milne" <emilne@redhat.com>
+To:     John Garry <john.garry@huawei.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 12 Feb 2020 11:10:44 -0500
+In-Reply-To: <2e2ead7d-503e-3881-b837-7c689a4d44c6@huawei.com>
+References: <1581355992-139274-1-git-send-email-john.garry@huawei.com>
+         <3795ab1d-5282-458b-6199-91e3def32463@acm.org>
+         <2e2ead7d-503e-3881-b837-7c689a4d44c6@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200211204220.GN10776@dread.disaster.area>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 07:42:20AM +1100, Dave Chinner wrote:
-> On Tue, Feb 11, 2020 at 09:55:09AM -0800, Ira Weiny wrote:
-> > On Tue, Feb 11, 2020 at 05:16:39PM +1100, Dave Chinner wrote:
-> > > On Sat, Feb 08, 2020 at 11:34:39AM -0800, ira.weiny@intel.com wrote:
-> > > > From: Ira Weiny <ira.weiny@intel.com>
-> > > > 
-
-[snip]
-
-> > > 
-> > > This raciness in checking the DAX flags is the reason that
-> > > xfs_ioctl_setattr_xflags() redoes all the reflink vs dax checks once
-> > > it's called under the XFS_ILOCK_EXCL during the actual change
-> > > transaction....
-> > 
-> > Ok I found this by trying to make sure that the xfs_inode_supports_dax() call
-> > was always returning valid data.  So I don't have a specific test which was
-> > failing.
-> > 
-> > Looking at the code again, it sounds like I was wrong about which locks protect
-> > what and with your explanation above it looks like there is nothing to be done
-> > here and I can drop the patch.
-> > 
-> > Would you agree?
+On Tue, 2020-02-11 at 11:50 +0000, John Garry wrote:
+> On 10/02/2020 22:37, Bart Van Assche wrote:
+> > On 2/10/20 9:33 AM, John Garry wrote:
+> > > -module_param_named(use_blk_mq, scsi_use_blk_mq, bool, S_IWUSR | 
+> > > S_IRUGO);
 > 
-> *nod*
-
-Thanks! done.
-Ira
-
+> Hi Bart,
 > 
-> Cheers,
+> > Will this change cause trouble to shell scripts that set or read this 
+> > parameter (/sys/module/scsi_mod/parameters/use_blk_mq)? 
 > 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+> The entry in Documentation/admin-guide/kernel-parameters.txt is gone for 
+> 2 years now.
+> 
+> And it is not an archaic module param, it was introduced 6 years ago. As 
+> such, I'd say that if a shell script was setup to access this parameter, 
+> then it would prob also pre-check if it exists and gracefully accept 
+> that it may not.
+> 
+> I will also note that there is still scsi_sysfs.c:show_use_blk_mq(), 
+> which would stay.
+> 
+> What will the
+> > impact be on systems where scsi_mod.use_blk_mq=Y is passed by GRUB to 
+> > the kernel at boot time, e.g. because it has been set in the 
+> > GRUB_CMDLINE_LINUX variable in /etc/default/grub?
+> 
+> The kernel should any params that does not recognize.
+> 
+> 
+> Having said all that, I don't feel too strongly about deleting this - 
+> it's only some tidy-up.
+> 
+> Thanks,
+> John
+> 
+
+I think we should remove it.  It is not good to have a kernel parameter
+that people used to be able to set to "N" that no longer does that.
+
+-Ewan
+
+
