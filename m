@@ -2,114 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FB04159DE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 01:20:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82F81159DC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 01:02:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbgBLAT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 19:19:59 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.202]:29769 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728117AbgBLAT6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 19:19:58 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 76114432A50
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 17:44:36 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 1fCmjf2P7RP4z1fCmj6rDE; Tue, 11 Feb 2020 17:44:36 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=3amEQsF/pWaQW0ZdmjVL4Wgo7HC7zMjKomqEb1UwY9w=; b=dtwL3ccmEPdB2X2E0oE+oR5rtA
-        /OvePgquBq2tCj3A90pJUt6j3VEX92sdFacASdnozUiIGwH63hkdUUdP0OdFp4EALqKwZIgJINcSP
-        9vLzP4j0/GJ5xFmMRfQG9Bo7veT/wb45fW0NRAvmLb0AeAIArFB4nAlVYl3sebz//FICGNra2PYzz
-        WCZb1AVMMdZAZoi4bpPrCL68Ry85T5YzQ7FD4G3QX5xuY05ghibdyNdM1jV3x5i6YuWrW4scavTep
-        xfpFZ5Kh29Fv+GFx0kIMF+swh3eRVhKz2+DtxT2dfWp6Jel3z6I9zqRazEMQTwBaF7UA+nsCCKPeU
-        s+yseETQ==;
-Received: from [200.68.140.36] (port=7097 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j1fCl-003kXF-2z; Tue, 11 Feb 2020 17:44:35 -0600
-Date:   Tue, 11 Feb 2020 17:47:10 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Support Opensource <support.opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] regulator: da9063: Replace zero-length array with
- flexible-array member
-Message-ID: <20200211234710.GA29532@embeddedor>
+        id S1728032AbgBLACa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 19:02:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32846 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727956AbgBLACa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 19:02:30 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93D0C20724;
+        Wed, 12 Feb 2020 00:02:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581465749;
+        bh=VXj1a+npI+7ydAyG+Owt//6Nop6TGqj0xGSkiZ+iHYA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=peRaHaSjJBWu0RxNWsbg2RkLC4l6xVY/UNgyg4oYdntqHFeDLMDpCQq3ZzzKuUrOA
+         zeKtNvUu0+uN19gu6qqY1w2j4lz2W0GQnIGL18vKQttilbW3vUx2lHkkkV77SlzbVT
+         RktuuaFjkVVQ6c/0oY+eZo3VzmOB0u5pYTbjNi84=
+Subject: Re: [PATCH v3 7/7] selftests/exec: Add READ_IMPLIES_EXEC tests
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Hector Marco-Gisbert <hecmargi@upv.es>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Jann Horn <jannh@google.com>,
+        Russell King <linux@armlinux.org.uk>, x86@kernel.org,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20200210193049.64362-1-keescook@chromium.org>
+ <20200210193049.64362-8-keescook@chromium.org>
+ <4f8a5036-dc2a-90ad-5fc8-69560a5dd78e@kernel.org>
+ <202002111124.0A334167@keescook>
+ <c09c345a-786f-25d2-1ee5-65f9cb23db6d@kernel.org>
+ <202002111549.CF18B7B3B@keescook>
+From:   shuah <shuah@kernel.org>
+Message-ID: <36e45314-b672-b211-72c5-eef1d48984c0@kernel.org>
+Date:   Tue, 11 Feb 2020 17:02:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.36
-X-Source-L: No
-X-Exim-ID: 1j1fCl-003kXF-2z
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.36]:7097
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 60
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <202002111549.CF18B7B3B@keescook>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On 2/11/20 4:54 PM, Kees Cook wrote:
+> On Tue, Feb 11, 2020 at 02:06:53PM -0700, shuah wrote:
+>> On 2/11/20 12:25 PM, Kees Cook wrote:
+>>> On Tue, Feb 11, 2020 at 11:11:21AM -0700, shuah wrote:
+>>>> On 2/10/20 12:30 PM, Kees Cook wrote:
+>>>>> In order to check the matrix of possible states for handling
+>>>>> READ_IMPLIES_EXEC across native, compat, and the state of PT_GNU_STACK,
+>>>>> add tests for these execution conditions.
+>>>>>
+>>>>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>>>>
+>>>> No issues for this to go through tip.
+>>>>
+>>>> A few problems to fix first. This fails to compile when 32-bit libraries
+>>>> aren't installed. It should fail the 32-bit part and run other checks.
+>>>
+>>> Do you mean the Makefile should detect the missing compat build deps and
+>>> avoid building them? Testing compat is pretty important to this test, so
+>>> it seems like missing the build deps causing the build to fail is the
+>>> correct action here. This is likely true for the x86/ selftests too.
+>>>
+>>> What would you like this to do?
+>>>
+>>
+>> selftests/x86 does this already and runs the dependency check in
+>> x86/Makefile.
+>>
+>>
+>> check_cc.sh:# check_cc.sh - Helper to test userspace compilation support
+>> Makefile:CAN_BUILD_I386 := $(shell ./check_cc.sh $(CC)
+>> trivial_32bit_program.c -m32)
+>> Makefile:CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC)
+>> trivial_64bit_program.c)
+>> Makefile:CAN_BUILD_WITH_NOPIE := $(shell ./check_cc.sh $(CC)
+>> trivial_program.c -no-pie)
+>>
+>> Take a look and see if you can leverage this.
+> 
+> I did before, and it can certainly be done, but their stuff is somewhat
+> specific to x86_64/ia32. I'm looking at supporting _all_ compat for any
+> 64-bit architecture. I can certainly write some similar build tooling,
+> but the question I have for you is one of coverage:
+> 
+> If a builder is 64-bit, it needs to be able to produce 32-bit compat
+> binaries for testing, otherwise the test is incomplete. (i.e. the tests
+> will only be able to test native behavior and not compat). This doesn't
+> seem like an "XFAIL" situation to me, and it doesn't seem right to
+> silently pass. It seems like the build should explicitly fail because
+> the needed prerequisites are missing. Do you instead want me to just
+> have it skip building the compat binaries if it can't build them?
+> 
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+Can we do the following:
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertenly introduced[3] to the codebase from now on.
 
-This issue was found with the help of Coccinelle.
+Build and run tests thatc an be built.
+Skip build and warn that test coverage is incomplete for compat
+with a strong recommendation on installing 32-bit libraries with
+some instructions on how to if applicable.
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/regulator/da9063-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
-index 2b0c7a85306a..368f8ad2a9f9 100644
---- a/drivers/regulator/da9063-regulator.c
-+++ b/drivers/regulator/da9063-regulator.c
-@@ -119,7 +119,7 @@ struct da9063_regulator {
- struct da9063_regulators {
- 	unsigned				n_regulators;
- 	/* Array size to be defined during init. Keep at end. */
--	struct da9063_regulator			regulator[0];
-+	struct da9063_regulator			regulator[];
- };
- 
- /* BUCK modes for DA9063 */
--- 
-2.25.0
-
+thanks,
+-- Shuah
