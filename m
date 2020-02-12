@@ -2,67 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB04D15ABAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:05:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EBAE15ABB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:08:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728507AbgBLPFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 10:05:41 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43404 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727531AbgBLPFl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 10:05:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=R27uEzmvp31adlnkqQRzsQ6H2g7fBN8gFQSD+LxBf6E=; b=Hz/3Aibqu2QROGvLCaHh06rM8E
-        Yfb6NbCsXryt/BFtAU9rfe0bem9ABTYfLoj6lbuCJw63ozFBFbWDItsSARxoIlDqsLdmhEOMgAAIQ
-        qMiHHLAHg06nuQ8EvntsoYMO3ck9OwEBrhsZkglC9A2Kp2i+girvA4S6vF/FVH0OalUbyJhCvV4hc
-        PM/6+R+g9sla1QNFkp3Obqlzokt5hcFu1aZKpcz3AqpxsTpuc5FCRaYZPsLrHc4jZIdBEJOwopD5X
-        tS/jirDX6LwfWBfqHYJkFqdh+y1ERUCFp9Q/9qrwLv5BVxTwA1KWQtaH59zin/o5uZXT9DjAs8zAb
-        Opd2LwwA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1ta8-0007QS-Qc; Wed, 12 Feb 2020 15:05:40 +0000
-Date:   Wed, 12 Feb 2020 07:05:40 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 10/25] fs: Introduce i_blocks_per_page
-Message-ID: <20200212150540.GE7778@bombadil.infradead.org>
-References: <20200212041845.25879-1-willy@infradead.org>
- <20200212041845.25879-11-willy@infradead.org>
- <20200212074453.GH7068@infradead.org>
+        id S1728551AbgBLPIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 10:08:16 -0500
+Received: from mga12.intel.com ([192.55.52.136]:33488 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728234AbgBLPIQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 10:08:16 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 07:07:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,433,1574150400"; 
+   d="scan'208";a="226891155"
+Received: from mlinda-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.9.85])
+  by orsmga008.jf.intel.com with ESMTP; 12 Feb 2020 07:07:44 -0800
+Date:   Wed, 12 Feb 2020 17:07:42 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     amirmizi6@gmail.com
+Cc:     Eyal.Cohen@nuvoton.com, oshrialkoby85@gmail.com,
+        alexander.steffen@infineon.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, peterhuewe@gmx.de, jgg@ziepe.ca,
+        arnd@arndb.de, gregkh@linuxfoundation.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, oshri.alkoby@nuvoton.com,
+        tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
+        Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
+        shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com
+Subject: Re: [PATCH v3 1/7] char: tpm: Make implementation of read16 read32
+ write32 optional
+Message-ID: <20200212150742.GA13248@linux.intel.com>
+References: <20200210162838.173903-1-amirmizi6@gmail.com>
+ <20200210162838.173903-2-amirmizi6@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200212074453.GH7068@infradead.org>
+In-Reply-To: <20200210162838.173903-2-amirmizi6@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 11:44:53PM -0800, Christoph Hellwig wrote:
-> Looks good modulo some nitpicks below:
+On Mon, Feb 10, 2020 at 06:28:32PM +0200, amirmizi6@gmail.com wrote:
+> From: Amir Mizinski <amirmizi6@gmail.com>
 > 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Only tpm_tis has a faster way to access multiple bytes at once, every other
+> driver will just fall back to read_bytes/write_bytes. Therefore, move this
+
+Describe exactly what you mean instead of "faster way" and "multiple
+bytes".
+
+> common code out of tpm_tis_spi into tpm_tis_core, so that it is
+> automatically used when low-level drivers do not implement the specialized
+> methods.
 > 
-> > + * Context: Any context.
+> This commit is based on previous work by Alexander Steffen.
 > 
-> Does this add any value for a trivial helper like this?
+> Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
 
-I think it's good to put them in to remind people they should be putting
-them in for more complex functions.  Just like the Return: section.
+You are missing commas in the short summary message when you list bunch
+of things.
 
-> > + * Return: The number of filesystem blocks covered by this page.
-> > + */
-> > +static inline
-> > +unsigned int i_blocks_per_page(struct inode *inode, struct page *page)
-> 
-> static inline unisnged int
-> i_blocks_per_page(struct inode *inode, struct page *page)
+We prefer "tpm:" instead of "char: tpm:" as the tag for this subsystem.
+You are also implying that this would be something global for the TPM
+driver whereas it is only scoped to tpm_tis:
 
-That's XFS coding style.  Linus has specifically forbidden that:
+Rephrase it something like:
 
-https://lore.kernel.org/lkml/1054519757.161606@palladium.transmeta.com/
+  "tpm: tpm_tis: Make 32-bit reads and writes optional"
+
+Please, first, take this away:
+
+"
+This commit is based on previous work by Alexander Steffen.
+
+Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
+"
+
+Then, replace it with:
+
+Co-developed-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
+
+/Jarkko
