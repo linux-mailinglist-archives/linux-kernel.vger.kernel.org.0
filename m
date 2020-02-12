@@ -2,59 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B817415ADFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 18:04:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8733915AE00
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 18:04:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728634AbgBLREK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 12:04:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55058 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726728AbgBLREJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 12:04:09 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728835AbgBLREl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 12:04:41 -0500
+Received: from mail27.static.mailgun.info ([104.130.122.27]:57806 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728612AbgBLREk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 12:04:40 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1581527079; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=1db+ymtXm5ZOsHNHHCA3Y5/L6QAZrcF4lOpLSvkECPQ=;
+ b=E/5cXsEID+gMR4YPX+FJ8my7QPY5Cu6BCuTvzaGhtDMREjH06owDlPdZ7RhCJtDpXmttne1c
+ O3U17tp2ws7AXX+Ne6dI4vQ/kujNAYblzRUpE8YevzHwcKWk71ppMOrmefBYQuGN0SzN94XO
+ ll6WCUGLHB9IAcl9JCTl7htoh1M=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e443022.7f6c02d759d0-smtp-out-n02;
+ Wed, 12 Feb 2020 17:04:34 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 8A793C433A2; Wed, 12 Feb 2020 17:04:33 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E30F520714;
-        Wed, 12 Feb 2020 17:04:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581527049;
-        bh=oyNik+kJ34F4CRt3s9kmd1lzGzTnEXIy5TRUWtDfzTw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=DuSGu2uYbxs3QsW/RyTokgR2zVGlVgsNU756y1Xy3UvbO9M+m2uolNAvKSPEkGMyI
-         D6D+a0Wm4djCyMclDGshdC8iO0O2sKcv8eTpucztksVBWMqcW/ARQNZMGEDb4S/m8I
-         aD9eGgGCHtdfudtNX495WlQWhpmCXaoQhcRI134E=
-Content-Type: text/plain; charset="utf-8"
+        (Authenticated sender: asutoshd)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5402BC43383;
+        Wed, 12 Feb 2020 17:04:31 +0000 (UTC)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200212101736.9126-1-geert+renesas@glider.be>
-References: <20200212101736.9126-1-geert+renesas@glider.be>
-Subject: Re: [PATCH] powerpc/time: Replace <linux/clk-provider.h> by <linux/of_clk.h>
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>
-Date:   Wed, 12 Feb 2020 09:04:08 -0800
-Message-ID: <158152704814.121156.18379102281375554988@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 12 Feb 2020 09:04:31 -0800
+From:   asutoshd@codeaurora.org
+To:     Can Guo <cang@codeaurora.org>
+Cc:     nguyenb@codeaurora.org, hongwus@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pedro Sousa <sousa@synopsys.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi-owner@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] scsi: ufs: Select INITIAL ADAPT type for HS Gear4
+In-Reply-To: <1581485910-8307-3-git-send-email-cang@codeaurora.org>
+References: <1581485910-8307-1-git-send-email-cang@codeaurora.org>
+ <1581485910-8307-3-git-send-email-cang@codeaurora.org>
+Message-ID: <ac3f68fa7f0dd3de567cc321eb5c5026@codeaurora.org>
+X-Sender: asutoshd@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2020-02-12 02:17:36)
-> The PowerPC time code is not a clock provider, and just needs to call
-> of_clk_init().
->=20
-> Hence it can include <linux/of_clk.h> instead of <linux/clk-provider.h>.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On 2020-02-11 21:38, Can Guo wrote:
+> ADAPT is added specifically for HS Gear4 mode only, select INITIAL 
+> ADAPT
+> before do power mode change to G4 and select NO ADAPT before switch to
+> non-G4 modes.
+> 
+> Signed-off-by: Can Guo <cang@codeaurora.org>
 > ---
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by:  Asutosh Das <asutoshd@codeaurora.org>
 
-This has an ifdef around the of_clk_init() call. Can you remove that too
-given that we stub it out in the header?
+>  drivers/scsi/ufs/ufs-qcom.c | 14 ++++++++++++++
+>  drivers/scsi/ufs/unipro.h   |  7 +++++++
+>  2 files changed, 21 insertions(+)
+> 
+> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+> index d593523..6a905bb 100644
+> --- a/drivers/scsi/ufs/ufs-qcom.c
+> +++ b/drivers/scsi/ufs/ufs-qcom.c
+> @@ -942,6 +942,20 @@ static int ufs_qcom_pwr_change_notify(struct 
+> ufs_hba *hba,
+>  		if (!ufshcd_is_hs_mode(&hba->pwr_info) &&
+>  			ufshcd_is_hs_mode(dev_req_params))
+>  			ufs_qcom_dev_ref_clk_ctrl(host, true);
+> +
+> +		if (host->hw_ver.major >= 0x4) {
+> +			if (dev_req_params->gear_tx == UFS_HS_G4) {
+> +				/* INITIAL ADAPT */
+> +				ufshcd_dme_set(hba,
+> +					       UIC_ARG_MIB(PA_TXHSADAPTTYPE),
+> +					       PA_INITIAL_ADAPT);
+> +			} else {
+> +				/* NO ADAPT */
+> +				ufshcd_dme_set(hba,
+> +					       UIC_ARG_MIB(PA_TXHSADAPTTYPE),
+> +					       PA_NO_ADAPT);
+> +			}
+> +		}
+>  		break;
+>  	case POST_CHANGE:
+>  		if (ufs_qcom_cfg_timers(hba, dev_req_params->gear_rx,
+> diff --git a/drivers/scsi/ufs/unipro.h b/drivers/scsi/ufs/unipro.h
+> index 3dc4d8b..766d551 100644
+> --- a/drivers/scsi/ufs/unipro.h
+> +++ b/drivers/scsi/ufs/unipro.h
+> @@ -146,6 +146,12 @@
+>  #define PA_SLEEPNOCONFIGTIME	0x15A2
+>  #define PA_STALLNOCONFIGTIME	0x15A3
+>  #define PA_SAVECONFIGTIME	0x15A4
+> +#define PA_TXHSADAPTTYPE       0x15D4
+> +
+> +/* Adpat type for PA_TXHSADAPTTYPE attribute */
+> +#define PA_REFRESH_ADAPT       0x00
+> +#define PA_INITIAL_ADAPT       0x01
+> +#define PA_NO_ADAPT            0x03
+> 
+>  #define PA_TACTIVATE_TIME_UNIT_US	10
+>  #define PA_HIBERN8_TIME_UNIT_US		100
+> @@ -203,6 +209,7 @@ enum ufs_hs_gear_tag {
+>  	UFS_HS_G1,		/* HS Gear 1 (default for reset) */
+>  	UFS_HS_G2,		/* HS Gear 2 */
+>  	UFS_HS_G3,		/* HS Gear 3 */
+> +	UFS_HS_G4,		/* HS Gear 4 */
+>  };
+> 
+>  enum ufs_unipro_ver {
