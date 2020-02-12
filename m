@@ -2,246 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F2E415A2A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:03:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02C7815A2A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:02:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbgBLIDN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 03:03:13 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:59110 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728250AbgBLIDM (ORCPT
+        id S1728441AbgBLICr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 03:02:47 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:50944 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728192AbgBLICq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 03:03:12 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01C81xBJ095149;
-        Wed, 12 Feb 2020 02:01:59 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581494519;
-        bh=NMTGmOJTTsRgJdge33dgFYwCOb7FpIs1fPjpfpLUBhM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Szq2nQYzAVvT+ophs58XAJBCUwogpwmwVdiXQghZG5ljD+XDAXj1yQgiCxGUpkaRi
-         HYeV9e4Y8XNBSzCdW3NznHpqDpccIt5dfrPcpmX276vS34FBX1AhfVXo88ZCknfzWh
-         TSGbdN6dZrqBXJOMUYJ4Vv0JZNVu/RQIN0BXLkjw=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01C81xf1023194
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Feb 2020 02:01:59 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 12
- Feb 2020 02:01:59 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 12 Feb 2020 02:01:59 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01C81taM069601;
-        Wed, 12 Feb 2020 02:01:56 -0600
-Subject: Re: [PATCH] ASoC: ti: Allocate dais dynamically for TDM and audio
- graph card
-To:     Tony Lindgren <tony@atomide.com>, Mark Brown <broonie@kernel.org>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        "Arthur D ." <spinal.by@gmail.com>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>
-References: <20200211171645.41990-1-tony@atomide.com>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <cd46c6ec-80e3-332f-4922-e58a3acbfc61@ti.com>
-Date:   Wed, 12 Feb 2020 10:02:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 12 Feb 2020 03:02:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=nfa7El0ORw2HCTWB7Em/MVPCwTy7Wkmj8WcnIu9Inb8=; b=TJ3m1SVhqEJjhO3XOm6k+WyBd5
+        wqma/gwkuMm4Nz26PccFx+VKw0wRuOSfE2TFPzFD7FfRhJbcqHyZk0Fon4y9r+3IHKCOFzltclt1U
+        ke3yre4BvrLB9sEpCEkm+5pWBF/NRjKKg8elz5LEMBNf9qIPR0dWHQxtXNWUbgacoq/E8My85KP+y
+        n+wHySPM0SRW7JMxhNhyyCTH7kW/HB+uM178GISHHnOA/4tBLn/NdoZPblNkJhx2SgleJseor07Qd
+        5WNrXzIrb4cvWk0eqk6vqUhCFzUUhZNl/Dy4UY40R0McLUI7i4UbdzmyhaXHTrEUjF1ji/4OklzE1
+        SmvYSezA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1myV-0007xU-So; Wed, 12 Feb 2020 08:02:24 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C4F0930066E;
+        Wed, 12 Feb 2020 09:00:31 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BDC6A2B9154E8; Wed, 12 Feb 2020 09:02:20 +0100 (CET)
+Date:   Wed, 12 Feb 2020 09:02:20 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     rostedt <rostedt@goodmis.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Joel Fernandes, Google" <joel@joelfernandes.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        paulmck <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [PATCH v2] tracing/perf: Move rcu_irq_enter/exit_irqson() to
+ perf trace point hook
+Message-ID: <20200212080220.GO14897@hirez.programming.kicks-ass.net>
+References: <20200211095047.58ddf750@gandalf.local.home>
+ <20200211153452.GW14914@hirez.programming.kicks-ass.net>
+ <20200211111828.48058768@gandalf.local.home>
+ <20200211172952.GY14914@hirez.programming.kicks-ass.net>
+ <903136616.617885.1581442521855.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
-In-Reply-To: <20200211171645.41990-1-tony@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <903136616.617885.1581442521855.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Feb 11, 2020 at 12:35:21PM -0500, Mathieu Desnoyers wrote:
 
-
-On 11/02/2020 19.16, Tony Lindgren wrote:
-> We can have multiple connections on a single McBSP instance configured
-> with audio graph card when using TDM (Time Division Multiplexing). Let's
-> allow that by configuring dais dynamically.
-
-It is still one DAI...
-If you have multiple codec connected to the same I2S lines, but the
-codecs communicate within different time slots, you still have one DAI
-on the CPU side, but multiple codecs (codec DAIs) with different TDM slot.
-
-> See Documentation/devicetree/bindings/sound/audio-graph-card.txt and
-> Documentation/devicetree/bindings/graph.txt for more details for
-> multiple endpoints.
-
-See the example for 'Multi DAI with DPCM' in audio-graph-card.txt
-The PCM3168a have 2 DAIs: playback and capture, but you can have
-multiple endpoints within a DAI.
-
-> I've tested this with droid4 where cpcap pmic and modem voice are both
-> both wired to mcbsp3. I've also tested this on droid4 both with and
-> without the pending modem audio codec driver that is waiting for n_gsm
-> serdev dependencies to clear.
-
-What this patch you effectively just creating dummy-dais on top of the
-real McBSP DAI.
-You also rename the DAIs, which might break ams-delta.
-
-We still have legacy support in
-omap-twl4030.c
-omap3pandora.c
-osk5912.c
-rx51.c
-
-which will break with the renamed DAI. On the other hand I think the
-legacy support can be dropped from them.
-
-I know it was discussed, but can not find the mail:
-Can you brief again on the audio connection?
-Do you have branch with working code?
-
-- Péter
-
-> Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-> Cc: Arthur D. <spinal.by@gmail.com>
-> Cc: Jarkko Nikula <jarkko.nikula@bitmer.com>
-> Cc: Merlijn Wajer <merlijn@wizzup.org>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
->  sound/soc/ti/omap-mcbsp-priv.h |  2 +
->  sound/soc/ti/omap-mcbsp.c      | 76 ++++++++++++++++++++++++----------
->  2 files changed, 55 insertions(+), 23 deletions(-)
+> Minor nits:
 > 
-> diff --git a/sound/soc/ti/omap-mcbsp-priv.h b/sound/soc/ti/omap-mcbsp-priv.h
-> --- a/sound/soc/ti/omap-mcbsp-priv.h
-> +++ b/sound/soc/ti/omap-mcbsp-priv.h
-> @@ -262,6 +262,8 @@ struct omap_mcbsp {
->  	struct omap_mcbsp_platform_data *pdata;
->  	struct omap_mcbsp_st_data *st_data;
->  	struct omap_mcbsp_reg_cfg cfg_regs;
-> +	struct snd_soc_dai_driver *dais;
-> +	int dai_count;
->  	struct snd_dmaengine_dai_dma_data dma_data[2];
->  	unsigned int dma_req[2];
->  	int dma_op_mode;
-> diff --git a/sound/soc/ti/omap-mcbsp.c b/sound/soc/ti/omap-mcbsp.c
-> --- a/sound/soc/ti/omap-mcbsp.c
-> +++ b/sound/soc/ti/omap-mcbsp.c
-> @@ -14,6 +14,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_graph.h>
->  #include <sound/core.h>
->  #include <sound/pcm.h>
->  #include <sound/pcm_params.h>
-> @@ -1304,23 +1305,53 @@ static int omap_mcbsp_remove(struct snd_soc_dai *dai)
->  	return 0;
->  }
->  
-> -static struct snd_soc_dai_driver omap_mcbsp_dai = {
-> -	.probe = omap_mcbsp_probe,
-> -	.remove = omap_mcbsp_remove,
-> -	.playback = {
-> -		.channels_min = 1,
-> -		.channels_max = 16,
-> -		.rates = OMAP_MCBSP_RATES,
-> -		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S32_LE,
-> -	},
-> -	.capture = {
-> -		.channels_min = 1,
-> -		.channels_max = 16,
-> -		.rates = OMAP_MCBSP_RATES,
-> -		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S32_LE,
-> -	},
-> -	.ops = &mcbsp_dai_ops,
-> -};
-> +static int omap_mcbsp_init_dais(struct omap_mcbsp *mcbsp)
-> +{
-> +	struct device_node *np = mcbsp->dev->of_node;
-> +	int i;
-> +
-> +	if (np)
-> +		mcbsp->dai_count = of_graph_get_endpoint_count(np);
-> +
-> +	if (!mcbsp->dai_count)
-> +		mcbsp->dai_count = 1;
-> +
-> +	mcbsp->dais = devm_kcalloc(mcbsp->dev, mcbsp->dai_count,
-> +				   sizeof(*mcbsp->dais), GFP_KERNEL);
-> +	if (!mcbsp->dais)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < mcbsp->dai_count; i++) {
-> +		struct snd_soc_dai_driver *dai = &mcbsp->dais[i];
-> +
-> +		dai->name = devm_kasprintf(mcbsp->dev, GFP_KERNEL, "%s-dai%i",
-> +					   dev_name(mcbsp->dev), i);
-> +
-> +		if (i == 0) {
-> +			dai->probe = omap_mcbsp_probe;
-> +			dai->remove = omap_mcbsp_remove;
-> +			dai->ops = &mcbsp_dai_ops;
-> +		}
-> +		dai->playback.channels_min = 1;
-> +		dai->playback.channels_max = 16;
-> +		dai->playback.rates = OMAP_MCBSP_RATES;
-> +		if (mcbsp->pdata->reg_size == 2)
-> +			dai->playback.formats = SNDRV_PCM_FMTBIT_S16_LE;
-> +		else
-> +			dai->playback.formats = SNDRV_PCM_FMTBIT_S16_LE |
-> +						SNDRV_PCM_FMTBIT_S32_LE;
-> +		dai->capture.channels_min = 1;
-> +		dai->capture.channels_max = 16;
-> +		dai->capture.rates = OMAP_MCBSP_RATES;
-> +		if (mcbsp->pdata->reg_size == 2)
-> +			dai->capture.formats = SNDRV_PCM_FMTBIT_S16_LE;
-> +		else
-> +			dai->capture.formats = SNDRV_PCM_FMTBIT_S16_LE |
-> +					       SNDRV_PCM_FMTBIT_S32_LE;
-> +	}
-> +
-> +	return 0;
-> +}
->  
->  static const struct snd_soc_component_driver omap_mcbsp_component = {
->  	.name		= "omap-mcbsp",
-> @@ -1409,18 +1440,17 @@ static int asoc_mcbsp_probe(struct platform_device *pdev)
->  	mcbsp->dev = &pdev->dev;
->  	platform_set_drvdata(pdev, mcbsp);
->  
-> -	ret = omap_mcbsp_init(pdev);
-> +	ret = omap_mcbsp_init_dais(mcbsp);
->  	if (ret)
->  		return ret;
->  
-> -	if (mcbsp->pdata->reg_size == 2) {
-> -		omap_mcbsp_dai.playback.formats = SNDRV_PCM_FMTBIT_S16_LE;
-> -		omap_mcbsp_dai.capture.formats = SNDRV_PCM_FMTBIT_S16_LE;
-> -	}
-> +	ret = omap_mcbsp_init(pdev);
-> +	if (ret)
-> +		return ret;
->  
->  	ret = devm_snd_soc_register_component(&pdev->dev,
->  					      &omap_mcbsp_component,
-> -					      &omap_mcbsp_dai, 1);
-> +					      mcbsp->dais, mcbsp->dai_count);
->  	if (ret)
->  		return ret;
->  
+> Why not make these an enum ?
 > 
+> > +
+> > +#define trace_rcu_enter()					\
+> > +({								\
+> > +	unsigned long state = 0;				\
+> > +	if (!rcu_is_watching())	{				\
+> > +		if (in_nmi()) {					\
+> > +			state = __TR_NMI;			\
+> > +			rcu_nmi_enter();			\
+> > +		} else {					\
+> > +			state = __TR_IRQ;			\
+> > +			rcu_irq_enter_irqson();			\
+> > +		}						\
+> > +	}							\
+> > +	state;							\
+> > +})
+> > +
+> > +#define trace_rcu_exit(state)					\
+> > +do {								\
+> > +	switch (state) {					\
+> > +	case __TR_IRQ:						\
+> > +		rcu_irq_exit_irqson();				\
+> > +		break;						\
+> > +	case __IRQ_NMI:						\
+> > +		rcu_nmi_exit();					\
+> > +		break;						\
+> > +	default:						\
+> > +		break;						\
+> > +	}							\
+> > +} while (0)
+> 
+> And convert these into static inline functions ?
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Probably the same reason the rest of the file is macros; header hell.
+
+Now, I could probably make these inlines, but then I'd have to add more
+RCU function declariations to this file (which is outside of
+rcupdate.h). Do we want to do that?
+
+The reason these were in this file is because I want to keep the comment
+and implementation near to nmi_enter/exit.
