@@ -2,87 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B667415A1A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 08:18:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E49815A1E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 08:26:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbgBLHSi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 02:18:38 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:36887 "EHLO ozlabs.org"
+        id S1728320AbgBLH0a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 02:26:30 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:59712 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728109AbgBLHSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 02:18:38 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48HWG32zYRz9s1x;
-        Wed, 12 Feb 2020 18:18:35 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1581491916;
-        bh=YP6oEXoQMgXjgZmzhpRJSKK/AIeIsipuyghA52XMHvQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=N5dTeAOFO73OzhjLDVDLthiXphqAPoPX/UMLdYoCrv0rRcU3VsY4pvUn8nLXbf7yy
-         yBEtQn6qO4ItZCI4DB+LI9f84Xez1N6wbjxhhDl/hmyT8y1xsoFxw3AZJ+xVGQ+DKa
-         SrR9pOwqYfrLiSL/8OAfZdMlGpJbe9j/oFOLPUf9YTw7KQYV92EuiHH38RzyXXMQYR
-         uigTIW4Qinoz0vhEDEBxaC2SqilGyUycRM1kmkRC/P8DGE7RZ6lNjLBNIS53LRZRZp
-         y7aZPfhXyiuP3yQ2lbYU6z8afX2QaVg9DraLNO5X/zNqn4RKMnYAld6TisN44mBsHv
-         xQZr7wFAJnAeg==
-Date:   Wed, 12 Feb 2020 18:18:28 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andy Gross <agross@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arun Kumar Neelakantam <aneela@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: linux-next: Fixes tag needs some work in the qcom tree
-Message-ID: <20200212181828.55b99a9e@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/IFBkUUGA5O0ongyIYWeX5nz";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        id S1727669AbgBLH0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 02:26:30 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E03D81C754F;
+        Wed, 12 Feb 2020 08:26:28 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 69D3E1C7552;
+        Wed, 12 Feb 2020 08:26:20 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 1DC304029B;
+        Wed, 12 Feb 2020 15:26:10 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        leonard.crestez@nxp.com, daniel.baluta@nxp.com, aford173@gmail.com,
+        shengjiu.wang@nxp.com, ping.bai@nxp.com, jun.li@nxp.com,
+        peng.fan@nxp.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] arm64: dts: imx8mm: Remove redundant interrupt-parent assignment
+Date:   Wed, 12 Feb 2020 15:20:49 +0800
+Message-Id: <1581492049-23523-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/IFBkUUGA5O0ongyIYWeX5nz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+GIC is assigned as interrupt-parent by default, no need to assign
+it again in ddr-pmu node, remove it.
 
-Hi all,
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-In commit
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+index 1e5e115..b3d0b29 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+@@ -896,7 +896,6 @@
+ 		ddr-pmu@3d800000 {
+ 			compatible = "fsl,imx8mm-ddr-pmu", "fsl,imx8m-ddr-pmu";
+ 			reg = <0x3d800000 0x400000>;
+-			interrupt-parent = <&gic>;
+ 			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 	};
+-- 
+2.7.4
 
-  a5fccb62cc89 ("soc: qcom: aoss: Read back before triggering the IRQ")
-
-Fixes tag
-
-  Fixes: e91366b0a8f9 ("soc: qcom: aoss: Use wake_up_all() instead of wake_=
-up_interruptible_all()")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-I can't find a matching commit :-(
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/IFBkUUGA5O0ongyIYWeX5nz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5DpsQACgkQAVBC80lX
-0Gyd6wf/XqebfhycbHLm3F73ViAyzz4boUGPtvFzj7G24hwytalUqm919tmzX2wN
-kRLseRCKKTEAUZjYi8tmg+lKsrn2vhIuJqGV2MsLYB1ep4F3GYgnOyiukpWaUp03
-XG0WyMeIrsCZXjSK3YVCwpsUPImcS+W8k3z39r1lmWYVEdrgpwSJEof9MtY0FOLk
-BUmPf27NR1X1sqr4KouKkHs4nNAeGG5x+Cjj2QSU321oqnsXkcfenzdqn3phhFgV
-I4A/C2zVee7GCMrGdIhqUUiO4PIzKTKC7XkJ3DpveaIM0WIgpcC7GWU1XtLbgTs0
-BKV3C+F+LIm09Y2Bt293tI52mIzf7g==
-=GuXM
------END PGP SIGNATURE-----
-
---Sig_/IFBkUUGA5O0ongyIYWeX5nz--
