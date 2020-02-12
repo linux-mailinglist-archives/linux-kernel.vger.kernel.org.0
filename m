@@ -2,69 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDAC415A5CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:10:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A821915A5CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:12:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbgBLKKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 05:10:20 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:33876 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728809AbgBLKKU (ORCPT
+        id S1727781AbgBLKK4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 05:10:56 -0500
+Received: from mail-wr1-f53.google.com ([209.85.221.53]:36294 "EHLO
+        mail-wr1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727649AbgBLKKu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 05:10:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=aDcXpc6fMD8W2Mej57+kBGa9iXxzdLXhNN1IYVmTtF0=; b=Wm4Paj5bD8pvXfMYKLX84VybP2
-        wZSTllkN5TEVWKQoXIu+U6VUp2z3uehJv8ls26EQtGOD/vdgE+lhO42rwlKF1svuccToBcCYbzCl1
-        vt7QABOuS0XG1C0N9EnxrEXPO0kJYIXPJTAiKRRumV4q7sai+EHiiNFsie/9qJkCL8Lfg2TXiwZ1g
-        9dDqcDghPr3OH6RSZkbt8oiib1fZWsd3ui3MuFR3t/tO4sDC9614DddKiu0SaLFdfv3EAbz9OtEHh
-        NvHf04cZsaWUAacrBQTDE9aNWXv5aVJWgciBmMReVoCcjD1VPOHGOQOM0wUXJV0GLRN+wa3gM2rRz
-        s8fUBQPQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1oxi-0006jD-9y; Wed, 12 Feb 2020 10:09:42 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DE600306012;
-        Wed, 12 Feb 2020 11:07:51 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 068872026E97A; Wed, 12 Feb 2020 11:09:41 +0100 (CET)
-Date:   Wed, 12 Feb 2020 11:09:40 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        rostedt@goodmis.org, linux@armlinux.org.uk
-Cc:     mingo@kernel.org, joel@joelfernandes.org,
-        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
-        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com
-Subject: Re: [PATCH 0/8] tracing vs rcu vs nmi
-Message-ID: <20200212100940.GD14914@hirez.programming.kicks-ass.net>
-References: <20200212093210.468391728@infradead.org>
+        Wed, 12 Feb 2020 05:10:50 -0500
+Received: by mail-wr1-f53.google.com with SMTP id z3so1483158wru.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 02:10:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=scylladb-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=BRjPfJMR3gBxSakZef/gb/VnG6S48JJMLp21pszTisM=;
+        b=oIYghL86GjmBaZilXF+NzQT9lOVQeHyGOnfORubKlbqH2iHU7BCSA111X2860O0xpd
+         xGNHdmxZssKmctutn4kX661YkGatIdrzulNTw7wbyOgnXjJjXnhcoDiqHmgBqN3Ny9qJ
+         ASsAGoV/RF1dmxCblipJbc6Gxfea7uFhHmL2kqEy/A44EZkxHGKQjf5FXxfE8psVl7Tj
+         i307gSCqJmhW5OidVecNv1TqhoGOh+Z4wLmmImlIG5ttGqK51zDwKXnXGIXYwCvrrVmk
+         75Sf94b7eU3ePGeBV0al97ts/xD+tIZCvOkPK1Qb+DlFEBF/GcSGKLYjRwSahwT32uPt
+         YYsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=BRjPfJMR3gBxSakZef/gb/VnG6S48JJMLp21pszTisM=;
+        b=HxxcU0ip+Bormjclzh7rmJtVa9uWh+6nsHeg74ha56UxqsCfhZltnPeZrxEa4RyCvs
+         p+DaQmSNuukLFMNnlxrl+lGMjA4evoPhL9zEp1Kzr1uNN+2grZkL6IzammVtSZbJDC7l
+         tsM8iQieKftNV2QaU6+l3ZAVDS70DxvvHHLD5L7uuqm+g1fkHXpdnvU9xgReSDdpg5Jw
+         ZrezueMJW51kygfbb+VpxTEf1HvLguke+0JQDoG6LBsnaLhhTeWI1Pr9JELmgsN+uIqh
+         lJmhBMQA1KdrjCO7gB7PiwFI5OXDoglsjwukPtCCGt01RoD62LZqk+r9YzumJvRUI3/X
+         CVYQ==
+X-Gm-Message-State: APjAAAUNlIkevSmnKAmUwH+LivCVY/GPbXvm+9AuvnFIhSmzeU3khC1M
+        3BDWRCCKm8o6SAw7lyWffwcpXA==
+X-Google-Smtp-Source: APXvYqyWd2HdsaijUMG4L8+DcCi4FCuU37UJqFhSImYWBPcv+G2F0q676xQm6nEE4PLfYcclMx8kEA==
+X-Received: by 2002:adf:f012:: with SMTP id j18mr14411599wro.314.1581502248098;
+        Wed, 12 Feb 2020 02:10:48 -0800 (PST)
+Received: from [10.0.0.1] (system.cloudius-systems.com. [199.203.229.89])
+        by smtp.gmail.com with ESMTPSA id x6sm37396wmi.44.2020.02.12.02.10.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2020 02:10:46 -0800 (PST)
+Subject: Re: [RFC] eventfd: add EFD_AUTORESET flag
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Davide Libenzi <davidel@xmailserver.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <20200129172010.162215-1-stefanha@redhat.com>
+ <66566792-58a4-bf65-6723-7d2887c84160@redhat.com>
+From:   Avi Kivity <avi@scylladb.com>
+Organization: ScyllaDB
+Message-ID: <a5299230-4e86-43d1-7f99-cc1f455a39c7@scylladb.com>
+Date:   Wed, 12 Feb 2020 12:10:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200212093210.468391728@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <66566792-58a4-bf65-6723-7d2887c84160@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 10:32:10AM +0100, Peter Zijlstra wrote:
-> Hi all,
-> 
-> These here patches are the result of Mathieu and Steve trying to get commit
-> 865e63b04e9b2 ("tracing: Add back in rcu_irq_enter/exit_irqson() for rcuidle
-> tracepoints") reverted again.
-> 
-> One of the things discovered is that tracing MUST NOT happen before nmi_enter()
-> or after nmi_exit(). I've only fixed x86, but quickly gone through other
-> architectures and there is definitely more stuff to be fixed (simply grep for
-> nmi_enter in your arch).
 
-Someone should probably look at the whole ARM FiQ stuff, I got a little
-lost, but probably handle_fiq_as_nmi() wants notrace and everything
-using set_fiq_handler() wants looking at.
+On 12/02/2020 10.31, Paolo Bonzini wrote:
+> On 29/01/20 18:20, Stefan Hajnoczi wrote:
+>> +	/* Semaphore semantics don't make sense when autoreset is enabled */
+>> +	if ((flags & EFD_SEMAPHORE) && (flags & EFD_AUTORESET))
+>> +		return -EINVAL;
+>> +
+> I think they do, you just want to subtract 1 instead of setting the
+> count to 0.  This way, writing 1 would be the post operation on the
+> semaphore, while poll() would be the wait operation.
+
+
+poll() is usually idempotent. Both resetting to zero and subtracting one 
+goes against the grain.
+
+
+Better to use uring async read. This way you get the value just as you 
+do with with poll+read, and the syscall cost is amortized away by uring.
+
