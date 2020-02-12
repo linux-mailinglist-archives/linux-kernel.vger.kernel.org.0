@@ -2,173 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C6E215B17F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 21:02:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FAF615B18A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 21:03:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729079AbgBLUCV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 15:02:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729017AbgBLUCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 15:02:20 -0500
-Received: from localhost (unknown [104.132.1.104])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1767D21739;
-        Wed, 12 Feb 2020 20:02:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581537739;
-        bh=QYX8ibf0AXGLzT1RdbhTP1ma4R2d/2xVyVlPC4y383c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oWxrb4iuibmarQYTGtaqUYNe3ZMlM7tKFJcxezJeAOzf05ail3SIAt05bBcW68pN/
-         asyqdMa2tCQ7PouXOrfLg6laRbbjD2HwMyuA9P/tXGoDeR+4cjN24NzvhVfKbR6Nly
-         vxww9mum38HLVEyRt8RRoXJKIr6Pmtt4Efprr1/o=
-Date:   Wed, 12 Feb 2020 12:02:18 -0800
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     rishi gupta <gupt21@gmail.com>
-Cc:     robh+dt@kernel.org, jslaby@suse.com, linux-serial@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 2/3] tty/serial: ttvys: add null modem driver
- emulating serial port
-Message-ID: <20200212200218.GA2081271@kroah.com>
-References: <cover.1578235515.git.gupt21@gmail.com>
- <9fcb02fafd5fc9b31f3fe358b8e62b8a40ae132a.1578235515.git.gupt21@gmail.com>
- <20200106193500.GC754821@kroah.com>
- <CALUj-gsaecfZ9HN_JVAnvJijYCHK-A5qeztDLbDOSOAjTVfTeg@mail.gmail.com>
- <20200110072051.GA124387@kroah.com>
- <CALUj-gvf5vcwdj=-8Sh9BjecKwGYFJciZ7caHxbzve3XNmE-xg@mail.gmail.com>
+        id S1729099AbgBLUDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 15:03:47 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39962 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727600AbgBLUDq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 15:03:46 -0500
+Received: by mail-lf1-f66.google.com with SMTP id c23so2505043lfi.7
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 12:03:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BPPHdbNaIkwiUwi0XK7V81BmqTqsxD9Wh/eCAuOFZ7c=;
+        b=edEbWD8VWSEo0ZJ6AJhYjMiocwqPWZuh1eMEPANkqs/U4/0xnwRt7xq+7HnenPiGeJ
+         VFphHJXoMrc/FwJ+qGT7Ukw5K8rPi428h9mf6Q5VDFjXFC52E+csZrxYeIflstJkvyxz
+         55c6XXfz4qcfrKgrhUQu/+BijxMyjycSx/JE8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BPPHdbNaIkwiUwi0XK7V81BmqTqsxD9Wh/eCAuOFZ7c=;
+        b=WYKAS3TMw8ktB7ZldVI9NP3am0LjMD8ROXiax5fLlKflRVP69P51tpe1Nqg6kCcp5x
+         13GEj8W+F4FLEtIKusOwtmK1qu85jywqAgsdvEqKnds6fCftRz9cA8QxEYqrTF9ySzdi
+         5deRnSi0O5Yj3gTfRcOO0w/ZAG+/Mr2/zVaseHyMfCi/Kc9lmzeKv+Fi530gtvhg9cMc
+         NK01WcEbkasSGbbp202XpJMZiTGOhLIfOtDaxbKnBMkI45KSmittbZgbZ54CCJx8CT9L
+         kB/o94Wkcs3oqUN8QreOCnYl9+w8p9RKGrKD5jOG2qtt6PohpPnoveVm+OeDJrJcF1Hy
+         8LHA==
+X-Gm-Message-State: APjAAAXi7IcgFdb6l3DwQyWEXvI+MiNu74s+h71AnR9KIGdyQiabnRZu
+        Ini2pwTDet2+bC261cieLMy1YU9m7To=
+X-Google-Smtp-Source: APXvYqx2ADEwD/Xh1Y2Ww/lpQ7t9cQfjl6n3jCgyzd3/ZjXQBsZIcio8b07nTcTjdhCMQOldIcQ9ng==
+X-Received: by 2002:ac2:52a5:: with SMTP id r5mr7470050lfm.19.1581537824190;
+        Wed, 12 Feb 2020 12:03:44 -0800 (PST)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id f16sm104445ljn.17.2020.02.12.12.03.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2020 12:03:43 -0800 (PST)
+Received: by mail-lj1-f179.google.com with SMTP id y6so3823164lji.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 12:03:43 -0800 (PST)
+X-Received: by 2002:a2e:88c5:: with SMTP id a5mr8860316ljk.201.1581537822998;
+ Wed, 12 Feb 2020 12:03:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALUj-gvf5vcwdj=-8Sh9BjecKwGYFJciZ7caHxbzve3XNmE-xg@mail.gmail.com>
+References: <20200208083604.GA86051@localhost>
+In-Reply-To: <20200208083604.GA86051@localhost>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 12 Feb 2020 12:03:26 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whdiabQ0dqVDJ0_5dfur7f2D5oESCjv34f4svrK3RJj=w@mail.gmail.com>
+Message-ID: <CAHk-=whdiabQ0dqVDJ0_5dfur7f2D5oESCjv34f4svrK3RJj=w@mail.gmail.com>
+Subject: Re: Applying pipe fix this merge window?
+To:     Josh Triplett <josh@joshtriplett.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 08:44:31PM +0530, rishi gupta wrote:
-> Tried dev_groups approach, doesn't fit here. Please see inline.
-> 
-> On Fri, Jan 10, 2020 at 12:50 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Thu, Jan 09, 2020 at 02:59:59PM +0530, rishi gupta wrote:
-> > > > > +/* UART frame structure definitions */
-> > > > > +#define VS_CRTSCTS       0x0001
-> > > > > +#define VS_XON           0x0002
-> > > > > +#define VS_NONE          0X0004
-> > > > > +#define VS_DATA_5        0X0008
-> > > > > +#define VS_DATA_6        0X0010
-> > > > > +#define VS_DATA_7        0X0020
-> > > > > +#define VS_DATA_8        0X0040
-> > > >
-> > > > Why the "X"?
-> > > Sorry I did not understand, do you mean why VS_XON.
-> >
-> > No, I mean why the "0X0040" instead of "0x0040" like all other hex
-> > digits in your list of defines.
-> >
-> > > > > +static int vs_alloc_reg_one_dev(int oidx, int pidx, int rtsmap,
-> > > > > +                     int dtrmap, int dtropn)
-> > > > > +{
-> > > > > +     int ret;
-> > > > > +     struct vs_dev *vsdev;
-> > > > > +     struct device *dev;
-> > > > > +
-> > > > > +     /* Allocate and init virtual tty device private data */
-> > > > > +     vsdev = kcalloc(1, sizeof(struct vs_dev), GFP_KERNEL);
-> > > > > +     if (!vsdev)
-> > > > > +             return -ENOMEM;
-> > > > > +
-> > > > > +     vsdev->own_tty = NULL;
-> > > > > +     vsdev->peer_tty = NULL;
-> > > > > +     vsdev->own_index = oidx;
-> > > > > +     vsdev->peer_index =  pidx;
-> > > > > +     vsdev->rts_mappings = rtsmap;
-> > > > > +     vsdev->dtr_mappings = dtrmap;
-> > > > > +     vsdev->set_odtr_at_open = dtropn;
-> > > > > +     vsdev->msr_reg = 0;
-> > > > > +     vsdev->mcr_reg = 0;
-> > > > > +     vsdev->waiting_msr_chg = 0;
-> > > > > +     vsdev->tx_paused = 0;
-> > > > > +     vsdev->faulty_cable = 0;
-> > > > > +     mutex_init(&vsdev->lock);
-> > > > > +
-> > > > > +     /* Register with tty core with specific minor number */
-> > > > > +     dev = tty_register_device(ttyvs_driver, oidx, NULL);
-> > > > > +     if (!dev) {
-> > > > > +             ret = -ENOMEM;
-> > > > > +             goto fail;
-> > > > > +     }
-> > > > > +
-> > > > > +     vsdev->device = dev;
-> > > > > +     dev_set_drvdata(dev, vsdev);
-> > > > > +
-> > > > > +     /* Create custom sysfs files for this device for events */
-> > > > > +     ret = sysfs_create_group(&dev->kobj, &vs_info_attr_grp);
-> > > >
-> > > > Please no.  You just raced with userspace and lost (i.e. userspace has
-> > > > no idea these files are present.)
-> > > >
-> > > > Please use the correct apis for this, if you _REALLY_ want special sysfs
-> > > > files for a tty device.
-> > > Any specific API would you like to suggest. I am unable to progress on
-> > > how to address this one.
-> >
-> > Now that you have moved things to configfs, maybe you do not need the
-> > sysfs files anymore?
-> >
-> > Ah your "control" sysfs files, ok, you need to set the driver's
-> > dev_groups variable to point to your sysfs attributes, and then the
-> > driver core will properly set up these files.
-> >
-> > hope this helps,
-> >
-> > greg k-h
-> 
-> Everything done except using dev_groups approach (full driver after
-> all changes https://github.com/test209/t/blob/master/ttyvs.c#L1957).
-> 
-> Currently to emulate parity error (or any event), user writes to a
-> device specific node (0 is device number):
-> echo "2" > /sys/devices/virtual/tty/ttyvs0/event
-> 
-> With dev_groups, sysfs is created (1) for driver not for devices
+On Sat, Feb 8, 2020 at 12:36 AM Josh Triplett <josh@joshtriplett.org> wrote:
+>
+> I've been hammering on your pipe fix patch (switching to exclusive wait
+> queues) for a month or so, on several different systems, and I've run
+> into no issues with it. The patch *substantially* improves parallel
+> build times on large (~100 CPU) systems, both with parallel make and
+> with other things that use make's pipe-based jobserver.
 
-Huh?  It's there for devices.
+Hmm. I just applied the doc fix that Randy sent, and that made me
+revisit this commit and the commit message.
 
-> (2) for platform devices only
+And I realized that I find it surprising that it makes your build
+times noticeably better.
 
-No, should work for any device type, as the logic is in the driver core.
+Yes, I have that silly example program to show the issue in the commit
+message, and yes, the exclusive directed write->read wakeups should
+most definitely improve by that commit.
 
-> Due to (1), parsing based approach will be needed, for ex (0 is device number);
-> echo "0-2" > /sys/devices/platform/ttyvs-card@0/event
-> or
-> echo "0-parity" > /sys/devices/platform/ttyvs-card@0/event
+But the make jobserver code ends up using "poll()/pselect()" and
+non-blocking reads, because of how it handles the child death signals.
 
-No, the 0- should not be needed, it should be a device-specific file.
+Which means that none of the nice exclusive directed write->read
+wakeups should even trigger in the first place, because the readers
+never block, and he poll/pselect code doesn't use exclusive wakeups
+(because it can't - it doesn't actually consume the data).
 
-> Due to (2), event file will not exist on desktop systems as there will
-> be no device tree node; no platform device.
+So I was looking at it, and going "it should actually not help GNU
+jobserver at all" in the fixed jobserver case.
 
-I don't understand, this file belongs in the tty device that you have
-created, not in any other device.
+So humor me, Josh - can you try to figure out why your numbers changed
+for this commit?
 
-> Original problem was user space doesn't know when
-> "/sys/devices/virtual/tty/ttyvs0/event" will exist.
-
-And if you set the devices group up properly, the sysfs file will be
-created when the device is created.
-
-> User space gets a uevent when a device is registered with tty core.
-> Application must access only after this.
-
-Yes, but you will race in creation of your file with userspace unless
-you tell the core to do this properly.
-
-> Is this okay in case of this particular driver.
-
-No.
-
-thanks,
-
-greg k-h
+                Linus
