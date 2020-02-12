@@ -2,74 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D79CA15AB30
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 15:45:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D669B15AB36
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 15:46:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728311AbgBLOpa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 09:45:30 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:45323 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728207AbgBLOp3 (ORCPT
+        id S1728428AbgBLOqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 09:46:36 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:12465 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727092AbgBLOqf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 09:45:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581518728;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5yxu7FAFWwnIWX0SIGmGmSoK4AorTJs9H07QQ92CKAE=;
-        b=i4MtEetD5RhwTIUKPQVuzOY0P9ku3syFHu78K3hsLtI6kFkNrGY4N5pJM8RBCIzTNn/c1J
-        g7+cwzj3VCEpqBwd/GHsr68sgPiqgLvM0QvNSYvkxVp5z4JDdxic0bvLOaU9UBBac4rndb
-        mbHOD53kotEi3jcEcI0AnbFYHzFatHw=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-412-_HjGUhyPP1-LU4NhapCOvw-1; Wed, 12 Feb 2020 09:45:21 -0500
-X-MC-Unique: _HjGUhyPP1-LU4NhapCOvw-1
-Received: by mail-wm1-f71.google.com with SMTP id 7so796426wmf.9
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 06:45:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5yxu7FAFWwnIWX0SIGmGmSoK4AorTJs9H07QQ92CKAE=;
-        b=ZuVXJfR6I9WvPWKsOMEcjhh3mufMcyj3cHOKAXijH1YPNk84R4xNTKpURdPxN7LZ2m
-         iGn5K2fVgNTJk5wK2XrE5xncsby3JWW7n5lAFVyjvJn3XJCKw2RTcC41ANq4BqPMJ3V2
-         kwRPx/Gpsaoizmn9D5T4yTNfG26mPcpkW2TiFdP1JyRVP0IHucV9U2Kuff7LqTomXoaY
-         Fn2SPl+DBMQk624BBv+d9bJlmWUnL7l26FANUVFtp5MuN9tEeinrpiZcOlEPKDm9w5ZQ
-         ixY30OX8YlcmVKZCmq/qMWNFm8of63v/g0Me0xVj3QK4gP4SitPh5U2/jEH4dmUYPlkl
-         Kpxg==
-X-Gm-Message-State: APjAAAVCN2QhhORzKLihB8zhwhUIJ7Mtp/hsj9YY9ztkgoAVfDsaucjm
-        nPeQqca1+gWSbgiBy8WLj4sWGT8LkExkwUyJvcT2XcS0KqdxGvrkI72+jru9EqUPONKLUj5bivB
-        DqrmzsOVai2QC6HgSjd3qcolr
-X-Received: by 2002:a05:600c:2207:: with SMTP id z7mr13285285wml.138.1581518719658;
-        Wed, 12 Feb 2020 06:45:19 -0800 (PST)
-X-Google-Smtp-Source: APXvYqz/DPnyNQBFf9qRLXEDxykkC41nBOMiGj9xsFs5aS89vZNDZnDfVr0gows1yjwgUiGwyd6Rsw==
-X-Received: by 2002:a05:600c:2207:: with SMTP id z7mr13285259wml.138.1581518719307;
-        Wed, 12 Feb 2020 06:45:19 -0800 (PST)
-Received: from x1.localdomain (2001-1c00-0c0c-fe00-fc7e-fd47-85c1-1ab3.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:fc7e:fd47:85c1:1ab3])
-        by smtp.gmail.com with ESMTPSA id m9sm893216wrx.55.2020.02.12.06.45.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2020 06:45:18 -0800 (PST)
-From:   Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v3 0/5] SFH: Add Support for AMD Sensor Fusion Hub
-To:     Sandeep Singh <Sandeep.Singh@amd.com>, jikos@kernel.org,
-        benjamin.tissoires@redhat.com, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org, srinivas.pandruvada@linux.intel.com,
-        jic23@kernel.org, linux-iio@vger.kernel.org,
-        Nehal-bakulchandra.Shah@amd.com
-Cc:     Shyam-sundar.S-k@amd.com
-References: <1581476197-25854-1-git-send-email-Sandeep.Singh@amd.com>
-Message-ID: <1ce6f591-1e8b-8291-7f18-48876fd70e10@redhat.com>
-Date:   Wed, 12 Feb 2020 15:45:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <1581476197-25854-1-git-send-email-Sandeep.Singh@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 12 Feb 2020 09:46:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581518792;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=eF0eU+wT6Jz3VQhXmG5csiS9c3rSC4Z9DeL2XQYqdFw=;
+        b=SCsGmzWDrloScq92rU+PXSYfAOu0RbAOZ7agPUad+rT+j1Pxyx3f5duf4L0nRwk5mq
+        Ms349kTulXSgOtFYrxgy9fRdKaWvGo0wMPOlBKgA/pdpUcHZWVOVcazrl+v76CBuSx6n
+        fqmnkzGxlu0fKPkrsui8bbTF7FagUzUESnORojltiAyJMRDel7TpT7MuBuRyfIbEc2sd
+        Bos3qm9owufelou5Uk9Ov8wjoATpYpUcoOtCJ6aB4JfFhJGFr9rztH/9K9rzw3OEKwXh
+        Jf83TygUD4bZ55MZBFg7838F0xDjroI2h4ynbVy5iGY/wF5aNlIa8aO6Y7EmCXVunOWf
+        KqIg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5Qpw97WFDlSbXAgODw=="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
+        with ESMTPSA id U06217w1CEkJ4uk
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Wed, 12 Feb 2020 15:46:19 +0100 (CET)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: i2c: jz4780: silence log flood on txabrt
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20200212094628.GB1143@ninjato>
+Date:   Wed, 12 Feb 2020 15:46:19 +0100
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        Paul Boddie <paul@boddie.org.uk>,
+        Alex Smith <alex.smith@imgtec.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        =?utf-8?Q?Petr_=C5=A0tetiar?= <ynezz@true.cz>,
+        Richard Fontana <rfontana@redhat.com>,
+        Allison Randal <allison@lohutok.net>,
+        Stephen Boyd <swboyd@chromium.org>, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org,
+        netdev@vger.kernel.org, linux-gpio@vger.kernel.org,
+        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <213C52CC-E5DC-4641-BE68-3D5C4FEA1FB5@goldelico.com>
+References: <cover.1581457290.git.hns@goldelico.com> <7facef52af9cff6ebe26ff321a7fd4f1ac640f74.1581457290.git.hns@goldelico.com> <20200212094628.GB1143@ninjato>
+To:     Wolfram Sang <wsa@the-dreams.de>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -77,179 +73,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On 2/12/20 3:56 AM, Sandeep Singh wrote:
-> From: Sandeep Singh <sandeep.singh@amd.com>
-> 
-> AMD SFH(Sensor Fusion Hub) is HID based driver.SFH FW
-> is part of MP2 processor (MP2 which is an ARM® Cortex-M4
-> core based co-processor to x86) and it runs on MP2 where
-> in driver resides on X86.The driver functionalities are
-> divided  into three parts:-
-> 
-> 1: amd-mp2-pcie:-       This module will communicate with MP2 FW and
->                          provide that data into DRAM.
-> 2: Client driver :-     This part for driver will use dram data and
->                          convert that data into HID format based on
->                          HID reports.
-> 3: Transport driver :-  This part of driver will communicate with
->                          HID core. Communication between devices and
->                          HID core is mostly done via HID reports
-> 
-> In terms of architecture it is much more reassembles like
-> ISH(Intel Integrated Sensor Hub). However the major difference
-> is all the hid reports are generated as part of kernel driver.
-> AMD SFH driver taken reference from ISH in terms of
-> design and functionalities at fewer location.
-> 
-> AMD sensor fusion Hub is part of a SOC 17h family based platforms.
-> The solution is working well on several OEM products.
-> AMD SFH uses HID over PCIe bus.
+> Am 12.02.2020 um 10:46 schrieb Wolfram Sang <wsa@the-dreams.de>:
+>=20
+>=20
+> The printout for txabrt is way too talkative. Reduce it to the =
+minimum,
+> the rest can be gained by I2C core debugging and datasheet =
+information.
+> Also, make it a debug printout, it won't help the regular user.
+>=20
+> Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+> ---
+>=20
+> Sorry, normally I don't do counter patches. Yet, this time I realized
+> that it would be faster to actually do what I envisioned than to
+> describe it in words. I hope you don't feel offended.
 
-I started looking at this patch because of the phoronix' news item on it.
+No problem. I had thought a little about that myself, but did not
+dare to solve more than my problem...
 
-First of all I want to say that it is great that AMD is working on
-getting the Sensor Fusion Hub supported on Linux and that you are
-working on a driver for this.
+> This driver has
+> way too many dev_err anyhow, so this may be a start.
+>=20
+> Obviously, I can't test, does it work for you?
 
-But, I've taken a quick look, mainly at the
-"[PATCH v3 5/5] SFH: Create HID report to Enable support of AMD sensor fusion Hub (SFH)"
-patch.
+Yes,it works.
 
-AFAIK with the Intel ISH the sensor-hub itself is actually providing
-HID descriptors and HID input reports.
+Do you want to push your patch yourself, or should I add it to my
+patch series and resubmit in a v2?
 
-Looking at the AMD code, that does not seem to be the case, it seems
-the values come directly from the AMD sensor-hub without being in any
-HID specific form, e.g.:
+BR and thanks,
+Nikolaus
 
-+u8 get_input_report(int sensor_idx, int report_id,
-+		    u8 *input_report, u32 *sensor_virt_addr)
-+{
-+	u8 report_size = 0;
-+	struct accel3_input_report acc_input;
-+	struct gyro_input_report gyro_input;
-+	struct magno_input_report magno_input;
-+	struct als_input_report als_input;
-+
-+	if (!sensor_virt_addr || !input_report)
-+		return report_size;
-+
-+	switch (sensor_idx) {
-+	case ACCEL_IDX: /* accel */
-+		acc_input.common_property.report_id = report_id;
-+		acc_input.common_property.sensor_state =
-+					HID_USAGE_SENSOR_STATE_READY_ENUM;
-+		acc_input.common_property.event_type =
-+				HID_USAGE_SENSOR_EVENT_DATA_UPDATED_ENUM;
-+		acc_input.in_accel_x_value = (int)sensor_virt_addr[0] /
-+						AMD_SFH_FIRMWARE_MULTIPLIER;
-+		acc_input.in_accel_y_value = (int)sensor_virt_addr[1] /
-+						AMD_SFH_FIRMWARE_MULTIPLIER;
-+		acc_input.in_accel_z_value =  (int)sensor_virt_addr[2] /
-+						AMD_SFH_FIRMWARE_MULTIPLIER;
-+		memcpy(input_report, &acc_input, sizeof(acc_input));
-+		report_size = sizeof(acc_input);
-+		break;
-
-And the descriptors are hardcoded in the driver so as to fake a HID
-device.
-
-So going through the HID subsystem seems like an unnecessary detour,
-which just makes things needlessly complex and harder to debug
-(and extend).
-
-The HID devices which the current patch-set is creating ultimately
-will result in a number of devices being created under
-
-/sys/bus/iio/devices
-
-And this are the devices which userspace uses to get the sensor data.
-
-IMHO instead of going through the HID subsys the AMD Sensor Fusion Hub
-driver should simply register 4 (*) iio-devices itself and directly
-pass the data through at the iio subsys level rather then going the
-long way around by creating a fake HID device which then gets
-attached to by the hid-sensor driver to ultimately create the same
-iio-devices.
-
-There are examples of e.g. various iio accel drivers under:
-drivers/iio/accel/ you could start with a simple driver supporting
-just the accelerometer bits and then extend things from there.
-
-Benjamin, Jiri, Jonathan, what is your take on this?
-
-Regards,
-
-Hans
-
-
-*) One for accel, gyra, magneto and light each
-
-
-> Sandeep Singh (5):
->    SFH: Add maintainers and documentation for AMD SFH based on HID
->      framework
->    SFH: PCI driver to add support of AMD sensor fusion Hub using HID
->      framework
->    SFH: Transport Driver to add support of AMD Sensor Fusion Hub (SFH)
->    SFH: Add debugfs support to AMD Sensor Fusion Hub
->    SFH: Create HID report to Enable support of AMD sensor fusion Hub
->      (SFH)
-> 
-> Changes since v1:
->          -Fix auto build test warnings
->          -Fix warnings captured using smatch
->          -Changes suggested by Dan Carpenter
-> 
-> Links of the review comments for v1:
->          [1] https://patchwork.kernel.org/patch/11325163/
->          [2] https://patchwork.kernel.org/patch/11325167/
->          [3] https://patchwork.kernel.org/patch/11325171/
->          [4] https://patchwork.kernel.org/patch/11325187/
-> 
-> 
-> Changes since v2:
->          -Debugfs divided into another patch
->          -Fix some cosmetic changes
->          -Fix for review comments
->           Reported and Suggested by:-  Srinivas Pandruvada
-> 
-> Links of the review comments for v2:
->          [1] https://patchwork.kernel.org/patch/11355491/
->          [2] https://patchwork.kernel.org/patch/11355495/
->          [3] https://patchwork.kernel.org/patch/11355499/
->          [4] https://patchwork.kernel.org/patch/11355503/
-> 
-> 
->   Documentation/hid/amd-sfh-hid.rst                  | 160 +++++
->   MAINTAINERS                                        |   8 +
->   drivers/hid/Kconfig                                |   2 +
->   drivers/hid/Makefile                               |   1 +
->   drivers/hid/amd-sfh-hid/Kconfig                    |  20 +
->   drivers/hid/amd-sfh-hid/Makefile                   |  17 +
->   drivers/hid/amd-sfh-hid/amd_mp2_pcie.c             | 243 ++++++++
->   drivers/hid/amd-sfh-hid/amd_mp2_pcie.h             | 177 ++++++
->   drivers/hid/amd-sfh-hid/amdsfh-debugfs.c           | 250 ++++++++
->   drivers/hid/amd-sfh-hid/amdsfh-debugfs.h           |  14 +
->   drivers/hid/amd-sfh-hid/amdsfh-hid-client.c        | 260 +++++++++
->   drivers/hid/amd-sfh-hid/amdsfh-hid.c               | 179 ++++++
->   drivers/hid/amd-sfh-hid/amdsfh-hid.h               |  85 +++
->   .../hid_descriptor/amd_sfh_hid_descriptor.c        | 275 +++++++++
->   .../hid_descriptor/amd_sfh_hid_descriptor.h        | 125 ++++
->   .../hid_descriptor/amd_sfh_hid_report_descriptor.h | 642 +++++++++++++++++++++
->   16 files changed, 2458 insertions(+)
->   create mode 100644 Documentation/hid/amd-sfh-hid.rst
->   create mode 100644 drivers/hid/amd-sfh-hid/Kconfig
->   create mode 100644 drivers/hid/amd-sfh-hid/Makefile
->   create mode 100644 drivers/hid/amd-sfh-hid/amd_mp2_pcie.c
->   create mode 100644 drivers/hid/amd-sfh-hid/amd_mp2_pcie.h
->   create mode 100644 drivers/hid/amd-sfh-hid/amdsfh-debugfs.c
->   create mode 100644 drivers/hid/amd-sfh-hid/amdsfh-debugfs.h
->   create mode 100644 drivers/hid/amd-sfh-hid/amdsfh-hid-client.c
->   create mode 100644 drivers/hid/amd-sfh-hid/amdsfh-hid.c
->   create mode 100644 drivers/hid/amd-sfh-hid/amdsfh-hid.h
->   create mode 100644 drivers/hid/amd-sfh-hid/hid_descriptor/amd_sfh_hid_descriptor.c
->   create mode 100644 drivers/hid/amd-sfh-hid/hid_descriptor/amd_sfh_hid_descriptor.h
->   create mode 100644 drivers/hid/amd-sfh-hid/hid_descriptor/amd_sfh_hid_report_descriptor.h
-> 
+>=20
+> drivers/i2c/busses/i2c-jz4780.c | 36 ++-------------------------------
+> 1 file changed, 2 insertions(+), 34 deletions(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-jz4780.c =
+b/drivers/i2c/busses/i2c-jz4780.c
+> index 16a67a64284a..b426fc956938 100644
+> --- a/drivers/i2c/busses/i2c-jz4780.c
+> +++ b/drivers/i2c/busses/i2c-jz4780.c
+> @@ -78,25 +78,6 @@
+>=20
+> #define X1000_I2C_DC_STOP		BIT(9)
+>=20
+> -static const char * const jz4780_i2c_abrt_src[] =3D {
+> -	"ABRT_7B_ADDR_NOACK",
+> -	"ABRT_10ADDR1_NOACK",
+> -	"ABRT_10ADDR2_NOACK",
+> -	"ABRT_XDATA_NOACK",
+> -	"ABRT_GCALL_NOACK",
+> -	"ABRT_GCALL_READ",
+> -	"ABRT_HS_ACKD",
+> -	"SBYTE_ACKDET",
+> -	"ABRT_HS_NORSTRT",
+> -	"SBYTE_NORSTRT",
+> -	"ABRT_10B_RD_NORSTRT",
+> -	"ABRT_MASTER_DIS",
+> -	"ARB_LOST",
+> -	"SLVFLUSH_TXFIFO",
+> -	"SLV_ARBLOST",
+> -	"SLVRD_INTX",
+> -};
+> -
+> #define JZ4780_I2C_INTST_IGC		BIT(11)
+> #define JZ4780_I2C_INTST_ISTT		BIT(10)
+> #define JZ4780_I2C_INTST_ISTP		BIT(9)
+> @@ -576,21 +557,8 @@ static irqreturn_t jz4780_i2c_irq(int irqno, void =
+*dev_id)
+>=20
+> static void jz4780_i2c_txabrt(struct jz4780_i2c *i2c, int src)
+> {
+> -	int i;
+> -
+> -	dev_err(&i2c->adap.dev, "txabrt: 0x%08x\n", src);
+> -	dev_err(&i2c->adap.dev, "device addr=3D%x\n",
+> -		jz4780_i2c_readw(i2c, JZ4780_I2C_TAR));
+> -	dev_err(&i2c->adap.dev, "send cmd count:%d  %d\n",
+> -		i2c->cmd, i2c->cmd_buf[i2c->cmd]);
+> -	dev_err(&i2c->adap.dev, "receive data count:%d  %d\n",
+> -		i2c->cmd, i2c->data_buf[i2c->cmd]);
+> -
+> -	for (i =3D 0; i < 16; i++) {
+> -		if (src & BIT(i))
+> -			dev_dbg(&i2c->adap.dev, "I2C TXABRT[%d]=3D%s\n",
+> -				i, jz4780_i2c_abrt_src[i]);
+> -	}
+> +	dev_dbg(&i2c->adap.dev, "txabrt: 0x%08x, cmd: %d, send: %d, =
+recv: %d\n",
+> +		src, i2c->cmd, i2c->cmd_buf[i2c->cmd], =
+i2c->data_buf[i2c->cmd]);
+> }
+>=20
+> static inline int jz4780_i2c_xfer_read(struct jz4780_i2c *i2c,
+> --=20
+> 2.20.1
+>=20
 
