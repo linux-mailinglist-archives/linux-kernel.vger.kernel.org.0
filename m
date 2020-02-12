@@ -2,112 +2,248 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65E2115AFDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 19:31:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D8B415AFEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 19:35:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728903AbgBLSbw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 13:31:52 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57904 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727054AbgBLSbv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 13:31:51 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id D1983AE46;
-        Wed, 12 Feb 2020 18:31:49 +0000 (UTC)
-Message-ID: <a1d66025baa13b2276b12405544fc7107aac8d6c.camel@suse.de>
-Subject: Re: [PATCH] ARM: bcm2835_defconfig: add minimal support for
- Raspberry Pi4
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>
-Date:   Wed, 12 Feb 2020 19:31:47 +0100
-In-Reply-To: <20200212102009.17428-1-m.szyprowski@samsung.com>
-References: <CGME20200212102022eucas1p1c49daf15d3e63eda9a56124bc4eafb57@eucas1p1.samsung.com>
-         <20200212102009.17428-1-m.szyprowski@samsung.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-ITbJ1iHkW+ijPO3M83tC"
-User-Agent: Evolution 3.34.3 
+        id S1728883AbgBLSfn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 13:35:43 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:34647 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbgBLSfm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 13:35:42 -0500
+Received: by mail-ot1-f66.google.com with SMTP id j16so2964256otl.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 10:35:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9KNdQTzecz/SJfMs4GgqFV3ANdv8gWp3Rod0UgNCFVs=;
+        b=gL0FnKJNJiJNa9dSHzfhhNO8SJ4Pvmvg5qHjXBm14UpYgAz9qO/shxHONMQmDjm/F7
+         CVgI1kGgADGkKWBRA0XCry6kkiADNAVNomJaW45cly2aK/nPwXtTYH2h+Fk+XIfIStRg
+         GMneMhvlMmKABuSc4cuohZ9MurZaBflu5tAvvfGfQz6ooYomObrajNfY0EcNqD5pLuJz
+         cnTw1K05XqPopYYhXXTldVau4/73meozj+jdbfnVzojvtHrd5HOJW5kV5/c3LIOuqv4h
+         0kiwWAwb4J4FS2Qg2htzghvR7a//KW24+EuP5JaPfs33cLv1XBVp1W+u8WeCDZklnWNv
+         xG0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9KNdQTzecz/SJfMs4GgqFV3ANdv8gWp3Rod0UgNCFVs=;
+        b=EZi06dRWIo6yzoPSP0TKrk6yGxAe2voBWpQVAPPjR8z33QqWHedUG4Cdq8h2H6kjeq
+         DQaQ5ILkRU7Z6f25BkH/KCedsNCJ5FKX5tmsWfXLMyzJPKLhyKzcRWUx6viqKFo7Bojs
+         CWUUteL2++6PWmiZncgdWq0/kLyPvjlAP9GGmSTq1XrUagcJTA2S6GUnyRlCrgKLb8Ba
+         TI5ncTHQBatq1xM4Hs6wClAArdjmOfyK58NR8+6zjtPzb8/3ISFMDciy1uRJRY+3q6kl
+         dhhQjP0CJZdroyjvQV97Ni8NSkLbBpGT68+KUV9wuMQ1u5XbiyvhPWiA36oThs9aOovn
+         N4cg==
+X-Gm-Message-State: APjAAAXamPRb/18Sb9uYaacs8BpO+nRADYhEwDbuRR74nxwZRPWJsx+B
+        7SV4XDex6fz/y9oTHHxK0nM=
+X-Google-Smtp-Source: APXvYqwUt8l78PKdBjAN9Sm0spQ3EBv7VF5bXaxMvmVuCBKXVYP4jn/2xFRFH/2gRqt+vQHJcJEVug==
+X-Received: by 2002:a9d:6f0d:: with SMTP id n13mr10594922otq.165.1581532540729;
+        Wed, 12 Feb 2020 10:35:40 -0800 (PST)
+Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id y6sm412731oti.44.2020.02.12.10.35.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Feb 2020 10:35:40 -0800 (PST)
+Date:   Wed, 12 Feb 2020 11:35:38 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Palmer Dabbelt <palmerdabbelt@google.com>, asb@lowrisc.org,
+        linux-riscv@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Subject: Re: Status of building and booting the RISCV64 kernel with Clang
+Message-ID: <20200212183538.GA34230@ubuntu-m2-xlarge-x86>
+References: <20200212054001.GA27071@ubuntu-m2-xlarge-x86>
+ <CAKwvOdnTW1AjB8nVKFd9i=ur88QtEp7taT2jo8R2-FXdBzZthQ@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOdnTW1AjB8nVKFd9i=ur88QtEp7taT2jo8R2-FXdBzZthQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 12, 2020 at 10:29:10AM -0800, 'Nick Desaulniers' via Clang Built Linux wrote:
+> + Palmer, Alex
+> 
+> On Tue, Feb 11, 2020 at 9:40 PM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+> >
+> > Hi all,
+> >
+> > We (ClangBuiltLinux) have started looking at building the RISCV64
+> > kernel with clang and booting it in QEMU. I thought it would be nice to
+> > give some sort of status update and go over the issues we have notice
+> > so far and see what people's thoughts are for solving them. If this
+> > email is unwelcome, apologies! This testing was done with clang-11 (tip
+> > of tree) and QEMU 4.2.0 with this rootfs (built with
+> > buildroot-2019.02.9):
+> >
+> > https://github.com/nathanchance/continuous-integration/blob/21ea056022f9cf1d62b7f805c3862daf9d89736f/images/riscv/rootfs.cpio
+> >
+> >
+> >
+> > Outstanding issues on the LLVM side:
+> >
+> > 1. LLVM output over -mno-save-restore (https://github.com/ClangBuiltLinux/linux/issues/804)
+> >
+> > The kernel passes -mno-save-restore to KBUILD_CFLAGS which causes a ton
+> > of warning spam from LLVM:
+> >
+> > '-save-restore' is not a recognized feature for this target (ignoring feature)
+> >
+> > This has been reported upstream as https://llvm.org/pr44853 but it could
+> > easily be fixed in the kernel by guarding the call against
+> > CONFIG_CC_IS_CLANG (although this is obviously fragile if the ABI ever
+> > changes to -msave-restore by default).
 
---=-ITbJ1iHkW+ijPO3M83tC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+And this issue has been fixed:
+https://github.com/llvm/llvm-project/commit/07f7c00208b393296f8f27d6cd3cec2b11d86fd8
 
-Hi Marek,
-On Wed, 2020-02-12 at 11:20 +0100, Marek Szyprowski wrote:
-> Add drivers for the minimal set of devices needed to boot Raspberry Pi4
-> board.
->=20
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-Just so you know, the amount of support on the RPi4 you might be able to ge=
-t
-updating bcm2835_defconfig's config is very limited. Only 1GB of ram and no
-PCIe (so no USBs).
-
-FYI I've been working on getting a workable configuration for arm32, short =
-of
-creating a new config altogether:
-https://www.mail-archive.com/linuxppc-dev@lists.ozlabs.org/msg163770.html
-
-That said, if you insist on booting with bcm2835_defconfig, I have no probl=
-em
-with the patch.
-
-Regards,
-Nicolas
-
->  arch/arm/configs/bcm2835_defconfig | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/arch/arm/configs/bcm2835_defconfig
-> b/arch/arm/configs/bcm2835_defconfig
-> index 519ff58e67b3..b5e7c1bd95f2 100644
-> --- a/arch/arm/configs/bcm2835_defconfig
-> +++ b/arch/arm/configs/bcm2835_defconfig
-> @@ -72,6 +72,7 @@ CONFIG_BLK_DEV_SD=3Dy
->  CONFIG_SCSI_CONSTANTS=3Dy
->  CONFIG_SCSI_SCAN_ASYNC=3Dy
->  CONFIG_NETDEVICES=3Dy
-> +CONFIG_BCMGENET=3Dy
->  CONFIG_USB_LAN78XX=3Dy
->  CONFIG_USB_USBNET=3Dy
->  CONFIG_USB_NET_SMSC95XX=3Dy
-> @@ -99,6 +100,8 @@ CONFIG_THERMAL=3Dy
->  CONFIG_BCM2835_THERMAL=3Dy
->  CONFIG_WATCHDOG=3Dy
->  CONFIG_BCM2835_WDT=3Dy
-> +CONFIG_REGULATOR=3Dy
-> +CONFIG_REGULATOR_GPIO=3Dy
->  CONFIG_MEDIA_SUPPORT=3Dy
->  CONFIG_MEDIA_CAMERA_SUPPORT=3Dy
->  CONFIG_DRM=3Dy
-
-
---=-ITbJ1iHkW+ijPO3M83tC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5ERJMACgkQlfZmHno8
-x/7nMwf/V2o3WeDmAvMxxux/NwAAfKHB2HFIpdC962NUNKnoHxaP27wl/nzWhkXe
-8ly7F1qMnQPcU8rnO3CyoZeRrlplQhg1Z8/RcXEmr83Ua5gj9eyrahwnJneui2BZ
-bR+oZFOiGo40QJtNdjm16dT59SbiLfcskyiLOqNEItCehxf1qb22hc3Vz0aSeEXI
-xd6qhcCU/KvQYyJWm0Izq3l0U43roUfhcqm89oVyZJq6lWT+RbS4KfYjNQA0OxkG
-H8BSyfiK9RyY7XbCq/rpcKBnTvXCm3Lm9B6nuHGJBV31HeaukFzWJR+LhJ+pIxgX
-xCtJYAy26dqMGTLAsu9F/XZ51sk6YA==
-=gfp3
------END PGP SIGNATURE-----
-
---=-ITbJ1iHkW+ijPO3M83tC--
-
+> > 2. -fPIC causes issues when using Clang + GNU as (https://github.com/ClangBuiltLinux/linux/issues/865)
+> >
+> > The kernel on a whole builds with -fno-integrated-as so we fall back to
+> > GNU as when assembling. Kernel modules are built with -fPIC and fail to
+> > build with a bunch of assembler errors like so (seen with binutils
+> > 2.31.1 and ToT):
+> >
+> > /tmp/flexfilelayout-2d0cdc.s:359: Error: bad expression
+> > /tmp/flexfilelayout-2d0cdc.s:359: Error: illegal operands `auipc a0,%got_pcrel_hi(mem_map)'
+> > /tmp/flexfilelayout-2d0cdc.s:367: Error: bad expression
+> > /tmp/flexfilelayout-2d0cdc.s:367: Error: illegal operands `auipc a2,%got_pcrel_hi(pfn_base)'
+> > /tmp/flexfilelayout-2d0cdc.s:374: Error: bad expression
+> > /tmp/flexfilelayout-2d0cdc.s:374: Error: illegal operands `auipc a3,%got_pcrel_hi(va_pa_offset)'
+> >
+> > This has been reported upstream as https://llvm.org/pr44854. The way to
+> > work around this in the kernel is to just disable CONFIG_MODULES (which
+> > is a big hammer but that obviously won't be sent upstream in any form).
+> >
+> >
+> >
+> >
+> > Outstanding issues on the kernel side:
+> >
+> > 1. -Wuninitialized warnings around local register variables
+> >
+> > There are a few warnings around local "register" variables, which are
+> > uninitialized when using clang:
+> >
+> > In file included from ../arch/riscv/kernel/asm-offsets.c:10:
+> > In file included from ../include/linux/sched.h:12:
+> > ../arch/riscv/include/asm/current.h:30:9: warning: variable 'tp' is uninitialized when used here [-Wuninitialized]
+> >         return tp;
+> >                ^~
+> > ../arch/riscv/include/asm/current.h:29:33: note: initialize the variable 'tp' to silence this warning
+> >         register struct task_struct *tp __asm__("tp");
+> >                                        ^
+> >                                         = NULL
+> > 1 warning generated.
+> >
+> > ../arch/riscv/kernel/process.c:112:19: warning: variable 'gp' is uninitialized when used here [-Wuninitialized]
+> >                 childregs->gp = gp;
+> >                                 ^~
+> > ../arch/riscv/kernel/process.c:110:34: note: initialize the variable 'gp' to silence this warning
+> >                 const register unsigned long gp __asm__ ("gp");
+> >                                                ^
+> >                                                 = 0
+> > 1 warning generated.
+> >
+> > ../arch/riscv/kernel/stacktrace.c:34:8: warning: variable 'current_sp' is uninitialized when used here [-Wuninitialized]
+> >                 sp = current_sp;
+> >                      ^~~~~~~~~~
+> > ../arch/riscv/kernel/stacktrace.c:32:42: note: initialize the variable 'current_sp' to silence this warning
+> >                 const register unsigned long current_sp __asm__ ("sp");
+> >                                                        ^
+> >                                                         = 0
+> > 1 warning generated.
+> >
+> > The way to solve these is to make these register variables global, where
+> > they are properly initialized and work. This has been done in the kernel
+> > a few times:
+> >
+> > fe92da0f355e ("MIPS: Changed current_thread_info() to an equivalent supported by both clang and GCC")
+> > 3337a10e0d0c ("arm64: LLVMLinux: Add current_stack_pointer() for arm64")
+> > 786248705ecf ("arm64: LLVMLinux: Calculate current_thread_info from current_stack_pointer")
+> > 0abc08baf2dd ("ARM: 8170/1: Add global named register current_stack_pointer for ARM")
+> > f6c9cbf091a4 ("ARM: 8173/1: Calculate current_thread_info from current_stack_pointer")
+> >
+> > The LLVM community has rejected adopting GCC's behavior of allowing
+> > local register variables because it would seriously complicate the
+> > register allocator; the full discussion can be viewed here:
+> > http://lists.llvm.org/pipermail/llvm-dev/2014-March/071472.html
+> >
+> > This is the diff I am currently working with; I am not sure of any side
+> > effects aside from two that I will list below.
+> >
+> > https://gist.github.com/b5fda253a243127736fd2ac5d317dcdd
+> >
+> >
+> >
+> > Booting in QEMU:
+> >
+> > This is where things get interesting... The kernel does not start at all
+> > when the registers are purely local. It does start when the tp register
+> > is moved globally (arch/riscv/include/asm/current.h diff above) but it
+> > does not finish getting to userspace. Additionally, the diff in
+> >  -s ARCH=riscv CC=clang CROSS_COMPILE=riscv64-linux-gnu- O=out.riscv distclean defconfig all
+> > ...
+> > $ timeout 30s qemu-system-riscv64 -M virt -m 512M -no-reboot -bios default -kernel out.riscv/arch/riscv/boot/Image -display none -serial mon:stdio -initrd out.riscv/rootfs.cpio
+> > ...
+> > [    0.000000] Linux version 5.6.0-rc1-00001-g90c81dfc010e (nathan@ubuntu-m2-xlarge-x86) (ClangBuiltLinux clang version 11.0.0 (git://github.com/llvm/llvm-project 9c1a88c96457ffde71f13c74fd4d52a77d86cc9f)) #1 SMP Tue Feb 11 22:13:03 MST 2020
+> > ...
+> > [    0.624295] Run /init as init process
+> > /init: exec: line 7: /sbin/init: Text file busy
+> > [    0.712090] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000200
+> > [    0.712739] CPU: 0 PID: 1 Comm: init Not tainted 5.6.0-rc1-00001-g90c81dfc010e #1
+> > [    0.713228] Call Trace:
+> > [    0.713508] [<ffffffe00004a3e6>] walk_stackframe+0x0/0xc6
+> > [    0.713832] [<ffffffe0007c0070>] dump_stack+0x9e/0xd6
+> > [    0.714112] [<ffffffe00004f250>] panic+0x112/0x2dc
+> > [    0.714387] [<ffffffe000051886>] exit_mm+0x0/0x12a
+> > [    0.714676] [<ffffffe000051a80>] sys_exit_group+0x0/0xe
+> > [    0.714965] [<ffffffe000051aa4>] __wake_up_parent+0x0/0x24
+> > [    0.715262] [<ffffffe000051a8e>] __do_sys_exit_group+0x0/0x16
+> > [    0.715568] [<ffffffe000048e3e>] ret_from_syscall+0x0/0x2
+> > [    0.716409] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000200 ]---
+> > qemu-system-riscv64: terminating on signal 15 from pid 55965 (timeout)
+> >
+> > GCC 9.2.0 works just fine.
+> >
+> > $ make -j$(nproc) -s ARCH=riscv CROSS_COMPILE=riscv64-linux- O=out.riscv distclean defconfig all
+> > $ timeout 30s qemu-system-riscv64 -M virt -m 512M -no-reboot -bios default -kernel out.riscv/arch/riscv/boot/Image -display none -serial mon:stdio -initrd out.riscv/rootfs.cpio
+> > ...
+> > [    0.634854] Run /init as init process
+> > Starting syslogd: OK
+> > Starting klogd: OK
+> > Initializing random number generator... [    1.329410] random: dd: uninitialized urandom read (512 bytes read)
+> > done.
+> > Starting network: OK
+> > Linux version 5.6.0-rc1-00001-g90c81dfc010e (nathan@ubuntu-m2-xlarge-x86) (gcc version 9.2.0 (GCC)) #1 SMP Tue Feb 11 22:20:36 MST 2020
+> > Linux version 5.6.0-rc1-00001-g90c81dfc010e (nathan@ubuntu-m2-xlarge-x86) (gcc version 9.2.0 (GCC)) #1 SMP Tue Feb 11 22:20:36 MST 2020
+> > Stopping network: OK
+> > Saving random seed... [    2.165960] random: dd: uninitialized urandom read (512 bytes read)
+> > done.
+> > Stopping klogd: OK
+> > Stopping syslogd: OK
+> > umount: devtmpfs busy - remounted read-only
+> > umount: can't unmount /: Invalid argument
+> > The system is going down NOW!
+> > Sent SIGTERM to all processes
+> > Sent SIGKILL to all processes
+> > Requesting system poweroff
+> > [    4.412388] reboot: Power down
+> >
+> > I have tried to do some debugging in gdb to see where things are going
+> > wrong and I see it get to run_init_process, succeed, then jump to the
+> > exception handler and panic so I am not really sure where things are
+> > going wrong. Any sort of ideas on where to go from here would certainly
+> > be appreciated :)
+> >
+> > Thanks for all the hard work everyone has done, hopefully we can help
+> > add to it!
+> >
+> > Cheers,
+> > Nathan
