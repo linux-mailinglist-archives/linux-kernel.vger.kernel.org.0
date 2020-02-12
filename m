@@ -2,110 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B2B015AE94
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 18:17:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAFBE15AE9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 18:20:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728073AbgBLRRJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 12:17:09 -0500
-Received: from mail.netline.ch ([148.251.143.178]:59978 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726982AbgBLRRJ (ORCPT
+        id S1728698AbgBLRT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 12:19:56 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36872 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726728AbgBLRT4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 12:17:09 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id 514DB2A604B;
-        Wed, 12 Feb 2020 18:17:06 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id TidibmeR2N2o; Wed, 12 Feb 2020 18:17:06 +0100 (CET)
-Received: from thor (252.80.76.83.dynamic.wline.res.cust.swisscom.ch [83.76.80.252])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 01A9A2A6046;
-        Wed, 12 Feb 2020 18:17:05 +0100 (CET)
-Received: from [::1]
-        by thor with esmtp (Exim 4.93)
-        (envelope-from <michel@daenzer.net>)
-        id 1j1vdJ-000ow8-2f; Wed, 12 Feb 2020 18:17:05 +0100
-Subject: Re: [PATCH v2] drm/i915: Disable
- -Wtautological-constant-out-of-range-compare
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        dri-devel@lists.freedesktop.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-References: <20200211050808.29463-1-natechancellor@gmail.com>
- <20200211061338.23666-1-natechancellor@gmail.com>
- <4c806435-f32d-1559-9563-ffe3fa69f0d1@daenzer.net>
- <20200211203935.GA16176@ubuntu-m2-xlarge-x86>
- <f3a6346b-2abf-0b6a-3d84-66e12f700b2b@daenzer.net>
- <20200212170734.GA16396@ubuntu-m2-xlarge-x86>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Message-ID: <d81a2cfe-79b6-51d4-023e-0960c0593856@daenzer.net>
-Date:   Wed, 12 Feb 2020 18:17:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        Wed, 12 Feb 2020 12:19:56 -0500
+Received: by mail-lf1-f67.google.com with SMTP id b15so2166076lfc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 09:19:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rU6txhFTKspoGX/U60ruYSaeQNuMHsYzoocjIcC782c=;
+        b=OZ1hvEGkFd12rHeAi8ci4EjhJ8sPzGLXm4kc5nQ6qyUcizK9ENQhNNUnvZNl6ipOwD
+         X9/zMjh4tdfENQwQU0gI8zznCTzlp1lj2LCgDOVRQRX/FGEwV12zZJ1PDeaQ0DW2Ore/
+         sCJkl+boumG/aT6Gpv4hmw5MMk5fqQyX6YT4+kpF9FUgWcp0LHmEGpmAF6UFfh5aQgp4
+         Fz5d6HvzmwF7R6BLbzai/AiDoEmBkjRbsgIABWxHaBUR8wFnHAkNBOdECeovaSeS8yIt
+         pD9sdydhVmJOz6uCU/xoZbmCQITmHKZjotwyNvLWBMyfKWoyNP02qX4ZHyDCEo7KJy+w
+         3haw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rU6txhFTKspoGX/U60ruYSaeQNuMHsYzoocjIcC782c=;
+        b=B/EOqQDd3TUTbvC/K+LuHy5nW6LEXIKVi6l8fkt5zwdnxL8BL6sk+5uxuCTHoOcNMa
+         NwIxELqneta89H1DC92LAWMDG9581u/2IvlWczqoct+b/GFBP/UQOaZcBqFywytzE5Kk
+         WIgjPaaWw6fUZ/dHp9bCle8hKDpFmCKeatKFQ7zp/KUF2O3F2YWy13+6hKaskjYnRitl
+         WSpZ91wunJx/7j7uy2s9JZhir3SjiIwcL78mcKJMpAYK/FDFxHA/JnriTM1T1KqdNvU1
+         jr8FmnK2bFfEjJD08BMBuPfwzKxcDZAr9WKf8LDNMzBrlM7Chpuf6luteA8//jw65Cwh
+         ugEg==
+X-Gm-Message-State: APjAAAX8kJRxyggJXLD4GczfPP2/NzKxMlXpLQpbG+a4I71OiIFXY/xe
+        loWuQ6R4i69wH34MoU2cA7egYezJ9CHid4sI6X17lw==
+X-Google-Smtp-Source: APXvYqw9k3f7e9kNkAqI6YaXNA3yxCHADb9+dIrru9lZjroVzKlLAvIc7iQVCvQ3XTCCBSqw34OZAuqivhMsrW/2i4w=
+X-Received: by 2002:ac2:5f59:: with SMTP id 25mr7042133lfz.193.1581527992964;
+ Wed, 12 Feb 2020 09:19:52 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200212170734.GA16396@ubuntu-m2-xlarge-x86>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+References: <20200211225547.235083-1-dancol@google.com> <20200211225547.235083-4-dancol@google.com>
+ <ef13d728-9f1e-5e38-28a1-7ed7134840e4@tycho.nsa.gov>
+In-Reply-To: <ef13d728-9f1e-5e38-28a1-7ed7134840e4@tycho.nsa.gov>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Wed, 12 Feb 2020 09:19:16 -0800
+Message-ID: <CAKOZuesUVSYJ6EjHFL3QyiWKVmyhm1fLp5Bm_SHjB3_s1gn08A@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] Teach SELinux about a new userfaultfd class
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Tim Murray <timmurray@google.com>, Nosh Minwalla <nosh@google.com>,
+        Nick Kralevich <nnk@google.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-12 6:07 p.m., Nathan Chancellor wrote:
-> On Wed, Feb 12, 2020 at 09:52:52AM +0100, Michel Dänzer wrote:
->> On 2020-02-11 9:39 p.m., Nathan Chancellor wrote:
->>> On Tue, Feb 11, 2020 at 10:41:48AM +0100, Michel Dänzer wrote:
->>>> On 2020-02-11 7:13 a.m., Nathan Chancellor wrote:
->>>>> A recent commit in clang added -Wtautological-compare to -Wall, which is
->>>>> enabled for i915 so we see the following warning:
->>>>>
->>>>> ../drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c:1485:22: warning:
->>>>> result of comparison of constant 576460752303423487 with expression of
->>>>> type 'unsigned int' is always false
->>>>> [-Wtautological-constant-out-of-range-compare]
->>>>>         if (unlikely(remain > N_RELOC(ULONG_MAX)))
->>>>>             ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
->>>>>
->>>>> This warning only happens on x86_64 but that check is relevant for
->>>>> 32-bit x86 so we cannot remove it.
->>>>
->>>> That's suprising. AFAICT N_RELOC(ULONG_MAX) works out to the same value
->>>> in both cases, and remain is a 32-bit value in both cases. How can it be
->>>> larger than N_RELOC(ULONG_MAX) on 32-bit (but not on 64-bit)?
->>>>
->>>
->>> Hi Michel,
->>>
->>> Can't this condition be true when UINT_MAX == ULONG_MAX?
->>
->> Oh, right, I think I was wrongly thinking long had 64 bits even on 32-bit.
->>
->>
->> Anyway, this suggests a possible better solution:
->>
->> #if UINT_MAX == ULONG_MAX
->> 	if (unlikely(remain > N_RELOC(ULONG_MAX)))
->> 		return -EINVAL;
->> #endif
->>
->>
->> Or if that can't be used for some reason, something like
->>
->> 	if (unlikely((unsigned long)remain > N_RELOC(ULONG_MAX)))
->> 		return -EINVAL;
->>
->> should silence the warning.
-> 
-> I do like this one better than the former.
+Thanks for taking a look.
 
-FWIW, one downside of this one compared to all alternatives (presumably)
-is that it might end up generating actual code even on 64-bit, which
-always ends up skipping the return.
+On Wed, Feb 12, 2020 at 9:04 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+>
+> On 2/11/20 5:55 PM, Daniel Colascione wrote:
+> > Use the secure anonymous inode LSM hook we just added to let SELinux
+> > policy place restrictions on userfaultfd use. The create operation
+> > applies to processes creating new instances of these file objects;
+> > transfer between processes is covered by restrictions on read, write,
+> > and ioctl access already checked inside selinux_file_receive.
+> >
+> > Signed-off-by: Daniel Colascione <dancol@google.com>
+>
+> (please add linux-fsdevel and viro to the cc for future versions of this
+> patch since it changes the VFS)
+>
+> > ---
+> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > index 1659b59fb5d7..e178f6f40e93 100644
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -2915,6 +2919,69 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+> >       return 0;
+> >   }
+> >
+> > +static int selinux_inode_init_security_anon(struct inode *inode,
+> > +                                         const char *name,
+> > +                                         const struct file_operations *fops)
+> > +{
+> > +     const struct task_security_struct *tsec = selinux_cred(current_cred());
+> > +     struct common_audit_data ad;
+> > +     struct inode_security_struct *isec;
+> > +
+> > +     if (unlikely(IS_PRIVATE(inode)))
+> > +             return 0;
+>
+> Seems like this is precluded by the caller and would be a bug?  If
+> needed at all, take it to the security_inode_init_security_anon() so it
+> doesn't have to be repeated in each security module.
+>
+> > +
+> > +     /*
+> > +      * We shouldn't be creating secure anonymous inodes before LSM
+> > +      * initialization completes.
+> > +      */
+> > +     if (unlikely(!selinux_state.initialized))
+> > +             return -EBUSY;
+>
+> I don't think this is viable; any arbitrary actions are possible before
+> policy is loaded, and a Linux distro can be brought up fully with
+> SELinux enabled and no policy loaded.  You'll just need to have a
+> default behavior prior to initialization.
 
+We'd have to fail open then, I think, and return an S_PRIVATE inode
+(the regular anon inode).
 
--- 
-Earthling Michel Dänzer               |               https://redhat.com
-Libre software enthusiast             |             Mesa and X developer
+> > +
+> > +     isec = selinux_inode(inode);
+> > +
+> > +     /*
+> > +      * We only get here once per ephemeral inode.  The inode has
+> > +      * been initialized via inode_alloc_security but is otherwise
+> > +      * untouched, so check that the state is as
+> > +      * inode_alloc_security left it.
+> > +      */
+> > +     BUG_ON(isec->initialized != LABEL_INVALID);
+> > +     BUG_ON(isec->sclass != SECCLASS_FILE);
+>
+> I think the kernel discourages overuse of BUG_ON/BUG/...
+
+I'm not sure what counts as overuse.
+
+> > +
+> > +#ifdef CONFIG_USERFAULTFD
+> > +     if (fops == &userfaultfd_fops)
+> > +             isec->sclass = SECCLASS_UFFD;
+> > +#endif
+>
+> Not sure we want or need to introduce a new security class for each user
+> of anonymous inodes since the permissions should be the same as for
+> file.
+
+The purpose of this change is to apply special policy to userfaultfd
+FDs in particular. Isn't having a UFFD security class the best way to
+go about that? (There's no path.) Am I missing something?
+
+> Also not sure we want to be testing fops for each such case.
+
+I was also thinking of just providing some kind of context string
+(maybe the name), which might be friendlier to modules, but the loose
+coupling kind of scares me, and for this particular application, since
+UFFD is always in the core and never in a module, checking the fops
+seems a bit more robust and doesn't hurt anything.
+
+> We
+> were looking at possibly leveraging the name as a key and using
+> security_transition_sid() to generate a distinct SID/context/type for
+> the inode via type_transition rules in policy.  We have some WIP along
+> those lines.
+
+Where? Any chance it would be ready soon? I'd rather not hold up this
+work for a more general mechanism.
+
+> > +
+> > +     if (isec->sclass == SECCLASS_FILE) {
+> > +             printk(KERN_WARNING "refusing to create secure anonymous inode "
+> > +                    "of unknown type");
+> > +             return -EOPNOTSUPP;
+> > +     }
+> > +     /*
+> > +      * Always give secure anonymous inodes the sid of the
+> > +      * creating task.
+> > +      */
+> > +
+> > +     isec->sid = tsec->sid;
+>
+> This doesn't generalize for other users of anonymous inodes, e.g. the
+> /dev/kvm case where we'd rather inherit the SID and class from the
+> original /dev/kvm inode itself.
+
+I think someone mentioned on the first version of this patch that we
+could make it more flexible if the need arose. If we do want to do it
+now, we could have the anon_inode security hook accept a "parent" or
+"context" inode that modules could inspect for the purposes of forming
+the new inode's SID. Does that make sense to you?
