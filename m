@@ -2,86 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BFAE15ACC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 17:04:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53FB615ACD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 17:09:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728791AbgBLQEi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 11:04:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33266 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727960AbgBLQEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 11:04:36 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id ADFA7AE84;
-        Wed, 12 Feb 2020 16:04:34 +0000 (UTC)
-Date:   Wed, 12 Feb 2020 16:04:31 +0000
-From:   Mel Gorman <mgorman@suse.de>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>
-Subject: Re: [RFC 2/4] sched/numa: replace runnable_load_avg by load_avg
-Message-ID: <20200212160431.GW3420@suse.de>
-References: <20200211174651.10330-1-vincent.guittot@linaro.org>
- <20200211174651.10330-3-vincent.guittot@linaro.org>
- <20200212133715.GU3420@suse.de>
- <CAKfTPtAJE_eDgR8dmScgVbOgS9sQSJg27Mw62Z1htMCmgN_Yew@mail.gmail.com>
+        id S1727923AbgBLQJT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 11:09:19 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:36144 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726351AbgBLQJT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 11:09:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=7+ReAluwFBjiuci9d/0VJPyPkG6BwXDsdk8/QiIksNQ=; b=NdmMbPvPTZAb0r59ZYL6ehSwDU
+        7s2p7DrUdrQNkzj1T8dpuAECugykZhQFiijvviMDcuXsDa8QmQTnkfU1vMLrL3eQ/cn9ibqYjftR4
+        TrSD3RZGSRlR9+J7QxVv6gFn+g37cZWAAqY8X1SovyieS6p3PU2ZBh8+tCm9q877ivoSs9w60QEbm
+        BXNSMcy68yqbVM8Q4AkllxEeG8sJxoGQ2fO8PztueGP1/WN9Ov+gI23DfbiEQlxVyJmiHG8lk9npX
+        F5r3Hea0Bku+HJXxjiwWwjjh7PiMmVycPc1VOm4O7lEbyOmzzh0WnGl+xxrh53sTVIe3IcMHdFc1m
+        0oNLpy+A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1uZK-0004eB-Pj; Wed, 12 Feb 2020 16:08:54 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3668F300235;
+        Wed, 12 Feb 2020 17:07:03 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6B7ED2B48FC86; Wed, 12 Feb 2020 17:08:52 +0100 (CET)
+Date:   Wed, 12 Feb 2020 17:08:52 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     linux-kernel@vger.kernel.org, monstr@monstr.eu, git@xilinx.com,
+        arnd@arndb.de, Allison Randal <allison@lohutok.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Enrico Weigelt <info@metux.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Stefan Asserhall <stefan.asserhall@xilinx.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 0/7] microblaze: Define SMP safe operations
+Message-ID: <20200212160852.GC14973@hirez.programming.kicks-ass.net>
+References: <cover.1581522136.git.michal.simek@xilinx.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKfTPtAJE_eDgR8dmScgVbOgS9sQSJg27Mw62Z1htMCmgN_Yew@mail.gmail.com>
+In-Reply-To: <cover.1581522136.git.michal.simek@xilinx.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 04:03:28PM +0100, Vincent Guittot wrote:
-> > Ok, so this is essentially group_is_overloaded.
-> >
-> >
-> > > +     if ((ns->nr_running < ns->weight) ||
-> > > +         ((ns->compute_capacity * 100) > (ns->util * imbalance_pct)))
-> > > +             return node_has_spare;
-> > > +
-> >
-> > And this is group_has_capacity. What I did was have a common helper
-> > for both NUMA and normal load balancing and translated the fields from
-> > sg_lb_stats and numa_stats into a common helper. This is to prevent them
-> > getting out of sync. The conversion was incomplete in my case but in
-> > principle, both NUMA and CPU load balancing should use common helpers or
-> > they'll get out of sync.
-> 
-> I fact, I wanted to keep this patch simple and readable for the 1st
-> version in order to not afraid people from reviewing it. That's the
-> main reason I didn't merge it with load_balance but i agree that some
-> common helper function might be possible.
-> 
+On Wed, Feb 12, 2020 at 04:42:22PM +0100, Michal Simek wrote:
 
-Makes sense.
+> Microblaze has 32bit exclusive load/store instructions which should be used
+> instead of irq enable/disable. For more information take a look at
+> https://www.xilinx.com/support/documentation/sw_manuals/xilinx2019_2/ug984-vivado-microblaze-ref.pdf
+> starting from page 25.
 
-> Also the struct sg_lb_stats has a lot more fields compared to struct numa_stats
-> 
+>  arch/microblaze/include/asm/Kbuild           |   1 -
+>  arch/microblaze/include/asm/atomic.h         | 265 ++++++++++++++++++-
+>  arch/microblaze/include/asm/bitops.h         | 189 +++++++++++++
+>  arch/microblaze/include/asm/cmpxchg.h        |  87 ++++++
+>  arch/microblaze/include/asm/cpuinfo.h        |   2 +-
+>  arch/microblaze/include/asm/pgtable.h        |  19 +-
+>  arch/microblaze/include/asm/spinlock.h       | 240 +++++++++++++++++
+>  arch/microblaze/include/asm/spinlock_types.h |  25 ++
+>  arch/microblaze/kernel/cpu/cache.c           | 154 ++++++-----
+>  arch/microblaze/kernel/cpu/cpuinfo.c         |  38 ++-
+>  arch/microblaze/kernel/cpu/mb.c              | 207 ++++++++-------
+>  arch/microblaze/kernel/timer.c               |   2 +-
+>  arch/microblaze/mm/consistent.c              |   8 +-
+>  13 files changed, 1040 insertions(+), 197 deletions(-)
+>  create mode 100644 arch/microblaze/include/asm/bitops.h
+>  create mode 100644 arch/microblaze/include/asm/spinlock.h
+>  create mode 100644 arch/microblaze/include/asm/spinlock_types.h
 
-Yes, I considered reusing the same structure and decided against it. I
-simply created a common helper. It's trivial enough to do on top after
-the fact in the name of clarity. Fundamentally it's cosmetic.
+I'm missing asm/barrier.h
 
-> Then, I wonder if we could end up with different rules for numa like
-> taking into account some NUMA specifics metrics to classify the node
-> 
+Also that PDF (thanks for that!), seems light on memory ordering
+details.
 
-Well, we could but right now they should be the same. As it is, the NUMA
-balancer and load balancer overrule each other. I think the scope for
-changing that without causing regressions is limited.
+Your comment:
 
--- 
-Mel Gorman
-SUSE Labs
++/*
++ * clear_bit doesn't imply a memory barrier
++ */
+
+worries me, because that would imply your ll/sc does not impose order,
+but then you also don't have any explicit barriers in your locking
+primitives or atomics where required.
+
+In the PDF I only find MBAR; is that what smp_mb() ends up being?
