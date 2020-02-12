@@ -2,103 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89E7515A482
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:21:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77D7A15A47D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:20:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728802AbgBLJVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 04:21:32 -0500
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:59506 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728530AbgBLJVb (ORCPT
+        id S1728745AbgBLJUv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 04:20:51 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:23668 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728530AbgBLJUu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:21:31 -0500
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id 01C9LI33008124;
-        Wed, 12 Feb 2020 18:21:19 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com 01C9LI33008124
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1581499279;
-        bh=iYzD7pdsLyiDZ36c5d6tg+M16G3Z0A4Qkle2y21WmO4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=MEkMO8qWqvGOB6YbA98tAicKNmVYCmEEF0+jvnZcP9vwWz5Z/XT1+Xds25vCvvshA
-         5zE/p5kLAorYZHqVYD3jmzJ4w1LdUJ19ZmdnBjhI+wpKbN7Bxewt9kHhIeqvk2oXrO
-         csk23G4fdJ9OyKsaInvXj3jS8QpaPywXcU7+J7r6IuUY/0vjSNO86L3UEQPL5+fyO0
-         McohvztsbamEnjn7UDDplfhbzJYR+CcDXCwrjntBrOdcqrs7GGjA50LIRmMtMwfqzN
-         uaV/zXL/Owwfi5xlN8GBD3pk4VFGr3t+TJJ02HiOQsYBWTqIf1HbBpz+bD+r8Fmr66
-         p3qp8l6RgZaIg==
-X-Nifty-SrcIP: [209.85.222.53]
-Received: by mail-ua1-f53.google.com with SMTP id w15so607239uap.0;
-        Wed, 12 Feb 2020 01:21:19 -0800 (PST)
-X-Gm-Message-State: APjAAAXrZYjw0vBK9T4UBABLZ00khLEbbLJ7rX/aVG4l0NH8cb3RVZjv
-        w8bauO4iyAnt9uq08LyBp1GdEUTGMrZMBPF6PiI=
-X-Google-Smtp-Source: APXvYqy0urxDpzGsbsHT8k8GTdNCXZuHMc0izqqATD6WqiS7hOqQJCh10Wqi+8y2ehLGEvej4sCWBmfUkqTYRP0+RJ8=
-X-Received: by 2002:ab0:2881:: with SMTP id s1mr3947693uap.95.1581499278141;
- Wed, 12 Feb 2020 01:21:18 -0800 (PST)
+        Wed, 12 Feb 2020 04:20:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581499249;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DzmJbxskk6AlcHsD2V7eyusyF086fPjD2IYe+QvfO+A=;
+        b=QBjSfRt62jDCOmdmZZDX/oGvknf8ensaGEC/CFjmqZ6dxIdSoOS6U0OUb+ZSQqnFkipAoc
+        IeFG6Zlq/yFFwQQNRvIXNB71Od/5cJn2wtt2iPTqDKoOo3irW3bIxlDa3njIy5XyZTZiVf
+        mv9gGze0hdHORYbpHCCqqiagqA8Lu1E=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-406-qLzioGbBOXmvZhndA3JKZQ-1; Wed, 12 Feb 2020 04:20:45 -0500
+X-MC-Unique: qLzioGbBOXmvZhndA3JKZQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0EF19107ACC9;
+        Wed, 12 Feb 2020 09:20:44 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-117-39.ams2.redhat.com [10.36.117.39])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BE63D1001281;
+        Wed, 12 Feb 2020 09:20:43 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id B751D9D6B; Wed, 12 Feb 2020 10:20:42 +0100 (CET)
+Date:   Wed, 12 Feb 2020 10:20:42 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] drm/bochs: add drm_driver.release callback.
+Message-ID: <20200212092042.wnolwagpiucyw25m@sirius.home.kraxel.org>
+References: <20200211135218.22871-1-kraxel@redhat.com>
+ <20200211141956.GC2363188@phenom.ffwll.local>
 MIME-Version: 1.0
-References: <20200210161852.842-1-masahiroy@kernel.org>
-In-Reply-To: <20200210161852.842-1-masahiroy@kernel.org>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Wed, 12 Feb 2020 18:20:42 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATLCAnrtqR8vv=jWiDcODGchMekOGMbSNvEQtnb3JqTDQ@mail.gmail.com>
-Message-ID: <CAK7LNATLCAnrtqR8vv=jWiDcODGchMekOGMbSNvEQtnb3JqTDQ@mail.gmail.com>
-Subject: Re: [PATCH] scripts/kallsyms: fix memory corruption caused by write over-run
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     youling257 <youling257@gmail.com>, Pavel Machek <pavel@ucw.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200211141956.GC2363188@phenom.ffwll.local>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 1:19 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> scripts/kallsyms crashes because memcpy() writes one more byte than
-> allocated.
->
-> Fixes: 8d60526999aa ("scripts/kallsyms: change table to store (strcut sym_entry *)")
-> Reported-by: youling257 <youling257@gmail.com>
-> Reported-by: Pavel Machek <pavel@ucw.cz>
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
+On Tue, Feb 11, 2020 at 03:19:56PM +0100, Daniel Vetter wrote:
+> On Tue, Feb 11, 2020 at 02:52:18PM +0100, Gerd Hoffmann wrote:
+> > Call bochs_unload via drm_driver.release to make sure we release stuff
+> > when it is safe to do so.  Use drm_dev_{enter,exit,unplug} to avoid
+> > touching hardware after device removal.  Tidy up here and there.
+> > 
+> > v4: add changelog.
+> > v3: use drm_dev_*().
+> > v2: move hardware deinit to pci_remove().
+> > 
+> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> 
+> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> 
+> Btw I checked around whether there's anything else that obviously needs a
+> drm_dev_enter/exit, and I spotted the !bochs->mmio check in
+> bochs_hw_load_edid. That one looks like cargo-cult, there's a single
+> caller in the init path, so either mmio works at that point or this is
+> dead code ... slightly confusing.
 
-Applied.
-I will send a pull request shortly
-because many people are tripping over this bug.
+FYI:  bochs->mmio actually can be NULL when running on very old qemu
+versions, the mmio bar was added in qemu release 1.3.  All the register
+access functions in bochs_hw.c have a fallback going to ioports because
+of that.  So there is a reason for the check, even though it is highly
+unlikely that mmio actually is NULL these days.  qemu 1.3 was released
+in 2013 ...
 
+cheers,
+  Gerd
 
-
-
->  scripts/kallsyms.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
-> index a566d8201b56..0133dfaaf352 100644
-> --- a/scripts/kallsyms.c
-> +++ b/scripts/kallsyms.c
-> @@ -210,7 +210,7 @@ static struct sym_entry *read_symbol(FILE *in)
->
->         len = strlen(name) + 1;
->
-> -       sym = malloc(sizeof(*sym) + len);
-> +       sym = malloc(sizeof(*sym) + len + 1);
->         if (!sym) {
->                 fprintf(stderr, "kallsyms failure: "
->                         "unable to allocate required amount of memory\n");
-> @@ -219,7 +219,7 @@ static struct sym_entry *read_symbol(FILE *in)
->         sym->addr = addr;
->         sym->len = len;
->         sym->sym[0] = type;
-> -       memcpy(sym_name(sym), name, len);
-> +       strcpy(sym_name(sym), name);
->         sym->percpu_absolute = 0;
->
->         return sym;
-> --
-> 2.17.1
->
-
-
--- 
-Best Regards
-Masahiro Yamada
