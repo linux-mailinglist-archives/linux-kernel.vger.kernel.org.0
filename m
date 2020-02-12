@@ -2,72 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C5B415A824
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 12:44:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79C0B15A82C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 12:45:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728311AbgBLLow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 06:44:52 -0500
-Received: from mga14.intel.com ([192.55.52.115]:46720 "EHLO mga14.intel.com"
+        id S1728417AbgBLLpG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 06:45:06 -0500
+Received: from 8bytes.org ([81.169.241.247]:53690 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727987AbgBLLow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 06:44:52 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 03:44:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="347499922"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 12 Feb 2020 03:44:47 -0800
-Received: by lahna (sSMTP sendmail emulation); Wed, 12 Feb 2020 13:44:46 +0200
-Date:   Wed, 12 Feb 2020 13:44:46 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        "David E . Box" <david.e.box@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 09/18] mfd: intel_soc_pmic: Add SCU IPC member to
- struct intel_soc_pmic
-Message-ID: <20200212114446.GY2667@lahna.fi.intel.com>
-References: <20200211132603.73509-1-mika.westerberg@linux.intel.com>
- <20200211132603.73509-10-mika.westerberg@linux.intel.com>
- <20200211155706.GH10400@smile.fi.intel.com>
+        id S1728386AbgBLLpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 06:45:05 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 01EBF4A6; Wed, 12 Feb 2020 12:45:03 +0100 (CET)
+Date:   Wed, 12 Feb 2020 12:44:51 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        Linux Virtualization <virtualization@lists.linux-foundation.org>,
+        Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH 18/62] x86/boot/compressed/64: Setup GHCB Based VC
+ Exception handler
+Message-ID: <20200212114451.GC20066@8bytes.org>
+References: <20200211135256.24617-1-joro@8bytes.org>
+ <20200211135256.24617-19-joro@8bytes.org>
+ <CALCETrVWoG7ugfE_FJgNKyyWYCmZh1162kfceJ2bs+O7Qyf-8A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200211155706.GH10400@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <CALCETrVWoG7ugfE_FJgNKyyWYCmZh1162kfceJ2bs+O7Qyf-8A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 05:57:06PM +0200, Andy Shevchenko wrote:
-> On Tue, Feb 11, 2020 at 04:25:54PM +0300, Mika Westerberg wrote:
-> > Both PMIC drivers (intel_soc_pmic_mrfld and intel_soc_pmic_bxtwc) will
-> > be using this field going forward to access the SCU IPC instance.
-> > 
-> > While there add kernel-doc for the intel_soc_pmic structure.
+On Tue, Feb 11, 2020 at 02:25:49PM -0800, Andy Lutomirski wrote:
+> On Tue, Feb 11, 2020 at 5:53 AM Joerg Roedel <joro@8bytes.org> wrote:
+> >
+> > From: Joerg Roedel <jroedel@suse.de>
+> >
+> > Install an exception handler for #VC exception that uses a GHCB. Also
+> > add the infrastructure for handling different exit-codes by decoding
+> > the instruction that caused the exception and error handling.
+> >
 > 
-> > + * @irq_chip_data_pwrbtn: Chained IRQ chip data for the power button
-> > + * @irq_chip_data_tmu: Chained IRQ chip data for the time management unit
-> > + * @irq_chip_data_bcu: Chained IRQ chip data for the burst control unit
-> > + * @irq_chip_data_adc: Chained IRQ chip data for the general purpose ADC
-> > + * @irq_chip_data_chgr: Chained IRQ chip data for the external charger
-> > + * @irq_chip_data_crit: Chained IRQ chip data for the critical event handler
+> > diff --git a/arch/x86/boot/compressed/sev-es.c b/arch/x86/boot/compressed/sev-es.c
+> > index 8d13121a8cf2..02fb6f57128b 100644
+> > --- a/arch/x86/boot/compressed/sev-es.c
+> > +++ b/arch/x86/boot/compressed/sev-es.c
+> > @@ -8,12 +8,16 @@
+> >  #include <linux/kernel.h>
+> >
+> >  #include <asm/sev-es.h>
+> > +#include <asm/trap_defs.h>
+> >  #include <asm/msr-index.h>
+> >  #include <asm/ptrace.h>
+> >  #include <asm/svm.h>
+> >
+> >  #include "misc.h"
+> >
+> > +struct ghcb boot_ghcb_page __aligned(PAGE_SIZE);
+> > +struct ghcb *boot_ghcb;
+> > +
+> >  static inline u64 read_ghcb_msr(void)
+> >  {
+> >         unsigned long low, high;
+> > @@ -35,8 +39,95 @@ static inline void write_ghcb_msr(u64 val)
+> >                         "a"(low), "d" (high) : "memory");
+> >  }
+> >
+> > +static enum es_result es_fetch_insn_byte(struct es_em_ctxt *ctxt,
+> > +                                        unsigned int offset,
+> > +                                        char *buffer)
+> > +{
+> > +       char *rip = (char *)ctxt->regs->ip;
+> > +
+> > +       buffer[offset] = rip[offset];
+> > +
+> > +       return ES_OK;
+> > +}
+> > +
+> > +static enum es_result es_write_mem(struct es_em_ctxt *ctxt,
+> > +                                  void *dst, char *buf, size_t size)
+> > +{
+> > +       memcpy(dst, buf, size);
+> > +
+> > +       return ES_OK;
+> > +}
+> > +
+> > +static enum es_result es_read_mem(struct es_em_ctxt *ctxt,
+> > +                                 void *src, char *buf, size_t size)
+> > +{
+> > +       memcpy(buf, src, size);
+> > +
+> > +       return ES_OK;
+> > +}
 > 
-> Perhaps capitalize the decoded abbreviation, e.g.
-> general purpose ADC -> General Purpose ADC ?
+> 
+> What are all these abstractions for?
 
-Sure.
+They are needed for the code in arch/x86/kernel/sev-es-shared.c. This
+file is used in the pre-decompression boot code and in the running
+kernels SEV-ES support.
+
+The running kernel needs these abstraction because it will get #VC
+exceptions from user-space and MMIO exits touching user-space addresses.
+These functions will implement the necessary security checks.
+
+Regards,
+
+	Joerg
