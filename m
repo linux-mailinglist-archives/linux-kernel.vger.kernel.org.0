@@ -2,161 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E37C115B426
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 23:56:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1399315B428
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 23:56:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729212AbgBLW4F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 17:56:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42504 "EHLO mail.kernel.org"
+        id S1729267AbgBLW4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 17:56:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728185AbgBLW4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 17:56:04 -0500
-Received: from localhost (unknown [104.132.1.104])
+        id S1728185AbgBLW4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 17:56:10 -0500
+Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5ABF21569;
-        Wed, 12 Feb 2020 22:56:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D357B2168B;
+        Wed, 12 Feb 2020 22:56:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581548164;
-        bh=dJpfeI0uuBvhIhsEza0VhIC2G+XvIrf3MaBC2aTSshM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SZnxP8BuZ/Lx5j9m6CT/0ULu3lx3IP+DaF/NdHSdFV8g1l7jTZnnhcBtNL86JP1i2
-         a7bIxg3o1sJwYOmIXOtcgB+RqMwAc8vk2mvRw8+f5+v+lnkD3vCSY7b63cJbZyOS81
-         XXWoad5cTUus64OU6aS0+KkxJBinI7ZscyNZYOTc=
-Date:   Wed, 12 Feb 2020 14:56:03 -0800
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Liang, Kan" <kan.liang@linux.intel.com>
-Cc:     "Sudarikov, Roman" <roman.sudarikov@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, peterz@infradead.org,
-        mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        eranian@google.com, bgregg@netflix.com, alexander.antonov@intel.com
-Subject: Re: [PATCH v5 3/3] perf =?iso-8859-1?Q?x86?=
- =?iso-8859-1?Q?=3A_Exposing_an_Uncore_unit_to_PMON_for_Intel_Xeon?=
- =?iso-8859-1?Q?=AE?= server platform
-Message-ID: <20200212225603.GA2489060@kroah.com>
-References: <20200211161549.19828-1-roman.sudarikov@linux.intel.com>
- <20200211161549.19828-4-roman.sudarikov@linux.intel.com>
- <20200211171544.GA1933705@kroah.com>
- <20200211184200.GA302770@tassilo.jf.intel.com>
- <20200211185759.GA1941673@kroah.com>
- <25dca8dd-c52d-676d-ffe4-90f3a6ddc915@linux.intel.com>
- <20200211201427.GA1975593@kroah.com>
- <7a697574-aa76-3eda-d504-1ec72bcb6353@linux.intel.com>
- <323e0892-d34f-a812-4d9a-e7a4bf71afd2@linux.intel.com>
+        s=default; t=1581548169;
+        bh=SCnNSfEGNeaLvEPYBFXgqfow4bBeZQwy5T7gptghPE8=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=x/+w7+6ZCMH4J8zy6pThODObm0WIsKddbKyctJ1uGJ2hLo2RqxUYjFhzF/DOhJgqJ
+         /IQuYnyWJxDNkg8SRGiWkoBFl0RP6kIuVEMXx6kOgGrOqFvvX7H8FBGG7prp5Hl2Xa
+         sP9pjAeUtAb6P53W5C0wakF+gvlwUz82LxutybE4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <323e0892-d34f-a812-4d9a-e7a4bf71afd2@linux.intel.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1581490943-17920-1-git-send-email-Anson.Huang@nxp.com>
+References: <1581490943-17920-1-git-send-email-Anson.Huang@nxp.com>
+Subject: Re: [PATCH] clk: imx: Include clk-provider.h instead of clk.h for i.MX8M SoCs clock driver
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Linux-imx@nxp.com
+To:     Anson Huang <Anson.Huang@nxp.com>, abel.vesa@nxp.com,
+        festevam@gmail.com, jun.li@nxp.com, kernel@pengutronix.de,
+        leonard.crestez@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, peng.fan@nxp.com, ping.bai@nxp.com,
+        s.hauer@pengutronix.de, shawnguo@kernel.org
+Date:   Wed, 12 Feb 2020 14:56:09 -0800
+Message-ID: <158154816906.184098.11837279192030973805@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 03:58:50PM -0500, Liang, Kan wrote:
-> 
-> 
-> On 2/12/2020 12:31 PM, Sudarikov, Roman wrote:
-> > On 11.02.2020 23:14, Greg KH wrote:
-> > > On Tue, Feb 11, 2020 at 02:59:21PM -0500, Liang, Kan wrote:
-> > > > 
-> > > > On 2/11/2020 1:57 PM, Greg KH wrote:
-> > > > > On Tue, Feb 11, 2020 at 10:42:00AM -0800, Andi Kleen wrote:
-> > > > > > On Tue, Feb 11, 2020 at 09:15:44AM -0800, Greg KH wrote:
-> > > > > > > On Tue, Feb 11, 2020 at 07:15:49PM +0300,
-> > > > > > > roman.sudarikov@linux.intel.com wrote:
-> > > > > > > > +static ssize_t skx_iio_mapping_show(struct device *dev,
-> > > > > > > > +                struct device_attribute *attr, char *buf)
-> > > > > > > > +{
-> > > > > > > > +    struct pmu *pmu = dev_get_drvdata(dev);
-> > > > > > > > +    struct intel_uncore_pmu *uncore_pmu =
-> > > > > > > > +        container_of(pmu, struct intel_uncore_pmu, pmu);
-> > > > > > > > +
-> > > > > > > > +    struct dev_ext_attribute *ea =
-> > > > > > > > +        container_of(attr, struct dev_ext_attribute, attr);
-> > > > > > > > +    long die = (long)ea->var;
-> > > > > > > > +
-> > > > > > > > +    return sprintf(buf, "0000:%02x\n",
-> > > > > > > > skx_iio_stack(uncore_pmu, die));
-> > > > > > > If "0000:" is always the "prefix" of the output of
-> > > > > > > this file, why have
-> > > > > > > it at all as you always know it is there?
-> > > > 
-> > > > I think Roman only test with BIOS configured as single-segment. So he
-> > > > hard-code the segment# here.
-> > > > 
-> > > > I'm not sure if Roman can do some test with multiple-segment
-> > > > BIOS. If not, I
-> > > > think we should at least print a warning here.
-> > > > 
-> > > > > > > What is ever going to cause that to change?
-> > > > > > I think it's just to make it a complete PCI address.
-> > > > > Is that what this really is?  If so, it's not a "complete" pci address,
-> > > > > is it?  If it is, use the real pci address please.
-> > > > I think we don't need a complete PCI address here. The attr is
-> > > > to disclose
-> > > > the mapping information between die and PCI BUS. Segment:BUS
-> > > > should be good
-> > > > enough.
-> > > "good enough" for today, but note that you can not change the format of
-> > > the data in the file in the future, you would have to create a new file.
-> > > So I suggest at least try to future-proof it as much as possible if you
-> > > _know_ this could change.
-> > > 
-> > > Just use the full pci address, there's no reason not to, otherwise it's
-> > > just confusing.
-> > > 
-> > > thanks,
-> > > 
-> > > greg k-h
-> > Hi Greg,
-> > 
-> > Yes, the "Segment:Bus" pair is enough to distinguish between different
-> > Root ports.
-> 
-> I think Greg suggests us to use full PCI address here.
-> 
-> Hi Greg,
-> 
-> There may be several devices are connected to IIO stack. There is no full
-> PCI address for IIO stack.
+Quoting Anson Huang (2020-02-11 23:02:23)
+> The i.MX8M SoCs clock driver are provider, NOT consumer, so clk-provider.h
+> should be used instead of clk.h.
+>=20
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
 
-Please define "full" for me.  Please please don't tell me you are just
-using a truncated version of the PCI address.  I thought we got rid of
-all of that nonsense 10 years ago...
-
-> I don't think we can list all of devices in the same IIO stack with full PCI
-> address here either. It's not necessary, and only increase maintenance
-> overhead.
-
-Then what exactly _IS_ this number, if not the PCI address?
-
-Something made up to look almost like a PCI address, but not quite?
-Somethine else?
-
-> I think we may have two options here.
-> 
-> Option 1: Roman's proposal.The format of the file is "Segment:Bus". For the
-> future I can see, the format doesn't need to be changed.
->     E.g. $ls /sys/devices/uncore_<type>_<pmu_idx>/die0
->          $0000:7f
-
-Again, fake PCI address?
-
-> Option 2: Use full PCI address, but use -1 to indicate invalid address.
->     E.g. $ls /sys/devices/uncore_<type>_<pmu_idx>/die0
->          $0000:7f:-1:-1
-
-"Invalid"?  Why?  Why not just refer to the 0:0 device, as that's the
-bus "root" address (or whatever it's called, I can't remember PCI stuff
-all that well...)
-
-> Should we use the format in option 2?
-
-What could userspace do with a -1 -1 address?
-
-thanks,
-
-greg k-h
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
