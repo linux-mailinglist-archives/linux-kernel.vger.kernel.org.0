@@ -2,91 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D051C15AC6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:53:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2C4E15AC73
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:54:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728689AbgBLPxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 10:53:16 -0500
-Received: from mga04.intel.com ([192.55.52.120]:37261 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728052AbgBLPxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 10:53:14 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 07:53:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,433,1574150400"; 
-   d="scan'208";a="347535140"
-Received: from kuha.fi.intel.com ([10.237.72.53])
-  by fmsmga001.fm.intel.com with SMTP; 12 Feb 2020 07:53:10 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 12 Feb 2020 17:53:09 +0200
-Date:   Wed, 12 Feb 2020 17:53:09 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Prashant Malani <pmalani@chromium.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        heikki.krogerus@intel.com,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Benson Leung <bleung@chromium.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Guenter Roeck <groeck@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: Add cros-ec Type C port driver
-Message-ID: <20200212155309.GG1498@kuha.fi.intel.com>
-References: <20200207203752.209296-1-pmalani@chromium.org>
- <20200207203752.209296-2-pmalani@chromium.org>
- <CAL_JsqKnQDhnb14TsOeHhXS0UAX6kexe44pfOntrbEcxB0CC9A@mail.gmail.com>
+        id S1728632AbgBLPyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 10:54:44 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:64526 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728245AbgBLPyn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 10:54:43 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1581522883; h=Content-Transfer-Encoding: MIME-Version:
+ Message-Id: Date: Subject: Cc: To: From: Sender;
+ bh=5GXYmuEvVBgrpfgyHmVLvKxCJbgXZCJNez/OEN+oLSs=; b=kvSUNg+nvKju4c+Q6KrClvqbYpFxpC3BgTtB2vDBlDftihOM5H7F9QCTkmGJZ6eEktnmDU7S
+ T/NMsBquYASR9IBNeSfB2cSiYldgyUitQrJJC0cKeaBUElnYT8u3xpochzKXiRBHybwoSFxE
+ K8gPUZiAcSXZ00GVXgLOoxSj9hU=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e441fb6.7ff518051768-smtp-out-n03;
+ Wed, 12 Feb 2020 15:54:30 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 8043EC4479D; Wed, 12 Feb 2020 15:54:30 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: bgodavar)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A1EE1C43383;
+        Wed, 12 Feb 2020 15:54:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A1EE1C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     mka@chromium.org, agross@kernel.org, bjorn.andersson@linaro.org,
+        hemantg@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        gubbaven@codeaurora.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Subject: [PATCH v2] arm64: dts: qcom: sc7180: Add node for bluetooth soc wcn3990
+Date:   Wed, 12 Feb 2020 21:24:19 +0530
+Message-Id: <20200212155419.20741-1-bgodavar@codeaurora.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqKnQDhnb14TsOeHhXS0UAX6kexe44pfOntrbEcxB0CC9A@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Add bluetooth SoC node for SC7180 IDP board.
 
-On Tue, Feb 11, 2020 at 05:25:13PM -0600, Rob Herring wrote:
-> > +examples:
-> > +  - |+
-> > +    typec {
-> > +      compatible = "google,cros-ec-typec";
-> > +
-> > +      port@0 {
-> 
-> 'port' is reserved for OF graph binding which this is not.
-> 
-> > +        port-number = <0>;
-> > +        power-role = "dual";
-> > +        data-role = "dual";
-> > +        try-power-role = "source";
-> 
-> These are usb-connector binding properties, but this is not a
-> usb-connector node. However, I think it should be. The main thing to
-> work out seems to be have multiple connectors.
-> 
-> With your binding, how does one associate the USB host controller with
-> each port/connector? That's a solved problem with the connector
-> binding.
+Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+---
+v2:
+  * updated commit text
+  * removed status form dts node
+---
+ arch/arm64/boot/dts/qcom/sc7180-idp.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-It looks like OF graph is required to be used for that. The plan was
-actually to propose that we use device properties "usb2-port" and
-"usb3-port" that directly reference the port nodes under the USB host
-controller, but I guess that's too late for that.
-
-OF graph creates one problem. We are going to need to identify the
-endpoints somehow in the USB Type-C drivers, so how do we know which
-endpoint is for example the USB2 port, which is USB3, which is
-DisplayPort, etc?
-
-Does the remote-endpoint parent need to have a specific compatible
-property, like the USB2 port needs to have compatible = "usb2-port"
-and so on?
-
-thanks,
-
+diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+index 388f50ad4fde..7a50a439b6f3 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
++++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+@@ -19,6 +19,7 @@
+ 	aliases {
+ 		hsuart0 = &uart3;
+ 		serial0 = &uart8;
++		bluetooth0 = &bluetooth;
+ 	};
+ 
+ 	chosen {
+@@ -256,6 +257,16 @@
+ 
+ &uart3 {
+ 	status = "okay";
++
++	bluetooth: wcn3990-bt {
++		compatible = "qcom,wcn3990-bt";
++		vddio-supply = <&vreg_l10a_1p8>;
++		vddxo-supply = <&vreg_l1c_1p8>;
++		vddrf-supply = <&vreg_l2c_1p3>;
++		vddch0-supply = <&vreg_l10c_3p3>;
++		max-speed = <3200000>;
++		clocks = <&rpmhcc RPMH_RF_CLK2>;
++	};
+ };
+ 
+ &uart8 {
 -- 
-heikki
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
