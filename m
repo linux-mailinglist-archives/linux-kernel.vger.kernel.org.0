@@ -2,91 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E793C15A32A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:23:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0E6815A351
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:27:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728492AbgBLIXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 03:23:51 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54696 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728469AbgBLIXu (ORCPT
+        id S1728472AbgBLI1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 03:27:39 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:56931 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728192AbgBLI1j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 03:23:50 -0500
-Received: by mail-wm1-f65.google.com with SMTP id g1so1034354wmh.4
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:23:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YcczKYnk8/5+6HzLwge2DmQ8UtE5/tLTf5uBW6rS0Uk=;
-        b=dio5Rg+kyMREybFXzNBAGU/7Nz3w8rIeccrJuibRbT8fJG5/J8tiYwofS7Ta1eSE0q
-         oDRyxKLLvBb0gWh8B58piO1doVo6DahG0X2fzdrGDCjTA9YKTLeIoopAwV+Zh3Klls4A
-         a0DqoOc1w6DwYJ45mp59VD4wNqhCLYuaBdt8CTlLw0h7uYQChHelXBf6ecYX+RguQndM
-         yAHAxr/kecLZa4pTlNEUJAbifbqlWU/O8AyRQJ3loBYnlNjIRarJSAA0KZ7L4mPuKQRB
-         NTC2pBReJEeUk/33IzxtjeDPR+FoekutBTuJGCzTekFkkVt7GudjpS1bAwVlD9WeIFfc
-         lfHA==
-X-Gm-Message-State: APjAAAWbRH6KRiI0IzXMD+1MfNSZqa7SsoOSGHWOEBG6TiMLqKlGj0JM
-        gNaWJ5F3CN+PTVQ177Jc152c4owh
-X-Google-Smtp-Source: APXvYqy1qfDdcUtFvF0fcj80udazhBnOTDztB57fRDKuAaR71X00G5KYH2xzD6d/1Dl8WaV4JyT86Q==
-X-Received: by 2002:a7b:c5cd:: with SMTP id n13mr11239178wmk.172.1581495828521;
-        Wed, 12 Feb 2020 00:23:48 -0800 (PST)
-Received: from localhost (ip-37-188-227-72.eurotel.cz. [37.188.227.72])
-        by smtp.gmail.com with ESMTPSA id o7sm7006577wmh.11.2020.02.12.00.23.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 00:23:47 -0800 (PST)
-Date:   Wed, 12 Feb 2020 09:23:46 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] mm: vmpressure: use mem_cgroup_is_root API
-Message-ID: <20200212082346.GB11353@dhcp22.suse.cz>
-References: <1581398649-125989-1-git-send-email-yang.shi@linux.alibaba.com>
- <1581398649-125989-2-git-send-email-yang.shi@linux.alibaba.com>
+        Wed, 12 Feb 2020 03:27:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581496058;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=0qA1nDcFUvrV3P04ERfz3LJJdXRR+wWSmOw4ogMcuSU=;
+        b=OcUyGKkAkz/wplYYA7cgAVr4h1cgVSf2J5eYVNAqMqmtYlF6I3UMCEWk1pM4uHuO5+Sk2Y
+        GgIUDL+/9lXvSJDA+5rA+A6mASe2Bgc3fsb350t69wehaAbnOWLiCrJOM/APPmhPE551oE
+        Nl7XhQF0PZyRs1LPtjUIGRUz412X5/I=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-212-v6ZEW2x5PFuPkYDjaZSrCg-1; Wed, 12 Feb 2020 03:27:36 -0500
+X-MC-Unique: v6ZEW2x5PFuPkYDjaZSrCg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E058B1857340;
+        Wed, 12 Feb 2020 08:27:33 +0000 (UTC)
+Received: from [10.72.13.111] (ovpn-13-111.pek2.redhat.com [10.72.13.111])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 03FA85DA83;
+        Wed, 12 Feb 2020 08:27:17 +0000 (UTC)
+Subject: Re: [PATCH V2 5/5] vdpasim: vDPA device simulator
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     mst@redhat.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        tiwei.bie@intel.com, maxime.coquelin@redhat.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        rob.miller@broadcom.com, xiao.w.wang@intel.com,
+        haotian.wang@sifive.com, lingshan.zhu@intel.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        kevin.tian@intel.com, stefanha@redhat.com, rdunlap@infradead.org,
+        hch@infradead.org, aadam@redhat.com, jiri@mellanox.com,
+        shahafs@mellanox.com, hanand@xilinx.com, mhabets@solarflare.com
+References: <20200210035608.10002-1-jasowang@redhat.com>
+ <20200210035608.10002-6-jasowang@redhat.com>
+ <20200211135254.GJ4271@mellanox.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <3dbadf4e-c4c5-22cc-f970-f25fa42c13d8@redhat.com>
+Date:   Wed, 12 Feb 2020 16:27:16 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1581398649-125989-2-git-send-email-yang.shi@linux.alibaba.com>
+In-Reply-To: <20200211135254.GJ4271@mellanox.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 11-02-20 13:24:09, Yang Shi wrote:
-> Use mem_cgroup_is_root() API to check if memcg is root memcg instead of
-> open coding.
 
-Yes, the direct use outside of memcontrol.c should be really an
-exception. The only other similar case is cgwb_bdi_init and there is no
-easy way to replace - except for adding a helper which is not worth it.
+On 2020/2/11 =E4=B8=8B=E5=8D=889:52, Jason Gunthorpe wrote:
+> On Mon, Feb 10, 2020 at 11:56:08AM +0800, Jason Wang wrote:
+>> +
+>> +static struct vdpasim *vdpasim_create(void)
+>> +{
+>> +	struct vdpasim *vdpasim;
+>> +	struct virtio_net_config *config;
+>> +	struct vdpa_device *vdpa;
+>> +	struct device *dev;
+>> +	int ret =3D -ENOMEM;
+>> +
+>> +	vdpasim =3D kzalloc(sizeof(*vdpasim), GFP_KERNEL);
+>> +	if (!vdpasim)
+>> +		goto err_vdpa_alloc;
+>> +
+>> +	vdpasim->buffer =3D kmalloc(PAGE_SIZE, GFP_KERNEL);
+>> +	if (!vdpasim->buffer)
+>> +		goto err_buffer_alloc;
+>> +
+>> +	vdpasim->iommu =3D vhost_iotlb_alloc(2048, 0);
+>> +	if (!vdpasim->iommu)
+>> +		goto err_iotlb;
+>> +
+>> +	config =3D &vdpasim->config;
+>> +	config->mtu =3D 1500;
+>> +	config->status =3D VIRTIO_NET_S_LINK_UP;
+>> +	eth_random_addr(config->mac);
+>> +
+>> +	INIT_WORK(&vdpasim->work, vdpasim_work);
+>> +	spin_lock_init(&vdpasim->lock);
+>> +
+>> +	vdpa =3D &vdpasim->vdpa;
+>> +	vdpa->dev.release =3D vdpasim_release_dev;
+> The driver should not provide the release function.
+>
+> Again the safest model is 'vdpa_alloc_device' which combines the
+> kzalloc and the vdpa_init_device() and returns something that is
+> error unwound with put_device()
+>
+> The subsystem owns the release and does the kfree and other cleanup
+> like releasing the IDA.
 
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+So I think if we agree bus instead of class is used. vDPA bus can=20
+provide a release function in vdpa_alloc_device()?
 
-Thanks!
 
-> ---
->  mm/vmpressure.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/vmpressure.c b/mm/vmpressure.c
-> index 0590f00..d69019f 100644
-> --- a/mm/vmpressure.c
-> +++ b/mm/vmpressure.c
-> @@ -280,7 +280,7 @@ void vmpressure(gfp_t gfp, struct mem_cgroup *memcg, bool tree,
->  		enum vmpressure_levels level;
->  
->  		/* For now, no users for root-level efficiency */
-> -		if (!memcg || memcg == root_mem_cgroup)
-> +		if (!memcg || mem_cgroup_is_root(memcg))
->  			return;
->  
->  		spin_lock(&vmpr->sr_lock);
-> -- 
-> 1.8.3.1
-> 
+>
+>> +	vringh_set_iotlb(&vdpasim->vqs[0].vring, vdpasim->iommu);
+>> +	vringh_set_iotlb(&vdpasim->vqs[1].vring, vdpasim->iommu);
+>> +
+>> +	dev =3D &vdpa->dev;
+>> +	dev->coherent_dma_mask =3D DMA_BIT_MASK(64);
+>> +	set_dma_ops(dev, &vdpasim_dma_ops);
+>> +
+>> +	ret =3D vdpa_init_device(vdpa, &vdpasim_dev->dev, dev,
+>> +			       &vdpasim_net_config_ops);
+>> +	if (ret)
+>> +		goto err_init;
+>> +
+>> +	ret =3D vdpa_register_device(vdpa);
+>> +	if (ret)
+>> +		goto err_register;
+> See? This error unwind is now all wrong:
+>
+>> +
+>> +	return vdpasim;
+>> +
+>> +err_register:
+>> +	put_device(&vdpa->dev);
+> Double put_device
 
--- 
-Michal Hocko
-SUSE Labs
+
+Yes.
+
+
+>
+>> +err_init:
+>> +	vhost_iotlb_free(vdpasim->iommu);
+>> +err_iotlb:
+>> +	kfree(vdpasim->buffer);
+>> +err_buffer_alloc:
+>> +	kfree(vdpasim);
+> kfree after vdpa_init_device() is incorrect, as the put_device now
+> does kfree via release
+
+
+Ok, will fix.
+
+
+>
+>> +static int __init vdpasim_dev_init(void)
+>> +{
+>> +	struct device *dev;
+>> +	int ret =3D 0;
+>> +
+>> +	vdpasim_dev =3D kzalloc(sizeof(*vdpasim_dev), GFP_KERNEL);
+>> +	if (!vdpasim_dev)
+>> +		return -ENOMEM;
+>> +
+>> +	dev =3D &vdpasim_dev->dev;
+>> +	dev->release =3D vdpasim_device_release;
+>> +	dev_set_name(dev, "%s", VDPASIM_NAME);
+>> +
+>> +	ret =3D device_register(&vdpasim_dev->dev);
+>> +	if (ret)
+>> +		goto err_register;
+>> +
+>> +	if (!vdpasim_create())
+>> +		goto err_register;
+> Wrong error unwind here too
+
+
+Will fix.
+
+Thanks
+
+
+>
+>> +	return 0;
+>> +
+>> +err_register:
+>> +	kfree(vdpasim_dev);
+>> +	vdpasim_dev =3D NULL;
+>> +	return ret;
+>> +}
+> Jason
+>
+
