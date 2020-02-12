@@ -2,366 +2,378 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55D9815A021
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 05:27:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AAFD15A025
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 05:28:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbgBLE1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 23:27:31 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:36336 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727912AbgBLE11 (ORCPT
+        id S1728142AbgBLE2j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 23:28:39 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46702 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727904AbgBLE2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 23:27:27 -0500
-Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01C4PmNB028913;
-        Tue, 11 Feb 2020 20:27:06 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=proofpoint;
- bh=o4AdgmXqUqX6lriSNaVhaoth4svMU2IeO+EV7vL06z8=;
- b=aRu47TJFPWhEsx3KZCk/4TbMTlxKnJyGFkT7RX7kfZ+FDYZLgEIiP0VV7lyzEfSBkZ2n
- OluCMML77LfyezT9A39rEiC5S1+MIOyMPqoFLAg41r9UAv4bcXeY4JRp8Ei7j0Lz8WXQ
- SP2Mggw/bSD4Ep3cNVJO8V6eSk/+Vkobq0kDgkiYQnxGVaw0sd3ZAQd7N9qK8+vlWKsY
- SJXJ5JVNgfGZ/bwOIwEqg3jKhXc7yCU3RmONFBwBEaw93FTfzduTo7EdjrkYH78UAV3y
- f48snZKMrTmvoxwUEyNwDiyxmEsRgi7P4E1Gz0lgcmmdM33za3TE7NXbUuwi6IQ//cc+ XQ== 
-Received: from nam02-bl2-obe.outbound.protection.outlook.com (mail-bl2nam02lp2053.outbound.protection.outlook.com [104.47.38.53])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2y1u17mxnu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 11 Feb 2020 20:27:06 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jOMZXEcq6XLgT5VE/sny3vK6yHB3R7rc0LVJ1K0M+vz8ZwkMLwJccOZaHitMHZ8X2At76xwACRMRKLslA2OTvZHwQJMl9A+5GJFf71uUX2bYJTNEG+9DrClvhGyy0vSjjVhJoZtF+oNdSGtKrESyg6gbawbGU0JlyWa2NhtW0zrRaJgB1J+PRes0YW7jd55PHMJScwmGK2BT4O9GF4XtFo2aA9IUzoEjCTN49+IWMvhgQnonVIkNJk6AgyAoxutx0kNOubd2V9d6uTWvZKGaeJ5g5kQr98fZUFGeCGp2mCWzFJtI6ijdiROz/3pDbDFriHQQQZr4Q83dXOLdN6Mh8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o4AdgmXqUqX6lriSNaVhaoth4svMU2IeO+EV7vL06z8=;
- b=ksLeRGOiYuyJhuIx5/gKNwuNrQ8qV4SFHwXuV3eem7NJYaiTaiuOYIO3u17ZxZeaZBIOfoo18JYyRGmZLGxL4kFyn1lgjCK2EYKkliRFCLeCayQaiWB57RR2qptl1tuhH16/0p9d1Z6nDiZSxb6c5l3HJH/Efn+rWlF0DmudidnHkaDqLt/ttEGlIwyn8mUbwT4LaF6HsvD8VyfQF8FZ4bkp+Nz/ZlxyfjIzrWkvtkX9LtbEugb8oej9j+ZY3YRcD9Jl3WDCibhdvwn07vRJWAc0v7y/PFpBxCUQ8qiZFWsZf9IztwK5dqtZZ4oEr+vQUX4zZ5m7EkBRTcwdeRZjIQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 199.43.4.28) smtp.rcpttodomain=linux.ie smtp.mailfrom=cadence.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=cadence.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o4AdgmXqUqX6lriSNaVhaoth4svMU2IeO+EV7vL06z8=;
- b=48UOBtrR97rDvOlB2i6uiuCTrBsH5uNPx7rnPq0ULXxJrSnb8LVdUoAAqzhqiYnDOkXCyZ7tSaLRF+DbazmkWsThw1KEg1CmhEbAg2cGiR9DtBDTjxw2snNTbJT8VF4EXovvcX25VxiiipW+8+/W1S3mkB6OSc+Nu3wHYMSRSbM=
-Received: from CH2PR07CA0013.namprd07.prod.outlook.com (2603:10b6:610:20::26)
- by BYAPR07MB4583.namprd07.prod.outlook.com (2603:10b6:a02:f8::30) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2707.24; Wed, 12 Feb
- 2020 04:27:04 +0000
-Received: from MW2NAM12FT009.eop-nam12.prod.protection.outlook.com
- (2a01:111:f400:fe5a::209) by CH2PR07CA0013.outlook.office365.com
- (2603:10b6:610:20::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.22 via Frontend
- Transport; Wed, 12 Feb 2020 04:27:03 +0000
-Received-SPF: Pass (protection.outlook.com: domain of cadence.com designates
- 199.43.4.28 as permitted sender) receiver=protection.outlook.com;
- client-ip=199.43.4.28; helo=rmmaillnx1.cadence.com;
-Received: from rmmaillnx1.cadence.com (199.43.4.28) by
- MW2NAM12FT009.mail.protection.outlook.com (10.13.180.76) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2729.10 via Frontend Transport; Wed, 12 Feb 2020 04:27:03 +0000
-Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id 01C4Qnkd007965
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Tue, 11 Feb 2020 23:27:01 -0500
-X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
-Received: from maileu3.global.cadence.com (10.160.88.99) by
- maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Wed, 12 Feb 2020 05:26:49 +0100
-Received: from vleu-orange.cadence.com (10.160.88.83) by
- maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Wed, 12 Feb 2020 05:26:49 +0100
-Received: from vleu-orange.cadence.com (localhost.localdomain [127.0.0.1])
-        by vleu-orange.cadence.com (8.14.4/8.14.4) with ESMTP id 01C4QnYO024562;
-        Wed, 12 Feb 2020 05:26:49 +0100
-Received: (from yamonkar@localhost)
-        by vleu-orange.cadence.com (8.14.4/8.14.4/Submit) id 01C4QnED024561;
-        Wed, 12 Feb 2020 05:26:49 +0100
-From:   Yuti Amonkar <yamonkar@cadence.com>
-To:     <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>,
-        <maxime@cerno.tech>, <airlied@linux.ie>, <daniel@ffwll.ch>,
-        <mark.rutland@arm.com>, <a.hajda@samsung.com>,
-        <narmstrong@baylibre.com>, <Laurent.pinchart@ideasonboard.com>,
-        <jonas@kwiboo.se>, <jernej.skrabec@siol.net>
-CC:     <praneeth@ti.com>, <jsarha@ti.com>, <tomi.valkeinen@ti.com>,
-        <mparab@cadence.com>, <sjakhade@cadence.com>,
-        <yamonkar@cadence.com>
-Subject: [PATCH v5 3/3] drm: bridge: cdns-mhdp: add j721e wrapper
-Date:   Wed, 12 Feb 2020 05:26:44 +0100
-Message-ID: <1581481604-24499-4-git-send-email-yamonkar@cadence.com>
-X-Mailer: git-send-email 2.4.5
-In-Reply-To: <1581481604-24499-1-git-send-email-yamonkar@cadence.com>
-References: <1581481604-24499-1-git-send-email-yamonkar@cadence.com>
+        Tue, 11 Feb 2020 23:28:39 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z7so457840wrl.13
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 20:28:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zpvQzt0G7nK1UhrxjyRbKFvhpJ/9qLsWzisYQqD9vVc=;
+        b=y0xLYqyhHL5ZtMnaKkWtviV3QYoHHgsBKb6apqm2R90q4SV0ohcLbTRQz+mnlQsuGw
+         QzrwDV4zMesr0MZ8RVQIx+vPy1DmiQfA1uvyRmq+tZUHTihRlwtu7XRm8nZXqKpMuGhZ
+         fZxFvdnQkbRh0wDZ3uO3MpwNFV8X/TgmvkY3dtgWQB74BMPGOfHkaVn5AOJ5Qm5mwF7/
+         XRneYPmVqgJkk3ZWGq9GOr2yvmCOHzFbAK5EME0x+2fCtcf8ksYo3RazGSzmDEf6IRS8
+         fztn7yq9DhP+ftKygr/TQZ6GTXDUEUCRttD+ApFwNi9T8LvfoPy0zZEQqn21JnMJpss6
+         LWLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zpvQzt0G7nK1UhrxjyRbKFvhpJ/9qLsWzisYQqD9vVc=;
+        b=LbRK+/CLXf8YeH1txQrb7Ss2j1A+/xxO4iitBzfEbMNAP3Wa4eSWshcYBMctnTrhi+
+         U4GYkMpSvCS9YQV4RwYGWUuuJzn99Pnd9TeodxGNGteDgn84XAgjLmxZfp9F5QygdhMq
+         9HZpX7L0/N6ObOz21ARVuZDO2AoB5WXyzsDxljEY7vObq2EyG/uWsulEO/AdTQhxc223
+         VEb0tFo1vvHikgQhae8KLQwqzXc/ltjPrLZlTktc1lElzQbHx2F6qyaNw7H359csb07T
+         +cmv9HATXHF7fXD+mbBTghWzYmxqH2i2wzxeV3AbI9nq2NtJ+XNEnHxTrPuMh9PggDec
+         Cqtg==
+X-Gm-Message-State: APjAAAXelCwaTakvompG9IUcKYoiVGkBTF/eQVCYb5Vao9n/He/BBq3X
+        RIWJ38v0D2q65b9yz6pYKP4PtMPgNGiQYBI9Bz+L/Q==
+X-Google-Smtp-Source: APXvYqzfV248s2Q0oR2x/I1/y2ryjxfZvXf11A+pGQon6zmy7Q2xGWNdTklL0rMevXvtZQ8oPovi5TR+y/Ie6tI0vTc=
+X-Received: by 2002:adf:f28f:: with SMTP id k15mr12420066wro.230.1581481714584;
+ Tue, 11 Feb 2020 20:28:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-OrganizationHeadersPreserved: maileu3.global.cadence.com
-X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(39860400002)(136003)(376002)(36092001)(199004)(189003)(26826003)(36756003)(186003)(110136005)(5660300002)(42186006)(54906003)(316002)(478600001)(966005)(26005)(107886003)(336012)(426003)(2616005)(86362001)(6666004)(356004)(8936002)(70206006)(2906002)(4326008)(81156014)(70586007)(8676002)(81166006)(7416002)(2004002)(921003)(1121003)(83996005)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4583;H:rmmaillnx1.cadence.com;FPR:;SPF:Pass;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e434d2f5-9e50-4f41-c37f-08d7af73cf6b
-X-MS-TrafficTypeDiagnostic: BYAPR07MB4583:
-X-Microsoft-Antispam-PRVS: <BYAPR07MB45835BDB5F43E2C998769D03D21B0@BYAPR07MB4583.namprd07.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:418;
-X-Forefront-PRVS: 0311124FA9
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: MIeVj3zwTKhSxgn7d78z3vFZiWY9qjQDQXkTC6ZIB26YbWUNOb9VN8X7LJdmCXrK9/hobcr0BuRrPJ0Ve2b6/NCpj3oROu0MSncywH4kg7KCtTnmP6nY+Iw9M7C+H6awVVuBkIHM2rI/lAWvN8H0idnKkka4qNyNrbegK5a3DV14Bl5P74jpw67dtnhBUc8J6c11H1MJq4yas/i1UATKFn1mHYX0elkQloIur9+RzzPzv2hau2Wo/ZgCk+pYsropzTtXjnrHyKGwTsmArvbTQgRR4xS6DjbciWDs9CL0zpaEBI3NzwWHr9oU/+wECqZMWntum60oVlJ+BMlk+cxedEZzAYLrqnZPe2Rp2ULbOEFtXWPS77bdL+D5QLgje1PnLFCkHd6NpnXymFBPgZxMcHcpt646Jyti+s8gymeuk8WLaRZZbyiHBr1uda2Cseckzmwjz5+omE98FIQYvXk33b9ynBQmE01Dr6Zl7u/cnW3qxncajT9PFihz6fqp6tDGyHxLuQCY/FMgFrmxOpSR+xfBq+AfYJNaHDhnKIIRzJNfWkr7tvrNo+pwqDL3EyiNziC8AcJ52/REXcGM3z5nzXw9fWaRgx/fWs2uxz0qq7EgFW3fk2FzRJ5LH5SjNPy0uYpdbKqEJf6cWOkUac7sZrdSY64gJKQfuPXdkEs8JM8=
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2020 04:27:03.0741
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e434d2f5-9e50-4f41-c37f-08d7af73cf6b
-X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4583
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-11_07:2020-02-11,2020-02-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0 bulkscore=0
- malwarescore=0 phishscore=0 priorityscore=1501 impostorscore=0
- mlxlogscore=999 clxscore=1015 mlxscore=0 suspectscore=0 adultscore=0
- spamscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2001150001 definitions=main-2002120031
+References: <20200212014822.28684-1-atish.patra@wdc.com> <20200212014822.28684-8-atish.patra@wdc.com>
+In-Reply-To: <20200212014822.28684-8-atish.patra@wdc.com>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Wed, 12 Feb 2020 09:58:23 +0530
+Message-ID: <CAAhSdy3RVpbum-O_ercZJkiEjDYPT-zrEHvYvMUQqE8+P82ihA@mail.gmail.com>
+Subject: Re: [PATCH v8 07/11] RISC-V: Add cpu_ops and modify default booting method
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Allison Randal <allison@lohutok.net>,
+        Borislav Petkov <bp@suse.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Kees Cook <keescook@chromium.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Mao Han <han_mao@c-sky.com>, Marc Zyngier <maz@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Chen <vincent.chen@sifive.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add j721e wrapper for mhdp, which sets up the clock and data muxes.
+On Wed, Feb 12, 2020 at 7:21 AM Atish Patra <atish.patra@wdc.com> wrote:
+>
+> Currently, all non-booting harts start booting after the booting hart
+> updates the per-hart stack pointer. This is done in a way that, it's
+> difficult to implement any other booting method without breaking the
+> backward compatibility.
+>
+> Define a cpu_ops method that allows to introduce other booting methods
+> in future. Modify the current booting method to be compatible with
+> cpu_ops.
+>
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> ---
+>  arch/riscv/include/asm/cpu_ops.h     | 34 ++++++++++++++++++
+>  arch/riscv/kernel/Makefile           |  2 ++
+>  arch/riscv/kernel/cpu_ops.c          | 40 +++++++++++++++++++++
+>  arch/riscv/kernel/cpu_ops_spinwait.c | 42 ++++++++++++++++++++++
+>  arch/riscv/kernel/smpboot.c          | 54 +++++++++++++++++-----------
+>  5 files changed, 151 insertions(+), 21 deletions(-)
+>  create mode 100644 arch/riscv/include/asm/cpu_ops.h
+>  create mode 100644 arch/riscv/kernel/cpu_ops.c
+>  create mode 100644 arch/riscv/kernel/cpu_ops_spinwait.c
+>
+> diff --git a/arch/riscv/include/asm/cpu_ops.h b/arch/riscv/include/asm/cpu_ops.h
+> new file mode 100644
+> index 000000000000..7db276284009
+> --- /dev/null
+> +++ b/arch/riscv/include/asm/cpu_ops.h
+> @@ -0,0 +1,34 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2019 Western Digital Corporation or its affiliates.
+> + * Based on arch/arm64/include/asm/cpu_ops.h
+> + */
+> +#ifndef __ASM_CPU_OPS_H
+> +#define __ASM_CPU_OPS_H
+> +
+> +#include <linux/init.h>
+> +#include <linux/sched.h>
+> +#include <linux/threads.h>
+> +
+> +/**
+> + * struct cpu_operations - Callback operations for hotplugging CPUs.
+> + *
+> + * @name:              Name of the boot protocol.
+> + * @cpu_prepare:       Early one-time preparation step for a cpu. If there
+> + *                     is a mechanism for doing so, tests whether it is
+> + *                     possible to boot the given HART.
+> + * @cpu_start:         Boots a cpu into the kernel.
+> + */
+> +struct cpu_operations {
+> +       const char      *name;
+> +       int             (*cpu_prepare)(unsigned int cpu);
+> +       int             (*cpu_start)(unsigned int cpu,
+> +                                    struct task_struct *tidle);
+> +};
+> +
+> +extern const struct cpu_operations *cpu_ops[NR_CPUS];
+> +int __init cpu_set_ops(int cpu);
 
-Signed-off-by: Yuti Amonkar <yamonkar@cadence.com>
-Signed-off-by: Jyri Sarha <jsarha@ti.com>
----
- drivers/gpu/drm/bridge/Kconfig           | 12 ++++
- drivers/gpu/drm/bridge/Makefile          |  3 +
- drivers/gpu/drm/bridge/cdns-mhdp-core.c  | 14 +++++
- drivers/gpu/drm/bridge/cdns-mhdp-core.h  |  1 +
- drivers/gpu/drm/bridge/cdns-mhdp-j721e.c | 79 ++++++++++++++++++++++++
- drivers/gpu/drm/bridge/cdns-mhdp-j721e.h | 55 +++++++++++++++++
- 6 files changed, 164 insertions(+)
- create mode 100644 drivers/gpu/drm/bridge/cdns-mhdp-j721e.c
- create mode 100644 drivers/gpu/drm/bridge/cdns-mhdp-j721e.h
+This function is more like probing for appropriate cpu_ops. Also,
+I think we don't need to return anything from cpu_set_ops().
 
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index c66f2ef04f71..32e3bc5edae8 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -38,6 +38,18 @@ config DRM_CDNS_MHDP
- 	  It takes a DPI stream as input and output it encoded
- 	  in DP format.
- 
-+if DRM_CDNS_MHDP
-+
-+config DRM_CDNS_MHDP_J721E
-+	bool "J721E Cadence DPI/DP wrapper support"
-+	default y
-+	help
-+	  Support J721E Cadence DPI/DP wrapper. This is a wrapper
-+	  which adds support for J721E related platform ops. It
-+	  initializes the J721e Display Port and sets up the
-+	  clock and data muxes.
-+endif
-+
- config DRM_DUMB_VGA_DAC
- 	tristate "Dumb VGA DAC Bridge support"
- 	depends on OF
-diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-index 71019088d257..7e6c64f9021f 100644
---- a/drivers/gpu/drm/bridge/Makefile
-+++ b/drivers/gpu/drm/bridge/Makefile
-@@ -21,3 +21,6 @@ obj-y += analogix/
- obj-y += synopsys/
- 
- cdns-mhdp-objs := cdns-mhdp-core.o
-+ifeq ($(CONFIG_DRM_CDNS_MHDP_J721E),y)
-+	cdns-mhdp-objs += cdns-mhdp-j721e.o
-+endif
-diff --git a/drivers/gpu/drm/bridge/cdns-mhdp-core.c b/drivers/gpu/drm/bridge/cdns-mhdp-core.c
-index 51ed9cdee161..8483b6b1023b 100644
---- a/drivers/gpu/drm/bridge/cdns-mhdp-core.c
-+++ b/drivers/gpu/drm/bridge/cdns-mhdp-core.c
-@@ -36,8 +36,22 @@
- 
- #include "cdns-mhdp-core.h"
- 
-+#include "cdns-mhdp-j721e.h"
-+
-+#ifdef CONFIG_DRM_CDNS_MHDP_J721E
-+static const struct mhdp_platform_ops mhdp_ti_j721e_ops = {
-+	.init = cdns_mhdp_j721e_init,
-+	.exit = cdns_mhdp_j721e_fini,
-+	.enable = cdns_mhdp_j721e_enable,
-+	.disable = cdns_mhdp_j721e_disable,
-+};
-+#endif
-+
- static const struct of_device_id mhdp_ids[] = {
- 	{ .compatible = "cdns,mhdp8546", },
-+#ifdef CONFIG_DRM_CDNS_MHDP_J721E
-+	{ .compatible = "ti,j721e-mhdp8546", .data = &mhdp_ti_j721e_ops },
-+#endif
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, mhdp_ids);
-diff --git a/drivers/gpu/drm/bridge/cdns-mhdp-core.h b/drivers/gpu/drm/bridge/cdns-mhdp-core.h
-index 2f3b67987832..67a99eab5db3 100644
---- a/drivers/gpu/drm/bridge/cdns-mhdp-core.h
-+++ b/drivers/gpu/drm/bridge/cdns-mhdp-core.h
-@@ -335,6 +335,7 @@ struct mhdp_platform_ops {
- 
- struct cdns_mhdp_device {
- 	void __iomem *regs;
-+	void __iomem *j721e_regs;
- 
- 	struct device *dev;
- 	struct clk *clk;
-diff --git a/drivers/gpu/drm/bridge/cdns-mhdp-j721e.c b/drivers/gpu/drm/bridge/cdns-mhdp-j721e.c
-new file mode 100644
-index 000000000000..a87faf55c065
---- /dev/null
-+++ b/drivers/gpu/drm/bridge/cdns-mhdp-j721e.c
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * TI j721e Cadence MHDP DP wrapper
-+ *
-+ * Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
-+ * Author: Jyri Sarha <jsarha@ti.com
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/io.h>
-+
-+#include "cdns-mhdp-j721e.h"
-+
-+#define	REVISION			0x00
-+#define	DPTX_IPCFG			0x04
-+#define	ECC_MEM_CFG			0x08
-+#define	DPTX_DSC_CFG			0x0c
-+#define	DPTX_SRC_CFG			0x10
-+#define	DPTX_VIF_SECURE_MODE_CFG	0x14
-+#define	DPTX_VIF_CONN_STATUS		0x18
-+#define	PHY_CLK_STATUS			0x1c
-+
-+#define DPTX_SRC_AIF_EN			BIT(16)
-+#define DPTX_SRC_VIF_3_IN30B		BIT(11)
-+#define DPTX_SRC_VIF_2_IN30B		BIT(10)
-+#define DPTX_SRC_VIF_1_IN30B		BIT(9)
-+#define DPTX_SRC_VIF_0_IN30B		BIT(8)
-+#define DPTX_SRC_VIF_3_SEL_DPI5		BIT(7)
-+#define DPTX_SRC_VIF_3_SEL_DPI3		0
-+#define DPTX_SRC_VIF_2_SEL_DPI4		BIT(6)
-+#define DPTX_SRC_VIF_2_SEL_DPI2		0
-+#define DPTX_SRC_VIF_1_SEL_DPI3		BIT(5)
-+#define DPTX_SRC_VIF_1_SEL_DPI1		0
-+#define DPTX_SRC_VIF_0_SEL_DPI2		BIT(4)
-+#define DPTX_SRC_VIF_0_SEL_DPI0		0
-+#define DPTX_SRC_VIF_3_EN		BIT(3)
-+#define DPTX_SRC_VIF_2_EN		BIT(2)
-+#define DPTX_SRC_VIF_1_EN		BIT(1)
-+#define DPTX_SRC_VIF_0_EN		BIT(0)
-+
-+/* TODO turn DPTX_IPCFG fw_mem_clk_en at pm_runtime_suspend. */
-+
-+int cdns_mhdp_j721e_init(struct cdns_mhdp_device *mhdp)
-+{
-+	struct platform_device *pdev = to_platform_device(mhdp->dev);
-+	struct resource *regs;
-+
-+	regs = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+	mhdp->j721e_regs = devm_ioremap_resource(&pdev->dev, regs);
-+	if (IS_ERR(mhdp->j721e_regs))
-+		return PTR_ERR(mhdp->j721e_regs);
-+
-+	return 0;
-+}
-+
-+void cdns_mhdp_j721e_fini(struct cdns_mhdp_device *mhdp)
-+{
-+}
-+
-+void cdns_mhdp_j721e_enable(struct cdns_mhdp_device *mhdp)
-+{
-+	/*
-+	 * Eneble VIF_0 and select DPI2 as its input. DSS0 DPI0 is connected
-+	 * to eDP DPI2. This is the only supported SST configuration on
-+	 * J721E.
-+	 */
-+	writel(DPTX_SRC_VIF_0_EN | DPTX_SRC_VIF_0_SEL_DPI2,
-+	       mhdp->j721e_regs + DPTX_SRC_CFG);
-+}
-+
-+void cdns_mhdp_j721e_disable(struct cdns_mhdp_device *mhdp)
-+{
-+	/* Put everything to defaults  */
-+	writel(0, mhdp->j721e_regs + DPTX_DSC_CFG);
-+}
-diff --git a/drivers/gpu/drm/bridge/cdns-mhdp-j721e.h b/drivers/gpu/drm/bridge/cdns-mhdp-j721e.h
-new file mode 100644
-index 000000000000..de0e4e82b58c
---- /dev/null
-+++ b/drivers/gpu/drm/bridge/cdns-mhdp-j721e.h
-@@ -0,0 +1,55 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * TI j721e Cadence MHDP DP wrapper
-+ *
-+ * Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
-+ * Author: Jyri Sarha <jsarha@ti.com
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef CDNS_MHDP_J721E_H
-+#define CDNS_MHDP_J721E_H
-+
-+#include <linux/platform_device.h>
-+#include "cdns-mhdp-core.h"
-+
-+struct cdns_mhdp_j721e_wrap;
-+
-+#ifdef CONFIG_DRM_CDNS_MHDP_J721E
-+
-+int cdns_mhdp_j721e_init(struct cdns_mhdp_device *mhdp);
-+
-+void cdns_mhdp_j721e_fini(struct cdns_mhdp_device *mhdp);
-+
-+void cdns_mhdp_j721e_enable(struct cdns_mhdp_device *mhdp);
-+
-+void cdns_mhdp_j721e_disable(struct cdns_mhdp_device *mhdp);
-+
-+#else
-+
-+static inline
-+int cdns_mhdp_j721e_init(struct cdns_mhdp_device *mhdp)
-+{
-+	return 0;
-+}
-+
-+static inline
-+void cdns_mhdp_j721e_fini(struct cdns_mhdp_device *mhdp)
-+{
-+}
-+
-+static inline
-+void cdns_mhdp_j721e_sst_enable(struct cdns_mhdp_device *mhdp);
-+{
-+}
-+
-+static inline
-+void cdns_mhdp_j721e_sst_disable(struct cdns_mhdp_device *mhdp)
-+{
-+}
-+#endif /* CONFIG_DRM_CDNS_MHDP_J721E */
-+
-+#endif /* !CDNS_MHDP_J721E_H */
--- 
-2.20.1
+Maybe rename it to "void cpu_probe_ops(int cpu)" ?
 
+> +void cpu_update_secondary_bootdata(unsigned int cpuid,
+> +                                  struct task_struct *tidle);
+> +
+> +#endif /* ifndef __ASM_CPU_OPS_H */
+> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+> index f40205cb9a22..f81a6ff88005 100644
+> --- a/arch/riscv/kernel/Makefile
+> +++ b/arch/riscv/kernel/Makefile
+> @@ -32,6 +32,8 @@ obj-$(CONFIG_RISCV_M_MODE)    += clint.o
+>  obj-$(CONFIG_FPU)              += fpu.o
+>  obj-$(CONFIG_SMP)              += smpboot.o
+>  obj-$(CONFIG_SMP)              += smp.o
+> +obj-$(CONFIG_SMP)              += cpu_ops.o
+> +obj-$(CONFIG_SMP)              += cpu_ops_spinwait.o
+>  obj-$(CONFIG_MODULES)          += module.o
+>  obj-$(CONFIG_MODULE_SECTIONS)  += module-sections.o
+>
+> diff --git a/arch/riscv/kernel/cpu_ops.c b/arch/riscv/kernel/cpu_ops.c
+> new file mode 100644
+> index 000000000000..1085def3735a
+> --- /dev/null
+> +++ b/arch/riscv/kernel/cpu_ops.c
+> @@ -0,0 +1,40 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2020 Western Digital Corporation or its affiliates.
+> + */
+> +
+> +#include <linux/errno.h>
+> +#include <linux/mm.h>
+> +#include <linux/of.h>
+> +#include <linux/string.h>
+> +#include <linux/sched.h>
+> +#include <linux/sched/task_stack.h>
+> +#include <asm/cpu_ops.h>
+> +#include <asm/sbi.h>
+> +#include <asm/smp.h>
+> +
+> +const struct cpu_operations *cpu_ops[NR_CPUS] __ro_after_init;
+> +
+> +void *__cpu_up_stack_pointer[NR_CPUS];
+> +void *__cpu_up_task_pointer[NR_CPUS];
+> +
+> +extern const struct cpu_operations cpu_ops_spinwait;
+> +
+> +void cpu_update_secondary_bootdata(unsigned int cpuid,
+> +                                  struct task_struct *tidle)
+> +{
+> +       int hartid = cpuid_to_hartid_map(cpuid);
+> +
+> +       /* Make sure tidle is updated */
+> +       smp_mb();
+> +       WRITE_ONCE(__cpu_up_stack_pointer[hartid],
+> +                 task_stack_page(tidle) + THREAD_SIZE);
+> +       WRITE_ONCE(__cpu_up_task_pointer[hartid], tidle);
+> +}
+> +
+> +int __init cpu_set_ops(int cpuid)
+
+Maybe rename it to "void cpu_probe_ops(int cpu)" ?
+
+> +{
+> +       cpu_ops[cpuid] = &cpu_ops_spinwait;
+> +
+> +       return 0;
+> +}
+> diff --git a/arch/riscv/kernel/cpu_ops_spinwait.c b/arch/riscv/kernel/cpu_ops_spinwait.c
+> new file mode 100644
+> index 000000000000..f828e660294e
+> --- /dev/null
+> +++ b/arch/riscv/kernel/cpu_ops_spinwait.c
+> @@ -0,0 +1,42 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2020 Western Digital Corporation or its affiliates.
+> + */
+> +
+> +#include <linux/errno.h>
+> +#include <linux/of.h>
+> +#include <linux/string.h>
+> +#include <asm/cpu_ops.h>
+> +#include <asm/sbi.h>
+> +#include <asm/smp.h>
+> +
+> +const struct cpu_operations cpu_ops_spinwait;
+> +
+> +static int spinwait_cpu_prepare(unsigned int cpuid)
+> +{
+> +       if (!cpu_ops_spinwait.cpu_start) {
+> +               pr_err("cpu start method not defined for CPU [%d]\n", cpuid);
+> +               return -ENODEV;
+> +       }
+> +       return 0;
+> +}
+> +
+> +static int spinwait_cpu_start(unsigned int cpuid, struct task_struct *tidle)
+> +{
+> +       /*
+> +        * In this protocol, all cpus boot on their own accord.  _start
+> +        * selects the first cpu to boot the kernel and causes the remainder
+> +        * of the cpus to spin in a loop waiting for their stack pointer to be
+> +        * setup by that main cpu.  Writing to bootdata (i.e __cpu_up_stack_pointer) signals to
+> +        * the spinning cpus that they can continue the boot process.
+> +        */
+> +       cpu_update_secondary_bootdata(cpuid, tidle);
+> +
+> +       return 0;
+> +}
+> +
+> +const struct cpu_operations cpu_ops_spinwait = {
+> +       .name           = "spinwait",
+> +       .cpu_prepare    = spinwait_cpu_prepare,
+> +       .cpu_start      = spinwait_cpu_start,
+> +};
+> diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
+> index 8bc01f0ca73b..2ee41c779a16 100644
+> --- a/arch/riscv/kernel/smpboot.c
+> +++ b/arch/riscv/kernel/smpboot.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/sched/task_stack.h>
+>  #include <linux/sched/mm.h>
+>  #include <asm/clint.h>
+> +#include <asm/cpu_ops.h>
+>  #include <asm/irq.h>
+>  #include <asm/mmu_context.h>
+>  #include <asm/tlbflush.h>
+> @@ -34,8 +35,6 @@
+>
+>  #include "head.h"
+>
+> -void *__cpu_up_stack_pointer[NR_CPUS];
+> -void *__cpu_up_task_pointer[NR_CPUS];
+>  static DECLARE_COMPLETION(cpu_running);
+>
+>  void __init smp_prepare_boot_cpu(void)
+> @@ -46,6 +45,7 @@ void __init smp_prepare_boot_cpu(void)
+>  void __init smp_prepare_cpus(unsigned int max_cpus)
+>  {
+>         int cpuid;
+> +       int ret;
+>
+>         /* This covers non-smp usecase mandated by "nosmp" option */
+>         if (max_cpus == 0)
+> @@ -54,6 +54,11 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
+>         for_each_possible_cpu(cpuid) {
+>                 if (cpuid == smp_processor_id())
+>                         continue;
+> +               if (cpu_ops[cpuid]->cpu_prepare) {
+> +                       ret = cpu_ops[cpuid]->cpu_prepare(cpuid);
+> +                       if (ret)
+> +                               continue;
+> +               }
+>                 set_cpu_present(cpuid, true);
+>         }
+>  }
+> @@ -65,6 +70,8 @@ void __init setup_smp(void)
+>         bool found_boot_cpu = false;
+>         int cpuid = 1;
+>
+> +       cpu_set_ops(0);
+> +
+>         for_each_of_cpu_node(dn) {
+>                 hart = riscv_of_processor_hartid(dn);
+>                 if (hart < 0)
+> @@ -92,36 +99,41 @@ void __init setup_smp(void)
+>                         cpuid, nr_cpu_ids);
+>
+>         for (cpuid = 1; cpuid < nr_cpu_ids; cpuid++) {
+> -               if (cpuid_to_hartid_map(cpuid) != INVALID_HARTID)
+> +               if (cpuid_to_hartid_map(cpuid) != INVALID_HARTID) {
+> +                       if (cpu_set_ops(cpuid)) {
+> +                               cpuid_to_hartid_map(cpuid) = INVALID_HARTID;
+> +                               continue;
+> +                       }
+>                         set_cpu_possible(cpuid, true);
+> +               }
+>         }
+>  }
+>
+> +int start_secondary_cpu(int cpu, struct task_struct *tidle)
+
+Make this function static.
+
+> +{
+> +       if (cpu_ops[cpu]->cpu_start)
+> +               return cpu_ops[cpu]->cpu_start(cpu, tidle);
+> +
+> +       return -EOPNOTSUPP;
+> +}
+> +
+>  int __cpu_up(unsigned int cpu, struct task_struct *tidle)
+>  {
+>         int ret = 0;
+> -       int hartid = cpuid_to_hartid_map(cpu);
+>         tidle->thread_info.cpu = cpu;
+>
+> -       /*
+> -        * On RISC-V systems, all harts boot on their own accord.  Our _start
+> -        * selects the first hart to boot the kernel and causes the remainder
+> -        * of the harts to spin in a loop waiting for their stack pointer to be
+> -        * setup by that main hart.  Writing __cpu_up_stack_pointer signals to
+> -        * the spinning harts that they can continue the boot process.
+> -        */
+> -       smp_mb();
+> -       WRITE_ONCE(__cpu_up_stack_pointer[hartid],
+> -                 task_stack_page(tidle) + THREAD_SIZE);
+> -       WRITE_ONCE(__cpu_up_task_pointer[hartid], tidle);
+> -
+> -       lockdep_assert_held(&cpu_running);
+> -       wait_for_completion_timeout(&cpu_running,
+> +       ret = start_secondary_cpu(cpu, tidle);
+> +       if (!ret) {
+> +               lockdep_assert_held(&cpu_running);
+> +               wait_for_completion_timeout(&cpu_running,
+>                                             msecs_to_jiffies(1000));
+>
+> -       if (!cpu_online(cpu)) {
+> -               pr_crit("CPU%u: failed to come online\n", cpu);
+> -               ret = -EIO;
+> +               if (!cpu_online(cpu)) {
+> +                       pr_crit("CPU%u: failed to come online\n", cpu);
+> +                       ret = -EIO;
+> +               }
+> +       } else {
+> +               pr_crit("CPU%u: failed to start\n", cpu);
+>         }
+>
+>         return ret;
+> --
+> 2.24.0
+>
+
+Apart from minor comments above, looks good to me.
+
+Reviewed-by: Anup Patel <anup@brainfault.org>
+
+Regards,
+Anup
