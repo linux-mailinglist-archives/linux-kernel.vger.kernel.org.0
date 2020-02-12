@@ -2,177 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 573EF15A796
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 12:19:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A86015A79A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 12:20:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727923AbgBLLTt convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 12 Feb 2020 06:19:49 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:48303 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbgBLLTs (ORCPT
+        id S1728002AbgBLLTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 06:19:51 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:55109 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727007AbgBLLTu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 06:19:48 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1j1q3T-0002hT-0l; Wed, 12 Feb 2020 12:19:43 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id D4D42100F5A; Wed, 12 Feb 2020 12:19:41 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Evan Green <evgreen@chromium.org>, Rajat Jain <rajatja@google.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Marc Zyngier <maz@kernel.org>
-Subject: Re: "Plug non-maskable MSI affinity race" triggers a warning with CPU hotplugs
-In-Reply-To: <FE2AA412-40A7-4FA2-A9E8-C7FA2919BD1D@lca.pw>
-References: <FE2AA412-40A7-4FA2-A9E8-C7FA2919BD1D@lca.pw>
-Date:   Wed, 12 Feb 2020 12:19:41 +0100
-Message-ID: <878sl8xdbm.fsf@nanos.tec.linutronix.de>
+        Wed, 12 Feb 2020 06:19:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581506389;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=Kg81wm3fk2Tmy+NaDfpTbjOmyUv8e2o9GjZbWPEgAEA=;
+        b=BNLjCVe6gVEql7+OTPyIIZofrUYa0oC1mDPnCLx/yClu9/vh8A0w5ACYSbqiHHPOJ+R+7U
+        EC8HJt8QECP9gla9LaQDARo/dH8a/cMlFkeXVHKZgscU+hYrf+hNrjF2OK5r3mgRsMKWtt
+        4ISxA6/vyQIFhc7q69hoSzznMhzzqss=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-400-ti1vUHWWNzOxK4VzGDEH1w-1; Wed, 12 Feb 2020 06:19:47 -0500
+X-MC-Unique: ti1vUHWWNzOxK4VzGDEH1w-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B4F9D1336560;
+        Wed, 12 Feb 2020 11:19:45 +0000 (UTC)
+Received: from [10.36.117.92] (ovpn-117-92.ams2.redhat.com [10.36.117.92])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A9DA60499;
+        Wed, 12 Feb 2020 11:19:44 +0000 (UTC)
+Subject: Re: [PATCH 2/2] mm: vmpressure: use mem_cgroup_is_root API
+To:     Yang Shi <yang.shi@linux.alibaba.com>, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1581398649-125989-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1581398649-125989-2-git-send-email-yang.shi@linux.alibaba.com>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Red Hat GmbH
+Message-ID: <3de985ee-b738-4947-57a3-ee665f162842@redhat.com>
+Date:   Wed, 12 Feb 2020 12:19:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <1581398649-125989-2-git-send-email-yang.shi@linux.alibaba.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Qian,
+On 11.02.20 06:24, Yang Shi wrote:
+> Use mem_cgroup_is_root() API to check if memcg is root memcg instead of
+> open coding.
+> 
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> ---
+>  mm/vmpressure.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/vmpressure.c b/mm/vmpressure.c
+> index 0590f00..d69019f 100644
+> --- a/mm/vmpressure.c
+> +++ b/mm/vmpressure.c
+> @@ -280,7 +280,7 @@ void vmpressure(gfp_t gfp, struct mem_cgroup *memcg, bool tree,
+>  		enum vmpressure_levels level;
+>  
+>  		/* For now, no users for root-level efficiency */
+> -		if (!memcg || memcg == root_mem_cgroup)
+> +		if (!memcg || mem_cgroup_is_root(memcg))
+>  			return;
+>  
+>  		spin_lock(&vmpr->sr_lock);
+> 
 
-Qian Cai <cai@lca.pw> writes:
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-> The linux-next commit 6f1a4891a592 (“x86/apic/msi: Plug non-maskable
-> MSI affinity race”) Introduced a bug which is always triggered during
-> the CPU hotplugs on this server. See the trace and line numbers below.
-
-Thanks for the report.
-
-> WARNING: CPU: 0 PID: 2794 at arch/x86/kernel/apic/msi.c:103 msi_set_affinity+0x278/0x330 
-> CPU: 0 PID: 2794 Comm: irqbalance Tainted: G             L    5.6.0-rc1-next-20200211 #1 
-> irq_do_set_affinity at kernel/irq/manage.c:259
-> irq_setup_affinity at kernel/irq/manage.c:474
-> irq_select_affinity_usr at kernel/irq/manage.c:496
-> write_irq_affinity.isra.0+0x137/0x1e0 
-> irq_affinity_proc_write+0x19/0x20
-...
-
-I'm glad I added this WARN_ON(). This unearthed another long standing
-bug. If user space writes a bogus affinity mask, i.e. no online CPUs
-then it calls irq_select_affinity_usr().
-
-This was introduced for ALPHA in
-
-  eee45269b0f5 ("[PATCH] Alpha: convert to generic irq framework (generic part)")
-
-and subsequently made available for all architectures in
-
-  18404756765c ("genirq: Expose default irq affinity mask (take 3)")
-
-which already introduced the circumvention of the affinity setting
-restrictions for interrupts which cannot be moved in process context.
-
-The whole exercise is bogus in various aspects:
-
-    1) If the interrupt is already started up then there is absolutely
-       no point to honour a bogus interrupt affinity setting from user
-       space. The interrupt is already assigned to an online CPU and it
-       does not make any sense to reassign it to some other randomly
-       chosen online CPU.
-
-    2) If the interupt is not yet started up then there is no point
-       either. A subsequent startup of the interrupt will invoke
-       irq_setup_affinity() anyway which will chose a valid target CPU.
-
-So the right thing to do is to just return -EINVAL in case user space
-wrote an affinity mask which does not contain any online CPUs, except for
-ALPHA which has it's own magic sauce for this.
-
-Can you please test the patch below?
-
+-- 
 Thanks,
 
-        tglx
+David / dhildenb
 
-8<---------------
-diff --git a/kernel/irq/internals.h b/kernel/irq/internals.h
-index 3924fbe829d4..c9d8eb7f5c02 100644
---- a/kernel/irq/internals.h
-+++ b/kernel/irq/internals.h
-@@ -128,8 +128,6 @@ static inline void unregister_handler_proc(unsigned int irq,
- 
- extern bool irq_can_set_affinity_usr(unsigned int irq);
- 
--extern int irq_select_affinity_usr(unsigned int irq);
--
- extern void irq_set_thread_affinity(struct irq_desc *desc);
- 
- extern int irq_do_set_affinity(struct irq_data *data,
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 3089a60ea8f9..7eee98c38f25 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -481,23 +481,9 @@ int irq_setup_affinity(struct irq_desc *desc)
- {
- 	return irq_select_affinity(irq_desc_get_irq(desc));
- }
--#endif
-+#endif /* CONFIG_AUTO_IRQ_AFFINITY */
-+#endif /* CONFIG_SMP */
- 
--/*
-- * Called when a bogus affinity is set via /proc/irq
-- */
--int irq_select_affinity_usr(unsigned int irq)
--{
--	struct irq_desc *desc = irq_to_desc(irq);
--	unsigned long flags;
--	int ret;
--
--	raw_spin_lock_irqsave(&desc->lock, flags);
--	ret = irq_setup_affinity(desc);
--	raw_spin_unlock_irqrestore(&desc->lock, flags);
--	return ret;
--}
--#endif
- 
- /**
-  *	irq_set_vcpu_affinity - Set vcpu affinity for the interrupt
-diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
-index 9e5783d98033..af488b037808 100644
---- a/kernel/irq/proc.c
-+++ b/kernel/irq/proc.c
-@@ -111,6 +111,28 @@ static int irq_affinity_list_proc_show(struct seq_file *m, void *v)
- 	return show_irq_affinity(AFFINITY_LIST, m);
- }
- 
-+#ifndef CONFIG_AUTO_IRQ_AFFINITY
-+static inline int irq_select_affinity_usr(unsigned int irq)
-+{
-+	/*
-+	 * If the interrupt is started up already then this fails. The
-+	 * interrupt is assigned to an online CPU already. There is no
-+	 * point to move it around randomly. Tell user space that the
-+	 * selected mask is bogus.
-+	 *
-+	 * If not then any change to the affinity is pointless because the
-+	 * startup code invokes irq_setup_affinity() which will select
-+	 * a online CPU anyway.
-+	 */
-+	return -EINVAL;
-+}
-+#else
-+/* ALPHA magic affinity auto selector. Keep it for historical reasons. */
-+static inline int irq_select_affinity_usr(unsigned int irq)
-+{
-+	return irq_select_affinity(irq);
-+}
-+#endif
- 
- static ssize_t write_irq_affinity(int type, struct file *file,
- 		const char __user *buffer, size_t count, loff_t *pos)
