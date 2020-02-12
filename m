@@ -2,97 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15B0115A914
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 13:25:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F16F15A918
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 13:25:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbgBLMZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 07:25:13 -0500
-Received: from vps.xff.cz ([195.181.215.36]:54674 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727561AbgBLMZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 07:25:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1581510311; bh=Md1F98Lg+g/HU1RRReO7O1H/L3IW/4YK8o6LZMkQlyM=;
-        h=Date:From:To:Cc:Subject:References:X-My-GPG-KeyId:From;
-        b=YHPiQ7g5CDLI2SQwq8GbZn1D1eBXr70YPQR6bVa+d8uRZlFDYzj/d6kGABbpizLYx
-         s61V7ay7LF4Q60uP1Aoc6WlgxdDEvrqbG/yPn9WA4UEHL/P45m+lixnFAw/NlymuD+
-         +COVYAETOIrwnsbPjmE1VON8OCYRIGg8cScOyv6k=
-Date:   Wed, 12 Feb 2020 13:25:11 +0100
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     mripard@kernel.org, wens@csie.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] [PATCH v2] arm64: dts: allwinner: h6: orangepi-3:
- Add eMMC node
-Message-ID: <20200212122511.5gr6m4ppmytq4ajj@core.my.home>
-Mail-Followup-To: Jernej Skrabec <jernej.skrabec@siol.net>,
-        mripard@kernel.org, wens@csie.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-References: <20200210174007.118575-1-jernej.skrabec@siol.net>
+        id S1727951AbgBLMZa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 07:25:30 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:31570 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725887AbgBLMZ3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 07:25:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581510328;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pDUH9gbb0ZVsTJG5o97WNAaGdKzWJn2GoPx52Q8GeLg=;
+        b=HqCZkzW/vbmISwHykXQzcNsR+Eik7s2nlee0WkvVaYSShyGRMcdo8DazQw2WoCmSK7i8PJ
+        fJhaIlDog+x8E+e4TlbTMmY4bnjXWAwhYoagbZAu4DENWwcfUMCPQPWrUsbU0NZ+NAOBqL
+        M1HS46lTS0p6KYHBVys6PQn9sPGbWKY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-79-4MsLLPGdNHGjriyOEYqYgA-1; Wed, 12 Feb 2020 07:25:27 -0500
+X-MC-Unique: 4MsLLPGdNHGjriyOEYqYgA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 11404101FC67;
+        Wed, 12 Feb 2020 12:25:26 +0000 (UTC)
+Received: from [10.36.116.37] (ovpn-116-37.ams2.redhat.com [10.36.116.37])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 52F1E5D9E2;
+        Wed, 12 Feb 2020 12:25:21 +0000 (UTC)
+Subject: Re: [PATCH v5 0/4] selftests: KVM: AMD Nested SVM test infrastructure
+To:     Paolo Bonzini <pbonzini@redhat.com>, eric.auger.pro@gmail.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        vkuznets@redhat.com
+Cc:     thuth@redhat.com, drjones@redhat.com, wei.huang2@amd.com,
+        krish.sadhukhan@oracle.com
+References: <20200207142715.6166-1-eric.auger@redhat.com>
+ <25441007-2b1a-f98a-3ca8-ffe9849d7031@redhat.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <7fdf6081-44a1-35e6-a652-69c753a17491@redhat.com>
+Date:   Wed, 12 Feb 2020 13:25:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200210174007.118575-1-jernej.skrabec@siol.net>
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
+In-Reply-To: <25441007-2b1a-f98a-3ca8-ffe9849d7031@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Paolo,
 
-On Mon, Feb 10, 2020 at 06:40:07PM +0100, Jernej Skrabec wrote:
-> OrangePi 3 can optionally have 8 GiB eMMC (soldered on board). Because
-> those pins are dedicated to eMMC exclusively, node can be added for both
-> variants (with and without eMMC). Kernel will then scan bus for presence
-> of eMMC and act accordingly.
-
-Tested-by: Ondrej Jirman <megous@megous.com> (on a variant without eMMC)
-
-It didn't magically add extra 8GiB of storage, but it didn't break anything
-either. :)
-
-regards,
-	o.
-
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
-> Changes since v1:
-> - don't make separate DT just for -emmc variant - add node to existing
->   orangepi 3 DT
+On 2/12/20 1:09 PM, Paolo Bonzini wrote:
+> On 07/02/20 15:27, Eric Auger wrote:
+>>
+>> History:
+>> v4 -> v5:
+>> - Added "selftests: KVM: Remove unused x86_register enum"
+>> - reorder GPRs within gpr64_regs
+>> - removed vmcb_hva and save_area_hva from svm_test_data
+>> - remove the naming for vmcb_gpa in run_guest
 > 
->  arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts | 9 +++++++++
->  1 file changed, 9 insertions(+)
+> I preferred v4. :)
+
+Ah OK
+
+I queued the patch to remove the unused enum though.
+
+Thanks
+
+Eric
 > 
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-> index c311eee52a35..1e0abd9d047f 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-> @@ -144,6 +144,15 @@ brcm: sdio-wifi@1 {
->  	};
->  };
->  
-> +&mmc2 {
-> +	vmmc-supply = <&reg_cldo1>;
-> +	vqmmc-supply = <&reg_bldo2>;
-> +	cap-mmc-hw-reset;
-> +	non-removable;
-> +	bus-width = <8>;
-> +	status = "okay";
-> +};
-> +
->  &ohci0 {
->  	status = "okay";
->  };
-> -- 
-> 2.25.0
+> Paolo
 > 
-> -- 
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> To view this discussion on the web, visit https://groups.google.com/d/msgid/linux-sunxi/20200210174007.118575-1-jernej.skrabec%40siol.net.
+
