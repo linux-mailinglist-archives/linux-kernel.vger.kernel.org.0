@@ -2,174 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09F3015AB26
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 15:43:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3494515AB2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 15:45:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728260AbgBLOnM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 09:43:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51768 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727092AbgBLOnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 09:43:12 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E87720661;
-        Wed, 12 Feb 2020 14:43:10 +0000 (UTC)
-Date:   Wed, 12 Feb 2020 09:43:08 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ben Segall <bsegall@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Phil Auld <pauld@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 05/11] sched/numa: Distinguish between the different
- task_numa_migrate failure cases
-Message-ID: <20200212094308.04bcf8a2@gandalf.local.home>
-In-Reply-To: <20200212093654.4816-6-mgorman@techsingularity.net>
-References: <20200212093654.4816-1-mgorman@techsingularity.net>
-        <20200212093654.4816-6-mgorman@techsingularity.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727781AbgBLOpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 09:45:10 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:51570 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727092AbgBLOpJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 09:45:09 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01CEWbVw010972;
+        Wed, 12 Feb 2020 14:44:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=i8va69HUS8usS5uVPrUR0RrMmMhq7YLvI3DqxMqPyhM=;
+ b=OVsFH/s2UrrUBzqSi7yuin/O8dRmeKg8c3tfvsIL7dCOQbC4OK/c/q1m1BPj1ye0x5il
+ OyefNp5FrQZRLNtOj5f/d3C+Q5BrXnEoTw22ySr/CDjxrM95oSsSfYoePKYez2jVtxdf
+ 61HKiPG0doqFh4VMK2iRV44ID2alKJ9t7FhOv3aUj3hPcaq9RHs5tnhi9P1Yf8lgX3jv
+ 99Ce26lSXK+/FIk4u+EXaUsBr0Fr1h6HM4zOHUN9F2ZSX4SLNhuja67nXQtCBH5xlnsg
+ 3u/NzLOOwI0GJ73TbjK/c8TT1WrDk9PNRfMhxw78LaNgq/8azh1NCSzvli4uox4/0uGT MA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2y2k88aurh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Feb 2020 14:44:49 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01CEd0xw073307;
+        Wed, 12 Feb 2020 14:44:48 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2y4kag893q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Feb 2020 14:44:48 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01CEiWlm013875;
+        Wed, 12 Feb 2020 14:44:33 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 12 Feb 2020 06:44:32 -0800
+Date:   Wed, 12 Feb 2020 17:44:24 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Kaaira Gupta <kgupta@es.iitr.ac.in>
+Cc:     Julia Lawall <julia.lawall@inria.fr>, devel@driverdev.osuosl.org,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        Rob Springer <rspringer@google.com>,
+        Todd Poynor <toddpoynor@google.com>
+Subject: Re: [PATCH v2] staging:gasket:gasket_core.c:unified quoted string
+ split across lines in one line
+Message-ID: <20200212144424.GI1778@kadam>
+References: <20200211200456.GA10351@kaaira-HP-Pavilion-Notebook>
+ <alpine.DEB.2.21.2002112139550.3266@hadrien>
+ <20200212115035.GB21751@kaaira-HP-Pavilion-Notebook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200212115035.GB21751@kaaira-HP-Pavilion-Notebook>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9528 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
+ suspectscore=0 mlxscore=0 malwarescore=0 adultscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002120114
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9528 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 lowpriorityscore=0
+ suspectscore=0 bulkscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
+ malwarescore=0 impostorscore=0 clxscore=1011 spamscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002120114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Feb 2020 09:36:48 +0000
-Mel Gorman <mgorman@techsingularity.net> wrote:
+On Wed, Feb 12, 2020 at 05:20:35PM +0530, Kaaira Gupta wrote:
+> When the driver tries to map a region, but the region has certain
+> permissions, or when it attempts to open gasket with tgid, or when it
+> realeases device node;
 
-> sched:sched_stick_numa is meant to fire when a task is unable to migrate
-> to the preferred node but from the trace, it's possibile to tell the
-> difference between "no CPU found", "migration to idle CPU failed" and
-> "tasks could not be swapped". Extend the tracepoint accordingly.
+We don't care about any of this information...
+
+> the logs are displayed in one line only while the
+> code has the strings split in two lines which makes it difficult for
+> developers to search for code based on the log messages. So, this patch
+> fixes three warnings of 'quoted string split across lines' in
+> gasket_core.c by merging the strings in one line.
 > 
-> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-> ---
->  include/trace/events/sched.h | 51 +++++++++++++++++++++++++++++++++-----------
->  kernel/sched/fair.c          |  6 +++---
->  2 files changed, 42 insertions(+), 15 deletions(-)
-> 
-> diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-> index 420e80e56e55..3d07c0af4ab8 100644
-> --- a/include/trace/events/sched.h
-> +++ b/include/trace/events/sched.h
-> @@ -487,7 +487,11 @@ TRACE_EVENT(sched_process_hang,
->  );
->  #endif /* CONFIG_DETECT_HUNG_TASK */
->  
-> -DECLARE_EVENT_CLASS(sched_move_task_template,
-> +/*
-> + * Tracks migration of tasks from one runqueue to another. Can be used to
-> + * detect if automatic NUMA balancing is bouncing between nodes
-> + */
-> +TRACE_EVENT(sched_move_numa,
->  
->  	TP_PROTO(struct task_struct *tsk, int src_cpu, int dst_cpu),
->  
-> @@ -519,20 +523,43 @@ DECLARE_EVENT_CLASS(sched_move_task_template,
->  			__entry->dst_cpu, __entry->dst_nid)
->  );
->  
-> -/*
-> - * Tracks migration of tasks from one runqueue to another. Can be used to
-> - * detect if automatic NUMA balancing is bouncing between nodes
-> - */
-> -DEFINE_EVENT(sched_move_task_template, sched_move_numa,
-> -	TP_PROTO(struct task_struct *tsk, int src_cpu, int dst_cpu),
-> +TRACE_EVENT(sched_stick_numa,
->  
-> -	TP_ARGS(tsk, src_cpu, dst_cpu)
-> -);
-> +	TP_PROTO(struct task_struct *src_tsk, int src_cpu, struct task_struct *dst_tsk, int dst_cpu),
->  
-> -DEFINE_EVENT(sched_move_task_template, sched_stick_numa,
-> -	TP_PROTO(struct task_struct *tsk, int src_cpu, int dst_cpu),
-> +	TP_ARGS(src_tsk, src_cpu, dst_tsk, dst_cpu),
->  
-> -	TP_ARGS(tsk, src_cpu, dst_cpu)
-> +	TP_STRUCT__entry(
-> +		__field( pid_t,	src_pid			)
-> +		__field( pid_t,	src_tgid		)
-> +		__field( pid_t,	src_ngid		)
-> +		__field( int,	src_cpu			)
-> +		__field( int,	src_nid			)
-> +		__field( pid_t,	dst_pid			)
-> +		__field( pid_t,	dst_tgid		)
-> +		__field( pid_t,	dst_ngid		)
-> +		__field( int,	dst_cpu			)
-> +		__field( int,	dst_nid			)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->src_pid	= task_pid_nr(src_tsk);
-> +		__entry->src_tgid	= task_tgid_nr(src_tsk);
-> +		__entry->src_ngid	= task_numa_group_id(src_tsk);
-> +		__entry->src_cpu	= src_cpu;
-> +		__entry->src_nid	= cpu_to_node(src_cpu);
-> +		__entry->dst_pid	= dst_tsk ? task_pid_nr(dst_tsk) : 0;
-> +		__entry->dst_tgid	= dst_tsk ? task_tgid_nr(dst_tsk) : 0;
-> +		__entry->dst_ngid	= dst_tsk ? task_numa_group_id(dst_tsk) : 0;
-> +		__entry->dst_cpu	= dst_cpu;
-> +		__entry->dst_nid	= dst_cpu >= 0 ? cpu_to_node(dst_cpu) : -1;
-> +	),
-> +
-> +	TP_printk("src_pid=%d src_tgid=%d src_ngid=%d src_cpu=%d src_nid=%d dst_pid=%d dst_tgid=%d dst_ngid=%d dst_cpu=%d dst_nid=%d",
-> +			__entry->src_pid, __entry->src_tgid, __entry->src_ngid,
-> +			__entry->src_cpu, __entry->src_nid,
-> +			__entry->dst_pid, __entry->dst_tgid, __entry->dst_ngid,
-> +			__entry->dst_cpu, __entry->dst_nid)
->  );
->  
+> Also, I wasn't sure if I were to send a separate batch or reply with a
+> v2 for this one. If former was the case than please let me know.
+> Thanks for your time!
 
-The above looks the same as the below sched_swap_numa. Can you make a
-DECLARE_EVENT_CLASS() and merge the two for sched_swap_numa?
+I would say:
 
-Note, most the footprint of a trace event happens in the
-DECLARE_EVENT_CLASS() (a TRACE_EVENT() is just a DECLARE_EVENT_CLASS()
-and DEFINE_EVENT() put together). The more DECLARE_EVENT_CLASS()s you
-can share, the less the footprint is.
+"Kernel style says not to split string literals across mutliple lines
+because it makes it difficult to grep the source for the printk.  I have
+changed the code accordingly.  It will not affect runtime."
 
--- Steve
+That's not imperative and some subsystems are more strict about "you're
+not allowed to use the words 'I', 'we' or 'this patch'" in a commit
+description.  But in staging we are pragmatists.  So long as it's clear
+why you're writing the patch that's the main thing.
 
+The other problem with this code is that some of these messages are over
+80 characters long themselves which is very long for one line.
 
->  TRACE_EVENT(sched_swap_numa,
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 4ab18fba5b82..6005ce28033b 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -1849,7 +1849,7 @@ static int task_numa_migrate(struct task_struct *p)
->  
->  	/* No better CPU than the current one was found. */
->  	if (env.best_cpu == -1) {
-> -		trace_sched_stick_numa(p, env.src_cpu, -1);
-> +		trace_sched_stick_numa(p, env.src_cpu, NULL, -1);
->  		return -EAGAIN;
->  	}
->  
-> @@ -1858,7 +1858,7 @@ static int task_numa_migrate(struct task_struct *p)
->  		ret = migrate_task_to(p, env.best_cpu);
->  		WRITE_ONCE(best_rq->numa_migrate_on, 0);
->  		if (ret != 0)
-> -			trace_sched_stick_numa(p, env.src_cpu, env.best_cpu);
-> +			trace_sched_stick_numa(p, env.src_cpu, NULL, env.best_cpu);
->  		return ret;
->  	}
->  
-> @@ -1866,7 +1866,7 @@ static int task_numa_migrate(struct task_struct *p)
->  	WRITE_ONCE(best_rq->numa_migrate_on, 0);
->  
->  	if (ret != 0)
-> -		trace_sched_stick_numa(p, env.src_cpu, task_cpu(env.best_task));
-> +		trace_sched_stick_numa(p, env.src_cpu, env.best_task, env.best_cpu);
->  	put_task_struct(env.best_task);
->  	return ret;
->  }
+It doesn't matter if you send the v2 as a reply or not.
+
+regards,
+dan carpenter
 
