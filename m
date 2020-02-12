@@ -2,92 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5558215ADE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 17:58:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3A7915AE82
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 18:14:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbgBLQ6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 11:58:49 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38488 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726351AbgBLQ6t (ORCPT
+        id S1728793AbgBLRN4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 12:13:56 -0500
+Received: from a80-127-99-228.adsl.xs4all.nl ([80.127.99.228]:37756 "EHLO
+        hetgrotebos.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726728AbgBLRNz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 11:58:49 -0500
-Received: by mail-pg1-f194.google.com with SMTP id d6so1519861pgn.5
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 08:58:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:in-reply-to:references
-         :subject:from:cc:to:date:message-id:user-agent;
-        bh=bK+cvl8zl3lFOBR7bGFC49ixHUgxXY0M1LIjl6eCa7g=;
-        b=NlaN8NZnHVoC2MsosIgILZ3NWppGuVSUhrH+t3G+ZjgTaeU9geNHIZoJ4yrqViRc4S
-         GuvHMdMQsjB2d7o2umi7zud7ryWUw8IRQTdPeV3ucViDk0QkOJLkT0XQHyI9toUPWM1h
-         TlTmAY+Eu0E3f0YiwnQMZ3xGlVVIEQiapH5bg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding
-         :in-reply-to:references:subject:from:cc:to:date:message-id
-         :user-agent;
-        bh=bK+cvl8zl3lFOBR7bGFC49ixHUgxXY0M1LIjl6eCa7g=;
-        b=gq08M/maz0qde0VvHLUUtCCVRjPQv4/mgZ530F0GHLboNs6CM/xqoKkMTtYF7oOVon
-         +LExeadqaxaKgtTC/aUJxMIv4HKkx3WmIHIlXXgpBvU0DhQaYKma68Iqf/7UE0+raeXg
-         QCevZu6U1hpOIaWMUIMPcRID1y7ui4m4MaaLo/4affe+EL5gOl5KbC6WIHpPW4eEr2II
-         htinAQ5KIfSa0rqjo+pxKSzQD/oJLNEm+7QMfGzsq06J78EaUruMXGgnAsDywTKiyvnf
-         j9F+Zs3qZI/yvgHospXpcxbA/QOkRy8dRWhQBKSmrdGT650vVdQP1a52AQNZS7rVBlnv
-         AkHQ==
-X-Gm-Message-State: APjAAAVhJA6A4adcCCNaObCxlEghU8R5VESCHwZOrv08Vr2z5CfCVIVq
-        0CT9V2aRK/WV1CTRq1b2Yod3xeF1Sgg=
-X-Google-Smtp-Source: APXvYqydHiVqEawLuj0kN/UatDCVMzDQCKH2Edo9QUQTHOVoTBw6W167ZCYnwSPn4e1U0H9BAmp+Iw==
-X-Received: by 2002:aa7:951c:: with SMTP id b28mr9136009pfp.97.1581526728668;
-        Wed, 12 Feb 2020 08:58:48 -0800 (PST)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id 13sm1497030pfj.68.2020.02.12.08.58.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 08:58:48 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1581492673-27295-1-git-send-email-sbhanu@codeaurora.org>
-References: <1581492673-27295-1-git-send-email-sbhanu@codeaurora.org>
-Subject: Re: [PATCH V3] mmc: sdhci-msm: Update system suspend/resume callbacks of sdhci-msm platform driver
-From:   Stephen Boyd <swboyd@chromium.org>
-Cc:     asutoshd@codeaurora.org, stummala@codeaurora.org,
-        sayalil@codeaurora.org, cang@codeaurora.org,
-        vbadigan@codeaurora.org, rampraka@codeaurora.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        agross@kernel.org, bjorn.andersson@linaro.org,
-        Shaik Sajida Bhanu <sbhanu@codeaurora.org>
-To:     Shaik Sajida Bhanu <sbhanu@codeaurora.org>,
-        adrian.hunter@intel.com, mka@chromium.org, robh+dt@kernel.org,
-        ulf.hansson@linaro.org
-Date:   Wed, 12 Feb 2020 08:58:47 -0800
-Message-ID: <158152672736.121156.11425666862560332951@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+        Wed, 12 Feb 2020 12:13:55 -0500
+X-Greylist: delayed 1723 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Feb 2020 12:13:54 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=wizzup.org;
+         s=mail; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:
+        Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=ZrFv79XmQN2t/hZYh19DmJQWLHJ5TcEW4pzIc6Gdimk=; b=X6IaEaPT6V8oEPKYGhmzZ6bZ4N
+        y49T9nnJzEaOmmXPy6ksXVy42j2NK1otan9Q6MGvFbKnllnhQ46fxmZQrjwZdT8Fh3G9wdNWpKQV2
+        uRDVh+UhBNwGL4U5aiUqz6ZdM52x8jYEASZ8/0GRAVecz2T+QAFa00ykA+KALT+cGmr7kpwy3kB0/
+        B1iDGwepDU9iOnenBbs+0f0QT2fe0kBvvHmAWFzSomNp+obhbirp5lBBGxXMh+sJM+2QROQm2o9qX
+        A4TK9+Jfns2Vm8f79zDUgKEdjAqitAWQVEsidkbPP0V3oYwM1rq3/ZmM/cGDNM2Tb3LwCiUIlxWdt
+        QDcK3Q5A==;
+Received: from archivecd-merlijn-development-nuc-1.fritz.box ([192.168.178.36])
+        by hetgrotebos.org with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <merlijn@wizzup.org>)
+        id 1j1v8P-0001jl-8M; Wed, 12 Feb 2020 16:45:09 +0000
+From:   Merlijn Wajer <merlijn@wizzup.org>
+To:     merlijn@wizzup.org, linux-scsi@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] scsi: sr: get rid of sr global mutex
+Date:   Wed, 12 Feb 2020 17:44:45 +0100
+Message-Id: <20200212164445.1171-1-merlijn@wizzup.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Shaik Sajida Bhanu (2020-02-11 23:31:13)
-> The existing suspend/resume callbacks of sdhci-msm driver are just
-> gating/un-gating the clocks. During suspend cycle more can be done
-> like disabling controller, disabling card detection, enabling wake-up eve=
-nts.
->=20
-> So updating the system pm callbacks for performing these extra
-> actions besides controlling the clocks.
->=20
-> Signed-off-by: Shaik Sajida Bhanu <sbhanu@codeaurora.org>
+When replacing the Big Kernel Lock in commit:
+<2a48fc0ab24241755dc93bfd4f01d68efab47f5a> ("block: autoconvert trivial BKL
+users to private mutex") , the lock was replaced with a sr-wide lock.
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+This causes very poor performance when using multiple sr devices, as the
+sr driver was not able to execute more than one command to one drive at
+any given time, even when there were many CD drives available.
 
->=20
-> Changes since V2:
->     Removed disabling/enabling pwr-irq from system pm ops.
->=20
-> Changes since V1:
->     Invoking pm_runtime_force_suspend/resume instead of
->     sdhci_msm_runtime_suepend/resume.
-> ---
+Replace the global mutex with per-sr-device mutex.
 
-This triple dash should come right after the SoB line.
+Someone tried this patch at the time, but it never made it
+upstream, due to possible concerns with race conditions, but it's not
+clear the patch actually caused those:
+
+https://www.spinics.net/lists/linux-scsi/msg63706.html
+https://www.spinics.net/lists/linux-scsi/msg63750.html
+
+Also see
+
+http://lists.xiph.org/pipermail/paranoia/2019-December/001647.html
+
+Signed-off-by: Merlijn Wajer <merlijn@wizzup.org>
+---
+ drivers/scsi/sr.c | 16 +++++++++-------
+ drivers/scsi/sr.h |  2 ++
+ 2 files changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
+index 38ddbbfe5..6809fdcfd 100644
+--- a/drivers/scsi/sr.c
++++ b/drivers/scsi/sr.c
+@@ -77,7 +77,6 @@ MODULE_ALIAS_SCSI_DEVICE(TYPE_WORM);
+ 	 CDC_CD_R|CDC_CD_RW|CDC_DVD|CDC_DVD_R|CDC_DVD_RAM|CDC_GENERIC_PACKET| \
+ 	 CDC_MRW|CDC_MRW_W|CDC_RAM)
+ 
+-static DEFINE_MUTEX(sr_mutex);
+ static int sr_probe(struct device *);
+ static int sr_remove(struct device *);
+ static blk_status_t sr_init_command(struct scsi_cmnd *SCpnt);
+@@ -535,9 +534,9 @@ static int sr_block_open(struct block_device *bdev, fmode_t mode)
+ 	scsi_autopm_get_device(sdev);
+ 	check_disk_change(bdev);
+ 
+-	mutex_lock(&sr_mutex);
++	mutex_lock(&cd->lock);
+ 	ret = cdrom_open(&cd->cdi, bdev, mode);
+-	mutex_unlock(&sr_mutex);
++	mutex_unlock(&cd->lock);
+ 
+ 	scsi_autopm_put_device(sdev);
+ 	if (ret)
+@@ -550,10 +549,10 @@ static int sr_block_open(struct block_device *bdev, fmode_t mode)
+ static void sr_block_release(struct gendisk *disk, fmode_t mode)
+ {
+ 	struct scsi_cd *cd = scsi_cd(disk);
+-	mutex_lock(&sr_mutex);
++	mutex_lock(&cd->lock);
+ 	cdrom_release(&cd->cdi, mode);
+ 	scsi_cd_put(cd);
+-	mutex_unlock(&sr_mutex);
++	mutex_unlock(&cd->lock);
+ }
+ 
+ static int sr_block_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
+@@ -564,7 +563,7 @@ static int sr_block_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
+ 	void __user *argp = (void __user *)arg;
+ 	int ret;
+ 
+-	mutex_lock(&sr_mutex);
++	mutex_lock(&cd->lock);
+ 
+ 	ret = scsi_ioctl_block_when_processing_errors(sdev, cmd,
+ 			(mode & FMODE_NDELAY) != 0);
+@@ -594,7 +593,7 @@ static int sr_block_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
+ 	scsi_autopm_put_device(sdev);
+ 
+ out:
+-	mutex_unlock(&sr_mutex);
++	mutex_unlock(&cd->lock);
+ 	return ret;
+ }
+ 
+@@ -700,6 +699,7 @@ static int sr_probe(struct device *dev)
+ 	disk = alloc_disk(1);
+ 	if (!disk)
+ 		goto fail_free;
++	mutex_init(&cd->lock);
+ 
+ 	spin_lock(&sr_index_lock);
+ 	minor = find_first_zero_bit(sr_index_bits, SR_DISKS);
+@@ -1009,6 +1009,8 @@ static void sr_kref_release(struct kref *kref)
+ 
+ 	put_disk(disk);
+ 
++	mutex_destroy(&cd->lock);
++
+ 	kfree(cd);
+ }
+ 
+diff --git a/drivers/scsi/sr.h b/drivers/scsi/sr.h
+index a2bb7b8ba..339c624e0 100644
+--- a/drivers/scsi/sr.h
++++ b/drivers/scsi/sr.h
+@@ -20,6 +20,7 @@
+ 
+ #include <linux/genhd.h>
+ #include <linux/kref.h>
++#include <linux/mutex.h>
+ 
+ #define MAX_RETRIES	3
+ #define SR_TIMEOUT	(30 * HZ)
+@@ -51,6 +52,7 @@ typedef struct scsi_cd {
+ 	bool ignore_get_event:1;	/* GET_EVENT is unreliable, use TUR */
+ 
+ 	struct cdrom_device_info cdi;
++	struct mutex lock;
+ 	/* We hold gendisk and scsi_device references on probe and use
+ 	 * the refs on this kref to decide when to release them */
+ 	struct kref kref;
+-- 
+2.17.1
+
