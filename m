@@ -2,93 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A213F15A673
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:33:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B601815A67B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:34:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbgBLKcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 05:32:55 -0500
-Received: from foss.arm.com ([217.140.110.172]:58812 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725710AbgBLKcw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 05:32:52 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C589330E;
-        Wed, 12 Feb 2020 02:32:51 -0800 (PST)
-Received: from localhost (unknown [10.1.198.52])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 61A953F68F;
-        Wed, 12 Feb 2020 02:32:51 -0800 (PST)
-Date:   Wed, 12 Feb 2020 10:32:49 +0000
-From:   Ionela Voinescu <ionela.voinescu@arm.com>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com,
-        maz@kernel.org, suzuki.poulose@arm.com, sudeep.holla@arm.com,
-        lukasz.luba@arm.com, rjw@rjwysocki.net, peterz@infradead.org,
-        mingo@redhat.com, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] clocksource/drivers/arm_arch_timer: validate
- arch_timer_rate
-Message-ID: <20200212103249.GA19041@arm.com>
-References: <20200211184542.29585-1-ionela.voinescu@arm.com>
- <20200211184542.29585-8-ionela.voinescu@arm.com>
- <05e257b6-0a39-135d-8117-7883739538c3@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <05e257b6-0a39-135d-8117-7883739538c3@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1727901AbgBLKev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 05:34:51 -0500
+Received: from mail27.static.mailgun.info ([104.130.122.27]:40639 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727558AbgBLKeu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 05:34:50 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1581503689; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=2BzVBkWXGOG1Dibf8D8odHQzCgza5j9KmDN17ZfpAAs=; b=qMTJ1CYcVWVSyFPcDyaqM3MPj9aIjZ4ZddmGjuEwXQrkpPP8AJs+C17d0vm1NdfTcvgPgHHT
+ jSe7vvviDz41H0CP29w3tkUNyEDxhNkj3E91ADMA42p/rd2I0DzJI7B1F+SjXbUgVOQ5cPSQ
+ GqzDDVKHg+008AxdH+B+XZN3j7s=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e43d4c7.7f2c914487d8-smtp-out-n01;
+ Wed, 12 Feb 2020 10:34:47 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 529F4C4479C; Wed, 12 Feb 2020 10:34:47 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: stummala)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B7DD8C433A2;
+        Wed, 12 Feb 2020 10:34:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B7DD8C433A2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+From:   Sahitya Tummala <stummala@codeaurora.org>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     Sahitya Tummala <stummala@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] f2fs: fix the panic in do_checkpoint()
+Date:   Wed, 12 Feb 2020 16:04:25 +0530
+Message-Id: <1581503665-19914-1-git-send-email-stummala@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Valentin,
+There could be a scenario where f2fs_sync_meta_pages() will not
+ensure that all F2FS_DIRTY_META pages are submitted for IO. Thus,
+resulting in the below panic in do_checkpoint() -
 
-On Wednesday 12 Feb 2020 at 09:30:34 (+0000), Valentin Schneider wrote:
-> On 11/02/2020 18:45, Ionela Voinescu wrote:
-> > From: Valentin Schneider <valentin.schneider@arm.com>
-> > 
-> > Using an arch timer with a frequency of less than 1MHz can result in an
-> > incorrect functionality of the system which assumes a reasonable rate.
-> > 
-> > One example is the use of activity monitors for frequency invariance
-> > which uses the rate of the arch timer as the known rate of the constant
-> > cycle counter in computing its ratio compared to the maximum frequency
-> > of a CPU. For arch timer frequencies less than 1MHz this ratio could
-> > end up being 0 which is an invalid value for its use.
-> > 
-> 
-> I'm being pedantic here (as usual), but I'd contrast this a bit more. The
-> activity monitor code checks by itself that the ratio doesn't end up being
-> 0, which is why we don't slam the brakes if the arch timer freq is < 1MHz.
-> 
-> It's just a CNTFRQ sanity check that goes a bit beyond the 0 value check,
-> IMO.
-> 
+f2fs_bug_on(sbi, get_pages(sbi, F2FS_DIRTY_META) &&
+				!f2fs_cp_error(sbi));
 
-I agree, but this part was just given as an example of functionality
-that relies on a reasonable arch timer rate. The AMU code checks for the
-ratio not to be 0 so it does not end up breaking frequency invariance.
-But if the ratio does end up being 0 due to the value of arch_time_rate,
-we bypass the use of activity monitors which I'd argue it's incorrect
-functionality by disabling a potential better source of information for
-frequency invariance.
+This can happen in a low-memory condition, where shrinker could
+also be doing the writepage operation (stack shown below)
+at the same time when checkpoint is running on another core.
 
-But I can rewrite this part for more clarity.
+schedule
+down_write
+f2fs_submit_page_write -> by this time, this page in page cache is tagged
+			as PAGECACHE_TAG_WRITEBACK and PAGECACHE_TAG_DIRTY
+			is cleared, due to which f2fs_sync_meta_pages()
+			cannot sync this page in do_checkpoint() path.
+f2fs_do_write_meta_page
+__f2fs_write_meta_page
+f2fs_write_meta_page
+shrink_page_list
+shrink_inactive_list
+shrink_node_memcg
+shrink_node
+kswapd
 
-> > Therefore, warn if the arch timer rate is below 1MHz which contravenes
-> > the recommended architecture interval of 1 to 50MHz.
-> > 
-> > Signed-off-by: Ionela Voinescu <ionela.voinescu@arm.com>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Marc Zyngier <maz@kernel.org>
-> 
-> ISTR something somewhere that says the first signoff should be that of the
-> author of the patch, and seeing as I just provided an untested diff that
-> ought to be you :)
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+---
+ fs/f2fs/checkpoint.c | 16 ++++++++--------
+ fs/f2fs/f2fs.h       |  2 +-
+ fs/f2fs/super.c      |  2 +-
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
-Will do!
-
-Thanks,
-Ionela.
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index ffdaba0..2b651a3 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1250,14 +1250,14 @@ static void unblock_operations(struct f2fs_sb_info *sbi)
+ 	f2fs_unlock_all(sbi);
+ }
+ 
+-void f2fs_wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
++void f2fs_wait_on_all_pages(struct f2fs_sb_info *sbi, int type)
+ {
+ 	DEFINE_WAIT(wait);
+ 
+ 	for (;;) {
+ 		prepare_to_wait(&sbi->cp_wait, &wait, TASK_UNINTERRUPTIBLE);
+ 
+-		if (!get_pages(sbi, F2FS_WB_CP_DATA))
++		if (!get_pages(sbi, type))
+ 			break;
+ 
+ 		if (unlikely(f2fs_cp_error(sbi)))
+@@ -1384,8 +1384,8 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	/* Flush all the NAT/SIT pages */
+ 	f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
+-	f2fs_bug_on(sbi, get_pages(sbi, F2FS_DIRTY_META) &&
+-					!f2fs_cp_error(sbi));
++	/* Wait for all dirty meta pages to be submitted for IO */
++	f2fs_wait_on_all_pages(sbi, F2FS_DIRTY_META);
+ 
+ 	/*
+ 	 * modify checkpoint
+@@ -1493,11 +1493,11 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	/* Here, we have one bio having CP pack except cp pack 2 page */
+ 	f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
+-	f2fs_bug_on(sbi, get_pages(sbi, F2FS_DIRTY_META) &&
+-					!f2fs_cp_error(sbi));
++	/* Wait for all dirty meta pages to be submitted for IO */
++	f2fs_wait_on_all_pages(sbi, F2FS_DIRTY_META);
+ 
+ 	/* wait for previous submitted meta pages writeback */
+-	f2fs_wait_on_all_pages_writeback(sbi);
++	f2fs_wait_on_all_pages(sbi, F2FS_WB_CP_DATA);
+ 
+ 	/* flush all device cache */
+ 	err = f2fs_flush_device_cache(sbi);
+@@ -1506,7 +1506,7 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	/* barrier and flush checkpoint cp pack 2 page if it can */
+ 	commit_checkpoint(sbi, ckpt, start_blk);
+-	f2fs_wait_on_all_pages_writeback(sbi);
++	f2fs_wait_on_all_pages(sbi, F2FS_WB_CP_DATA);
+ 
+ 	/*
+ 	 * invalidate intermediate page cache borrowed from meta inode
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5a888a0..b0e0535 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3196,7 +3196,7 @@ bool f2fs_is_dirty_device(struct f2fs_sb_info *sbi, nid_t ino,
+ void f2fs_update_dirty_page(struct inode *inode, struct page *page);
+ void f2fs_remove_dirty_inode(struct inode *inode);
+ int f2fs_sync_dirty_inodes(struct f2fs_sb_info *sbi, enum inode_type type);
+-void f2fs_wait_on_all_pages_writeback(struct f2fs_sb_info *sbi);
++void f2fs_wait_on_all_pages(struct f2fs_sb_info *sbi, int type);
+ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc);
+ void f2fs_init_ino_entry_info(struct f2fs_sb_info *sbi);
+ int __init f2fs_create_checkpoint_caches(void);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 5111e1f..084633b 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1105,7 +1105,7 @@ static void f2fs_put_super(struct super_block *sb)
+ 	/* our cp_error case, we can wait for any writeback page */
+ 	f2fs_flush_merged_writes(sbi);
+ 
+-	f2fs_wait_on_all_pages_writeback(sbi);
++	f2fs_wait_on_all_pages(sbi, F2FS_WB_CP_DATA);
+ 
+ 	f2fs_bug_on(sbi, sbi->fsync_node_num);
+ 
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
