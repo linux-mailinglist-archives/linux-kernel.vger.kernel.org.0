@@ -2,121 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 758A615A4D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:32:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01B3A15A4DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:33:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728868AbgBLJck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 04:32:40 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:37052 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728530AbgBLJcj (ORCPT
+        id S1728846AbgBLJdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 04:33:50 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:60874 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728530AbgBLJdt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:32:39 -0500
-Received: by mail-oi1-f196.google.com with SMTP id q84so1407554oic.4;
-        Wed, 12 Feb 2020 01:32:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fbl16QLWOk16BbpGJnBM6ITNh/OXaqd9qdxwFkNXjtY=;
-        b=JvhsPYEUaeeK7KbUnv7HXvNL2DqGDkkKcSFQurlaubDp0i4OUymw+p/npEtcoaWB7S
-         aiVyvhtXfRwKL9vFcCI641secM3Q5pP4/c2cMthfvTdhJow3dwuz1BDay3nH7PR9f4AQ
-         qs1zm1HKcZ6pOfXiTtLsHmvzhccnlQpceR6bhnCzFQCanL0v3Q1cxydvqWyDcZFAYRI3
-         EyXi7htNo/acu0CupQhih1qmFiGqBwqcXs3BBGCq9Vge+Gd7CKXiHRz/w/QiW+v0UIja
-         C//psjZdR5eIy3NW8CSTji+By/l/ctSmwyVXfx+9we4brR5KqJQyfA1LSMQ6HcVpTDcG
-         F+UQ==
-X-Gm-Message-State: APjAAAUQSlYw2r07G2XgRxnPrYE14q1hn8VANcensh+zCHpPmgRgd6gH
-        G5C/Z9zj+Srh6goR8N237Dl4QJbV1MhuE8AhTEg=
-X-Google-Smtp-Source: APXvYqw2r8z8Vc2w1tJlwrxGXuJOMY7YWRpy7v7NNenZTHTtUJxjFWBwZTlQgI0gtLqTBX6zyCXSm2/SjWcl6JKwack=
-X-Received: by 2002:aca:c4d2:: with SMTP id u201mr5697570oif.54.1581499958571;
- Wed, 12 Feb 2020 01:32:38 -0800 (PST)
+        Wed, 12 Feb 2020 04:33:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581500028;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RXSj4dp+3e1XmrSFNINy7OA1N1REvEZjNFMtm5OoDhU=;
+        b=LbER5Gn6+3mpuXY+O5BEZcVteGDR5iMT0YCxqvVuTdXLPXPjuXki2r+05D3E5TWDacSIyN
+        DrhEk03qKMpQyx41EJlt7IL+D8HGgo4nUm8P1wNneQ53JHatT4WQOqrIWy/oqGqD9uVWA4
+        dYG7+pr1T3HK6Cxu1Q+TYYPFkgcAdYM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-323-i4y7TRpeNXOk-ShitKUjMg-1; Wed, 12 Feb 2020 04:33:43 -0500
+X-MC-Unique: i4y7TRpeNXOk-ShitKUjMg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E30E11005513;
+        Wed, 12 Feb 2020 09:33:41 +0000 (UTC)
+Received: from [10.72.13.111] (ovpn-13-111.pek2.redhat.com [10.72.13.111])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 80EBE101D482;
+        Wed, 12 Feb 2020 09:33:10 +0000 (UTC)
+Subject: Re: [PATCH v2 1/5] virtio-mmio: add notify feature for per-queue
+From:   Jason Wang <jasowang@redhat.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Zha Bin <zhabin@linux.alibaba.com>,
+        virtio-dev@lists.oasis-open.org, slp@redhat.com,
+        jing2.liu@linux.intel.com, linux-kernel@vger.kernel.org,
+        qemu-devel@nongnu.org, chao.p.peng@linux.intel.com,
+        gerry@linux.alibaba.com
+References: <cover.1581305609.git.zhabin@linux.alibaba.com>
+ <8a4ea95d6d77a2814aaf6897b5517353289a098e.1581305609.git.zhabin@linux.alibaba.com>
+ <20200211062205-mutt-send-email-mst@kernel.org>
+ <ef613d3a-0372-64f3-7644-2e88cc9d4355@redhat.com>
+ <20200212024158-mutt-send-email-mst@kernel.org>
+ <d4eb9cde-5d06-3df9-df28-15378a9c6929@redhat.com>
+Message-ID: <82d99b35-0c64-2eb2-9c23-7af2597b880b@redhat.com>
+Date:   Wed, 12 Feb 2020 17:33:06 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <dcdd615f77dacf8a98e18950b66fb5a675277f38.1581498987.git.michal.simek@xilinx.com>
- <CAMo8BfLYM-_SbqmMUCVjwqL7MpA2W7toTg_F6HTY4Sg5QxGzfw@mail.gmail.com>
- <CAMuHMdUZ_e9JsF0fuLxBwdoy7YVLarH6E98z5nKUZ2CccSkV-Q@mail.gmail.com> <6128aa3a-a99c-2ab0-82d1-d5c419e4f5b9@xilinx.com>
-In-Reply-To: <6128aa3a-a99c-2ab0-82d1-d5c419e4f5b9@xilinx.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 12 Feb 2020 10:32:27 +0100
-Message-ID: <CAMuHMdX3O6aL_yGSfqrbdfPf-HHqqdkMwPHS=Y0WxMRTYOtJ4w@mail.gmail.com>
-Subject: Re: [PATCH v2] asm-generic: Fix unistd_32.h generation format
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Max Filippov <jcmvbkbc@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Simek <monstr@monstr.eu>, git@xilinx.com,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stefan Asserhall <stefan.asserhall@xilinx.com>,
-        Chris Zankel <chris@zankel.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Helge Deller <deller@gmx.de>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Matt Turner <mattst88@gmail.com>,
-        Rich Felker <dalias@libc.org>,
-        Richard Henderson <rth@twiddle.net>,
-        Tony Luck <tony.luck@intel.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        "open list:ALPHA PORT" <linux-alpha@vger.kernel.org>,
-        "open list:IA64 (Itanium) PL..." <linux-ia64@vger.kernel.org>,
-        "open list:M68K ARCHITECTURE" <linux-m68k@lists.linux-m68k.org>,
-        "open list:PARISC ARCHITECTURE" <linux-parisc@vger.kernel.org>,
-        "open list:SUPERH" <linux-sh@vger.kernel.org>,
-        "open list:TENSILICA XTENSA PORT (xtensa)" 
-        <linux-xtensa@linux-xtensa.org>,
-        "open list:SPARC + UltraSPAR..." <sparclinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <d4eb9cde-5d06-3df9-df28-15378a9c6929@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
 
-On Wed, Feb 12, 2020 at 10:27 AM Michal Simek <michal.simek@xilinx.com> wrote:
-> On 12. 02. 20 10:25, Geert Uytterhoeven wrote:
-> > On Wed, Feb 12, 2020 at 10:23 AM Max Filippov <jcmvbkbc@gmail.com> wrote:
-> >> On Wed, Feb 12, 2020 at 1:16 AM Michal Simek <michal.simek@xilinx.com> wrote:
-> >>>
-> >>> Generated files are also checked by sparse that's why add newline
-> >>> to remove sparse (C=1) warning.
-> >>>
-> >>> The issue was found on Microblaze and reported like this:
-> >>> ./arch/microblaze/include/generated/uapi/asm/unistd_32.h:438:45:
-> >>> warning: no newline at end of file
-> >>>
-> >>> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> >>> Reviewed-by: Stefan Asserhall <stefan.asserhall@xilinx.com>
-> >
-> >>> --- a/arch/m68k/kernel/syscalls/syscallhdr.sh
-> >>> +++ b/arch/m68k/kernel/syscalls/syscallhdr.sh
-> >>> @@ -33,4 +33,5 @@ grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
-> >>>         printf "#endif\n"
-> >>>         printf "\n"
-> >>>         printf "#endif /* %s */\n" "${fileguard}"
-> >>
-> >> Here there's already \n at the end, so no need for another one?
-> >
-> > Thanks! I completely missed that.
-> > So I did fix the original while applying ;-)
+On 2020/2/12 =E4=B8=8B=E5=8D=884:53, Jason Wang wrote:
 >
-> I can drop m68k or align with with others. I would prefer to have the
-> same solution in all these scripts.
+> On 2020/2/12 =E4=B8=8B=E5=8D=884:18, Michael S. Tsirkin wrote:
+>> On Wed, Feb 12, 2020 at 11:39:54AM +0800, Jason Wang wrote:
+>>> On 2020/2/11 =E4=B8=8B=E5=8D=887:33, Michael S. Tsirkin wrote:
+>>>> On Mon, Feb 10, 2020 at 05:05:17PM +0800, Zha Bin wrote:
+>>>>> From: Liu Jiang<gerry@linux.alibaba.com>
+>>>>>
+>>>>> The standard virtio-mmio devices use notification register to signa=
+l
+>>>>> backend. This will cause vmexits and slow down the performance=20
+>>>>> when we
+>>>>> passthrough the virtio-mmio devices to guest virtual machines.
+>>>>> We proposed to update virtio over MMIO spec to add the per-queue
+>>>>> notify feature VIRTIO_F_MMIO_NOTIFICATION[1]. It can allow the VMM =
+to
+>>>>> configure notify location for each queue.
+>>>>>
+>>>>> [1]https://lkml.org/lkml/2020/1/21/31
+>>>>>
+>>>>> Signed-off-by: Liu Jiang<gerry@linux.alibaba.com>
+>>>>> Co-developed-by: Zha Bin<zhabin@linux.alibaba.com>
+>>>>> Signed-off-by: Zha Bin<zhabin@linux.alibaba.com>
+>>>>> Co-developed-by: Jing Liu<jing2.liu@linux.intel.com>
+>>>>> Signed-off-by: Jing Liu<jing2.liu@linux.intel.com>
+>>>>> Co-developed-by: Chao Peng<chao.p.peng@linux.intel.com>
+>>>>> Signed-off-by: Chao Peng<chao.p.peng@linux.intel.com>
+>>>> Hmm. Any way to make this static so we don't need
+>>>> base and multiplier?
+>>> E.g page per vq?
+>>>
+>>> Thanks
+>> Problem is, is page size well defined enough?
+>> Are there cases where guest and host page sizes differ?
+>> I suspect there might be.
+>
+>
+> Right, so it looks better to keep base and multiplier, e.g for vDPA.
+>
+>
+>>
+>> But I also think this whole patch is unproven. Is someone actually
+>> working on QEMU code to support pass-trough of virtio-pci
+>> as virtio-mmio for nested guests? What's the performance
+>> gain like?
+>
+>
+> I don't know.
+>
+> Thanks
 
-Yeah, it makes sense to align as much as possible.
-IIRC, the original plan was to consolidate more later.
 
-Note that all other lines are terminated with a "\n" at the end.
-The separate 'printf "\n"' is an extra blank line, not the terminator for the
-previous line.
+Btw, I think there's no need for a nested environment to test. Current=20
+eventfd hook to MSIX should still work for MMIO.
 
-Gr{oetje,eeting}s,
+Thanks
 
-                        Geert
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
