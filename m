@@ -2,110 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2091915A45E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:15:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CA8115A463
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:15:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728665AbgBLJPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 04:15:12 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:59446 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728150AbgBLJPL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:15:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581498909;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=emUnSXuU1gnGL6zBKl9lbYM4Of017ZRheWAF5EOYEWY=;
-        b=FS2OSk6upgltjg2vreNmq/dtvHghwkQpduwJpo96eJvK2ynAHPVGFc7zZU+1KtOfe6kVES
-        VAmx6vAiF1ikVGd6izueqm2VgNjcUbkjGNUJv9iAhF5PA1RZ9gdt7iMWqXiYQ8lO541rij
-        xdAib4Ygl3S+ZddLHgK8agxWnsxnfmk=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-314-zb57WKeHOcC6QVaQVaWzPw-1; Wed, 12 Feb 2020 04:15:06 -0500
-X-MC-Unique: zb57WKeHOcC6QVaQVaWzPw-1
-Received: by mail-qt1-f197.google.com with SMTP id g26so836720qts.16
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 01:15:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=emUnSXuU1gnGL6zBKl9lbYM4Of017ZRheWAF5EOYEWY=;
-        b=fedk4vPtppi8js+h59MBO4c8Wy5XiQxFFHfujXCA2WgeS+bY2PL08+kUVlr5YJi5Cl
-         veJLhfRmaGqFKFkdGaYcnYS/pq7dkWILdtycye0QGljEPqz6OkSmRspkHKZg8xukxfEb
-         W1wp5Sq/4Zn+biQ+FMpnGpOjM4WlusxsYEqOAj2j5vADqk/TFFDuOkZI+bhR0+XTU0iy
-         VNF21DfYlmV09rMMnBlZIy/aQvkPKXu08MLy1DCTpn5BXH9LQ7EoRcgd5LGYv6W9dArd
-         io3hdPRVv3vcbcqmYUNy9JF1OOfMSLIdyNmOxXQtP9qMumgmHo61hnf5VxRnqFoESRv1
-         U5gw==
-X-Gm-Message-State: APjAAAX5y3txcLBFgQU4++1Cyjp1SQkzAWVZQRb59OzgO4L6DKJ69aWH
-        K8rivFhs37OQ8VTsAPuyLnXS79qTB7EC+4RzICzHxCdEonKwlyLywGP18cmWP77G545UP3XFkU8
-        lQ826dSkK1t5uJ1cxXmAQlZqc
-X-Received: by 2002:a37:9d44:: with SMTP id g65mr9308941qke.15.1581498906464;
-        Wed, 12 Feb 2020 01:15:06 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxlftBNRnpiBz+KvKNJz2frshDsvKQ2+OJG52e1nrZBO4xynJpwxurqShPM5E74UZozY6B2ag==
-X-Received: by 2002:a37:9d44:: with SMTP id g65mr9308935qke.15.1581498906290;
-        Wed, 12 Feb 2020 01:15:06 -0800 (PST)
-Received: from redhat.com (bzq-79-176-41-183.red.bezeqint.net. [79.176.41.183])
-        by smtp.gmail.com with ESMTPSA id h14sm84919qke.99.2020.02.12.01.15.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 01:15:05 -0800 (PST)
-Date:   Wed, 12 Feb 2020 04:15:01 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     virtio-dev@lists.oasis-open.org,
-        Zha Bin <zhabin@linux.alibaba.com>, slp@redhat.com,
-        "Liu, Jing2" <jing2.liu@linux.intel.com>,
-        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
-        chao.p.peng@linux.intel.com, gerry@linux.alibaba.com
-Subject: Re: [virtio-dev] Re: [PATCH v2 4/5] virtio-mmio: add MSI interrupt
- feature support
-Message-ID: <20200212041317-mutt-send-email-mst@kernel.org>
-References: <c42c8b49-5357-f341-2942-ba84afc25437@linux.intel.com>
- <ad96269f-753d-54b8-a4ae-59d1595dd3b2@redhat.com>
- <5522f205-207b-b012-6631-3cc77dde3bfe@linux.intel.com>
- <45e22435-08d3-08fe-8843-d8db02fcb8e3@redhat.com>
- <20200211065319-mutt-send-email-mst@kernel.org>
- <c4a78a15-c889-df3f-3e1e-7df1a4d67838@redhat.com>
- <20200211070523-mutt-send-email-mst@kernel.org>
- <fdb19ef4-2003-6c6f-5c6f-c757a6320130@redhat.com>
- <20200211090003-mutt-send-email-mst@kernel.org>
- <4557a5e8-74eb-f238-1579-b7b558cb2969@redhat.com>
+        id S1728737AbgBLJPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 04:15:51 -0500
+Received: from mail-eopbgr80078.outbound.protection.outlook.com ([40.107.8.78]:47286
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728150AbgBLJPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 04:15:51 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PQ+djMYHbRnDzBklzjYrsYr0aSIDNRYXEnwzR3VEYrS8fM1DDI6V2HeqTPedOaYvxLcPdhGlAu8N1x0V3frZ77omSUlju74y9Tt0zxrVVwF0Yk1I865qVKF+s2ygVWQbaEdukZIlRRsBgl9ZeHdbVt0NsU/QYhkM37+phZ1RQNuSxnx9l88mCpuM5jk/rLDirF0zwZneMDsDYI0jD/P19jaIhBymWpler7TXqTdfa1mepvUZYWPloRQR2AAdd/BT+ncY1uYCu4O6M4DY8c0pg8C+mG2+aDW8hbYPNZTa/35e6AQVYldEue5pUgywLtKt3M5qHFXFvb2W48ug51wnDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HAIEf/+QyeiIQ+a1ZNt/mhUOdaMd61SzsLmGoU7+FHU=;
+ b=ZNPOGWsSJOt0/H3kqIajMdKKY+RLEoUPP1RqtJg4IiorwPpaTIXMR8Ym9qy9gs2aoZSSNzf/r1aEFZC73qdRYsT5NY9+CNZpr15TBOfX55tG+xyLWbRqcGuvlIw6WAUys78PTlo5QAV95H3rWlZcZMHZHDbJbmo+wId/1/T1vbvPGUBv1I+qzzj7Hd3X2zHEytYcO+Z9NmrOGZRPeko+tbExvoY2odsuyWtclAzoOEFSKhKaJp04qzABMnbPxbTKqLLQCRxWtP6IfdH/Vt0DlBh/lsu4hojMvLEv4GQsFTWx5+WHuVs1B1yK7oBxmklrR4ZrT7A4YcH1LbO5fO8Mlw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HAIEf/+QyeiIQ+a1ZNt/mhUOdaMd61SzsLmGoU7+FHU=;
+ b=jmvOrXfsqMyx3vIHjxZGLhrLxBnCnFiLhSDKWryg2gkoP2K5K9cNGn3ZszGZbp5cy4pMJNRcGIpnCCC5jypBNp+ZzCHWGolRXlVwyJbbmoy3Ij9nrZTq4XlSjBKpPEsJOETYqI09XRuRja8/tHEWsVzI5VipVRHo+mrspuwNCdo=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3947.eurprd04.prod.outlook.com (52.134.67.147) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.23; Wed, 12 Feb 2020 09:15:47 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::e44d:fa34:a0af:d96]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::e44d:fa34:a0af:d96%5]) with mapi id 15.20.2729.021; Wed, 12 Feb 2020
+ 09:15:47 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Peng Fan <peng.fan@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "aford173@gmail.com" <aford173@gmail.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Jun Li <jun.li@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH] arm64: dts: imx8mm: Remove redundant interrupt-parent
+ assignment
+Thread-Topic: [PATCH] arm64: dts: imx8mm: Remove redundant interrupt-parent
+ assignment
+Thread-Index: AQHV4XW+d5C7DyyLjk2aRizRdCCKcqgXKOqAgAAeCLA=
+Date:   Wed, 12 Feb 2020 09:15:47 +0000
+Message-ID: <DB3PR0402MB3916BC592914EC3387D457D2F51B0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1581492049-23523-1-git-send-email-Anson.Huang@nxp.com>
+ <AM0PR04MB4481546EFDF5A53078F1A385881B0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+In-Reply-To: <AM0PR04MB4481546EFDF5A53078F1A385881B0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: ae7ef57b-da43-4cec-45bd-08d7af9c2587
+x-ms-traffictypediagnostic: DB3PR0402MB3947:|DB3PR0402MB3947:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB3PR0402MB3947255F7536C435D1057297F51B0@DB3PR0402MB3947.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5797;
+x-forefront-prvs: 0311124FA9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(136003)(366004)(396003)(346002)(189003)(199004)(5660300002)(26005)(7416002)(8676002)(66556008)(33656002)(7696005)(186003)(8936002)(2906002)(66946007)(66446008)(64756008)(66476007)(81166006)(9686003)(966005)(44832011)(55016002)(76116006)(81156014)(4326008)(86362001)(71200400001)(52536014)(478600001)(6506007)(316002)(110136005)(32563001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3947;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: wp/zwWvaK8ZFFntZpqXADo/rcw4Relq5r+YvTQ+NhPAj1ULoGb5agkCC0v8ezaNa+1z/oyPbRms8qpPpDYnlB5VhUTGKGk5KXHAf+qHXmQpMl3XNPtQTk7qB4EJU6wdb3sIFZPZ8Hlw5gPV81njPAPEc4/K7cNKT36ev4+xmueSeYkdokyBqWlBL1jMhaB1PVA6Zx3nKO1geYLmFlvXy5l/iocIWdVzk16grm+sH8Z6FcnGQOQZiNNZDI1ZbNQefhZ81cLaIgIGrnoNk7L96OynbbrYN/9ZpUhM52sbZO2ACW5+lREl1mnQtp1bM8R7ZkEVqVJ1dk4DAwh3ZF+NQAC/AT/j/N67FoT81BT/bu3TdcttGmO/uqDHq7UUn0jU0fwjrircllfVyRGIUE4Rn66OnBJFX76oQhx0KB6Lc23uAahthBbV0WxWyy+5/N0i6/S46FF9OY1IqZx4p8eQZIwaBgI0w5YjTQWIr5SMMU7MTz6gapoTPUcodOCovtmavEF08JnDCK2laPyz2MHkTmXF/4fLz+QnBzMLtEzXiYUUPTsEX3K/cLp4dhnuAYTBG5CAJff1VIi6V4AlN0UaW6kItmlVzkawRQa/tWHTnYds=
+x-ms-exchange-antispam-messagedata: vpPGYoSZ/yX3Y/iIb+Prbf2mxf5uSeps2Vo2JtRNSVohDx4YFRwiiuN21oG2++zXQbYRtC87AESg8hYMf5WUVhIDYGjFgwJ3TZybixr1G4ONlMyJej7yExARaaKXjG8ezSXqPFz/2zAnfKhlDujM2g==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4557a5e8-74eb-f238-1579-b7b558cb2969@redhat.com>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae7ef57b-da43-4cec-45bd-08d7af9c2587
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2020 09:15:47.3406
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: G/380cPs8RXY781KuVd/+PQc+0FD29QlBwtNvJyAMLZ3dqQDhWC2qc80jh+2m5MfmTQnlMcHFeJVc8sKAzvfbg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3947
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 05:03:00PM +0800, Jason Wang wrote:
-> 
-> On 2020/2/11 下午10:00, Michael S. Tsirkin wrote:
-> > > Yes, it can work but it may bring extra effort when you want to mask a
-> > > vector which is was shared by a lot of queues.
-> > > 
-> > > Thanks
-> > > 
-> > masking should be per vq too.
-> > 
-> > -- 
-> 
-> 
-> Yes, but if the vector is shard by e.g 16 queues, then all those virtqueues
-> needs to be masked which is expensive.
-> 
-> Thanks
-
-I think that's ok - masking is rare. in fact if vectors can be
-changed atomically I'm no longer sure they are needed,
-maybe a destructive "disable" which can lose interrupts
-is enough.
-
--- 
-MST
-
+DQoNCj4gU3ViamVjdDogUkU6IFtQQVRDSF0gYXJtNjQ6IGR0czogaW14OG1tOiBSZW1vdmUgcmVk
+dW5kYW50IGludGVycnVwdC0NCj4gcGFyZW50IGFzc2lnbm1lbnQNCj4gDQo+IEhpIEFuc29uLA0K
+PiANCj4gPiBTdWJqZWN0OiBbUEFUQ0hdIGFybTY0OiBkdHM6IGlteDhtbTogUmVtb3ZlIHJlZHVu
+ZGFudCBpbnRlcnJ1cHQtcGFyZW50DQo+ID4gYXNzaWdubWVudA0KPiANCj4gVGhlcmUgaXMgYWxy
+ZWFkeSBhIHBhdGNoOiBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzExMzQwNjEz
+Lw0KDQoNClRoYW5rcyBmb3Igbm90aWNlLCBwbGVhc2UgaWdub3JlIHRoaXMgcGF0Y2ggdGhlbi4N
+Cg0KQW5zb24uDQoNCg0KPiANCj4gVGhhbmtzLA0KPiBQZW5nLg0KPiANCj4gPg0KPiA+IEdJQyBp
+cyBhc3NpZ25lZCBhcyBpbnRlcnJ1cHQtcGFyZW50IGJ5IGRlZmF1bHQsIG5vIG5lZWQgdG8gYXNz
+aWduIGl0DQo+ID4gYWdhaW4gaW4gZGRyLXBtdSBub2RlLCByZW1vdmUgaXQuDQo+ID4NCj4gPiBT
+aWduZWQtb2ZmLWJ5OiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gPiAtLS0N
+Cj4gPiAgYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OG1tLmR0c2kgfCAxIC0NCj4g
+PiAgMSBmaWxlIGNoYW5nZWQsIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9h
+cmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9pbXg4bW0uZHRzaQ0KPiA+IGIvYXJjaC9hcm02
+NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OG1tLmR0c2kNCj4gPiBpbmRleCAxZTVlMTE1Li5iM2Qw
+YjI5IDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDht
+bS5kdHNpDQo+ID4gKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OG1tLmR0
+c2kNCj4gPiBAQCAtODk2LDcgKzg5Niw2IEBADQo+ID4gIAkJZGRyLXBtdUAzZDgwMDAwMCB7DQo+
+ID4gIAkJCWNvbXBhdGlibGUgPSAiZnNsLGlteDhtbS1kZHItcG11IiwgImZzbCxpbXg4bS0NCj4g
+ZGRyLXBtdSI7DQo+ID4gIAkJCXJlZyA9IDwweDNkODAwMDAwIDB4NDAwMDAwPjsNCj4gPiAtCQkJ
+aW50ZXJydXB0LXBhcmVudCA9IDwmZ2ljPjsNCj4gPiAgCQkJaW50ZXJydXB0cyA9IDxHSUNfU1BJ
+IDk4IElSUV9UWVBFX0xFVkVMX0hJR0g+Ow0KPiA+ICAJCX07DQo+ID4gIAl9Ow0KPiA+IC0tDQo+
+ID4gMi43LjQNCg0K
