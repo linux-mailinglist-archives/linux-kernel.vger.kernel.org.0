@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06AB815B5BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 01:17:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CDA015B5C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 01:22:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729299AbgBMARI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 19:17:08 -0500
-Received: from gateway20.websitewelcome.com ([192.185.55.25]:48861 "EHLO
+        id S1729307AbgBMAWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 19:22:08 -0500
+Received: from gateway20.websitewelcome.com ([192.185.55.25]:48647 "EHLO
         gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729256AbgBMARI (ORCPT
+        by vger.kernel.org with ESMTP id S1729132AbgBMAWH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 19:17:08 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id BAA67400C6921
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 16:43:08 -0600 (CST)
+        Wed, 12 Feb 2020 19:22:07 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 8A4F4400C2EEE
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 16:45:37 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 21s6j5sQURP4z21s6jXTKl; Wed, 12 Feb 2020 17:56:46 -0600
+        id 21uUji0oZSl8q21uUjQiH7; Wed, 12 Feb 2020 17:59:14 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -25,24 +25,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/EEuWjIs24zKWMIqBOvxcb5j49JwVhYdPasyL1DoPcI=; b=f39zQB0NnhSRj5vhaap+92XVNE
-        xeAw/tYgbka4ARFX6aMzPd1+63LR4h0GXQEV/haTWYmf1y5s0m9UYd/cTLRreqzjlnTxQ+OvQvziw
-        7KMZWzHzONfscu6Go9KdVoSK1UfBbcqQnGn+WV28xlsbPaadi5TZ9fySDFUrPfOeTRHQ2agR34XP4
-        ZggByW/Y34dLChIkjXbUme/OtWzjghVZF/iBCnkl89iN1j9g4j5RDc1+6A7mMWPRkgNg9t/F0wGWg
-        9nlf8zluM7fsPEiCy9NFqGcENnN6NHg4a7oiq8z/Ms2CGnyAb2Gawgl9gHA05pob3jPCT5Q9V31NI
-        iRmDeNFw==;
-Received: from [200.68.141.42] (port=22005 helo=embeddedor)
+        bh=/+tuQXIxcgFaHv6yXlJ1vmExFRnqlxjpnHGOi7H52Tg=; b=po54q2qUsGuaR0K/Wp1vdgTtMA
+        4bqd8irT0krgOs1LiVOytLou0n39j7GCldKLTSLj6DB8xRasxdqlbzlvZ/wM0Ot48ApyfidA0/eia
+        9RyncvjU45xE4mXrHLV+xgyGS7BHwgOkZXHN6UeIJipMGwoTDuTt8BVpDfl0NDdNze/ehwnqtYx3K
+        de9oaVhsFhgDoaqFVR1fCyQtua/pXXF3Vt/YlzvAfrS8PAP9RFHY0PF9B3hsI0AWl5zhrvN3iv+/+
+        zQzkd5wMRVzV26FryXUDqCLpFKO+D/chlpNGqp2oO49IH7uivTKFJ1eqwHJCfNJhWzhr6t02Hy2J3
+        17O01tGQ==;
+Received: from [200.68.141.42] (port=17873 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1j21s4-003LCB-B0; Wed, 12 Feb 2020 17:56:44 -0600
-Date:   Wed, 12 Feb 2020 17:56:42 -0600
+        id 1j21uT-003MB9-45; Wed, 12 Feb 2020 17:59:13 -0600
+Date:   Wed, 12 Feb 2020 17:59:11 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>
-Cc:     linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] mfd: omap-usb-tll: Replace zero-length array with
- flexible-array member
-Message-ID: <20200212235642.GA19206@embeddedor.com>
+Subject: [PATCH] mfd: pm8xxx: Replace zero-length array with flexible-array
+ member
+Message-ID: <20200212235911.GA20179@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -55,13 +57,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 200.68.141.42
 X-Source-L: No
-X-Exim-ID: 1j21s4-003LCB-B0
+X-Exim-ID: 1j21uT-003MB9-45
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.141.42]:22005
+X-Source-Sender: (embeddedor) [200.68.141.42]:17873
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
+X-Email-Count: 15
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -99,22 +101,22 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/mfd/omap-usb-tll.c | 2 +-
+ drivers/mfd/qcom-pm8xxx.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
-index 265f5e350e1c..1cf259a48966 100644
---- a/drivers/mfd/omap-usb-tll.c
-+++ b/drivers/mfd/omap-usb-tll.c
-@@ -99,7 +99,7 @@
- struct usbtll_omap {
- 	void __iomem	*base;
- 	int		nch;		/* num. of channels */
--	struct clk	*ch_clk[0];	/* must be the last member */
-+	struct clk	*ch_clk[];	/* must be the last member */
+diff --git a/drivers/mfd/qcom-pm8xxx.c b/drivers/mfd/qcom-pm8xxx.c
+index 29133326c6fd..acd172ddcbd6 100644
+--- a/drivers/mfd/qcom-pm8xxx.c
++++ b/drivers/mfd/qcom-pm8xxx.c
+@@ -76,7 +76,7 @@ struct pm_irq_chip {
+ 	unsigned int		num_masters;
+ 	const struct pm_irq_data *pm_irq_data;
+ 	/* MUST BE AT THE END OF THIS STRUCT */
+-	u8			config[0];
++	u8			config[];
  };
  
- /*-------------------------------------------------------------------------*/
+ static int pm8xxx_read_block_irq(struct pm_irq_chip *chip, unsigned int bp,
 -- 
 2.23.0
 
