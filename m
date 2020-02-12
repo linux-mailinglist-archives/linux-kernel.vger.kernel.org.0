@@ -2,107 +2,256 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCC6815B38A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 23:23:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7F6615B39B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 23:25:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729163AbgBLWXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 17:23:42 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45581 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727564AbgBLWXm (ORCPT
+        id S1729249AbgBLWZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 17:25:24 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35179 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727564AbgBLWZW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 17:23:42 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 59so3569616otp.12;
-        Wed, 12 Feb 2020 14:23:42 -0800 (PST)
+        Wed, 12 Feb 2020 17:25:22 -0500
+Received: by mail-lj1-f195.google.com with SMTP id q8so4245113ljb.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 14:25:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0CUbHP/EPh4AO1uTbHnps+SXg3HP5g8yx8ixZz33gns=;
+        b=U4aLdABNtOOCi2r88ChEahVs9MTkIkcbzK+CNIaOopWiBG9RWs1B8wUTNGrnUAzTZh
+         Zx6pmY6Wil2vorbs1/tkNhQW72wSw9SsGuXxLcPBervl/BWc6juD9hVue51nNX3VTNXy
+         4cvc5/wbx1XPMqBBRsEm5mYreaQjhGYnu+wb3BoejUdP8QkMEKkskPkuhsq3Xz/lhog0
+         LhzwjeMm8ZQqTDrYBj35XidQ5oOBsP77lO0pp2SXtN948wz7p+igJBlIIGvjPFIWt3bb
+         6R2i1Z7KSCrpm8S6YZ36dYBXEQ4Q/qY70r4bBjDl1nx+wWFt55ZnIazqCbH9G3WWl3Qw
+         EuPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fCkVC9NqRVI+yjNU/x8RfyABDYXvK7aIQSvHuq/V4LY=;
-        b=LN9x4PDO+sbBYznxmJJpB//3PbHAMxr+Dp5f68RGgky0vQ9m+OnrSok2gkRLz8OYZP
-         OcPZh4G/zHgHBOYk1Mf86x9y9w5ZgUjRYqsy8twmCZOMi/Jtn0ZWXPXfB7GcXzJd3+GX
-         b3E8V51ecpAmwf6152/LMDkRMd1hgKXxNBSQQY9WpAaDKIdh2RqwChEPqENzhtGkcBzv
-         yZoSa4mBK28ucbkIDR8CUIKWAStq6opTiDsuCgEfB0M6QQrRFBIoXTDiTi1kzAyaDi/T
-         EAmGKIEs2/yye5o5RhC63z8N1hmBd+MmHRhatkX3AXSVkL2LfwRNy63730vSQKZsTz2d
-         Xgug==
-X-Gm-Message-State: APjAAAU3/cuf2rmayPiLu4fLNJCwltLLnieshHv3IBUVzjmjZFrPtgye
-        yOmpUCf8lHSjkGk50CXUOBIw2YXeusO9eXhe+3+SGQ==
-X-Google-Smtp-Source: APXvYqxfTT8qr8c4bypJ1HYQhwx61Zp/gO/g6UAOTefrhcOIgagR/0Bd4khYcmlsGTGodOF7H7aii0b1l6/sTkrq4f0=
-X-Received: by 2002:a05:6830:4b9:: with SMTP id l25mr11303250otd.266.1581546221551;
- Wed, 12 Feb 2020 14:23:41 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0CUbHP/EPh4AO1uTbHnps+SXg3HP5g8yx8ixZz33gns=;
+        b=iZJXlaRcRjj/ZCyfnyZD0Pu6YyP34NN/i54wuFVSTSLz+1zCP1k8CbjhtUS7ILxSFz
+         rWUPvSj7MHcYYoZS9VvJRvzMN1f00TfnsfUsdUlI+87QTxf145Y/8LU7QxzuEWNc51Nj
+         nv6ZYkYkRkueWWLb8cUp2Clz860DA8ThrnGH/n4PQJeXfcnDI3wZ11yiwPwlDmGzuZ4j
+         sW7DzVXk8J752DohQhztkfp0AGTZa0cpIFxZeWtaHp0BbrZoyDq0LJuP3sdgVoZ/q4rB
+         ApcQ5DDi/ViE8ON3eFta+hWAC+9NJb4fsUbQs8WRNm9fK3WQ3fdRO9ywd09uXhCXyd1h
+         8/wQ==
+X-Gm-Message-State: APjAAAXBt7zya/XCTTUivE0hsVBl3S9u6+TNoxNfR+YrLRsYZz/w+vdr
+        D/BVCS0NMG5YnVUyTlzn+14=
+X-Google-Smtp-Source: APXvYqx+Gyj2x6H2HEYYeBRlNwVQLOMAPueoHPhtXwOT5KaW+fSfVjeng+C+acSytTn+85kmx9Ms3Q==
+X-Received: by 2002:a2e:995a:: with SMTP id r26mr9480280ljj.78.1581546320307;
+        Wed, 12 Feb 2020 14:25:20 -0800 (PST)
+Received: from localhost.localdomain ([5.20.204.163])
+        by smtp.gmail.com with ESMTPSA id 126sm188008lfm.38.2020.02.12.14.25.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2020 14:25:19 -0800 (PST)
+From:   andrey.lebedev@gmail.com
+To:     mripard@kernel.org, wens@csie.org, airlied@linux.ie,
+        daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     linux-sunxi@googlegroups.com, Andrey Lebedev <andrey@lebedev.lt>
+Subject: [PATCH v2 1/2] ARM: sun7i: Support LVDS output on Allwinner A20
+Date:   Thu, 13 Feb 2020 00:23:55 +0200
+Message-Id: <20200212222355.17141-1-andrey.lebedev@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200210195633.GA21832@kedthinkpad>
+References: <20200210195633.GA21832@kedthinkpad>
 MIME-Version: 1.0
-References: <20190805142706.22520-1-keith.busch@intel.com> <20190805142706.22520-4-keith.busch@intel.com>
- <CAJZ5v0hCkibcbiYdPmBXdnDHZbGP2q0uNRi01oU0NMz5o3WwGA@mail.gmail.com>
- <1922204.kTHyOg1r71@kreacher> <CAPcyv4iLyHLqRD4E9HHx+pcRVHkF8zYKjCBE9YDQOiZTQVyo0g@mail.gmail.com>
-In-Reply-To: <CAPcyv4iLyHLqRD4E9HHx+pcRVHkF8zYKjCBE9YDQOiZTQVyo0g@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 12 Feb 2020 23:23:28 +0100
-Message-ID: <CAJZ5v0gsgWOROhbXaknirQ_J+ed2R6-zpMXWAcb8mxQGi8Gx2g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] acpi/hmat: Skip publishing target info for nodes with
- no online memory
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 5:29 PM Dan Williams <dan.j.williams@intel.com> wrote:
->
-> On Mon, Aug 26, 2019 at 2:05 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> >
-> > On Monday, August 12, 2019 10:59:58 AM CEST Rafael J. Wysocki wrote:
-> > > On Mon, Aug 5, 2019 at 4:30 PM Keith Busch <keith.busch@intel.com> wrote:
-> > > >
-> > > > From: Dan Williams <dan.j.williams@intel.com>
-> > > >
-> > > > There are multiple scenarios where the HMAT may contain information
-> > > > about proximity domains that are not currently online. Rather than fail
-> > > > to report any HMAT data just elide those offline domains.
-> > > >
-> > > > If and when those domains are later onlined they can be added to the
-> > > > HMEM reporting at that point.
-> > > >
-> > > > This was found while testing EFI_MEMORY_SP support which reserves
-> > > > "specific purpose" memory from the general allocation pool. If that
-> > > > reservation results in an empty numa-node then the node is not marked
-> > > > online leading a spurious:
-> > > >
-> > > >     "acpi/hmat: Ignoring HMAT: Invalid table"
-> > > >
-> > > > ...result for HMAT parsing.
-> > > >
-> > > > Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-> > > > Reviewed-by: Keith Busch <keith.busch@intel.com>
-> > > > Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> > >
-> > > When you send somebody else's patches, you should sign them off as a
-> > > rule, but since you sent this one with your own R-by, I converted that
-> > > to a S-o-b.
-> > >
-> >
-> > And all patches in the series have been applied.
->
-> I want to flag this patch (commit 5c7ed4385424 "HMAT: Skip publishing
-> target info for nodes with no online memory")
-> for -stable to cleanup a spurious WARN_ON:
->
-> WARNING: CPU: 7 PID: 1 at drivers/base/node.c:191 node_set_perf_attrs+0x90/0xa0
-> CPU: 7 PID: 1 Comm: swapper/0 Not tainted 5.3.6-100.fc29.x86_64 #1
-> RIP: 0010:node_set_perf_attrs+0x90/0xa0
-> Call Trace:
->  ? do_early_param+0x8e/0x8e
->  hmat_init+0x2ff/0x443
->  ? hmat_parse_subtable+0x55a/0x55a
->  ? do_early_param+0x8e/0x8e
->  do_one_initcall+0x46/0x1f4
->
-> Do you mind if I forward to stable@, or do you collect ACPI patches to
-> send to stable@?
+From: Andrey Lebedev <andrey@lebedev.lt>
 
-Please forward it, thanks!
+A20 SoC (found in Cubieboard 2 among others) requires different LVDS set
+up procedure than A33. Timing controller (tcon) driver only implements
+sun6i-style procedure, that doesn't work on A20 (sun7i).
+
+Signed-off-by: Andrey Lebedev <andrey@lebedev.lt>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 95 ++++++++++++++++++++----------
+ drivers/gpu/drm/sun4i/sun4i_tcon.h | 14 +++++
+ 2 files changed, 77 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index c81cdce6ed55..e4c605ca685e 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -114,46 +114,73 @@ static void sun4i_tcon_channel_set_status(struct sun4i_tcon *tcon, int channel,
+ 	}
+ }
+ 
++static void sun6i_tcon_setup_lvds_phy(struct sun4i_tcon *tcon,
++				      const struct drm_encoder *encoder)
++{
++	u8 val;
++
++	regmap_write(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
++		     SUN6I_TCON0_LVDS_ANA0_C(2) |
++		     SUN6I_TCON0_LVDS_ANA0_V(3) |
++		     SUN6I_TCON0_LVDS_ANA0_PD(2) |
++		     SUN6I_TCON0_LVDS_ANA0_EN_LDO);
++	udelay(2);
++
++	regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
++			   SUN6I_TCON0_LVDS_ANA0_EN_MB,
++			   SUN6I_TCON0_LVDS_ANA0_EN_MB);
++	udelay(2);
++
++	regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
++			   SUN6I_TCON0_LVDS_ANA0_EN_DRVC,
++			   SUN6I_TCON0_LVDS_ANA0_EN_DRVC);
++
++	if (sun4i_tcon_get_pixel_depth(encoder) == 18)
++		val = 7;
++	else
++		val = 0xf;
++
++	regmap_write_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
++			  SUN6I_TCON0_LVDS_ANA0_EN_DRVD(0xf),
++			  SUN6I_TCON0_LVDS_ANA0_EN_DRVD(val));
++
++}
++
++static void sun4i_tcon_setup_lvds_phy(struct sun4i_tcon *tcon,
++				      const struct drm_encoder *encoder)
++{
++	regmap_write(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
++		     SUN4I_TCON0_LVDS_ANA0_CK_EN |
++		     SUN4I_TCON0_LVDS_ANA0_REG_V |
++		     SUN4I_TCON0_LVDS_ANA0_REG_C |
++		     SUN4I_TCON0_LVDS_ANA0_EN_MB |
++		     SUN4I_TCON0_LVDS_ANA0_PD |
++		     SUN4I_TCON0_LVDS_ANA0_DCHS);
++
++	udelay(2); /* delay at least 1200 ns */
++	regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA1_REG,
++			   SUN4I_TCON0_LVDS_ANA1_INIT,
++			   SUN4I_TCON0_LVDS_ANA1_INIT);
++	udelay(1); /* delay at least 120 ns */
++	regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA1_REG,
++			   SUN4I_TCON0_LVDS_ANA1_UPDATE,
++			   SUN4I_TCON0_LVDS_ANA1_UPDATE);
++	regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
++			   SUN4I_TCON0_LVDS_ANA0_EN_MB,
++			   SUN4I_TCON0_LVDS_ANA0_EN_MB);
++}
++
++
+ static void sun4i_tcon_lvds_set_status(struct sun4i_tcon *tcon,
+ 				       const struct drm_encoder *encoder,
+ 				       bool enabled)
+ {
+ 	if (enabled) {
+-		u8 val;
+-
+ 		regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_IF_REG,
+ 				   SUN4I_TCON0_LVDS_IF_EN,
+ 				   SUN4I_TCON0_LVDS_IF_EN);
+-
+-		/*
+-		 * As their name suggest, these values only apply to the A31
+-		 * and later SoCs. We'll have to rework this when merging
+-		 * support for the older SoCs.
+-		 */
+-		regmap_write(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
+-			     SUN6I_TCON0_LVDS_ANA0_C(2) |
+-			     SUN6I_TCON0_LVDS_ANA0_V(3) |
+-			     SUN6I_TCON0_LVDS_ANA0_PD(2) |
+-			     SUN6I_TCON0_LVDS_ANA0_EN_LDO);
+-		udelay(2);
+-
+-		regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
+-				   SUN6I_TCON0_LVDS_ANA0_EN_MB,
+-				   SUN6I_TCON0_LVDS_ANA0_EN_MB);
+-		udelay(2);
+-
+-		regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
+-				   SUN6I_TCON0_LVDS_ANA0_EN_DRVC,
+-				   SUN6I_TCON0_LVDS_ANA0_EN_DRVC);
+-
+-		if (sun4i_tcon_get_pixel_depth(encoder) == 18)
+-			val = 7;
+-		else
+-			val = 0xf;
+-
+-		regmap_write_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
+-				  SUN6I_TCON0_LVDS_ANA0_EN_DRVD(0xf),
+-				  SUN6I_TCON0_LVDS_ANA0_EN_DRVD(val));
++		if (tcon->quirks->setup_lvds_phy)
++			tcon->quirks->setup_lvds_phy(tcon, encoder);
+ 	} else {
+ 		regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_IF_REG,
+ 				   SUN4I_TCON0_LVDS_IF_EN, 0);
+@@ -1454,23 +1481,27 @@ static const struct sun4i_tcon_quirks sun6i_a31s_quirks = {
+ };
+ 
+ static const struct sun4i_tcon_quirks sun7i_a20_quirks = {
++	.supports_lvds		= true,
+ 	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+ 	.dclk_min_div		= 4,
+ 	/* Same display pipeline structure as A10 */
+ 	.set_mux		= sun4i_a10_tcon_set_mux,
++	.setup_lvds_phy		= sun4i_tcon_setup_lvds_phy,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
+ 	.has_channel_0		= true,
+ 	.has_lvds_alt		= true,
+ 	.dclk_min_div		= 1,
++	.setup_lvds_phy		= sun6i_tcon_setup_lvds_phy,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_a83t_lcd_quirks = {
+ 	.supports_lvds		= true,
+ 	.has_channel_0		= true,
+ 	.dclk_min_div		= 1,
++	.setup_lvds_phy		= sun6i_tcon_setup_lvds_phy,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_a83t_tv_quirks = {
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+index a62ec826ae71..cfbf4e6c1679 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -193,6 +193,13 @@
+ #define SUN4I_TCON_MUX_CTRL_REG			0x200
+ 
+ #define SUN4I_TCON0_LVDS_ANA0_REG		0x220
++#define SUN4I_TCON0_LVDS_ANA0_DCHS			BIT(16)
++#define SUN4I_TCON0_LVDS_ANA0_PD			(BIT(20) | BIT(21))
++#define SUN4I_TCON0_LVDS_ANA0_EN_MB			BIT(22)
++#define SUN4I_TCON0_LVDS_ANA0_REG_C			(BIT(24) | BIT(25))
++#define SUN4I_TCON0_LVDS_ANA0_REG_V			(BIT(26) | BIT(27))
++#define SUN4I_TCON0_LVDS_ANA0_CK_EN			(BIT(29) | BIT(28))
++
+ #define SUN6I_TCON0_LVDS_ANA0_EN_MB			BIT(31)
+ #define SUN6I_TCON0_LVDS_ANA0_EN_LDO			BIT(30)
+ #define SUN6I_TCON0_LVDS_ANA0_EN_DRVC			BIT(24)
+@@ -201,6 +208,10 @@
+ #define SUN6I_TCON0_LVDS_ANA0_V(x)			(((x) & 3) << 8)
+ #define SUN6I_TCON0_LVDS_ANA0_PD(x)			(((x) & 3) << 4)
+ 
++#define SUN4I_TCON0_LVDS_ANA1_REG		0x224
++#define SUN4I_TCON0_LVDS_ANA1_INIT			(0x1f << 26 | 0x1f << 10)
++#define SUN4I_TCON0_LVDS_ANA1_UPDATE			(0x1f << 16 | 0x1f << 00)
++
+ #define SUN4I_TCON1_FILL_CTL_REG		0x300
+ #define SUN4I_TCON1_FILL_BEG0_REG		0x304
+ #define SUN4I_TCON1_FILL_END0_REG		0x308
+@@ -228,6 +239,9 @@ struct sun4i_tcon_quirks {
+ 
+ 	/* callback to handle tcon muxing options */
+ 	int	(*set_mux)(struct sun4i_tcon *, const struct drm_encoder *);
++	/* handler for LVDS setup routine */
++	void	(*setup_lvds_phy)(struct sun4i_tcon *tcon,
++				  const struct drm_encoder *encoder);
+ };
+ 
+ struct sun4i_tcon {
+-- 
+2.20.1
+
