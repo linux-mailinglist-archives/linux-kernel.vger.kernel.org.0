@@ -2,123 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3045F15A440
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:08:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B67C15A42E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:04:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728552AbgBLJIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 04:08:45 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:51734 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728150AbgBLJIo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:08:44 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 690011A3CE4;
-        Wed, 12 Feb 2020 10:08:40 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 696F91A09E5;
-        Wed, 12 Feb 2020 10:08:31 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id AC410402A9;
-        Wed, 12 Feb 2020 17:08:20 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        abel.vesa@nxp.com, peng.fan@nxp.com, broonie@kernel.org,
-        tglx@linutronix.de, allison@lohutok.net,
-        gregkh@linuxfoundation.org, rfontana@redhat.com, info@metux.net,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] clk: imx: drop redundant initialization
-Date:   Wed, 12 Feb 2020 17:03:00 +0800
-Message-Id: <1581498180-2652-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728659AbgBLJEA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 04:04:00 -0500
+Received: from mail-pj1-f43.google.com ([209.85.216.43]:40912 "EHLO
+        mail-pj1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728353AbgBLJEA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 04:04:00 -0500
+Received: by mail-pj1-f43.google.com with SMTP id 12so604490pjb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 01:03:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=gRnbs9UyfGjvIhynZ2KVS4IHtfYSTjBz7Uxnflp9deU=;
+        b=No83RYQ5WXmqUxAtV/DbkdJ742GjayOW5ooTSd2Ahiv8cV+xq8uvbU51Lyf+DVSgCB
+         OMob3+p0NjXL8Gv7cKBiWoVgDiFL+vKUbR6ekgIojtOrqgLHAYVsJFprObVdfYxdvEJ0
+         /IZty0pcQhdZyUthceSRL04SmiwayyZfOs7DvLLeJgvxYGymfBuBscpZ5Yj/KFoJHj68
+         yvdnFaj7195LrjMh9188Q9hraC0kZ81UGG9ZbwFyGCsIXNqZIPl1bZgrZJtnzVxQIYfL
+         Wp048yq8MWFpZZmPYT5DjpXuFJa/gmnQnWHQ+SndErjnS2bmXLhAZz/a2UvCMvmluaSE
+         cgFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gRnbs9UyfGjvIhynZ2KVS4IHtfYSTjBz7Uxnflp9deU=;
+        b=DC1669CP4BzPjTpMhf4LjGVL92NNB7PdF+6v/e9wLGfECIelP6jLNC+Dx0b5DHpYPj
+         1hKvIcERMScqq6Gnu7oTdME/6/oB0cJ+V7aN+XcTajtM010M6aqtn4sQ+Ma4LNxVx3yr
+         oiFm6rO0BsM0/8sBWNMnzRyRm6ndcpe+7lwHiPiZTCrp/sRJGq1FBW9e+kDleph3J5rj
+         zfVMgbTsHQ1yRNH6Wuxc6I3/YGIJr9UAFOHWVbV6SuJWLtSo1UFrvTjJQ6HYycRktQWk
+         1GKawnsI8XDjK+1/C1c9dbnFgQnXmyHmKntKMS34yeWXc4knPR0M/qnZZKtWesI5v5hI
+         927Q==
+X-Gm-Message-State: APjAAAWHXjaSbcQk2tw+Biz3EHmAnFk6SVy5TfdKP+9bVRr1ZwxGIxXi
+        iNDtjGF8NLFJDWJ4To7cRmjhlg==
+X-Google-Smtp-Source: APXvYqyWsFhWjuIclAiFWmBBhY2Gb5f/tFGJL0ji9ZTiqepHu132XIMinaueCci9NIJAUiGmUSt+ng==
+X-Received: by 2002:a17:902:b484:: with SMTP id y4mr21819287plr.126.1581498239335;
+        Wed, 12 Feb 2020 01:03:59 -0800 (PST)
+Received: from localhost ([122.167.210.63])
+        by smtp.gmail.com with ESMTPSA id d22sm7037640pfo.187.2020.02.12.01.03.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Feb 2020 01:03:58 -0800 (PST)
+Date:   Wed, 12 Feb 2020 14:33:56 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PM / OPP: Add support for multiple regulators
+Message-ID: <20200212090356.x6aieuddym5zea5d@vireshk-i7>
+References: <20200212075529.156756-1-drinkcat@chromium.org>
+ <20200212081340.vcfd3t5w5pgxfuha@vireshk-i7>
+ <CANMq1KA1=LTtCD2ic7GcskX7izuEkAqUo1xxwwCXBeTLi0r5vg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANMq1KA1=LTtCD2ic7GcskX7izuEkAqUo1xxwwCXBeTLi0r5vg@mail.gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No need to initialize flags as 0, remove the initialization.
+On 12-02-20, 16:57, Nicolas Boichat wrote:
+> I see... And you're right that it's probably best to change the
+> voltages in a specific order (I just ignored that problem ,-P). I do
+> wonder if there's something we could do in the core/DT to specify that
+> order (if it's a simple order?), it's not really ideal to have to copy
+> paste code around...
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-composite-8m.c | 2 +-
- drivers/clk/imx/clk-fixup-div.c    | 2 +-
- drivers/clk/imx/clk-fixup-mux.c    | 2 +-
- drivers/clk/imx/clk-gate2.c        | 6 +++---
- 4 files changed, 6 insertions(+), 6 deletions(-)
+I will suggest adding your own version (like TI) for now, if we later
+feel that there is too much duplicate code, we can look for an
+alternative. But as of now, there aren't a lot of platforms using
+multiple regulators anyway.
 
-diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
-index 20f7c91..a35407b 100644
---- a/drivers/clk/imx/clk-composite-8m.c
-+++ b/drivers/clk/imx/clk-composite-8m.c
-@@ -91,7 +91,7 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
- 					unsigned long parent_rate)
- {
- 	struct clk_divider *divider = to_clk_divider(hw);
--	unsigned long flags = 0;
-+	unsigned long flags;
- 	int prediv_value;
- 	int div_value;
- 	int ret;
-diff --git a/drivers/clk/imx/clk-fixup-div.c b/drivers/clk/imx/clk-fixup-div.c
-index 4b17b91..100ca82 100644
---- a/drivers/clk/imx/clk-fixup-div.c
-+++ b/drivers/clk/imx/clk-fixup-div.c
-@@ -55,7 +55,7 @@ static int clk_fixup_div_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_fixup_div *fixup_div = to_clk_fixup_div(hw);
- 	struct clk_divider *div = to_clk_divider(hw);
- 	unsigned int divider, value;
--	unsigned long flags = 0;
-+	unsigned long flags;
- 	u32 val;
- 
- 	divider = parent_rate / rate;
-diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mux.c
-index b569d91..58a6763 100644
---- a/drivers/clk/imx/clk-fixup-mux.c
-+++ b/drivers/clk/imx/clk-fixup-mux.c
-@@ -42,7 +42,7 @@ static int clk_fixup_mux_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct clk_fixup_mux *fixup_mux = to_clk_fixup_mux(hw);
- 	struct clk_mux *mux = to_clk_mux(hw);
--	unsigned long flags = 0;
-+	unsigned long flags;
- 	u32 val;
- 
- 	spin_lock_irqsave(mux->lock, flags);
-diff --git a/drivers/clk/imx/clk-gate2.c b/drivers/clk/imx/clk-gate2.c
-index 7d44ce8..72a7698 100644
---- a/drivers/clk/imx/clk-gate2.c
-+++ b/drivers/clk/imx/clk-gate2.c
-@@ -40,7 +40,7 @@ static int clk_gate2_enable(struct clk_hw *hw)
- {
- 	struct clk_gate2 *gate = to_clk_gate2(hw);
- 	u32 reg;
--	unsigned long flags = 0;
-+	unsigned long flags;
- 
- 	spin_lock_irqsave(gate->lock, flags);
- 
-@@ -62,7 +62,7 @@ static void clk_gate2_disable(struct clk_hw *hw)
- {
- 	struct clk_gate2 *gate = to_clk_gate2(hw);
- 	u32 reg;
--	unsigned long flags = 0;
-+	unsigned long flags;
- 
- 	spin_lock_irqsave(gate->lock, flags);
- 
-@@ -101,7 +101,7 @@ static int clk_gate2_is_enabled(struct clk_hw *hw)
- static void clk_gate2_disable_unused(struct clk_hw *hw)
- {
- 	struct clk_gate2 *gate = to_clk_gate2(hw);
--	unsigned long flags = 0;
-+	unsigned long flags;
- 	u32 reg;
- 
- 	spin_lock_irqsave(gate->lock, flags);
 -- 
-2.7.4
-
+viresh
