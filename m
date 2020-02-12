@@ -2,82 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ED7D15A9F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 14:22:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C4DF15A9FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 14:23:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbgBLNWY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 08:22:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48224 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725887AbgBLNWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 08:22:23 -0500
-Received: from localhost (unknown [209.37.97.194])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2E562086A;
-        Wed, 12 Feb 2020 13:22:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581513743;
-        bh=JFrjBxqFik1XAZG6UPC/UGZmlwLQaiFVmammY5sszzY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=i5fLyrcn7extWiTcr0jq09MUXP917ebOLZdwcP3ZIP3+Z5UNKIkrQ/IgsZ12VClH3
-         CmKBh4nk5Hhs2joZoGLgZUiHya4UcxU2+VR3rSfrGb0XNZGsqgTnWXGcvCrMCrjxUX
-         09EyQ/nJRB4Fyj+hjGuoaHHnXqNKfKN4gGmaEEAY=
-Date:   Wed, 12 Feb 2020 05:22:22 -0800
-From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To:     Vladimir Stankovic <vladimir.stankovic@displaylink.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        Petar Kovacevic <petar.kovacevic@displaylink.com>,
-        Stefan Lugonjic <stefan.lugonjic@displaylink.com>,
-        Nikola Simic <nikola.simic@displaylink.com>,
-        Marko Miljkovic <marko.miljkovic@displaylink.com>
-Subject: Re: [External] Re: [PATCH 1/1] usb: Add MA USB Host driver
-Message-ID: <20200212132222.GD1789899@kroah.com>
-References: <VI1PR10MB1965B4B61D7A9808B2EA095591180@VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM>
- <61e63056-31f9-9d4b-60c1-8cbf0372d34f@displaylink.com>
- <20200211163906.GA1931506@kroah.com>
- <742e4af7-ad70-6607-62b0-81d11cd5b04e@displaylink.com>
+        id S1728187AbgBLNXI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 08:23:08 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:53801 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbgBLNXI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 08:23:08 -0500
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id 01CDN4ud027300;
+        Wed, 12 Feb 2020 22:23:04 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 01CDN4ud027300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1581513784;
+        bh=LoNSUGEOpcC6+C5YLO+Kyo48Olrbu/yrYFZCVU6Mou0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=jdAYQ1y7Ve5XRhisC6H6g5SVhFZzr5vVRE33azttayU/ptqfhhtxPUY6TuC1hD7Xh
+         FPplkTOWJsQ3kINHp4Cx9HbMKLF8L+j76xjjK5MWe+NdZdF9y+xswEDiR7aZGw4jQc
+         VnVSPhwoqC0tEdzcV7Pl7ZHSSJ0NkB3w6vqadqCSOpOYXoDfN+dlBl3IMEvViyPk9m
+         m5DNOP6VjmqkBTJD/FESbQlIzCi0rX1rcfY88oxFI7hvizkEANdmgnUJR9Js3jKJHq
+         x/s8WAhpa5PjQ9eS/BJoQ2qj2lEROgoaDpJ9jSIUZSmVkSYEArXYFdcmWiGYildj7R
+         KTh44X7xFYR9Q==
+X-Nifty-SrcIP: [209.85.217.45]
+Received: by mail-vs1-f45.google.com with SMTP id c18so1100060vsq.7;
+        Wed, 12 Feb 2020 05:23:04 -0800 (PST)
+X-Gm-Message-State: APjAAAXen5DVXS/hweiSZRWiCCJNKG+5i5UBasi4ev/1Mn68RK0FnCZG
+        V6/VznZEOMQ/7u0RG4shsaIY0FGxBfgj5K6rfgQ=
+X-Google-Smtp-Source: APXvYqzsrUfrxM+SGnth+VRTUsfnKL7azpsfR1oe565OuXxNSQ9Ri3Dy3FMOrDbOj9ew/vkJdZV+3YDsRikCHnJdykw=
+X-Received: by 2002:a05:6102:190:: with SMTP id r16mr11753579vsq.215.1581513783166;
+ Wed, 12 Feb 2020 05:23:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <742e4af7-ad70-6607-62b0-81d11cd5b04e@displaylink.com>
+References: <20200210131925.145463-1-samitolvanen@google.com>
+In-Reply-To: <20200210131925.145463-1-samitolvanen@google.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 12 Feb 2020 22:22:27 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS7UchtP_+2m4AB-hJ=nMwsM-qpkJ+VHU1JGJrn8K1KPg@mail.gmail.com>
+Message-ID: <CAK7LNAS7UchtP_+2m4AB-hJ=nMwsM-qpkJ+VHU1JGJrn8K1KPg@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: remove duplicate dependencies from .mod files
+To:     Sami Tolvanen <samitolvanen@google.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 09:41:12AM +0000, Vladimir Stankovic wrote:
-> On 11.2.20. 17:39, gregkh@linuxfoundation.org wrote:
-> > On Tue, Feb 11, 2020 at 04:21:24PM +0000, Vladimir Stankovic wrote:
-> >>    39 files changed, 8668 insertions(+)
-> > 
-> > This is a bit hard, if not impossible, to review all in one huge patch.
-> > 
-> > Can you resend this as a patch series, breaking it down into logical
-> > chunks, like all other kernel patches have?
-> > 
-> > Also, why so many individual files?  For only 8k lines, 39 files seems
-> > like a huge number.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> Will break it down into patch series and resend.
-> 
-> In regards of the file count, our intention was to ease the 
-> troubleshooting efforts during development and have a clear separation 
-> between logical parts of MA-USB implementation (i.e data in/out, isoch 
-> in/out, etc.; each source file representing logical chunk).
+Hi Sami,
 
-Yeah, but at the very least, only have a single .h "internal" file, you
-have whole files for just 1 or 2 function prototypes, that's totally
-overkill.
+On Mon, Feb 10, 2020 at 10:19 PM Sami Tolvanen <samitolvanen@google.com> wrote:
+>
+> With CONFIG_TRIM_UNUSED_SYMS, if a module has enough dependencies to
+> exceed the default xargs command line size limit, the output is split
+> into multiple lines, which can result in used symbols getting trimmed.
+>
+> This change removes duplicate dependencies, which will reduce the
+> probability of this happening and makes .mod files smaller and easier
+> to read.
+>
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> ---
+>  scripts/Makefile.build | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> index a1730d42e5f3..a083bcec19d3 100644
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -257,7 +257,7 @@ endef
+>
+>  # List module undefined symbols (or empty line if not enabled)
+>  ifdef CONFIG_TRIM_UNUSED_KSYMS
+> -cmd_undef_syms = $(NM) $< | sed -n 's/^  *U //p' | xargs echo
+> +cmd_undef_syms = $(NM) $< | sed -n 's/^  *U //p' | sort -u | xargs echo
 
-Simple is good, you don't want to have to bounce around through multiple
-files for a simple 8k line driver, that's not a good idea.
 
-thanks,
 
-greg k-h
+In which case are undefined symbols duplicated?
+
+Do you have a .config to reproduce it?
+
+
+
+>  else
+>  cmd_undef_syms = echo
+>  endif
+>
+> base-commit: bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9
+> --
+> 2.25.0.341.g760bfbb309-goog
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
