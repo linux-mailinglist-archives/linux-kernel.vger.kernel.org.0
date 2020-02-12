@@ -2,56 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68D3815A41C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:58:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F69A15A41E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:58:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728813AbgBLI6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 03:58:25 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38236 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728768AbgBLI6Y (ORCPT
+        id S1728839AbgBLI63 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 03:58:29 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33639 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728807AbgBLI60 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 03:58:24 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a9so1222624wmj.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:58:22 -0800 (PST)
+        Wed, 12 Feb 2020 03:58:26 -0500
+Received: by mail-wr1-f67.google.com with SMTP id u6so1216375wrt.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:58:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=monstr-eu.20150623.gappssmtp.com; s=20150623;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3yrvW1QnDdvO63in3dRUZs4rJOwYNpH9/tgF+hnzj7A=;
-        b=oP3fH6O+4ITPoX9/Zi/S3apt/zZIU9P7OQnfv2RTQG2UQlro4x1SAXbLd/UJJvtQBd
-         0HjbcLt+hjzcp/hI9kPu+l8EKNCLYyVFujCf/SxUHI6OVTFNx6hKj9UJ8dKCq27Jtfjv
-         iNeP8pS18UUxN6ilxG8KsQLiVhfmIwoCM1+nSTy3FeyD/L6MpZeJxfK6fS5Bx7YKOEuA
-         d2MziozttVmnbtCHoTMnG4hyuzqjIWiZ6KD7D2bH0btWJFKoPiSz7PIaxxAZnczj07Ew
-         RgzTGrzMXVsznewMYJTfAAh7Wuh25ptXuJGpShHsz1tjpRYgTMQmYPr4oCa+0VTrdSIS
-         IvWw==
+        bh=PbPM+IFIv10EDyvULs9OlFwo1yj0tKaQ85CzafFBjwk=;
+        b=zZXNM0dYGW7Znea8Gw9/B3wlfsH1LC/HedoZf5DlseriHMnA5bh7R5UjtuxUSkGVGL
+         s50bzjS0iKOUMjVM0pnMs2IOIvM9j6binbeGCOF2f/w383kJWcCfCaDsUil+X4wFRYOQ
+         DWqN1Lw6QxQvPoejpNSHByEodgJpzeem5k+EztSflE+5n7CbSnIAkgvSSLKIoFFpXltS
+         76iwoxDy4+TfvXswUpTO66A74szY1M9TySL2stCmKVhUEzZjWiFY3A6/FvydyTbPKAD+
+         Y2dGAT+Yxu1e9AbldCUM/UC/LIgGgajmnUKaFk5SWMbZf/a6fszg2vPtaaXYis+pSQ7s
+         N+KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=3yrvW1QnDdvO63in3dRUZs4rJOwYNpH9/tgF+hnzj7A=;
-        b=LyVgYC0MBZSGaXpTk5TUus84JUsbCn7NWqWELp3mOajGT2oxn9Fqxlyt653EwBTjHw
-         EqqjMcOxtFtLEAZPSPpMotd28pL3i+rMTa91ZkEYvB15oyvoxpMp1NkxESgum7ZOzmmf
-         no1cL+dcPLy1SsuKfSsQm5UFCRhA/6xUQW3O3ukdSoRbOzANFdbUery5mUuILA38mU09
-         l3Gx6iv5IbN5Y2yUBHEoueO6WnBaqLEoJKYAsajUHzAxfKJQVVm6R7ymXg4KepJBaa0L
-         dLJ1BCyVNWr3nYdYqa7ZHlV7jIAwPhQc8ClD9HnvTANVjSxi4MaIWokvi2DzM/DdeYMb
-         4lOQ==
-X-Gm-Message-State: APjAAAWbFMAFkDyffRtcP5r2Dc9fW/lUh/Ysnrw7NRCrIMTsmJpgfnZS
-        xbs4S8Izf+PrJXgA622JYehZl9DKbvbMRw==
-X-Google-Smtp-Source: APXvYqxl6EMFnQECsh0qHrFjZYiGEKhyjBd0znZaDnf8uRTRKLuTXujl4JXhh+JdsdZCmAeJrEVcYw==
-X-Received: by 2002:a7b:cf0d:: with SMTP id l13mr12036781wmg.13.1581497901298;
-        Wed, 12 Feb 2020 00:58:21 -0800 (PST)
+        bh=PbPM+IFIv10EDyvULs9OlFwo1yj0tKaQ85CzafFBjwk=;
+        b=Xzrn7lpAQHpUMu9V7eQq5FccGpfjtmVEw76vE/GRxq+KeL+QtIlWLJGNUYokMiRtYO
+         OHLcFvV4MAqRN5SKHBx91+GnPRDZYQ4E8RuBwPshZPrSrjISjwr88ChEyi3bnYPmvO5w
+         Qdlli8qt74W24fDMhzkOnELlBocwOZ5L8yFR2C29RBMR80fFkfwabMS/YMYzSdv+Rcl3
+         kEF4pImjZRrDe+bhauqJXLp5MrES8prsTbfKP6V73H08pM19YcyuPGE3Zng0k/+C6X+C
+         WGhbHiy32PTp+1C4lnDvXzvaLqo+OqnxdO2pxhusxiEA0OsC+Lk92EoRn6pvJORqym6y
+         iMcA==
+X-Gm-Message-State: APjAAAWfzBZYXJMVFOz9j/sGGK0saLfdaNlL8uXEo1C/JhG7/NYu6b3T
+        oEQ6UmDhCgoz+m8L457wSjVOmNZRB7PTZQ==
+X-Google-Smtp-Source: APXvYqy8AArVJd0v7iAp1VwlYWnjCfUnUd8JqsSiNMR90W7DDrXOHzxYBneaXTtGlPm9cMF7Wwrijw==
+X-Received: by 2002:adf:ffc5:: with SMTP id x5mr14481864wrs.92.1581497902930;
+        Wed, 12 Feb 2020 00:58:22 -0800 (PST)
 Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id g25sm9352693wmh.3.2020.02.12.00.58.20
+        by smtp.gmail.com with ESMTPSA id p26sm7019262wmc.24.2020.02.12.00.58.22
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Feb 2020 00:58:20 -0800 (PST)
+        Wed, 12 Feb 2020 00:58:22 -0800 (PST)
 From:   Michal Simek <michal.simek@xilinx.com>
 To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
         michal.simek@xilinx.com, git@xilinx.com, arnd@arndb.de
-Cc:     Stefan Asserhall <stefan.asserhall@xilinx.com>
-Subject: [PATCH 07/10] microblaze: Add missing irqflags.h header
-Date:   Wed, 12 Feb 2020 09:58:04 +0100
-Message-Id: <bb096275c875973d5cd56271d27cbbede5d324d6.1581497860.git.michal.simek@xilinx.com>
+Cc:     Stefan Asserhall <stefan.asserhall@xilinx.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Subject: [PATCH 08/10] microblaze: Remove unused boot_cpuid variable
+Date:   Wed, 12 Feb 2020 09:58:05 +0100
+Message-Id: <658d8948b81137b205b02032bda43d2ea6998fe7.1581497860.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <cover.1581497860.git.michal.simek@xilinx.com>
 References: <cover.1581497860.git.michal.simek@xilinx.com>
@@ -62,29 +65,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Asserhall <stefan.asserhall@xilinx.com>
+boot_cpuid is not used on uni processor system that's why can be removed.
 
-Without this header local_save_flags() is not defined.
-
-Signed-off-by: Stefan Asserhall <stefan.asserhall@xilinx.com>
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Reviewed-by: Stefan Asserhall <stefan.asserhall@xilinx.com>
 ---
 
- arch/microblaze/kernel/cpu/pvr.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/microblaze/include/asm/setup.h | 2 --
+ arch/microblaze/kernel/setup.c      | 1 -
+ 2 files changed, 3 deletions(-)
 
-diff --git a/arch/microblaze/kernel/cpu/pvr.c b/arch/microblaze/kernel/cpu/pvr.c
-index 8d0dc6db48cf..f139052a39bd 100644
---- a/arch/microblaze/kernel/cpu/pvr.c
-+++ b/arch/microblaze/kernel/cpu/pvr.c
-@@ -14,6 +14,7 @@
- #include <linux/compiler.h>
- #include <asm/exceptions.h>
- #include <asm/pvr.h>
-+#include <linux/irqflags.h>
+diff --git a/arch/microblaze/include/asm/setup.h b/arch/microblaze/include/asm/setup.h
+index c209d5297029..be10da9d87cb 100644
+--- a/arch/microblaze/include/asm/setup.h
++++ b/arch/microblaze/include/asm/setup.h
+@@ -10,8 +10,6 @@
+ #include <uapi/asm/setup.h>
  
+ # ifndef __ASSEMBLY__
+-extern unsigned int boot_cpuid; /* move to smp.h */
+-
+ extern char cmd_line[COMMAND_LINE_SIZE];
+ 
+ extern char *klimit;
+diff --git a/arch/microblaze/kernel/setup.c b/arch/microblaze/kernel/setup.c
+index a8fc15ac4291..dd121e33b8e3 100644
+--- a/arch/microblaze/kernel/setup.c
++++ b/arch/microblaze/kernel/setup.c
+@@ -41,7 +41,6 @@ DEFINE_PER_CPU(unsigned int, ENTRY_SP);	/* Saved SP on kernel entry */
+ DEFINE_PER_CPU(unsigned int, R11_SAVE);	/* Temp variable for entry */
+ DEFINE_PER_CPU(unsigned int, CURRENT_SAVE);	/* Saved current pointer */
+ 
+-unsigned int boot_cpuid;
  /*
-  * Until we get an assembler that knows about the pvr registers,
+  * Placed cmd_line to .data section because can be initialized from
+  * ASM code. Default position is BSS section which is cleared
 -- 
 2.25.0
 
