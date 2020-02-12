@@ -2,176 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D25EE15A4CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:31:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 683DC15A525
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:44:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728857AbgBLJbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 04:31:10 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:50904 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728530AbgBLJbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:31:10 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 7BA28551258B46250CA0;
-        Wed, 12 Feb 2020 17:31:07 +0800 (CST)
-Received: from [127.0.0.1] (10.74.221.148) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Wed, 12 Feb 2020
- 17:30:56 +0800
-Subject: Re: [PATCH] perf tools: Add arm64 version of get_cpuid()
-To:     John Garry <john.garry@huawei.com>, <peterz@infradead.org>,
-        <mingo@redhat.com>, <acme@kernel.org>, <mark.rutland@arm.com>,
-        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
-        <namhyung@kernel.org>
-References: <1576245255-210926-1-git-send-email-john.garry@huawei.com>
-CC:     <linux-kernel@vger.kernel.org>, <will@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linuxarm@huawei.com>
-From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
-Message-ID: <4ccf4455-b33d-441b-50ed-28211dd87c7c@hisilicon.com>
-Date:   Wed, 12 Feb 2020 17:30:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.1
-MIME-Version: 1.0
-In-Reply-To: <1576245255-210926-1-git-send-email-john.garry@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.221.148]
-X-CFilter-Loop: Reflected
+        id S1729010AbgBLJnu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 04:43:50 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:46606 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728637AbgBLJno (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 04:43:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Subject:Cc:To:From:Date:Message-Id:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=bTlY8PGhCYzSVjFt/mma9u9atqHaB4/S7WhFaJNCETg=; b=Gvbxpj63SlusCN6Dzw/w+tioui
+        mXMS+wYeKZCzpl6vh67GQ+rpdH7w6KiKvpCvDWPH/uS8XV9qVxx6xB4pRowPtkTdAF5ABCLWeeWBE
+        ANsB7ynEG0r0w3FjgH6cou7mHRzj/dB1eE8/8EKUgla/zDd4xApPGTM7Dar0azLbDzvInm5U6uIAs
+        fMnUAp2t9yJvEY1xs+KUd2AGBGcsmA9ahlje2GJ/oIvUACaynNgc1UzsjXe2Y2bNmnM2OakRsrMYN
+        SiPg9Th3zeyU6hwLa9xvjEMuy0aTrjpz6SyWo6JDhoHfSnBmfYWRsKNRwwHbZtlnWwVNQdezKUWl9
+        MhFfW5pg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1oYG-0006zW-9T; Wed, 12 Feb 2020 09:43:24 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5C6D03077DC;
+        Wed, 12 Feb 2020 10:41:32 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id 46FA720148932; Wed, 12 Feb 2020 10:43:21 +0100 (CET)
+Message-Id: <20200212093210.468391728@infradead.org>
+User-Agent: quilt/0.65
+Date:   Wed, 12 Feb 2020 10:32:10 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        rostedt@goodmis.org
+Cc:     peterz@infradead.org, mingo@kernel.org, joel@joelfernandes.org,
+        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
+        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com
+Subject: [PATCH 0/8] tracing vs rcu vs nmi
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi John,
+Hi all,
 
-I tested this patch on my new ARM64 Kunpeng 920 server.
-[root@node1 zsk]# ./perf --version
-perf version 5.6.rc1.g2cdb955b7252
+These here patches are the result of Mathieu and Steve trying to get commit
+865e63b04e9b2 ("tracing: Add back in rcu_irq_enter/exit_irqson() for rcuidle
+tracepoints") reverted again.
 
-Both perf list and perf stat can work.
+One of the things discovered is that tracing MUST NOT happen before nmi_enter()
+or after nmi_exit(). I've only fixed x86, but quickly gone through other
+architectures and there is definitely more stuff to be fixed (simply grep for
+nmi_enter in your arch).
 
-Tested-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
 
-Thanks,
-Shaokun
-
-On 2019/12/13 21:54, John Garry wrote:
-> Add an arm64 version of get_cpuid(), which is used for various annotation
-> and headers - for example, I now get the CPUID in "perf report --header",
-> as shown in this snippet:
-> 
-> # hostname : ubuntu
-> # os release : 5.5.0-rc1-dirty
-> # perf version : 5.5.rc1.gbf8a13dc9851
-> # arch : aarch64
-> # nrcpus online : 96
-> # nrcpus avail : 96
-> # cpuid : 0x00000000480fd010
-> 
-> Since much of the code to read the MIDR is already in get_cpuid_str(),
-> factor out this code.
-> 
-> Signed-off-by: John Garry <john.garry@huawei.com>
-> 
-> diff --git a/tools/perf/arch/arm64/util/header.c b/tools/perf/arch/arm64/util/header.c
-> index a32e4b72a98f..d730666ab95d 100644
-> --- a/tools/perf/arch/arm64/util/header.c
-> +++ b/tools/perf/arch/arm64/util/header.c
-> @@ -1,8 +1,10 @@
->  #include <stdio.h>
->  #include <stdlib.h>
->  #include <perf/cpumap.h>
-> +#include <util/cpumap.h>
->  #include <internal/cpumap.h>
->  #include <api/fs/fs.h>
-> +#include <errno.h>
->  #include "debug.h"
->  #include "header.h"
->  
-> @@ -12,26 +14,21 @@
->  #define MIDR_VARIANT_SHIFT      20
->  #define MIDR_VARIANT_MASK       (0xf << MIDR_VARIANT_SHIFT)
->  
-> -char *get_cpuid_str(struct perf_pmu *pmu)
-> +static int _get_cpuid(char *buf, size_t sz, struct perf_cpu_map *cpus)
->  {
-> -	char *buf = NULL;
-> -	char path[PATH_MAX];
->  	const char *sysfs = sysfs__mountpoint();
-> -	int cpu;
->  	u64 midr = 0;
-> -	struct perf_cpu_map *cpus;
-> -	FILE *file;
-> +	int cpu;
->  
-> -	if (!sysfs || !pmu || !pmu->cpus)
-> -		return NULL;
-> +	if (!sysfs || sz < MIDR_SIZE)
-> +		return EINVAL;
->  
-> -	buf = malloc(MIDR_SIZE);
-> -	if (!buf)
-> -		return NULL;
-> +	cpus = perf_cpu_map__get(cpus);
->  
-> -	/* read midr from list of cpus mapped to this pmu */
-> -	cpus = perf_cpu_map__get(pmu->cpus);
->  	for (cpu = 0; cpu < perf_cpu_map__nr(cpus); cpu++) {
-> +		char path[PATH_MAX];
-> +		FILE *file;
-> +
->  		scnprintf(path, PATH_MAX, "%s/devices/system/cpu/cpu%d"MIDR,
->  				sysfs, cpus->map[cpu]);
->  
-> @@ -57,12 +54,48 @@ char *get_cpuid_str(struct perf_pmu *pmu)
->  		break;
->  	}
->  
-> -	if (!midr) {
-> +	perf_cpu_map__put(cpus);
-> +
-> +	if (!midr)
-> +		return EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +int get_cpuid(char *buf, size_t sz)
-> +{
-> +	struct perf_cpu_map *cpus = perf_cpu_map__new(NULL);
-> +	int ret;
-> +
-> +	if (!cpus)
-> +		return EINVAL;
-> +
-> +	ret = _get_cpuid(buf, sz, cpus);
-> +
-> +	perf_cpu_map__put(cpus);
-> +
-> +	return ret;
-> +}
-> +
-> +char *get_cpuid_str(struct perf_pmu *pmu)
-> +{
-> +	char *buf = NULL;
-> +	int res;
-> +
-> +	if (!pmu || !pmu->cpus)
-> +		return NULL;
-> +
-> +	buf = malloc(MIDR_SIZE);
-> +	if (!buf)
-> +		return NULL;
-> +
-> +	/* read midr from list of cpus mapped to this pmu */
-> +	res = _get_cpuid(buf, MIDR_SIZE, pmu->cpus);
-> +	if (res) {
->  		pr_err("failed to get cpuid string for PMU %s\n", pmu->name);
->  		free(buf);
->  		buf = NULL;
->  	}
->  
-> -	perf_cpu_map__put(cpus);
->  	return buf;
->  }
-> 
 
