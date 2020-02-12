@@ -2,238 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AED915AA11
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 14:31:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05E2415AA17
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 14:32:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbgBLNbt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 08:31:49 -0500
-Received: from UPDC19PA21.eemsg.mail.mil ([214.24.27.196]:12688 "EHLO
-        UPDC19PA21.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727951AbgBLNbs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 08:31:48 -0500
-X-EEMSG-check-017: 58189834|UPDC19PA21_ESA_OUT03.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.70,433,1574121600"; 
-   d="scan'208";a="58189834"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by UPDC19PA21.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 12 Feb 2020 13:31:42 +0000
+        id S1728142AbgBLNch (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 08:32:37 -0500
+Received: from mail-dm6nam11on2079.outbound.protection.outlook.com ([40.107.223.79]:39942
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726728AbgBLNch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 08:32:37 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dfDH+BWAnFblqrrRgffeKXbA2rKbU6x8ImGlnM7a4wAmPYjp87lz2kvD0PWDUmAAsCCCxMNAEL4mXtB4Ag4nMXym2Rg82iJ5pFGODtsNhvJWKHxBs0jW0GSdyvVTIwEdIjhq9f9Lv+tH0cn0ozf+/e6lbGPHYmYAQczqUwB2AQVeSYriG69MVLHTTaGnKvjvos32Fg23SPxp7qZVQjhNJWzLbLTjgNk5+sUwsHclryvI1+3RmY85xwBX6gz0NpZ/agcookK+RPaE58QCZU5JAEpXaiy86ysXWPFo9H5uv0cBiX1746mZsLN0BuFH5uM4AeomSnDKB0EAxtlE38WeCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d/+6aI4CSGjyta9xfoND7xrCTLCHsYapASMJV3XsmUw=;
+ b=fkuBZVxC3zSVXM4JPHI3oMqseyh48wApZAsn7gU4qEUS+k7GcHO80Z+l5L6lNkTZOH/HFwiih18LNbGWWGk+dqleYJPJ1B7P9WP6RJ02oZTrSSxV8RLnRjycTL1dyVxquBeXphl9Q53I/3pl5kJBojaXXwPQ1sHyUTzSedFnwnWAKe1DRwVBWJp5UUAYoqvXaAg53HCYeZ5a9rk7MZRSsufFEiBPd/EOWWc6do88M3zD8ks7lcjUPxmkR6ntWxtdu5GAPj5g2KLc6TanfObPkpOEHzYy92hp5ERU2jLjgKjjs53WVgldezNhPf4PXreTpUIWUwDf+joYA/XbkD8aEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=arndb.de smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1581514302; x=1613050302;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=4E6NdF8sYemfNDGEjWXx29tiVX+0McGJ92YpwPd8UrY=;
-  b=dTj/HpjMFK+CwtnbH1SUjnUs2qiieY9aegIGStqkXVcTHbj+T2exW639
-   aIjwWvVLPAP4BJLSKBWac+8oco+GIVASc643tIjmyfDuS3Jpo/WOEHcpW
-   N4WtMkFSwcMQUuHeM/VVNNBrbJDLXsHT0nA685D5I+aOvoNrJ+EabyQan
-   lviQytvbflrE+FZfn1MomFLbGsE6U8+jeqeux1VOF3JwK0dfG2zEoMXNx
-   M7GAWD6zAnydXscQnpbc9UpmuoTUcvOKl1eI/W7yGPxyLWItRD226wxjc
-   bszB71lu6n34OjpkpqGDTPaCE/VjLtQLHfxiYNpEgBwB7LG/no1CKEixq
-   w==;
-X-IronPort-AV: E=Sophos;i="5.70,428,1574121600"; 
-   d="scan'208";a="32966495"
-IronPort-PHdr: =?us-ascii?q?9a23=3AQxEdcxMOstBwQrwplEYl6mtUPXoX/o7sNwtQ0K?=
- =?us-ascii?q?IMzox0Kf37r8bcNUDSrc9gkEXOFd2Cra4d16yI7uu9AyQp2tWojjMrSNR0TR?=
- =?us-ascii?q?gLiMEbzUQLIfWuLgnFFsPsdDEwB89YVVVorDmROElRH9viNRWJ+iXhpTEdFQ?=
- =?us-ascii?q?/iOgVrO+/7BpDdj9it1+C15pbffxhEiCCybL9vIxi6twTcu8kZjYZiNKo61w?=
- =?us-ascii?q?fErGZPd+lKymxkIk6ekQzh7cmq5p5j9CpQu/Ml98FeVKjxYro1Q79FAjk4Km?=
- =?us-ascii?q?45/MLkuwXNQguJ/XscT34ZkgFUDAjf7RH1RYn+vy3nvedgwiaaPMn2TbcpWT?=
- =?us-ascii?q?S+6qpgVRHlhDsbOzM/7WrakdJ7gr5Frx29phx/24/Ub5+TNPpiZaPWYNcWSX?=
- =?us-ascii?q?NcUspNSyBNB4WxYIUVD+oFIO1WsY/zqVUTphe6HAWhCufixjpOi3Tr36M1zv?=
- =?us-ascii?q?4hHBnb0gI+EdIAsHfaotv7O6gdU++60KbGwC7fb/5Vwzrx9JTEfx4jrPyKQL?=
- =?us-ascii?q?l+cdDRyU4qFw7dk1uQtZLqPyuV1usTtWiQ8vduVee1hG4jrwF+vDiuzdorh4?=
- =?us-ascii?q?nSm40V0UvJ9Tl5wYkpJd24T1R3Ydi/EJRKrS2aOIx2Qt07TmxupS00yaUGtI?=
- =?us-ascii?q?amcCUFx5kr3R7SZ+Gdf4SW7R/vSvydLSp+iXl4YrywnQyy/lKlyuDkU8m010?=
- =?us-ascii?q?tFoTRdn9nXs3ANywTT6s+aSvth5kuh2SiA1wTU6uxcPUA7j7DbK588wr4rjJ?=
- =?us-ascii?q?YTsELDHiHxmEXtkqCZal8o+vSo6uv7YrXmoYWQN4lohQHlLqsigMm/AeU8Mg?=
- =?us-ascii?q?QWXmib//qz1KH78EHkT7hHgec6n6nEvJzAO8gWqbC1DxVI3oo77hawFTam0N?=
- =?us-ascii?q?AWnXkdK1JFfQqKj5P0NFHVO/34Efe+jEiskDds3fzGOKbhDY/XInjMl7fhY6?=
- =?us-ascii?q?5x61RAxwor0dBf+5VUB6kbL/L3REDwu8LXDx8jPwOv3uboFc9y1oUdWWKIHK?=
- =?us-ascii?q?+UK6fSsV6O5uIyLOiAfo4VuDDhK/c74/7il2M2mVgYfaOxx5sYdGi4Huh6I0?=
- =?us-ascii?q?WeeXfjmNMBHnkFvwUgTezmkkaCUSJJaHaoWKI8+DY7CIO6DYfEWICgm7OB3C?=
- =?us-ascii?q?KhEZ1XYmBKEEyDEXDtd4+cQfcDdDqSItN9kjwDTbWhU5Eu1Q2wuw/gyrtqNe?=
- =?us-ascii?q?vU+isWtZL5ztd6+vPcmgsv+jBuCMSdyW6NRXlunmwUXz82wLx/oUtlx1iZza?=
- =?us-ascii?q?d4huJXGMdQ5/xXSAc6M4DTz+hgB9D1QALBcc+DSEy6TdW+HTExUtUxzscLY0?=
- =?us-ascii?q?Z8HdWigRfD0jGwA7ALirOLBIY78r7G03ftIMZ9zm7M1LM9gFk+XstPKWqmi7?=
- =?us-ascii?q?Z99wfJAY7Jkl+Vl6CrdaQfwS7N8H2MwHGKvEFZVg5wTKrEUWoeZkvQsdT2+E?=
- =?us-ascii?q?fCQ6WyBrQgNwtL0dSCJbdSat31kVVGQ+/uONbZY2K2nWe/Hw2IyqmIbIXwe2?=
- =?us-ascii?q?UdwCTdCE4anAAV5nuGMQk+BiG8o2PRFjBuFFTvY1/y/ul6sn+0Ukg0zwSSZU?=
- =?us-ascii?q?17y7W14gIVheCbS/4LxLIEvzouqy91HFay2NLaEcSApwt/fKVdet494VFH1X?=
- =?us-ascii?q?7HuAx5JJCvM6dihlsGeQRto0zuzwl3CplHkcUyt3wl0gxyKaKD3VNCaTyYx5?=
- =?us-ascii?q?bwNaPTKmXo4B+vcbTZ2kre0NaX/KcP5+40q1L5vAGmDkAi6Wlo08FJ03uA4Z?=
- =?us-ascii?q?XHFBISXojsUkYz6hh6vKrXYjIn6IPRznJjK7O4sjjY29ImHOEl0Aqvf89DMK?=
- =?us-ascii?q?OYEw//C8gaB9CwJ+ExhVepahYEM/5I9K4xJcymceGK2K+2M+p6hj2mkHxN4J?=
- =?us-ascii?q?ph3UKU6yp8VunI0o4Hw/6C2wuISSz8gE26vcDwhYBEeTYSHm+7ySf6BI9cfa?=
- =?us-ascii?q?1ycpwNCWe1PcK3wM1+iIT3W35E8l6sGUkG2NSpeRqTd1zxxxFf1UMSoXa/gy?=
- =?us-ascii?q?u30yR0ky01rqqYxCHO2PrtdAAIOmFVX2RijU3jIYywj9EaWkikdRQmlByg5U?=
- =?us-ascii?q?zi3ahUuLx/L3XPQUdPZyX2LWRiUqyqtrqYYs5P84glsSNNX+S5f1+aS6Txox?=
- =?us-ascii?q?wA0yPsB2Fe3iw0dym2upXlmBx3kGycLHd3rHrdY81/2AnQ68bASv5W2DoLXz?=
- =?us-ascii?q?N3iSPSBlSmI9ap+tCUnY/Zsu+iT2KhSoFTcS7zwIOFriS7/25qDQeln/Cuht?=
- =?us-ascii?q?3nFRI10Snm2NRxTyrIthP8bpP32KS9NOJtZlNoC0Pk68pmBoF+lZM9hIsK2X?=
- =?us-ascii?q?gbmpqY5nkHnnnpMdVdx63+aGABRTkRw97a+ALlwlFsLmqVx4LlUXWQ2tFuZ8?=
- =?us-ascii?q?KmYm4N2SIy8dpKCKGK47xAhyd1pUC4rQ3Ja/hngjgd0ecu6GIdg+wRugotyS?=
- =?us-ascii?q?GdAqsIEkRDJyzjiQmH79Cko6VLfmqgbb+w1E9ml9C7EL6Cuh1cWGr+epo6By?=
- =?us-ascii?q?Bw7d5yMFbN0H3194Hld8PcbdMVth2IjRjAi/JZJ442lvoPnSBnI37yvWU5y+?=
- =?us-ascii?q?4nihxjxY+1vJKdJGVr/aK2GBhYOyb6Z8MU/THtgqJekdiM04+zGZVhHy0BXI?=
- =?us-ascii?q?H0QvKwDDISqfPnOh6PED04t3eUAqDQHRSf6Eh4tH/ACZOrOGuSJHYDzNVuXg?=
- =?us-ascii?q?WSJEtagAoMRjU1goY5Fhy2xMzmaEp2/DQR6UD3qxRWzOJnKgfwUn3FqAezaj?=
- =?us-ascii?q?c0SYOfLBpV7gFD4UfYKsie7uN1HyFF8Zyttg2NKmqHZwtWCWEFQFCLB1fmPr?=
- =?us-ascii?q?O2/9nP7/CYBvaiL/vJebiOr/ZRV/KIxZOvz4tm+TmMO96MPnZ8Ff073FRMXX?=
- =?us-ascii?q?RjF8TegTUPRDQdlzjRYM6DuBe85ip3o9ik8PTsXgLv6o+PC7pPMdp04RC5m7?=
- =?us-ascii?q?mDN++WhCZ2MjtY2IgDyWXUx7gY2V4YkztueCW1EbQcqS7NS7rdmqtWDx4cbS?=
- =?us-ascii?q?N8Ks9I47gz3gVXPc7UkNX12aN2j/ErEVdFUV3hmseyaMwLJWG9KE3IBEKROL?=
- =?us-ascii?q?uaIj3Lxtn9YbmgRr1IkOVUqxqwtC6HE0/sOjSCmCLkVxSuMeFKkSGbIAZeuI?=
- =?us-ascii?q?a7chZsBmnvVs/pZQOjOt9tkTI22aE0hm/NNWMENTh8ckVNrqCf7C9BgfVwBX?=
- =?us-ascii?q?ZB7nx7IumAgCuZ8ebYJYgMsfdxASR7ifha4HIkxLtR9i1EQ+Z1mCTKpN50v1?=
- =?us-ascii?q?6mivWPyiZgUBdWrjZLhYSLvVhtOKnA7ZlPR2rL/A8X7WWRFxQLp8JpCtjou6?=
- =?us-ascii?q?9N19jPkLz8JSxc89Lb48QcHdLYKMGZP3o7NxrmBjrUABECTT6xOmHVn1Zdn+?=
- =?us-ascii?q?2K9n2Jspg6rYDhmIEQRb9fVVw1EO4aC0t+EdwcL5d4QCkknaSYjMEW/3q+qg?=
- =?us-ascii?q?feRMFAspDATPKSDu3lKCyFgrlcexsI3bT4IJwSNo39x0xtdF16kJ3FG0reUt?=
- =?us-ascii?q?FAuSlhbg4voEVR63hyVGMz21j7ZQyz/XAcC+W0nh0qigt5eeQh7jDs4004Jl?=
- =?us-ascii?q?DSvis/jFExmcn5gTCWaDPxKKawXYdLCyv7rkQxKon0Qxx0bQ2pgUNpLynER7?=
- =?us-ascii?q?1PgLt6b2xrixHTuYFJGfFCSa1IehgQxeuYZ/8wy1RTtj2nxVNb5evCEZZikA?=
- =?us-ascii?q?oqcZixr3NPwwJjdMI6KbXNK6VX0FhdnaaOvi6z1uAt2w8SPUEN8WKWeCESo0?=
- =?us-ascii?q?MILaMqJy2y/uxj8QaCgSdMeHAQV/o2pfJn7kc9O+WGzyL93L9PM1q+N/aaL6?=
- =?us-ascii?q?+AuGjPi9SIQlUu2UMMjERF+bl20dw/c0qPTUwvzb2RFxoTNcXYNA5acdBd+2?=
- =?us-ascii?q?XJcSaJq+XNzop/P5+hGeDwUe+OqKEUj1qgHAYoGYQM88sAEoC00E7GN8fnIq?=
- =?us-ascii?q?cJyQg25Av1PlWFF+9EeAyEkDgZucGz1px30pdHJjEbH2p9NT+75rHNpg8lmP?=
- =?us-ascii?q?CDRss5Ym8GXosYMXI7QMq6mzZDv3RHAjm30+YZxxab4z/4pyTQFyX8YsFnZP?=
- =?us-ascii?q?eVfhNsFMq29S8k86i4k1LX9IvRJ33iP9R4ptDP8f8ap4qAC/5MSbl9rlvcm4?=
- =?us-ascii?q?5DSnOwVm7AC8K6KILoa4ktcdz7EHK6Xka5iz0rU8eidOqqe4GMjBHlVM5+rY?=
- =?us-ascii?q?WS2jMkK4fpHzUTCxph4ese6Kt6ZgodS546ZwP48QU4K6G7Zgyf14P9bXyqLG?=
- =?us-ascii?q?5tU/RHzei8L4dSxi4oY/7ynGAsVbkm3uK39ggLX5hMgRbAk6XwL7JCWDT+Ty?=
- =?us-ascii?q?QOMz7EojA0wi04bbc/?=
-X-IPAS-Result: =?us-ascii?q?A2BPBACF/ENe/wHyM5BmHgELHIN4gWwBIBIqhBSJA4ZlA?=
- =?us-ascii?q?QEBAQEBBoE3iXCRSQkBAQEBAQEBAQE3AQGEQAKCbTgTAhABAQEEAQEBAQEFA?=
- =?us-ascii?q?wEBbIVDgjspAYMCAQUdBg8BBUEQCQIYAgImAgJXBg0GAgEBgmM/glclj1Gbe?=
- =?us-ascii?q?YEyhUqDSIE+gQ4qjD55gQeBEScPgl0+h1uCXgSNTYJPh298lm+CRIJOikaJN?=
- =?us-ascii?q?QYcgkiIEpA7Lat0IoFYKwgCGAghD4MnUBgNjikXFY4sIwMwApFfAQE?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 12 Feb 2020 13:31:40 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 01CDU4TT018798;
-        Wed, 12 Feb 2020 08:30:10 -0500
-Subject: Re: [PATCH v5 01/10] capabilities: introduce CAP_PERFMON to kernel
- and user space
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d/+6aI4CSGjyta9xfoND7xrCTLCHsYapASMJV3XsmUw=;
+ b=rWP4QkxTiEQ50ACrWE312Q/LUTVtC6IovUUNEWq0LBS0gCYUmTTYsZu/Npu74Al5OU1ZufgiGehNB0aboSUjXz5kBAat1MyK10XfElQRHTA3YZvdSmF2lAcJY5ztCXkqkAoINYAeZ/k7wZ5RRhzEo6aMcFhpXXdu+zxuyXIszXU=
+Received: from BYAPR02CA0070.namprd02.prod.outlook.com (2603:10b6:a03:54::47)
+ by BN7PR02MB3940.namprd02.prod.outlook.com (2603:10b6:406:f4::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2707.21; Wed, 12 Feb
+ 2020 13:32:32 +0000
+Received: from CY1NAM02FT020.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::203) by BYAPR02CA0070.outlook.office365.com
+ (2603:10b6:a03:54::47) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2707.29 via Frontend
+ Transport; Wed, 12 Feb 2020 13:32:31 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; arndb.de; dkim=none (message not signed)
+ header.d=none;arndb.de; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT020.mail.protection.outlook.com (10.152.75.191) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2729.22
+ via Frontend Transport; Wed, 12 Feb 2020 13:32:31 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1j1s7y-0000uX-O7; Wed, 12 Feb 2020 05:32:30 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1j1s7t-0005JW-Kc; Wed, 12 Feb 2020 05:32:25 -0800
+Received: from xsj-pvapsmtp01 (xsj-pvapsmtp01.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 01CDWJ0Y031306;
+        Wed, 12 Feb 2020 05:32:19 -0800
+Received: from [172.30.17.107]
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <michals@xilinx.com>)
+        id 1j1s7n-0005E5-Ec; Wed, 12 Feb 2020 05:32:19 -0800
+Subject: Re: [PATCH 00/10] Hi,
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Michal Simek <michal.simek@xilinx.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Simek <monstr@monstr.eu>, git@xilinx.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Borislav Petkov <bp@suse.de>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Mubin Sayyed <mubinusm@xilinx.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "james.bottomley@hansenpartnership.com" 
-        <james.bottomley@hansenpartnership.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        oprofile-list@lists.sf.net, Andy Lutomirski <luto@amacapital.net>
-References: <0548c832-7f4b-dc4c-8883-3f2b6d351a08@linux.intel.com>
- <9b77124b-675d-5ac7-3741-edec575bd425@linux.intel.com>
- <64cab472-806e-38c4-fb26-0ffbee485367@tycho.nsa.gov>
- <05297eff-8e14-ccdf-55a4-870c64516de8@linux.intel.com>
- <CAADnVQK-JzK-GUk4KOozn4c1xr=7TiCpB9Fi0QDC9nE6iVn8iQ@mail.gmail.com>
- <537bdb28-c9e4-f44f-d665-25250065a6bb@linux.intel.com>
- <63d9700f-231d-7973-5307-3e56a48c54cb@linux.intel.com>
- <d7213569-9578-7201-6106-f5ebc95bd6be@tycho.nsa.gov>
- <2e38c33d-f085-1320-8cc2-45f74b6ad86d@linux.intel.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <dd6a1382-7b2f-a6e6-a1ac-009566d7f556@tycho.nsa.gov>
-Date:   Wed, 12 Feb 2020 08:32:07 -0500
+        Randy Dunlap <rdunlap@infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Siva Durga Prasad Paladugu <siva.durga.paladugu@xilinx.com>,
+        Stefan Asserhall <stefan.asserhall@xilinx.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+References: <cover.1581497860.git.michal.simek@xilinx.com>
+ <CAK8P3a1NymovoUxYBF8Ok8Rfke7ECW49bmc+K-=vtH_Bz8_7jQ@mail.gmail.com>
+From:   Michal Simek <michal.simek@xilinx.com>
+Message-ID: <a05bbd70-9531-9445-c842-5bb8336d273a@xilinx.com>
+Date:   Wed, 12 Feb 2020 14:32:12 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <2e38c33d-f085-1320-8cc2-45f74b6ad86d@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAK8P3a1NymovoUxYBF8Ok8Rfke7ECW49bmc+K-=vtH_Bz8_7jQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(376002)(136003)(39860400002)(199004)(189003)(31686004)(4326008)(70586007)(110136005)(70206006)(54906003)(316002)(6666004)(81156014)(8676002)(8936002)(356004)(81166006)(336012)(2906002)(426003)(186003)(26005)(53546011)(31696002)(44832011)(478600001)(2616005)(4744005)(5660300002)(7416002)(36756003)(9786002)(106390200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR02MB3940;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e2267e22-056c-4375-2753-08d7afc002eb
+X-MS-TrafficTypeDiagnostic: BN7PR02MB3940:
+X-LD-Processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+X-Microsoft-Antispam-PRVS: <BN7PR02MB39401692B35BDC57D1321034C61B0@BN7PR02MB3940.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:2043;
+X-Forefront-PRVS: 0311124FA9
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: sqFMQEA1TurfJe8amd2jHN9wmqVzlrNPYYQElrG1LD+ulI8Ap+ycwiwfJ7YISJSg8jouU/w/5lJkl4krmrYLCp01WxEoeLXN6kVXT9KcQ4gWiFDUKC+C2ygowCD1evJzdY/iEHl1HnsenmgvMRmSwK3NBPh2Ctku1QmTwCUXfJU3mJ7d8uJqUH0RJT4oJvH1fnQJo5YxrR/CgvkCBRgTTFVe5gulidq2/lHpG5scl1KJBGrRcqDXDEDcmV73pxhozo/IwyRuitnDapJaUcO2vNwJGBu7+GNaSYPR6DaFYKuAQtHkFMler3drBGkhr7r7nSHf3CNIqvGzLl7q8w1KxluuuI+8gzCC0j0SHZFfisFF3kTN5Umpdttkr4JxZM+Big+9KoD8+Df0Do/EPtWnzCz4cfneVz9ekZvIuRSXbTCgzJZwJ3n1tTi+3zZKwfM/XV3KyK+wFpgJzvmff6DQql6+xY2NPXydDcJaVOuSw5IIM/wA0ZKwQvbPea4UjOHi
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2020 13:32:31.2470
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2267e22-056c-4375-2753-08d7afc002eb
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR02MB3940
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/12/20 3:53 AM, Alexey Budankov wrote:
-> Hi Stephen,
-> 
-> On 22.01.2020 17:07, Stephen Smalley wrote:
->> On 1/22/20 5:45 AM, Alexey Budankov wrote:
->>>
->>> On 21.01.2020 21:27, Alexey Budankov wrote:
->>>>
->>>> On 21.01.2020 20:55, Alexei Starovoitov wrote:
->>>>> On Tue, Jan 21, 2020 at 9:31 AM Alexey Budankov
->>>>> <alexey.budankov@linux.intel.com> wrote:
->>>>>>
->>>>>>
->>>>>> On 21.01.2020 17:43, Stephen Smalley wrote:
->>>>>>> On 1/20/20 6:23 AM, Alexey Budankov wrote:
->>>>>>>>
-> <SNIP>
->>>>>>>> Introduce CAP_PERFMON capability designed to secure system performance
->>>>>>>
->>>>>>> Why _noaudit()?  Normally only used when a permission failure is non-fatal to the operation.  Otherwise, we want the audit message.
->>>
->>> So far so good, I suggest using the simplest version for v6:
->>>
->>> static inline bool perfmon_capable(void)
->>> {
->>>      return capable(CAP_PERFMON) || capable(CAP_SYS_ADMIN);
->>> }
->>>
->>> It keeps the implementation simple and readable. The implementation is more
->>> performant in the sense of calling the API - one capable() call for CAP_PERFMON
->>> privileged process.
->>>
->>> Yes, it bloats audit log for CAP_SYS_ADMIN privileged and unprivileged processes,
->>> but this bloating also advertises and leverages using more secure CAP_PERFMON
->>> based approach to use perf_event_open system call.
+On 12. 02. 20 14:02, Arnd Bergmann wrote:
+> On Wed, Feb 12, 2020 at 9:58 AM Michal Simek <michal.simek@xilinx.com> wrote:
 >>
->> I can live with that.  We just need to document that when you see both a CAP_PERFMON and a CAP_SYS_ADMIN audit message for a process, try only allowing CAP_PERFMON first and see if that resolves the issue.  We have a similar issue with CAP_DAC_READ_SEARCH versus CAP_DAC_OVERRIDE.
+>>
+>> I am sending this series as before SMP support.
+>> Most of these patches are clean ups and should be easy to review them. I
+>> expect there will be more discussions about SMP support.
 > 
-> I am trying to reproduce this double logging with CAP_PERFMON.
-> I am using the refpolicy version with enabled perf_event tclass [1], in permissive mode.
-> When running perf stat -a I am observing this AVC audit messages:
+> Agreed.
 > 
-> type=AVC msg=audit(1581496695.666:8691): avc:  denied  { open } for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
-> type=AVC msg=audit(1581496695.666:8691): avc:  denied  { kernel } for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
-> type=AVC msg=audit(1581496695.666:8691): avc:  denied  { cpu } for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
-> type=AVC msg=audit(1581496695.666:8692): avc:  denied  { write } for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
+> I had one question about a detail, other than that:
 > 
-> However there is no capability related messages around. I suppose my refpolicy should
-> be modified somehow to observe capability related AVCs.
-> 
-> Could you please comment or clarify on how to enable caps related AVCs in order
-> to test the concerned logging.
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
-The new perfmon permission has to be defined in your policy; you'll have 
-a message in dmesg about "Permission perfmon in class capability2 not 
-defined in policy.".  You can either add it to the common cap2 
-definition in refpolicy/policy/flask/access_vectors and rebuild your 
-policy or extract your base module as CIL, add it there, and insert the 
-updated module.
-
+Thanks,
+Michal
 
