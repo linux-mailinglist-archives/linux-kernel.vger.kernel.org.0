@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 452B415A6C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:44:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B824115A6C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:44:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728226AbgBLKoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 05:44:19 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33590 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728108AbgBLKoD (ORCPT
+        id S1728187AbgBLKoK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 05:44:10 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36235 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728105AbgBLKoE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 05:44:03 -0500
-Received: by mail-lf1-f67.google.com with SMTP id n25so1270102lfl.0;
-        Wed, 12 Feb 2020 02:44:01 -0800 (PST)
+        Wed, 12 Feb 2020 05:44:04 -0500
+Received: by mail-lj1-f193.google.com with SMTP id r19so1747701ljg.3;
+        Wed, 12 Feb 2020 02:44:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=dW/gtpmwTFw+oEFIzLCTetdu7jdvkgezHPX1Sr93TwA=;
-        b=VZ6vSPQ1+bh+AetrOMjQ/4Gm4kyUD55HounmT4vy3toVjhbL0FNrU2NcB8FInoOUmL
-         R6tIDImjmBb0l50ccGa9QvgvcZgyuiC0vckW+kNeVv22uWGLaLS5C3H6glaTSNDxfMr+
-         D1yYT9o84o+J1Z/YSBakCsJ4vboXO2dBPz9Zi54ZpBgwEjsdKV3zMkfdrwbfLZDTYvjU
-         ZA1uoRHH5J93ZC0/fBE5kwOKRqI60nGOt3VS/APWKkdC7in6STYjGTrvd44sG9mElcMU
-         lvVppOTSaZ+2TgD267ZmgXns6M/Il0Qe6KlzjGSHe+fihuyyL3qmnZxjA5Ih6rrUKVUI
-         nxxg==
-X-Gm-Message-State: APjAAAU5WeS8P55hTEjT4L54VOsPZ74D/UPa58NHFpYlzx3NypqD4hLR
-        IsX+EdsZlzyLlzI0Li+FZLU=
-X-Google-Smtp-Source: APXvYqzLv9Q5S1c1DIe6LSv7xAjK0nV9/GigVpccCCM69py78gj1tLuTt8v/gphZF/9ei+4cDgjc9Q==
-X-Received: by 2002:a19:23d7:: with SMTP id j206mr6361123lfj.108.1581504240882;
-        Wed, 12 Feb 2020 02:44:00 -0800 (PST)
+        bh=iKlCRyIiMtnqAsTUzds53Dv6bIjyCavUz2JwE+5Q86U=;
+        b=q5HVRDWhwRbnE9XD+o+E9xAjOAPh7hQLfxuR2Q8IDVZ9T4TM1epaVOtVyrlu8rGABh
+         yFqCmc8lkO7Cafl/HYhWllqXiIuLapsvVAQnGGQcjsqxaammtQ08szh/unYlYUU7/aVn
+         5Y3eK5B2eLMSiN4yawADQadAg6x+qVO8ETp7np/hh4aiE/y3aTnL30BjSCFWlOM0LEUK
+         td2zjvNBwoIws7FJZtQbuHZF0cSwe9TfZs+qsUqy1+gm8TKYyrBdhoddFPoiOZyROZAx
+         4AUMHjV+kM0rXe59nSsEt0+w7iLyrsNYMIQHQxtbyBaexbKAv1lDD0w6rEbSKtyjKUtE
+         Q1MQ==
+X-Gm-Message-State: APjAAAXdH6yUdrcRJ+JyB2DNrRd0fEFCMh+e7/up4E+c/raNqoNUtsR8
+        KlNzXbkgf21uto2iOoHGwE3mfSN2
+X-Google-Smtp-Source: APXvYqw7J+T5Ysy2HXL8fB1EY4rHD15OKtFOpMRNPxVKAu0ydkSwOONjjAYScm3qUiyiEjWtrDI6RA==
+X-Received: by 2002:a2e:9e03:: with SMTP id e3mr7402721ljk.186.1581504241717;
+        Wed, 12 Feb 2020 02:44:01 -0800 (PST)
 Received: from xi.terra (c-12aae455.07-184-6d6c6d4.bbcust.telenor.se. [85.228.170.18])
-        by smtp.gmail.com with ESMTPSA id v2sm95791lfo.6.2020.02.12.02.43.58
+        by smtp.gmail.com with ESMTPSA id a8sm13450ljn.74.2020.02.12.02.43.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 12 Feb 2020 02:43:59 -0800 (PST)
 Received: from johan by xi.terra with local (Exim 4.92.3)
         (envelope-from <johan@xi.terra>)
-        id 1j1pUs-0005CW-7b; Wed, 12 Feb 2020 11:43:58 +0100
+        id 1j1pUs-0005Cc-An; Wed, 12 Feb 2020 11:43:58 +0100
 From:   Johan Hovold <johan@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>
 Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Barry Song <Baohua.Song@csr.com>,
-        Johan Hovold <johan@kernel.org>, Ye He <Ye.He@csr.com>
-Subject: [PATCH 2/3] ARM: dts: atlas7: fix space in gmac compatible string
-Date:   Wed, 12 Feb 2020 11:43:47 +0100
-Message-Id: <20200212104348.19940-3-johan@kernel.org>
+        Johan Hovold <johan@kernel.org>, Dongli Li <Kasin.Li@csr.com>
+Subject: [PATCH 3/3] ARM: dts: atlas7: fix space in g2d compatible string
+Date:   Wed, 12 Feb 2020 11:43:48 +0100
+Message-Id: <20200212104348.19940-4-johan@kernel.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200212104348.19940-1-johan@kernel.org>
 References: <20200212104348.19940-1-johan@kernel.org>
@@ -55,14 +55,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop the space between manufacturer and model in the Synopsis compatible
-string in the gmac node so that it matches the recommended format.
+Drop the space between manufacturer and model in the SiRF compatible
+string in the g2d node so that it matches the recommended format.
 
 Note that there are no in-kernel drivers that use this compatible and
 it is not present in any binding.
 
-Fixes: 153645b3e037 ("ARM: dts: atlas7: add lost gmac node")
-Cc: Ye He <Ye.He@csr.com>
+Fixes: d9615f8bf5d9 ("ARM: dts: atlas7: add lost G2D node")
+Cc: Dongli Li <Kasin.Li@csr.com>
 Cc: Barry Song <Baohua.Song@csr.com>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
@@ -70,18 +70,18 @@ Signed-off-by: Johan Hovold <johan@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/atlas7.dtsi b/arch/arm/boot/dts/atlas7.dtsi
-index 92b00e4740f6..f1e8c772a59e 100644
+index f1e8c772a59e..c3104b85813b 100644
 --- a/arch/arm/boot/dts/atlas7.dtsi
 +++ b/arch/arm/boot/dts/atlas7.dtsi
-@@ -1333,7 +1333,7 @@ uart5: uart@18060000 {
- 				status = "disabled";
+@@ -1930,7 +1930,7 @@ lvds@10e10000 {
+ 				resets = <&car 29>;
  			};
- 			gmac: eth@180b0000 {
--				compatible = "snps, dwc-eth-qos";
-+				compatible = "snps,dwc-eth-qos";
- 				reg = <0x180b0000 0x4000>;
- 				interrupts = <0 59 0>, <0 70 0>;
- 				interrupt-names = "macirq", "macpmt";
+ 			g2d@17010000 {
+-				compatible = "sirf, atlas7-g2d";
++				compatible = "sirf,atlas7-g2d";
+ 				reg = <0x17010000 0x10000>;
+ 				interrupts = <0 61 0>;
+ 				clocks = <&car 104>;
 -- 
 2.24.1
 
