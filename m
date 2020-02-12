@@ -2,111 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A610015B213
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 21:45:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E1CB15B217
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 21:46:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729079AbgBLUpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 15:45:47 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:40876 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728447AbgBLUpr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 15:45:47 -0500
-Received: by mail-pj1-f68.google.com with SMTP id 12so1383877pjb.5;
-        Wed, 12 Feb 2020 12:45:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZPrKuRi6FOCenz8x5HDZUpKjL7/Vbor3/MAzvMLKF5E=;
-        b=OE9G1AdasJTFsKzJWS8850awYaQjFlzggWaPKTYdJhH+RGC10+WE4Oyg/tol+Y06BN
-         T+vNbnd1sRGxIOa43ic9tL98yjpP+w5izvAGPhAL6iapL73WaUwLIi5O/KDWY2UhX9Bj
-         4ivnKKvWWdLpLM/4spAH9rGtIwpl0zyhsNvafOjIjLZWEfNQZhZ/+eNIIWrXTc5cMWf4
-         xxEauh0uxljia3qMFyX1lmgC3buYcF+U22KGAj+/pB8FXK/vqRQ1J7n5u0UoL8CKLGdf
-         jaoMvScNI6iFvOmsFJ0MjE7j4zkAlY4/vRcT2B9FdgUeyq+/vmv3R8ex0bHoRNOwmGvk
-         ubuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZPrKuRi6FOCenz8x5HDZUpKjL7/Vbor3/MAzvMLKF5E=;
-        b=XBM0gvdXBZx6iTNPuXLK9ZtZkGsFlVXBowCUL7VXx1cPWgfWfjo3bu0Ob/ydZfF4Yx
-         UvmffpNdI53kvh0QkIqoh9FuD/C2t+71zAuz94+7Ya0K9mRmyCsDilGmkF3AptLQAs4P
-         YisHsomZNXrkZ1X+NBJXNhaq12lLat5nxmNgc5W05kV7fJv3+A4f7SJg+Cv46THDXLhB
-         NNwAuyJxqibgfC4xUwAwdnpnHNFZGiTx4WdVnaYTSILr0O6fSVySRcgOpthJxeFGKABo
-         ZSZbqUAEcok3P4/Awpw5bwTEOJA9DTxT5HhXFZVlg6S5u3EZBZdNSgguH4Zr2p4L1xFz
-         3KhQ==
-X-Gm-Message-State: APjAAAVhrcQEIvV6o//5yuN9rEH3F/HDIR76zVRJ1zDF9r+rj7X3j7H1
-        3+PA+P38RYOcUyrNpe4XAk0=
-X-Google-Smtp-Source: APXvYqxVHlUd3V0YAJLj7a1864k4eFqZ6YOFpcoO/yGan1cBrkCH/1mAgFrufk2ZuU/R+82aoLhEGw==
-X-Received: by 2002:a17:902:ac97:: with SMTP id h23mr10290430plr.237.1581540345301;
-        Wed, 12 Feb 2020 12:45:45 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 199sm128759pfu.71.2020.02.12.12.45.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Feb 2020 12:45:44 -0800 (PST)
-Date:   Wed, 12 Feb 2020 12:45:43 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        id S1728977AbgBLUqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 15:46:53 -0500
+Received: from mga03.intel.com ([134.134.136.65]:27753 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727111AbgBLUqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 15:46:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 12:46:52 -0800
+X-IronPort-AV: E=Sophos;i="5.70,434,1574150400"; 
+   d="scan'208";a="281335102"
+Received: from agluck-desk2.sc.intel.com ([10.3.52.68])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 12:46:52 -0800
+From:   Tony Luck <tony.luck@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Tony Luck <tony.luck@intel.com>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (ibmaem) Replace zero-length array with
- flexible-array member
-Message-ID: <20200212204543.GA7197@roeck-us.net>
-References: <20200211234237.GA26971@embeddedor>
+Subject: [RFC PATCH 0/5] New way to track mce notifier chain actions
+Date:   Wed, 12 Feb 2020 12:46:47 -0800
+Message-Id: <20200212204652.1489-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200211234237.GA26971@embeddedor>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 05:42:37PM -0600, Gustavo A. R. Silva wrote:
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
-> 
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
-> 
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertenly introduced[3] to the codebase from now on.
-> 
-> This issue was found with the help of Coccinelle.
-> 
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+This is just a skeleton of how it might look. Several issues
+arose while looking at this ... not all directly related to
+the problem at hand.
 
-Applied to hwmon-next.
+Parts 1 & 2 are just cleanup.  CEC should follow the same rules
+as everyone else who wants to be on the mce notifier chain. No
+real reason for it to have direct hooks into mce/core.c
 
-Thanks,
-Guenter
+Part 3 adds a field to struct mce, and defines the BIT fields
+for each class of notifier. All EDAC drivers share the same BIT
+since only one of them should be active.
 
-> ---
->  drivers/hwmon/ibmaem.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/ibmaem.c b/drivers/hwmon/ibmaem.c
-> index db63c1295cb2..fb052c2d9c34 100644
-> --- a/drivers/hwmon/ibmaem.c
-> +++ b/drivers/hwmon/ibmaem.c
-> @@ -232,7 +232,7 @@ struct aem_read_sensor_req {
->  
->  struct aem_read_sensor_resp {
->  	struct aem_iana_id	id;
-> -	u8			bytes[0];
-> +	u8			bytes[];
->  } __packed;
->  
->  /* Data structures to talk to the IPMI layer */
+Part 4 is where things are interesting and need a great deal more
+thought.  A bunch of things on the chain return NOTIFY_STOP which
+prevents anything else on the chain from being run.  For the moment
+I ignored that semantic and added code everywhere to set the BIT
+even though nobody else will see it.  This is because I think at
+least some of them should NOT be NOTIFY_STOP.
+
+Part 5 is currently written to always call __print_mce() for
+debugging. The "if (1 || ...)" obviously doesn't want the "1"
+(though I'd like to add some /sys knob to flip a switch to force
+printing for systems where something weird is happening and logs
+are being lost).
+
+Tony Luck (5):
+  x86/mce: Rename "first" function as "early"
+  x86/mce: Convert corrected error collector to use mce notifier
+  x86/mce: Add new "handled" field to "struct mce"
+  x86/mce: Fix all mce notifiers to update the mce->handled bitmask
+  x86/mce: Change default mce logger to check mce->handled
+
+ arch/x86/include/asm/mce.h           | 15 ++++----
+ arch/x86/include/uapi/asm/mce.h      |  9 +++++
+ arch/x86/kernel/cpu/mce/core.c       | 53 +++++++---------------------
+ arch/x86/kernel/cpu/mce/dev-mcelog.c |  1 +
+ drivers/acpi/acpi_extlog.c           |  1 +
+ drivers/acpi/nfit/mce.c              |  1 +
+ drivers/edac/i7core_edac.c           |  1 +
+ drivers/edac/mce_amd.c               |  5 ++-
+ drivers/edac/pnd2_edac.c             |  1 +
+ drivers/edac/sb_edac.c               |  1 +
+ drivers/edac/skx_common.c            |  1 +
+ drivers/ras/cec.c                    | 29 +++++++++++++++
+ 12 files changed, 69 insertions(+), 49 deletions(-)
+
+-- 
+2.21.1
+
