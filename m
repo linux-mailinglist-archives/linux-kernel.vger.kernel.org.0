@@ -2,108 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42FAF15A832
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 12:45:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77F6915A837
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 12:48:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728426AbgBLLpn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 06:45:43 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:23756 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728099AbgBLLpm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 06:45:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581507941;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xHa7p/GKnBvLzuu4QbsQ7jX/HvnO0aLikEJRRufEnjE=;
-        b=jVpL90OBLhGoK3xQiG6dz6Wa8tmCguw1lzAzc6BmurKRXqOQeWTZ6TcvrzNQaX2QrHusZC
-        rUYNY44pVa9aSpCZgaJ/csc9h1TVMzPxZ+ieNzdAbYGz3m1pFxzxENNKZU3ZId+fyAa8G/
-        h1s+uTT6+jynKO2AD9pAtK1BwvBWpf0=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-309-e6Dw7l45Pb6WF0dPnZoDiA-1; Wed, 12 Feb 2020 06:45:39 -0500
-X-MC-Unique: e6Dw7l45Pb6WF0dPnZoDiA-1
-Received: by mail-wm1-f71.google.com with SMTP id p2so846940wma.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 03:45:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xHa7p/GKnBvLzuu4QbsQ7jX/HvnO0aLikEJRRufEnjE=;
-        b=hbDwxbwGkgNm6VCAILnpjU6kFoRWTtRcFPF4lS0VL9nIwrNYLexLIHhauxBhtBCESY
-         TOMmTveGA6mF4UBROCJQqXIQvNdrsT4VylrggGCksRSRY9RfMGSepoOrcfAA3bTdLnhB
-         cLc8aSreqMchq4zaAUr3et3brr622YV+jYPCUiSkAum+I5uF4dUGYt3ll9U6CbxgldEg
-         /P1Wrn6Y6pN0FsiEx53vVGet8+qUh2U2njG76j9GxupNEYc+ZbLgEADak9/KQ7/YVKnW
-         HB1KyNkNGwWDTkQiWhgNzQvbIho6/8rRqSwyDbNco8La5BZs4nLa3kzPTEk4ls0pxIz+
-         Cfjw==
-X-Gm-Message-State: APjAAAUptnQny5F6qqhu+rxDIwlwt/5FclFUlhSiHD0iywC92omeGHjH
-        QV9gKlZmQqNZ5dOrqxwZZsl6e09UsrN13aItXQXG+wCrmJo0a1oqqVSOG6WWb39dHLWVZkBJCBa
-        LxBloBjpWhk6GwSV4xQKI5XtW
-X-Received: by 2002:a5d:4a04:: with SMTP id m4mr15120666wrq.104.1581507937026;
-        Wed, 12 Feb 2020 03:45:37 -0800 (PST)
-X-Google-Smtp-Source: APXvYqymgry8s5CPyNlN/xpDmM97UGbnWzc/qdRpwVaty0USC4aB2hAo5lCGpzT0Ossub3L7KFkQWQ==
-X-Received: by 2002:a5d:4a04:: with SMTP id m4mr15120639wrq.104.1581507936776;
-        Wed, 12 Feb 2020 03:45:36 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:652c:29a6:517b:66d9? ([2001:b07:6468:f312:652c:29a6:517b:66d9])
-        by smtp.gmail.com with ESMTPSA id r5sm297552wrt.43.2020.02.12.03.45.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2020 03:45:36 -0800 (PST)
-Subject: Re: [PATCH v2] KVM: x86: remove duplicated KVM_REQ_EVENT request
-To:     linmiaohe <linmiaohe@huawei.com>, rkrcmar@redhat.com,
-        sean.j.christopherson@intel.com, vkuznets@redhat.com,
-        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org
-References: <1581089271-3431-1-git-send-email-linmiaohe@huawei.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <55eb3a20-9660-4155-1e2a-ece8b31dbbfc@redhat.com>
-Date:   Wed, 12 Feb 2020 12:45:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1728139AbgBLLsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 06:48:13 -0500
+Received: from mga01.intel.com ([192.55.52.88]:10182 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726775AbgBLLsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 06:48:12 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 03:48:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
+   d="scan'208";a="347500425"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 12 Feb 2020 03:48:07 -0800
+Received: by lahna (sSMTP sendmail emulation); Wed, 12 Feb 2020 13:48:06 +0200
+Date:   Wed, 12 Feb 2020 13:48:06 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        "David E . Box" <david.e.box@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 18/18] MAINTAINERS: Update entry for Intel Broxton PMC
+ driver
+Message-ID: <20200212114806.GZ2667@lahna.fi.intel.com>
+References: <20200211132603.73509-1-mika.westerberg@linux.intel.com>
+ <20200211132603.73509-19-mika.westerberg@linux.intel.com>
+ <20200211160133.GI10400@smile.fi.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1581089271-3431-1-git-send-email-linmiaohe@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200211160133.GI10400@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/20 16:27, linmiaohe wrote:
-> From: Miaohe Lin <linmiaohe@huawei.com>
+On Tue, Feb 11, 2020 at 06:01:33PM +0200, Andy Shevchenko wrote:
+> On Tue, Feb 11, 2020 at 04:26:03PM +0300, Mika Westerberg wrote:
+> > The driver lives now under MFD so split the current entry into two parts
+> > and add me as co-maintainer of the Intel Broxton PMC driver. While there
+> > correct formatting of Zha Qipeng's email address.
 > 
-> The KVM_REQ_EVENT request is already made in kvm_set_rflags(). We should
-> not make it again.
+> ...
 > 
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-> Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> ---
-> v1->v2:
-> Collected Vitaly's R-b
-> ---
->  arch/x86/kvm/x86.c | 1 -
->  1 file changed, 1 deletion(-)
+> > -INTEL PMC/P-Unit IPC DRIVER
+> > -M:	Zha Qipeng<qipeng.zha@intel.com>
+> > +INTEL P-Unit IPC DRIVER
+> > +M:	Zha Qipeng <qipeng.zha@intel.com>
+> >  L:	platform-driver-x86@vger.kernel.org
+> >  S:	Maintained
+> > -F:	arch/x86/include/asm/intel_pmc_ipc.h
+> >  F:	arch/x86/include/asm/intel_punit_ipc.h
+> > -F:	drivers/platform/x86/intel_pmc_ipc.c
+> >  F:	drivers/platform/x86/intel_punit_ipc.c
+> >  
+> >  INTEL PMIC GPIO DRIVERS
 > 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index fbabb2f06273..212282c6fb76 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -8942,7 +8942,6 @@ int kvm_task_switch(struct kvm_vcpu *vcpu, u16 tss_selector, int idt_index,
->  
->  	kvm_rip_write(vcpu, ctxt->eip);
->  	kvm_set_rflags(vcpu, ctxt->eflags);
-> -	kvm_make_request(KVM_REQ_EVENT, vcpu);
->  	return 1;
->  }
->  EXPORT_SYMBOL_GPL(kvm_task_switch);
-> 
+> Does it stays at the same place after executing parse-maintainers.pl?
 
-Queued, thanks.
-
-Paolo
-
+Good point, the entry needs to be moved in the correct place to keep it
+sorted alphabetically since the name changes now from PMC -> P-Unit.
