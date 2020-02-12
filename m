@@ -2,126 +2,292 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE77B15A445
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:08:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E70915A43A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:07:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728708AbgBLJI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 04:08:56 -0500
-Received: from mail-eopbgr750072.outbound.protection.outlook.com ([40.107.75.72]:50797
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728150AbgBLJIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:08:55 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=C9HBgyw/MCki5eoDurA7EFkMrYHLzvaW8aRcEIYlkAco65zDv2Hot0yiSzpg762xYSAlB4WM6THwQ6mlrIhegogjGG/uaxKAAEHZ4VreIS0S1oHMg65Moy6Pt2UvoFSW2OXGz7yQ+F3WG6uVGEzxk///3f4I/RwRnxx9U8Ur3qOn9zTY33W1f0haBaDlsMUXH5WHg4NJLjoyy++z/5RnvnkW0KX7DZ0l8EbN893Nzc0awlsD3uS25/hCPG1hpvYhRrK7zklTwy9Jxts8DXSv2PPKD1gLwPhhLUDQj9WDQcIXdXXkRf7gvPnSw2+DRwz0eQRssDmwGrAmVKjoZilb1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VXTivQ7eLvuhRAMBqe3k4QgJPPe6DRGwzA+6HB/RF0A=;
- b=LH3U2n5MRv8O2Cn4XfATy7Rr0Kn8Ax3TyGPRmEJ3JzTm7qT34TNM6lu+QjYszYjuPKNL6wArLYZKm2XlH/jyXrZuI/ZDGj3zzGspSqwT67kuIEXEKTd6u2Tly0VCohXUeeI33h8OdycuMlp1kp4y4h8ctMa8MAMI68hETlIWSIhI423Z79yrVeaWscmqmCH+Z0WxJZ6cu7q3o3eenlBAV3wh83D0eh0XSZo5AVRs9zs31g0oeSmdCr1dGSBZL1M60dT3h2u0kO+spWQ/6nN3pwr9XvFlyKtGYZttAHKnTZYj/RKMCFwBeM5kK3BxRPGS2Sc1LShcdwIBbJWZgs5pAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VXTivQ7eLvuhRAMBqe3k4QgJPPe6DRGwzA+6HB/RF0A=;
- b=Cm1guE96R5CmV21CcX3QUIRndAkralc45OQxFKgLbjumfJGzqZRO3dX54C6QUjARM1X8nmlduYbgkCAP6A4CH4m1kRkhX7qpa/x1ZAyOAfpohapHyXMl+TIFwTc+4XvnUjex+4xkykWEYpwt7l2GMpkcqXvu+/Rd5/NtQlsay/I=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Vishnuvardhanrao.Ravulapati@amd.com; 
-Received: from DM6PR12MB3868.namprd12.prod.outlook.com (10.255.173.213) by
- DM6PR12MB2986.namprd12.prod.outlook.com (20.178.198.75) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2707.28; Wed, 12 Feb 2020 09:08:52 +0000
-Received: from DM6PR12MB3868.namprd12.prod.outlook.com
- ([fe80::acd1:24ec:991:f353]) by DM6PR12MB3868.namprd12.prod.outlook.com
- ([fe80::acd1:24ec:991:f353%5]) with mapi id 15.20.2707.030; Wed, 12 Feb 2020
- 09:08:52 +0000
-Subject: Re: [PATCH] ASoC: amd: Buffer Size instead of MAX Buffer
-To:     Mark Brown <broonie@kernel.org>,
-        Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-Cc:     Alexander.Deucher@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1581426768-8937-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
- <20200211153847.GK4543@sirena.org.uk>
-From:   vishnu <vravulap@amd.com>
-Message-ID: <c4b900ee-743e-8ce0-1061-02c383bff90e@amd.com>
-Date:   Wed, 12 Feb 2020 14:36:32 +0530
+        id S1728683AbgBLJHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 04:07:22 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:58902 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728150AbgBLJHV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 04:07:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581498439;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Xd4zjQZSa1NqEGRzZDTzigGv8FiBSvE9RlLefOdlOZ4=;
+        b=YTTXxHppla5bRvc6PHCtE0fd/2dvOw1ZEWl4Sbe69xo7gKmLyXU75dMHaABnnynm4ODhMM
+        VwhYX4y4lIkjAoKr+Msk5IL9bSwgKvmiddaRUD2TlC3wYSuJfn+kfs6i8cavsVvQAxXKrF
+        Bsks3OOKLcrmnStDjQ+e6WkkZ3ToHYs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-104-nGovIV4SNhyApnXVWNc58g-1; Wed, 12 Feb 2020 04:07:18 -0500
+X-MC-Unique: nGovIV4SNhyApnXVWNc58g-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A325813E4;
+        Wed, 12 Feb 2020 09:07:16 +0000 (UTC)
+Received: from [10.72.13.111] (ovpn-13-111.pek2.redhat.com [10.72.13.111])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5144690086;
+        Wed, 12 Feb 2020 09:06:58 +0000 (UTC)
+Subject: Re: [virtio-dev] Re: [PATCH v2 4/5] virtio-mmio: add MSI interrupt
+ feature support
+To:     "Liu, Jing2" <jing2.liu@linux.intel.com>,
+        Zha Bin <zhabin@linux.alibaba.com>,
+        linux-kernel@vger.kernel.org
+Cc:     virtio-dev@lists.oasis-open.org, slp@redhat.com, mst@redhat.com,
+        qemu-devel@nongnu.org, chao.p.peng@linux.intel.com,
+        gerry@linux.alibaba.com
+References: <cover.1581305609.git.zhabin@linux.alibaba.com>
+ <4c3d13be5a391b1fc50416838de57d903cbf8038.1581305609.git.zhabin@linux.alibaba.com>
+ <0c71ff9d-1a7f-cfd2-e682-71b181bdeae4@redhat.com>
+ <c42c8b49-5357-f341-2942-ba84afc25437@linux.intel.com>
+ <ad96269f-753d-54b8-a4ae-59d1595dd3b2@redhat.com>
+ <5522f205-207b-b012-6631-3cc77dde3bfe@linux.intel.com>
+ <45e22435-08d3-08fe-8843-d8db02fcb8e3@redhat.com>
+ <4c19292f-9d25-a859-3dde-6dd5a03fdf0b@linux.intel.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <44209f3c-613c-3766-ca83-321b77b0f0dd@redhat.com>
+Date:   Wed, 12 Feb 2020 17:06:52 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-In-Reply-To: <20200211153847.GK4543@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BMXPR01CA0036.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:c::22) To DM6PR12MB3868.namprd12.prod.outlook.com
- (2603:10b6:5:1c8::21)
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Received: from [10.129.9.12] (165.204.159.251) by BMXPR01CA0036.INDPRD01.PROD.OUTLOOK.COM (2603:1096:b00:c::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.22 via Frontend Transport; Wed, 12 Feb 2020 09:08:48 +0000
-X-Originating-IP: [165.204.159.251]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 64dd54c0-e341-4ab9-9ef8-08d7af9b2e02
-X-MS-TrafficTypeDiagnostic: DM6PR12MB2986:|DM6PR12MB2986:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM6PR12MB2986C3710F2A4230585E4A0CE71B0@DM6PR12MB2986.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-Forefront-PRVS: 0311124FA9
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(39860400002)(346002)(366004)(376002)(199004)(189003)(81166006)(81156014)(26005)(110136005)(36756003)(2616005)(8676002)(31696002)(6636002)(956004)(7416002)(8936002)(52116002)(478600001)(4326008)(6486002)(186003)(53546011)(66946007)(16526019)(54906003)(16576012)(316002)(6666004)(5660300002)(31686004)(66476007)(2906002)(66556008)(43062003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB2986;H:DM6PR12MB3868.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: cEmVanYSlK2r3LWwnyNdoEJ1bfExplo6LuFjX1v4sqp5zUihTljpfdOLoMxmcFm5NalJ8/S37GOcoa86NR2IexkRPpQhHRkMKM0/0pkyQ17ZF4Km96Hg5qcbcaS8R01OjGNregn1uqTk/Kmc8rkR+vagZBManCcLUlkz0awZo7+m0gf6UcdU16ItarArlbvQbBzUpi9fxbVXhI9nQqlZtZP6vgNLJd1U1bBS87jiRQ9UMWCOuDfkiYgSQRI3AmTU4kqhNfOh0jkXcdbo5bgMH1zseJlKo+V/rKR+9rR+NJwwU+w62AulqQPp8kxWI2xFZlZnwcaAzyqt7HBZX0SC2N6bFanCYOH1/XRe042cxrSQu4g0sFgMkL2NZ1KlbHHIfG27AEUEpqjcgzdm3pzsPM2iDQFVmk+X1ADCJAMUDXSsex74mjSGOaf0QUiCOmX6C3Hqu2r3PfSoPfFhiAsyPwJOtl8cQP3nm6xs2esGZKY/raZQ3hACxEms1RFLoFRT
-X-MS-Exchange-AntiSpam-MessageData: tl7kj3LiJ5IKYjrazo8LSlu10xCpyWvRQPxbMpA4kzyBneyulX4C3EiU+J8GauNB/GcoDchseEY6dh0fL3hFpjJoOJOQ8vSaFZ9Gey5lR1IhglN3/KNtobeyxCSmEB6EDr9XkyxC6l/HL860pS1n+g==
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64dd54c0-e341-4ab9-9ef8-08d7af9b2e02
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2020 09:08:52.6248
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iEswVZVh0AK8b5Dz+CICfLvWX2hIUpbLFZZxUKz+8DHkVU4OwbDoIxR6A2kYwDcH+ZAUF5exckLW56ddkcVVcA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2986
+In-Reply-To: <4c19292f-9d25-a859-3dde-6dd5a03fdf0b@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+On 2020/2/12 =E4=B8=8A=E5=8D=8811:54, Liu, Jing2 wrote:
+>
+>
+> On 2/11/2020 3:40 PM, Jason Wang wrote:
+>>
+>> On 2020/2/11 =E4=B8=8B=E5=8D=882:02, Liu, Jing2 wrote:
+>>>
+>>>
+>>> On 2/11/2020 12:02 PM, Jason Wang wrote:
+>>>>
+>>>> On 2020/2/11 =E4=B8=8A=E5=8D=8811:35, Liu, Jing2 wrote:
+>>>>>
+>>>>> On 2/11/2020 11:17 AM, Jason Wang wrote:
+>>>>>>
+>>>>>> On 2020/2/10 =E4=B8=8B=E5=8D=885:05, Zha Bin wrote:
+>>>>>>> From: Liu Jiang<gerry@linux.alibaba.com>
+>>>>>>>
+>>>>>>> Userspace VMMs (e.g. Qemu microvm, Firecracker) take advantage=20
+>>>>>>> of using
+>>>>>>> virtio over mmio devices as a lightweight machine model for moder=
+n
+>>>>>>> cloud. The standard virtio over MMIO transport layer only=20
+>>>>>>> supports one
+>>>>>>> legacy interrupt, which is much heavier than virtio over PCI=20
+>>>>>>> transport
+>>>>>>> layer using MSI. Legacy interrupt has long work path and causes=20
+>>>>>>> specific
+>>>>>>> VMExits in following cases, which would considerably slow down th=
+e
+>>>>>>> performance:
+>>>>>>>
+>>>>>>> 1) read interrupt status register
+>>>>>>> 2) update interrupt status register
+>>>>>>> 3) write IOAPIC EOI register
+>>>>>>>
+>>>>>>> We proposed to add MSI support for virtio over MMIO via new featu=
+re
+>>>>>>> bit VIRTIO_F_MMIO_MSI[1] which increases the interrupt performanc=
+e.
+>>>>>>>
+>>>>>>> With the VIRTIO_F_MMIO_MSI feature bit supported, the=20
+>>>>>>> virtio-mmio MSI
+>>>>>>> uses msi_sharing[1] to indicate the event and vector mapping.
+>>>>>>> Bit 1 is 0: device uses non-sharing and fixed vector per event=20
+>>>>>>> mapping.
+>>>>>>> Bit 1 is 1: device uses sharing mode and dynamic mapping.
+>>>>>>
+>>>>>>
+>>>>>> I believe dynamic mapping should cover the case of fixed vector?
+>>>>>>
+>>>>> Actually this bit *aims* for msi sharing or msi non-sharing.
+>>>>>
+>>>>> It means, when msi sharing bit is 1, device doesn't want vector=20
+>>>>> per queue
+>>>>>
+>>>>> (it wants msi vector sharing as name) and doesn't want a high=20
+>>>>> interrupt rate.
+>>>>>
+>>>>> So driver turns to !per_vq_vectors and has to do dynamical mapping.
+>>>>>
+>>>>> So they are opposite not superset.
+>>>>>
+>>>>> Thanks!
+>>>>>
+>>>>> Jing
+>>>>
+>>>>
+>>>> I think you need add more comments on the command.
+>>>>
+>>>> E.g if I want to map vector 0 to queue 1, how do I need to do?
+>>>>
+>>>> write(1, queue_sel);
+>>>> write(0, vector_sel);
+>>>
+>>> That's true. Besides, two commands are used for msi sharing mode,
+>>>
+>>> VIRTIO_MMIO_MSI_CMD_MAP_CONFIG and VIRTIO_MMIO_MSI_CMD_MAP_QUEUE.
+>>>
+>>> "To set up the event and vector mapping for MSI sharing mode, driver=20
+>>> SHOULD write a valid MsiVecSel followed by=20
+>>> VIRTIO_MMIO_MSI_CMD_MAP_CONFIG/VIRTIO_MMIO_MSI_CMD_MAP_QUEUE command=20
+>>> to map the configuration change/selected queue events respectively.=C2=
+=A0=20
+>>> " (See spec patch 5/5)
+>>>
+>>> So if driver detects the msi sharing mode, when it does setup vq,=20
+>>> writes the queue_sel (this already exists in setup vq), vector sel=20
+>>> and then MAP_QUEUE command to do the queue event mapping.
+>>>
+>>
+>> So actually the per vq msix could be done through this.=20
+>
+> Right, per vq msix can also be mapped by the 2 commands if we want.
+>
+> The current design benefits for those devices requesting per vq msi=20
+> that driver
+>
+> doesn't have to map during setup each queue,
+>
+> since we define the relationship by default.
+>
 
-On 11/02/20 9:08 PM, Mark Brown wrote:
-> On Tue, Feb 11, 2020 at 06:42:28PM +0530, Ravulapati Vishnu vardhan rao wrote:
-> 
->> Because of MAX BUFFER size in register,when user/app give small
->> buffer size produces noise of old data in buffer.
->> This patch rectifies this noise when using different
->> buffer sizes less than MAX BUFFER.
-> 
-> In what way does this patch fix the issue?  I looks like it's moving a
-> buffer size setting from DMA to I2S but it's not clear why or how this
-> fixes the issue, or indeed what the actual issue that's causing what are
-> presumably underruns is?
-> 
-prior to this fix the value in Tx/Rx Ring Buffer Size register 
-ACP_BT_TX_RINGBUFSIZE,ACP_BT_RX_RINGBUFSIZE and same in I2S RINGBUFSIZE 
-registers was statically set to maximum which is wrong.
-Buffer size must be equal to actual allocated.
-
-Due to which When I play any audio:aplay -Dhw:2,0 test.wav and then stop 
-and play  aplay -Dhw:2,0 -c2 -fS16_LE -r48000 /dev/zero 
---buffer-size=2048 I hear some part of old audio.
+Well since you've defined the dynamic mapping, having some "default"=20
+mapping won't help to reduce the complexity but increase it.
 
 
-So after adding above fix the issue is not reproduced.
+>
+>> I don't get why you need to introduce MSI_SHARING_MASK which is the=20
+>> charge of driver instead of device.=20
+>
+> MSI_SHARING_MASK is just for identifying the msi_sharing bit in=20
+> readl(MsiState) (0x0c4). The device tells whether it wants msi_sharing.
+>
+> MsiState register: R
+>
+> le32 {
+> =C2=A0=C2=A0=C2=A0 msi_enabled : 1;
+> =C2=A0=C2=A0=C2=A0 msi_sharing: 1;
+> =C2=A0=C2=A0=C2=A0 reserved : 30;
+> };
+>
+
+The question is why device want such information.
+
+
+>
+>> The interrupt rate should have no direct relationship with whether it=20
+>> has been shared or not.
+>
+>>
+>> Btw, you introduce mask/unmask without pending, how to deal with the=20
+>> lost interrupt during the masking then?
+>>
+>>
+>>> For msi non-sharing mode, no special action is needed because we=20
+>>> make the rule of per_vq_vector and fixed relationship.
+>>>
+>>> Correct me if this is not that clear for spec/code comments.
+>>>
+>>
+>> The ABI is not as straightforward as PCI did. Why not just reuse the=20
+>> PCI layout?
+>>
+>> E.g having
+>>
+>> queue_sel
+>> queue_msix_vector
+>> msix_config
+>>
+>> for configuring map between msi vector and queues/config
+>
+> Thanks for the advice. :)
+>
+> Actually when looking into pci, the queue_msix_vector/msix_config is=20
+> the msi vector index, which is the same as the mmio register MsiVecSel=20
+> (0x0d0).
+>
+> So we don't introduce two extra registers for mapping even in sharing=20
+> mode.
+>
+> What do you think?
+>
+
+I'm not sure I get the point, but I still prefer the separate vector_sel=20
+from queue_msix_vector.
+
+Btw, Michael propose per vq registers which could also work.
+
+Thanks
+
+
+>
+>>
+>> Then
+>>
+>> vector_sel
+>> address
+>> data
+>> pending
+>> mask
+>> unmask
+>>
+>> for configuring msi table?
+>
+> PCI-like msix table is not introduced to device and instead simply use=20
+> commands to tell the mask/configure/enable.
+>
+> Thanks!
+>
+> Jing
+>
+>>
+>> Thanks
+>>
+>>
+>>> Thanks!
+>>>
+>>> Jing
+>>>
+>>>
+>>>>
+>>>> ?
+>>>>
+>>>> Thanks
+>>>>
+>>>>
+>>>>>
+>>>>>
+>>>>>> Thanks
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> ------------------------------------------------------------------=
+---=20
+>>>>>>
+>>>>>> To unsubscribe, e-mail: virtio-dev-unsubscribe@lists.oasis-open.or=
+g
+>>>>>> For additional commands, e-mail:=20
+>>>>>> virtio-dev-help@lists.oasis-open.org
+>>>>>>
+>>>>>
+>>>>
+>>
+
