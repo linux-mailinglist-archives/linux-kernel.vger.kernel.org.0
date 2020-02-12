@@ -2,292 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52E0915AC4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:46:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3554615AC58
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:49:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728575AbgBLPq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 10:46:27 -0500
-Received: from outbound-smtp27.blacknight.com ([81.17.249.195]:34431 "EHLO
-        outbound-smtp27.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728052AbgBLPq1 (ORCPT
+        id S1728646AbgBLPtK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 10:49:10 -0500
+Received: from smtprelay0242.hostedemail.com ([216.40.44.242]:49478 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727458AbgBLPtJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 10:46:27 -0500
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp27.blacknight.com (Postfix) with ESMTPS id 003D6B8736
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 15:46:24 +0000 (GMT)
-Received: (qmail 32079 invoked from network); 12 Feb 2020 15:46:24 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 12 Feb 2020 15:46:24 -0000
-Date:   Wed, 12 Feb 2020 15:46:23 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Phil Auld <pauld@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 11/11] sched/numa: Use similar logic to the load balancer for
- moving between overloaded domains
-Message-ID: <20200212154623.GP3466@techsingularity.net>
-References: <20200212093654.4816-1-mgorman@techsingularity.net>
+        Wed, 12 Feb 2020 10:49:09 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 35642180A68D7;
+        Wed, 12 Feb 2020 15:49:07 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1593:1594:1711:1714:1730:1747:1777:1792:2393:2525:2560:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3350:3622:3865:3867:3868:3870:3872:3873:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:7903:8985:9025:10004:10400:10848:11232:11658:11914:12043:12048:12297:12555:12740:12760:12895:12986:13069:13095:13311:13357:13439:14181:14659:14721:21067:21080:21324:21433:21451:21611:21627:21740:30029:30054:30070:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:6,LUA_SUMMARY:none
+X-HE-Tag: play61_4f690e963e011
+X-Filterd-Recvd-Size: 1651
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf17.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 12 Feb 2020 15:49:05 +0000 (UTC)
+Message-ID: <b9acb7868a1e225db09830d859bfd4cc6ac6330d.camel@perches.com>
+Subject: Re: [PATCH v3 3/3] IMA: Add module name and base name prefix to log.
+From:   Joe Perches <joe@perches.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        skhan@linuxfoundation.org, linux-integrity@vger.kernel.org
+Cc:     sashal@kernel.org, nramas@linux.microsoft.com,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 12 Feb 2020 07:47:49 -0800
+In-Reply-To: <1581521161.3494.7.camel@HansenPartnership.com>
+References: <20200211231414.6640-1-tusharsu@linux.microsoft.com>
+         <20200211231414.6640-4-tusharsu@linux.microsoft.com>
+         <1581517770.8515.35.camel@linux.ibm.com>
+         <1581521161.3494.7.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20200212093654.4816-1-mgorman@techsingularity.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The NUMA balancer compares task loads to determine if a task can move
-to the preferred domain but this is not what the load balancer does.
-Migrating a task to a preferred domain risks the NUMA balancer and load
-balancer overriding each others decisions.
+On Wed, 2020-02-12 at 10:26 -0500, James Bottomley wrote:
+> Log messages are often consumed by log monitors, which mostly use
+> pattern matching to find messages they're interested in, so you have to
+> take some care when changing the messages the kernel spits out and you
+> have to make sure any change gets well notified so the distributions
+> can warn about it.
+> 
+> For this one, can we see a "before" and "after" message so we know
+> what's happening?
 
-This patch brings the NUMA balancer more in line with the load balancer by
-considering two cases when an idle CPU cannot be used. If the preferred
-node has no spare capacity but a move to an idle CPU would not cause
-a load imbalance then it's allowed. Alternatively, when comparing tasks
-for swapping, it'll allow the swap if the load imbalance is reduced.
+https://patchwork.kernel.org/patch/11357335/#23134147
 
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- kernel/sched/fair.c | 132 +++++++++++++++++++++++++++++-----------------------
- 1 file changed, 75 insertions(+), 57 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 69e41204cfae..b5a93c345e97 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1605,7 +1605,7 @@ struct task_numa_env {
- 	int best_cpu;
- };
- 
--static void task_numa_assign(struct task_numa_env *env,
-+static bool task_numa_assign(struct task_numa_env *env,
- 			     struct task_struct *p, long imp)
- {
- 	struct rq *rq = cpu_rq(env->dst_cpu);
-@@ -1629,7 +1629,7 @@ static void task_numa_assign(struct task_numa_env *env,
- 		}
- 
- 		/* Failed to find an alternative idle CPU */
--		return;
-+		return false;
- 	}
- 
- assign:
-@@ -1650,34 +1650,39 @@ static void task_numa_assign(struct task_numa_env *env,
- 	env->best_task = p;
- 	env->best_imp = imp;
- 	env->best_cpu = env->dst_cpu;
-+	return true;
- }
- 
--static bool load_too_imbalanced(long src_load, long dst_load,
--				struct task_numa_env *env)
-+/*
-+ * For overloaded domains, the load balancer compares average
-+ * load -- See group_overloaded case in update_sd_pick_busiest.
-+ * Return true if the load balancer has more work to do after
-+ * a move.
-+ */
-+static bool load_degrades_imbalance(struct task_numa_env *env, long src_load, long dst_load)
- {
--	long imb, old_imb;
--	long orig_src_load, orig_dst_load;
--	long src_capacity, dst_capacity;
-+	long cur_imb, new_imb;
-+	long src_avg_load, dst_avg_load;
- 
--	/*
--	 * The load is corrected for the CPU capacity available on each node.
--	 *
--	 * src_load        dst_load
--	 * ------------ vs ---------
--	 * src_capacity    dst_capacity
--	 */
--	src_capacity = env->src_stats.group_capacity;
--	dst_capacity = env->dst_stats.group_capacity;
--
--	imb = abs(dst_load * src_capacity - src_load * dst_capacity);
-+	if (src_load == dst_load)
-+		return false;
- 
--	orig_src_load = env->src_stats.group_load;
--	orig_dst_load = env->dst_stats.group_load;
-+	/* Current imbalance */
-+	src_avg_load = (env->src_stats.group_load * SCHED_CAPACITY_SCALE) /
-+			env->src_stats.group_capacity;
-+	dst_avg_load = (env->dst_stats.group_load * SCHED_CAPACITY_SCALE) /
-+			env->dst_stats.group_capacity;
-+	cur_imb = abs(dst_avg_load - src_avg_load);
- 
--	old_imb = abs(orig_dst_load * src_capacity - orig_src_load * dst_capacity);
-+	/* Post-move imbalance */
-+	src_avg_load = ((env->src_stats.group_load + dst_load - src_load) * SCHED_CAPACITY_SCALE) /
-+			env->src_stats.group_capacity;
-+	dst_avg_load = ((env->dst_stats.group_load + src_load - dst_load) * SCHED_CAPACITY_SCALE) /
-+			env->dst_stats.group_capacity;
-+	new_imb = abs(dst_avg_load - src_avg_load);
- 
--	/* Would this change make things worse? */
--	return (imb > old_imb);
-+	/* Does the move make the imbalance worse? */
-+	return new_imb > cur_imb;
- }
- 
- /*
-@@ -1693,7 +1698,7 @@ static bool load_too_imbalanced(long src_load, long dst_load,
-  * into account that it might be best if task running on the dst_cpu should
-  * be exchanged with the source task
-  */
--static void task_numa_compare(struct task_numa_env *env,
-+static bool task_numa_compare(struct task_numa_env *env,
- 			      long taskimp, long groupimp, bool maymove)
- {
- 	struct numa_group *cur_ng, *p_ng = deref_curr_numa_group(env->p);
-@@ -1703,10 +1708,9 @@ static void task_numa_compare(struct task_numa_env *env,
- 	long src_load, dst_load;
- 	int dist = env->dist;
- 	long moveimp = imp;
--	long load;
- 
- 	if (READ_ONCE(dst_rq->numa_migrate_on))
--		return;
-+		return false;
- 
- 	rcu_read_lock();
- 	cur = rcu_dereference(dst_rq->curr);
-@@ -1802,7 +1806,6 @@ static void task_numa_compare(struct task_numa_env *env,
- 		goto assign;
- 	}
- 
--
- 	/*
- 	 * If the NUMA importance is less than SMALLIMP,
- 	 * task migration might only result in ping pong
-@@ -1812,17 +1815,10 @@ static void task_numa_compare(struct task_numa_env *env,
- 	if (imp < SMALLIMP || imp <= env->best_imp + SMALLIMP / 2)
- 		goto unlock;
- 
--	/*
--	 * In the overloaded case, try and keep the load balanced.
--	 */
--	load = task_h_load(env->p) - task_h_load(cur);
--	if (!load)
--		goto assign;
--
--	dst_load = env->dst_stats.group_load + load;
--	src_load = env->src_stats.group_load - load;
--
--	if (load_too_imbalanced(src_load, dst_load, env))
-+	/* In the overloaded case, try and keep the load balanced. */
-+	src_load = task_h_load(env->p);
-+	dst_load = task_h_load(cur);
-+	if (load_degrades_imbalance(env, src_load, dst_load))
- 		goto unlock;
- 
- assign:
-@@ -1849,20 +1845,41 @@ static void task_numa_compare(struct task_numa_env *env,
- 	task_numa_assign(env, cur, imp);
- unlock:
- 	rcu_read_unlock();
-+
-+	/*
-+	 * If a move to idle is allowed because there is capacity or load
-+	 * balance improves then stop the search. While a better swap
-+	 * candidate may exist, a search is not free.
-+	 */
-+	if (maymove && !cur)
-+		return true;
-+
-+	/*
-+	 * If a swap candidate must be identified and the best one moves to
-+	 * its preferred node then stop the search. Search is not free.
-+	 */
-+	if (!maymove && env->best_task &&
-+	    env->best_task->numa_preferred_nid == env->src_nid) {
-+		return true;
-+	}
-+
-+	return false;
- }
- 
- static void task_numa_find_cpu(struct task_numa_env *env,
- 				long taskimp, long groupimp)
- {
--	long src_load, dst_load, load;
--	bool maymove = false;
- 	int cpu;
-+	bool has_capacity;
-+	bool maymove = false;
-+
-+	has_capacity = numa_has_capacity(env->imbalance_pct, &env->dst_stats);
- 
- 	/*
- 	 * If the load balancer is unlikely to interfere with the task after
--	 * a migration then use an idle CPU.
-+	 * a migration then try use an idle CPU.
- 	 */
--	if (env->dst_stats.idle_cpu >= 0) {
-+	if (has_capacity) {
- 		unsigned int imbalance;
- 		int src_running, dst_running;
- 
-@@ -1872,31 +1889,32 @@ static void task_numa_find_cpu(struct task_numa_env *env,
- 		imbalance = max(0, dst_running - src_running);
- 		imbalance = adjust_numa_imbalance(imbalance, src_running);
- 
--		/* Use idle CPU there is spare capacity and no imbalance */
--		if (numa_has_capacity(env->imbalance_pct, &env->dst_stats) &&
--		    !imbalance) {
-+		/* Use idle CPU if there is no imbalance */
-+		if (!imbalance) {
- 			env->dst_cpu = env->dst_stats.idle_cpu;
--			task_numa_assign(env, NULL, 0);
--			return;
-+			if (env->dst_cpu >= 0 && task_numa_assign(env, NULL, 0))
-+				return;
-+
-+			/*
-+			 * A race prevented finding or using an idle CPU but
-+			 * searching for swap candidates may still find an
-+			 * idle CPU.
-+			 */
-+			maymove = true;
- 		}
-+	} else {
-+		/* Fully busy/overloaded. Allow a move if improves balance */
-+		maymove = !load_degrades_imbalance(env, task_h_load(env->p), 0);
- 	}
- 
--	/*
--	 * If using an idle CPU would cause an imbalance that would likely
--	 * be overridden by the load balancer, consider the load instead.
--	 */
--	load = task_h_load(env->p);
--	dst_load = env->dst_stats.group_load + load;
--	src_load = env->src_stats.group_load - load;
--	maymove = !load_too_imbalanced(src_load, dst_load, env);
--
- 	for_each_cpu(cpu, cpumask_of_node(env->dst_nid)) {
- 		/* Skip this CPU if the source task cannot migrate */
- 		if (!cpumask_test_cpu(cpu, env->p->cpus_ptr))
- 			continue;
- 
- 		env->dst_cpu = cpu;
--		task_numa_compare(env, taskimp, groupimp, maymove);
-+		if (task_numa_compare(env, taskimp, groupimp, maymove))
-+			break;
- 	}
- }
- 
--- 
-2.16.4
 
