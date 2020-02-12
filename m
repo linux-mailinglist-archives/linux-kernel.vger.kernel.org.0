@@ -2,106 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB29115A653
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:29:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E0CF15A66F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:32:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727669AbgBLK3R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 05:29:17 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43175 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbgBLK3R (ORCPT
+        id S1727747AbgBLKcw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 05:32:52 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:32826 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725710AbgBLKcv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 05:29:17 -0500
-Received: by mail-wr1-f67.google.com with SMTP id r11so1525282wrq.10;
-        Wed, 12 Feb 2020 02:29:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=/a19wkw5zcAUXXARw7C4Q+g5Zk5wzezKFPbsaOb+NUQ=;
-        b=UfDri8LbvztPbTDcHA+Zi+Uj0sTIpaqy55Kppxj0FpCOAAtVxDSjDYmk0SGos18Bo+
-         YAEPsFN0LwqYTSC24Y7spRmt7K3a+qNcCEtOPoH8Ab8fFbuGIjssthutA4JINZ0Xk8uK
-         F7h9tChSZl6y5Y2J7qGRbTofvcqyY3FKqxLBMWfxwpWnWMPKcCj/N91b6TXxoon1ZaEV
-         q67VnO66YoCbuviGa3G6BAGfdsafgqSrNaP4J5Co1k+KpyJelhHYmedo/EldAIvQoxtl
-         If2j6vYmdZlK0w6s83dN1cQJa+yGBkJNoyjFtmPFCOHckZd4nEiLquKu9Rx5LPoNiyrP
-         ndfw==
+        Wed, 12 Feb 2020 05:32:51 -0500
+Received: by mail-ot1-f68.google.com with SMTP id b18so1431780otp.0;
+        Wed, 12 Feb 2020 02:32:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/a19wkw5zcAUXXARw7C4Q+g5Zk5wzezKFPbsaOb+NUQ=;
-        b=Lmfag5DMvceNmsZIzYtEin+/KhO9dmKWJogLWJkVnvAZL3+QeCOqVIl9x4VJZqtERW
-         wDGWt3I7jHY2nDk0HELkSjAm1+Z5+7dQMco0PG0mTd7P3xjtD7Jo2f7oaWXwBFWnrcmp
-         9MDGlpTXmKDGywwcnvA5rwtQecDQs3IcUpIpjFlaBEgZ1Ug4Nn2tioYdIL1PtZ37hXj6
-         g6zQR32Lih1yHsPpsVTfNP4HwQeqTK0HF3pIS1l5fetqxFv5sM+u5LssBnq671kQUnyv
-         mXh6N3NqlG12JBPBbzcdjDsmSmg7eV5Zhy/Wbhw3rf7yZOlaDkbqdJgnQlcrURc45qDl
-         DZIw==
-X-Gm-Message-State: APjAAAXlpBWGct19bvnuwKcFa8Be3c2WsJ+MWq89boH9huZHdjXHTa1J
-        dvDWvsLCtFNpektCtwWmMTWZxxsKC2qfwA==
-X-Google-Smtp-Source: APXvYqxpuZLPw68k9p6/ZtX2wMIGZBzLwo30raerKBjVddvIqtIKF6Z0rPJOrkjwCt6B4lDtlfEVuQ==
-X-Received: by 2002:adf:f787:: with SMTP id q7mr14445406wrp.297.1581503355024;
-        Wed, 12 Feb 2020 02:29:15 -0800 (PST)
-Received: from localhost ([51.15.41.238])
-        by smtp.gmail.com with ESMTPSA id f65sm137374wmf.29.2020.02.12.02.29.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 02:29:14 -0800 (PST)
-Date:   Wed, 12 Feb 2020 10:29:12 +0000
-From:   Stefan Hajnoczi <stefanha@gmail.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Avi Kivity <avi@scylladb.com>,
-        Davide Libenzi <davidel@xmailserver.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [RFC] eventfd: add EFD_AUTORESET flag
-Message-ID: <20200212102912.GA464050@stefanha-x1.localdomain>
-References: <20200129172010.162215-1-stefanha@redhat.com>
- <66566792-58a4-bf65-6723-7d2887c84160@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Gzv9rt4/sNqw8bJZ2qsq654js0pdgt12w5ZQU73AU3k=;
+        b=Mh1sLVZt+D8gsL7IxIkjsA7q6wmOMGNgxfTe286J6KfCVyEthFRWT8vDWe3MMqFuUJ
+         bfPHvatcdxwUC6s7fV2oB46SRlbDcFTCQdbcJ4uyV7lqKBlHQ3S7g0E91SpitwjFyhrI
+         anFLefv1Kfp6vNECrzbEFJfkkVivUS53CotdK2nDtXojjOmM5dCzelxo8QsJfTCx5b3i
+         u8EWrclg0ce6uXFJLbSTJzgBzxCdmX6TDpiizY5FsC5eWbUsgflIgKOG4d7LtMie2cNM
+         xMx0FFT4pqLiopmYlI91Q1CMLjr6jmrmNnE49wYpj0hflBXdkiT7dOGvtxLzd4XHloMc
+         SYkA==
+X-Gm-Message-State: APjAAAXBORr/c8gi4O9PqfjUZpUJR9Qy0UOTz29edcoO12y9yGGQRcwH
+        Nq+bYWe8gSTYWZFl/r2b0K0Emv3+Jl1F11sdezg=
+X-Google-Smtp-Source: APXvYqyy0kS7yyyUWf4LuMflnzcOEsRX4eqdYDT7PPvW+fTKcUJ6nyzjykovZhYc07IsNLnHlvxZIEw2/zbxRrszOjs=
+X-Received: by 2002:a9d:7559:: with SMTP id b25mr8433715otl.189.1581503570435;
+ Wed, 12 Feb 2020 02:32:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
-Content-Disposition: inline
-In-Reply-To: <66566792-58a4-bf65-6723-7d2887c84160@redhat.com>
+References: <1654227.8mz0SueHsU@kreacher> <1759702.XAW9B0MHEz@kreacher>
+In-Reply-To: <1759702.XAW9B0MHEz@kreacher>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 12 Feb 2020 11:32:39 +0100
+Message-ID: <CAJZ5v0g7H=hQPZ18qtzXv_c_w_QL1i4vuKcogygipcH2vz689Q@mail.gmail.com>
+Subject: Re: [PATCH 16/28] drm: i915: Call cpu_latency_qos_*() instead of pm_qos_*()
+To:     intel-gfx <intel-gfx@lists.freedesktop.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 12, 2020 at 12:40 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+>
+> Call cpu_latency_qos_add/update/remove_request() instead of
+> pm_qos_add/update/remove_request(), respectively, because the
+> latter are going to be dropped.
+>
+> No intentional functional impact.
+>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
---1yeeQ81UyVL57Vl7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please note that the whole series is available here:
 
-On Wed, Feb 12, 2020 at 09:31:32AM +0100, Paolo Bonzini wrote:
-> On 29/01/20 18:20, Stefan Hajnoczi wrote:
-> > +	/* Semaphore semantics don't make sense when autoreset is enabled */
-> > +	if ((flags & EFD_SEMAPHORE) && (flags & EFD_AUTORESET))
-> > +		return -EINVAL;
-> > +
->=20
-> I think they do, you just want to subtract 1 instead of setting the
-> count to 0.  This way, writing 1 would be the post operation on the
-> semaphore, while poll() would be the wait operation.
+https://lore.kernel.org/linux-pm/1654227.8mz0SueHsU@kreacher/
 
-True!  Then EFD_AUTORESET is not a fitting name.  EFD_AUTOREAD or
-EFD_POLL_READS?
-
-Stefan
-
---1yeeQ81UyVL57Vl7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl5D03gACgkQnKSrs4Gr
-c8iXugf+J/YVpTHlkSA/Kk71x6qq43BnfiE9Yr7zaoyLZXe/OLqZOPuFh9W1Zd7p
-vL7xjXxzNfZj+h2rQtmvQTzioivvhfYERHsiyYwgFbdC1Ju9oB4gDOsOrHF9bk8n
-nj13JoaUBvzFdWlOW1Rml++wH6gJSZUGkerjuchEF8nFmE2HOip+tcRWlt4iB0Ym
-X6Fj02m4EO6Jyj5q+2AyhiNqzkCpOzgAN0VerGQoKT81K1rWIjMPgxjAuv70vFza
-YolBmujVzhmKdGScHQ2rOBQlVc0sJc0RNzciojGdw9NqkSXl/3jwoEoeD8nkfUFC
-NegsoHXoW0Afqg27Tp6bdKfR/p0m2w==
-=XDwI
------END PGP SIGNATURE-----
-
---1yeeQ81UyVL57Vl7--
+> ---
+>  drivers/gpu/drm/i915/display/intel_dp.c |  4 ++--
+>  drivers/gpu/drm/i915/i915_drv.c         | 12 +++++-------
+>  drivers/gpu/drm/i915/intel_sideband.c   |  5 +++--
+>  3 files changed, 10 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
+> index c7424e2a04a3..208457005a11 100644
+> --- a/drivers/gpu/drm/i915/display/intel_dp.c
+> +++ b/drivers/gpu/drm/i915/display/intel_dp.c
+> @@ -1360,7 +1360,7 @@ intel_dp_aux_xfer(struct intel_dp *intel_dp,
+>          * lowest possible wakeup latency and so prevent the cpu from going into
+>          * deep sleep states.
+>          */
+> -       pm_qos_update_request(&i915->pm_qos, 0);
+> +       cpu_latency_qos_update_request(&i915->pm_qos, 0);
+>
+>         intel_dp_check_edp(intel_dp);
+>
+> @@ -1488,7 +1488,7 @@ intel_dp_aux_xfer(struct intel_dp *intel_dp,
+>
+>         ret = recv_bytes;
+>  out:
+> -       pm_qos_update_request(&i915->pm_qos, PM_QOS_DEFAULT_VALUE);
+> +       cpu_latency_qos_update_request(&i915->pm_qos, PM_QOS_DEFAULT_VALUE);
+>
+>         if (vdd)
+>                 edp_panel_vdd_off(intel_dp, false);
+> diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
+> index f7385abdd74b..74481a189cfc 100644
+> --- a/drivers/gpu/drm/i915/i915_drv.c
+> +++ b/drivers/gpu/drm/i915/i915_drv.c
+> @@ -502,8 +502,7 @@ static int i915_driver_early_probe(struct drm_i915_private *dev_priv)
+>         mutex_init(&dev_priv->backlight_lock);
+>
+>         mutex_init(&dev_priv->sb_lock);
+> -       pm_qos_add_request(&dev_priv->sb_qos,
+> -                          PM_QOS_CPU_DMA_LATENCY, PM_QOS_DEFAULT_VALUE);
+> +       cpu_latency_qos_add_request(&dev_priv->sb_qos, PM_QOS_DEFAULT_VALUE);
+>
+>         mutex_init(&dev_priv->av_mutex);
+>         mutex_init(&dev_priv->wm.wm_mutex);
+> @@ -568,7 +567,7 @@ static void i915_driver_late_release(struct drm_i915_private *dev_priv)
+>         vlv_free_s0ix_state(dev_priv);
+>         i915_workqueues_cleanup(dev_priv);
+>
+> -       pm_qos_remove_request(&dev_priv->sb_qos);
+> +       cpu_latency_qos_remove_request(&dev_priv->sb_qos);
+>         mutex_destroy(&dev_priv->sb_lock);
+>  }
+>
+> @@ -1226,8 +1225,7 @@ static int i915_driver_hw_probe(struct drm_i915_private *dev_priv)
+>                 }
+>         }
+>
+> -       pm_qos_add_request(&dev_priv->pm_qos, PM_QOS_CPU_DMA_LATENCY,
+> -                          PM_QOS_DEFAULT_VALUE);
+> +       cpu_latency_qos_add_request(&dev_priv->pm_qos, PM_QOS_DEFAULT_VALUE);
+>
+>         intel_gt_init_workarounds(dev_priv);
+>
+> @@ -1273,7 +1271,7 @@ static int i915_driver_hw_probe(struct drm_i915_private *dev_priv)
+>  err_msi:
+>         if (pdev->msi_enabled)
+>                 pci_disable_msi(pdev);
+> -       pm_qos_remove_request(&dev_priv->pm_qos);
+> +       cpu_latency_qos_remove_request(&dev_priv->pm_qos);
+>  err_mem_regions:
+>         intel_memory_regions_driver_release(dev_priv);
+>  err_ggtt:
+> @@ -1296,7 +1294,7 @@ static void i915_driver_hw_remove(struct drm_i915_private *dev_priv)
+>         if (pdev->msi_enabled)
+>                 pci_disable_msi(pdev);
+>
+> -       pm_qos_remove_request(&dev_priv->pm_qos);
+> +       cpu_latency_qos_remove_request(&dev_priv->pm_qos);
+>  }
+>
+>  /**
+> diff --git a/drivers/gpu/drm/i915/intel_sideband.c b/drivers/gpu/drm/i915/intel_sideband.c
+> index cbfb7171d62d..0648eda309e4 100644
+> --- a/drivers/gpu/drm/i915/intel_sideband.c
+> +++ b/drivers/gpu/drm/i915/intel_sideband.c
+> @@ -60,7 +60,7 @@ static void __vlv_punit_get(struct drm_i915_private *i915)
+>          * to the Valleyview P-unit and not all sideband communications.
+>          */
+>         if (IS_VALLEYVIEW(i915)) {
+> -               pm_qos_update_request(&i915->sb_qos, 0);
+> +               cpu_latency_qos_update_request(&i915->sb_qos, 0);
+>                 on_each_cpu(ping, NULL, 1);
+>         }
+>  }
+> @@ -68,7 +68,8 @@ static void __vlv_punit_get(struct drm_i915_private *i915)
+>  static void __vlv_punit_put(struct drm_i915_private *i915)
+>  {
+>         if (IS_VALLEYVIEW(i915))
+> -               pm_qos_update_request(&i915->sb_qos, PM_QOS_DEFAULT_VALUE);
+> +               cpu_latency_qos_update_request(&i915->sb_qos,
+> +                                              PM_QOS_DEFAULT_VALUE);
+>
+>         iosf_mbi_punit_release();
+>  }
+> --
+> 2.16.4
+>
+>
+>
+>
+>
