@@ -2,154 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EA4E15B312
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 22:50:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E189515B319
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 22:52:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729152AbgBLVt7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 16:49:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40028 "EHLO mail.kernel.org"
+        id S1729071AbgBLVwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 16:52:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728185AbgBLVt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 16:49:59 -0500
-Received: from paulmck-ThinkPad-P72.home (unknown [62.84.152.189])
+        id S1727564AbgBLVwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 16:52:01 -0500
+Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5674206DB;
-        Wed, 12 Feb 2020 21:49:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5BD3206DB;
+        Wed, 12 Feb 2020 21:52:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581544197;
-        bh=LPjM60eQv8EtzXOT2YUg9BXx/0uoNBO7Jj/3xF05eBY=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=uyAwzvx2h/Y/aOHrzUq8wWwPpCGBrY5p9R+FhoOHMh5ehPS7KmcFRMSZUVcMLDn2/
-         hvJAgnD0kgDkrQfRDr5vOU3rT+S6P2Wx9mOXWbrwnxn89u1MOnW5qiIZZsoG0StAzq
-         68kBjb3p/DRi9z9fD9kPTFyWY2/NA0hKr8wvGSnA=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 2E2EF3522725; Wed, 12 Feb 2020 13:49:56 -0800 (PST)
-Date:   Wed, 12 Feb 2020 13:49:56 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Corey Minyard <minyard@acm.org>
-Cc:     Amol Grover <frextrite@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
-Subject: Re: [PATCH v3] drivers: char: ipmi: ipmi_msghandler: Pass lockdep
- expression to RCU lists
-Message-ID: <20200212214956.GT2935@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200117132521.31020-1-frextrite@gmail.com>
- <20200212134552.GN7842@minyard.net>
+        s=default; t=1581544320;
+        bh=CqfexFpFL2Kvk+pZ9hKVo8U3ep9xVwRyPRkPasjv5MA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=k0YtbvwK0+BdeASaaSY+VKozd/Lnxx+raoJDZzvCiaiANS6NjrpK0P2D9q8AaJas7
+         kZQzj6tL2X1+rbxXGt6yiPPioMOPJ1T7prHE0tEnqnxkTlOr2LVCAU34wR9Xd0tL1G
+         uSyf7vZWh3zsu3jIOdr3YuQ/Kn7n16OLZpscRD/w=
+Date:   Wed, 12 Feb 2020 13:52:00 -0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     ralf@linux-mips.org, paulburton@kernel.org, linux@roeck-us.net,
+        dan.carpenter@oracle.com, willy@infradead.org,
+        devel@driverdev.osuosl.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/6] Re-instate octeon staging drivers
+Message-ID: <20200212215200.GA2367959@kroah.com>
+References: <20200205001116.14096-1-chris.packham@alliedtelesis.co.nz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200212134552.GN7842@minyard.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200205001116.14096-1-chris.packham@alliedtelesis.co.nz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 07:45:52AM -0600, Corey Minyard wrote:
-> On Fri, Jan 17, 2020 at 06:55:22PM +0530, Amol Grover wrote:
-> > intf->cmd_rcvrs is traversed with list_for_each_entry_rcu
-> > outside an RCU read-side critical section but under the
-> > protection of intf->cmd_rcvrs_mutex.
-> > 
-> > ipmi_interfaces is traversed using list_for_each_entry_rcu
-> > outside an RCU read-side critical section but under the protection
-> > of ipmi_interfaces_mutex.
-> > 
-> > Hence, add the corresponding lockdep expression to the list traversal
-> > primitive to silence false-positive lockdep warnings, and
-> > harden RCU lists.
-> > 
-> > Add macro for the corresponding lockdep expression to make the code
-> > clean and concise.
-> > 
-> > Signed-off-by: Amol Grover <frextrite@gmail.com>
+On Wed, Feb 05, 2020 at 01:11:10PM +1300, Chris Packham wrote:
+> This series re-instates the octeon drivers that were recently removed and
+> addresses the build issues that lead to that decision.
 > 
-> After reading everything, I think this is correct, but I would like
-> Paul's stamp of approval on this.
+> I've approached Cavium/Marvell about taking a more active interest in getting
+> the code out of staging and into their proper location. No reply on that (yet).
 
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
+Good luck with talking to the companies, hopefully that will work.
 
-But note that I did not trace the locking in the case of ipmi_add_smi().
-I did the others, so lockdep can do the last one.  ;-)
+Anyway, I've applied this series, thanks for this, let's see what breaks
+now :)
 
-							Thanx, Paul
-
-> Thanks,
-> 
-> -corey
-> 
-> > ---
-> > v3:
-> > - Remove rcu_read_lock_held() from lockdep expression since it is
-> >   implicitly checked.
-> > - Remove unintended macro usage.
-> >  
-> > v2:
-> > - Fix sparse error
-> >   CHECK: Alignment should match open parenthesis
-> > 
-> >  drivers/char/ipmi/ipmi_msghandler.c | 14 ++++++++++----
-> >  1 file changed, 10 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-> > index cad9563f8f48..64ba16dcb681 100644
-> > --- a/drivers/char/ipmi/ipmi_msghandler.c
-> > +++ b/drivers/char/ipmi/ipmi_msghandler.c
-> > @@ -618,6 +618,8 @@ static DEFINE_MUTEX(ipmidriver_mutex);
-> >  
-> >  static LIST_HEAD(ipmi_interfaces);
-> >  static DEFINE_MUTEX(ipmi_interfaces_mutex);
-> > +#define ipmi_interfaces_mutex_held() \
-> > +	lockdep_is_held(&ipmi_interfaces_mutex)
-> >  static struct srcu_struct ipmi_interfaces_srcu;
-> >  
-> >  /*
-> > @@ -1321,7 +1323,8 @@ static void _ipmi_destroy_user(struct ipmi_user *user)
-> >  	 * synchronize_srcu()) then free everything in that list.
-> >  	 */
-> >  	mutex_lock(&intf->cmd_rcvrs_mutex);
-> > -	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link) {
-> > +	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
-> > +				lockdep_is_held(&intf->cmd_rcvrs_mutex)) {
-> >  		if (rcvr->user == user) {
-> >  			list_del_rcu(&rcvr->link);
-> >  			rcvr->next = rcvrs;
-> > @@ -1599,7 +1602,8 @@ static struct cmd_rcvr *find_cmd_rcvr(struct ipmi_smi *intf,
-> >  {
-> >  	struct cmd_rcvr *rcvr;
-> >  
-> > -	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link) {
-> > +	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
-> > +				lockdep_is_held(&intf->cmd_rcvrs_mutex)) {
-> >  		if ((rcvr->netfn == netfn) && (rcvr->cmd == cmd)
-> >  					&& (rcvr->chans & (1 << chan)))
-> >  			return rcvr;
-> > @@ -1614,7 +1618,8 @@ static int is_cmd_rcvr_exclusive(struct ipmi_smi *intf,
-> >  {
-> >  	struct cmd_rcvr *rcvr;
-> >  
-> > -	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link) {
-> > +	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
-> > +				lockdep_is_held(&intf->cmd_rcvrs_mutex)) {
-> >  		if ((rcvr->netfn == netfn) && (rcvr->cmd == cmd)
-> >  					&& (rcvr->chans & chans))
-> >  			return 0;
-> > @@ -3450,7 +3455,8 @@ int ipmi_add_smi(struct module         *owner,
-> >  	/* Look for a hole in the numbers. */
-> >  	i = 0;
-> >  	link = &ipmi_interfaces;
-> > -	list_for_each_entry_rcu(tintf, &ipmi_interfaces, link) {
-> > +	list_for_each_entry_rcu(tintf, &ipmi_interfaces, link,
-> > +				ipmi_interfaces_mutex_held()) {
-> >  		if (tintf->intf_num != i) {
-> >  			link = &tintf->link;
-> >  			break;
-> > -- 
-> > 2.24.1
-> > 
+greg k-h
