@@ -2,135 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A41AB15B286
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 22:13:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9E2415B2AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 22:21:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729132AbgBLVNZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 16:13:25 -0500
-Received: from mga05.intel.com ([192.55.52.43]:60665 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727420AbgBLVNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 16:13:25 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 13:13:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,434,1574150400"; 
-   d="scan'208";a="432449589"
-Received: from wendeand-mobl.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.252.52.16])
-  by fmsmga005.fm.intel.com with ESMTP; 12 Feb 2020 13:13:20 -0800
-Received: by kekkonen.fi.intel.com (Postfix, from userid 1000)
-        id 0320921D13; Wed, 12 Feb 2020 23:13:17 +0200 (EET)
-Date:   Wed, 12 Feb 2020 23:13:17 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-Cc:     Helen Koike <helen.koike@collabora.com>,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        eddie.cai.linux@gmail.com, mchehab@kernel.org, heiko@sntech.de,
-        jacob2.chen@rock-chips.com, jeffy.chen@rock-chips.com,
-        zyc@rock-chips.com, linux-kernel@vger.kernel.org,
-        tfiga@chromium.org, hans.verkuil@cisco.com,
-        laurent.pinchart@ideasonboard.com, kernel@collabora.com,
-        ezequiel@collabora.com, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, zhengsq@rock-chips.com,
-        Jacob Chen <cc@rock-chips.com>,
-        Allon Huang <allon.huang@rock-chips.com>,
-        Dafna Hirschfeld <dafna3@gmail.com>
-Subject: Re: [PATCH v8 05/14] media: rkisp1: add Rockchip ISP1 subdev driver
-Message-ID: <20200212211317.GD3087@kekkonen.localdomain>
-References: <20190730184256.30338-1-helen.koike@collabora.com>
- <20190730184256.30338-6-helen.koike@collabora.com>
- <20190808091406.GQ21370@paasikivi.fi.intel.com>
- <da6c1d01-e3f6-ad73-db55-145d7832a665@collabora.com>
- <20190815082422.GM6133@paasikivi.fi.intel.com>
- <20190815131748.GS6133@paasikivi.fi.intel.com>
- <78856358-1afd-31a7-86dd-22f7d6d7fb05@collabora.com>
+        id S1729071AbgBLVVa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 16:21:30 -0500
+Received: from freki.datenkhaos.de ([81.7.17.101]:38118 "EHLO
+        freki.datenkhaos.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727548AbgBLVV3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 16:21:29 -0500
+X-Greylist: delayed 385 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Feb 2020 16:21:27 EST
+Received: from localhost (localhost [127.0.0.1])
+        by freki.datenkhaos.de (Postfix) with ESMTP id 7666A22882CB;
+        Wed, 12 Feb 2020 22:15:01 +0100 (CET)
+Received: from freki.datenkhaos.de ([127.0.0.1])
+        by localhost (freki.datenkhaos.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id bCFkDBKXADtd; Wed, 12 Feb 2020 22:14:57 +0100 (CET)
+Received: from latitude (x4e367a0e.dyn.telefonica.de [78.54.122.14])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by freki.datenkhaos.de (Postfix) with ESMTPSA;
+        Wed, 12 Feb 2020 22:14:57 +0100 (CET)
+Date:   Wed, 12 Feb 2020 22:14:52 +0100
+From:   Johannes Hirte <johannes.hirte@datenkhaos.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Doug Gilbert <dgilbert@interlog.com>,
+        Kai =?utf-8?B?TcOka2lzYXJh?= <Kai.Makisara@kolumbus.fi>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dongli Zhang <dongli.zhang@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Hannes Reinecke <hare@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        John Garry <john.garry@huawei.com>,
+        Martin Wilck <mwilck@suse.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Ira Weiny <ira.weiny@intel.com>, Iustin Pop <iustin@k1024.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 13/22] compat_ioctl: scsi: move ioctl handling into
+ drivers
+Message-ID: <20200212211452.GA5726@latitude>
+References: <20200102145552.1853992-1-arnd@arndb.de>
+ <20200102145552.1853992-14-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <78856358-1afd-31a7-86dd-22f7d6d7fb05@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200102145552.1853992-14-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dafna,
-
-Apologies for the late reply. I learned the mail had got lost due to mail
-server issues.
-
-On Fri, Jan 31, 2020 at 08:38:34PM +0100, Dafna Hirschfeld wrote:
-> Hi,
-> I (Dafna Hirschfeld) will work in following months with Helen Koike to fix the issues
-> in the TODO file of this driver: drivers/staging/media/rkisp1/TODO
+On 2020 Jan 02, Arnd Bergmann wrote:
+> Each driver calling scsi_ioctl() gets an equivalent compat_ioctl()
+> handler that implements the same commands by calling scsi_compat_ioctl().
 > 
-> On 15.08.19 15:17, Sakari Ailus wrote:
-> > On Thu, Aug 15, 2019 at 11:24:22AM +0300, Sakari Ailus wrote:
-> > > Hi Helen,
-> > > 
-> > > On Wed, Aug 14, 2019 at 09:58:05PM -0300, Helen Koike wrote:
-> > > 
-> > > ...
-> > > 
-> > > > > > +static int rkisp1_isp_sd_set_fmt(struct v4l2_subdev *sd,
-> > > > > > +				 struct v4l2_subdev_pad_config *cfg,
-> > > > > > +				 struct v4l2_subdev_format *fmt)
-> > > > > > +{
-> > > > > > +	struct rkisp1_device *isp_dev = sd_to_isp_dev(sd);
-> > > > > > +	struct rkisp1_isp_subdev *isp_sd = &isp_dev->isp_sdev;
-> > > > > > +	struct v4l2_mbus_framefmt *mf = &fmt->format;
-> > > > > > +
-> > > > > 
-> > > > > Note that for sub-device nodes, the driver is itself responsible for
-> > > > > serialising the access to its data structures.
-> > > > 
-> > > > But looking at subdev_do_ioctl_lock(), it seems that it serializes the
-> > > > ioctl calls for subdevs, no? Or I'm misunderstanding something (which is
-> > > > most probably) ?
-> > > 
-> > > Good question. I had missed this change --- subdev_do_ioctl_lock() is
-> > > relatively new. But setting that lock is still not possible as the struct
+> The scsi_cmd_ioctl() and scsi_cmd_blk_ioctl() functions are compatible
+> at this point, so any driver that calls those can do so for both native
+> and compat mode, with the argument passed through compat_ptr().
 > 
-> 'the struct' - do you mean the 'vdev' struct allocated in
-> 'v4l2_device_register_subdev_nodes' ?
+> With this, we can remove the entries from fs/compat_ioctl.c.  The new
+> code is larger, but should be easier to maintain and keep updated with
+> newly added commands.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/block/virtio_blk.c |   3 +
+>  drivers/scsi/ch.c          |   9 ++-
+>  drivers/scsi/sd.c          |  50 ++++++--------
+>  drivers/scsi/sg.c          |  44 ++++++++-----
+>  drivers/scsi/sr.c          |  57 ++++++++++++++--
+>  drivers/scsi/st.c          |  51 ++++++++------
+>  fs/compat_ioctl.c          | 132 +------------------------------------
+>  7 files changed, 142 insertions(+), 204 deletions(-)
+> 
 
-Yes.
+This breaks libcdio. cd-info now results in:
 
-> 
-> > > is allocated in the framework and the device is registered before the
-> 
-> > > driver gets hold of it. It's a good idea to provide the same serialisation
-> > > for subdevs as well.
-> > > 
-> > > I'll get back to this later.
-> > 
-> > The main reason is actually that these ops are also called through the
-> > sub-device kAPI, not only through the uAPI, and the locks are only taken
-> > through the calls via uAPI.
-> 
-> actually it seems that although 'subdev_do_ioctl_lock' exit, I wonder if
-> any subdevice uses that vdev->lock in  subdev_do_ioctl_lock.
-> It is not initialized in v4l2_device_register_subdev_nodes where the vdev is allocated
-> and I wonder if any subdevice actually initialize it somewhere else. For example it is null in this
-> driver and in vimc.
+cd-info version 2.1.0 x86_64-pc-linux-gnu
+Copyright (c) 2003-2005, 2007-2008, 2011-2015, 2017 R. Bernstein
+This is free software; see the source for copying conditions.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
+CD location   : /dev/cdrom
+CD driver name: GNU/Linux
+   access mode: IOCTL
 
-It needs to be set before the video device is registered, so indeed, it
-seems no driver can make use it.
+Error in getting drive hardware properties
+Error in getting drive reading properties
+Error in getting drive writing properties
+__________________________________
 
-> 
-> > 
-> > So adding the locks to uAPI calls alone would not address the issue.
-> 
-> What I can do is add a mutex to every struct of a subdevice and lock it
-> at the beginning of each subdevice operation.
-> Is this an acceptable solution?
+Disc mode is listed as: CD-DA
+++ WARN: error in ioctl CDROMREADTOCHDR: Bad address
 
-Please do. That's what other drivers do at the moment as well.
+cd-info: Can't get first track number. I give up.
+
 
 -- 
-Kind regards,
+Regards,
+  Johannes Hirte
 
-Sakari Ailus
