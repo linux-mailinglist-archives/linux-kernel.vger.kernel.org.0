@@ -2,149 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE1DE15A0C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 06:47:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB09915A0CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 06:47:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbgBLFrY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 00:47:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39652 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbgBLFrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 00:47:24 -0500
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D15620714;
-        Wed, 12 Feb 2020 05:47:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581486442;
-        bh=vfQCzX8Gzst/DyzbbP8Yb9hEeqTup17d6ibCA2atEQk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=16O0AgpGnIblG8wXcW2EbHRzkj93++0mtvCGjFsyUCV76OVBn3s08Rm0Tzv10tDKX
-         lVogvBzynO1bch/RJ/BUyPtnWFQPHyHktHkoCQZmBDMm5mY+WEzsP8LNaRpna7Nlxp
-         fGy1pIz8XmPZ5U7MkLYBItDm8Mu67V3uwnIqWsJk=
-Date:   Tue, 11 Feb 2020 21:47:20 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com
-Subject: Re: [PATCH v7 6/8] f2fs: Handle casefolding with Encryption
-Message-ID: <20200212054720.GH870@sol.localdomain>
-References: <20200208013552.241832-1-drosen@google.com>
- <20200208013552.241832-7-drosen@google.com>
+        id S1728191AbgBLFrf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 00:47:35 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45164 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbgBLFre (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 00:47:34 -0500
+Received: by mail-pf1-f195.google.com with SMTP id 2so645759pfg.12
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 21:47:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=axtens.net; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0eDFn39gIg7xtZfHp4ELa6UyXk2yfoJL9wFZ1T547PE=;
+        b=L46dDlkOez2ml8dh2NS+K4qq7GTlG/io/AMAU9SRBGPaz4blna+0SbhhfSOT8CxueM
+         GKZ5MCVfZZ6DX82aTrUsAMnj/FU5JzlRV4IiQjIA4KhwgqWDk4SzORV9x4CxyzRqrRHb
+         1CHvDymIOD+q8aqsKCluSH5SAPqL9he+ZO5o4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0eDFn39gIg7xtZfHp4ELa6UyXk2yfoJL9wFZ1T547PE=;
+        b=cOhcR+ijuEXugGegHdhQjAy3flQfUhzsXGzJoLekrxkOYlt0tGnzWTYKf/9jL9eZaK
+         6D+OFcs48NVAgJ/iQTz7YTVQSTUqOfRFTRUacRWv32XlmkwW6ufQ5OZe3wvU33MNfa79
+         PvqwrXANZrSs8pEvAyWNvJlvvARQOdCSKFm8WeDUszO9jpY8Hic7ZjLybDX3niHHJMv9
+         Bfvtchf/dyqVa+N61fK9G2LC6GswOdHA/ZHqf0WWXQ9en7AxQiEIs4cCBut5/uxiGBMj
+         lo9BFoHgdM6l+biMikuVpAdKL6J/RHvN+z8gOF5EByIJHTXf7r8KcqUQpGsN/TYBSUAm
+         tZIg==
+X-Gm-Message-State: APjAAAV3HUY+qRrDYELTjTs8eCS9zo5Dwj8cg9XSLJ2uzePbdMnN/PjC
+        NAduP2eLdZwWrKhFwxUIO6fh7nPaicc=
+X-Google-Smtp-Source: APXvYqz1Geq46JTS1k8k9cQzXBKQ43uOUT4qhGGPD7QkzUf9EB0qW8h3Jb/pGJ4+qFGDFiZWJtusww==
+X-Received: by 2002:a62:2cd8:: with SMTP id s207mr6815093pfs.247.1581486453988;
+        Tue, 11 Feb 2020 21:47:33 -0800 (PST)
+Received: from localhost (2001-44b8-1113-6700-65dc-9b98-63a7-c7a4.static.ipv6.internode.on.net. [2001:44b8:1113:6700:65dc:9b98:63a7:c7a4])
+        by smtp.gmail.com with ESMTPSA id d64sm6160498pga.17.2020.02.11.21.47.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2020 21:47:33 -0800 (PST)
+From:   Daniel Axtens <dja@axtens.net>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, kasan-dev@googlegroups.com,
+        christophe.leroy@c-s.fr, aneesh.kumar@linux.ibm.com,
+        bsingharora@gmail.com
+Cc:     Daniel Axtens <dja@axtens.net>
+Subject: [PATCH v6 1/4] kasan: define and use MAX_PTRS_PER_* for early shadow tables
+Date:   Wed, 12 Feb 2020 16:47:21 +1100
+Message-Id: <20200212054724.7708-2-dja@axtens.net>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200212054724.7708-1-dja@axtens.net>
+References: <20200212054724.7708-1-dja@axtens.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200208013552.241832-7-drosen@google.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 05:35:50PM -0800, Daniel Rosenberg wrote:
-> @@ -173,24 +193,24 @@ static inline bool f2fs_match_name(struct f2fs_dentry_ptr *d,
->  {
->  #ifdef CONFIG_UNICODE
->  	struct inode *parent = d->inode;
-> -	struct super_block *sb = parent->i_sb;
-> -	struct qstr entry;
-> +	unsigned char *name;
-> +	int len;
->  #endif
->  
->  	if (de->hash_code != namehash)
->  		return false;
->  
->  #ifdef CONFIG_UNICODE
-> -	entry.name = d->filename[bit_pos];
-> -	entry.len = de->name_len;
-> +	name = d->filename[bit_pos];
-> +	len = de->name_len;
+powerpc has a variable number of PTRS_PER_*, set at runtime based
+on the MMU that the kernel is booted under.
 
-This is missing le16_to_cpu().
+This means the PTRS_PER_* are no longer constants, and therefore
+breaks the build.
 
->  int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
->  				const struct qstr *orig_name,
-> +				f2fs_hash_t dentry_hash,
->  				struct inode *inode, nid_t ino, umode_t mode)
->  {
->  	unsigned int bit_pos;
->  	unsigned int level;
->  	unsigned int current_depth;
->  	unsigned long bidx, block;
-> -	f2fs_hash_t dentry_hash;
->  	unsigned int nbucket, nblock;
->  	struct page *dentry_page = NULL;
->  	struct f2fs_dentry_block *dentry_blk = NULL;
-> @@ -632,7 +652,6 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
->  
->  	level = 0;
->  	slots = GET_DENTRY_SLOTS(new_name->len);
-> -	dentry_hash = f2fs_dentry_hash(dir, new_name, NULL);
+Define default MAX_PTRS_PER_*s in the same style as MAX_PTRS_PER_P4D.
+As KASAN is the only user at the moment, just define them in the kasan
+header, and have them default to PTRS_PER_* unless overridden in arch
+code.
 
-Why was the call to f2fs_dentry_hash() moved to the caller, but for
-f2fs_add_inline_entry() a different approach was taken?
+Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Suggested-by: Balbir Singh <bsingharora@gmail.com>
+Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Reviewed-by: Balbir Singh <bsingharora@gmail.com>
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+---
+ include/linux/kasan.h | 18 +++++++++++++++---
+ mm/kasan/init.c       |  6 +++---
+ 2 files changed, 18 insertions(+), 6 deletions(-)
 
-> @@ -718,17 +737,19 @@ int f2fs_add_dentry(struct inode *dir, struct fscrypt_name *fname,
->  				struct inode *inode, nid_t ino, umode_t mode)
->  {
->  	struct qstr new_name;
-> +	f2fs_hash_t dentry_hash;
->  	int err = -EAGAIN;
->  
->  	new_name.name = fname_name(fname);
->  	new_name.len = fname_len(fname);
->  
->  	if (f2fs_has_inline_dentry(dir))
-> -		err = f2fs_add_inline_entry(dir, &new_name, fname->usr_fname,
-> +		err = f2fs_add_inline_entry(dir, &new_name, fname,
->  							inode, ino, mode);
+diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+index 5cde9e7c2664..b3a4500633f5 100644
+--- a/include/linux/kasan.h
++++ b/include/linux/kasan.h
+@@ -14,10 +14,22 @@ struct task_struct;
+ #include <asm/kasan.h>
+ #include <asm/pgtable.h>
+ 
++#ifndef MAX_PTRS_PER_PTE
++#define MAX_PTRS_PER_PTE PTRS_PER_PTE
++#endif
++
++#ifndef MAX_PTRS_PER_PMD
++#define MAX_PTRS_PER_PMD PTRS_PER_PMD
++#endif
++
++#ifndef MAX_PTRS_PER_PUD
++#define MAX_PTRS_PER_PUD PTRS_PER_PUD
++#endif
++
+ extern unsigned char kasan_early_shadow_page[PAGE_SIZE];
+-extern pte_t kasan_early_shadow_pte[PTRS_PER_PTE];
+-extern pmd_t kasan_early_shadow_pmd[PTRS_PER_PMD];
+-extern pud_t kasan_early_shadow_pud[PTRS_PER_PUD];
++extern pte_t kasan_early_shadow_pte[MAX_PTRS_PER_PTE];
++extern pmd_t kasan_early_shadow_pmd[MAX_PTRS_PER_PMD];
++extern pud_t kasan_early_shadow_pud[MAX_PTRS_PER_PUD];
+ extern p4d_t kasan_early_shadow_p4d[MAX_PTRS_PER_P4D];
+ 
+ int kasan_populate_early_shadow(const void *shadow_start,
+diff --git a/mm/kasan/init.c b/mm/kasan/init.c
+index ce45c491ebcd..8b54a96d3b3e 100644
+--- a/mm/kasan/init.c
++++ b/mm/kasan/init.c
+@@ -46,7 +46,7 @@ static inline bool kasan_p4d_table(pgd_t pgd)
+ }
+ #endif
+ #if CONFIG_PGTABLE_LEVELS > 3
+-pud_t kasan_early_shadow_pud[PTRS_PER_PUD] __page_aligned_bss;
++pud_t kasan_early_shadow_pud[MAX_PTRS_PER_PUD] __page_aligned_bss;
+ static inline bool kasan_pud_table(p4d_t p4d)
+ {
+ 	return p4d_page(p4d) == virt_to_page(lm_alias(kasan_early_shadow_pud));
+@@ -58,7 +58,7 @@ static inline bool kasan_pud_table(p4d_t p4d)
+ }
+ #endif
+ #if CONFIG_PGTABLE_LEVELS > 2
+-pmd_t kasan_early_shadow_pmd[PTRS_PER_PMD] __page_aligned_bss;
++pmd_t kasan_early_shadow_pmd[MAX_PTRS_PER_PMD] __page_aligned_bss;
+ static inline bool kasan_pmd_table(pud_t pud)
+ {
+ 	return pud_page(pud) == virt_to_page(lm_alias(kasan_early_shadow_pmd));
+@@ -69,7 +69,7 @@ static inline bool kasan_pmd_table(pud_t pud)
+ 	return false;
+ }
+ #endif
+-pte_t kasan_early_shadow_pte[PTRS_PER_PTE] __page_aligned_bss;
++pte_t kasan_early_shadow_pte[MAX_PTRS_PER_PTE] __page_aligned_bss;
+ 
+ static inline bool kasan_pte_table(pmd_t pmd)
+ {
+-- 
+2.20.1
 
-I'm really confused.  Why are you passing around both new_name and fname?
-We already have new_name == fname.disk_name.  So isn't just the
-'struct fscrypt_name' sufficient?
-
-> +static f2fs_hash_t __f2fs_dentry_hash(const struct inode *dir,
-> +				const struct qstr *name_info,
-> +				const struct fscrypt_name *fname)
->  {
->  	__u32 hash;
->  	f2fs_hash_t f2fs_hash;
-> @@ -85,6 +86,11 @@ static f2fs_hash_t __f2fs_dentry_hash(const struct qstr *name_info,
->  	if (is_dot_dotdot(name_info))
->  		return 0;
->  
-> +	if (IS_CASEFOLDED(dir) && IS_ENCRYPTED(dir)) {
-> +		f2fs_hash = fscrypt_fname_siphash(dir, name_info);
-> +		return f2fs_hash;
-> +	}
-
-This is missing cpu_to_le32().
-
-Also, above we have:
-
-        /* encrypted bigname case */
-        if (fname && !fname->disk_name.name)
-                return cpu_to_le32(fname->hash);
-
-That won't work with encrypted+casefolded directories without the key, because
-now sometimes the hash from the no-key name is needed even when the disk_name is
-available.  This will cause a crash in fscrypt_fname_siphash() being called
-without the key.  I think you want:
-
-        if (fname && fname->is_ciphertext_name)
-                return cpu_to_le32(fname->hash);
-
-Can you please write xfstests for encrypt+casefold?
-
-- Eric
