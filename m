@@ -2,101 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59A3E159F68
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 04:04:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87467159F6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 04:07:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbgBLDEI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 22:04:08 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40323 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727873AbgBLDEG (ORCPT
+        id S1727873AbgBLDG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 22:06:28 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:39377 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727600AbgBLDG1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 22:04:06 -0500
-Received: by mail-pf1-f195.google.com with SMTP id q8so468179pfh.7
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 19:04:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9+ROEe9uWmoG0JMAqzzVnYSI9Saz27W5dlKTyv5qcfY=;
-        b=iJmZX2RZ/wxAjrXPddKP4hLoYxzoUoCOPgHnw51WvCeyrxd87JQqifT/H0H+Hn4wjw
-         coR17eeP2g0txCCLTi252rucXv0msl+yLgO9URNvA/PqtbCTH4j9ggB4DfZISxhWMW6b
-         2Q/B6KYxzVrQpzgRffigYY6k+zrIry08cIbSatNnvT7AXIgSLy6bDNdmDmZgmgFt46XQ
-         46kp3VLilGqsA/sHSc1aeQoVb0TmlFmzezJKlbBC2HW61yKowv38kgSRdAHsTxgxuHxN
-         0GfBgKsZN+BCQzhx3NWnrymI6H9+W3Jd9aCVvaPzrpe9rpHWEOOqSWTD50jbkpCIVh3L
-         lG7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9+ROEe9uWmoG0JMAqzzVnYSI9Saz27W5dlKTyv5qcfY=;
-        b=YO7AiZuzwP5kCWrot4+ODH3YUy+3caz/YY/cVOzV0ZutBEoEU1Df09tWtXCpo5+DFk
-         AsDGHL+Z/2Gf5tMHuVv7u8M7zbg8/Ld9NVkrZ9l4RRCfavLmxDJDYyfPevO0/HQBlMNA
-         ckM+nW67uDMnT8VL8d1hFt+axBK8cD3oHKQLM+MwPBJaF0nzBfC0JcJcLj8sOqiy14vW
-         s4O80ev17Vl6r6el4YETTQ78pbW/eTTbtZqDGqJ4Mvp06ZqYSCJDKbv1684CZH7gId2P
-         r7T+WWCeVdqZVwmCtYnYoys03k+40QCxAniWDnTKyqU+smOczsov5EZ3jguB/i2xnbPK
-         YuMQ==
-X-Gm-Message-State: APjAAAVWx897wXbJXrHyed0ZOvdyWkyE1R8sVw711FiS9a0Awvo7iJVn
-        9Q7kmysxM3vbgMiwkO9DCRs=
-X-Google-Smtp-Source: APXvYqxRRt7P+TBCz+ADgVugIYbkq0VaauGzcxx3XpCD1mhmIlZWG6fYU3EI1TxMW1gPiPJWAKh61A==
-X-Received: by 2002:a63:27c4:: with SMTP id n187mr6557727pgn.305.1581476645647;
-        Tue, 11 Feb 2020 19:04:05 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
-        by smtp.gmail.com with ESMTPSA id u12sm5654332pgr.3.2020.02.11.19.04.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 19:04:04 -0800 (PST)
-Date:   Wed, 12 Feb 2020 12:04:03 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Subject: Re: [PATCH] kernel/watchdog: flush all printk nmi buffers when
- hardlockup detected
-Message-ID: <20200212030403.GC13208@google.com>
-References: <158132813726.1980.17382047082627699898.stgit@buzz>
- <20200212011551.GA13208@google.com>
- <20200211214958.5d8f4004@rorschach.local.home>
+        Tue, 11 Feb 2020 22:06:27 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 6C51D886BF;
+        Wed, 12 Feb 2020 16:06:23 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1581476783;
+        bh=5Zzd4p0YzB4rRdaFrzvricfO2C3A3m/IaL6u4DjRzpc=;
+        h=From:To:Cc:Subject:Date;
+        b=h7aDYiZAdE7XwdaiY96S+eNZrCHc+z135II3+n6IEBdPfoB9gENjPA/lxfydY4VWa
+         iJ8XY6vvrSft4mI4S9tzkWWs1HgHAyXCy5gQ/FOEe7tK3rABrH0SST7RzEhhZUEV8i
+         mHyoceaSfzL+dYJkjCoBKfXTb6bvCrFz+n/FsCKbb22nnN+tys88APHHi/BSR3MxbY
+         p7IhYjRDkkPHoMmC0yJ4ZOx/6om17WchS8d4UaFw45WTW82R+lCdm+Teg4fD+AfFx2
+         8kuLr1WcZQKT/0m9CL7UIpM91QW3iArqU8UbrombQKtYBIAYLStGMQHkijEco5DZk7
+         8s5hbHmgk8fCQ==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5e436baf0000>; Wed, 12 Feb 2020 16:06:23 +1300
+Received: from henrys-dl.ws.atlnz.lc (henrys-dl.ws.atlnz.lc [10.33.23.26])
+        by smtp (Postfix) with ESMTP id 0E26213EED4;
+        Wed, 12 Feb 2020 16:06:23 +1300 (NZDT)
+Received: by henrys-dl.ws.atlnz.lc (Postfix, from userid 1052)
+        id 351754E1463; Wed, 12 Feb 2020 16:06:23 +1300 (NZDT)
+From:   Henry Shen <henry.shen@alliedtelesis.co.nz>
+To:     robh+dt@kernel.org, mark.rutland@arm.com,
+        guillaume.ligneul@gmail.com, jdelvare@suse.com, linux@roeck-us.net,
+        trivial@kernel.org, venture@google.com
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hwmon@vger.kernel.org,
+        Henry Shen <henry.shen@alliedtelesis.co.nz>
+Subject: [PATCH v2 0/2] (lm73) Add support for of_match_table
+Date:   Wed, 12 Feb 2020 16:06:13 +1300
+Message-Id: <20200212030615.28537-1-henry.shen@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200211214958.5d8f4004@rorschach.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (20/02/11 21:49), Steven Rostedt wrote:
-> On Wed, 12 Feb 2020 10:15:51 +0900
-> Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
-> 
-> > On (20/02/10 12:48), Konstantin Khlebnikov wrote:
-> > > 
-> > > In NMI context printk() could save messages into per-cpu buffers and
-> > > schedule flush by irq_work when IRQ are unblocked. This means message
-> > > about hardlockup appears in kernel log only when/if lockup is gone.
-> > > 
-> > > Comment in irq_work_queue_on() states that remote IPI aren't NMI safe
-> > > thus printk() cannot schedule flush work to another cpu.
-> > > 
-> > > This patch adds simple atomic counter of detected hardlockups and
-> > > flushes all per-cpu printk buffers in context softlockup watchdog
-> > > at any other cpu when it sees changes of this counter.
-> > 
-> > Petr, could you remind me, why do we do PRINTK_NMI_DIRECT_CONTEXT_MASK
-> > only from ftrace?
-> 
-> Could it be because its from ftrace_dump() which can spit out millions
-> of lines from NMI context?
+This series adds documentation and compatible info for the lm73 temperatu=
+re
+sensor.
 
-Oh, yes, ftrace printks a lot. But I sort of forgot why don't we do
-the same for "regular" NMIs. So NMIs use per-cpu buffers, expect for
-NMIs which involve ftrace dump. I'm missing something here.
+Henry Shen (2):
+  dt-bindings: Add TI LM73 as a trivial device
+  hwmon: (lm73) Add support for of_match_table
 
-	-ss
+ Documentation/devicetree/bindings/trivial-devices.yaml |  2 ++
+ drivers/hwmon/lm73.c                                   | 10 ++++++++++
+ 2 files changed, 12 insertions(+)
+
+--=20
+2.25.0
+
