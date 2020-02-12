@@ -2,137 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21D3715AC68
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:53:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BAF515AC6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:53:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728671AbgBLPxM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 10:53:12 -0500
-Received: from foss.arm.com ([217.140.110.172]:34472 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728052AbgBLPxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 10:53:12 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2AD72328;
-        Wed, 12 Feb 2020 07:53:11 -0800 (PST)
-Received: from [10.1.194.46] (e113632-lin.cambridge.arm.com [10.1.194.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A7BEF3F68F;
-        Wed, 12 Feb 2020 07:53:09 -0800 (PST)
-Subject: Re: Suspect broken frequency transitions on SDM845
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, Ionela Voinescu <ionela.voinescu@arm.com>,
-        Quentin Perret <qperret@google.com>,
-        Lukasz Luba <lukasz.luba@arm.com>
-References: <eb8c48fb-c9b1-79c1-21b3-cd41ea37e2c6@arm.com>
-Message-ID: <c46e07df-b01a-4ff5-19c7-9b70063f1665@arm.com>
-Date:   Wed, 12 Feb 2020 15:53:08 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728614AbgBLPxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 10:53:21 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:34774 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727458AbgBLPxU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 10:53:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=I78sEJ8+ptaFjhSR0f/UOcUJHo+xxWDSJ6PGpnWy2jA=; b=aAolVHgx06P+LyOsg4e1QFeLQO
+        pEH2ZkVZkDAChnLpn2F7UjN+8aAl5G5iLMiQho18nhIs5C3ZGq5tuvYmG8c2I36BjVtN0BGFuK9Et
+        kQBtDgqYPw5vx1rbOIxjoq0PBuDYEDZsMfdpHeJTy3SrQUUd+1tJPQzhzVj+jxb+h5iRxhJzukjUb
+        79+lHj+yHwA1dGqwDE7Y/Qum1Usy+OHYQsW3WL3F6iWSw/Y1WYShGh5+1yqVog6ZAWn4iYhOrPse0
+        i0UE878SuDcL1wrmejG7Bjyts2pD1slBEeq6cn1lV8BCvfP6VXSuRr3870DAD4JsPXtxsHl3Cdr+L
+        VZPgbRHA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1uK7-0004NF-GR; Wed, 12 Feb 2020 15:53:11 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5E41E300E0C;
+        Wed, 12 Feb 2020 16:51:20 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8C3EF203A89A7; Wed, 12 Feb 2020 16:53:09 +0100 (CET)
+Date:   Wed, 12 Feb 2020 16:53:09 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     linux-kernel@vger.kernel.org, monstr@monstr.eu, git@xilinx.com,
+        arnd@arndb.de, Stefan Asserhall <stefan.asserhall@xilinx.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 3/7] microblaze: Define SMP safe bit operations
+Message-ID: <20200212155309.GA14973@hirez.programming.kicks-ass.net>
+References: <cover.1581522136.git.michal.simek@xilinx.com>
+ <6a052c943197ed33db09ad42877e8a2b7dad6b96.1581522136.git.michal.simek@xilinx.com>
 MIME-Version: 1.0
-In-Reply-To: <eb8c48fb-c9b1-79c1-21b3-cd41ea37e2c6@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6a052c943197ed33db09ad42877e8a2b7dad6b96.1581522136.git.michal.simek@xilinx.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/02/2020 12:53, Valentin Schneider wrote:
-> We've been getting some sporadic failures on the big CPUs of a Pixel3
-> running mainline [1], here is an example of a correct run (CPU4):
+On Wed, Feb 12, 2020 at 04:42:25PM +0100, Michal Simek wrote:
+> From: Stefan Asserhall <stefan.asserhall@xilinx.com>
 > 
-> | frequency (kHz) | sysbench events |
-> |-----------------+-----------------|
-> |          825600 |             236 |
-> |         1286400 |             369 |
-> |         1689600 |             483 |
-> |         2092800 |             600 |
-> |         2476800 |             711 |
+> For SMP based system there is a need to have proper bit operations.
+> Microblaze is using exclusive load and store instructions.
 > 
-> and here is a failed one (still CPU4):
-> 
-> | frequency (kHz) | sysbench events |
-> |-----------------+-----------------|
-> |          825600 |             234 |
-> |         1286400 |             369 |
-> |         1689600 |             449 |
-> |         2092800 |             600 |
-> |         2476800 |             355 |
-> 
-> 
-> We've encountered something like this in the past with the exact same
-> test on h960 [2] but it is much harder to reproduce reliably this time
-> around.
-> 
-> I haven't found much time to dig into this; I did get a run of ~100 
-> iterations with about ~15 failures, but nothing cpufreq related showed up in
-> dmesg. I briefly suspected fast-switch, but it's only used by schedutil, so
-> in this test I would expect the frequency transition to be complete before we
-> even try to start executing sysbench.
-> 
+> Signed-off-by: Stefan Asserhall <stefan.asserhall@xilinx.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 
-I've been adding some more debug stuff in that test case following some of
-Lukasz' recommendations, and I still don't find anything that would
-explain what I'm seeing.
+> +/*
+> + * clear_bit doesn't imply a memory barrier
+> + */
+> +#define smp_mb__before_clear_bit()	smp_mb()
+> +#define smp_mb__after_clear_bit()	smp_mb()
 
-The raw output of the test is:
+These macros no longer exist.
 
-        CPU0:
-            300000: 61
-            576000: 114
-            825600: 172
-            1056000: 221
-            1324800: 278
-            1612800: 339
-        CPU4:
-            825600: 236
-            1286400: 368
-            1689600: 479
-            2092800: 420 <---}
-            2476800: 339 <---} Both of these are not monotonically increasing...
+Also, might I draw your attention to:
 
+  include/asm-generic/bitops/atomic.h
 
-/sys/kernel/debug/clk/clk_summary doesn't seem to include CPU clocks, or
-doesn't get updated because I see no diff from one frequency to another
-(even between lowest & highest tested frequency)
-
-
-/sys/devices/system/cpu/cpu*/cpufreq/stats/time_in_state does get updated,
-and seems to hint that I am getting the frequency I'm asking for:
-
-  [2020-02-12 14:48:21,706] 2476800 39544
-  [2020-02-12 14:48:23,929] 2476800 39745
-
-There's about ~10% (200ms) missing here, but that shouldn't lead to about
-half the expected performance (I get ~710 "score" out of that 2.477GHz freq
-on non-failing runs).
-
-
-I also made sure to read back
-  /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq
-and I do see the value I've asked for.
-
-
-Finally, I also probed the thermal state via
-  /sys/class/thermal/cooling_device*/cur_state
-and they are *always* 0 (i.e., no throttling) right after finishing the
-execution of the benchmark, which should be close to the "hottest" point.
-
-
-So AFAICT there is nothing on the cpufreq side that hints at a slow or
-unsuccessful frequency transition. Can FW mess about frequencies without
-notifying the kernel?
-
-> If anyone has the time and will to look into this, that would be much
-> appreciated.
-> 
-> [1]: https://git.linaro.org/people/amit.pundir/linux.git/log/?h=blueline-mainline-tracking
-> [2]: https://lore.kernel.org/lkml/d3ede0ab-b635-344c-faba-a9b1531b7f05@arm.com/
-> 
-> Cheers,
-> Valentin
-> 
+This being a ll/sc arch, I'm thinking that if you do your atomic_t
+implementation right, the generic atomic bitop code should be near
+optimal.
