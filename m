@@ -2,62 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF65B15A543
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:47:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71CAD15A546
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 10:48:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728754AbgBLJra (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 04:47:30 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:54502 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728605AbgBLJra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:47:30 -0500
-Received: from zn.tnic (p200300EC2F09E80011DF4A8A67D9D17B.dip0.t-ipconnect.de [IPv6:2003:ec:2f09:e800:11df:4a8a:67d9:d17b])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D187F1EC0CE4;
-        Wed, 12 Feb 2020 10:47:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1581500848;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=A+UxdxRfhb2KxZ5sW3vuVAuCDanzPsN8zts9XRHkNTA=;
-        b=H4wRIpkKfQOSd93tLrrVNgqNNdrbHHkjFWCmVHmTbEKhLJcSVbWj2nvtHtVCsC2LgAhyHj
-        oG36/dDcP6WZoXCIEKYe/baFZv/TOp6Y33MZHRWP0ZcYkLEZy1KNy+HPe8vV1tZ7K8gre8
-        0rFkquLVMlKS3piZC/BMj+j4srUnAi8=
-Date:   Wed, 12 Feb 2020 10:47:21 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Michael Matz <matz@suse.de>
-Subject: Re: [PATCH v2] x86/boot: Use 32-bit (zero-extended) move for
- z_output_len
-Message-ID: <20200212094721.GB30793@zn.tnic>
-References: <20200211161739.GE32279@zn.tnic>
- <20200211173333.1722739-1-nivedita@alum.mit.edu>
- <20200211181559.GI32279@zn.tnic>
- <20200211192739.GA1761914@rani.riverdale.lan>
+        id S1728890AbgBLJss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 04:48:48 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:43915 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728737AbgBLJsr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 04:48:47 -0500
+Received: by mail-vs1-f65.google.com with SMTP id 7so734064vsr.10
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 01:48:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=zdxUWMWXTEs/zs0LJh1bxLoOHpDg1k5nkLimqXptzik=;
+        b=H+Fm6etSpj2MWADhXyV9PGzYJlmqEQ52/Wr0GihWUEQXNK+fU+p0POGfytLAx/6Bsp
+         BzMlNVCPKeEvhzVGjstuhRht1bH7ywg7kSlenTMuAPtkHHMMoeUTnXu7WEeU74X3foCD
+         isFOv3LKoMB5fibUdrkLkOdJ7MJ5UH3K7/nltzZqvO/4UUxs8qIxacnfwVD9F5NcbHc8
+         qSzLfmoRNq0cIYImWKhe9Uyl4pSVe4kF5uuP9h0Svm79jimK7mwgFO642CgG3cm45e8F
+         B3B2GqzYetAzsiW4KI5yYXMopwOsEyKhKnWphUw+G2jISTsn4cckJPSEfmrAqry6xSFz
+         RuRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=zdxUWMWXTEs/zs0LJh1bxLoOHpDg1k5nkLimqXptzik=;
+        b=Xo9+NMp3gNvSG1mG/iH8TURzd94Axat0pp+AXYk2tpIHfsgwqdctmeIKTEm6m7IxIG
+         WbAbfXQoa7Bd6txarhW3yzuK/CoB2iKZqrx3aunhQfrwr+M1IOyjG6cHXr0em2ore79u
+         DQARwmxaS5hcgB5ViFV8X2deuk7/9VBMXbL0c16FYNtI2Ik9oJOYaUq0BizOsrl67VTd
+         h6nLbmGm/XzQbLQwyYMohFAfQUYnkNnePFAvfVqJqBECwYSE665Gq6rcTaTfYfxsWlxV
+         FrAYRxuCw5jbx4AijCp/vBJmos9xF9ijGz6+tPSPSGsyxgfHhH7oxLObTxtT9RxeVQ+g
+         9Hfg==
+X-Gm-Message-State: APjAAAX3oG6Z608x96M2yyf7uupwv8UEzScndL0aVkO15AduXpyYC0wK
+        qj8GmTRQZ2+0a2PXIV7xgvfzHDg6cUfyuXv3fBg=
+X-Google-Smtp-Source: APXvYqwOiQbmR0FBvILhRTHuu7V+eRHPP+VcfL0g8Fma4XTHqSQ6mg0H05Af2W8R1Vn3xK4Cdsf+GJ06YFvAWkM72MM=
+X-Received: by 2002:a05:6102:2e4:: with SMTP id j4mr11694498vsj.134.1581500927003;
+ Wed, 12 Feb 2020 01:48:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200211192739.GA1761914@rani.riverdale.lan>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a05:6102:109d:0:0:0:0 with HTTP; Wed, 12 Feb 2020 01:48:46
+ -0800 (PST)
+Reply-To: ayishagddafio@mail.ru
+From:   AISHA GADDAFI <mahasaliou99999@gmail.com>
+Date:   Wed, 12 Feb 2020 01:48:46 -0800
+Message-ID: <CAMugOs_Nqd3VGiRvkGZe9Z+YzyvjpAovouRdUNBFsOsy-QXWCw@mail.gmail.com>
+Subject: Lieber Freund (Assalamu Alaikum),?
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 02:27:39PM -0500, Arvind Sankar wrote:
-> Yes, this is just a "neatening" patch to use a more appropriate
-> instruction. There would have to be a lot of work to allow kernels to be
-> bigger than 2Gb,
+--=20
+Lieber Freund (Assalamu Alaikum),
 
-And yet we're bloating up, right into that limit... ;-\
+Ich bin vor einer privaten Suche auf Ihren E-Mail-Kontakt gesto=C3=9Fen
+Ihre Hilfe. Mein Name ist Aisha Al-Qaddafi, eine alleinerziehende
+Mutter und eine Witwe
+mit drei Kindern. Ich bin die einzige leibliche Tochter des Sp=C3=A4tlibysc=
+hen
+Pr=C3=A4sident (verstorbener Oberst Muammar Gaddafi).
 
--- 
-Regards/Gruss,
-    Boris.
+Ich habe Investmentfonds im Wert von siebenundzwanzig Millionen
+f=C3=BCnfhunderttausend
+United State Dollar ($ 27.500.000.00) und ich brauche eine
+vertrauensw=C3=BCrdige Investition
+Manager / Partner aufgrund meines aktuellen Fl=C3=BCchtlingsstatus bin ich =
+jedoch
+M=C3=B6glicherweise interessieren Sie sich f=C3=BCr die Unterst=C3=BCtzung =
+von
+Investitionsprojekten in Ihrem Land
+Von dort aus k=C3=B6nnen wir in naher Zukunft Gesch=C3=A4ftsbeziehungen auf=
+bauen.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Ich bin bereit, mit Ihnen =C3=BCber das Verh=C3=A4ltnis zwischen Investitio=
+n und
+Unternehmensgewinn zu verhandeln
+Basis f=C3=BCr die zuk=C3=BCnftige Investition Gewinne zu erzielen.
+
+Wenn Sie bereit sind, dieses Projekt in meinem Namen zu bearbeiten,
+antworten Sie bitte dringend
+Damit ich Ihnen mehr Informationen =C3=BCber die Investmentfonds geben kann=
+.
+
+Ihre dringende Antwort wird gesch=C3=A4tzt. schreibe mir an diese email adr=
+esse (
+ayishagddafio@mail.ru ) zur weiteren Diskussion.
+
+Freundliche Gr=C3=BC=C3=9Fe
+Frau Aisha Al-Qaddafi
