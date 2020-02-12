@@ -2,71 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1066915A3D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:48:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAB1A15A37E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:43:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728731AbgBLIsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 03:48:45 -0500
-Received: from esa3.mentor.iphmx.com ([68.232.137.180]:42675 "EHLO
-        esa3.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728538AbgBLIso (ORCPT
+        id S1728566AbgBLIne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 03:43:34 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37886 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728457AbgBLIne (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 03:48:44 -0500
-IronPort-SDR: Nvw0FT5zA0bkzPThUG2AA6A6CyiVIcwX1e1euyqRCQly8KIXYXYI4vTzvFzN6zK+qNyo5pnEx9
- mRkeaWYeV8FEeRZOlwZwAVVxkO+uDRhIS6qS9YWGyEVeM2/zEwwDjjXmZydLcn0EmH+lYxUHfa
- prGX0QtgKiS6Z9B6FVIpzws4QnedpA3rUKZlf3jO484dyaagCs5+6NEEwOz8GtqPWIGt5viz2K
- BV7dwBpOilLJFv7Ui2IGt24qt8OOyMP8GBnCvXZmdD/I08Fim/rVvVJyUiB1TH7evOm5+ycy/x
- RyM=
-X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="45742651"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa3.mentor.iphmx.com with ESMTP; 12 Feb 2020 00:48:43 -0800
-IronPort-SDR: 3pRdBghNyuIZJ2UHCP3UcZGr+zw1Ego2Jw9McQffzAszi6NoRvRAEEdOjTcKLVGdvvoVzp85rJ
- 2EWmlCv1Xwr7+wa7KuLK0SHnN++qe2TpIq2gGeduRH/8/qgmDtNzBcHfwwbrOmoZP3yLvybTzZ
- FrRl2I4qlmUOopKJ498nJ6/dRfCR3H8rqQVkoKjoIGtE1TzaxaC0eDtCWADUtD7mnGsGpj3R98
- b/Ndp0kuDI21fuwxf6zeEz8QsrM9GZRW6wNxQsNX0qKsLaWw2smqk+RrmpvD7E3BIt1g/EQhY7
- 8OM=
-From:   Jiada Wang <jiada_wang@mentor.com>
-To:     <jikos@kernel.org>, <benjamin.tissoires@redhat.com>,
-        <rydberg@bitmath.org>, <dmitry.torokhov@gmail.com>,
-        <nick@shmanahar.org>, <bsz@semihalf.com>
-CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <erosca@de.adit-jv.com>, <Andrew_Gabbasov@mentor.com>,
-        <jiada_wang@mentor.com>
-Subject: [PATCH v7 48/48] Input: atmel_mxt_ts - Fix compilation warning
-Date:   Wed, 12 Feb 2020 00:42:18 -0800
-Message-ID: <20200212084218.32344-49-jiada_wang@mentor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200212084218.32344-1-jiada_wang@mentor.com>
-References: <20200212084218.32344-1-jiada_wang@mentor.com>
+        Wed, 12 Feb 2020 03:43:34 -0500
+Received: by mail-wr1-f68.google.com with SMTP id w15so1140783wru.4
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:43:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fGdSUfQkLfF9DHdMDJ60li9faldkILwXEkxG3rbMJHU=;
+        b=ex8fNHPDp1r+bWrBKR0esR9qfcYVyA5glEE7UMwCBgPwjATziesFGlYx0DxioyRJYZ
+         dPWRNvswyEl7UkeGN87c4FKCWNfh09bJMNiG62/RHoU7A/ETKml7KPHU34POrzFwNt52
+         48B5WIVvgl3LaxY2IWtXFPCWNEEv6E1QGchGoBPP2h0uQ0c7KwQKYQs1ag2e4RnCCoUY
+         VnEeMhxymeqTBVrq1dDt30+TNrEuDAJTyJoGoF4ggxK+xzKoriEuWdkGlvke9yX7C+S0
+         jwdOQ6eCnJwLrflFglAClPwML1MiuvVgkKf+JdNddxa5BKMLhu9v7+6Qfg4Z1nkqeHix
+         l32Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=fGdSUfQkLfF9DHdMDJ60li9faldkILwXEkxG3rbMJHU=;
+        b=gq4uCeIDI/qKnNjrcOFwPlTjibbbUeLM2462fbZez4GGnPqALoJU6uM2MKKkTCpDOZ
+         BroJI/kK0P8tdZMU2wJ6zzcgrQDh8zBLh27UbROEZ+WoFHrwpZT9X6OaRNL5ef5LxA2K
+         xqWMNkgPuSFiOruSsQQsei1vWhCEwNXXSCktqAXkhtQCncJUInxrbYHZzyeMe/fmhDmn
+         T3VY9qDrG0Xqe2fQ6+sP9j3N97RMFpYKFdKezf5mRrLKshI+Jcl7UG1mSuwo5N1erSyn
+         wA3D++UXZtKWRbqlJQmbavHHLfAq34SLy4s1qieA/xgN7qG2jwK6uzO0+YZAgdmwEkrp
+         qklg==
+X-Gm-Message-State: APjAAAWpnum9zIOy2vdewvAW7jxWmtZ/QseKsAFMABI6otlrcIV/Junp
+        Rh3XsCfjCL5apiHd4QslowOmWf2UeD0Pbg==
+X-Google-Smtp-Source: APXvYqxgoPwHQJmB9TPvdAU8TKfypqitKOvk7OPqb3X+I31fSJGcGIKDmQNob8tkfVJ1c0OC7naEDg==
+X-Received: by 2002:a5d:54c1:: with SMTP id x1mr13514491wrv.240.1581497011545;
+        Wed, 12 Feb 2020 00:43:31 -0800 (PST)
+Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id x6sm9023725wrr.6.2020.02.12.00.43.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Feb 2020 00:43:30 -0800 (PST)
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        michal.simek@xilinx.com, git@xilinx.com
+Cc:     Stefan Asserhall <stefan.asserhall@xilinx.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Valentin Schneider <valentin.schneider@arm.com>
+Subject: [PATCH] microblaze: Fix _reset() function
+Date:   Wed, 12 Feb 2020 09:43:29 +0100
+Message-Id: <ce58b2e6d0fbc8bf94d3cd986c068fbc4fda4d04.1581497006.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fix "make W=1" compilation warnings from Atmel driver
-as per the compilation logs.
+There is a need to disable VM before jump to zero reset vector.
 
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Reviewed-by: Stefan Asserhall <stefan.asserhall@xilinx.com>
 ---
- drivers/input/touchscreen/atmel_mxt_ts.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index 715952a6200d..79b92b20cc91 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -2046,7 +2046,7 @@ static int mxt_prepare_cfg_mem(struct mxt_data *data, struct mxt_cfg *cfg)
+ arch/microblaze/kernel/entry.S | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/microblaze/kernel/entry.S b/arch/microblaze/kernel/entry.S
+index f6ded356394a..b179f8f6d287 100644
+--- a/arch/microblaze/kernel/entry.S
++++ b/arch/microblaze/kernel/entry.S
+@@ -958,6 +958,7 @@ ENTRY(_switch_to)
+ 	nop
  
- 			byte_offset = reg + i - cfg->start_ofs;
+ ENTRY(_reset)
++	VM_OFF
+ 	brai	0; /* Jump to reset vector */
  
--			if (byte_offset >= 0 && byte_offset < cfg->mem_size) {
-+			if (byte_offset < cfg->mem_size) {
- 				*(cfg->mem + byte_offset) = val;
- 			} else {
- 				dev_err(dev, "Bad object: reg:%d, T%d, ofs=%d\n",
+ 	/* These are compiled and loaded into high memory, then
 -- 
-2.17.1
+2.25.0
 
