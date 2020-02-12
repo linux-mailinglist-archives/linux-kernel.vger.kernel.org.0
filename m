@@ -2,77 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1FA715A10F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 07:08:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5918015A116
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 07:12:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbgBLGIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 01:08:46 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:59215 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725887AbgBLGIq (ORCPT
+        id S1728234AbgBLGLp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 01:11:45 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:8022 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbgBLGLm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 01:08:46 -0500
-X-UUID: 84c92f6bafd04e06bc906fd0e676de58-20200212
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=SWD5TohyT5cMPrdmmo17mXTsqaC7XRDeHZDf6wxl7cY=;
-        b=QqKpIGphIjGohnCyD8IAS+Rvhp6QiGtoKfw21hkpiSgyk0/ISqf3VfrZaZ0I6USNo/u1GDfCNekz+hx3EDXSorL0F2XISXUewfRUb/mRQ2mdNoeFC+kjaX+gkfWQVISej/+WmlJL94L75bGKmyFJ+VvlCm/JQ42qz88verQ3d2c=;
-X-UUID: 84c92f6bafd04e06bc906fd0e676de58-20200212
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <wen.su@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 208193523; Wed, 12 Feb 2020 14:08:42 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 12 Feb 2020 14:07:53 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 12 Feb 2020 14:08:49 +0800
-Message-ID: <1581487721.16783.9.camel@mtkswgap22>
-Subject: Re: [PATCH v2 1/4] dt-bindings: regulator: Add document for MT6359
- regulator
-From:   Wen Su <Wen.Su@mediatek.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Mark Rutland <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Wed, 12 Feb 2020 14:08:41 +0800
-In-Reply-To: <8398188f-820a-5abf-f52e-b79c0c583704@gmail.com>
-References: <1580958411-2478-1-git-send-email-Wen.Su@mediatek.com>
-         <1580958411-2478-2-git-send-email-Wen.Su@mediatek.com>
-         <20200206114927.GN3897@sirena.org.uk> <1581335854.16783.1.camel@mtkswgap22>
-         <8398188f-820a-5abf-f52e-b79c0c583704@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        Wed, 12 Feb 2020 01:11:42 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e43970c0000>; Tue, 11 Feb 2020 22:11:24 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 11 Feb 2020 22:11:38 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 11 Feb 2020 22:11:38 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 12 Feb
+ 2020 06:11:38 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 12 Feb 2020 06:11:38 +0000
+Received: from jckuo-lt.nvidia.com (Not Verified[10.19.108.125]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5e4397180000>; Tue, 11 Feb 2020 22:11:37 -0800
+From:   JC Kuo <jckuo@nvidia.com>
+To:     <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
+        <robh@kernel.org>, <jonathanh@nvidia.com>, <kishon@ti.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>
+Subject: [PATCH v6 0/5] add Tegra194 XUSB host and pad controller support
+Date:   Wed, 12 Feb 2020 14:11:28 +0800
+Message-ID: <20200212061133.11665-1-jckuo@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1581487884; bh=JtGIEzqesheFOsXH1XBFeaqJD7RkaFvWmH//lN6CKYU=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=Z5fsTmvN+b2CxUnflZu3GJsG1IBlQfWUIxe/NQdAhCqQA6ITpzXFfinZYsZjgtvqK
+         ApWVFOCZygdcWV5jabsa85Qi/2ON+MIlKQstbD5jmIwHkZsffj/cQEHLQqVYcfraGP
+         N6rz3BCAmD6H/ksxaq+Dk38AbcktntbOdHrW5oI9N+ZUHHy7U08r3jJr9EBDxLeJAL
+         EjEYPeBJjC9gZks3/nwWuGyRuS2yGIdFIfmfEaBoJuE2G6WVLobJtPyykxoM/Fo3yU
+         DWQiARUkS5iVtedC1Qjyfrje1I0oMkH4A8545jlPKMq6hqRDhGYvyS79aP7mECfdTK
+         TbPO/uh9UEv+w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIA0KDQpPbiBUdWUsIDIwMjAtMDItMTEgYXQgMTc6MDYgKzAxMDAsIE1hdHRoaWFzIEJydWdn
-ZXIgd3JvdGU6DQo+IA0KPiBPbiAxMC8wMi8yMDIwIDEyOjU3LCBXZW4gU3Ugd3JvdGU6DQo+ID4g
-SGksIA0KPiA+IA0KPiA+IE9uIFRodSwgMjAyMC0wMi0wNiBhdCAxMTo0OSArMDAwMCwgTWFyayBC
-cm93biB3cm90ZToNCj4gPj4gT24gVGh1LCBGZWIgMDYsIDIwMjAgYXQgMTE6MDY6NDhBTSArMDgw
-MCwgV2VuIFN1IHdyb3RlOg0KPiA+Pg0KPiA+Pj4gK1JlcXVpcmVkIHByb3BlcnRpZXM6DQo+ID4+
-PiArLSBjb21wYXRpYmxlOiAibWVkaWF0ZWssbXQ2MzU5LXJlZ3VsYXRvciINCj4gPj4NCj4gPj4g
-V2h5IGRvZXMgdGhpcyBuZWVkIGEgY29tcGF0aWJsZSBzdHJpbmcgLSBpdCBsb29rcyBsaWtlIGl0
-J3MganVzdA0KPiA+PiBlbmNvZGluZyB0aGUgd2F5IExpbnV4IHNwbGl0cyBkZXZpY2VzIHVwIGlu
-dG8gdGhlIERULCBub3QNCj4gPj4gcHJvdmlkaW5nIHNvbWUgcmV1c2FibGUgSVAgYmxvY2suDQo+
-ID4gDQo+ID4gVGhhbmtzIGZvciB5b3VyIGNvbW1lbnRzLg0KPiA+IEkgd2lsbCByZW1vdmUgaXQg
-aW4gdGhlIG5leHQgcGF0Y2guDQo+ID4gDQo+IA0KPiBJZiB0aGlzIHRoZSB3YXkgdG8gZ28sIHRo
-ZW4gcGxlYXNlIGZpeCBhbGwgdGhlIG90aGVyIE1lZGlhVGVrIGJpbmRpbmcNCj4gZGVzY3JpcHRp
-b24gZm9yIHJlZ3VsYXRvcnMgKCsgdGhlIGR0cykgYXMgdGhpcyBpcyB0aGVuIHdyb25nLg0KPiBU
-aGFua3MhDQo+IE1hdHRoaWFzDQoNClRoZSBtdDYzNTktcmVndWxhdG9yIGRyaXZlciBpcyBzdGls
-bCBhIHJldXNhYmxlIElQIGJsb2NrLkl0IGNvdWxkIGJlDQphZGRpbmcgbW9yZSBvdGhlciBNZWRp
-YVRlayBwbWljIG10NjM1OSBzaW1pbGFyIGNvbXBhdGlibGUgZGV2aWNlLiBCdXQNCmN1cnJlbnRs
-eSB0aGlzIHBhdGNoIG9ubHkgdGVzdGluZyBvbiBwbWljIG10NjM1OS4NCklzIGl0IGFsbG93YWJs
-ZSB0byBrZWVwIGNvbXBhdGlibGUgc3RyaW5nIGluIGJpbmRpbmcgZGVzY3JpcHRpb24gPw0KDQpU
-aGFua3MNCg0K
+v6:
+  phy: tegra: xusb: Protect Tegra186 soc with config
+   - no change
+
+  phy: tegra: xusb: Add Tegra194 support
+   - no change
+
+  dt-bindings: phy: tegra: Add Tegra194 support
+   - no change
+
+  arm64: tegra: Add XUSB and pad controller on Tegra194
+   - rebased
+
+  arm64: tegra: Enable XUSB host in P2972-0000 board
+   - re-use "maximum-speed" instead of adding "nvidia,disable-gen2"
+
+v5:
+  phy: tegra: xusb: Protect Tegra186 soc with config
+   - no change
+
+  phy: tegra: xusb: Add Tegra194 support
+   - re-use "maximum-speed" instead of adding "nvidia,disable-gen2"
+
+  dt-bindings: phy: tegra: Add Tegra194 support
+   - re-use "maximum-speed" instead of adding "nvidia,disable-gen2"
+
+  arm64: tegra: Add XUSB and pad controller on Tegra194
+   - no change
+
+  arm64: tegra: Enable XUSB host in P2972-0000 board
+   - no change
+
+v3:
+  add change log to cover latter
+
+v2:
+  xhci: tegra: Parameterize mailbox register addresses
+   - no change
+
+  usb: host: xhci-tegra: Add Tegra194 XHCI support
+   - no change
+
+  phy: tegra: xusb: Protect Tegra186 soc with config
+   - new patch to protect Tegra186 soc data with config
+
+  phy: tegra: xusb: Add Tegra194 support
+   - removed unnecessary #if/#endif pairs
+   - introduce new soc->supports_gen2 flag which indicate whether or not 
+     a soc supports USB 3.1 Gen 2 speed
+
+  dt-bindings: phy: tegra: Add Tegra194 support
+   - fix a typo
+
+  arm64: tegra: Add XUSB and pad controller on Tegra194
+   - renamed xhci@3610000 with usb@3610000
+   - moved padctl@3520000 and usb@3610000 inside /cbb
+   - cleaned up "clocks" property of usb@3610000 node
+   - added blanks lines to visually separate blocks
+
+  arm64: tegra: Enable XUSB host in P2972-0000 board
+   - use capitalization of regulator names
+   - fix gpio property of VDD_5V_SATA regulator
+
+
+JC Kuo (5):
+  phy: tegra: xusb: Protect Tegra186 soc with config
+  phy: tegra: xusb: Add Tegra194 support
+  dt-bindings: phy: tegra: Add Tegra194 support
+  arm64: tegra: Add XUSB and pad controller on Tegra194
+  arm64: tegra: Enable XUSB host in P2972-0000 board
+
+ .../phy/nvidia,tegra124-xusb-padctl.txt       |  18 +++
+ .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |  36 ++++-
+ .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  63 ++++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      | 139 +++++++++++++++++
+ drivers/phy/tegra/Makefile                    |   1 +
+ drivers/phy/tegra/xusb-tegra186.c             | 143 +++++++++++++-----
+ drivers/phy/tegra/xusb.c                      |  17 +++
+ drivers/phy/tegra/xusb.h                      |   5 +
+ 8 files changed, 387 insertions(+), 35 deletions(-)
+
+-- 
+2.17.1
 
