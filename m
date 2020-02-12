@@ -2,136 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 109AC15A590
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:02:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B664315A637
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:22:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729003AbgBLKCC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 05:02:02 -0500
-Received: from foss.arm.com ([217.140.110.172]:58362 "EHLO foss.arm.com"
+        id S1727582AbgBLKW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 05:22:58 -0500
+Received: from mga07.intel.com ([134.134.136.100]:46280 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728843AbgBLKCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 05:02:01 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 516BF30E;
-        Wed, 12 Feb 2020 02:02:00 -0800 (PST)
-Received: from [10.37.12.187] (unknown [10.37.12.187])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BCACC3F68F;
-        Wed, 12 Feb 2020 02:01:56 -0800 (PST)
-Subject: Re: [PATCH v3 7/7] clocksource/drivers/arm_arch_timer: validate
- arch_timer_rate
-To:     Ionela Voinescu <ionela.voinescu@arm.com>, catalin.marinas@arm.com,
-        will@kernel.org, mark.rutland@arm.com, maz@kernel.org,
-        suzuki.poulose@arm.com, sudeep.holla@arm.com,
-        valentin.schneider@arm.com, rjw@rjwysocki.net
-Cc:     peterz@infradead.org, mingo@redhat.com, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20200211184542.29585-1-ionela.voinescu@arm.com>
- <20200211184542.29585-8-ionela.voinescu@arm.com>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <89339501-5ee4-e871-3076-c8b02c6fbf6e@arm.com>
-Date:   Wed, 12 Feb 2020 10:01:54 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1725710AbgBLKW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 05:22:57 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 02:22:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
+   d="scan'208";a="226820686"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by orsmga008.jf.intel.com with ESMTP; 12 Feb 2020 02:22:53 -0800
+Date:   Wed, 12 Feb 2020 18:02:11 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Will Deacon <will@kernel.org>, mdf@kernel.org,
+        mark.rutland@arm.com, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        atull@kernel.org, yilun.xu@intel.com,
+        Luwei Kang <luwei.kang@intel.com>
+Subject: Re: [PATCH v7 2/2] fpga: dfl: fme: add performance reporting support
+Message-ID: <20200212100211.GA10436@hao-dev>
+References: <1581306469-22629-1-git-send-email-hao.wu@intel.com>
+ <1581306469-22629-3-git-send-email-hao.wu@intel.com>
+ <20200210163400.GA21900@willie-the-truck>
+ <20200212031929.GB5645@hao-dev>
+ <20200212053035.GA382718@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20200211184542.29585-8-ionela.voinescu@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200212053035.GA382718@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ionela, Valentin
-
-On 2/11/20 6:45 PM, Ionela Voinescu wrote:
-> From: Valentin Schneider <valentin.schneider@arm.com>
+On Tue, Feb 11, 2020 at 09:30:35PM -0800, Greg KH wrote:
+> On Wed, Feb 12, 2020 at 11:19:29AM +0800, Wu Hao wrote:
+> > On Mon, Feb 10, 2020 at 04:34:01PM +0000, Will Deacon wrote:
+> > > Hi,
+> > > 
+> > > On Mon, Feb 10, 2020 at 11:47:49AM +0800, Wu Hao wrote:
+> > > > This patch adds support for performance reporting private feature
+> > > > for FPGA Management Engine (FME). Now it supports several different
+> > > > performance counters, including 'basic', 'cache', 'fabric', 'vtd'
+> > > > and 'vtd_sip'. It allows user to use standard linux tools to access
+> > > > these performance counters.
+> > > 
+> > > I had a quick look at this, and it mostly looks alright to me. Just a few
+> > > high-level comments/questions:
+> > 
+> > Hi Will
+> > 
+> > Thanks a lot for the review! :)
+> > 
+> > > 
+> > >   - I would still prefer for the PMU drivers to live under drivers/perf/
+> > 
+> > Hm.. one possible way is to create a platform device, and introduce a new
+> > platform device driver under drivers/perf/.
 > 
-> Using an arch timer with a frequency of less than 1MHz can result in an
-> incorrect functionality of the system which assumes a reasonable rate.
-> 
-> One example is the use of activity monitors for frequency invariance
-> which uses the rate of the arch timer as the known rate of the constant
-> cycle counter in computing its ratio compared to the maximum frequency
-> of a CPU. For arch timer frequencies less than 1MHz this ratio could
-> end up being 0 which is an invalid value for its use.
-> 
-> Therefore, warn if the arch timer rate is below 1MHz which contravenes
-> the recommended architecture interval of 1 to 50MHz.
-> 
-> Signed-off-by: Ionela Voinescu <ionela.voinescu@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Marc Zyngier <maz@kernel.org>
-> ---
->   drivers/clocksource/arm_arch_timer.c | 18 +++++++++++++++---
->   1 file changed, 15 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-> index 9a5464c625b4..4faa930eabf8 100644
-> --- a/drivers/clocksource/arm_arch_timer.c
-> +++ b/drivers/clocksource/arm_arch_timer.c
-> @@ -885,6 +885,17 @@ static int arch_timer_starting_cpu(unsigned int cpu)
->   	return 0;
->   }
->   
-> +static int validate_timer_rate(void)
-> +{
-> +	if (!arch_timer_rate)
-> +		return -EINVAL;
-> +
-> +	/* Arch timer frequency < 1MHz can cause trouble */
-> +	WARN_ON(arch_timer_rate < 1000000);
+> No, do not abuse platform drivers, you have a real device, use it.
 
-I don't see a big value of having a patch just to add one extra warning,
-in a situation which we handle in our code with in 6/7 with:
+Sure, thanks for the comments. Then I don't have any other idea to move code to
+drivers/perf/ directory, so probably only can live with current code.
 
-+	if (!ratio) {
-+		pr_err("System timer frequency too low.\n");
-+		return -EINVAL;
-+	}
-
-Furthermore, the value '100000' here is because of our code and
-calculation in there, so it does not belong to arch timer. Someone
-might ask why it's not 200000 or a define in our header...
-Or questions asking why do you warn when that arch timer and cpu is not
-AMU capable...
-
-> +
-> +	return 0;
-> +}
-> +
->   /*
->    * For historical reasons, when probing with DT we use whichever (non-zero)
->    * rate was probed first, and don't verify that others match. If the first node
-> @@ -900,7 +911,7 @@ static void arch_timer_of_configure_rate(u32 rate, struct device_node *np)
->   		arch_timer_rate = rate;
->   
->   	/* Check the timer frequency. */
-> -	if (arch_timer_rate == 0)
-> +	if (validate_timer_rate())
->   		pr_warn("frequency not available\n");
->   }
->   
-> @@ -1594,9 +1605,10 @@ static int __init arch_timer_acpi_init(struct acpi_table_header *table)
->   	 * CNTFRQ value. This *must* be correct.
->   	 */
->   	arch_timer_rate = arch_timer_get_cntfrq();
-> -	if (!arch_timer_rate) {
-> +	ret = validate_timer_rate();
-> +	if (ret) {
->   		pr_err(FW_BUG "frequency not available.\n");
-> -		return -EINVAL;
-> +		return ret;
->   	}
->   
->   	arch_timer_uses_ppi = arch_timer_select_ppi();
-> 
-
-Lastly, this is arch timer.
-To increase chances of getting merge soon, I would recommend to drop
-the patch from this series.
-
-Regards,
-Lukasz
+Thanks
+Hao
