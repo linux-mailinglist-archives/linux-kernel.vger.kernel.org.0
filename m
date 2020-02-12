@@ -2,78 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9F3615B22F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 21:52:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE2E615B22C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 21:52:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729056AbgBLUwh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 15:52:37 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:53163 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbgBLUwh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 15:52:37 -0500
-Received: by mail-pj1-f68.google.com with SMTP id ep11so1385399pjb.2;
-        Wed, 12 Feb 2020 12:52:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ktEu+4lqCDbKO9qnX2sTlUigBje7mt6XvSgw9jTL1Mk=;
-        b=uTDlFixc9E3zW4wTk0TrpEQ2A3Yli1behriN27YAL8w35rHbk2z+09sIys8fE4GSiO
-         L5jyVxcLE5sYowM0Mkb+TgFO66yvc5H+CjNsF6nlPAmfrH3NwrA4aDcqMslox3XL7AMm
-         FdSXPyFcop/k3XTrwwTNEkf5kayQUlnEUq/7/suKwCn92RI0hVjsPXI0+rXxHqVC3NLb
-         3xDXT9x7DXMJBdrxZH1KxnezomenMaoz7H4Xe3kv13FwzwM3nYKwN+BA8VB+3dPOKErS
-         iuLTXzw8ztaXWV7aW62YauSfz9ya4Txr9pikwo20YqYEBHddQNVuPeNnBjY+2TLeKe1P
-         meww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ktEu+4lqCDbKO9qnX2sTlUigBje7mt6XvSgw9jTL1Mk=;
-        b=ho300KLIBdptAD7IISUY04CXIHK/ebnjX9EXm1m95kCNS1yEkn0poZIhksOu4Hm/WC
-         mRFwd/6DU/E0RWcUNWp+/KzJNAaN59aHGktkqloJvet8T15/Y/qepP39nAydMzBFfGsT
-         O0LTg38dq8+fF0+ZT0zOQxU0gHAYHIahDia94NraL/S8To+PFhV00mbtf2xdEuNxzYog
-         gh/I/2+H6fruUcKuHWb5bhAv6EODRwpSn7VrghuL8v+b9D0bTzJzDO6RXuV1bxOVEYK5
-         jr00FLWF6zDwrww+0Jvi2z5g/CFOzhcCS1g0JaGxAqNbtHMuIN/Ob7GnsnVJndt119/n
-         zyjQ==
-X-Gm-Message-State: APjAAAVAMgJdivf8ZWHiwShGqdx0H6Ekidg38LdDHS4l8Ikqr8700rve
-        QcfLbGGSfhfkTV+qPbAlpB4d96lQW0oLo/5+AjUmY4E5
-X-Google-Smtp-Source: APXvYqwxpkbf0L8zsRg5l2ML4V17u7r9J3ky+ezHWyvI6+qF3r5FN6i0X2ddHsr1cxJGlD0sr2lEoIiUu0uJATfEkKs=
-X-Received: by 2002:a17:90b:f06:: with SMTP id br6mr974150pjb.125.1581540756516;
- Wed, 12 Feb 2020 12:52:36 -0800 (PST)
+        id S1728603AbgBLUw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 15:52:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34016 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727111AbgBLUw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 15:52:26 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 244FD2173E;
+        Wed, 12 Feb 2020 20:52:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581540746;
+        bh=IyBLJs7u+s1RqfuILL8EHYI9KQ31ezat17YVqp0mnJE=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=yHHoK4jnA1pMtbfXvN+Rd+0Dhpmtdd6EEmDrQ2FiBdkmc5ouIZJfcTMj+mwiEdSze
+         pM4jRSSzpiVGRKbzKkWp6l1k7st5Tl3iypLw1zODU3c+sLmN9Bp4+/obQ9rwWft+BQ
+         N5m40RGAGq1Oi6+Jc2qY+YxccQvXHY5l13MYvN5U=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20200212101947.9534-1-geert+renesas@glider.be>
-In-Reply-To: <20200212101947.9534-1-geert+renesas@glider.be>
-From:   Max Filippov <jcmvbkbc@gmail.com>
-Date:   Wed, 12 Feb 2020 12:52:24 -0800
-Message-ID: <CAMo8BfK9LFfopJcNUDruFK-G_KqYP=7u9zdpNgZ5OZ_Ty7rO8w@mail.gmail.com>
-Subject: Re: [PATCH] xtensa: Replace <linux/clk-provider.h> by <linux/of_clk.h>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Chris Zankel <chris@zankel.net>,
-        "open list:TENSILICA XTENSA PORT (xtensa)" 
-        <linux-xtensa@linux-xtensa.org>, linux-clk@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200212101544.8793-4-geert+renesas@glider.be>
+References: <20200212101544.8793-1-geert+renesas@glider.be> <20200212101544.8793-4-geert+renesas@glider.be>
+Subject: Re: [PATCH 3/7] MIPS: generic: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-mips@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        James Hartley <james.hartley@sondrel.com>,
+        John Crispin <john@phrozen.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Ralf Baechle <ralf@linux-mips.org>
+Date:   Wed, 12 Feb 2020 12:52:25 -0800
+Message-ID: <158154074529.184098.8557310539914705485@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 2:19 AM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
-> The Xtensa time code is not a clock provider, and just needs to call
-> of_clk_init().
->
+Quoting Geert Uytterhoeven (2020-02-12 02:15:40)
+> The generic MIPS platform code is not a clock provider, and just needs
+> to call of_clk_init().
+>=20
 > Hence it can include <linux/of_clk.h> instead of <linux/clk-provider.h>.
->
+>=20
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  arch/xtensa/kernel/time.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Max Filippov <jcmvbkbc@gmail.com>
-
--- 
-Thanks.
--- Max
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
