@@ -2,72 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A07A159E0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 01:35:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89CD1159E11
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 01:37:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbgBLAfs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 19:35:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38830 "EHLO mail.kernel.org"
+        id S1728112AbgBLAho (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 19:37:44 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:49028 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728041AbgBLAfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 19:35:48 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8257C2082F;
-        Wed, 12 Feb 2020 00:35:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581467747;
-        bh=O3iLdjra2rXeebyKBMhajToC7LRorp8lLz2ui6hj++0=;
-        h=To:Cc:From:Subject:Date:From;
-        b=lwD3fjeqhBDoQuf1aHwDSaPQCGgScSjoSinHwrFf26haQ94IC8L1AK1wq2W6lo64B
-         rTj4K2o4bbpZ+z5HEWXQYE66a4LQNHMqsufLuZMkGwEchZyLk3UZOTAPopVeql6jsa
-         pqmo6xFfLYIazxktHzIOzP4vFKsQo3hwHukTG7zI=
-To:     linux-kselftest@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dmitry Safonov <dima@arista.com>,
-        Aleksa Sarai <cyphar@cyphar.com>
-Cc:     shuah <shuah@kernel.org>
-From:   shuah <shuah@kernel.org>
-Subject: Linux 5.6-rc1 kselftest build failures
-Message-ID: <ff16537e-febc-1b98-0cf8-1aa23e0c29b0@kernel.org>
-Date:   Tue, 11 Feb 2020 17:35:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1728057AbgBLAhn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 19:37:43 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9E5881C6A9B;
+        Wed, 12 Feb 2020 01:37:41 +0100 (CET)
+Received: from smtp.na-rdc02.nxp.com (usphx01srsp001v.us-phx01.nxp.com [134.27.49.11])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 628A41A00C8;
+        Wed, 12 Feb 2020 01:37:41 +0100 (CET)
+Received: from right.am.freescale.net (right.am.freescale.net [10.81.116.70])
+        by usphx01srsp001v.us-phx01.nxp.com (Postfix) with ESMTP id 8E69B40CB6;
+        Tue, 11 Feb 2020 17:37:40 -0700 (MST)
+From:   Li Yang <leoyang.li@nxp.com>
+To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Li Yang <leoyang.li@nxp.com>, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] iommu/arm-smmu: fix the module name to be consistent with older kernel
+Date:   Tue, 11 Feb 2020 18:37:20 -0600
+Message-Id: <1581467841-25397-1-git-send-email-leoyang.li@nxp.com>
+X-Mailer: git-send-email 1.9.0
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following tests fail to build on x86_64
+Commit cd221bd24ff5 ("iommu/arm-smmu: Allow building as a module")
+introduced a side effect that changed the module name from arm-smmu to
+arm-smmu-mod.  This breaks the users of kernel parameters for the driver
+(e.g. arm-smmu.disable_bypass).  This patch changes the module name back
+to be consistent.
 
-openat2:
+Signed-off-by: Li Yang <leoyang.li@nxp.com>
+---
+ drivers/iommu/Makefile                          | 4 ++--
+ drivers/iommu/{arm-smmu.c => arm-smmu-common.c} | 0
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+ rename drivers/iommu/{arm-smmu.c => arm-smmu-common.c} (100%)
 
-tools/testing/selftests/openat2'
-gcc -Wall -O2 -g -fsanitize=address -fsanitize=undefined 
-openat2_test.c helpers.c  -o tools/testing/selftests/openat2/openat2_test
-In file included from /usr/include/fcntl.h:301,
-                  from helpers.c:9:
-In function ‘openat’,
-     inlined from ‘touchat’ at helpers.c:49:11:
-/usr/include/x86_64-linux-gnu/bits/fcntl2.h:126:4: error: call to 
-‘__openat_missing_mode’ declared with attribute error: openat with 
-O_CREAT or O_TMPFILE in third argument needs 4 arguments
-   126 |    __openat_missing_mode ();
-       |    ^~~~~~~~~~~~~~~~~~~~~~~~
+diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+index 2104fb8afc06..f39e82e68640 100644
+--- a/drivers/iommu/Makefile
++++ b/drivers/iommu/Makefile
+@@ -14,8 +14,8 @@ obj-$(CONFIG_MSM_IOMMU) += msm_iommu.o
+ obj-$(CONFIG_AMD_IOMMU) += amd_iommu.o amd_iommu_init.o amd_iommu_quirks.o
+ obj-$(CONFIG_AMD_IOMMU_DEBUGFS) += amd_iommu_debugfs.o
+ obj-$(CONFIG_AMD_IOMMU_V2) += amd_iommu_v2.o
+-obj-$(CONFIG_ARM_SMMU) += arm-smmu-mod.o
+-arm-smmu-mod-objs += arm-smmu.o arm-smmu-impl.o arm-smmu-qcom.o
++obj-$(CONFIG_ARM_SMMU) += arm-smmu.o
++arm-smmu-objs := arm-smmu-common.o arm-smmu-impl.o arm-smmu-qcom.o
+ obj-$(CONFIG_ARM_SMMU_V3) += arm-smmu-v3.o
+ obj-$(CONFIG_DMAR_TABLE) += dmar.o
+ obj-$(CONFIG_INTEL_IOMMU) += intel-iommu.o intel-pasid.o
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu-common.c
+similarity index 100%
+rename from drivers/iommu/arm-smmu.c
+rename to drivers/iommu/arm-smmu-common.c
+-- 
+2.17.1
 
-timerns:
-
-tools/testing/selftests/timens'
-gcc -Wall -Werror -pthread  -lrt -ldl  timens.c  -o 
-tools/testing/selftests/timens/timens
-/usr/bin/ld: /tmp/ccGy5CST.o: in function `check_config_posix_timers':
-timens.c:(.text+0x65a): undefined reference to `timer_create'
-collect2: error: ld returned 1 exit status
-
-thanks,
--- Shuah
