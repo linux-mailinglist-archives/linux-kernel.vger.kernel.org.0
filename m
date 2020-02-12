@@ -2,70 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A00815B429
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 23:56:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8718715B437
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 00:01:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729273AbgBLW4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 17:56:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42684 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728185AbgBLW4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 17:56:17 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729215AbgBLXAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 18:00:55 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47519 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727692AbgBLXAx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 18:00:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581548452;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=VWlt+bgXIf5/iv+Jhlc8cQtwPoqiZeX+qbSML/8mt+s=;
+        b=OqanHHKhfIvFlJgo4RmJi47bxvDgRunupB7gQo8ckCpV1GYgoBvCnHcBU5LlZ6ThrIK+xr
+        1lI1bCKny/PHg0VoN0JtrGVrOUfZU+TYmbosx2gtbn0rLhYER9hF4x8mNSTVEQv0C3PwJu
+        d3wgHy5yhu9ogOceD9a0urL8W8c45Ig=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-432-PPQ5D6jdPdewmS9mXXbLnA-1; Wed, 12 Feb 2020 18:00:50 -0500
+X-MC-Unique: PPQ5D6jdPdewmS9mXXbLnA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FF592173E;
-        Wed, 12 Feb 2020 22:56:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581548176;
-        bh=mTJZ+UJfMT24SAW6HUVPaH/0W+EjuQ/Qksp9vL1UmDs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=gnL3Rr/nGogf72hp1kDcNGDR6W17loTSy71/2IsyhZorCKrzy6xx2QvuBuJiq2r7o
-         ILzvJR6yiF0KRWR9fMRHfO/s2zGrRNBjj5gpZwyOQPcLnLzEiC9Z8O60UM1Fp2U7bZ
-         GYy2uyMjkYdTALoZiyWGZL7umma+8n/WuM5iRON4=
-Date:   Wed, 12 Feb 2020 14:56:15 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     Wen Yang <wenyang@linux.alibaba.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Xunlei Pang <xlpang@linux.alibaba.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/slub: Detach node lock from counting free objects
-Message-Id: <20200212145615.3518e29ec90d580817c14dc8@linux-foundation.org>
-In-Reply-To: <alpine.DEB.2.21.2002082138070.21534@www.lameter.com>
-References: <20200201031502.92218-1-wenyang@linux.alibaba.com>
-        <5373ce28-c369-4e40-11dd-b269e4d2cb24@linux.alibaba.com>
-        <alpine.DEB.2.21.2002082138070.21534@www.lameter.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 60DEF107ACCC;
+        Wed, 12 Feb 2020 23:00:48 +0000 (UTC)
+Received: from Ruby.bss.redhat.com (dhcp-10-20-1-196.bss.redhat.com [10.20.1.196])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B84A5C109;
+        Wed, 12 Feb 2020 23:00:46 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     nouveau@lists.freedesktop.org
+Cc:     "Daniel Vetter" <daniel@ffwll.ch>,
+        "Mikita Lipski" <mikita.lipski@amd.com>,
+        "David Airlie" <airlied@linux.ie>, "Takashi Iwai" <tiwai@suse.de>,
+        "Manasi Navare" <manasi.d.navare@intel.com>,
+        "Sean Paul" <seanpaul@chromium.org>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, "Ben Skeggs" <bskeggs@redhat.com>,
+        "Lyude Paul" <lyude@redhat.com>,
+        "Ilia Mirkin" <imirkin@alum.mit.edu>,
+        "Dave Airlie" <airlied@redhat.com>,
+        "Alex Deucher" <alexander.deucher@amd.com>
+Subject: [PATCH 0/4] drm/nouveau: DP interlace fixes
+Date:   Wed, 12 Feb 2020 18:00:34 -0500
+Message-Id: <20200212230043.170477-1-lyude@redhat.com>
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 8 Feb 2020 21:41:49 +0000 (UTC) Christopher Lameter <cl@linux.com> wrote:
+Currently, nouveau doesn't actually bother to try probing whether or not
+it can actually handle interlaced modes over DisplayPort. As a result,
+on volta and later we'll end up trying to set an interlaced mode even
+when it's not supported and cause the front end for the display engine
+to hang.
 
-> On Sat, 8 Feb 2020, Wen Yang wrote:
-> 
-> > I would greatly appreciate it if you kindly give me some feedback on this
-> > patch.
-> 
-> I think the measure is too severe given its use and the general impact on code.
+So, let's teach nouveau to reject interlaced modes on hardware that
+can't actually handle it. Additionally for MST, since we accomplish this
+by simply reusing more of the SST mode validation we also get (some)
+basic bw validation for modes we detect on MST connectors completely for
+free.
 
-Severe in what way?  It's really a quite simple change, although quite
-a few edits were needed.
+Lyude Paul (4):
+  drm/nouveau/kms/nv50-: Probe SOR caps for DP interlacing support
+  drm/nouveau/kms/gv100-: Add support for interlaced modes
+  drm/nouveau/kms/nv50-: Move 8BPC limit for MST into
+    nv50_mstc_get_modes()
+  drm/nouveau/kms/nv50-: Share DP SST mode_valid() handling with MST
 
-> Maybe avoid taking the lock or reducing the time a lock is taken when reading /proc/slabinfo is
-> the best approach?
-> 
-> Also you could cache the value in the userspace application? Why is this
-> value read continually?
+ drivers/gpu/drm/nouveau/dispnv50/disp.c     | 55 ++++++++++++++-------
+ drivers/gpu/drm/nouveau/dispnv50/headc37d.c |  5 +-
+ drivers/gpu/drm/nouveau/dispnv50/headc57d.c |  5 +-
+ drivers/gpu/drm/nouveau/nouveau_connector.c | 43 ++++++++++------
+ drivers/gpu/drm/nouveau/nouveau_connector.h |  5 ++
+ drivers/gpu/drm/nouveau/nouveau_dp.c        | 27 ++++++++++
+ drivers/gpu/drm/nouveau/nouveau_encoder.h   |  7 +++
+ 7 files changed, 108 insertions(+), 39 deletions(-)
 
-: reading "/proc/slabinfo" can possibly block the slab allocation on
-: another CPU for a while, 200ms in extreme cases
+--=20
+2.24.1
 
-That was bad of us.  It would be good to stop doing this.
