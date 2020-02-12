@@ -2,219 +2,363 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D9F715A7BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 12:22:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07E8515A7D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 12:27:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbgBLLWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 06:22:13 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:51802 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728315AbgBLLWL (ORCPT
+        id S1728021AbgBLL1A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 06:27:00 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:23386 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726351AbgBLL1A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 06:22:11 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01CBLvGN014361;
-        Wed, 12 Feb 2020 05:21:57 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581506517;
-        bh=LAHbe1ep18MRMLKppKExizKw+8T2sbESWHHKJMLTnvs=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=sCaAqDj2+59ftqzv0t66V8M3cHSXhnCnXnMfmhnOhOD0SnTx2ejUnoePSJ87Z7AcV
-         66MqYyfeLQhDS4NFUOfzjkHDJqKgjI8I2GSgskNDzIWjL2l/VSMfqUi5/4QCdkIQmp
-         ziXGgYyxU+ZUdb2stNJoc7hZc8yEfLb75gXqVcSo=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01CBLv5F113060
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Feb 2020 05:21:57 -0600
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 12
- Feb 2020 05:21:57 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 12 Feb 2020 05:21:57 -0600
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01CBLc5b049841;
-        Wed, 12 Feb 2020 05:21:54 -0600
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Andrew Murray <amurray@thegoodpenguin.co.uk>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Athani Nadeem Ladkhan <nadeem@cadence.com>,
-        Tom Joseph <tjoseph@cadence.com>
-CC:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH v2 5/5] PCI: endpoint: Assign function number for each PF in EPC core
-Date:   Wed, 12 Feb 2020 16:55:14 +0530
-Message-ID: <20200212112514.2000-6-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200212112514.2000-1-kishon@ti.com>
-References: <20200212112514.2000-1-kishon@ti.com>
+        Wed, 12 Feb 2020 06:27:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581506818;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sOBpuSxMPuJUbkuLPHqFKoJm4N6xAPNq3p7qQaPewdE=;
+        b=OMbat9aQ4/P8y8ZUjk8B/H8130y1qCewJXuCQ5eYiAhiTuwwZHxo2IJG7uw5QHSYznPJ2s
+        Wnj2T41/XrnmapVwhmC/e9zAHjTqvkllqA8TljYW2x90OJ2NMpxmoKWbhgXJwNRtl1Xj88
+        AAqA+9ItwCv8fwb0sB31xa0LYIMvkI0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-198-xuJ5a9kFN6SbgiyplfDCAQ-1; Wed, 12 Feb 2020 06:26:55 -0500
+X-MC-Unique: xuJ5a9kFN6SbgiyplfDCAQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 10F768017CC;
+        Wed, 12 Feb 2020 11:26:54 +0000 (UTC)
+Received: from localhost (ovpn-12-47.pek2.redhat.com [10.72.12.47])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4A5F39006B;
+        Wed, 12 Feb 2020 11:26:49 +0000 (UTC)
+Date:   Wed, 12 Feb 2020 19:26:41 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, dan.j.williams@intel.com,
+        richardw.yang@linux.intel.com
+Subject: Re: [PATCH 3/7] mm/sparse.c: only use subsection map in VMEMMAP case
+Message-ID: <20200212112641.GJ26758@MiWiFi-R3L-srv>
+References: <20200209104826.3385-1-bhe@redhat.com>
+ <20200209104826.3385-4-bhe@redhat.com>
+ <be1625c4-6875-cfba-9894-f9c148cfe4e7@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <be1625c4-6875-cfba-9894-f9c148cfe4e7@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PCIe endpoint core relies on the drivers that invoke the
-pci_epc_add_epf() API to allocate and assign a function number
-to each physical function (PF). Since endpoint function device can
-be created by multiple mechanisms (configfs, devicetree, etc..),
-allowing each of these mechanisms to assign a function number
-would result in mutliple endpoint function devices having the
-same function number. In order to avoid this, let EPC core assign
-a function number to the endpoint device.
+On 02/11/20 at 03:43pm, David Hildenbrand wrote:
+> On 09.02.20 11:48, Baoquan He wrote:
+> > Currently, subsection map is used when SPARSEMEM is enabled, including
+> > VMEMMAP case and !VMEMMAP case. However, subsection hotplug is not
+> > supported at all in SPARSEMEM|!VMEMMAP case, subsection map is unnecessary
+> > and misleading. Let's adjust code to only allow subsection map being
+> > used in SPARSEMEM|VMEMMAP case.
+> > 
+> > Signed-off-by: Baoquan He <bhe@redhat.com>
+> > ---
+> >  include/linux/mmzone.h |   2 +
+> >  mm/sparse.c            | 231 ++++++++++++++++++++++-------------------
+> >  2 files changed, 124 insertions(+), 109 deletions(-)
+> > 
+> > diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> > index 462f6873905a..fc0de3a9a51e 100644
+> > --- a/include/linux/mmzone.h
+> > +++ b/include/linux/mmzone.h
+> > @@ -1185,7 +1185,9 @@ static inline unsigned long section_nr_to_pfn(unsigned long sec)
+> >  #define SUBSECTION_ALIGN_DOWN(pfn) ((pfn) & PAGE_SUBSECTION_MASK)
+> >  
+> >  struct mem_section_usage {
+> > +#ifdef CONFIG_SPARSEMEM_VMEMMAP
+> >  	DECLARE_BITMAP(subsection_map, SUBSECTIONS_PER_SECTION);
+> > +#endif
+> >  	/* See declaration of similar field in struct zone */
+> >  	unsigned long pageblock_flags[0];
+> >  };
+> > diff --git a/mm/sparse.c b/mm/sparse.c
+> > index 696f6b9f706e..cf55d272d0a9 100644
+> > --- a/mm/sparse.c
+> > +++ b/mm/sparse.c
+> > @@ -209,41 +209,6 @@ static inline unsigned long first_present_section_nr(void)
+> >  	return next_present_section_nr(-1);
+> >  }
+> >  
+> > -static void subsection_mask_set(unsigned long *map, unsigned long pfn,
+> > -		unsigned long nr_pages)
+> > -{
+> > -	int idx = subsection_map_index(pfn);
+> > -	int end = subsection_map_index(pfn + nr_pages - 1);
+> > -
+> > -	bitmap_set(map, idx, end - idx + 1);
+> > -}
+> > -
+> > -void __init subsection_map_init(unsigned long pfn, unsigned long nr_pages)
+> > -{
+> > -	int end_sec = pfn_to_section_nr(pfn + nr_pages - 1);
+> > -	unsigned long nr, start_sec = pfn_to_section_nr(pfn);
+> > -
+> > -	if (!nr_pages)
+> > -		return;
+> > -
+> > -	for (nr = start_sec; nr <= end_sec; nr++) {
+> > -		struct mem_section *ms;
+> > -		unsigned long pfns;
+> > -
+> > -		pfns = min(nr_pages, PAGES_PER_SECTION
+> > -				- (pfn & ~PAGE_SECTION_MASK));
+> > -		ms = __nr_to_section(nr);
+> > -		subsection_mask_set(ms->usage->subsection_map, pfn, pfns);
+> > -
+> > -		pr_debug("%s: sec: %lu pfns: %lu set(%d, %d)\n", __func__, nr,
+> > -				pfns, subsection_map_index(pfn),
+> > -				subsection_map_index(pfn + pfns - 1));
+> > -
+> > -		pfn += pfns;
+> > -		nr_pages -= pfns;
+> > -	}
+> > -}
+> > -
+> >  /* Record a memory area against a node. */
+> >  void __init memory_present(int nid, unsigned long start, unsigned long end)
+> >  {
+> > @@ -432,12 +397,134 @@ static unsigned long __init section_map_size(void)
+> >  	return ALIGN(sizeof(struct page) * PAGES_PER_SECTION, PMD_SIZE);
+> >  }
+> >  
+> > +static void subsection_mask_set(unsigned long *map, unsigned long pfn,
+> > +		unsigned long nr_pages)
+> > +{
+> > +	int idx = subsection_map_index(pfn);
+> > +	int end = subsection_map_index(pfn + nr_pages - 1);
+> > +
+> > +	bitmap_set(map, idx, end - idx + 1);
+> > +}
+> > +
+> > +void __init subsection_map_init(unsigned long pfn, unsigned long nr_pages)
+> > +{
+> > +	int end_sec = pfn_to_section_nr(pfn + nr_pages - 1);
+> > +	unsigned long nr, start_sec = pfn_to_section_nr(pfn);
+> > +
+> > +	if (!nr_pages)
+> > +		return;
+> > +
+> > +	for (nr = start_sec; nr <= end_sec; nr++) {
+> > +		struct mem_section *ms;
+> > +		unsigned long pfns;
+> > +
+> > +		pfns = min(nr_pages, PAGES_PER_SECTION
+> > +				- (pfn & ~PAGE_SECTION_MASK));
+> > +		ms = __nr_to_section(nr);
+> > +		subsection_mask_set(ms->usage->subsection_map, pfn, pfns);
+> > +
+> > +		pr_debug("%s: sec: %lu pfns: %lu set(%d, %d)\n", __func__, nr,
+> > +				pfns, subsection_map_index(pfn),
+> > +				subsection_map_index(pfn + pfns - 1));
+> > +
+> > +		pfn += pfns;
+> > +		nr_pages -= pfns;
+> > +	}
+> > +}
+> > +
+> > +/**
+> > + * clear_subsection_map - Clear subsection map of one memory region
+> > + *
+> > + * @pfn - start pfn of the memory range
+> > + * @nr_pages - number of pfns to add in the region
+> > + *
+> > + * This is only intended for hotplug, and clear the related subsection
+> > + * map inside one section.
+> > + *
+> > + * Return:
+> > + * * -EINVAL	- Section already deactived.
+> > + * * 0		- Subsection map is emptied.
+> > + * * 1		- Subsection map is not empty.
+> > + */
+> > +static int clear_subsection_map(unsigned long pfn, unsigned long nr_pages)
+> > +{
+> > +	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
+> > +	DECLARE_BITMAP(tmp, SUBSECTIONS_PER_SECTION) = { 0 };
+> > +	struct mem_section *ms = __pfn_to_section(pfn);
+> > +	unsigned long *subsection_map = ms->usage
+> > +		? &ms->usage->subsection_map[0] : NULL;
+> > +
+> > +	subsection_mask_set(map, pfn, nr_pages);
+> > +	if (subsection_map)
+> > +		bitmap_and(tmp, map, subsection_map, SUBSECTIONS_PER_SECTION);
+> > +
+> > +	if (WARN(!subsection_map || !bitmap_equal(tmp, map, SUBSECTIONS_PER_SECTION),
+> > +				"section already deactivated (%#lx + %ld)\n",
+> > +				pfn, nr_pages))
+> > +		return -EINVAL;
+> > +
+> > +	bitmap_xor(subsection_map, map, subsection_map, SUBSECTIONS_PER_SECTION);
+> > +
+> > +	if (bitmap_empty(subsection_map, SUBSECTIONS_PER_SECTION))
+> > +		return 0;
+> > +
+> > +	return 1;
+> > +}
+> > +
+> > +/**
+> > + * fill_subsection_map - fill subsection map of a memory region
+> > + * @pfn - start pfn of the memory range
+> > + * @nr_pages - number of pfns to add in the region
+> > + *
+> > + * This clears the related subsection map inside one section, and only
+> > + * intended for hotplug.
+> > + *
+> > + * Return:
+> > + * * 0		- On success.
+> > + * * -EINVAL	- Invalid memory region.
+> > + * * -EEXIST	- Subsection map has been set.
+> > + */
+> > +static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
+> > +{
+> > +	struct mem_section *ms = __pfn_to_section(pfn);
+> > +	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
+> > +	unsigned long *subsection_map;
+> > +	int rc = 0;
+> > +
+> > +	subsection_mask_set(map, pfn, nr_pages);
+> > +
+> > +	subsection_map = &ms->usage->subsection_map[0];
+> > +
+> > +	if (bitmap_empty(map, SUBSECTIONS_PER_SECTION))
+> > +		rc = -EINVAL;
+> > +	else if (bitmap_intersects(map, subsection_map, SUBSECTIONS_PER_SECTION))
+> > +		rc = -EEXIST;
+> > +	else
+> > +		bitmap_or(subsection_map, map, subsection_map,
+> > +				SUBSECTIONS_PER_SECTION);
+> > +
+> > +	return rc;
+> > +}
+> > +
+> >  #else
+> >  static unsigned long __init section_map_size(void)
+> >  {
+> >  	return PAGE_ALIGN(sizeof(struct page) * PAGES_PER_SECTION);
+> >  }
+> >  
+> > +void __init subsection_map_init(unsigned long pfn, unsigned long nr_pages)
+> > +{
+> > +}
+> > +
+> > +static int clear_subsection_map(unsigned long pfn, unsigned long nr_pages)
+> > +{
+> > +	return 0;
+> > +}
+> > +static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> >  struct page __init *__populate_section_memmap(unsigned long pfn,
+> >  		unsigned long nr_pages, int nid, struct vmem_altmap *altmap)
+> >  {
+> > @@ -726,45 +813,6 @@ static void free_map_bootmem(struct page *memmap)
+> >  }
+> >  #endif /* CONFIG_SPARSEMEM_VMEMMAP */
+> >  
+> > -/**
+> > - * clear_subsection_map - Clear subsection map of one memory region
+> > - *
+> > - * @pfn - start pfn of the memory range
+> > - * @nr_pages - number of pfns to add in the region
+> > - *
+> > - * This is only intended for hotplug, and clear the related subsection
+> > - * map inside one section.
+> > - *
+> > - * Return:
+> > - * * -EINVAL	- Section already deactived.
+> > - * * 0		- Subsection map is emptied.
+> > - * * 1		- Subsection map is not empty.
+> > - */
+> > -static int clear_subsection_map(unsigned long pfn, unsigned long nr_pages)
+> > -{
+> > -	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
+> > -	DECLARE_BITMAP(tmp, SUBSECTIONS_PER_SECTION) = { 0 };
+> > -	struct mem_section *ms = __pfn_to_section(pfn);
+> > -	unsigned long *subsection_map = ms->usage
+> > -		? &ms->usage->subsection_map[0] : NULL;
+> > -
+> > -	subsection_mask_set(map, pfn, nr_pages);
+> > -	if (subsection_map)
+> > -		bitmap_and(tmp, map, subsection_map, SUBSECTIONS_PER_SECTION);
+> > -
+> > -	if (WARN(!subsection_map || !bitmap_equal(tmp, map, SUBSECTIONS_PER_SECTION),
+> > -				"section already deactivated (%#lx + %ld)\n",
+> > -				pfn, nr_pages))
+> > -		return -EINVAL;
+> > -
+> > -	bitmap_xor(subsection_map, map, subsection_map, SUBSECTIONS_PER_SECTION);
+> > -
+> > -	if (bitmap_empty(subsection_map, SUBSECTIONS_PER_SECTION))
+> > -		return 0;
+> > -
+> > -	return 1;
+> > -}
+> > -
+> >  static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+> >  		struct vmem_altmap *altmap)
+> >  {
+> > @@ -818,41 +866,6 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+> >  		depopulate_section_memmap(pfn, nr_pages, altmap);
+> >  }
+> >  
+> > -/**
+> > - * fill_subsection_map - fill subsection map of a memory region
+> > - * @pfn - start pfn of the memory range
+> > - * @nr_pages - number of pfns to add in the region
+> > - *
+> > - * This clears the related subsection map inside one section, and only
+> > - * intended for hotplug.
+> > - *
+> > - * Return:
+> > - * * 0		- On success.
+> > - * * -EINVAL	- Invalid memory region.
+> > - * * -EEXIST	- Subsection map has been set.
+> > - */
+> > -static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
+> > -{
+> > -	struct mem_section *ms = __pfn_to_section(pfn);
+> > -	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
+> > -	unsigned long *subsection_map;
+> > -	int rc = 0;
+> > -
+> > -	subsection_mask_set(map, pfn, nr_pages);
+> > -
+> > -	subsection_map = &ms->usage->subsection_map[0];
+> > -
+> > -	if (bitmap_empty(map, SUBSECTIONS_PER_SECTION))
+> > -		rc = -EINVAL;
+> > -	else if (bitmap_intersects(map, subsection_map, SUBSECTIONS_PER_SECTION))
+> > -		rc = -EEXIST;
+> > -	else
+> > -		bitmap_or(subsection_map, map, subsection_map,
+> > -				SUBSECTIONS_PER_SECTION);
+> > -
+> > -	return rc;
+> > -}
+> > -
+> >  static struct page * __meminit section_activate(int nid, unsigned long pfn,
+> >  		unsigned long nr_pages, struct vmem_altmap *altmap)
+> >  {
+> > 
+> 
+> I'd prefer adding more ifdefs to avoid heavy code movement. Would make
+> it much easier to review :)
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- drivers/pci/endpoint/pci-ep-cfs.c   | 27 +++++----------------------
- drivers/pci/endpoint/pci-epc-core.c | 26 ++++++++++++++++++++++----
- include/linux/pci-epc.h             |  2 ++
- 3 files changed, 29 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
-index d1288a0bd530..e7e8367eead1 100644
---- a/drivers/pci/endpoint/pci-ep-cfs.c
-+++ b/drivers/pci/endpoint/pci-ep-cfs.c
-@@ -29,7 +29,6 @@ struct pci_epc_group {
- 	struct config_group group;
- 	struct pci_epc *epc;
- 	bool start;
--	unsigned long function_num_map;
- };
- 
- static inline struct pci_epf_group *to_pci_epf_group(struct config_item *item)
-@@ -89,37 +88,22 @@ static int pci_epc_epf_link(struct config_item *epc_item,
- 			    struct config_item *epf_item)
- {
- 	int ret;
--	u32 func_no = 0;
- 	struct pci_epf_group *epf_group = to_pci_epf_group(epf_item);
- 	struct pci_epc_group *epc_group = to_pci_epc_group(epc_item);
- 	struct pci_epc *epc = epc_group->epc;
- 	struct pci_epf *epf = epf_group->epf;
- 
--	func_no = find_first_zero_bit(&epc_group->function_num_map,
--				      BITS_PER_LONG);
--	if (func_no >= BITS_PER_LONG)
--		return -EINVAL;
--
--	set_bit(func_no, &epc_group->function_num_map);
--	epf->func_no = func_no;
--
- 	ret = pci_epc_add_epf(epc, epf);
- 	if (ret)
--		goto err_add_epf;
-+		return ret;
- 
- 	ret = pci_epf_bind(epf);
--	if (ret)
--		goto err_epf_bind;
-+	if (ret) {
-+		pci_epc_remove_epf(epc, epf);
-+		return ret;
-+	}
- 
- 	return 0;
--
--err_epf_bind:
--	pci_epc_remove_epf(epc, epf);
--
--err_add_epf:
--	clear_bit(func_no, &epc_group->function_num_map);
--
--	return ret;
- }
- 
- static void pci_epc_epf_unlink(struct config_item *epc_item,
-@@ -134,7 +118,6 @@ static void pci_epc_epf_unlink(struct config_item *epc_item,
- 
- 	epc = epc_group->epc;
- 	epf = epf_group->epf;
--	clear_bit(epf->func_no, &epc_group->function_num_map);
- 	pci_epf_unbind(epf);
- 	pci_epc_remove_epf(epc, epf);
- }
-diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-index e51a12ed85bb..dc1c673534e0 100644
---- a/drivers/pci/endpoint/pci-epc-core.c
-+++ b/drivers/pci/endpoint/pci-epc-core.c
-@@ -471,22 +471,39 @@ EXPORT_SYMBOL_GPL(pci_epc_write_header);
-  */
- int pci_epc_add_epf(struct pci_epc *epc, struct pci_epf *epf)
- {
-+	u32 func_no;
-+	int ret = 0;
-+
- 	if (epf->epc)
- 		return -EBUSY;
- 
- 	if (IS_ERR(epc))
- 		return -EINVAL;
- 
--	if (epf->func_no > epc->max_functions - 1)
--		return -EINVAL;
-+	mutex_lock(&epc->lock);
-+	func_no = find_first_zero_bit(&epc->function_num_map,
-+				      BITS_PER_LONG);
-+	if (func_no >= BITS_PER_LONG) {
-+		ret = -EINVAL;
-+		goto ret;
-+	}
-+
-+	if (func_no > epc->max_functions - 1) {
-+		dev_err(&epc->dev, "Exceeding max supported Function Number\n");
-+		ret = -EINVAL;
-+		goto ret;
-+	}
- 
-+	set_bit(func_no, &epc->function_num_map);
-+	epf->func_no = func_no;
- 	epf->epc = epc;
- 
--	mutex_lock(&epc->lock);
- 	list_add_tail(&epf->list, &epc->pci_epf);
-+
-+ret:
- 	mutex_unlock(&epc->lock);
- 
--	return 0;
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(pci_epc_add_epf);
- 
-@@ -503,6 +520,7 @@ void pci_epc_remove_epf(struct pci_epc *epc, struct pci_epf *epf)
- 		return;
- 
- 	mutex_lock(&epc->lock);
-+	clear_bit(epf->func_no, &epc->function_num_map);
- 	list_del(&epf->list);
- 	epf->epc = NULL;
- 	mutex_unlock(&epc->lock);
-diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
-index 4e3e527c49d1..ccaf6e3fa931 100644
---- a/include/linux/pci-epc.h
-+++ b/include/linux/pci-epc.h
-@@ -92,6 +92,7 @@ struct pci_epc_mem {
-  * @max_functions: max number of functions that can be configured in this EPC
-  * @group: configfs group representing the PCI EPC device
-  * @lock: mutex to protect pci_epc ops
-+ * @function_num_map: bitmap to manage physical function number
-  * @notifier: used to notify EPF of any EPC events (like linkup)
-  */
- struct pci_epc {
-@@ -103,6 +104,7 @@ struct pci_epc {
- 	struct config_group		*group;
- 	/* mutex to protect against concurrent access of EP controller */
- 	struct mutex			lock;
-+	unsigned long			function_num_map;
- 	struct atomic_notifier_head	notifier;
- };
- 
--- 
-2.17.1
+OK, I did it in the first place. Later I think putting all subsectin
+related handling into one place makes code look better. Now I understand
+it may make patch format messy. I will adjust the place to make
+reviewing easier. Thanks for your great suggestion.
 
