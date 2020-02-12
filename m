@@ -2,95 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2161315A36A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:38:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A52F615A3B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:46:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728516AbgBLIiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 03:38:23 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:35611 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728428AbgBLIiW (ORCPT
+        id S1728823AbgBLIqi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 03:46:38 -0500
+Received: from esa2.mentor.iphmx.com ([68.232.141.98]:34515 "EHLO
+        esa2.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728642AbgBLIqh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 03:38:22 -0500
-Received: from mail-qk1-f182.google.com ([209.85.222.182]) by
- mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MEmIl-1jGJS32slH-00GJ5u for <linux-kernel@vger.kernel.org>; Wed, 12 Feb
- 2020 09:38:20 +0100
-Received: by mail-qk1-f182.google.com with SMTP id a2so1241151qko.12
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:38:20 -0800 (PST)
-X-Gm-Message-State: APjAAAWOKBX2xd7Rs1Ln4N24t3Nh/o/a/jQXU8fBUsqFyLsCk9smDCmd
-        yNi3/iy3ZBn59MoY5rEncyKjvhmnAHbCTzrU3T0=
-X-Google-Smtp-Source: APXvYqyYk7YcrJsuGQROcM1Q+7Sr79yC/wr0DfRbtSl7Fh7agtFK3thWNqlFOqrqSc684PPKwzGxufZobo2gdBgTBY4=
-X-Received: by 2002:a05:620a:1530:: with SMTP id n16mr6477563qkk.394.1581496699586;
- Wed, 12 Feb 2020 00:38:19 -0800 (PST)
+        Wed, 12 Feb 2020 03:46:37 -0500
+IronPort-SDR: 2TaUWfGz159jBrIxLvkvbG003RsTsfUQdEWkDyCfQ3Quvp2igP1+epXJpHTxq5NeluR5o/Tf4U
+ QDAoJYl9PeXp/pPycO9PSW0MQWyxDpT0BudQj/KT2MOT6cCqhAgrHWoCPbNLzp8Hg5Ud7JEl+/
+ hijxypV/Z6O5Tvg1pAu3oVkqwRKoOYpupBOnaccBfTutVt3Sgl4ufwzA9VHr2K5v03Gc6k2vkw
+ dao+oSKrhDMQ993IkSJs143LMHyTkVBmpTdGnAA6rmu6OaSPFDVCOBXN+8+AVA2mNvKWaAnt9j
+ /cU=
+X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
+   d="scan'208";a="45686076"
+Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
+  by esa2.mentor.iphmx.com with ESMTP; 12 Feb 2020 00:39:30 -0800
+IronPort-SDR: pQpryPK47i03139lAwDnAblCiPUOtB7ZZx0CRFiUUCN9ujhFnqVvZg7adoMOdRnBu06nFofL4Q
+ 1CzXqBTB//uCB/5PTkHxvAOg7P9bZQePAT3/bEZTcLM55HQTYYvwVASaVtFKxCzKjZK7TyYC2N
+ qU1c6GCFkf2jqwOOrvvJ9tLMSanB3r6lLqyBkT3wu6p41V07N17k3LzGFghJsmlu7QslBjA+K/
+ oBWNTssnX0pYrlHZOIfKLCaTwAwdVoWUbK49202YQw4UmgAbm5RJfmvZS9NVaIZE8LoUZpvLZF
+ rak=
+Subject: Re: [PATCH v6 24/48] Input: atmel_mxt_ts - make bootloader interrupt
+ driven
+To:     Bartosz Szczepanek <bsz@semihalf.com>, <nick.dyer@itdev.co.uk>
+CC:     <Andrew_Gabbasov@mentor.com>, <benjamin.tissoires@redhat.com>,
+        <dmitry.torokhov@gmail.com>, <erosca@de.adit-jv.com>,
+        <jikos@kernel.org>, <linux-input@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <nick@shmanahar.org>,
+        <rydberg@bitmath.org>, <levinale@google.com>, <rad@semihalf.com>
+References: <20191122082402.18173-25-jiada_wang@mentor.com>
+ <20200127174127.25522-1-bsz@semihalf.com>
+From:   "Wang, Jiada" <jiada_wang@mentor.com>
+Message-ID: <884a9ce0-b6db-6716-e366-e4c8ed7b4910@mentor.com>
+Date:   Wed, 12 Feb 2020 17:39:07 +0900
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-References: <fe6868726b897fb7e89058d8e45985141260ed68.1581494174.git.michal.simek@xilinx.com>
-In-Reply-To: <fe6868726b897fb7e89058d8e45985141260ed68.1581494174.git.michal.simek@xilinx.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 12 Feb 2020 09:38:03 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a1kjK=fqJiPWPOG19pBEX+khAgVyMC-7AqT4BiH8dDn8g@mail.gmail.com>
-Message-ID: <CAK8P3a1kjK=fqJiPWPOG19pBEX+khAgVyMC-7AqT4BiH8dDn8g@mail.gmail.com>
-Subject: Re: [PATCH] microblaze: Fix unistd_32.h generation format
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Simek <monstr@monstr.eu>, git@xilinx.com,
-        Firoz Khan <firoz.khan@linaro.org>,
-        Stefan Asserhall <stefan.asserhall@xilinx.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:Exq0zEcR4E3c2SEm/Nkna68KFy5bEyX4AzqxeBlwWkcTRSVOu3i
- V1rDHe1HBjp+0xrLCImTSSlOZ3DapxX9h0HRc94ilYyx47YCtiIJ/OPol//mMwpYcHBgjxs
- O2NSheR4UZlWn4AUgJrkM0aFv6g42SjY+LxjE4eGXZeY/Aiq6BDqmeJbXc+MGRe41IvuM1d
- 0Ycb6XiP/3CdW8gd9v73w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:BJGm9oCgk18=:CVySYhE5RvWhSgvCttlRRb
- HE/PZWrFJmvpM8+Sm40s4Zf5sRnMZmig8JNR8EiZQ8YACyoDG8QKTlDjcfQ25IA8IMXeOlBMR
- OW2vvoy/e0PtBLz6XWofMkfVtkCrLoE2PzZ33xg9KdeOHjpi4fvToP6YRg6tpYxMgBvNWBE34
- LBxG3dukLhv0jYSZ+OiZDDQr7WNPKe/RfgCqDQIc/ifCdXwoUT1cXLwvEtK9ZDGHYt23N8QPd
- +b3rQC9WJygb3IMilVsrr8VMoIwvtPj/nr6Eusg6tQaZZ535DQ0QWlWuTWl2M9byXvrQ5iaMu
- gmsVz5SVBfARLppEOkahPWG0v+FnNXZETW3Jqo69Ajel26KUvQw9Vatkrtpf7Gewd1V9AJ0RW
- UEoAuJnzgaSuJSzV3zPB6eLpwYqjIuPBJQOZGz3I3d1Ea9wbzDJ4Vvxl0UycnBq66YzivVs9W
- jbNzmIQ8rkXZc5tDub3BlnhUYwgKDlbs30XXRqt6xsCPT0+AwGssE276lZewxK5MHJ/nDrnJ3
- GwTQbvqyJvb0aib7GHfjOw7QWj8tV056NTdEu/UfwNJd8DzLJKrZaYewInkO0xMdUz38Gdp1W
- 4w9DK2lLw7gq2KmIUDEBnzqUO0OrsyDayxNcchnNVpPXAFCL+QZZg/2cWJHbLtzcpT4qtN1qi
- kL+KgrGNlcEmtlEjZEnrI5mUSbIkB0vp71VGCDGiT/LMV2wRVPixsrmNKfAelYQlXNxH3+v38
- MSJnAPViDYDv62oQeBkrPRtZW0IpOLANdUtmwOdqo1HgmEXz4L79e+8MLXLFEShvHAiBfSacg
- V26c6zlGQct+h5awvM1tdlQHm5/yiGR+vAPdYaWdguUh/DkkIM=
+In-Reply-To: <20200127174127.25522-1-bsz@semihalf.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
+ svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 8:56 AM Michal Simek <michal.simek@xilinx.com> wrote:
->
-> Generated files are also checked by sparse that's why add newline
-> to remove sparse (C=1) warning:
-> ./arch/microblaze/include/generated/uapi/asm/unistd_32.h:438:45:
-> warning: no newline at end of file
->
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> Reviewed-by: Stefan Asserhall <stefan.asserhall@xilinx.com>
+Hello Bartosz
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+On 2020/01/28 2:41, Bartosz Szczepanek wrote:
+> Hi,
+> 
+> I've been testing this patchset on Chromebook equipped with Atmel touchscreen &
+> touchpad. In my setup, this particular patch seems to introduce a regression
+> on firmware update:
+> 
+>> localhost /sys/devices/pci0000:00/0000:00:15.0/i2c_designware.0/i2c-6/i2c-ATML0001:00 # echo maxtouch-ts.fw > update_fw
+>> bash: echo: write error: Remote I/O error
+> 
+> Kernel logs show that the reason is failed I2C transfer:
+> 
+>> [ 111.632131] atmel_mxt_ts i2c-ATML0001:00: Found bootloader addr:27 ID:21 version:4
+>> [ 111.637711] atmel_mxt_ts i2c-ATML0001:00: Unlocking bootloader
+>> [ 129.155091] atmel_mxt_ts i2c-ATML0001:00: Sent 1356 frames, 212224 bytes
+>> [ 129.263269] atmel_mxt_ts i2c-ATML0001:00: The firmware update succeeded
+>> [ 129.263952] atmel_mxt_ts i2c-ATML0001:00: __mxt_read_chunk: i2c transfer failed (-121)
+>> [ 129.265072] atmel_mxt_ts i2c-ATML0001:00: mxt_bootloader_read: i2c recv failed (-121)
+>> [ 129.265588] atmel_mxt_ts i2c-ATML0001:00: Trying alternate bootloader address
+>> [ 129.266375] atmel_mxt_ts i2c-ATML0001:00: mxt_bootloader_read: i2c recv failed (-121)
+> 
+> Surprisingly, only touchscreen device is affected. When I checked out to
+> 119e1b7e8481 ("Input: atmel_mxt_ts - refactor code to enter bootloader into
+> separate func") all worked fine. In between these commits I got some mixed
+> results, including timeout while waiting for completion:
+> 
+>> [ 190.006174] atmel_mxt_ts i2c-ATML0001:00: Found bootloader addr:27 ID:21 version:4
+>> [ 190.317819] atmel_mxt_ts i2c-ATML0001:00: Wait for completion timed out.
+>> [ 190.318267] atmel_mxt_ts i2c-ATML0001:00: Update wait error -110
+>> [ 190.319310] atmel_mxt_ts i2c-ATML0001:00: Unlocking bootloader
+>> [ 208.369825] atmel_mxt_ts i2c-ATML0001:00: Sent 1356 frames, 212224 bytes
+>> [ 208.536942] atmel_mxt_ts i2c-ATML0001:00: The firmware update succeeded
+>> [ 208.544835] atmel_mxt_ts i2c-ATML0001:00: Family: 164 Variant: 14 Firmware V2.3.AA Objects: 40
+>> [ 208.547623] atmel_mxt_ts i2c-ATML0001:00: Touchscreen size X4095Y2729
+> 
+> Some more details - the touchscreen device reports itself as:
+> 
+>> atmel_mxt_ts i2c-ATML0001:00: Family: 164 Variant: 14 Firmware V2.3.AA Objects: 40
+> 
+> Due to Chromebook limitations on kernel version, I'm running 4.19 kernel
+> with patches backported from master (so that atmel_mxt_ts is aligned between
+> master and 4.19). The platform is Samsung Chromebook Pro.
+> 
+I have found the root cause for the regression,
+will submit v7 patch-set shortly,
+if you could validate for the update,
+it will be very helpful
 
-The patch looks good, but if you don't mind respinning it, could respin
-it to do the same thing for all architectures at once? I see that  some
-already have it, but most don't.
-
-> ---
->
->  arch/microblaze/kernel/syscalls/syscallhdr.sh | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/microblaze/kernel/syscalls/syscallhdr.sh b/arch/microblaze/kernel/syscalls/syscallhdr.sh
-> index 2e9062a926a3..4f4238433644 100644
-> --- a/arch/microblaze/kernel/syscalls/syscallhdr.sh
-> +++ b/arch/microblaze/kernel/syscalls/syscallhdr.sh
-> @@ -33,4 +33,5 @@ grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
->         printf "#endif\n"
->         printf "\n"
->         printf "#endif /* %s */" "${fileguard}"
-> +       printf "\n"
->  ) > "$out"
-> --
-> 2.25.0
->
+thanks,
+Jiada
+> Best regards,
+> Bartosz
+> 
