@@ -2,61 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFE0815A370
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:40:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3FB215A371
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:40:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728508AbgBLIkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 03:40:04 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35104 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728370AbgBLIkE (ORCPT
+        id S1728550AbgBLIkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 03:40:06 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33456 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728513AbgBLIkF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 03:40:04 -0500
-Received: by mail-wr1-f68.google.com with SMTP id w12so1136513wrt.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:40:01 -0800 (PST)
+        Wed, 12 Feb 2020 03:40:05 -0500
+Received: by mail-wr1-f66.google.com with SMTP id u6so1145281wrt.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:40:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=monstr-eu.20150623.gappssmtp.com; s=20150623;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sh9edya09m3ampotYP3rKXxFWAQAZ1sl203zZxDnubY=;
-        b=Rd9ZsYVqBQpLNRN1NUoCJwtgrHIvxjFXbiYEbesFFL+EtggZeSkMBsmX6aQN4sRPqk
-         BFm7ziMyioakOHPenVv+pazCq1xMgITET4yi3liedrfDOAYUiIlLzo7E7XNEIvegXUBX
-         VVryKZVBrlSDZxSLbfYqPEDFJgSbi3oy3nDXlTZs8GcWdZZwU3frgCCR/swJU89rUorq
-         q2MuolQSmMWjjazZ+JadmnTMhsRcwMVWiPPvoHqIzEPRmpPdhSyYd0CI+AdR0i+Jc/rO
-         DdIo+gr5eG0/N7R7ER0Wvm5aB55R/zxAvE9YDjWfOqt+5/iPXeOQxA4BGm1SPsdQctNB
-         PeXw==
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=vlGsrurND/ABJQemtdqIOhR0buTYuD6gWRyYKODN9Xk=;
+        b=NKQ8YuiPPz9uuqFcO4gqQlpy0FIsB00vju+5ElEyGiLsREmxv4Jo0jIew6PG4ycqk+
+         czj+eYDQUsi/kK6LtoxCJYRrpaNptaf8vhLIUWTh8ctATPy5DayO8eVAz6jqOz4nXPMk
+         3psY2+K8n4v3pEpXY66d7wMVgx7TE2Gy9W60ajwfbWTOkuDTzsv+lfP7qNmrCx5SQqvv
+         FKET5k/88hDeYjqa+NPiX716k+qae0OUGNZjoxGITKkoEW8rgUzyNOOKaAWonnLNUei3
+         00QtZuMW6d60b9nO1J0XsegienKIjeT22Ke4PCaET7ESyrcLW1m/VYLxfZwyPZtr9fZk
+         F2fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=sh9edya09m3ampotYP3rKXxFWAQAZ1sl203zZxDnubY=;
-        b=rqz6kIP1WPT82MZtn5i7hAacp85dacj9XUMhKDiJVeS/hb7WtdYRIDNfmf3pSzbxJ0
-         kTqYT7D559RtXnZG43cnuFBVrfma7CXwtIkbf/eXftN2X1t045lbCGfu5S4FnRQRA7B8
-         hLMnscVOIo/4l/qGZPrg/17PUoMR2jklTGsyNFHWHWlFm9aJBpTFL/2kAs9y41Y63t3j
-         rSmB7V1qT08VoI214F7/naTRrUs/cMQokNaLpcmiaHFNHmtsQAWzrfAZ6Ui3P+eIC33Z
-         4s+GV/oIgcyYDb0xKFVXrSeDh821KNeb6KuROnjOX9not2+v60wjGvVNvwZYyXNSHPdy
-         SeyQ==
-X-Gm-Message-State: APjAAAXzAhAFMXUJLb6sRI9zDMSVfwkVJj98BrGf4jLO+SUfaEOA8oxe
-        nMECb/+LUOUJqHu4YMhIFA9cdCNT/cOoyA==
-X-Google-Smtp-Source: APXvYqwuS7+TqsdETIEjYnS5F+Hk3WQXvU5tJoIGMYYgCfRi7CqmSIQCIAeJ5eLjixqHvrdhZP54DA==
-X-Received: by 2002:a5d:42c6:: with SMTP id t6mr13871376wrr.151.1581496800421;
-        Wed, 12 Feb 2020 00:40:00 -0800 (PST)
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=vlGsrurND/ABJQemtdqIOhR0buTYuD6gWRyYKODN9Xk=;
+        b=Cs49WcHMs4sODwRMCSWLQ5amTBrBa20V50UBbZfjeKuBc71QgCFlsqRMuXFwpEPt3c
+         fLmzjg1u+tNm2fNa7DsgigyvJgEo2J2wEsxYb0N8E3sLAWogqkZ7r6oEsFUFx8FKnQEw
+         AF3ZQcK69QP8KckcrWY8wx5WzYUnO+PVzRlK7Ba7TTbXWWXeWVX7Sszxfo4lcFylFZGn
+         L1mSxKG/6kGDdkWX1pAKN8qrCc9Weo74awHxKOYPrhd0kq856W1UNlb9dfxhu3yY/Q+p
+         ro5pjNaSot5i77MgL1jWxq2hOCqduC9sIT7tLTsME0eBEauGjkAp6UrMtf8ckeF/XmTg
+         M2zg==
+X-Gm-Message-State: APjAAAWywkzmUIMkK2G8nlMzwZ4mvD85JGRCa+vQ0ey/KnOp6r25v1Bi
+        rBKWjJrWXid1r3eOTMESo/B6AEC6jiT2RA==
+X-Google-Smtp-Source: APXvYqwd4NGHpkAia9MPc9TqBch3g3lddR5bKtlF0IABbXo2wYaC1n9u3QQSEPORyd4SI6qM5hPp1g==
+X-Received: by 2002:a5d:55d2:: with SMTP id i18mr13399003wrw.287.1581496802074;
+        Wed, 12 Feb 2020 00:40:02 -0800 (PST)
 Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id x17sm8482201wrt.74.2020.02.12.00.39.59
+        by smtp.gmail.com with ESMTPSA id r6sm8849640wrq.92.2020.02.12.00.40.01
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Feb 2020 00:39:59 -0800 (PST)
+        Wed, 12 Feb 2020 00:40:01 -0800 (PST)
 From:   Michal Simek <michal.simek@xilinx.com>
 To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
         michal.simek@xilinx.com, git@xilinx.com
-Cc:     Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>,
-        Mubin Sayyed <mubinusm@xilinx.com>,
-        Stefan Asserhall <stefan.asserhall@xilinx.com>,
+Cc:     Stefan Asserhall <stefan.asserhall@xilinx.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/3] irqchip: xilinx: Switch to generic domain handler
-Date:   Wed, 12 Feb 2020 09:39:55 +0100
-Message-Id: <cover.1581496793.git.michal.simek@xilinx.com>
+Subject: [PATCH 1/3] irqchip: xilinx: Fill error code when irq domain registration fails
+Date:   Wed, 12 Feb 2020 09:39:56 +0100
+Message-Id: <08b652db487686d816d71b3447a3b9f612d0fab4.1581496793.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 2.25.0
+In-Reply-To: <cover.1581496793.git.michal.simek@xilinx.com>
+References: <cover.1581496793.git.michal.simek@xilinx.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,36 +66,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+There is no ret filled in case of irq_domain_add_linear() failure.
 
-this series is based on cascade mode patch sent by Mubin
-(https://lkml.org/lkml/2020/2/11/888 - v3 series).
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Reviewed-by: Stefan Asserhall <stefan.asserhall@xilinx.com>
+---
 
-The first patch is just fixing error patch. The second and the third are
-converting microblaze do_IRQ() to generic IRQ handler with appropriate
-changes in xilinx intc driver. I have done it in two steps to be visible
-how it was done.
+ drivers/irqchip/irq-xilinx-intc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-The last patch removes concurrent_irq global variable which wasn't wired
-anywhere but it stores number of concurrent IRQs handled by one call. There
-is option to get it back if needed but I haven't seen it in other archs
-that's why I have removed it too.
-
-Thanks,
-Michal
-
-
-Michal Simek (3):
-  irqchip: xilinx: Fill error code when irq domain registration fails
-  irqchip: xilinx: Enable generic irq multi handler
-  irqchip: xilinx: Use handle_domain_irq()
-
- arch/microblaze/Kconfig           |  2 ++
- arch/microblaze/include/asm/irq.h |  3 ---
- arch/microblaze/kernel/irq.c      | 21 +------------------
- drivers/irqchip/irq-xilinx-intc.c | 35 ++++++++++++++++++-------------
- 4 files changed, 24 insertions(+), 37 deletions(-)
-
+diff --git a/drivers/irqchip/irq-xilinx-intc.c b/drivers/irqchip/irq-xilinx-intc.c
+index 51f461d2934f..cf1bb470d7b5 100644
+--- a/drivers/irqchip/irq-xilinx-intc.c
++++ b/drivers/irqchip/irq-xilinx-intc.c
+@@ -230,6 +230,7 @@ static int __init xilinx_intc_of_init(struct device_node *intc,
+ 						  &xintc_irq_domain_ops, irqc);
+ 	if (!irqc->root_domain) {
+ 		pr_err("irq-xilinx: Unable to create IRQ domain\n");
++		ret = -EINVAL;
+ 		goto error;
+ 	}
+ 
 -- 
 2.25.0
 
