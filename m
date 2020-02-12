@@ -2,95 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D01F15A2D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:06:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5447C15A2CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 09:05:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728612AbgBLIGE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 03:06:04 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:49784 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728353AbgBLIGE (ORCPT
+        id S1728469AbgBLIF3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 03:05:29 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43941 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728323AbgBLIF3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 03:06:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=oDAot7XC0gIAmAyPofX8hByGkkfWmUHeU1+lBRlryTs=; b=Q0tQVx4f/ZbXs9EkIpHSl6gV4y
-        ZY4gI3bFP02hOAW7tJIJrFe5GjCZpWwBcYxa8jQNGMdYsyqvtuMP05Dd7adEzyUUVWp+Z076E3oYp
-        i+ByNCWLmDVxswwmX2BGcubDSDbpEzEUGNJG9mC5Emts4lJcAUN3sv2S9cDyW6f296uUMqN8XcQs6
-        73Rz72JY9PnRkRyjjzj+JQFOsw4P6qITdDiiY3bS0M5gskm/uyymwTUJWbYh6Vh7NSHr5yiDusQ5Q
-        nOaSHy4IA4Z7/H6v/GgxtQHmvWjJecfJGa7dykrYKC7NC7M7DELD+fYRvos7rkjujK4JSU6xwa0eM
-        SgljleQw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1n1R-0004ML-KX; Wed, 12 Feb 2020 08:05:25 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C3411306E5C;
-        Wed, 12 Feb 2020 09:03:33 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A1B172B9154E9; Wed, 12 Feb 2020 09:05:22 +0100 (CET)
-Date:   Wed, 12 Feb 2020 09:05:22 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Wed, 12 Feb 2020 03:05:29 -0500
+Received: by mail-pf1-f194.google.com with SMTP id s1so829620pfh.10
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 00:05:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=7cVJrf+4rXD3RIvKPMDPkxaYFB3IsTOj78t7ZIWn1gM=;
+        b=b2rWZgdTS+HavWtrTjLQrHTONKBSuIgdXx6mgRc1+KE2M2+sTlKIfE+pEP2oUglRjA
+         SqSCImuVddgreHZII0cvxRG7LSH6Gid0BMel/HQhdaD2HOap8nFJRotmzz8mNWGki35E
+         0F/ndCza8rBC7MrfxMuXoTfPE2vBsg/LmSkh3/QI4DhvEG01cdCLb/Qw4hrz+46py+bQ
+         rmo+mAVXPUixKaVaBlTQWhz/+e6lPA13o9eRNtBd8rw0JXi0NF45w/seYrG+MdOjfw48
+         pZAuXpzo7SoqK42Hzj8oRkGpN9kt3rgf269kbkiF5aLrlIxHFdq9eul+GVUOSIA9ZJPu
+         8ULg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7cVJrf+4rXD3RIvKPMDPkxaYFB3IsTOj78t7ZIWn1gM=;
+        b=aW1Ya8oVPBmptsv9+eIvRZXXiWRiA85sx8Ilr3XJ2pKjDrBKBbISTeprrBigbmBH7p
+         /X9rJbdcF49TEcg/6zKCHu1Z7pisn/AunzuvhOAw8Vy+tBM/IL2rFY2X9MfuI/RQpl6D
+         S2sA3M4AtIc2VKIF6WHE7c8sPl7WXU5EGAaP2e/zQAcVBu8dR/6CmJuPAwj5tSg3X2OA
+         b6ifQsd6ErA4ymztyoe/EdH2TMZujlRVXvYQEYP85vG0ABcvfApS6xgSzEGQ/ZMox61U
+         wsd1hnZcgOEyYmB1v+Z6vPBfBl++SYMDiMi7IOVgi7mHudWGgdKk0QnhEd8uhjWfAhgC
+         p2pg==
+X-Gm-Message-State: APjAAAVDnbUn1qm1gVxMiSsJ/4nize77+59tD6DbRQ1NhilTudscOVLB
+        v2RPdIg3/MbVqLDXG/PAlRE=
+X-Google-Smtp-Source: APXvYqwoSIuklDxB/zT59bsO9z7KoWjif6ryTXMbCWHhiwrIZ5TNoyZqviTrUKNsMR4xuvFo+evjdQ==
+X-Received: by 2002:a63:d04c:: with SMTP id s12mr11239449pgi.105.1581494728515;
+        Wed, 12 Feb 2020 00:05:28 -0800 (PST)
+Received: from localhost ([106.51.21.91])
+        by smtp.gmail.com with ESMTPSA id o10sm6508939pgq.68.2020.02.12.00.05.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Feb 2020 00:05:28 -0800 (PST)
+Date:   Wed, 12 Feb 2020 13:35:26 +0530
+From:   afzal mohammed <afzal.mohd.ma@gmail.com>
+To:     linux-xtensa@linux-xtensa.org, linux-kernel@vger.kernel.org
+Cc:     Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: Re: [PATCH v2] tracing/perf: Move rcu_irq_enter/exit_irqson() to
- perf trace point hook
-Message-ID: <20200212080522.GP14897@hirez.programming.kicks-ass.net>
-References: <20200211095047.58ddf750@gandalf.local.home>
- <20200211153452.GW14914@hirez.programming.kicks-ass.net>
- <20200211111828.48058768@gandalf.local.home>
- <20200211172952.GY14914@hirez.programming.kicks-ass.net>
- <20200211173213.GX14946@hirez.programming.kicks-ass.net>
- <20200211185457.GN2935@paulmck-ThinkPad-P72>
+        Sinan Kaya <okaya@kernel.org>
+Subject: [PATCH 15/18] xtensa: replace setup_irq() by request_irq()
+Message-ID: <85574e1ae1e6870ef01b6e61c5b1c5f393c2ac4b.1581478324.git.afzal.mohd.ma@gmail.com>
+References: <cover.1581478323.git.afzal.mohd.ma@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200211185457.GN2935@paulmck-ThinkPad-P72>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <cover.1581478323.git.afzal.mohd.ma@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 10:54:57AM -0800, Paul E. McKenney wrote:
-> On Tue, Feb 11, 2020 at 06:32:13PM +0100, Peter Zijlstra wrote:
-> > On Tue, Feb 11, 2020 at 06:29:52PM +0100, Peter Zijlstra wrote:
-> > > +#define trace_rcu_enter()					\
-> > > +({								\
-> > > +	unsigned long state = 0;				\
-> > > +	if (!rcu_is_watching())	{				\
-> > 
-> > Also, afaict rcu_is_watching() itself needs more love, the functio has
-> > notrace, but calls other stuff that does not have notrace or inline.
-> 
-> Good catch!  Like this?
-> 
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 1f5fdf7..51616e72 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -295,7 +295,7 @@ static void rcu_dynticks_eqs_online(void)
->   *
->   * No ordering, as we are sampling CPU-local information.
->   */
-> -static bool rcu_dynticks_curr_cpu_in_eqs(void)
-> +static bool notrace rcu_dynticks_curr_cpu_in_eqs(void)
+request_irq() is preferred over setup_irq(). Existing callers of
+setup_irq() reached mostly via 'init_IRQ()' & 'time_init()', while
+memory allocators are ready by 'mm_init()'.
 
-Right, except that, given the size of the thing, I'd opt for 'inline'
-over 'notrace'.
+Per tglx[1], setup_irq() existed in olden days when allocators were not
+ready by the time early interrupts were initialized.
+
+Hence replace setup_irq() by request_irq().
+
+Seldom remove_irq() usage has been observed coupled with setup_irq(),
+wherever that has been found, it too has been replaced by free_irq().
+
+[1] https://lkml.kernel.org/r/alpine.DEB.2.20.1710191609480.1971@nanos
+
+Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+---
+
+Since cc'ing cover letter to all maintainers/reviewers would be too
+many, refer for cover letter,
+ https://lkml.kernel.org/r/cover.1581478323.git.afzal.mohd.ma@gmail.com
+
+ arch/xtensa/kernel/smp.c  |  8 ++------
+ arch/xtensa/kernel/time.c | 10 +++-------
+ 2 files changed, 5 insertions(+), 13 deletions(-)
+
+diff --git a/arch/xtensa/kernel/smp.c b/arch/xtensa/kernel/smp.c
+index 83b244ce61ee..22a117ca0c4d 100644
+--- a/arch/xtensa/kernel/smp.c
++++ b/arch/xtensa/kernel/smp.c
+@@ -53,16 +53,12 @@ static void system_flush_invalidate_dcache_range(unsigned long start,
+ #define IPI_IRQ	0
+ 
+ static irqreturn_t ipi_interrupt(int irq, void *dev_id);
+-static struct irqaction ipi_irqaction = {
+-	.handler =	ipi_interrupt,
+-	.flags =	IRQF_PERCPU,
+-	.name =		"ipi",
+-};
+ 
+ void ipi_init(void)
+ {
+ 	unsigned irq = irq_create_mapping(NULL, IPI_IRQ);
+-	setup_irq(irq, &ipi_irqaction);
++	if (request_irq(irq, ipi_interrupt, IRQF_PERCPU, "ipi", NULL))
++		pr_err("request_irq() on %s failed\n", "ipi");
+ }
+ 
+ static inline unsigned int get_core_count(void)
+diff --git a/arch/xtensa/kernel/time.c b/arch/xtensa/kernel/time.c
+index 69db8c93c1f9..cd7651c603d2 100644
+--- a/arch/xtensa/kernel/time.c
++++ b/arch/xtensa/kernel/time.c
+@@ -128,12 +128,6 @@ static irqreturn_t timer_interrupt(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static struct irqaction timer_irqaction = {
+-	.handler =	timer_interrupt,
+-	.flags =	IRQF_TIMER,
+-	.name =		"timer",
+-};
+-
+ void local_timer_setup(unsigned cpu)
+ {
+ 	struct ccount_timer *timer = &per_cpu(ccount_timer, cpu);
+@@ -199,7 +193,9 @@ void __init time_init(void)
+ 	     __func__);
+ 	clocksource_register_hz(&ccount_clocksource, ccount_freq);
+ 	local_timer_setup(0);
+-	setup_irq(this_cpu_ptr(&ccount_timer)->evt.irq, &timer_irqaction);
++	if (request_irq(this_cpu_ptr(&ccount_timer)->evt.irq, timer_interrupt,
++			IRQF_TIMER, "timer", NULL))
++		pr_err("request_irq() on %s failed\n", "timer");
+ 	sched_clock_register(ccount_sched_clock_read, 32, ccount_freq);
+ 	timer_probe();
+ }
+-- 
+2.24.1
+
