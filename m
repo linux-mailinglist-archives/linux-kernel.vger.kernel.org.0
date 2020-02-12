@@ -2,156 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66C6A159DE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 01:21:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A9BE159DF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 01:29:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbgBLAVu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 19:21:50 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:40449 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727985AbgBLAVt (ORCPT
+        id S1728116AbgBLA3D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 19:29:03 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34299 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728091AbgBLA3B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 19:21:49 -0500
-Received: by mail-io1-f66.google.com with SMTP id x1so178146iop.7
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 16:21:48 -0800 (PST)
+        Tue, 11 Feb 2020 19:29:01 -0500
+Received: by mail-lf1-f68.google.com with SMTP id l18so278092lfc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 16:29:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=znb551cSk4SwLxhNrEmBfKq1pXuZl4kKW4lbTxGwGf0=;
-        b=VZ6ckbfRbXGkd5NeS4Ei/5MZP/bHqLs4i414YLfooFZWB/vpkXt3IRgOWOHViumSmw
-         d1dqbNOZEIA0wrY2USJ21lXm6Bf+vZ5MNqF4XFQaUy82r4ioVWSOAy2wxI6esOe4xUd5
-         Pj0gKdW0s+lwOTFimBjaR2PgezxkqAafgvdOo4KIJjksO/DAYzzGhkJdfeLdtu7dc3D8
-         lA5FUgjcvQ0OpSn5Jx+Qa0wDtDfIonHBAaPjMwsxTyl/oY3XrGZZxXwixUN/WWNMwSfd
-         T3eYxWdvx/AdiShb5/amBwznu9N2xDiNXoBrwaPpwqx55F19thSdPSVjxxHnBWKL1QPK
-         BPWA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I1zwim5bENoBH/YJdV0JdFYomer3zhgdaL9VRFgFbmk=;
+        b=a0mAJB8SfJ9gaZZHweS2NdfMYUd1WCE17SI7XP87C6+Ff2gIDBgABMTm1Kx1Nsg1HY
+         0ruUjl8AovwmwDeG0JrMTljpLYvq2f2NsCGILLfMorIKOj/gOtfvalctlgOMWWRjQ4hp
+         XXLCJke+6ceL5jkjOhRCVzu1uXDQxR66FqD6c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=znb551cSk4SwLxhNrEmBfKq1pXuZl4kKW4lbTxGwGf0=;
-        b=ONFevrqXyze0xYK02sByP8HZHyFP6BHTUbWxzT1XuaFvfNl9ndAyxm4hqi8brHBM2C
-         Tc75Hv2EhSk7zirBlNQGGYpIyk6HgdSBE6Oi367wulFwFDaBRW0yo4XM58kvD7sDOEdE
-         BXhgBr0f70q5G08lMmkLhojyf4hyp4MVLiroa8r9mb+zc8Yydn0VDNfT/1ooc7FcNJtI
-         dOXn/DCQuWO0hKsPsUkC2CWHH7gGR6phlpMxBZ+txeAUAPXvpodkzuW4fFsvZcC+yiSt
-         xlgoUHeBGGQ/40mYPAPoxEFpbETtYTJ+Jtu3nsZoqSV1it6qyo+18lxM8W7i97DfR/Lt
-         8OBQ==
-X-Gm-Message-State: APjAAAUSLb35e/ixTs00Dj81zz/bqAxX4tekG7ogOBVp/NZDQjB5KvAg
-        +octeHNPn6jQSuX04/Tyachqg1/LcspAig==
-X-Google-Smtp-Source: APXvYqxnRq6BGvwAHW2U261ceZ/bNuGg0tou3R07qwEpFfCKWQdGO9ZqNUDWl6Avc9BLocaETXZ3DQ==
-X-Received: by 2002:a5e:9b01:: with SMTP id j1mr15005204iok.27.1581466907709;
-        Tue, 11 Feb 2020 16:21:47 -0800 (PST)
-Received: from [172.22.22.10] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.googlemail.com with ESMTPSA id q90sm1797509ili.27.2020.02.11.16.21.46
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I1zwim5bENoBH/YJdV0JdFYomer3zhgdaL9VRFgFbmk=;
+        b=PJe6tcu6ZfGLG8AeDiHDMQAP8qxUjHmOwOWaY1P4F0QeihNv8Ax/ZJUKogD4w3YNrT
+         HgUXLkZhKEoxVrj95iFQBkGm0M7oGRjw0Beoq2LRVcsualOtyerROyu1pRUkkPyCLORR
+         BZkqCs5P9fO6pyqWp6O9wDZBs9/BfpmDY8PAwuPFdn554ROLGB2gy8YgntG8ZFkA2f7Y
+         Gu9++VAxYZFoanpR9sqeLAgKeTzSOzi9QJGNOE0kfXLzb6J2r3EoybkoTJrT5bfTgWBS
+         YSYazJ6+BzHlplGYQhF14hXuOK8BheeImyIzijm/6lxQfuv8zuakLIVVy+Oc+fkUHn3T
+         Y9Tg==
+X-Gm-Message-State: APjAAAVuFu35F24SapPPZ2w7N+fcTl22nf0miThf6TKgqi13Q/li1CbL
+        EcnEg5HpY98W2EP2HdqpnVJVyRnfnm8=
+X-Google-Smtp-Source: APXvYqxGlX8Cfesxlkcv4Fc4xNmr7SHgdTao5sh+KjKmEDG8sefHr4kDho6A2h/nYvpjMdKgqGxasw==
+X-Received: by 2002:ac2:59dd:: with SMTP id x29mr5036715lfn.95.1581467339364;
+        Tue, 11 Feb 2020 16:28:59 -0800 (PST)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id w1sm2529009lfe.96.2020.02.11.16.28.57
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Feb 2020 16:21:46 -0800 (PST)
-Subject: Re: [greybus-dev] [PATCH] staging: greybus: Replace zero-length array
- with flexible-array member
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, greybus-dev@lists.linaro.org,
-        linux-kernel@vger.kernel.org
-References: <20200211211219.GA673@embeddedor>
- <e465ca6e-ed9f-4340-9f4c-104f9b6acb74@linaro.org>
- <ebd179c5-29d6-4c86-e047-76815572fcf6@embeddedor.com>
-From:   Alex Elder <elder@linaro.org>
-Message-ID: <7ac2012c-6d22-dcc2-7c96-b9d6d578706a@linaro.org>
-Date:   Tue, 11 Feb 2020 18:21:13 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 11 Feb 2020 16:28:57 -0800 (PST)
+Received: by mail-lj1-f178.google.com with SMTP id y6so271886lji.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 16:28:57 -0800 (PST)
+X-Received: by 2002:a2e:88c5:: with SMTP id a5mr6018875ljk.201.1581467335909;
+ Tue, 11 Feb 2020 16:28:55 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <ebd179c5-29d6-4c86-e047-76815572fcf6@embeddedor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200211175507.178100-1-hannes@cmpxchg.org> <29b6e848ff4ad69b55201751c9880921266ec7f4.camel@surriel.com>
+ <20200211193101.GA178975@cmpxchg.org> <20200211154438.14ef129db412574c5576facf@linux-foundation.org>
+In-Reply-To: <20200211154438.14ef129db412574c5576facf@linux-foundation.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 11 Feb 2020 16:28:39 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiGbz3oRvAVFtN-whW-d2F-STKsP1MZT4m_VeycAr1_VQ@mail.gmail.com>
+Message-ID: <CAHk-=wiGbz3oRvAVFtN-whW-d2F-STKsP1MZT4m_VeycAr1_VQ@mail.gmail.com>
+Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker LRU
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Rik van Riel <riel@surriel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/11/20 4:47 PM, Gustavo A. R. Silva wrote:
-> 
-> 
-> On 2/11/20 16:15, Alex Elder wrote:
->> On 2/11/20 3:12 PM, Gustavo A. R. Silva wrote:
->>> The current codebase makes use of the zero-length array language
->>> extension to the C90 standard, but the preferred mechanism to declare
->>> variable-length types such as these ones is a flexible array member[1][2],
->>> introduced in C99:
->>>
->>> struct foo {
->>>         int stuff;
->>>         struct boo array[];
->>> };
->>>
->>> By making use of the mechanism above, we will get a compiler warning
->>> in case the flexible array does not occur last in the structure, which
->>> will help us prevent some kind of undefined behavior bugs from being
->>> inadvertenly introduced[3] to the codebase from now on.
->>>
->>> This issue was found with the help of Coccinelle.
->>>
->>> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
->>> [2] https://github.com/KSPP/linux/issues/21
->>> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
->>>
->>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>> ---
->>>  drivers/staging/greybus/raw.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/staging/greybus/raw.c b/drivers/staging/greybus/raw.c
->>> index 838acbe84ca0..2b301b2aa107 100644
->>> --- a/drivers/staging/greybus/raw.c
->>> +++ b/drivers/staging/greybus/raw.c
->>> @@ -30,7 +30,7 @@ struct gb_raw {
->>>  struct raw_data {
->>>  	struct list_head entry;
->>>  	u32 len;
->>> -	u8 data[0];
->>> +	u8 data[];
->>>  };
->>>  
->>>  static struct class *raw_class;
->>>
->>
->> Does the kamlloc() call in receive_data() have any problems
->> with the sizeof(*raw_data) passed as its argument?
->>
-> 
-> Not in this case. It'd be different with a one-element array (u8 data[1]),
-> though.
-> 
->> I'm not entirely sure what sizeof(struct-with-flexible-array-member)
->> produces.
->>
-> 
-> The same as sizeof(struct-with-zero-length-array):
-> 
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
-> 
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+On Tue, Feb 11, 2020 at 3:44 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> Testing this will be a challenge, but the issue was real - a 7GB
+> highmem machine isn't crazy and I expect the inode has become larger
+> since those days.
 
-I saw that, but I wondered what the standard says (and
-whether Clang produces the same result).
+Hmm. I would say that in the intening years a 7GB highmem machine has
+indeed become crazy.
 
-I found this in a draft standard, and I guess we can
-assume it applies here:
+It used to be something we kind of supported.
 
-    "...the  size of the structure is as if the flexible
-    array  member were omitted except that it may have
-    more trailing padding than the omission would imply."
+But we really should consider HIGHMEM to be something that is on the
+deprecation list. In this day and age, there is no excuse for running
+a 32-bit kernel with lots of physical memory.
 
-Looks good to me.
+And if you really want to do that, and have some legacy hardware with
+a legacy use case, maybe you should be using a legacy kernel.
 
-Reviewed-by: Alex Elder <elder@linaro.org>
+I'd personally be perfectly happy to start removing HIGHMEM support again.
 
-> 
-> --
-> Gustavo
-> 
-
+                   Linus
