@@ -2,102 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A741E15AB99
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:00:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63D8B15ABA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 16:02:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728523AbgBLPAn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 10:00:43 -0500
-Received: from monster.unsafe.ru ([5.9.28.80]:59254 "EHLO mail.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727231AbgBLPAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 10:00:43 -0500
-Received: from comp-core-i7-2640m-0182e6 (nat-pool-brq-t.redhat.com [213.175.37.10])
+        id S1728508AbgBLPCi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 10:02:38 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43304 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727231AbgBLPCh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 10:02:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=FaxeSXwVb9YdybUdnSUzUuefptnpP1pWk8I0wE1Oxzo=; b=iK5CEFVRW9fYTbRCi9CnjsGQfB
+        uVCamwQdLUMJVwpRf1eQtmWuO9Qj/M/kZySXlUMYjzNM4uCxkJADTlqAcB7q4bjo4xF5ch9gbAkUm
+        zPxzPqocEgc/coGG0VoB/fK9XoXmWH2JTNPhcAAOXflURp3evLfpjGP15o+fWaB+GUJ2lRzvUuG45
+        43y57IhbEJ/PAANBIhWtTNqN+xn9Aje5JVdp1HEA/khkpqbeWDf4S8/UMTZS74qMOjpm3gjf+MXa1
+        sZnoyTwWBt8UYDSQjczJnjR3MAAn33C4bu+3mgKweKYxehnoJ0OWcBRaLx3cz5IxPN/qfIXNs4+Ey
+        bJDw3QLw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1tWo-00061G-T4; Wed, 12 Feb 2020 15:02:15 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.unsafe.ru (Postfix) with ESMTPSA id 9F5EFC61AB0;
-        Wed, 12 Feb 2020 15:00:39 +0000 (UTC)
-Date:   Wed, 12 Feb 2020 16:00:38 +0100
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-Subject: Re: [PATCH v8 03/11] proc: move /proc/{self|thread-self} dentries to
- proc_fs_info
-Message-ID: <20200212150038.rr364l5kjcgbmr3g@comp-core-i7-2640m-0182e6>
-Mail-Followup-To: Andy Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
- <20200210150519.538333-4-gladkov.alexey@gmail.com>
- <CALCETrWGpRr86tVKJU-sEMcg+x0Yzp+TbiBhrAc71RaO8=DYGQ@mail.gmail.com>
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E0ADA30066E;
+        Wed, 12 Feb 2020 16:00:22 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DE4CF2032662E; Wed, 12 Feb 2020 16:02:11 +0100 (CET)
+Date:   Wed, 12 Feb 2020 16:02:11 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, joel@joelfernandes.org,
+        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
+        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com
+Subject: Re: [PATCH 4/8] sched,rcu,tracing: Mark preempt_count_{add,sub}()
+ notrace
+Message-ID: <20200212150211.GS14897@hirez.programming.kicks-ass.net>
+References: <20200212093210.468391728@infradead.org>
+ <20200212094107.838108888@infradead.org>
+ <20200212092417.04c3da8c@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrWGpRr86tVKJU-sEMcg+x0Yzp+TbiBhrAc71RaO8=DYGQ@mail.gmail.com>
+In-Reply-To: <20200212092417.04c3da8c@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 10:23:23AM -0800, Andy Lutomirski wrote:
-> On Mon, Feb 10, 2020 at 7:06 AM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
-> >
-> > This is a preparation patch that moves /proc/{self|thread-self} dentries
-> > to be stored inside procfs fs_info struct instead of making them per pid
-> > namespace. Since we want to support multiple procfs instances we need to
-> > make sure that these dentries are also per-superblock instead of
-> > per-pidns,
+On Wed, Feb 12, 2020 at 09:24:17AM -0500, Steven Rostedt wrote:
+> On Wed, 12 Feb 2020 10:32:14 +0100
+> Peter Zijlstra <peterz@infradead.org> wrote:
 > 
-> The changelog makes perfect sense so far...
+> > Because of the requirement that no tracing happens until after we've
+> > incremented preempt_count, see nmi_enter() / trace_rcu_enter(), mark
+> > these functions as notrace.
 > 
-> > unmounting a private procfs won't clash with other procfs
-> > mounts.
-> 
-> This doesn't parse as part of the previous sentence.  I'm also not
-> convinced that this really involves unmounting per se.  Maybe just
-> delete these words.
+> I actually depend on these function being traced.
 
-Sure. I will remove this part.
+Why? They already have a tracepoint inside.
 
--- 
-Rgrds, legion
+> We do have
+> "preempt_enable_notrace()" and "preempt_disable_notrace()" for places
+> that shouldn't be traced. Can't we use those? (or simply
+> __preempt_count_add()) in the nmi_enter() code instead? (perhaps create
+> a preempt_count_add_notrace()).
+
+My initial patch has __preempt_count_add/sub() in, but then I figured
+someone would go complain the tracepoint would go missing.
 
