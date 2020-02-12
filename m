@@ -2,181 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC84715B32B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 22:57:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C15315B33E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 22:58:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729207AbgBLV5g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 16:57:36 -0500
-Received: from mail-pf1-f175.google.com ([209.85.210.175]:37827 "EHLO
-        mail-pf1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727791AbgBLV5e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 16:57:34 -0500
-Received: by mail-pf1-f175.google.com with SMTP id p14so1904795pfn.4;
-        Wed, 12 Feb 2020 13:57:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2QbmPfzltSzW5mWdCB/KhMJVjhjJxlHZbqILs7yTeAQ=;
-        b=ce8GUooFBOvSgvMKV+9brKJAVKqMFGJ3xkYxunWzSQAYO8KLd9aFbPfT7bV2FMVwhz
-         eST8dRqv8KWlLrom3u3Q0aPT6PDNvZfrQQ/h8iR1pH9TN2gxhvWFbnc18dTw7Y2upHkW
-         FntRVhN3N7YWyQgbSloq7OZnqYfK2NJr2UC5mhZNCVGjSQdYtdqEm2RC6Go4A0L3q7UQ
-         yV+tIjzqsfa+/pNamBP11eZfiO/yhVN7OlfT/hC1PZhGfeE8ingKseG46FxBrtL5+gdt
-         FdJ9BoiwZJCSTXOp+Py/cEB+7yXlAFhhQsrmhM34uPN4qUWIhbKTwICVMW37tC3gZHmI
-         azUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=2QbmPfzltSzW5mWdCB/KhMJVjhjJxlHZbqILs7yTeAQ=;
-        b=BOSpeUDQIjw5cUvPlGZbqZ1Ntz583MWx5v3bTiaED3+IeolbAO9v2sUr9ldQ7/AbZ4
-         7hP4oMJcuJSoSaOa9cYe19pYEFBslMp9IrWR5l2aWlvhNadZQyQA97L/cVQ4NFVNgA88
-         b2nHLkdFObYPSO5WiccaGEY4yzY1U4AXLORXLJAzae5UZZb0tV2VBb3AfpSRlls3KBsC
-         tJWzwlok5g41snkWV0VqiDLNEdT4dXJ1hApgoz/Fdaa9byqAsCcw5WAa98Ynj1wUHZGV
-         zDrlkoFixXsZZ/vjrw/2wzGaz0D3hKeXbH1k3zCG8OPy7JRgBEphiJ9BpSk9ecA/62/S
-         Codg==
-X-Gm-Message-State: APjAAAVjPOoKUGxWfPwCeY3CLbb3B0uYtG44wl8MPE0TvkPdlTdIQ/Yd
-        /77uzWNtW6ddDM81ziZeIx8=
-X-Google-Smtp-Source: APXvYqymr2P1ZRlNuiNFOSs4YYrw8/hEQfeqg0rK1zxiJ+24ysgBvwXeSWUpT16tK+SWhP4q812dUQ==
-X-Received: by 2002:aa7:82d5:: with SMTP id f21mr14119364pfn.245.1581544653229;
-        Wed, 12 Feb 2020 13:57:33 -0800 (PST)
-Received: from taoren-ubuntu-R90MNF91.thefacebook.com ([2620:10d:c090:200::3:533f])
-        by smtp.gmail.com with ESMTPSA id r6sm214431pfh.91.2020.02.12.13.57.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 13:57:32 -0800 (PST)
-From:   rentao.bupt@gmail.com
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
-        taoren@fb.com
-Cc:     Tao Ren <rentao.bupt@gmail.com>
-Subject: [PATCH v2 5/5] ARM: dts: aspeed-g6: add usb functions
-Date:   Wed, 12 Feb 2020 13:57:17 -0800
-Message-Id: <20200212215717.9474-6-rentao.bupt@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200212215717.9474-1-rentao.bupt@gmail.com>
-References: <20200212215717.9474-1-rentao.bupt@gmail.com>
+        id S1729190AbgBLV6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 16:58:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52934 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727791AbgBLV6t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 16:58:49 -0500
+Received: from localhost (unknown [104.132.1.104])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59F102082F;
+        Wed, 12 Feb 2020 21:58:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581544728;
+        bh=NIzr3bNWf1aMRrgZ8jkW+jI7fikdoe2GZiH8v1p3UTA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kExeR861AcmKi8/BScBgFovpGQ+GVNS6kuNsYmZMbM6pXa/JrG0W+SdhkVQc7mdxR
+         K0TogNvzqBOIOQhAW+CK5FzYnux5bvhbZLlejU+g08/juxJg1VVoa0F2jY+4JgDqhe
+         WUpQrQmhYpPqIVi/iMvKXv9T7LplaxE2dhUxlQ24=
+Date:   Wed, 12 Feb 2020 13:58:47 -0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Saravana Kannan <saravanak@google.com>,
+        Jason Baron <jbaron@akamai.com>, Will Deacon <will@kernel.org>,
+        linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v6] dynamic_debug: allow to work if debugfs is disabled
+Message-ID: <20200212215847.GA2386833@kroah.com>
+References: <20200123093628.GA18991@willie-the-truck>
+ <20200123085015.GA436361@kroah.com>
+ <CAGETcx86rQpS4qodSiv_v+E_8P3DUQDY9jiN_Yq07Jwh9tHQcQ@mail.gmail.com>
+ <20200125101130.449a8e4d@lwn.net>
+ <20200125014231.GI147870@mit.edu>
+ <20200123155340.GD147870@mit.edu>
+ <20200209110549.GA1621867@kroah.com>
+ <20200210211142.GB1373304@kroah.com>
+ <827b4265-918e-99a7-544a-668edad5b2b9@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <827b4265-918e-99a7-544a-668edad5b2b9@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tao Ren <rentao.bupt@gmail.com>
+On Mon, Feb 10, 2020 at 01:15:50PM -0800, Randy Dunlap wrote:
+> On 2/10/20 1:11 PM, Greg Kroah-Hartman wrote:
+> > diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
+> > index 252e5ef324e5..585451d12608 100644
+> > --- a/Documentation/admin-guide/dynamic-debug-howto.rst
+> > +++ b/Documentation/admin-guide/dynamic-debug-howto.rst
+> > @@ -54,6 +54,9 @@ If you make a mistake with the syntax, the write will fail thus::
+> >  				<debugfs>/dynamic_debug/control
+> >    -bash: echo: write error: Invalid argument
+> >  
+> > +Note, for systems without 'debugfs' enabled, the control file can also
+> 
+> Hi Greg,
+> If you make any more changes, please drop the word "also" here       ^^^^
 
-Add USB components and according pin groups in aspeed-g6 dtsi.
+I will delete it by hand when I apply the patch now, thanks!
 
-Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
----
- Changes in v2:
-   - added port/endpoint properties for vhub dt node.
-
- arch/arm/boot/dts/aspeed-g6-pinctrl.dtsi | 25 +++++++++++++
- arch/arm/boot/dts/aspeed-g6.dtsi         | 45 ++++++++++++++++++++++++
- 2 files changed, 70 insertions(+)
-
-diff --git a/arch/arm/boot/dts/aspeed-g6-pinctrl.dtsi b/arch/arm/boot/dts/aspeed-g6-pinctrl.dtsi
-index 045ce66ca876..7028e21bdd98 100644
---- a/arch/arm/boot/dts/aspeed-g6-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/aspeed-g6-pinctrl.dtsi
-@@ -1112,6 +1112,31 @@
- 		groups = "UART9";
- 	};
- 
-+	pinctrl_usb2ah_default: usb2ah_default {
-+		function = "USB2AH";
-+		groups = "USBA";
-+	};
-+
-+	pinctrl_usb2ad_default: usb2ad_default {
-+		function = "USB2AD";
-+		groups = "USBA";
-+	};
-+
-+	pinctrl_usb2bh_default: usb2bh_default {
-+		function = "USB2BH";
-+		groups = "USBB";
-+	};
-+
-+	pinctrl_usb2bd_default: usb2bd_default {
-+		function = "USB2BD";
-+		groups = "USBB";
-+	};
-+
-+	pinctrl_usb11bhid_default: usb11bhid_default {
-+		function = "USB11BHID";
-+		groups = "USBB";
-+	};
-+
- 	pinctrl_vb_default: vb_default {
- 		function = "VB";
- 		groups = "VB";
-diff --git a/arch/arm/boot/dts/aspeed-g6.dtsi b/arch/arm/boot/dts/aspeed-g6.dtsi
-index 796976d275e1..0a29b3b57a9d 100644
---- a/arch/arm/boot/dts/aspeed-g6.dtsi
-+++ b/arch/arm/boot/dts/aspeed-g6.dtsi
-@@ -245,6 +245,51 @@
- 			status = "disabled";
- 		};
- 
-+		ehci0: usb@1e6a1000 {
-+			compatible = "aspeed,ast2600-ehci", "generic-ehci";
-+			reg = <0x1e6a1000 0x100>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&syscon ASPEED_CLK_GATE_USBPORT1CLK>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_usb2ah_default>;
-+			status = "disabled";
-+		};
-+
-+		ehci1: usb@1e6a3000 {
-+			compatible = "aspeed,ast2600-ehci", "generic-ehci";
-+			reg = <0x1e6a3000 0x100>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&syscon ASPEED_CLK_GATE_USBPORT2CLK>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_usb2bh_default>;
-+			status = "disabled";
-+		};
-+
-+		uhci: usb@1e6b0000 {
-+			compatible = "aspeed,ast2600-uhci", "generic-uhci";
-+			reg = <0x1e6b0000 0x100>;
-+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+			#ports = <2>;
-+			clocks = <&syscon ASPEED_CLK_GATE_USBUHCICLK>;
-+			status = "disabled";
-+			/*
-+			 * No default pinmux, it will follow EHCI, use an
-+			 * explicit pinmux override if EHCI is not enabled.
-+			 */
-+		};
-+
-+		vhub: usb-vhub@1e6a0000 {
-+			compatible = "aspeed,ast2600-usb-vhub";
-+			reg = <0x1e6a0000 0x350>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&syscon ASPEED_CLK_GATE_USBPORT1CLK>;
-+			aspeed,vhub-downstream-ports = <7>;
-+			aspeed,vhub-generic-endpoints = <21>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_usb2ad_default>;
-+			status = "disabled";
-+		};
-+
- 		apb {
- 			compatible = "simple-bus";
- 			#address-cells = <1>;
--- 
-2.17.1
-
+greg k-h
