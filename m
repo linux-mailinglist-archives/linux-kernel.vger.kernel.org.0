@@ -2,85 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5AEB15AAE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 15:24:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82CD115AAE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 15:24:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728290AbgBLOYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 09:24:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42764 "EHLO mail.kernel.org"
+        id S1728327AbgBLOYk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 09:24:40 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:26186 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727988AbgBLOYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 09:24:21 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 276BD206D7;
-        Wed, 12 Feb 2020 14:24:20 +0000 (UTC)
-Date:   Wed, 12 Feb 2020 09:24:17 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org, joel@joelfernandes.org,
-        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
-        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com
-Subject: Re: [PATCH 4/8] sched,rcu,tracing: Mark preempt_count_{add,sub}()
- notrace
-Message-ID: <20200212092417.04c3da8c@gandalf.local.home>
-In-Reply-To: <20200212094107.838108888@infradead.org>
-References: <20200212093210.468391728@infradead.org>
-        <20200212094107.838108888@infradead.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727963AbgBLOYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 09:24:40 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 48Hhjc2VPgz9txMl;
+        Wed, 12 Feb 2020 15:24:36 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=E4jQh+u/; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id vgRppl4aZR85; Wed, 12 Feb 2020 15:24:36 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 48Hhjc1JJvz9txMj;
+        Wed, 12 Feb 2020 15:24:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1581517476; bh=igqAQ6RyNRhDBT/cqa7dKxQJPcmonCFpfGNLvOYs5Ag=;
+        h=From:Subject:To:Cc:Date:From;
+        b=E4jQh+u/E2Y2/69w0EdD7SYH455XnezpEG1HAgq2DEV4PDSPitdhFI8oyHoI9VzBy
+         R0F1q3WUTgldY3k0NYDh6shv/9PlBFzYD/EvuYk0rvwInhtsnxW251BU6mjk0MGU63
+         2Dz00a7ahBfUa8gYFCt53SmqAN0Sk6MQjMjZ8bEc=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 66A498B81A;
+        Wed, 12 Feb 2020 15:24:37 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id j91gDLBU-b-L; Wed, 12 Feb 2020 15:24:37 +0100 (CET)
+Received: from pc16570vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.230.102])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2D1F38B80D;
+        Wed, 12 Feb 2020 15:24:37 +0100 (CET)
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [Regression 5.6-rc1][Bisected b6231ea2b3c6] Powerpc 8xx doesn't boot
+ anymore
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Li Yang <leoyang.li@nxp.com>, Qiang Zhao <qiang.zhao@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        Scott Wood <oss@buserror.net>,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>
+Message-ID: <0d45fa64-51ee-0052-cb34-58c770c5b3ce@c-s.fr>
+Date:   Wed, 12 Feb 2020 14:24:36 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Feb 2020 10:32:14 +0100
-Peter Zijlstra <peterz@infradead.org> wrote:
+Hi Rasmus,
 
-> Because of the requirement that no tracing happens until after we've
-> incremented preempt_count, see nmi_enter() / trace_rcu_enter(), mark
-> these functions as notrace.
+Kernel 5.6-rc1 silently fails on boot.
 
-I actually depend on these function being traced. We do have
-"preempt_enable_notrace()" and "preempt_disable_notrace()" for places
-that shouldn't be traced. Can't we use those? (or simply
-__preempt_count_add()) in the nmi_enter() code instead? (perhaps create
-a preempt_count_add_notrace()).
+I bisected the problem to commit b6231ea2b3c6 ("soc: fsl: qe: drop 
+broken lazy call of cpm_muram_init()")
 
--- Steve
+I get a bad_page_fault() for an access at address 8 in 
+cpm_muram_alloc_common(), called from cpm_uart_console_setup() via 
+cpm_uart_allocbuf()
 
+Reverting the guilty commit on top of 5.6-rc1 is not trivial.
 
+In your commit text you explain that cpm_muram_init() is called via 
+subsys_initcall. But console init is done before that, so it cannot work.
 
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  kernel/sched/core.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -3781,7 +3781,7 @@ static inline void preempt_latency_start
->  	}
->  }
->  
-> -void preempt_count_add(int val)
-> +void notrace preempt_count_add(int val)
->  {
->  #ifdef CONFIG_DEBUG_PREEMPT
->  	/*
-> @@ -3813,7 +3813,7 @@ static inline void preempt_latency_stop(
->  		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
->  }
->  
-> -void preempt_count_sub(int val)
-> +void notrace preempt_count_sub(int val)
->  {
->  #ifdef CONFIG_DEBUG_PREEMPT
->  	/*
-> 
+Do you have a fix for that ?
 
+Thanks
+Christophe
+
+NB: Next time, can you please copy powerpc mailing list when changing 
+such core parts of powerpc CPUs ?
