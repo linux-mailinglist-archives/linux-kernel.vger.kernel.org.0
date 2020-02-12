@@ -2,127 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F8B0159F78
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 04:18:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3171159F7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 04:24:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727873AbgBLDR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Feb 2020 22:17:29 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:39387 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727602AbgBLDR3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Feb 2020 22:17:29 -0500
-Received: by mail-ed1-f68.google.com with SMTP id m13so687509edb.6
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2020 19:17:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RE15EJdsIKQxzRJbIxCFVMJk+0seSzUjqA6IxkKMdfg=;
-        b=uj1wCy2gPcCZ7S0AqU83K19vwujH6Ply0s+P839a507GXDuVJ9UCPZM7BTeN3SVrxC
-         G6Eq8RvMDyjxdDNAEOIfrViZlwMxEsbHxm5eiQiXIUzywzwWV0UzFce5IOmncS+MEuo1
-         9IU0AQW1kaFebYy6+WKjDu9CaC3dIH9RadhTkJex6VkgeRrL7vLnxTLOoHLsfr6A+Bf+
-         MY33psuPYIm2DbE7fj7419TLPxz/R+tElbTiifLgwrhEi4J/14HYFBG6Q4RxU+YTsnuS
-         lYWNKP4fRpaa9+nbtrL3L3qh1PZUVzU/VuNU7pY1uXxhd8LNY2BbQLUDaEBU2CMqW8sm
-         E9Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RE15EJdsIKQxzRJbIxCFVMJk+0seSzUjqA6IxkKMdfg=;
-        b=td+TXlYgCRT8Qklzv5owQgQPqaZzyEYcx77F08rTPrWjrHDSnqL11krambywSDsHaR
-         8/9j+f3qzELi2iiDelZLkf0+P3B1nBDGVafvDsC7bIJDc7VSDnsTcxmbGza70LSU/T28
-         Fbbh+Tu7nsR7BMEg+o4Dd/+isD9PAt3QVjfKkA9+bxj4f2FB7FE7LfeqPNYdKhqMrIiI
-         WK/wWIKvRRnjnVZQeDmamB/fE/QyRXeVD6hvS3kNyh24MvAG+1atdDqcIVQFLb7/knRy
-         7we6ZI2kNa5zM/dx/Xa3jqbVuL7TFCvunDKGfW/t52LHLl0rY7HE2VTsTOhVoggaGeNQ
-         THtw==
-X-Gm-Message-State: APjAAAWwoqovOYRcGEHo+/1DAEos039MDhC7xKbntb6oS4/lWmFuCis8
-        DVKIoFviTa7ylUGhkprWlFdfdEGI7D1xwQD2+GbN
-X-Google-Smtp-Source: APXvYqyHCiiN6oXTN7ZQP6ljA4ERUQofXGYHnq8vJHGmwB1jP9aWiO76pTg6f5hjJhdy3qSVCbxPsXIMiRBsXV0d2hY=
-X-Received: by 2002:a50:a7a5:: with SMTP id i34mr8996071edc.128.1581477447006;
- Tue, 11 Feb 2020 19:17:27 -0800 (PST)
-MIME-Version: 1.0
-References: <20200206165527.211350-1-smoreland@google.com> <91465612-2fb2-5985-ba45-d4d9fcf0f70c@tycho.nsa.gov>
- <c61fc8f6-55c2-c717-5090-e535b7bdbb4f@tycho.nsa.gov> <CAKLm694DMH0JCpHuT4HgMd4yCNJZPFMpex8iEiRF9kRjPb0d6g@mail.gmail.com>
- <a8321785-902d-9186-fcf5-ee12a362a207@tycho.nsa.gov>
-In-Reply-To: <a8321785-902d-9186-fcf5-ee12a362a207@tycho.nsa.gov>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 11 Feb 2020 22:17:16 -0500
-Message-ID: <CAHC9VhQVcgQ7ZKXi+Umm51WNgfNSzNX7Zoe=MyaLo1rRm-uUtA@mail.gmail.com>
-Subject: Re: [PATCH] security: selinux: allow per-file labeling for bpffs
-To:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Steven Moreland <smoreland@google.com>,
-        Colin Cross <ccross@android.com>,
-        "Connor O'Brien" <connoro@google.com>, kernel-team@android.com
-Cc:     Eric Paris <eparis@parisplace.org>, keescook@chromium.org,
-        anton@enomsg.org, tony.luck@intel.com, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1727897AbgBLDYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Feb 2020 22:24:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37158 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727641AbgBLDYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Feb 2020 22:24:17 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FBCD2082F;
+        Wed, 12 Feb 2020 03:24:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581477857;
+        bh=mBWVEBG2jTxD+zdNGdiJ9jwLnAWUmNwN96Qt1ATXxMM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=2Z/nr1hJvBKn/UFlGu1nNbTvndgpqmllyLnspyObsXgwGY2DHe8+QUbeY9EBXx8aA
+         axXIYMlFHBP29/zapP+8/mdMqyskSX4SaPos79xOdGPPFbQalPAfi2F4dHl7CvByyr
+         aYV4I1UCO8w2joypRL/08/YUwIibZ0ohJwIzA40I=
+Date:   Wed, 12 Feb 2020 12:24:12 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Tom Zanussi <zanussi@kernel.org>
+Cc:     rostedt@goodmis.org, artem.bityutskiy@linux.intel.com,
+        mhiramat@kernel.org, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH 1/3] tracing: Add missing nest end to
+ synth_event_trace_start() error case
+Message-Id: <20200212122412.9666e6fd30c8d5d48ea5a2d8@kernel.org>
+In-Reply-To: <20abc444b3eeff76425f895815380abe7aa53ff8.1581374549.git.zanussi@kernel.org>
+References: <cover.1581374549.git.zanussi@kernel.org>
+        <20abc444b3eeff76425f895815380abe7aa53ff8.1581374549.git.zanussi@kernel.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 6, 2020 at 1:12 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On 2/6/20 12:41 PM, Steven Moreland wrote:
-> > On Thu, Feb 6, 2020 at 9:35 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> >>
-> >> On 2/6/20 12:21 PM, Stephen Smalley wrote:
-> >>> On 2/6/20 11:55 AM, Steven Moreland wrote:
-> >>>> From: Connor O'Brien <connoro@google.com>
-> >>>>
-> >>>> Add support for genfscon per-file labeling of bpffs files. This allows
-> >>>> for separate permissions for different pinned bpf objects, which may
-> >>>> be completely unrelated to each other.
-> >>>
-> >>> Do you want bpf fs to also support userspace labeling of files via
-> >>> setxattr()?  If so, you'll want to also add it to
-> >>> selinux_is_genfs_special_handling() as well.
-> >>>
-> >
-> > Android doesn't currently have this use case.
-> >
-> >>> The only caveat I would note here is that it appears that bpf fs
-> >>> supports rename, link, unlink, rmdir etc by userspace, which means that
-> >>> name-based labeling via genfscon isn't necessarily safe/stable.  See
-> >>> https://github.com/SELinuxProject/selinux-kernel/issues/2
-> >>>
-> >
-> > Android restricts ownership of these files to a single process (bpfloader) and
-> > so this isn't a concern in our architecture. Is it a concern in general?
->
-> I guess if the inodes are pinned in memory, then only the original name
-> under which the file is created will be relevant to determining the
-> label and subsequent rename/link operations won't have any effect. So as
-> long as the bpfloader creates the files with the same names being
-> specified in policy, that should line up and be stable for the lifecycle
-> of the inode.
->
-> The alternative model is to have bpfloader look up a context from the
-> userspace file_contexts configuration via selabel_lookup(3) and friends,
-> and set it on the file explicitly.  That's what e.g. ueventd does for
-> device nodes.  However, one difference here is that you could currently
-> only do this via setxattr()/setfilecon() after creating the file so that
-> the file would temporarily exist in the default label for bpf fs, if
-> that matters.  ueventd can instead use setfscreatecon(3) before creating
-> the file so that it is originally created in the right label but that
-> requires the filesystem to call security_inode_init_security() from its
-> function that originally creates the inode, which tmpfs/devtmpfs does
-> but bpf does not.  So you'd have to add that to the bpf filesystem code
-> if you wanted to support setfscreatecon(3) on it.
+On Mon, 10 Feb 2020 17:06:48 -0600
+Tom Zanussi <zanussi@kernel.org> wrote:
 
-Considering the relative maturity of bpf, and bpffs, I think it's okay
-to take this small step right now, with the understanding that more
-work may need to be done, depending on how this is generally adopted
-by distros and users (for those of you not following the other thread,
-I've merged the v3 draft of this patch).
+> If the ring_buffer reserve in synth_event_trace_start() fails, the
+> matching ring_buffer_nest_end() should be called in the error code,
+> since nothing else will ever call it in this case.
+> 
 
-However, I've been noticing a trend from the Android folks of tossing
-patches over the wall without much thought beyond the Android use
-case.  I understand the Android devs have a job to do, and products to
-focus on, but I would strongly encourage them to think a bit longer
-about more general use cases before submitting patches upstream.
+Looks good to me.
+
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+Thanks,
+
+> Signed-off-by: Tom Zanussi <zanussi@kernel.org>
+> ---
+>  kernel/trace/trace_events_hist.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+> index b3bcfd8c7332..a546ffa14785 100644
+> --- a/kernel/trace/trace_events_hist.c
+> +++ b/kernel/trace/trace_events_hist.c
+> @@ -2043,6 +2043,7 @@ int synth_event_trace_start(struct trace_event_file *file,
+>  	entry = trace_event_buffer_reserve(&trace_state->fbuffer, file,
+>  					   sizeof(*entry) + fields_size);
+>  	if (!entry) {
+> +		ring_buffer_nest_end(trace_state->buffer);
+>  		ret = -EINVAL;
+>  		goto out;
+>  	}
+> -- 
+> 2.14.1
+> 
+
 
 -- 
-paul moore
-www.paul-moore.com
+Masami Hiramatsu <mhiramat@kernel.org>
