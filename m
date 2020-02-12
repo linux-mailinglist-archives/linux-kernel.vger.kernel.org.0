@@ -2,70 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DFA315A60A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:16:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E53B215A60D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:17:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbgBLKQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 05:16:40 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41999 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbgBLKQj (ORCPT
+        id S1727594AbgBLKQz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 05:16:55 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:44784 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbgBLKQy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 05:16:39 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 66so1346431otd.9;
-        Wed, 12 Feb 2020 02:16:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BSd7L1WcqmA7Rn1t/qtLYAH7L9DL0l8H2ANtY/V6cDc=;
-        b=gReBd1Ywov8ljWD1+wSAQA4uHUVj9uIy8Je3MtzuZ/kZ3CfR+97pLCp1EsVr5huVDr
-         GR1VRClCJVP8AW3Cgyi0H6jaJPPDkO6FHevE1c0xsjAUH+YCMWbbnM8W18oqECMsbpSS
-         qOrcI90WIJqKOlMLWXwOVANoe0XBIukrGCGw75mUIfdtfGYXgR/bnthuX2UjDT0oosSa
-         TUV4X4oS99IFidi2xfF1cA9lGHIsup04ePZnAUtJF3f1To/aBZWLyhII/OADy4If9B8F
-         qP+xKFU5uPIq9FPY9CkPOUF9nPlyte7zT8A8gfwTR3NplT58yHbFGktJ+484YJcC57ID
-         AIGA==
-X-Gm-Message-State: APjAAAVIwgvvVF/6r0CnFL3O11z7Eus+JKxJ72EJEMjywrs58Pn/WgDG
-        76MmwOtaRzj8ReakPVliPuZPgQjg4+LABMt/u6o=
-X-Google-Smtp-Source: APXvYqyfmunP1o2BTpeb9JU1HjP2UYYEVp4pQeJQcvu4Jqvu9FNFexZwM5K2BHzwypUIBN4OQGyWST7sYQ52txz7keM=
-X-Received: by 2002:a9d:67d7:: with SMTP id c23mr8759446otn.262.1581502598886;
- Wed, 12 Feb 2020 02:16:38 -0800 (PST)
-MIME-Version: 1.0
-References: <1654227.8mz0SueHsU@kreacher> <197693303.hiACyxC3Vm@kreacher> <20200212100810.GA4028@sirena.org.uk>
-In-Reply-To: <20200212100810.GA4028@sirena.org.uk>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 12 Feb 2020 11:16:27 +0100
-Message-ID: <CAJZ5v0i8DsjQkf_4ezOYMrvB47ZuxsgNmTbHQB-JEK8bMHUpPg@mail.gmail.com>
-Subject: Re: [PATCH 24/28] sound: Call cpu_latency_qos_*() instead of pm_qos_*()
-To:     Mark Brown <broonie@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>, Liam Girdwood <lgirdwood@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 12 Feb 2020 05:16:54 -0500
+Received: from ramsan ([84.195.182.253])
+        by andre.telenet-ops.be with bizsmtp
+        id 1mGs2200R5USYZQ01mGskR; Wed, 12 Feb 2020 11:16:53 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j1p4e-0001NS-Gp; Wed, 12 Feb 2020 11:16:52 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j1p4e-0002M5-FI; Wed, 12 Feb 2020 11:16:52 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Nick Hu <nickhu@andestech.com>, Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] nds32: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+Date:   Wed, 12 Feb 2020 11:16:51 +0100
+Message-Id: <20200212101651.9010-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 11:08 AM Mark Brown <broonie@kernel.org> wrote:
->
-> On Wed, Feb 12, 2020 at 12:34:15AM +0100, Rafael J. Wysocki wrote:
-> > From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-> >
-> > Call cpu_latency_qos_add/update/remove_request() and
-> > cpu_latency_qos_request_active() instead of
-> > pm_qos_add/update/remove_request() and pm_qos_request_active(),
-> > respectively, because the latter are going to be dropped.
->
-> What's the story with dependencies here, I only have this patch and not
-> the cover letter?
+The Andes platform code is not a clock provider, and just needs to call
+of_clk_init().
 
-The cover letter is here:
+Hence it can include <linux/of_clk.h> instead of <linux/clk-provider.h>.
 
-https://lore.kernel.org/linux-pm/CAJZ5v0h1z2p66J5KB3P0RjPkLE-DfDbcfhG_OrnDG_weir7HMA@mail.gmail.com/T/#m92ce7ffd743083e89e45c0a98da8c0140e44c70b
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/nds32/kernel/time.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Generally speaking, this patch depends on the previous patches in the series.
+diff --git a/arch/nds32/kernel/time.c b/arch/nds32/kernel/time.c
+index ac9d78ce3a818926..574a3d0a853980a9 100644
+--- a/arch/nds32/kernel/time.c
++++ b/arch/nds32/kernel/time.c
+@@ -2,7 +2,7 @@
+ // Copyright (C) 2005-2017 Andes Technology Corporation
+ 
+ #include <linux/clocksource.h>
+-#include <linux/clk-provider.h>
++#include <linux/of_clk.h>
+ 
+ void __init time_init(void)
+ {
+-- 
+2.17.1
+
