@@ -2,131 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1420A15A5F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:16:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DFA315A60A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2020 11:16:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbgBLKQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 05:16:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39160 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727279AbgBLKQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 05:16:00 -0500
-Received: from localhost (unknown [223.226.122.5])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3841C2073C;
-        Wed, 12 Feb 2020 10:15:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581502559;
-        bh=0ZfvCJyD4aws5BJOETfWcvOs5Q4TcRSl+cvngTFFj4E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DRXxX5tKi7piaFyca09jdXFxsKPiEvspBonnyZ0Dz+rdmgDlp7PZWbfSQxiu5WByV
-         uSSt22QM8Rq5SK4NtQ7xuJBzHjHJlZAwd9cBlQeefylCVNRDA1MgMWStiu98e6C1QR
-         SaA06dY+p9Nyoth4MBm5Pu7Hy3oewdHYwCIRyVbA=
-Date:   Wed, 12 Feb 2020 15:45:54 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
-        jank@cadence.com, srinivas.kandagatla@linaro.org,
-        slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [PATCH v2 5/5] soundwire: intel: free all resources on hw_free()
-Message-ID: <20200212101554.GB2618@vkoul-mobl>
-References: <20200114234257.14336-1-pierre-louis.bossart@linux.intel.com>
- <20200114234257.14336-6-pierre-louis.bossart@linux.intel.com>
+        id S1727847AbgBLKQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 05:16:40 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41999 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbgBLKQj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 05:16:39 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 66so1346431otd.9;
+        Wed, 12 Feb 2020 02:16:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BSd7L1WcqmA7Rn1t/qtLYAH7L9DL0l8H2ANtY/V6cDc=;
+        b=gReBd1Ywov8ljWD1+wSAQA4uHUVj9uIy8Je3MtzuZ/kZ3CfR+97pLCp1EsVr5huVDr
+         GR1VRClCJVP8AW3Cgyi0H6jaJPPDkO6FHevE1c0xsjAUH+YCMWbbnM8W18oqECMsbpSS
+         qOrcI90WIJqKOlMLWXwOVANoe0XBIukrGCGw75mUIfdtfGYXgR/bnthuX2UjDT0oosSa
+         TUV4X4oS99IFidi2xfF1cA9lGHIsup04ePZnAUtJF3f1To/aBZWLyhII/OADy4If9B8F
+         qP+xKFU5uPIq9FPY9CkPOUF9nPlyte7zT8A8gfwTR3NplT58yHbFGktJ+484YJcC57ID
+         AIGA==
+X-Gm-Message-State: APjAAAVIwgvvVF/6r0CnFL3O11z7Eus+JKxJ72EJEMjywrs58Pn/WgDG
+        76MmwOtaRzj8ReakPVliPuZPgQjg4+LABMt/u6o=
+X-Google-Smtp-Source: APXvYqyfmunP1o2BTpeb9JU1HjP2UYYEVp4pQeJQcvu4Jqvu9FNFexZwM5K2BHzwypUIBN4OQGyWST7sYQ52txz7keM=
+X-Received: by 2002:a9d:67d7:: with SMTP id c23mr8759446otn.262.1581502598886;
+ Wed, 12 Feb 2020 02:16:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200114234257.14336-6-pierre-louis.bossart@linux.intel.com>
+References: <1654227.8mz0SueHsU@kreacher> <197693303.hiACyxC3Vm@kreacher> <20200212100810.GA4028@sirena.org.uk>
+In-Reply-To: <20200212100810.GA4028@sirena.org.uk>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 12 Feb 2020 11:16:27 +0100
+Message-ID: <CAJZ5v0i8DsjQkf_4ezOYMrvB47ZuxsgNmTbHQB-JEK8bMHUpPg@mail.gmail.com>
+Subject: Re: [PATCH 24/28] sound: Call cpu_latency_qos_*() instead of pm_qos_*()
+To:     Mark Brown <broonie@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>, Liam Girdwood <lgirdwood@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14-01-20, 17:42, Pierre-Louis Bossart wrote:
-> Make sure all calls to the SoundWire stream API are done and involve
-> callback
-> 
-> Signed-off-by: Rander Wang <rander.wang@linux.intel.com>
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
->  drivers/soundwire/intel.c | 40 +++++++++++++++++++++++++++++++++++++--
->  1 file changed, 38 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-> index c498812522ab..e0c1fff7c4a0 100644
-> --- a/drivers/soundwire/intel.c
-> +++ b/drivers/soundwire/intel.c
-> @@ -550,6 +550,25 @@ static int intel_params_stream(struct sdw_intel *sdw,
->  	return -EIO;
->  }
->  
-> +static int intel_free_stream(struct sdw_intel *sdw,
-> +			     struct snd_pcm_substream *substream,
-> +			     struct snd_soc_dai *dai,
-> +			     int link_id)
-> +{
-> +	struct sdw_intel_link_res *res = sdw->link_res;
-> +	struct sdw_intel_stream_free_data free_data;
+On Wed, Feb 12, 2020 at 11:08 AM Mark Brown <broonie@kernel.org> wrote:
+>
+> On Wed, Feb 12, 2020 at 12:34:15AM +0100, Rafael J. Wysocki wrote:
+> > From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+> >
+> > Call cpu_latency_qos_add/update/remove_request() and
+> > cpu_latency_qos_request_active() instead of
+> > pm_qos_add/update/remove_request() and pm_qos_request_active(),
+> > respectively, because the latter are going to be dropped.
+>
+> What's the story with dependencies here, I only have this patch and not
+> the cover letter?
 
-where is this struct sdw_intel_stream_free_data defined. I dont see it
-in this patch or this series..
+The cover letter is here:
 
-> +
-> +	free_data.substream = substream;
-> +	free_data.dai = dai;
-> +	free_data.link_id = link_id;
-> +
-> +	if (res->ops && res->ops->free_stream && res->dev)
-> +		return res->ops->free_stream(res->dev,
-> +					     &free_data);
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * bank switch routines
->   */
-> @@ -817,6 +836,7 @@ static int
->  intel_hw_free(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
->  {
->  	struct sdw_cdns *cdns = snd_soc_dai_get_drvdata(dai);
-> +	struct sdw_intel *sdw = cdns_to_intel(cdns);
->  	struct sdw_cdns_dma_data *dma;
->  	int ret;
->  
-> @@ -824,12 +844,28 @@ intel_hw_free(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
->  	if (!dma)
->  		return -EIO;
->  
-> +	ret = sdw_deprepare_stream(dma->stream);
-> +	if (ret) {
-> +		dev_err(dai->dev, "sdw_deprepare_stream: failed %d", ret);
-> +		return ret;
-> +	}
-> +
->  	ret = sdw_stream_remove_master(&cdns->bus, dma->stream);
-> -	if (ret < 0)
-> +	if (ret < 0) {
->  		dev_err(dai->dev, "remove master from stream %s failed: %d\n",
->  			dma->stream->name, ret);
-> +		return ret;
-> +	}
->  
-> -	return ret;
-> +	ret = intel_free_stream(sdw, substream, dai, sdw->instance);
-> +	if (ret < 0) {
-> +		dev_err(dai->dev, "intel_free_stream: failed %d", ret);
-> +		return ret;
-> +	}
-> +
-> +	sdw_release_stream(dma->stream);
+https://lore.kernel.org/linux-pm/CAJZ5v0h1z2p66J5KB3P0RjPkLE-DfDbcfhG_OrnDG_weir7HMA@mail.gmail.com/T/#m92ce7ffd743083e89e45c0a98da8c0140e44c70b
 
-I think, free the 'name' here would be apt
-
--- 
-~Vinod
+Generally speaking, this patch depends on the previous patches in the series.
