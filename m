@@ -2,332 +2,375 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43DFC15BB22
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:05:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 254DF15BB2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:08:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729586AbgBMJFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 04:05:40 -0500
-Received: from mga04.intel.com ([192.55.52.120]:54713 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729459AbgBMJFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 04:05:40 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 01:05:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,436,1574150400"; 
-   d="scan'208";a="267006589"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga002.fm.intel.com with ESMTP; 13 Feb 2020 01:05:33 -0800
-Received: from [10.125.252.71] (abudanko-mobl.ccr.corp.intel.com [10.125.252.71])
-        by linux.intel.com (Postfix) with ESMTP id 49A115802C1;
-        Thu, 13 Feb 2020 01:05:25 -0800 (PST)
-Subject: Re: [PATCH v5 01/10] capabilities: introduce CAP_PERFMON to kernel
- and user space
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "james.bottomley@hansenpartnership.com" 
-        <james.bottomley@hansenpartnership.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        oprofile-list@lists.sf.net, Andy Lutomirski <luto@amacapital.net>
-References: <0548c832-7f4b-dc4c-8883-3f2b6d351a08@linux.intel.com>
- <9b77124b-675d-5ac7-3741-edec575bd425@linux.intel.com>
- <64cab472-806e-38c4-fb26-0ffbee485367@tycho.nsa.gov>
- <05297eff-8e14-ccdf-55a4-870c64516de8@linux.intel.com>
- <CAADnVQK-JzK-GUk4KOozn4c1xr=7TiCpB9Fi0QDC9nE6iVn8iQ@mail.gmail.com>
- <537bdb28-c9e4-f44f-d665-25250065a6bb@linux.intel.com>
- <63d9700f-231d-7973-5307-3e56a48c54cb@linux.intel.com>
- <d7213569-9578-7201-6106-f5ebc95bd6be@tycho.nsa.gov>
- <2e38c33d-f085-1320-8cc2-45f74b6ad86d@linux.intel.com>
- <dd6a1382-7b2f-a6e6-a1ac-009566d7f556@tycho.nsa.gov>
- <8141da2e-49cf-c02d-69e9-8a7cbdc91431@linux.intel.com>
- <7c367905-e8c9-7665-d923-c850e05c757a@tycho.nsa.gov>
- <280e6644-c129-15f6-ea5c-0f66bf764e0f@tycho.nsa.gov>
- <950cc6a4-5823-d607-1210-6f62c96cf67f@linux.intel.com>
- <46751eb9-deca-53cc-95fb-1602cfdf62a2@tycho.nsa.gov>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <874115a9-fb11-b7f4-7e92-46aedc5f26af@linux.intel.com>
-Date:   Thu, 13 Feb 2020 12:05:24 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S1729643AbgBMJIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 04:08:06 -0500
+Received: from mail27.static.mailgun.info ([104.130.122.27]:42104 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729531AbgBMJIF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 04:08:05 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1581584884; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=uNf6vVapQCg3D5lsFZcvKZjpP9dTesFvM5nY+NiQhdg=;
+ b=JDio2x9W2pb6KXsjO92pRXHXxkjhxfGJa80hLHfgdUawcSJVfsfNnFRdOZhBx5MYpMt/TqNz
+ aGeL078ezY8v7ArwC6jDCpB7jOQetB2gZFRAZo4E4Obc0Neq4+n6UrC5vtEm0V/wAtrqdvlY
+ JE/r4lSHqC10HEH5YmgA4uM7/og=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e4511f0.7f5db6faadc0-smtp-out-n02;
+ Thu, 13 Feb 2020 09:08:00 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id D1045C447A0; Thu, 13 Feb 2020 09:07:58 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: gubbaven)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7AF57C43383;
+        Thu, 13 Feb 2020 09:07:57 +0000 (UTC)
 MIME-Version: 1.0
-In-Reply-To: <46751eb9-deca-53cc-95fb-1602cfdf62a2@tycho.nsa.gov>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 13 Feb 2020 14:37:57 +0530
+From:   gubbaven@codeaurora.org
+To:     Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        robh@kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, bgodavar@codeaurora.org,
+        Claire Chang <tientzu@chromium.org>,
+        Sean Paul <seanpaul@chromium.org>, rjliao@codeaurora.org,
+        Yoni Shavit <yshavit@google.com>
+Subject: Re: [PATCH v2] Bluetooth: hci_qca: Bug fixes while collecting
+ controller memory dump
+In-Reply-To: <CANFp7mVGurJ0LG9X9EDoT0j25SoJgXeXpWvAVDymhWYVb3nnbw@mail.gmail.com>
+References: <1581522508-31337-1-git-send-email-gubbaven@codeaurora.org>
+ <CANFp7mVGurJ0LG9X9EDoT0j25SoJgXeXpWvAVDymhWYVb3nnbw@mail.gmail.com>
+Message-ID: <a3e713f2663bffbb71400563ba6d3735@codeaurora.org>
+X-Sender: gubbaven@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Abhishek,
 
-On 12.02.2020 20:09, Stephen Smalley wrote:
-> On 2/12/20 11:56 AM, Alexey Budankov wrote:
->>
->>
->> On 12.02.2020 18:45, Stephen Smalley wrote:
->>> On 2/12/20 10:21 AM, Stephen Smalley wrote:
->>>> On 2/12/20 8:53 AM, Alexey Budankov wrote:
->>>>> On 12.02.2020 16:32, Stephen Smalley wrote:
->>>>>> On 2/12/20 3:53 AM, Alexey Budankov wrote:
->>>>>>> Hi Stephen,
->>>>>>>
->>>>>>> On 22.01.2020 17:07, Stephen Smalley wrote:
->>>>>>>> On 1/22/20 5:45 AM, Alexey Budankov wrote:
->>>>>>>>>
->>>>>>>>> On 21.01.2020 21:27, Alexey Budankov wrote:
->>>>>>>>>>
->>>>>>>>>> On 21.01.2020 20:55, Alexei Starovoitov wrote:
->>>>>>>>>>> On Tue, Jan 21, 2020 at 9:31 AM Alexey Budankov
->>>>>>>>>>> <alexey.budankov@linux.intel.com> wrote:
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> On 21.01.2020 17:43, Stephen Smalley wrote:
->>>>>>>>>>>>> On 1/20/20 6:23 AM, Alexey Budankov wrote:
->>>>>>>>>>>>>>
->>>>>>> <SNIP>
->>>>>>>>>>>>>> Introduce CAP_PERFMON capability designed to secure system performance
->>>>>>>>>>>>>
->>>>>>>>>>>>> Why _noaudit()?  Normally only used when a permission failure is non-fatal to the operation.  Otherwise, we want the audit message.
->>>>>>>>>
->>>>>>>>> So far so good, I suggest using the simplest version for v6:
->>>>>>>>>
->>>>>>>>> static inline bool perfmon_capable(void)
->>>>>>>>> {
->>>>>>>>>        return capable(CAP_PERFMON) || capable(CAP_SYS_ADMIN);
->>>>>>>>> }
->>>>>>>>>
->>>>>>>>> It keeps the implementation simple and readable. The implementation is more
->>>>>>>>> performant in the sense of calling the API - one capable() call for CAP_PERFMON
->>>>>>>>> privileged process.
->>>>>>>>>
->>>>>>>>> Yes, it bloats audit log for CAP_SYS_ADMIN privileged and unprivileged processes,
->>>>>>>>> but this bloating also advertises and leverages using more secure CAP_PERFMON
->>>>>>>>> based approach to use perf_event_open system call.
->>>>>>>>
->>>>>>>> I can live with that.  We just need to document that when you see both a CAP_PERFMON and a CAP_SYS_ADMIN audit message for a process, try only allowing CAP_PERFMON first and see if that resolves the issue.  We have a similar issue with CAP_DAC_READ_SEARCH versus CAP_DAC_OVERRIDE.
->>>>>>>
->>>>>>> I am trying to reproduce this double logging with CAP_PERFMON.
->>>>>>> I am using the refpolicy version with enabled perf_event tclass [1], in permissive mode.
->>>>>>> When running perf stat -a I am observing this AVC audit messages:
->>>>>>>
->>>>>>> type=AVC msg=audit(1581496695.666:8691): avc:  denied  { open } for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
->>>>>>> type=AVC msg=audit(1581496695.666:8691): avc:  denied  { kernel } for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
->>>>>>> type=AVC msg=audit(1581496695.666:8691): avc:  denied  { cpu } for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
->>>>>>> type=AVC msg=audit(1581496695.666:8692): avc:  denied  { write } for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
->>>>>>>
->>>>>>> However there is no capability related messages around. I suppose my refpolicy should
->>>>>>> be modified somehow to observe capability related AVCs.
->>>>>>>
->>>>>>> Could you please comment or clarify on how to enable caps related AVCs in order
->>>>>>> to test the concerned logging.
->>>>>>
->>>>>> The new perfmon permission has to be defined in your policy; you'll have a message in dmesg about "Permission perfmon in class capability2 not defined in policy.".  You can either add it to the common cap2 definition in refpolicy/policy/flask/access_vectors and rebuild your policy or extract your base module as CIL, add it there, and insert the updated module.
->>>>>
->>>>> Yes, I already have it like this:
->>>>> common cap2
->>>>> {
->>>>> <------>mac_override<--># unused by SELinux
->>>>> <------>mac_admin
->>>>> <------>syslog
->>>>> <------>wake_alarm
->>>>> <------>block_suspend
->>>>> <------>audit_read
->>>>> <------>perfmon
->>>>> }
->>>>>
->>>>> dmesg stopped reporting perfmon as not defined but audit.log still doesn't report CAP_PERFMON denials.
->>>>> BTW, audit even doesn't report CAP_SYS_ADMIN denials, however perfmon_capable() does check for it.
->>>>
->>>> Some denials may be silenced by dontaudit rules; semodule -DB will strip those and semodule -B will restore them.  Other possibility is that the process doesn't have CAP_PERFMON in its effective set and therefore never reaches SELinux at all; denied first by the capability module.
->>>
->>> Also, the fact that your denials are showing up in user_systemd_t suggests that something is off in your policy or userspace/distro; I assume that is a domain type for the systemd --user instance, but your shell and commands shouldn't be running in that domain (user_t would be more appropriate for that).
->>
->> It is user_t for local terminal session:
->> ps -Z
->> LABEL                             PID TTY          TIME CMD
->> user_u:user_r:user_t            11317 pts/9    00:00:00 bash
->> user_u:user_r:user_t            11796 pts/9    00:00:00 ps
->>
->> For local terminal root session:
->> ps -Z
->> LABEL                             PID TTY          TIME CMD
->> user_u:user_r:user_su_t          2926 pts/3    00:00:00 bash
->> user_u:user_r:user_su_t         10995 pts/3    00:00:00 ps
->>
->> For remote ssh session:
->> ps -Z
->> LABEL                             PID TTY          TIME CMD
->> user_u:user_r:user_t             7540 pts/8    00:00:00 ps
->> user_u:user_r:user_systemd_t     8875 pts/8    00:00:00 bash
+Sure I will update and post next patch set.
+
+Regards,
+Lakshmi Narayana.
+On 2020-02-12 22:27, Abhishek Pandit-Subedi wrote:
+> Hi Venkata,
 > 
-> That's a bug in either your policy or your userspace/distro integration.  In any event, unless user_systemd_t is allowed all capability2 permissions by your policy, you should see the denials if CAP_PERFMON is set in the effective capability set of the process.
+> I would suggest removing the memdump_timer entirely and making the
+> ctrl_memdump_timeout into struct delayed_work.
 > 
-
-That all seems to be true. After instrumentation, rebuilding and rebooting, in CAP_PERFMON case:
-
-$ getcap perf
-perf = cap_sys_ptrace,cap_syslog,cap_perfmon+ep
-
-$ perf stat -a
-
-type=AVC msg=audit(1581580399.165:784): avc:  denied  { open } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580399.165:785): avc:  denied  { perfmon } for  pid=8859 comm="perf" capability=38  scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=capability2 permissive=1
-type=AVC msg=audit(1581580399.165:786): avc:  denied  { kernel } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580399.165:787): avc:  denied  { cpu } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580399.165:788): avc:  denied  { write } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580408.078:791): avc:  denied  { read } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-
-dmesg:
-
-[  137.877713] security_capable(0000000071f7ee6e, 000000009dd7a5fc, CAP_PERFMON, 0) = ?
-[  137.877774] cread_has_capability(CAP_PERFMON) = 0
-[  137.877775] prior avc_audit(CAP_PERFMON)
-[  137.877779] security_capable(0000000071f7ee6e, 000000009dd7a5fc, CAP_PERFMON, 0) = 0
-
-[  137.877784] security_capable(0000000071f7ee6e, 000000009dd7a5fc, CAP_PERFMON, 0) = ?
-[  137.877785] cread_has_capability(CAP_PERFMON) = 0
-[  137.877786] security_capable(0000000071f7ee6e, 000000009dd7a5fc, CAP_PERFMON, 0) = 0
-
-[  137.877794] security_capable(0000000071f7ee6e, 000000009dd7a5fc, CAP_PERFMON, 0) = ?
-[  137.877795] cread_has_capability(CAP_PERFMON) = 0
-[  137.877796] security_capable(0000000071f7ee6e, 000000009dd7a5fc, CAP_PERFMON, 0) = 0
-
-...
-
-in CAP_SYS_ADMIN case:
-
-$ getcap perf
-perf = cap_sys_ptrace,cap_sys_admin,cap_syslog+ep
-
-$ perf stat -a
-
-type=AVC msg=audit(1581580747.928:835): avc:  denied  { open } for  pid=8927 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580747.928:836): avc:  denied  { cpu } for  pid=8927 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580747.928:837): avc:  denied  { kernel } for  pid=8927 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580747.928:838): avc:  denied  { read } for  pid=8927 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580747.928:839): avc:  denied  { write } for  pid=8927 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-...
-
-$ perf record -- ls
-...
-type=AVC msg=audit(1581580747.930:843): avc:  denied  { sys_ptrace } for  pid=8927 comm="perf" capability=19  scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=capability permissive=1
-...
-
-dmesg:
-
-[  276.714266] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_PERFMON, 0) = ?
-[  276.714268] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_PERFMON, 0) = -1
-
-[  276.714269] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = ?
-[  276.714270] cread_has_capability(CAP_SYS_ADMIN) = 0
-[  276.714270] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = 0
-
-[  276.714287] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_PERFMON, 0) = ?
-[  276.714287] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_PERFMON, 0) = -1
-
-[  276.714288] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = ?
-[  276.714288] cread_has_capability(CAP_SYS_ADMIN) = 0
-[  276.714289] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = 0
-
-[  276.714294] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_PERFMON, 0) = ?
-[  276.714295] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_PERFMON, 0) = -1
-
-[  276.714295] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = ?
-[  276.714296] cread_has_capability(CAP_SYS_ADMIN) = 0
-[  276.714296] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = 0
-
-...
-
-in unprivileged case:
-
-$ getcap perf
-perf =
-
-$ perf stat -a; perf record -a
-
-...
-
-dmesg:
-
-[  947.275611] security_capable(00000000d3a75377, 000000009dd7a5fc, CAP_PERFMON, 0) = ?
-[  947.275613] security_capable(00000000d3a75377, 000000009dd7a5fc, CAP_PERFMON, 0) = -1
-
-[  947.275614] security_capable(00000000d3a75377, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = ?
-[  947.275615] security_capable(00000000d3a75377, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = -1
-
-[  947.275636] security_capable(00000000d3a75377, 000000009dd7a5fc, CAP_PERFMON, 0) = ?
-[  947.275637] security_capable(00000000d3a75377, 000000009dd7a5fc, CAP_PERFMON, 0) = -1
-
-[  947.275638] security_capable(00000000d3a75377, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = ?
-[  947.275638] security_capable(00000000d3a75377, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = -1
-
-...
-
-So it looks like CAP_PERFMON and CAP_SYS_ADMIN are not ever logged by AVC simultaneously,
-in the current LSM and perfmon_capable() implementations.
-
-If perfmon is granted:
-	perfmon is not logged by capabilities, perfmon is logged by AVC,
-	no check for sys_admin by perfmon_capable().
-
-If perfmon is not granted but sys_admin is granted:
-	perfmon is not logged by capabilities, AVC logging is not called for perfmon,
-	sys_admin is not logged by capabilities, sys_admin is not logged by AVC, for some intended reason?
-
-No caps are granted:
-	AVC logging is not called either for perfmon or for sys_admin.
-
-BTW, is there a way to may be drop some AV cache so denials would appear in audit in the next AV access?
-
-Well, I guess you have initially mentioned some case similar to this (note that ids are not the same but pids= are):
-
-type=AVC msg=audit(1581580399.165:784): avc:  denied  { open } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580399.165:785): avc:  denied  { perfmon } for  pid=8859 comm="perf" capability=38  scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=capability2 permissive=1
-type=AVC msg=audit(          .   :   ): avc:  denied  { sys_admin } for  pid=8859 comm="perf" capability=21  scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=capability2 permissive=1
-type=AVC msg=audit(1581580399.165:786): avc:  denied  { kernel } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580399.165:787): avc:  denied  { cpu } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580399.165:788): avc:  denied  { write } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580408.078:791): avc:  denied  { read } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-
-So the message could be like this:
-
-"If audit logs for a process using perf_events related syscalls i.e. perf_event_open(), read(), write(),
- ioctl(), mmap() contain denials both for CAP_PERFMON and CAP_SYS_ADMIN capabilities then providing the
- process with CAP_PERFMON capability singly is the secure preferred approach to resolve access denials 
- to performance monitoring and observability operations."
-
-~Alexey
+> Instead of using mod_timer to get the callback ready, you would
+> instead call `queue_delayed_work(qca->workqueue,
+> &qca->ctrl_memdump_timeout, MEMDUMP_TIMEOUT_MS);` and instead of
+> del_timer, you would instead
+> `cancel_delayed_work(&qca->ctrl_memdump_timeout)` if mutex is held or
+> `cancel_delayed_work_sync(&qca->ctrl_memdump_timeout)` if mutex is not
+> held.
+> 
+> Other than that, everything else looks good to me.
+> 
+> On Wed, Feb 12, 2020 at 7:51 AM Venkata Lakshmi Narayana Gubba
+> <gubbaven@codeaurora.org> wrote:
+>> 
+>> This patch will fix the below issues
+>>    1.Fixed race conditions while accessing memory dump state flags.
+>>    2.Updated with actual context of timer in hci_memdump_timeout()
+>>    3.Updated injecting hardware error event if the dumps failed to 
+>> receive.
+>>    4.Once timeout is triggered, stopping the memory dump collections.
+>> 
+>> Possible scenarios while collecting memory dump:
+>> 
+>> Scenario 1:
+>> 
+>> Memdump event from firmware
+>> Some number of memdump events with seq #
+>> Hw error event
+>> Reset
+>> 
+>> Scenario 2:
+>> 
+>> Memdump event from firmware
+>> Some number of memdump events with seq #
+>> Timeout schedules hw_error_event if hw error event is not received 
+>> already
+>> hw_error_event clears the memdump activity
+>> reset
+>> 
+>> Scenario 3:
+>> 
+>> hw_error_event sends memdump command to firmware and waits for 
+>> completion
+>> Some number of memdump events with seq #
+>> hw error event
+>> reset
+>> 
+>> Fixes: d841502c79e3 ("Bluetooth: hci_qca: Collect controller memory 
+>> dump during SSR")
+>> Reported-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+>> Signed-off-by: Venkata Lakshmi Narayana Gubba 
+>> <gubbaven@codeaurora.org>
+>> ---
+>>  drivers/bluetooth/hci_qca.c | 96 
+>> ++++++++++++++++++++++++++++++++-------------
+>>  1 file changed, 69 insertions(+), 27 deletions(-)
+>> 
+>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> index eacc65b..80ee838 100644
+>> --- a/drivers/bluetooth/hci_qca.c
+>> +++ b/drivers/bluetooth/hci_qca.c
+>> @@ -29,6 +29,7 @@
+>>  #include <linux/platform_device.h>
+>>  #include <linux/regulator/consumer.h>
+>>  #include <linux/serdev.h>
+>> +#include <linux/mutex.h>
+>>  #include <asm/unaligned.h>
+>> 
+>>  #include <net/bluetooth/bluetooth.h>
+>> @@ -69,7 +70,8 @@ enum qca_flags {
+>>         QCA_IBS_ENABLED,
+>>         QCA_DROP_VENDOR_EVENT,
+>>         QCA_SUSPENDING,
+>> -       QCA_MEMDUMP_COLLECTION
+>> +       QCA_MEMDUMP_COLLECTION,
+>> +       QCA_HW_ERROR_EVENT
+>>  };
+>> 
+>> 
+>> @@ -145,11 +147,13 @@ struct qca_data {
+>>         struct work_struct ws_rx_vote_off;
+>>         struct work_struct ws_tx_vote_off;
+>>         struct work_struct ctrl_memdump_evt;
+>> +       struct work_struct ctrl_memdump_timeout;
+>>         struct qca_memdump_data *qca_memdump;
+>>         unsigned long flags;
+>>         struct completion drop_ev_comp;
+>>         wait_queue_head_t suspend_wait_q;
+>>         enum qca_memdump_states memdump_state;
+>> +       struct mutex hci_memdump_lock;
+>> 
+>>         /* For debugging purpose */
+>>         u64 ibs_sent_wacks;
+>> @@ -524,21 +528,33 @@ static void hci_ibs_wake_retrans_timeout(struct 
+>> timer_list *t)
+>> 
+>>  static void hci_memdump_timeout(struct timer_list *t)
+>>  {
+>> -       struct qca_data *qca = from_timer(qca, t, tx_idle_timer);
+>> -       struct hci_uart *hu = qca->hu;
+>> -       struct qca_memdump_data *qca_memdump = qca->qca_memdump;
+>> -       char *memdump_buf = qca_memdump->memdump_buf_tail;
+>> -
+>> -       bt_dev_err(hu->hdev, "clearing allocated memory due to memdump 
+>> timeout");
+>> -       /* Inject hw error event to reset the device and driver. */
+>> -       hci_reset_dev(hu->hdev);
+>> -       vfree(memdump_buf);
+>> -       kfree(qca_memdump);
+>> -       qca->memdump_state = QCA_MEMDUMP_TIMEOUT;
+>> +       struct qca_data *qca = from_timer(qca, t, memdump_timer);
+>> +
+>> +       queue_work(qca->workqueue, &qca->ctrl_memdump_timeout);
+>>         del_timer(&qca->memdump_timer);
+>> -       cancel_work_sync(&qca->ctrl_memdump_evt);
+>>  }
+>> 
+>> +static void qca_controller_memdump_timeout(struct work_struct *work)
+>> +{
+>> +       struct qca_data *qca = container_of(work, struct qca_data,
+>> +                                       ctrl_memdump_timeout);
+>> +       struct hci_uart *hu = qca->hu;
+>> +
+>> +       mutex_lock(&qca->hci_memdump_lock);
+>> +       if (test_bit(QCA_MEMDUMP_COLLECTION, &qca->flags)) {
+>> +               qca->memdump_state = QCA_MEMDUMP_TIMEOUT;
+>> +               if (!test_bit(QCA_HW_ERROR_EVENT, &qca->flags)) {
+>> +                       /* Inject hw error event to reset the device
+>> +                        * and driver.
+>> +                        */
+>> +                       hci_reset_dev(hu->hdev);
+>> +               }
+>> +       }
+>> +
+>> +       mutex_unlock(&qca->hci_memdump_lock);
+>> +}
+>> +
+>> +
+>>  /* Initialize protocol */
+>>  static int qca_open(struct hci_uart *hu)
+>>  {
+>> @@ -558,6 +574,7 @@ static int qca_open(struct hci_uart *hu)
+>>         skb_queue_head_init(&qca->tx_wait_q);
+>>         skb_queue_head_init(&qca->rx_memdump_q);
+>>         spin_lock_init(&qca->hci_ibs_lock);
+>> +       mutex_init(&qca->hci_memdump_lock);
+>>         qca->workqueue = alloc_ordered_workqueue("qca_wq", 0);
+>>         if (!qca->workqueue) {
+>>                 BT_ERR("QCA Workqueue not initialized properly");
+>> @@ -570,6 +587,7 @@ static int qca_open(struct hci_uart *hu)
+>>         INIT_WORK(&qca->ws_rx_vote_off, 
+>> qca_wq_serial_rx_clock_vote_off);
+>>         INIT_WORK(&qca->ws_tx_vote_off, 
+>> qca_wq_serial_tx_clock_vote_off);
+>>         INIT_WORK(&qca->ctrl_memdump_evt, qca_controller_memdump);
+>> +       INIT_WORK(&qca->ctrl_memdump_timeout, 
+>> qca_controller_memdump_timeout);
+>>         init_waitqueue_head(&qca->suspend_wait_q);
+>> 
+>>         qca->hu = hu;
+>> @@ -963,11 +981,20 @@ static void qca_controller_memdump(struct 
+>> work_struct *work)
+>> 
+>>         while ((skb = skb_dequeue(&qca->rx_memdump_q))) {
+>> 
+>> +               mutex_lock(&qca->hci_memdump_lock);
+>> +               /* Skip processing the received packets if timeout 
+>> detected. */
+>> +               if (qca->memdump_state == QCA_MEMDUMP_TIMEOUT) {
+>> +                       mutex_unlock(&qca->hci_memdump_lock);
+>> +                       return;
+>> +               }
+>> +
+>>                 if (!qca_memdump) {
+>>                         qca_memdump = kzalloc(sizeof(struct 
+>> qca_memdump_data),
+>>                                               GFP_ATOMIC);
+>> -                       if (!qca_memdump)
+>> +                       if (!qca_memdump) {
+>> +                               mutex_unlock(&qca->hci_memdump_lock);
+>>                                 return;
+>> +                       }
+>> 
+>>                         qca->qca_memdump = qca_memdump;
+>>                 }
+>> @@ -992,6 +1019,7 @@ static void qca_controller_memdump(struct 
+>> work_struct *work)
+>>                         if (!(dump_size)) {
+>>                                 bt_dev_err(hu->hdev, "Rx invalid 
+>> memdump size");
+>>                                 kfree_skb(skb);
+>> +                               mutex_unlock(&qca->hci_memdump_lock);
+>>                                 return;
+>>                         }
+>> 
+>> @@ -1016,6 +1044,7 @@ static void qca_controller_memdump(struct 
+>> work_struct *work)
+>>                         kfree(qca_memdump);
+>>                         kfree_skb(skb);
+>>                         qca->qca_memdump = NULL;
+>> +                       mutex_unlock(&qca->hci_memdump_lock);
+>>                         return;
+>>                 }
+>> 
+>> @@ -1050,12 +1079,16 @@ static void qca_controller_memdump(struct 
+>> work_struct *work)
+>>                         kfree(qca->qca_memdump);
+>>                         qca->qca_memdump = NULL;
+>>                         qca->memdump_state = QCA_MEMDUMP_COLLECTED;
+>> +                       clear_bit(QCA_MEMDUMP_COLLECTION, 
+>> &qca->flags);
+>>                 }
+>> +
+>> +               mutex_unlock(&qca->hci_memdump_lock);
+>>         }
+>> 
+>>  }
+>> 
+>> -int qca_controller_memdump_event(struct hci_dev *hdev, struct sk_buff 
+>> *skb)
+>> +static int qca_controller_memdump_event(struct hci_dev *hdev,
+>> +                                       struct sk_buff *skb)
+>>  {
+>>         struct hci_uart *hu = hci_get_drvdata(hdev);
+>>         struct qca_data *qca = hu->priv;
+>> @@ -1406,30 +1439,21 @@ static void 
+>> qca_wait_for_dump_collection(struct hci_dev *hdev)
+>>  {
+>>         struct hci_uart *hu = hci_get_drvdata(hdev);
+>>         struct qca_data *qca = hu->priv;
+>> -       struct qca_memdump_data *qca_memdump = qca->qca_memdump;
+>> -       char *memdump_buf = NULL;
+>> 
+>>         wait_on_bit_timeout(&qca->flags, QCA_MEMDUMP_COLLECTION,
+>>                             TASK_UNINTERRUPTIBLE, MEMDUMP_TIMEOUT_MS);
+>> 
+>>         clear_bit(QCA_MEMDUMP_COLLECTION, &qca->flags);
+>> -       if (qca->memdump_state == QCA_MEMDUMP_IDLE) {
+>> -               bt_dev_err(hu->hdev, "Clearing the buffers due to 
+>> timeout");
+>> -               if (qca_memdump)
+>> -                       memdump_buf = qca_memdump->memdump_buf_tail;
+>> -               vfree(memdump_buf);
+>> -               kfree(qca_memdump);
+>> -               qca->memdump_state = QCA_MEMDUMP_TIMEOUT;
+>> -               del_timer(&qca->memdump_timer);
+>> -               cancel_work_sync(&qca->ctrl_memdump_evt);
+>> -       }
+>>  }
+>> 
+>>  static void qca_hw_error(struct hci_dev *hdev, u8 code)
+>>  {
+>>         struct hci_uart *hu = hci_get_drvdata(hdev);
+>>         struct qca_data *qca = hu->priv;
+>> +       struct qca_memdump_data *qca_memdump = qca->qca_memdump;
+>> +       char *memdump_buf = NULL;
+>> 
+>> +       set_bit(QCA_HW_ERROR_EVENT, &qca->flags);
+>>         bt_dev_info(hdev, "mem_dump_status: %d", qca->memdump_state);
+>> 
+>>         if (qca->memdump_state == QCA_MEMDUMP_IDLE) {
+>> @@ -1449,6 +1473,24 @@ static void qca_hw_error(struct hci_dev *hdev, 
+>> u8 code)
+>>                 bt_dev_info(hdev, "waiting for dump to complete");
+>>                 qca_wait_for_dump_collection(hdev);
+>>         }
+>> +
+>> +       if (qca->memdump_state != QCA_MEMDUMP_COLLECTED) {
+>> +               bt_dev_err(hu->hdev, "clearing allocated memory due to 
+>> memdump timeout");
+>> +               mutex_lock(&qca->hci_memdump_lock);
+>> +               if (qca_memdump)
+>> +                       memdump_buf = qca_memdump->memdump_buf_head;
+>> +               vfree(memdump_buf);
+>> +               kfree(qca_memdump);
+>> +               qca->qca_memdump = NULL;
+>> +               qca->memdump_state = QCA_MEMDUMP_TIMEOUT;
+>> +               del_timer(&qca->memdump_timer);
+>> +               skb_queue_purge(&qca->rx_memdump_q);
+>> +               mutex_unlock(&qca->hci_memdump_lock);
+>> +               cancel_work_sync(&qca->ctrl_memdump_timeout);
+>> +               cancel_work_sync(&qca->ctrl_memdump_evt);
+>> +       }
+>> +
+>> +       clear_bit(QCA_HW_ERROR_EVENT, &qca->flags);
+>>  }
+>> 
+>>  static void qca_cmd_timeout(struct hci_dev *hdev)
+>> --
+>> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
+>> member
+>> of Code Aurora Forum, hosted by The Linux Foundation
+>> 
+> 
+> Thanks
+> Abhishek
