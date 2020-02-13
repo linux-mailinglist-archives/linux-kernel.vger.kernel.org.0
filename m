@@ -2,52 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BE5A15BBA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:25:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC20415BBD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:40:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729709AbgBMJZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 04:25:49 -0500
-Received: from helcar.hmeau.com ([216.24.177.18]:42542 "EHLO deadmen.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729578AbgBMJZs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 04:25:48 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1j2Aka-0004Bp-Lc; Thu, 13 Feb 2020 17:25:36 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1j2AkZ-0006rf-OP; Thu, 13 Feb 2020 17:25:35 +0800
-Date:   Thu, 13 Feb 2020 17:25:35 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Chen Zhou <chenzhou10@huawei.com>
-Cc:     clabbe.montjoie@gmail.com, davem@davemloft.net, mripard@kernel.org,
-        wens@csie.org, linux-crypto@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] crypto: allwinner - remove redundant
- platform_get_irq error message
-Message-ID: <20200213092535.buas6vaiusonkhrw@gondor.apana.org.au>
-References: <20200205140130.164805-1-chenzhou10@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200205140130.164805-1-chenzhou10@huawei.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1729653AbgBMJkr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 04:40:47 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:46304 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729440AbgBMJkr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 04:40:47 -0500
+Received: from ramsan ([84.195.182.253])
+        by andre.telenet-ops.be with bizsmtp
+        id 29gj220075USYZQ019gj7i; Thu, 13 Feb 2020 10:40:44 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j2AzD-0007zc-5i; Thu, 13 Feb 2020 10:40:43 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j2A0b-0006Ku-4K; Thu, 13 Feb 2020 09:38:05 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] powerpc/time: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+Date:   Thu, 13 Feb 2020 09:38:04 +0100
+Message-Id: <20200213083804.24315-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 10:01:30PM +0800, Chen Zhou wrote:
-> Function dev_err() after platform_get_irq() is redundant because
-> platform_get_irq() already prints an error.
-> 
-> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
-> ---
->  drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+The PowerPC time code is not a clock provider, and just needs to call
+of_clk_init().
 
-Patch applied.  Thanks.
+Hence it can include <linux/of_clk.h> instead of <linux/clk-provider.h>.
+
+Remove the #ifdef protecting the of_clk_init() call, as a stub is
+available for the !CONFIG_COMMON_CLK case.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+---
+v2:
+  - Add Reviewed-by,
+  - Remove #ifdef.
+---
+ arch/powerpc/kernel/time.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
+index 1168e8b37e30696d..8ce3fa8a8c0a2d63 100644
+--- a/arch/powerpc/kernel/time.c
++++ b/arch/powerpc/kernel/time.c
+@@ -50,7 +50,7 @@
+ #include <linux/irq.h>
+ #include <linux/delay.h>
+ #include <linux/irq_work.h>
+-#include <linux/clk-provider.h>
++#include <linux/of_clk.h>
+ #include <linux/suspend.h>
+ #include <linux/sched/cputime.h>
+ #include <linux/processor.h>
+@@ -1158,9 +1158,7 @@ void __init time_init(void)
+ 	init_decrementer_clockevent();
+ 	tick_setup_hrtimer_broadcast();
+ 
+-#ifdef CONFIG_COMMON_CLK
+ 	of_clk_init(NULL);
+-#endif
+ }
+ 
+ /*
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.17.1
+
