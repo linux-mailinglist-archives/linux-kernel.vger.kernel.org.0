@@ -2,135 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18D0815BA19
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 08:35:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F99015BA2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 08:40:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729829AbgBMHfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 02:35:11 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:41893 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727123AbgBMHfL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 02:35:11 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200213073508euoutp02768fcc78e703300937c32ea9da22b989~y5gB8wQ4Y2826228262euoutp02F
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:35:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200213073508euoutp02768fcc78e703300937c32ea9da22b989~y5gB8wQ4Y2826228262euoutp02F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1581579308;
-        bh=yxhnnZFN4xpeYqDaqMbGXmr4Z8OKTV5vkdpP58BDZ5M=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=m2mgv3kSEbxTscz3LG6e9/tq+1t3U6JNZz9LX7aCgI/4KEzqlMLwTJUo4H2fsWy9Q
-         M7636dgSf2Fv9rqG15LeVYjvNIWpE6KEeGfkva4lLGSKfTjAqTJa8CY6GAXQr+0Jlx
-         0YXzQm8VlxJdhusIMp0jZEW9h+TuI9nnSO/Cn4vo=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200213073508eucas1p16e119f10904f7a049c539aed4f0f076c~y5gB4Nelh2164521645eucas1p1S;
-        Thu, 13 Feb 2020 07:35:08 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 09.AE.61286.C2CF44E5; Thu, 13
-        Feb 2020 07:35:08 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200213073508eucas1p22d36cf1b15ea9ecd7a22d245e145fe05~y5gBbADf61499814998eucas1p2A;
-        Thu, 13 Feb 2020 07:35:08 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200213073508eusmtrp289c345422080c6de682e12c374c70169~y5gBaYfrZ0470804708eusmtrp20;
-        Thu, 13 Feb 2020 07:35:08 +0000 (GMT)
-X-AuditID: cbfec7f2-ef1ff7000001ef66-85-5e44fc2c385c
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 96.1A.08375.C2CF44E5; Thu, 13
-        Feb 2020 07:35:08 +0000 (GMT)
-Received: from [106.120.51.15] (unknown [106.120.51.15]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200213073507eusmtip1b413deaca0d82eef849bc98c225005d1~y5gBFDLWm1173711737eusmtip1g;
-        Thu, 13 Feb 2020 07:35:07 +0000 (GMT)
-Subject: Re: [PATCH] ARM: bcm2835_defconfig: add minimal support for
- Raspberry Pi4
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <5adcb2de-3570-9c4d-5e5b-726b94fb2029@samsung.com>
-Date:   Thu, 13 Feb 2020 08:35:06 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.4.2
+        id S1729905AbgBMHj5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 02:39:57 -0500
+Received: from relay.sw.ru ([185.231.240.75]:41054 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729757AbgBMHj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 02:39:56 -0500
+Received: from [192.168.15.156] (helo=localhost.localdomain)
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1j295S-0001TQ-1z; Thu, 13 Feb 2020 10:39:02 +0300
+Subject: [PATCH v7 0/6] block: Introduce REQ_ALLOCATE flag for
+ REQ_OP_WRITE_ZEROES
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+To:     martin.petersen@oracle.com, bob.liu@oracle.com, axboe@kernel.dk,
+        darrick.wong@oracle.com
+Cc:     agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
+        song@kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        Chaitanya.Kulkarni@wdc.com, ming.lei@redhat.com, osandov@fb.com,
+        jthumshirn@suse.de, minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
+        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
+        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
+        chaitanya.kulkarni@wdc.com, bvanassche@acm.org,
+        dhowells@redhat.com, asml.silence@gmail.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ktkhai@virtuozzo.com
+Date:   Thu, 13 Feb 2020 10:39:01 +0300
+Message-ID: <158157930219.111879.12072477040351921368.stgit@localhost.localdomain>
+User-Agent: StGit/0.19
 MIME-Version: 1.0
-In-Reply-To: <a1d66025baa13b2276b12405544fc7107aac8d6c.camel@suse.de>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBKsWRmVeSWpSXmKPExsWy7djPc7o6f1ziDN7ON7DY9Pgaq8XlXXPY
-        LCbe3sBusW3WcjaLTStusDmwemy9ZeqxeUm9x+bT1R6fN8kFsERx2aSk5mSWpRbp2yVwZSx9
-        +oypoIuz4tOq+8wNjMvZuxg5OSQETCQuP//F2sXIxSEksIJRomP9D2YI5wujxLKORiaQKiGB
-        z4wStz47wnR0TNrACBFfzihx4okpRMNbRolZU/6ygiSEBUIktnTOAZskIrCQUaL57kGgSRwc
-        zAJaErOupILUsAkYSnS97WIDsXkF7CQmb78GtoxFQFXiw+4GMFtUIFbizLHvrBA1ghInZz5h
-        AbE5BVwlDmz8AHYEs4C8xPa3ILtAbHGJW0/mM4HslRCYzi4x9csjFoirXSQad12DsoUlXh3f
-        AvW/jMT/nTANzYwSD8+tZYdwehglLjfNYISospa4c+4XG8QHmhLrd+lDhB0lnm7bxA4SlhDg
-        k7jxVhDiCD6JSdumM0OEeSU62oQgqtUkZh1fB7f24IVLzBMYlWYheW0WkndmIXlnFsLeBYws
-        qxjFU0uLc9NTiw3zUsv1ihNzi0vz0vWS83M3MQLTy+l/xz/tYPx6KekQowAHoxIPr8Rr5zgh
-        1sSy4srcQ4wSHMxKIrzijUAh3pTEyqrUovz4otKc1OJDjNIcLErivMaLXsYKCaQnlqRmp6YW
-        pBbBZJk4OKUaGB0emwce4+98vOLeDkulHa+jJZdocK5S3JDluZJJaouF8fuaDfNU7gpac+/Q
-        n37Ff7b/tIdTuCdsDt/66Ci3+i73ikcBlb1fFe/8X/2mrf+YevK8Ny/rCm44T9Fbkcte2Pd7
-        0YZbirqLRe+dnhxl5iM0P+a5z9JZOVfklwbNFJrzWruyrl73KLcSS3FGoqEWc1FxIgAkZKGk
-        KwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsVy+t/xu7o6f1ziDHYfFbTY9Pgaq8XlXXPY
-        LCbe3sBusW3WcjaLTStusDmwemy9ZeqxeUm9x+bT1R6fN8kFsETp2RTll5akKmTkF5fYKkUb
-        WhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXoZSx9+oypoIuz4tOq+8wNjMvZuxg5
-        OSQETCQ6Jm1g7GLk4hASWMooMe/rEyaIhIzEyWkNrBC2sMSfa11sEEWvGSW2HjzACJIQFgiR
-        eNK7jB0kISKwkFFi9qe9QFUcHMwCWhKzrqRCNJxhlNg/7zDYOjYBQ4mutyCTODl4BewkJm+/
-        BraNRUBV4sPuBjBbVCBW4tj2NnaIGkGJkzOfsIDYnAKuEgc2fgBbzCxgJjFv80NmCFteYvvb
-        OVC2uMStJ/OZJjAKzULSPgtJyywkLbOQtCxgZFnFKJJaWpybnltsqFecmFtcmpeul5yfu4kR
-        GFPbjv3cvIPx0sbgQ4wCHIxKPLwSr53jhFgTy4orcw8xSnAwK4nwijcChXhTEiurUovy44tK
-        c1KLDzGaAj03kVlKNDkfGO95JfGGpobmFpaG5sbmxmYWSuK8HQIHY4QE0hNLUrNTUwtSi2D6
-        mDg4pRoYF63cvCfwQ3td9TW2JCnxQjfXzFtL9Ww/iu7/VVFx5rC5Z3FEelwnuy7TsU+Rr5Ze
-        LN8b/l18f+GljD+Tn+y4f6fSuaruW0h/fBWrwp7Gdx2LfjTVLIhZlLz5seal6gV9bL+qbv/l
-        99nI//51VYeE7/uZm8r47/9q7Z/l+M/vqlzi+p8+DD/MlViKMxINtZiLihMBqTtoY78CAAA=
-X-CMS-MailID: 20200213073508eucas1p22d36cf1b15ea9ecd7a22d245e145fe05
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200212102022eucas1p1c49daf15d3e63eda9a56124bc4eafb57
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200212102022eucas1p1c49daf15d3e63eda9a56124bc4eafb57
-References: <CGME20200212102022eucas1p1c49daf15d3e63eda9a56124bc4eafb57@eucas1p1.samsung.com>
-        <20200212102009.17428-1-m.szyprowski@samsung.com>
-        <a1d66025baa13b2276b12405544fc7107aac8d6c.camel@suse.de>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nicolas
+(was "[PATCH block v2 0/3] block: Introduce REQ_NOZERO flag
+      for REQ_OP_WRITE_ZEROES operation";
+ was "[PATCH RFC 0/3] block,ext4: Introduce REQ_OP_ASSIGN_RANGE
+      to reflect extents allocation in block device internals")
 
-On 12.02.2020 19:31, Nicolas Saenz Julienne wrote:
-> Hi Marek,
-> On Wed, 2020-02-12 at 11:20 +0100, Marek Szyprowski wrote:
->> Add drivers for the minimal set of devices needed to boot Raspberry Pi4
->> board.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Just so you know, the amount of support on the RPi4 you might be able to get
-> updating bcm2835_defconfig's config is very limited. Only 1GB of ram and no
-> PCIe (so no USBs).
+v7: Two comments changed.
 
-Yes, I know. A lots of core features is missing: SMP, HIGHMEM, LPAE, PCI 
-and so on, but having a possibility to boot RPi4 with this defconfig 
-increases the test coverage.
+v6: req_op() cosmetic change.
 
-> FYI I've been working on getting a workable configuration for arm32, short of
-> creating a new config altogether:
-> https://www.mail-archive.com/linuxppc-dev@lists.ozlabs.org/msg163770.html
->
-> That said, if you insist on booting with bcm2835_defconfig, I have no problem
-> with the patch.
+v5: Kill dm|md patch, which disables REQ_ALLOCATE for these devices.
+    Disable REQ_ALLOCATE for all stacking devices instead of this.
 
-Right, having a proper multi defconfig with LPAE is also needed on other 
-boards. I would add VIRTUALIZATION and KVM to it too.
+v4: Correct argument for mddev_check_write_zeroes().
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+v3: Rename REQ_NOZERO to REQ_ALLOCATE.
+    Split helpers to separate patches.
+    Add a patch, disabling max_allocate_sectors inheritance for dm.
+
+v2: Introduce new flag for REQ_OP_WRITE_ZEROES instead of
+    introduction a new operation as suggested by Martin K. Petersen.
+    Removed ext4-related patch to focus on block changes
+    for now.
+
+Information about continuous extent placement may be useful
+for some block devices. Say, distributed network filesystems,
+which provide block device interface, may use this information
+for better blocks placement over the nodes in their cluster,
+and for better performance. Block devices, which map a file
+on another filesystem (loop), may request the same length extent
+on underlining filesystem for less fragmentation and for batching
+allocation requests. Also, hypervisors like QEMU may use this
+information for optimization of cluster allocations.
+
+This patchset introduces REQ_ALLOCATE flag for REQ_OP_WRITE_ZEROES,
+which makes a block device to allocate blocks instead of actual
+blocks zeroing. This may be used for forwarding user's fallocate(0)
+requests into block device internals. E.g., in loop driver this
+will result in allocation extents in backing-file, so subsequent
+write won't fail by the reason of no available space. Distributed
+network filesystems will be able to assign specific servers for
+specific extents, so subsequent write will be more efficient.
+
+Patches [1-3/6] are preparation on helper functions, patch [4/6]
+introduces REQ_ALLOCATE flag and implements all the logic,
+patch [5/6] adds one more helper, patch [6/6] adds loop
+as the first user of the flag.
+
+Note, that here is only block-related patches, example of usage
+for ext4 with a performance numbers may be seen in [1].
+
+[1] https://lore.kernel.org/linux-ext4/157599697369.12112.10138136904533871162.stgit@localhost.localdomain/T/#me5bdd5cc313e14de615d81bea214f355ae975db0
+---
+
+Kirill Tkhai (6):
+      block: Add @flags argument to bdev_write_zeroes_sectors()
+      block: Pass op_flags into blk_queue_get_max_sectors()
+      block: Introduce blk_queue_get_max_write_zeroes_sectors()
+      block: Add support for REQ_ALLOCATE flag
+      block: Add blk_queue_max_allocate_sectors()
+      loop: Add support for REQ_ALLOCATE
+
+
+ block/blk-core.c                    |    6 +++---
+ block/blk-lib.c                     |   17 ++++++++++-------
+ block/blk-merge.c                   |    9 ++++++---
+ block/blk-settings.c                |   17 +++++++++++++++++
+ drivers/block/loop.c                |   20 +++++++++++++-------
+ drivers/md/dm-kcopyd.c              |    2 +-
+ drivers/target/target_core_iblock.c |    4 ++--
+ fs/block_dev.c                      |    4 ++++
+ include/linux/blk_types.h           |    6 ++++++
+ include/linux/blkdev.h              |   34 ++++++++++++++++++++++++++--------
+ 10 files changed, 88 insertions(+), 31 deletions(-)
+
+--
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Reviewed-by: Bob Liu <bob.liu@oracle.com>
 
