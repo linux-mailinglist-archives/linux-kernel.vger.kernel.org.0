@@ -2,76 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA81915B92F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 06:48:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF27F15B932
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 06:50:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729691AbgBMFsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 00:48:08 -0500
-Received: from helcar.hmeau.com ([216.24.177.18]:36936 "EHLO deadmen.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725773AbgBMFsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 00:48:08 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1j27Lv-0002va-Ue; Thu, 13 Feb 2020 13:47:56 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1j27Lr-0001EJ-Vy; Thu, 13 Feb 2020 13:47:52 +0800
-Date:   Thu, 13 Feb 2020 13:47:51 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Stephen Kitt <steve@sk2.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Atul Gupta <atul.gupta@chelsio.com>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vinay Kumar Yadav <vinay.yadav@chelsio.com>,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] crypto: chelsio - remove extra allocation for chtls_dev
-Message-ID: <20200213054751.4okuxe3hr2i4dxzs@gondor.apana.org.au>
-References: <20200124222051.1925415-1-steve@sk2.org>
+        id S1729712AbgBMFuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 00:50:13 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:11148 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726654AbgBMFuL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 00:50:11 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e44e3840000>; Wed, 12 Feb 2020 21:49:56 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 12 Feb 2020 21:50:10 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 12 Feb 2020 21:50:10 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Feb
+ 2020 05:50:10 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Thu, 13 Feb 2020 05:50:10 +0000
+Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5e44e3920001>; Wed, 12 Feb 2020 21:50:10 -0800
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Joe Perches <joe@perches.com>
+CC:     Andy Whitcroft <apw@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v2 0/1] checkpatch: support "base-commit:" format
+Date:   Wed, 12 Feb 2020 21:50:03 -0800
+Message-ID: <20200213055004.69235-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200124222051.1925415-1-steve@sk2.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1581572997; bh=c5c6vj7oCLEPt01HPQEWuFd1BSxiH31flBTm7eIsdFM=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
+         Content-Type;
+        b=funinmbrXDHohBRuXf48d/RlzMcZZvTpVklfgdjVME7s+9J97Mk/ktRxFOu81cGyH
+         zWZGjM74AyMfRHFkm9noXHJbGP+xDeVW98EnBDrRj/XZp/f73c6m/OqfAixw/XqYEE
+         iEkg2VZgOE2EmCZ9MaLOWl3vU+OLWdNpVyMRruzpluvn81HyI2B4pYWoXCquw3wt0b
+         Z8fA0DHAw9zJNV26JV/3h27y72EbG+V6hrI/rkCTIb8os5s9g0+iQGEYnjaS5lTFnr
+         jEZvw4cKICpX8ALH3Pta2vUHg1d1Aba0Z+fIzgdkDFZTVkL2mHkmKCHU08FhFZaZBN
+         4sGzMpMwzfj0w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 11:20:51PM +0100, Stephen Kitt wrote:
-> chtls_uld_add allocates room for info->nports net_device structs
-> following the chtls_dev struct, presumably because it was originally
-> intended that the ports array would be stored there. This is suggested
-> by the assignment which was present in initial versions and removed by
-> c4e848586cf1 ("crypto: chelsio - remove redundant assignment to
-> cdev->ports"):
-> 
-> 	cdev->ports = (struct net_device **)(cdev + 1);
-> 
-> This assignment was never used, being overwritten by lldi->ports
-> immediately afterwards, and I couldn't find any uses of the memory
-> allocated past the end of the struct.
-> 
-> Signed-off-by: Stephen Kitt <steve@sk2.org>
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Changes since v1:
 
-Thanks for the patch!
+* Changed to extend an existing regex line, instead of adding a new line
+  (suggested by Joe Perches). Adjusted the commit description slightly
+  to match.
 
-I think the problem goes deeper though.  It appears that instead
-of allocating a ports array this function actually hangs onto the
-array from the function argument "info".  This seems to be broken
-and possibly the extra memory allocated was meant to accomodate
-the ports array.  Indeed, the code removed by the commit that you
-mentioned indicates this as well (although the memory was never
-actually used).
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-Dave, I think we should talk about the maintainence of the chelsio
-net/crypto drivers.  They have quite a bit of overlap and there is
-simply not enough people on the crypto side to review these drivers
-properly.  Would it be possible for all future changes to these
-drivers to go through the net tree?
- 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+In order to support the get-lore-mbox.py tool described in [1], I ran:
+
+    git format-patch --base=3D<commit> --cover-letter <revrange>
+
+...which generated a "base-commit: <commit-hash>" tag at the end of the
+cover letter, just like you can see at the end of this cover letter.
+However, checkpatch.pl generated an error upon encounting
+"base-commit:" in the cover letter.
+
+So, I suspect that no one is actually using the --base option yet, but
+if [1] leads to get-lore-mbox.py and similar scripts becoming popular,
+then we'll want checkpatch.pl to work well with them. This tiny patch
+does that.
+
+An alternative approach to fixing this would be to make the --base
+option emit a checkpatch-friendly commit style. However, I think that's
+much less desirable, because base-commit is really just for tools
+(mainly "git am") to consume. And so we don't really want it to take up
+any more valuable lines in the commit letter than it already does.
+
+thanks,
+John Hubbard
+NVIDIA
+
+John Hubbard (1):
+  checkpatch: support "base-commit:" format
+
+ scripts/checkpatch.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+
+base-commit: 0bf999f9c5e74c7ecf9dafb527146601e5c848b9
+--=20
+2.25.0
+
