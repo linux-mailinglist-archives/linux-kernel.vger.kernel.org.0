@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D2A415C27B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:35:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A5BA15C22B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:30:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388116AbgBMPcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:32:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55046 "EHLO mail.kernel.org"
+        id S2387765AbgBMPaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:30:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729603AbgBMP2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:28:16 -0500
+        id S2387670AbgBMP1I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:08 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D80A24670;
-        Thu, 13 Feb 2020 15:28:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 622C424670;
+        Thu, 13 Feb 2020 15:27:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607696;
-        bh=NP6AoYlELGfUFoRjR5wWantuWYyunVPz11smvM2VwE4=;
+        s=default; t=1581607626;
+        bh=3nlkMOexwN0vMHaEgkQV2oRYXu3dFm5ewfx2cYMG5s0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rgURrOadyeLoNwA8gjaQjigWj66wkillDYUSp9D7AV8r4Kfl66TQJVv88+KrGeV9j
-         8/QFrjHyUfKHvorKMIUVB+8ErXR0/Zq8LoGjfDHOFCFWoVmpuzZk5qZ1MfSy+uBBvY
-         hKwSjAwf7hwbF2aoQi3s8Vkowtukk3i2EAzY6pNQ=
+        b=gRF2E3lNnepxXkZ40ZGIKsxRBhYGRIP4gZhIMvM9WX8jCDa6MC7neba+K598J/s40
+         LRWbI/YBL72ibw3bhNnAc23vrys9ushKSzNb4k8Mkq8B2/YtLNcWYJLnSQh1bzFgHT
+         xb5nd3iTqtxKHeyd+FJmb9BZ8I0JvHtGwAtawYwc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 5.5 020/120] PCI/AER: Initialize aer_fifo
+        stable@vger.kernel.org, Michael Guralnik <michaelgur@mellanox.com>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 5.4 09/96] RDMA/uverbs: Verify MR access flags
 Date:   Thu, 13 Feb 2020 07:20:16 -0800
-Message-Id: <20200213151909.046374640@linuxfoundation.org>
+Message-Id: <20200213151842.879726344@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
+References: <20200213151839.156309910@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dongdong Liu <liudongdong3@huawei.com>
+From: Michael Guralnik <michaelgur@mellanox.com>
 
-commit d95f20c4f07020ebc605f3b46af4b6db9eb5fc99 upstream.
+commit ca95c1411198c2d87217c19d44571052cdc94725 upstream.
 
-Previously we did not call INIT_KFIFO() for aer_fifo.  This leads to
-kfifo_put() sometimes returning 0 (queue full) when in fact it is not.
+Verify that MR access flags that are passed from user are all supported
+ones, otherwise an error is returned.
 
-It is easy to reproduce the problem by using aer-inject:
-
-  $ aer-inject -s :82:00.0 multiple-corr-nonfatal
-
-The content of the multiple-corr-nonfatal file is as below:
-
-  AER
-  COR RCVR
-  HL 0 1 2 3
-  AER
-  UNCOR POISON_TLP
-  HL 4 5 6 7
-
-Fixes: 27c1ce8bbed7 ("PCI/AER: Use kfifo for tracking events instead of reimplementing it")
-Link: https://lore.kernel.org/r/1579767991-103898-1-git-send-email-liudongdong3@huawei.com
-Signed-off-by: Dongdong Liu <liudongdong3@huawei.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Fixes: 4fca03778351 ("IB/uverbs: Move ib_access_flags and ib_read_counters_flags to uapi")
+Link: https://lore.kernel.org/r/1578506740-22188-6-git-send-email-yishaih@mellanox.com
+Signed-off-by: Michael Guralnik <michaelgur@mellanox.com>
+Signed-off-by: Yishai Hadas <yishaih@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/pcie/aer.c |    1 +
- 1 file changed, 1 insertion(+)
+ include/rdma/ib_verbs.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -1445,6 +1445,7 @@ static int aer_probe(struct pcie_device
- 		return -ENOMEM;
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -4252,6 +4252,9 @@ static inline int ib_check_mr_access(int
+ 	    !(flags & IB_ACCESS_LOCAL_WRITE))
+ 		return -EINVAL;
  
- 	rpc->rpd = port;
-+	INIT_KFIFO(rpc->aer_fifo);
- 	set_service_data(dev, rpc);
++	if (flags & ~IB_ACCESS_SUPPORTED)
++		return -EINVAL;
++
+ 	return 0;
+ }
  
- 	status = devm_request_threaded_irq(device, dev->irq, aer_irq, aer_isr,
 
 
