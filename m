@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB54C15C481
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2689A15C2BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:38:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729326AbgBMPrx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:47:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47986 "EHLO mail.kernel.org"
+        id S1729740AbgBMPaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:30:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728496AbgBMP1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:00 -0500
+        id S2387638AbgBMP1B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:01 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BAC32468D;
+        by mail.kernel.org (Postfix) with ESMTPSA id A87D824676;
         Thu, 13 Feb 2020 15:27:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1581607620;
-        bh=I3F37xw90XR+ITkmYbUSU264wdX9jM9dM/02J2SyJLA=;
+        bh=p6JrbT3CgbN40TmXB28kT1XvH8v/sceqsNnGlOEqp48=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m2TspjOcCQ9n9JadozBeoTf3IzjIA8SuLKl1kZC6omrVYLr34MxiN5wPa20cm0h0Q
-         qmPlspNtkmKWYlWCEj/f57KNbERH89BnS/C7We6cuWOjhQO3RqMN8yVFHaQM8Po7w6
-         z1H+8ckTyhZVm5Vpl1q7cqkOIaZFeugCNxIiMggQ=
+        b=132T4Gls7UQ1PjAnW172ogKLcv1RGC9EgH5PKoDsdehieiKFotHQMvOFVYEbUUfhB
+         lr2z/6LYaI9ECjJxJ5L+C7dv6U3p1SL0RsIH6Mj8k6rbiewnXnN6EGPposiHbmaS+I
+         WIUqOr7Y2P9CnTBbNY3xs0a8V0n33CGKwyepWnvw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bryan ODonoghue <bryan.odonoghue@linaro.org>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 5.4 14/96] ath10k: pci: Only dump ATH10K_MEM_REGION_TYPE_IOREG when safe
-Date:   Thu, 13 Feb 2020 07:20:21 -0800
-Message-Id: <20200213151844.830408523@linuxfoundation.org>
+        stable@vger.kernel.org, Wesley Sheng <wesley.sheng@microchip.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 5.4 15/96] PCI/switchtec: Use dma_set_mask_and_coherent()
+Date:   Thu, 13 Feb 2020 07:20:22 -0800
+Message-Id: <20200213151845.371550113@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
 References: <20200213151839.156309910@linuxfoundation.org>
@@ -44,69 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+From: Wesley Sheng <wesley.sheng@microchip.com>
 
-commit d239380196c4e27a26fa4bea73d2bf994c14ec2d upstream.
+commit aa82130a22f77c1aa5794703730304d035a0c1f4 upstream.
 
-ath10k_pci_dump_memory_reg() will try to access memory of type
-ATH10K_MEM_REGION_TYPE_IOREG however, if a hardware restart is in progress
-this can crash a system.
+Use dma_set_mask_and_coherent() instead of dma_set_coherent_mask() as the
+Switchtec hardware fully supports 64bit addressing and we should set both
+the streaming and coherent masks the same.
 
-Individual ioread32() time has been observed to jump from 15-20 ticks to >
-80k ticks followed by a secure-watchdog bite and a system reset.
-
-Work around this corner case by only issuing the read transaction when the
-driver state is ATH10K_STATE_ON.
-
-Tested-on: QCA9988 PCI 10.4-3.9.0.2-00044
-
-Fixes: 219cc084c6706 ("ath10k: add memory dump support QCA9984")
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+[logang@deltatee.com: reworked commit message]
+Fixes: aff614c6339c ("switchtec: Set DMA coherent mask")
+Link: https://lore.kernel.org/r/20200106190337.2428-2-logang@deltatee.com
+Signed-off-by: Wesley Sheng <wesley.sheng@microchip.com>
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/ath/ath10k/pci.c |   19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ drivers/pci/switch/switchtec.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/ath/ath10k/pci.c
-+++ b/drivers/net/wireless/ath/ath10k/pci.c
-@@ -1604,11 +1604,22 @@ static int ath10k_pci_dump_memory_reg(st
- {
- 	struct ath10k_pci *ar_pci = ath10k_pci_priv(ar);
- 	u32 i;
-+	int ret;
-+
-+	mutex_lock(&ar->conf_mutex);
-+	if (ar->state != ATH10K_STATE_ON) {
-+		ath10k_warn(ar, "Skipping pci_dump_memory_reg invalid state\n");
-+		ret = -EIO;
-+		goto done;
-+	}
+--- a/drivers/pci/switch/switchtec.c
++++ b/drivers/pci/switch/switchtec.c
+@@ -1349,7 +1349,7 @@ static int switchtec_init_pci(struct swi
+ 	if (rc)
+ 		return rc;
  
- 	for (i = 0; i < region->len; i += 4)
- 		*(u32 *)(buf + i) = ioread32(ar_pci->mem + region->start + i);
+-	rc = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(64));
++	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (rc)
+ 		return rc;
  
--	return region->len;
-+	ret = region->len;
-+done:
-+	mutex_unlock(&ar->conf_mutex);
-+	return ret;
- }
- 
- /* if an error happened returns < 0, otherwise the length */
-@@ -1704,7 +1715,11 @@ static void ath10k_pci_dump_memory(struc
- 			count = ath10k_pci_dump_memory_sram(ar, current_region, buf);
- 			break;
- 		case ATH10K_MEM_REGION_TYPE_IOREG:
--			count = ath10k_pci_dump_memory_reg(ar, current_region, buf);
-+			ret = ath10k_pci_dump_memory_reg(ar, current_region, buf);
-+			if (ret < 0)
-+				break;
-+
-+			count = ret;
- 			break;
- 		default:
- 			ret = ath10k_pci_dump_memory_generic(ar, current_region, buf);
 
 
