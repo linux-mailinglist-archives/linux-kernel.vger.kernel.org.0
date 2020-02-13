@@ -2,89 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EF5B15C366
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5B0015C34C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387749AbgBMPkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:40:53 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:48166 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729536AbgBMPks (ORCPT
+        id S2387692AbgBMPjx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:39:53 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34100 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728584AbgBMPju (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:40:48 -0500
-Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id 01DFdZHY005809;
-        Fri, 14 Feb 2020 00:39:39 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com 01DFdZHY005809
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1581608379;
-        bh=mUXWSCOUhmEqCqZ+TwM1+NYP6yh2Anh0WoMXN2qQ3Co=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BjoOjoPDyjlxgE30NXzuz2035Uk/UrfOBulP31p7kYSGDl0fDCvGDT6Ta5pYhtzJP
-         X5m4LllyJfotrdVbuyp/oio2EbEP1ABXpKQUaR19zjHrsMvpSemmcqi9Id1VCSm3W4
-         VWcyYisjaAsi5lCpfHcNaAjlxO1uKsGDBxV2d7pDk6zReCaqAREj6yq+5izqvS6upq
-         Sie9lX9l+gSP439Q2zyk4imA+XOGMhRrreyhRhZPF8ydWS1rE+UT12jAkcjUqe7hol
-         LYRVf2NVA/B7XHERPhoNwAB3SQqfEsKulmJTR35gp3cf0E/scVM9XTS8eL0bMWIe2l
-         mA6VHKdSbBRNg==
-X-Nifty-SrcIP: [126.93.102.113]
-From:   Masahiro Yamada <masahiroy@kernel.org>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=8F=AB=D3nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>, amd-gfx@lists.freedesktop.org
-Cc:     Masahiro Yamada <masahiroy@kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] drm/radeon: align short build log
-Date:   Fri, 14 Feb 2020 00:39:27 +0900
-Message-Id: <20200213153928.28407-4-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200213153928.28407-1-masahiroy@kernel.org>
-References: <20200213153928.28407-1-masahiroy@kernel.org>
+        Thu, 13 Feb 2020 10:39:50 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x7so7129516ljc.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:39:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=NHktFnZlX6uKMwJC+qraMNZiHbiScODIMZ6tmW6mHl4=;
+        b=NftAHAky8nG3HwoLsfo/A8XP/u8putXbTgMDGVG58zTqt/ANXlRTYfcUpPXIjIulCW
+         F3frpsniYt6j0+nbWgw7d9lx35BuGxO/FG96mRE8mhOsVGxY+XQjoPIrnqIMuOrN1/sT
+         E7/82AQpay1JLLCwW1jOIPaRMJa4OX3nkjmTI4lbVG1YQPVm1h54D4/xbiKtRvEweF0T
+         48Vwo0nYCFVEAsONA2QnyFuiJknvu7JV84/cePCypvp5ncTwBb82VdR5tASR8Om68/Xx
+         IVLOFu/1sRo6fR4cGOO5EzsJQn35BxU+zKuSxG+WjrfJHZfuceELhp+8PnpUHRqeb8ZM
+         UHLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=NHktFnZlX6uKMwJC+qraMNZiHbiScODIMZ6tmW6mHl4=;
+        b=pxm79AfOxCotkEBUrMaDxQiaGWwS3etp2LB/O84FRukVtjpZlqxMgJwx3uFMXh4/Ad
+         1AT5Sywjh+JwC2cxJrsHUkBDO0D7iB3O0xTnnVAevbAjcd2yaRmZHNmNSqhWqOxI8TB3
+         wbvceWwocQdo7qGbrRvmNmnRXG+f1mF9ubqklr/TStFjHG8iSpaWM2pXE+iBnHlhToas
+         BI6escwDDnfB3MSIifVWtsdA0IqqWti6+HlOTDvuZQNL17/FHRgF2IdVo6OWGbc69y5t
+         WAqjAfPTmJPU2MVg2uRyyK6AYPrys6j9Hw7hHc+SgWZ7NoN/+ekVxXxd694dHiImszUT
+         axlg==
+X-Gm-Message-State: APjAAAUAf9Od+74iToH2Hel5iezx0aLhF8F0wq85ihUdIAXyBPX1smWe
+        3Jb6R5OZmaxljfRDbpguLWY0wA==
+X-Google-Smtp-Source: APXvYqwEQWxVztZsHujLgYXUzp80jKlSTGmzeS7kguAQ03NeSNKI0seeS7EaeHwwCRbzQupO4lEBBQ==
+X-Received: by 2002:a2e:93c5:: with SMTP id p5mr10069149ljh.192.1581608389545;
+        Thu, 13 Feb 2020 07:39:49 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id p12sm1474818lfc.43.2020.02.13.07.39.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2020 07:39:48 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id F34E7100F25; Thu, 13 Feb 2020 18:40:10 +0300 (+03)
+Date:   Thu, 13 Feb 2020 18:40:10 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 10/25] fs: Introduce i_blocks_per_page
+Message-ID: <20200213154010.skb5ut6fixd36cxr@box>
+References: <20200212041845.25879-1-willy@infradead.org>
+ <20200212041845.25879-11-willy@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200212041845.25879-11-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This beautifies the build log.
+On Tue, Feb 11, 2020 at 08:18:30PM -0800, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> 
+> This helper is useful for both large pages in the page cache and for
+> supporting block size larger than page size.  Convert some example
+> users (we have a few different ways of writing this idiom).
 
-[Before]
+Maybe we should list what was converted and what wasn't. Like it's
+important to know that fs/buffer.c is not covered.
 
-  HOSTCC  drivers/gpu/drm/radeon/mkregtable
-  MKREGTABLE drivers/gpu/drm/radeon/r100_reg_safe.h
-  MKREGTABLE drivers/gpu/drm/radeon/rn50_reg_safe.h
-  CC [M]  drivers/gpu/drm/radeon/r100.o
-  MKREGTABLE drivers/gpu/drm/radeon/r300_reg_safe.h
-  CC [M]  drivers/gpu/drm/radeon/r300.o
-
-[After]
-
-  HOSTCC  drivers/gpu/drm/radeon/mkregtable
-  MKREG   drivers/gpu/drm/radeon/r100_reg_safe.h
-  MKREG   drivers/gpu/drm/radeon/rn50_reg_safe.h
-  CC [M]  drivers/gpu/drm/radeon/r100.o
-  MKREG   drivers/gpu/drm/radeon/r300_reg_safe.h
-  CC [M]  drivers/gpu/drm/radeon/r300.o
-
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
-
- drivers/gpu/drm/radeon/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/radeon/Makefile b/drivers/gpu/drm/radeon/Makefile
-index 480a8d4a3c82..11c97edde54d 100644
---- a/drivers/gpu/drm/radeon/Makefile
-+++ b/drivers/gpu/drm/radeon/Makefile
-@@ -6,7 +6,7 @@
- hostprogs := mkregtable
- targets := rn50_reg_safe.h r100_reg_safe.h r200_reg_safe.h rv515_reg_safe.h r300_reg_safe.h r420_reg_safe.h rs600_reg_safe.h r600_reg_safe.h evergreen_reg_safe.h cayman_reg_safe.h
- 
--quiet_cmd_mkregtable = MKREGTABLE $@
-+quiet_cmd_mkregtable = MKREG   $@
-       cmd_mkregtable = $(obj)/mkregtable $< > $@
- 
- $(obj)/%_reg_safe.h: $(src)/reg_srcs/% $(obj)/mkregtable FORCE
 -- 
-2.17.1
-
+ Kirill A. Shutemov
