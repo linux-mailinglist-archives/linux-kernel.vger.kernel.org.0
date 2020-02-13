@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A90B15C33B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6510415C3CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:45:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728666AbgBMP2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:28:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44534 "EHLO mail.kernel.org"
+        id S1729468AbgBMPoa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:44:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387519AbgBMP0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:17 -0500
+        id S1728398AbgBMP1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:41 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B31624670;
-        Thu, 13 Feb 2020 15:26:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A7082467D;
+        Thu, 13 Feb 2020 15:27:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607576;
-        bh=Dgrwx/JC4sa0jfa3IwWsSW9puRlLOOtDFySxIgxoPhs=;
+        s=default; t=1581607660;
+        bh=g3V5GqFuvHm9hAAo7i5DEoNIqNDkI0QlDyTVfPLRz8E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DU52u+rUsOsfGeX02A1EjJKVWeGDDJ/ELP5wT15nYMIdbWDedFMQYONjsK3DL+mdw
-         031GsSZv8tFLMP8aV+SXf8qH52tJqN5wuwhUkq0sLhzco5aKDGkn89VxebLKGEAIIG
-         TJs7DJwPG6h8pRZj+lqEYKR/4YwhgFlvLofitilc=
+        b=aeioqHO6QfJGfgLughkx5ysvUbUxld9xVObTTjF7wd2YDDZzV/Q6uNyHmYTO9+CLT
+         I0tCU7IF4KlzZBfWgtU5+Ld6dWRfqWTvEhLrMF5NjUKee9CXfKrOFZYhKpj7SVeker
+         xqKVJyYi7xU7X3Sq5qE474HJAv3Hv0TJHIhF9LX0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 165/173] crypto: atmel-sha - fix error handling when setting hmac key
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 5.4 61/96] ARM: at91: pm: use of_device_id array to find the proper shdwc node
 Date:   Thu, 13 Feb 2020 07:21:08 -0800
-Message-Id: <20200213152012.661973705@linuxfoundation.org>
+Message-Id: <20200213151902.636412094@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
+References: <20200213151839.156309910@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,43 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
 
-commit b529f1983b2dcc46354f311feda92e07b6e9e2da upstream.
+commit ec6e618c8c018c1361d77789a100a5f6f6317178 upstream.
 
-HMAC keys can be of any length, and atmel_sha_hmac_key_set() can only
-fail due to -ENOMEM.  But atmel_sha_hmac_setkey() incorrectly treated
-any error as a "bad key length" error.  Fix it to correctly propagate
-the -ENOMEM error code and not set any tfm result flags.
+Use of_device_id array to find the proper shdwc compatibile node.
+SAM9X60's shdwc changes were not integrated when
+commit eaedc0d379da ("ARM: at91: pm: add ULP1 support for SAM9X60")
+was integrated.
 
-Fixes: 81d8750b2b59 ("crypto: atmel-sha - add support to hmac(shaX)")
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: eaedc0d379da ("ARM: at91: pm: add ULP1 support for SAM9X60")
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Link: https://lore.kernel.org/r/1576062248-18514-3-git-send-email-claudiu.beznea@microchip.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/atmel-sha.c |    7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ arch/arm/mach-at91/pm.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/crypto/atmel-sha.c
-+++ b/drivers/crypto/atmel-sha.c
-@@ -1921,12 +1921,7 @@ static int atmel_sha_hmac_setkey(struct
- {
- 	struct atmel_sha_hmac_ctx *hmac = crypto_ahash_ctx(tfm);
- 
--	if (atmel_sha_hmac_key_set(&hmac->hkey, key, keylen)) {
--		crypto_ahash_set_flags(tfm, CRYPTO_TFM_RES_BAD_KEY_LEN);
--		return -EINVAL;
--	}
--
--	return 0;
-+	return atmel_sha_hmac_key_set(&hmac->hkey, key, keylen);
+--- a/arch/arm/mach-at91/pm.c
++++ b/arch/arm/mach-at91/pm.c
+@@ -691,6 +691,12 @@ static void __init at91_pm_use_default_m
+ 		soc_pm.data.suspend_mode = AT91_PM_ULP0;
  }
  
- static int atmel_sha_hmac_init(struct ahash_request *req)
++static const struct of_device_id atmel_shdwc_ids[] = {
++	{ .compatible = "atmel,sama5d2-shdwc" },
++	{ .compatible = "microchip,sam9x60-shdwc" },
++	{ /* sentinel. */ }
++};
++
+ static void __init at91_pm_modes_init(void)
+ {
+ 	struct device_node *np;
+@@ -700,7 +706,7 @@ static void __init at91_pm_modes_init(vo
+ 	    !at91_is_pm_mode_active(AT91_PM_ULP1))
+ 		return;
+ 
+-	np = of_find_compatible_node(NULL, NULL, "atmel,sama5d2-shdwc");
++	np = of_find_matching_node(NULL, atmel_shdwc_ids);
+ 	if (!np) {
+ 		pr_warn("%s: failed to find shdwc!\n", __func__);
+ 		goto ulp1_default;
 
 
