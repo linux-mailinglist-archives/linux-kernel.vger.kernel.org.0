@@ -2,60 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A5C715B8AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 05:38:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84BF015B8BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 05:41:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729655AbgBMEiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 23:38:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41758 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729482AbgBMEiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 23:38:54 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18ED8206D7;
-        Thu, 13 Feb 2020 04:38:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581568733;
-        bh=bv+0VtaMuMuDtzLYPkieCdmd5QR4JDDM6y220mrx378=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=tbYlCnFj7ggSwK4cyg70rWxQrzUahCW2yOeoE3sZ/LlJjzcrzNUchpk3R5qfHHiaz
-         SHB7larZ7765fztRfvP4xU4fKtp8W2fvEWd3ELQPm1bzbJvc27CPLFeH48zYRK25QU
-         yPUch6WEdYHhO2730Z2ntH6BUkthDgGeRFY+B2E4=
-Date:   Wed, 12 Feb 2020 20:38:52 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        cluster-devel@redhat.com, ocfs2-devel@oss.oracle.com
-Subject: Re: [PATCH 00/12] Change readahead API
-Message-Id: <20200212203852.8b7e0b28974e41227bd97329@linux-foundation.org>
-In-Reply-To: <20200125013553.24899-1-willy@infradead.org>
-References: <20200125013553.24899-1-willy@infradead.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1729618AbgBMElB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 23:41:01 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53598 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729358AbgBMElA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 23:41:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=V4kNebw5qwSAs1Iv3VjcAGcXSIRN/Sh+t0JG0ujJMLA=; b=Q+wbEs+4SjiYlqx6+leCFn40Rb
+        MFIheZuIKzBVVOtdCQU5SULXwDC1rDORCfMp0rjyuChrx8ChPH8vtSnVk8rqNMX1eq0wulpE9SKRA
+        9WAhh3YSvV3u1ZD5we4JrdoPWE5fWnioChew1lXXVAhDw8jDEsXMdMMTiqw7Rrd6Nh7Brk0ZWZHXt
+        kNz1Um7Nzai5WYjwCiIyw6V+jLuCqn7jHUfQO3W7SzOKLMldKoyiWvBcuCWBoZPFbOtjCgmT38eKQ
+        GA4SOAiiwcJh0MfcVZkYdZnjtJPeO1wslVj5SYClhP2CkHqG9Ps4IfhY205UtOLWHTgQ+qnbIlgl8
+        PQYhTn4A==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j26JA-0003vk-Hq; Thu, 13 Feb 2020 04:41:00 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] kbuild: add comment for V=2 mode
+Message-ID: <a06194f0-3713-cc04-1673-c05b35c03242@infradead.org>
+Date:   Wed, 12 Feb 2020 20:40:57 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 24 Jan 2020 17:35:41 -0800 Matthew Wilcox <willy@infradead.org> wrote:
+From: Randy Dunlap <rdunlap@infradead.org>
 
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> This series adds a readahead address_space operation to eventually
-> replace the readpages operation.  The key difference is that
-> pages are added to the page cache as they are allocated (and
-> then looked up by the filesystem) instead of passing them on a
-> list to the readpages operation and having the filesystem add
-> them to the page cache.  It's a net reduction in code for each
-> implementation, more efficient than walking a list, and solves
-> the direct-write vs buffered-read problem reported by yu kuai at
-> https://lore.kernel.org/linux-fsdevel/20200116063601.39201-1-yukuai3@huawei.com/
+Complete the comments for valid values of KBUILD_VERBOSE,
+specifically for KBUILD_VERBOSE=2.
 
-Unclear which patch fixes this and how it did it?
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+ Makefile |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20200206.orig/Makefile
++++ linux-next-20200206/Makefile
+@@ -68,6 +68,7 @@ unexport GREP_OPTIONS
+ #
+ # If KBUILD_VERBOSE equals 0 then the above command will be hidden.
+ # If KBUILD_VERBOSE equals 1 then the above command is displayed.
++# If KBUILD_VERBOSE equals 2 then give the reason why each target is rebuilt.
+ #
+ # To put more focus on warnings, be less verbose as default
+ # Use 'make V=1' to see the full commands
+
