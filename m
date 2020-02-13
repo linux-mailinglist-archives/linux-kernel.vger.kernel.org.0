@@ -2,102 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58E1115B797
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 04:12:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAFAE15B78B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 04:10:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729593AbgBMDMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 22:12:46 -0500
-Received: from mga01.intel.com ([192.55.52.88]:16902 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729378AbgBMDMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 22:12:45 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 19:12:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,434,1574150400"; 
-   d="scan'208";a="313601327"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by orsmga001.jf.intel.com with ESMTP; 12 Feb 2020 19:12:42 -0800
-Date:   Thu, 13 Feb 2020 10:51:59 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Will Deacon <will@kernel.org>, mdf@kernel.org,
-        mark.rutland@arm.com, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        atull@kernel.org, yilun.xu@intel.com,
-        Luwei Kang <luwei.kang@intel.com>
-Subject: Re: [PATCH v7 2/2] fpga: dfl: fme: add performance reporting support
-Message-ID: <20200213025159.GA11784@hao-dev>
-References: <1581306469-22629-1-git-send-email-hao.wu@intel.com>
- <1581306469-22629-3-git-send-email-hao.wu@intel.com>
- <20200210163400.GA21900@willie-the-truck>
- <20200212031929.GB5645@hao-dev>
- <20200212053035.GA382718@kroah.com>
- <20200212100211.GA10436@hao-dev>
- <20200212132045.GC1789899@kroah.com>
+        id S1729522AbgBMDKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 22:10:51 -0500
+Received: from mailgw01.mediatek.com ([216.200.240.184]:53539 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729333AbgBMDKv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 22:10:51 -0500
+X-Greylist: delayed 305 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Feb 2020 22:10:51 EST
+X-UUID: a726eaddffad4e0e8a84623cf2e77221-20200212
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=0HPDjdt74T111dUFssEsZJlHvxvLqFiiV5OgaDl5UMI=;
+        b=leVPUigmIgi+5lYDpuX29RQSRcbEv8Hm0/47jlB8vwQJ0pTQDGP3gf+0/gGpu4/f8CfzzrdOkesbjHHCf1ijfEGpQhbqPyP9ltKQ6inV2tBm1eGIw6fEZ9Hbsd1Hr/087GcW7Nl/uIu9k3rMFELZYqayoY0VEkIDzyV2Es+EyXY=;
+X-UUID: a726eaddffad4e0e8a84623cf2e77221-20200212
+Received: from mtkcas66.mediatek.inc [(172.29.193.44)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (musrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 27702398; Wed, 12 Feb 2020 19:05:43 -0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ MTKMBS62N1.mediatek.inc (172.29.193.41) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 12 Feb 2020 18:58:05 -0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 13 Feb 2020 10:56:49 +0800
+Message-ID: <1581562673.24120.3.camel@mtksdaap41>
+Subject: Re: [resend PATCH v6 00/12] arm/arm64: mediatek: Fix mmsys device
+ probing
+From:   CK Hu <ck.hu@mediatek.com>
+To:     <matthias.bgg@kernel.org>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <p.zabel@pengutronix.de>, <airlied@linux.ie>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <ulrich.hecht+renesas@gmail.com>,
+        <laurent.pinchart@ideasonboard.com>,
+        <enric.balletbo@collabora.com>, <devicetree@vger.kernel.org>,
+        <rdunlap@infradead.org>, <frank-w@public-files.de>,
+        <sean.wang@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <sean.wang@kernel.org>,
+        <wens@csie.org>, <drinkcat@chromium.org>,
+        <linux-mediatek@lists.infradead.org>, <mbrugger@suse.com>,
+        <hsinyi@chromium.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-media@vger.kernel.org>
+Date:   Thu, 13 Feb 2020 10:57:53 +0800
+In-Reply-To: <20191207224740.24536-1-matthias.bgg@kernel.org>
+References: <20191207224740.24536-1-matthias.bgg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200212132045.GC1789899@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 05:20:45AM -0800, Greg KH wrote:
-> On Wed, Feb 12, 2020 at 06:02:11PM +0800, Wu Hao wrote:
-> > On Tue, Feb 11, 2020 at 09:30:35PM -0800, Greg KH wrote:
-> > > On Wed, Feb 12, 2020 at 11:19:29AM +0800, Wu Hao wrote:
-> > > > On Mon, Feb 10, 2020 at 04:34:01PM +0000, Will Deacon wrote:
-> > > > > Hi,
-> > > > > 
-> > > > > On Mon, Feb 10, 2020 at 11:47:49AM +0800, Wu Hao wrote:
-> > > > > > This patch adds support for performance reporting private feature
-> > > > > > for FPGA Management Engine (FME). Now it supports several different
-> > > > > > performance counters, including 'basic', 'cache', 'fabric', 'vtd'
-> > > > > > and 'vtd_sip'. It allows user to use standard linux tools to access
-> > > > > > these performance counters.
-> > > > > 
-> > > > > I had a quick look at this, and it mostly looks alright to me. Just a few
-> > > > > high-level comments/questions:
-> > > > 
-> > > > Hi Will
-> > > > 
-> > > > Thanks a lot for the review! :)
-> > > > 
-> > > > > 
-> > > > >   - I would still prefer for the PMU drivers to live under drivers/perf/
-> > > > 
-> > > > Hm.. one possible way is to create a platform device, and introduce a new
-> > > > platform device driver under drivers/perf/.
-> > > 
-> > > No, do not abuse platform drivers, you have a real device, use it.
-> > 
-> > Sure, thanks for the comments. Then I don't have any other idea to move code to
-> > drivers/perf/ directory, so probably only can live with current code.
-> 
-> The location of the file in the kernel tree has no bearing on if you use
-> a platform device, a USB device, or a PCI device.  It is just a location
-> of a file.
-> 
-> You are interacting with the perf api as the driver's primary userspace
-> api, so put the driver into the drivers/perf/ directory.  That's all
-> that Will is asking you to do here.
+SGksIE1hdHRoaWFzOg0KDQoNCldvdWxkIHlvdSB3b3JrIG9uIHRoaXMgc2VyaWVzIGluIGEgc2hv
+cnQgdGltZT8gU29tZSBZb25ncWlhbmcncyBwYXRjaGVzDQpbMV0gYWxzbyBtb2RpZnkgbW1zeXMg
+ZHJpdmVyLCBhbmQgbm93IGl0IGRlcGVuZCBvbiB5b3VyIHBhdGNoIHRvIHByZXZlbnQNCmNvbmZs
+aWN0cy4gSWYgeW91IHdvdWxkIG5vdCB3b3JrIG9uIHRoaXMgc2VyaWVzIGluIGEgc2hvcnQgdGlt
+ZSwgSSB3b3VsZA0KbGlrZSB0byBhcHBseSBZb25ncWlhbmcncyBwYXRjaCB3aXRob3V0IHRoaXMg
+c2VyaWVzLg0KDQpbMV0NCmh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVjdC9saW51
+eC1tZWRpYXRlay9saXN0Lz9zZXJpZXM9MjIzMjIxDQoNClJlZ2FyZHMsDQpDSw0KDQpPbiBTYXQs
+IDIwMTktMTItMDcgYXQgMjM6NDcgKzAxMDAsIG1hdHRoaWFzLmJnZ0BrZXJuZWwub3JnIHdyb3Rl
+Og0KPiBGcm9tOiBNYXR0aGlhcyBCcnVnZ2VyIDxtYnJ1Z2dlckBzdXNlLmNvbT4NCj4gDQo+IFty
+ZXNlZGluZyBkdWUgdG8gd3JvbmcgbWFpbCBvZiBTdGVwaGVuXQ0KPiANCj4gVGhpcyBpcyB2ZXJz
+aW9uIGZpdmUgb2YgdGhlIHNlcmllcy4gSXQncyBhIGxvbmcgdGltZSB0aGlzIHdhc24ndCB3b3Jr
+ZWQgb24sIHNvDQo+IGFzIGEgcmVtaW5kZXIsIHZlcnNpb24gZm91ciBjYW4gYmUgZm91bmQgaGVy
+ZToNCj4gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9jb3Zlci8xMDY4NjI0Ny8NCj4gDQo+
+IFRoZSBiaWdnZXN0IGNoYW5nZXMgdGhpcyBuZXcgdmVyc2lvbiBkb2VzLCBpcyB0byBpbXBsZW1l
+bnQgdGhlIGNsb2NrIHByb2JpbmcNCj4gdGhyb3VnaCBhIHBsYXRmb3JtIGRyaXZlci4gVGhlIGNv
+cnJlc3BvbmRpbmcgcGxhdGZvcm0gZGV2aWNlIGdldCdzIGNyZWF0ZWQgaW4NCj4gdGhlIERSTSBk
+cml2ZXIuIEkgY29udmVydGVkIGFsbCB0aGUgY2xvY2sgZHJpdmVycyB0byBwbGF0Zm9ybSBkcml2
+ZXJzIGFuZCB0ZXN0ZWQNCj4gdGhlIGFwcHJvYWNoIG9uIHRoZSBBY2VyIENocm9tZWJvb2sgUjEz
+IChtdDgxNzMgYmFzZWQpLg0KPiBBcGFydCBmcm9tIHRoYXQgSSByZW9yZGVyZWQgdGhlIHBhdGNo
+ZXMgc28gdGhhdCB0aGUgRFQgYmluZGluZ3MgdXBkYXRlIGFyZSB0aGUgZmlyc3QNCj4gcGF0Y2hl
+cy4NCj4gDQo+IENoYW5nZXMgc2luY2UgdjU6DQo+IC0gcmUtYXJyYW5nZSB0aGUgcGF0Y2ggb3Jk
+ZXINCj4gLSBnZW5lcmF0ZSBwbGF0Zm9ybV9kZXZpY2UgZm9yIG1tc3lzIGNsb2NrIGRyaXZlciBp
+bnNpZGUgdGhlIERSTSBkcml2ZXINCj4gLSBmaXggRFRTIGJpbmRpbmcgYWNjb3JkaW5nbHkNCj4g
+LSBzd2l0Y2ggYWxsIG1tc3lzIGNsb2NrIGRyaXZlciB0byBwbGF0Zm9ybSBwcm9iaW5nDQo+IC0g
+Zml4IG10ODE3MyBwbGF0Zm9ybSBkcml2ZXIgcmVtb3ZlIGZ1bmN0aW9uDQo+IC0gZml4IHByb2Jl
+IGRlZmVyIHBhdGggaW4gSERNSSBkcml2ZXINCj4gLSBmaXggcHJvYmUgZGVmZXIgcGF0aCBpbiBt
+dGtfbWRwX2NvbXANCj4gLSBmaXggaWRlbnRhdGlvbiBvZiBlcnJvciBtZXNzYWdlcw0KPiANCj4g
+Q2hhbmdlcyBzaW5jZSB2NDoNCj4gLSBmaXggbWlzc2luZyByZWdtYXAgYWNjZXNzb3JzIGluIGRy
+bSBkaXZlciAocGF0Y2ggMSkNCj4gLSBvbWl0IHByb2JlIGRlZmZlcmVkIHdhcm5pbmcgb24gYWxs
+IGRyaXZlcnMgKHBhdGNoIDUpDQo+IC0gdXBkYXRlIGRybSBhbmQgY2xrIGJpbmRpbmdzIChwYXRj
+aCA2IGFuZCA3KQ0KPiAtIHB1dCBtbXN5cyBjbG9jayBwYXJ0IGluIGR0cyBjaGlsZCBub2RlIG9m
+IG1tc3lzLiBPbmx5IGRvbmUNCj4gZm9yIEhXIHdoZXJlIG5vIGR0cyBiYWNrcG9ydCBjb21wYXRp
+YmxlIGJyZWFrYWdlIGlzIGV4cGVjdGVkIA0KPiAoZWl0aGVyIERSTSBkcml2ZXIgbm90IHlldCBp
+bXBsZW1lbnRlZCBvciBubyBIVyBhdmFpbGFibGUgdG8NCj4gdGhlIHB1YmxpYykgKHBhdGNoIDkg
+dG8gMTIpDQo+IA0KPiBDaGFuZ2VzIHNpbmNlIHYzOg0KPiAtIHVzZSBwbGF0Zm9ybSBkZXZpY2Ug
+dG8gcHJvYmUgY2xvY2sgZHJpdmVyDQo+IC0gYWRkIEFja2VkLWJ5IENLIEh1IGZvciB0aGUgcHJv
+YmUgZGVmZXJyZWQgcGF0Y2gNCj4gDQo+IENoYW5nZXMgc2luY2UgdjI6DQo+IC0gZml4IGtjb25m
+aWcgdHlwbyAoc2hhbWUgb24gbWUpDQo+IC0gZGVsZXRlIF9faW5pdGNvbnN0IGZyb20gbW1fY2xv
+Y2tzIGFzIGNvbnZlcnRlZCB0byBhIHBsYXRmb3JtIGRyaXZlcg0KPiAgIA0KPiBDaGFuZ2VzIHNp
+bmNlIHYxOg0KPiAtIGFkZCBiaW5kaW5nIGRvY3VtZW50YXRpb24NCj4gLSBkZHA6IHVzZSByZWdt
+YXBfdXBkYXRlX2JpdHMNCj4gLSBkZHA6IGlnbm9yZSBFUFJPQkVfREVGRVIgb24gY2xvY2sgcHJv
+YmluZw0KPiAtIG1mZDogZGVsZXRlIG1tc3lzX3ByaXZhdGUNCj4gLSBhZGQgUmV2aWV3ZWQtYnkg
+YW5kIEFja2VkLWJ5IHRhZ3MNCj4gIA0KPiBNTVNZUyBpbiBNZWRpYXRlayBTb0NzIGhhcyBzb21l
+IHJlZ2lzdGVycyB0byBjb250cm9sIGNsb2NrIGdhdGVzICh3aGljaCBpcyANCj4gdXNlZCBpbiB0
+aGUgY2xrIGRyaXZlcikgYW5kIHNvbWUgcmVnaXN0ZXJzIHRvIHNldCB0aGUgcm91dGluZyBhbmQg
+ZW5hYmxlDQo+IHRoZSBkaWZmZXJuZXQgYmxvY2tzIG9mIHRoZSBkaXNwbGF5IHN1YnN5c3RlbS4N
+Cj4gDQo+IFVwIHRvIG5vdyBib3RoIGRyaXZlcnMsIGNsb2NrIGFuZCBkcm0gYXJlIHByb2JlZCB3
+aXRoIHRoZSBzYW1lIGRldmljZSB0cmVlDQo+IGNvbXBhdGlibGUuIEJ1dCBvbmx5IHRoZSBmaXJz
+dCBkcml2ZXIgZ2V0IHByb2JlZCwgd2hpY2ggaW4gZWZmZWN0IGJyZWFrcw0KPiBncmFwaGljcyBv
+biBtdDgxNzMgYW5kIG10MjcwMS4NCj4gDQo+IFRoaXMgcGF0Y2ggdXNlcyBhIHBsYXRmb3JtIGRl
+dmljZSByZWdpc3RyYXRpb24gaW4gdGhlIERSTSBkcml2ZXIsIHdoaWNoDQo+IHdpbGwgdHJpZ2dl
+ciB0aGUgcHJvYmUgb2YgdGhlIGNvcnJlc3BvbmRpbmcgY2xvY2sgZHJpdmVyLiBJdCB3YXMgdGVz
+dGVkIG9uIHRoZQ0KPiBiYW5hbmFwaS1yMiBhbmQgdGhlIEFjZXIgUjEzIENocm9tZWJvb2suDQo+
+IA0KPiANCj4gTWF0dGhpYXMgQnJ1Z2dlciAoMTIpOg0KPiAgIGR0LWJpbmRpbmdzOiBkaXNwbGF5
+OiBtZWRpYXRlazogQWRkIG1tc3lzIGJpbmRpbmcgZGVzY3JpcHRpb24NCj4gICBkdC1iaW5kaW5n
+czogbWVkaWF0ZWs6IEFkZCBjb21wYXRpYmxlIGZvciBtdDc2MjMNCj4gICBkcm0vbWVkaWF0ZWs6
+IFVzZSByZWdtYXAgZm9yIHJlZ2lzdGVyIGFjY2Vzcw0KPiAgIGRybTogbWVkaWF0ZWs6IE9taXQg
+d2FybmluZyBvbiBwcm9iZSBkZWZlcnMNCj4gICBtZWRpYTogbXRrLW1kcDogQ2hlY2sgcmV0dXJu
+IHZhbHVlIG9mIG9mX2Nsa19nZXQNCj4gICBjbGs6IG1lZGlhdGVrOiBtdDI3MDE6IHN3aXRjaCBt
+bXN5cyB0byBwbGF0Zm9ybSBkZXZpY2UgcHJvYmluZw0KPiAgIGNsazogbWVkaWF0ZWs6IG10Mjcx
+MmU6IHN3aXRjaCB0byBwbGF0Zm9ybSBkZXZpY2UgcHJvYmluZw0KPiAgIGNsazogbWVkaWF0ZWs6
+IG10Njc3OTogc3dpdGNoIG1tc3lzIHRvIHBsYXRmb3JtIGRldmljZSBwcm9iaW5nDQo+ICAgY2xr
+OiBtZWRpYXRlazogbXQ2Nzk3OiBzd2l0Y2ggdG8gcGxhdGZvcm0gZGV2aWNlIHByb2JpbmcNCj4g
+ICBjbGs6IG1lZGlhdGVrOiBtdDgxODM6IHN3aXRjaCBtbXN5cyB0byBwbGF0Zm9ybSBkZXZpY2Ug
+cHJvYmluZw0KPiAgIGNsazogbWVkaWF0ZWs6IG10ODE3Mzogc3dpdGNoIG1tc3lzIHRvIHBsYXRm
+b3JtIGRldmljZSBwcm9iaW5nDQo+ICAgZHJtL21lZGlhdGVrOiBBZGQgc3VwcG9ydCBmb3IgbW1z
+eXMgdGhyb3VnaCBhIHBkZXYNCj4gDQo+ICAuLi4vZGlzcGxheS9tZWRpYXRlay9tZWRpYXRlayxk
+aXNwLnR4dCAgICAgICAgfCAzMCArKysrKystLS0tLQ0KPiAgZHJpdmVycy9jbGsvbWVkaWF0ZWsv
+Y2xrLW10MjcwMS1tbS5jICAgICAgICAgIHwgNDEgKysrKysrKysrLS0tLS0NCj4gIGRyaXZlcnMv
+Y2xrL21lZGlhdGVrL2Nsay1tdDI3MTItbW0uYyAgICAgICAgICB8IDM5ICsrKysrKysrKy0tLS0t
+DQo+ICBkcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ2Nzc5LW1tLmMgICAgICAgICAgfCA0MSAr
+KysrKysrKystLS0tLQ0KPiAgZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10Njc5Ny1tbS5jICAg
+ICAgICAgIHwgNDMgKysrKysrKysrKy0tLS0tDQo+ICBkcml2ZXJzL2Nsay9tZWRpYXRlay9jbGst
+bXQ4MTczLmMgICAgICAgICAgICAgfCA1MSArKysrKysrKysrKysrKystLS0NCj4gIGRyaXZlcnMv
+Y2xrL21lZGlhdGVrL2Nsay1tdDgxODMtbW0uYyAgICAgICAgICB8IDM5ICsrKysrKysrKy0tLS0t
+DQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2Rpc3BfY29sb3IuYyAgICAgfCAgNSAr
+LQ0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kaXNwX292bC5jICAgICAgIHwgIDUg
+Ky0NCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZGlzcF9yZG1hLmMgICAgICB8ICA1
+ICstDQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RwaS5jICAgICAgICAgICAgfCAx
+MiArKystLQ0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jICAgICAg
+IHwgIDQgKy0NCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2RkcC5jICAgICAg
+ICB8IDU0ICsrKysrKysrKy0tLS0tLS0tLS0NCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9t
+dGtfZHJtX2RkcC5oICAgICAgICB8ICA0ICstDQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsv
+bXRrX2RybV9kcnYuYyAgICAgICAgfCAzNSArKysrKysrKystLS0NCj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9tZWRpYXRlay9tdGtfZHJtX2Rydi5oICAgICAgICB8ICA0ICstDQo+ICBkcml2ZXJzL2dwdS9k
+cm0vbWVkaWF0ZWsvbXRrX2RzaS5jICAgICAgICAgICAgfCAgOCArKy0NCj4gIGRyaXZlcnMvZ3B1
+L2RybS9tZWRpYXRlay9tdGtfaGRtaS5jICAgICAgICAgICB8ICA0ICstDQo+ICBkcml2ZXJzL21l
+ZGlhL3BsYXRmb3JtL210ay1tZHAvbXRrX21kcF9jb21wLmMgfCAgNiArKysNCj4gIDE5IGZpbGVz
+IGNoYW5nZWQsIDI5NSBpbnNlcnRpb25zKCspLCAxMzUgZGVsZXRpb25zKC0pDQo+IA0KDQo=
 
-Thanks a lot for the patient explanation. : )
-
-Actually this patch only adds a new file to existing fme platform driver, fme
-platform driver already has several different types userspace interfaces,
-including hwmon, sysfs and etc, so the new perf api is only one of them, as
-we can't move the whole fme platform driver into drivers/perf/, we feel that
-maybe we should keep that code together with other fme files in drivers/fpga/.
-
-Thanks
-Hao
-
-> 
-> greg k-h
