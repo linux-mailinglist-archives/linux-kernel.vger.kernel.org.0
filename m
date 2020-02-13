@@ -2,124 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D264B15C28B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:35:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25B8C15C296
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:35:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729933AbgBMPeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:34:09 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:37787 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729664AbgBMPaP (ORCPT
+        id S1729058AbgBMPfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:35:25 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46949 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388085AbgBMPbz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:30:15 -0500
-Received: by mail-pj1-f68.google.com with SMTP id m13so2573489pjb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:30:15 -0800 (PST)
+        Thu, 13 Feb 2020 10:31:55 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z7so7179655wrl.13;
+        Thu, 13 Feb 2020 07:31:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=h4tXxCDqUAeynBn8YfdI4d7ZTww8jr1pxW2BfTAecOw=;
-        b=JBecrczYg/FyZDYE2AD6DZpQw8AIB6CSVaDIj1K/dFnFrEr2zRO+zLKtyzp0Z39Xnq
-         IuzUCdw9nwffWRWpajJpZT4OwMlCOpi+ovKz39fufc6rkztLeurDSzyNe3kRmokyBG5a
-         +gmLrP5OOJcRjRxe3NO22f1QhCsls+vFKA2xeDyT0LwwB82JrEWA0p0tk+R0gX0c2r7S
-         JAlpTr7pQJSmAat59NdTtv1EOte41xirVsrnmS7VmioGXwX+f6Xb7ZDenCH+XGQZrBMm
-         8W02xkMZue137NK7rZCbMlPlIIdZLugk5OSsohCHVUeZa3qxGN2q42ZhcsH2tzSRajoX
-         wjlQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=jY+YnMofuqwzjILofdtROeXpT9sto3UqcBNW/xLjoRs=;
+        b=pMu8qWisYyaMHM2tnHMktgLsO04+nQvZ6zDXoYNfcRi1UXplaz/1HVsQS/Ea4ZnRIy
+         Y4EfxaXb9c3cxF8rXOM0BjWn7zYUNOvVsuZ1EEgXknU9BbKCt2yic2hQLu+uvGbfaDIq
+         bOras25oV+gjPZm0Xah6RXvFKK3pkzhRb0DED4iFXQwklCkfNacH1kkE2PKCrR8vrUhT
+         xcIqw5XUOdNKIQZmWV1a5q0Y9cEurSyc5lJ784goDVfUs7oorbiios0LjGZWKAbx892A
+         GAheOuDXqapKdiCKErkXodg6gpZ32V247Z6cdiWlztK0pyW9Vsu6PzDNyqFJw341KkkK
+         AXkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=h4tXxCDqUAeynBn8YfdI4d7ZTww8jr1pxW2BfTAecOw=;
-        b=mpsnLCv6ELctWO+pvXnlIKnSjo8QQd0uvfCKAe1BVlQ7lxGa+K6f0Vcj6OjK0QwDcr
-         JGuhobf8mefnRy7dpEue4g2YClpjJ9NA4vttjjP5/aoDiRfT2YRtbgaCaZS23VXimcYW
-         3fR5QbjeSlzXUF5RX3CB9rasmdpgebihb1cW0MsZHDO6GIjHAEB0hW94017i2I7s3GuD
-         +rYPFv+7N8Bp9VKTXhYphkbNEmi/sH2c9u/5k1BeK8oc0Q1ey6s7MMFG9AMDTxUzbOiv
-         sD9IKKlLgquD25PmqXf7yeC/p04EEOFZRA+pyEXetsPLczeTNaI6IudMuUNwYYKgeO1n
-         dijA==
-X-Gm-Message-State: APjAAAWxAfAZ8/rSNrFaipxKyJ8QY1Iunw1ffE4hLvlPPOeS3DmikejT
-        wCk+N+RvnNGg0jyIv3bGvqb9
-X-Google-Smtp-Source: APXvYqz4gm0XDqU07OdTiTdJXfSfampqcbHQpGnuG26etIIxJDg/VSwU6SBMHKkVPXZ7r6GHgiSJqg==
-X-Received: by 2002:a17:90b:97:: with SMTP id bb23mr5485019pjb.53.1581607815090;
-        Thu, 13 Feb 2020 07:30:15 -0800 (PST)
-Received: from mani ([103.59.133.81])
-        by smtp.gmail.com with ESMTPSA id x6sm3506464pfi.83.2020.02.13.07.30.12
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=jY+YnMofuqwzjILofdtROeXpT9sto3UqcBNW/xLjoRs=;
+        b=olo6MZ1+5niy0iyHC+fjvzYxfYRDF+ySnlEfWyTZy4LWhhPPFZgXmjU41wZLuqjRCd
+         WxcgfcDD3quk2VEGfmK0TG9tfWGdqIxcx/cXaLrVKuvIbz/Q1wxAuIDLQyQ/eYexncH+
+         HRBa8OGfPvVBFCWCVaWdSSjim//6uYjonQJfA7cbJ9cjq/JfVckkGmGWNe9n1IT+P7D9
+         wFNQUf3iZ+hhENfBeDJf+3Y1Iygk1GL4erw2k2xBg1fk3bR5sSzSwTll1GcY/JnSTXve
+         bOhSc6SA/jWz5VEqiQC0yiYZqIDa0u19+2MbT4BRxty8pJ5Cs1dihjs3vxIQaA+dMpxV
+         HAdA==
+X-Gm-Message-State: APjAAAU4i9ADgdovXWEXqFJL8+ZvcpUqYo8vokFcEeXQsaR0ffjV+EmR
+        PqUO2ogFcv/5NSUOuZU4deo=
+X-Google-Smtp-Source: APXvYqw7slUsjNQkyU+rvi+PmJErVCo36nL+8e2UFRgWoCo3D5Shs+6iWOnwkAagzlIj1g9ifPTGCA==
+X-Received: by 2002:a5d:494f:: with SMTP id r15mr23122503wrs.143.1581607913331;
+        Thu, 13 Feb 2020 07:31:53 -0800 (PST)
+Received: from localhost ([193.47.161.132])
+        by smtp.gmail.com with ESMTPSA id q14sm3278650wrj.81.2020.02.13.07.31.52
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Feb 2020 07:30:14 -0800 (PST)
-Date:   Thu, 13 Feb 2020 21:00:08 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Dan Williams <dcbw@redhat.com>
-Cc:     davem@davemloft.net, kuba@kernel.org, bjorn.andersson@linaro.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] Migrate QRTR Nameservice to Kernel
-Message-ID: <20200213153007.GA26254@mani>
-References: <20200213091427.13435-1-manivannan.sadhasivam@linaro.org>
- <34daecbeb05d31e30ef11574f873553290c29d16.camel@redhat.com>
+        Thu, 13 Feb 2020 07:31:52 -0800 (PST)
+Date:   Thu, 13 Feb 2020 16:31:51 +0100
+From:   Oliver Graute <oliver.graute@gmail.com>
+To:     festevam@gmail.com, Anson.Huang@nxp.com
+Cc:     Aisheng Dong <aisheng.dong@nxp.com>, leonard.crestez@nxp.com,
+        peng.fan@nxp.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: clk: imx: clock driver for imx8qm?
+Message-ID: <20200213153151.GB6975@optiplex>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <34daecbeb05d31e30ef11574f873553290c29d16.camel@redhat.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
+Hello Favio,
+Hello Anson,
 
-On Thu, Feb 13, 2020 at 09:22:39AM -0600, Dan Williams wrote:
-> On Thu, 2020-02-13 at 14:44 +0530, Manivannan Sadhasivam wrote:
-> > Hello,
-> > 
-> > This patchset migrates the Qualcomm IPC Router (QRTR) Nameservice
-> > from userspace
-> > to kernel under net/qrtr.
-> > 
-> > The userspace implementation of it can be found here:
-> > https://github.com/andersson/qrtr/blob/master/src/ns.c
-> > 
-> > This change is required for enabling the WiFi functionality of some
-> > Qualcomm
-> > WLAN devices using ATH11K without any dependency on a userspace
-> > daemon.
-> 
-> Just out of curiousity, what's the motivation for not requiring a
-> userspace daemon? What are the downsides of the current userspace
-> daemon implementation?
->
+is someone working on clock driver for imx8qm? I miss at least a
+clk-imx8qm.c in the drivers/imx/clk/ directory. I saw that you are
+working in this area and perhaps you can give me some insights what is
+needed here.
 
-The primary motivation is to eliminate the need for installing and starting
-a userspace tool for the basic WiFi usage. This will be critical for the
-Qualcomm WLAN devices deployed in x86 laptops.
+Best regards,
 
-Also, there are some plans to implement QRTR link negotiation based on this
-in future.
-
-Thanks,
-Mani
- 
-> Dan
-> 
-> > The original userspace code is published under BSD3 license. For
-> > migrating it
-> > to Linux kernel, I have adapted Dual BSD/GPL license.
-> > 
-> > This patchset has been verified on Dragonboard410c and Intel NUC with
-> > QCA6390
-> > WLAN device.
-> > 
-> > Thanks,
-> > Mani
-> > 
-> > Manivannan Sadhasivam (2):
-> >   net: qrtr: Migrate nameservice to kernel from userspace
-> >   net: qrtr: Fix the local node ID as 1
-> > 
-> >  net/qrtr/Makefile |   2 +-
-> >  net/qrtr/ns.c     | 730
-> > ++++++++++++++++++++++++++++++++++++++++++++++
-> >  net/qrtr/qrtr.c   |  51 +---
-> >  net/qrtr/qrtr.h   |   4 +
-> >  4 files changed, 746 insertions(+), 41 deletions(-)
-> >  create mode 100644 net/qrtr/ns.c
-> > 
-> 
+Oliver
