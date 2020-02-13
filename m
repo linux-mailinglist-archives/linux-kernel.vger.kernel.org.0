@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 226E715C25F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:33:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 895EC15C4BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387962AbgBMPc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:32:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57108 "EHLO mail.kernel.org"
+        id S2388049AbgBMPuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:50:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728414AbgBMP2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:28:50 -0500
+        id S2387573AbgBMP03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:29 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5CEA2465D;
-        Thu, 13 Feb 2020 15:28:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E661206DB;
+        Thu, 13 Feb 2020 15:26:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607730;
-        bh=vF3vpiJfV5jRF2elPwqFz17RlyJWH7ft1gujGBsgYYU=;
+        s=default; t=1581607587;
+        bh=QyJVGfqaru/uvrDGFsoczRg8cEkQo1LqTPd4vcYohKI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q6SMki5fdIEjMBYyqlA9N0M94YdYG4F93C5eP7TLMnK8CYqK5aP8KERV1vwbbmaxy
-         7itek2APbzpOZMSQSg/JfvTHYyMOsG28872D4LYoqh11wE51ENIIuBpIAz3QcRZSvo
-         0gmLgQiom5wQyTAnomf9K44PgpGAlWtNTFJ0RHdc=
+        b=IaOyfw7brjr1FnJKH1+qcAWitiQ0o1cB00+00UjiY9HYrmF78gPMG2+PE7pD7dz7R
+         KhIVqTi5SwrHn71N1kkQ2I5kM2yug9cmosSl0xVinkluX6A+mFjoUkYTzMW+9UFIrb
+         DGJRLw05uiNjFh1+hxZ4+AnqpVvKQTshLk90xPPA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-Subject: [PATCH 5.5 051/120] watchdog: qcom: Use platform_get_irq_optional() for bark irq
+        stable@vger.kernel.org, Michael Guralnik <michaelgur@mellanox.com>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.19 06/52] RDMA/uverbs: Verify MR access flags
 Date:   Thu, 13 Feb 2020 07:20:47 -0800
-Message-Id: <20200213151919.340210137@linuxfoundation.org>
+Message-Id: <20200213151813.270748287@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
+References: <20200213151810.331796857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,43 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+From: Michael Guralnik <michaelgur@mellanox.com>
 
-commit e0b4f4e0cf7fa9d62628d4249c765ec18dffd143 upstream.
+commit ca95c1411198c2d87217c19d44571052cdc94725 upstream.
 
-platform_get_irq() prints an error message when the interrupt
-is not available. So on platforms where bark interrupt is
-not specified, following error message is observed on SDM845.
+Verify that MR access flags that are passed from user are all supported
+ones, otherwise an error is returned.
 
-[    2.975888] qcom_wdt 17980000.watchdog: IRQ index 0 not found
-
-This is also seen on SC7180, SM8150 SoCs as well.
-Fix this by using platform_get_irq_optional() instead.
-
-Fixes: 36375491a4395654 ("watchdog: qcom: support pre-timeout when the bark irq is available")
-Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Link: https://lore.kernel.org/r/20191213064934.4112-1-saiprakash.ranjan@codeaurora.org
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Fixes: 4fca03778351 ("IB/uverbs: Move ib_access_flags and ib_read_counters_flags to uapi")
+Link: https://lore.kernel.org/r/1578506740-22188-6-git-send-email-yishaih@mellanox.com
+Signed-off-by: Michael Guralnik <michaelgur@mellanox.com>
+Signed-off-by: Yishai Hadas <yishaih@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/watchdog/qcom-wdt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/rdma/ib_verbs.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/watchdog/qcom-wdt.c
-+++ b/drivers/watchdog/qcom-wdt.c
-@@ -246,7 +246,7 @@ static int qcom_wdt_probe(struct platfor
- 	}
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -3864,6 +3864,9 @@ static inline int ib_check_mr_access(int
+ 	    !(flags & IB_ACCESS_LOCAL_WRITE))
+ 		return -EINVAL;
  
- 	/* check if there is pretimeout support */
--	irq = platform_get_irq(pdev, 0);
-+	irq = platform_get_irq_optional(pdev, 0);
- 	if (irq > 0) {
- 		ret = devm_request_irq(dev, irq, qcom_wdt_isr,
- 				       IRQF_TRIGGER_RISING,
++	if (flags & ~IB_ACCESS_SUPPORTED)
++		return -EINVAL;
++
+ 	return 0;
+ }
+ 
 
 
