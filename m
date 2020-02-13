@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A4DF15C6F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:13:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD97215C578
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:10:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730329AbgBMQFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 11:05:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35800 "EHLO mail.kernel.org"
+        id S1728048AbgBMPWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:22:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728486AbgBMPXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:23:48 -0500
+        id S1727960AbgBMPWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:22:31 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 574EA2469C;
-        Thu, 13 Feb 2020 15:23:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 078D62469A;
+        Thu, 13 Feb 2020 15:22:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607428;
-        bh=2S2Xv7OmE/qAmWepxc4mgXxqfn5c9L+ojn0/7KWDObU=;
+        s=default; t=1581607350;
+        bh=xIU6Nwqa904aEcK0t4PQtkloNsGxD+863Oj+mHYhQY4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wHqBzD6o4UZcfsCPDiJp5uW08VzbWVT2dmsHqpG0H3H06d14rOjj64fV42RhQ/HcR
-         5BpBKx8BBLt4o7yKzdSubH+n8aJaRolraZ9aS4VTm0ktDKCoFx7JXUuzGDb7fnFryr
-         4yzMUVNPYsONQvU2jYHbbf7dTOrV+xJv3E9wFKEk=
+        b=btO8/4xXs7ersuBXMujp3cUPHNx2Cdjttgr0Wpx7Hf/+UNrOYIlw/rZfn27IYHJPp
+         G4bApOG63Qy91GDqNogQsnRWvJobC8c/WsEE4DhCsaa2E8GP0Dghtdsi4dlhSV0HGX
+         noq7CzJo/LFaK5l5h78J2C9CK8iOPlpmvZgYb9kA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Roberto Bergantinos Corpas <rbergant@redhat.com>,
-        Frank Sorenson <sorenson@redhat.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.9 043/116] sunrpc: expiry_time should be seconds not timeval
+        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.4 30/91] crypto: picoxcell - adjust the position of tasklet_init and fix missed tasklet_kill
 Date:   Thu, 13 Feb 2020 07:19:47 -0800
-Message-Id: <20200213151859.743949173@linuxfoundation.org>
+Message-Id: <20200213151833.166396815@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
-References: <20200213151842.259660170@linuxfoundation.org>
+In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
+References: <20200213151821.384445454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,54 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roberto Bergantinos Corpas <rbergant@redhat.com>
+From: Chuhong Yuan <hslester96@gmail.com>
 
-commit 3d96208c30f84d6edf9ab4fac813306ac0d20c10 upstream.
+commit 7f8c36fe9be46862c4f3c5302f769378028a34fa upstream.
 
-When upcalling gssproxy, cache_head.expiry_time is set as a
-timeval, not seconds since boot. As such, RPC cache expiry
-logic will not clean expired objects created under
-auth.rpcsec.context cache.
+Since tasklet is needed to be initialized before registering IRQ
+handler, adjust the position of tasklet_init to fix the wrong order.
 
-This has proven to cause kernel memory leaks on field. Using
-64 bit variants of getboottime/timespec
+Besides, to fix the missed tasklet_kill, this patch adds a helper
+function and uses devm_add_action to kill the tasklet automatically.
 
-Expiration times have worked this way since 2010's c5b29f885afe "sunrpc:
-use seconds since boot in expiry cache".  The gssproxy code introduced
-in 2012 added gss_proxy_save_rsc and introduced the bug.  That's a while
-for this to lurk, but it required a bit of an extreme case to make it
-obvious.
-
-Signed-off-by: Roberto Bergantinos Corpas <rbergant@redhat.com>
-Cc: stable@vger.kernel.org
-Fixes: 030d794bf498 "SUNRPC: Use gssproxy upcall for server..."
-Tested-By: Frank Sorenson <sorenson@redhat.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Fixes: ce92136843cb ("crypto: picoxcell - add support for the picoxcell crypto engines")
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/auth_gss/svcauth_gss.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/crypto/picoxcell_crypto.c |   15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
---- a/net/sunrpc/auth_gss/svcauth_gss.c
-+++ b/net/sunrpc/auth_gss/svcauth_gss.c
-@@ -1180,6 +1180,7 @@ static int gss_proxy_save_rsc(struct cac
- 		dprintk("RPC:       No creds found!\n");
- 		goto out;
- 	} else {
-+		struct timespec64 boot;
+--- a/drivers/crypto/picoxcell_crypto.c
++++ b/drivers/crypto/picoxcell_crypto.c
+@@ -1610,6 +1610,11 @@ static bool spacc_is_compatible(struct p
+ 	return false;
+ }
  
- 		/* steal creds */
- 		rsci.cred = ud->creds;
-@@ -1200,6 +1201,9 @@ static int gss_proxy_save_rsc(struct cac
- 						&expiry, GFP_KERNEL);
- 		if (status)
- 			goto out;
++static void spacc_tasklet_kill(void *data)
++{
++	tasklet_kill(data);
++}
 +
-+		getboottime64(&boot);
-+		expiry -= boot.tv_sec;
+ static int spacc_probe(struct platform_device *pdev)
+ {
+ 	int i, err, ret = -EINVAL;
+@@ -1652,6 +1657,14 @@ static int spacc_probe(struct platform_d
+ 		return -ENXIO;
  	}
  
- 	rsci.h.expiry_time = expiry;
++	tasklet_init(&engine->complete, spacc_spacc_complete,
++		     (unsigned long)engine);
++
++	ret = devm_add_action(&pdev->dev, spacc_tasklet_kill,
++			      &engine->complete);
++	if (ret)
++		return ret;
++
+ 	if (devm_request_irq(&pdev->dev, irq->start, spacc_spacc_irq, 0,
+ 			     engine->name, engine)) {
+ 		dev_err(engine->dev, "failed to request IRQ\n");
+@@ -1714,8 +1727,6 @@ static int spacc_probe(struct platform_d
+ 	INIT_LIST_HEAD(&engine->completed);
+ 	INIT_LIST_HEAD(&engine->in_progress);
+ 	engine->in_flight = 0;
+-	tasklet_init(&engine->complete, spacc_spacc_complete,
+-		     (unsigned long)engine);
+ 
+ 	platform_set_drvdata(pdev, engine);
+ 
 
 
