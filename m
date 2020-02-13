@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05FC715C2BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:38:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C3D015C250
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:33:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729756AbgBMPaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:30:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48738 "EHLO mail.kernel.org"
+        id S2388098AbgBMPcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:32:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387667AbgBMP1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:05 -0500
+        id S1728534AbgBMP2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:15 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 166B720661;
-        Thu, 13 Feb 2020 15:27:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5B1D222C2;
+        Thu, 13 Feb 2020 15:28:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607625;
-        bh=qalAB5bKEGVK827bqT35jJirfnT6wm6bOd0KLJ3sqa4=;
+        s=default; t=1581607695;
+        bh=bTaM9z7UZIreCdFbopgJgFvaS0Ot1vVV2fi3Qq0RXyQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FrqIS/KXSeHBIGb5jPLSK1FbYkozUQLVPtsbtZNMCU1lDRddvrGkCvdjZTkwhligR
-         K/Sh8+Y4rpZDKqi4H2jBFm5GStr7Vd8tS4nPY28DtxPYard9oI1p/B73irrWbAIzFD
-         OnEOG1nZhL/ZQ+NupESwswj25hCdZPQfKhJJz0ss=
+        b=E23BcBPFrxOT81eMgPny7ruAJ4lKINFN14LnQXpMy5ndYMz/6DsAARyUNHF0dnqLf
+         YAGx56I+qnj+VLx9fRYd781BK+Y/r8xTHtR3AUuDhtOij5PQppY9dpvrMs/ByIo9nh
+         mBHAivrL9tzsbZ0RXdJxrH5KwjDWRRPcTDk1hu1I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiyu Yang <xiyuyang19@fudan.edu.cn>,
-        Xin Tan <tanxin.ctf@gmail.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.4 07/96] RDMA/i40iw: fix a potential NULL pointer dereference
+        stable@vger.kernel.org, Marcel Ziswiler <marcel@ziswiler.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: [PATCH 5.5 018/120] PCI: tegra: Fix afi_pex2_ctrl reg offset for Tegra30
 Date:   Thu, 13 Feb 2020 07:20:14 -0800
-Message-Id: <20200213151841.973038724@linuxfoundation.org>
+Message-Id: <20200213151908.294986420@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiyu Yang <xiyuyang19@fudan.edu.cn>
+From: Marcel Ziswiler <marcel@ziswiler.com>
 
-commit 04db1580b5e48a79e24aa51ecae0cd4b2296ec23 upstream.
+commit 21a92676e1fe292acb077b13106b08c22ed36b14 upstream.
 
-A NULL pointer can be returned by in_dev_get(). Thus add a corresponding
-check so that a NULL pointer dereference will be avoided at this place.
+Fix AFI_PEX2_CTRL reg offset for Tegra30 by moving it from the Tegra20
+SoC struct where it erroneously got added. This fixes the AFI_PEX2_CTRL
+reg offset being uninitialised subsequently failing to bring up the
+third PCIe port.
 
-Fixes: 8e06af711bf2 ("i40iw: add main, hdr, status")
-Link: https://lore.kernel.org/r/1577672668-46499-1-git-send-email-xiyuyang19@fudan.edu.cn
-Signed-off-by: Xiyu Yang <xiyuyang19@fudan.edu.cn>
-Signed-off-by: Xin Tan <tanxin.ctf@gmail.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: adb2653b3d2e ("PCI: tegra: Add AFI_PEX2_CTRL reg offset as part of SoC struct")
+Signed-off-by: Marcel Ziswiler <marcel@ziswiler.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/i40iw/i40iw_main.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pci/controller/pci-tegra.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/i40iw/i40iw_main.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_main.c
-@@ -1225,6 +1225,8 @@ static void i40iw_add_ipv4_addr(struct i
- 			const struct in_ifaddr *ifa;
- 
- 			idev = in_dev_get(dev);
-+			if (!idev)
-+				continue;
- 			in_dev_for_each_ifa_rtnl(ifa, idev) {
- 				i40iw_debug(&iwdev->sc_dev, I40IW_DEBUG_CM,
- 					    "IP=%pI4, vlan_id=%d, MAC=%pM\n", &ifa->ifa_address,
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -2499,7 +2499,6 @@ static const struct tegra_pcie_soc tegra
+ 	.num_ports = 2,
+ 	.ports = tegra20_pcie_ports,
+ 	.msi_base_shift = 0,
+-	.afi_pex2_ctrl = 0x128,
+ 	.pads_pll_ctl = PADS_PLL_CTL_TEGRA20,
+ 	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_DIV10,
+ 	.pads_refclk_cfg0 = 0xfa5cfa5c,
+@@ -2528,6 +2527,7 @@ static const struct tegra_pcie_soc tegra
+ 	.num_ports = 3,
+ 	.ports = tegra30_pcie_ports,
+ 	.msi_base_shift = 8,
++	.afi_pex2_ctrl = 0x128,
+ 	.pads_pll_ctl = PADS_PLL_CTL_TEGRA30,
+ 	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_BUF_EN,
+ 	.pads_refclk_cfg0 = 0xfa5cfa5c,
 
 
