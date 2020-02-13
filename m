@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1056915C276
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:35:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13FCF15C560
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:55:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388091AbgBMPbz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:31:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54524 "EHLO mail.kernel.org"
+        id S1730014AbgBMPzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:55:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729570AbgBMP2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:28:09 -0500
+        id S2387488AbgBMPZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:42 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95D352168B;
-        Thu, 13 Feb 2020 15:28:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB4192469A;
+        Thu, 13 Feb 2020 15:25:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607688;
-        bh=vy9wzLAXtpu/XTVoeNZRrmp6y35QIRVEViTmeL54EUI=;
+        s=default; t=1581607541;
+        bh=XzVkkxfENQ+u25KE1T0DQ5ICjNeu3/HPCkk9hMjUUFE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OeiHVwuTi9yAQQjVFLdKANevmisHzTYEOjf6464lIZYKHwAR+vgypEH9S6Mqy76fw
-         p6UxUTCwwJyI1hNaKNvt910fbM+0M8Djt0YmWs0x6aGop8Isa/VsI/uSQSdthr3gCN
-         7o2FmVJhSeXSKw1McqZYA0kzze6TknS7vDP7HWcs=
+        b=ix8pCZRH49u/GiyLmxP4Ea0Vi9FgYg+vDdn168CsCNPXueEZoSfQGsahfwge9jyB6
+         WOzb8lIMe/ZC3Np8I7PDrxzjAfN/B9IfpoYNu5FFZ/YxqkvTDt84e26J1D60AMdbhk
+         /X5GYRf6A5GLwb0zydzxg27aLVxrnI3WrO4iBPrU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Blakey <paulb@mellanox.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 5.5 025/120] netfilter: flowtable: Fix hardware flush order on nf_flow_table_cleanup
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Theodore Tso <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 118/173] ext4: fix deadlock allocating crypto bounce page from mempool
 Date:   Thu, 13 Feb 2020 07:20:21 -0800
-Message-Id: <20200213151910.704317780@linuxfoundation.org>
+Message-Id: <20200213152002.197255199@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,39 +43,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Blakey <paulb@mellanox.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 91bfaa15a379e9af24f71fb4ee08d8019b6e8ec7 upstream.
+[ Upstream commit 547c556f4db7c09447ecf5f833ab6aaae0c5ab58 ]
 
-On netdev down event, nf_flow_table_cleanup() is called for the relevant
-device and it cleans all the tables that are on that device.
-If one of those tables has hardware offload flag,
-nf_flow_table_iterate_cleanup flushes hardware and then runs the gc.
-But the gc can queue more hardware work, which will take time to execute.
+ext4_writepages() on an encrypted file has to encrypt the data, but it
+can't modify the pagecache pages in-place, so it encrypts the data into
+bounce pages and writes those instead.  All bounce pages are allocated
+from a mempool using GFP_NOFS.
 
-Instead first add the work, then flush it, to execute it now.
+This is not correct use of a mempool, and it can deadlock.  This is
+because GFP_NOFS includes __GFP_DIRECT_RECLAIM, which enables the "never
+fail" mode for mempool_alloc() where a failed allocation will fall back
+to waiting for one of the preallocated elements in the pool.
 
-Fixes: c29f74e0df7a ("netfilter: nf_flow_table: hardware offload support")
-Signed-off-by: Paul Blakey <paulb@mellanox.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+But since this mode is used for all a bio's pages and not just the
+first, it can deadlock waiting for pages already in the bio to be freed.
 
+This deadlock can be reproduced by patching mempool_alloc() to pretend
+that pool->alloc() always fails (so that it always falls back to the
+preallocations), and then creating an encrypted file of size > 128 KiB.
+
+Fix it by only using GFP_NOFS for the first page in the bio.  For
+subsequent pages just use GFP_NOWAIT, and if any of those fail, just
+submit the bio and start a new one.
+
+This will need to be fixed in f2fs too, but that's less straightforward.
+
+Fixes: c9af28fdd449 ("ext4 crypto: don't let data integrity writebacks fail with ENOMEM")
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Link: https://lore.kernel.org/r/20191231181149.47619-1-ebiggers@kernel.org
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_flow_table_core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/page-io.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
---- a/net/netfilter/nf_flow_table_core.c
-+++ b/net/netfilter/nf_flow_table_core.c
-@@ -529,9 +529,9 @@ static void nf_flow_table_do_cleanup(str
- static void nf_flow_table_iterate_cleanup(struct nf_flowtable *flowtable,
- 					  struct net_device *dev)
- {
--	nf_flow_table_offload_flush(flowtable);
- 	nf_flow_table_iterate(flowtable, nf_flow_table_do_cleanup, dev);
- 	flush_delayed_work(&flowtable->gc_work);
-+	nf_flow_table_offload_flush(flowtable);
- }
+diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+index db7590178dfcf..9cc79b7b0df11 100644
+--- a/fs/ext4/page-io.c
++++ b/fs/ext4/page-io.c
+@@ -481,17 +481,26 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
+ 	    nr_to_submit) {
+ 		gfp_t gfp_flags = GFP_NOFS;
  
- void nf_flow_table_cleanup(struct net_device *dev)
++		/*
++		 * Since bounce page allocation uses a mempool, we can only use
++		 * a waiting mask (i.e. request guaranteed allocation) on the
++		 * first page of the bio.  Otherwise it can deadlock.
++		 */
++		if (io->io_bio)
++			gfp_flags = GFP_NOWAIT | __GFP_NOWARN;
+ 	retry_encrypt:
+ 		data_page = fscrypt_encrypt_page(inode, page, PAGE_SIZE, 0,
+ 						page->index, gfp_flags);
+ 		if (IS_ERR(data_page)) {
+ 			ret = PTR_ERR(data_page);
+-			if (ret == -ENOMEM && wbc->sync_mode == WB_SYNC_ALL) {
+-				if (io->io_bio) {
++			if (ret == -ENOMEM &&
++			    (io->io_bio || wbc->sync_mode == WB_SYNC_ALL)) {
++				gfp_flags = GFP_NOFS;
++				if (io->io_bio)
+ 					ext4_io_submit(io);
+-					congestion_wait(BLK_RW_ASYNC, HZ/50);
+-				}
+-				gfp_flags |= __GFP_NOFAIL;
++				else
++					gfp_flags |= __GFP_NOFAIL;
++				congestion_wait(BLK_RW_ASYNC, HZ/50);
+ 				goto retry_encrypt;
+ 			}
+ 			data_page = NULL;
+-- 
+2.20.1
+
 
 
