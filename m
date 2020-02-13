@@ -2,129 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 203F015B87C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 05:18:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E029D15B88E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 05:25:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729704AbgBMESL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 23:18:11 -0500
-Received: from mail-eopbgr1300109.outbound.protection.outlook.com ([40.107.130.109]:8416
-        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729633AbgBMESL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 23:18:11 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ftCPQbXhlsOzfJtPPsmxl/d43JNxqv6pZpSFD0a4Fz9iMrS/xOyCVMTmZFjSsvRlFjuiRLQG+oe38nLKtsWpQyjRAjnVdILo5M2mWY1lQ9FzYPvBakZi2utJ96SbphiShBhJ5AIXTmWiuid3w88ssPBuVGUJq3e6BJ+64xKleOq5jxe6DNVCpBSXBiwF0e3ukj7aMmkSVKxh9cRRwcPLBVYw3dTP1OSjEVuXXXl29Hz3pUvzPMWqmRghPOS6ZtaJRqoHT5dxV2aC+2gggxBMNUHluOMWIhsNuODuOzY/aCX8pjiKPjNG/hmkAZyD9crA8vMCv+CJ1u8bzOPcHIa/QQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fGTIQeg0+eKDbwcVyrM63ya+ly96ipnAwkEi5ZVgu+g=;
- b=kBomwKf3u1x/GdBsubJyfzkz27u45UzkibOInFzOrNQV9byMCFmQ500sIyY1YqUXZghk7S6uFLBcuueO+uedXsl29KlO7mcoshnl/nwAp3l8Zo89wDUSgfBtnENutITdXoO4rUzAlPDyjlNmXSPZanJX7pa3+owxZJlPay/L0XRrUn+63xAKP14SiEWMf/nzmgnUa57XFc7Tb0d8ONSoPu0O6XyP6wSQFrwUoVRDOJMRQzg3B6tAN65t3QS/JH60dZaPd80shR1zvd/ZvstERbjpyy494UX6n86rrUWKcwWNMEImXXBoRAmBx+KCa7yBi7m/vz9zxnDWl5JzR9OmDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fGTIQeg0+eKDbwcVyrM63ya+ly96ipnAwkEi5ZVgu+g=;
- b=d4AOQsMaJ3MTgGO8D94KI2tJywTYv7udlvUKkEmqtQvfAS0eF4GxLMcZ329JFndFfNQajD9NxlJWKjTib/9sKYxAjdtdo/Y+LNBvykFdKkThsaAW0884kBaPqc5MBFxS/5ffbxFJ0PjOkJENw2rz6RMQ/PFc3C0fBANOB86NEZc=
-Received: from HK0P153MB0148.APCP153.PROD.OUTLOOK.COM (52.133.156.139) by
- HK0P153MB0290.APCP153.PROD.OUTLOOK.COM (52.132.236.143) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2750.2; Thu, 13 Feb 2020 04:18:01 +0000
-Received: from HK0P153MB0148.APCP153.PROD.OUTLOOK.COM
- ([fe80::58ea:c6ae:4ea3:8432]) by HK0P153MB0148.APCP153.PROD.OUTLOOK.COM
- ([fe80::58ea:c6ae:4ea3:8432%5]) with mapi id 15.20.2750.007; Thu, 13 Feb 2020
- 04:18:01 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     Boqun Feng <boqun.feng@gmail.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-CC:     Michael Kelley <mikelley@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Andrew Murray <amurray@thegoodpenguin.co.uk>
-Subject: RE: [PATCH v3 3/3] PCI: hv: Introduce hv_msi_entry
-Thread-Topic: [PATCH v3 3/3] PCI: hv: Introduce hv_msi_entry
-Thread-Index: AQHV38PZxjAi0xWAZkW4JMZC1Le8B6gYh+3Q
-Date:   Thu, 13 Feb 2020 04:18:01 +0000
-Message-ID: <HK0P153MB0148834D630E95D055CE051CBF1A0@HK0P153MB0148.APCP153.PROD.OUTLOOK.COM>
-References: <20200210033953.99692-1-boqun.feng@gmail.com>
- <20200210033953.99692-4-boqun.feng@gmail.com>
-In-Reply-To: <20200210033953.99692-4-boqun.feng@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2020-02-13T04:17:59.5083367Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=638e90be-ea16-4589-af53-af25dfb78032;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-originating-ip: [2601:600:a280:7f70:c129:4d3:3571:d407]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 675f161b-6400-41bd-d577-08d7b03bb6ec
-x-ms-traffictypediagnostic: HK0P153MB0290:|HK0P153MB0290:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <HK0P153MB02901B88A669AD74C3ABA5C6BF1A0@HK0P153MB0290.APCP153.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-forefront-prvs: 031257FE13
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(346002)(366004)(376002)(396003)(39860400002)(199004)(189003)(110136005)(8676002)(81156014)(81166006)(54906003)(6506007)(8990500004)(478600001)(55016002)(9686003)(10290500003)(2906002)(86362001)(4326008)(7416002)(4744005)(316002)(66446008)(76116006)(5660300002)(66946007)(52536014)(66476007)(8936002)(7696005)(33656002)(66556008)(186003)(71200400001)(64756008);DIR:OUT;SFP:1102;SCL:1;SRVR:HK0P153MB0290;H:HK0P153MB0148.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 6RwGZMCuSSzDhboykzAGybYDG1aQ9PboIHleaIeNXX764UC3bSVKc0M5KNRGl0ZVf5xnNlMd1bi/bgTyFDBUd4xheWmUo4Ws2Y+AVEqMx/Tahb8ty4WvraL9I+bvLM41hXcQZyush7QXsadnegOplHZPounrc9KYW+pZjEfBP61RJk3wtIb0P5eGSgXwXeUWSw0xDt2h/lULfTvTI93Sc2Dno0b1Yqf0QaPSOeDiNVOfgi5MR6Bz5ax15DpntUh6Q8nPhW6Qfv7RLuBbTK894lhj8raas8poAd3HEugd531q3dMW1ddSJx2oSFr82c+snRYWCq4TZcXb8H9aDU4Ge8GgNlvxPqZwvrDh9dEK6WQM9a/mmFU7lvkhOH6ZcoWLULA5NL8c/FlHRbKHJoMia++3JwWfzvvscxvsSsaOa1EV1xzcpiR25RJhfbAaI9qN
-x-ms-exchange-antispam-messagedata: tKrFCSzonWEko5Qa9fGTZVqILqFhOHAhJ+SouEREKgQFIp+LAAbCvW+rgp/C5jaRm0jtpaMhG8iIMFyivbz1JMJt/plCAUaDiUlsItFadQniI/48oQzKth8ITKhrX9yWjQQzO0HeYCEZnu3DN06abBu1An7AMGeNwLY5AE9WsK9y+EHXo4fqWPSDeaAU8qCwvUwhTtiwGFjPCmcluH3FCQ==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1729674AbgBMEZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 23:25:12 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18996 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729358AbgBMEZM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 23:25:12 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e44cf8a0002>; Wed, 12 Feb 2020 20:24:43 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 12 Feb 2020 20:25:11 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 12 Feb 2020 20:25:11 -0800
+Received: from [10.2.168.250] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Feb
+ 2020 04:25:11 +0000
+Subject: Re: [PATCH 1/1] checkpatch: support "base-commit:" format
+To:     Joe Perches <joe@perches.com>
+CC:     Andy Whitcroft <apw@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20200212233221.47662-1-jhubbard@nvidia.com>
+ <20200212233221.47662-2-jhubbard@nvidia.com>
+ <a22937adb1bb364e4f5b8f30ee928a2df5cc226c.camel@perches.com>
+ <2dab786b686735ec0c4ee614c64448d78c67a51d.camel@perches.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <5b8d6faf-4eec-ae8a-42e4-0b16713ed288@nvidia.com>
+Date:   Wed, 12 Feb 2020 20:22:14 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 675f161b-6400-41bd-d577-08d7b03bb6ec
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2020 04:18:01.0230
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Bqc4X/R8cZQ1lgKqFfXBJC+Eos/vwDnHCiI8Qg017y2V5bbFjrJask/hYdhvBVTvao4PgUoW0bpEBTVlEIpfzQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0P153MB0290
+In-Reply-To: <2dab786b686735ec0c4ee614c64448d78c67a51d.camel@perches.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1581567883; bh=CH0W1IgPYwgWyTV2KHOAEhDBrtMU65kM4pCC54fWw+0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=sFkA2Qy936atZnIJPkXIUXcq1h54enMuxBxrb+d/HnleDChtcUZ5u7zT3oW7wD76Q
+         T02wSRzNM0/9fSD1KiIm0CVhyDHip9rgMKoYKf0ii758rUiZbsorlxux0hf4zBikFD
+         gEjjQjt07XWWBkuh5lLdExIU2WeK9tmzPpoYs7GRS+FzJ2slPd5PzkQ3SYGZTTywaJ
+         ieZHQOzjQ/hkv2T8lLCWSidVsw7Og7jRszYIJ6Vibo1JzvSk2OaivDak8iu1GKnO4i
+         jb/T1zAAXk86TwAb79Dtjv9l64RQTgdVNa3dY7b8ZaEAJs6lIpbNHVqh2FCWK0GvYz
+         ngPuJJW/Zhn0Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: linux-hyperv-owner@vger.kernel.org
-> <linux-hyperv-owner@vger.kernel.org> On Behalf Of Boqun Feng
-> diff --git a/arch/x86/include/asm/hyperv-tlfs.h
-> b/arch/x86/include/asm/hyperv-tlfs.h
->=20
-> +union hv_msi_entry {
-> +	u64 as_uint64;
-> +	struct {
-> +		u32 address;
-> +		u32 data;
-> +	} __packed;
-> +};
+On 2/12/20 5:32 PM, Joe Perches wrote:
+> On Wed, 2020-02-12 at 17:06 -0800, Joe Perches wrote:
+>> On Wed, 2020-02-12 at 15:32 -0800, John Hubbard wrote:
+>>> In order to support the get-lore-mbox.py tool described in [1], I ran:
+>>>
+>>>      git format-patch --base=<commit> --cover-letter <revrange>
+>>>
+>>> ...which generated a "base-commit: <commit-hash>" tag at the end of the
+>>> cover letter. However, checkpatch.pl generated an error upon encounting
+>>> "base-commit:" in the cover letter:
+>>>
+>>>      "ERROR: Please use git commit description style..."
+>>>
+>>> ...because it found the "commit" keyword, and failed to recognize that
+>>> it was part of the "base-commit" phrase, and as such, should not be
+>>> subjected to the same commit description style rules.
+>>>
+>>> Update checkpatch.pl to include a special case for "base-commit:", so
+>>> that that tag no longer generates a checkpatch error.
+> []
+>>> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> []
+>>> @@ -2761,6 +2761,7 @@ sub process {
+>>>   
+>>>   # Check for git id commit length and improperly formed commit descriptions
+>>>   		if ($in_commit_log && !$commit_log_possible_stack_dump &&
+>>> +		    $line !~ /base-commit:/ &&
+>>
+>> If this base-commit: entry is only at the start of line,
 
-Just a small thing: should we move the __packed to after the "}" of
-the union hv_msi_entry ?
 
-Reviewed-by: Dexuan Cui <decui@microsoft.com>
+As far as I can tell, we should be able to rely on that, yes.
+
+
+>> I presume this should actually be
+>>
+>> 		    $line !~ /^base-commit:/ &&
+>> or maybe
+>> 		    $line !~ /^\s*base-commit:/ &&
+>>
+>>>   		    $line !~ /^\s*(?:Link|Patchwork|http|https|BugLink):/i &&
+> 
+> and probably better to just add it to this line instead like
+> 
+>   		    $line !~ /^\s*(?:Link|Patchwork|http|https|BugLink|base-commit):/i &&
+>  
+
+Yes, that looks nice. I'll send a v2 doing it that way.
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
