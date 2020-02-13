@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF9F215C4E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4954715C237
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:31:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729391AbgBMPvf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:51:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44172 "EHLO mail.kernel.org"
+        id S1729780AbgBMPaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:30:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729184AbgBMP0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:13 -0500
+        id S1729419AbgBMP1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:31 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB846206DB;
-        Thu, 13 Feb 2020 15:26:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CEDD2467D;
+        Thu, 13 Feb 2020 15:27:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607572;
-        bh=Q9fdlR82wiaX9vykGrnCI5l2LOnaF8uppBi01UAvLBM=;
+        s=default; t=1581607650;
+        bh=f1s+YvCK7KWxdlT3jqyahDQ8NHLzxmyGOCafi62aq2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cFONUfk73EqCd6Em1iandSkTbw0PRhH5bReSfvhkcktN+1FO6dAmIbBcA7L9+8cir
-         ITCko4jQbmxrU50Xej38B8HD+c2IIug3/VENVNADq6barw7cbjMElAafB2Nq7tiYCh
-         IiSy5TBq8tRkZko0EZWnKy/pSnxblf8p1JZ1uYK0=
+        b=2leppSWDdG6Ul5tL5/eifwARXlp/vpXk8wHuZ6fFXW4e0A6lBI+he45VZUOlAKOka
+         bPTzWcedr/E9itZWykEL0Fz+q5cS+QgB7NzH25Bvne7L/+syAbmMOH7G3fzgFJ3uB+
+         /IzrhK0J2I7WGzI3aVG2OzlCc0STO17UJS4bzE20=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Milkowski <rmilkowski@gmail.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 4.14 149/173] NFSv4: try lease recovery on NFS4ERR_EXPIRED
+        stable@vger.kernel.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 5.4 45/96] arm64: dts: renesas: r8a77990: ebisu: Remove clkout-lr-synchronous from sound
 Date:   Thu, 13 Feb 2020 07:20:52 -0800
-Message-Id: <20200213152009.128846716@linuxfoundation.org>
+Message-Id: <20200213151856.738483541@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
+References: <20200213151839.156309910@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robert Milkowski <rmilkowski@gmail.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit 924491f2e476f7234d722b24171a4daff61bbe13 upstream.
+commit bf2b74ce9b33a2edd6ba1930ce60a71830790910 upstream.
 
-Currently, if an nfs server returns NFS4ERR_EXPIRED to open(),
-we return EIO to applications without even trying to recover.
+rcar_sound doesn't support clkout-lr-synchronous in upstream.
+It was supported under out-of-tree rcar_sound.
+upstream rcar_sound is supporting
+	- clkout-lr-synchronous
+	+ clkout-lr-asynchronous
 
-Fixes: 272289a3df72 ("NFSv4: nfs4_do_handle_exception() handle revoke/expiry of a single stateid")
-Signed-off-by: Robert Milkowski <rmilkowski@gmail.com>
-Reviewed-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Link: https://lore.kernel.org/r/87mubt3tux.wl-kuninori.morimoto.gx@renesas.com
+Fixes: 56629fcba94c698d ("arm64: dts: renesas: ebisu: Enable Audio")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/nfs4proc.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -2923,6 +2923,11 @@ static struct nfs4_state *nfs4_do_open(s
- 			exception.retry = 1;
- 			continue;
- 		}
-+		if (status == -NFS4ERR_EXPIRED) {
-+			nfs4_schedule_lease_recovery(server->nfs_client);
-+			exception.retry = 1;
-+			continue;
-+		}
- 		if (status == -EAGAIN) {
- 			/* We must have found a delegation */
- 			exception.retry = 1;
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -636,7 +636,6 @@
+ 	/* audio_clkout0/1/2/3 */
+ 	#clock-cells = <1>;
+ 	clock-frequency = <12288000 11289600>;
+-	clkout-lr-synchronous;
+ 
+ 	status = "okay";
+ 
 
 
