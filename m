@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59E1315C1A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:25:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41C8B15C14D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:22:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbgBMPZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:25:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35196 "EHLO mail.kernel.org"
+        id S1727855AbgBMPWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:22:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727857AbgBMPXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:23:37 -0500
+        id S1727797AbgBMPWU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:22:20 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E78E8246B8;
-        Thu, 13 Feb 2020 15:23:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F109246C3;
+        Thu, 13 Feb 2020 15:22:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607417;
-        bh=ZYqFd2UMqZljpxCmE2ZW4VaxsnEOsTXis5PLPV4k+ww=;
+        s=default; t=1581607338;
+        bh=SeUInoUZKF668T+Lg79mvKlNvrUROy3LHdp63jNvHxA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lY0XwyYsaJUToaDC/t+ceYj2TesirK7W7KXkbzXRQhG9xknvAHTXmrRs0Mwts+wbd
-         g4B+N7gWmMC+UE93ZaVnx7qz5QzghBE/LmcDtVUtOgXvUUOtE8EhRMEAo4h3hsaViF
-         0NgnKTZa1I2bHas2LYiywYvoqEGfQi580mRqwLE8=
+        b=MDeb4EIjQwqmDKHAcAdI3rBMjSHInpsdPxHvcrbteXwR0ZrcI5WgObIsSYwQ2nYQG
+         vx+rRj/pO0L9MFk0FLbFOplVKabLr/QE/RQl4RxJSYkgWUVYxLSZJ3JwX2BZKRUJ4A
+         chn6J5T2f2IrmTo5bqRKvSVYRXoCPlzHxO9XSe4Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 024/116] lib/test_kasan.c: fix memory leak in kmalloc_oob_krealloc_more()
-Date:   Thu, 13 Feb 2020 07:19:28 -0800
-Message-Id: <20200213151852.240664549@linuxfoundation.org>
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.4 12/91] brcmfmac: Fix memory leak in brcmf_usbdev_qinit
+Date:   Thu, 13 Feb 2020 07:19:29 -0800
+Message-Id: <20200213151826.385949633@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
-References: <20200213151842.259660170@linuxfoundation.org>
+In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
+References: <20200213151821.384445454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-commit 3e21d9a501bf99aee2e5835d7f34d8c823f115b5 upstream.
+commit 4282dc057d750c6a7dd92953564b15c26b54c22c upstream.
 
-In case memory resources for _ptr2_ were allocated, release them before
-return.
+In the implementation of brcmf_usbdev_qinit() the allocated memory for
+reqs is leaking if usb_alloc_urb() fails. Release reqs in the error
+handling path.
 
-Notice that in case _ptr1_ happens to be NULL, krealloc() behaves
-exactly like kmalloc().
-
-Addresses-Coverity-ID: 1490594 ("Resource leak")
-Link: http://lkml.kernel.org/r/20200123160115.GA4202@embeddedor
-Fixes: 3f15801cdc23 ("lib: add kasan test module")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 71bb244ba2fd ("brcm80211: fmac: add USB support for bcm43235/6/8 chipsets")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/test_kasan.c |    1 +
+ drivers/net/wireless/brcm80211/brcmfmac/usb.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/lib/test_kasan.c
-+++ b/lib/test_kasan.c
-@@ -124,6 +124,7 @@ static noinline void __init kmalloc_oob_
- 	if (!ptr1 || !ptr2) {
- 		pr_err("Allocation failed\n");
- 		kfree(ptr1);
-+		kfree(ptr2);
- 		return;
+--- a/drivers/net/wireless/brcm80211/brcmfmac/usb.c
++++ b/drivers/net/wireless/brcm80211/brcmfmac/usb.c
+@@ -426,6 +426,7 @@ fail:
+ 			usb_free_urb(req->urb);
+ 		list_del(q->next);
  	}
++	kfree(reqs);
+ 	return NULL;
  
+ }
 
 
