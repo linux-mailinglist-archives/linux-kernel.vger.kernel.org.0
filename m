@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FD5D15C3BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B228115C3A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbgBMP1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:27:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41726 "EHLO mail.kernel.org"
+        id S1729367AbgBMPnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:43:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387474AbgBMPZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:37 -0500
+        id S1728332AbgBMP2A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:00 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A7E224689;
-        Thu, 13 Feb 2020 15:25:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E56F24677;
+        Thu, 13 Feb 2020 15:28:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607536;
-        bh=xp5AfYsg5Lg7c8CdywzoLdQcyf/BrBlzYmWCtroqw9A=;
+        s=default; t=1581607680;
+        bh=JlPOFG2Dfl0ScRZaq+loHRP1Q0SDK9iFvbCKI1AeBV8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1gq13jm/ZY2ZZ4kkCWaG5/oLzFm7gkHUjrjLS/X4vql7gaSvH/uP3Pz1WQ8GzrNrp
-         ge6Xw3gfv9mUL3hHqEq7rLPWnjjsqaA3peX3bsSCWrRSkQ+BHAAP1XLd+w87fPW5XY
-         jbc4GWgjp5hw2jBwQLCpzUm5/tDvUTxOuBlaOMBw=
+        b=fYoyb+cf0qrxqL8kC4nRacuN2hulHYjy3kkiK31VDRZkPkO9iTpsCaLIyw+o/NgMH
+         b0Sr09Bh9sR9dnwPR3d9vDBWXi76q/p7oVTcOoKnOkskvSOceOTTvrTpwby5CZz5ME
+         AE6XOJuMvPOlHBOHPvbO9fldOST7oyZ5v0TxuSXk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 094/173] scsi: csiostor: Adjust indentation in csio_device_reset
-Date:   Thu, 13 Feb 2020 07:19:57 -0800
-Message-Id: <20200213151956.750581256@linuxfoundation.org>
+        stable@vger.kernel.org, Sergey Gorenko <sergeygo@mellanox.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 5.5 002/120] IB/srp: Never use immediate data if it is disabled by a user
+Date:   Thu, 13 Feb 2020 07:19:58 -0800
+Message-Id: <20200213151901.999623265@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Sergey Gorenko <sergeygo@mellanox.com>
 
-commit a808a04c861782e31fc30e342a619c144aaee14a upstream.
+commit 0fbb37dd82998b5c83355997b3bdba2806968ac7 upstream.
 
-Clang warns:
+Some SRP targets that do not support specification SRP-2, put the garbage
+to the reserved bits of the SRP login response.  The problem was not
+detected for a long time because the SRP initiator ignored those bits. But
+now one of them is used as SRP_LOGIN_RSP_IMMED_SUPP. And it causes a
+critical error on the target when the initiator sends immediate data.
 
-../drivers/scsi/csiostor/csio_scsi.c:1386:3: warning: misleading
-indentation; statement is not part of the previous 'if'
-[-Wmisleading-indentation]
-         csio_lnodes_exit(hw, 1);
-         ^
-../drivers/scsi/csiostor/csio_scsi.c:1382:2: note: previous statement is
-here
-        if (*buf != '1')
-        ^
-1 warning generated.
+The ib_srp module has a use_imm_date parameter to enable or disable
+immediate data manually. But it does not help in the above case, because
+use_imm_date is ignored at handling the SRP login response. The problem is
+definitely caused by a bug on the target side, but the initiator's
+behavior also does not look correct.  The initiator should not use
+immediate data if use_imm_date is disabled by a user.
 
-This warning occurs because there is a space after the tab on this
-line.  Remove it so that the indentation is consistent with the Linux
-kernel coding style and clang no longer warns.
+This commit adds an additional checking of use_imm_date at the handling of
+SRP login response to avoid unexpected use of immediate data.
 
-Fixes: a3667aaed569 ("[SCSI] csiostor: Chelsio FCoE offload driver")
-Link: https://github.com/ClangBuiltLinux/linux/issues/818
-Link: https://lore.kernel.org/r/20191218014726.8455-1-natechancellor@gmail.com
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 882981f4a411 ("RDMA/srp: Add support for immediate data")
+Link: https://lore.kernel.org/r/20200115133055.30232-1-sergeygo@mellanox.com
+Signed-off-by: Sergey Gorenko <sergeygo@mellanox.com>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/csiostor/csio_scsi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/ulp/srp/ib_srp.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/csiostor/csio_scsi.c
-+++ b/drivers/scsi/csiostor/csio_scsi.c
-@@ -1383,7 +1383,7 @@ csio_device_reset(struct device *dev,
- 		return -EINVAL;
- 
- 	/* Delete NPIV lnodes */
--	 csio_lnodes_exit(hw, 1);
-+	csio_lnodes_exit(hw, 1);
- 
- 	/* Block upper IOs */
- 	csio_lnodes_block_request(hw);
+--- a/drivers/infiniband/ulp/srp/ib_srp.c
++++ b/drivers/infiniband/ulp/srp/ib_srp.c
+@@ -2546,7 +2546,8 @@ static void srp_cm_rep_handler(struct ib
+ 	if (lrsp->opcode == SRP_LOGIN_RSP) {
+ 		ch->max_ti_iu_len = be32_to_cpu(lrsp->max_ti_iu_len);
+ 		ch->req_lim       = be32_to_cpu(lrsp->req_lim_delta);
+-		ch->use_imm_data  = lrsp->rsp_flags & SRP_LOGIN_RSP_IMMED_SUPP;
++		ch->use_imm_data  = srp_use_imm_data &&
++			(lrsp->rsp_flags & SRP_LOGIN_RSP_IMMED_SUPP);
+ 		ch->max_it_iu_len = srp_max_it_iu_len(target->cmd_sg_cnt,
+ 						      ch->use_imm_data,
+ 						      target->max_it_iu_size);
 
 
