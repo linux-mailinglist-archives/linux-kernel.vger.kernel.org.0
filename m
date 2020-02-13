@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91FC015C299
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:35:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97A9715C3D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:45:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387946AbgBMPbe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:31:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53770 "EHLO mail.kernel.org"
+        id S1729443AbgBMP1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:27:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729169AbgBMP17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:59 -0500
+        id S2387443AbgBMPZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:31 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBDD820661;
-        Thu, 13 Feb 2020 15:27:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BFAD24689;
+        Thu, 13 Feb 2020 15:25:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607679;
-        bh=eOvi2lyam38R3vikiDpoBEPaRqMpYkr9BVA2+dxyxkE=;
+        s=default; t=1581607531;
+        bh=k6zzSi/3kzZ0yoY6mFvD2E49V2R4sZ2tFHgwb8SeCps=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v0cxAT95fSV/foegaXT1g7EYFGg3y+5W+n1hTObl4Zmz7r4uXmpGEqmWiyJkGbanF
-         46lxOSoRlTT6shCjvs2WsIKj022pIyPyX+FeuL9zofV9cSHlkj+/fUhAgm//6a3Er8
-         XLGOcvj695Ft9zA3FIMWlTieyS9AmrHrN9xXpgb4=
+        b=NDeeqj826cfPdYBLDJdvRxz3P76K+gDC3rcy6+yUgtiW2pr4k59AEDAJOMpU22JhF
+         zLsB/3sw1tsJ36eWhqzeeCw4M213E64jfBOtWAeu9JmVvnll8J2srmFWUvBDY0Cvn6
+         tM5FM3l55kj4Ri6H+k9ocuc4LOO/5EmepU9yQsNk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gal Pressman <galpress@amazon.com>,
-        Michal Kalderon <michal.kalderon@marvell.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.5 010/120] RDMA/core: Ensure that rdma_user_mmap_entry_remove() is a fence
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 103/173] net: tulip: Adjust indentation in {dmfe, uli526x}_init_module
 Date:   Thu, 13 Feb 2020 07:20:06 -0800
-Message-Id: <20200213151905.020233871@linuxfoundation.org>
+Message-Id: <20200213151958.705942495@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +44,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit 6b3712c0246ca7b2b8fa05eab2362cf267410f7e upstream.
+commit fe06bf3d83ef0d92f35a24e03297172e92ce9ce3 upstream.
 
-The set of entry->driver_removed is missing locking, protect it with
-xa_lock() which is held by the only reader.
+Clang warns:
 
-Otherwise readers may continue to see driver_removed = false after
-rdma_user_mmap_entry_remove() returns and may continue to try and
-establish new mmaps.
+../drivers/net/ethernet/dec/tulip/uli526x.c:1812:3: warning: misleading
+indentation; statement is not part of the previous 'if'
+[-Wmisleading-indentation]
+        switch (mode) {
+        ^
+../drivers/net/ethernet/dec/tulip/uli526x.c:1809:2: note: previous
+statement is here
+        if (cr6set)
+        ^
+1 warning generated.
 
-Fixes: 3411f9f01b76 ("RDMA/core: Create mmap database and cookie helper functions")
-Link: https://lore.kernel.org/r/20200115202041.GA17199@ziepe.ca
-Reviewed-by: Gal Pressman <galpress@amazon.com>
-Acked-by: Michal Kalderon <michal.kalderon@marvell.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+../drivers/net/ethernet/dec/tulip/dmfe.c:2217:3: warning: misleading
+indentation; statement is not part of the previous 'if'
+[-Wmisleading-indentation]
+        switch(mode) {
+        ^
+../drivers/net/ethernet/dec/tulip/dmfe.c:2214:2: note: previous
+statement is here
+        if (cr6set)
+        ^
+1 warning generated.
+
+This warning occurs because there is a space before the tab on these
+lines. Remove them so that the indentation is consistent with the Linux
+kernel coding style and clang no longer warns.
+
+While we are here, adjust the default block in dmfe_init_module to have
+a proper break between the label and assignment and add a space between
+the switch and opening parentheses to avoid a checkpatch warning.
+
+Fixes: e1c3e5014040 ("[PATCH] initialisation cleanup for ULI526x-net-driver")
+Link: https://github.com/ClangBuiltLinux/linux/issues/795
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/ib_core_uverbs.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/dec/tulip/dmfe.c    |    7 ++++---
+ drivers/net/ethernet/dec/tulip/uli526x.c |    4 ++--
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/infiniband/core/ib_core_uverbs.c
-+++ b/drivers/infiniband/core/ib_core_uverbs.c
-@@ -232,7 +232,9 @@ void rdma_user_mmap_entry_remove(struct
- 	if (!entry)
- 		return;
+--- a/drivers/net/ethernet/dec/tulip/dmfe.c
++++ b/drivers/net/ethernet/dec/tulip/dmfe.c
+@@ -2224,15 +2224,16 @@ static int __init dmfe_init_module(void)
+ 	if (cr6set)
+ 		dmfe_cr6_user_set = cr6set;
  
-+	xa_lock(&entry->ucontext->mmap_xa);
- 	entry->driver_removed = true;
-+	xa_unlock(&entry->ucontext->mmap_xa);
- 	kref_put(&entry->ref, rdma_user_mmap_entry_free);
- }
- EXPORT_SYMBOL(rdma_user_mmap_entry_remove);
+- 	switch(mode) {
+-   	case DMFE_10MHF:
++	switch (mode) {
++	case DMFE_10MHF:
+ 	case DMFE_100MHF:
+ 	case DMFE_10MFD:
+ 	case DMFE_100MFD:
+ 	case DMFE_1M_HPNA:
+ 		dmfe_media_mode = mode;
+ 		break;
+-	default:dmfe_media_mode = DMFE_AUTO;
++	default:
++		dmfe_media_mode = DMFE_AUTO;
+ 		break;
+ 	}
+ 
+--- a/drivers/net/ethernet/dec/tulip/uli526x.c
++++ b/drivers/net/ethernet/dec/tulip/uli526x.c
+@@ -1819,8 +1819,8 @@ static int __init uli526x_init_module(vo
+ 	if (cr6set)
+ 		uli526x_cr6_user_set = cr6set;
+ 
+- 	switch (mode) {
+-   	case ULI526X_10MHF:
++	switch (mode) {
++	case ULI526X_10MHF:
+ 	case ULI526X_100MHF:
+ 	case ULI526X_10MFD:
+ 	case ULI526X_100MFD:
 
 
