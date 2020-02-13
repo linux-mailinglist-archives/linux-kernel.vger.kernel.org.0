@@ -2,121 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AEF915C93A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 18:12:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A358215C908
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 18:02:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbgBMRMf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 12:12:35 -0500
-Received: from gateway20.websitewelcome.com ([192.185.58.11]:16091 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728138AbgBMRMe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 12:12:34 -0500
-X-Greylist: delayed 1454 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Feb 2020 12:12:33 EST
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 70917400CF46F
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 09:34:39 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 2Hf0jMxYIRP4z2Hf1joPvt; Thu, 13 Feb 2020 10:48:19 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Bs8CD4elab7gEoHuomTzKuiJhB+d5B0XV8i9tY3kOnI=; b=TGWs1xnovy+EkuZTu7TgLh61rH
-        3X0KXbhMSv2Skcn4fGWRroyZvNy8nKiC7KMz3XSPHAu01+Y4eLgqam6R13VoLe3Ik9LcI6MOHVzWi
-        /vDInhraxjL9DNLBIjgX74wV3X+tqzhJ3qCmjlCUgtcnU/9ui85zsdCF8yk4bonvNBwXZGfvdruc/
-        b/FWTw+d31qoOCrYQkwMkxCGXJk+ZaFgUrbPfuo1DFd16I0lNhzeSMVjvJTnJDoT0r/6xpvI0yIEd
-        yntLgDn0C420260oVgPob7V03H2AktZl4yTkA2Ctmze9huxGZiwuT4A3pHT5fJllAHFdtumnS5h1O
-        kzHwt+eQ==;
-Received: from [200.68.140.15] (port=22021 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j2Hez-003zOt-J2; Thu, 13 Feb 2020 10:48:17 -0600
-Date:   Thu, 13 Feb 2020 10:50:54 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] crypto: img-hash - Replace zero-length array with
- flexible-array member
-Message-ID: <20200213165054.GA11109@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.15
-X-Source-L: No
-X-Exim-ID: 1j2Hez-003zOt-J2
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.15]:22021
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        id S1728376AbgBMRB5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 12:01:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53950 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727851AbgBMRB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 12:01:57 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1301206DB;
+        Thu, 13 Feb 2020 17:01:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581613316;
+        bh=U556d2PmtLaNN2i/zseRkAt5LAexOSH4RlsVoDHLoxw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nhODriiCitKMS3HgY+skJsEXIvx7MDxW72+qU4ZeMrxi0op5f/2tl7iA4ilBWP6sa
+         wMbYglHKJ7AuIiy9HN/f4jINaazmraLr/I7wjgqyeeBRYxMRITegJJ8ElDFZcxtX7A
+         ywJ7/uyynvY8T5YWVQkIX/p0qkZKUWha/TE0st20=
+Date:   Fri, 14 Feb 2020 02:01:51 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Thomas Richter <tmricht@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        heiko.carstens@de.ibm.com, Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v3] perf test: Fix test trace+probe_vfs_getname.sh
+Message-Id: <20200214020151.c93187535a8ccd0fb146a301@kernel.org>
+In-Reply-To: <20200213143048.GA22170@kernel.org>
+References: <20200213122009.31810-1-tmricht@linux.ibm.com>
+        <20200213143048.GA22170@kernel.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+Hi Thomas and Arnaldo,
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+On Thu, 13 Feb 2020 11:30:48 -0300
+Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+> Em Thu, Feb 13, 2020 at 01:20:09PM +0100, Thomas Richter escreveu:
+> > This test places a kprobe to function getname_flags() in the kernel
+> > which has the following prototype:
+> > 
+> >   struct filename *
+> >   getname_flags(const char __user *filename, int flags, int *empty)
+> > 
+> > Variable filename points to a filename located in user space memory.
+> > Looking at
+> > commit 88903c464321c ("tracing/probe: Add ustring type for user-space string")
+> > the kprobe should indicate that user space memory is accessed.
+> > 
+> > The following patch specifies user space memory access first and if this
+> > fails use type 'string' in case 'ustring' is not supported.
+> 
+> What are you fixing?
+> 
+> I haven't seen any example of this test failing, and right now testing
+> it with:
+> 
+> [root@quaco ~]# uname -a
+> Linux quaco 5.6.0-rc1+ #1 SMP Wed Feb 12 15:42:16 -03 2020 x86_64 x86_64 x86_64 GNU/Linux
+> [root@quaco ~]#
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+This bug doesn't happen on x86 or other archs on which user-address space and
+kernel address space is same. On some arch (ppc64 in this case?) user-address
+space is partially or completely same as kernel address space. (Yes, they switch
+the world when running into the kernel) In this case, we need to use different
+data access functions for each spaces. That is why I introduced "ustring" type
+for kprobe event.
+As far as I can see, Thomas's patch is sane. Thomas, could you show us your
+result on your test environment?
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+Thank you,
 
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/crypto/img-hash.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/crypto/img-hash.c b/drivers/crypto/img-hash.c
-index 25d5227f74a1..0e25fc3087f3 100644
---- a/drivers/crypto/img-hash.c
-+++ b/drivers/crypto/img-hash.c
-@@ -103,7 +103,7 @@ struct img_hash_request_ctx {
- 	struct ahash_request	fallback_req;
- 
- 	/* Zero length buffer must remain last member of struct */
--	u8 buffer[0] __aligned(sizeof(u32));
-+	u8 buffer[] __aligned(sizeof(u32));
- };
- 
- struct img_hash_ctx {
 -- 
-2.25.0
-
+Masami Hiramatsu <mhiramat@kernel.org>
