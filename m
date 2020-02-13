@@ -2,137 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB02A15CBDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 21:20:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB48B15CBD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 21:19:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728657AbgBMUUC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 15:20:02 -0500
-Received: from mail-lj1-f180.google.com ([209.85.208.180]:39357 "EHLO
-        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728158AbgBMUUB (ORCPT
+        id S1728152AbgBMUTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 15:19:18 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:46810 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726968AbgBMUTS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 15:20:01 -0500
-Received: by mail-lj1-f180.google.com with SMTP id o15so8104359ljg.6
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 12:20:00 -0800 (PST)
+        Thu, 13 Feb 2020 15:19:18 -0500
+Received: by mail-oi1-f196.google.com with SMTP id a22so7096240oid.13;
+        Thu, 13 Feb 2020 12:19:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=mW6PukSxckGSUCke6VTFTCVByD+nJPm6k8mdLJlJUQ8=;
-        b=RC09I+Bvk9BEGM312oV5NW7pG1aKQPts5wE1yDyMZ5aunmfCjtpj/ZtkVQfg5cc4kX
-         n4rUd7Uw8Ed/epLUm9Gj7Q9rrTgeNaB7fA6T6msnWDT9n49NXzqbTh4gbBQ3D4ylyM2m
-         Db9pfSfadEt1TPmiY25g7eQP5kfvza19ucaRwOBa4LoatztuIsBGKZCRLtsT1qGzqb+x
-         3R1jApficdWMUC38I6zCdiYLKbYUeP7ewABAHw3uNkUlziHLUZmEa77C55CQ9fX5E8yR
-         nhxT/uqgKTwmRXqalvyie7/fOEEnIe6JNxBaGyGoRwKVGvbXa2Gl0eaaV/pVBbzSbPgj
-         WORA==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Bfr+esBsHNaFRTQzYPRTVOspPKJf2wCefrCUUIjTbrM=;
+        b=NPUn1NnqWMHNRr9KUxHDsJXvr20A4UQ+WdrH80a6RRn0IunEBBtMaO5vUSmsoNGxHa
+         42Y8zL9NtLkzgoqXiAfaRQBJB99tyLLcNkfQd6fQ8Ky6mc5ipCanm8yigkxQGUxEcm4e
+         IXuDbI8INxiq2595087Si5qhClXNHIiEMfmYeaxOjYwHAesyJARK8OycsAhQIQnsGEhL
+         xNBxsTsjSnCHE5JRMoxWYiO0+p+ov4nmMupyvQfSSUQnObWuY1zQW/Y9CPtWEny06SYl
+         L8BjVTJnzPYZMYYCV4zG8VVHrw77hLBuzXNaNvtKkI5I278pZLk0gx7/HIAnJ0N6l7JS
+         ltOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mW6PukSxckGSUCke6VTFTCVByD+nJPm6k8mdLJlJUQ8=;
-        b=YIpBo3LTPF5v8jbRhELzzSg08DcLIEt5V8QxYIMJoLY+TCYsT+NB6Iwx/ZYWhcno4y
-         lJqelOIY7MHEByULj1PWAhTCKPV9Ce1AHKKT78aeyY61Au27vt4yzphOpYJZiCXXETFA
-         W/TDUGdy6dHhPIG6ZXFQteuV2D1ptk84x+6m7C+Xo8JVZLpOhadsSBH5+quLdYvzHNuZ
-         Mc+wXgdyBsG6NXLp4rmG8ddnZ8Lxp9JbNXJFh+UP56DEV4Kw0x3uJWrOFOfAREb6QPsp
-         mRcvz0SHx2tHhcAxJjXza7UlizrPIhqIq8x/3ibKkDCrBNasfjxq4vvfWa/KaP3b0wG3
-         dzIA==
-X-Gm-Message-State: APjAAAUFQrkYx4VOae++LyRb4rkSTRa3RXiWHKJ9TMwh5GRoYMzbXfeD
-        dfqtjMVy46RLbLLJlUSXKG4=
-X-Google-Smtp-Source: APXvYqxw0rZXUmiJIT9xq2xe3VuahXdAUOtscc4DdIG+xn5Y17KAhRRAUvyZVKqDwcbtKuS/oxnM5w==
-X-Received: by 2002:a2e:9e19:: with SMTP id e25mr12844931ljk.179.1581625199519;
-        Thu, 13 Feb 2020 12:19:59 -0800 (PST)
-Received: from localhost.localdomain ([5.20.204.163])
-        by smtp.gmail.com with ESMTPSA id s22sm2209470ljm.41.2020.02.13.12.19.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 12:19:59 -0800 (PST)
-From:   Andrey Lebedev <andrey.lebedev@gmail.com>
-To:     mripard@kernel.org, wens@csie.org, airlied@linux.ie,
-        daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     linux-sunxi@googlegroups.com, Andrey Lebedev <andrey@lebedev.lt>
-Subject: [PATCH v3 3/3] ARM: dts: sun7i: Add LVDS panel support on A20
-Date:   Thu, 13 Feb 2020 22:18:57 +0200
-Message-Id: <20200213201854.810-3-andrey.lebedev@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200210195633.GA21832@kedthinkpad>
-References: <20200210195633.GA21832@kedthinkpad>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Bfr+esBsHNaFRTQzYPRTVOspPKJf2wCefrCUUIjTbrM=;
+        b=aOcYxdbQOBBUvKy2wDPGQ5b2ukOru3AZilqvdF0EpsbSoZIdE8SMoWK93kojSBaOn6
+         N2jm9IBAf8DJmweM4hQfJmalSCaL+/KuWJzkcJz3MzVkDNqJRIh/sRz7m05W6aJWvMya
+         eXoGIOO9wQJntrlH1kH3j+dvq+6mjgk7M4GzH8eB1yweMwBtX+szdHhT2wP3EgfsHPJv
+         HX00p5Sel2QvpPfPKhHwhz7F0G+Cj+307LN/hM1GhE5yxodmnxHQKCcL7eZP4vLBgkHN
+         DbNh+/OPrMBLrxoNhge9AGAAz1xaSxa2fqsRxyezbwYShhTYjmvp+ZMGrISa9xvmnKgr
+         V5rA==
+X-Gm-Message-State: APjAAAW5yUEgd1gecPpwD5LkUaX4Qr46JPekyhkKt800zhIKvjAbtUpi
+        F7YetupAYuAMjutGgjaD4TI=
+X-Google-Smtp-Source: APXvYqzDNKV11rJwNaq95rUg/4Mu3e50MemTBFAz7q8b5nBFi6k2OjPGRoW305AblRQDLr/TOJvUhA==
+X-Received: by 2002:aca:1012:: with SMTP id 18mr4002409oiq.151.1581625156920;
+        Thu, 13 Feb 2020 12:19:16 -0800 (PST)
+Received: from [100.71.96.87] ([143.166.81.254])
+        by smtp.gmail.com with ESMTPSA id l1sm1022530oic.22.2020.02.13.12.19.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Feb 2020 12:19:15 -0800 (PST)
+Subject: Re: [PATCH v3] PCI: pciehp: Make sure pciehp_isr clears interrupt
+ events
+From:   Stuart Hayes <stuart.w.hayes@gmail.com>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Austin Bolen <austin_bolen@dell.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, narendra_k@dell.com,
+        Enzo Matsumiya <ematsumiya@suse.com>
+References: <20200207195450.52026-1-stuart.w.hayes@gmail.com>
+ <20200209150328.2x2zumhqbs6fihmc@wunner.de>
+ <20200209180722.ikuyjignnd7ddfp5@wunner.de>
+ <20200209202512.rzaqoc7tydo2ouog@wunner.de>
+ <0f772c73-5616-ae7c-6808-ecefac8ebf13@gmail.com>
+Message-ID: <55648b65-146c-4970-3ae9-53fee03afbd2@gmail.com>
+Date:   Thu, 13 Feb 2020 14:19:14 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <0f772c73-5616-ae7c-6808-ecefac8ebf13@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Lebedev <andrey@lebedev.lt>
 
-Define pins for LVDS channels 0 and 1, configure reset line for tcon0 and
-provide sample LVDS panel, connected to tcon0.
 
-Signed-off-by: Andrey Lebedev <andrey@lebedev.lt>
----
- arch/arm/boot/dts/sun7i-a20.dtsi | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+On 2/10/20 3:40 PM, Stuart Hayes wrote:
+> 
+> 
+> On 2/9/20 2:25 PM, Lukas Wunner wrote:
+>> On Sun, Feb 09, 2020 at 07:07:22PM +0100, Lukas Wunner wrote:
+>>> Actually, scratch that.  After thinking about this problem for a day
+>>> I've come up with a much simpler and more elegant solution.  Could you
+>>> test if the below works for you?
+>>
+>> Sorry, I missed a few things:
+>>
+>> * pm_runtime_put() is called too often in the MSI case.
+>> * If only the CC bit is set or if ignore_hotplug is set, the function
+>>   may return prematurely without re-reading the Slot Status register.
+>> * Returning IRQ_NONE in the MSI case even though the IRQ thread was woken
+>>   may incorrectly signal a spurious interrupt to the genirq code.
+>>   It's better to return IRQ_HANDLED instead.
+>>
+>> Below is another attempt.  I'll have to take a look at this with a
+>> fresh pair of eyeballs though to verify I haven't overlooked anything
+>> else and also to determine if this is actually simpler than Stuart's
+>> approach.  Again, the advantage here is that processing of the events
+>> by the IRQ thread is sped up by not delaying it until the Slot Status
+>> register has settled.
+>>
+>> Thanks.
+>>
+>> -- >8 --
+>> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+>> index c3e3f53..db5baa5 100644
+>> --- a/drivers/pci/hotplug/pciehp_hpc.c
+>> +++ b/drivers/pci/hotplug/pciehp_hpc.c
+>> @@ -530,6 +530,7 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
+>>  	struct controller *ctrl = (struct controller *)dev_id;
+>>  	struct pci_dev *pdev = ctrl_dev(ctrl);
+>>  	struct device *parent = pdev->dev.parent;
+>> +	irqreturn_t ret = IRQ_NONE;
+>>  	u16 status, events;
+>>  
+>>  	/*
+>> @@ -553,6 +554,7 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
+>>  		}
+>>  	}
+>>  
+>> +read_status:
+>>  	pcie_capability_read_word(pdev, PCI_EXP_SLTSTA, &status);
+>>  	if (status == (u16) ~0) {
+>>  		ctrl_info(ctrl, "%s: no response from device\n", __func__);
+>> @@ -579,13 +581,11 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
+>>  	if (!events) {
+>>  		if (parent)
+>>  			pm_runtime_put(parent);
+>> -		return IRQ_NONE;
+>> +		return ret;
+>>  	}
+>>  
+>>  	pcie_capability_write_word(pdev, PCI_EXP_SLTSTA, events);
+>>  	ctrl_dbg(ctrl, "pending interrupts %#06x from Slot Status\n", events);
+>> -	if (parent)
+>> -		pm_runtime_put(parent);
+>>  
+>>  	/*
+>>  	 * Command Completed notifications are not deferred to the
+>> @@ -595,21 +595,33 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
+>>  		ctrl->cmd_busy = 0;
+>>  		smp_mb();
+>>  		wake_up(&ctrl->queue);
+>> -
+>> -		if (events == PCI_EXP_SLTSTA_CC)
+>> -			return IRQ_HANDLED;
+>> -
+>>  		events &= ~PCI_EXP_SLTSTA_CC;
+>>  	}
+>>  
+>>  	if (pdev->ignore_hotplug) {
+>>  		ctrl_dbg(ctrl, "ignoring hotplug event %#06x\n", events);
+>> -		return IRQ_HANDLED;
+>> +		events = 0;
+>>  	}
+>>  
+>>  	/* Save pending events for consumption by IRQ thread. */
+>>  	atomic_or(events, &ctrl->pending_events);
+>> -	return IRQ_WAKE_THREAD;
+>> +
+>> +	/*
+>> +	 * In MSI mode, all event bits must be zero before the port will send
+>> +	 * a new interrupt (PCIe Base Spec r5.0 sec 6.7.3.4).  So re-read the
+>> +	 * Slot Status register in case a bit was set between read and write.
+>> +	 */
+>> +	if (pci_dev_msi_enabled(pdev) && !pciehp_poll_mode) {
+>> +		irq_wake_thread(irq, ctrl);
+>> +		ret = IRQ_HANDLED;
+>> +		goto read_status;
+>> +	}
+>> +
+>> +	if (parent)
+>> +		pm_runtime_put(parent);
+>> +	if (events)
+>> +		return IRQ_WAKE_THREAD;
+>> +	return IRQ_HANDLED;
+>>  }
+>>  
+>>  static irqreturn_t pciehp_ist(int irq, void *dev_id)
+>>
+> 
+> I tested this patch, and it fixes the issue on my system.
+> 
 
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index 92b5be97085d..3b3c366a2bee 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -47,6 +47,7 @@
- #include <dt-bindings/dma/sun4i-a10.h>
- #include <dt-bindings/clock/sun7i-a20-ccu.h>
- #include <dt-bindings/reset/sun4i-a10-ccu.h>
-+#include <dt-bindings/pinctrl/sun4i-a10.h>
- 
- / {
- 	interrupt-parent = <&gic>;
-@@ -407,8 +408,8 @@
- 			compatible = "allwinner,sun7i-a20-tcon";
- 			reg = <0x01c0c000 0x1000>;
- 			interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
--			resets = <&ccu RST_TCON0>;
--			reset-names = "lcd";
-+			resets = <&ccu RST_TCON0>, <&ccu RST_LVDS>;
-+			reset-names = "lcd", "lvds";
- 			clocks = <&ccu CLK_AHB_LCD0>,
- 				 <&ccu CLK_TCON0_CH0>,
- 				 <&ccu CLK_TCON0_CH1>;
-@@ -444,6 +445,11 @@
- 					#size-cells = <0>;
- 					reg = <1>;
- 
-+					tcon0_out_lvds: endpoint@0 {
-+						reg = <0>;
-+						allwinner,tcon-channel = <0>;
-+					};
-+
- 					tcon0_out_hdmi: endpoint@1 {
- 						reg = <1>;
- 						remote-endpoint = <&hdmi_in_tcon0>;
-@@ -1162,6 +1168,24 @@
- 				pins = "PI20", "PI21";
- 				function = "uart7";
- 			};
-+
-+			/omit-if-no-ref/
-+			lcd_lvds0_pins: lcd-lvds0-pins {
-+				pins =
-+					"PD0", "PD1", "PD2", "PD3", "PD4",
-+					"PD5", "PD6", "PD7", "PD8", "PD9";
-+				function = "lvds0";
-+				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-+			};
-+
-+			/omit-if-no-ref/
-+			lcd_lvds1_pins: lcd-lvds1-pins {
-+				pins =
-+					"PD10", "PD11", "PD12", "PD13", "PD14",
-+					"PD15", "PD16", "PD17", "PD18", "PD19";
-+				function = "lvds1";
-+				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-+			};
- 		};
- 
- 		timer@1c20c00 {
--- 
-2.20.1
-
+CCing Enzo Matsumiya.
