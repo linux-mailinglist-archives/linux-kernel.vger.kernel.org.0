@@ -2,47 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD95A15BBDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:42:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 374B215BBDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:43:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729675AbgBMJmd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 04:42:33 -0500
-Received: from mail-pl1-f174.google.com ([209.85.214.174]:37942 "EHLO
-        mail-pl1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729440AbgBMJmd (ORCPT
+        id S1729754AbgBMJmn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 04:42:43 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:55258 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729440AbgBMJmm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 04:42:33 -0500
-Received: by mail-pl1-f174.google.com with SMTP id t6so2128421plj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 01:42:31 -0800 (PST)
+        Thu, 13 Feb 2020 04:42:42 -0500
+Received: by mail-pj1-f65.google.com with SMTP id dw13so2140949pjb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 01:42:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=S/ghNKXRSZz4hGEEcpXpDQwI1tYwPeM0vOIIlfcElJU=;
-        b=io6WQ6MaLhj+zbFMXA5CKhrY8GPFI6/umJNB3wHne1XogN9Dw5s8d1k004duQzmevq
-         E0M9SBYOVadyleg54df3OJETqlZw4OP3CT+0ISD7Aiw1e8/9SI6FB+LXBglp5pQg/xWn
-         3EroAValxQo2FhmbVUZWp56EROx8kfhAkyIClCmJqis6XGtCgUrBcsekk/FnrFM8NvWS
-         8fTdtLlzLs51IkF6vfTI9NyIsg2DxwFiNASRllI56X2OgKQiJRMHGcW1shSxW1EMjk2J
-         0jj1i6Uk1qdnrsUSpsU+MKmySIr+CriWYzes3IA7oAoLyYgkYTidvs/Nb0M40IdzxfpR
-         IrNg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=G6IPm5U0/N32JfuJRrXFpT4+8WxS2iUn3t7D8Wj9RWY=;
+        b=vrNgUqWPxNjcbcprI69cNxpFGDoNlqSdIUfnpnFCC1Z+cnY1e70ej8SOS8MyZU1iUu
+         Foyb6kugSrVv9KNVBrdGT+IR49tDjT63OdH1PVsbdb8eaJZzpwdVvO2LUkxHjjMEWfYg
+         ZfC0+UdGGiaKJwebfefg71mPJ2whj5CFNxWU0Zx7NEh6kAwNrVsvvhky53G9uGNGvHYl
+         yh4g1tiGbTFJnbzGFg1DsE9xEfqMzWCN2BFgXkbH0Yla2SkezfnvY4mggLN4uEjtMlJU
+         deL11fXjY/a4OVGq1zdDrramCjTp7bNYT6tV4N68F7XmWRRCkOSPxyqeGVApT3TYZGSE
+         IdiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=S/ghNKXRSZz4hGEEcpXpDQwI1tYwPeM0vOIIlfcElJU=;
-        b=YRuFbml7buTyYW1NCIq+DOTL6WTBQovKuKbLBJGdXNvq5NbxwoDjrA5BoNkr80yE+p
-         bZl1X0VJWSxDnohEdk0BtBps0ley5Vf84zB9PlIKnv4pZNky82bclvPYYJ6BxyXK3zzE
-         AOBv+tzA8aMJE1OG7csssQqzb8RrrRtkYEbKoB4+ZrLkNqVw8ZExFjw4fU6E5/R3FASY
-         pBCk/W+aeeDVEv/1SefSUT9dZ0MZMB3yLKetX2z20IP2Y7ARkr2yv03rpMlU8+3Pnk8N
-         PfzbQanP7bBIPuyNRfZxlKO7hp2uddtlHcKEzCWxamfsPNKUcH5Qs6GSbQTaO7Wz5eXX
-         NRww==
-X-Gm-Message-State: APjAAAUXM/+cMuju4KaiQViQotBmi1RbgxoFTDl0KDMvuAQ18UkHlMeZ
-        fQBqX9gCneLMxRzcIpfy4epR7A==
-X-Google-Smtp-Source: APXvYqyNzUZdPGouJRFQFTcXwQmxRIUQ8rDBZOAPaV3uOSYYi0QOE0bCORvmwHW1WdHSFC5vLa3Ynw==
-X-Received: by 2002:a17:902:8642:: with SMTP id y2mr12499791plt.306.1581586951239;
-        Thu, 13 Feb 2020 01:42:31 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=G6IPm5U0/N32JfuJRrXFpT4+8WxS2iUn3t7D8Wj9RWY=;
+        b=Pl+HGLkO/QG2Zrm0N6lU9RxAnpclggOuDzoIOS0IEgcBQaA5Doh4oHty4Ivbax4U+E
+         Eq2Ym9JmhyQVsH+IAoH0mmQSNlQFpXz3UHfhSXy4L/nr+m8J4VYit4YX2mqkBC414qbf
+         FM5wEkhS4xZLW8xxA464jY1g+eBXyCkVwhXkbmqJ3X2vHaB2nfNYLoIasLkRA4MX9uyU
+         phD6ozTY4mpale/qMyoTTO7rcMrZc11vrguKKsfsLr8UkFIgaY734jco2qQYp777ZcWQ
+         vjHrVQ1kuBIGrK4xycNe4SxtsSUhsMHqHNJkq+Y66CzPV0Pxr9SyLhatptLr76bQc6Nq
+         L1qQ==
+X-Gm-Message-State: APjAAAUFd65bVstAvFsrtIPILYBfgjp14ru1uPSIDT+YYjlun2Ga3C8p
+        kyzaQ43FiSj0PTKA5QZO5HkAVg==
+X-Google-Smtp-Source: APXvYqyXs+FQTEb/MYdpAWnSqLxOY3Lricf+P1+wCsYF6j9aOQspLE4mAeq2ZT3Mu7FTAD0FpT3RAg==
+X-Received: by 2002:a17:902:2e:: with SMTP id 43mr12872821pla.326.1581586961690;
+        Thu, 13 Feb 2020 01:42:41 -0800 (PST)
 Received: from localhost.localdomain (li1441-214.members.linode.com. [45.118.134.214])
-        by smtp.gmail.com with ESMTPSA id 3sm2310277pfi.13.2020.02.13.01.42.21
+        by smtp.gmail.com with ESMTPSA id 3sm2310277pfi.13.2020.02.13.01.42.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 01:42:30 -0800 (PST)
+        Thu, 13 Feb 2020 01:42:41 -0800 (PST)
 From:   Leo Yan <leo.yan@linaro.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -58,73 +59,111 @@ To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Coresight ML <coresight@lists.linaro.org>
 Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v4 0/5] perf cs-etm: Fix synthesizing instruction samples
-Date:   Thu, 13 Feb 2020 17:41:59 +0800
-Message-Id: <20200213094204.2568-1-leo.yan@linaro.org>
+Subject: [PATCH v4 1/5] perf cs-etm: Swap packets for instruction samples
+Date:   Thu, 13 Feb 2020 17:42:00 +0800
+Message-Id: <20200213094204.2568-2-leo.yan@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200213094204.2568-1-leo.yan@linaro.org>
+References: <20200213094204.2568-1-leo.yan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series is to address issues for synthesizing instruction
-samples, especially when the instruction sample period is small enough,
-the current logic cannot synthesize multiple instruction samples within
-one instruction range packet.
+If use option '--itrace=iNNN' with Arm CoreSight trace data, perf tool
+fails inject instruction samples; the root cause is the packets are
+only swapped for branch samples and last branches but not for
+instruction samples, so the new coming packets cannot be properly
+handled for only synthesizing instruction samples.
 
-Patch 0001 is to swap packets for instruction samples, so this allow
-option '--itrace=iNNN' can work well.
+To fix this issue, this patch refactors the code with a new function
+cs_etm__packet_swap() which is used to swap packets and adds the
+condition for instruction samples.
 
-Patch 0002 avoids to reset the last branches for every instruction
-sample; if reset the last branches for every time generating sample, the
-later samples in the same range packet cannot use the last branches
-anymore.
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Reviewed-by: Mike Leach <mike.leach@linaro.org>
+---
+ tools/perf/util/cs-etm.c | 39 +++++++++++++++++++--------------------
+ 1 file changed, 19 insertions(+), 20 deletions(-)
 
-Patch 0003 is the fixing for handling different instruction periods,
-especially for small sample period.
-
-Patch 0004 is an optimization for copying last branches; it only copies
-last branches once if the instruction samples share the same last
-branches.
-
-Patch 0005 is a minor fix for unsigned variable comparison to zero.
-
-This patch set has been rebased on the latest perf/core branch; and
-verified on Juno board with below commands:
-
-  # perf script --itrace=i2
-  # perf script --itrace=i2il16
-  # perf inject --itrace=i2il16 -i perf.data -o perf.data.new
-  # perf inject --itrace=i100il16 -i perf.data -o perf.data.new
-
-Changes from v3:
-* Refactored patch 0001 with new function cs_etm__packet_swap() (Mike);
-* Refined instruction sample generation flow with single while loop,
-  which completely uses Mike's suggestions (Mike);
-* Added Mike's review tags for patch 01/02/04/05.
-
-Changes from v2:
-* Added patch 0001 which is to fix swapping packets for instruction
-  samples;
-* Refined minor commit logs and comments;
-* Rebased on the latest perf/core branch.
-
-Changes from v1:
-* Rebased patch set on perf/core branch with latest commit 9fec3cd5fa4a
-  ("perf map: Check if the map still has some refcounts on exit").
-
-
-
-Leo Yan (5):
-  perf cs-etm: Swap packets for instruction samples
-  perf cs-etm: Continuously record last branch
-  perf cs-etm: Correct synthesizing instruction samples
-  perf cs-etm: Optimize copying last branches
-  perf cs-etm: Fix unsigned variable comparison to zero
-
- tools/perf/util/cs-etm.c | 157 +++++++++++++++++++++++++++------------
- 1 file changed, 111 insertions(+), 46 deletions(-)
-
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 5471045ebf5c..84f30c2de185 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -363,6 +363,23 @@ struct cs_etm_packet_queue
+ 	return NULL;
+ }
+ 
++static void cs_etm__packet_swap(struct cs_etm_auxtrace *etm,
++				struct cs_etm_traceid_queue *tidq)
++{
++	struct cs_etm_packet *tmp;
++
++	if (etm->sample_branches || etm->synth_opts.last_branch ||
++	    etm->sample_instructions) {
++		/*
++		 * Swap PACKET with PREV_PACKET: PACKET becomes PREV_PACKET for
++		 * the next incoming packet.
++		 */
++		tmp = tidq->packet;
++		tidq->packet = tidq->prev_packet;
++		tidq->prev_packet = tmp;
++	}
++}
++
+ static void cs_etm__packet_dump(const char *pkt_string)
+ {
+ 	const char *color = PERF_COLOR_BLUE;
+@@ -1340,7 +1357,6 @@ static int cs_etm__sample(struct cs_etm_queue *etmq,
+ 			  struct cs_etm_traceid_queue *tidq)
+ {
+ 	struct cs_etm_auxtrace *etm = etmq->etm;
+-	struct cs_etm_packet *tmp;
+ 	int ret;
+ 	u8 trace_chan_id = tidq->trace_chan_id;
+ 	u64 instrs_executed = tidq->packet->instr_count;
+@@ -1404,15 +1420,7 @@ static int cs_etm__sample(struct cs_etm_queue *etmq,
+ 		}
+ 	}
+ 
+-	if (etm->sample_branches || etm->synth_opts.last_branch) {
+-		/*
+-		 * Swap PACKET with PREV_PACKET: PACKET becomes PREV_PACKET for
+-		 * the next incoming packet.
+-		 */
+-		tmp = tidq->packet;
+-		tidq->packet = tidq->prev_packet;
+-		tidq->prev_packet = tmp;
+-	}
++	cs_etm__packet_swap(etm, tidq);
+ 
+ 	return 0;
+ }
+@@ -1441,7 +1449,6 @@ static int cs_etm__flush(struct cs_etm_queue *etmq,
+ {
+ 	int err = 0;
+ 	struct cs_etm_auxtrace *etm = etmq->etm;
+-	struct cs_etm_packet *tmp;
+ 
+ 	/* Handle start tracing packet */
+ 	if (tidq->prev_packet->sample_type == CS_ETM_EMPTY)
+@@ -1476,15 +1483,7 @@ static int cs_etm__flush(struct cs_etm_queue *etmq,
+ 	}
+ 
+ swap_packet:
+-	if (etm->sample_branches || etm->synth_opts.last_branch) {
+-		/*
+-		 * Swap PACKET with PREV_PACKET: PACKET becomes PREV_PACKET for
+-		 * the next incoming packet.
+-		 */
+-		tmp = tidq->packet;
+-		tidq->packet = tidq->prev_packet;
+-		tidq->prev_packet = tmp;
+-	}
++	cs_etm__packet_swap(etm, tidq);
+ 
+ 	return err;
+ }
 -- 
 2.17.1
 
