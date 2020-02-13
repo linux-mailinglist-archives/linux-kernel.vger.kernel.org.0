@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E08AB15C42A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EB9A15C417
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729321AbgBMP1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:27:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40312 "EHLO mail.kernel.org"
+        id S1729275AbgBMP0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:26:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728948AbgBMPZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:14 -0500
+        id S1728899AbgBMPZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:03 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32AE9246B3;
-        Thu, 13 Feb 2020 15:25:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 051B124693;
+        Thu, 13 Feb 2020 15:25:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607513;
-        bh=LDJ2gcdsdapsSCLe6d3TJz1woS6LRNQhKicWstxjU3M=;
+        s=default; t=1581607503;
+        bh=lLtqOmb6ArOFmm28b9QmeMjMkS6NyDFvFIkExuqLrsY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AgzMhJyMhkqLfp+O/Pi/8flbzqIqR8nK+pek0OTUjsihqvTFHnZQrD+ZUIIUp0R3h
-         zh5/803NZgGp/JLkMzF2nStq/YRyhhasnv7wMNdMmHzfS4ZZqBUIn4+nCAAkzMBhWG
-         p65cFfUdG3GkH3P17l+Ar8DNr8XKQ0y/B+BW6SFo=
+        b=qvUaxORK5Kj4QP20lzmsMYmu1iH1sQqlhuVX6JqfMvP6ZPHaayaEzvTBMCo0OnNfh
+         paaujLoZGjVPcihrKYNESB6Y2EY3QYrH6LA6Qa8PVPyvp+Djyhi4uV0P8MlP+lDEpP
+         qxVm58u3ldnzgV3CotxESS6fxlygioT24MxZgqJM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        stable@vger.kernel.org, Amol Grover <frextrite@gmail.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 057/173] padata: Remove broken queue flushing
-Date:   Thu, 13 Feb 2020 07:19:20 -0800
-Message-Id: <20200213151948.275124464@linuxfoundation.org>
+Subject: [PATCH 4.14 059/173] tracing: Annotate ftrace_graph_notrace_hash pointer with __rcu
+Date:   Thu, 13 Feb 2020 07:19:22 -0800
+Message-Id: <20200213151948.709228320@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
 References: <20200213151931.677980430@linuxfoundation.org>
@@ -44,142 +44,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Amol Grover <frextrite@gmail.com>
 
-[ Upstream commit 07928d9bfc81640bab36f5190e8725894d93b659 ]
+[ Upstream commit fd0e6852c407dd9aefc594f54ddcc21d84803d3b ]
 
-The function padata_flush_queues is fundamentally broken because
-it cannot force padata users to complete the request that is
-underway.  IOW padata has to passively wait for the completion
-of any outstanding work.
+Fix following instances of sparse error
+kernel/trace/ftrace.c:5667:29: error: incompatible types in comparison
+kernel/trace/ftrace.c:5813:21: error: incompatible types in comparison
+kernel/trace/ftrace.c:5868:36: error: incompatible types in comparison
+kernel/trace/ftrace.c:5870:25: error: incompatible types in comparison
 
-As it stands flushing is used in two places.  Its use in padata_stop
-is simply unnecessary because nothing depends on the queues to
-be flushed afterwards.
+Use rcu_dereference_protected to dereference the newly annotated pointer.
 
-The other use in padata_replace is more substantial as we depend
-on it to free the old pd structure.  This patch instead uses the
-pd->refcnt to dynamically free the pd structure once all requests
-are complete.
+Link: http://lkml.kernel.org/r/20200205055701.30195-1-frextrite@gmail.com
 
-Fixes: 2b73b07ab8a4 ("padata: Flush the padata queues actively")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/padata.c | 46 ++++++++++++----------------------------------
- 1 file changed, 12 insertions(+), 34 deletions(-)
+ kernel/trace/ftrace.c | 2 +-
+ kernel/trace/trace.h  | 8 ++++++--
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/padata.c b/kernel/padata.c
-index 87540ce72aea6..ef4ba3d664dab 100644
---- a/kernel/padata.c
-+++ b/kernel/padata.c
-@@ -34,6 +34,8 @@
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 6af28692f0f53..dd9fdb52e24ad 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -5147,7 +5147,7 @@ static const struct file_operations ftrace_notrace_fops = {
+ static DEFINE_MUTEX(graph_lock);
  
- #define MAX_OBJ_NUM 1000
+ struct ftrace_hash __rcu *ftrace_graph_hash = EMPTY_HASH;
+-struct ftrace_hash *ftrace_graph_notrace_hash = EMPTY_HASH;
++struct ftrace_hash __rcu *ftrace_graph_notrace_hash = EMPTY_HASH;
  
-+static void padata_free_pd(struct parallel_data *pd);
-+
- static int padata_index_to_cpu(struct parallel_data *pd, int cpu_index)
+ enum graph_filter_type {
+ 	GRAPH_FILTER_NOTRACE	= 0,
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 17f36488d3c84..757bb1bffed99 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -869,7 +869,7 @@ extern void __trace_graph_return(struct trace_array *tr,
+ 
+ #ifdef CONFIG_DYNAMIC_FTRACE
+ extern struct ftrace_hash __rcu *ftrace_graph_hash;
+-extern struct ftrace_hash *ftrace_graph_notrace_hash;
++extern struct ftrace_hash __rcu *ftrace_graph_notrace_hash;
+ 
+ static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
  {
- 	int cpu, target_cpu;
-@@ -292,6 +294,7 @@ static void padata_serial_worker(struct work_struct *serial_work)
- 	struct padata_serial_queue *squeue;
- 	struct parallel_data *pd;
- 	LIST_HEAD(local_list);
-+	int cnt;
- 
- 	local_bh_disable();
- 	squeue = container_of(serial_work, struct padata_serial_queue, work);
-@@ -301,6 +304,8 @@ static void padata_serial_worker(struct work_struct *serial_work)
- 	list_replace_init(&squeue->serial.list, &local_list);
- 	spin_unlock(&squeue->serial.lock);
- 
-+	cnt = 0;
-+
- 	while (!list_empty(&local_list)) {
- 		struct padata_priv *padata;
- 
-@@ -310,9 +315,12 @@ static void padata_serial_worker(struct work_struct *serial_work)
- 		list_del_init(&padata->list);
- 
- 		padata->serial(padata);
--		atomic_dec(&pd->refcnt);
-+		cnt++;
- 	}
- 	local_bh_enable();
-+
-+	if (atomic_sub_and_test(cnt, &pd->refcnt))
-+		padata_free_pd(pd);
- }
- 
- /**
-@@ -435,8 +443,7 @@ static struct parallel_data *padata_alloc_pd(struct padata_instance *pinst,
- 	setup_timer(&pd->timer, padata_reorder_timer, (unsigned long)pd);
- 	atomic_set(&pd->seq_nr, -1);
- 	atomic_set(&pd->reorder_objects, 0);
--	atomic_set(&pd->refcnt, 0);
--	pd->pinst = pinst;
-+	atomic_set(&pd->refcnt, 1);
- 	spin_lock_init(&pd->lock);
- 
- 	return pd;
-@@ -460,31 +467,6 @@ static void padata_free_pd(struct parallel_data *pd)
- 	kfree(pd);
- }
- 
--/* Flush all objects out of the padata queues. */
--static void padata_flush_queues(struct parallel_data *pd)
--{
--	int cpu;
--	struct padata_parallel_queue *pqueue;
--	struct padata_serial_queue *squeue;
--
--	for_each_cpu(cpu, pd->cpumask.pcpu) {
--		pqueue = per_cpu_ptr(pd->pqueue, cpu);
--		flush_work(&pqueue->work);
--	}
--
--	del_timer_sync(&pd->timer);
--
--	if (atomic_read(&pd->reorder_objects))
--		padata_reorder(pd);
--
--	for_each_cpu(cpu, pd->cpumask.cbcpu) {
--		squeue = per_cpu_ptr(pd->squeue, cpu);
--		flush_work(&squeue->work);
--	}
--
--	BUG_ON(atomic_read(&pd->refcnt) != 0);
--}
--
- static void __padata_start(struct padata_instance *pinst)
+@@ -922,10 +922,14 @@ static inline void ftrace_graph_addr_finish(struct ftrace_graph_ret *trace)
+ static inline int ftrace_graph_notrace_addr(unsigned long addr)
  {
- 	pinst->flags |= PADATA_INIT;
-@@ -498,10 +480,6 @@ static void __padata_stop(struct padata_instance *pinst)
- 	pinst->flags &= ~PADATA_INIT;
+ 	int ret = 0;
++	struct ftrace_hash *notrace_hash;
  
- 	synchronize_rcu();
--
--	get_online_cpus();
--	padata_flush_queues(pinst->pd);
--	put_online_cpus();
- }
+ 	preempt_disable_notrace();
  
- /* Replace the internal control structure with a new one. */
-@@ -522,8 +500,8 @@ static void padata_replace(struct padata_instance *pinst,
- 	if (!cpumask_equal(pd_old->cpumask.cbcpu, pd_new->cpumask.cbcpu))
- 		notification_mask |= PADATA_CPU_SERIAL;
+-	if (ftrace_lookup_ip(ftrace_graph_notrace_hash, addr))
++	notrace_hash = rcu_dereference_protected(ftrace_graph_notrace_hash,
++						 !preemptible());
++
++	if (ftrace_lookup_ip(notrace_hash, addr))
+ 		ret = 1;
  
--	padata_flush_queues(pd_old);
--	padata_free_pd(pd_old);
-+	if (atomic_dec_and_test(&pd_old->refcnt))
-+		padata_free_pd(pd_old);
- 
- 	if (notification_mask)
- 		blocking_notifier_call_chain(&pinst->cpumask_change_notifier,
+ 	preempt_enable_notrace();
 -- 
 2.20.1
 
