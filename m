@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C697015C550
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:55:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 953D315C27E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:35:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729471AbgBMPyw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:54:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42106 "EHLO mail.kernel.org"
+        id S2388149AbgBMPcR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:32:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729062AbgBMPZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:46 -0500
+        id S2387723AbgBMP2e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:34 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 134322469C;
-        Thu, 13 Feb 2020 15:25:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D1C824671;
+        Thu, 13 Feb 2020 15:28:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607546;
-        bh=T8sAqA4upVLNUrxAG8sQJk9Le/ePo3ZgUbOsKHbdoFM=;
+        s=default; t=1581607713;
+        bh=NqRjdYbLxOrjmqzKa5B5q8MN0H5QJefJP55g9Nja6sk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=klH/Njj5CleKpS1ymI5QP4Qj4OH62zZNXBO0DrKEPGdOeFRuboutcUp7raePjrOwH
-         rzhEE4UGO42HuhKA/VlloR4qKelnXOBpzsMcVG7A1gbKZwdFNSXKvcMIg0YegKF/9Z
-         T6tYjQmsdh/1a3CVBSv32jo3z6QIuAlxHPJJbC7A=
+        b=NevuJKxjOxA228seUCUSQ2G/kqgSQ3IO5XaQqw6Q1Bz6yxvCBflAioh0bs35QDJeJ
+         R5ZJCn+QTgfP/E6yySIYMdyLzJ3dZhTdt1vbpPu1sl8CcdfHQiHdUJvXFxbTCcZJxL
+         /r2RoIrsKxUr2iOgH5WV6AKjZa+3ZO7xq+IBH1pU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 126/173] drm: atmel-hlcdc: enable clock before configuring timing engine
-Date:   Thu, 13 Feb 2020 07:20:29 -0800
-Message-Id: <20200213152004.081277899@linuxfoundation.org>
+        stable@vger.kernel.org, Robert Milkowski <rmilkowski@gmail.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 5.5 034/120] NFSv4.0: nfs4_do_fsinfo() should not do implicit lease renewals
+Date:   Thu, 13 Feb 2020 07:20:30 -0800
+Message-Id: <20200213151913.468527448@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,57 +43,152 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+From: Robert Milkowski <rmilkowski@gmail.com>
 
-[ Upstream commit 2c1fb9d86f6820abbfaa38a6836157c76ccb4e7b ]
+commit 7dc2993a9e51dd2eee955944efec65bef90265b7 upstream.
 
-Changing pixel clock source without having this clock source enabled
-will block the timing engine and the next operations after (in this case
-setting ATMEL_HLCDC_CFG(5) settings in atmel_hlcdc_crtc_mode_set_nofb()
-will fail). It is recomended (although in datasheet this is not present)
-to actually enabled pixel clock source before doing any changes on timing
-enginge (only SAM9X60 datasheet specifies that the peripheral clock and
-pixel clock must be enabled before using LCD controller).
+Currently, each time nfs4_do_fsinfo() is called it will do an implicit
+NFS4 lease renewal, which is not compliant with the NFS4 specification.
+This can result in a lease being expired by an NFS server.
 
-Fixes: 1a396789f65a ("drm: add Atmel HLCDC Display Controller support")
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: <stable@vger.kernel.org> # v4.0+
-Link: https://patchwork.freedesktop.org/patch/msgid/1576672109-22707-3-git-send-email-claudiu.beznea@microchip.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Commit 83ca7f5ab31f ("NFS: Avoid PUTROOTFH when managing leases")
+introduced implicit client lease renewal in nfs4_do_fsinfo(),
+which can result in the NFSv4.0 lease to expire on a server side,
+and servers returning NFS4ERR_EXPIRED or NFS4ERR_STALE_CLIENTID.
+
+This can easily be reproduced by frequently unmounting a sub-mount,
+then stat'ing it to get it mounted again, which will delay or even
+completely prevent client from sending RENEW operations if no other
+NFS operations are issued. Eventually nfs server will expire client's
+lease and return an error on file access or next RENEW.
+
+This can also happen when a sub-mount is automatically unmounted
+due to inactivity (after nfs_mountpoint_expiry_timeout), then it is
+mounted again via stat(). This can result in a short window during
+which client's lease will expire on a server but not on a client.
+This specific case was observed on production systems.
+
+This patch removes the implicit lease renewal from nfs4_do_fsinfo().
+
+Fixes: 83ca7f5ab31f ("NFS: Avoid PUTROOTFH when managing leases")
+Signed-off-by: Robert Milkowski <rmilkowski@gmail.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/nfs/nfs4_fs.h    |    4 +---
+ fs/nfs/nfs4proc.c   |   12 ++++++++----
+ fs/nfs/nfs4renewd.c |    5 +----
+ fs/nfs/nfs4state.c  |    4 +---
+ 4 files changed, 11 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-index d73281095faca..976109c20d493 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-@@ -79,7 +79,11 @@ static void atmel_hlcdc_crtc_mode_set_nofb(struct drm_crtc *c)
- 	struct videomode vm;
- 	unsigned long prate;
- 	unsigned int cfg;
--	int div;
-+	int div, ret;
-+
-+	ret = clk_prepare_enable(crtc->dc->hlcdc->sys_clk);
-+	if (ret)
-+		return;
+--- a/fs/nfs/nfs4_fs.h
++++ b/fs/nfs/nfs4_fs.h
+@@ -446,9 +446,7 @@ extern void nfs4_schedule_state_renewal(
+ extern void nfs4_renewd_prepare_shutdown(struct nfs_server *);
+ extern void nfs4_kill_renewd(struct nfs_client *);
+ extern void nfs4_renew_state(struct work_struct *);
+-extern void nfs4_set_lease_period(struct nfs_client *clp,
+-		unsigned long lease,
+-		unsigned long lastrenewed);
++extern void nfs4_set_lease_period(struct nfs_client *clp, unsigned long lease);
  
- 	vm.vfront_porch = adj->crtc_vsync_start - adj->crtc_vdisplay;
- 	vm.vback_porch = adj->crtc_vtotal - adj->crtc_vsync_end;
-@@ -138,6 +142,8 @@ static void atmel_hlcdc_crtc_mode_set_nofb(struct drm_crtc *c)
- 			   ATMEL_HLCDC_VSPSU | ATMEL_HLCDC_VSPHO |
- 			   ATMEL_HLCDC_GUARDTIME_MASK | ATMEL_HLCDC_MODE_MASK,
- 			   cfg);
-+
-+	clk_disable_unprepare(crtc->dc->hlcdc->sys_clk);
- }
  
- static enum drm_mode_status
--- 
-2.20.1
-
+ /* nfs4state.c */
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -5026,16 +5026,13 @@ static int nfs4_do_fsinfo(struct nfs_ser
+ 	struct nfs4_exception exception = {
+ 		.interruptible = true,
+ 	};
+-	unsigned long now = jiffies;
+ 	int err;
+ 
+ 	do {
+ 		err = _nfs4_do_fsinfo(server, fhandle, fsinfo);
+ 		trace_nfs4_fsinfo(server, fhandle, fsinfo->fattr, err);
+ 		if (err == 0) {
+-			nfs4_set_lease_period(server->nfs_client,
+-					fsinfo->lease_time * HZ,
+-					now);
++			nfs4_set_lease_period(server->nfs_client, fsinfo->lease_time * HZ);
+ 			break;
+ 		}
+ 		err = nfs4_handle_exception(server, err, &exception);
+@@ -6091,6 +6088,7 @@ int nfs4_proc_setclientid(struct nfs_cli
+ 		.callback_data = &setclientid,
+ 		.flags = RPC_TASK_TIMEOUT | RPC_TASK_NO_ROUND_ROBIN,
+ 	};
++	unsigned long now = jiffies;
+ 	int status;
+ 
+ 	/* nfs_client_id4 */
+@@ -6123,6 +6121,9 @@ int nfs4_proc_setclientid(struct nfs_cli
+ 		clp->cl_acceptor = rpcauth_stringify_acceptor(setclientid.sc_cred);
+ 		put_rpccred(setclientid.sc_cred);
+ 	}
++
++	if (status == 0)
++		do_renew_lease(clp, now);
+ out:
+ 	trace_nfs4_setclientid(clp, status);
+ 	dprintk("NFS reply setclientid: %d\n", status);
+@@ -8210,6 +8211,7 @@ static int _nfs4_proc_exchange_id(struct
+ 	struct rpc_task *task;
+ 	struct nfs41_exchange_id_args *argp;
+ 	struct nfs41_exchange_id_res *resp;
++	unsigned long now = jiffies;
+ 	int status;
+ 
+ 	task = nfs4_run_exchange_id(clp, cred, sp4_how, NULL);
+@@ -8230,6 +8232,8 @@ static int _nfs4_proc_exchange_id(struct
+ 	if (status != 0)
+ 		goto out;
+ 
++	do_renew_lease(clp, now);
++
+ 	clp->cl_clientid = resp->clientid;
+ 	clp->cl_exchange_flags = resp->flags;
+ 	clp->cl_seqid = resp->seqid;
+--- a/fs/nfs/nfs4renewd.c
++++ b/fs/nfs/nfs4renewd.c
+@@ -138,15 +138,12 @@ nfs4_kill_renewd(struct nfs_client *clp)
+  *
+  * @clp: pointer to nfs_client
+  * @lease: new value for lease period
+- * @lastrenewed: time at which lease was last renewed
+  */
+ void nfs4_set_lease_period(struct nfs_client *clp,
+-		unsigned long lease,
+-		unsigned long lastrenewed)
++		unsigned long lease)
+ {
+ 	spin_lock(&clp->cl_lock);
+ 	clp->cl_lease_time = lease;
+-	clp->cl_last_renewal = lastrenewed;
+ 	spin_unlock(&clp->cl_lock);
+ 
+ 	/* Cap maximum reconnect timeout at 1/2 lease period */
+--- a/fs/nfs/nfs4state.c
++++ b/fs/nfs/nfs4state.c
+@@ -92,17 +92,15 @@ static int nfs4_setup_state_renewal(stru
+ {
+ 	int status;
+ 	struct nfs_fsinfo fsinfo;
+-	unsigned long now;
+ 
+ 	if (!test_bit(NFS_CS_CHECK_LEASE_TIME, &clp->cl_res_state)) {
+ 		nfs4_schedule_state_renewal(clp);
+ 		return 0;
+ 	}
+ 
+-	now = jiffies;
+ 	status = nfs4_proc_get_lease_time(clp, &fsinfo);
+ 	if (status == 0) {
+-		nfs4_set_lease_period(clp, fsinfo.lease_time * HZ, now);
++		nfs4_set_lease_period(clp, fsinfo.lease_time * HZ);
+ 		nfs4_schedule_state_renewal(clp);
+ 	}
+ 
 
 
