@@ -2,116 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3727A15C3E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:45:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6ED415C461
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729862AbgBMPpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:45:05 -0500
-Received: from mga14.intel.com ([192.55.52.115]:49577 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729437AbgBMPpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:45:02 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 07:45:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,437,1574150400"; 
-   d="scan'208";a="238065015"
-Received: from btraw-mobl.amr.corp.intel.com (HELO [10.251.24.52]) ([10.251.24.52])
-  by orsmga006.jf.intel.com with ESMTP; 13 Feb 2020 07:45:00 -0800
-Subject: Re: [PATCH 41/62] x86/sev-es: Handle MSR events
-To:     Joerg Roedel <joro@8bytes.org>, x86@kernel.org
-Cc:     hpa@zytor.com, Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Joerg Roedel <jroedel@suse.de>
-References: <20200211135256.24617-1-joro@8bytes.org>
- <20200211135256.24617-42-joro@8bytes.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <b688b4ad-5a64-d2df-6dd8-e23fac75a6b9@intel.com>
-Date:   Thu, 13 Feb 2020 07:45:00 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2387840AbgBMPqk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:46:40 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55000 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387782AbgBMPqh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:46:37 -0500
+Received: by mail-wm1-f65.google.com with SMTP id g1so6775345wmh.4;
+        Thu, 13 Feb 2020 07:46:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=J8k2mhXdk3Vz02LszhRoEidbhtCkluKhM0hovqHlfY0=;
+        b=nPeFoy2NbPGjoHukBm+3jXkYblH7WcU9FWtgEOlzZSv+X4ud+vA+hWO7uSE3x4wOrp
+         JG8gNe30aE6EIuMSgvIPZCvHryHdIOQRKjBqkJeXRQQNDRoP8+T44VVxViwvBdwyAM28
+         oXvVRqjFFzhJkcFH58wJB8RTCaK3hrlclujuTeSf+ygS1XBeb8gFfzDJQOBeBCRLq/0D
+         TSUQcUWZp7Ym2y9Qh2VTujMFBU6kDdtCWEAGnTBtbCZI8LVvARvVr2tRm9J5yEPNCTDS
+         t8Ax1yQRfRWiQY8FYCi4RWf7NWIpf8yhGQSNGHePT8YB61b0Db41hbALq8rVDQ/mwggG
+         bBvQ==
+X-Gm-Message-State: APjAAAUJB0KEZ5d8ICnIPHlzjLYrMnognz+Uh3OKVcpGFChgxVqy6PCe
+        eoIs/OIQ7HmdCfIWKu9hWeCgLRS+
+X-Google-Smtp-Source: APXvYqxCRc7R8lbPp7soi6Tf8uhzJML2oddqjNP5vBPCY+sYO6/UygTQhV+vkx/KmTbiGRrHuw62Vg==
+X-Received: by 2002:a1c:7205:: with SMTP id n5mr6747383wmc.9.1581608794910;
+        Thu, 13 Feb 2020 07:46:34 -0800 (PST)
+Received: from localhost (ip-37-188-133-87.eurotel.cz. [37.188.133.87])
+        by smtp.gmail.com with ESMTPSA id h71sm3825363wme.26.2020.02.13.07.46.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2020 07:46:33 -0800 (PST)
+Date:   Thu, 13 Feb 2020 16:46:27 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, Tejun Heo <tj@kernel.org>,
+        linux-mm@kvack.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com
+Subject: Re: [PATCH v2 3/3] mm: memcontrol: recursive memory.low protection
+Message-ID: <20200213154627.GD31689@dhcp22.suse.cz>
+References: <20191219200718.15696-1-hannes@cmpxchg.org>
+ <20191219200718.15696-4-hannes@cmpxchg.org>
+ <20200130170020.GZ24244@dhcp22.suse.cz>
+ <20200203215201.GD6380@cmpxchg.org>
+ <20200211164753.GQ10636@dhcp22.suse.cz>
+ <20200212170826.GC180867@cmpxchg.org>
+ <20200213074049.GA31689@dhcp22.suse.cz>
+ <20200213132317.GA208501@cmpxchg.org>
 MIME-Version: 1.0
-In-Reply-To: <20200211135256.24617-42-joro@8bytes.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200213132317.GA208501@cmpxchg.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/11/20 5:52 AM, Joerg Roedel wrote:
-> Implement a handler for #VC exceptions caused by RDMSR/WRMSR
-> instructions.
+On Thu 13-02-20 08:23:17, Johannes Weiner wrote:
+> On Thu, Feb 13, 2020 at 08:40:49AM +0100, Michal Hocko wrote:
+> > On Wed 12-02-20 12:08:26, Johannes Weiner wrote:
+> > > On Tue, Feb 11, 2020 at 05:47:53PM +0100, Michal Hocko wrote:
+> > > > Unless I am missing something then I am afraid it doesn't. Say you have a
+> > > > default systemd cgroup deployment (aka deeper cgroup hierarchy with
+> > > > slices and scopes) and now you want to grant a reclaim protection on a
+> > > > leaf cgroup (or even a whole slice that is not really important). All the
+> > > > hierarchy up the tree has the protection set to 0 by default, right? You
+> > > > simply cannot get that protection. You would need to configure the
+> > > > protection up the hierarchy and that is really cumbersome.
+> > > 
+> > > Okay, I think I know what you mean. Let's say you have a tree like
+> > > this:
+> > > 
+> > >                           A
+> > >                          / \
+> > >                         B1  B2
+> > >                        / \   \
+> > >                       C1 C2   C3
+> > > 
+> > > and there is no actual delegation point - everything belongs to the
+> > > same user / trust domain. C1 sets memory.low to 10G, but its parents
+> > > set nothing. You're saying we should honor the 10G protection during
+> > > global and limit reclaims anywhere in the tree?
+> > 
+> > No, only in the C1 which sets the limit, because that is the woriking
+> > set we want to protect.
+> > 
+> > > Now let's consider there is a delegation point at B1: we set up and
+> > > trust B1, but not its children. What effect would the C1 protection
+> > > have then? Would we ignore it during global and A reclaim, but honor
+> > > it when there is B1 limit reclaim?
+> > 
+> > In the scheme with the inherited protection it would act as the gate
+> > and require an explicit low limit setup defaulting to 0 if none is
+> > specified.
+> > 
+> > > Doing an explicit downward propagation from the root to C1 *could* be
+> > > tedious, but I can't think of a scenario where it's completely
+> > > impossible. Especially because we allow proportional distribution when
+> > > the limit is overcommitted and you don't have to be 100% accurate.
+> > 
+> > So let's see how that works in practice, say a multi workload setup
+> > with a complex/deep cgroup hierachies (e.g. your above example). No
+> > delegation point this time.
+> > 
+> > C1 asks for low=1G while using 500M, C3 low=100M using 80M.  B1 and
+> > B2 are completely independent workloads and the same applies to C2 which
+> > doesn't ask for any protection at all? C2 uses 100M. Now the admin has
+> > to propagate protection upwards so B1 low=1G, B2 low=100M and A low=1G,
+> > right? Let's say we have a global reclaim due to external pressure that
+> > originates from outside of A hierarchy (it is not overcommited on the
+> > protection).
+> > 
+> > Unless I miss something C2 would get a protection even though nobody
+> > asked for it.
+> 
+> Good observation, but I think you spotted an unintentional side effect
+> of how I implemented the "floating protection" calculation rather than
+> a design problem.
+> 
+> My patch still allows explicit downward propagation. So if B1 sets up
+> 1G, and C1 explicitly claims those 1G (low>=1G, usage>=1G), C2 does
+> NOT get any protection. There is no "floating" protection left in B1
+> that could get to C2.
 
-As a general comment on all of these event handlers: Why do we bother
-having the hypercalls in the interrupt handler as opposed to just
-calling them directly.  What you have is:
+Yeah, the saturated protection works reasonably AFAICS.
+ 
+> However, to calculate the float, I'm using the utilized protection
+> counters (children_low_usage) to determine what is "claimed". Mostly
+> for convenience because they were already there. In your example, C1
+> is only utilizing 500M of its protection, leaving 500M in the float
+> that will go toward C2. I agree that's undesirable.
+> 
+> But it's fixable by adding a hierarchical children_low counter that
+> tracks the static configuration, and using that to calculate floating
+> protection instead of the dynamic children_low_usage.
+> 
+> That way you can propagate protection from A to C1 without it spilling
+> to anybody else unintentionally, regardless of how much B1 and C1 are
+> actually *using*.
+> 
+> Does that sound reasonable?
 
-	wrmsr()
-	-> #VC exception
-	   hcall()
+Please post a patch and I will think about it more to see whether I can
+see more problems. I am worried this is getting more and more complex
+and harder to wrap head around.
 
-But we could make our rd/wrmsr() wrappers just do:
-
-	if (running_on_sev_es())
-		hcall(HCALL_MSR_WHATEVER...)
-	else
-		wrmsr()
-
-and then we don't have any of the nastiness of exception handling.
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
