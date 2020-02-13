@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF5DA15C167
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:23:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A55C15C1AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:25:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728245AbgBMPXF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:23:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60906 "EHLO mail.kernel.org"
+        id S2387428AbgBMPZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:25:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728122AbgBMPWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:22:48 -0500
+        id S1727873AbgBMPXp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:45 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79C1B24689;
-        Thu, 13 Feb 2020 15:22:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 800B3246B5;
+        Thu, 13 Feb 2020 15:23:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607367;
-        bh=wp6DlfLy2ZTgy4xURGFu8rOf9ZQEUYuUErnKGeDGjD0=;
+        s=default; t=1581607424;
+        bh=c6YHXyVYeo56alttnMPtiq+Xf9OGWRPcr2cFn1Y7gX4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R44F5IEPkMirMtfXlTHS1lS6at7epN8mdDDIJSmtt55qFN44i3M+2PTstRKOV7Iu0
-         YKVMVYuNLk+2daNnK1+JW7WYG1IU9pLbzPIS67dfshtnkDiaRk4f93XeO6OW4qahlt
-         7jS7pYToi/c0fTVSpoYrh8rSQtEF2YLCNiWGLhIk=
+        b=1xJgtdIfnf5MqkqPH7thUN5qAef2NBcuE68HY2wq+CXBchFBOXnuKgNkD6IHu23QU
+         yEacl/CrX4StDpzhS+11XlAgNHTJjOzKCoTXIyehnBDV4mCfeG15wIeKMCxeHwEOv5
+         g4MCzKveIh6oBtGURYkD5/8fiGL9OyIHCSJM/fkY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
-        Marios Pomonis <pomonis@google.com>,
-        Andrew Honig <ahonig@google.com>,
-        Jim Mattson <jmattson@google.com>,
+        stable@vger.kernel.org, Greg Kurz <groug@kaod.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.4 40/91] KVM: x86: Protect ioapic_read_indirect() from Spectre-v1/L1TF attacks
-Date:   Thu, 13 Feb 2020 07:19:57 -0800
-Message-Id: <20200213151837.086387403@linuxfoundation.org>
+Subject: [PATCH 4.9 054/116] KVM: PPC: Book3S HV: Uninit vCPU if vcore creation fails
+Date:   Thu, 13 Feb 2020 07:19:58 -0800
+Message-Id: <20200213151903.928016018@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
-References: <20200213151821.384445454@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,50 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marios Pomonis <pomonis@google.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 8c86405f606ca8508b8d9280680166ca26723695 upstream.
+commit 1a978d9d3e72ddfa40ac60d26301b154247ee0bc upstream.
 
-This fixes a Spectre-v1/L1TF vulnerability in ioapic_read_indirect().
-This function contains index computations based on the
-(attacker-controlled) IOREGSEL register.
+Call kvm_vcpu_uninit() if vcore creation fails to avoid leaking any
+resources allocated by kvm_vcpu_init(), i.e. the vcpu->run page.
 
-Fixes: a2c118bfab8b ("KVM: Fix bounds checking in ioapic indirect register reads (CVE-2013-1798)")
-
-Signed-off-by: Nick Finco <nifi@google.com>
-Signed-off-by: Marios Pomonis <pomonis@google.com>
-Reviewed-by: Andrew Honig <ahonig@google.com>
+Fixes: 371fefd6f2dc4 ("KVM: PPC: Allow book3s_hv guests to use SMT processor modes")
 Cc: stable@vger.kernel.org
-Reviewed-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: Greg Kurz <groug@kaod.org>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Acked-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/ioapic.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ arch/powerpc/kvm/book3s_hv.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kvm/ioapic.c
-+++ b/arch/x86/kvm/ioapic.c
-@@ -74,13 +74,14 @@ static unsigned long ioapic_read_indirec
- 	default:
- 		{
- 			u32 redir_index = (ioapic->ioregsel - 0x10) >> 1;
--			u64 redir_content;
-+			u64 redir_content = ~0ULL;
+--- a/arch/powerpc/kvm/book3s_hv.c
++++ b/arch/powerpc/kvm/book3s_hv.c
+@@ -1766,7 +1766,7 @@ static struct kvm_vcpu *kvmppc_core_vcpu
+ 	mutex_unlock(&kvm->lock);
  
--			if (redir_index < IOAPIC_NUM_PINS)
--				redir_content =
--					ioapic->redirtbl[redir_index].bits;
--			else
--				redir_content = ~0ULL;
-+			if (redir_index < IOAPIC_NUM_PINS) {
-+				u32 index = array_index_nospec(
-+					redir_index, IOAPIC_NUM_PINS);
-+
-+				redir_content = ioapic->redirtbl[index].bits;
-+			}
+ 	if (!vcore)
+-		goto free_vcpu;
++		goto uninit_vcpu;
  
- 			result = (ioapic->ioregsel & 0x1) ?
- 			    (redir_content >> 32) & 0xffffffff :
+ 	spin_lock(&vcore->lock);
+ 	++vcore->num_threads;
+@@ -1782,6 +1782,8 @@ static struct kvm_vcpu *kvmppc_core_vcpu
+ 
+ 	return vcpu;
+ 
++uninit_vcpu:
++	kvm_vcpu_uninit(vcpu);
+ free_vcpu:
+ 	kmem_cache_free(kvm_vcpu_cache, vcpu);
+ out:
 
 
