@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1205315C363
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61D5215C2A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:38:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729616AbgBMPkr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:40:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56400 "EHLO mail.kernel.org"
+        id S1729698AbgBMP3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:29:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387749AbgBMP2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:28:38 -0500
+        id S2387564AbgBMP02 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:28 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 500812467D;
-        Thu, 13 Feb 2020 15:28:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22D3420661;
+        Thu, 13 Feb 2020 15:26:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607718;
-        bh=PiBdcD+Bje6p3RdBSrjXgWJm4Gd4Cq0tAJ6WKxdJb8U=;
+        s=default; t=1581607588;
+        bh=+8K9qALO+PnHir5xlA2IA3S4gSUrvcUcxgqPV0CBVvc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dPU12V8meH2xefUYncCHTXDHRW95IPJXc4tJZtL6sUSXuTR/rbpB83LM04i/pZvou
-         +zt/WxmW44KsEAM7DXrlcG/mBJ94Y2xY3I5orGWPyrxEQ4khjiESpbwAhZKQ/C7E5e
-         vGGb8kD6GWp5QzCjJ/R++ONL5jXOmPJU36zxsWBY=
+        b=jsWRGKSkcQQ2IU5ek20Bk6EoO6YQEn9pLLuXnni1UJCus9Qjpa7hZLrMyY+pjDYy8
+         gmdVW+7FnWRTD7KC09mi3PipahLPldERUVFTp79HMJqYxrencecSU7Nl8t2DRi4Zyx
+         k8aqb3TPUo58DLAKl1T0Zj1eieoezCHsjuUXVpLQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tiezhu Yang <yangtiezhu@loongson.cn>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Huacai Chen <chenhc@lemote.com>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        linux-mips@vger.kernel.org
-Subject: [PATCH 5.5 052/120] MIPS: Loongson: Fix potential NULL dereference in loongson3_platform_init()
+        stable@vger.kernel.org, Asutosh Das <asutoshd@codeaurora.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.19 07/52] scsi: ufs: Fix ufshcd_probe_hba() reture value in case ufshcd_scsi_add_wlus() fails
 Date:   Thu, 13 Feb 2020 07:20:48 -0800
-Message-Id: <20200213151919.611428309@linuxfoundation.org>
+Message-Id: <20200213151813.630401481@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
+References: <20200213151810.331796857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,38 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
+From: Bean Huo <beanhuo@micron.com>
 
-commit 72d052e28d1d2363f9107be63ef3a3afdea6143c upstream.
+commit b9fc5320212efdfb4e08b825aaa007815fd11d16 upstream.
 
-If kzalloc fails, it should return -ENOMEM, otherwise may trigger a NULL
-pointer dereference.
+A non-zero error value likely being returned by ufshcd_scsi_add_wlus() in
+case of failure of adding the WLs, but ufshcd_probe_hba() doesn't use this
+value, and doesn't report this failure to upper caller.  This patch is to
+fix this issue.
 
-Fixes: 3adeb2566b9b ("MIPS: Loongson: Improve LEFI firmware interface")
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Huacai Chen <chenhc@lemote.com>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Fixes: 2a8fa600445c ("ufs: manually add well known logical units")
+Link: https://lore.kernel.org/r/20200120130820.1737-2-huobean@gmail.com
+Reviewed-by: Asutosh Das <asutoshd@codeaurora.org>
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+Reviewed-by: Stanley Chu <stanley.chu@mediatek.com>
+Signed-off-by: Bean Huo <beanhuo@micron.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/loongson64/platform.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/scsi/ufs/ufshcd.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/mips/loongson64/platform.c
-+++ b/arch/mips/loongson64/platform.c
-@@ -27,6 +27,9 @@ static int __init loongson3_platform_ini
- 			continue;
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -6685,7 +6685,8 @@ static int ufshcd_probe_hba(struct ufs_h
+ 			ufshcd_init_icc_levels(hba);
  
- 		pdev = kzalloc(sizeof(struct platform_device), GFP_KERNEL);
-+		if (!pdev)
-+			return -ENOMEM;
-+
- 		pdev->name = loongson_sysconf.sensors[i].name;
- 		pdev->id = loongson_sysconf.sensors[i].id;
- 		pdev->dev.platform_data = &loongson_sysconf.sensors[i];
+ 		/* Add required well known logical units to scsi mid layer */
+-		if (ufshcd_scsi_add_wlus(hba))
++		ret = ufshcd_scsi_add_wlus(hba);
++		if (ret)
+ 			goto out;
+ 
+ 		/* Initialize devfreq after UFS device is detected */
 
 
