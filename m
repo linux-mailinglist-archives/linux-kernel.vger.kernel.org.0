@@ -2,75 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2355E15CAFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 20:13:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2B6215CB03
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 20:16:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728476AbgBMTM7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 14:12:59 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:53229 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727652AbgBMTM7 (ORCPT
+        id S1728528AbgBMTQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 14:16:00 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:59676 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727720AbgBMTP7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 14:12:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581621178;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=3pLLVLig1uc97lbYVaMiWyMB8bq9fPfRpEXIp2spies=;
-        b=VvWjEXnOEehlLAePfeYV3Bg+L9PXMI/cHeeoGp3AxX89eA92iqRr887PJ+4yGmWC4f7F3n
-        ewhGpC84H0ioi7fOFhjWqY9ddfSTcPjNDGQHVDRMBc064/zFJxg1Mqhi1p0v1t6unqSGAL
-        JYGQQQHYB+MoLImuDDrlVEU9/08Jzf4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-363--OFJ6Y_HN7GijxJy3P8bng-1; Thu, 13 Feb 2020 14:12:53 -0500
-X-MC-Unique: -OFJ6Y_HN7GijxJy3P8bng-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8270E80259A;
-        Thu, 13 Feb 2020 19:12:52 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D634F5C13E;
-        Thu, 13 Feb 2020 19:12:51 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm@lists.01.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2 3/4] libnvdimm/region: Introduce NDD_LABELING
-References: <158155489850.3343782.2687127373754434980.stgit@dwillia2-desk3.amr.corp.intel.com>
-        <158155491425.3343782.10431348498314981347.stgit@dwillia2-desk3.amr.corp.intel.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Thu, 13 Feb 2020 14:12:50 -0500
-In-Reply-To: <158155491425.3343782.10431348498314981347.stgit@dwillia2-desk3.amr.corp.intel.com>
-        (Dan Williams's message of "Wed, 12 Feb 2020 16:48:34 -0800")
-Message-ID: <x49sgje5mj1.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 13 Feb 2020 14:15:59 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01DJDQC9185826;
+        Thu, 13 Feb 2020 19:14:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=OEuCbiEvIiQVXLl2pCrqBGmbUcJGpiJBcGSmK0rtNRI=;
+ b=FuuX3DgQgUvVzHFcbhXs9LAl0NqHxmmlNYCXVW/AyiAQCNXzKQIAAcW5/qzzNUyXzYIJ
+ bVZ7V+U6pWSksLPfAQdQlZRhILIulpnkqLXhK9iRK1IjAF3QBNPnz+07JGl1daMuSWsq
+ D4V2e9Mpee4sf8XtcwztWlW9ih+CNtZtpDeKQPJtLM+ZukHgGyuPw0Og0qyvpAAgUndw
+ 1YKG/9GcGwowCV9X9vfwgNvbk26yAuEoYmBoCLYslIN1pTtk4uYxWMwUlK4K7pSyhxPL
+ 2aMdDiYnFfHHHpqCXZjVwf6EkhV1Ov6zlknIn5oGGJ28Hvw4ZuQfQFYpg17ZNcaMcMDP 6w== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2y2p3svhbp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Feb 2020 19:14:34 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01DJBx4G187623;
+        Thu, 13 Feb 2020 19:14:34 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2y4k80ek4h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Feb 2020 19:14:33 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01DJEUaO023529;
+        Thu, 13 Feb 2020 19:14:30 GMT
+Received: from localhost.localdomain (/10.159.243.170)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 13 Feb 2020 11:14:30 -0800
+Subject: Re: [PATCH] KVM: apic: remove unused function apic_lvt_vector()
+To:     linmiaohe <linmiaohe@huawei.com>, pbonzini@redhat.com,
+        rkrcmar@redhat.com, sean.j.christopherson@intel.com,
+        vkuznets@redhat.com, wanpengli@tencent.com, jmattson@google.com,
+        joro@8bytes.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org
+References: <1581561464-3893-1-git-send-email-linmiaohe@huawei.com>
+From:   Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Message-ID: <2fb684de-30c1-ed67-600f-08168e64d6c7@oracle.com>
+Date:   Thu, 13 Feb 2020 11:14:28 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+In-Reply-To: <1581561464-3893-1-git-send-email-linmiaohe@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9530 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ suspectscore=0 mlxscore=0 bulkscore=0 malwarescore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002130135
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9530 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 malwarescore=0
+ suspectscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1015
+ impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002130135
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan Williams <dan.j.williams@intel.com> writes:
 
-> @@ -312,8 +312,9 @@ static ssize_t flags_show(struct device *dev,
->  {
->  	struct nvdimm *nvdimm = to_nvdimm(dev);
->  
-> -	return sprintf(buf, "%s%s\n",
-> +	return sprintf(buf, "%s%s%s\n",
->  			test_bit(NDD_ALIASING, &nvdimm->flags) ? "alias " : "",
-> +			test_bit(NDD_LABELING, &nvdimm->flags) ? "label" : "",
-                                                                       ^
+On 2/12/20 6:37 PM, linmiaohe wrote:
+> From: Miaohe Lin <linmiaohe@huawei.com>
+>
+> The function apic_lvt_vector() is unused now, remove it.
+>
+> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+> ---
+>   arch/x86/kvm/lapic.c | 5 -----
+>   1 file changed, 5 deletions(-)
+>
+> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> index eafc631d305c..0b563c280784 100644
+> --- a/arch/x86/kvm/lapic.c
+> +++ b/arch/x86/kvm/lapic.c
+> @@ -294,11 +294,6 @@ static inline int apic_lvt_enabled(struct kvm_lapic *apic, int lvt_type)
+>   	return !(kvm_lapic_get_reg(apic, lvt_type) & APIC_LVT_MASKED);
+>   }
+>   
+> -static inline int apic_lvt_vector(struct kvm_lapic *apic, int lvt_type)
+> -{
+> -	return kvm_lapic_get_reg(apic, lvt_type) & APIC_VECTOR_MASK;
+> -}
+> -
+>   static inline int apic_lvtt_oneshot(struct kvm_lapic *apic)
+>   {
+>   	return apic->lapic_timer.timer_mode == APIC_LVT_TIMER_ONESHOT;
 
-Missing a space.
+There is one place, lapic_timer_int_injected(), where this function be 
+used :
 
-The rest looks sane.
+         struct kvm_lapic *apic = vcpu->arch.apic;
+-       u32 reg = kvm_lapic_get_reg(apic, APIC_LVTT);
 
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+         if (kvm_apic_hw_enabled(apic)) {
+
+-                int vec = reg & APIC_VECTOR_MASK;
+
++               int vec = apic_lvt_vector(APIC_LVTT);
+                  void *bitmap = apic->regs + APIC_ISR;
+
+
+But since that's the only place I can find, we probably don't need a 
+separate function.
+
+
+Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
 
