@@ -2,159 +2,339 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A19215BF15
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 14:21:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 492A715BF19
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 14:22:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729985AbgBMNVr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 08:21:47 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62610 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729557AbgBMNVr (ORCPT
-        <rfc822;Linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 08:21:47 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01DDJK26027838
-        for <Linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 08:21:45 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2y4wuttynp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <Linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 08:21:45 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <Linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Thu, 13 Feb 2020 13:21:43 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 13 Feb 2020 13:21:38 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01DDLbK433816730
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Feb 2020 13:21:38 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CC74B52051;
-        Thu, 13 Feb 2020 13:21:37 +0000 (GMT)
-Received: from [9.199.61.192] (unknown [9.199.61.192])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id C148D52050;
-        Thu, 13 Feb 2020 13:21:01 +0000 (GMT)
-Subject: Re: [PATCH v3] perf stat: Show percore counts in per CPU output
-To:     Jin Yao <yao.jin@linux.intel.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20200213071555.17239-1-yao.jin@linux.intel.com>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Thu, 13 Feb 2020 18:50:56 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200213071555.17239-1-yao.jin@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021313-0012-0000-0000-000003867CCB
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021313-0013-0000-0000-000021C30025
-Message-Id: <54bea6fe-26a1-a08c-7a61-ac5f5d43ad8c@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-13_04:2020-02-12,2020-02-13 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
- priorityscore=1501 suspectscore=0 lowpriorityscore=0 mlxlogscore=999
- adultscore=0 malwarescore=0 spamscore=0 mlxscore=0 impostorscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002130105
+        id S1730003AbgBMNWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 08:22:14 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:28232 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729952AbgBMNWO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 08:22:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581600133;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
+        bh=9A+wSkyxusnRX7BicnjW3WSbmTih3JMxMiULkIbUYv8=;
+        b=DwAQiWzh+j5SyzjKQyRlXUHTbv47WwZ5OHCjk+6L+vAdIAlXGQiWr/nQXbQ8tJxwLnwZkm
+        It4IjnRLm9c+zTEumaaucZ36YmMDxdC+rcnxi8/BqGWy8ALBnrCO37TC3/5MpJYAU4EuS/
+        gKin+tt8RS4jby8qYjBI/ZtnauVvgyw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-350-oQB6h8WnMoe3oyTrqDIccA-1; Thu, 13 Feb 2020 08:22:09 -0500
+X-MC-Unique: oQB6h8WnMoe3oyTrqDIccA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 58627800D41;
+        Thu, 13 Feb 2020 13:22:08 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-117-39.ams2.redhat.com [10.36.117.39])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D0BDC26FB9;
+        Thu, 13 Feb 2020 13:22:04 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 2538D9B0B; Thu, 13 Feb 2020 14:22:04 +0100 (CET)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     olvaffe@gmail.com, gurchetansingh@chromium.org,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 1/4] drm/virtio: rework notification for better batching
+Date:   Thu, 13 Feb 2020 14:22:00 +0100
+Message-Id: <20200213132203.23441-2-kraxel@redhat.com>
+In-Reply-To: <20200213132203.23441-1-kraxel@redhat.com>
+References: <20200213132203.23441-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jin,
+Drop the virtio_gpu_{disable,enable}_notify().  Add a new
+virtio_gpu_notify() call instead, which must be called whenever
+the driver wants make sure the host is notified needed.
 
-On 2/13/20 12:45 PM, Jin Yao wrote:
-> With this patch, for example,
-> 
->   # perf stat -e cpu/event=cpu-cycles,percore/ -a -A --percore-show-thread  -- sleep 1
-> 
->    Performance counter stats for 'system wide':
-> 
->   CPU0               2,453,061      cpu/event=cpu-cycles,percore/
->   CPU1               1,823,921      cpu/event=cpu-cycles,percore/
->   CPU2               1,383,166      cpu/event=cpu-cycles,percore/
->   CPU3               1,102,652      cpu/event=cpu-cycles,percore/
->   CPU4               2,453,061      cpu/event=cpu-cycles,percore/
->   CPU5               1,823,921      cpu/event=cpu-cycles,percore/
->   CPU6               1,383,166      cpu/event=cpu-cycles,percore/
->   CPU7               1,102,652      cpu/event=cpu-cycles,percore/
-> 
-> We can see counts are duplicated in CPU pairs
-> (CPU0/CPU4, CPU1/CPU5, CPU2/CPU6, CPU3/CPU7).
-> 
+Drop automatic notification from command submission.  Add
+virtio_gpu_notify() calls after each command query instead.
+This allows more fine-grained control over host notification
+and can move around the notify calls in subsequent patches to
+batch command submissions. With this in place it is also
+possible to make notification optional for userspace ioctls.
 
-I was trying this patch and I am getting bit weird results when any cpu
-is offline. Ex,
+Page flip batching goes away (temporarely).
 
-   $ lscpu | grep list
-   On-line CPU(s) list:             0-4,6,7
-   Off-line CPU(s) list:            5
+v3:
+ - move batching to separate patches.
+v2:
+ - rebase to latest drm-misc-next.
+ - use "if (!atomic_read())".
+ - add review & test tags.
 
-   $ sudo ./perf stat -e cpu/event=cpu-cycles,percore/ -a -A --percore-show-thread -vv -- sleep 1
-     ...
-   cpu/event=cpu-cycles,percore/: 0: 23746491 1001189836 1001189836
-   cpu/event=cpu-cycles,percore/: 1: 19802666 1001291299 1001291299
-   cpu/event=cpu-cycles,percore/: 2: 24211983 1001394318 1001394318
-   cpu/event=cpu-cycles,percore/: 3: 54051396 1001516816 1001516816
-   cpu/event=cpu-cycles,percore/: 4: 6378825 1001064048 1001064048
-   cpu/event=cpu-cycles,percore/: 5: 21299840 1001166297 1001166297
-   cpu/event=cpu-cycles,percore/: 6: 13075410 1001274535 1001274535
-   
-    Performance counter stats for 'system wide':
-   
-   CPU0              30,125,316      cpu/event=cpu-cycles,percore/
-   CPU1              19,802,666      cpu/event=cpu-cycles,percore/
-   CPU2              45,511,823      cpu/event=cpu-cycles,percore/
-   CPU3              67,126,806      cpu/event=cpu-cycles,percore/
-   CPU4              30,125,316      cpu/event=cpu-cycles,percore/
-   CPU7              67,126,806      cpu/event=cpu-cycles,percore/
-   CPU0              30,125,316      cpu/event=cpu-cycles,percore/
-   
-          1.001918764 seconds time elapsed
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Gurchetan Singh <gurchetansingh@chromium.org>
+Tested-by: Gurchetan Singh <gurchetansingh@chromium.org>
+---
+ drivers/gpu/drm/virtio/virtgpu_drv.h   |  6 ++--
+ drivers/gpu/drm/virtio/virtgpu_plane.c |  4 ---
+ drivers/gpu/drm/virtio/virtgpu_vq.c    | 50 ++++++++++++++++----------
+ 3 files changed, 33 insertions(+), 27 deletions(-)
 
-I see proper result without --percore-show-thread:
-
-   $ sudo ./perf stat -e cpu/event=cpu-cycles,percore/ -a -A -vv -- sleep 1
-     ...
-   cpu/event=cpu-cycles,percore/: 0: 11676414 1001190709 1001190709
-   cpu/event=cpu-cycles,percore/: 1: 39119617 1001291459 1001291459
-   cpu/event=cpu-cycles,percore/: 2: 41821512 1001391158 1001391158
-   cpu/event=cpu-cycles,percore/: 3: 46853730 1001492799 1001492799
-   cpu/event=cpu-cycles,percore/: 4: 14448274 1001095948 1001095948
-   cpu/event=cpu-cycles,percore/: 5: 42238217 1001191187 1001191187
-   cpu/event=cpu-cycles,percore/: 6: 33129641 1001292072 1001292072
-   
-    Performance counter stats for 'system wide':
-   
-   S0-D0-C0             26,124,688      cpu/event=cpu-cycles,percore/
-   S0-D0-C1             39,119,617      cpu/event=cpu-cycles,percore/
-   S0-D0-C2             84,059,729      cpu/event=cpu-cycles,percore/
-   S0-D0-C3             79,983,371      cpu/event=cpu-cycles,percore/
-   
-          1.001961563 seconds time elapsed
-
-[...]
-
-> +--percore-show-thread::
-> +The event modifier "percore" has supported to sum up the event counts
-> +for all hardware threads in a core and show the counts per core.
-> +
-> +This option with event modifier "percore" enabled also sums up the event
-> +counts for all hardware threads in a core but show the sum counts per
-> +hardware thread. This is essentially a replacement for the any bit and
-> +convenient for posting process.
-
-s/posting process/post processing/ ? :)
-
-Ravi
+diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
+index af9403e1cf78..2f6c4ccbfd14 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_drv.h
++++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
+@@ -179,8 +179,7 @@ struct virtio_gpu_device {
+ 	struct virtio_gpu_queue cursorq;
+ 	struct kmem_cache *vbufs;
+ 
+-	bool disable_notify;
+-	bool pending_notify;
++	atomic_t pending_commands;
+ 
+ 	struct ida	resource_ida;
+ 
+@@ -335,8 +334,7 @@ void virtio_gpu_dequeue_ctrl_func(struct work_struct *work);
+ void virtio_gpu_dequeue_cursor_func(struct work_struct *work);
+ void virtio_gpu_dequeue_fence_func(struct work_struct *work);
+ 
+-void virtio_gpu_disable_notify(struct virtio_gpu_device *vgdev);
+-void virtio_gpu_enable_notify(struct virtio_gpu_device *vgdev);
++void virtio_gpu_notify(struct virtio_gpu_device *vgdev);
+ 
+ /* virtio_gpu_display.c */
+ void virtio_gpu_modeset_init(struct virtio_gpu_device *vgdev);
+diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virtio/virtgpu_plane.c
+index d1c3f5fbfee4..08b2e4127eb3 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_plane.c
++++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
+@@ -154,8 +154,6 @@ static void virtio_gpu_primary_plane_update(struct drm_plane *plane,
+ 	if (!drm_atomic_helper_damage_merged(old_state, plane->state, &rect))
+ 		return;
+ 
+-	virtio_gpu_disable_notify(vgdev);
+-
+ 	bo = gem_to_virtio_gpu_obj(plane->state->fb->obj[0]);
+ 	if (bo->dumb)
+ 		virtio_gpu_update_dumb_bo(vgdev, plane->state, &rect);
+@@ -186,8 +184,6 @@ static void virtio_gpu_primary_plane_update(struct drm_plane *plane,
+ 				      rect.y1,
+ 				      rect.x2 - rect.x1,
+ 				      rect.y2 - rect.y1);
+-
+-	virtio_gpu_enable_notify(vgdev);
+ }
+ 
+ static int virtio_gpu_cursor_prepare_fb(struct drm_plane *plane,
+diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+index cfe9c54f87a3..812212975440 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -329,7 +329,6 @@ static void virtio_gpu_queue_ctrl_sgs(struct virtio_gpu_device *vgdev,
+ 				      int incnt)
+ {
+ 	struct virtqueue *vq = vgdev->ctrlq.vq;
+-	bool notify = false;
+ 	int ret, idx;
+ 
+ 	if (!drm_dev_enter(vgdev->ddev, &idx)) {
+@@ -368,16 +367,10 @@ static void virtio_gpu_queue_ctrl_sgs(struct virtio_gpu_device *vgdev,
+ 
+ 	trace_virtio_gpu_cmd_queue(vq, virtio_gpu_vbuf_ctrl_hdr(vbuf));
+ 
+-	notify = virtqueue_kick_prepare(vq);
++	atomic_inc(&vgdev->pending_commands);
+ 
+ 	spin_unlock(&vgdev->ctrlq.qlock);
+ 
+-	if (notify) {
+-		if (vgdev->disable_notify)
+-			vgdev->pending_notify = true;
+-		else
+-			virtqueue_notify(vq);
+-	}
+ 	drm_dev_exit(idx);
+ }
+ 
+@@ -434,19 +427,20 @@ static void virtio_gpu_queue_fenced_ctrl_buffer(struct virtio_gpu_device *vgdev,
+ 	}
+ }
+ 
+-void virtio_gpu_disable_notify(struct virtio_gpu_device *vgdev)
++void virtio_gpu_notify(struct virtio_gpu_device *vgdev)
+ {
+-	vgdev->disable_notify = true;
+-}
++	bool notify;
+ 
+-void virtio_gpu_enable_notify(struct virtio_gpu_device *vgdev)
+-{
+-	vgdev->disable_notify = false;
+-
+-	if (!vgdev->pending_notify)
++	if (!atomic_read(&vgdev->pending_commands))
+ 		return;
+-	vgdev->pending_notify = false;
+-	virtqueue_notify(vgdev->ctrlq.vq);
++
++	spin_lock(&vgdev->ctrlq.qlock);
++	atomic_set(&vgdev->pending_commands, 0);
++	notify = virtqueue_kick_prepare(vgdev->ctrlq.vq);
++	spin_unlock(&vgdev->ctrlq.qlock);
++
++	if (notify)
++		virtqueue_notify(vgdev->ctrlq.vq);
+ }
+ 
+ static void virtio_gpu_queue_ctrl_buffer(struct virtio_gpu_device *vgdev,
+@@ -520,6 +514,7 @@ void virtio_gpu_cmd_create_resource(struct virtio_gpu_device *vgdev,
+ 	cmd_p->height = cpu_to_le32(params->height);
+ 
+ 	virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, fence);
++	virtio_gpu_notify(vgdev);
+ 	bo->created = true;
+ }
+ 
+@@ -549,6 +544,7 @@ void virtio_gpu_cmd_unref_resource(struct virtio_gpu_device *vgdev,
+ 
+ 	vbuf->resp_cb_data = bo;
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void virtio_gpu_cmd_set_scanout(struct virtio_gpu_device *vgdev,
+@@ -571,6 +567,7 @@ void virtio_gpu_cmd_set_scanout(struct virtio_gpu_device *vgdev,
+ 	cmd_p->r.y = cpu_to_le32(y);
+ 
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void virtio_gpu_cmd_resource_flush(struct virtio_gpu_device *vgdev,
+@@ -592,6 +589,7 @@ void virtio_gpu_cmd_resource_flush(struct virtio_gpu_device *vgdev,
+ 	cmd_p->r.y = cpu_to_le32(y);
+ 
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void virtio_gpu_cmd_transfer_to_host_2d(struct virtio_gpu_device *vgdev,
+@@ -624,6 +622,7 @@ void virtio_gpu_cmd_transfer_to_host_2d(struct virtio_gpu_device *vgdev,
+ 	cmd_p->r.y = cpu_to_le32(y);
+ 
+ 	virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, fence);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ static void
+@@ -647,6 +646,7 @@ virtio_gpu_cmd_resource_attach_backing(struct virtio_gpu_device *vgdev,
+ 	vbuf->data_size = sizeof(*ents) * nents;
+ 
+ 	virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, fence);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ static void virtio_gpu_cmd_get_display_info_cb(struct virtio_gpu_device *vgdev,
+@@ -779,6 +779,7 @@ int virtio_gpu_cmd_get_display_info(struct virtio_gpu_device *vgdev)
+ 	vgdev->display_info_pending = true;
+ 	cmd_p->type = cpu_to_le32(VIRTIO_GPU_CMD_GET_DISPLAY_INFO);
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ 	return 0;
+ }
+ 
+@@ -802,6 +803,7 @@ int virtio_gpu_cmd_get_capset_info(struct virtio_gpu_device *vgdev, int idx)
+ 	cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_GET_CAPSET_INFO);
+ 	cmd_p->capset_index = cpu_to_le32(idx);
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ 	return 0;
+ }
+ 
+@@ -877,6 +879,7 @@ int virtio_gpu_cmd_get_capset(struct virtio_gpu_device *vgdev,
+ 	cmd_p->capset_version = cpu_to_le32(version);
+ 	*cache_p = cache_ent;
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ 
+ 	return 0;
+ }
+@@ -904,6 +907,7 @@ int virtio_gpu_cmd_get_edids(struct virtio_gpu_device *vgdev)
+ 		cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_GET_EDID);
+ 		cmd_p->scanout = cpu_to_le32(scanout);
+ 		virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++		virtio_gpu_notify(vgdev);
+ 	}
+ 
+ 	return 0;
+@@ -924,6 +928,7 @@ void virtio_gpu_cmd_context_create(struct virtio_gpu_device *vgdev, uint32_t id,
+ 	strncpy(cmd_p->debug_name, name, sizeof(cmd_p->debug_name) - 1);
+ 	cmd_p->debug_name[sizeof(cmd_p->debug_name) - 1] = 0;
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void virtio_gpu_cmd_context_destroy(struct virtio_gpu_device *vgdev,
+@@ -938,6 +943,7 @@ void virtio_gpu_cmd_context_destroy(struct virtio_gpu_device *vgdev,
+ 	cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_CTX_DESTROY);
+ 	cmd_p->hdr.ctx_id = cpu_to_le32(id);
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void virtio_gpu_cmd_context_attach_resource(struct virtio_gpu_device *vgdev,
+@@ -956,7 +962,7 @@ void virtio_gpu_cmd_context_attach_resource(struct virtio_gpu_device *vgdev,
+ 	cmd_p->hdr.ctx_id = cpu_to_le32(ctx_id);
+ 	cmd_p->resource_id = cpu_to_le32(bo->hw_res_handle);
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
+-
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void virtio_gpu_cmd_context_detach_resource(struct virtio_gpu_device *vgdev,
+@@ -975,6 +981,7 @@ void virtio_gpu_cmd_context_detach_resource(struct virtio_gpu_device *vgdev,
+ 	cmd_p->hdr.ctx_id = cpu_to_le32(ctx_id);
+ 	cmd_p->resource_id = cpu_to_le32(bo->hw_res_handle);
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void
+@@ -1006,6 +1013,8 @@ virtio_gpu_cmd_resource_create_3d(struct virtio_gpu_device *vgdev,
+ 	cmd_p->flags = cpu_to_le32(params->flags);
+ 
+ 	virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, fence);
++	virtio_gpu_notify(vgdev);
++
+ 	bo->created = true;
+ }
+ 
+@@ -1039,6 +1048,7 @@ void virtio_gpu_cmd_transfer_to_host_3d(struct virtio_gpu_device *vgdev,
+ 	cmd_p->level = cpu_to_le32(level);
+ 
+ 	virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, fence);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void virtio_gpu_cmd_transfer_from_host_3d(struct virtio_gpu_device *vgdev,
+@@ -1065,6 +1075,7 @@ void virtio_gpu_cmd_transfer_from_host_3d(struct virtio_gpu_device *vgdev,
+ 	cmd_p->level = cpu_to_le32(level);
+ 
+ 	virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, fence);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void virtio_gpu_cmd_submit(struct virtio_gpu_device *vgdev,
+@@ -1088,6 +1099,7 @@ void virtio_gpu_cmd_submit(struct virtio_gpu_device *vgdev,
+ 	cmd_p->size = cpu_to_le32(data_size);
+ 
+ 	virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, fence);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ int virtio_gpu_object_attach(struct virtio_gpu_device *vgdev,
+-- 
+2.18.2
 
