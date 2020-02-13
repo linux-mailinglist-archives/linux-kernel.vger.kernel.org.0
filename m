@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C33315C4B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F335215C44F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387626AbgBMPtn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:49:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46478 "EHLO mail.kernel.org"
+        id S1729965AbgBMPp7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:45:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387620AbgBMP0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:39 -0500
+        id S1728357AbgBMP1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:23 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53A9824693;
-        Thu, 13 Feb 2020 15:26:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CF4224688;
+        Thu, 13 Feb 2020 15:27:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607598;
-        bh=wHGaMKgffCtYSsTxzAw+uNAjQmYOFbcSC4KShEuTDTo=;
+        s=default; t=1581607643;
+        bh=jL7wi3GPQAwkR3cY7qiLEUcRjR9A248C0dluTePwOGg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p9ED0yITl+Z3mr72eF3gUqmakeUZzqUHFsXF32cfDpJrXnb3Wdz3f1Bi/fOUYtRzU
-         k8vs9AfRPgKgAHfJ0ule4nQ62YIOu7oFknnzB0is6NYS+o56biAx1RzO66/w6bjx5K
-         MDrVi23W6eoAJWHNDG8r0cXPHF2mIhZwq1g8ZJYE=
+        b=FvhhGOwPzrY3vI79nznrahN0HgM4GcEkbGnm7lAiwqBlF8a6HpFTeShVMdA4dMqg+
+         mQGDW/t01PgWeFirA82ftbrNM6I+faNmSBJp2fs/qVlJ1imO28KLhf6ldQvsPu6FTM
+         aMFG0lrjHhQtbRnIQKmScXf7j40ikV19JQTdgGM0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Jean-Francois Dagenais <jeff.dagenais@gmail.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 16/52] serial: uartps: Add a timeout to the tx empty wait
+        =?UTF-8?q?Karl=20Rudb=C3=A6k=20Olsen?= <karl@micro-technic.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 5.4 50/96] ARM: dts: at91: sama5d3: define clock rate range for tcb1
 Date:   Thu, 13 Feb 2020 07:20:57 -0800
-Message-Id: <20200213151817.584286846@linuxfoundation.org>
+Message-Id: <20200213151858.763075683@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
-References: <20200213151810.331796857@linuxfoundation.org>
+In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
+References: <20200213151839.156309910@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,71 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-commit 277375b864e8147975b064b513f491e2a910e66a upstream
+commit a7e0f3fc01df4b1b7077df777c37feae8c9e8b6d upstream.
 
-In case the cable is not connected then the target gets into
-an infinite wait for tx empty.
-Add a timeout to the tx empty wait.
+The clock rate range for the TCB1 clock is missing. define it in the device
+tree.
 
-Reported-by: Jean-Francois Dagenais <jeff.dagenais@gmail.com>
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Reported-by: Karl Rudbæk Olsen <karl@micro-technic.com>
+Fixes: d2e8190b7916 ("ARM: at91/dt: define sama5d3 clocks")
+Link: https://lore.kernel.org/r/20200110172007.1253659-2-alexandre.belloni@bootlin.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable <stable@vger.kernel.org> # 4.19
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- drivers/tty/serial/xilinx_uartps.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/sama5d3_tcb1.dtsi |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index 66d49d5118853..7cbee19ea93d5 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -26,6 +26,7 @@
- #include <linux/of.h>
- #include <linux/module.h>
- #include <linux/pm_runtime.h>
-+#include <linux/iopoll.h>
- 
- #define CDNS_UART_TTY_NAME	"ttyPS"
- #define CDNS_UART_NAME		"xuartps"
-@@ -34,6 +35,7 @@
- #define CDNS_UART_NR_PORTS	2
- #define CDNS_UART_FIFO_SIZE	64	/* FIFO size */
- #define CDNS_UART_REGISTER_SPACE	0x1000
-+#define TX_TIMEOUT		500000
- 
- /* Rx Trigger level */
- static int rx_trigger_level = 56;
-@@ -681,16 +683,20 @@ static void cdns_uart_set_termios(struct uart_port *port,
- 	unsigned int cval = 0;
- 	unsigned int baud, minbaud, maxbaud;
- 	unsigned long flags;
--	unsigned int ctrl_reg, mode_reg;
-+	unsigned int ctrl_reg, mode_reg, val;
-+	int err;
- 
- 	spin_lock_irqsave(&port->lock, flags);
- 
- 	/* Wait for the transmit FIFO to empty before making changes */
- 	if (!(readl(port->membase + CDNS_UART_CR) &
- 				CDNS_UART_CR_TX_DIS)) {
--		while (!(readl(port->membase + CDNS_UART_SR) &
--				CDNS_UART_SR_TXEMPTY)) {
--			cpu_relax();
-+		err = readl_poll_timeout(port->membase + CDNS_UART_SR,
-+					 val, (val & CDNS_UART_SR_TXEMPTY),
-+					 1000, TX_TIMEOUT);
-+		if (err) {
-+			dev_err(port->dev, "timed out waiting for tx empty");
-+			return;
- 		}
- 	}
- 
--- 
-2.20.1
-
+--- a/arch/arm/boot/dts/sama5d3_tcb1.dtsi
++++ b/arch/arm/boot/dts/sama5d3_tcb1.dtsi
+@@ -22,6 +22,7 @@
+ 					tcb1_clk: tcb1_clk {
+ 						#clock-cells = <0>;
+ 						reg = <27>;
++						atmel,clk-output-range = <0 166000000>;
+ 					};
+ 				};
+ 			};
 
 
