@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB8E215C360
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C33315C4B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729213AbgBMPkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:40:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56428 "EHLO mail.kernel.org"
+        id S2387626AbgBMPtn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:49:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728631AbgBMP2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:28:39 -0500
+        id S2387620AbgBMP0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:39 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8FC3206DB;
-        Thu, 13 Feb 2020 15:28:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53A9824693;
+        Thu, 13 Feb 2020 15:26:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607719;
-        bh=EZnF+QuJO+sub9/aDn4PIsMh2MpwJZKmxruzUZa2+uc=;
+        s=default; t=1581607598;
+        bh=wHGaMKgffCtYSsTxzAw+uNAjQmYOFbcSC4KShEuTDTo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LNVZCv4QqOYRz1oaZRfaNICqHgbWdWyEMhlcaK1oBvCPl4jPlG6H5rkPcg/i8lIFZ
-         1ewotJVxWGVQaYPQs9DF2KAJ2pn0mvWHDplbomvjTk1rB0I21QknmBU4fAQnHW0s/q
-         L6QwyuKqDY41nsOw95Mhn+sWy8Eg2iuWxqm+ZGe4=
+        b=p9ED0yITl+Z3mr72eF3gUqmakeUZzqUHFsXF32cfDpJrXnb3Wdz3f1Bi/fOUYtRzU
+         k8vs9AfRPgKgAHfJ0ule4nQ62YIOu7oFknnzB0is6NYS+o56biAx1RzO66/w6bjx5K
+         MDrVi23W6eoAJWHNDG8r0cXPHF2mIhZwq1g8ZJYE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Denis Odintsov <d.odintsov@traviangames.com>,
-        Baruch Siach <baruch@tkos.co.il>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: [PATCH 5.5 061/120] arm64: dts: marvell: clearfog-gt-8k: fix switch cpu port node
+        Jean-Francois Dagenais <jeff.dagenais@gmail.com>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 16/52] serial: uartps: Add a timeout to the tx empty wait
 Date:   Thu, 13 Feb 2020 07:20:57 -0800
-Message-Id: <20200213151922.185020505@linuxfoundation.org>
+Message-Id: <20200213151817.584286846@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
+References: <20200213151810.331796857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +46,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Baruch Siach <baruch@tkos.co.il>
+From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 
-commit 62bba54d99407aedfe9b0a02e72e23c06e2b0116 upstream.
+commit 277375b864e8147975b064b513f491e2a910e66a upstream
 
-Explicitly set the switch cpu (upstream) port phy-mode and managed
-properties. This fixes the Marvell 88E6141 switch serdes configuration
-with the recently enabled phylink layer.
+In case the cable is not connected then the target gets into
+an infinite wait for tx empty.
+Add a timeout to the tx empty wait.
 
-Fixes: a6120833272c ("arm64: dts: add support for SolidRun Clearfog GT 8K")
-Reported-by: Denis Odintsov <d.odintsov@traviangames.com>
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Reported-by: Jean-Francois Dagenais <jeff.dagenais@gmail.com>
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: stable <stable@vger.kernel.org> # 4.19
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/tty/serial/xilinx_uartps.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
---- a/arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts
-+++ b/arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts
-@@ -408,6 +408,8 @@
- 				reg = <5>;
- 				label = "cpu";
- 				ethernet = <&cp1_eth2>;
-+				phy-mode = "2500base-x";
-+				managed = "in-band-status";
- 			};
- 		};
+diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
+index 66d49d5118853..7cbee19ea93d5 100644
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -26,6 +26,7 @@
+ #include <linux/of.h>
+ #include <linux/module.h>
+ #include <linux/pm_runtime.h>
++#include <linux/iopoll.h>
  
+ #define CDNS_UART_TTY_NAME	"ttyPS"
+ #define CDNS_UART_NAME		"xuartps"
+@@ -34,6 +35,7 @@
+ #define CDNS_UART_NR_PORTS	2
+ #define CDNS_UART_FIFO_SIZE	64	/* FIFO size */
+ #define CDNS_UART_REGISTER_SPACE	0x1000
++#define TX_TIMEOUT		500000
+ 
+ /* Rx Trigger level */
+ static int rx_trigger_level = 56;
+@@ -681,16 +683,20 @@ static void cdns_uart_set_termios(struct uart_port *port,
+ 	unsigned int cval = 0;
+ 	unsigned int baud, minbaud, maxbaud;
+ 	unsigned long flags;
+-	unsigned int ctrl_reg, mode_reg;
++	unsigned int ctrl_reg, mode_reg, val;
++	int err;
+ 
+ 	spin_lock_irqsave(&port->lock, flags);
+ 
+ 	/* Wait for the transmit FIFO to empty before making changes */
+ 	if (!(readl(port->membase + CDNS_UART_CR) &
+ 				CDNS_UART_CR_TX_DIS)) {
+-		while (!(readl(port->membase + CDNS_UART_SR) &
+-				CDNS_UART_SR_TXEMPTY)) {
+-			cpu_relax();
++		err = readl_poll_timeout(port->membase + CDNS_UART_SR,
++					 val, (val & CDNS_UART_SR_TXEMPTY),
++					 1000, TX_TIMEOUT);
++		if (err) {
++			dev_err(port->dev, "timed out waiting for tx empty");
++			return;
+ 		}
+ 	}
+ 
+-- 
+2.20.1
+
 
 
