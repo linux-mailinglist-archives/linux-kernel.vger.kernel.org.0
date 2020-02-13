@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D6CD15C16F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:23:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 671B115C1B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:26:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbgBMPXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:23:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60878 "EHLO mail.kernel.org"
+        id S2387462AbgBMPZf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:25:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728152AbgBMPWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:22:50 -0500
+        id S1728554AbgBMPX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:59 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A2792469A;
-        Thu, 13 Feb 2020 15:22:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB4EC24689;
+        Thu, 13 Feb 2020 15:23:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607370;
-        bh=i+yGrRs4yCH7reidTqlcHP58PGWiJO2laSighC9WHBk=;
+        s=default; t=1581607438;
+        bh=xfG5/kMh0FCtqyAB9qCXP7XQeqibpa9pw53hQWCk2V4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GZjjEjVGgHnK+tBp5mZK50BkRgDWvDBu0vnBfDbiO1yPuoTUx4sMBiA6F9/KcqSQI
-         7OpYP+9uG6s2UoEaNFy9nLEgkSDVxi6uYTkc1aUfu2nWg7Qez2rukUNEbqlN6MtEXp
-         WdkhH92GewnhY1/iA+yNI9h0aHVWRuak6ZH+BszA=
+        b=WtownyV1ThbQpudh0ss3TKdl/8gCF7beZ4j/T/bRMl4KLF+CkWoISxmmGJXgy2oT7
+         WvSEi50xSr6inHzh6v4liT52Wx4JR5wZhK5pq2Z1aXIycdaJ6VpAj+dMpdTrF+O9Y6
+         OWa05vuoLPEQjnjTKTEpYK6D+eRyVuL5b7aXwf+0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Greg Kurz <groug@kaod.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.4 44/91] KVM: PPC: Book3S HV: Uninit vCPU if vcore creation fails
-Date:   Thu, 13 Feb 2020 07:20:01 -0800
-Message-Id: <20200213151838.723680390@linuxfoundation.org>
+        stable@vger.kernel.org, Himanshu Madhani <hmadhani@marvell.com>,
+        Quinn Tran <qutran@marvell.com>,
+        Martin Wilck <mwilck@suse.com>,
+        Daniel Wagner <dwagner@suse.de>,
+        Roman Bolshakov <r.bolshakov@yadro.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 058/116] scsi: qla2xxx: Fix the endianness of the qla82xx_get_fw_size() return type
+Date:   Thu, 13 Feb 2020 07:20:02 -0800
+Message-Id: <20200213151905.429737166@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
-References: <20200213151821.384445454@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +48,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-commit 1a978d9d3e72ddfa40ac60d26301b154247ee0bc upstream.
+commit 3f5f7335e5e234e340b48ecb24c2aba98a61f934 upstream.
 
-Call kvm_vcpu_uninit() if vcore creation fails to avoid leaking any
-resources allocated by kvm_vcpu_init(), i.e. the vcpu->run page.
+Since qla82xx_get_fw_size() returns a number in CPU-endian format, change
+its return type from __le32 into u32. This patch does not change any
+functionality.
 
-Fixes: 371fefd6f2dc4 ("KVM: PPC: Allow book3s_hv guests to use SMT processor modes")
-Cc: stable@vger.kernel.org
-Reviewed-by: Greg Kurz <groug@kaod.org>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Acked-by: Paul Mackerras <paulus@ozlabs.org>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Fixes: 9c2b297572bf ("[SCSI] qla2xxx: Support for loading Unified ROM Image (URI) format firmware file.")
+Cc: Himanshu Madhani <hmadhani@marvell.com>
+Cc: Quinn Tran <qutran@marvell.com>
+Cc: Martin Wilck <mwilck@suse.com>
+Cc: Daniel Wagner <dwagner@suse.de>
+Cc: Roman Bolshakov <r.bolshakov@yadro.com>
+Link: https://lore.kernel.org/r/20191219004905.39586-1-bvanassche@acm.org
+Reviewed-by: Daniel Wagner <dwagner@suse.de>
+Reviewed-by: Roman Bolshakov <r.bolshakov@yadro.com>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kvm/book3s_hv.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_nx.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/arch/powerpc/kvm/book3s_hv.c
-+++ b/arch/powerpc/kvm/book3s_hv.c
-@@ -1669,7 +1669,7 @@ static struct kvm_vcpu *kvmppc_core_vcpu
- 	mutex_unlock(&kvm->lock);
+--- a/drivers/scsi/qla2xxx/qla_nx.c
++++ b/drivers/scsi/qla2xxx/qla_nx.c
+@@ -1600,8 +1600,7 @@ qla82xx_get_bootld_offset(struct qla_hw_
+ 	return (u8 *)&ha->hablob->fw->data[offset];
+ }
  
- 	if (!vcore)
--		goto free_vcpu;
-+		goto uninit_vcpu;
+-static __le32
+-qla82xx_get_fw_size(struct qla_hw_data *ha)
++static u32 qla82xx_get_fw_size(struct qla_hw_data *ha)
+ {
+ 	struct qla82xx_uri_data_desc *uri_desc = NULL;
  
- 	spin_lock(&vcore->lock);
- 	++vcore->num_threads;
-@@ -1685,6 +1685,8 @@ static struct kvm_vcpu *kvmppc_core_vcpu
+@@ -1612,7 +1611,7 @@ qla82xx_get_fw_size(struct qla_hw_data *
+ 			return cpu_to_le32(uri_desc->size);
+ 	}
  
- 	return vcpu;
+-	return cpu_to_le32(*(u32 *)&ha->hablob->fw->data[FW_SIZE_OFFSET]);
++	return get_unaligned_le32(&ha->hablob->fw->data[FW_SIZE_OFFSET]);
+ }
  
-+uninit_vcpu:
-+	kvm_vcpu_uninit(vcpu);
- free_vcpu:
- 	kmem_cache_free(kvm_vcpu_cache, vcpu);
- out:
+ static u8 *
+@@ -1803,7 +1802,7 @@ qla82xx_fw_load_from_blob(struct qla_hw_
+ 	}
+ 
+ 	flashaddr = FLASH_ADDR_START;
+-	size = (__force u32)qla82xx_get_fw_size(ha) / 8;
++	size = qla82xx_get_fw_size(ha) / 8;
+ 	ptr64 = (u64 *)qla82xx_get_fw_offs(ha);
+ 
+ 	for (i = 0; i < size; i++) {
 
 
