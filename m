@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70DA415C544
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:55:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47BAC15C53F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:55:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729097AbgBMPZv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:25:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36746 "EHLO mail.kernel.org"
+        id S2388267AbgBMPyY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:54:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728584AbgBMPYH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:24:07 -0500
+        id S1729122AbgBMPZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:55 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD7DA20848;
-        Thu, 13 Feb 2020 15:24:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D3DA24691;
+        Thu, 13 Feb 2020 15:25:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607445;
-        bh=RkvVxjVniafEYFLD5/3Du9E96eZyu/XJaraLUL93oyg=;
+        s=default; t=1581607552;
+        bh=u8zKPE2MDJBP7Xodhz8YBPY1I5BV9w4c8q36pzW/TeY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z8/FOZNP65GGBcPrMSw6L6IJ23ogCszPMMuajbNYu4I+HbSOPeuDl6WvpFhucS+8o
-         NL/Fs8ynGv6NUU5K/gRH/BwmSdYZhI12cVv9y2tUU5iIsRivCUH9HhnYVyb+ALMZOv
-         xKWkdxSPLzudeJpELsdejofXyfcfcC8RWOCC9G8o=
+        b=oWNp4RSXGQv3y1pGAfnd9CO2vpHz96J1RysZfeu8zHEEmSH2gX1wwqxSJHllcwF90
+         mnBklfe3vnyGctIwS53bXPqDJ3ofREmPPb+ZqeiCE8GsHXj/RWr6AGyiDSktc4QHRR
+         H76nkKs+eUiI/93777Tr8bUiUqcnVgBiavywPDtM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wayne Lin <Wayne.Lin@amd.com>,
-        Lyude Paul <lyude@redhat.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 087/116] drm/dp_mst: Remove VCPI while disabling topology mgr
+        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
+        Marios Pomonis <pomonis@google.com>,
+        Andrew Honig <ahonig@google.com>,
+        Jim Mattson <jmattson@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 128/173] KVM: x86: Protect pmu_intel.c from Spectre-v1/L1TF attacks
 Date:   Thu, 13 Feb 2020 07:20:31 -0800
-Message-Id: <20200213151916.429278047@linuxfoundation.org>
+Message-Id: <20200213152004.512717026@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
-References: <20200213151842.259660170@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,90 +47,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wayne Lin <Wayne.Lin@amd.com>
+From: Marios Pomonis <pomonis@google.com>
 
-[ Upstream commit 64e62bdf04ab8529f45ed0a85122c703035dec3a ]
+[ Upstream commit 66061740f1a487f4ed54fde75e724709f805da53 ]
 
-[Why]
+This fixes Spectre-v1/L1TF vulnerabilities in intel_find_fixed_event()
+and intel_rdpmc_ecx_to_pmc().
+kvm_rdpmc() (ancestor of intel_find_fixed_event()) and
+reprogram_fixed_counter() (ancestor of intel_rdpmc_ecx_to_pmc()) are
+exported symbols so KVM should treat them conservatively from a security
+perspective.
 
-This patch is trying to address the issue observed when hotplug DP
-daisy chain monitors.
+Fixes: 25462f7f5295 ("KVM: x86/vPMU: Define kvm_pmu_ops to support vPMU function dispatch")
 
-e.g.
-src-mstb-mstb-sst -> src (unplug) mstb-mstb-sst -> src-mstb-mstb-sst
-(plug in again)
-
-Once unplug a DP MST capable device, driver will call
-drm_dp_mst_topology_mgr_set_mst() to disable MST. In this function,
-it cleans data of topology manager while disabling mst_state. However,
-it doesn't clean up the proposed_vcpis of topology manager.
-If proposed_vcpi is not reset, once plug in MST daisy chain monitors
-later, code will fail at checking port validation while trying to
-allocate payloads.
-
-When MST capable device is plugged in again and try to allocate
-payloads by calling drm_dp_update_payload_part1(), this
-function will iterate over all proposed virtual channels to see if
-any proposed VCPI's num_slots is greater than 0. If any proposed
-VCPI's num_slots is greater than 0 and the port which the
-specific virtual channel directed to is not in the topology, code then
-fails at the port validation. Since there are stale VCPI allocations
-from the previous topology enablement in proposed_vcpi[], code will fail
-at port validation and reurn EINVAL.
-
-[How]
-
-Clean up the data of stale proposed_vcpi[] and reset mgr->proposed_vcpis
-to NULL while disabling mst in drm_dp_mst_topology_mgr_set_mst().
-
-Changes since v1:
-*Add on more details in commit message to describe the issue which the
-patch is trying to fix
-
-Signed-off-by: Wayne Lin <Wayne.Lin@amd.com>
-[added cc to stable]
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191205090043.7580-1-Wayne.Lin@amd.com
-Cc: <stable@vger.kernel.org> # v3.17+
+Signed-off-by: Nick Finco <nifi@google.com>
+Signed-off-by: Marios Pomonis <pomonis@google.com>
+Reviewed-by: Andrew Honig <ahonig@google.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_dp_mst_topology.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/x86/kvm/pmu_intel.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index 17aedaaf364c1..8b1d497b7f99f 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -2042,6 +2042,7 @@ static bool drm_dp_get_vc_payload_bw(int dp_link_bw,
- int drm_dp_mst_topology_mgr_set_mst(struct drm_dp_mst_topology_mgr *mgr, bool mst_state)
+diff --git a/arch/x86/kvm/pmu_intel.c b/arch/x86/kvm/pmu_intel.c
+index 2729131fe9bfc..84ae4dd261caf 100644
+--- a/arch/x86/kvm/pmu_intel.c
++++ b/arch/x86/kvm/pmu_intel.c
+@@ -87,10 +87,14 @@ static unsigned intel_find_arch_event(struct kvm_pmu *pmu,
+ 
+ static unsigned intel_find_fixed_event(int idx)
  {
- 	int ret = 0;
-+	int i = 0;
- 	struct drm_dp_mst_branch *mstb = NULL;
- 
- 	mutex_lock(&mgr->lock);
-@@ -2106,10 +2107,21 @@ int drm_dp_mst_topology_mgr_set_mst(struct drm_dp_mst_topology_mgr *mgr, bool ms
- 		/* this can fail if the device is gone */
- 		drm_dp_dpcd_writeb(mgr->aux, DP_MSTM_CTRL, 0);
- 		ret = 0;
-+		mutex_lock(&mgr->payload_lock);
- 		memset(mgr->payloads, 0, mgr->max_payloads * sizeof(struct drm_dp_payload));
- 		mgr->payload_mask = 0;
- 		set_bit(0, &mgr->payload_mask);
-+		for (i = 0; i < mgr->max_payloads; i++) {
-+			struct drm_dp_vcpi *vcpi = mgr->proposed_vcpis[i];
+-	if (idx >= ARRAY_SIZE(fixed_pmc_events))
++	u32 event;
++	size_t size = ARRAY_SIZE(fixed_pmc_events);
 +
-+			if (vcpi) {
-+				vcpi->vcpi = 0;
-+				vcpi->num_slots = 0;
-+			}
-+			mgr->proposed_vcpis[i] = NULL;
-+		}
- 		mgr->vcpi_mask = 0;
-+		mutex_unlock(&mgr->payload_lock);
- 	}
++	if (idx >= size)
+ 		return PERF_COUNT_HW_MAX;
  
- out_unlock:
+-	return intel_arch_events[fixed_pmc_events[idx]].event_type;
++	event = fixed_pmc_events[array_index_nospec(idx, size)];
++	return intel_arch_events[event].event_type;
+ }
+ 
+ /* check if a PMC is enabled by comparing it with globl_ctrl bits. */
+@@ -131,15 +135,19 @@ static struct kvm_pmc *intel_msr_idx_to_pmc(struct kvm_vcpu *vcpu,
+ 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
+ 	bool fixed = idx & (1u << 30);
+ 	struct kvm_pmc *counters;
++	unsigned int num_counters;
+ 
+ 	idx &= ~(3u << 30);
+-	if (!fixed && idx >= pmu->nr_arch_gp_counters)
+-		return NULL;
+-	if (fixed && idx >= pmu->nr_arch_fixed_counters)
++	if (fixed) {
++		counters = pmu->fixed_counters;
++		num_counters = pmu->nr_arch_fixed_counters;
++	} else {
++		counters = pmu->gp_counters;
++		num_counters = pmu->nr_arch_gp_counters;
++	}
++	if (idx >= num_counters)
+ 		return NULL;
+-	counters = fixed ? pmu->fixed_counters : pmu->gp_counters;
+-
+-	return &counters[idx];
++	return &counters[array_index_nospec(idx, num_counters)];
+ }
+ 
+ static bool intel_is_valid_msr(struct kvm_vcpu *vcpu, u32 msr)
 -- 
 2.20.1
 
