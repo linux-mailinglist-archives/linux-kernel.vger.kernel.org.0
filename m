@@ -2,88 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4002115CBB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 21:10:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F42915CBC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 21:12:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbgBMUKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 15:10:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51426 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726780AbgBMUKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 15:10:31 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB6E424673;
-        Thu, 13 Feb 2020 20:10:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581624631;
-        bh=wCa5vRNZGSPGzqcXpTyE+mHqN/Ye42Xpuhgjo/0QB/s=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=nviCRg1g4MZAo0jKL456uD4cVnAykwAnapNmSYMDXqWZJw1ziRRyAUYClXejO8gEk
-         qljLS/l1HBJwOPpefFXMCgNASTZ7WCRkVRpjiFV36MpTyl1JRIS+9HbQTeAZWD+uOU
-         9V8/fJLMmUxaNNLCaix5dKc1eZtd9CCuONPTjs+Q=
-Subject: Re: [PATCH] selftests: openat2: fix build error on newer glibc
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20200213072656.15611-1-cyphar@cyphar.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <0126e205-e11e-f107-24b8-3673b1c749e3@kernel.org>
-Date:   Thu, 13 Feb 2020 13:10:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1728407AbgBMUMv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 15:12:51 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33727 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728100AbgBMUMu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 15:12:50 -0500
+Received: by mail-pf1-f194.google.com with SMTP id n7so3626789pfn.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 12:12:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Em2FaAYttibjTQlPuyOTgle0cIehhPkcJObsB7mmxQ4=;
+        b=UUEAaBo8QzHRBzSTg5vwmEwtBZHIqo8GM6h67erAyXq9FaDWBAU6ir6JHFm5b5diIV
+         HGWsJNDUrBMq8XkvSBRBNdSSnVo7QRrvOMGbMi4++YLam3x4bpheUpxPqL0nIVQiGhM5
+         wFBYyGzAdq57vTFYJhluzz5kWAZTiuunHzIg4nV6XVmMowY494/FBW7F+k7invAvbZ0u
+         349HgFlf3nLnrDlGAeeclZeyHNlXZAVUx2AJjjZQ8m74wI1MglsOpM3/jwU+jMgBt49d
+         KKo78LddH450ayeAYP+lbVv7jKVJwUjYpvPpYqdDXM4aBjH7FlHFOH+2XRGqs9w9YhTy
+         sGyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Em2FaAYttibjTQlPuyOTgle0cIehhPkcJObsB7mmxQ4=;
+        b=tMIfDBgxE2xdQR/1mUG1W2CJYgT9cTUgxlsNVPop7CJxvZjoU4qCkRZq7zG8B4dKs+
+         kwRpzfGdUQfFxfkwyvgvgtwBreYTKNuTYIAJMQ1lcTaRs0Rd9PAn/uWLYei88jXEUd93
+         MJW7k8NuoRK/0aPRzqZQlC4DAJxjMMGk5T6iP5qgVe2gv2xdHcnlNjdcFDZlYZYy+3Lo
+         zQC1fIYwGGx0Gei5leeEv7gQGRVNCIhYYMhIsyqf3KBeMOkw87atuM8QYxa540I4EhO6
+         4fF4KAzeD6HBxemNdz4CWRIh6rDjnyix8McUeaf2xv3in/6VOc50Uc11WSrfZ9SGElj6
+         3kng==
+X-Gm-Message-State: APjAAAVtUfrsgXwNEDACBd5Udgfq49Pirn4BN/XrpNlYrTSH3Ofzx1NG
+        fLVdpu2JuguAgqL74iMtqVFxEg==
+X-Google-Smtp-Source: APXvYqz6C2//bSkNXWpg1QFzaCdhtdkUlSkJBK805RDsjAufMVdJhjl5udMwJOsTXCI9bhdi8VtmPg==
+X-Received: by 2002:aa7:8703:: with SMTP id b3mr14998134pfo.67.1581624769948;
+        Thu, 13 Feb 2020 12:12:49 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id u23sm3988269pfm.29.2020.02.13.12.12.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2020 12:12:49 -0800 (PST)
+Date:   Thu, 13 Feb 2020 12:12:47 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Dikshita Agarwal <dikshita@codeaurora.org>,
+        linux-media@vger.kernel.org, stanimir.varbanov@linaro.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, vgarodia@codeaurora.org,
+        Odelu Kukatla <okukatla@codeaurora.org>
+Subject: Re: [PATCH V4 0/4] Enable video on sc7180
+Message-ID: <20200213201247.GQ3948@builder>
+References: <1579006416-11599-1-git-send-email-dikshita@codeaurora.org>
+ <20200203180240.GD3948@builder>
+ <20200213185305.GF50449@google.com>
+ <20200213192627.GA1455@tuxbook-pro>
+ <20200213195725.GH50449@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20200213072656.15611-1-cyphar@cyphar.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200213195725.GH50449@google.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/13/20 12:26 AM, Aleksa Sarai wrote:
-> It appears that newer glibcs check that openat(O_CREAT) was provided a
-> fourth argument (rather than passing garbage), resulting in the
-> following build error:
+On Thu 13 Feb 11:57 PST 2020, Matthias Kaehlcke wrote:
+
+> On Thu, Feb 13, 2020 at 11:26:27AM -0800, Bjorn Andersson wrote:
+> > On Thu 13 Feb 10:53 PST 2020, Matthias Kaehlcke wrote:
+> > 
+> > > Hi Bjorn,
+> > > 
+> > > On Mon, Feb 03, 2020 at 10:02:40AM -0800, Bjorn Andersson wrote:
+> > > > On Tue 14 Jan 04:53 PST 2020, Dikshita Agarwal wrote:
+> > > > 
+> > > > > Hello,
+> > > > > 
+> > > > > Changes since v3:
+> > > > > 
+> > > > >   - addressed DT and DT schema review comments.
+> > > > > 
+> > > > >   - renamed DT schema file.
+> > > > > 
+> > > > > v3 can be found at [1].
+> > > > > These changes depend on patch series [2] - [6].
+> > > > > 
+> > > > > Thanks,
+> > > > > Dikshita
+> > > > > 
+> > > > 
+> > > > Picked up the dts patches for 5.7, with Stan's acks
+> > > 
+> > > I can't seem to find the patches in the QCOM repo, neither in
+> > > 'arm64-for-5.7' nor 'for-next'. Am I looking at the wrong place or
+> > > maybe you forget to push these?
+> > > 
+> > 
+> > Thanks for the question Matthias, I was looking for this email as I
+> > rebased onto v5.6-rc1 earlier this week, but got distracted.
+> > 
+> > I pulled them in, but in the rebase I realized that we don't have the
+> > interconnects in place, so in it's current form these patches doesn't
+> > compile.
+> > 
+> > Seems we're waiting for rather trivial respin of
+> > https://lore.kernel.org/linux-arm-msm/1577782737-32068-1-git-send-email-okukatla@codeaurora.org/
+> > to get this settled.
 > 
->> In file included from /usr/include/fcntl.h:301,
->>                   from helpers.c:9:
->> In function 'openat',
->>      inlined from 'touchat' at helpers.c:49:11:
->> /usr/include/x86_64-linux-gnu/bits/fcntl2.h:126:4: error: call to
->> '__openat_missing_mode' declared with attribute error: openat with O_CREAT
->> or O_TMPFILE in third argument needs 4 arguments
->>    126 |    __openat_missing_mode ();
->>        |    ^~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Reported-by: Shuah Khan <shuah@kernel.org>
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> ---
->   tools/testing/selftests/openat2/helpers.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/openat2/helpers.c b/tools/testing/selftests/openat2/helpers.c
-> index e9a6557ab16f..5074681ffdc9 100644
-> --- a/tools/testing/selftests/openat2/helpers.c
-> +++ b/tools/testing/selftests/openat2/helpers.c
-> @@ -46,7 +46,7 @@ int sys_renameat2(int olddirfd, const char *oldpath,
->   
->   int touchat(int dfd, const char *path)
->   {
-> -	int fd = openat(dfd, path, O_CREAT);
-> +	int fd = openat(dfd, path, O_CREAT, 0700);
->   	if (fd >= 0)
->   		close(fd);
->   	return fd;
+> Hm, there has been no response to the comments in more than a month, also
+> the series depends on another ('Split SDM845 interconnect nodes and
+> consolidate RPMh support' https://patchwork.kernel.org/project/linux-arm-msm/list/?series=238831),
+> even though that isn't mentioned anywhere.
 > 
 
-Thanks for a quick patch. It compiles now.
+Sibi is revisiting David's 845 series, so my expectation is that it will
+land in this cycle.
 
-I will take this through kselftest tree.
+> IIUC the interconnect configuration isn't strictly required to get the
+> video codec to work. I wonder if it would make sense to respin this
+> series to remove the interconnect properties. They could be added in a
+> separate patch after the ICC support has landed.
+> 
+> Dikshita/Bjorn, what do you think?
 
-thanks,
--- Shuah
+That sounds likely. Dikshita, can you confirm that we can just omit the
+interconnect lines from the patch and I'll just apply the patches again
+without these (and you can follow up with adding interconnects later).
 
-
+Regards,
+Bjorn
