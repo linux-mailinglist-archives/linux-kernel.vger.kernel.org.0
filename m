@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8636515C3B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD1CA15C264
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:33:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728899AbgBMPnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:43:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53022 "EHLO mail.kernel.org"
+        id S1728516AbgBMPdO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:33:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728929AbgBMP1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:52 -0500
+        id S1729630AbgBMP24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:56 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5390A206DB;
-        Thu, 13 Feb 2020 15:27:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 692692467D;
+        Thu, 13 Feb 2020 15:28:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607671;
-        bh=u6ru0ReBZHKSYmSZDd7iySDmnsFxSlS+65fv0zpmsVc=;
+        s=default; t=1581607736;
+        bh=fPB1iHhgeFpUPKsYjqf2vZYkXrit/70jiBZ3Dsfo/pk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X16IRlgrQpb2B8uXb58wfpl1BFRXBKSryAnNK7YsZEeLdz4GkTwJjVlnYHdZL8S6w
-         l6JA9H9yTzImWaaExJo8bCKA68mTjIMVf6jpB4i7wZYz8ZJoN/oRMSn86EpbQapKbB
-         zIhg9mC7z9+A2Y6hPPOAWBGFgBwOEKLCVZhT5UGw=
+        b=RuHVsARH3l9mYKC2OIRNahDJE2/UtzIzEDLVOh1ZOZ58lh/Ie4xn3Qi/dOY2p70+t
+         ewHnmi+FnRqZmMKxWh+/qy06ylQAFQ75xg6802c5Gmz3o6/ERk+DQ/oJmypCAMEPpn
+         56N4o2CCjPnzR4O1BWU8uxTip9AYEWk6kLSxAkho=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.4 77/96] crypto: testmgr - dont try to decrypt uninitialized buffers
+        stable@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Andrew Murray <andrew.murray@arm.com>
+Subject: [PATCH 5.5 088/120] KVM: arm64: pmu: Dont increment SW_INCR if PMCR.E is unset
 Date:   Thu, 13 Feb 2020 07:21:24 -0800
-Message-Id: <20200213151908.336442211@linuxfoundation.org>
+Message-Id: <20200213151930.882972327@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,76 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Eric Auger <eric.auger@redhat.com>
 
-commit eb455dbd02cb1074b37872ffca30a81cb2a18eaa upstream.
+commit 3837407c1aa1101ed5e214c7d6041e7a23335c6e upstream.
 
-Currently if the comparison fuzz tests encounter an encryption error
-when generating an skcipher or AEAD test vector, they will still test
-the decryption side (passing it the uninitialized ciphertext buffer)
-and expect it to fail with the same error.
+The specification says PMSWINC increments PMEVCNTR<n>_EL1 by 1
+if PMEVCNTR<n>_EL0 is enabled and configured to count SW_INCR.
 
-This is sort of broken because it's not well-defined usage of the API to
-pass an uninitialized buffer, and furthermore in the AEAD case it's
-acceptable for the decryption error to be EBADMSG (meaning "inauthentic
-input") even if the encryption error was something else like EINVAL.
+For PMEVCNTR<n>_EL0 to be enabled, we need both PMCNTENSET to
+be set for the corresponding event counter but we also need
+the PMCR.E bit to be set.
 
-Fix this for skcipher by explicitly initializing the ciphertext buffer
-on error, and for AEAD by skipping the decryption test on error.
-
-Reported-by: Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>
-Fixes: d435e10e67be ("crypto: testmgr - fuzz skciphers against their generic implementation")
-Fixes: 40153b10d91c ("crypto: testmgr - fuzz AEADs against their generic implementation")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: 7a0adc7064b8 ("arm64: KVM: Add access handler for PMSWINC register")
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Acked-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/20200124142535.29386-2-eric.auger@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/testmgr.c |   20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ virt/kvm/arm/pmu.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -2102,6 +2102,7 @@ static void generate_random_aead_testvec
- 	 * If the key or authentication tag size couldn't be set, no need to
- 	 * continue to encrypt.
- 	 */
-+	vec->crypt_error = 0;
- 	if (vec->setkey_error || vec->setauthsize_error)
- 		goto done;
+--- a/virt/kvm/arm/pmu.c
++++ b/virt/kvm/arm/pmu.c
+@@ -486,6 +486,9 @@ void kvm_pmu_software_increment(struct k
+ 	if (val == 0)
+ 		return;
  
-@@ -2245,10 +2246,12 @@ static int test_aead_vs_generic_impl(con
- 					req, tsgls);
- 		if (err)
- 			goto out;
--		err = test_aead_vec_cfg(driver, DECRYPT, &vec, vec_name, cfg,
--					req, tsgls);
--		if (err)
--			goto out;
-+		if (vec.crypt_error == 0) {
-+			err = test_aead_vec_cfg(driver, DECRYPT, &vec, vec_name,
-+						cfg, req, tsgls);
-+			if (err)
-+				goto out;
-+		}
- 		cond_resched();
- 	}
- 	err = 0;
-@@ -2678,6 +2681,15 @@ static void generate_random_cipher_testv
- 	skcipher_request_set_callback(req, 0, crypto_req_done, &wait);
- 	skcipher_request_set_crypt(req, &src, &dst, vec->len, iv);
- 	vec->crypt_error = crypto_wait_req(crypto_skcipher_encrypt(req), &wait);
-+	if (vec->crypt_error != 0) {
-+		/*
-+		 * The only acceptable error here is for an invalid length, so
-+		 * skcipher decryption should fail with the same error too.
-+		 * We'll test for this.  But to keep the API usage well-defined,
-+		 * explicitly initialize the ciphertext buffer too.
-+		 */
-+		memset((u8 *)vec->ctext, 0, vec->len);
-+	}
- done:
- 	snprintf(name, max_namelen, "\"random: len=%u klen=%u\"",
- 		 vec->len, vec->klen);
++	if (!(__vcpu_sys_reg(vcpu, PMCR_EL0) & ARMV8_PMU_PMCR_E))
++		return;
++
+ 	enable = __vcpu_sys_reg(vcpu, PMCNTENSET_EL0);
+ 	for (i = 0; i < ARMV8_PMU_CYCLE_IDX; i++) {
+ 		if (!(val & BIT(i)))
 
 
