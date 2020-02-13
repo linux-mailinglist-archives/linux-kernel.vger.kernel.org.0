@@ -2,119 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C12F15C5A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:10:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C411215C69C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:12:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbgBMPXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:23:49 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40878 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728220AbgBMPXB (ORCPT
+        id S1729136AbgBMQCM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 11:02:12 -0500
+Received: from smtprelay0076.hostedemail.com ([216.40.44.76]:38045 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727955AbgBMPYe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:23:01 -0500
-Received: by mail-pl1-f193.google.com with SMTP id y1so2463743plp.7
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:23:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mG5Pj3Ga2qn/6UPh/hiM2vYUP7QMzFr/lGer+oLepCc=;
-        b=ojjKqoJqn3YNbRS9pIbai3sOzbP1aYkgdpr7OpIR1y2+KaxVGpme9iesoJCJU3SRhU
-         HAfQ/pbQUu2k4NcORvH4RHD/TgpX9EwAE3ASjn75CwsQ6aifFHMjui0B/keNeiEfBYAm
-         9VxkhZ441f/jNEys8dffVo1BnGSySP3/lfTo111fQACZ4xowTWKgUHPWcGpSloattgia
-         zE46NmTrTYDxxlLpkEth0WCXUsAzom8BBeNY/XXQAwBpEzm6aNRbYbNJ8efaNmdblTej
-         qEP6ATS99mxjh7IbNgoJcGNL4co6kAqB61eQiK4MdYk2h3VWemMGVBmIpbBfcQdfTTz9
-         T1SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mG5Pj3Ga2qn/6UPh/hiM2vYUP7QMzFr/lGer+oLepCc=;
-        b=cYlR9xM3q2OqNtaJMKafQj745j/b/K+OijNwmsc8lJrJ3oAF/16EhD7MR4NJe7ciWp
-         o34hpO1OOqKh+EpdRvh+6ZsnQpFLHpCL0jxGNcyDEKwTW+mB+8rPOeHoMctebV5iGnSM
-         CcwUiXbFMGt/IJktvt/Uc0W5pAcJKLt6Qgufx3i51pT98zrRnXihF+hMKIQ4jcqRiFR6
-         pOeWH53ntUwOVG6V5D9RF+9jpgBdMxpsnDJY7bFc3elkrnI1lW13v8hgcI/e+exjjQKN
-         onAprVsLSSXscJZZ0DL1eQRoAOH9mwIYgxzHAn+CeNSwsDKSZpoaGXVFJLmABmT1hg/K
-         /Kqw==
-X-Gm-Message-State: APjAAAXH49vLhXM6Nt22sBbSIovjlpaHbkEJtHjFyXozDpyHyBwnQ+Ck
-        SAPR/gRWqwCe0DVakZ7zQCZ7
-X-Google-Smtp-Source: APXvYqyFO7tCYmZ8k+SqmOtcnU6W7tN/B4ksrngWczKUIT1JduB/3SDAP6TvrlAIs6RKKyY3gUuZ5Q==
-X-Received: by 2002:a17:902:a58a:: with SMTP id az10mr28645091plb.20.1581607380940;
-        Thu, 13 Feb 2020 07:23:00 -0800 (PST)
-Received: from mani ([103.59.133.81])
-        by smtp.gmail.com with ESMTPSA id n2sm3561515pgn.71.2020.02.13.07.22.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Feb 2020 07:23:00 -0800 (PST)
-Date:   Thu, 13 Feb 2020 20:52:55 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     arnd@arndb.de, smohanad@codeaurora.org, jhugo@codeaurora.org,
-        kvalo@codeaurora.org, bjorn.andersson@linaro.org,
-        hemantk@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        Thu, 13 Feb 2020 10:24:34 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 64D68180AAD53;
+        Thu, 13 Feb 2020 15:24:32 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3353:3653:3865:3866:3867:3872:4321:4605:5007:6119:7903:10004:10400:11026:11658:11914:12043:12048:12291:12297:12555:12683:12760:13439:14110:14181:14394:14659:14721:14877:21080:21627:21990:30054:30070,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: fact83_447fe222a2361
+X-Filterd-Recvd-Size: 3345
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 13 Feb 2020 15:24:30 +0000 (UTC)
+Message-ID: <8b6c1b9031ab9f3cdebada06b8d46467f1492d68.camel@perches.com>
+Subject: [PATCH] checkpatch: Prefer fallthrough; over fallthrough comments
+From:   Joe Perches <joe@perches.com>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Timur Tabi <timur@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Anton Vorontsov <avorontsov@ru.mvista.com>,
+        kbuild test robot <lkp@intel.com>, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/16] bus: mhi: core: Add support for registering MHI
- controllers
-Message-ID: <20200213152255.GC15010@mani>
-References: <20200131135009.31477-1-manivannan.sadhasivam@linaro.org>
- <20200131135009.31477-3-manivannan.sadhasivam@linaro.org>
- <20200206165606.GA3894455@kroah.com>
- <20200211191147.GB11908@Mani-XPS-13-9360>
- <20200211192236.GB1962867@kroah.com>
+Date:   Thu, 13 Feb 2020 07:23:13 -0800
+In-Reply-To: <6ab68169-dde6-b5ba-0909-fa685bd24aac@rasmusvillemoes.dk>
+References: <20200213085401.27862-1-linux@rasmusvillemoes.dk>
+         <20200213125659.GB3325929@kroah.com>
+         <6ab68169-dde6-b5ba-0909-fa685bd24aac@rasmusvillemoes.dk>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200211192236.GB1962867@kroah.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+commit 294f69e662d1 ("compiler_attributes.h: Add 'fallthrough'
+pseudo keyword for switch/case use") added the pseudo keyword
+so add a test for it to checkpatch.
 
-On Tue, Feb 11, 2020 at 11:22:36AM -0800, Greg KH wrote:
-> On Wed, Feb 12, 2020 at 12:41:47AM +0530, Manivannan Sadhasivam wrote:
-> > Hi Greg,
-> > 
-> > On Thu, Feb 06, 2020 at 05:56:06PM +0100, Greg KH wrote:
-> > > On Fri, Jan 31, 2020 at 07:19:55PM +0530, Manivannan Sadhasivam wrote:
-> > > > +static void mhi_release_device(struct device *dev)
-> > > > +{
-> > > > +	struct mhi_device *mhi_dev = to_mhi_device(dev);
-> > > > +
-> > > > +	if (mhi_dev->ul_chan)
-> > > > +		mhi_dev->ul_chan->mhi_dev = NULL;
-> > > 
-> > > That looks really odd.  Why didn't you just drop the reference you
-> > > should have grabbed here for this pointer?  You did properly increment
-> > > it when you saved it, right?  :)
-> > > 
-> > 
-> > Well, there is no reference count (kref) exist for mhi_dev.
-> 
-> Then something is wrong with your model :(
-> 
-> You can't save pointers off to things without reference counting, that
-> is going to cause you real problems.  See the coding style document for
-> all the details.
-> 
-> > And we really needed to NULL the mhi_dev to avoid any dangling
-> > reference to it.
-> 
-> Again, that's not how to do this correctly.
-> 
-> > The reason for not having kref is that, each mhi_dev will be used by
-> > maximum of 2 channels only. So thought that refcounting is not needed.
-> > Please correct me if I'm wrong.
-> 
-> Please read section 11 of Documentation/process/coding-style.rst
-> 
+Warn on a patch or use --strict for files.
 
-I have fixed it and will send the next iteration soon.
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ scripts/checkpatch.pl | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-Thanks,
-Mani
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index f3b8434..5579d7 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2286,6 +2286,19 @@ sub pos_last_openparen {
+ 	return length(expand_tabs(substr($line, 0, $last_openparen))) + 1;
+ }
+ 
++sub get_raw_comment {
++	my ($line, $rawline) = @_;
++	my $comment = '';
++
++	for my $i (0 .. (length($line) - 1)) {
++		if (substr($line, $i, 1) eq "$;") {
++			$comment .= substr($rawline, $i, 1);
++		}
++	}
++
++	return $comment;
++}
++
+ sub process {
+ 	my $filename = shift;
+ 
+@@ -2447,6 +2460,7 @@ sub process {
+ 		$sline =~ s/$;/ /g;	#with comments as spaces
+ 
+ 		my $rawline = $rawlines[$linenr - 1];
++		my $raw_comment = get_raw_comment($line, $rawline);
+ 
+ # check if it's a mode change, rename or start of a patch
+ 		if (!$in_commit_log &&
+@@ -6403,6 +6417,28 @@ sub process {
+ 			}
+ 		}
+ 
++# check for /* fallthrough */ like comment, prefer fallthrough;
++		my @fallthroughs = (
++			'fallthrough',
++			'@fallthrough@',
++			'lint -fallthrough[ \t]*',
++			'intentional(?:ly)?[ \t]*fall(?:(?:s | |-)[Tt]|t)hr(?:ough|u|ew)',
++			'(?:else,?\s*)?FALL(?:S | |-)?THR(?:OUGH|U|EW)[ \t.!]*(?:-[^\n\r]*)?',
++			'Fall(?:(?:s | |-)[Tt]|t)hr(?:ough|u|ew)[ \t.!]*(?:-[^\n\r]*)?',
++			'fall(?:s | |-)?thr(?:ough|u|ew)[ \t.!]*(?:-[^\n\r]*)?',
++		    );
++		if ($raw_comment ne '') {
++			foreach my $ft (@fallthroughs) {
++				if ($raw_comment =~ /$ft/) {
++					my $msg_level = \&WARN;
++					$msg_level = \&CHK if ($file);
++					&{$msg_level}("PREFER_FALLTHROUGH",
++						      "Prefer 'fallthrough;' over fallthrough comment\n" . $herecurr);
++					last;
++				}
++			}
++		}
++
+ # check for switch/default statements without a break;
+ 		if ($perl_version_ok &&
+ 		    defined $stat &&
 
-> thanks,
-> 
-> greg k-h
+
