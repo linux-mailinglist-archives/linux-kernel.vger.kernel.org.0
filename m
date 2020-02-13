@@ -2,263 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B05EA15C501
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1071815C50C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388072AbgBMPwb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:52:31 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39081 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728506AbgBMPwT (ORCPT
+        id S2388045AbgBMPwy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:52:54 -0500
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:36030 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729202AbgBMPww (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:52:19 -0500
-Received: by mail-wm1-f65.google.com with SMTP id c84so7330936wme.4
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:52:17 -0800 (PST)
+        Thu, 13 Feb 2020 10:52:52 -0500
+Received: by mail-qv1-f67.google.com with SMTP id db9so2825044qvb.3;
+        Thu, 13 Feb 2020 07:52:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=tveyt6J2X+uabgEQ/mj5bAqqccazTsWZH5vIdnttJSg=;
-        b=OcbaJyShdx1CRYbEg0P7r6/7tU4ttgaXvOw6dIVStzuNDwuKZO9sZNgWdCK71k8pFE
-         b5WfunilEzaZF/54lgN1xTSDCi8dtm+WwiyEoWeHJHdRbKu65sCJehSgDxSqLMjvjIlW
-         yX4Kb7FqQFH/cos/EMvelQGbB1mLmMkYqpS6OhqmmuPN0Z8Gp+qcUKe1i0bEKveAIsJH
-         Tn4kkGKR82GtzFUa5hRT5YyorS9UTW3iFMnyNpPKh04AdbXI9l7uGBrm917etxPjNnMP
-         SrcIGXWJ6tWyHuSv7aCiQSbNuq+b9jHF0ozI3VdqXAbEAq8WkGyb1R7X62iKuS6GDHwG
-         6NwQ==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=EuJrg4ULs0tpagr31hXq1zdKPAdFI4MMOOagF1qJLOg=;
+        b=PnjLF4bNA/eUyCHgQ/R8wWTcv3gOxU/nYK8t0Sd6AcOsphiCjIu2d4hWM4XNJrJafd
+         XgexmQM//GYEUS2Q79iqv68UkFJZPtLjF1AZJdYosM2nOHeRG3BwnZoNAe+H15LDic0U
+         mKRMYRni5DqhLpZ9U0Plvl11o3JecbI4ETKTy4aMgKU4sndLLwACtL53DzTrrbRX0WWy
+         oNFNxYsLwhjxLBwrqYmDBR/4Y5K+F6KfdMe2Sr2t56jkIy16cydbw7Q6u8fhT2NUopRX
+         YWcB76bAbCNyH5CJcWEJDAJhA8Ungl8ZJhh35Jp0l2R31W8u+aum4qdhDbnwFDwye59v
+         vTrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=tveyt6J2X+uabgEQ/mj5bAqqccazTsWZH5vIdnttJSg=;
-        b=hEbzsvuE/6ExppRUC1DFFyvFGKhb418jSsUegqIDHigk2OhlBcwS6eOa7dzIW0hln8
-         qAbNHlh1KwwzDjPswa+VN7K2xyODpPUMlBtWeMP+DwaI4nDPA38ruteUIId0S7q5YWdR
-         eWZ8XP0tzUwIEluhiyP+mCNDmeuuzH5K/wXoxbGlmSYxuGcl5ibiGas+VTtHKdCtLQHg
-         wIYxj7rgXywOcuQmkMgGW/uHI/oq+zatYWz0OiLQsMQZrmuy1cetI+JrR/Xdj/y79/vh
-         G+t1YYj6gIKpeihxaC+1U1Zpq0OW8Upnlb4Kky5NA9xmt2zsndNeI69MIlGjmvh7wmt7
-         oZBw==
-X-Gm-Message-State: APjAAAVYZIErnzmUBwZhaUKTwmLKw7vMeV4C+DzOXRtK80U3e15ydMtN
-        Bkv3FWxNLpRvJb0uH7lBycdl7g==
-X-Google-Smtp-Source: APXvYqwA041IWnaiiF8p6WaNGCtAIMpLGWSuvS9KZogSxJnR7PyvLosI31gLD3ccOvYkV2nUj2AC7g==
-X-Received: by 2002:a7b:cbd6:: with SMTP id n22mr6783621wmi.118.1581609136778;
-        Thu, 13 Feb 2020 07:52:16 -0800 (PST)
-Received: from starbuck.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id e1sm3319814wrt.84.2020.02.13.07.52.15
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=EuJrg4ULs0tpagr31hXq1zdKPAdFI4MMOOagF1qJLOg=;
+        b=ITIpqr3HZ2A4pea7QD1aVIDLQmjHo92tr9fODfDL+uNA4IOH68Bcehed8+SjocPl78
+         o6ywE04/1vctnNNo29OhuEmfB/2GQxitn+yRq7ArQX8hJzI9wJ71wLBjzCESzC4AejXY
+         8+pW4h0t2bjzZSyWtlyBmxjzk/w3RxtfAdLSjE+UG2/4uya/Xlurs2oeNGKph1HTfIVS
+         XCOKhUd1uWI00pUFhw9nrniGXfG4uYcGgo8bIpObIsbEBKJgnrBm3k+7JKsbiRO4PsFs
+         OhBUOgb4papceI/dyMjLwMoM+jUIrrfyZL1srvnK6EmLAOBmd+cxvNGwrmaoYaWbdeGd
+         16ZA==
+X-Gm-Message-State: APjAAAXiMcGBKzVmAgFVfBGnfxN1COhp7Tn9SiyOZ3QTT2gVQULFESKz
+        6gmpNRoJhOg+hI4nshN4qq6gLz/toEI=
+X-Google-Smtp-Source: APXvYqwgtnWEN5FesTTslQ57egNuS1baXiQAXTLM2vbGsZMUPJpSNipp0vBwp8oFOfgBHYOElxnPgQ==
+X-Received: by 2002:a0c:efc4:: with SMTP id a4mr12479571qvt.178.1581609170928;
+        Thu, 13 Feb 2020 07:52:50 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::1:f3be])
+        by smtp.gmail.com with ESMTPSA id 65sm1639533qtf.95.2020.02.13.07.52.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 07:52:16 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 9/9] ASoC: meson: gx: add sound card support
-Date:   Thu, 13 Feb 2020 16:51:59 +0100
-Message-Id: <20200213155159.3235792-10-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200213155159.3235792-1-jbrunet@baylibre.com>
-References: <20200213155159.3235792-1-jbrunet@baylibre.com>
+        Thu, 13 Feb 2020 07:52:50 -0800 (PST)
+Date:   Thu, 13 Feb 2020 10:52:49 -0500
+From:   Tejun Heo <tj@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH v2 3/3] mm: memcontrol: recursive memory.low protection
+Message-ID: <20200213155249.GI88887@mtj.thefacebook.com>
+References: <20191219200718.15696-1-hannes@cmpxchg.org>
+ <20191219200718.15696-4-hannes@cmpxchg.org>
+ <20200130170020.GZ24244@dhcp22.suse.cz>
+ <20200203215201.GD6380@cmpxchg.org>
+ <20200211164753.GQ10636@dhcp22.suse.cz>
+ <20200212170826.GC180867@cmpxchg.org>
+ <20200213074049.GA31689@dhcp22.suse.cz>
+ <20200213135348.GF88887@mtj.thefacebook.com>
+ <20200213154731.GE31689@dhcp22.suse.cz>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200213154731.GE31689@dhcp22.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the sound card used on the amlogic GX SoC family
+Hello,
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- sound/soc/meson/Kconfig   |   7 ++
- sound/soc/meson/Makefile  |   2 +
- sound/soc/meson/gx-card.c | 141 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 150 insertions(+)
- create mode 100644 sound/soc/meson/gx-card.c
+On Thu, Feb 13, 2020 at 04:47:31PM +0100, Michal Hocko wrote:
+> Well, I would tend to agree but I can see an existing cgroup hierarchy
+> imposed by systemd and that is more about "logical" organization of
+> processes based on their purpose than anything resembling resources.
+> So what can we do about that to make it all work?
 
-diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
-index 347fa78e309a..22d2af75b59e 100644
---- a/sound/soc/meson/Kconfig
-+++ b/sound/soc/meson/Kconfig
-@@ -101,6 +101,13 @@ config SND_MESON_CARD_UTILS
- config SND_MESON_CODEC_GLUE
- 	tristate
- 
-+config SND_MESON_GX_SOUND_CARD
-+	tristate "Amlogic GX Sound Card Support"
-+	select SND_MESON_CARD_UTILS
-+	imply SND_MESON_AIU
-+	help
-+	  Select Y or M to add support for the GXBB/GXL SoC sound card
-+
- config SND_MESON_G12A_TOHDMITX
- 	tristate "Amlogic G12A To HDMI TX Control Support"
- 	select REGMAP_MMIO
-diff --git a/sound/soc/meson/Makefile b/sound/soc/meson/Makefile
-index bef2b72fd7a7..f9c90c391498 100644
---- a/sound/soc/meson/Makefile
-+++ b/sound/soc/meson/Makefile
-@@ -21,6 +21,7 @@ snd-soc-meson-axg-spdifout-objs := axg-spdifout.o
- snd-soc-meson-axg-pdm-objs := axg-pdm.o
- snd-soc-meson-card-utils-objs := meson-card-utils.o
- snd-soc-meson-codec-glue-objs := meson-codec-glue.o
-+snd-soc-meson-gx-sound-card-objs := gx-card.o
- snd-soc-meson-g12a-tohdmitx-objs := g12a-tohdmitx.o
- 
- obj-$(CONFIG_SND_MESON_AIU) += snd-soc-meson-aiu.o
-@@ -37,4 +38,5 @@ obj-$(CONFIG_SND_MESON_AXG_SPDIFOUT) += snd-soc-meson-axg-spdifout.o
- obj-$(CONFIG_SND_MESON_AXG_PDM) += snd-soc-meson-axg-pdm.o
- obj-$(CONFIG_SND_MESON_CARD_UTILS) += snd-soc-meson-card-utils.o
- obj-$(CONFIG_SND_MESON_CODEC_GLUE) += snd-soc-meson-codec-glue.o
-+obj-$(CONFIG_SND_MESON_GX_SOUND_CARD) += snd-soc-meson-gx-sound-card.o
- obj-$(CONFIG_SND_MESON_G12A_TOHDMITX) += snd-soc-meson-g12a-tohdmitx.o
-diff --git a/sound/soc/meson/gx-card.c b/sound/soc/meson/gx-card.c
-new file mode 100644
-index 000000000000..7b01dcb73e5e
---- /dev/null
-+++ b/sound/soc/meson/gx-card.c
-@@ -0,0 +1,141 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+//
-+// Copyright (c) 2020 BayLibre, SAS.
-+// Author: Jerome Brunet <jbrunet@baylibre.com>
-+
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <sound/soc.h>
-+#include <sound/soc-dai.h>
-+
-+#include "meson-card.h"
-+
-+struct gx_dai_link_i2s_data {
-+	unsigned int mclk_fs;
-+};
-+
-+/*
-+ * Base params for the codec to codec links
-+ * Those will be over-written by the CPU side of the link
-+ */
-+static const struct snd_soc_pcm_stream codec_params = {
-+	.formats = SNDRV_PCM_FMTBIT_S24_LE,
-+	.rate_min = 5525,
-+	.rate_max = 192000,
-+	.channels_min = 1,
-+	.channels_max = 8,
-+};
-+
-+static int gx_card_i2s_be_hw_params(struct snd_pcm_substream *substream,
-+				    struct snd_pcm_hw_params *params)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct meson_card *priv = snd_soc_card_get_drvdata(rtd->card);
-+	struct gx_dai_link_i2s_data *be =
-+		(struct gx_dai_link_i2s_data *)priv->link_data[rtd->num];
-+
-+	return meson_card_i2s_set_sysclk(substream, params, be->mclk_fs);
-+}
-+
-+static const struct snd_soc_ops gx_card_i2s_be_ops = {
-+	.hw_params = gx_card_i2s_be_hw_params,
-+};
-+
-+static int gx_card_parse_i2s(struct snd_soc_card *card,
-+			     struct device_node *node,
-+			     int *index)
-+{
-+	struct meson_card *priv = snd_soc_card_get_drvdata(card);
-+	struct snd_soc_dai_link *link = &card->dai_link[*index];
-+	struct gx_dai_link_i2s_data *be;
-+
-+	/* Allocate i2s link parameters */
-+	be = devm_kzalloc(card->dev, sizeof(*be), GFP_KERNEL);
-+	if (!be)
-+		return -ENOMEM;
-+	priv->link_data[*index] = be;
-+
-+	/* Setup i2s link */
-+	link->ops = &gx_card_i2s_be_ops;
-+	link->dai_fmt = meson_card_parse_daifmt(node, link->cpus->of_node);
-+
-+	of_property_read_u32(node, "mclk-fs", &be->mclk_fs);
-+
-+	return 0;
-+}
-+
-+static int gx_card_cpu_identify(struct snd_soc_dai_link_component *c,
-+				char *match)
-+{
-+	if (of_device_is_compatible(c->of_node, DT_PREFIX "aiu")) {
-+		if (strstr(c->dai_name, match))
-+			return 1;
-+	}
-+
-+	/* dai not matched */
-+	return 0;
-+}
-+
-+static int gx_card_add_link(struct snd_soc_card *card, struct device_node *np,
-+			    int *index)
-+{
-+	struct snd_soc_dai_link *dai_link = &card->dai_link[*index];
-+	struct snd_soc_dai_link_component *cpu;
-+	int ret;
-+
-+	cpu = devm_kzalloc(card->dev, sizeof(*cpu), GFP_KERNEL);
-+	if (!cpu)
-+		return -ENOMEM;
-+
-+	dai_link->cpus = cpu;
-+	dai_link->num_cpus = 1;
-+
-+	ret = meson_card_parse_dai(card, np, &dai_link->cpus->of_node,
-+				   &dai_link->cpus->dai_name);
-+	if (ret)
-+		return ret;
-+
-+	if (gx_card_cpu_identify(dai_link->cpus, "FIFO"))
-+		ret = meson_card_set_fe_link(card, dai_link, np, true);
-+	else
-+		ret = meson_card_set_be_link(card, dai_link, np);
-+
-+	if (ret)
-+		return ret;
-+
-+	/* Check if the cpu is the i2s encoder and parse i2s data */
-+	if (gx_card_cpu_identify(dai_link->cpus, "I2S Encoder"))
-+		ret = gx_card_parse_i2s(card, np, index);
-+
-+	/* Or apply codec to codec params if necessary */
-+	else if (gx_card_cpu_identify(dai_link->cpus, "CODEC CTRL"))
-+		dai_link->params = &codec_params;
-+
-+	return ret;
-+}
-+
-+static const struct meson_card_match_data gx_card_match_data = {
-+	.add_link = gx_card_add_link,
-+};
-+
-+static const struct of_device_id gx_card_of_match[] = {
-+	{
-+		.compatible = "amlogic,gx-sound-card",
-+		.data = &gx_card_match_data,
-+	}, {}
-+};
-+MODULE_DEVICE_TABLE(of, gx_card_of_match);
-+
-+static struct platform_driver gx_card_pdrv = {
-+	.probe = meson_card_probe,
-+	.remove = meson_card_remove,
-+	.driver = {
-+		.name = "gx-sound-card",
-+		.of_match_table = gx_card_of_match,
-+	},
-+};
-+module_platform_driver(gx_card_pdrv);
-+
-+MODULE_DESCRIPTION("Amlogic GX ALSA machine driver");
-+MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
-+MODULE_LICENSE("GPL v2");
+systemd right now isn't configuring any resource control by default,
+so I'm not sure why it is relevant in this discussion. You gotta
+change the layout to configure resource control no matter what and
+it's pretty easy to do. systemd folks are planning to integrate higher
+level resource control features, so my expectation is that the default
+layout is gonna change as it develops.
+
+Thanks.
+
 -- 
-2.24.1
-
+tejun
