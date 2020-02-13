@@ -2,193 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB48B15CBD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 21:19:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E975B15CBE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 21:20:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbgBMUTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 15:19:18 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:46810 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726968AbgBMUTS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 15:19:18 -0500
-Received: by mail-oi1-f196.google.com with SMTP id a22so7096240oid.13;
-        Thu, 13 Feb 2020 12:19:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Bfr+esBsHNaFRTQzYPRTVOspPKJf2wCefrCUUIjTbrM=;
-        b=NPUn1NnqWMHNRr9KUxHDsJXvr20A4UQ+WdrH80a6RRn0IunEBBtMaO5vUSmsoNGxHa
-         42Y8zL9NtLkzgoqXiAfaRQBJB99tyLLcNkfQd6fQ8Ky6mc5ipCanm8yigkxQGUxEcm4e
-         IXuDbI8INxiq2595087Si5qhClXNHIiEMfmYeaxOjYwHAesyJARK8OycsAhQIQnsGEhL
-         xNBxsTsjSnCHE5JRMoxWYiO0+p+ov4nmMupyvQfSSUQnObWuY1zQW/Y9CPtWEny06SYl
-         L8BjVTJnzPYZMYYCV4zG8VVHrw77hLBuzXNaNvtKkI5I278pZLk0gx7/HIAnJ0N6l7JS
-         ltOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Bfr+esBsHNaFRTQzYPRTVOspPKJf2wCefrCUUIjTbrM=;
-        b=aOcYxdbQOBBUvKy2wDPGQ5b2ukOru3AZilqvdF0EpsbSoZIdE8SMoWK93kojSBaOn6
-         N2jm9IBAf8DJmweM4hQfJmalSCaL+/KuWJzkcJz3MzVkDNqJRIh/sRz7m05W6aJWvMya
-         eXoGIOO9wQJntrlH1kH3j+dvq+6mjgk7M4GzH8eB1yweMwBtX+szdHhT2wP3EgfsHPJv
-         HX00p5Sel2QvpPfPKhHwhz7F0G+Cj+307LN/hM1GhE5yxodmnxHQKCcL7eZP4vLBgkHN
-         DbNh+/OPrMBLrxoNhge9AGAAz1xaSxa2fqsRxyezbwYShhTYjmvp+ZMGrISa9xvmnKgr
-         V5rA==
-X-Gm-Message-State: APjAAAW5yUEgd1gecPpwD5LkUaX4Qr46JPekyhkKt800zhIKvjAbtUpi
-        F7YetupAYuAMjutGgjaD4TI=
-X-Google-Smtp-Source: APXvYqzDNKV11rJwNaq95rUg/4Mu3e50MemTBFAz7q8b5nBFi6k2OjPGRoW305AblRQDLr/TOJvUhA==
-X-Received: by 2002:aca:1012:: with SMTP id 18mr4002409oiq.151.1581625156920;
-        Thu, 13 Feb 2020 12:19:16 -0800 (PST)
-Received: from [100.71.96.87] ([143.166.81.254])
-        by smtp.gmail.com with ESMTPSA id l1sm1022530oic.22.2020.02.13.12.19.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Feb 2020 12:19:15 -0800 (PST)
-Subject: Re: [PATCH v3] PCI: pciehp: Make sure pciehp_isr clears interrupt
- events
-From:   Stuart Hayes <stuart.w.hayes@gmail.com>
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Austin Bolen <austin_bolen@dell.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, narendra_k@dell.com,
-        Enzo Matsumiya <ematsumiya@suse.com>
-References: <20200207195450.52026-1-stuart.w.hayes@gmail.com>
- <20200209150328.2x2zumhqbs6fihmc@wunner.de>
- <20200209180722.ikuyjignnd7ddfp5@wunner.de>
- <20200209202512.rzaqoc7tydo2ouog@wunner.de>
- <0f772c73-5616-ae7c-6808-ecefac8ebf13@gmail.com>
-Message-ID: <55648b65-146c-4970-3ae9-53fee03afbd2@gmail.com>
-Date:   Thu, 13 Feb 2020 14:19:14 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2387412AbgBMUUG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 15:20:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33786 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728682AbgBMUUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 15:20:04 -0500
+Received: from ziggy.cz (unknown [37.223.145.31])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66F0F2469D;
+        Thu, 13 Feb 2020 20:19:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581625203;
+        bh=R8UpRNiytRsuHIWc0OqScPoYY0fGZraRBsSlvTcx6mU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UTS8/b23WmULbwyasgTnsQ521FQFg2A0LsOgiLNdjiDYAsDc7jh7Yd7mg5vPjGcj+
+         MDg0ZmHb2J2TnmJZCAvJzhEtfSeGD/kAD33NvwqjNvYOqaj9/8rt0/W8sBdGmGaF8U
+         EXN5E1fIqbHCIYSBlFcI7pEFGDwd3TQNeZBGg6IM=
+From:   matthias.bgg@kernel.org
+To:     robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
+        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
+        sboyd@kernel.org, ulrich.hecht+renesas@gmail.com,
+        laurent.pinchart@ideasonboard.com, enric.balletbo@collabora.com
+Cc:     devicetree@vger.kernel.org, drinkcat@chromium.org,
+        frank-w@public-files.de, sean.wang@mediatek.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        wens@csie.org, linux-mediatek@lists.infradead.org,
+        rdunlap@infradead.org, matthias.bgg@kernel.org,
+        hsinyi@chromium.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        Matthias Brugger <mbrugger@suse.com>,
+        Allison Randal <allison@lohutok.net>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Richard Fontana <rfontana@redhat.com>,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        mtk01761 <wendell.lin@mediatek.com>
+Subject: [PATCH v7 00/13] arm/arm64: mediatek: Fix mmsys device probing
+Date:   Thu, 13 Feb 2020 21:19:40 +0100
+Message-Id: <20200213201953.15268-1-matthias.bgg@kernel.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <0f772c73-5616-ae7c-6808-ecefac8ebf13@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Matthias Brugger <mbrugger@suse.com>
 
+This is version seven of the series. The biggest change is, that I added
+a first patch that actually moves the mmsys binding from arm/mediatek to
+display/mediatek, as in effect the mmsys is part of the display
+subsystem.
 
-On 2/10/20 3:40 PM, Stuart Hayes wrote:
-> 
-> 
-> On 2/9/20 2:25 PM, Lukas Wunner wrote:
->> On Sun, Feb 09, 2020 at 07:07:22PM +0100, Lukas Wunner wrote:
->>> Actually, scratch that.  After thinking about this problem for a day
->>> I've come up with a much simpler and more elegant solution.  Could you
->>> test if the below works for you?
->>
->> Sorry, I missed a few things:
->>
->> * pm_runtime_put() is called too often in the MSI case.
->> * If only the CC bit is set or if ignore_hotplug is set, the function
->>   may return prematurely without re-reading the Slot Status register.
->> * Returning IRQ_NONE in the MSI case even though the IRQ thread was woken
->>   may incorrectly signal a spurious interrupt to the genirq code.
->>   It's better to return IRQ_HANDLED instead.
->>
->> Below is another attempt.  I'll have to take a look at this with a
->> fresh pair of eyeballs though to verify I haven't overlooked anything
->> else and also to determine if this is actually simpler than Stuart's
->> approach.  Again, the advantage here is that processing of the events
->> by the IRQ thread is sped up by not delaying it until the Slot Status
->> register has settled.
->>
->> Thanks.
->>
->> -- >8 --
->> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
->> index c3e3f53..db5baa5 100644
->> --- a/drivers/pci/hotplug/pciehp_hpc.c
->> +++ b/drivers/pci/hotplug/pciehp_hpc.c
->> @@ -530,6 +530,7 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
->>  	struct controller *ctrl = (struct controller *)dev_id;
->>  	struct pci_dev *pdev = ctrl_dev(ctrl);
->>  	struct device *parent = pdev->dev.parent;
->> +	irqreturn_t ret = IRQ_NONE;
->>  	u16 status, events;
->>  
->>  	/*
->> @@ -553,6 +554,7 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
->>  		}
->>  	}
->>  
->> +read_status:
->>  	pcie_capability_read_word(pdev, PCI_EXP_SLTSTA, &status);
->>  	if (status == (u16) ~0) {
->>  		ctrl_info(ctrl, "%s: no response from device\n", __func__);
->> @@ -579,13 +581,11 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
->>  	if (!events) {
->>  		if (parent)
->>  			pm_runtime_put(parent);
->> -		return IRQ_NONE;
->> +		return ret;
->>  	}
->>  
->>  	pcie_capability_write_word(pdev, PCI_EXP_SLTSTA, events);
->>  	ctrl_dbg(ctrl, "pending interrupts %#06x from Slot Status\n", events);
->> -	if (parent)
->> -		pm_runtime_put(parent);
->>  
->>  	/*
->>  	 * Command Completed notifications are not deferred to the
->> @@ -595,21 +595,33 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
->>  		ctrl->cmd_busy = 0;
->>  		smp_mb();
->>  		wake_up(&ctrl->queue);
->> -
->> -		if (events == PCI_EXP_SLTSTA_CC)
->> -			return IRQ_HANDLED;
->> -
->>  		events &= ~PCI_EXP_SLTSTA_CC;
->>  	}
->>  
->>  	if (pdev->ignore_hotplug) {
->>  		ctrl_dbg(ctrl, "ignoring hotplug event %#06x\n", events);
->> -		return IRQ_HANDLED;
->> +		events = 0;
->>  	}
->>  
->>  	/* Save pending events for consumption by IRQ thread. */
->>  	atomic_or(events, &ctrl->pending_events);
->> -	return IRQ_WAKE_THREAD;
->> +
->> +	/*
->> +	 * In MSI mode, all event bits must be zero before the port will send
->> +	 * a new interrupt (PCIe Base Spec r5.0 sec 6.7.3.4).  So re-read the
->> +	 * Slot Status register in case a bit was set between read and write.
->> +	 */
->> +	if (pci_dev_msi_enabled(pdev) && !pciehp_poll_mode) {
->> +		irq_wake_thread(irq, ctrl);
->> +		ret = IRQ_HANDLED;
->> +		goto read_status;
->> +	}
->> +
->> +	if (parent)
->> +		pm_runtime_put(parent);
->> +	if (events)
->> +		return IRQ_WAKE_THREAD;
->> +	return IRQ_HANDLED;
->>  }
->>  
->>  static irqreturn_t pciehp_ist(int irq, void *dev_id)
->>
-> 
-> I tested this patch, and it fixes the issue on my system.
-> 
+Since version five, the clock probing is implemented through a platform driver.
+The corresponding platform device get's created in the DRM driver. I converted
+all the clock drivers to platform drivers and tested the approach on the Acer
+Chromebook R13 (mt8173 based).
+Apart from that I reordered the patches so that the DT bindings update are the
+first patches.
 
-CCing Enzo Matsumiya.
+MMSYS in Mediatek SoCs has some registers to control clock gates (which is
+used in the clk driver) and some registers to set the routing and enable
+the differnet blocks of the display subsystem.
+
+Up to now both drivers, clock and drm are probed with the same device tree
+compatible. But only the first driver get probed, which in effect breaks
+graphics on mt8173 and mt2701.
+
+This patch uses a platform device registration in the DRM driver, which
+will trigger the probe of the corresponding clock driver. It was tested on the
+Acer R13 Chromebook.
+
+Changes in v7:
+- move the binding description
+- add hint to the mmsys binding document
+- make mmsys description generic
+- fix typo in commit message
+- fix check of return value of of_clk_get
+- free clk_data->clks as well
+- get rid of private data structure
+
+Changes in v6:
+- re-arrange the patch order
+- generate platform_device for mmsys clock driver inside the DRM driver
+- fix DTS binding accordingly
+- switch all mmsys clock driver to platform probing
+- fix mt8173 platform driver remove function
+- fix probe defer path in HDMI driver
+- fix probe defer path in mtk_mdp_comp
+- fix identation of error messages
+
+Changes in v5:
+- fix missing regmap accessors in drm diver (patch 1)
+- omit probe deffered warning on all drivers (patch 5)
+- update drm and clk bindings (patch 6 and 7)
+- put mmsys clock part in dts child node of mmsys. Only done
+for HW where no dts backport compatible breakage is expected
+(either DRM driver not yet implemented or no HW available to
+the public) (patch 9 to 12)
+
+Changes in v4:
+- use platform device to probe clock driver
+- add Acked-by CK Hu for the probe deferred patch
+
+Changes in v3:
+- fix kconfig typo (shame on me)
+- delete __initconst from mm_clocks as converted to a platform driver
+
+Changes in v2:
+- add binding documentation
+- ddp: use regmap_update_bits
+- ddp: ignore EPROBE_DEFER on clock probing
+- mfd: delete mmsys_private
+- add Reviewed-by and Acked-by tags
+
+Matthias Brugger (13):
+  dt-bindings: arm: move mmsys description to display
+  dt-bindings: display: mediatek: Add mmsys binding description
+  dt-bindings: mediatek: Add compatible for mt7623
+  drm/mediatek: Use regmap for register access
+  drm: mediatek: Omit warning on probe defers
+  media: mtk-mdp: Check return value of of_clk_get
+  clk: mediatek: mt2701: switch mmsys to platform device probing
+  clk: mediatek: mt2712e: switch to platform device probing
+  clk: mediatek: mt6779: switch mmsys to platform device probing
+  clk: mediatek: mt6797: switch to platform device probing
+  clk: mediatek: mt8183: switch mmsys to platform device probing
+  clk: mediatek: mt8173: switch mmsys to platform device probing
+  drm/mediatek: Add support for mmsys through a pdev
+
+ .../display/mediatek/mediatek,disp.txt        |  5 ++
+ .../mediatek/mediatek,mmsys.txt               |  9 +---
+ drivers/clk/mediatek/clk-mt2701-mm.c          | 34 ++++++++----
+ drivers/clk/mediatek/clk-mt2712-mm.c          | 32 +++++++----
+ drivers/clk/mediatek/clk-mt6779-mm.c          | 32 +++++++----
+ drivers/clk/mediatek/clk-mt6797-mm.c          | 34 ++++++++----
+ drivers/clk/mediatek/clk-mt8173.c             | 45 +++++++++++++---
+ drivers/clk/mediatek/clk-mt8183-mm.c          | 30 +++++++----
+ drivers/gpu/drm/mediatek/mtk_disp_color.c     |  5 +-
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c       |  5 +-
+ drivers/gpu/drm/mediatek/mtk_disp_rdma.c      |  5 +-
+ drivers/gpu/drm/mediatek/mtk_dpi.c            | 12 +++--
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c       |  4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c        | 53 ++++++++-----------
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.h        |  4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c        | 35 +++++++++---
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h        |  4 +-
+ drivers/gpu/drm/mediatek/mtk_dsi.c            |  8 ++-
+ drivers/gpu/drm/mediatek/mtk_hdmi.c           |  4 +-
+ drivers/media/platform/mtk-mdp/mtk_mdp_comp.c |  6 +++
+ 20 files changed, 246 insertions(+), 120 deletions(-)
+ rename Documentation/devicetree/bindings/{arm => display}/mediatek/mediatek,mmsys.txt (61%)
+
+-- 
+2.24.1
+
