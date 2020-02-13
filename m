@@ -2,321 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6DEA15C4D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B56615C4F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729067AbgBMPu5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:50:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55532 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728180AbgBMPu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:50:56 -0500
-Received: from localhost (unknown [104.132.1.104])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B74A2073C;
-        Thu, 13 Feb 2020 15:50:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581609055;
-        bh=67cBmMXAaMxoFXydo1CCWUcl3bQ1+tlC1lTSDW1I7hI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rGAkxrHG29IXEPhmN+miOKX0GOw4IM4vm0YXZYc+33H5XkVwpPPG7d0oWfoezwYAt
-         YmqiMkikSbKZyW9dvxmYbZo4hRykp3TgftXexJzQKeBzkEZIe7hAN/YogHyh2LxbrW
-         BPoP9vUGTRsJHSdq+p5gYxEC38VVx5yXXjPRE5lQ=
-Date:   Thu, 13 Feb 2020 07:50:55 -0800
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     roman.sudarikov@linux.intel.com
-Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, eranian@google.com,
-        bgregg@netflix.com, ak@linux.intel.com, kan.liang@linux.intel.com,
-        alexander.antonov@intel.com
-Subject: Re: [PATCH v6 3/3] perf =?iso-8859-1?Q?x86?=
- =?iso-8859-1?Q?=3A_Exposing_an_Uncore_unit_to_PMON_for_Intel_Xeon?=
- =?iso-8859-1?Q?=AE?= server platform
-Message-ID: <20200213155055.GA3624708@kroah.com>
-References: <20200213150148.5627-1-roman.sudarikov@linux.intel.com>
- <20200213150148.5627-4-roman.sudarikov@linux.intel.com>
+        id S1729910AbgBMPwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:52:10 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45777 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729876AbgBMPwJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:52:09 -0500
+Received: by mail-wr1-f65.google.com with SMTP id g3so7274150wrs.12
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:52:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qRSNHxPBZ1IexXWr4sAA9opPLPtOEFKsiR173BgPSbE=;
+        b=rmDCMt8johXf39HuPfvbW10KGlsza5f82dM90WRh/o8esX8OkRNxItKTtPH80Aw7PK
+         w6hwn7YXoxCrjoydoLYw8KB+l8rFn0HuY1RWsVR55UzJk4jRrYmR0OqOv9+dllAqoqYI
+         IUfZtCwBYWOyibEPrFjbOgM10K11SHeVgTIQpGfnGO+gTk83bitTdzbao0Hgi3r5l3QQ
+         a1WcFJOjDtt1x0Fyxqw2UUXZYfxowjJxu3tleaFrPidLlZzONnLFrhPM+kmdV1h3aYm0
+         VscLAall4oZEcfJFTKX3LM8+AuGIbObycMU9LRQADS9nEzZrQVzTo3ETriJPaan58JVT
+         NeFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qRSNHxPBZ1IexXWr4sAA9opPLPtOEFKsiR173BgPSbE=;
+        b=FmdOj/vsxNgBcvhNZmHS3KZhmVA6RC+LeE/iTMuZRz5TYXiJwfKcmfO8wODUm0UbVC
+         J61ZtP/jTygVgwemDmnut+ut8Z37xYTjBdyLribjaurKdBVY3MOGnc5BgaWVlnQUygnC
+         HrOEKYHTc7Z0O5KJ0Nd81trfskXuNf0G5JAFWALnj4LnP/dw6z3n4m321ydfXLTHoPz2
+         YR7P2U9PU6xiOrheyox5mXAoeLxi4rFDYURmAvZyrgy5veIgq8GMJJpJoEGgmoeaiWNH
+         UldMbj3oTxt/xl6/oKT4EASTDLZ/jLJdUxLHZXRXHBtmnZS45hSfE8dud3cGKzXTWC5u
+         tiiQ==
+X-Gm-Message-State: APjAAAVey0ww2Zn41Bn0gu4NjxutIfbCakjKo3RdQ3Xep9D2FL4vjpN6
+        XRXhqfS/BX7D0w0FB6zbEQz/Pw+6RIs=
+X-Google-Smtp-Source: APXvYqzaEZ72W0WraKrTyInOswcFFpztUeMtekBYMK7/Qvo39kr8aI6aa2+adZuUr6wwgRuldPDSzw==
+X-Received: by 2002:adf:dd51:: with SMTP id u17mr21617587wrm.290.1581609127423;
+        Thu, 13 Feb 2020 07:52:07 -0800 (PST)
+Received: from starbuck.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id e1sm3319814wrt.84.2020.02.13.07.52.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2020 07:52:06 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH 0/9] ASoC: meson: gx: add audio output support
+Date:   Thu, 13 Feb 2020 16:51:50 +0100
+Message-Id: <20200213155159.3235792-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200213150148.5627-4-roman.sudarikov@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 06:01:48PM +0300, roman.sudarikov@linux.intel.com wrote:
-> From: Roman Sudarikov <roman.sudarikov@linux.intel.com>
-> 
-> Current version supports a server line starting Intel® Xeon® Processor
-> Scalable Family and introduces mapping for IIO Uncore units only.
-> Other units can be added on demand.
-> 
-> IIO stack to PMON mapping is exposed through:
->     /sys/devices/uncore_iio_<pmu_idx>/dieX
->     where dieX is file which holds "Segment:Root Bus" for PCIe root port,
->     which can be monitored by that IIO PMON block.
-> 
-> Details are explained in Documentation/ABI/testing/sysfs-devices-mapping
-> 
-> Co-developed-by: Alexander Antonov <alexander.antonov@intel.com>
-> Signed-off-by: Alexander Antonov <alexander.antonov@intel.com>
-> Signed-off-by: Roman Sudarikov <roman.sudarikov@linux.intel.com>
-> ---
->  .../ABI/testing/sysfs-devices-mapping         |  33 +++
->  arch/x86/events/intel/uncore_snbep.c          | 189 ++++++++++++++++++
->  2 files changed, 222 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-devices-mapping
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-devices-mapping b/Documentation/ABI/testing/sysfs-devices-mapping
-> new file mode 100644
-> index 000000000000..16f4e900be7b
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-devices-mapping
-> @@ -0,0 +1,33 @@
-> +What:           /sys/devices/uncore_iio_x/dieX
-> +Date:           February 2020
-> +Contact:        Roman Sudarikov <roman.sudarikov@linux.intel.com>
-> +Description:
-> +                Each IIO stack (PCIe root port) has its own IIO PMON block, so
-> +                each dieX file (where X is die number) holds "Segment:Root Bus"
-> +                for PCIe root port, which can be monitored by that IIO PMON
-> +                block.
-> +                For example, on 4-die Xeon platform with up to 6 IIO stacks per
-> +                die and, therefore, 6 IIO PMON blocks per die, the mapping of
-> +                IIO PMON block 0 exposes as the following:
-> +
-> +                $ ls /sys/devices/uncore_iio_0/die*
-> +                -r--r--r-- /sys/devices/uncore_iio_0/die0
-> +                -r--r--r-- /sys/devices/uncore_iio_0/die1
-> +                -r--r--r-- /sys/devices/uncore_iio_0/die2
-> +                -r--r--r-- /sys/devices/uncore_iio_0/die3
-> +
-> +                $ tail /sys/devices/uncore_iio_0/die*
-> +                ==> /sys/devices/uncore_iio_0/die0 <==
-> +                0000:00
-> +                ==> /sys/devices/uncore_iio_0/die1 <==
-> +                0000:40
-> +                ==> /sys/devices/uncore_iio_0/die2 <==
-> +                0000:80
-> +                ==> /sys/devices/uncore_iio_0/die3 <==
-> +                0000:c0
-> +
-> +                Which means:
-> +                IIO PMU 0 on die 0 belongs to PCI RP on bus 0x00, domain 0x0000
-> +                IIO PMU 0 on die 1 belongs to PCI RP on bus 0x40, domain 0x0000
-> +                IIO PMU 0 on die 2 belongs to PCI RP on bus 0x80, domain 0x0000
-> +                IIO PMU 0 on die 3 belongs to PCI RP on bus 0xc0, domain 0x0000
-> \ No newline at end of file
-> diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-> index ad20220af303..f805fbdbbe81 100644
-> --- a/arch/x86/events/intel/uncore_snbep.c
-> +++ b/arch/x86/events/intel/uncore_snbep.c
-> @@ -273,6 +273,30 @@
->  #define SKX_CPUNODEID			0xc0
->  #define SKX_GIDNIDMAP			0xd4
->  
-> +/*
-> + * The CPU_BUS_NUMBER MSR returns the values of the respective CPUBUSNO CSR
-> + * that BIOS programmed. MSR has package scope.
-> + * |  Bit  |  Default  |  Description
-> + * | [63]  |    00h    | VALID - When set, indicates the CPU bus
-> + *                       numbers have been initialized. (RO)
-> + * |[62:48]|    ---    | Reserved
-> + * |[47:40]|    00h    | BUS_NUM_5 — Return the bus number BIOS assigned
-> + *                       CPUBUSNO(5). (RO)
-> + * |[39:32]|    00h    | BUS_NUM_4 — Return the bus number BIOS assigned
-> + *                       CPUBUSNO(4). (RO)
-> + * |[31:24]|    00h    | BUS_NUM_3 — Return the bus number BIOS assigned
-> + *                       CPUBUSNO(3). (RO)
-> + * |[23:16]|    00h    | BUS_NUM_2 — Return the bus number BIOS assigned
-> + *                       CPUBUSNO(2). (RO)
-> + * |[15:8] |    00h    | BUS_NUM_1 — Return the bus number BIOS assigned
-> + *                       CPUBUSNO(1). (RO)
-> + * | [7:0] |    00h    | BUS_NUM_0 — Return the bus number BIOS assigned
-> + *                       CPUBUSNO(0). (RO)
-> + */
-> +#define SKX_MSR_CPU_BUS_NUMBER		0x300
-> +#define SKX_MSR_CPU_BUS_VALID_BIT	(1ULL << 63)
-> +#define BUS_NUM_STRIDE			8
-> +
->  /* SKX CHA */
->  #define SKX_CHA_MSR_PMON_BOX_FILTER_TID		(0x1ffULL << 0)
->  #define SKX_CHA_MSR_PMON_BOX_FILTER_LINK	(0xfULL << 9)
-> @@ -3575,6 +3599,169 @@ static struct intel_uncore_ops skx_uncore_iio_ops = {
->  	.read_counter		= uncore_msr_read_counter,
->  };
->  
-> +static inline u8 skx_iio_stack(struct intel_uncore_pmu *pmu, int die)
-> +{
-> +	return pmu->type->topology[die] >> (pmu->pmu_idx * BUS_NUM_STRIDE);
-> +}
-> +
-> +static umode_t
-> +skx_iio_mapping_visible(struct kobject *kobj, struct attribute *attr, int die)
-> +{
-> +	struct intel_uncore_pmu *pmu = dev_get_drvdata(kobj_to_dev(kobj));
-> +
-> +	//Root bus 0x00 is valid only for die 0 AND pmu_idx = 0.
-> +	return (!skx_iio_stack(pmu, die) && pmu->pmu_idx) ? 0 : attr->mode;
-> +}
-> +
-> +static ssize_t skx_iio_mapping_show(struct device *dev,
-> +				struct device_attribute *attr, char *buf)
-> +{
-> +	struct pci_bus *bus = NULL;
-> +	struct pmu *pmu = dev_get_drvdata(dev);
-> +	struct intel_uncore_pmu *uncore_pmu =
-> +		container_of(pmu, struct intel_uncore_pmu, pmu);
-> +	int pmu_idx = uncore_pmu->pmu_idx;
-> +
-> +	struct dev_ext_attribute *ea =
-> +		container_of(attr, struct dev_ext_attribute, attr);
-> +	long die = (long)ea->var;
+This patchset adds support for the i2s and spdif audio outputs of the
+amlogic GX SoC family, such the S905, S905X/D, S912 and S805X. These SoCs
+are used by a fair amount of boards actively maintained upstream.
 
-Why the extra blank line in the middle of the variable list?
+This was tested on:
+ * amlogic s912 q200
+ * libretech s805x-ac (frite)
+ * libretech s905x-cc (potato)
+ * libretech s905d-pc (tartiflette)
 
-And can't you make proper macros for the pmu and attribute container_of
-calls?
+This could also possibly support meson8 32bits SoCs but I have not tested
+it myself and it could require some further tweaks.
 
-> +
-> +	do {
-> +		bus = pci_find_next_bus(bus);
-> +	} while (pmu_idx--);
+The audio subsystem found on these SoCs has now been dropped in the newer
+designs. All recent SoCs families (like g12a and sm1) derive from the AXG
+audio architecture.
 
-I'm dense, but what are you doing here?  Just walking the list of pci
-busses for a specific number of them?  What guarantees any ordering of
-pci busses in this list?  What happens if you get a new bus hotplugged
-in the middle of this loop?  Or yanked out?  How will pmu_idx mean
-anything then?
+Jerome Brunet (9):
+  ASoC: core: allow a dt node to provide several components
+  ASoC: meson: g12a: extract codec-to-codec utils
+  ASoC: meson: aiu: add audio output dt-bindings
+  ASoC: meson: aiu: add i2s and spdif support
+  ASoC: meson: aiu: add hdmi codec control support
+  ASoC: meson: aiu: add internal dac codec control support
+  ASoC: meson: axg: extract sound card utils
+  ASoC: meson: gx: add sound card dt-binding documentation
+  ASoC: meson: gx: add sound card support
 
-And what does pmu_idx mean anyway?  Why not just store the real pointer
-to the pci bus in your structure properly, so you don't have to do odd
-things like guess the ordering of the pci busses in the system?  As that
-way lies dragons...
+ .../bindings/sound/amlogic,aiu.yaml           | 111 +++++
+ .../bindings/sound/amlogic,gx-sound-card.yaml | 113 +++++
+ include/dt-bindings/sound/meson-aiu.h         |  18 +
+ sound/soc/meson/Kconfig                       |  24 ++
+ sound/soc/meson/Makefile                      |  15 +
+ sound/soc/meson/aiu-acodec-ctrl.c             | 205 +++++++++
+ sound/soc/meson/aiu-codec-ctrl.c              | 152 +++++++
+ sound/soc/meson/aiu-encoder-i2s.c             | 324 ++++++++++++++
+ sound/soc/meson/aiu-encoder-spdif.c           | 209 +++++++++
+ sound/soc/meson/aiu-fifo-i2s.c                | 153 +++++++
+ sound/soc/meson/aiu-fifo-spdif.c              | 186 ++++++++
+ sound/soc/meson/aiu-fifo.c                    | 223 ++++++++++
+ sound/soc/meson/aiu-fifo.h                    |  50 +++
+ sound/soc/meson/aiu.c                         | 390 +++++++++++++++++
+ sound/soc/meson/aiu.h                         |  91 ++++
+ sound/soc/meson/axg-card.c                    | 403 ++----------------
+ sound/soc/meson/g12a-tohdmitx.c               | 219 ++--------
+ sound/soc/meson/gx-card.c                     | 141 ++++++
+ sound/soc/meson/meson-card-utils.c            | 385 +++++++++++++++++
+ sound/soc/meson/meson-card.h                  |  55 +++
+ sound/soc/meson/meson-codec-glue.c            | 149 +++++++
+ sound/soc/meson/meson-codec-glue.h            |  32 ++
+ sound/soc/soc-core.c                          |   8 +
+ 23 files changed, 3104 insertions(+), 552 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/amlogic,aiu.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/amlogic,gx-sound-card.yaml
+ create mode 100644 include/dt-bindings/sound/meson-aiu.h
+ create mode 100644 sound/soc/meson/aiu-acodec-ctrl.c
+ create mode 100644 sound/soc/meson/aiu-codec-ctrl.c
+ create mode 100644 sound/soc/meson/aiu-encoder-i2s.c
+ create mode 100644 sound/soc/meson/aiu-encoder-spdif.c
+ create mode 100644 sound/soc/meson/aiu-fifo-i2s.c
+ create mode 100644 sound/soc/meson/aiu-fifo-spdif.c
+ create mode 100644 sound/soc/meson/aiu-fifo.c
+ create mode 100644 sound/soc/meson/aiu-fifo.h
+ create mode 100644 sound/soc/meson/aiu.c
+ create mode 100644 sound/soc/meson/aiu.h
+ create mode 100644 sound/soc/meson/gx-card.c
+ create mode 100644 sound/soc/meson/meson-card-utils.c
+ create mode 100644 sound/soc/meson/meson-card.h
+ create mode 100644 sound/soc/meson/meson-codec-glue.c
+ create mode 100644 sound/soc/meson/meson-codec-glue.h
 
-> +
-> +	return sprintf(buf, "%04x:%02x\n", pci_domain_nr(bus),
-> +					   skx_iio_stack(uncore_pmu, die));
-> +}
-> +
-> +static int skx_msr_cpu_bus_read(int cpu, u64 *topology)
-> +{
-> +	u64 msr_value;
-> +
-> +	if (rdmsrl_on_cpu(cpu, SKX_MSR_CPU_BUS_NUMBER, &msr_value) ||
-> +			!(msr_value & SKX_MSR_CPU_BUS_VALID_BIT))
-> +		return -ENXIO;
-> +
-> +	*topology = msr_value;
-> +
-> +	return 0;
-> +}
-> +
-> +static int die_to_cpu(int die)
-> +{
-> +	int res = 0, cpu, current_die;
-> +	/*
-> +	 * Using cpus_read_lock() to ensure cpu is not going down between
-> +	 * looking at cpu_online_mask.
-> +	 */
+-- 
+2.24.1
 
-checkpatch didn't complain about this?
-
-
-> +	cpus_read_lock();
-> +	for_each_online_cpu(cpu) {
-> +		current_die = topology_logical_die_id(cpu);
-> +		if (current_die == die) {
-> +			res = cpu;
-> +			break;
-> +		}
-> +	}
-> +	cpus_read_unlock();
-> +	return res;
-> +}
-> +
-> +static int skx_iio_get_topology(struct intel_uncore_type *type)
-> +{
-> +	int i, ret;
-> +	struct pci_bus *bus = NULL;
-> +
-> +	/*
-> +	 * Verified single-segment environments only; disabled for multiple
-> +	 * segment topologies for now except VMD domains.
-> +	 * VMD domains start at 0x10000 to not clash with ACPI _SEG domains.
-> +	 */
-> +	while ((bus = pci_find_next_bus(bus))
-> +		&& (!pci_domain_nr(bus) || pci_domain_nr(bus) > 0xffff))
-> +		;
-> +	if (bus)
-> +		return -EPERM;
-> +
-> +	type->topology = kcalloc(uncore_max_dies(), sizeof(u64), GFP_KERNEL);
-> +	if (!type->topology)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < uncore_max_dies(); i++) {
-> +		ret = skx_msr_cpu_bus_read(die_to_cpu(i), &type->topology[i]);
-> +		if (ret) {
-> +			kfree(type->topology);
-> +			type->topology = NULL;
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static struct attribute_group skx_iio_mapping_group = {
-> +	.is_visible	= skx_iio_mapping_visible,
-> +};
-> +
-> +const static struct attribute_group *skx_iio_attr_update[] = {
-> +	&skx_iio_mapping_group,
-> +	NULL,
-> +};
-> +
-> +static int skx_iio_set_mapping(struct intel_uncore_type *type)
-> +{
-> +	char buf[64];
-> +	int ret = 0;
-> +	long die;
-> +	struct attribute **attrs;
-> +	struct dev_ext_attribute *eas;
-> +
-> +	ret = skx_iio_get_topology(type);
-> +	if (ret)
-> +		return ret;
-> +
-> +	// One more for NULL.
-> +	attrs = kzalloc((uncore_max_dies() + 1) * sizeof(*attrs), GFP_KERNEL);
-> +	if (!attrs) {
-> +		kfree(type->topology);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	eas = kzalloc(sizeof(*eas) * uncore_max_dies(), GFP_KERNEL);
-> +	if (!eas) {
-> +		kfree(attrs);
-> +		kfree(type->topology);
-> +		return -ENOMEM;
-
-gotos are your friend, please use them.
-
-> +	}
-> +	for (die = 0; die < uncore_max_dies(); die++) {
-> +		sprintf(buf, "die%ld", die);
-> +		sysfs_attr_init(&eas[die].attr.attr);
-> +		eas[die].attr.attr.name = kstrdup(buf, GFP_KERNEL);
-
-Who ends up freeing this string and overall attribute when things get
-torn down if something is removed from the system, or the module is
-unloaded, or something else like that?
-
-thanks,
-
-greg k-h
