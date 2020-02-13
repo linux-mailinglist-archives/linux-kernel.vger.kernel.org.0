@@ -2,34 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B479C15C1D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:27:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABCAA15C1DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:27:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387654AbgBMP1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:27:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40056 "EHLO mail.kernel.org"
+        id S2387685AbgBMP1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:27:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728923AbgBMPZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:08 -0500
+        id S1728444AbgBMPZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:09 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 690CE246B3;
-        Thu, 13 Feb 2020 15:25:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFF0E246C3;
+        Thu, 13 Feb 2020 15:25:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607507;
-        bh=JnJMKykcCMlxvmwUkHWNd/DN9s2hpkqaD2YmQKTtg9w=;
+        s=default; t=1581607508;
+        bh=ZrgZ9ikyuXBUgk80zX5lKrUxZZpLxZpNqbz/yxa73lc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bRNW1FHrupTet/G2yeIbuk3zQt/M0eiKSoGEu2u4ZLeqzPYKIBgAiE5pSivosUmsy
-         JBxWdHfc6/KrI01ne0izj0vtsPfKWCmau77MDkLsQmU8LYaGhLLE1wfIySN2cYHojZ
-         ZjlnM7zmqNvFFwHM/K2krGY1cccyCSOMuZxzd8FQ=
+        b=j06l/dmzxbUUCrk6gUzP4Psi0QwbpGPtBO+yvb5Mby/noPLhWZL8nSjzrRwmx3/5t
+         2qJyusDaqTqETqlNfw9+JscHuYfpfLrEiYkQjXq7ypClxGT0lqEICoXH516DZaidMe
+         wTZF3xzxSXiP7ZyCjmsxlgwFeGy7FU8O07vFb/t8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 066/173] crypto: api - Fix race condition in crypto_spawn_alg
-Date:   Thu, 13 Feb 2020 07:19:29 -0800
-Message-Id: <20200213151950.383288559@linuxfoundation.org>
+        stable@vger.kernel.org, Arun Easi <aeasi@marvell.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        "Ewan D. Milne" <emilne@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 068/173] scsi: qla2xxx: Fix unbound NVME response length
+Date:   Thu, 13 Feb 2020 07:19:31 -0800
+Message-Id: <20200213151950.830147532@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
 References: <20200213151931.677980430@linuxfoundation.org>
@@ -42,82 +45,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Arun Easi <aeasi@marvell.com>
 
-commit 73669cc556462f4e50376538d77ee312142e8a8a upstream.
+commit 00fe717ee1ea3c2979db4f94b1533c57aed8dea9 upstream.
 
-The function crypto_spawn_alg is racy because it drops the lock
-before shooting the dying algorithm.  The algorithm could disappear
-altogether before we shoot it.
+On certain cases when response length is less than 32, NVME response data
+is supplied inline in IOCB. This is indicated by some combination of state
+flags. There was an instance when a high, and incorrect, response length
+was indicated causing driver to overrun buffers. Fix this by checking and
+limiting the response payload length.
 
-This patch fixes it by moving the shooting into the locked section.
-
-Fixes: 6bfd48096ff8 ("[CRYPTO] api: Added spawns")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: 7401bc18d1ee3 ("scsi: qla2xxx: Add FC-NVMe command handling")
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20200124045014.23554-1-hmadhani@marvell.com
+Signed-off-by: Arun Easi <aeasi@marvell.com>
+Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/algapi.c   |   16 +++++-----------
- crypto/api.c      |    3 +--
- crypto/internal.h |    1 -
- 3 files changed, 6 insertions(+), 14 deletions(-)
+ drivers/scsi/qla2xxx/qla_dbg.c |    6 ------
+ drivers/scsi/qla2xxx/qla_dbg.h |    6 ++++++
+ drivers/scsi/qla2xxx/qla_isr.c |   12 ++++++++++++
+ 3 files changed, 18 insertions(+), 6 deletions(-)
 
---- a/crypto/algapi.c
-+++ b/crypto/algapi.c
-@@ -662,22 +662,16 @@ EXPORT_SYMBOL_GPL(crypto_drop_spawn);
- static struct crypto_alg *crypto_spawn_alg(struct crypto_spawn *spawn)
- {
- 	struct crypto_alg *alg;
--	struct crypto_alg *alg2;
+--- a/drivers/scsi/qla2xxx/qla_dbg.c
++++ b/drivers/scsi/qla2xxx/qla_dbg.c
+@@ -2517,12 +2517,6 @@ qla83xx_fw_dump_failed:
+ /*                         Driver Debug Functions.                          */
+ /****************************************************************************/
  
- 	down_read(&crypto_alg_sem);
- 	alg = spawn->alg;
--	alg2 = alg;
--	if (alg2)
--		alg2 = crypto_mod_get(alg2);
--	up_read(&crypto_alg_sem);
+-static inline int
+-ql_mask_match(uint32_t level)
+-{
+-	return (level & ql2xextended_error_logging) == level;
+-}
 -
--	if (!alg2) {
--		if (alg)
--			crypto_shoot_alg(alg);
--		return ERR_PTR(-EAGAIN);
-+	if (alg && !crypto_mod_get(alg)) {
-+		alg->cra_flags |= CRYPTO_ALG_DYING;
-+		alg = NULL;
- 	}
-+	up_read(&crypto_alg_sem);
- 
--	return alg;
-+	return alg ?: ERR_PTR(-EAGAIN);
- }
- 
- struct crypto_tfm *crypto_spawn_tfm(struct crypto_spawn *spawn, u32 type,
---- a/crypto/api.c
-+++ b/crypto/api.c
-@@ -339,13 +339,12 @@ static unsigned int crypto_ctxsize(struc
- 	return len;
- }
- 
--void crypto_shoot_alg(struct crypto_alg *alg)
-+static void crypto_shoot_alg(struct crypto_alg *alg)
- {
- 	down_write(&crypto_alg_sem);
- 	alg->cra_flags |= CRYPTO_ALG_DYING;
- 	up_write(&crypto_alg_sem);
- }
--EXPORT_SYMBOL_GPL(crypto_shoot_alg);
- 
- struct crypto_tfm *__crypto_alloc_tfm(struct crypto_alg *alg, u32 type,
- 				      u32 mask)
---- a/crypto/internal.h
-+++ b/crypto/internal.h
-@@ -84,7 +84,6 @@ void crypto_alg_tested(const char *name,
- void crypto_remove_spawns(struct crypto_alg *alg, struct list_head *list,
- 			  struct crypto_alg *nalg);
- void crypto_remove_final(struct list_head *list);
--void crypto_shoot_alg(struct crypto_alg *alg);
- struct crypto_tfm *__crypto_alloc_tfm(struct crypto_alg *alg, u32 type,
- 				      u32 mask);
- void *crypto_create_tfm(struct crypto_alg *alg,
+ /*
+  * This function is for formatting and logging debug information.
+  * It is to be used when vha is available. It formats the message
+--- a/drivers/scsi/qla2xxx/qla_dbg.h
++++ b/drivers/scsi/qla2xxx/qla_dbg.h
+@@ -374,3 +374,9 @@ extern int qla24xx_dump_ram(struct qla_h
+ extern void qla24xx_pause_risc(struct device_reg_24xx __iomem *,
+ 	struct qla_hw_data *);
+ extern int qla24xx_soft_reset(struct qla_hw_data *);
++
++static inline int
++ql_mask_match(uint level)
++{
++	return (level & ql2xextended_error_logging) == level;
++}
+--- a/drivers/scsi/qla2xxx/qla_isr.c
++++ b/drivers/scsi/qla2xxx/qla_isr.c
+@@ -1853,6 +1853,18 @@ qla24xx_nvme_iocb_entry(scsi_qla_host_t
+ 		inbuf = (uint32_t *)&sts->nvme_ersp_data;
+ 		outbuf = (uint32_t *)fd->rspaddr;
+ 		iocb->u.nvme.rsp_pyld_len = le16_to_cpu(sts->nvme_rsp_pyld_len);
++		if (unlikely(iocb->u.nvme.rsp_pyld_len >
++		    sizeof(struct nvme_fc_ersp_iu))) {
++			if (ql_mask_match(ql_dbg_io)) {
++				WARN_ONCE(1, "Unexpected response payload length %u.\n",
++				    iocb->u.nvme.rsp_pyld_len);
++				ql_log(ql_log_warn, fcport->vha, 0x5100,
++				    "Unexpected response payload length %u.\n",
++				    iocb->u.nvme.rsp_pyld_len);
++			}
++			iocb->u.nvme.rsp_pyld_len =
++			    sizeof(struct nvme_fc_ersp_iu);
++		}
+ 		iter = iocb->u.nvme.rsp_pyld_len >> 2;
+ 		for (; iter; iter--)
+ 			*outbuf++ = swab32(*inbuf++);
 
 
