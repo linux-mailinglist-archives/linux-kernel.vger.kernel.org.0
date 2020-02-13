@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9FD615C2C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:39:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95B4015C4DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729705AbgBMPad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:30:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50130 "EHLO mail.kernel.org"
+        id S2388155AbgBMPvZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:51:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729051AbgBMP1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:22 -0500
+        id S2387512AbgBMP0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:15 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2F8C2468F;
-        Thu, 13 Feb 2020 15:27:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53C5F218AC;
+        Thu, 13 Feb 2020 15:26:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607641;
-        bh=gLEvYRahZJZvgtrz81+2AEcu4KmTQ3gESGj7mWlMQCg=;
+        s=default; t=1581607575;
+        bh=1Cokn1pviuR+T44ILUmue+s8elSDJo3wXVwwfeJefyg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gl/4ZCc/aDRntyDbWN/0FUssQd9oRB5oCcUW+3JU/LPDpANxAcMerUr4vbnAZNTfI
-         GHDYR8vM2Y/fJzGAGGO/gfVSR39P8XdrQxQzkCJbahsd8hR9JP2T82qJMpTiflPd8E
-         eutHTyjDgrZFLkiCr8pQ7fc/tLLPbQvHgIpJ+iJc=
+        b=TfUL9wh+mM9rCYYq0gkzIPvh/CokTstrZLFeS/RO4X3HYgm17T3r0lfc4nITm1xTB
+         BWkVCh+0M4ohyPbP3U/kAoYS+6hd1wzIu/Fn4mh82QjFq5uPhMfDid6ZRV1cL8RYn2
+         FH62X9Fj+VaRMt9g3oXExaTWkqYN1M8T8PKPcnQk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 5.4 48/96] ARM: dts: meson8b: use the actual frequency for the GPUs 364MHz OPP
-Date:   Thu, 13 Feb 2020 07:20:55 -0800
-Message-Id: <20200213151858.035142777@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.14 153/173] ARC: [plat-axs10x]: Add missing multicast filter number to GMAC node
+Date:   Thu, 13 Feb 2020 07:20:56 -0800
+Message-Id: <20200213152010.011238652@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
 
-commit c3dd3315ab58b2cfa1916df55b0d0f9fbd94266f upstream.
+commit 7980dff398f86a618f502378fa27cf7e77449afa upstream.
 
-The clock setup on Meson8 cannot achieve a Mali frequency of exactly
-182.15MHz. The vendor driver uses "FCLK_DIV7 / 1" for this frequency,
-which translates to 2550MHz / 7 / 1 = 364285714Hz.
-Update the GPU operating point to that specific frequency to not confuse
-myself when comparing the frequency from the .dts with the actual clock
-rate on the system.
+Add a missing property to GMAC node so that multicast filtering works
+correctly.
 
-Fixes: c3ea80b6138cae ("ARM: dts: meson8b: add the Mali-450 MP2 GPU")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Fixes: 556cc1c5f528 ("ARC: [axs101] Add support for AXS101 SDP (software development platform)")
+Acked-by: Alexey Brodkin <abrodkin@synopsys.com>
+Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/meson8b.dtsi |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arc/boot/dts/axs10x_mb.dtsi |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm/boot/dts/meson8b.dtsi
-+++ b/arch/arm/boot/dts/meson8b.dtsi
-@@ -125,8 +125,8 @@
- 			opp-hz = /bits/ 64 <255000000>;
- 			opp-microvolt = <1100000>;
- 		};
--		opp-364300000 {
--			opp-hz = /bits/ 64 <364300000>;
-+		opp-364285714 {
-+			opp-hz = /bits/ 64 <364285714>;
- 			opp-microvolt = <1100000>;
- 		};
- 		opp-425000000 {
+--- a/arch/arc/boot/dts/axs10x_mb.dtsi
++++ b/arch/arc/boot/dts/axs10x_mb.dtsi
+@@ -70,6 +70,7 @@
+ 			interrupt-names = "macirq";
+ 			phy-mode = "rgmii";
+ 			snps,pbl = < 32 >;
++			snps,multicast-filter-bins = <256>;
+ 			clocks = <&apbclk>;
+ 			clock-names = "stmmaceth";
+ 			max-speed = <100>;
 
 
