@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D0A115C26C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:33:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5F8215C2F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:39:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388197AbgBMPdg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:33:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58584 "EHLO mail.kernel.org"
+        id S2387452AbgBMPiv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:38:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729446AbgBMP3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:29:04 -0500
+        id S2387813AbgBMP3L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:29:11 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D46F24671;
-        Thu, 13 Feb 2020 15:29:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C002624677;
+        Thu, 13 Feb 2020 15:29:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607743;
-        bh=XChCWwQA7p49qpA7/oQtOGhUEGaG7pAcVi/m2bGRhos=;
+        s=default; t=1581607749;
+        bh=9TzQP5GwF4uTtO1+JG5dhg7Vcb7eHZ1g0mrxjSP/EG0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AAuTVBX1Q2DkRequqZIMJEETfgCJOgsy4KdDPczXKZpBxOyJIvMpziie5DED5Nn+u
-         CpPBZuqnv+kK82MVkhZ0ClIarwFTe0D99p/Cl/00LKd31xzXJxlsQGcANEkrEPHe3a
-         FPRmUJNzjFZdpcdzzQLNjDb0jVkQYi7XC4vvcXjU=
+        b=EoGDJF9Vj00geVP8tWVhrOXAZRRyBD7lm8U8FmDOmgRIGQUplD5FJpZ+PwcnV5n6X
+         GvmY9gwVWwrW3AzCMTQXwPa7XjNDhLYsxBgW38JJdSRFhuwfht6lAKf8jpXa+BUUms
+         TdSrt4jGogo7+X01xjCr2UEWpmP/rdK8XA1tnaiQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH 5.5 091/120] arm64: nofpsmid: Handle TIF_FOREIGN_FPSTATE flag cleanly
-Date:   Thu, 13 Feb 2020 07:21:27 -0800
-Message-Id: <20200213151931.763943572@linuxfoundation.org>
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Marc Zyngier <maz@kernel.org>
+Subject: [PATCH 5.5 092/120] arm64: kvm: Fix IDMAP overlap with HYP VA
+Date:   Thu, 13 Feb 2020 07:21:28 -0800
+Message-Id: <20200213151932.068698138@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
 References: <20200213151901.039700531@linuxfoundation.org>
@@ -47,184 +43,156 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-commit 52f73c383b2418f2d31b798e765ae7d596c35021 upstream.
+commit f5523423defb0d929e23813c8dd16c0131043a8c upstream.
 
-We detect the absence of FP/SIMD after an incapable CPU is brought up,
-and by then we have kernel threads running already with TIF_FOREIGN_FPSTATE set
-which could be set for early userspace applications (e.g, modprobe triggered
-from initramfs) and init. This could cause the applications to loop forever in
-do_nofity_resume() as we never clear the TIF flag, once we now know that
-we don't support FP.
+Booting 5.4 on LX2160A reveals that KVM is non-functional:
 
-Fix this by making sure that we clear the TIF_FOREIGN_FPSTATE flag
-for tasks which may have them set, as we would have done in the normal
-case, but avoiding touching the hardware state (since we don't support any).
+kvm: Limiting the IPA size due to kernel Virtual Address limit
+kvm [1]: IPA Size Limit: 43bits
+kvm [1]: IDMAP intersecting with HYP VA, unable to continue
+kvm [1]: error initializing Hyp mode: -22
 
-Also to make sure we handle the cases seemlessly we categorise the
-helper functions to two :
- 1) Helpers for common core code, which calls into take appropriate
-    actions without knowing the current FPSIMD state of the CPU/task.
+Debugging shows:
 
-    e.g fpsimd_restore_current_state(), fpsimd_flush_task_state(),
-        fpsimd_save_and_flush_cpu_state().
+kvm [1]: IDMAP page: 81a26000
+kvm [1]: HYP VA range: 0:22ffffffff
 
-    We bail out early for these functions, taking any appropriate actions
-    (e.g, clearing the TIF flag) where necessary to hide the handling
-    from core code.
+as RAM is located at:
 
- 2) Helpers used when the presence of FP/SIMD is apparent.
-    i.e, save/restore the FP/SIMD register state, modify the CPU/task
-    FP/SIMD state.
-    e.g,
+80000000-fbdfffff : System RAM
+2080000000-237fffffff : System RAM
 
-    fpsimd_save(), task_fpsimd_load() - save/restore task FP/SIMD registers
+Comparing this with the same kernel on Armada 8040 shows:
 
-    fpsimd_bind_task_to_cpu()  \
-                                - Update the "state" metadata for CPU/task.
-    fpsimd_bind_state_to_cpu() /
+kvm: Limiting the IPA size due to kernel Virtual Address limit
+kvm [1]: IPA Size Limit: 43bits
+kvm [1]: IDMAP page: 2a26000
+kvm [1]: HYP VA range: 4800000000:493fffffff
+...
+kvm [1]: Hyp mode initialized successfully
 
-    fpsimd_update_current_state() - Update the fp/simd state for the current
-                                    task from memory.
+which indicates that hyp_va_msb is set, and is always set to the
+opposite value of the idmap page to avoid the overlap. This does not
+happen with the LX2160A.
 
-    These must not be called in the absence of FP/SIMD. Put in a WARNING
-    to make sure they are not invoked in the absence of FP/SIMD.
+Further debugging shows vabits_actual = 39, kva_msb = 38 on LX2160A and
+kva_msb = 33 on Armada 8040. Looking at the bit layout of the HYP VA,
+there is still one bit available for hyp_va_msb. Set this bit
+appropriately. This allows KVM to be functional on the LX2160A, but
+without any HYP VA randomisation:
 
-KVM also uses the TIF_FOREIGN_FPSTATE flag to manage the FP/SIMD state
-on the CPU. However, without FP/SIMD support we trap all accesses and
-inject undefined instruction. Thus we should never "load" guest state.
-Add a sanity check to make sure this is valid.
+kvm: Limiting the IPA size due to kernel Virtual Address limit
+kvm [1]: IPA Size Limit: 43bits
+kvm [1]: IDMAP page: 81a24000
+kvm [1]: HYP VA range: 4000000000:62ffffffff
+...
+kvm [1]: Hyp mode initialized successfully
 
-Fixes: 82e0191a1aa11abf ("arm64: Support systems without FP/ASIMD")
-Cc: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Acked-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Will Deacon <will@kernel.org>
+Fixes: ed57cac83e05 ("arm64: KVM: Introduce EL2 VA randomisation")
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+[maz: small additional cleanups, preserved case where the tag
+ is legitimately 0 and we can just use the mask, Fixes tag]
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/E1ilAiY-0000MA-RG@rmk-PC.armlinux.org.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/fpsimd.c  |   30 +++++++++++++++++++++++++++---
- arch/arm64/kvm/hyp/switch.c |   10 +++++++++-
- 2 files changed, 36 insertions(+), 4 deletions(-)
+ arch/arm64/kvm/va_layout.c |   56 ++++++++++++++++++++-------------------------
+ 1 file changed, 25 insertions(+), 31 deletions(-)
 
---- a/arch/arm64/kernel/fpsimd.c
-+++ b/arch/arm64/kernel/fpsimd.c
-@@ -269,6 +269,7 @@ static void sve_free(struct task_struct
+--- a/arch/arm64/kvm/va_layout.c
++++ b/arch/arm64/kvm/va_layout.c
+@@ -13,52 +13,46 @@
+ #include <asm/kvm_mmu.h>
+ 
+ /*
+- * The LSB of the random hyp VA tag or 0 if no randomization is used.
++ * The LSB of the HYP VA tag
   */
- static void task_fpsimd_load(void)
- {
-+	WARN_ON(!system_supports_fpsimd());
- 	WARN_ON(!have_cpu_fpsimd_context());
- 
- 	if (system_supports_sve() && test_thread_flag(TIF_SVE))
-@@ -289,6 +290,7 @@ static void fpsimd_save(void)
- 		this_cpu_ptr(&fpsimd_last_state);
- 	/* set by fpsimd_bind_task_to_cpu() or fpsimd_bind_state_to_cpu() */
- 
-+	WARN_ON(!system_supports_fpsimd());
- 	WARN_ON(!have_cpu_fpsimd_context());
- 
- 	if (!test_thread_flag(TIF_FOREIGN_FPSTATE)) {
-@@ -1092,6 +1094,7 @@ void fpsimd_bind_task_to_cpu(void)
- 	struct fpsimd_last_state_struct *last =
- 		this_cpu_ptr(&fpsimd_last_state);
- 
-+	WARN_ON(!system_supports_fpsimd());
- 	last->st = &current->thread.uw.fpsimd_state;
- 	last->sve_state = current->thread.sve_state;
- 	last->sve_vl = current->thread.sve_vl;
-@@ -1114,6 +1117,7 @@ void fpsimd_bind_state_to_cpu(struct use
- 	struct fpsimd_last_state_struct *last =
- 		this_cpu_ptr(&fpsimd_last_state);
- 
-+	WARN_ON(!system_supports_fpsimd());
- 	WARN_ON(!in_softirq() && !irqs_disabled());
- 
- 	last->st = st;
-@@ -1128,8 +1132,19 @@ void fpsimd_bind_state_to_cpu(struct use
+ static u8 tag_lsb;
+ /*
+- * The random hyp VA tag value with the region bit if hyp randomization is used
++ * The HYP VA tag value with the region bit
   */
- void fpsimd_restore_current_state(void)
- {
--	if (!system_supports_fpsimd())
-+	/*
-+	 * For the tasks that were created before we detected the absence of
-+	 * FP/SIMD, the TIF_FOREIGN_FPSTATE could be set via fpsimd_thread_switch(),
-+	 * e.g, init. This could be then inherited by the children processes.
-+	 * If we later detect that the system doesn't support FP/SIMD,
-+	 * we must clear the flag for  all the tasks to indicate that the
-+	 * FPSTATE is clean (as we can't have one) to avoid looping for ever in
-+	 * do_notify_resume().
-+	 */
-+	if (!system_supports_fpsimd()) {
-+		clear_thread_flag(TIF_FOREIGN_FPSTATE);
- 		return;
-+	}
+ static u64 tag_val;
+ static u64 va_mask;
  
- 	get_cpu_fpsimd_context();
- 
-@@ -1148,7 +1163,7 @@ void fpsimd_restore_current_state(void)
-  */
- void fpsimd_update_current_state(struct user_fpsimd_state const *state)
++/*
++ * We want to generate a hyp VA with the following format (with V ==
++ * vabits_actual):
++ *
++ *  63 ... V |     V-1    | V-2 .. tag_lsb | tag_lsb - 1 .. 0
++ *  ---------------------------------------------------------
++ * | 0000000 | hyp_va_msb |   random tag   |  kern linear VA |
++ *           |--------- tag_val -----------|----- va_mask ---|
++ *
++ * which does not conflict with the idmap regions.
++ */
+ __init void kvm_compute_layout(void)
  {
--	if (!system_supports_fpsimd())
-+	if (WARN_ON(!system_supports_fpsimd()))
- 		return;
+ 	phys_addr_t idmap_addr = __pa_symbol(__hyp_idmap_text_start);
+ 	u64 hyp_va_msb;
+-	int kva_msb;
  
- 	get_cpu_fpsimd_context();
-@@ -1179,7 +1194,13 @@ void fpsimd_update_current_state(struct
- void fpsimd_flush_task_state(struct task_struct *t)
- {
- 	t->thread.fpsimd_cpu = NR_CPUS;
--
-+	/*
-+	 * If we don't support fpsimd, bail out after we have
-+	 * reset the fpsimd_cpu for this task and clear the
-+	 * FPSTATE.
-+	 */
-+	if (!system_supports_fpsimd())
-+		return;
- 	barrier();
- 	set_tsk_thread_flag(t, TIF_FOREIGN_FPSTATE);
+ 	/* Where is my RAM region? */
+ 	hyp_va_msb  = idmap_addr & BIT(vabits_actual - 1);
+ 	hyp_va_msb ^= BIT(vabits_actual - 1);
  
-@@ -1193,6 +1214,7 @@ void fpsimd_flush_task_state(struct task
-  */
- static void fpsimd_flush_cpu_state(void)
- {
-+	WARN_ON(!system_supports_fpsimd());
- 	__this_cpu_write(fpsimd_last_state.st, NULL);
- 	set_thread_flag(TIF_FOREIGN_FPSTATE);
+-	kva_msb = fls64((u64)phys_to_virt(memblock_start_of_DRAM()) ^
++	tag_lsb = fls64((u64)phys_to_virt(memblock_start_of_DRAM()) ^
+ 			(u64)(high_memory - 1));
+ 
+-	if (kva_msb == (vabits_actual - 1)) {
+-		/*
+-		 * No space in the address, let's compute the mask so
+-		 * that it covers (vabits_actual - 1) bits, and the region
+-		 * bit. The tag stays set to zero.
+-		 */
+-		va_mask  = BIT(vabits_actual - 1) - 1;
+-		va_mask |= hyp_va_msb;
+-	} else {
+-		/*
+-		 * We do have some free bits to insert a random tag.
+-		 * Hyp VAs are now created from kernel linear map VAs
+-		 * using the following formula (with V == vabits_actual):
+-		 *
+-		 *  63 ... V |     V-1    | V-2 .. tag_lsb | tag_lsb - 1 .. 0
+-		 *  ---------------------------------------------------------
+-		 * | 0000000 | hyp_va_msb |    random tag  |  kern linear VA |
+-		 */
+-		tag_lsb = kva_msb;
+-		va_mask = GENMASK_ULL(tag_lsb - 1, 0);
+-		tag_val = get_random_long() & GENMASK_ULL(vabits_actual - 2, tag_lsb);
+-		tag_val |= hyp_va_msb;
+-		tag_val >>= tag_lsb;
++	va_mask = GENMASK_ULL(tag_lsb - 1, 0);
++	tag_val = hyp_va_msb;
++
++	if (tag_lsb != (vabits_actual - 1)) {
++		/* We have some free bits to insert a random tag. */
++		tag_val |= get_random_long() & GENMASK_ULL(vabits_actual - 2, tag_lsb);
+ 	}
++	tag_val >>= tag_lsb;
  }
-@@ -1203,6 +1225,8 @@ static void fpsimd_flush_cpu_state(void)
-  */
- void fpsimd_save_and_flush_cpu_state(void)
- {
-+	if (!system_supports_fpsimd())
-+		return;
- 	WARN_ON(preemptible());
- 	__get_cpu_fpsimd_context();
- 	fpsimd_save();
---- a/arch/arm64/kvm/hyp/switch.c
-+++ b/arch/arm64/kvm/hyp/switch.c
-@@ -28,7 +28,15 @@
- /* Check whether the FP regs were dirtied while in the host-side run loop: */
- static bool __hyp_text update_fp_enabled(struct kvm_vcpu *vcpu)
- {
--	if (vcpu->arch.host_thread_info->flags & _TIF_FOREIGN_FPSTATE)
-+	/*
-+	 * When the system doesn't support FP/SIMD, we cannot rely on
-+	 * the _TIF_FOREIGN_FPSTATE flag. However, we always inject an
-+	 * abort on the very first access to FP and thus we should never
-+	 * see KVM_ARM64_FP_ENABLED. For added safety, make sure we always
-+	 * trap the accesses.
-+	 */
-+	if (!system_supports_fpsimd() ||
-+	    vcpu->arch.host_thread_info->flags & _TIF_FOREIGN_FPSTATE)
- 		vcpu->arch.flags &= ~(KVM_ARM64_FP_ENABLED |
- 				      KVM_ARM64_FP_HOST);
  
+ static u32 compute_instruction(int n, u32 rd, u32 rn)
+@@ -117,11 +111,11 @@ void __init kvm_update_va_mask(struct al
+ 		 * VHE doesn't need any address translation, let's NOP
+ 		 * everything.
+ 		 *
+-		 * Alternatively, if we don't have any spare bits in
+-		 * the address, NOP everything after masking that
+-		 * kernel VA.
++		 * Alternatively, if the tag is zero (because the layout
++		 * dictates it and we don't have any spare bits in the
++		 * address), NOP everything after masking the kernel VA.
+ 		 */
+-		if (has_vhe() || (!tag_lsb && i > 0)) {
++		if (has_vhe() || (!tag_val && i > 0)) {
+ 			updptr[i] = cpu_to_le32(aarch64_insn_gen_nop());
+ 			continue;
+ 		}
 
 
