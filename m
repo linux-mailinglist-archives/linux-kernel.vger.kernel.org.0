@@ -2,83 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 063FC15B7FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 04:54:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A157515B7EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 04:46:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729632AbgBMDyq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 22:54:46 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:36092 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729443AbgBMDyq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 22:54:46 -0500
-X-UUID: 37b24f8c41ef491abd919b4882b7a201-20200213
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=AWHKi/bi0HkO6LeGddbfc6Yc3pqDeHpmuHU4Mk2li9M=;
-        b=UkKKLj5tzbNwYgYlmFqEGo/YfHOL9OuvekZyN/NKtmeL5yIZY/knOWoJmxtCoQAEhPGL2AYBp5v4YGRndrp1qXOfr7BuqWA5heOJDwFJb5VbXLbhnmZCtxtfpAfvvdXu++GfNHvmqt90Sj7HnQCvAMHEDooirPzggmyFy2jcHLw=;
-X-UUID: 37b24f8c41ef491abd919b4882b7a201-20200213
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 678038741; Thu, 13 Feb 2020 11:54:39 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 13 Feb 2020 11:53:55 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 13 Feb 2020 11:55:07 +0800
-Message-ID: <1581566078.12071.0.camel@mtksdaap41>
-Subject: Re: [PATCH 1/2] drm/mediatek: add plane check in async_check
- function
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
-        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>
-Date:   Thu, 13 Feb 2020 11:54:38 +0800
-In-Reply-To: <20200213012353.26815-1-bibby.hsieh@mediatek.com>
-References: <20200213012353.26815-1-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1729635AbgBMDpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 22:45:52 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:38462 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729470AbgBMDpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 22:45:51 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 5FE231F777D9C80FF576;
+        Thu, 13 Feb 2020 11:45:49 +0800 (CST)
+Received: from huawei.com (10.175.101.78) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Thu, 13 Feb 2020
+ 11:45:41 +0800
+From:   Yang Yingliang <yangyingliang@huawei.com>
+To:     <linux-kernel@vger.kernel.org>, <dm-devel@redhat.com>
+CC:     <agk@redhat.com>, <snitzer@redhat.com>, <yangyingliang@huawei.com>
+Subject: [PATCH] dm crypt: use crypt_integrity_aead() helper
+Date:   Thu, 13 Feb 2020 12:11:26 +0800
+Message-ID: <1581567086-17807-1-git-send-email-yangyingliang@huawei.com>
+X-Mailer: git-send-email 1.8.3
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
+X-Originating-IP: [10.175.101.78]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEJpYmJ5Og0KDQpPbiBUaHUsIDIwMjAtMDItMTMgYXQgMDk6MjMgKzA4MDAsIEJpYmJ5IEhz
-aWVoIHdyb3RlOg0KPiBNVEsgZG8gcm90YXRpb24gY2hlY2tpbmcgYW5kIHRyYW5zZmVycmluZyBp
-biBsYXllciBjaGVjayBmdW5jdGlvbiwNCj4gYnV0IHdlIGRvIG5vdCBjaGVjayB0aGF0IGluIGF0
-b21pY19jaGVjaywNCj4gc28gYWRkIGJhY2sgaW4gYXRvbWljX2NoZWNrIGZ1bmN0aW9uLg0KPiAN
-Cg0KUmV2aWV3ZWQtYnk6IENLIEh1IDxjay5odUBtZWRpYXRlay5jb20+DQoNCj4gRml4ZXM6IDky
-MGZmZmNjODkxMiAoImRybS9tZWRpYXRlazogdXBkYXRlIGN1cnNvcnMgYnkgdXNpbmcgYXN5bmMg
-YXRvbWljIHVwZGF0ZSIpDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBCaWJieSBIc2llaCA8YmliYnku
-aHNpZWhAbWVkaWF0ZWsuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9t
-dGtfZHJtX3BsYW5lLmMgfCA2ICsrKysrKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDYgaW5zZXJ0aW9u
-cygrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJt
-X3BsYW5lLmMgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9wbGFuZS5jDQo+IGlu
-ZGV4IDE4OTc0NGQzNGY1My4uZDMyYjQ5NGZmMWRlIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9wbGFuZS5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9t
-ZWRpYXRlay9tdGtfZHJtX3BsYW5lLmMNCj4gQEAgLTgxLDYgKzgxLDcgQEAgc3RhdGljIGludCBt
-dGtfcGxhbmVfYXRvbWljX2FzeW5jX2NoZWNrKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLA0KPiAg
-CQkJCQlzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpzdGF0ZSkNCj4gIHsNCj4gIAlzdHJ1Y3QgZHJt
-X2NydGNfc3RhdGUgKmNydGNfc3RhdGU7DQo+ICsJaW50IHJldDsNCj4gIA0KPiAgCWlmIChwbGFu
-ZSAhPSBzdGF0ZS0+Y3J0Yy0+Y3Vyc29yKQ0KPiAgCQlyZXR1cm4gLUVJTlZBTDsNCj4gQEAgLTkx
-LDYgKzkyLDExIEBAIHN0YXRpYyBpbnQgbXRrX3BsYW5lX2F0b21pY19hc3luY19jaGVjayhzdHJ1
-Y3QgZHJtX3BsYW5lICpwbGFuZSwNCj4gIAlpZiAoIXBsYW5lLT5zdGF0ZS0+ZmIpDQo+ICAJCXJl
-dHVybiAtRUlOVkFMOw0KPiAgDQo+ICsJcmV0ID0gbXRrX2RybV9jcnRjX3BsYW5lX2NoZWNrKHN0
-YXRlLT5jcnRjLCBwbGFuZSwNCj4gKwkJCQkgICAgICAgdG9fbXRrX3BsYW5lX3N0YXRlKHN0YXRl
-KSk7DQo+ICsJaWYgKHJldCkNCj4gKwkJcmV0dXJuIHJldDsNCj4gKw0KPiAgCWlmIChzdGF0ZS0+
-c3RhdGUpDQo+ICAJCWNydGNfc3RhdGUgPSBkcm1fYXRvbWljX2dldF9leGlzdGluZ19jcnRjX3N0
-YXRlKHN0YXRlLT5zdGF0ZSwNCj4gIAkJCQkJCQkJc3RhdGUtPmNydGMpOw0KDQo=
+Replace test_bit(CRYPT_MODE_INTEGRITY_AEAD, XXX) with
+crypt_integrity_aead().
+
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+---
+ drivers/md/dm-crypt.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index c6a5298..3df90da 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -230,6 +230,8 @@ struct crypt_config {
+ static struct scatterlist *crypt_get_sg_data(struct crypt_config *cc,
+ 					     struct scatterlist *sg);
+ 
++static bool crypt_integrity_aead(struct crypt_config *cc);
++
+ /*
+  * Use this to access cipher attributes that are independent of the key.
+  */
+@@ -346,7 +348,7 @@ static int crypt_iv_benbi_ctr(struct crypt_config *cc, struct dm_target *ti,
+ 	unsigned bs;
+ 	int log;
+ 
+-	if (test_bit(CRYPT_MODE_INTEGRITY_AEAD, &cc->cipher_flags))
++	if (crypt_integrity_aead(cc))
+ 		bs = crypto_aead_blocksize(any_tfm_aead(cc));
+ 	else
+ 		bs = crypto_skcipher_blocksize(any_tfm(cc));
+@@ -712,7 +714,7 @@ static int crypt_iv_random_gen(struct crypt_config *cc, u8 *iv,
+ static int crypt_iv_eboiv_ctr(struct crypt_config *cc, struct dm_target *ti,
+ 			    const char *opts)
+ {
+-	if (test_bit(CRYPT_MODE_INTEGRITY_AEAD, &cc->cipher_flags)) {
++	if (crypt_integrity_aead(cc)) {
+ 		ti->error = "AEAD transforms not supported for EBOIV";
+ 		return -EINVAL;
+ 	}
+-- 
+1.8.3
 
