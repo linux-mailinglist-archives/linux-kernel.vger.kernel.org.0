@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7B6A15C3D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:45:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46D9215C2B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:38:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729621AbgBMPov (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:44:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51528 "EHLO mail.kernel.org"
+        id S2387880AbgBMP3r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:29:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729454AbgBMP1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:36 -0500
+        id S1729270AbgBMP0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:52 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 317F824670;
-        Thu, 13 Feb 2020 15:27:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8D7924676;
+        Thu, 13 Feb 2020 15:26:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607656;
-        bh=fPB1iHhgeFpUPKsYjqf2vZYkXrit/70jiBZ3Dsfo/pk=;
+        s=default; t=1581607611;
+        bh=ZHKaTW72O/ICIe1McLvpYTtjEEyNdR+al3GhkznqujA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qah9WawN3PjLgiBRd5baoykMmNsh7wPzslr0jcH8H1c8M2DJWK6B2S5KT2R0yqmha
-         tZhOksklqxdy9Nhf+QaLu40t2RQp7bXT2rAIbqog4IvtjPyb91kyraU9P+HFZKMJwa
-         6gEZF5uJsjrGDvQZlHh5moLU7mZd4WPbx1VySYho=
+        b=T+JfOcnPjf73Ts3+ln29CSON3Q+KPWpPMWUlRwCTAWfQY9ww/KVlqQjHUYGZ3zkie
+         BqNlIq8SMoDH8/0C8xDwI8Jpu13+Nz7ABGcivtF89ExRiJ8hIrGPJ3Knbx2PxHMmRr
+         3lVpESKGxKc+za0Xe5HKcF8QX+cbyocRoZesJaY8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Andrew Murray <andrew.murray@arm.com>
-Subject: [PATCH 5.4 71/96] KVM: arm64: pmu: Dont increment SW_INCR if PMCR.E is unset
+        stable@vger.kernel.org,
+        Beata Michalska <beata.michalska@linaro.org>,
+        James Morse <james.morse@arm.com>,
+        Marc Zyngier <maz@kernel.org>
+Subject: [PATCH 4.19 37/52] KVM: arm: Fix DFSR setting for non-LPAE aarch32 guests
 Date:   Thu, 13 Feb 2020 07:21:18 -0800
-Message-Id: <20200213151906.126388921@linuxfoundation.org>
+Message-Id: <20200213151825.523552739@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
+References: <20200213151810.331796857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Auger <eric.auger@redhat.com>
+From: James Morse <james.morse@arm.com>
 
-commit 3837407c1aa1101ed5e214c7d6041e7a23335c6e upstream.
+commit 018f22f95e8a6c3e27188b7317ef2c70a34cb2cd upstream.
 
-The specification says PMSWINC increments PMEVCNTR<n>_EL1 by 1
-if PMEVCNTR<n>_EL0 is enabled and configured to count SW_INCR.
+Beata reports that KVM_SET_VCPU_EVENTS doesn't inject the expected
+exception to a non-LPAE aarch32 guest.
 
-For PMEVCNTR<n>_EL0 to be enabled, we need both PMCNTENSET to
-be set for the corresponding event counter but we also need
-the PMCR.E bit to be set.
+The host intends to inject DFSR.FS=0x14 "IMPLEMENTATION DEFINED fault
+(Lockdown fault)", but the guest receives DFSR.FS=0x04 "Fault on
+instruction cache maintenance". This fault is hooked by
+do_translation_fault() since ARMv6, which goes on to silently 'handle'
+the exception, and restart the faulting instruction.
 
-Fixes: 7a0adc7064b8 ("arm64: KVM: Add access handler for PMSWINC register")
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
+It turns out, when TTBCR.EAE is clear DFSR is split, and FS[4] has
+to shuffle up to DFSR[10].
+
+As KVM only does this in one place, fix up the static values. We
+now get the expected:
+| Unhandled fault: lock abort (0x404) at 0x9c800f00
+
+Fixes: 74a64a981662a ("KVM: arm/arm64: Unify 32bit fault injection")
+Reported-by: Beata Michalska <beata.michalska@linaro.org>
+Signed-off-by: James Morse <james.morse@arm.com>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
-Acked-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/20200124142535.29386-2-eric.auger@redhat.com
+Link: https://lore.kernel.org/r/20200121123356.203000-2-james.morse@arm.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/arm/pmu.c |    3 +++
- 1 file changed, 3 insertions(+)
+ virt/kvm/arm/aarch32.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/virt/kvm/arm/pmu.c
-+++ b/virt/kvm/arm/pmu.c
-@@ -486,6 +486,9 @@ void kvm_pmu_software_increment(struct k
- 	if (val == 0)
- 		return;
+--- a/virt/kvm/arm/aarch32.c
++++ b/virt/kvm/arm/aarch32.c
+@@ -192,10 +192,12 @@ static void inject_abt32(struct kvm_vcpu
  
-+	if (!(__vcpu_sys_reg(vcpu, PMCR_EL0) & ARMV8_PMU_PMCR_E))
-+		return;
-+
- 	enable = __vcpu_sys_reg(vcpu, PMCNTENSET_EL0);
- 	for (i = 0; i < ARMV8_PMU_CYCLE_IDX; i++) {
- 		if (!(val & BIT(i)))
+ 	/* Give the guest an IMPLEMENTATION DEFINED exception */
+ 	is_lpae = (vcpu_cp15(vcpu, c2_TTBCR) >> 31);
+-	if (is_lpae)
++	if (is_lpae) {
+ 		*fsr = 1 << 9 | 0x34;
+-	else
+-		*fsr = 0x14;
++	} else {
++		/* Surprise! DFSR's FS[4] lives in bit 10 */
++		*fsr = BIT(10) | 0x4; /* 0x14 */
++	}
+ }
+ 
+ void kvm_inject_dabt32(struct kvm_vcpu *vcpu, unsigned long addr)
 
 
