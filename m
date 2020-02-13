@@ -2,60 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20E7315BAEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 09:43:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCEA715BADC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 09:37:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729612AbgBMIn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 03:43:29 -0500
-Received: from mail.megasuccess.eu ([212.237.8.43]:33620 "EHLO
-        mail.megasuccess.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729474AbgBMIn3 (ORCPT
+        id S1729559AbgBMIhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 03:37:23 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55349 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729401AbgBMIhX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 03:43:29 -0500
-X-Greylist: delayed 378 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Feb 2020 03:43:28 EST
-Received: by mail.megasuccess.eu (Postfix, from userid 1001)
-        id 1F547A2820; Thu, 13 Feb 2020 08:37:07 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megasuccess.eu;
-        s=mail; t=1581583029;
-        bh=vZCY/WMzWvcSzsvr/JOJ79lD1pX2vHR2JT0iP5CcxnY=;
-        h=Date:From:To:Subject:From;
-        b=TbWMRGTNotNcTO4GlcltV7HX9VPNw5n3WScQo5cZpuRkzh9odQsnMhDTGUvxzlXR9
-         itvzg7sMXtv6OowrgzVtkeCcGH+++dHfADNwVD8sy1hRFVQOPcpg95aqUtYmZfDVEt
-         0Ey64IzD/4ljDxr470MSTDA6RQABzS7IWnCacMEIcvMyKKwL8LYDbFSMHpTaI6FToH
-         tuimpmwTbgJtSmTJdTOzCCjH6g7uyA2upQVxTQ2rxPv6qwwlxRUNLwCptCBOKmvb0j
-         bkZSOh0VwYUBGwABicnZPNBKtmxUswBv7rp2DDLTIwb2+UOI3kz5deWeRCa7S9imkX
-         ILRCPIaM1Iqig==
-Received: by mail.megasuccess.eu for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 08:37:04 GMT
-Message-ID: <20200213074500-0.1.11.1y9d.0.ajru0a2emt@megasuccess.eu>
-Date:   Thu, 13 Feb 2020 08:37:04 GMT
-From:   "Nathalie Benoit" <n.benoit@megasuccess.eu>
-To:     <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?Q?GPS_avanc=C3=A9?=
-X-Mailer: mail.megasuccess.eu
+        Thu, 13 Feb 2020 03:37:23 -0500
+Received: by mail-wm1-f66.google.com with SMTP id q9so5188080wmj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 00:37:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=SpOSiHd+ceklnjc83gflDmwLy0jKlR+qhKztdISCJPg=;
+        b=QqLT0mWVbsMw+N9f4Im+jQL5BOZo+5jZXDOTzVWBKwPthjs9CXFw5kX2TVdcK/JYQS
+         SgPW18YO1LCHbpThp+P6ZRoeZtLq69sCJ21cpm867TRwd/S54iTZrTK0XS7g3KDuffEC
+         LzdwixSMCUskX2SPWImajF+SsDK+hX6EsXF5IIOUcxqE53Rf5pa1lImq3xbL90KcAEDN
+         0gn2FqERO9F2jtW/KbFh/C07s4I+p1oJPmqz1Abj+EMbv/F3wF29lguemS0h4t2O6rrE
+         jgHVzKVE4uD/30BlXw+InYiUcUz+GWXFTDCh81VHWnGbSUV8Yv1lyu7SoskuvZ3jakRD
+         oijA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=SpOSiHd+ceklnjc83gflDmwLy0jKlR+qhKztdISCJPg=;
+        b=iOiHhn1+/ihYPlJQFJ75l/f9Ut07FkKrwXbl+Y/BiBZTGK9ywYfuv3Mo78iMNfo4Tc
+         8xP+6hjt9QNY5w/gCMiFzyZupcs2/azVGzM54P5wAcGRsMh/N6SZlmWoLKZ+NkvcTmrB
+         9HKJoPO/G4EHei+qWypeTf1FUwNb8UkM5higwvco4hB216mVqNwJa09War04jNDQE6jU
+         dX9g3Nqt8XNSHqHKbYv1KmZev4rladp+4VJarmpU0vESSZ+lBemNX/L8isbNM2EbWsO2
+         LLFDzwCVMJanuFnpC38ut5u1ozYmMoWPAEWj9I3quMGVupgSAk9hJYVKBp2AaU6oGAQi
+         0QUQ==
+X-Gm-Message-State: APjAAAVIdaz3RXSNgtd6maRty1h1vzpolxDAOAu6fFla7ZuLiiHrGi30
+        tGcStpL8qOjvw5H6w8ZkPZ4/+w==
+X-Google-Smtp-Source: APXvYqzCff8WTsFShTc3iju7U1CZeupb+EhRjNpiAZFEfcxo2uvaUfoSzx1vdoEkL6bd57iktFA6Nw==
+X-Received: by 2002:a1c:4e01:: with SMTP id g1mr4269368wmh.12.1581583039666;
+        Thu, 13 Feb 2020 00:37:19 -0800 (PST)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id o77sm2154746wme.34.2020.02.13.00.37.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2020 00:37:19 -0800 (PST)
+References: <20200213061147.29386-1-samuel@sholland.org> <20200213061147.29386-2-samuel@sholland.org>
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Samuel Holland <samuel@sholland.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Jonathan Corbet <corbet@lwn.net>
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 1/4] ASoC: codec2codec: avoid invalid/double-free of pcm runtime
+In-reply-to: <20200213061147.29386-2-samuel@sholland.org>
+Date:   Thu, 13 Feb 2020 09:37:18 +0100
+Message-ID: <1jr1yyannl.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bonjour,
 
-Je me permets de vous contacter concernant la commercialisation de l=E2=80=
-=99un des meilleurs GPS sur le march=C3=A9.
+On Thu 13 Feb 2020 at 07:11, Samuel Holland <samuel@sholland.org> wrote:
 
-Je vous propose de vous pr=C3=A9senter bri=C3=A8vement cet outil dot=C3=A9=
- de nombreuses fonctionnalit=C3=A9s qui deviendront sans aucun doute indi=
-spensables =C3=A0 l=E2=80=99organisation de votre travail, en ce qu=E2=80=
-=99elles permettent d=E2=80=99optimiser les processus de transport et am=C3=
-=A9liorent votre productivit=C3=A9 sur le terrain.
+> The PCM runtime was freed during PMU in the case that the event hook
+> encountered an error. However, it is also unconditionally freed during
+> PMD. Avoid a double-free by dropping the call to kfree in the PMU
+> hook.
 
-Si vous souhaitez obtenir de plus amples informations, n=E2=80=99h=C3=A9s=
-itez pas =C3=A0 me contacter.
+Oh ... Thanks for finding this.
 
-Dans l'attente de votre r=C3=A9ponse, je vous prie d=E2=80=99agr=C3=A9er =
-mes salutations distingu=C3=A9es.=20
+I thought that a widget which has failed PMU would not go through PMD,
+but It seems the return value dapm_seq_check_event is not checked.
 
+This brings another question/problem:
+A link which has failed in PMU, could try in PMD to hw_free/shutdown a
+dai which has not gone through startup/hw_params, right ?
 
-Nathalie Benoit
+>
+> Fixes: a72706ed8208 ("ASoC: codec2codec: remove ephemeral variables")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> ---
+>  sound/soc/soc-dapm.c | 3 ---
+>  1 file changed, 3 deletions(-)
+>
+> diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+> index b6378f025836..935b5375ecc5 100644
+> --- a/sound/soc/soc-dapm.c
+> +++ b/sound/soc/soc-dapm.c
+> @@ -3888,9 +3888,6 @@ snd_soc_dai_link_event_pre_pmu(struct snd_soc_dapm_widget *w,
+>  	runtime->rate = params_rate(params);
+>  
+>  out:
+> -	if (ret < 0)
+> -		kfree(runtime);
+> -
+>  	kfree(params);
+>  	return ret;
+>  }
+
