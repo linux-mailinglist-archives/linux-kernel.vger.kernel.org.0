@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF34615C1D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:27:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FC3915C1A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:25:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728128AbgBMP04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:26:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39642 "EHLO mail.kernel.org"
+        id S1728435AbgBMPZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:25:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727877AbgBMPZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:06 -0500
+        id S1728425AbgBMPXg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:36 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86382246B1;
-        Thu, 13 Feb 2020 15:25:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C26424689;
+        Thu, 13 Feb 2020 15:23:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607505;
-        bh=s9vMX17cL/4UN/uKNxZu0qzByCTD+ZvN3gc5LxNfAN8=;
+        s=default; t=1581607416;
+        bh=6U861f3HlY1jbH9VK2csIX+8uPv8zZrqsBmhEnRUkx0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XPzuCGhk/dd3nyLd5tD4cDmq88ryvGyabec0hcIT3fk93wDPv2HpPfAMwQKAqxVKW
-         gFLfnvjgaB1t4T5LhWSRP8syKbANpb1RYs5hQ4afYg1fAC/KkEMbIIui5xTzU+w/uq
-         DtxAoVbIN7aaiqTC92hc/Z8n0ZLqRGfTYH6hicI4=
+        b=oV4dujv9hSFA4Ur+O8tYlduoAmmZtRc9qxkkBKkSeJwhIPfGRzEePsf8lqT33g875
+         keebf8HcJ4tNoAPApY1UMuxUQNstJ7Fl/Q0TVwr8Fzj/wHXY+F3OP/ASBJbbjKIaqY
+         AY7xk2GSYCWjS6C8SaOgYccY18zny+SBhEpdhlKs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gary R Hook <gary.hook@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 063/173] crypto: ccp - set max RSA modulus size for v3 platform devices as well
-Date:   Thu, 13 Feb 2020 07:19:26 -0800
-Message-Id: <20200213151949.713565684@linuxfoundation.org>
+        stable@vger.kernel.org, Helen Koike <helen.koike@collabora.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Subject: [PATCH 4.9 023/116] media: v4l2-rect.h: fix v4l2_rect_map_inside() top/left adjustments
+Date:   Thu, 13 Feb 2020 07:19:27 -0800
+Message-Id: <20200213151851.946150810@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +44,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ardb@kernel.org>
+From: Helen Koike <helen.koike@collabora.com>
 
-commit 11548f5a5747813ff84bed6f2ea01100053b0d8d upstream.
+commit f51e50db4c20d46930b33be3f208851265694f3e upstream.
 
-AMD Seattle incorporates a non-PCI version of the v3 CCP crypto
-accelerator, and this version was left behind when the maximum
-RSA modulus size was parameterized in order to support v5 hardware
-which supports larger moduli than v3 hardware does. Due to this
-oversight, RSA acceleration no longer works at all on these systems.
+boundary->width and boundary->height are sizes relative to
+boundary->left and boundary->top coordinates, but they were not being
+taken into consideration to adjust r->left and r->top, leading to the
+following error:
 
-Fix this by setting the .rsamax property to the appropriate value
-for v3 platform hardware.
+Consider the follow as initial values for boundary and r:
 
-Fixes: e28c190db66830c0 ("csrypto: ccp - Expand RSA support for a v5 ccp")
-Cc: Gary R Hook <gary.hook@amd.com>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Acked-by: Gary R Hook <gary.hook@amd.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+struct v4l2_rect boundary = {
+	.left = 100,
+	.top = 100,
+	.width = 800,
+	.height = 600,
+}
+
+struct v4l2_rect r = {
+	.left = 0,
+	.top = 0,
+	.width = 1920,
+	.height = 960,
+}
+
+calling v4l2_rect_map_inside(&r, &boundary) was modifying r to:
+
+r = {
+	.left = 0,
+	.top = 0,
+	.width = 800,
+	.height = 600,
+}
+
+Which is wrongly outside the boundary rectangle, because:
+
+	v4l2_rect_set_max_size(r, boundary); // r->width = 800, r->height = 600
+	...
+	if (r->left + r->width > boundary->width) // true
+		r->left = boundary->width - r->width; // r->left = 800 - 800
+	if (r->top + r->height > boundary->height) // true
+		r->top = boundary->height - r->height; // r->height = 600 - 600
+
+Fix this by considering top/left coordinates from boundary.
+
+Fixes: ac49de8c49d7 ("[media] v4l2-rect.h: new header with struct v4l2_rect helper functions")
+Signed-off-by: Helen Koike <helen.koike@collabora.com>
+Cc: <stable@vger.kernel.org>      # for v4.7 and up
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/ccp/ccp-dev-v3.c |    1 +
- 1 file changed, 1 insertion(+)
+ include/media/v4l2-rect.h |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/crypto/ccp/ccp-dev-v3.c
-+++ b/drivers/crypto/ccp/ccp-dev-v3.c
-@@ -590,6 +590,7 @@ const struct ccp_vdata ccpv3_platform =
- 	.setup = NULL,
- 	.perform = &ccp3_actions,
- 	.offset = 0,
-+	.rsamax = CCP_RSA_MAX_WIDTH,
- };
+--- a/include/media/v4l2-rect.h
++++ b/include/media/v4l2-rect.h
+@@ -75,10 +75,10 @@ static inline void v4l2_rect_map_inside(
+ 		r->left = boundary->left;
+ 	if (r->top < boundary->top)
+ 		r->top = boundary->top;
+-	if (r->left + r->width > boundary->width)
+-		r->left = boundary->width - r->width;
+-	if (r->top + r->height > boundary->height)
+-		r->top = boundary->height - r->height;
++	if (r->left + r->width > boundary->left + boundary->width)
++		r->left = boundary->left + boundary->width - r->width;
++	if (r->top + r->height > boundary->top + boundary->height)
++		r->top = boundary->top + boundary->height - r->height;
+ }
  
- const struct ccp_vdata ccpv3 = {
+ /**
 
 
