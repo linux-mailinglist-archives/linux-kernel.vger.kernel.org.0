@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9036815C3BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C78E015C26D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:33:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387656AbgBMPnx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:43:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52406 "EHLO mail.kernel.org"
+        id S1729907AbgBMPdj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:33:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387706AbgBMP1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:48 -0500
+        id S1729663AbgBMP3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:29:05 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65A2A20661;
-        Thu, 13 Feb 2020 15:27:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23D2920661;
+        Thu, 13 Feb 2020 15:29:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607667;
-        bh=MRdGMjutinYGYiS4uueb/cSnR9n8EX3kqsC1u8p/7kI=;
+        s=default; t=1581607744;
+        bh=4LziLDgEs1a6bdEtUIGJmGqk67KT7ZSxeXxXjuRP6yE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fQQ0LdSPn+6DjfaKxEHplbBccfLzGFSvFuQi/+Wqmq1k+6khh2slPO3NiY0al2VsW
-         b+czQSkOidNq10P3TiEiwVeZkO3YqRDCHxuZSZyuqFeTuSDm8ssOiS9gzfTAkcVdN1
-         WqmijvOfGcfvtoCgp0l1OwOSx0r3j+r0YhqQsUX8=
+        b=TLTGf5w9+nJm7eB31dL1dHNC+k9SHzpeSFL3VG1vf2SBzaKX79qsduMc9w7HW5/6I
+         dhPznpAkwmtjVyP22/KYU+4l816mhNqEykuQsFcD7a5cC5AyUkshLTbhTZi8XOIPYd
+         PFLhSVbr1ibiViy6+i0tFPjkON8y6RrM0/wARAlI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Whitten <ben.whitten@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.4 89/96] regmap: fix writes to non incrementing registers
+        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Subject: [PATCH 5.5 100/120] media: i2c: adv748x: Fix unsafe macros
 Date:   Thu, 13 Feb 2020 07:21:36 -0800
-Message-Id: <20200213151912.406961661@linuxfoundation.org>
+Message-Id: <20200213151934.598850472@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,48 +46,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Whitten <ben.whitten@gmail.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 2e31aab08bad0d4ee3d3d890a7b74cb6293e0a41 upstream.
+commit 0d962e061abcf1b9105f88fb850158b5887fbca3 upstream.
 
-When checking if a register block is writable we must ensure that the
-block does not start with or contain a non incrementing register.
+Enclose multiple macro parameters in parentheses in order to
+make such macros safer and fix the Clang warning below:
 
-Fixes: 8b9f9d4dc511 ("regmap: verify if register is writeable before writing operations")
-Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
-Link: https://lore.kernel.org/r/20200118205625.14532-1-ben.whitten@gmail.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+drivers/media/i2c/adv748x/adv748x-afe.c:452:12: warning: operator '?:'
+has lower precedence than '|'; '|' will be evaluated first
+[-Wbitwise-conditional-parentheses]
+
+ret = sdp_clrset(state, ADV748X_SDP_FRP, ADV748X_SDP_FRP_MASK, enable
+? ctrl->val - 1 : 0);
+
+Fixes: 3e89586a64df ("media: i2c: adv748x: add adv748x driver")
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/regmap/regmap.c |   17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ drivers/media/i2c/adv748x/adv748x.h |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -1488,11 +1488,18 @@ static int _regmap_raw_write_impl(struct
+--- a/drivers/media/i2c/adv748x/adv748x.h
++++ b/drivers/media/i2c/adv748x/adv748x.h
+@@ -394,10 +394,10 @@ int adv748x_write_block(struct adv748x_s
  
- 	WARN_ON(!map->bus);
+ #define io_read(s, r) adv748x_read(s, ADV748X_PAGE_IO, r)
+ #define io_write(s, r, v) adv748x_write(s, ADV748X_PAGE_IO, r, v)
+-#define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~m) | v)
++#define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~(m)) | (v))
  
--	/* Check for unwritable registers before we start */
--	for (i = 0; i < val_len / map->format.val_bytes; i++)
--		if (!regmap_writeable(map,
--				     reg + regmap_get_offset(map, i)))
--			return -EINVAL;
-+	/* Check for unwritable or noinc registers in range
-+	 * before we start
-+	 */
-+	if (!regmap_writeable_noinc(map, reg)) {
-+		for (i = 0; i < val_len / map->format.val_bytes; i++) {
-+			unsigned int element =
-+				reg + regmap_get_offset(map, i);
-+			if (!regmap_writeable(map, element) ||
-+				regmap_writeable_noinc(map, element))
-+				return -EINVAL;
-+		}
-+	}
+ #define hdmi_read(s, r) adv748x_read(s, ADV748X_PAGE_HDMI, r)
+-#define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, r+1)) & m)
++#define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, (r)+1)) & (m))
+ #define hdmi_write(s, r, v) adv748x_write(s, ADV748X_PAGE_HDMI, r, v)
  
- 	if (!map->cache_bypass && map->format.parse_val) {
- 		unsigned int ival;
+ #define repeater_read(s, r) adv748x_read(s, ADV748X_PAGE_REPEATER, r)
+@@ -405,11 +405,11 @@ int adv748x_write_block(struct adv748x_s
+ 
+ #define sdp_read(s, r) adv748x_read(s, ADV748X_PAGE_SDP, r)
+ #define sdp_write(s, r, v) adv748x_write(s, ADV748X_PAGE_SDP, r, v)
+-#define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~m) | v)
++#define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~(m)) | (v))
+ 
+ #define cp_read(s, r) adv748x_read(s, ADV748X_PAGE_CP, r)
+ #define cp_write(s, r, v) adv748x_write(s, ADV748X_PAGE_CP, r, v)
+-#define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~m) | v)
++#define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~(m)) | (v))
+ 
+ #define tx_read(t, r) adv748x_read(t->state, t->page, r)
+ #define tx_write(t, r, v) adv748x_write(t->state, t->page, r, v)
 
 
