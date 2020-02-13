@@ -2,100 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C938B15C788
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:14:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C12F15C5A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:10:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727836AbgBMPWW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:22:22 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:59052 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726937AbgBMPWS (ORCPT
+        id S1727958AbgBMPXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:23:49 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40878 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728220AbgBMPXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:22:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581607337;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=sg7JP3JVay2T20YRvFn/u3cS+1B1NiES9y/sI/tFeig=;
-        b=Qz/f4Kh6z7n6zhj4ns8P3PUrRhsXanr4Y1mqTQ8y+PzerssUfGRNltmpLguYDpg3RRK+A0
-        zO74YdrwKtcSZE2Kbg3w9DTxpr2JYk2Cvcz5d07KhtKqCpMEQwK4AtjKJimsiF/aP70frA
-        Ih63j+a8Mnqi1u1F1hUdVm/M86xvMok=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-244-c64aTuVgNGC2tCQYBesUgg-1; Thu, 13 Feb 2020 10:22:12 -0500
-X-MC-Unique: c64aTuVgNGC2tCQYBesUgg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 12F1410CE786;
-        Thu, 13 Feb 2020 15:22:11 +0000 (UTC)
-Received: from ovpn-112-23.rdu2.redhat.com (ovpn-112-23.rdu2.redhat.com [10.10.112.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C19148AC23;
-        Thu, 13 Feb 2020 15:22:09 +0000 (UTC)
-Message-ID: <34daecbeb05d31e30ef11574f873553290c29d16.camel@redhat.com>
-Subject: Re: [PATCH 0/2] Migrate QRTR Nameservice to Kernel
-From:   Dan Williams <dcbw@redhat.com>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        davem@davemloft.net, kuba@kernel.org
-Cc:     bjorn.andersson@linaro.org, netdev@vger.kernel.org,
+        Thu, 13 Feb 2020 10:23:01 -0500
+Received: by mail-pl1-f193.google.com with SMTP id y1so2463743plp.7
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:23:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mG5Pj3Ga2qn/6UPh/hiM2vYUP7QMzFr/lGer+oLepCc=;
+        b=ojjKqoJqn3YNbRS9pIbai3sOzbP1aYkgdpr7OpIR1y2+KaxVGpme9iesoJCJU3SRhU
+         HAfQ/pbQUu2k4NcORvH4RHD/TgpX9EwAE3ASjn75CwsQ6aifFHMjui0B/keNeiEfBYAm
+         9VxkhZ441f/jNEys8dffVo1BnGSySP3/lfTo111fQACZ4xowTWKgUHPWcGpSloattgia
+         zE46NmTrTYDxxlLpkEth0WCXUsAzom8BBeNY/XXQAwBpEzm6aNRbYbNJ8efaNmdblTej
+         qEP6ATS99mxjh7IbNgoJcGNL4co6kAqB61eQiK4MdYk2h3VWemMGVBmIpbBfcQdfTTz9
+         T1SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mG5Pj3Ga2qn/6UPh/hiM2vYUP7QMzFr/lGer+oLepCc=;
+        b=cYlR9xM3q2OqNtaJMKafQj745j/b/K+OijNwmsc8lJrJ3oAF/16EhD7MR4NJe7ciWp
+         o34hpO1OOqKh+EpdRvh+6ZsnQpFLHpCL0jxGNcyDEKwTW+mB+8rPOeHoMctebV5iGnSM
+         CcwUiXbFMGt/IJktvt/Uc0W5pAcJKLt6Qgufx3i51pT98zrRnXihF+hMKIQ4jcqRiFR6
+         pOeWH53ntUwOVG6V5D9RF+9jpgBdMxpsnDJY7bFc3elkrnI1lW13v8hgcI/e+exjjQKN
+         onAprVsLSSXscJZZ0DL1eQRoAOH9mwIYgxzHAn+CeNSwsDKSZpoaGXVFJLmABmT1hg/K
+         /Kqw==
+X-Gm-Message-State: APjAAAXH49vLhXM6Nt22sBbSIovjlpaHbkEJtHjFyXozDpyHyBwnQ+Ck
+        SAPR/gRWqwCe0DVakZ7zQCZ7
+X-Google-Smtp-Source: APXvYqyFO7tCYmZ8k+SqmOtcnU6W7tN/B4ksrngWczKUIT1JduB/3SDAP6TvrlAIs6RKKyY3gUuZ5Q==
+X-Received: by 2002:a17:902:a58a:: with SMTP id az10mr28645091plb.20.1581607380940;
+        Thu, 13 Feb 2020 07:23:00 -0800 (PST)
+Received: from mani ([103.59.133.81])
+        by smtp.gmail.com with ESMTPSA id n2sm3561515pgn.71.2020.02.13.07.22.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Feb 2020 07:23:00 -0800 (PST)
+Date:   Thu, 13 Feb 2020 20:52:55 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     arnd@arndb.de, smohanad@codeaurora.org, jhugo@codeaurora.org,
+        kvalo@codeaurora.org, bjorn.andersson@linaro.org,
+        hemantk@codeaurora.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Thu, 13 Feb 2020 09:22:39 -0600
-In-Reply-To: <20200213091427.13435-1-manivannan.sadhasivam@linaro.org>
-References: <20200213091427.13435-1-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+Subject: Re: [PATCH v2 02/16] bus: mhi: core: Add support for registering MHI
+ controllers
+Message-ID: <20200213152255.GC15010@mani>
+References: <20200131135009.31477-1-manivannan.sadhasivam@linaro.org>
+ <20200131135009.31477-3-manivannan.sadhasivam@linaro.org>
+ <20200206165606.GA3894455@kroah.com>
+ <20200211191147.GB11908@Mani-XPS-13-9360>
+ <20200211192236.GB1962867@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200211192236.GB1962867@kroah.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-02-13 at 14:44 +0530, Manivannan Sadhasivam wrote:
-> Hello,
-> 
-> This patchset migrates the Qualcomm IPC Router (QRTR) Nameservice
-> from userspace
-> to kernel under net/qrtr.
-> 
-> The userspace implementation of it can be found here:
-> https://github.com/andersson/qrtr/blob/master/src/ns.c
-> 
-> This change is required for enabling the WiFi functionality of some
-> Qualcomm
-> WLAN devices using ATH11K without any dependency on a userspace
-> daemon.
+Hi Greg,
 
-Just out of curiousity, what's the motivation for not requiring a
-userspace daemon? What are the downsides of the current userspace
-daemon implementation?
-
-Dan
-
-> The original userspace code is published under BSD3 license. For
-> migrating it
-> to Linux kernel, I have adapted Dual BSD/GPL license.
+On Tue, Feb 11, 2020 at 11:22:36AM -0800, Greg KH wrote:
+> On Wed, Feb 12, 2020 at 12:41:47AM +0530, Manivannan Sadhasivam wrote:
+> > Hi Greg,
+> > 
+> > On Thu, Feb 06, 2020 at 05:56:06PM +0100, Greg KH wrote:
+> > > On Fri, Jan 31, 2020 at 07:19:55PM +0530, Manivannan Sadhasivam wrote:
+> > > > +static void mhi_release_device(struct device *dev)
+> > > > +{
+> > > > +	struct mhi_device *mhi_dev = to_mhi_device(dev);
+> > > > +
+> > > > +	if (mhi_dev->ul_chan)
+> > > > +		mhi_dev->ul_chan->mhi_dev = NULL;
+> > > 
+> > > That looks really odd.  Why didn't you just drop the reference you
+> > > should have grabbed here for this pointer?  You did properly increment
+> > > it when you saved it, right?  :)
+> > > 
+> > 
+> > Well, there is no reference count (kref) exist for mhi_dev.
 > 
-> This patchset has been verified on Dragonboard410c and Intel NUC with
-> QCA6390
-> WLAN device.
+> Then something is wrong with your model :(
 > 
-> Thanks,
-> Mani
+> You can't save pointers off to things without reference counting, that
+> is going to cause you real problems.  See the coding style document for
+> all the details.
 > 
-> Manivannan Sadhasivam (2):
->   net: qrtr: Migrate nameservice to kernel from userspace
->   net: qrtr: Fix the local node ID as 1
+> > And we really needed to NULL the mhi_dev to avoid any dangling
+> > reference to it.
 > 
->  net/qrtr/Makefile |   2 +-
->  net/qrtr/ns.c     | 730
-> ++++++++++++++++++++++++++++++++++++++++++++++
->  net/qrtr/qrtr.c   |  51 +---
->  net/qrtr/qrtr.h   |   4 +
->  4 files changed, 746 insertions(+), 41 deletions(-)
->  create mode 100644 net/qrtr/ns.c
+> Again, that's not how to do this correctly.
+> 
+> > The reason for not having kref is that, each mhi_dev will be used by
+> > maximum of 2 channels only. So thought that refcounting is not needed.
+> > Please correct me if I'm wrong.
+> 
+> Please read section 11 of Documentation/process/coding-style.rst
 > 
 
+I have fixed it and will send the next iteration soon.
+
+Thanks,
+Mani
+
+> thanks,
+> 
+> greg k-h
