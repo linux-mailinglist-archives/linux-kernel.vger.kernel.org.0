@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA7B915C35E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D93E215C2AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:38:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387825AbgBMPkd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:40:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56570 "EHLO mail.kernel.org"
+        id S2387814AbgBMP3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:29:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387769AbgBMP2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:28:43 -0500
+        id S2387591AbgBMP0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:32 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9C9824685;
-        Thu, 13 Feb 2020 15:28:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B97D24671;
+        Thu, 13 Feb 2020 15:26:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607722;
-        bh=8o5e555fo6HVVk33P4Q8tLT7prYOfmlPR4EsrzZIo9g=;
+        s=default; t=1581607592;
+        bh=c+NAbmXVUCR2NCHZlhlJbWAl+qAOyeaTOTrvAYJSc7U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QOl02q+vgrPHXFl10J+sm8VIBOfCk9LQjegoiqntKi6jyCV4sZRCM2JYoHKxbPkSN
-         g6Sg1x9LvbyqT7CVeEs2i3beLHwJUr6vWMPV0Z0VZqJRsZs7S9q8xBS/IM07mDKp/4
-         GjqymTVrUN1zq40qnkITTkKy48epoJcGU+aNvixY=
+        b=uBxuARAjmSzIrh3iLdMwq9zWHQMduVg6IYrTo0/8UIoQDea9ZqJWzvl6j6ThMwOO5
+         AI5kfiFk3/fjsFpSJdGHH8qcKSdjsHMYmX8wGj/I60c/OnCnd6tufYrbSVIVW4dDVQ
+         QMOVqedCc/IO5dAlSrrbRYH5tSUb1Wk8w0JqKnfI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 5.5 067/120] soc: qcom: rpmhpd: Set active_only for active only power domains
-Date:   Thu, 13 Feb 2020 07:21:03 -0800
-Message-Id: <20200213151924.186987996@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.19 23/52] platform/x86: intel_mid_powerbtn: Take a copy of ddata
+Date:   Thu, 13 Feb 2020 07:21:04 -0800
+Message-Id: <20200213151819.922200920@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
+References: <20200213151810.331796857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-commit 5d0d4d42bed0090d3139e7c5ca1587d76d48add6 upstream.
+commit 5e0c94d3aeeecc68c573033f08d9678fecf253bd upstream.
 
-The 'active_only' attribute was accidentally never set to true for any
-power domains meaning that all the code handling this attribute was
-dead.
+The driver gets driver_data from memory that is marked as const (which
+is probably put to read-only memory) and it then modifies it. This
+likely causes some sort of fault to happen.
 
-NOTE that the RPM power domain code (as opposed to the RPMh one) gets
-this right.
+Fix this by taking a copy of the structure.
 
-Acked-by: Rajendra Nayak <rnayak@codeaurora.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Fixes: 279b7e8a62cc ("soc: qcom: rpmhpd: Add RPMh power domain driver")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Link: https://lore.kernel.org/r/20190214173633.211000-1-dianders@chromium.org
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Fixes: c94a8ff14de3 ("platform/x86: intel_mid_powerbtn: make mid_pb_ddata const")
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/soc/qcom/rpmhpd.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/platform/x86/intel_mid_powerbtn.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/soc/qcom/rpmhpd.c
-+++ b/drivers/soc/qcom/rpmhpd.c
-@@ -93,6 +93,7 @@ static struct rpmhpd sdm845_mx = {
+--- a/drivers/platform/x86/intel_mid_powerbtn.c
++++ b/drivers/platform/x86/intel_mid_powerbtn.c
+@@ -158,9 +158,10 @@ static int mid_pb_probe(struct platform_
  
- static struct rpmhpd sdm845_mx_ao = {
- 	.pd = { .name = "mx_ao", },
-+	.active_only = true,
- 	.peer = &sdm845_mx,
- 	.res_name = "mx.lvl",
- };
-@@ -107,6 +108,7 @@ static struct rpmhpd sdm845_cx = {
+ 	input_set_capability(input, EV_KEY, KEY_POWER);
  
- static struct rpmhpd sdm845_cx_ao = {
- 	.pd = { .name = "cx_ao", },
-+	.active_only = true,
- 	.peer = &sdm845_cx,
- 	.parent = &sdm845_mx_ao.pd,
- 	.res_name = "cx.lvl",
+-	ddata = (struct mid_pb_ddata *)id->driver_data;
++	ddata = devm_kmemdup(&pdev->dev, (void *)id->driver_data,
++			     sizeof(*ddata), GFP_KERNEL);
+ 	if (!ddata)
+-		return -ENODATA;
++		return -ENOMEM;
+ 
+ 	ddata->dev = &pdev->dev;
+ 	ddata->irq = irq;
 
 
