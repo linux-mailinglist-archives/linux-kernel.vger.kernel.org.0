@@ -2,122 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60C0915C672
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:12:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A68615C6B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:12:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729767AbgBMQAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 11:00:47 -0500
-Received: from USFB19PA36.eemsg.mail.mil ([214.24.26.199]:49602 "EHLO
-        USFB19PA36.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728853AbgBMQAp (ORCPT
+        id S1730114AbgBMQDD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 11:03:03 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:53494 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728316AbgBMQC7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 11:00:45 -0500
-X-EEMSG-check-017: 55804223|USFB19PA36_ESA_OUT06.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.70,437,1574121600"; 
-   d="scan'208";a="55804223"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by USFB19PA36.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 13 Feb 2020 16:00:36 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1581609637; x=1613145637;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=KIcuSejQnqpI1jbM63RzeE7p+CVUNEGm6AHO7WK6rr4=;
-  b=lu6hMfThc7yL6BWv6oMlFR9fNRZdBCDTOsfa5EkqbasRNX9bgtpP5M97
-   KDzGo0lK9IjYhaTGpVaPEN+R4hUodJDKB07KgMRylhEiQQvK2KzROKlPN
-   RIsypEhsFdLePA96QgkAB2CYM7hHJ4p3oQEkmShJ8lOhG6NO6jqwNfJSp
-   HFNzB4kmKyZ4nNeKAeXtkE+pdu87BzWqEq4CRIraJi8QIJ4SKHmwqGd2s
-   No/BwGWAliQy+5GYvEZLM/qpUsrhqKiHT82aVWfOvYjzK1rRMPIRfF96+
-   pf6JoAXhc+TV9eUbtJ0gKRGqs5poOnw+w7RExtl5U+tCEANB1rIcOGdrQ
-   w==;
-X-IronPort-AV: E=Sophos;i="5.70,437,1574121600"; 
-   d="scan'208";a="33030530"
-IronPort-PHdr: =?us-ascii?q?9a23=3AaSjTkB2aIbMKZLWismDT+DRfVm0co7zxezQtwd?=
- =?us-ascii?q?8ZsesXK/zxwZ3uMQTl6Ol3ixeRBMOHsq4C1bqd4/mocFdDyKjCmUhKSIZLWR?=
- =?us-ascii?q?4BhJdetC0bK+nBN3fGKuX3ZTcxBsVIWQwt1Xi6NU9IBJS2PAWK8TW94jEIBx?=
- =?us-ascii?q?rwKxd+KPjrFY7OlcS30P2594HObwlSizexfLx/IA+3oAjSucUbgpZuIbstxx?=
- =?us-ascii?q?XUpXdFZ+tZyWR0KFyJgh3y/N2w/Jlt8yRRv/Iu6ctNWrjkcqo7ULJVEi0oP3?=
- =?us-ascii?q?g668P3uxbDSxCP5mYHXWUNjhVIGQnF4wrkUZr3ryD3q/By2CiePc3xULA0RT?=
- =?us-ascii?q?Gv5LplRRP0lCsKMSMy/XrJgcJskq1UvBOhpwR+w4HKZoGVKOF+db7Zcd8DWG?=
- =?us-ascii?q?ZNQtpdWylHD4yydYsPC/cKM/heoYfzulACqQKyCReoCe/qzDJDm3340rAg0+?=
- =?us-ascii?q?k5DA/IwgIgEdINvnraotr6O6UdXvy6wqTT0TXObelb1Svh5IXGcB0sp+yHU7?=
- =?us-ascii?q?JqccrWzEkiDx7LjkmOpoz9PzOayOINuHWG4eplT+2vj2onpB9xozOywcoskZ?=
- =?us-ascii?q?TGhpkOx1DY9SR23IY1JdqiRE59et6rCoFcty6dN4toW84vRXxjtiUiyrAepJ?=
- =?us-ascii?q?K2cycHxI4nyhLCcfCLbYeF7gz5WOqMJzpzmWhrd6ilhxmo9Eit0uj8Vs6p31?=
- =?us-ascii?q?lUtidFidzMtmwV1xzU98iHVuNx/ke/1jaL0ADe8v1ELloularaNp4h2aQ8lp?=
- =?us-ascii?q?sVsUTNGS/2g1v5g7OMekU4+umn9+TnYrL8qp+aK4B0kR3xPr4rmsy+BeQ0Kg?=
- =?us-ascii?q?kOX26F9uSgzLDv4EL0TbpQgvA2j6XVqo7WKMsFqqKjHgNZyoMj5Ay+Dzei3t?=
- =?us-ascii?q?QYh34HLFdddRKckofpIErDIOz4DPijg1Ssly1nx/bdPrL7GJnNIX/DkKn5cb?=
- =?us-ascii?q?Zn90Fc0BYzzcxY559MBbEBOuz8WkDytNzYFRI5Nw20w+D6CNRy2IMeXn+PAq?=
- =?us-ascii?q?mEP6zIrV+I5+UvI++WaI8Sojb9JOAv5+Tygn8hhV8dYa6p0IMTaHC5GPRmPk?=
- =?us-ascii?q?qYbWPvgtgfC2cKuBQxTOjxhV2cXj5ceWyyU7g/5j4lEoKmC5nMRoS3jLyGxi?=
- =?us-ascii?q?e7EYVcZnpaBVCUDXfoa4KEVu8XaCKOOMBuiTgEWqa6Ro8/2hGhqhX6x6BkLu?=
- =?us-ascii?q?XK4C0Ys4zs1Nxv6+3UjxEy+iR+D96B3GGVU2F0gmQISic43aB+pUx9zkyO0a?=
- =?us-ascii?q?tmjPxCE9xc+fdJXh09NZ7GwOxwE8ryVR7ZfteVVFamRc2rASkrQdIsx98DeF?=
- =?us-ascii?q?59FM+/jhDHxiaqBrgVl7uRBJMq6K7Tw3/xJ8Mug0rBgYY7glZuYdFIPG3jpq?=
- =?us-ascii?q?dl6w3aAcadnF+UmKWqXaAd2jPd+mCey2aHoEBfVkh3S6qTGTgbZ03LvZH661?=
- =?us-ascii?q?nEQruGF7sqKE1CxNSEJ68Mbcfm3ntcQ/K2A8jTe2K8nS+LAB+Mwr6dJN7xd3?=
- =?us-ascii?q?41wDTWCE9ClRsau3mBK15tVW+av2vCAWk2RhrUaET2/Lw78SnqQw=3D=3D?=
-X-IPAS-Result: =?us-ascii?q?A2DmAABlcUVe/wHyM5BmGwEBAQEBAQEFAQEBEQEBAwMBA?=
- =?us-ascii?q?QGBe4F9gW0gEiqEFIkDhl8GgTeJcJFKCQEBAQEBAQEBATcEAQGEQAKCcDgTA?=
- =?us-ascii?q?hABAQEFAQEBAQEFAwEBbIVDgjspAYMBAQEBAQMjFUEQCxUDAgImAgJXBgEMB?=
- =?us-ascii?q?gIBAYJjP4JXJawZdYEyhUqDToE+gQ4qjD55gQeBOA+CXT6HW4JeBJdFRpdrg?=
- =?us-ascii?q?kSCT5N8BhybFy2OO50+IoFYKwgCGAghD4MnUBgNjlWOLCMDMI8hAQE?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 13 Feb 2020 16:00:35 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 01DFxZqs258318;
-        Thu, 13 Feb 2020 10:59:37 -0500
-Subject: Re: [PATCH 5.4 85/96] selinux: revert "stop passing MAY_NOT_BLOCK to
- the AVC upon follow_link"
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org, Will Deacon <will@kernel.org>,
-        Paul Moore <paul@paul-moore.com>
-References: <20200213151839.156309910@linuxfoundation.org>
- <20200213151911.147099125@linuxfoundation.org>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <b481f512-d4dd-1c04-f39f-0ba271193d0a@tycho.nsa.gov>
-Date:   Thu, 13 Feb 2020 11:01:41 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 13 Feb 2020 11:02:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1581609777; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=WjFVxWmftnYJudI0P+zBlLjpdpoJuteS1QDW4Yee3k4=;
+        b=WMIT38x2f8xFJ9kCXx9mkZx7YdOa8pPD90lqQMWvltPE5KBTgEMyIcH438+OQl6uqORX8K
+        jWZASV7U5SthC8Z+JbsQMrboloTDqtxfLZ4MZEMLXBtjgJ7iSbcZh8KxYAYXFql37GwPOu
+        nsihHaV8EP8uKRNyyPXfnImsFuudu0o=
+Date:   Thu, 13 Feb 2020 13:02:44 -0300
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 17/18] irqchip: Replace setup_irq() by request_irq()
+To:     afzal mohammed <afzal.mohd.ma@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>
+Message-Id: <1581609764.3.2@crapouillou.net>
+In-Reply-To: <8e00874d072f32496c2d0da05423bda1cadd6975.1581478324.git.afzal.mohd.ma@gmail.
+        com>
+References: <cover.1581478323.git.afzal.mohd.ma@gmail.com>
+        <8e00874d072f32496c2d0da05423bda1cadd6975.1581478324.git.afzal.mohd.ma@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200213151911.147099125@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/13/20 10:21 AM, Greg Kroah-Hartman wrote:
-> From: Stephen Smalley <sds@tycho.nsa.gov>
-> 
-> commit 1a37079c236d55fb31ebbf4b59945dab8ec8764c upstream.
-> 
-> This reverts commit e46e01eebbbc ("selinux: stop passing MAY_NOT_BLOCK
-> to the AVC upon follow_link"). The correct fix is to instead fall
-> back to ref-walk if audit is required irrespective of the specific
-> audit data type.  This is done in the next commit.
-> 
-> Fixes: e46e01eebbbc ("selinux: stop passing MAY_NOT_BLOCK to the AVC upon follow_link")
-> Reported-by: Will Deacon <will@kernel.org>
-> Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Hi,
 
-This patch should be accompanied by commit 
-0188d5c025ca8fe756ba3193bd7d150139af5a88 ("selinux: fall back to 
-ref-walk if audit is required").  The former is reverting an incorrect 
-fix for bda0be7ad994 ("security: make inode_follow_link RCU-walk 
-aware"), the latter is providing the correct fix for it.
 
-> 
+Le mer., f=E9vr. 12, 2020 at 13:35, afzal mohammed=20
+<afzal.mohd.ma@gmail.com> a =E9crit :
+> request_irq() is preferred over setup_irq(). Existing callers of
+> setup_irq() reached mostly via 'init_IRQ()' & 'time_init()', while
+> memory allocators are ready by 'mm_init()'.
+>=20
+> Per tglx[1], setup_irq() existed in olden days when allocators were=20
+> not
+> ready by the time early interrupts were initialized.
+>=20
+> Hence replace setup_irq() by request_irq().
+>=20
+> Seldom remove_irq() usage has been observed coupled with setup_irq(),
+> wherever that has been found, it too has been replaced by free_irq().
+>=20
+> [1] https://lkml.kernel.org/r/alpine.DEB.2.20.1710191609480.1971@nanos
+>=20
+> Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+
+Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+
 > ---
->   security/selinux/avc.c         |   24 ++++++++++++++++++++++--
->   security/selinux/hooks.c       |    5 +++--
->   security/selinux/include/avc.h |    5 +++++
->   3 files changed, 30 insertions(+), 4 deletions(-)
+>=20
+> Since cc'ing cover letter to all maintainers/reviewers would be too
+> many, refer for cover letter,
+> =20
+> https://lkml.kernel.org/r/cover.1581478323.git.afzal.mohd.ma@gmail.com
+>=20
+>  drivers/irqchip/irq-i8259.c   |  9 +++------
+>  drivers/irqchip/irq-ingenic.c | 11 +++++------
+>  2 files changed, 8 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/drivers/irqchip/irq-i8259.c b/drivers/irqchip/irq-i8259.c
+> index d000870d9b6b..e9798d02b256 100644
+> --- a/drivers/irqchip/irq-i8259.c
+> +++ b/drivers/irqchip/irq-i8259.c
+> @@ -271,11 +271,6 @@ static void init_8259A(int auto_eoi)
+>  /*
+>   * IRQ2 is cascade interrupt to second interrupt controller
+>   */
+> -static struct irqaction irq2 =3D {
+> -	.handler =3D no_action,
+> -	.name =3D "cascade",
+> -	.flags =3D IRQF_NO_THREAD,
+> -};
+>=20
+>  static struct resource pic1_io_resource =3D {
+>  	.name =3D "pic1",
+> @@ -323,7 +318,9 @@ struct irq_domain * __init=20
+> __init_i8259_irqs(struct device_node *node)
+>  	if (!domain)
+>  		panic("Failed to add i8259 IRQ domain");
+>=20
+> -	setup_irq(I8259A_IRQ_BASE + PIC_CASCADE_IR, &irq2);
+> +	if (request_irq(I8259A_IRQ_BASE + PIC_CASCADE_IR, no_action,
+> +			IRQF_NO_THREAD, "cascade", NULL))
+> +		pr_err("request_irq() on %s failed\n", "cascade");
+>  	register_syscore_ops(&i8259_syscore_ops);
+>  	return domain;
+>  }
+> diff --git a/drivers/irqchip/irq-ingenic.c=20
+> b/drivers/irqchip/irq-ingenic.c
+> index c5589ee0dfb3..5b20a0f0ece8 100644
+> --- a/drivers/irqchip/irq-ingenic.c
+> +++ b/drivers/irqchip/irq-ingenic.c
+> @@ -58,11 +58,6 @@ static irqreturn_t intc_cascade(int irq, void=20
+> *data)
+>  	return IRQ_HANDLED;
+>  }
+>=20
+> -static struct irqaction intc_cascade_action =3D {
+> -	.handler =3D intc_cascade,
+> -	.name =3D "SoC intc cascade interrupt",
+> -};
+> -
+>  static int __init ingenic_intc_of_init(struct device_node *node,
+>  				       unsigned num_chips)
+>  {
+> @@ -130,7 +125,11 @@ static int __init ingenic_intc_of_init(struct=20
+> device_node *node,
+>  		irq_reg_writel(gc, IRQ_MSK(32), JZ_REG_INTC_SET_MASK);
+>  	}
+>=20
+> -	setup_irq(parent_irq, &intc_cascade_action);
+> +	if (request_irq(parent_irq, intc_cascade, 0,
+> +			"SoC intc cascade interrupt", NULL)) {
+> +		pr_err("request_irq() on %s failed\n",
+> +		       "SoC intc cascade interrupt");
+> +	}
+>  	return 0;
+>=20
+>  out_domain_remove:
+> --
+> 2.24.1
+>=20
 
-[...]
+=
+
