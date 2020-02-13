@@ -2,102 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 113F015B69F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 02:24:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90A1515B6AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 02:27:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729459AbgBMBYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 20:24:33 -0500
-Received: from mail-ot1-f45.google.com ([209.85.210.45]:35709 "EHLO
-        mail-ot1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729369AbgBMBYd (ORCPT
+        id S1729383AbgBMB1C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 20:27:02 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:13832 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729289AbgBMB1C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 20:24:33 -0500
-Received: by mail-ot1-f45.google.com with SMTP id r16so4016122otd.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 17:24:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PILiMPIWP83o9BEbVPcc2wkT+EgjSJOcxDjVmVXRxQ4=;
-        b=VbKK3eHv0jEZv+wG5KpbnI+nM5uIG95ROVb5rMd+HdMnBiiloxF3M2au9YKpNlMvH3
-         HX7AJll9ycYr+HTlyWJcvPNGwpm+O+QBAONVVfsQNkontupQ94WNAdKrExlHzC2/Ri+v
-         bqhIYD2mo9AbtO1Gi2XcQxcJNXn1iynTWrEa8nJttq3QPbX1JgMynf1VXNPRRc0ZoGrP
-         6/H6eqa+ALrZ11hbuNORzH4xwlJxImKe/Pe/K9RI83dJGi9g/rRyaV12RbUdWmn9xO93
-         yid562ZhiigWEUUE7BBedZWIJwWrNf+UgeMAsyz5m42OXRW66L4H0b0eVUHfioHsXR04
-         B1hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PILiMPIWP83o9BEbVPcc2wkT+EgjSJOcxDjVmVXRxQ4=;
-        b=KctqkiLFMuv+JQEEMjxp3EQzfaXKVkZWwfvxy2ikpyrqwSceo48nR6dUCigkE8CbTh
-         u2Gi/h6FQkp3Nt/HlVzHaC9sEw0Np5oWm4nHHzqg+7rsMN/DqAPCnVEV1SuF4KDAanWC
-         nH6VtO7RXCrntPhKWZcXTs/WtpJ/qlksmMINrbg6jXdWDTCduGGXjg8SuoKPKwBzDE2K
-         jt4niLBfnC3QLMsTRIf71Qgkfp4q8AphC/z363zcrlCvd2S0AFj6UmB1WDmPuxWd1tTi
-         2GV+ahlzZc93ogtS/PgbWVNq23+5f0BQyKB/UvPECZ9ef5AVR2X/pCrNxoDVqCBSETJ+
-         4ITA==
-X-Gm-Message-State: APjAAAW1uKJw5zhucYZsYhEIP30qpwoRfqww4fqBWoNC4cbMXCZwSdQ/
-        cGO6T+BxHRgAB1Ep/LFPW2z474UzknK2qEkOTnVqew==
-X-Google-Smtp-Source: APXvYqyxb54hnCS3lFIqw5xbxKQtpV/D8VX7T2q4SiMXZ9DPJBX2YlSEIb4y3hV6TTULD7kKC0IdHQiVeth+Nvi6JpA=
-X-Received: by 2002:a9d:7f83:: with SMTP id t3mr7941193otp.63.1581557072210;
- Wed, 12 Feb 2020 17:24:32 -0800 (PST)
-MIME-Version: 1.0
-References: <CAKUOC8VN5n+YnFLPbQWa1hKp+vOWH26FKS92R+h4EvS=e11jFA@mail.gmail.com>
- <20200212230652.GA145444@mit.edu> <CAKUOC8UwjUyX1Ou-Gad29-DsyYHMtmLjwV9_0ghGUx=ys_drbA@mail.gmail.com>
-In-Reply-To: <CAKUOC8UwjUyX1Ou-Gad29-DsyYHMtmLjwV9_0ghGUx=ys_drbA@mail.gmail.com>
-From:   Jesse Barnes <jsbarnes@google.com>
-Date:   Wed, 12 Feb 2020 17:24:19 -0800
-Message-ID: <CAJmaN=kYvGWs=e_ee-DgRs2yW1UFgypKGxOTW2u1MSz1zkmHgQ@mail.gmail.com>
-Subject: Re: BLKSECDISCARD ioctl and hung tasks
-To:     Salman Qazi <sqazi@google.com>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>, Jens Axboe <axboe@kernel.dk>,
-        Ming Lei <ming.lei@redhat.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org, Gwendal Grignou <gwendal@google.com>
+        Wed, 12 Feb 2020 20:27:02 -0500
+X-UUID: cbc872e4b40242fc8d2d3d8b23d7993f-20200213
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=yOSBqxqyM2MBNdVtLEcUpyckrLNC7q1s0wr5YIz7XTw=;
+        b=rvxiq1ffA/1uEyJ0mg3lMBWqFgHfnwv/KutQjyBKQ6Ko9WVMLOm2CKZaHGfUXI1U3qoHskVIpbzHR8l4l1ZlFufYbzVjNO6LxxAw5uUZh/p1QXjWlVdSbIbefthKeUPGQf1BVmuWkFUgYu31Q6aOzBbn3NpFB9Y46Y23yJrJuEo=;
+X-UUID: cbc872e4b40242fc8d2d3d8b23d7993f-20200213
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <bibby.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 497296874; Thu, 13 Feb 2020 09:26:56 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 13 Feb 2020 09:26:07 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 13 Feb 2020 09:27:23 +0800
+Message-ID: <1581557213.12296.0.camel@mtksdaap41>
+Subject: Re: [PATCH 1/2] arm64: dts: mt8183: Add gce setting in display node
+From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>
+CC:     David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        YT Shen <yt.shen@mediatek.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
+        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>,
+        Yongqiang Niu <yongqiang.niu@mediatek.com>
+Date:   Thu, 13 Feb 2020 09:26:53 +0800
+In-Reply-To: <1581504514.26347.4.camel@mtksdaap41>
+References: <20200212095501.12124-1-bibby.hsieh@mediatek.com>
+         <1581504514.26347.4.camel@mtksdaap41>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 5:20 PM Salman Qazi <sqazi@google.com> wrote:
->
-> On Wed, Feb 12, 2020 at 3:07 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> >
-> > This is a problem we've been strugging with in other contexts.  For
-> > example, if you have the hung task timer set to 2 minutes, and the
-> > system to panic if the hung task timer exceeds that, and an NFS server
-> > which the client is writing to crashes, and it takes longer for the
-> > NFS server to come back, that might be a situation where we might want
-> > to exempt the hung task warning from panic'ing the system.  On the
-> > other hand, if the process is failing to schedule for other reasons,
-> > maybe we would still want the hung task timeout to go off.
-> >
-> > So I've been meditating over whether the right answer is to just
-> > globally configure the hung task timer to something like 5 or 10
-> > minutes (which would require no kernel changes, yay?), or have some
-> > way of telling the hung task timeout logic that it shouldn't apply, or
-> > should have a different timeout, when we're waiting for I/O to
-> > complete.
->
-> The problem that I anticipate in our space is that a generous timeout
-> will make impatient people reboot their chromebooks, losing us
-> information
-> about hangs.  But, this can be worked around by having multiple
-> different timeouts.  For instance, a thread that is expecting to do
-> something slow, can set a flag
-> to indicate that it wishes to be held against the more generous
-> criteria.  This is something I am tempted to do on older kernels where
-> we might not feel
-> comfortable backporting io_uring.
+T24gV2VkLCAyMDIwLTAyLTEyIGF0IDE4OjQ4ICswODAwLCBDSyBIdSB3cm90ZToNCj4gT24gV2Vk
+LCAyMDIwLTAyLTEyIGF0IDE3OjU1ICswODAwLCBCaWJieSBIc2llaCB3cm90ZToNCj4gPiBJbiBv
+cmRlciB0byB1c2UgR0NFIGZ1bmN0aW9uLCB3ZSBuZWVkIGFkZCBzb21lIGluZm9ybWF0aW9uDQo+
+ID4gaW50byBkaXNwbGF5IG5vZGUgKG1ib3hlcywgbWVkaWF0ZWssZ2NlLWNsaWVudC1yZWcsIG1l
+ZGlhdGVrLGdjZS1ldmVudHMpLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IEJpYmJ5IEhzaWVo
+IDxiaWJieS5oc2llaEBtZWRpYXRlay5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogWW9uZ3FpYW5n
+IE5pdSA8eW9uZ3FpYW5nLm5pdUBtZWRpYXRlay5jb20+DQo+ID4gLS0tDQo+ID4gIGFyY2gvYXJt
+NjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ4MTgzLmR0c2kgfCAxNiArKysrKysrKysrKysrKysrDQo+
+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxNiBpbnNlcnRpb25zKCspDQo+ID4gDQo+ID4gZGlmZiAtLWdp
+dCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ4MTgzLmR0c2kgYi9hcmNoL2FybTY0
+L2Jvb3QvZHRzL21lZGlhdGVrL210ODE4My5kdHNpDQo+ID4gaW5kZXggYmU0NDI4YzkyZjM1Li4x
+ZjBmYzI4MWJjMmQgMTAwNjQ0DQo+ID4gLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRl
+ay9tdDgxODMuZHRzaQ0KPiA+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ4
+MTgzLmR0c2kNCj4gPiBAQCAtOSw2ICs5LDcgQEANCj4gPiAgI2luY2x1ZGUgPGR0LWJpbmRpbmdz
+L2ludGVycnVwdC1jb250cm9sbGVyL2FybS1naWMuaD4NCj4gPiAgI2luY2x1ZGUgPGR0LWJpbmRp
+bmdzL2ludGVycnVwdC1jb250cm9sbGVyL2lycS5oPg0KPiA+ICAjaW5jbHVkZSA8ZHQtYmluZGlu
+Z3MvcG93ZXIvbXQ4MTgzLXBvd2VyLmg+DQo+ID4gKyNpbmNsdWRlIDxkdC1iaW5kaW5ncy9nY2Uv
+bXQ4MTgzLWdjZS5oPg0KPiA+ICAjaW5jbHVkZSAibXQ4MTgzLXBpbmZ1bmMuaCINCj4gPiAgDQo+
+ID4gIC8gew0KPiA+IEBAIC02NjQsNiArNjY1LDkgQEANCj4gPiAgCQkJcmVnID0gPDAgMHgxNDAw
+MDAwMCAwIDB4MTAwMD47DQo+ID4gIAkJCXBvd2VyLWRvbWFpbnMgPSA8JnNjcHN5cyBNVDgxODNf
+UE9XRVJfRE9NQUlOX0RJU1A+Ow0KPiA+ICAJCQkjY2xvY2stY2VsbHMgPSA8MT47DQo+ID4gKwkJ
+CW1ib3hlcyA9IDwmZ2NlIDAgQ01EUV9USFJfUFJJT19ISUdIRVNUIDE+LA0KPiANCj4gSSB3b3Vs
+ZCBsaWtlIHRvIHJlbW92ZSBhdG9taWMgcGFyYW1ldGVyLCBzbyBwbGVhc2UgZm9sbG93IFsxXSB0
+byByZW1vdmUNCj4gaXQuDQo+IA0KPiBbMV0gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9w
+YXRjaC8xMDc2NTQxOS8NCg0KSGksIENLLA0KDQpZZWFoLCBJJ20gdHJ5aW5nIHJlbW92ZSBhdG9t
+aWMgZmVhdHVyZS4NCg0KVGhhbmtzDQoNCkJpYmJ5DQo+IA0KPiBSZWdhcmRzLA0KPiBDSw0KPiAN
+Cj4gPiArCQkJCSA8JmdjZSAxIENNRFFfVEhSX1BSSU9fSElHSEVTVCAxPjsNCj4gPiArCQkJbWVk
+aWF0ZWssZ2NlLWNsaWVudC1yZWcgPSA8JmdjZSBTVUJTWVNfMTQwMFhYWFggMCAweDEwMDA+Ow0K
+PiA+ICAJCX07DQo+ID4gIA0KPiA+ICAJCW92bDA6IG92bEAxNDAwODAwMCB7DQo+ID4gQEAgLTY3
+Miw2ICs2NzYsNyBAQA0KPiA+ICAJCQlpbnRlcnJ1cHRzID0gPEdJQ19TUEkgMjI1IElSUV9UWVBF
+X0xFVkVMX0xPVz47DQo+ID4gIAkJCXBvd2VyLWRvbWFpbnMgPSA8JnNjcHN5cyBNVDgxODNfUE9X
+RVJfRE9NQUlOX0RJU1A+Ow0KPiA+ICAJCQljbG9ja3MgPSA8Jm1tc3lzIENMS19NTV9ESVNQX09W
+TDA+Ow0KPiA+ICsJCQltZWRpYXRlayxnY2UtY2xpZW50LXJlZyA9IDwmZ2NlIFNVQlNZU18xNDAw
+WFhYWCAweDgwMDAgMHgxMDAwPjsNCj4gPiAgCQl9Ow0KPiA+ICANCj4gPiAgCQlvdmxfMmwwOiBv
+dmxAMTQwMDkwMDAgew0KPiA+IEBAIC02ODAsNiArNjg1LDcgQEANCj4gPiAgCQkJaW50ZXJydXB0
+cyA9IDxHSUNfU1BJIDIyNiBJUlFfVFlQRV9MRVZFTF9MT1c+Ow0KPiA+ICAJCQlwb3dlci1kb21h
+aW5zID0gPCZzY3BzeXMgTVQ4MTgzX1BPV0VSX0RPTUFJTl9ESVNQPjsNCj4gPiAgCQkJY2xvY2tz
+ID0gPCZtbXN5cyBDTEtfTU1fRElTUF9PVkwwXzJMPjsNCj4gPiArCQkJbWVkaWF0ZWssZ2NlLWNs
+aWVudC1yZWcgPSA8JmdjZSBTVUJTWVNfMTQwMFhYWFggMHg5MDAwIDB4MTAwMD47DQo+ID4gIAkJ
+fTsNCj4gPiAgDQo+ID4gIAkJb3ZsXzJsMTogb3ZsQDE0MDBhMDAwIHsNCj4gPiBAQCAtNjg4LDYg
+KzY5NCw3IEBADQo+ID4gIAkJCWludGVycnVwdHMgPSA8R0lDX1NQSSAyMjcgSVJRX1RZUEVfTEVW
+RUxfTE9XPjsNCj4gPiAgCQkJcG93ZXItZG9tYWlucyA9IDwmc2Nwc3lzIE1UODE4M19QT1dFUl9E
+T01BSU5fRElTUD47DQo+ID4gIAkJCWNsb2NrcyA9IDwmbW1zeXMgQ0xLX01NX0RJU1BfT1ZMMV8y
+TD47DQo+ID4gKwkJCW1lZGlhdGVrLGdjZS1jbGllbnQtcmVnID0gPCZnY2UgU1VCU1lTXzE0MDBY
+WFhYIDB4YTAwMCAweDEwMDA+Ow0KPiA+ICAJCX07DQo+ID4gIA0KPiA+ICAJCXJkbWEwOiByZG1h
+QDE0MDBiMDAwIHsNCj4gPiBAQCAtNjk3LDYgKzcwNCw3IEBADQo+ID4gIAkJCXBvd2VyLWRvbWFp
+bnMgPSA8JnNjcHN5cyBNVDgxODNfUE9XRVJfRE9NQUlOX0RJU1A+Ow0KPiA+ICAJCQljbG9ja3Mg
+PSA8Jm1tc3lzIENMS19NTV9ESVNQX1JETUEwPjsNCj4gPiAgCQkJbWVkaWF0ZWsscmRtYV9maWZv
+X3NpemUgPSA8NTEyMD47DQo+ID4gKwkJCW1lZGlhdGVrLGdjZS1jbGllbnQtcmVnID0gPCZnY2Ug
+U1VCU1lTXzE0MDBYWFhYIDB4YjAwMCAweDEwMDA+Ow0KPiA+ICAJCX07DQo+ID4gIA0KPiA+ICAJ
+CXJkbWExOiByZG1hQDE0MDBjMDAwIHsNCj4gPiBAQCAtNzA2LDYgKzcxNCw3IEBADQo+ID4gIAkJ
+CXBvd2VyLWRvbWFpbnMgPSA8JnNjcHN5cyBNVDgxODNfUE9XRVJfRE9NQUlOX0RJU1A+Ow0KPiA+
+ICAJCQljbG9ja3MgPSA8Jm1tc3lzIENMS19NTV9ESVNQX1JETUExPjsNCj4gPiAgCQkJbWVkaWF0
+ZWsscmRtYV9maWZvX3NpemUgPSA8MjA0OD47DQo+ID4gKwkJCW1lZGlhdGVrLGdjZS1jbGllbnQt
+cmVnID0gPCZnY2UgU1VCU1lTXzE0MDBYWFhYIDB4YzAwMCAweDEwMDA+Ow0KPiA+ICAJCX07DQo+
+ID4gIA0KPiA+ICAJCWNvbG9yMDogY29sb3JAMTQwMGUwMDAgew0KPiA+IEBAIC03MTUsNiArNzI0
+LDcgQEANCj4gPiAgCQkJaW50ZXJydXB0cyA9IDxHSUNfU1BJIDIzMSBJUlFfVFlQRV9MRVZFTF9M
+T1c+Ow0KPiA+ICAJCQlwb3dlci1kb21haW5zID0gPCZzY3BzeXMgTVQ4MTgzX1BPV0VSX0RPTUFJ
+Tl9ESVNQPjsNCj4gPiAgCQkJY2xvY2tzID0gPCZtbXN5cyBDTEtfTU1fRElTUF9DT0xPUjA+Ow0K
+PiA+ICsJCQltZWRpYXRlayxnY2UtY2xpZW50LXJlZyA9IDwmZ2NlIFNVQlNZU18xNDAwWFhYWCAw
+eGUwMDAgMHgxMDAwPjsNCj4gPiAgCQl9Ow0KPiA+ICANCj4gPiAgCQljY29ycjA6IGNjb3JyQDE0
+MDBmMDAwIHsNCj4gPiBAQCAtNzIzLDYgKzczMyw3IEBADQo+ID4gIAkJCWludGVycnVwdHMgPSA8
+R0lDX1NQSSAyMzIgSVJRX1RZUEVfTEVWRUxfTE9XPjsNCj4gPiAgCQkJcG93ZXItZG9tYWlucyA9
+IDwmc2Nwc3lzIE1UODE4M19QT1dFUl9ET01BSU5fRElTUD47DQo+ID4gIAkJCWNsb2NrcyA9IDwm
+bW1zeXMgQ0xLX01NX0RJU1BfQ0NPUlIwPjsNCj4gPiArCQkJbWVkaWF0ZWssZ2NlLWNsaWVudC1y
+ZWcgPSA8JmdjZSBTVUJTWVNfMTQwMFhYWFggMHhmMDAwIDB4MTAwMD47DQo+ID4gIAkJfTsNCj4g
+PiAgDQo+ID4gIAkJYWFsMDogYWFsQDE0MDEwMDAwIHsNCj4gPiBAQCAtNzMyLDYgKzc0Myw3IEBA
+DQo+ID4gIAkJCWludGVycnVwdHMgPSA8R0lDX1NQSSAyMzMgSVJRX1RZUEVfTEVWRUxfTE9XPjsN
+Cj4gPiAgCQkJcG93ZXItZG9tYWlucyA9IDwmc2Nwc3lzIE1UODE4M19QT1dFUl9ET01BSU5fRElT
+UD47DQo+ID4gIAkJCWNsb2NrcyA9IDwmbW1zeXMgQ0xLX01NX0RJU1BfQUFMMD47DQo+ID4gKwkJ
+CW1lZGlhdGVrLGdjZS1jbGllbnQtcmVnID0gPCZnY2UgU1VCU1lTXzE0MDFYWFhYIDAgMHgxMDAw
+PjsNCj4gPiAgCQl9Ow0KPiA+ICANCj4gPiAgCQlnYW1tYTA6IGdhbW1hQDE0MDExMDAwIHsNCj4g
+PiBAQCAtNzQxLDYgKzc1Myw3IEBADQo+ID4gIAkJCWludGVycnVwdHMgPSA8R0lDX1NQSSAyMzQg
+SVJRX1RZUEVfTEVWRUxfTE9XPjsNCj4gPiAgCQkJcG93ZXItZG9tYWlucyA9IDwmc2Nwc3lzIE1U
+ODE4M19QT1dFUl9ET01BSU5fRElTUD47DQo+ID4gIAkJCWNsb2NrcyA9IDwmbW1zeXMgQ0xLX01N
+X0RJU1BfR0FNTUEwPjsNCj4gPiArCQkJbWVkaWF0ZWssZ2NlLWNsaWVudC1yZWcgPSA8JmdjZSBT
+VUJTWVNfMTQwMVhYWFggMHgxMDAwIDB4MTAwMD47DQo+ID4gIAkJfTsNCj4gPiAgDQo+ID4gIAkJ
+ZGl0aGVyMDogZGl0aGVyQDE0MDEyMDAwIHsNCj4gPiBAQCAtNzQ5LDYgKzc2Miw3IEBADQo+ID4g
+IAkJCWludGVycnVwdHMgPSA8R0lDX1NQSSAyMzUgSVJRX1RZUEVfTEVWRUxfTE9XPjsNCj4gPiAg
+CQkJcG93ZXItZG9tYWlucyA9IDwmc2Nwc3lzIE1UODE4M19QT1dFUl9ET01BSU5fRElTUD47DQo+
+ID4gIAkJCWNsb2NrcyA9IDwmbW1zeXMgQ0xLX01NX0RJU1BfRElUSEVSMD47DQo+ID4gKwkJCW1l
+ZGlhdGVrLGdjZS1jbGllbnQtcmVnID0gPCZnY2UgU1VCU1lTXzE0MDFYWFhYIDB4MjAwMCAweDEw
+MDA+Ow0KPiA+ICAJCX07DQo+ID4gIA0KPiA+ICAJCW11dGV4OiBtdXRleEAxNDAxNjAwMCB7DQo+
+ID4gQEAgLTc1Niw2ICs3NzAsOCBAQA0KPiA+ICAJCQlyZWcgPSA8MCAweDE0MDE2MDAwIDAgMHgx
+MDAwPjsNCj4gPiAgCQkJaW50ZXJydXB0cyA9IDxHSUNfU1BJIDIxNyBJUlFfVFlQRV9MRVZFTF9M
+T1c+Ow0KPiA+ICAJCQlwb3dlci1kb21haW5zID0gPCZzY3BzeXMgTVQ4MTgzX1BPV0VSX0RPTUFJ
+Tl9ESVNQPjsNCj4gPiArCQkJbWVkaWF0ZWssZ2NlLWV2ZW50cyA9IDxDTURRX0VWRU5UX01VVEVY
+X1NUUkVBTV9ET05FMD4sDQo+ID4gKwkJCQkJICAgICAgPENNRFFfRVZFTlRfTVVURVhfU1RSRUFN
+X0RPTkUxPjsNCj4gPiAgCQl9Ow0KPiA+ICANCj4gPiAgCQlzbWlfY29tbW9uOiBzbWlAMTQwMTkw
+MDAgew0KPiANCj4gDQoNCg==
 
-I was going to reply along the same lines when I got distracted by a
-mtg.  If anything I'd like to see a LOWER hung task timeout, generally
-speaking.  And maybe that means having more operations be asynchronous
-like Ted suggests (I'm generally a fan of that anyway).
-
-[snipped good suggestion about async interface]
-
-Jesse
