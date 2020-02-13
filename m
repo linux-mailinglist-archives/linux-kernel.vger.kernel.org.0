@@ -2,131 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D989915B94C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 07:08:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C30A15B954
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 07:10:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729688AbgBMGIa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 01:08:30 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:61064 "EHLO pegase1.c-s.fr"
+        id S1729714AbgBMGKA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 01:10:00 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:38206 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726436AbgBMGIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 01:08:30 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48J5fg1vBSz9txqP;
-        Thu, 13 Feb 2020 07:08:27 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=Bo8PZYyO; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id W3ooT9PICKBs; Thu, 13 Feb 2020 07:08:27 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48J5fg0KvXz9txpx;
-        Thu, 13 Feb 2020 07:08:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1581574107; bh=AKmjbGNoqXYmXrUzT0AKVVfZXpSdbAFvNtOP0PQkAVk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Bo8PZYyOEZ7qD+MevGwQsu8UvvqAisxHMQmlLFbb5ZCOOdcEU4xLcfXvv0aEn1OwF
-         3fkTo5JOrKAuArtvzKFZe5s3giihd2TCJnKCFWYoV92r76w9omaLNFtSsL82MjHDrb
-         voS3bNq/47yELGACslffHb3qsSDzMPtFyeJQjXQU=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D2FE68B752;
-        Thu, 13 Feb 2020 07:08:27 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 5eeoAwa3yMGD; Thu, 13 Feb 2020 07:08:27 +0100 (CET)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2F9C88B795;
-        Thu, 13 Feb 2020 07:08:27 +0100 (CET)
-Subject: Re: [PATCH v7 4/4] powerpc: Book3S 64-bit "heavyweight" KASAN support
-To:     Daniel Axtens <dja@axtens.net>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
-        kasan-dev@googlegroups.com, aneesh.kumar@linux.ibm.com,
-        bsingharora@gmail.com
-Cc:     Michael Ellerman <mpe@ellerman.id.au>
-References: <20200213004752.11019-1-dja@axtens.net>
- <20200213004752.11019-5-dja@axtens.net>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <67370fc6-8fe8-c5ba-d97a-4a4c399b0ae0@c-s.fr>
-Date:   Thu, 13 Feb 2020 07:08:27 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726436AbgBMGKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 01:10:00 -0500
+Received: from zn.tnic (p200300EC2F07F600C900F9734EF2E51F.dip0.t-ipconnect.de [IPv6:2003:ec:2f07:f600:c900:f973:4ef2:e51f])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 385001EC0C76;
+        Thu, 13 Feb 2020 07:09:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1581574199;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=TH3guTuF8ik0rTG2tTgMhnQG64Kn6K+XDPaqH7vx/Z4=;
+        b=o4qkGfUUEF//F1I7E6hT7xqpGW4gFh4DKwrkTDzZ2TEOKWgvtjZzEiqUaYCI6ICDbHpMV1
+        NoioX/KK3ZD3+oIvLJCr2Ii42cwZXhocEfnp7UpGXU5EeN89hAFUdG+bCRuc6B5Yzgj0xq
+        hKScz2AzILJ5KMOZDjx67FQIfOfqBwo=
+Date:   Thu, 13 Feb 2020 07:09:49 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     "Luck, Tony" <tony.luck@intel.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/5] New way to track mce notifier chain actions
+Message-ID: <20200213060949.GA31799@zn.tnic>
+References: <20200212204652.1489-1-tony.luck@intel.com>
+ <20200212230815.GA3217@agluck-desk2.amr.corp.intel.com>
+ <CALCETrXx7ah9c=TYGm3ZXvwUnoJkDHP1vbuqaudih9fik5W9_A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200213004752.11019-5-dja@axtens.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CALCETrXx7ah9c=TYGm3ZXvwUnoJkDHP1vbuqaudih9fik5W9_A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 12, 2020 at 09:52:39PM -0800, Andy Lutomirski wrote:
+> I HATE notifier chains for exceptions, and I REALLY HATE NOTIFY_STOP.
+> I don't suppose we could rig something up so that they are simply
+> notifiers (for MCE and, eventually, for everything) and just outright
+> prevent them from modifying the processing?
 
+As in: they all get executed unconditionally and there's no NOTIFY_STOP
+and if they're not interested in the notification, they simply return
+early?
 
-Le 13/02/2020 à 01:47, Daniel Axtens a écrit :
-> KASAN support on Book3S is a bit tricky to get right:
-> 
->   - It would be good to support inline instrumentation so as to be able to
->     catch stack issues that cannot be caught with outline mode.
-> 
->   - Inline instrumentation requires a fixed offset.
-> 
->   - Book3S runs code in real mode after booting. Most notably a lot of KVM
->     runs in real mode, and it would be good to be able to instrument it.
-> 
->   - Because code runs in real mode after boot, the offset has to point to
->     valid memory both in and out of real mode.
-> 
->      [ppc64 mm note: The kernel installs a linear mapping at effective
->      address c000... onward. This is a one-to-one mapping with physical
->      memory from 0000... onward. Because of how memory accesses work on
->      powerpc 64-bit Book3S, a kernel pointer in the linear map accesses the
->      same memory both with translations on (accessing as an 'effective
->      address'), and with translations off (accessing as a 'real
->      address'). This works in both guests and the hypervisor. For more
->      details, see s5.7 of Book III of version 3 of the ISA, in particular
->      the Storage Control Overview, s5.7.3, and s5.7.5 - noting that this
->      KASAN implementation currently only supports Radix.]
-> 
-> One approach is just to give up on inline instrumentation. This way all
-> checks can be delayed until after everything set is up correctly, and the
-> address-to-shadow calculations can be overridden. However, the features and
-> speed boost provided by inline instrumentation are worth trying to do
-> better.
-> 
-> If _at compile time_ it is known how much contiguous physical memory a
-> system has, the top 1/8th of the first block of physical memory can be set
-> aside for the shadow. This is a big hammer and comes with 3 big
-> consequences:
-> 
->   - there's no nice way to handle physically discontiguous memory, so only
->     the first physical memory block can be used.
-> 
->   - kernels will simply fail to boot on machines with less memory than
->     specified when compiling.
-> 
->   - kernels running on machines with more memory than specified when
->     compiling will simply ignore the extra memory.
-> 
-> Implement and document KASAN this way. The current implementation is Radix
-> only.
-> 
-> Despite the limitations, it can still find bugs,
-> e.g. http://patchwork.ozlabs.org/patch/1103775/
-> 
-> At the moment, this physical memory limit must be set _even for outline
-> mode_. This may be changed in a later series - a different implementation
-> could be added for outline mode that dynamically allocates shadow at a
-> fixed offset. For example, see https://patchwork.ozlabs.org/patch/795211/
-> 
-> Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Balbir Singh <bsingharora@gmail.com> # ppc64 out-of-line radix version
-> Cc: Christophe Leroy <christophe.leroy@c-s.fr> # ppc32 version
-> Signed-off-by: Daniel Axtens <dja@axtens.net>
+Hohumm, sounds nicer.
 
-Reviewed-by: <christophe.leroy@c-s.fr> # focussed mainly on 
-Documentation and things impacting PPC32
+-- 
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
