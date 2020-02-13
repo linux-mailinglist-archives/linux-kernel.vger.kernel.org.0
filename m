@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F9E515C616
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A646315C715
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:13:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388150AbgBMP45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:56:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41016 "EHLO mail.kernel.org"
+        id S1730412AbgBMQGt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 11:06:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728990AbgBMPZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:25 -0500
+        id S1728415AbgBMPXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:33 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B32442469A;
-        Thu, 13 Feb 2020 15:25:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 918CA24699;
+        Thu, 13 Feb 2020 15:23:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607524;
-        bh=CRBIkMmtK6DbX7OWOAvW7vuWCkdRO+6B/HqySGWO/fY=;
+        s=default; t=1581607412;
+        bh=i51N5vsJGfbRUtDCnYlXm5BfBaOKh4rrwDhVWr/Xjdg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yYI7kzh06h4DVf4UDs2iHsb+FFzCALTRNAgK9F0V0E3+v0Cv5FuL4JFM7t3AkJKCn
-         5j1X5y38ze4NarBbm/3x8a2Pcwl9cmyXeDyqqBORZqk5agWRvzHUzw1X4wCkoB1lpi
-         q5hM5MG64ujuoCQs4PMba93LEJJFH5DifZDiVAFU=
+        b=2iRNThiqifqKJsmiuONBBig9/TZ2q6d+yWUPk/vM8iXrAqBg9FquY9aR0QAoWo4rl
+         h/vmJ7xrS9iwTJRUbmtr7U/yFHft2OGsJtpJBdF1x3leiIxaH5d41OWedOTrksg3Mo
+         o3Kez9YXknfr92fFg5IqJtbwNtIUYwqHId25VUG0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Jones <drjones@redhat.com>,
-        Gavin Shan <gshan@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.14 076/173] tools/kvm_stat: Fix kvm_exit filter name
+        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 035/116] padata: Remove broken queue flushing
 Date:   Thu, 13 Feb 2020 07:19:39 -0800
-Message-Id: <20200213151952.689740853@linuxfoundation.org>
+Message-Id: <20200213151856.812892483@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,73 +44,144 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gavin Shan <gshan@redhat.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-commit 5fcf3a55a62afb0760ccb6f391d62f20bce4a42f upstream.
+[ Upstream commit 07928d9bfc81640bab36f5190e8725894d93b659 ]
 
-The filter name is fixed to "exit_reason" for some kvm_exit events, no
-matter what architect we have. Actually, the filter name ("exit_reason")
-is only applicable to x86, meaning it's broken on other architects
-including aarch64.
+The function padata_flush_queues is fundamentally broken because
+it cannot force padata users to complete the request that is
+underway.  IOW padata has to passively wait for the completion
+of any outstanding work.
 
-This fixes the issue by providing various kvm_exit filter names, depending
-on architect we're on. Afterwards, the variable filter name is picked and
-applied through ioctl(fd, SET_FILTER).
+As it stands flushing is used in two places.  Its use in padata_stop
+is simply unnecessary because nothing depends on the queues to
+be flushed afterwards.
 
-Reported-by: Andrew Jones <drjones@redhat.com>
-Signed-off-by: Gavin Shan <gshan@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The other use in padata_replace is more substantial as we depend
+on it to free the old pd structure.  This patch instead uses the
+pd->refcnt to dynamically free the pd structure once all requests
+are complete.
 
+Fixes: 2b73b07ab8a4 ("padata: Flush the padata queues actively")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/kvm/kvm_stat/kvm_stat |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ kernel/padata.c | 46 ++++++++++++----------------------------------
+ 1 file changed, 12 insertions(+), 34 deletions(-)
 
---- a/tools/kvm/kvm_stat/kvm_stat
-+++ b/tools/kvm/kvm_stat/kvm_stat
-@@ -261,6 +261,7 @@ class ArchX86(Arch):
-     def __init__(self, exit_reasons):
-         self.sc_perf_evt_open = 298
-         self.ioctl_numbers = IOCTL_NUMBERS
-+        self.exit_reason_field = 'exit_reason'
-         self.exit_reasons = exit_reasons
+diff --git a/kernel/padata.c b/kernel/padata.c
+index 63449fc584daf..9ba611b42abac 100644
+--- a/kernel/padata.c
++++ b/kernel/padata.c
+@@ -34,6 +34,8 @@
  
+ #define MAX_OBJ_NUM 1000
  
-@@ -276,6 +277,7 @@ class ArchPPC(Arch):
-         # numbers depend on the wordsize.
-         char_ptr_size = ctypes.sizeof(ctypes.c_char_p)
-         self.ioctl_numbers['SET_FILTER'] = 0x80002406 | char_ptr_size << 16
-+        self.exit_reason_field = 'exit_nr'
-         self.exit_reasons = {}
++static void padata_free_pd(struct parallel_data *pd);
++
+ static int padata_index_to_cpu(struct parallel_data *pd, int cpu_index)
+ {
+ 	int cpu, target_cpu;
+@@ -301,6 +303,7 @@ static void padata_serial_worker(struct work_struct *serial_work)
+ 	struct padata_serial_queue *squeue;
+ 	struct parallel_data *pd;
+ 	LIST_HEAD(local_list);
++	int cnt;
  
+ 	local_bh_disable();
+ 	squeue = container_of(serial_work, struct padata_serial_queue, work);
+@@ -310,6 +313,8 @@ static void padata_serial_worker(struct work_struct *serial_work)
+ 	list_replace_init(&squeue->serial.list, &local_list);
+ 	spin_unlock(&squeue->serial.lock);
  
-@@ -283,6 +285,7 @@ class ArchA64(Arch):
-     def __init__(self):
-         self.sc_perf_evt_open = 241
-         self.ioctl_numbers = IOCTL_NUMBERS
-+        self.exit_reason_field = 'esr_ec'
-         self.exit_reasons = AARCH64_EXIT_REASONS
++	cnt = 0;
++
+ 	while (!list_empty(&local_list)) {
+ 		struct padata_priv *padata;
  
+@@ -319,9 +324,12 @@ static void padata_serial_worker(struct work_struct *serial_work)
+ 		list_del_init(&padata->list);
  
-@@ -290,6 +293,7 @@ class ArchS390(Arch):
-     def __init__(self):
-         self.sc_perf_evt_open = 331
-         self.ioctl_numbers = IOCTL_NUMBERS
-+        self.exit_reason_field = None
-         self.exit_reasons = None
+ 		padata->serial(padata);
+-		atomic_dec(&pd->refcnt);
++		cnt++;
+ 	}
+ 	local_bh_enable();
++
++	if (atomic_sub_and_test(cnt, &pd->refcnt))
++		padata_free_pd(pd);
+ }
  
- ARCH = Arch.get_arch()
-@@ -513,8 +517,8 @@ class TracepointProvider(Provider):
-         """
-         filters = {}
-         filters['kvm_userspace_exit'] = ('reason', USERSPACE_EXIT_REASONS)
--        if ARCH.exit_reasons:
--            filters['kvm_exit'] = ('exit_reason', ARCH.exit_reasons)
-+        if ARCH.exit_reason_field and ARCH.exit_reasons:
-+            filters['kvm_exit'] = (ARCH.exit_reason_field, ARCH.exit_reasons)
-         return filters
+ /**
+@@ -444,8 +452,7 @@ static struct parallel_data *padata_alloc_pd(struct padata_instance *pinst,
+ 	setup_timer(&pd->timer, padata_reorder_timer, (unsigned long)pd);
+ 	atomic_set(&pd->seq_nr, -1);
+ 	atomic_set(&pd->reorder_objects, 0);
+-	atomic_set(&pd->refcnt, 0);
+-	pd->pinst = pinst;
++	atomic_set(&pd->refcnt, 1);
+ 	spin_lock_init(&pd->lock);
  
-     def get_available_fields(self):
+ 	return pd;
+@@ -469,31 +476,6 @@ static void padata_free_pd(struct parallel_data *pd)
+ 	kfree(pd);
+ }
+ 
+-/* Flush all objects out of the padata queues. */
+-static void padata_flush_queues(struct parallel_data *pd)
+-{
+-	int cpu;
+-	struct padata_parallel_queue *pqueue;
+-	struct padata_serial_queue *squeue;
+-
+-	for_each_cpu(cpu, pd->cpumask.pcpu) {
+-		pqueue = per_cpu_ptr(pd->pqueue, cpu);
+-		flush_work(&pqueue->work);
+-	}
+-
+-	del_timer_sync(&pd->timer);
+-
+-	if (atomic_read(&pd->reorder_objects))
+-		padata_reorder(pd);
+-
+-	for_each_cpu(cpu, pd->cpumask.cbcpu) {
+-		squeue = per_cpu_ptr(pd->squeue, cpu);
+-		flush_work(&squeue->work);
+-	}
+-
+-	BUG_ON(atomic_read(&pd->refcnt) != 0);
+-}
+-
+ static void __padata_start(struct padata_instance *pinst)
+ {
+ 	pinst->flags |= PADATA_INIT;
+@@ -507,10 +489,6 @@ static void __padata_stop(struct padata_instance *pinst)
+ 	pinst->flags &= ~PADATA_INIT;
+ 
+ 	synchronize_rcu();
+-
+-	get_online_cpus();
+-	padata_flush_queues(pinst->pd);
+-	put_online_cpus();
+ }
+ 
+ /* Replace the internal control structure with a new one. */
+@@ -531,8 +509,8 @@ static void padata_replace(struct padata_instance *pinst,
+ 	if (!cpumask_equal(pd_old->cpumask.cbcpu, pd_new->cpumask.cbcpu))
+ 		notification_mask |= PADATA_CPU_SERIAL;
+ 
+-	padata_flush_queues(pd_old);
+-	padata_free_pd(pd_old);
++	if (atomic_dec_and_test(&pd_old->refcnt))
++		padata_free_pd(pd_old);
+ 
+ 	if (notification_mask)
+ 		blocking_notifier_call_chain(&pinst->cpumask_change_notifier,
+-- 
+2.20.1
+
 
 
