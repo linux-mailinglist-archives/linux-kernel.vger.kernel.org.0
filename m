@@ -2,97 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD62E15B9FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 08:23:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21BD615B9FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 08:25:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729823AbgBMHXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 02:23:20 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:43460 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729364AbgBMHXT (ORCPT
+        id S1729852AbgBMHZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 02:25:01 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:59408 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729364AbgBMHZA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 02:23:19 -0500
-Received: by mail-oi1-f196.google.com with SMTP id p125so4787692oif.10
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 23:23:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=stapelberg-ch.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=muyZ7YMznir5WH5exT0RbBmxdQ/Z+Ljlf7z/NaG6Agg=;
-        b=L61FooOwf9pKuM2tfav43uuzApo0o0TxSOJOE8dnOlQ2hvwEnOdmfFgEZ9qB3fIp8r
-         2pmCCAJR5/24PQuRFSN8Bva5hmG31QIxHh81GHBe5gqIeMmvV182MBY4wKMq2nsPBYlN
-         z/fjVcD813zY1x8Mnu0IlyjefBRM5kPjRfL8r7FOspda6BVKzYeat4nC571OE/yz0Azz
-         VDm3z2c+NGuF7fFrXMXkXQGm8Lv6JykpaZONh26d+TPoK+l1dOvEqJeXmHQrbwApcyri
-         0zOeQlWzlQTkeMPMlqFbG2uoodOvV8f3yD783BxTbMazdQtkiE7N0osbll+5OSSQ62kp
-         CY0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=muyZ7YMznir5WH5exT0RbBmxdQ/Z+Ljlf7z/NaG6Agg=;
-        b=nQLZUBE13D3Pu7DERRSGFIcVL/i6CNR3nj+kPSPVmXWSfM9A9C3HRFUntVickPmqKn
-         ERvFiftiKawcuhDI7pkyobnK6PWR2s33KehiWawTngG6C8fyUJmwG2AI7kMKWpmMkbs9
-         JFhuS3VuuWkAsFUHOfsdiv/3WQme7zUAOa5UHuxR3fA1LLopCnEc8a+0r37UTxQUYjeS
-         b+l6ORyNcwGx+TyUkj8kv9jo6IFp1JVdMtifrvL4UuMTZNDRwMlQzPXUXAb0m6tIhBNy
-         /gTNjssgFAjS771AO7L7oBGEpDK0VWLR6aJIWQ1jgHmMF8fB0vndKquZs7sLe/UaMqZm
-         TqSg==
-X-Gm-Message-State: APjAAAUk7I39G5A+y7khFyOI7/p1BTs6LB8Rl8D56ubacsN+0WT0rQvd
-        yvsFGwp3FIGSk8SEd2C4RE7yDbFVIQyEFHGldVyKeNiQJ0Q=
-X-Google-Smtp-Source: APXvYqyYzxgFIan1kewGLG3nqH4OvVo1xRGOuRgd1gmRmamEyn7pbXlvPBmnd0zoDYbsyql132fSHcS/xRA08u5VJ5s=
-X-Received: by 2002:a05:6808:8ca:: with SMTP id k10mr2012050oij.164.1581578598795;
- Wed, 12 Feb 2020 23:23:18 -0800 (PST)
+        Thu, 13 Feb 2020 02:25:00 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01D7OiT6053069;
+        Thu, 13 Feb 2020 01:24:44 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1581578684;
+        bh=tdRVGdl7zGcgsD4GIj6ckaPuNZE9tHErFs3YzFk6dw4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=m+c1YDXlgfXLn4ZC49AGdYt+7+HxUW/vssIp4QvnjXridBdfB8Ah4MsW2+WY/Hj4w
+         xmgJvTsITghB0GqPk3S6p7qSyb2YWDM5dgOynk1xNui4FwOyuv5JSdwRVnVyuV3Auc
+         YUtvBKY/cqF9qJCP1TklXgBTlZJMj0nX7udHEhHk=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01D7Oi2w060210
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 13 Feb 2020 01:24:44 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 13
+ Feb 2020 01:24:43 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 13 Feb 2020 01:24:43 -0600
+Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01D7Oe6K027910;
+        Thu, 13 Feb 2020 01:24:41 -0600
+Subject: Re: [PATCH] ata: ahci_platform: add 32-bit quirk for dwc-ahci
+To:     Robin Murphy <robin.murphy@arm.com>,
+        Hans de Goede <hdegoede@redhat.com>, <axboe@kernel.dk>
+CC:     <vigneshr@ti.com>, <nsekhar@ti.com>, <linux-ide@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        =?UTF-8?Q?P=c3=a9ter_Ujfalusi?= <peter.ujfalusi@ti.com>
+References: <20200206111728.6703-1-rogerq@ti.com>
+ <d3a80407-a40a-c9e4-830f-138cfe9b163c@redhat.com>
+ <1c3ec10c-8505-a067-d51d-667f47d8d55b@ti.com>
+ <37c3ca6a-dc64-9ce9-e43b-03b12da6325e@redhat.com>
+ <7e5f503f-03df-29d0-baae-af12d0af6f61@arm.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <543961d5-afc6-31ef-7fa9-cd15597c2988@ti.com>
+Date:   Thu, 13 Feb 2020 09:24:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <CAJfpegtUAHPL9tsFB85ZqjAfy0xwz7ATRcCtLbzFBo8=WnCvLw@mail.gmail.com>
- <20200209080918.1562823-1-michael+lkml@stapelberg.ch> <CAJfpegv4iL=bW3TXP3F9w1z6-LUox8KiBmw7UBcWE-0jiK0YsA@mail.gmail.com>
- <CANnVG6kYh6M30mwBHcGeFf=fhqKmWKPeUj2GYbvNgtq0hm=gXQ@mail.gmail.com>
- <CAJfpegtX0Z3_OZFG50epWGHkW5aOMfYmn61WmqYC67aBmJyDMA@mail.gmail.com>
- <CANnVG6=s1C7LSDGD1-Ato-sfaKi1LQvW3GM5wfAiUqWXibEohw@mail.gmail.com> <CAJfpegvBguKcNZk-p7sAtSuNH_7HfdCyYvo8Wh7X6P=hT=kPrA@mail.gmail.com>
-In-Reply-To: <CAJfpegvBguKcNZk-p7sAtSuNH_7HfdCyYvo8Wh7X6P=hT=kPrA@mail.gmail.com>
-From:   Michael Stapelberg <michael+lkml@stapelberg.ch>
-Date:   Thu, 13 Feb 2020 08:23:07 +0100
-Message-ID: <CANnVG6=u8drSyKhF9Gjd-Y-saN8gdOSOsmEJenyWXsQE9QYmVQ@mail.gmail.com>
-Subject: Re: Still a pretty bad time on 5.4.6 with fuse_request_end.
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     fuse-devel <fuse-devel@lists.sourceforge.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kyle Sanderson <kyle.leet@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <7e5f503f-03df-29d0-baae-af12d0af6f61@arm.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I confirm that the patch fixes the issue I was seeing. Thanks a lot!
+On 12/02/2020 13:43, Robin Murphy wrote:
+> On 2020-02-12 11:32 am, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 2/12/20 12:01 PM, Roger Quadros wrote:
+>>> Hi,
+>>>
+>>> On 06/02/2020 13:50, Hans de Goede wrote:
+>>>> Hi,
+>>>>
+>>>> On 2/6/20 12:17 PM, Roger Quadros wrote:
+>>>>> On TI Platforms using LPAE, SATA breaks with 64-bit DMA.
+>>>>> Restrict it to 32-bit.
+>>>>>
+>>>>> Cc: stable@vger.kernel.org
+>>>>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>>>>> ---
+>>>>>   drivers/ata/ahci_platform.c | 3 +++
+>>>>>   1 file changed, 3 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/ata/ahci_platform.c b/drivers/ata/ahci_platform.c
+>>>>> index 3aab2e3d57f3..b925dc54cfa5 100644
+>>>>> --- a/drivers/ata/ahci_platform.c
+>>>>> +++ b/drivers/ata/ahci_platform.c
+>>>>> @@ -62,6 +62,9 @@ static int ahci_probe(struct platform_device *pdev)
+>>>>>       if (of_device_is_compatible(dev->of_node, "hisilicon,hisi-ahci"))
+>>>>>           hpriv->flags |= AHCI_HFLAG_NO_FBS | AHCI_HFLAG_NO_NCQ;
+>>>>> +    if (of_device_is_compatible(dev->of_node, "snps,dwc-ahci"))
+>>>>> +        hpriv->flags |= AHCI_HFLAG_32BIT_ONLY;
+>>>>> +
+>>>>
+>>>> The "snps,dwc-ahci" is a generic (non TI specific) compatible which
+>>>> is e.g. also used on some exynos devices. So using that to key the
+>>>> setting of the 32 bit flag seems wrong to me.
+>>>>
+>>>> IMHO it would be better to introduce a TI specific compatible
+>>>> and use that to match on instead (and also adjust the dts files
+>>>> accordingly).
+>>>
+>>> Thinking further on this I think it is a bad idea to add a special
+>>> binding because the IP is not different. It is just that it is
+>>> wired differently on the TI SoC so DMA range is limited.
+>>>
+>>> IMO the proper solution is to have the right dma-ranges property in the
+>>> device tree. However, SATA platform driver is doing the wrong thing
+>>> by overriding the dma masks.
+>>> i.e. in ahci_platform_init_host() in libahci_platform.c >
+>>>          if (hpriv->cap & HOST_CAP_64) {
+>>>                  rc = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(64));
+>>>                  if (rc) {
+>>>                          rc = dma_coerce_mask_and_coherent(dev,
+>>> DMA_BIT_MASK(32));
+>>>                          if (rc) {
+>>>                                  dev_err(dev, "Failed to enable 64-bit DMA.\n");
+>>>                                  return rc;
+>>>                          }
+>>>                          dev_warn(dev, "Enable 32-bit DMA instead of 64-bit.\n");
+>>>                  }
+>>>          }
+>>>
+>>> This should be removed. Do you agree?
+>>
+>> I agree with you in principal, but I'm afraid this might cause regressions for
+>> existing hardware. We only do this if the host has set the CAP_64 flag,
+>> this code is quite old, it comes from the following commit:
+>>
+>> ###
+>>  From cc7a9e27562cd78a1dc885504086fab24addce40 Mon Sep 17 00:00:00 2001
+>> From: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
+>> Date: Thu, 12 Jun 2014 12:40:23 -0500
+>> Subject: [PATCH v3] ahci: Check and set 64-bit DMA mask for platform AHCI driver
+>>
+>> The current platform AHCI driver does not set the dma_mask correctly
+>> for 64-bit DMA capable AHCI controller. This patch checks the AHCI
+>> capability bit and set the dma_mask and coherent_dma_mask accordingly.
+>>
+>> Signed-off-by: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
+>> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+>> Tested-by: Hans de Goede <hdegoede@redhat.com>
+>> Tested-by: Suman Tripathi <stripathi@apm.com>
+>> Signed-off-by: Tejun Heo <tj@kernel.org>
+>> ###
+>>
+>> Presumably this was added for a reason, I'm guessing this might come
+>> from AMD's ARM server chips adventures, but I'm afraid that AHCI support
+>> on other (ARM) SoC's has become to rely on this behavior too.
+>>
+>> Maybe we can add a check to see if the mask was not already set and skip
+>> setting the mask in that case ?
+> 
+> If the device *is* inherently 64-bit capable, then setting 64-bit masks in the driver is correct - if a 64-bit IP block happens to have been integrated with only 32 address bits wired up, but the system has memory above the 32-bit boundary, then that should be described via "dma-ranges", which should then end up being used to further constrain the device masks internally to the DMA API.
 
-On Wed, Feb 12, 2020 at 8:36 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Wed, Feb 12, 2020 at 10:38 AM Michael Stapelberg
-> <michael+lkml@stapelberg.ch> wrote:
-> >
-> > Unfortunately not: when I change the code like so:
-> >
-> >     bool async;
-> >     uint32_t opcode_early =3D req->args->opcode;
-> >
-> >     if (test_and_set_bit(FR_FINISHED, &req->flags))
-> >         goto put_request;
-> >
-> >     async =3D req->args->end;
-> >
-> > =E2=80=A6gdb only reports:
-> >
-> > (gdb) bt
-> > #0  0x000000a700000001 in ?? ()
-> > #1  0xffffffff8137fc99 in fuse_copy_finish (cs=3D0x20000ffffffff) at
-> > fs/fuse/dev.c:681
-> > Backtrace stopped: previous frame inner to this frame (corrupt stack?)
-> >
-> > But maybe that=E2=80=99s a hint in and of itself?
->
-> Yep, it's a stack use after return bug.   Attached patch should fix
-> it, though I haven't tested it.
->
-> Thanks,
-> Miklos
+I agree. In this case, it looks like DMA API is allocating memory > 32-bits
+even if "dma-ranges" size and dma_bus_limit is < 32-bits so issue is with
+platform DMA code.
+
+I will continue the discussion in the other thread
+https://lkml.org/lkml/2020/2/12/907
+
+-- 
+cheers,
+-roger
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
