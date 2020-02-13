@@ -2,76 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9C9615C3C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3727A15C3E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:45:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387848AbgBMPoF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:44:05 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:34848 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728441AbgBMPoA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:44:00 -0500
-Received: by mail-lf1-f68.google.com with SMTP id z18so4605696lfe.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:43:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=K6511DdGifH8XUHZx9YT0KbpkCqEo3UTWf5Na2Wavuk=;
-        b=h1O9Lk/39Nx/ytmuPKvu48NGNZk+XUil67BnaQeOVqW/Cxkpqv48zOF9nGwuUWlurM
-         xa/u43X71SKX6da2a5fB2v7S6PgQbQBl2ssMQ94F9rVUv8LKIUdVh9zDvGRo4D5v6+nh
-         LuEjK1SL9jGH9n9oTsRgAnTMwm6XTkEOF5/XYPKhJ4cpujsioAoAN8FERx3YESyPw37h
-         9NEXptd6Gt16Vof39x76tD1yi5FL8D3RgfFYOqkR73ihPA21YsLTzKCgkmtI+79zgECg
-         sL1BpHotERgS2c80OI6FTeoS+pGgJOQg0Eiig6Hakw1DtvSJOGUrK1sCxYJwoULIUzjm
-         1cnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=K6511DdGifH8XUHZx9YT0KbpkCqEo3UTWf5Na2Wavuk=;
-        b=pf6BEmtts+wFxMn5xrr77xu7wY5xCIAAFi5yRA0nVhS5Df+9Pd+LnXAiJiRC/TpEdU
-         NudUEv4fklwulkk/UP2k1cy8Pc8A1bkw42FQUUEU1gIHIHsYLXWePL1gPfaCHHPLyQvB
-         FsHkDqX2b2LnqNnztfL0YM4ETHV0jjcvryw2AgFsshu1OsHng2h/8TAWSD/oGbsKL8lI
-         2kHUnXOvt/BYc3JXIGJQz2/u5mKyK4Iw/7yTFVGdt9CZelXVv0Fw8mEAPIykgxow3Kuh
-         qApeTupSego72NIIFT7PXgM0jGx/DbQ+QmUZlXZaIoVB0ZbrIhlNTiizyE/crtX83TOe
-         fx0w==
-X-Gm-Message-State: APjAAAVXRH7x1KNxaFXfGEriG0vtn4rNO+ySByTrD+PapkfFQrmUasax
-        phSW4gun5PNbNVkSzu405zSoVQ==
-X-Google-Smtp-Source: APXvYqxrBJSTTk3KS21AJKxD2y7eTX8gC2feRkJ1tSpYCm6mG9Y6yhHM7jH/gQZsD+JKdEUN74SLWA==
-X-Received: by 2002:a19:cb17:: with SMTP id b23mr9726567lfg.201.1581608638158;
-        Thu, 13 Feb 2020 07:43:58 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id u16sm1695370ljo.22.2020.02.13.07.43.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 07:43:57 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id C4400100F25; Thu, 13 Feb 2020 18:44:19 +0300 (+03)
-Date:   Thu, 13 Feb 2020 18:44:19 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 11/25] fs: Make page_mkwrite_check_truncate thp-aware
-Message-ID: <20200213154419.szxgd5tv2tjxmlz7@box>
-References: <20200212041845.25879-1-willy@infradead.org>
- <20200212041845.25879-12-willy@infradead.org>
+        id S1729862AbgBMPpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:45:05 -0500
+Received: from mga14.intel.com ([192.55.52.115]:49577 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729437AbgBMPpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:45:02 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 07:45:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,437,1574150400"; 
+   d="scan'208";a="238065015"
+Received: from btraw-mobl.amr.corp.intel.com (HELO [10.251.24.52]) ([10.251.24.52])
+  by orsmga006.jf.intel.com with ESMTP; 13 Feb 2020 07:45:00 -0800
+Subject: Re: [PATCH 41/62] x86/sev-es: Handle MSR events
+To:     Joerg Roedel <joro@8bytes.org>, x86@kernel.org
+Cc:     hpa@zytor.com, Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Joerg Roedel <jroedel@suse.de>
+References: <20200211135256.24617-1-joro@8bytes.org>
+ <20200211135256.24617-42-joro@8bytes.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ mQINBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABtEVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT6JAjgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lcuQINBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABiQIfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+Message-ID: <b688b4ad-5a64-d2df-6dd8-e23fac75a6b9@intel.com>
+Date:   Thu, 13 Feb 2020 07:45:00 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200212041845.25879-12-willy@infradead.org>
+In-Reply-To: <20200211135256.24617-42-joro@8bytes.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 08:18:31PM -0800, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> If the page is compound, check the appropriate indices and return the
-> appropriate sizes.
+On 2/11/20 5:52 AM, Joerg Roedel wrote:
+> Implement a handler for #VC exceptions caused by RDMSR/WRMSR
+> instructions.
 
-Is it guarnteed that the page is never called on tail page?
+As a general comment on all of these event handlers: Why do we bother
+having the hypercalls in the interrupt handler as opposed to just
+calling them directly.  What you have is:
 
--- 
- Kirill A. Shutemov
+	wrmsr()
+	-> #VC exception
+	   hcall()
+
+But we could make our rd/wrmsr() wrappers just do:
+
+	if (running_on_sev_es())
+		hcall(HCALL_MSR_WHATEVER...)
+	else
+		wrmsr()
+
+and then we don't have any of the nastiness of exception handling.
