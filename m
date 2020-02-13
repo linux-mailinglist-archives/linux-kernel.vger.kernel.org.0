@@ -2,94 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0150D15CDB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 23:04:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1468615CDCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 23:06:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727938AbgBMWEB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 17:04:01 -0500
-Received: from smtprelay0246.hostedemail.com ([216.40.44.246]:60460 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727594AbgBMWEB (ORCPT
+        id S1728693AbgBMWFf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 17:05:35 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:51260 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727519AbgBMWFE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 17:04:01 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id A030618026A0E;
-        Thu, 13 Feb 2020 22:03:59 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:5007:6119:9040:10004:10400:10848:11232:11658:11914:12043:12297:12663:12740:12760:12895:13019:13069:13149:13230:13311:13357:13439:14659:14721:21080:21611:21627:21939:21972:21990:30054:30083:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: toys27_3f8fd5acfc11c
-X-Filterd-Recvd-Size: 2705
-Received: from XPS-9350 (unknown [172.58.44.42])
-        (Authenticated sender: joe@perches.com)
-        by omf06.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 13 Feb 2020 22:03:56 +0000 (UTC)
-Message-ID: <c7df22d3f248c784e8960841c79fe2836d7ea8ab.camel@perches.com>
-Subject: Re: [PATCH] sched/fair: Replace zero-length array with
- flexible-array member
-From:   Joe Perches <joe@perches.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 13 Feb 2020 14:02:10 -0800
-In-Reply-To: <20200213170639.GK14914@hirez.programming.kicks-ass.net>
-References: <20200213151951.GA32363@embeddedor>
-         <20200213164518.GI14914@hirez.programming.kicks-ass.net>
-         <9d516501-2624-f915-32be-13ba6f881019@embeddedor.com>
-         <20200213170639.GK14914@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Thu, 13 Feb 2020 17:05:04 -0500
+Received: from 79.184.254.199.ipv4.supernova.orange.pl (79.184.254.199) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
+ id b120af7d0df2dbec; Thu, 13 Feb 2020 23:05:02 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     Len Brown <len.brown@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Chen Yu <yu.c.chen@intel.com>
+Subject: [PATCH 7/9] intel_idle: Clean up kerneldoc comments of multiple functions
+Date:   Thu, 13 Feb 2020 23:03:07 +0100
+Message-ID: <16490706.IjqtDSzaaB@kreacher>
+In-Reply-To: <2960689.qre192dJKD@kreacher>
+References: <2960689.qre192dJKD@kreacher>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-02-13 at 18:06 +0100, Peter Zijlstra wrote:
-> On Thu, Feb 13, 2020 at 10:58:31AM -0600, Gustavo A. R. Silva wrote:
-> > > Hurmph, and where are all the other similar changes for kernel/sched/ ?
-> > > Because this really isn't the only such usage and I really don't see the
-> > > point in having a separate patch for every single one of them.
-> > > 
-> > 
-> > Yeah. I can do that. I'll send a patch for the whole kernel/sched.
-> 
-> Thanks!
-> 
-> > > Also; couldn't you've taught the compiler to also warn about [0] ?
-> > > There's really no other purpose to having a zero length array.
-> > > 
-> > 
-> > Yeah, this is something we'd like to see in the short future.
-> > Unfortunately, for now, the only way for the compiler to warn
-> > about zero-length arrays in through the use of "-pedantic".
-> > And we definitely don't want to follow this path.
-> > 
-> > What we can do, in the meantime, is to add a test for it to
-> > checkpatch.
-> 
-> Oh, I means, warn if it isn't the last member of a struct. Not warn on
-> any use. Or we mean the same and I'm just confused.
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-That might be a somewhat difficult thing to add to checkpatch
-as it is effectively a per-line scanner:
+Turn the description comments of some functions in the intel_idle
+driver into proper kerneldoc ones and clean them up.
 
-Try something like:
+No functional impact.
 
-$ git grep -P -A1 '^\s*(?!return)(\w+\s+){1,3}\w+\[0\];' -- '*.[ch]'
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/idle/intel_idle.c | 40 +++++++++++++++++++++-------------------
+ 1 file changed, 21 insertions(+), 19 deletions(-)
 
-and look at the results.
+diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
+index 3a93cd1036fb..9575615c8f4a 100644
+--- a/drivers/idle/intel_idle.c
++++ b/drivers/idle/intel_idle.c
+@@ -1288,11 +1288,11 @@ static inline void intel_idle_init_cstates_acpi(struct cpuidle_driver *drv) { }
+ static inline bool intel_idle_off_by_default(u32 mwait_hint) { return false; }
+ #endif /* !CONFIG_ACPI_PROCESSOR_CSTATE */
+ 
+-/*
+- * ivt_idle_state_table_update(void)
++/**
++ * ivt_idle_state_table_update - Tune the idle states table for Ivy Town.
+  *
+- * Tune IVT multi-socket targets
+- * Assumption: num_sockets == (max_package_num + 1)
++ * Tune IVT multi-socket targets.
++ * Assumption: num_sockets == (max_package_num + 1).
+  */
+ static void __init ivt_idle_state_table_update(void)
+ {
+@@ -1338,11 +1338,11 @@ static unsigned long long __init irtl_2_usec(unsigned long long irtl)
+ 	return div_u64((irtl & 0x3FF) * ns, NSEC_PER_USEC);
+ }
+ 
+-/*
+- * bxt_idle_state_table_update(void)
++/**
++ * bxt_idle_state_table_update - Fix up the Broxton idle states table.
+  *
+- * On BXT, we trust the IRTL to show the definitive maximum latency
+- * We use the same value for target_residency.
++ * On BXT, trust the IRTL (Interrupt Response Time Limit) MSR to show the
++ * definitive maximum latency and use the same value for target_residency.
+  */
+ static void __init bxt_idle_state_table_update(void)
+ {
+@@ -1385,11 +1385,11 @@ static void __init bxt_idle_state_table_update(void)
+ 	}
+ 
+ }
+-/*
+- * sklh_idle_state_table_update(void)
++
++/**
++ * sklh_idle_state_table_update - Fix up the Sky Lake idle states table.
+  *
+- * On SKL-H (model 0x5e) disable C8 and C9 if:
+- * C10 is enabled and SGX disabled
++ * On SKL-H (model 0x5e) skip C8 and C9 if C10 is enabled and SGX disabled.
+  */
+ static void __init sklh_idle_state_table_update(void)
+ {
+@@ -1500,9 +1500,9 @@ static void __init intel_idle_init_cstates_icpu(struct cpuidle_driver *drv)
+ 	}
+ }
+ 
+-/*
+- * intel_idle_cpuidle_driver_init()
+- * allocate, initialize cpuidle_states
++/**
++ * intel_idle_cpuidle_driver_init - Create the list of available idle states.
++ * @drv: cpuidle driver structure to initialize.
+  */
+ static void __init intel_idle_cpuidle_driver_init(struct cpuidle_driver *drv)
+ {
+@@ -1537,10 +1537,12 @@ static void c1e_promotion_disable(void)
+ 	wrmsrl(MSR_IA32_POWER_CTL, msr_bits);
+ }
+ 
+-/*
+- * intel_idle_cpu_init()
+- * allocate, initialize, register cpuidle_devices
+- * @cpu: cpu/core to initialize
++/**
++ * intel_idle_cpu_init - Register the target CPU with the cpuidle core.
++ * @cpu: CPU to initialize.
++ *
++ * Register a cpuidle device object for @cpu and update its MSRs in accordance
++ * with the processor model flags.
+  */
+ static int intel_idle_cpu_init(unsigned int cpu)
+ {
+-- 
+2.16.4
 
-In checkpatch that could be something like:
 
-	if ($line =~ /^.\s*$Type\s+$Ident\s*\[\s*0\s*\]\s*;/) {
-		warn...
-	}
 
 
 
