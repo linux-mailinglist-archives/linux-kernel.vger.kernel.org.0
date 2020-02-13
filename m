@@ -2,170 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CCF715C373
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 080D715C3A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387590AbgBMPlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:41:23 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:29040 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729171AbgBMPlS (ORCPT
+        id S2387759AbgBMPnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:43:15 -0500
+Received: from mail-lj1-f175.google.com ([209.85.208.175]:43232 "EHLO
+        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729249AbgBMPnM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:41:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581608476;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+ek7ovueQ1Zw26uD1wE6yB4d2TtRDHlkQXfHHqxBETA=;
-        b=M9ZZ/+2RA8byGXc2LRefLzUFeSzCIKDVa+St08NkNALS/D9Qgd3w+CU+76DW7l9F/Nsu+J
-        VurU6yHRwXHSH5G4sS5CvyuPV1Pae6ukqFhyKX7N+3sK4xOolb68UNVoy0pYi0DjSeAW8q
-        vqx9rPCSO3MMQ/Ozibjg9ieKiLVfi7U=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-332-6LzdxEqhMmixyCCeVboJcA-1; Thu, 13 Feb 2020 10:41:15 -0500
-X-MC-Unique: 6LzdxEqhMmixyCCeVboJcA-1
-Received: by mail-qt1-f199.google.com with SMTP id z25so3584268qto.8
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:41:15 -0800 (PST)
+        Thu, 13 Feb 2020 10:43:12 -0500
+Received: by mail-lj1-f175.google.com with SMTP id a13so7123976ljm.10
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:43:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=JwYIMGQOk6yTod1/avu+lWhhzqWkolvZorazJQ/e5vo=;
+        b=f7L3GH7hb8TxsVSZle5VHmgjCNBDMD/Jz+PugJqwS7bdt1lxNyYFQ6Y9sXKI4v26Qa
+         +Zw7oVpd7FI5ptlf36aIfLy34xPhlkXb48/epixfDzHfoSVS5Vk4ilHkupWTdHuSRITl
+         zM2geoM6gwjXXpHhkUcXkwXHJNCTSbc0aVyLDdWBIVnmuKqz3rUQtK3xqsYnHo+OpD2U
+         /z1U8rCw2fhJag15TRK8H4tvoktNOAAVa+/OpOJEHFtTJ5ME+twuxFsfcgVfeAGJlM1y
+         Ap3UEMA4CAe3LFeDchj1LmaaRAObnfZwc6gYZMWoflkVi5n1wIs2RJ9JiVZV8iIP9owA
+         FV+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=+ek7ovueQ1Zw26uD1wE6yB4d2TtRDHlkQXfHHqxBETA=;
-        b=m7ikJzUhF7ZTHRXBAnTxMckIIMcO3PZF+km5yzAV6TNkHkcrCymzj95cKCj+G7zaXL
-         vgt2IcD3Jna0Ix+jTJ4sde9ozOsUt1C+G78DusBCWYJvulx3IIDAgLnVUv59sziK5lVa
-         ZziHkiC+QFnEl1JuE6LtugUZ2YYjf16l8yFoZ1g0wb9RSAAYEK334TPnPXktRVeke4q+
-         nr+Y+5GStsNdMP/XVjAY/G5VNuIMQiHerktJ5uoPEyg3QS5YhGR/lMyB34f8+T/bFY/J
-         Eiiij5XytKYyv6k3I4QxXfoSWnuyI6HxBw7sIu73AhmH/PbpqLKmplQb1m1iTZfTWEgJ
-         qOsA==
-X-Gm-Message-State: APjAAAXOskw+FWVt2X7+DcMou0LtS6OiyyPuVw5jFIMjS20/8nFW5ZEi
-        4swnXhRVSaW/MrQgrKjiA84Y/YXJsTJicupIDjBBii212FHVc7wmBhD8SAoQYVmVtwjp+DX9Ywq
-        dL9TxmOztnr/VYHPRRmkWXGn1
-X-Received: by 2002:ac8:73c7:: with SMTP id v7mr12288255qtp.269.1581608474719;
-        Thu, 13 Feb 2020 07:41:14 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxuqtb2eDuJSUZlrEktyKz5ywe6U44aZfk5M0ldus3W3zRLJxwzeEMRVv8ZApy9boqdJBD+1Q==
-X-Received: by 2002:ac8:73c7:: with SMTP id v7mr12288206qtp.269.1581608474439;
-        Thu, 13 Feb 2020 07:41:14 -0800 (PST)
-Received: from redhat.com (bzq-79-176-28-95.red.bezeqint.net. [79.176.28.95])
-        by smtp.gmail.com with ESMTPSA id x41sm1711309qtj.52.2020.02.13.07.41.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 07:41:13 -0800 (PST)
-Date:   Thu, 13 Feb 2020 10:41:06 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, tiwei.bie@intel.com,
-        maxime.coquelin@redhat.com, cunming.liang@intel.com,
-        zhihong.wang@intel.com, rob.miller@broadcom.com,
-        xiao.w.wang@intel.com, haotian.wang@sifive.com,
-        lingshan.zhu@intel.com, eperezma@redhat.com, lulu@redhat.com,
-        parav@mellanox.com, kevin.tian@intel.com, stefanha@redhat.com,
-        rdunlap@infradead.org, hch@infradead.org, aadam@redhat.com,
-        jiri@mellanox.com, shahafs@mellanox.com, hanand@xilinx.com,
-        mhabets@solarflare.com
-Subject: Re: [PATCH V2 3/5] vDPA: introduce vDPA bus
-Message-ID: <20200213103714-mutt-send-email-mst@kernel.org>
-References: <20200210035608.10002-1-jasowang@redhat.com>
- <20200210035608.10002-4-jasowang@redhat.com>
- <20200211134746.GI4271@mellanox.com>
- <cf7abcc9-f8ef-1fe2-248e-9b9028788ade@redhat.com>
- <20200212125108.GS4271@mellanox.com>
- <12775659-1589-39e4-e344-b7a2c792b0f3@redhat.com>
- <20200213134128.GV4271@mellanox.com>
- <ebaea825-5432-65e2-2ab3-720a8c4030e7@redhat.com>
- <20200213150542.GW4271@mellanox.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=JwYIMGQOk6yTod1/avu+lWhhzqWkolvZorazJQ/e5vo=;
+        b=gQ6IznqnnOKthFaOET15RG+syIsdMMsI8GojlnHnVhkypW/uNKvHTYldemr7wD9ncr
+         RUQpK7rDudTlinWy43irNo2cD1jSW9Mp/UyTgrAs1Jpf4cyoun349uab1bY9XZFi4GYk
+         S6y+7Al0c2G9s2WHRyLHHQRljjZSFawTUh3MyrsTazSePrsGCBF4h1l+jL5nq/4Zmq99
+         LmxI+oJCm7wpqgv0nLWBLVdLzW0jJji51NAoThNjkAJyCo91Oo56Yfa8r5GZm22lXjRs
+         0XJ7b/IY7LZR+2O3klwcbTaFFGUkk+dY7W1JZqDzjxmpfMr7IUJ2ZotxIKFvYG1pK6GP
+         9Saw==
+X-Gm-Message-State: APjAAAXZDpnuH6UQ7MqXZ9j1BzqKYKsedh8Q8eEXWxduB4nmvCaKCYG7
+        ZJIwe66QTdURpZxvZ3qgldxKOKSOI7B47+Q+lVLWow==
+X-Google-Smtp-Source: APXvYqzmF34g0nZFr7DF1AKlt1QCmlxH+mSY9VRh9SQu0Ps7iRGt/qgCxg0xMvSqW7uqWDYnhFpJcDIiC4O2o2Zq+AA=
+X-Received: by 2002:a05:651c:1072:: with SMTP id y18mr11832537ljm.243.1581608589852;
+ Thu, 13 Feb 2020 07:43:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200213150542.GW4271@mellanox.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 13 Feb 2020 21:12:57 +0530
+Message-ID: <CA+G9fYuqAQfhzF2BzHr7vMHx68bo8-jT+ob_F3eHQ3=oFjgYdg@mail.gmail.com>
+Subject: LKFT: arm x15: mmc1: cache flush error -110
+To:     Jens Axboe <axboe@kernel.dk>, Alexei Starovoitov <ast@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-block@vger.kernel.org, lkft-triage@lists.linaro.org,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-mmc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        John Stultz <john.stultz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 11:05:42AM -0400, Jason Gunthorpe wrote:
-> On Thu, Feb 13, 2020 at 10:58:44PM +0800, Jason Wang wrote:
-> > 
-> > On 2020/2/13 下午9:41, Jason Gunthorpe wrote:
-> > > On Thu, Feb 13, 2020 at 11:34:10AM +0800, Jason Wang wrote:
-> > > 
-> > > > >    You have dev, type or
-> > > > > class to choose from. Type is rarely used and doesn't seem to be used
-> > > > > by vdpa, so class seems the right choice
-> > > > > 
-> > > > > Jason
-> > > > Yes, but my understanding is class and bus are mutually exclusive. So we
-> > > > can't add a class to a device which is already attached on a bus.
-> > > While I suppose there are variations, typically 'class' devices are
-> > > user facing things and 'bus' devices are internal facing (ie like a
-> > > PCI device)
-> > 
-> > 
-> > Though all vDPA devices have the same programming interface, but the
-> > semantic is different. So it looks to me that use bus complies what
-> > class.rst said:
-> > 
-> > "
-> > 
-> > Each device class defines a set of semantics and a programming interface
-> > that devices of that class adhere to. Device drivers are the
-> > implementation of that programming interface for a particular device on
-> > a particular bus.
-> > 
-> > "
-> 
-> Here we are talking about the /dev/XX node that provides the
-> programming interface. All the vdpa devices have the same basic
-> chardev interface and discover any semantic variations 'in band'
-> 
-> > > So why is this using a bus? VDPA is a user facing object, so the
-> > > driver should create a class vhost_vdpa device directly, and that
-> > > driver should live in the drivers/vhost/ directory.
-> >  
-> > This is because we want vDPA to be generic for being used by different
-> > drivers which is not limited to vhost-vdpa. E.g in this series, it allows
-> > vDPA to be used by kernel virtio drivers. And in the future, we will
-> > probably introduce more drivers in the future.
-> 
-> I don't see how that connects with using a bus.
-> 
-> Every class of virtio traffic is going to need a special HW driver to
-> enable VDPA, that special driver can create the correct vhost side
-> class device.
+arm beagleboard x15 device failed to boot Linux mainline and
+linux-next kernel due
+to below error.
+This error occurred across all x15 device for these kernel version.
+
+This regression started happening on x15 from this commit onwards (27th Jan)
+  git branch: master
+  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+  git commit: aae1464f46a2403565f75717438118691d31ccf1
+  git describe: v5.5-489-gaae1464f46a2
 
 
-That's just a ton of useless code duplication, and a good chance
-to have minor variations in implementations confusing
-userspace.
+Test output log,
+[   37.606241] mmc1: Card stuck being busy! mmc_poll_for_busy
+[   37.611850] mmc1: cache flush error -110
+[   37.615883] blk_update_request: I/O error, dev mmcblk1, sector
+4302400 op 0x1:(WRITE) flags 0x20800 phys_seg 1 prio class 0
+[   37.627387] Aborting journal on device mmcblk1p9-8.
+[   37.635448] systemd[1]: Installed transient /etc/machine-id file.
+[   37.659283] systemd[1]: Couldn't move remaining userspace
+processes, ignoring: Input/output error
+[   37.744027] EXT4-fs error (device mmcblk1p9):
+ext4_journal_check_start:61: Detected aborted journal
+[   37.753322] EXT4-fs (mmcblk1p9): Remounting filesystem read-only
+[   37.917486] systemd-gpt-auto-generator[108]: Failed to dissect:
+Input/output error
+[   37.927825] systemd[104]:
+/lib/systemd/system-generators/systemd-gpt-auto-generator failed with
+exit status 1.
+<>
+[   68.856307] mmc1: Card stuck being busy! mmc_poll_for_busy
+[   68.861838] mmc1: cache flush error -110
+[   68.865812] blk_update_request: I/O error, dev mmcblk1, sector 0 op
+0x1:(WRITE) flags 0x800 phys_seg 0 prio class 0
+<>
+[   98.906243] mmc1: Card stuck being busy! mmc_poll_for_busy
+[   98.911774] mmc1: cache flush error -110
+[   98.915747] blk_update_request: I/O error, dev mmcblk1, sector 0 op
+0x1:(WRITE) flags 0x800 phys_seg 0 prio class 0
+<>
+Dependency failed for Serial Getty on ttyS2.
+[  128.946258] mmc1: Card stuck being busy! mmc_poll_for_busy
+[  128.951786] mmc1: cache flush error -110
+[  128.955756] blk_update_request: I/O error, dev mmcblk1, sector 0 op
+0x1:(WRITE) flags 0x800 phys_seg 0 prio class 0
+[FAILED] Failed to start File System Check on Root Device.
+See 'systemctl status systemd-fsck-root.service' for details.
+[  OK  ] Started Apply Kernel Variables.
+[  OK  ] Reached target Login Prompts.
+         Starting Remount Root and Kernel File Systems...
+[  OK  ] Reached target Timers.
+[  OK  ] Closed Syslog Socket.
+[  OK  ] Started Emergency Shell.
+[  129.227328] EXT4-fs error (device mmcblk1p9): ext4_remount:5354:
+Abort forced by user
+[  OK  ] Reached target Emergency Mode.
+[  OK  ] Reached target Sockets.
+[FAILED] Failed to start Remount Root and Kernel File Systems.
+<>
+You are in emergency mode. After logging in, type \"journalctl -xb\" to view
+system logs, \"systemctl reboot\" to reboot, \"systemctl default\" or \"exit\"
+to boot into default mode.
+Press Enter for maintenance
+auto-login-action timed out after 874 seconds
 
-Instead, each device implement the same interface, and then
-vhost sits on top.
-
-> > > For the PCI VF case this driver would bind to a PCI device like
-> > > everything else
-> > > 
-> > > For our future SF/ADI cases the driver would bind to some
-> > > SF/ADI/whatever device on a bus.
-> > 
-> > All these driver will still be bound to their own bus (PCI or other). And
-> > what the driver needs is to present a vDPA device to virtual vDPA bus on
-> > top.
-> 
-> Again, I can't see any reason to inject a 'vdpa virtual bus' on
-> top. That seems like mis-using the driver core.
-> 
-> Jason
-
-That bus is exactly what Greg KH proposed. There are other ways
-to solve this I guess but this bikeshedding is getting tiring.
-Come on it's an internal kernel interface, if we feel
-it was a wrong direction to take we can change our minds later.
-Main thing is getting UAPI right.
+ref:
+https://lkft.validation.linaro.org/scheduler/job/1137693#L4034
+https://lkft.validation.linaro.org/scheduler/job/1158106#L4048
+https://lkft.validation.linaro.org/scheduler/job/1137690#L3985
+https://lkft.validation.linaro.org/scheduler/job/1137691#L4012
+https://lkft.validation.linaro.org/scheduler/job/1137696#L4043
+https://lkft.validation.linaro.org/scheduler/job/1137699#L4153
 
 -- 
-MST
-
+Linaro LKFT
+https://lkft.linaro.org
