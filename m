@@ -2,171 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 448D315CD1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 22:20:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0454E15CD24
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 22:20:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728428AbgBMVUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 16:20:04 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33829 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727986AbgBMVUD (ORCPT
+        id S1728649AbgBMVUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 16:20:17 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:1868 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728631AbgBMVUR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 16:20:03 -0500
-Received: by mail-ot1-f68.google.com with SMTP id j16so7079367otl.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 13:20:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vdeMRXcHv3gdD6qpW26HbSbVWn9VbRyn5M5xWNM2dDM=;
-        b=Hyyvv8vojMc3YBTypTl8uC2uiKKtwZNhOmrxbaeG1vuEwpYOBWtUCtYYg0lYEql4zN
-         iQhsW++w/ZAYQx4DWEAHt6KFC1Osk7+fnv+N10orqg0hMBpJ5upOM9vYaC6HThBEWUo4
-         x8lSTdVsID1n9sDXHKjdP0wZOyi3I5KgZohTPQEZ6SvZkK0KIraYfFXgJWT7EBHym7lD
-         qHWVKcYmF/3JOR5hSfhX8LfGU7oXROkRyuZ7d8fCAITSP1r0DKZPxtU1HZtwQKrg56ck
-         601ueLi8jx80f5FnP/FCE4wz5IyUxhpnFTQRgZhpic+9EvNZpOXw2+FeDBsFcyVW+NQO
-         iecw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vdeMRXcHv3gdD6qpW26HbSbVWn9VbRyn5M5xWNM2dDM=;
-        b=dIXsf43tymzTwOEYwSw3TLASwts6XTIJxk3+VKFwEOsHJfTxlD6odhFlfqT/3k90tB
-         U+26Yr6nCCFKdpRh4Mgcgmou1Bh+d55Un2x1QeSrv7PFruqEoUTWRvBxKczsFFMWRM2A
-         YIHYBtySf8pa/tUXs5IaXrsTzk83MaXBlJ7bWhEtgL92RmTEQwkSqdVpQPa4V4N4b20r
-         tiQpNlt9fSd6Pzkfmi+QGamCBiNHubMGNpBPo2RVohdfRJ23PXDFjkH14BaHNt0yDety
-         ZdGBcYQv+Ha2y1O4EegjaaYBXEG6gfqczB/j+d2+T6vML8GziBAYCklCEV92GWJgyxn4
-         RNIA==
-X-Gm-Message-State: APjAAAUcwubC1O640MoVIildf3aI1Ke7kOywn75vdz1rQcxKQB3pnTvt
-        3f7EKptQJbEjNRnqmOpgWrL3MKCZMGuxLrZfgPfbFg==
-X-Google-Smtp-Source: APXvYqy/JTMiaK1YjeSUIRUgCDXzbRBoIVRbwxDW+6bmRuwC7016knDFFU+BtSvxGFlv/jMxkwnEe8Gedri67BtzpDA=
-X-Received: by 2002:a9d:7852:: with SMTP id c18mr14235067otm.247.1581628802976;
- Thu, 13 Feb 2020 13:20:02 -0800 (PST)
+        Thu, 13 Feb 2020 16:20:17 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e45bd730000>; Thu, 13 Feb 2020 13:19:47 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 13 Feb 2020 13:20:16 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 13 Feb 2020 13:20:16 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Feb
+ 2020 21:20:16 +0000
+Subject: Re: [PATCH -next v2] mm: annotate a data race in page_zonenum()
+To:     Qian Cai <cai@lca.pw>, <paulmck@kernel.org>
+CC:     <akpm@linux-foundation.org>, <elver@google.com>,
+        <david@redhat.com>, <jack@suse.cz>, <ira.weiny@intel.com>,
+        <dan.j.williams@intel.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1581619089-14472-1-git-send-email-cai@lca.pw>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <c1b1b448-ec64-c245-896c-462c55d94b3b@nvidia.com>
+Date:   Thu, 13 Feb 2020 13:20:15 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-References: <157966227494.2508551.7206194169374588977.stgit@dwillia2-desk3.amr.corp.intel.com>
- <157966229575.2508551.1892426244277171485.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20200213093227.GA90266@gmail.com>
-In-Reply-To: <20200213093227.GA90266@gmail.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 13 Feb 2020 13:19:51 -0800
-Message-ID: <CAPcyv4hXpqrZ4jmgmjy9fH=3oHg0UDDU6xLGX2TVCgSS_xkq4w@mail.gmail.com>
-Subject: Re: [PATCH v4 4/6] x86/mm: Introduce CONFIG_KEEP_NUMA
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1581619089-14472-1-git-send-email-cai@lca.pw>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1581628787; bh=HGGswWKrncPRu93Zq0PyM9U46WDVJ12jUnjbh/MB+io=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=GuiQ4sZ7GN6uyStZwg8bulXkQ+p9vDBfhMfkLVSOQ1eB7OYDPPbgMOBMWE6OfHD9z
+         VylC9wTfTi82BTV8wqrfA+EEH+LGjCnZ9EwIwIY0qOTfluBB9529SzUgsyZXI0tRxl
+         eWH/dxWUxgc9AC2oTHW+6na2CCTbxgUdhKXQyo61NytOjKrIJRWt3qFHgQ15+u7YeM
+         /hDwdfToc9qj82HnGlukqlL3yLEuxkDbf1rV3ms5PqaNHhwiTRe0unZV2Dazu+iLnC
+         fjWQSHyoKHSI3/F/+JnlXq3ozaxbofZhNnUpIZf1oePhfd9T+8cKvvXUNl7vz6Zjca
+         cTTo3payr8upQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 1:32 AM Ingo Molnar <mingo@kernel.org> wrote:
->
->
-> * Dan Williams <dan.j.williams@intel.com> wrote:
->
-> > Currently x86 numa_meminfo is marked __initdata in the
-> > CONFIG_MEMORY_HOTPLUG=n case. In support of a new facility to allow
-> > drivers to map reserved memory to a 'target_node'
-> > (phys_to_target_node()), add support for removing the __initdata
-> > designation for those users. Both memory hotplug and
-> > phys_to_target_node() users select CONFIG_KEEP_NUMA to tell the arch to
-> > maintain its physical address to numa mapping infrastructure post init.
-> >
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Cc: Andy Lutomirski <luto@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Borislav Petkov <bp@alien8.de>
-> > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > Cc: <x86@kernel.org>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: David Hildenbrand <david@redhat.com>
-> > Cc: Michal Hocko <mhocko@suse.com>
-> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> > ---
-> >  arch/x86/mm/numa.c   |    6 +-----
-> >  include/linux/numa.h |    6 ++++++
-> >  mm/Kconfig           |    5 +++++
-> >  3 files changed, 12 insertions(+), 5 deletions(-)
->
-> The concept and the x86 portions look sane, just a few minor nits:
->
-> >
-> > diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
-> > index 99f7a68738f0..5289d9d6799a 100644
-> > --- a/arch/x86/mm/numa.c
-> > +++ b/arch/x86/mm/numa.c
-> > @@ -25,11 +25,7 @@ nodemask_t numa_nodes_parsed __initdata;
-> >  struct pglist_data *node_data[MAX_NUMNODES] __read_mostly;
-> >  EXPORT_SYMBOL(node_data);
-> >
-> > -static struct numa_meminfo numa_meminfo
-> > -#ifndef CONFIG_MEMORY_HOTPLUG
-> > -__initdata
-> > -#endif
-> > -;
-> > +static struct numa_meminfo numa_meminfo __initdata_numa;
-> >
-> >  static int numa_distance_cnt;
-> >  static u8 *numa_distance;
-> > diff --git a/include/linux/numa.h b/include/linux/numa.h
-> > index 20f4e44b186c..c005ed6b807b 100644
-> > --- a/include/linux/numa.h
-> > +++ b/include/linux/numa.h
-> > @@ -13,6 +13,12 @@
-> >
-> >  #define      NUMA_NO_NODE    (-1)
-> >
-> > +#ifdef CONFIG_KEEP_NUMA
-> > +#define __initdata_numa
-> > +#else
-> > +#define __initdata_numa __initdata
-> > +#endif
-> > +
-> >  #ifdef CONFIG_NUMA
-> >  int numa_map_to_online_node(int node);
-> >  #else
-> > diff --git a/mm/Kconfig b/mm/Kconfig
-> > index ab80933be65f..001f1185eadf 100644
-> > --- a/mm/Kconfig
-> > +++ b/mm/Kconfig
-> > @@ -139,6 +139,10 @@ config HAVE_FAST_GUP
-> >  config ARCH_KEEP_MEMBLOCK
-> >       bool
-> >
-> > +# Keep arch numa mapping infrastructure post-init.
->
-> s/numa/NUMA
->
-> Please also capitalize consistently in the rest of the series.
->
-> > +config KEEP_NUMA
-> > +     bool
->
->
-> So most of our recent new NUMA options followed the naming pattern of:
->
->   CONFIG_NUMA_*
->
-> Such as CONFIG_NUMA_BALANCING or CONFIG_NUMA_EMU.
->
-> So I'd suggesting naming it to CONFIG_NUMA_KEEP, or, a bit more
-> descriptively, such as CONFIG_NUMA_KEEP_MAPPING or such?
->
-> 'Keeping NUMA' is kind of lame - of course we keep NUMA. ;-)
+On 2/13/20 10:38 AM, Qian Cai wrote:
+>  BUG: KCSAN: data-race in page_cpupid_xchg_last / put_page
+> 
+>  write (marked) to 0xfffffc0d48ec1a00 of 8 bytes by task 91442 on cpu 3:
+>   page_cpupid_xchg_last+0x51/0x80
+>   page_cpupid_xchg_last at mm/mmzone.c:109 (discriminator 11)
+>   wp_page_reuse+0x3e/0xc0
+>   wp_page_reuse at mm/memory.c:2453
+>   do_wp_page+0x472/0x7b0
+>   do_wp_page at mm/memory.c:2798
+>   __handle_mm_fault+0xcb0/0xd00
+>   handle_pte_fault at mm/memory.c:4049
+>   (inlined by) __handle_mm_fault at mm/memory.c:4163
+>   handle_mm_fault+0xfc/0x2f0
+>   handle_mm_fault at mm/memory.c:4200
+>   do_page_fault+0x263/0x6f9
+>   do_user_addr_fault at arch/x86/mm/fault.c:1465
+>   (inlined by) do_page_fault at arch/x86/mm/fault.c:1539
+>   page_fault+0x34/0x40
+> 
+>  read to 0xfffffc0d48ec1a00 of 8 bytes by task 94817 on cpu 69:
+>   put_page+0x15a/0x1f0
+>   page_zonenum at include/linux/mm.h:923
+>   (inlined by) is_zone_device_page at include/linux/mm.h:929
+>   (inlined by) page_is_devmap_managed at include/linux/mm.h:948
+>   (inlined by) put_page at include/linux/mm.h:1023
+>   wp_page_copy+0x571/0x930
+>   wp_page_copy at mm/memory.c:2615
+>   do_wp_page+0x107/0x7b0
+>   __handle_mm_fault+0xcb0/0xd00
+>   handle_mm_fault+0xfc/0x2f0
+>   do_page_fault+0x263/0x6f9
+>   page_fault+0x34/0x40
+> 
+>  Reported by Kernel Concurrency Sanitizer on:
+>  CPU: 69 PID: 94817 Comm: systemd-udevd Tainted: G        W  O L 5.5.0-next-20200204+ #6
+>  Hardware name: HPE ProLiant DL385 Gen10/ProLiant DL385 Gen10, BIOS A40 07/10/2019
+> 
+> A page never changes its zone number. The zone number happens to be
+> stored in the same word as other bits which are modified, but the zone
+> number bits will never be modified by any other write, so it can accept
+> a reload of the zone bits after an intervening write and it don't need
+> to use READ_ONCE(). Thus, annotate this data race using
+> ASSERT_EXCLUSIVE_BITS() to also assert that there are no concurrent
+> writes to it.
+> 
+> Suggested-by: Marco Elver <elver@google.com>
+> Signed-off-by: Qian Cai <cai@lca.pw>
+> ---
+> 
+> v2: use ASSERT_EXCLUSIVE_BITS().
 
-Ok, I settled on CONFIG_NUMA_KEEP_MEMINFO, and will fix up the
-lowercase "numa" instances in the set.
+
+Much cleaner, thanks to this new macro. You can add:
+
+
+    Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
+> 
+> BTW, not sure if it is easier for Andrew with Paul to pick this up (with
+> Andrew's ACK), since ASSERT_EXCLUSIVE_BITS() is in -rcu tree only (or likely
+> tomorrow's -next tree).
+> 
+>  include/linux/mm.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 52269e56c514..0d70fafd055c 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -920,6 +920,7 @@ vm_fault_t alloc_set_pte(struct vm_fault *vmf, struct mem_cgroup *memcg,
+>  
+>  static inline enum zone_type page_zonenum(const struct page *page)
+>  {
+> +	ASSERT_EXCLUSIVE_BITS(page->flags, ZONES_MASK << ZONES_PGSHIFT);
+>  	return (page->flags >> ZONES_PGSHIFT) & ZONES_MASK;
+>  }
+>  
+> 
