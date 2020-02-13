@@ -2,93 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 718BC15CABD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 19:53:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AE1C15CAC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 19:55:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728286AbgBMSxK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 13:53:10 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33374 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728216AbgBMSxJ (ORCPT
+        id S1728318AbgBMSzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 13:55:05 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:37572 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727761AbgBMSzF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 13:53:09 -0500
-Received: by mail-pg1-f196.google.com with SMTP id 6so3602389pgk.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 10:53:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Z5vHe2AowREqzAqOW6YaBuKUxPqz6MPlaKgwHeJebmE=;
-        b=SY+Nz1MHBZwExWD4owfVmV3PKG8yw31q8mvMuM6QeqDDRkCgPfGDToBxCoXtzv381u
-         Sx9OA5EBZVY/H1Uo5+oKZzHTqqH/JIXslPIK3cdn+q7Y+hFEI6WH4T6ux2goMg2iLmsd
-         h6xM/VP8wbKEKFo6Pm9jYseBTiXldmQTfj/fc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z5vHe2AowREqzAqOW6YaBuKUxPqz6MPlaKgwHeJebmE=;
-        b=VEVf747d/k2Wfr61+VX/DfHz8MyIqHzAchoFDZoKbzlrvQrX6VGo5Vh5uP8qh7+VSR
-         ibtqCD83riatZ8JQb5QXoYzZQQbn+u4FPBKIVn76BmQfgi7WiVG88rDOyEAennWEZkcq
-         TA9IxkNIdpUlfyCnqzt1SXGonHzp02UERGU61OSYYHgMxzwuH6BoHpBWPD5AkoMCoWNC
-         tmXqWmuzFbtOwZZMRX4itRiAHxRUG4QMO9hSsMG+v6mVmzaefPBQWCLMPnvwuA7uqiiZ
-         MVT308euHB/EGkDwrQ0vdegtgV0m6uzie8PwWgPKEhC5UU3rkcNZO8+iph2OUGzPXVk5
-         xJJg==
-X-Gm-Message-State: APjAAAUis70N/7Rp1n+lSJzbYNg/Vobe7iYHCtV+OWvl5wdN0keOOlXT
-        tOOxJt8zmRFjkSsP8uVF2paoxw==
-X-Google-Smtp-Source: APXvYqxHhXqcb5J9cFkzWat6D++pep33cBNsqaKAX+B6vNPEnsssomZ/y+j9r5yiKu81pnWzZrJ16w==
-X-Received: by 2002:a63:c14b:: with SMTP id p11mr15832742pgi.290.1581619987489;
-        Thu, 13 Feb 2020 10:53:07 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id s14sm3897124pgv.74.2020.02.13.10.53.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2020 10:53:06 -0800 (PST)
-Date:   Thu, 13 Feb 2020 10:53:05 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Dikshita Agarwal <dikshita@codeaurora.org>,
-        linux-media@vger.kernel.org, stanimir.varbanov@linaro.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, vgarodia@codeaurora.org
-Subject: Re: [PATCH V4 0/4] Enable video on sc7180
-Message-ID: <20200213185305.GF50449@google.com>
-References: <1579006416-11599-1-git-send-email-dikshita@codeaurora.org>
- <20200203180240.GD3948@builder>
+        Thu, 13 Feb 2020 13:55:05 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01DIqbxH014791;
+        Thu, 13 Feb 2020 18:53:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=xxN1ToWl43jQv4Pb6pKw4TpxAtDjjezu7dXEUGdd9F4=;
+ b=EFZ1M3LZ4fWyLWpmMcGqXG+b9pCa4PfOEc/PgvFeywSF+E2mxW1uUHUVakOp4OS+vRqC
+ 7/9GrUjD5u7IRLs+rzBz7l72TNelNDjqgNcV/Js1CZknAQtgRpU64JLc6L73RKmwtT9u
+ G295K2MYoLfnPV/GxDxATByMR/cTVlOppqYLQ62tskfjx70B96DVit7XK8YY+AoFz33Z
+ mACXsCeORMOFt15FWyMvXrhFEG/aNeDEboMLhb3Y2TDBDjFk6T3HljXRs+Eu/hir+Dv7
+ U1swXxF7zLvsEEAVJjtQmpqgCeKsTJ1OWTTKlFZ3Suk0mIRQGOQmC12YU6z9rMiIxRzb wg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2y2k88mhvp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Feb 2020 18:53:43 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01DIpqZm043233;
+        Thu, 13 Feb 2020 18:53:42 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2y4k80de1h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Feb 2020 18:53:42 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01DIrZ8S010833;
+        Thu, 13 Feb 2020 18:53:35 GMT
+Received: from localhost.localdomain (/10.159.243.170)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 13 Feb 2020 10:53:35 -0800
+Subject: Re: [PATCH] KVM: x86: eliminate some unreachable code
+To:     linmiaohe <linmiaohe@huawei.com>, pbonzini@redhat.com,
+        rkrcmar@redhat.com, sean.j.christopherson@intel.com,
+        vkuznets@redhat.com, wanpengli@tencent.com, jmattson@google.com,
+        joro@8bytes.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org
+References: <1581562405-30321-1-git-send-email-linmiaohe@huawei.com>
+From:   Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Message-ID: <ac51e889-624a-b108-d03c-4dc3e91c9a69@oracle.com>
+Date:   Thu, 13 Feb 2020 10:53:34 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200203180240.GD3948@builder>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1581562405-30321-1-git-send-email-linmiaohe@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9530 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ suspectscore=0 mlxscore=0 bulkscore=0 malwarescore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002130132
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9530 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 lowpriorityscore=0
+ suspectscore=0 bulkscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
+ malwarescore=0 impostorscore=0 clxscore=1011 spamscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002130132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
 
-On Mon, Feb 03, 2020 at 10:02:40AM -0800, Bjorn Andersson wrote:
-> On Tue 14 Jan 04:53 PST 2020, Dikshita Agarwal wrote:
-> 
-> > Hello,
-> > 
-> > Changes since v3:
-> > 
-> >   - addressed DT and DT schema review comments.
-> > 
-> >   - renamed DT schema file.
-> > 
-> > v3 can be found at [1].
-> > These changes depend on patch series [2] - [6].
-> > 
-> > Thanks,
-> > Dikshita
-> > 
-> 
-> Picked up the dts patches for 5.7, with Stan's acks
-
-I can't seem to find the patches in the QCOM repo, neither in
-'arm64-for-5.7' nor 'for-next'. Am I looking at the wrong place or
-maybe you forget to push these?
-
-Thanks
-
-Matthias
+On 2/12/20 6:53 PM, linmiaohe wrote:
+> From: Miaohe Lin <linmiaohe@huawei.com>
+>
+> These code are unreachable, remove them.
+>
+> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+> ---
+>   arch/x86/kvm/vmx/vmx.c | 1 -
+>   arch/x86/kvm/x86.c     | 3 ---
+>   2 files changed, 4 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index bb5c33440af8..b6d4eafe01cf 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -4505,7 +4505,6 @@ static bool rmode_exception(struct kvm_vcpu *vcpu, int vec)
+>   	case GP_VECTOR:
+>   	case MF_VECTOR:
+>   		return true;
+> -	break;
+>   	}
+>   	return false;
+>   }
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index fbabb2f06273..a597009aefd7 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -3081,7 +3081,6 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   		break;
+>   	case APIC_BASE_MSR ... APIC_BASE_MSR + 0x3ff:
+>   		return kvm_x2apic_msr_read(vcpu, msr_info->index, &msr_info->data);
+> -		break;
+>   	case MSR_IA32_TSCDEADLINE:
+>   		msr_info->data = kvm_get_lapic_tscdeadline_msr(vcpu);
+>   		break;
+> @@ -3164,7 +3163,6 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   		return kvm_hv_get_msr_common(vcpu,
+>   					     msr_info->index, &msr_info->data,
+>   					     msr_info->host_initiated);
+> -		break;
+>   	case MSR_IA32_BBL_CR_CTL3:
+>   		/* This legacy MSR exists but isn't fully documented in current
+>   		 * silicon.  It is however accessed by winxp in very narrow
+> @@ -8471,7 +8469,6 @@ static inline int vcpu_block(struct kvm *kvm, struct kvm_vcpu *vcpu)
+>   		break;
+>   	default:
+>   		return -EINTR;
+> -		break;
+>   	}
+>   	return 1;
+>   }
+Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
