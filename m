@@ -2,140 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DCEB15BAE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 09:41:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20E7315BAEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 09:43:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729601AbgBMIlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 03:41:21 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:40578 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729406AbgBMIlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 03:41:21 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 326AA1A4069;
-        Thu, 13 Feb 2020 09:41:18 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7B98D1A92A4;
-        Thu, 13 Feb 2020 09:41:08 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 3BAC94029B;
-        Thu, 13 Feb 2020 16:40:57 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, allison@lohutok.net,
-        tglx@linutronix.de, andrew.smirnov@gmail.com,
-        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
-        rfontana@redhat.com, sakari.ailus@linux.intel.com,
-        bhelgaas@google.com, dsterba@suse.com, peng.fan@nxp.com,
-        okuno.kohji@jp.panasonic.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V3] ARM: imx: Add missing of_node_put()
-Date:   Thu, 13 Feb 2020 16:35:33 +0800
-Message-Id: <1581582933-901-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729612AbgBMIn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 03:43:29 -0500
+Received: from mail.megasuccess.eu ([212.237.8.43]:33620 "EHLO
+        mail.megasuccess.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729474AbgBMIn3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 03:43:29 -0500
+X-Greylist: delayed 378 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Feb 2020 03:43:28 EST
+Received: by mail.megasuccess.eu (Postfix, from userid 1001)
+        id 1F547A2820; Thu, 13 Feb 2020 08:37:07 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megasuccess.eu;
+        s=mail; t=1581583029;
+        bh=vZCY/WMzWvcSzsvr/JOJ79lD1pX2vHR2JT0iP5CcxnY=;
+        h=Date:From:To:Subject:From;
+        b=TbWMRGTNotNcTO4GlcltV7HX9VPNw5n3WScQo5cZpuRkzh9odQsnMhDTGUvxzlXR9
+         itvzg7sMXtv6OowrgzVtkeCcGH+++dHfADNwVD8sy1hRFVQOPcpg95aqUtYmZfDVEt
+         0Ey64IzD/4ljDxr470MSTDA6RQABzS7IWnCacMEIcvMyKKwL8LYDbFSMHpTaI6FToH
+         tuimpmwTbgJtSmTJdTOzCCjH6g7uyA2upQVxTQ2rxPv6qwwlxRUNLwCptCBOKmvb0j
+         bkZSOh0VwYUBGwABicnZPNBKtmxUswBv7rp2DDLTIwb2+UOI3kz5deWeRCa7S9imkX
+         ILRCPIaM1Iqig==
+Received: by mail.megasuccess.eu for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 08:37:04 GMT
+Message-ID: <20200213074500-0.1.11.1y9d.0.ajru0a2emt@megasuccess.eu>
+Date:   Thu, 13 Feb 2020 08:37:04 GMT
+From:   "Nathalie Benoit" <n.benoit@megasuccess.eu>
+To:     <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?Q?GPS_avanc=C3=A9?=
+X-Mailer: mail.megasuccess.eu
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After finishing using device node got from of_find_compatible_node(),
-of_node_put() needs to be called.
+Bonjour,
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-Changes since V2:
-	- introduce src_node in anatop.c for second usage of of_find_compatible_node
-	  to make of_node_put() more clear for reader.
----
- arch/arm/mach-imx/anatop.c     | 6 ++++--
- arch/arm/mach-imx/gpc.c        | 1 +
- arch/arm/mach-imx/platsmp.c    | 1 +
- arch/arm/mach-imx/pm-imx6.c    | 2 ++
- arch/arm/mach-imx/pm-imx7ulp.c | 1 +
- 5 files changed, 9 insertions(+), 2 deletions(-)
+Je me permets de vous contacter concernant la commercialisation de l=E2=80=
+=99un des meilleurs GPS sur le march=C3=A9.
 
-diff --git a/arch/arm/mach-imx/anatop.c b/arch/arm/mach-imx/anatop.c
-index 8fb68c0..ea4a596 100644
---- a/arch/arm/mach-imx/anatop.c
-+++ b/arch/arm/mach-imx/anatop.c
-@@ -94,7 +94,7 @@ void imx_anatop_post_resume(void)
- 
- void __init imx_init_revision_from_anatop(void)
- {
--	struct device_node *np;
-+	struct device_node *np, *src_np;
- 	void __iomem *anatop_base;
- 	unsigned int revision;
- 	u32 digprog;
-@@ -135,9 +135,10 @@ void __init imx_init_revision_from_anatop(void)
- 			void __iomem *src_base;
- 			u32 sbmr2;
- 
--			np = of_find_compatible_node(NULL, NULL,
-+			src_np = of_find_compatible_node(NULL, NULL,
- 						     "fsl,imx6ul-src");
- 			src_base = of_iomap(np, 0);
-+			of_node_put(src_np);
- 			WARN_ON(!src_base);
- 			sbmr2 = readl_relaxed(src_base + SRC_SBMR2);
- 			iounmap(src_base);
-@@ -149,6 +150,7 @@ void __init imx_init_revision_from_anatop(void)
- 			}
- 		}
- 	}
-+	of_node_put(np);
- 
- 	mxc_set_cpu_type(digprog >> 16 & 0xff);
- 	imx_set_soc_revision(revision);
-diff --git a/arch/arm/mach-imx/gpc.c b/arch/arm/mach-imx/gpc.c
-index b5b557f..07f1972 100644
---- a/arch/arm/mach-imx/gpc.c
-+++ b/arch/arm/mach-imx/gpc.c
-@@ -282,4 +282,5 @@ void __init imx_gpc_check_dt(void)
- 		/* map GPC, so that at least CPUidle and WARs keep working */
- 		gpc_base = of_iomap(np, 0);
- 	}
-+	of_node_put(np);
- }
-diff --git a/arch/arm/mach-imx/platsmp.c b/arch/arm/mach-imx/platsmp.c
-index 2aa2692..cf4e933 100644
---- a/arch/arm/mach-imx/platsmp.c
-+++ b/arch/arm/mach-imx/platsmp.c
-@@ -109,6 +109,7 @@ static void __init ls1021a_smp_prepare_cpus(unsigned int max_cpus)
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,ls1021a-dcfg");
- 	dcfg_base = of_iomap(np, 0);
-+	of_node_put(np);
- 	BUG_ON(!dcfg_base);
- 
- 	paddr = __pa_symbol(secondary_startup);
-diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-index 1c0ecad..dd34dff 100644
---- a/arch/arm/mach-imx/pm-imx6.c
-+++ b/arch/arm/mach-imx/pm-imx6.c
-@@ -655,6 +655,8 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
- 
- 	if (of_property_read_bool(np, "fsl,pmic-stby-poweroff"))
- 		imx6_pm_stby_poweroff_probe();
-+
-+	of_node_put(np);
- }
- 
- void __init imx6q_pm_init(void)
-diff --git a/arch/arm/mach-imx/pm-imx7ulp.c b/arch/arm/mach-imx/pm-imx7ulp.c
-index 7b2f738..2e756d8 100644
---- a/arch/arm/mach-imx/pm-imx7ulp.c
-+++ b/arch/arm/mach-imx/pm-imx7ulp.c
-@@ -62,6 +62,7 @@ void __init imx7ulp_pm_init(void)
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx7ulp-smc1");
- 	smc1_base = of_iomap(np, 0);
-+	of_node_put(np);
- 	WARN_ON(!smc1_base);
- 
- 	imx7ulp_set_lpm(ULP_PM_RUN);
--- 
-2.7.4
+Je vous propose de vous pr=C3=A9senter bri=C3=A8vement cet outil dot=C3=A9=
+ de nombreuses fonctionnalit=C3=A9s qui deviendront sans aucun doute indi=
+spensables =C3=A0 l=E2=80=99organisation de votre travail, en ce qu=E2=80=
+=99elles permettent d=E2=80=99optimiser les processus de transport et am=C3=
+=A9liorent votre productivit=C3=A9 sur le terrain.
 
+Si vous souhaitez obtenir de plus amples informations, n=E2=80=99h=C3=A9s=
+itez pas =C3=A0 me contacter.
+
+Dans l'attente de votre r=C3=A9ponse, je vous prie d=E2=80=99agr=C3=A9er =
+mes salutations distingu=C3=A9es.=20
+
+
+Nathalie Benoit
