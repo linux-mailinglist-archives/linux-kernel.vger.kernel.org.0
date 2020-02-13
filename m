@@ -2,161 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A91615B6A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 02:25:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AF1F15B66C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 02:13:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729508AbgBMBYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 20:24:51 -0500
-Received: from smtp.uniroma2.it ([160.80.6.23]:60443 "EHLO smtp.uniroma2.it"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729369AbgBMBYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 20:24:50 -0500
-X-Greylist: delayed 742 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Feb 2020 20:24:39 EST
-Received: from smtpauth-2019-1.uniroma2.it (smtpauth.uniroma2.it [160.80.5.46])
-        by smtp-2015.uniroma2.it (8.14.4/8.14.4/Debian-8) with ESMTP id 01D1BTKq030210;
-        Thu, 13 Feb 2020 02:11:34 +0100
-Received: from utente-Aspire-V3-572G.campusx-relay3.uniroma2.it (wireless-71-132.net.uniroma2.it [160.80.132.71])
-        by smtpauth-2019-1.uniroma2.it (Postfix) with ESMTPSA id CDA2A120EC9;
-        Thu, 13 Feb 2020 02:11:24 +0100 (CET)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=uniroma2.it;
-        s=ed201904; t=1581556284; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=mej9aNRLvDHBYp6C+0JEMnnGVNRirupCbZfr5nASbD0=;
-        b=Z0eW+UeQcY7vNJ3q/mp4l3wkW4eZTOqHSIDqVFCsWfsoHQEJCzgN7bNU6NDvjI0C66uAO4
-        m9es+uWM4cQXgHBg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniroma2.it; s=rsa201904;
-        t=1581556284; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=mej9aNRLvDHBYp6C+0JEMnnGVNRirupCbZfr5nASbD0=;
-        b=xfTb0kp+lIXL57nYuVAlIDZWofvoE5uGI9H366ObLsjxzi5OwvnDbSX8wnZjdBcGHYlIJa
-        I/PvE7Lxz0d0fRc/T+S5KtVwpJSSCypcZwoyHaulMfyPmt2s1E2ncpIAiC0vcH3BCxAqm8
-        KmBlhQNHLK9+B/Wy43ciaASXwsvl3XlI4bU1ychZ6jzH7OavtN42w44pwiEELNK3nHCLX1
-        8+rb1vm0Du/x/vzAc5EGao7FN761lPyW0vx+WniggFLB8wnOtrYYlRBkHw6569T1PesgJi
-        3hMOruhr1L7djVvZhh2wMbegCIwJQVK0vA6pUsBuMf0NbxUlm2bGaXJGMNPNgw==
-From:   Carmine Scarpitta <carmine.scarpitta@uniroma2.it>
-To:     davem@davemloft.net
-Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, kuba@kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ahmed.abdelsalam@gssi.it, david.lebrun@uclouvain.be,
-        dav.lebrun@gmail.com, andrea.mayer@uniroma2.it,
-        paolo.lungaroni@cnit.it,
-        Carmine Scarpitta <carmine.scarpitta@uniroma2.it>
-Subject: [net-next 2/2] Add support for SRv6 End.DT4 action
-Date:   Thu, 13 Feb 2020 02:09:32 +0100
-Message-Id: <20200213010932.11817-3-carmine.scarpitta@uniroma2.it>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200213010932.11817-1-carmine.scarpitta@uniroma2.it>
-References: <20200213010932.11817-1-carmine.scarpitta@uniroma2.it>
-X-Virus-Scanned: clamav-milter 0.100.0 at smtp-2015
-X-Virus-Status: Clean
+        id S1729329AbgBMBNF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 20:13:05 -0500
+Received: from gateway31.websitewelcome.com ([192.185.144.219]:36694 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729185AbgBMBNF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 20:13:05 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 57EAF10FA7
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 19:13:02 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 233ujnuUwXVkQ233ujBzJb; Wed, 12 Feb 2020 19:13:02 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=UeniUbGWJBBT0KfdU4Phj7oirIhMUxWtMEICDs+UUbc=; b=luWkpuZOAHOBeP3hzt9+2sVjY9
+        Oh99k4/astn8cTmIvl9lR+TsyG2zn9Pc4E0iBcaSHkL4s/PYbz+h/DJX5gxngBuKrY+TOb5N3q0JI
+        z1TBwOvGnDASVVuqgwySR/FaQpUUaT+MmLlmxyN5ceIr2zQOMz14XD2ud9w+5K/dGahj8SERJdYyU
+        w3muOr+obfgZsuq4lU6bKZoxc8nukhue4zzo0nH4ng+pBTGNqsIOj5qqIYyr29CBsGDhvyHzVL5qn
+        kFmEgokbxNymlJtV38eQShXh9gppnz79twb12YIsaEYl5/zX8zt4WO1vjJQHDBRKyroCU5fp7PdNB
+        F1/tOpGQ==;
+Received: from [200.68.141.42] (port=27417 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j233s-003yhS-91; Wed, 12 Feb 2020 19:13:00 -0600
+Date:   Wed, 12 Feb 2020 19:12:58 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] IB/multicast: Replace zero-length array with flexible-array
+ member
+Message-ID: <20200213011258.GA14874@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.141.42
+X-Source-L: No
+X-Exim-ID: 1j233s-003yhS-91
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [200.68.141.42]:27417
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SRv6 End.DT4 is defined in the SRv6 Network Programming doc within IETF [1].
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-End.DT4 is used to implement IPv4 L3VPN use-cases in multi-tenants
-environments. It decapsulates the received packets and does IPv4 routing
-lookup in the routing table of the tenant.
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-At JANOG44, LINE corporation presented their multi-tenant DC architecture
-using SRv6 [2]. In the slides, they reported that the linux kernel is
-missing the support of SRv6 End.DT4 action.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-This patch adds support to SRv6 End.DT4 action.
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-The iproute2 part required for this action was already implemented along
-with the other supported SRv6 actions [3].
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
 
-[1] https://tools.ietf.org/html/draft-ietf-spring-srv6-network-programming-08
-[2] https://speakerdeck.com/line_developers/line-data-center-networking-with-srv6
-[3] https://patchwork.ozlabs.org/patch/799837/
+This issue was found with the help of Coccinelle.
 
-Signed-off-by: Carmine Scarpitta <carmine.scarpitta@uniroma2.it>
-Acked-by: Ahmed Abdelsalam <ahmed.abdelsalam@gssi.it>
-Acked-by: Andrea Mayer <andrea.mayer@uniroma2.it>
-Acked-by: Paolo Lungaroni <paolo.lungaroni@cnit.it>
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- net/ipv6/seg6_local.c | 49 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+ drivers/infiniband/core/multicast.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/ipv6/seg6_local.c b/net/ipv6/seg6_local.c
-index 7cbc19731997..d54a921ea96d 100644
---- a/net/ipv6/seg6_local.c
-+++ b/net/ipv6/seg6_local.c
-@@ -151,6 +151,26 @@ static void advance_nextseg(struct ipv6_sr_hdr *srh, struct in6_addr *daddr)
- 	*daddr = *addr;
- }
+diff --git a/drivers/infiniband/core/multicast.c b/drivers/infiniband/core/multicast.c
+index cd338ddc4a39..9c2d8b7f1af9 100644
+--- a/drivers/infiniband/core/multicast.c
++++ b/drivers/infiniband/core/multicast.c
+@@ -71,7 +71,7 @@ struct mcast_device {
+ 	struct ib_event_handler	event_handler;
+ 	int			start_port;
+ 	int			end_port;
+-	struct mcast_port	port[0];
++	struct mcast_port	port[];
+ };
  
-+static int seg6_lookup_nexthop_v4(struct sk_buff *skb, u32 tbl_id)
-+{
-+	struct net *net = dev_net(skb->dev);
-+	struct fib_result res;
-+	struct iphdr *iph;
-+	u8 tos;
-+
-+	iph = ip_hdr(skb);
-+	tos = iph->tos & IPTOS_RT_MASK;
-+
-+	res.table = fib_get_table(net, tbl_id);
-+	if (!res.table)
-+		return -ENOENT;
-+
-+	skb_dst_drop(skb);
-+
-+	return ip_route_input_rcu(skb, iph->daddr, iph->saddr,
-+				  tos, skb->dev, &res, true);
-+}
-+
- static int
- seg6_lookup_any_nexthop(struct sk_buff *skb, struct in6_addr *nhaddr,
- 			u32 tbl_id, bool local_delivery)
-@@ -401,6 +421,30 @@ static int input_action_end_dx4(struct sk_buff *skb,
- 	return -EINVAL;
- }
- 
-+static int input_action_end_dt4(struct sk_buff *skb,
-+				struct seg6_local_lwt *slwt)
-+{
-+	int err;
-+
-+	if (!decap_and_validate(skb, IPPROTO_IPIP))
-+		goto drop;
-+
-+	if (!pskb_may_pull(skb, sizeof(struct iphdr)))
-+		goto drop;
-+
-+	skb_set_transport_header(skb, sizeof(struct iphdr));
-+
-+	err = seg6_lookup_nexthop_v4(skb, slwt->table);
-+	if (err)
-+		goto drop;
-+
-+	return dst_input(skb);
-+
-+drop:
-+	kfree_skb(skb);
-+	return -EINVAL;
-+}
-+
- static int input_action_end_dt6(struct sk_buff *skb,
- 				struct seg6_local_lwt *slwt)
- {
-@@ -589,6 +633,11 @@ static struct seg6_action_desc seg6_action_table[] = {
- 		.attrs		= (1 << SEG6_LOCAL_NH4),
- 		.input		= input_action_end_dx4,
- 	},
-+	{
-+		.action		= SEG6_LOCAL_ACTION_END_DT4,
-+		.attrs		= (1 << SEG6_LOCAL_TABLE),
-+		.input		= input_action_end_dt4,
-+	},
- 	{
- 		.action		= SEG6_LOCAL_ACTION_END_DT6,
- 		.attrs		= (1 << SEG6_LOCAL_TABLE),
+ enum mcast_state {
 -- 
-2.17.1
+2.23.0
 
