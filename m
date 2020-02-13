@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF24F15C77F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:14:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47FE515C71B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:13:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727901AbgBMPW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:22:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59418 "EHLO mail.kernel.org"
+        id S2388244AbgBMQHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 11:07:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727822AbgBMPWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:22:22 -0500
+        id S1728396AbgBMPXa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:30 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A043D24689;
-        Thu, 13 Feb 2020 15:22:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63C5E20848;
+        Thu, 13 Feb 2020 15:23:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607341;
-        bh=Ia+0b3TRMNDzpP8GUiBSaQYdLYkIS1oM0oh6BuKGS3Y=;
+        s=default; t=1581607409;
+        bh=eznXPyPtjKiPjmnqn26WtXAu+cuU4ehtOyvEIL3a3iA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y/t9ZLTCdhtfn6s4NJn5nYl9lr9pUETghtfZ/yrhflPeACG82MRU4Z9JGZ7++ilQ5
-         3/gkRvjc+GoU0RsSeBTpOpJCa8UOoe04sYhD7TYKE7uL8gGmlsamvPuVxDCYqnBRyx
-         hzge3ZYKvLQ3wdEB++tEgHjsFr8YEkcHh1tkwNUI=
+        b=zltTCDPuMVUT26r2g74atiawIpJvOT/LCsFRH8xc1rCBBOaSj3uYpw9Ma3Ff2N65W
+         v4KDohzDP8RdSEwJ84m1/kcT1yHenOlMp5XS3ELRwyiopnCo6/ZqhJeS+Y2LxdVi/Q
+         OUDyGyv+A1HBAaUizRsSnuxzmoO+J+0HFXhakdHA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 17/91] lib/test_kasan.c: fix memory leak in kmalloc_oob_krealloc_more()
+        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.9 030/116] crypto: api - Check spawn->alg under lock in crypto_drop_spawn
 Date:   Thu, 13 Feb 2020 07:19:34 -0800
-Message-Id: <20200213151828.460650836@linuxfoundation.org>
+Message-Id: <20200213151854.692220564@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
-References: <20200213151821.384445454@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +42,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-commit 3e21d9a501bf99aee2e5835d7f34d8c823f115b5 upstream.
+commit 7db3b61b6bba4310f454588c2ca6faf2958ad79f upstream.
 
-In case memory resources for _ptr2_ were allocated, release them before
-return.
+We need to check whether spawn->alg is NULL under lock as otherwise
+the algorithm could be removed from under us after we have checked
+it and found it to be non-NULL.  This could cause us to remove the
+spawn from a non-existent list.
 
-Notice that in case _ptr1_ happens to be NULL, krealloc() behaves
-exactly like kmalloc().
-
-Addresses-Coverity-ID: 1490594 ("Resource leak")
-Link: http://lkml.kernel.org/r/20200123160115.GA4202@embeddedor
-Fixes: 3f15801cdc23 ("lib: add kasan test module")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+Fixes: 7ede5a5ba55a ("crypto: api - Fix crypto_drop_spawn crash...")
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/test_kasan.c |    1 +
- 1 file changed, 1 insertion(+)
+ crypto/algapi.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/lib/test_kasan.c
-+++ b/lib/test_kasan.c
-@@ -93,6 +93,7 @@ static noinline void __init kmalloc_oob_
- 	if (!ptr1 || !ptr2) {
- 		pr_err("Allocation failed\n");
- 		kfree(ptr1);
-+		kfree(ptr2);
- 		return;
- 	}
+--- a/crypto/algapi.c
++++ b/crypto/algapi.c
+@@ -652,11 +652,9 @@ EXPORT_SYMBOL_GPL(crypto_grab_spawn);
  
+ void crypto_drop_spawn(struct crypto_spawn *spawn)
+ {
+-	if (!spawn->alg)
+-		return;
+-
+ 	down_write(&crypto_alg_sem);
+-	list_del(&spawn->list);
++	if (spawn->alg)
++		list_del(&spawn->list);
+ 	up_write(&crypto_alg_sem);
+ }
+ EXPORT_SYMBOL_GPL(crypto_drop_spawn);
 
 
