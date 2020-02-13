@@ -2,55 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9DA715B966
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 07:11:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1B2715B96B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 07:12:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729740AbgBMGLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 01:11:51 -0500
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:33151 "EHLO
+        id S1729759AbgBMGLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 01:11:52 -0500
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:34237 "EHLO
         new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726657AbgBMGLv (ORCPT
+        by vger.kernel.org with ESMTP id S1726368AbgBMGLv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Feb 2020 01:11:51 -0500
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id F40B55604;
+        by mailnew.nyi.internal (Postfix) with ESMTP id F2A215397;
         Thu, 13 Feb 2020 01:11:49 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
   by compute5.internal (MEProxy); Thu, 13 Feb 2020 01:11:50 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm1; bh=e9e1sQnXhr72HpZZYSvle3HwJO
-        ivmu7Jj2yYJpKIjBM=; b=BAvfeaTQFfuZBFSD83RIFgUnKGoLYwSW5SKAWokzo2
-        /okcCgX2JWOzz9DUKszGSS6Ag6+RrASZY6jxNGLOyTPxEZpjSqG88bBa8K+i/+Ug
-        B6rufqO6Yh8z5+hFJnSPfch/2A9SyHc9EPWImK7csuJE//97Pmf8n3n45yEFAy40
-        Yfl7iVvYTOZd3/h2eZ12rjtpAjKoQlGo6YdUTGpmJmW1R5w1WDUSmkMdaCdw/qag
-        EVv4EXQzLjt54NzsskveymNcF0y5ayH1mxwNS7u40RSp5Ei7YFWlsvaR+4jVuBis
-        QXGvKR0kuySyjhRhdBANlABipxDf+l2UfipBe216Zcww==
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=fm1; bh=RIhl9ui4MUMvU
+        Z3Loqtrzp+BStII7YZIIhAd8D98BR8=; b=FrRY45uza9QIuvD5w+dJpQeXqiaCE
+        c7bfRtWec5BqDXWDuANN1aSRBkpbHpHDJZKhM1Flzqs5uBjN2Q0SJ9WNRdkFc41Y
+        udUV+f/RJhMESZsCQHfUcU5/uTi6IbdBtdmcesSn01yed2mGgyYWR9Ixd9kFxrPG
+        85pgkcZbQi4CuByjj5Vk3CHigylPmknw0aRch5d4K+jIBiZbp6nPDPSd4C3b++Il
+        M/oSnqrVjVXjaf1jVWJ3RoZ+GKefTBmD+zv9/kS3MgbL0/HbprW+v/zgFbiWdKIv
+        c+l3xmS8oeA9Y1j4iFYBgu4d2D1F3c3o9hYP3VAQ02CtDg3nTj+OBIQ3Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=e9e1sQnXhr72HpZZY
-        Svle3HwJOivmu7Jj2yYJpKIjBM=; b=jjY5YAj1jw0QeFpU8BHe02Q5cRp546yxJ
-        d6/FotXbnGPjprW59lTr/VmhpszV3xW3Cq9EUHmoJWmlG2zrEfqpZMybosydjbTC
-        cE4vNpL749SYUkUn/XMYJBuJnwDQ10j0vhMO9AC5j9wYL0HA4UOQ5PNWjfkAdhW2
-        hxIOqPQY95CuSVn+fEhrWNDjJ9O1GPvIJqFGtrT+sM/aBPj+XMlm+T1rtfie6IRW
-        CSiB0wy0acfRqU4fvsMtyxN7mQ/qroHtHYsnen4ShZtUIyO0zgljonkFDG1ZaZns
-        BgFCeiTHs67TV1bNcbQjKdZXJ0Fc11paQN71wr8fJEQK3BB7n/4og==
-X-ME-Sender: <xms:pehEXkfoIo0fCETACFiEazh08z5LfdL96YaynEeaMkrdeQ3_fg2KmA>
+        :in-reply-to:message-id:mime-version:references:subject:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; bh=RIhl9ui4MUMvUZ3Loqtrzp+BStII7YZIIhAd8D98BR8=; b=ciM6GQug
+        Iw0C7/qrmPtYFYeogOGkOV+LKE3UJfNnEt1Uf388Y2HrIJMW6+SaksdhcaSWZff8
+        pNt1cOsuMoHdBICa47pJIqRHTnMVRTLtexGKXoqkhJx9cy31Gr1KvE445cdsim+H
+        g8bVRCZyZERGBoiKMkpeVhdWjfLayrkXOBtEgG/B49mrYg0YQdIVVsXrw6HffNFB
+        Ux9xdwfwRrXZmuMj7bKQWSc6J1Mby9v4DW7F56kV3VClafRjgxtx2EWomunJ27U0
+        Sa6olSwdregwsItpviPrCd65uvl8akNKQ5TF8QEzFI73UWeHUhtK8IePGm6CPZ9X
+        HnJDMV1yS4LGtQ==
+X-ME-Sender: <xms:pehEXn4FgcqQV0QB2W75WmQRxBAjFFyio8WwtXUKnJR9vY-r5Hb0rA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrieejgdelhecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghlucfj
-    ohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppeejtd
-    drudefhedrudegkedrudehudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhep
-    mhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:pehEXkqtw_vjOTYUhmO8CLJ8sOKlrzjyqQ6BcOCpkc4QrNkRd3XpTg>
-    <xmx:pehEXoTP7gjsC8GjYzPdFE-6sMJpIHskoS0pz4WI3tz0EoEY97Ws9w>
-    <xmx:pehEXuy4RXlQ9AC4EWBg3pBIAKGohgjvXGDN40nOQWypI7u30idEJg>
-    <xmx:pehEXkYjTdP3iMv3aB5S8vCLbDNUf2PHfhfWrjVXO4m-ASYLrDcYgg>
+    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghl
+    ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppe
+    ejtddrudefhedrudegkedrudehudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgr
+    mhepmhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
+X-ME-Proxy: <xmx:pehEXqG_tkvVnAlLW0wt6CgoCmUugWiJDHEnxRaYpbfFENSenBvs1A>
+    <xmx:pehEXnCLaUgA2hBbPTjHKfpT_TV_WKMxoNjt3EZvgAb4u-aJkDxtrw>
+    <xmx:pehEXnycsg15BGcKBJuRm_5AwxKWgNZ7D9_cIAelNFC-0d-zPUnTZA>
+    <xmx:pehEXrF1pHEbmaet6mDBhsM37nEGOeXFFOdUuWC75nAHjOZfiOiV0A>
 Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 486353280065;
-        Thu, 13 Feb 2020 01:11:48 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 114593280067;
+        Thu, 13 Feb 2020 01:11:49 -0500 (EST)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
@@ -62,11 +63,13 @@ To:     Liam Girdwood <lgirdwood@gmail.com>,
         Jerome Brunet <jbrunet@baylibre.com>
 Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Samuel Holland <samuel@sholland.org>
-Subject: [PATCH 0/4] simple-audio-card codec2codec support
-Date:   Thu, 13 Feb 2020 00:11:43 -0600
-Message-Id: <20200213061147.29386-1-samuel@sholland.org>
+        Samuel Holland <samuel@sholland.org>, stable@vger.kernel.org
+Subject: [PATCH 1/4] ASoC: codec2codec: avoid invalid/double-free of pcm runtime
+Date:   Thu, 13 Feb 2020 00:11:44 -0600
+Message-Id: <20200213061147.29386-2-samuel@sholland.org>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200213061147.29386-1-samuel@sholland.org>
+References: <20200213061147.29386-1-samuel@sholland.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,60 +77,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are currently using simple-audio-card on the Allwinner A64 SoC.
-The digital audio codec there (sun8i-codec) has 3 AIFs, one each for the
-CPU, the modem, and Bluetooth. Adding support for the secondary AIFs
-requires adding codec2codec DAI links.
+The PCM runtime was freed during PMU in the case that the event hook
+encountered an error. However, it is also unconditionally freed during
+PMD. Avoid a double-free by dropping the call to kfree in the PMU hook.
 
-Since the modem and bt-sco codec DAI drivers only have one set of
-possible PCM parameters (namely, 8kHz mono S16LE), there's no real
-need for a machine driver to specify the DAI link configuration. The
-parameters for these "simple" DAI links can be chosen automatically.
+Fixes: a72706ed8208 ("ASoC: codec2codec: remove ephemeral variables")
+Cc: stable@vger.kernel.org
+Signed-off-by: Samuel Holland <samuel@sholland.org>
+---
+ sound/soc/soc-dapm.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-This series adds a single "codec-to-codec" property to the
-simple-audio-card binding, which does exactly what it says. It works out
-rather nicely without making the device tree binding too complicated.
-
-The first patch fixes a bug I found while implementing this feature.
-
-I tried to reuse as much code as possible, so the middle two patches
-refactor a couple of helper functions to be more generic.
-
-Finally, the last patch adds the new feature and its documentation.
-
-Samuel Holland (4):
-  ASoC: codec2codec: avoid invalid/double-free of pcm runtime
-  ALSA: pcm: Make snd_pcm_limit_hw_rates take hw directly
-  ASoC: pcm: Export parameter intersection logic
-  ASoC: simple-card: Add support for codec-to-codec dai_links
-
- .../devicetree/bindings/sound/simple-card.txt |  1 +
- Documentation/sound/soc/codec-to-codec.rst    |  9 ++-
- .../drm/bridge/synopsys/dw-hdmi-ahb-audio.c   |  2 +-
- include/sound/pcm.h                           |  2 +-
- include/sound/simple_card_utils.h             |  1 +
- include/sound/soc.h                           |  3 +
- sound/arm/aaci.c                              |  2 +-
- sound/arm/pxa2xx-ac97.c                       |  2 +-
- sound/core/pcm_misc.c                         | 14 ++---
- sound/firewire/dice/dice-pcm.c                |  2 +-
- sound/firewire/digi00x/digi00x-pcm.c          |  2 +-
- sound/firewire/fireworks/fireworks_pcm.c      |  2 +-
- sound/firewire/motu/motu-pcm.c                |  2 +-
- sound/firewire/tascam/tascam-pcm.c            |  2 +-
- sound/pci/atiixp.c                            |  2 +-
- sound/pci/cs5535audio/cs5535audio_pcm.c       |  4 +-
- sound/pci/hda/hda_controller.c                |  4 +-
- sound/pci/intel8x0.c                          |  2 +-
- sound/pci/sis7019.c                           |  2 +-
- sound/pci/via82xx.c                           |  4 +-
- sound/soc/generic/simple-card-utils.c         | 39 +++++++++++++
- sound/soc/generic/simple-card.c               | 12 ++++
- sound/soc/soc-dapm.c                          |  3 -
- sound/soc/soc-pcm.c                           | 57 +++++++++++++------
- sound/usb/caiaq/audio.c                       |  4 +-
- 25 files changed, 130 insertions(+), 49 deletions(-)
-
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index b6378f025836..935b5375ecc5 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -3888,9 +3888,6 @@ snd_soc_dai_link_event_pre_pmu(struct snd_soc_dapm_widget *w,
+ 	runtime->rate = params_rate(params);
+ 
+ out:
+-	if (ret < 0)
+-		kfree(runtime);
+-
+ 	kfree(params);
+ 	return ret;
+ }
 -- 
 2.24.1
 
