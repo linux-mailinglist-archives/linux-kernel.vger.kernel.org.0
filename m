@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A915115C224
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:29:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B90A15C223
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:29:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387889AbgBMP3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:29:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47522 "EHLO mail.kernel.org"
+        id S1728259AbgBMP3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:29:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729279AbgBMP0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:53 -0500
+        id S1729247AbgBMP0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:47 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E32C2465D;
-        Thu, 13 Feb 2020 15:26:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 463232468C;
+        Thu, 13 Feb 2020 15:26:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607612;
-        bh=5IGcf0Cuf4hPbDef247OB/duOvf0GB+NRDuUUuPMJ1k=;
+        s=default; t=1581607607;
+        bh=zGDsKnCbDCmGbyaAhoyu+iozB1UdO/wpTisfWn1/pMc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YSXz3X59z1WrHimIx3KtS0jee8rbxirpy2aTS1wAaXD+uGjgM+quJqc87OcTnnpQH
-         C8JZJycRhB2Y/4UvnyabXnZ/1qRHq8CGAx4WFybjP7yzbEDJYAQFycnh2XH7rLZ4r9
-         mSCzQvorY6Y6dHuoCQFgwzNPiTxC2un8qhAUazuA=
+        b=kPxtmic5PAcWYBa2RIPNkDmh8zmig4l9/vtQTbNuSdwovWxKXCJ0BZoSoJ1yQ1trH
+         QYto2BK5SLvTKGPi1vD0TKER56pqIzPvyWzd0mIIR+Sv/JmPZsIjJVWjcnXkfY3LqH
+         b9+9jmxn1cSM6lzebeP57MVY0ql6KS5Knd1xKvz8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Beata Michalska <beata.michalska@linaro.org>,
-        James Morse <james.morse@arm.com>,
-        Marc Zyngier <maz@kernel.org>
-Subject: [PATCH 4.19 38/52] KVM: arm: Make inject_abt32() inject an external abort instead
-Date:   Thu, 13 Feb 2020 07:21:19 -0800
-Message-Id: <20200213151825.869221014@linuxfoundation.org>
+        stable@vger.kernel.org, Qing Xu <m1s5p6688@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 47/52] mwifiex: Fix possible buffer overflows in mwifiex_cmd_append_vsie_tlv()
+Date:   Thu, 13 Feb 2020 07:21:28 -0800
+Message-Id: <20200213151829.249633969@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
 References: <20200213151810.331796857@linuxfoundation.org>
@@ -45,57 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Morse <james.morse@arm.com>
+From: Qing Xu <m1s5p6688@gmail.com>
 
-commit 21aecdbd7f3ab02c9b82597dc733ee759fb8b274 upstream.
+[ Upstream commit b70261a288ea4d2f4ac7cd04be08a9f0f2de4f4d ]
 
-KVM's inject_abt64() injects an external-abort into an aarch64 guest.
-The KVM_CAP_ARM_INJECT_EXT_DABT is intended to do exactly this, but
-for an aarch32 guest inject_abt32() injects an implementation-defined
-exception, 'Lockdown fault'.
+mwifiex_cmd_append_vsie_tlv() calls memcpy() without checking
+the destination size may trigger a buffer overflower,
+which a local user could use to cause denial of service
+or the execution of arbitrary code.
+Fix it by putting the length check before calling memcpy().
 
-Change this to external abort. For non-LPAE we now get the documented:
-| Unhandled fault: external abort on non-linefetch (0x008) at 0x9c800f00
-and for LPAE:
-| Unhandled fault: synchronous external abort (0x210) at 0x9c800f00
-
-Fixes: 74a64a981662a ("KVM: arm/arm64: Unify 32bit fault injection")
-Reported-by: Beata Michalska <beata.michalska@linaro.org>
-Signed-off-by: James Morse <james.morse@arm.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/20200121123356.203000-3-james.morse@arm.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Qing Xu <m1s5p6688@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- virt/kvm/arm/aarch32.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/scan.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/virt/kvm/arm/aarch32.c
-+++ b/virt/kvm/arm/aarch32.c
-@@ -26,6 +26,10 @@
- #include <asm/kvm_emulate.h>
- #include <asm/kvm_hyp.h>
- 
-+#define DFSR_FSC_EXTABT_LPAE	0x10
-+#define DFSR_FSC_EXTABT_nLPAE	0x08
-+#define DFSR_LPAE		BIT(9)
+diff --git a/drivers/net/wireless/marvell/mwifiex/scan.c b/drivers/net/wireless/marvell/mwifiex/scan.c
+index dd02bbd9544e7..85d6d5f3dce5b 100644
+--- a/drivers/net/wireless/marvell/mwifiex/scan.c
++++ b/drivers/net/wireless/marvell/mwifiex/scan.c
+@@ -2894,6 +2894,13 @@ mwifiex_cmd_append_vsie_tlv(struct mwifiex_private *priv,
+ 			vs_param_set->header.len =
+ 				cpu_to_le16((((u16) priv->vs_ie[id].ie[1])
+ 				& 0x00FF) + 2);
++			if (le16_to_cpu(vs_param_set->header.len) >
++				MWIFIEX_MAX_VSIE_LEN) {
++				mwifiex_dbg(priv->adapter, ERROR,
++					    "Invalid param length!\n");
++				break;
++			}
 +
- /*
-  * Table taken from ARMv8 ARM DDI0487B-B, table G1-10.
-  */
-@@ -193,10 +197,10 @@ static void inject_abt32(struct kvm_vcpu
- 	/* Give the guest an IMPLEMENTATION DEFINED exception */
- 	is_lpae = (vcpu_cp15(vcpu, c2_TTBCR) >> 31);
- 	if (is_lpae) {
--		*fsr = 1 << 9 | 0x34;
-+		*fsr = DFSR_LPAE | DFSR_FSC_EXTABT_LPAE;
- 	} else {
--		/* Surprise! DFSR's FS[4] lives in bit 10 */
--		*fsr = BIT(10) | 0x4; /* 0x14 */
-+		/* no need to shuffle FS[4] into DFSR[10] as its 0 */
-+		*fsr = DFSR_FSC_EXTABT_nLPAE;
- 	}
- }
- 
+ 			memcpy(vs_param_set->ie, priv->vs_ie[id].ie,
+ 			       le16_to_cpu(vs_param_set->header.len));
+ 			*buffer += le16_to_cpu(vs_param_set->header.len) +
+-- 
+2.20.1
+
 
 
