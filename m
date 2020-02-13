@@ -2,116 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 142B815CDA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 22:59:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDBB415CDC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 23:05:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728130AbgBMV7D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 16:59:03 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:55271 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727991AbgBMV7D (ORCPT
+        id S1728113AbgBMWFU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 17:05:20 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:47208 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728446AbgBMWFI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 16:59:03 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1j2MVe-0008BD-Hj; Thu, 13 Feb 2020 22:58:58 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1j2MVe-0001Pw-0x; Thu, 13 Feb 2020 22:58:58 +0100
-Date:   Thu, 13 Feb 2020 22:58:57 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Guru Das Srinagesh <gurus@codeaurora.org>
-Cc:     linux-pwm@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RESEND v5 2/2] pwm: core: Convert period and duty cycle to u64
-Message-ID: <20200213215857.uq4f44jqlayhbiqh@pengutronix.de>
-References: <cover.1581533161.git.gurus@codeaurora.org>
- <f7986df5d54b2bb84ee14e80d0c1225444608f32.1581533161.git.gurus@codeaurora.org>
- <20200213101802.owpluhixtpor3qi3@pengutronix.de>
- <20200213193926.GA20183@codeaurora.org>
- <20200213202804.pqgbqtphuboqo6af@pengutronix.de>
- <20200213210648.GA12663@codeaurora.org>
+        Thu, 13 Feb 2020 17:05:08 -0500
+Received: from 79.184.254.199.ipv4.supernova.orange.pl (79.184.254.199) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
+ id 79f6eeb3f55caea7; Thu, 13 Feb 2020 23:05:06 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     Len Brown <len.brown@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Chen Yu <yu.c.chen@intel.com>
+Subject: [PATCH 0/9] intel_idle: More assorted cleanups
+Date:   Thu, 13 Feb 2020 22:58:31 +0100
+Message-ID: <2960689.qre192dJKD@kreacher>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200213210648.GA12663@codeaurora.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 01:06:49PM -0800, Guru Das Srinagesh wrote:
-> On Thu, Feb 13, 2020 at 09:28:04PM +0100, Uwe Kleine-König wrote:
-> > On Thu, Feb 13, 2020 at 11:39:26AM -0800, Guru Das Srinagesh wrote:
-> > > On Thu, Feb 13, 2020 at 11:18:02AM +0100, Uwe Kleine-König wrote:
-> > > > Hello,
-> > > > 
-> > > > On Wed, Feb 12, 2020 at 10:54:08AM -0800, Guru Das Srinagesh wrote:
-> > > > > @@ -305,8 +305,8 @@ struct pwm_chip {
-> > > > >   * @duty_cycle: duty cycle of the PWM signal (in nanoseconds)
-> > > > >   */
-> > > > >  struct pwm_capture {
-> > > > > -	unsigned int period;
-> > > > > -	unsigned int duty_cycle;
-> > > > > +	u64 period;
-> > > > > +	u64 duty_cycle;
-> > > > >  };
-> > > > 
-> > > > Is this last hunk a separate change?
-> > > > 
-> > > > Otherwise looks fine.
-> > > 
-> > > No, this is very much a part of the change and not a separate one.
-> > 
-> > Not sure we understand each other. I wondered if conversion of the
-> > pwm_capture stuff should be done separately. (OTOH I wonder if this is
-> > used at all and already considered deleting it.)
-> 
-> I see. Could you please elaborate on your concerns? I think this hunk's
-> being in this patch makes sense as duty and period should be converted
-> to u64 throughout the file in one go.
+Hi All,
 
-I guess that capturing isn't much used if at all. So keeping it as
-limited as it is today doesn't seem like a bad idea to me. (OK, you
-could also accidentally break it such that we can say in a few years
-time: This is broken since v5.6, obviously nobody cares and we remove it
-for good :-))
+This series of intel_idle cleanups (on top of 5.6-rc1) simplifies the code,
+improves kerneldoc comments, reduces the post-initialization memory footprint
+of the driver and makes some cosmetic changes, including bumping up the version
+number which deserves that due to the recent significant changes.
 
-> Also, it looks like pwm_capture is being used by pwm-sti.c and
-> pwm-stm32.c currently.
+Please refer to the changelogs of individual patches for details.
 
-Yeah, these two drivers provide the needed callback. That doesn't
-necessarily mean there are active users. Also I'm convinced that there
-are implementation problems. For example the commit that added capture
-support for stm32 has in its commit log:
+For easier access the series is available as a git branch at:
 
-	Capture requires exclusive access (e.g. no pwm output running at
-	the same time, to protect common prescaler).
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ intel_idle-cleanup
 
-but the capture callback doesn't even check if the PWMs are in use (but
-I only looked quickly, so I might have missed something).
+Thanks!
 
-Apart from that I think that the capturing stuff doesn't really fit into
-the PWM framework which is (apart from the capture callback and API
-function) about PWM *outputs* and most hardware's I know about either
-don't support capturing or it is located in a different IP than the PWM
-output. (And it is not even possible today to register a driver that can
-only capture but not drive a PWM output.)
 
-Best regards
-Uwe
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
