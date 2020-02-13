@@ -2,63 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DE1E15CEB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 00:37:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9351B15CEBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 00:43:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbgBMXhw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 18:37:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47804 "EHLO mail.kernel.org"
+        id S1727931AbgBMXm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 18:42:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727594AbgBMXhw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 18:37:52 -0500
-Received: from localhost (unknown [104.132.1.104])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727594AbgBMXm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 18:42:59 -0500
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0626620848;
-        Thu, 13 Feb 2020 23:37:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89F6D2467D;
+        Thu, 13 Feb 2020 23:42:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581637070;
-        bh=Ql6zYvXCOBVpVMtIO4wvQ1qek1fa2G9r/sFK9BFYgVQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=R+S8OxEv7r81aEszEQVahIXP90Eb09j1iN/gyGVcQ9ACja+ulkWazmbP9rblVcmss
-         WxdkxWgdXd4SJtYqMAuLWl2EubuZTKu8AcdKI8mXpjV+V04gKY5EcVnlQI1FiWkwTS
-         1pVB9atDLD0vJW8fmhKrIQY+TMeCO5eu9Xad7V1k=
-Date:   Thu, 13 Feb 2020 15:37:49 -0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Tyler Hicks <tyhicks@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Harry Wei <harryxiyou@gmail.com>,
-        Alex Shi <alex.shi@linux.alibaba.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation/process: Swap out the ambassador for
- Canonical
-Message-ID: <20200213233749.GB3926134@kroah.com>
-References: <20200213214842.21312-1-tyhicks@canonical.com>
- <20200213231607.GA3925051@kroah.com>
- <ea91eec6-a1be-807b-32e7-acfa36071599@canonical.com>
+        s=default; t=1581637378;
+        bh=QvXr0ccIUZIRsqUcy6mdX4RvItZ/HQGPAVqIR5RAVyo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=cPo6gRm2riJCg2de4KFKjGUPyih5I99+ID98XQlsTTxOWt9KQ5Pfqdzsd5F8lPb46
+         PWQzSbOz7vIG+xvGz7PfCbmDfooxlwTbJpl1r0D3JFRAOkqSLvkxfK8/0KLnmSKU0Y
+         1H66ieYG9DmRRXq2PvYmmF1St6fRqy/EY5GTTf3U=
+Received: by mail-lj1-f182.google.com with SMTP id v17so8650836ljg.4;
+        Thu, 13 Feb 2020 15:42:58 -0800 (PST)
+X-Gm-Message-State: APjAAAUb1CfRx2QXhgS6f3LnmqO1jgROFnwsemZxbhjIQIyd3pwJn9VF
+        m+rbhCifUv5Zkw30EnyNy1zzXRKHtCfuRH3rsRU=
+X-Google-Smtp-Source: APXvYqyMTY5BiLP/4jYWIAjsVYrB8h/h7Ek++s0e6pxXO6PqFXN3+xu4BLWRYI1/YeOOm0rQ6bFf5+MVwGHlLSORLHc=
+X-Received: by 2002:a2e:a553:: with SMTP id e19mr168246ljn.64.1581637376641;
+ Thu, 13 Feb 2020 15:42:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ea91eec6-a1be-807b-32e7-acfa36071599@canonical.com>
+References: <20200213141823.2174236-1-mplaneta@os.inf.tu-dresden.de>
+ <20200213153645.GA11313@redhat.com> <82715589-8b59-5cfd-a32f-1e57871327fe@os.inf.tu-dresden.de>
+In-Reply-To: <82715589-8b59-5cfd-a32f-1e57871327fe@os.inf.tu-dresden.de>
+From:   Song Liu <song@kernel.org>
+Date:   Thu, 13 Feb 2020 15:42:45 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW70_HtmxA0qmUVLk4L+Ls5t=0j0k5D4fbT4fNY59L2UpQ@mail.gmail.com>
+Message-ID: <CAPhsuW70_HtmxA0qmUVLk4L+Ls5t=0j0k5D4fbT4fNY59L2UpQ@mail.gmail.com>
+Subject: Re: Remove WQ_CPU_INTENSIVE flag from unbound wq's
+To:     Maksym Planeta <mplaneta@os.inf.tu-dresden.de>
+Cc:     Mike Snitzer <snitzer@redhat.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com,
+        Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-crypto@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-raid <linux-raid@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 03:25:22PM -0800, John Johansen wrote:
-> On 2/13/20 3:16 PM, Greg Kroah-Hartman wrote:
-> > On Thu, Feb 13, 2020 at 09:48:42PM +0000, Tyler Hicks wrote:
-> > > John Johansen will take over as the process ambassador for Canonical
-> > > when dealing with embargoed hardware issues.
-> > 
-> > Can I get an ack from John to "prove" he is ok with this horrible task?  :)
-> > 
-> 
-> sure take away the plausible deniability ;)
+On Thu, Feb 13, 2020 at 8:19 AM Maksym Planeta
+<mplaneta@os.inf.tu-dresden.de> wrote:
+>
+>
+>
+> On 13/02/2020 16:36, Mike Snitzer wrote:
+> > On Thu, Feb 13 2020 at  9:18am -0500,
+> > Maksym Planeta <mplaneta@os.inf.tu-dresden.de> wrote:
+> >
+> >> The documentation [1] says that WQ_CPU_INTENSIVE is "meaningless" for
+> >> unbound wq. I remove this flag from places where unbound queue is
+> >> allocated. This is supposed to improve code readability.
+> >>
+> >> 1. https://www.kernel.org/doc/html/latest/core-api/workqueue.html#flags
+> >>
+> >> Signed-off-by: Maksym Planeta <mplaneta@os.inf.tu-dresden.de>
+> >
+> > What the Documentation says aside, have you cross referenced with the
+> > code?  And/or have you done benchmarks to verify no changes?
+> >
+>
+> It seems so from the code. Although, I'm not 100% confident. I did not
+> run benchmarks, instead I relied that on the assumption that
+> documentation is correct.
 
-Heh, thanks.  I'll queue this up with the other modifications I have
-already for this file and send it to Linus soon.
+From the code, WQ_CPU_INTENSIVE is only used to set
+WORKER_CPU_INTENSIVE, and WORKER_CPU_INTENSIVE is only used
+as part of WORKER_NOT_RUNNING, which includes WORKER_UNBOUND.
+So, I agree that with current code, WQ_CPU_INTENSIVE with WQ_UNBOUND
+is same as WQ_UNBOUND alone.
 
-greg k-h
+However, I don't think it is necessary to make the changes. They don't really
+improve readability of the code.
+
+Thanks,
+Song
