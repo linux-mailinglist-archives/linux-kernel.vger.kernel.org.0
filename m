@@ -2,70 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEACD15CD78
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 22:47:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63A3F15CD7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 22:48:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728735AbgBMVrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 16:47:25 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37466 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727772AbgBMVrY (ORCPT
+        id S1728774AbgBMVsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 16:48:17 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45125 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728740AbgBMVsP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 16:47:24 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: dafna)
-        with ESMTPSA id A805A28DA7F
-From:   Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, bleung@chromium.org,
-        enric.balletbo@collabora.com, groeck@chromium.org,
-        dafna.hirschfeld@collabora.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, helen.koike@collabora.com,
-        ezequiel@collabora.com, kernel@collabora.com, dafna3@gmail.com
-Subject: [PATCH v3 2/2] arm64: tegra: add unit address to nodes under i2c-tunnel
-Date:   Thu, 13 Feb 2020 22:46:56 +0100
-Message-Id: <20200213214656.9801-2-dafna.hirschfeld@collabora.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200213214656.9801-1-dafna.hirschfeld@collabora.com>
-References: <20200213214656.9801-1-dafna.hirschfeld@collabora.com>
+        Thu, 13 Feb 2020 16:48:15 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 59so7118714otp.12
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 13:48:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=OA6xe4auWdZmJjRQ/wLiVug/7u1e1T2hWJ4r61PFbbI=;
+        b=Yjbihcz/pjHpfRB3FK6+kvNDhYFYbKTb1fXNAhFDe7n59LWRE2MCoGk1PeaKJHPvF4
+         RtNIcD/phGw2ZuoWRUZrK1q4zQOgagT8eH9UxHfJp8JS3HlkHgcoR5wj66yRZoz3lQG1
+         0V2azohVyjf1jbPfBR6yNDkaJfpzXLfLX6hHZ30DyW4nRdCBdCiQ+qLLUqxQOE5Aw0RW
+         w1TU55yhMAMuOHFWgjyf4knPaW8zX8nR0V70N6aBJz1weth7/T/9DOanwwibX1hGcLqb
+         xDYSMNuXGUigliBYkNovwpJSc8hED9QlvnUIOCtqOWazNjan9pkfh6st8JLX1dn4BXGq
+         FQoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=OA6xe4auWdZmJjRQ/wLiVug/7u1e1T2hWJ4r61PFbbI=;
+        b=HP7wFVlJBjBbaQ1IueMY9HxMPdiPeGRc05EXx/OOhZD0cg/+BrvdU33fjMuiUHWhvI
+         6U2x59LgucFNsPc4l0pvOCM/1hbpnV8ynYRhe3RQH9ITukugv6xBjfQ2n5v/32Ow8QlM
+         mRa/u8DqpycHb1fzCyf8Np+9tAXQtcyY17OHLN/48+PYq8eQmVoXN5icIYbgDsxqxUqb
+         xSw7UQ5EXeoQShLVvp2e+BfUSg+NnJNNvblw3Q3/i14FY/m5c1ZfXS+CKbyQTD6mwD3P
+         lDcIRgr0lqrCssTVxWiNxoUf3HvF5zp+jGujRDiDdoX0mEs+0K7j8I2xMpW/nkwYFeoY
+         /L4g==
+X-Gm-Message-State: APjAAAX1unxStACPuV66+APxjtgK3rpdiopB3Se43LHI79l8Z5+5PeLq
+        5KGA67Q+P3rBgCrq7oPuDg4=
+X-Google-Smtp-Source: APXvYqz3P6jxWKRvESHwGthFWB57MpjdHTr6nTaZb86AI0CqwYT2Gh/3W9UwxiWywmhVURTmUZK27Q==
+X-Received: by 2002:a9d:138:: with SMTP id 53mr8087394otu.334.1581630494627;
+        Thu, 13 Feb 2020 13:48:14 -0800 (PST)
+Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id q6sm1225527otn.73.2020.02.13.13.48.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Feb 2020 13:48:14 -0800 (PST)
+Date:   Thu, 13 Feb 2020 14:48:12 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
+        clang-built-linux@googlegroups.com,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [Intel-gfx] [PATCH v2] drm/i915: Disable
+ -Wtautological-constant-out-of-range-compare
+Message-ID: <20200213214812.GA7980@ubuntu-m2-xlarge-x86>
+References: <20200211050808.29463-1-natechancellor@gmail.com>
+ <20200211061338.23666-1-natechancellor@gmail.com>
+ <4c806435-f32d-1559-9563-ffe3fa69f0d1@daenzer.net>
+ <20200211203935.GA16176@ubuntu-m2-xlarge-x86>
+ <f3a6346b-2abf-0b6a-3d84-66e12f700b2b@daenzer.net>
+ <20200212170734.GA16396@ubuntu-m2-xlarge-x86>
+ <d81a2cfe-79b6-51d4-023e-0960c0593856@daenzer.net>
+ <877e0qy2n8.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <877e0qy2n8.fsf@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add unit address to the nodes bq24735, smart-battery
+On Thu, Feb 13, 2020 at 04:37:15PM +0200, Jani Nikula wrote:
+> On Wed, 12 Feb 2020, Michel Dänzer <michel@daenzer.net> wrote:
+> > On 2020-02-12 6:07 p.m., Nathan Chancellor wrote:
+> >> On Wed, Feb 12, 2020 at 09:52:52AM +0100, Michel Dänzer wrote:
+> >>> On 2020-02-11 9:39 p.m., Nathan Chancellor wrote:
+> >>>> On Tue, Feb 11, 2020 at 10:41:48AM +0100, Michel Dänzer wrote:
+> >>>>> On 2020-02-11 7:13 a.m., Nathan Chancellor wrote:
+> >>>>>> A recent commit in clang added -Wtautological-compare to -Wall, which is
+> >>>>>> enabled for i915 so we see the following warning:
+> >>>>>>
+> >>>>>> ../drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c:1485:22: warning:
+> >>>>>> result of comparison of constant 576460752303423487 with expression of
+> >>>>>> type 'unsigned int' is always false
+> >>>>>> [-Wtautological-constant-out-of-range-compare]
+> >>>>>>         if (unlikely(remain > N_RELOC(ULONG_MAX)))
+> >>>>>>             ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+> >>>>>>
+> >>>>>> This warning only happens on x86_64 but that check is relevant for
+> >>>>>> 32-bit x86 so we cannot remove it.
+> >>>>>
+> >>>>> That's suprising. AFAICT N_RELOC(ULONG_MAX) works out to the same value
+> >>>>> in both cases, and remain is a 32-bit value in both cases. How can it be
+> >>>>> larger than N_RELOC(ULONG_MAX) on 32-bit (but not on 64-bit)?
+> >>>>>
+> >>>>
+> >>>> Hi Michel,
+> >>>>
+> >>>> Can't this condition be true when UINT_MAX == ULONG_MAX?
+> >>>
+> >>> Oh, right, I think I was wrongly thinking long had 64 bits even on 32-bit.
+> >>>
+> >>>
+> >>> Anyway, this suggests a possible better solution:
+> >>>
+> >>> #if UINT_MAX == ULONG_MAX
+> >>> 	if (unlikely(remain > N_RELOC(ULONG_MAX)))
+> >>> 		return -EINVAL;
+> >>> #endif
+> >>>
+> >>>
+> >>> Or if that can't be used for some reason, something like
+> >>>
+> >>> 	if (unlikely((unsigned long)remain > N_RELOC(ULONG_MAX)))
+> >>> 		return -EINVAL;
+> >>>
+> >>> should silence the warning.
+> >> 
+> >> I do like this one better than the former.
+> >
+> > FWIW, one downside of this one compared to all alternatives (presumably)
+> > is that it might end up generating actual code even on 64-bit, which
+> > always ends up skipping the return.
+> 
+> I like this better than the UINT_MAX == ULONG_MAX comparison because
+> that creates a dependency on the type of remain.
+> 
+> Then again, a sufficiently clever compiler could see through the cast,
+> and flag the warning anyway...
 
-This fixes the warning:
-'bq24735', 'smart-battery' do not match any of the
-regexes: '^.*@[0-9a-f]+$', 'pinctrl-[0-9]+'
+Would you prefer a patch that adds that cast rather than silencing the
+warning outright? It does appear to work for clang.
 
-Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
----
- arch/arm64/boot/dts/nvidia/tegra132-norrin.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
-index a0385a386a3f..a19171f6f0f7 100644
---- a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
-@@ -767,7 +767,7 @@
- 
- 				google,remote-bus = <0>;
- 
--				charger: bq24735 {
-+				charger: bq24735@9 {
- 					compatible = "ti,bq24735";
- 					reg = <0x9>;
- 					interrupt-parent = <&gpio>;
-@@ -778,7 +778,7 @@
- 							GPIO_ACTIVE_HIGH>;
- 				};
- 
--				battery: smart-battery {
-+				battery: smart-battery@b {
- 					compatible = "sbs,sbs-battery";
- 					reg = <0xb>;
- 					battery-name = "battery";
--- 
-2.17.1
-
+Cheers,
+Nathan
