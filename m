@@ -2,34 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72FB815C407
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:52:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BC0015C40E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729205AbgBMP01 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:26:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39082 "EHLO mail.kernel.org"
+        id S1729221AbgBMP0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:26:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728769AbgBMPYq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:24:46 -0500
+        id S1728869AbgBMPY6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:24:58 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3F092469C;
-        Thu, 13 Feb 2020 15:24:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 306AC246C0;
+        Thu, 13 Feb 2020 15:24:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607486;
-        bh=UpPXFoui4hyYvPiNR7vUK0jLSs31YFIdBM+fE9REzvc=;
+        s=default; t=1581607497;
+        bh=zSg6T09HqcBiqYeTqt4FTCQO6B5h/IbyxlbEvz0yLW8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TD08ojSRn2Qv6O2A1J+J9gSqy7AoGdsO0xb9AHTHtrR3Rpy4x12Vg4VP4qAucaIa/
-         yWtbLhnaV7vv/+dlAImHhC+PFpXNbdKk0/6cDS8EPjlVbMPISBBJvZ74Wx+gis3R8b
-         EfAEw2KZ1uGOm0O8DFlUDUUG+vdJo6aMxRyoGcDQ=
+        b=xQ4LtvXRi8Ex3Xa/t6/YwEktHJCrzcny16RXETW0HiMdW36jHLxLc9Awi4qT+AJQJ
+         80NOChK5pIkVRPijkAXW35lNRc8wycUiseKosC8xjJFK9Bgir20kalO3YMGGpazAdp
+         5FIGoA0g8orX02QV4h1YSXEkZHp0/JjOIgZTRkk0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>
-Subject: [PATCH 4.14 016/173] rxrpc: Fix insufficient receive notification generation
-Date:   Thu, 13 Feb 2020 07:18:39 -0800
-Message-Id: <20200213151937.020629081@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Lobakin <alobakin@dlink.ru>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Rob Herring <robh@kernel.org>, linux-mips@vger.kernel.org
+Subject: [PATCH 4.14 032/173] MIPS: fix indentation of the RELOCS message
+Date:   Thu, 13 Feb 2020 07:18:55 -0800
+Message-Id: <20200213151941.675722065@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
 References: <20200213151931.677980430@linuxfoundation.org>
@@ -42,40 +47,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+From: Alexander Lobakin <alobakin@dlink.ru>
 
-[ Upstream commit f71dbf2fb28489a79bde0dca1c8adfb9cdb20a6b ]
+commit a53998802e178451701d59d38e36f551422977ba upstream.
 
-In rxrpc_input_data(), rxrpc_notify_socket() is called if the base sequence
-number of the packet is immediately following the hard-ack point at the end
-of the function.  However, this isn't sufficient, since the recvmsg side
-may have been advancing the window and then overrun the position in which
-we're adding - at which point rx_hard_ack >= seq0 and no notification is
-generated.
+quiet_cmd_relocs lacks a whitespace which results in:
 
-Fix this by always generating a notification at the end of the input
-function.
+  LD      vmlinux
+  SORTEX  vmlinux
+  SYSMAP  System.map
+  RELOCS vmlinux
+  Building modules, stage 2.
+  MODPOST 64 modules
 
-Without this, a long call may stall, possibly indefinitely.
+After this patch:
 
-Fixes: 248f219cb8bc ("rxrpc: Rewrite the data and ack handling code")
-Signed-off-by: David Howells <dhowells@redhat.com>
+  LD      vmlinux
+  SORTEX  vmlinux
+  SYSMAP  System.map
+  RELOCS  vmlinux
+  Building modules, stage 2.
+  MODPOST 64 modules
+
+Typo is present in kernel tree since the introduction of relocatable
+kernel support in commit e818fac595ab ("MIPS: Generate relocation table
+when CONFIG_RELOCATABLE"), but the relocation scripts were moved to
+Makefile.postlink later with commit 44079d3509ae ("MIPS: Use
+Makefile.postlink to insert relocations into vmlinux").
+
+Fixes: 44079d3509ae ("MIPS: Use Makefile.postlink to insert relocations into vmlinux")
+Cc: <stable@vger.kernel.org> # v4.11+
+Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
+[paulburton@kernel.org: Fixup commit references in commit message.]
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/rxrpc/input.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/net/rxrpc/input.c
-+++ b/net/rxrpc/input.c
-@@ -585,8 +585,7 @@ ack:
- 				  immediate_ack, true,
- 				  rxrpc_propose_ack_input_data);
+---
+ arch/mips/Makefile.postlink |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/mips/Makefile.postlink
++++ b/arch/mips/Makefile.postlink
+@@ -12,7 +12,7 @@ __archpost:
+ include scripts/Kbuild.include
  
--	if (sp->hdr.seq == READ_ONCE(call->rx_hard_ack) + 1)
--		rxrpc_notify_socket(call);
-+	rxrpc_notify_socket(call);
- 	_leave(" [queued]");
- }
+ CMD_RELOCS = arch/mips/boot/tools/relocs
+-quiet_cmd_relocs = RELOCS $@
++quiet_cmd_relocs = RELOCS  $@
+       cmd_relocs = $(CMD_RELOCS) $@
  
+ # `@true` prevents complaint when there is nothing to be done
 
 
