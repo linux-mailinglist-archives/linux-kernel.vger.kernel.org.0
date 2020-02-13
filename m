@@ -2,23 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E73515B5EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 01:37:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41B9315B627
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 01:50:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729386AbgBMAg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 19:36:59 -0500
-Received: from gateway30.websitewelcome.com ([50.116.127.1]:45471 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729190AbgBMAg7 (ORCPT
+        id S1729289AbgBMAul (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 19:50:41 -0500
+Received: from gateway36.websitewelcome.com ([192.185.197.22]:29734 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729185AbgBMAul (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 19:36:59 -0500
-X-Greylist: delayed 1371 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Feb 2020 19:36:58 EST
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id EC9EB8AB6
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 18:14:06 -0600 (CST)
+        Wed, 12 Feb 2020 19:50:41 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 0E43C400E11C8
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 17:40:08 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 228sjbhODEfyq228sjlLtW; Wed, 12 Feb 2020 18:14:06 -0600
+        id 22KSjnDtVXVkQ22KSjBJ3t; Wed, 12 Feb 2020 18:26:04 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -26,27 +25,24 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=3h2EV0nIxHBK7v9f5cUKRdwO80WBlvIZfyKilfYiuUg=; b=E5A7ex1Uu6r3pyb2y6Fl0Prond
-        kgzSeEkFAMNZUnd42KQqtYjeDc8iO2quUxzYVZboPUVyxiXzSQAplCIdZyFsOMGW/UK7PpVwpcnqx
-        t5wOERuAEXLy0V3D4b1Ssl5HsEtUDUEh0KJGRAn1LTOseqvWobgR9+kM4rhU8KwzGWD9J7yTVrI0h
-        V02vJKAS+Sw0KMbr4fAYFCtEOdyJg2DHu9typZXfvnGGwqBYmbLQOYZZWqaxR0xnA7TRz394qsz0K
-        iso3U/491+JPYKMSi3X3QHztXRNp9MgWc7tQ8UYZg5YRpvKRanycrsYULhM42DklNZ2yBuiV6u5g2
-        rF3z18hg==;
-Received: from [200.68.141.42] (port=9261 helo=embeddedor)
+        bh=2HOG+cF7ErJztCRrMubk72Din9WB7LDLWJbqEyt+viM=; b=u9J9GAIUzcqfmlHrz79BfTJzza
+        EJBQ2QdrMwZQvbxY5cJQ5jdGAJNE4Sx6YoQ/18ICDomD02e6toNy9fHpv35S8GtcKgOHeixWnAPGF
+        +vQ9px9QKTRLr0IAmJDetOwqRgLtw91xf93931DZyi6xZrA44KDBZ1y33mH2BTte7zjBnumQf+HKe
+        2NuRJOVBzRmNx3Mbbe7dyfeDpj/+AeJ9sS+3q9tHoGxm0zl64ZFGnoyftpD+twjKvKRXrl2raXec/
+        fFIYAHuOLILWoXZXRaED6v3eUfDjvp64OVdKpS3F/CM58ZpBZxSRtnmhlk5laiVuV0u/ARVf/ossR
+        2wThmoZQ==;
+Received: from [200.68.141.42] (port=21527 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1j228r-003UE4-0h; Wed, 12 Feb 2020 18:14:05 -0600
-Date:   Wed, 12 Feb 2020 18:14:01 -0600
+        id 1j22KQ-003ZSf-AU; Wed, 12 Feb 2020 18:26:02 -0600
+Date:   Wed, 12 Feb 2020 18:26:00 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Rob Clark <robdclark@gmail.com>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     iommu@lists.linux-foundation.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] iommu/qcom: Replace zero-length array with flexible-array
- member
-Message-ID: <20200213001401.GA28587@embeddedor.com>
+Subject: [PATCH] Input: gpio_keys - replace zero-length array with
+ flexible-array member
+Message-ID: <20200213002600.GA31916@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -59,13 +55,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 200.68.141.42
 X-Source-L: No
-X-Exim-ID: 1j228r-003UE4-0h
+X-Exim-ID: 1j22KQ-003ZSf-AU
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.141.42]:9261
+X-Source-Sender: (embeddedor) [200.68.141.42]:21527
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 25
+X-Email-Count: 35
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -103,22 +99,22 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/iommu/qcom_iommu.c | 2 +-
+ drivers/input/keyboard/gpio_keys.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/qcom_iommu.c b/drivers/iommu/qcom_iommu.c
-index 39759db4f003..f1e175ca5e4a 100644
---- a/drivers/iommu/qcom_iommu.c
-+++ b/drivers/iommu/qcom_iommu.c
-@@ -48,7 +48,7 @@ struct qcom_iommu_dev {
- 	void __iomem		*local_base;
- 	u32			 sec_id;
- 	u8			 num_ctxs;
--	struct qcom_iommu_ctx	*ctxs[0];   /* indexed by asid-1 */
-+	struct qcom_iommu_ctx	*ctxs[];   /* indexed by asid-1 */
+diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+index 1f56d53454b2..53c9ff338dea 100644
+--- a/drivers/input/keyboard/gpio_keys.c
++++ b/drivers/input/keyboard/gpio_keys.c
+@@ -55,7 +55,7 @@ struct gpio_keys_drvdata {
+ 	struct input_dev *input;
+ 	struct mutex disable_lock;
+ 	unsigned short *keymap;
+-	struct gpio_button_data data[0];
++	struct gpio_button_data data[];
  };
  
- struct qcom_iommu_ctx {
+ /*
 -- 
 2.23.0
 
