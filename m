@@ -2,116 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2A1C15BC1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:52:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7B9915BC2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:54:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729852AbgBMJv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 04:51:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41218 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729805AbgBMJv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 04:51:57 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 381B5B240;
-        Thu, 13 Feb 2020 09:51:56 +0000 (UTC)
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] printk: Correctly set CON_CONSDEV even when preferred console was not registered
-Date:   Thu, 13 Feb 2020 10:51:33 +0100
-Message-Id: <20200213095133.23176-4-pmladek@suse.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20200213095133.23176-1-pmladek@suse.com>
-References: <20200213095133.23176-1-pmladek@suse.com>
+        id S1729653AbgBMJym (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 04:54:42 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:49588 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729440AbgBMJym (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 04:54:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581587681;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ez44N34m1PHTjtAxByIbkjxOsH6Q8Xfjl62Un4eIlPE=;
+        b=MRNT606QWflaL85Ok9xCt16vX7+7rckREsN17pDO8D0VL6skVH98zPOhmuWxmi+AB9+f20
+        FP89iMn8VBM8UK+d2HpgN4jOHEfX2tujkwVzt7D8k3LIvhNz6nC1/5ImIcoXQpkv+vqVyo
+        ruyWlmVrB+k9+4WRsNVFVakbfjvSHhA=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-357-VFZp81C1PWyMM5rgKF0cOg-1; Thu, 13 Feb 2020 04:54:39 -0500
+X-MC-Unique: VFZp81C1PWyMM5rgKF0cOg-1
+Received: by mail-wr1-f71.google.com with SMTP id w6so2111019wrm.16
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 01:54:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ez44N34m1PHTjtAxByIbkjxOsH6Q8Xfjl62Un4eIlPE=;
+        b=H3nTZ86raiIokM2DwKDnG1iKMVWMYSWOqlsVmqhvjnRZAx8cxpVqo8+W2PPrBgKUux
+         fxBcqiWSvp7AKVwSOj+q6iy454u+Ij18xaesgsXUgbHcVaLw+ZCehnApcEsawdRDFQZm
+         /UY0irQvkcxSuRxSFnng9V0BA/5GCogaYC9lgycEECLWwrfmDwK18Sg6KQyH3UaRBnnW
+         UJrluro2b0DmqbRdYNubM+iAZA2aeJXAKR+SinV9DpeE/uIqwA5HiP6YjlVu31RH/p85
+         ppgxoIm9I/pcpBEDS24ylXGK6XOn8hDy2xbgal9UvCLG3YVrHGXGIsXKW2ShX86hmWAt
+         szxQ==
+X-Gm-Message-State: APjAAAWgnHI9jxO18GG/GMrzSbE+CwmC7Ev2jvtsBP11Oo4vcAG5F7wx
+        RseZenIauBo3UAG1rET8CA8ZnUdCW93azAC0ISbXD0kQDS96+jHdVoggGFJdmJh2/mOIU5PZmZK
+        dEgMTcRMRFnI5iou1AOeFrGFl
+X-Received: by 2002:a7b:c318:: with SMTP id k24mr5213062wmj.54.1581587678272;
+        Thu, 13 Feb 2020 01:54:38 -0800 (PST)
+X-Google-Smtp-Source: APXvYqz4Fq3M8a40Fwp+Pl2CcItRt8aHeoE6SL80Nlz6KbnNbOf6qcxWgFwi+XXod3UC9586V1UZ+Q==
+X-Received: by 2002:a7b:c318:: with SMTP id k24mr5213036wmj.54.1581587678038;
+        Thu, 13 Feb 2020 01:54:38 -0800 (PST)
+Received: from [192.168.10.150] ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id k16sm2259120wru.0.2020.02.13.01.54.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2020 01:54:37 -0800 (PST)
+Subject: Re: [PATCH] KVM: x86: enable -Werror
+To:     Joe Perches <joe@perches.com>, linmiaohe <linmiaohe@huawei.com>,
+        Linus Walleij <linux.walleij@sterricsson.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+References: <12259a951c5e47359c46f7875e758d41@huawei.com>
+ <71b3bf53c0fc3c68b10368092022e3bf2cffc506.camel@perches.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <249ec0c0-10fb-52df-0c81-2ec28ecae32b@redhat.com>
+Date:   Thu, 13 Feb 2020 10:54:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
+MIME-Version: 1.0
+In-Reply-To: <71b3bf53c0fc3c68b10368092022e3bf2cffc506.camel@perches.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+On 13/02/20 04:31, Joe Perches wrote:
+> On Thu, 2020-02-13 at 01:40 +0000, linmiaohe wrote:
+>> Paolo Bonzini <pbonzini@redhat.com> wrote:
+>>> Avoid more embarrassing mistakes.  At least those that the compiler can catch.
+>>>
+>>> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+>>> ---
+> 
+> I think adding -Werror is a bad idea as new versions of compilers can
+> create additional compilation warnings and break builds in the
+> future.
+Seems like cargo culting (in the reverse) to me.  We can cross the
+bridge when we get there.
 
-CON_CONSDEV flag was historically used to put/keep the preferred console
-first in console_drivers list. Where the preferred console is the last
-on the command line.
-
-The ordering is important only when opening /dev/console:
-
-  + tty_kopen()
-    + tty_lookup_driver()
-      + console_device()
-
-The flag was originally an implementation detail. But it was later
-made accessible from userspace via /proc/consoles. It was used,
-for example, by the tool "showconsole" to show the real tty
-accessible via /dev/console, see
-https://github.com/bitstreamout/showconsole
-
-Now, the current code sets CON_CONSDEV only for the preferred
-console or when a fallback console is added. The flag is not
-set when the preferred console is defined on the command line
-but it is not registered from some reasons.
-
-Simple solution is to set CON_CONSDEV flag for the first
-registered console. It will work most of the time because:
-
-  + Most real consoles have console->device defined.
-
-  + Boot consoles are removed in printk_late_init().
-
-  + unregister_console() moves CON_CONSDEV flag to the next
-    console.
-
-Clean solution would require checking con->device when the
-preferred console is registered and in unregister_console().
-
-Conclusion:
-
-Use the simple solution for now. It is better than the current
-state and good enough.
-
-The clean solution is not worth it. It would complicate the already
-complicated code without too much gain. Instead the code would deserve
-a complete rewrite.
-
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-[pmladek@suse.com: Correct reasoning in the commit message, comment update.]
-Reviewed-by: Petr Mladek <pmladek@suse.com>
----
- include/linux/console.h | 2 +-
- kernel/printk/printk.c  | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/console.h b/include/linux/console.h
-index f33016b3a401..57ae2dedb51f 100644
---- a/include/linux/console.h
-+++ b/include/linux/console.h
-@@ -134,7 +134,7 @@ static inline int con_debug_leave(void)
-  */
- 
- #define CON_PRINTBUFFER	(1)
--#define CON_CONSDEV	(2) /* Last on the command line */
-+#define CON_CONSDEV	(2) /* Preferred console, /dev/console */
- #define CON_ENABLED	(4)
- #define CON_BOOT	(8)
- #define CON_ANYTIME	(16) /* Safe to call when cpu is offline */
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index f76ef3f0efca..cf0ceacdae2f 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2788,6 +2788,8 @@ void register_console(struct console *newcon)
- 		console_drivers = newcon;
- 		if (newcon->next)
- 			newcon->next->flags &= ~CON_CONSDEV;
-+		/* Ensure this flag is always set for the head of the list */
-+		newcon->flags |= CON_CONSDEV;
- 	} else {
- 		newcon->next = console_drivers->next;
- 		console_drivers->next = newcon;
--- 
-2.16.4
+Paolo
 
