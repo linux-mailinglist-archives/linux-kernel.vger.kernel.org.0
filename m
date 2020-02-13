@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A67515C24E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:32:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 905D315C2BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:38:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729866AbgBMPb7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:31:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54842 "EHLO mail.kernel.org"
+        id S1729639AbgBMPaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:30:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729589AbgBMP2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:28:14 -0500
+        id S2387661AbgBMP1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:05 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96F3A20661;
-        Thu, 13 Feb 2020 15:28:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE96324684;
+        Thu, 13 Feb 2020 15:27:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607693;
-        bh=p6JrbT3CgbN40TmXB28kT1XvH8v/sceqsNnGlOEqp48=;
+        s=default; t=1581607623;
+        bh=Z0WUW3WebhFnMI1JtileyBhNCkLIzEIlAU4RtOpoYm4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NfmSWtJSYBEwfWc8JLh6z6ocN6iPHRyispd0/jUz9/2QLgRpt27zpJrkSJFU+Lj80
-         ZkXFxtQF4PAENjymc5dp7NdKFQOLEVR3kYSLWa0dK6Iz8vXoY5u/Lfb8uZGjwciihJ
-         9tQdHqagJwxJVK4AhyHEWj+QJZWrA0gT+To439kQ=
+        b=hOSSjnRjeT1HDopMZopXo1WHReZKOF5UtCCus1omaaV1IuQeRHSubMfAYTt3j21sV
+         IcbZMn7epTMifanAjzTIbbD/2Zj03LPQdGrGVrY/bHhFfndA2eUExQHqrFvT4T4fAp
+         N0//Xmje3QuY2+yWEda34/qzWKpJ1lHVYmOJrp2Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wesley Sheng <wesley.sheng@microchip.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 5.5 016/120] PCI/switchtec: Use dma_set_mask_and_coherent()
+        stable@vger.kernel.org,
+        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
+        Manjunath Patil <manjunath.b.patil@oracle.com>,
+        Rama Nichanamatlu <rama.nichanamatlu@oracle.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 5.4 05/96] IB/mlx4: Fix leak in id_map_find_del
 Date:   Thu, 13 Feb 2020 07:20:12 -0800
-Message-Id: <20200213151907.440481666@linuxfoundation.org>
+Message-Id: <20200213151841.069249659@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
+References: <20200213151839.156309910@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +47,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wesley Sheng <wesley.sheng@microchip.com>
+From: Håkon Bugge <haakon.bugge@oracle.com>
 
-commit aa82130a22f77c1aa5794703730304d035a0c1f4 upstream.
+commit ea660ad7c1c476fd6e5e3b17780d47159db71dea upstream.
 
-Use dma_set_mask_and_coherent() instead of dma_set_coherent_mask() as the
-Switchtec hardware fully supports 64bit addressing and we should set both
-the streaming and coherent masks the same.
+Using CX-3 virtual functions, either from a bare-metal machine or
+pass-through from a VM, MAD packets are proxied through the PF driver.
 
-[logang@deltatee.com: reworked commit message]
-Fixes: aff614c6339c ("switchtec: Set DMA coherent mask")
-Link: https://lore.kernel.org/r/20200106190337.2428-2-logang@deltatee.com
-Signed-off-by: Wesley Sheng <wesley.sheng@microchip.com>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Since the VF drivers have separate name spaces for MAD Transaction Ids
+(TIDs), the PF driver has to re-map the TIDs and keep the book keeping in
+a cache.
+
+Following the RDMA Connection Manager (CM) protocol, it is clear when an
+entry has to evicted from the cache. When a DREP is sent from
+mlx4_ib_multiplex_cm_handler(), id_map_find_del() is called. Similar when
+a REJ is received by the mlx4_ib_demux_cm_handler(), id_map_find_del() is
+called.
+
+This function wipes out the TID in use from the IDR or XArray and removes
+the id_map_entry from the table.
+
+In short, it does everything except the topping of the cake, which is to
+remove the entry from the list and free it. In other words, for the REJ
+case enumerated above, one id_map_entry will be leaked.
+
+For the other case above, a DREQ has been received first. The reception of
+the DREQ will trigger queuing of a delayed work to delete the
+id_map_entry, for the case where the VM doesn't send back a DREP.
+
+In the normal case, the VM _will_ send back a DREP, and id_map_find_del()
+will be called.
+
+But this scenario introduces a secondary leak. First, when the DREQ is
+received, a delayed work is queued. The VM will then return a DREP, which
+will call id_map_find_del(). As stated above, this will free the TID used
+from the XArray or IDR. Now, there is window where that particular TID can
+be re-allocated, lets say by an outgoing REQ. This TID will later be wiped
+out by the delayed work, when the function id_map_ent_timeout() is
+called. But the id_map_entry allocated by the outgoing REQ will not be
+de-allocated, and we have a leak.
+
+Both leaks are fixed by removing the id_map_find_del() function and only
+using schedule_delayed(). Of course, a check in schedule_delayed() to see
+if the work already has been queued, has been added.
+
+Another benefit of always using the delayed version for deleting entries,
+is that we do get a TimeWait effect; a TID no longer in use, will occupy
+the XArray or IDR for CM_CLEANUP_CACHE_TIMEOUT time, without any ability
+of being re-used for that time period.
+
+Fixes: 3cf69cc8dbeb ("IB/mlx4: Add CM paravirtualization")
+Link: https://lore.kernel.org/r/20200123155521.1212288-1-haakon.bugge@oracle.com
+Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
+Signed-off-by: Manjunath Patil <manjunath.b.patil@oracle.com>
+Reviewed-by: Rama Nichanamatlu <rama.nichanamatlu@oracle.com>
+Reviewed-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/switch/switchtec.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/mlx4/cm.c |   29 +++--------------------------
+ 1 file changed, 3 insertions(+), 26 deletions(-)
 
---- a/drivers/pci/switch/switchtec.c
-+++ b/drivers/pci/switch/switchtec.c
-@@ -1349,7 +1349,7 @@ static int switchtec_init_pci(struct swi
- 	if (rc)
- 		return rc;
+--- a/drivers/infiniband/hw/mlx4/cm.c
++++ b/drivers/infiniband/hw/mlx4/cm.c
+@@ -186,23 +186,6 @@ out:
+ 	kfree(ent);
+ }
  
--	rc = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(64));
-+	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
- 	if (rc)
- 		return rc;
+-static void id_map_find_del(struct ib_device *ibdev, int pv_cm_id)
+-{
+-	struct mlx4_ib_sriov *sriov = &to_mdev(ibdev)->sriov;
+-	struct rb_root *sl_id_map = &sriov->sl_id_map;
+-	struct id_map_entry *ent, *found_ent;
+-
+-	spin_lock(&sriov->id_map_lock);
+-	ent = xa_erase(&sriov->pv_id_table, pv_cm_id);
+-	if (!ent)
+-		goto out;
+-	found_ent = id_map_find_by_sl_id(ibdev, ent->slave_id, ent->sl_cm_id);
+-	if (found_ent && found_ent == ent)
+-		rb_erase(&found_ent->node, sl_id_map);
+-out:
+-	spin_unlock(&sriov->id_map_lock);
+-}
+-
+ static void sl_id_map_add(struct ib_device *ibdev, struct id_map_entry *new)
+ {
+ 	struct rb_root *sl_id_map = &to_mdev(ibdev)->sriov.sl_id_map;
+@@ -294,7 +277,7 @@ static void schedule_delayed(struct ib_d
+ 	spin_lock(&sriov->id_map_lock);
+ 	spin_lock_irqsave(&sriov->going_down_lock, flags);
+ 	/*make sure that there is no schedule inside the scheduled work.*/
+-	if (!sriov->is_going_down) {
++	if (!sriov->is_going_down && !id->scheduled_delete) {
+ 		id->scheduled_delete = 1;
+ 		schedule_delayed_work(&id->timeout, CM_CLEANUP_CACHE_TIMEOUT);
+ 	}
+@@ -341,9 +324,6 @@ cont:
  
+ 	if (mad->mad_hdr.attr_id == CM_DREQ_ATTR_ID)
+ 		schedule_delayed(ibdev, id);
+-	else if (mad->mad_hdr.attr_id == CM_DREP_ATTR_ID)
+-		id_map_find_del(ibdev, pv_cm_id);
+-
+ 	return 0;
+ }
+ 
+@@ -382,12 +362,9 @@ int mlx4_ib_demux_cm_handler(struct ib_d
+ 		*slave = id->slave_id;
+ 	set_remote_comm_id(mad, id->sl_cm_id);
+ 
+-	if (mad->mad_hdr.attr_id == CM_DREQ_ATTR_ID)
++	if (mad->mad_hdr.attr_id == CM_DREQ_ATTR_ID ||
++	    mad->mad_hdr.attr_id == CM_REJ_ATTR_ID)
+ 		schedule_delayed(ibdev, id);
+-	else if (mad->mad_hdr.attr_id == CM_REJ_ATTR_ID ||
+-			mad->mad_hdr.attr_id == CM_DREP_ATTR_ID) {
+-		id_map_find_del(ibdev, (int) pv_cm_id);
+-	}
+ 
+ 	return 0;
+ }
 
 
