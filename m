@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37A9415C64D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:12:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF78015C723
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:13:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729037AbgBMP7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:59:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39334 "EHLO mail.kernel.org"
+        id S2388418AbgBMQHX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 11:07:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728853AbgBMPYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:24:55 -0500
+        id S1728367AbgBMPXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:25 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B14F024689;
-        Thu, 13 Feb 2020 15:24:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC98B20848;
+        Thu, 13 Feb 2020 15:23:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607494;
-        bh=eznXPyPtjKiPjmnqn26WtXAu+cuU4ehtOyvEIL3a3iA=;
+        s=default; t=1581607403;
+        bh=zCnYQwLaSk6jNcHbnqxcTOVbTYavOhSozb67NHsNvss=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rkcuZfyw8g2RO+sscdBP3g0oqYvJ7cR7w83BDTYgUQO2kQwBFpeDWx+VpScdtSzaf
-         +eNqCX0ORdO/m5zb+odZmLq9kixz3RYVIlfvRFU4cz8Gzenk1yeCnQslrHlbvUNxl1
-         eKaEQklaaT85r0Dww4tPZiBRcu5/n3JcpjiMQpso=
+        b=Y2TCGAU6LEVxSzaHnn7TeUk+VjK23RObIY8xbpIez6OBsDUgEFpKqe6UmwKrjxgSy
+         GpGp+0tIaYZ28HjtYbUbl+FQ2qrbr4p70IZeyuDMkp6JE2XLhr4/ruK2fJKCAKJF5M
+         IDkjNqFdOEgw30YiLkAoLLFkltvat0wVjhJLxiLQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 046/173] crypto: api - Check spawn->alg under lock in crypto_drop_spawn
-Date:   Thu, 13 Feb 2020 07:19:09 -0800
-Message-Id: <20200213151945.544273046@linuxfoundation.org>
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 006/116] gtp: use __GFP_NOWARN to avoid memalloc warning
+Date:   Thu, 13 Feb 2020 07:19:10 -0800
+Message-Id: <20200213151845.076376193@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,39 +43,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Taehee Yoo <ap420073@gmail.com>
 
-commit 7db3b61b6bba4310f454588c2ca6faf2958ad79f upstream.
+[ Upstream commit bd5cd35b782abf5437fbd01dfaee12437d20e832 ]
 
-We need to check whether spawn->alg is NULL under lock as otherwise
-the algorithm could be removed from under us after we have checked
-it and found it to be non-NULL.  This could cause us to remove the
-spawn from a non-existent list.
+gtp hashtable size is received by user-space.
+So, this hashtable size could be too large. If so, kmalloc will internally
+print a warning message.
+This warning message is actually not necessary for the gtp module.
+So, this patch adds __GFP_NOWARN to avoid this message.
 
-Fixes: 7ede5a5ba55a ("crypto: api - Fix crypto_drop_spawn crash...")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Splat looks like:
+[ 2171.200049][ T1860] WARNING: CPU: 1 PID: 1860 at mm/page_alloc.c:4713 __alloc_pages_nodemask+0x2f3/0x740
+[ 2171.238885][ T1860] Modules linked in: gtp veth openvswitch nsh nf_conncount nf_nat nf_conntrack nf_defrag_ipv]
+[ 2171.262680][ T1860] CPU: 1 PID: 1860 Comm: gtp-link Not tainted 5.5.0+ #321
+[ 2171.263567][ T1860] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[ 2171.264681][ T1860] RIP: 0010:__alloc_pages_nodemask+0x2f3/0x740
+[ 2171.265332][ T1860] Code: 64 fe ff ff 65 48 8b 04 25 c0 0f 02 00 48 05 f0 12 00 00 41 be 01 00 00 00 49 89 47 0
+[ 2171.267301][ T1860] RSP: 0018:ffff8880b51af1f0 EFLAGS: 00010246
+[ 2171.268320][ T1860] RAX: ffffed1016a35e43 RBX: 0000000000000000 RCX: 0000000000000000
+[ 2171.269517][ T1860] RDX: 0000000000000000 RSI: 000000000000000b RDI: 0000000000000000
+[ 2171.270305][ T1860] RBP: 0000000000040cc0 R08: ffffed1018893109 R09: dffffc0000000000
+[ 2171.275973][ T1860] R10: 0000000000000001 R11: ffffed1018893108 R12: 1ffff11016a35e43
+[ 2171.291039][ T1860] R13: 000000000000000b R14: 000000000000000b R15: 00000000000f4240
+[ 2171.292328][ T1860] FS:  00007f53cbc83740(0000) GS:ffff8880da000000(0000) knlGS:0000000000000000
+[ 2171.293409][ T1860] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 2171.294586][ T1860] CR2: 000055f540014508 CR3: 00000000b49f2004 CR4: 00000000000606e0
+[ 2171.295424][ T1860] Call Trace:
+[ 2171.295756][ T1860]  ? mark_held_locks+0xa5/0xe0
+[ 2171.296659][ T1860]  ? __alloc_pages_slowpath+0x21b0/0x21b0
+[ 2171.298283][ T1860]  ? gtp_encap_enable_socket+0x13e/0x400 [gtp]
+[ 2171.298962][ T1860]  ? alloc_pages_current+0xc1/0x1a0
+[ 2171.299475][ T1860]  kmalloc_order+0x22/0x80
+[ 2171.299936][ T1860]  kmalloc_order_trace+0x1d/0x140
+[ 2171.300437][ T1860]  __kmalloc+0x302/0x3a0
+[ 2171.300896][ T1860]  gtp_newlink+0x293/0xba0 [gtp]
+[ ... ]
+
+Fixes: 459aa660eb1d ("gtp: add initial driver for datapath of GPRS Tunneling Protocol (GTP-U)")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- crypto/algapi.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/gtp.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/crypto/algapi.c
-+++ b/crypto/algapi.c
-@@ -652,11 +652,9 @@ EXPORT_SYMBOL_GPL(crypto_grab_spawn);
- 
- void crypto_drop_spawn(struct crypto_spawn *spawn)
+--- a/drivers/net/gtp.c
++++ b/drivers/net/gtp.c
+@@ -784,11 +784,13 @@ static int gtp_hashtable_new(struct gtp_
  {
--	if (!spawn->alg)
--		return;
--
- 	down_write(&crypto_alg_sem);
--	list_del(&spawn->list);
-+	if (spawn->alg)
-+		list_del(&spawn->list);
- 	up_write(&crypto_alg_sem);
- }
- EXPORT_SYMBOL_GPL(crypto_drop_spawn);
+ 	int i;
+ 
+-	gtp->addr_hash = kmalloc(sizeof(struct hlist_head) * hsize, GFP_KERNEL);
++	gtp->addr_hash = kmalloc(sizeof(struct hlist_head) * hsize,
++				 GFP_KERNEL | __GFP_NOWARN);
+ 	if (gtp->addr_hash == NULL)
+ 		return -ENOMEM;
+ 
+-	gtp->tid_hash = kmalloc(sizeof(struct hlist_head) * hsize, GFP_KERNEL);
++	gtp->tid_hash = kmalloc(sizeof(struct hlist_head) * hsize,
++				GFP_KERNEL | __GFP_NOWARN);
+ 	if (gtp->tid_hash == NULL)
+ 		goto err1;
+ 
 
 
