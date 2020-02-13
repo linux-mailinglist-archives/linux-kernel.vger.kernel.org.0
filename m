@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4410A15C30D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:39:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1853915C3E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:45:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729643AbgBMPj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:39:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58226 "EHLO mail.kernel.org"
+        id S1728624AbgBMPpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:45:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729433AbgBMP3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:29:02 -0500
+        id S1728970AbgBMP1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:34 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E0DF24670;
-        Thu, 13 Feb 2020 15:29:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEA6424670;
+        Thu, 13 Feb 2020 15:27:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607741;
-        bh=V+PE1rRJttWwgfRiEoKsub1Yes6FAf870CGA2laaGo0=;
+        s=default; t=1581607653;
+        bh=/6nvKJXpUQXg8GvlxjuliI9HJ8lsGRxn/EMimUQ8VTQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FD11zuIN5wRSE1x0Mxi0G+S7aaf8s8aKHzyKcUUOY8hD3upTbmFa0DFfUgIt82q0f
-         fRL1e4gdzPSkDqBnV9A8R1VQOgcQazBpacjFxvsslztb5sSugp/FB/r0F3ZjS0UfiV
-         bQDmsJ8Kd1f732pGIHjRis2lAJDs7i6xjWAbM2Qw=
+        b=2B1LiMA0Cf7PN9qPTZVfXhQJG1auE7GYiLX68PAw87bWY0FtCsv8bJs2Q07GE10dC
+         3wqxRBA05b4hNZaYI4mOwvdcQ8h0zJ1kRJzbwK+rN+Il5I9Pev8w0MsrVgmt3FK4b5
+         9efaE3v1zevF6p7yRDvE6W+IyC/h6VGt/BJZc7wI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 5.5 078/120] ARM: 8949/1: mm: mark free_memmap as __init
+        stable@vger.kernel.org, Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH 5.4 67/96] arm64: ptrace: nofpsimd: Fail FP/SIMD regset operations
 Date:   Thu, 13 Feb 2020 07:21:14 -0800
-Message-Id: <20200213151927.729883313@linuxfoundation.org>
+Message-Id: <20200213151904.616191583@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
+References: <20200213151839.156309910@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +46,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olof Johansson <olof@lixom.net>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-commit 31f3010e60522ede237fb145a63b4af5a41718c2 upstream.
+commit c9d66999f064947e6b577ceacc1eb2fbca6a8d3c upstream.
 
-As of commit ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING
-forcibly"), free_memmap() might not always be inlined, and thus is
-triggering a section warning:
+When fp/simd is not supported on the system, fail the operations
+of FP/SIMD regsets.
 
-WARNING: vmlinux.o(.text.unlikely+0x904): Section mismatch in reference from the function free_memmap() to the function .meminit.text:memblock_free()
-
-Mark it as __init, since the faller (free_unused_memmap) already is.
-
-Fixes: ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING forcibly")
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Fixes: 82e0191a1aa11abf ("arm64: Support systems without FP/ASIMD")
+Cc: Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mm/init.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/kernel/ptrace.c |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
---- a/arch/arm/mm/init.c
-+++ b/arch/arm/mm/init.c
-@@ -324,7 +324,7 @@ static inline void poison_init_mem(void
- 		*p++ = 0xe7fddef0;
+--- a/arch/arm64/kernel/ptrace.c
++++ b/arch/arm64/kernel/ptrace.c
+@@ -615,6 +615,13 @@ static int gpr_set(struct task_struct *t
+ 	return 0;
  }
  
--static inline void
-+static inline void __init
- free_memmap(unsigned long start_pfn, unsigned long end_pfn)
++static int fpr_active(struct task_struct *target, const struct user_regset *regset)
++{
++	if (!system_supports_fpsimd())
++		return -ENODEV;
++	return regset->n;
++}
++
+ /*
+  * TODO: update fp accessors for lazy context switching (sync/flush hwstate)
+  */
+@@ -637,6 +644,9 @@ static int fpr_get(struct task_struct *t
+ 		   unsigned int pos, unsigned int count,
+ 		   void *kbuf, void __user *ubuf)
  {
- 	struct page *start_pg, *end_pg;
++	if (!system_supports_fpsimd())
++		return -EINVAL;
++
+ 	if (target == current)
+ 		fpsimd_preserve_current_state();
+ 
+@@ -676,6 +686,9 @@ static int fpr_set(struct task_struct *t
+ {
+ 	int ret;
+ 
++	if (!system_supports_fpsimd())
++		return -EINVAL;
++
+ 	ret = __fpr_set(target, regset, pos, count, kbuf, ubuf, 0);
+ 	if (ret)
+ 		return ret;
+@@ -1134,6 +1147,7 @@ static const struct user_regset aarch64_
+ 		 */
+ 		.size = sizeof(u32),
+ 		.align = sizeof(u32),
++		.active = fpr_active,
+ 		.get = fpr_get,
+ 		.set = fpr_set
+ 	},
+@@ -1348,6 +1362,9 @@ static int compat_vfp_get(struct task_st
+ 	compat_ulong_t fpscr;
+ 	int ret, vregs_end_pos;
+ 
++	if (!system_supports_fpsimd())
++		return -EINVAL;
++
+ 	uregs = &target->thread.uw.fpsimd_state;
+ 
+ 	if (target == current)
+@@ -1381,6 +1398,9 @@ static int compat_vfp_set(struct task_st
+ 	compat_ulong_t fpscr;
+ 	int ret, vregs_end_pos;
+ 
++	if (!system_supports_fpsimd())
++		return -EINVAL;
++
+ 	uregs = &target->thread.uw.fpsimd_state;
+ 
+ 	vregs_end_pos = VFP_STATE_SIZE - sizeof(compat_ulong_t);
+@@ -1438,6 +1458,7 @@ static const struct user_regset aarch32_
+ 		.n = VFP_STATE_SIZE / sizeof(compat_ulong_t),
+ 		.size = sizeof(compat_ulong_t),
+ 		.align = sizeof(compat_ulong_t),
++		.active = fpr_active,
+ 		.get = compat_vfp_get,
+ 		.set = compat_vfp_set
+ 	},
 
 
