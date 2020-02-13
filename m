@@ -2,277 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2F5D15BB5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:16:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A91415BB64
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:16:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729797AbgBMJQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 04:16:18 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:40959 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729766AbgBMJQQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 04:16:16 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1j2AbR-00080i-Oa; Thu, 13 Feb 2020 10:16:09 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1j2AbR-0005r8-Ei; Thu, 13 Feb 2020 10:16:09 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
-        linux-serial@vger.kernel.org
-Subject: [PATCH v6 4/4] leds: trigger: implement a tty trigger
-Date:   Thu, 13 Feb 2020 10:16:00 +0100
-Message-Id: <20200213091600.554-5-uwe@kleine-koenig.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200213091600.554-1-uwe@kleine-koenig.org>
-References: <20200213091600.554-1-uwe@kleine-koenig.org>
+        id S1729801AbgBMJQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 04:16:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49672 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729531AbgBMJQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 04:16:39 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4556620848;
+        Thu, 13 Feb 2020 09:16:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581585398;
+        bh=GiebtmJpNzAk9Qikj9svaXnffKSNLaoVx4iZEJ1f9R8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Tl6c66Z/muXXGGsR8OFmt//7oEMoFMLpSOdMqTmIZMcSapkUUhJ5KhzDiPIeGnuRs
+         s6L05Zr2yBZTqQxPgrTxwf/vJZuS09jUreCa650odBkGyci7sfrn50FK2D+S/FgaEJ
+         hzkiirULO+oY9fiFM996uGnX90vfzqRz2rcR9e4g=
+Date:   Thu, 13 Feb 2020 09:16:33 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Li Yang <leoyang.li@nxp.com>
+Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] iommu/arm-smmu: fix the module name to be consistent
+ with older kernel
+Message-ID: <20200213091633.GA849@willie-the-truck>
+References: <1581467841-25397-1-git-send-email-leoyang.li@nxp.com>
+ <20200212104902.GA3664@willie-the-truck>
+ <CADRPPNQ-FcA-xdjp02ybsYeU9UFxCZU5dpf0wHThTmLHcjovCQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADRPPNQ-FcA-xdjp02ybsYeU9UFxCZU5dpf0wHThTmLHcjovCQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+On Wed, Feb 12, 2020 at 01:59:46PM -0600, Li Yang wrote:
+> On Wed, Feb 12, 2020 at 4:50 AM Will Deacon <will@kernel.org> wrote:
+> >
+> > On Tue, Feb 11, 2020 at 06:37:20PM -0600, Li Yang wrote:
+> > > Commit cd221bd24ff5 ("iommu/arm-smmu: Allow building as a module")
+> > > introduced a side effect that changed the module name from arm-smmu to
+> > > arm-smmu-mod.  This breaks the users of kernel parameters for the driver
+> > > (e.g. arm-smmu.disable_bypass).  This patch changes the module name back
+> > > to be consistent.
+> > >
+> > > Signed-off-by: Li Yang <leoyang.li@nxp.com>
+> > > ---
+> > >  drivers/iommu/Makefile                          | 4 ++--
+> > >  drivers/iommu/{arm-smmu.c => arm-smmu-common.c} | 0
+> > >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > >  rename drivers/iommu/{arm-smmu.c => arm-smmu-common.c} (100%)
+> >
+> > Can't we just override MODULE_PARAM_PREFIX instead of renaming the file?
+> 
+> I can do that.  But on the other hand, the "mod" in the module name
+> arm-smmu-mod.ko seems to be redundant and looks a little bit weird.
+> Wouldn't it be cleaner to make it just arm-smmu.ko?
 
-Usage is as follows:
+I just didn't fancy renaming the file because it's a pain for backports
+and why does the name of the module matter?
 
-	myled=ledname
-	tty=ttyS0
-
-	echo tty > /sys/class/leds/$myled/trigger
-	cat /sys/class/tty/$tty/dev > /sys/class/leds/$myled/dev
-
-. When this new trigger is active it periodically checks the tty's
-statistics and when it changed since the last check the led is flashed
-once.
-
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- .../ABI/testing/sysfs-class-led-trigger-tty   |   6 +
- drivers/leds/trigger/Kconfig                  |   7 +
- drivers/leds/trigger/Makefile                 |   1 +
- drivers/leds/trigger/ledtrig-tty.c            | 159 ++++++++++++++++++
- 4 files changed, 173 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-tty
- create mode 100644 drivers/leds/trigger/ledtrig-tty.c
-
-diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-tty b/Documentation/ABI/testing/sysfs-class-led-trigger-tty
-new file mode 100644
-index 000000000000..f56f9721c317
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-led-trigger-tty
-@@ -0,0 +1,6 @@
-+What:		/sys/class/leds/<led>/dev
-+Date:		Dec 2019
-+KernelVersion:	5.6
-+Contact:	linux-leds@vger.kernel.org
-+Description:
-+		Specifies $major:$minor of the triggering tty
-diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
-index ce9429ca6dde..40ff08c93f56 100644
---- a/drivers/leds/trigger/Kconfig
-+++ b/drivers/leds/trigger/Kconfig
-@@ -144,4 +144,11 @@ config LEDS_TRIGGER_AUDIO
- 	  the audio mute and mic-mute changes.
- 	  If unsure, say N
- 
-+config LEDS_TRIGGER_TTY
-+	tristate "LED Trigger for TTY devices"
-+	depends on TTY
-+	help
-+	  This allows LEDs to be controlled by activity on ttys which includes
-+	  serial devices like /dev/ttyS0.
-+
- endif # LEDS_TRIGGERS
-diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
-index 733a83e2a718..25c4db97cdd4 100644
---- a/drivers/leds/trigger/Makefile
-+++ b/drivers/leds/trigger/Makefile
-@@ -15,3 +15,4 @@ obj-$(CONFIG_LEDS_TRIGGER_PANIC)	+= ledtrig-panic.o
- obj-$(CONFIG_LEDS_TRIGGER_NETDEV)	+= ledtrig-netdev.o
- obj-$(CONFIG_LEDS_TRIGGER_PATTERN)	+= ledtrig-pattern.o
- obj-$(CONFIG_LEDS_TRIGGER_AUDIO)	+= ledtrig-audio.o
-+obj-$(CONFIG_LEDS_TRIGGER_TTY)		+= ledtrig-tty.o
-diff --git a/drivers/leds/trigger/ledtrig-tty.c b/drivers/leds/trigger/ledtrig-tty.c
-new file mode 100644
-index 000000000000..e1be93c3026f
---- /dev/null
-+++ b/drivers/leds/trigger/ledtrig-tty.c
-@@ -0,0 +1,159 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/delay.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/tty.h>
-+#include <uapi/linux/serial.h>
-+
-+struct ledtrig_tty_data {
-+	struct led_classdev *led_cdev;
-+	struct delayed_work dwork;
-+	struct tty_struct *tty;
-+	dev_t device;
-+	int rx, tx;
-+};
-+
-+static void ledtrig_tty_halt(struct ledtrig_tty_data *trigger_data)
-+{
-+	cancel_delayed_work_sync(&trigger_data->dwork);
-+}
-+
-+static void ledtrig_tty_restart(struct ledtrig_tty_data *trigger_data)
-+{
-+	schedule_delayed_work(&trigger_data->dwork, 0);
-+}
-+
-+static ssize_t dev_show(struct device *dev,
-+			struct device_attribute *attr, char *buf)
-+{
-+	struct ledtrig_tty_data *trigger_data = led_trigger_get_drvdata(dev);
-+	ssize_t len = 0;
-+
-+	if (trigger_data->tty)
-+		len = sprintf(buf, "%d:%d\n", MAJOR(trigger_data->device),
-+			      MINOR(trigger_data->device));
-+
-+	return len;
-+}
-+
-+static ssize_t dev_store(struct device *dev,
-+			 struct device_attribute *attr, const char *buf,
-+			 size_t size)
-+{
-+	struct ledtrig_tty_data *trigger_data = led_trigger_get_drvdata(dev);
-+	struct tty_struct *tty;
-+	dev_t d;
-+	int ret;
-+
-+	if (size == 0 || (size == 1 && buf[0] == '\n')) {
-+		tty = NULL;
-+	} else {
-+		ret = kstrtodev_t(buf, &d);
-+		if (ret < 0)
-+			return ret;
-+
-+		tty = tty_kopen_shared(d);
-+		if (IS_ERR(tty))
-+			return PTR_ERR(tty);
-+	}
-+
-+	ledtrig_tty_halt(trigger_data);
-+
-+	tty_kref_put(trigger_data->tty);
-+	trigger_data->tty = tty;
-+	trigger_data->device = d;
-+
-+	if (tty) {
-+		struct serial_icounter_struct icount;
-+		ret = tty_get_icount(trigger_data->tty, &icount);
-+		if (!ret) {
-+			trigger_data->tx = icount.tx;
-+			trigger_data->rx = icount.rx;
-+		}
-+
-+		ledtrig_tty_restart(trigger_data);
-+	}
-+
-+	return size;
-+}
-+static DEVICE_ATTR_RW(dev);
-+
-+static void ledtrig_tty_work(struct work_struct *work)
-+{
-+	struct ledtrig_tty_data *trigger_data =
-+		container_of(work, struct ledtrig_tty_data, dwork.work);
-+	struct serial_icounter_struct icount;
-+	int ret;
-+
-+	if (!trigger_data->tty) {
-+		led_set_brightness(trigger_data->led_cdev, LED_OFF);
-+		return;
-+	}
-+
-+	ret = tty_get_icount(trigger_data->tty, &icount);
-+	if (ret)
-+		return;
-+
-+	while (icount.rx != trigger_data->rx ||
-+	       icount.tx != trigger_data->tx) {
-+		led_set_brightness(trigger_data->led_cdev, LED_ON);
-+
-+		msleep(100);
-+
-+		led_set_brightness(trigger_data->led_cdev, LED_OFF);
-+
-+		trigger_data->rx = icount.rx;
-+		trigger_data->tx = icount.tx;
-+
-+		ret = tty_get_icount(trigger_data->tty, &icount);
-+		if (ret)
-+			return;
-+	}
-+
-+	schedule_delayed_work(&trigger_data->dwork, msecs_to_jiffies(100));
-+}
-+
-+static struct attribute *ledtrig_tty_attrs[] = {
-+	&dev_attr_dev.attr,
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(ledtrig_tty);
-+
-+static int ledtrig_tty_activate(struct led_classdev *led_cdev)
-+{
-+	struct ledtrig_tty_data *trigger_data;
-+
-+	trigger_data = kzalloc(sizeof(*trigger_data), GFP_KERNEL);
-+	if (!trigger_data)
-+		return -ENOMEM;
-+
-+	led_set_trigger_data(led_cdev, trigger_data);
-+
-+	INIT_DELAYED_WORK(&trigger_data->dwork, ledtrig_tty_work);
-+	trigger_data->led_cdev = led_cdev;
-+
-+	return 0;
-+}
-+
-+static void ledtrig_tty_deactivate(struct led_classdev *led_cdev)
-+{
-+	struct ledtrig_tty_data *trigger_data = led_get_trigger_data(led_cdev);
-+
-+	cancel_delayed_work_sync(&trigger_data->dwork);
-+
-+	kfree(trigger_data);
-+}
-+
-+struct led_trigger ledtrig_tty = {
-+	.name = "tty",
-+	.activate = ledtrig_tty_activate,
-+	.deactivate = ledtrig_tty_deactivate,
-+	.groups = ledtrig_tty_groups,
-+};
-+module_led_trigger(ledtrig_tty);
-+
-+MODULE_AUTHOR("Uwe Kleine-König <u.kleine-koenig@pengutronix.de>");
-+MODULE_DESCRIPTION("UART LED trigger");
-+MODULE_LICENSE("GPL v2");
--- 
-2.24.0
-
+Will
