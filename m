@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 528AE15C767
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:14:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D473815C5E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730414AbgBMQKZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 11:10:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60388 "EHLO mail.kernel.org"
+        id S1729009AbgBMPZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:25:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728006AbgBMPWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:22:38 -0500
+        id S1728508AbgBMPXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:52 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29DB024690;
-        Thu, 13 Feb 2020 15:22:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC52E2469A;
+        Thu, 13 Feb 2020 15:23:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607357;
-        bh=QVTMlH3x/XufSgrUByrIR90YJd9Pgm7gaU+w7qCgZC8=;
+        s=default; t=1581607431;
+        bh=RH5xBxZPRjFSo1vkgEfk5poDwjzp/ocBf+yyxsIgywc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xJoQotKvfQuPIru/1LGxRiePF+8SPdCRNiTZ66i5vQgmanw/z6/Lld3M6dwvtEzpM
-         03L/V9HF4uvCfm/W2A+9ChUyc1dU3DVLok5SgI8Gn5D/WdLgorDjPCLtCacWlOLx1v
-         6qAgAK2uGqsdg4nWOfu965LkcYo2Da9EKmXv6WgU=
+        b=2DrzTEqCUDvyrMpfTNULlGhiSVTSPrTWTOfWVFyGe+LROW1sXaxFGvmYiFGxUItP7
+         gKKbdCdykUocEYN07Kx056xDwVoMXJLXMWk9TO7VFM4TVdTJc98vj7OJE4dfQR5lwF
+         Ote+0cPFwK1s9EIBieA/jKs3UBU+vM6HjaRva3N8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>
-Subject: [PATCH 4.4 24/91] Revert "ovl: modify ovl_permission() to do checks on two inodes"
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.9 037/116] crypto: atmel-aes - Fix counter overflow in CTR mode
 Date:   Thu, 13 Feb 2020 07:19:41 -0800
-Message-Id: <20200213151830.964687032@linuxfoundation.org>
+Message-Id: <20200213151857.597907343@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
-References: <20200213151821.384445454@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,95 +44,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>
+From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-This reverts commit b24be4acd17a8963a29b2a92e1d80b9ddf759c95 which is commit
-c0ca3d70e8d3cf81e2255a217f7ca402f5ed0862 upstream.
+commit 781a08d9740afa73357f1a60d45d7c93d7cca2dd upstream.
 
-Commit b24be4acd17a ("ovl: modify ovl_permission() to do checks on two
-inodes") (stable kernel  id) breaks r/w access in overlayfs when setting
-ACL to files, in 4.4 stable kernel. There is an available reproducer in
-[1].
+32 bit counter is not supported by neither of our AES IPs, all implement
+a 16 bit block counter. Drop the 32 bit block counter logic.
 
-To reproduce the issue :
-$./make-overlay.sh
-$./test.sh
-st_mode is 100644
-open failed: -1
-cat: /tmp/overlay/animal: Permission denied <---- Breaks access
--rw-r--r-- 1 jo jo 0 Oct 11 09:57 /tmp/overlay/animal
-
-There are two options to fix this; (a) backport commit ce31513a9114
-("ovl: copyattr after setting POSIX ACL") to 4.4 or (b) revert offending
-commit b24be4acd17a ("ovl: modify ovl_permission() to do checks on two
-inodes"). Following option (a) entails high risk of regression since
-commit ce31513a9114 ("ovl: copyattr after setting POSIX ACL") has many
-dependencies on other commits that need to be backported too (~18
-commits).
-
-This patch proceeds with reverting commit b24be4acd17a ("ovl: modify
-ovl_permission() to do checks on two inodes").  The reverted commit is
-associated with CVE-2018-16597, however the test-script provided in [3]
-shows that 4.4 kernel is  NOT affected by this cve and therefore it's
-safe to revert it.
-
-The offending commit was introduced upstream in v4.8-rc1. At this point
-had nothing to do with any CVE.  It was related with CVE-2018-16597 as
-it was the fix for bug [2]. Later on it was backported to stable 4.4.
-
-The test-script [3] tests whether 4.4 kernel is affected by
-CVE-2018-16597. It tests the reproducer found in [2] plus a few more
-cases. The correct output of the script is failure with "Permission
-denied" when a normal user tries to overwrite root owned files.  For
-more details please refer to [4].
-
-[1] https://gist.github.com/thomas-holmes/711bcdb28e2b8e6d1c39c1d99d292af7
-[2] https://bugzilla.suse.com/show_bug.cgi?id=1106512#c0
-[3] https://launchpadlibrarian.net/459694705/test_overlay_permission.sh
-[4] https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1851243
-
-Signed-off-by: Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>
+Fixes: fcac83656a3e ("crypto: atmel-aes - fix the counter overflow in CTR mode")
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/overlayfs/inode.c |   13 -------------
- 1 file changed, 13 deletions(-)
 
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -9,7 +9,6 @@
+---
+ drivers/crypto/atmel-aes.c |   37 ++++++++++++-------------------------
+ 1 file changed, 12 insertions(+), 25 deletions(-)
+
+--- a/drivers/crypto/atmel-aes.c
++++ b/drivers/crypto/atmel-aes.c
+@@ -87,7 +87,6 @@
+ struct atmel_aes_caps {
+ 	bool			has_dualbuff;
+ 	bool			has_cfb64;
+-	bool			has_ctr32;
+ 	bool			has_gcm;
+ 	u32			max_burst_size;
+ };
+@@ -923,8 +922,9 @@ static int atmel_aes_ctr_transfer(struct
+ 	struct atmel_aes_ctr_ctx *ctx = atmel_aes_ctr_ctx_cast(dd->ctx);
+ 	struct ablkcipher_request *req = ablkcipher_request_cast(dd->areq);
+ 	struct scatterlist *src, *dst;
+-	u32 ctr, blocks;
+ 	size_t datalen;
++	u32 ctr;
++	u16 blocks, start, end;
+ 	bool use_dma, fragmented = false;
  
- #include <linux/fs.h>
- #include <linux/slab.h>
--#include <linux/cred.h>
- #include <linux/xattr.h>
- #include "overlayfs.h"
- 
-@@ -92,7 +91,6 @@ int ovl_permission(struct inode *inode,
- 	struct ovl_entry *oe;
- 	struct dentry *alias = NULL;
- 	struct inode *realinode;
--	const struct cred *old_cred;
- 	struct dentry *realdentry;
- 	bool is_upper;
- 	int err;
-@@ -145,18 +143,7 @@ int ovl_permission(struct inode *inode,
- 			goto out_dput;
+ 	/* Check for transfer completion. */
+@@ -936,27 +936,17 @@ static int atmel_aes_ctr_transfer(struct
+ 	datalen = req->nbytes - ctx->offset;
+ 	blocks = DIV_ROUND_UP(datalen, AES_BLOCK_SIZE);
+ 	ctr = be32_to_cpu(ctx->iv[3]);
+-	if (dd->caps.has_ctr32) {
+-		/* Check 32bit counter overflow. */
+-		u32 start = ctr;
+-		u32 end = start + blocks - 1;
+-
+-		if (end < start) {
+-			ctr |= 0xffffffff;
+-			datalen = AES_BLOCK_SIZE * -start;
+-			fragmented = true;
+-		}
+-	} else {
+-		/* Check 16bit counter overflow. */
+-		u16 start = ctr & 0xffff;
+-		u16 end = start + (u16)blocks - 1;
+-
+-		if (blocks >> 16 || end < start) {
+-			ctr |= 0xffff;
+-			datalen = AES_BLOCK_SIZE * (0x10000-start);
+-			fragmented = true;
+-		}
++
++	/* Check 16bit counter overflow. */
++	start = ctr & 0xffff;
++	end = start + blocks - 1;
++
++	if (blocks >> 16 || end < start) {
++		ctr |= 0xffff;
++		datalen = AES_BLOCK_SIZE * (0x10000 - start);
++		fragmented = true;
  	}
++
+ 	use_dma = (datalen >= ATMEL_AES_DMA_THRESHOLD);
  
--	/*
--	 * Check overlay inode with the creds of task and underlying inode
--	 * with creds of mounter
--	 */
--	err = generic_permission(inode, mask);
--	if (err)
--		goto out_dput;
--
--	old_cred = ovl_override_creds(inode->i_sb);
- 	err = __inode_permission(realinode, mask);
--	revert_creds(old_cred);
--
- out_dput:
- 	dput(alias);
- 	return err;
+ 	/* Jump to offset. */
+@@ -1926,7 +1916,6 @@ static void atmel_aes_get_cap(struct atm
+ {
+ 	dd->caps.has_dualbuff = 0;
+ 	dd->caps.has_cfb64 = 0;
+-	dd->caps.has_ctr32 = 0;
+ 	dd->caps.has_gcm = 0;
+ 	dd->caps.max_burst_size = 1;
+ 
+@@ -1935,14 +1924,12 @@ static void atmel_aes_get_cap(struct atm
+ 	case 0x500:
+ 		dd->caps.has_dualbuff = 1;
+ 		dd->caps.has_cfb64 = 1;
+-		dd->caps.has_ctr32 = 1;
+ 		dd->caps.has_gcm = 1;
+ 		dd->caps.max_burst_size = 4;
+ 		break;
+ 	case 0x200:
+ 		dd->caps.has_dualbuff = 1;
+ 		dd->caps.has_cfb64 = 1;
+-		dd->caps.has_ctr32 = 1;
+ 		dd->caps.has_gcm = 1;
+ 		dd->caps.max_burst_size = 4;
+ 		break;
 
 
