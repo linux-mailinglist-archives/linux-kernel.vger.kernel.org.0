@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A698A15C172
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:23:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1502D15C161
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:23:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbgBMPXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:23:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32904 "EHLO mail.kernel.org"
+        id S1728194AbgBMPW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:22:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728171AbgBMPWw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:22:52 -0500
+        id S1728066AbgBMPWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:22:42 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 821C92469C;
-        Thu, 13 Feb 2020 15:22:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A816E246A4;
+        Thu, 13 Feb 2020 15:22:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607371;
-        bh=ImnbD9F25e9BycBbdnfihLcvYJC4fBuKP6FR6RfChZo=;
+        s=default; t=1581607361;
+        bh=xp5AfYsg5Lg7c8CdywzoLdQcyf/BrBlzYmWCtroqw9A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ghOB+xU9bYbVFGu6LnO9rYJUyXtdf+M5TlQbFH6856lxWzS4PoIE/qcOXtsNAlzUS
-         OvvNBDmNegoMUoV/J20/WoONt0QK+vUwCBp2BtyBGjqVjpWkdDUyoJ8rmhg6Pnyo6a
-         Kin9c/4SUsPKFsDjtQxT+B0oojTkMPSQP+0CLAQc=
+        b=aLE2SJpTMMjfCekGlGs0ht7VCQjqQPaws2JBUqvpbn7/VHazhXlh6SKnGVdWa6hLB
+         DNhaCaCAMa+SgHPVRMNW787Dh7zhwMXD1/NGA7CAycvLHhDLL5w8dS2C4Xyjd1vr6B
+         Hbv3raVAIV3XUnUhRnh7STxDQTYiXKgi75GcxnS4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.4 46/91] KVM: x86: Free wbinvd_dirty_mask if vCPU creation fails
-Date:   Thu, 13 Feb 2020 07:20:03 -0800
-Message-Id: <20200213151839.364525463@linuxfoundation.org>
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.4 48/91] scsi: csiostor: Adjust indentation in csio_device_reset
+Date:   Thu, 13 Feb 2020 07:20:05 -0800
+Message-Id: <20200213151840.304812250@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
 References: <20200213151821.384445454@linuxfoundation.org>
@@ -44,37 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit 16be9ddea268ad841457a59109963fff8c9de38d upstream.
+commit a808a04c861782e31fc30e342a619c144aaee14a upstream.
 
-Free the vCPU's wbinvd_dirty_mask if vCPU creation fails after
-kvm_arch_vcpu_init(), e.g. when installing the vCPU's file descriptor.
-Do the freeing by calling kvm_arch_vcpu_free() instead of open coding
-the freeing.  This adds a likely superfluous, but ultimately harmless,
-call to kvmclock_reset(), which only clears vcpu->arch.pv_time_enabled.
-Using kvm_arch_vcpu_free() allows for additional cleanup in the future.
+Clang warns:
 
-Fixes: f5f48ee15c2ee ("KVM: VMX: Execute WBINVD to keep data consistency with assigned devices")
-Cc: stable@vger.kernel.org
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+../drivers/scsi/csiostor/csio_scsi.c:1386:3: warning: misleading
+indentation; statement is not part of the previous 'if'
+[-Wmisleading-indentation]
+         csio_lnodes_exit(hw, 1);
+         ^
+../drivers/scsi/csiostor/csio_scsi.c:1382:2: note: previous statement is
+here
+        if (*buf != '1')
+        ^
+1 warning generated.
+
+This warning occurs because there is a space after the tab on this
+line.  Remove it so that the indentation is consistent with the Linux
+kernel coding style and clang no longer warns.
+
+Fixes: a3667aaed569 ("[SCSI] csiostor: Chelsio FCoE offload driver")
+Link: https://github.com/ClangBuiltLinux/linux/issues/818
+Link: https://lore.kernel.org/r/20191218014726.8455-1-natechancellor@gmail.com
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |    2 +-
+ drivers/scsi/csiostor/csio_scsi.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7498,7 +7498,7 @@ void kvm_arch_vcpu_destroy(struct kvm_vc
- 	kvm_mmu_unload(vcpu);
- 	vcpu_put(vcpu);
+--- a/drivers/scsi/csiostor/csio_scsi.c
++++ b/drivers/scsi/csiostor/csio_scsi.c
+@@ -1383,7 +1383,7 @@ csio_device_reset(struct device *dev,
+ 		return -EINVAL;
  
--	kvm_x86_ops->vcpu_free(vcpu);
-+	kvm_arch_vcpu_free(vcpu);
- }
+ 	/* Delete NPIV lnodes */
+-	 csio_lnodes_exit(hw, 1);
++	csio_lnodes_exit(hw, 1);
  
- void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+ 	/* Block upper IOs */
+ 	csio_lnodes_block_request(hw);
 
 
