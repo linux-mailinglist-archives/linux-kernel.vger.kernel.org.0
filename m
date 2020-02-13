@@ -2,98 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA66B15C65C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:12:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A593E15C624
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387543AbgBMP7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:59:52 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:25656 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728910AbgBMP7q (ORCPT
+        id S1729972AbgBMP5k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:57:40 -0500
+Received: from gateway34.websitewelcome.com ([192.185.148.204]:49284 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729929AbgBMP5h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:59:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581609585;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=YjESY5U+42gtKNpvEnDRTyHV+mXqJmvUAfYgrE7ny0Y=;
-        b=JJOd8BTu72GcaOVKXV8mvXtCFIZQg9e3xZJGBi7qInkef1najIbQPVShs3JG+ORIZilHhu
-        q1N/7l/vz0F4AUG4cmUH9sljAHHptH/eWaJ6oSZRJ6drYwg1g9uOwQb7pimR6zJahasDpG
-        4aBEa6ramsDP5AsV8jiv6lUMfhhApw0=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-226-jRvZCEz6MbOoYDZXPV1WAg-1; Thu, 13 Feb 2020 10:59:42 -0500
-X-MC-Unique: jRvZCEz6MbOoYDZXPV1WAg-1
-Received: by mail-qk1-f198.google.com with SMTP id q2so3992404qkq.19
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:59:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YjESY5U+42gtKNpvEnDRTyHV+mXqJmvUAfYgrE7ny0Y=;
-        b=d1OVUgNj4RuXCUzoH/foMW5DLfOh/FhIeOBiFSrtbjcw3hQix4edJJ+VDr6Q0mHLQN
-         Y9VKCByAYy0V56vuf0ZwDrscXvGl8FhA2QitBuZ8ZSk5D4vJhEHKvdCeYUy3ufjMIq66
-         CyCAaQfZI47oidff5vF1I8Z96NuWxEYHuoHkIKhN6Te5XX1gUyoJZ45r94PokKRJks7R
-         UmVqPo3PKRgSUDqOvHFHQYwa/Lj+cGG7snkD76MZlG/r6tpMglmfUGPU38tltMXk/z/J
-         46qXtHcPxVwNhMDhekXFWUjd0GrkEfJxHCUjeS6n6+S9Iv0qk5jSkAHh/f5N3EpoarJz
-         VQgA==
-X-Gm-Message-State: APjAAAVUzJrygd5S684tJ4IOtBy/jly1QDwWQnqQerk11CzyoZ7162fZ
-        jUBcfWWMC/mrPhmW8hKP4QwyPePJwfbvfYu2xc8GlXViaE/guzUFCSHYYNzzzZO0uSbYXAlqnWo
-        DC20AhmIE5b51LzVxXHVNybve
-X-Received: by 2002:a37:648c:: with SMTP id y134mr12655812qkb.112.1581609582441;
-        Thu, 13 Feb 2020 07:59:42 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwblUv4o0toVmVYl/HEAfrRzni+p8oGrxwrOCdC64VBDuyyCDEhJs814GPsgJHzOlkKNS9BGQ==
-X-Received: by 2002:a37:648c:: with SMTP id y134mr12655792qkb.112.1581609582252;
-        Thu, 13 Feb 2020 07:59:42 -0800 (PST)
-Received: from redhat.com (bzq-79-176-28-95.red.bezeqint.net. [79.176.28.95])
-        by smtp.gmail.com with ESMTPSA id b7sm1490925qka.67.2020.02.13.07.59.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 07:59:41 -0800 (PST)
-Date:   Thu, 13 Feb 2020 10:59:34 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, tiwei.bie@intel.com,
-        maxime.coquelin@redhat.com, cunming.liang@intel.com,
-        zhihong.wang@intel.com, rob.miller@broadcom.com,
-        xiao.w.wang@intel.com, haotian.wang@sifive.com,
-        lingshan.zhu@intel.com, eperezma@redhat.com, lulu@redhat.com,
-        parav@mellanox.com, kevin.tian@intel.com, stefanha@redhat.com,
-        rdunlap@infradead.org, hch@infradead.org, aadam@redhat.com,
-        jiri@mellanox.com, shahafs@mellanox.com, hanand@xilinx.com,
-        mhabets@solarflare.com
-Subject: Re: [PATCH V2 3/5] vDPA: introduce vDPA bus
-Message-ID: <20200213105743-mutt-send-email-mst@kernel.org>
-References: <20200210035608.10002-4-jasowang@redhat.com>
- <20200211134746.GI4271@mellanox.com>
- <cf7abcc9-f8ef-1fe2-248e-9b9028788ade@redhat.com>
- <20200212125108.GS4271@mellanox.com>
- <12775659-1589-39e4-e344-b7a2c792b0f3@redhat.com>
- <20200213134128.GV4271@mellanox.com>
- <ebaea825-5432-65e2-2ab3-720a8c4030e7@redhat.com>
- <20200213150542.GW4271@mellanox.com>
- <20200213103714-mutt-send-email-mst@kernel.org>
- <20200213155154.GX4271@mellanox.com>
+        Thu, 13 Feb 2020 10:57:37 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id 7B3B86B88
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 09:57:36 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 2GrwjLgseRP4z2Grwjn9gT; Thu, 13 Feb 2020 09:57:36 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Um+rb49HzTPy3aKPHN4PPBR2MnF7JZXlZxEpVoL80Og=; b=Xcayo0azDhxE8evk6zOzISkC+a
+        UscPK1V/D7cNNgwGTSzhFGcAR6B2WrjvRP93mpb1Fsqi39h5TwWNN7kYUxsA9xxk2jTF4oe+m+KCH
+        9OpmMN246fJjGVFyIIuuhA1sncn0YcQZQawhW6nwozqMMX601tRPFklDF9QfWDzV0Fp9cKDew2DLf
+        1KfjoNGmHVAxdn32wiwQrlGG1Y8/wuSTQdicz+Xsnd5vlxfck+R99EWzPCxVlIMbEdFj7CBrBPbiy
+        iD9Obr+ZVl2DYbXVsAwUr2fjAvZcRZIVvallDEYMJQIxw4Y9pqerWkoVFamVJrjKPGcVQK8XTe+6V
+        texiosAA==;
+Received: from [200.68.140.15] (port=18357 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j2Gru-003WPh-M4; Thu, 13 Feb 2020 09:57:34 -0600
+Date:   Thu, 13 Feb 2020 10:00:04 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ceph: cache: Replace zero-length array with flexible-array
+ member
+Message-ID: <20200213160004.GA4334@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200213155154.GX4271@mellanox.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.140.15
+X-Source-L: No
+X-Exim-ID: 1j2Gru-003WPh-M4
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [200.68.140.15]:18357
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 35
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 11:51:54AM -0400, Jason Gunthorpe wrote:
-> The 'class' is supposed to provide all the library functions to remove
-> this duplication. Instead of plugging the HW driver in via some bus
-> scheme every subsystem has its own 'ops' that the HW driver provides
-> to the subsystem's class via subsystem_register()
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-Hmm I'm not familiar with subsystem_register. A grep didn't find it
-in the kernel either ...
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
+
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
+
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/ceph/cache.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
+index 270b769607a2..2f5cb6bc78e1 100644
+--- a/fs/ceph/cache.c
++++ b/fs/ceph/cache.c
+@@ -32,7 +32,7 @@ struct ceph_fscache_entry {
+ 	size_t uniq_len;
+ 	/* The following members must be last */
+ 	struct ceph_fsid fsid;
+-	char uniquifier[0];
++	char uniquifier[];
+ };
+ 
+ static const struct fscache_cookie_def ceph_fscache_fsid_object_def = {
 -- 
-MST
+2.25.0
 
