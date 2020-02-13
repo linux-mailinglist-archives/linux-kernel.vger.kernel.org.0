@@ -2,77 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F07615CAC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 19:55:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31B2415CAC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 19:56:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728339AbgBMSzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 13:55:44 -0500
-Received: from ms.lwn.net ([45.79.88.28]:47042 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727761AbgBMSzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 13:55:44 -0500
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728382AbgBMS4T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 13:56:19 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:44609 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727761AbgBMS4S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 13:56:18 -0500
+Received: from mwalle01.sab.local. (unknown [213.135.10.150])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id DB34A740;
-        Thu, 13 Feb 2020 18:55:43 +0000 (UTC)
-Date:   Thu, 13 Feb 2020 11:55:42 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Stephen Kitt <steve@sk2.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] docs: merge debugging-modules.txt into
- sysctl/kernel.rst
-Message-ID: <20200213115542.79a86048@lwn.net>
-In-Reply-To: <20200213174701.3200366-3-steve@sk2.org>
-References: <20200213174701.3200366-1-steve@sk2.org>
-        <20200213174701.3200366-3-steve@sk2.org>
-Organization: LWN.net
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 6EA2122F9C;
+        Thu, 13 Feb 2020 19:56:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1581620173;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=9an3iRVq2YjIPfUhYxOoLpl1wuu7J1Z3FBZN8OEzMp4=;
+        b=YYX1Qo7Rs5XhmvPZejBWD6p/KoWkO9d5YsN0SaQ96glLZGpziObPS2TFDC7CncV2UmbpD2
+        8xXQMIuFMJ3RsLc/MRs6EcORpgWLZIrDUjfvVEusE/Ol0vLj8V4vu/UBFTr7pjCliSgfR+
+        cpHNY7y6PlPwxYOHLI4WTFVSXLhby58=
+From:   Michael Walle <michael@walle.cc>
+To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Michael Walle <michael@walle.cc>
+Subject: [PATCH] arm64: dts: ls1028a: add missing SPI nodes
+Date:   Thu, 13 Feb 2020 19:56:06 +0100
+Message-Id: <20200213185606.2747-1-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: ++++++
+X-Spam-Level: ******
+X-Rspamd-Server: web
+X-Spam-Status: Yes, score=6.40
+X-Spam-Score: 6.40
+X-Rspamd-Queue-Id: 6EA2122F9C
+X-Spamd-Result: default: False [6.40 / 15.00];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         R_MISSING_CHARSET(2.50)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         BROKEN_CONTENT_TYPE(1.50)[];
+         DKIM_SIGNED(0.00)[];
+         DBL_PROHIBIT(0.00)[0.32.167.96:email,0.32.50.48:email,0.32.89.64:email,0.32.11.32:email];
+         RCPT_COUNT_SEVEN(0.00)[8];
+         MID_CONTAINS_FROM(1.00)[];
+         NEURAL_HAM(-0.00)[-0.747];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         ASN(0.00)[asn:12941, ipnet:213.135.0.0/19, country:DE];
+         SUSPICIOUS_RECIPS(1.50)[]
+X-Spam: Yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Feb 2020 18:46:57 +0100
-Stephen Kitt <steve@sk2.org> wrote:
+The LS1028A has three (dual) SPI controller. These are compatible with
+the ones from the LS1021A. Add the nodes.
 
-> This fits nicely in sysctl/kernel.rst, merge it (and rephrase it)
-> instead of linking to it.
-> 
-> Signed-off-by: Stephen Kitt <steve@sk2.org>
-> ---
->  Documentation/admin-guide/sysctl/kernel.rst | 16 ++++++++++++++-
->  Documentation/debugging-modules.txt         | 22 ---------------------
->  2 files changed, 15 insertions(+), 23 deletions(-)
->  delete mode 100644 Documentation/debugging-modules.txt
+This was tested on a custom board.
 
-One quick comment here:
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
+ .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 39 +++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-> index 1de8f0b199b1..1aacd7a24f5a 100644
-> --- a/Documentation/admin-guide/sysctl/kernel.rst
-> +++ b/Documentation/admin-guide/sysctl/kernel.rst
-> @@ -388,7 +388,21 @@ This flag controls the L2 cache of G3 processor boards. If
->  modprobe
->  ========
->  
-> -See Documentation/debugging-modules.txt.
-> +This gives the full path of the modprobe command which the kernel will
-> +use to load modules. This can be used to debug module loading
-> +requests:
-> +
-> +::
-
-This can be more readably written as just:
-
-     requests::
-
-No need for the separate "::" line.
-
-Thanks,
-
-jon
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index 36007d07ac6d..302f353e57db 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -290,6 +290,45 @@
+ 			status = "disabled";
+ 		};
+ 
++		dspi0: spi@2100000 {
++			compatible = "fsl,ls1021a-v1.0-dspi";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2100000 0x0 0x10000>;
++			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "dspi";
++			clocks = <&clockgen 4 1>;
++			spi-num-chipselects = <4>;
++			little-endian;
++			status = "disabled";
++		};
++
++		dspi1: spi@2110000 {
++			compatible = "fsl,ls1021a-v1.0-dspi";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2110000 0x0 0x10000>;
++			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "dspi";
++			clocks = <&clockgen 4 1>;
++			spi-num-chipselects = <4>;
++			little-endian;
++			status = "disabled";
++		};
++
++		dspi2: spi@2120000 {
++			compatible = "fsl,ls1021a-v1.0-dspi";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2120000 0x0 0x10000>;
++			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "dspi";
++			clocks = <&clockgen 4 1>;
++			spi-num-chipselects = <3>;
++			little-endian;
++			status = "disabled";
++		};
++
+ 		esdhc: mmc@2140000 {
+ 			compatible = "fsl,ls1028a-esdhc", "fsl,esdhc";
+ 			reg = <0x0 0x2140000 0x0 0x10000>;
+-- 
+2.20.1
 
