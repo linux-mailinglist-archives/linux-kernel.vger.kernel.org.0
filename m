@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BE7C15C1B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:26:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35B7C15C20C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:28:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728274AbgBMPZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:25:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36710 "EHLO mail.kernel.org"
+        id S2387751AbgBMP2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:28:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728033AbgBMPYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:24:05 -0500
+        id S1728631AbgBMP0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:04 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16CF924699;
-        Thu, 13 Feb 2020 15:24:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33A3B246A3;
+        Thu, 13 Feb 2020 15:26:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607445;
-        bh=ci0cWJhWEJ5TIxrNLKSvUC5wi9hhvqvQis8zL+6Emvw=;
+        s=default; t=1581607563;
+        bh=gjjDWGRooBc5UqVMIQJAX12Qn9s0CDwI6cpcchgX04k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pa913HQWii9TKET2rOwFWJ49y4IgCnD8ynhpvjepFteo+dOVqsCFW4W9HDuEvUQrw
-         c7vTnibAYS0AqBN7Qhxule8CyR537xWhcbBOJzaJGTOPsJGwyDkju4MwRBsIxCa4Qk
-         8fMpYJlAUsM3CfYlKgZKPxNu+Sbri9JyRM7K3ogE=
+        b=tRR/eXC1bQ8sUuAM6z0NxYVA1AmTs3PqNgyquV7zylYE6TG3B6b0ZxTC0Abgczn0o
+         YGhq3fdkR8JaggZQrAWFTcxCRHO3RXj3nxj2Yup1EBHg4MwfSxWU7UqMLtD0V82/cB
+         oNCaCG2BHfuInOxyduS70r5haCuWtvLlHnZVTRlc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 086/116] drm: atmel-hlcdc: enable clock before configuring timing engine
+        stable@vger.kernel.org, Wayne Lin <Wayne.Lin@amd.com>,
+        Lyude Paul <lyude@redhat.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 127/173] drm/dp_mst: Remove VCPI while disabling topology mgr
 Date:   Thu, 13 Feb 2020 07:20:30 -0800
-Message-Id: <20200213151916.139732436@linuxfoundation.org>
+Message-Id: <20200213152004.290260546@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
-References: <20200213151842.259660170@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,55 +43,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+From: Wayne Lin <Wayne.Lin@amd.com>
 
-[ Upstream commit 2c1fb9d86f6820abbfaa38a6836157c76ccb4e7b ]
+[ Upstream commit 64e62bdf04ab8529f45ed0a85122c703035dec3a ]
 
-Changing pixel clock source without having this clock source enabled
-will block the timing engine and the next operations after (in this case
-setting ATMEL_HLCDC_CFG(5) settings in atmel_hlcdc_crtc_mode_set_nofb()
-will fail). It is recomended (although in datasheet this is not present)
-to actually enabled pixel clock source before doing any changes on timing
-enginge (only SAM9X60 datasheet specifies that the peripheral clock and
-pixel clock must be enabled before using LCD controller).
+[Why]
 
-Fixes: 1a396789f65a ("drm: add Atmel HLCDC Display Controller support")
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: <stable@vger.kernel.org> # v4.0+
-Link: https://patchwork.freedesktop.org/patch/msgid/1576672109-22707-3-git-send-email-claudiu.beznea@microchip.com
+This patch is trying to address the issue observed when hotplug DP
+daisy chain monitors.
+
+e.g.
+src-mstb-mstb-sst -> src (unplug) mstb-mstb-sst -> src-mstb-mstb-sst
+(plug in again)
+
+Once unplug a DP MST capable device, driver will call
+drm_dp_mst_topology_mgr_set_mst() to disable MST. In this function,
+it cleans data of topology manager while disabling mst_state. However,
+it doesn't clean up the proposed_vcpis of topology manager.
+If proposed_vcpi is not reset, once plug in MST daisy chain monitors
+later, code will fail at checking port validation while trying to
+allocate payloads.
+
+When MST capable device is plugged in again and try to allocate
+payloads by calling drm_dp_update_payload_part1(), this
+function will iterate over all proposed virtual channels to see if
+any proposed VCPI's num_slots is greater than 0. If any proposed
+VCPI's num_slots is greater than 0 and the port which the
+specific virtual channel directed to is not in the topology, code then
+fails at the port validation. Since there are stale VCPI allocations
+from the previous topology enablement in proposed_vcpi[], code will fail
+at port validation and reurn EINVAL.
+
+[How]
+
+Clean up the data of stale proposed_vcpi[] and reset mgr->proposed_vcpis
+to NULL while disabling mst in drm_dp_mst_topology_mgr_set_mst().
+
+Changes since v1:
+*Add on more details in commit message to describe the issue which the
+patch is trying to fix
+
+Signed-off-by: Wayne Lin <Wayne.Lin@amd.com>
+[added cc to stable]
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20191205090043.7580-1-Wayne.Lin@amd.com
+Cc: <stable@vger.kernel.org> # v3.17+
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/drm_dp_mst_topology.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-index 9b17a66cf0e16..aa54a6a2ad1da 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-@@ -81,7 +81,11 @@ static void atmel_hlcdc_crtc_mode_set_nofb(struct drm_crtc *c)
- 	struct videomode vm;
- 	unsigned long prate;
- 	unsigned int cfg;
--	int div;
-+	int div, ret;
-+
-+	ret = clk_prepare_enable(crtc->dc->hlcdc->sys_clk);
-+	if (ret)
-+		return;
+diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
+index 9d94c306c8ca1..f427a5dc66685 100644
+--- a/drivers/gpu/drm/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+@@ -2046,6 +2046,7 @@ static bool drm_dp_get_vc_payload_bw(int dp_link_bw,
+ int drm_dp_mst_topology_mgr_set_mst(struct drm_dp_mst_topology_mgr *mgr, bool mst_state)
+ {
+ 	int ret = 0;
++	int i = 0;
+ 	struct drm_dp_mst_branch *mstb = NULL;
  
- 	vm.vfront_porch = adj->crtc_vsync_start - adj->crtc_vdisplay;
- 	vm.vback_porch = adj->crtc_vtotal - adj->crtc_vsync_end;
-@@ -140,6 +144,8 @@ static void atmel_hlcdc_crtc_mode_set_nofb(struct drm_crtc *c)
- 			   ATMEL_HLCDC_VSPSU | ATMEL_HLCDC_VSPHO |
- 			   ATMEL_HLCDC_GUARDTIME_MASK | ATMEL_HLCDC_MODE_MASK,
- 			   cfg);
+ 	mutex_lock(&mgr->lock);
+@@ -2106,10 +2107,21 @@ int drm_dp_mst_topology_mgr_set_mst(struct drm_dp_mst_topology_mgr *mgr, bool ms
+ 		/* this can fail if the device is gone */
+ 		drm_dp_dpcd_writeb(mgr->aux, DP_MSTM_CTRL, 0);
+ 		ret = 0;
++		mutex_lock(&mgr->payload_lock);
+ 		memset(mgr->payloads, 0, mgr->max_payloads * sizeof(struct drm_dp_payload));
+ 		mgr->payload_mask = 0;
+ 		set_bit(0, &mgr->payload_mask);
++		for (i = 0; i < mgr->max_payloads; i++) {
++			struct drm_dp_vcpi *vcpi = mgr->proposed_vcpis[i];
 +
-+	clk_disable_unprepare(crtc->dc->hlcdc->sys_clk);
- }
++			if (vcpi) {
++				vcpi->vcpi = 0;
++				vcpi->num_slots = 0;
++			}
++			mgr->proposed_vcpis[i] = NULL;
++		}
+ 		mgr->vcpi_mask = 0;
++		mutex_unlock(&mgr->payload_lock);
+ 	}
  
- static bool atmel_hlcdc_crtc_mode_fixup(struct drm_crtc *c,
+ out_unlock:
 -- 
 2.20.1
 
