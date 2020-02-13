@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16FBD15C394
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 732EE15C558
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:55:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729859AbgBMPml (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:42:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54618 "EHLO mail.kernel.org"
+        id S1729930AbgBMPzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:55:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729580AbgBMP2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:28:10 -0500
+        id S1728186AbgBMPZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:43 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDFA620661;
-        Thu, 13 Feb 2020 15:28:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3349D24689;
+        Thu, 13 Feb 2020 15:25:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607689;
-        bh=xe3r34Is/TdpWklCLdm6X5UfJDrx1AOcYQjschZd5Nc=;
+        s=default; t=1581607542;
+        bh=mtAVfQBFiAs/RLpW7EvuRjeUj677ivimXNGV5IpWMqw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wnbN9hHUTOjaLWiMcFf9TlohxvykUdpmvy2h7UbQNeNriMkD+YVqJMyU+jpZJRf+1
-         SRHQ+YkxG1Z+AlYQHIZBuATLWA4NAinH9U8z0chloakexAzYhREe0VHwELsQyBoGaj
-         ShudrgyDpHZ252UXLSP/KxTWAqw8X8LSq4UTgBdc=
+        b=vIwU2IwuGDL/QDDZFFg8/+kuWM4Y4pempOMBSL4AHSSetzPp6MBJWZdXW6qoSK4A2
+         B+z7TLuBYFJHvq9EIQUVQNtMpOWoGRDW21Rhe3H8jQfafptNxlXK4YEU8I5UzZGB1W
+         VuQe1wRondaCRRLS1wmlHAclFwGj7yxUXrFO1LiE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olga Kornievskaia <kolga@netapp.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 5.5 027/120] NFSv4.x recover from pre-mature loss of openstateid
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 120/173] Btrfs: fix assertion failure on fsync with NO_HOLES enabled
 Date:   Thu, 13 Feb 2020 07:20:23 -0800
-Message-Id: <20200213151911.293201740@linuxfoundation.org>
+Message-Id: <20200213152002.658064326@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,141 +44,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olga Kornievskaia <kolga@netapp.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit d826e5b827641ae1bebb33d23a774f4e9bb8e94f upstream.
+[ Upstream commit 0ccc3876e4b2a1559a4dbe3126dda4459d38a83b ]
 
-Ever since the commit 0e0cb35b417f, it's possible to lose an open stateid
-while retrying a CLOSE due to ERR_OLD_STATEID. Once that happens,
-operations that require openstateid fail with EAGAIN which is propagated
-to the application then tests like generic/446 and generic/168 fail with
-"Resource temporarily unavailable".
+Back in commit a89ca6f24ffe4 ("Btrfs: fix fsync after truncate when
+no_holes feature is enabled") I added an assertion that is triggered when
+an inline extent is found to assert that the length of the (uncompressed)
+data the extent represents is the same as the i_size of the inode, since
+that is true most of the time I couldn't find or didn't remembered about
+any exception at that time. Later on the assertion was expanded twice to
+deal with a case of a compressed inline extent representing a range that
+matches the sector size followed by an expanding truncate, and another
+case where fallocate can update the i_size of the inode without adding
+or updating existing extents (if the fallocate range falls entirely within
+the first block of the file). These two expansion/fixes of the assertion
+were done by commit 7ed586d0a8241 ("Btrfs: fix assertion on fsync of
+regular file when using no-holes feature") and commit 6399fb5a0b69a
+("Btrfs: fix assertion failure during fsync in no-holes mode").
+These however missed the case where an falloc expands the i_size of an
+inode to exactly the sector size and inline extent exists, for example:
 
-Instead of returning this error, initiate state recovery when possible to
-recover the open stateid and then try calling nfs4_select_rw_stateid()
-again.
+ $ mkfs.btrfs -f -O no-holes /dev/sdc
+ $ mount /dev/sdc /mnt
 
-Fixes: 0e0cb35b417f ("NFSv4: Handle NFS4ERR_OLD_STATEID in CLOSE/OPEN_DOWNGRADE")
-Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ $ xfs_io -f -c "pwrite -S 0xab 0 1096" /mnt/foobar
+ wrote 1096/1096 bytes at offset 0
+ 1 KiB, 1 ops; 0.0002 sec (4.448 MiB/sec and 4255.3191 ops/sec)
 
+ $ xfs_io -c "falloc 1096 3000" /mnt/foobar
+ $ xfs_io -c "fsync" /mnt/foobar
+ Segmentation fault
+
+ $ dmesg
+ [701253.602385] assertion failed: len == i_size || (len == fs_info->sectorsize && btrfs_file_extent_compression(leaf, extent) != BTRFS_COMPRESS_NONE) || (len < i_size && i_size < fs_info->sectorsize), file: fs/btrfs/tree-log.c, line: 4727
+ [701253.602962] ------------[ cut here ]------------
+ [701253.603224] kernel BUG at fs/btrfs/ctree.h:3533!
+ [701253.603503] invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
+ [701253.603774] CPU: 2 PID: 7192 Comm: xfs_io Tainted: G        W         5.0.0-rc8-btrfs-next-45 #1
+ [701253.604054] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.2-0-gf9626ccb91-prebuilt.qemu-project.org 04/01/2014
+ [701253.604650] RIP: 0010:assfail.constprop.23+0x18/0x1a [btrfs]
+ (...)
+ [701253.605591] RSP: 0018:ffffbb48c186bc48 EFLAGS: 00010286
+ [701253.605914] RAX: 00000000000000de RBX: ffff921d0a7afc08 RCX: 0000000000000000
+ [701253.606244] RDX: 0000000000000000 RSI: ffff921d36b16868 RDI: ffff921d36b16868
+ [701253.606580] RBP: ffffbb48c186bcf0 R08: 0000000000000000 R09: 0000000000000000
+ [701253.606913] R10: 0000000000000003 R11: 0000000000000000 R12: ffff921d05d2de18
+ [701253.607247] R13: ffff921d03b54000 R14: 0000000000000448 R15: ffff921d059ecf80
+ [701253.607769] FS:  00007f14da906700(0000) GS:ffff921d36b00000(0000) knlGS:0000000000000000
+ [701253.608163] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ [701253.608516] CR2: 000056087ea9f278 CR3: 00000002268e8001 CR4: 00000000003606e0
+ [701253.608880] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+ [701253.609250] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+ [701253.609608] Call Trace:
+ [701253.609994]  btrfs_log_inode+0xdfb/0xe40 [btrfs]
+ [701253.610383]  btrfs_log_inode_parent+0x2be/0xa60 [btrfs]
+ [701253.610770]  ? do_raw_spin_unlock+0x49/0xc0
+ [701253.611150]  btrfs_log_dentry_safe+0x4a/0x70 [btrfs]
+ [701253.611537]  btrfs_sync_file+0x3b2/0x440 [btrfs]
+ [701253.612010]  ? do_sysinfo+0xb0/0xf0
+ [701253.612552]  do_fsync+0x38/0x60
+ [701253.612988]  __x64_sys_fsync+0x10/0x20
+ [701253.613360]  do_syscall_64+0x60/0x1b0
+ [701253.613733]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+ [701253.614103] RIP: 0033:0x7f14da4e66d0
+ (...)
+ [701253.615250] RSP: 002b:00007fffa670fdb8 EFLAGS: 00000246 ORIG_RAX: 000000000000004a
+ [701253.615647] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f14da4e66d0
+ [701253.616047] RDX: 000056087ea9c260 RSI: 000056087ea9c260 RDI: 0000000000000003
+ [701253.616450] RBP: 0000000000000001 R08: 0000000000000020 R09: 0000000000000010
+ [701253.616854] R10: 000000000000009b R11: 0000000000000246 R12: 000056087ea9c260
+ [701253.617257] R13: 000056087ea9c240 R14: 0000000000000000 R15: 000056087ea9dd10
+ (...)
+ [701253.619941] ---[ end trace e088d74f132b6da5 ]---
+
+Updating the assertion again to allow for this particular case would result
+in a meaningless assertion, plus there is currently no risk of logging
+content that would result in any corruption after a log replay if the size
+of the data encoded in an inline extent is greater than the inode's i_size
+(which is not currently possibe either with or without compression),
+therefore just remove the assertion.
+
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/nfs42proc.c |   36 ++++++++++++++++++++++++++++--------
- fs/nfs/nfs4proc.c  |    2 ++
- fs/nfs/pnfs.c      |    2 --
- 3 files changed, 30 insertions(+), 10 deletions(-)
+ fs/btrfs/tree-log.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
---- a/fs/nfs/nfs42proc.c
-+++ b/fs/nfs/nfs42proc.c
-@@ -61,8 +61,11 @@ static int _nfs42_proc_fallocate(struct
+diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
+index 65a986054f89e..3558697e4c042 100644
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -4727,15 +4727,8 @@ static int btrfs_log_trailing_hole(struct btrfs_trans_handle *trans,
+ 					struct btrfs_file_extent_item);
  
- 	status = nfs4_set_rw_stateid(&args.falloc_stateid, lock->open_context,
- 			lock, FMODE_WRITE);
--	if (status)
-+	if (status) {
-+		if (status == -EAGAIN)
-+			status = -NFS4ERR_BAD_STATEID;
- 		return status;
-+	}
+ 		if (btrfs_file_extent_type(leaf, extent) ==
+-		    BTRFS_FILE_EXTENT_INLINE) {
+-			len = btrfs_file_extent_ram_bytes(leaf, extent);
+-			ASSERT(len == i_size ||
+-			       (len == fs_info->sectorsize &&
+-				btrfs_file_extent_compression(leaf, extent) !=
+-				BTRFS_COMPRESS_NONE) ||
+-			       (len < i_size && i_size < fs_info->sectorsize));
++		    BTRFS_FILE_EXTENT_INLINE)
+ 			return 0;
+-		}
  
- 	res.falloc_fattr = nfs_alloc_fattr();
- 	if (!res.falloc_fattr)
-@@ -287,8 +290,11 @@ static ssize_t _nfs42_proc_copy(struct f
- 	} else {
- 		status = nfs4_set_rw_stateid(&args->src_stateid,
- 				src_lock->open_context, src_lock, FMODE_READ);
--		if (status)
-+		if (status) {
-+			if (status == -EAGAIN)
-+				status = -NFS4ERR_BAD_STATEID;
- 			return status;
-+		}
- 	}
- 	status = nfs_filemap_write_and_wait_range(file_inode(src)->i_mapping,
- 			pos_src, pos_src + (loff_t)count - 1);
-@@ -297,8 +303,11 @@ static ssize_t _nfs42_proc_copy(struct f
- 
- 	status = nfs4_set_rw_stateid(&args->dst_stateid, dst_lock->open_context,
- 				     dst_lock, FMODE_WRITE);
--	if (status)
-+	if (status) {
-+		if (status == -EAGAIN)
-+			status = -NFS4ERR_BAD_STATEID;
- 		return status;
-+	}
- 
- 	status = nfs_sync_inode(dst_inode);
- 	if (status)
-@@ -546,8 +555,11 @@ static int _nfs42_proc_copy_notify(struc
- 	status = nfs4_set_rw_stateid(&args->cna_src_stateid, ctx, l_ctx,
- 				     FMODE_READ);
- 	nfs_put_lock_context(l_ctx);
--	if (status)
-+	if (status) {
-+		if (status == -EAGAIN)
-+			status = -NFS4ERR_BAD_STATEID;
- 		return status;
-+	}
- 
- 	status = nfs4_call_sync(src_server->client, src_server, &msg,
- 				&args->cna_seq_args, &res->cnr_seq_res, 0);
-@@ -618,8 +630,11 @@ static loff_t _nfs42_proc_llseek(struct
- 
- 	status = nfs4_set_rw_stateid(&args.sa_stateid, lock->open_context,
- 			lock, FMODE_READ);
--	if (status)
-+	if (status) {
-+		if (status == -EAGAIN)
-+			status = -NFS4ERR_BAD_STATEID;
- 		return status;
-+	}
- 
- 	status = nfs_filemap_write_and_wait_range(inode->i_mapping,
- 			offset, LLONG_MAX);
-@@ -994,13 +1009,18 @@ static int _nfs42_proc_clone(struct rpc_
- 
- 	status = nfs4_set_rw_stateid(&args.src_stateid, src_lock->open_context,
- 			src_lock, FMODE_READ);
--	if (status)
-+	if (status) {
-+		if (status == -EAGAIN)
-+			status = -NFS4ERR_BAD_STATEID;
- 		return status;
--
-+	}
- 	status = nfs4_set_rw_stateid(&args.dst_stateid, dst_lock->open_context,
- 			dst_lock, FMODE_WRITE);
--	if (status)
-+	if (status) {
-+		if (status == -EAGAIN)
-+			status = -NFS4ERR_BAD_STATEID;
- 		return status;
-+	}
- 
- 	res.dst_fattr = nfs_alloc_fattr();
- 	if (!res.dst_fattr)
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -3239,6 +3239,8 @@ static int _nfs4_do_setattr(struct inode
- 		nfs_put_lock_context(l_ctx);
- 		if (status == -EIO)
- 			return -EBADF;
-+		else if (status == -EAGAIN)
-+			goto zero_stateid;
- 	} else {
- zero_stateid:
- 		nfs4_stateid_copy(&arg->stateid, &zero_stateid);
---- a/fs/nfs/pnfs.c
-+++ b/fs/nfs/pnfs.c
-@@ -1998,8 +1998,6 @@ lookup_again:
- 			trace_pnfs_update_layout(ino, pos, count,
- 					iomode, lo, lseg,
- 					PNFS_UPDATE_LAYOUT_INVALID_OPEN);
--			if (status != -EAGAIN)
--				goto out_unlock;
- 			spin_unlock(&ino->i_lock);
- 			nfs4_schedule_stateid_recovery(server, ctx->state);
- 			pnfs_clear_first_layoutget(lo);
+ 		len = btrfs_file_extent_num_bytes(leaf, extent);
+ 		/* Last extent goes beyond i_size, no need to log a hole. */
+-- 
+2.20.1
+
 
 
