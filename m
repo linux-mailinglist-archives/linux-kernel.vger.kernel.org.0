@@ -2,78 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E27515C94E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 18:18:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9274115C950
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 18:18:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728434AbgBMRSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 12:18:34 -0500
-Received: from foss.arm.com ([217.140.110.172]:51294 "EHLO foss.arm.com"
+        id S1728599AbgBMRSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 12:18:39 -0500
+Received: from mga12.intel.com ([192.55.52.136]:8689 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727781AbgBMRSd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 12:18:33 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9CDC6328;
-        Thu, 13 Feb 2020 09:18:32 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 204453F6CF;
-        Thu, 13 Feb 2020 09:18:31 -0800 (PST)
-Date:   Thu, 13 Feb 2020 17:18:30 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH 1/9] ASoC: core: allow a dt node to provide several
- components
-Message-ID: <20200213171830.GH4333@sirena.org.uk>
-References: <20200213155159.3235792-1-jbrunet@baylibre.com>
- <20200213155159.3235792-2-jbrunet@baylibre.com>
+        id S1727781AbgBMRSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 12:18:38 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 09:18:38 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,437,1574150400"; 
+   d="scan'208";a="267204517"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga002.fm.intel.com with ESMTP; 13 Feb 2020 09:18:35 -0800
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1j2I8K-001B0E-Ab; Thu, 13 Feb 2020 19:18:36 +0200
+Date:   Thu, 13 Feb 2020 19:18:36 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     "Srivastava, Shobhit" <shobhit.srivastava@intel.com>
+Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Rajat Jain <rajatja@google.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Mark Brown <broonie@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        "rajatxjain@gmail.com" <rajatxjain@gmail.com>,
+        "evgreen@google.com" <evgreen@google.com>,
+        "Muthukrishnan, Porselvan" <porselvan.muthukrishnan@intel.com>
+Subject: Re: Re: [PATCH] spi: pxa2xx: Add CS control clock quirk
+Message-ID: <20200213171836.GD10400@smile.fi.intel.com>
+References: <CB4ED07B85D6BB40B8B44F6D5442E4F6572C1523@BGSMSX101.gar.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="LZFKeWUZP29EKQNE"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200213155159.3235792-2-jbrunet@baylibre.com>
-X-Cookie: Academicians care, that's who.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CB4ED07B85D6BB40B8B44F6D5442E4F6572C1523@BGSMSX101.gar.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 13, 2020 at 04:57:24PM +0000, Srivastava, Shobhit wrote:
+> > On 2/12/20 12:34 AM, Rajat Jain wrote:
 
---LZFKeWUZP29EKQNE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+...
 
-On Thu, Feb 13, 2020 at 04:51:51PM +0100, Jerome Brunet wrote:
+> > I wonder is it enough to have this quick toggling only or is time or actually
+> > number of clock cycles dependent? Now there is no delay between but I'm
+> > thinking if it needs certain number cycles does this still work when using low
+> > ssp_clk rates similar than in commit d0283eb2dbc1 ("spi:
+> > pxa2xx: Add output control for multiple Intel LPSS chip selects").
+> > 
+> > I'm thinking can this be done only once after resume and may other LPSS
+> > blocks need the same? I.e. should this be done in drivers/mfd/intel-lpss.c?
 
-> At the moment, querying the dai_name will stop of the first component
-> matching the dt node. This does not allow a device (single dt node) to
-> provide several ASoC components which could then be used through DT.
+> This behavior is seen after S0ix resume, but it is not seen after S3 resume.
 
-> This change let the search go on if the xlate function of the component
-> returns an error, giving the possibility to another component to match
-> and return the dai_name.
+I already commented in the other thread about this.
 
-My first question here would be why you'd want to do that rather than
-combine everything into a single component since the hardware seems to
-be doing that anyway.  Hopefully the rest of the series will answer this
-but it'd be good in the changelog here.
+Have you checked what's going on in intel_lpss_suspend() and
+intel_lpss_resume() for your case?
 
---LZFKeWUZP29EKQNE
-Content-Type: application/pgp-signature; name="signature.asc"
+Is intel_lpss_prepare() called during S0ix exit?
 
------BEGIN PGP SIGNATURE-----
+> I am thinking that it happens because we are not enabling the SSP after resume. 
+> It is deferred until we need to send data. By enabling the SSP in resume, I don’t see the issue.
+> For S3, I think BIOS re-enables the SSP in resume flow.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5FhOUACgkQJNaLcl1U
-h9CqPgf+L/Xt6fytZ8T0Qto2jS45qM+J0JJtBuwbWI1qn00Rangat1H8RPcg9vlo
-3gwlnj9jjdCCvGNB3+ECaCtCeh5QihLVZXSs8qXYIZF502avt/atdjVBfK7XT5jb
-uKjjMM+fn5wwvTfZsi3OOxXtUMbpSkuDJ82c8zFDgQBss4F7T94Lq3Qzw5f6Bvub
-/m1zvfVuh4LiTa7HADtrrD9Az0o9gO/Ielc0xH0mHydZtuv4qIMOxPQXwT/14tU1
-hLQwfy9VkkBfA0xuKKVJ0vjyWhi7A0SdE6RdbR9D0QUSBuSD2iPV28XaJD+jFwX3
-k0q3tgreqtSmKkmnySuAGJ+wTQIzVg==
-=Cn3Z
------END PGP SIGNATURE-----
+-- 
+With Best Regards,
+Andy Shevchenko
 
---LZFKeWUZP29EKQNE--
+
