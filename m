@@ -2,148 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FF5115C9D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 19:00:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAFE115C9ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 19:07:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbgBMSAN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 13:00:13 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40018 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727754AbgBMSAM (ORCPT
+        id S1728186AbgBMSHC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 13:07:02 -0500
+Received: from 2.mo4.mail-out.ovh.net ([46.105.72.36]:37976 "EHLO
+        2.mo4.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbgBMSHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 13:00:12 -0500
-Received: by mail-wr1-f68.google.com with SMTP id t3so7818838wru.7
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 10:00:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=XXo3L4k48aibe+yP/A4EY8XTS9o1G2cK7ZyRw33XEt8=;
-        b=D2KwX3UVhNBaSMtlGygi7ujusj8mKB5CcFanw7hjeEE722YbtHnWTNV13eGfVuFNic
-         abEz7lOczVoEbxhOBIjwjHChdsNNJ83vitHq0RgebeASzJqg5/iVqBkCGex1dvQODZ6F
-         SBZNsy/HbodwmxtTnB0YGepG07xMUnGSS+u5BDsJAXOya+C134E/cC1GTaIbMsGIp9w6
-         v8olvCtghXvcl102ZRlwUmPAav21tepYq5Ogeq6AZQTkK1uoV7/ddYtGfqVcL4c5uza3
-         J9SyiO8c6oKS64EbROwk8eV2Pl+ttxALeDPsbZ+xvL6E4tiXuiZdEesuLxpdaQEc5iiN
-         h86A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=XXo3L4k48aibe+yP/A4EY8XTS9o1G2cK7ZyRw33XEt8=;
-        b=DjX+4KJv7P1aDnxPuzudvk6mLEafMSsWtXO35LTu4UVlbP6pB0SpUxn8ajXpt4U1DE
-         eHFaqXrThoZF/kuYDWb/DyyPS3xFPd3X/8xJ7Dxi4mHmY8aAkuubLdmByTjtSdRJ7V1Z
-         2xv5Xz/wHUrORQnL34QQXwMlkrMRN5ywPinWsx5BMlSVpBEEOO5E+gV6czUdPUW1XN/B
-         xMBZfBnhCXgBz+azTfgzznvXjJ5nsvLodT9muc8a/a+Z76I4eY6GOgfMrUovBqK5wF9l
-         VYLdt7kSM3ROt3UTKbSgaHbElgGF3VGk9jOHdR0R9poOqGj4vift4360IiZdyAnk1aUr
-         7zZg==
-X-Gm-Message-State: APjAAAUvxAdH8BDBVoPaUN/3cfOY6z9t80UULdRGuc398/1KxY3Jv4MZ
-        tjoNaka6dLHniEJmRzfeZvPujmQxwWE=
-X-Google-Smtp-Source: APXvYqyUsqTefNHa+WG1XIxQNt/pUPg/0tXe6oyOXxhPFPWFFV3tAT2SQrkX7z4Jz6q1Z1ekN+sbRg==
-X-Received: by 2002:a05:6000:10c:: with SMTP id o12mr23253172wrx.106.1581616810553;
-        Thu, 13 Feb 2020 10:00:10 -0800 (PST)
-Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id z11sm3630089wrv.96.2020.02.13.10.00.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 10:00:10 -0800 (PST)
-From:   Dmitry Safonov <dima@arista.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org
-Subject: [PATCH 2/2] watchdog/uapi: Add WDIOS_{RUN,STOP}_ON_REBOOT
-Date:   Thu, 13 Feb 2020 17:59:58 +0000
-Message-Id: <20200213175958.105914-3-dima@arista.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213175958.105914-1-dima@arista.com>
-References: <20200213175958.105914-1-dima@arista.com>
+        Thu, 13 Feb 2020 13:07:02 -0500
+Received: from player715.ha.ovh.net (unknown [10.110.171.125])
+        by mo4.mail-out.ovh.net (Postfix) with ESMTP id CA302224801
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 18:48:30 +0100 (CET)
+Received: from sk2.org (cre33-1_migr-88-122-126-116.fbx.proxad.net [88.122.126.116])
+        (Authenticated sender: steve@sk2.org)
+        by player715.ha.ovh.net (Postfix) with ESMTPSA id 41F56F2A6677;
+        Thu, 13 Feb 2020 17:48:25 +0000 (UTC)
+From:   Stephen Kitt <steve@sk2.org>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-doc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Stephen Kitt <steve@sk2.org>
+Subject: [PATCH 2/6] docs: merge debugging-modules.txt into sysctl/kernel.rst
+Date:   Thu, 13 Feb 2020 18:46:57 +0100
+Message-Id: <20200213174701.3200366-3-steve@sk2.org>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200213174701.3200366-1-steve@sk2.org>
+References: <20200213174701.3200366-1-steve@sk2.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 10082996616245562757
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedrieekgddutdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffojghfgggtgfesthekredtredtjeenucfhrhhomhepufhtvghphhgvnhcumfhithhtuceoshhtvghvvgesshhkvddrohhrgheqnecukfhppedtrddtrddtrddtpdekkedruddvvddruddviedrudduieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejudehrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Many watchdog drivers use watchdog_stop_on_reboot() helper in order
-to stop the watchdog on system reboot. Unfortunately, this logic is
-coded in driver's probe function and doesn't allows user to decide what
-to do during shutdown/reboot.
+This fits nicely in sysctl/kernel.rst, merge it (and rephrase it)
+instead of linking to it.
 
-On the other side, Xen and Qemu watchdog drivers (xen_wdt and i6300esb)
-may be configured to either send NMI or turn off/reboot VM as
-the watchdog action. As the kernel may stuck at any state, sending NMIs
-can't reliably reboot the VM.
-
-At Arista, we benefited from the following set-up: the emulated watchdogs
-trigger VM reset and softdog is set to catch less severe conditions to
-generate vmcore. Just before reboot watchdog's timeout is increased
-to some good-enough value (3 mins). That keeps watchdog always running
-and guarantees that VM doesn't stuck.
-
-Provide new WDIOS_RUN_ON_REBOOT and WDIOS_STOP_ON_REBOOT ioctl options
-to set up strategy on reboot.
-
-Signed-off-by: Dmitry Safonov <dima@arista.com>
+Signed-off-by: Stephen Kitt <steve@sk2.org>
 ---
- drivers/watchdog/watchdog_dev.c | 12 ++++++++++++
- include/linux/watchdog.h        |  6 ++++++
- include/uapi/linux/watchdog.h   |  3 ++-
- 3 files changed, 20 insertions(+), 1 deletion(-)
+ Documentation/admin-guide/sysctl/kernel.rst | 16 ++++++++++++++-
+ Documentation/debugging-modules.txt         | 22 ---------------------
+ 2 files changed, 15 insertions(+), 23 deletions(-)
+ delete mode 100644 Documentation/debugging-modules.txt
 
-diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
-index 8b5c742f24e8..c854cd0245db 100644
---- a/drivers/watchdog/watchdog_dev.c
-+++ b/drivers/watchdog/watchdog_dev.c
-@@ -753,6 +753,18 @@ static long watchdog_ioctl(struct file *file, unsigned int cmd,
- 		}
- 		if (val & WDIOS_ENABLECARD)
- 			err = watchdog_start(wdd);
-+
-+		if (val & WDIOS_RUN_ON_REBOOT) {
-+			if (val & WDIOS_STOP_ON_REBOOT) {
-+				err = -EINVAL;
-+				break;
-+			}
-+			watchdog_run_on_reboot(wdd);
-+			err = 0;
-+		} else if (val & WDIOS_STOP_ON_REBOOT) {
-+			watchdog_stop_on_reboot(wdd);
-+			err = 0;
-+		}
- 		break;
- 	case WDIOC_KEEPALIVE:
- 		if (!(wdd->info->options & WDIOF_KEEPALIVEPING)) {
-diff --git a/include/linux/watchdog.h b/include/linux/watchdog.h
-index 417d9f37077a..9e2ca7754631 100644
---- a/include/linux/watchdog.h
-+++ b/include/linux/watchdog.h
-@@ -150,6 +150,12 @@ static inline void watchdog_stop_on_reboot(struct watchdog_device *wdd)
- 	set_bit(WDOG_STOP_ON_REBOOT, &wdd->status);
- }
+diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+index 1de8f0b199b1..1aacd7a24f5a 100644
+--- a/Documentation/admin-guide/sysctl/kernel.rst
++++ b/Documentation/admin-guide/sysctl/kernel.rst
+@@ -388,7 +388,21 @@ This flag controls the L2 cache of G3 processor boards. If
+ modprobe
+ ========
  
-+/* Use the following function to keep the watchdog running on reboot */
-+static inline void watchdog_run_on_reboot(struct watchdog_device *wdd)
-+{
-+	clear_bit(WDOG_STOP_ON_REBOOT, &wdd->status);
-+}
+-See Documentation/debugging-modules.txt.
++This gives the full path of the modprobe command which the kernel will
++use to load modules. This can be used to debug module loading
++requests:
 +
- /* Use the following function to stop the watchdog when unregistering it */
- static inline void watchdog_stop_on_unregister(struct watchdog_device *wdd)
- {
-diff --git a/include/uapi/linux/watchdog.h b/include/uapi/linux/watchdog.h
-index b15cde5c9054..bf19a5d3c987 100644
---- a/include/uapi/linux/watchdog.h
-+++ b/include/uapi/linux/watchdog.h
-@@ -53,6 +53,7 @@ struct watchdog_info {
- #define	WDIOS_DISABLECARD	0x0001	/* Turn off the watchdog timer */
- #define	WDIOS_ENABLECARD	0x0002	/* Turn on the watchdog timer */
- #define	WDIOS_TEMPPANIC		0x0004	/* Kernel panic on temperature trip */
++::
++
++    echo '#! /bin/sh' > /tmp/modprobe
++    echo 'echo "$@" >> /tmp/modprobe.log' >> /tmp/modprobe
++    echo 'exec /sbin/modprobe "$@"' >> /tmp/modprobe
++    chmod a+x /tmp/modprobe
++    echo /tmp/modprobe > /proc/sys/kernel/modprobe
++
++This only applies when the *kernel* is requesting that the module be
++loaded; it won’t have any effect if the module is being loaded
++explicitly using ``modprobe`` from userspace.
+ 
+ 
+ modules_disabled
+diff --git a/Documentation/debugging-modules.txt b/Documentation/debugging-modules.txt
+deleted file mode 100644
+index 172ad4aec493..000000000000
+--- a/Documentation/debugging-modules.txt
++++ /dev/null
+@@ -1,22 +0,0 @@
+-Debugging Modules after 2.6.3
+------------------------------
 -
-+#define	WDIOS_RUN_ON_REBOOT	0x0008	/* Keep watchdog enabled on reboot */
-+#define	WDIOS_STOP_ON_REBOOT	0x0010	/* Turn off the watchdog on reboot */
- 
- #endif /* _UAPI_LINUX_WATCHDOG_H */
+-In almost all distributions, the kernel asks for modules which don't
+-exist, such as "net-pf-10" or whatever.  Changing "modprobe -q" to
+-"succeed" in this case is hacky and breaks some setups, and also we
+-want to know if it failed for the fallback code for old aliases in
+-fs/char_dev.c, for example.
+-
+-In the past a debugging message which would fill people's logs was
+-emitted.  This debugging message has been removed.  The correct way
+-of debugging module problems is something like this:
+-
+-echo '#! /bin/sh' > /tmp/modprobe
+-echo 'echo "$@" >> /tmp/modprobe.log' >> /tmp/modprobe
+-echo 'exec /sbin/modprobe "$@"' >> /tmp/modprobe
+-chmod a+x /tmp/modprobe
+-echo /tmp/modprobe > /proc/sys/kernel/modprobe
+-
+-Note that the above applies only when the *kernel* is requesting
+-that the module be loaded -- it won't have any effect if that module
+-is being loaded explicitly using "modprobe" from userspace.
 -- 
-2.25.0
+2.24.1
 
