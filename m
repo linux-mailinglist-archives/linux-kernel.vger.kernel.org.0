@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D30015C57E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:10:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 528AE15C767
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:14:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbgBMPWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:22:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60336 "EHLO mail.kernel.org"
+        id S1730414AbgBMQKZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 11:10:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728010AbgBMPWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728006AbgBMPWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Feb 2020 10:22:38 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A9122469A;
-        Thu, 13 Feb 2020 15:22:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29DB024690;
+        Thu, 13 Feb 2020 15:22:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607356;
-        bh=vF4Tl7FSUcGUORXXCvptmOuZZk3w99WSLJoEbil353U=;
+        s=default; t=1581607357;
+        bh=QVTMlH3x/XufSgrUByrIR90YJd9Pgm7gaU+w7qCgZC8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WzgZoMmb+N1wLN1PBMnVRJ7dAXFuyEHCDBhkFQMo7beUJB4bphBvyFO4OE7u5Iid4
-         ux+DZjyKmnrdfl/8fcBQTIkxJB48CroTff42fngz6VlfuAK2vd3d70lhisbS62Yjol
-         GGNw43OOjWE7PSMHBagZm5+5HLUUiWWPWFyAtvZw=
+        b=xJoQotKvfQuPIru/1LGxRiePF+8SPdCRNiTZ66i5vQgmanw/z6/Lld3M6dwvtEzpM
+         03L/V9HF4uvCfm/W2A+9ChUyc1dU3DVLok5SgI8Gn5D/WdLgorDjPCLtCacWlOLx1v
+         6qAgAK2uGqsdg4nWOfu965LkcYo2Da9EKmXv6WgU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Van Asbroeck <TheSven73@gmail.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCH 4.4 23/91] power: supply: ltc2941-battery-gauge: fix use-after-free
-Date:   Thu, 13 Feb 2020 07:19:40 -0800
-Message-Id: <20200213151830.591680561@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>
+Subject: [PATCH 4.4 24/91] Revert "ovl: modify ovl_permission() to do checks on two inodes"
+Date:   Thu, 13 Feb 2020 07:19:41 -0800
+Message-Id: <20200213151830.964687032@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
 References: <20200213151821.384445454@linuxfoundation.org>
@@ -43,41 +43,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Van Asbroeck <thesven73@gmail.com>
+From: Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>
 
-commit a60ec78d306c6548d4adbc7918b587a723c555cc upstream.
+This reverts commit b24be4acd17a8963a29b2a92e1d80b9ddf759c95 which is commit
+c0ca3d70e8d3cf81e2255a217f7ca402f5ed0862 upstream.
 
-This driver's remove path calls cancel_delayed_work().
-However, that function does not wait until the work function
-finishes. This could mean that the work function is still
-running after the driver's remove function has finished,
-which would result in a use-after-free.
+Commit b24be4acd17a ("ovl: modify ovl_permission() to do checks on two
+inodes") (stable kernel  id) breaks r/w access in overlayfs when setting
+ACL to files, in 4.4 stable kernel. There is an available reproducer in
+[1].
 
-Fix by calling cancel_delayed_work_sync(), which ensures that
-that the work is properly cancelled, no longer running, and
-unable to re-schedule itself.
+To reproduce the issue :
+$./make-overlay.sh
+$./test.sh
+st_mode is 100644
+open failed: -1
+cat: /tmp/overlay/animal: Permission denied <---- Breaks access
+-rw-r--r-- 1 jo jo 0 Oct 11 09:57 /tmp/overlay/animal
 
-This issue was detected with the help of Coccinelle.
+There are two options to fix this; (a) backport commit ce31513a9114
+("ovl: copyattr after setting POSIX ACL") to 4.4 or (b) revert offending
+commit b24be4acd17a ("ovl: modify ovl_permission() to do checks on two
+inodes"). Following option (a) entails high risk of regression since
+commit ce31513a9114 ("ovl: copyattr after setting POSIX ACL") has many
+dependencies on other commits that need to be backported too (~18
+commits).
 
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+This patch proceeds with reverting commit b24be4acd17a ("ovl: modify
+ovl_permission() to do checks on two inodes").  The reverted commit is
+associated with CVE-2018-16597, however the test-script provided in [3]
+shows that 4.4 kernel is  NOT affected by this cve and therefore it's
+safe to revert it.
+
+The offending commit was introduced upstream in v4.8-rc1. At this point
+had nothing to do with any CVE.  It was related with CVE-2018-16597 as
+it was the fix for bug [2]. Later on it was backported to stable 4.4.
+
+The test-script [3] tests whether 4.4 kernel is affected by
+CVE-2018-16597. It tests the reproducer found in [2] plus a few more
+cases. The correct output of the script is failure with "Permission
+denied" when a normal user tries to overwrite root owned files.  For
+more details please refer to [4].
+
+[1] https://gist.github.com/thomas-holmes/711bcdb28e2b8e6d1c39c1d99d292af7
+[2] https://bugzilla.suse.com/show_bug.cgi?id=1106512#c0
+[3] https://launchpadlibrarian.net/459694705/test_overlay_permission.sh
+[4] https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1851243
+
+Signed-off-by: Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/power/ltc2941-battery-gauge.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/overlayfs/inode.c |   13 -------------
+ 1 file changed, 13 deletions(-)
 
---- a/drivers/power/ltc2941-battery-gauge.c
-+++ b/drivers/power/ltc2941-battery-gauge.c
-@@ -364,7 +364,7 @@ static int ltc294x_i2c_remove(struct i2c
- {
- 	struct ltc294x_info *info = i2c_get_clientdata(client);
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -9,7 +9,6 @@
  
--	cancel_delayed_work(&info->work);
-+	cancel_delayed_work_sync(&info->work);
- 	power_supply_unregister(info->supply);
- 	return 0;
- }
+ #include <linux/fs.h>
+ #include <linux/slab.h>
+-#include <linux/cred.h>
+ #include <linux/xattr.h>
+ #include "overlayfs.h"
+ 
+@@ -92,7 +91,6 @@ int ovl_permission(struct inode *inode,
+ 	struct ovl_entry *oe;
+ 	struct dentry *alias = NULL;
+ 	struct inode *realinode;
+-	const struct cred *old_cred;
+ 	struct dentry *realdentry;
+ 	bool is_upper;
+ 	int err;
+@@ -145,18 +143,7 @@ int ovl_permission(struct inode *inode,
+ 			goto out_dput;
+ 	}
+ 
+-	/*
+-	 * Check overlay inode with the creds of task and underlying inode
+-	 * with creds of mounter
+-	 */
+-	err = generic_permission(inode, mask);
+-	if (err)
+-		goto out_dput;
+-
+-	old_cred = ovl_override_creds(inode->i_sb);
+ 	err = __inode_permission(realinode, mask);
+-	revert_creds(old_cred);
+-
+ out_dput:
+ 	dput(alias);
+ 	return err;
 
 
