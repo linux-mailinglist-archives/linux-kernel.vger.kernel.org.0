@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12E3115C4CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ACB715C34F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388121AbgBMPuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:50:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45002 "EHLO mail.kernel.org"
+        id S1728729AbgBMPkC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:40:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728350AbgBMP0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:23 -0500
+        id S1729301AbgBMP2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:51 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5DBB02168B;
-        Thu, 13 Feb 2020 15:26:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C75624670;
+        Thu, 13 Feb 2020 15:28:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607582;
-        bh=5IHAgVIK4KTq1hgs6co910tH1rCw+oBCf0E6d10O9A0=;
+        s=default; t=1581607730;
+        bh=obH4/DaO/opBIJgt8oyRpklHKyIoA0/WRywmZyAtvxw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MwYV4fwhAYQF3g5y6vmahzTryqJ3haIqzuQUcXdFIujh7Tu1X+3LUasAuW4B8DQIJ
-         9Dzqr7b0t0M9xUz3IIHtj0Pz3Ju9Wa0Edjwypimp9UQwwqP842bCksdPHJwbQj9NXx
-         WmuJQ0ytN3Pg4ra3jHdkUFQIBKcTjB3n8QkkVSNQ=
+        b=dOct7CStpkGB5OoxHbCRXaLeYZCO+IcLVX+M1wowN2vM+rBeu/4vbmByHM+JIjA2m
+         bDMuJwSR6CY27Ii5/YF3D4amIcdKgxrFRJBiwQ0QrslWc5CAcAK+00IKx+IZGY6jGf
+         mRHUgRFCK7fYKGZPHcDBWdo8uroigsRjh4ljFQR8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesper Nilsson <jesper.nilsson@axis.com>,
-        Lars Persson <lars.persson@axis.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 164/173] crypto: artpec6 - return correct error code for failed setkey()
+        stable@vger.kernel.org, Vaibhav Jain <vaibhav@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.5 071/120] powerpc/papr_scm: Fix leaking bus_desc.provider_name in some paths
 Date:   Thu, 13 Feb 2020 07:21:07 -0800
-Message-Id: <20200213152012.452162546@linuxfoundation.org>
+Message-Id: <20200213151925.387634339@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Vaibhav Jain <vaibhav@linux.ibm.com>
 
-commit b828f905904cd76424230c69741a4cabb0174168 upstream.
+commit 5649607a8d0b0e019a4db14aab3de1e16c3a2b4f upstream.
 
-->setkey() is supposed to retun -EINVAL for invalid key lengths, not -1.
+String 'bus_desc.provider_name' allocated inside
+papr_scm_nvdimm_init() will leaks in case call to
+nvdimm_bus_register() fails or when papr_scm_remove() is called.
 
-Fixes: a21eb94fc4d3 ("crypto: axis - add ARTPEC-6/7 crypto accelerator driver")
-Cc: Jesper Nilsson <jesper.nilsson@axis.com>
-Cc: Lars Persson <lars.persson@axis.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Acked-by: Lars Persson <lars.persson@axis.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+This minor patch ensures that 'bus_desc.provider_name' is freed in
+error path for nvdimm_bus_register() as well as in papr_scm_remove().
+
+Fixes: b5beae5e224f ("powerpc/pseries: Add driver for PAPR SCM regions")
+Signed-off-by: Vaibhav Jain <vaibhav@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20200122155140.120429-1-vaibhav@linux.ibm.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/axis/artpec6_crypto.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/pseries/papr_scm.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/crypto/axis/artpec6_crypto.c
-+++ b/drivers/crypto/axis/artpec6_crypto.c
-@@ -1256,7 +1256,7 @@ static int artpec6_crypto_aead_set_key(s
- 
- 	if (len != 16 && len != 24 && len != 32) {
- 		crypto_aead_set_flags(tfm, CRYPTO_TFM_RES_BAD_KEY_LEN);
--		return -1;
-+		return -EINVAL;
+--- a/arch/powerpc/platforms/pseries/papr_scm.c
++++ b/arch/powerpc/platforms/pseries/papr_scm.c
+@@ -322,6 +322,7 @@ static int papr_scm_nvdimm_init(struct p
+ 	p->bus = nvdimm_bus_register(NULL, &p->bus_desc);
+ 	if (!p->bus) {
+ 		dev_err(dev, "Error creating nvdimm bus %pOF\n", p->dn);
++		kfree(p->bus_desc.provider_name);
+ 		return -ENXIO;
  	}
  
- 	ctx->key_length = len;
+@@ -477,6 +478,7 @@ static int papr_scm_remove(struct platfo
+ 
+ 	nvdimm_bus_unregister(p->bus);
+ 	drc_pmem_unbind(p);
++	kfree(p->bus_desc.provider_name);
+ 	kfree(p);
+ 
+ 	return 0;
 
 
