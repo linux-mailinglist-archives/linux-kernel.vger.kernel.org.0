@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E417B15C3C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C32015C48D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728441AbgBMPoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:44:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52322 "EHLO mail.kernel.org"
+        id S1729217AbgBMPsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:48:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728015AbgBMP1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:45 -0500
+        id S1729295AbgBMP04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:56 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 397E12465D;
-        Thu, 13 Feb 2020 15:27:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFA0B206DB;
+        Thu, 13 Feb 2020 15:26:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607664;
-        bh=nw6wzbezLI20litWW0tClmKxWHbKsyiT45NGefxLg+I=;
+        s=default; t=1581607615;
+        bh=dVJglPzkGQNWLRZbvnUE/tGiFH6lQqO/45Lkw0Kd2MA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CHH7I1j22553RKEVziruDEzccArQSRR+qTDFUsp6YXs3vxcqm2fBgFFgGEbk80C5r
-         gGij/pPNoCoqxBKWxX/ed4iK9tT0e6XrpwTRO07bUZ3NOGNfRQt0/GJ9FR+TIDpSds
-         g/0ixbtAMQ2IixHa4mFU/KKmF8Fo0lYQ6UDbnnl4=
+        b=eI/shsGzg4Pn+ydIjDTWZSfig+al9DF8B8yJgI8IBFXpJNILRE55fvJd+RC+EmZCY
+         drKSf2ZrTRM7gia74hc7JwOfHPZfrVeipKYC5V4a7oORy1wBNmiXj5KFQtAa53WgXR
+         YZicYS2KYT3Mh0eNBhDe2Llb0UBRpbdPhpUKIOxA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guoju Fang <fangguoju@gmail.com>,
-        Shuang Li <psymon@bonuscloud.io>, Coly Li <colyli@suse.de>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.4 84/96] bcache: avoid unnecessary btree nodes flushing in btree_flush_write()
-Date:   Thu, 13 Feb 2020 07:21:31 -0800
-Message-Id: <20200213151910.632750303@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Dmitry Safonov <dima@arista.com>
+Subject: [PATCH 4.19 51/52] x86/stackframe: Move ENCODE_FRAME_POINTER to asm/frame.h
+Date:   Thu, 13 Feb 2020 07:21:32 -0800
+Message-Id: <20200213151830.764945877@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
+References: <20200213151810.331796857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,231 +48,150 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 2aa8c529387c25606fdc1484154b92f8bfbc5746 upstream.
+commit a9b3c6998d4a7d53a787cf4d0fd4a4c11239e517 upstream.
 
-the commit 91be66e1318f ("bcache: performance improvement for
-btree_flush_write()") was an effort to flushing btree node with oldest
-btree node faster in following methods,
-- Only iterate dirty btree nodes in c->btree_cache, avoid scanning a lot
-  of clean btree nodes.
-- Take c->btree_cache as a LRU-like list, aggressively flushing all
-  dirty nodes from tail of c->btree_cache util the btree node with
-  oldest journal entry is flushed. This is to reduce the time of holding
-  c->bucket_lock.
+In preparation for wider use, move the ENCODE_FRAME_POINTER macros to
+a common header and provide inline asm versions.
 
-Guoju Fang and Shuang Li reported that they observe unexptected extra
-write I/Os on cache device after applying the above patch. Guoju Fang
-provideed more detailed diagnose information that the aggressive
-btree nodes flushing may cause 10x more btree nodes to flush in his
-workload. He points out when system memory is large enough to hold all
-btree nodes in memory, c->btree_cache is not a LRU-like list any more.
-Then the btree node with oldest journal entry is very probably not-
-close to the tail of c->btree_cache list. In such situation much more
-dirty btree nodes will be aggressively flushed before the target node
-is flushed. When slow SATA SSD is used as cache device, such over-
-aggressive flushing behavior will cause performance regression.
+These macros are used to encode a pt_regs frame for the unwinder; see
+unwind_frame.c:decode_frame_pointer().
 
-After spending a lot of time on debug and diagnose, I find the real
-condition is more complicated, aggressive flushing dirty btree nodes
-from tail of c->btree_cache list is not a good solution.
-- When all btree nodes are cached in memory, c->btree_cache is not
-  a LRU-like list, the btree nodes with oldest journal entry won't
-  be close to the tail of the list.
-- There can be hundreds dirty btree nodes reference the oldest journal
-  entry, before flushing all the nodes the oldest journal entry cannot
-  be reclaimed.
-When the above two conditions mixed together, a simply flushing from
-tail of c->btree_cache list is really NOT a good idea.
-
-Fortunately there is still chance to make btree_flush_write() work
-better. Here is how this patch avoids unnecessary btree nodes flushing,
-- Only acquire c->journal.lock when getting oldest journal entry of
-  fifo c->journal.pin. In rested locations check the journal entries
-  locklessly, so their values can be changed on other cores
-  in parallel.
-- In loop list_for_each_entry_safe_reverse(), checking latest front
-  point of fifo c->journal.pin. If it is different from the original
-  point which we get with locking c->journal.lock, it means the oldest
-  journal entry is reclaim on other cores. At this moment, all selected
-  dirty nodes recorded in array btree_nodes[] are all flushed and clean
-  on other CPU cores, it is unncessary to iterate c->btree_cache any
-  longer. Just quit the list_for_each_entry_safe_reverse() loop and
-  the following for-loop will skip all the selected clean nodes.
-- Find a proper time to quit the list_for_each_entry_safe_reverse()
-  loop. Check the refcount value of orignial fifo front point, if the
-  value is larger than selected node number of btree_nodes[], it means
-  more matching btree nodes should be scanned. Otherwise it means no
-  more matching btee nodes in rest of c->btree_cache list, the loop
-  can be quit. If the original oldest journal entry is reclaimed and
-  fifo front point is updated, the refcount of original fifo front point
-  will be 0, then the loop will be quit too.
-- Not hold c->bucket_lock too long time. c->bucket_lock is also required
-  for space allocation for cached data, hold it for too long time will
-  block regular I/O requests. When iterating list c->btree_cache, even
-  there are a lot of maching btree nodes, in order to not holding
-  c->bucket_lock for too long time, only BTREE_FLUSH_NR nodes are
-  selected and to flush in following for-loop.
-With this patch, only btree nodes referencing oldest journal entry
-are flushed to cache device, no aggressive flushing for  unnecessary
-btree node any more. And in order to avoid blocking regluar I/O
-requests, each time when btree_flush_write() called, at most only
-BTREE_FLUSH_NR btree nodes are selected to flush, even there are more
-maching btree nodes in list c->btree_cache.
-
-At last, one more thing to explain: Why it is safe to read front point
-of c->journal.pin without holding c->journal.lock inside the
-list_for_each_entry_safe_reverse() loop ?
-
-Here is my answer: When reading the front point of fifo c->journal.pin,
-we don't need to know the exact value of front point, we just want to
-check whether the value is different from the original front point
-(which is accurate value because we get it while c->jouranl.lock is
-held). For such purpose, it works as expected without holding
-c->journal.lock. Even the front point is changed on other CPU core and
-not updated to local core, and current iterating btree node has
-identical journal entry local as original fetched fifo front point, it
-is still safe. Because after holding mutex b->write_lock (with memory
-barrier) this btree node can be found as clean and skipped, the loop
-will quite latter when iterate on next node of list c->btree_cache.
-
-Fixes: 91be66e1318f ("bcache: performance improvement for btree_flush_write()")
-Reported-by: Guoju Fang <fangguoju@gmail.com>
-Reported-by: Shuang Li <psymon@bonuscloud.io>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/bcache/journal.c |   80 +++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 75 insertions(+), 5 deletions(-)
+ arch/x86/entry/calling.h     |   15 -------------
+ arch/x86/entry/entry_32.S    |   16 --------------
+ arch/x86/include/asm/frame.h |   49 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 49 insertions(+), 31 deletions(-)
 
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -417,10 +417,14 @@ err:
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -172,21 +172,6 @@ For 32-bit we have the following convent
+ 	.endif
+ .endm
  
- /* Journalling */
+-/*
+- * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
+- * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
+- * is just setting the LSB, which makes it an invalid stack address and is also
+- * a signal to the unwinder that it's a pt_regs pointer in disguise.
+- *
+- * NOTE: This macro must be used *after* PUSH_AND_CLEAR_REGS because it corrupts
+- * the original rbp.
+- */
+-.macro ENCODE_FRAME_POINTER ptregs_offset=0
+-#ifdef CONFIG_FRAME_POINTER
+-	leaq 1+\ptregs_offset(%rsp), %rbp
+-#endif
+-.endm
+-
+ #ifdef CONFIG_PAGE_TABLE_ISOLATION
  
-+#define nr_to_fifo_front(p, front_p, mask)	(((p) - (front_p)) & (mask))
+ /*
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -245,22 +245,6 @@
+ .Lend_\@:
+ .endm
+ 
+-/*
+- * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
+- * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
+- * is just clearing the MSB, which makes it an invalid stack address and is also
+- * a signal to the unwinder that it's a pt_regs pointer in disguise.
+- *
+- * NOTE: This macro must be used *after* SAVE_ALL because it corrupts the
+- * original rbp.
+- */
+-.macro ENCODE_FRAME_POINTER
+-#ifdef CONFIG_FRAME_POINTER
+-	mov %esp, %ebp
+-	andl $0x7fffffff, %ebp
+-#endif
+-.endm
+-
+ .macro RESTORE_INT_REGS
+ 	popl	%ebx
+ 	popl	%ecx
+--- a/arch/x86/include/asm/frame.h
++++ b/arch/x86/include/asm/frame.h
+@@ -22,6 +22,35 @@
+ 	pop %_ASM_BP
+ .endm
+ 
++#ifdef CONFIG_X86_64
++/*
++ * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
++ * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
++ * is just setting the LSB, which makes it an invalid stack address and is also
++ * a signal to the unwinder that it's a pt_regs pointer in disguise.
++ *
++ * NOTE: This macro must be used *after* PUSH_AND_CLEAR_REGS because it corrupts
++ * the original rbp.
++ */
++.macro ENCODE_FRAME_POINTER ptregs_offset=0
++	leaq 1+\ptregs_offset(%rsp), %rbp
++.endm
++#else /* !CONFIG_X86_64 */
++/*
++ * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
++ * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
++ * is just clearing the MSB, which makes it an invalid stack address and is also
++ * a signal to the unwinder that it's a pt_regs pointer in disguise.
++ *
++ * NOTE: This macro must be used *after* SAVE_ALL because it corrupts the
++ * original ebp.
++ */
++.macro ENCODE_FRAME_POINTER
++	mov %esp, %ebp
++	andl $0x7fffffff, %ebp
++.endm
++#endif /* CONFIG_X86_64 */
 +
- static void btree_flush_write(struct cache_set *c)
- {
- 	struct btree *b, *t, *btree_nodes[BTREE_FLUSH_NR];
--	unsigned int i, n;
-+	unsigned int i, nr, ref_nr;
-+	atomic_t *fifo_front_p, *now_fifo_front_p;
-+	size_t mask;
+ #else /* !__ASSEMBLY__ */
  
- 	if (c->journal.btree_flushing)
- 		return;
-@@ -433,12 +437,50 @@ static void btree_flush_write(struct cac
- 	c->journal.btree_flushing = true;
- 	spin_unlock(&c->journal.flush_write_lock);
+ #define FRAME_BEGIN				\
+@@ -30,12 +59,32 @@
  
-+	/* get the oldest journal entry and check its refcount */
-+	spin_lock(&c->journal.lock);
-+	fifo_front_p = &fifo_front(&c->journal.pin);
-+	ref_nr = atomic_read(fifo_front_p);
-+	if (ref_nr <= 0) {
-+		/*
-+		 * do nothing if no btree node references
-+		 * the oldest journal entry
-+		 */
-+		spin_unlock(&c->journal.lock);
-+		goto out;
-+	}
-+	spin_unlock(&c->journal.lock);
+ #define FRAME_END "pop %" _ASM_BP "\n"
+ 
++#ifdef CONFIG_X86_64
++#define ENCODE_FRAME_POINTER			\
++	"lea 1(%rsp), %rbp\n\t"
++#else /* !CONFIG_X86_64 */
++#define ENCODE_FRAME_POINTER			\
++	"movl %esp, %ebp\n\t"			\
++	"andl $0x7fffffff, %ebp\n\t"
++#endif /* CONFIG_X86_64 */
 +
-+	mask = c->journal.pin.mask;
-+	nr = 0;
- 	atomic_long_inc(&c->flush_write);
- 	memset(btree_nodes, 0, sizeof(btree_nodes));
--	n = 0;
+ #endif /* __ASSEMBLY__ */
  
- 	mutex_lock(&c->bucket_lock);
- 	list_for_each_entry_safe_reverse(b, t, &c->btree_cache, list) {
-+		/*
-+		 * It is safe to get now_fifo_front_p without holding
-+		 * c->journal.lock here, because we don't need to know
-+		 * the exactly accurate value, just check whether the
-+		 * front pointer of c->journal.pin is changed.
-+		 */
-+		now_fifo_front_p = &fifo_front(&c->journal.pin);
-+		/*
-+		 * If the oldest journal entry is reclaimed and front
-+		 * pointer of c->journal.pin changes, it is unnecessary
-+		 * to scan c->btree_cache anymore, just quit the loop and
-+		 * flush out what we have already.
-+		 */
-+		if (now_fifo_front_p != fifo_front_p)
-+			break;
-+		/*
-+		 * quit this loop if all matching btree nodes are
-+		 * scanned and record in btree_nodes[] already.
-+		 */
-+		ref_nr = atomic_read(fifo_front_p);
-+		if (nr >= ref_nr)
-+			break;
+ #define FRAME_OFFSET __ASM_SEL(4, 8)
+ 
+ #else /* !CONFIG_FRAME_POINTER */
+ 
++#ifdef __ASSEMBLY__
 +
- 		if (btree_node_journal_flush(b))
- 			pr_err("BUG: flush_write bit should not be set here!");
- 
-@@ -454,17 +496,44 @@ static void btree_flush_write(struct cac
- 			continue;
- 		}
- 
-+		/*
-+		 * Only select the btree node which exactly references
-+		 * the oldest journal entry.
-+		 *
-+		 * If the journal entry pointed by fifo_front_p is
-+		 * reclaimed in parallel, don't worry:
-+		 * - the list_for_each_xxx loop will quit when checking
-+		 *   next now_fifo_front_p.
-+		 * - If there are matched nodes recorded in btree_nodes[],
-+		 *   they are clean now (this is why and how the oldest
-+		 *   journal entry can be reclaimed). These selected nodes
-+		 *   will be ignored and skipped in the folowing for-loop.
-+		 */
-+		if (nr_to_fifo_front(btree_current_write(b)->journal,
-+				     fifo_front_p,
-+				     mask) != 0) {
-+			mutex_unlock(&b->write_lock);
-+			continue;
-+		}
++.macro ENCODE_FRAME_POINTER ptregs_offset=0
++.endm
 +
- 		set_btree_node_journal_flush(b);
- 
- 		mutex_unlock(&b->write_lock);
- 
--		btree_nodes[n++] = b;
--		if (n == BTREE_FLUSH_NR)
-+		btree_nodes[nr++] = b;
-+		/*
-+		 * To avoid holding c->bucket_lock too long time,
-+		 * only scan for BTREE_FLUSH_NR matched btree nodes
-+		 * at most. If there are more btree nodes reference
-+		 * the oldest journal entry, try to flush them next
-+		 * time when btree_flush_write() is called.
-+		 */
-+		if (nr == BTREE_FLUSH_NR)
- 			break;
- 	}
- 	mutex_unlock(&c->bucket_lock);
- 
--	for (i = 0; i < n; i++) {
-+	for (i = 0; i < nr; i++) {
- 		b = btree_nodes[i];
- 		if (!b) {
- 			pr_err("BUG: btree_nodes[%d] is NULL", i);
-@@ -497,6 +566,7 @@ static void btree_flush_write(struct cac
- 		mutex_unlock(&b->write_lock);
- 	}
- 
-+out:
- 	spin_lock(&c->journal.flush_write_lock);
- 	c->journal.btree_flushing = false;
- 	spin_unlock(&c->journal.flush_write_lock);
++#else /* !__ASSEMBLY */
++
++#define ENCODE_FRAME_POINTER
++
++#endif
++
+ #define FRAME_BEGIN
+ #define FRAME_END
+ #define FRAME_OFFSET 0
 
 
