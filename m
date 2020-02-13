@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFCAA15C2C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:38:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78BD115C523
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:55:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387911AbgBMPaS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:30:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49134 "EHLO mail.kernel.org"
+        id S2388194AbgBMPxi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:53:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387689AbgBMP1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:10 -0500
+        id S2387497AbgBMP0C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:02 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C7A72468D;
-        Thu, 13 Feb 2020 15:27:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FB382469A;
+        Thu, 13 Feb 2020 15:26:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607629;
-        bh=PQCTp41WTY/o2WQQBvdSyRvnyuictcDvRR7gqd/A5J8=;
+        s=default; t=1581607561;
+        bh=dQDLL5v0B2uWONqaxaUpBsOW51lVw8D4m2aJaCr6JpU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZrJTbGTMz5Mv2jjSx0wu9zPwMTNFm/cuo4UyrdX+IfHJFpwr57uVSGkDIP7Qa1skt
-         rmBt8bsQfQraJ24pTRYolaj3CduGc1tk+/qrXKJYpdPMdt0nEog4kl8cO3c1ajAZjz
-         ypCLxMVQGcGntBz4PnAcsIZtj6kIEeJYrzyKclWI=
+        b=bneKyTcRl340ESn4W+RiMVdsD0H1qfJjy8Aj/Tz81GIS7+NWuAbV3kDVprzImKCQn
+         AJHDV3XKxKTl+jxl2cKnuE62HSaDe3mC58cl+YcuvpFt+Vp18PVOvnVnXf9GwlzC41
+         x4Kvbl12OWmxOS5/t7ITMsOtXumfCZD2ZcfEa6To=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 5.4 29/96] NFS/pnfs: Fix pnfs_generic_prepare_to_resend_writes()
-Date:   Thu, 13 Feb 2020 07:20:36 -0800
-Message-Id: <20200213151850.282369070@linuxfoundation.org>
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 134/173] KVM: Use vcpu-specific gva->hva translation when querying host page size
+Date:   Thu, 13 Feb 2020 07:20:37 -0800
+Message-Id: <20200213152005.766626332@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,118 +45,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trondmy@gmail.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 221203ce6406273cf00e5c6397257d986c003ee6 upstream.
+[ Upstream commit f9b84e19221efc5f493156ee0329df3142085f28 ]
 
-Instead of making assumptions about the commit verifier contents, change
-the commit code to ensure we always check that the verifier was set
-by the XDR code.
+Use kvm_vcpu_gfn_to_hva() when retrieving the host page size so that the
+correct set of memslots is used when handling x86 page faults in SMM.
 
-Fixes: f54bcf2ecee9 ("pnfs: Prepare for flexfiles by pulling out common code")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 54bf36aac520 ("KVM: x86: use vcpu-specific functions to read/write/translate GFNs")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/direct.c   |    4 ++--
- fs/nfs/nfs3xdr.c  |    5 ++++-
- fs/nfs/nfs4xdr.c  |    5 ++++-
- fs/nfs/pnfs_nfs.c |    7 +++----
- fs/nfs/write.c    |    4 +++-
- 5 files changed, 16 insertions(+), 9 deletions(-)
+ arch/x86/kvm/mmu.c       | 6 +++---
+ include/linux/kvm_host.h | 2 +-
+ virt/kvm/kvm_main.c      | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
---- a/fs/nfs/direct.c
-+++ b/fs/nfs/direct.c
-@@ -245,10 +245,10 @@ static int nfs_direct_cmp_commit_data_ve
- 					 data->ds_commit_index);
- 
- 	/* verifier not set so always fail */
--	if (verfp->committed < 0)
-+	if (verfp->committed < 0 || data->res.verf->committed <= NFS_UNSTABLE)
- 		return 1;
- 
--	return nfs_direct_cmp_verf(verfp, &data->verf);
-+	return nfs_direct_cmp_verf(verfp, data->res.verf);
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index c0b0135ef07f0..e5af08b581320 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -1165,12 +1165,12 @@ static bool mmu_gfn_lpage_is_disallowed(struct kvm_vcpu *vcpu, gfn_t gfn,
+ 	return __mmu_gfn_lpage_is_disallowed(gfn, level, slot);
  }
  
- /**
---- a/fs/nfs/nfs3xdr.c
-+++ b/fs/nfs/nfs3xdr.c
-@@ -2338,6 +2338,7 @@ static int nfs3_xdr_dec_commit3res(struc
- 				   void *data)
+-static int host_mapping_level(struct kvm *kvm, gfn_t gfn)
++static int host_mapping_level(struct kvm_vcpu *vcpu, gfn_t gfn)
  {
- 	struct nfs_commitres *result = data;
-+	struct nfs_writeverf *verf = result->verf;
- 	enum nfs_stat status;
- 	int error;
+ 	unsigned long page_size;
+ 	int i, ret = 0;
  
-@@ -2350,7 +2351,9 @@ static int nfs3_xdr_dec_commit3res(struc
- 	result->op_status = status;
- 	if (status != NFS3_OK)
- 		goto out_status;
--	error = decode_writeverf3(xdr, &result->verf->verifier);
-+	error = decode_writeverf3(xdr, &verf->verifier);
-+	if (!error)
-+		verf->committed = NFS_FILE_SYNC;
- out:
- 	return error;
- out_status:
---- a/fs/nfs/nfs4xdr.c
-+++ b/fs/nfs/nfs4xdr.c
-@@ -4316,11 +4316,14 @@ static int decode_write_verifier(struct
+-	page_size = kvm_host_page_size(kvm, gfn);
++	page_size = kvm_host_page_size(vcpu, gfn);
  
- static int decode_commit(struct xdr_stream *xdr, struct nfs_commitres *res)
- {
-+	struct nfs_writeverf *verf = res->verf;
- 	int status;
+ 	for (i = PT_PAGE_TABLE_LEVEL; i <= PT_MAX_HUGEPAGE_LEVEL; ++i) {
+ 		if (page_size >= KVM_HPAGE_SIZE(i))
+@@ -1220,7 +1220,7 @@ static int mapping_level(struct kvm_vcpu *vcpu, gfn_t large_gfn,
+ 	if (unlikely(*force_pt_level))
+ 		return PT_PAGE_TABLE_LEVEL;
  
- 	status = decode_op_hdr(xdr, OP_COMMIT);
- 	if (!status)
--		status = decode_write_verifier(xdr, &res->verf->verifier);
-+		status = decode_write_verifier(xdr, &verf->verifier);
-+	if (!status)
-+		verf->committed = NFS_FILE_SYNC;
- 	return status;
+-	host_level = host_mapping_level(vcpu->kvm, large_gfn);
++	host_level = host_mapping_level(vcpu, large_gfn);
+ 
+ 	if (host_level == PT_PAGE_TABLE_LEVEL)
+ 		return host_level;
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 7668c68ddb5b3..30376715a6070 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -695,7 +695,7 @@ int kvm_clear_guest_page(struct kvm *kvm, gfn_t gfn, int offset, int len);
+ int kvm_clear_guest(struct kvm *kvm, gpa_t gpa, unsigned long len);
+ struct kvm_memory_slot *gfn_to_memslot(struct kvm *kvm, gfn_t gfn);
+ bool kvm_is_visible_gfn(struct kvm *kvm, gfn_t gfn);
+-unsigned long kvm_host_page_size(struct kvm *kvm, gfn_t gfn);
++unsigned long kvm_host_page_size(struct kvm_vcpu *vcpu, gfn_t gfn);
+ void mark_page_dirty(struct kvm *kvm, gfn_t gfn);
+ 
+ struct kvm_memslots *kvm_vcpu_memslots(struct kvm_vcpu *vcpu);
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index deff4b3eb9722..609903481e39b 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1277,14 +1277,14 @@ bool kvm_is_visible_gfn(struct kvm *kvm, gfn_t gfn)
  }
+ EXPORT_SYMBOL_GPL(kvm_is_visible_gfn);
  
---- a/fs/nfs/pnfs_nfs.c
-+++ b/fs/nfs/pnfs_nfs.c
-@@ -31,12 +31,11 @@ EXPORT_SYMBOL_GPL(pnfs_generic_rw_releas
- /* Fake up some data that will cause nfs_commit_release to retry the writes. */
- void pnfs_generic_prepare_to_resend_writes(struct nfs_commit_data *data)
+-unsigned long kvm_host_page_size(struct kvm *kvm, gfn_t gfn)
++unsigned long kvm_host_page_size(struct kvm_vcpu *vcpu, gfn_t gfn)
  {
--	struct nfs_page *first = nfs_list_entry(data->pages.next);
-+	struct nfs_writeverf *verf = data->res.verf;
+ 	struct vm_area_struct *vma;
+ 	unsigned long addr, size;
  
- 	data->task.tk_status = 0;
--	memcpy(&data->verf.verifier, &first->wb_verf,
--	       sizeof(data->verf.verifier));
--	data->verf.verifier.data[0]++; /* ensure verifier mismatch */
-+	memset(&verf->verifier, 0, sizeof(verf->verifier));
-+	verf->committed = NFS_UNSTABLE;
- }
- EXPORT_SYMBOL_GPL(pnfs_generic_prepare_to_resend_writes);
+ 	size = PAGE_SIZE;
  
---- a/fs/nfs/write.c
-+++ b/fs/nfs/write.c
-@@ -1837,6 +1837,7 @@ static void nfs_commit_done(struct rpc_t
+-	addr = gfn_to_hva(kvm, gfn);
++	addr = kvm_vcpu_gfn_to_hva(vcpu, gfn);
+ 	if (kvm_is_error_hva(addr))
+ 		return PAGE_SIZE;
  
- static void nfs_commit_release_pages(struct nfs_commit_data *data)
- {
-+	const struct nfs_writeverf *verf = data->res.verf;
- 	struct nfs_page	*req;
- 	int status = data->task.tk_status;
- 	struct nfs_commit_info cinfo;
-@@ -1864,7 +1865,8 @@ static void nfs_commit_release_pages(str
- 
- 		/* Okay, COMMIT succeeded, apparently. Check the verifier
- 		 * returned by the server against all stored verfs. */
--		if (!nfs_write_verifier_cmp(&req->wb_verf, &data->verf.verifier)) {
-+		if (verf->committed > NFS_UNSTABLE &&
-+		    !nfs_write_verifier_cmp(&req->wb_verf, &verf->verifier)) {
- 			/* We have a match */
- 			if (req->wb_page)
- 				nfs_inode_remove_request(req);
+-- 
+2.20.1
+
 
 
