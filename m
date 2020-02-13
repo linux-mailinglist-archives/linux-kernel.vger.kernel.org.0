@@ -2,122 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7B8F15CDB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 23:05:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B48CE15CDD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 23:08:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728055AbgBMWFC convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 13 Feb 2020 17:05:02 -0500
-Received: from mga03.intel.com ([134.134.136.65]:59918 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727519AbgBMWFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 17:05:02 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 14:05:01 -0800
-X-IronPort-AV: E=Sophos;i="5.70,438,1574150400"; 
-   d="scan'208";a="227391043"
-Received: from unknown (HELO localhost) ([10.252.53.8])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 14:04:58 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Michel =?utf-8?Q?D=C3=A4nzer?= <michel@daenzer.net>,
-        clang-built-linux@googlegroups.com,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [Intel-gfx] [PATCH v2] drm/i915: Disable -Wtautological-constant-out-of-range-compare
-In-Reply-To: <20200213214812.GA7980@ubuntu-m2-xlarge-x86>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20200211050808.29463-1-natechancellor@gmail.com> <20200211061338.23666-1-natechancellor@gmail.com> <4c806435-f32d-1559-9563-ffe3fa69f0d1@daenzer.net> <20200211203935.GA16176@ubuntu-m2-xlarge-x86> <f3a6346b-2abf-0b6a-3d84-66e12f700b2b@daenzer.net> <20200212170734.GA16396@ubuntu-m2-xlarge-x86> <d81a2cfe-79b6-51d4-023e-0960c0593856@daenzer.net> <877e0qy2n8.fsf@intel.com> <20200213214812.GA7980@ubuntu-m2-xlarge-x86>
-Date:   Fri, 14 Feb 2020 00:05:24 +0200
-Message-ID: <87mu9mw3bv.fsf@intel.com>
+        id S1727873AbgBMWIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 17:08:18 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37329 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbgBMWIS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 17:08:18 -0500
+Received: by mail-io1-f66.google.com with SMTP id k24so8329780ioc.4
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 14:08:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PvTmvGfvJmOv7sMbAjwocI81PqYWLyNw6wRoKoHV6qg=;
+        b=txT4jK1J0pBtT9kg3vVsCO4+fPlEEgl0mw/PQqXHnDzVPHf1XFGMXXGWSOkx36QT+M
+         VpDhUw85bVIZAXgTqTvaEkxT48Z8Ur8OA2/wpwNXs6gXisBx2OlaYnAJBEFD9B//46qP
+         t/oHlKKxqFBmo9MBOeYDZDgAE3p14qbAeZ+dlEVwugWXswqi914wl6jAMHuAR0eTPAi6
+         y2eJbwjJolAzw2xqxyimpS0RmJ3n9f6jKJ+20Q4ytQasqPlrw6fasVslAvVjRc/uCcvM
+         FauQ1mtCSUfKUPi83ludoUvB9+x1qfE9UyUxicbj//+lSrh9DMaC/nCAo/wZ26XukEI5
+         5yRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PvTmvGfvJmOv7sMbAjwocI81PqYWLyNw6wRoKoHV6qg=;
+        b=INRkkd93lNHwc3JUCSlAioASldQM/d/2S4eefSY4IzkYpqcl62N2y9FYwKmLq4LxHe
+         WYTOeSpQ/4NDUTvKXolCa2gJrGeyh2GhmSYHXmPa4uDLtaITZG8kcfxZa8XrsVmWYGaa
+         EwT3bf80wEOOHmA4D8jnwUDb0buiPEYghvRr2QPVwLvXZt0IgvI/agAyAInENgjNxb89
+         sQQ4DAmGZVW+ZLdGgGBxYEziGQelmfJT7PGwojcRnrfqx4EoNkF4nlYCE9nm1ltBhuUU
+         9S0syGTDJE28oygPFoxElFADlKdEPNkbieq3aIzbZ7kA4RVO8kuQYnBPTxf+iLhiH/Dw
+         TWAQ==
+X-Gm-Message-State: APjAAAVYWWvvec5enoCcf10gjZ6wF6n5nhdZYweK/6xOPa1+s94XM/hc
+        78KVf04EJJrv/k8wfMLoEFwi61VZTQFVGD9SzLhcr6qaeREl6g==
+X-Google-Smtp-Source: APXvYqzouCBHWn9pG6B4NKVnpMkjX7h2J2/kCFDH8mqr1st4quO6paJ726ZTIeLIe6O9RURzpeKV7WvozsevHmVpHHE=
+X-Received: by 2002:a02:7fd0:: with SMTP id r199mr94717jac.126.1581631696132;
+ Thu, 13 Feb 2020 14:08:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+References: <CAKUOC8VN5n+YnFLPbQWa1hKp+vOWH26FKS92R+h4EvS=e11jFA@mail.gmail.com>
+ <20200213082643.GB9144@ming.t460p> <d2c77921-fdcd-4667-d21a-60700e6a2fa5@acm.org>
+ <CAKUOC8U1H8qJ+95pcF-fjeu9hag3P3Wm6XiOh26uXOkvpNngZg@mail.gmail.com>
+In-Reply-To: <CAKUOC8U1H8qJ+95pcF-fjeu9hag3P3Wm6XiOh26uXOkvpNngZg@mail.gmail.com>
+From:   Salman Qazi <sqazi@google.com>
+Date:   Thu, 13 Feb 2020 14:08:04 -0800
+Message-ID: <CAKUOC8U9+x4SDji-v=1PEoHmcTQ40fU0sOt34+2v5qpfKwVbVQ@mail.gmail.com>
+Subject: Re: BLKSECDISCARD ioctl and hung tasks
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block@vger.kernel.org, Gwendal Grignou <gwendal@google.com>,
+        Jesse Barnes <jsbarnes@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Feb 2020, Nathan Chancellor <natechancellor@gmail.com> wrote:
-> On Thu, Feb 13, 2020 at 04:37:15PM +0200, Jani Nikula wrote:
->> On Wed, 12 Feb 2020, Michel Dänzer <michel@daenzer.net> wrote:
->> > On 2020-02-12 6:07 p.m., Nathan Chancellor wrote:
->> >> On Wed, Feb 12, 2020 at 09:52:52AM +0100, Michel Dänzer wrote:
->> >>> On 2020-02-11 9:39 p.m., Nathan Chancellor wrote:
->> >>>> On Tue, Feb 11, 2020 at 10:41:48AM +0100, Michel Dänzer wrote:
->> >>>>> On 2020-02-11 7:13 a.m., Nathan Chancellor wrote:
->> >>>>>> A recent commit in clang added -Wtautological-compare to -Wall, which is
->> >>>>>> enabled for i915 so we see the following warning:
->> >>>>>>
->> >>>>>> ../drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c:1485:22: warning:
->> >>>>>> result of comparison of constant 576460752303423487 with expression of
->> >>>>>> type 'unsigned int' is always false
->> >>>>>> [-Wtautological-constant-out-of-range-compare]
->> >>>>>>         if (unlikely(remain > N_RELOC(ULONG_MAX)))
->> >>>>>>             ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
->> >>>>>>
->> >>>>>> This warning only happens on x86_64 but that check is relevant for
->> >>>>>> 32-bit x86 so we cannot remove it.
->> >>>>>
->> >>>>> That's suprising. AFAICT N_RELOC(ULONG_MAX) works out to the same value
->> >>>>> in both cases, and remain is a 32-bit value in both cases. How can it be
->> >>>>> larger than N_RELOC(ULONG_MAX) on 32-bit (but not on 64-bit)?
->> >>>>>
->> >>>>
->> >>>> Hi Michel,
->> >>>>
->> >>>> Can't this condition be true when UINT_MAX == ULONG_MAX?
->> >>>
->> >>> Oh, right, I think I was wrongly thinking long had 64 bits even on 32-bit.
->> >>>
->> >>>
->> >>> Anyway, this suggests a possible better solution:
->> >>>
->> >>> #if UINT_MAX == ULONG_MAX
->> >>> 	if (unlikely(remain > N_RELOC(ULONG_MAX)))
->> >>> 		return -EINVAL;
->> >>> #endif
->> >>>
->> >>>
->> >>> Or if that can't be used for some reason, something like
->> >>>
->> >>> 	if (unlikely((unsigned long)remain > N_RELOC(ULONG_MAX)))
->> >>> 		return -EINVAL;
->> >>>
->> >>> should silence the warning.
->> >> 
->> >> I do like this one better than the former.
->> >
->> > FWIW, one downside of this one compared to all alternatives (presumably)
->> > is that it might end up generating actual code even on 64-bit, which
->> > always ends up skipping the return.
->> 
->> I like this better than the UINT_MAX == ULONG_MAX comparison because
->> that creates a dependency on the type of remain.
->> 
->> Then again, a sufficiently clever compiler could see through the cast,
->> and flag the warning anyway...
+On Thu, Feb 13, 2020 at 11:21 AM Salman Qazi <sqazi@google.com> wrote:
 >
-> Would you prefer a patch that adds that cast rather than silencing the
-> warning outright? It does appear to work for clang.
+> On Thu, Feb 13, 2020 at 9:48 AM Bart Van Assche <bvanassche@acm.org> wrote:
+> >
+> > On 2/13/20 12:26 AM, Ming Lei wrote:
+> > > The approach used in blk_execute_rq() can be borrowed for workaround the
+> > > issue, such as:
+> > >
+> > > diff --git a/block/bio.c b/block/bio.c
+> > > index 94d697217887..c9ce19a86de7 100644
+> > > --- a/block/bio.c
+> > > +++ b/block/bio.c
+> > > @@ -17,6 +17,7 @@
+> > >   #include <linux/cgroup.h>
+> > >   #include <linux/blk-cgroup.h>
+> > >   #include <linux/highmem.h>
+> > > +#include <linux/sched/sysctl.h>
+> > >
+> > >   #include <trace/events/block.h>
+> > >   #include "blk.h"
+> > > @@ -1019,12 +1020,19 @@ static void submit_bio_wait_endio(struct bio *bio)
+> > >   int submit_bio_wait(struct bio *bio)
+> > >   {
+> > >       DECLARE_COMPLETION_ONSTACK_MAP(done, bio->bi_disk->lockdep_map);
+> > > +     unsigned long hang_check;
+> > >
+> > >       bio->bi_private = &done;
+> > >       bio->bi_end_io = submit_bio_wait_endio;
+> > >       bio->bi_opf |= REQ_SYNC;
+> > >       submit_bio(bio);
+> > > -     wait_for_completion_io(&done);
+> > > +
+> > > +     /* Prevent hang_check timer from firing at us during very long I/O */
+> > > +     hang_check = sysctl_hung_task_timeout_secs;
+> > > +     if (hang_check)
+> > > +             while (!wait_for_completion_io_timeout(&done, hang_check * (HZ/2)));
+> > > +     else
+> > > +             wait_for_completion_io(&done);
+> > >
+> > >       return blk_status_to_errno(bio->bi_status);
+> > >   }
+> >
+> > Instead of suppressing the hung task complaints, has it been considered
+> > to use the bio splitting mechanism to make discard bios smaller? Block
+> > drivers may set a limit by calling blk_queue_max_discard_segments().
+> >  From block/blk-settings.c:
+> >
+> > /**
+> >   * blk_queue_max_discard_segments - set max segments for discard
+> >   * requests
+> >   * @q:  the request queue for the device
+> >   * @max_segments:  max number of segments
+> >   *
+> >   * Description:
+> >   *    Enables a low level driver to set an upper limit on the number of
+> >   *    segments in a discard request.
+> >   **/
+> > void blk_queue_max_discard_segments(struct request_queue *q,
+> >                 unsigned short max_segments)
+> > {
+> >         q->limits.max_discard_segments = max_segments;
+> > }
+> > EXPORT_SYMBOL_GPL(blk_queue_max_discard_segments);
+> >
+>
+> AFAICT, This is not actually sufficient, because the issuer of the bio
+> is waiting for the entire bio, regardless of how it is split later.
+> But, also there isn't a good mapping between the size of the secure
+> discard and how long it will take.  If given the geometry of a flash
+> device, it is not hard to construct a scenario where a relatively
+> small secure discard (few thousand sectors) will take a very long time
+> (multiple seconds).
+>
+> Having said that, I don't like neutering the hung task timer either.
 
-I'd take the cast.
+In fact, it's worse than that.  Today, I was able to construct a case
+of a 4K discard on a particular device that took 100 seconds.  I did
+this
+by arranging to write a single copy of page 0 for every erase unit of
+the device, and wrote random LBAs to the rest of the erase unit.  I
+suspect the
+slow speed comes from the need to copy almost the entire device to
+erase all the stale copies of page 0.
 
-If that fails for whatever reason, per-file
+#define _GNU_SOURCE
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
+#include <assert.h>
+#include <unistd.h>
+#include <linux/fs.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
-CFLAGS_gem/i915_gem_execbuffer.o = $(call cc-disable-warning, tautological-constant-out-of-range-compare)
+char page[8192];
 
-over subdir-ccflags-y would be preferrable I think.
+int main(int argc, char **argv)
+{
+        unsigned long start;
+        int fd;
+        int i;
+        char *page_aligned = (char *)(((unsigned long)page + 4095) & ~4095UL);
+        unsigned long range[2];
+        fd = open(argv[1], O_RDWR | O_DIRECT);
+        assert(fd >= 0);
+        range[0] = 0;
+        assert(ioctl(fd, BLKGETSIZE64, &range[1]) >= 0);
+        for (i = 0; i < range[1]; i += 4096) {
+                /* paranoia: incase there is any deduping */
+                page_aligned[0] = i;
+                /*
+                 * Almost always write randomly
+                 */
+                if (i % (4*1024*1024) != 0)
+                        assert(pwrite(fd, page_aligned, 4096,
+                              (lrand48() % range[1]) & ~4095UL) == 4096);
+                else
+                        /* except, once per erase block, write page 0 */
+                        assert(pwrite(fd, page_aligned, 4096, 0) == 4096);
+        }
+        start = time(NULL);
 
-BR,
-Jani.
-
+        /* discard exactly one page */
+        range[1] = 4096;
+        printf("Starting discard %lu!\n", start);
+        assert(ioctl(fd, BLKSECDISCARD, &range) >= 0);
+        printf("Finished discard.  Took %lu!\n", time(NULL) - start);
+        close(fd);
+}
 
 
 >
-> Cheers,
-> Nathan
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+> > Thanks,
+> >
+> > Bart.
