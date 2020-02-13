@@ -2,111 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6137315BFBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 14:51:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24D6F15BFC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 14:51:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730142AbgBMNvM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 08:51:12 -0500
-Received: from mga01.intel.com ([192.55.52.88]:59554 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730003AbgBMNvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 08:51:12 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 05:51:12 -0800
-X-IronPort-AV: E=Sophos;i="5.70,436,1574150400"; 
-   d="scan'208";a="227235705"
-Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.255.30.123]) ([10.255.30.123])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 13 Feb 2020 05:51:10 -0800
-Subject: Re: [PATCH 30/61] KVM: x86: Handle MPX CPUID adjustment in VMX code
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200201185218.24473-1-sean.j.christopherson@intel.com>
- <20200201185218.24473-31-sean.j.christopherson@intel.com>
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-Message-ID: <4ff69a7e-acdb-40fd-d717-3b2829f20154@intel.com>
-Date:   Thu, 13 Feb 2020 21:51:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S1730180AbgBMNvr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 08:51:47 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35460 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730120AbgBMNvr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 08:51:47 -0500
+Received: by mail-wm1-f67.google.com with SMTP id b17so6845264wmb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 05:51:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dXeXmbnt/wE2uV+BRjNgnqQCAx/h6dr+7sDohudsbhM=;
+        b=BJA3vGr/iLlR+5TsGX3YRqQM0xa4p6xj+gH5ge3WJwBL2noMLtMbcJK1Y8AbsU4fxr
+         jeep5ss6fGNmdy1bk0mm/jztKxPHBnWXi1mngeJJ1tQpjAwYSsYp8AyaNZ77/xcXSvHV
+         p/hZeWbL4JwB1Ky0vJIY1+9PEGdrXqm9SzVDIi1pIbOJOPynXhMjdsZTrUVB2GWFasNQ
+         WV4ETEruV2s3bmh3vFX6sHfoaVefaalFYl0HQfbxwVLsUEplbmOpoMNpSibmCnWVBtwq
+         UJtaaheWIdXX8n2nwGwDQylAEAZf8Xr0U5yG0h+WUHjJ/D3iI9JwnD0SZgeRxXNuj5GZ
+         t1Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dXeXmbnt/wE2uV+BRjNgnqQCAx/h6dr+7sDohudsbhM=;
+        b=Wc/4kH13ARxDuKyMZ9ivzQc6dex/AJE6q5Wy2WLHUBajcPXmMRPhpmtPfY6qSvuTpv
+         eIDiP0NvIqzyNLIP+R4jp5ZMcHVVmjuZJDBMGN6SVT59cowe3NJrkkRyJwfPQm1tOLhb
+         pxbMJWk3jThOGdI/2bmXUnhPYO8Un550IbxYAuIT1m6rdlMRwM3dukIf117/VMSzpvoF
+         YR+ZDnGkPx9kGLkHZAOj7lD3ZCBDv4Y/rYIVcfrN4QYfjjz8sQcv/Ez5EGLQvMph++/E
+         WKSY2Sq+Ji+VT6E3mrblUJuu50mJabvp0JqsBxmdFvEqw6Oz2ro6GWaUkg5tKXYuz9Qo
+         5Cag==
+X-Gm-Message-State: APjAAAWt1kMIROBpEramSOJ5LpvRyqFcLDaulSvFfCjxiiuOSAqqx7H1
+        AnozcyX5+CS102IwhoWvGiE=
+X-Google-Smtp-Source: APXvYqwR1iaGDp4GFWoCDS/WUIQc0XiJcUy2KWsuTzfnN95YSv2E+XsPesP3g28sspLRLVAp94YJDA==
+X-Received: by 2002:a1c:1b93:: with SMTP id b141mr6288226wmb.114.1581601905326;
+        Thu, 13 Feb 2020 05:51:45 -0800 (PST)
+Received: from andrea (ip-213-220-200-127.net.upcbroadband.cz. [213.220.200.127])
+        by smtp.gmail.com with ESMTPSA id x14sm3108109wmj.42.2020.02.13.05.51.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2020 05:51:44 -0800 (PST)
+Date:   Thu, 13 Feb 2020 14:51:38 +0100
+From:   Andrea Parri <parri.andrea@gmail.com>
+To:     Boqun Feng <boqun.feng@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-kernel@vger.kernel.org, monstr@monstr.eu, git@xilinx.com,
+        arnd@arndb.de,
+        Stefan Asserhall load and store 
+        <stefan.asserhall@xilinx.com>, Will Deacon <will@kernel.org>,
+        paulmck@kernel.org
+Subject: Re: [PATCH 7/7] microblaze: Do atomic operations by using exclusive
+ ops
+Message-ID: <20200213135138.GA5843@andrea>
+References: <cover.1581522136.git.michal.simek@xilinx.com>
+ <ba3047649af07dadecf1a52e7d815db8f068eb24.1581522136.git.michal.simek@xilinx.com>
+ <20200212155500.GB14973@hirez.programming.kicks-ass.net>
+ <4b46b33e-14ad-7097-f0db-2915ac772f15@xilinx.com>
+ <20200213085849.GL14897@hirez.programming.kicks-ass.net>
+ <20200213113432.GF69108@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+ <20200213113812.GG69108@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
 MIME-Version: 1.0
-In-Reply-To: <20200201185218.24473-31-sean.j.christopherson@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200213113812.GG69108@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/2/2020 2:51 AM, Sean Christopherson wrote:
-> Move the MPX CPUID adjustments into VMX to eliminate an instance of the
-> undesirable "unsigned f_* = *_supported ? F(*) : 0" pattern in the
-> common CPUID handling code.
-> 
-> Note, VMX must manually check for kernel support via
-> boot_cpu_has(X86_FEATURE_MPX).
+Hi,
 
-Why must?
+On Thu, Feb 13, 2020 at 07:38:12PM +0800, Boqun Feng wrote:
+> (Forget to copy Andrea in the previous email)
+> 
+> Andrea, could you tell us more about how to use klitmus to generate test
+> modules from litmus test?
 
-> No functional change intended.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->   arch/x86/kvm/cpuid.c   |  3 +--
->   arch/x86/kvm/vmx/vmx.c | 14 ++++++++++++--
->   2 files changed, 13 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index cb5870a323cc..09e24d1d731c 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -340,7 +340,6 @@ static int __do_cpuid_func_emulated(struct kvm_cpuid_array *array, u32 func)
->   static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry)
->   {
->   	unsigned f_invpcid = kvm_x86_ops->invpcid_supported() ? F(INVPCID) : 0;
-> -	unsigned f_mpx = kvm_mpx_supported() ? F(MPX) : 0;
->   	unsigned f_umip = kvm_x86_ops->umip_emulated() ? F(UMIP) : 0;
->   	unsigned f_intel_pt = kvm_x86_ops->pt_supported() ? F(INTEL_PT) : 0;
->   	unsigned f_la57;
-> @@ -349,7 +348,7 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry)
->   	/* cpuid 7.0.ebx */
->   	const u32 kvm_cpuid_7_0_ebx_x86_features =
->   		F(FSGSBASE) | F(BMI1) | F(HLE) | F(AVX2) | F(SMEP) |
-> -		F(BMI2) | F(ERMS) | f_invpcid | F(RTM) | f_mpx | F(RDSEED) |
-> +		F(BMI2) | F(ERMS) | f_invpcid | F(RTM) | 0 /*MPX*/ | F(RDSEED) |
->   		F(ADX) | F(SMAP) | F(AVX512IFMA) | F(AVX512F) | F(AVX512PF) |
->   		F(AVX512ER) | F(AVX512CD) | F(CLFLUSHOPT) | F(CLWB) | F(AVX512DQ) |
->   		F(SHA_NI) | F(AVX512BW) | F(AVX512VL) | f_intel_pt;
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 3ff830e2258e..143193fc178e 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -7106,8 +7106,18 @@ static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
->   
->   static void vmx_set_supported_cpuid(struct kvm_cpuid_entry2 *entry)
->   {
-> -	if (entry->function == 1 && nested)
-> -		entry->ecx |= feature_bit(VMX);
-> +	switch (entry->function) {
-> +	case 0x1:
-> +		if (nested)
-> +			cpuid_entry_set(entry, X86_FEATURE_VMX);
-> +		break;
-> +	case 0x7:
-> +		if (boot_cpu_has(X86_FEATURE_MPX) && kvm_mpx_supported())
-> +			cpuid_entry_set(entry, X86_FEATURE_MPX);
-> +		break;
-> +	default:
-> +		break;
-> +	}
->   }
->   
->   static void vmx_request_immediate_exit(struct kvm_vcpu *vcpu)
-> 
+The basic usage is described in "tools/memory-model/README", cf., in
+particular, the section dedicated to klitmus7 and the "REQUIREMENTS"
+section.  For example, given the test,
 
+andrea@andrea:~$ cat atomicity.litmus
+C atomicity
+
+{
+	atomic_t x = ATOMIC_INIT(0);
+}
+
+P0(atomic_t *x)
+{
+	int r0;
+
+	r0 = atomic_fetch_inc_relaxed(x);
+}
+
+P1(atomic_t *x)
+{
+	atomic_set(x, 2);
+}
+
+exists (0:r0=0 /\ x=1)
+
+You should be able to do:
+
+$ mkdir mymodules
+$ klitmus7 -o mymodules atomicity.litmus
+$ cd mymodules ; make
+[...]
+
+$ sudo sh run.sh
+Thu 13 Feb 2020 02:21:52 PM CET
+Compilation command: klitmus7 -o mymodules atomicity.litmus
+OPT=
+uname -r=5.3.0-29-generic
+
+Test atomicity Allowed
+Histogram (2 states)
+1963399 :>0:r0=0; x=2;
+2036601 :>0:r0=2; x=3;
+No
+
+Witnesses
+Positive: 0, Negative: 4000000
+Condition exists (0:r0=0 /\ x=1) is NOT validated
+Hash=11bd2c90c4ca7a8acd9ca728a3d61d5f
+Observation atomicity Never 0 4000000
+Time atomicity 0.15
+
+Thu 13 Feb 2020 02:21:52 PM CET
+
+Where the "Positive: 0 Negative: 4000000" indicates that, during four
+million trials, the state specified in the test's "exists" clause was
+not reached/observed (as expected).
+
+More information are available at:
+
+  http://diy.inria.fr/doc/litmus.html#klitmus
+
+Thanks,
+  Andrea
