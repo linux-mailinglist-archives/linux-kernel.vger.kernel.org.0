@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69BA215C439
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9D6815C24A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:32:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729427AbgBMP1c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:27:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41288 "EHLO mail.kernel.org"
+        id S1729395AbgBMPbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:31:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729023AbgBMPZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:30 -0500
+        id S1729545AbgBMP2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:04 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34FF820848;
-        Thu, 13 Feb 2020 15:25:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25A0C218AC;
+        Thu, 13 Feb 2020 15:28:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607529;
-        bh=GA+fYb+0DRK+VeQeKUaCgGZFbiP+DH5OSDA2JxVANdU=;
+        s=default; t=1581607684;
+        bh=IzQ6xyG7OVKJTpEyVdt5ZW6WXPzpifb6DD9cEoFHN8k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tV8DAJ9AqqlbK/93sIi41VpAfuecw/3/o3XFI8ewCsxH7APTDlfXlEAparRVUfXHf
-         3H3+rgZ8+6izfdGxUKzZNHiQRIO8tWbGNq0PZEz7/mw2WghevLyr4ScL9sF/PC9d6Q
-         FmnkOWQgaY6VNXlWPauMYrbVGbQUfGFmGspSA7HU=
+        b=Nsuev0SURuq5ouMWOLcCTD7/RVA8h7XLFpAZY8wzSXr/nqN5m3KmwKFaQp/ZRJ5iA
+         xiLAR3djwDmU8u5h5Nm3wTWntJes3CZ8eJawdWbxuWmV3Cp02sUDpEn06NNMFqIUGq
+         mZV2zrmUcmeT4lgrbR1yFop4YBMf0rm3CzstMhhk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 100/173] NFC: pn544: Adjust indentation in pn544_hci_check_presence
-Date:   Thu, 13 Feb 2020 07:20:03 -0800
-Message-Id: <20200213151958.029772178@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Guralnik <michaelgur@mellanox.com>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 5.5 008/120] RDMA/uverbs: Verify MR access flags
+Date:   Thu, 13 Feb 2020 07:20:04 -0800
+Message-Id: <20200213151904.370359735@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Michael Guralnik <michaelgur@mellanox.com>
 
-commit 5080832627b65e3772a35d1dced68c64e2b24442 upstream.
+commit ca95c1411198c2d87217c19d44571052cdc94725 upstream.
 
-Clang warns
+Verify that MR access flags that are passed from user are all supported
+ones, otherwise an error is returned.
 
-../drivers/nfc/pn544/pn544.c:696:4: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-                 return nfc_hci_send_cmd(hdev, NFC_HCI_RF_READER_A_GATE,
-                 ^
-../drivers/nfc/pn544/pn544.c:692:3: note: previous statement is here
-                if (target->nfcid1_len != 4 && target->nfcid1_len != 7 &&
-                ^
-1 warning generated.
-
-This warning occurs because there is a space after the tab on this line.
-Remove it so that the indentation is consistent with the Linux kernel
-coding style and clang no longer warns.
-
-Fixes: da052850b911 ("NFC: Add pn544 presence check for different targets")
-Link: https://github.com/ClangBuiltLinux/linux/issues/814
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 4fca03778351 ("IB/uverbs: Move ib_access_flags and ib_read_counters_flags to uapi")
+Link: https://lore.kernel.org/r/1578506740-22188-6-git-send-email-yishaih@mellanox.com
+Signed-off-by: Michael Guralnik <michaelgur@mellanox.com>
+Signed-off-by: Yishai Hadas <yishaih@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nfc/pn544/pn544.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/rdma/ib_verbs.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/nfc/pn544/pn544.c
-+++ b/drivers/nfc/pn544/pn544.c
-@@ -704,7 +704,7 @@ static int pn544_hci_check_presence(stru
- 		    target->nfcid1_len != 10)
- 			return -EOPNOTSUPP;
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -4300,6 +4300,9 @@ static inline int ib_check_mr_access(int
+ 	    !(flags & IB_ACCESS_LOCAL_WRITE))
+ 		return -EINVAL;
  
--		 return nfc_hci_send_cmd(hdev, NFC_HCI_RF_READER_A_GATE,
-+		return nfc_hci_send_cmd(hdev, NFC_HCI_RF_READER_A_GATE,
- 				     PN544_RF_READER_CMD_ACTIVATE_NEXT,
- 				     target->nfcid1, target->nfcid1_len, NULL);
- 	} else if (target->supported_protocols & (NFC_PROTO_JEWEL_MASK |
++	if (flags & ~IB_ACCESS_SUPPORTED)
++		return -EINVAL;
++
+ 	return 0;
+ }
+ 
 
 
