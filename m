@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BAA815C476
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DF0D15C38D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387956AbgBMPrd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:47:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48512 "EHLO mail.kernel.org"
+        id S1729824AbgBMPm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:42:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728988AbgBMP1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:03 -0500
+        id S1729585AbgBMP2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:13 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 904BB24670;
-        Thu, 13 Feb 2020 15:27:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F09D024681;
+        Thu, 13 Feb 2020 15:28:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607622;
-        bh=asWoLacKFH1KxfF3Gmpm1l70KlWV8YA0bQ4Byui+Vio=;
+        s=default; t=1581607693;
+        bh=I3F37xw90XR+ITkmYbUSU264wdX9jM9dM/02J2SyJLA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eQKZN9NCxKuOaud+gcJ1kHcYEfap+AiecH4TFy2YqbhcAPlIjZxzQpl6LbMGTA6fs
-         bL4O0bDLHEZo8PBRnUIM0XfEC3i6ma9ZVg6xCMI3Mc3+Us2IGDNnPkoEhiPmOL2gUf
-         rTjMew9EjcwliYUDfl6Z39M69ThZNNSbLLpl4BwM=
+        b=VglL+DpTtB67KIEuTKV52CvCRbjoyUSuBBkFS5QCsaZPLFOSRowhuix/rTEO6HeKa
+         BGYABPv79hIuijg5diZAlxhe3hU+/8Zfdmt/i8QcopfHWhQ3u4pB7GQdWIoz43T8Fi
+         QwCq49PKgJmk4vDAIhuYKLiKJTTyw0ra+sov7plo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Parav Pandit <parav@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.4 03/96] IB/mlx4: Fix memory leak in add_gid error flow
-Date:   Thu, 13 Feb 2020 07:20:10 -0800
-Message-Id: <20200213151840.200355439@linuxfoundation.org>
+        Bryan ODonoghue <bryan.odonoghue@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.5 015/120] ath10k: pci: Only dump ATH10K_MEM_REGION_TYPE_IOREG when safe
+Date:   Thu, 13 Feb 2020 07:20:11 -0800
+Message-Id: <20200213151907.039722384@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,78 +44,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-commit eaad647e5cc27f7b46a27f3b85b14c4c8a64bffa upstream.
+commit d239380196c4e27a26fa4bea73d2bf994c14ec2d upstream.
 
-In procedure mlx4_ib_add_gid(), if the driver is unable to update the FW
-gid table, there is a memory leak in the driver's copy of the gid table:
-the gid entry's context buffer is not freed.
+ath10k_pci_dump_memory_reg() will try to access memory of type
+ATH10K_MEM_REGION_TYPE_IOREG however, if a hardware restart is in progress
+this can crash a system.
 
-If such an error occurs, free the entry's context buffer, and mark the
-entry as available (by setting its context pointer to NULL).
+Individual ioread32() time has been observed to jump from 15-20 ticks to >
+80k ticks followed by a secure-watchdog bite and a system reset.
 
-Fixes: e26be1bfef81 ("IB/mlx4: Implement ib_device callbacks")
-Link: https://lore.kernel.org/r/20200115085050.73746-1-leon@kernel.org
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Reviewed-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Work around this corner case by only issuing the read transaction when the
+driver state is ATH10K_STATE_ON.
+
+Tested-on: QCA9988 PCI 10.4-3.9.0.2-00044
+
+Fixes: 219cc084c6706 ("ath10k: add memory dump support QCA9984")
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/mlx4/main.c |   20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ drivers/net/wireless/ath/ath10k/pci.c |   19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -246,6 +246,13 @@ static int mlx4_ib_update_gids(struct gi
- 	return mlx4_ib_update_gids_v1(gids, ibdev, port_num);
+--- a/drivers/net/wireless/ath/ath10k/pci.c
++++ b/drivers/net/wireless/ath/ath10k/pci.c
+@@ -1604,11 +1604,22 @@ static int ath10k_pci_dump_memory_reg(st
+ {
+ 	struct ath10k_pci *ar_pci = ath10k_pci_priv(ar);
+ 	u32 i;
++	int ret;
++
++	mutex_lock(&ar->conf_mutex);
++	if (ar->state != ATH10K_STATE_ON) {
++		ath10k_warn(ar, "Skipping pci_dump_memory_reg invalid state\n");
++		ret = -EIO;
++		goto done;
++	}
+ 
+ 	for (i = 0; i < region->len; i += 4)
+ 		*(u32 *)(buf + i) = ioread32(ar_pci->mem + region->start + i);
+ 
+-	return region->len;
++	ret = region->len;
++done:
++	mutex_unlock(&ar->conf_mutex);
++	return ret;
  }
  
-+static void free_gid_entry(struct gid_entry *entry)
-+{
-+	memset(&entry->gid, 0, sizeof(entry->gid));
-+	kfree(entry->ctx);
-+	entry->ctx = NULL;
-+}
+ /* if an error happened returns < 0, otherwise the length */
+@@ -1704,7 +1715,11 @@ static void ath10k_pci_dump_memory(struc
+ 			count = ath10k_pci_dump_memory_sram(ar, current_region, buf);
+ 			break;
+ 		case ATH10K_MEM_REGION_TYPE_IOREG:
+-			count = ath10k_pci_dump_memory_reg(ar, current_region, buf);
++			ret = ath10k_pci_dump_memory_reg(ar, current_region, buf);
++			if (ret < 0)
++				break;
 +
- static int mlx4_ib_add_gid(const struct ib_gid_attr *attr, void **context)
- {
- 	struct mlx4_ib_dev *ibdev = to_mdev(attr->device);
-@@ -306,6 +313,8 @@ static int mlx4_ib_add_gid(const struct
- 				     GFP_ATOMIC);
- 		if (!gids) {
- 			ret = -ENOMEM;
-+			*context = NULL;
-+			free_gid_entry(&port_gid_table->gids[free]);
- 		} else {
- 			for (i = 0; i < MLX4_MAX_PORT_GIDS; i++) {
- 				memcpy(&gids[i].gid, &port_gid_table->gids[i].gid, sizeof(union ib_gid));
-@@ -317,6 +326,12 @@ static int mlx4_ib_add_gid(const struct
- 
- 	if (!ret && hw_update) {
- 		ret = mlx4_ib_update_gids(gids, ibdev, attr->port_num);
-+		if (ret) {
-+			spin_lock_bh(&iboe->lock);
-+			*context = NULL;
-+			free_gid_entry(&port_gid_table->gids[free]);
-+			spin_unlock_bh(&iboe->lock);
-+		}
- 		kfree(gids);
- 	}
- 
-@@ -346,10 +361,7 @@ static int mlx4_ib_del_gid(const struct
- 		if (!ctx->refcount) {
- 			unsigned int real_index = ctx->real_index;
- 
--			memset(&port_gid_table->gids[real_index].gid, 0,
--			       sizeof(port_gid_table->gids[real_index].gid));
--			kfree(port_gid_table->gids[real_index].ctx);
--			port_gid_table->gids[real_index].ctx = NULL;
-+			free_gid_entry(&port_gid_table->gids[real_index]);
- 			hw_update = 1;
- 		}
- 	}
++			count = ret;
+ 			break;
+ 		default:
+ 			ret = ath10k_pci_dump_memory_generic(ar, current_region, buf);
 
 
