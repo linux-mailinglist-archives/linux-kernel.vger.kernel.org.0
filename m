@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1853915C3E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:45:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E12E015C3DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:45:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728624AbgBMPpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:45:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51292 "EHLO mail.kernel.org"
+        id S1729837AbgBMPpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:45:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728970AbgBMP1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729437AbgBMP1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Feb 2020 10:27:34 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEA6424670;
-        Thu, 13 Feb 2020 15:27:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6566E20661;
+        Thu, 13 Feb 2020 15:27:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607653;
-        bh=/6nvKJXpUQXg8GvlxjuliI9HJ8lsGRxn/EMimUQ8VTQ=;
+        s=default; t=1581607654;
+        bh=WuqV254a5onX5HPGKhHxntSjp5QurUQnAHBFMgCKLuQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2B1LiMA0Cf7PN9qPTZVfXhQJG1auE7GYiLX68PAw87bWY0FtCsv8bJs2Q07GE10dC
-         3wqxRBA05b4hNZaYI4mOwvdcQ8h0zJ1kRJzbwK+rN+Il5I9Pev8w0MsrVgmt3FK4b5
-         9efaE3v1zevF6p7yRDvE6W+IyC/h6VGt/BJZc7wI=
+        b=TXBX8N/S92zrhlKvcsOrjzB7GY3CpPBdgsLWV28huGjhwcfiR8vfWsY2aTE/wlPlb
+         ShnA2X9uduY5bTz/Ua064FHqLGHyKWmlZP8zUvAbGCj9a5/tfK74diVAvDJhIrLxOi
+         bsPiCLsRtO3Q2CGjhU2V3PJDS1ZQ4FXx/PTd0KhM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH 5.4 67/96] arm64: ptrace: nofpsimd: Fail FP/SIMD regset operations
-Date:   Thu, 13 Feb 2020 07:21:14 -0800
-Message-Id: <20200213151904.616191583@linuxfoundation.org>
+        stable@vger.kernel.org, Gavin Shan <gshan@redhat.com>,
+        Marc Zyngier <maz@kernel.org>
+Subject: [PATCH 5.4 68/96] KVM: arm/arm64: Fix young bit from mmu notifier
+Date:   Thu, 13 Feb 2020 07:21:15 -0800
+Message-Id: <20200213151904.946853903@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
 References: <20200213151839.156309910@linuxfoundation.org>
@@ -46,97 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Gavin Shan <gshan@redhat.com>
 
-commit c9d66999f064947e6b577ceacc1eb2fbca6a8d3c upstream.
+commit cf2d23e0bac9f6b5cd1cba8898f5f05ead40e530 upstream.
 
-When fp/simd is not supported on the system, fail the operations
-of FP/SIMD regsets.
+kvm_test_age_hva() is called upon mmu_notifier_test_young(), but wrong
+address range has been passed to handle_hva_to_gpa(). With the wrong
+address range, no young bits will be checked in handle_hva_to_gpa().
+It means zero is always returned from mmu_notifier_test_young().
 
-Fixes: 82e0191a1aa11abf ("arm64: Support systems without FP/ASIMD")
-Cc: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Will Deacon <will@kernel.org>
+This fixes the issue by passing correct address range to the underly
+function handle_hva_to_gpa(), so that the hardware young (access) bit
+will be visited.
+
+Fixes: 35307b9a5f7e ("arm/arm64: KVM: Implement Stage-2 page aging")
+Signed-off-by: Gavin Shan <gshan@redhat.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/20200121055659.19560-1-gshan@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/ptrace.c |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ virt/kvm/arm/mmu.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/arm64/kernel/ptrace.c
-+++ b/arch/arm64/kernel/ptrace.c
-@@ -615,6 +615,13 @@ static int gpr_set(struct task_struct *t
- 	return 0;
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -2147,7 +2147,8 @@ int kvm_test_age_hva(struct kvm *kvm, un
+ 	if (!kvm->arch.pgd)
+ 		return 0;
+ 	trace_kvm_test_age_hva(hva);
+-	return handle_hva_to_gpa(kvm, hva, hva, kvm_test_age_hva_handler, NULL);
++	return handle_hva_to_gpa(kvm, hva, hva + PAGE_SIZE,
++				 kvm_test_age_hva_handler, NULL);
  }
  
-+static int fpr_active(struct task_struct *target, const struct user_regset *regset)
-+{
-+	if (!system_supports_fpsimd())
-+		return -ENODEV;
-+	return regset->n;
-+}
-+
- /*
-  * TODO: update fp accessors for lazy context switching (sync/flush hwstate)
-  */
-@@ -637,6 +644,9 @@ static int fpr_get(struct task_struct *t
- 		   unsigned int pos, unsigned int count,
- 		   void *kbuf, void __user *ubuf)
- {
-+	if (!system_supports_fpsimd())
-+		return -EINVAL;
-+
- 	if (target == current)
- 		fpsimd_preserve_current_state();
- 
-@@ -676,6 +686,9 @@ static int fpr_set(struct task_struct *t
- {
- 	int ret;
- 
-+	if (!system_supports_fpsimd())
-+		return -EINVAL;
-+
- 	ret = __fpr_set(target, regset, pos, count, kbuf, ubuf, 0);
- 	if (ret)
- 		return ret;
-@@ -1134,6 +1147,7 @@ static const struct user_regset aarch64_
- 		 */
- 		.size = sizeof(u32),
- 		.align = sizeof(u32),
-+		.active = fpr_active,
- 		.get = fpr_get,
- 		.set = fpr_set
- 	},
-@@ -1348,6 +1362,9 @@ static int compat_vfp_get(struct task_st
- 	compat_ulong_t fpscr;
- 	int ret, vregs_end_pos;
- 
-+	if (!system_supports_fpsimd())
-+		return -EINVAL;
-+
- 	uregs = &target->thread.uw.fpsimd_state;
- 
- 	if (target == current)
-@@ -1381,6 +1398,9 @@ static int compat_vfp_set(struct task_st
- 	compat_ulong_t fpscr;
- 	int ret, vregs_end_pos;
- 
-+	if (!system_supports_fpsimd())
-+		return -EINVAL;
-+
- 	uregs = &target->thread.uw.fpsimd_state;
- 
- 	vregs_end_pos = VFP_STATE_SIZE - sizeof(compat_ulong_t);
-@@ -1438,6 +1458,7 @@ static const struct user_regset aarch32_
- 		.n = VFP_STATE_SIZE / sizeof(compat_ulong_t),
- 		.size = sizeof(compat_ulong_t),
- 		.align = sizeof(compat_ulong_t),
-+		.active = fpr_active,
- 		.get = compat_vfp_get,
- 		.set = compat_vfp_set
- 	},
+ void kvm_mmu_free_memory_caches(struct kvm_vcpu *vcpu)
 
 
