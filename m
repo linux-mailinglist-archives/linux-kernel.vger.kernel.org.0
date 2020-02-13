@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD2A015C345
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD71615C4AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387503AbgBMPjj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:39:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57778 "EHLO mail.kernel.org"
+        id S1729306AbgBMPt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:49:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729629AbgBMP24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:28:56 -0500
+        id S1729237AbgBMP0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:45 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC20E2168B;
-        Thu, 13 Feb 2020 15:28:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABEC824685;
+        Thu, 13 Feb 2020 15:26:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607735;
-        bh=eA2xG7o/gojCA1Jlfncc6S6XqFxRCP2rOYoV6DMyWws=;
+        s=default; t=1581607604;
+        bh=Dgrwx/JC4sa0jfa3IwWsSW9puRlLOOtDFySxIgxoPhs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HWKuZCgmr2pgF+7njm3T+ct3JOaUfKbM6yDxc7cjWF1rj4BopJMeth4RMZx+ky8S5
-         Up3PIRWUe2jvpfgdT7elF04HMLg1NMn0fWQpBCB3gW03Rp9MX4qGeTth36kHyh5vEN
-         1CAnGzrSdphxUHQIoj0ICj4WVyyvyajw8dUEYN5U=
+        b=1HLrbVVFt6r2HOQqmhQL2ppYt+9yCipnxBGXrRq05+izXMS9v4+3B7JAZkW+ehD4h
+         EsqN2PTc7gfYlt6x6svBmKSDEdVrgaV41df8i+0Ion53iHE8GC4nDrygAFDauGyY+U
+         t3tmYwSxCsI5MHwzO4K9Vre6OBNQ5tWAqIKE7YAs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Beata Michalska <beata.michalska@linaro.org>,
-        James Morse <james.morse@arm.com>,
-        Marc Zyngier <maz@kernel.org>
-Subject: [PATCH 5.5 087/120] KVM: arm: Make inject_abt32() inject an external abort instead
-Date:   Thu, 13 Feb 2020 07:21:23 -0800
-Message-Id: <20200213151930.619676045@linuxfoundation.org>
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.19 43/52] crypto: atmel-sha - fix error handling when setting hmac key
+Date:   Thu, 13 Feb 2020 07:21:24 -0800
+Message-Id: <20200213151827.802990585@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
+References: <20200213151810.331796857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,57 +48,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Morse <james.morse@arm.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 21aecdbd7f3ab02c9b82597dc733ee759fb8b274 upstream.
+commit b529f1983b2dcc46354f311feda92e07b6e9e2da upstream.
 
-KVM's inject_abt64() injects an external-abort into an aarch64 guest.
-The KVM_CAP_ARM_INJECT_EXT_DABT is intended to do exactly this, but
-for an aarch32 guest inject_abt32() injects an implementation-defined
-exception, 'Lockdown fault'.
+HMAC keys can be of any length, and atmel_sha_hmac_key_set() can only
+fail due to -ENOMEM.  But atmel_sha_hmac_setkey() incorrectly treated
+any error as a "bad key length" error.  Fix it to correctly propagate
+the -ENOMEM error code and not set any tfm result flags.
 
-Change this to external abort. For non-LPAE we now get the documented:
-| Unhandled fault: external abort on non-linefetch (0x008) at 0x9c800f00
-and for LPAE:
-| Unhandled fault: synchronous external abort (0x210) at 0x9c800f00
-
-Fixes: 74a64a981662a ("KVM: arm/arm64: Unify 32bit fault injection")
-Reported-by: Beata Michalska <beata.michalska@linaro.org>
-Signed-off-by: James Morse <james.morse@arm.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/20200121123356.203000-3-james.morse@arm.com
+Fixes: 81d8750b2b59 ("crypto: atmel-sha - add support to hmac(shaX)")
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/arm/aarch32.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/crypto/atmel-sha.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
---- a/virt/kvm/arm/aarch32.c
-+++ b/virt/kvm/arm/aarch32.c
-@@ -15,6 +15,10 @@
- #include <asm/kvm_emulate.h>
- #include <asm/kvm_hyp.h>
+--- a/drivers/crypto/atmel-sha.c
++++ b/drivers/crypto/atmel-sha.c
+@@ -1921,12 +1921,7 @@ static int atmel_sha_hmac_setkey(struct
+ {
+ 	struct atmel_sha_hmac_ctx *hmac = crypto_ahash_ctx(tfm);
  
-+#define DFSR_FSC_EXTABT_LPAE	0x10
-+#define DFSR_FSC_EXTABT_nLPAE	0x08
-+#define DFSR_LPAE		BIT(9)
-+
- /*
-  * Table taken from ARMv8 ARM DDI0487B-B, table G1-10.
-  */
-@@ -182,10 +186,10 @@ static void inject_abt32(struct kvm_vcpu
- 	/* Give the guest an IMPLEMENTATION DEFINED exception */
- 	is_lpae = (vcpu_cp15(vcpu, c2_TTBCR) >> 31);
- 	if (is_lpae) {
--		*fsr = 1 << 9 | 0x34;
-+		*fsr = DFSR_LPAE | DFSR_FSC_EXTABT_LPAE;
- 	} else {
--		/* Surprise! DFSR's FS[4] lives in bit 10 */
--		*fsr = BIT(10) | 0x4; /* 0x14 */
-+		/* no need to shuffle FS[4] into DFSR[10] as its 0 */
-+		*fsr = DFSR_FSC_EXTABT_nLPAE;
- 	}
+-	if (atmel_sha_hmac_key_set(&hmac->hkey, key, keylen)) {
+-		crypto_ahash_set_flags(tfm, CRYPTO_TFM_RES_BAD_KEY_LEN);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
++	return atmel_sha_hmac_key_set(&hmac->hkey, key, keylen);
  }
  
+ static int atmel_sha_hmac_init(struct ahash_request *req)
 
 
