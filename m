@@ -2,174 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E098315B960
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 07:11:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43BE515B97C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 07:14:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729732AbgBMGLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 01:11:10 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.155]:14807 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729383AbgBMGLJ (ORCPT
+        id S1729736AbgBMGOP convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 13 Feb 2020 01:14:15 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:59408 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726654AbgBMGOP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 01:11:09 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 20793400C6EA2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 00:11:08 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 27iOjmjufSl8q27iOjVMFF; Thu, 13 Feb 2020 00:11:08 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ojdiWiFv5ooTl6FyYNua5SpLKzy89/VIsicFh/83C2g=; b=Uw3GWhHE9plPJBJANIakK1olap
-        QCivh/2NoSEIhW6BPIhfBO4j9RohoF8zF9xPGcKVDEuFKHtzcOOLhBjS1yQYrhrGQwZtzVQtJgPOK
-        rjlOU9C36TiUV0Ua383szihpEyHJ1DLOya33hZzdWjfBzE2a06pBZ4hF2vVeIPNobC1nRh6vLVWIZ
-        Iz94ERUzGOPOboTqN0+fhfQYIvkB6JwYpDJHYHGWAuObDS4qxIpYFyVLus9YEWXo8BflxU4vg19hF
-        tPUx/4ZcDIzBLp0IuNSZQIcXGf+IoweKqBaYen5Hza5ZFRwyZOj50XQPbDCZNblRZOycRElvcf94O
-        1A7IBfzA==;
-Received: from [200.68.140.15] (port=3953 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j27iN-0029rv-Jl; Thu, 13 Feb 2020 00:11:07 -0600
-Subject: Re: [PATCH] auxdisplay: charlcd: replace zero-length array with
- flexible-array member
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>
-References: <20200212195231.GA2867@embeddedor>
- <CANiq72nt19x2Z6ErT8a1_2c0sKfjkv_yUFMZS2mf3HWp3RvnDQ@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <0dd75019-4d02-24ee-fdf1-f713a99d4141@embeddedor.com>
-Date:   Thu, 13 Feb 2020 00:13:41 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <CANiq72nt19x2Z6ErT8a1_2c0sKfjkv_yUFMZS2mf3HWp3RvnDQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.15
-X-Source-L: No
-X-Exim-ID: 1j27iN-0029rv-Jl
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [200.68.140.15]:3953
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Thu, 13 Feb 2020 01:14:15 -0500
+Received: from mail-pl1-f200.google.com ([209.85.214.200])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1j27lM-0005gY-Gv
+        for linux-kernel@vger.kernel.org; Thu, 13 Feb 2020 06:14:12 +0000
+Received: by mail-pl1-f200.google.com with SMTP id k16so2583757pls.9
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 22:14:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=iFTWL0F6XbEgUZzdQsa4Lq7XsI2j5FghOEFQx5EWTBU=;
+        b=aPzLdpa4yrNk2r37vrqygD8gubHuD4+xDOa0N8w+dWPdV0W8vn7lYxB5ecLMusVm/Y
+         D7UJ4srYUHcFgYQLIRZ1l8AW43Bw8313kYtkgxsrSsQhmRLksJ2YYF/1tSx2vnUhaRr5
+         IdSwL/ZJpmd8wyoUEADO9NknOt++tyidiiBKuS3CWloXtYaUmpP5cvz7AvHw+MVo3g0R
+         0aujhe+4eX1ILziV2EtiVLGNP/kMAn3XmsG1j/765iTvGx0LH9L4xu815T5KlOzNhA/p
+         NC6sOXsq1WGkAXQ34Gfippp+OHhIgInk2R8klBzS5mdFt2JJpRwkUm1CMXuSXnHC5psb
+         BLMA==
+X-Gm-Message-State: APjAAAVgyITYEsgB0kc4y/A1O/UJ+u4EIVMvJMyTyljNCK1iEft8c030
+        lvpbTZ9AmGH6mLAAhARyiDJBRHQ58I7V5dIgA3TlHqxOOpp2vsICAx7aaS6e5HAOz3ubGas1vCt
+        58mMP/fFolrFm49uKRXqIUzMkd9ZKmNnPJJPJPM9AUQ==
+X-Received: by 2002:a63:34e:: with SMTP id 75mr13066833pgd.286.1581574450422;
+        Wed, 12 Feb 2020 22:14:10 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzT9Z2iW42XtrLIqYPUNuKLar0Sh4sU/tNHkIS51us6U+ljOu3YmbnxZJEs456aej2kx9cetw==
+X-Received: by 2002:a63:34e:: with SMTP id 75mr13066806pgd.286.1581574450017;
+        Wed, 12 Feb 2020 22:14:10 -0800 (PST)
+Received: from 2001-b011-380f-3214-1cc0-4d67-0ea8-9f12.dynamic-ip6.hinet.net (2001-b011-380f-3214-1cc0-4d67-0ea8-9f12.dynamic-ip6.hinet.net. [2001:b011:380f:3214:1cc0:4d67:ea8:9f12])
+        by smtp.gmail.com with ESMTPSA id i27sm1141022pgn.76.2020.02.12.22.14.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Feb 2020 22:14:09 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: SFP+ support for 8168fp/8117
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <02F7CBDE-B877-481C-A5AF-2F4CBF830A2C@canonical.com>
+Date:   Thu, 13 Feb 2020 14:14:06 +0800
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        Anthony Wong <anthony.wong@canonical.com>,
+        Jason Yen <jason.yen@canonical.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <80E9C881-91C8-4F29-B9CE-652F9EE0B018@canonical.com>
+References: <2D8F5FFE-3EC3-480B-9D15-23CACE5556DF@canonical.com>
+ <20200102152143.GB1397@lunn.ch>
+ <DC28A43E-4F1A-40B6-84B0-3E79215527C9@canonical.com>
+ <c148fefc-fd56-26a8-9f9b-fbefbaf25050@gmail.com>
+ <02F7CBDE-B877-481C-A5AF-2F4CBF830A2C@canonical.com>
+To:     Chun-Hao Lin <hau@realtek.com>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miguel,
+Chun-Hao,
 
-On 2/12/20 14:49, Miguel Ojeda wrote:
-> Hi Gustavo,
+> On Jan 3, 2020, at 12:53, Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
 > 
-> On Wed, Feb 12, 2020 at 8:49 PM Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
->>
->> The current codebase makes use of the zero-length array language
->> extension to the C90 standard, but the preferred mechanism to declare
->> variable-length types such as these ones is a flexible array member[1][2],
->> introduced in C99:
->>
->> struct foo {
->>         int stuff;
->>         struct boo array[];
->> };
->>
->> By making use of the mechanism above, we will get a compiler warning
->> in case the flexible array does not occur last in the structure, which
->> will help us prevent some kind of undefined behavior bugs from being
->> inadvertenly introduced[3] to the codebase from now on.
 > 
-> s:inadvertenly:inadvertently:
+> 
+>> On Jan 3, 2020, at 05:24, Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>> 
+>> On 02.01.2020 17:46, Kai-Heng Feng wrote:
+>>> Hi Andrew,
+>>> 
+>>>> On Jan 2, 2020, at 23:21, Andrew Lunn <andrew@lunn.ch> wrote:
+>>>> 
+>>>> On Thu, Jan 02, 2020 at 02:59:42PM +0800, Kai Heng Feng wrote:
+>>>>> Hi Heiner,
+>>>>> 
+>>>>> There's an 8168fp/8117 chip has SFP+ port instead of RJ45, the phy device ID matches "Generic FE-GE Realtek PHY" nevertheless.
+>>>>> The problems is that, since it uses SFP+, both BMCR and BMSR read are always zero, so Realtek phylib never knows if the link is up.
+>>>>> 
+>>>>> However, the old method to read through MMIO correctly shows the link is up:
+>>>>> static unsigned int rtl8169_xmii_link_ok(struct rtl8169_private *tp)
+>>>>> {
+>>>>>     return RTL_R8(tp, PHYstatus) & LinkStatus;
+>>>>> }
+>>>>> 
+>>>>> Few ideas here:
+>>>>> - Add a link state callback for phylib like phylink's phylink_fixed_state_cb(). However there's no guarantee that other parts of this chip works.
+>>>>> - Add SFP+ support for this chip. However the phy device matches to "Generic FE-GE Realtek PHY" which may complicate things.
+>>>>> 
+>>>>> Any advice will be welcome.
+>>>> 
+>>>> Hi Kai
+>>>> 
+>>>> Is the i2c bus accessible?
+>>> 
+>>> I don't think so. It seems to be a regular Realtek 8168 device with generic PCI ID [10ec:8168].
+>>> 
+>>>> Is there any documentation or example code?
+>>> 
+>>> Unfortunately no.
+>>> 
+>>>> 
+>>>> In order to correctly support SFP+ cages, we need access to the i2c
+>>>> bus to determine what sort of module has been inserted. It would also
+>>>> be good to have access to LOS, transmitter disable, etc, from the SFP
+>>>> cage.
+>>> 
+>>> Seems like we need Realtek to provide more information to support this chip with SFP+.
+>>> 
+>> Indeed it would be good to have some more details how this chip handles SFP+,
+>> therefore I add Hau to the discussion.
+>> 
+>> As I see it the PHY registers are simply dummies on this chip. Or does this chip
+>> support both, PHY and SFP+? Hopefully SFP presence can be autodetected, we could
+>> skip the complete PHY handling in this case. Interesting would be which parts of
+>> the SFP interface are exposed how via (proprietary) registers.
+>> Recently the STMMAC driver was converted from phylib to phylink, maybe we have
+>> to do the same with r8169 one fine day. But w/o more details this is just
+>> speculation, much appreciated would be documentation from Realtek about the
+>> SFP+ interface.
+>> 
+>> Kai, which hardware/board are we talking about?
+> 
+> It's a regular Intel PC.
+> 
+> The ethernet is function 1 of the PCI device, function 0 isn't bound to any driver:
+> 02:00.0 Unassigned class [ff00]: Realtek Semiconductor Co., Ltd. Device [10ec:816e] (rev 1a)
+> 02:00.1 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd. RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller [10ec:8168] (rev 22)
+
+Would it be possible to share some info on SFP support?
+
+Kai-Heng
+
+> 
+> Kai-Heng
+> 
+>> 
+>>> Kai-Heng
+>>> 
+>>>> 
+>>>> Andrew
+>>> 
+>> Heiner
 > 
 
-Thanks for this.
-
->> Also, notice that, dynamic memory allocations won't be affected by
->> this change:
->>
->> "Flexible array members have incomplete type, and so the sizeof operator
->> may not be applied. As a quirk of the original implementation of
->> zero-length arrays, sizeof evaluates to zero."[1]
->>
->> This issue was found with the help of Coccinelle.
->>
->> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
->> [2] https://github.com/KSPP/linux/issues/21
->> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> I saw the discussion regarding this -- thanks! Do you want me to
-> handle this or will you push everything centrally? If the latter, have
-> my
-> 
-
-Please, go ahead and handle it.
-
-> Acked-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-> 
-
-Thanks
---
-Gustavo
