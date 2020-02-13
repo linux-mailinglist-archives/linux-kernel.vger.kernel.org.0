@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7A5715C413
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0010515C416
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729234AbgBMP0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:26:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39674 "EHLO mail.kernel.org"
+        id S1729267AbgBMP0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:26:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727936AbgBMPY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:24:59 -0500
+        id S1728888AbgBMPZC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:02 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76F4424689;
-        Thu, 13 Feb 2020 15:24:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20E0824689;
+        Thu, 13 Feb 2020 15:25:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607498;
-        bh=p+lZsTl40XZIe1QI/pgvsj5qXEmMVhKP7TvLVH8ZpJk=;
+        s=default; t=1581607501;
+        bh=ORUBw7O67TyN1UqRgeVdqFmlZz/TLP7kWLLyPL5R8lY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GkA2en3uXR+g4OPUJ+RBkEVfOr1pH9qVFHzTs0Tqw05auuOFfDZQGajkC2lMgh796
-         TDP+wyYoqGrwbHlKoa7NJGUp0IFyEcsqI2IBv6eHzEE/i729PDTLrhVOVR/Av+1X0h
-         h1AGXLC1vDcU5sldLRm/lZJJWIV9Wbnhzt0W99eo=
+        b=rmfSN1dlv5T/iwMOfV9ybdWM62S7+tafi4hBuMmMjpNzjNfaRopIJ4bAYQfrw3XRe
+         7U+1Hoce1tF2lfV0jifOQMlvOJUmwFVRITHwoLh7K8w9tkegxT1vN6LrTox6OuJAvI
+         VPAmi4sHm64lDdN4GhvMzEV2/23Zdzl7Q1R0Tmx4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sukadev Bhattiprolu <sukadev@linux.ibm.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 034/173] powerpc/xmon: dont access ASDR in VMs
-Date:   Thu, 13 Feb 2020 07:18:57 -0800
-Message-Id: <20200213151942.203062597@linuxfoundation.org>
+        stable@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: [PATCH 4.14 038/173] alarmtimer: Unregister wakeup source when module get fails
+Date:   Thu, 13 Feb 2020 07:19:01 -0800
+Message-Id: <20200213151943.589621404@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
 References: <20200213151931.677980430@linuxfoundation.org>
@@ -45,46 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sukadev Bhattiprolu <sukadev@linux.ibm.com>
+From: Stephen Boyd <swboyd@chromium.org>
 
-commit c2a20711fc181e7f22ee5c16c28cb9578af84729 upstream.
+commit 6b6d188aae79a630957aefd88ff5c42af6553ee3 upstream.
 
-ASDR is HV-privileged and must only be accessed in HV-mode.
-Fixes a Program Check (0x700) when xmon in a VM dumps SPRs.
+The alarmtimer_rtc_add_device() function creates a wakeup source and then
+tries to grab a module reference. If that fails the function returns early
+with an error code, but fails to remove the wakeup source.
 
-Fixes: d1e1b351f50f ("powerpc/xmon: Add ISA v3.0 SPRs to SPR dump")
-Cc: stable@vger.kernel.org # v4.14+
-Signed-off-by: Sukadev Bhattiprolu <sukadev@linux.ibm.com>
-Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20200107021633.GB29843@us.ibm.com
+Cleanup this exit path so there is no dangling wakeup source, which is
+named 'alarmtime' left allocated which will conflict with another RTC
+device that may be registered later.
+
+Fixes: 51218298a25e ("alarmtimer: Ensure RTC module is not unloaded")
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20200109155910.907-2-swboyd@chromium.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/xmon/xmon.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ kernel/time/alarmtimer.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/xmon/xmon.c
-+++ b/arch/powerpc/xmon/xmon.c
-@@ -1830,15 +1830,14 @@ static void dump_300_sprs(void)
+--- a/kernel/time/alarmtimer.c
++++ b/kernel/time/alarmtimer.c
+@@ -91,6 +91,7 @@ static int alarmtimer_rtc_add_device(str
+ 	unsigned long flags;
+ 	struct rtc_device *rtc = to_rtc_device(dev);
+ 	struct wakeup_source *__ws;
++	int ret = 0;
  
- 	printf("pidr   = %.16lx  tidr  = %.16lx\n",
- 		mfspr(SPRN_PID), mfspr(SPRN_TIDR));
--	printf("asdr   = %.16lx  psscr = %.16lx\n",
--		mfspr(SPRN_ASDR), hv ? mfspr(SPRN_PSSCR)
--					: mfspr(SPRN_PSSCR_PR));
-+	printf("psscr  = %.16lx\n",
-+		hv ? mfspr(SPRN_PSSCR) : mfspr(SPRN_PSSCR_PR));
+ 	if (rtcdev)
+ 		return -EBUSY;
+@@ -105,8 +106,8 @@ static int alarmtimer_rtc_add_device(str
+ 	spin_lock_irqsave(&rtcdev_lock, flags);
+ 	if (!rtcdev) {
+ 		if (!try_module_get(rtc->owner)) {
+-			spin_unlock_irqrestore(&rtcdev_lock, flags);
+-			return -1;
++			ret = -1;
++			goto unlock;
+ 		}
  
- 	if (!hv)
- 		return;
+ 		rtcdev = rtc;
+@@ -115,11 +116,12 @@ static int alarmtimer_rtc_add_device(str
+ 		ws = __ws;
+ 		__ws = NULL;
+ 	}
++unlock:
+ 	spin_unlock_irqrestore(&rtcdev_lock, flags);
  
--	printf("ptcr   = %.16lx\n",
--		mfspr(SPRN_PTCR));
-+	printf("ptcr   = %.16lx  asdr  = %.16lx\n",
-+		mfspr(SPRN_PTCR), mfspr(SPRN_ASDR));
- #endif
+ 	wakeup_source_unregister(__ws);
+ 
+-	return 0;
++	return ret;
  }
  
+ static inline void alarmtimer_rtc_timer_init(void)
 
 
