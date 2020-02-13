@@ -2,262 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BAB815C8FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:58:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4918515C8F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:56:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728338AbgBMQ6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 11:58:05 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:27284 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727873AbgBMQ6E (ORCPT
+        id S1728162AbgBMQ4D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 11:56:03 -0500
+Received: from gateway30.websitewelcome.com ([50.116.127.1]:41174 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727705AbgBMQ4C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 11:58:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581613083;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CsVqx+kyd9Ql+81DltyyZW5LFYl4/Tko9hU86AVRTT8=;
-        b=ewetNaUd9xZ4+f8xaBD5AZpU4rrdWnXpE1IdNpDBzscamGHAD1HtGpmSqjGH8Z/u6z5ldB
-        +VE6uGgAPOl88L+D3FKXFNduL8i2i8avjs9uohHGoAp8BaePXVq/WUtBgCPKdxOacaAYAh
-        I3tZsYSP776QGQdoUzHAJ03ohJS3lZE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-101-NpHPUwgpMoqKZVVBz_ghvg-1; Thu, 13 Feb 2020 11:57:56 -0500
-X-MC-Unique: NpHPUwgpMoqKZVVBz_ghvg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F0BE48010DF;
-        Thu, 13 Feb 2020 16:57:54 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 00C2960C05;
-        Thu, 13 Feb 2020 16:57:52 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm@lists.01.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, vishal.l.verma@intel.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2 1/4] mm/memremap_pages: Introduce memremap_compat_align()
-References: <158155489850.3343782.2687127373754434980.stgit@dwillia2-desk3.amr.corp.intel.com>
-        <158155490379.3343782.10305190793306743949.stgit@dwillia2-desk3.amr.corp.intel.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Thu, 13 Feb 2020 11:57:52 -0500
-In-Reply-To: <158155490379.3343782.10305190793306743949.stgit@dwillia2-desk3.amr.corp.intel.com>
-        (Dan Williams's message of "Wed, 12 Feb 2020 16:48:23 -0800")
-Message-ID: <x498sl677cf.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 13 Feb 2020 11:56:02 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 254E719F7E
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 10:56:01 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 2HmSjN6tuRP4z2HmTjoZDs; Thu, 13 Feb 2020 10:56:01 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:Subject:From:References:Cc:To:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=OObOTkKA0YfP2edpTShhhqNMRLQqQD/4lSguuoqSZRc=; b=muUD+GQxzGDsPHQbW2oRSxOp58
+        lnqnrgENN2IATIIrBSvfR5MpXWWH6RgiEYtEJk8fnTFaQlGdtcQEdKt3DJihr8tQ2bNTrMV5njz2y
+        jDVHYbYHr92FpdzPgD3f+CgNugMCBYB71hSvIeJkPTje/zQe6J2WPPoecDRkg4r8b2vThpuk7ehwv
+        LIWf5lmZs9Zcrd7b0EwCfLxqCx7Xske9HuraKQ8eJCiFOAeA0xBusFJjvmpZglzVipwKWmpsvi9uE
+        QRJ32lNanY+X86GwNbxaQod88v6+OMpQP87EFbzqq7bVZd020VqAN4j0apYklnfuKdtp60aTge8Hs
+        Xs0/DlAA==;
+Received: from [200.68.140.15] (port=18891 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j2HmS-00439F-Ej; Thu, 13 Feb 2020 10:56:00 -0600
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel@vger.kernel.org
+References: <20200213151951.GA32363@embeddedor>
+ <20200213164518.GI14914@hirez.programming.kicks-ass.net>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ xsFNBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
+ 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
+ tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
+ DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
+ 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
+ YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
+ m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
+ NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
+ qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
+ LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABzSxHdXN0YXZvIEEu
+ IFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPsLBfQQTAQgAJwUCWywcDAIbIwUJ
+ CWYBgAULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRBHBbTLRwbbMZ6tEACk0hmmZ2FWL1Xi
+ l/bPqDGFhzzexrdkXSfTTZjBV3a+4hIOe+jl6Rci/CvRicNW4H9yJHKBrqwwWm9fvKqOBAg9
+ obq753jydVmLwlXO7xjcfyfcMWyx9QdYLERTeQfDAfRqxir3xMeOiZwgQ6dzX3JjOXs6jHBP
+ cgry90aWbaMpQRRhaAKeAS14EEe9TSIly5JepaHoVdASuxklvOC0VB0OwNblVSR2S5i5hSsh
+ ewbOJtwSlonsYEj4EW1noQNSxnN/vKuvUNegMe+LTtnbbocFQ7dGMsT3kbYNIyIsp42B5eCu
+ JXnyKLih7rSGBtPgJ540CjoPBkw2mCfhj2p5fElRJn1tcX2McsjzLFY5jK9RYFDavez5w3lx
+ JFgFkla6sQHcrxH62gTkb9sUtNfXKucAfjjCMJ0iuQIHRbMYCa9v2YEymc0k0RvYr43GkA3N
+ PJYd/vf9vU7VtZXaY4a/dz1d9dwIpyQARFQpSyvt++R74S78eY/+lX8wEznQdmRQ27kq7BJS
+ R20KI/8knhUNUJR3epJu2YFT/JwHbRYC4BoIqWl+uNvDf+lUlI/D1wP+lCBSGr2LTkQRoU8U
+ 64iK28BmjJh2K3WHmInC1hbUucWT7Swz/+6+FCuHzap/cjuzRN04Z3Fdj084oeUNpP6+b9yW
+ e5YnLxF8ctRAp7K4yVlvA87BTQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJB
+ H1AAh8tq2ULl7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0
+ DbnWSOrG7z9HIZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo
+ 5NwYiwS0lGisLTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOP
+ otJTApqGBq80X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfF
+ l5qH5RFY/qVn3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpD
+ jKxY/HBUSmaE9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+e
+ zS/pzC/YTzAvCWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQ
+ I6Zk91jbx96nrdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqoz
+ ol6ioMHMb+InrHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcA
+ EQEAAcLBZQQYAQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QS
+ UMebQRFjKavwXB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sd
+ XvUjUocKgUQq6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4
+ WrZGh/1hAYw4ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVn
+ imua0OpqRXhCrEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfg
+ fBNOb1p1jVnT2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF
+ 8ieyHVq3qatJ9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDC
+ ORYf5kW61fcrHEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86
+ YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
+ GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH] sched/fair: Replace zero-length array with flexible-array
+ member
+Message-ID: <9d516501-2624-f915-32be-13ba6f881019@embeddedor.com>
+Date:   Thu, 13 Feb 2020 10:58:31 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <20200213164518.GI14914@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.140.15
+X-Source-L: No
+X-Exim-ID: 1j2HmS-00439F-Ej
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [200.68.140.15]:18891
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 25
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan Williams <dan.j.williams@intel.com> writes:
 
-> The "sub-section memory hotplug" facility allows memremap_pages() users
-> like libnvdimm to compensate for hardware platforms like x86 that have a
-> section size larger than their hardware memory mapping granularity.  The
-> compensation that sub-section support affords is being tolerant of
-> physical memory resources shifting by units smaller (64MiB on x86) than
-> the memory-hotplug section size (128 MiB). Where the platform
-> physical-memory mapping granularity is limited by the number and
-> capability of address-decode-registers in the memory controller.
->
-> While the sub-section support allows memremap_pages() to operate on
-> sub-section (2MiB) granularity, the Power architecture may still
-> require 16MiB alignment on "!radix_enabled()" platforms.
->
-> In order for libnvdimm to be able to detect and manage this per-arch
-> limitation, introduce memremap_compat_align() as a common minimum
-> alignment across all driver-facing memory-mapping interfaces, and let
-> Power override it to 16MiB in the "!radix_enabled()" case.
->
-> The assumption / requirement for 16MiB to be a viable
-> memremap_compat_align() value is that Power does not have platforms
-> where its equivalent of address-decode-registers never hardware remaps a
-> persistent memory resource on smaller than 16MiB boundaries. Note that I
-> tried my best to not add a new Kconfig symbol, but header include
-> entanglements defeated the #ifndef memremap_compat_align design pattern
-> and the need to export it defeats the __weak design pattern for arch
-> overrides.
->
-> Based on an initial patch by Aneesh.
 
-I have just a couple of questions.
+On 2/13/20 10:45, Peter Zijlstra wrote:
+> On Thu, Feb 13, 2020 at 09:19:51AM -0600, Gustavo A. R. Silva wrote:
+>> The current codebase makes use of the zero-length array language
+>> extension to the C90 standard, but the preferred mechanism to declare
+>> variable-length types such as these ones is a flexible array member[1][2],
+>> introduced in C99:
+>>
+>> struct foo {
+>>         int stuff;
+>>         struct boo array[];
+>> };
+>>
+>> By making use of the mechanism above, we will get a compiler warning
+>> in case the flexible array does not occur last in the structure, which
+>> will help us prevent some kind of undefined behavior bugs from being
+>> inadvertently introduced[3] to the codebase from now on.
+>>
+>> Also, notice that, dynamic memory allocations won't be affected by
+>> this change:
+>>
+>> "Flexible array members have incomplete type, and so the sizeof operator
+>> may not be applied. As a quirk of the original implementation of
+>> zero-length arrays, sizeof evaluates to zero."[1]
+>>
+>> This issue was found with the help of Coccinelle.
+>>
+>> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+>> [2] https://github.com/KSPP/linux/issues/21
+>> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  kernel/sched/fair.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index f38ff5a335d3..12a424878b23 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -1081,7 +1081,7 @@ struct numa_group {
+>>  	 * more by CPU use than by memory faults.
+>>  	 */
+>>  	unsigned long *faults_cpu;
+>> -	unsigned long faults[0];
+>> +	unsigned long faults[];
+>>  };
+> 
+> Hurmph, and where are all the other similar changes for kernel/sched/ ?
+> Because this really isn't the only such usage and I really don't see the
+> point in having a separate patch for every single one of them.
+> 
 
-First, can you please add a comment above the generic implementation of
-memremap_compat_align describing its purpose, and why a platform might
-want to override it?
+Yeah. I can do that. I'll send a patch for the whole kernel/sched.
 
-Second, I will take it at face value that the power architecture
-requires a 16MB alignment, but it's not clear to me why mmu_linear_psize
-was chosen to represent that.  What's the relationship, there, and can
-we please have a comment explaining it?
+> Also; couldn't you've taught the compiler to also warn about [0] ?
+> There's really no other purpose to having a zero length array.
+> 
 
-Thanks!
-Jeff
+Yeah, this is something we'd like to see in the short future.
+Unfortunately, for now, the only way for the compiler to warn
+about zero-length arrays in through the use of "-pedantic".
+And we definitely don't want to follow this path.
 
->
-> Link: http://lore.kernel.org/r/CAPcyv4gBGNP95APYaBcsocEa50tQj9b5h__83vgngjq3ouGX_Q@mail.gmail.com
-> Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> Reported-by: Jeff Moyer <jmoyer@redhat.com>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  arch/powerpc/Kconfig      |    1 +
->  arch/powerpc/mm/ioremap.c |   12 ++++++++++++
->  drivers/nvdimm/pfn_devs.c |    2 +-
->  include/linux/memremap.h  |    8 ++++++++
->  include/linux/mmzone.h    |    1 +
->  lib/Kconfig               |    3 +++
->  mm/memremap.c             |   13 +++++++++++++
->  7 files changed, 39 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index 497b7d0b2d7e..e6ffe905e2b9 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -122,6 +122,7 @@ config PPC
->  	select ARCH_HAS_GCOV_PROFILE_ALL
->  	select ARCH_HAS_KCOV
->  	select ARCH_HAS_HUGEPD			if HUGETLB_PAGE
-> +	select ARCH_HAS_MEMREMAP_COMPAT_ALIGN
->  	select ARCH_HAS_MMIOWB			if PPC64
->  	select ARCH_HAS_PHYS_TO_DMA
->  	select ARCH_HAS_PMEM_API
-> diff --git a/arch/powerpc/mm/ioremap.c b/arch/powerpc/mm/ioremap.c
-> index fc669643ce6a..38b5ba7d3e2d 100644
-> --- a/arch/powerpc/mm/ioremap.c
-> +++ b/arch/powerpc/mm/ioremap.c
-> @@ -2,6 +2,7 @@
->  
->  #include <linux/io.h>
->  #include <linux/slab.h>
-> +#include <linux/mmzone.h>
->  #include <linux/vmalloc.h>
->  #include <asm/io-workarounds.h>
->  
-> @@ -97,3 +98,14 @@ void __iomem *do_ioremap(phys_addr_t pa, phys_addr_t offset, unsigned long size,
->  
->  	return NULL;
->  }
-> +
-> +#ifdef CONFIG_ZONE_DEVICE
-> +/* override of the generic version in mm/memremap.c */
-> +unsigned long memremap_compat_align(void)
-> +{
-> +       if (radix_enabled())
-> +               return SUBSECTION_SIZE;
-> +       return (1UL << mmu_psize_defs[mmu_linear_psize].shift);
-> +}
-> +EXPORT_SYMBOL_GPL(memremap_compat_align);
-> +#endif
-> diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
-> index b94f7a7e94b8..a5c25cb87116 100644
-> --- a/drivers/nvdimm/pfn_devs.c
-> +++ b/drivers/nvdimm/pfn_devs.c
-> @@ -750,7 +750,7 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
->  	start = nsio->res.start;
->  	size = resource_size(&nsio->res);
->  	npfns = PHYS_PFN(size - SZ_8K);
-> -	align = max(nd_pfn->align, (1UL << SUBSECTION_SHIFT));
-> +	align = max(nd_pfn->align, SUBSECTION_SIZE);
->  	end_trunc = start + size - ALIGN_DOWN(start + size, align);
->  	if (nd_pfn->mode == PFN_MODE_PMEM) {
->  		/*
-> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-> index 6fefb09af7c3..8af1cbd8f293 100644
-> --- a/include/linux/memremap.h
-> +++ b/include/linux/memremap.h
-> @@ -132,6 +132,7 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
->  
->  unsigned long vmem_altmap_offset(struct vmem_altmap *altmap);
->  void vmem_altmap_free(struct vmem_altmap *altmap, unsigned long nr_pfns);
-> +unsigned long memremap_compat_align(void);
->  #else
->  static inline void *devm_memremap_pages(struct device *dev,
->  		struct dev_pagemap *pgmap)
-> @@ -165,6 +166,12 @@ static inline void vmem_altmap_free(struct vmem_altmap *altmap,
->  		unsigned long nr_pfns)
->  {
->  }
-> +
-> +/* when memremap_pages() is disabled all archs can remap a single page */
-> +static inline unsigned long memremap_compat_align(void)
-> +{
-> +	return PAGE_SIZE;
-> +}
->  #endif /* CONFIG_ZONE_DEVICE */
->  
->  static inline void put_dev_pagemap(struct dev_pagemap *pgmap)
-> @@ -172,4 +179,5 @@ static inline void put_dev_pagemap(struct dev_pagemap *pgmap)
->  	if (pgmap)
->  		percpu_ref_put(pgmap->ref);
->  }
-> +
->  #endif /* _LINUX_MEMREMAP_H_ */
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index 462f6873905a..6b77f7239af5 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -1170,6 +1170,7 @@ static inline unsigned long section_nr_to_pfn(unsigned long sec)
->  #define SECTION_ALIGN_DOWN(pfn)	((pfn) & PAGE_SECTION_MASK)
->  
->  #define SUBSECTION_SHIFT 21
-> +#define SUBSECTION_SIZE (1UL << SUBSECTION_SHIFT)
->  
->  #define PFN_SUBSECTION_SHIFT (SUBSECTION_SHIFT - PAGE_SHIFT)
->  #define PAGES_PER_SUBSECTION (1UL << PFN_SUBSECTION_SHIFT)
-> diff --git a/lib/Kconfig b/lib/Kconfig
-> index 0cf875fd627c..17dbc7bd3895 100644
-> --- a/lib/Kconfig
-> +++ b/lib/Kconfig
-> @@ -618,6 +618,9 @@ config ARCH_HAS_PMEM_API
->  config MEMREGION
->  	bool
->  
-> +config ARCH_HAS_MEMREMAP_COMPAT_ALIGN
-> +	bool
-> +
->  # use memcpy to implement user copies for nommu architectures
->  config UACCESS_MEMCPY
->  	bool
-> diff --git a/mm/memremap.c b/mm/memremap.c
-> index 09b5b7adc773..a6905d28fe91 100644
-> --- a/mm/memremap.c
-> +++ b/mm/memremap.c
-> @@ -7,6 +7,7 @@
->  #include <linux/mm.h>
->  #include <linux/pfn_t.h>
->  #include <linux/swap.h>
-> +#include <linux/mmzone.h>
->  #include <linux/swapops.h>
->  #include <linux/types.h>
->  #include <linux/wait_bit.h>
-> @@ -14,6 +15,18 @@
->  
->  static DEFINE_XARRAY(pgmap_array);
->  
-> +/*
-> + * Minimum compatible alignment of the resource (start, end) across
-> + * memremap interfaces (i.e. memremap + memremap_pages)
-> + */
-> +#ifndef CONFIG_ARCH_HAS_MEMREMAP_COMPAT_ALIGN
-> +unsigned long memremap_compat_align(void)
-> +{
-> +	return SUBSECTION_SIZE;
-> +}
-> +EXPORT_SYMBOL_GPL(memremap_compat_align);
-> +#endif
-> +
->  #ifdef CONFIG_DEV_PAGEMAP_OPS
->  DEFINE_STATIC_KEY_FALSE(devmap_managed_key);
->  EXPORT_SYMBOL(devmap_managed_key);
+What we can do, in the meantime, is to add a test for it to
+checkpatch.
 
+Thanks
+--
+Gustavo
