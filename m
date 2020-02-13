@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60E7E15C230
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:30:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D50F615C52E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:55:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387959AbgBMPa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:30:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49862 "EHLO mail.kernel.org"
+        id S2387556AbgBMPx6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:53:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729360AbgBMP1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:19 -0500
+        id S1729145AbgBMPZ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:58 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B75924676;
-        Thu, 13 Feb 2020 15:27:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AF342469C;
+        Thu, 13 Feb 2020 15:25:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607638;
-        bh=0Wyzm8prTXdxcC5qKMuthwEvTdxOmhJ2ohgnlYe8qGk=;
+        s=default; t=1581607558;
+        bh=0srs3T9ZsXX8Nrsv68rGqAiZFnG5/45JnzEHQ3vjyHo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OgGmTP7QYcDr+iKJYS8Cb5W1FQBv+lIs6Oyffc+o+mD8c4xgef5SxQl7ZJSeN/SJo
-         xfubhQYDFShLV0vYK3GafsBTIf6mys5BGVsXhbozMroVFMs/94hMS2vi8+WB+j6MAf
-         d/69td3WSUSHonM56AltCOCeDKASifKlyjcffR3o=
+        b=jMgAVb+3zz8+t2cC8c6XfzjcRelp5Icp7XtUiwSsQgxs0/b6st2lmLCQAmI/O5aJm
+         nYb1tbkzgAYuvIH9mrKBuiglsrcs4jDcdcB1RZ1n5tTACSsmTCKW8k4FX2/Sw8kkI5
+         46XTL1RxSWKv8xdZANoY4mEI9Xal670qBFaXb0C0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lorenz Bauer <lmb@cloudflare.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Sitnicki <jakub@cloudflare.com>
-Subject: [PATCH 5.4 26/96] bpf, sockmap: Check update requirements after locking
+        stable@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 130/173] KVM: x86: Fix potential put_fpu() w/o load_fpu() on MPX platform
 Date:   Thu, 13 Feb 2020 07:20:33 -0800
-Message-Id: <20200213151849.209731823@linuxfoundation.org>
+Message-Id: <20200213152004.943982276@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,80 +45,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lorenz Bauer <lmb@cloudflare.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 85b8ac01a421791d66c3a458a7f83cfd173fe3fa upstream.
+[ Upstream commit f958bd2314d117f8c29f4821401bc1925bc2e5ef ]
 
-It's currently possible to insert sockets in unexpected states into
-a sockmap, due to a TOCTTOU when updating the map from a syscall.
-sock_map_update_elem checks that sk->sk_state == TCP_ESTABLISHED,
-locks the socket and then calls sock_map_update_common. At this
-point, the socket may have transitioned into another state, and
-the earlier assumptions don't hold anymore. Crucially, it's
-conceivable (though very unlikely) that a socket has become unhashed.
-This breaks the sockmap's assumption that it will get a callback
-via sk->sk_prot->unhash.
+Unlike most state managed by XSAVE, MPX is initialized to zero on INIT.
+Because INITs are usually recognized in the context of a VCPU_RUN call,
+kvm_vcpu_reset() puts the guest's FPU so that the FPU state is resident
+in memory, zeros the MPX state, and reloads FPU state to hardware.  But,
+in the unlikely event that an INIT is recognized during
+kvm_arch_vcpu_ioctl_get_mpstate() via kvm_apic_accept_events(),
+kvm_vcpu_reset() will call kvm_put_guest_fpu() without a preceding
+kvm_load_guest_fpu() and corrupt the guest's FPU state (and possibly
+userspace's FPU state as well).
 
-Fix this by checking the (fixed) sk_type and sk_protocol without the
-lock, followed by a locked check of sk_state.
+Given that MPX is being removed from the kernel[*], fix the bug with the
+simple-but-ugly approach of loading the guest's FPU during
+KVM_GET_MP_STATE.
 
-Unfortunately it's not possible to push the check down into
-sock_(map|hash)_update_common, since BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB
-run before the socket has transitioned from TCP_SYN_RECV into
-TCP_ESTABLISHED.
+[*] See commit f240652b6032b ("x86/mpx: Remove MPX APIs").
 
-Fixes: 604326b41a6f ("bpf, sockmap: convert to generic sk_msg interface")
-Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Reviewed-by: Jakub Sitnicki <jakub@cloudflare.com>
-Link: https://lore.kernel.org/bpf/20200207103713.28175-1-lmb@cloudflare.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: f775b13eedee2 ("x86,kvm: move qemu/guest FPU switching out to vcpu_run")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/sock_map.c |   16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ arch/x86/kvm/x86.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/net/core/sock_map.c
-+++ b/net/core/sock_map.c
-@@ -417,14 +417,16 @@ static int sock_map_update_elem(struct b
- 		ret = -EINVAL;
- 		goto out;
- 	}
--	if (!sock_map_sk_is_suitable(sk) ||
--	    sk->sk_state != TCP_ESTABLISHED) {
-+	if (!sock_map_sk_is_suitable(sk)) {
- 		ret = -EOPNOTSUPP;
- 		goto out;
- 	}
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index b6d80c0190563..d915ea0e69cfd 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -7677,6 +7677,9 @@ int kvm_arch_vcpu_ioctl_get_sregs(struct kvm_vcpu *vcpu,
+ int kvm_arch_vcpu_ioctl_get_mpstate(struct kvm_vcpu *vcpu,
+ 				    struct kvm_mp_state *mp_state)
+ {
++	if (kvm_mpx_supported())
++		kvm_load_guest_fpu(vcpu);
++
+ 	kvm_apic_accept_events(vcpu);
+ 	if (vcpu->arch.mp_state == KVM_MP_STATE_HALTED &&
+ 					vcpu->arch.pv.pv_unhalted)
+@@ -7684,6 +7687,8 @@ int kvm_arch_vcpu_ioctl_get_mpstate(struct kvm_vcpu *vcpu,
+ 	else
+ 		mp_state->mp_state = vcpu->arch.mp_state;
  
- 	sock_map_sk_acquire(sk);
--	ret = sock_map_update_common(map, idx, sk, flags);
-+	if (sk->sk_state != TCP_ESTABLISHED)
-+		ret = -EOPNOTSUPP;
-+	else
-+		ret = sock_map_update_common(map, idx, sk, flags);
- 	sock_map_sk_release(sk);
- out:
- 	fput(sock->file);
-@@ -740,14 +742,16 @@ static int sock_hash_update_elem(struct
- 		ret = -EINVAL;
- 		goto out;
- 	}
--	if (!sock_map_sk_is_suitable(sk) ||
--	    sk->sk_state != TCP_ESTABLISHED) {
-+	if (!sock_map_sk_is_suitable(sk)) {
- 		ret = -EOPNOTSUPP;
- 		goto out;
- 	}
++	if (kvm_mpx_supported())
++		kvm_put_guest_fpu(vcpu);
+ 	return 0;
+ }
  
- 	sock_map_sk_acquire(sk);
--	ret = sock_hash_update_common(map, key, sk, flags);
-+	if (sk->sk_state != TCP_ESTABLISHED)
-+		ret = -EOPNOTSUPP;
-+	else
-+		ret = sock_hash_update_common(map, key, sk, flags);
- 	sock_map_sk_release(sk);
- out:
- 	fput(sock->file);
+-- 
+2.20.1
+
 
 
