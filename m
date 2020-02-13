@@ -2,129 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3E8615BEE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 14:02:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17FC415BEE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 14:04:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729971AbgBMNCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 08:02:15 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:40583 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729557AbgBMNCP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 08:02:15 -0500
-Received: by mail-oi1-f196.google.com with SMTP id a142so5647745oii.7
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 05:02:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:reply-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=A+3wMprKg+igdVYsZNJ9ivwdJoPZAYkyawyyUa/pO6U=;
-        b=mXg8YSs4G/ZfxUwU2MzESrELoc+GOj54Yjqj0o9bWPuTpsGqP3bg0P1R61bGKmq0/r
-         F8mbUrvydomYreQ7W0fdCyBcIQuQ8c0bzwyd/IbJgzqrFBBJbVbfLQ1f1ETkPJ9U6ERl
-         fDlFSOTUqJkBEpbilzoFGFnc8GblsaCicldNoB+kxrRbG99Kk3h5IDl56BA8h2eUKIy9
-         TDG3wFcEs23nZFmSe4YTNAzmpiiN/Un9c/6e1bfIKWCq1FkiBNaYBgxrhOe+tbjGF/DI
-         GhX9fv+ye12i++omcqU/fwu+wxoOv20L9NGNUQC1xOQVpOTZBUL1fiKOApUqHqvzpRk2
-         TgLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :reply-to:references:mime-version:content-disposition:in-reply-to
-         :user-agent;
-        bh=A+3wMprKg+igdVYsZNJ9ivwdJoPZAYkyawyyUa/pO6U=;
-        b=mIQq171abibkNoHgxgr1g7fgmOORvkT2rK/i84bwUh3caLOfqMsnp9peLK4TTKwTOC
-         zcoyhXRzFtLZLHE4w/AXopOKg6TYBe6WmhXKypErIibVduA2pwer7rPbHk4itmMrQDqX
-         yZlI1IKHv/CeZ25Hthh4oI4aVl6V+uVgPBf/x2xcnQcRnRk/EEt+58yI3XpYFM4m2FCw
-         zEbaMTq7+F6u0iAs/f3rUbRg1q63d9l7tH0E5tSs2d+o8rNxKIaWj/zfz+89tf+L7udB
-         JnqExD7CY0XWo2Omow4K1Gp1BMs7QeiOZMl6CW4r6K6j3OdlKUafI5mRPEptEu+QxnpW
-         8IXA==
-X-Gm-Message-State: APjAAAVhdp7zo26+0Tp9HgqXZr+1PDR9iRqKpMa9vdlVhJHbn26xBSWy
-        qdh+vDM8RT6mAVVC/uQGPQ==
-X-Google-Smtp-Source: APXvYqyXRG2Era0fflTDvw+Wf1os+YHhKgV6rKFYPeyZGsSJt9hh3qOzNfDIEVzeN5yM3UaLJpF+UQ==
-X-Received: by 2002:aca:db43:: with SMTP id s64mr2674666oig.144.1581598934487;
-        Thu, 13 Feb 2020 05:02:14 -0800 (PST)
-Received: from serve.minyard.net ([47.184.136.59])
-        by smtp.gmail.com with ESMTPSA id p65sm665303oif.47.2020.02.13.05.02.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 05:02:14 -0800 (PST)
-Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:e166:6491:dd75:4196])
-        by serve.minyard.net (Postfix) with ESMTPSA id 4A5B0180053;
-        Thu, 13 Feb 2020 13:02:13 +0000 (UTC)
-Date:   Thu, 13 Feb 2020 07:02:12 -0600
-From:   Corey Minyard <minyard@acm.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Patrick Vo <patrick.vo@hpe.com>,
-        openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ipmi_si: Avoid spurious errors for optional IRQs
-Message-ID: <20200213130212.GP7842@minyard.net>
-Reply-To: minyard@acm.org
-References: <20200205093146.1352-1-tiwai@suse.de>
- <s5hpneiyjgb.wl-tiwai@suse.de>
+        id S1729988AbgBMNEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 08:04:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49778 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729801AbgBMNEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 08:04:06 -0500
+Received: from localhost (unknown [209.37.97.194])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F6DB2168B;
+        Thu, 13 Feb 2020 13:04:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581599044;
+        bh=JzuXVZMjhJuQSJ5hGh5JfZlVw6AYi3gKS44RcKZi8yI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rKcZlkdb1MfHMvC/XJXfgmNFUkssnjWs2ADRkmHXZ9mvIr//KwkdCC50/Ltj/M0PG
+         I0m89eojS5KcAIjAWPsFPJfX/rRcXDDOHLTe7buofpKbFgASMcaiXNIkdsCwflkNtZ
+         VEBeoqqUxZD/8RNhH9Bp8nCx7FJv1ZIdiVzuNRLU=
+Date:   Thu, 13 Feb 2020 05:04:04 -0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     Colin King <colin.king@canonical.com>, linux-usb@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: ucsi: remove redundant assignment to
+ variable num
+Message-ID: <20200213130404.GA3369961@kroah.com>
+References: <20200208165022.30429-1-colin.king@canonical.com>
+ <20200213113423.GK1498@kuha.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <s5hpneiyjgb.wl-tiwai@suse.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200213113423.GK1498@kuha.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 09:34:12AM +0100, Takashi Iwai wrote:
-> On Wed, 05 Feb 2020 10:31:46 +0100,
-> Takashi Iwai wrote:
+On Thu, Feb 13, 2020 at 01:34:23PM +0200, Heikki Krogerus wrote:
+> On Sat, Feb 08, 2020 at 04:50:22PM +0000, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
 > > 
-> > Although the IRQ assignment in ipmi_si driver is optional,
-> > platform_get_irq() spews error messages unnecessarily:
-> >   ipmi_si dmi-ipmi-si.0: IRQ index 0 not found
+> > Variable num is being assigned with a value that is never read, it is
+> > assigned a new value later in a for-loop. The assignment is redundant
+> > and can be removed.
 > > 
-> > Fix this by switching to platform_get_irq_optional().
-> > 
-> > Fixes: 7723f4c5ecdb ("driver core: platform: Add an error message to platform_get_irq*()")
-> > Reported-and-tested-by: Patrick Vo <patrick.vo@hpe.com>
-> > Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> 
-> Any review / ack on this?
-
-Sorry, lost in the noise.  I've included this for 5.7.  If you want it
-earlier, I can arrange that.
-
-Thanks,
-
--corey
-
-> 
-> 
-> thanks,
-> 
-> Takashi
-> 
+> > Addresses-Coverity: ("Unused value")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > > ---
-> >  drivers/char/ipmi/ipmi_si_platform.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >  drivers/usb/typec/ucsi/ucsi.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 > > 
-> > diff --git a/drivers/char/ipmi/ipmi_si_platform.c b/drivers/char/ipmi/ipmi_si_platform.c
-> > index c78127ccbc0d..638c693e17ad 100644
-> > --- a/drivers/char/ipmi/ipmi_si_platform.c
-> > +++ b/drivers/char/ipmi/ipmi_si_platform.c
-> > @@ -194,7 +194,7 @@ static int platform_ipmi_probe(struct platform_device *pdev)
-> >  	else
-> >  		io.slave_addr = slave_addr;
-> >  
-> > -	io.irq = platform_get_irq(pdev, 0);
-> > +	io.irq = platform_get_irq_optional(pdev, 0);
-> >  	if (io.irq > 0)
-> >  		io.irq_setup = ipmi_std_irq_setup;
-> >  	else
-> > @@ -378,7 +378,7 @@ static int acpi_ipmi_probe(struct platform_device *pdev)
-> >  		io.irq = tmp;
-> >  		io.irq_setup = acpi_gpe_irq_setup;
-> >  	} else {
-> > -		int irq = platform_get_irq(pdev, 0);
-> > +		int irq = platform_get_irq_optional(pdev, 0);
-> >  
-> >  		if (irq > 0) {
-> >  			io.irq = irq;
-> > -- 
-> > 2.16.4
-> > 
+> > diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+> > index d5a6aac86327..b1b72cb7af10 100644
+> > --- a/drivers/usb/typec/ucsi/ucsi.c
+> > +++ b/drivers/usb/typec/ucsi/ucsi.c
+> > @@ -400,7 +400,7 @@ static int ucsi_register_altmodes(struct ucsi_connector *con, u8 recipient)
+> >  	struct typec_altmode_desc desc;
+> >  	struct ucsi_altmode alt[2];
+> >  	u64 command;
+> > -	int num = 1;
+> > +	int num;
+> >  	int ret;
+> >  	int len;
+> >  	int j;
+> 
+> Greg! I'll pick this, and to you with a few other patches that I have
+> in my queue for the ucsi driver. I hope that's OK.
+
+Thats fine.
