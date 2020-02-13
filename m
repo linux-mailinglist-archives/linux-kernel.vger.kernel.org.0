@@ -2,76 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A157515B7EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 04:46:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D08715B80A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 05:04:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729635AbgBMDpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 22:45:52 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:38462 "EHLO huawei.com"
+        id S1729613AbgBMEEj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 23:04:39 -0500
+Received: from mail-eopbgr60075.outbound.protection.outlook.com ([40.107.6.75]:41486
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729470AbgBMDpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 22:45:51 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 5FE231F777D9C80FF576;
-        Thu, 13 Feb 2020 11:45:49 +0800 (CST)
-Received: from huawei.com (10.175.101.78) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Thu, 13 Feb 2020
- 11:45:41 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
-To:     <linux-kernel@vger.kernel.org>, <dm-devel@redhat.com>
-CC:     <agk@redhat.com>, <snitzer@redhat.com>, <yangyingliang@huawei.com>
-Subject: [PATCH] dm crypt: use crypt_integrity_aead() helper
-Date:   Thu, 13 Feb 2020 12:11:26 +0800
-Message-ID: <1581567086-17807-1-git-send-email-yangyingliang@huawei.com>
-X-Mailer: git-send-email 1.8.3
-MIME-Version: 1.0
+        id S1729407AbgBMEEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 23:04:39 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ybj+3x6m5PbYyJEmcivfsNT6T/s0wbrpYEREtfF20QSJvVBCFV8iKdw9P7mlHEOd3ayGjaa6JLoRXPTLGsgpzRsF1AhAP1mipe4K6G6FTMW7VfDFhdDuCG9D7SkNa868TAGvBUtZBxa0evbFix/sYvrRh1vEK62qPNrE+8MH3RG6pVVs2mrsSAKK++2Cn0B2zXcphP+5s/It5jxbTvrJucFiK9BatiGnNScY31itRNuENIpnv5lnvVxH6p7iFFDy4xwVsGM5vi815fb1T47ZYtXGKxt3B5mSankJsE/K5hRwyEYpeJBLr3rmvEZYzW+9kriDq8r8yyC2LJNCVWRq3w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QRXwC/+YUmGPuAXuuGVkqYWLQt0AdSWQy8klGxhzrew=;
+ b=fpINHh4Oj1Ng6qIbz0SfNruf2H3bL/w/HLzF0MpvI/ewEYcWd2MPThmmIBaf9AqJmvZkcv4cj1B/i3aKE/oxSW56xwPuEJXKljuu8wVl13enEWrqPgqiJhvLxkR6CnobMWhbRvPTPgW2mN9PbcetdLAvY+rWgn07cw8Ed4CuygDk2n1RfBII0VfgV8mgVuKgpbULC2a3DoXnot9Fkqc8GdY0y7cWp7ooQquTcr6WpwPcPCgKWBTVDpNRG1veagy5v9UZyypQ0f2DI7NSHtoNl+nOC8WMtGJW8ULnKl1G1Tm4fcvCB5vGksS8jDm3fuEFnKseJg5TzMppbRKDr/8U5g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QRXwC/+YUmGPuAXuuGVkqYWLQt0AdSWQy8klGxhzrew=;
+ b=kBeJjzXC3YMLDNMDahAx6Dyyc5OfhlZDnsGsaRcNvmRf5uh9Njg1EIKwDeBtSFs4EKG60wMGK3rSlWtw1UuNsGaj4oKCxtlKSH6Y78+8ueXGmlZOqBGKzhkBtDicwiZjYWhqLTE4yHsqBraKn3R0D7o88eWGEYtAu3Rag6e4N0I=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5220.eurprd04.prod.outlook.com (20.176.215.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.24; Thu, 13 Feb 2020 04:04:35 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2729.024; Thu, 13 Feb 2020
+ 04:04:35 +0000
+From:   peng.fan@nxp.com
+To:     sudeep.holla@arm.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     viresh.kumar@linaro.org, f.fainelli@gmail.com, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, andre.przywara@arm.com,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V2 0/2] firmware: arm_scmi: add smc/hvc transports support
+Date:   Thu, 13 Feb 2020 11:58:48 +0800
+Message-Id: <1581566330-1029-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
 Content-Type: text/plain
-X-Originating-IP: [10.175.101.78]
-X-CFilter-Loop: Reflected
+X-ClientProxiedBy: HK2PR03CA0056.apcprd03.prod.outlook.com
+ (2603:1096:202:17::26) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+MIME-Version: 1.0
+Received: from localhost.localdomain (119.31.174.66) by HK2PR03CA0056.apcprd03.prod.outlook.com (2603:1096:202:17::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2729.12 via Frontend Transport; Thu, 13 Feb 2020 04:04:32 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 790923b7-353a-4fac-32b2-08d7b039d690
+X-MS-TrafficTypeDiagnostic: AM0PR04MB5220:|AM0PR04MB5220:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB5220CFBAE8423A2989997946881A0@AM0PR04MB5220.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Forefront-PRVS: 031257FE13
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(396003)(366004)(136003)(346002)(199004)(189003)(52116002)(4326008)(26005)(186003)(6666004)(36756003)(69590400006)(6486002)(956004)(2616005)(86362001)(8936002)(2906002)(478600001)(66476007)(5660300002)(81156014)(8676002)(81166006)(6506007)(9686003)(6512007)(316002)(66556008)(16526019)(66946007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5220;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: iVoiqv9Jl9Vcj+j7Qdx52akaUnWd+Gim66WPt22tJQDRQN1o6ICSNRuzxuePeKluf3Nysz/ba8Brjma5BzF5i8ACngHNIEIpY80N/zGV99BaaacJOk3SO2GrUMktR7X+YG1c4o/roTgt+wM70m0MlXCR34FAIKWdDEAmmLnCxjKhcDHEV35f0k0SEV66BVS8wtL2Aeni5WjVI3TonMBDLTYsJ5sZgP7HazEqiahKYbNLxNUKUGbj5zn/D28K+7Pl51aDMrm4oRH427DPVTn9uTUUMT4PgxljPxO0yX3HJdLaHZzDiEpuL4c4IWdtKcSgw+CC5eQJnyEKc8xhMtI357x6zrUrZgMv9JuVJaC+TzUfzhaBnfNrVD3p5GtjztsS2JbZi/n1U97lpTXV/zASEUwfIF2hCTbR2OscLPIL33WhmWCrRPLwuclG1AE7JeefKtzAAdeaMnaZzAxXsxvgkjn0g0KvjA+NmP+nFTJYDYrkfOoWuOzhWUl0LgvygEQdZl34lqtxZV0c5qHhMTyXHfO5DBj/eLtRu9pDDdDq0AY=
+X-MS-Exchange-AntiSpam-MessageData: 9zH3emyVoK8daxGhb0VmdVewPWSfiq2Khf877K6Tzp6q3E3NdGlXL00Krqn3BSsPmc9PMmGG3iHWB+0bpOgR4QrBtXoWb55zPgB9B6J2c4PvAm9cb6eMmdPjiAG8VoTdVnZibh/P3nU1nKZCBB89hw==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 790923b7-353a-4fac-32b2-08d7b039d690
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2020 04:04:35.7802
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qHz1bfN3ia1m2um2ljl4d0h9NFKL8vJiDicr70aqPseGuhSwOgVS38r3Z4q/i/PF8qm91bverld1L2WmXznMtg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5220
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace test_bit(CRYPT_MODE_INTEGRITY_AEAD, XXX) with
-crypt_integrity_aead().
+From: Peng Fan <peng.fan@nxp.com>
 
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
- drivers/md/dm-crypt.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index c6a5298..3df90da 100644
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -230,6 +230,8 @@ struct crypt_config {
- static struct scatterlist *crypt_get_sg_data(struct crypt_config *cc,
- 					     struct scatterlist *sg);
- 
-+static bool crypt_integrity_aead(struct crypt_config *cc);
-+
- /*
-  * Use this to access cipher attributes that are independent of the key.
-  */
-@@ -346,7 +348,7 @@ static int crypt_iv_benbi_ctr(struct crypt_config *cc, struct dm_target *ti,
- 	unsigned bs;
- 	int log;
- 
--	if (test_bit(CRYPT_MODE_INTEGRITY_AEAD, &cc->cipher_flags))
-+	if (crypt_integrity_aead(cc))
- 		bs = crypto_aead_blocksize(any_tfm_aead(cc));
- 	else
- 		bs = crypto_skcipher_blocksize(any_tfm(cc));
-@@ -712,7 +714,7 @@ static int crypt_iv_random_gen(struct crypt_config *cc, u8 *iv,
- static int crypt_iv_eboiv_ctr(struct crypt_config *cc, struct dm_target *ti,
- 			    const char *opts)
- {
--	if (test_bit(CRYPT_MODE_INTEGRITY_AEAD, &cc->cipher_flags)) {
-+	if (crypt_integrity_aead(cc)) {
- 		ti->error = "AEAD transforms not supported for EBOIV";
- 		return -EINVAL;
- 	}
+V2:
+ patch 1/2: only add smc-id property
+ patch 2/2: Parse smc/hvc from psci node
+	    Use prot_id as 2nd arg when issue smc/hvc
+	    Differentiate tranports using mboxes or smc-id property
+
+This is to add smc/hvc transports support, based on Viresh's v6.
+SCMI firmware could be implemented in EL3, S-EL1, NS-EL2 or other
+A core exception level. Then smc/hvc could be used. And for vendor
+specific firmware, a wrapper layer could added in EL3, S-EL1,
+NS-EL2 and etc to translate SCMI calls to vendor specific firmware calls.
+
+A new compatible string arm,scmi-smc is added. arm,scmi is still for
+mailbox transports.
+
+All protocol share same smc/hvc id, the protocol id will be take as
+2nd arg when issue smc/hvc.
+Each protocol could use its own shmem or share the same shmem
+Per smc/hvc, only Tx supported.
+
+Peng Fan (2):
+  dt-bindings: arm: arm,scmi: add smc/hvc transports
+  firmware: arm_scmi: add smc/hvc transports
+
+ Documentation/devicetree/bindings/arm/arm,scmi.txt |   1 +
+ drivers/firmware/arm_scmi/Makefile                 |   2 +-
+ drivers/firmware/arm_scmi/common.h                 |   4 +-
+ drivers/firmware/arm_scmi/driver.c                 |  11 +-
+ drivers/firmware/arm_scmi/mailbox.c                |   2 +-
+ drivers/firmware/arm_scmi/smc.c                    | 222 +++++++++++++++++++++
+ 6 files changed, 235 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/firmware/arm_scmi/smc.c
+
 -- 
-1.8.3
+2.16.4
 
