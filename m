@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86AF415C52A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:55:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8DC415C369
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387494AbgBMP0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:26:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37202 "EHLO mail.kernel.org"
+        id S1729687AbgBMPlG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:41:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728632AbgBMPYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:24:14 -0500
+        id S2387745AbgBMP2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:38 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A91CD246D5;
-        Thu, 13 Feb 2020 15:24:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D6A024676;
+        Thu, 13 Feb 2020 15:28:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607453;
-        bh=vy74wm83DRKAWIGrBtePE5PIkR4Vj7bQrTfCCtH+hfU=;
+        s=default; t=1581607717;
+        bh=7FjNszEGcyqwFNDRE5D8/DfailREOXD8wf+cbYYTG3E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KDa9Pmwk7hzDK9TPZ+xxD6humuCLAPIY3Rugl6KzPY+BJtsV89oJ2dBOvVq8UjQhC
-         dlM1J1sTvd/AMa4k8sNEY21b3lYOPAX18ewtR6AAvzIZpaHUDGx1IVFUonQ2RAkIDk
-         mC9QOvAlQpo3r2UCmZCkJVkdmLhL9+0H9KQ9A94A=
+        b=kvDIwbn5MC0mWPcL3HHCrG/6KcmndYtPHBb3c/J9zY2rGMJ/OP/270Fx6rfo6PuOe
+         HKkRG18FQnU5qTf3n9zkpRe63fszYifemZFTQLY+9hWG1b1dgp4EHpuzHQK9CizXLY
+         xfRULa9IKV8N/Jqzd3slmydoqt55l+6GPipWB4N0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 082/116] btrfs: use bool argument in free_root_pointers()
-Date:   Thu, 13 Feb 2020 07:20:26 -0800
-Message-Id: <20200213151914.722732464@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 5.5 031/120] NFS: Fix fix of show_nfs_errors
+Date:   Thu, 13 Feb 2020 07:20:27 -0800
+Message-Id: <20200213151912.509741343@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
-References: <20200213151842.259660170@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,73 +44,168 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anand Jain <anand.jain@oracle.com>
+From: Trond Myklebust <trondmy@gmail.com>
 
-[ Upstream commit 4273eaff9b8d5e141113a5bdf9628c02acf3afe5 ]
+commit 118b6292195cfb86a9f43cb65610fc6d980c65f4 upstream.
 
-We don't need int argument bool shall do in free_root_pointers().  And
-rename the argument as it confused two people.
+Casting a negative value to an unsigned long is not the same as
+converting it to its absolute value.
 
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: Anand Jain <anand.jain@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 96650e2effa2 ("NFS: Fix show_nfs_errors macros again")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/btrfs/disk-io.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ fs/nfs/nfs4trace.h |   33 +++++++++++++++++----------------
+ 1 file changed, 17 insertions(+), 16 deletions(-)
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index b37519241eb1c..eab5a9065f093 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -2104,7 +2104,7 @@ static void free_root_extent_buffers(struct btrfs_root *root)
- }
+--- a/fs/nfs/nfs4trace.h
++++ b/fs/nfs/nfs4trace.h
+@@ -352,7 +352,7 @@ DECLARE_EVENT_CLASS(nfs4_clientid_event,
+ 		),
  
- /* helper to cleanup tree roots */
--static void free_root_pointers(struct btrfs_fs_info *info, int chunk_root)
-+static void free_root_pointers(struct btrfs_fs_info *info, bool free_chunk_root)
- {
- 	free_root_extent_buffers(info->tree_root);
+ 		TP_fast_assign(
+-			__entry->error = error;
++			__entry->error = error < 0 ? -error : 0;
+ 			__assign_str(dstaddr, clp->cl_hostname);
+ 		),
  
-@@ -2113,7 +2113,7 @@ static void free_root_pointers(struct btrfs_fs_info *info, int chunk_root)
- 	free_root_extent_buffers(info->csum_root);
- 	free_root_extent_buffers(info->quota_root);
- 	free_root_extent_buffers(info->uuid_root);
--	if (chunk_root)
-+	if (free_chunk_root)
- 		free_root_extent_buffers(info->chunk_root);
- 	free_root_extent_buffers(info->free_space_root);
- }
-@@ -3136,7 +3136,7 @@ int open_ctree(struct super_block *sb,
- 	btrfs_free_block_groups(fs_info);
+@@ -432,7 +432,8 @@ TRACE_EVENT(nfs4_sequence_done,
+ 			__entry->target_highest_slotid =
+ 					res->sr_target_highest_slotid;
+ 			__entry->status_flags = res->sr_status_flags;
+-			__entry->error = res->sr_status;
++			__entry->error = res->sr_status < 0 ?
++					-res->sr_status : 0;
+ 		),
+ 		TP_printk(
+ 			"error=%ld (%s) session=0x%08x slot_nr=%u seq_nr=%u "
+@@ -640,7 +641,7 @@ TRACE_EVENT(nfs4_state_mgr_failed,
+ 		),
  
- fail_tree_roots:
--	free_root_pointers(fs_info, 1);
-+	free_root_pointers(fs_info, true);
- 	invalidate_inode_pages2(fs_info->btree_inode->i_mapping);
+ 		TP_fast_assign(
+-			__entry->error = status;
++			__entry->error = status < 0 ? -status : 0;
+ 			__entry->state = clp->cl_state;
+ 			__assign_str(hostname, clp->cl_hostname);
+ 			__assign_str(section, section);
+@@ -659,7 +660,7 @@ TRACE_EVENT(nfs4_xdr_status,
+ 		TP_PROTO(
+ 			const struct xdr_stream *xdr,
+ 			u32 op,
+-			int error
++			u32 error
+ 		),
  
- fail_sb_buffer:
-@@ -3165,7 +3165,7 @@ int open_ctree(struct super_block *sb,
- 	if (!btrfs_test_opt(tree_root->fs_info, USEBACKUPROOT))
- 		goto fail_tree_roots;
+ 		TP_ARGS(xdr, op, error),
+@@ -849,7 +850,7 @@ TRACE_EVENT(nfs4_close,
+ 			__entry->fileid = NFS_FILEID(inode);
+ 			__entry->fhandle = nfs_fhandle_hash(NFS_FH(inode));
+ 			__entry->fmode = (__force unsigned int)state->state;
+-			__entry->error = error;
++			__entry->error = error < 0 ? -error : 0;
+ 			__entry->stateid_seq =
+ 				be32_to_cpu(args->stateid.seqid);
+ 			__entry->stateid_hash =
+@@ -914,7 +915,7 @@ DECLARE_EVENT_CLASS(nfs4_lock_event,
+ 		TP_fast_assign(
+ 			const struct inode *inode = state->inode;
  
--	free_root_pointers(fs_info, 0);
-+	free_root_pointers(fs_info, false);
+-			__entry->error = error;
++			__entry->error = error < 0 ? -error : 0;
+ 			__entry->cmd = cmd;
+ 			__entry->type = request->fl_type;
+ 			__entry->start = request->fl_start;
+@@ -986,7 +987,7 @@ TRACE_EVENT(nfs4_set_lock,
+ 		TP_fast_assign(
+ 			const struct inode *inode = state->inode;
  
- 	/* don't use the log in recovery mode, it won't be valid */
- 	btrfs_set_super_log_root(disk_super, 0);
-@@ -3862,7 +3862,7 @@ void close_ctree(struct btrfs_root *root)
- 	btrfs_stop_all_workers(fs_info);
+-			__entry->error = error;
++			__entry->error = error < 0 ? -error : 0;
+ 			__entry->cmd = cmd;
+ 			__entry->type = request->fl_type;
+ 			__entry->start = request->fl_start;
+@@ -1164,7 +1165,7 @@ TRACE_EVENT(nfs4_delegreturn_exit,
+ 		TP_fast_assign(
+ 			__entry->dev = res->server->s_dev;
+ 			__entry->fhandle = nfs_fhandle_hash(args->fhandle);
+-			__entry->error = error;
++			__entry->error = error < 0 ? -error : 0;
+ 			__entry->stateid_seq =
+ 				be32_to_cpu(args->stateid->seqid);
+ 			__entry->stateid_hash =
+@@ -1204,7 +1205,7 @@ DECLARE_EVENT_CLASS(nfs4_test_stateid_ev
+ 		TP_fast_assign(
+ 			const struct inode *inode = state->inode;
  
- 	clear_bit(BTRFS_FS_OPEN, &fs_info->flags);
--	free_root_pointers(fs_info, 1);
-+	free_root_pointers(fs_info, true);
+-			__entry->error = error;
++			__entry->error = error < 0 ? -error : 0;
+ 			__entry->dev = inode->i_sb->s_dev;
+ 			__entry->fileid = NFS_FILEID(inode);
+ 			__entry->fhandle = nfs_fhandle_hash(NFS_FH(inode));
+@@ -1306,7 +1307,7 @@ TRACE_EVENT(nfs4_lookupp,
+ 		TP_fast_assign(
+ 			__entry->dev = inode->i_sb->s_dev;
+ 			__entry->ino = NFS_FILEID(inode);
+-			__entry->error = error;
++			__entry->error = error < 0 ? -error : 0;
+ 		),
  
- 	iput(fs_info->btree_inode);
+ 		TP_printk(
+@@ -1342,7 +1343,7 @@ TRACE_EVENT(nfs4_rename,
+ 			__entry->dev = olddir->i_sb->s_dev;
+ 			__entry->olddir = NFS_FILEID(olddir);
+ 			__entry->newdir = NFS_FILEID(newdir);
+-			__entry->error = error;
++			__entry->error = error < 0 ? -error : 0;
+ 			__assign_str(oldname, oldname->name);
+ 			__assign_str(newname, newname->name);
+ 		),
+@@ -1433,7 +1434,7 @@ DECLARE_EVENT_CLASS(nfs4_inode_stateid_e
+ 			__entry->dev = inode->i_sb->s_dev;
+ 			__entry->fileid = NFS_FILEID(inode);
+ 			__entry->fhandle = nfs_fhandle_hash(NFS_FH(inode));
+-			__entry->error = error;
++			__entry->error = error < 0 ? -error : 0;
+ 			__entry->stateid_seq =
+ 				be32_to_cpu(stateid->seqid);
+ 			__entry->stateid_hash =
+@@ -1489,7 +1490,7 @@ DECLARE_EVENT_CLASS(nfs4_getattr_event,
+ 			__entry->valid = fattr->valid;
+ 			__entry->fhandle = nfs_fhandle_hash(fhandle);
+ 			__entry->fileid = (fattr->valid & NFS_ATTR_FATTR_FILEID) ? fattr->fileid : 0;
+-			__entry->error = error;
++			__entry->error = error < 0 ? -error : 0;
+ 		),
  
--- 
-2.20.1
-
+ 		TP_printk(
+@@ -1536,7 +1537,7 @@ DECLARE_EVENT_CLASS(nfs4_inode_callback_
+ 		),
+ 
+ 		TP_fast_assign(
+-			__entry->error = error;
++			__entry->error = error < 0 ? -error : 0;
+ 			__entry->fhandle = nfs_fhandle_hash(fhandle);
+ 			if (!IS_ERR_OR_NULL(inode)) {
+ 				__entry->fileid = NFS_FILEID(inode);
+@@ -1593,7 +1594,7 @@ DECLARE_EVENT_CLASS(nfs4_inode_stateid_c
+ 		),
+ 
+ 		TP_fast_assign(
+-			__entry->error = error;
++			__entry->error = error < 0 ? -error : 0;
+ 			__entry->fhandle = nfs_fhandle_hash(fhandle);
+ 			if (!IS_ERR_OR_NULL(inode)) {
+ 				__entry->fileid = NFS_FILEID(inode);
+@@ -1896,7 +1897,7 @@ TRACE_EVENT(nfs4_layoutget,
+ 			__entry->iomode = args->iomode;
+ 			__entry->offset = args->offset;
+ 			__entry->count = args->length;
+-			__entry->error = error;
++			__entry->error = error < 0 ? -error : 0;
+ 			__entry->stateid_seq =
+ 				be32_to_cpu(state->stateid.seqid);
+ 			__entry->stateid_hash =
 
 
