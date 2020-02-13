@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95A3115C2C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:38:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9075215C277
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:35:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729179AbgBMPaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:30:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48976 "EHLO mail.kernel.org"
+        id S1729731AbgBMPb6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:31:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387671AbgBMP1I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:08 -0500
+        id S1729582AbgBMP2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:12 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B49392465D;
-        Thu, 13 Feb 2020 15:27:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 174C020661;
+        Thu, 13 Feb 2020 15:28:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607627;
-        bh=5c5HxMqvkuSCxF9rj1sG0dTkvaPN9Q5K7ejTic2O88c=;
+        s=default; t=1581607691;
+        bh=CuVfiS2S9a2bwNenn2jhACMneXOOC1/b5Hy9foAEjiY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FNtQ7qxhHY9lFqCknKr4dyRzRgMq12vncyMvoNmSGQrHtYcl9jMmSGofLm318RWLX
-         64IsA1bq7OBMuXfV2qN6angmtHIk+hBsV4OjBkWzkx7YEGcrJexAXXNi+GeWlHqxFr
-         hyRLUXEV1ilG9vqSd2OHaqfCwFCs4yDBBw6l9Tls=
+        b=MY4fgVkx/SVfjFCGi/wSs2iWFtuKPobHt4z+hzQ7taLSr3zDTS282CiyeQvPC5JHH
+         T7W4Iyzv+w8h1gXTYMQP3IupvbBPQDhHoNKe8+ANxFhOHHijEqhybogS6uVmNERkC/
+         A0EOjTBWO6qnKkU4mW4NecQlK9Yqt2oTeNwzmG8c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kit Chow <kchow@gigaio.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 5.4 18/96] PCI: Dont disable bridge BARs when assigning bus resources
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 5.5 029/120] NFS: Revalidate the file size on a fatal write error
 Date:   Thu, 13 Feb 2020 07:20:25 -0800
-Message-Id: <20200213151846.486334533@linuxfoundation.org>
+Message-Id: <20200213151911.904360143@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,111 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Logan Gunthorpe <logang@deltatee.com>
+From: Trond Myklebust <trondmy@gmail.com>
 
-commit 9db8dc6d0785225c42a37be7b44d1b07b31b8957 upstream.
+commit 0df68ced55443243951d02cc497be31fadf28173 upstream.
 
-Some PCI bridges implement BARs in addition to bridge windows.  For
-example, here's a PLX switch:
+If we suffer a fatal error upon writing a file, which causes us to
+need to revalidate the entire mapping, then we should also revalidate
+the file size.
 
-  04:00.0 PCI bridge: PLX Technology, Inc. PEX 8724 24-Lane, 6-Port PCI
-            Express Gen 3 (8 GT/s) Switch, 19 x 19mm FCBGA (rev ca)
-	    (prog-if 00 [Normal decode])
-      Flags: bus master, fast devsel, latency 0, IRQ 30, NUMA node 0
-      Memory at 90a00000 (32-bit, non-prefetchable) [size=256K]
-      Bus: primary=04, secondary=05, subordinate=0a, sec-latency=0
-      I/O behind bridge: 00002000-00003fff
-      Memory behind bridge: 90000000-909fffff
-      Prefetchable memory behind bridge: 0000380000800000-0000380000bfffff
-
-Previously, when the kernel assigned resource addresses (with the
-pci=realloc command line parameter, for example) it could clear the struct
-resource corresponding to the BAR.  When this happened, lspci would report
-this BAR as "ignored":
-
-   Region 0: Memory at <ignored> (32-bit, non-prefetchable) [size=256K]
-
-This is because the kernel reports a zero start address and zero flags
-in the corresponding sysfs resource file and in /proc/bus/pci/devices.
-Investigation with 'lspci -x', however, shows the BIOS-assigned address
-will still be programmed in the device's BAR registers.
-
-It's clearly a bug that the kernel lost track of the BAR value, but in most
-cases, this still won't result in a visible issue because nothing uses the
-memory, so nothing is affected.  However, when an IOMMU is in use, it will
-not reserve this space in the IOVA because the kernel no longer thinks the
-range is valid.  (See dmar_init_reserved_ranges() for the Intel
-implementation of this.)
-
-Without the proper reserved range, a DMA mapping may allocate an IOVA that
-matches a bridge BAR, which results in DMA accesses going to the BAR
-instead of the intended RAM.
-
-The problem was in pci_assign_unassigned_root_bus_resources().  When any
-resource from a bridge device fails to get assigned, the code set the
-resource's flags to zero.  This makes sense for bridge windows, as they
-will be re-enabled later, but for regular BARs, it makes the kernel
-permanently lose track of the fact that they decode address space.
-
-Change pci_assign_unassigned_root_bus_resources() and
-pci_assign_unassigned_bridge_resources() so they only clear "res->flags"
-for bridge *windows*, not bridge BARs.
-
-Fixes: da7822e5ad71 ("PCI: update bridge resources to get more big ranges when allocating space (again)")
-Link: https://lore.kernel.org/r/20200108213208.4612-1-logang@deltatee.com
-[bhelgaas: commit log, check for pci_is_bridge()]
-Reported-by: Kit Chow <kchow@gigaio.com>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Fixes: d2ceb7e57086 ("NFS: Don't use page_file_mapping after removing the page")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/setup-bus.c |   20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ fs/nfs/write.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/pci/setup-bus.c
-+++ b/drivers/pci/setup-bus.c
-@@ -1785,12 +1785,18 @@ again:
- 	/* Restore size and flags */
- 	list_for_each_entry(fail_res, &fail_head, list) {
- 		struct resource *res = fail_res->res;
-+		int idx;
- 
- 		res->start = fail_res->start;
- 		res->end = fail_res->end;
- 		res->flags = fail_res->flags;
--		if (fail_res->dev->subordinate)
--			res->flags = 0;
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -243,7 +243,15 @@ out:
+ /* A writeback failed: mark the page as bad, and invalidate the page cache */
+ static void nfs_set_pageerror(struct address_space *mapping)
+ {
++	struct inode *inode = mapping->host;
 +
-+		if (pci_is_bridge(fail_res->dev)) {
-+			idx = res - &fail_res->dev->resource[0];
-+			if (idx >= PCI_BRIDGE_RESOURCES &&
-+			    idx <= PCI_BRIDGE_RESOURCE_END)
-+				res->flags = 0;
-+		}
- 	}
- 	free_list(&fail_head);
+ 	nfs_zap_mapping(mapping->host, mapping);
++	/* Force file size revalidation */
++	spin_lock(&inode->i_lock);
++	NFS_I(inode)->cache_validity |= NFS_INO_REVAL_FORCED |
++					NFS_INO_REVAL_PAGECACHE |
++					NFS_INO_INVALID_SIZE;
++	spin_unlock(&inode->i_lock);
+ }
  
-@@ -2037,12 +2043,18 @@ again:
- 	/* Restore size and flags */
- 	list_for_each_entry(fail_res, &fail_head, list) {
- 		struct resource *res = fail_res->res;
-+		int idx;
- 
- 		res->start = fail_res->start;
- 		res->end = fail_res->end;
- 		res->flags = fail_res->flags;
--		if (fail_res->dev->subordinate)
--			res->flags = 0;
-+
-+		if (pci_is_bridge(fail_res->dev)) {
-+			idx = res - &fail_res->dev->resource[0];
-+			if (idx >= PCI_BRIDGE_RESOURCES &&
-+			    idx <= PCI_BRIDGE_RESOURCE_END)
-+				res->flags = 0;
-+		}
- 	}
- 	free_list(&fail_head);
- 
+ static void nfs_mapping_set_error(struct page *page, int error)
 
 
