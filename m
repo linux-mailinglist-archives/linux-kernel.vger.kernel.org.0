@@ -2,146 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39BBB15BB3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:10:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E4DE15BB38
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:10:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729709AbgBMJKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 04:10:10 -0500
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:40177 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729515AbgBMJKJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 04:10:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1581585009; x=1613121009;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   mime-version;
-  bh=5zK64KITLcQjS6f6/zvuoFVwDohflsNQOJAoV/nzry0=;
-  b=dKSbfTBIgH+LzbItQMLN/sBhvF9Idpxc9GxK7uD5vUze9X+lmq/RgAAy
-   JzNiLANvG0ugBqUZOel1d8JB8lbZ+4KuJGzq2uCcmjq/gcaLI/09pM/n6
-   cwPnVJ/C82H7ueKP9x8mR/eojoHQrU4ECatVzz6jjJQmIuuGdW7Pklz4r
-   M=;
-IronPort-SDR: 3+SNpXZS1vv6k+McXcBL93v+BWSeBf4hX7OpFmadPl/isR6s0UEw/8BDFRt5AeB1LVWMgIRs3S
- gGb6YZZOw2Jw==
-X-IronPort-AV: E=Sophos;i="5.70,436,1574121600"; 
-   d="scan'208";a="26169876"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-2a-f14f4a47.us-west-2.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 13 Feb 2020 09:10:06 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
-        by email-inbound-relay-2a-f14f4a47.us-west-2.amazon.com (Postfix) with ESMTPS id 25895A18BA;
-        Thu, 13 Feb 2020 09:10:05 +0000 (UTC)
-Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
- EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Thu, 13 Feb 2020 09:10:04 +0000
-Received: from u886c93fd17d25d.ant.amazon.com (10.43.160.92) by
- EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 13 Feb 2020 09:09:53 +0000
-From:   SeongJae Park <sjpark@amazon.com>
-To:     kbuild test robot <lkp@intel.com>
-CC:     <sjpark@amazon.com>, <kbuild-all@lists.01.org>,
-        <akpm@linux-foundation.org>, SeongJae Park <sjpark@amazon.de>,
-        <acme@kernel.org>, <alexander.shishkin@linux.intel.com>,
-        <amit@kernel.org>, <brendan.d.gregg@gmail.com>,
-        <brendanhiggins@google.com>, <cai@lca.pw>,
-        <colin.king@canonical.com>, <corbet@lwn.net>, <dwmw@amazon.com>,
-        <jolsa@redhat.com>, <kirill@shutemov.name>, <mark.rutland@arm.com>,
-        <mgorman@suse.de>, <minchan@kernel.org>, <mingo@redhat.com>,
-        <namhyung@kernel.org>, <peterz@infradead.org>,
-        <rdunlap@infradead.org>, <rostedt@goodmis.org>,
-        <sj38.park@gmail.com>, <vdavydov.dev@gmail.com>,
-        <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: Re: [PATCH v4 05/11] mm/damon: Implement kernel space API
-Date:   Thu, 13 Feb 2020 10:09:37 +0100
-Message-ID: <20200213090937.9368-1-sjpark@amazon.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <202002130710.3P1Y98f7%lkp@intel.com> (raw)
+        id S1729691AbgBMJKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 04:10:02 -0500
+Received: from sauhun.de ([88.99.104.3]:45230 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729515AbgBMJKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 04:10:02 -0500
+Received: from localhost (p54B33627.dip0.t-ipconnect.de [84.179.54.39])
+        by pokefinder.org (Postfix) with ESMTPSA id CD4352C07AD;
+        Thu, 13 Feb 2020 10:09:59 +0100 (CET)
+Date:   Thu, 13 Feb 2020 10:09:59 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Thor Thayer <thor.thayer@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] i2c: altera: Fix potential integer overflow
+Message-ID: <20200213090959.GA2123@ninjato>
+References: <20200211144704.GA6461@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.160.92]
-X-ClientProxiedBy: EX13D23UWC003.ant.amazon.com (10.43.162.81) To
- EX13D31EUA001.ant.amazon.com (10.43.165.15)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
+Content-Disposition: inline
+In-Reply-To: <20200211144704.GA6461@embeddedor>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Feb 2020 07:21:37 +0800 kbuild test robot <lkp@intel.com> wrote:
 
-> [-- Attachment #1: Type: text/plain, Size: 937 bytes --]
-> 
-> Hi,
-> 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on d5226fa6dbae0569ee43ecfc08bdcd6770fc4755]
-> 
-> url:    https://github.com/0day-ci/linux/commits/sjpark-amazon-com/Introduce-Data-Access-MONitor-DAMON/20200213-003254
-> base:    d5226fa6dbae0569ee43ecfc08bdcd6770fc4755
-> config: m68k-allmodconfig (attached as .config)
-> compiler: m68k-linux-gcc (GCC) 7.5.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=7.5.0 make.cross ARCH=m68k 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> All errors (new ones prefixed by >>):
-> 
-> >> ERROR: "lookup_page_ext" [mm/damon.ko] undefined!
+--45Z9DzgjV8m4Oswq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for finding this problem, kbuild!
+On Tue, Feb 11, 2020 at 08:47:04AM -0600, Gustavo A. R. Silva wrote:
+> Factor out 100 from the equation and do 32-bit arithmetic (3 * clk_mhz / =
+10)
+> instead of 64-bit.
+>=20
+> Notice that clk_mhz is MHz, so the multiplication will never wrap 32 bits
+> and there is no need for div_u64().
 
+Was there ever? With
 
-This problem comes when `CONFIG_DAMON=m` and `CONFIG_64BIT` unset because
-`lookup_page_ext()`, which is used by `page_idle.h` if `CONFIG_64BIT` unset, is
-not exported.  Most simple fix would be avoiding module build of DAMON as
-below::
+	u32 clk_mhz =3D clk_get_rate(idev->i2c_clk) / 1000000;
 
-    diff --git a/mm/Kconfig b/mm/Kconfig
-    index b279ab9c78d0..f24dd670baad 100644
-    --- a/mm/Kconfig
-    +++ b/mm/Kconfig
-    @@ -740,7 +740,7 @@ config MAPPING_DIRTY_HELPERS
-             bool
-    
-     config DAMON
-    -       tristate "Data Access Monitor"
-    +       bool "Data Access Monitor"
-            depends on MMU
-            default n
-            help
+a later multiplication with 300 should not wrap u32?
 
-Or, exporting the symbol as below::
+>  	/* SDA Hold Time, 300ns */
+> -	writel(div_u64(300 * clk_mhz, 1000), idev->base + ALTR_I2C_SDA_HOLD);
+> +	writel(3 * clk_mhz / 10, idev->base + ALTR_I2C_SDA_HOLD);
 
-    diff --git a/mm/page_ext.c b/mm/page_ext.c
-    index 4ade843ff588..e6e6b7e625e4 100644
-    --- a/mm/page_ext.c
-    +++ b/mm/page_ext.c
-    @@ -131,6 +131,7 @@ struct page_ext *lookup_page_ext(const struct page *page)
-                                            MAX_ORDER_NR_PAGES);
-            return get_entry(base, index);
-     }
-    +EXPORT_SYMBOL(lookup_page_ext);
-    
-     static int __init alloc_node_page_ext(int nid)
-     {
+The change itself is OK, yet I wonder about the comment above:
 
-I of course prefer this fix but unsure whether exporting this symbol is ok or
-not.  May I ask your opinions?
+'clk_mhz * 0.3' will not give a constant 300ns, or?
 
 
-Thanks,
-SeongJae Park
+--45Z9DzgjV8m4Oswq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> ---
-> 0-DAY CI Kernel Test Service, Intel Corporation
-> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
-> 
-> [-- Attachment #2: .config.gz --]
-> [-- Type: application/gzip, Size: 51870 bytes --]
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl5FEmMACgkQFA3kzBSg
+KbY1uw/7BhPcgJIcLbjs58paXf+DrYXcCzE4JXUpsxHft1b1iZ35nwkka2gUVbj0
+S2Hi9JqDetiMdhVWHYPjFb04Qe1vyfZa69zwWYjMCwMgLZUUBTDCd8a2enehWBAD
+DAE9DClhtvYWAHbl4BoQTqgFCjwmP5mit8EZjKY79SgfS7ZVPuKWCFOYUztWPBtc
+1UnG2ZtT8eHTl/rrOMND+8+c0HYDuXBuNPCK6QVNX80yhtDgNfVpufQDTHXGgGV8
+CMCmrvHu0To49H2Qj4sSZs/wQQX4u3eMqsS4PARW0UQm8jB/6+EmYoHJH4u87XBg
+7KMQMPeQbMFuU998ns4R9Z32ouhwK+yQunjxL/Fezn9dhX/p6TxdvYu9difsmnPG
+vTPSs8yHSq2AYgfQ0DwWivV6cNEvfdFd7PiAnBBZCO+JDfziPfoqRGFz+do0O9Fm
+SHCm907tybkTtilG1EsgrSWTO04H9V9L7bq8mWc7eG+V7u1+YGkEwKH/38EgnQx1
+em1FinZ/lLglFc17TEvEuapeRO5Nec120q6MHCEkHjuC6cz4SbWesLQnWStWmsBa
+1TTBJT6D9ED0np3F8N7cNKHqbaCTB6V7rCLGgbm4PMKHK81TK/VL+Ya5/WluMv2f
+UtzX/DEoqDxsARBstFHP47bYJlPJCMF4a4CQcRR5ko6kWKXWjYE=
+=R290
+-----END PGP SIGNATURE-----
+
+--45Z9DzgjV8m4Oswq--
