@@ -2,107 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A844415BA8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 09:12:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 528DD15BAA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 09:14:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729466AbgBMILx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 03:11:53 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42996 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbgBMILw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 03:11:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=847pzyVrtZCzsbfhxF1vEmTe4aPfobgj5eCqvQBGp1U=; b=aYxYuk196tbYMdLPy9bjNRTwcP
-        nCSDuoH8YbkxeDpHGjXvXJ0xxOtxrIxcX78c+6QyCxkKnRW/a1mxGDKeYnR1fq/5thnLHaUcExAaE
-        upamVGG7siLMkjiJZt80mvWnYa+cZpYFK2N2JD0dqmN6VHoOSyw1b7+QfrLl0NcVKSDjbwMSxTG+8
-        vrdkxgO0PMTQlkOc/2k7XebrDpQyZkRZqh8T77V9FE7KSbuOPsyCRKtHGbfjR+jFYV9jWVslE343p
-        G5mwRFBT/l94iXto3Wy8WEIHz5VIeMaDr49s0UoCsRi+ZtuC8/rWEOYNM9HPuC3DtiUjWXCOEoOb0
-        PEhR3bhQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j29b3-0006Wv-Hk; Thu, 13 Feb 2020 08:11:41 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D0EC2300446;
-        Thu, 13 Feb 2020 09:09:49 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4497E20206D6B; Thu, 13 Feb 2020 09:11:39 +0100 (CET)
-Date:   Thu, 13 Feb 2020 09:11:39 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     linux-kernel@vger.kernel.org, monstr@monstr.eu, git@xilinx.com,
-        arnd@arndb.de, Allison Randal <allison@lohutok.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Enrico Weigelt <info@metux.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Stefan Asserhall <stefan.asserhall@xilinx.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [PATCH 0/7] microblaze: Define SMP safe operations
-Message-ID: <20200213081139.GG14897@hirez.programming.kicks-ass.net>
-References: <cover.1581522136.git.michal.simek@xilinx.com>
- <20200212160852.GC14973@hirez.programming.kicks-ass.net>
- <8dc57ea5-0868-0707-25a7-4cd6d8a43add@xilinx.com>
+        id S1729544AbgBMIOF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 03:14:05 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10616 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726232AbgBMIOF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 03:14:05 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 89CD216CD1DB96080775;
+        Thu, 13 Feb 2020 16:14:00 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Thu, 13 Feb 2020
+ 16:13:50 +0800
+From:   yu kuai <yukuai3@huawei.com>
+To:     <axboe@kernel.dk>, <ming.lei@redhat.com>,
+        <chaitanya.kulkarni@wdc.com>, <damien.lemoal@wdc.com>,
+        <bvanassche@acm.org>, <dhowells@redhat.com>,
+        <asml.silence@gmail.com>, <ajay.joshi@wdc.com>
+CC:     <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yukuai3@huawei.com>, <yi.zhang@huawei.com>,
+        <zhangxiaoxu5@huawei.com>, <luoshijie1@huawei.com>
+Subject: [PATCH V2] block: rename 'q->debugfs_dir' and 'q->blk_trace->dir' in blk_unregister_queue()
+Date:   Thu, 13 Feb 2020 16:12:52 +0800
+Message-ID: <20200213081252.32395-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8dc57ea5-0868-0707-25a7-4cd6d8a43add@xilinx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 08:49:40AM +0100, Michal Simek wrote:
-> On 12. 02. 20 17:08, Peter Zijlstra wrote:
-> > On Wed, Feb 12, 2020 at 04:42:22PM +0100, Michal Simek wrote:
-> > 
-> >> Microblaze has 32bit exclusive load/store instructions which should be used
-> >> instead of irq enable/disable. For more information take a look at
-> >> https://www.xilinx.com/support/documentation/sw_manuals/xilinx2019_2/ug984-vivado-microblaze-ref.pdf
-> >> starting from page 25.
-> > 
-> >>  arch/microblaze/include/asm/Kbuild           |   1 -
-> >>  arch/microblaze/include/asm/atomic.h         | 265 ++++++++++++++++++-
-> >>  arch/microblaze/include/asm/bitops.h         | 189 +++++++++++++
-> >>  arch/microblaze/include/asm/cmpxchg.h        |  87 ++++++
-> >>  arch/microblaze/include/asm/cpuinfo.h        |   2 +-
-> >>  arch/microblaze/include/asm/pgtable.h        |  19 +-
-> >>  arch/microblaze/include/asm/spinlock.h       | 240 +++++++++++++++++
-> >>  arch/microblaze/include/asm/spinlock_types.h |  25 ++
-> >>  arch/microblaze/kernel/cpu/cache.c           | 154 ++++++-----
-> >>  arch/microblaze/kernel/cpu/cpuinfo.c         |  38 ++-
-> >>  arch/microblaze/kernel/cpu/mb.c              | 207 ++++++++-------
-> >>  arch/microblaze/kernel/timer.c               |   2 +-
-> >>  arch/microblaze/mm/consistent.c              |   8 +-
-> >>  13 files changed, 1040 insertions(+), 197 deletions(-)
-> >>  create mode 100644 arch/microblaze/include/asm/bitops.h
-> >>  create mode 100644 arch/microblaze/include/asm/spinlock.h
-> >>  create mode 100644 arch/microblaze/include/asm/spinlock_types.h
-> > 
-> > I'm missing asm/barrier.h
-> 
-> This has been sent in previous patchset. Link was in this email.
+syzbot is reporting use after free bug in debugfs_remove[1].
 
-lkml.org link, please don't use them. The kernel.org links (example
-below) have the Message-Id in them, which allows me to search for them
-in my local storage without having to use a web browser.
+This is because in request_queue, 'q->debugfs_dir' and
+'q->blk_trace->dir' could be the same dir. And in __blk_release_queue(),
+blk_mq_debugfs_unregister() will remove everything inside the dir.
 
-You mean this one, right?
+With futher investigation of the reporduce repro, the problem can be
+reporduced by following procedure:
 
-  https://lkml.kernel.org/r/be707feb95d65b44435a0d9de946192f1fef30c6.1581497860.git.michal.simek@xilinx.com
+1. LOOP_CTL_ADD, create a request_queue q1, blk_mq_debugfs_register() will
+create the dir.
+2. LOOP_CTL_REMOVE, blk_release_queue() will add q1 to release queue.
+3. LOOP_CTL_ADD, create another request_queue q2,blk_mq_debugfs_register()
+will fail because the dir aready exist.
+4. BLKTRACESETUP, create two files(msg and dropped) inside the dir.
+5. call __blk_release_queue() for q1, debugfs_remove_recursive() will
+delete the files created in step 4.
+6. LOOP_CTL_REMOVE, blk_release_queue() will add q2 to release queue.
+And when __blk_release_queue() is called for q2, blk_trace_shutdown() will
+try to release the two files created in step 4, wich are aready released
+in step 5.
 
-So the PDF says this is a completion barrier, needed for DMA. This is a
-very expensive option for smp_mb(), but if it is all you have and is
-required, then yes, that should do.
+thread1		         |kworker                   |thread2
+ ----------------------- | ------------------------ | --------------------
+loop_control_ioctl       |                          |
+ loop_add                |                          |
+  blk_mq_debugfs_register|                          |
+   debugfs_create_dir    |                          |
+loop_control_ioctl       |                          |
+ loop_remove		 |                          |
+  blk_release_queue      |                          |
+   schedule_work         |                          |
+                         |                          |loop_control_ioctl
+                         |                          | loop_add
+                         |                          |  ...
+                         |                          |blk_trace_ioctl
+                         |                          | __blk_trace_setup
+                         |                          |   debugfs_create_file
+                         |__blk_release_queue       |
+                         | blk_mq_debugfs_unregister|
+                         |  debugfs_remove_recursive|
+                         |                          |loop_control_ioctl
+                         |                          | loop_remove
+                         |                          |  ...
+                         |__blk_release_queue       |
+                         | blk_trace_shutdown       |
+                         |  debugfs_remove          |
+
+commit dc9edc44de6c ("block: Fix a blk_exit_rl() regression") pushed the
+final release of request_queue to a workqueue, so, when loop_add() is
+called again(step 3), __blk_release_queue() might not been called yet,
+which causes the problem.
+
+Fix the problem by renaming 'q->debugfs_dir' or 'q->blk_trace->dir'
+in blk_unregister_queue() if they exist.
+
+[1] https://syzkaller.appspot.com/bug?extid=903b72a010ad6b7a40f2
+References: CVE-2019-19770
+Fixes: commit dc9edc44de6c ("block: Fix a blk_exit_rl() regression")
+Reported-by: syzbot <syz...@syzkaller.appspotmail.com>
+Signed-off-by: yu kuai <yukuai3@huawei.com>
+---
+Changes in V2:
+ add device name to the new dir name
+ fix compile err when 'CONFIG_BLK_DEBUG_FS' is not enabled
+ add treatment of 'q->blk_trace->dir'
+
+ block/blk-sysfs.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+
+diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+index fca9b158f4a0..1da8d4a4915a 100644
+--- a/block/blk-sysfs.c
++++ b/block/blk-sysfs.c
+@@ -11,6 +11,7 @@
+ #include <linux/blktrace_api.h>
+ #include <linux/blk-mq.h>
+ #include <linux/blk-cgroup.h>
++#include <linux/debugfs.h>
+ 
+ #include "blk.h"
+ #include "blk-mq.h"
+@@ -1011,6 +1012,46 @@ int blk_register_queue(struct gendisk *disk)
+ }
+ EXPORT_SYMBOL_GPL(blk_register_queue);
+ 
++#ifdef CONFIG_DEBUG_FS
++/*
++ * blk_prepare_release_queue - rename q->debugfs_dir and q->blk_trace->dir
++ * @q: request_queue of which the dir to be renamed belong to.
++ *
++ * Because the final release of request_queue is in a workqueue, the
++ * cleanup might not been finished yet while the same device start to
++ * create. It's not correct if q->debugfs_dir still exist while trying
++ * to create a new one.
++ */
++static void blk_prepare_release_queue(struct request_queue *q)
++{
++	struct dentry *new = NULL;
++	struct dentry **old = NULL;
++	char name[DNAME_INLINE_LEN];
++	int i = 0;
++
++#ifdef CONFIG_BLK_DEBUG_FS
++	if (!IS_ERR_OR_NULL(q->debugfs_dir))
++		old = &q->debugfs_dir;
++#endif
++#ifdef CONFIG_BLK_DEV_IO_TRACE
++	/* q->debugfs_dir and q->blk_trace->dir can't both exist */
++	if (q->blk_trace && !IS_ERR_OR_NULL(q->blk_trace->dir))
++		old = &q->blk_trace->dir;
++#endif
++	if (old == NULL)
++		return;
++	while (new == NULL) {
++		sprintf(name, "ready_to_remove_%s_%d",
++				kobject_name(q->kobj.parent), i++);
++		new = debugfs_rename(blk_debugfs_root, *old,
++				     blk_debugfs_root, name);
++	}
++	*old = new;
++}
++#else
++#define blk_prepare_release_queue(q)		do { } while (0)
++#endif
++
+ /**
+  * blk_unregister_queue - counterpart of blk_register_queue()
+  * @disk: Disk of which the request queue should be unregistered from sysfs.
+@@ -1039,6 +1080,7 @@ void blk_unregister_queue(struct gendisk *disk)
+ 	mutex_unlock(&q->sysfs_lock);
+ 
+ 	mutex_lock(&q->sysfs_dir_lock);
++	blk_prepare_release_queue(q);
+ 	/*
+ 	 * Remove the sysfs attributes before unregistering the queue data
+ 	 * structures that can be modified through sysfs.
+-- 
+2.17.2
+
