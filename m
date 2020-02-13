@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0900915C907
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 18:01:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AEF915C93A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 18:12:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728229AbgBMRBV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 12:01:21 -0500
-Received: from gateway36.websitewelcome.com ([192.185.193.12]:25074 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727851AbgBMRBV (ORCPT
+        id S1728619AbgBMRMf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 12:12:35 -0500
+Received: from gateway20.websitewelcome.com ([192.185.58.11]:16091 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728138AbgBMRMe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 12:01:21 -0500
-X-Greylist: delayed 1412 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Feb 2020 12:01:20 EST
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 7E20C417F6A92
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 09:51:53 -0600 (CST)
+        Thu, 13 Feb 2020 12:12:34 -0500
+X-Greylist: delayed 1454 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Feb 2020 12:12:33 EST
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 70917400CF46F
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 09:34:39 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 2HUpjSLnQAGTX2HUpjeMX3; Thu, 13 Feb 2020 10:37:47 -0600
+        id 2Hf0jMxYIRP4z2Hf1joPvt; Thu, 13 Feb 2020 10:48:19 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -26,24 +26,25 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=eO6da+Y3zTKqO5U3OOMJJYMv3F/0mch/JbIXhqIP11c=; b=Hiu712TN1ZetJOVxZcK3jWptoP
-        +pUR0u5zvtgiy1BTsF+uxfHsXJabE1+Z4YvgI7xzragSNLa+Pb/0+5hXlDNADOtOIWEkdmBkXcAN5
-        MBY5KpUkS+9sa9yTHBmAQ1Wbl3pRP5J86wi7yocLFMZwwvw9+0h/xUMTYEeurTTx+pc2G7fdcx6Ef
-        g+r5ta5DvH0BgwoB/DriEfbITkjfc8hsRwz+VmgZD0P4+be61EhuDNkl73o69uwulp9OL/F5hAstR
-        ep4US3KU+Ell0oG7b3YvxRO5iX0hbfJoLxogXwlg1lQU+uWdNhT7czJGZ1H6cq8wEYq5bLkt6fmUs
-        A8iiVZpA==;
-Received: from [200.68.140.15] (port=4263 helo=embeddedor)
+        bh=Bs8CD4elab7gEoHuomTzKuiJhB+d5B0XV8i9tY3kOnI=; b=TGWs1xnovy+EkuZTu7TgLh61rH
+        3X0KXbhMSv2Skcn4fGWRroyZvNy8nKiC7KMz3XSPHAu01+Y4eLgqam6R13VoLe3Ik9LcI6MOHVzWi
+        /vDInhraxjL9DNLBIjgX74wV3X+tqzhJ3qCmjlCUgtcnU/9ui85zsdCF8yk4bonvNBwXZGfvdruc/
+        b/FWTw+d31qoOCrYQkwMkxCGXJk+ZaFgUrbPfuo1DFd16I0lNhzeSMVjvJTnJDoT0r/6xpvI0yIEd
+        yntLgDn0C420260oVgPob7V03H2AktZl4yTkA2Ctmze9huxGZiwuT4A3pHT5fJllAHFdtumnS5h1O
+        kzHwt+eQ==;
+Received: from [200.68.140.15] (port=22021 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1j2HUn-003uAK-UU; Thu, 13 Feb 2020 10:37:46 -0600
-Date:   Thu, 13 Feb 2020 10:40:22 -0600
+        id 1j2Hez-003zOt-J2; Thu, 13 Feb 2020 10:48:17 -0600
+Date:   Thu, 13 Feb 2020 10:50:54 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Matt Porter <mporter@kernel.crashing.org>,
-        Alexandre Bounine <alex.bou9@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] rapidio: Replace zero-length array with flexible-array member
-Message-ID: <20200213164022.GA8937@embeddedor>
+Subject: [PATCH] crypto: img-hash - Replace zero-length array with
+ flexible-array member
+Message-ID: <20200213165054.GA11109@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -56,13 +57,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 200.68.140.15
 X-Source-L: No
-X-Exim-ID: 1j2HUn-003uAK-UU
+X-Exim-ID: 1j2Hez-003zOt-J2
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.15]:4263
+X-Source-Sender: (embeddedor) [200.68.140.15]:22021
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 12
+X-Email-Count: 16
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -100,22 +101,22 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/rapidio/rio-scan.c | 2 +-
+ drivers/crypto/img-hash.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rapidio/rio-scan.c b/drivers/rapidio/rio-scan.c
-index 0e90c5d4bb2b..eb8ed28533f8 100644
---- a/drivers/rapidio/rio-scan.c
-+++ b/drivers/rapidio/rio-scan.c
-@@ -39,7 +39,7 @@ struct rio_id_table {
- 	u16 start;	/* logical minimal id */
- 	u32 max;	/* max number of IDs in table */
- 	spinlock_t lock;
--	unsigned long table[0];
-+	unsigned long table[];
+diff --git a/drivers/crypto/img-hash.c b/drivers/crypto/img-hash.c
+index 25d5227f74a1..0e25fc3087f3 100644
+--- a/drivers/crypto/img-hash.c
++++ b/drivers/crypto/img-hash.c
+@@ -103,7 +103,7 @@ struct img_hash_request_ctx {
+ 	struct ahash_request	fallback_req;
+ 
+ 	/* Zero length buffer must remain last member of struct */
+-	u8 buffer[0] __aligned(sizeof(u32));
++	u8 buffer[] __aligned(sizeof(u32));
  };
  
- static int next_destid = 0;
+ struct img_hash_ctx {
 -- 
 2.25.0
 
