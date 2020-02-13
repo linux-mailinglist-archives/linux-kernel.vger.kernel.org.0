@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DF5615C759
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:14:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C82C915C5F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730364AbgBMQJo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 11:09:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60682 "EHLO mail.kernel.org"
+        id S1728949AbgBMPzs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:55:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728085AbgBMPWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:22:43 -0500
+        id S2387453AbgBMPZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:33 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A0362469A;
-        Thu, 13 Feb 2020 15:22:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 863CD24689;
+        Thu, 13 Feb 2020 15:25:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607363;
-        bh=rIHLUYSfXasaLl1fb12IkZaLdKyt8ASA0w+9L2oYfQQ=;
+        s=default; t=1581607532;
+        bh=J8U2XHhDjEV1eshd/Uyu3VJchwaFWGske4LcJpeg+Gk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vc1o10VK2Ap64vs33aibVrhtbjLkUAnkgSd2m9emwTDk4fD3NbdmeKHtJEUBCNMkc
-         K+Vy+XskSFNjcSC57lnltfOe05Z5uJT4Q19d7qsNyKrOrKR12XD+qkFrQyoAPHNZhi
-         y7KLGKq9U27ptyXt9l7Sc1c3wPTyYBZe3859gz0M=
+        b=u/Mh/nNoDGSEsAQprZXATlXiwS4br63CyU515JrAU6nZ/JjQ5wL8XS3a9yJYe60g8
+         12VzkuZnTOUCzcDvUxs7PDZR/SaLSsungTMNfTKF+rRHMuwkXrsyIZZixBfxiUM992
+         qYThl6iBsytT26z2Q4PdldkFe1346l2eMc4AxKb4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.4 50/91] ext2: Adjust indentation in ext2_fill_super
-Date:   Thu, 13 Feb 2020 07:20:07 -0800
-Message-Id: <20200213151840.984242435@linuxfoundation.org>
+        stable@vger.kernel.org, Yishai Hadas <yishaih@mellanox.com>,
+        Artemy Kovalyov <artemyko@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: [PATCH 4.14 105/173] IB/core: Fix ODP get user pages flow
+Date:   Thu, 13 Feb 2020 07:20:08 -0800
+Message-Id: <20200213151959.153418142@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
-References: <20200213151821.384445454@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Yishai Hadas <yishaih@mellanox.com>
 
-commit d9e9866803f7b6c3fdd35d345e97fb0b2908bbbc upstream.
+commit d07de8bd1709a80a282963ad7b2535148678a9e4 upstream.
 
-Clang warns:
+The nr_pages argument of get_user_pages_remote() should always be in terms
+of the system page size, not the MR page size. Use PAGE_SIZE instead of
+umem_odp->page_shift.
 
-../fs/ext2/super.c:1076:3: warning: misleading indentation; statement is
-not part of the previous 'if' [-Wmisleading-indentation]
-        sbi->s_groups_count = ((le32_to_cpu(es->s_blocks_count) -
-        ^
-../fs/ext2/super.c:1074:2: note: previous statement is here
-        if (EXT2_BLOCKS_PER_GROUP(sb) == 0)
-        ^
-1 warning generated.
-
-This warning occurs because there is a space before the tab on this
-line. Remove it so that the indentation is consistent with the Linux
-kernel coding style and clang no longer warns.
-
-Fixes: 41f04d852e35 ("[PATCH] ext2: fix mounts at 16T")
-Link: https://github.com/ClangBuiltLinux/linux/issues/827
-Link: https://lore.kernel.org/r/20191218031930.31393-1-natechancellor@gmail.com
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Fixes: 403cd12e2cf7 ("IB/umem: Add contiguous ODP support")
+Link: https://lore.kernel.org/r/20191222124649.52300-3-leon@kernel.org
+Signed-off-by: Yishai Hadas <yishaih@mellanox.com>
+Reviewed-by: Artemy Kovalyov <artemyko@mellanox.com>
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext2/super.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/core/umem_odp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ext2/super.c
-+++ b/fs/ext2/super.c
-@@ -1051,9 +1051,9 @@ static int ext2_fill_super(struct super_
+--- a/drivers/infiniband/core/umem_odp.c
++++ b/drivers/infiniband/core/umem_odp.c
+@@ -637,7 +637,7 @@ int ib_umem_odp_map_dma_pages(struct ib_
  
- 	if (EXT2_BLOCKS_PER_GROUP(sb) == 0)
- 		goto cantfind_ext2;
-- 	sbi->s_groups_count = ((le32_to_cpu(es->s_blocks_count) -
-- 				le32_to_cpu(es->s_first_data_block) - 1)
-- 					/ EXT2_BLOCKS_PER_GROUP(sb)) + 1;
-+	sbi->s_groups_count = ((le32_to_cpu(es->s_blocks_count) -
-+				le32_to_cpu(es->s_first_data_block) - 1)
-+					/ EXT2_BLOCKS_PER_GROUP(sb)) + 1;
- 	db_count = (sbi->s_groups_count + EXT2_DESC_PER_BLOCK(sb) - 1) /
- 		   EXT2_DESC_PER_BLOCK(sb);
- 	sbi->s_group_desc = kmalloc (db_count * sizeof (struct buffer_head *), GFP_KERNEL);
+ 	while (bcnt > 0) {
+ 		const size_t gup_num_pages = min_t(size_t,
+-				(bcnt + BIT(page_shift) - 1) >> page_shift,
++				ALIGN(bcnt, PAGE_SIZE) / PAGE_SIZE,
+ 				PAGE_SIZE / sizeof(struct page *));
+ 
+ 		down_read(&owning_mm->mmap_sem);
 
 
