@@ -2,133 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 080D715C3A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CBB215C3AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387759AbgBMPnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:43:15 -0500
-Received: from mail-lj1-f175.google.com ([209.85.208.175]:43232 "EHLO
-        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729249AbgBMPnM (ORCPT
+        id S2387822AbgBMPn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:43:28 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:44807 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727707AbgBMPnU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:43:12 -0500
-Received: by mail-lj1-f175.google.com with SMTP id a13so7123976ljm.10
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:43:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=JwYIMGQOk6yTod1/avu+lWhhzqWkolvZorazJQ/e5vo=;
-        b=f7L3GH7hb8TxsVSZle5VHmgjCNBDMD/Jz+PugJqwS7bdt1lxNyYFQ6Y9sXKI4v26Qa
-         +Zw7oVpd7FI5ptlf36aIfLy34xPhlkXb48/epixfDzHfoSVS5Vk4ilHkupWTdHuSRITl
-         zM2geoM6gwjXXpHhkUcXkwXHJNCTSbc0aVyLDdWBIVnmuKqz3rUQtK3xqsYnHo+OpD2U
-         /z1U8rCw2fhJag15TRK8H4tvoktNOAAVa+/OpOJEHFtTJ5ME+twuxFsfcgVfeAGJlM1y
-         Ap3UEMA4CAe3LFeDchj1LmaaRAObnfZwc6gYZMWoflkVi5n1wIs2RJ9JiVZV8iIP9owA
-         FV+A==
+        Thu, 13 Feb 2020 10:43:20 -0500
+Received: by mail-ed1-f67.google.com with SMTP id g19so7309976eds.11;
+        Thu, 13 Feb 2020 07:43:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=JwYIMGQOk6yTod1/avu+lWhhzqWkolvZorazJQ/e5vo=;
-        b=gQ6IznqnnOKthFaOET15RG+syIsdMMsI8GojlnHnVhkypW/uNKvHTYldemr7wD9ncr
-         RUQpK7rDudTlinWy43irNo2cD1jSW9Mp/UyTgrAs1Jpf4cyoun349uab1bY9XZFi4GYk
-         S6y+7Al0c2G9s2WHRyLHHQRljjZSFawTUh3MyrsTazSePrsGCBF4h1l+jL5nq/4Zmq99
-         LmxI+oJCm7wpqgv0nLWBLVdLzW0jJji51NAoThNjkAJyCo91Oo56Yfa8r5GZm22lXjRs
-         0XJ7b/IY7LZR+2O3klwcbTaFFGUkk+dY7W1JZqDzjxmpfMr7IUJ2ZotxIKFvYG1pK6GP
-         9Saw==
-X-Gm-Message-State: APjAAAXZDpnuH6UQ7MqXZ9j1BzqKYKsedh8Q8eEXWxduB4nmvCaKCYG7
-        ZJIwe66QTdURpZxvZ3qgldxKOKSOI7B47+Q+lVLWow==
-X-Google-Smtp-Source: APXvYqzmF34g0nZFr7DF1AKlt1QCmlxH+mSY9VRh9SQu0Ps7iRGt/qgCxg0xMvSqW7uqWDYnhFpJcDIiC4O2o2Zq+AA=
-X-Received: by 2002:a05:651c:1072:: with SMTP id y18mr11832537ljm.243.1581608589852;
- Thu, 13 Feb 2020 07:43:09 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xWjlmZnVBt/ZlK8vapzAQmz9T3RLkyLlYRSHtgLmYd4=;
+        b=CzVCjzh+FuyLd7kL9fHAM6HRWMCvbGLuy7tvQittfhNBsrvqkFhGl6KgQ5tZ/XHVRF
+         HzNqMi5hUxJ933xS2w0oPK0P8yhpl+z4E9+4s17hzVt9HHHlux49i8ES/aaensIlKhs0
+         6jYGbOCkFjtIuUZiuXJLY5A7J3FNXm1kEcPPkI42XF99GfmyRLCKtmIBlrw3rdhCj0Pi
+         6OQIkDwFcJ33Jsx6EF4xAhKX6W3nNlmuVRSpYpxjuSFRnTengdFqMrncA9FrWDxITuBg
+         5kyS2mSAaT0qzZgX1eW/+I372xPPrJFiwVKoHULommFOlPsbNmC1VIP6tyNCoZH/wjiW
+         wJtA==
+X-Gm-Message-State: APjAAAWEaGsk8ekv2+QI2i/4BWG9nbNEpROqM8sI0EKLSf2NcG3spr6E
+        63om7lV5GmPlYQhi0DdJDL4=
+X-Google-Smtp-Source: APXvYqxC6vfH1GEp1GXd5aDVxuhj2SoNdVlypepsj2HdRdhqBL5BWW5qSOnvNylv+AF9dT1OutTu0w==
+X-Received: by 2002:a50:9b03:: with SMTP id o3mr16345398edi.371.1581608597930;
+        Thu, 13 Feb 2020 07:43:17 -0800 (PST)
+Received: from kozik-lap ([194.230.155.125])
+        by smtp.googlemail.com with ESMTPSA id w18sm293112eja.57.2020.02.13.07.43.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Feb 2020 07:43:17 -0800 (PST)
+Date:   Thu, 13 Feb 2020 16:43:14 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCHv1 0/2] Add FSYS2 power domain for MMC driver
+Message-ID: <20200213154314.GA7215@kozik-lap>
+References: <20200212120237.1332-1-linux.amoon@gmail.com>
+ <20200213101744.GA11087@kozik-lap>
+ <CANAwSgR+PFiE0=FEhDY__FDx+470pe0OsbUXcSG64JDuG++ccQ@mail.gmail.com>
 MIME-Version: 1.0
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Thu, 13 Feb 2020 21:12:57 +0530
-Message-ID: <CA+G9fYuqAQfhzF2BzHr7vMHx68bo8-jT+ob_F3eHQ3=oFjgYdg@mail.gmail.com>
-Subject: LKFT: arm x15: mmc1: cache flush error -110
-To:     Jens Axboe <axboe@kernel.dk>, Alexei Starovoitov <ast@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     linux-block@vger.kernel.org, lkft-triage@lists.linaro.org,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-mmc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        John Stultz <john.stultz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANAwSgR+PFiE0=FEhDY__FDx+470pe0OsbUXcSG64JDuG++ccQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm beagleboard x15 device failed to boot Linux mainline and
-linux-next kernel due
-to below error.
-This error occurred across all x15 device for these kernel version.
+On Thu, Feb 13, 2020 at 06:58:51PM +0530, Anand Moon wrote:
+> hi Krzysztof,
+> 
+> On Thu, 13 Feb 2020 at 15:47, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >
+> > On Wed, Feb 12, 2020 at 12:02:35PM +0000, Anand Moon wrote:
+> > > This patches add the power domain for MMC driver,
+> > > but somehow the suspend/resume feature is broken
+> > > so any input on how to fix this.
+> >
+> > I think S2R was working on XU3-family after Marek's fixes, so you mean
+> > that these patches break it?
+> >
+> Yes I my testing mmc driver failed to come up after suspend.
 
-This regression started happening on x15 from this commit onwards (27th Jan)
-  git branch: master
-  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-  git commit: aae1464f46a2403565f75717438118691d31ccf1
-  git describe: v5.5-489-gaae1464f46a2
+Patches breaking systems should be clearly marked as work in progress,
+e.g.  by using RFC instead of PATCH in the title.
 
+This patchset cannot be applied.
 
-Test output log,
-[   37.606241] mmc1: Card stuck being busy! mmc_poll_for_busy
-[   37.611850] mmc1: cache flush error -110
-[   37.615883] blk_update_request: I/O error, dev mmcblk1, sector
-4302400 op 0x1:(WRITE) flags 0x20800 phys_seg 1 prio class 0
-[   37.627387] Aborting journal on device mmcblk1p9-8.
-[   37.635448] systemd[1]: Installed transient /etc/machine-id file.
-[   37.659283] systemd[1]: Couldn't move remaining userspace
-processes, ignoring: Input/output error
-[   37.744027] EXT4-fs error (device mmcblk1p9):
-ext4_journal_check_start:61: Detected aborted journal
-[   37.753322] EXT4-fs (mmcblk1p9): Remounting filesystem read-only
-[   37.917486] systemd-gpt-auto-generator[108]: Failed to dissect:
-Input/output error
-[   37.927825] systemd[104]:
-/lib/systemd/system-generators/systemd-gpt-auto-generator failed with
-exit status 1.
-<>
-[   68.856307] mmc1: Card stuck being busy! mmc_poll_for_busy
-[   68.861838] mmc1: cache flush error -110
-[   68.865812] blk_update_request: I/O error, dev mmcblk1, sector 0 op
-0x1:(WRITE) flags 0x800 phys_seg 0 prio class 0
-<>
-[   98.906243] mmc1: Card stuck being busy! mmc_poll_for_busy
-[   98.911774] mmc1: cache flush error -110
-[   98.915747] blk_update_request: I/O error, dev mmcblk1, sector 0 op
-0x1:(WRITE) flags 0x800 phys_seg 0 prio class 0
-<>
-Dependency failed for Serial Getty on ttyS2.
-[  128.946258] mmc1: Card stuck being busy! mmc_poll_for_busy
-[  128.951786] mmc1: cache flush error -110
-[  128.955756] blk_update_request: I/O error, dev mmcblk1, sector 0 op
-0x1:(WRITE) flags 0x800 phys_seg 0 prio class 0
-[FAILED] Failed to start File System Check on Root Device.
-See 'systemctl status systemd-fsck-root.service' for details.
-[  OK  ] Started Apply Kernel Variables.
-[  OK  ] Reached target Login Prompts.
-         Starting Remount Root and Kernel File Systems...
-[  OK  ] Reached target Timers.
-[  OK  ] Closed Syslog Socket.
-[  OK  ] Started Emergency Shell.
-[  129.227328] EXT4-fs error (device mmcblk1p9): ext4_remount:5354:
-Abort forced by user
-[  OK  ] Reached target Emergency Mode.
-[  OK  ] Reached target Sockets.
-[FAILED] Failed to start Remount Root and Kernel File Systems.
-<>
-You are in emergency mode. After logging in, type \"journalctl -xb\" to view
-system logs, \"systemctl reboot\" to reboot, \"systemctl default\" or \"exit\"
-to boot into default mode.
-Press Enter for maintenance
-auto-login-action timed out after 874 seconds
+You probably have to figure out some missing dependencies, e.g. in
+clocks/power domains/pinctrl.
 
-ref:
-https://lkft.validation.linaro.org/scheduler/job/1137693#L4034
-https://lkft.validation.linaro.org/scheduler/job/1158106#L4048
-https://lkft.validation.linaro.org/scheduler/job/1137690#L3985
-https://lkft.validation.linaro.org/scheduler/job/1137691#L4012
-https://lkft.validation.linaro.org/scheduler/job/1137696#L4043
-https://lkft.validation.linaro.org/scheduler/job/1137699#L4153
+Best regards,
+Krzysztof
 
--- 
-Linaro LKFT
-https://lkft.linaro.org
