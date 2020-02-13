@@ -2,55 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 133B615C06A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 15:34:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FE1F15C070
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 15:36:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727584AbgBMOeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 09:34:36 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33908 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727414AbgBMOeg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 09:34:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=KjjQOSYaN0OsAxz1AYWuwCc8Awm7MXmiPSF9G+9HfOA=; b=WOHb9DMxHgk0Zii+JORq4vQLNZ
-        38IO6hDSOQbqM5lPkG2oqepO/vxWUPN/s3u1z4fOkgqCzXKUrGcJZX3jECIJbueY6TuigsxtI1KNT
-        5jEadu6G9+0+E4sosJIt84SbIvXN8hKECmkUW2RLxbMOaYoyWYpqovjsKF0WSWWzUwkDu0YXp6UXX
-        brVTEfLZZXVYz6UactfF0BCx+MZO4efUjiNaDDSypF/lmfofuns/qoBIFs2Z7eoK0A2Xv8BpYHyQ+
-        pX5NAXgJs4wFx8rID+jHcqYW0P23V5Q+jXprdZJ9KhcHxEnUqzXjh5Lozv0Gd2AAPrleRF4hXs3v+
-        7Z3xf3hA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j2FZb-0001Bi-Qx; Thu, 13 Feb 2020 14:34:35 +0000
-Date:   Thu, 13 Feb 2020 06:34:35 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        id S1727549AbgBMOgo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 09:36:44 -0500
+Received: from foss.arm.com ([217.140.110.172]:47346 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726300AbgBMOgn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 09:36:43 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D3771FB;
+        Thu, 13 Feb 2020 06:36:43 -0800 (PST)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 724E83F68F;
+        Thu, 13 Feb 2020 06:36:42 -0800 (PST)
+Date:   Thu, 13 Feb 2020 14:36:40 +0000
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/25] mm: Fix documentation of FGP flags
-Message-ID: <20200213143435.GM7778@bombadil.infradead.org>
-References: <20200212041845.25879-1-willy@infradead.org>
- <20200212041845.25879-6-willy@infradead.org>
- <20200213135905.wvpeiw7tyma75tsq@box>
+Subject: Re: [PATCH] cgroup/cpuset: Fix a race condition when reading cpuset.*
+Message-ID: <20200213143639.6jw2kiadjzyu6unr@e107158-lin.cambridge.arm.com>
+References: <20200211141554.24181-1-qais.yousef@arm.com>
+ <20200212221543.GL80993@mtj.thefacebook.com>
+ <20200213115015.hkd6uqwfjosxjfpm@e107158-lin.cambridge.arm.com>
+ <20200213135645.GG88887@mtj.thefacebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200213135905.wvpeiw7tyma75tsq@box>
+In-Reply-To: <20200213135645.GG88887@mtj.thefacebook.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 04:59:05PM +0300, Kirill A. Shutemov wrote:
-> On Tue, Feb 11, 2020 at 08:18:25PM -0800, Matthew Wilcox wrote:
-> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On 02/13/20 08:56, Tejun Heo wrote:
+> Hello,
+> 
+> On Thu, Feb 13, 2020 at 11:50:16AM +0000, Qais Yousef wrote:
+> > I ran 500 iterations of cpuset_hotplug_test.sh on the branch, it passed.
 > > 
-> > We never had PCG flags
+> > I also cherry-picked commit 6426bfb1d5f0 ("cpuset: Make cpuset hotplug synchronous")
+> > into v5.6-rc1 and ran 100 iterations and it passed too.
 > 
-> We actually had :P But it's totally different story.
+> Awesome, thanks for verifying.
 > 
-> See git log for include/linux/page_cgroup.h.
+> > While investigating the problem, I could reproduce it all the way back to v5.0.
+> > Stopped there so earlier versions could still have the problem.
+> > 
+> > Do you think it's worth porting the change to stable trees? Admittedly the
+> > problem should be benign, but it did trigger an LTP failure.
+> 
+> I'm afraid not. It's not an issue which would affect actual use cases
+> and there's (as always) some risks involved with backporting it, so
+> the benefit just doesn't seem justifiable here.
 
-Thanks, wording updated.
+Yeah I can't see how a real application would depend on this functionality
+other than for informational reasons. Or testing like in this case.
+
+Thanks
+
+--
+Qais Yousef
