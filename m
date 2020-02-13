@@ -2,88 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9268115C042
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 15:25:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 300EA15C043
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 15:26:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbgBMOZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 09:25:21 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:34313 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbgBMOZU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 09:25:20 -0500
-Received: by mail-qk1-f194.google.com with SMTP id c20so5828825qkm.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 06:25:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Bc0b7TzZN/NSWX0NFmEbYxGFh6qjkw/pK6nZDwFtVfU=;
-        b=e72tivqYvQ7hzD1hDEOyR4fyZzUUauEuzvGQ1N6vlP9FlkxL9ARfbqgtUfkupK82HE
-         QkWjAEhiFncYm+atr/0aEnCDVDNTgaMxj0/Pwg9HQmhiF5/yPOhPnh0lTZhCD+DUthjp
-         efugfVtBDen1rlDtGrdP9N7pjEOdNHRqT8Rhg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Bc0b7TzZN/NSWX0NFmEbYxGFh6qjkw/pK6nZDwFtVfU=;
-        b=qheH6KyOYuyMGi1APKRR1kdrmbpqrMciz1nteN94OXwyv03MdalQ/swccBHuzAwcQx
-         wvoL2lCfTWrtjVwGLzRpixf3tBAgzPRzFnbnjSpHAoZEeyrirYHVmnCZTKQw78IWDm85
-         1IKAEE/900LJa85trTXxVI/46U+bdVm2ViLPit1fSR+LG1Vlb+Xwo5qldkE68iIF3xv+
-         U3BlcV+PuIkLIRXTY4amOd+KSpNLFmi++LccglZn+95FlmrUaTMelUSx8don/3Nn08KF
-         4+zo/7gQ286U5dqE0WrMecck9kfg+/NwrWaAruBvzGWbCpYbqfNhe5PvCjyM2CK0KbX0
-         +QOA==
-X-Gm-Message-State: APjAAAWiEdCD218gTczaKHgrqPh7sGJYMOo2LjBrmFTH85DB2k/UeEZv
-        hHU4sUYXenkt6tX4Ma0rwxMGZ7iGdOaypuyzBsNqEw==
-X-Google-Smtp-Source: APXvYqyqVlaAznCrTjgFnMS/rbNzkVZ+JXaavI7b9i3sKA5vbbQy2odANJfyMh8Z8Llpqed5LUZncN0z3LiE3my3DaQ=
-X-Received: by 2002:a37:6d47:: with SMTP id i68mr16018376qkc.228.1581603919781;
- Thu, 13 Feb 2020 06:25:19 -0800 (PST)
+        id S1727555AbgBMOZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 09:25:53 -0500
+Received: from mga01.intel.com ([192.55.52.88]:62473 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725781AbgBMOZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 09:25:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 06:25:52 -0800
+X-IronPort-AV: E=Sophos;i="5.70,437,1574150400"; 
+   d="scan'208";a="227245768"
+Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.255.30.123]) ([10.255.30.123])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 13 Feb 2020 06:25:50 -0800
+Subject: Re: [PATCH 21/61] KVM: x86: Use supported_xcr0 to detect MPX support
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200201185218.24473-1-sean.j.christopherson@intel.com>
+ <20200201185218.24473-22-sean.j.christopherson@intel.com>
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+Message-ID: <10a4c4bb-82a7-4a1e-d979-dea5f4076d41@intel.com>
+Date:   Thu, 13 Feb 2020 22:25:49 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-References: <20200212210139.382424693@infradead.org> <20200212210749.915180520@infradead.org>
- <20200212223818.GA115917@google.com> <20200212204128.20f5e8ba@oasis.local.home>
-In-Reply-To: <20200212204128.20f5e8ba@oasis.local.home>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Thu, 13 Feb 2020 09:25:08 -0500
-Message-ID: <CAEXW_YSddXU++o7xpi-0kzg9GA6UkM5FsnoXjLQ=gAFBjPf=RA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/9] rcu: Mark rcu_dynticks_curr_cpu_in_eqs() inline
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-arch@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200201185218.24473-22-sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 8:41 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Wed, 12 Feb 2020 17:38:18 -0500
-> Joel Fernandes <joel@joelfernandes.org> wrote:
->
-> > I think there are ways to turn off function inlining, such as gcc's:
-> > -fkeep-inline-functions
-> >
-> > And just to be sure weird compilers (clang *cough*) don't screw this up,
-> > could we make it static inline notrace?
->
-> inline is defined as notrace, so not needed.
->
-> I did that because of surprises when functions marked as inline
-> suddenly became non inlined and traced, which caused issues with
-> function tracing (before I finally got recursion protection working).
-> But even then, I figured, if something is inlined and gcc actually
-> inlines it, it wont be traced. For consistency, if something is marked
-> inline, it should not be traced.
+On 2/2/2020 2:51 AM, Sean Christopherson wrote:
+> Query supported_xcr0 when checking for MPX support instead of invoking
+> ->mpx_supported() and drop ->mpx_supported() as kvm_mpx_supported() was
+> its last user.  Rename vmx_mpx_supported() to cpu_has_vmx_mpx() to
+> better align with VMX/VMCS nomenclature.
+> 
+> Modify VMX's adjustment of xcr0 to call cpus_has_vmx_mpx() (renamed from
+> vmx_mpx_supported()) directly to avoid reading supported_xcr0 before
+> it's fully configured.
+> 
+> No functional change intended.
+> 
 
-Ah I see it, thanks for the clarification Steve! That looks like a
-good idea. I withdraw my previous comment.
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
-- Joel
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>   arch/x86/include/asm/kvm_host.h | 2 +-
+>   arch/x86/kvm/cpuid.c            | 3 +--
+>   arch/x86/kvm/svm.c              | 6 ------
+>   arch/x86/kvm/vmx/capabilities.h | 2 +-
+>   arch/x86/kvm/vmx/vmx.c          | 3 +--
+>   5 files changed, 4 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 77d206a93658..85f0d96cfeb2 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1163,7 +1163,7 @@ struct kvm_x86_ops {
+>   			       enum x86_intercept_stage stage);
+>   	void (*handle_exit_irqoff)(struct kvm_vcpu *vcpu,
+>   		enum exit_fastpath_completion *exit_fastpath);
+> -	bool (*mpx_supported)(void);
+> +
+>   	bool (*xsaves_supported)(void);
+>   	bool (*umip_emulated)(void);
+>   	bool (*pt_supported)(void);
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index b9763eb711cb..84006cc4007c 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -47,8 +47,7 @@ static u32 xstate_required_size(u64 xstate_bv, bool compacted)
+>   
+>   bool kvm_mpx_supported(void)
+>   {
+> -	return ((host_xcr0 & (XFEATURE_MASK_BNDREGS | XFEATURE_MASK_BNDCSR))
+> -		 && kvm_x86_ops->mpx_supported());
+> +	return supported_xcr0 & (XFEATURE_MASK_BNDREGS | XFEATURE_MASK_BNDCSR);
+>   }
+>   EXPORT_SYMBOL_GPL(kvm_mpx_supported);
+>   
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index af096c4f9c5f..3c7ddaff405d 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -6082,11 +6082,6 @@ static bool svm_invpcid_supported(void)
+>   	return false;
+>   }
+>   
+> -static bool svm_mpx_supported(void)
+> -{
+> -	return false;
+> -}
+> -
+>   static bool svm_xsaves_supported(void)
+>   {
+>   	return boot_cpu_has(X86_FEATURE_XSAVES);
+> @@ -7468,7 +7463,6 @@ static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
+>   
+>   	.rdtscp_supported = svm_rdtscp_supported,
+>   	.invpcid_supported = svm_invpcid_supported,
+> -	.mpx_supported = svm_mpx_supported,
+>   	.xsaves_supported = svm_xsaves_supported,
+>   	.umip_emulated = svm_umip_emulated,
+>   	.pt_supported = svm_pt_supported,
+> diff --git a/arch/x86/kvm/vmx/capabilities.h b/arch/x86/kvm/vmx/capabilities.h
+> index 1a6a99382e94..0a0b1494a934 100644
+> --- a/arch/x86/kvm/vmx/capabilities.h
+> +++ b/arch/x86/kvm/vmx/capabilities.h
+> @@ -100,7 +100,7 @@ static inline bool cpu_has_load_perf_global_ctrl(void)
+>   	       (vmcs_config.vmexit_ctrl & VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL);
+>   }
+>   
+> -static inline bool vmx_mpx_supported(void)
+> +static inline bool cpu_has_vmx_mpx(void)
+>   {
+>   	return (vmcs_config.vmexit_ctrl & VM_EXIT_CLEAR_BNDCFGS) &&
+>   		(vmcs_config.vmentry_ctrl & VM_ENTRY_LOAD_BNDCFGS);
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 32a84ec15064..98fd651f7f7e 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -7590,7 +7590,7 @@ static __init int hardware_setup(void)
+>   		WARN_ONCE(host_bndcfgs, "KVM: BNDCFGS in host will be lost");
+>   	}
+>   
+> -	if (!kvm_mpx_supported())
+> +	if (!cpu_has_vmx_mpx())
+>   		supported_xcr0 &= ~(XFEATURE_MASK_BNDREGS |
+>   				    XFEATURE_MASK_BNDCSR);
+>   
+> @@ -7857,7 +7857,6 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
+>   
+>   	.check_intercept = vmx_check_intercept,
+>   	.handle_exit_irqoff = vmx_handle_exit_irqoff,
+> -	.mpx_supported = vmx_mpx_supported,
+>   	.xsaves_supported = vmx_xsaves_supported,
+>   	.umip_emulated = vmx_umip_emulated,
+>   	.pt_supported = vmx_pt_supported,
+> 
+
