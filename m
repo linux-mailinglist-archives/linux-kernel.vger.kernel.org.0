@@ -2,123 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5247915BDB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 12:34:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D982515BDB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 12:36:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729909AbgBMLem (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 06:34:42 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:41717 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbgBMLel (ORCPT
+        id S1729875AbgBMLgW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 06:36:22 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41002 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726232AbgBMLgW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 06:34:41 -0500
-Received: by mail-qk1-f196.google.com with SMTP id d11so5279075qko.8
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 03:34:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=VSt973hv/QfrpDHXWJ8G2UOF9Wa/lnfW+Pjf23P9P30=;
-        b=sjO1AgGuqroNntfZVFrbHRsfQarPG/RNkbx884jvzfti4wftqKRRIHCv/yHRkBPAts
-         8lCtQSvZWMLPioSiqRhHCf3/o4TCiC4OXSz7nQ9lUV0L3qbfZ7UjfKfR1zIdYqqXSFgk
-         LpQ/bzDjwLamYL8z58X8rc+wtaW5xw92tKQl2sAP070YbTxBnFoYfn5L54PK6UsazPZp
-         b1tlMb1rEySTkuauZDZVcGaH8ZKcEXEuKLX/d9ItbThwkcVImGz8LHbV4CviIqEdEuwL
-         YDJYyLueKGD7NjwVFCok0H2/sOp+b5pqQIL13lUyIpHX9sh1Mlr2tPtrs87oPkga6mB1
-         Fx6A==
+        Thu, 13 Feb 2020 06:36:22 -0500
+Received: by mail-ot1-f68.google.com with SMTP id r27so5231069otc.8;
+        Thu, 13 Feb 2020 03:36:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=VSt973hv/QfrpDHXWJ8G2UOF9Wa/lnfW+Pjf23P9P30=;
-        b=qBK9VPF1XNddzZxUr5ZmcdQL2javbtAE2FwphAlwnaudv94qvmXVsiffz6ExI0ILSm
-         Dr6pn1+7hXH+a0HciMziHuIcgEWw1cxp40flXQ5uP5excuGW28+lwz1OH8X56iVxbLlu
-         A6oJJg/9kWx0l6gJVuztyeDeM+qJp4GcspVJdFIvpQZKGTOhp1QTWJD3BMTKcM7XYwBW
-         tPnjWF3jmcLkldJuKMdGGzPU3VZNCQGEJd8r4SUujySyQArVJWmhHn7raVpU9JuopWPW
-         2VFdxPD7FQRlSGgCyAj0jlGjtwmJ206hOdHMsxjRBBgBnHsK0H8iMeHdHv+YNnTR7VJu
-         HRKg==
-X-Gm-Message-State: APjAAAXyLGzobJRx74KBvHJbmt5yw9EwF6+sE9l/RgyLTuVmpYTHBIDm
-        m+jCGujQmE0Jn254ry+qKWU=
-X-Google-Smtp-Source: APXvYqz5vvB+WVrDlPoO5rukeQ63p4hoxhct3LGLyZkXmynEjEMPZqNdUR3LbapTyEwBGcwItYOzSw==
-X-Received: by 2002:a37:4894:: with SMTP id v142mr11135684qka.220.1581593679345;
-        Thu, 13 Feb 2020 03:34:39 -0800 (PST)
-Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
-        by smtp.gmail.com with ESMTPSA id g6sm1139614qki.100.2020.02.13.03.34.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Feb 2020 03:34:38 -0800 (PST)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 5FD29220BD;
-        Thu, 13 Feb 2020 06:34:36 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Thu, 13 Feb 2020 06:34:36 -0500
-X-ME-Sender: <xms:SjRFXmB_lU7g0hJPMLN6JkK06D4G3hHTqw7Mwvuzkr5Fm2PkxczMVA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrieekgddvkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucffohhmrghinh
-    epghhithhhuhgsrdgtohhmnecukfhppeehvddrudehhedrudduuddrjedunecuvehluhhs
-    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvsh
-    hmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheeh
-    vddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:SjRFXsh5T1MI4-0LegWeTaWNddW2pFop7YHOWIQc73yR1lSinfytxw>
-    <xmx:SjRFXrzaYxdE6PMfvEKzsx8sMr3rgVeRgYlGS9FoehV53W31do13cA>
-    <xmx:SjRFXl3qDIxlN3IIEgvQiKZoWvSq-chriOws0KrdTQoHvZnNoRLplQ>
-    <xmx:TDRFXuNhsS43D-8YM0imxLMnfJQHV6rnlyrk6oxPJpnuNc18WEsXKw>
-Received: from localhost (unknown [52.155.111.71])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0E73F30600DC;
-        Thu, 13 Feb 2020 06:34:33 -0500 (EST)
-Date:   Thu, 13 Feb 2020 19:34:32 +0800
-From:   Boqun Feng <boqun.feng@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Michal Simek <michal.simek@xilinx.com>,
-        linux-kernel@vger.kernel.org, monstr@monstr.eu, git@xilinx.com,
-        arnd@arndb.de,
-        Stefan Asserhall load and store 
-        <stefan.asserhall@xilinx.com>, Will Deacon <will@kernel.org>,
-        paulmck@kernel.org
-Subject: Re: [PATCH 7/7] microblaze: Do atomic operations by using exclusive
- ops
-Message-ID: <20200213113432.GF69108@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-References: <cover.1581522136.git.michal.simek@xilinx.com>
- <ba3047649af07dadecf1a52e7d815db8f068eb24.1581522136.git.michal.simek@xilinx.com>
- <20200212155500.GB14973@hirez.programming.kicks-ass.net>
- <4b46b33e-14ad-7097-f0db-2915ac772f15@xilinx.com>
- <20200213085849.GL14897@hirez.programming.kicks-ass.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Zj3Cy+ZdryRl51K+ddpsg8bzCDF5qrepn0JC6SP151s=;
+        b=oLKZ7odfEwjg/v8T2Eb/YMbE2VaqpMQXvdwuQeJZ2sR0u2loHQo21pkn+VSgxBsaSn
+         IJJn2aP7tJWayM2iGo3qylSyF0cUH3TzXKYTBzNQ2fotZr+FooXDzUkAO1Pj+V1WUYdl
+         oVNvNqe3suOudiE6tzgzeejBcpwqNmWotEgozde6pf4FPStbnW5XhuiJhN7djcXAWCRN
+         /UX57NJHdGIJs/QZXfV7ozIf1AKKd/jpHmlcWn0/RIcP8lN4OuTtx8EGn9BddoVglni9
+         0TNCxyeVK1Syc7Aeyxu34RK/sDHQCed0Xwtaa1pIpafG44wlskbi2WX2l8s4ZJUQmjoF
+         FrHQ==
+X-Gm-Message-State: APjAAAVjZ+iE0e945LqNIkDI8MQhPEPAesevcjDkBE2GEWFcU6Kb4RJG
+        QpdsqNLPK5alUpjWVfZFNG8NcpjUKHRBY/MxL8+8JLbw
+X-Google-Smtp-Source: APXvYqzAm9MzCByym4P/YRlcLqRVNha6O0/BpwrLcVv7wOIqwuyXJbLDHEA9CTGKKS21NF/xnO2dOiQ7oY4qUh3/v+E=
+X-Received: by 2002:a9d:7653:: with SMTP id o19mr12549270otl.118.1581593780696;
+ Thu, 13 Feb 2020 03:36:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200213085849.GL14897@hirez.programming.kicks-ass.net>
+References: <1654227.8mz0SueHsU@kreacher> <CAP245DXY2MsV6rf95QdATTXXZWoYYLFBO3QxQgkg=44Fw0cLNA@mail.gmail.com>
+ <CAJZ5v0i5thgrdGNQ+a1tuw=CGa8PAhHt19GoDpC8KLLjNVoQLQ@mail.gmail.com> <CAP245DUGieaBgN6NCOpjbZtWsX5Bext1S4NqySYXK_H6Go5FgA@mail.gmail.com>
+In-Reply-To: <CAP245DUGieaBgN6NCOpjbZtWsX5Bext1S4NqySYXK_H6Go5FgA@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 13 Feb 2020 12:36:09 +0100
+Message-ID: <CAJZ5v0gn=retwWpDaZC5jikyRQdYTRVQUqMaYKGkdMeNqz7wuw@mail.gmail.com>
+Subject: Re: [PATCH 00/28] PM: QoS: Get rid of unuseful code and rework CPU
+ latency QoS interface
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 09:58:49AM +0100, Peter Zijlstra wrote:
-[...]
-> 
-> > Also is there any testsuite I should run to verify all these atomics
-> > operations? That would really help but I haven't seen any tool (but also
-> > didn't try hard to find it out).
-> 
-> Will, Paul; can't this LKMM thing generate kernel modules to run? And do
+On Thu, Feb 13, 2020 at 11:50 AM Amit Kucheria <amit.kucheria@linaro.org> wrote:
+>
+> On Thu, Feb 13, 2020 at 3:47 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > On Thu, Feb 13, 2020 at 8:10 AM Amit Kucheria <amit.kucheria@linaro.org> wrote:
+> > >
+> > > On Wed, Feb 12, 2020 at 5:09 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > > >
+> > > > Hi All,
+> > > >
+> > > > This series of patches is based on the observation that after commit
+> > > > c3082a674f46 ("PM: QoS: Get rid of unused flags") the only global PM QoS class
+> > > > in use is PM_QOS_CPU_DMA_LATENCY, but there is still a significant amount of
+> > > > code dedicated to the handling of global PM QoS classes in general.  That code
+> > > > takes up space and adds overhead in vain, so it is better to get rid of it.
+> > > >
+> > > > Moreover, with that unuseful code removed, the interface for adding QoS
+> > > > requests for CPU latency becomes inelegant and confusing, so it is better to
+> > > > clean it up.
+> > > >
+> > > > Patches [01/28-12/28] do the first part described above, which also includes
+> > > > some assorted cleanups of the core PM QoS code that doesn't go away.
+> > > >
+> > > > Patches [13/28-25/28] rework the CPU latency QoS interface (in the classic
+> > > > "define stubs, migrate users, change the API proper" manner), patches
+> > > > [26-27/28] update the general comments and documentation to match the code
+> > > > after the previous changes and the last one makes the CPU latency QoS depend
+> > > > on CPU_IDLE (because cpuidle is the only user of its target value today).
+> > > >
+> > > > The majority of the patches in this series don't change the functionality of
+> > > > the code at all (at least not intentionally).
+> > > >
+> > > > Please refer to the changelogs of individual patches for details.
+> > >
+> > > Hi Rafael,
+> > >
+> > > Nice cleanup to the code and docs.
+> > >
+> > > I've reviewed the series, and briefly tested it by setting latencies
+> > > from userspace. Can we not remove the debugfs interface? It is a quick
+> > > way to check the global cpu latency clamp on the system from userspace
+> > > without setting up tracepoints or writing a program to read
+> > > /dev/cpu_dma_latency.
+> >
+> > Come on.
+> >
+> > What about in Python?
+> >
+> > #!/usr/bin/env python
+> > import numpy as np
+> >
+> > if __name__ == '__main__':
+> >     f = open("/dev/cpu_dma_latency", "r")
+> >     print(np.fromfile(f, dtype=np.int32, count=1))
+> >     f.close()
+> >
+> > And probably you can do it in at least 20 different ways. :-)
+>
+> Indeed, I can, just not as straightforward as "cat /debugfs/filename"
+> when you don't have python or perl in your buildroot initramfs.
+>
+> Some hexdump/od acrobatics will yield the value, I guess.
 
-The herd toolset does have something called klitmus:
+Right,
 
-"an experimental tool, similar to litmus7 that runs kernel memory model
-tests as kernel modules."
+# hexdump --format '"%d\n"' /dev/cpu_dma_latency
 
-I think Andrea knows more about how to use it.
+works just fine, actually.
 
-> we have a 'nice' collection of litmus tests that cover atomic_t ?
-> 
-
-There is a few in Paul's litmus repo:
-
-	https://github.com/paulmckrcu/litmus/tree/master/manual/atomic
-
-Maybe a good start?
-
-Regards,
-Boqun
-
-> The one in atomic_t.txt should cover this one at least.
+Thanks!
