@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85F3F15C2B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:38:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE5B515C353
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729533AbgBMP3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:29:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46788 "EHLO mail.kernel.org"
+        id S2387707AbgBMPkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:40:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729222AbgBMP0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:42 -0500
+        id S2387789AbgBMP2r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:47 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20040206DB;
-        Thu, 13 Feb 2020 15:26:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50742206DB;
+        Thu, 13 Feb 2020 15:28:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607602;
-        bh=FxYiCaXQskh90KrwG3iV7GTqM8cjabD5+J+amsqs1UY=;
+        s=default; t=1581607727;
+        bh=c6sN0RjKAHXORAEcOzdJvGezCrM7RSfLgAmj2j+lqOU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iFuAlbqXc3IDlOuKChBcDYjfnXK9OXaYMPx0TjZ5APSZpL/X6lLj199f/rX7Eas86
-         PNXnR46mQ0K7gYFbUkQ4h1TLrnVq59+tCYe23/5NlwTBSI7tAn4DMP2cAZZ2Xf1WDa
-         Mh89IxhrUDnBvRDuU/g2c9Q31YLayZL7xLzK0rAs=
+        b=dbYjraoecTugTPmPJb+/ZelelQvxcvHmN9oOmK47CLRLFV/ySg5c7PKmpeQq39tlQ
+         El88PgxENEcTWL6mYvMOPbvwKv5Lr/YdU+/LHqvpbUZCwB94j7di0UWlR69fnpm/Hv
+         3NpS3pCL+3gjBdfuKYMXJByOQz42Qa3sWcdl09Ss=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 4.19 12/52] nfs: NFS_SWAP should depend on SWAP
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: [PATCH 5.5 057/120] arm64: dts: qcom: msm8998-mtp: Add alias for blsp1_uart3
 Date:   Thu, 13 Feb 2020 07:20:53 -0800
-Message-Id: <20200213151816.036795353@linuxfoundation.org>
+Message-Id: <20200213151921.158176607@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
-References: <20200213151810.331796857@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-commit 474c4f306eefbb21b67ebd1de802d005c7d7ecdc upstream.
+commit c9ec155b5962233aff3df65210bd6a4788dee21c upstream.
 
-If CONFIG_SWAP=n, it does not make much sense to offer the user the
-option to enable support for swapping over NFS, as that will still fail
-at run time:
+The msm_serial driver has a predefined set of uart ports defined, which
+is allocated either by reading aliases or if no match is found a simple
+counter, starting at index 0. But there's no logic in place to prevent
+these two allocation mechanism from colliding. As a result either none
+or all of the active msm_serial instances must be listed as aliases.
 
-    # swapon /swap
-    swapon: /swap: swapon failed: Function not implemented
+Define blsp1_uart3 as "serial1" to mitigate this problem.
 
-Fix this by adding a dependency on CONFIG_SWAP.
-
-Fixes: a564b8f0398636ba ("nfs: enable swap on NFS")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Fixes: 4cffb9f2c700 ("arm64: dts: qcom: msm8998-mtp: Enable bluetooth")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Link: https://lore.kernel.org/r/20191119011823.379100-1-bjorn.andersson@linaro.org
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/nfs/Kconfig
-+++ b/fs/nfs/Kconfig
-@@ -89,7 +89,7 @@ config NFS_V4
- config NFS_SWAP
- 	bool "Provide swap over NFS support"
- 	default n
--	depends on NFS_FS
-+	depends on NFS_FS && SWAP
- 	select SUNRPC_SWAP
- 	help
- 	  This option enables swapon to work on files located on NFS mounts.
+--- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+@@ -9,6 +9,7 @@
+ / {
+ 	aliases {
+ 		serial0 = &blsp2_uart1;
++		serial1 = &blsp1_uart3;
+ 	};
+ 
+ 	chosen {
 
 
