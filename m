@@ -2,97 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B0C315B5E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 01:36:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A115D15B5ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 01:37:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729374AbgBMAgs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 19:36:48 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:57024 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729190AbgBMAgr (ORCPT
+        id S1729401AbgBMAhJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 19:37:09 -0500
+Received: from gateway22.websitewelcome.com ([192.185.46.224]:19128 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729190AbgBMAhI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 19:36:47 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01D0WdCG162252;
-        Thu, 13 Feb 2020 00:36:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2020-01-29;
- bh=lOJCfJT2udTX7MkccrkOVv4P5oDuCzc4Q2DUeaZKbrE=;
- b=Dlpe4f+H1r69N2rHehey7P0mPaXk15GrcsiDJG8KtBhrwPkNR/gwBuqms/rlhA9BH8Di
- MiMf8gAZ1BI+KuVATAeoHT9oZdnO7dIgCifpFmoNHfIuqzMIYdyUdaUcftZo8/ex2DeG
- kkAg/vdDYwie3Ik8Z/+5qMF4rk5kZQAZs6ZmJlLvvo0qE+EOARETZ7iI7yaLx4TS74Li
- bWk1jWtJBWaLKdTtK5y0cpcKqK3H1Hlalulh2K2O+eqN/6zynqqDI3MBsOpvCXLrRoHU
- RZyr1AiYWimZPCDsP7+g5xCZn0gPTpoG42P8r+fxM7PM1zXmaRsnUkwNBljOOKRceFJp BQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2y2k88eg7q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 13 Feb 2020 00:36:26 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01D0X9n8114293;
-        Thu, 13 Feb 2020 00:36:26 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2y4kah7bbs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Feb 2020 00:36:26 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01D0aLRc024911;
-        Thu, 13 Feb 2020 00:36:23 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 12 Feb 2020 16:36:21 -0800
-To:     Can Guo <cang@codeaurora.org>
-Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        hongwus@codeaurora.org, rnayak@codeaurora.org,
-        linux-scsi@vger.kernel.org, kernel-team@android.com,
-        saravanak@google.com, salyzyn@google.com,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pedro Sousa <sousa@synopsys.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT),
-        linux-kernel@vger.kernel.org (open list)
-Subject: Re: [PATCH v1 2/2] scsi: ufs: Select INITIAL ADAPT type for HS Gear4
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1581485910-8307-1-git-send-email-cang@codeaurora.org>
-        <1581485910-8307-3-git-send-email-cang@codeaurora.org>
-Date:   Wed, 12 Feb 2020 19:36:16 -0500
-In-Reply-To: <1581485910-8307-3-git-send-email-cang@codeaurora.org> (Can Guo's
-        message of "Tue, 11 Feb 2020 21:38:29 -0800")
-Message-ID: <yq1k14rs4qn.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        Wed, 12 Feb 2020 19:37:08 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 7300E2FA1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 18:37:07 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 22V9jc20NEfyq22V9jlgFW; Wed, 12 Feb 2020 18:37:07 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=kKJv0kn/8CiWYuFmMyB4I0SAO11rL/+DS9oRFWOs7DQ=; b=fQnu/LyjuKg3u/C06g61MYjHat
+        +RqeUElmb2EEKpk3+M64szLExX29wDkSAz0fH+N4Otq+AQuEtAYPcOrvbdzGhWG3pjRpnGjCGw6sA
+        Ymod/f4dxLsqEtxlFLzTmdnu9U6wpxp5CcB3YeIOixwSSQXOVY8KnKMh9hI2dIMa7DozH8LsQfAU4
+        JSB+K2BC7Po0KuaLWhMynciE6zphMJ0hjR3Y3GNKYS2goqpnF+d1+Q93vY789nNTYRuz29og0psY4
+        GuJ0KLNtQ9KvpAozAFkVHZIn5dWw+4Z0AMWk1mNojN+6wLo52ielfmuJq8FWqjH8OibikFZ8NA/L8
+        AdOawVzA==;
+Received: from [200.68.141.42] (port=25707 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j22V7-003fvN-Ib; Wed, 12 Feb 2020 18:37:06 -0600
+Date:   Wed, 12 Feb 2020 18:37:03 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] dmaengine: bcm-sba-raid: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200213003703.GA4177@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9529 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
- suspectscore=0 mlxscore=0 malwarescore=0 adultscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002130003
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9529 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 lowpriorityscore=0
- suspectscore=0 bulkscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
- malwarescore=0 impostorscore=0 clxscore=1011 spamscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002130003
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.141.42
+X-Source-L: No
+X-Exim-ID: 1j22V7-003fvN-Ib
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [200.68.141.42]:25707
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 51
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-Can,
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-> ADAPT is added specifically for HS Gear4 mode only, select INITIAL
-> ADAPT before do power mode change to G4 and select NO ADAPT before
-> switch to non-G4 modes.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-Applied to 5.7/scsi-queue, thanks!
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/dma/bcm-sba-raid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/dma/bcm-sba-raid.c b/drivers/dma/bcm-sba-raid.c
+index 275e90fa829d..64239da02e74 100644
+--- a/drivers/dma/bcm-sba-raid.c
++++ b/drivers/dma/bcm-sba-raid.c
+@@ -120,7 +120,7 @@ struct sba_request {
+ 	struct brcm_message msg;
+ 	struct dma_async_tx_descriptor tx;
+ 	/* SBA commands */
+-	struct brcm_sba_command cmds[0];
++	struct brcm_sba_command cmds[];
+ };
+ 
+ enum sba_version {
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.23.0
+
