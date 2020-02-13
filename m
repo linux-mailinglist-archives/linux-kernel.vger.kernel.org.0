@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EBF715C39A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52A3915C55A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:55:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387578AbgBMPm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:42:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54316 "EHLO mail.kernel.org"
+        id S1728344AbgBMPZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:25:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729553AbgBMP2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:28:06 -0500
+        id S2387398AbgBMPYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:24:03 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1170E24671;
-        Thu, 13 Feb 2020 15:28:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24CBC24689;
+        Thu, 13 Feb 2020 15:24:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607686;
-        bh=ljblTdtXxx08TdZR2KauMkb4yiErJI/zfrPYRupG6GM=;
+        s=default; t=1581607443;
+        bh=Y1qJ4WosxJNPcN5BVx7gfDlF+Vvx9yR2+2ZUjt6mZSo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mFJEEVqOkSsLnFiPaZxxooEankjEOCPcas2Vw7lHxKYmH4Za5/kpmwRvmgF2Mx/BC
-         y5c+yBoFJXrH1ZcX4suq2ux5XVKtGJ/1h58oi4HcEukdxB5tIcmOLqKycd5EtPzI4B
-         gBUzQFAei+vRaXKTdeDbDiBxXTAuhcJTfYhFpNGw=
+        b=fFmuHfSkKDJzXzUfUwhiX/8QztQ8LSSpex3dJxRyoVPrVWdD3ZLdj9Fz8a0gGf+W+
+         6PTCPzUWrSXgInQ8TqGF7l0vHfr7Rj7Y+7zFZR4TGeCGfywHZotlSzVJKfjINvR6wT
+         QpndLteglZZW31zThGmFjK0pTCgJhZtNtzRenYhk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Asutosh Das <asutoshd@codeaurora.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 5.5 013/120] scsi: ufs: Fix ufshcd_probe_hba() reture value in case ufshcd_scsi_add_wlus() fails
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 065/116] net: smc911x: Adjust indentation in smc911x_phy_configure
 Date:   Thu, 13 Feb 2020 07:20:09 -0800
-Message-Id: <20200213151906.209600883@linuxfoundation.org>
+Message-Id: <20200213151908.285016269@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bean Huo <beanhuo@micron.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit b9fc5320212efdfb4e08b825aaa007815fd11d16 upstream.
+commit 5c61e223004b3b5c3f1dd25718e979bc17a3b12d upstream.
 
-A non-zero error value likely being returned by ufshcd_scsi_add_wlus() in
-case of failure of adding the WLs, but ufshcd_probe_hba() doesn't use this
-value, and doesn't report this failure to upper caller.  This patch is to
-fix this issue.
+Clang warns:
 
-Fixes: 2a8fa600445c ("ufs: manually add well known logical units")
-Link: https://lore.kernel.org/r/20200120130820.1737-2-huobean@gmail.com
-Reviewed-by: Asutosh Das <asutoshd@codeaurora.org>
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Stanley Chu <stanley.chu@mediatek.com>
-Signed-off-by: Bean Huo <beanhuo@micron.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+../drivers/net/ethernet/smsc/smc911x.c:939:3: warning: misleading
+indentation; statement is not part of the previous 'if'
+[-Wmisleading-indentation]
+         if (!lp->ctl_rfduplx)
+         ^
+../drivers/net/ethernet/smsc/smc911x.c:936:2: note: previous statement
+is here
+        if (lp->ctl_rspeed != 100)
+        ^
+1 warning generated.
+
+This warning occurs because there is a space after the tab on this line.
+Remove it so that the indentation is consistent with the Linux kernel
+coding style and clang no longer warns.
+
+Fixes: 0a0c72c9118c ("[PATCH] RE: [PATCH 1/1] net driver: Add support for SMSC LAN911x line of ethernet chips")
+Link: https://github.com/ClangBuiltLinux/linux/issues/796
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/ufs/ufshcd.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/smsc/smc911x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -7030,7 +7030,8 @@ static int ufshcd_probe_hba(struct ufs_h
- 			ufshcd_init_icc_levels(hba);
+--- a/drivers/net/ethernet/smsc/smc911x.c
++++ b/drivers/net/ethernet/smsc/smc911x.c
+@@ -948,7 +948,7 @@ static void smc911x_phy_configure(struct
+ 	if (lp->ctl_rspeed != 100)
+ 		my_ad_caps &= ~(ADVERTISE_100BASE4|ADVERTISE_100FULL|ADVERTISE_100HALF);
  
- 		/* Add required well known logical units to scsi mid layer */
--		if (ufshcd_scsi_add_wlus(hba))
-+		ret = ufshcd_scsi_add_wlus(hba);
-+		if (ret)
- 			goto out;
+-	 if (!lp->ctl_rfduplx)
++	if (!lp->ctl_rfduplx)
+ 		my_ad_caps &= ~(ADVERTISE_100FULL|ADVERTISE_10FULL);
  
- 		/* Initialize devfreq after UFS device is detected */
+ 	/* Update our Auto-Neg Advertisement Register */
 
 
