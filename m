@@ -2,103 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7860F15B775
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 04:00:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37EEF15B792
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 04:11:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729576AbgBMDAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 22:00:24 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10615 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729546AbgBMDAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 22:00:24 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 794A93135E4076A8B01B;
-        Thu, 13 Feb 2020 11:00:22 +0800 (CST)
-Received: from [127.0.0.1] (10.173.221.195) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Thu, 13 Feb 2020
- 11:00:14 +0800
-Subject: Re: [PATCH v3 0/6] implement KASLR for powerpc/fsl_booke/64
-To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
-        <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
-        <benh@kernel.crashing.org>, <paulus@samba.org>,
-        <npiggin@gmail.com>, <keescook@chromium.org>,
-        <kernel-hardening@lists.openwall.com>, <oss@buserror.net>
-CC:     <linux-kernel@vger.kernel.org>, <zhaohongjiang@huawei.com>
-References: <20200206025825.22934-1-yanaijie@huawei.com>
-From:   Jason Yan <yanaijie@huawei.com>
-Message-ID: <636f16fd-cc7b-ee2e-7496-c06bdc10c7af@huawei.com>
-Date:   Thu, 13 Feb 2020 11:00:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
-MIME-Version: 1.0
-In-Reply-To: <20200206025825.22934-1-yanaijie@huawei.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.173.221.195]
-X-CFilter-Loop: Reflected
+        id S1729570AbgBMDLj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 22:11:39 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41984 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729531AbgBMDLj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 22:11:39 -0500
+Received: by mail-oi1-f195.google.com with SMTP id j132so4306185oih.9
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 19:11:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=7Jxk3ZsRFc3/YFTDblpD+Mq1gRETolyk9jgC+WBc/KA=;
+        b=C9v8ruOYZJ1gnA9z3smSBpPvTK+zMit6K2kMpLoDrciBoWOsSLSbzsG2sxInd0sIoC
+         rkxTL55WnZK3YLIsZDxrxC0278hMpYbX7buLTwsS1Egxv9LjH62M3G9YwFoEktTwHZdr
+         IeIME5r6sYqEf+NphUV+yXviKsRiMprrklojF8vATIBg0rl8IKxSxGaJRR0L5/CcjHY/
+         rmpI0c3ZxPULgobOi9VLS39OPLSIwrQjD9Z4lJn+HANb2OdIk6OtKFPEgBWyrz3cVQiq
+         Wd++CmXua+rWkMx0pEWQaGteFL3R0SqXDYPnj4UN/BiYJ9Hmx919TjqLrzB6FESS7AyN
+         C+sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=7Jxk3ZsRFc3/YFTDblpD+Mq1gRETolyk9jgC+WBc/KA=;
+        b=ODkXcQT7Zrot/SDO2gFF0eIsLJ7T9yWC1SIF3OtbihlTpVskefdrOndCt+mUgVykVT
+         WehkXTVim3gln4ncKWvrbi0QEjlHs4+TnUfQexnAkYEQ09vXfWeMzpC/MyHeiatqCYlt
+         KpBwChTcVKGZMEsOx3g4rAA2MS1kOHKfiy157jNO1vZfyTww1h/uzeT/QOXqUBCflRsq
+         CX5Ydz2XNR94LPLXjxXNovOw/5F/BwIj/B3ATLpOhVJk0aEYPE34bVXVTKrTRSACnOyI
+         9Jz9ergSt3IXAJ9+fbRHtS4JX/WA2DFswj0OTGh22ZzkpT3/8/3KSRLt44HoCv38ek70
+         TrxQ==
+X-Gm-Message-State: APjAAAXmWG6wQ+zUWXt+Uv3LsoTlpXrxGU71sGdlFxEjnNTaRYwzyu+i
+        fE6qw+KPnBwpPFdLPf2jZInyaxc=
+X-Google-Smtp-Source: APXvYqxvRPrg3Efx6AjL/K8iKSSEeflxng8SctmU7z/7pLjgENpcXgOzuN+ct+nuttO04suXBx9Xyg==
+X-Received: by 2002:aca:b2c5:: with SMTP id b188mr1557327oif.163.1581563498253;
+        Wed, 12 Feb 2020 19:11:38 -0800 (PST)
+Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
+        by smtp.gmail.com with ESMTPSA id u66sm311468oie.17.2020.02.12.19.11.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2020 19:11:37 -0800 (PST)
+Received: from t560.minyard.net (unknown [IPv6:2001:470:b8f6:1b:e166:6491:dd75:4196])
+        by serve.minyard.net (Postfix) with ESMTPA id 54FB918004F;
+        Thu, 13 Feb 2020 03:11:36 +0000 (UTC)
+From:   minyard@acm.org
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/2] arm64 kgdb fixes for single stepping
+Date:   Wed, 12 Feb 2020 21:11:29 -0600
+Message-Id: <20200213031131.13255-1-minyard@acm.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi everyone, any comments or suggestions?
+I got a bug report about using kgdb on arm64, and it turns out it was
+fairly broken.  Patch 2 has a description of what was going on.  I am
+using a Marvell 8100 board.
 
-Thanks,
-Jason
+The following patches fix the problem, but probably not in the
+best way.  They are what I hacked out to show the problems.
 
-on 2020/2/6 10:58, Jason Yan wrote:
-> This is a try to implement KASLR for Freescale BookE64 which is based on
-> my earlier implementation for Freescale BookE32:
-> https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=131718
-> 
-> The implementation for Freescale BookE64 is similar as BookE32. One
-> difference is that Freescale BookE64 set up a TLB mapping of 1G during
-> booting. Another difference is that ppc64 needs the kernel to be
-> 64K-aligned. So we can randomize the kernel in this 1G mapping and make
-> it 64K-aligned. This can save some code to creat another TLB map at
-> early boot. The disadvantage is that we only have about 1G/64K = 16384
-> slots to put the kernel in.
-> 
->      KERNELBASE
-> 
->            64K                     |--> kernel <--|
->             |                      |              |
->          +--+--+--+    +--+--+--+--+--+--+--+--+--+    +--+--+
->          |  |  |  |....|  |  |  |  |  |  |  |  |  |....|  |  |
->          +--+--+--+    +--+--+--+--+--+--+--+--+--+    +--+--+
->          |                         |                        1G
->          |----->   offset    <-----|
-> 
->                                kernstart_virt_addr
-> 
-> I'm not sure if the slot numbers is enough or the design has any
-> defects. If you have some better ideas, I would be happy to hear that.
-> 
-> Thank you all.
-> 
-> v2->v3:
->    Fix build error when KASLR is disabled.
-> v1->v2:
->    Add __kaslr_offset for the secondary cpu boot up.
-> 
-> Jason Yan (6):
->    powerpc/fsl_booke/kaslr: refactor kaslr_legal_offset() and
->      kaslr_early_init()
->    powerpc/fsl_booke/64: introduce reloc_kernel_entry() helper
->    powerpc/fsl_booke/64: implement KASLR for fsl_booke64
->    powerpc/fsl_booke/64: do not clear the BSS for the second pass
->    powerpc/fsl_booke/64: clear the original kernel if randomized
->    powerpc/fsl_booke/kaslr: rename kaslr-booke32.rst to kaslr-booke.rst
->      and add 64bit part
-> 
->   .../{kaslr-booke32.rst => kaslr-booke.rst}    | 35 +++++++--
->   arch/powerpc/Kconfig                          |  2 +-
->   arch/powerpc/kernel/exceptions-64e.S          | 23 ++++++
->   arch/powerpc/kernel/head_64.S                 | 14 ++++
->   arch/powerpc/kernel/setup_64.c                |  4 +-
->   arch/powerpc/mm/mmu_decl.h                    | 19 ++---
->   arch/powerpc/mm/nohash/kaslr_booke.c          | 71 +++++++++++++------
->   7 files changed, 132 insertions(+), 36 deletions(-)
->   rename Documentation/powerpc/{kaslr-booke32.rst => kaslr-booke.rst} (59%)
-> 
+I am not quite sure how this will interact with kprobes and hardware
+breakpoints which use the same code, but they would have been broken,
+too, so this is not making them any worse.
+
 
