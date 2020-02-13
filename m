@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D175015C423
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9353D15C427
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbgBMP1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:27:07 -0500
+        id S1728692AbgBMP1L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:27:11 -0500
 Received: from mail.kernel.org ([198.145.29.99]:40076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728928AbgBMPZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:10 -0500
+        id S1728464AbgBMPZM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:12 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54DE124689;
-        Thu, 13 Feb 2020 15:25:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2CE1246C7;
+        Thu, 13 Feb 2020 15:25:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607509;
-        bh=uCk4q5ynbHYhKxkn9XvhbYEQ4vr65YGL+KGVX3uiaGI=;
+        s=default; t=1581607512;
+        bh=ZI60MJYRu8jKhrxFGhixMOM4BOXL81oCtDEH43M3F2U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=clEhN5SvDFWaqHxHZA46SMCsu8GpGHW1KbNL1RKOjKiY+QTO3pMq/9K5VNFaERjdY
-         DoesGR/o5eqHy0y8lbGyNg4aVAs85+O4Tk/C7db3VvuS540CiWR4eL2aVZC6HLXZJr
-         mqibvHbgvLNMb814dswONHUJK38QT+HgQCkClocI=
+        b=xOC4mw64Y+P+gvra20MPc6cwV4pdjFe0Ft07N4izNlw+pKA0OFXv+eysFo0/FhJfc
+         AeELeZzAQfrjM7mIAyeCwytKRaczfWycO9auvA+PS6NMYdvvU6fDtPEJ6RX+7p+oTt
+         qTQ6T8sY/aHu2QHWdZCH5PVMwJs9nBE2pe4jCnl4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chengguang Xu <cgxu519@mykernel.net>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4.14 051/173] f2fs: code cleanup for f2fs_statfs_project()
-Date:   Thu, 13 Feb 2020 07:19:14 -0800
-Message-Id: <20200213151946.833585404@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Wheeler <dm-devel@lists.ewheeler.net>,
+        Joe Thornber <ejt@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.14 055/173] dm space map common: fix to ensure new block isnt already in use
+Date:   Thu, 13 Feb 2020 07:19:18 -0800
+Message-Id: <20200213151947.824684686@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
 References: <20200213151931.677980430@linuxfoundation.org>
@@ -43,53 +44,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chengguang Xu <cgxu519@mykernel.net>
+From: Joe Thornber <ejt@redhat.com>
 
-commit bf2cbd3c57159c2b639ee8797b52ab5af180bf83 upstream.
+commit 4feaef830de7ffdd8352e1fe14ad3bf13c9688f8 upstream.
 
-Calling min_not_zero() to simplify complicated prjquota
-limit comparison in f2fs_statfs_project().
+The space-maps track the reference counts for disk blocks allocated by
+both the thin-provisioning and cache targets.  There are variants for
+tracking metadata blocks and data blocks.
 
-Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Transactionality is implemented by never touching blocks from the
+previous transaction, so we can rollback in the event of a crash.
+
+When allocating a new block we need to ensure the block is free (has
+reference count of 0) in both the current and previous transaction.
+Prior to this fix we were doing this by searching for a free block in
+the previous transaction, and relying on a 'begin' counter to track
+where the last allocation in the current transaction was.  This
+'begin' field was not being updated in all code paths (eg, increment
+of a data block reference count due to breaking sharing of a neighbour
+block in the same btree leaf).
+
+This fix keeps the 'begin' field, but now it's just a hint to speed up
+the search.  Instead the current transaction is searched for a free
+block, and then the old transaction is double checked to ensure it's
+free.  Much simpler.
+
+This fixes reports of sm_disk_new_block()'s BUG_ON() triggering when
+DM thin-provisioning's snapshots are heavily used.
+
+Reported-by: Eric Wheeler <dm-devel@lists.ewheeler.net>
+Cc: stable@vger.kernel.org
+Signed-off-by: Joe Thornber <ejt@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/f2fs/super.c |   16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+ drivers/md/persistent-data/dm-space-map-common.c   |   27 +++++++++++++++++++++
+ drivers/md/persistent-data/dm-space-map-common.h   |    2 +
+ drivers/md/persistent-data/dm-space-map-disk.c     |    6 +++-
+ drivers/md/persistent-data/dm-space-map-metadata.c |    5 +++
+ 4 files changed, 37 insertions(+), 3 deletions(-)
 
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -912,12 +912,8 @@ static int f2fs_statfs_project(struct su
- 		return PTR_ERR(dquot);
- 	spin_lock(&dq_data_lock);
+--- a/drivers/md/persistent-data/dm-space-map-common.c
++++ b/drivers/md/persistent-data/dm-space-map-common.c
+@@ -382,6 +382,33 @@ int sm_ll_find_free_block(struct ll_disk
+ 	return -ENOSPC;
+ }
  
--	limit = 0;
--	if (dquot->dq_dqb.dqb_bsoftlimit)
--		limit = dquot->dq_dqb.dqb_bsoftlimit;
--	if (dquot->dq_dqb.dqb_bhardlimit &&
--			(!limit || dquot->dq_dqb.dqb_bhardlimit < limit))
--		limit = dquot->dq_dqb.dqb_bhardlimit;
-+	limit = min_not_zero(dquot->dq_dqb.dqb_bsoftlimit,
-+					dquot->dq_dqb.dqb_bhardlimit);
- 	if (limit)
- 		limit >>= sb->s_blocksize_bits;
++int sm_ll_find_common_free_block(struct ll_disk *old_ll, struct ll_disk *new_ll,
++	                         dm_block_t begin, dm_block_t end, dm_block_t *b)
++{
++	int r;
++	uint32_t count;
++
++	do {
++		r = sm_ll_find_free_block(new_ll, begin, new_ll->nr_blocks, b);
++		if (r)
++			break;
++
++		/* double check this block wasn't used in the old transaction */
++		if (*b >= old_ll->nr_blocks)
++			count = 0;
++		else {
++			r = sm_ll_lookup(old_ll, *b, &count);
++			if (r)
++				break;
++
++			if (count)
++				begin = *b + 1;
++		}
++	} while (count);
++
++	return r;
++}
++
+ static int sm_ll_mutate(struct ll_disk *ll, dm_block_t b,
+ 			int (*mutator)(void *context, uint32_t old, uint32_t *new),
+ 			void *context, enum allocation_event *ev)
+--- a/drivers/md/persistent-data/dm-space-map-common.h
++++ b/drivers/md/persistent-data/dm-space-map-common.h
+@@ -109,6 +109,8 @@ int sm_ll_lookup_bitmap(struct ll_disk *
+ int sm_ll_lookup(struct ll_disk *ll, dm_block_t b, uint32_t *result);
+ int sm_ll_find_free_block(struct ll_disk *ll, dm_block_t begin,
+ 			  dm_block_t end, dm_block_t *result);
++int sm_ll_find_common_free_block(struct ll_disk *old_ll, struct ll_disk *new_ll,
++	                         dm_block_t begin, dm_block_t end, dm_block_t *result);
+ int sm_ll_insert(struct ll_disk *ll, dm_block_t b, uint32_t ref_count, enum allocation_event *ev);
+ int sm_ll_inc(struct ll_disk *ll, dm_block_t b, enum allocation_event *ev);
+ int sm_ll_dec(struct ll_disk *ll, dm_block_t b, enum allocation_event *ev);
+--- a/drivers/md/persistent-data/dm-space-map-disk.c
++++ b/drivers/md/persistent-data/dm-space-map-disk.c
+@@ -167,8 +167,10 @@ static int sm_disk_new_block(struct dm_s
+ 	enum allocation_event ev;
+ 	struct sm_disk *smd = container_of(sm, struct sm_disk, sm);
  
-@@ -929,12 +925,8 @@ static int f2fs_statfs_project(struct su
- 			 (buf->f_blocks - curblock) : 0;
- 	}
+-	/* FIXME: we should loop round a couple of times */
+-	r = sm_ll_find_free_block(&smd->old_ll, smd->begin, smd->old_ll.nr_blocks, b);
++	/*
++	 * Any block we allocate has to be free in both the old and current ll.
++	 */
++	r = sm_ll_find_common_free_block(&smd->old_ll, &smd->ll, smd->begin, smd->ll.nr_blocks, b);
+ 	if (r)
+ 		return r;
  
--	limit = 0;
--	if (dquot->dq_dqb.dqb_isoftlimit)
--		limit = dquot->dq_dqb.dqb_isoftlimit;
--	if (dquot->dq_dqb.dqb_ihardlimit &&
--			(!limit || dquot->dq_dqb.dqb_ihardlimit < limit))
--		limit = dquot->dq_dqb.dqb_ihardlimit;
-+	limit = min_not_zero(dquot->dq_dqb.dqb_isoftlimit,
-+					dquot->dq_dqb.dqb_ihardlimit);
+--- a/drivers/md/persistent-data/dm-space-map-metadata.c
++++ b/drivers/md/persistent-data/dm-space-map-metadata.c
+@@ -447,7 +447,10 @@ static int sm_metadata_new_block_(struct
+ 	enum allocation_event ev;
+ 	struct sm_metadata *smm = container_of(sm, struct sm_metadata, sm);
  
- 	if (limit && buf->f_files > limit) {
- 		buf->f_files = limit;
+-	r = sm_ll_find_free_block(&smm->old_ll, smm->begin, smm->old_ll.nr_blocks, b);
++	/*
++	 * Any block we allocate has to be free in both the old and current ll.
++	 */
++	r = sm_ll_find_common_free_block(&smm->old_ll, &smm->ll, smm->begin, smm->ll.nr_blocks, b);
+ 	if (r)
+ 		return r;
+ 
 
 
