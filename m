@@ -2,133 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5106A15BCF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 11:40:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAB7D15BD04
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 11:44:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729731AbgBMKkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 05:40:25 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:16332 "EHLO pegase1.c-s.fr"
+        id S1729843AbgBMKog (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 05:44:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729428AbgBMKkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 05:40:24 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48JChP5r4pz9vCQf;
-        Thu, 13 Feb 2020 11:40:21 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=sZorrvgN; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id eq5fshwkQBVW; Thu, 13 Feb 2020 11:40:21 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48JChP4myJz9vCQZ;
-        Thu, 13 Feb 2020 11:40:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1581590421; bh=KX/Bf+44urcJ+M7SRbj0cLc9DnYSDfuYYz2j2RUtDIo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=sZorrvgNZs/DTsuS53wt8WvSgGCpj97AGtw1XpGSHVpVxMGjMzmpEBKxu2D4v07OX
-         zVfw60DRealJF3FMpiR4gDj5eDvU9Yi8ivuXuDeG1IU4FxoIfg9u+TgmmioEpVIhge
-         IF44jXccQd+bLWpv4KaEi9/5sZa7uw9YEFMscOZA=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C9EA58B83E;
-        Thu, 13 Feb 2020 11:40:22 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id N2rjANNu6E0L; Thu, 13 Feb 2020 11:40:22 +0100 (CET)
-Received: from pc16570vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 369BF8B835;
-        Thu, 13 Feb 2020 11:40:22 +0100 (CET)
-Subject: Re: [Regression 5.6-rc1][Bisected b6231ea2b3c6] Powerpc 8xx doesn't
- boot anymore
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Li Yang <leoyang.li@nxp.com>, Qiang Zhao <qiang.zhao@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        Scott Wood <oss@buserror.net>,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <0d45fa64-51ee-0052-cb34-58c770c5b3ce@c-s.fr>
- <f67f7566-24f2-9c71-36be-2e55ec436097@rasmusvillemoes.dk>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <f68d7a21-63b6-07a1-09de-5e66f422dcae@c-s.fr>
-Date:   Thu, 13 Feb 2020 10:40:21 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1729428AbgBMKog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 05:44:36 -0500
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 252B8217F4
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 10:44:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581590675;
+        bh=JbaaM3wCQgbP43CQfcEhVYnKbvSGI/oQuNsbU2J944Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=d1EIBB3fpdOYfbZVDlipDaNZI7pfvlPVWpb//iA7HKs/0lMMjXl5mDJe5t4qceIAz
+         5e2Uk1qNGCZ205/6pzh87+HEzpmGlgvHip0vzlAN41V5acTE0o0sEfLH+Ar0Zgvc3q
+         DKvC4pdoosfd+AtmO4C8DnAMtJvycS+9DJ79Qx9I=
+Received: by mail-wm1-f51.google.com with SMTP id q9so5644328wmj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 02:44:35 -0800 (PST)
+X-Gm-Message-State: APjAAAW1MBhI4+0uTghCZ3wAHYY78XkU7X+FrvitLYFyIe/JjVbKClMa
+        jtTCH0B+SIYLoqBaFGyKhSETzi70s0gsTfvWM68nXQ==
+X-Google-Smtp-Source: APXvYqyeNAdVe/yqJLR6H0X+hoGPMP4zBD/FxKoWXql/TI0MpTRDK9n3nhyRYZYAox7MRIUl0lMPJapkr9XL/Aa5l2U=
+X-Received: by 2002:a1c:b603:: with SMTP id g3mr5427492wmf.133.1581590673662;
+ Thu, 13 Feb 2020 02:44:33 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <f67f7566-24f2-9c71-36be-2e55ec436097@rasmusvillemoes.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200203233933.19577-1-mcroce@redhat.com> <20200213092355.i77luefms23jkud2@gondor.apana.org.au>
+ <20200213103444.GA700076@zx2c4.com> <20200213103851.d26zufgvivamulcg@gondor.apana.org.au>
+In-Reply-To: <20200213103851.d26zufgvivamulcg@gondor.apana.org.au>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Thu, 13 Feb 2020 10:44:22 +0000
+X-Gmail-Original-Message-ID: <CAKv+Gu8XYoCLPN3F3BbMXt6JbbhBvbHvEiyJZu=EdLGxc6tcwA@mail.gmail.com>
+Message-ID: <CAKv+Gu8XYoCLPN3F3BbMXt6JbbhBvbHvEiyJZu=EdLGxc6tcwA@mail.gmail.com>
+Subject: Re: [PATCH] crypto: arm64/poly1305: ignore build files
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Matteo Croce <mcroce@redhat.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 13 Feb 2020 at 11:39, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+>
+> On Thu, Feb 13, 2020 at 11:34:44AM +0100, Jason A. Donenfeld wrote:
+> > On Thu, Feb 13, 2020 at 05:23:55PM +0800, Herbert Xu wrote:
+> > > On Tue, Feb 04, 2020 at 12:39:33AM +0100, Matteo Croce wrote:
+> > > > Add arch/arm64/crypto/poly1305-core.S to .gitignore
+> > > > as it's built from poly1305-core.S_shipped
+> > > >
+> > > > Fixes: f569ca164751 ("crypto: arm64/poly1305 - incorporate OpenSSL/CRYPTOGAMS NEON implementation")
+> > > > Signed-off-by: Matteo Croce <mcroce@redhat.com>
+> > > > ---
+> > > >  arch/arm64/crypto/.gitignore | 1 +
+> > > >  1 file changed, 1 insertion(+)
+> > >
+> > > Patch applied.  Thanks.
+> >
+> > Probably makes sense for 5.6, no?
+>
+> No this is too minor.  Only critical bug fixes (e.g., user
+> triggerable crashes) or build issues are routinely accepted.
+>
 
-
-On 02/13/2020 07:45 AM, Rasmus Villemoes wrote:
-> On 12/02/2020 15.24, Christophe Leroy wrote:
->> Hi Rasmus,
->>
->> Kernel 5.6-rc1 silently fails on boot.
->>
->> I bisected the problem to commit b6231ea2b3c6 ("soc: fsl: qe: drop
->> broken lazy call of cpm_muram_init()")
->>
->> I get a bad_page_fault() for an access at address 8 in
->> cpm_muram_alloc_common(), called from cpm_uart_console_setup() via
->> cpm_uart_allocbuf()
-> 
-> Sorry about that. But I'm afraid I don't see what I could have done
-> differently - the patch series, including b6231ea2b3c6, has been in
-> -next since 20191210, both you and ppc-dev were cc'ed on the entire
-> series (last revision sent November 28). And I've been dogfooding the
-> patches on both arm- and ppc-derived boards ever since (but obviously
-> only for a few cpus).
-
-Yes, this patch series should have ringed a bell in my head, looks like 
-I'm the one who introduced this 4 years ago through commit 4d486e008379 
-("soc/fsl/qe: fix Oops on CPM1 (and likely CPM2)")
-
-But I had completely forgotten that patch until I did some git blame 
-this morning on this lazy call.
-
-
-> 
->> Reverting the guilty commit on top of 5.6-rc1 is not trivial.
->>
->> In your commit text you explain that cpm_muram_init() is called via
->> subsys_initcall. But console init is done before that, so it cannot work.
-> 
-> No, but neither did the code I removed seem to work - how does doing
-> spin_lock_init on a held spinlock, and then unlocking it, work? Is
-> everything-spinlock always a no-op in your configuration? And even so,
-> I'd think a GFP_KERNEL allocation under spin_lock_irqsave() would
-> trigger some splat somewhere?
-> 
-> Please note I'm not claiming my patch is not at fault, it clearly is, I
-> just want to try to understand how I could have been wrong about the
-> "nobody can have been relying on it" part.
-> 
-
-It seems spin_lock_init() does just nothing.
-spin_lock_irqsave() just disable IRQs and increases preempt_count.
-spin_lock_irqrestore() restore IRQ state, decreace preempt_count and 
-call preempt_schedule if preempt_count reaches 0.
-
-Maybe with some debugging options like DEBUG_ATOMIC_SLEEP could detect it ?
-
->> Do you have a fix for that ?
-> 
-> Not right now, but I'll have a look. It's true that the patch probably
-> doesn't revert cleanly, but it shouldn't be hard to add back those few
-> lines in the appropriate spot, with a big fat comment that this does
-> something very fishy (at least as a temporary measure if we don't find a
-> proper solution soonish).
-> 
-
-Thanks
-Christophe
+Sasha Levin's 'AI' bot finds everything with a 'fixes' tag and
+proposes to backport it if it applies cleanly and doesn't break the
+build, so this patch is going to end up in v5.6 anyway.
