@@ -2,86 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E395F15BE06
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 12:50:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89CA315BDC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 12:38:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729760AbgBMLuV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 06:50:21 -0500
-Received: from foss.arm.com ([217.140.110.172]:45544 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbgBMLuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 06:50:21 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A767E1FB;
-        Thu, 13 Feb 2020 03:50:20 -0800 (PST)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DA2403F6CF;
-        Thu, 13 Feb 2020 03:50:19 -0800 (PST)
-Date:   Thu, 13 Feb 2020 11:50:16 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cgroup/cpuset: Fix a race condition when reading cpuset.*
-Message-ID: <20200213115015.hkd6uqwfjosxjfpm@e107158-lin.cambridge.arm.com>
-References: <20200211141554.24181-1-qais.yousef@arm.com>
- <20200212221543.GL80993@mtj.thefacebook.com>
+        id S1729937AbgBMLin (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 06:38:43 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:40484 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729428AbgBMLin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 06:38:43 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id BF4C799AEFB5401D0311;
+        Thu, 13 Feb 2020 19:38:40 +0800 (CST)
+Received: from euler.huawei.com (10.175.104.193) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 13 Feb 2020 19:38:30 +0800
+From:   Hongbo Yao <yaohongbo@huawei.com>
+To:     <paulmck@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <yaohongbo@huawei.com>,
+        <chenzhou10@huawei.com>, <dave@stgolabs.net>,
+        <josh@joshtriplett.org>
+Subject: [PATCH RESEND -next] torture: avoid build error without CONFIG_RCU_TORTURE_TEST
+Date:   Thu, 13 Feb 2020 19:53:13 +0800
+Message-ID: <20200213115313.4794-1-yaohongbo@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200212221543.GL80993@mtj.thefacebook.com>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain
+X-Originating-IP: [10.175.104.193]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tejun
+If TORTURE_TEST=y(selected by TORTURE_LOCK_TEST) and RCU_TORTURE_TEST=n,
+the following error is seen while building kernel/torture.c
 
-On 02/12/20 17:15, Tejun Heo wrote:
-> On Tue, Feb 11, 2020 at 02:15:54PM +0000, Qais Yousef wrote:
-> > LTP cpuset_hotplug_test.sh was failing with the following error message
-> > 
-> > 	cpuset_hotplug 1 TFAIL: root group's cpus isn't expected(Result: 0-5, Expect: 0,2-5).
-> > 
-> > Which is due to a race condition between cpu hotplug operation and
-> > reading cpuset.cpus file.
-> > 
-> > When a cpu is onlined/offlined, cpuset schedules a workqueue to sync its
-> > internal data structures with the new values. If a read happens during
-> > this window, the user will read a stale value, hence triggering the
-> > failure above.
-> > 
-> > To fix the issue make sure cpuset_wait_for_hotplug() is called before
-> > allowing any value to be read, hence forcing the synchronization to
-> > happen before the read.
-> > 
-> > I ran 500 iterations with this fix applied with no failure triggered.
-> > 
-> > Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-> 
-> Hello, Qais. I just applied a patch which makes the operation
-> synchronous. Can you see whether the problem is gone on the
-> cgroup/for-next branch?
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
+kernel/torture.c: In function torture_onoff:
+kernel/torture.c:239:3: error: implicit declaration of function
+rcutorture_sched_setaffinity; did you mean __NR_ia32_sched_setaffinity?
+[-Werror=implicit-function-declaration]
+   rcutorture_sched_setaffinity(current->pid, cpumask_of(0));
 
-I ran 500 iterations of cpuset_hotplug_test.sh on the branch, it passed.
+Using sched_setaffnity() instead of rcutorture_sched_setaffinity() to
+avoid the error.
 
-I also cherry-picked commit 6426bfb1d5f0 ("cpuset: Make cpuset hotplug synchronous")
-into v5.6-rc1 and ran 100 iterations and it passed too.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: bc3db9afb849 ("EXP: rcutorture hack to force CPU hotplug onto CPU 0")
+Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
+---
+ kernel/torture.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-While investigating the problem, I could reproduce it all the way back to v5.0.
-Stopped there so earlier versions could still have the problem.
+diff --git a/kernel/torture.c b/kernel/torture.c
+index b29adec50e01..834214cbd1cd 100644
+--- a/kernel/torture.c
++++ b/kernel/torture.c
+@@ -236,7 +236,7 @@ torture_onoff(void *arg)
+ 			schedule_timeout_interruptible(HZ / 10);
+ 			continue;
+ 		}
+-		rcutorture_sched_setaffinity(current->pid, cpumask_of(0));
++		sched_setaffinity(current->pid, cpumask_of(0));
+ 		cpu = (torture_random(&rand) >> 4) % (maxcpu + 1);
+ 		if (!torture_offline(cpu,
+ 				     &n_offline_attempts, &n_offline_successes,
+-- 
+2.17.1
 
-Do you think it's worth porting the change to stable trees? Admittedly the
-problem should be benign, but it did trigger an LTP failure.
-
-I can check 4.19 and 4.14 stable trees (which at least in Android world are
-still relevant) if you agree it makes sense to put a fix in stable.
-
-Thanks
-
---
-Qais Yousef
