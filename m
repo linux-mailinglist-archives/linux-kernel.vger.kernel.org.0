@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EADB15C538
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:55:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3941215C37A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388248AbgBMPyJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:54:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42992 "EHLO mail.kernel.org"
+        id S2387725AbgBMPlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:41:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729136AbgBMPZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:57 -0500
+        id S2387603AbgBMP2c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:32 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33FD7246A3;
-        Thu, 13 Feb 2020 15:25:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8808218AC;
+        Thu, 13 Feb 2020 15:28:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607557;
-        bh=a1Tf/gwbOK8EFr26g537xvn8PZhTMLo3dmN8kTrzzik=;
+        s=default; t=1581607711;
+        bh=Qm0xSLfvbGM27e3fE+H72stdknaIeAyPzTwdgyCF8Zw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B8hDhLoHWtL6v1KIm0lsLEBPFjWpeH4V1d3uJVngf1LOcc13gu8EgxypEME/dscAE
-         WkUfRuddga80shVmHA4Ah/3pBveeEFrkKVM3bDekINQ8kXOFi/TJF+U+WE5DJgV1gk
-         ZZ6SqmNaHHBUbuN802O/N4dTQHWg/pmprZFUDhOM=
+        b=cE5/v9VqbhP/dJw7eDw4+Jk3IdvwPEF4onedOGpm4YdA/rL50chWI34oSXc3DFifR
+         0zuAv4GB+3HD2y70TID26RsC9bAtuGt8h5Eq8eFH+GzU0DJ49ECem2W1dyXYV9OJ8S
+         wCvCgqB1EDVRaR7y9aKLFWM59pq51IiwaYDOQWpc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Haywood <mark.haywood@oracle.com>,
-        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 143/173] RDMA/netlink: Do not always generate an ACK for some netlink operations
+        stable@vger.kernel.org,
+        "Guilherme G. Piccoli" <gpiccoli@canonical.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 5.5 050/120] rtc: cmos: Stop using shared IRQ
 Date:   Thu, 13 Feb 2020 07:20:46 -0800
-Message-Id: <20200213152007.740150707@linuxfoundation.org>
+Message-Id: <20200213151918.982561922@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,77 +46,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Håkon Bugge <haakon.bugge@oracle.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-commit a242c36951ecd24bc16086940dbe6b522205c461 upstream.
+commit b6da197a2e9670df6f07e6698629e9ce95ab614e upstream.
 
-In rdma_nl_rcv_skb(), the local variable err is assigned the return value
-of the supplied callback function, which could be one of
-ib_nl_handle_resolve_resp(), ib_nl_handle_set_timeout(), or
-ib_nl_handle_ip_res_resp(). These three functions all return skb->len on
-success.
+As reported by Guilherme G. Piccoli:
 
-rdma_nl_rcv_skb() is merely a copy of netlink_rcv_skb(). The callback
-functions used by the latter have the convention: "Returns 0 on success or
-a negative error code".
+---8<---8<---8<---
 
-In particular, the statement (equal for both functions):
+The rtc-cmos interrupt setting was changed in the commit 079062b28fb4
+("rtc: cmos: prevent kernel warning on IRQ flags mismatch") in order
+to allow shared interrupts; according to that commit's description,
+some machine got kernel warnings due to the interrupt line being shared
+between rtc-cmos and other hardware, and rtc-cmos didn't allow IRQ sharing
+that time.
 
-   if (nlh->nlmsg_flags & NLM_F_ACK || err)
+After the aforementioned commit though it was observed a huge increase
+in lost HPET interrupts in some systems, observed through the following
+kernel message:
 
-implies that rdma_nl_rcv_skb() always will ack a message, independent of
-the NLM_F_ACK being set in nlmsg_flags or not.
+[...] hpet1: lost 35 rtc interrupts
 
-The fix could be to change the above statement, but it is better to keep
-the two *_rcv_skb() functions equal in this respect and instead change the
-three callback functions in the rdma subsystem to the correct convention.
+After investigation, it was narrowed down to the shared interrupts
+usage when having the kernel option "irqpoll" enabled. In this case,
+all IRQ handlers are called for non-timer interrupts, if such handlers
+are setup in shared IRQ lines. The rtc-cmos IRQ handler could be set to
+hpet_rtc_interrupt(), which will produce the kernel "lost interrupts"
+message after doing work - lots of readl/writel to HPET registers, which
+are known to be slow.
 
-Fixes: 2ca546b92a02 ("IB/sa: Route SA pathrecord query through netlink")
-Fixes: ae43f8286730 ("IB/core: Add IP to GID netlink offload")
-Link: https://lore.kernel.org/r/20191216120436.3204814-1-haakon.bugge@oracle.com
-Suggested-by: Mark Haywood <mark.haywood@oracle.com>
-Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
-Tested-by: Mark Haywood <mark.haywood@oracle.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Although "irqpoll" is not a default kernel option, it's used in some contexts,
+one being the kdump kernel (which is an already "impaired" kernel usually
+running with 1 CPU available), so the performance burden could be considerable.
+Also, the same issue would happen (in a shorter extent though) when using
+"irqfixup" kernel option.
+
+In a quick experiment, a virtual machine with uptime of 2 minutes produced
+>300 calls to hpet_rtc_interrupt() when "irqpoll" was set, whereas without
+sharing interrupts this number reduced to 1 interrupt. Machines with more
+hardware than a VM should generate even more unnecessary HPET interrupts
+in this scenario.
+
+---8<---8<---8<---
+
+After looking into the rtc-cmos driver history and DSDT table from
+the Microsoft Surface 3, we may notice that Hans de Goede submitted
+a correct fix (see dependency below). Thus, we simply revert
+the culprit commit.
+
+Fixes: 079062b28fb4 ("rtc: cmos: prevent kernel warning on IRQ flags mismatch")
+Depends-on: a1e23a42f1bd ("rtc: cmos: Do not assume irq 8 for rtc when there are no legacy irqs")
+Reported-by: Guilherme G. Piccoli <gpiccoli@canonical.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Tested-by: Guilherme G. Piccoli <gpiccoli@canonical.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Link: https://lore.kernel.org/r/20200123131437.28157-1-andriy.shevchenko@linux.intel.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/addr.c     |    2 +-
- drivers/infiniband/core/sa_query.c |    4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/rtc/rtc-cmos.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/addr.c
-+++ b/drivers/infiniband/core/addr.c
-@@ -140,7 +140,7 @@ int ib_nl_handle_ip_res_resp(struct sk_b
- 	if (ib_nl_is_good_ip_resp(nlh))
- 		ib_nl_process_good_ip_rsep(nlh);
+--- a/drivers/rtc/rtc-cmos.c
++++ b/drivers/rtc/rtc-cmos.c
+@@ -850,7 +850,7 @@ cmos_do_probe(struct device *dev, struct
+ 			rtc_cmos_int_handler = cmos_interrupt;
  
--	return skb->len;
-+	return 0;
- }
- 
- static int ib_nl_ip_send_msg(struct rdma_dev_addr *dev_addr,
---- a/drivers/infiniband/core/sa_query.c
-+++ b/drivers/infiniband/core/sa_query.c
-@@ -1078,7 +1078,7 @@ int ib_nl_handle_set_timeout(struct sk_b
- 	}
- 
- settimeout_out:
--	return skb->len;
-+	return 0;
- }
- 
- static inline int ib_nl_is_good_resolve_resp(const struct nlmsghdr *nlh)
-@@ -1149,7 +1149,7 @@ int ib_nl_handle_resolve_resp(struct sk_
- 	}
- 
- resp_out:
--	return skb->len;
-+	return 0;
- }
- 
- static void free_sm_ah(struct kref *kref)
+ 		retval = request_irq(rtc_irq, rtc_cmos_int_handler,
+-				IRQF_SHARED, dev_name(&cmos_rtc.rtc->dev),
++				0, dev_name(&cmos_rtc.rtc->dev),
+ 				cmos_rtc.rtc);
+ 		if (retval < 0) {
+ 			dev_dbg(dev, "IRQ %d is already in use\n", rtc_irq);
 
 
