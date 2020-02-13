@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BBAD15C227
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:30:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5F2615C1B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:26:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729387AbgBMP36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:29:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48080 "EHLO mail.kernel.org"
+        id S1729068AbgBMPZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:25:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387420AbgBMP07 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:59 -0500
+        id S2387401AbgBMPYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:24:05 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6775D24671;
-        Thu, 13 Feb 2020 15:26:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66F0B24690;
+        Thu, 13 Feb 2020 15:24:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607619;
-        bh=/CemN1ycka/MJsyzYlUU88+mA6n3Ug1qud/dFE15e/0=;
+        s=default; t=1581607444;
+        bh=GWlmbiMV461p8XNCPKbPV1piO8V7/KlUIQoYLE7tbUU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bZhif5vGj3YcE+nCJzszOAY9y4UV6Sf8KVZ/yjPNR8cwGhxMGEZQ7oCFkPVbqKGUh
-         dJjInSjwO86uLYGj8315kLIE4Ai4PkSuc+C3/ITGsJJyJorHWECKtWSuahUUu71Zt3
-         1ApWXPZPF/eFXi5k8qRbx6gCkF5VndiooimSN3VI=
+        b=zQ/xyLZdNvypx+ZZ5zTdh3fOVg2+Ut1nxpX3gzLahJOr9BQPwSQ5u9Kgm8nLWpwAC
+         2il65/jGmmLjlinaiLQ3kYb7Bec1Ev0FPfQVLFi5OWaAqryvcgCZv/k0c0rDb0jJ8P
+         AB7TmtW7xcPWTUCVKsNUUNlbcI4FpbfiTQ/+NZp8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 5.4 13/96] PCI/IOV: Fix memory leak in pci_iov_add_virtfn()
-Date:   Thu, 13 Feb 2020 07:20:20 -0800
-Message-Id: <20200213151844.419804126@linuxfoundation.org>
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 077/116] NFS: Fix memory leaks and corruption in readdir
+Date:   Thu, 13 Feb 2020 07:20:21 -0800
+Message-Id: <20200213151912.623470526@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +46,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Trond Myklebust <trondmy@gmail.com>
 
-commit 8c386cc817878588195dde38e919aa6ba9409d58 upstream.
+[ Upstream commit 4b310319c6a8ce708f1033d57145e2aa027a883c ]
 
-In the implementation of pci_iov_add_virtfn() the allocated virtfn is
-leaked if pci_setup_device() fails. The error handling is not calling
-pci_stop_and_remove_bus_device(). Change the goto label to failed2.
+nfs_readdir_xdr_to_array() must not exit without having initialised
+the array, so that the page cache deletion routines can safely
+call nfs_readdir_clear_array().
+Furthermore, we should ensure that if we exit nfs_readdir_filler()
+with an error, we free up any page contents to prevent a leak
+if we try to fill the page again.
 
-Fixes: 156c55325d30 ("PCI: Check for pci_setup_device() failure in pci_iov_add_virtfn()")
-Link: https://lore.kernel.org/r/20191125195255.23740-1-navid.emamdoost@gmail.com
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 11de3b11e08c ("NFS: Fix a memory leak in nfs_readdir")
+Cc: stable@vger.kernel.org # v2.6.37+
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/iov.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ fs/nfs/dir.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
---- a/drivers/pci/iov.c
-+++ b/drivers/pci/iov.c
-@@ -187,10 +187,10 @@ int pci_iov_add_virtfn(struct pci_dev *d
- 	sprintf(buf, "virtfn%u", id);
- 	rc = sysfs_create_link(&dev->dev.kobj, &virtfn->dev.kobj, buf);
- 	if (rc)
--		goto failed2;
-+		goto failed1;
- 	rc = sysfs_create_link(&virtfn->dev.kobj, &dev->dev.kobj, "physfn");
- 	if (rc)
--		goto failed3;
-+		goto failed2;
+diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+index a41df7d44bd7a..5936c54ac5fdb 100644
+--- a/fs/nfs/dir.c
++++ b/fs/nfs/dir.c
+@@ -169,6 +169,17 @@ typedef struct {
+ 	unsigned int	eof:1;
+ } nfs_readdir_descriptor_t;
  
- 	kobject_uevent(&virtfn->dev.kobj, KOBJ_CHANGE);
++static
++void nfs_readdir_init_array(struct page *page)
++{
++	struct nfs_cache_array *array;
++
++	array = kmap_atomic(page);
++	memset(array, 0, sizeof(struct nfs_cache_array));
++	array->eof_index = -1;
++	kunmap_atomic(array);
++}
++
+ /*
+  * The caller is responsible for calling nfs_readdir_release_array(page)
+  */
+@@ -202,6 +213,7 @@ void nfs_readdir_clear_array(struct page *page)
+ 	array = kmap_atomic(page);
+ 	for (i = 0; i < array->size; i++)
+ 		kfree(array->array[i].string.name);
++	array->size = 0;
+ 	kunmap_atomic(array);
+ }
  
-@@ -198,11 +198,10 @@ int pci_iov_add_virtfn(struct pci_dev *d
+@@ -643,6 +655,8 @@ int nfs_readdir_xdr_to_array(nfs_readdir_descriptor_t *desc, struct page *page,
+ 	int status = -ENOMEM;
+ 	unsigned int array_size = ARRAY_SIZE(pages);
  
++	nfs_readdir_init_array(page);
++
+ 	entry.prev_cookie = 0;
+ 	entry.cookie = desc->last_cookie;
+ 	entry.eof = 0;
+@@ -663,8 +677,8 @@ int nfs_readdir_xdr_to_array(nfs_readdir_descriptor_t *desc, struct page *page,
+ 		status = PTR_ERR(array);
+ 		goto out_label_free;
+ 	}
+-	memset(array, 0, sizeof(struct nfs_cache_array));
+-	array->eof_index = -1;
++
++	array = kmap(page);
+ 
+ 	status = nfs_readdir_alloc_pages(pages, array_size);
+ 	if (status < 0)
+@@ -719,6 +733,7 @@ int nfs_readdir_filler(nfs_readdir_descriptor_t *desc, struct page* page)
+ 	unlock_page(page);
  	return 0;
- 
--failed3:
--	sysfs_remove_link(&dev->dev.kobj, buf);
- failed2:
--	pci_stop_and_remove_bus_device(virtfn);
-+	sysfs_remove_link(&dev->dev.kobj, buf);
- failed1:
-+	pci_stop_and_remove_bus_device(virtfn);
- 	pci_dev_put(dev);
- failed0:
- 	virtfn_remove_bus(dev->bus, bus);
+  error:
++	nfs_readdir_clear_array(page);
+ 	unlock_page(page);
+ 	return ret;
+ }
+-- 
+2.20.1
+
 
 
