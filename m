@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B56F15C2CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:39:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F005115C2B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:38:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729606AbgBMPbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:31:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52212 "EHLO mail.kernel.org"
+        id S1728151AbgBMP3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:29:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729486AbgBMP1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:43 -0500
+        id S1729217AbgBMP0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:42 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0313D24671;
-        Thu, 13 Feb 2020 15:27:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D63E20661;
+        Thu, 13 Feb 2020 15:26:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607663;
-        bh=1C2F05DTQ5vhQOubAguPuMs/IxDOxndvtOJ7j2bd/NM=;
+        s=default; t=1581607601;
+        bh=ZpcbW6ebGxl7BPjUEXVKVR61gFMocjAh4dAkTRP96CE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MUsyoDlnj/DTYwhyQICyNZvGby+0wlJdJVic1iXUzBzUdhCV+mpAM7oAw+kxDuYew
-         OLfIrwiiOrnpWzh+9onSPVWnw0K3MUIyAPd3hGusVkc5LHZNmEpPdk2DP/5Mjnr6SB
-         LetkYKQ1Mxrv16pCEH9btmOlaMs2XfYgHD2nAMcg=
+        b=1KSrhSXAx3hQSZbCIVk6q4VC2aQcOssWN3ARSS6PlT2/LVqKvMt2eRIk2e0GZ6Kx8
+         cdh1ANtcN9qfOVWJCZCUWIPLU5Oktr8ZlYkYV2ANdGzxwKMVi2Z0bA0GCFA/+UBx7F
+         RhrKOROqOxqBJG72etEzD+j+VjPEU7TmKP3DiRfI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.4 55/96] powerpc/ptdump: Only enable PPC_CHECK_WX with STRICT_KERNEL_RWX
+        stable@vger.kernel.org,
+        "Guilherme G. Piccoli" <gpiccoli@canonical.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 4.19 21/52] rtc: cmos: Stop using shared IRQ
 Date:   Thu, 13 Feb 2020 07:21:02 -0800
-Message-Id: <20200213151900.681059691@linuxfoundation.org>
+Message-Id: <20200213151819.319695169@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
+References: <20200213151810.331796857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +46,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-commit f509247b08f2dcf7754d9ed85ad69a7972aa132b upstream.
+commit b6da197a2e9670df6f07e6698629e9ce95ab614e upstream.
 
-ptdump_check_wx() is called from mark_rodata_ro() which only exists
-when CONFIG_STRICT_KERNEL_RWX is selected.
+As reported by Guilherme G. Piccoli:
 
-Fixes: 453d87f6a8ae ("powerpc/mm: Warn if W+X pages found on boot")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/922d4939c735c6b52b4137838bcc066fffd4fc33.1578989545.git.christophe.leroy@c-s.fr
+---8<---8<---8<---
+
+The rtc-cmos interrupt setting was changed in the commit 079062b28fb4
+("rtc: cmos: prevent kernel warning on IRQ flags mismatch") in order
+to allow shared interrupts; according to that commit's description,
+some machine got kernel warnings due to the interrupt line being shared
+between rtc-cmos and other hardware, and rtc-cmos didn't allow IRQ sharing
+that time.
+
+After the aforementioned commit though it was observed a huge increase
+in lost HPET interrupts in some systems, observed through the following
+kernel message:
+
+[...] hpet1: lost 35 rtc interrupts
+
+After investigation, it was narrowed down to the shared interrupts
+usage when having the kernel option "irqpoll" enabled. In this case,
+all IRQ handlers are called for non-timer interrupts, if such handlers
+are setup in shared IRQ lines. The rtc-cmos IRQ handler could be set to
+hpet_rtc_interrupt(), which will produce the kernel "lost interrupts"
+message after doing work - lots of readl/writel to HPET registers, which
+are known to be slow.
+
+Although "irqpoll" is not a default kernel option, it's used in some contexts,
+one being the kdump kernel (which is an already "impaired" kernel usually
+running with 1 CPU available), so the performance burden could be considerable.
+Also, the same issue would happen (in a shorter extent though) when using
+"irqfixup" kernel option.
+
+In a quick experiment, a virtual machine with uptime of 2 minutes produced
+>300 calls to hpet_rtc_interrupt() when "irqpoll" was set, whereas without
+sharing interrupts this number reduced to 1 interrupt. Machines with more
+hardware than a VM should generate even more unnecessary HPET interrupts
+in this scenario.
+
+---8<---8<---8<---
+
+After looking into the rtc-cmos driver history and DSDT table from
+the Microsoft Surface 3, we may notice that Hans de Goede submitted
+a correct fix (see dependency below). Thus, we simply revert
+the culprit commit.
+
+Fixes: 079062b28fb4 ("rtc: cmos: prevent kernel warning on IRQ flags mismatch")
+Depends-on: a1e23a42f1bd ("rtc: cmos: Do not assume irq 8 for rtc when there are no legacy irqs")
+Reported-by: Guilherme G. Piccoli <gpiccoli@canonical.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Tested-by: Guilherme G. Piccoli <gpiccoli@canonical.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Link: https://lore.kernel.org/r/20200123131437.28157-1-andriy.shevchenko@linux.intel.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/Kconfig.debug |    2 +-
+ drivers/rtc/rtc-cmos.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/Kconfig.debug
-+++ b/arch/powerpc/Kconfig.debug
-@@ -371,7 +371,7 @@ config PPC_PTDUMP
+--- a/drivers/rtc/rtc-cmos.c
++++ b/drivers/rtc/rtc-cmos.c
+@@ -854,7 +854,7 @@ cmos_do_probe(struct device *dev, struct
+ 			rtc_cmos_int_handler = cmos_interrupt;
  
- config PPC_DEBUG_WX
- 	bool "Warn on W+X mappings at boot"
--	depends on PPC_PTDUMP
-+	depends on PPC_PTDUMP && STRICT_KERNEL_RWX
- 	help
- 	  Generate a warning if any W+X mappings are found at boot.
- 
+ 		retval = request_irq(rtc_irq, rtc_cmos_int_handler,
+-				IRQF_SHARED, dev_name(&cmos_rtc.rtc->dev),
++				0, dev_name(&cmos_rtc.rtc->dev),
+ 				cmos_rtc.rtc);
+ 		if (retval < 0) {
+ 			dev_dbg(dev, "IRQ %d is already in use\n", rtc_irq);
 
 
