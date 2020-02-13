@@ -2,126 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44D1315C122
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:13:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1206415C1C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:26:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbgBMPNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:13:22 -0500
-Received: from gateway34.websitewelcome.com ([192.185.149.101]:23641 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726937AbgBMPNV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:13:21 -0500
-X-Greylist: delayed 155405 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Feb 2020 10:13:21 EST
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 6B1D046A08
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 09:13:20 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 2GB6jqLjcEfyq2GB6jzprw; Thu, 13 Feb 2020 09:13:20 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=+fR8VpEZuRRfpGxcIpPoYVDkNDgOchG1Z08leGpul4A=; b=e1wZzP7y1q6RiBlBf19j2hVgdO
-        Yy4LZyvSMDAlMc/nSFDwH8m2wgwa+jw9SagsqRcOQjzrw46lukdMFN/oLCGGk+gngxs5DoGM+08f7
-        BBerbwas+GUJ6YpiPZ4vYXyNmdWBCs4MTPCF6iEib5m6N2qi9NwA4/6dNjLKMtCJSWp2nwd1KkQhj
-        30eEv1QwbZPTafpcl2zm83GDP8AxxqVNpFGSt9Mcsg0PxR5zG8KkwHjLzZRaK5B5kWEXZQ4UAXo+C
-        uLWNjr9AVNn3i2mml0JjgzZL6eIgK5KBe77lCE9h+g8mGW2pEe3AMz0AKkRLcHCR4GFvtSEnjdfn9
-        OzpY2+QQ==;
-Received: from [200.68.140.15] (port=31765 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j2GB4-0036gz-Fg; Thu, 13 Feb 2020 09:13:18 -0600
-Date:   Thu, 13 Feb 2020 09:15:55 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] perf/callchain: Replace zero-length array with
- flexible-array member
-Message-ID: <20200213151555.GA31434@embeddedor>
+        id S2387563AbgBMP02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:26:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39102 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728771AbgBMPYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:24:47 -0500
+Received: from localhost (unknown [104.132.1.104])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88D7424693;
+        Thu, 13 Feb 2020 15:24:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581607486;
+        bh=axkzjAVqLhMmmBO+eVTMGQ/6LdJuBAFn24vBXIHaDHU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=2cWEcezUVI0LlL6R1WjFHRmccGTiNWoJ35yLppHaSSEWbEueS61V4Jdbb1hVriJFR
+         o7MlcC2E4oHMYAeV0vGuknwfouzLEgqaslkiJIV+7CLr9Z1XJ0TGdbqa3Tl8KGVJ0q
+         c8tpfde8a/XVLqbBGp7apTBIbCCg4OHYNjZ8z44s=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: [PATCH 4.14 017/173] rxrpc: Fix NULL pointer deref due to call->conn being cleared on disconnect
+Date:   Thu, 13 Feb 2020 07:18:40 -0800
+Message-Id: <20200213151937.337219002@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.15
-X-Source-L: No
-X-Exim-ID: 1j2GB4-0036gz-Fg
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.15]:31765
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+From: David Howells <dhowells@redhat.com>
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+[ Upstream commit 5273a191dca65a675dc0bcf3909e59c6933e2831 ]
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+When a call is disconnected, the connection pointer from the call is
+cleared to make sure it isn't used again and to prevent further attempted
+transmission for the call.  Unfortunately, there might be a daemon trying
+to use it at the same time to transmit a packet.
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+Fix this by keeping call->conn set, but setting a flag on the call to
+indicate disconnection instead.
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+Remove also the bits in the transmission functions where the conn pointer is
+checked and a ref taken under spinlock as this is now redundant.
 
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Fixes: 8d94aa381dab ("rxrpc: Calls shouldn't hold socket refs")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/events/callchain.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/rxrpc/ar-internal.h |    1 +
+ net/rxrpc/call_object.c |    4 ++--
+ net/rxrpc/conn_client.c |    3 +--
+ net/rxrpc/conn_object.c |    4 ++--
+ net/rxrpc/output.c      |   26 +++++++++-----------------
+ 5 files changed, 15 insertions(+), 23 deletions(-)
 
-diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
-index c2b41a263166..b1991043b7d8 100644
---- a/kernel/events/callchain.c
-+++ b/kernel/events/callchain.c
-@@ -16,7 +16,7 @@
- 
- struct callchain_cpus_entries {
- 	struct rcu_head			rcu_head;
--	struct perf_callchain_entry	*cpu_entries[0];
-+	struct perf_callchain_entry	*cpu_entries[];
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -451,6 +451,7 @@ enum rxrpc_call_flag {
+ 	RXRPC_CALL_SEND_PING,		/* A ping will need to be sent */
+ 	RXRPC_CALL_PINGING,		/* Ping in process */
+ 	RXRPC_CALL_RETRANS_TIMEOUT,	/* Retransmission due to timeout occurred */
++	RXRPC_CALL_DISCONNECTED,	/* The call has been disconnected */
  };
  
- int sysctl_perf_event_max_stack __read_mostly = PERF_MAX_STACK_DEPTH;
--- 
-2.25.0
+ /*
+--- a/net/rxrpc/call_object.c
++++ b/net/rxrpc/call_object.c
+@@ -505,7 +505,7 @@ void rxrpc_release_call(struct rxrpc_soc
+ 
+ 	_debug("RELEASE CALL %p (%d CONN %p)", call, call->debug_id, conn);
+ 
+-	if (conn)
++	if (conn && !test_bit(RXRPC_CALL_DISCONNECTED, &call->flags))
+ 		rxrpc_disconnect_call(call);
+ 
+ 	for (i = 0; i < RXRPC_RXTX_BUFF_SIZE; i++) {
+@@ -639,6 +639,7 @@ static void rxrpc_rcu_destroy_call(struc
+ {
+ 	struct rxrpc_call *call = container_of(rcu, struct rxrpc_call, rcu);
+ 
++	rxrpc_put_connection(call->conn);
+ 	rxrpc_put_peer(call->peer);
+ 	kfree(call->rxtx_buffer);
+ 	kfree(call->rxtx_annotations);
+@@ -660,7 +661,6 @@ void rxrpc_cleanup_call(struct rxrpc_cal
+ 
+ 	ASSERTCMP(call->state, ==, RXRPC_CALL_COMPLETE);
+ 	ASSERT(test_bit(RXRPC_CALL_RELEASED, &call->flags));
+-	ASSERTCMP(call->conn, ==, NULL);
+ 
+ 	/* Clean up the Rx/Tx buffer */
+ 	for (i = 0; i < RXRPC_RXTX_BUFF_SIZE; i++)
+--- a/net/rxrpc/conn_client.c
++++ b/net/rxrpc/conn_client.c
+@@ -762,9 +762,9 @@ void rxrpc_disconnect_client_call(struct
+ 	struct rxrpc_net *rxnet = rxrpc_net(sock_net(&call->socket->sk));
+ 
+ 	trace_rxrpc_client(conn, channel, rxrpc_client_chan_disconnect);
+-	call->conn = NULL;
+ 
+ 	spin_lock(&conn->channel_lock);
++	set_bit(RXRPC_CALL_DISCONNECTED, &call->flags);
+ 
+ 	/* Calls that have never actually been assigned a channel can simply be
+ 	 * discarded.  If the conn didn't get used either, it will follow
+@@ -863,7 +863,6 @@ out:
+ 	spin_unlock(&rxnet->client_conn_cache_lock);
+ out_2:
+ 	spin_unlock(&conn->channel_lock);
+-	rxrpc_put_connection(conn);
+ 	_leave("");
+ 	return;
+ 
+--- a/net/rxrpc/conn_object.c
++++ b/net/rxrpc/conn_object.c
+@@ -163,6 +163,8 @@ void __rxrpc_disconnect_call(struct rxrp
+ 
+ 	_enter("%d,%x", conn->debug_id, call->cid);
+ 
++	set_bit(RXRPC_CALL_DISCONNECTED, &call->flags);
++
+ 	if (rcu_access_pointer(chan->call) == call) {
+ 		/* Save the result of the call so that we can repeat it if necessary
+ 		 * through the channel, whilst disposing of the actual call record.
+@@ -207,9 +209,7 @@ void rxrpc_disconnect_call(struct rxrpc_
+ 	__rxrpc_disconnect_call(conn, call);
+ 	spin_unlock(&conn->channel_lock);
+ 
+-	call->conn = NULL;
+ 	conn->idle_timestamp = jiffies;
+-	rxrpc_put_connection(conn);
+ }
+ 
+ /*
+--- a/net/rxrpc/output.c
++++ b/net/rxrpc/output.c
+@@ -96,7 +96,7 @@ static size_t rxrpc_fill_out_ack(struct
+  */
+ int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping)
+ {
+-	struct rxrpc_connection *conn = NULL;
++	struct rxrpc_connection *conn;
+ 	struct rxrpc_ack_buffer *pkt;
+ 	struct msghdr msg;
+ 	struct kvec iov[2];
+@@ -106,18 +106,14 @@ int rxrpc_send_ack_packet(struct rxrpc_c
+ 	int ret;
+ 	u8 reason;
+ 
+-	spin_lock_bh(&call->lock);
+-	if (call->conn)
+-		conn = rxrpc_get_connection_maybe(call->conn);
+-	spin_unlock_bh(&call->lock);
+-	if (!conn)
++	if (test_bit(RXRPC_CALL_DISCONNECTED, &call->flags))
+ 		return -ECONNRESET;
+ 
+ 	pkt = kzalloc(sizeof(*pkt), GFP_KERNEL);
+-	if (!pkt) {
+-		rxrpc_put_connection(conn);
++	if (!pkt)
+ 		return -ENOMEM;
+-	}
++
++	conn = call->conn;
+ 
+ 	msg.msg_name	= &call->peer->srx.transport;
+ 	msg.msg_namelen	= call->peer->srx.transport_len;
+@@ -204,7 +200,6 @@ int rxrpc_send_ack_packet(struct rxrpc_c
+ 	}
+ 
+ out:
+-	rxrpc_put_connection(conn);
+ 	kfree(pkt);
+ 	return ret;
+ }
+@@ -214,20 +209,18 @@ out:
+  */
+ int rxrpc_send_abort_packet(struct rxrpc_call *call)
+ {
+-	struct rxrpc_connection *conn = NULL;
++	struct rxrpc_connection *conn;
+ 	struct rxrpc_abort_buffer pkt;
+ 	struct msghdr msg;
+ 	struct kvec iov[1];
+ 	rxrpc_serial_t serial;
+ 	int ret;
+ 
+-	spin_lock_bh(&call->lock);
+-	if (call->conn)
+-		conn = rxrpc_get_connection_maybe(call->conn);
+-	spin_unlock_bh(&call->lock);
+-	if (!conn)
++	if (test_bit(RXRPC_CALL_DISCONNECTED, &call->flags))
+ 		return -ECONNRESET;
+ 
++	conn = call->conn;
++
+ 	msg.msg_name	= &call->peer->srx.transport;
+ 	msg.msg_namelen	= call->peer->srx.transport_len;
+ 	msg.msg_control	= NULL;
+@@ -255,7 +248,6 @@ int rxrpc_send_abort_packet(struct rxrpc
+ 	ret = kernel_sendmsg(conn->params.local->socket,
+ 			     &msg, iov, 1, sizeof(pkt));
+ 
+-	rxrpc_put_connection(conn);
+ 	return ret;
+ }
+ 
+
 
