@@ -2,113 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 765A015C958
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 18:23:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 495A715C95E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 18:24:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728358AbgBMRX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 12:23:27 -0500
-Received: from foss.arm.com ([217.140.110.172]:51332 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727966AbgBMRX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 12:23:27 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E75ED328;
-        Thu, 13 Feb 2020 09:23:25 -0800 (PST)
-Received: from [10.1.196.37] (e121345-lin.cambridge.arm.com [10.1.196.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 568773F6CF;
-        Thu, 13 Feb 2020 09:23:24 -0800 (PST)
-Subject: Re: [PATCH v4 0/5] memory: Introduce memory controller mini-framework
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Joerg Roedel <joro@8bytes.org>, Olof Johansson <olof@lixom.net>,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Maxime Ripard <mripard@kernel.org>
-References: <20200213163959.819733-1-thierry.reding@gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <9841eb35-65e4-632a-ceff-bb2ba3b11bb0@arm.com>
-Date:   Thu, 13 Feb 2020 17:23:23 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728696AbgBMRX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 12:23:56 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37486 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728383AbgBMRX4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 12:23:56 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a6so7688059wme.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 09:23:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :mime-version:content-disposition:user-agent;
+        bh=CV85bk6ID9w9qqLWKqmaw6gPSwhI+3a5wQYBZuJvupE=;
+        b=jCbiiiRZujf0aw66N8Kanx2+W+IUbknnVlB+lZGXYxs/uUPYwz0YX7r9XaZ9jcf1cV
+         ex7AHrUipCPAAVDzdNWTsHExM8fGIKJvh0bMSFDiRBIAEkLBJd2PzHb56mqAFuAeH4E9
+         R2ki0Mog7pUUTbR8rA1m9SNliuh2XP5mCLYl/iqisC1KNYPd5zw979GQ3eQoZQvxp6NS
+         bGoGt3PUPftqDmDlGK8UDuc4wY+D6RoeHw0Ywl0Bnbw6W4fumIvdfYOP4zR+Ys/iS9Ot
+         um2zPCqcHC0oR/WePUCljgVVxRZo9hoZ4zWwZxYESL+F8NlThUJDXWhRPcvc+qkn0x7q
+         oD9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:mime-version:content-disposition:user-agent;
+        bh=CV85bk6ID9w9qqLWKqmaw6gPSwhI+3a5wQYBZuJvupE=;
+        b=O4qKe67l+ohxe4kzQ/WW5lET4AMTuTGFGQAziL3bAadljCghkOOY4D9Mkt4lRaGfwI
+         b5GPwYmvwZ1Uc/enho+uR3JmnYVbCqswxC6k8h7z9jpKc7QOnD80Rwe2RJoZg8mPrsBJ
+         PsIrOBZcxmjAqANOxGMs82TzaxMYepr7UZU2AJ3uT9AaPotiXpQunvxu1TNHZPqKYUiL
+         JyeiPOYWHsGT3zJMu+i++kJm6iz+WL/zWWfJE4yBIDI/W2VDgDbEY5SuhhaYAS7GbZ3o
+         RPe+XEu2Kbw0ajr1yj61w0U6bD4D+JsKKWHLV05+BOs0tSX9e5do7yYEl/iMKQNedhmy
+         EmSw==
+X-Gm-Message-State: APjAAAUIlZSxbjJKi7x5QiD+2Et2L3Zdir0ULm3kMXrQSBtb8ULowNcX
+        mW6qz/c4pyMaW9Ic5uJipLI=
+X-Google-Smtp-Source: APXvYqzbcoMtiASfXswpi9fb+X7XP1QiFKWKz5ELS/FVcz/QDQIJxIWK6B3Mqi+uxV52KqBNy2MWaQ==
+X-Received: by 2002:a1c:3204:: with SMTP id y4mr6641095wmy.166.1581614634384;
+        Thu, 13 Feb 2020 09:23:54 -0800 (PST)
+Received: from dumbo ([83.137.6.251])
+        by smtp.gmail.com with ESMTPSA id z21sm3838941wml.5.2020.02.13.09.23.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2020 09:23:53 -0800 (PST)
+Date:   Thu, 13 Feb 2020 18:23:51 +0100
+From:   Domenico Andreoli <domenico.andreoli@linux.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Regression: hibernation is broken since
+ e6bc9de714972cac34daa1dc1567ee48a47a9342
+Message-ID: <20200213172351.GA6747@dumbo>
+Mail-Followup-To: "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20200213163959.819733-1-thierry.reding@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+ Maxime]
+Hi,
 
-On 13/02/2020 4:39 pm, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Hi,
-> 
-> this set of patches adds a new binding that allows device tree nodes to
-> explicitly define the DMA parent for a given device. This supplements
-> the existing interconnect bindings and is useful to disambiguate in the
-> case where a device has multiple paths to system memory. Beyond that it
-> can also be useful when there aren't any actual interconnect paths that
-> can be controlled, so in simple cases this can serve as a simpler
-> variant of interconnect paths.
+  at some point between 5.2 and 5.3 my laptop started to refuse
+hibernating and come back to a full functional state. It's fully 100%
+reproducible, no oopses or any other damage to the state seems to happen.
 
-Isn't that still squarely the intent of the "dma-mem" binding, though? 
-i.e. it's not meant to be a 'real' interconnect provider, but a very 
-simple way to encode DMA parentage piggybacked onto a more general 
-binding (with the *option* of being a full-blown interconnect if it 
-wants to, but certainly no expectation).
+It took me a while to follow the trail down to this commit. If I revert
+it from v5.6-rc1, the hibernation is back as in the old times.
 
-Robin.
 
-> One other case where this is useful is to describe the relationship
-> between devices such as the memory controller and an IOMMU, for example.
-> On Tegra186 and later, the memory controller is programmed with a set of
-> stream IDs that are to be associated with each memory client. This
-> programming needs to happen before translations through the IOMMU start,
-> otherwise the used stream IDs may deviate from the expected values. The
-> memory-controllers property is used in this case to ensure that the
-> memory controller driver has been probed (and hence has programmed the
-> stream ID mappings) before the IOMMU becomes available.
-> 
-> Patch 1 introduces the memory controller bindings, both from the
-> perspective of the provider and the consumer. Patch 2 makes use of a
-> memory-controllers property to determine the DMA parent for the purpose
-> of setting up DMA masks (based on the dma-ranges property of the DMA
-> parent). Patch 3 introduces a minimalistic framework that is used to
-> register memory controllers with along with a set of helpers to look up
-> the memory controller from device tree.
-> 
-> An example of how to register a memory controller is shown in patch 4
-> for Tegra186 (and later) and finally the ARM SMMU driver is extended to
-> become a consumer of an (optional) memory controller. As described
-> above, the goal is to defer probe as long as the memory controller has
-> not yet programmed the stream ID mappings.
-> 
-> Thierry
-> 
-> Thierry Reding (5):
->    dt-bindings: Add memory controller bindings
->    of: Use memory-controllers property for DMA parent
->    memory: Introduce memory controller mini-framework
->    memory: tegra186: Register as memory controller
->    iommu: arm-smmu: Get reference to memory controller
-> 
->   .../bindings/memory-controllers/consumer.yaml |  14 +
->   .../memory-controllers/memory-controller.yaml |  32 +++
->   drivers/iommu/arm-smmu.c                      |  11 +
->   drivers/iommu/arm-smmu.h                      |   2 +
->   drivers/memory/Makefile                       |   1 +
->   drivers/memory/core.c                         | 248 ++++++++++++++++++
->   drivers/memory/tegra/tegra186.c               |   9 +-
->   drivers/of/address.c                          |  25 +-
->   include/linux/memory-controller.h             |  34 +++
->   9 files changed, 366 insertions(+), 10 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/memory-controllers/consumer.yaml
->   create mode 100644 Documentation/devicetree/bindings/memory-controllers/memory-controller.yaml
->   create mode 100644 drivers/memory/core.c
->   create mode 100644 include/linux/memory-controller.h
-> 
+commit e6bc9de714972cac34daa1dc1567ee48a47a9342
+Merge: b6c0d3577246 dc617f29dbe5
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed Sep 18 17:35:20 2019 -0700
+
+    Merge tag 'vfs-5.4-merge-1' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux
+
+    Pull swap access updates from Darrick Wong:
+     "Prohibit writing to active swap files and swap partitions.
+
+      There's no non-malicious use case for allowing userspace to scribble
+      on storage that the kernel thinks it owns"
+
+    * tag 'vfs-5.4-merge-1' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux:
+      vfs: don't allow writes to swap files
+      mm: set S_SWAPFILE on blockdev swap devices
+
+
+Is it possible to do anything?
+
+Regards,
+Domenico
+
+-- 
+rsa4096: 3B10 0CA1 8674 ACBA B4FE  FCD2 CE5B CF17 9960 DE13
+ed25519: FFB4 0CC3 7F2E 091D F7DA  356E CC79 2832 ED38 CB05
