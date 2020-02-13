@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7580415C1CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:26:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFCC415C19B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:25:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387593AbgBMP0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:26:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39440 "EHLO mail.kernel.org"
+        id S1728759AbgBMPYl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:24:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728837AbgBMPYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:24:54 -0500
+        id S1728363AbgBMPXX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:23 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78A37246A3;
-        Thu, 13 Feb 2020 15:24:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 819CB24699;
+        Thu, 13 Feb 2020 15:23:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607493;
-        bh=tDIBEW+qhN6NjizLvnUmXcQjQff1bi95mps5Y2AQeLk=;
+        s=default; t=1581607402;
+        bh=uf0sW80CIBSxOkP6grpHcVop7BngU6qc+NqqsOk2MDc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dwrSKWwUdG8QLkE/30FLruwDyp/quXQlGnjj3alZ8BKqwQ/IRcOPvO14LGogJXF89
-         ped508jFGLe6bkNy8LAAW4y7/xTNRocyL2PELpai/qtwxJsQjyKbzW/kGMZdaqJFZH
-         hJCsirSHRBSt1hGmglrJrVWIm8exBnGhzPxpMBLw=
+        b=E/ByYe6uiyXA3NRtOFdaif0r+MzSMxkB0njtE/0Gw8f1hchCm/rDYqKZoOFx6Tn/F
+         Pi0SMNUfAj9I5IphHpoaA1OlmoL20Huvfp/vMlI9zZxzlpx2fcR1bB2oyV2IpbtCBr
+         KHLhybZ+2jJJ4gT1sYQzoDcWeuCkbcMjUdfOVkiQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 044/173] ubifs: dont trigger assertion on invalid no-key filename
-Date:   Thu, 13 Feb 2020 07:19:07 -0800
-Message-Id: <20200213151945.047297989@linuxfoundation.org>
+        Patrick Lai <plai@codeaurora.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: [PATCH 4.9 004/116] ASoC: qcom: Fix of-node refcount unbalance to link->codec_of_node
+Date:   Thu, 13 Feb 2020 07:19:08 -0800
+Message-Id: <20200213151844.171406458@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,53 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 
-[ Upstream commit f0d07a98a070bb5e443df19c3aa55693cbca9341 ]
+[ This is a fix specific to 4.4.y and 4.9.y stable trees;
+  4.14.y and older are not affected ]
 
-If userspace provides an invalid fscrypt no-key filename which encodes a
-hash value with any of the UBIFS node type bits set (i.e. the high 3
-bits), gracefully report ENOENT rather than triggering ubifs_assert().
+The of-node refcount fixes were made in commit 8d1667200850 ("ASoC: qcom:
+Fix of-node refcount unbalance in apq8016_sbc_parse_of()"), but not enough
+in 4.4.y and 4.9.y. The modification of link->codec_of_node is missing.
+This fixes of-node refcount unbalance to link->codec_of_node.
 
-Test case with kvm-xfstests shell:
-
-    . fs/ubifs/config
-    . ~/xfstests/common/encrypt
-    dev=$(__blkdev_to_ubi_volume /dev/vdc)
-    ubiupdatevol $dev -t
-    mount $dev /mnt -t ubifs
-    mkdir /mnt/edir
-    xfs_io -c set_encpolicy /mnt/edir
-    rm /mnt/edir/_,,,,,DAAAAAAAAAAAAAAAAAAAAAAAAAA
-
-With the bug, the following assertion fails on the 'rm' command:
-
-    [   19.066048] UBIFS error (ubi0:0 pid 379): ubifs_assert_failed: UBIFS assert failed: !(hash & ~UBIFS_S_KEY_HASH_MASK), in fs/ubifs/key.h:170
-
-Fixes: f4f61d2cc6d8 ("ubifs: Implement encrypted filenames")
-Cc: <stable@vger.kernel.org> # v4.10+
-Link: https://lore.kernel.org/r/20200120223201.241390-5-ebiggers@kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 8d1667200850 ("ASoC: qcom: Fix of-node refcount unbalance in apq8016_sbc_parse_of()")
+Cc: Patrick Lai <plai@codeaurora.org>
+Cc: Banajit Goswami <bgoswami@codeaurora.org>
+Cc: Takashi Iwai <tiwai@suse.de>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ubifs/dir.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/qcom/apq8016_sbc.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
-index 4e6e32c0c08a4..358abc26dbc0b 100644
---- a/fs/ubifs/dir.c
-+++ b/fs/ubifs/dir.c
-@@ -253,6 +253,8 @@ static struct dentry *ubifs_lookup(struct inode *dir, struct dentry *dentry,
- 	if (nm.hash) {
- 		ubifs_assert(fname_len(&nm) == 0);
- 		ubifs_assert(fname_name(&nm) == NULL);
-+		if (nm.hash & ~UBIFS_S_KEY_HASH_MASK)
-+			goto done; /* ENOENT */
- 		dent_key_init_hash(c, &key, dir->i_ino, nm.hash);
- 		err = ubifs_tnc_lookup_dh(c, &key, dent, nm.minor_hash);
- 	} else {
--- 
-2.20.1
-
+--- a/sound/soc/qcom/apq8016_sbc.c
++++ b/sound/soc/qcom/apq8016_sbc.c
+@@ -128,7 +128,8 @@ static struct apq8016_sbc_data *apq8016_
+ 		link->codec_of_node = of_parse_phandle(codec, "sound-dai", 0);
+ 		if (!link->codec_of_node) {
+ 			dev_err(card->dev, "error getting codec phandle\n");
+-			return ERR_PTR(-EINVAL);
++			ret = -EINVAL;
++			goto error;
+ 		}
+ 
+ 		ret = snd_soc_of_get_dai_name(cpu, &link->cpu_dai_name);
 
 
