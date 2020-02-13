@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D93E215C2AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:38:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1BEC15C4EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387814AbgBMP3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:29:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45914 "EHLO mail.kernel.org"
+        id S1729828AbgBMPv4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:51:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387591AbgBMP0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:32 -0500
+        id S1728651AbgBMP0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:09 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B97D24671;
-        Thu, 13 Feb 2020 15:26:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B33D206ED;
+        Thu, 13 Feb 2020 15:26:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607592;
-        bh=c+NAbmXVUCR2NCHZlhlJbWAl+qAOyeaTOTrvAYJSc7U=;
+        s=default; t=1581607569;
+        bh=MXUvtE+DyhgA9eVd8REk4gWhFUqUQf7jXGOjSh3qabQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uBxuARAjmSzIrh3iLdMwq9zWHQMduVg6IYrTo0/8UIoQDea9ZqJWzvl6j6ThMwOO5
-         AI5kfiFk3/fjsFpSJdGHH8qcKSdjsHMYmX8wGj/I60c/OnCnd6tufYrbSVIVW4dDVQ
-         QMOVqedCc/IO5dAlSrrbRYH5tSUb1Wk8w0JqKnfI=
+        b=LWRebF7eprKk180MKSp+o5vmyjhiFL8c7NgrBSn4AAJSdABSuvZgPoY1beo3RPSm0
+         j6PgbjsmsRsp+/s0QSGlnEEXNUrR9lkz6wdaRsKL/uvQWmKTjV+i9PwkeWFLPam0T4
+         LkbzFQmibSdLhJQdmfiVR2gZXUbtz45JoMCGsiUY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.19 23/52] platform/x86: intel_mid_powerbtn: Take a copy of ddata
+        stable@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 4.14 161/173] ARM: 8949/1: mm: mark free_memmap as __init
 Date:   Thu, 13 Feb 2020 07:21:04 -0800
-Message-Id: <20200213151819.922200920@linuxfoundation.org>
+Message-Id: <20200213152011.837317599@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
-References: <20200213151810.331796857@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Olof Johansson <olof@lixom.net>
 
-commit 5e0c94d3aeeecc68c573033f08d9678fecf253bd upstream.
+commit 31f3010e60522ede237fb145a63b4af5a41718c2 upstream.
 
-The driver gets driver_data from memory that is marked as const (which
-is probably put to read-only memory) and it then modifies it. This
-likely causes some sort of fault to happen.
+As of commit ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING
+forcibly"), free_memmap() might not always be inlined, and thus is
+triggering a section warning:
 
-Fix this by taking a copy of the structure.
+WARNING: vmlinux.o(.text.unlikely+0x904): Section mismatch in reference from the function free_memmap() to the function .meminit.text:memblock_free()
 
-Fixes: c94a8ff14de3 ("platform/x86: intel_mid_powerbtn: make mid_pb_ddata const")
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Mark it as __init, since the faller (free_unused_memmap) already is.
+
+Fixes: ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING forcibly")
+Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/platform/x86/intel_mid_powerbtn.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/mm/init.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/platform/x86/intel_mid_powerbtn.c
-+++ b/drivers/platform/x86/intel_mid_powerbtn.c
-@@ -158,9 +158,10 @@ static int mid_pb_probe(struct platform_
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -356,7 +356,7 @@ static inline void poison_init_mem(void
+ 		*p++ = 0xe7fddef0;
+ }
  
- 	input_set_capability(input, EV_KEY, KEY_POWER);
- 
--	ddata = (struct mid_pb_ddata *)id->driver_data;
-+	ddata = devm_kmemdup(&pdev->dev, (void *)id->driver_data,
-+			     sizeof(*ddata), GFP_KERNEL);
- 	if (!ddata)
--		return -ENODATA;
-+		return -ENOMEM;
- 
- 	ddata->dev = &pdev->dev;
- 	ddata->irq = irq;
+-static inline void
++static inline void __init
+ free_memmap(unsigned long start_pfn, unsigned long end_pfn)
+ {
+ 	struct page *start_pg, *end_pg;
 
 
