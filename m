@@ -2,76 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DC4615C2D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:39:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E91A015C365
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387555AbgBMPhA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:37:00 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:45432 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728534AbgBMPg4 (ORCPT
+        id S1729668AbgBMPkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:40:52 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:48167 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729446AbgBMPkr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:36:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581608215;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=IwQHI79iQNnLF0R813K4ZfyJ/4oVZzBfHd4LqqijBNs=;
-        b=QJ5KUCHpoHxzmHxMnCNPYpFg6CmWfK8bDzEQWHDGEjfFj6zn4iNSfRaHQrsaK3O5ia9ivp
-        GuMvw39wG0VqVrX6tEKwoiGsKOiinX8bLmMDMWwYWdhZWsPFT0u9Ev0ZVfUBUsFPRrwipq
-        vfXAsJCFyliiu/v6OsXEusODedkdhUY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-421-2EOjsAokOgC2pnOKYZU8tQ-1; Thu, 13 Feb 2020 10:36:51 -0500
-X-MC-Unique: 2EOjsAokOgC2pnOKYZU8tQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D3280100550E;
-        Thu, 13 Feb 2020 15:36:49 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A17CD5DA85;
-        Thu, 13 Feb 2020 15:36:46 +0000 (UTC)
-Date:   Thu, 13 Feb 2020 10:36:45 -0500
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Maksym Planeta <mplaneta@os.inf.tu-dresden.de>
-Cc:     Zhou Wang <wangzhou1@hisilicon.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com,
-        Song Liu <song@kernel.org>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org
-Subject: Re: Remove WQ_CPU_INTENSIVE flag from unbound wq's
-Message-ID: <20200213153645.GA11313@redhat.com>
-References: <20200213141823.2174236-1-mplaneta@os.inf.tu-dresden.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200213141823.2174236-1-mplaneta@os.inf.tu-dresden.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+        Thu, 13 Feb 2020 10:40:47 -0500
+Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id 01DFdZHV005809;
+        Fri, 14 Feb 2020 00:39:35 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com 01DFdZHV005809
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1581608376;
+        bh=dqecOZAANxjvQ3trtEaHQkh+WvtX98O39pJAPhItCK8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=iSn7y9stEH0GS1eu9X4sH5jPS0X4ZO9WgMOY40Ymos1qcTEFr9MSajcjv70Rt3qAF
+         Wptf7W8HWPLqck3wHlwUJrPxI2/IDFX+3kCeeR4NGkxn892yQsMbdtYYnpoFXAtQqr
+         UE0P831QydXlx/8xElFEm9rGkwB48e8S4OwRMRxhWnRqfbEfyPvXNFNu+Oru5qwPRz
+         xaXwsu6uWfIJ+BtdmbXqqSUvuQc1OOvWeyD4WzxIyqyLtIlGRdctFGhUhKF4/G5peF
+         Q71MP6onwpjCd4g96QW9GYTuyyiRp4KbDkVT5pN+HlD6pU+RrBlBuZpJx7p1frgjcI
+         uHKQjhmgk0UHA==
+X-Nifty-SrcIP: [126.93.102.113]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=8F=AB=D3nig?= <christian.koenig@amd.com>,
+        David Zhou <David1.Zhou@amd.com>, amd-gfx@lists.freedesktop.org
+Cc:     Masahiro Yamada <masahiroy@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] drm/radeon: remove unneeded header include path
+Date:   Fri, 14 Feb 2020 00:39:24 +0900
+Message-Id: <20200213153928.28407-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13 2020 at  9:18am -0500,
-Maksym Planeta <mplaneta@os.inf.tu-dresden.de> wrote:
+A header include path without $(srctree)/ is suspicious because it does
+not work with O= builds.
 
-> The documentation [1] says that WQ_CPU_INTENSIVE is "meaningless" for
-> unbound wq. I remove this flag from places where unbound queue is
-> allocated. This is supposed to improve code readability.
-> 
-> 1. https://www.kernel.org/doc/html/latest/core-api/workqueue.html#flags
-> 
-> Signed-off-by: Maksym Planeta <mplaneta@os.inf.tu-dresden.de>
+You can build drivers/gpu/drm/radeon/ without this include path.
 
-What the Documentation says aside, have you cross referenced with the
-code?  And/or have you done benchmarks to verify no changes?
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-Thanks,
-Mike
+ drivers/gpu/drm/radeon/Makefile | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/radeon/Makefile b/drivers/gpu/drm/radeon/Makefile
+index c693b2ca0329..9d5d3dc1011f 100644
+--- a/drivers/gpu/drm/radeon/Makefile
++++ b/drivers/gpu/drm/radeon/Makefile
+@@ -3,8 +3,6 @@
+ # Makefile for the drm device driver.  This driver provides support for the
+ # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
+ 
+-ccflags-y := -Idrivers/gpu/drm/amd/include
+-
+ hostprogs := mkregtable
+ clean-files := rn50_reg_safe.h r100_reg_safe.h r200_reg_safe.h rv515_reg_safe.h r300_reg_safe.h r420_reg_safe.h rs600_reg_safe.h r600_reg_safe.h evergreen_reg_safe.h cayman_reg_safe.h
+ 
+-- 
+2.17.1
 
