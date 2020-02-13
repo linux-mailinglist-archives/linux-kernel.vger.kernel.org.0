@@ -2,88 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0E9115B928
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 06:43:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E157F15B938
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 06:53:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729532AbgBMFny (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 00:43:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57422 "EHLO mail.kernel.org"
+        id S1729724AbgBMFxN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 00:53:13 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:54182 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725773AbgBMFnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 00:43:53 -0500
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CEC220873;
-        Thu, 13 Feb 2020 05:43:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581572633;
-        bh=4syaKUKu77FngS2/xeaFk/gtszZv6o9gBJ+A5aYg8KU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RMT4njs9CqOEjaxrgfxN4wrm4Uhh6yv/5opMDMKEcFVMDRrz2yQbvzd3Cwfe7WGL5
-         2PHPd0Q7VIzWPMHxRDU5SmLfuRPft18+xurNzc1Kn+7wln6WeOQ7+Bmb/yRt9d/WyK
-         PNYEc8J6a3Kya+FiJPg82yFvjKLc1YHh/CuL2jkY=
-Date:   Thu, 13 Feb 2020 13:43:45 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     Jacky Bai <ping.bai@nxp.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "allison@lohutok.net" <allison@lohutok.net>,
-        "info@metux.net" <info@metux.net>,
-        Anson Huang <anson.huang@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "git@andred.net" <git@andred.net>, Abel Vesa <abel.vesa@nxp.com>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC 1/4] ARM: imx: use device_initcall for imx_soc_device_init
-Message-ID: <20200213054344.GM11096@dragon>
-References: <1579167145-1480-1-git-send-email-peng.fan@nxp.com>
- <1579167145-1480-2-git-send-email-peng.fan@nxp.com>
- <AM7PR04MB6981B45633536729EBEB427487310@AM7PR04MB6981.eurprd04.prod.outlook.com>
- <AM0PR04MB448103B7C47B9AA5621A731A88310@AM0PR04MB4481.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM0PR04MB448103B7C47B9AA5621A731A88310@AM0PR04MB4481.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1726436AbgBMFxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 00:53:12 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D5AF21A00A6;
+        Thu, 13 Feb 2020 06:53:09 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 747671A5559;
+        Thu, 13 Feb 2020 06:53:00 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 386994029B;
+        Thu, 13 Feb 2020 13:52:49 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, allison@lohutok.net,
+        tglx@linutronix.de, andrew.smirnov@gmail.com,
+        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+        rfontana@redhat.com, sakari.ailus@linux.intel.com,
+        bhelgaas@google.com, dsterba@suse.com, peng.fan@nxp.com,
+        okuno.kohji@jp.panasonic.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] ARM: imx: Add missing of_node_put()
+Date:   Thu, 13 Feb 2020 13:47:26 +0800
+Message-Id: <1581572846-4301-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 08:15:54AM +0000, Peng Fan wrote:
-> > > Subject: [RFC 1/4] ARM: imx: use device_initcall for
-> > > imx_soc_device_init
-> > >
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > This is preparation to move imx_soc_device_init to drivers/soc/imx/
-> > >
-> > > There is no reason to must put dt devices under /sys/devices/soc0,
-> > > they could also be under /sys/devices/platform, so we could pass NULL
-> > > as parent when calling of_platform_default_populate.
-> > >
-> > 
-> > This change will impact various internal test case & userspace lib, I think.
-> > Need to ask test team & other developer to double check the impact.
-> 
-> /sys/devices/soc0 is still there, the patchset only moves
-> the platform devices which under /sys/devices/soc0 to /sys/devices/platform
+After finishing using device node got from of_find_compatible_node(),
+of_node_put() needs to be called.
 
-Jacky's concern still stands, as there are many user spaces which will be
-broken and need update.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ arch/arm/mach-imx/anatop.c     | 2 ++
+ arch/arm/mach-imx/gpc.c        | 1 +
+ arch/arm/mach-imx/platsmp.c    | 1 +
+ arch/arm/mach-imx/pm-imx6.c    | 1 +
+ arch/arm/mach-imx/pm-imx7ulp.c | 1 +
+ 5 files changed, 6 insertions(+)
 
-> In this way, we aligned with ARM64. And simplify arch code by moving
-> the code to drivers/soc/imx. In future, considering more cleanup,
-> we could merge the code to soc-imx8.c, since they share similar
-> silicon rev ocotp logic.
+diff --git a/arch/arm/mach-imx/anatop.c b/arch/arm/mach-imx/anatop.c
+index 8fb68c0..4fa727f 100644
+--- a/arch/arm/mach-imx/anatop.c
++++ b/arch/arm/mach-imx/anatop.c
+@@ -103,6 +103,7 @@ void __init imx_init_revision_from_anatop(void)
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx6q-anatop");
+ 	anatop_base = of_iomap(np, 0);
++	of_node_put(np);
+ 	WARN_ON(!anatop_base);
+ 	if (of_device_is_compatible(np, "fsl,imx6sl-anatop"))
+ 		offset = ANADIG_DIGPROG_IMX6SL;
+@@ -138,6 +139,7 @@ void __init imx_init_revision_from_anatop(void)
+ 			np = of_find_compatible_node(NULL, NULL,
+ 						     "fsl,imx6ul-src");
+ 			src_base = of_iomap(np, 0);
++			of_node_put(np);
+ 			WARN_ON(!src_base);
+ 			sbmr2 = readl_relaxed(src_base + SRC_SBMR2);
+ 			iounmap(src_base);
+diff --git a/arch/arm/mach-imx/gpc.c b/arch/arm/mach-imx/gpc.c
+index b5b557f..07f1972 100644
+--- a/arch/arm/mach-imx/gpc.c
++++ b/arch/arm/mach-imx/gpc.c
+@@ -282,4 +282,5 @@ void __init imx_gpc_check_dt(void)
+ 		/* map GPC, so that at least CPUidle and WARs keep working */
+ 		gpc_base = of_iomap(np, 0);
+ 	}
++	of_node_put(np);
+ }
+diff --git a/arch/arm/mach-imx/platsmp.c b/arch/arm/mach-imx/platsmp.c
+index 2aa2692..cf4e933 100644
+--- a/arch/arm/mach-imx/platsmp.c
++++ b/arch/arm/mach-imx/platsmp.c
+@@ -109,6 +109,7 @@ static void __init ls1021a_smp_prepare_cpus(unsigned int max_cpus)
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,ls1021a-dcfg");
+ 	dcfg_base = of_iomap(np, 0);
++	of_node_put(np);
+ 	BUG_ON(!dcfg_base);
+ 
+ 	paddr = __pa_symbol(secondary_startup);
+diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
+index 1c0ecad..c437f21 100644
+--- a/arch/arm/mach-imx/pm-imx6.c
++++ b/arch/arm/mach-imx/pm-imx6.c
+@@ -643,6 +643,7 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
+ 
+ 	np = of_find_compatible_node(NULL, NULL, ccm_compat);
+ 	ccm_base = of_iomap(np, 0);
++	of_node_put(np);
+ 	BUG_ON(!ccm_base);
+ 
+ 	/*
+diff --git a/arch/arm/mach-imx/pm-imx7ulp.c b/arch/arm/mach-imx/pm-imx7ulp.c
+index 7b2f738..2e756d8 100644
+--- a/arch/arm/mach-imx/pm-imx7ulp.c
++++ b/arch/arm/mach-imx/pm-imx7ulp.c
+@@ -62,6 +62,7 @@ void __init imx7ulp_pm_init(void)
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx7ulp-smc1");
+ 	smc1_base = of_iomap(np, 0);
++	of_node_put(np);
+ 	WARN_ON(!smc1_base);
+ 
+ 	imx7ulp_set_lpm(ULP_PM_RUN);
+-- 
+2.7.4
 
-Though this is a good thing from maintenance point of view, we do not
-want to break user spaces.
-
-Shawn
