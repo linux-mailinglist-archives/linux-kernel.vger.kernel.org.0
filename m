@@ -2,111 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ED4315CDD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 23:10:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD6C815CDE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 23:11:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727902AbgBMWJ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 17:09:56 -0500
-Received: from mga03.intel.com ([134.134.136.65]:60321 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726282AbgBMWJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 17:09:56 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 14:09:55 -0800
-X-IronPort-AV: E=Sophos;i="5.70,438,1574150400"; 
-   d="scan'208";a="313869160"
-Received: from agluck-desk2.sc.intel.com (HELO agluck-desk2.amr.corp.intel.com) ([10.3.52.68])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 14:09:55 -0800
-Date:   Thu, 13 Feb 2020 14:09:53 -0800
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] x86/mce: Add new "handled" field to "struct mce"
-Message-ID: <20200213220953.GA21107@agluck-desk2.amr.corp.intel.com>
-References: <20200212204652.1489-1-tony.luck@intel.com>
- <20200212204652.1489-4-tony.luck@intel.com>
- <20200213165617.GL31799@zn.tnic>
+        id S1728107AbgBMWLV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 17:11:21 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:26035 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727772AbgBMWLV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 17:11:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581631880;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=L8CYIylXszw5T12nzwhCt2wOP17igubFfMw076GDMa8=;
+        b=RAdpu5qFwLkwa57yNe4+SaAIid5CBmLJZZgJ3Dvc+KHjmePuynQXlvrBIBzWomyZAuSeSW
+        fuAtrgmMndVqawuIoplIGGjsRabEPhTRPPP22WQTsWKP/9IEW7iFCsNc2v/xXU37y5Myk8
+        Rs8Eqs7FH7LTyn29SL/rIe0ziOxz+08=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-318-ClN-4b6NMPa4-IJWdfJHLw-1; Thu, 13 Feb 2020 17:11:04 -0500
+X-MC-Unique: ClN-4b6NMPa4-IJWdfJHLw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9746D1005514;
+        Thu, 13 Feb 2020 22:11:03 +0000 (UTC)
+Received: from treble (ovpn-121-12.rdu2.redhat.com [10.10.121.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AFB14272A1;
+        Thu, 13 Feb 2020 22:11:02 +0000 (UTC)
+Date:   Thu, 13 Feb 2020 16:11:00 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     tip-bot2 for Josh Poimboeuf <tip-bot2@linutronix.de>
+Cc:     linux-tip-commits@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Julien Thierry <jthierry@redhat.com>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [tip: core/objtool] objtool: Fail the kernel build on fatal
+ errors
+Message-ID: <20200213221100.odwg5gan3dwcpk6g@treble>
+References: <f18c3743de0fef673d49dd35760f26bdef7f6fc3.1581359535.git.jpoimboe@redhat.com>
+ <158142525822.411.5401976987070210798.tip-bot2@tip-bot2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200213165617.GL31799@zn.tnic>
+In-Reply-To: <158142525822.411.5401976987070210798.tip-bot2@tip-bot2>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 05:56:17PM +0100, Borislav Petkov wrote:
-> On Wed, Feb 12, 2020 at 12:46:50PM -0800, Tony Luck wrote:
-> > There can be many different subsystems register on the mce handler
-> > chain. Add a new bitmask field and define values so that handlers
-> > can indicate whether they took any action to log or otherwise
-> > handle an error.
-> > 
-> > The default handler at the end of the chain can use this information
-> > to decide whether to print to the console log.
-> > 
-> > Signed-off-by: Tony Luck <tony.luck@intel.com>
-> > ---
-> >  arch/x86/include/uapi/asm/mce.h | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> > 
-> > diff --git a/arch/x86/include/uapi/asm/mce.h b/arch/x86/include/uapi/asm/mce.h
-> > index 955c2a2e1cf9..99ca07f7b078 100644
-> > --- a/arch/x86/include/uapi/asm/mce.h
-> > +++ b/arch/x86/include/uapi/asm/mce.h
-> > @@ -35,8 +35,17 @@ struct mce {
-> >  	__u64 ipid;		/* MCA_IPID MSR: only valid on SMCA systems */
-> >  	__u64 ppin;		/* Protected Processor Inventory Number */
-> >  	__u32 microcode;	/* Microcode revision */
-> > +	__u32 handled;		/* Bitmap of logging/handling actions */
-> >  };
-> >  
-> > +/* handled flag bits */
-> > +#define	MCE_HANDLED_CEC		BIT(0)
-> > +#define	MCE_HANDLED_UC		BIT(1)
-> > +#define	MCE_HANDLED_EXTLOG	BIT(2)
-> > +#define	MCE_HANDLED_NFIT	BIT(3)
-> > +#define	MCE_HANDLED_EDAC	BIT(4)
-> > +#define	MCE_HANDLED_MCELOG	BIT(5)
-> > +
-> >  #define MCE_GET_RECORD_LEN   _IOR('M', 1, int)
-> >  #define MCE_GET_LOG_LEN      _IOR('M', 2, int)
-> >  #define MCE_GETCLEAR_FLAGS   _IOR('M', 3, int)
-> > -- 
+On Tue, Feb 11, 2020 at 12:47:38PM -0000, tip-bot2 for Josh Poimboeuf wrote:
+> The following commit has been merged into the core/objtool branch of tip:
 > 
-> Not sure if this should be exposed to user. I don't think it has any
-> business poking its nose into how the MCE was handled. Or maybe it does
-> but I cannot think of a good example ATM.
+> Commit-ID:     644592d328370af4b3e027b7b1ae9f81613782d8
+> Gitweb:        https://git.kernel.org/tip/644592d328370af4b3e027b7b1ae9f81613782d8
+> Author:        Josh Poimboeuf <jpoimboe@redhat.com>
+> AuthorDate:    Mon, 10 Feb 2020 12:32:38 -06:00
+> Committer:     Borislav Petkov <bp@suse.de>
+> CommitterDate: Tue, 11 Feb 2020 13:27:03 +01:00
 > 
-> If not, this could be
+> objtool: Fail the kernel build on fatal errors
 > 
-> 	...
-> 	void *private;
-> };
+> When objtool encounters a fatal error, it usually means the binary is
+> corrupt or otherwise broken in some way.  Up until now, such errors were
+> just treated as warnings which didn't fail the kernel build.
 > 
-> which userspace can't make any assumptions about. And we can put
-> whatever we need in there...
+> However, objtool is now stable enough that if a fatal error is
+> discovered, it most likely means something is seriously wrong and it
+> should fail the kernel build.
+> 
+> Note that this doesn't apply to "normal" objtool warnings; only fatal
+> ones.
 
-I can see various ways to spin this:
+Clang still has some toolchain issues which need to be sorted out, so
+upgrading the fatal errors is causing their CI to fail.
 
-1) It is useful to user mode. The mcelog(8) daemon (or other consumer
-   of "struct mce") gets a record of where to look for logs from this
-   record.  This could reduce the anxiety about logging the same item
-   multiple times.  Its a bit weird though because each entity logging
-   only sees who came before them, not who came after.
-2) Not useful
-	2a) Keep it in the structure, but clear it in copies shown to user
-	2b) Make a *private to point to such things (but that really
-	    complicates allocation of struct mce ... right now we just
-	    have local copies on kernel stack)
-	2c) Make a wrapper structure:
-		struct kernel_mce {
-			struct mce mce;
-			u32 handled;
-			... other hidden stuff ...
-		};
+So I think we need to drop this one for now.
 
--Tony
+Boris, are you able to just drop it or should I send a revert?
+
+-- 
+Josh
+
