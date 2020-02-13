@@ -2,103 +2,266 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1D5015B5C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 01:22:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06EAA15B5C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 01:22:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729259AbgBMAWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 19:22:02 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:28826 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729119AbgBMAWB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 19:22:01 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01D0JWRq177919
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 19:22:00 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y3pqhen17-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 19:22:00 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 13 Feb 2020 00:21:58 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 13 Feb 2020 00:21:54 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01D0Lrd658720472
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Feb 2020 00:21:53 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7A81D11C050;
-        Thu, 13 Feb 2020 00:21:53 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7D97411C05C;
-        Thu, 13 Feb 2020 00:21:52 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.191.187])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 13 Feb 2020 00:21:52 +0000 (GMT)
-Subject: Re: [PATCH v3 2/3] IMA: Add log statements for failure conditions.
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>, joe@perches.com,
-        skhan@linuxfoundation.org, linux-integrity@vger.kernel.org
-Cc:     sashal@kernel.org, nramas@linux.microsoft.com,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 12 Feb 2020 19:21:51 -0500
-In-Reply-To: <ce89d382-8e8b-71d0-5271-4db83d324f94@linux.microsoft.com>
-References: <20200211231414.6640-1-tusharsu@linux.microsoft.com>
-         <20200211231414.6640-3-tusharsu@linux.microsoft.com>
-         <1581518823.8515.49.camel@linux.ibm.com>
-         <ce89d382-8e8b-71d0-5271-4db83d324f94@linux.microsoft.com>
+        id S1727032AbgBMAWK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 19:22:10 -0500
+Received: from mga04.intel.com ([192.55.52.120]:12226 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729132AbgBMAWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Feb 2020 19:22:09 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 16:22:08 -0800
+X-IronPort-AV: E=Sophos;i="5.70,434,1574150400"; 
+   d="scan'208";a="237874632"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 16:22:08 -0800
+Message-ID: <3f0218093e2d19fa0f24ceff635cbb9ec5ba69ec.camel@linux.intel.com>
+Subject: Re: [PATCH v4 1/8] mm: pass task to do_madvise
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+        linux-api@vger.kernel.org, oleksandr@redhat.com,
+        Suren Baghdasaryan <surenb@google.com>,
+        Tim Murray <timmurray@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        John Dias <joaodias@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>
+Date:   Wed, 12 Feb 2020 16:21:59 -0800
+In-Reply-To: <20200212233946.246210-2-minchan@kernel.org>
+References: <20200212233946.246210-1-minchan@kernel.org>
+         <20200212233946.246210-2-minchan@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021300-0020-0000-0000-000003A9992F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021300-0021-0000-0000-00002201815E
-Message-Id: <1581553311.8515.96.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-12_10:2020-02-12,2020-02-12 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- bulkscore=0 malwarescore=0 mlxlogscore=754 adultscore=0 spamscore=0
- lowpriorityscore=0 mlxscore=0 suspectscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002130001
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-02-12 at 14:30 -0800, Tushar Sugandhi wrote:
+On Wed, 2020-02-12 at 15:39 -0800, Minchan Kim wrote:
+> In upcoming patches, do_madvise will be called from external process
+> context so it shouldn't asssume "current" is always hinted process's
+> task_struct. Thus, let's get the mm_struct from vma->vm_mm, not
+> current because vma is always hinted process's one. And let's pass
+> *current* as new task argument of do_madvise so it shouldn't change
+> existing behavior.
 > 
-> On 2020-02-12 6:47 a.m., Mimi Zohar wrote:
-> > Hi Tushar,
-> > 
-> > Please remove the period at the end of the  Subject line.
-> Thanks. I will fix it in the next iteration.
-> > 
-> > On Tue, 2020-02-11 at 15:14 -0800, Tushar Sugandhi wrote:
-> >> process_buffer_measurement() does not have log messages for failure
-> >> conditions.
-> >>
-> >> This change adds a log statement in the above function.
-> > 
-> > I agree some form of notification needs to be added.  The question is
-> > whether the failure should be audited or a kernel message emitted.
-> >   IMA emits audit messages (integrity_audit_msg) for a number of
-> > reasons - on failure to calculate a file hash, invalid policy rules,
-> > failure to communicate with the TPM, signature verification errors,
-> > etc.
-> I believe both IMA audit messages and kernel message should be emitted -
-> for better discoverability and diagnosability.
+> Signed-off-by: Minchan Kim <minchan@kernel.org>
+> ---
+>  fs/io_uring.c      |  2 +-
+>  include/linux/mm.h |  3 ++-
+>  mm/madvise.c       | 37 ++++++++++++++++++++-----------------
+>  3 files changed, 23 insertions(+), 19 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 63beda9bafc5..6307206b970f 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -2736,7 +2736,7 @@ static int io_madvise(struct io_kiocb *req, struct io_kiocb **nxt,
+>  	if (force_nonblock)
+>  		return -EAGAIN;
+>  
+> -	ret = do_madvise(ma->addr, ma->len, ma->advice);
+> +	ret = do_madvise(current, ma->addr, ma->len, ma->advice);
+>  	if (ret < 0)
+>  		req_set_fail_links(req);
+>  	io_cqring_add_event(req, ret);
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 52269e56c514..8cb41131ec96 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2323,7 +2323,8 @@ extern int __do_munmap(struct mm_struct *, unsigned long, size_t,
+>  		       struct list_head *uf, bool downgrade);
+>  extern int do_munmap(struct mm_struct *, unsigned long, size_t,
+>  		     struct list_head *uf);
+> -extern int do_madvise(unsigned long start, size_t len_in, int behavior);
+> +extern int do_madvise(struct task_struct *task, unsigned long start,
+> +			size_t len_in, int behavior);
+>  
+>  static inline unsigned long
+>  do_mmap_pgoff(struct file *file, unsigned long addr,
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index 43b47d3fae02..ab4011ba2d9e 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -256,6 +256,7 @@ static long madvise_willneed(struct vm_area_struct *vma,
+>  {
+>  	struct file *file = vma->vm_file;
+>  	loff_t offset;
+> +	struct mm_struct *mm = vma->vm_mm;
+>  
+>  	*prev = vma;
+>  #ifdef CONFIG_SWAP
 
-Like file measurement failures, failure to measure a key or the boot
-command line should be audited as well.  For debugging purposes, you
-could make this message pr_devel.
+I would probably move the declaration of the mm variable to the top just
+so you don't have the large "offset" valley between the two long variable
+declarations.
 
-Mimi
+> @@ -288,12 +289,12 @@ static long madvise_willneed(struct vm_area_struct *vma,
+>  	 */
+>  	*prev = NULL;	/* tell sys_madvise we drop mmap_sem */
+>  	get_file(file);
+> -	up_read(&current->mm->mmap_sem);
+> +	up_read(&mm->mmap_sem);
+>  	offset = (loff_t)(start - vma->vm_start)
+>  			+ ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
+>  	vfs_fadvise(file, offset, end - start, POSIX_FADV_WILLNEED);
+>  	fput(file);
+> -	down_read(&current->mm->mmap_sem);
+> +	down_read(&mm->mmap_sem);
+>  	return 0;
+>  }
+>  
+> @@ -674,9 +675,7 @@ static int madvise_free_pte_range(pmd_t *pmd, unsigned long addr,
+>  	}
+>  out:
+>  	if (nr_swap) {
+> -		if (current->mm == mm)
+> -			sync_mm_rss(mm);
+> -
+> +		sync_mm_rss(mm);
+>  		add_mm_counter(mm, MM_SWAPENTS, nr_swap);
+>  	}
+>  	arch_leave_lazy_mmu_mode();
+
+This seems like it is taking things in the opposite direction of the other
+changes. sync_mm_rss will operate on current if I am not mistaken. I don't
+think you would want to add the stats from current to the stats of the
+task you are updating.
+
+It might make sense to add a new function that would allow you to sync the
+remote task stats by creaing a version of sync_mm_rss that also takes a
+task pointer.
+
+> @@ -756,6 +755,7 @@ static long madvise_dontneed_free(struct vm_area_struct *vma,
+>  				  unsigned long start, unsigned long end,
+>  				  int behavior)
+>  {
+> +	struct mm_struct *mm = vma->vm_mm;
+>  	*prev = vma;
+>  	if (!can_madv_lru_vma(vma))
+>  		return -EINVAL;
+> @@ -763,8 +763,8 @@ static long madvise_dontneed_free(struct vm_area_struct *vma,
+>  	if (!userfaultfd_remove(vma, start, end)) {
+>  		*prev = NULL; /* mmap_sem has been dropped, prev is stale */
+>  
+> -		down_read(&current->mm->mmap_sem);
+> -		vma = find_vma(current->mm, start);
+> +		down_read(&mm->mmap_sem);
+> +		vma = find_vma(mm, start);
+>  		if (!vma)
+>  			return -ENOMEM;
+>  		if (start < vma->vm_start) {
+
+This piece of code has me wondering if it is valid to be using vma->mm at
+the start of the function. I assume we are probably safe since we read the
+mm value before the semaphore was released in userfaultfd_remove. It might
+make more sense to just pass the task to the function and use task->mm-
+>mmap_sem instead. 
+
+It might be simpler, safer, and easier to review to just go through and
+add the task struct as needed and then simply replace references to
+current->mm with task->mm.
+
+> @@ -818,6 +818,7 @@ static long madvise_remove(struct vm_area_struct *vma,
+>  	loff_t offset;
+>  	int error;
+>  	struct file *f;
+> +	struct mm_struct *mm = vma->vm_mm;
+>  
+>  	*prev = NULL;	/* tell sys_madvise we drop mmap_sem */
+>  
+> @@ -845,13 +846,13 @@ static long madvise_remove(struct vm_area_struct *vma,
+>  	get_file(f);
+>  	if (userfaultfd_remove(vma, start, end)) {
+>  		/* mmap_sem was not released by userfaultfd_remove() */
+> -		up_read(&current->mm->mmap_sem);
+> +		up_read(&mm->mmap_sem);
+>  	}
+>  	error = vfs_fallocate(f,
+>  				FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
+>  				offset, end - start);
+>  	fput(f);
+> -	down_read(&current->mm->mmap_sem);
+> +	down_read(&mm->mmap_sem);
+>  	return error;
+>  }
+>  
+> @@ -1044,7 +1045,8 @@ madvise_behavior_valid(int behavior)
+>   *  -EBADF  - map exists, but area maps something that isn't a file.
+>   *  -EAGAIN - a kernel resource was temporarily unavailable.
+>   */
+> -int do_madvise(unsigned long start, size_t len_in, int behavior)
+> +int do_madvise(struct task_struct *task, unsigned long start,
+> +					size_t len_in, int behavior)
+>  {
+>  	unsigned long end, tmp;
+>  	struct vm_area_struct *vma, *prev;
+> @@ -1053,6 +1055,7 @@ int do_madvise(unsigned long start, size_t len_in, int behavior)
+>  	int write;
+>  	size_t len;
+>  	struct blk_plug plug;
+> +	struct mm_struct *mm = task->mm;
+>  
+>  	start = untagged_addr(start);
+>  
+> @@ -1082,10 +1085,10 @@ int do_madvise(unsigned long start, size_t len_in, int behavior)
+>  
+>  	write = madvise_need_mmap_write(behavior);
+>  	if (write) {
+> -		if (down_write_killable(&current->mm->mmap_sem))
+> +		if (down_write_killable(&mm->mmap_sem))
+>  			return -EINTR;
+>  	} else {
+> -		down_read(&current->mm->mmap_sem);
+> +		down_read(&mm->mmap_sem);
+>  	}
+>  
+>  	/*
+> @@ -1093,7 +1096,7 @@ int do_madvise(unsigned long start, size_t len_in, int behavior)
+>  	 * ranges, just ignore them, but return -ENOMEM at the end.
+>  	 * - different from the way of handling in mlock etc.
+>  	 */
+> -	vma = find_vma_prev(current->mm, start, &prev);
+> +	vma = find_vma_prev(mm, start, &prev);
+>  	if (vma && start > vma->vm_start)
+>  		prev = vma;
+>  
+> @@ -1130,19 +1133,19 @@ int do_madvise(unsigned long start, size_t len_in, int behavior)
+>  		if (prev)
+>  			vma = prev->vm_next;
+>  		else	/* madvise_remove dropped mmap_sem */
+> -			vma = find_vma(current->mm, start);
+> +			vma = find_vma(mm, start);
+>  	}
+>  out:
+>  	blk_finish_plug(&plug);
+>  	if (write)
+> -		up_write(&current->mm->mmap_sem);
+> +		up_write(&mm->mmap_sem);
+>  	else
+> -		up_read(&current->mm->mmap_sem);
+> +		up_read(&mm->mmap_sem);
+>  
+>  	return error;
+>  }
+>  
+>  SYSCALL_DEFINE3(madvise, unsigned long, start, size_t, len_in, int, behavior)
+>  {
+> -	return do_madvise(start, len_in, behavior);
+> +	return do_madvise(current, start, len_in, behavior);
+>  }
+
 
