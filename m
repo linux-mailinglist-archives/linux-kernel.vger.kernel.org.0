@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F51715C5B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24B0C15C6BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:12:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728608AbgBMPYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:24:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33786 "EHLO mail.kernel.org"
+        id S1730249AbgBMQDW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 11:03:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728278AbgBMPXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:23:10 -0500
+        id S2387414AbgBMPYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:24:19 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FD2C24693;
-        Thu, 13 Feb 2020 15:23:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2EEBB20848;
+        Thu, 13 Feb 2020 15:24:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607389;
-        bh=uWRAqrrz8QGRmZbaK0xqB+Wr/NpuVq0kBoEB4W7u2Og=;
+        s=default; t=1581607458;
+        bh=Ebtfs1JYoqcLtSEw/9VArz/6nfiSbOpff46SDXtS9dk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j3B7YGku8v2GJq9ni0kaWWjnhwf7UeoJSxFZ8HXASH2PF+L3BO69ixUl5s8MDFc3W
-         lejCk8paNBXhMTUnISb3zYTdgKnlOjIFEpAXRNWb1hc/AwqwPk4yptvjyCwsHZ5mws
-         S9mN6kRoOM6QqeSp2cE1f6zWOOugA7LiBP0eNqu4=
+        b=2Dl/BcDxPMTOUtNk6NQORsI9OIvaU21OrJfhsLK3H4vPf1Ng5KlRYWYR/UyFJr1TE
+         BKhfrNc9u0EvpZEJewuEp8MNNEKyMmemJ18IY3AOPH8YUN4TkJg6XsMUUmrXm6sdhf
+         lmHyfNgY605NV6jDai6btkZlioOVpBq3SA/M96mk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 90/91] libertas: make lbs_ibss_join_existing() return error code on rates overflow
-Date:   Thu, 13 Feb 2020 07:20:47 -0800
-Message-Id: <20200213151857.632316857@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Karl=20Rudb=C3=A6k=20Olsen?= <karl@micro-technic.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 4.9 106/116] ARM: dts: at91: sama5d3: fix maximum peripheral clock rates
+Date:   Thu, 13 Feb 2020 07:20:50 -0800
+Message-Id: <20200213151923.437177066@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
-References: <20200213151821.384445454@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +44,170 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolai Stange <nstange@suse.de>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 1754c4f60aaf1e17d886afefee97e94d7f27b4cb ]
+commit ee0aa926ddb0bd8ba59e33e3803b3b5804e3f5da upstream.
 
-Commit e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss
-descriptor") introduced a bounds check on the number of supplied rates to
-lbs_ibss_join_existing() and made it to return on overflow.
+Currently the maximum rate for peripheral clock is calculated based on a
+typical 133MHz MCK. The maximum frequency is defined in the datasheet as a
+ratio to MCK. Some sama5d3 platforms are using a 166MHz MCK. Update the
+device trees to match the maximum rate based on 166MHz.
 
-However, the aforementioned commit doesn't set the return value accordingly
-and thus, lbs_ibss_join_existing() would return with zero even though it
-failed.
+Reported-by: Karl Rudbæk Olsen <karl@micro-technic.com>
+Fixes: d2e8190b7916 ("ARM: at91/dt: define sama5d3 clocks")
+Link: https://lore.kernel.org/r/20200110172007.1253659-1-alexandre.belloni@bootlin.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Make lbs_ibss_join_existing return -EINVAL in case the bounds check on the
-number of supplied rates fails.
-
-Fixes: e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss descriptor")
-Signed-off-by: Nicolai Stange <nstange@suse.de>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/libertas/cfg.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/sama5d3.dtsi      |   28 ++++++++++++++--------------
+ arch/arm/boot/dts/sama5d3_can.dtsi  |    4 ++--
+ arch/arm/boot/dts/sama5d3_uart.dtsi |    4 ++--
+ 3 files changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/net/wireless/libertas/cfg.c b/drivers/net/wireless/libertas/cfg.c
-index 803684eed142c..7d55de21b1903 100644
---- a/drivers/net/wireless/libertas/cfg.c
-+++ b/drivers/net/wireless/libertas/cfg.c
-@@ -1854,6 +1854,7 @@ static int lbs_ibss_join_existing(struct lbs_private *priv,
- 		if (rates_max > MAX_RATES) {
- 			lbs_deb_join("invalid rates");
- 			rcu_read_unlock();
-+			ret = -EINVAL;
- 			goto out;
- 		}
- 		rates = cmd.bss.rates;
--- 
-2.20.1
-
+--- a/arch/arm/boot/dts/sama5d3.dtsi
++++ b/arch/arm/boot/dts/sama5d3.dtsi
+@@ -1109,49 +1109,49 @@
+ 					usart0_clk: usart0_clk {
+ 						#clock-cells = <0>;
+ 						reg = <12>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
+ 
+ 					usart1_clk: usart1_clk {
+ 						#clock-cells = <0>;
+ 						reg = <13>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
+ 
+ 					usart2_clk: usart2_clk {
+ 						#clock-cells = <0>;
+ 						reg = <14>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
+ 
+ 					usart3_clk: usart3_clk {
+ 						#clock-cells = <0>;
+ 						reg = <15>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
+ 
+ 					uart0_clk: uart0_clk {
+ 						#clock-cells = <0>;
+ 						reg = <16>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
+ 
+ 					twi0_clk: twi0_clk {
+ 						reg = <18>;
+ 						#clock-cells = <0>;
+-						atmel,clk-output-range = <0 16625000>;
++						atmel,clk-output-range = <0 41500000>;
+ 					};
+ 
+ 					twi1_clk: twi1_clk {
+ 						#clock-cells = <0>;
+ 						reg = <19>;
+-						atmel,clk-output-range = <0 16625000>;
++						atmel,clk-output-range = <0 41500000>;
+ 					};
+ 
+ 					twi2_clk: twi2_clk {
+ 						#clock-cells = <0>;
+ 						reg = <20>;
+-						atmel,clk-output-range = <0 16625000>;
++						atmel,clk-output-range = <0 41500000>;
+ 					};
+ 
+ 					mci0_clk: mci0_clk {
+@@ -1167,19 +1167,19 @@
+ 					spi0_clk: spi0_clk {
+ 						#clock-cells = <0>;
+ 						reg = <24>;
+-						atmel,clk-output-range = <0 133000000>;
++						atmel,clk-output-range = <0 166000000>;
+ 					};
+ 
+ 					spi1_clk: spi1_clk {
+ 						#clock-cells = <0>;
+ 						reg = <25>;
+-						atmel,clk-output-range = <0 133000000>;
++						atmel,clk-output-range = <0 166000000>;
+ 					};
+ 
+ 					tcb0_clk: tcb0_clk {
+ 						#clock-cells = <0>;
+ 						reg = <26>;
+-						atmel,clk-output-range = <0 133000000>;
++						atmel,clk-output-range = <0 166000000>;
+ 					};
+ 
+ 					pwm_clk: pwm_clk {
+@@ -1190,7 +1190,7 @@
+ 					adc_clk: adc_clk {
+ 						#clock-cells = <0>;
+ 						reg = <29>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
+ 
+ 					dma0_clk: dma0_clk {
+@@ -1221,13 +1221,13 @@
+ 					ssc0_clk: ssc0_clk {
+ 						#clock-cells = <0>;
+ 						reg = <38>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
+ 
+ 					ssc1_clk: ssc1_clk {
+ 						#clock-cells = <0>;
+ 						reg = <39>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
+ 
+ 					sha_clk: sha_clk {
+--- a/arch/arm/boot/dts/sama5d3_can.dtsi
++++ b/arch/arm/boot/dts/sama5d3_can.dtsi
+@@ -37,13 +37,13 @@
+ 					can0_clk: can0_clk {
+ 						#clock-cells = <0>;
+ 						reg = <40>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
+ 
+ 					can1_clk: can1_clk {
+ 						#clock-cells = <0>;
+ 						reg = <41>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
+ 				};
+ 			};
+--- a/arch/arm/boot/dts/sama5d3_uart.dtsi
++++ b/arch/arm/boot/dts/sama5d3_uart.dtsi
+@@ -42,13 +42,13 @@
+ 					uart0_clk: uart0_clk {
+ 						#clock-cells = <0>;
+ 						reg = <16>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
+ 
+ 					uart1_clk: uart1_clk {
+ 						#clock-cells = <0>;
+ 						reg = <17>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
+ 				};
+ 			};
 
 
