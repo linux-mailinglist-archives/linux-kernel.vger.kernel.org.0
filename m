@@ -2,119 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D4CA15C664
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:12:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 270A015C6EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:13:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387667AbgBMQAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 11:00:16 -0500
-Received: from gateway23.websitewelcome.com ([192.185.50.164]:30865 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727983AbgBMQAO (ORCPT
+        id S1730110AbgBMQFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 11:05:15 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34035 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388260AbgBMQFN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 11:00:14 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 98E413C05
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 10:00:13 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 2GuTjrKXWEfyq2GuTj0o7Q; Thu, 13 Feb 2020 10:00:13 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=NmNOXDdvB98xwhJtElcLMbN7Op+XthJY6SaxnSvAi38=; b=PnRXhWpqpuP8CcDGMmZsl0bGNa
-        XNQeXo/bLuVdGGn4oHhKjZ9V0qYKbURZQOxyu3tATX/9f3uZtKCoaIear7lD8f3b878q41oKtoxFF
-        pjjXp43uLxs2n0ozqN6aKMwUQqNoA6zbcLBN4goSeehiUYUcA+leArBf0o2T2uZw8z3l8cBBQoBcg
-        FMRdHiQJuYRSpPmqFacjUuE+fgBWN9EfKmeNBrEA2IhqK0IvLV7pg3iVxuh5xg5+8G+fAieB2cPjz
-        t257qJDh4l+u8iYkqWn7TkKXwjyGUN8294Sa92MAGjcbc5Y7SlTyvZxGuc9N+37uwhuXKSBlXEUby
-        LgImiwtw==;
-Received: from [200.68.140.15] (port=13875 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j2GuS-003Y1i-2Q; Thu, 13 Feb 2020 10:00:12 -0600
-Date:   Thu, 13 Feb 2020 10:02:44 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc:     ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ocfs2: Replace zero-length array with flexible-array member
-Message-ID: <20200213160244.GA6088@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.15
-X-Source-L: No
-X-Exim-ID: 1j2GuS-003Y1i-2Q
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.15]:13875
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Thu, 13 Feb 2020 11:05:13 -0500
+Received: by mail-pg1-f194.google.com with SMTP id j4so3346378pgi.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 08:05:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=Nw7URh+UMCPI53aY8KronYHaSIRJakz2tA+QVeHRq24=;
+        b=vN9o+Q3ylXls7dbXZf7pb/BIPUAI8Rq7Vvzs+fg7G1A1zZ0N40p1LKY63k5fzF8dE/
+         SUM+YiJ9jqaU/EER7RCFRbv+4s5Dl+QygoZOI0MFB4v6UYZ09sSYMuLr0IWHzE/o1FPm
+         8oK92WL0KjzSl4FX/VGKfQ58yvvzeV/A0n6ChZ9Pf48ydntQl2k3DZ7/ffrpC2IJUEJb
+         f1ec9bn9QARh8hezJM8WiEBIvFtcYq7OIdfUvK2JDNR2ZwV0+QUDK8XqMNwZWlTpBzGR
+         edXS6d7DKgctWboMSFvd3oIPwmZeo+q81rh28UocbZhWsx+6w5ryC1WhQgKKqTZ7i/78
+         hU+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=Nw7URh+UMCPI53aY8KronYHaSIRJakz2tA+QVeHRq24=;
+        b=oVHWscS63MbjVV2C0/FWOItsyG67pXb5+dEML5XtPrVqRvkQl3u0OzaWEwPgVEzLWZ
+         2gBZHsjzpHArUQgE88/keqHvKzo0Y0YcbkPVjM7z4PFmqSqUzdwGf0IBARkVB5/2BzUA
+         YVE2RKyGnzx2xXY8Q5KZkNHay/XZkmSqVI9pNNsBqPXU/fu0FdpCTDDNZWkDttrnX84Z
+         mgCxAg19+aikwHptz4VUhqyhP2ax/Zd6frTZzeXrYk12TXJhcQHbl4Ysyu6QVgsJixYC
+         1P2/ylsJUGsSXdLtKJaHM5UCKR9gh+8j1W6GR4QtSV2sZd+lHzOBfL+rzLP6AIEvTLpo
+         5bUQ==
+X-Gm-Message-State: APjAAAX0x6Eo+L4TCyDQUroNeIcWRGkY+r4u22tEfR3A9O6efdMNaaJB
+        PFN5P3MHm2Sr2RKOtDjK5DV5KFb0LZQ=
+X-Google-Smtp-Source: APXvYqwoar8rBWSpiup3MdH7P5BbX7a3Za05ctuYjG7lmMKzNxPXx+gxROipIcVYQPWoBdY6rSms4w==
+X-Received: by 2002:a62:b60b:: with SMTP id j11mr14757776pff.255.1581609911677;
+        Thu, 13 Feb 2020 08:05:11 -0800 (PST)
+Received: from ?IPv6:2601:646:c200:1ef2:4e4:2fae:ba85:17b7? ([2601:646:c200:1ef2:4e4:2fae:ba85:17b7])
+        by smtp.gmail.com with ESMTPSA id 70sm3544667pgd.28.2020.02.13.08.05.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2020 08:05:10 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC PATCH 0/5] New way to track mce notifier chain actions
+Date:   Thu, 13 Feb 2020 08:05:09 -0800
+Message-Id: <A5D5C146-DA47-46F3-ACE1-2D3FCCFA1FDD@amacapital.net>
+References: <20200213060949.GA31799@zn.tnic>
+Cc:     "Luck, Tony" <tony.luck@intel.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200213060949.GA31799@zn.tnic>
+To:     Borislav Petkov <bp@alien8.de>
+X-Mailer: iPhone Mail (17D50)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+> On Feb 12, 2020, at 10:09 PM, Borislav Petkov <bp@alien8.de> wrote:
+>=20
+> =EF=BB=BFOn Wed, Feb 12, 2020 at 09:52:39PM -0800, Andy Lutomirski wrote:
+>> I HATE notifier chains for exceptions, and I REALLY HATE NOTIFY_STOP.
+>> I don't suppose we could rig something up so that they are simply
+>> notifiers (for MCE and, eventually, for everything) and just outright
+>> prevent them from modifying the processing?
+>=20
+> As in: they all get executed unconditionally and there's no NOTIFY_STOP
+> and if they're not interested in the notification, they simply return
+> early?
+>=20
+> Hohumm, sounds nicer.
+>=20
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+Exactly :)
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- fs/ocfs2/journal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
-index 68ba354cf361..b425f0b01dce 100644
---- a/fs/ocfs2/journal.c
-+++ b/fs/ocfs2/journal.c
-@@ -91,7 +91,7 @@ enum ocfs2_replay_state {
- struct ocfs2_replay_map {
- 	unsigned int rm_slots;
- 	enum ocfs2_replay_state rm_state;
--	unsigned char rm_replay_slots[0];
-+	unsigned char rm_replay_slots[];
- };
- 
- static void ocfs2_replay_map_set_state(struct ocfs2_super *osb, int state)
--- 
-2.25.0
-
+> --=20
+> Regards/Gruss,
+>    Boris.
+>=20
+> https://people.kernel.org/tglx/notes-about-netiquette
