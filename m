@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 869A915C63D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:12:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4F7F15C5C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730007AbgBMP6k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:58:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40076 "EHLO mail.kernel.org"
+        id S1728370AbgBMPYw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:24:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728190AbgBMPZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:08 -0500
+        id S1728388AbgBMPX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:28 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B80E246C1;
-        Thu, 13 Feb 2020 15:25:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7ED2F2469A;
+        Thu, 13 Feb 2020 15:23:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607508;
-        bh=H0mPSkaFOF7J4fHrknf39KG7tqcuvpubEYUOXQTbNcM=;
+        s=default; t=1581607407;
+        bh=h1jvcIZdjodHYjLypghcVkFJ+zkW2H7PdFtEX+iSY20=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZdBpGYZ4xa0OHsp2g/HUnS7XMONDqEJC1oWs9jaLRhqyo02ECJuiooVBs0iMLe3j3
-         1CIdSmxCOt6vbX35jh9tCQ2G9rta+5iWQY9GRVCmcEtqk1TBf/FOij68SdVHlS2NHt
-         zCsHyAcacMwLSG245iJk3mRIfuvDirHfnT86U9DY=
+        b=2rG0zJjwmX26fT/yBsZezx9owal79C6Zhf6GNdyy7+TkULLTFFoxpaAuTPRwlh7sO
+         ozv6Jcvi603QF2FTr9pK+1uMfpueMqdDT6s3adJNNu9H6R4SECx/L7Dm0AcMAKCk2z
+         xZAZbMEViRqFwhAHiwYvAEnSNFZlCyTx4o5KB8nI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 067/173] crypto: picoxcell - adjust the position of tasklet_init and fix missed tasklet_kill
-Date:   Thu, 13 Feb 2020 07:19:30 -0800
-Message-Id: <20200213151950.616419334@linuxfoundation.org>
+        stable@vger.kernel.org, Yurii Monakov <monakov.y@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 027/116] PCI: keystone: Fix link training retries initiation
+Date:   Thu, 13 Feb 2020 07:19:31 -0800
+Message-Id: <20200213151853.493272633@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,62 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Yurii Monakov <monakov.y@gmail.com>
 
-commit 7f8c36fe9be46862c4f3c5302f769378028a34fa upstream.
+[ Upstream commit 6df19872d881641e6394f93ef2938cffcbdae5bb ]
 
-Since tasklet is needed to be initialized before registering IRQ
-handler, adjust the position of tasklet_init to fix the wrong order.
+ks_pcie_stop_link() function does not clear LTSSM_EN_VAL bit so
+link training was not triggered more than once after startup.
+In configurations where link can be unstable during early boot,
+for example, under low temperature, it will never be established.
 
-Besides, to fix the missed tasklet_kill, this patch adds a helper
-function and uses devm_add_action to kill the tasklet automatically.
-
-Fixes: ce92136843cb ("crypto: picoxcell - add support for the picoxcell crypto engines")
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 0c4ffcfe1fbc ("PCI: keystone: Add TI Keystone PCIe driver")
+Signed-off-by: Yurii Monakov <monakov.y@gmail.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Andrew Murray <andrew.murray@arm.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/picoxcell_crypto.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/pci/host/pci-keystone-dw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/crypto/picoxcell_crypto.c
-+++ b/drivers/crypto/picoxcell_crypto.c
-@@ -1616,6 +1616,11 @@ static const struct of_device_id spacc_o
- MODULE_DEVICE_TABLE(of, spacc_of_id_table);
- #endif /* CONFIG_OF */
+diff --git a/drivers/pci/host/pci-keystone-dw.c b/drivers/pci/host/pci-keystone-dw.c
+index 9397c46671062..f011a8780ff53 100644
+--- a/drivers/pci/host/pci-keystone-dw.c
++++ b/drivers/pci/host/pci-keystone-dw.c
+@@ -502,7 +502,7 @@ void ks_dw_pcie_initiate_link_train(struct keystone_pcie *ks_pcie)
+ 	/* Disable Link training */
+ 	val = ks_dw_app_readl(ks_pcie, CMD_STATUS);
+ 	val &= ~LTSSM_EN_VAL;
+-	ks_dw_app_writel(ks_pcie, CMD_STATUS, LTSSM_EN_VAL | val);
++	ks_dw_app_writel(ks_pcie, CMD_STATUS, val);
  
-+static void spacc_tasklet_kill(void *data)
-+{
-+	tasklet_kill(data);
-+}
-+
- static int spacc_probe(struct platform_device *pdev)
- {
- 	int i, err, ret = -EINVAL;
-@@ -1659,6 +1664,14 @@ static int spacc_probe(struct platform_d
- 		return -ENXIO;
- 	}
- 
-+	tasklet_init(&engine->complete, spacc_spacc_complete,
-+		     (unsigned long)engine);
-+
-+	ret = devm_add_action(&pdev->dev, spacc_tasklet_kill,
-+			      &engine->complete);
-+	if (ret)
-+		return ret;
-+
- 	if (devm_request_irq(&pdev->dev, irq->start, spacc_spacc_irq, 0,
- 			     engine->name, engine)) {
- 		dev_err(engine->dev, "failed to request IRQ\n");
-@@ -1721,8 +1734,6 @@ static int spacc_probe(struct platform_d
- 	INIT_LIST_HEAD(&engine->completed);
- 	INIT_LIST_HEAD(&engine->in_progress);
- 	engine->in_flight = 0;
--	tasklet_init(&engine->complete, spacc_spacc_complete,
--		     (unsigned long)engine);
- 
- 	platform_set_drvdata(pdev, engine);
- 
+ 	/* Initiate Link Training */
+ 	val = ks_dw_app_readl(ks_pcie, CMD_STATUS);
+-- 
+2.20.1
+
 
 
