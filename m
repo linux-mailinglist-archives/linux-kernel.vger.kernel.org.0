@@ -2,149 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90A1515B6AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 02:27:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A870715B6BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 02:33:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729383AbgBMB1C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 20:27:02 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:13832 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729289AbgBMB1C (ORCPT
+        id S1729427AbgBMBdV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 20:33:21 -0500
+Received: from smtprelay0101.hostedemail.com ([216.40.44.101]:42230 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729285AbgBMBdV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 20:27:02 -0500
-X-UUID: cbc872e4b40242fc8d2d3d8b23d7993f-20200213
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=yOSBqxqyM2MBNdVtLEcUpyckrLNC7q1s0wr5YIz7XTw=;
-        b=rvxiq1ffA/1uEyJ0mg3lMBWqFgHfnwv/KutQjyBKQ6Ko9WVMLOm2CKZaHGfUXI1U3qoHskVIpbzHR8l4l1ZlFufYbzVjNO6LxxAw5uUZh/p1QXjWlVdSbIbefthKeUPGQf1BVmuWkFUgYu31Q6aOzBbn3NpFB9Y46Y23yJrJuEo=;
-X-UUID: cbc872e4b40242fc8d2d3d8b23d7993f-20200213
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <bibby.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 497296874; Thu, 13 Feb 2020 09:26:56 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 13 Feb 2020 09:26:07 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 13 Feb 2020 09:27:23 +0800
-Message-ID: <1581557213.12296.0.camel@mtksdaap41>
-Subject: Re: [PATCH 1/2] arm64: dts: mt8183: Add gce setting in display node
-From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>
-CC:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
-        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>,
-        Yongqiang Niu <yongqiang.niu@mediatek.com>
-Date:   Thu, 13 Feb 2020 09:26:53 +0800
-In-Reply-To: <1581504514.26347.4.camel@mtksdaap41>
-References: <20200212095501.12124-1-bibby.hsieh@mediatek.com>
-         <1581504514.26347.4.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Wed, 12 Feb 2020 20:33:21 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 124AA1801A89A;
+        Thu, 13 Feb 2020 01:33:20 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:960:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:2731:2828:2895:2902:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3874:4321:5007:8957:10004:10400:10848:11026:11232:11658:11914:12043:12297:12438:12740:12760:12895:13069:13311:13357:13439:14093:14097:14181:14659:14721:21080:21451:21611:21627:21740:21939:30054:30070:30080:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: bike27_572f8f1d99a5a
+X-Filterd-Recvd-Size: 2605
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf12.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 13 Feb 2020 01:33:19 +0000 (UTC)
+Message-ID: <2dab786b686735ec0c4ee614c64448d78c67a51d.camel@perches.com>
+Subject: Re: [PATCH 1/1] checkpatch: support "base-commit:" format
+From:   Joe Perches <joe@perches.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andy Whitcroft <apw@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Wed, 12 Feb 2020 17:32:01 -0800
+In-Reply-To: <a22937adb1bb364e4f5b8f30ee928a2df5cc226c.camel@perches.com>
+References: <20200212233221.47662-1-jhubbard@nvidia.com>
+         <20200212233221.47662-2-jhubbard@nvidia.com>
+         <a22937adb1bb364e4f5b8f30ee928a2df5cc226c.camel@perches.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDIwLTAyLTEyIGF0IDE4OjQ4ICswODAwLCBDSyBIdSB3cm90ZToNCj4gT24gV2Vk
-LCAyMDIwLTAyLTEyIGF0IDE3OjU1ICswODAwLCBCaWJieSBIc2llaCB3cm90ZToNCj4gPiBJbiBv
-cmRlciB0byB1c2UgR0NFIGZ1bmN0aW9uLCB3ZSBuZWVkIGFkZCBzb21lIGluZm9ybWF0aW9uDQo+
-ID4gaW50byBkaXNwbGF5IG5vZGUgKG1ib3hlcywgbWVkaWF0ZWssZ2NlLWNsaWVudC1yZWcsIG1l
-ZGlhdGVrLGdjZS1ldmVudHMpLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IEJpYmJ5IEhzaWVo
-IDxiaWJieS5oc2llaEBtZWRpYXRlay5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogWW9uZ3FpYW5n
-IE5pdSA8eW9uZ3FpYW5nLm5pdUBtZWRpYXRlay5jb20+DQo+ID4gLS0tDQo+ID4gIGFyY2gvYXJt
-NjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ4MTgzLmR0c2kgfCAxNiArKysrKysrKysrKysrKysrDQo+
-ID4gIDEgZmlsZSBjaGFuZ2VkLCAxNiBpbnNlcnRpb25zKCspDQo+ID4gDQo+ID4gZGlmZiAtLWdp
-dCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ4MTgzLmR0c2kgYi9hcmNoL2FybTY0
-L2Jvb3QvZHRzL21lZGlhdGVrL210ODE4My5kdHNpDQo+ID4gaW5kZXggYmU0NDI4YzkyZjM1Li4x
-ZjBmYzI4MWJjMmQgMTAwNjQ0DQo+ID4gLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRl
-ay9tdDgxODMuZHRzaQ0KPiA+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ4
-MTgzLmR0c2kNCj4gPiBAQCAtOSw2ICs5LDcgQEANCj4gPiAgI2luY2x1ZGUgPGR0LWJpbmRpbmdz
-L2ludGVycnVwdC1jb250cm9sbGVyL2FybS1naWMuaD4NCj4gPiAgI2luY2x1ZGUgPGR0LWJpbmRp
-bmdzL2ludGVycnVwdC1jb250cm9sbGVyL2lycS5oPg0KPiA+ICAjaW5jbHVkZSA8ZHQtYmluZGlu
-Z3MvcG93ZXIvbXQ4MTgzLXBvd2VyLmg+DQo+ID4gKyNpbmNsdWRlIDxkdC1iaW5kaW5ncy9nY2Uv
-bXQ4MTgzLWdjZS5oPg0KPiA+ICAjaW5jbHVkZSAibXQ4MTgzLXBpbmZ1bmMuaCINCj4gPiAgDQo+
-ID4gIC8gew0KPiA+IEBAIC02NjQsNiArNjY1LDkgQEANCj4gPiAgCQkJcmVnID0gPDAgMHgxNDAw
-MDAwMCAwIDB4MTAwMD47DQo+ID4gIAkJCXBvd2VyLWRvbWFpbnMgPSA8JnNjcHN5cyBNVDgxODNf
-UE9XRVJfRE9NQUlOX0RJU1A+Ow0KPiA+ICAJCQkjY2xvY2stY2VsbHMgPSA8MT47DQo+ID4gKwkJ
-CW1ib3hlcyA9IDwmZ2NlIDAgQ01EUV9USFJfUFJJT19ISUdIRVNUIDE+LA0KPiANCj4gSSB3b3Vs
-ZCBsaWtlIHRvIHJlbW92ZSBhdG9taWMgcGFyYW1ldGVyLCBzbyBwbGVhc2UgZm9sbG93IFsxXSB0
-byByZW1vdmUNCj4gaXQuDQo+IA0KPiBbMV0gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9w
-YXRjaC8xMDc2NTQxOS8NCg0KSGksIENLLA0KDQpZZWFoLCBJJ20gdHJ5aW5nIHJlbW92ZSBhdG9t
-aWMgZmVhdHVyZS4NCg0KVGhhbmtzDQoNCkJpYmJ5DQo+IA0KPiBSZWdhcmRzLA0KPiBDSw0KPiAN
-Cj4gPiArCQkJCSA8JmdjZSAxIENNRFFfVEhSX1BSSU9fSElHSEVTVCAxPjsNCj4gPiArCQkJbWVk
-aWF0ZWssZ2NlLWNsaWVudC1yZWcgPSA8JmdjZSBTVUJTWVNfMTQwMFhYWFggMCAweDEwMDA+Ow0K
-PiA+ICAJCX07DQo+ID4gIA0KPiA+ICAJCW92bDA6IG92bEAxNDAwODAwMCB7DQo+ID4gQEAgLTY3
-Miw2ICs2NzYsNyBAQA0KPiA+ICAJCQlpbnRlcnJ1cHRzID0gPEdJQ19TUEkgMjI1IElSUV9UWVBF
-X0xFVkVMX0xPVz47DQo+ID4gIAkJCXBvd2VyLWRvbWFpbnMgPSA8JnNjcHN5cyBNVDgxODNfUE9X
-RVJfRE9NQUlOX0RJU1A+Ow0KPiA+ICAJCQljbG9ja3MgPSA8Jm1tc3lzIENMS19NTV9ESVNQX09W
-TDA+Ow0KPiA+ICsJCQltZWRpYXRlayxnY2UtY2xpZW50LXJlZyA9IDwmZ2NlIFNVQlNZU18xNDAw
-WFhYWCAweDgwMDAgMHgxMDAwPjsNCj4gPiAgCQl9Ow0KPiA+ICANCj4gPiAgCQlvdmxfMmwwOiBv
-dmxAMTQwMDkwMDAgew0KPiA+IEBAIC02ODAsNiArNjg1LDcgQEANCj4gPiAgCQkJaW50ZXJydXB0
-cyA9IDxHSUNfU1BJIDIyNiBJUlFfVFlQRV9MRVZFTF9MT1c+Ow0KPiA+ICAJCQlwb3dlci1kb21h
-aW5zID0gPCZzY3BzeXMgTVQ4MTgzX1BPV0VSX0RPTUFJTl9ESVNQPjsNCj4gPiAgCQkJY2xvY2tz
-ID0gPCZtbXN5cyBDTEtfTU1fRElTUF9PVkwwXzJMPjsNCj4gPiArCQkJbWVkaWF0ZWssZ2NlLWNs
-aWVudC1yZWcgPSA8JmdjZSBTVUJTWVNfMTQwMFhYWFggMHg5MDAwIDB4MTAwMD47DQo+ID4gIAkJ
-fTsNCj4gPiAgDQo+ID4gIAkJb3ZsXzJsMTogb3ZsQDE0MDBhMDAwIHsNCj4gPiBAQCAtNjg4LDYg
-KzY5NCw3IEBADQo+ID4gIAkJCWludGVycnVwdHMgPSA8R0lDX1NQSSAyMjcgSVJRX1RZUEVfTEVW
-RUxfTE9XPjsNCj4gPiAgCQkJcG93ZXItZG9tYWlucyA9IDwmc2Nwc3lzIE1UODE4M19QT1dFUl9E
-T01BSU5fRElTUD47DQo+ID4gIAkJCWNsb2NrcyA9IDwmbW1zeXMgQ0xLX01NX0RJU1BfT1ZMMV8y
-TD47DQo+ID4gKwkJCW1lZGlhdGVrLGdjZS1jbGllbnQtcmVnID0gPCZnY2UgU1VCU1lTXzE0MDBY
-WFhYIDB4YTAwMCAweDEwMDA+Ow0KPiA+ICAJCX07DQo+ID4gIA0KPiA+ICAJCXJkbWEwOiByZG1h
-QDE0MDBiMDAwIHsNCj4gPiBAQCAtNjk3LDYgKzcwNCw3IEBADQo+ID4gIAkJCXBvd2VyLWRvbWFp
-bnMgPSA8JnNjcHN5cyBNVDgxODNfUE9XRVJfRE9NQUlOX0RJU1A+Ow0KPiA+ICAJCQljbG9ja3Mg
-PSA8Jm1tc3lzIENMS19NTV9ESVNQX1JETUEwPjsNCj4gPiAgCQkJbWVkaWF0ZWsscmRtYV9maWZv
-X3NpemUgPSA8NTEyMD47DQo+ID4gKwkJCW1lZGlhdGVrLGdjZS1jbGllbnQtcmVnID0gPCZnY2Ug
-U1VCU1lTXzE0MDBYWFhYIDB4YjAwMCAweDEwMDA+Ow0KPiA+ICAJCX07DQo+ID4gIA0KPiA+ICAJ
-CXJkbWExOiByZG1hQDE0MDBjMDAwIHsNCj4gPiBAQCAtNzA2LDYgKzcxNCw3IEBADQo+ID4gIAkJ
-CXBvd2VyLWRvbWFpbnMgPSA8JnNjcHN5cyBNVDgxODNfUE9XRVJfRE9NQUlOX0RJU1A+Ow0KPiA+
-ICAJCQljbG9ja3MgPSA8Jm1tc3lzIENMS19NTV9ESVNQX1JETUExPjsNCj4gPiAgCQkJbWVkaWF0
-ZWsscmRtYV9maWZvX3NpemUgPSA8MjA0OD47DQo+ID4gKwkJCW1lZGlhdGVrLGdjZS1jbGllbnQt
-cmVnID0gPCZnY2UgU1VCU1lTXzE0MDBYWFhYIDB4YzAwMCAweDEwMDA+Ow0KPiA+ICAJCX07DQo+
-ID4gIA0KPiA+ICAJCWNvbG9yMDogY29sb3JAMTQwMGUwMDAgew0KPiA+IEBAIC03MTUsNiArNzI0
-LDcgQEANCj4gPiAgCQkJaW50ZXJydXB0cyA9IDxHSUNfU1BJIDIzMSBJUlFfVFlQRV9MRVZFTF9M
-T1c+Ow0KPiA+ICAJCQlwb3dlci1kb21haW5zID0gPCZzY3BzeXMgTVQ4MTgzX1BPV0VSX0RPTUFJ
-Tl9ESVNQPjsNCj4gPiAgCQkJY2xvY2tzID0gPCZtbXN5cyBDTEtfTU1fRElTUF9DT0xPUjA+Ow0K
-PiA+ICsJCQltZWRpYXRlayxnY2UtY2xpZW50LXJlZyA9IDwmZ2NlIFNVQlNZU18xNDAwWFhYWCAw
-eGUwMDAgMHgxMDAwPjsNCj4gPiAgCQl9Ow0KPiA+ICANCj4gPiAgCQljY29ycjA6IGNjb3JyQDE0
-MDBmMDAwIHsNCj4gPiBAQCAtNzIzLDYgKzczMyw3IEBADQo+ID4gIAkJCWludGVycnVwdHMgPSA8
-R0lDX1NQSSAyMzIgSVJRX1RZUEVfTEVWRUxfTE9XPjsNCj4gPiAgCQkJcG93ZXItZG9tYWlucyA9
-IDwmc2Nwc3lzIE1UODE4M19QT1dFUl9ET01BSU5fRElTUD47DQo+ID4gIAkJCWNsb2NrcyA9IDwm
-bW1zeXMgQ0xLX01NX0RJU1BfQ0NPUlIwPjsNCj4gPiArCQkJbWVkaWF0ZWssZ2NlLWNsaWVudC1y
-ZWcgPSA8JmdjZSBTVUJTWVNfMTQwMFhYWFggMHhmMDAwIDB4MTAwMD47DQo+ID4gIAkJfTsNCj4g
-PiAgDQo+ID4gIAkJYWFsMDogYWFsQDE0MDEwMDAwIHsNCj4gPiBAQCAtNzMyLDYgKzc0Myw3IEBA
-DQo+ID4gIAkJCWludGVycnVwdHMgPSA8R0lDX1NQSSAyMzMgSVJRX1RZUEVfTEVWRUxfTE9XPjsN
-Cj4gPiAgCQkJcG93ZXItZG9tYWlucyA9IDwmc2Nwc3lzIE1UODE4M19QT1dFUl9ET01BSU5fRElT
-UD47DQo+ID4gIAkJCWNsb2NrcyA9IDwmbW1zeXMgQ0xLX01NX0RJU1BfQUFMMD47DQo+ID4gKwkJ
-CW1lZGlhdGVrLGdjZS1jbGllbnQtcmVnID0gPCZnY2UgU1VCU1lTXzE0MDFYWFhYIDAgMHgxMDAw
-PjsNCj4gPiAgCQl9Ow0KPiA+ICANCj4gPiAgCQlnYW1tYTA6IGdhbW1hQDE0MDExMDAwIHsNCj4g
-PiBAQCAtNzQxLDYgKzc1Myw3IEBADQo+ID4gIAkJCWludGVycnVwdHMgPSA8R0lDX1NQSSAyMzQg
-SVJRX1RZUEVfTEVWRUxfTE9XPjsNCj4gPiAgCQkJcG93ZXItZG9tYWlucyA9IDwmc2Nwc3lzIE1U
-ODE4M19QT1dFUl9ET01BSU5fRElTUD47DQo+ID4gIAkJCWNsb2NrcyA9IDwmbW1zeXMgQ0xLX01N
-X0RJU1BfR0FNTUEwPjsNCj4gPiArCQkJbWVkaWF0ZWssZ2NlLWNsaWVudC1yZWcgPSA8JmdjZSBT
-VUJTWVNfMTQwMVhYWFggMHgxMDAwIDB4MTAwMD47DQo+ID4gIAkJfTsNCj4gPiAgDQo+ID4gIAkJ
-ZGl0aGVyMDogZGl0aGVyQDE0MDEyMDAwIHsNCj4gPiBAQCAtNzQ5LDYgKzc2Miw3IEBADQo+ID4g
-IAkJCWludGVycnVwdHMgPSA8R0lDX1NQSSAyMzUgSVJRX1RZUEVfTEVWRUxfTE9XPjsNCj4gPiAg
-CQkJcG93ZXItZG9tYWlucyA9IDwmc2Nwc3lzIE1UODE4M19QT1dFUl9ET01BSU5fRElTUD47DQo+
-ID4gIAkJCWNsb2NrcyA9IDwmbW1zeXMgQ0xLX01NX0RJU1BfRElUSEVSMD47DQo+ID4gKwkJCW1l
-ZGlhdGVrLGdjZS1jbGllbnQtcmVnID0gPCZnY2UgU1VCU1lTXzE0MDFYWFhYIDB4MjAwMCAweDEw
-MDA+Ow0KPiA+ICAJCX07DQo+ID4gIA0KPiA+ICAJCW11dGV4OiBtdXRleEAxNDAxNjAwMCB7DQo+
-ID4gQEAgLTc1Niw2ICs3NzAsOCBAQA0KPiA+ICAJCQlyZWcgPSA8MCAweDE0MDE2MDAwIDAgMHgx
-MDAwPjsNCj4gPiAgCQkJaW50ZXJydXB0cyA9IDxHSUNfU1BJIDIxNyBJUlFfVFlQRV9MRVZFTF9M
-T1c+Ow0KPiA+ICAJCQlwb3dlci1kb21haW5zID0gPCZzY3BzeXMgTVQ4MTgzX1BPV0VSX0RPTUFJ
-Tl9ESVNQPjsNCj4gPiArCQkJbWVkaWF0ZWssZ2NlLWV2ZW50cyA9IDxDTURRX0VWRU5UX01VVEVY
-X1NUUkVBTV9ET05FMD4sDQo+ID4gKwkJCQkJICAgICAgPENNRFFfRVZFTlRfTVVURVhfU1RSRUFN
-X0RPTkUxPjsNCj4gPiAgCQl9Ow0KPiA+ICANCj4gPiAgCQlzbWlfY29tbW9uOiBzbWlAMTQwMTkw
-MDAgew0KPiANCj4gDQoNCg==
+On Wed, 2020-02-12 at 17:06 -0800, Joe Perches wrote:
+> On Wed, 2020-02-12 at 15:32 -0800, John Hubbard wrote:
+> > In order to support the get-lore-mbox.py tool described in [1], I ran:
+> > 
+> >     git format-patch --base=<commit> --cover-letter <revrange>
+> > 
+> > ...which generated a "base-commit: <commit-hash>" tag at the end of the
+> > cover letter. However, checkpatch.pl generated an error upon encounting
+> > "base-commit:" in the cover letter:
+> > 
+> >     "ERROR: Please use git commit description style..."
+> > 
+> > ...because it found the "commit" keyword, and failed to recognize that
+> > it was part of the "base-commit" phrase, and as such, should not be
+> > subjected to the same commit description style rules.
+> > 
+> > Update checkpatch.pl to include a special case for "base-commit:", so
+> > that that tag no longer generates a checkpatch error.
+[]
+> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+[]
+> > @@ -2761,6 +2761,7 @@ sub process {
+> >  
+> >  # Check for git id commit length and improperly formed commit descriptions
+> >  		if ($in_commit_log && !$commit_log_possible_stack_dump &&
+> > +		    $line !~ /base-commit:/ &&
+> 
+> If this base-commit: entry is only at the start of line,
+> I presume this should actually be
+> 
+> 		    $line !~ /^base-commit:/ &&
+> or maybe
+> 		    $line !~ /^\s*base-commit:/ &&
+> 
+> >  		    $line !~ /^\s*(?:Link|Patchwork|http|https|BugLink):/i &&
+
+and probably better to just add it to this line instead like
+
+ 		    $line !~ /^\s*(?:Link|Patchwork|http|https|BugLink|base-commit):/i &&
+
 
