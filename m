@@ -2,84 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2C7415B926
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 06:42:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 669FD15B92A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 06:43:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729667AbgBMFml (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 00:42:41 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43706 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbgBMFml (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 00:42:41 -0500
-Received: by mail-pf1-f193.google.com with SMTP id s1so2455499pfh.10
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 21:42:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=l3fC7d9p2hDnV1O6sE47mVWCvfvZGL5+HxAj+Md7Lc0=;
-        b=T62CKdFr4fxXFFolO534bUAx5TuqPWnzHsFLyNj3hNnvdursXIKGRIx9OwvNQdblEa
-         f3zcwktKN0UyiuaNORzYgMB1AHrQ3JBzdmYGKHT8mkG6uY/2xj+IyzMCvqxhwQQ9u7x/
-         yYOk5us7rV5DT0som65N5iwUVKuO0LA4HJl9Ax+jo5iUtzjVtah7lUGaKMcE+2k0V8Pl
-         wCfFQwVPngqZ9AZd/jJl7Z3t7haTve9AAlJHmmjDISe02zthyZugs+rWozorhVZd1jWP
-         93JgUyitKSVuaZrAoqTjmUFHmxJ+d9xKA475QnmC9Cx2C9WHj6SGAJpSfkqXr6k5P+/F
-         OT9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=l3fC7d9p2hDnV1O6sE47mVWCvfvZGL5+HxAj+Md7Lc0=;
-        b=F9pN4othCk/0Vgc8/Ii0W9Nw5kLRJsX+wyK4xzeGyOY16+I/h4n2Mb06+33abmd6MF
-         2YjalMfVcDKZh8BUoZJnRMjrMyyIjPg+/fO2s4XFaXpa55mCQUG+VZ4LCGAjdfzEwFzw
-         ibSuniXYcL+7cwrTVWWIpuXAsbru93w6yIV65OMK9Cj0yhclZUoU3Plw+Fyd8JMtZBqc
-         8Yu7NWKe6ZjKd8t+sgxteUyVu7IPhqql70qAIZAC4eps36FxleYe4CUu6hsLdMwDQo81
-         mtunvu12tMzi/Tbasx1A+JjpIs4giZlzrrxlMfoSvjhG8wWuWEBMFrO19pDxeTq1KPIt
-         FXdA==
-X-Gm-Message-State: APjAAAXwT+uj9k7lPm/CE8uIYvUbMCPNSNRDCK+dJvkX8nKBP4Kt1/gI
-        ZVhEd2HeN13O18dWU29EEBk=
-X-Google-Smtp-Source: APXvYqyUxe7EYa42/2FGmXN9rs9QBSvCVXUdopificAVMg5Klb19y9xwFLv+/DX3VE5Ui3NsQHWGyQ==
-X-Received: by 2002:aa7:951c:: with SMTP id b28mr11882993pfp.97.1581572560379;
-        Wed, 12 Feb 2020 21:42:40 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
-        by smtp.gmail.com with ESMTPSA id l5sm996424pgu.61.2020.02.12.21.42.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 21:42:39 -0800 (PST)
-Date:   Thu, 13 Feb 2020 14:42:37 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/3] printk: Move console matching logic into a
- separate function
-Message-ID: <20200213054237.GD13208@google.com>
-References: <e6b63bc26108c6e3645f9ea9e03aba38fd8b8464.camel@kernel.crashing.org>
+        id S1729694AbgBMFn4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 00:43:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57636 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725773AbgBMFnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 00:43:55 -0500
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBA8724676
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 05:43:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581572634;
+        bh=MeLA6KBsKMNopTpVt73O8Wl7j6vH4TfNZlX2CyoSvrA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=tQMa4cy5y61Eqk2HT4RhEU9VuwdcKmwmLV+Pm9dxWTPAgh9MYuU7dVQnXUxZ6Wux+
+         vU0nBwtQNGI/ps/3y0l8NVCzoimDaot739BC7xRFDHA1CrZZaxhPkyNd4Uk3cUJsEa
+         qbP/QS7COcKS5XVFIhtTOXEk2C2TyXgbaXJgMsxY=
+Received: by mail-wm1-f49.google.com with SMTP id a6so5157458wme.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 21:43:53 -0800 (PST)
+X-Gm-Message-State: APjAAAXmy+vRXocsm/oW/lNRbDBEgY41zA831DDp+6krg1TZC+xc7mVh
+        n2QfCOBi//+kyQ5TRNb5eI2a729XP3wwHqnx1ft7tA==
+X-Google-Smtp-Source: APXvYqyqUoW3kfb8cYofHM8mbkBfIsE5YpgIUhk/mRvexUuzH11inVRX40a4Ns/fahBVe21U0vz1KAbXBJxlE849bAY=
+X-Received: by 2002:a1c:bb82:: with SMTP id l124mr3454795wmf.176.1581572632244;
+ Wed, 12 Feb 2020 21:43:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e6b63bc26108c6e3645f9ea9e03aba38fd8b8464.camel@kernel.crashing.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1581555616.git.ashish.kalra@amd.com>
+In-Reply-To: <cover.1581555616.git.ashish.kalra@amd.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 12 Feb 2020 21:43:41 -0800
+X-Gmail-Original-Message-ID: <CALCETrXE9cWd3TbBZMsAwmSwWpDYFsicLZ=amHLWsvE0burQSw@mail.gmail.com>
+Message-ID: <CALCETrXE9cWd3TbBZMsAwmSwWpDYFsicLZ=amHLWsvE0burQSw@mail.gmail.com>
+Subject: Re: [PATCH 00/12] SEV Live Migration Patchset.
+To:     Ashish Kalra <Ashish.Kalra@amd.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@suse.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        David Rientjes <rientjes@google.com>, X86 ML <x86@kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (20/02/06 15:02), Benjamin Herrenschmidt wrote:
-[..]
-> +
-> +	/*
-> +         * Some consoles, such as pstore and netconsole, can be enabled even
-> +         * without matching.
-> +         */
-> +        if (newcon->flags & CON_ENABLED)
-> +                return 0;
-> +
-> +	return -ENOENT;
-> +}
+On Wed, Feb 12, 2020 at 5:14 PM Ashish Kalra <Ashish.Kalra@amd.com> wrote:
+>
+> From: Ashish Kalra <ashish.kalra@amd.com>
+>
+> This patchset adds support for SEV Live Migration on KVM/QEMU.
 
-Looks good to me // modulo checkpatch warnings //
+I skimmed this all and I don't see any description of how this all works.
 
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Does any of this address the mess in svm_register_enc_region()?  Right
+now, when QEMU (or a QEMU alternative) wants to allocate some memory
+to be used for guest encrypted pages, it mmap()s some memory and the
+kernel does get_user_pages_fast() on it.  The pages are kept pinned
+for the lifetime of the mapping.  This is not at all okay.  Let's see:
 
-	-ss
+ - The memory is pinned and it doesn't play well with the Linux memory
+management code.  You just wrote a big patch set to migrate the pages
+to a whole different machines, but we apparently can't even migrate
+them to a different NUMA node or even just a different address.  And
+good luck swapping it out.
+
+ - The memory is still mapped in the QEMU process, and that mapping is
+incoherent with actual guest access to the memory.  It's nice that KVM
+clflushes it so that, in principle, everything might actually work,
+but this is gross.  We should not be exposing incoherent mappings to
+userspace.
+
+Perhaps all this fancy infrastructure you're writing for migration and
+all this new API surface could also teach the kernel how to migrate
+pages from a guest *to the same guest* so we don't need to pin pages
+forever.  And perhaps you could put some thought into how to improve
+the API so that it doesn't involve nonsensical incoherent mappings.
+
+(To be blunt: if I had noticed how the SEV code worked before it was
+merged, I would have NAKed it.  It's too late now to retroactively
+remove it from the kernel, but perhaps we could try not to pile more
+complexity on top of the unfortunate foundation we have.)
