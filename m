@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F005115C2B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:38:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7437415C257
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:33:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbgBMP3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:29:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46746 "EHLO mail.kernel.org"
+        id S2388216AbgBMPcf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:32:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729217AbgBMP0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:42 -0500
+        id S2387766AbgBMP2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:42 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D63E20661;
-        Thu, 13 Feb 2020 15:26:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3258224682;
+        Thu, 13 Feb 2020 15:28:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607601;
-        bh=ZpcbW6ebGxl7BPjUEXVKVR61gFMocjAh4dAkTRP96CE=;
+        s=default; t=1581607722;
+        bh=6APSuzR5QQ1pD6w/up3le0id6xut3M8E7VEdJw0ul/k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1KSrhSXAx3hQSZbCIVk6q4VC2aQcOssWN3ARSS6PlT2/LVqKvMt2eRIk2e0GZ6Kx8
-         cdh1ANtcN9qfOVWJCZCUWIPLU5Oktr8ZlYkYV2ANdGzxwKMVi2Z0bA0GCFA/+UBx7F
-         RhrKOROqOxqBJG72etEzD+j+VjPEU7TmKP3DiRfI=
+        b=x9S1/S5bzzU0pPVt6EL9W2WA4rt2Do1MaH7v6XhFp9ZMd4hiwnlaC0bDSqPawGfgD
+         RhkzpkXolgb+uVc6WlRHRU0rdgIZC6snVwoaV0DCva0+UeJ9yWlJ+NEcw1VaFtI69Y
+         WW8TpId108SmkYO1KzlQrqXe86/Y9oLg7MhLpo/U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Guilherme G. Piccoli" <gpiccoli@canonical.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 4.19 21/52] rtc: cmos: Stop using shared IRQ
+        stable@vger.kernel.org, Zhengyuan Liu <liuzhengyuan@kylinos.cn>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 5.5 066/120] tools/power/acpi: fix compilation error
 Date:   Thu, 13 Feb 2020 07:21:02 -0800
-Message-Id: <20200213151819.319695169@linuxfoundation.org>
+Message-Id: <20200213151923.900550530@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
-References: <20200213151810.331796857@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,79 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
 
-commit b6da197a2e9670df6f07e6698629e9ce95ab614e upstream.
+commit 1985f8c7f9a42a651a9750d6fcadc74336d182df upstream.
 
-As reported by Guilherme G. Piccoli:
+If we compile tools/acpi target in the top source directory, we'd get a
+compilation error showing as bellow:
 
----8<---8<---8<---
+	# make tools/acpi
+	  DESCEND  power/acpi
+	  DESCEND  tools/acpidbg
+	  CC       tools/acpidbg/acpidbg.o
+	Assembler messages:
+	Fatal error: can't create /home/lzy/kernel-upstream/power/acpi/\
+			tools/acpidbg/acpidbg.o: No such file or directory
+	../../Makefile.rules:26: recipe for target '/home/lzy/kernel-upstream/\
+			power/acpi/tools/acpidbg/acpidbg.o' failed
+	make[3]: *** [/home/lzy/kernel-upstream//power/acpi/tools/acpidbg/\
+			acpidbg.o] Error 1
+	Makefile:19: recipe for target 'acpidbg' failed
+	make[2]: *** [acpidbg] Error 2
+	Makefile:54: recipe for target 'acpi' failed
+	make[1]: *** [acpi] Error 2
+	Makefile:1607: recipe for target 'tools/acpi' failed
+	make: *** [tools/acpi] Error 2
 
-The rtc-cmos interrupt setting was changed in the commit 079062b28fb4
-("rtc: cmos: prevent kernel warning on IRQ flags mismatch") in order
-to allow shared interrupts; according to that commit's description,
-some machine got kernel warnings due to the interrupt line being shared
-between rtc-cmos and other hardware, and rtc-cmos didn't allow IRQ sharing
-that time.
-
-After the aforementioned commit though it was observed a huge increase
-in lost HPET interrupts in some systems, observed through the following
-kernel message:
-
-[...] hpet1: lost 35 rtc interrupts
-
-After investigation, it was narrowed down to the shared interrupts
-usage when having the kernel option "irqpoll" enabled. In this case,
-all IRQ handlers are called for non-timer interrupts, if such handlers
-are setup in shared IRQ lines. The rtc-cmos IRQ handler could be set to
-hpet_rtc_interrupt(), which will produce the kernel "lost interrupts"
-message after doing work - lots of readl/writel to HPET registers, which
-are known to be slow.
-
-Although "irqpoll" is not a default kernel option, it's used in some contexts,
-one being the kdump kernel (which is an already "impaired" kernel usually
-running with 1 CPU available), so the performance burden could be considerable.
-Also, the same issue would happen (in a shorter extent though) when using
-"irqfixup" kernel option.
-
-In a quick experiment, a virtual machine with uptime of 2 minutes produced
->300 calls to hpet_rtc_interrupt() when "irqpoll" was set, whereas without
-sharing interrupts this number reduced to 1 interrupt. Machines with more
-hardware than a VM should generate even more unnecessary HPET interrupts
-in this scenario.
-
----8<---8<---8<---
-
-After looking into the rtc-cmos driver history and DSDT table from
-the Microsoft Surface 3, we may notice that Hans de Goede submitted
-a correct fix (see dependency below). Thus, we simply revert
-the culprit commit.
-
-Fixes: 079062b28fb4 ("rtc: cmos: prevent kernel warning on IRQ flags mismatch")
-Depends-on: a1e23a42f1bd ("rtc: cmos: Do not assume irq 8 for rtc when there are no legacy irqs")
-Reported-by: Guilherme G. Piccoli <gpiccoli@canonical.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: Guilherme G. Piccoli <gpiccoli@canonical.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Link: https://lore.kernel.org/r/20200123131437.28157-1-andriy.shevchenko@linux.intel.com
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: d5a4b1a540b8 ("tools/power/acpi: Remove direct kernel source include reference")
+Signed-off-by: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/rtc/rtc-cmos.c |    2 +-
+ tools/power/acpi/Makefile.config |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/rtc/rtc-cmos.c
-+++ b/drivers/rtc/rtc-cmos.c
-@@ -854,7 +854,7 @@ cmos_do_probe(struct device *dev, struct
- 			rtc_cmos_int_handler = cmos_interrupt;
+--- a/tools/power/acpi/Makefile.config
++++ b/tools/power/acpi/Makefile.config
+@@ -15,7 +15,7 @@ include $(srctree)/../../scripts/Makefil
  
- 		retval = request_irq(rtc_irq, rtc_cmos_int_handler,
--				IRQF_SHARED, dev_name(&cmos_rtc.rtc->dev),
-+				0, dev_name(&cmos_rtc.rtc->dev),
- 				cmos_rtc.rtc);
- 		if (retval < 0) {
- 			dev_dbg(dev, "IRQ %d is already in use\n", rtc_irq);
+ OUTPUT=$(srctree)/
+ ifeq ("$(origin O)", "command line")
+-	OUTPUT := $(O)/power/acpi/
++	OUTPUT := $(O)/tools/power/acpi/
+ endif
+ #$(info Determined 'OUTPUT' to be $(OUTPUT))
+ 
 
 
