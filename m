@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DF0D15C38D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A39C315C475
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729824AbgBMPm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:42:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54884 "EHLO mail.kernel.org"
+        id S1729384AbgBMPra (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:47:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729585AbgBMP2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:28:13 -0500
+        id S2387650AbgBMP1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:03 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F09D024681;
-        Thu, 13 Feb 2020 15:28:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 358D32465D;
+        Thu, 13 Feb 2020 15:27:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607693;
-        bh=I3F37xw90XR+ITkmYbUSU264wdX9jM9dM/02J2SyJLA=;
+        s=default; t=1581607623;
+        bh=Kp5ITOmmGRq5nUzVovCIS4LzsjYjFZEjGH8vi4E4nvM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VglL+DpTtB67KIEuTKV52CvCRbjoyUSuBBkFS5QCsaZPLFOSRowhuix/rTEO6HeKa
-         BGYABPv79hIuijg5diZAlxhe3hU+/8Zfdmt/i8QcopfHWhQ3u4pB7GQdWIoz43T8Fi
-         QwCq49PKgJmk4vDAIhuYKLiKJTTyw0ra+sov7plo=
+        b=wlNcgDbEu0+M3EN1y663NVDmtGMxawgTIh7dfST0K54bXhm8SoJEOgfHnElROxrq6
+         /A9iomX/VMAF6Hiv93uHmfkquxUFfn+gWYqZiH2Q96kzpPYP9AL+Pd3g1/7PKcEw/3
+         /BCapFVZPi9febq5kexLWZS+fdtZ5ICOAZTfqTzg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bryan ODonoghue <bryan.odonoghue@linaro.org>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 5.5 015/120] ath10k: pci: Only dump ATH10K_MEM_REGION_TYPE_IOREG when safe
+        stable@vger.kernel.org, Sergey Gorenko <sergeygo@mellanox.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 5.4 04/96] IB/srp: Never use immediate data if it is disabled by a user
 Date:   Thu, 13 Feb 2020 07:20:11 -0800
-Message-Id: <20200213151907.039722384@linuxfoundation.org>
+Message-Id: <20200213151840.592525080@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
+References: <20200213151839.156309910@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,69 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+From: Sergey Gorenko <sergeygo@mellanox.com>
 
-commit d239380196c4e27a26fa4bea73d2bf994c14ec2d upstream.
+commit 0fbb37dd82998b5c83355997b3bdba2806968ac7 upstream.
 
-ath10k_pci_dump_memory_reg() will try to access memory of type
-ATH10K_MEM_REGION_TYPE_IOREG however, if a hardware restart is in progress
-this can crash a system.
+Some SRP targets that do not support specification SRP-2, put the garbage
+to the reserved bits of the SRP login response.  The problem was not
+detected for a long time because the SRP initiator ignored those bits. But
+now one of them is used as SRP_LOGIN_RSP_IMMED_SUPP. And it causes a
+critical error on the target when the initiator sends immediate data.
 
-Individual ioread32() time has been observed to jump from 15-20 ticks to >
-80k ticks followed by a secure-watchdog bite and a system reset.
+The ib_srp module has a use_imm_date parameter to enable or disable
+immediate data manually. But it does not help in the above case, because
+use_imm_date is ignored at handling the SRP login response. The problem is
+definitely caused by a bug on the target side, but the initiator's
+behavior also does not look correct.  The initiator should not use
+immediate data if use_imm_date is disabled by a user.
 
-Work around this corner case by only issuing the read transaction when the
-driver state is ATH10K_STATE_ON.
+This commit adds an additional checking of use_imm_date at the handling of
+SRP login response to avoid unexpected use of immediate data.
 
-Tested-on: QCA9988 PCI 10.4-3.9.0.2-00044
-
-Fixes: 219cc084c6706 ("ath10k: add memory dump support QCA9984")
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 882981f4a411 ("RDMA/srp: Add support for immediate data")
+Link: https://lore.kernel.org/r/20200115133055.30232-1-sergeygo@mellanox.com
+Signed-off-by: Sergey Gorenko <sergeygo@mellanox.com>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/ath/ath10k/pci.c |   19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ drivers/infiniband/ulp/srp/ib_srp.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/ath/ath10k/pci.c
-+++ b/drivers/net/wireless/ath/ath10k/pci.c
-@@ -1604,11 +1604,22 @@ static int ath10k_pci_dump_memory_reg(st
- {
- 	struct ath10k_pci *ar_pci = ath10k_pci_priv(ar);
- 	u32 i;
-+	int ret;
-+
-+	mutex_lock(&ar->conf_mutex);
-+	if (ar->state != ATH10K_STATE_ON) {
-+		ath10k_warn(ar, "Skipping pci_dump_memory_reg invalid state\n");
-+		ret = -EIO;
-+		goto done;
-+	}
- 
- 	for (i = 0; i < region->len; i += 4)
- 		*(u32 *)(buf + i) = ioread32(ar_pci->mem + region->start + i);
- 
--	return region->len;
-+	ret = region->len;
-+done:
-+	mutex_unlock(&ar->conf_mutex);
-+	return ret;
- }
- 
- /* if an error happened returns < 0, otherwise the length */
-@@ -1704,7 +1715,11 @@ static void ath10k_pci_dump_memory(struc
- 			count = ath10k_pci_dump_memory_sram(ar, current_region, buf);
- 			break;
- 		case ATH10K_MEM_REGION_TYPE_IOREG:
--			count = ath10k_pci_dump_memory_reg(ar, current_region, buf);
-+			ret = ath10k_pci_dump_memory_reg(ar, current_region, buf);
-+			if (ret < 0)
-+				break;
-+
-+			count = ret;
- 			break;
- 		default:
- 			ret = ath10k_pci_dump_memory_generic(ar, current_region, buf);
+--- a/drivers/infiniband/ulp/srp/ib_srp.c
++++ b/drivers/infiniband/ulp/srp/ib_srp.c
+@@ -2536,7 +2536,8 @@ static void srp_cm_rep_handler(struct ib
+ 	if (lrsp->opcode == SRP_LOGIN_RSP) {
+ 		ch->max_ti_iu_len = be32_to_cpu(lrsp->max_ti_iu_len);
+ 		ch->req_lim       = be32_to_cpu(lrsp->req_lim_delta);
+-		ch->use_imm_data  = lrsp->rsp_flags & SRP_LOGIN_RSP_IMMED_SUPP;
++		ch->use_imm_data  = srp_use_imm_data &&
++			(lrsp->rsp_flags & SRP_LOGIN_RSP_IMMED_SUPP);
+ 		ch->max_it_iu_len = srp_max_it_iu_len(target->cmd_sg_cnt,
+ 						      ch->use_imm_data);
+ 		WARN_ON_ONCE(ch->max_it_iu_len >
 
 
