@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DCB415C3D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:45:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C7CC15C32A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:43:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729456AbgBMP1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:27:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41506 "EHLO mail.kernel.org"
+        id S1728605AbgBMP23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:28:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387456AbgBMPZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:34 -0500
+        id S1729110AbgBMPZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:52 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28C6124690;
-        Thu, 13 Feb 2020 15:25:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0680F24693;
+        Thu, 13 Feb 2020 15:25:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607533;
-        bh=4/tTk0ZiW7DQJxVy89AldRXoFxuJGR2zrHVnfhe/Pt0=;
+        s=default; t=1581607552;
+        bh=fPaObG+zKIvumG63pCibj4GFA7/6iCVHsZhVsIS5drU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=izDlQsaw1tv28HURyV2qmR4Js+sQ8TfNF6xGL3Em8JL38bX9RYIh+n7nU4YJPGt7j
-         xWP+r1wXU+wxy98BgrZvvezktp3581N8TKVVtnS9Mjuz+LsMLMPsR51x4EJvLQnyBc
-         ZU8fFk78cGMdzMLs3LP+XaxudNq5kJ6+kv25Zmv4=
+        b=CQMBtroscvbSp3im+lO++bfwD6AYDE06xyl8IN5i1VPVotWgx0OxTwyS4nYRej4Bp
+         FwMK6WGTJjKH4CGS+Yymu02z/6dCtF6f/lhno6u2a1NLxLalmf0KV1pekmvjeIFr3c
+         7+lBK/rNCLKY5mgjDuqrOLklzHugsDUtUFxeIuaE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.14 106/173] nfsd: fix delay timer on 32-bit architectures
-Date:   Thu, 13 Feb 2020 07:20:09 -0800
-Message-Id: <20200213151959.417339917@linuxfoundation.org>
+Subject: [PATCH 4.14 107/173] nfsd: fix jiffies/time_t mixup in LRU list
+Date:   Thu, 13 Feb 2020 07:20:10 -0800
+Message-Id: <20200213151959.639491737@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
 References: <20200213151931.677980430@linuxfoundation.org>
@@ -45,38 +45,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit 2561c92b12f4f4e386d453556685f75775c0938b upstream.
+commit 9594497f2c78993cb66b696122f7c65528ace985 upstream.
 
-The nfsd4_cb_layout_done() function takes a 'time_t' value,
-multiplied by NSEC_PER_SEC*2 to get a nanosecond value.
+The nfsd4_blocked_lock->nbl_time timestamp is recorded in jiffies,
+but then compared to a CLOCK_REALTIME timestamp later on, which makes
+no sense.
 
-This works fine on 64-bit architectures, but on 32-bit, any
-value over 1 second results in a signed integer overflow
-with unexpected results.
+For consistency with the other timestamps, change this to use a time_t.
 
-Cast one input to a 64-bit type in order to produce the
-same result that we have on 64-bit architectures, regarless
-of the type of nfsd4_lease.
+This is a change in behavior, which may cause regressions, but the
+current code is not sensible. On a system with CONFIG_HZ=1000,
+the 'time_after((unsigned long)nbl->nbl_time, (unsigned long)cutoff))'
+check is false for roughly the first 18 days of uptime and then true
+for the next 49 days.
 
-Fixes: 6b9b21073d3b ("nfsd: give up on CB_LAYOUTRECALLs after two lease periods")
+Fixes: 7919d0a27f1e ("nfsd: add a LRU list for blocked locks")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfsd/nfs4layouts.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/nfsd/nfs4state.c |    2 +-
+ fs/nfsd/state.h     |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/nfsd/nfs4layouts.c
-+++ b/fs/nfsd/nfs4layouts.c
-@@ -683,7 +683,7 @@ nfsd4_cb_layout_done(struct nfsd4_callba
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -6040,7 +6040,7 @@ nfsd4_lock(struct svc_rqst *rqstp, struc
+ 	}
  
- 		/* Client gets 2 lease periods to return it */
- 		cutoff = ktime_add_ns(task->tk_start,
--					 nn->nfsd4_lease * NSEC_PER_SEC * 2);
-+					 (u64)nn->nfsd4_lease * NSEC_PER_SEC * 2);
- 
- 		if (ktime_before(now, cutoff)) {
- 			rpc_delay(task, HZ/100); /* 10 mili-seconds */
+ 	if (fl_flags & FL_SLEEP) {
+-		nbl->nbl_time = jiffies;
++		nbl->nbl_time = get_seconds();
+ 		spin_lock(&nn->blocked_locks_lock);
+ 		list_add_tail(&nbl->nbl_list, &lock_sop->lo_blocked);
+ 		list_add_tail(&nbl->nbl_lru, &nn->blocked_locks_lru);
+--- a/fs/nfsd/state.h
++++ b/fs/nfsd/state.h
+@@ -591,7 +591,7 @@ static inline bool nfsd4_stateid_generat
+ struct nfsd4_blocked_lock {
+ 	struct list_head	nbl_list;
+ 	struct list_head	nbl_lru;
+-	unsigned long		nbl_time;
++	time_t			nbl_time;
+ 	struct file_lock	nbl_lock;
+ 	struct knfsd_fh		nbl_fh;
+ 	struct nfsd4_callback	nbl_cb;
 
 
