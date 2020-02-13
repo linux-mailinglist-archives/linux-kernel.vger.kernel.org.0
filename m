@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A64715C71F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:13:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F03B715C627
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388329AbgBMQHN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 11:07:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34480 "EHLO mail.kernel.org"
+        id S1729730AbgBMP5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:57:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728394AbgBMPX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:23:29 -0500
+        id S1727964AbgBMPZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:16 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0FD0246B3;
-        Thu, 13 Feb 2020 15:23:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26AD324691;
+        Thu, 13 Feb 2020 15:25:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607408;
-        bh=vF2xtnGldzOfqvnK52m1DzUvSRJ9Qju3vRFkjNDBDf4=;
+        s=default; t=1581607515;
+        bh=LJIIXpG0yztFs+lg1DZ8AtU8Ue+MNAUkltEdUFQXn5s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cWCA77t0FcxC8logfhqFxw6eNZFzevOEjB7HMkrHgvG3z1C8DHztmlSzzVh+96BIQ
-         Xu7VIZrZmjeC6R+jAiZGixYXovjrrA1AFpPjFgLVx1fPGM6YqRRJi0UbURhTFJCA5j
-         e1ndEkhNp/qHnsfAcfMdSlcLZAl0GPE4rDVuvdj4=
+        b=LcxzAGp17iffSpFO65Ld+cgGFUEJNzreHQSaMrzhh85AOf3R3yv84wOekJxsartqv
+         w/5FtHT3EQ+YwuxqDJFTYaCZorgczpTPvZKQiafdmUK0nOFCDK3g+b56PKBANWAOZT
+         cLyKwZ8EBEbGWCQgb402/UFLQ6VbLMyw+TlR8Fv8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhihao Cheng <chengzhihao1@huawei.com>,
-        "zhangyi (F)" <yi.zhang@huawei.com>, Stable@vger.kernel.org,
-        Richard Weinberger <richard@nod.at>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 029/116] ubifs: Fix deadlock in concurrent bulk-read and writepage
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.14 070/173] NFS: Directory page cache pages need to be locked when read
 Date:   Thu, 13 Feb 2020 07:19:33 -0800
-Message-Id: <20200213151854.296626030@linuxfoundation.org>
+Message-Id: <20200213151951.265733926@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
-References: <20200213151842.259660170@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,60 +45,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhihao Cheng <chengzhihao1@huawei.com>
+From: Trond Myklebust <trondmy@gmail.com>
 
-[ Upstream commit f5de5b83303e61b1f3fb09bd77ce3ac2d7a475f2 ]
+commit 114de38225d9b300f027e2aec9afbb6e0def154b upstream.
 
-In ubifs, concurrent execution of writepage and bulk read on the same file
-may cause ABBA deadlock, for example (Reproduce method see Link):
+When a NFS directory page cache page is removed from the page cache,
+its contents are freed through a call to nfs_readdir_clear_array().
+To prevent the removal of the page cache entry until after we've
+finished reading it, we must take the page lock.
 
-Process A(Bulk-read starts from page4)         Process B(write page4 back)
-  vfs_read                                       wb_workfn or fsync
-  ...                                            ...
-  generic_file_buffered_read                     write_cache_pages
-    ubifs_readpage                                 LOCK(page4)
+Fixes: 11de3b11e08c ("NFS: Fix a memory leak in nfs_readdir")
+Cc: stable@vger.kernel.org # v2.6.37+
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-      ubifs_bulk_read                              ubifs_writepage
-        LOCK(ui->ui_mutex)                           ubifs_write_inode
-
-	  ubifs_do_bulk_read                           LOCK(ui->ui_mutex)
-	    find_or_create_page(alloc page4)                  ↑
-	      LOCK(page4)                   <--     ABBA deadlock occurs!
-
-In order to ensure the serialization execution of bulk read, we can't
-remove the big lock 'ui->ui_mutex' in ubifs_bulk_read(). Instead, we
-allow ubifs_do_bulk_read() to lock page failed by replacing
-find_or_create_page(FGP_LOCK) with
-pagecache_get_page(FGP_LOCK | FGP_NOWAIT).
-
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
-Suggested-by: zhangyi (F) <yi.zhang@huawei.com>
-Cc: <Stable@vger.kernel.org>
-Fixes: 4793e7c5e1c ("UBIFS: add bulk-read facility")
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206153
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ubifs/file.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/nfs/dir.c |   30 +++++++++++++++++++-----------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
 
-diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-index f2e6162f8e656..5ef0d1d607431 100644
---- a/fs/ubifs/file.c
-+++ b/fs/ubifs/file.c
-@@ -783,7 +783,9 @@ static int ubifs_do_bulk_read(struct ubifs_info *c, struct bu_info *bu,
+--- a/fs/nfs/dir.c
++++ b/fs/nfs/dir.c
+@@ -708,8 +708,6 @@ int nfs_readdir_filler(nfs_readdir_descr
+ static
+ void cache_page_release(nfs_readdir_descriptor_t *desc)
+ {
+-	if (!desc->page->mapping)
+-		nfs_readdir_clear_array(desc->page);
+ 	put_page(desc->page);
+ 	desc->page = NULL;
+ }
+@@ -723,19 +721,28 @@ struct page *get_cache_page(nfs_readdir_
  
- 		if (page_offset > end_index)
+ /*
+  * Returns 0 if desc->dir_cookie was found on page desc->page_index
++ * and locks the page to prevent removal from the page cache.
+  */
+ static
+-int find_cache_page(nfs_readdir_descriptor_t *desc)
++int find_and_lock_cache_page(nfs_readdir_descriptor_t *desc)
+ {
+ 	int res;
+ 
+ 	desc->page = get_cache_page(desc);
+ 	if (IS_ERR(desc->page))
+ 		return PTR_ERR(desc->page);
+-
+-	res = nfs_readdir_search_array(desc);
++	res = lock_page_killable(desc->page);
+ 	if (res != 0)
+-		cache_page_release(desc);
++		goto error;
++	res = -EAGAIN;
++	if (desc->page->mapping != NULL) {
++		res = nfs_readdir_search_array(desc);
++		if (res == 0)
++			return 0;
++	}
++	unlock_page(desc->page);
++error:
++	cache_page_release(desc);
+ 	return res;
+ }
+ 
+@@ -750,7 +757,7 @@ int readdir_search_pagecache(nfs_readdir
+ 		desc->last_cookie = 0;
+ 	}
+ 	do {
+-		res = find_cache_page(desc);
++		res = find_and_lock_cache_page(desc);
+ 	} while (res == -EAGAIN);
+ 	return res;
+ }
+@@ -789,7 +796,6 @@ int nfs_do_filldir(nfs_readdir_descripto
+ 		desc->eof = 1;
+ 
+ 	kunmap(desc->page);
+-	cache_page_release(desc);
+ 	dfprintk(DIRCACHE, "NFS: nfs_do_filldir() filling ended @ cookie %Lu; returning = %d\n",
+ 			(unsigned long long)*desc->dir_cookie, res);
+ 	return res;
+@@ -835,13 +841,13 @@ int uncached_readdir(nfs_readdir_descrip
+ 
+ 	status = nfs_do_filldir(desc);
+ 
++ out_release:
++	nfs_readdir_clear_array(desc->page);
++	cache_page_release(desc);
+  out:
+ 	dfprintk(DIRCACHE, "NFS: %s: returns %d\n",
+ 			__func__, status);
+ 	return status;
+- out_release:
+-	cache_page_release(desc);
+-	goto out;
+ }
+ 
+ /* The file offset position represents the dirent entry number.  A
+@@ -906,6 +912,8 @@ static int nfs_readdir(struct file *file
  			break;
--		page = find_or_create_page(mapping, page_offset, ra_gfp_mask);
-+		page = pagecache_get_page(mapping, page_offset,
-+				 FGP_LOCK|FGP_ACCESSED|FGP_CREAT|FGP_NOWAIT,
-+				 ra_gfp_mask);
- 		if (!page)
+ 
+ 		res = nfs_do_filldir(desc);
++		unlock_page(desc->page);
++		cache_page_release(desc);
+ 		if (res < 0)
  			break;
- 		if (!PageUptodate(page))
--- 
-2.20.1
-
+ 	} while (!desc->eof);
 
 
