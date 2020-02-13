@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E09315C274
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:35:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 514D415C482
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388066AbgBMPbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:31:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54402 "EHLO mail.kernel.org"
+        id S2387873AbgBMPr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:47:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729565AbgBMP2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:28:07 -0500
+        id S1729309AbgBMP07 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:59 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53C0D218AC;
-        Thu, 13 Feb 2020 15:28:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFB0D20661;
+        Thu, 13 Feb 2020 15:26:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607687;
-        bh=Z5lZXUiB6mlzTPLpoJlxhmPg57lh4/wOXqiKgZ3hICU=;
+        s=default; t=1581607618;
+        bh=Pm+Mw0+GOmvlozoTcCID/HKqOQ0CXLV9Qfa6XUztFXI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o4KcELOHHVAzGCpApVQlPxm0qrUJInE8fvYA/Hpi6liOfNY1/XrkAvwXA41zpn00x
-         Dj0BY44owcYASV0RsswBfNP/CYFG8LnPJK80TSTxJn94WCcCLSZ5wKiY/x50nixE5n
-         VtJlBQIFj13i8u6gwFEaalsOIgUfXu45YYOCPScU=
+        b=eiIUtJzuv01y8gIp9MgUvFErqh+BU3/zTo+wUkjz8gep8qv3M7QWcoMDhF0LnhdYT
+         tqSGjnVfV8Mbj4S381ipMyQ1NTghMnyhXfiIJZF3JaIVhVc+qTy5ple0r+U0kY7+al
+         B5c+DozrrQ4Cs3cvt+UPMIEDkkPmzFQLSJJqHV6I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>,
-        wenxu <wenxu@ucloud.cn>
-Subject: [PATCH 5.5 023/120] netfilter: flowtable: fetch stats only if flow is still alive
+        stable@vger.kernel.org, Asutosh Das <asutoshd@codeaurora.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 5.4 12/96] scsi: ufs: Fix ufshcd_probe_hba() reture value in case ufshcd_scsi_add_wlus() fails
 Date:   Thu, 13 Feb 2020 07:20:19 -0800
-Message-Id: <20200213151910.049692279@linuxfoundation.org>
+Message-Id: <20200213151843.859773749@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
+References: <20200213151839.156309910@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,56 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pablo Neira Ayuso <pablo@netfilter.org>
+From: Bean Huo <beanhuo@micron.com>
 
-commit 79b9b685dde1d1bf43cf84163c76953dc3781c85 upstream.
+commit b9fc5320212efdfb4e08b825aaa007815fd11d16 upstream.
 
-Do not fetch statistics if flow has expired since it might not in
-hardware anymore. After this update, remove the FLOW_OFFLOAD_HW_DYING
-check from nf_flow_offload_stats() since this flag is never set on.
+A non-zero error value likely being returned by ufshcd_scsi_add_wlus() in
+case of failure of adding the WLs, but ufshcd_probe_hba() doesn't use this
+value, and doesn't report this failure to upper caller.  This patch is to
+fix this issue.
 
-Fixes: c29f74e0df7a ("netfilter: nf_flow_table: hardware offload support")
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Acked-by: wenxu <wenxu@ucloud.cn>
+Fixes: 2a8fa600445c ("ufs: manually add well known logical units")
+Link: https://lore.kernel.org/r/20200120130820.1737-2-huobean@gmail.com
+Reviewed-by: Asutosh Das <asutoshd@codeaurora.org>
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+Reviewed-by: Stanley Chu <stanley.chu@mediatek.com>
+Signed-off-by: Bean Huo <beanhuo@micron.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_flow_table_core.c    |    5 ++---
- net/netfilter/nf_flow_table_offload.c |    3 +--
- 2 files changed, 3 insertions(+), 5 deletions(-)
+ drivers/scsi/ufs/ufshcd.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/netfilter/nf_flow_table_core.c
-+++ b/net/netfilter/nf_flow_table_core.c
-@@ -348,9 +348,6 @@ static void nf_flow_offload_gc_step(stru
- {
- 	struct nf_flowtable *flow_table = data;
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -6953,7 +6953,8 @@ static int ufshcd_probe_hba(struct ufs_h
+ 			ufshcd_init_icc_levels(hba);
  
--	if (flow->flags & FLOW_OFFLOAD_HW)
--		nf_flow_offload_stats(flow_table, flow);
--
- 	if (nf_flow_has_expired(flow) || nf_ct_is_dying(flow->ct) ||
- 	    (flow->flags & (FLOW_OFFLOAD_DYING | FLOW_OFFLOAD_TEARDOWN))) {
- 		if (flow->flags & FLOW_OFFLOAD_HW) {
-@@ -361,6 +358,8 @@ static void nf_flow_offload_gc_step(stru
- 		} else {
- 			flow_offload_del(flow_table, flow);
- 		}
-+	} else if (flow->flags & FLOW_OFFLOAD_HW) {
-+		nf_flow_offload_stats(flow_table, flow);
- 	}
- }
+ 		/* Add required well known logical units to scsi mid layer */
+-		if (ufshcd_scsi_add_wlus(hba))
++		ret = ufshcd_scsi_add_wlus(hba);
++		if (ret)
+ 			goto out;
  
---- a/net/netfilter/nf_flow_table_offload.c
-+++ b/net/netfilter/nf_flow_table_offload.c
-@@ -784,8 +784,7 @@ void nf_flow_offload_stats(struct nf_flo
- 	__s32 delta;
- 
- 	delta = nf_flow_timeout_delta(flow->timeout);
--	if ((delta >= (9 * NF_FLOW_TIMEOUT) / 10) ||
--	    flow->flags & FLOW_OFFLOAD_HW_DYING)
-+	if ((delta >= (9 * NF_FLOW_TIMEOUT) / 10))
- 		return;
- 
- 	offload = kzalloc(sizeof(struct flow_offload_work), GFP_ATOMIC);
+ 		/* Initialize devfreq after UFS device is detected */
 
 
