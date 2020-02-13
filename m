@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32B5615C769
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:14:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8709F15C717
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:13:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729351AbgBMQKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 11:10:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60300 "EHLO mail.kernel.org"
+        id S2388017AbgBMQGv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 11:06:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728003AbgBMPWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:22:37 -0500
+        id S1727881AbgBMPXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:33 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB20024689;
-        Thu, 13 Feb 2020 15:22:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3679F246AD;
+        Thu, 13 Feb 2020 15:23:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607355;
-        bh=1Iizuofl1M9QTJuqeATp+FLhwr0NT7Oa3L7BrSWjUnQ=;
+        s=default; t=1581607413;
+        bh=nue5T3gYIodIk7hAlwR2JIdhQ6M5D4n4gZHo6VdSTpM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SFOr7qY51QvB8lHooFAGSknunz24tPiQurPIfa0G4QwXUkaF2cK+OSHezfZDgvq/Z
-         z0o2gmmAKW1/9e32el0nLOfk4Xw6rn1RjzLPVjGkLbs46LilriZwZWVkrfdJOdzgDN
-         hTx3AVpxkEqNErrOBHamjhYCzfkIrfhh2MBfH4vc=
+        b=brkUth03IIBPcwd4c5horHUTHxPBed/Sm+5UR1ff+nw+WhC3oQfyI7VegwjU1qbhA
+         6fqS3ruGdKZZWtBzQmj2Rrv2a0YJCwNyjdBe7hV9eYiI5RFuKzl5N2bk2nZmeasb7L
+         dClNWwZoIa/MZJRgu53lIa9qoyP65IUVW52/U5S4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <qutran@marvell.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 22/91] scsi: qla2xxx: Fix mtcp dump collection failure
-Date:   Thu, 13 Feb 2020 07:19:39 -0800
-Message-Id: <20200213151830.210127935@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.9 036/116] crypto: pcrypt - Do not clear MAY_SLEEP flag in original request
+Date:   Thu, 13 Feb 2020 07:19:40 -0800
+Message-Id: <20200213151857.161403531@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
-References: <20200213151821.384445454@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quinn Tran <qutran@marvell.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-commit 641e0efddcbde52461e017136acd3ce7f2ef0c14 upstream.
+commit e8d998264bffade3cfe0536559f712ab9058d654 upstream.
 
-MTCP dump failed due to MB Reg 10 was picking garbage data from stack
-memory.
+We should not be modifying the original request's MAY_SLEEP flag
+upon completion.  It makes no sense to do so anyway.
 
-Fixes: 81178772b636a ("[SCSI] qla2xxx: Implemetation of mctp.")
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20191217220617.28084-14-hmadhani@marvell.com
-Signed-off-by: Quinn Tran <qutran@marvell.com>
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Reported-by: Eric Biggers <ebiggers@kernel.org>
+Fixes: 5068c7a883d1 ("crypto: pcrypt - Add pcrypt crypto...")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Tested-by: Eric Biggers <ebiggers@kernel.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_mbx.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ crypto/pcrypt.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/scsi/qla2xxx/qla_mbx.c
-+++ b/drivers/scsi/qla2xxx/qla_mbx.c
-@@ -5455,9 +5455,8 @@ qla2x00_dump_mctp_data(scsi_qla_host_t *
- 	mcp->mb[7] = LSW(MSD(req_dma));
- 	mcp->mb[8] = MSW(addr);
- 	/* Setting RAM ID to valid */
--	mcp->mb[10] |= BIT_7;
- 	/* For MCTP RAM ID is 0x40 */
--	mcp->mb[10] |= 0x40;
-+	mcp->mb[10] = BIT_7 | 0x40;
+--- a/crypto/pcrypt.c
++++ b/crypto/pcrypt.c
+@@ -130,7 +130,6 @@ static void pcrypt_aead_done(struct cryp
+ 	struct padata_priv *padata = pcrypt_request_padata(preq);
  
- 	mcp->out_mb |= MBX_10|MBX_8|MBX_7|MBX_6|MBX_5|MBX_4|MBX_3|MBX_2|MBX_1|
- 	    MBX_0;
+ 	padata->info = err;
+-	req->base.flags &= ~CRYPTO_TFM_REQ_MAY_SLEEP;
+ 
+ 	padata_do_serial(padata);
+ }
 
 
