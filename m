@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F60D15C725
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:13:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 901E815C62D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730019AbgBMQHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 11:07:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34336 "EHLO mail.kernel.org"
+        id S2388132AbgBMP6I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:58:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727777AbgBMPXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:23:21 -0500
+        id S1728950AbgBMPZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:14 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9839A246C0;
-        Thu, 13 Feb 2020 15:23:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB66A246A3;
+        Thu, 13 Feb 2020 15:25:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607400;
-        bh=rUcEVU3gBhjHwiVrzHGmMtspZDVT+yVIgYlJpo9qhi0=;
+        s=default; t=1581607513;
+        bh=8LnMSoTK3W8ydSoPVhw8dm+DF5F1/ExigDKkhP3Fx7A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DjWUBDFJuXz77d7shfDt4/agI2E4GGI38anVM1Uc8tyht6Su/lgkXmKcM85DhSc6T
-         SQ/XeW/WHqPpaQ/A6FQs0VRSpAQY5WdTs+2SB9PvgPyoY0hUGNt0SbEzKJrhZef4LE
-         TqbnvV0D6BVK0aVjaNmIsNoKaVmmak3ghC4CcExA=
+        b=o6DOlIikiCZRAH4KUY53wPNcrplM8vvYwftdo/GE2+MMrYq1U6ecu+GrNWKSWgsA0
+         CboRTKtzMThDr7Owt1T5S9cxn+kx65n3KDUDQKPn35cDVMRYFtApW8+clsEvT1wOeC
+         NZEfJqPBlT/tyxJvizJO0fg6mwF1NB4JM5TOvg78=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        syzbot+48a2851be24583b864dc@syzkaller.appspotmail.com
-Subject: [PATCH 4.9 016/116] mfd: dln2: More sanity checking for endpoints
-Date:   Thu, 13 Feb 2020 07:19:20 -0800
-Message-Id: <20200213151849.286887601@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Amol Grover <frextrite@gmail.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 058/173] tracing: Annotate ftrace_graph_hash pointer with __rcu
+Date:   Thu, 13 Feb 2020 07:19:21 -0800
+Message-Id: <20200213151948.509243564@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
-References: <20200213151842.259660170@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +46,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Amol Grover <frextrite@gmail.com>
 
-commit 2b8bd606b1e60ca28c765f69c1eedd7d2a2e9dca upstream.
+[ Upstream commit 24a9729f831462b1d9d61dc85ecc91c59037243f ]
 
-It is not enough to check for the number of endpoints.
-The types must also be correct.
+Fix following instances of sparse error
+kernel/trace/ftrace.c:5664:29: error: incompatible types in comparison
+kernel/trace/ftrace.c:5785:21: error: incompatible types in comparison
+kernel/trace/ftrace.c:5864:36: error: incompatible types in comparison
+kernel/trace/ftrace.c:5866:25: error: incompatible types in comparison
 
-Reported-and-tested-by: syzbot+48a2851be24583b864dc@syzkaller.appspotmail.com
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Use rcu_dereference_protected to access the __rcu annotated pointer.
 
+Link: http://lkml.kernel.org/r/20200201072703.17330-1-frextrite@gmail.com
+
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/dln2.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ kernel/trace/ftrace.c | 2 +-
+ kernel/trace/trace.h  | 9 ++++++---
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
---- a/drivers/mfd/dln2.c
-+++ b/drivers/mfd/dln2.c
-@@ -729,6 +729,8 @@ static int dln2_probe(struct usb_interfa
- 		      const struct usb_device_id *usb_id)
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 3864d23414429..6af28692f0f53 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -5146,7 +5146,7 @@ static const struct file_operations ftrace_notrace_fops = {
+ 
+ static DEFINE_MUTEX(graph_lock);
+ 
+-struct ftrace_hash *ftrace_graph_hash = EMPTY_HASH;
++struct ftrace_hash __rcu *ftrace_graph_hash = EMPTY_HASH;
+ struct ftrace_hash *ftrace_graph_notrace_hash = EMPTY_HASH;
+ 
+ enum graph_filter_type {
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index dbb212c40a410..17f36488d3c84 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -868,22 +868,25 @@ extern void __trace_graph_return(struct trace_array *tr,
+ 				 unsigned long flags, int pc);
+ 
+ #ifdef CONFIG_DYNAMIC_FTRACE
+-extern struct ftrace_hash *ftrace_graph_hash;
++extern struct ftrace_hash __rcu *ftrace_graph_hash;
+ extern struct ftrace_hash *ftrace_graph_notrace_hash;
+ 
+ static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
  {
- 	struct usb_host_interface *hostif = interface->cur_altsetting;
-+	struct usb_endpoint_descriptor *epin;
-+	struct usb_endpoint_descriptor *epout;
- 	struct device *dev = &interface->dev;
- 	struct dln2_dev *dln2;
- 	int ret;
-@@ -738,12 +740,19 @@ static int dln2_probe(struct usb_interfa
- 	    hostif->desc.bNumEndpoints < 2)
- 		return -ENODEV;
+ 	unsigned long addr = trace->func;
+ 	int ret = 0;
++	struct ftrace_hash *hash;
  
-+	epin = &hostif->endpoint[0].desc;
-+	epout = &hostif->endpoint[1].desc;
-+	if (!usb_endpoint_is_bulk_out(epout))
-+		return -ENODEV;
-+	if (!usb_endpoint_is_bulk_in(epin))
-+		return -ENODEV;
+ 	preempt_disable_notrace();
+ 
+-	if (ftrace_hash_empty(ftrace_graph_hash)) {
++	hash = rcu_dereference_protected(ftrace_graph_hash, !preemptible());
 +
- 	dln2 = kzalloc(sizeof(*dln2), GFP_KERNEL);
- 	if (!dln2)
- 		return -ENOMEM;
++	if (ftrace_hash_empty(hash)) {
+ 		ret = 1;
+ 		goto out;
+ 	}
  
--	dln2->ep_out = hostif->endpoint[0].desc.bEndpointAddress;
--	dln2->ep_in = hostif->endpoint[1].desc.bEndpointAddress;
-+	dln2->ep_out = epout->bEndpointAddress;
-+	dln2->ep_in = epin->bEndpointAddress;
- 	dln2->usb_dev = usb_get_dev(interface_to_usbdev(interface));
- 	dln2->interface = interface;
- 	usb_set_intfdata(interface, dln2);
+-	if (ftrace_lookup_ip(ftrace_graph_hash, addr)) {
++	if (ftrace_lookup_ip(hash, addr)) {
+ 
+ 		/*
+ 		 * This needs to be cleared on the return functions
+-- 
+2.20.1
+
 
 
