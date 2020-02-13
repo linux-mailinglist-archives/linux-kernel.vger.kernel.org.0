@@ -2,191 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 680EC15CA17
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 19:16:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E89A415CA19
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 19:16:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727849AbgBMSQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 13:16:02 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40531 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727595AbgBMSQC (ORCPT
+        id S1727884AbgBMSQn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 13:16:43 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:33191 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbgBMSQm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 13:16:02 -0500
-Received: by mail-wm1-f68.google.com with SMTP id t14so7833813wmi.5;
-        Thu, 13 Feb 2020 10:15:58 -0800 (PST)
+        Thu, 13 Feb 2020 13:16:42 -0500
+Received: by mail-il1-f194.google.com with SMTP id s18so5807988iln.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 10:16:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5d94ISfAMJsY5/JXuqSKAmxNkAX3S4dFJmeeR7ypVcE=;
-        b=FFwuMx4A91uPXpKY8nsucsQTEpphwr5zhH4Oya1D86W+RXvdwACsmlSXhLSexF0NcM
-         P9TfFve1ePZB9zAXpfXPJ6pnLIJKiI+vsVdmHMDavStLweUfRWnrTV2MIgQDt/tnTttP
-         FrQGvuDP4LCuIFD2h2Vv6QvQSiEUUKhJF+QkXD2j/s44KWLYBWsxLrHYeZer3Z2y0aqz
-         RPfiBuphdNVtBahhcdlpnYEKEr+vLrCy1lGJ7aAqfiw6nTeNt7IO1eXjEYH3eL7LBRNt
-         K3XIt4YNATmo1Grnqf9PsgDq8/IUaIU45JRkPVo0FI0rVzdZ8pPphyr8n0oNjdxNyj3b
-         ddBQ==
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=/gw4qDpNAs3mYSEqUleB+KUgpQF9RHwkXLQ/OIg+awE=;
+        b=C1tIlC+NwTtxt62U6Stdfh5UgN1HL2IOW1UmG/Wi83kJFEzdmKMlTonaEJogCuYc8s
+         4B4r8F8XrtUWBAkVxcl+Ya6YJ3QEi2DO32h56NrHQVHRPfrvRNtEZNZB5bSmaHSf9lpb
+         8jYsBuw5TbDfn+nXS17QjZ/NXpm1qiG1nmwU9SBnobh1QjgLvm5CtUlqru7VEyA+hVdz
+         Dl/nGq403tCvJ29CMDKpG7KEeoO5HbURxyO7JZ8H1uhUEhHFMuO/mYd8jlZhNI+FrcDm
+         W/KK64CWCHs09zoFbZ0XjtjlYYjwK4oaP/kBoZ9tzcGXVQrzxI70V2hJK7KxwvjE7/W6
+         /6+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5d94ISfAMJsY5/JXuqSKAmxNkAX3S4dFJmeeR7ypVcE=;
-        b=FvdB8EnUmFTmZ1mf0u3am5f8gDVm280Gtjq4EvHabNxV3kpszc46SBMX+Cph1oe98W
-         /rGaS2V16P9XvgCCtqx1/fmnKWtgjYvcaM1d6vwmvERGuOZkYGfcPzeio2dxeq1M+p3x
-         ylhCWxVJQwEI4eFwx15dSCRz6iL+7C9bnbyo4EKe9dueurM2F45PNvozPtr5HlbzS2Qb
-         kDj2U/9h0W/06IDo/ZxbxQTCofFE3My9MhtgkULDg3uspDa4DBdDI+jM5ywDS0oHHXUi
-         QRoNAY1XthNmoxKaQcZy25MjE4nZKRRwoGQbUafjejpT0+wczXRthuqlgXHmOL9dTJ0g
-         OGig==
-X-Gm-Message-State: APjAAAX7UbfGvjuQLt42V+PhJxrTEpIhC4UngJNtM6Q2g94IhoxoluGF
-        gOuNDPSCTCp5xlSbp384rYw=
-X-Google-Smtp-Source: APXvYqxqFNSHf02vz4/vAuR4WVy3yZSGsTnLODcDrddSPmiG/KsfyeRBrRl06AzAZBFk2cOx947e8g==
-X-Received: by 2002:a1c:4e05:: with SMTP id g5mr6927099wmh.152.1581617758127;
-        Thu, 13 Feb 2020 10:15:58 -0800 (PST)
-Received: from localhost (p2E5BEF3F.dip0.t-ipconnect.de. [46.91.239.63])
-        by smtp.gmail.com with ESMTPSA id y12sm3896731wmj.6.2020.02.13.10.15.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 10:15:56 -0800 (PST)
-Date:   Thu, 13 Feb 2020 19:15:55 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Olof Johansson <olof@lixom.net>, linux-tegra@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Maxime Ripard <mripard@kernel.org>
-Subject: Re: [PATCH v4 0/5] memory: Introduce memory controller mini-framework
-Message-ID: <20200213181555.GB1006063@ulmo>
-References: <20200213163959.819733-1-thierry.reding@gmail.com>
- <9841eb35-65e4-632a-ceff-bb2ba3b11bb0@arm.com>
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=/gw4qDpNAs3mYSEqUleB+KUgpQF9RHwkXLQ/OIg+awE=;
+        b=VAz1HH72ewFx8SRerieKZNMgTypm+y6ETWUWSGywBfAzA3GrVxcsCBju4/STgRp3gv
+         B38dOLThf7iH3u7dDS5AyZCp6pM50iXiVmseEIAh46EVmLGxCbXupGR/jey+koeRiuWb
+         hsXAy4u4FbTWG1Vo1yHUMwQFjsLwfmTVyHQXJcdGyFCzUaU4vqCftjkSXazuOFmByRCy
+         scGpkCMtL4Z78hZ8AZfcG29ss2NkJgPAjT2Fz/vER0MkXJRNaD2KLrGbm4VQ++D18oJX
+         fm5Q02k+3hPGfUUIOBeFC5Cj3cq0lRa0YWKQ7Ng9ldFOpC8z6Yo9dzXJjoZo5aCtMf4f
+         6lYw==
+X-Gm-Message-State: APjAAAWQxExrKAhYffi71qYm3l7ZYZxlF4Qrux5K0Gq3BtLWrn0tyy1P
+        92eU47VH8xsZXKGSfns+EwDJEScPywwSW+Vy7H4=
+X-Google-Smtp-Source: APXvYqzpC+tAwq+qrfk7rtF7H9OneXbZuy6qKmd/cZiqI9UiFUvKq/oU2diV2mHNqY75pzXzrPOnoGuw/5pwMI53KVE=
+X-Received: by 2002:a92:854e:: with SMTP id f75mr17927634ilh.104.1581617802262;
+ Thu, 13 Feb 2020 10:16:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ZfOjI3PrQbgiZnxM"
-Content-Disposition: inline
-In-Reply-To: <9841eb35-65e4-632a-ceff-bb2ba3b11bb0@arm.com>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+Received: by 2002:a5d:8584:0:0:0:0:0 with HTTP; Thu, 13 Feb 2020 10:16:42
+ -0800 (PST)
+From:   jan king <kingjan650@gmail.com>
+Date:   Thu, 13 Feb 2020 10:16:42 -0800
+X-Google-Sender-Auth: oZsvr9nJJVVbQtBhdjDLBgfOX4k
+Message-ID: <CA+WsxLVUXSJdTw_rMEWnkiG5pfYi1aZgsp_pskrGBgkPG0pH8g@mail.gmail.com>
+Subject: URGENT RESPONSES
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Sir / Madam,
 
---ZfOjI3PrQbgiZnxM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Friend I am the accountant and auditing manager of the
+International Finance Bank Plc bf I want to transfer an abandoned sum
+of 10.5 millions USD  to your account.50% will be for you. No risk
+involved. Contact me for more details.
 
-On Thu, Feb 13, 2020 at 05:23:23PM +0000, Robin Murphy wrote:
-> [+ Maxime]
->=20
-> On 13/02/2020 4:39 pm, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Hi,
-> >=20
-> > this set of patches adds a new binding that allows device tree nodes to
-> > explicitly define the DMA parent for a given device. This supplements
-> > the existing interconnect bindings and is useful to disambiguate in the
-> > case where a device has multiple paths to system memory. Beyond that it
-> > can also be useful when there aren't any actual interconnect paths that
-> > can be controlled, so in simple cases this can serve as a simpler
-> > variant of interconnect paths.
->=20
-> Isn't that still squarely the intent of the "dma-mem" binding, though? i.=
-e.
-> it's not meant to be a 'real' interconnect provider, but a very simple way
-> to encode DMA parentage piggybacked onto a more general binding (with the
-> *option* of being a full-blown interconnect if it wants to, but certainly=
- no
-> expectation).
+Kindly reply me back to my alternative email address (kingjan650@gmail.com)
 
-The way that this works on Tegra is that we want to describe multiple
-interconnect paths. A typical device will have a read and a write memory
-client, which can be separately "tuned". Both of these paths will target
-system memory, so they would both technically be "dma-mem" paths. But
-that would make it impossible to treat them separately elsewhere.
-
-So we could choose any of them to be the "dma-mem" path, but then we
-need to be very careful about defining which one that is, so that
-drivers know how to look them up, which is also not really desirable.
-
-One other things we could do is to duplicate one of the entries, so that
-we'd have "read", "write" and "dma-mem" interconnect paths, with
-"dma-mem" referencing the same path as "read" or "write". That doesn't
-sound *too* bad, but it's still a bit of a hack. Having an explicit
-description for this sounds much clearer and less error prone to me.
-
-Thierry
-
-> > One other case where this is useful is to describe the relationship
-> > between devices such as the memory controller and an IOMMU, for example.
-> > On Tegra186 and later, the memory controller is programmed with a set of
-> > stream IDs that are to be associated with each memory client. This
-> > programming needs to happen before translations through the IOMMU start,
-> > otherwise the used stream IDs may deviate from the expected values. The
-> > memory-controllers property is used in this case to ensure that the
-> > memory controller driver has been probed (and hence has programmed the
-> > stream ID mappings) before the IOMMU becomes available.
-> >=20
-> > Patch 1 introduces the memory controller bindings, both from the
-> > perspective of the provider and the consumer. Patch 2 makes use of a
-> > memory-controllers property to determine the DMA parent for the purpose
-> > of setting up DMA masks (based on the dma-ranges property of the DMA
-> > parent). Patch 3 introduces a minimalistic framework that is used to
-> > register memory controllers with along with a set of helpers to look up
-> > the memory controller from device tree.
-> >=20
-> > An example of how to register a memory controller is shown in patch 4
-> > for Tegra186 (and later) and finally the ARM SMMU driver is extended to
-> > become a consumer of an (optional) memory controller. As described
-> > above, the goal is to defer probe as long as the memory controller has
-> > not yet programmed the stream ID mappings.
-> >=20
-> > Thierry
-> >=20
-> > Thierry Reding (5):
-> >    dt-bindings: Add memory controller bindings
-> >    of: Use memory-controllers property for DMA parent
-> >    memory: Introduce memory controller mini-framework
-> >    memory: tegra186: Register as memory controller
-> >    iommu: arm-smmu: Get reference to memory controller
-> >=20
-> >   .../bindings/memory-controllers/consumer.yaml |  14 +
-> >   .../memory-controllers/memory-controller.yaml |  32 +++
-> >   drivers/iommu/arm-smmu.c                      |  11 +
-> >   drivers/iommu/arm-smmu.h                      |   2 +
-> >   drivers/memory/Makefile                       |   1 +
-> >   drivers/memory/core.c                         | 248 ++++++++++++++++++
-> >   drivers/memory/tegra/tegra186.c               |   9 +-
-> >   drivers/of/address.c                          |  25 +-
-> >   include/linux/memory-controller.h             |  34 +++
-> >   9 files changed, 366 insertions(+), 10 deletions(-)
-> >   create mode 100644 Documentation/devicetree/bindings/memory-controlle=
-rs/consumer.yaml
-> >   create mode 100644 Documentation/devicetree/bindings/memory-controlle=
-rs/memory-controller.yaml
-> >   create mode 100644 drivers/memory/core.c
-> >   create mode 100644 include/linux/memory-controller.h
-> >=20
-
---ZfOjI3PrQbgiZnxM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5FklsACgkQ3SOs138+
-s6GcqA//Q5OUVYrdcTeux/f0EWBv1/pwht0ee1aUsnP4Um8quhAz+gMOpMLLq0Tr
-Lxv4wuLKKSd59BfF48NUk7fU91iMLKJTzT1yBxSWvsEc0MIfUPre8PalEToob4oj
-TfLrNwEulquUL4aUAEdXUzfpSibr+2cf0Vf0oQMXDIj4TQ5LNc8WtRssWU/joa1Z
-jTNrXQ8B0+gA9KXf9/5jA4tzsrFfpxaVQ2oiPBJTxaBS6a1VSGhCfk64Fv1Xezv6
-NIffcn67mdt2rtI59Pz1YTVEgUqG9E47S+9qwqfgtcRvqE2UoiPHGoOpOevDI2El
-LO/muVw5xyROk4X23lhbH9q1IZ8wDefRP0Nt2e5/Fgi1jj899n3GBpFrp4tLIZQ4
-OKzxA/yoHOfWqPQkYmE8LY9OZZKYv5vX1E0l7aY7OR78rUpc0oXPptkedP1JVHnX
-It3t3YvecvstIl0UxC67b9OlZC4h2kPzqlqF3fc0xOdV1eeLI1G58UzC8phSfoEo
-qCOps57BTHR2i4BMXirkvKkb5bbDhGA3qrgX068xGIsw4SDvnQ7y4c5SFTqybqql
-eplj55UYCk+JP85/gJ6+sXjEqAnyMIdv6lnGCxmfncIXheSDw0c/D8t00IzpovmO
-PX1pak4k8xe0Ub8R6Vg9HRM0IsCSQ8lDrt/whJVWXKU1M74PJlM=
-=gwzY
------END PGP SIGNATURE-----
-
---ZfOjI3PrQbgiZnxM--
+Thanks
+Prince King Jan.
