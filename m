@@ -2,34 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1206415C1C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:26:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1822815C1D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:26:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387563AbgBMP02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:26:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39102 "EHLO mail.kernel.org"
+        id S2387634AbgBMP0s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:26:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728771AbgBMPYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:24:47 -0500
+        id S1728882AbgBMPZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:00 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88D7424693;
-        Thu, 13 Feb 2020 15:24:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB09524693;
+        Thu, 13 Feb 2020 15:24:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607486;
-        bh=axkzjAVqLhMmmBO+eVTMGQ/6LdJuBAFn24vBXIHaDHU=;
+        s=default; t=1581607499;
+        bh=dUIA7XYKh2tjWz5vcmmzWs7dwmjsqJYdL6fQNXnZiDE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2cWEcezUVI0LlL6R1WjFHRmccGTiNWoJ35yLppHaSSEWbEueS61V4Jdbb1hVriJFR
-         o7MlcC2E4oHMYAeV0vGuknwfouzLEgqaslkiJIV+7CLr9Z1XJ0TGdbqa3Tl8KGVJ0q
-         c8tpfde8a/XVLqbBGp7apTBIbCCg4OHYNjZ8z44s=
+        b=NPGYROw0hrW8/agwVGZKnB1VWYt8ETaFHn+5B9OzeB4jAYOv3jNUZ9YzjPsjWS8XX
+         m4E4+U4uroVnrZV5HamkQGMOQXKLEh2+Gg4+oFwRiojIgZMAIhMTYJUDTM7L4bAwwJ
+         0sznpEVU0c6oSgU7RanHoL8vggksFLTfBnm4NePw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>
-Subject: [PATCH 4.14 017/173] rxrpc: Fix NULL pointer deref due to call->conn being cleared on disconnect
-Date:   Thu, 13 Feb 2020 07:18:40 -0800
-Message-Id: <20200213151937.337219002@linuxfoundation.org>
+        stable@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.14 036/173] mmc: spi: Toggle SPI polarity, do not hardcode it
+Date:   Thu, 13 Feb 2020 07:18:59 -0800
+Message-Id: <20200213151942.906422152@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
 References: <20200213151931.677980430@linuxfoundation.org>
@@ -42,185 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit 5273a191dca65a675dc0bcf3909e59c6933e2831 ]
+commit af3ed119329cf9690598c5a562d95dfd128e91d6 upstream.
 
-When a call is disconnected, the connection pointer from the call is
-cleared to make sure it isn't used again and to prevent further attempted
-transmission for the call.  Unfortunately, there might be a daemon trying
-to use it at the same time to transmit a packet.
+The code in mmc_spi_initsequence() tries to send a burst with
+high chipselect and for this reason hardcodes the device into
+SPI_CS_HIGH.
 
-Fix this by keeping call->conn set, but setting a flag on the call to
-indicate disconnection instead.
+This is not good because the SPI_CS_HIGH flag indicates
+logical "asserted" CS not always the physical level. In
+some cases the signal is inverted in the GPIO library and
+in that case SPI_CS_HIGH is already set, and enforcing
+SPI_CS_HIGH again will actually drive it low.
 
-Remove also the bits in the transmission functions where the conn pointer is
-checked and a ref taken under spinlock as this is now redundant.
+Instead of hard-coding this, toggle the polarity so if the
+default is LOW it goes high to assert chipselect but if it
+is already high then toggle it low instead.
 
-Fixes: 8d94aa381dab ("rxrpc: Calls shouldn't hold socket refs")
-Signed-off-by: David Howells <dhowells@redhat.com>
+Cc: Phil Elwell <phil@raspberrypi.org>
+Reported-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Link: https://lore.kernel.org/r/20191204152749.12652-1-linus.walleij@linaro.org
+Cc: stable@vger.kernel.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/rxrpc/ar-internal.h |    1 +
- net/rxrpc/call_object.c |    4 ++--
- net/rxrpc/conn_client.c |    3 +--
- net/rxrpc/conn_object.c |    4 ++--
- net/rxrpc/output.c      |   26 +++++++++-----------------
- 5 files changed, 15 insertions(+), 23 deletions(-)
 
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -451,6 +451,7 @@ enum rxrpc_call_flag {
- 	RXRPC_CALL_SEND_PING,		/* A ping will need to be sent */
- 	RXRPC_CALL_PINGING,		/* Ping in process */
- 	RXRPC_CALL_RETRANS_TIMEOUT,	/* Retransmission due to timeout occurred */
-+	RXRPC_CALL_DISCONNECTED,	/* The call has been disconnected */
- };
+---
+ drivers/mmc/host/mmc_spi.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+--- a/drivers/mmc/host/mmc_spi.c
++++ b/drivers/mmc/host/mmc_spi.c
+@@ -1154,17 +1154,22 @@ static void mmc_spi_initsequence(struct
+ 	 * SPI protocol.  Another is that when chipselect is released while
+ 	 * the card returns BUSY status, the clock must issue several cycles
+ 	 * with chipselect high before the card will stop driving its output.
++	 *
++	 * SPI_CS_HIGH means "asserted" here. In some cases like when using
++	 * GPIOs for chip select, SPI_CS_HIGH is set but this will be logically
++	 * inverted by gpiolib, so if we want to ascertain to drive it high
++	 * we should toggle the default with an XOR as we do here.
+ 	 */
+-	host->spi->mode |= SPI_CS_HIGH;
++	host->spi->mode ^= SPI_CS_HIGH;
+ 	if (spi_setup(host->spi) != 0) {
+ 		/* Just warn; most cards work without it. */
+ 		dev_warn(&host->spi->dev,
+ 				"can't change chip-select polarity\n");
+-		host->spi->mode &= ~SPI_CS_HIGH;
++		host->spi->mode ^= SPI_CS_HIGH;
+ 	} else {
+ 		mmc_spi_readbytes(host, 18);
  
- /*
---- a/net/rxrpc/call_object.c
-+++ b/net/rxrpc/call_object.c
-@@ -505,7 +505,7 @@ void rxrpc_release_call(struct rxrpc_soc
- 
- 	_debug("RELEASE CALL %p (%d CONN %p)", call, call->debug_id, conn);
- 
--	if (conn)
-+	if (conn && !test_bit(RXRPC_CALL_DISCONNECTED, &call->flags))
- 		rxrpc_disconnect_call(call);
- 
- 	for (i = 0; i < RXRPC_RXTX_BUFF_SIZE; i++) {
-@@ -639,6 +639,7 @@ static void rxrpc_rcu_destroy_call(struc
- {
- 	struct rxrpc_call *call = container_of(rcu, struct rxrpc_call, rcu);
- 
-+	rxrpc_put_connection(call->conn);
- 	rxrpc_put_peer(call->peer);
- 	kfree(call->rxtx_buffer);
- 	kfree(call->rxtx_annotations);
-@@ -660,7 +661,6 @@ void rxrpc_cleanup_call(struct rxrpc_cal
- 
- 	ASSERTCMP(call->state, ==, RXRPC_CALL_COMPLETE);
- 	ASSERT(test_bit(RXRPC_CALL_RELEASED, &call->flags));
--	ASSERTCMP(call->conn, ==, NULL);
- 
- 	/* Clean up the Rx/Tx buffer */
- 	for (i = 0; i < RXRPC_RXTX_BUFF_SIZE; i++)
---- a/net/rxrpc/conn_client.c
-+++ b/net/rxrpc/conn_client.c
-@@ -762,9 +762,9 @@ void rxrpc_disconnect_client_call(struct
- 	struct rxrpc_net *rxnet = rxrpc_net(sock_net(&call->socket->sk));
- 
- 	trace_rxrpc_client(conn, channel, rxrpc_client_chan_disconnect);
--	call->conn = NULL;
- 
- 	spin_lock(&conn->channel_lock);
-+	set_bit(RXRPC_CALL_DISCONNECTED, &call->flags);
- 
- 	/* Calls that have never actually been assigned a channel can simply be
- 	 * discarded.  If the conn didn't get used either, it will follow
-@@ -863,7 +863,6 @@ out:
- 	spin_unlock(&rxnet->client_conn_cache_lock);
- out_2:
- 	spin_unlock(&conn->channel_lock);
--	rxrpc_put_connection(conn);
- 	_leave("");
- 	return;
- 
---- a/net/rxrpc/conn_object.c
-+++ b/net/rxrpc/conn_object.c
-@@ -163,6 +163,8 @@ void __rxrpc_disconnect_call(struct rxrp
- 
- 	_enter("%d,%x", conn->debug_id, call->cid);
- 
-+	set_bit(RXRPC_CALL_DISCONNECTED, &call->flags);
-+
- 	if (rcu_access_pointer(chan->call) == call) {
- 		/* Save the result of the call so that we can repeat it if necessary
- 		 * through the channel, whilst disposing of the actual call record.
-@@ -207,9 +209,7 @@ void rxrpc_disconnect_call(struct rxrpc_
- 	__rxrpc_disconnect_call(conn, call);
- 	spin_unlock(&conn->channel_lock);
- 
--	call->conn = NULL;
- 	conn->idle_timestamp = jiffies;
--	rxrpc_put_connection(conn);
- }
- 
- /*
---- a/net/rxrpc/output.c
-+++ b/net/rxrpc/output.c
-@@ -96,7 +96,7 @@ static size_t rxrpc_fill_out_ack(struct
-  */
- int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping)
- {
--	struct rxrpc_connection *conn = NULL;
-+	struct rxrpc_connection *conn;
- 	struct rxrpc_ack_buffer *pkt;
- 	struct msghdr msg;
- 	struct kvec iov[2];
-@@ -106,18 +106,14 @@ int rxrpc_send_ack_packet(struct rxrpc_c
- 	int ret;
- 	u8 reason;
- 
--	spin_lock_bh(&call->lock);
--	if (call->conn)
--		conn = rxrpc_get_connection_maybe(call->conn);
--	spin_unlock_bh(&call->lock);
--	if (!conn)
-+	if (test_bit(RXRPC_CALL_DISCONNECTED, &call->flags))
- 		return -ECONNRESET;
- 
- 	pkt = kzalloc(sizeof(*pkt), GFP_KERNEL);
--	if (!pkt) {
--		rxrpc_put_connection(conn);
-+	if (!pkt)
- 		return -ENOMEM;
--	}
-+
-+	conn = call->conn;
- 
- 	msg.msg_name	= &call->peer->srx.transport;
- 	msg.msg_namelen	= call->peer->srx.transport_len;
-@@ -204,7 +200,6 @@ int rxrpc_send_ack_packet(struct rxrpc_c
- 	}
- 
- out:
--	rxrpc_put_connection(conn);
- 	kfree(pkt);
- 	return ret;
- }
-@@ -214,20 +209,18 @@ out:
-  */
- int rxrpc_send_abort_packet(struct rxrpc_call *call)
- {
--	struct rxrpc_connection *conn = NULL;
-+	struct rxrpc_connection *conn;
- 	struct rxrpc_abort_buffer pkt;
- 	struct msghdr msg;
- 	struct kvec iov[1];
- 	rxrpc_serial_t serial;
- 	int ret;
- 
--	spin_lock_bh(&call->lock);
--	if (call->conn)
--		conn = rxrpc_get_connection_maybe(call->conn);
--	spin_unlock_bh(&call->lock);
--	if (!conn)
-+	if (test_bit(RXRPC_CALL_DISCONNECTED, &call->flags))
- 		return -ECONNRESET;
- 
-+	conn = call->conn;
-+
- 	msg.msg_name	= &call->peer->srx.transport;
- 	msg.msg_namelen	= call->peer->srx.transport_len;
- 	msg.msg_control	= NULL;
-@@ -255,7 +248,6 @@ int rxrpc_send_abort_packet(struct rxrpc
- 	ret = kernel_sendmsg(conn->params.local->socket,
- 			     &msg, iov, 1, sizeof(pkt));
- 
--	rxrpc_put_connection(conn);
- 	return ret;
- }
- 
+-		host->spi->mode &= ~SPI_CS_HIGH;
++		host->spi->mode ^= SPI_CS_HIGH;
+ 		if (spi_setup(host->spi) != 0) {
+ 			/* Wot, we can't get the same setup we had before? */
+ 			dev_err(&host->spi->dev,
 
 
