@@ -2,130 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E3EE15C11B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:12:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA02015C128
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:14:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727668AbgBMPMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:12:03 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:46708 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726937AbgBMPMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:12:02 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 87457483DF8DF9ECD8F4;
-        Thu, 13 Feb 2020 23:11:59 +0800 (CST)
-Received: from [127.0.0.1] (10.173.222.27) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Thu, 13 Feb 2020
- 23:11:52 +0800
-Subject: Re: [PATCH v2 3/6] irqchip/gic-v4.1: Ensure L2 vPE table is allocated
- at RD level
-To:     Marc Zyngier <maz@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>, <wanghaibin.wang@huawei.com>
-References: <20200206075711.1275-1-yuzenghui@huawei.com>
- <20200206075711.1275-4-yuzenghui@huawei.com>
- <2f6a27ac57aef9b948952c210c9a5882@kernel.org>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <b1cdce3f-0c0e-8b78-0fe0-f4114190caa3@huawei.com>
-Date:   Thu, 13 Feb 2020 23:11:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+        id S1727721AbgBMPOf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:14:35 -0500
+Received: from outbound-smtp15.blacknight.com ([46.22.139.232]:48634 "EHLO
+        outbound-smtp15.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727595AbgBMPOf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:14:35 -0500
+Received: from mail.blacknight.com (unknown [81.17.254.16])
+        by outbound-smtp15.blacknight.com (Postfix) with ESMTPS id A6B391C298D
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 15:14:32 +0000 (GMT)
+Received: (qmail 12326 invoked from network); 13 Feb 2020 15:14:32 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 13 Feb 2020 15:14:32 -0000
+Date:   Thu, 13 Feb 2020 15:14:30 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Phil Auld <pauld@redhat.com>
+Cc:     Hillf Danton <hdanton@sina.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Parth Shah <parth@linux.ibm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>
+Subject: Re: [RFC 2/4] sched/numa: replace runnable_load_avg by load_avg
+Message-ID: <20200213151430.GY3466@techsingularity.net>
+References: <20200211174651.10330-1-vincent.guittot@linaro.org>
+ <20200211174651.10330-3-vincent.guittot@linaro.org>
+ <20200212133715.GU3420@suse.de>
+ <20200212194903.GS3466@techsingularity.net>
+ <CAKfTPtDA5GamN4A1SnegYwYCk123TqUDE9EHFbHTgKCMR+yqGQ@mail.gmail.com>
+ <20200213131658.9600-1-hdanton@sina.com>
+ <20200213134655.GX3466@techsingularity.net>
+ <20200213150026.GB6541@lorien.usersys.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <2f6a27ac57aef9b948952c210c9a5882@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.173.222.27]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20200213150026.GB6541@lorien.usersys.redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
-
-On 2020/2/13 22:22, Marc Zyngier wrote:
-> Hi Zenghui,
+On Thu, Feb 13, 2020 at 10:00:26AM -0500, Phil Auld wrote:
+> On Thu, Feb 13, 2020 at 01:46:55PM +0000 Mel Gorman wrote:
+> > On Thu, Feb 13, 2020 at 09:16:58PM +0800, Hillf Danton wrote:
+> > > > -	load = task_h_load(env->p);
+> > > > -	dst_load = env->dst_stats.load + load;
+> > > > -	src_load = env->src_stats.load - load;
+> > > > -
+> > > >  	/*
+> > > > -	 * If the improvement from just moving env->p direction is better
+> > > > -	 * than swapping tasks around, check if a move is possible.
+> > > > +	 * If dst node has spare capacity, then check if there is an
+> > > > +	 * imbalance that would be overruled by the load balancer.
+> > > >  	 */
+> > > > -	maymove = !load_too_imbalanced(src_load, dst_load, env);
+> > > > +	if (env->dst_stats.node_type == node_has_spare) {
+> > > > +		unsigned int imbalance;
+> > > > +		int src_running, dst_running;
+> > > > +
+> > > > +		/* Would movement cause an imbalance? */
+> > > > +		src_running = env->src_stats.nr_running - 1;
+> > > > +		dst_running = env->src_stats.nr_running + 1;
+> > > > +		imbalance = max(0, dst_running - src_running);
+> > > 
+> > > Have trouble working out why 2 is magician again to make your test data nicer :P
+> > > 
+> > 
+> > This is calculating what the nr_running would be after the move and
+> > checking if an imbalance exists after the move forcing the load balancer
+> > to intervene.
 > 
-> On 2020-02-06 07:57, Zenghui Yu wrote:
->> In GICv4, we will ensure that level2 vPE table memory is allocated
->> for the specified vpe_id on all v4 ITS, in its_alloc_vpe_table().
->> This still works well for the typical GICv4.1 implementation, where
->> the new vPE table is shared between the ITSs and the RDs.
->>
->> To make it explicit, let us introduce allocate_vpe_l2_table() to
->> make sure that the L2 tables are allocated on all v4.1 RDs. We're
->> likely not need to allocate memory in it because the vPE table is
->> shared and (L2 table is) already allocated at ITS level, except
->> for the case where the ITS doesn't share anything (say SVPET == 0,
->> practically unlikely but architecturally allowed).
->>
->> The implementation of allocate_vpe_l2_table() is mostly copied from
->> its_alloc_table_entry().
->>
->> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
->> ---
->>  drivers/irqchip/irq-gic-v3-its.c | 80 ++++++++++++++++++++++++++++++++
->>  1 file changed, 80 insertions(+)
->>
->> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
->> b/drivers/irqchip/irq-gic-v3-its.c
->> index 0f1fe56ce0af..ae4e7b355b46 100644
->> --- a/drivers/irqchip/irq-gic-v3-its.c
->> +++ b/drivers/irqchip/irq-gic-v3-its.c
->> @@ -2443,6 +2443,72 @@ static u64 
->> inherit_vpe_l1_table_from_rd(cpumask_t **mask)
->>      return 0;
->>  }
->>
->> +static bool allocate_vpe_l2_table(int cpu, u32 id)
->> +{
->> +    void __iomem *base = gic_data_rdist_cpu(cpu)->rd_base;
->> +    u64 val, gpsz, npg;
->> +    unsigned int psz, esz, idx;
->> +    struct page *page;
->> +    __le64 *table;
->> +
->> +    if (!gic_rdists->has_rvpeid)
->> +        return true;
->> +
->> +    val  = gits_read_vpropbaser(base + SZ_128K + GICR_VPROPBASER);
+> Isn't that always going to work out to 2? 
 > 
-> Having rebased the rest of the GICv4.1 series on top of -rc1, I've hit a 
-> small
-> issue right here. I run a FVP model that only spawns 4 CPUs, while the 
-> DT has
-> 8 of them. This means that online_cpus = 4, and possible_cpus = 8.
-> 
-> So in my case, half of the RDs have base == NULL, and things stop quickly.
 
-Ah, so this may also be why we check '!base' for each possible CPU in
-inherit_vpe_l1_table_from_rd(). I didn't think about it at that time.
+Crap, stupid cut and paste moving between source trees. Yes, this is
+broken.
 
-> 
-> I plan to queue the following:
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
-> b/drivers/irqchip/irq-gic-v3-its.c
-> index d85dc8dcb0ad..7656b353a95f 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -2526,6 +2526,10 @@ static bool allocate_vpe_l2_table(int cpu, u32 id)
->       if (!gic_rdists->has_rvpeid)
->           return true;
-> 
-> +    /* Skip non-present CPUs */
-> +    if (!base)
-> +        return true;
-> +
->       val  = gicr_read_vpropbaser(base + SZ_128K + GICR_VPROPBASER);
-> 
->       esz  = FIELD_GET(GICR_VPROPBASER_4_1_ENTRY_SIZE, val) + 1;
-
-Thanks for fixing the second bug for this patch :-)
-
-
-Zenghui
-
+-- 
+Mel Gorman
+SUSE Labs
