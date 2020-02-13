@@ -2,102 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B898415B61D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 01:48:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B056215B628
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 01:51:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729448AbgBMAsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 19:48:18 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:40448 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729429AbgBMAsS (ORCPT
+        id S1729377AbgBMAuy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 19:50:54 -0500
+Received: from gateway24.websitewelcome.com ([192.185.51.202]:24195 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729185AbgBMAuy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 19:48:18 -0500
-Received: by mail-qk1-f196.google.com with SMTP id b7so4064908qkl.7
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 16:48:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=179Yt5PBUg2b6L8viYwRFsPlTIoidUR/f0EhWo/bqrQ=;
-        b=aSjmmByiXUpWFynH1CKOAB5S58PeRgELd/7h0zyhU5tXXXr+K6/NhngkvT6XOw9hj4
-         CmWurt+Jale4K7dB238hZ8meqeEQxgivd4X/gap6SOh8cBUJZvXxpHxejNzWeseESkFO
-         HdXszEgneWAm6jdXf2w5FS65rEaSOgfCiCAqaerXux70hbQYoyxgbS9aXc9j9tNBO3po
-         19dQvym2kLkqC5InJUrCUv2D7qFXOzreokSyxPcN/hRqVh8G2GhNzU63EgjMEXIU2Pjw
-         FGZq22YUAlCXse5vBiSXvSK90ywzeyZN4wdcHrffB5S4bnPwgYOKd3fiCvsRCWGvoLUC
-         KsEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=179Yt5PBUg2b6L8viYwRFsPlTIoidUR/f0EhWo/bqrQ=;
-        b=N0HrBVN2+3XsxaLjkvqEBUJCJTIc8neVm1z5uQaCS1oZMFOK23kaZ+5gkNfhGE9ei9
-         WZYPGEv5ZYce4EOE0JBcl22dA0rX+f7ZbDVrjBjZ/hZkrB2+NwqfNXWeSIu5qxNkIgYF
-         k/q9OPd8jbTbo20f4bs9sapeTqbvVLGGAFqs5htbzxPQxgVxiAxm6U2J5WUKWzcE01nj
-         plsIMNySY/eeVO2NZMm3ClCrRTxDNcREt3lqpIuLJNy43ZhlEUO6NroWoCb1Fp+2KwMd
-         emVyouRZyWOFJKiZyKEwgYesfXVmbk2ZlfzFFCNW7TPHPa3Qd6DRtWwr4Cc3wvJgmE2N
-         KF0w==
-X-Gm-Message-State: APjAAAUbV5/aHYZFJBOxDdRZ8QLx7fJoAiPqQ9XngxS20hHAgRiaE51p
-        +lHMOwiin6pTygbYqLUfRv4fyw==
-X-Google-Smtp-Source: APXvYqzOPvx9ypE9Cx7jsnK8Q3PCVT6KNkVVIroDyhA6gT7xUK96DxPUBGSPyZsdAzY10BS8J6B6UA==
-X-Received: by 2002:ae9:c318:: with SMTP id n24mr13889195qkg.38.1581554897259;
-        Wed, 12 Feb 2020 16:48:17 -0800 (PST)
-Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id 13sm356902qke.85.2020.02.12.16.48.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Feb 2020 16:48:16 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: Re: [PATCH v2 5/5] kcsan: Introduce ASSERT_EXCLUSIVE_BITS(var, mask)
-From:   Qian Cai <cai@lca.pw>
-In-Reply-To: <20200212214029.GS2935@paulmck-ThinkPad-P72>
-Date:   Wed, 12 Feb 2020 19:48:15 -0500
-Cc:     Marco Elver <elver@google.com>, John Hubbard <jhubbard@nvidia.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>, Jan Kara <jack@suse.cz>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <79934F2A-E151-480F-B1B1-1C713F932CEC@lca.pw>
-References: <CANpmjNOWzWB2GgJiZx7c96qoy-e+BDFUx9zYr+1hZS1SUS7LBQ@mail.gmail.com>
- <ED2B665D-CF42-45BD-B476-523E3549F127@lca.pw>
- <20200212214029.GS2935@paulmck-ThinkPad-P72>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+        Wed, 12 Feb 2020 19:50:54 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 3087154AC6
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 18:50:53 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 22iTjCJK8AGTX22iTjOS4t; Wed, 12 Feb 2020 18:50:53 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=oNtS80ALTefLju8sXnhUYyqruAR8Cl5rZOZKlDdi3/o=; b=O6E89Kl1z/UOh3gllATe8Wi3cR
+        x/TDcLBjptHyATw2n2/d70Tr9OQ6VklUFJ3eo1Dch4M/zLSE3I86K4Z0l6QofCllkVSMqjzWASmgb
+        mwO7JjC7vu/UR8xY4HZbrhTQv86mqRvXFBL/mpmKOXR6cWHbyz9qEk3s7M/Jq+VIbh1lQ3JAW2fAa
+        g00iYXlgXl4PSG+tjDrntzMx2Lnkzp95Ydn0Llxu3ctF2XvNAbFqYBatLgJWt9CqJ/ATAcf/xiRII
+        H4X74kdy9YqbtQ6XiZ1gi3NjY7Q2CSLPjW5wSXLL7FvRpazRxUu3ospLuWRT2i6Oyt9RwDmv78VGa
+        4dlntZ9w==;
+Received: from [200.68.141.42] (port=17629 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j22iQ-003lou-MG; Wed, 12 Feb 2020 18:50:51 -0600
+Date:   Wed, 12 Feb 2020 18:50:48 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <amurray@thegoodpenguin.co.uk>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     linux-hyperv@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] PCI: hv: Replace zero-length array with flexible-array member
+Message-ID: <20200213005048.GA9662@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.141.42
+X-Source-L: No
+X-Exim-ID: 1j22iQ-003lou-MG
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [200.68.141.42]:17629
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 73
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-> On Feb 12, 2020, at 4:40 PM, Paul E. McKenney <paulmck@kernel.org> =
-wrote:
->=20
-> On Wed, Feb 12, 2020 at 07:30:16AM -0500, Qian Cai wrote:
->>=20
->>=20
->>> On Feb 12, 2020, at 5:57 AM, Marco Elver <elver@google.com> wrote:
->>>=20
->>> KCSAN is currently in -rcu (kcsan branch has the latest version),
->>> -tip, and -next.
->>=20
->> It would like be nice to at least have this patchset can be applied =
-against the linux-next, so I can try it a spin.
->>=20
->> Maybe a better question to Paul if he could push all the latest kcsan =
-code base to linux-next soon since we are now past the merging window. I =
-also noticed some data races in rcu but only found out some of them had =
-already been fixed in rcu tree but not in linux-next.
->=20
-> I have pushed all that I have queued other than the last set of five,
-> which I will do tomorrow (Prague time) if testing goes well.
->=20
-> Could you please check the -rcu "dev" branch to see if I am missing =
-any
-> of the KCSAN patches?
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-Nope. It looks good to me.=
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
+
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/pci/controller/pci-hyperv.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+index 9977abff92fc..be957268f9d6 100644
+--- a/drivers/pci/controller/pci-hyperv.c
++++ b/drivers/pci/controller/pci-hyperv.c
+@@ -260,7 +260,7 @@ struct pci_packet {
+ 				int resp_packet_size);
+ 	void *compl_ctxt;
+ 
+-	struct pci_message message[0];
++	struct pci_message message[];
+ };
+ 
+ /*
+@@ -296,7 +296,7 @@ struct pci_bus_d0_entry {
+ struct pci_bus_relations {
+ 	struct pci_incoming_message incoming;
+ 	u32 device_count;
+-	struct pci_function_description func[0];
++	struct pci_function_description func[];
+ } __packed;
+ 
+ struct pci_q_res_req_response {
+@@ -508,7 +508,7 @@ struct hv_dr_work {
+ struct hv_dr_state {
+ 	struct list_head list_entry;
+ 	u32 device_count;
+-	struct pci_function_description func[0];
++	struct pci_function_description func[];
+ };
+ 
+ enum hv_pcichild_state {
+-- 
+2.23.0
+
