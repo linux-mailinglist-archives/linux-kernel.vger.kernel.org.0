@@ -2,108 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54EDD15B931
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 06:50:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8678815B936
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 06:52:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729699AbgBMFuL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 00:50:11 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:3324 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbgBMFuL (ORCPT
+        id S1729637AbgBMFwk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 00:52:40 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37641 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbgBMFwk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 00:50:11 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e44e3760001>; Wed, 12 Feb 2020 21:49:42 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 12 Feb 2020 21:50:10 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 12 Feb 2020 21:50:10 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Feb
- 2020 05:50:10 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Thu, 13 Feb 2020 05:50:10 +0000
-Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e44e3920002>; Wed, 12 Feb 2020 21:50:10 -0800
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Joe Perches <joe@perches.com>
-CC:     Andy Whitcroft <apw@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v2 1/1] checkpatch: support "base-commit:" format
-Date:   Wed, 12 Feb 2020 21:50:04 -0800
-Message-ID: <20200213055004.69235-2-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213055004.69235-1-jhubbard@nvidia.com>
-References: <20200213055004.69235-1-jhubbard@nvidia.com>
+        Thu, 13 Feb 2020 00:52:40 -0500
+Received: by mail-pl1-f195.google.com with SMTP id c23so1902385plz.4
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 21:52:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+1S9sNHPw62IiDHN8eBPg+LrMJ2ouKwr3VAKbMRF980=;
+        b=JbwTOUfDNCW8qkY/K2fwPjqrNqbtdzFFdI4/KN8PtrzOmCcy9ldaaldRrev+2hewUs
+         N4tqjWYrZZlQsZx0itOo/1N7IKBSDRrEMIWqskzXqPFVJvSV8i+kfhjhMsu1c9MfQwGP
+         90OXGjLAoHpFUs4sbbvWCmR2YXWtHeu+EtFiDbz8VYIBl+8S9kk7HFvjaCFnoqKZQ0O/
+         IrUo2NJAskpjveNynLwGiJU788Ydk655SFHz3o3FfB8tan8yIBx74/WgkEBDvZEXaTHN
+         h2t1rDSXVGj/GtKVk9DeAoxb4sddDKNnZOA7jM0KHQXjMNZCrhAIveBDmmgwdUCUSuJz
+         ceXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+1S9sNHPw62IiDHN8eBPg+LrMJ2ouKwr3VAKbMRF980=;
+        b=hiFLo2xVUqD5pdl4oRT2KVYgI5128cCeeYk4hFf9P8Kpq5Qobpj4snBYCk2WlEtZ1l
+         Jl6GKhrz6hUbswn81GWXaunAdYGKC9DP/rxT/jJLTa0ALlqbPBtM0kqfOjIIB5CE+aHi
+         BuR5nICY0khJrIjWk0PuzZGCUXz3VBD1O4wjKRZYrb2OgPHMqwB7q1d/cb5gJH9XiWQy
+         hTdAy7LvkzFOFanBHvL9GC2afeNkyHMGa9obVpC0PSiXjuWNpohdBpY9fxoE4/RPQQqx
+         Ovf2xHMSVe5JnH3ybwLc4FUEQ21IxIp/egQn43SxCb+z/5PaHUlIdNZuvor7PX+CUGEh
+         sKug==
+X-Gm-Message-State: APjAAAXm0qFEnTCmq+8gnz/Ah4Lg7/2zd2OiOmsLE0L2QX2BcfnVQP8s
+        XNHZvHlnLWt5YaPANGEdwSY=
+X-Google-Smtp-Source: APXvYqwEUOhsEe9x5FKfzhw+SMi+PEv2ID9VU2z6+xNAsqbLEa4uiOg5pUBE46wVc+0mOK7RiwIXDA==
+X-Received: by 2002:a17:90a:3243:: with SMTP id k61mr3295357pjb.43.1581573159839;
+        Wed, 12 Feb 2020 21:52:39 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
+        by smtp.gmail.com with ESMTPSA id m187sm1028142pga.65.2020.02.12.21.52.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2020 21:52:38 -0800 (PST)
+Date:   Thu, 13 Feb 2020 14:52:36 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/3] printk: Fix preferred console selection with
+ multiple matches
+Message-ID: <20200213055236.GE13208@google.com>
+References: <97dc50d411e10ac8aab1de0376d7a535fea8c60a.camel@kernel.crashing.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1581572982; bh=2fzW1cFQcCv8wV+9ogMJBPeSWfZqvFADlLbfZGyZt3Y=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=MyBxSIY7te8xFRF51y23sJ1vt2fRt38Auojnd0p+V5cCnVwa+mnGu0y4nZYPfFQAN
-         NDARuJzh3/1H7CIiJ5tjdveXfsVxAxiAGVrv5MGFtmvnQmeolXyzw+tD+jiQY+Rmgj
-         uV1Dyq646lUL1TMTUHV7FCwWMHWZoJaCYAMloO92zZ+P30H5WstN2RFU/fl9WjLLgp
-         4+wLZqmVHZAsp/bGe6rUHPEZu375etObGnSm6lvXF4UhxjN4V/2SXQ3CIT0H/Uyz29
-         aYaECHvMKHc3S0D3KS2HVrmPNU4amsTGh/b7uIJ8DonP7KW8rPXelK1vCXz4Y77lvP
-         jXC3Bcf/rc5ng==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <97dc50d411e10ac8aab1de0376d7a535fea8c60a.camel@kernel.crashing.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to support the get-lore-mbox.py tool described in [1], I ran:
+On (20/02/06 15:02), Benjamin Herrenschmidt wrote:
+[..]
+>  static int __add_preferred_console(char *name, int idx, char *options,
+> -				   char *brl_options)
+> +				   char *brl_options, bool user_specified)
+>  {
+>  	struct console_cmdline *c;
+>  	int i;
+> @@ -2131,6 +2131,8 @@ static int __add_preferred_console(char *name, int idx, char *options,
+>  		if (strcmp(c->name, name) == 0 && c->index == idx) {
+>  			if (!brl_options)
+>  				preferred_console = i;
+> +                       if (user_specified)
+> +                               c->user_specified = true;
+>  			return 0;
+>  		}
+>  	}
+> @@ -2140,6 +2142,7 @@ static int __add_preferred_console(char *name, int idx, char *options,
+>  		preferred_console = i;
+>  	strlcpy(c->name, name, sizeof(c->name));
+>  	c->options = options;
+> +	c->user_specified = user_specified;
+>  	braille_set_options(c, brl_options);
+>  
+>  	c->index = idx;
+> @@ -2194,7 +2197,7 @@ static int __init console_setup(char *str)
+>  	idx = simple_strtoul(s, NULL, 10);
+>  	*s = 0;
+>  
+> -	__add_preferred_console(buf, idx, options, brl_options);
+> +	__add_preferred_console(buf, idx, options, brl_options, true);
+>  	console_set_on_cmdline = 1;
+>  	return 1;
+>  }
+> @@ -2215,7 +2218,7 @@ __setup("console=", console_setup);
+>   */
+>  int add_preferred_console(char *name, int idx, char *options)
+>  {
+> -	return __add_preferred_console(name, idx, options, NULL);
+> +	return __add_preferred_console(name, idx, options, NULL, false);
+>  }
 
-    git format-patch --base=3D<commit> --cover-letter <revrange>
+A silly question:
 
-...which generated a "base-commit: <commit-hash>" tag at the end of the
-cover letter. However, checkpatch.pl generated an error upon encounting
-"base-commit:" in the cover letter:
+Can the same console first be added by
+	console_setup()->__add_preferred_console(true)
+and then by
+	add_preferred_console()->__add_preferred_console(false)
 
-    "ERROR: Please use git commit description style..."
-
-...because it found the "commit" keyword, and failed to recognize that
-it was part of the "base-commit" phrase, and as such, should not be
-subjected to the same commit description style rules.
-
-Update checkpatch.pl to include a special case for "base-commit:" (at
-the start of the line, possibly with some leading whitespace) so
-that that tag no longer generates a checkpatch error.
-
-[1] https://lwn.net/Articles/811528/ "Better tools for kernel
-    developers"
-
-Cc: Andy Whitcroft <apw@canonical.com>
-Suggested-by: Joe Perches <joe@perches.com>
-Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- scripts/checkpatch.pl | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index a63380c6b0d2..1e66fc7a2f2f 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -2761,7 +2761,7 @@ sub process {
-=20
- # Check for git id commit length and improperly formed commit descriptions
- 		if ($in_commit_log && !$commit_log_possible_stack_dump &&
--		    $line !~ /^\s*(?:Link|Patchwork|http|https|BugLink):/i &&
-+		    $line !~ /^\s*(?:Link|Patchwork|http|https|BugLink|base-commit):/i &=
-&
- 		    $line !~ /^This reverts commit [0-9a-f]{7,40}/ &&
- 		    ($line =3D~ /\bcommit\s+[0-9a-f]{5,}\b/i ||
- 		     ($line =3D~ /(?:\s|^)[0-9a-f]{12,40}(?:[\s"'\(\[]|$)/i &&
---=20
-2.25.0
-
+	-ss
