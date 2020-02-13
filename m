@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2706B15C519
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1400315C254
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:33:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729765AbgBMPxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:53:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43598 "EHLO mail.kernel.org"
+        id S2387966AbgBMPc1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:32:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729149AbgBMP0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:06 -0500
+        id S1729124AbgBMP2l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:41 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0EBF20848;
-        Thu, 13 Feb 2020 15:26:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3376324681;
+        Thu, 13 Feb 2020 15:28:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607565;
-        bh=vK0jvBmRKwQvyHXa/EMemD0TVUS1+x9d8R924du5diM=;
+        s=default; t=1581607720;
+        bh=gLEvYRahZJZvgtrz81+2AEcu4KmTQ3gESGj7mWlMQCg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hpTKVmplHu+A+rMIIx0M3XTMIlS6dgrvm5kC+6+Sx9SphJIUnMZZV5pv1uQ1TFWkG
-         p58kZ5MrHvu7LCnm0pIIGgV+khGobZ11Z1yt2Q/Bk58Qke96WUoc5IEpGg/KZB6P6q
-         QqSaGiAho+I++J28l7EkA76gIi+8DhjwDa5Kedsg=
+        b=oL7nMhpdRfEBeEybMd5pj1EIhDsZGjKmXTPCi2y/j84V6x27r4j9Y/p/Fev8n4nxp
+         ZCiw/kLV8Qo+aYgoeqmVViOh7z7q4TDVe0oBFqEKZtpJsdqe7IVQHVrjMtfTklFOy3
+         KLDWSYdcJlxB/el4K37yP8fqSYwwK4h22RHfPoMk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?Karl=20Rudb=C3=A6k=20Olsen?= <karl@micro-technic.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 4.14 156/173] ARM: dts: at91: sama5d3: define clock rate range for tcb1
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH 5.5 063/120] ARM: dts: meson8b: use the actual frequency for the GPUs 364MHz OPP
 Date:   Thu, 13 Feb 2020 07:20:59 -0800
-Message-Id: <20200213152010.709639327@linuxfoundation.org>
+Message-Id: <20200213151922.867892486@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,32 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-commit a7e0f3fc01df4b1b7077df777c37feae8c9e8b6d upstream.
+commit c3dd3315ab58b2cfa1916df55b0d0f9fbd94266f upstream.
 
-The clock rate range for the TCB1 clock is missing. define it in the device
-tree.
+The clock setup on Meson8 cannot achieve a Mali frequency of exactly
+182.15MHz. The vendor driver uses "FCLK_DIV7 / 1" for this frequency,
+which translates to 2550MHz / 7 / 1 = 364285714Hz.
+Update the GPU operating point to that specific frequency to not confuse
+myself when comparing the frequency from the .dts with the actual clock
+rate on the system.
 
-Reported-by: Karl Rudbæk Olsen <karl@micro-technic.com>
-Fixes: d2e8190b7916 ("ARM: at91/dt: define sama5d3 clocks")
-Link: https://lore.kernel.org/r/20200110172007.1253659-2-alexandre.belloni@bootlin.com
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: c3ea80b6138cae ("ARM: dts: meson8b: add the Mali-450 MP2 GPU")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/sama5d3_tcb1.dtsi |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/meson8b.dtsi |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arm/boot/dts/sama5d3_tcb1.dtsi
-+++ b/arch/arm/boot/dts/sama5d3_tcb1.dtsi
-@@ -23,6 +23,7 @@
- 					tcb1_clk: tcb1_clk {
- 						#clock-cells = <0>;
- 						reg = <27>;
-+						atmel,clk-output-range = <0 166000000>;
- 					};
- 				};
- 			};
+--- a/arch/arm/boot/dts/meson8b.dtsi
++++ b/arch/arm/boot/dts/meson8b.dtsi
+@@ -125,8 +125,8 @@
+ 			opp-hz = /bits/ 64 <255000000>;
+ 			opp-microvolt = <1100000>;
+ 		};
+-		opp-364300000 {
+-			opp-hz = /bits/ 64 <364300000>;
++		opp-364285714 {
++			opp-hz = /bits/ 64 <364285714>;
+ 			opp-microvolt = <1100000>;
+ 		};
+ 		opp-425000000 {
 
 
