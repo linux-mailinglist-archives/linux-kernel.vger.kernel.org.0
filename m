@@ -2,77 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A91415BB64
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:16:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE4B415BB6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:18:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729801AbgBMJQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 04:16:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49672 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729531AbgBMJQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 04:16:39 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4556620848;
-        Thu, 13 Feb 2020 09:16:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581585398;
-        bh=GiebtmJpNzAk9Qikj9svaXnffKSNLaoVx4iZEJ1f9R8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Tl6c66Z/muXXGGsR8OFmt//7oEMoFMLpSOdMqTmIZMcSapkUUhJ5KhzDiPIeGnuRs
-         s6L05Zr2yBZTqQxPgrTxwf/vJZuS09jUreCa650odBkGyci7sfrn50FK2D+S/FgaEJ
-         hzkiirULO+oY9fiFM996uGnX90vfzqRz2rcR9e4g=
-Date:   Thu, 13 Feb 2020 09:16:33 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Li Yang <leoyang.li@nxp.com>
-Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] iommu/arm-smmu: fix the module name to be consistent
- with older kernel
-Message-ID: <20200213091633.GA849@willie-the-truck>
-References: <1581467841-25397-1-git-send-email-leoyang.li@nxp.com>
- <20200212104902.GA3664@willie-the-truck>
- <CADRPPNQ-FcA-xdjp02ybsYeU9UFxCZU5dpf0wHThTmLHcjovCQ@mail.gmail.com>
+        id S1729833AbgBMJRU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 04:17:20 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:44832 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729662AbgBMJRU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 04:17:20 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01D9GugY083260;
+        Thu, 13 Feb 2020 03:16:56 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1581585416;
+        bh=HD8xpFq6QBHByMPfQUEirTRxNYqt9sNUI9YHw9LUwuA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=aDm+V9KX1LvxWGQqO+fXi+inYSFZoo+xo8hTQyEtf4v2AlBfCWq6rE1Zra68n0B0m
+         P8Vn81aGeakUc51CirbhuRjWKomks8vMUK+hfcTzTSJ3WjE37P2m2v9uzaTXv7HU7j
+         UK7tLncslZhU7AUCndEyok7mZeADMXRBZA0TmoR0=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01D9GuSS062922
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 13 Feb 2020 03:16:56 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 13
+ Feb 2020 03:16:55 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 13 Feb 2020 03:16:55 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01D9Gp4Q021263;
+        Thu, 13 Feb 2020 03:16:52 -0600
+Subject: Re: [PATCH v5 1/3] dt-bindings: drm/bridge: Document Cadence MHDP
+ bridge bindings.
+To:     Yuti Amonkar <yamonkar@cadence.com>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>,
+        <maxime@cerno.tech>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <mark.rutland@arm.com>, <a.hajda@samsung.com>,
+        <narmstrong@baylibre.com>, <Laurent.pinchart@ideasonboard.com>,
+        <jonas@kwiboo.se>, <jernej.skrabec@siol.net>
+CC:     <praneeth@ti.com>, <jsarha@ti.com>, <mparab@cadence.com>,
+        <sjakhade@cadence.com>
+References: <1581481604-24499-1-git-send-email-yamonkar@cadence.com>
+ <1581481604-24499-2-git-send-email-yamonkar@cadence.com>
+From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <b97283b0-e4a5-4b96-e509-b9b5cdd78991@ti.com>
+Date:   Thu, 13 Feb 2020 11:16:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADRPPNQ-FcA-xdjp02ybsYeU9UFxCZU5dpf0wHThTmLHcjovCQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1581481604-24499-2-git-send-email-yamonkar@cadence.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 01:59:46PM -0600, Li Yang wrote:
-> On Wed, Feb 12, 2020 at 4:50 AM Will Deacon <will@kernel.org> wrote:
-> >
-> > On Tue, Feb 11, 2020 at 06:37:20PM -0600, Li Yang wrote:
-> > > Commit cd221bd24ff5 ("iommu/arm-smmu: Allow building as a module")
-> > > introduced a side effect that changed the module name from arm-smmu to
-> > > arm-smmu-mod.  This breaks the users of kernel parameters for the driver
-> > > (e.g. arm-smmu.disable_bypass).  This patch changes the module name back
-> > > to be consistent.
-> > >
-> > > Signed-off-by: Li Yang <leoyang.li@nxp.com>
-> > > ---
-> > >  drivers/iommu/Makefile                          | 4 ++--
-> > >  drivers/iommu/{arm-smmu.c => arm-smmu-common.c} | 0
-> > >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > >  rename drivers/iommu/{arm-smmu.c => arm-smmu-common.c} (100%)
-> >
-> > Can't we just override MODULE_PARAM_PREFIX instead of renaming the file?
+On 12/02/2020 06:26, Yuti Amonkar wrote:
+> Document the bindings used for the Cadence MHDP DPI/DP bridge in
+> yaml format.
 > 
-> I can do that.  But on the other hand, the "mod" in the module name
-> arm-smmu-mod.ko seems to be redundant and looks a little bit weird.
-> Wouldn't it be cleaner to make it just arm-smmu.ko?
+> Signed-off-by: Yuti Amonkar <yamonkar@cadence.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>   .../bindings/display/bridge/cdns,mhdp.yaml    | 125 ++++++++++++++++++
+>   1 file changed, 125 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/display/bridge/cdns,mhdp.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp.yaml b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp.yaml
+> new file mode 100644
+> index 000000000000..e7f84ed1d2da
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp.yaml
+> @@ -0,0 +1,125 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/display/bridge/cdns,mhdp.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Cadence MHDP bridge
+> +
+> +maintainers:
+> +  - Swapnil Jakhade <sjakhade@cadence.com>
+> +  - Yuti Amonkar <yamonkar@cadence.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - cdns,mhdp8546
+> +      - ti,j721e-mhdp8546
+> +
+> +  reg:
+> +    minItems: 1
+> +    maxItems: 2
+> +    items:
+> +      - description:
+> +          Register block of mhdptx apb registers upto PHY mapped area(AUX_CONFIG_P).
 
-I just didn't fancy renaming the file because it's a pain for backports
-and why does the name of the module matter?
+"up to". Add space before (.
 
-Will
+> +          The AUX and PMA registers are mapped to associated phy driver.
+> +      - description:
+> +          Register block for DSS_EDP0_INTG_CFG_VP registers in case of TI J7 SoCs.
+> +
+> +  reg-names:
+> +    minItems: 1
+> +    maxItems: 2
+> +    items:
+> +      - const: mhdptx
+> +      - const: j721e-intg
+> +
+> +  clocks:
+> +    maxItems: 1
+> +    description:
+> +      DP bridge clock, it's used by the IP to know how to translate a number of
+> +      clock cycles into a time (which is used to comply with DP standard timings
+> +      and delays).
+> +
+> +  phys:
+> +    description: Phandle to the DisplyPort phy.
+
+"Display"
+
+  Tomi
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
