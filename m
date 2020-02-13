@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD89315C238
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:31:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDCFE15C4CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729788AbgBMPas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:30:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50992 "EHLO mail.kernel.org"
+        id S2388111AbgBMPum (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:50:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729423AbgBMP1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:31 -0500
+        id S2387548AbgBMP00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:26 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30444222C2;
-        Thu, 13 Feb 2020 15:27:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 937E32168B;
+        Thu, 13 Feb 2020 15:26:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607651;
-        bh=DIrkXbGb/ga3AX6/AEEose0jWcl44fW09Or1iBgmwOY=;
+        s=default; t=1581607585;
+        bh=asWoLacKFH1KxfF3Gmpm1l70KlWV8YA0bQ4Byui+Vio=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zez9xH6cksMXPOc2DCyt39QcAgAxntVfC/bOVKUdMiG1rniT+/wPNUgwlcbn55aTJ
-         dRH2wPpqyOTBZuSJs5ArEf39JIcm7Nr8bbH92J3c9ZhqlkJFc6Cb+cl/XVUpKsps4Y
-         tb6lCq1mEdojQ3MpRq4402YwBWlIaRpaXbsptBGc=
+        b=k8OxENi/LZuXYQXxMNrxCbCn5dbneaXbw0Pd83OXkEP8H82iakrtFruRr5FOMi96m
+         tF0y/NCxrFlZQlQ292QDEPDHw/47Y5jcFAaL8MvACVuMlf/PJ/qYSWRxIaBKWVmFV3
+         NS5+2M5IECaYj+MpCk7h/ziSqMSaJ16C+0338UEY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
-        kbuild test robot <lkp@intel.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 5.4 36/96] rtc: i2c/spi: Avoid inclusion of REGMAP support when not needed
-Date:   Thu, 13 Feb 2020 07:20:43 -0800
-Message-Id: <20200213151853.109812966@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Parav Pandit <parav@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.19 03/52] IB/mlx4: Fix memory leak in add_gid error flow
+Date:   Thu, 13 Feb 2020 07:20:44 -0800
+Message-Id: <20200213151812.096725128@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
+References: <20200213151810.331796857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,70 +46,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-commit 34719de919af07682861cb0fa2bcf64da33ecf44 upstream.
+commit eaad647e5cc27f7b46a27f3b85b14c4c8a64bffa upstream.
 
-Merely enabling I2C and RTC selects REGMAP_I2C and REGMAP_SPI, even when
-no driver needs it.  While the former can be moduler, the latter cannot,
-and thus becomes built-in.
+In procedure mlx4_ib_add_gid(), if the driver is unable to update the FW
+gid table, there is a memory leak in the driver's copy of the gid table:
+the gid entry's context buffer is not freed.
 
-Fix this by moving the select statements for REGMAP_I2C and REGMAP_SPI
-from the RTC_I2C_AND_SPI helper to the individual drivers that depend on
-it.
+If such an error occurs, free the entry's context buffer, and mark the
+entry as available (by setting its context pointer to NULL).
 
-Note that the comment for RTC_I2C_AND_SPI refers to SND_SOC_I2C_AND_SPI
-for more information, but the latter does not select REGMAP_{I2C,SPI}
-itself, and defers that to the individual drivers, too.
-
-Fixes: 080481f54ef62121 ("rtc: merge ds3232 and ds3234")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: kbuild test robot <lkp@intel.com>
-Link: https://lore.kernel.org/r/20200112171349.22268-1-geert@linux-m68k.org
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: e26be1bfef81 ("IB/mlx4: Implement ib_device callbacks")
+Link: https://lore.kernel.org/r/20200115085050.73746-1-leon@kernel.org
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Reviewed-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/rtc/Kconfig |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/mlx4/main.c |   20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -859,14 +859,14 @@ config RTC_I2C_AND_SPI
- 	default m if I2C=m
- 	default y if I2C=y
- 	default y if SPI_MASTER=y
--	select REGMAP_I2C if I2C
--	select REGMAP_SPI if SPI_MASTER
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -246,6 +246,13 @@ static int mlx4_ib_update_gids(struct gi
+ 	return mlx4_ib_update_gids_v1(gids, ibdev, port_num);
+ }
  
- comment "SPI and I2C RTC drivers"
++static void free_gid_entry(struct gid_entry *entry)
++{
++	memset(&entry->gid, 0, sizeof(entry->gid));
++	kfree(entry->ctx);
++	entry->ctx = NULL;
++}
++
+ static int mlx4_ib_add_gid(const struct ib_gid_attr *attr, void **context)
+ {
+ 	struct mlx4_ib_dev *ibdev = to_mdev(attr->device);
+@@ -306,6 +313,8 @@ static int mlx4_ib_add_gid(const struct
+ 				     GFP_ATOMIC);
+ 		if (!gids) {
+ 			ret = -ENOMEM;
++			*context = NULL;
++			free_gid_entry(&port_gid_table->gids[free]);
+ 		} else {
+ 			for (i = 0; i < MLX4_MAX_PORT_GIDS; i++) {
+ 				memcpy(&gids[i].gid, &port_gid_table->gids[i].gid, sizeof(union ib_gid));
+@@ -317,6 +326,12 @@ static int mlx4_ib_add_gid(const struct
  
- config RTC_DRV_DS3232
- 	tristate "Dallas/Maxim DS3232/DS3234"
- 	depends on RTC_I2C_AND_SPI
-+	select REGMAP_I2C if I2C
-+	select REGMAP_SPI if SPI_MASTER
- 	help
- 	  If you say yes here you get support for Dallas Semiconductor
- 	  DS3232 and DS3234 real-time clock chips. If an interrupt is associated
-@@ -886,6 +886,8 @@ config RTC_DRV_DS3232_HWMON
- config RTC_DRV_PCF2127
- 	tristate "NXP PCF2127"
- 	depends on RTC_I2C_AND_SPI
-+	select REGMAP_I2C if I2C
-+	select REGMAP_SPI if SPI_MASTER
- 	select WATCHDOG_CORE if WATCHDOG
- 	help
- 	  If you say yes here you get support for the NXP PCF2127/29 RTC
-@@ -902,6 +904,8 @@ config RTC_DRV_PCF2127
- config RTC_DRV_RV3029C2
- 	tristate "Micro Crystal RV3029/3049"
- 	depends on RTC_I2C_AND_SPI
-+	select REGMAP_I2C if I2C
-+	select REGMAP_SPI if SPI_MASTER
- 	help
- 	  If you say yes here you get support for the Micro Crystal
- 	  RV3029 and RV3049 RTC chips.
+ 	if (!ret && hw_update) {
+ 		ret = mlx4_ib_update_gids(gids, ibdev, attr->port_num);
++		if (ret) {
++			spin_lock_bh(&iboe->lock);
++			*context = NULL;
++			free_gid_entry(&port_gid_table->gids[free]);
++			spin_unlock_bh(&iboe->lock);
++		}
+ 		kfree(gids);
+ 	}
+ 
+@@ -346,10 +361,7 @@ static int mlx4_ib_del_gid(const struct
+ 		if (!ctx->refcount) {
+ 			unsigned int real_index = ctx->real_index;
+ 
+-			memset(&port_gid_table->gids[real_index].gid, 0,
+-			       sizeof(port_gid_table->gids[real_index].gid));
+-			kfree(port_gid_table->gids[real_index].ctx);
+-			port_gid_table->gids[real_index].ctx = NULL;
++			free_gid_entry(&port_gid_table->gids[real_index]);
+ 			hw_update = 1;
+ 		}
+ 	}
 
 
