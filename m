@@ -2,120 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80E7115B9FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 08:25:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB1C615BA0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 08:28:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729830AbgBMHY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 02:24:59 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:58314 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729364AbgBMHY7 (ORCPT
+        id S1729880AbgBMH2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 02:28:18 -0500
+Received: from mout-p-101.mailbox.org ([80.241.56.151]:40788 "EHLO
+        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729748AbgBMH2R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 02:24:59 -0500
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01D7MUPO025678;
-        Thu, 13 Feb 2020 02:24:50 -0500
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2y1udn1bjf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 13 Feb 2020 02:24:50 -0500
-Received: from SCSQMBX11.ad.analog.com (scsqmbx11.ad.analog.com [10.77.17.10])
-        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 01D7Om7E013138
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Thu, 13 Feb 2020 02:24:49 -0500
-Received: from SCSQMBX10.ad.analog.com (10.77.17.5) by SCSQMBX11.ad.analog.com
- (10.77.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Wed, 12 Feb
- 2020 23:24:47 -0800
-Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX10.ad.analog.com
- (10.77.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Wed, 12 Feb 2020 23:24:47 -0800
-Received: from saturn.ad.analog.com ([10.48.65.124])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01D7Oi87022204;
-        Thu, 13 Feb 2020 02:24:44 -0500
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-kernel@vger.kernel.org>
-CC:     <akpm@linux-foundation.org>, <keescook@chromium.org>,
-        <andriy.shevchenko@linux.intel.com>, <tobin@kernel.org>,
-        <gregkh@linuxfoundation.org>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH v2] lib/string: update match_string() doc-strings with correct behavior
-Date:   Thu, 13 Feb 2020 09:27:22 +0200
-Message-ID: <20200213072722.8249-1-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200212144723.21884-1-alexandru.ardelean@analog.com>
-References: <20200212144723.21884-1-alexandru.ardelean@analog.com>
+        Thu, 13 Feb 2020 02:28:17 -0500
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 48J7Ql1frkzKmT5;
+        Thu, 13 Feb 2020 08:28:15 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
+        with ESMTP id rJTc2o0rhn-7; Thu, 13 Feb 2020 08:28:11 +0100 (CET)
+Date:   Thu, 13 Feb 2020 18:27:58 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     shuah <shuah@kernel.org>
+Cc:     linux-kselftest@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dmitry Safonov <dima@arista.com>
+Subject: Re: Linux 5.6-rc1 kselftest build failures
+Message-ID: <20200213072758.e2bngq2z6yypvsim@yavin>
+References: <ff16537e-febc-1b98-0cf8-1aa23e0c29b0@kernel.org>
+ <20200212081414.7bwkndf6qxg2p35a@yavin>
+ <5311f218-9bb0-4792-c469-019c7c2db7ee@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-13_01:2020-02-12,2020-02-13 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=1 bulkscore=0 adultscore=0 mlxlogscore=570 lowpriorityscore=0
- clxscore=1015 mlxscore=0 impostorscore=0 spamscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002130058
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qh5d5kw7pebtctms"
+Content-Disposition: inline
+In-Reply-To: <5311f218-9bb0-4792-c469-019c7c2db7ee@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There were a few attempts at changing behavior of the match_string()
-helpers (i.e. 'match_string()' & 'sysfs_match_string()'), to change &
-extend the behavior according to the doc-string.
 
-But the simplest approach is to just fix the doc-strings. The current
-behavior is fine as-is, and some bugs were introduced trying to fix it.
+--qh5d5kw7pebtctms
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As for extending the behavior, new helpers can always be introduced if
-needed.
+On 2020-02-12, shuah <shuah@kernel.org> wrote:
+> On 2/12/20 1:14 AM, Aleksa Sarai wrote:
+> > On 2020-02-11, shuah <shuah@kernel.org> wrote:
+> > > openat2:
+> > >=20
+> > > tools/testing/selftests/openat2'
+> > > gcc -Wall -O2 -g -fsanitize=3Daddress -fsanitize=3Dundefined openat2_=
+test.c
+> > > helpers.c  -o tools/testing/selftests/openat2/openat2_test
+> > > In file included from /usr/include/fcntl.h:301,
+> > >                   from helpers.c:9:
+> > > In function =E2=80=98openat=E2=80=99,
+> > >      inlined from =E2=80=98touchat=E2=80=99 at helpers.c:49:11:
+> > > /usr/include/x86_64-linux-gnu/bits/fcntl2.h:126:4: error: call to
+> > > =E2=80=98__openat_missing_mode=E2=80=99 declared with attribute error=
+: openat with O_CREAT
+> > > or O_TMPFILE in third argument needs 4 arguments
+> > >    126 |    __openat_missing_mode ();
+> > >        |    ^~~~~~~~~~~~~~~~~~~~~~~~
+> >=20
+> > Yeah, that's a brain-o -- it looks like you have a newer glibc than
+> > me which gives you a warning when you don't set the mode. The fix should
+> > be just the following:
+> >=20
+>=20
+> Nice. Do you mind sending a proper patch, I can pull in.
 
-The match_string() helpers behave more like 'strncmp()' in the sense that
-they go up to n elements or until the first NULL element in the array of
-strings.
+Done[1].
 
-This change updates the doc-strings with this info.
+[1]: https://lore.kernel.org/linux-kselftest/20200213072656.15611-1-cyphar@=
+cyphar.com/
 
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- lib/string.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-diff --git a/lib/string.c b/lib/string.c
-index f607b967d978..6012c385fb31 100644
---- a/lib/string.c
-+++ b/lib/string.c
-@@ -699,6 +699,14 @@ EXPORT_SYMBOL(sysfs_streq);
-  * @n:		number of strings in the array or -1 for NULL terminated arrays
-  * @string:	string to match with
-  *
-+ * This routine will look for a string in an array of strings up to the
-+ * n-th element in the array or until the first NULL element.
-+ *
-+ * Historically the value of -1 for @n, was used to search in arrays that
-+ * are NULL terminated. However, the function does not make a distinction
-+ * when finishing the search: either @n elements have been compared OR
-+ * the first NULL element was found.
-+ *
-  * Return:
-  * index of a @string in the @array if matches, or %-EINVAL otherwise.
-  */
-@@ -727,6 +735,14 @@ EXPORT_SYMBOL(match_string);
-  *
-  * Returns index of @str in the @array or -EINVAL, just like match_string().
-  * Uses sysfs_streq instead of strcmp for matching.
-+ *
-+ * This routine will look for a string in an array of strings up to the
-+ * n-th element in the array or until the first NULL element.
-+ *
-+ * Historically the value of -1 for @n, was used to search in arrays that
-+ * are NULL terminated. However, the function does not make a distinction
-+ * when finishing the search: either @n elements have been compared OR
-+ * the first NULL element was found.
-  */
- int __sysfs_match_string(const char * const *array, size_t n, const char *str)
- {
--- 
-2.20.1
+--qh5d5kw7pebtctms
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXkT6ewAKCRCdlLljIbnQ
+EnCtAQCzI05OXMgl0JIuGJ5egu8Kczl6d3+PRHVJNjo+G6ctzAD8DeeaDhBBGG4S
+DRST3Y5gOLhDnlxv5gvFKh6UVQqbxg4=
+=toGw
+-----END PGP SIGNATURE-----
+
+--qh5d5kw7pebtctms--
