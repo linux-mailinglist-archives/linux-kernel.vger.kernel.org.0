@@ -2,59 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EF3315B791
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 04:11:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC2C415B793
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 04:11:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729551AbgBMDLj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 22:11:39 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:40422 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729333AbgBMDLi (ORCPT
+        id S1729586AbgBMDLk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 22:11:40 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:45334 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729378AbgBMDLj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 22:11:38 -0500
-Received: by mail-oi1-f193.google.com with SMTP id a142so4314349oii.7
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 19:11:37 -0800 (PST)
+        Wed, 12 Feb 2020 22:11:39 -0500
+Received: by mail-oi1-f196.google.com with SMTP id v19so4298610oic.12
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 19:11:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8yL7iUZLlDcWI/hz8OXwlSrnW+RQAzQUw/NYymBX6Xg=;
-        b=g5LdkQicWog5B/IhutWPsbAlMBNOVtHT+iHIggE1NmzAkvGYMo3XVtvDzMbvcclAQx
-         HOzLo6ocZ40bWeLZwDMdsITnH6K5hq98fNPzsrucQPhIHZ8gHH9nnTkO2GPuXfoTZHOU
-         ATUVfqfevRboK+XDtxQ04FrHy0dhMwY1aV/wsVo2TcOmVKU8phUlMyXavaxtNRSbu1vr
-         orMRFwi/oE9JgXLqtRVPDR669S7sICwgwS3lB95DReN4nbBWYG9A44HWsHWEVOdNsxHG
-         sODipyUDZgthIOc4Deiama0Rn30E0VJtFz6KJ3hm/Qnx75ZQu9X7RQv8FqQUrd4oyzzo
-         XORA==
+        bh=KJ1cbKxSOkkJkYmSO9MG9FaSPDVN9iwyOwbghCa/jtg=;
+        b=oXBOKXpcItHfv4s3EsQVQteHfurtrQ6mrHee+WEyMt4RcFVZVzPrAM2IX5iVcqFHDF
+         ggdFJebWJo4tS2fy1u82DGyu7AW2TuLpNKof9ZOh+RUhr2PO+KyLj1GVBY1UnnsPyHRT
+         YmEVVRfl9Rsmj/Onq2+50dIBVXupdYVBaKcQfnJB0mtWRvPldzjzG5igdgrzDZO7eteP
+         WZIV1dnrzILifztrU0tTKRnvkkONqpZGXdz2gql0XUkvgan+ZFcn7L9ijKNR2Y8FoAIT
+         DGJIRLbALOyvLyW0pR1HZR4RDhMoLNJa7uNVOX5PiUGthjljSuDbCVmYjra+DUQkhj84
+         VxDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=8yL7iUZLlDcWI/hz8OXwlSrnW+RQAzQUw/NYymBX6Xg=;
-        b=PHwYOgqBiPCfQN6U+7dSYcaHcN6mMRWE/xnR7i/J8wsNTImgxX3oD7/J5lD3/SY2c5
-         xjTB35Bifg06hmts9PiOd6HeiyKB0utFj/2ebm2QM+Ru6G1P9fjPunWY0DIA2zh2Pmy9
-         HXHMqoQ9i3nOpBsuRF468u6NmHb8DsGuJBO+DQANMDuw+aua4r/Q3CLXqb2KrXPpvRsf
-         O2Rzz8oGrVVbdEd5rioAkuxClQOvI0zsHS3d1M5tClogJAyAAMGXDX22kxQhyPLy0+2j
-         lCrvFGh26e6oxeXLBLjoTGB41ZHRZeo4Cx5wMMgtcmwoR+RhCwQ5SZ0e9Gu5KlCusybc
-         AQ6Q==
-X-Gm-Message-State: APjAAAUjm8/ty9ygf2mFchQcrNZVzUE3UgVWm/pkYPR32W/LBhleOytQ
-        Hcnqajeo7AtK4dsFzh1SsA==
-X-Google-Smtp-Source: APXvYqwlCkCidibdWZXqORr5Z1LDxXrg1K9Z9Te7n583TI937al7BnaO+AEgibCe5jg2r6ePg2hMkQ==
-X-Received: by 2002:aca:6542:: with SMTP id j2mr1569376oiw.69.1581563497381;
+        bh=KJ1cbKxSOkkJkYmSO9MG9FaSPDVN9iwyOwbghCa/jtg=;
+        b=tsfh0+Hyn5zHfp68CGl5j5DoSU7dePlWSfT5MglDc76TjGKskZLrcmq+ePoKB56S4G
+         NiDOZ7h+CIw584ET1opOU9UC88GeOpCJcLwe+KLiH2z6mR57JM5yp7fiynemRGYvvEH2
+         Aik3AMxpUI/scvoG2Z/WwMt0E5HLspaySz8r+KUn2UQJ8v8pVJU8V/c9pFhPy0fKCQEa
+         BcNjHMCXHhiD1570boDfMdnfLAbSdXnKlGsEZX2TLDdDqadzndl0L3k9fUpPo3aKzozw
+         70JpEdnf8JODldFu3R61VitgTuUCSCnjVAQEvjFi7cWuoQFRBQSaG9Hj7wsrUlWb7/r8
+         wkVQ==
+X-Gm-Message-State: APjAAAWQ6aCK48jQ4RgETwNzOw197lmGbQNmpB88I2zAuY0rriBmWQMv
+        mAqnMrYk+gSHIXnamLqLfw==
+X-Google-Smtp-Source: APXvYqyM14DgLsOUslHynlzF8FJnfHQ8NGtfE7G0/E9SFAd6NbDwI+ZX+AsWAWB2Q3W3IzL6oj454A==
+X-Received: by 2002:aca:f1d4:: with SMTP id p203mr1558648oih.116.1581563497684;
         Wed, 12 Feb 2020 19:11:37 -0800 (PST)
 Received: from serve.minyard.net ([47.184.136.59])
-        by smtp.gmail.com with ESMTPSA id n25sm317517oic.6.2020.02.12.19.11.36
+        by smtp.gmail.com with ESMTPSA id t20sm307533oij.19.2020.02.12.19.11.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 12 Feb 2020 19:11:36 -0800 (PST)
 Received: from t560.minyard.net (unknown [IPv6:2001:470:b8f6:1b:e166:6491:dd75:4196])
-        by serve.minyard.net (Postfix) with ESMTPA id 779C9180054;
+        by serve.minyard.net (Postfix) with ESMTPA id 84C4B180055;
         Thu, 13 Feb 2020 03:11:36 +0000 (UTC)
 From:   minyard@acm.org
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
         linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, Corey Minyard <cminyard@mvista.com>
-Subject: [RFC PATCH 1/2] arm64: Pass registers to all single-step handling routines
-Date:   Wed, 12 Feb 2020 21:11:30 -0600
-Message-Id: <20200213031131.13255-2-minyard@acm.org>
+Subject: [RFC PATCH 2/2] arm64:kgdb: Fix kernel single-stepping
+Date:   Wed, 12 Feb 2020 21:11:31 -0600
+Message-Id: <20200213031131.13255-3-minyard@acm.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200213031131.13255-1-minyard@acm.org>
 References: <20200213031131.13255-1-minyard@acm.org>
@@ -65,132 +65,149 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Corey Minyard <cminyard@mvista.com>
 
-Get ready to set the SS bit in the MDSCR register in the kernel restore
-handler.
+Single stepping on arm64 in kernel mode was just broken.  Here are the
+problems:
+
+If single step is set and an interrupt is pending, the interrupt is
+taken.  The interrupt should run and then return and the single stepped
+instruction run.  However, instead, as soon as the kernel calls
+enable_dbg, the single step happens right there.  To fix this,
+disable SS in the MDSCR register on entry and save it's value for later
+use.
+
+The SS bit in the MDSCR register is set globally for the CPU, not for the
+task being single stepped.  If the task migrates, that could cause the
+bit to be set on the wrong core.  So instead, store the value of SS in
+the thread structure and set it properly on exit back to the kernel.
+
+If a single step occurs, it clears the SS bit in PSTATE.  So subsiquent
+single steps will not work.  The bit needs to be reset on each single
+step operation.
 
 Signed-off-by: Corey Minyard <cminyard@mvista.com>
 ---
- arch/arm64/include/asm/debug-monitors.h | 4 ++--
- arch/arm64/kernel/debug-monitors.c      | 4 ++--
- arch/arm64/kernel/hw_breakpoint.c       | 6 +++---
- arch/arm64/kernel/kgdb.c                | 6 +++---
- arch/arm64/kernel/probes/kprobes.c      | 4 ++--
- 5 files changed, 12 insertions(+), 12 deletions(-)
+ arch/arm64/include/asm/ptrace.h    |  4 ++--
+ arch/arm64/kernel/asm-offsets.c    |  1 +
+ arch/arm64/kernel/debug-monitors.c |  7 ++++---
+ arch/arm64/kernel/entry.S          | 21 +++++++++++++++++++++
+ arch/arm64/kernel/kgdb.c           |  3 +++
+ 5 files changed, 31 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/include/asm/debug-monitors.h b/arch/arm64/include/asm/debug-monitors.h
-index 7619f473155f..73ce974bf754 100644
---- a/arch/arm64/include/asm/debug-monitors.h
-+++ b/arch/arm64/include/asm/debug-monitors.h
-@@ -111,8 +111,8 @@ void user_rewind_single_step(struct task_struct *task);
- void user_fastforward_single_step(struct task_struct *task);
+diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
+index fbebb411ae20..a07847deff8f 100644
+--- a/arch/arm64/include/asm/ptrace.h
++++ b/arch/arm64/include/asm/ptrace.h
+@@ -168,11 +168,11 @@ struct pt_regs {
+ 	};
+ 	u64 orig_x0;
+ #ifdef __AARCH64EB__
+-	u32 unused2;
++	u32 ss_enable; /* Kernel single-step for a task */
+ 	s32 syscallno;
+ #else
+ 	s32 syscallno;
+-	u32 unused2;
++	u32 ss_enable;
+ #endif
  
- void kernel_enable_single_step(struct pt_regs *regs);
--void kernel_disable_single_step(void);
--int kernel_active_single_step(void);
-+void kernel_disable_single_step(struct pt_regs *regs);
-+int kernel_active_single_step(struct pt_regs *regs);
- 
- #ifdef CONFIG_HAVE_HW_BREAKPOINT
- int reinstall_suspended_bps(struct pt_regs *regs);
+ 	u64 orig_addr_limit;
+diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
+index a5bdce8af65b..038e76d2f0c4 100644
+--- a/arch/arm64/kernel/asm-offsets.c
++++ b/arch/arm64/kernel/asm-offsets.c
+@@ -62,6 +62,7 @@ int main(void)
+   DEFINE(S_PSTATE,		offsetof(struct pt_regs, pstate));
+   DEFINE(S_PC,			offsetof(struct pt_regs, pc));
+   DEFINE(S_SYSCALLNO,		offsetof(struct pt_regs, syscallno));
++  DEFINE(S_SS_ENABLE,		offsetof(struct pt_regs, ss_enable));
+   DEFINE(S_ORIG_ADDR_LIMIT,	offsetof(struct pt_regs, orig_addr_limit));
+   DEFINE(S_PMR_SAVE,		offsetof(struct pt_regs, pmr_save));
+   DEFINE(S_STACKFRAME,		offsetof(struct pt_regs, stackframe));
 diff --git a/arch/arm64/kernel/debug-monitors.c b/arch/arm64/kernel/debug-monitors.c
-index 48222a4760c2..2a0dfd8b1265 100644
+index 2a0dfd8b1265..d4085cfef5a7 100644
 --- a/arch/arm64/kernel/debug-monitors.c
 +++ b/arch/arm64/kernel/debug-monitors.c
-@@ -414,7 +414,7 @@ void kernel_enable_single_step(struct pt_regs *regs)
+@@ -409,7 +409,7 @@ void kernel_enable_single_step(struct pt_regs *regs)
+ {
+ 	WARN_ON(!irqs_disabled());
+ 	set_regs_spsr_ss(regs);
+-	mdscr_write(mdscr_read() | DBG_MDSCR_SS);
++	regs->ss_enable = DBG_MDSCR_SS;
+ 	enable_debug_monitors(DBG_ACTIVE_EL1);
  }
  NOKPROBE_SYMBOL(kernel_enable_single_step);
- 
--void kernel_disable_single_step(void)
-+void kernel_disable_single_step(struct pt_regs *regs)
+@@ -417,7 +417,8 @@ NOKPROBE_SYMBOL(kernel_enable_single_step);
+ void kernel_disable_single_step(struct pt_regs *regs)
  {
  	WARN_ON(!irqs_disabled());
- 	mdscr_write(mdscr_read() & ~DBG_MDSCR_SS);
-@@ -422,7 +422,7 @@ void kernel_disable_single_step(void)
+-	mdscr_write(mdscr_read() & ~DBG_MDSCR_SS);
++	regs->ss_enable = 0;
++	clear_regs_spsr_ss(regs);
+ 	disable_debug_monitors(DBG_ACTIVE_EL1);
  }
  NOKPROBE_SYMBOL(kernel_disable_single_step);
- 
--int kernel_active_single_step(void)
-+int kernel_active_single_step(struct pt_regs *regs)
+@@ -425,7 +426,7 @@ NOKPROBE_SYMBOL(kernel_disable_single_step);
+ int kernel_active_single_step(struct pt_regs *regs)
  {
  	WARN_ON(!irqs_disabled());
- 	return mdscr_read() & DBG_MDSCR_SS;
-diff --git a/arch/arm64/kernel/hw_breakpoint.c b/arch/arm64/kernel/hw_breakpoint.c
-index 0b727edf4104..785c9a5060a6 100644
---- a/arch/arm64/kernel/hw_breakpoint.c
-+++ b/arch/arm64/kernel/hw_breakpoint.c
-@@ -682,7 +682,7 @@ static int breakpoint_handler(unsigned long unused, unsigned int esr,
- 		if (*kernel_step != ARM_KERNEL_STEP_NONE)
- 			return 0;
+-	return mdscr_read() & DBG_MDSCR_SS;
++	return regs->ss_enable;
+ }
+ NOKPROBE_SYMBOL(kernel_active_single_step);
  
--		if (kernel_active_single_step()) {
-+		if (kernel_active_single_step(regs)) {
- 			*kernel_step = ARM_KERNEL_STEP_SUSPEND;
- 		} else {
- 			*kernel_step = ARM_KERNEL_STEP_ACTIVE;
-@@ -825,7 +825,7 @@ static int watchpoint_handler(unsigned long addr, unsigned int esr,
- 		if (*kernel_step != ARM_KERNEL_STEP_NONE)
- 			return 0;
+diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+index 7c6a0a41676f..fcf979b17d94 100644
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -174,6 +174,17 @@ alternative_cb_end
+ 	apply_ssbd 1, x22, x23
  
--		if (kernel_active_single_step()) {
-+		if (kernel_active_single_step(regs)) {
- 			*kernel_step = ARM_KERNEL_STEP_SUSPEND;
- 		} else {
- 			*kernel_step = ARM_KERNEL_STEP_ACTIVE;
-@@ -882,7 +882,7 @@ int reinstall_suspended_bps(struct pt_regs *regs)
- 			toggle_bp_registers(AARCH64_DBG_REG_WCR, DBG_ACTIVE_EL0, 1);
+ 	.else
++	/*
++	 * If single-step was enabled, save it off and disable it,
++	 * or it will trap on clearing the D bit in PSTATE.
++	 * The restore code will re-enable it if necessary.
++	 */
++	mrs	x20, mdscr_el1
++	bic	x21, x20, #1
++	msr	mdscr_el1, x21
++	and	x20, x20, #1
++	str	w20, [sp, #S_SS_ENABLE]
++
+ 	add	x21, sp, #S_FRAME_SIZE
+ 	get_current_task tsk
+ 	/* Save the task's original addr_limit and set USER_DS */
+@@ -349,6 +360,16 @@ alternative_else_nop_endif
  
- 		if (*kernel_step != ARM_KERNEL_STEP_SUSPEND) {
--			kernel_disable_single_step();
-+			kernel_disable_single_step(regs);
- 			handled_exception = 1;
- 		} else {
- 			handled_exception = 0;
+ 	msr	elr_el1, x21			// set up the return data
+ 	msr	spsr_el1, x22
++
++	.if	\el != 0
++	/* Restore the single-step bit. */
++	ldr	w21, [sp, #S_SS_ENABLE]
++	mrs	x20, mdscr_el1
++	orr	x20, x20, x21
++	msr	mdscr_el1, x20
++	/* PSTATE.D and PSTATE.SS will be restored from SPSR_EL1. */
++	.endif
++
+ 	ldp	x0, x1, [sp, #16 * 0]
+ 	ldp	x2, x3, [sp, #16 * 1]
+ 	ldp	x4, x5, [sp, #16 * 2]
 diff --git a/arch/arm64/kernel/kgdb.c b/arch/arm64/kernel/kgdb.c
-index 43119922341f..220fe8fd6ace 100644
+index 220fe8fd6ace..260f12c76b6e 100644
 --- a/arch/arm64/kernel/kgdb.c
 +++ b/arch/arm64/kernel/kgdb.c
-@@ -200,8 +200,8 @@ int kgdb_arch_handle_exception(int exception_vector, int signo,
- 		/*
- 		 * Received continue command, disable single step
+@@ -223,6 +223,9 @@ int kgdb_arch_handle_exception(int exception_vector, int signo,
  		 */
--		if (kernel_active_single_step())
--			kernel_disable_single_step();
-+		if (kernel_active_single_step(linux_regs))
-+			kernel_disable_single_step(linux_regs);
- 
- 		err = 0;
- 		break;
-@@ -221,7 +221,7 @@ int kgdb_arch_handle_exception(int exception_vector, int signo,
- 		/*
- 		 * Enable single step handling
- 		 */
--		if (!kernel_active_single_step())
-+		if (!kernel_active_single_step(linux_regs))
+ 		if (!kernel_active_single_step(linux_regs))
  			kernel_enable_single_step(linux_regs);
++		else
++			/* Doing a single-step clears ss, reset it. */
++			linux_regs->pstate |= DBG_SPSR_SS;
  		err = 0;
  		break;
-diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-index d1c95dcf1d78..3082dfc3cd99 100644
---- a/arch/arm64/kernel/probes/kprobes.c
-+++ b/arch/arm64/kernel/probes/kprobes.c
-@@ -308,7 +308,7 @@ int __kprobes kprobe_fault_handler(struct pt_regs *regs, unsigned int fsr)
- 		if (!instruction_pointer(regs))
- 			BUG();
- 
--		kernel_disable_single_step();
-+		kernel_disable_single_step(regs);
- 
- 		if (kcb->kprobe_status == KPROBE_REENTER)
- 			restore_previous_kprobe(kcb);
-@@ -415,7 +415,7 @@ kprobe_single_step_handler(struct pt_regs *regs, unsigned int esr)
- 
- 	if (retval == DBG_HOOK_HANDLED) {
- 		kprobes_restore_local_irqflag(kcb, regs);
--		kernel_disable_single_step();
-+		kernel_disable_single_step(regs);
- 
- 		post_kprobe_handler(kcb, regs);
- 	}
+ 	default:
 -- 
 2.17.1
 
