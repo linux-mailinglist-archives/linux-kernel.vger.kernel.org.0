@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDF6F15C700
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:13:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E798715C5F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387762AbgBMQGD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 11:06:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35458 "EHLO mail.kernel.org"
+        id S2388102AbgBMPzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:55:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728456AbgBMPXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:23:44 -0500
+        id S1728200AbgBMPZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:38 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFE9224689;
-        Thu, 13 Feb 2020 15:23:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC85F20848;
+        Thu, 13 Feb 2020 15:25:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607424;
-        bh=Bzhi6lde7OpuvdLPjVRGmFwvB5ok4FRpi36AmEcxJis=;
+        s=default; t=1581607537;
+        bh=/O/Q4FG/rgon6u0qtaJpJXjl/VmEOXvI7NIDBPba6es=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y9bG0JHTZAcUNKh7PJlbILzn99X8NLlTCV4d1bOxIq/NYHss7P3buTYVmqPWQ/72C
-         Wkh9JPgZtLE+0WcbB8d0lPcaLxGfYPC+JD7FPq65m/U0JUK2bWNuEQzTKMhQioKA5W
-         IRX7Ki90Uwr1RmEc9nBKUbFn2pnK1iefQ4AxpaEE=
+        b=csFPNPZKU8f0W6bE6LerMxFZTR0XQFFpL7SB63fy4WeWtxk661EyIP0u2Clh2Bfz2
+         h08wQl+fgnrPbjOqXE2c/uYe/7nfwlxOb0ZT7p0LzGdVC882iWJ0yh8Y+zRDb51uES
+         I3Xv4oKQdrw8Qs4G+wZJoGaUDafYyX+Rdh2UqxM4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
-        Marios Pomonis <pomonis@google.com>,
-        Andrew Honig <ahonig@google.com>,
-        Jim Mattson <jmattson@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.9 053/116] KVM: x86: Protect MSR-based index computations in fixed_msr_to_seg_unit() from Spectre-v1/L1TF attacks
-Date:   Thu, 13 Feb 2020 07:19:57 -0800
-Message-Id: <20200213151903.638033884@linuxfoundation.org>
+        stable@vger.kernel.org, Manish Rangankar <mrangankar@marvell.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 095/173] scsi: qla4xxx: Adjust indentation in qla4xxx_mem_free
+Date:   Thu, 13 Feb 2020 07:19:58 -0800
+Message-Id: <20200213151956.947394191@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
-References: <20200213151842.259660170@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,55 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marios Pomonis <pomonis@google.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit 25a5edea71b7c154b6a0b8cec14c711cafa31d26 upstream.
+commit aa8679736a82386551eb9f3ea0e6ebe2c0e99104 upstream.
 
-This fixes a Spectre-v1/L1TF vulnerability in fixed_msr_to_seg_unit().
-This function contains index computations based on the
-(attacker-controlled) MSR number.
+Clang warns:
 
-Fixes: de9aef5e1ad6 ("KVM: MTRR: introduce fixed_mtrr_segment table")
+../drivers/scsi/qla4xxx/ql4_os.c:4148:3: warning: misleading
+indentation; statement is not part of the previous 'if'
+[-Wmisleading-indentation]
+         if (ha->fw_dump)
+         ^
+../drivers/scsi/qla4xxx/ql4_os.c:4144:2: note: previous statement is
+here
+        if (ha->queues)
+        ^
+1 warning generated.
 
-Signed-off-by: Nick Finco <nifi@google.com>
-Signed-off-by: Marios Pomonis <pomonis@google.com>
-Reviewed-by: Andrew Honig <ahonig@google.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+This warning occurs because there is a space after the tab on this
+line.  Remove it so that the indentation is consistent with the Linux
+kernel coding style and clang no longer warns.
+
+Fixes: 068237c87c64 ("[SCSI] qla4xxx: Capture minidump for ISP82XX on firmware failure")
+Link: https://github.com/ClangBuiltLinux/linux/issues/819
+Link: https://lore.kernel.org/r/20191218015252.20890-1-natechancellor@gmail.com
+Acked-by: Manish Rangankar <mrangankar@marvell.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/mtrr.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/scsi/qla4xxx/ql4_os.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kvm/mtrr.c
-+++ b/arch/x86/kvm/mtrr.c
-@@ -17,6 +17,7 @@
-  */
+--- a/drivers/scsi/qla4xxx/ql4_os.c
++++ b/drivers/scsi/qla4xxx/ql4_os.c
+@@ -4150,7 +4150,7 @@ static void qla4xxx_mem_free(struct scsi
+ 		dma_free_coherent(&ha->pdev->dev, ha->queues_len, ha->queues,
+ 				  ha->queues_dma);
  
- #include <linux/kvm_host.h>
-+#include <linux/nospec.h>
- #include <asm/mtrr.h>
+-	 if (ha->fw_dump)
++	if (ha->fw_dump)
+ 		vfree(ha->fw_dump);
  
- #include "cpuid.h"
-@@ -202,11 +203,15 @@ static bool fixed_msr_to_seg_unit(u32 ms
- 		break;
- 	case MSR_MTRRfix16K_80000 ... MSR_MTRRfix16K_A0000:
- 		*seg = 1;
--		*unit = msr - MSR_MTRRfix16K_80000;
-+		*unit = array_index_nospec(
-+			msr - MSR_MTRRfix16K_80000,
-+			MSR_MTRRfix16K_A0000 - MSR_MTRRfix16K_80000 + 1);
- 		break;
- 	case MSR_MTRRfix4K_C0000 ... MSR_MTRRfix4K_F8000:
- 		*seg = 2;
--		*unit = msr - MSR_MTRRfix4K_C0000;
-+		*unit = array_index_nospec(
-+			msr - MSR_MTRRfix4K_C0000,
-+			MSR_MTRRfix4K_F8000 - MSR_MTRRfix4K_C0000 + 1);
- 		break;
- 	default:
- 		return false;
+ 	ha->queues_len = 0;
 
 
