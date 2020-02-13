@@ -2,108 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B54B215CBA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 21:03:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC62315CBAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 21:08:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbgBMUD5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 15:03:57 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38190 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727797AbgBMUD5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 15:03:57 -0500
-Received: by mail-pl1-f195.google.com with SMTP id t6so2767242plj.5;
-        Thu, 13 Feb 2020 12:03:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UQjjHQDgj0q56YxtAxLxiwd0e2dsyqGtwVu7Hq/6ZWw=;
-        b=N/k7RAPUDfZEcoyOkB0wvxfvhSGMwEJU6wxiChP5OO/yVwjVpZSN4JI1eSaUSVN8tm
-         YWl7fRqn0MB9brNk7Q8MrlT3MuSh0O5S2tMwW1GuWZwUX7bLucomFKem3FwgSSZVxSUM
-         3El9OGIyK8kX91tlZixUZ644/ZIACx51O1h+vgyCKLQEvDPLFbI1o8TI6mRiLIq/ghOS
-         cPkbQzKAqvAv68Ca21w/lSp3RuPJiuDzIydBeXAUD8I9EaeqO+cINsvI0ZnCC1j3wbuM
-         0b5jUyJ3Z0Kgx9pTtQVVTCJeUVhzy9Rd8AHueHSUlND7MsdoNAkvK+xuNeDdiqONsk3s
-         L4GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UQjjHQDgj0q56YxtAxLxiwd0e2dsyqGtwVu7Hq/6ZWw=;
-        b=UUowp87HkcsiRrWEvW2Q8d0FbqZnOQc0WuQ8VmWeGN/FZ8wzNFC3Gyh7Kznl1VE0MB
-         loqj8YiYgHqkzQVloeP1nZpKSG3G48j4y6QfRBqyJ8WX7NFnSQ/CvkY0e/y2qQkVohY4
-         4HZi0McdyD/Zo6ZgtF2vV8nql85rD/eHMg9IibPSff3G0wuIvsvSV+tvdLDNZBhQNCR0
-         JnJ72TDoWL27IYRXXRbo+KgN6U87xY6ZwQ+q/hTm/BP7EgzM3nrSr6WqBhvQMAHwTxzP
-         6z8VJajBs3UWZkJXxH4x/rLhOIqzpEAiSrk/xb6WgOMzmj/RguBqv6ZcKmkSU8YCkntW
-         fbOg==
-X-Gm-Message-State: APjAAAVi4ZSPMxx/Da88DCq7F0i99ZhF5UEbl8MNiWumCPMz0fjWyC61
-        2qVK8fuB6Zq2kJ91HduO1lQ=
-X-Google-Smtp-Source: APXvYqxK3k8dw4bEbots2NbHpnsfrrHqX2qUwnysFEa+wzONL/xB3/2+U19TyNmfD+4AoiDn7+9nGA==
-X-Received: by 2002:a17:90a:a88d:: with SMTP id h13mr6597270pjq.55.1581624236430;
-        Thu, 13 Feb 2020 12:03:56 -0800 (PST)
-Received: from localhost ([100.118.89.211])
-        by smtp.gmail.com with ESMTPSA id w25sm4126396pfi.106.2020.02.13.12.03.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 12:03:55 -0800 (PST)
-From:   Rob Clark <robdclark@gmail.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Rob Clark <robdclark@chromium.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Fritz Koenig <frkoenig@google.com>,
-        Nathan Huckleberry <nhuck@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-msm@vger.kernel.org (open list:DRM DRIVER FOR MSM ADRENO GPU),
-        freedreno@lists.freedesktop.org (open list:DRM DRIVER FOR MSM ADRENO
-        GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/msm/dpu: fix BGR565 vs RGB565 confusion
-Date:   Thu, 13 Feb 2020 12:01:35 -0800
-Message-Id: <20200213200137.745029-1-robdclark@gmail.com>
-X-Mailer: git-send-email 2.24.1
+        id S1728618AbgBMUIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 15:08:23 -0500
+Received: from mail-eopbgr80095.outbound.protection.outlook.com ([40.107.8.95]:49669
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728236AbgBMUIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 15:08:22 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=h6Qrw3pwTHGup7Ze3r7Z65f3DimKBNi9EupESzMweKqB4U4iX6ddpTTitgcla8RX/jPG56aBAwg0KE9xTk91fpfBRFMb9UqvQrMC15FRWPFUG45OKxZnrOID3Yvti/RX4XAJXgs6E7xJ17OVl3xhslDgr4oVkLnEvEid0/08AlVKDZCmMhI7kg7zAwZxXSM5bWTaHB5glzhn90GyVq8Z3oMOsZTDrse/2HfKmiO0MewKnpM2h6x+PVYce+W68LTiT/ZCC+siNdop1p9m0A/R774MmN4GWziDWVoYt6xiZrhv9FexwOL1A9fv+875c87j5UOtCZsU7Pxxnn8ssdM8Mg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oZSM8XMa67H24VUG0pAjveCWcZjFTkP79RtY4g/g51E=;
+ b=GmCxDJ4IJ1PK49PmGVB3C/qcCyMdFjzs0Qt+enOms+pQj2gITqGkk6FZyPcASI/LdLSx8hfuzD/NZ6C7TUUoAk1p2IvUE7ViSvASdCZwcKja0RMBao0nGDuQzQiCWCwjgqWWvTHu1Dg8xF/7sH0LcimsAr0O9ZvkhHYyqFfMz6xeOTIm0iW3I76ZDJSFbU+I8AzDcd7psAECJ3MZsb+O53AJbxuaNgFKUMdTGTvGPE1WsD10buY06gkuul+VK62XwhA9b3d6Ry6+9EOutByslMSoNy6vfGeBto37ADR7ypFsh9hKXN5fj+eeIOC7YSD1UyVdGJOiMjHljZQWNl9Hsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
+ header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oZSM8XMa67H24VUG0pAjveCWcZjFTkP79RtY4g/g51E=;
+ b=LaETPekxjj7ngfvowJeaJN/LvzQSztBpx0EtwJvY0wIum6b8NxODl81txTMd5CAZr8/yxYm1JcnxrsZOtNXfeAdfXECcJ3PIadiWJcFz1RwaJ+COZfWx5DUcQ6wS1acDkWkX2Q45bcncbY/nadSGkXWj236f0RPNhFQBMvinrzM=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com; 
+Received: from DB7PR08MB3276.eurprd08.prod.outlook.com (52.135.128.26) by
+ DB7PR08MB3387.eurprd08.prod.outlook.com (20.176.239.94) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.21; Thu, 13 Feb 2020 20:08:18 +0000
+Received: from DB7PR08MB3276.eurprd08.prod.outlook.com
+ ([fe80::304f:d257:baf1:4d22]) by DB7PR08MB3276.eurprd08.prod.outlook.com
+ ([fe80::304f:d257:baf1:4d22%4]) with mapi id 15.20.2707.030; Thu, 13 Feb 2020
+ 20:08:18 +0000
+Subject: Re: [PATCH v7 6/6] loop: Add support for REQ_ALLOCATE
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     martin.petersen@oracle.com, bob.liu@oracle.com, axboe@kernel.dk,
+        agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
+        song@kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        Chaitanya.Kulkarni@wdc.com, ming.lei@redhat.com, osandov@fb.com,
+        jthumshirn@suse.de, minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
+        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
+        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
+        bvanassche@acm.org, dhowells@redhat.com, asml.silence@gmail.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <158157930219.111879.12072477040351921368.stgit@localhost.localdomain>
+ <158157957565.111879.5952051034259419400.stgit@localhost.localdomain>
+ <20200213181141.GT6874@magnolia>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <6e3081f5-9462-c6e8-2ab9-524dc3d0304c@virtuozzo.com>
+Date:   Thu, 13 Feb 2020 23:07:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+In-Reply-To: <20200213181141.GT6874@magnolia>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: HE1P190CA0023.EURP190.PROD.OUTLOOK.COM (2603:10a6:3:bc::33)
+ To DB7PR08MB3276.eurprd08.prod.outlook.com (2603:10a6:5:21::26)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: from localhost.localdomain (176.14.212.145) by HE1P190CA0023.EURP190.PROD.OUTLOOK.COM (2603:10a6:3:bc::33) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.25 via Frontend Transport; Thu, 13 Feb 2020 20:08:14 +0000
+X-Originating-IP: [176.14.212.145]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0d129ce7-93fd-4650-f0ff-08d7b0c0776e
+X-MS-TrafficTypeDiagnostic: DB7PR08MB3387:
+X-Microsoft-Antispam-PRVS: <DB7PR08MB338766E746A15D8B55E708DFCD1A0@DB7PR08MB3387.eurprd08.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3826;
+X-Forefront-PRVS: 031257FE13
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(346002)(39830400003)(366004)(136003)(396003)(189003)(199004)(8936002)(81166006)(6506007)(2906002)(6916009)(16526019)(8676002)(186003)(53546011)(6486002)(26005)(52116002)(81156014)(36756003)(6512007)(956004)(66556008)(478600001)(7416002)(66476007)(66946007)(316002)(4326008)(2616005)(31696002)(5660300002)(31686004)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:DB7PR08MB3387;H:DB7PR08MB3276.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: DwJFGDxyl0MyXmNz/0g+szVR7l9zY+wC7mCRvFb+DAyASo7Pu80DWqhsY0sx3zrCnD5bDd17pT2gAkTuqCOu+JibDy0HBtJr62Vhmys9VkfFxMLqPZDMrrWCE25NmdQrdOMmWjhViGAA9PqD2WJqfNau9R/RTfgMJzyMBNuvXSX2awDymdanI7P1ErqhEiEYNOR9aiWqIQnQQloWAmi/H4+mmWt0TQVxykMRnvcg5skprlJWGdMdHBk+YdCs4DxU/mI3/Kd4tC0W0+vCROO+oqd11xIdeDh7lwo9YT5CK/7YxVIIt04Iu/DwAfHDxJg/MZlN89R3OAuB7Vv/Bq2RNAMhCYQc/Vuah1VCU9VFBQk/gjwlmianCr58fVBjvaVA58NfDjMCqOm2UTW3qJCvIvo/CG9ESJ8XAM9R3Lrrthk46AF7QLZIu6KAuUz/QnVn
+X-MS-Exchange-AntiSpam-MessageData: 3u6WJWy96Drpuv4VqHVDRjeDzQ1/qNcGDiW4FZxOmRbaxlJ1pvFSyZKzZP36ufkrqMeZ4cUUJy3dNAWrP/nLWF2O0OzIvomD3UYmHfMzfDX1P9HyhydZ1OZi1dsJPJo/yXQC12POe36/id5TmqhrBg==
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d129ce7-93fd-4650-f0ff-08d7b0c0776e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2020 20:08:18.3321
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AB3oqubc00LDjbpHNNx7TapAZfZT+4mfQGE02hvLXfMhBCC2vySSleJp4llmclXWa/9+5HCb8/DgQ6q6ct06eA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR08MB3387
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Clark <robdclark@chromium.org>
+On 13.02.2020 21:11, Darrick J. Wong wrote:
+> On Thu, Feb 13, 2020 at 10:39:35AM +0300, Kirill Tkhai wrote:
+>> Support for new modifier of REQ_OP_WRITE_ZEROES command.
+>> This results in allocation extents in backing file instead
+>> of actual blocks zeroing.
+>>
+>> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+>> Reviewed-by: Bob Liu <bob.liu@oracle.com>
+>> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+>> ---
+>>  drivers/block/loop.c |   20 +++++++++++++-------
+>>  1 file changed, 13 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+>> index 739b372a5112..0704167a5aaa 100644
+>> --- a/drivers/block/loop.c
+>> +++ b/drivers/block/loop.c
+>> @@ -581,6 +581,16 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
+>>  	return 0;
+>>  }
+>>  
+> 
+> Urgh, I meant "copy the comment directly to here", e.g.
+> 
+> /*
+>  * Convert REQ_OP_WRITE_ZEROES modifiers into fallocate mode
+>  *
+>  * If the caller requires allocation, select that mode.  If the caller
+>  * doesn't want deallocation, call zeroout to write zeroes the range.
+>  * Otherwise, punch out the blocks.
+>  */
+> 
+> The goal here is to reinforce the notion that FL_ZERO_RANGE is how we
+> achieve nounmap zeroing...
 
-The component order between the two was swapped, resulting in incorrect
-color when games with 565 visual hit the overlay path instead of GPU
-composition.
+The function is pretty small, and its meaning is easily seen from the name
+and description.
 
-Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I don't think we have to retell every function code line in a separate
+sentence, since this distract the attention from really difficult places,
+which are really need it.
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c
-index 24ab6249083a..6f420cc73dbd 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c
-@@ -255,13 +255,13 @@ static const struct dpu_format dpu_format_map[] = {
- 
- 	INTERLEAVED_RGB_FMT(RGB565,
- 		0, COLOR_5BIT, COLOR_6BIT, COLOR_5BIT,
--		C2_R_Cr, C0_G_Y, C1_B_Cb, 0, 3,
-+		C1_B_Cb, C0_G_Y, C2_R_Cr, 0, 3,
- 		false, 2, 0,
- 		DPU_FETCH_LINEAR, 1),
- 
- 	INTERLEAVED_RGB_FMT(BGR565,
- 		0, COLOR_5BIT, COLOR_6BIT, COLOR_5BIT,
--		C1_B_Cb, C0_G_Y, C2_R_Cr, 0, 3,
-+		C2_R_Cr, C0_G_Y, C1_B_Cb, 0, 3,
- 		false, 2, 0,
- 		DPU_FETCH_LINEAR, 1),
- 
--- 
-2.24.1
-
+Kirill
