@@ -2,104 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A7E415B9E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 08:10:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 574F615B9EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 08:11:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729815AbgBMHKT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 02:10:19 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33234 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727123AbgBMHKT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 02:10:19 -0500
-Received: by mail-lj1-f195.google.com with SMTP id y6so5347648lji.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 23:10:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Vg2ne5AyyglOAv8FBMMwHyfnVt31BO4UzavNdGGQICU=;
-        b=v/6iFBYYAvUyH1ig7uVxg5hp1J8W8pqTDvVe0oceLhdcpHrvCci4+tF2xXQNtxzQPu
-         NKnZfw4MmkSWjVBNlp37Az1Fd4k9TFuYRV7SWLWH2ToujZ9cpggJ2KTajdvy+bzqJ48u
-         Amm262fwmwPMBW9u/oNOafTF4C3pXNHBnUAnMohr9hjAefmdH/GbH5ceZCSvT6lWJlxb
-         VcufdzCYyhzDOx9Qc2EMeKSYxnTz8XK0IjrM6+4eSYLVdJR0lhAALzQ+4VIlbb6G16d/
-         INxdJ1lb3L/AZVPz49LRoyCYB6KYpEau3aOcTip0b/Dk4M6kU7SKMGO2Bmt7UkBrmAaa
-         6a9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Vg2ne5AyyglOAv8FBMMwHyfnVt31BO4UzavNdGGQICU=;
-        b=exIl6GMJbXwqlv6jVk7FLd9QWO4Kj3z+Ne08vHykBS6FnLCsfx7nj8TMWzYHWOT19M
-         8/WUgLmNwhSJJHGi6Tj0TuQd/UQ+kZOMItGZRON1rhA2ajVXqCs3MHiTSnYsDwKZkWMb
-         5XA6XvA54qQ1/Qe/GGmrW6idmlbVWO5ZW+g3HugQcdeXxnO5RErx3mzR0hArkTBmLBky
-         a6sf+Tx3Busm50kNzc4ZOBulnxzOHN1Zt9quNYve1Owk9z/19K/Diq8g400kbLnT+eq/
-         1j6MEGUMJKRSHYt8yoFGov6wN6m4cu1ZAjI6oUY+qvkTCEE/tmKLGiivexNYeQNvJm2a
-         7nqQ==
-X-Gm-Message-State: APjAAAXVifjhhN3Ms1Bsz9XBlX/IPt25ktRGbaK8FSaAoOay72obO7Fp
-        1TINgfhCM4qJXSiqt+d+20v7s7mgAi0ewxiZ+eciDhOBTyQ=
-X-Google-Smtp-Source: APXvYqzaqiU/b6IGWITzU+eEe7MG3UAMGPlHrN3BYM1ZLAe965Y8HgMBCww+Yvh2kbxnhfBUSc8FAGZm3qKahOTJp04=
-X-Received: by 2002:a2e:7005:: with SMTP id l5mr9592622ljc.230.1581577817025;
- Wed, 12 Feb 2020 23:10:17 -0800 (PST)
+        id S1729837AbgBMHLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 02:11:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44692 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727123AbgBMHLZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 02:11:25 -0500
+Received: from [10.44.0.22] (unknown [103.48.210.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E860A2168B;
+        Thu, 13 Feb 2020 07:11:21 +0000 (UTC)
+Subject: Re: [PATCH 06/18] m68k: Replace setup_irq() by request_irq()
+To:     afzal mohammed <afzal.mohd.ma@gmail.com>,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+References: <cover.1581478323.git.afzal.mohd.ma@gmail.com>
+ <1941c51a3237c4e9df6d9a5b87615cd1bba572dc.1581478324.git.afzal.mohd.ma@gmail.com>
+From:   Greg Ungerer <gerg@linux-m68k.org>
+Message-ID: <bfb9c0bb-0c16-5516-d788-bbd2ca86fc58@linux-m68k.org>
+Date:   Thu, 13 Feb 2020 17:11:17 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <1654227.8mz0SueHsU@kreacher>
-In-Reply-To: <1654227.8mz0SueHsU@kreacher>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Thu, 13 Feb 2020 12:40:05 +0530
-Message-ID: <CAP245DXY2MsV6rf95QdATTXXZWoYYLFBO3QxQgkg=44Fw0cLNA@mail.gmail.com>
-Subject: Re: [PATCH 00/28] PM: QoS: Get rid of unuseful code and rework CPU
- latency QoS interface
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1941c51a3237c4e9df6d9a5b87615cd1bba572dc.1581478324.git.afzal.mohd.ma@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 5:09 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> Hi All,
->
-> This series of patches is based on the observation that after commit
-> c3082a674f46 ("PM: QoS: Get rid of unused flags") the only global PM QoS class
-> in use is PM_QOS_CPU_DMA_LATENCY, but there is still a significant amount of
-> code dedicated to the handling of global PM QoS classes in general.  That code
-> takes up space and adds overhead in vain, so it is better to get rid of it.
->
-> Moreover, with that unuseful code removed, the interface for adding QoS
-> requests for CPU latency becomes inelegant and confusing, so it is better to
-> clean it up.
->
-> Patches [01/28-12/28] do the first part described above, which also includes
-> some assorted cleanups of the core PM QoS code that doesn't go away.
->
-> Patches [13/28-25/28] rework the CPU latency QoS interface (in the classic
-> "define stubs, migrate users, change the API proper" manner), patches
-> [26-27/28] update the general comments and documentation to match the code
-> after the previous changes and the last one makes the CPU latency QoS depend
-> on CPU_IDLE (because cpuidle is the only user of its target value today).
->
-> The majority of the patches in this series don't change the functionality of
-> the code at all (at least not intentionally).
->
-> Please refer to the changelogs of individual patches for details.
+Hi Afzal,
 
-Hi Rafael,
+On 12/2/20 6:03 pm, afzal mohammed wrote:
+> request_irq() is preferred over setup_irq(). Existing callers of
+> setup_irq() reached mostly via 'init_IRQ()' & 'time_init()', while
+> memory allocators are ready by 'mm_init()'.
+> 
+> Per tglx[1], setup_irq() existed in olden days when allocators were not
+> ready by the time early interrupts were initialized.
+> 
+> Hence replace setup_irq() by request_irq().
+> 
+> Seldom remove_irq() usage has been observed coupled with setup_irq(),
+> wherever that has been found, it too has been replaced by free_irq().
+> 
+> [1] https://lkml.kernel.org/r/alpine.DEB.2.20.1710191609480.1971@nanos
+> 
+> Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+> ---
+> 
+> Since cc'ing cover letter to all maintainers/reviewers would be too
+> many, refer for cover letter,
+>   https://lkml.kernel.org/r/cover.1581478323.git.afzal.mohd.ma@gmail.com
+> 
+>   arch/m68k/68000/timers.c      |  9 ++-------
+>   arch/m68k/coldfire/pit.c      |  9 ++-------
+>   arch/m68k/coldfire/sltimers.c | 19 +++++--------------
+>   arch/m68k/coldfire/timers.c   | 19 +++++--------------
+>   4 files changed, 14 insertions(+), 42 deletions(-)
+> 
+> diff --git a/arch/m68k/68000/timers.c b/arch/m68k/68000/timers.c
+> index 71ddb4c98726..7a55d664592e 100644
+> --- a/arch/m68k/68000/timers.c
+> +++ b/arch/m68k/68000/timers.c
+> @@ -68,12 +68,6 @@ static irqreturn_t hw_tick(int irq, void *dummy)
+>   
+>   /***************************************************************************/
+>   
+> -static struct irqaction m68328_timer_irq = {
+> -	.name	 = "timer",
+> -	.flags	 = IRQF_TIMER,
+> -	.handler = hw_tick,
+> -};
+> -
+>   /***************************************************************************/
 
-Nice cleanup to the code and docs.
+Remove this comment line as well. Nothing left to separate
+between those comment lines with the struct initialization removed.
 
-I've reviewed the series, and briefly tested it by setting latencies
-from userspace. Can we not remove the debugfs interface? It is a quick
-way to check the global cpu latency clamp on the system from userspace
-without setting up tracepoints or writing a program to read
-/dev/cpu_dma_latency.
 
-Except for patch 01/28 removing the debugfs interface, please feel to add my
+>   static u64 m68328_read_clk(struct clocksource *cs)
+> @@ -106,7 +100,8 @@ void hw_timer_init(irq_handler_t handler)
+>   	TCTL = 0;
+>   
+>   	/* set ISR */
+> -	setup_irq(TMR_IRQ_NUM, &m68328_timer_irq);
+> +	if (request_irq(TMR_IRQ_NUM, hw_tick, IRQF_TIMER, "timer", NULL))
+> +		pr_err("request_irq() on %s failed\n", "timer");
+>   
+>   	/* Restart mode, Enable int, Set clock source */
+>   	TCTL = TCTL_OM | TCTL_IRQEN | CLOCK_SOURCE;
+> diff --git a/arch/m68k/coldfire/pit.c b/arch/m68k/coldfire/pit.c
+> index eb6f16b0e2e6..d09e253abe5a 100644
+> --- a/arch/m68k/coldfire/pit.c
+> +++ b/arch/m68k/coldfire/pit.c
+> @@ -111,12 +111,6 @@ static irqreturn_t pit_tick(int irq, void *dummy)
+>   
+>   /***************************************************************************/
+>   
+> -static struct irqaction pit_irq = {
+> -	.name	 = "timer",
+> -	.flags	 = IRQF_TIMER,
+> -	.handler = pit_tick,
+> -};
+> -
+>   /***************************************************************************/
 
-Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
-Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
+Remove this comment line as well.
 
-Regards,
-Amit
+
+>   static u64 pit_read_clk(struct clocksource *cs)
+> @@ -156,7 +150,8 @@ void hw_timer_init(irq_handler_t handler)
+>   	cf_pit_clockevent.min_delta_ticks = 0x3f;
+>   	clockevents_register_device(&cf_pit_clockevent);
+>   
+> -	setup_irq(MCF_IRQ_PIT1, &pit_irq);
+> +	if (request_irq(MCF_IRQ_PIT1, pit_tick, IRQF_TIMER, "timer", NULL))
+> +		pr_err("request_irq() on %s failed\n", "timer");
+>   
+>   	clocksource_register_hz(&pit_clk, FREQ);
+>   }
+> diff --git a/arch/m68k/coldfire/sltimers.c b/arch/m68k/coldfire/sltimers.c
+> index 1b11e7bacab3..2188a21e5413 100644
+> --- a/arch/m68k/coldfire/sltimers.c
+> +++ b/arch/m68k/coldfire/sltimers.c
+> @@ -50,18 +50,14 @@ irqreturn_t mcfslt_profile_tick(int irq, void *dummy)
+>   	return IRQ_HANDLED;
+>   }
+>   
+> -static struct irqaction mcfslt_profile_irq = {
+> -	.name	 = "profile timer",
+> -	.flags	 = IRQF_TIMER,
+> -	.handler = mcfslt_profile_tick,
+> -};
+> -
+>   void mcfslt_profile_init(void)
+>   {
+>   	printk(KERN_INFO "PROFILE: lodging TIMER 1 @ %dHz as profile timer\n",
+>   	       PROFILEHZ);
+>   
+> -	setup_irq(MCF_IRQ_PROFILER, &mcfslt_profile_irq);
+> +	if (request_irq(MCF_IRQ_PROFILER, mcfslt_profile_tick, IRQF_TIMER,
+> +			"profile timer", NULL))
+> +		pr_err("request_irq() on %s failed\n", "profile timer");
+>   
+>   	/* Set up TIMER 2 as high speed profile clock */
+>   	__raw_writel(MCF_BUSCLK / PROFILEHZ - 1, PA(MCFSLT_STCNT));
+> @@ -92,12 +88,6 @@ static irqreturn_t mcfslt_tick(int irq, void *dummy)
+>   	return timer_interrupt(irq, dummy);
+>   }
+>   
+> -static struct irqaction mcfslt_timer_irq = {
+> -	.name	 = "timer",
+> -	.flags	 = IRQF_TIMER,
+> -	.handler = mcfslt_tick,
+> -};
+> -
+>   static u64 mcfslt_read_clk(struct clocksource *cs)
+>   {
+>   	unsigned long flags;
+> @@ -140,7 +130,8 @@ void hw_timer_init(irq_handler_t handler)
+>   	mcfslt_cnt = mcfslt_cycles_per_jiffy;
+>   
+>   	timer_interrupt = handler;
+> -	setup_irq(MCF_IRQ_TIMER, &mcfslt_timer_irq);
+> +	if (request_irq(MCF_IRQ_TIMER, mcfslt_tick, IRQF_TIMER, "timer", NULL))
+> +		pr_err("request_irq() on %s failed\n", "timer");
+>   
+>   	clocksource_register_hz(&mcfslt_clk, MCF_BUSCLK);
+>   
+> diff --git a/arch/m68k/coldfire/timers.c b/arch/m68k/coldfire/timers.c
+> index 227aa5d13709..f384e92d8b1c 100644
+> --- a/arch/m68k/coldfire/timers.c
+> +++ b/arch/m68k/coldfire/timers.c
+> @@ -82,12 +82,6 @@ static irqreturn_t mcftmr_tick(int irq, void *dummy)
+>   
+>   /***************************************************************************/
+>   
+> -static struct irqaction mcftmr_timer_irq = {
+> -	.name	 = "timer",
+> -	.flags	 = IRQF_TIMER,
+> -	.handler = mcftmr_tick,
+> -};
+> -
+>   /***************************************************************************/
+
+Remove comment line here too.
+
+
+>   static u64 mcftmr_read_clk(struct clocksource *cs)
+> @@ -134,7 +128,8 @@ void hw_timer_init(irq_handler_t handler)
+>   
+>   	timer_interrupt = handler;
+>   	init_timer_irq();
+> -	setup_irq(MCF_IRQ_TIMER, &mcftmr_timer_irq);
+> +	if (request_irq(MCF_IRQ_TIMER, mcftmr_tick, IRQF_TIMER, "timer", NULL))
+> +		pr_err("request_irq() on %s failed\n", "timer");
+>   
+>   #ifdef CONFIG_HIGHPROFILE
+>   	coldfire_profile_init();
+> @@ -170,12 +165,6 @@ irqreturn_t coldfire_profile_tick(int irq, void *dummy)
+>   
+>   /***************************************************************************/
+>   
+> -static struct irqaction coldfire_profile_irq = {
+> -	.name	 = "profile timer",
+> -	.flags	 = IRQF_TIMER,
+> -	.handler = coldfire_profile_tick,
+> -};
+> -
+>   void coldfire_profile_init(void)
+>   {
+>   	printk(KERN_INFO "PROFILE: lodging TIMER2 @ %dHz as profile timer\n",
+> @@ -188,7 +177,9 @@ void coldfire_profile_init(void)
+>   	__raw_writew(MCFTIMER_TMR_ENORI | MCFTIMER_TMR_CLK16 |
+>   		MCFTIMER_TMR_RESTART | MCFTIMER_TMR_ENABLE, PA(MCFTIMER_TMR));
+>   
+> -	setup_irq(MCF_IRQ_PROFILER, &coldfire_profile_irq);
+> +	if (request_irq(MCF_IRQ_PROFILER, coldfire_profile_tick, IRQF_TIMER,
+> +			"profile timer", NULL))
+> +		pr_err("request_irq() on %s failed\n", "profile timer");
+>   }
+>   
+>   /***************************************************************************/
+
+I tested this out on ColdFire hardware I have, worked fine.
+All defconfigs still compiled too.
+
+Regards
+Greg
+
+
