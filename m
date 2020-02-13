@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C9D515C298
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:35:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FDF915C249
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:32:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729863AbgBMPbj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:31:39 -0500
+        id S2388047AbgBMPbm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:31:42 -0500
 Received: from mail.kernel.org ([198.145.29.99]:54040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728280AbgBMP2C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:28:02 -0500
+        id S1729539AbgBMP2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:03 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 311AD20661;
+        by mail.kernel.org (Postfix) with ESMTPSA id C749F206DB;
         Thu, 13 Feb 2020 15:28:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1581607682;
-        bh=jOzQoKaNoUzmDAcE2f1lJ1Vju69MQpsJT9S2YdQl15U=;
+        bh=qalAB5bKEGVK827bqT35jJirfnT6wm6bOd0KLJ3sqa4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yK71ba9IqR0fAa3OdcIy8bB9ANmaQvC1nVF1eNKPZYaGo7nReApyu/UEdJUMo441n
-         SdRnOwLrEDvhE9UJYehmovNI7EYAEd38enD8SMAhU34wMMF7oGVkkeFflD1Gy41tn2
-         eo8aW3nHR3To4f6Gv6YNqiVBOrv9I2bXvOSVEagM=
+        b=yC3KPv7mK7YRLq+rZn++f6aVivYYO1j3GpIWY1r68PxEs5k7Ej3+pBP6WyNVoWOMZ
+         Q6Lbs8H/1emNpnPo7wiHCl7HIUiXerUs2UNeCGtd860c+NQKJn//mycU1qS7ne6D/C
+         ajnva7UwXUWevdiVX3N6HqLveVhiT1zs1aS0iHLU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Haywood <mark.haywood@oracle.com>,
-        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
+        stable@vger.kernel.org, Xiyu Yang <xiyuyang19@fudan.edu.cn>,
+        Xin Tan <tanxin.ctf@gmail.com>,
         Leon Romanovsky <leonro@mellanox.com>,
         Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.5 005/120] RDMA/netlink: Do not always generate an ACK for some netlink operations
-Date:   Thu, 13 Feb 2020 07:20:01 -0800
-Message-Id: <20200213151903.095079526@linuxfoundation.org>
+Subject: [PATCH 5.5 006/120] RDMA/i40iw: fix a potential NULL pointer dereference
+Date:   Thu, 13 Feb 2020 07:20:02 -0800
+Message-Id: <20200213151903.615842568@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
 References: <20200213151901.039700531@linuxfoundation.org>
@@ -45,77 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Håkon Bugge <haakon.bugge@oracle.com>
+From: Xiyu Yang <xiyuyang19@fudan.edu.cn>
 
-commit a242c36951ecd24bc16086940dbe6b522205c461 upstream.
+commit 04db1580b5e48a79e24aa51ecae0cd4b2296ec23 upstream.
 
-In rdma_nl_rcv_skb(), the local variable err is assigned the return value
-of the supplied callback function, which could be one of
-ib_nl_handle_resolve_resp(), ib_nl_handle_set_timeout(), or
-ib_nl_handle_ip_res_resp(). These three functions all return skb->len on
-success.
+A NULL pointer can be returned by in_dev_get(). Thus add a corresponding
+check so that a NULL pointer dereference will be avoided at this place.
 
-rdma_nl_rcv_skb() is merely a copy of netlink_rcv_skb(). The callback
-functions used by the latter have the convention: "Returns 0 on success or
-a negative error code".
-
-In particular, the statement (equal for both functions):
-
-   if (nlh->nlmsg_flags & NLM_F_ACK || err)
-
-implies that rdma_nl_rcv_skb() always will ack a message, independent of
-the NLM_F_ACK being set in nlmsg_flags or not.
-
-The fix could be to change the above statement, but it is better to keep
-the two *_rcv_skb() functions equal in this respect and instead change the
-three callback functions in the rdma subsystem to the correct convention.
-
-Fixes: 2ca546b92a02 ("IB/sa: Route SA pathrecord query through netlink")
-Fixes: ae43f8286730 ("IB/core: Add IP to GID netlink offload")
-Link: https://lore.kernel.org/r/20191216120436.3204814-1-haakon.bugge@oracle.com
-Suggested-by: Mark Haywood <mark.haywood@oracle.com>
-Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
-Tested-by: Mark Haywood <mark.haywood@oracle.com>
+Fixes: 8e06af711bf2 ("i40iw: add main, hdr, status")
+Link: https://lore.kernel.org/r/1577672668-46499-1-git-send-email-xiyuyang19@fudan.edu.cn
+Signed-off-by: Xiyu Yang <xiyuyang19@fudan.edu.cn>
+Signed-off-by: Xin Tan <tanxin.ctf@gmail.com>
 Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
 Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/addr.c     |    2 +-
- drivers/infiniband/core/sa_query.c |    4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/i40iw/i40iw_main.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/infiniband/core/addr.c
-+++ b/drivers/infiniband/core/addr.c
-@@ -139,7 +139,7 @@ int ib_nl_handle_ip_res_resp(struct sk_b
- 	if (ib_nl_is_good_ip_resp(nlh))
- 		ib_nl_process_good_ip_rsep(nlh);
+--- a/drivers/infiniband/hw/i40iw/i40iw_main.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_main.c
+@@ -1225,6 +1225,8 @@ static void i40iw_add_ipv4_addr(struct i
+ 			const struct in_ifaddr *ifa;
  
--	return skb->len;
-+	return 0;
- }
- 
- static int ib_nl_ip_send_msg(struct rdma_dev_addr *dev_addr,
---- a/drivers/infiniband/core/sa_query.c
-+++ b/drivers/infiniband/core/sa_query.c
-@@ -1068,7 +1068,7 @@ int ib_nl_handle_set_timeout(struct sk_b
- 	}
- 
- settimeout_out:
--	return skb->len;
-+	return 0;
- }
- 
- static inline int ib_nl_is_good_resolve_resp(const struct nlmsghdr *nlh)
-@@ -1139,7 +1139,7 @@ int ib_nl_handle_resolve_resp(struct sk_
- 	}
- 
- resp_out:
--	return skb->len;
-+	return 0;
- }
- 
- static void free_sm_ah(struct kref *kref)
+ 			idev = in_dev_get(dev);
++			if (!idev)
++				continue;
+ 			in_dev_for_each_ifa_rtnl(ifa, idev) {
+ 				i40iw_debug(&iwdev->sc_dev, I40IW_DEBUG_CM,
+ 					    "IP=%pI4, vlan_id=%d, MAC=%pM\n", &ifa->ifa_address,
 
 
