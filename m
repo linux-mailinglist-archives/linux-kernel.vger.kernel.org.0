@@ -2,99 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7874915BFD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 14:56:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A601F15BFCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 14:56:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730162AbgBMN4r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 08:56:47 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:38254 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730143AbgBMN4q (ORCPT
+        id S1730084AbgBMN4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 08:56:25 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:62366 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729971AbgBMN4Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 08:56:46 -0500
-Received: by mail-vs1-f65.google.com with SMTP id r18so3945387vso.5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 05:56:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rNaO9fCq4OroqsLyyWDGRz4F9uHGAr1iFI1cNpsaze4=;
-        b=VXc0piMADDudT2640UQ7xe52fYFhWUEMLYy+jDVn2rbNCyaajFa8ImKPOPMX3vdv+B
-         aThfOe7Q6XjxyxTfQtT9C/IKgmcmZVoep4WV0BASsavWPD9pzh4D7aiTyvk+83d7Uk+9
-         led7ucEq595FFqn9GXQhp65NBLipKASrshgoZQPB2f9OIb0yPUTrSqMqiLrHszcFT9Ge
-         IAEsgcaXlKJJjLVD6bInw0nQTNcDvFrCm6fNBGWtLJR4w7N/wvzljNzo5fhNfAQq5+Kt
-         p9Ne2GXymxzxGSa9mUbTR+QxdyhyX+hIFEsE60h/Zd5la9sp5XbZhcK8Ms49cW5Mh97H
-         2p7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rNaO9fCq4OroqsLyyWDGRz4F9uHGAr1iFI1cNpsaze4=;
-        b=YFfrtf+xk3zXLhoLDNa/wombsUD/MTNmTD5p0FRMoyptA7v+G3eoADagFZru4SAh0v
-         Mp8PF2tarCZ6Uxfmcqrh5UBAFSAyscNTBFzkYOYuUI45SPzzJcEH6CSWR4Kehdp2LzDS
-         a1S/mYjFm6Tk74AZVoroCRQbnTvlIAAV4ujfVmDjm8yHxOEuOShMT/dSJHamNs7LCcl8
-         or+XW8gOl27nIYJUUaXjgW3s3LEpxCxX3hgljOQyn64R751VjtSR1DE9GUlEQTy55WvO
-         8VGJo0dzn+HXOOvsU1sB+P6XtNhVhVBHJytqFKqS2duzLZiPH23+4vzmuWv6zliVpXB3
-         j/Kw==
-X-Gm-Message-State: APjAAAVhx5JtopsZ8Nzj0gjUrRfdnaB1TsmkRxElhOvxGzno1f7IB92z
-        ZQsLaSkrc0p1/N/fhhRV00E69UTxcJJQbCi7Qt1HzlVW
-X-Google-Smtp-Source: APXvYqxqHAmLotIRRQ0ncI82P7E94z6GiQzoCMQmJK6bCTdhOwKfljgkz8QLciGgOc9VSbSss2yfxewHEL5Z+BXjbfY=
-X-Received: by 2002:a67:5e45:: with SMTP id s66mr2150149vsb.200.1581602205182;
- Thu, 13 Feb 2020 05:56:45 -0800 (PST)
+        Thu, 13 Feb 2020 08:56:25 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01DDmnk7003299;
+        Thu, 13 Feb 2020 14:56:19 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=YJPJ2VtB5Pf6F+A52rBi6qL7Kcr6n5x21hJ8PjtmHNA=;
+ b=Uz9Sd+XZF94QJ2oVs5YxjmqhBWrHfugXDGOU5B66/3I/Cjd4DnCCWhoqIL8fpRYgD/ZG
+ JEwWTDwANHfm9pbndKgDhMmi32TMd27o+yNG3Unts0S9/cmFDRnXkR08syaI+EqQBNeQ
+ Zb3+6w7SEUyYafT1wrdx8E1Pl3FKpS9yCzY+TfXCtpQmx5Ux6TUIHv9+dkpXBzQgEMNJ
+ +AyLlz/Ae1hoZw6N4fH2OEn6AO3D3Nt//X6zA3Mwe82Qe/eabpkzTxOiYcKFSSvOhsC4
+ DQRz6f9+WHg89wKUpWDvNf41O+IgK2MJPzUN/R9nA2FXxGDjk07gwVahUvTc7mJotKm3 5Q== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2y1ufhnkex-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 13 Feb 2020 14:56:19 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F324E10003B;
+        Thu, 13 Feb 2020 14:56:11 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E52982B8517;
+        Thu, 13 Feb 2020 14:56:11 +0100 (CET)
+Received: from lmecxl0889.lme.st.com (10.75.127.45) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Feb
+ 2020 14:56:11 +0100
+Subject: Re: [PATCH 1/1] rpmsg: core: Add wildcard match for name service
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <bjorn.andersson@linaro.org>, <ohad@wizery.com>
+CC:     <s-anna@ti.com>, <xiaoxiang@xiaomi.com>, <t-kristo@ti.com>,
+        <loic.pallardy@st.com>, <remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200212211251.32091-1-mathieu.poirier@linaro.org>
+ <20200212211251.32091-2-mathieu.poirier@linaro.org>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Message-ID: <034dcb0b-e305-aab9-f52b-5f725856480f@st.com>
+Date:   Thu, 13 Feb 2020 14:56:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200206162124.201195-1-swboyd@chromium.org>
-In-Reply-To: <20200206162124.201195-1-swboyd@chromium.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 13 Feb 2020 14:56:09 +0100
-Message-ID: <CAPDyKFo9cKVNRuu0EK9CdD9gx3kd+gcW=AtaC3Ewhmy1KpNAHw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-msm: Mark sdhci_msm_cqe_disable static
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Ritesh Harjani <riteshh@codeaurora.org>,
-        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Douglas Anderson <dianders@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200212211251.32091-2-mathieu.poirier@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-13_04:2020-02-12,2020-02-13 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Feb 2020 at 17:21, Stephen Boyd <swboyd@chromium.org> wrote:
->
-> This function is not exported and only used in this file. Mark it
-> static.
->
-> Cc: Ritesh Harjani <riteshh@codeaurora.org>
-> Cc: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Hi Mathieu,
 
-Applied for fixes, thanks!
+Simple and elegant :)
+I tested it with my rpmsg_tty client which defines several IDs: work fine.
+  
+Just a question regarding the comment else
+Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+ 
 
-Kind regards
-Uffe
-
-
+On 2/12/20 10:12 PM, Mathieu Poirier wrote:
+> Adding the capability to supplement the base definition published
+> by an rpmsg_driver with a postfix description so that it is possible
+> for several entity to use the same service.
+> 
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > ---
->  drivers/mmc/host/sdhci-msm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index c3a160c18047..3955fa5db43c 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -1590,7 +1590,7 @@ static u32 sdhci_msm_cqe_irq(struct sdhci_host *host, u32 intmask)
->         return 0;
->  }
->
-> -void sdhci_msm_cqe_disable(struct mmc_host *mmc, bool recovery)
-> +static void sdhci_msm_cqe_disable(struct mmc_host *mmc, bool recovery)
+>  drivers/rpmsg/rpmsg_core.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index e330ec4dfc33..bfd25978fa35 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -399,7 +399,25 @@ ATTRIBUTE_GROUPS(rpmsg_dev);
+>  static inline int rpmsg_id_match(const struct rpmsg_device *rpdev,
+>  				  const struct rpmsg_device_id *id)
 >  {
->         struct sdhci_host *host = mmc_priv(mmc);
->         unsigned long flags;
-> --
-> Sent by a computer, using git, on the internet
->
+> -	return strncmp(id->name, rpdev->id.name, RPMSG_NAME_SIZE) == 0;
+> +	size_t len = min_t(size_t, strlen(id->name), RPMSG_NAME_SIZE);
+> +
+> +	/*
+> +	 * Allow for wildcard matches.  For example if rpmsg_driver::id_table
+> +	 * is:
+> +	 *
+> +	 * static struct rpmsg_device_id rpmsg_driver_sample_id_table[] = {
+> +	 *      { .name = "rpmsg-client-sample" },
+> +	 *      { },
+> +	 * }
+> +	 *
+> +	 * Then it is possible to support "rpmsg-client-sample*", i.e:
+> +	 *	rpmsg-client-sample
+> +	 *	rpmsg-client-sample_instance0
+> +	 *	rpmsg-client-sample_instance1
+> +	 *	...
+> +	 *	rpmsg-client-sample_instanceX
+> +	 */
+What about adding this as function documentation? i don't know if it makes sense
+for a static volatile function...
+
+Regards
+Arnaud
+
+> +	return strncmp(id->name, rpdev->id.name, len) == 0;
+>  }
+>  
+>  /* match rpmsg channel and rpmsg driver */
+> 
