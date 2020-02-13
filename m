@@ -2,243 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE3A015CBAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 21:08:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F105C15CBB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 21:08:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728456AbgBMUIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 15:08:19 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:39815 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728294AbgBMUIS (ORCPT
+        id S1728676AbgBMUI3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 15:08:29 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41199 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727595AbgBMUI2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 15:08:18 -0500
-Received: by mail-yb1-f196.google.com with SMTP id l75so3602065ybf.6
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 12:08:17 -0800 (PST)
+        Thu, 13 Feb 2020 15:08:28 -0500
+Received: by mail-lj1-f196.google.com with SMTP id h23so8066101ljc.8
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 12:08:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=GJxkwq8/D+o8z2hOcO4GUN34L77pUJGhVsXqvKjTQDQ=;
-        b=Of24hL8aXheNsVDZUzZ55pcCK7OV3KGqYupe+ZmKgcaybTpcTuLLCFOBzep889PXDx
-         J+eAybQltBvRNx+rC00KxKZ6Y43l2FU3nKu+C/RnUCK3ddDYM9vVTy+bMBkWpY5vu5WF
-         QlfAxAfK47jlmX+uMTeg2ejqopLS8w++OdbPVQA9N6DBNmm9LTfnm+opqtV/Qo8c6X0k
-         HAwlNxDZOg9MuRnC6QClbINsPO6ujRAyIEGWd7jUkv7Ts3JOuFGo5OjdfXRPEvaZ0gau
-         4adIDoTsbq5Si9VYH0hwR723QfUMHdk8RNUp6oH6SKMhjMMdUNhtQrq2loUk0lhPOAVZ
-         RJ0w==
+        bh=BGyZT7dbwMQ7jRrV7OPOX8exFdqWmXNOVwOPlJZyRbk=;
+        b=Q7Nd/9vPTfJrYfCbCnUoPbPOpTzh3mz2xPJW1hQXDfbva2G/ahXsRqzD1wUuPZ0P3d
+         +VywfqW7xB0c1jzTKa7NJz6yLxoDyvNlvg34cVn9HgdBE0NIoNuEjhR1q5M5tg+WKX1s
+         VR/cE6zJ0oW3d9yoa95wrCDl733BktZ0XiN5OqGki05JxaBJP9SLsgtvO6NIKNtbC2QN
+         laeEw6HaaasnQGqEFM8QClPBWowIpVDKLEz5clAkkVrjEM5nZOWjCb0qr8FpJMzm7oWl
+         MBgsia3Si3eM8ZVXJqbn+jwHsq5CG7Hr1ZPF2HhnxEJvtGIJfwYCRkECqsnu3hYJRJai
+         b5mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GJxkwq8/D+o8z2hOcO4GUN34L77pUJGhVsXqvKjTQDQ=;
-        b=N7pHGITNpxwljLOgL4tTq9UHKG3MFYT20mimxDBw+vh+oIWh5eBKXblakJF3Hl7Qt5
-         R/Eagb3cObevtHlFW84hFfuq21KXRq3WR7Y2yuxY7th6bYO3MTHr8S0qhL0/0skVFCPR
-         RpC9IZN94ELPCRwrVHzv1dfTgX0Bm5HLbHiTrQfJQkXVSupt16y+0wMfy7cYy4btz70L
-         FXdq9XHTjJdFyb30zsUO+RevAoFv/19SYtfyddiRejZeZFiZhR9DHkZCey6Wn7PlnQgf
-         Dy78GzIHvxmNgtCfzDIjVFIDujqF/xMcUO0yx61gjSNNR9jwDq/QxAcxIEQln2t0OpPs
-         yHag==
-X-Gm-Message-State: APjAAAXcA9ihiwfQ8rj3qIVMe6t4XCI7ae5hFQ15GfDOyR/r2dsXzzov
-        XeSREaKKwAFdU3AWiXTodfxHMQ==
-X-Google-Smtp-Source: APXvYqwlrZYVi0V2hI3T0AESbnztZSJUg9sdbeYCbuUGNhwLIhR6i/8KC0vw9CwxnN8O7tJmwxSwVg==
-X-Received: by 2002:a25:d9cc:: with SMTP id q195mr8640124ybg.126.1581624497107;
-        Thu, 13 Feb 2020 12:08:17 -0800 (PST)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id w132sm1424354ywc.51.2020.02.13.12.08.15
+        bh=BGyZT7dbwMQ7jRrV7OPOX8exFdqWmXNOVwOPlJZyRbk=;
+        b=lT0VZ4AMKtXFMR1OJWFSXwrO2rocwF8F1JDK+bBaCKPpa7sbKNl63zBWxd5de3BXFs
+         vQW2p9+Bj35ow9PSIJDyyfAxa0cnWJyQukG9N0dDuKEqSpj40AOAiwQdAQ9yVVXmyG57
+         VvLKiekQi/Zr/nu37getqkVOFCRnvS6hN8PTSD8BpYzxJVrvjF9TL9KIRMzivpw5n7Ih
+         uKVAiZzU8kt4FGKO3kXMvgVsh8+52BaznguBD1kNrzCQcWHEu8tOKpTGIy9TKAfMQU9q
+         dbfkheDxMxC77Eym4hMumwZ2d1BHCktb249ITihFH/cAsGT0m3K1jSGQASzoEgirKyTr
+         nakQ==
+X-Gm-Message-State: APjAAAWRYRjqUFKxWSbhaFMKsBTXGaYfGF1AAOMpQF7rGUumXYywRzrT
+        WIBYhIU8kaLaY+XRRV2ROkw=
+X-Google-Smtp-Source: APXvYqztD+iqwv6Xp+koxjrHW1aZ2Qay9QARoJlk+46QWn4zlAo+rJAYb4gEbYwOOYOAAItaIZGLEw==
+X-Received: by 2002:a2e:98c6:: with SMTP id s6mr12200884ljj.14.1581624505681;
+        Thu, 13 Feb 2020 12:08:25 -0800 (PST)
+Received: from kedthinkpad ([5.20.204.163])
+        by smtp.gmail.com with ESMTPSA id d20sm2132164ljg.95.2020.02.13.12.08.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 12:08:16 -0800 (PST)
-Date:   Thu, 13 Feb 2020 13:08:13 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Loic PALLARDY <loic.pallardy@st.com>,
-        Suman Anna <s-anna@ti.com>,
-        Fabien DESSENNE <fabien.dessenne@st.com>,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v5 1/3] remoteproc: add support for co-processor loaded
- and booted before kernel
-Message-ID: <20200213200813.GA14415@xps15>
-References: <20200211174205.22247-1-arnaud.pouliquen@st.com>
- <20200211174205.22247-2-arnaud.pouliquen@st.com>
+        Thu, 13 Feb 2020 12:08:24 -0800 (PST)
+Date:   Thu, 13 Feb 2020 22:08:23 +0200
+From:   Andrey Lebedev <andrey.lebedev@gmail.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     wens@csie.org, airlied@linux.ie, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Andrey Lebedev <andrey@lebedev.lt>
+Subject: Re: [PATCH v2 2/2] ARM: sun7i: dts: Add LVDS panel support on A20
+Message-ID: <20200213200823.GA28336@kedthinkpad>
+References: <20200210195633.GA21832@kedthinkpad>
+ <20200212222355.17141-2-andrey.lebedev@gmail.com>
+ <20200213094304.hf3glhgmquypxpyf@gilmour.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200211174205.22247-2-arnaud.pouliquen@st.com>
+In-Reply-To: <20200213094304.hf3glhgmquypxpyf@gilmour.lan>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good day,
-
-On Tue, Feb 11, 2020 at 06:42:03PM +0100, Arnaud Pouliquen wrote:
-> From: Loic Pallardy <loic.pallardy@st.com>
+On Thu, Feb 13, 2020 at 10:43:04AM +0100, Maxime Ripard wrote:
+> On Thu, Feb 13, 2020 at 12:23:57AM +0200, andrey.lebedev@gmail.com wrote:
+> > From: Andrey Lebedev <andrey@lebedev.lt>
+> >
+> > Define pins for LVDS channels 0 and 1, configure reset line for tcon0 and
+> > provide sample LVDS panel, connected to tcon0.
+> >
+> > Signed-off-by: Andrey Lebedev <andrey@lebedev.lt>
 > 
-> Remote processor could boot independently or be loaded/started before
-> Linux kernel by bootloader or any firmware.
-> This patch introduces a new property in rproc core, named skip_fw_load,
-> to be able to allocate resources and sub-devices like vdev and to
-> synchronize with current state without loading firmware from file system.
-> It is platform driver responsibility to implement the right firmware
-> load ops according to HW specificities.
+> And this prefix should be ARM: dts: sun7i ;)
+
+Ah, thanks, I think I've got the pattern now!
+
+> > +			/omit-if-no-ref/
+> > +			lcd_lvds0_pins: lcd_lvds0_pins {
 > 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 67 ++++++++++++++++++++++------
->  include/linux/remoteproc.h           |  2 +
->  2 files changed, 55 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 097f33e4f1f3..876b5420a32b 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1358,8 +1358,19 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  	return ret;
->  }
->  
-> -/*
-> - * take a firmware and boot a remote processor with it.
-> +/**
-> + * rproc_fw_boot() - boot specified remote processor according to specified
-> + * firmware
-> + * @rproc: handle of a remote processor
-> + * @fw: pointer on firmware to handle
-> + *
-> + * Handle resources defined in resource table, load firmware and
-> + * start remote processor.
-> + *
-> + * If firmware pointer fw is NULL, firmware is not handled by remoteproc
-> + * core, but under the responsibility of platform driver.
-> + *
-> + * Returns 0 on success, and an appropriate error value otherwise.
->   */
->  static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
->  {
-> @@ -1371,7 +1382,11 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
->  	if (ret)
->  		return ret;
->  
-> -	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
-> +	if (fw)
-> +		dev_info(dev, "Booting fw image %s, size %zd\n", name,
-> +			 fw->size);
-> +	else
-> +		dev_info(dev, "Synchronizing with preloaded co-processor\n");
->  
->  	/*
->  	 * if enabling an IOMMU isn't relevant for this rproc, this is
-> @@ -1718,16 +1733,22 @@ static void rproc_crash_handler_work(struct work_struct *work)
->   * rproc_boot() - boot a remote processor
->   * @rproc: handle of a remote processor
->   *
-> - * Boot a remote processor (i.e. load its firmware, power it on, ...).
-> + * Boot a remote processor (i.e. load its firmware, power it on, ...) from
-> + * different contexts:
-> + * - power off
-> + * - preloaded firmware
-> + * - started before kernel execution
-> + * The different operations are selected thanks to properties defined by
-> + * platform driver.
->   *
-> - * If the remote processor is already powered on, this function immediately
-> - * returns (successfully).
-> + * If the remote processor is already powered on at rproc level, this function
-> + * immediately returns (successfully).
->   *
->   * Returns 0 on success, and an appropriate error value otherwise.
->   */
->  int rproc_boot(struct rproc *rproc)
->  {
-> -	const struct firmware *firmware_p;
-> +	const struct firmware *firmware_p = NULL;
->  	struct device *dev;
->  	int ret;
->  
-> @@ -1758,11 +1779,20 @@ int rproc_boot(struct rproc *rproc)
->  
->  	dev_info(dev, "powering up %s\n", rproc->name);
->  
-> -	/* load firmware */
-> -	ret = request_firmware(&firmware_p, rproc->firmware, dev);
-> -	if (ret < 0) {
-> -		dev_err(dev, "request_firmware failed: %d\n", ret);
-> -		goto downref_rproc;
-> +	if (!rproc->skip_fw_load) {
-> +		/* load firmware */
-> +		ret = request_firmware(&firmware_p, rproc->firmware, dev);
-> +		if (ret < 0) {
-> +			dev_err(dev, "request_firmware failed: %d\n", ret);
-> +			goto downref_rproc;
-> +		}
-> +	} else {
-> +		/*
-> +		 * Set firmware name pointer to null as remoteproc core is not
-> +		 * in charge of firmware loading
-> +		 */
-> +		kfree(rproc->firmware);
-> +		rproc->firmware = NULL;
+> underscores in the node names will create a dtc warning at
+> compilation, you should use lcd-lvds0-pins instead.
 
-If the MCU with pre-loaded FW crashes request_firmware() in
-rproc_trigger_recovery() will return an error and rproc_start()
-never called.
+You're right, I wasn't following the naming convention here. dtc doesn't
+produce any warning on this though. Fixed that anyway.
 
->  	}
->  
->  	ret = rproc_fw_boot(rproc, firmware_p);
-> @@ -1916,8 +1946,17 @@ int rproc_add(struct rproc *rproc)
->  	/* create debugfs entries */
->  	rproc_create_debug_dir(rproc);
->  
-> -	/* if rproc is marked always-on, request it to boot */
-> -	if (rproc->auto_boot) {
-> +	if (rproc->skip_fw_load) {
-> +		/*
-> +		 * If rproc is marked already booted, no need to wait
-> +		 * for firmware.
-> +		 * Just handle associated resources and start sub devices
-> +		 */
-> +		ret = rproc_boot(rproc);
-> +		if (ret < 0)
-> +			return ret;
-> +	} else if (rproc->auto_boot) {
-> +		/* if rproc is marked always-on, request it to boot */
+> This will create a spurious warning message for TCON1, since we
+> adjusted the driver to tell it supports LVDS, but there's no LVDS
+> reset line, so we need to make it finer grained.
 
-I spent way too much time staring at this modification...  I can't decide if a
-system where the FW has been pre-loaded should be considered "auto_boot".
-Indeed the result is the same, i.e the MCU is started at boot time without user
-intervention.
+Yes, I can attribute two of the messages in my dmesg log [1] to this
+("Missing LVDS properties" and "LVDS output disabled". "sun4i-tcon
+1c0d000.lcd-controller" is indeed tcon1). And yes, I can see how they
+can be confusing to someone.
 
-I'd welcome other people's opinion on this.
+I'd need some pointers on how to deal with that though (if we want to do
+it in this scope).
 
->  		ret = rproc_trigger_auto_boot(rproc);
->  		if (ret < 0)
->  			return ret;
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 16ad66683ad0..4fd5bedab4fa 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -479,6 +479,7 @@ struct rproc_dump_segment {
->   * @table_sz: size of @cached_table
->   * @has_iommu: flag to indicate if remote processor is behind an MMU
->   * @auto_boot: flag to indicate if remote processor should be auto-started
-> + * @skip_fw_load: remote processor has been preloaded before start sequence
->   * @dump_segments: list of segments in the firmware
->   * @nb_vdev: number of vdev currently handled by rproc
->   */
-> @@ -512,6 +513,7 @@ struct rproc {
->  	size_t table_sz;
->  	bool has_iommu;
->  	bool auto_boot;
-> +	bool skip_fw_load;
->  	struct list_head dump_segments;
->  	int nb_vdev;
->  };
-> -- 
-> 2.17.1
-> 
+[1] excerpt from kernel boot log:
+
+[    4.890975] sun4i-drm display-engine: bound 1e00000.display-frontend (ops sun4i_frontend_driver_exit [sun4i_frontend])
+[    4.902032] sun4i-drm display-engine: bound 1e20000.display-frontend (ops sun4i_frontend_driver_exit [sun4i_frontend])
+[    4.913467] sun4i-drm display-engine: bound 1e60000.display-backend (ops sun4i_backend_ops [sun4i_backend])
+[    4.923806] sun4i-drm display-engine: bound 1e40000.display-backend (ops sun4i_backend_ops [sun4i_backend])
+[    4.934451] sun4i-drm display-engine: bound 1c0c000.lcd-controller (ops sun4i_tcon_platform_driver_exit [sun4i_tcon])
+[    4.945254] sun4i-tcon 1c0d000.lcd-controller: Missing LVDS properties, Please upgrade your DT
+[    4.953935] sun4i-tcon 1c0d000.lcd-controller: LVDS output disabled
+[    4.960857] sun4i-drm display-engine: No panel or bridge found... RGB output disabled
+[    4.968845] sun4i-drm display-engine: bound 1c0d000.lcd-controller (ops sun4i_tcon_platform_driver_exit [sun4i_tcon])
+[    5.080874] sun4i-drm display-engine: bound 1c16000.hdmi (ops sun4i_hdmi_driver_exit [sun4i_drm_hdmi])
+[    5.110087] [drm] Initialized sun4i-drm 1.0.0 20150629 for display-engine on minor 0
+[    5.763064] sun4i-drm display-engine: fb0: sun4i-drmdrmfb frame buffer device
+
+
+-- 
+Andrey Lebedev aka -.- . -.. -.. . .-.
+Software engineer
+Homepage: http://lebedev.lt/
