@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EC5715C449
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18BEC15C37C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729951AbgBMPpn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:45:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50548 "EHLO mail.kernel.org"
+        id S1729749AbgBMPlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:41:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728942AbgBMP10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:26 -0500
+        id S1729612AbgBMP2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:31 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E4692465D;
-        Thu, 13 Feb 2020 15:27:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F3F420661;
+        Thu, 13 Feb 2020 15:28:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607646;
-        bh=vF3vpiJfV5jRF2elPwqFz17RlyJWH7ft1gujGBsgYYU=;
+        s=default; t=1581607711;
+        bh=apdVoM1n0KbyCo2+Qj7vg+Z37yBrWQBTkDgIYKkM5Nk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wFbqLfw8ya/9qz6NOA037cwKVFCAJeTDpky+6S3P8EZibrd8tXMYfqbjc001FbOoq
-         ilmnvV2lDg/+bXazIdY8qdq13I/OJJrOvOmag1ESj3hf7ao1YuSgU1Yr9/GCFC+m7G
-         /uslvqefVE3UQjjXVbgEyOYD3hXhPSi46PFinxg4=
+        b=zcbX5L4par3glKAOUl2dteebJoW0OQRX7JB3b77ztNu0upn4AGw1YBlmcnBdMoBxm
+         LV875aVW8g1hk29danxd6MZjBQW8rpPOFojGy/9Zj7fJLWDVk0+I/MsgCt5rjXldYo
+         l0alELVJYqhwzo925Ivz1EUjzNX35aiOPnQngGCA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-Subject: [PATCH 5.4 38/96] watchdog: qcom: Use platform_get_irq_optional() for bark irq
+        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+        kbuild test robot <lkp@intel.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 5.5 049/120] rtc: i2c/spi: Avoid inclusion of REGMAP support when not needed
 Date:   Thu, 13 Feb 2020 07:20:45 -0800
-Message-Id: <20200213151854.039679791@linuxfoundation.org>
+Message-Id: <20200213151918.505301005@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,43 +44,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 
-commit e0b4f4e0cf7fa9d62628d4249c765ec18dffd143 upstream.
+commit 34719de919af07682861cb0fa2bcf64da33ecf44 upstream.
 
-platform_get_irq() prints an error message when the interrupt
-is not available. So on platforms where bark interrupt is
-not specified, following error message is observed on SDM845.
+Merely enabling I2C and RTC selects REGMAP_I2C and REGMAP_SPI, even when
+no driver needs it.  While the former can be moduler, the latter cannot,
+and thus becomes built-in.
 
-[    2.975888] qcom_wdt 17980000.watchdog: IRQ index 0 not found
+Fix this by moving the select statements for REGMAP_I2C and REGMAP_SPI
+from the RTC_I2C_AND_SPI helper to the individual drivers that depend on
+it.
 
-This is also seen on SC7180, SM8150 SoCs as well.
-Fix this by using platform_get_irq_optional() instead.
+Note that the comment for RTC_I2C_AND_SPI refers to SND_SOC_I2C_AND_SPI
+for more information, but the latter does not select REGMAP_{I2C,SPI}
+itself, and defers that to the individual drivers, too.
 
-Fixes: 36375491a4395654 ("watchdog: qcom: support pre-timeout when the bark irq is available")
-Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Link: https://lore.kernel.org/r/20191213064934.4112-1-saiprakash.ranjan@codeaurora.org
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Fixes: 080481f54ef62121 ("rtc: merge ds3232 and ds3234")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: kbuild test robot <lkp@intel.com>
+Link: https://lore.kernel.org/r/20200112171349.22268-1-geert@linux-m68k.org
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/watchdog/qcom-wdt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rtc/Kconfig |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/watchdog/qcom-wdt.c
-+++ b/drivers/watchdog/qcom-wdt.c
-@@ -246,7 +246,7 @@ static int qcom_wdt_probe(struct platfor
- 	}
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -848,14 +848,14 @@ config RTC_I2C_AND_SPI
+ 	default m if I2C=m
+ 	default y if I2C=y
+ 	default y if SPI_MASTER=y
+-	select REGMAP_I2C if I2C
+-	select REGMAP_SPI if SPI_MASTER
  
- 	/* check if there is pretimeout support */
--	irq = platform_get_irq(pdev, 0);
-+	irq = platform_get_irq_optional(pdev, 0);
- 	if (irq > 0) {
- 		ret = devm_request_irq(dev, irq, qcom_wdt_isr,
- 				       IRQF_TRIGGER_RISING,
+ comment "SPI and I2C RTC drivers"
+ 
+ config RTC_DRV_DS3232
+ 	tristate "Dallas/Maxim DS3232/DS3234"
+ 	depends on RTC_I2C_AND_SPI
++	select REGMAP_I2C if I2C
++	select REGMAP_SPI if SPI_MASTER
+ 	help
+ 	  If you say yes here you get support for Dallas Semiconductor
+ 	  DS3232 and DS3234 real-time clock chips. If an interrupt is associated
+@@ -875,6 +875,8 @@ config RTC_DRV_DS3232_HWMON
+ config RTC_DRV_PCF2127
+ 	tristate "NXP PCF2127"
+ 	depends on RTC_I2C_AND_SPI
++	select REGMAP_I2C if I2C
++	select REGMAP_SPI if SPI_MASTER
+ 	select WATCHDOG_CORE if WATCHDOG
+ 	help
+ 	  If you say yes here you get support for the NXP PCF2127/29 RTC
+@@ -891,6 +893,8 @@ config RTC_DRV_PCF2127
+ config RTC_DRV_RV3029C2
+ 	tristate "Micro Crystal RV3029/3049"
+ 	depends on RTC_I2C_AND_SPI
++	select REGMAP_I2C if I2C
++	select REGMAP_SPI if SPI_MASTER
+ 	help
+ 	  If you say yes here you get support for the Micro Crystal
+ 	  RV3029 and RV3049 RTC chips.
 
 
