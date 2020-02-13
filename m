@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE7C015C458
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7737115C376
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387745AbgBMPqW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:46:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49726 "EHLO mail.kernel.org"
+        id S2387832AbgBMPl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:41:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729354AbgBMP1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:18 -0500
+        id S2387725AbgBMP2e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:34 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7C1720661;
-        Thu, 13 Feb 2020 15:27:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE4D42168B;
+        Thu, 13 Feb 2020 15:28:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607636;
-        bh=AzMvOGFeP02uYb2htvlWBAJwij+2RSgKQh/WezhmmP4=;
+        s=default; t=1581607713;
+        bh=qNVJvkLk5QY4zMFf9zWqo7r205XJykyNObIRHrwIBPo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1lJ5gmJmRyI0zh+XeYpOAG+hvPTLuI0o987osSdu1EbTspbLxowOI0xDb3BOn5TSY
-         AeS3v7H3aoIvdlbTpLc4clpOvmaGgFeCMJlLlGBrdMv3SLA7GYNvSkWyfqwLOJDihx
-         KSuIR8v7Te7v7SZ6aEmeP62tQrO0gBtgRoF2qcRY=
+        b=eSdhd21AsrVeBhBUaZ+REaI2tMFdnzhL7z43zMczyMMYYTx+/7hnyC7F2aH9Bx77R
+         w9nYGJ9S1BQbeVWQOlbBNxOZAQrIvcEALG6e2LvVrRSRhmfAWfWXz8s1v9HLdUtk0o
+         pqENeUCrUB1DNqxacNHEf8LLz1STEZ0xxhILv6FY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jakub Sitnicki <jakub@cloudflare.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        John Fastabend <john.fastabend@gmail.com>
-Subject: [PATCH 5.4 23/96] bpf, sockhash: Synchronize_rcu before freeing map
-Date:   Thu, 13 Feb 2020 07:20:30 -0800
-Message-Id: <20200213151848.153137952@linuxfoundation.org>
+        stable@vger.kernel.org, Steven Clarkson <sc@lambdal.com>,
+        Borislav Petkov <bp@suse.de>, linux-acpi@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 035/120] x86/boot: Handle malformed SRAT tables during early ACPI parsing
+Date:   Thu, 13 Feb 2020 07:20:31 -0800
+Message-Id: <20200213151913.733845018@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Sitnicki <jakub@cloudflare.com>
+From: Steven Clarkson <sc@lambdal.com>
 
-commit 0b2dc83906cf1e694e48003eae5df8fa63f76fd9 upstream.
+[ Upstream commit 2b73ea3796242608b4ccf019ff217156c92e92fe ]
 
-We need to have a synchronize_rcu before free'ing the sockhash because any
-outstanding psock references will have a pointer to the map and when they
-use it, this could trigger a use after free.
+Break an infinite loop when early parsing of the SRAT table is caused
+by a subtable with zero length. Known to affect the ASUS WS X299 SAGE
+motherboard with firmware version 1201 which has a large block of
+zeros in its SRAT table. The kernel could boot successfully on this
+board/firmware prior to the introduction of early parsing this table or
+after a BIOS update.
 
-This is a sister fix for sockhash, following commit 2bb90e5cc90e ("bpf:
-sockmap, synchronize_rcu before free'ing map") which addressed sockmap,
-which comes from a manual audit.
+ [ bp: Fixup whitespace damage and commit message. Make it return 0 to
+   denote that there are no immovable regions because who knows what
+   else is broken in this BIOS. ]
 
-Fixes: 604326b41a6fb ("bpf, sockmap: convert to generic sk_msg interface")
-Signed-off-by: Jakub Sitnicki <jakub@cloudflare.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: John Fastabend <john.fastabend@gmail.com>
-Link: https://lore.kernel.org/bpf/20200206111652.694507-3-jakub@cloudflare.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 02a3e3cdb7f1 ("x86/boot: Parse SRAT table and count immovable memory regions")
+Signed-off-by: Steven Clarkson <sc@lambdal.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: linux-acpi@vger.kernel.org
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=206343
+Link: https://lkml.kernel.org/r/CAHKq8taGzj0u1E_i=poHUam60Bko5BpiJ9jn0fAupFUYexvdUQ@mail.gmail.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/sock_map.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/boot/compressed/acpi.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/net/core/sock_map.c
-+++ b/net/core/sock_map.c
-@@ -250,6 +250,7 @@ static void sock_map_free(struct bpf_map
- 	}
- 	raw_spin_unlock_bh(&stab->lock);
+diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+index 25019d42ae937..ef2ad7253cd5e 100644
+--- a/arch/x86/boot/compressed/acpi.c
++++ b/arch/x86/boot/compressed/acpi.c
+@@ -393,7 +393,13 @@ int count_immovable_mem_regions(void)
+ 	table = table_addr + sizeof(struct acpi_table_srat);
  
-+	/* wait for psock readers accessing its map link */
- 	synchronize_rcu();
- 
- 	bpf_map_area_free(stab->sks);
-@@ -873,6 +874,9 @@ static void sock_hash_free(struct bpf_ma
- 		raw_spin_unlock_bh(&bucket->lock);
- 	}
- 
-+	/* wait for psock readers accessing its map link */
-+	synchronize_rcu();
+ 	while (table + sizeof(struct acpi_subtable_header) < table_end) {
 +
- 	bpf_map_area_free(htab->buckets);
- 	kfree(htab);
- }
+ 		sub_table = (struct acpi_subtable_header *)table;
++		if (!sub_table->length) {
++			debug_putstr("Invalid zero length SRAT subtable.\n");
++			return 0;
++		}
++
+ 		if (sub_table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
+ 			struct acpi_srat_mem_affinity *ma;
+ 
+-- 
+2.20.1
+
 
 
