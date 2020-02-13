@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2637B15C244
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:31:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C32915C2F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:39:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387915AbgBMPba (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:31:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53394 "EHLO mail.kernel.org"
+        id S1729769AbgBMPiq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:38:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729508AbgBMP1z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:55 -0500
+        id S1729670AbgBMP3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:29:12 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22D7320661;
-        Thu, 13 Feb 2020 15:27:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 137B3218AC;
+        Thu, 13 Feb 2020 15:29:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607675;
-        bh=Vp1HU5MM0aP6YvXyu1D2mNusGmERSgN0wIc6HJRs83s=;
+        s=default; t=1581607751;
+        bh=n9qPfzZareJWROB5S1i2u8Q8pzKf0P4hrNCvkAWh3w0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sZYuofQb0EsfuxdhfrWlEDACvSd4AIuaxGBFKL4bADvnZqKcsmkRp2PQjtv+76DGD
-         xdPa7Br/gRR5VFZudWNL6Q2YQ/6RZqd681INKam/JgD/gvez9RjXaPlNRKaPwyqvs5
-         AR9HRJw4S6IjT9kas4Ygvy56UXPpwDbxjimTRjAE=
+        b=wUOCVgr/h168DEixxlbkmEx+UI97j8o6inlZ7TrZ9Y578onM+55vzLRyej8p2eQHI
+         pKyWxeSMExO8BZrebVcjBB1BXVgb6+0p8vdgDr/h6hhVUHn0ONgHyQUwGWphfI1AVB
+         vOhQK7mr1ZH2I3C+dNIhiz989B7vWl1B8EInNX8Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Beniamin Bia <beniamin.bia@analog.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 5.4 83/96] dt-bindings: iio: adc: ad7606: Fix wrong maxItems value
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 5.5 094/120] mtd: sharpslpart: Fix unsigned comparison to zero
 Date:   Thu, 13 Feb 2020 07:21:30 -0800
-Message-Id: <20200213151910.299667068@linuxfoundation.org>
+Message-Id: <20200213151932.657671950@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Beniamin Bia <beniamin.bia@analog.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit a6c4f77cb3b11f81077b53c4a38f21b92d41f21e upstream.
+commit f33113b542219448fa02d77ca1c6f4265bd7f130 upstream.
 
-This patch set the correct value for oversampling maxItems. In the
-original example, appears 3 items for oversampling while the maxItems
-is set to 1, this patch fixes those issues.
+The unsigned variable log_num is being assigned a return value
+from the call to sharpsl_nand_get_logical_num that can return
+-EINVAL.
 
-Fixes: 416f882c3b40 ("dt-bindings: iio: adc: Migrate AD7606 documentation to yaml")
-Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Detected using Coccinelle:
+./drivers/mtd/parsers/sharpslpart.c:207:6-13: WARNING: Unsigned expression compared with zero: log_num > 0
+
+Fixes: 8a4580e4d298 ("mtd: sharpslpart: Add sharpslpart partition parser")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/mtd/parsers/sharpslpart.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-@@ -85,7 +85,7 @@ properties:
-       Must be the device tree identifier of the over-sampling
-       mode pins. As the line is active high, it should be marked
-       GPIO_ACTIVE_HIGH.
--    maxItems: 1
-+    maxItems: 3
+--- a/drivers/mtd/parsers/sharpslpart.c
++++ b/drivers/mtd/parsers/sharpslpart.c
+@@ -165,10 +165,10 @@ static int sharpsl_nand_get_logical_num(
  
-   adi,sw-mode:
-     description:
-@@ -128,9 +128,9 @@ examples:
-                 adi,conversion-start-gpios = <&gpio 17 GPIO_ACTIVE_HIGH>;
-                 reset-gpios = <&gpio 27 GPIO_ACTIVE_HIGH>;
-                 adi,first-data-gpios = <&gpio 22 GPIO_ACTIVE_HIGH>;
--                adi,oversampling-ratio-gpios = <&gpio 18 GPIO_ACTIVE_HIGH
--                                                &gpio 23 GPIO_ACTIVE_HIGH
--                                                &gpio 26 GPIO_ACTIVE_HIGH>;
-+                adi,oversampling-ratio-gpios = <&gpio 18 GPIO_ACTIVE_HIGH>,
-+                                               <&gpio 23 GPIO_ACTIVE_HIGH>,
-+                                               <&gpio 26 GPIO_ACTIVE_HIGH>;
-                 standby-gpios = <&gpio 24 GPIO_ACTIVE_LOW>;
-                 adi,sw-mode;
-         };
+ static int sharpsl_nand_init_ftl(struct mtd_info *mtd, struct sharpsl_ftl *ftl)
+ {
+-	unsigned int block_num, log_num, phymax;
++	unsigned int block_num, phymax;
++	int i, ret, log_num;
+ 	loff_t block_adr;
+ 	u8 *oob;
+-	int i, ret;
+ 
+ 	oob = kzalloc(mtd->oobsize, GFP_KERNEL);
+ 	if (!oob)
 
 
