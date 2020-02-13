@@ -2,258 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A49FA15CAA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 19:45:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C683815CA9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 19:43:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728187AbgBMSpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 13:45:02 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44167 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbgBMSpB (ORCPT
+        id S1727976AbgBMSnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 13:43:40 -0500
+Received: from gateway24.websitewelcome.com ([192.185.51.202]:43044 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725781AbgBMSnk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 13:45:01 -0500
-Received: by mail-pf1-f194.google.com with SMTP id y5so3493868pfb.11
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 10:45:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=HW/BXhZ167OEEajAOw2rAoUCDtpe+TnVa4bYsRxTPYc=;
-        b=rdisC/Rf+eihKVY2ofZQRKz1/ekjzEms1VyVIvgQw828ZDUOoUk4WssQq9o4es+AwI
-         q54fFsbMVJekC0s/uz/JGLEZHy/UIE9CUDJlMq4du0H4pSpMkNh6pZ13Y8srYFho26EU
-         iyc89cHX88v96wm3Pf5IGpxIGMob3BFzo5uQvIci2uLfm7VFy5eIU/bOJsWeCXKU00ne
-         BTkOMFRIxvqmSJ38p1W+evSjUSDqUf2XfXOMRZNIBO3H6iipsc1MDlDcMXTAWP+BlxNW
-         YCUpkxGEEM3vwa+VOOTAUwek2EWkYQ1F98648arU6wbTvtnBmepymPPK17IJsLXxyGTn
-         MYIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=HW/BXhZ167OEEajAOw2rAoUCDtpe+TnVa4bYsRxTPYc=;
-        b=JbUiedCxS/WimSy9/3dn0FtqEp9XdGfUcox+GRISplIBIRkeJSm7u4q59UWN2ozPC2
-         BxKOck6uJlCE3F9XjrfK392d/3gO/ze0T4CGFEELi6aZsntExH457Nlv4p+5asnLAfdW
-         lHbdG979NT9LnWbCDBlB2xMLhd1J9j/3PN+Hq5WZdUG16avfI2cH9BzYIRlMRYfTzFlI
-         iIRFBKorh0MbEL1I6sEu1S8TvA6zJRApP7qRxVQgEow37GRVhiKYhX14Wi/7R0CnUZcD
-         AASSKYGgGo4eL0fG3nlOhjmgH2wr2ONOiBa6WkVx/P2Doh2HC3Kxfyif2hUsP8mnfIcf
-         tAyg==
-X-Gm-Message-State: APjAAAVgqZIN60A4+WtU4bB1bTEBfzozFt9zc9jbJG+w+JH/wC8htsJ1
-        bzVGf9axHPGlC+NvzdoHLYRvLQ==
-X-Google-Smtp-Source: APXvYqyrfRc75DhUOUqp0yRCOfhN/ILA1RABTCP6/i7LIIQfn1FLv2iKkOuVWTlyFICyHA+NaY/mgw==
-X-Received: by 2002:a63:3c46:: with SMTP id i6mr15943820pgn.413.1581619500709;
-        Thu, 13 Feb 2020 10:45:00 -0800 (PST)
-Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
-        by smtp.googlemail.com with ESMTPSA id 28sm4018642pgl.42.2020.02.13.10.44.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2020 10:45:00 -0800 (PST)
-Subject: Re: [PATCH] random: add rng-seed= command line option
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-        kernel-team@android.com, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Potapenko <glider@google.com>
-References: <20200207150809.19329-1-salyzyn@android.com>
- <20200207155828.GB122530@mit.edu>
- <d35bacd4-ba3f-335d-85c4-57e87abd8e9a@android.com>
- <20200208004922.GE122530@mit.edu> <20200207195326.0344ef82@oasis.local.home>
- <20200213202454.f1bb0e65ccc429bde039111b@kernel.org>
- <20200214000343.a3b49deb2f0455568b371d0e@kernel.org>
-From:   Mark Salyzyn <salyzyn@android.com>
-Message-ID: <2dc50225-10e2-01dc-c376-6f9e73087242@android.com>
-Date:   Thu, 13 Feb 2020 10:44:59 -0800
+        Thu, 13 Feb 2020 13:43:40 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id CA0F411445D
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 12:43:38 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 2JScj1ZtaSl8q2JScjk132; Thu, 13 Feb 2020 12:43:38 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=RP9MNo1YdDU9fDbbP5ClVHP/dNN6EGRpfzts4Ja36zg=; b=pV2j0L0SxNe1B8wo31b2C9lxEl
+        P+kUKKwpA7otAaU8T1gVQ0+M9tLO1CX9IeKgzvi+jQBbrW/NrU4UlBWewjxTcV5dDrsdVqwW2yFQ+
+        ekIDVwZlZmT+wwPgrz9toSolLqwXbuPe+aXXi9MB7IA+V77J8PCE/L7ioS2cFPkP84P+II+5vEDvI
+        XTrQo1Rt9eZ7E4YrTyQa5gXcNO882QoI5msF2HI+G73wES4nXUpiNqv63oR83GUDBJP1+lJ19MUc7
+        BFhbTcR5pKLHCIxUAvwBBQoNL+JnbDJ/CerIHFVHJagsaWAUQFtesbH03xd1dCTyYepN8J2mHqZ0q
+        eAD12LGQ==;
+Received: from [200.68.140.15] (port=4209 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j2JSc-000bf4-BO; Thu, 13 Feb 2020 12:43:38 -0600
+Subject: Re: [PATCH] IB/core, cache: Replace zero-length array with
+ flexible-array member
+To:     Leon Romanovsky <leon@kernel.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200213010425.GA13068@embeddedor.com>
+ <20200213010827.GG31668@ziepe.ca>
+ <1e6d952f-7d43-db2b-67f3-001ab8421bc8@embeddedor.com>
+ <20200213183756.GI679970@unreal>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <d92ce07f-7a9c-2b67-4d88-51b3c04a7e77@embeddedor.com>
+Date:   Thu, 13 Feb 2020 12:46:14 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200214000343.a3b49deb2f0455568b371d0e@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20200213183756.GI679970@unreal>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.140.15
+X-Source-L: No
+X-Exim-ID: 1j2JSc-000bf4-BO
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [200.68.140.15]:4209
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 13
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/13/20 7:03 AM, Masami Hiramatsu wrote:
-> On Thu, 13 Feb 2020 20:24:54 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
->
->>>> My preference would be to pass in the random seed *not* on the
->>>> command-line at all, but as a separate parameter which is passed to
->>>> the bootloader, just as we pass in the device-tree, the initrd and the
->>>> command-line as separate things.  The problem is that how we pass in
->>>> extra boot parameters is architecture specific, and how we might do it
->>>> for x86 is different than for arm64.  So yeah, it's a bit more
->>>> inconvenient to do things that way; but I think it's also much
->>>> cleaner.
->>> Hmm, if the boot loader could add on to the bootconfig that Masami just
->>> added, then it could add some "random" seed for each boot! The
->>> bootconfig is just an appended file at the end of the initrd.
->> Yeah, it is easy to add bootconfig support to a bootloader. It can add
->> a entropy number as "rng.seed=XXX" text after initrd image with size
->> and checksum. That is architecutre independent way to pass such hidden
->> parameter.
->> (hidden key must be filtered out when printing out the /proc/bootconfig,
->> but that is very easy too, just need a strncmp)
+
+
+On 2/13/20 12:37, Leon Romanovsky wrote:
+> On Thu, Feb 13, 2020 at 12:36:39PM -0600, Gustavo A. R. Silva wrote:
 >>
-> And here is the patch to support "random.rng_seed = XXX" option by
-> bootconfig. Now you can focus on what you want to do. No need to
-> modify command line strings.
+>>
+>> On 2/12/20 19:08, Jason Gunthorpe wrote:
+>>>
+>>> There are many more of these under core/* care to fix them all in one
+>>> patch?
+>>>
+>>
+>> Sure thing. I can do that.
+> 
+> Gustavo,
+> 
+> Was checkpatch extended to catch such mistakes?
+> 
 
-LGTM, our virtualized emulator (cuttlefish) folks believe they can do it 
-this way. Albeit keep in mind that there are _thousands_ of embedded 
-bootloaders out there that are comfortable updating DT and kernel 
-command line, but few that add boot configs, so this may add complexity. 
-For our use case that caused us to need this, the cuttlefish Android 
-emulated device, not a problem though.
+Not yet. But that's on my list for the short future.
 
-However, the entropy _data_ has not been added (see below)
-
-Could you please formally re-submit your patch mhiramet@ with a change 
-to push the _data_ as well to the entropy?
-
--- Mark
-
->
-> BTW, if you think you need to pass UTF-8 code as a data, I'm happy to
-> update the bootconfig to support it. Just for the safeness, I have
-> limited it by isprint() || isspace().
->
-> Thank you,
->
-> diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
-> index 26956c006987..43fbbd307204 100644
-> --- a/drivers/char/Kconfig
-> +++ b/drivers/char/Kconfig
-> @@ -554,6 +554,7 @@ config RANDOM_TRUST_CPU
->   
->   config RANDOM_TRUST_BOOTLOADER
->   	bool "Trust the bootloader to initialize Linux's CRNG"
-> +	select BOOT_CONFIG
->   	help
->   	Some bootloaders can provide entropy to increase the kernel's initial
->   	device randomness. Say Y here to assume the entropy provided by the
-> diff --git a/drivers/char/random.c b/drivers/char/random.c
-> index c7f9584de2c8..0ae33bbbd338 100644
-> --- a/drivers/char/random.c
-> +++ b/drivers/char/random.c
-> @@ -2311,3 +2311,11 @@ void add_bootloader_randomness(const void *buf, unsigned int size)
->   		add_device_randomness(buf, size);
->   }
->   EXPORT_SYMBOL_GPL(add_bootloader_randomness);
-> +
-> +#if defined(CONFIG_RANDOM_TRUST_BOOTLOADER)
-> +/* caller called add_device_randomness, but it is from a trusted source */
-> +void __init credit_trusted_entropy_bits(unsigned int nbits)
-> +{
-> +	credit_entropy_bits(&input_pool, nbits);
-> +}
-> +#endif
-> diff --git a/fs/proc/bootconfig.c b/fs/proc/bootconfig.c
-> index 9955d75c0585..aace466c56ed 100644
-> --- a/fs/proc/bootconfig.c
-> +++ b/fs/proc/bootconfig.c
-> @@ -36,6 +36,9 @@ static int __init copy_xbc_key_value_list(char *dst, size_t size)
->   		ret = xbc_node_compose_key(leaf, key, XBC_KEYLEN_MAX);
->   		if (ret < 0)
->   			break;
-> +		/* For keeping security reason, remove randomness key */
-> +		if (!strcmp(key, RANDOM_SEED_XBC_KEY))
-> +			continue;
->   		ret = snprintf(dst, rest(dst, end), "%s = ", key);
->   		if (ret < 0)
->   			break;
-> diff --git a/include/linux/random.h b/include/linux/random.h
-> index d319f9a1e429..c8f41ab4f342 100644
-> --- a/include/linux/random.h
-> +++ b/include/linux/random.h
-> @@ -20,6 +20,13 @@ struct random_ready_callback {
->   
->   extern void add_device_randomness(const void *, unsigned int);
->   extern void add_bootloader_randomness(const void *, unsigned int);
-> +#if defined(CONFIG_RANDOM_TRUST_BOOTLOADER)
-> +extern void __init credit_trusted_entropy_bits(unsigned int nbits);
-> +#else
-> +static inline void credit_trusted_entropy_bits(unsigned int nbits) {}
-> +#endif
-> +
-> +#define RANDOM_SEED_XBC_KEY "random.rng_seed"
->   
->   #if defined(LATENT_ENTROPY_PLUGIN) && !defined(__CHECKER__)
->   static inline void add_latent_entropy(void)
-> diff --git a/init/main.c b/init/main.c
-> index f95b014a5479..6c3f51bc76d5 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -776,6 +776,32 @@ void __init __weak arch_call_rest_init(void)
->   	rest_init();
->   }
->   
-> +static __always_inline void __init collect_entropy(const char *command_line)
-> +{
-> +	/*
-> +	 * For best initial stack canary entropy, prepare it after:
-> +	 * - setup_arch() for any UEFI RNG entropy and boot cmdline access
-> +	 * - timekeeping_init() for ktime entropy used in rand_initialize()
-> +	 * - rand_initialize() to get any arch-specific entropy like RDRAND
-> +	 * - add_latent_entropy() to get any latent entropy
-> +	 * - adding command line entropy
-> +	 */
-> +	rand_initialize();
-> +	add_latent_entropy();
-> +	add_device_randomness(command_line, strlen(command_line));
-> +	if (IS_BUILTIN(CONFIG_RANDOM_TRUST_BOOTLOADER)) {
-> +		/*
-> +		 * Added bootconfig device randomness above,
-
-This part is incorrect, the rng_seed collected below was _not_ added to 
-the device_randomness.
-
-add_device_randomness(rng_seed, strlen(rng_seed)) needs to be pushed 
-below along with the credit.
-
-> +		 * now add entropy credit for just random.rng_seed=<data>
-> +		 */
-> +		const char *rng_seed = xbc_find_value(RANDOM_SEED_XBC_KEY, NULL);
-> +
-> +		if (rng_seed)
-> +			credit_trusted_entropy_bits(strlen(rng_seed) * 6);
-> +	}
-> +	boot_init_stack_canary();
-> +}
-> +
->   asmlinkage __visible void __init start_kernel(void)
->   {
->   	char *command_line;
-> @@ -887,18 +913,7 @@ asmlinkage __visible void __init start_kernel(void)
->   	softirq_init();
->   	timekeeping_init();
->   
-> -	/*
-> -	 * For best initial stack canary entropy, prepare it after:
-> -	 * - setup_arch() for any UEFI RNG entropy and boot cmdline access
-> -	 * - timekeeping_init() for ktime entropy used in rand_initialize()
-> -	 * - rand_initialize() to get any arch-specific entropy like RDRAND
-> -	 * - add_latent_entropy() to get any latent entropy
-> -	 * - adding command line entropy
-> -	 */
-> -	rand_initialize();
-> -	add_latent_entropy();
-> -	add_device_randomness(command_line, strlen(command_line));
-> -	boot_init_stack_canary();
-> +	collect_entropy(command_line);
->   
->   	time_init();
->   	printk_safe_init();
->
-
+Thanks
+--
+Gustavo
