@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5A7C15C5CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F1F215C78B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:14:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728840AbgBMPYy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:24:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34696 "EHLO mail.kernel.org"
+        id S1728517AbgBMQLi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 11:11:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727604AbgBMPX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:23:29 -0500
+        id S1727809AbgBMPWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:22:21 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2693F24689;
-        Thu, 13 Feb 2020 15:23:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6391C20848;
+        Thu, 13 Feb 2020 15:22:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607408;
-        bh=8m95RymEldAFxdMNFNOh5ebIIqj+Gyn1fmABkibbhcY=;
+        s=default; t=1581607340;
+        bh=kt0Bz0bPpo/l/zqQOhZV+pT2pslamunyf4gkPOCt2Pw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qqp4Ds2eSKaMe01ZDQHWVv++O4+QxUMhOuGoAjjinxWlLGaGa9wq0HKW/GwNW/Xfh
-         wqtb+hAFnnFFfE4C6h9/kCMuQscioChobqAgMBxKMUQR1LuY/WnWu+T+o2WSaCZyqG
-         1gvN6e3UtMzDbHXnrf5FQMEhJV0v57xiy9mqV0sQ=
+        b=G1NuQu7Cp6iRd+kAkGS5r3cW+pGU+eq0MVEb1ntO6loR33VXgFtL1lKVV0eTdPrmZ
+         uvUT5uLaI6X9lP9uArEwa9vkwnH5eNvxFDuYuhswMD7Yy9ZRhkxmTE0DC4lpVBmyco
+         BVie+ZDyHLK3gC7FclCFQ8mlPEfBtT7TJqPl95OI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hyunchul Lee <cheol.lee@lge.com>,
-        Richard Weinberger <richard@nod.at>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 028/116] ubifs: Change gfp flags in page allocation for bulk read
+        stable@vger.kernel.org,
+        Bryan ODonoghue <bryan.odonoghue@linaro.org>,
+        Felipe Balbi <balbi@kernel.org>
+Subject: [PATCH 4.4 15/91] usb: gadget: f_ecm: Use atomic_t to track in-flight request
 Date:   Thu, 13 Feb 2020 07:19:32 -0800
-Message-Id: <20200213151853.797208951@linuxfoundation.org>
+Message-Id: <20200213151827.713921191@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
-References: <20200213151842.259660170@linuxfoundation.org>
+In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
+References: <20200213151821.384445454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +44,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hyunchul Lee <cheol.lee@lge.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-[ Upstream commit 480a1a6a3ef6fb6be4cd2f37b34314fbf64867dd ]
+commit d710562e01c48d59be3f60d58b7a85958b39aeda upstream.
 
-In low memory situations, page allocations for bulk read
-can kill applications for reclaiming memory, and print an
-failure message when allocations are failed.
-Because bulk read is just an optimization, we don't have
-to do these and can stop page allocations.
+Currently ecm->notify_req is used to flag when a request is in-flight.
+ecm->notify_req is set to NULL and when a request completes it is
+subsequently reset.
 
-Though this siutation happens rarely, add __GFP_NORETRY
-to prevent from excessive memory reclaim and killing
-applications, and __GFP_WARN to suppress this failure
-message.
+This is fundamentally buggy in that the unbind logic of the ECM driver will
+unconditionally free ecm->notify_req leading to a NULL pointer dereference.
 
-For this, Use readahead_gfp_mask for gfp flags when
-allocating pages.
+Fixes: da741b8c56d6 ("usb ethernet gadget: split CDC Ethernet function")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Hyunchul Lee <cheol.lee@lge.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ubifs/file.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/function/f_ecm.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-index b4fbeefba246a..f2e6162f8e656 100644
---- a/fs/ubifs/file.c
-+++ b/fs/ubifs/file.c
-@@ -721,6 +721,7 @@ static int ubifs_do_bulk_read(struct ubifs_info *c, struct bu_info *bu,
- 	int err, page_idx, page_cnt, ret = 0, n = 0;
- 	int allocate = bu->buf ? 0 : 1;
- 	loff_t isize;
-+	gfp_t ra_gfp_mask = readahead_gfp_mask(mapping) & ~__GFP_FS;
+--- a/drivers/usb/gadget/function/f_ecm.c
++++ b/drivers/usb/gadget/function/f_ecm.c
+@@ -56,6 +56,7 @@ struct f_ecm {
+ 	struct usb_ep			*notify;
+ 	struct usb_request		*notify_req;
+ 	u8				notify_state;
++	atomic_t			notify_count;
+ 	bool				is_open;
  
- 	err = ubifs_tnc_get_bu_keys(c, bu);
- 	if (err)
-@@ -782,8 +783,7 @@ static int ubifs_do_bulk_read(struct ubifs_info *c, struct bu_info *bu,
+ 	/* FIXME is_open needs some irq-ish locking
+@@ -384,7 +385,7 @@ static void ecm_do_notify(struct f_ecm *
+ 	int				status;
  
- 		if (page_offset > end_index)
- 			break;
--		page = find_or_create_page(mapping, page_offset,
--					   GFP_NOFS | __GFP_COLD);
-+		page = find_or_create_page(mapping, page_offset, ra_gfp_mask);
- 		if (!page)
- 			break;
- 		if (!PageUptodate(page))
--- 
-2.20.1
-
+ 	/* notification already in flight? */
+-	if (!req)
++	if (atomic_read(&ecm->notify_count))
+ 		return;
+ 
+ 	event = req->buf;
+@@ -424,10 +425,10 @@ static void ecm_do_notify(struct f_ecm *
+ 	event->bmRequestType = 0xA1;
+ 	event->wIndex = cpu_to_le16(ecm->ctrl_id);
+ 
+-	ecm->notify_req = NULL;
++	atomic_inc(&ecm->notify_count);
+ 	status = usb_ep_queue(ecm->notify, req, GFP_ATOMIC);
+ 	if (status < 0) {
+-		ecm->notify_req = req;
++		atomic_dec(&ecm->notify_count);
+ 		DBG(cdev, "notify --> %d\n", status);
+ 	}
+ }
+@@ -452,17 +453,19 @@ static void ecm_notify_complete(struct u
+ 	switch (req->status) {
+ 	case 0:
+ 		/* no fault */
++		atomic_dec(&ecm->notify_count);
+ 		break;
+ 	case -ECONNRESET:
+ 	case -ESHUTDOWN:
++		atomic_set(&ecm->notify_count, 0);
+ 		ecm->notify_state = ECM_NOTIFY_NONE;
+ 		break;
+ 	default:
+ 		DBG(cdev, "event %02x --> %d\n",
+ 			event->bNotificationType, req->status);
++		atomic_dec(&ecm->notify_count);
+ 		break;
+ 	}
+-	ecm->notify_req = req;
+ 	ecm_do_notify(ecm);
+ }
+ 
+@@ -909,6 +912,11 @@ static void ecm_unbind(struct usb_config
+ 
+ 	usb_free_all_descriptors(f);
+ 
++	if (atomic_read(&ecm->notify_count)) {
++		usb_ep_dequeue(ecm->notify, ecm->notify_req);
++		atomic_set(&ecm->notify_count, 0);
++	}
++
+ 	kfree(ecm->notify_req->buf);
+ 	usb_ep_free_request(ecm->notify, ecm->notify_req);
+ }
 
 
