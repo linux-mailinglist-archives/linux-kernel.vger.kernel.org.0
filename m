@@ -2,51 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86E1015C06B
+	by mail.lfdr.de (Postfix) with ESMTP id 133B615C06A
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 15:34:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbgBMOek (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 09:34:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726780AbgBMOek (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 09:34:40 -0500
-Received: from localhost (unknown [106.201.58.38])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD48024673;
-        Thu, 13 Feb 2020 14:34:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581604479;
-        bh=mt/wBV75C0JFyp9Jp5NJAMBeePDKaAfR/fqnojQNLA8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uyvSVb57nyYaFp0FTteX2g7KVlTIRAi1q6Yp8rBqBFyBLrZugZvocsrEQpnRO0Wrm
-         BHwmZvHealztvCTSEIXt4liEt7OEQT8/4hvtTWf3liE+ujdrkScy3vD03bV2xPIfw5
-         6n4gohOeD4/OZYU6vs7OzYX3Axb9gfNpVPcCQU6Q=
-Date:   Thu, 13 Feb 2020 20:04:35 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     dave.jiang@intel.com, dan.j.williams@intel.com,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] dmaengine: idxd: remove set but not used variable
- 'idxd_cdev'
-Message-ID: <20200213143435.GI2618@vkoul-mobl>
-References: <20200210151855.55044-1-yuehaibing@huawei.com>
+        id S1727584AbgBMOeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 09:34:36 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:33908 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727414AbgBMOeg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 09:34:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=KjjQOSYaN0OsAxz1AYWuwCc8Awm7MXmiPSF9G+9HfOA=; b=WOHb9DMxHgk0Zii+JORq4vQLNZ
+        38IO6hDSOQbqM5lPkG2oqepO/vxWUPN/s3u1z4fOkgqCzXKUrGcJZX3jECIJbueY6TuigsxtI1KNT
+        5jEadu6G9+0+E4sosJIt84SbIvXN8hKECmkUW2RLxbMOaYoyWYpqovjsKF0WSWWzUwkDu0YXp6UXX
+        brVTEfLZZXVYz6UactfF0BCx+MZO4efUjiNaDDSypF/lmfofuns/qoBIFs2Z7eoK0A2Xv8BpYHyQ+
+        pX5NAXgJs4wFx8rID+jHcqYW0P23V5Q+jXprdZJ9KhcHxEnUqzXjh5Lozv0Gd2AAPrleRF4hXs3v+
+        7Z3xf3hA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j2FZb-0001Bi-Qx; Thu, 13 Feb 2020 14:34:35 +0000
+Date:   Thu, 13 Feb 2020 06:34:35 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 05/25] mm: Fix documentation of FGP flags
+Message-ID: <20200213143435.GM7778@bombadil.infradead.org>
+References: <20200212041845.25879-1-willy@infradead.org>
+ <20200212041845.25879-6-willy@infradead.org>
+ <20200213135905.wvpeiw7tyma75tsq@box>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200210151855.55044-1-yuehaibing@huawei.com>
+In-Reply-To: <20200213135905.wvpeiw7tyma75tsq@box>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10-02-20, 23:18, YueHaibing wrote:
-> drivers/dma/idxd/cdev.c: In function idxd_cdev_open:
-> drivers/dma/idxd/cdev.c:77:20: warning:
->  variable idxd_cdev set but not used [-Wunused-but-set-variable]
+On Thu, Feb 13, 2020 at 04:59:05PM +0300, Kirill A. Shutemov wrote:
+> On Tue, Feb 11, 2020 at 08:18:25PM -0800, Matthew Wilcox wrote:
+> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> > 
+> > We never had PCG flags
+> 
+> We actually had :P But it's totally different story.
+> 
+> See git log for include/linux/page_cgroup.h.
 
-Applied, thanks
-
--- 
-~Vinod
+Thanks, wording updated.
