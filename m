@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0131C15C229
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:30:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09BF515C163
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:23:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387691AbgBMPaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:30:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48452 "EHLO mail.kernel.org"
+        id S1728212AbgBMPW7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:22:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387646AbgBMP1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:02 -0500
+        id S1728107AbgBMPWq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:22:46 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA56B218AC;
-        Thu, 13 Feb 2020 15:27:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E387124699;
+        Thu, 13 Feb 2020 15:22:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607622;
-        bh=nqcGG/WO56Zu/rq/TnBzMmGzqpJVN3K4l3o8HdgZ3FQ=;
+        s=default; t=1581607365;
+        bh=wgQjZs1ddBRdFqlffXn/FGMRtYF9eRuUuRtsGAyWpRA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IALo4glvjFJgozMVvJz/R3rFl3rtQQ6D7FdxNBlvueB+ACHZtpzyn0KgVtbxRJ5p3
-         PZhxXBMb5IfKjYf6Q8Bk4YY10f6o6qID5Js7H0BuZOfkeeVb0dZKOqODWTTnehiSwN
-         FwKQ+jifZyvBG19xVbMO3SxNZ7SKJp0KM8UCira4=
+        b=UzVzQE5KvvNPxjPUNFeGq48Oeo/uvsEwuxPrNM3cV+3ao7dtHN64iElheoTdAsAxu
+         X4Byiu+JLDMB8vuCrtxp39uCeZSkU/6b9KqUg71b6U2AgorZF43XmeG6XWf2O3eCHv
+         k7k1fExDXDnra7iYfdV90kBNycngPVTuFxYt5nh8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sunil Muthuswamy <sunilmut@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 02/96] hv_sock: Remove the accept port restriction
-Date:   Thu, 13 Feb 2020 07:20:09 -0800
-Message-Id: <20200213151839.736570375@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 53/91] ppp: Adjust indentation into ppp_async_input
+Date:   Thu, 13 Feb 2020 07:20:10 -0800
+Message-Id: <20200213151842.139701943@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
+References: <20200213151821.384445454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,168 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sunil Muthuswamy <sunilmut@microsoft.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit c742c59e1fbd022b64d91aa9a0092b3a699d653c ]
+commit 08cbc75f96029d3092664213a844a5e25523aa35 upstream.
 
-Currently, hv_sock restricts the port the guest socket can accept
-connections on. hv_sock divides the socket port namespace into two parts
-for server side (listening socket), 0-0x7FFFFFFF & 0x80000000-0xFFFFFFFF
-(there are no restrictions on client port namespace). The first part
-(0-0x7FFFFFFF) is reserved for sockets where connections can be accepted.
-The second part (0x80000000-0xFFFFFFFF) is reserved for allocating ports
-for the peer (host) socket, once a connection is accepted.
-This reservation of the port namespace is specific to hv_sock and not
-known by the generic vsock library (ex: af_vsock). This is problematic
-because auto-binds/ephemeral ports are handled by the generic vsock
-library and it has no knowledge of this port reservation and could
-allocate a port that is not compatible with hv_sock (and legitimately so).
-The issue hasn't surfaced so far because the auto-bind code of vsock
-(__vsock_bind_stream) prior to the change 'VSOCK: bind to random port for
-VMADDR_PORT_ANY' would start walking up from LAST_RESERVED_PORT (1023) and
-start assigning ports. That will take a large number of iterations to hit
-0x7FFFFFFF. But, after the above change to randomize port selection, the
-issue has started coming up more frequently.
-There has really been no good reason to have this port reservation logic
-in hv_sock from the get go. Reserving a local port for peer ports is not
-how things are handled generally. Peer ports should reflect the peer port.
-This fixes the issue by lifting the port reservation, and also returns the
-right peer port. Since the code converts the GUID to the peer port (by
-using the first 4 bytes), there is a possibility of conflicts, but that
-seems like a reasonable risk to take, given this is limited to vsock and
-that only applies to all local sockets.
+Clang warns:
 
-Signed-off-by: Sunil Muthuswamy <sunilmut@microsoft.com>
+../drivers/net/ppp/ppp_async.c:877:6: warning: misleading indentation;
+statement is not part of the previous 'if' [-Wmisleading-indentation]
+                                ap->rpkt = skb;
+                                ^
+../drivers/net/ppp/ppp_async.c:875:5: note: previous statement is here
+                                if (!skb)
+                                ^
+1 warning generated.
+
+This warning occurs because there is a space before the tab on this
+line. Clean up this entire block's indentation so that it is consistent
+with the Linux kernel coding style and clang no longer warns.
+
+Fixes: 6722e78c9005 ("[PPP]: handle misaligned accesses")
+Link: https://github.com/ClangBuiltLinux/linux/issues/800
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/vmw_vsock/hyperv_transport.c | 68 +++++---------------------------
- 1 file changed, 9 insertions(+), 59 deletions(-)
+ drivers/net/ppp/ppp_async.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/net/vmw_vsock/hyperv_transport.c b/net/vmw_vsock/hyperv_transport.c
-index c443db7af8d4a..463cefc1e5ae2 100644
---- a/net/vmw_vsock/hyperv_transport.c
-+++ b/net/vmw_vsock/hyperv_transport.c
-@@ -136,28 +136,15 @@ struct hvsock {
-  ****************************************************************************
-  * The only valid Service GUIDs, from the perspectives of both the host and *
-  * Linux VM, that can be connected by the other end, must conform to this   *
-- * format: <port>-facb-11e6-bd58-64006a7986d3, and the "port" must be in    *
-- * this range [0, 0x7FFFFFFF].                                              *
-+ * format: <port>-facb-11e6-bd58-64006a7986d3.                              *
-  ****************************************************************************
-  *
-  * When we write apps on the host to connect(), the GUID ServiceID is used.
-  * When we write apps in Linux VM to connect(), we only need to specify the
-  * port and the driver will form the GUID and use that to request the host.
-  *
-- * From the perspective of Linux VM:
-- * 1. the local ephemeral port (i.e. the local auto-bound port when we call
-- * connect() without explicit bind()) is generated by __vsock_bind_stream(),
-- * and the range is [1024, 0xFFFFFFFF).
-- * 2. the remote ephemeral port (i.e. the auto-generated remote port for
-- * a connect request initiated by the host's connect()) is generated by
-- * hvs_remote_addr_init() and the range is [0x80000000, 0xFFFFFFFF).
-  */
- 
--#define MAX_LISTEN_PORT			((u32)0x7FFFFFFF)
--#define MAX_VM_LISTEN_PORT		MAX_LISTEN_PORT
--#define MAX_HOST_LISTEN_PORT		MAX_LISTEN_PORT
--#define MIN_HOST_EPHEMERAL_PORT		(MAX_HOST_LISTEN_PORT + 1)
--
- /* 00000000-facb-11e6-bd58-64006a7986d3 */
- static const guid_t srv_id_template =
- 	GUID_INIT(0x00000000, 0xfacb, 0x11e6, 0xbd, 0x58,
-@@ -180,33 +167,6 @@ static void hvs_addr_init(struct sockaddr_vm *addr, const guid_t *svr_id)
- 	vsock_addr_init(addr, VMADDR_CID_ANY, port);
- }
- 
--static void hvs_remote_addr_init(struct sockaddr_vm *remote,
--				 struct sockaddr_vm *local)
--{
--	static u32 host_ephemeral_port = MIN_HOST_EPHEMERAL_PORT;
--	struct sock *sk;
--
--	vsock_addr_init(remote, VMADDR_CID_ANY, VMADDR_PORT_ANY);
--
--	while (1) {
--		/* Wrap around ? */
--		if (host_ephemeral_port < MIN_HOST_EPHEMERAL_PORT ||
--		    host_ephemeral_port == VMADDR_PORT_ANY)
--			host_ephemeral_port = MIN_HOST_EPHEMERAL_PORT;
--
--		remote->svm_port = host_ephemeral_port++;
--
--		sk = vsock_find_connected_socket(remote, local);
--		if (!sk) {
--			/* Found an available ephemeral port */
--			return;
--		}
--
--		/* Release refcnt got in vsock_find_connected_socket */
--		sock_put(sk);
--	}
--}
--
- static void hvs_set_channel_pending_send_size(struct vmbus_channel *chan)
- {
- 	set_channel_pending_send_size(chan,
-@@ -336,12 +296,7 @@ static void hvs_open_connection(struct vmbus_channel *chan)
- 	if_type = &chan->offermsg.offer.if_type;
- 	if_instance = &chan->offermsg.offer.if_instance;
- 	conn_from_host = chan->offermsg.offer.u.pipe.user_def[0];
--
--	/* The host or the VM should only listen on a port in
--	 * [0, MAX_LISTEN_PORT]
--	 */
--	if (!is_valid_srv_id(if_type) ||
--	    get_port_by_srv_id(if_type) > MAX_LISTEN_PORT)
-+	if (!is_valid_srv_id(if_type))
- 		return;
- 
- 	hvs_addr_init(&addr, conn_from_host ? if_type : if_instance);
-@@ -365,6 +320,13 @@ static void hvs_open_connection(struct vmbus_channel *chan)
- 
- 		new->sk_state = TCP_SYN_SENT;
- 		vnew = vsock_sk(new);
-+
-+		hvs_addr_init(&vnew->local_addr, if_type);
-+
-+		/* Remote peer is always the host */
-+		vsock_addr_init(&vnew->remote_addr,
-+				VMADDR_CID_HOST, VMADDR_PORT_ANY);
-+		vnew->remote_addr.svm_port = get_port_by_srv_id(if_instance);
- 		hvs_new = vnew->trans;
- 		hvs_new->chan = chan;
- 	} else {
-@@ -429,8 +391,6 @@ static void hvs_open_connection(struct vmbus_channel *chan)
- 		sk->sk_ack_backlog++;
- 
- 		hvs_addr_init(&vnew->local_addr, if_type);
--		hvs_remote_addr_init(&vnew->remote_addr, &vnew->local_addr);
--
- 		hvs_new->vm_srv_id = *if_type;
- 		hvs_new->host_srv_id = *if_instance;
- 
-@@ -753,16 +713,6 @@ static bool hvs_stream_is_active(struct vsock_sock *vsk)
- 
- static bool hvs_stream_allow(u32 cid, u32 port)
- {
--	/* The host's port range [MIN_HOST_EPHEMERAL_PORT, 0xFFFFFFFF) is
--	 * reserved as ephemeral ports, which are used as the host's ports
--	 * when the host initiates connections.
--	 *
--	 * Perform this check in the guest so an immediate error is produced
--	 * instead of a timeout.
--	 */
--	if (port > MAX_HOST_LISTEN_PORT)
--		return false;
--
- 	if (cid == VMADDR_CID_HOST)
- 		return true;
- 
--- 
-2.20.1
-
+--- a/drivers/net/ppp/ppp_async.c
++++ b/drivers/net/ppp/ppp_async.c
+@@ -878,15 +878,15 @@ ppp_async_input(struct asyncppp *ap, con
+ 				skb = dev_alloc_skb(ap->mru + PPP_HDRLEN + 2);
+ 				if (!skb)
+ 					goto nomem;
+- 				ap->rpkt = skb;
+- 			}
+- 			if (skb->len == 0) {
+- 				/* Try to get the payload 4-byte aligned.
+- 				 * This should match the
+- 				 * PPP_ALLSTATIONS/PPP_UI/compressed tests in
+- 				 * process_input_packet, but we do not have
+- 				 * enough chars here to test buf[1] and buf[2].
+- 				 */
++				ap->rpkt = skb;
++			}
++			if (skb->len == 0) {
++				/* Try to get the payload 4-byte aligned.
++				 * This should match the
++				 * PPP_ALLSTATIONS/PPP_UI/compressed tests in
++				 * process_input_packet, but we do not have
++				 * enough chars here to test buf[1] and buf[2].
++				 */
+ 				if (buf[0] != PPP_ALLSTATIONS)
+ 					skb_reserve(skb, 2 + (buf[0] & 1));
+ 			}
 
 
