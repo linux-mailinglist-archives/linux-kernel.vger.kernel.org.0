@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6FA215C26F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:33:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 707E915C247
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:31:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388204AbgBMPdr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:33:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59100 "EHLO mail.kernel.org"
+        id S1729742AbgBMPbh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:31:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387809AbgBMP3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:29:09 -0500
+        id S1729522AbgBMP15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:57 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81658222C2;
-        Thu, 13 Feb 2020 15:29:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0513924670;
+        Thu, 13 Feb 2020 15:27:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607748;
-        bh=VuGAiv0Vs7XKtEIuBTXRsMXF4t/BrT5Xys71xL1WeBY=;
+        s=default; t=1581607677;
+        bh=laid7J5sQfr4zc5dfFYayIFp5SqBhYxHplp0Qg+Sfbc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FsDaYGKfSZyH6o/trJZdlaOTgUr8eOpslKWx4SEPmtiUwPXqLo8lnJpzUab/qZzkU
-         nq2zECNjgiikAEqLqtOdXLNe5ml0S7iDZLpoeCDNCpg11HP266j1GQwQXKwVcd9yy0
-         b4KODERroCcHj21bRb7TTq9sXxtptmQLJCivBJhQ=
+        b=zQjja0pDZitXl+RZcn5esNlXlgG0kEN2QvC4trQbCWr3FpzZvR1oFMKZnirfKdkkr
+         /8oMzkK4xHzoo83AP/GRVLYfMH7yvyPk6/pr8fGx6YPhPf2GejaUP6BFnul1VoyLul
+         APbbHTTviS+HrJykF3b2C3DKn0PUT/YHJUp9tXTE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>
-Subject: [PATCH 5.5 107/120] selinux: revert "stop passing MAY_NOT_BLOCK to the AVC upon follow_link"
+        stable@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 96/96] libertas: make lbs_ibss_join_existing() return error code on rates overflow
 Date:   Thu, 13 Feb 2020 07:21:43 -0800
-Message-Id: <20200213151936.692857427@linuxfoundation.org>
+Message-Id: <20200213151914.736275424@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
+References: <20200213151839.156309910@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,94 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Smalley <sds@tycho.nsa.gov>
+From: Nicolai Stange <nstange@suse.de>
 
-commit 1a37079c236d55fb31ebbf4b59945dab8ec8764c upstream.
+[ Upstream commit 1754c4f60aaf1e17d886afefee97e94d7f27b4cb ]
 
-This reverts commit e46e01eebbbc ("selinux: stop passing MAY_NOT_BLOCK
-to the AVC upon follow_link"). The correct fix is to instead fall
-back to ref-walk if audit is required irrespective of the specific
-audit data type.  This is done in the next commit.
+Commit e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss
+descriptor") introduced a bounds check on the number of supplied rates to
+lbs_ibss_join_existing() and made it to return on overflow.
 
-Fixes: e46e01eebbbc ("selinux: stop passing MAY_NOT_BLOCK to the AVC upon follow_link")
-Reported-by: Will Deacon <will@kernel.org>
-Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+However, the aforementioned commit doesn't set the return value accordingly
+and thus, lbs_ibss_join_existing() would return with zero even though it
+failed.
 
+Make lbs_ibss_join_existing return -EINVAL in case the bounds check on the
+number of supplied rates fails.
+
+Fixes: e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss descriptor")
+Signed-off-by: Nicolai Stange <nstange@suse.de>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/selinux/avc.c         |   24 ++++++++++++++++++++++--
- security/selinux/hooks.c       |    5 +++--
- security/selinux/include/avc.h |    5 +++++
- 3 files changed, 30 insertions(+), 4 deletions(-)
+ drivers/net/wireless/marvell/libertas/cfg.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/security/selinux/avc.c
-+++ b/security/selinux/avc.c
-@@ -862,8 +862,9 @@ static int avc_update_node(struct selinu
- 	 * permissive mode that only appear when in enforcing mode.
- 	 *
- 	 * See the corresponding handling in slow_avc_audit(), and the
--	 * logic in selinux_inode_permission for the MAY_NOT_BLOCK flag,
--	 * which is transliterated into AVC_NONBLOCKING.
-+	 * logic in selinux_inode_follow_link and selinux_inode_permission
-+	 * for the VFS MAY_NOT_BLOCK flag, which is transliterated into
-+	 * AVC_NONBLOCKING for avc_has_perm_noaudit().
- 	 */
- 	if (flags & AVC_NONBLOCKING)
- 		return 0;
-@@ -1203,6 +1204,25 @@ int avc_has_perm(struct selinux_state *s
- 	if (rc2)
- 		return rc2;
- 	return rc;
-+}
-+
-+int avc_has_perm_flags(struct selinux_state *state,
-+		       u32 ssid, u32 tsid, u16 tclass, u32 requested,
-+		       struct common_audit_data *auditdata,
-+		       int flags)
-+{
-+	struct av_decision avd;
-+	int rc, rc2;
-+
-+	rc = avc_has_perm_noaudit(state, ssid, tsid, tclass, requested,
-+				  (flags & MAY_NOT_BLOCK) ? AVC_NONBLOCKING : 0,
-+				  &avd);
-+
-+	rc2 = avc_audit(state, ssid, tsid, tclass, requested, &avd, rc,
-+			auditdata, flags);
-+	if (rc2)
-+		return rc2;
-+	return rc;
- }
- 
- u32 avc_policy_seqno(struct selinux_state *state)
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3004,8 +3004,9 @@ static int selinux_inode_follow_link(str
- 	if (IS_ERR(isec))
- 		return PTR_ERR(isec);
- 
--	return avc_has_perm(&selinux_state,
--			    sid, isec->sid, isec->sclass, FILE__READ, &ad);
-+	return avc_has_perm_flags(&selinux_state,
-+				  sid, isec->sid, isec->sclass, FILE__READ, &ad,
-+				  rcu ? MAY_NOT_BLOCK : 0);
- }
- 
- static noinline int audit_inode_permission(struct inode *inode,
---- a/security/selinux/include/avc.h
-+++ b/security/selinux/include/avc.h
-@@ -153,6 +153,11 @@ int avc_has_perm(struct selinux_state *s
- 		 u32 ssid, u32 tsid,
- 		 u16 tclass, u32 requested,
- 		 struct common_audit_data *auditdata);
-+int avc_has_perm_flags(struct selinux_state *state,
-+		       u32 ssid, u32 tsid,
-+		       u16 tclass, u32 requested,
-+		       struct common_audit_data *auditdata,
-+		       int flags);
- 
- int avc_has_extended_perms(struct selinux_state *state,
- 			   u32 ssid, u32 tsid, u16 tclass, u32 requested,
+diff --git a/drivers/net/wireless/marvell/libertas/cfg.c b/drivers/net/wireless/marvell/libertas/cfg.c
+index 68985d7663491..4e3de684928bf 100644
+--- a/drivers/net/wireless/marvell/libertas/cfg.c
++++ b/drivers/net/wireless/marvell/libertas/cfg.c
+@@ -1786,6 +1786,7 @@ static int lbs_ibss_join_existing(struct lbs_private *priv,
+ 		if (rates_max > MAX_RATES) {
+ 			lbs_deb_join("invalid rates");
+ 			rcu_read_unlock();
++			ret = -EINVAL;
+ 			goto out;
+ 		}
+ 		rates = cmd.bss.rates;
+-- 
+2.20.1
+
 
 
