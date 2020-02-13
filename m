@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1D5F15C75F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:14:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA37815C619
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728282AbgBMQJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 11:09:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60538 "EHLO mail.kernel.org"
+        id S1729039AbgBMP5G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:57:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728063AbgBMPWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:22:42 -0500
+        id S1728134AbgBMPZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:23 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51D18246A3;
-        Thu, 13 Feb 2020 15:22:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7827620848;
+        Thu, 13 Feb 2020 15:25:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607360;
-        bh=00hycvRWbvcfPEzeSB7Pad5lAyiMKp3N+PVa35w2HL0=;
+        s=default; t=1581607523;
+        bh=sliaj5BSkKa6BZ89HC0XulnKCqnhPE0kdzLJ7gX9zqw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p27w8odo4alMFITMNyFXixzXTvE90Dt+plVLnYHbalEMI0aullOYcRxlU4FfYZnsN
-         AFOQr0rFOsii46N00oliScyYOc8XBwFTUl73QV/GZ8i15rPvJvWwwkCRTyGTQxnEng
-         lZOGhqaNW3i1U2K6YoW4vzD5MCHz3prhM8EWmzP8=
+        b=1fHu+T8tJmVWmfm/peeL53xjEWlTu0ezV2iiy6XZ7+Ymus+2HUlBkeA7nKvCI0cR8
+         4Io728kFR4U9Rtviugdk2kiQLqfntq0YkXFZ1zon58jir8/cLdMnuyddBKp+k2I+KV
+         zuUnklU8Dr9tlTijpka7x3WMl2AtAWdaqT/Rb1Ak=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.4 19/91] mmc: spi: Toggle SPI polarity, do not hardcode it
-Date:   Thu, 13 Feb 2020 07:19:36 -0800
-Message-Id: <20200213151829.134508209@linuxfoundation.org>
+        stable@vger.kernel.org, huangwen <huangwenabc@gmail.com>,
+        Ganapathi Bhat <ganapathi.bhat@nxp.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.14 074/173] mwifiex: fix unbalanced locking in mwifiex_process_country_ie()
+Date:   Thu, 13 Feb 2020 07:19:37 -0800
+Message-Id: <20200213151952.183642750@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
-References: <20200213151821.384445454@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,64 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Brian Norris <briannorris@chromium.org>
 
-commit af3ed119329cf9690598c5a562d95dfd128e91d6 upstream.
+commit 65b1aae0d9d5962faccc06bdb8e91a2a0b09451c upstream.
 
-The code in mmc_spi_initsequence() tries to send a burst with
-high chipselect and for this reason hardcodes the device into
-SPI_CS_HIGH.
+We called rcu_read_lock(), so we need to call rcu_read_unlock() before
+we return.
 
-This is not good because the SPI_CS_HIGH flag indicates
-logical "asserted" CS not always the physical level. In
-some cases the signal is inverted in the GPIO library and
-in that case SPI_CS_HIGH is already set, and enforcing
-SPI_CS_HIGH again will actually drive it low.
-
-Instead of hard-coding this, toggle the polarity so if the
-default is LOW it goes high to assert chipselect but if it
-is already high then toggle it low instead.
-
-Cc: Phil Elwell <phil@raspberrypi.org>
-Reported-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Link: https://lore.kernel.org/r/20191204152749.12652-1-linus.walleij@linaro.org
+Fixes: 3d94a4a8373b ("mwifiex: fix possible heap overflow in mwifiex_process_country_ie()")
 Cc: stable@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: huangwen <huangwenabc@gmail.com>
+Cc: Ganapathi Bhat <ganapathi.bhat@nxp.com>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Acked-by: Ganapathi Bhat <ganapathi.bhat@nxp.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/mmc_spi.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/sta_ioctl.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/mmc/host/mmc_spi.c
-+++ b/drivers/mmc/host/mmc_spi.c
-@@ -1153,17 +1153,22 @@ static void mmc_spi_initsequence(struct
- 	 * SPI protocol.  Another is that when chipselect is released while
- 	 * the card returns BUSY status, the clock must issue several cycles
- 	 * with chipselect high before the card will stop driving its output.
-+	 *
-+	 * SPI_CS_HIGH means "asserted" here. In some cases like when using
-+	 * GPIOs for chip select, SPI_CS_HIGH is set but this will be logically
-+	 * inverted by gpiolib, so if we want to ascertain to drive it high
-+	 * we should toggle the default with an XOR as we do here.
- 	 */
--	host->spi->mode |= SPI_CS_HIGH;
-+	host->spi->mode ^= SPI_CS_HIGH;
- 	if (spi_setup(host->spi) != 0) {
- 		/* Just warn; most cards work without it. */
- 		dev_warn(&host->spi->dev,
- 				"can't change chip-select polarity\n");
--		host->spi->mode &= ~SPI_CS_HIGH;
-+		host->spi->mode ^= SPI_CS_HIGH;
- 	} else {
- 		mmc_spi_readbytes(host, 18);
+--- a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+@@ -274,6 +274,7 @@ static int mwifiex_process_country_ie(st
  
--		host->spi->mode &= ~SPI_CS_HIGH;
-+		host->spi->mode ^= SPI_CS_HIGH;
- 		if (spi_setup(host->spi) != 0) {
- 			/* Wot, we can't get the same setup we had before? */
- 			dev_err(&host->spi->dev,
+ 	if (country_ie_len >
+ 	    (IEEE80211_COUNTRY_STRING_LEN + MWIFIEX_MAX_TRIPLET_802_11D)) {
++		rcu_read_unlock();
+ 		mwifiex_dbg(priv->adapter, ERROR,
+ 			    "11D: country_ie_len overflow!, deauth AP\n");
+ 		return -EINVAL;
 
 
