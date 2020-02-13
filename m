@@ -2,129 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AE1C15CAC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 19:55:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4DE115CAB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 19:51:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728318AbgBMSzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 13:55:05 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:37572 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727761AbgBMSzF (ORCPT
+        id S1727951AbgBMSvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 13:51:01 -0500
+Received: from gateway34.websitewelcome.com ([192.185.148.196]:22165 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727433AbgBMSvB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 13:55:05 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01DIqbxH014791;
-        Thu, 13 Feb 2020 18:53:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=xxN1ToWl43jQv4Pb6pKw4TpxAtDjjezu7dXEUGdd9F4=;
- b=EFZ1M3LZ4fWyLWpmMcGqXG+b9pCa4PfOEc/PgvFeywSF+E2mxW1uUHUVakOp4OS+vRqC
- 7/9GrUjD5u7IRLs+rzBz7l72TNelNDjqgNcV/Js1CZknAQtgRpU64JLc6L73RKmwtT9u
- G295K2MYoLfnPV/GxDxATByMR/cTVlOppqYLQ62tskfjx70B96DVit7XK8YY+AoFz33Z
- mACXsCeORMOFt15FWyMvXrhFEG/aNeDEboMLhb3Y2TDBDjFk6T3HljXRs+Eu/hir+Dv7
- U1swXxF7zLvsEEAVJjtQmpqgCeKsTJ1OWTTKlFZ3Suk0mIRQGOQmC12YU6z9rMiIxRzb wg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2y2k88mhvp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Feb 2020 18:53:43 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01DIpqZm043233;
-        Thu, 13 Feb 2020 18:53:42 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2y4k80de1h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Feb 2020 18:53:42 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01DIrZ8S010833;
-        Thu, 13 Feb 2020 18:53:35 GMT
-Received: from localhost.localdomain (/10.159.243.170)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 13 Feb 2020 10:53:35 -0800
-Subject: Re: [PATCH] KVM: x86: eliminate some unreachable code
-To:     linmiaohe <linmiaohe@huawei.com>, pbonzini@redhat.com,
-        rkrcmar@redhat.com, sean.j.christopherson@intel.com,
-        vkuznets@redhat.com, wanpengli@tencent.com, jmattson@google.com,
-        joro@8bytes.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org
-References: <1581562405-30321-1-git-send-email-linmiaohe@huawei.com>
-From:   Krish Sadhukhan <krish.sadhukhan@oracle.com>
-Message-ID: <ac51e889-624a-b108-d03c-4dc3e91c9a69@oracle.com>
-Date:   Thu, 13 Feb 2020 10:53:34 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 13 Feb 2020 13:51:01 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id 4FAE6ECE9BD
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 12:51:00 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 2JZkj6erUXVkQ2JZkjUamO; Thu, 13 Feb 2020 12:51:00 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=T7nae/cQQpsPFTp+fQB1X1mfe56DykBNtXR9BGxwUJE=; b=IAjHsCPXdMZt+5WNJcqD+P7TIP
+        7+R15R+sJUQkw9qT8j7G+LFiVAxHM9fzq8n5chUMuZO/1zeCSL9OAFMVT97WQG0Xo54MMJ/hbst0K
+        eh9SwkUJUe8WNfyXlbfvzCjqdvCTACrKHHfcDIXYorm5KjplB6NZzYLHLe/K1W54SuIGiOfEQvkmc
+        vtnQg/f1K/tvS2jinwVDPYcFaUYvyrG5eJNnNGpTUbS6yBc/SryF8Blaqy5kea3mcSNJ/EUgztXs8
+        Gq4Exh4jgTzVHLR1jpwahpQajQrwoTt649HZykaNeAI4HairJsnsIx+YsHcqWivaUnXEbZuZTJ7YG
+        3FVpMlxQ==;
+Received: from [200.68.140.15] (port=10057 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j2JZj-000fEB-VN; Thu, 13 Feb 2020 12:51:00 -0600
+Subject: Re: [PATCH] IB/core: Replace zero-length array with flexible-array
+ member
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200213183715.GA19636@embeddedor>
+ <20200213183850.GM31668@ziepe.ca>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <ad526791-a9d2-fa69-e989-5c74c3cfc704@embeddedor.com>
+Date:   Thu, 13 Feb 2020 12:53:36 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <1581562405-30321-1-git-send-email-linmiaohe@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200213183850.GM31668@ziepe.ca>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9530 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- suspectscore=0 mlxscore=0 bulkscore=0 malwarescore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002130132
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9530 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 lowpriorityscore=0
- suspectscore=0 bulkscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
- malwarescore=0 impostorscore=0 clxscore=1011 spamscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002130132
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.140.15
+X-Source-L: No
+X-Exim-ID: 1j2JZj-000fEB-VN
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [200.68.140.15]:10057
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 17
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 2/12/20 6:53 PM, linmiaohe wrote:
-> From: Miaohe Lin <linmiaohe@huawei.com>
->
-> These code are unreachable, remove them.
->
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-> ---
->   arch/x86/kvm/vmx/vmx.c | 1 -
->   arch/x86/kvm/x86.c     | 3 ---
->   2 files changed, 4 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index bb5c33440af8..b6d4eafe01cf 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -4505,7 +4505,6 @@ static bool rmode_exception(struct kvm_vcpu *vcpu, int vec)
->   	case GP_VECTOR:
->   	case MF_VECTOR:
->   		return true;
-> -	break;
->   	}
->   	return false;
->   }
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index fbabb2f06273..a597009aefd7 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -3081,7 +3081,6 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->   		break;
->   	case APIC_BASE_MSR ... APIC_BASE_MSR + 0x3ff:
->   		return kvm_x2apic_msr_read(vcpu, msr_info->index, &msr_info->data);
-> -		break;
->   	case MSR_IA32_TSCDEADLINE:
->   		msr_info->data = kvm_get_lapic_tscdeadline_msr(vcpu);
->   		break;
-> @@ -3164,7 +3163,6 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->   		return kvm_hv_get_msr_common(vcpu,
->   					     msr_info->index, &msr_info->data,
->   					     msr_info->host_initiated);
-> -		break;
->   	case MSR_IA32_BBL_CR_CTL3:
->   		/* This legacy MSR exists but isn't fully documented in current
->   		 * silicon.  It is however accessed by winxp in very narrow
-> @@ -8471,7 +8469,6 @@ static inline int vcpu_block(struct kvm *kvm, struct kvm_vcpu *vcpu)
->   		break;
->   	default:
->   		return -EINTR;
-> -		break;
->   	}
->   	return 1;
->   }
-Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+
+On 2/13/20 12:38, Jason Gunthorpe wrote:
+
+> 
+> Any reason to skip these two?
+> 
+> drivers/infiniband/core/mad_priv.h:     u8 mad[0];
+> drivers/infiniband/core/mad_priv.h:     u8 data[0];
+> 
+> And may as well touch these in the subsystem headers too:
+> 
+> include/rdma/ib_fmr_pool.h:     u64                 page_list[0];
+> include/rdma/ib_verbs.h:        u8      real_sz[0];
+> include/rdma/ib_verbs.h:        u8      real_sz[0];
+> include/rdma/ib_verbs.h:        u8      real_sz[0];
+> include/rdma/ib_verbs.h:        u8      real_sz[0];
+> include/rdma/ib_verbs.h:        u8      real_sz[0];
+> include/rdma/ib_verbs.h:        u8      real_sz[0];
+> include/rdma/ib_verbs.h:        u8      real_sz[0];
+> include/rdma/ib_verbs.h:        u8      real_sz[0];
+> include/rdma/ib_verbs.h:        u8      real_sz[0];
+> include/rdma/opa_vnic.h:        char *dev_priv[0];
+> include/rdma/rdmavt_mr.h:       struct rvt_segarray *map[0];    /* the segments */
+> include/rdma/rdmavt_qp.h:       struct rvt_sge sg_list[0];
+> 
+> ?
+
+OK. Let me tweak my script a bit to catch all of those.
+
+Thanks for the feedback.
+--
+Gustavo
