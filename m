@@ -2,137 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87DC215C04B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 15:27:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9268115C042
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 15:25:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727561AbgBMO1t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 09:27:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46512 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725781AbgBMO1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 09:27:48 -0500
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A312F222C2;
-        Thu, 13 Feb 2020 14:22:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581603729;
-        bh=6VfGSAC1HNOSPZvAehIj0dyrn4ZvRctoIk3FH92JPYI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=kSeAbcjQ8QOxAe4QgIbYkEwyQm3vrPqRAkJtjE0GbKOtRmcwL4e4Um3YxtPHyFnrh
-         sMbizg7K02UaBIu2Fg5l9afFMJ+YXwXAZ+pOfkgKZPgX3I8z6mAeRgXjKDavzXGviQ
-         cFL3ig+yq/2tfGch9ygjX6/xRILMKkgI2klDov8I=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1j2FNX-004qXJ-U9; Thu, 13 Feb 2020 14:22:08 +0000
+        id S1727434AbgBMOZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 09:25:21 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:34313 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbgBMOZU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 09:25:20 -0500
+Received: by mail-qk1-f194.google.com with SMTP id c20so5828825qkm.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 06:25:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Bc0b7TzZN/NSWX0NFmEbYxGFh6qjkw/pK6nZDwFtVfU=;
+        b=e72tivqYvQ7hzD1hDEOyR4fyZzUUauEuzvGQ1N6vlP9FlkxL9ARfbqgtUfkupK82HE
+         QkWjAEhiFncYm+atr/0aEnCDVDNTgaMxj0/Pwg9HQmhiF5/yPOhPnh0lTZhCD+DUthjp
+         efugfVtBDen1rlDtGrdP9N7pjEOdNHRqT8Rhg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Bc0b7TzZN/NSWX0NFmEbYxGFh6qjkw/pK6nZDwFtVfU=;
+        b=qheH6KyOYuyMGi1APKRR1kdrmbpqrMciz1nteN94OXwyv03MdalQ/swccBHuzAwcQx
+         wvoL2lCfTWrtjVwGLzRpixf3tBAgzPRzFnbnjSpHAoZEeyrirYHVmnCZTKQw78IWDm85
+         1IKAEE/900LJa85trTXxVI/46U+bdVm2ViLPit1fSR+LG1Vlb+Xwo5qldkE68iIF3xv+
+         U3BlcV+PuIkLIRXTY4amOd+KSpNLFmi++LccglZn+95FlmrUaTMelUSx8don/3Nn08KF
+         4+zo/7gQ286U5dqE0WrMecck9kfg+/NwrWaAruBvzGWbCpYbqfNhe5PvCjyM2CK0KbX0
+         +QOA==
+X-Gm-Message-State: APjAAAWiEdCD218gTczaKHgrqPh7sGJYMOo2LjBrmFTH85DB2k/UeEZv
+        hHU4sUYXenkt6tX4Ma0rwxMGZ7iGdOaypuyzBsNqEw==
+X-Google-Smtp-Source: APXvYqyqVlaAznCrTjgFnMS/rbNzkVZ+JXaavI7b9i3sKA5vbbQy2odANJfyMh8Z8Llpqed5LUZncN0z3LiE3my3DaQ=
+X-Received: by 2002:a37:6d47:: with SMTP id i68mr16018376qkc.228.1581603919781;
+ Thu, 13 Feb 2020 06:25:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 13 Feb 2020 14:22:07 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Zenghui Yu <yuzenghui@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, tglx@linutronix.de,
-        jason@lakedaemon.net, wanghaibin.wang@huawei.com
-Subject: Re: [PATCH v2 3/6] irqchip/gic-v4.1: Ensure L2 vPE table is allocated
- at RD level
-In-Reply-To: <20200206075711.1275-4-yuzenghui@huawei.com>
-References: <20200206075711.1275-1-yuzenghui@huawei.com>
- <20200206075711.1275-4-yuzenghui@huawei.com>
-Message-ID: <2f6a27ac57aef9b948952c210c9a5882@kernel.org>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/1.3.10
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, tglx@linutronix.de, jason@lakedaemon.net, wanghaibin.wang@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+References: <20200212210139.382424693@infradead.org> <20200212210749.915180520@infradead.org>
+ <20200212223818.GA115917@google.com> <20200212204128.20f5e8ba@oasis.local.home>
+In-Reply-To: <20200212204128.20f5e8ba@oasis.local.home>
+From:   Joel Fernandes <joel@joelfernandes.org>
+Date:   Thu, 13 Feb 2020 09:25:08 -0500
+Message-ID: <CAEXW_YSddXU++o7xpi-0kzg9GA6UkM5FsnoXjLQ=gAFBjPf=RA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/9] rcu: Mark rcu_dynticks_curr_cpu_in_eqs() inline
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-arch@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Zenghui,
+On Wed, Feb 12, 2020 at 8:41 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Wed, 12 Feb 2020 17:38:18 -0500
+> Joel Fernandes <joel@joelfernandes.org> wrote:
+>
+> > I think there are ways to turn off function inlining, such as gcc's:
+> > -fkeep-inline-functions
+> >
+> > And just to be sure weird compilers (clang *cough*) don't screw this up,
+> > could we make it static inline notrace?
+>
+> inline is defined as notrace, so not needed.
+>
+> I did that because of surprises when functions marked as inline
+> suddenly became non inlined and traced, which caused issues with
+> function tracing (before I finally got recursion protection working).
+> But even then, I figured, if something is inlined and gcc actually
+> inlines it, it wont be traced. For consistency, if something is marked
+> inline, it should not be traced.
 
-On 2020-02-06 07:57, Zenghui Yu wrote:
-> In GICv4, we will ensure that level2 vPE table memory is allocated
-> for the specified vpe_id on all v4 ITS, in its_alloc_vpe_table().
-> This still works well for the typical GICv4.1 implementation, where
-> the new vPE table is shared between the ITSs and the RDs.
-> 
-> To make it explicit, let us introduce allocate_vpe_l2_table() to
-> make sure that the L2 tables are allocated on all v4.1 RDs. We're
-> likely not need to allocate memory in it because the vPE table is
-> shared and (L2 table is) already allocated at ITS level, except
-> for the case where the ITS doesn't share anything (say SVPET == 0,
-> practically unlikely but architecturally allowed).
-> 
-> The implementation of allocate_vpe_l2_table() is mostly copied from
-> its_alloc_table_entry().
-> 
-> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
-> ---
->  drivers/irqchip/irq-gic-v3-its.c | 80 ++++++++++++++++++++++++++++++++
->  1 file changed, 80 insertions(+)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
-> b/drivers/irqchip/irq-gic-v3-its.c
-> index 0f1fe56ce0af..ae4e7b355b46 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -2443,6 +2443,72 @@ static u64 
-> inherit_vpe_l1_table_from_rd(cpumask_t **mask)
->  	return 0;
->  }
-> 
-> +static bool allocate_vpe_l2_table(int cpu, u32 id)
-> +{
-> +	void __iomem *base = gic_data_rdist_cpu(cpu)->rd_base;
-> +	u64 val, gpsz, npg;
-> +	unsigned int psz, esz, idx;
-> +	struct page *page;
-> +	__le64 *table;
-> +
-> +	if (!gic_rdists->has_rvpeid)
-> +		return true;
-> +
-> +	val  = gits_read_vpropbaser(base + SZ_128K + GICR_VPROPBASER);
+Ah I see it, thanks for the clarification Steve! That looks like a
+good idea. I withdraw my previous comment.
 
-Having rebased the rest of the GICv4.1 series on top of -rc1, I've hit a 
-small
-issue right here. I run a FVP model that only spawns 4 CPUs, while the 
-DT has
-8 of them. This means that online_cpus = 4, and possible_cpus = 8.
-
-So in my case, half of the RDs have base == NULL, and things stop 
-quickly.
-
-I plan to queue the following:
-
-diff --git a/drivers/irqchip/irq-gic-v3-its.c 
-b/drivers/irqchip/irq-gic-v3-its.c
-index d85dc8dcb0ad..7656b353a95f 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -2526,6 +2526,10 @@ static bool allocate_vpe_l2_table(int cpu, u32 
-id)
-  	if (!gic_rdists->has_rvpeid)
-  		return true;
-
-+	/* Skip non-present CPUs */
-+	if (!base)
-+		return true;
-+
-  	val  = gicr_read_vpropbaser(base + SZ_128K + GICR_VPROPBASER);
-
-  	esz  = FIELD_GET(GICR_VPROPBASER_4_1_ENTRY_SIZE, val) + 1;
-
-
-Thanks,
-
-         M.
--- 
-Jazz is not dead. It just smells funny...
+- Joel
