@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E1A015B9BB
+	by mail.lfdr.de (Postfix) with ESMTP id E226915B9BD
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 07:44:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729847AbgBMGou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 01:44:50 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:8226 "EHLO
+        id S1729867AbgBMGo4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 01:44:56 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37866 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729767AbgBMGot (ORCPT
+        by vger.kernel.org with ESMTP id S1729849AbgBMGoz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 01:44:49 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01D6fFXL017510
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 01:44:48 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2y4qyahcme-1
+        Thu, 13 Feb 2020 01:44:55 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01D6eIEJ067876
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 01:44:54 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2y4j870ad7-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 01:44:48 -0500
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 01:44:54 -0500
 Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Thu, 13 Feb 2020 06:44:46 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Thu, 13 Feb 2020 06:44:52 -0000
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 13 Feb 2020 06:44:42 -0000
+        Thu, 13 Feb 2020 06:44:48 -0000
 Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01D6ifdt36569334
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01D6ikcB34734408
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Feb 2020 06:44:41 GMT
+        Thu, 13 Feb 2020 06:44:46 GMT
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 256B64203F;
+        by IMSVA (Postfix) with ESMTP id 64EAB42049;
+        Thu, 13 Feb 2020 06:44:46 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 885A642041;
         Thu, 13 Feb 2020 06:44:41 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E73CC42047;
-        Thu, 13 Feb 2020 06:44:36 +0000 (GMT)
 Received: from bangoria.ibmuc.com (unknown [9.199.58.40])
         by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 13 Feb 2020 06:44:36 +0000 (GMT)
+        Thu, 13 Feb 2020 06:44:41 +0000 (GMT)
 From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 To:     acme@kernel.org, jolsa@redhat.com
 Cc:     xieyisheng1@huawei.com, alexey.budankov@linux.intel.com,
@@ -49,130 +49,114 @@ Cc:     xieyisheng1@huawei.com, alexey.budankov@linux.intel.com,
         changbin.du@intel.com, leo.yan@linaro.org,
         linux-kernel@vger.kernel.org,
         Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [PATCH 7/8] perf annotate: Fix perf config option description
-Date:   Thu, 13 Feb 2020 12:13:05 +0530
+Subject: [PATCH 8/8] perf config: Document missing config options
+Date:   Thu, 13 Feb 2020 12:13:06 +0530
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200213064306.160480-1-ravi.bangoria@linux.ibm.com>
 References: <20200213064306.160480-1-ravi.bangoria@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 20021306-0008-0000-0000-0000035267D0
+x-cbid: 20021306-0020-0000-0000-000003A9AEB8
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021306-0009-0000-0000-00004A730FB1
-Message-Id: <20200213064306.160480-8-ravi.bangoria@linux.ibm.com>
+x-cbparentid: 20021306-0021-0000-0000-0000220197E7
+Message-Id: <20200213064306.160480-9-ravi.bangoria@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-02-13_01:2020-02-12,2020-02-13 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- mlxscore=0 adultscore=0 spamscore=0 phishscore=0 clxscore=1015
- priorityscore=1501 lowpriorityscore=0 mlxlogscore=999 impostorscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ impostorscore=0 priorityscore=1501 spamscore=0 adultscore=0 mlxscore=0
+ malwarescore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
+ suspectscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2001150001 definitions=main-2002130052
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-perf config annotate options says it works only with TUI, which is wrong.
-Most of the TUI options are applicable to stdio2 as well. So remove that
-generic line and add individual line with each option stating which
-browsers supports that option. Also, annotate.show_nr_samples config is
-missing in Documentation. Describe it.
+While documenting annotate.show_nr_samples config option, I found many
+other config options missing in perf-config documentation. Add them.
 
 Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 ---
- tools/perf/Documentation/perf-config.txt | 30 +++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
+ tools/perf/Documentation/perf-config.txt | 44 ++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
 diff --git a/tools/perf/Documentation/perf-config.txt b/tools/perf/Documentation/perf-config.txt
-index c4dd23c4b478..9dae0df3ab7e 100644
+index 9dae0df3ab7e..8ead55593984 100644
 --- a/tools/perf/Documentation/perf-config.txt
 +++ b/tools/perf/Documentation/perf-config.txt
-@@ -239,7 +239,6 @@ buildid.*::
- 		set buildid.dir to /dev/null. The default is $HOME/.debug
+@@ -518,6 +518,12 @@ top.*::
+ 		column by default.
+ 		The default is 'true'.
  
- annotate.*::
--	These options work only for TUI.
- 	These are in control of addresses, jump function, source code
- 	in lines of assembly code from a specific program.
- 
-@@ -269,6 +268,8 @@ annotate.*::
- 		│        mov    (%rdi),%rdx
- 		│              return n;
- 
-+		This option works with tui, stdio2 browsers.
++	top.call-graph::
++		This is identical to 'call-graph.record-mode', except it is
++		applicable only for 'top' subcommand. This option ONLY setup
++		the unwind method. To enable 'perf top' to actually use it,
++		the command line option -g must be specified.
 +
-         annotate.use_offset::
- 		Basing on a first address of a loaded function, offset can be used.
- 		Instead of using original addresses of assembly code,
-@@ -287,6 +288,8 @@ annotate.*::
+ man.*::
+ 	man.viewer::
+ 		This option can assign a tool to view manual pages when 'help'
+@@ -545,6 +551,16 @@ record.*::
+ 		But if this option is 'no-cache', it will not update the build-id cache.
+ 		'skip' skips post-processing and does not update the cache.
  
- 		             368:│  mov    0x8(%r14),%rdi
++	record.call-graph::
++		This is identical to 'call-graph.record-mode', except it is
++		applicable only for 'record' subcommand. This option ONLY setup
++		the unwind method. To enable 'perf record' to actually use it,
++		the command line option -g must be specified.
++
++	record.aio::
++		Use 'n' control blocks in asynchronous (Posix AIO) trace writing
++		mode ('n' default: 1, max: 4).
++
+ diff.*::
+ 	diff.order::
+ 		This option sets the number of columns to sort the result.
+@@ -594,6 +610,11 @@ trace.*::
+ 		"libbeauty", the default, to use the same argument beautifiers used in the
+ 		strace-like sys_enter+sys_exit lines.
  
-+		This option works with tui, stdio2 browsers.
++ftrace.*::
++	ftrace.tracer::
++		Can be used to select the default tracer. Possible values are
++		'function' and 'function_graph'.
 +
- 	annotate.jump_arrows::
- 		There can be jump instruction among assembly code.
- 		Depending on a boolean value of jump_arrows,
-@@ -306,6 +309,8 @@ annotate.*::
- 		│1330:   mov    %r15,%r10
- 		│1333:   cmp    %r15,%r14
+ llvm.*::
+ 	llvm.clang-path::
+ 		Path to clang. If omit, search it from $PATH.
+@@ -638,6 +659,29 @@ scripts.*::
+ 	The script gets the same options passed as a full perf script,
+ 	in particular -i perfdata file, --cpu, --tid
  
-+		This option works with tui browser.
++convert.*::
 +
-         annotate.show_linenr::
- 		When showing source code if this option is 'true',
- 		line numbers are printed as below.
-@@ -325,6 +330,8 @@ annotate.*::
- 		│                     array++;
- 		│             }
- 
-+		This option works with tui, stdio2 browsers.
++	convert.queue-size::
++		Limit the size of ordered_events queue, so we could control
++		allocation size of perf data files without proper finished
++		round events.
 +
-         annotate.show_nr_jumps::
- 		Let's see a part of assembly code.
- 
-@@ -335,6 +342,8 @@ annotate.*::
- 
- 		│1 1382:   movb   $0x1,-0x270(%rbp)
- 
-+		This option works with tui, stdio2 browsers.
++intel-pt.*::
 +
-         annotate.show_total_period::
- 		To compare two records on an instruction base, with this option
- 		provided, display total number of samples that belong to a line
-@@ -348,11 +357,30 @@ annotate.*::
- 
- 		99.93 │      mov    %eax,%eax
- 
-+		This option works with tui, stdio2, stdio browsers.
++	intel-pt.cache-divisor::
 +
-+	annotate.show_nr_samples::
-+		By default perf annotate shows percentage of samples. This option
-+		can be used to print absolute number of samples. Ex, when set as
-+		false:
++	intel-pt.mispred-all::
++		If set, Intel PT decoder will set the mispred flag on all
++		branches.
 +
-+		Percent│
-+		 74.03 │      mov    %fs:0x28,%rax
++auxtrace.*::
 +
-+		When set as true:
++	auxtrace.dumpdir::
++		s390 only. The directory to save the auxiliary trace buffer
++		can be changed using this option. Ex, auxtrace.dumpdir=/tmp.
++		If the directory does not exist or has the wrong file type,
++		the current directory is used.
 +
-+		Samples│
-+		     6 │      mov    %fs:0x28,%rax
-+
-+		This option works with tui, stdio2, stdio browsers.
-+
- 	annotate.offset_level::
- 		Default is '1', meaning just jump targets will have offsets show right beside
- 		the instruction. When set to '2' 'call' instructions will also have its offsets
- 		shown, 3 or higher will show offsets for all instructions.
- 
-+		This option works with tui, stdio2 browsers.
-+
- hist.*::
- 	hist.percentage::
- 		This option control the way to calculate overhead of filtered entries -
+ SEE ALSO
+ --------
+ linkperf:perf[1]
 -- 
 2.24.1
 
