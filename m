@@ -2,22 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22BDC15C147
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:21:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8865215C29C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:35:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbgBMPVn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:21:43 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.4]:17127 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726937AbgBMPVn (ORCPT
+        id S2387504AbgBMPfy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:35:54 -0500
+Received: from gateway20.websitewelcome.com ([192.185.54.2]:41631 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728602AbgBMPfw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:21:43 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id E6C46825487
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 09:21:41 -0600 (CST)
+        Thu, 13 Feb 2020 10:35:52 -0500
+X-Greylist: delayed 1457 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Feb 2020 10:35:52 EST
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 7CC8F400C5246
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:57:55 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 2GJBjKxmURP4z2GJBjmQsE; Thu, 13 Feb 2020 09:21:41 -0600
+        id 2G9Oj1Za0XVkQ2G9OjPXEP; Thu, 13 Feb 2020 09:11:34 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -25,29 +26,24 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=tlzInWey23Efbti3IVI7QK7bG7x1edOF4vWB/j8UuCg=; b=qUBPc+5fDEGt6M5dgwJulMJp+G
-        xcMtSAYOH/X0jV8IyUUPvs80Ttm+MXBgQ8qc27gOJWz05nEnxh4pFjiFklBTyOZgBCxQ0gkv0qNVU
-        oKGPrxltSRC+XnaTwGk/xuX5mhgyFpgQdq+I4gqPpsSIi2DpRDoQCe55ho30GyrzWIqoyuzXhHiwE
-        jyiSnpGoggRlGalXfSmMNqIutwrK5Wee4Z77OuIp/CvM13nU/t/nBmkfntKDkFRCSdgrqjor/APB0
-        5QE3/CkAoKBfUgQV9K5AT+4GfPe1H4rDZTWmD742+C+7oRRpkbCKEhX4WDPXJMHEDFtddVW2fo3hk
-        OXEc0N7Q==;
-Received: from [200.68.140.15] (port=29529 helo=embeddedor)
+        bh=mMH90DJQNFAtuTIHTFIPLDELcmZyic0yLac3lSYPFq4=; b=ImPLnHegN91Lx7ngWrKfqhpzwM
+        GpMfnoN14gs1u80wKIVtfaA/jeQv7lADnlBF8y7jUea9GKNKngl8JDiIIlrsDQmfz6Dajx93S1jQ+
+        JvRHBDTYNR18wEhjyW+KXSZ7U3FdazimOJzej7h0UfscCusDgvKmWBaIxP2+xHWENo487X2KRoOSa
+        thxtDPBixRefw07TnOFx72jxtxgK4Ikj2Q6XOn1tR7aJCPpUpUwmreQxMWzPVGLQBgmk5uQCnr+VZ
+        XsGrPqxPPxGMoPca3YgEkHBdDIUIaokiOHcuA+M+5n95Duw28ZjJ7PSA8/Zv59xQ/p77BJ6Cq6rlK
+        ZYBlRKAw==;
+Received: from [200.68.140.15] (port=28117 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1j2GJA-003BYr-8t; Thu, 13 Feb 2020 09:21:40 -0600
-Date:   Thu, 13 Feb 2020 09:24:16 -0600
+        id 1j2G9M-0035UK-Ut; Thu, 13 Feb 2020 09:11:33 -0600
+Date:   Thu, 13 Feb 2020 09:14:09 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>
-Cc:     netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] bpf: queue_stack_maps: Replace zero-length array with
+Subject: [PATCH] kernel: module: Replace zero-length array with
  flexible-array member
-Message-ID: <20200213152416.GA1873@embeddedor>
+Message-ID: <20200213151409.GA30541@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -60,13 +56,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 200.68.140.15
 X-Source-L: No
-X-Exim-ID: 1j2GJA-003BYr-8t
+X-Exim-ID: 1j2G9M-0035UK-Ut
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.15]:29529
+X-Source-Sender: (embeddedor) [200.68.140.15]:28117
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 30
+X-Email-Count: 2
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -104,22 +100,31 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- kernel/bpf/queue_stack_maps.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/module.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/bpf/queue_stack_maps.c b/kernel/bpf/queue_stack_maps.c
-index f697647ceb54..30e1373fd437 100644
---- a/kernel/bpf/queue_stack_maps.c
-+++ b/kernel/bpf/queue_stack_maps.c
-@@ -19,7 +19,7 @@ struct bpf_queue_stack {
- 	u32 head, tail;
- 	u32 size; /* max_entries + 1 */
- 
--	char elements[0] __aligned(8);
-+	char elements[] __aligned(8);
+diff --git a/kernel/module.c b/kernel/module.c
+index 33569a01d6e1..b88ec9cd2a7f 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -1515,7 +1515,7 @@ struct module_sect_attr {
+ struct module_sect_attrs {
+ 	struct attribute_group grp;
+ 	unsigned int nsections;
+-	struct module_sect_attr attrs[0];
++	struct module_sect_attr attrs[];
  };
  
- static struct bpf_queue_stack *bpf_queue_stack(struct bpf_map *map)
+ static ssize_t module_sect_show(struct module_attribute *mattr,
+@@ -1608,7 +1608,7 @@ static void remove_sect_attrs(struct module *mod)
+ struct module_notes_attrs {
+ 	struct kobject *dir;
+ 	unsigned int notes;
+-	struct bin_attribute attrs[0];
++	struct bin_attribute attrs[];
+ };
+ 
+ static ssize_t module_notes_read(struct file *filp, struct kobject *kobj,
 -- 
 2.25.0
 
