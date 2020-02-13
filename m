@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B56615C4F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1859515C4F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729910AbgBMPwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:52:10 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45777 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729876AbgBMPwJ (ORCPT
+        id S1730002AbgBMPwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:52:16 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35765 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729926AbgBMPwM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:52:09 -0500
-Received: by mail-wr1-f65.google.com with SMTP id g3so7274150wrs.12
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:52:08 -0800 (PST)
+        Thu, 13 Feb 2020 10:52:12 -0500
+Received: by mail-wr1-f67.google.com with SMTP id w12so7304319wrt.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:52:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qRSNHxPBZ1IexXWr4sAA9opPLPtOEFKsiR173BgPSbE=;
-        b=rmDCMt8johXf39HuPfvbW10KGlsza5f82dM90WRh/o8esX8OkRNxItKTtPH80Aw7PK
-         w6hwn7YXoxCrjoydoLYw8KB+l8rFn0HuY1RWsVR55UzJk4jRrYmR0OqOv9+dllAqoqYI
-         IUfZtCwBYWOyibEPrFjbOgM10K11SHeVgTIQpGfnGO+gTk83bitTdzbao0Hgi3r5l3QQ
-         a1WcFJOjDtt1x0Fyxqw2UUXZYfxowjJxu3tleaFrPidLlZzONnLFrhPM+kmdV1h3aYm0
-         VscLAall4oZEcfJFTKX3LM8+AuGIbObycMU9LRQADS9nEzZrQVzTo3ETriJPaan58JVT
-         NeFA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=aB1AiCkdQEWl25o0CFyQmEuSLs3mwyleNLQ7q44t8HY=;
+        b=LYTr/jwnIP7xB41uk/g/SVYjXm/Nywl7CqihGSb6gmVFQuEoDKE+M6yeLtXBuxzSDV
+         WSSiblX+7cKEZrMWY2arxWYNZs2uanjtjOd+R/yUTEMfW9J33ZT633LPckPXELjES10Y
+         Aw8ZBK7NcNiN9jxHEIKAUsv3sAXzaBPkttp4Zf6trbnjHLj5fnXmyXOrUZL45qj2ssGU
+         GnuX/g7Hhi6cCKYgZwWfl0kXt6jC7LA9LBGTwFzOU3OSPGWRVbd3/jvNcy2c28hqmfKB
+         nNEVuHcu1cXqvVGTIH5fetzbCx7zyvwiZMeRE4ET5ZeNlolaqQALDjFF+9l21K1IDFee
+         UTmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qRSNHxPBZ1IexXWr4sAA9opPLPtOEFKsiR173BgPSbE=;
-        b=FmdOj/vsxNgBcvhNZmHS3KZhmVA6RC+LeE/iTMuZRz5TYXiJwfKcmfO8wODUm0UbVC
-         J61ZtP/jTygVgwemDmnut+ut8Z37xYTjBdyLribjaurKdBVY3MOGnc5BgaWVlnQUygnC
-         HrOEKYHTc7Z0O5KJ0Nd81trfskXuNf0G5JAFWALnj4LnP/dw6z3n4m321ydfXLTHoPz2
-         YR7P2U9PU6xiOrheyox5mXAoeLxi4rFDYURmAvZyrgy5veIgq8GMJJpJoEGgmoeaiWNH
-         UldMbj3oTxt/xl6/oKT4EASTDLZ/jLJdUxLHZXRXHBtmnZS45hSfE8dud3cGKzXTWC5u
-         tiiQ==
-X-Gm-Message-State: APjAAAVey0ww2Zn41Bn0gu4NjxutIfbCakjKo3RdQ3Xep9D2FL4vjpN6
-        XRXhqfS/BX7D0w0FB6zbEQz/Pw+6RIs=
-X-Google-Smtp-Source: APXvYqzaEZ72W0WraKrTyInOswcFFpztUeMtekBYMK7/Qvo39kr8aI6aa2+adZuUr6wwgRuldPDSzw==
-X-Received: by 2002:adf:dd51:: with SMTP id u17mr21617587wrm.290.1581609127423;
-        Thu, 13 Feb 2020 07:52:07 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=aB1AiCkdQEWl25o0CFyQmEuSLs3mwyleNLQ7q44t8HY=;
+        b=or5Opo5xpBcLr4w7waDmALJiTW0RKzWAKbU5JwKZZARCs1JofF9vsBzouIApTKbBim
+         TERM9tRPMPw1Vdr5QEX+WQ89EWLiVtGoD/EFFfIkhKJUMRQq4MnpX1RtsuzfDiVnbOgJ
+         aLwih8dZEmmK6OC7gHwRUiN1WoBB/FcXfQiGwHxTeIJyvzR6qwUjAavZk5ZcqvlUMxli
+         cblC59Bxvdr80F8DSLqrRt7HrVJwzNwA0YFUP4mhun0C0NypQP+IKmYCvTOp00q9ZjsE
+         qNqU1hqbfseJ8MhamWnAMso/xq6fuSO0xd6lXIkq5PK8H4IgkSlguf6dLgNPMHAWambd
+         Lhxw==
+X-Gm-Message-State: APjAAAXRtkByeWad23b2xkMt8Eauic9zBLDeMXWWcUT9z75q24pgO2Nq
+        pLeFoLz0X7X5a6uypapzK3+qDg==
+X-Google-Smtp-Source: APXvYqyEvLneyxVeHuI/0pBQCYZi5+WLlVqFWpfGuTvBL5p6xmOWK7iqZ4/PQzBDgirZhGC884Aaew==
+X-Received: by 2002:adf:f850:: with SMTP id d16mr21763639wrq.161.1581609128618;
+        Thu, 13 Feb 2020 07:52:08 -0800 (PST)
 Received: from starbuck.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id e1sm3319814wrt.84.2020.02.13.07.52.06
+        by smtp.googlemail.com with ESMTPSA id e1sm3319814wrt.84.2020.02.13.07.52.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 07:52:06 -0800 (PST)
+        Thu, 13 Feb 2020 07:52:07 -0800 (PST)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Mark Brown <broonie@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>
@@ -52,10 +52,12 @@ Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
         Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 0/9] ASoC: meson: gx: add audio output support
-Date:   Thu, 13 Feb 2020 16:51:50 +0100
-Message-Id: <20200213155159.3235792-1-jbrunet@baylibre.com>
+Subject: [PATCH 1/9] ASoC: core: allow a dt node to provide several components
+Date:   Thu, 13 Feb 2020 16:51:51 +0100
+Message-Id: <20200213155159.3235792-2-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200213155159.3235792-1-jbrunet@baylibre.com>
+References: <20200213155159.3235792-1-jbrunet@baylibre.com>
 MIME-Version: 1.0
 X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
@@ -64,77 +66,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds support for the i2s and spdif audio outputs of the
-amlogic GX SoC family, such the S905, S905X/D, S912 and S805X. These SoCs
-are used by a fair amount of boards actively maintained upstream.
+At the moment, querying the dai_name will stop of the first component
+matching the dt node. This does not allow a device (single dt node) to
+provide several ASoC components which could then be used through DT.
 
-This was tested on:
- * amlogic s912 q200
- * libretech s805x-ac (frite)
- * libretech s905x-cc (potato)
- * libretech s905d-pc (tartiflette)
+This change let the search go on if the xlate function of the component
+returns an error, giving the possibility to another component to match
+and return the dai_name.
 
-This could also possibly support meson8 32bits SoCs but I have not tested
-it myself and it could require some further tweaks.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ sound/soc/soc-core.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-The audio subsystem found on these SoCs has now been dropped in the newer
-designs. All recent SoCs families (like g12a and sm1) derive from the AXG
-audio architecture.
-
-Jerome Brunet (9):
-  ASoC: core: allow a dt node to provide several components
-  ASoC: meson: g12a: extract codec-to-codec utils
-  ASoC: meson: aiu: add audio output dt-bindings
-  ASoC: meson: aiu: add i2s and spdif support
-  ASoC: meson: aiu: add hdmi codec control support
-  ASoC: meson: aiu: add internal dac codec control support
-  ASoC: meson: axg: extract sound card utils
-  ASoC: meson: gx: add sound card dt-binding documentation
-  ASoC: meson: gx: add sound card support
-
- .../bindings/sound/amlogic,aiu.yaml           | 111 +++++
- .../bindings/sound/amlogic,gx-sound-card.yaml | 113 +++++
- include/dt-bindings/sound/meson-aiu.h         |  18 +
- sound/soc/meson/Kconfig                       |  24 ++
- sound/soc/meson/Makefile                      |  15 +
- sound/soc/meson/aiu-acodec-ctrl.c             | 205 +++++++++
- sound/soc/meson/aiu-codec-ctrl.c              | 152 +++++++
- sound/soc/meson/aiu-encoder-i2s.c             | 324 ++++++++++++++
- sound/soc/meson/aiu-encoder-spdif.c           | 209 +++++++++
- sound/soc/meson/aiu-fifo-i2s.c                | 153 +++++++
- sound/soc/meson/aiu-fifo-spdif.c              | 186 ++++++++
- sound/soc/meson/aiu-fifo.c                    | 223 ++++++++++
- sound/soc/meson/aiu-fifo.h                    |  50 +++
- sound/soc/meson/aiu.c                         | 390 +++++++++++++++++
- sound/soc/meson/aiu.h                         |  91 ++++
- sound/soc/meson/axg-card.c                    | 403 ++----------------
- sound/soc/meson/g12a-tohdmitx.c               | 219 ++--------
- sound/soc/meson/gx-card.c                     | 141 ++++++
- sound/soc/meson/meson-card-utils.c            | 385 +++++++++++++++++
- sound/soc/meson/meson-card.h                  |  55 +++
- sound/soc/meson/meson-codec-glue.c            | 149 +++++++
- sound/soc/meson/meson-codec-glue.h            |  32 ++
- sound/soc/soc-core.c                          |   8 +
- 23 files changed, 3104 insertions(+), 552 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/amlogic,aiu.yaml
- create mode 100644 Documentation/devicetree/bindings/sound/amlogic,gx-sound-card.yaml
- create mode 100644 include/dt-bindings/sound/meson-aiu.h
- create mode 100644 sound/soc/meson/aiu-acodec-ctrl.c
- create mode 100644 sound/soc/meson/aiu-codec-ctrl.c
- create mode 100644 sound/soc/meson/aiu-encoder-i2s.c
- create mode 100644 sound/soc/meson/aiu-encoder-spdif.c
- create mode 100644 sound/soc/meson/aiu-fifo-i2s.c
- create mode 100644 sound/soc/meson/aiu-fifo-spdif.c
- create mode 100644 sound/soc/meson/aiu-fifo.c
- create mode 100644 sound/soc/meson/aiu-fifo.h
- create mode 100644 sound/soc/meson/aiu.c
- create mode 100644 sound/soc/meson/aiu.h
- create mode 100644 sound/soc/meson/gx-card.c
- create mode 100644 sound/soc/meson/meson-card-utils.c
- create mode 100644 sound/soc/meson/meson-card.h
- create mode 100644 sound/soc/meson/meson-codec-glue.c
- create mode 100644 sound/soc/meson/meson-codec-glue.h
-
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 068d809c349a..03b87427faa7 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -3102,6 +3102,14 @@ int snd_soc_get_dai_name(struct of_phandle_args *args,
+ 			*dai_name = dai->driver->name;
+ 			if (!*dai_name)
+ 				*dai_name = pos->name;
++		} else if (ret) {
++			/*
++			 * if another error than ENOTSUPP is returned go on and
++			 * check if another component is provided with the same
++			 * node. This may happen if a device provides several
++			 * components
++			 */
++			continue;
+ 		}
+ 
+ 		break;
 -- 
 2.24.1
 
