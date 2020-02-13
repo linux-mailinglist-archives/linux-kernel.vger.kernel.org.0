@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55E4515C20A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:28:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B49B15C188
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:24:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387717AbgBMP2c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:28:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42754 "EHLO mail.kernel.org"
+        id S2387405AbgBMPYD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:24:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728619AbgBMPZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:55 -0500
+        id S1728266AbgBMPXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:08 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 360B1246A4;
-        Thu, 13 Feb 2020 15:25:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF0ED246B1;
+        Thu, 13 Feb 2020 15:23:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607555;
-        bh=K+s38cj5BHIKmV+617PonKL6SoRCkEgPvgG0+Aam/6U=;
+        s=default; t=1581607387;
+        bh=du9oXxZbxUbew44pUv5fioKxk69e07rtJO050qyje3k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WWqS6glmpMKny5sNxnwf7CgsAxhBQjIqBowz9TDlJ01oj+RNAi0eSlFaaaBp8BFeH
-         wee4LrgZCN0JysxSvVymlf/wl9aQNP8EfeHYzS3iZEPYRKzs3HqTz8lX3AWB73bvlu
-         Ha2xxZeMDcyN33jJUYj6voDJEmIadOLLJRuZ3JKU=
+        b=YvcJjqZ4Cp8lUbwwfVd4n7hNTwpsP8JxcmXUN0jMfeBXos9RkmmBbcn1vj/27FNJU
+         6te436r9Wg9txkIoY6u6xfHkYX1PHgvQUg4/nNxSYzFjsMR4pFvSY1nJuN15khnqgR
+         XJvkT1bSSAC7tJjl2s8qsSqj3Hm5fjc+6Ge1AHOY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Qing Xu <m1s5p6688@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 140/173] rxrpc: Fix service call disconnection
-Date:   Thu, 13 Feb 2020 07:20:43 -0800
-Message-Id: <20200213152007.050589400@linuxfoundation.org>
+Subject: [PATCH 4.4 88/91] mwifiex: Fix possible buffer overflows in mwifiex_cmd_append_vsie_tlv()
+Date:   Thu, 13 Feb 2020 07:20:45 -0800
+Message-Id: <20200213151856.833108534@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
+References: <20200213151821.384445454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+From: Qing Xu <m1s5p6688@gmail.com>
 
-[ Upstream commit b39a934ec72fa2b5a74123891f25273a38378b90 ]
+[ Upstream commit b70261a288ea4d2f4ac7cd04be08a9f0f2de4f4d ]
 
-The recent patch that substituted a flag on an rxrpc_call for the
-connection pointer being NULL as an indication that a call was disconnected
-puts the set_bit in the wrong place for service calls.  This is only a
-problem if a call is implicitly terminated by a new call coming in on the
-same connection channel instead of a terminating ACK packet.
+mwifiex_cmd_append_vsie_tlv() calls memcpy() without checking
+the destination size may trigger a buffer overflower,
+which a local user could use to cause denial of service
+or the execution of arbitrary code.
+Fix it by putting the length check before calling memcpy().
 
-In such a case, rxrpc_input_implicit_end_call() calls
-__rxrpc_disconnect_call(), which is now (incorrectly) setting the
-disconnection bit, meaning that when rxrpc_release_call() is later called,
-it doesn't call rxrpc_disconnect_call() and so the call isn't removed from
-the peer's error distribution list and the list gets corrupted.
-
-KASAN finds the issue as an access after release on a call, but the
-position at which it occurs is confusing as it appears to be related to a
-different call (the call site is where the latter call is being removed
-from the error distribution list and either the next or pprev pointer
-points to a previously released call).
-
-Fix this by moving the setting of the flag from __rxrpc_disconnect_call()
-to rxrpc_disconnect_call() in the same place that the connection pointer
-was being cleared.
-
-Fixes: 5273a191dca6 ("rxrpc: Fix NULL pointer deref due to call->conn being cleared on disconnect")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Qing Xu <m1s5p6688@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/rxrpc/conn_object.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/wireless/mwifiex/scan.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/net/rxrpc/conn_object.c b/net/rxrpc/conn_object.c
-index 13b29e491de91..af02328205979 100644
---- a/net/rxrpc/conn_object.c
-+++ b/net/rxrpc/conn_object.c
-@@ -163,8 +163,6 @@ void __rxrpc_disconnect_call(struct rxrpc_connection *conn,
- 
- 	_enter("%d,%x", conn->debug_id, call->cid);
- 
--	set_bit(RXRPC_CALL_DISCONNECTED, &call->flags);
--
- 	if (rcu_access_pointer(chan->call) == call) {
- 		/* Save the result of the call so that we can repeat it if necessary
- 		 * through the channel, whilst disposing of the actual call record.
-@@ -209,6 +207,7 @@ void rxrpc_disconnect_call(struct rxrpc_call *call)
- 	__rxrpc_disconnect_call(conn, call);
- 	spin_unlock(&conn->channel_lock);
- 
-+	set_bit(RXRPC_CALL_DISCONNECTED, &call->flags);
- 	conn->idle_timestamp = jiffies;
- }
- 
+diff --git a/drivers/net/wireless/mwifiex/scan.c b/drivers/net/wireless/mwifiex/scan.c
+index 39b78dc1bd92b..e7c8972431d34 100644
+--- a/drivers/net/wireless/mwifiex/scan.c
++++ b/drivers/net/wireless/mwifiex/scan.c
+@@ -2568,6 +2568,13 @@ mwifiex_cmd_append_vsie_tlv(struct mwifiex_private *priv,
+ 			vs_param_set->header.len =
+ 				cpu_to_le16((((u16) priv->vs_ie[id].ie[1])
+ 				& 0x00FF) + 2);
++			if (le16_to_cpu(vs_param_set->header.len) >
++				MWIFIEX_MAX_VSIE_LEN) {
++				mwifiex_dbg(priv->adapter, ERROR,
++					    "Invalid param length!\n");
++				break;
++			}
++
+ 			memcpy(vs_param_set->ie, priv->vs_ie[id].ie,
+ 			       le16_to_cpu(vs_param_set->header.len));
+ 			*buffer += le16_to_cpu(vs_param_set->header.len) +
 -- 
 2.20.1
 
