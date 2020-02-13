@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6CCD15C76D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:14:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F9E515C616
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728800AbgBMQKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 11:10:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60274 "EHLO mail.kernel.org"
+        id S2388150AbgBMP45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:56:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727987AbgBMPWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:22:35 -0500
+        id S1728990AbgBMPZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:25 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 302B624699;
-        Thu, 13 Feb 2020 15:22:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B32442469A;
+        Thu, 13 Feb 2020 15:25:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607355;
-        bh=ZYhu1oglyVabZJCIqMih7PEUtRywOI7/sk/iy065ffc=;
+        s=default; t=1581607524;
+        bh=CRBIkMmtK6DbX7OWOAvW7vuWCkdRO+6B/HqySGWO/fY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y9+rzGx7WCymVyH3c5Z36Dtv5TFi4EaRGCV1w2FKI7CyhV0KayeRvuOn36V0jkJWL
-         YMMG6JYyZT7AvpBZPimnttEXSuRXb3LX4D5Ex4NidXUFI2UJdC8lfbzlN6KmwkxJNw
-         95gCkzcbx9X9nhdcKIAe9u1QUz31d7uoW1e3YgSo=
+        b=yYI7kzh06h4DVf4UDs2iHsb+FFzCALTRNAgK9F0V0E3+v0Cv5FuL4JFM7t3AkJKCn
+         5j1X5y38ze4NarBbm/3x8a2Pcwl9cmyXeDyqqBORZqk5agWRvzHUzw1X4wCkoB1lpi
+         q5hM5MG64ujuoCQs4PMba93LEJJFH5DifZDiVAFU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.4 21/91] crypto: api - Check spawn->alg under lock in crypto_drop_spawn
-Date:   Thu, 13 Feb 2020 07:19:38 -0800
-Message-Id: <20200213151829.841711176@linuxfoundation.org>
+        stable@vger.kernel.org, Andrew Jones <drjones@redhat.com>,
+        Gavin Shan <gshan@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 076/173] tools/kvm_stat: Fix kvm_exit filter name
+Date:   Thu, 13 Feb 2020 07:19:39 -0800
+Message-Id: <20200213151952.689740853@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
-References: <20200213151821.384445454@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,39 +44,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Gavin Shan <gshan@redhat.com>
 
-commit 7db3b61b6bba4310f454588c2ca6faf2958ad79f upstream.
+commit 5fcf3a55a62afb0760ccb6f391d62f20bce4a42f upstream.
 
-We need to check whether spawn->alg is NULL under lock as otherwise
-the algorithm could be removed from under us after we have checked
-it and found it to be non-NULL.  This could cause us to remove the
-spawn from a non-existent list.
+The filter name is fixed to "exit_reason" for some kvm_exit events, no
+matter what architect we have. Actually, the filter name ("exit_reason")
+is only applicable to x86, meaning it's broken on other architects
+including aarch64.
 
-Fixes: 7ede5a5ba55a ("crypto: api - Fix crypto_drop_spawn crash...")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+This fixes the issue by providing various kvm_exit filter names, depending
+on architect we're on. Afterwards, the variable filter name is picked and
+applied through ioctl(fd, SET_FILTER).
+
+Reported-by: Andrew Jones <drjones@redhat.com>
+Signed-off-by: Gavin Shan <gshan@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/algapi.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ tools/kvm/kvm_stat/kvm_stat |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/crypto/algapi.c
-+++ b/crypto/algapi.c
-@@ -653,11 +653,9 @@ EXPORT_SYMBOL_GPL(crypto_grab_spawn);
+--- a/tools/kvm/kvm_stat/kvm_stat
++++ b/tools/kvm/kvm_stat/kvm_stat
+@@ -261,6 +261,7 @@ class ArchX86(Arch):
+     def __init__(self, exit_reasons):
+         self.sc_perf_evt_open = 298
+         self.ioctl_numbers = IOCTL_NUMBERS
++        self.exit_reason_field = 'exit_reason'
+         self.exit_reasons = exit_reasons
  
- void crypto_drop_spawn(struct crypto_spawn *spawn)
- {
--	if (!spawn->alg)
--		return;
--
- 	down_write(&crypto_alg_sem);
--	list_del(&spawn->list);
-+	if (spawn->alg)
-+		list_del(&spawn->list);
- 	up_write(&crypto_alg_sem);
- }
- EXPORT_SYMBOL_GPL(crypto_drop_spawn);
+ 
+@@ -276,6 +277,7 @@ class ArchPPC(Arch):
+         # numbers depend on the wordsize.
+         char_ptr_size = ctypes.sizeof(ctypes.c_char_p)
+         self.ioctl_numbers['SET_FILTER'] = 0x80002406 | char_ptr_size << 16
++        self.exit_reason_field = 'exit_nr'
+         self.exit_reasons = {}
+ 
+ 
+@@ -283,6 +285,7 @@ class ArchA64(Arch):
+     def __init__(self):
+         self.sc_perf_evt_open = 241
+         self.ioctl_numbers = IOCTL_NUMBERS
++        self.exit_reason_field = 'esr_ec'
+         self.exit_reasons = AARCH64_EXIT_REASONS
+ 
+ 
+@@ -290,6 +293,7 @@ class ArchS390(Arch):
+     def __init__(self):
+         self.sc_perf_evt_open = 331
+         self.ioctl_numbers = IOCTL_NUMBERS
++        self.exit_reason_field = None
+         self.exit_reasons = None
+ 
+ ARCH = Arch.get_arch()
+@@ -513,8 +517,8 @@ class TracepointProvider(Provider):
+         """
+         filters = {}
+         filters['kvm_userspace_exit'] = ('reason', USERSPACE_EXIT_REASONS)
+-        if ARCH.exit_reasons:
+-            filters['kvm_exit'] = ('exit_reason', ARCH.exit_reasons)
++        if ARCH.exit_reason_field and ARCH.exit_reasons:
++            filters['kvm_exit'] = (ARCH.exit_reason_field, ARCH.exit_reasons)
+         return filters
+ 
+     def get_available_fields(self):
 
 
