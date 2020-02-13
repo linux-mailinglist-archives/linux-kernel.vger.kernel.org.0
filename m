@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C7CC15C32A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:43:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3757015C392
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728605AbgBMP23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:28:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42684 "EHLO mail.kernel.org"
+        id S2387498AbgBMPme (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:42:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729110AbgBMPZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:52 -0500
+        id S1729584AbgBMP2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:12 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0680F24693;
-        Thu, 13 Feb 2020 15:25:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5979E2168B;
+        Thu, 13 Feb 2020 15:28:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607552;
-        bh=fPaObG+zKIvumG63pCibj4GFA7/6iCVHsZhVsIS5drU=;
+        s=default; t=1581607692;
+        bh=qvBnAU59iaz2bSUSla1OP9QwwdKedb4s6k3Y0PMnntM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CQMBtroscvbSp3im+lO++bfwD6AYDE06xyl8IN5i1VPVotWgx0OxTwyS4nYRej4Bp
-         FwMK6WGTJjKH4CGS+Yymu02z/6dCtF6f/lhno6u2a1NLxLalmf0KV1pekmvjeIFr3c
-         7+lBK/rNCLKY5mgjDuqrOLklzHugsDUtUFxeIuaE=
+        b=upCu77I56irHJkik3ZQHXdTHLD6gdyvPpXZDf2WTqEDsAzV5rsfHYNo2EFr63ESaQ
+         ces2h8Q2L99aJMaVjcTctgtKoFKiGqCar6ZRcM3U740CfKE4rQg+JIutjDN97wJ6Hm
+         XqsyP5bRuX1nmBLKUyESjiKm3b2L4ociXtlq1e0g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.14 107/173] nfsd: fix jiffies/time_t mixup in LRU list
+        stable@vger.kernel.org,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 5.5 014/120] PCI/IOV: Fix memory leak in pci_iov_add_virtfn()
 Date:   Thu, 13 Feb 2020 07:20:10 -0800
-Message-Id: <20200213151959.639491737@linuxfoundation.org>
+Message-Id: <20200213151906.648052496@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,53 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-commit 9594497f2c78993cb66b696122f7c65528ace985 upstream.
+commit 8c386cc817878588195dde38e919aa6ba9409d58 upstream.
 
-The nfsd4_blocked_lock->nbl_time timestamp is recorded in jiffies,
-but then compared to a CLOCK_REALTIME timestamp later on, which makes
-no sense.
+In the implementation of pci_iov_add_virtfn() the allocated virtfn is
+leaked if pci_setup_device() fails. The error handling is not calling
+pci_stop_and_remove_bus_device(). Change the goto label to failed2.
 
-For consistency with the other timestamps, change this to use a time_t.
-
-This is a change in behavior, which may cause regressions, but the
-current code is not sensible. On a system with CONFIG_HZ=1000,
-the 'time_after((unsigned long)nbl->nbl_time, (unsigned long)cutoff))'
-check is false for roughly the first 18 days of uptime and then true
-for the next 49 days.
-
-Fixes: 7919d0a27f1e ("nfsd: add a LRU list for blocked locks")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Fixes: 156c55325d30 ("PCI: Check for pci_setup_device() failure in pci_iov_add_virtfn()")
+Link: https://lore.kernel.org/r/20191125195255.23740-1-navid.emamdoost@gmail.com
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfsd/nfs4state.c |    2 +-
- fs/nfsd/state.h     |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/pci/iov.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -6040,7 +6040,7 @@ nfsd4_lock(struct svc_rqst *rqstp, struc
- 	}
+--- a/drivers/pci/iov.c
++++ b/drivers/pci/iov.c
+@@ -186,10 +186,10 @@ int pci_iov_add_virtfn(struct pci_dev *d
+ 	sprintf(buf, "virtfn%u", id);
+ 	rc = sysfs_create_link(&dev->dev.kobj, &virtfn->dev.kobj, buf);
+ 	if (rc)
+-		goto failed2;
++		goto failed1;
+ 	rc = sysfs_create_link(&virtfn->dev.kobj, &dev->dev.kobj, "physfn");
+ 	if (rc)
+-		goto failed3;
++		goto failed2;
  
- 	if (fl_flags & FL_SLEEP) {
--		nbl->nbl_time = jiffies;
-+		nbl->nbl_time = get_seconds();
- 		spin_lock(&nn->blocked_locks_lock);
- 		list_add_tail(&nbl->nbl_list, &lock_sop->lo_blocked);
- 		list_add_tail(&nbl->nbl_lru, &nn->blocked_locks_lru);
---- a/fs/nfsd/state.h
-+++ b/fs/nfsd/state.h
-@@ -591,7 +591,7 @@ static inline bool nfsd4_stateid_generat
- struct nfsd4_blocked_lock {
- 	struct list_head	nbl_list;
- 	struct list_head	nbl_lru;
--	unsigned long		nbl_time;
-+	time_t			nbl_time;
- 	struct file_lock	nbl_lock;
- 	struct knfsd_fh		nbl_fh;
- 	struct nfsd4_callback	nbl_cb;
+ 	kobject_uevent(&virtfn->dev.kobj, KOBJ_CHANGE);
+ 
+@@ -197,11 +197,10 @@ int pci_iov_add_virtfn(struct pci_dev *d
+ 
+ 	return 0;
+ 
+-failed3:
+-	sysfs_remove_link(&dev->dev.kobj, buf);
+ failed2:
+-	pci_stop_and_remove_bus_device(virtfn);
++	sysfs_remove_link(&dev->dev.kobj, buf);
+ failed1:
++	pci_stop_and_remove_bus_device(virtfn);
+ 	pci_dev_put(dev);
+ failed0:
+ 	virtfn_remove_bus(dev->bus, bus);
 
 
