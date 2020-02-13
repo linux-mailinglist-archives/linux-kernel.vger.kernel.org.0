@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEC3715C3CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:45:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12E3115C4CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729674AbgBMPod (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:44:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51908 "EHLO mail.kernel.org"
+        id S2388121AbgBMPuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:50:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387703AbgBMP1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:41 -0500
+        id S1728350AbgBMP0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:23 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E039D218AC;
-        Thu, 13 Feb 2020 15:27:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DBB02168B;
+        Thu, 13 Feb 2020 15:26:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607660;
-        bh=/cBsV2+fZ3tqujiRAUL+RNTm5GPLITKuiZjrgCkDibY=;
+        s=default; t=1581607582;
+        bh=5IHAgVIK4KTq1hgs6co910tH1rCw+oBCf0E6d10O9A0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R+LI80x7liCmpWwtPM1VYnBh6iGP9e7GSk/rqRX6E6YWQVDAlXbeLOwR/cMOILnLY
-         ChqqfH60iBVK8WKp3FwQ/8d0bkYuZGHK1jU9sT+9wQmWWRKqGNs5xB8zx9M+baOA9o
-         DYXGIN3/EhFBzMnhJi2pbHYICN7MQPeAq85BiyHo=
+        b=MwYV4fwhAYQF3g5y6vmahzTryqJ3haIqzuQUcXdFIujh7Tu1X+3LUasAuW4B8DQIJ
+         9Dzqr7b0t0M9xUz3IIHtj0Pz3Ju9Wa0Edjwypimp9UQwwqP842bCksdPHJwbQj9NXx
+         WmuJQ0ytN3Pg4ra3jHdkUFQIBKcTjB3n8QkkVSNQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 5.4 60/96] ARM: at91: pm: use SAM9X60 PMCs compatible
+        stable@vger.kernel.org, Jesper Nilsson <jesper.nilsson@axis.com>,
+        Lars Persson <lars.persson@axis.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 164/173] crypto: artpec6 - return correct error code for failed setkey()
 Date:   Thu, 13 Feb 2020 07:21:07 -0800
-Message-Id: <20200213151902.191896192@linuxfoundation.org>
+Message-Id: <20200213152012.452162546@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 6b9dfd986a81a999a27b6ed9dbe91203089c62dd upstream.
+commit b828f905904cd76424230c69741a4cabb0174168 upstream.
 
-SAM9X60 PMC's has a different PMC. It was not integrated at the moment
-commit 01c7031cfa73 ("ARM: at91: pm: initial PM support for SAM9X60")
-was published.
+->setkey() is supposed to retun -EINVAL for invalid key lengths, not -1.
 
-Fixes: 01c7031cfa73 ("ARM: at91: pm: initial PM support for SAM9X60")
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Link: https://lore.kernel.org/r/1576062248-18514-2-git-send-email-claudiu.beznea@microchip.com
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: a21eb94fc4d3 ("crypto: axis - add ARTPEC-6/7 crypto accelerator driver")
+Cc: Jesper Nilsson <jesper.nilsson@axis.com>
+Cc: Lars Persson <lars.persson@axis.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Acked-by: Lars Persson <lars.persson@axis.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mach-at91/pm.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/crypto/axis/artpec6_crypto.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/mach-at91/pm.c
-+++ b/arch/arm/mach-at91/pm.c
-@@ -751,6 +751,7 @@ static const struct of_device_id atmel_p
- 	{ .compatible = "atmel,sama5d3-pmc", .data = &pmc_infos[1] },
- 	{ .compatible = "atmel,sama5d4-pmc", .data = &pmc_infos[1] },
- 	{ .compatible = "atmel,sama5d2-pmc", .data = &pmc_infos[1] },
-+	{ .compatible = "microchip,sam9x60-pmc", .data = &pmc_infos[1] },
- 	{ /* sentinel */ },
- };
+--- a/drivers/crypto/axis/artpec6_crypto.c
++++ b/drivers/crypto/axis/artpec6_crypto.c
+@@ -1256,7 +1256,7 @@ static int artpec6_crypto_aead_set_key(s
  
+ 	if (len != 16 && len != 24 && len != 32) {
+ 		crypto_aead_set_flags(tfm, CRYPTO_TFM_RES_BAD_KEY_LEN);
+-		return -1;
++		return -EINVAL;
+ 	}
+ 
+ 	ctx->key_length = len;
 
 
