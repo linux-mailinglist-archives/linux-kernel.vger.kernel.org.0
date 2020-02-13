@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41A6E15C654
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:12:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBB8915C651
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:12:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728937AbgBMP7c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:59:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39308 "EHLO mail.kernel.org"
+        id S1729992AbgBMP71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:59:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728829AbgBMPYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:24:53 -0500
+        id S1727978AbgBMPYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:24:54 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A177246A4;
+        by mail.kernel.org (Postfix) with ESMTPSA id C22C3246AD;
         Thu, 13 Feb 2020 15:24:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1581607492;
-        bh=2oxY/CeXo6tpQqHA33WHFGYWV8gsqXM69By8VEJZBrw=;
+        bh=UcB75R57FiRoBTEkAPF5DZwDBQVw/QCjV4Ivyvlae5o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qInmNIhvBfznFIE2305GUoYwbWHRPI0oiJIOPkc2CSzIOHstlRMMYQItd+DqpCduf
-         cWoIGIn/+xOv6nkQ8soyXcM0f8I1H3yhRw2PvDOEuy5EYB7sUnWCZ2MHjGNAe5vfi0
-         6uPcIm22QprZx6TAYj2kHlZqeEuvUhbzU9NKYIv4=
+        b=jqmScfUcyiA0i3CkOBM6RqDPwPAeeueUZFO3nH4U4QfFEyIut9Yb/9UZjQdRzQx1m
+         Wh8u6ZLWkllKla5vdkJL3wZB9YzbEe0rxaw/cQkt5qm24BtJpjFb0GmgM0xFqrWaMe
+         +Gg3sI8RKpnc8FZIoMi8K3MBsLv6BnJNabOw3KHQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yurii Monakov <monakov.y@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 042/173] PCI: keystone: Fix link training retries initiation
-Date:   Thu, 13 Feb 2020 07:19:05 -0800
-Message-Id: <20200213151944.585298649@linuxfoundation.org>
+Subject: [PATCH 4.14 043/173] mmc: sdhci-of-at91: fix memleak on clk_get failure
+Date:   Thu, 13 Feb 2020 07:19:06 -0800
+Message-Id: <20200213151944.811844803@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
 References: <20200213151931.677980430@linuxfoundation.org>
@@ -45,38 +47,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yurii Monakov <monakov.y@gmail.com>
+From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 
-[ Upstream commit 6df19872d881641e6394f93ef2938cffcbdae5bb ]
+[ Upstream commit a04184ce777b46e92c2b3c93c6dcb2754cb005e1 ]
 
-ks_pcie_stop_link() function does not clear LTSSM_EN_VAL bit so
-link training was not triggered more than once after startup.
-In configurations where link can be unstable during early boot,
-for example, under low temperature, it will never be established.
+sdhci_alloc_host() does its work not using managed infrastructure, so
+needs explicit free on error path. Add it where needed.
 
-Fixes: 0c4ffcfe1fbc ("PCI: keystone: Add TI Keystone PCIe driver")
-Signed-off-by: Yurii Monakov <monakov.y@gmail.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Andrew Murray <andrew.murray@arm.com>
-Cc: stable@vger.kernel.org
+Cc: <stable@vger.kernel.org>
+Fixes: bb5f8ea4d514 ("mmc: sdhci-of-at91: introduce driver for the Atmel SDMMC")
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Link: https://lore.kernel.org/r/b2a44d5be2e06ff075f32477e466598bb0f07b36.1577961679.git.mirq-linux@rere.qmqm.pl
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/dwc/pci-keystone-dw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/sdhci-of-at91.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pci/dwc/pci-keystone-dw.c b/drivers/pci/dwc/pci-keystone-dw.c
-index 2fb20b887d2a5..4cf2662930d86 100644
---- a/drivers/pci/dwc/pci-keystone-dw.c
-+++ b/drivers/pci/dwc/pci-keystone-dw.c
-@@ -510,7 +510,7 @@ void ks_dw_pcie_initiate_link_train(struct keystone_pcie *ks_pcie)
- 	/* Disable Link training */
- 	val = ks_dw_app_readl(ks_pcie, CMD_STATUS);
- 	val &= ~LTSSM_EN_VAL;
--	ks_dw_app_writel(ks_pcie, CMD_STATUS, LTSSM_EN_VAL | val);
-+	ks_dw_app_writel(ks_pcie, CMD_STATUS, val);
+diff --git a/drivers/mmc/host/sdhci-of-at91.c b/drivers/mmc/host/sdhci-of-at91.c
+index 564e7be21e068..1dadd460cc8fb 100644
+--- a/drivers/mmc/host/sdhci-of-at91.c
++++ b/drivers/mmc/host/sdhci-of-at91.c
+@@ -331,19 +331,22 @@ static int sdhci_at91_probe(struct platform_device *pdev)
+ 	priv->mainck = devm_clk_get(&pdev->dev, "baseclk");
+ 	if (IS_ERR(priv->mainck)) {
+ 		dev_err(&pdev->dev, "failed to get baseclk\n");
+-		return PTR_ERR(priv->mainck);
++		ret = PTR_ERR(priv->mainck);
++		goto sdhci_pltfm_free;
+ 	}
  
- 	/* Initiate Link Training */
- 	val = ks_dw_app_readl(ks_pcie, CMD_STATUS);
+ 	priv->hclock = devm_clk_get(&pdev->dev, "hclock");
+ 	if (IS_ERR(priv->hclock)) {
+ 		dev_err(&pdev->dev, "failed to get hclock\n");
+-		return PTR_ERR(priv->hclock);
++		ret = PTR_ERR(priv->hclock);
++		goto sdhci_pltfm_free;
+ 	}
+ 
+ 	priv->gck = devm_clk_get(&pdev->dev, "multclk");
+ 	if (IS_ERR(priv->gck)) {
+ 		dev_err(&pdev->dev, "failed to get multclk\n");
+-		return PTR_ERR(priv->gck);
++		ret = PTR_ERR(priv->gck);
++		goto sdhci_pltfm_free;
+ 	}
+ 
+ 	ret = sdhci_at91_set_clks_presets(&pdev->dev);
 -- 
 2.20.1
 
