@@ -2,111 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24C9015C989
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 18:37:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94A0D15C98F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 18:38:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728845AbgBMRhp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 12:37:45 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36270 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728192AbgBMRho (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 12:37:44 -0500
-Received: by mail-wm1-f65.google.com with SMTP id p17so7721352wma.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 09:37:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=Zvz2XeVTIF+ueC8ZSbcXCfTRm4NOaCnXy121PGkk+Yg=;
-        b=y4z9797WK5rw61o0bHX20MVMCzpPi8e1XV3NNiGnUzy/usayLB7afqaJPX9RbfFN8d
-         DTHjeJKKl0pf+6s56FBO6zp7C85vj8QTq9rii/FdwUiZoqKNj2guPNqtyP8wgQNOtmdv
-         UmaS7phuNaxUHCjYa2YlwmNpOzXz4C8VUr6ecOtZfSqBYOmP7+4uubq2yIunsJr3QiXl
-         LX8W4qZbMWDrTV7lJnlgFd0vCm3XBm13uk9eSp8VTYshLUJcLJ6P1lfAfGOL5EPZQvVi
-         OimW08hzSH5ujRFZxkJhUKNViVxC/yetGRK+uJ2pXq3g+0gHCPA1imWM3FBb0b/dl8fF
-         KtLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=Zvz2XeVTIF+ueC8ZSbcXCfTRm4NOaCnXy121PGkk+Yg=;
-        b=WiLkS4Ky3mg77xCtFAorkrI7X+GbqkZSpap3FqIi7mWPmszDE5wzR4MH8K1inod1ys
-         fbXAdQI4dXihiX6C+aC/iTTM7UbC8t/65w7XmcIfVH8S7Vc2QrNidd/fXVDxe1UKgOP0
-         Rc/7pqToFagsipwXG8esVL+Q3QvpiXVI6ce+ahgAIrXteKpvQ9BUdEP6yPSgf3fZXhLJ
-         UfI1XT74VprAIovH3gdSTC9tOgz7drpLCuhM8MaIgtUdiFoguMYoy9CvH5PWqli+zm6G
-         mHYFNFHKPBPbs335IEXc5ddJhZxcJPe7fLmrORhnUK93I6Nhw2OnnGA+fb3Pry5H9Rro
-         eXHg==
-X-Gm-Message-State: APjAAAUhXaHl4NjgQNbWr1ZCtFiowePh6sxeqyd/9dMrAIE7Kx45uIjA
-        mtUr3LGIkJUHA1HpjTfQ+Zf8dw==
-X-Google-Smtp-Source: APXvYqykC+mTy5IPmmZi7PPVz1FJbeRW+wBfOOUQU58sYIdkyHAaUT8ZIB+UlNf0ucjzIZv+uzieOg==
-X-Received: by 2002:a05:600c:228f:: with SMTP id 15mr7314496wmf.56.1581615463076;
-        Thu, 13 Feb 2020 09:37:43 -0800 (PST)
-Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id y185sm4054871wmg.2.2020.02.13.09.37.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 09:37:42 -0800 (PST)
-References: <20200213155159.3235792-1-jbrunet@baylibre.com> <20200213155159.3235792-2-jbrunet@baylibre.com> <20200213171830.GH4333@sirena.org.uk>
-User-agent: mu4e 1.3.3; emacs 26.3
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH 1/9] ASoC: core: allow a dt node to provide several components
-In-reply-to: <20200213171830.GH4333@sirena.org.uk>
-Date:   Thu, 13 Feb 2020 18:37:41 +0100
-Message-ID: <1j4kvufkwq.fsf@starbuckisacylon.baylibre.com>
+        id S1728876AbgBMRiW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 12:38:22 -0500
+Received: from foss.arm.com ([217.140.110.172]:51466 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728186AbgBMRiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 12:38:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1EFA3328;
+        Thu, 13 Feb 2020 09:38:21 -0800 (PST)
+Received: from C02TF0J2HF1T.cambridge.arm.com (C02TF0J2HF1T.cambridge.arm.com [10.1.31.194])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 407003F6CF;
+        Thu, 13 Feb 2020 09:38:20 -0800 (PST)
+Date:   Thu, 13 Feb 2020 17:38:18 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Qian Cai <cai@lca.pw>
+Cc:     akpm@linux-foundation.org, elver@google.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next v2] mm/kmemleak: annotate various data races
+ obj->ptr
+Message-ID: <20200213173818.GA43109@C02TF0J2HF1T.cambridge.arm.com>
+References: <1581615390-9720-1-git-send-email-cai@lca.pw>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1581615390-9720-1-git-send-email-cai@lca.pw>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 13, 2020 at 12:36:30PM -0500, Qian Cai wrote:
+> The value of object->pointer could be accessed concurrently as noticed
+> by KCSAN,
+> 
+>  write to 0xffffb0ea683a7d50 of 4 bytes by task 23575 on cpu 12:
+>   do_raw_spin_lock+0x114/0x200
+>   debug_spin_lock_after at kernel/locking/spinlock_debug.c:91
+>   (inlined by) do_raw_spin_lock at kernel/locking/spinlock_debug.c:115
+>   _raw_spin_lock+0x40/0x50
+>   __handle_mm_fault+0xa9e/0xd00
+>   handle_mm_fault+0xfc/0x2f0
+>   do_page_fault+0x263/0x6f9
+>   page_fault+0x34/0x40
+> 
+>  read to 0xffffb0ea683a7d50 of 4 bytes by task 839 on cpu 60:
+>   crc32_le_base+0x67/0x350
+>   crc32_le_base+0x67/0x350:
+>   crc32_body at lib/crc32.c:106
+>   (inlined by) crc32_le_generic at lib/crc32.c:179
+>   (inlined by) crc32_le at lib/crc32.c:197
+>   kmemleak_scan+0x528/0xd90
+>   update_checksum at mm/kmemleak.c:1172
+>   (inlined by) kmemleak_scan at mm/kmemleak.c:1497
+>   kmemleak_scan_thread+0xcc/0xfa
+>   kthread+0x1e0/0x200
+>   ret_from_fork+0x27/0x50
+> 
+>  write to 0xffff939bf07b95b8 of 4 bytes by interrupt on cpu 119:
+>   __free_object+0x884/0xcb0
+>   __free_object at lib/debugobjects.c:359
+>   __debug_check_no_obj_freed+0x19d/0x370
+>   debug_check_no_obj_freed+0x41/0x4b
+>   slab_free_freelist_hook+0xfb/0x1c0
+>   kmem_cache_free+0x10c/0x3a0
+>   free_object_rcu+0x1ca/0x260
+>   rcu_core+0x677/0xcc0
+>   rcu_core_si+0x17/0x20
+>   __do_softirq+0xd9/0x57c
+>   run_ksoftirqd+0x29/0x50
+>   smpboot_thread_fn+0x222/0x3f0
+>   kthread+0x1e0/0x200
+>   ret_from_fork+0x27/0x50
+> 
+>  read to 0xffff939bf07b95b8 of 8 bytes by task 838 on cpu 109:
+>   scan_block+0x69/0x190
+>   scan_block at mm/kmemleak.c:1250
+>   kmemleak_scan+0x249/0xd90
+>   scan_large_block at mm/kmemleak.c:1309
+>   (inlined by) kmemleak_scan at mm/kmemleak.c:1434
+>   kmemleak_scan_thread+0xcc/0xfa
+>   kthread+0x1e0/0x200
+>   ret_from_fork+0x27/0x50
+> 
+> crc32() will dereference object->pointer. If a shattered value was
+> returned due to a data race, it will be corrected in the next scan.
+> scan_block() will dereference a range of addresses (e.g., percpu
+> sections) to search for valid pointers. Even if a data race heppens, it
+> will cause no issue because the code here does not care about the exact
+> value of a non-pointer. Thus, mark them as intentional data races using
+> the data_race() macro.
+> 
+> Signed-off-by: Qian Cai <cai@lca.pw>
 
-On Thu 13 Feb 2020 at 18:18, Mark Brown <broonie@kernel.org> wrote:
-
-> On Thu, Feb 13, 2020 at 04:51:51PM +0100, Jerome Brunet wrote:
->
->> At the moment, querying the dai_name will stop of the first component
->> matching the dt node. This does not allow a device (single dt node) to
->> provide several ASoC components which could then be used through DT.
->
->> This change let the search go on if the xlate function of the component
->> returns an error, giving the possibility to another component to match
->> and return the dai_name.
->
-> My first question here would be why you'd want to do that rather than
-> combine everything into a single component since the hardware seems to
-> be doing that anyway.  Hopefully the rest of the series will answer this
-> but it'd be good in the changelog here.
-
-Hi Mark,
-
-Sorry if I was not clear enough.
-
-This HW is messy. It is indeed one monolithic device which
-provides several functions/sub-devices/components
-
-I tried several approaches:
-
-* Just 1 component: This was ugly because the part that is present only on 1
-SoC variant, I needed to reconstruct the dai, widget, route and control
-table which involved a fair amount of useless copies.
-
-* A lot of devices (and components) with syscon: This ended up being even
-  uglier, difficult to work with since it did not really reflected the
-  actual HW.
-
-The solution proposed here is just one device with 3 possible
-components (groups):
-* The CPU producers a associated path
-* The HDMI control
-* The Internal DAC control
-
-The impact on ASoC is rather small, the driver reflect quite well what
-the HW is and, with a sound-dai-cell=2, it fairly simple in DT as well.
-
-Do you think there is something wrong with a linux device providing
-several ASoC components ?
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
