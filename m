@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F65F15C286
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:35:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9036815C3BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388236AbgBMPdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:33:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59234 "EHLO mail.kernel.org"
+        id S2387656AbgBMPnx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:43:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729689AbgBMP3P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:29:15 -0500
+        id S2387706AbgBMP1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:48 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 518EE2467B;
-        Thu, 13 Feb 2020 15:29:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65A2A20661;
+        Thu, 13 Feb 2020 15:27:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607754;
-        bh=Rz7lJTFMsK3PbyJvA7oCormXXhuf2NgqQc2/DqCu1hM=;
+        s=default; t=1581607667;
+        bh=MRdGMjutinYGYiS4uueb/cSnR9n8EX3kqsC1u8p/7kI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jm7t3Pevjpxvp+2Aje0ck4I4tBI6vVk/neS9tnvXz8AXylubzrnI6tpSlDdifxTkL
-         9m9Kig1+nEatJida2ttPpX9TZwmlegKR88ZcSjOrIuOO/s0ySIqncWzpVTpAPwdW0x
-         U0JSHdyge9o7wOeKOQd7RW73Cu2c+dYtHSjVzA0U=
+        b=fQQ0LdSPn+6DjfaKxEHplbBccfLzGFSvFuQi/+Wqmq1k+6khh2slPO3NiY0al2VsW
+         b+czQSkOidNq10P3TiEiwVeZkO3YqRDCHxuZSZyuqFeTuSDm8ssOiS9gzfTAkcVdN1
+         WqmijvOfGcfvtoCgp0l1OwOSx0r3j+r0YhqQsUX8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe Roullier <christophe.roullier@st.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-Subject: [PATCH 5.5 099/120] drivers: watchdog: stm32_iwdg: set WDOG_HW_RUNNING at probe
-Date:   Thu, 13 Feb 2020 07:21:35 -0800
-Message-Id: <20200213151934.223896799@linuxfoundation.org>
+        stable@vger.kernel.org, Ben Whitten <ben.whitten@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 5.4 89/96] regmap: fix writes to non incrementing registers
+Date:   Thu, 13 Feb 2020 07:21:36 -0800
+Message-Id: <20200213151912.406961661@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
+References: <20200213151839.156309910@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,55 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Roullier <christophe.roullier@st.com>
+From: Ben Whitten <ben.whitten@gmail.com>
 
-commit 85fdc63fe256b595f923a69848cd99972ff446d8 upstream.
+commit 2e31aab08bad0d4ee3d3d890a7b74cb6293e0a41 upstream.
 
-If the watchdog hardware is already enabled during the boot process,
-when the Linux watchdog driver loads, it should start/reset the watchdog
-and tell the watchdog framework. As a result, ping can be generated from
-the watchdog framework (if CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED is set),
-until the userspace watchdog daemon takes over control
+When checking if a register block is writable we must ensure that the
+block does not start with or contain a non incrementing register.
 
-Fixes:4332d113c66a ("watchdog: Add STM32 IWDG driver")
-
-Signed-off-by: Christophe Roullier <christophe.roullier@st.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/20191122132246.8473-1-christophe.roullier@st.com
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Fixes: 8b9f9d4dc511 ("regmap: verify if register is writeable before writing operations")
+Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
+Link: https://lore.kernel.org/r/20200118205625.14532-1-ben.whitten@gmail.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/watchdog/stm32_iwdg.c |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/base/regmap/regmap.c |   17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
---- a/drivers/watchdog/stm32_iwdg.c
-+++ b/drivers/watchdog/stm32_iwdg.c
-@@ -262,6 +262,24 @@ static int stm32_iwdg_probe(struct platf
- 	watchdog_set_nowayout(wdd, WATCHDOG_NOWAYOUT);
- 	watchdog_init_timeout(wdd, 0, dev);
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -1488,11 +1488,18 @@ static int _regmap_raw_write_impl(struct
  
-+	/*
-+	 * In case of CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED is set
-+	 * (Means U-Boot/bootloaders leaves the watchdog running)
-+	 * When we get here we should make a decision to prevent
-+	 * any side effects before user space daemon will take care of it.
-+	 * The best option, taking into consideration that there is no
-+	 * way to read values back from hardware, is to enforce watchdog
-+	 * being run with deterministic values.
+ 	WARN_ON(!map->bus);
+ 
+-	/* Check for unwritable registers before we start */
+-	for (i = 0; i < val_len / map->format.val_bytes; i++)
+-		if (!regmap_writeable(map,
+-				     reg + regmap_get_offset(map, i)))
+-			return -EINVAL;
++	/* Check for unwritable or noinc registers in range
++	 * before we start
 +	 */
-+	if (IS_ENABLED(CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED)) {
-+		ret = stm32_iwdg_start(wdd);
-+		if (ret)
-+			return ret;
-+
-+		/* Make sure the watchdog is serviced */
-+		set_bit(WDOG_HW_RUNNING, &wdd->status);
++	if (!regmap_writeable_noinc(map, reg)) {
++		for (i = 0; i < val_len / map->format.val_bytes; i++) {
++			unsigned int element =
++				reg + regmap_get_offset(map, i);
++			if (!regmap_writeable(map, element) ||
++				regmap_writeable_noinc(map, element))
++				return -EINVAL;
++		}
 +	}
-+
- 	ret = devm_watchdog_register_device(dev, wdd);
- 	if (ret)
- 		return ret;
+ 
+ 	if (!map->cache_bypass && map->format.parse_val) {
+ 		unsigned int ival;
 
 
