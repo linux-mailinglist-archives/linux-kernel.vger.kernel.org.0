@@ -2,108 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4728715C046
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 15:26:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3776C15C050
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 15:29:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbgBMO0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 09:26:44 -0500
-Received: from mga11.intel.com ([192.55.52.93]:20110 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727561AbgBMO0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 09:26:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 06:26:43 -0800
-X-IronPort-AV: E=Sophos;i="5.70,437,1574150400"; 
-   d="scan'208";a="227245933"
-Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.255.30.123]) ([10.255.30.123])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 13 Feb 2020 06:26:41 -0800
-Subject: Re: [PATCH 22/61] KVM: x86: Make kvm_mpx_supported() an inline
- function
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200201185218.24473-1-sean.j.christopherson@intel.com>
- <20200201185218.24473-23-sean.j.christopherson@intel.com>
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-Message-ID: <05355867-58c6-06de-704c-286c8f57c838@intel.com>
-Date:   Thu, 13 Feb 2020 22:26:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S1727535AbgBMO36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 09:29:58 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:47179 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726780AbgBMO35 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 09:29:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581604196;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0l9nlLtv0/bHXNek1lDCBUaE0lHasr+bBc4jA0BaTh0=;
+        b=UtItgN4qy+/zNskX/eV6DepOXEYEJdRbrfcWZC82YvMyCEY2q3l+dYczJmuorFcfDWDoTx
+        SY7uruJ7+At+snYlvSyq7oYrqpsWnr5xRzonYnubzZPqOILFcfiCTkih4oXg6DpPUr2ekN
+        fFmXRye7zdbNNrvYgFzyoFPGDrEetK4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-258-PjoBI8_dNuKbyHfpVocn9A-1; Thu, 13 Feb 2020 09:29:54 -0500
+X-MC-Unique: PjoBI8_dNuKbyHfpVocn9A-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 68441DBAE;
+        Thu, 13 Feb 2020 14:29:53 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-16.rdu2.redhat.com [10.10.112.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 294495DA85;
+        Thu, 13 Feb 2020 14:29:45 +0000 (UTC)
+Date:   Thu, 13 Feb 2020 09:29:43 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Florian Westphal <fw@strlen.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        twoerner@redhat.com, eparis@parisplace.org, tgraf@infradead.org
+Subject: Re: [PATCH ghak25 v2 8/9] netfilter: add audit operation field
+Message-ID: <20200213142943.zxa6vwvl45q36zu6@madcap2.tricolour.ca>
+References: <cover.1577830902.git.rgb@redhat.com>
+ <6768f7c7d9804216853e6e9c59e44f8a10f46b99.1577830902.git.rgb@redhat.com>
+ <20200106202306.GO795@breakpoint.cc>
+ <20200213121410.b2dsh2kwg3k7xg7e@madcap2.tricolour.ca>
+ <20200213123457.GO2991@breakpoint.cc>
 MIME-Version: 1.0
-In-Reply-To: <20200201185218.24473-23-sean.j.christopherson@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200213123457.GO2991@breakpoint.cc>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/2/2020 2:51 AM, Sean Christopherson wrote:
-> Expose kvm_mpx_supported() as a static inline so that it can be inlined
-> in kvm_intel.ko.
+On 2020-02-13 13:34, Florian Westphal wrote:
+> Richard Guy Briggs <rgb@redhat.com> wrote:
+> > The default policy is NF_ACCEPT (because Rusty didn't want
+> > more email, go figure...).  It occurred to me later that some table
+> > loads took a command line parameter to be able to change the default
+> > policy verdict from NF_ACCEPT to NF_DROP.  In particular, filter FORWARD
+> > hook tables.  Is there a straightforward way to be able to detect this
+> > in all the audit_nf_cfg() callers to be able to log it?  In particular,
+> > in:
+> > 	net/bridge/netfilter/ebtables.c: ebt_register_table()
+> > 	net/bridge/netfilter/ebtables.c: do_replace_finish()
+> > 	net/bridge/netfilter/ebtables.c: __ebt_unregister_table()
+> > 	net/netfilter/x_tables.c: xt_replace_table()
+> > 	net/netfilter/x_tables.c: xt_unregister_table()
 > 
-> No functional change intended.
+> The module parameter or the policy?
 > 
+> The poliy can be changed via the xtables tools.
+> Given you can have:
+> 
+> *filter
+> :INPUT ACCEPT [0:0]
+> :FORWARD DROP [0:0]
+> :OUTPUT ACCEPT [0:0]
+> -A FORWARD -j ACCEPT
+> COMMIT
+> 
+> ... which effectily gives a FORWARD ACCEPT policy I'm not sure logging
+> the policy is useful.
+> 
+> Furthermore, ebtables has polices even for user-defined chains.
+> 
+> > Both potential solutions are awkward, adding a parameter to pass that
+> > value in, but also trying to reach into the protocol-specific entry
+> > table to find that value.  Would you have a recommendation?  This
+> > assumes that reporting that default policy value is even desired or
+> > required.
+> 
+> See above, I don't think its useful.  If it is needed, its probably best
+> to define an informational struct containing the policy (accept/drop)
+> value for the each hook points (prerouting to postrouting),  fill
+> that from the backend specific code (as thats the only place that
+> exposes the backend specific structs ...) and then pass that to
+> the audit logging functions.
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->   arch/x86/kvm/cpuid.c | 6 ------
->   arch/x86/kvm/cpuid.h | 1 -
->   arch/x86/kvm/x86.h   | 5 +++++
->   3 files changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 84006cc4007c..d3c93b94abc3 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -45,12 +45,6 @@ static u32 xstate_required_size(u64 xstate_bv, bool compacted)
->   	return ret;
->   }
->   
-> -bool kvm_mpx_supported(void)
-> -{
-> -	return supported_xcr0 & (XFEATURE_MASK_BNDREGS | XFEATURE_MASK_BNDCSR);
-> -}
-> -EXPORT_SYMBOL_GPL(kvm_mpx_supported);
-> -
->   #define F feature_bit
->   
->   int kvm_update_cpuid(struct kvm_vcpu *vcpu)
-> diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
-> index 7366c618aa04..c1ac0995843d 100644
-> --- a/arch/x86/kvm/cpuid.h
-> +++ b/arch/x86/kvm/cpuid.h
-> @@ -7,7 +7,6 @@
->   #include <asm/processor.h>
->   
->   int kvm_update_cpuid(struct kvm_vcpu *vcpu);
-> -bool kvm_mpx_supported(void);
->   struct kvm_cpuid_entry2 *kvm_find_cpuid_entry(struct kvm_vcpu *vcpu,
->   					      u32 function, u32 index);
->   int kvm_dev_ioctl_get_cpuid(struct kvm_cpuid2 *cpuid,
-> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> index 02b49ee49e24..bfac4a80956c 100644
-> --- a/arch/x86/kvm/x86.h
-> +++ b/arch/x86/kvm/x86.h
-> @@ -283,6 +283,11 @@ enum exit_fastpath_completion handle_fastpath_set_msr_irqoff(struct kvm_vcpu *vc
->   extern u64 host_xcr0;
->   extern u64 supported_xcr0;
->   
-> +static inline bool kvm_mpx_supported(void)
-> +{
-> +	return supported_xcr0 & (XFEATURE_MASK_BNDREGS | XFEATURE_MASK_BNDCSR);
-> +}
-> +
->   extern unsigned int min_timer_period_us;
->   
->   extern bool enable_vmware_backdoor;
-> 
+Ok, for this set, I'll drop the idea.  If it becomes apparent later than
+it is necessary, it can be added as a field at the end of the record.
+
+Thanks for looking at this.
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 
