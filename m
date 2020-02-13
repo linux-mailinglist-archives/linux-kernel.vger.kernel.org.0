@@ -2,142 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 508F115C9F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 19:07:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EAD115C9F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 19:08:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728217AbgBMSHk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 13:07:40 -0500
-Received: from mga09.intel.com ([134.134.136.24]:55155 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726282AbgBMSHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 13:07:40 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 10:07:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,437,1574150400"; 
-   d="scan'208";a="238107659"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga006.jf.intel.com with ESMTP; 13 Feb 2020 10:07:37 -0800
-Date:   Thu, 13 Feb 2020 10:07:37 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
-        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
-        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-security-module@vger.kernel.org,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>
-Subject: Re: [PATCH v26 10/22] x86/sgx: Linux Enclave Driver
-Message-ID: <20200213180737.GC18610@linux.intel.com>
-References: <20200209212609.7928-1-jarkko.sakkinen@linux.intel.com>
- <20200209212609.7928-11-jarkko.sakkinen@linux.intel.com>
- <d17c50a7-6900-731b-43a2-d6e49b8eb44d@fortanix.com>
+        id S1728090AbgBMSI3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 13:08:29 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:51352 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727669AbgBMSI2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 13:08:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581617305;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=deHttPInqFs6xYAV0uYMAcNgDa9/Kd+C12ssa7guPmc=;
+        b=AVDeWbsgsxiMA6Au4vxlvEpfXcxDgNnRiYttHE1ra50tLdYcyoV0XwRFprDpzhxEkTSA9/
+        WNQrOVQn4zka0Qx1Pm2tFiExmczqGTZGPEeb2j95WtBRZeMbo+Z9AE6CJaEKiMX0PogwEQ
+        Vqd9yKvdh9LaQo1SXqBnJwN8OUfQWcU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-141-iTjufJ3TOB2pFQOEgpdEsg-1; Thu, 13 Feb 2020 13:08:23 -0500
+X-MC-Unique: iTjufJ3TOB2pFQOEgpdEsg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8AA217A583;
+        Thu, 13 Feb 2020 18:08:21 +0000 (UTC)
+Received: from gondolin (ovpn-117-100.ams2.redhat.com [10.36.117.100])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2DF891000325;
+        Thu, 13 Feb 2020 18:08:16 +0000 (UTC)
+Date:   Thu, 13 Feb 2020 19:08:13 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dev@dpdk.org, mtosatti@redhat.com,
+        thomas@monjalon.net, bluca@debian.org, jerinjacobk@gmail.com,
+        bruce.richardson@intel.com
+Subject: Re: [PATCH 4/7] vfio: Introduce VFIO_DEVICE_FEATURE ioctl and first
+ user
+Message-ID: <20200213190813.1bcd1a15.cohuck@redhat.com>
+In-Reply-To: <20200213103957.0d75034b@w520.home>
+References: <158145472604.16827.15751375540102298130.stgit@gimli.home>
+        <158146235133.16827.7215789038918853214.stgit@gimli.home>
+        <20200213134121.54b8debb.cohuck@redhat.com>
+        <20200213103957.0d75034b@w520.home>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d17c50a7-6900-731b-43a2-d6e49b8eb44d@fortanix.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 02:59:52PM +0100, Jethro Beekman wrote:
-> On 2020-02-09 22:25, Jarkko Sakkinen wrote:
-> > +/**
-> > + * struct sgx_enclave_add_pages - parameter structure for the
-> > + *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
-> > + * @src:	start address for the page data
-> > + * @offset:	starting page offset
-> > + * @length:	length of the data (multiple of the page size)
-> > + * @secinfo:	address for the SECINFO data
-> > + * @flags:	page control flags
-> > + * @count:	number of bytes added (multiple of the page size)
-> > + */
-> > +struct sgx_enclave_add_pages {
-> > +	__u64	src;
-> > +	__u64	offset;
-> > +	__u64	length;
-> > +	__u64	secinfo;
-> > +	__u64	flags;
-> > +	__u64	count;
-> > +};
+On Thu, 13 Feb 2020 10:39:57 -0700
+Alex Williamson <alex.williamson@redhat.com> wrote:
+
+> On Thu, 13 Feb 2020 13:41:21 +0100
+> Cornelia Huck <cohuck@redhat.com> wrote:
 > 
-> Compared to the last time I looked at the patch set, this API removes the
-> ability to measure individual pages chunks. That is not acceptable.
+> > On Tue, 11 Feb 2020 16:05:51 -0700
+> > Alex Williamson <alex.williamson@redhat.com> wrote:
 
-Why is it not acceptable?  E.g. what specific use case do you have that
-_requires_ on measuring partial 4k pages of an enclave?
-
-> On 2019-10-11 16:37, Sean Christopherson wrote:
-> > Hiding the 256-byte granualarity from userspace is a good idea as it's not
-> > intrinsically tied to the SGX architecture and exists only because of
-> > latency requirements.
+> > > +struct vfio_device_feature {
+> > > +	__u32	argsz;
+> > > +	__u32	flags;
+> > > +#define VFIO_DEVICE_FEATURE_MASK	(0xffff) /* 16-bit feature index */
+> > > +#define VFIO_DEVICE_FEATURE_GET		(1 << 16) /* Get feature into data[] */
+> > > +#define VFIO_DEVICE_FEATURE_SET		(1 << 17) /* Set feature from data[] */
+> > > +#define VFIO_DEVICE_FEATURE_PROBE	(1 << 18) /* Probe feature support */
+> > > +	__u8	data[];
+> > > +};    
+> > 
+> > I'm not sure I'm a fan of cramming both feature selection and operation
+> > selection into flags. What about:
+> > 
+> > struct vfio_device_feature {
+> > 	__u32 argsz;
+> > 	__u32 flags;
+> > /* GET/SET/PROBE #defines */
+> > 	__u32 feature;
+> > 	__u8  data[];
+> > };  
 > 
-> What do you mean by "it's not intrinsically tied to the SGX architecture"?
-> This is a fundamental part of the SGX instruction set. This is the
-> instruction definition from the SDM: "EEXTEND—Extend Uninitialized Enclave
-> Measurement by 256 Bytes".
+> Then data is unaligned so we either need to expand feature or add
+> padding.  So this makes the structure at least 8 bytes bigger and buys
+> us...?  What's so special about the bottom half of flags that we can't
+> designate it as the flags that specify the feature?  We still have
+> another 13 bits of flags for future use.
 
-SGX fundamentally works at a 4k granularity.  EEXTEND is special cased
-because extending the measurement is a slow operation, i.e. EEXTEND on more
-than 256 byte chunks, *with the current implementation*, would exceeded
-latency requirements, e.g. block interrupts for too long and hose the
-kernel.
+It is more my general dislike of bit fiddling here, no strong
+objection, certainly.
 
-A future implementation of SGX could change the latency of extending the
-measurement, e.g. a different algorithm that is slower/faster, and so could
-introduce EEXTEND2 which would work at a different granularity than EEXTEND.
-
-EEXTEND could have avoided the latency problems via other methods, e.g. by
-being interruptible a la EINIT and/or by being restartable.  But that ship
-has sailed, so to avoid future complication in the kernel's ABI we're
-proposing/advocating supporting only measuring at a 4k granularity.
- 
-> The exact sequence of EADD/EEXTEND calls is part of the enclave hash. The OS
-> mustn't arbitrarily restrict how an enclave may be loaded. If the enclave
-
-It's not arbitrary, there are good reasons for wanting to work with 4k
-granularity.  Regardless, there are many examples of the kernel arbitrarily
-restricting what can be done relative to what is physically possible in
-hardware.
-
-> loader were to follows OS-specific restrictions, that would result in
-> effectively different enclaves. Because of these interoperability concerns,
-> 256-byte granularity *must* be exposed through the UAPI.
-
-Interoperability with what?  Other OSes? 
-
-> Besides only partially measuring a page, there are some other fringe cases
-> that are technically possible, although I haven't seen any toolchains that do
-> that. These include not interleaving EADD and EEXTEND, not using logical
-> ordering for the EEXTENDs, and call EEXTEND multiple times on the same chunk.
-> Maximum interoperability would require supporting any EADD/EEXTEND sequence.
-
-Same interoperability question as above.
-
-> Maybe we should just add an EEXTEND@offset ioctl? This would give
-> fine-grained control when needed (one could set flags=0 in the add pages
-> ioctl and interleave with EEXTEND as needed). If you're ok adding an EEXTEND
-> ioctl I don't think this issue needs to block landing the driver in its
-> current form, in which case:
-
-We've also discussed an EEXTEND ioctl(), but ultimately couldn't come up
-with a use case that _required_ partial page measurement.
-
-> Tested-by: Jethro Beekman <jethro@fortanix.com>
 > 
-> Sorry for being super late with this, I know you asked me for feedback about
-> this specific point in October. However, I did previously mention several
-> times that being able to measure individual 256-byte chunks is necessary.
+> > Getting/setting more than one feature at the same time does not sound
+> > like a common use case; you would need to specify some kind of
+> > algorithm for that anyway, and just doing it individually seems much
+> > easier than that.  
 > 
-> -- Jethro Beekman | Fortanix
+> Yup.  I just figured 2^16 features is a nice way to make use of the
+> structure vs 2^32 features and 4 bytes of padding or 2^64 features.  I
+> don't think I'm being optimistic in thinking we'll have far less than
+> 16K features and we can always reserve feature 0xffff as an extended
+> feature where the first 8-bytes of data defines that extended feature
+> index.
+
+Agreed, we're probably not going to end up with a flood of features
+here.
+
+Anyway, much of this seems to be a matter of personal taste, so let's
+keep it as it is.
+
