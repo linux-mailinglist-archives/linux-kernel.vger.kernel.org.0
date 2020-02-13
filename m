@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFC8C15C199
+	by mail.lfdr.de (Postfix) with ESMTP id 759E815C198
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:25:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728737AbgBMPYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:24:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34368 "EHLO mail.kernel.org"
+        id S1728730AbgBMPYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:24:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728356AbgBMPXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728358AbgBMPXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Feb 2020 10:23:22 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F7B724691;
+        by mail.kernel.org (Postfix) with ESMTPSA id D872924689;
         Thu, 13 Feb 2020 15:23:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607401;
-        bh=ACjKYz9A2d8Fi5hQbocr4bi/V9Cmxvl3mDGZ6dQiI0A=;
+        s=default; t=1581607402;
+        bh=NdlLm7yWaw3LgbtsyqnOryAaYva9na4S5TGxCK5Z3bM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AUxl46A9vbSckRz81y82JvHgjlxjjTfzJQqxKmLcjlckA+wXZldy1lcIGjPomPW53
-         y/EeVXq7spr4f3lReCqaSed9iprPB9CHLyvD6tvn97W6UbFhcjJ+3fE5cWqFyO42wE
-         VTaLrPDTdPEXj6D5KJ2ePaAZg8qOpcJaxoUKYL+Q=
+        b=Bg/M/pper9QeAIg8M7/TuTQdVM2IWryhIkfmuOhlDl70yhX6czZKIhJf1O3CrIisS
+         x9DUtkNCEBDlfB+R8UogFMOmZB6DrVDUl+k/HwmgWrvriJqb49LZXtWJf9YRJdY9ah
+         DCDJ8twrp2vUTPKAFtc5hOibCwPLbYjDucdnWFEg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Neelima Krishnan <neelima.krishnan@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
+        stable@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Rich Felker <dalias@libc.org>, libc-alpha@sourceware.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 002/116] x86/cpu: Update cached HLE state on write to TSX_CTRL_CPUID_CLEAR
-Date:   Thu, 13 Feb 2020 07:19:06 -0800
-Message-Id: <20200213151843.221414164@linuxfoundation.org>
+Subject: [PATCH 4.9 003/116] sparc32: fix struct ipc64_perm type definition
+Date:   Thu, 13 Feb 2020 07:19:07 -0800
+Message-Id: <20200213151843.796428293@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
 References: <20200213151842.259660170@linuxfoundation.org>
@@ -48,65 +47,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 5efc6fa9044c3356d6046c6e1da6d02572dbed6b ]
+[ Upstream commit 34ca70ef7d3a9fa7e89151597db5e37ae1d429b4 ]
 
-/proc/cpuinfo currently reports Hardware Lock Elision (HLE) feature to
-be present on boot cpu even if it was disabled during the bootup. This
-is because cpuinfo_x86->x86_capability HLE bit is not updated after TSX
-state is changed via the new MSR IA32_TSX_CTRL.
+As discussed in the strace issue tracker, it appears that the sparc32
+sysvipc support has been broken for the past 11 years. It was however
+working in compat mode, which is how it must have escaped most of the
+regular testing.
 
-Update the cached HLE bit also since it is expected to change after an
-update to CPUID_CLEAR bit in MSR IA32_TSX_CTRL.
+The problem is that a cleanup patch inadvertently changed the uid/gid
+fields in struct ipc64_perm from 32-bit types to 16-bit types in uapi
+headers.
 
-Fixes: 95c5824f75f3 ("x86/cpu: Add a "tsx=" cmdline option with TSX disabled by default")
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Neelima Krishnan <neelima.krishnan@intel.com>
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/2529b99546294c893dfa1c89e2b3e46da3369a59.1578685425.git.pawan.kumar.gupta@linux.intel.com
+Both glibc and uclibc-ng still use the original types, so they should
+work fine with compat mode, but not natively.  Change the definitions
+to use __kernel_uid32_t and __kernel_gid32_t again.
+
+Fixes: 83c86984bff2 ("sparc: unify ipcbuf.h")
+Link: https://github.com/strace/strace/issues/116
+Cc: <stable@vger.kernel.org> # v2.6.29
+Cc: Sam Ravnborg <sam@ravnborg.org>
+Cc: "Dmitry V . Levin" <ldv@altlinux.org>
+Cc: Rich Felker <dalias@libc.org>
+Cc: libc-alpha@sourceware.org
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/tsx.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ arch/sparc/include/uapi/asm/ipcbuf.h | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/tsx.c b/arch/x86/kernel/cpu/tsx.c
-index 3e20d322bc98b..032509adf9de9 100644
---- a/arch/x86/kernel/cpu/tsx.c
-+++ b/arch/x86/kernel/cpu/tsx.c
-@@ -115,11 +115,12 @@ void __init tsx_init(void)
- 		tsx_disable();
+diff --git a/arch/sparc/include/uapi/asm/ipcbuf.h b/arch/sparc/include/uapi/asm/ipcbuf.h
+index 66013b4fe10d5..58da9c4addb2d 100644
+--- a/arch/sparc/include/uapi/asm/ipcbuf.h
++++ b/arch/sparc/include/uapi/asm/ipcbuf.h
+@@ -14,19 +14,19 @@
  
- 		/*
--		 * tsx_disable() will change the state of the
--		 * RTM CPUID bit.  Clear it here since it is now
--		 * expected to be not set.
-+		 * tsx_disable() will change the state of the RTM and HLE CPUID
-+		 * bits. Clear them here since they are now expected to be not
-+		 * set.
- 		 */
- 		setup_clear_cpu_cap(X86_FEATURE_RTM);
-+		setup_clear_cpu_cap(X86_FEATURE_HLE);
- 	} else if (tsx_ctrl_state == TSX_CTRL_ENABLE) {
+ struct ipc64_perm
+ {
+-	__kernel_key_t	key;
+-	__kernel_uid_t	uid;
+-	__kernel_gid_t	gid;
+-	__kernel_uid_t	cuid;
+-	__kernel_gid_t	cgid;
++	__kernel_key_t		key;
++	__kernel_uid32_t	uid;
++	__kernel_gid32_t	gid;
++	__kernel_uid32_t	cuid;
++	__kernel_gid32_t	cgid;
+ #ifndef __arch64__
+-	unsigned short	__pad0;
++	unsigned short		__pad0;
+ #endif
+-	__kernel_mode_t	mode;
+-	unsigned short	__pad1;
+-	unsigned short	seq;
+-	unsigned long long __unused1;
+-	unsigned long long __unused2;
++	__kernel_mode_t		mode;
++	unsigned short		__pad1;
++	unsigned short		seq;
++	unsigned long long	__unused1;
++	unsigned long long	__unused2;
+ };
  
- 		/*
-@@ -131,10 +132,10 @@ void __init tsx_init(void)
- 		tsx_enable();
- 
- 		/*
--		 * tsx_enable() will change the state of the
--		 * RTM CPUID bit.  Force it here since it is now
--		 * expected to be set.
-+		 * tsx_enable() will change the state of the RTM and HLE CPUID
-+		 * bits. Force them here since they are now expected to be set.
- 		 */
- 		setup_force_cpu_cap(X86_FEATURE_RTM);
-+		setup_force_cpu_cap(X86_FEATURE_HLE);
- 	}
- }
+ #endif /* __SPARC_IPCBUF_H */
 -- 
 2.20.1
 
