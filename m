@@ -2,37 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0086A15C155
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:22:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2219315C1DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:27:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbgBMPWf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:22:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59570 "EHLO mail.kernel.org"
+        id S1727635AbgBMP1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:27:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727946AbgBMPWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:22:30 -0500
+        id S1728102AbgBMPZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:19 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 623CF20848;
-        Thu, 13 Feb 2020 15:22:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EAEC224691;
+        Thu, 13 Feb 2020 15:25:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607349;
-        bh=/QIIiKLLOME+T7VODOcXDaeNjirLEVsJBrE5ZbWR8rE=;
+        s=default; t=1581607519;
+        bh=OSlvVw44Qhx2hrQj100qel0ozOsHwi4Z0gCH3uBz36o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ztp24As1fHNL7tzIHze/A8ve3RivyaamQuUor7EvgRpgVaEt37bUONnIwXI3K/rf1
-         SUKznvBjO9YOG+bj+om7a7ZJqsByhJIm6CQnht9rkOkzrEhtBRvYvsYWCaQYQYRLCM
-         DWYwTm9XGFwcwb6vThbV/jEBh+vkWVnaiB6v+Uwk=
+        b=Hcybp1jL271orjjhakLuRfK63fcBgQsri/9PExhm7cH0UE8+J/DoMex+22n3j1ETG
+         zqlWc+PDDXY3fSQHpxlUAZ2saH9xxW9drOlv8FbaBJnhcbUhpYlehGQIXNscus8Osa
+         tzKBxdA9dmZAi2xvNx5I83suJlCgRRhJioRaVR8c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.4 29/91] crypto: api - Fix race condition in crypto_spawn_alg
-Date:   Thu, 13 Feb 2020 07:19:46 -0800
-Message-Id: <20200213151832.831143978@linuxfoundation.org>
+        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
+        Marios Pomonis <pomonis@google.com>,
+        Andrew Honig <ahonig@google.com>,
+        Jim Mattson <jmattson@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 084/173] KVM: x86: Protect MSR-based index computations in pmu.h from Spectre-v1/L1TF attacks
+Date:   Thu, 13 Feb 2020 07:19:47 -0800
+Message-Id: <20200213151954.513237244@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
-References: <20200213151821.384445454@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,82 +46,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Marios Pomonis <pomonis@google.com>
 
-commit 73669cc556462f4e50376538d77ee312142e8a8a upstream.
+commit 13c5183a4e643cc2b03a22d0e582c8e17bb7457d upstream.
 
-The function crypto_spawn_alg is racy because it drops the lock
-before shooting the dying algorithm.  The algorithm could disappear
-altogether before we shoot it.
+This fixes a Spectre-v1/L1TF vulnerability in the get_gp_pmc() and
+get_fixed_pmc() functions.
+They both contain index computations based on the (attacker-controlled)
+MSR number.
 
-This patch fixes it by moving the shooting into the locked section.
+Fixes: 25462f7f5295 ("KVM: x86/vPMU: Define kvm_pmu_ops to support vPMU function dispatch")
 
-Fixes: 6bfd48096ff8 ("[CRYPTO] api: Added spawns")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Nick Finco <nifi@google.com>
+Signed-off-by: Marios Pomonis <pomonis@google.com>
+Reviewed-by: Andrew Honig <ahonig@google.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/algapi.c   |   16 +++++-----------
- crypto/api.c      |    3 +--
- crypto/internal.h |    1 -
- 3 files changed, 6 insertions(+), 14 deletions(-)
+ arch/x86/kvm/pmu.h |   18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
---- a/crypto/algapi.c
-+++ b/crypto/algapi.c
-@@ -663,22 +663,16 @@ EXPORT_SYMBOL_GPL(crypto_drop_spawn);
- static struct crypto_alg *crypto_spawn_alg(struct crypto_spawn *spawn)
+--- a/arch/x86/kvm/pmu.h
++++ b/arch/x86/kvm/pmu.h
+@@ -2,6 +2,8 @@
+ #ifndef __KVM_X86_PMU_H
+ #define __KVM_X86_PMU_H
+ 
++#include <linux/nospec.h>
++
+ #define vcpu_to_pmu(vcpu) (&(vcpu)->arch.pmu)
+ #define pmu_to_vcpu(pmu)  (container_of((pmu), struct kvm_vcpu, arch.pmu))
+ #define pmc_to_pmu(pmc)   (&(pmc)->vcpu->arch.pmu)
+@@ -81,8 +83,12 @@ static inline bool pmc_is_enabled(struct
+ static inline struct kvm_pmc *get_gp_pmc(struct kvm_pmu *pmu, u32 msr,
+ 					 u32 base)
  {
- 	struct crypto_alg *alg;
--	struct crypto_alg *alg2;
+-	if (msr >= base && msr < base + pmu->nr_arch_gp_counters)
+-		return &pmu->gp_counters[msr - base];
++	if (msr >= base && msr < base + pmu->nr_arch_gp_counters) {
++		u32 index = array_index_nospec(msr - base,
++					       pmu->nr_arch_gp_counters);
++
++		return &pmu->gp_counters[index];
++	}
  
- 	down_read(&crypto_alg_sem);
- 	alg = spawn->alg;
--	alg2 = alg;
--	if (alg2)
--		alg2 = crypto_mod_get(alg2);
--	up_read(&crypto_alg_sem);
--
--	if (!alg2) {
--		if (alg)
--			crypto_shoot_alg(alg);
--		return ERR_PTR(-EAGAIN);
-+	if (alg && !crypto_mod_get(alg)) {
-+		alg->cra_flags |= CRYPTO_ALG_DYING;
-+		alg = NULL;
- 	}
-+	up_read(&crypto_alg_sem);
- 
--	return alg;
-+	return alg ?: ERR_PTR(-EAGAIN);
+ 	return NULL;
  }
- 
- struct crypto_tfm *crypto_spawn_tfm(struct crypto_spawn *spawn, u32 type,
---- a/crypto/api.c
-+++ b/crypto/api.c
-@@ -355,13 +355,12 @@ static unsigned int crypto_ctxsize(struc
- 	return len;
- }
- 
--void crypto_shoot_alg(struct crypto_alg *alg)
-+static void crypto_shoot_alg(struct crypto_alg *alg)
+@@ -92,8 +98,12 @@ static inline struct kvm_pmc *get_fixed_
  {
- 	down_write(&crypto_alg_sem);
- 	alg->cra_flags |= CRYPTO_ALG_DYING;
- 	up_write(&crypto_alg_sem);
- }
--EXPORT_SYMBOL_GPL(crypto_shoot_alg);
+ 	int base = MSR_CORE_PERF_FIXED_CTR0;
  
- struct crypto_tfm *__crypto_alloc_tfm(struct crypto_alg *alg, u32 type,
- 				      u32 mask)
---- a/crypto/internal.h
-+++ b/crypto/internal.h
-@@ -87,7 +87,6 @@ void crypto_alg_tested(const char *name,
- void crypto_remove_spawns(struct crypto_alg *alg, struct list_head *list,
- 			  struct crypto_alg *nalg);
- void crypto_remove_final(struct list_head *list);
--void crypto_shoot_alg(struct crypto_alg *alg);
- struct crypto_tfm *__crypto_alloc_tfm(struct crypto_alg *alg, u32 type,
- 				      u32 mask);
- void *crypto_create_tfm(struct crypto_alg *alg,
+-	if (msr >= base && msr < base + pmu->nr_arch_fixed_counters)
+-		return &pmu->fixed_counters[msr - base];
++	if (msr >= base && msr < base + pmu->nr_arch_fixed_counters) {
++		u32 index = array_index_nospec(msr - base,
++					       pmu->nr_arch_fixed_counters);
++
++		return &pmu->fixed_counters[index];
++	}
+ 
+ 	return NULL;
+ }
 
 
