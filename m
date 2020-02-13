@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F8E115C18B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:24:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81FAD15C20D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:29:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728620AbgBMPYL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:24:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33820 "EHLO mail.kernel.org"
+        id S2387771AbgBMP2n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:28:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728129AbgBMPXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:23:10 -0500
+        id S1729178AbgBMP0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:12 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8C2124689;
-        Thu, 13 Feb 2020 15:23:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED2EB2465D;
+        Thu, 13 Feb 2020 15:26:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607389;
-        bh=7cqMCJ9GXmCqEY6VdO/ifb5Idjq6R0CpGeUisgxTWpE=;
+        s=default; t=1581607571;
+        bh=+rb1xsD4rqswuV16rQ2zxJmrEqt0/6ApD8HljhcNnno=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0piQFXL/jHLRxsE39h2AQdFHEvSHGjU4eFhaV661XM7A0TxkuUCRrMmRxJjLJd+19
-         h9Sr6JT3BaGwm2RdBQevKzMfXI9afO5S30Vj1mPZGpV2TTRNMhxXCUGx3Fw2JRRlVw
-         OVFVp3orlq72Fz+ToBKuYqckSy+37r0T8Ah1h93E=
+        b=Nv00Vq364cDXhemRkl6elRYK6tlwKGH40+Tb1BlKC/jTOH/OQsb6hKafPHOghJhDj
+         9jDMs0EWNqtbAeigCsbntEVqB6awRqMjCQzn0i9nPZ5UJwttvffL6B6aIeFeL+x/lq
+         JZkMtBM9eLbtpdIc3iFOMPrbHjczb/taCQZJJYrU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Bader <stefan.bader@canonical.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.4 91/91] dm: fix potential for q->make_request_fn NULL pointer
-Date:   Thu, 13 Feb 2020 07:20:48 -0800
-Message-Id: <20200213151857.973752051@linuxfoundation.org>
+        stable@vger.kernel.org, Kit Chow <kchow@gigaio.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 4.14 146/173] PCI: Dont disable bridge BARs when assigning bus resources
+Date:   Thu, 13 Feb 2020 07:20:49 -0800
+Message-Id: <20200213152008.475185807@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
-References: <20200213151821.384445454@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,74 +44,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Snitzer <snitzer@redhat.com>
+From: Logan Gunthorpe <logang@deltatee.com>
 
-commit 47ace7e012b9f7ad71d43ac9063d335ea3d6820b upstream.
+commit 9db8dc6d0785225c42a37be7b44d1b07b31b8957 upstream.
 
-Move blk_queue_make_request() to dm.c:alloc_dev() so that
-q->make_request_fn is never NULL during the lifetime of a DM device
-(even one that is created without a DM table).
+Some PCI bridges implement BARs in addition to bridge windows.  For
+example, here's a PLX switch:
 
-Otherwise generic_make_request() will crash simply by doing:
-  dmsetup create -n test
-  mount /dev/dm-N /mnt
+  04:00.0 PCI bridge: PLX Technology, Inc. PEX 8724 24-Lane, 6-Port PCI
+            Express Gen 3 (8 GT/s) Switch, 19 x 19mm FCBGA (rev ca)
+	    (prog-if 00 [Normal decode])
+      Flags: bus master, fast devsel, latency 0, IRQ 30, NUMA node 0
+      Memory at 90a00000 (32-bit, non-prefetchable) [size=256K]
+      Bus: primary=04, secondary=05, subordinate=0a, sec-latency=0
+      I/O behind bridge: 00002000-00003fff
+      Memory behind bridge: 90000000-909fffff
+      Prefetchable memory behind bridge: 0000380000800000-0000380000bfffff
 
-While at it, move ->congested_data initialization out of
-dm.c:alloc_dev() and into the bio-based specific init method.
+Previously, when the kernel assigned resource addresses (with the
+pci=realloc command line parameter, for example) it could clear the struct
+resource corresponding to the BAR.  When this happened, lspci would report
+this BAR as "ignored":
 
-Reported-by: Stefan Bader <stefan.bader@canonical.com>
-BugLink: https://bugs.launchpad.net/bugs/1860231
-Fixes: ff36ab34583a ("dm: remove request-based logic from make_request_fn wrapper")
-Depends-on: c12c9a3c3860c ("dm: various cleanups to md->queue initialization code")
-Cc: stable@vger.kernel.org
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
-[smb: adjusted for context and dm_init_md_queue() exitsting in older
-      kernels, and congested_data embedded in backing_dev_info, and
-      dm_init_normal_md_queue() was called dm_init_old_md_queue()]
-Signed-off-by: Stefan Bader <stefan.bader@canonical.com>
+   Region 0: Memory at <ignored> (32-bit, non-prefetchable) [size=256K]
+
+This is because the kernel reports a zero start address and zero flags
+in the corresponding sysfs resource file and in /proc/bus/pci/devices.
+Investigation with 'lspci -x', however, shows the BIOS-assigned address
+will still be programmed in the device's BAR registers.
+
+It's clearly a bug that the kernel lost track of the BAR value, but in most
+cases, this still won't result in a visible issue because nothing uses the
+memory, so nothing is affected.  However, when an IOMMU is in use, it will
+not reserve this space in the IOVA because the kernel no longer thinks the
+range is valid.  (See dmar_init_reserved_ranges() for the Intel
+implementation of this.)
+
+Without the proper reserved range, a DMA mapping may allocate an IOVA that
+matches a bridge BAR, which results in DMA accesses going to the BAR
+instead of the intended RAM.
+
+The problem was in pci_assign_unassigned_root_bus_resources().  When any
+resource from a bridge device fails to get assigned, the code set the
+resource's flags to zero.  This makes sense for bridge windows, as they
+will be re-enabled later, but for regular BARs, it makes the kernel
+permanently lose track of the fact that they decode address space.
+
+Change pci_assign_unassigned_root_bus_resources() and
+pci_assign_unassigned_bridge_resources() so they only clear "res->flags"
+for bridge *windows*, not bridge BARs.
+
+Fixes: da7822e5ad71 ("PCI: update bridge resources to get more big ranges when allocating space (again)")
+Link: https://lore.kernel.org/r/20200108213208.4612-1-logang@deltatee.com
+[bhelgaas: commit log, check for pci_is_bridge()]
+Reported-by: Kit Chow <kchow@gigaio.com>
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/md/dm.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -2293,7 +2293,6 @@ static void dm_init_md_queue(struct mapp
- 	 * - must do so here (in alloc_dev callchain) before queue is used
- 	 */
- 	md->queue->queuedata = md;
--	md->queue->backing_dev_info.congested_data = md;
- }
+---
+ drivers/pci/setup-bus.c |   20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -1824,12 +1824,18 @@ again:
+ 	/* restore size and flags */
+ 	list_for_each_entry(fail_res, &fail_head, list) {
+ 		struct resource *res = fail_res->res;
++		int idx;
  
- static void dm_init_old_md_queue(struct mapped_device *md)
-@@ -2304,6 +2303,7 @@ static void dm_init_old_md_queue(struct
- 	/*
- 	 * Initialize aspects of queue that aren't relevant for blk-mq
- 	 */
-+	md->queue->backing_dev_info.congested_data = md;
- 	md->queue->backing_dev_info.congested_fn = dm_any_congested;
- 	blk_queue_bounce_limit(md->queue, BLK_BOUNCE_ANY);
- }
-@@ -2386,6 +2386,12 @@ static struct mapped_device *alloc_dev(i
- 		goto bad;
+ 		res->start = fail_res->start;
+ 		res->end = fail_res->end;
+ 		res->flags = fail_res->flags;
+-		if (fail_res->dev->subordinate)
+-			res->flags = 0;
++
++		if (pci_is_bridge(fail_res->dev)) {
++			idx = res - &fail_res->dev->resource[0];
++			if (idx >= PCI_BRIDGE_RESOURCES &&
++			    idx <= PCI_BRIDGE_RESOURCE_END)
++				res->flags = 0;
++		}
+ 	}
+ 	free_list(&fail_head);
  
- 	dm_init_md_queue(md);
-+	/*
-+	 * default to bio-based required ->make_request_fn until DM
-+	 * table is loaded and md->type established. If request-based
-+	 * table is loaded: blk-mq will override accordingly.
-+	 */
-+	blk_queue_make_request(md->queue, dm_make_request);
+@@ -1895,12 +1901,18 @@ again:
+ 	/* restore size and flags */
+ 	list_for_each_entry(fail_res, &fail_head, list) {
+ 		struct resource *res = fail_res->res;
++		int idx;
  
- 	md->disk = alloc_disk(1);
- 	if (!md->disk)
-@@ -2849,7 +2855,6 @@ int dm_setup_md_queue(struct mapped_devi
- 		break;
- 	case DM_TYPE_BIO_BASED:
- 		dm_init_old_md_queue(md);
--		blk_queue_make_request(md->queue, dm_make_request);
- 		/*
- 		 * DM handles splitting bios as needed.  Free the bio_split bioset
- 		 * since it won't be used (saves 1 process per bio-based DM device).
+ 		res->start = fail_res->start;
+ 		res->end = fail_res->end;
+ 		res->flags = fail_res->flags;
+-		if (fail_res->dev->subordinate)
+-			res->flags = 0;
++
++		if (pci_is_bridge(fail_res->dev)) {
++			idx = res - &fail_res->dev->resource[0];
++			if (idx >= PCI_BRIDGE_RESOURCES &&
++			    idx <= PCI_BRIDGE_RESOURCE_END)
++				res->flags = 0;
++		}
+ 	}
+ 	free_list(&fail_head);
+ 
 
 
