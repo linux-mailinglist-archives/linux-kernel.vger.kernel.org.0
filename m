@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEE0C15C74F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:14:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99CE915C604
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388465AbgBMQJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 11:09:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60850 "EHLO mail.kernel.org"
+        id S1729993AbgBMP4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:56:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728150AbgBMPWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:22:50 -0500
+        id S1729014AbgBMPZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:28 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94D3E24699;
-        Thu, 13 Feb 2020 15:22:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED1F1246B1;
+        Thu, 13 Feb 2020 15:25:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607369;
-        bh=Bzhi6lde7OpuvdLPjVRGmFwvB5ok4FRpi36AmEcxJis=;
+        s=default; t=1581607528;
+        bh=nGq0rymzF1adUybtnImcccFG/sb+UsgjBTZgG8TZMe4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kpj1E1KsrUGftVC1TP/x+kJsmU6B0BOVUeLogJrvQtDAdik0oqAFrO399rLfZUxwd
-         BFVTojHBgrMS6yATU3gRzZvENRO2rXt3MblbSdeZZrjI37tI+ON/whvhsp9JiQJp9T
-         VJ4tkRaUS+1QC0aUXrnWw1+fjhRpLc0746f6AVn4=
+        b=IRk3+8vhXn/s3Kzl52db5ZQ6Sz/1b6WGjTSuNqkhEueGz/VL4uoY5qKmpchomNser
+         fbw5l++pVkdhlfyTGuy2tnl0ufwXBESCKnekw7nhiu9bgShFNy3JfFm7dAiQ50M+H5
+         pH7YdsSWwlo/CpQFHgAY2CZOUX9tb30qMQbR+WX0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
-        Marios Pomonis <pomonis@google.com>,
-        Andrew Honig <ahonig@google.com>,
-        Jim Mattson <jmattson@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.4 43/91] KVM: x86: Protect MSR-based index computations in fixed_msr_to_seg_unit() from Spectre-v1/L1TF attacks
-Date:   Thu, 13 Feb 2020 07:20:00 -0800
-Message-Id: <20200213151838.314721719@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.14 098/173] ext2: Adjust indentation in ext2_fill_super
+Date:   Thu, 13 Feb 2020 07:20:01 -0800
+Message-Id: <20200213151957.595854450@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
-References: <20200213151821.384445454@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,55 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marios Pomonis <pomonis@google.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit 25a5edea71b7c154b6a0b8cec14c711cafa31d26 upstream.
+commit d9e9866803f7b6c3fdd35d345e97fb0b2908bbbc upstream.
 
-This fixes a Spectre-v1/L1TF vulnerability in fixed_msr_to_seg_unit().
-This function contains index computations based on the
-(attacker-controlled) MSR number.
+Clang warns:
 
-Fixes: de9aef5e1ad6 ("KVM: MTRR: introduce fixed_mtrr_segment table")
+../fs/ext2/super.c:1076:3: warning: misleading indentation; statement is
+not part of the previous 'if' [-Wmisleading-indentation]
+        sbi->s_groups_count = ((le32_to_cpu(es->s_blocks_count) -
+        ^
+../fs/ext2/super.c:1074:2: note: previous statement is here
+        if (EXT2_BLOCKS_PER_GROUP(sb) == 0)
+        ^
+1 warning generated.
 
-Signed-off-by: Nick Finco <nifi@google.com>
-Signed-off-by: Marios Pomonis <pomonis@google.com>
-Reviewed-by: Andrew Honig <ahonig@google.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+This warning occurs because there is a space before the tab on this
+line. Remove it so that the indentation is consistent with the Linux
+kernel coding style and clang no longer warns.
+
+Fixes: 41f04d852e35 ("[PATCH] ext2: fix mounts at 16T")
+Link: https://github.com/ClangBuiltLinux/linux/issues/827
+Link: https://lore.kernel.org/r/20191218031930.31393-1-natechancellor@gmail.com
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/mtrr.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ fs/ext2/super.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kvm/mtrr.c
-+++ b/arch/x86/kvm/mtrr.c
-@@ -17,6 +17,7 @@
-  */
+--- a/fs/ext2/super.c
++++ b/fs/ext2/super.c
+@@ -1077,9 +1077,9 @@ static int ext2_fill_super(struct super_
  
- #include <linux/kvm_host.h>
-+#include <linux/nospec.h>
- #include <asm/mtrr.h>
- 
- #include "cpuid.h"
-@@ -202,11 +203,15 @@ static bool fixed_msr_to_seg_unit(u32 ms
- 		break;
- 	case MSR_MTRRfix16K_80000 ... MSR_MTRRfix16K_A0000:
- 		*seg = 1;
--		*unit = msr - MSR_MTRRfix16K_80000;
-+		*unit = array_index_nospec(
-+			msr - MSR_MTRRfix16K_80000,
-+			MSR_MTRRfix16K_A0000 - MSR_MTRRfix16K_80000 + 1);
- 		break;
- 	case MSR_MTRRfix4K_C0000 ... MSR_MTRRfix4K_F8000:
- 		*seg = 2;
--		*unit = msr - MSR_MTRRfix4K_C0000;
-+		*unit = array_index_nospec(
-+			msr - MSR_MTRRfix4K_C0000,
-+			MSR_MTRRfix4K_F8000 - MSR_MTRRfix4K_C0000 + 1);
- 		break;
- 	default:
- 		return false;
+ 	if (EXT2_BLOCKS_PER_GROUP(sb) == 0)
+ 		goto cantfind_ext2;
+- 	sbi->s_groups_count = ((le32_to_cpu(es->s_blocks_count) -
+- 				le32_to_cpu(es->s_first_data_block) - 1)
+- 					/ EXT2_BLOCKS_PER_GROUP(sb)) + 1;
++	sbi->s_groups_count = ((le32_to_cpu(es->s_blocks_count) -
++				le32_to_cpu(es->s_first_data_block) - 1)
++					/ EXT2_BLOCKS_PER_GROUP(sb)) + 1;
+ 	db_count = (sbi->s_groups_count + EXT2_DESC_PER_BLOCK(sb) - 1) /
+ 		   EXT2_DESC_PER_BLOCK(sb);
+ 	sbi->s_group_desc = kmalloc (db_count * sizeof (struct buffer_head *), GFP_KERNEL);
 
 
