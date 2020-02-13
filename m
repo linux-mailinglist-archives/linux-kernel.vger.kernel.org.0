@@ -2,118 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2700215BFED
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 15:01:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23FEC15BFE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 15:00:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730206AbgBMOBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 09:01:01 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:44362 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730036AbgBMOBB (ORCPT
+        id S1730196AbgBMOAt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 09:00:49 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:38147 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730036AbgBMOAt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 09:01:01 -0500
-Received: by mail-qk1-f194.google.com with SMTP id v195so5683258qkb.11
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 06:01:00 -0800 (PST)
+        Thu, 13 Feb 2020 09:00:49 -0500
+Received: by mail-qk1-f195.google.com with SMTP id z19so5713035qkj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 06:00:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GwvJtBvLYgXHz2Xkjo28kGnQcGUFvmoCc8Tq+skqxFM=;
-        b=WoSPPLB6quBGtBpRywwrlPUN/efg7Ughe/HaH3khTmKhm8TtRvn1omHwpi/Uje11Nc
-         pJJ434RD5vc6K56AF1flgXq7rGgQL4eIbgy0vNQWX3Ilo6r1XlrPGVcQUkzDZJVdNAqL
-         CQWRmZ6MDJKjdXiViv85LIZth9OYzoQf4NKp2R4S9uMoWLn4jAzJvRHErhw/tberXn1U
-         afxPCPN8yIbn8R73x0dy1qStRMFKKk0TU7EJIVtQo9A5/go6CKtMqKAybDD7f1leMzbr
-         RkHP02AhsZ8v09CuFrX1byfuhGihLXF2U77kvpA2MNTc/JMV0yrMCE7PJN/PnIDh9OCX
-         EVqQ==
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=+OmXmEli0YoEZar5L9LIwtTHV0usbuhTp5GIfzjURVA=;
+        b=vJw/VCws0hdDkZQcKilcmjnTFz3FhZIRsZNQPk7+AdJtsN22IXKbziuC4UMuhJ3cgf
+         5Qi/sg4UZJ+fdPDcFdNgJsa1vgfDND18BN3NRtjgXKNG0DPh73ltFtJyw0rbw7EMYvjQ
+         sE9rwkRY3PhCP+olmbS2ctpkiRKWln5/at4miQs6+g6KR6172PlcF3IIyssymQkDnUzE
+         9MFo0QWOL5rRXZ3TelHmWjpFF58fMRKn+5SnaNiSF9iCnOUruMLwuXsS0O9Ql1pKiogw
+         CGuATc7/L7lvPy/nSwJKXXffdPLEfF20q7MBapxgRYMuhIz9RfuQ7WzL/p3DGECmFjkF
+         +dtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GwvJtBvLYgXHz2Xkjo28kGnQcGUFvmoCc8Tq+skqxFM=;
-        b=fKKFwfSsDflt2/E4MEl9M/z7OTpAt0nPJGQVqJ1mdFjAFwJXCErO/DzgFO/JeaWfUY
-         t+TdXxlChcjILpxosFBWGzy4BfrMcOovjdTdHcLJ5YApS6gPmrCnmLpcH0QESHkaOhca
-         TwO+/RHXFnIqIuxUwwcwbwzgxiGMEILJY8937EVMnxS6B5lOcPl1drlefrqKglXNuzRC
-         2PtK4A6VVcofyili/ycUsQulXF7lCGBvg9XKexuuOxhIsoXO6r4H7wcJOHMuMyuJ3FQr
-         huXJ90AcTImgbIRbbAxD/tfrwiPLb5ECtXdJRyzu+nQxkd1h0GLv0Q7Jn+S8jifLdH5V
-         5UWQ==
-X-Gm-Message-State: APjAAAWBbIZHXckkTFTBlLzknXqPm1wupSstMBQu/Wlx958pHb0bROgg
-        S+NKfCtXxiM2rJoN8fDSiFhKwoF8nlJAQqAf+jk=
-X-Google-Smtp-Source: APXvYqyjD4OX/YI4q5ugfE3GeGjRdg6xfub/ylaaIdK2920TyQEJp7ys7DWIVv34YSpAoPAjOFPsF7u/zxzxnLNIOJE=
-X-Received: by 2002:a37:a642:: with SMTP id p63mr16214664qke.85.1581602456914;
- Thu, 13 Feb 2020 06:00:56 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=+OmXmEli0YoEZar5L9LIwtTHV0usbuhTp5GIfzjURVA=;
+        b=lYxTjum3vW2mdHFl8iKV40W60pyxf8t7czv6kavjhna0S9Co6EXHb41+KDmEsQ6y+v
+         G6tKolGcfQ6V0EfL9jGojF0yP6TutmrdjlSn34DSjI4mFgOZE/WexqtOoxFpkZrIA/wc
+         NNvTLzPTtzzQajszgqLQoa0YIMFlkVVxHtkpwsXeIFBvF1OYs8TkZf/28MLIISzgqg5s
+         Y7kBvmBMkF20ad1t9o/mH2/eqgc3wS66CRT/9dKqlNawvSl47T9lxEumhX8lxSUblCKx
+         5XMWOzFJxgOuwXlV3fR8RrmAF+QBl8AGKk0X7ysfGBVevGDZvTtclXMaMH+6sMCQkljN
+         T8xQ==
+X-Gm-Message-State: APjAAAVg//5iLYZyusl90rceJZFkLctYN1Mw8WIqWEC8OMkT208RJrUK
+        Q87egHR/fLTjeEZ2pk8KSqccWz4FcGt/W2EIPN0=
+X-Google-Smtp-Source: APXvYqzMUmauIMQqKfMnuiYYHMt37ulcHUnqFD84z9UIgBjD8bJul5+1gEqazdlBsck9hQfMzLXbCGxFSibExQowRS4=
+X-Received: by 2002:a37:c84:: with SMTP id 126mr15833181qkm.372.1581602447966;
+ Thu, 13 Feb 2020 06:00:47 -0800 (PST)
 MIME-Version: 1.0
-References: <20200213012353.26815-1-bibby.hsieh@mediatek.com>
- <20200213012353.26815-2-bibby.hsieh@mediatek.com> <1581566763.12071.1.camel@mtksdaap41>
-In-Reply-To: <1581566763.12071.1.camel@mtksdaap41>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Thu, 13 Feb 2020 15:00:45 +0100
-Message-ID: <CAFqH_51r8CvBz3J-TffYaMsZQwX=hdDVjEz9+BmBeC=QurP7Ug@mail.gmail.com>
-Subject: Re: [PATCH 2/2] drm/mediatek: add fb swap in async_update
-To:     CK Hu <ck.hu@mediatek.com>
-Cc:     Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Received: by 2002:a0c:80cb:0:0:0:0:0 with HTTP; Thu, 13 Feb 2020 06:00:47
+ -0800 (PST)
+Reply-To: sgtsafiibrahim@gmail.com
+From:   SGT SAFI IBRAHIM <artintall1@gmail.com>
+Date:   Thu, 13 Feb 2020 15:00:47 +0100
+Message-ID: <CACTzrRnTMsSDVKJ1e7NZgnDUT9BLEC5vARycz_F2VZ_m6r8mfw@mail.gmail.com>
+Subject: Hello Greetings.
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+--=20
+Hello Greetings.
 
-Missatge de CK Hu <ck.hu@mediatek.com> del dia dj., 13 de febr. 2020 a les 5:06:
->
-> Hi, Bibby:
->
-> On Thu, 2020-02-13 at 09:23 +0800, Bibby Hsieh wrote:
-> > Besides x, y position, width and height,
-> > fb also need updating in async update.
-> >
->
-> Reviewed-by: CK Hu <ck.hu@mediatek.com>
->
-> > Fixes: 920fffcc8912 ("drm/mediatek: update cursors by using async atomic update")
-> >
-> > Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
-> > ---
+I am happy to have you here as a friend, i hope all is well with you,
+and how are you enjoying your day over there in your country?
 
-This patch actually fixes two issues as explained in [1], I send the
-patch without seeing that another one was already sent. Both do the
-same thing. So,
+My name is SGT SAFI IBRAHIM,. I=E2=80=99m 28 years old an orphan my parents
+died when I was five years old nobody to help me,I send you my
+business proposal with tears and sorrow Please let this not be a
+surprised message to you.
 
-Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+I am single. an Nurse in America military but i am presently in
+Afghanistan for the fight against terrorism and peace keeping, I need
+an urgent help from you i have in my possession the sum of $3.5million
+USD I made here in Afghanistan.
 
-[1] https://lkml.org/lkml/2020/2/13/286
+I want you to stand as my beneficiary receive the fund you will assist
+me to invest it in a good profitable Venture or you keep it for me
+until I arrive your country, I will give You 40% of the total money
+for your assistance after you have receive The money.
 
-> >  drivers/gpu/drm/mediatek/mtk_drm_plane.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_plane.c b/drivers/gpu/drm/mediatek/mtk_drm_plane.c
-> > index d32b494ff1de..e084c36fdd8a 100644
-> > --- a/drivers/gpu/drm/mediatek/mtk_drm_plane.c
-> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_plane.c
-> > @@ -122,6 +122,7 @@ static void mtk_plane_atomic_async_update(struct drm_plane *plane,
-> >       plane->state->src_y = new_state->src_y;
-> >       plane->state->src_h = new_state->src_h;
-> >       plane->state->src_w = new_state->src_w;
-> > +     swap(plane->state->fb, new_state->fb);
-> >       state->pending.async_dirty = true;
-> >
-> >       mtk_drm_crtc_async_update(new_state->crtc, plane, new_state);
->
-> --
-> CK Hu <ck.hu@mediatek.com>
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Take good care of yourself.your urgent reply is needed is my private
+email address below  misssaifibrahim@gmail.com, for more details.
+
+Best Resgards
+SGT SAFI IBRAHIM,
