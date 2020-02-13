@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68E3815C450
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A29C15C351
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729975AbgBMPqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:46:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49862 "EHLO mail.kernel.org"
+        id S1729464AbgBMPkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:40:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727873AbgBMP1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:22 -0500
+        id S2387800AbgBMP2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:49 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67A8F2467D;
-        Thu, 13 Feb 2020 15:27:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 397E9222C2;
+        Thu, 13 Feb 2020 15:28:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607642;
-        bh=rCeMCLFSen/SyZsts+0rnrFBV2IT3YKK6T7buIseJiQ=;
+        s=default; t=1581607729;
+        bh=f1s+YvCK7KWxdlT3jqyahDQ8NHLzxmyGOCafi62aq2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IW34IyL2aH8d9yFxW2PPvuRMA33NwUs47sZPHiZ7VuckKfxinvA+mhPaG/QfeFWn4
-         zjrxbCYgZvUgP6jEjIzn8bIqqAJ8aOaeoQFlKtIgmm8Sri00hqATBh1bjdg5L4EGMT
-         i/tcQw0e/im7kCFoa7eGPwybw2J2r7vIEbcQwwpQ=
+        b=w7VVvxXsCze9CO0K6WLlHrP9cAzv87prVwNjWP9+IWKr506B1xDwSDRrZVB4BzyYG
+         P4oY38hiJGKsrhvpRYbjIRaHJfjpvIJn7goEmbpM1Cz73RBLxOEWbKwgxiP2/tmC5L
+         dg0Sz9AYjePxG7ksGHCgNcnhzCeSN27BSqgRNBW8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?Karl=20Rudb=C3=A6k=20Olsen?= <karl@micro-technic.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 5.4 49/96] ARM: dts: at91: sama5d3: fix maximum peripheral clock rates
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 5.5 060/120] arm64: dts: renesas: r8a77990: ebisu: Remove clkout-lr-synchronous from sound
 Date:   Thu, 13 Feb 2020 07:20:56 -0800
-Message-Id: <20200213151858.386374006@linuxfoundation.org>
+Message-Id: <20200213151921.899823700@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,170 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit ee0aa926ddb0bd8ba59e33e3803b3b5804e3f5da upstream.
+commit bf2b74ce9b33a2edd6ba1930ce60a71830790910 upstream.
 
-Currently the maximum rate for peripheral clock is calculated based on a
-typical 133MHz MCK. The maximum frequency is defined in the datasheet as a
-ratio to MCK. Some sama5d3 platforms are using a 166MHz MCK. Update the
-device trees to match the maximum rate based on 166MHz.
+rcar_sound doesn't support clkout-lr-synchronous in upstream.
+It was supported under out-of-tree rcar_sound.
+upstream rcar_sound is supporting
+	- clkout-lr-synchronous
+	+ clkout-lr-asynchronous
 
-Reported-by: Karl Rudbæk Olsen <karl@micro-technic.com>
-Fixes: d2e8190b7916 ("ARM: at91/dt: define sama5d3 clocks")
-Link: https://lore.kernel.org/r/20200110172007.1253659-1-alexandre.belloni@bootlin.com
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Link: https://lore.kernel.org/r/87mubt3tux.wl-kuninori.morimoto.gx@renesas.com
+Fixes: 56629fcba94c698d ("arm64: dts: renesas: ebisu: Enable Audio")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/sama5d3.dtsi      |   28 ++++++++++++++--------------
- arch/arm/boot/dts/sama5d3_can.dtsi  |    4 ++--
- arch/arm/boot/dts/sama5d3_uart.dtsi |    4 ++--
- 3 files changed, 18 insertions(+), 18 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/arch/arm/boot/dts/sama5d3.dtsi
-+++ b/arch/arm/boot/dts/sama5d3.dtsi
-@@ -1188,49 +1188,49 @@
- 					usart0_clk: usart0_clk {
- 						#clock-cells = <0>;
- 						reg = <12>;
--						atmel,clk-output-range = <0 66000000>;
-+						atmel,clk-output-range = <0 83000000>;
- 					};
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -636,7 +636,6 @@
+ 	/* audio_clkout0/1/2/3 */
+ 	#clock-cells = <1>;
+ 	clock-frequency = <12288000 11289600>;
+-	clkout-lr-synchronous;
  
- 					usart1_clk: usart1_clk {
- 						#clock-cells = <0>;
- 						reg = <13>;
--						atmel,clk-output-range = <0 66000000>;
-+						atmel,clk-output-range = <0 83000000>;
- 					};
+ 	status = "okay";
  
- 					usart2_clk: usart2_clk {
- 						#clock-cells = <0>;
- 						reg = <14>;
--						atmel,clk-output-range = <0 66000000>;
-+						atmel,clk-output-range = <0 83000000>;
- 					};
- 
- 					usart3_clk: usart3_clk {
- 						#clock-cells = <0>;
- 						reg = <15>;
--						atmel,clk-output-range = <0 66000000>;
-+						atmel,clk-output-range = <0 83000000>;
- 					};
- 
- 					uart0_clk: uart0_clk {
- 						#clock-cells = <0>;
- 						reg = <16>;
--						atmel,clk-output-range = <0 66000000>;
-+						atmel,clk-output-range = <0 83000000>;
- 					};
- 
- 					twi0_clk: twi0_clk {
- 						reg = <18>;
- 						#clock-cells = <0>;
--						atmel,clk-output-range = <0 16625000>;
-+						atmel,clk-output-range = <0 41500000>;
- 					};
- 
- 					twi1_clk: twi1_clk {
- 						#clock-cells = <0>;
- 						reg = <19>;
--						atmel,clk-output-range = <0 16625000>;
-+						atmel,clk-output-range = <0 41500000>;
- 					};
- 
- 					twi2_clk: twi2_clk {
- 						#clock-cells = <0>;
- 						reg = <20>;
--						atmel,clk-output-range = <0 16625000>;
-+						atmel,clk-output-range = <0 41500000>;
- 					};
- 
- 					mci0_clk: mci0_clk {
-@@ -1246,19 +1246,19 @@
- 					spi0_clk: spi0_clk {
- 						#clock-cells = <0>;
- 						reg = <24>;
--						atmel,clk-output-range = <0 133000000>;
-+						atmel,clk-output-range = <0 166000000>;
- 					};
- 
- 					spi1_clk: spi1_clk {
- 						#clock-cells = <0>;
- 						reg = <25>;
--						atmel,clk-output-range = <0 133000000>;
-+						atmel,clk-output-range = <0 166000000>;
- 					};
- 
- 					tcb0_clk: tcb0_clk {
- 						#clock-cells = <0>;
- 						reg = <26>;
--						atmel,clk-output-range = <0 133000000>;
-+						atmel,clk-output-range = <0 166000000>;
- 					};
- 
- 					pwm_clk: pwm_clk {
-@@ -1269,7 +1269,7 @@
- 					adc_clk: adc_clk {
- 						#clock-cells = <0>;
- 						reg = <29>;
--						atmel,clk-output-range = <0 66000000>;
-+						atmel,clk-output-range = <0 83000000>;
- 					};
- 
- 					dma0_clk: dma0_clk {
-@@ -1300,13 +1300,13 @@
- 					ssc0_clk: ssc0_clk {
- 						#clock-cells = <0>;
- 						reg = <38>;
--						atmel,clk-output-range = <0 66000000>;
-+						atmel,clk-output-range = <0 83000000>;
- 					};
- 
- 					ssc1_clk: ssc1_clk {
- 						#clock-cells = <0>;
- 						reg = <39>;
--						atmel,clk-output-range = <0 66000000>;
-+						atmel,clk-output-range = <0 83000000>;
- 					};
- 
- 					sha_clk: sha_clk {
---- a/arch/arm/boot/dts/sama5d3_can.dtsi
-+++ b/arch/arm/boot/dts/sama5d3_can.dtsi
-@@ -36,13 +36,13 @@
- 					can0_clk: can0_clk {
- 						#clock-cells = <0>;
- 						reg = <40>;
--						atmel,clk-output-range = <0 66000000>;
-+						atmel,clk-output-range = <0 83000000>;
- 					};
- 
- 					can1_clk: can1_clk {
- 						#clock-cells = <0>;
- 						reg = <41>;
--						atmel,clk-output-range = <0 66000000>;
-+						atmel,clk-output-range = <0 83000000>;
- 					};
- 				};
- 			};
---- a/arch/arm/boot/dts/sama5d3_uart.dtsi
-+++ b/arch/arm/boot/dts/sama5d3_uart.dtsi
-@@ -41,13 +41,13 @@
- 					uart0_clk: uart0_clk {
- 						#clock-cells = <0>;
- 						reg = <16>;
--						atmel,clk-output-range = <0 66000000>;
-+						atmel,clk-output-range = <0 83000000>;
- 					};
- 
- 					uart1_clk: uart1_clk {
- 						#clock-cells = <0>;
- 						reg = <17>;
--						atmel,clk-output-range = <0 66000000>;
-+						atmel,clk-output-range = <0 83000000>;
- 					};
- 				};
- 			};
 
 
