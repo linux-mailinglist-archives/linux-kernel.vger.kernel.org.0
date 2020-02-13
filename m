@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D41915C73C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:13:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AB7815C5EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388404AbgBMQIa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 11:08:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33382 "EHLO mail.kernel.org"
+        id S2387446AbgBMPZc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:25:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728242AbgBMPXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:23:05 -0500
+        id S1728539AbgBMPX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:56 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 198DF24689;
-        Thu, 13 Feb 2020 15:23:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8526724691;
+        Thu, 13 Feb 2020 15:23:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607385;
-        bh=RVMrRn/672904ZJ9LKWHjuRWZYknUEX76x2QFpM7TLA=;
+        s=default; t=1581607435;
+        bh=+n9UQHxAvQgQFJMau27dS5mtw+cO/bqHPKaO4xMeHrA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y5ablhpWrHtidkRx4+d2eMVDlw9DZo8DJs0ce3SlBl1dAYR+93vEVZnWY/b7XsT4/
-         4QZ5Bd/B7PBd7tGSR2pQpfCFpQCSAi3wd8RCF+RjHqGomGK9pvtNQL0BJnjYkdUW84
-         s7pfkhg5IJ/57uf6McnlZOiyR0CUsLjDJxHk5TCw=
+        b=AjGqU1OveDs7GNWrXZUacsiWWaHFK1w64Hn697jhWpDN0aRvyZicq0djqWqF7JuMO
+         5lHIbPmddqvzhHs+zUZTg6v8IAA2xCmUoqRT1WTET4VMjS37pPlT0ezM8D+S5DCgA1
+         V6rBWMAvXm5FflrTw2C31fFQ0ED1NVGW8yytNVa4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.4 57/91] mfd: rn5t618: Mark ADC control register volatile
-Date:   Thu, 13 Feb 2020 07:20:14 -0800
-Message-Id: <20200213151843.961727486@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.9 071/116] ubi: Fix an error pointer dereference in error handling code
+Date:   Thu, 13 Feb 2020 07:20:15 -0800
+Message-Id: <20200213151910.510226175@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
-References: <20200213151821.384445454@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,30 +43,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Kemnade <andreas@kemnade.info>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 2f3dc25c0118de03a00ddc88b61f7216854f534d upstream.
+commit 5d3805af279c93ef49a64701f35254676d709622 upstream.
 
-There is a bit which gets cleared after conversion.
+If "seen_pebs = init_seen(ubi);" fails then "seen_pebs" is an error pointer
+and we try to kfree() it which results in an Oops.
 
-Fixes: 9bb9e29c78f8 ("mfd: Add Ricoh RN5T618 PMIC core driver")
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+This patch re-arranges the error handling so now it only frees things
+which have been allocated successfully.
+
+Fixes: daef3dd1f0ae ("UBI: Fastmap: Add self check to detect absent PEBs")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mfd/rn5t618.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/mtd/ubi/fastmap.c |   21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
---- a/drivers/mfd/rn5t618.c
-+++ b/drivers/mfd/rn5t618.c
-@@ -28,6 +28,7 @@ static bool rn5t618_volatile_reg(struct
- 	case RN5T618_WATCHDOGCNT:
- 	case RN5T618_DCIRQ:
- 	case RN5T618_ILIMDATAH ... RN5T618_AIN0DATAL:
-+	case RN5T618_ADCCNT3:
- 	case RN5T618_IR_ADC1 ... RN5T618_IR_ADC3:
- 	case RN5T618_IR_GPR:
- 	case RN5T618_IR_GPF:
+--- a/drivers/mtd/ubi/fastmap.c
++++ b/drivers/mtd/ubi/fastmap.c
+@@ -1127,7 +1127,7 @@ static int ubi_write_fastmap(struct ubi_
+ 	struct rb_node *tmp_rb;
+ 	int ret, i, j, free_peb_count, used_peb_count, vol_count;
+ 	int scrub_peb_count, erase_peb_count;
+-	unsigned long *seen_pebs = NULL;
++	unsigned long *seen_pebs;
+ 
+ 	fm_raw = ubi->fm_buf;
+ 	memset(ubi->fm_buf, 0, ubi->fm_size);
+@@ -1141,7 +1141,7 @@ static int ubi_write_fastmap(struct ubi_
+ 	dvbuf = new_fm_vbuf(ubi, UBI_FM_DATA_VOLUME_ID);
+ 	if (!dvbuf) {
+ 		ret = -ENOMEM;
+-		goto out_kfree;
++		goto out_free_avbuf;
+ 	}
+ 
+ 	avhdr = ubi_get_vid_hdr(avbuf);
+@@ -1150,7 +1150,7 @@ static int ubi_write_fastmap(struct ubi_
+ 	seen_pebs = init_seen(ubi);
+ 	if (IS_ERR(seen_pebs)) {
+ 		ret = PTR_ERR(seen_pebs);
+-		goto out_kfree;
++		goto out_free_dvbuf;
+ 	}
+ 
+ 	spin_lock(&ubi->volumes_lock);
+@@ -1318,7 +1318,7 @@ static int ubi_write_fastmap(struct ubi_
+ 	ret = ubi_io_write_vid_hdr(ubi, new_fm->e[0]->pnum, avbuf);
+ 	if (ret) {
+ 		ubi_err(ubi, "unable to write vid_hdr to fastmap SB!");
+-		goto out_kfree;
++		goto out_free_seen;
+ 	}
+ 
+ 	for (i = 0; i < new_fm->used_blocks; i++) {
+@@ -1340,7 +1340,7 @@ static int ubi_write_fastmap(struct ubi_
+ 		if (ret) {
+ 			ubi_err(ubi, "unable to write vid_hdr to PEB %i!",
+ 				new_fm->e[i]->pnum);
+-			goto out_kfree;
++			goto out_free_seen;
+ 		}
+ 	}
+ 
+@@ -1350,7 +1350,7 @@ static int ubi_write_fastmap(struct ubi_
+ 		if (ret) {
+ 			ubi_err(ubi, "unable to write fastmap to PEB %i!",
+ 				new_fm->e[i]->pnum);
+-			goto out_kfree;
++			goto out_free_seen;
+ 		}
+ 	}
+ 
+@@ -1360,10 +1360,13 @@ static int ubi_write_fastmap(struct ubi_
+ 	ret = self_check_seen(ubi, seen_pebs);
+ 	dbg_bld("fastmap written!");
+ 
+-out_kfree:
+-	ubi_free_vid_buf(avbuf);
+-	ubi_free_vid_buf(dvbuf);
++out_free_seen:
+ 	free_seen(seen_pebs);
++out_free_dvbuf:
++	ubi_free_vid_buf(dvbuf);
++out_free_avbuf:
++	ubi_free_vid_buf(avbuf);
++
+ out:
+ 	return ret;
+ }
 
 
