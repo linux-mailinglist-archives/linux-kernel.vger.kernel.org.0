@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C72D15C2F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:39:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0B8415C48F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728594AbgBMPik (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:38:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59234 "EHLO mail.kernel.org"
+        id S1729521AbgBMPs3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:48:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729681AbgBMP3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:29:12 -0500
+        id S1729296AbgBMP04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:56 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 571EA24670;
-        Thu, 13 Feb 2020 15:29:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97B4C2465D;
+        Thu, 13 Feb 2020 15:26:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607752;
-        bh=dHeL7CXV9VZmIwpyozwNJgQsEYNVcPDI375P/GphZS8=;
+        s=default; t=1581607615;
+        bh=S7bOtw8DY7CZu+78NqMqNEcEoAyaXmvP+s1qMErXI6Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O7id/n/caYU4kpKbyRpEzebwD+eJeYfXRmSY4q3KDc/Lo6H685cZAITt5cly0ufau
-         RDu1DG07FERyGRoM/z8xyfdesCUGjrq1SS5V9JoGZRK929nAXKKHoYpTnqsNfI94VQ
-         1r4JFxytS4owOldJECALgCtvmQCNj1u6dc5QHGZ0=
+        b=tLeSNH9J1f9MJonz0D0Jm+ULZbI7LKM5Bpx31fz39BHrG0XuxvbWLc+QLik/P4kzB
+         KdLKfLPUpFoZy0KQrHbRQqgl3G69HLDaSa8oU0xzyQAh9mwUtIcO7WCtu0Nr2atWl7
+         e4dEonyJB7UBMn04VAMIbljbvoB6XrgTzRavQJls=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesper Nilsson <jesper.nilsson@axis.com>,
-        Lars Persson <lars.persson@axis.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.5 096/120] crypto: artpec6 - return correct error code for failed setkey()
-Date:   Thu, 13 Feb 2020 07:21:32 -0800
-Message-Id: <20200213151933.339239596@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Dmitry Safonov <dima@arista.com>
+Subject: [PATCH 4.19 52/52] x86/stackframe, x86/ftrace: Add pt_regs frame annotations
+Date:   Thu, 13 Feb 2020 07:21:33 -0800
+Message-Id: <20200213151831.169671579@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
+References: <20200213151810.331796857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +48,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit b828f905904cd76424230c69741a4cabb0174168 upstream.
+commit ea1ed38dba64b64a245ab8ca1406269d17b99485 upstream.
 
-->setkey() is supposed to retun -EINVAL for invalid key lengths, not -1.
+When CONFIG_FRAME_POINTER, we should mark pt_regs frames.
 
-Fixes: a21eb94fc4d3 ("crypto: axis - add ARTPEC-6/7 crypto accelerator driver")
-Cc: Jesper Nilsson <jesper.nilsson@axis.com>
-Cc: Lars Persson <lars.persson@axis.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Acked-by: Lars Persson <lars.persson@axis.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[4.19 backport; added user-visible changelog]
+Signed-off-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/axis/artpec6_crypto.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/ftrace_32.S |    3 +++
+ arch/x86/kernel/ftrace_64.S |    3 +++
+ 2 files changed, 6 insertions(+)
 
---- a/drivers/crypto/axis/artpec6_crypto.c
-+++ b/drivers/crypto/axis/artpec6_crypto.c
-@@ -1251,7 +1251,7 @@ static int artpec6_crypto_aead_set_key(s
+--- a/arch/x86/kernel/ftrace_32.S
++++ b/arch/x86/kernel/ftrace_32.S
+@@ -9,6 +9,7 @@
+ #include <asm/export.h>
+ #include <asm/ftrace.h>
+ #include <asm/nospec-branch.h>
++#include <asm/frame.h>
  
- 	if (len != 16 && len != 24 && len != 32) {
- 		crypto_aead_set_flags(tfm, CRYPTO_TFM_RES_BAD_KEY_LEN);
--		return -1;
-+		return -EINVAL;
- 	}
+ #ifdef CC_USING_FENTRY
+ # define function_hook	__fentry__
+@@ -131,6 +132,8 @@ ENTRY(ftrace_regs_caller)
+ 	pushl	%ecx
+ 	pushl	%ebx
  
- 	ctx->key_length = len;
++	ENCODE_FRAME_POINTER
++
+ 	movl	12*4(%esp), %eax		/* Load ip (1st parameter) */
+ 	subl	$MCOUNT_INSN_SIZE, %eax		/* Adjust ip */
+ #ifdef CC_USING_FENTRY
+--- a/arch/x86/kernel/ftrace_64.S
++++ b/arch/x86/kernel/ftrace_64.S
+@@ -9,6 +9,7 @@
+ #include <asm/export.h>
+ #include <asm/nospec-branch.h>
+ #include <asm/unwind_hints.h>
++#include <asm/frame.h>
+ 
+ 	.code64
+ 	.section .entry.text, "ax"
+@@ -222,6 +223,8 @@ GLOBAL(ftrace_regs_caller_op_ptr)
+ 	leaq MCOUNT_REG_SIZE+8*2(%rsp), %rcx
+ 	movq %rcx, RSP(%rsp)
+ 
++	ENCODE_FRAME_POINTER
++
+ 	/* regs go into 4th parameter */
+ 	leaq (%rsp), %rcx
+ 
 
 
