@@ -2,80 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE8A615CDFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 23:17:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DA4A15CDFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 23:18:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728248AbgBMWRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 17:17:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58832 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728023AbgBMWQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 17:16:57 -0500
-Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728267AbgBMWSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 17:18:10 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:53134 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727594AbgBMWSK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 17:18:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581632289;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Qi71n+eauOK1OSXi8ZkVfgUb7+wXkbcDfLtR5AJoSms=;
+        b=YSioyUaVPsB5icC03M223TQ/33iAuCbDn7G0W4Omlo3CyCDi+pDgIQLT+VhBJuzhYD2kdP
+        JV1muXPSVYGPbcIHKPR0JXb8PQs77A+g8EFYhYibNAae78e6/55z44wOPlskIKjZBwppnw
+        WJ37c2qs47bhHp1fSZrrmiFdhkEsS28=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-229-DupnYgKvNvSJ6uPJg0My1A-1; Thu, 13 Feb 2020 17:18:05 -0500
+X-MC-Unique: DupnYgKvNvSJ6uPJg0My1A-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9374621734;
-        Thu, 13 Feb 2020 22:16:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581632217;
-        bh=GC3o1L9Dy/ZR1bFVYqPjewkxO9dcs3UD4eXhs4w5UMI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=FayMhEqIvwRftuAdTfe54aMcWL5PN0W1EYQ+OW4Akde8WJ+RyZDBBb8VF/0i6+lDE
-         LoQy3hiOSLWAuOOHlrt0TRkxH3/yoSZWryl4OZTmtr0tmMM8oh3Ua3Zyvv7bsdqWDb
-         ESApZjb+2GX1sEbLzVF1AEZ8YLD7clGzFYxf+YQ4=
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     rostedt@goodmis.org
-Cc:     artem.bityutskiy@linux.intel.com, mhiramat@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] tracing: Check that number of vals matches number of synth  event fields
-Date:   Thu, 13 Feb 2020 16:16:45 -0600
-Message-Id: <2643328537a8f753c1018b1f4d1128e87ed8f043.1581630377.git.zanussi@kernel.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1581630377.git.zanussi@kernel.org>
-References: <cover.1581630377.git.zanussi@kernel.org>
-In-Reply-To: <cover.1581630377.git.zanussi@kernel.org>
-References: <cover.1581630377.git.zanussi@kernel.org>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9B2E318A6EC0;
+        Thu, 13 Feb 2020 22:18:03 +0000 (UTC)
+Received: from treble (ovpn-121-12.rdu2.redhat.com [10.10.121.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 47C1C1001B28;
+        Thu, 13 Feb 2020 22:18:01 +0000 (UTC)
+Date:   Thu, 13 Feb 2020 16:17:58 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     peterz@infradead.org, clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Fangrui Song <maskray@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] objtool: ignore .L prefixed local symbols
+Message-ID: <20200213221758.i6pchz4gsiy2lsyc@treble>
+References: <20200213184708.205083-1-ndesaulniers@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200213184708.205083-1-ndesaulniers@google.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 7276531d4036('tracing: Consolidate trace() functions')
-inadvertently dropped the synth_event_trace() and
-synth_event_trace_array() checks that verify the number of values
-passed in matches the number of fields in the synthetic event being
-traced, so add them back.
+On Thu, Feb 13, 2020 at 10:47:08AM -0800, Nick Desaulniers wrote:
+> Top of tree LLVM has optimizations related to
+> -fno-semantic-interposition to avoid emitting PLT relocations for
+> references to symbols located in the same translation unit, where it
+> will emit "local symbol" references.
+> 
+> Clang builds fall back on GNU as for assembling, currently. It appears a
+> bug in GNU as introduced around 2.31 is keeping around local labels in
+> the symbol table, despite the documentation saying:
+> 
+> "Local symbols are defined and used within the assembler, but they are
+> normally not saved in object files."
+> 
+> When objtool searches for a symbol at a given offset, it's finding the
+> incorrectly kept .L<symbol>$local symbol that should have been discarded
+> by the assembler.
+> 
+> A patch for GNU as has been authored.  For now, objtool should not treat
+> local symbols as the expected symbol for a given offset when iterating
+> the symbol table.
+> 
+> commit 644592d32837 ("objtool: Fail the kernel build on fatal errors")
+> exposed this issue.
 
-Signed-off-by: Tom Zanussi <zanussi@kernel.org>
----
- kernel/trace/trace_events_hist.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Since I'm going to be dropping 644592d32837 ("objtool: Fail the kernel
+build on fatal errors") anyway, I wonder if this patch is still needed?
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 913760d2d505..d931f1404505 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -1885,6 +1885,9 @@ int synth_event_trace(struct trace_event_file *file, unsigned int n_vals, ...)
- 		return ret;
- 	}
- 
-+	if (n_vals != state.event->n_fields)
-+		return -EINVAL;
-+
- 	va_start(args, n_vals);
- 	for (i = 0, n_u64 = 0; i < state.event->n_fields; i++) {
- 		u64 val;
-@@ -1960,6 +1963,9 @@ int synth_event_trace_array(struct trace_event_file *file, u64 *vals,
- 		return ret;
- 	}
- 
-+	if (n_vals != state.event->n_fields)
-+		return -EINVAL;
-+
- 	for (i = 0, n_u64 = 0; i < state.event->n_fields; i++) {
- 		if (state.event->fields[i]->is_string) {
- 			char *str_val = (char *)(long)vals[i];
+At least the error will be downgraded to a warning.  And while the
+warning could be more user friendly, it still has value because it
+reveals a toolchain bug.
+
 -- 
-2.14.1
+Josh
 
