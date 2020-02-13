@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E987A15C5B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F51715C5B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728008AbgBMPYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:24:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33764 "EHLO mail.kernel.org"
+        id S1728608AbgBMPYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:24:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728271AbgBMPXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:23:08 -0500
+        id S1728278AbgBMPXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:10 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66A0B246A3;
-        Thu, 13 Feb 2020 15:23:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FD2C24693;
+        Thu, 13 Feb 2020 15:23:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607388;
-        bh=cfIgvVj7qHISRaX4GDxNbcsuJ+CNHbeT9hRhvwyQMEo=;
+        s=default; t=1581607389;
+        bh=uWRAqrrz8QGRmZbaK0xqB+Wr/NpuVq0kBoEB4W7u2Og=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F29abYibZJISh65P7VN18CSTUvKGDqO+8BcVaNW0Z9Bjy5cOAmLacvnoZmukB8/5I
-         XoCQ9QL4c3y+uj4FmwKDwlZTdUqI6xxWOrVqElUkALSeYXRVIEhc8AuVhCkycJFMlI
-         aUerQch/Z1ZJ5G11cMSKaGn092YKoSx2ktPUo23U=
+        b=j3B7YGku8v2GJq9ni0kaWWjnhwf7UeoJSxFZ8HXASH2PF+L3BO69ixUl5s8MDFc3W
+         lejCk8paNBXhMTUnISb3zYTdgKnlOjIFEpAXRNWb1hc/AwqwPk4yptvjyCwsHZ5mws
+         S9mN6kRoOM6QqeSp2cE1f6zWOOugA7LiBP0eNqu4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 89/91] libertas: dont exit from lbs_ibss_join_existing() with RCU read lock held
-Date:   Thu, 13 Feb 2020 07:20:46 -0800
-Message-Id: <20200213151857.331193372@linuxfoundation.org>
+Subject: [PATCH 4.4 90/91] libertas: make lbs_ibss_join_existing() return error code on rates overflow
+Date:   Thu, 13 Feb 2020 07:20:47 -0800
+Message-Id: <20200213151857.632316857@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
 References: <20200213151821.384445454@linuxfoundation.org>
@@ -46,14 +46,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nicolai Stange <nstange@suse.de>
 
-[ Upstream commit c7bf1fb7ddca331780b9a733ae308737b39f1ad4 ]
+[ Upstream commit 1754c4f60aaf1e17d886afefee97e94d7f27b4cb ]
 
 Commit e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss
 descriptor") introduced a bounds check on the number of supplied rates to
-lbs_ibss_join_existing().
+lbs_ibss_join_existing() and made it to return on overflow.
 
-Unfortunately, it introduced a return path from within a RCU read side
-critical section without a corresponding rcu_read_unlock(). Fix this.
+However, the aforementioned commit doesn't set the return value accordingly
+and thus, lbs_ibss_join_existing() would return with zero even though it
+failed.
+
+Make lbs_ibss_join_existing return -EINVAL in case the bounds check on the
+number of supplied rates fails.
 
 Fixes: e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss descriptor")
 Signed-off-by: Nicolai Stange <nstange@suse.de>
@@ -64,14 +68,14 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/wireless/libertas/cfg.c b/drivers/net/wireless/libertas/cfg.c
-index 0824697c3dca0..803684eed142c 100644
+index 803684eed142c..7d55de21b1903 100644
 --- a/drivers/net/wireless/libertas/cfg.c
 +++ b/drivers/net/wireless/libertas/cfg.c
-@@ -1853,6 +1853,7 @@ static int lbs_ibss_join_existing(struct lbs_private *priv,
- 		rates_max = rates_eid[1];
+@@ -1854,6 +1854,7 @@ static int lbs_ibss_join_existing(struct lbs_private *priv,
  		if (rates_max > MAX_RATES) {
  			lbs_deb_join("invalid rates");
-+			rcu_read_unlock();
+ 			rcu_read_unlock();
++			ret = -EINVAL;
  			goto out;
  		}
  		rates = cmd.bss.rates;
