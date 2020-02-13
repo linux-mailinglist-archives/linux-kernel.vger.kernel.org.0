@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9C0815C51F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFAF615C2C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:38:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387506AbgBMP0E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:26:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37116 "EHLO mail.kernel.org"
+        id S2387939AbgBMPaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:30:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728639AbgBMPYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:24:15 -0500
+        id S1729048AbgBMP1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:15 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5970C24689;
-        Thu, 13 Feb 2020 15:24:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFB60206DB;
+        Thu, 13 Feb 2020 15:27:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607454;
-        bh=XGihjVxIgskibkVAWS3CfHIBjo058JMWp6934itqryo=;
+        s=default; t=1581607634;
+        bh=egsv0F3QI165Kw4Zy5KRqStiuf+/g6ZG+gWYqu5O9EA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DNx5HrrIL06+b9Xhw7SjZhZFUx5aiE/f4+47DvxxVFpKQR4u7+zcoCFAsC2ADe5uE
-         UJy9h2j4m/l9c7DWe+ixMSrNwbTo81km/U3NSVxwwDwGilPPl9QrPwmT17dSLcaD2c
-         0FrYF3cAo98xeV17q9mWcKcD4Vn6bjM281Hnrqr8=
+        b=UBYINCXsfcCELQWtP6wLgErnpMFa3PRN5lPhRHf4RTqJ4TF67+0Fnjt9lUqtgGJiu
+         uu29K5bHHBq1LS1HOa8CmzMh1yrXg2Q1IgM4MdGaTDCAul1On7qHtX4lXo7TjOOPhs
+         MfpPHUkaMHN8yAT5CaUGin9nsr/9yjyOg7w2zpR8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 083/116] btrfs: free block groups after freeing fs trees
+        stable@vger.kernel.org, Avraham Stern <avraham.stern@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.4 20/96] iwlwifi: mvm: avoid use after free for pmsr request
 Date:   Thu, 13 Feb 2020 07:20:27 -0800
-Message-Id: <20200213151915.106400155@linuxfoundation.org>
+Message-Id: <20200213151846.993912426@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
-References: <20200213151842.259660170@linuxfoundation.org>
+In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
+References: <20200213151839.156309910@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Avraham Stern <avraham.stern@intel.com>
 
-[ Upstream commit 4e19443da1941050b346f8fc4c368aa68413bc88 ]
+commit cc4255eff523f25187bb95561642941de0e57497 upstream.
 
-Sometimes when running generic/475 we would trip the
-WARN_ON(cache->reserved) check when free'ing the block groups on umount.
-This is because sometimes we don't commit the transaction because of IO
-errors and thus do not cleanup the tree logs until at umount time.
+When a FTM request is aborted, the driver sends the abort command to
+the fw and waits for a response. When the response arrives, the driver
+calls cfg80211_pmsr_complete() for that request.
+However, cfg80211 frees the requested data immediately after sending
+the abort command, so this may lead to use after free.
 
-These blocks are still reserved until they are cleaned up, but they
-aren't cleaned up until _after_ we do the free block groups work.  Fix
-this by moving the free after free'ing the fs roots, that way all of the
-tree logs are cleaned up and we have a properly cleaned fs.  A bunch of
-loops of generic/475 confirmed this fixes the problem.
+Fix it by clearing the request data in the driver when the abort
+command arrives and ignoring the fw notification that will come
+afterwards.
 
-CC: stable@vger.kernel.org # 4.9+
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Avraham Stern <avraham.stern@intel.com>
+Fixes: fc36ffda3267 ("iwlwifi: mvm: support FTM initiator")
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/btrfs/disk-io.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index eab5a9065f093..439b5f5dc3274 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -3864,6 +3864,15 @@ void close_ctree(struct btrfs_root *root)
- 	clear_bit(BTRFS_FS_OPEN, &fs_info->flags);
- 	free_root_pointers(fs_info, true);
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c
+@@ -8,6 +8,7 @@
+  * Copyright(c) 2015 - 2017 Intel Deutschland GmbH
+  * Copyright (C) 2018 Intel Corporation
+  * Copyright (C) 2019 Intel Corporation
++ * Copyright (C) 2020 Intel Corporation
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of version 2 of the GNU General Public License as
+@@ -30,6 +31,7 @@
+  * Copyright(c) 2015 - 2017 Intel Deutschland GmbH
+  * Copyright (C) 2018 Intel Corporation
+  * Copyright (C) 2019 Intel Corporation
++ * Copyright (C) 2020 Intel Corporation
+  * All rights reserved.
+  *
+  * Redistribution and use in source and binary forms, with or without
+@@ -389,6 +391,8 @@ void iwl_mvm_ftm_abort(struct iwl_mvm *m
+ 	if (req != mvm->ftm_initiator.req)
+ 		return;
  
-+	/*
-+	 * We must free the block groups after dropping the fs_roots as we could
-+	 * have had an IO error and have left over tree log blocks that aren't
-+	 * cleaned up until the fs roots are freed.  This makes the block group
-+	 * accounting appear to be wrong because there's pending reserved bytes,
-+	 * so make sure we do the block group cleanup afterwards.
-+	 */
-+	btrfs_free_block_groups(fs_info);
++	iwl_mvm_ftm_reset(mvm);
 +
- 	iput(fs_info->btree_inode);
+ 	if (iwl_mvm_send_cmd_pdu(mvm, iwl_cmd_id(TOF_RANGE_ABORT_CMD,
+ 						 LOCATION_GROUP, 0),
+ 				 0, sizeof(cmd), &cmd))
+@@ -502,7 +506,6 @@ void iwl_mvm_ftm_range_resp(struct iwl_m
+ 	lockdep_assert_held(&mvm->mutex);
  
- #ifdef CONFIG_BTRFS_FS_CHECK_INTEGRITY
--- 
-2.20.1
-
+ 	if (!mvm->ftm_initiator.req) {
+-		IWL_ERR(mvm, "Got FTM response but have no request?\n");
+ 		return;
+ 	}
+ 
 
 
