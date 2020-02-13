@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB31A15C483
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E09315C274
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:35:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387985AbgBMPr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:47:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47986 "EHLO mail.kernel.org"
+        id S2388066AbgBMPbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:31:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727986AbgBMP06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:58 -0500
+        id S1729565AbgBMP2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:07 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23AAF24677;
-        Thu, 13 Feb 2020 15:26:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53C0D218AC;
+        Thu, 13 Feb 2020 15:28:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607618;
-        bh=Qi7UqkWj3azxCJlMz34Rq3df9Z8YUBZlDpzh1tYSrkc=;
+        s=default; t=1581607687;
+        bh=Z5lZXUiB6mlzTPLpoJlxhmPg57lh4/wOXqiKgZ3hICU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oRm4rnDUArGq0hMl+SMRmNOZ4gR0eAHq4lIf04cHObxre5HlF2dTtfv/aZSAfnhiU
-         ZQMcNeIrEnKPPeCJl/iLjXDCswdRMVUI0CMHaEIcnEZf4mTIVp85FSPsRWikZ/LDSU
-         a4cSmhBsacLKdlhA65+w31WpxONhm9OZc6bwJ7DQ=
+        b=o4KcELOHHVAzGCpApVQlPxm0qrUJInE8fvYA/Hpi6liOfNY1/XrkAvwXA41zpn00x
+         Dj0BY44owcYASV0RsswBfNP/CYFG8LnPJK80TSTxJn94WCcCLSZ5wKiY/x50nixE5n
+         VtJlBQIFj13i8u6gwFEaalsOIgUfXu45YYOCPScU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Artemy Kovalyov <artemyko@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Gal Pressman <galpress@amazon.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.4 11/96] RDMA/umem: Fix ib_umem_find_best_pgsz()
-Date:   Thu, 13 Feb 2020 07:20:18 -0800
-Message-Id: <20200213151843.594895581@linuxfoundation.org>
+        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>,
+        wenxu <wenxu@ucloud.cn>
+Subject: [PATCH 5.5 023/120] netfilter: flowtable: fetch stats only if flow is still alive
+Date:   Thu, 13 Feb 2020 07:20:19 -0800
+Message-Id: <20200213151910.049692279@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +43,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Artemy Kovalyov <artemyko@mellanox.com>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
 
-commit 36798d5ae1af62e830c5e045b2e41ce038690c61 upstream.
+commit 79b9b685dde1d1bf43cf84163c76953dc3781c85 upstream.
 
-Except for the last entry, the ending iova alignment sets the maximum
-possible page size as the low bits of the iova must be zero when starting
-the next chunk.
+Do not fetch statistics if flow has expired since it might not in
+hardware anymore. After this update, remove the FLOW_OFFLOAD_HW_DYING
+check from nf_flow_offload_stats() since this flag is never set on.
 
-Fixes: 4a35339958f1 ("RDMA/umem: Add API to find best driver supported page size in an MR")
-Link: https://lore.kernel.org/r/20200128135612.174820-1-leon@kernel.org
-Signed-off-by: Artemy Kovalyov <artemyko@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Tested-by: Gal Pressman <galpress@amazon.com>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: c29f74e0df7a ("netfilter: nf_flow_table: hardware offload support")
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Acked-by: wenxu <wenxu@ucloud.cn>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/umem.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ net/netfilter/nf_flow_table_core.c    |    5 ++---
+ net/netfilter/nf_flow_table_offload.c |    3 +--
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
---- a/drivers/infiniband/core/umem.c
-+++ b/drivers/infiniband/core/umem.c
-@@ -166,10 +166,13 @@ unsigned long ib_umem_find_best_pgsz(str
- 		 * for any address.
- 		 */
- 		mask |= (sg_dma_address(sg) + pgoff) ^ va;
--		if (i && i != (umem->nmap - 1))
--			/* restrict by length as well for interior SGEs */
--			mask |= sg_dma_len(sg);
- 		va += sg_dma_len(sg) - pgoff;
-+		/* Except for the last entry, the ending iova alignment sets
-+		 * the maximum possible page size as the low bits of the iova
-+		 * must be zero when starting the next chunk.
-+		 */
-+		if (i != (umem->nmap - 1))
-+			mask |= va;
- 		pgoff = 0;
+--- a/net/netfilter/nf_flow_table_core.c
++++ b/net/netfilter/nf_flow_table_core.c
+@@ -348,9 +348,6 @@ static void nf_flow_offload_gc_step(stru
+ {
+ 	struct nf_flowtable *flow_table = data;
+ 
+-	if (flow->flags & FLOW_OFFLOAD_HW)
+-		nf_flow_offload_stats(flow_table, flow);
+-
+ 	if (nf_flow_has_expired(flow) || nf_ct_is_dying(flow->ct) ||
+ 	    (flow->flags & (FLOW_OFFLOAD_DYING | FLOW_OFFLOAD_TEARDOWN))) {
+ 		if (flow->flags & FLOW_OFFLOAD_HW) {
+@@ -361,6 +358,8 @@ static void nf_flow_offload_gc_step(stru
+ 		} else {
+ 			flow_offload_del(flow_table, flow);
+ 		}
++	} else if (flow->flags & FLOW_OFFLOAD_HW) {
++		nf_flow_offload_stats(flow_table, flow);
  	}
- 	best_pg_bit = rdma_find_pg_bit(mask, pgsz_bitmap);
+ }
+ 
+--- a/net/netfilter/nf_flow_table_offload.c
++++ b/net/netfilter/nf_flow_table_offload.c
+@@ -784,8 +784,7 @@ void nf_flow_offload_stats(struct nf_flo
+ 	__s32 delta;
+ 
+ 	delta = nf_flow_timeout_delta(flow->timeout);
+-	if ((delta >= (9 * NF_FLOW_TIMEOUT) / 10) ||
+-	    flow->flags & FLOW_OFFLOAD_HW_DYING)
++	if ((delta >= (9 * NF_FLOW_TIMEOUT) / 10))
+ 		return;
+ 
+ 	offload = kzalloc(sizeof(struct flow_offload_work), GFP_ATOMIC);
 
 
