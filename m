@@ -2,202 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2A7815BA86
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 09:09:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E62815BA8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 09:12:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729485AbgBMIJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 03:09:14 -0500
-Received: from mx1.riseup.net ([198.252.153.129]:39962 "EHLO mx1.riseup.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbgBMIJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 03:09:14 -0500
-Received: from capuchin.riseup.net (unknown [10.0.1.176])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "*.riseup.net", Issuer "Sectigo RSA Domain Validation Secure Server CA" (not verified))
-        by mx1.riseup.net (Postfix) with ESMTPS id 48J8L05DG8zFcnh;
-        Thu, 13 Feb 2020 00:09:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-        t=1581581353; bh=iaEbgRhh4JWQVtHf1D4tdApBs60r3rvF+gxfzTtwdxo=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=Pk3arEwpOvughEu1uNBvJ058c5UIEW8D6Fr8MvRSXH74r4SmdlfyJuuhhHZsGaTwV
-         QcZkjY+h2uNwRoIJu6LxEYTrX8wJiCqdvADpftpTPDVQJQTP2OEaHlvj+Scne2LaBN
-         QsNdBc8GOk2csPbN+EQQH09Z5kHnGJxAq5KHDbSM=
-X-Riseup-User-ID: 90775717B03DC2932B6F230B81F7F2C06CAEDFBEF0445F64578388C10C2ADA06
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-         by capuchin.riseup.net (Postfix) with ESMTPSA id 48J8Kv1dw0z8trb;
-        Thu, 13 Feb 2020 00:09:07 -0800 (PST)
-From:   Francisco Jerez <currojerez@riseup.net>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        "Pandruvada\, Srinivas" <srinivas.pandruvada@intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 00/28] PM: QoS: Get rid of unuseful code and rework CPU latency QoS interface
-In-Reply-To: <CAJZ5v0hrOma52rocMsitvYUK6WxHAa0702_8XJn1UJZVyhz=rQ@mail.gmail.com>
-References: <1654227.8mz0SueHsU@kreacher> <87wo8rjsa4.fsf@riseup.net> <CAJZ5v0hAn0V-QhebFt=vqKK6gBLxjTq7SNOWOStt7huCXMSH7g@mail.gmail.com> <CAJZ5v0hrOma52rocMsitvYUK6WxHAa0702_8XJn1UJZVyhz=rQ@mail.gmail.com>
-Date:   Thu, 13 Feb 2020 00:10:05 -0800
-Message-ID: <877e0qj4bm.fsf@riseup.net>
+        id S1729531AbgBMILz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 03:11:55 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:39940 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726232AbgBMILy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 03:11:54 -0500
+Received: by mail-pj1-f65.google.com with SMTP id 12so2068815pjb.5
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 00:11:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=XnRL/6GCJnnLqnsq4zYt0l8kyVXrVP3xw1YFsqQnEx4=;
+        b=Es48Y6nx1HIXVE1wzsyfQo33Kx1crK2xDdWk+ZULrQ0st3KadIGmT4/fB0b1CPvL2N
+         5cRSgayMUW2fCiLQUmT/VYkYpllxPjd75L9CxY8uMSZ6biMIa/KqxIK8OY/osn1KKoGl
+         TMsk5V1eL/zvu8n/0t6KvbPfxaJU9yFupnFyDotUGUyruJes9Wyis3RoZn4g1CTIjhtq
+         t5ayCIlA3No6HgQxprrWldDVdLubes9dWrFuQ932SILEjR2l7+OBBfN3B0ZiW/h4/eLH
+         sNWr71yNhL6ACs1m9+nTo/a3f51M9yDbdnx4UTXw/n1O7vIBDUfg9RVe/v77lfkR5Zll
+         EeBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=XnRL/6GCJnnLqnsq4zYt0l8kyVXrVP3xw1YFsqQnEx4=;
+        b=kRVsQFL/DBUBloykDmozFtQs6NgE2k9grDHFsYvU1Ry6yGh3IwVL+hnTu/ZW3AdBHD
+         MdxO+zXI1V8PsMSTJExWnHoIDnO18/XbXvkBmc9Q9Cu9QVYPplTxTWU+j76rj5fSxrIx
+         ZUWP7tK9dxsNJ0lCO7rmO5verRx+oCKHeYpK+n+0OoEXr6430Wt6gTq2maA4sxu48LgL
+         Doo0Yjz31rb7DXtaJ9Wt2YEZxrQne5QoGDqMK8jGM3FTRZeHk2EmhLyBkGgCEApX5fnw
+         6CypLTOfeqZybebbj5gvoJSAGYbWIAIQTr+bE/8ffR9sZWhjUkm/UDtPR5RkU9/L6lim
+         L1OQ==
+X-Gm-Message-State: APjAAAX+3clbmtgwoHg86TFDL9dNGK2PlzB2kyYcAV+HdA981PxBPs0U
+        uZt7Lt6LXvmeJnoaSzg7OjA=
+X-Google-Smtp-Source: APXvYqzfz/PE2mNdtJw+e11/Z3yxDbjoO6rLO+S8IVtkypnf1/CSYFZ6seYri1fPVJTKNtoS2bbH3g==
+X-Received: by 2002:a17:902:6bcb:: with SMTP id m11mr28523894plt.10.1581581513257;
+        Thu, 13 Feb 2020 00:11:53 -0800 (PST)
+Received: from workstation-portable ([103.211.17.23])
+        by smtp.gmail.com with ESMTPSA id o16sm1681844pgl.58.2020.02.13.00.11.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2020 00:11:52 -0800 (PST)
+Date:   Thu, 13 Feb 2020 13:41:39 +0530
+From:   Amol Grover <frextrite@gmail.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jann Horn <jannh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Eric Paris <eparis@redhat.com>,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-audit@redhat.com,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH 3/3] auditsc: Do not use RCU primitive to read from cred
+ pointer
+Message-ID: <20200213081139.GB26550@workstation-portable>
+References: <20200207180504.4200-1-frextrite@gmail.com>
+ <20200207180504.4200-3-frextrite@gmail.com>
+ <CAHC9VhQCbg1V290bYEZM+izDPRpr=XYXakohnDaMphkBBFgUaA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="==-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhQCbg1V290bYEZM+izDPRpr=XYXakohnDaMphkBBFgUaA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==-=-=
-Content-Type: multipart/mixed; boundary="=-=-="
+On Tue, Feb 11, 2020 at 10:19:04AM -0500, Paul Moore wrote:
+> On Fri, Feb 7, 2020 at 1:08 PM Amol Grover <frextrite@gmail.com> wrote:
+> >
+> > task_struct::cred is only used task-synchronously and does
+> > not require any RCU locks, hence, rcu_dereference_check is
+> > not required to read from it.
+> >
+> > Suggested-by: Jann Horn <jannh@google.com>
+> > Co-developed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > Signed-off-by: Amol Grover <frextrite@gmail.com>
+> > ---
+> >  kernel/auditsc.c | 15 +++++----------
+> >  1 file changed, 5 insertions(+), 10 deletions(-)
+> 
+> Considering the other changes in this patchset this change seems
+> reasonable to me.  I'm assuming you were intending this patchset to go
+> in via some tree other than audit?
+> 
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Yes, that's correct. Thank you for the ack!
 
-"Rafael J. Wysocki" <rafael@kernel.org> writes:
-
-> On Thu, Feb 13, 2020 at 1:16 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
->>
->> On Thu, Feb 13, 2020 at 12:31 AM Francisco Jerez <currojerez@riseup.net> wrote:
->> >
->> > "Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
->> >
->> > > Hi All,
->> > >
->> > > This series of patches is based on the observation that after commit
->> > > c3082a674f46 ("PM: QoS: Get rid of unused flags") the only global PM QoS class
->> > > in use is PM_QOS_CPU_DMA_LATENCY, but there is still a significant amount of
->> > > code dedicated to the handling of global PM QoS classes in general.  That code
->> > > takes up space and adds overhead in vain, so it is better to get rid of it.
->> > >
->> > > Moreover, with that unuseful code removed, the interface for adding QoS
->> > > requests for CPU latency becomes inelegant and confusing, so it is better to
->> > > clean it up.
->> > >
->> > > Patches [01/28-12/28] do the first part described above, which also includes
->> > > some assorted cleanups of the core PM QoS code that doesn't go away.
->> > >
->> > > Patches [13/28-25/28] rework the CPU latency QoS interface (in the classic
->> > > "define stubs, migrate users, change the API proper" manner), patches
->> > > [26-27/28] update the general comments and documentation to match the code
->> > > after the previous changes and the last one makes the CPU latency QoS depend
->> > > on CPU_IDLE (because cpuidle is the only user of its target value today).
->> > >
->> > > The majority of the patches in this series don't change the functionality of
->> > > the code at all (at least not intentionally).
->> > >
->> > > Please refer to the changelogs of individual patches for details.
->> > >
->> > > Thanks!
->> >
->> > Hi Rafael,
->> >
->> > I believe some of the interfaces removed here could be useful in the
->> > near future.
->>
->> I disagree.
->>
->> >  It goes back to the energy efficiency- (and IGP graphics
->> > performance-)improving series I submitted a while ago [1].  It relies on
->> > some mechanism for the graphics driver to report an I/O bottleneck to
->> > CPUFREQ, allowing it to make a more conservative trade-off between
->> > energy efficiency and latency, which can greatly reduce the CPU package
->> > energy usage of IO-bound applications (in some graphics benchmarks I've
->> > seen it reduced by over 40% on my ICL laptop), and therefore also allows
->> > TDP-bound applications to obtain a reciprocal improvement in throughput.
->> >
->> > I'm not particularly fond of the global PM QoS interfaces TBH, it seems
->> > like an excessively blunt hammer to me, so I can very much relate to the
->> > purpose of this series.  However the finer-grained solution I've
->> > implemented has seen some push-back from i915 and CPUFREQ devs due to
->> > its complexity, since it relies on task scheduler changes in order to
->> > track IO bottlenecks per-process (roughly as suggested by Peter Zijlstra
->> > during our previous discussions), pretty much in the spirit of PELT but
->> > applied to IO utilization.
->> >
->> > With that in mind I was hoping we could take advantage of PM QoS as a
->> > temporary solution [2], by introducing a global PM QoS class similar but
->> > with roughly converse semantics to PM_QOS_CPU_DMA_LATENCY, allowing
->> > device drivers to report a *lower* bound on CPU latency beyond which PM
->> > shall not bother to reduce latency if doing so would have negative
->> > consequences on the energy efficiency and/or parallelism of the system.
->>
->> So I really don't quite see how that could be responded to, by cpuidle
->> say.  What exactly do you mean by "reducing latency" in particular?
->>
->> > Of course one would expect the current PM_QOS_CPU_DMA_LATENCY upper
->> > bound to take precedence over the new lower bound in cases where the
->> > former is in conflict with the latter.
->>
->> So that needs to be done on top of this series.
->>
->> > I can think of several alternatives to that which don't involve
->> > temporarily holding off your clean-up,
->>
->> The cleanup goes in.  Please work on top of it.
->>
->> > but none of them sound particularly exciting:
->> >
->> >  1/ Use an interface specific to CPUFREQ, pretty much like the one
->> >     introduced in my original submission [1].
->>
->> It uses frequency QoS already today, do you really need something else?
->>
->> >  2/ Use per-CPU PM QoS, which AFAICT would require the graphics driver
->> >     to either place a request on every CPU of the system (which would
->> >     cause a frequent operation to have O(N) complexity on the number of
->> >     CPUs on the system), or play a cat-and-mouse game with the task
->> >     scheduler.
->>
->> That's in place already too in the form of device PM QoS; see
->> drivers/base/power/qos.c.
->>
->> >  3/ Add a new global PM QoS mechanism roughly duplicating the
->> >     cpu_latency_qos_* interfaces introduced in this series.  Drop your
->> >     change making this available to CPU IDLE only.
->>
->> It sounds like you really want performance for energy efficiency and
->> CPU latency has a little to do with that.
->>
->> >  3/ Go straight to a scheduling-based approach, which is likely to
->> >     greatly increase the review effort required to upstream this
->> >     feature.  (Peter might disagree though?)
->>
->> Are you familiar with the utilization clamps mechanism?
->
-> And BTW, posting patches as RFC is fine even if they have not been
-> tested.  At least you let people know that you work on something this
-> way, so if they work on changes in the same area, they may take that
-> into consideration.
->
-
-Sure, that was going to be the first RFC.
-
-> Also if there are objections to your proposal, you may save quite a
-> bit of time by sending it early.
->
-> It is unfortunate that this series has clashed with the changes that
-> you were about to propose, but in this particular case in my view it
-> is better to clean up things and start over.
->
-
-Luckily it doesn't clash with the second RFC I was meaning to send,
-maybe we should just skip the first?  Or maybe it's valuable as a
-curiosity anyway?
-
-> Thanks!
-
---=-=-=--
-
---==-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEAREIAB0WIQST8OekYz69PM20/4aDmTidfVK/WwUCXkUEXQAKCRCDmTidfVK/
-W4pAAP9vmbs26tAnKsYJ+S4uoe86MagT3K6/cDduW1R8rKZwdQEAoMhECi5Ar//t
-Idku9y/+hBdBSWgH1os3DRQNWpLrdjE=
-=zHCk
------END PGP SIGNATURE-----
---==-=-=--
+> Acked-by: Paul Moore <paul@paul-moore.com>
+> 
+> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > index 4effe01ebbe2..d3510513cdd1 100644
+> > --- a/kernel/auditsc.c
+> > +++ b/kernel/auditsc.c
+> > @@ -430,24 +430,19 @@ static int audit_field_compare(struct task_struct *tsk,
+> >  /* Determine if any context name data matches a rule's watch data */
+> >  /* Compare a task_struct with an audit_rule.  Return 1 on match, 0
+> >   * otherwise.
+> > - *
+> > - * If task_creation is true, this is an explicit indication that we are
+> > - * filtering a task rule at task creation time.  This and tsk == current are
+> > - * the only situations where tsk->cred may be accessed without an rcu read lock.
+> >   */
+> >  static int audit_filter_rules(struct task_struct *tsk,
+> >                               struct audit_krule *rule,
+> >                               struct audit_context *ctx,
+> >                               struct audit_names *name,
+> > -                             enum audit_state *state,
+> > -                             bool task_creation)
+> > +                             enum audit_state *state)
+> >  {
+> >         const struct cred *cred;
+> >         int i, need_sid = 1;
+> >         u32 sid;
+> >         unsigned int sessionid;
+> >
+> > -       cred = rcu_dereference_check(tsk->cred, tsk == current || task_creation);
+> > +       cred = tsk->cred;
+> >
+> >         for (i = 0; i < rule->field_count; i++) {
+> >                 struct audit_field *f = &rule->fields[i];
+> > @@ -745,7 +740,7 @@ static enum audit_state audit_filter_task(struct task_struct *tsk, char **key)
+> >         rcu_read_lock();
+> >         list_for_each_entry_rcu(e, &audit_filter_list[AUDIT_FILTER_TASK], list) {
+> >                 if (audit_filter_rules(tsk, &e->rule, NULL, NULL,
+> > -                                      &state, true)) {
+> > +                                      &state)) {
+> >                         if (state == AUDIT_RECORD_CONTEXT)
+> >                                 *key = kstrdup(e->rule.filterkey, GFP_ATOMIC);
+> >                         rcu_read_unlock();
+> > @@ -791,7 +786,7 @@ static enum audit_state audit_filter_syscall(struct task_struct *tsk,
+> >         list_for_each_entry_rcu(e, list, list) {
+> >                 if (audit_in_mask(&e->rule, ctx->major) &&
+> >                     audit_filter_rules(tsk, &e->rule, ctx, NULL,
+> > -                                      &state, false)) {
+> > +                                      &state)) {
+> >                         rcu_read_unlock();
+> >                         ctx->current_state = state;
+> >                         return state;
+> > @@ -815,7 +810,7 @@ static int audit_filter_inode_name(struct task_struct *tsk,
+> >
+> >         list_for_each_entry_rcu(e, list, list) {
+> >                 if (audit_in_mask(&e->rule, ctx->major) &&
+> > -                   audit_filter_rules(tsk, &e->rule, ctx, n, &state, false)) {
+> > +                   audit_filter_rules(tsk, &e->rule, ctx, n, &state)) {
+> >                         ctx->current_state = state;
+> >                         return 1;
+> >                 }
+> > --
+> > 2.24.1
+> >
+> 
+> 
+> -- 
+> paul moore
+> www.paul-moore.com
