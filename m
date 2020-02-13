@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D12E515C241
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:31:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C51815C3B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729704AbgBMPbV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:31:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53068 "EHLO mail.kernel.org"
+        id S1729524AbgBMPnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:43:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728479AbgBMP1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:52 -0500
+        id S1728412AbgBMP1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:53 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF3FB2168B;
-        Thu, 13 Feb 2020 15:27:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9757F218AC;
+        Thu, 13 Feb 2020 15:27:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1581607672;
-        bh=dHeL7CXV9VZmIwpyozwNJgQsEYNVcPDI375P/GphZS8=;
+        bh=Y7tj7PSZoyNOv58hg+6UOtynPKMg5y4iPeSa/ueM9To=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QbSiQL1tjWCFMmwDX066u/tCZfocOySVy+HgE7HkVfbqWHIh5T7P8ZJDQPlDM4H4y
-         FtKTmA9GPyItuuBvSU62N9wG/2tEeajOMay0k80vMfxkZACZZtJVYNEM5bBhG0z11J
-         JGGJtBAoGuRWBX7qTYH23oiSqYQZrpWnkqz9e/U4=
+        b=WSceo7h8Un/a+AD7PCxqjK/1O8WftM0lGth5g+ui7/pVK3mBADqKsY2GScIdlilYW
+         GdT8k9CvKgkkJDKyHZTZwN2vnXOvKyGLAgYhIr7ZOualdMyvDvVrQGw9YNIuSU+8Qk
+         gxORHny6QgunwH//Vl8A6nsGbtrReAohgnrBZfhw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesper Nilsson <jesper.nilsson@axis.com>,
-        Lars Persson <lars.persson@axis.com>,
+        stable@vger.kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
         Eric Biggers <ebiggers@google.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.4 78/96] crypto: artpec6 - return correct error code for failed setkey()
-Date:   Thu, 13 Feb 2020 07:21:25 -0800
-Message-Id: <20200213151908.623473446@linuxfoundation.org>
+Subject: [PATCH 5.4 79/96] crypto: atmel-sha - fix error handling when setting hmac key
+Date:   Thu, 13 Feb 2020 07:21:26 -0800
+Message-Id: <20200213151908.944131584@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
 References: <20200213151839.156309910@linuxfoundation.org>
@@ -47,32 +50,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-commit b828f905904cd76424230c69741a4cabb0174168 upstream.
+commit b529f1983b2dcc46354f311feda92e07b6e9e2da upstream.
 
-->setkey() is supposed to retun -EINVAL for invalid key lengths, not -1.
+HMAC keys can be of any length, and atmel_sha_hmac_key_set() can only
+fail due to -ENOMEM.  But atmel_sha_hmac_setkey() incorrectly treated
+any error as a "bad key length" error.  Fix it to correctly propagate
+the -ENOMEM error code and not set any tfm result flags.
 
-Fixes: a21eb94fc4d3 ("crypto: axis - add ARTPEC-6/7 crypto accelerator driver")
-Cc: Jesper Nilsson <jesper.nilsson@axis.com>
-Cc: Lars Persson <lars.persson@axis.com>
+Fixes: 81d8750b2b59 ("crypto: atmel-sha - add support to hmac(shaX)")
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
-Acked-by: Lars Persson <lars.persson@axis.com>
+Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/axis/artpec6_crypto.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/atmel-sha.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
---- a/drivers/crypto/axis/artpec6_crypto.c
-+++ b/drivers/crypto/axis/artpec6_crypto.c
-@@ -1251,7 +1251,7 @@ static int artpec6_crypto_aead_set_key(s
+--- a/drivers/crypto/atmel-sha.c
++++ b/drivers/crypto/atmel-sha.c
+@@ -1918,12 +1918,7 @@ static int atmel_sha_hmac_setkey(struct
+ {
+ 	struct atmel_sha_hmac_ctx *hmac = crypto_ahash_ctx(tfm);
  
- 	if (len != 16 && len != 24 && len != 32) {
- 		crypto_aead_set_flags(tfm, CRYPTO_TFM_RES_BAD_KEY_LEN);
--		return -1;
-+		return -EINVAL;
- 	}
+-	if (atmel_sha_hmac_key_set(&hmac->hkey, key, keylen)) {
+-		crypto_ahash_set_flags(tfm, CRYPTO_TFM_RES_BAD_KEY_LEN);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
++	return atmel_sha_hmac_key_set(&hmac->hkey, key, keylen);
+ }
  
- 	ctx->key_length = len;
+ static int atmel_sha_hmac_init(struct ahash_request *req)
 
 
