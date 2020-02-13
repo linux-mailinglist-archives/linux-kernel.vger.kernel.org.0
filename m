@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66D9315C2B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:38:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 671B115C240
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:31:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729724AbgBMP3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:29:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46912 "EHLO mail.kernel.org"
+        id S1729843AbgBMPbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:31:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729230AbgBMP0o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:44 -0500
+        id S2387715AbgBMP1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:51 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5DDAF2467C;
-        Thu, 13 Feb 2020 15:26:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3F2C20661;
+        Thu, 13 Feb 2020 15:27:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607603;
+        s=default; t=1581607670;
         bh=n9qPfzZareJWROB5S1i2u8Q8pzKf0P4hrNCvkAWh3w0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VAy6/SfO15ASRcjUOo5b7Z238MDz0kp7yT+7443A0tfY2wRXk9K2pI2+jKlwoEUmq
-         fI/FGXb5QylAy1VQG6mngKsNBrc4lG97edz2L69CzvJYcwuMFMAfasmjdkvVrOGJPd
-         7NSygFAWirhIDv1gKvOmXkh19iD3cTS412pGQQ/8=
+        b=A09L2oHIWIql9Vo4eUcdKxAjsDyD/4cjetf+ZQQZbQ/7mD+P0KNGikhmL7hJHbFro
+         0u/GFuk74f7SJJ4iJMNUxZQ5dhMKIgA618yB8R7MorvQV4dwKaNt7XDIBfEpi7esJK
+         IbPmuGMF4OUK6w760CzFH/71birPIdcb1rEd0Lx4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 4.19 41/52] mtd: sharpslpart: Fix unsigned comparison to zero
-Date:   Thu, 13 Feb 2020 07:21:22 -0800
-Message-Id: <20200213151827.127577441@linuxfoundation.org>
+Subject: [PATCH 5.4 76/96] mtd: sharpslpart: Fix unsigned comparison to zero
+Date:   Thu, 13 Feb 2020 07:21:23 -0800
+Message-Id: <20200213151908.016338383@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
-References: <20200213151810.331796857@linuxfoundation.org>
+In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
+References: <20200213151839.156309910@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
