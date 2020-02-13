@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 901E815C62D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC6B015C5D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388132AbgBMP6I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:58:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40352 "EHLO mail.kernel.org"
+        id S1728226AbgBMPZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:25:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728950AbgBMPZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:14 -0500
+        id S1728434AbgBMPXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:39 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB66A246A3;
-        Thu, 13 Feb 2020 15:25:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2FEB246C0;
+        Thu, 13 Feb 2020 15:23:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607513;
-        bh=8LnMSoTK3W8ydSoPVhw8dm+DF5F1/ExigDKkhP3Fx7A=;
+        s=default; t=1581607418;
+        bh=YOR8bPRZxfWKnP2r5ckgg8MHlfxHiP9z0YI5Tv3PFOg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o6DOlIikiCZRAH4KUY53wPNcrplM8vvYwftdo/GE2+MMrYq1U6ecu+GrNWKSWgsA0
-         CboRTKtzMThDr7Owt1T5S9cxn+kx65n3KDUDQKPn35cDVMRYFtApW8+clsEvT1wOeC
-         NZEfJqPBlT/tyxJvizJO0fg6mwF1NB4JM5TOvg78=
+        b=c0mp+oa1DZlZeUM4HV38Kqnc3GOFh9fstQVP8orLiKKQsi2zQrrB+A1cM+jZXxaCi
+         3NoZbPGIsdcIPz202Jxo1cap9djMwyAcIIyHaxowhS0GN087r+YZyjWBDET89dHNof
+         XpBTocRjH10uPKk7rjNSgxvYoq0qLw0AMxIux/3w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Amol Grover <frextrite@gmail.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 058/173] tracing: Annotate ftrace_graph_hash pointer with __rcu
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.9 017/116] brcmfmac: Fix memory leak in brcmf_usbdev_qinit
 Date:   Thu, 13 Feb 2020 07:19:21 -0800
-Message-Id: <20200213151948.509243564@linuxfoundation.org>
+Message-Id: <20200213151849.671772663@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,77 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amol Grover <frextrite@gmail.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-[ Upstream commit 24a9729f831462b1d9d61dc85ecc91c59037243f ]
+commit 4282dc057d750c6a7dd92953564b15c26b54c22c upstream.
 
-Fix following instances of sparse error
-kernel/trace/ftrace.c:5664:29: error: incompatible types in comparison
-kernel/trace/ftrace.c:5785:21: error: incompatible types in comparison
-kernel/trace/ftrace.c:5864:36: error: incompatible types in comparison
-kernel/trace/ftrace.c:5866:25: error: incompatible types in comparison
+In the implementation of brcmf_usbdev_qinit() the allocated memory for
+reqs is leaking if usb_alloc_urb() fails. Release reqs in the error
+handling path.
 
-Use rcu_dereference_protected to access the __rcu annotated pointer.
+Fixes: 71bb244ba2fd ("brcm80211: fmac: add USB support for bcm43235/6/8 chipsets")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Link: http://lkml.kernel.org/r/20200201072703.17330-1-frextrite@gmail.com
-
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Signed-off-by: Amol Grover <frextrite@gmail.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/ftrace.c | 2 +-
- kernel/trace/trace.h  | 9 ++++++---
- 2 files changed, 7 insertions(+), 4 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 3864d23414429..6af28692f0f53 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -5146,7 +5146,7 @@ static const struct file_operations ftrace_notrace_fops = {
- 
- static DEFINE_MUTEX(graph_lock);
- 
--struct ftrace_hash *ftrace_graph_hash = EMPTY_HASH;
-+struct ftrace_hash __rcu *ftrace_graph_hash = EMPTY_HASH;
- struct ftrace_hash *ftrace_graph_notrace_hash = EMPTY_HASH;
- 
- enum graph_filter_type {
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index dbb212c40a410..17f36488d3c84 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -868,22 +868,25 @@ extern void __trace_graph_return(struct trace_array *tr,
- 				 unsigned long flags, int pc);
- 
- #ifdef CONFIG_DYNAMIC_FTRACE
--extern struct ftrace_hash *ftrace_graph_hash;
-+extern struct ftrace_hash __rcu *ftrace_graph_hash;
- extern struct ftrace_hash *ftrace_graph_notrace_hash;
- 
- static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
- {
- 	unsigned long addr = trace->func;
- 	int ret = 0;
-+	struct ftrace_hash *hash;
- 
- 	preempt_disable_notrace();
- 
--	if (ftrace_hash_empty(ftrace_graph_hash)) {
-+	hash = rcu_dereference_protected(ftrace_graph_hash, !preemptible());
-+
-+	if (ftrace_hash_empty(hash)) {
- 		ret = 1;
- 		goto out;
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
+@@ -438,6 +438,7 @@ fail:
+ 			usb_free_urb(req->urb);
+ 		list_del(q->next);
  	}
++	kfree(reqs);
+ 	return NULL;
  
--	if (ftrace_lookup_ip(ftrace_graph_hash, addr)) {
-+	if (ftrace_lookup_ip(hash, addr)) {
- 
- 		/*
- 		 * This needs to be cleared on the return functions
--- 
-2.20.1
-
+ }
 
 
