@@ -2,93 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1071815C50C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC49715C513
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388045AbgBMPwy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:52:54 -0500
-Received: from mail-qv1-f67.google.com ([209.85.219.67]:36030 "EHLO
-        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729202AbgBMPww (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:52:52 -0500
-Received: by mail-qv1-f67.google.com with SMTP id db9so2825044qvb.3;
-        Thu, 13 Feb 2020 07:52:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=EuJrg4ULs0tpagr31hXq1zdKPAdFI4MMOOagF1qJLOg=;
-        b=PnjLF4bNA/eUyCHgQ/R8wWTcv3gOxU/nYK8t0Sd6AcOsphiCjIu2d4hWM4XNJrJafd
-         XgexmQM//GYEUS2Q79iqv68UkFJZPtLjF1AZJdYosM2nOHeRG3BwnZoNAe+H15LDic0U
-         mKRMYRni5DqhLpZ9U0Plvl11o3JecbI4ETKTy4aMgKU4sndLLwACtL53DzTrrbRX0WWy
-         oNFNxYsLwhjxLBwrqYmDBR/4Y5K+F6KfdMe2Sr2t56jkIy16cydbw7Q6u8fhT2NUopRX
-         YWcB76bAbCNyH5CJcWEJDAJhA8Ungl8ZJhh35Jp0l2R31W8u+aum4qdhDbnwFDwye59v
-         vTrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=EuJrg4ULs0tpagr31hXq1zdKPAdFI4MMOOagF1qJLOg=;
-        b=ITIpqr3HZ2A4pea7QD1aVIDLQmjHo92tr9fODfDL+uNA4IOH68Bcehed8+SjocPl78
-         o6ywE04/1vctnNNo29OhuEmfB/2GQxitn+yRq7ArQX8hJzI9wJ71wLBjzCESzC4AejXY
-         8+pW4h0t2bjzZSyWtlyBmxjzk/w3RxtfAdLSjE+UG2/4uya/Xlurs2oeNGKph1HTfIVS
-         XCOKhUd1uWI00pUFhw9nrniGXfG4uYcGgo8bIpObIsbEBKJgnrBm3k+7JKsbiRO4PsFs
-         OhBUOgb4papceI/dyMjLwMoM+jUIrrfyZL1srvnK6EmLAOBmd+cxvNGwrmaoYaWbdeGd
-         16ZA==
-X-Gm-Message-State: APjAAAXiMcGBKzVmAgFVfBGnfxN1COhp7Tn9SiyOZ3QTT2gVQULFESKz
-        6gmpNRoJhOg+hI4nshN4qq6gLz/toEI=
-X-Google-Smtp-Source: APXvYqwgtnWEN5FesTTslQ57egNuS1baXiQAXTLM2vbGsZMUPJpSNipp0vBwp8oFOfgBHYOElxnPgQ==
-X-Received: by 2002:a0c:efc4:: with SMTP id a4mr12479571qvt.178.1581609170928;
-        Thu, 13 Feb 2020 07:52:50 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::1:f3be])
-        by smtp.gmail.com with ESMTPSA id 65sm1639533qtf.95.2020.02.13.07.52.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 07:52:50 -0800 (PST)
-Date:   Thu, 13 Feb 2020 10:52:49 -0500
-From:   Tejun Heo <tj@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH v2 3/3] mm: memcontrol: recursive memory.low protection
-Message-ID: <20200213155249.GI88887@mtj.thefacebook.com>
-References: <20191219200718.15696-1-hannes@cmpxchg.org>
- <20191219200718.15696-4-hannes@cmpxchg.org>
- <20200130170020.GZ24244@dhcp22.suse.cz>
- <20200203215201.GD6380@cmpxchg.org>
- <20200211164753.GQ10636@dhcp22.suse.cz>
- <20200212170826.GC180867@cmpxchg.org>
- <20200213074049.GA31689@dhcp22.suse.cz>
- <20200213135348.GF88887@mtj.thefacebook.com>
- <20200213154731.GE31689@dhcp22.suse.cz>
+        id S1729189AbgBMPxM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:53:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57752 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388170AbgBMPxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:53:03 -0500
+Received: from localhost (unknown [104.132.1.104])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0B4E20675;
+        Thu, 13 Feb 2020 15:53:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581609182;
+        bh=FMfC9moU8ewBagpU75MLiV8NmlJku+z4d5ntWxhtmPk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ko0g4PMvx7Tl5DjaEdW1cD3ygfNr6WmnxSTzqPN9YlticY3jy30MzILCszhPdqGyD
+         +Ti3b27JLDSQ/EShZEXuUlHFDG91Q1YmjMPBZmdX3/6JenuapGjNBWDscxTBg9ZDau
+         f6+0f/7MM20QZzw0cFx7Y36LlEPBrF0gncOW7eoc=
+Date:   Thu, 13 Feb 2020 07:53:02 -0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     arnd@arndb.de, smohanad@codeaurora.org, jhugo@codeaurora.org,
+        kvalo@codeaurora.org, bjorn.andersson@linaro.org,
+        hemantk@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 02/16] bus: mhi: core: Add support for registering MHI
+ controllers
+Message-ID: <20200213155302.GA3635465@kroah.com>
+References: <20200131135009.31477-1-manivannan.sadhasivam@linaro.org>
+ <20200131135009.31477-3-manivannan.sadhasivam@linaro.org>
+ <20200206165755.GB3894455@kroah.com>
+ <20200211184130.GA11908@Mani-XPS-13-9360>
+ <20200211192055.GA1962867@kroah.com>
+ <20200213152013.GB15010@mani>
+ <20200213153418.GA3623121@kroah.com>
+ <20200213154809.GA26953@mani>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200213154731.GE31689@dhcp22.suse.cz>
+In-Reply-To: <20200213154809.GA26953@mani>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Feb 13, 2020 at 09:18:09PM +0530, Manivannan Sadhasivam wrote:
+> Hi Greg,
+> 
+> On Thu, Feb 13, 2020 at 07:34:18AM -0800, Greg KH wrote:
+> > On Thu, Feb 13, 2020 at 08:50:13PM +0530, Manivannan Sadhasivam wrote:
+> > > On Tue, Feb 11, 2020 at 11:20:55AM -0800, Greg KH wrote:
+> > > > On Wed, Feb 12, 2020 at 12:11:30AM +0530, Manivannan Sadhasivam wrote:
+> > > > > Hi Greg,
+> > > > > 
+> > > > > On Thu, Feb 06, 2020 at 05:57:55PM +0100, Greg KH wrote:
+> > > > > > On Fri, Jan 31, 2020 at 07:19:55PM +0530, Manivannan Sadhasivam wrote:
+> > > > > > > --- /dev/null
+> > > > > > > +++ b/drivers/bus/mhi/core/init.c
+> > > > > > > @@ -0,0 +1,407 @@
+> > > > > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > > > > +/*
+> > > > > > > + * Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
+> > > > > > > + *
+> > > > > > > + */
+> > > > > > > +
+> > > > > > > +#define dev_fmt(fmt) "MHI: " fmt
+> > > > > > 
+> > > > > > This should not be needed, right?  The bus/device name should give you
+> > > > > > all you need here from what I can tell.  So why is this needed?
+> > > > > > 
+> > > > > 
+> > > > > The log will have only the device name as like PCI-E. But that won't specify
+> > > > > where the error is coming from. Having "MHI" prefix helps the users to
+> > > > > quickly identify that the error is coming from MHI stack.
+> > > > 
+> > > > If the driver binds properly to the device, the name of the driver will
+> > > > be there in the message, so I suggest using that please.
+> > > > 
+> > > > No need for this prefix...
+> > > > 
+> > > 
+> > > So the driver name will be in the log but that won't help identifying where
+> > > the log is coming from. This is more important for MHI since it reuses the
+> > > `struct device` of the transport device like PCI-E. For instance, below is
+> > > the log without MHI prefix:
+> > > 
+> > > [   47.355582] ath11k_pci 0000:01:00.0: Requested to power on
+> > > [   47.355724] ath11k_pci 0000:01:00.0: Power on setup success
+> > > 
+> > > As you can see, this gives the assumption that the log is coming from the
+> > > ath11k_pci driver. But the reality is, it is coming from MHI bus.
+> > 
+> > Then you should NOT be trying to "reuse" a struct device.
+> > 
+> > > With the prefix added, we will get below:
+> > > 
+> > > [   47.355582] ath11k_pci 0000:01:00.0: MHI: Requested to power on
+> > > [   47.355724] ath11k_pci 0000:01:00.0: MHI: Power on setup success
+> > > 
+> > > IMO, the prefix will give users a clear idea of logs and that will be very
+> > > useful for debugging.
+> > > 
+> > > Hope this clarifies.
+> > 
+> > Don't try to reuse struct devices, if you are a bus, have your own
+> > devices as that's the correct way to do things.
+> > 
+> 
+> I assumed that the buses relying on a different physical interface for the
+> actual communication can reuse the `struct device`. I can see that the MOXTET
+> bus driver already doing it. It reuses the `struct device` of SPI.
 
-On Thu, Feb 13, 2020 at 04:47:31PM +0100, Michal Hocko wrote:
-> Well, I would tend to agree but I can see an existing cgroup hierarchy
-> imposed by systemd and that is more about "logical" organization of
-> processes based on their purpose than anything resembling resources.
-> So what can we do about that to make it all work?
+How can you reuse anything?
 
-systemd right now isn't configuring any resource control by default,
-so I'm not sure why it is relevant in this discussion. You gotta
-change the layout to configure resource control no matter what and
-it's pretty easy to do. systemd folks are planning to integrate higher
-level resource control features, so my expectation is that the default
-layout is gonna change as it develops.
+> And this assumption has deep rooted in MHI bus design.
 
-Thanks.
+Maybe I do not understand what this is at all, but a device can only be
+on one "bus" at a time.  How is that being broken here?
 
--- 
-tejun
+thanks,
+
+greg k-h
