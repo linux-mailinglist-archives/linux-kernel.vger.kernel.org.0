@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FBD715C432
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FEF415C434
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387486AbgBMP1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:27:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40786 "EHLO mail.kernel.org"
+        id S1728961AbgBMP11 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:27:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728516AbgBMPZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:22 -0500
+        id S1728989AbgBMPZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:25 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3323124690;
-        Thu, 13 Feb 2020 15:25:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C1D524690;
+        Thu, 13 Feb 2020 15:25:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607522;
-        bh=SIsmPf3abXu8RlcQgswvaUTqnh7SxIEE2Cc3DW6G/Lc=;
+        s=default; t=1581607524;
+        bh=ImQqmsBiXC3ZTbpTA1IsoX3Qd4c7vQXtJfxgswp5vE4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xgqd11IRRmxuh41Ct60EIMj3pHNQSoXTUYO2ecQsyxd0mbUhlJmigW58CySHj+GTY
-         78ZuBZqzWPJe8ztFLExoFnxg9R3h4n7zOQRE0Vjc3iK1c2cZrefZzlOqAxFe0GWp52
-         y2XshKEpWBd/Qw+v4Cfw6tqCjdnLxeYhmXbcGXxE=
+        b=rxGfQx9hBTFRDVgej8LM/7Yv0xZyIkNvRkyj9QYeWIFflVtwgPJu8WeaBN8i6y6F/
+         hi8PANTG0ZOjhD5A2DmUDVPTEqozZNamoX9+Uqe3FkcBm9sV1cVISqI5n4XOYsLzQD
+         yPR6zWhsYAssmRhrwbpcQ68GV7zNnl2OSMuj2IaI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
-        Stephen Warren <swarren@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: [PATCH 4.14 072/173] ARM: tegra: Enable PLLP bypass during Tegra124 LP1
-Date:   Thu, 13 Feb 2020 07:19:35 -0800
-Message-Id: <20200213151951.723509496@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Roberto Bergantinos Corpas <rbergant@redhat.com>,
+        Frank Sorenson <sorenson@redhat.com>,
+        "J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.14 075/173] sunrpc: expiry_time should be seconds not timeval
+Date:   Thu, 13 Feb 2020 07:19:38 -0800
+Message-Id: <20200213151952.453093218@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
 References: <20200213151931.677980430@linuxfoundation.org>
@@ -44,70 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+From: Roberto Bergantinos Corpas <rbergant@redhat.com>
 
-commit 1a3388d506bf5b45bb283e6a4c4706cfb4897333 upstream.
+commit 3d96208c30f84d6edf9ab4fac813306ac0d20c10 upstream.
 
-For a little over a year, U-Boot has configured the flow controller to
-perform automatic RAM re-repair on off->on power transitions of the CPU
-rail[1]. This is mandatory for correct operation of Tegra124. However,
-RAM re-repair relies on certain clocks, which the kernel must enable and
-leave running. PLLP is one of those clocks. This clock is shut down
-during LP1 in order to save power. Enable bypass (which I believe routes
-osc_div_clk, essentially the crystal clock, to the PLL output) so that
-this clock signal toggles even though the PLL is not active. This is
-required so that LP1 power mode (system suspend) operates correctly.
+When upcalling gssproxy, cache_head.expiry_time is set as a
+timeval, not seconds since boot. As such, RPC cache expiry
+logic will not clean expired objects created under
+auth.rpcsec.context cache.
 
-The bypass configuration must then be undone when resuming from LP1, so
-that all peripheral clocks run at the expected rate. Without this, many
-peripherals won't work correctly; for example, the UART baud rate would
-be incorrect.
+This has proven to cause kernel memory leaks on field. Using
+64 bit variants of getboottime/timespec
 
-NVIDIA's downstream kernel code only does this if not compiled for
-Tegra30, so the added code is made conditional upon the chip ID.
-NVIDIA's downstream code makes this change conditional upon the active
-CPU cluster. The upstream kernel currently doesn't support cluster
-switching, so this patch doesn't test the active CPU cluster ID.
+Expiration times have worked this way since 2010's c5b29f885afe "sunrpc:
+use seconds since boot in expiry cache".  The gssproxy code introduced
+in 2012 added gss_proxy_save_rsc and introduced the bug.  That's a while
+for this to lurk, but it required a bit of an extreme case to make it
+obvious.
 
-[1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
-
-Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+Signed-off-by: Roberto Bergantinos Corpas <rbergant@redhat.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Fixes: 030d794bf498 "SUNRPC: Use gssproxy upcall for server..."
+Tested-By: Frank Sorenson <sorenson@redhat.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mach-tegra/sleep-tegra30.S |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ net/sunrpc/auth_gss/svcauth_gss.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/arm/mach-tegra/sleep-tegra30.S
-+++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -382,6 +382,14 @@ _pll_m_c_x_done:
- 	pll_locked r1, r0, CLK_RESET_PLLC_BASE
- 	pll_locked r1, r0, CLK_RESET_PLLX_BASE
+--- a/net/sunrpc/auth_gss/svcauth_gss.c
++++ b/net/sunrpc/auth_gss/svcauth_gss.c
+@@ -1188,6 +1188,7 @@ static int gss_proxy_save_rsc(struct cac
+ 		dprintk("RPC:       No creds found!\n");
+ 		goto out;
+ 	} else {
++		struct timespec64 boot;
  
-+	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
-+	cmp	r1, #TEGRA30
-+	beq	1f
-+	ldr	r1, [r0, #CLK_RESET_PLLP_BASE]
-+	bic	r1, r1, #(1<<31)	@ disable PllP bypass
-+	str	r1, [r0, #CLK_RESET_PLLP_BASE]
-+1:
+ 		/* steal creds */
+ 		rsci.cred = ud->creds;
+@@ -1208,6 +1209,9 @@ static int gss_proxy_save_rsc(struct cac
+ 						&expiry, GFP_KERNEL);
+ 		if (status)
+ 			goto out;
 +
- 	mov32	r7, TEGRA_TMRUS_BASE
- 	ldr	r1, [r7]
- 	add	r1, r1, #LOCK_DELAY
-@@ -641,7 +649,10 @@ tegra30_switch_cpu_to_clk32k:
- 	str	r0, [r4, #PMC_PLLP_WB0_OVERRIDE]
++		getboottime64(&boot);
++		expiry -= boot.tv_sec;
+ 	}
  
- 	/* disable PLLP, PLLA, PLLC and PLLX */
-+	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
-+	cmp	r1, #TEGRA30
- 	ldr	r0, [r5, #CLK_RESET_PLLP_BASE]
-+	orrne	r0, r0, #(1 << 31)	@ enable PllP bypass on fast cluster
- 	bic	r0, r0, #(1 << 30)
- 	str	r0, [r5, #CLK_RESET_PLLP_BASE]
- 	ldr	r0, [r5, #CLK_RESET_PLLA_BASE]
+ 	rsci.h.expiry_time = expiry;
 
 
