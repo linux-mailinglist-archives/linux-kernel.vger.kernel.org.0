@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80CD915C670
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:12:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7789415C669
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:12:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387803AbgBMQAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 11:00:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39060 "EHLO mail.kernel.org"
+        id S1730027AbgBMQA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 11:00:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728767AbgBMPYp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:24:45 -0500
+        id S1728779AbgBMPYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:24:48 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D90420848;
-        Thu, 13 Feb 2020 15:24:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2EB2B24689;
+        Thu, 13 Feb 2020 15:24:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607485;
-        bh=zj0L/O4bKO6W4FzZ9V7mOoFoXZc71mjj81b4DP/Dsds=;
+        s=default; t=1581607487;
+        bh=XsQhw8W7mXohLjQmh6Bd0tths9W1lSIIvAvOrwJSJic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mCpXIpFdxaiaQAh4gSq51cIpQq2tBMGUgOEfqgDmCHtiSO195XpleDrBmZJnzRAXP
-         pD48usF5gAPBB9anqYGVHTXOYuSBYHOhOsD7Nhj73679daUuhKnNfp7+EobprGmo+Q
-         CvxVcD2rO3aJrzVtx6VQ7xL5XR3P+a4iMxYqXqF4=
+        b=CZU3hCqNK+PsIU1ltIMjQ/rilB94SB4p/SCzys83bJDGKy3zjq5vXYhrYWMsyi02U
+         Y2lkKLF8mJ/tGHynSp2+kgG9dqK2wABFo5if6JE1B38NrGVfW43I6FaYc6w58hssiU
+         uXm7XMd0jZ0M6sczNrU3NpuF6AbGiguptF3UMdeM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Marcelo Ricardo Leitner <mleitner@redhat.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Jakub Kicinski <kuba@kernel.org>
-Subject: [PATCH 4.14 015/173] tcp: clear tp->segs_{in|out} in tcp_disconnect()
-Date:   Thu, 13 Feb 2020 07:18:38 -0800
-Message-Id: <20200213151936.687879775@linuxfoundation.org>
+        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
+        Will Deacon <will@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Subject: [PATCH 4.14 018/173] media: uvcvideo: Avoid cyclic entity chains due to malformed USB descriptors
+Date:   Thu, 13 Feb 2020 07:18:41 -0800
+Message-Id: <20200213151937.607318733@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
 References: <20200213151931.677980430@linuxfoundation.org>
@@ -46,36 +45,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Will Deacon <will@kernel.org>
 
-[ Upstream commit 784f8344de750a41344f4bbbebb8507a730fc99c ]
+commit 68035c80e129c4cfec659aac4180354530b26527 upstream.
 
-tp->segs_in and tp->segs_out need to be cleared in tcp_disconnect().
+Way back in 2017, fuzzing the 4.14-rc2 USB stack with syzkaller kicked
+up the following WARNING from the UVC chain scanning code:
 
-tcp_disconnect() is rarely used, but it is worth fixing it.
+  | list_add double add: new=ffff880069084010, prev=ffff880069084010,
+  | next=ffff880067d22298.
+  | ------------[ cut here ]------------
+  | WARNING: CPU: 1 PID: 1846 at lib/list_debug.c:31 __list_add_valid+0xbd/0xf0
+  | Modules linked in:
+  | CPU: 1 PID: 1846 Comm: kworker/1:2 Not tainted
+  | 4.14.0-rc2-42613-g1488251d1a98 #238
+  | Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+  | Workqueue: usb_hub_wq hub_event
+  | task: ffff88006b01ca40 task.stack: ffff880064358000
+  | RIP: 0010:__list_add_valid+0xbd/0xf0 lib/list_debug.c:29
+  | RSP: 0018:ffff88006435ddd0 EFLAGS: 00010286
+  | RAX: 0000000000000058 RBX: ffff880067d22298 RCX: 0000000000000000
+  | RDX: 0000000000000058 RSI: ffffffff85a58800 RDI: ffffed000c86bbac
+  | RBP: ffff88006435dde8 R08: 1ffff1000c86ba52 R09: 0000000000000000
+  | R10: 0000000000000002 R11: 0000000000000000 R12: ffff880069084010
+  | R13: ffff880067d22298 R14: ffff880069084010 R15: ffff880067d222a0
+  | FS:  0000000000000000(0000) GS:ffff88006c900000(0000) knlGS:0000000000000000
+  | CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  | CR2: 0000000020004ff2 CR3: 000000006b447000 CR4: 00000000000006e0
+  | Call Trace:
+  |  __list_add ./include/linux/list.h:59
+  |  list_add_tail+0x8c/0x1b0 ./include/linux/list.h:92
+  |  uvc_scan_chain_forward.isra.8+0x373/0x416
+  | drivers/media/usb/uvc/uvc_driver.c:1471
+  |  uvc_scan_chain drivers/media/usb/uvc/uvc_driver.c:1585
+  |  uvc_scan_device drivers/media/usb/uvc/uvc_driver.c:1769
+  |  uvc_probe+0x77f2/0x8f00 drivers/media/usb/uvc/uvc_driver.c:2104
 
-Fixes: 2efd055c53c0 ("tcp: add tcpi_segs_in and tcpi_segs_out to tcp_info")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Marcelo Ricardo Leitner <mleitner@redhat.com>
-Cc: Yuchung Cheng <ycheng@google.com>
-Cc: Neal Cardwell <ncardwell@google.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Looking into the output from usbmon, the interesting part is the
+following data packet:
+
+  ffff880069c63e00 30710169 C Ci:1:002:0 0 143 = 09028f00 01030080
+  00090403 00000e01 00000924 03000103 7c003328 010204db
+
+If we drop the lead configuration and interface descriptors, we're left
+with an output terminal descriptor describing a generic display:
+
+  /* Output terminal descriptor */
+  buf[0]	09
+  buf[1]	24
+  buf[2]	03	/* UVC_VC_OUTPUT_TERMINAL */
+  buf[3]	00	/* ID */
+  buf[4]	01	/* type == 0x0301 (UVC_OTT_DISPLAY) */
+  buf[5]	03
+  buf[6]	7c
+  buf[7]	00	/* source ID refers to self! */
+  buf[8]	33
+
+The problem with this descriptor is that it is self-referential: the
+source ID of 0 matches itself! This causes the 'struct uvc_entity'
+representing the display to be added to its chain list twice during
+'uvc_scan_chain()': once via 'uvc_scan_chain_entity()' when it is
+processed directly from the 'dev->entities' list and then again
+immediately afterwards when trying to follow the source ID in
+'uvc_scan_chain_forward()'
+
+Add a check before adding an entity to a chain list to ensure that the
+entity is not already part of a chain.
+
+Link: https://lore.kernel.org/linux-media/CAAeHK+z+Si69jUR+N-SjN9q4O+o5KFiNManqEa-PjUta7EOb7A@mail.gmail.com/
+
+Cc: <stable@vger.kernel.org>
+Fixes: c0efd232929c ("V4L/DVB (8145a): USB Video Class driver")
+Reported-by: Andrey Konovalov <andreyknvl@google.com>
+Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/tcp.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -2379,6 +2379,8 @@ int tcp_disconnect(struct sock *sk, int
- 	dst_release(sk->sk_rx_dst);
- 	sk->sk_rx_dst = NULL;
- 	tcp_saved_syn_free(tp);
-+	tp->segs_in = 0;
-+	tp->segs_out = 0;
- 	tp->bytes_acked = 0;
- 	tp->bytes_received = 0;
- 	tp->data_segs_in = 0;
+---
+ drivers/media/usb/uvc/uvc_driver.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -1446,6 +1446,11 @@ static int uvc_scan_chain_forward(struct
+ 			break;
+ 		if (forward == prev)
+ 			continue;
++		if (forward->chain.next || forward->chain.prev) {
++			uvc_trace(UVC_TRACE_DESCR, "Found reference to "
++				"entity %d already in chain.\n", forward->id);
++			return -EINVAL;
++		}
+ 
+ 		switch (UVC_ENTITY_TYPE(forward)) {
+ 		case UVC_VC_EXTENSION_UNIT:
+@@ -1527,6 +1532,13 @@ static int uvc_scan_chain_backward(struc
+ 				return -1;
+ 			}
+ 
++			if (term->chain.next || term->chain.prev) {
++				uvc_trace(UVC_TRACE_DESCR, "Found reference to "
++					"entity %d already in chain.\n",
++					term->id);
++				return -EINVAL;
++			}
++
+ 			if (uvc_trace_param & UVC_TRACE_PROBE)
+ 				printk(KERN_CONT " %d", term->id);
+ 
 
 
