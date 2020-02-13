@@ -2,273 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2241815CD85
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 22:48:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A742515CD75
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 22:47:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728824AbgBMVs3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 16:48:29 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37558 "EHLO
+        id S1728209AbgBMVrW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 16:47:22 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37462 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728168AbgBMVs1 (ORCPT
+        with ESMTP id S1727772AbgBMVrV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 16:48:27 -0500
+        Thu, 13 Feb 2020 16:47:21 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: tonyk)
-        with ESMTPSA id 8BB3229581D
-From:   =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
-To:     linux-kernel@vger.kernel.org, tglx@linutronix.de
-Cc:     kernel@collabora.com, krisman@collabora.com, shuah@kernel.org,
-        linux-kselftest@vger.kernel.org, rostedt@goodmis.org,
-        ryao@gentoo.org, peterz@infradead.org, dvhart@infradead.org,
-        mingo@redhat.com, z.figura12@gmail.com, steven@valvesoftware.com,
-        pgriffais@valvesoftware.com, steven@liquorix.net,
-        =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
-Subject: [PATCH v3 4/4] selftests: futex: Add FUTEX_WAIT_MULTIPLE wake up test
-Date:   Thu, 13 Feb 2020 18:45:25 -0300
-Message-Id: <20200213214525.183689-5-andrealmeid@collabora.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213214525.183689-1-andrealmeid@collabora.com>
-References: <20200213214525.183689-1-andrealmeid@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        (Authenticated sender: dafna)
+        with ESMTPSA id A1ED228DA7F
+From:   Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, bleung@chromium.org,
+        enric.balletbo@collabora.com, groeck@chromium.org,
+        dafna.hirschfeld@collabora.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, helen.koike@collabora.com,
+        ezequiel@collabora.com, kernel@collabora.com, dafna3@gmail.com
+Subject: [PATCH v3 1/2] dt-bindings: i2c: cros-ec-tunnel: convert i2c-cros-ec-tunnel.txt to yaml
+Date:   Thu, 13 Feb 2020 22:46:55 +0100
+Message-Id: <20200213214656.9801-1-dafna.hirschfeld@collabora.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gabriel Krisman Bertazi <krisman@collabora.com>
+Convert the binding file i2c-cros-ec-tunnel.txt to yaml format.
 
-Add test for wait at multiple futexes mechanism. Skip the test if it's a
-x32 application and the kernel returned the approtiaded error, since this
-ABI is not supported for this operation.
+This was tested and verified on ARM and ARM64 with:
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-Co-developed-by: André Almeida <andrealmeid@collabora.com>
-Signed-off-by: André Almeida <andrealmeid@collabora.com>
+make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.yaml
+make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.yaml
+
+Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
 ---
-Changes since v2: none
----
- .../selftests/futex/functional/.gitignore     |   1 +
- .../selftests/futex/functional/Makefile       |   3 +-
- .../futex/functional/futex_wait_multiple.c    | 173 ++++++++++++++++++
- .../testing/selftests/futex/functional/run.sh |   3 +
- 4 files changed, 179 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/futex/functional/futex_wait_multiple.c
+Changes since v1:
+- changing the subject to start with "dt-bindings: i2c: cros-ec-tunnel:"
+- changing the license to (GPL-2.0-only OR BSD-2-Clause)
+- removing "Guenter Roeck <groeck@chromium.org>" from the maintainers list
+- adding ref: /schemas/i2c/i2c-controller.yaml
 
-diff --git a/tools/testing/selftests/futex/functional/.gitignore b/tools/testing/selftests/futex/functional/.gitignore
-index a09f57061902..4660128a545e 100644
---- a/tools/testing/selftests/futex/functional/.gitignore
-+++ b/tools/testing/selftests/futex/functional/.gitignore
-@@ -5,3 +5,4 @@ futex_wait_private_mapped_file
- futex_wait_timeout
- futex_wait_uninitialized_heap
- futex_wait_wouldblock
-+futex_wait_multiple
-diff --git a/tools/testing/selftests/futex/functional/Makefile b/tools/testing/selftests/futex/functional/Makefile
-index 30996306cabc..75f9fface11f 100644
---- a/tools/testing/selftests/futex/functional/Makefile
-+++ b/tools/testing/selftests/futex/functional/Makefile
-@@ -14,7 +14,8 @@ TEST_GEN_FILES := \
- 	futex_requeue_pi_signal_restart \
- 	futex_requeue_pi_mismatched_ops \
- 	futex_wait_uninitialized_heap \
--	futex_wait_private_mapped_file
-+	futex_wait_private_mapped_file \
-+	futex_wait_multiple
- 
- TEST_PROGS := run.sh
- 
-diff --git a/tools/testing/selftests/futex/functional/futex_wait_multiple.c b/tools/testing/selftests/futex/functional/futex_wait_multiple.c
+Changes since v2:
+- adding another patch that fixes a warning found by this patch
+
+
+ .../bindings/i2c/i2c-cros-ec-tunnel.txt       | 39 ------------
+ .../bindings/i2c/i2c-cros-ec-tunnel.yaml      | 63 +++++++++++++++++++
+ 2 files changed, 63 insertions(+), 39 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.yaml
+
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt b/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
+deleted file mode 100644
+index 898f030eba62..000000000000
+--- a/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
++++ /dev/null
+@@ -1,39 +0,0 @@
+-I2C bus that tunnels through the ChromeOS EC (cros-ec)
+-======================================================
+-On some ChromeOS board designs we've got a connection to the EC (embedded
+-controller) but no direct connection to some devices on the other side of
+-the EC (like a battery and PMIC).  To get access to those devices we need
+-to tunnel our i2c commands through the EC.
+-
+-The node for this device should be under a cros-ec node like google,cros-ec-spi
+-or google,cros-ec-i2c.
+-
+-
+-Required properties:
+-- compatible: google,cros-ec-i2c-tunnel
+-- google,remote-bus: The EC bus we'd like to talk to.
+-
+-Optional child nodes:
+-- One node per I2C device connected to the tunnelled I2C bus.
+-
+-
+-Example:
+-	cros-ec@0 {
+-		compatible = "google,cros-ec-spi";
+-
+-		...
+-
+-		i2c-tunnel {
+-			compatible = "google,cros-ec-i2c-tunnel";
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			google,remote-bus = <0>;
+-
+-			battery: sbs-battery@b {
+-				compatible = "sbs,sbs-battery";
+-				reg = <0xb>;
+-				sbs,poll-retry-count = <1>;
+-			};
+-		};
+-	}
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.yaml b/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.yaml
 new file mode 100644
-index 000000000000..b48422e79f42
+index 000000000000..a14d821ff65d
 --- /dev/null
-+++ b/tools/testing/selftests/futex/functional/futex_wait_multiple.c
-@@ -0,0 +1,173 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/******************************************************************************
-+ *
-+ *   Copyright © Collabora, Ltd., 2019
-+ *
-+ * DESCRIPTION
-+ *      Test basic semantics of FUTEX_WAIT_MULTIPLE
-+ *
-+ * AUTHOR
-+ *      Gabriel Krisman Bertazi <krisman@collabora.com>
-+ *
-+ * HISTORY
-+ *      2019-Dec-13: Initial version by Krisman <krisman@collabora.com>
-+ *
-+ *****************************************************************************/
++++ b/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.yaml
+@@ -0,0 +1,63 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/i2c/i2c-cros-ec-tunnel.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#include <errno.h>
-+#include <getopt.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <time.h>
-+#include <pthread.h>
-+#include "futextest.h"
-+#include "logging.h"
++title: I2C bus that tunnels through the ChromeOS EC (cros-ec)
 +
-+#define TEST_NAME "futex-wait-multiple"
-+#define timeout_ns 100000
-+#define MAX_COUNT 128
-+#define WAKE_WAIT_US 3000000
++maintainers:
++  - Benson Leung <bleung@chromium.org>
++  - Enric Balletbo i Serra <enric.balletbo@collabora.com>
 +
-+int ret = RET_PASS;
-+char *progname;
-+futex_t f[MAX_COUNT] = {0};
-+struct futex_wait_block fwb[MAX_COUNT];
++description: |
++  On some ChromeOS board designs we've got a connection to the EC (embedded
++  controller) but no direct connection to some devices on the other side of
++  the EC (like a battery and PMIC). To get access to those devices we need
++  to tunnel our i2c commands through the EC.
++  The node for this device should be under a cros-ec node like google,cros-ec-spi
++  or google,cros-ec-i2c.
 +
-+void usage(char *prog)
-+{
-+	printf("Usage: %s\n", prog);
-+	printf("  -c	Use color\n");
-+	printf("  -h	Display this help message\n");
-+	printf("  -v L	Verbosity level: %d=QUIET %d=CRITICAL %d=INFO\n",
-+	       VQUIET, VCRITICAL, VINFO);
-+}
++allOf:
++  - $ref: /schemas/i2c/i2c-controller.yaml#
 +
-+void test_count_overflow(void)
-+{
-+	futex_t f = FUTEX_INITIALIZER;
-+	struct futex_wait_block fwb[MAX_COUNT+1];
-+	int res, i;
++properties:
++  compatible:
++    const:
++      google,cros-ec-i2c-tunnel
 +
-+	ksft_print_msg("%s: Test a too big number of futexes\n", progname);
++  google,remote-bus:
++    $ref: "/schemas/types.yaml#/definitions/uint32"
++    description: The EC bus we'd like to talk to.
 +
-+	for (i = 0; i < MAX_COUNT+1; i++) {
-+		fwb[i].uaddr = &f;
-+		fwb[i].val = f;
-+		fwb[i].bitset = 0;
-+	}
++  "#address-cells": true
++  "#size-cells": true
 +
-+	res = futex_wait_multiple(fwb, MAX_COUNT+1, NULL, FUTEX_PRIVATE_FLAG);
++patternProperties:
++  "^.*@[0-9a-f]+$":
++    type: object
++    description: One node per I2C device connected to the tunnelled I2C bus.
 +
-+#ifdef __ILP32__
-+	if (res != -1 || errno != ENOSYS) {
-+		ksft_test_result_fail("futex_wait_multiple returned %d\n",
-+				      res < 0 ? errno : res);
-+		ret = RET_FAIL;
-+	} else {
-+		ksft_test_result_skip("futex_wait_multiple not supported at x32\n");
-+	}
-+#else
-+	if (res != -1 || errno != EINVAL) {
-+		ksft_test_result_fail("futex_wait_multiple returned %d\n",
-+				      res < 0 ? errno : res);
-+		ret = RET_FAIL;
-+	} else {
-+		ksft_test_result_pass("futex_wait_multiple count overflow succeed\n");
-+	}
++additionalProperties: false
 +
-+#endif /* __ILP32__ */
-+}
++required:
++  - compatible
++  - google,remote-bus
 +
-+void *waiterfn(void *arg)
-+{
-+	int res;
++examples:
++  - |
++    cros-ec@0 {
++        compatible = "google,cros-ec-spi";
++        i2c-tunnel {
++            compatible = "google,cros-ec-i2c-tunnel";
++            #address-cells = <1>;
++            #size-cells = <0>;
++            google,remote-bus = <0>;
 +
-+	res = futex_wait_multiple(fwb, MAX_COUNT, NULL, FUTEX_PRIVATE_FLAG);
-+
-+#ifdef __ILP32__
-+	if (res != -1 || errno != ENOSYS) {
-+		ksft_test_result_fail("futex_wait_multiple returned %d\n",
-+				      res < 0 ? errno : res);
-+		ret = RET_FAIL;
-+	} else {
-+		ksft_test_result_skip("futex_wait_multiple not supported at x32\n");
-+	}
-+#else
-+	if (res < 0)
-+		ksft_print_msg("waiter failed %d\n", res);
-+
-+	info("futex_wait_multiple: Got hint futex %d was freed\n", res);
-+#endif /* __ILP32__ */
-+
-+	return NULL;
-+}
-+
-+void test_fwb_wakeup(void)
-+{
-+	int res, i;
-+	pthread_t waiter;
-+
-+	ksft_print_msg("%s: Test wake up in a list of futex\n", progname);
-+
-+	for (i = 0; i < MAX_COUNT; i++) {
-+		fwb[i].uaddr = &f[i];
-+		fwb[i].val = f[i];
-+		fwb[i].bitset = 0xffffffff;
-+	}
-+
-+	res = pthread_create(&waiter, NULL, waiterfn, NULL);
-+	if (res) {
-+		ksft_test_result_fail("Creating waiting thread failed");
-+		ksft_exit_fail();
-+	}
-+
-+	usleep(WAKE_WAIT_US);
-+	res = futex_wake(&(f[MAX_COUNT-1]), 1, FUTEX_PRIVATE_FLAG);
-+	if (res != 1) {
-+		ksft_test_result_fail("Failed to wake thread res=%d\n", res);
-+		ksft_exit_fail();
-+	}
-+
-+	pthread_join(waiter, NULL);
-+	ksft_test_result_pass("%s succeed\n", __func__);
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	int c;
-+
-+	while ((c = getopt(argc, argv, "cht:v:")) != -1) {
-+		switch (c) {
-+		case 'c':
-+			log_color(1);
-+			break;
-+		case 'h':
-+			usage(basename(argv[0]));
-+			exit(0);
-+		case 'v':
-+			log_verbosity(atoi(optarg));
-+			break;
-+		default:
-+			usage(basename(argv[0]));
-+			exit(1);
-+		}
-+	}
-+
-+	progname = basename(argv[0]);
-+
-+	ksft_print_header();
-+	ksft_set_plan(2);
-+
-+	test_count_overflow();
-+
-+#ifdef __ILP32__
-+	// if it's a 32x binary, there's no futex to wakeup
-+	ksft_test_result_skip("futex_wait_multiple not supported at x32\n");
-+#else
-+	test_fwb_wakeup();
-+#endif /* __ILP32__ */
-+
-+	ksft_print_cnts();
-+	return ret;
-+}
-diff --git a/tools/testing/selftests/futex/functional/run.sh b/tools/testing/selftests/futex/functional/run.sh
-index 1acb6ace1680..a8be94f28ff7 100755
---- a/tools/testing/selftests/futex/functional/run.sh
-+++ b/tools/testing/selftests/futex/functional/run.sh
-@@ -73,3 +73,6 @@ echo
- echo
- ./futex_wait_uninitialized_heap $COLOR
- ./futex_wait_private_mapped_file $COLOR
-+
-+echo
-+./futex_wait_multiple $COLOR
++            battery: sbs-battery@b {
++                compatible = "sbs,sbs-battery";
++                reg = <0xb>;
++                sbs,poll-retry-count = <1>;
++            };
++        };
++    };
 -- 
-2.25.0
+2.17.1
 
