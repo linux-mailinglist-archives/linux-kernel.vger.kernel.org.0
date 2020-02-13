@@ -2,63 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C30A15B954
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 07:10:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9DA715B966
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 07:11:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbgBMGKA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 01:10:00 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:38206 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726436AbgBMGKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 01:10:00 -0500
-Received: from zn.tnic (p200300EC2F07F600C900F9734EF2E51F.dip0.t-ipconnect.de [IPv6:2003:ec:2f07:f600:c900:f973:4ef2:e51f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 385001EC0C76;
-        Thu, 13 Feb 2020 07:09:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1581574199;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=TH3guTuF8ik0rTG2tTgMhnQG64Kn6K+XDPaqH7vx/Z4=;
-        b=o4qkGfUUEF//F1I7E6hT7xqpGW4gFh4DKwrkTDzZ2TEOKWgvtjZzEiqUaYCI6ICDbHpMV1
-        NoioX/KK3ZD3+oIvLJCr2Ii42cwZXhocEfnp7UpGXU5EeN89hAFUdG+bCRuc6B5Yzgj0xq
-        hKScz2AzILJ5KMOZDjx67FQIfOfqBwo=
-Date:   Thu, 13 Feb 2020 07:09:49 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     "Luck, Tony" <tony.luck@intel.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/5] New way to track mce notifier chain actions
-Message-ID: <20200213060949.GA31799@zn.tnic>
-References: <20200212204652.1489-1-tony.luck@intel.com>
- <20200212230815.GA3217@agluck-desk2.amr.corp.intel.com>
- <CALCETrXx7ah9c=TYGm3ZXvwUnoJkDHP1vbuqaudih9fik5W9_A@mail.gmail.com>
+        id S1729740AbgBMGLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 01:11:51 -0500
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:33151 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726657AbgBMGLv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 01:11:51 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.nyi.internal (Postfix) with ESMTP id F40B55604;
+        Thu, 13 Feb 2020 01:11:49 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Thu, 13 Feb 2020 01:11:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm1; bh=e9e1sQnXhr72HpZZYSvle3HwJO
+        ivmu7Jj2yYJpKIjBM=; b=BAvfeaTQFfuZBFSD83RIFgUnKGoLYwSW5SKAWokzo2
+        /okcCgX2JWOzz9DUKszGSS6Ag6+RrASZY6jxNGLOyTPxEZpjSqG88bBa8K+i/+Ug
+        B6rufqO6Yh8z5+hFJnSPfch/2A9SyHc9EPWImK7csuJE//97Pmf8n3n45yEFAy40
+        Yfl7iVvYTOZd3/h2eZ12rjtpAjKoQlGo6YdUTGpmJmW1R5w1WDUSmkMdaCdw/qag
+        EVv4EXQzLjt54NzsskveymNcF0y5ayH1mxwNS7u40RSp5Ei7YFWlsvaR+4jVuBis
+        QXGvKR0kuySyjhRhdBANlABipxDf+l2UfipBe216Zcww==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=e9e1sQnXhr72HpZZY
+        Svle3HwJOivmu7Jj2yYJpKIjBM=; b=jjY5YAj1jw0QeFpU8BHe02Q5cRp546yxJ
+        d6/FotXbnGPjprW59lTr/VmhpszV3xW3Cq9EUHmoJWmlG2zrEfqpZMybosydjbTC
+        cE4vNpL749SYUkUn/XMYJBuJnwDQ10j0vhMO9AC5j9wYL0HA4UOQ5PNWjfkAdhW2
+        hxIOqPQY95CuSVn+fEhrWNDjJ9O1GPvIJqFGtrT+sM/aBPj+XMlm+T1rtfie6IRW
+        CSiB0wy0acfRqU4fvsMtyxN7mQ/qroHtHYsnen4ShZtUIyO0zgljonkFDG1ZaZns
+        BgFCeiTHs67TV1bNcbQjKdZXJ0Fc11paQN71wr8fJEQK3BB7n/4og==
+X-ME-Sender: <xms:pehEXkfoIo0fCETACFiEazh08z5LfdL96YaynEeaMkrdeQ3_fg2KmA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrieejgdelhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghlucfj
+    ohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppeejtd
+    drudefhedrudegkedrudehudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhep
+    mhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
+X-ME-Proxy: <xmx:pehEXkqtw_vjOTYUhmO8CLJ8sOKlrzjyqQ6BcOCpkc4QrNkRd3XpTg>
+    <xmx:pehEXoTP7gjsC8GjYzPdFE-6sMJpIHskoS0pz4WI3tz0EoEY97Ws9w>
+    <xmx:pehEXuy4RXlQ9AC4EWBg3pBIAKGohgjvXGDN40nOQWypI7u30idEJg>
+    <xmx:pehEXkYjTdP3iMv3aB5S8vCLbDNUf2PHfhfWrjVXO4m-ASYLrDcYgg>
+Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 486353280065;
+        Thu, 13 Feb 2020 01:11:48 -0500 (EST)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Samuel Holland <samuel@sholland.org>
+Subject: [PATCH 0/4] simple-audio-card codec2codec support
+Date:   Thu, 13 Feb 2020 00:11:43 -0600
+Message-Id: <20200213061147.29386-1-samuel@sholland.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CALCETrXx7ah9c=TYGm3ZXvwUnoJkDHP1vbuqaudih9fik5W9_A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 09:52:39PM -0800, Andy Lutomirski wrote:
-> I HATE notifier chains for exceptions, and I REALLY HATE NOTIFY_STOP.
-> I don't suppose we could rig something up so that they are simply
-> notifiers (for MCE and, eventually, for everything) and just outright
-> prevent them from modifying the processing?
+We are currently using simple-audio-card on the Allwinner A64 SoC.
+The digital audio codec there (sun8i-codec) has 3 AIFs, one each for the
+CPU, the modem, and Bluetooth. Adding support for the secondary AIFs
+requires adding codec2codec DAI links.
 
-As in: they all get executed unconditionally and there's no NOTIFY_STOP
-and if they're not interested in the notification, they simply return
-early?
+Since the modem and bt-sco codec DAI drivers only have one set of
+possible PCM parameters (namely, 8kHz mono S16LE), there's no real
+need for a machine driver to specify the DAI link configuration. The
+parameters for these "simple" DAI links can be chosen automatically.
 
-Hohumm, sounds nicer.
+This series adds a single "codec-to-codec" property to the
+simple-audio-card binding, which does exactly what it says. It works out
+rather nicely without making the device tree binding too complicated.
+
+The first patch fixes a bug I found while implementing this feature.
+
+I tried to reuse as much code as possible, so the middle two patches
+refactor a couple of helper functions to be more generic.
+
+Finally, the last patch adds the new feature and its documentation.
+
+Samuel Holland (4):
+  ASoC: codec2codec: avoid invalid/double-free of pcm runtime
+  ALSA: pcm: Make snd_pcm_limit_hw_rates take hw directly
+  ASoC: pcm: Export parameter intersection logic
+  ASoC: simple-card: Add support for codec-to-codec dai_links
+
+ .../devicetree/bindings/sound/simple-card.txt |  1 +
+ Documentation/sound/soc/codec-to-codec.rst    |  9 ++-
+ .../drm/bridge/synopsys/dw-hdmi-ahb-audio.c   |  2 +-
+ include/sound/pcm.h                           |  2 +-
+ include/sound/simple_card_utils.h             |  1 +
+ include/sound/soc.h                           |  3 +
+ sound/arm/aaci.c                              |  2 +-
+ sound/arm/pxa2xx-ac97.c                       |  2 +-
+ sound/core/pcm_misc.c                         | 14 ++---
+ sound/firewire/dice/dice-pcm.c                |  2 +-
+ sound/firewire/digi00x/digi00x-pcm.c          |  2 +-
+ sound/firewire/fireworks/fireworks_pcm.c      |  2 +-
+ sound/firewire/motu/motu-pcm.c                |  2 +-
+ sound/firewire/tascam/tascam-pcm.c            |  2 +-
+ sound/pci/atiixp.c                            |  2 +-
+ sound/pci/cs5535audio/cs5535audio_pcm.c       |  4 +-
+ sound/pci/hda/hda_controller.c                |  4 +-
+ sound/pci/intel8x0.c                          |  2 +-
+ sound/pci/sis7019.c                           |  2 +-
+ sound/pci/via82xx.c                           |  4 +-
+ sound/soc/generic/simple-card-utils.c         | 39 +++++++++++++
+ sound/soc/generic/simple-card.c               | 12 ++++
+ sound/soc/soc-dapm.c                          |  3 -
+ sound/soc/soc-pcm.c                           | 57 +++++++++++++------
+ sound/usb/caiaq/audio.c                       |  4 +-
+ 25 files changed, 130 insertions(+), 49 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.24.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
