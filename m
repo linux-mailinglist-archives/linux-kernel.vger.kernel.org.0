@@ -2,123 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C486915C622
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA66B15C65C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:12:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728955AbgBMP5e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:57:34 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44365 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727986AbgBMP5V (ORCPT
+        id S2387543AbgBMP7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:59:52 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:25656 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728910AbgBMP7q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:57:21 -0500
-Received: by mail-ot1-f65.google.com with SMTP id h9so6000459otj.11
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:57:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:reply-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iHd9eEOMss4ignfVOBjMhQvhmaQpxOZedD/hOOnSljE=;
-        b=aW4NpPK/CUlNtpEKVSyOptCzOOAEb2UBHdaa2/6OuNkGeDyA/3Ju9hy4bWbsVCTZG2
-         HcS2gB+D/ewN3JPKxLD9z/UO/hKQLyHqtZSVOrVNmQFS7sd31qPbQHktwPrdzlHoBTaQ
-         ZFHGf/SCImB3lwFh0KIdsJ8b3l2+vU9TRI/9wlxTO9+8s+tdN+BH6p8vuyXjNeSwA7w0
-         f1BIjIQA9oUVq2/se0P5dfZmzcBbxr+v1zB7PxiKJAEw1l57/9npFLS22goXHfHH3l2j
-         w+WBxEKnHNvvco1oGaxKSTDThGtAQkulVUfNkOtkAgDMGUOeYGWyxz6XOfe5u0o2+AyY
-         o4GQ==
+        Thu, 13 Feb 2020 10:59:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581609585;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YjESY5U+42gtKNpvEnDRTyHV+mXqJmvUAfYgrE7ny0Y=;
+        b=JJOd8BTu72GcaOVKXV8mvXtCFIZQg9e3xZJGBi7qInkef1najIbQPVShs3JG+ORIZilHhu
+        q1N/7l/vz0F4AUG4cmUH9sljAHHptH/eWaJ6oSZRJ6drYwg1g9uOwQb7pimR6zJahasDpG
+        4aBEa6ramsDP5AsV8jiv6lUMfhhApw0=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-226-jRvZCEz6MbOoYDZXPV1WAg-1; Thu, 13 Feb 2020 10:59:42 -0500
+X-MC-Unique: jRvZCEz6MbOoYDZXPV1WAg-1
+Received: by mail-qk1-f198.google.com with SMTP id q2so3992404qkq.19
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:59:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :reply-to:references:mime-version:content-disposition:in-reply-to
-         :user-agent;
-        bh=iHd9eEOMss4ignfVOBjMhQvhmaQpxOZedD/hOOnSljE=;
-        b=fdnAFJeYmt6HJyA4sdVDE2+YQWxV47FB60NE4xwGoirCw7hFwC6JQnxO9RH3ai2cZn
-         CjD/orOzPLBadaDAJFgt5rA4lrtOoZwtPxb06Uy1KaORk1y2VKjiqk+AyKoN+a1P7DaU
-         +M3s9Lusd8cSXH0prTwvEtxbG2c39DcufmaMTHlMQC608bPymx2aQGj5EHjW1ZnnXfUn
-         ujCPMgwteqziM0oM0wc0anTF06vv4KebP6bGJ4w9ZxvvB9cjjHkUEItja2hnjyWk50px
-         zL3Kny+5L+Xk6t3oPMzWA9oER9I5wSQKvEZ/vpMnoE7ONkp10ToaJpCHEQupClPgOvi2
-         kp1w==
-X-Gm-Message-State: APjAAAWALjrumX6dAWPknydVSIjstZbE4OkJQf7TuhdmYM85S7pWekKL
-        IEj/Ud0KrIiYtpmk21k4tw==
-X-Google-Smtp-Source: APXvYqwW5dr9VVGCv7dnexVl4FihX0lzD1j3rmacCX9mxpMnvRdb7Q/x+CX/eDQeZcBknsVcjEBzxQ==
-X-Received: by 2002:a9d:7e99:: with SMTP id m25mr13475107otp.212.1581609439644;
-        Thu, 13 Feb 2020 07:57:19 -0800 (PST)
-Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
-        by smtp.gmail.com with ESMTPSA id m15sm914229otl.20.2020.02.13.07.57.19
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=YjESY5U+42gtKNpvEnDRTyHV+mXqJmvUAfYgrE7ny0Y=;
+        b=d1OVUgNj4RuXCUzoH/foMW5DLfOh/FhIeOBiFSrtbjcw3hQix4edJJ+VDr6Q0mHLQN
+         Y9VKCByAYy0V56vuf0ZwDrscXvGl8FhA2QitBuZ8ZSk5D4vJhEHKvdCeYUy3ufjMIq66
+         CyCAaQfZI47oidff5vF1I8Z96NuWxEYHuoHkIKhN6Te5XX1gUyoJZ45r94PokKRJks7R
+         UmVqPo3PKRgSUDqOvHFHQYwa/Lj+cGG7snkD76MZlG/r6tpMglmfUGPU38tltMXk/z/J
+         46qXtHcPxVwNhMDhekXFWUjd0GrkEfJxHCUjeS6n6+S9Iv0qk5jSkAHh/f5N3EpoarJz
+         VQgA==
+X-Gm-Message-State: APjAAAVUzJrygd5S684tJ4IOtBy/jly1QDwWQnqQerk11CzyoZ7162fZ
+        jUBcfWWMC/mrPhmW8hKP4QwyPePJwfbvfYu2xc8GlXViaE/guzUFCSHYYNzzzZO0uSbYXAlqnWo
+        DC20AhmIE5b51LzVxXHVNybve
+X-Received: by 2002:a37:648c:: with SMTP id y134mr12655812qkb.112.1581609582441;
+        Thu, 13 Feb 2020 07:59:42 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwblUv4o0toVmVYl/HEAfrRzni+p8oGrxwrOCdC64VBDuyyCDEhJs814GPsgJHzOlkKNS9BGQ==
+X-Received: by 2002:a37:648c:: with SMTP id y134mr12655792qkb.112.1581609582252;
+        Thu, 13 Feb 2020 07:59:42 -0800 (PST)
+Received: from redhat.com (bzq-79-176-28-95.red.bezeqint.net. [79.176.28.95])
+        by smtp.gmail.com with ESMTPSA id b7sm1490925qka.67.2020.02.13.07.59.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 07:57:19 -0800 (PST)
-Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:d0c7:64ad:d8cf:b1d2])
-        by serve.minyard.net (Postfix) with ESMTPSA id 97B2A180053;
-        Thu, 13 Feb 2020 15:57:18 +0000 (UTC)
-Date:   Thu, 13 Feb 2020 09:57:17 -0600
-From:   Corey Minyard <minyard@acm.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/2] arm64 kgdb fixes for single stepping
-Message-ID: <20200213155717.GR7842@minyard.net>
-Reply-To: minyard@acm.org
-References: <20200213031131.13255-1-minyard@acm.org>
- <20200213101057.GB1405@willie-the-truck>
+        Thu, 13 Feb 2020 07:59:41 -0800 (PST)
+Date:   Thu, 13 Feb 2020 10:59:34 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, tiwei.bie@intel.com,
+        maxime.coquelin@redhat.com, cunming.liang@intel.com,
+        zhihong.wang@intel.com, rob.miller@broadcom.com,
+        xiao.w.wang@intel.com, haotian.wang@sifive.com,
+        lingshan.zhu@intel.com, eperezma@redhat.com, lulu@redhat.com,
+        parav@mellanox.com, kevin.tian@intel.com, stefanha@redhat.com,
+        rdunlap@infradead.org, hch@infradead.org, aadam@redhat.com,
+        jiri@mellanox.com, shahafs@mellanox.com, hanand@xilinx.com,
+        mhabets@solarflare.com
+Subject: Re: [PATCH V2 3/5] vDPA: introduce vDPA bus
+Message-ID: <20200213105743-mutt-send-email-mst@kernel.org>
+References: <20200210035608.10002-4-jasowang@redhat.com>
+ <20200211134746.GI4271@mellanox.com>
+ <cf7abcc9-f8ef-1fe2-248e-9b9028788ade@redhat.com>
+ <20200212125108.GS4271@mellanox.com>
+ <12775659-1589-39e4-e344-b7a2c792b0f3@redhat.com>
+ <20200213134128.GV4271@mellanox.com>
+ <ebaea825-5432-65e2-2ab3-720a8c4030e7@redhat.com>
+ <20200213150542.GW4271@mellanox.com>
+ <20200213103714-mutt-send-email-mst@kernel.org>
+ <20200213155154.GX4271@mellanox.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200213101057.GB1405@willie-the-truck>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200213155154.GX4271@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 10:10:58AM +0000, Will Deacon wrote:
-> On Wed, Feb 12, 2020 at 09:11:29PM -0600, minyard@acm.org wrote:
-> > I got a bug report about using kgdb on arm64, and it turns out it was
-> > fairly broken.  Patch 2 has a description of what was going on.  I am
-> > using a Marvell 8100 board.
-> > 
-> > The following patches fix the problem, but probably not in the
-> > best way.  They are what I hacked out to show the problems.
-> > 
-> > I am not quite sure how this will interact with kprobes and hardware
-> > breakpoints which use the same code, but they would have been broken,
-> > too, so this is not making them any worse.
-> 
-> This should all be handled by kgdb itself, not by changing the low-level
-> debug exception handling. For example, the '&kgdb_step_hook' can take
-> care of re-arming the step state machine and kgdb can also simply disable
-> interrupts during the step if it doesn't want to step into the handler.
+On Thu, Feb 13, 2020 at 11:51:54AM -0400, Jason Gunthorpe wrote:
+> The 'class' is supposed to provide all the library functions to remove
+> this duplication. Instead of plugging the HW driver in via some bus
+> scheme every subsystem has its own 'ops' that the HW driver provides
+> to the subsystem's class via subsystem_register()
 
-How can kgdb disable the SS bit in MDSRC, or re-enable it on the right
-CPU, without doing this in the exception handling?
+Hmm I'm not familiar with subsystem_register. A grep didn't find it
+in the kernel either ...
 
-I'm actually thinking that this may be a hardware bug.  Looking at the
-ARMv8 manual, it looks like PSTATE.SS should be set to 0 if the
-processor takes an exception.  That's definitely not happening; if I do
-an instruction step from, say, sys_sync(), it gets the single-step trap
-on the instruction after the PSTATE.D bit is disabled in el1_irq.
+-- 
+MST
 
-Even so, I think the migration issue is still a problem.  If you do an
-eret set up for single-step, and interrupts are on, and you get a timer
-interrupt, it could migrate the task to a different CPU if
-PREEMPT_ENABLE is set, right?  If so, the MDSRC.SS bit will be set on
-the wrong CPU and the single step trap won't happen.  That will break
-kprobes, too.
-
-You mention turning off interrupts in kgdb when single-stepping, which
-you could do and it would solve this problem.  But it wouldn't solve the
-problem of taking a paging exception, which you want to take in this
-case.  And you could still migrate on a paging exception.  So I don't
-think disabling interrupts is a good solution.
-
-I don't see a solution besides clearing MDSCR.SS on an el1 exception
-entry and conditionally setting it on an el1 exception return.  It might
-be better to have a thread flag to do this instead of depending on the
-setting of that bit; I'm not sure how expensive accessing the MDSRC
-register is.
-
-Setting SPSR.SS on subsequent single steps is definitely an issue, but I
-can split that out into a separate patch.
-
--corey
-
-> 
-> Will
