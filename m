@@ -2,119 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC9AE15C987
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 18:37:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2129E15C98C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 18:38:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728811AbgBMRhS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 12:37:18 -0500
-Received: from mga05.intel.com ([192.55.52.43]:45921 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728186AbgBMRhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 12:37:18 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 09:37:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,437,1574150400"; 
-   d="scan'208";a="227305266"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga008.jf.intel.com with ESMTP; 13 Feb 2020 09:37:17 -0800
-Date:   Thu, 13 Feb 2020 09:37:17 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 30/61] KVM: x86: Handle MPX CPUID adjustment in VMX code
-Message-ID: <20200213173717.GB18610@linux.intel.com>
-References: <20200201185218.24473-1-sean.j.christopherson@intel.com>
- <20200201185218.24473-31-sean.j.christopherson@intel.com>
- <4ff69a7e-acdb-40fd-d717-3b2829f20154@intel.com>
+        id S1728869AbgBMRhz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 12:37:55 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:35552 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728186AbgBMRhy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 12:37:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581615473;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=xkLHneclbeHCST7fASewwtHTBnTmgy0d+6MGvsQvuck=;
+        b=NlLALCUKbnCQ+y2Z1ZdEY7E1zG1jJwLPCGO4ym1aAUUpjPjptFf8meEOC6qoRWEUgKe8Ys
+        qkb+6usXsw+JvNwlLCuSreQjPV3sRXwJzOP006zhlI7GvzhWR/jocohEzGolxoodKbdlSI
+        75QhUBShn1M0XEZ3WTcHbMyLZjKd7D0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-327-1EeHWuRaNJymRz7915BeVA-1; Thu, 13 Feb 2020 12:37:44 -0500
+X-MC-Unique: 1EeHWuRaNJymRz7915BeVA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C1458801E72;
+        Thu, 13 Feb 2020 17:37:42 +0000 (UTC)
+Received: from ovpn-123-34.rdu2.redhat.com (ovpn-123-34.rdu2.redhat.com [10.10.123.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 404515C100;
+        Thu, 13 Feb 2020 17:37:41 +0000 (UTC)
+Message-ID: <48174ba52460d317a630df1389fbb76f5a733250.camel@redhat.com>
+Subject: Re: [PATCH 03/18] c6x: replace setup_irq() by request_irq()
+From:   Mark Salter <msalter@redhat.com>
+To:     afzal mohammed <afzal.mohd.ma@gmail.com>,
+        linux-c6x-dev@linux-c6x.org, linux-kernel@vger.kernel.org
+Cc:     Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Enrico Weigelt <info@metux.net>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>
+Date:   Thu, 13 Feb 2020 12:37:40 -0500
+In-Reply-To: <11cbe657937077b56bd28d277c9b9455a6985501.1581478324.git.afzal.mohd.ma@gmail.com>
+References: <cover.1581478323.git.afzal.mohd.ma@gmail.com>
+         <11cbe657937077b56bd28d277c9b9455a6985501.1581478324.git.afzal.mohd.ma@gmail.com>
+Organization: Red Hat, Inc
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4ff69a7e-acdb-40fd-d717-3b2829f20154@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 09:51:08PM +0800, Xiaoyao Li wrote:
-> On 2/2/2020 2:51 AM, Sean Christopherson wrote:
-> >Move the MPX CPUID adjustments into VMX to eliminate an instance of the
-> >undesirable "unsigned f_* = *_supported ? F(*) : 0" pattern in the
-> >common CPUID handling code.
-> >
-> >Note, VMX must manually check for kernel support via
-> >boot_cpu_has(X86_FEATURE_MPX).
+On Wed, 2020-02-12 at 13:32 +0530, afzal mohammed wrote:
+> request_irq() is preferred over setup_irq(). Existing callers of
+> setup_irq() reached mostly via 'init_IRQ()' & 'time_init()', while
+> memory allocators are ready by 'mm_init()'.
 > 
-> Why must?
-
-do_cpuid_7_mask() runs the CPUID result through cpuid_mask(), which masks
-features based on boot_cpu_data, i.e. clears bits for features that are
-supported by hardware but unsupported/disabled by the kernel.
-
-vmx_set_supported_cpuid() needs to to query boot_cpu_has() to preserve the
-"supported by kernel" check provided by cpuid_mask().
-
+> Per tglx[1], setup_irq() existed in olden days when allocators were not
+> ready by the time early interrupts were initialized.
 > 
-> >No functional change intended.
-> >
-> >Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> >---
-> >  arch/x86/kvm/cpuid.c   |  3 +--
-> >  arch/x86/kvm/vmx/vmx.c | 14 ++++++++++++--
-> >  2 files changed, 13 insertions(+), 4 deletions(-)
-> >
-> >diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> >index cb5870a323cc..09e24d1d731c 100644
-> >--- a/arch/x86/kvm/cpuid.c
-> >+++ b/arch/x86/kvm/cpuid.c
-> >@@ -340,7 +340,6 @@ static int __do_cpuid_func_emulated(struct kvm_cpuid_array *array, u32 func)
-> >  static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry)
-> >  {
-> >  	unsigned f_invpcid = kvm_x86_ops->invpcid_supported() ? F(INVPCID) : 0;
-> >-	unsigned f_mpx = kvm_mpx_supported() ? F(MPX) : 0;
-> >  	unsigned f_umip = kvm_x86_ops->umip_emulated() ? F(UMIP) : 0;
-> >  	unsigned f_intel_pt = kvm_x86_ops->pt_supported() ? F(INTEL_PT) : 0;
-> >  	unsigned f_la57;
-> >@@ -349,7 +348,7 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry)
-> >  	/* cpuid 7.0.ebx */
-> >  	const u32 kvm_cpuid_7_0_ebx_x86_features =
-> >  		F(FSGSBASE) | F(BMI1) | F(HLE) | F(AVX2) | F(SMEP) |
-> >-		F(BMI2) | F(ERMS) | f_invpcid | F(RTM) | f_mpx | F(RDSEED) |
-> >+		F(BMI2) | F(ERMS) | f_invpcid | F(RTM) | 0 /*MPX*/ | F(RDSEED) |
-> >  		F(ADX) | F(SMAP) | F(AVX512IFMA) | F(AVX512F) | F(AVX512PF) |
-> >  		F(AVX512ER) | F(AVX512CD) | F(CLFLUSHOPT) | F(CLWB) | F(AVX512DQ) |
-> >  		F(SHA_NI) | F(AVX512BW) | F(AVX512VL) | f_intel_pt;
-> >diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> >index 3ff830e2258e..143193fc178e 100644
-> >--- a/arch/x86/kvm/vmx/vmx.c
-> >+++ b/arch/x86/kvm/vmx/vmx.c
-> >@@ -7106,8 +7106,18 @@ static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
-> >  static void vmx_set_supported_cpuid(struct kvm_cpuid_entry2 *entry)
-> >  {
-> >-	if (entry->function == 1 && nested)
-> >-		entry->ecx |= feature_bit(VMX);
-> >+	switch (entry->function) {
-> >+	case 0x1:
-> >+		if (nested)
-> >+			cpuid_entry_set(entry, X86_FEATURE_VMX);
-> >+		break;
-> >+	case 0x7:
-> >+		if (boot_cpu_has(X86_FEATURE_MPX) && kvm_mpx_supported())
-> >+			cpuid_entry_set(entry, X86_FEATURE_MPX);
-> >+		break;
-> >+	default:
-> >+		break;
-> >+	}
-> >  }
-> >  static void vmx_request_immediate_exit(struct kvm_vcpu *vcpu)
-> >
+> Hence replace setup_irq() by request_irq().
 > 
+> Seldom remove_irq() usage has been observed coupled with setup_irq(),
+> wherever that has been found, it too has been replaced by free_irq().
+> 
+> [1] https://lkml.kernel.org/r/alpine.DEB.2.20.1710191609480.1971@nanos
+> 
+> Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+> ---
+> 
+> Since cc'ing cover letter to all maintainers/reviewers would be too
+> many, refer for cover letter,
+>  https://lkml.kernel.org/r/cover.1581478323.git.afzal.mohd.ma@gmail.com
+> 
+>  arch/c6x/platforms/timer64.c | 11 +++--------
+>  1 file changed, 3 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/c6x/platforms/timer64.c b/arch/c6x/platforms/timer64.c
+> index d98d94303498..ceee34c51d4b 100644
+> --- a/arch/c6x/platforms/timer64.c
+> +++ b/arch/c6x/platforms/timer64.c
+> @@ -165,13 +165,6 @@ static irqreturn_t timer_interrupt(int irq, void *dev_id)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> -static struct irqaction timer_iact = {
+> -	.name		= "timer",
+> -	.flags		= IRQF_TIMER,
+> -	.handler	= timer_interrupt,
+> -	.dev_id		= &t64_clockevent_device,
+> -};
+> -
+>  void __init timer64_init(void)
+>  {
+>  	struct clock_event_device *cd = &t64_clockevent_device;
+> @@ -238,7 +231,9 @@ void __init timer64_init(void)
+>  	cd->cpumask		= cpumask_of(smp_processor_id());
+>  
+>  	clockevents_register_device(cd);
+> -	setup_irq(cd->irq, &timer_iact);
+> +	if (request_irq(cd->irq, timer_interrupt, IRQF_TIMER, "timer",
+> +			&t64_clockevent_device))
+> +		pr_err("request_irq() on %s failed\n", "timer");
+>  
+>  out:
+>  	of_node_put(np);
+
+Acked-by: Mark Salter <msalter@redhat.com>
+
+
