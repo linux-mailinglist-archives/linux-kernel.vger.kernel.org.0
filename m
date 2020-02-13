@@ -2,65 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B407615BCEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 11:35:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1155515BD06
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 11:44:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729736AbgBMKfl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 05:35:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34840 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729428AbgBMKfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 05:35:41 -0500
-Received: from paulmck-ThinkPad-P72.home (unknown [193.85.242.128])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729872AbgBMKor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 05:44:47 -0500
+Received: from smtpo.poczta.interia.pl ([217.74.65.152]:57326 "EHLO
+        smtpo.poczta.interia.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729428AbgBMKoq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 05:44:46 -0500
+X-Greylist: delayed 441 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Feb 2020 05:44:45 EST
+X-Interia-R: Interia
+X-Interia-R-IP: 185.15.80.246
+X-Interia-R-Helo: <photon.emea.nsn-net.net>
+Received: from photon.emea.nsn-net.net (185-15-80-246.ksi-system.net [185.15.80.246])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 787CD218AC;
-        Thu, 13 Feb 2020 10:35:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581590140;
-        bh=NIljgsYqVdaDxPgwZoKkDL5vFfJ8VuJH1KorovtlNRc=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=j1BhQ6p7gagtWdPoZEcA0Z8+IXZ87QOy5pb01g6eyi0IHP9kkYk1U+tAr81Lqj7Qb
-         Us0fzY8wysZZSVMchl7y6hCjAB2jx/2XNTVVsTDZKShDSYWhwxWcFXL8zlSXOpaNGW
-         MVA12yUKZofn52wZUDlWDICtg0IcVv2RSjsXvJZ0=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 0608535226E8; Thu, 13 Feb 2020 02:35:38 -0800 (PST)
-Date:   Thu, 13 Feb 2020 02:35:38 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the rcu tree
-Message-ID: <20200213103537.GX2935@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200213092613.1b66d1f5@canb.auug.org.au>
+        by poczta.interia.pl (INTERIA.PL) with ESMTPSA;
+        Thu, 13 Feb 2020 11:37:20 +0100 (CET)
+From:   Radoslaw Smigielski <radoslaw.smigielski@interia.pl>
+To:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        alsa-devel@alsa-project.org, corbet@lwn.net, tiwai@suse.com,
+        perex@perex.cz, radoslaw.smigielski@interia.pl
+Subject: [alsa-devel] [PATCH] ALSA: doc: fix snd_hda_intel driver name
+Date:   Thu, 13 Feb 2020 11:36:37 +0100
+Message-Id: <20200213103636.733463-1-radoslaw.smigielski@interia.pl>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200213092613.1b66d1f5@canb.auug.org.au>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+X-Interia-Antivirus: OK
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=interia.pl;
+        s=biztos; t=1581590241;
+        bh=gVqMAKSIPkY8OiAd077JlbnTBYo5wVcLt3iZ6loGT8Y=;
+        h=X-Interia-R:X-Interia-R-IP:X-Interia-R-Helo:From:To:Subject:Date:
+         Message-Id:X-Mailer:MIME-Version:Content-Transfer-Encoding:
+         X-Interia-Antivirus;
+        b=Kuxf4Ium3/75vWo/SUnB0MPiRIZaAhRwFeR3fVI2USNtD0mDfNojDrYcVc7jj4236
+         ja6CwFGQc5CIwIKyNFO2xuKqU4nu06YQ2FuYAffUqfmwzXsA6sJXQg7nf1P37FJcc6
+         XlS8uu5sIaKwuV0GVLrPR6YLjYqX2fFsdBEbuRUs=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 09:26:13AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> In commit
-> 
->   71901ffaf70d ("locktorture: Print ratio of acquisitions, not failures")
-> 
-> Fixes tag
-> 
->   Fixes: 0af3fe1e ("locktorture: Add a lock-torture kernel module")
-> 
-> has these problem(s):
-> 
->   - SHA1 should be at least 12 digits long
->     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
->     or later) just making sure it is not set (or set to "auto").
+Update driver name snd-hda-intel to proper, existing driver
+name snd_hda_intel in Documentation/sound/hd-audio/notes.rst.
 
-Good catch, will fix, thank you!
+Signed-off-by: Radoslaw Smigielski <radoslaw.smigielski@interia.pl>
+---
+ Documentation/sound/hd-audio/notes.rst | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-							Thanx, Paul
+diff --git a/Documentation/sound/hd-audio/notes.rst b/Documentation/sound/hd-audio/notes.rst
+index 0f3109d9abc8..56ccc15f4d26 100644
+--- a/Documentation/sound/hd-audio/notes.rst
++++ b/Documentation/sound/hd-audio/notes.rst
+@@ -17,12 +17,12 @@ methods for the	HD-audio hardware.
+ 
+ The HD-audio component consists of two parts: the controller chip and 
+ the codec chips on the HD-audio bus.  Linux provides a single driver
+-for all controllers, snd-hda-intel.  Although the driver name contains
++for all controllers, snd_hda_intel.  Although the driver name contains
+ a word of a well-known hardware vendor, it's not specific to it but for
+ all controller chips by other companies.  Since the HD-audio
+ controllers are supposed to be compatible, the single snd-hda-driver
+ should work in most cases.  But, not surprisingly, there are known
+-bugs and issues specific to each controller type.  The snd-hda-intel
++bugs and issues specific to each controller type.  The snd_hda_intel
+ driver has a bunch of workarounds for these as described below.
+ 
+ A controller may have multiple codecs.  Usually you have one audio
+@@ -31,7 +31,7 @@ multiple audio codecs, e.g. for analog and digital outputs, and the
+ driver might not work properly because of conflict of mixer elements.
+ This should be fixed in future if such hardware really exists.
+ 
+-The snd-hda-intel driver has several different codec parsers depending
++The snd_hda_intel driver has several different codec parsers depending
+ on the codec.  It has a generic parser as a fallback, but this
+ functionality is fairly limited until now.  Instead of the generic
+ parser, usually the codec-specific parser (coded in patch_*.c) is used
+@@ -226,7 +226,7 @@ the external amplifier bits.  Thus a headphone output has a slightly
+ better chance.
+ 
+ Before making a bug report, double-check whether the mixer is set up
+-correctly.  The recent version of snd-hda-intel driver provides mostly
++correctly.  The recent version of snd_hda_intel driver provides mostly
+ "Master" volume control as well as "Front" volume (where Front
+ indicates the front-channels).  In addition, there can be individual
+ "Headphone" and "Speaker" controls.
+@@ -596,7 +596,7 @@ For example, if you have two cards, one for an on-board analog and one
+ for an HDMI video board, you may pass patch option like below:
+ ::
+ 
+-    options snd-hda-intel patch=on-board-patch,hdmi-patch
++    options snd_hda_intel patch=on-board-patch,hdmi-patch
+ 
+ 
+ Power-Saving
+-- 
+2.24.1
+
