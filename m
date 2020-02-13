@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0598315C5D5
+	by mail.lfdr.de (Postfix) with ESMTP id DCDCD15C5D7
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387418AbgBMPZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:25:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35226 "EHLO mail.kernel.org"
+        id S1728939AbgBMPZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:25:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35264 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728433AbgBMPXi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728442AbgBMPXi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Feb 2020 10:23:38 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96957246B1;
-        Thu, 13 Feb 2020 15:23:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A878246AD;
+        Thu, 13 Feb 2020 15:23:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607417;
-        bh=ZlegwmCnAZOuLIiv3fdHyQ4anQ6XQtuPlcFIM1GgWJk=;
+        s=default; t=1581607418;
+        bh=I4BM5jV6fmMz0MB6nVZKLDDCTivXHgSEbj9NYG4nepc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=172NZIM3Y52nIXM+h7wMTcvsNxjYuSLHTEDQzzr8JNsR+UjM8criJn//mvVy/ZKGG
-         onqC6GjjDJ+ZjOu6ktSPDtlhcbVK5jS/SCnTgLPS0WkLDfP1UXOp+7HlHKmwdWnK+J
-         v2pHr0KtjKvUJ3f7ydmVy0ZwTyytb8sIF3zOIjQk=
+        b=YLJX1xRnclUgmWSm6fdp5eE1DcXQAjto9NXchLRhKZPylQpt1QX/jEZxqxq6JJZZ6
+         5yDNglyINuHjaOmHRSB8AvYjiWBVIaEIAs5qplSaAvAkiMblnaVIRCPk45PQ0eaVqR
+         FNoZiS04QI2OzBfCc1j6DEsKq9lQiUaJhS0Qes+U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pingfan Liu <kernelfans@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 025/116] powerpc/pseries: Advance pfn if section is not present in lmb_is_removable()
-Date:   Thu, 13 Feb 2020 07:19:29 -0800
-Message-Id: <20200213151852.632372374@linuxfoundation.org>
+        stable@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.9 026/116] mmc: spi: Toggle SPI polarity, do not hardcode it
+Date:   Thu, 13 Feb 2020 07:19:30 -0800
+Message-Id: <20200213151853.066660298@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
 References: <20200213151842.259660170@linuxfoundation.org>
@@ -43,38 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pingfan Liu <kernelfans@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-commit fbee6ba2dca30d302efe6bddb3a886f5e964a257 upstream.
+commit af3ed119329cf9690598c5a562d95dfd128e91d6 upstream.
 
-In lmb_is_removable(), if a section is not present, it should continue
-to test the rest of the sections in the block. But the current code
-fails to do so.
+The code in mmc_spi_initsequence() tries to send a burst with
+high chipselect and for this reason hardcodes the device into
+SPI_CS_HIGH.
 
-Fixes: 51925fb3c5c9 ("powerpc/pseries: Implement memory hotplug remove in the kernel")
-Cc: stable@vger.kernel.org # v4.1+
-Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/1578632042-12415-1-git-send-email-kernelfans@gmail.com
+This is not good because the SPI_CS_HIGH flag indicates
+logical "asserted" CS not always the physical level. In
+some cases the signal is inverted in the GPIO library and
+in that case SPI_CS_HIGH is already set, and enforcing
+SPI_CS_HIGH again will actually drive it low.
+
+Instead of hard-coding this, toggle the polarity so if the
+default is LOW it goes high to assert chipselect but if it
+is already high then toggle it low instead.
+
+Cc: Phil Elwell <phil@raspberrypi.org>
+Reported-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Link: https://lore.kernel.org/r/20191204152749.12652-1-linus.walleij@linaro.org
+Cc: stable@vger.kernel.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/pseries/hotplug-memory.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/mmc/host/mmc_spi.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/platforms/pseries/hotplug-memory.c
-+++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
-@@ -398,8 +398,10 @@ static bool lmb_is_removable(struct of_d
+--- a/drivers/mmc/host/mmc_spi.c
++++ b/drivers/mmc/host/mmc_spi.c
+@@ -1157,17 +1157,22 @@ static void mmc_spi_initsequence(struct
+ 	 * SPI protocol.  Another is that when chipselect is released while
+ 	 * the card returns BUSY status, the clock must issue several cycles
+ 	 * with chipselect high before the card will stop driving its output.
++	 *
++	 * SPI_CS_HIGH means "asserted" here. In some cases like when using
++	 * GPIOs for chip select, SPI_CS_HIGH is set but this will be logically
++	 * inverted by gpiolib, so if we want to ascertain to drive it high
++	 * we should toggle the default with an XOR as we do here.
+ 	 */
+-	host->spi->mode |= SPI_CS_HIGH;
++	host->spi->mode ^= SPI_CS_HIGH;
+ 	if (spi_setup(host->spi) != 0) {
+ 		/* Just warn; most cards work without it. */
+ 		dev_warn(&host->spi->dev,
+ 				"can't change chip-select polarity\n");
+-		host->spi->mode &= ~SPI_CS_HIGH;
++		host->spi->mode ^= SPI_CS_HIGH;
+ 	} else {
+ 		mmc_spi_readbytes(host, 18);
  
- 	for (i = 0; i < scns_per_block; i++) {
- 		pfn = PFN_DOWN(phys_addr);
--		if (!pfn_present(pfn))
-+		if (!pfn_present(pfn)) {
-+			phys_addr += MIN_MEMORY_BLOCK_SIZE;
- 			continue;
-+		}
- 
- 		rc &= is_mem_section_removable(pfn, PAGES_PER_SECTION);
- 		phys_addr += MIN_MEMORY_BLOCK_SIZE;
+-		host->spi->mode &= ~SPI_CS_HIGH;
++		host->spi->mode ^= SPI_CS_HIGH;
+ 		if (spi_setup(host->spi) != 0) {
+ 			/* Wot, we can't get the same setup we had before? */
+ 			dev_err(&host->spi->dev,
 
 
