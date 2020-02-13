@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B31315C456
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85F3F15C2B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:38:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387701AbgBMPqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:46:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49862 "EHLO mail.kernel.org"
+        id S1729533AbgBMP3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:29:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729380AbgBMP1U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:20 -0500
+        id S1729222AbgBMP0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:42 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BDBE24689;
-        Thu, 13 Feb 2020 15:27:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20040206DB;
+        Thu, 13 Feb 2020 15:26:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607640;
-        bh=EZnF+QuJO+sub9/aDn4PIsMh2MpwJZKmxruzUZa2+uc=;
+        s=default; t=1581607602;
+        bh=FxYiCaXQskh90KrwG3iV7GTqM8cjabD5+J+amsqs1UY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h1+0E1GXDRmLGyJeXn9T/mheE0Q3X7U6uxq9YK88JcnUrTOZU761FvEOR3dYYtthG
-         I1HOjDWXZZNyrNo3BE435Pm6Q6bc+G4twb80Gt+n0npGvH1IW5WYZebu0WWHuOOuDf
-         839Hp6MbndPVhsjQUgw6Mxznx6JbioeDe21mXGzk=
+        b=iFuAlbqXc3IDlOuKChBcDYjfnXK9OXaYMPx0TjZ5APSZpL/X6lLj199f/rX7Eas86
+         PNXnR46mQ0K7gYFbUkQ4h1TLrnVq59+tCYe23/5NlwTBSI7tAn4DMP2cAZZ2Xf1WDa
+         Mh89IxhrUDnBvRDuU/g2c9Q31YLayZL7xLzK0rAs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Denis Odintsov <d.odintsov@traviangames.com>,
-        Baruch Siach <baruch@tkos.co.il>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: [PATCH 5.4 46/96] arm64: dts: marvell: clearfog-gt-8k: fix switch cpu port node
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.19 12/52] nfs: NFS_SWAP should depend on SWAP
 Date:   Thu, 13 Feb 2020 07:20:53 -0800
-Message-Id: <20200213151857.106084033@linuxfoundation.org>
+Message-Id: <20200213151816.036795353@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
+References: <20200213151810.331796857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Baruch Siach <baruch@tkos.co.il>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 62bba54d99407aedfe9b0a02e72e23c06e2b0116 upstream.
+commit 474c4f306eefbb21b67ebd1de802d005c7d7ecdc upstream.
 
-Explicitly set the switch cpu (upstream) port phy-mode and managed
-properties. This fixes the Marvell 88E6141 switch serdes configuration
-with the recently enabled phylink layer.
+If CONFIG_SWAP=n, it does not make much sense to offer the user the
+option to enable support for swapping over NFS, as that will still fail
+at run time:
 
-Fixes: a6120833272c ("arm64: dts: add support for SolidRun Clearfog GT 8K")
-Reported-by: Denis Odintsov <d.odintsov@traviangames.com>
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+    # swapon /swap
+    swapon: /swap: swapon failed: Function not implemented
+
+Fix this by adding a dependency on CONFIG_SWAP.
+
+Fixes: a564b8f0398636ba ("nfs: enable swap on NFS")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/nfs/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts
-+++ b/arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts
-@@ -408,6 +408,8 @@
- 				reg = <5>;
- 				label = "cpu";
- 				ethernet = <&cp1_eth2>;
-+				phy-mode = "2500base-x";
-+				managed = "in-band-status";
- 			};
- 		};
- 
+--- a/fs/nfs/Kconfig
++++ b/fs/nfs/Kconfig
+@@ -89,7 +89,7 @@ config NFS_V4
+ config NFS_SWAP
+ 	bool "Provide swap over NFS support"
+ 	default n
+-	depends on NFS_FS
++	depends on NFS_FS && SWAP
+ 	select SUNRPC_SWAP
+ 	help
+ 	  This option enables swapon to work on files located on NFS mounts.
 
 
