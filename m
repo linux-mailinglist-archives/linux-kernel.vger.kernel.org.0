@@ -2,71 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89CA315BDC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 12:38:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48D2115BE0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 12:55:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbgBMLin (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 06:38:43 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:40484 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729428AbgBMLin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 06:38:43 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id BF4C799AEFB5401D0311;
-        Thu, 13 Feb 2020 19:38:40 +0800 (CST)
-Received: from euler.huawei.com (10.175.104.193) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 13 Feb 2020 19:38:30 +0800
-From:   Hongbo Yao <yaohongbo@huawei.com>
-To:     <paulmck@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <yaohongbo@huawei.com>,
-        <chenzhou10@huawei.com>, <dave@stgolabs.net>,
-        <josh@joshtriplett.org>
-Subject: [PATCH RESEND -next] torture: avoid build error without CONFIG_RCU_TORTURE_TEST
-Date:   Thu, 13 Feb 2020 19:53:13 +0800
-Message-ID: <20200213115313.4794-1-yaohongbo@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729772AbgBMLzd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 06:55:33 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:58211 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726232AbgBMLzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 06:55:33 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 48JFM44nsvz9vC11;
+        Thu, 13 Feb 2020 12:55:28 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=KJWXfYPu; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id wAM0AcDhPoiW; Thu, 13 Feb 2020 12:55:28 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 48JFM43T1Qz9vC10;
+        Thu, 13 Feb 2020 12:55:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1581594928; bh=Rrbw8RVt/xSUKxa7Q0zKFqi6LP7mXV3jDI44d43PGuA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=KJWXfYPuarHKovP9WzhGQjgpCzoGk0NZtnunr96zCcG0tIm4aC70u27tLnrfoqIIl
+         ZVLTktzaHpTVXLBrGoYCQ8wU6Dzowxs+jBXlG8+cTU/Cgxpc/9WRlPaiIn31H8XwtV
+         b/Jw5mDFUdWEqvhfmeWoyQc6/yilYcmI1ECXbxqc=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id B47338B845;
+        Thu, 13 Feb 2020 12:55:29 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 4iZciwIiPN-4; Thu, 13 Feb 2020 12:55:29 +0100 (CET)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id CD85D8B842;
+        Thu, 13 Feb 2020 12:55:28 +0100 (CET)
+Subject: Re: [PATCH] serial: cpm_uart: call cpm_muram_init before registering
+ console
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Timur Tabi <timur@kernel.org>,
+        Li Yang <leoyang.li@nxp.com>
+Cc:     Qiang Zhao <qiang.zhao@nxp.com>, linuxppc-dev@lists.ozlabs.org,
+        Scott Wood <oss@buserror.net>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200213114342.21712-1-linux@rasmusvillemoes.dk>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <d8d006d1-dff9-251e-acde-f02f66205d7d@c-s.fr>
+Date:   Thu, 13 Feb 2020 12:55:28 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.104.193]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200213114342.21712-1-linux@rasmusvillemoes.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If TORTURE_TEST=y(selected by TORTURE_LOCK_TEST) and RCU_TORTURE_TEST=n,
-the following error is seen while building kernel/torture.c
 
-kernel/torture.c: In function torture_onoff:
-kernel/torture.c:239:3: error: implicit declaration of function
-rcutorture_sched_setaffinity; did you mean __NR_ia32_sched_setaffinity?
-[-Werror=implicit-function-declaration]
-   rcutorture_sched_setaffinity(current->pid, cpumask_of(0));
 
-Using sched_setaffnity() instead of rcutorture_sched_setaffinity() to
-avoid the error.
+Le 13/02/2020 à 12:43, Rasmus Villemoes a écrit :
+> Christophe reports that powerpc 8xx silently fails to 5.6-rc1. It turns
+> out I was wrong about nobody relying on the lazy initialization of the
+> cpm/qe muram in commit b6231ea2b3c6 (soc: fsl: qe: drop broken lazy
+> call of cpm_muram_init()).
+> 
+> Rather than reinstating the somewhat dubious lazy call (initializing a
+> currently held spinlock, and implicitly doing a GFP_KERNEL under that
+> spinlock), make sure that cpm_muram_init() is called early enough - I
+> thought the calls from the subsys_initcalls were good enough, but when
+> used by console drivers, that's obviously not the
+> case. cpm_muram_init() is safe to call twice (there's an early return
+> if it is already initialized), so keep the call from cpm_init() - in
+> case SERIAL_CPM_CONSOLE=n.
+> 
+> Reported-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Fixes: b6231ea2b3c6 (soc: fsl: qe: drop broken lazy call of cpm_muram_init())
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: bc3db9afb849 ("EXP: rcutorture hack to force CPU hotplug onto CPU 0")
-Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
----
- kernel/torture.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tested-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-diff --git a/kernel/torture.c b/kernel/torture.c
-index b29adec50e01..834214cbd1cd 100644
---- a/kernel/torture.c
-+++ b/kernel/torture.c
-@@ -236,7 +236,7 @@ torture_onoff(void *arg)
- 			schedule_timeout_interruptible(HZ / 10);
- 			continue;
- 		}
--		rcutorture_sched_setaffinity(current->pid, cpumask_of(0));
-+		sched_setaffinity(current->pid, cpumask_of(0));
- 		cpu = (torture_random(&rand) >> 4) % (maxcpu + 1);
- 		if (!torture_offline(cpu,
- 				     &n_offline_attempts, &n_offline_successes,
--- 
-2.17.1
-
+> ---
+> 
+> Christophe, can I get you to add a formal Tested-by?
+> 
+> I'm not sure which tree this should go through.
+> 
+>   drivers/tty/serial/cpm_uart/cpm_uart_core.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/tty/serial/cpm_uart/cpm_uart_core.c b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
+> index 19d5a4cf29a6..d4b81b06e0cb 100644
+> --- a/drivers/tty/serial/cpm_uart/cpm_uart_core.c
+> +++ b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
+> @@ -1373,6 +1373,7 @@ static struct console cpm_scc_uart_console = {
+>   
+>   static int __init cpm_uart_console_init(void)
+>   {
+> +	cpm_muram_init();
+>   	register_console(&cpm_scc_uart_console);
+>   	return 0;
+>   }
+> 
