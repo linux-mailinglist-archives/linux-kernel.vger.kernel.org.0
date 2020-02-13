@@ -2,204 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70E7915CA41
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 19:23:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E87815CA2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 19:21:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbgBMSXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 13:23:09 -0500
-Received: from mga03.intel.com ([134.134.136.65]:45465 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727608AbgBMSWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 13:22:53 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 10:22:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,437,1574150400"; 
-   d="scan'208";a="313809161"
-Received: from skuppusw-desk.jf.intel.com ([10.7.201.16])
-  by orsmga001.jf.intel.com with ESMTP; 13 Feb 2020 10:22:51 -0800
-From:   sathyanarayanan.kuppuswamy@linux.intel.com
-To:     bhelgaas@google.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, sathyanarayanan.kuppuswamy@linux.intel.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Huong Nguyen <huong.nguyen@dell.com>,
-        Austin Bolen <Austin.Bolen@dell.com>
-Subject: [PATCH v15 5/5] PCI/ACPI: Enable EDR support
-Date:   Thu, 13 Feb 2020 10:20:17 -0800
-Message-Id: <e4d0c96f60bad8802b8379628707e5582d28c3c1.1581617873.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1581617873.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <cover.1581617873.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+        id S1728006AbgBMSVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 13:21:13 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34706 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbgBMSVN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 13:21:13 -0500
+Received: by mail-ed1-f66.google.com with SMTP id r18so8021792edl.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 10:21:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ckYAtFkLGTpqFasss2Yh3sgNnvC6X5fXw2I1Fp2BCnI=;
+        b=dcS6pegO12bP6j8/IxZRcJacM50FbD1iRPyqN51QsgWQuddjlR5/CEHWNuIeE9aA3J
+         m7T0l7tq2/Gcod87ssIr+J94iXOhbqETJnhWbz8UtLia+BEPXix4UP2NHFcQrNy0NNoO
+         I9LF6zTMEL2mdpfCuweuZ08YKBckzPkf4JAFtJlnnAIDYYqB6touDFQccxfDXWXmVo8q
+         RYejfAEVD1DrZcyUxTqTcmucp6CwA+iVZuOpyRGNDZL9MWbPi47AtWH2/Il6ez6JQNv3
+         u3cMYgodLRvwzyGKKU17fkEX23SDPg/uYhyBUuk3wITZPNplSPlzZU3cf8y8PHJGgCvn
+         0iDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ckYAtFkLGTpqFasss2Yh3sgNnvC6X5fXw2I1Fp2BCnI=;
+        b=XLN7Zvg/brLcXIfN1vIqNatow1JwDPt7yFdXLwfdyN8tZu4bEGPZbQGmyxSVZxP3pz
+         u/3gBb2w4bEpf6CkYqzg9Z4iMmRx7GvJheY5IrEFIzy4KshhWf/hLkczHU8d72PSL1s0
+         PmZSvedmwNT2BuQzmO0mIYE5Khnm+VwW97DsNOZvpD3L8jsEjXsZ7yNZGhMgk1VEtb8E
+         CnL8NPWOwugb0i4oUjZDa5xsM39aT25h9VCPPm/fPF6F5v0GBs94pLXRmtOEv75WvKnA
+         OVORsHejHgqV3FpQmoc7OThMMWpqlK0MT/whqFQFfBtlfYJQFupkBtFH1D5IpljKjAwC
+         I7Rg==
+X-Gm-Message-State: APjAAAUgMj5/Ru0ij2ZC499MAIg7JkDe6501tSIeTIYtew4dxOUndqlJ
+        Q8WRxymwFPTDYTcVOwSwpNBvwf7beyxG7/EgN1rfoA==
+X-Google-Smtp-Source: APXvYqwiJPQ8Fg+Dw3qWjh34zdXDeJrcERoGTVCIyZvCpVoBcfFB4U15IkYT3Sgub2qcfUBd9eIRuKLQ1/iNvIecqKg=
+X-Received: by 2002:a17:906:4e01:: with SMTP id z1mr17455077eju.46.1581618070828;
+ Thu, 13 Feb 2020 10:21:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200207201856.46070-1-bgeffon@google.com> <20200210104520.cfs2oytkrf5ihd3m@box>
+ <CADyq12wcwvRLwueucHFV2ErL67etOJdFGYQdqVFM2WAeOkMGQA@mail.gmail.com> <20200213120813.myanzyjmpyzixghf@box>
+In-Reply-To: <20200213120813.myanzyjmpyzixghf@box>
+From:   Brian Geffon <bgeffon@google.com>
+Date:   Thu, 13 Feb 2020 10:20:44 -0800
+Message-ID: <CADyq12wWOhGDeUeOB74dxuRKjPhduMWZLBMxOxpm5-yHOpjaRw@mail.gmail.com>
+Subject: Re: [PATCH v4] mm: Add MREMAP_DONTUNMAP to mremap().
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Deacon <will@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Yu Zhao <yuzhao@google.com>,
+        Jesse Barnes <jsbarnes@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Hi Kirill,
 
-As per PCI firmware specification r3.2 Downstream Port Containment
-Related Enhancements ECN, sec 4.5.1, OS must implement following steps
-to enable/use EDR feature.
+> But if you do the operation for the VM_LOCKED vma, you'll have two locked
+> VMA's now, right? Where do you account the old locked vma you left behind?
 
-1. OS can use bit 7 of _OSC Control Field to negotiate control over
-Downstream Port Containment (DPC) configuration of PCIe port. After _OSC
-negotiation, firmware will Set this bit to grant OS control over PCIe
-DPC configuration and Clear it if this feature was requested and denied,
-or was not requested.
+You bring up a good point. In a previous iteration of my patch I had
+it clearing the locked flags on the old VMA as technically the locked
+pages had migrated. I talked myself out of that but the more I think
+about it we should probably do that. Something along the lines of:
 
-2. Also, if OS supports EDR, it should expose its support to BIOS by
-setting bit 7 of _OSC Support Field. And if OS sets bit 7 of _OSC
-Control Field it must also expose support for EDR by setting bit 7 of
-_OSC Support Field.
++    if (vm_flags & VM_LOCKED) {
++      /* Locked pages would have migrated to the new VMA */
++      vma->vm_flags &= VM_LOCKED_CLEAR_MASK;
++      if (new_len > old_len)
++              mm->locked_vm += (new_len - old_len) >> PAGE_SHIFT;
++   }
 
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Len Brown <lenb@kernel.org>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Acked-by: Keith Busch <keith.busch@intel.com>
-Tested-by: Huong Nguyen <huong.nguyen@dell.com>
-Tested-by: Austin Bolen <Austin.Bolen@dell.com>
----
- drivers/acpi/pci_root.c | 16 ++++++++++++++++
- drivers/pci/pcie/edr.c  |  4 +++-
- drivers/pci/probe.c     |  1 +
- include/linux/acpi.h    |  6 ++++--
- include/linux/pci.h     |  1 +
- 5 files changed, 25 insertions(+), 3 deletions(-)
+I feel that this is correct. The only other possible option would be
+to clear only the VM_LOCKED flag on the old vma leaving VM_LOCKONFAULT
+to handle the MCL_ONFAULT mlocked situation, thoughts? Regardless I'll
+have to mail a new patch because that part where I'm incrementing the
+mm->locked_vm lost the check on VM_LOCKED during patch versions.
 
-diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
-index d1e666ef3fcc..ad1be5941a00 100644
---- a/drivers/acpi/pci_root.c
-+++ b/drivers/acpi/pci_root.c
-@@ -131,6 +131,7 @@ static struct pci_osc_bit_struct pci_osc_support_bit[] = {
- 	{ OSC_PCI_CLOCK_PM_SUPPORT, "ClockPM" },
- 	{ OSC_PCI_SEGMENT_GROUPS_SUPPORT, "Segments" },
- 	{ OSC_PCI_MSI_SUPPORT, "MSI" },
-+	{ OSC_PCI_EDR_SUPPORT, "EDR" },
- 	{ OSC_PCI_HPX_TYPE_3_SUPPORT, "HPX-Type3" },
- };
- 
-@@ -141,6 +142,7 @@ static struct pci_osc_bit_struct pci_osc_control_bit[] = {
- 	{ OSC_PCI_EXPRESS_AER_CONTROL, "AER" },
- 	{ OSC_PCI_EXPRESS_CAPABILITY_CONTROL, "PCIeCapability" },
- 	{ OSC_PCI_EXPRESS_LTR_CONTROL, "LTR" },
-+	{ OSC_PCI_EXPRESS_DPC_CONTROL, "DPC" },
- };
- 
- static void decode_osc_bits(struct acpi_pci_root *root, char *msg, u32 word,
-@@ -440,6 +442,8 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm,
- 		support |= OSC_PCI_ASPM_SUPPORT | OSC_PCI_CLOCK_PM_SUPPORT;
- 	if (pci_msi_enabled())
- 		support |= OSC_PCI_MSI_SUPPORT;
-+	if (IS_ENABLED(CONFIG_PCIE_EDR))
-+		support |= OSC_PCI_EDR_SUPPORT;
- 
- 	decode_osc_support(root, "OS supports", support);
- 	status = acpi_pci_osc_support(root, support);
-@@ -487,6 +491,16 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm,
- 			control |= OSC_PCI_EXPRESS_AER_CONTROL;
- 	}
- 
-+	/*
-+	 * Per the Downstream Port Containment Related Enhancements ECN to
-+	 * the PCI Firmware Spec, r3.2, sec 4.5.1, table 4-5,
-+	 * OSC_PCI_EXPRESS_DPC_CONTROL indicates the OS supports both DPC
-+	 * and EDR. So use CONFIG_PCIE_EDR for requesting DPC control which
-+	 * will only be turned on if both EDR and DPC is enabled.
-+	 */
-+	if (IS_ENABLED(CONFIG_PCIE_EDR))
-+		control |= OSC_PCI_EXPRESS_DPC_CONTROL;
-+
- 	requested = control;
- 	status = acpi_pci_osc_control_set(handle, &control,
- 					  OSC_PCI_EXPRESS_CAPABILITY_CONTROL);
-@@ -916,6 +930,8 @@ struct pci_bus *acpi_pci_root_create(struct acpi_pci_root *root,
- 		host_bridge->native_pme = 0;
- 	if (!(root->osc_control_set & OSC_PCI_EXPRESS_LTR_CONTROL))
- 		host_bridge->native_ltr = 0;
-+	if (!(root->osc_control_set & OSC_PCI_EXPRESS_DPC_CONTROL))
-+		host_bridge->native_dpc = 0;
- 
- 	/*
- 	 * Evaluate the "PCI Boot Configuration" _DSM Function.  If it
-diff --git a/drivers/pci/pcie/edr.c b/drivers/pci/pcie/edr.c
-index b3e9103585a1..e7dfe401db5c 100644
---- a/drivers/pci/pcie/edr.c
-+++ b/drivers/pci/pcie/edr.c
-@@ -201,6 +201,7 @@ static void edr_handle_event(acpi_handle handle, u32 event, void *data)
- int pci_acpi_add_edr_notifier(struct pci_dev *pdev)
- {
- 	struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
-+	struct pci_host_bridge *host = pci_find_host_bridge(pdev->bus);
- 	struct dpc_dev *dpc;
- 	acpi_status astatus;
- 	int status;
-@@ -213,7 +214,8 @@ int pci_acpi_add_edr_notifier(struct pci_dev *pdev)
- 	 * TODO: Remove dependency on ACPI FIRMWARE_FIRST bit to
- 	 * determine ownership of DPC between firmware or OS.
- 	 */
--	if (!pcie_aer_get_firmware_first(pdev) || pcie_ports_dpc_native)
-+	if (!pcie_aer_get_firmware_first(pdev) || pcie_ports_dpc_native ||
-+	    (host->native_dpc))
- 		return -ENODEV;
- 
- 	if (!adev)
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 512cb4312ddd..c9a9c5b42e72 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -598,6 +598,7 @@ static void pci_init_host_bridge(struct pci_host_bridge *bridge)
- 	bridge->native_shpc_hotplug = 1;
- 	bridge->native_pme = 1;
- 	bridge->native_ltr = 1;
-+	bridge->native_dpc = 1;
- }
- 
- struct pci_host_bridge *pci_alloc_host_bridge(size_t priv)
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 0f24d701fbdc..b7d3caf6f205 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -530,8 +530,9 @@ extern bool osc_pc_lpi_support_confirmed;
- #define OSC_PCI_CLOCK_PM_SUPPORT		0x00000004
- #define OSC_PCI_SEGMENT_GROUPS_SUPPORT		0x00000008
- #define OSC_PCI_MSI_SUPPORT			0x00000010
-+#define OSC_PCI_EDR_SUPPORT			0x00000080
- #define OSC_PCI_HPX_TYPE_3_SUPPORT		0x00000100
--#define OSC_PCI_SUPPORT_MASKS			0x0000011f
-+#define OSC_PCI_SUPPORT_MASKS			0x0000019f
- 
- /* PCI Host Bridge _OSC: Capabilities DWORD 3: Control Field */
- #define OSC_PCI_EXPRESS_NATIVE_HP_CONTROL	0x00000001
-@@ -540,7 +541,8 @@ extern bool osc_pc_lpi_support_confirmed;
- #define OSC_PCI_EXPRESS_AER_CONTROL		0x00000008
- #define OSC_PCI_EXPRESS_CAPABILITY_CONTROL	0x00000010
- #define OSC_PCI_EXPRESS_LTR_CONTROL		0x00000020
--#define OSC_PCI_CONTROL_MASKS			0x0000003f
-+#define OSC_PCI_EXPRESS_DPC_CONTROL		0x00000080
-+#define OSC_PCI_CONTROL_MASKS			0x000000bf
- 
- #define ACPI_GSB_ACCESS_ATTRIB_QUICK		0x00000002
- #define ACPI_GSB_ACCESS_ATTRIB_SEND_RCV         0x00000004
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 3840a541a9de..9a0d602627d8 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -510,6 +510,7 @@ struct pci_host_bridge {
- 	unsigned int	native_shpc_hotplug:1;	/* OS may use SHPC hotplug */
- 	unsigned int	native_pme:1;		/* OS may use PCIe PME */
- 	unsigned int	native_ltr:1;		/* OS may use PCIe LTR */
-+	unsigned int	native_dpc:1;		/* OS may use PCIe DPC */
- 	unsigned int	preserve_config:1;	/* Preserve FW resource setup */
- 
- 	/* Resource alignment requirements */
--- 
-2.21.0
+Thanks again for taking the time to review.
 
+Brian
