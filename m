@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A684615C397
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1056915C276
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:35:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729588AbgBMPmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:42:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54438 "EHLO mail.kernel.org"
+        id S2388091AbgBMPbz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:31:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729567AbgBMP2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:28:08 -0500
+        id S1729570AbgBMP2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:09 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC13624670;
-        Thu, 13 Feb 2020 15:28:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95D352168B;
+        Thu, 13 Feb 2020 15:28:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1581607688;
-        bh=rL6fDz+I5A3uyYZWOVRc2bEZCJUprRQhZbW+bndkYms=;
+        bh=vy9wzLAXtpu/XTVoeNZRrmp6y35QIRVEViTmeL54EUI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F5idrao7tM3VN0zr0r7s8udfepXjs6/qrZP60xnqN1ZrpSVyq89gPhDW8SKHRmVq9
-         jBfm4tR8NXjD3jTuEIFjztMp8+/VWcca4d7CeRsuRzgvem5iB3ukdpv4xeDHDBDmWx
-         poobjxDL+E+K7AYaD4Wc4SUeLLhLoR7O9t4Tdiq8=
+        b=OeiHVwuTi9yAQQjVFLdKANevmisHzTYEOjf6464lIZYKHwAR+vgypEH9S6Mqy76fw
+         p6UxUTCwwJyI1hNaKNvt910fbM+0M8Djt0YmWs0x6aGop8Isa/VsI/uSQSdthr3gCN
+         7o2FmVJhSeXSKw1McqZYA0kzze6TknS7vDP7HWcs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 5.5 024/120] netfilter: flowtable: restrict flow dissector match on meta ingress device
-Date:   Thu, 13 Feb 2020 07:20:20 -0800
-Message-Id: <20200213151910.353478699@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Blakey <paulb@mellanox.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 5.5 025/120] netfilter: flowtable: Fix hardware flush order on nf_flow_table_cleanup
+Date:   Thu, 13 Feb 2020 07:20:21 -0800
+Message-Id: <20200213151910.704317780@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
 References: <20200213151901.039700531@linuxfoundation.org>
@@ -42,57 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pablo Neira Ayuso <pablo@netfilter.org>
+From: Paul Blakey <paulb@mellanox.com>
 
-commit a7521a60a5f3e1f58a015fedb6e69aed40455feb upstream.
+commit 91bfaa15a379e9af24f71fb4ee08d8019b6e8ec7 upstream.
 
-Set on FLOW_DISSECTOR_KEY_META meta key using flow tuple ingress interface.
+On netdev down event, nf_flow_table_cleanup() is called for the relevant
+device and it cleans all the tables that are on that device.
+If one of those tables has hardware offload flag,
+nf_flow_table_iterate_cleanup flushes hardware and then runs the gc.
+But the gc can queue more hardware work, which will take time to execute.
+
+Instead first add the work, then flush it, to execute it now.
 
 Fixes: c29f74e0df7a ("netfilter: nf_flow_table: hardware offload support")
+Signed-off-by: Paul Blakey <paulb@mellanox.com>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_flow_table_offload.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ net/netfilter/nf_flow_table_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netfilter/nf_flow_table_offload.c
-+++ b/net/netfilter/nf_flow_table_offload.c
-@@ -24,6 +24,7 @@ struct flow_offload_work {
- };
+--- a/net/netfilter/nf_flow_table_core.c
++++ b/net/netfilter/nf_flow_table_core.c
+@@ -529,9 +529,9 @@ static void nf_flow_table_do_cleanup(str
+ static void nf_flow_table_iterate_cleanup(struct nf_flowtable *flowtable,
+ 					  struct net_device *dev)
+ {
+-	nf_flow_table_offload_flush(flowtable);
+ 	nf_flow_table_iterate(flowtable, nf_flow_table_do_cleanup, dev);
+ 	flush_delayed_work(&flowtable->gc_work);
++	nf_flow_table_offload_flush(flowtable);
+ }
  
- struct nf_flow_key {
-+	struct flow_dissector_key_meta			meta;
- 	struct flow_dissector_key_control		control;
- 	struct flow_dissector_key_basic			basic;
- 	union {
-@@ -55,6 +56,7 @@ static int nf_flow_rule_match(struct nf_
- 	struct nf_flow_key *mask = &match->mask;
- 	struct nf_flow_key *key = &match->key;
- 
-+	NF_FLOW_DISSECTOR(match, FLOW_DISSECTOR_KEY_META, meta);
- 	NF_FLOW_DISSECTOR(match, FLOW_DISSECTOR_KEY_CONTROL, control);
- 	NF_FLOW_DISSECTOR(match, FLOW_DISSECTOR_KEY_BASIC, basic);
- 	NF_FLOW_DISSECTOR(match, FLOW_DISSECTOR_KEY_IPV4_ADDRS, ipv4);
-@@ -62,6 +64,9 @@ static int nf_flow_rule_match(struct nf_
- 	NF_FLOW_DISSECTOR(match, FLOW_DISSECTOR_KEY_TCP, tcp);
- 	NF_FLOW_DISSECTOR(match, FLOW_DISSECTOR_KEY_PORTS, tp);
- 
-+	key->meta.ingress_ifindex = tuple->iifidx;
-+	mask->meta.ingress_ifindex = 0xffffffff;
-+
- 	switch (tuple->l3proto) {
- 	case AF_INET:
- 		key->control.addr_type = FLOW_DISSECTOR_KEY_IPV4_ADDRS;
-@@ -105,7 +110,8 @@ static int nf_flow_rule_match(struct nf_
- 	key->tp.dst = tuple->dst_port;
- 	mask->tp.dst = 0xffff;
- 
--	match->dissector.used_keys |= BIT(FLOW_DISSECTOR_KEY_CONTROL) |
-+	match->dissector.used_keys |= BIT(FLOW_DISSECTOR_KEY_META) |
-+				      BIT(FLOW_DISSECTOR_KEY_CONTROL) |
- 				      BIT(FLOW_DISSECTOR_KEY_BASIC) |
- 				      BIT(FLOW_DISSECTOR_KEY_PORTS);
- 	return 0;
+ void nf_flow_table_cleanup(struct net_device *dev)
 
 
