@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B4FB15C208
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:28:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4161F15C186
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:24:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387558AbgBMP2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:28:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42754 "EHLO mail.kernel.org"
+        id S1728567AbgBMPYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:24:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728592AbgBMPZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:54 -0500
+        id S1728259AbgBMPXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:07 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E340A20848;
-        Thu, 13 Feb 2020 15:25:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67EC7246AD;
+        Thu, 13 Feb 2020 15:23:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607554;
-        bh=9FPWhcCTK05bnS2TBT8O1i7bsSy3XacfH+dW6tvwj5o=;
+        s=default; t=1581607386;
+        bh=8kYutW9+41XF0O/3w4uBAxEow1/LGdc52OsXTqnh5vA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nHQrpC8xR5deoYOPCt7/oEe5NrpXNZh9dlawed2/MpxUJvl3ia2cCvvCNQ9zC21d6
-         f9AuuL+CXjk9w13x+Xs2k6eWSIMoPQ2UkQB+jLKRi7ihP+4GTzkaS8JQkFAa6zN9Wo
-         pIYldt7DbeypHz/MIoqR3QJapM/Lpaer/jhbjekY=
+        b=N1i/QjVfwtMPvws2NgxY9Bb0NpzFInPD2HYD94GvpAbs0lomxZ12KSNMsdbQh6Wqd
+         F08QfcwuskhV35JIzw3YRTHBk2GoFPXEqv3yQd3xplfOLyXDvF2dhTn0808JWepUq2
+         QUMheTXm9H4r+tvJOgFHDYbTC+qgzw9kEw8gFNfc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 138/173] clocksource: Prevent double add_timer_on() for watchdog_timer
-Date:   Thu, 13 Feb 2020 07:20:41 -0800
-Message-Id: <20200213152006.592788433@linuxfoundation.org>
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4.4 86/91] pinctrl: sh-pfc: r8a7778: Fix duplicate SDSELF_B and SD1_CLK_B
+Date:   Thu, 13 Feb 2020 07:20:43 -0800
+Message-Id: <20200213151856.055258250@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
+References: <20200213151821.384445454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,96 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit febac332a819f0e764aa4da62757ba21d18c182b upstream.
+commit 805f635703b2562b5ddd822c62fc9124087e5dd5 upstream.
 
-Kernel crashes inside QEMU/KVM are observed:
+The FN_SDSELF_B and FN_SD1_CLK_B enum IDs are used twice, which means
+one set of users must be wrong.  Replace them by the correct enum IDs.
 
-  kernel BUG at kernel/time/timer.c:1154!
-  BUG_ON(timer_pending(timer) || !timer->function) in add_timer_on().
-
-At the same time another cpu got:
-
-  general protection fault: 0000 [#1] SMP PTI of poinson pointer 0xdead000000000200 in:
-
-  __hlist_del at include/linux/list.h:681
-  (inlined by) detach_timer at kernel/time/timer.c:818
-  (inlined by) expire_timers at kernel/time/timer.c:1355
-  (inlined by) __run_timers at kernel/time/timer.c:1686
-  (inlined by) run_timer_softirq at kernel/time/timer.c:1699
-
-Unfortunately kernel logs are badly scrambled, stacktraces are lost.
-
-Printing the timer->function before the BUG_ON() pointed to
-clocksource_watchdog().
-
-The execution of clocksource_watchdog() can race with a sequence of
-clocksource_stop_watchdog() .. clocksource_start_watchdog():
-
-expire_timers()
- detach_timer(timer, true);
-  timer->entry.pprev = NULL;
- raw_spin_unlock_irq(&base->lock);
- call_timer_fn
-  clocksource_watchdog()
-
-					clocksource_watchdog_kthread() or
-					clocksource_unbind()
-
-					spin_lock_irqsave(&watchdog_lock, flags);
-					clocksource_stop_watchdog();
-					 del_timer(&watchdog_timer);
-					 watchdog_running = 0;
-					spin_unlock_irqrestore(&watchdog_lock, flags);
-
-					spin_lock_irqsave(&watchdog_lock, flags);
-					clocksource_start_watchdog();
-					 add_timer_on(&watchdog_timer, ...);
-					 watchdog_running = 1;
-					spin_unlock_irqrestore(&watchdog_lock, flags);
-
-  spin_lock(&watchdog_lock);
-  add_timer_on(&watchdog_timer, ...);
-   BUG_ON(timer_pending(timer) || !timer->function);
-    timer_pending() -> true
-    BUG()
-
-I.e. inside clocksource_watchdog() watchdog_timer could be already armed.
-
-Check timer_pending() before calling add_timer_on(). This is sufficient as
-all operations are synchronized by watchdog_lock.
-
-Fixes: 75c5158f70c0 ("timekeeping: Update clocksource with stop_machine")
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/158048693917.4378.13823603769948933793.stgit@buzz
+Fixes: 87f8c988636db0d4 ("sh-pfc: Add r8a7778 pinmux support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20191218194812.12741-2-geert+renesas@glider.be
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/time/clocksource.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -280,8 +280,15 @@ static void clocksource_watchdog(unsigne
- 	next_cpu = cpumask_next(raw_smp_processor_id(), cpu_online_mask);
- 	if (next_cpu >= nr_cpu_ids)
- 		next_cpu = cpumask_first(cpu_online_mask);
--	watchdog_timer.expires += WATCHDOG_INTERVAL;
--	add_timer_on(&watchdog_timer, next_cpu);
-+
-+	/*
-+	 * Arm timer if not already pending: could race with concurrent
-+	 * pair clocksource_stop_watchdog() clocksource_start_watchdog().
-+	 */
-+	if (!timer_pending(&watchdog_timer)) {
-+		watchdog_timer.expires += WATCHDOG_INTERVAL;
-+		add_timer_on(&watchdog_timer, next_cpu);
-+	}
- out:
- 	spin_unlock(&watchdog_lock);
- }
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
+@@ -2324,7 +2324,7 @@ static const struct pinmux_cfg_reg pinmu
+ 		FN_ATAG0_A,	0,		FN_REMOCON_B,	0,
+ 		/* IP0_11_8 [4] */
+ 		FN_SD1_DAT2_A,	FN_MMC_D2,	0,		FN_BS,
+-		FN_ATADIR0_A,	0,		FN_SDSELF_B,	0,
++		FN_ATADIR0_A,	0,		FN_SDSELF_A,	0,
+ 		FN_PWM4_B,	0,		0,		0,
+ 		0,		0,		0,		0,
+ 		/* IP0_7_5 [3] */
+@@ -2366,7 +2366,7 @@ static const struct pinmux_cfg_reg pinmu
+ 		FN_TS_SDAT0_A,	0,		0,		0,
+ 		0,		0,		0,		0,
+ 		/* IP1_10_8 [3] */
+-		FN_SD1_CLK_B,	FN_MMC_D6,	0,		FN_A24,
++		FN_SD1_CD_A,	FN_MMC_D6,	0,		FN_A24,
+ 		FN_DREQ1_A,	0,		FN_HRX0_B,	FN_TS_SPSYNC0_A,
+ 		/* IP1_7_5 [3] */
+ 		FN_A23,		FN_HTX0_B,	FN_TX2_B,	FN_DACK2_A,
 
 
