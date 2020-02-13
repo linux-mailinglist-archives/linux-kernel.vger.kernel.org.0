@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA48615C511
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0052F15C232
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:31:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388179AbgBMPxF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:53:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43632 "EHLO mail.kernel.org"
+        id S2387973AbgBMPae (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:30:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729153AbgBMP0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:06 -0500
+        id S1729076AbgBMP10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:26 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 744B2246A3;
-        Thu, 13 Feb 2020 15:26:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E486524689;
+        Thu, 13 Feb 2020 15:27:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607566;
-        bh=YWwsiAPRyvw4xteGMCEmiUmKRJ6fxQY1oH9OoFfKU2E=;
+        s=default; t=1581607645;
+        bh=r9xKMrfjsCH7A7sq9FAn3xenWtfx94nRGSwIgf1QNaw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nOdTDgBoh/hxV4HtZGNbcNuhtJc2nzT6aqPJlO8NRUsZi1yNKxmihm8tWX1xENxAS
-         2pGxzKroU1z1yFj/38F95d75Cwz6ARSMA1+UGjpJY4En66a9cVM+GoK8fBuXmPEpTX
-         V+3mmN949qeDBK24HbT93+Xykcu61BAVFB3vGFpQ=
+        b=psCFahKrMW2fCU1KgLBuUnVOeOqLn1dwRSE+QB8P6VaZAZL98rdbJokOnbF06Kxmy
+         YRzz7NRNYU/VuhZtIeK65UUaLjEAA+z5AyFUMibMXNyKXAh4KvoOSqVM3UQqQkSusv
+         GJmBN+2soSLrU0ZILlqOqBxL5e9hmBLQaMhjMAKo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhengyuan Liu <liuzhengyuan@kylinos.cn>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.14 157/173] tools/power/acpi: fix compilation error
+        stable@vger.kernel.org, Ram Pai <linuxram@us.ibm.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.4 53/96] Revert "powerpc/pseries/iommu: Dont use dma_iommu_ops on secure guests"
 Date:   Thu, 13 Feb 2020 07:21:00 -0800
-Message-Id: <20200213152010.934536388@linuxfoundation.org>
+Message-Id: <20200213151859.926436608@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
+References: <20200213151839.156309910@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,50 +45,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+From: Ram Pai <linuxram@us.ibm.com>
 
-commit 1985f8c7f9a42a651a9750d6fcadc74336d182df upstream.
+commit d862b44133b7a1d7de25288e09eabf4df415e971 upstream.
 
-If we compile tools/acpi target in the top source directory, we'd get a
-compilation error showing as bellow:
+This reverts commit edea902c1c1efb855f77e041f9daf1abe7a9768a.
 
-	# make tools/acpi
-	  DESCEND  power/acpi
-	  DESCEND  tools/acpidbg
-	  CC       tools/acpidbg/acpidbg.o
-	Assembler messages:
-	Fatal error: can't create /home/lzy/kernel-upstream/power/acpi/\
-			tools/acpidbg/acpidbg.o: No such file or directory
-	../../Makefile.rules:26: recipe for target '/home/lzy/kernel-upstream/\
-			power/acpi/tools/acpidbg/acpidbg.o' failed
-	make[3]: *** [/home/lzy/kernel-upstream//power/acpi/tools/acpidbg/\
-			acpidbg.o] Error 1
-	Makefile:19: recipe for target 'acpidbg' failed
-	make[2]: *** [acpidbg] Error 2
-	Makefile:54: recipe for target 'acpi' failed
-	make[1]: *** [acpi] Error 2
-	Makefile:1607: recipe for target 'tools/acpi' failed
-	make: *** [tools/acpi] Error 2
+At the time the change allowed direct DMA ops for secure VMs; however
+since then we switched on using SWIOTLB backed with IOMMU (direct mapping)
+and to make this work, we need dma_iommu_ops which handles all cases
+including TCE mapping I/O pages in the presence of an IOMMU.
 
-Fixes: d5a4b1a540b8 ("tools/power/acpi: Remove direct kernel source include reference")
-Signed-off-by: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: edea902c1c1e ("powerpc/pseries/iommu: Don't use dma_iommu_ops on secure guests")
+Signed-off-by: Ram Pai <linuxram@us.ibm.com>
+[aik: added "revert" and "fixes:"]
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Tested-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20191216041924.42318-2-aik@ozlabs.ru
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/power/acpi/Makefile.config |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/pseries/iommu.c |   11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
---- a/tools/power/acpi/Makefile.config
-+++ b/tools/power/acpi/Makefile.config
-@@ -18,7 +18,7 @@ include $(srctree)/../../scripts/Makefil
+--- a/arch/powerpc/platforms/pseries/iommu.c
++++ b/arch/powerpc/platforms/pseries/iommu.c
+@@ -36,7 +36,6 @@
+ #include <asm/udbg.h>
+ #include <asm/mmzone.h>
+ #include <asm/plpar_wrappers.h>
+-#include <asm/svm.h>
  
- OUTPUT=$(srctree)/
- ifeq ("$(origin O)", "command line")
--	OUTPUT := $(O)/power/acpi/
-+	OUTPUT := $(O)/tools/power/acpi/
- endif
- #$(info Determined 'OUTPUT' to be $(OUTPUT))
+ #include "pseries.h"
  
+@@ -1320,15 +1319,7 @@ void iommu_init_early_pSeries(void)
+ 	of_reconfig_notifier_register(&iommu_reconfig_nb);
+ 	register_memory_notifier(&iommu_mem_nb);
+ 
+-	/*
+-	 * Secure guest memory is inacessible to devices so regular DMA isn't
+-	 * possible.
+-	 *
+-	 * In that case keep devices' dma_map_ops as NULL so that the generic
+-	 * DMA code path will use SWIOTLB to bounce buffers for DMA.
+-	 */
+-	if (!is_secure_guest())
+-		set_pci_dma_ops(&dma_iommu_ops);
++	set_pci_dma_ops(&dma_iommu_ops);
+ }
+ 
+ static int __init disable_multitce(char *str)
 
 
