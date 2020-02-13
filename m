@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F335215C44F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E126F15C3FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:52:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729965AbgBMPp7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:45:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50274 "EHLO mail.kernel.org"
+        id S1728732AbgBMP0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:26:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728357AbgBMP1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:23 -0500
+        id S1728676AbgBMPYX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:24:23 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CF4224688;
-        Thu, 13 Feb 2020 15:27:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC49C246B8;
+        Thu, 13 Feb 2020 15:24:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607643;
-        bh=jL7wi3GPQAwkR3cY7qiLEUcRjR9A248C0dluTePwOGg=;
+        s=default; t=1581607462;
+        bh=p5Vka3MWRnnxWQWS9554okQybQol3sSg6zPQmh524Rw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FvhhGOwPzrY3vI79nznrahN0HgM4GcEkbGnm7lAiwqBlF8a6HpFTeShVMdA4dMqg+
-         mQGDW/t01PgWeFirA82ftbrNM6I+faNmSBJp2fs/qVlJ1imO28KLhf6ldQvsPu6FTM
-         aMFG0lrjHhQtbRnIQKmScXf7j40ikV19JQTdgGM0=
+        b=YC7Y4I2rxCAJjfmqvlpOlqpWVNh5nW9fDapWGm6Dj/RBGpaPOV0Oxm76m5BR7tAK+
+         LSNQfugA+K5FcIsLokWjyxan7XB50AVdFEfk4zGOed+iaAjwA+xImewJQvBJwhDnTj
+         fYMaqWGkB42uQ6v56z5/9swR3tu9lkk/1y6T+AQQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Karl=20Rudb=C3=A6k=20Olsen?= <karl@micro-technic.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 5.4 50/96] ARM: dts: at91: sama5d3: define clock rate range for tcb1
+        stable@vger.kernel.org, Qing Xu <m1s5p6688@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 113/116] mwifiex: Fix possible buffer overflows in mwifiex_ret_wmm_get_status()
 Date:   Thu, 13 Feb 2020 07:20:57 -0800
-Message-Id: <20200213151858.763075683@linuxfoundation.org>
+Message-Id: <20200213151925.781939440@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,32 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Qing Xu <m1s5p6688@gmail.com>
 
-commit a7e0f3fc01df4b1b7077df777c37feae8c9e8b6d upstream.
+[ Upstream commit 3a9b153c5591548612c3955c9600a98150c81875 ]
 
-The clock rate range for the TCB1 clock is missing. define it in the device
-tree.
+mwifiex_ret_wmm_get_status() calls memcpy() without checking the
+destination size.Since the source is given from remote AP which
+contains illegal wmm elements , this may trigger a heap buffer
+overflow.
+Fix it by putting the length check before calling memcpy().
 
-Reported-by: Karl Rudbæk Olsen <karl@micro-technic.com>
-Fixes: d2e8190b7916 ("ARM: at91/dt: define sama5d3 clocks")
-Link: https://lore.kernel.org/r/20200110172007.1253659-2-alexandre.belloni@bootlin.com
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Qing Xu <m1s5p6688@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/sama5d3_tcb1.dtsi |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/marvell/mwifiex/wmm.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/arm/boot/dts/sama5d3_tcb1.dtsi
-+++ b/arch/arm/boot/dts/sama5d3_tcb1.dtsi
-@@ -22,6 +22,7 @@
- 					tcb1_clk: tcb1_clk {
- 						#clock-cells = <0>;
- 						reg = <27>;
-+						atmel,clk-output-range = <0 166000000>;
- 					};
- 				};
- 			};
+diff --git a/drivers/net/wireless/marvell/mwifiex/wmm.c b/drivers/net/wireless/marvell/mwifiex/wmm.c
+index 9843560e784fe..c93fcafbcc7a6 100644
+--- a/drivers/net/wireless/marvell/mwifiex/wmm.c
++++ b/drivers/net/wireless/marvell/mwifiex/wmm.c
+@@ -980,6 +980,10 @@ int mwifiex_ret_wmm_get_status(struct mwifiex_private *priv,
+ 				    "WMM Parameter Set Count: %d\n",
+ 				    wmm_param_ie->qos_info_bitmap & mask);
+ 
++			if (wmm_param_ie->vend_hdr.len + 2 >
++				sizeof(struct ieee_types_wmm_parameter))
++				break;
++
+ 			memcpy((u8 *) &priv->curr_bss_params.bss_descriptor.
+ 			       wmm_ie, wmm_param_ie,
+ 			       wmm_param_ie->vend_hdr.len + 2);
+-- 
+2.20.1
+
 
 
