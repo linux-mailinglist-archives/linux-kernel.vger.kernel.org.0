@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFD0815C20B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:28:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B4FB15C208
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:28:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387739AbgBMP2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:28:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43374 "EHLO mail.kernel.org"
+        id S2387558AbgBMP2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:28:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728602AbgBMP0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:04 -0500
+        id S1728592AbgBMPZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:54 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8796E2469C;
-        Thu, 13 Feb 2020 15:26:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E340A20848;
+        Thu, 13 Feb 2020 15:25:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607562;
-        bh=sMKRMxAKZmEI4l58IG+Ydcmfx5bYgtYEsOOYTnpTo20=;
+        s=default; t=1581607554;
+        bh=9FPWhcCTK05bnS2TBT8O1i7bsSy3XacfH+dW6tvwj5o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IYo68MzjpUx3/9AQC2+E4c6nmJ/BSPMTb0gdTU61GpmNU79se1TmNUKNoeuq9YTIv
-         +2/GuJsPYm0pLp+4PNpGXp0uwA9Go9KICPrYD98HqTR9fWRm2DtEJQNCBoaTExBE8W
-         paYy+cqPck5vNeip3xbt8V24av+gd9L/uNUuH0/k=
+        b=nHQrpC8xR5deoYOPCt7/oEe5NrpXNZh9dlawed2/MpxUJvl3ia2cCvvCNQ9zC21d6
+         f9AuuL+CXjk9w13x+Xs2k6eWSIMoPQ2UkQB+jLKRi7ihP+4GTzkaS8JQkFAa6zN9Wo
+         pIYldt7DbeypHz/MIoqR3QJapM/Lpaer/jhbjekY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 136/173] KVM: s390: do not clobber registers during guest reset/store status
-Date:   Thu, 13 Feb 2020 07:20:39 -0800
-Message-Id: <20200213152006.212371310@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.14 138/173] clocksource: Prevent double add_timer_on() for watchdog_timer
+Date:   Thu, 13 Feb 2020 07:20:41 -0800
+Message-Id: <20200213152006.592788433@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
 References: <20200213151931.677980430@linuxfoundation.org>
@@ -47,55 +44,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Borntraeger <borntraeger@de.ibm.com>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-[ Upstream commit 55680890ea78be0df5e1384989f1be835043c084 ]
+commit febac332a819f0e764aa4da62757ba21d18c182b upstream.
 
-The initial CPU reset clobbers the userspace fpc and the store status
-ioctl clobbers the guest acrs + fpr.  As these calls are only done via
-ioctl (and not via vcpu_run), no CPU context is loaded, so we can (and
-must) act directly on the sync regs, not on the thread context.
+Kernel crashes inside QEMU/KVM are observed:
 
-Cc: stable@kernel.org
-Fixes: e1788bb995be ("KVM: s390: handle floating point registers in the run ioctl not in vcpu_put/load")
-Fixes: 31d8b8d41a7e ("KVM: s390: handle access registers in the run ioctl not in vcpu_put/load")
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
-Link: https://lore.kernel.org/r/20200131100205.74720-2-frankja@linux.ibm.com
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+  kernel BUG at kernel/time/timer.c:1154!
+  BUG_ON(timer_pending(timer) || !timer->function) in add_timer_on().
+
+At the same time another cpu got:
+
+  general protection fault: 0000 [#1] SMP PTI of poinson pointer 0xdead000000000200 in:
+
+  __hlist_del at include/linux/list.h:681
+  (inlined by) detach_timer at kernel/time/timer.c:818
+  (inlined by) expire_timers at kernel/time/timer.c:1355
+  (inlined by) __run_timers at kernel/time/timer.c:1686
+  (inlined by) run_timer_softirq at kernel/time/timer.c:1699
+
+Unfortunately kernel logs are badly scrambled, stacktraces are lost.
+
+Printing the timer->function before the BUG_ON() pointed to
+clocksource_watchdog().
+
+The execution of clocksource_watchdog() can race with a sequence of
+clocksource_stop_watchdog() .. clocksource_start_watchdog():
+
+expire_timers()
+ detach_timer(timer, true);
+  timer->entry.pprev = NULL;
+ raw_spin_unlock_irq(&base->lock);
+ call_timer_fn
+  clocksource_watchdog()
+
+					clocksource_watchdog_kthread() or
+					clocksource_unbind()
+
+					spin_lock_irqsave(&watchdog_lock, flags);
+					clocksource_stop_watchdog();
+					 del_timer(&watchdog_timer);
+					 watchdog_running = 0;
+					spin_unlock_irqrestore(&watchdog_lock, flags);
+
+					spin_lock_irqsave(&watchdog_lock, flags);
+					clocksource_start_watchdog();
+					 add_timer_on(&watchdog_timer, ...);
+					 watchdog_running = 1;
+					spin_unlock_irqrestore(&watchdog_lock, flags);
+
+  spin_lock(&watchdog_lock);
+  add_timer_on(&watchdog_timer, ...);
+   BUG_ON(timer_pending(timer) || !timer->function);
+    timer_pending() -> true
+    BUG()
+
+I.e. inside clocksource_watchdog() watchdog_timer could be already armed.
+
+Check timer_pending() before calling add_timer_on(). This is sufficient as
+all operations are synchronized by watchdog_lock.
+
+Fixes: 75c5158f70c0 ("timekeeping: Update clocksource with stop_machine")
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/158048693917.4378.13823603769948933793.stgit@buzz
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/s390/kvm/kvm-s390.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ kernel/time/clocksource.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index 91c24e87fe10a..46fee3f4dedda 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -2384,9 +2384,7 @@ static void kvm_s390_vcpu_initial_reset(struct kvm_vcpu *vcpu)
- 	memset(vcpu->arch.sie_block->gcr, 0, 16 * sizeof(__u64));
- 	vcpu->arch.sie_block->gcr[0]  = 0xE0UL;
- 	vcpu->arch.sie_block->gcr[14] = 0xC2000000UL;
--	/* make sure the new fpc will be lazily loaded */
--	save_fpu_regs();
--	current->thread.fpu.fpc = 0;
-+	vcpu->run->s.regs.fpc = 0;
- 	vcpu->arch.sie_block->gbea = 1;
- 	vcpu->arch.sie_block->pp = 0;
- 	vcpu->arch.sie_block->fpf &= ~FPF_BPBC;
-@@ -3753,7 +3751,7 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
- 	}
- 	case KVM_S390_STORE_STATUS:
- 		idx = srcu_read_lock(&vcpu->kvm->srcu);
--		r = kvm_s390_vcpu_store_status(vcpu, arg);
-+		r = kvm_s390_store_status_unloaded(vcpu, arg);
- 		srcu_read_unlock(&vcpu->kvm->srcu, idx);
- 		break;
- 	case KVM_S390_SET_INITIAL_PSW: {
--- 
-2.20.1
-
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -280,8 +280,15 @@ static void clocksource_watchdog(unsigne
+ 	next_cpu = cpumask_next(raw_smp_processor_id(), cpu_online_mask);
+ 	if (next_cpu >= nr_cpu_ids)
+ 		next_cpu = cpumask_first(cpu_online_mask);
+-	watchdog_timer.expires += WATCHDOG_INTERVAL;
+-	add_timer_on(&watchdog_timer, next_cpu);
++
++	/*
++	 * Arm timer if not already pending: could race with concurrent
++	 * pair clocksource_stop_watchdog() clocksource_start_watchdog().
++	 */
++	if (!timer_pending(&watchdog_timer)) {
++		watchdog_timer.expires += WATCHDOG_INTERVAL;
++		add_timer_on(&watchdog_timer, next_cpu);
++	}
+ out:
+ 	spin_unlock(&watchdog_lock);
+ }
 
 
