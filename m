@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35B7C15C20C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:28:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90AB215C1B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:26:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387751AbgBMP2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:28:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43376 "EHLO mail.kernel.org"
+        id S1728614AbgBMPZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:25:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728631AbgBMP0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:04 -0500
+        id S1728592AbgBMPYH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:24:07 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33A3B246A3;
-        Thu, 13 Feb 2020 15:26:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECCFD24691;
+        Thu, 13 Feb 2020 15:24:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607563;
-        bh=gjjDWGRooBc5UqVMIQJAX12Qn9s0CDwI6cpcchgX04k=;
+        s=default; t=1581607447;
+        bh=usdD7E2v7ryHJezLF4KmGqTvXV8BRUodlwhHkqQprBU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tRR/eXC1bQ8sUuAM6z0NxYVA1AmTs3PqNgyquV7zylYE6TG3B6b0ZxTC0Abgczn0o
-         YGhq3fdkR8JaggZQrAWFTcxCRHO3RXj3nxj2Yup1EBHg4MwfSxWU7UqMLtD0V82/cB
-         oNCaCG2BHfuInOxyduS70r5haCuWtvLlHnZVTRlc=
+        b=cah7D5CUzIx/h3sZ2MXiiGDZXnIaxJIAhe8K3/IySsnVzJcV9n+vOCG61lH3L+Uka
+         zaWnFP94M4NBL0jhBz/68KxKj7le1Z2/Z+7vZRPnPYGsT1aNc14ZYeNx8fbEbWZJWY
+         3hSvX5kbbvCSvD8pOCFoM/SuEMpMC3gOGa2tFIjA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wayne Lin <Wayne.Lin@amd.com>,
-        Lyude Paul <lyude@redhat.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 127/173] drm/dp_mst: Remove VCPI while disabling topology mgr
-Date:   Thu, 13 Feb 2020 07:20:30 -0800
-Message-Id: <20200213152004.290260546@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 089/116] btrfs: flush write bio if we loop in extent_write_cache_pages
+Date:   Thu, 13 Feb 2020 07:20:33 -0800
+Message-Id: <20200213151917.511897953@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,90 +45,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wayne Lin <Wayne.Lin@amd.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-[ Upstream commit 64e62bdf04ab8529f45ed0a85122c703035dec3a ]
+[ Upstream commit 96bf313ecb33567af4cb53928b0c951254a02759 ]
 
-[Why]
+There exists a deadlock with range_cyclic that has existed forever.  If
+we loop around with a bio already built we could deadlock with a writer
+who has the page locked that we're attempting to write but is waiting on
+a page in our bio to be written out.  The task traces are as follows
 
-This patch is trying to address the issue observed when hotplug DP
-daisy chain monitors.
+  PID: 1329874  TASK: ffff889ebcdf3800  CPU: 33  COMMAND: "kworker/u113:5"
+   #0 [ffffc900297bb658] __schedule at ffffffff81a4c33f
+   #1 [ffffc900297bb6e0] schedule at ffffffff81a4c6e3
+   #2 [ffffc900297bb6f8] io_schedule at ffffffff81a4ca42
+   #3 [ffffc900297bb708] __lock_page at ffffffff811f145b
+   #4 [ffffc900297bb798] __process_pages_contig at ffffffff814bc502
+   #5 [ffffc900297bb8c8] lock_delalloc_pages at ffffffff814bc684
+   #6 [ffffc900297bb900] find_lock_delalloc_range at ffffffff814be9ff
+   #7 [ffffc900297bb9a0] writepage_delalloc at ffffffff814bebd0
+   #8 [ffffc900297bba18] __extent_writepage at ffffffff814bfbf2
+   #9 [ffffc900297bba98] extent_write_cache_pages at ffffffff814bffbd
 
-e.g.
-src-mstb-mstb-sst -> src (unplug) mstb-mstb-sst -> src-mstb-mstb-sst
-(plug in again)
+  PID: 2167901  TASK: ffff889dc6a59c00  CPU: 14  COMMAND:
+  "aio-dio-invalid"
+   #0 [ffffc9003b50bb18] __schedule at ffffffff81a4c33f
+   #1 [ffffc9003b50bba0] schedule at ffffffff81a4c6e3
+   #2 [ffffc9003b50bbb8] io_schedule at ffffffff81a4ca42
+   #3 [ffffc9003b50bbc8] wait_on_page_bit at ffffffff811f24d6
+   #4 [ffffc9003b50bc60] prepare_pages at ffffffff814b05a7
+   #5 [ffffc9003b50bcd8] btrfs_buffered_write at ffffffff814b1359
+   #6 [ffffc9003b50bdb0] btrfs_file_write_iter at ffffffff814b5933
+   #7 [ffffc9003b50be38] new_sync_write at ffffffff8128f6a8
+   #8 [ffffc9003b50bec8] vfs_write at ffffffff81292b9d
+   #9 [ffffc9003b50bf00] ksys_pwrite64 at ffffffff81293032
 
-Once unplug a DP MST capable device, driver will call
-drm_dp_mst_topology_mgr_set_mst() to disable MST. In this function,
-it cleans data of topology manager while disabling mst_state. However,
-it doesn't clean up the proposed_vcpis of topology manager.
-If proposed_vcpi is not reset, once plug in MST daisy chain monitors
-later, code will fail at checking port validation while trying to
-allocate payloads.
+I used drgn to find the respective pages we were stuck on
 
-When MST capable device is plugged in again and try to allocate
-payloads by calling drm_dp_update_payload_part1(), this
-function will iterate over all proposed virtual channels to see if
-any proposed VCPI's num_slots is greater than 0. If any proposed
-VCPI's num_slots is greater than 0 and the port which the
-specific virtual channel directed to is not in the topology, code then
-fails at the port validation. Since there are stale VCPI allocations
-from the previous topology enablement in proposed_vcpi[], code will fail
-at port validation and reurn EINVAL.
+page_entry.page 0xffffea00fbfc7500 index 8148 bit 15 pid 2167901
+page_entry.page 0xffffea00f9bb7400 index 7680 bit 0 pid 1329874
 
-[How]
+As you can see the kworker is waiting for bit 0 (PG_locked) on index
+7680, and aio-dio-invalid is waiting for bit 15 (PG_writeback) on index
+8148.  aio-dio-invalid has 7680, and the kworker epd looks like the
+following
 
-Clean up the data of stale proposed_vcpi[] and reset mgr->proposed_vcpis
-to NULL while disabling mst in drm_dp_mst_topology_mgr_set_mst().
+  crash> struct extent_page_data ffffc900297bbbb0
+  struct extent_page_data {
+    bio = 0xffff889f747ed830,
+    tree = 0xffff889eed6ba448,
+    extent_locked = 0,
+    sync_io = 0
+  }
 
-Changes since v1:
-*Add on more details in commit message to describe the issue which the
-patch is trying to fix
+Probably worth mentioning as well that it waits for writeback of the
+page to complete while holding a lock on it (at prepare_pages()).
 
-Signed-off-by: Wayne Lin <Wayne.Lin@amd.com>
-[added cc to stable]
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191205090043.7580-1-Wayne.Lin@amd.com
-Cc: <stable@vger.kernel.org> # v3.17+
+Using drgn I walked the bio pages looking for page
+0xffffea00fbfc7500 which is the one we're waiting for writeback on
+
+  bio = Object(prog, 'struct bio', address=0xffff889f747ed830)
+  for i in range(0, bio.bi_vcnt.value_()):
+      bv = bio.bi_io_vec[i]
+      if bv.bv_page.value_() == 0xffffea00fbfc7500:
+	  print("FOUND IT")
+
+which validated what I suspected.
+
+The fix for this is simple, flush the epd before we loop back around to
+the beginning of the file during writeout.
+
+Fixes: b293f02e1423 ("Btrfs: Add writepages support")
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_dp_mst_topology.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ fs/btrfs/extent_io.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index 9d94c306c8ca1..f427a5dc66685 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -2046,6 +2046,7 @@ static bool drm_dp_get_vc_payload_bw(int dp_link_bw,
- int drm_dp_mst_topology_mgr_set_mst(struct drm_dp_mst_topology_mgr *mgr, bool mst_state)
- {
- 	int ret = 0;
-+	int i = 0;
- 	struct drm_dp_mst_branch *mstb = NULL;
- 
- 	mutex_lock(&mgr->lock);
-@@ -2106,10 +2107,21 @@ int drm_dp_mst_topology_mgr_set_mst(struct drm_dp_mst_topology_mgr *mgr, bool ms
- 		/* this can fail if the device is gone */
- 		drm_dp_dpcd_writeb(mgr->aux, DP_MSTM_CTRL, 0);
- 		ret = 0;
-+		mutex_lock(&mgr->payload_lock);
- 		memset(mgr->payloads, 0, mgr->max_payloads * sizeof(struct drm_dp_payload));
- 		mgr->payload_mask = 0;
- 		set_bit(0, &mgr->payload_mask);
-+		for (i = 0; i < mgr->max_payloads; i++) {
-+			struct drm_dp_vcpi *vcpi = mgr->proposed_vcpis[i];
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index 37a28e2369b91..1372d3e5d90bb 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -4060,6 +4060,14 @@ static int extent_write_cache_pages(struct extent_io_tree *tree,
+ 		 */
+ 		scanned = 1;
+ 		index = 0;
 +
-+			if (vcpi) {
-+				vcpi->vcpi = 0;
-+				vcpi->num_slots = 0;
-+			}
-+			mgr->proposed_vcpis[i] = NULL;
-+		}
- 		mgr->vcpi_mask = 0;
-+		mutex_unlock(&mgr->payload_lock);
++		/*
++		 * If we're looping we could run into a page that is locked by a
++		 * writer and that writer could be waiting on writeback for a
++		 * page in our current bio, and thus deadlock, so flush the
++		 * write bio here.
++		 */
++		flush_write_bio(data);
+ 		goto retry;
  	}
  
- out_unlock:
 -- 
 2.20.1
 
