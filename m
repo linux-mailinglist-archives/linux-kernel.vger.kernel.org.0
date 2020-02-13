@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF20015C2AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:38:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AFD015C2CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:39:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387828AbgBMP3U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:29:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45956 "EHLO mail.kernel.org"
+        id S2387884AbgBMPbD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:31:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387595AbgBMP0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:34 -0500
+        id S1728866AbgBMP1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:39 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A05D1222C2;
-        Thu, 13 Feb 2020 15:26:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6F1624685;
+        Thu, 13 Feb 2020 15:27:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607592;
-        bh=5d8vTwSTKLpkNP5dmN6PxFU8quK9Vs/L1w1NZ9OmVyE=;
+        s=default; t=1581607658;
+        bh=ixRsr3LHyXV1VQ4gg7dSIzR1NdGBwYbr3CTD23NWhHI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NpUkleZNEm+f0rTgf33f3FaOlGWqXIijtiAa3e1cSTVjN0i+L9wB4Kx9JwoGpYYeX
-         BIsw7yIayxwBAZLXyEfiTmWCQWg7+pf0JlQu/gVjzqakl81xmtZtfE/SpFHTi+pbc5
-         d3yiNshGCHC/BdnNqouccpNN9ZYLGi7ItimmXe+0=
+        b=kJ5AOT2EcOzep7+GK1KjCPV4NAc2ApS5mgHW07eTAbz5W1D9UP0nn4Jwh0blrERF1
+         6Tx109w8LEcadlvyuA4LqBF+1n06QAIryGNowO6MUJJ3L417+kqTkceeXU3sgyk2XY
+         TO6L3VdTkVtwfc+urJkI+L5hY5U0DCdw7PN+pM2o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ingo van Lil <inguin@gmx.de>,
-        Peter Rosin <peda@axentia.se>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 4.19 24/52] ARM: dts: at91: Reenable UART TX pull-ups
+        stable@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.4 58/96] powerpc/pseries: Allow not having ibm, hypertas-functions::hcall-multi-tce for DDW
 Date:   Thu, 13 Feb 2020 07:21:05 -0800
-Message-Id: <20200213151820.267903624@linuxfoundation.org>
+Message-Id: <20200213151901.546415469@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
-References: <20200213151810.331796857@linuxfoundation.org>
+In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
+References: <20200213151839.156309910@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,224 +44,155 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ingo van Lil <inguin@gmx.de>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
 
-commit 9d39d86cd4af2b17b970d63307daad71f563d207 upstream.
+commit 7559d3d295f3365ea7ac0c0274c05e633fe4f594 upstream.
 
-Pull-ups for SAM9 UART/USART TX lines were disabled in a previous
-commit. However, several chips in the SAM9 family require pull-ups to
-prevent the TX lines from falling (and causing an endless break
-condition) when the transceiver is disabled.
+By default a pseries guest supports a H_PUT_TCE hypercall which maps
+a single IOMMU page in a DMA window. Additionally the hypervisor may
+support H_PUT_TCE_INDIRECT/H_STUFF_TCE which update multiple TCEs at once;
+this is advertised via the device tree /rtas/ibm,hypertas-functions
+property which Linux converts to FW_FEATURE_MULTITCE.
 
->From the SAM9G20 datasheet, 32.5.1: "To prevent the TXD line from
-falling when the USART is disabled, the use of an internal pull up
-is mandatory.". This commit reenables the pull-ups for all chips having
-that sentence in their datasheets.
+FW_FEATURE_MULTITCE is checked when dma_iommu_ops is used; however
+the code managing the huge DMA window (DDW) ignores it and calls
+H_PUT_TCE_INDIRECT even if it is explicitly disabled via
+the "multitce=off" kernel command line parameter.
 
-Fixes: 5e04822f7db5 ("ARM: dts: at91: fixes uart pinctrl, set pullup on rx, clear pullup on tx")
-Signed-off-by: Ingo van Lil <inguin@gmx.de>
-Cc: Peter Rosin <peda@axentia.se>
-Link: https://lore.kernel.org/r/20191203142147.875227-1-inguin@gmx.de
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+This adds FW_FEATURE_MULTITCE checking to the DDW code path.
+
+This changes tce_build_pSeriesLP to take liobn and page size as
+the huge window does not have iommu_table descriptor which usually
+the place to store these numbers.
+
+Fixes: 4e8b0cf46b25 ("powerpc/pseries: Add support for dynamic dma windows")
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Tested-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20191216041924.42318-3-aik@ozlabs.ru
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/at91sam9260.dtsi |   12 ++++++------
- arch/arm/boot/dts/at91sam9261.dtsi |    6 +++---
- arch/arm/boot/dts/at91sam9263.dtsi |    6 +++---
- arch/arm/boot/dts/at91sam9g45.dtsi |    8 ++++----
- arch/arm/boot/dts/at91sam9rl.dtsi  |    8 ++++----
- 5 files changed, 20 insertions(+), 20 deletions(-)
+ arch/powerpc/platforms/pseries/iommu.c |   43 ++++++++++++++++++++++-----------
+ 1 file changed, 29 insertions(+), 14 deletions(-)
 
---- a/arch/arm/boot/dts/at91sam9260.dtsi
-+++ b/arch/arm/boot/dts/at91sam9260.dtsi
-@@ -434,7 +434,7 @@
- 				usart0 {
- 					pinctrl_usart0: usart0-0 {
- 						atmel,pins =
--							<AT91_PIOB 4 AT91_PERIPH_A AT91_PINCTRL_NONE
-+							<AT91_PIOB 4 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
- 							 AT91_PIOB 5 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
+--- a/arch/powerpc/platforms/pseries/iommu.c
++++ b/arch/powerpc/platforms/pseries/iommu.c
+@@ -132,10 +132,10 @@ static unsigned long tce_get_pseries(str
+ 	return be64_to_cpu(*tcep);
+ }
  
-@@ -468,7 +468,7 @@
- 				usart1 {
- 					pinctrl_usart1: usart1-0 {
- 						atmel,pins =
--							<AT91_PIOB 6 AT91_PERIPH_A AT91_PINCTRL_NONE
-+							<AT91_PIOB 6 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
- 							 AT91_PIOB 7 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
+-static void tce_free_pSeriesLP(struct iommu_table*, long, long);
++static void tce_free_pSeriesLP(unsigned long liobn, long, long);
+ static void tce_freemulti_pSeriesLP(struct iommu_table*, long, long);
  
-@@ -486,7 +486,7 @@
- 				usart2 {
- 					pinctrl_usart2: usart2-0 {
- 						atmel,pins =
--							<AT91_PIOB 8 AT91_PERIPH_A AT91_PINCTRL_NONE
-+							<AT91_PIOB 8 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
- 							 AT91_PIOB 9 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
+-static int tce_build_pSeriesLP(struct iommu_table *tbl, long tcenum,
++static int tce_build_pSeriesLP(unsigned long liobn, long tcenum, long tceshift,
+ 				long npages, unsigned long uaddr,
+ 				enum dma_data_direction direction,
+ 				unsigned long attrs)
+@@ -146,25 +146,25 @@ static int tce_build_pSeriesLP(struct io
+ 	int ret = 0;
+ 	long tcenum_start = tcenum, npages_start = npages;
  
-@@ -504,7 +504,7 @@
- 				usart3 {
- 					pinctrl_usart3: usart3-0 {
- 						atmel,pins =
--							<AT91_PIOB 10 AT91_PERIPH_A AT91_PINCTRL_NONE
-+							<AT91_PIOB 10 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
- 							 AT91_PIOB 11 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
+-	rpn = __pa(uaddr) >> TCE_SHIFT;
++	rpn = __pa(uaddr) >> tceshift;
+ 	proto_tce = TCE_PCI_READ;
+ 	if (direction != DMA_TO_DEVICE)
+ 		proto_tce |= TCE_PCI_WRITE;
  
-@@ -522,7 +522,7 @@
- 				uart0 {
- 					pinctrl_uart0: uart0-0 {
- 						atmel,pins =
--							<AT91_PIOA 31 AT91_PERIPH_B AT91_PINCTRL_NONE
-+							<AT91_PIOA 31 AT91_PERIPH_B AT91_PINCTRL_PULL_UP
- 							 AT91_PIOA 30 AT91_PERIPH_B AT91_PINCTRL_PULL_UP>;
- 					};
- 				};
-@@ -530,7 +530,7 @@
- 				uart1 {
- 					pinctrl_uart1: uart1-0 {
- 						atmel,pins =
--							<AT91_PIOB 12 AT91_PERIPH_A AT91_PINCTRL_NONE
-+							<AT91_PIOB 12 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
- 							 AT91_PIOB 13 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
- 				};
---- a/arch/arm/boot/dts/at91sam9261.dtsi
-+++ b/arch/arm/boot/dts/at91sam9261.dtsi
-@@ -328,7 +328,7 @@
- 				usart0 {
- 					pinctrl_usart0: usart0-0 {
- 						atmel,pins =
--							<AT91_PIOC 8 AT91_PERIPH_A AT91_PINCTRL_NONE>,
-+							<AT91_PIOC 8 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>,
- 							<AT91_PIOC 9 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
+ 	while (npages--) {
+-		tce = proto_tce | (rpn & TCE_RPN_MASK) << TCE_RPN_SHIFT;
+-		rc = plpar_tce_put((u64)tbl->it_index, (u64)tcenum << 12, tce);
++		tce = proto_tce | (rpn & TCE_RPN_MASK) << tceshift;
++		rc = plpar_tce_put((u64)liobn, (u64)tcenum << tceshift, tce);
  
-@@ -346,7 +346,7 @@
- 				usart1 {
- 					pinctrl_usart1: usart1-0 {
- 						atmel,pins =
--							<AT91_PIOC 12 AT91_PERIPH_A AT91_PINCTRL_NONE>,
-+							<AT91_PIOC 12 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>,
- 							<AT91_PIOC 13 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
+ 		if (unlikely(rc == H_NOT_ENOUGH_RESOURCES)) {
+ 			ret = (int)rc;
+-			tce_free_pSeriesLP(tbl, tcenum_start,
++			tce_free_pSeriesLP(liobn, tcenum_start,
+ 			                   (npages_start - (npages + 1)));
+ 			break;
+ 		}
  
-@@ -364,7 +364,7 @@
- 				usart2 {
- 					pinctrl_usart2: usart2-0 {
- 						atmel,pins =
--							<AT91_PIOC 14 AT91_PERIPH_A AT91_PINCTRL_NONE>,
-+							<AT91_PIOC 14 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>,
- 							<AT91_PIOC 15 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
+ 		if (rc && printk_ratelimit()) {
+ 			printk("tce_build_pSeriesLP: plpar_tce_put failed. rc=%lld\n", rc);
+-			printk("\tindex   = 0x%llx\n", (u64)tbl->it_index);
++			printk("\tindex   = 0x%llx\n", (u64)liobn);
+ 			printk("\ttcenum  = 0x%llx\n", (u64)tcenum);
+ 			printk("\ttce val = 0x%llx\n", tce );
+ 			dump_stack();
+@@ -193,7 +193,8 @@ static int tce_buildmulti_pSeriesLP(stru
+ 	unsigned long flags;
  
---- a/arch/arm/boot/dts/at91sam9263.dtsi
-+++ b/arch/arm/boot/dts/at91sam9263.dtsi
-@@ -437,7 +437,7 @@
- 				usart0 {
- 					pinctrl_usart0: usart0-0 {
- 						atmel,pins =
--							<AT91_PIOA 26 AT91_PERIPH_A AT91_PINCTRL_NONE
-+							<AT91_PIOA 26 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
- 							 AT91_PIOA 27 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
+ 	if ((npages == 1) || !firmware_has_feature(FW_FEATURE_MULTITCE)) {
+-		return tce_build_pSeriesLP(tbl, tcenum, npages, uaddr,
++		return tce_build_pSeriesLP(tbl->it_index, tcenum,
++					   tbl->it_page_shift, npages, uaddr,
+ 		                           direction, attrs);
+ 	}
  
-@@ -455,7 +455,7 @@
- 				usart1 {
- 					pinctrl_usart1: usart1-0 {
- 						atmel,pins =
--							<AT91_PIOD 0 AT91_PERIPH_A AT91_PINCTRL_NONE
-+							<AT91_PIOD 0 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
- 							 AT91_PIOD 1 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
+@@ -209,8 +210,9 @@ static int tce_buildmulti_pSeriesLP(stru
+ 		/* If allocation fails, fall back to the loop implementation */
+ 		if (!tcep) {
+ 			local_irq_restore(flags);
+-			return tce_build_pSeriesLP(tbl, tcenum, npages, uaddr,
+-					    direction, attrs);
++			return tce_build_pSeriesLP(tbl->it_index, tcenum,
++					tbl->it_page_shift,
++					npages, uaddr, direction, attrs);
+ 		}
+ 		__this_cpu_write(tce_page, tcep);
+ 	}
+@@ -261,16 +263,16 @@ static int tce_buildmulti_pSeriesLP(stru
+ 	return ret;
+ }
  
-@@ -473,7 +473,7 @@
- 				usart2 {
- 					pinctrl_usart2: usart2-0 {
- 						atmel,pins =
--							<AT91_PIOD 2 AT91_PERIPH_A AT91_PINCTRL_NONE
-+							<AT91_PIOD 2 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
- 							 AT91_PIOD 3 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
+-static void tce_free_pSeriesLP(struct iommu_table *tbl, long tcenum, long npages)
++static void tce_free_pSeriesLP(unsigned long liobn, long tcenum, long npages)
+ {
+ 	u64 rc;
  
---- a/arch/arm/boot/dts/at91sam9g45.dtsi
-+++ b/arch/arm/boot/dts/at91sam9g45.dtsi
-@@ -555,7 +555,7 @@
- 				usart0 {
- 					pinctrl_usart0: usart0-0 {
- 						atmel,pins =
--							<AT91_PIOB 19 AT91_PERIPH_A AT91_PINCTRL_NONE
-+							<AT91_PIOB 19 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
- 							 AT91_PIOB 18 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
+ 	while (npages--) {
+-		rc = plpar_tce_put((u64)tbl->it_index, (u64)tcenum << 12, 0);
++		rc = plpar_tce_put((u64)liobn, (u64)tcenum << 12, 0);
  
-@@ -573,7 +573,7 @@
- 				usart1 {
- 					pinctrl_usart1: usart1-0 {
- 						atmel,pins =
--							<AT91_PIOB 4 AT91_PERIPH_A AT91_PINCTRL_NONE
-+							<AT91_PIOB 4 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
- 							 AT91_PIOB 5 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
+ 		if (rc && printk_ratelimit()) {
+ 			printk("tce_free_pSeriesLP: plpar_tce_put failed. rc=%lld\n", rc);
+-			printk("\tindex   = 0x%llx\n", (u64)tbl->it_index);
++			printk("\tindex   = 0x%llx\n", (u64)liobn);
+ 			printk("\ttcenum  = 0x%llx\n", (u64)tcenum);
+ 			dump_stack();
+ 		}
+@@ -285,7 +287,7 @@ static void tce_freemulti_pSeriesLP(stru
+ 	u64 rc;
  
-@@ -591,7 +591,7 @@
- 				usart2 {
- 					pinctrl_usart2: usart2-0 {
- 						atmel,pins =
--							<AT91_PIOB 6 AT91_PERIPH_A AT91_PINCTRL_NONE
-+							<AT91_PIOB 6 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
- 							 AT91_PIOB 7 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
+ 	if (!firmware_has_feature(FW_FEATURE_MULTITCE))
+-		return tce_free_pSeriesLP(tbl, tcenum, npages);
++		return tce_free_pSeriesLP(tbl->it_index, tcenum, npages);
  
-@@ -609,7 +609,7 @@
- 				usart3 {
- 					pinctrl_usart3: usart3-0 {
- 						atmel,pins =
--							<AT91_PIOB 8 AT91_PERIPH_A AT91_PINCTRL_NONE
-+							<AT91_PIOB 8 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
- 							 AT91_PIOB 9 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
+ 	rc = plpar_tce_stuff((u64)tbl->it_index, (u64)tcenum << 12, 0, npages);
  
---- a/arch/arm/boot/dts/at91sam9rl.dtsi
-+++ b/arch/arm/boot/dts/at91sam9rl.dtsi
-@@ -681,7 +681,7 @@
- 				usart0 {
- 					pinctrl_usart0: usart0-0 {
- 						atmel,pins =
--							<AT91_PIOA 6 AT91_PERIPH_A AT91_PINCTRL_NONE>,
-+							<AT91_PIOA 6 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>,
- 							<AT91_PIOA 7 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
+@@ -400,6 +402,19 @@ static int tce_setrange_multi_pSeriesLP(
+ 	u64 rc = 0;
+ 	long l, limit;
  
-@@ -720,7 +720,7 @@
- 				usart1 {
- 					pinctrl_usart1: usart1-0 {
- 						atmel,pins =
--							<AT91_PIOA 11 AT91_PERIPH_A AT91_PINCTRL_NONE>,
-+							<AT91_PIOA 11 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>,
- 							<AT91_PIOA 12 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
- 
-@@ -743,7 +743,7 @@
- 				usart2 {
- 					pinctrl_usart2: usart2-0 {
- 						atmel,pins =
--							<AT91_PIOA 13 AT91_PERIPH_A AT91_PINCTRL_NONE>,
-+							<AT91_PIOA 13 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>,
- 							<AT91_PIOA 14 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
- 
-@@ -766,7 +766,7 @@
- 				usart3 {
- 					pinctrl_usart3: usart3-0 {
- 						atmel,pins =
--							<AT91_PIOB 0 AT91_PERIPH_A AT91_PINCTRL_NONE>,
-+							<AT91_PIOB 0 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>,
- 							<AT91_PIOB 1 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
- 					};
++	if (!firmware_has_feature(FW_FEATURE_MULTITCE)) {
++		unsigned long tceshift = be32_to_cpu(maprange->tce_shift);
++		unsigned long dmastart = (start_pfn << PAGE_SHIFT) +
++				be64_to_cpu(maprange->dma_base);
++		unsigned long tcenum = dmastart >> tceshift;
++		unsigned long npages = num_pfn << PAGE_SHIFT >> tceshift;
++		void *uaddr = __va(start_pfn << PAGE_SHIFT);
++
++		return tce_build_pSeriesLP(be32_to_cpu(maprange->liobn),
++				tcenum, tceshift, npages, (unsigned long) uaddr,
++				DMA_BIDIRECTIONAL, 0);
++	}
++
+ 	local_irq_disable();	/* to protect tcep and the page behind it */
+ 	tcep = __this_cpu_read(tce_page);
  
 
 
