@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FEF415C434
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C01E815C42C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728961AbgBMP11 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:27:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40980 "EHLO mail.kernel.org"
+        id S1729334AbgBMP1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:27:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728989AbgBMPZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:25 -0500
+        id S2387424AbgBMPZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:17 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C1D524690;
-        Thu, 13 Feb 2020 15:25:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67D1F246B5;
+        Thu, 13 Feb 2020 15:25:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607524;
-        bh=ImQqmsBiXC3ZTbpTA1IsoX3Qd4c7vQXtJfxgswp5vE4=;
+        s=default; t=1581607516;
+        bh=6jiThO6KwAUUZpDdP6OoahcnF7wU3KAVmYKEa7AhWX4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rxGfQx9hBTFRDVgej8LM/7Yv0xZyIkNvRkyj9QYeWIFflVtwgPJu8WeaBN8i6y6F/
-         hi8PANTG0ZOjhD5A2DmUDVPTEqozZNamoX9+Uqe3FkcBm9sV1cVISqI5n4XOYsLzQD
-         yPR6zWhsYAssmRhrwbpcQ68GV7zNnl2OSMuj2IaI=
+        b=bMAR/8UwmibOc30kXCaxCm76btxO5+6ZmiU9yIcQw6E2PnH/FAzhEn14gzJ0oxZno
+         GX5fZmoguO76+bqOpqip5GCbfF3XWmaKbVz+Hj8b+PDMCw/VqJoolXFDdzWpG5ba6i
+         jBKM9EuFg4gZZewHiC2GwEqU5+G4DjJjRBj6oQpA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Roberto Bergantinos Corpas <rbergant@redhat.com>,
-        Frank Sorenson <sorenson@redhat.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.14 075/173] sunrpc: expiry_time should be seconds not timeval
-Date:   Thu, 13 Feb 2020 07:19:38 -0800
-Message-Id: <20200213151952.453093218@linuxfoundation.org>
+        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
+        Marios Pomonis <pomonis@google.com>,
+        Andrew Honig <ahonig@google.com>,
+        Jim Mattson <jmattson@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 080/173] KVM: x86: Protect DR-based index computations from Spectre-v1/L1TF attacks
+Date:   Thu, 13 Feb 2020 07:19:43 -0800
+Message-Id: <20200213151953.652740374@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
 References: <20200213151931.677980430@linuxfoundation.org>
@@ -45,54 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roberto Bergantinos Corpas <rbergant@redhat.com>
+From: Marios Pomonis <pomonis@google.com>
 
-commit 3d96208c30f84d6edf9ab4fac813306ac0d20c10 upstream.
+commit ea740059ecb37807ba47b84b33d1447435a8d868 upstream.
 
-When upcalling gssproxy, cache_head.expiry_time is set as a
-timeval, not seconds since boot. As such, RPC cache expiry
-logic will not clean expired objects created under
-auth.rpcsec.context cache.
+This fixes a Spectre-v1/L1TF vulnerability in __kvm_set_dr() and
+kvm_get_dr().
+Both kvm_get_dr() and kvm_set_dr() (a wrapper of __kvm_set_dr()) are
+exported symbols so KVM should tream them conservatively from a security
+perspective.
 
-This has proven to cause kernel memory leaks on field. Using
-64 bit variants of getboottime/timespec
+Fixes: 020df0794f57 ("KVM: move DR register access handling into generic code")
 
-Expiration times have worked this way since 2010's c5b29f885afe "sunrpc:
-use seconds since boot in expiry cache".  The gssproxy code introduced
-in 2012 added gss_proxy_save_rsc and introduced the bug.  That's a while
-for this to lurk, but it required a bit of an extreme case to make it
-obvious.
-
-Signed-off-by: Roberto Bergantinos Corpas <rbergant@redhat.com>
+Signed-off-by: Nick Finco <nifi@google.com>
+Signed-off-by: Marios Pomonis <pomonis@google.com>
+Reviewed-by: Andrew Honig <ahonig@google.com>
 Cc: stable@vger.kernel.org
-Fixes: 030d794bf498 "SUNRPC: Use gssproxy upcall for server..."
-Tested-By: Frank Sorenson <sorenson@redhat.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/auth_gss/svcauth_gss.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/kvm/x86.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/net/sunrpc/auth_gss/svcauth_gss.c
-+++ b/net/sunrpc/auth_gss/svcauth_gss.c
-@@ -1188,6 +1188,7 @@ static int gss_proxy_save_rsc(struct cac
- 		dprintk("RPC:       No creds found!\n");
- 		goto out;
- 	} else {
-+		struct timespec64 boot;
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -924,9 +924,11 @@ static u64 kvm_dr6_fixed(struct kvm_vcpu
  
- 		/* steal creds */
- 		rsci.cred = ud->creds;
-@@ -1208,6 +1209,9 @@ static int gss_proxy_save_rsc(struct cac
- 						&expiry, GFP_KERNEL);
- 		if (status)
- 			goto out;
+ static int __kvm_set_dr(struct kvm_vcpu *vcpu, int dr, unsigned long val)
+ {
++	size_t size = ARRAY_SIZE(vcpu->arch.db);
 +
-+		getboottime64(&boot);
-+		expiry -= boot.tv_sec;
- 	}
+ 	switch (dr) {
+ 	case 0 ... 3:
+-		vcpu->arch.db[dr] = val;
++		vcpu->arch.db[array_index_nospec(dr, size)] = val;
+ 		if (!(vcpu->guest_debug & KVM_GUESTDBG_USE_HW_BP))
+ 			vcpu->arch.eff_db[dr] = val;
+ 		break;
+@@ -963,9 +965,11 @@ EXPORT_SYMBOL_GPL(kvm_set_dr);
  
- 	rsci.h.expiry_time = expiry;
+ int kvm_get_dr(struct kvm_vcpu *vcpu, int dr, unsigned long *val)
+ {
++	size_t size = ARRAY_SIZE(vcpu->arch.db);
++
+ 	switch (dr) {
+ 	case 0 ... 3:
+-		*val = vcpu->arch.db[dr];
++		*val = vcpu->arch.db[array_index_nospec(dr, size)];
+ 		break;
+ 	case 4:
+ 		/* fall through */
 
 
