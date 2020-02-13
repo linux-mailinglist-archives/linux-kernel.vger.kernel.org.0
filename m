@@ -2,144 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D3DF15B9B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 07:44:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58BD515B9C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 07:51:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729781AbgBMGo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 01:44:27 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34324 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729768AbgBMGo1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 01:44:27 -0500
-Received: by mail-pl1-f193.google.com with SMTP id j7so1962436plt.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 22:44:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=PTjJW5WkW3WINmBSd47NRsGrdkm7l3mFig0Vv87JoHI=;
-        b=fOt+CKbaa0hK1SD+Dy3Gz8bkHD+cshmpLIT8v+VWyrtWI20L8EU2KYeZeIS4rt8NC4
-         v2C0B1s63ubGJUhO1XnAezBRS6Bl3gqUaQx0jhQPDFgUwsj4WU+jb9De89x8LVVkxCVh
-         kQYGq2caYpKvRl3s2Uaouw5RUk2UcZxWhfKRF+uI/UB9sRroBDPHW/AsaxXuIkXp+y1x
-         4xDnPRcWpYRdZZQDtjN029HZpLQZR8kVwn3EHkJbDxcIp5IuRUxkYaOUZ9xtTg7d9zwV
-         qb6+D2jEIHi2q9SIpVRpEc2ZDU5OgD+SdH6c+9PGs+FAMKDFVED6KmP1wxX1lPk6YlqG
-         2hJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=PTjJW5WkW3WINmBSd47NRsGrdkm7l3mFig0Vv87JoHI=;
-        b=UrdBkL75rh4x9JyzfTQGJMtf2WP4sqRQ5eoSHjnyJLRSJIeifpJv7a3qGOAh37Es6P
-         whcYghgjbPdYtbMcL4fYcUXj/Elz6i4LL6ivST4RZuSoMcHy+zkJ/g5fwe+RCoGAFSsi
-         jrnD1xq8FO8Jb77ON8tcZU86tvBw+rGAwhROU2k6TwFAvu3Bmhwk4Vtkuf2GUHARFq02
-         2WkvHpkmecHArs8oCmXbKgwDeCb2+iDXe/9RUlI16mEI0WlSYwfiX9+WEodXDO9TKPfy
-         OA8nSMYNAbNxbpIAHHv9/O2C5UrLys4dqRnd5r7VjpRmLzNx8RnxuSa+pLutlzPfxBSm
-         bDgg==
-X-Gm-Message-State: APjAAAVI2h53LHV4+CtIdxDWEp864vlZSn0alwwS0e07XOf1tGJiwkYw
-        mzxxRujbBvTtirnqDb/eogkF2p/v2pI=
-X-Google-Smtp-Source: APXvYqwNMnGMEqnUw+BD3d356YdrBTWxcZDVrpMEjClwMVJdXshDYsdlX3TJyZLVvbTGGXZqEsja7Q==
-X-Received: by 2002:a17:90a:17c2:: with SMTP id q60mr3225606pja.111.1581576264849;
-        Wed, 12 Feb 2020 22:44:24 -0800 (PST)
-Received: from workstation-portable ([103.211.17.23])
-        by smtp.gmail.com with ESMTPSA id x4sm1412685pff.143.2020.02.12.22.44.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 22:44:24 -0800 (PST)
-Date:   Thu, 13 Feb 2020 12:14:18 +0530
-From:   Amol Grover <frextrite@gmail.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH] events: Annotate parent_ctx with __rcu
-Message-ID: <20200213064418.GA26550@workstation-portable>
-References: <20200208144648.18833-1-frextrite@gmail.com>
- <20200210093624.GB14879@hirez.programming.kicks-ass.net>
- <20200210125948.GA16485@workstation-portable>
- <20200210133459.GJ14897@hirez.programming.kicks-ass.net>
- <20200210164727.GA22283@workstation-portable>
- <20200210170831.GB246160@google.com>
+        id S1729767AbgBMGvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 01:51:42 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:43696 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726654AbgBMGvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 01:51:41 -0500
+Received: from zn.tnic (p200300EC2F07F600C900F9734EF2E51F.dip0.t-ipconnect.de [IPv6:2003:ec:2f07:f600:c900:f973:4ef2:e51f])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C4EDE1EC0CD2;
+        Thu, 13 Feb 2020 07:51:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1581576699;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=wf2AmwI9fi4Vl0/u0IIy7+8D26tMI5ezRzlAF6DDWs8=;
+        b=P65ey5vigoXjTd7ueflajmSjmkBu2Bllf6vzf1XgbPemXuoGDfOlbNXaqfPNcgyGSr2EWy
+        NAYs2muwd1lcDwmLVWFQhoOPxBscCFa9RaScvP8CC7axukYg6aiImLSWDraOolnsBUbBFG
+        sXhEd0CHSK5zjMfgt/gRS63dnJk8QHk=
+Date:   Thu, 13 Feb 2020 07:51:30 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     x86@kernel.org, hpa@zytor.com, Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH 03/62] x86/cpufeatures: Add SEV-ES CPU feature
+Message-ID: <20200213065130.GC31799@zn.tnic>
+References: <20200211135256.24617-1-joro@8bytes.org>
+ <20200211135256.24617-4-joro@8bytes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200210170831.GB246160@google.com>
+In-Reply-To: <20200211135256.24617-4-joro@8bytes.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 12:08:31PM -0500, Joel Fernandes wrote:
-> On Mon, Feb 10, 2020 at 10:17:27PM +0530, Amol Grover wrote:
-> > On Mon, Feb 10, 2020 at 02:34:59PM +0100, Peter Zijlstra wrote:
-> > > On Mon, Feb 10, 2020 at 06:29:48PM +0530, Amol Grover wrote:
-> > > > On Mon, Feb 10, 2020 at 10:36:24AM +0100, Peter Zijlstra wrote:
-> > > > > On Sat, Feb 08, 2020 at 08:16:49PM +0530, Amol Grover wrote:
-> > > 
-> > > > > > @@ -3106,26 +3106,31 @@ static void ctx_sched_out(struct perf_event_context *ctx,
-> > > > > >  static int context_equiv(struct perf_event_context *ctx1,
-> > > > > >  			 struct perf_event_context *ctx2)
-> > > > > >  {
-> > > > > > +	struct perf_event_context *parent_ctx1, *parent_ctx2;
-> > > > > > +
-> > > > > >  	lockdep_assert_held(&ctx1->lock);
-> > > > > >  	lockdep_assert_held(&ctx2->lock);
-> > > > > >  
-> > > > > > +	parent_ctx1 = rcu_dereference(ctx1->parent_ctx);
-> > > > > > +	parent_ctx2 = rcu_dereference(ctx2->parent_ctx);
+On Tue, Feb 11, 2020 at 02:51:57PM +0100, Joerg Roedel wrote:
+> From: Tom Lendacky <thomas.lendacky@amd.com>
 > 
-> You can probably remove the earlier lockdep_assert_held(s) if you're going to
-> use rcu_dereference_protected() here, since that would do the checking anyway.
+> Add CPU feature detection for Secure Encrypted Virtualization with
+> Encrypted State. This feature enhances SEV by also encrypting the
+> guest register state, making it in-accessible to the hypervisor.
 > 
+> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+> Signed-off-by: Joerg Roedel <jroedel@suse.de>
+> ---
+>  arch/x86/include/asm/cpufeatures.h | 1 +
+>  arch/x86/kernel/cpu/amd.c          | 4 +++-
+>  arch/x86/kernel/cpu/scattered.c    | 1 +
+>  3 files changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> index f3327cb56edf..26e4ee209f7b 100644
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@ -285,6 +285,7 @@
+>  #define X86_FEATURE_CQM_MBM_LOCAL	(11*32+ 3) /* LLC Local MBM monitoring */
+>  #define X86_FEATURE_FENCE_SWAPGS_USER	(11*32+ 4) /* "" LFENCE in user entry SWAPGS path */
+>  #define X86_FEATURE_FENCE_SWAPGS_KERNEL	(11*32+ 5) /* "" LFENCE in kernel entry SWAPGS path */
+> +#define X86_FEATURE_SEV_ES		(11*32+ 6) /* AMD Secure Encrypted Virtualization - Encrypted State */
 
-Ah yes, I was thinking this aswell.
+Let's put this in word 8 which is for virt flags. X86_FEATURE_SEV could
+go there too but that should be a separate patch anyway, if at all.
 
-> > > > > 
-> > > > > Bah.
-> > > > > 
-> > > > > Why are you  fixing all this sparse crap and making the code worse?
-> > > > 
-> > > > Hi Peter,
-> > > > 
-> > > > Sparse is quite noisy and we need to eliminate false-positives, right?
-> > > 
-> > > Dunno, I've been happy just ignoring it all.
-> 
-> FWIW some of the sparse fixes Amol made recently did uncover so existing
-> "bugs" :) (Not in perf but other code).
-> 
-> > > > __rcu will tell the developer, this pointer could change and he needs to
-> > > > take the required steps to make sure the code doesn't break.
-> > > 
-> > > I know what it does; what I don't know is why you need to make the code
-> > > worse. In paricular, __rcu doesn't mandate rcu_dereference(), esp. not
-> > > when you're actually holding the write side lock.
-> > 
-> > I might've misinterpreted the code. How does replacing rcu_dereference()
-> > with
-> > parent_ctx1 = rcu_dereference_protected(ctx1->parent_ctx,
-> > 					lockdep_is_held(&ctx1->lock));
-> > sound?
-> 
-> FWIW, some maintainers do hate calling RCU APIs when write side lock is held.
-> Evidently it does make the code readability a bit worse and I can see Peter's
-> point of view because the existing code is correct. I leave it to you guys to
-> decide how you want to handle it.
-> 
+>  /* Intel-defined CPU features, CPUID level 0x00000007:1 (EAX), word 12 */
+>  #define X86_FEATURE_AVX512_BF16		(12*32+ 5) /* AVX512 BFLOAT16 instructions */
+> diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+> index ac83a0fef628..aad2223862ef 100644
+> --- a/arch/x86/kernel/cpu/amd.c
+> +++ b/arch/x86/kernel/cpu/amd.c
+> @@ -580,7 +580,7 @@ static void early_detect_mem_encrypt(struct cpuinfo_x86 *c)
+>  	 *	      If BIOS has not enabled SME then don't advertise the
+>  	 *	      SME feature (set in scattered.c).
+>  	 *   For SEV: If BIOS has not enabled SEV then don't advertise the
+> -	 *            SEV feature (set in scattered.c).
+> +	 *            SEV and SEV_ES feature (set in scattered.c).
+>  	 *
+>  	 *   In all cases, since support for SME and SEV requires long mode,
+>  	 *   don't advertise the feature under CONFIG_X86_32.
+> @@ -611,6 +611,8 @@ static void early_detect_mem_encrypt(struct cpuinfo_x86 *c)
+>  		setup_clear_cpu_cap(X86_FEATURE_SME);
+>  clear_sev:
+>  		setup_clear_cpu_cap(X86_FEATURE_SEV);
+> +		setup_clear_cpu_cap(X86_FEATURE_SEV);
 
-In that case, I think the code is fine as it is. Thank you for the review both!
+X86_FEATURE_SEV twice? Because once didn't stick?
 
-Thanks
-Amol
+:-)
 
-> thanks!
-> 
->  - Joel
-> 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
