@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B21A15C1D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:27:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 951D615C152
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:22:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729288AbgBMP0z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:26:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39898 "EHLO mail.kernel.org"
+        id S1727953AbgBMPWa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:22:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728903AbgBMPZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:04 -0500
+        id S1727881AbgBMPW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:22:28 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5C6D246A4;
-        Thu, 13 Feb 2020 15:25:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D46DD246C0;
+        Thu, 13 Feb 2020 15:22:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607503;
-        bh=70flgQxNwh5hYgsNI8djhEjl8EqUBmy1+5Jcyh62HQs=;
+        s=default; t=1581607347;
+        bh=iKkF4Zgp5sijlwm9Zs8L9gBFzpXfEG5kjg4D6f2fOpU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ruIOeIwOyvGMqJpZwCrHDSXYSpooY20GaTJRlhTlXg0Q9Fca//C5USRy7OlABIequ
-         YypCGCIkooN9U0CZ9IUNtQwcb4l0T9b5wgLW3JltzeBYSG6s1IlgsLXNQnH+hvmaw9
-         RQ48EKdPYFX1T8chNFBZ8KXIUQT0e0Z/iDEuNGqw=
+        b=itzSjE4L2L8Z3pC80UQO3nSKQdXNKirAHrTY856mCDrEebVQpno45O8xVkbYx23we
+         EMW5bTMOKJcUeEsWE4efB6yYIFMUmHsP2F6Gm/r77q5EYDUgv8u/JzXDjNRLqAhIJ4
+         h6abm3fjyEljS9XpmldGwpcVBAD36ArYQqIgLFQ8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 060/173] ftrace: Add comment to why rcu_dereference_sched() is open coded
-Date:   Thu, 13 Feb 2020 07:19:23 -0800
-Message-Id: <20200213151948.956357608@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        SeongJae Park <sjpark@amazon.de>,
+        Jakub Kicinski <kuba@kernel.org>
+Subject: [PATCH 4.4 08/91] tcp: clear tp->total_retrans in tcp_disconnect()
+Date:   Thu, 13 Feb 2020 07:19:25 -0800
+Message-Id: <20200213151824.663369407@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
+References: <20200213151821.384445454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,53 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 16052dd5bdfa16dbe18d8c1d4cde2ddab9d23177 ]
+[ Upstream commit c13c48c00a6bc1febc73902505bdec0967bd7095 ]
 
-Because the function graph tracer can execute in sections where RCU is not
-"watching", the rcu_dereference_sched() for the has needs to be open coded.
-This is fine because the RCU "flavor" of the ftrace hash is protected by
-its own RCU handling (it does its own little synchronization on every CPU
-and does not rely on RCU sched).
+total_retrans needs to be cleared in tcp_disconnect().
 
-Acked-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+tcp_disconnect() is rarely used, but it is worth fixing it.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: SeongJae Park <sjpark@amazon.de>
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/trace/trace.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ net/ipv4/tcp.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 757bb1bffed99..99af95e294d8d 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -879,6 +879,11 @@ static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
- 
- 	preempt_disable_notrace();
- 
-+	/*
-+	 * Have to open code "rcu_dereference_sched()" because the
-+	 * function graph tracer can be called when RCU is not
-+	 * "watching".
-+	 */
- 	hash = rcu_dereference_protected(ftrace_graph_hash, !preemptible());
- 
- 	if (ftrace_hash_empty(hash)) {
-@@ -926,6 +931,11 @@ static inline int ftrace_graph_notrace_addr(unsigned long addr)
- 
- 	preempt_disable_notrace();
- 
-+	/*
-+	 * Have to open code "rcu_dereference_sched()" because the
-+	 * function graph tracer can be called when RCU is not
-+	 * "watching".
-+	 */
- 	notrace_hash = rcu_dereference_protected(ftrace_graph_notrace_hash,
- 						 !preemptible());
- 
--- 
-2.20.1
-
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2261,6 +2261,7 @@ int tcp_disconnect(struct sock *sk, int
+ 	tp->window_clamp = 0;
+ 	tcp_set_ca_state(sk, TCP_CA_Open);
+ 	tcp_clear_retrans(tp);
++	tp->total_retrans = 0;
+ 	inet_csk_delack_init(sk);
+ 	/* Initialize rcv_mss to TCP_MIN_MSS to avoid division by 0
+ 	 * issue in __tcp_select_window()
 
 
