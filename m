@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D6BC15C26A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:33:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9E6915C49C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388008AbgBMPdd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:33:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57966 "EHLO mail.kernel.org"
+        id S2387892AbgBMPs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:48:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729647AbgBMP3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:29:02 -0500
+        id S1729258AbgBMP0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:50 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33DD4218AC;
-        Thu, 13 Feb 2020 15:29:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC38E2467B;
+        Thu, 13 Feb 2020 15:26:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607742;
-        bh=hgS5iMbB3/SY2x/9uvJwBtsYpyv2xzbjtqpk/MDAnKc=;
+        s=default; t=1581607610;
+        bh=7OZtItf/0dIUR/Bw9IMQi3zppq5EypSGVvdPlW5Lseg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UMl9k6hF+hR81MNahs4TZOTX6X7wnt8xjUQ2j/4bHTQ03iZyWxHHQXet0lGvNO8MK
-         TYKNlLcgbVS3jZZD0GzO4VTmldFs/zXoxg2YHKuisy6mAob09GtS+MZ1gSp0smw3uI
-         b3r7q+qhCXK014fYflkBOo1hS3T/ZzJoginxAWvM=
+        b=x/w3iOj3swm3lDnKoJrvuaTLrDAFYdoEaQYHqTQfbH4DA6hssUCf409r8OXcq7N94
+         3Ax07YqsobWfCSPgDFNktsHyrKIhwgMlV6DRo80gPASrqpvNaJHuqYU0a86y2Jc6AE
+         uCvOSjr2XK3eHD3D2gytkjDUcrU0FXImiL0+sUCM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Smythies <dsmythies@telus.net>,
-        Qais Yousef <qais.yousef@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH 5.5 079/120] sched/uclamp: Fix a bug in propagating uclamp value in new cgroups
+        stable@vger.kernel.org, Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH 4.19 34/52] arm64: cpufeature: Fix the type of no FP/SIMD capability
 Date:   Thu, 13 Feb 2020 07:21:15 -0800
-Message-Id: <20200213151928.089549500@linuxfoundation.org>
+Message-Id: <20200213151824.124180177@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
+References: <20200213151810.331796857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,57 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qais Yousef <qais.yousef@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-commit 7226017ad37a888915628e59a84a2d1e57b40707 upstream.
+commit 449443c03d8cfdacf7313e17779a2594ebf87e6d upstream.
 
-When a new cgroup is created, the effective uclamp value wasn't updated
-with a call to cpu_util_update_eff() that looks at the hierarchy and
-update to the most restrictive values.
+The NO_FPSIMD capability is defined with scope SYSTEM, which implies
+that the "absence" of FP/SIMD on at least one CPU is detected only
+after all the SMP CPUs are brought up. However, we use the status
+of this capability for every context switch. So, let us change
+the scope to LOCAL_CPU to allow the detection of this capability
+as and when the first CPU without FP is brought up.
 
-Fix it by ensuring to call cpu_util_update_eff() when a new cgroup
-becomes online.
+Also, the current type allows hotplugged CPU to be brought up without
+FP/SIMD when all the current CPUs have FP/SIMD and we have the userspace
+up. Fix both of these issues by changing the capability to
+BOOT_RESTRICTED_LOCAL_CPU_FEATURE.
 
-Without this change, the newly created cgroup uses the default
-root_task_group uclamp values, which is 1024 for both uclamp_{min, max},
-which will cause the rq to to be clamped to max, hence cause the
-system to run at max frequency.
-
-The problem was observed on Ubuntu server and was reproduced on Debian
-and Buildroot rootfs.
-
-By default, Ubuntu and Debian create a cpu controller cgroup hierarchy
-and add all tasks to it - which creates enough noise to keep the rq
-uclamp value at max most of the time. Imitating this behavior makes the
-problem visible in Buildroot too which otherwise looks fine since it's a
-minimal userspace.
-
-Fixes: 0b60ba2dd342 ("sched/uclamp: Propagate parent clamps")
-Reported-by: Doug Smythies <dsmythies@telus.net>
-Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Tested-by: Doug Smythies <dsmythies@telus.net>
-Link: https://lore.kernel.org/lkml/000701d5b965$361b6c60$a2524520$@net/
+Fixes: 82e0191a1aa11abf ("arm64: Support systems without FP/ASIMD")
+Cc: Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/sched/core.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/kernel/cpufeature.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7100,6 +7100,12 @@ static int cpu_cgroup_css_online(struct
- 
- 	if (parent)
- 		sched_online_group(tg, parent);
-+
-+#ifdef CONFIG_UCLAMP_TASK_GROUP
-+	/* Propagate the effective uclamp value for the new group */
-+	cpu_util_update_eff(css);
-+#endif
-+
- 	return 0;
- }
- 
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1241,7 +1241,7 @@ static const struct arm64_cpu_capabiliti
+ 	{
+ 		/* FP/SIMD is not implemented */
+ 		.capability = ARM64_HAS_NO_FPSIMD,
+-		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
++		.type = ARM64_CPUCAP_BOOT_RESTRICTED_CPU_LOCAL_FEATURE,
+ 		.min_field_value = 0,
+ 		.matches = has_no_fpsimd,
+ 	},
 
 
