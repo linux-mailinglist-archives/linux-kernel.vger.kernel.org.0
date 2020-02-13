@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7445415C4C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1510B15C446
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388096AbgBMPuh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:50:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45270 "EHLO mail.kernel.org"
+        id S1729623AbgBMPpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:45:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728714AbgBMP01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:27 -0500
+        id S1729398AbgBMP11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:27 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9A00222C2;
-        Thu, 13 Feb 2020 15:26:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DFBE2168B;
+        Thu, 13 Feb 2020 15:27:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607587;
-        bh=qnfJISG4sE6UeBhnpy91mZ1qa5kFlD3IbMeRsqcOW5c=;
+        s=default; t=1581607647;
+        bh=xtM+YC0fsXmRTgOGiXE3QIqZjxM4PwqTDLgPxouqRsc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jVQ4q9YvSLPHlLd+ng5fHvDZV6Za5m9QbJSmTsBTNOhfzrAkzC8fLJYLcr+XxranW
-         CTft4YCHSpgeFBTo5r/TgDJOcYHM6jISjT3tYoSnnfl9GUfK5TOWRdjc835mwNHWrj
-         U9ATrUOLBGdgSq9RHpPaNI12Lbn0BVRKlyTBRke0=
+        b=sI5SUgUK0KIkpc+zFJpDXygJUVJrMQB7TzrbxZ2jViK9WQ1JOzC4MSPeKN8260Bhi
+         fUYLc5t98bcp0qMnc2qz2DRpJbmRT2CXNOu/2Iustj9PYpFs5uohN4X2XqeOdnqwwI
+         s+gIcdla8CorPAUBPPjp+PxwAiiCeOZOC6P1pJZ4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yishai Hadas <yishaih@mellanox.com>,
-        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.19 05/52] RDMA/core: Fix locking in ib_uverbs_event_read
-Date:   Thu, 13 Feb 2020 07:20:46 -0800
-Message-Id: <20200213151812.906346096@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 5.4 40/96] platform/x86: intel_mid_powerbtn: Take a copy of ddata
+Date:   Thu, 13 Feb 2020 07:20:47 -0800
+Message-Id: <20200213151854.799686466@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
-References: <20200213151810.331796857@linuxfoundation.org>
+In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
+References: <20200213151839.156309910@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,107 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-commit 14e23bd6d22123f6f3b2747701fa6cd4c6d05873 upstream.
+commit 5e0c94d3aeeecc68c573033f08d9678fecf253bd upstream.
 
-This should not be using ib_dev to test for disassociation, during
-disassociation is_closed is set under lock and the waitq is triggered.
+The driver gets driver_data from memory that is marked as const (which
+is probably put to read-only memory) and it then modifies it. This
+likely causes some sort of fault to happen.
 
-Instead check is_closed and be sure to re-obtain the lock to test the
-value after the wait_event returns.
+Fix this by taking a copy of the structure.
 
-Fixes: 036b10635739 ("IB/uverbs: Enable device removal when there are active user space applications")
-Link: https://lore.kernel.org/r/1578504126-9400-12-git-send-email-yishaih@mellanox.com
-Signed-off-by: Yishai Hadas <yishaih@mellanox.com>
-Reviewed-by: Håkon Bugge <haakon.bugge@oracle.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: c94a8ff14de3 ("platform/x86: intel_mid_powerbtn: make mid_pb_ddata const")
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/uverbs_main.c |   32 ++++++++++++++------------------
- 1 file changed, 14 insertions(+), 18 deletions(-)
+ drivers/platform/x86/intel_mid_powerbtn.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/core/uverbs_main.c
-+++ b/drivers/infiniband/core/uverbs_main.c
-@@ -273,7 +273,6 @@ void ib_uverbs_release_file(struct kref
- }
+--- a/drivers/platform/x86/intel_mid_powerbtn.c
++++ b/drivers/platform/x86/intel_mid_powerbtn.c
+@@ -146,9 +146,10 @@ static int mid_pb_probe(struct platform_
  
- static ssize_t ib_uverbs_event_read(struct ib_uverbs_event_queue *ev_queue,
--				    struct ib_uverbs_file *uverbs_file,
- 				    struct file *filp, char __user *buf,
- 				    size_t count, loff_t *pos,
- 				    size_t eventsz)
-@@ -291,19 +290,16 @@ static ssize_t ib_uverbs_event_read(stru
+ 	input_set_capability(input, EV_KEY, KEY_POWER);
  
- 		if (wait_event_interruptible(ev_queue->poll_wait,
- 					     (!list_empty(&ev_queue->event_list) ||
--			/* The barriers built into wait_event_interruptible()
--			 * and wake_up() guarentee this will see the null set
--			 * without using RCU
--			 */
--					     !uverbs_file->device->ib_dev)))
-+					      ev_queue->is_closed)))
- 			return -ERESTARTSYS;
+-	ddata = (struct mid_pb_ddata *)id->driver_data;
++	ddata = devm_kmemdup(&pdev->dev, (void *)id->driver_data,
++			     sizeof(*ddata), GFP_KERNEL);
+ 	if (!ddata)
+-		return -ENODATA;
++		return -ENOMEM;
  
-+		spin_lock_irq(&ev_queue->lock);
-+
- 		/* If device was disassociated and no event exists set an error */
--		if (list_empty(&ev_queue->event_list) &&
--		    !uverbs_file->device->ib_dev)
-+		if (list_empty(&ev_queue->event_list) && ev_queue->is_closed) {
-+			spin_unlock_irq(&ev_queue->lock);
- 			return -EIO;
--
--		spin_lock_irq(&ev_queue->lock);
-+		}
- 	}
- 
- 	event = list_entry(ev_queue->event_list.next, struct ib_uverbs_event, list);
-@@ -338,8 +334,7 @@ static ssize_t ib_uverbs_async_event_rea
- {
- 	struct ib_uverbs_async_event_file *file = filp->private_data;
- 
--	return ib_uverbs_event_read(&file->ev_queue, file->uverbs_file, filp,
--				    buf, count, pos,
-+	return ib_uverbs_event_read(&file->ev_queue, filp, buf, count, pos,
- 				    sizeof(struct ib_uverbs_async_event_desc));
- }
- 
-@@ -349,9 +344,8 @@ static ssize_t ib_uverbs_comp_event_read
- 	struct ib_uverbs_completion_event_file *comp_ev_file =
- 		filp->private_data;
- 
--	return ib_uverbs_event_read(&comp_ev_file->ev_queue,
--				    comp_ev_file->uobj.ufile, filp,
--				    buf, count, pos,
-+	return ib_uverbs_event_read(&comp_ev_file->ev_queue, filp, buf, count,
-+				    pos,
- 				    sizeof(struct ib_uverbs_comp_event_desc));
- }
- 
-@@ -374,7 +368,9 @@ static __poll_t ib_uverbs_event_poll(str
- static __poll_t ib_uverbs_async_event_poll(struct file *filp,
- 					       struct poll_table_struct *wait)
- {
--	return ib_uverbs_event_poll(filp->private_data, filp, wait);
-+	struct ib_uverbs_async_event_file *file = filp->private_data;
-+
-+	return ib_uverbs_event_poll(&file->ev_queue, filp, wait);
- }
- 
- static __poll_t ib_uverbs_comp_event_poll(struct file *filp,
-@@ -388,9 +384,9 @@ static __poll_t ib_uverbs_comp_event_pol
- 
- static int ib_uverbs_async_event_fasync(int fd, struct file *filp, int on)
- {
--	struct ib_uverbs_event_queue *ev_queue = filp->private_data;
-+	struct ib_uverbs_async_event_file *file = filp->private_data;
- 
--	return fasync_helper(fd, filp, on, &ev_queue->async_queue);
-+	return fasync_helper(fd, filp, on, &file->ev_queue.async_queue);
- }
- 
- static int ib_uverbs_comp_event_fasync(int fd, struct file *filp, int on)
+ 	ddata->dev = &pdev->dev;
+ 	ddata->irq = irq;
 
 
